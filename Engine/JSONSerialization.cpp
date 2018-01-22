@@ -34,7 +34,7 @@ void JSONSerialization::SaveScene()
 		config = json_value_get_object(config_file);
 		config_node = json_object_get_object(config, "Scene");
 		json_object_clear(config_node);
-		json_object_dotset_number_with_std(config_node, "Info.Number of GameObjects", App->scene->gameobjects.size());
+		json_object_dotset_number_with_std(config_node, "Info.Number of GameObjects", App->scene->gameobjects->GetNumChilds());
 
 		// Update GameObjects
 		for (uint i = 0; i < App->scene->gameobjects.size(); i++)
@@ -175,7 +175,7 @@ void JSONSerialization::LoadChilds(GameObject& parent, GameObject& child, int uu
 		{
 			if (parent.GetUUID() == uuidParent)
 			{
-				parent.AddChildGameObject_Load(&child);
+				parent.AddChildGameObject(&child);
 				return;
 			}
 			else
@@ -188,7 +188,7 @@ void JSONSerialization::LoadChilds(GameObject& parent, GameObject& child, int uu
 	{
 		if (parent.GetUUID() == uuidParent)
 		{
-			parent.AddChildGameObject_Load(&child);
+			parent.AddChildGameObject(&child);
 			return;
 		}
 	}
@@ -360,7 +360,7 @@ void JSONSerialization::LoadChildLoadPrefab(GameObject& parent, GameObject& chil
 		{
 			if (parent.GetUUID() == uuidParent)
 			{
-				parent.AddChildGameObject_Load(&child);
+				parent.AddChildGameObject(&child);
 				return;
 			}
 			else
@@ -373,7 +373,7 @@ void JSONSerialization::LoadChildLoadPrefab(GameObject& parent, GameObject& chil
 	{
 		if (parent.GetUUID() == uuidParent)
 		{
-			parent.AddChildGameObject_Load(&child);
+			parent.AddChildGameObject(&child);
 			return;
 		}
 	}

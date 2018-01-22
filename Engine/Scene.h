@@ -51,7 +51,7 @@ public:
 	GameObject* CreateGameObject(GameObject* parent = nullptr);
 	GameObject* CreateCube(GameObject* parent = nullptr);
 	GameObject* CreateMainCamera(GameObject* parent = nullptr);
-	void DeleteGameObjects(std::vector<GameObject*>& gameobjects, bool isMain = true);
+	void DeleteGameObjects(std::vector<GameObject>& gameobjects, bool isMain = true);
 	void DeleteGameObject(GameObject* gameobject, bool isImport = false);
 	// -------------------------------------
 
@@ -59,7 +59,8 @@ public:
 	FrameBuffer* sceneBuff = nullptr;
 
 	//Container Vector of all Game Objects
-	std::vector<GameObject*> gameobjects;
+	//std::vector<GameObject*> gameobjects;
+	GameObject* gameobjects = nullptr;
 
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)

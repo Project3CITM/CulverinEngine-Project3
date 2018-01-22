@@ -64,15 +64,14 @@ public:
 	bool isStatic() const;
 
 	// Components -----------------------------
-	Component* AddComponent(Comp_Type type, bool isFromLoader = false);
+	Component* AddComponent(Comp_Type type);
 	void AddComponentCopy(const Component& copy);
 	int GetNumComponents() const;
-	Component* FindComponentByType(Comp_Type type) const;
-	CompTransform* GetComponentTransform() const;
-	CompMesh* GetComponentMesh() const;
-	CompMaterial* GetComponentMaterial() const;
-	CompScript * GetComponentScript() const;
-	Component* GetComponentbyIndex(uint i) const;
+	Component* FindComponentByType(Comp_Type type);
+	CompTransform* GetComponentTransform();
+	CompMesh* GetComponentMesh();
+	CompMaterial* GetComponentMaterial();
+	CompScript * GetComponentScript();
 	void DeleteAllComponents();
 	void DeleteComponent(Component* component);
 
@@ -81,15 +80,14 @@ public:
 
 	// Childs ---------------------------------
 	uint GetNumChilds() const;
-	GameObject* GetChildbyIndex(uint pos_inVec) const;
-	GameObject* GetChildbyName(const char* name) const;
-	uint GetIndexChildbyName(const char* name) const;
+	GameObject* GetChildbyIndex(uint pos_inVec);
+	GameObject* GetChildbyName(const char* name);
+	uint GetIndexChildbyName(const char* name);
 	void RemoveChildbyIndex(uint index);
-	std::vector<GameObject*> GetChildsVec() const;
-	std::vector<GameObject*>* GetChildsPtr();
+	std::vector<GameObject> GetChildsVec();
+	std::vector<GameObject>* GetChildsPtr();
 	void AddChildGameObject_Copy(const GameObject* child);
-	void AddChildGameObject_Load(GameObject* child);
-	void AddChildGameObject_Replace(GameObject* child);
+	void AddChildGameObject(GameObject child);
 
 	// Transform Modifications -----------------
 	void UpdateChildsMatrices();
@@ -101,7 +99,7 @@ public:
 	// Bounding Box -----------------------
 	void AddBoundingBox(const ResourceMesh* mesh);
 	void DrawBoundingBox();
-	AABB* bounding_box = nullptr;
+	AABB* bounding_box = nullptr; // no pointer!
 	AABB  box_fixed;
 	void SetAABBActive(bool active);
 	bool isAABBActive() const;
@@ -127,8 +125,9 @@ private:
 	bool bb_active = false;
 
 	GameObject* parent = nullptr;
-	std::vector<Component*> components;
-	std::vector<GameObject*> childs;
+	std::vector<Component> components;
+	std::vector<GameObject> childs;
+	//GameObject* childs = nullptr;
 	
 
 };

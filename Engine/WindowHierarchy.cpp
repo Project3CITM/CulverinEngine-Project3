@@ -207,7 +207,7 @@ void Hierarchy::CopyGameObject(GameObject* select)
 		if (select->HaveParent())
 		{
 			GameObject* copied = new GameObject(*copy, true, select->GetParent());
-			select->GetParent()->AddChildGameObject_Load(copied);
+			select->GetParent()->AddChildGameObject(copied);
 			//copy = nullptr;
 		}
 		else
