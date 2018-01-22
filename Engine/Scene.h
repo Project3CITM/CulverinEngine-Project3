@@ -60,8 +60,7 @@ public:
 
 	//Container Vector of all Game Objects
 	std::vector<GameObject*> gameobjects;
-	// std::vector<GameObject*> gameobjects to GameObject* gameobjects
-	GameObject* gameobjects_inscene = nullptr; //Rename to gameobjects
+
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
 	std::vector<GameObject*> static_objects;

@@ -83,7 +83,7 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 		reimportNow = true;
 	}
 
-	// Delete Resource from Memory if anyone use it.
+	// Delete Resource from Memory if no one use it.
 	std::map<uint, Resource*>::iterator it = resources.begin();
 	for (int i = 0; i < resources.size(); i++)
 	{
@@ -120,6 +120,7 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 
 update_status ModuleResourceManager::PostUpdate(float dt)
 {
+	perf_timer.Start();
 	if (resourcesToReimport.size() > 0 && reimportNow)
 	{
 		// if a Resource state == Resource::State::REIMPORT delete it.
@@ -220,6 +221,7 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 		}
 	}
 
+	postUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
 
