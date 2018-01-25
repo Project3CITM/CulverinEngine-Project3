@@ -1,6 +1,7 @@
 #ifndef _RESOURCEMESH_
 #define _RESOURCEMESH_
 
+#include "Globals.h"
 #include "Resource_.h"
 #include "Math/float3.h"
 #include "Math/float2.h"

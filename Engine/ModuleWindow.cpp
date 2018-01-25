@@ -1,4 +1,3 @@
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "SDL\include\SDL.h"

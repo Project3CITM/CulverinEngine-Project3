@@ -363,7 +363,7 @@ void CompTransform::UpdateGlobalTransform()
 		parent_object = parent_object->GetParent();
 	}
 
-	std::list<const GameObject*>::reverse_iterator item = parents.rbegin();
+	std::list<GameObject*>::reverse_iterator item = parents.rbegin();
 	
 	// Multiply parents local transforms to get the Global transform of this game object
 	while (item !=  parents.crend())

@@ -1,4 +1,3 @@
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleCamera3D.h"
 #include "GameObject.h"
@@ -278,12 +277,9 @@ void ModuleCamera3D::MousePick(float x, float y, float w, float h)
 	entry_dist = 0.0f;
 	exit_dist = ray.Length();
 
-	for (uint i = 0; i < App->scene->gameobjects.size(); i++)
-	{
-		// Check intersection ray-AABB
-		CheckAABBIntersection(App->scene->gameobjects[i], entry_dist, exit_dist);
-	}
-
+	// Check intersection ray-AABB
+	CheckAABBIntersection(App->scene->root, entry_dist, exit_dist);
+	
 	if (possible_intersections.size() > 0)
 	{
 		// Check intersection ray-traingles
@@ -309,7 +305,7 @@ void ModuleCamera3D::CheckAABBIntersection(GameObject* candidate, float& entry_d
 		// Check intersection for childs
 		for (uint i = 0; i < candidate->GetChildsVec().size(); i++)
 		{
-			CheckAABBIntersection(candidate->GetChildsVec()[i], entry_dist, exit_dist);
+			CheckAABBIntersection(candidate->GetChildbyIndex(i), entry_dist, exit_dist);
 		}
 	}
 }
@@ -368,7 +364,7 @@ void ModuleCamera3D::CheckGeometryIntersection()
 }
 
 
-void ModuleCamera3D::SetFocus(const GameObject* selected)
+void ModuleCamera3D::SetFocus(GameObject* selected)
 {
 	if (selected != nullptr)
 	{
