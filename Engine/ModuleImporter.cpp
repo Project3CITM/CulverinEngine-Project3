@@ -301,7 +301,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 			Newdirectory += "\\" + App->fs->FixName_directory(file);
 			App->Json_seria->SavePrefab(*obj, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 
-			App->scene->gameobjects->AddChildGameObject(obj); // Need cleen
+			App->scene->gameobjects.push_back(obj); // Need cleen
 			App->scene->DeleteGameObject(obj);
 		}
 		else

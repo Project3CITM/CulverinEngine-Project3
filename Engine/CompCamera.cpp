@@ -283,7 +283,7 @@ void CompCamera::CullDynamicObjects()
 	const AABB* box = nullptr;
 
 	// Push all active elements that are root & active
-	for (uint i = 0; i < App->scene->gameobjects->GetNumChilds(); i++)
+	for (uint i = 0; i < App->scene->gameobjects.size(); i++)
 	{
 		if (App->scene->gameobjects[i]->isActive())
 		{

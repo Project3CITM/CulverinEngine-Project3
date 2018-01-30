@@ -210,9 +210,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	App->scene->DrawPlane();
 
 	// Draw GameObjects
-	for (uint i = 0; i < App->scene->gameobjects->GetNumChilds(); i++)
+	for (uint i = 0; i < App->scene->gameobjects.size(); i++)
 	{
-		App->scene->gameobjects->Draw();
+		App->scene->gameobjects[i]->Draw();
 	}
 
 	// Draw Quadtree

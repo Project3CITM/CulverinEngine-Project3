@@ -10,12 +10,6 @@ class ResourceMaterial;
 class ResourceScript;
 struct ReImport;
 
-struct VecTempScene
-{
-	GameObject gameobject;
-	uint uid_parent;
-};
-
 class JSONSerialization
 {
 public:
@@ -24,14 +18,14 @@ public:
 
 	// SAVE & LOAD SCENE --------------------------
 	void SaveScene();
-	void SaveChildGameObject(JSON_Object* config_node, GameObject& gameObject, uint& count, uint& countResources);
-	void LoadScene(const char* scene);
+	void SaveChildGameObject(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);
+	void LoadScene();
 	void LoadChilds(GameObject& parent, GameObject& child, int uuidParent);
 	// --------------------------------------
 
 	// SAVE & LOAD PREFAB --------------------------
-	void SavePrefab(GameObject& gameObject, const char* directory, const char* fileName);
-	void SaveChildPrefab(JSON_Object* config_node, GameObject& gameObject, uint& count, uint& countResources);
+	void SavePrefab(const GameObject& gameObject, const char* directory, const char* fileName);
+	void SaveChildPrefab(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);
 	void LoadPrefab(const char* prefab);
 	void LoadChildLoadPrefab(GameObject& parent, GameObject& child, int uuidParent);
 	// --------------------------------------
@@ -56,7 +50,7 @@ private:
 	void ChangeUUIDs(GameObject& gameObject);
 	void CheckChangeName(GameObject& gameObject);
 	// Get All Names form Scene -------
-	void GetAllNames(std::vector<GameObject>& gameobjects);
+	void GetAllNames(const std::vector<GameObject*>& gameobjects);
 
 private:
 	std::vector<const char*> namesScene;

@@ -257,34 +257,34 @@ void Quadtree::Clear()
 	}	
 }
 
-void Quadtree::Bake(std::vector<GameObject>& objects)
+void Quadtree::Bake(const std::vector<GameObject*>& objects)
 {
 	for (uint i = 0; i < objects.size(); i++)
 	{
-		if (objects[i].isActive())
+		if (objects[i]->isActive())
 		{
-			if (objects[i].isStatic())
+			if (objects[i]->isStatic())
 			{
 				Insert(objects[i]);
 			}
-			if (objects[i].GetNumChilds() > 0)
+			if (objects[i]->GetNumChilds() > 0)
 			{
-				Bake(objects[i].GetChildsVec());
+				Bake(objects[i]->GetChildsVec());
 			}
 		}
 	}
 }
 
-void Quadtree::Insert(GameObject& obj)
+void Quadtree::Insert(GameObject* obj)
 {
 	if (root_node != nullptr)
 	{
 		// If object is inside the Boundaries & has an AABB, insert it in a node
-		if (obj.bounding_box != nullptr)
+		if (obj->bounding_box != nullptr)
 		{
-			if (obj.box_fixed.Intersects(root_node->box))
+			if (obj->box_fixed.Intersects(root_node->box))
 			{
-				root_node->Insert(&obj);
+				root_node->Insert(obj);
 			}
 		}
 		else
@@ -294,11 +294,11 @@ void Quadtree::Insert(GameObject& obj)
 	}
 }
 
-void Quadtree::Remove(GameObject& obj)
+void Quadtree::Remove(GameObject* obj)
 {
 	if (root_node != nullptr)
 	{
-		root_node->Remove(&obj);
+		root_node->Remove(obj);
 	}
 }
 

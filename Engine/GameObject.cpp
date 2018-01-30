@@ -57,19 +57,19 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 		bounding_box = new AABB(*copy.bounding_box);
 	}
 
-	////Create all components from copy object with same data
-	//for (uint i = 0; i < copy.GetNumComponents(); i++)
-	//{
-	//	AddComponentCopy(*copy.components[i]);
-	//}
+	//Create all components from copy object with same data
+	for (uint i = 0; i < copy.GetNumComponents(); i++)
+	{
+		AddComponentCopy(*copy.components[i]);
+	}
 
-	////Create childrens from copy object with same data to this new game object
-	//for (uint i = 0; i < copy.GetNumChilds(); i++)
-	//{
-	//	//Create from copy constructor all childs of the game object to copy
-	//	childs.push_back(new GameObject(*copy.GetChildbyIndex(i), haveparent, parent_));
-	//	childs[i]->parent = this;
-	//}
+	//Create childrens from copy object with same data to this new game object
+	for (uint i = 0; i < copy.GetNumChilds(); i++)
+	{
+		//Create from copy constructor all childs of the game object to copy
+		childs.push_back(new GameObject(*copy.GetChildbyIndex(i), haveparent, parent_));
+		childs[i]->parent = this;
+	}
 }
 
 GameObject::~GameObject()
@@ -98,11 +98,11 @@ bool GameObject::CheckScripts(int& numfails)
 		//Check compilation errors --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i].isActive())
+			if (components[i]->isActive())
 			{
-				if (components[i].GetType() == Comp_Type::C_SCRIPT)
+				if (components[i]->GetType() == Comp_Type::C_SCRIPT)
 				{
-					if (((CompScript*)&components[i])->CheckScript() == false)
+					if (((CompScript*)components[i])->CheckScript() == false)
 					{
 						allScriptsCompiled++;
 					}
@@ -113,9 +113,9 @@ bool GameObject::CheckScripts(int& numfails)
 		//Check child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i].isActive())
+			if (childs[i]->isActive())
 			{
-				childs[i].CheckScripts(numfails);
+				childs[i]->CheckScripts(numfails);
 			}
 		}
 	}
@@ -136,11 +136,11 @@ void GameObject::StartScripts()
 		//Start Active scripts --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i].isActive())
+			if (components[i]->isActive())
 			{
-				if (components[i].GetType() == Comp_Type::C_SCRIPT)
+				if (components[i]->GetType() == Comp_Type::C_SCRIPT)
 				{
-					((CompScript*)&components[i])->Start();
+					((CompScript*)components[i])->Start();
 				}
 			}
 		}
@@ -148,9 +148,9 @@ void GameObject::StartScripts()
 		//Check child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i].isActive())
+			if (childs[i]->isActive())
 			{
-				childs[i].StartScripts();
+				childs[i]->StartScripts();
 			}
 		}
 	}
@@ -163,11 +163,11 @@ void GameObject::ClearAllVariablesScript()
 		//Start Active scripts --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i].isActive())
+			if (components[i]->isActive())
 			{
-				if (components[i].GetType() == Comp_Type::C_SCRIPT)
+				if (components[i]->GetType() == Comp_Type::C_SCRIPT)
 				{
-					((CompScript*)&components[i])->ClearVariables();
+					((CompScript*)components[i])->ClearVariables();
 				}
 			}
 		}
@@ -175,9 +175,9 @@ void GameObject::ClearAllVariablesScript()
 		//Check child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i].isActive())
+			if (childs[i]->isActive())
 			{
-				childs[i].ClearAllVariablesScript();
+				childs[i]->ClearAllVariablesScript();
 			}
 		}
 	}
@@ -194,7 +194,7 @@ GameObject* GameObject::GetGameObjectbyuid(uint uid)
 		//Check child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			childs[i].GetGameObjectbyuid(uid);
+			childs[i]->GetGameObjectbyuid(uid);
 		}
 	}
 	return nullptr;
@@ -216,7 +216,7 @@ GameObject* GameObject::GetGameObjectfromScene(int id)
 		//Check child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			GameObject* temp = childs[i].GetGameObjectfromScene(id);
+			GameObject* temp = childs[i]->GetGameObjectfromScene(id);
 			if (temp != nullptr)
 			{
 				return temp;
@@ -239,15 +239,15 @@ void GameObject::preUpdate(float dt)
 		//preUpdate Components --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i].WantDelete())
+			if (components[i]->WantDelete())
 			{
-				DeleteComponent(&components[i]);
+				DeleteComponent(components[i]);
 			}
 			else
 			{
-				if (components[i].isActive())
+				if (components[i]->isActive())
 				{
-					components[i].preUpdate(dt);
+					components[i]->preUpdate(dt);
 				}
 			}
 		}
@@ -255,15 +255,15 @@ void GameObject::preUpdate(float dt)
 		//preUpdate child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i].toDelete)
+			if (childs[i]->toDelete)
 			{
-				App->scene->DeleteGameObject(&childs[i]);
+				App->scene->DeleteGameObject(childs[i]);
 			}
 			else
 			{
-				if (childs[i].isActive())
+				if (childs[i]->isActive())
 				{
-					childs[i].preUpdate(dt);
+					childs[i]->preUpdate(dt);
 				}
 			}
 		}
@@ -277,18 +277,18 @@ void GameObject::Update(float dt)
 		//Update Components --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i].isActive())
+			if (components[i]->isActive())
 			{
-				components[i].Update(dt);
+				components[i]->Update(dt);
 			}
 		}
 
 		//Update child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i].isActive())
+			if (childs[i]->isActive())
 			{
-				childs[i].Update(dt);
+				childs[i]->Update(dt);
 			}
 		}
 
@@ -317,13 +317,13 @@ bool GameObject::CleanUp()
 	//preUpdate Components --------------------------
 	for (uint i = 0; i < components.size(); i++)
 	{
-		components[i].Clear();
+		components[i]->Clear();
 	}
 
 	//preUpdate child Game Objects -------------------
 	for (uint i = 0; i < childs.size(); i++)
 	{
-		childs[i].CleanUp();
+		childs[i]->CleanUp();
 	}
 	return true;
 }
@@ -345,18 +345,18 @@ void GameObject::Draw()
 		//Draw Components --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i].isActive())
+			if (components[i]->isActive())
 			{
-				components[i].Draw();
+				components[i]->Draw();
 			}
 		}
 
 		//Draw child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i].isActive())
+			if (childs[i]->isActive())
 			{
-				childs[i].Draw();
+				childs[i]->Draw();
 			}
 		}
 
@@ -443,16 +443,16 @@ void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* p
 		}
 		else
 		{
-			if (i < App->scene->gameobjects->GetNumChilds())
+			if (i < App->scene->gameobjects.size())
 			{
 				bool stop_reserch = false;
 				int ds = 0;
 				bool haveRepeat = false;
 				while (stop_reserch == false)
 				{
-					if (ds < App->scene->gameobjects->GetNumChilds())
+					if (ds < App->scene->gameobjects.size())
 					{
-						std::string nameChild = App->scene->gameobjects->GetChildbyIndex(ds)->GetName();
+						std::string nameChild = App->scene->gameobjects[ds]->GetName();
 						if (nameRepeat == nameChild)
 						{
 							haveRepeat = true;
@@ -544,7 +544,7 @@ void GameObject::ShowHierarchy()
 		for (uint i = 0; i < childs.size(); i++)
 		{
 			ImGui::PushID(i);
-			childs[i].ShowHierarchy();
+			childs[i]->ShowHierarchy();
 			ImGui::PopID();
 		}
 
@@ -717,7 +717,7 @@ void GameObject::ShowInspectorInfo()
 	{
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.25f, 1.00f, 0.00f, 1.00f));
 		bool open = false;
-		if (ImGui::TreeNodeEx(components[i].GetName(), ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::TreeNodeEx(components[i]->GetName(), ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			open = true;
 		}
@@ -725,13 +725,13 @@ void GameObject::ShowInspectorInfo()
 		if (ImGui::BeginPopupContextItem("Open"))
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(12, 3));
-			components[i].ShowOptions();
+			components[i]->ShowOptions();
 			ImGui::PopStyleVar();
 			ImGui::EndPopup();
 		}
 		if(open)
 		{
-			components[i].ShowInspectorInfo();
+			components[i]->ShowInspectorInfo();
 			ImGui::Separator();
 		}
 	}
@@ -812,8 +812,8 @@ void GameObject::FreezeTransforms(bool freeze, bool change_childs)
 		{
 			for (uint i = 0; i < childs.size(); i++)
 			{
-				childs[i].static_obj = freeze;
-				childs[i].FreezeTransforms(freeze, change_childs);
+				childs[i]->static_obj = freeze;
+				childs[i]->FreezeTransforms(freeze, change_childs);
 			}
 		}
 	}
@@ -884,25 +884,29 @@ bool GameObject::isStatic() const
 	return static_obj;
 }
 
-Component* GameObject::FindComponentByType(Comp_Type type)
+Component* GameObject::FindComponentByType(Comp_Type type) const
 {
+	Component* comp = nullptr;
+
 	for (uint i = 0; i < components.size(); i++)
 	{
-		if (components[i].GetType() == type) // We need to check if the component is ACTIVE first?¿
+		if (components[i]->GetType() == type) // We need to check if the component is ACTIVE first?¿
 		{
-			return &components[i];
+			comp = components[i];
+			break;
 		}
 	}
-	return nullptr;
+
+	return comp;
 }
 
-Component* GameObject::AddComponent(Comp_Type type)
+Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 {
 	bool dupe = false;
 	for (uint i = 0; i < components.size(); i++)
 	{
 		//We need to check if there is already a component of that type (no duplication)
-		if (components[i].GetType() == type) 
+		if (components[i]->GetType() == type) 
 		{
 			dupe = true;
 			LOG("There's already one component of this type in '%s'.", name);
@@ -915,62 +919,66 @@ Component* GameObject::AddComponent(Comp_Type type)
 		if (type == Comp_Type::C_MESH)
 		{
 			LOG("Adding MESH COMPONENT.");
-			CompMesh mesh = CompMesh(type, this);
+			CompMesh* mesh = new CompMesh(type, this);
 			components.push_back(mesh);
 			/* Link Material to the Mesh if exists */
 			const CompMaterial* material_link = (CompMaterial*)FindComponentByType(Comp_Type::C_MATERIAL);
 			if (material_link != nullptr)
 			{
-				mesh.LinkMaterial(material_link);
+				mesh->LinkMaterial(material_link);
 			}
 			else
 			{
 				LOG("Havent Material");
 			}
-			return &mesh;
+			return mesh;
 		}
 
 		else if (type == Comp_Type::C_TRANSFORM)
 		{
 			LOG("Adding TRANSFORM COMPONENT.");
-			CompTransform transform = CompTransform(type, this);
+			CompTransform* transform = new CompTransform(type, this);
 			components.push_back(transform);
-			return &transform;
+			return transform;
 		}
 
 		else if (type == Comp_Type::C_MATERIAL)
 		{
 			LOG("Adding MATERIAL COMPONENT.");
-			CompMaterial material = CompMaterial(type, this);
+			CompMaterial* material = new CompMaterial(type, this);
 			components.push_back(material);
 
 			/* Link Material to the Mesh if exists */
 			CompMesh* mesh_to_link = (CompMesh*)FindComponentByType(Comp_Type::C_MESH);
 			if (mesh_to_link != nullptr)
 			{
-				mesh_to_link->LinkMaterial(&material);
+				mesh_to_link->LinkMaterial(material);
 			}
 			else
 			{
 				LOG("MATERIAL not linked to any mesh");
 			}
-			return &material;
+			return material;
 		}
 
 		else if (type == Comp_Type::C_CAMERA)
 		{
 			LOG("Adding CAMERA COMPONENT.");
-			CompCamera camera = CompCamera(type, this);
+			CompCamera* camera = new CompCamera(type, this);
 			components.push_back(camera);
-			return &camera;
+			return camera;
 		}
 
 		else if (type == Comp_Type::C_SCRIPT)
 		{
 			LOG("Adding SCRIPT COMPONENT.");
-			CompScript script = CompScript(type, this);
+			CompScript* script = new CompScript(type, this);
+			if (isFromLoader == false)
+			{
+				script->Init();
+			}
 			components.push_back(script);
-			return &script;
+			return script;
 		}
 	}
 
@@ -983,19 +991,19 @@ void GameObject::AddComponentCopy(const Component& copy)
 	{
 	case (Comp_Type::C_TRANSFORM):
 	{
-		CompTransform transform = CompTransform((CompTransform&)copy, this); //Transform copy constructor
+		CompTransform* transform = new CompTransform((CompTransform&)copy, this); //Transform copy constructor
 		components.push_back(transform);
 		break;
 	}
 	case (Comp_Type::C_MESH):
 	{
-		CompMesh mesh = CompMesh((CompMesh&)copy, this); //Mesh copy constructor
+		CompMesh* mesh = new CompMesh((CompMesh&)copy, this); //Mesh copy constructor
 		components.push_back(mesh);
 		/* Link Material to the Mesh (if exists) */
 		CompMaterial* material_link = (CompMaterial*)FindComponentByType(Comp_Type::C_MATERIAL);
 		if (material_link != nullptr)
 		{
-			mesh.LinkMaterial(material_link);
+			mesh->LinkMaterial(material_link);
 		}
 		else
 		{
@@ -1005,13 +1013,13 @@ void GameObject::AddComponentCopy(const Component& copy)
 	}
 	case (Comp_Type::C_MATERIAL):
 	{
-		CompMaterial material = CompMaterial((CompMaterial&)copy, this); //Material copy constructor
+		CompMaterial* material = new CompMaterial((CompMaterial&)copy, this); //Material copy constructor
 		components.push_back(material);
 		/* Link Mesh to the Material (if exists) */
 		CompMesh* mesh_to_link = (CompMesh*)FindComponentByType(Comp_Type::C_MESH);
 		if (mesh_to_link != nullptr)
 		{
-			mesh_to_link->LinkMaterial(&material);
+			mesh_to_link->LinkMaterial(material);
 		}
 		else
 		{
@@ -1021,13 +1029,13 @@ void GameObject::AddComponentCopy(const Component& copy)
 	}
 	case (Comp_Type::C_CAMERA):
 	{
-		CompCamera camera = CompCamera((CompCamera&)copy, this); //Camera copy constructor
+		CompCamera* camera = new CompCamera((CompCamera&)copy, this); //Camera copy constructor
 		components.push_back(camera);
 		break;
 	}
 	case (Comp_Type::C_SCRIPT):
 	{
-		CompScript script = CompScript((CompScript&)copy, this); //Script copy constructor
+		CompScript* script = new CompScript((CompScript&)copy, this); //Script copy constructor
 		components.push_back(script);
 		break;
 	}
@@ -1041,7 +1049,7 @@ void GameObject::SaveComponents(JSON_Object* object, std::string name, bool save
 	for (int i = 0; i < components.size(); i++)
 	{
 		std::string temp = name + "Component " + std::to_string(i) + ".";
-		components[i].Save(object, temp, saveScene, countResources);
+		components[i]->Save(object, temp, saveScene, countResources);
 	}
 }
 
@@ -1069,7 +1077,7 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			this->AddComponent(Comp_Type::C_CAMERA);
 			break;
 		case Comp_Type::C_SCRIPT:
-			this->AddComponent(Comp_Type::C_SCRIPT);
+			this->AddComponent(Comp_Type::C_SCRIPT, true);
 			break;
 		default:
 			break;
@@ -1080,7 +1088,7 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 	for (int i = 0; i < components.size(); i++)
 	{
 		std::string temp = name + "Component " + std::to_string(i) + ".";
-		components[i].Load(object, temp);
+		components[i]->Load(object, temp);
 	}
 }
 
@@ -1089,31 +1097,41 @@ int GameObject::GetNumComponents() const
 	return components.size();
 }
 
-CompTransform* GameObject::GetComponentTransform()
+CompTransform* GameObject::GetComponentTransform() const
 {
 	return (CompTransform*)FindComponentByType(Comp_Type::C_TRANSFORM);
 }
 
-CompMesh* GameObject::GetComponentMesh()
+CompMesh* GameObject::GetComponentMesh() const
 {
 	return (CompMesh*)FindComponentByType(Comp_Type::C_MESH);
 }
 
-CompMaterial* GameObject::GetComponentMaterial()
+CompMaterial* GameObject::GetComponentMaterial() const
 {
 	return (CompMaterial*)FindComponentByType(Comp_Type::C_MATERIAL);
 }
 
-CompScript* GameObject::GetComponentScript()
+CompScript* GameObject::GetComponentScript() const
 {
 	return (CompScript*)FindComponentByType(Comp_Type::C_SCRIPT);
+}
+
+Component* GameObject::GetComponentbyIndex(uint i) const
+{
+	if (i < components.size() && i >= 0)
+	{
+		return components[i];
+	}
+	return nullptr;
 }
 
 void GameObject::DeleteAllComponents()
 {
 	for (int i = 0; i < components.size(); i++)
 	{
-		components[i].Clear();
+		components[i]->Clear();
+		delete components[i];
 	}
 	components.clear();
 }
@@ -1122,10 +1140,10 @@ void GameObject::DeleteComponent(Component* component)
 {
 	if (component != nullptr && components.size() > 0)
 	{
-		std::vector<Component>::iterator item = components.begin();
+		std::vector<Component*>::iterator item = components.begin();
 		for (int i = 0; i < components.size(); i++)
 		{
-			if (component == &components[i])
+			if (component == components[i])
 			{
 				components.erase(item);
 				break;
@@ -1141,33 +1159,33 @@ uint GameObject::GetNumChilds() const
 	return childs.size();
 }
 
-GameObject* GameObject::GetChildbyIndex(uint pos_inVec)
+GameObject* GameObject::GetChildbyIndex(uint pos_inVec) const
 {
-	return &childs[pos_inVec];
+	return childs[pos_inVec];
 }
 
-GameObject* GameObject::GetChildbyName(const char* name)
+GameObject* GameObject::GetChildbyName(const char* name) const
 {
 	if (childs.size() > 0)
 	{
 		for (int i = 0; i < childs.size(); i++)
 		{
-			if (strcmp(childs[i].GetName(), name) == 0)
+			if (strcmp(childs[i]->GetName(), name) == 0)
 			{
-				return &childs[i];
+				return childs[i];
 			}
 		}
 	}
 	return nullptr;
 }
 
-uint GameObject::GetIndexChildbyName(const char * name)
+uint GameObject::GetIndexChildbyName(const char * name) const
 {
 	if (childs.size() > 0)
 	{
 		for (int i = 0; i < childs.size(); i++)
 		{
-			if (strcmp(childs[i].GetName(), name) == 0)
+			if (strcmp(childs[i]->GetName(), name) == 0)
 			{
 				return i;
 			}
@@ -1180,12 +1198,15 @@ void GameObject::RemoveChildbyIndex(uint index)
 {
 	if (childs.size() > 0)
 	{
-		std::vector<GameObject>::iterator item = childs.begin();
+		std::vector<GameObject*>::iterator item = childs.begin();
 		for (int i = 0; i < childs.size(); i++)
 		{
 			if (i == index)
 			{
+				GameObject* it = childs[i];
+				RELEASE(it);
 				childs.erase(item);
+				it = nullptr;
 				break;
 			}
 			item++;
@@ -1193,12 +1214,12 @@ void GameObject::RemoveChildbyIndex(uint index)
 	}
 }
 
-std::vector<GameObject> GameObject::GetChildsVec()
+std::vector<GameObject*> GameObject::GetChildsVec() const
 {
 	return childs;
 }
 
-std::vector<GameObject>* GameObject::GetChildsPtr() 
+std::vector<GameObject*>* GameObject::GetChildsPtr() 
 {
 	return &childs;
 }
@@ -1215,17 +1236,24 @@ void GameObject::AddChildGameObject_Copy(const GameObject* child)
 	childs.push_back(temp);
 }
 
-void GameObject::AddChildGameObject(GameObject child)
+void GameObject::AddChildGameObject_Load(GameObject* child)
 {
-	child.parent = this;
+	child->parent = this;
 	childs.push_back(child);
+}
+
+void GameObject::AddChildGameObject_Replace(GameObject* child)
+{
+	child->parent = this;
+	childs.push_back(child);
+	App->scene->gameobjects.pop_back();
 }
 
 void GameObject::UpdateChildsMatrices()
 {
 	for (uint i = 0; i < childs.size(); i++)
 	{
-		childs[i].GetComponentTransform()->UpdateGlobalMatrixRecursive();
+		childs[i]->GetComponentTransform()->UpdateGlobalMatrixRecursive();
 	}
 }
 

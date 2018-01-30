@@ -42,7 +42,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 
 Scene::~Scene()
 {
-	DeleteGameObject(gameobjects, true);
+	DeleteGameObjects(gameobjects, true);
 	RELEASE(sceneBuff);
 	RELEASE(skybox);
 }
@@ -90,10 +90,26 @@ update_status Scene::PreUpdate(float dt)
 	perf_timer.Start();
 
 	// PreUpdate GameObjects ------------------------
-	for (uint i = 0; i < gameobjects->GetNumChilds(); i++)
+	for (uint i = 0; i < gameobjects.size(); i++)
 	{
-		gameobjects->preUpdate(dt);
+		if (gameobjects[i]->WanttoDelete() == false)
+		{
+			gameobjects[i]->preUpdate(dt);
+		}
+		else
+		{
+			DeleteGameObject(gameobjects[i]);
+		}
 	}
+
+	//// PreUpdate GameObjects ------------------------
+	//for (uint i = 0; i < gameobjects_inscene->GetNumChilds(); i++)
+	//{
+	//	if (gameobjects_inscene->WanttoDelete() == false) //Scene
+	//	{
+	//		gameobjects_inscene->preUpdate(dt);
+	//	}
+	//}
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -104,9 +120,9 @@ update_status Scene::Update(float dt)
 	perf_timer.Start();
 
 	// Update GameObjects -----------
-	for (uint i = 0; i < gameobjects->GetNumChilds(); i++)
+	for (uint i = 0; i < gameobjects.size(); i++)
 	{
-		gameobjects->Update(dt);
+		gameobjects[i]->Update(dt);
 	}
 	// -------------------------------------------------
 
@@ -141,9 +157,9 @@ bool Scene::CleanUp()
 {
 	skybox->DeleteSkyboxTex();
 	ClearAllVariablesScript();
-	for (uint i = 0; i < gameobjects->GetNumChilds(); i++)
+	for (uint i = 0; i < gameobjects.size(); i++)
 	{
-		gameobjects->CleanUp();
+		gameobjects[i]->CleanUp();
 	}
 	return true;
 }
@@ -228,9 +244,9 @@ void Scene::EditorSkybox()
 bool Scene::CheckNoFails()
 {
 	int fails = 0;
-	for (int i = 0; i < gameobjects->GetNumChilds(); i++)
+	for (int i = 0; i < gameobjects.size(); i++)
 	{
-		gameobjects->CheckScripts(fails);
+		gameobjects[i]->CheckScripts(fails);
 	}
 	if (fails == 0)
 	{
@@ -247,26 +263,26 @@ bool Scene::CheckNoFails()
 void Scene::StartScripts()
 {
 	//Iterate all GameObjects and, if they have scripts, call their start
-	for (int i = 0; i < gameobjects->GetNumChilds(); i++)
+	for (int i = 0; i < gameobjects.size(); i++)
 	{
-		gameobjects->StartScripts();
+		gameobjects[i]->StartScripts();
 	}
 }
 
 void Scene::ClearAllVariablesScript()
 {
 	//Iterate all GameObjects and, if they have scripts, call their ClearAllVariablesScript
-	for (int i = 0; i < gameobjects->GetNumChilds(); i++)
+	for (int i = 0; i < gameobjects.size(); i++)
 	{
-		gameobjects->ClearAllVariablesScript();
+		gameobjects[i]->ClearAllVariablesScript();
 	}
 }
 
 void Scene::SetScriptVariablesToNull(GameObject * go)
 {
-	for (uint i = 0; i < gameobjects->GetNumChilds(); i++)
+	for (uint i = 0; i < gameobjects.size(); i++)
 	{
-		gameobjects->RemoveScriptReference(go);
+		gameobjects[i]->RemoveScriptReference(go);
 	}
 }
 
@@ -278,10 +294,10 @@ GameObject* Scene::GetGameObjectfromScene(bool& active)
 	}
 	else
 	{
-		for (int i = 0; i < gameobjects->GetNumChilds(); i++)
+		for (int i = 0; i < gameobjects.size(); i++)
 		{
 			ImGui::PushID(i);
-			GameObject* temp = gameobjects->GetGameObjectfromScene(i);
+			GameObject* temp = gameobjects[i]->GetGameObjectfromScene(i);
 			if (temp != nullptr)
 			{
 				ImGui::PopID();
@@ -302,9 +318,9 @@ GameObject* Scene::GetGameObjectfromScene(bool& active)
 
 GameObject* Scene::GetGameObjectbyuid(uint uid)
 {
-	for (int i = 0; i < gameobjects->GetNumChilds(); i++)
+	for (int i = 0; i < gameobjects.size(); i++)
 	{
-		GameObject* ret = gameobjects->GetGameObjectbyuid(uid);
+		GameObject* ret = gameobjects[i]->GetGameObjectbyuid(uid);
 		if (ret != nullptr)
 		{
 			return ret;
@@ -415,35 +431,35 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 
 	if (parent == nullptr)
 	{
-		gameobjects->AddChildGameObject(obj);
+		gameobjects.push_back(obj);
 	}
 	return obj;
 }
 
-void Scene::DeleteGameObjects(std::vector<GameObject>& gameobjects, bool isMain)
+void Scene::DeleteGameObjects(std::vector<GameObject*>& gameobjects, bool isMain)
 {
 	for (int i = 0; i < gameobjects.size(); i++)
 	{
-		if (gameobjects[i].GetNumChilds() > 0)
+		if (gameobjects[i]->GetNumChilds() > 0)
 		{
-			DeleteGameObjects(gameobjects[i].GetChildsVec(), false);
+			DeleteGameObjects(gameobjects[i]->GetChildsVec(), false);
 		}
 		// First of all, Set nullptr all pointer to this GameObject
-		if (App->camera->GetFocus() == &gameobjects[i])
+		if (App->camera->GetFocus() == gameobjects[i])
 		{
 			App->camera->SetFocusNull();
 		}
-		if (((Inspector*)App->gui->winManager[INSPECTOR])->GetSelected() == &gameobjects[i])
+		if (((Inspector*)App->gui->winManager[INSPECTOR])->GetSelected() == gameobjects[i])
 		{
 			((Inspector*)App->gui->winManager[INSPECTOR])->SetLinkObjectNull();
 		}
 		// First delete all components
-		if (gameobjects[i].GetNumComponents() > 0)
+		if (gameobjects[i]->GetNumComponents() > 0)
 		{
-			gameobjects[i].DeleteAllComponents();
+			gameobjects[i]->DeleteAllComponents();
 		}
 		// Now Delete GameObject
-		GameObject* it = &gameobjects[i];
+		GameObject* it = gameobjects[i];
 		if(it != nullptr)
 		{
 			if (!it->isDeleteFixed())
@@ -513,7 +529,10 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 			{
 				if (i == index)
 				{
+					GameObject* it = gameobjects[i];
+					RELEASE(it);
 					gameobjects.erase(item);
+					it = nullptr;
 					break;
 				}
 				item++;
@@ -574,7 +593,7 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	if (parent == nullptr)
 	{
 		// Only add to GameObjects list the Root Game Objects
-		gameobjects->AddChildGameObject(obj);
+		App->scene->gameobjects.push_back(obj);
 	}
 
 	LOG("CUBE Created.");
@@ -607,7 +626,7 @@ GameObject* Scene::CreateMainCamera(GameObject* parent)
 	if (parent == nullptr)
 	{
 		// Only add to GameObjects list the Root Game Objects
-		gameobjects->AddChildGameObject(obj);
+		App->scene->gameobjects.push_back(obj);
 	}
 
 	LOG("MAIN CAMERA Created.");
