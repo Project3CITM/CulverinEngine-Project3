@@ -1,6 +1,5 @@
 #include "ResourceMesh.h"
 #include "Application.h"
-#include "Globals.h"
 
 ResourceMesh::ResourceMesh(uint uid) : Resource(uid, Resource::Type::MESH, Resource::State::UNLOADED)
 {

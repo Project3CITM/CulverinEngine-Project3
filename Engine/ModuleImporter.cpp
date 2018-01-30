@@ -296,12 +296,12 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, resourcesToReimport);
 			obj->SetName(App->GetCharfromConstChar(App->fs->FixName_directory(file).c_str()));
 
-			//Now Save Serialitzate OBJ -> Prefab
+			//Now Save Serialize OBJ -> Prefab
 			std::string Newdirectory = ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory();
 			Newdirectory += "\\" + App->fs->FixName_directory(file);
 			App->Json_seria->SavePrefab(*obj, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 
-			App->scene->gameobjects->AddChildGameObject(obj); // Need cleen
+			App->scene->root->AddChildGameObject(obj); // Delete "root" GameObject created
 			App->scene->DeleteGameObject(obj);
 		}
 		else

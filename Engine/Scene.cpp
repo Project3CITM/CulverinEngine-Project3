@@ -1,4 +1,3 @@
-#include "Globals.h"
 #include "Application.h"
 #include "Scene.h"
 #include "ModuleInput.h"
@@ -42,7 +41,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 
 Scene::~Scene()
 {
-	DeleteGameObject(gameobjects, true);
+	DeleteGameObject(root, true);
 	RELEASE(sceneBuff);
 	RELEASE(skybox);
 }
@@ -90,10 +89,8 @@ update_status Scene::PreUpdate(float dt)
 	perf_timer.Start();
 
 	// PreUpdate GameObjects ------------------------
-	for (uint i = 0; i < gameobjects->GetNumChilds(); i++)
-	{
-		gameobjects->preUpdate(dt);
-	}
+	root->preUpdate(dt);
+	
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -104,11 +101,7 @@ update_status Scene::Update(float dt)
 	perf_timer.Start();
 
 	// Update GameObjects -----------
-	for (uint i = 0; i < gameobjects->GetNumChilds(); i++)
-	{
-		gameobjects->Update(dt);
-	}
-	// -------------------------------------------------
+	root->Update(dt);
 
 	Update_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -139,12 +132,15 @@ update_status Scene::UpdateConfig(float dt)
 
 bool Scene::CleanUp()
 {
+	//Cleanup Skybox
 	skybox->DeleteSkyboxTex();
+
+	//Cleanup Scripts
 	ClearAllVariablesScript();
-	for (uint i = 0; i < gameobjects->GetNumChilds(); i++)
-	{
-		gameobjects->CleanUp();
-	}
+
+	//Cleanup GameObjects
+	root->CleanUp();
+	
 	return true;
 }
 
@@ -174,7 +170,8 @@ void Scene::EditorQuadtree()
 				{
 					quadtree.root_node->Clear();
 				}
-				quadtree.Bake(App->scene->gameobjects);
+
+				quadtree.Bake(App->scene->root->GetChildsVec());
 			}
 			else
 			{
@@ -228,10 +225,9 @@ void Scene::EditorSkybox()
 bool Scene::CheckNoFails()
 {
 	int fails = 0;
-	for (int i = 0; i < gameobjects->GetNumChilds(); i++)
-	{
-		gameobjects->CheckScripts(fails);
-	}
+
+	root->CheckScripts(fails);
+	
 	if (fails == 0)
 	{
 		LOG("All Scripts are succesfully compiled.");
@@ -241,33 +237,26 @@ bool Scene::CheckNoFails()
 	{
 		LOG("[error] total scripts failed: %i.", fails);
 	}
+
 	return false;
 }
 
 void Scene::StartScripts()
 {
 	//Iterate all GameObjects and, if they have scripts, call their start
-	for (int i = 0; i < gameobjects->GetNumChilds(); i++)
-	{
-		gameobjects->StartScripts();
-	}
+	root->StartScripts();
+	
 }
 
 void Scene::ClearAllVariablesScript()
 {
 	//Iterate all GameObjects and, if they have scripts, call their ClearAllVariablesScript
-	for (int i = 0; i < gameobjects->GetNumChilds(); i++)
-	{
-		gameobjects->ClearAllVariablesScript();
-	}
+	root->ClearAllVariablesScript();
 }
 
-void Scene::SetScriptVariablesToNull(GameObject * go)
+void Scene::SetScriptVariablesToNull(GameObject* go)
 {
-	for (uint i = 0; i < gameobjects->GetNumChilds(); i++)
-	{
-		gameobjects->RemoveScriptReference(go);
-	}
+	root->RemoveScriptReference(go);
 }
 
 GameObject* Scene::GetGameObjectfromScene(bool& active)
@@ -278,22 +267,27 @@ GameObject* Scene::GetGameObjectfromScene(bool& active)
 	}
 	else
 	{
-		for (int i = 0; i < gameobjects->GetNumChilds(); i++)
-		{
-			ImGui::PushID(i);
-			GameObject* temp = gameobjects->GetGameObjectfromScene(i);
-			if (temp != nullptr)
+		for (int i = 0; i < root->GetNumChilds(); i++)
+		{	
+			for (int j = 0; j < root->GetChildbyIndex(i)->GetNumChilds(); j++)
 			{
-				ImGui::PopID();
-				ImGui::End();
-				active = false;
-				return temp;
-			}
-			//if(ImGui::Selectable(gameobjects[i]->GetName()))
-			//{
+				ImGui::PushID(i);
+				GameObject* temp = root->GetChildbyIndex(i)->GetGameObjectfromScene(j);
 
-			//}
-			ImGui::PopID();
+				if (temp != nullptr)
+				{
+					ImGui::PopID();
+					ImGui::End();
+
+					active = false;
+					return temp;
+				}
+				//if(ImGui::Selectable(gameobjects[i]->GetName()))
+				//{
+
+				//}
+				ImGui::PopID();
+			}
 		}
 		ImGui::End();
 	}
@@ -302,14 +296,13 @@ GameObject* Scene::GetGameObjectfromScene(bool& active)
 
 GameObject* Scene::GetGameObjectbyuid(uint uid)
 {
-	for (int i = 0; i < gameobjects->GetNumChilds(); i++)
+	GameObject* ret = root->GetGameObjectbyuid(uid);
+	
+	if (ret != nullptr)
 	{
-		GameObject* ret = gameobjects->GetGameObjectbyuid(uid);
-		if (ret != nullptr)
-		{
-			return ret;
-		}
+		return ret;
 	}
+
 	return nullptr;
 }
 
@@ -415,7 +408,7 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 
 	if (parent == nullptr)
 	{
-		gameobjects->AddChildGameObject(obj);
+		root->AddChildGameObject(obj);
 	}
 	return obj;
 }
@@ -480,11 +473,13 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 		{
 			((Inspector*)App->gui->winManager[INSPECTOR])->SetLinkObjectNull();
 		}
+
 		// First Delete All Childs and their components
 		if (gameobject->GetNumChilds() > 0)
 		{
 			DeleteGameObjects(gameobject->GetChildsVec(), false);
 		}
+
 		// Then Delete Components
 		if (gameobject->GetNumComponents() > 0)
 		{
@@ -498,7 +493,7 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 			gameobject->GetParent()->RemoveChildbyIndex(index);
 		}
 
-		else if (isImport == false)
+		/*else if (isImport == false)
 		{
 			int index = 0;
 			for (int i = 0; i < gameobjects.size(); i++)
@@ -518,7 +513,7 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 				}
 				item++;
 			}
-		}
+		}*/
 		else
 		{
 			gameobject->GetChildsPtr()->clear();
@@ -574,7 +569,7 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	if (parent == nullptr)
 	{
 		// Only add to GameObjects list the Root Game Objects
-		gameobjects->AddChildGameObject(obj);
+		root->AddChildGameObject(obj);
 	}
 
 	LOG("CUBE Created.");
@@ -584,33 +579,33 @@ GameObject* Scene::CreateCube(GameObject* parent)
 
 GameObject* Scene::CreateMainCamera(GameObject* parent)
 {
-	GameObject* obj = new GameObject(parent);
+	GameObject obj = GameObject(parent);
 
 	// SET NAME -----------------------------------
 	std::string name = "MainCamera";
 	char* name_str = new char[name.size() + 1];
 	strcpy(name_str, name.c_str());
-	obj->SetName(name_str);
+	obj.SetName(name_str);
 
 	/* Predefined Main Camera has 2 Base components: Transform & Camera */
 
 	// TRANSFORM COMPONENT --------------
-	CompTransform* transform = (CompTransform*)obj->AddComponent(C_TRANSFORM);
+	CompTransform* transform = (CompTransform*)obj.AddComponent(C_TRANSFORM);
 	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
 	transform->Enable();
 
 	// CAMERA COMPONENT -----------------
-	CompCamera* camera = (CompCamera*)obj->AddComponent(C_CAMERA);
+	CompCamera* camera = (CompCamera*)obj.AddComponent(C_CAMERA);
 	camera->Enable();
 	camera->SetMain(true);
 
 	if (parent == nullptr)
 	{
 		// Only add to GameObjects list the Root Game Objects
-		gameobjects->AddChildGameObject(obj);
+		root->AddChildGameObject(obj);
 	}
 
 	LOG("MAIN CAMERA Created.");
 
-	return obj;
+	return &obj;
 }

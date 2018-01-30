@@ -8,7 +8,6 @@
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
 #include "CSharpScript.h"
-#include "Globals.h"
 #include "Timer.h"
 
 #include <direct.h>

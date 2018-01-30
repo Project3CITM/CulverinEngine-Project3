@@ -44,7 +44,7 @@ public:
 	// --------------------------------------------
 
 	// Focus (Object selected) methods ----------------------------------
-	void SetFocus(const GameObject* selected);
+	void SetFocus(GameObject* selected);
 	const GameObject* GetFocus() const;
 	void SetFocusNull();
 	void CenterToObject();
@@ -66,7 +66,7 @@ public:
 
 private:
 	CompCamera* cam = nullptr;
-	const GameObject* focus = nullptr;
+	GameObject* focus = nullptr;
 	float3 point_to_look = { 0, 0, 0 };
 
 	/* Mouse Picking */

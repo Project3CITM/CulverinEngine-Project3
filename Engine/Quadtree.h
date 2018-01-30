@@ -18,8 +18,8 @@ public:
 
 	bool isLeaf() const;
 
-	void Insert(GameObject obj);
-	void Remove(GameObject obj);
+	void Insert(GameObject* obj);
+	void Remove(GameObject* obj);
 
 	void Clear();
 
@@ -52,7 +52,7 @@ public:
 	void Init(float new_size);
 	void Boundaries(AABB limits);
 	void Clear();
-	void Bake(std::vector<GameObject>& objects);
+	void Bake(const std::vector<GameObject>& objects);
 	void Insert(GameObject& obj);
 	void Remove(GameObject& obj);
 

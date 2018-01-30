@@ -283,6 +283,35 @@ void CompCamera::CullDynamicObjects()
 	const AABB* box = nullptr;
 
 	// Push all active elements that are root & active
+	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
+	{
+		if (App->scene->root->GetChildbyIndex(i)->isActive() && !App->scene->root->GetChildbyIndex(i)->isStatic())
+		{
+			if (App->scene->root->GetChildbyIndex(i)->bounding_box != nullptr)
+			{
+				box = &App->scene->root->GetChildbyIndex(i)->box_fixed;
+
+				if (ContainsAABox(*box) == CULL_OUT)
+				{
+					App->scene->root->GetChildbyIndex(i)->SetVisible(false); // OUTSIDE CAMERA VISION
+				}
+				else
+				{
+					App->scene->root->GetChildbyIndex(i)->SetVisible(true); // INSIDE CAMERA VISION
+				}
+			}
+		}
+	}
+
+	for (uint i = 0; i < parent->GetNumChilds(); i++)
+	{
+		parent->GetChildsVec()[i].Cull();
+	}
+
+
+	const AABB* box = nullptr;
+
+	// Push all active elements that are root & active
 	for (uint i = 0; i < App->scene->gameobjects->GetNumChilds(); i++)
 	{
 		if (App->scene->gameobjects[i]->isActive())
