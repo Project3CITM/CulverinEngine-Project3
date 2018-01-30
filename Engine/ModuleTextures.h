@@ -3,9 +3,9 @@
 
 #include "Module.h"
 #include "Globals.h"
+#include "GL3W/include/glew.h"
 
 class BaseObject;
-typedef unsigned int GLuint;
 
 class ModuleTextures : public Module
 {

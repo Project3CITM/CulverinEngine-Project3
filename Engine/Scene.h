@@ -60,7 +60,7 @@ public:
 
 	//Container Vector of all Game Objects
 	//std::vector<GameObject*> gameobjects;
-	GameObject* root = nullptr;
+	GameObject* gameobjects = nullptr;
 
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
