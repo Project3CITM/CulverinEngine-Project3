@@ -75,10 +75,12 @@ void Hierarchy::ShowHierarchy()
 		ImGui::EndMenu();
 	}
 	ImGui::PopStyleVar();
-	
-	//Shows hierarchy of the scene 
-	App->scene->root->ShowHierarchy();
-		
+	for (uint i = 0; i < App->scene->gameobjects.size(); i++)
+	{
+		ImGui::PushID(i);
+		App->scene->gameobjects[i]->ShowHierarchy();
+		ImGui::PopID();
+	}
 	ImGui::PopStyleVar();
 
 	// Open Window To Delete GameObject
@@ -200,22 +202,21 @@ void Hierarchy::SetGameObjectCopy(GameObject* copy_)
 
 void Hierarchy::CopyGameObject(GameObject* select)
 {
-	//if (select != nullptr && copy != nullptr)
-	//{
-	//	if (select->HaveParent())
-	//	{
-	//		GameObject copied = GameObject(*copy, true, select->GetParent());
-	//		select->GetParent()->AddChildGameObject(copied);
-	//		App->scene->DeleteGameObject(&copied);
-	//		//copy = nullptr;
-	//	}
-	//	else
-	//	{
-	//		GameObject* copied = new GameObject(*copy);
-	//		App->scene->gameobjects.push_back(copied);
-	//		//copy = nullptr;
-	//	}
-	//}
+	if (select != nullptr && copy != nullptr)
+	{
+		if (select->HaveParent())
+		{
+			GameObject* copied = new GameObject(*copy, true, select->GetParent());
+			select->GetParent()->AddChildGameObject(copied);
+			//copy = nullptr;
+		}
+		else
+		{
+			GameObject* copied = new GameObject(*copy);
+			App->scene->gameobjects.push_back(copied);
+			//copy = nullptr;
+		}
+	}
 }
 
 const GameObject* Hierarchy::GetCopied() const

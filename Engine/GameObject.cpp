@@ -119,7 +119,6 @@ bool GameObject::CheckScripts(int& numfails)
 			}
 		}
 	}
-
 	numfails = allScriptsCompiled;
 	if (allScriptsCompiled == 0)
 	{
@@ -192,7 +191,6 @@ GameObject* GameObject::GetGameObjectbyuid(uint uid)
 		{
 			return this;
 		}
-
 		//Check child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
@@ -404,48 +402,81 @@ void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* p
 	bool stop = false;
 	int i = 0;
 	std::string nameRepeat = name;
-
-	if (haveParent == false)
-	{
-		parent_ = App->scene->root;
-	}
-
 	while (stop == false)
 	{
-
-		if (i < parent_->GetNumChilds())
+		if (haveParent)
 		{
-			bool stop_research = false;
-			int j = 0;
-			bool haveRepeat = false;
-			while (stop_research == false)
+			if (i < parent_->GetNumChilds())
 			{
-				if (j < parent_->GetNumChilds())
+				bool stop_reserch = false;
+				int ds = 0;
+				bool haveRepeat = false;
+				while (stop_reserch == false)
 				{
-					std::string nameChild = parent_->GetChildbyIndex(j)->GetName();
-					if (nameRepeat == nameChild)
+					if (ds < parent_->GetNumChilds())
 					{
-						haveRepeat = true;
+						std::string nameChild = parent_->GetChildbyIndex(ds)->GetName();
+						if (nameRepeat == nameChild)
+						{
+							haveRepeat = true;
+						}
 					}
+					else
+					{
+						stop_reserch = true;
+					}
+					ds++;
 				}
-				else
+				if (haveRepeat == false)
 				{
-					stop_research = true;
+					stop_reserch = true;
+					stop = true;
+					name = nameRepeat;
 				}
-				j++;
+				nameRepeat = name;
+				nameRepeat += " (" + std::to_string(i + 1) + ")";
 			}
-			if (haveRepeat == false)
+			else
 			{
-				stop_research = true;
 				stop = true;
-				name = nameRepeat;
 			}
-			nameRepeat = name;
-			nameRepeat += " (" + std::to_string(i + 1) + ")";
 		}
 		else
 		{
-			stop = true;
+			if (i < App->scene->gameobjects->GetNumChilds())
+			{
+				bool stop_reserch = false;
+				int ds = 0;
+				bool haveRepeat = false;
+				while (stop_reserch == false)
+				{
+					if (ds < App->scene->gameobjects->GetNumChilds())
+					{
+						std::string nameChild = App->scene->gameobjects->GetChildbyIndex(ds)->GetName();
+						if (nameRepeat == nameChild)
+						{
+							haveRepeat = true;
+						}
+					}
+					else
+					{
+						stop_reserch = true;
+					}
+					ds++;
+				}
+				if (haveRepeat == false)
+				{
+					stop_reserch = true;
+					stop = true;
+					name = nameRepeat;
+				}
+				nameRepeat = name;
+				nameRepeat += " (" + std::to_string(i + 1) + ")";
+			}
+			else
+			{
+				stop = true;
+			}
 		}
 
 		i++;

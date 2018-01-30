@@ -1,3 +1,4 @@
+#include "Globals.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
@@ -209,8 +210,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	App->scene->DrawPlane();
 
 	// Draw GameObjects
-	App->scene->root->Draw();
-	
+	for (uint i = 0; i < App->scene->gameobjects->GetNumChilds(); i++)
+	{
+		App->scene->gameobjects->Draw();
+	}
+
 	// Draw Quadtree
 	if (App->scene->quadtree_draw)
 	{

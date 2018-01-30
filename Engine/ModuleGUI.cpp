@@ -1,3 +1,4 @@
+#include "Globals.h"
 #include "ModuleGUI.h"
 #include "Application.h"
 #include "ModuleInput.h"
