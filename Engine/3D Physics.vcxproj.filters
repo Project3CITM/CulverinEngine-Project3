@@ -61,6 +61,9 @@
     <Filter Include="Engine\Resources\Script">
       <UniqueIdentifier>{ba62ae01-4435-4755-9343-6cc18c3996e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Events">
+      <UniqueIdentifier>{b78ef69c-e45a-47c5-a161-38e8153cba34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -408,6 +411,12 @@
     <ClInclude Include="CSharpScript.h">
       <Filter>Engine\Resources\Script</Filter>
     </ClInclude>
+    <ClInclude Include="EventDef.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleEventSystem.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -658,6 +667,9 @@
     </ClCompile>
     <ClCompile Include="CSharpScript.cpp">
       <Filter>Engine\Resources\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleEventSystem.cpp">
+      <Filter>Engine\Events</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -99,6 +99,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="CompScript.h" />
     <ClInclude Include="CSharpScript.h" />
+    <ClInclude Include="EventDef.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ImGui\ImGuizmo.h" />
     <ClInclude Include="ImGui\imgui_dock_v2.h" />
@@ -108,6 +109,7 @@
     <ClInclude Include="ImportScript.h" />
     <ClInclude Include="mmgr\mmgr.h" />
     <ClInclude Include="mmgr\nommgr.h" />
+    <ClInclude Include="ModuleEventSystem.h" />
     <ClInclude Include="ModuleFS.h" />
     <ClInclude Include="ModuleFramebuffers.h" />
     <ClInclude Include="ModuleResourceManager.h" />
@@ -224,6 +226,7 @@
     <ClCompile Include="CompMesh.cpp" />
     <ClCompile Include="ImportScript.cpp" />
     <ClCompile Include="mmgr\mmgr.cpp" />
+    <ClCompile Include="ModuleEventSystem.cpp" />
     <ClCompile Include="ModuleFS.cpp" />
     <ClCompile Include="ModuleFramebuffers.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
