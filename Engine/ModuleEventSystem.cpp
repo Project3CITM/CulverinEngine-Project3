@@ -1,5 +1,17 @@
+#include "Application.h"
 #include "ModuleEventSystem.h"
-#include "EventDef.h"
+
+int MaxEvents = EventType::MAXEVENTS - 1;
+
+void PushEvent(Event& event)
+{
+	App->event_system->PushEvent(event);
+}
+
+void AddListener(EventType type, Module* listener)
+{
+	App->event_system->AddListener(type, listener);
+}
 
 ModuleEventSystem::ModuleEventSystem(bool start_enabled)
 {
@@ -13,40 +25,74 @@ ModuleEventSystem::~ModuleEventSystem()
 
 bool ModuleEventSystem::Init(JSON_Object* node)
 {
+	//creation of event-listeners map
+	for (int i = 0; i < MaxEvents; i++)
+	{
+		std::vector<Module*> ListenersVec;
+		EListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, ListenersVec));
+	}
+	//call here all addlistenrs you need (we can create a virtual method in module.h, and iterate here all modules calling that method where every module just call: AddListener(EventType::DELETE_GO, (Module*)this);)
+	//Example: AddListener(EventType::DELETE_GO, (Module*)App->scene);
 
+	return true;
 }
 
 bool ModuleEventSystem::Start()
 {
-
+	return true;
 }
 
 update_status ModuleEventSystem::PreUpdate(float dt)
 {
-
+	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleEventSystem::Update(float dt)
 {
-
+	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleEventSystem::PostUpdate(float dt)
 {
-
+	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleEventSystem::UpdateConfig(float dt)
 {
-
+	return update_status::UPDATE_CONTINUE;
 }
 
 bool ModuleEventSystem::SaveConfig(JSON_Object* node)
 {
-
+	return true;
 }
 
 bool ModuleEventSystem::CleanUp()
 {
+	return true;
+}
 
+void ModuleEventSystem::PushEvent(Event& event)
+{
+	switch (event.type)
+	{
+	case EventType::DRAW:
+		switch (event.draw.type)
+		{
+		case event.draw.DRAW3D: Q3DDrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
+		case event.draw.DRAW3DAlpha: Q3DADrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
+		case event.draw.DRAW2D: Q2DDrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
+		}
+		break;
+	default: QNormalEvent.push(event); break;
+	}
+}
+
+void ModuleEventSystem::AddListener(EventType type, Module* listener)
+{
+	if (listener != nullptr)
+	{
+		std::map<EventType, std::vector<Module*>>::iterator EListener = EListeners.find(type);
+		if (EListener != EListeners.end()) EListener._Ptr->_Myval.second.push_back(listener);
+	}
 }

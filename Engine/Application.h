@@ -30,6 +30,7 @@ class ModuleImporter;
 class ModuleFS;
 class ModuleTextures;
 class ModuleResourceManager;
+class ModuleEventSystem;
 
 class JSONSerialization;
 
@@ -114,6 +115,7 @@ public:
 	ModuleFS* fs = nullptr;
 	ModuleTextures* textures = nullptr;
 	ModuleResourceManager* resource_manager = nullptr;
+	ModuleEventSystem* event_system = nullptr;
 
 private:
 	std::list<Module*> list_modules;

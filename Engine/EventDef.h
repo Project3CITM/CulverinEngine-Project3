@@ -1,8 +1,6 @@
 #ifndef _EVENTDEF_
 #define _EVENTDEF_
 
-#include "Globals.h"
-
 /*----------------------------------------------------------------------------------------------------------*/
 /*---Add new events:----------------------------------------------------------------------------------------*/
 /*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))-------------*/
@@ -42,6 +40,7 @@ enum EventType
 
 	/*------------------User Interface------------------*/
 	
+	MAXEVENTS
 };
 
 /*--------------------------------------------------*/
@@ -69,6 +68,7 @@ struct EDraw
 		DRAW2D
 	};
 	DrawType Dtype;
+	float DistanceCamToObject;
 	GameObject* ToDraw;
 };
 

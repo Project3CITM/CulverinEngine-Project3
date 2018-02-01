@@ -11,6 +11,7 @@
 #include "ModuleTextures.h"
 #include "ModuleFS.h"
 #include "ModuleResourceManager.h"
+#include "ModuleEventSystem.h"
 #include "parson.h"
 #include "PerfTimer.h"
 #include "WindowSceneWorld.h"
@@ -40,6 +41,7 @@ Application::Application()
 	fs = new ModuleFS();
 	textures = new ModuleTextures();
 	resource_manager = new ModuleResourceManager();
+	event_system = new ModuleEventSystem();
 
 	random = new math::LCG();
 	Json_seria = new JSONSerialization();
@@ -60,6 +62,7 @@ Application::Application()
 	AddModule(gui);
 	AddModule(importer);
 	AddModule(textures);
+	AddModule(event_system); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
 
 	// Renderer last!
 	AddModule(renderer3D);
