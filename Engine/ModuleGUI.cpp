@@ -16,12 +16,12 @@
 #include "ImportScript.h"
 #include "GameObject.h"
 
-#include "ImGui\imgui.h"
-#include "ImGui\imgui_impl_sdl_gl3.h"
-#include "ImGui\imgui_dock_v2.h"
-#include "Gl3W\include\glew.h"
-#include "Algorithm\Random\LCG.h"
-#include "SDL\include\SDL.h"
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_sdl_gl3.h"
+#include "ImGui/imgui_dock_v2.h"
+#include "Gl3W/include/glew.h"
+#include "Algorithm/Random/LCG.h"
+#include "SDL/include/SDL.h"
 
 ModuleGUI::ModuleGUI(bool start_enabled): Module(start_enabled)
 {

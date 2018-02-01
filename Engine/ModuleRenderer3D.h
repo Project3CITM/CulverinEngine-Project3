@@ -5,7 +5,6 @@
 #include "Globals.h"
 #include "Light.h"
 #include "parson.h"
-#include "GL3W/include/glew.h"
 
 #include <gl/GL.h>
 #include <gl/GLU.h>

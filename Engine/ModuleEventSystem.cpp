@@ -32,9 +32,9 @@ bool ModuleEventSystem::Init(JSON_Object* node)
 		MEventListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, ListenersVec));
 	}
 	//addlistenrs
-	const std::list<Module*>* ModuleList = App->GetModuleList();
-	for (std::list<Module*>::const_iterator item = ModuleList->cbegin(); item != ModuleList->cend(); ++item)
-		item._Ptr->_Myval->SetEventListenrs();
+	const std::vector<Module*>* ModuleList = App->GetModuleList();
+	for (std::vector<Module*>::const_iterator item = ModuleList->cbegin(); item != ModuleList->cend(); ++item)
+		(*item)->SetEventListenrs();
 	return true;
 }
 
@@ -55,7 +55,7 @@ update_status ModuleEventSystem::Update(float dt)
 
 update_status ModuleEventSystem::PostUpdate(float dt)
 {
-	const std::list<Module*>* ModuleList = App->GetModuleList();
+	const std::vector<Module*>* ModuleList = App->GetModuleList();
 	//iterate and send MMNormalEvent
 
 	//iterate and send MM3DDrawEvent

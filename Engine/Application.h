@@ -96,7 +96,7 @@ public:
 
 	void ChangeCamera(const char* window);
 
-	const std::list<Module*>* GetModuleList() const;
+	const std::vector<Module*>* GetModuleList() const;
 
 private:
 	void AddModule(Module* mod);
@@ -120,7 +120,7 @@ public:
 	ModuleEventSystem* event_system = nullptr;
 
 private:
-	std::list<Module*> list_modules;
+	std::vector<Module*> list_modules;
 	// ----------------------------------
 
 	// TIME -----------------------------
