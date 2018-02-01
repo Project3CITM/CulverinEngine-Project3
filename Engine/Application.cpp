@@ -688,7 +688,10 @@ void Application::ChangeCamera(const char* window)
 	}
 }
 
-
+const std::list<Module*>* Application::GetModuleList() const
+{
+	return &list_modules;
+}
 
 void Application::AddModule(Module* mod)
 {

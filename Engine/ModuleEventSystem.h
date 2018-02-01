@@ -5,7 +5,6 @@
 #include <map>
 
 #include "Module.h"
-#include "EventDef.h"
 
 void PushEvent(Event& event);
 void AddListener(EventType type, Module* listener);
@@ -28,11 +27,11 @@ public:
 	void AddListener(EventType type, Module* listener);
 
 private:
-	std::queue<Event> QNormalEvent;
-	std::multimap<float, Event> Q3DDrawEvent;
-	std::multimap<float, Event> Q3DADrawEvent;
-	std::multimap<float, Event> Q2DDrawEvent;
-	std::map<EventType, std::vector<Module*>> EListeners;
+	std::multimap<EventType, Event> MMNormalEvent;
+	std::multimap<float, Event> MM3DDrawEvent;
+	std::multimap<float, Event> MM3DADrawEvent;
+	std::multimap<float, Event> MM2DDrawEvent;
+	std::map<EventType, std::vector<Module*>> MEventListeners;
 };
 
 #endif //_EVENTSYSTEM_

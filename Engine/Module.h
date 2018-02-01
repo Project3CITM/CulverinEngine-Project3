@@ -5,6 +5,7 @@
 #include "PerfTimer.h"
 #include "ImGui\imgui.h"
 #include "ImGui\imgui_impl_sdl_gl3.h"
+#include "EventDef.h"
 #include <string>
 
 class Application;
@@ -21,6 +22,11 @@ public:
 	virtual bool Init(JSON_Object* node) 
 	{
 		return true; 
+	}
+
+	virtual bool SetEventListenrs() //Called at EventSystemModule Init, set all event listeners, call example inside this method: AddListener(EventType::DELETE_GO, (Module*)this);
+	{
+		return true;
 	}
 
 	virtual bool Start()
@@ -87,6 +93,8 @@ public:
 	}
 
 	virtual void OnCollision(PhysBody3D* body1, PhysBody3D* body2){}
+
+	virtual void OnEvent(Event& event){} //Called if the module is a listener of the event sent
 
 	bool IsEnabled() const { return enabled; }
 

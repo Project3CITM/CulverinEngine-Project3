@@ -1,13 +1,16 @@
 #ifndef _EVENTDEF_
 #define _EVENTDEF_
 
-/*----------------------------------------------------------------------------------------------------------*/
-/*---Add new events:----------------------------------------------------------------------------------------*/
-/*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))-------------*/
-/*---Add the new Event struct (in the proper place and alphabetical order (easier to search))---------------*/
-/*---In the new Event structure DON'T declare anything (this can be modified in the future)-----------------*/
-/*---Add the new Event in the Event union (in the proper place and alphabetical order (easier to search))---*/
-/*----------------------------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------*/
+/*---Add new events:-----------------------------------------------------------------------------------------*/
+/*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))--------------*/
+/*---Add the new Event struct (in the proper place and alphabetical order (easier to search))----------------*/
+/*---In the new Event structure DON'T declare anything (this can be modified in the future)------------------*/
+/*---Add the new Event in the Event union (in the proper place and alphabetical order (easier to search))----*/
+/*---If you are testing and don't put in the proper place and alphabetical order the events copy&paste this:-*/
+/*---(Not ordered)-------------------------------------------------------------------------------------------*/
+/*---When the time comes, someone must order them :)---------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------*/
 /*-----------All forwad declarations here-----------*/
@@ -35,12 +38,13 @@ enum EventType
 	/*----------------------Physics---------------------*/
 
 	/*------------------Shader Pipeline-----------------*/
-
+	CREATE_SHADER,
+	CREATE_SHADER_PROGRAM,
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
 	
-	MAXEVENTS
+	MAXEVENTS//Keep this at the bottom, needed to know how many events se have
 };
 
 /*--------------------------------------------------*/
@@ -122,7 +126,19 @@ struct EWindowResize
 /*--------------------------------------------------*/
 /*------------------Shader Pipeline-----------------*/
 /*--------------------------------------------------*/
+struct ECreateShader
+{
+	EventType type;
+	const char* name;	//std::string?
+	const char* code;	//std::string?
+};
 
+struct ECreateShaderProgram
+{
+	EventType type;
+	const char* name;	//std::string?
+	//std::queue<int> ShaderObjects;
+};
 
 /*--------------------------------------------------*/
 /*----------------Skeletal Animation----------------*/
@@ -155,7 +171,8 @@ union Event
 	/*----------------------Physics---------------------*/
 
 	/*------------------Shader Pipeline-----------------*/
-
+	ECreateShader shader;
+	ECreateShaderProgram shaderprogram;
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/

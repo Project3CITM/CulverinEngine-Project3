@@ -96,6 +96,8 @@ public:
 
 	void ChangeCamera(const char* window);
 
+	const std::list<Module*>* GetModuleList() const;
+
 private:
 	void AddModule(Module* mod);
 	void PrepareUpdate();
