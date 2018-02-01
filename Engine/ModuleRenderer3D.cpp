@@ -1,4 +1,3 @@
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
