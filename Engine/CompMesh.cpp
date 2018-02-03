@@ -135,6 +135,24 @@ void CompMesh::ShowOptions()
 		//parent->AddComponent(App->scene->copyComponent->GetType())
 		// Create contructor Component Copy or add funtion to add info
 	}
+	ImGui::Separator();
+	if (ImGui::MenuItem("Reset Mesh"))
+	{
+		if (resourceMesh != nullptr)
+		{
+			if (resourceMesh->NumGameObjectsUseMe > 0)
+			{
+				resourceMesh->NumGameObjectsUseMe--;
+			}
+		}
+		resourceMesh = nullptr;
+		ImGui::CloseCurrentPopup();
+	}
+	if (ImGui::MenuItem("Select Mesh..."))
+	{
+		SelectMesh = true;
+		ImGui::CloseCurrentPopup();
+	}
 }
 
 void CompMesh::ShowInspectorInfo()
@@ -148,32 +166,12 @@ void CompMesh::ShowInspectorInfo()
 	ImGui::PopStyleVar();
 
 	// Button Options --------------------------------------
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.00f));
 	if (ImGui::BeginPopup("OptionsMesh"))
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 2));
-		if (ImGui::Button("Reset Mesh"))
-		{
-			if (resourceMesh != nullptr)
-			{
-				if (resourceMesh->NumGameObjectsUseMe > 0)
-				{
-					resourceMesh->NumGameObjectsUseMe--;
-				}
-			}
-			resourceMesh = nullptr;
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::Separator();
-		if (ImGui::Button("Select Mesh..."))
-		{
-			SelectMesh = true;
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::PopStyleVar();
+		ShowOptions();
 		ImGui::EndPopup();
 	}
-	ImGui::PopStyleColor();
+
 	if (resourceMesh != nullptr)
 	{
 		ImGui::Text("Name:"); ImGui::SameLine();
@@ -187,6 +185,8 @@ void CompMesh::ShowInspectorInfo()
 	}
 	if (resourceMesh == nullptr)
 	{
+		ImGui::Text("Name:"); ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Mesh)");
 		if (ImGui::Button("Select Mesh..."))
 		{
 			SelectMesh = true;
@@ -194,13 +194,6 @@ void CompMesh::ShowInspectorInfo()
 	}
 	if(resourceMesh == nullptr || SelectMesh)
 	{
-		//if (1)
-		//{
-		//	if (ImGui::Button("Select Mesh..."))
-		//	{
-		//		SelectMesh = true;
-		//	}
-		//}
 		if (SelectMesh)
 		{
 			ResourceMesh* temp = (ResourceMesh*)App->resource_manager->ShowResources(SelectMesh, Resource::Type::MESH);

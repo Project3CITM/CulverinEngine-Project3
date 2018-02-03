@@ -144,6 +144,25 @@ void CompMaterial::ShowOptions()
 		//parent->AddComponent(App->scene->copyComponent->GetType())
 		// Create contructor Component Copy or add funtion to add info
 	}
+	ImGui::Separator();
+	if (ImGui::MenuItem("Reset Material"))
+	{
+		if (resourceMaterial != nullptr)
+		{
+			if (resourceMaterial->NumGameObjectsUseMe > 0)
+			{
+				resourceMaterial->NumGameObjectsUseMe--;
+			}
+		}
+		resourceMaterial = nullptr;
+		ImGui::CloseCurrentPopup();
+	}
+	/* Select Material */
+	if (ImGui::MenuItem("Select Material..."))
+	{
+		selectMaterial = true;
+		ImGui::CloseCurrentPopup();
+	}
 }
 
 void CompMaterial::ShowInspectorInfo()
@@ -157,34 +176,11 @@ void CompMaterial::ShowInspectorInfo()
 	}
 
 	// Button Options --------------------------------------
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.00f));
 	if (ImGui::BeginPopup("OptionsMaterial"))
 	{
-		/* Reset Material */
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 2));
-		if (ImGui::Button("Reset Material"))
-		{
-			if (resourceMaterial != nullptr)
-			{
-				if (resourceMaterial->NumGameObjectsUseMe > 0)
-				{
-					resourceMaterial->NumGameObjectsUseMe--;
-				}
-			}
-			resourceMaterial = nullptr;
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::Separator();
-		/* Select Material */
-		if (ImGui::Button("Select Material..."))
-		{
-			selectMaterial = true;
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::PopStyleVar();
+		ShowOptions();
 		ImGui::EndPopup();
 	}
-	ImGui::PopStyleColor();
 	ImGui::PopStyleVar();
 	ImGui::ColorEdit3("", (float*)&color);
 
@@ -202,6 +198,8 @@ void CompMaterial::ShowInspectorInfo()
 	{
 		if (resourceMaterial == nullptr)
 		{
+			ImGui::Text("Name:"); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Material)");
 			if (ImGui::Button("Select Material..."))
 			{
 				selectMaterial = true;

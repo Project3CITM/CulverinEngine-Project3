@@ -197,6 +197,19 @@ void CompScript::ShowOptions()
 		//parent->AddComponent(App->scene->copyComponent->GetType())
 		// Create contructor Component Copy or add funtion to add info
 	}
+	ImGui::Separator();
+	if (ImGui::MenuItem("Reset Script"))
+	{
+		if (resourcescript != nullptr)
+		{
+			if (resourcescript->NumGameObjectsUseMe > 0)
+			{
+				resourcescript->NumGameObjectsUseMe--;
+			}
+		}
+		resourcescript = nullptr;
+		ImGui::CloseCurrentPopup();
+	}
 }
 
 void CompScript::ShowInspectorInfo()
@@ -210,44 +223,44 @@ void CompScript::ShowInspectorInfo()
 	}
 
 	// Button Options --------------------------------------
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.00f));
+
 	if (ImGui::BeginPopup("OptionsScript"))
 	{
-		/* Reset Material */
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 2));
-		if (ImGui::Button("Reset Script"))
-		{
-			if (resourcescript != nullptr)
-			{
-				if (resourcescript->NumGameObjectsUseMe > 0)
-				{
-					resourcescript->NumGameObjectsUseMe--;
-				}
-			}
-			resourcescript = nullptr;
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::PopStyleVar();
+		ShowOptions();
 		ImGui::EndPopup();
 	}
 
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.00f));
 	//ImGui::Text("Script"); ImGui::SameLine();
-	ImGui::Selectable("< Edit Script >", false);
 	static bool activeScript = false;
-	if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+	if (resourcescript != nullptr)
 	{
-		//LOG("%.2f - %.2f  / /  %.2f - %.2f", ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y, ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y);
-		if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+		ImGui::Selectable("< Edit Script >", false);
+		if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 		{
-			if (resourcescript != nullptr)
+			//LOG("%.2f - %.2f  / /  %.2f - %.2f", ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y, ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y);
+			if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
 			{
-				activeScript = !activeScript;
+				if (resourcescript != nullptr)
+				{
+					activeScript = !activeScript;
+				}
 			}
 		}
 	}
 
 	ImGui::PopStyleColor();
 	ImGui::PopStyleVar();
+
+	if (resourcescript == nullptr)
+	{
+		ImGui::Text("NAME:"); ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Script)");
+		if (ImGui::Button("Create New Script"))
+		{
+			//Need Implementation... TODO
+		}
+	}
 
 	if (resourcescript != nullptr)
 	{
@@ -324,7 +337,7 @@ void CompScript::ShowInspectorInfo()
 			}
 		}
 	}
-	if (activeScript)
+	if (activeScript && resourcescript != nullptr)
 	{
 		resourcescript->ShowEditor(activeScript);
 	}
