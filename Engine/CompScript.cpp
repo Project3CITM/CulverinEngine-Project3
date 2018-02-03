@@ -480,6 +480,7 @@ void CompScript::ShowVarValue(ScriptVariable* var, int pushi)
 
 void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
+	json_object_dotset_string_with_std(object, name + "Component:", nameComponent);
 	json_object_dotset_number_with_std(object, name + "Type", Comp_Type::C_SCRIPT);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 	if (resourcescript != nullptr)

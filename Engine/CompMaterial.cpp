@@ -42,6 +42,7 @@ CompMaterial::~CompMaterial()
 
 void CompMaterial::preUpdate(float dt)
 {
+	// Manage Resource -------------------------------------------------
 	// Before delete Resource, Set this pointer to nullptr
 	if (resourceMaterial != nullptr)
 	{
@@ -73,6 +74,7 @@ void CompMaterial::preUpdate(float dt)
 			}
 		}
 	}
+	// -------------------------------------------------
 }
 
 void CompMaterial::Clear()
@@ -233,6 +235,7 @@ void CompMaterial::ShowInspectorInfo()
 
 void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
+	json_object_dotset_string_with_std(object, name + "Component:", nameComponent);
 	json_object_dotset_number_with_std(object, name + "Type", C_MATERIAL);
 	float4 tempColor = { color.r, color.g, color.b, color.a };
 	App->fs->json_array_dotset_float4(object, name + "Color", tempColor);

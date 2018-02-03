@@ -62,6 +62,7 @@ CompMesh::~CompMesh()
 
 void CompMesh::preUpdate(float dt)
 {
+	// Manage Resource -------------------------------------------------
 	// Before delete Resource Set this pointer to nullptr
 	if (resourceMesh != nullptr)
 	{
@@ -92,6 +93,7 @@ void CompMesh::preUpdate(float dt)
 			}
 		}
 	}
+	// -------------------------------------------------------------------
 }
 
 void CompMesh::Update(float dt)
@@ -192,7 +194,7 @@ void CompMesh::ShowInspectorInfo()
 			SelectMesh = true;
 		}
 	}
-	if(resourceMesh == nullptr || SelectMesh)
+	if (resourceMesh == nullptr || SelectMesh)
 	{
 		if (SelectMesh)
 		{
@@ -360,6 +362,7 @@ void CompMesh::SetResource(ResourceMesh* resourse_mesh, bool isImport)
 
 void CompMesh::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
+	json_object_dotset_string_with_std(object, name + "Component:", nameComponent);
 	json_object_dotset_number_with_std(object, name + "Type", C_MESH);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 	if(resourceMesh != nullptr)
