@@ -67,9 +67,9 @@ struct EDraw
 	EventType type;
 	enum DrawType
 	{
-		DRAW3D,
-		DRAW3DAlpha,
-		DRAW2D
+		DRAW3D,					//3D Game Objects without alpha
+		DRAW3DALPHA_WCANVAS,	//3D Game Objects with alpha & World space canvas
+		DRAW2DSCREENCANVAS		//Screen space canvas
 	};
 	DrawType Dtype;
 	float DistanceCamToObject;
