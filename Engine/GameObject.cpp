@@ -603,7 +603,9 @@ void GameObject::ShowGameObjectOptions()
 	//	GameObject* sphere = App->scene->CreateSphere(this);
 	//	((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->LinkObject(sphere);
 	//}
+
 	ImGui::Separator();
+	// Add Components -----------------------------------------------
 	ImGui::MenuItem("ADD COMPONENT", NULL, false, false);
 	if (ImGui::MenuItem("Transform"))
 	{
@@ -621,6 +623,7 @@ void GameObject::ShowGameObjectOptions()
 	{
 		AddComponent(Comp_Type::C_SCRIPT);
 	}
+	// -------------------------------------------------------------
 }
 
 void GameObject::ShowInspectorInfo()
