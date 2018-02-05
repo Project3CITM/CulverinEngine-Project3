@@ -75,12 +75,9 @@ void Hierarchy::ShowHierarchy()
 		ImGui::EndMenu();
 	}
 	ImGui::PopStyleVar();
-	for (uint i = 0; i < App->scene->gameobjects.size(); i++)
-	{
-		ImGui::PushID(i);
-		App->scene->gameobjects[i]->ShowHierarchy();
-		ImGui::PopID();
-	}
+	// Iterate all root and show in Hierarchy all GameObjects -----------
+	App->scene->root->ShowHierarchy();
+	// ----------------------------------------------------------------
 	ImGui::PopStyleVar();
 
 	// Open Window To Delete GameObject
