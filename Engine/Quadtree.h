@@ -52,7 +52,7 @@ public:
 	void Init(float new_size);
 	void Boundaries(AABB limits);
 	void Clear();
-	void Bake(const std::vector<GameObject*>& objects);
+	void Bake(GameObject* root);
 	void Insert(GameObject* obj);
 	void Remove(GameObject* obj);
 

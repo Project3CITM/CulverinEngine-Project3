@@ -58,9 +58,7 @@ public:
 public:
 	FrameBuffer* sceneBuff = nullptr;
 
-	//Container Vector of all Game Objects
-	std::vector<GameObject*> gameobjects;
-	// std::vector<GameObject*> gameobjects to GameObject* gameobjects
+	//Container of all Game Objects
 	GameObject* root = nullptr;
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)

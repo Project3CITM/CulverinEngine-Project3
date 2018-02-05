@@ -41,7 +41,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 
 Scene::~Scene()
 {
-	DeleteGameObjects(gameobjects, true);
+	//DeleteGameObjects(root, true); //TODO-> Elliot
 	RELEASE(sceneBuff);
 	RELEASE(skybox);
 }
@@ -89,16 +89,13 @@ update_status Scene::PreUpdate(float dt)
 	perf_timer.Start();
 
 	// PreUpdate GameObjects ------------------------
-	for (uint i = 0; i < gameobjects.size(); i++)
+	if (root->WanttoDelete() == false)
 	{
-		if (gameobjects[i]->WanttoDelete() == false)
-		{
-			gameobjects[i]->preUpdate(dt);
-		}
-		else
-		{
-			DeleteGameObject(gameobjects[i]);
-		}
+		root->preUpdate(dt);
+	}
+	else
+	{
+		DeleteGameObject(root);
 	}
 
 	//// PreUpdate GameObjects ------------------------
@@ -119,11 +116,7 @@ update_status Scene::Update(float dt)
 	perf_timer.Start();
 
 	// Update GameObjects -----------
-	for (uint i = 0; i < gameobjects.size(); i++)
-	{
-		gameobjects[i]->Update(dt);
-	}
-	// -------------------------------------------------
+	root->Update(dt);
 
 	Update_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -156,10 +149,9 @@ bool Scene::CleanUp()
 {
 	skybox->DeleteSkyboxTex();
 	ClearAllVariablesScript();
-	for (uint i = 0; i < gameobjects.size(); i++)
-	{
-		gameobjects[i]->CleanUp();
-	}
+	
+	root->CleanUp();
+
 	return true;
 }
 
@@ -189,7 +181,7 @@ void Scene::EditorQuadtree()
 				{
 					quadtree.root_node->Clear();
 				}
-				quadtree.Bake(App->scene->gameobjects);
+				quadtree.Bake(App->scene->root);
 			}
 			else
 			{
@@ -243,10 +235,9 @@ void Scene::EditorSkybox()
 bool Scene::CheckNoFails()
 {
 	int fails = 0;
-	for (int i = 0; i < gameobjects.size(); i++)
-	{
-		gameobjects[i]->CheckScripts(fails);
-	}
+	
+	root->CheckScripts(fails);
+
 	if (fails == 0)
 	{
 		LOG("All Scripts are succesfully compiled.");
@@ -262,27 +253,18 @@ bool Scene::CheckNoFails()
 void Scene::StartScripts()
 {
 	//Iterate all GameObjects and, if they have scripts, call their start
-	for (int i = 0; i < gameobjects.size(); i++)
-	{
-		gameobjects[i]->StartScripts();
-	}
+	root->StartScripts();
 }
 
 void Scene::ClearAllVariablesScript()
 {
 	//Iterate all GameObjects and, if they have scripts, call their ClearAllVariablesScript
-	for (int i = 0; i < gameobjects.size(); i++)
-	{
-		gameobjects[i]->ClearAllVariablesScript();
-	}
+	root->ClearAllVariablesScript();
 }
 
-void Scene::SetScriptVariablesToNull(GameObject * go)
+void Scene::SetScriptVariablesToNull(GameObject* go)
 {
-	for (uint i = 0; i < gameobjects.size(); i++)
-	{
-		gameobjects[i]->RemoveScriptReference(go);
-	}
+	root->RemoveScriptReference(go);
 }
 
 GameObject* Scene::GetGameObjectfromScene(bool& active)
@@ -293,10 +275,11 @@ GameObject* Scene::GetGameObjectfromScene(bool& active)
 	}
 	else
 	{
-		for (int i = 0; i < gameobjects.size(); i++)
+		for (int i = 0; i < root->GetNumChilds(); i++)
 		{
 			ImGui::PushID(i);
-			GameObject* temp = gameobjects[i]->GetGameObjectfromScene(i);
+			GameObject* temp = root->GetChildbyIndex(i)->GetGameObjectfromScene(i);
+			
 			if (temp != nullptr)
 			{
 				ImGui::PopID();
@@ -304,10 +287,7 @@ GameObject* Scene::GetGameObjectfromScene(bool& active)
 				active = false;
 				return temp;
 			}
-			//if(ImGui::Selectable(gameobjects[i]->GetName()))
-			//{
 
-			//}
 			ImGui::PopID();
 		}
 		ImGui::End();
@@ -317,14 +297,13 @@ GameObject* Scene::GetGameObjectfromScene(bool& active)
 
 GameObject* Scene::GetGameObjectbyuid(uint uid)
 {
-	for (int i = 0; i < gameobjects.size(); i++)
+	GameObject* ret = root->GetGameObjectbyuid(uid);
+	
+	if (ret != nullptr)
 	{
-		GameObject* ret = gameobjects[i]->GetGameObjectbyuid(uid);
-		if (ret != nullptr)
-		{
-			return ret;
-		}
+		return ret;
 	}
+
 	return nullptr;
 }
 
@@ -422,7 +401,6 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 	obj->SetName(name_str);
 
 	/* Empty GameObject only has Transform Component */
-
 	//TRANSFORM COMPONENT --------------
 	CompTransform* transform = (CompTransform*)obj->AddComponent(C_TRANSFORM);
 	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1)); // TRANSFORM WILL ACCUMULATE PARENTS TRANSFORMS
@@ -430,11 +408,13 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 
 	if (parent == nullptr)
 	{
-		gameobjects.push_back(obj);
+		root->AddChildGameObject(obj);
 	}
+
 	return obj;
 }
 
+//TODO -> Elliot -----------------------------------------------------------------------------
 void Scene::DeleteGameObjects(std::vector<GameObject*>& gameobjects, bool isMain)
 {
 	for (int i = 0; i < gameobjects.size(); i++)
@@ -443,6 +423,7 @@ void Scene::DeleteGameObjects(std::vector<GameObject*>& gameobjects, bool isMain
 		{
 			DeleteGameObjects(gameobjects[i]->GetChildsVec(), false);
 		}
+
 		// First of all, Set nullptr all pointer to this GameObject
 		if (App->camera->GetFocus() == gameobjects[i])
 		{
@@ -544,6 +525,7 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 		}
 	}
 }
+// -------------------------------------------------------------------------------------
 
 GameObject* Scene::CreateCube(GameObject* parent)
 {
@@ -592,7 +574,7 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	if (parent == nullptr)
 	{
 		// Only add to GameObjects list the Root Game Objects
-		App->scene->gameobjects.push_back(obj);
+		App->scene->root->AddChildGameObject(obj);
 	}
 
 	LOG("CUBE Created.");
@@ -625,7 +607,7 @@ GameObject* Scene::CreateMainCamera(GameObject* parent)
 	if (parent == nullptr)
 	{
 		// Only add to GameObjects list the Root Game Objects
-		App->scene->gameobjects.push_back(obj);
+		App->scene->root->AddChildGameObject(obj);
 	}
 
 	LOG("MAIN CAMERA Created.");

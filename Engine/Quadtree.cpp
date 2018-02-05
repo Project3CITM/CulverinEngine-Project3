@@ -257,19 +257,26 @@ void Quadtree::Clear()
 	}	
 }
 
-void Quadtree::Bake(const std::vector<GameObject*>& objects)
+void Quadtree::Bake(GameObject* root)
 {
-	for (uint i = 0; i < objects.size(); i++)
+	GameObject* temp = nullptr;
+	for (uint i = 0; i < root->GetNumChilds(); i++)
 	{
-		if (objects[i]->isActive())
+		temp = root->GetChildbyIndex(i);
+
+		//Check first if GO is Active
+		if (temp->isActive())
 		{
-			if (objects[i]->isStatic())
+			//If it's Static, insert it in the Quadtree
+			if (temp->isStatic())
 			{
-				Insert(objects[i]);
+				Insert(temp);
 			}
-			if (objects[i]->GetNumChilds() > 0)
+
+			//Check its childs vector to insert them into the Quadtree too
+			if (temp->GetNumChilds() > 0)
 			{
-				Bake(objects[i]->GetChildsVec());
+				Bake(temp);
 			}
 		}
 	}

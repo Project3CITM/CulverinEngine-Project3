@@ -188,7 +188,7 @@ void Application::FinishUpdate()
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		App->scene->ClearAllVariablesScript();
-		App->scene->DeleteGameObjects(App->scene->gameobjects);
+		App->scene->DeleteGameObjects(App->scene->gameobjects); //TODO->Elliot
 		Json_seria->LoadScene();
 		App->resource_manager->ReImportAllScripts();
 		want_to_load = false;

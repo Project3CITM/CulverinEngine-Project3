@@ -277,11 +277,9 @@ void ModuleCamera3D::MousePick(float x, float y, float w, float h)
 	entry_dist = 0.0f;
 	exit_dist = ray.Length();
 
-	for (uint i = 0; i < App->scene->gameobjects.size(); i++)
-	{
-		// Check intersection ray-AABB
-		CheckAABBIntersection(App->scene->gameobjects[i], entry_dist, exit_dist);
-	}
+
+	// Check intersection ray-AABB
+	CheckAABBIntersection(App->scene->root, entry_dist, exit_dist);
 
 	if (possible_intersections.size() > 0)
 	{

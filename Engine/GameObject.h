@@ -88,8 +88,7 @@ public:
 	std::vector<GameObject*> GetChildsVec() const;
 	std::vector<GameObject*>* GetChildsPtr();
 	void AddChildGameObject_Copy(const GameObject* child);
-	void AddChildGameObject_Load(GameObject* child);
-	void AddChildGameObject_Replace(GameObject* child);
+	void AddChildGameObject(GameObject* child);
 
 	// Transform Modifications -----------------
 	void UpdateChildsMatrices();

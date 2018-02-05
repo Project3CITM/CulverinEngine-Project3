@@ -288,12 +288,12 @@ void CompCamera::CullDynamicObjects()
 {
 	const AABB* box = nullptr;
 
-	// Push all active elements that are root & active
-	for (uint i = 0; i < App->scene->gameobjects.size(); i++)
+	// Push all active elements that are main childs of root & active
+	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
 	{
-		if (App->scene->gameobjects[i]->isActive())
+		if (App->scene->root->GetChildbyIndex(i)->isActive())
 		{
-			candidates_to_cull.push(App->scene->gameobjects[i]);
+			candidates_to_cull.push(App->scene->root->GetChildbyIndex(i));
 		}
 	}
 
@@ -334,11 +334,11 @@ void CompCamera::CullDynamicObjects()
 void CompCamera::UnCull()
 {
 	// Push all active elements that are root & active
-	for (uint i = 0; i < App->scene->gameobjects.size(); i++)
+	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
 	{
-		if (App->scene->gameobjects[i]->isActive())
+		if (App->scene->root->GetChildbyIndex(i)->isActive())
 		{
-			candidates_to_cull.push(App->scene->gameobjects[i]);
+			candidates_to_cull.push(App->scene->root->GetChildbyIndex(i));
 		}
 	}
 
