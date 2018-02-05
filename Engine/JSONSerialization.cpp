@@ -17,7 +17,7 @@ JSONSerialization::~JSONSerialization()
 	namesScene.clear();
 }
 
-void JSONSerialization::SaveScene()
+std::string JSONSerialization::SaveScene()
 {
 	LOG("SAVING SCENE -----");
 
@@ -43,14 +43,8 @@ void JSONSerialization::SaveScene()
 		std::string nameScene = "Scene.Propeties.";
 		// UUID--------
 		json_object_dotset_number_with_std(config_node, nameScene + "UUID", App->scene->root->GetUUID());
-		// Parent UUID------------
-		json_object_dotset_number_with_std(config_node, nameScene + "Parent", -1);
 		// Name --------
 		json_object_dotset_string_with_std(config_node, nameScene + "Name", App->scene->root->GetName());
-		// Bounding Box ---------
-		json_object_dotset_boolean_with_std(config_node, nameScene + "Bounding Box", App->scene->root->isAABBActive());
-		// Static ---------
-		json_object_dotset_boolean_with_std(config_node, nameScene + "Static", App->scene->root->isStatic());
 
 		// Propreties Scene
 		std::string name = "GameObject" + std::to_string(count);
@@ -67,6 +61,7 @@ void JSONSerialization::SaveScene()
 	json_object_dotset_number_with_std(config_node, "Info.Number of GameObjects", count);
 	json_serialize_to_file(config_file, nameJson.c_str());
 	json_value_free(config_file);
+	return nameJson;
 }
 
 void JSONSerialization::SaveChildGameObject(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources)
@@ -122,6 +117,8 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		config = json_value_get_object(config_file);
 		config_node = json_object_get_object(config, "Scene");
 		int NUmberGameObjects = json_object_dotget_number(config_node, "Info.Number of GameObjects");
+		App->scene->root->SetUUID(json_object_dotget_number(config_node, "Scene.Propeties.UUID"));
+		App->scene->root->SetName(App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, "Scene.Propeties.Name")));
 		if (NUmberGameObjects > 0)
 		{
 			for (int i = 0; i < NUmberGameObjects; i++)
@@ -151,10 +148,10 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				}
 				else
 				{
-					for (int x = 0; x < App->scene->gameobjects.size(); x++)
-					{
-						LoadChilds(*App->scene->gameobjects[x], *obj, uuid_parent);
-					}
+					//for (int x = 0; x < App->scene->gameobjects.size(); x++)
+					//{
+					//	LoadChilds(*App->scene->gameobjects[x], *obj, uuid_parent);
+					//}
 				}
 			}
 		}
@@ -170,7 +167,7 @@ void JSONSerialization::LoadChilds(GameObject& parent, GameObject& child, int uu
 		{
 			if (parent.GetUUID() == uuidParent)
 			{
-				parent.AddChildGameObject_Load(&child);
+				parent.AddChildGameObject(&child);
 				return;
 			}
 			else
@@ -183,7 +180,7 @@ void JSONSerialization::LoadChilds(GameObject& parent, GameObject& child, int uu
 	{
 		if (parent.GetUUID() == uuidParent)
 		{
-			parent.AddChildGameObject_Load(&child);
+			parent.AddChildGameObject(&child);
 			return;
 		}
 	}
@@ -303,7 +300,7 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 			//}
 			namesScene.clear();
 			// Now GetAll Names from Scene
-			GetAllNames(App->scene->gameobjects);
+			GetAllNames(App->scene->root->GetChildsVec());
 
 			GameObject* mainParent = nullptr;
 			for (int i = 0; i < NUmberGameObjects; i++)
@@ -341,7 +338,7 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 				ChangeUUIDs(*mainParent);
 			}
 			// Finaly, add gameObject in Scene.
-			App->scene->gameobjects.push_back(mainParent);
+			App->scene->root->AddChildGameObject(mainParent);
 		}
 	}
 	json_value_free(config_file);
@@ -355,7 +352,7 @@ void JSONSerialization::LoadChildLoadPrefab(GameObject& parent, GameObject& chil
 		{
 			if (parent.GetUUID() == uuidParent)
 			{
-				parent.AddChildGameObject_Load(&child);
+				parent.AddChildGameObject(&child);
 				return;
 			}
 			else
@@ -368,7 +365,7 @@ void JSONSerialization::LoadChildLoadPrefab(GameObject& parent, GameObject& chil
 	{
 		if (parent.GetUUID() == uuidParent)
 		{
-			parent.AddChildGameObject_Load(&child);
+			parent.AddChildGameObject(&child);
 			return;
 		}
 	}

@@ -17,7 +17,7 @@ public:
 	~JSONSerialization();
 
 	// SAVE & LOAD SCENE --------------------------
-	void SaveScene();
+	std::string SaveScene();
 	void SaveChildGameObject(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);
 	void LoadScene(const char* sceneName);
 	void LoadChilds(GameObject& parent, GameObject& child, int uuidParent);

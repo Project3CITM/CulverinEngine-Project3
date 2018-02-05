@@ -177,10 +177,11 @@ void Application::PrepareUpdate()
 // ---------------------------------------------
 void Application::FinishUpdate()
 {
+
 	// SAVE & LOAD FUNCTIONS ------------------------
 	if (want_to_save == true)
 	{
-		Json_seria->SaveScene();
+		actualScene = Json_seria->SaveScene();
 		want_to_save = false;
 	}
 
@@ -188,8 +189,8 @@ void Application::FinishUpdate()
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		App->scene->ClearAllVariablesScript();
-		App->scene->DeleteGameObjects(App->scene->gameobjects); //TODO->Elliot
-		Json_seria->LoadScene();
+		App->scene->DeleteAllGameObjects(App->scene->root); //TODO->Elliot
+		Json_seria->LoadScene(actualScene.c_str());
 		App->resource_manager->ReImportAllScripts();
 		want_to_load = false;
 	}
@@ -645,7 +646,7 @@ void Application::SetState(EngineState state)
 				scene->sceneBuff->WantRefreshRatio();
 
 				//To Save all elements in the scene to load them correctly when exiting Game Mode
-				Json_seria->SaveScene();
+				actualScene = Json_seria->SaveScene();
 			}
 			else
 			{

@@ -1,6 +1,7 @@
 #include "WindowProject.h"
 #include "Application.h"
 #include "ModuleFS.h"
+#include "Scene.h"
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
@@ -29,6 +30,7 @@ bool Project::Start()
 	icon_obj = App->textures->LoadTexture("Images/UI/icon_obj.png");
 	icon_script = App->textures->LoadTexture("Images/UI/icon_script.png");
 	icon_unknown = App->textures->LoadTexture("Images/UI/icon_unknown.png");
+	icon_scene = App->textures->LoadTexture("Images/UI/icon_Culverin.png");
 
 	//directory_see = App->fs->GetMainDirectory();
 	//directory_see = "Assets\\";
@@ -74,8 +76,7 @@ bool Project::CleanUp()
 
 TYPE_FILE Project::SetType(std::string name)
 {
-	size_t EndName = name.find_last_of(".");
-	std::string temp = name.substr(EndName + 1);
+	std::string temp = App->fs->GetExtension(name);
 	if (name.compare(temp) != 0)
 	{
 		// Isn't a Folder
@@ -106,6 +107,10 @@ TYPE_FILE Project::SetType(std::string name)
 		else if (temp == "cs" || temp == "cpp" || temp == "c")
 		{
 			return TYPE_FILE::SCRIPT;
+		}
+		else if (temp == "scene.json")
+		{
+			return TYPE_FILE::SCENE;
 		}
 		else
 		{
@@ -396,6 +401,25 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 		case TYPE_FILE::JPG:
 		{
 			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_jpg, nameTemp, ImVec2(sizeFiles, sizeFiles), ImVec2(-1, 1), ImVec2(0, 0));
+			break;
+		}
+		case TYPE_FILE::SCENE:
+		{
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_scene, nameTemp, ImVec2(sizeFiles, sizeFiles), ImVec2(-1, 1), ImVec2(0, 0));
+			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+			{
+				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+				{
+					// Set new Scene and before change scene, check if he want save scene.
+					App->scene->ClearAllVariablesScript();
+					App->scene->DeleteAllGameObjects(App->scene->root); //TODO->Elliot
+					std::string directory_scene = GetDirectory();
+					directory_scene += "/";
+					directory_scene += files[i].file_name;
+					App->Json_seria->LoadScene(directory_scene.c_str());
+					App->resource_manager->ReImportAllScripts();
+				}
+			}
 			break;
 		}
 		}

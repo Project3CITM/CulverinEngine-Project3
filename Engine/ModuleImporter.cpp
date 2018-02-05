@@ -302,7 +302,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 			App->Json_seria->SavePrefab(*obj, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 
 			//TODO-> Elliot -------------------------------------------
-			App->scene->gameobjects.push_back(obj); // Temp obj needs to be erased
+			App->scene->root->AddChildGameObject(obj); // Temp obj needs to be erased
 			App->scene->DeleteGameObject(obj);
 			//---------------------------------------------------------
 		}

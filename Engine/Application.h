@@ -156,6 +156,8 @@ private:
 	std::string appName;
 	std::string orgName;
 
+	std::string actualScene;
+
 	bool want_to_save = false;
 	bool want_to_load = false;
 

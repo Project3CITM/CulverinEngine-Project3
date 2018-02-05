@@ -204,13 +204,13 @@ void Hierarchy::CopyGameObject(GameObject* select)
 		if (select->HaveParent())
 		{
 			GameObject* copied = new GameObject(*copy, true, select->GetParent());
-			select->GetParent()->AddChildGameObject_Load(copied);
+			select->GetParent()->AddChildGameObject(copied);
 			//copy = nullptr;
 		}
 		else
 		{
 			GameObject* copied = new GameObject(*copy);
-			App->scene->gameobjects.push_back(copied);
+			App->scene->root->AddChildGameObject(copied);
 			//copy = nullptr;
 		}
 	}

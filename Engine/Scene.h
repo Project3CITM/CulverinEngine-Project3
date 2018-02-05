@@ -51,7 +51,7 @@ public:
 	GameObject* CreateGameObject(GameObject* parent = nullptr);
 	GameObject* CreateCube(GameObject* parent = nullptr);
 	GameObject* CreateMainCamera(GameObject* parent = nullptr);
-	void DeleteGameObjects(std::vector<GameObject*>& gameobjects, bool isMain = true);
+	void DeleteAllGameObjects(GameObject* gameobject, bool isMain = true);
 	void DeleteGameObject(GameObject* gameobject, bool isImport = false);
 	// -------------------------------------
 

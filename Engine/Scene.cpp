@@ -58,6 +58,9 @@ bool Scene::Start()
 {
 	perf_timer.Start();
 
+	// First of all create New Scene
+	root = new GameObject("NewScene", 1);
+
 	/* Init Quadtree */
 	size_quadtree = 50.0f;
 	quadtree.Init(size_quadtree);
@@ -415,31 +418,31 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 }
 
 //TODO -> Elliot -----------------------------------------------------------------------------
-void Scene::DeleteGameObjects(std::vector<GameObject*>& gameobjects, bool isMain)
+void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 {
-	for (int i = 0; i < gameobjects.size(); i++)
+	for (int i = 0; i < gameobject->GetNumChilds(); i++)
 	{
-		if (gameobjects[i]->GetNumChilds() > 0)
+		if (gameobject->GetChildbyIndex(i)->GetNumChilds() > 0)
 		{
-			DeleteGameObjects(gameobjects[i]->GetChildsVec(), false);
+			DeleteAllGameObjects(gameobject->GetChildbyIndex(i), false);
 		}
 
 		// First of all, Set nullptr all pointer to this GameObject
-		if (App->camera->GetFocus() == gameobjects[i])
+		if (App->camera->GetFocus() == gameobject->GetChildbyIndex(i))
 		{
 			App->camera->SetFocusNull();
 		}
-		if (((Inspector*)App->gui->winManager[INSPECTOR])->GetSelected() == gameobjects[i])
+		if (((Inspector*)App->gui->winManager[INSPECTOR])->GetSelected() == gameobject->GetChildbyIndex(i))
 		{
 			((Inspector*)App->gui->winManager[INSPECTOR])->SetLinkObjectNull();
 		}
 		// First delete all components
-		if (gameobjects[i]->GetNumComponents() > 0)
+		if (gameobject->GetChildbyIndex(i)->GetNumComponents() > 0)
 		{
-			gameobjects[i]->DeleteAllComponents();
+			gameobject->GetChildbyIndex(i)->DeleteAllComponents();
 		}
 		// Now Delete GameObject
-		GameObject* it = gameobjects[i];
+		GameObject* it = gameobject->GetChildbyIndex(i);
 		if(it != nullptr)
 		{
 			if (!it->isDeleteFixed())
@@ -450,7 +453,7 @@ void Scene::DeleteGameObjects(std::vector<GameObject*>& gameobjects, bool isMain
 			it = nullptr;
 		}
 	}
-	gameobjects.clear();
+	gameobject->GetChildsPtr()->clear();
 
 	if (isMain)
 	{
@@ -479,7 +482,7 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 		// First Delete All Childs and their components
 		if (gameobject->GetNumChilds() > 0)
 		{
-			DeleteGameObjects(gameobject->GetChildsVec(), false);
+			DeleteAllGameObjects(gameobject, false);
 		}
 		// Then Delete Components
 		if (gameobject->GetNumComponents() > 0)
@@ -497,21 +500,21 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 		else if (isImport == false)
 		{
 			int index = 0;
-			for (int i = 0; i < gameobjects.size(); i++)
+			for (int i = 0; i < root->GetNumChilds(); i++)
 			{
-				if (strcmp(gameobject->GetName(), gameobjects[i]->GetName()) == 0)
+				if (strcmp(gameobject->GetName(), root->GetChildbyIndex(i)->GetName()) == 0)
 				{
 					index = i;
 				}
 			}
-			std::vector<GameObject*>::iterator item = gameobjects.begin();
-			for (int i = 0; i < gameobjects.size(); i++)
+			std::vector<GameObject*>::iterator item = root->GetChildsPtr()->begin();
+			for (int i = 0; i < root->GetNumChilds(); i++)
 			{
 				if (i == index)
 				{
-					GameObject* it = gameobjects[i];
+					GameObject* it = root->GetChildbyIndex(i);
 					RELEASE(it);
-					gameobjects.erase(item);
+					root->GetChildsPtr()->erase(item);
 					it = nullptr;
 					break;
 				}

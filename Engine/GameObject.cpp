@@ -1208,7 +1208,14 @@ void GameObject::AddChildGameObject_Copy(const GameObject* child)
 
 void GameObject::AddChildGameObject(GameObject* child)
 {
-	child->parent = this;
+	if (this->GetUUID() == 1)
+	{
+		child->parent = nullptr;
+	}
+	else
+	{
+		child->parent = this;
+	}
 	childs.push_back(child);
 }
 
