@@ -77,12 +77,7 @@ public:
 	CompMesh* GetComponentMesh() const;
 	CompMaterial* GetComponentMaterial() const;
 	CompScript * GetComponentScript() const;
-	CompRectTransform * GetCompRectTransform()const;
-	CompImage * GetCompImage()const;
-	CompText * GetCompText()const;
-	CompEditText * GetCompEditText()const;
-	CompButton * GetCompButton()const;
-	CompCheckBox * GetCompCheckBox()const;
+
 	Component* GetComponentbyIndex(uint i) const;
 	void DeleteAllComponents();
 	void DeleteComponent(Component* component);

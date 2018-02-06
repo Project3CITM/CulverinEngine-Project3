@@ -12,7 +12,7 @@ CompButton::CompButton(Comp_Type t, GameObject * parent) :CompInteractive(t, par
 }
 
 
-CompButton::CompButton(const CompButton & copy, GameObject * parent) : CompInteractive(Comp_Type::C_MESH, parent)
+CompButton::CompButton(const CompButton & copy, GameObject * parent) : CompInteractive(Comp_Type::C_BUTTON, parent)
 {
 }
 

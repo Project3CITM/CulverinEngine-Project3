@@ -8,7 +8,7 @@ CompInteractive::CompInteractive(Comp_Type t, GameObject * parent) :Component(t,
 	name_component = "Canvas";
 }
 
-CompInteractive::CompInteractive(const CompInteractive & copy, GameObject * parent) :Component(Comp_Type::C_MESH, parent)
+CompInteractive::CompInteractive(const CompInteractive & copy, GameObject * parent) :Component(copy.GetType(), parent)
 {
 }
 
