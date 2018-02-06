@@ -27,6 +27,7 @@ public:
 	// EDITOR METHODS ----------
 	void ShowOptions();
 	void ShowInspectorInfo();
+	void CopyValues(const CompMaterial * component);
 	// -------------------------
 
 	// SAVE - LOAD METHODS ------------------------

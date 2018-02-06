@@ -67,7 +67,7 @@ void SceneWorld::ShowSceneWorld()
 		}
 	}
 
-	App->camera->CanMoveCamera = ImGui::IsMouseHoveringWindow(); //TODO ELLIOT CHange to variable in WindowManager.h
+	App->camera->can_move_cam = ImGui::IsMouseHoveringWindow(); //TODO ELLIOT CHange to variable in WindowManager.h
 	
 	ImGui::Image((void*)App->scene->sceneBuff->GetTexture(), ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0)); // Set texture to buffer
 

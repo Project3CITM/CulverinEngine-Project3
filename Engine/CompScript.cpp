@@ -194,14 +194,20 @@ void CompScript::ShowOptions()
 	{
 		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
-	if (ImGui::MenuItem("Paste Component As New", NULL, false, false))
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		//parent->AddComponent(App->scene->copyComponent->GetType())
-		// Create contructor Component Copy or add funtion to add info
+		if (parent->FindComponentByType(((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
+			|| ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+		{
+			parent->AddComponentCopy(*((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied());
+		}
 	}
-	if (ImGui::MenuItem("Paste Component Values", NULL, false, false))
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		// Paste values from component copied in Inspector
+		if (this->GetType() == ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
+		{
+			CopyValues(((CompScript*)((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()));
+		}
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Reset Script"))
@@ -482,6 +488,11 @@ void CompScript::ShowVarValue(ScriptVariable* var, int pushi)
 	{
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "UNKNOWN VALUE");
 	}
+}
+
+void CompScript::CopyValues(const CompScript* component)
+{
+	//more...
 }
 
 void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const

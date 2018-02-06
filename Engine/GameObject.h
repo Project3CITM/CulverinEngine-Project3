@@ -13,6 +13,12 @@ class CompTransform;
 class CompMesh;
 class CompMaterial;
 class CompScript;
+class CompRectTransform;
+class CompImage;
+class CompText;
+class CompEditText;
+class CompButton;
+class CompCheckBox;
 
 class GameObject
 {
@@ -71,6 +77,12 @@ public:
 	CompMesh* GetComponentMesh() const;
 	CompMaterial* GetComponentMaterial() const;
 	CompScript * GetComponentScript() const;
+	CompRectTransform * GetCompRectTransform()const;
+	CompImage * GetCompImage()const;
+	CompText * GetCompText()const;
+	CompEditText * GetCompEditText()const;
+	CompButton * GetCompButton()const;
+	CompCheckBox * GetCompCheckBox()const;
 	Component* GetComponentbyIndex(uint i) const;
 	void DeleteAllComponents();
 	void DeleteComponent(Component* component);

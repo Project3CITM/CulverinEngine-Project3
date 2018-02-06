@@ -1,5 +1,5 @@
-#ifndef _APPLICATION_
-#define _APPLICATION_
+#ifndef APPLICATION_H
+#define APPLICATION_H
 
 #include "Globals.h"
 #include "Timer.h"

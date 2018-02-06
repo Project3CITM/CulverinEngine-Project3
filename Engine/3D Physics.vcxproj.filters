@@ -67,6 +67,12 @@
     <Filter Include="Engine\Shaders">
       <UniqueIdentifier>{4ac4f5d4-60a2-4354-b4ec-5dc7d5776fec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Tools\Wwished">
+      <UniqueIdentifier>{d1555f45-e1b9-4150-b38a-ad9d15d78630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\Wwished\Wwise_libraries">
+      <UniqueIdentifier>{507d365f-226e-4cf8-a7fc-001bfaf27ba3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -423,41 +429,47 @@
     <ClInclude Include="ShadersLib.h">
       <Filter>Engine\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleRenderGui.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="include_wwise.h">
+      <Filter>Engine\Tools\Wwished</Filter>
     </ClInclude>
-    <ClInclude Include="CompButton.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="wwished.h">
+      <Filter>Engine\Tools\Wwished</Filter>
     </ClInclude>
-    <ClInclude Include="CompCanvas.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="CompCanvasRender.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="AK\DefaultIO\Common\AkFileLocationBase.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="CompCheckBox.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackage.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="CompEditText.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="CompGraphic.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLUT.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="CompImage.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="CompText.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="CompInteractive.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFont.h">
-      <Filter>Engine\Resources</Filter>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFileHelpers.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="CompRectTransform.h">
-      <Filter>Engine\Components</Filter>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIOBlocking.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIODeferred.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\stdafx.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -716,41 +728,32 @@
     <ClCompile Include="ShadersLib.cpp">
       <Filter>Engine\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="CompButton.cpp">
-      <Filter>Engine\Components</Filter>
+    <ClCompile Include="include_wwise.cpp">
+      <Filter>Engine\Tools\Wwished</Filter>
     </ClCompile>
-    <ClCompile Include="CompCanvas.cpp">
-      <Filter>Engine\Components</Filter>
+    <ClCompile Include="wwished.cpp">
+      <Filter>Engine\Tools\Wwished</Filter>
     </ClCompile>
-    <ClCompile Include="CompCanvasRender.cpp">
-      <Filter>Engine\Components</Filter>
+    <ClCompile Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
-    <ClCompile Include="CompCheckBox.cpp">
-      <Filter>Engine\Components</Filter>
+    <ClCompile Include="AK\DefaultIO\Common\AkFileLocationBase.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
-    <ClCompile Include="CompEditText.cpp">
-      <Filter>Engine\Components</Filter>
+    <ClCompile Include="AK\DefaultIO\Common\AkFilePackage.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
-    <ClCompile Include="CompGraphic.cpp">
-      <Filter>Engine\Components</Filter>
+    <ClCompile Include="AK\DefaultIO\Common\AkFilePackageLUT.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
-    <ClCompile Include="CompImage.cpp">
-      <Filter>Engine\Components</Filter>
+    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
-    <ClCompile Include="CompText.cpp">
-      <Filter>Engine\Components</Filter>
+    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleRenderGui.cpp">
-      <Filter>Engine\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="CompInteractive.cpp">
-      <Filter>Engine\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceFont.cpp">
-      <Filter>Engine\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="CompRectTransform.cpp">
-      <Filter>Engine\Components</Filter>
+    <ClCompile Include="AK\DefaultIO\Win32\stdafx.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -761,5 +764,11 @@
       <Filter>Engine\Tools\MathGeoLib\Math</Filter>
     </None>
     <None Include="Game\config.json" />
+    <None Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.inl">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </None>
+    <None Include="AK\DefaultIO\Common\AkMultipleFileLocation.inl">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </None>
   </ItemGroup>
 </Project>

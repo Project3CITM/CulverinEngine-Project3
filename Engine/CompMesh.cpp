@@ -134,14 +134,20 @@ void CompMesh::ShowOptions()
 	{
 		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
-	if (ImGui::MenuItem("Paste Component As New", NULL, false, false))
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		//parent->AddComponent(App->scene->copyComponent->GetType())
-		// Create contructor Component Copy or add funtion to add info
+		if (parent->FindComponentByType(((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
+			|| ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+		{
+			parent->AddComponentCopy(*((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied());
+		}
 	}
-	if (ImGui::MenuItem("Paste Component Values", NULL, false, false))
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		// Paste values from component copied in Inspector
+		if (this->GetType() == ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
+		{
+			CopyValues(((CompMesh*)((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()));
+		}
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Reset Mesh"))
@@ -273,10 +279,17 @@ void CompMesh::Draw()
 				if (temp != nullptr) {
 					uint texture_2D_sampler = 0;
 					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, temp->GetTextureID());
+					if (temp->GetTextureID() == 0)
+					{
+						glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+					}
+					else
+					{
+						glBindTexture(GL_TEXTURE_2D, temp->GetTextureID());
+					}
 					texture_2D_sampler = glGetUniformLocation(App->renderer3D->default_shader->programID, "_texture");
 					glUniform1i(texture_2D_sampler, 0);
-	
+
 
 				}
 			}		
@@ -402,6 +415,12 @@ void CompMesh::SetResource(ResourceMesh* resourse_mesh, bool isImport)
 			resourceMesh->NumGameObjectsUseMe++;
 		}
 	}
+}
+
+void CompMesh::CopyValues(const CompMesh* component)
+{
+	resourceMesh = component->resourceMesh;
+	//more...
 }
 
 void CompMesh::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const

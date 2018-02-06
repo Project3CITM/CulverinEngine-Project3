@@ -42,6 +42,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>$(SolutionDir)\Game\Mono\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Kay\Documents\GitHub\TempMotor3D_P3\Engine\AK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(SolutionDir)\Game\Mono\lib;$(LibraryPath)</LibraryPath>
@@ -91,6 +92,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.h" />
+    <ClInclude Include="AK\DefaultIO\Common\AkFileLocationBase.h" />
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackage.h" />
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.h" />
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLUT.h" />
+    <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h" />
+    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.h" />
+    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.h" />
+    <ClInclude Include="AK\DefaultIO\Win32\AkFileHelpers.h" />
+    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIOBlocking.h" />
+    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIODeferred.h" />
+    <ClInclude Include="AK\DefaultIO\Win32\stdafx.h" />
     <ClInclude Include="Algorithm\Random\LCG.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Color.h" />
@@ -117,6 +130,7 @@
     <ClInclude Include="ImportMaterial.h" />
     <ClInclude Include="CompMesh.h" />
     <ClInclude Include="ImportScript.h" />
+    <ClInclude Include="include_wwise.h" />
     <ClInclude Include="mmgr\mmgr.h" />
     <ClInclude Include="mmgr\nommgr.h" />
     <ClInclude Include="ModuleEventSystem.h" />
@@ -221,8 +235,16 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Time\Clock.h" />
     <ClInclude Include="WindowManager.h" />
+    <ClInclude Include="wwished.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.cpp" />
+    <ClCompile Include="AK\DefaultIO\Common\AkFileLocationBase.cpp" />
+    <ClCompile Include="AK\DefaultIO\Common\AkFilePackage.cpp" />
+    <ClCompile Include="AK\DefaultIO\Common\AkFilePackageLUT.cpp" />
+    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.cpp" />
+    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.cpp" />
+    <ClCompile Include="AK\DefaultIO\Win32\stdafx.cpp" />
     <ClCompile Include="Algorithm\Random\LCG.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
@@ -248,6 +270,7 @@
     <ClCompile Include="ImportMaterial.cpp" />
     <ClCompile Include="CompMesh.cpp" />
     <ClCompile Include="ImportScript.cpp" />
+    <ClCompile Include="include_wwise.cpp" />
     <ClCompile Include="mmgr\mmgr.cpp" />
     <ClCompile Include="ModuleEventSystem.cpp" />
     <ClCompile Include="ModuleFS.cpp" />
@@ -320,8 +343,11 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Time\Clock.cpp" />
+    <ClCompile Include="wwished.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.inl" />
+    <None Include="AK\DefaultIO\Common\AkMultipleFileLocation.inl" />
     <None Include="Game\config.json" />
     <None Include="Geometry\KDTree.inl" />
     <None Include="Math\Matrix.inl" />

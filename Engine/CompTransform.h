@@ -61,6 +61,8 @@ public:
 
 	const float* GetMultMatrixForOpenGL() const;
 
+	void CopyValues(const CompTransform* component);
+
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
 

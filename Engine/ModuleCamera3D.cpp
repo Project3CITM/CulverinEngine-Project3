@@ -24,7 +24,7 @@ ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
 	Start_enabled = true;
 	Update_enabled = true;
 
-	haveConfig = true;
+	have_config = true;
 	name = "Camera";
 }
 
@@ -98,7 +98,7 @@ update_status ModuleCamera3D::Update(float dt)
 		CheckOut();
 
 		// Only modify camera when it's possible
-		if (io.WantTextInput == false && isMouseOnWindow() || canOut)
+		if (io.WantTextInput == false && IsMouseOnWindow() || canOut)
 		{
 			/* ------------------- CENTER CAMERA TO OBJECT ----------------- */
 			if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
@@ -411,9 +411,9 @@ void ModuleCamera3D::CenterToObject()
 	}
 }
 
-bool ModuleCamera3D::isMouseOnWindow()
+bool ModuleCamera3D::IsMouseOnWindow()
 {
-	return CanMoveCamera;
+	return can_move_cam;
 }
 
 float * ModuleCamera3D::GetViewMatrix() const
@@ -441,7 +441,7 @@ void ModuleCamera3D::CheckOut()
 {
 	if ((App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN ||
 		App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN ||
-		App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_DOWN) && isMouseOnWindow())
+		App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_DOWN) && IsMouseOnWindow())
 	{
 		canOut = true;
 	}

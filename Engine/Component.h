@@ -1,8 +1,8 @@
-#ifndef _COMPONENT_
-#define _COMPONENT_
+#ifndef COMPONENT_H
+#define COMPONENT_H
 
 #include "Globals.h"
-#include "ImGui\imgui.h"
+#include "ImGui/imgui.h"
 #include <string>
 
 struct json_object_t;
@@ -14,10 +14,20 @@ enum Comp_Type
 {	
 	C_UNKNOWN = -1,
 	C_TRANSFORM,
+	C_RECT_TRANSFORM,
 	C_MESH,
 	C_MATERIAL,
 	C_CAMERA,
-	C_SCRIPT
+	C_UNIQUE_SEPARATOR,
+	C_SCRIPT,
+	C_BUTTON,
+	C_CHECK_BOX,
+	C_CANVAS,
+	C_CANVAS_RENDER,
+	C_TEXT,
+	C_EDIT_TEXT,
+	C_IMAGE,
+
 };
 
 class Component

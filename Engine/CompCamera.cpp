@@ -163,14 +163,20 @@ void CompCamera::ShowOptions()
 	{
 		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
-	if (ImGui::MenuItem("Paste Component As New", NULL, false, false))
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		//parent->AddComponent(App->scene->copyComponent->GetType())
-		// Create contructor Component Copy or add funtion to add info
+		if (parent->FindComponentByType(((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
+			|| ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+		{
+			parent->AddComponentCopy(*((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied());
+		}
 	}
-	if (ImGui::MenuItem("Paste Component Values", NULL, false, false))
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		// Paste values from component copied in Inspector
+		if (this->GetType() == ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
+		{
+			CopyValues(((CompCamera*)((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()));
+		}
 	}
 }
 
@@ -525,6 +531,11 @@ float* CompCamera::GetProjectionMatrix() const
 	matrix.Transpose();
 
 	return (float*)matrix.v;
+}
+
+void CompCamera::CopyValues(const CompCamera* component)
+{
+	//more...
 }
 
 void CompCamera::Save(JSON_Object * object, std::string name, bool saveScene, uint& countResources) const

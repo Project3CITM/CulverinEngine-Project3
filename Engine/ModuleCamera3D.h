@@ -1,5 +1,5 @@
-#ifndef _MODULECAMERA_
-#define _MODULECAMERA_
+#ifndef _MODULECAMERA_H_
+#define _MODULECAMERA_H_
 
 #include "Module.h"
 #include "Globals.h"
@@ -50,20 +50,19 @@ public:
 	void CenterToObject();
 	// --------------------------------------------
 
-	bool isMouseOnWindow();
+	bool IsMouseOnWindow();
 
 	float* GetViewMatrix() const;
 	float* GetProjMatrix() const;
 	float3 GetPos() const;
-
 	Frustum GetFrustum() const;
 
 private:
 	void CheckOut();
 
 public:
-	bool changecam = false;
-	bool CanMoveCamera = false;
+	bool change_cam = false;
+	bool can_move_cam = false;
 	LineSegment ray;
 
 private:
