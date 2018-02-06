@@ -238,6 +238,7 @@
     <ClCompile Include="ResourceScript.cpp" />
     <ClCompile Include="Resource_.cpp" />
     <ClCompile Include="Script_editor.cpp" />
+    <ClCompile Include="ShadersLib.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="TextEditor.cpp" />
     <ClCompile Include="WindowHierarchy.cpp" />

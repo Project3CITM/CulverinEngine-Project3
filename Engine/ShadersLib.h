@@ -1,11 +1,6 @@
 // MathLibrary.h - Contains declaration of Function class  
 #pragma once  
 
-#ifdef SHADERS_EXPORTS  
-#define SHADERS_API __declspec(dllexport)   
-#else  
-#define SHADERS_API __declspec(dllimport)   
-#endif  
 
 
 #include <string>
@@ -15,99 +10,96 @@
 #pragma comment (lib, "GL3W/libx86/glew32.lib") 
 typedef unsigned int uint;
 
-namespace ShaderLib {
-
-	enum ShaderType {
-		nullShader,
-		fragment,
-		geometry,
-		vertex,
-	};
-	
-
-	struct UniformVar {
-		
-		char name[64] = "0";
-		GLenum type = GL_ZERO;		
-
-	};
-
-	class Shader {
-	public:
-		Shader() {
-
-		}
-		~Shader() {
-
-		}
-	public:
-		uint shaderID = 0;
-
-		std::string shaderPath = "";
-
-		std::string shaderText = "";
-
-		ShaderType shaderType = ShaderType::nullShader;
-
-	};
+enum ShaderType {
+	nullShader,
+	fragment,
+	geometry,
+	vertex,
+};
 
 
-	class ShaderProgram {
-	public:
-		ShaderProgram() {
+struct UniformVar {
 
-		}
-		~ShaderProgram() {
+	char name[64] = "0";
+	GLenum type = GL_ZERO;
 
-		}
+};
 
-		SHADERS_API void _stdcall AddFragment(Shader* fragment);
-		SHADERS_API void _stdcall AddVertex(Shader* vertex);
-		SHADERS_API void _stdcall AddGeometry(Shader* geometry);
+class Shader {
+public:
+	Shader() {
 
-		SHADERS_API bool _stdcall LoadProgram();
+	}
+	~Shader() {
 
-		SHADERS_API bool _stdcall Bind();
+	}
+public:
+	uint shaderID = 0;
 
-		SHADERS_API void _stdcall Unbind();
+	std::string shaderPath = "";
 
-		SHADERS_API UniformVar _stdcall GetVariableInfo(uint index);
+	std::string shaderText = "";
 
-		SHADERS_API GLint _stdcall GetVariablesSize()const;
+	ShaderType shaderType = ShaderType::nullShader;
 
-
-	public:
-		std::string name;
-
-		uint programID = 0;
-
-		Shader* fragment = nullptr;
-		Shader* vertex = nullptr;
-		Shader* geometry = nullptr;
-
-	};
+};
 
 
-	class ShaderManager
-	{
-	public:
+class ShaderProgram {
+public:
+	ShaderProgram() {
 
-		
-		 SHADERS_API ShaderProgram* _stdcall CreateShader(char* name);
+	}
+	~ShaderProgram() {
 
-		 SHADERS_API ShaderProgram*  _stdcall CreateDefaultShader();
+	}
 
-		 SHADERS_API Shader*  _stdcall CompileShader(std::string path, ShaderType type);
-	 
-		 SHADERS_API void  _stdcall AddShaderList(Shader* newShader);
-		
+	void AddFragment(Shader* fragment);
+	void AddVertex(Shader* vertex);
+	void  AddGeometry(Shader* geometry);
 
-	public:
-		
+	bool  LoadProgram();
 
-		 std::list<Shader*> shaders;
-		 std::list<ShaderProgram*> programs;
-	};
+	bool  Bind();
 
-}
+	void  Unbind();
+
+	UniformVar  GetVariableInfo(uint index);
+
+	GLint  GetVariablesSize()const;
+
+
+public:
+	std::string name;
+
+	uint programID = 0;
+
+	Shader* fragment = nullptr;
+	Shader* vertex = nullptr;
+	Shader* geometry = nullptr;
+
+};
+
+
+class ShaderManager
+{
+public:
+
+
+	ShaderProgram * CreateShader(char* name);
+
+	ShaderProgram*   CreateDefaultShader();
+
+	Shader*   CompileShader(std::string path, ShaderType type);
+
+	void   AddShaderList(Shader* newShader);
+
+
+public:
+
+
+	std::list<Shader*> shaders;
+	std::list<ShaderProgram*> programs;
+};
+
 

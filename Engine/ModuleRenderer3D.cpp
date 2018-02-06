@@ -132,6 +132,8 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 		fog_density = json_object_get_number(node, "Density");	
 	}
 
+	default_shader = shader_manager.CreateDefaultShader();
+
 	Awake_t = perf_timer.ReadMs();
 	return ret;
 }

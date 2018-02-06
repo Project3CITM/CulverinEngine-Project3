@@ -677,6 +677,9 @@
     <ClCompile Include="ModuleEventSystem.cpp">
       <Filter>Engine\Events</Filter>
     </ClCompile>
+    <ClCompile Include="ShadersLib.cpp">
+      <Filter>Engine\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">

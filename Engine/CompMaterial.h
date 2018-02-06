@@ -5,6 +5,8 @@
 #include "Color.h"
 #include <string>
 
+#include "ShadersLib.h"
+
 class ResourceMaterial;
 
 class CompMaterial : public Component
@@ -34,7 +36,7 @@ public:
 
 public:
 	ResourceMaterial* resourceMaterial = nullptr;
-
+	ShaderProgram* material_shader = nullptr;
 private:
 	Color color = White;
 	bool selectMaterial = false;

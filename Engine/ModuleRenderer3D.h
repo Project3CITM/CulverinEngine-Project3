@@ -6,6 +6,8 @@
 #include "Light.h"
 #include "parson.h"
 
+#include "ShadersLib.h"
+
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
@@ -58,6 +60,10 @@ public:
 	bool bounding_box = false;
 	GLfloat fog_density = 0;
 	// --------------------------
+
+	// Shaders
+	ShaderProgram* default_shader = nullptr;
+	ShaderManager shader_manager;
 };
 
 #endif

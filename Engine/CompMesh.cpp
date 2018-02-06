@@ -230,6 +230,8 @@ void CompMesh::ShowInspectorInfo()
 
 void CompMesh::Draw()
 {
+
+	App->renderer3D->default_shader->Bind();
 	if (render && resourceMesh != nullptr)
 	{
 		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
@@ -303,6 +305,8 @@ void CompMesh::Draw()
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+			App->renderer3D->default_shader->Unbind();
 		}
 
 		else
