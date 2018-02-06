@@ -66,6 +66,16 @@ bool Component::isActive() const
 	return active;
 }
 
+const char * Component::GetName() const
+{
+	return name_component;
+}
+
+bool Component::WantDelete() const
+{
+	return to_delete;
+}
+
 void Component::SetActive(bool active)
 {
 	this->active = active;

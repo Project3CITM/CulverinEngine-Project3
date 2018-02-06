@@ -36,7 +36,7 @@ CompCamera::CompCamera(Comp_Type t, GameObject* parent) : Component(t, parent)
 	frustum.verticalFov = vertical_fov * DEGTORAD;
 	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
 
-	nameComponent = "Camera";
+	name_component = "Camera";
 }
 
 CompCamera::CompCamera(const CompCamera& copy, GameObject* parent) : Component(Comp_Type::C_CAMERA, parent)
@@ -62,7 +62,7 @@ CompCamera::CompCamera(const CompCamera& copy, GameObject* parent) : Component(C
 	frustum.verticalFov = vertical_fov * DEGTORAD;
 	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
 
-	nameComponent = "Camera";
+	name_component = "Camera";
 }
 
 CompCamera::~CompCamera()
@@ -149,7 +149,7 @@ void CompCamera::ShowOptions()
 	}
 	if (ImGui::MenuItem("Remove Component"))
 	{
-		toDelete = true;
+		to_delete = true;
 	}
 	if (ImGui::MenuItem("Move Up", NULL, false, false))
 	{
@@ -529,7 +529,7 @@ float* CompCamera::GetProjectionMatrix() const
 
 void CompCamera::Save(JSON_Object * object, std::string name, bool saveScene, uint& countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", nameComponent);
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", C_CAMERA);
 
 	// Transform variables ------

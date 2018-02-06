@@ -14,7 +14,7 @@ CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent
 {
 	uid = App->random->Int();
 	color = White;
-	nameComponent = "Material";
+	name_component = "Material";
 }
 
 CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Component(Comp_Type::C_MATERIAL, parent)
@@ -27,7 +27,7 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 		resourceMaterial->NumGameObjectsUseMe++;
 	}
 
-	nameComponent = "Material";
+	name_component = "Material";
 }
 
 CompMaterial::~CompMaterial()
@@ -129,7 +129,7 @@ void CompMaterial::ShowOptions()
 	}
 	if (ImGui::MenuItem("Remove Component"))
 	{
-		toDelete = true;
+		to_delete = true;
 	}
 	if (ImGui::MenuItem("Move Up", NULL, false, false))
 	{
@@ -241,7 +241,7 @@ void CompMaterial::ShowInspectorInfo()
 
 void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", nameComponent);
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", C_MATERIAL);
 	float4 tempColor = { color.r, color.g, color.b, color.a };
 	App->fs->json_array_dotset_float4(object, name + "Color", tempColor);

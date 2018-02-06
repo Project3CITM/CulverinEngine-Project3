@@ -13,12 +13,12 @@
 CompScript::CompScript(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
 	uid = App->random->Int();
-	nameComponent = "Script";
+	name_component = "Script";
 }
 
 CompScript::CompScript(const CompScript & copy, GameObject * parent) : Component(Comp_Type::C_SCRIPT, parent)
 {
-	nameComponent = copy.nameScript.c_str();
+	name_component = copy.nameScript.c_str();
 }
 
 CompScript::~CompScript()
@@ -172,7 +172,7 @@ void CompScript::ShowOptions()
 	ImGui::Separator();
 	if (ImGui::MenuItem("Remove Component"))
 	{
-		toDelete = true;
+		to_delete = true;
 	}
 	if (ImGui::MenuItem("Move to Front", NULL, false, false))
 	{
@@ -486,7 +486,7 @@ void CompScript::ShowVarValue(ScriptVariable* var, int pushi)
 
 void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", nameComponent);
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", Comp_Type::C_SCRIPT);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 	if (resourcescript != nullptr)

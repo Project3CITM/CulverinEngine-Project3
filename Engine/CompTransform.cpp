@@ -19,7 +19,7 @@
 
 CompTransform::CompTransform(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
-	nameComponent = "Transformation";
+	name_component = "Transformation";
 }
 
 CompTransform::CompTransform(const CompTransform& copy, GameObject* parent) : Component(Comp_Type::C_TRANSFORM, parent)
@@ -29,7 +29,7 @@ CompTransform::CompTransform(const CompTransform& copy, GameObject* parent) : Co
 	
 	Init(copy.GetPos(), copy.GetRotEuler(), copy.GetScale()); //Set Local matrix
 
-	nameComponent = "Transformation";
+	name_component = "Transformation";
 }
 
 CompTransform::~CompTransform()
@@ -461,7 +461,7 @@ const float* CompTransform::GetMultMatrixForOpenGL() const
 
 void CompTransform::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", nameComponent);
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	// TRANSFORM -----------
 	json_object_dotset_number_with_std(object, name + "Type", C_TRANSFORM);
 	// Position
