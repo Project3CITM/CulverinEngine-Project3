@@ -39,7 +39,7 @@ build:
   verbosity: normal
   
 before_package:
-- ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\Handout\$env:CONFIGURATION\3D Physics - class4.exe C:\projects\engine\Engine\Game\.
+- ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\Handout\$env:CONFIGURATION\CulverinEngine.exe C:\projects\engine\Engine\Game\.
 - ps: Copy-Item C:\projects\TempMotor3D_P3\README.md C:\projects\engine\Engine\Game\.
   
 artifacts:
