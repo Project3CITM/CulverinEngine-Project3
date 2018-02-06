@@ -1,7 +1,6 @@
 #ifndef _WWISHED_H_
 #define _WWISHED_H_
 
-
 #include <AK/SoundEngine/Common/AkTypes.h>
 
 
