@@ -1,8 +1,8 @@
-#ifndef _COMPONENT_
-#define _COMPONENT_
+#ifndef COMPONENT_H
+#define COMPONENT_H
 
 #include "Globals.h"
-#include "ImGui\imgui.h"
+#include "ImGui/imgui.h"
 #include <string>
 
 struct json_object_t;
@@ -17,6 +17,7 @@ enum Comp_Type
 	C_MESH,
 	C_MATERIAL,
 	C_CAMERA,
+	C_UNIQUE_SEPARATOR,
 	C_SCRIPT
 };
 
@@ -47,7 +48,7 @@ public:
 
 	uint GetUUID() const;
 	Comp_Type GetType() const;
-	bool isActive() const;
+	bool IsActive() const;
 	const char* GetName() const;
 	bool WantDelete() const;
 

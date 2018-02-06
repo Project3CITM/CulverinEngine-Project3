@@ -14,7 +14,8 @@ public:
 		FOLDER,
 		MATERIAL,
 		MESH,
-		SCRIPT
+		SCRIPT,
+		FONT
 	};
 	enum State {
 		UNLOADED,

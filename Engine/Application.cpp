@@ -491,7 +491,7 @@ void Application::Config()
 
 			while (item != list_modules.end() && ret == UPDATE_CONTINUE)
 			{
-				if ((*item)->IsEnabled() && (*item)->haveConfig)
+				if ((*item)->IsEnabled() && (*item)->have_config)
 				{
 					static bool* closeButton = NULL;
 					if (!configuration->_BeginDock((*item)->name.c_str(), closeButton, ImGuiWindowFlags_NoCollapse))

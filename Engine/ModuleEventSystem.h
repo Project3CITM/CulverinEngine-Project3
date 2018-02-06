@@ -1,5 +1,29 @@
-#ifndef _EVENTSYSTEM_
-#define _EVENTSYSTEM_
+#ifndef EVENTSYSTEM
+#define EVENTSYSTEM
+
+/*--------------------------------------------------------------------------------------------------------------*/
+/*---To use "void PushEvent(Event& event);" & "AddListener(EventType type, Module* listener);" include this-----*/
+/*---file and call them directly, no need to do App-> before call.----------------------------------------------*/
+/*--------------------------------------------------------------------------------------------------------------*/
+/*---To generate new events, include EventDef.h-----------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------------------------------------*/
+/*---Create events:---------------------------------------------------------------------------------------------*/
+/*---Just make an instance of the union Event, define the type and all the especific properties of the event----*/
+/*---type. Then just call "PushEvent(Event& event)" the system will store the event and send it at the end of---*/
+/*---the frame, so you can make events in preupdate, update and postupdate.-------------------------------------*/
+/*---Example:---------------------------------------------------------------------------------------------------*/
+/*---Event event;-----------------------------------------------------------------------------------------------*/
+/*---event.type = EventType::EVENT_DELETE_GO;-------------------------------------------------------------------*/
+/*---event.deletego.Todelte = (Something to delete);------------------------------------------------------------*/
+/*---PushEvent(event);------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------------------------------------*/
+/*---Receive events:--------------------------------------------------------------------------------------------*/
+/*---In the module you want to receive events, define the method "bool SetEventListenrs()", inside that, call---*/
+/*---the function "AddListener(EventType, (Module*)this)" with the propper event type you want to receive.------*/
+/*---Now this module is ready to receive events of the type added, but you need to define the method to---------*/
+/*---receive the events, define "void OnEvent(Event& event)" with a switch inside like the one in input---------*/
+/*---module with SDL. Like "switch(event.type){case: EventType::EVENT_DELETE_GO: (call functions); break;}".----*/
+/*--------------------------------------------------------------------------------------------------------------*/
 
 #include <queue>
 #include <map>
@@ -34,4 +58,4 @@ private:
 	std::map<EventType, std::vector<Module*>> MEventListeners;
 };
 
-#endif //_EVENTSYSTEM_
+#endif //EVENTSYSTEM

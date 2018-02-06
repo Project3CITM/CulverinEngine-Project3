@@ -36,7 +36,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 	Update_enabled = true;
 
 	name = "Scene";
-	haveConfig = true;
+	have_config = true;
 }
 
 Scene::~Scene()
@@ -445,7 +445,7 @@ void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 		GameObject* it = gameobject->GetChildbyIndex(i);
 		if(it != nullptr)
 		{
-			if (!it->isDeleteFixed())
+			if (!it->IsDeleteFixed())
 			{
 				RELEASE(it);
 			}

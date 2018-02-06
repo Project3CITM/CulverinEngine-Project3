@@ -5,7 +5,7 @@
 /*---Add new events:-----------------------------------------------------------------------------------------*/
 /*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))--------------*/
 /*---Add the new Event struct (in the proper place and alphabetical order (easier to search))----------------*/
-/*---In the new Event structure DON'T declare anything (this can be modified in the future)------------------*/
+/*---In the new Event structure DON'T define anything (this can be modified in the future)-------------------*/
 /*---Add the new Event in the Event union (in the proper place and alphabetical order (easier to search))----*/
 /*---If you are testing and don't put in the proper place and alphabetical order the events copy&paste this:-*/
 /*---(Not ordered)-------------------------------------------------------------------------------------------*/
@@ -16,19 +16,21 @@
 /*-----------All forwad declarations here-----------*/
 /*--------------------------------------------------*/
 class GameObject;
+class Component;
 
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
 /*--------------------------------------------------*/
 enum EventType
 {
+	EVENT_UNKNOWN = -1,
 	/*----------------------Engine----------------------*/
-	DELETE_GO,
-	DOCKING_MODIF,
-	DRAW,
-	DROPPED_FILE,
-	TIME_MANAGER,
-	WINDOW_RESIZE,
+	EVENT_DELETE_GO,
+	EVENT_DOCKING_MODIF,
+	EVENT_DRAW,
+	EVENT_DROPPED_FILE,
+	EVENT_TIME_MANAGER,
+	EVENT_WINDOW_RESIZE,
 	/*-------------------Audio Engine-------------------*/
 
 	/*------------------Gameplay System-----------------*/
@@ -38,8 +40,8 @@ enum EventType
 	/*----------------------Physics---------------------*/
 
 	/*------------------Shader Pipeline-----------------*/
-	CREATE_SHADER,
-	CREATE_SHADER_PROGRAM,
+	EVENT_CREATE_SHADER,
+	EVENT_CREATE_SHADER_PROGRAM,
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
@@ -67,13 +69,15 @@ struct EDraw
 	EventType type;
 	enum DrawType
 	{
-		DRAW3D,					//3D Game Objects without alpha
-		DRAW3DALPHA_WCANVAS,	//3D Game Objects with alpha & World space canvas
-		DRAW2DSCREENCANVAS		//Screen space canvas
+		DRAW_3D,			//3D Game Objects without alpha
+		DRAW_3D_ALPHA,		//3D Game Objects with alpha & World space canvas
+		DRAW_2D,			//2D GameObject / game object you want to draw with orthogonal perspective
+		DRAW_WORLD_CANVAS,	//World space canvas
+		DRAW_SCREEN_CANVAS	//Screen space canvas
 	};
 	DrawType Dtype;
 	float DistanceCamToObject;
-	GameObject* ToDraw;
+	Component* ToDraw;
 };
 
 struct EDroppedFile
@@ -87,11 +91,11 @@ struct ETimeManager
 	EventType type;
 	enum TimeEvent
 	{
-		PLAY,
-		PAUSE,
-		UNPAUSE,
-		FRAME,
-		STOP
+		TIME_PLAY,
+		TIME_PAUSE,
+		TIME_UNPAUSE,
+		TIME_FRAME,
+		TIME_STOP
 	};
 	TimeEvent time;
 };

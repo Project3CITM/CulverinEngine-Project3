@@ -48,10 +48,10 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 	name = App->GetCharfromConstChar(nametemp.c_str());
 
 	// Same data as the 'copy' gameobject
-	active = copy.isActive();
-	visible = copy.isVisible();
-	static_obj = copy.isStatic();
-	bb_active = copy.isAABBActive();
+	active = copy.IsActive();
+	visible = copy.IsVisible();
+	static_obj = copy.IsStatic();
+	bb_active = copy.IsAABBActive();
 	if (copy.bounding_box != nullptr)
 	{
 		bounding_box = new AABB(*copy.bounding_box);
@@ -98,7 +98,7 @@ bool GameObject::CheckScripts(int& numfails)
 		//Check compilation errors --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i]->isActive())
+			if (components[i]->IsActive())
 			{
 				if (components[i]->GetType() == Comp_Type::C_SCRIPT)
 				{
@@ -113,7 +113,7 @@ bool GameObject::CheckScripts(int& numfails)
 		//Check child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i]->isActive())
+			if (childs[i]->IsActive())
 			{
 				childs[i]->CheckScripts(numfails);
 			}
@@ -137,7 +137,7 @@ void GameObject::StartScripts()
 		//Start Active scripts --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i]->isActive())
+			if (components[i]->IsActive())
 			{
 				if (components[i]->GetType() == Comp_Type::C_SCRIPT)
 				{
@@ -149,7 +149,7 @@ void GameObject::StartScripts()
 		//Check child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i]->isActive())
+			if (childs[i]->IsActive())
 			{
 				childs[i]->StartScripts();
 			}
@@ -164,7 +164,7 @@ void GameObject::ClearAllVariablesScript()
 		//Start Active scripts --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i]->isActive())
+			if (components[i]->IsActive())
 			{
 				if (components[i]->GetType() == Comp_Type::C_SCRIPT)
 				{
@@ -176,7 +176,7 @@ void GameObject::ClearAllVariablesScript()
 		//Check child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i]->isActive())
+			if (childs[i]->IsActive())
 			{
 				childs[i]->ClearAllVariablesScript();
 			}
@@ -233,7 +233,7 @@ void GameObject::Init()
 
 void GameObject::preUpdate(float dt)
 {
-	fixedDelete = false;
+	to_delete = false;
 
 	if (active)
 	{
@@ -246,7 +246,7 @@ void GameObject::preUpdate(float dt)
 			}
 			else
 			{
-				if (components[i]->isActive())
+				if (components[i]->IsActive())
 				{
 					components[i]->preUpdate(dt);
 				}
@@ -256,13 +256,13 @@ void GameObject::preUpdate(float dt)
 		//preUpdate child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i]->toDelete)
+			if (childs[i]->to_delete)
 			{
 				App->scene->DeleteGameObject(childs[i]);
 			}
 			else
 			{
-				if (childs[i]->isActive())
+				if (childs[i]->IsActive())
 				{
 					childs[i]->preUpdate(dt);
 				}
@@ -278,7 +278,7 @@ void GameObject::Update(float dt)
 		//Update Components --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i]->isActive())
+			if (components[i]->IsActive())
 			{
 				components[i]->Update(dt);
 			}
@@ -287,7 +287,7 @@ void GameObject::Update(float dt)
 		//Update child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i]->isActive())
+			if (childs[i]->IsActive())
 			{
 				childs[i]->Update(dt);
 			}
@@ -331,12 +331,12 @@ bool GameObject::CleanUp()
 
 void GameObject::FixedDelete(bool check_delete)
 {
-	fixedDelete = check_delete;
+	to_delete = check_delete;
 }
 
-bool GameObject::isDeleteFixed() const
+bool GameObject::IsDeleteFixed() const
 {
-	return fixedDelete;
+	return to_delete;
 }
 
 void GameObject::Draw()
@@ -346,7 +346,7 @@ void GameObject::Draw()
 		//Draw Components --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i]->isActive() && components[i]->GetType() == Comp_Type::C_MESH)
+			if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_MESH)
 			{
 				components[i]->Draw();
 			}
@@ -355,7 +355,7 @@ void GameObject::Draw()
 		//Draw child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i]->isActive())
+			if (childs[i]->IsActive())
 			{
 				childs[i]->Draw();
 			}
@@ -452,7 +452,7 @@ void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* p
 
 void GameObject::ShowHierarchy()
 {
-	if (!isVisible())
+	if (!IsVisible())
 	{
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.385f, 0.385f, 0.385f, 1.00f));
 	}
@@ -710,22 +710,22 @@ void GameObject::ShowInspectorInfo()
 	ImGui::Spacing();
 	ImGui::Spacing();
 	ImGui::Text("");
-	ImGui::SameLine(ImGui::GetWindowWidth() / 2 - Width_AddComponent / 2);
+	ImGui::SameLine(ImGui::GetWindowWidth() / 2 - WIDTH_ADDCOMPONENT / 2);
 	//ImGui::PushItemWidth(ImGui::GetWindowWidth() / 2);
 	static bool add_component = false;
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.208f, 0.208f, 0.208f, 1.00f));
-	if (ImGui::ButtonEx("ADD COMPONENT", ImVec2(Width_AddComponent, 20)))
+	if (ImGui::ButtonEx("ADD COMPONENT", ImVec2(WIDTH_ADDCOMPONENT, 20)))
 	{
 		add_component = !add_component;
 	}
 	ImGui::PopStyleColor();
 	ImVec2 pos_min = ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y);
-	ImVec2 pos_max = ImVec2(pos_min.x + (ImGui::GetWindowWidth() / 2), pos_min.y + (Width_AddComponent / 2));
+	ImVec2 pos_max = ImVec2(pos_min.x + (ImGui::GetWindowWidth() / 2), pos_min.y + (WIDTH_ADDCOMPONENT / 2));
 	if (add_component)
 	{
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.258f, 0.258f, 0.258f, 1.00f));
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y + ImGui::GetItemRectSize().y));
-		ImGui::SetNextWindowSize(ImVec2(Width_AddComponent, Width_AddComponent / 2));
+		ImGui::SetNextWindowSize(ImVec2(WIDTH_ADDCOMPONENT, WIDTH_ADDCOMPONENT / 2));
 		ImGui::Begin("AddComponent", NULL, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
 		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4(0.311f, 0.311f, 0.311f, 1.00f));
 		if (ImGui::BeginChild(ImGui::GetID("AddComponent"), ImVec2(ImGui::GetWindowWidth(), 20), false, ImGuiWindowFlags_NoScrollWithMouse))
@@ -839,17 +839,17 @@ void GameObject::SetStatic(bool set_static)
 	static_obj = set_static;
 }
 
-bool GameObject::isActive() const
+bool GameObject::IsActive() const
 {
 	return active;
 }
 
-bool GameObject::isVisible() const
+bool GameObject::IsVisible() const
 {
 	return visible;
 }
 
-bool GameObject::isStatic() const
+bool GameObject::IsStatic() const
 {
 	return static_obj;
 }
@@ -1241,7 +1241,7 @@ GameObject* GameObject::GetParent() const
 	return parent;
 }
 
-bool GameObject::HaveParent()
+bool GameObject::HaveParent() const
 {
 	return (parent != nullptr);
 }
@@ -1276,7 +1276,7 @@ void GameObject::SetAABBActive(bool active)
 	bb_active = active;
 }
 
-bool GameObject::isAABBActive() const
+bool GameObject::IsAABBActive() const
 {
 	return bb_active;
 }
@@ -1298,12 +1298,12 @@ void GameObject::SetUUIDRandom()
 
 bool GameObject::WanttoDelete() const
 {
-	return toDelete;
+	return to_delete;
 }
 
 void GameObject::SettoDelete()
 {
-	toDelete = true;
+	to_delete = true;
 }
 
 void GameObject::RemoveScriptReference(GameObject* go)

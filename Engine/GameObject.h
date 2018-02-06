@@ -1,5 +1,5 @@
-#ifndef _GAMEOBJECT_
-#define _GAMEOBJECT_
+#ifndef _GAMEOBJECT_H_
+#define _GAMEOBJECT_H_
 
 #include "Globals.h"
 #include "Component.h"
@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#define Width_AddComponent 204
+#define WIDTH_ADDCOMPONENT 204
 
 class CompTransform;
 class CompMesh;
@@ -35,17 +35,21 @@ public:
 	void Update(float dt);
 	void postUpdate();
 	bool CleanUp();
-
-	void FixedDelete(bool check_delete);
-	bool isDeleteFixed() const;
-	void Draw();
 	bool Enable();
 	bool Disable();
+	void Draw();
 
-	// Name
+	void SetActive(bool active);
+	void SetVisible(bool visible);
+	void SetStatic(bool set_static);
+	void FixedDelete(bool check_delete);
 	void SetName(char* name);
+
+	bool IsActive() const;
+	bool IsVisible() const;
+	bool IsStatic() const;
+	bool IsDeleteFixed() const;
 	const char* GetName() const;
-	void NameNotRepeat(std::string& name, bool haveParent, GameObject* parent);
 
 	// EDITOR METHODS ------------------
 	void ShowHierarchy();
@@ -55,13 +59,8 @@ public:
 	void ShowFreezeChildsWindow(bool freeze, bool& active);
 	// ----------------------------------
 
-	void SetActive(bool active);
-	void SetVisible(bool visible);
-	void SetStatic(bool set_static);
-
-	bool isActive() const;
-	bool isVisible() const;
-	bool isStatic() const;
+	// Name -------------
+	void NameNotRepeat(std::string& name, bool haveParent, GameObject* parent);
 
 	// Components -----------------------------
 	Component* AddComponent(Comp_Type type, bool isFromLoader = false);
@@ -75,7 +74,6 @@ public:
 	Component* GetComponentbyIndex(uint i) const;
 	void DeleteAllComponents();
 	void DeleteComponent(Component* component);
-
 	void SaveComponents(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void LoadComponents(const JSON_Object * object, std::string name, uint numComponents);
 
@@ -87,24 +85,21 @@ public:
 	void RemoveChildbyIndex(uint index);
 	std::vector<GameObject*> GetChildsVec() const;
 	std::vector<GameObject*>* GetChildsPtr();
-	void AddChildGameObject_Copy(const GameObject* child);
 	void AddChildGameObject(GameObject* child);
+	void AddChildGameObject_Copy(const GameObject* child);
 
 	// Transform Modifications -----------------
 	void UpdateChildsMatrices();
 
 	// Parent ----------------
 	GameObject* GetParent() const; //Not const pointer to enable parent variables modification
-	bool HaveParent();
+	bool HaveParent() const;
 
 	// Bounding Box -----------------------
 	void AddBoundingBox(const ResourceMesh* mesh);
 	void DrawBoundingBox();
-	AABB* bounding_box = nullptr;
-	AABB  box_fixed;
 	void SetAABBActive(bool active);
-	bool isAABBActive() const;
-
+	bool IsAABBActive() const;
 	uint GetUUID() const;
 	void SetUUID(uint uuid);
 	void SetUUIDRandom();
@@ -114,23 +109,24 @@ public:
 	void SettoDelete();
 	void RemoveScriptReference(GameObject* go);
 
+public:
+	AABB * bounding_box = nullptr;
+	AABB  box_fixed;
 	bool beingUsedByScript = false;
+
 private:
 	uint uid = 0;
 	char* name = "CHANGE THIS";
 	bool active = false;
 	bool visible = false;
 	bool static_obj = false;
-	bool toDelete = false; 
-	bool fixedDelete = false;
+	bool to_delete = false; 
+	bool fixed_delete = false;
 	bool bb_active = false;
 
 	GameObject* parent = nullptr;
 	std::vector<Component*> components;
 	std::vector<GameObject*> childs;
-	
-
 };
-
 
 #endif

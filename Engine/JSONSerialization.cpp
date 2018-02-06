@@ -81,9 +81,9 @@ void JSONSerialization::SaveChildGameObject(JSON_Object* config_node, const Game
 	// Name- --------
 	json_object_dotset_string_with_std(config_node, name + "Name", gameObject.GetName());
 	// Bounding Box ---------
-	json_object_dotset_boolean_with_std(config_node, name + "Bounding Box", gameObject.isAABBActive());
+	json_object_dotset_boolean_with_std(config_node, name + "Bounding Box", gameObject.IsAABBActive());
 	// Static ---------
-	json_object_dotset_boolean_with_std(config_node, name + "Static", gameObject.isStatic());
+	json_object_dotset_boolean_with_std(config_node, name + "Static", gameObject.IsStatic());
 
 
 	// Components  ------------

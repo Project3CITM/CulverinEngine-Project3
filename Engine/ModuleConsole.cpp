@@ -1,7 +1,7 @@
 #include "ModuleConsole.h"
 #include "Application.h"
 #include "ModuleInput.h"
-#include "ImGui\imgui.h"
+#include "ImGui/imgui.h"
 
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 

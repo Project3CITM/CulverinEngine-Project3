@@ -588,7 +588,7 @@ mono_bool CSharpScript::IsGOActive(MonoObject* object)
 
 	if (currentGameObject != nullptr)
 	{
-		return currentGameObject->isActive();
+		return currentGameObject->IsActive();
 	}
 	else
 	{ 
