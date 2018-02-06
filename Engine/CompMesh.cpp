@@ -19,7 +19,7 @@
 CompMesh::CompMesh(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
 	uid = App->random->Int();
-	nameComponent = "Mesh";
+	name_component = "Mesh";
 }
 
 CompMesh::CompMesh(const CompMesh& copy, GameObject* parent) :Component(Comp_Type::C_MESH, parent)
@@ -34,7 +34,7 @@ CompMesh::CompMesh(const CompMesh& copy, GameObject* parent) :Component(Comp_Typ
 	hasNormals = copy.hasNormals;
 	render = copy.render;
 
-	nameComponent = "Mesh";
+	name_component = "Mesh";
 }
 
 CompMesh::~CompMesh()
@@ -120,7 +120,7 @@ void CompMesh::ShowOptions()
 	}
 	if (ImGui::MenuItem("Remove Component"))
 	{
-		toDelete = true;
+		to_delete = true;
 	}
 	if (ImGui::MenuItem("Move Up", NULL, false, false))
 	{
@@ -406,7 +406,7 @@ void CompMesh::SetResource(ResourceMesh* resourse_mesh, bool isImport)
 
 void CompMesh::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", nameComponent);
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", C_MESH);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 	if(resourceMesh != nullptr)
