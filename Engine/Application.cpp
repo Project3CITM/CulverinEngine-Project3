@@ -109,6 +109,8 @@ bool Application::Init()
 		SetFpsCap(maxFPS);
 		// ---------------------------------------------------
 
+		actualScene = json_object_get_string(config_node, "ActualScene");
+
 		// Call Init() in all modules
 		std::vector<Module*>::iterator item = list_modules.begin();
 
@@ -574,6 +576,9 @@ bool Application::SaveConfig()
 		json_object_set_string(config_node, "Org Name", orgName.c_str());
 		json_object_set_number(config_node, "Max FPS", maxFPS);
 		json_object_set_boolean(config_node, "VSYNC", vsync);
+		 
+		//Save ActualScene ----- 
+		json_object_set_string(config_node, "ActualScene", actualScene.c_str());
 
 
 		//Iterate all modules to save each respective info
@@ -687,6 +692,16 @@ void Application::ChangeCamera(const char* window)
 		change_to_game = false;
 		change_to_scene = true;
 	}
+}
+
+std::string Application::GetActualScene()
+{
+	return actualScene;
+}
+
+void Application::SetActualScene(std::string scene)
+{
+	actualScene = scene;
 }
 
 const std::vector<Module*>* Application::GetModuleList() const

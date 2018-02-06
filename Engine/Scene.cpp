@@ -46,20 +46,18 @@ Scene::~Scene()
 	RELEASE(skybox);
 }
 
-//bool Scene::Init(JSON_Object * node)
-//{
-//	perf_timer.Start();
-
-//	Awake_t = perf_timer.ReadMs();
-//	return true;
-//}
-
 bool Scene::Start()
 {
 	perf_timer.Start();
 
 	// First of all create New Scene
 	root = new GameObject("NewScene", 1);
+	bool newScene = true;
+	if (strcmp(App->GetActualScene().c_str(), "") != 0)
+	{
+		newScene = false;
+		App->Json_seria->LoadScene(App->GetActualScene().c_str());
+	}
 
 	/* Init Quadtree */
 	size_quadtree = 50.0f;
@@ -68,13 +66,15 @@ bool Scene::Start()
 	/* Set size of the plane of the scene */
 	size_plane = 50;
 
-	/* Create Default Main Camera Game Object */
-	CreateMainCamera(nullptr);
+	if (newScene)
+	{
+		/* Create Default Main Camera Game Object */
+		CreateMainCamera(nullptr);
 
-	////TEST 
-	//ScriptManager Jordi;
-	//Jordi.Compile("C:/Users/Administrador/Documents/GitHub/3D-Engine/Engine/Game/Assets/Example_test.cs");
-	
+		// Also Light??
+	}
+
+
 	icon_options_transform = App->textures->LoadTexture("Images/UI/icon_options_transform.png");
 
 	/* Init Skybox */ 

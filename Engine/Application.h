@@ -96,6 +96,9 @@ public:
 
 	void ChangeCamera(const char* window);
 
+	std::string GetActualScene();
+	void SetActualScene(std::string);
+
 	const std::vector<Module*>* GetModuleList() const;
 
 private:

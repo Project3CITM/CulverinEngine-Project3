@@ -417,6 +417,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 					directory_scene += "/";
 					directory_scene += files[i].file_name;
 					App->Json_seria->LoadScene(directory_scene.c_str());
+					App->SetActualScene(directory_scene.c_str());
 					App->resource_manager->ReImportAllScripts();
 				}
 			}

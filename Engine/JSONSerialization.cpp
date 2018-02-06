@@ -119,6 +119,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		int NUmberGameObjects = json_object_dotget_number(config_node, "Info.Number of GameObjects");
 		App->scene->root->SetUUID(json_object_dotget_number(config_node, "Scene.Propeties.UUID"));
 		App->scene->root->SetName(App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, "Scene.Propeties.Name")));
+		std::vector<LoadSceneSt> templist;
 		if (NUmberGameObjects > 0)
 		{
 			for (int i = 0; i < NUmberGameObjects; i++)
@@ -141,49 +142,37 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				}
 				int uuid_parent = json_object_dotget_number_with_std(config_node, name + "Parent");
 
-				//Add GameObject
-				if (uuid_parent == -1)
+				LoadSceneSt temp;
+				temp.go = obj;
+				temp.uid_parent = uuid_parent;
+				templist.push_back(temp);
+			}
+		}
+		// Now with uid parent add childs.
+		for (int i = 0; i < templist.size(); i++)
+		{
+			if (templist[i].uid_parent != -1)
+			{
+				for (int j = 0; j < templist.size(); j++)
 				{
-					App->scene->root->AddChildGameObject(obj);
-				}
-				else
-				{
-					//for (int x = 0; x < App->scene->gameobjects.size(); x++)
-					//{
-					//	LoadChilds(*App->scene->gameobjects[x], *obj, uuid_parent);
-					//}
+					if (templist[i].uid_parent == templist[j].go->GetUUID())
+					{
+						templist[j].go->AddChildGameObject(templist[i].go);
+					}
 				}
 			}
 		}
+		// Now pass vector to root in scene
+		for (int i = 0; i < templist.size(); i++)
+		{
+			if (templist[i].uid_parent == -1)
+			{
+				App->scene->root->AddChildGameObject(templist[i].go);
+			}
+		}
+		templist.clear();
 	}
 	json_value_free(config_file);
-}
-
-void JSONSerialization::LoadChilds(GameObject& parent, GameObject& child, int uuidParent)
-{
-	if (parent.GetNumChilds() > 0)
-	{
-		for (int i = 0; i < parent.GetNumChilds(); i++)
-		{
-			if (parent.GetUUID() == uuidParent)
-			{
-				parent.AddChildGameObject(&child);
-				return;
-			}
-			else
-			{
-				LoadChilds(*parent.GetChildbyIndex(i), child, uuidParent);
-			}
-		}
-	}
-	else
-	{
-		if (parent.GetUUID() == uuidParent)
-		{
-			parent.AddChildGameObject(&child);
-			return;
-		}
-	}
 }
 
 

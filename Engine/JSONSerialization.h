@@ -10,6 +10,12 @@ class ResourceMaterial;
 class ResourceScript;
 struct ReImport;
 
+struct LoadSceneSt
+{
+	GameObject* go = nullptr;
+	int uid_parent;
+};
+
 class JSONSerialization
 {
 public:
@@ -20,7 +26,6 @@ public:
 	std::string SaveScene();
 	void SaveChildGameObject(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);
 	void LoadScene(const char* sceneName);
-	void LoadChilds(GameObject& parent, GameObject& child, int uuidParent);
 	// --------------------------------------
 
 	// SAVE & LOAD PREFAB --------------------------
