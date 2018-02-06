@@ -47,7 +47,7 @@ public:
 
 	uint GetUUID() const;
 	Comp_Type GetType() const;
-	bool isActive() const;
+	bool IsActive() const;
 	const char* GetName() const;
 	bool WantDelete() const;
 

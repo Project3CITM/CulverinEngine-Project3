@@ -297,7 +297,7 @@ void CompCamera::CullDynamicObjects()
 	// Push all active elements that are main childs of root & active
 	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
 	{
-		if (App->scene->root->GetChildbyIndex(i)->isActive())
+		if (App->scene->root->GetChildbyIndex(i)->IsActive())
 		{
 			candidates_to_cull.push(App->scene->root->GetChildbyIndex(i));
 		}
@@ -307,7 +307,7 @@ void CompCamera::CullDynamicObjects()
 	while (candidates_to_cull.empty() == false)
 	{
 		// If it's not static, check if it's inside the vision of the camera to set 
-		if (!candidates_to_cull.front()->isStatic())
+		if (!candidates_to_cull.front()->IsStatic())
 		{
 			if (candidates_to_cull.front()->bounding_box != nullptr) // Check if it has AABB and it's not the camera itself
 			{
@@ -326,7 +326,7 @@ void CompCamera::CullDynamicObjects()
 		//Push all the active childs to the candidates vector
 		for (std::vector<GameObject*>::iterator it = candidates_to_cull.front()->GetChildsPtr()->begin(); it != candidates_to_cull.front()->GetChildsPtr()->end(); it++)
 		{
-			if ((*it)->isActive())
+			if ((*it)->IsActive())
 			{
 				candidates_to_cull.push((*it));
 			}
@@ -342,7 +342,7 @@ void CompCamera::UnCull()
 	// Push all active elements that are root & active
 	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
 	{
-		if (App->scene->root->GetChildbyIndex(i)->isActive())
+		if (App->scene->root->GetChildbyIndex(i)->IsActive())
 		{
 			candidates_to_cull.push(App->scene->root->GetChildbyIndex(i));
 		}
@@ -356,7 +356,7 @@ void CompCamera::UnCull()
 		//Push all childs that are active to the candidates vector
 		for (std::vector<GameObject*>::iterator it = candidates_to_cull.front()->GetChildsPtr()->begin(); it != candidates_to_cull.front()->GetChildsPtr()->end(); it++)
 		{
-			if ((*it)->isActive())
+			if ((*it)->IsActive())
 			{
 				candidates_to_cull.push((*it));
 			}

@@ -270,7 +270,7 @@ void CompScript::ShowInspectorInfo()
 
 	if (resourcescript != nullptr)
 	{
-		static bool active = isActive();
+		static bool active = IsActive();
 		if (ImGui::Checkbox("Active", &active))
 		{
 			SetActive(active);
@@ -290,7 +290,7 @@ void CompScript::ShowInspectorInfo()
 		ImGui::Spacing();
 
 		//Info about ACTIVE/INACTIVE ---------------------------------
-		if (isActive())
+		if (IsActive())
 		{
 			ImGui::TextColored(ImVec4(0.0f, 0.58f, 1.0f, 1.0f), "SCRIPT ACTIVE");
 		}

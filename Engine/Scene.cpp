@@ -445,7 +445,7 @@ void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 		GameObject* it = gameobject->GetChildbyIndex(i);
 		if(it != nullptr)
 		{
-			if (!it->isDeleteFixed())
+			if (!it->IsDeleteFixed())
 			{
 				RELEASE(it);
 			}

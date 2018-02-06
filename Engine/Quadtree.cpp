@@ -265,10 +265,10 @@ void Quadtree::Bake(GameObject* root)
 		temp = root->GetChildbyIndex(i);
 
 		//Check first if GO is Active
-		if (temp->isActive())
+		if (temp->IsActive())
 		{
 			//If it's Static, insert it in the Quadtree
-			if (temp->isStatic())
+			if (temp->IsStatic())
 			{
 				Insert(temp);
 			}

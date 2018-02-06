@@ -290,7 +290,7 @@ void ModuleCamera3D::MousePick(float x, float y, float w, float h)
 
 void ModuleCamera3D::CheckAABBIntersection(GameObject* candidate, float& entry_dist, float& exit_dist)
 {
-	if (candidate->isActive())
+	if (candidate->IsActive())
 	{
 		if (candidate->bounding_box != nullptr)
 		{

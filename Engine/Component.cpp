@@ -61,7 +61,7 @@ Comp_Type Component::GetType() const
 	return type;
 }
 
-bool Component::isActive() const
+bool Component::IsActive() const
 {
 	return active;
 }
