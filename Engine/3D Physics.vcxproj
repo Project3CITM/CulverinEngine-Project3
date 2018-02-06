@@ -120,6 +120,7 @@
     <ClInclude Include="ResourceScript.h" />
     <ClInclude Include="Resource_.h" />
     <ClInclude Include="Script_editor.h" />
+    <ClInclude Include="ShadersLib.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="TextEditor.h" />
     <ClInclude Include="WindowHierarchy.h" />

@@ -64,6 +64,9 @@
     <Filter Include="Engine\Events">
       <UniqueIdentifier>{b78ef69c-e45a-47c5-a161-38e8153cba34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Shaders">
+      <UniqueIdentifier>{4ac4f5d4-60a2-4354-b4ec-5dc7d5776fec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -416,6 +419,9 @@
     </ClInclude>
     <ClInclude Include="ModuleEventSystem.h">
       <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadersLib.h">
+      <Filter>Engine\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
