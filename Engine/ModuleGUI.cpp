@@ -107,11 +107,20 @@ update_status ModuleGUI::Update(float dt)
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("New Scene", "Ctrl + N", false, false))
+			if (ImGui::MenuItem("New Scene", "Ctrl + N"))
 			{
+				if (App->scene->SceneSaved)
+				{
+					App->scene->ClearAllVariablesScript();
+					App->scene->DeleteAllGameObjects(App->scene->root);
+					App->scene->root->SetName("NewScene");
+					App->scene->CreateMainCamera(nullptr);
+					App->resource_manager->ReImportAllScripts();
+				}
 			}
 			if (ImGui::MenuItem("Open Scene", "Ctrl + O", false, false))
 			{
+
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Save Scene", "Ctrl + S"))

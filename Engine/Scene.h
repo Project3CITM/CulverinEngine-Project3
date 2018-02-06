@@ -64,6 +64,9 @@ public:
 	//Container Vector of Static Objects (to speeding searches with quadtree)
 	std::vector<GameObject*> static_objects;
 
+	// Scene Saved
+	bool SceneSaved = true; // TODO XAVI - need implementation with Event System
+
 	// Quadtree ----------------
 	Quadtree quadtree;
 	bool quadtree_draw = false;
