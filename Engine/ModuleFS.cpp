@@ -1,3 +1,4 @@
+#include "Dirent\dirent.h"
 #include "ModuleFS.h"
 #include "Application.h"
 #include "ModuleInput.h"
@@ -25,13 +26,18 @@ ModuleFS::~ModuleFS()
 bool ModuleFS::Init(JSON_Object * node)
 {
 	// Will contain exe path
-	HMODULE hModule = GetModuleHandle(NULL);
+	/*HMODULE hModule = GetModuleHandle(NULL);
 	if (hModule != NULL)
 	{
 		// When passing NULL to GetModuleHandle, it returns handle of exe itself
 		GetModuleFileName(hModule, ownPth, (sizeof(ownPth)));
 	}
 	directory_Game = ownPth;
+
+	char my_path[MAX_PATH + 1];*/
+	GetCurrentDirectory(MAX_PATH, ownPth);
+	directory_Game = ownPth;
+	directory_Game += "\\Assets";
 
 	//In release this code: -----------------------------------------
 	//size_t EndName = directory_Game.find_last_of("\\");
@@ -42,12 +48,12 @@ bool ModuleFS::Init(JSON_Object * node)
 	//LOG("%s", directory_Game);
 
 	//Not release this: ---------------------------------------------
-	size_t EndName = directory_Game.find_last_of("\\");
+	/*size_t EndName = directory_Game.find_last_of("\\");
 	directory_Game = directory_Game.substr(0, EndName);
 	EndName = directory_Game.find_last_of("\\");
 	directory_Game = directory_Game.substr(0, EndName);
 	directory_Assets = directory_Game + "\\Game";
-	directory_Game += "\\Game\\Assets"; // "\\Game\\Assets"
+	directory_Game += "\\Game\\Assets"; // "\\Game\\Assets"*/
 
 										// Check if Main Folders exist --------------------
 	CreateFolder("Library");
