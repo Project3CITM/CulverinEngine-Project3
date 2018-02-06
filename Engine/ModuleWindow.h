@@ -1,5 +1,5 @@
-#ifndef __ModuleWindow_H__
-#define __ModuleWindow_H__
+#ifndef MODULE_WINDOW_H
+#define MODULE_WINDOW_H
 
 #include "Module.h"
 #include "SDL/include/SDL.h"
@@ -10,6 +10,7 @@ class Application;
 class ModuleWindow : public Module
 {
 public:
+	
 	ModuleWindow(bool start_enabled = true);
 	virtual ~ModuleWindow();
 
@@ -21,7 +22,6 @@ public:
 	bool CleanUp();
 
 	void SetTitle(const char* title);
-
 	update_status UpdateConfig(float dt);
 	bool SaveConfig(JSON_Object* node);
 
@@ -32,28 +32,24 @@ public:
 	uint GetScale() const;
 	uint GetWidth() const;
 	uint GetHeight() const;
-
-	uint GetDesktopWidth() const
-	{
-		return displaymode.w;
-	}
-	uint GetDesktopHeight() const
-	{
-		return displaymode.h;
-	}
-
+	uint GetDesktopWidth() const;
+	uint GetDesktopHeight() const;
 
 public:
+
 	//The window we'll be rendering to
-	SDL_Window* window;
+	SDL_Window* window = nullptr;
 
 	//The surface contained by the window
-	SDL_Surface* screen_surface;
+	SDL_Surface* screen_surface = nullptr;
+
+	bool writing = false; // To not overlap camera controls when writting
 
 private:
+
 	SDL_DisplayMode displaymode;
-	int displayIndex = 0;
-	int modeIndex = 0;
+	int display_index = 0;
+	int mode_index = 0;
 
 	// Window Parameters -------------
 	int width = SCREEN_WIDTH * SCREEN_SIZE;
@@ -70,12 +66,9 @@ private:
 	bool borderless = false;
 
 	std::string window_name;
-	char textBuf[256] = "Change Name...";
+	char text_buf[256] = "Change Name...";
 	// ------------------------------------
-
-public:
-	bool writing = false; // To not overlap camera controls when writting
 
 };
 
-#endif // __ModuleWindow_H__
+#endif // MODULE_WINDOW_H

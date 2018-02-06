@@ -9,7 +9,7 @@
 ModuleWindow::ModuleWindow(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
-	haveConfig = true;
+	//have_config = true;
 
 	window = NULL;
 	screen_surface = NULL;
@@ -113,7 +113,7 @@ bool ModuleWindow::Init(JSON_Object* node)
 			return 1;
 		}
 
-		if (SDL_GetDisplayMode(displayIndex, modeIndex, &displaymode) != 0) {
+		if (SDL_GetDisplayMode(display_index, mode_index, &displaymode) != 0) {
 			SDL_Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
 			return 1;
 		}
@@ -196,11 +196,11 @@ update_status ModuleWindow::UpdateConfig(float dt)
 {
 	static int refresh = displaymode.refresh_rate;
 	ImGui::PushItemWidth(ImGui::GetWindowWidth() / 4);
-	ImGui::InputText("Window Name", textBuf, IM_ARRAYSIZE(textBuf));
+	ImGui::InputText("Window Name", text_buf, IM_ARRAYSIZE(text_buf));
 	ImGui::SameLine();
 	if (ImGui::Button("APPLY##window_name"))
 	{
-		window_name = textBuf;
+		window_name = text_buf;
 		SetTitle(window_name.c_str());
 	}
 	ImGui::Text("Refresh rate:"); ImGui::SameLine();
@@ -368,4 +368,14 @@ uint ModuleWindow::GetWidth() const
 uint ModuleWindow::GetHeight() const
 {
 	return height;
+}
+
+uint ModuleWindow::GetDesktopWidth() const
+{
+	return displaymode.w;
+}
+
+uint ModuleWindow::GetDesktopHeight() const
+{
+	return displaymode.h;
 }
