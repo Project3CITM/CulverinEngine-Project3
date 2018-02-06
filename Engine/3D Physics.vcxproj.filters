@@ -67,6 +67,12 @@
     <Filter Include="Engine\Shaders">
       <UniqueIdentifier>{4ac4f5d4-60a2-4354-b4ec-5dc7d5776fec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Tools\Wwished">
+      <UniqueIdentifier>{d1555f45-e1b9-4150-b38a-ad9d15d78630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\Wwished\Wwise_libraries">
+      <UniqueIdentifier>{507d365f-226e-4cf8-a7fc-001bfaf27ba3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -423,6 +429,48 @@
     <ClInclude Include="ShadersLib.h">
       <Filter>Engine\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="include_wwise.h">
+      <Filter>Engine\Tools\Wwished</Filter>
+    </ClInclude>
+    <ClInclude Include="wwished.h">
+      <Filter>Engine\Tools\Wwished</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFileLocationBase.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackage.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLUT.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFileHelpers.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIOBlocking.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIODeferred.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\stdafx.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -680,6 +728,33 @@
     <ClCompile Include="ShadersLib.cpp">
       <Filter>Engine\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="include_wwise.cpp">
+      <Filter>Engine\Tools\Wwished</Filter>
+    </ClCompile>
+    <ClCompile Include="wwished.cpp">
+      <Filter>Engine\Tools\Wwished</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkFileLocationBase.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkFilePackage.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkFilePackageLUT.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Win32\stdafx.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">
@@ -689,5 +764,11 @@
       <Filter>Engine\Tools\MathGeoLib\Math</Filter>
     </None>
     <None Include="Game\config.json" />
+    <None Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.inl">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </None>
+    <None Include="AK\DefaultIO\Common\AkMultipleFileLocation.inl">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </None>
   </ItemGroup>
 </Project>
