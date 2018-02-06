@@ -431,6 +431,11 @@ float3 ModuleCamera3D::GetPos() const
 	return cam->frustum.pos;
 }
 
+Frustum  ModuleCamera3D::GetFrustum() const
+{
+	return cam->frustum;
+}
+
 //Check mouse if is out of the Scene Window
 void ModuleCamera3D::CheckOut()
 {

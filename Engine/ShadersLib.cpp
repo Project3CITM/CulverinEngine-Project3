@@ -33,8 +33,8 @@
 		{
 			"#version 330 core\n"
 			"layout(location = 0) in vec3 position;\n"
-			"layout(location = 1) in vec3 normal;\n"
-			"layout(location = 2) in vec2 texCoord;\n"
+			"layout(location = 1) in vec2 texCoord;\n"
+			"layout(location = 2) in vec3 normal;\n"
 			"layout(location = 3) in vec4 color;\n"
 			"out float ourTime;\n"
 			"out vec4 ourColor;\n"
@@ -90,7 +90,7 @@
 			"{\n"
 			"vec3 lightDir = vec3(1);\n"
 			"float angle = dot(lightDir, ourNormal);\n"
-			"color = texture(_texture, TexCoord) * ourColor * vec4(angle,angle,angle,1);\n"
+			"color = texture(_texture, TexCoord);\n"
 			"}\n"
 		};
 

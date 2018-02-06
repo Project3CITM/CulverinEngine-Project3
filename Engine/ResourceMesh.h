@@ -33,13 +33,15 @@ public:
 	std::vector<Vertex> vertices;
 	std::vector<uint> indices;
 	std::vector<float3> vertices_normals;
+
+
 	//std::vector<FaceCenter> face_centers;
 
 	//uint VAO = 0;				/* Vertex Array Object */
 	uint vertices_id = 0;		/* VERTICES ID */
 	uint indices_id = 0;		/* INDICES ID */
 	uint vertices_norm_id = 0;	/* NORMALS OF VERTICES ID */
-
+	uint id_total_buffer; /*MESH INFO BUFFER ID*/
 };
 
 #endif

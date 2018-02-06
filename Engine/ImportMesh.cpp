@@ -120,7 +120,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		{
 			for (uint i = 0; i < num_vertices; i++)
 			{
-				tex_coords[i] = float2(0, 0);
+				tex_coords[i] = float2(0, 0);//TODO-> change default value
 			}
 
 			LOG("- Mesh %s hasn't got Tex Coords", mesh->mName.C_Str());

@@ -12,7 +12,7 @@
 #include "Color.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
-
+#include "ModuleCamera3D.h"
 #include <vector>
 
 
@@ -238,9 +238,9 @@ void CompMesh::Draw()
 		if (transform != nullptr)
 		{
 			/* Push Matrix to Draw with transform applied, only if it contains a transform component */
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glMultMatrixf(transform->GetMultMatrixForOpenGL());
+		//	glMatrixMode(GL_MODELVIEW);
+			//glPushMatrix();
+			//glMultMatrixf(transform->GetMultMatrixForOpenGL());
 		}
 
 		if (resourceMesh->vertices.size() > 0 && resourceMesh->indices.size() > 0)
@@ -256,6 +256,7 @@ void CompMesh::Draw()
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			}
 
+			//Temporary, future delete incoming
 			//Set Color
 			if (material != nullptr)
 			{
@@ -269,19 +270,19 @@ void CompMesh::Draw()
 			if (App->renderer3D->texture_2d)
 			{
 				CompMaterial* temp = parent->GetComponentMaterial();
-				if(temp != nullptr)
+				if (temp != nullptr) {
+					uint texture_2D_sampler = 0;
+					glActiveTexture(GL_TEXTURE0);
 					glBindTexture(GL_TEXTURE_2D, temp->GetTextureID());
-			}
+					texture_2D_sampler = glGetUniformLocation(App->renderer3D->default_shader->programID, "_texture");
+					glUniform1i(texture_2D_sampler, 0);
+	
 
-			glBindBuffer(GL_ARRAY_BUFFER, resourceMesh->vertices_id); //VERTEX ID
-			glVertexPointer(3, GL_FLOAT, sizeof(Vertex), NULL);
-			glNormalPointer(GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, norm));
-			glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+				}
+			}		
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resourceMesh->indices_id); // INDICES ID
-			glDrawElements(GL_TRIANGLES, resourceMesh->indices.size(), GL_UNSIGNED_INT, NULL);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			
+
 
 			// NORMALS ----------------------------------
 			if (App->renderer3D->normals && hasNormals)
@@ -291,6 +292,39 @@ void CompMesh::Draw()
 				glDrawArrays(GL_LINES, 0, resourceMesh->vertices.size() * 2);
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 			}
+
+	
+			GLint view2Loc = glGetUniformLocation(App->renderer3D->default_shader->programID, "view");
+			Frustum camFrust = App->camera->GetFrustum();
+			float4x4 temp = camFrust.ViewMatrix();
+
+			glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
+
+			GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetMultMatrixForOpenGL());
+
+			GLint viewLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "viewproj");
+
+			glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+
+			int tota_save_buffer = 8;
+
+			if (resourceMesh->vertices.size()>0) {
+				glBindBuffer(GL_ARRAY_BUFFER, resourceMesh->id_total_buffer);
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, tota_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, tota_save_buffer * sizeof(GLfloat), (char *)NULL + (3 * sizeof(float)));
+				glEnableVertexAttribArray(2);
+				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, tota_save_buffer * sizeof(GLfloat), (char *)NULL + (5 * sizeof(float)));
+
+				glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resourceMesh->indices_id);
+				glDrawElements(GL_TRIANGLES, resourceMesh->num_indices, GL_UNSIGNED_INT, NULL);
+
+			}
+
+			//-----------------
 
 			//Reset TextureColor
 			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -316,7 +350,7 @@ void CompMesh::Draw()
 
 		if (transform != nullptr)
 		{
-			glPopMatrix();
+			//glPopMatrix();
 		}
 	}
 }

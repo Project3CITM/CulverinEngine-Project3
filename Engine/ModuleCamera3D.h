@@ -56,6 +56,8 @@ public:
 	float* GetProjMatrix() const;
 	float3 GetPos() const;
 
+	Frustum GetFrustum() const;
+
 private:
 	void CheckOut();
 
