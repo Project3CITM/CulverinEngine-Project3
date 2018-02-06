@@ -19,7 +19,7 @@ version: Project3-0.{build}
 image: Visual Studio 2017
 
 # clone directory
-clone_folder: C:\projects\engine
+clone_folder: C:\projects\TempMotor3D_P3
 
 #---------------------------------#
 #       build configuration       #
