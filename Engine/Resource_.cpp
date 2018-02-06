@@ -1,5 +1,6 @@
 #include "Resource_.h"
-
+#include "Application.h"
+#include "Globals.h"
 
 Resource::Resource(uint uid, Resource::Type type, Resource::State state) : uuid(uid), type(type), state(state)
 {
