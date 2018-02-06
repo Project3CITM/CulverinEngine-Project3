@@ -133,6 +133,25 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	}
 
 	default_shader = shader_manager.CreateDefaultShader();
+	for (int i = 0; i < 64; i++) {
+		for (int j = 0; j < 32; j++) {
+			//int c = ((((i & 0x8) == 0) ^ (((j & 0x8)) == 0))) * 255;
+			checkImage[i][j][0] = (GLubyte)255;
+			checkImage[i][j][1] = (GLubyte)255;
+			checkImage[i][j][2] = (GLubyte)255;
+			checkImage[i][j][3] = (GLubyte)255;
+		}
+	}
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, &id_checkImage);
+	glBindTexture(GL_TEXTURE_2D, id_checkImage);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;

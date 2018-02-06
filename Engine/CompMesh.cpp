@@ -279,10 +279,17 @@ void CompMesh::Draw()
 				if (temp != nullptr) {
 					uint texture_2D_sampler = 0;
 					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, temp->GetTextureID());
+					if (temp->GetTextureID() == 0)
+					{
+						glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+					}
+					else
+					{
+						glBindTexture(GL_TEXTURE_2D, temp->GetTextureID());
+					}
 					texture_2D_sampler = glGetUniformLocation(App->renderer3D->default_shader->programID, "_texture");
 					glUniform1i(texture_2D_sampler, 0);
-	
+
 
 				}
 			}		
