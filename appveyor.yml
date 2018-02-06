@@ -1,0 +1,80 @@
+# Notes:
+#   - Minimal appveyor.yml file is an empty file. All sections are optional.
+#   - Indent each level of configuration with 2 spaces. Do not use tabs!
+#   - All section names are case-sensitive.
+#   - Section names should be unique on each level.
+
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: Engine_1.1.{build}
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+# clone directory
+clone_folder: C:\projects\engine
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+# build Configuration, i.e. Debug, Release, etc.
+configuration:
+- Debug
+- Release
+
+build:
+  project: Engine\3D Engine.sln
+  
+  # MSBuild verbosity level
+  verbosity: normal
+  
+before_package:
+- ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\Engine.exe C:\projects\engine\Engine\Game\.
+- ps: Copy-Item C:\projects\TempMotor3D_P3\README.md C:\projects\engine\Engine\Game\.
+  
+artifacts:
+- path: Engine\Game
+  name: Game_files
+  
+#---------------------------------#
+#         notifications           #
+#---------------------------------#
+
+notifications:
+
+  # Email
+  - provider: Email
+    to:
+      - martimyc@gmail.com
+      - marc.lafrwy@gmail.com
+    subject: 'Build {{status}}'                  # optional
+    message: "{{message}}, {{commitId}}, ..."    # optional
+    on_build_status_changed: true
+
+#---------------------------------#
+#     deployment configuration    #
+#---------------------------------#
+
+# providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
+# provider names are case-sensitive!
+
+# Deploy to GitHub Releases
+deploy:
+- provider: GitHub
+  description: Release
+  auth_token:
+    secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
+  artifact: game_files
+  draft: false
+  prerelease: true
+  force_update: true
+  on:
+    CONFIGURATION: Release
