@@ -351,6 +351,7 @@
     <None Include="Game\config.json" />
     <None Include="Geometry\KDTree.inl" />
     <None Include="Math\Matrix.inl" />
+    <None Include="Snippets\CodeSnippets.snippet" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CulverinEditor\CulverinEditor\CulverinEditor.csproj">

@@ -73,6 +73,9 @@
     <Filter Include="Engine\Tools\Wwished\Wwise_libraries">
       <UniqueIdentifier>{507d365f-226e-4cf8-a7fc-001bfaf27ba3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Tools\Snippets">
+      <UniqueIdentifier>{12f4a194-d014-4209-8e33-7a9d6a13f5c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -841,6 +844,9 @@
     </None>
     <None Include="AK\DefaultIO\Common\AkMultipleFileLocation.inl">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </None>
+    <None Include="Snippets\CodeSnippets.snippet">
+      <Filter>Engine\Tools\Snippets</Filter>
     </None>
   </ItemGroup>
 </Project>
