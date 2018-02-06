@@ -55,10 +55,6 @@ update_status ModuleEventSystem::Update(float dt)
 
 update_status ModuleEventSystem::PostUpdate(float dt)
 {
-	/*--------------------------------------------------*/
-	/*---Need to clean, this is copy&paste to test :)---*/
-	/*--------------------------------------------------*/
-
 	const std::vector<Module*>* ModuleList = App->GetModuleList();
 	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
 
@@ -69,9 +65,7 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 			EListener = MEventListeners.find(item._Ptr->_Myval.first);
 		if (EListener != MEventListeners.end())
 			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-			{
 				(*item2)->OnEvent(item._Ptr->_Myval.second);
-			}
 		else continue;
 	}
 
@@ -106,6 +100,13 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 			//TODO Set perspective back to perspective here
 		}
 	}
+
+	//We had analysed all events, just clean them and wait for new ones in the next frame
+	MMNormalEvent.clear();
+	MM3DDrawEvent.clear();
+	MM3DADrawEvent.clear();
+	MM2DCanvasDrawEvent.clear();
+
 	return update_status::UPDATE_CONTINUE;
 }
 
@@ -128,12 +129,14 @@ void ModuleEventSystem::PushEvent(Event& event)
 {
 	switch (event.type)
 	{
-	case EventType::DRAW:
+	case EventType::EVENT_DRAW:
 		switch (event.draw.type)
 		{
-		case event.draw.DRAW3D: MM3DDrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
-		case event.draw.DRAW3DALPHA_WCANVAS: MM3DADrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
-		case event.draw.DRAW2DSCREENCANVAS: MM2DCanvasDrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
+		case event.draw.DRAW_3D: MM3DDrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
+		case event.draw.DRAW_3D_ALPHA: MM3DADrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event));  break;
+		case event.draw.DRAW_2D: MM2DCanvasDrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
+		case event.draw.DRAW_WORLD_CANVAS: MM3DADrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event));  break;
+		case event.draw.DRAW_SCREEN_CANVAS: MM2DCanvasDrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
 		}
 		break;
 	default: MMNormalEvent.insert(std::pair<EventType, Event>(event.type, event)); break;
