@@ -81,7 +81,7 @@
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\Users\Marti\Desktop\Github\P3\Engine\AK\include;$(SolutionDir)\Game\Mono\include\mono-2.0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Game\AK\include;$(SolutionDir)\Game\Mono\include\mono-2.0</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
