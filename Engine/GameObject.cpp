@@ -11,9 +11,17 @@
 #include "Component.h"
 #include "CompMesh.h"
 #include "CompTransform.h"
+#include "CompRectTransform.h"
 #include "CompMaterial.h"
 #include "CompCamera.h"
 #include "CompScript.h"
+#include "CompButton.h"
+#include "CompCheckBox.h"
+#include "CompImage.h"
+#include "CompText.h"
+#include "CompEditText.h"
+#include "CompCanvas.h"
+#include "CompCanvasRender.h"
 
 GameObject::GameObject(GameObject* parent) :parent(parent)
 {
@@ -911,7 +919,21 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(transform);
 			return transform;
 		}
-
+		else if (type == Comp_Type::C_RECT_TRANSFORM)
+		{
+			LOG("Adding TRANSFORM COMPONENT.");
+			CompRectTransform* transform = new CompRectTransform(type, this);
+			if (!components.empty())
+			{
+				RELEASE(components[0]);
+				components.at(0) = transform;
+			}
+			else
+			{
+				components.push_back(transform);
+			}
+			return transform;
+		}
 		else if (type == Comp_Type::C_MATERIAL)
 		{
 			LOG("Adding MATERIAL COMPONENT.");
@@ -930,7 +952,23 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			}
 			return material;
 		}
+		else if (type == Comp_Type::C_BUTTON)
+		{
+			LOG("Adding MATERIAL COMPONENT.");
+			CompButton* button = new CompButton(type, this);
+			components.push_back(button);
 
+			/* Link Material to the Mesh if exists */
+			CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
+			if (image_to_link != nullptr)
+			{
+			}
+			else
+			{
+				LOG("IMAGE not linked to any mesh");
+			}
+			return button;
+		}
 		else if (type == Comp_Type::C_CAMERA)
 		{
 			LOG("Adding CAMERA COMPONENT.");
@@ -1085,6 +1123,36 @@ CompMaterial* GameObject::GetComponentMaterial() const
 CompScript* GameObject::GetComponentScript() const
 {
 	return (CompScript*)FindComponentByType(Comp_Type::C_SCRIPT);
+}
+
+CompRectTransform * GameObject::GetCompRectTransform() const
+{
+	return (CompRectTransform*)FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
+}
+
+CompImage * GameObject::GetCompImage() const
+{
+	return (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
+}
+
+CompText * GameObject::GetCompText() const
+{
+	return (CompText*)FindComponentByType(Comp_Type::C_TEXT);
+}
+
+CompEditText * GameObject::GetCompEditText() const
+{
+	return (CompEditText*)FindComponentByType(Comp_Type::C_EDIT_TEXT);
+}
+
+CompButton * GameObject::GetCompButton() const
+{
+	return (CompButton*)FindComponentByType(Comp_Type::C_BUTTON);
+}
+
+CompCheckBox * GameObject::GetCompCheckBox() const
+{
+	return (CompCheckBox*)FindComponentByType(Comp_Type::C_CHECK_BOX);
 }
 
 Component* GameObject::GetComponentbyIndex(uint i) const

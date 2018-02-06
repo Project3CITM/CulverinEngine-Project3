@@ -60,6 +60,9 @@ public:
 	bool bounding_box = false;
 	GLfloat fog_density = 0;
 	// --------------------------
+	//Texture Creation Default
+	uint id_checkImage = 0;
+	unsigned char checkImage[64][32][4];
 
 	// Shaders
 	ShaderProgram* default_shader = nullptr;
