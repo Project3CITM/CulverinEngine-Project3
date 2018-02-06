@@ -7,6 +7,8 @@
 #include "ModuleFS.h"
 #include "ModuleRenderer3D.h"
 #include "GameObject.h"
+#include "ModuleGUI.h"
+#include "WindowInspector.h"
 
 #include "SDL\include\SDL_opengl.h"
 #include <math.h>
@@ -157,14 +159,18 @@ void CompCamera::ShowOptions()
 	{
 		// Not implmented yet.
 	}
-	if (ImGui::MenuItem("Copy Component", NULL, false, false))
+	if (ImGui::MenuItem("Copy Component"))
 	{
-		// Component* Copy = this;
+		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
-	if (ImGui::MenuItem("Paste Component", NULL, false, false))
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, false))
 	{
 		//parent->AddComponent(App->scene->copyComponent->GetType())
 		// Create contructor Component Copy or add funtion to add info
+	}
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, false))
+	{
+		// Paste values from component copied in Inspector
 	}
 }
 

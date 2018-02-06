@@ -8,6 +8,7 @@
 #include <string>
 
 class GameObject;
+class Component;
 
 class Inspector : public WindowManager
 {
@@ -21,6 +22,11 @@ public:
 	bool CleanUp();
 
 	void ShowInspector();
+
+	void SetComponentCopy(Component* copy);
+	bool AnyComponentCopied();
+	Component* GetComponentCopied();
+	void SetLinkComponentNull();
 
 	void LinkObject(GameObject* obj);
 	void SetLinkObjectNull();
@@ -37,6 +43,7 @@ public:
 
 private:
 	GameObject* selected_object = nullptr;
+	Component* copied = nullptr;
 
 	ImVec4 color_picker = { 255, 255, 255, 255 };
 };

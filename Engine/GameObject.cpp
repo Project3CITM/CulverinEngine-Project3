@@ -1100,8 +1100,12 @@ void GameObject::DeleteAllComponents()
 {
 	for (int i = 0; i < components.size(); i++)
 	{
+		if (((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
+		{
+			((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetLinkComponentNull();
+		}
 		components[i]->Clear();
-		delete components[i];
+		RELEASE(components[i]);
 	}
 	components.clear();
 }
@@ -1115,6 +1119,11 @@ void GameObject::DeleteComponent(Component* component)
 		{
 			if (component == components[i])
 			{
+				if (((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
+				{
+					((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetLinkComponentNull();
+				}
+				components[i]->Clear();
 				components.erase(item);
 				break;
 			}

@@ -7,6 +7,8 @@
 #include "CSharpScript.h"
 #include "Scene.h"
 #include "ModuleFS.h"
+#include "ModuleGUI.h"
+#include "WindowInspector.h"
 
 CompScript::CompScript(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
@@ -188,14 +190,18 @@ void CompScript::ShowOptions()
 	{
 		// Not implmented yet.
 	}
-	if (ImGui::MenuItem("Copy Component", NULL, false, false))
+	if (ImGui::MenuItem("Copy Component"))
 	{
-		// Component* Copy = this;
+		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
-	if (ImGui::MenuItem("Paste Component", NULL, false, false))
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, false))
 	{
 		//parent->AddComponent(App->scene->copyComponent->GetType())
 		// Create contructor Component Copy or add funtion to add info
+	}
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, false))
+	{
+		// Paste values from component copied in Inspector
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Reset Script"))

@@ -2,6 +2,7 @@
 #include "WindowInspector.h"
 #include "ModuleWindow.h"
 #include "GameObject.h"
+#include "Component.h"
 
 Inspector::Inspector() : WindowManager()
 {
@@ -67,6 +68,29 @@ void Inspector::SetLinkObjectNull()
 GameObject* Inspector::GetSelected() const
 {
 	return selected_object;
+}
+
+void Inspector::SetComponentCopy(Component* copy)
+{
+	if (copy != nullptr)
+	{
+		copied = copy;
+	}
+}
+
+bool Inspector::AnyComponentCopied()
+{
+	return (copied != nullptr);
+}
+
+void Inspector::SetLinkComponentNull()
+{
+	copied = nullptr;
+}
+
+Component * Inspector::GetComponentCopied()
+{
+	return copied;
 }
 
 bool Inspector::CleanUp()
