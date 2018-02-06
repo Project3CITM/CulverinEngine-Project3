@@ -9,7 +9,7 @@
 #---------------------------------#
 
 # version format
-version: Engine_1.1.{build}
+version: Project3-0.{build}
 
 #---------------------------------#
 #    environment configuration    #
@@ -31,7 +31,7 @@ configuration:
 - Release
 
 build:
-  project: Engine\3D Engine.sln
+  project: Engine\3D Physics.sln
   
   # MSBuild verbosity level
   verbosity: normal
