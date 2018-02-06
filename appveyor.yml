@@ -25,6 +25,8 @@ clone_folder: C:\projects\TempMotor3D_P3
 #       build configuration       #
 #---------------------------------#
 
+platform: Win32
+
 # build Configuration, i.e. Debug, Release, etc.
 configuration:
 - Debug
