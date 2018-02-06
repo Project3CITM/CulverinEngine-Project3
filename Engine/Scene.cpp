@@ -36,7 +36,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 	Update_enabled = true;
 
 	name = "Scene";
-	haveConfig = true;
+	have_config = true;
 }
 
 Scene::~Scene()

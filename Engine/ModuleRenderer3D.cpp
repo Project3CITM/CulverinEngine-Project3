@@ -24,7 +24,7 @@ ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled)
 	preUpdate_enabled = true;
 	postUpdate_enabled = true;
 	
-	haveConfig = true;
+	have_config = true;
 
 	name = "Renderer";
 }

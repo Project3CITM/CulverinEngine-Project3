@@ -1,5 +1,6 @@
 #ifndef _MODULE_
 #define _MODULE_
+
 #include "Globals.h"
 #include "parson.h"
 #include "PerfTimer.h"
@@ -115,7 +116,8 @@ public:
 			CleanUp();
 		}
 	}
-	void Disable_whitout()
+
+	void DisableWhitout()
 	{
 		if (enabled == true)
 		{
@@ -127,7 +129,7 @@ public:
 
 	std::string	name;
 	bool enabled = true;
-	bool haveConfig = false;
+	bool have_config = false;
 
 	// PERFORMANCE VARIABLES -------------
 	PerfTimer perf_timer;

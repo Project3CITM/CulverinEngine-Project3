@@ -10,7 +10,7 @@ ModuleAudio::ModuleAudio(bool start_enabled) : Module(start_enabled), music(NULL
 {
 	Awake_enabled = true;
 
-	haveConfig = true;
+	have_config = true;
 
 	volume = 10;
 	name = "Audio";

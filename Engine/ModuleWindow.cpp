@@ -1,15 +1,15 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleWindow.h"
-#include "SDL\include\SDL.h"
-#include "ImGui\imgui.h"
-#include "ImGui\imgui_impl_sdl_gl3.h"
+#include "SDL/include/SDL.h"
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_sdl_gl3.h"
 #include "parson.h"
 
 ModuleWindow::ModuleWindow(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
-	//have_config = true;
+	have_config = true;
 
 	window = NULL;
 	screen_surface = NULL;

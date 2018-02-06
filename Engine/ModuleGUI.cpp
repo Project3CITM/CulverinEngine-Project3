@@ -27,7 +27,7 @@ ModuleGUI::ModuleGUI(bool start_enabled): Module(start_enabled)
 {
 	Start_enabled = true;
 	Update_enabled = true;
-	haveConfig = true;
+	have_config = true;
 
 	name = "Gui";
 }
