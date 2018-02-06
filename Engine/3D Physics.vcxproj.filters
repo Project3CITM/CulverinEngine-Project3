@@ -471,18 +471,42 @@
     <ClInclude Include="AK\DefaultIO\Win32\stdafx.h">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="CompButton.h" />
-    <ClInclude Include="CompCanvas.h" />
-    <ClInclude Include="CompCanvasRender.h" />
-    <ClInclude Include="CompCheckBox.h" />
-    <ClInclude Include="CompEditText.h" />
-    <ClInclude Include="CompGraphic.h" />
-    <ClInclude Include="CompImage.h" />
-    <ClInclude Include="CompInteractive.h" />
-    <ClInclude Include="CompRectTransform.h" />
-    <ClInclude Include="CompText.h" />
-    <ClInclude Include="ModuleRenderGui.h" />
-    <ClInclude Include="ResourceFont.h" />
+    <ClInclude Include="CompText.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompButton.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompCanvas.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompCanvasRender.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompCheckBox.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompEditText.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompGraphic.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompImage.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompInteractive.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompRectTransform.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFont.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleRenderGui.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -767,18 +791,42 @@
     <ClCompile Include="AK\DefaultIO\Win32\stdafx.cpp">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
-    <ClCompile Include="CompButton.cpp" />
-    <ClCompile Include="CompCanvas.cpp" />
-    <ClCompile Include="CompCanvasRender.cpp" />
-    <ClCompile Include="CompCheckBox.cpp" />
-    <ClCompile Include="CompEditText.cpp" />
-    <ClCompile Include="CompGraphic.cpp" />
-    <ClCompile Include="CompImage.cpp" />
-    <ClCompile Include="CompInteractive.cpp" />
-    <ClCompile Include="CompRectTransform.cpp" />
-    <ClCompile Include="CompText.cpp" />
-    <ClCompile Include="ModuleRenderGui.cpp" />
-    <ClCompile Include="ResourceFont.cpp" />
+    <ClCompile Include="CompButton.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompCanvas.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompCanvasRender.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompCheckBox.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompEditText.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompGraphic.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompImage.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompInteractive.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompRectTransform.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompText.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceFont.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleRenderGui.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">

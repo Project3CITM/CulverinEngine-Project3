@@ -10,7 +10,7 @@ CompCanvas::CompCanvas(Comp_Type t, GameObject * parent) :Component(t, parent)
 	name_component = "Canvas";
 }
 
-CompCanvas::CompCanvas(const CompCanvas & copy, GameObject * parent) :Component(Comp_Type::C_MESH, parent)
+CompCanvas::CompCanvas(const CompCanvas & copy, GameObject * parent) :Component(Comp_Type::C_CANVAS, parent)
 {
 }
 

@@ -598,6 +598,26 @@ void GameObject::ShowGameObjectOptions()
 	{
 		AddComponent(Comp_Type::C_SCRIPT);
 	}
+	if (ImGui::MenuItem("Canvas"))
+	{
+		AddComponent(Comp_Type::C_CANVAS);
+	}
+	if (ImGui::MenuItem("Button"))
+	{
+		AddComponent(Comp_Type::C_BUTTON);
+	}
+	if (ImGui::MenuItem("Image"))
+	{
+		AddComponent(Comp_Type::C_IMAGE);
+	}
+	if (ImGui::MenuItem("Text"))
+	{
+		AddComponent(Comp_Type::C_TEXT);
+	}
+	if (ImGui::MenuItem("Edit Text"))
+	{
+		AddComponent(Comp_Type::C_EDIT_TEXT);
+	}
 	// -------------------------------------------------------------
 }
 
@@ -921,7 +941,7 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		}
 		else if (type == Comp_Type::C_RECT_TRANSFORM)
 		{
-			LOG("Adding TRANSFORM COMPONENT.");
+			LOG("Adding RECT TRANSFORM COMPONENT.");
 			CompRectTransform* transform = new CompRectTransform(type, this);
 			if (!components.empty())
 			{
@@ -952,22 +972,110 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			}
 			return material;
 		}
+		else if (type == Comp_Type::C_CANVAS)
+		{
+			LOG("Adding CANVAS COMPONENT.");
+			CompCanvas* canvas = new CompCanvas(type, this);
+			components.push_back(canvas);
+
+			//If is not RectTransform
+			//TODO change transform
+			return canvas;
+		}
+		else if (type == Comp_Type::C_CANVAS_RENDER)
+		{
+			LOG("Adding CANVAS RENDER COMPONENT.");
+			CompCanvasRender* canvas_renderer = new CompCanvasRender(type, this);
+			components.push_back(canvas_renderer);
+
+			return canvas_renderer;
+		}
+		else if (type == Comp_Type::C_IMAGE)
+		{
+
+			//If is not RectTransform
+			//TODO change transform
+			LOG("Adding CANVAS RENDER COMPONENT.");
+			CompCanvasRender* canvas_renderer = new CompCanvasRender(type, this);
+			components.push_back(canvas_renderer);
+			LOG("Adding IMAGE COMPONENT.");
+			CompImage* image = new CompImage(type, this);
+			components.push_back(image);
+			return image;
+		}
+		else if (type == Comp_Type::C_TEXT)
+		{
+
+			//If is not RectTransform
+			//TODO change transform
+			LOG("Adding CANVAS RENDER COMPONENT.");
+			CompCanvasRender* canvas_renderer = new CompCanvasRender(type, this);
+			components.push_back(canvas_renderer);
+			LOG("Adding TEXT COMPONENT.");
+			CompText* text = new CompText(type, this);
+			components.push_back(text);
+			return text;
+		}
+		else if (type == Comp_Type::C_EDIT_TEXT)
+		{
+
+			//If is not RectTransform
+			//TODO change transform
+			LOG("Adding EDIT TEXT COMPONENT.");
+			CompEditText* edit_text = new CompEditText(type, this);
+			components.push_back(edit_text);
+
+			/* Link image to the button if exists */
+			CompText* text_to_link = (CompText*)FindComponentByType(Comp_Type::C_TEXT);
+			if (text_to_link != nullptr)
+			{
+			}
+			else
+			{
+				LOG("TEXT not linked to any Edit Text");
+			}
+			return edit_text;
+		}
 		else if (type == Comp_Type::C_BUTTON)
 		{
-			LOG("Adding MATERIAL COMPONENT.");
+
+			//If is not RectTransform
+			//TODO change transform
+			LOG("Adding BUTTON COMPONENT.");
 			CompButton* button = new CompButton(type, this);
 			components.push_back(button);
 
-			/* Link Material to the Mesh if exists */
+			/* Link image to the button if exists */
 			CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
 			if (image_to_link != nullptr)
 			{
 			}
 			else
 			{
-				LOG("IMAGE not linked to any mesh");
+				LOG("IMAGE not linked to any Button");
 			}
 			return button;
+		}
+		else if (type == Comp_Type::C_CHECK_BOX)
+		{
+
+			//If is not RectTransform
+			//TODO change transform
+			LOG("Adding CHECK BOX COMPONENT.");
+			CompCheckBox* check_box = new CompCheckBox(type, this);
+			components.push_back(check_box);
+
+			/* Link image to the button if exists */
+			CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
+			if (image_to_link != nullptr)
+			{
+
+			}
+			else
+			{
+				LOG("IMAGE not linked to any CheckBox");
+			}
+			return check_box;
 		}
 		else if (type == Comp_Type::C_CAMERA)
 		{
@@ -1075,6 +1183,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		case Comp_Type::C_TRANSFORM:
 			this->AddComponent(Comp_Type::C_TRANSFORM);
 			break;
+		case Comp_Type::C_RECT_TRANSFORM:
+			this->AddComponent(Comp_Type::C_RECT_TRANSFORM);
+			break;
 		case Comp_Type::C_MESH:
 			this->AddComponent(Comp_Type::C_MESH);
 			break;
@@ -1083,6 +1194,27 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			break;
 		case Comp_Type::C_CAMERA:
 			this->AddComponent(Comp_Type::C_CAMERA);
+			break;
+		case Comp_Type::C_BUTTON:
+			this->AddComponent(Comp_Type::C_BUTTON);
+			break;
+		case Comp_Type::C_CHECK_BOX:
+			this->AddComponent(Comp_Type::C_CHECK_BOX);
+			break;
+		case Comp_Type::C_CANVAS:
+			this->AddComponent(Comp_Type::C_CANVAS);
+			break;
+		case Comp_Type::C_CANVAS_RENDER:
+			this->AddComponent(Comp_Type::C_CANVAS_RENDER);
+			break;
+		case Comp_Type::C_TEXT:
+			this->AddComponent(Comp_Type::C_TEXT);
+			break;
+		case Comp_Type::C_EDIT_TEXT:
+			this->AddComponent(Comp_Type::C_EDIT_TEXT);
+			break;
+		case Comp_Type::C_IMAGE:
+			this->AddComponent(Comp_Type::C_IMAGE);
 			break;
 		case Comp_Type::C_SCRIPT:
 			this->AddComponent(Comp_Type::C_SCRIPT, true);
@@ -1125,35 +1257,6 @@ CompScript* GameObject::GetComponentScript() const
 	return (CompScript*)FindComponentByType(Comp_Type::C_SCRIPT);
 }
 
-CompRectTransform * GameObject::GetCompRectTransform() const
-{
-	return (CompRectTransform*)FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
-}
-
-CompImage * GameObject::GetCompImage() const
-{
-	return (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
-}
-
-CompText * GameObject::GetCompText() const
-{
-	return (CompText*)FindComponentByType(Comp_Type::C_TEXT);
-}
-
-CompEditText * GameObject::GetCompEditText() const
-{
-	return (CompEditText*)FindComponentByType(Comp_Type::C_EDIT_TEXT);
-}
-
-CompButton * GameObject::GetCompButton() const
-{
-	return (CompButton*)FindComponentByType(Comp_Type::C_BUTTON);
-}
-
-CompCheckBox * GameObject::GetCompCheckBox() const
-{
-	return (CompCheckBox*)FindComponentByType(Comp_Type::C_CHECK_BOX);
-}
 
 Component* GameObject::GetComponentbyIndex(uint i) const
 {

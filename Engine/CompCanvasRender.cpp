@@ -7,7 +7,7 @@ CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(
 	name_component = "Canvas Render";
 }
 
-CompCanvasRender::CompCanvasRender(const CompCanvasRender & copy, GameObject * parent) : Component(Comp_Type::C_MESH, parent)
+CompCanvasRender::CompCanvasRender(const CompCanvasRender & copy, GameObject * parent) : Component(Comp_Type::C_CANVAS_RENDER, parent)
 {
 }
 

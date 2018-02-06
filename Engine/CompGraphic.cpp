@@ -10,7 +10,7 @@ CompGraphic::CompGraphic(Comp_Type t, GameObject * parent) :Component(t, parent)
 	name_component = "Graphic";
 }
 
-CompGraphic::CompGraphic(const CompGraphic & copy, GameObject * parent) : Component(Comp_Type::C_MESH, parent)
+CompGraphic::CompGraphic(const CompGraphic & copy, GameObject * parent) : Component(copy.GetType(), parent)
 {
 }
 
