@@ -31,6 +31,7 @@ public:
 	void ShowVariablesInfo();
 	void ShowVarType(ScriptVariable* var);
 	void ShowVarValue(ScriptVariable* var, int i);
+	void CopyValues(const CompScript * component);
 	// -------------------------
 
 	// SAVE - LOAD METHODS ----------------

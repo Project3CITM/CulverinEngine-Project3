@@ -57,6 +57,8 @@ public:
 	float* GetViewMatrix() const;
 	float* GetProjectionMatrix() const;
 
+	void CopyValues(const CompCamera * component);
+
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
 
