@@ -61,7 +61,7 @@ update_status ModuleFS::PreUpdate(float dt)
 	static bool ImportAutoFiles = true;
 	if (ImportAutoFiles)
 	{
-		ImportAllFilesNoMeta(allfilesAsstes);
+		ImportAllFilesNoMeta(allfilesAsstes); //First material!! and next meshes... TODO ELLIOT
 		ImportAutoFiles = false;
 	}
 
