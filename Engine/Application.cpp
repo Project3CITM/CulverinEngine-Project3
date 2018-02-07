@@ -44,7 +44,7 @@ Application::Application()
 	event_system = new ModuleEventSystem();
 
 	random = new math::LCG();
-	Json_seria = new JSONSerialization();
+	json_seria = new JSONSerialization();
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -79,7 +79,7 @@ Application::~Application()
 	}
 	RELEASE(configuration);
 	RELEASE(random);
-	RELEASE(Json_seria);
+	RELEASE(json_seria);
 }
 
 bool Application::Init()
@@ -102,14 +102,14 @@ bool Application::Init()
 		// Get editor variables from .json document ------
 		config = json_value_get_object(config_file);
 		config_node = json_object_get_object(config,"Application");
-		appName = json_object_get_string(config_node, "App Name");
-		orgName = json_object_get_string(config_node, "Org Name");
+		app_name = json_object_get_string(config_node, "App Name");
+		org_name = json_object_get_string(config_node, "Org Name");
 		maxFPS = json_object_get_number(config_node, "Max FPS");
 		vsync = json_object_get_boolean(config_node, "VSYNC");
 		SetFpsCap(maxFPS);
 		// ---------------------------------------------------
 
-		actualScene = json_object_get_string(config_node, "ActualScene");
+		actual_scene = json_object_get_string(config_node, "ActualScene");
 
 		// Call Init() in all modules
 		std::vector<Module*>::iterator item = list_modules.begin();
@@ -137,8 +137,8 @@ bool Application::Init()
 			}
 			item++;
 		}
-		realTime.engineStart_time.Start();
-		realTime.ms_timer.Start();
+		real_time.engine_start_time.Start();
+		real_time.ms_timer.Start();
 	}
 	return ret;
 }
@@ -146,22 +146,22 @@ bool Application::Init()
 // ---------------------------------------------
 void Application::PrepareUpdate()
 {
-	realTime.frame_count++;
-	realTime.last_sec_frame_count++;
-	realTime.dt = (float)realTime.ms_timer.ReadSec();
-	realTime.ms_timer.Start();
-	realTime.frame_time.Start();
+	real_time.frame_count++;
+	real_time.last_sec_frame_count++;
+	real_time.dt = (float)real_time.ms_timer.ReadSec();
+	real_time.ms_timer.Start();
+	real_time.frame_time.Start();
 
-	if (gameTime.prepare_frame)
+	if (game_time.prepare_frame)
 	{
-		gameTime.play_frame = true;
-		gameTime.prepare_frame = false;
+		game_time.play_frame = true;
+		game_time.prepare_frame = false;
 	}
 
-	if (engineState == EngineState::PLAY || engineState == EngineState::PLAYFRAME)
+	if (engine_state == EngineState::PLAY || engine_state == EngineState::PLAYFRAME)
 	{
-		gameTime.gameStart_time += realTime.dt * gameTime.timeScale;
-		gameTime.frame_count++;
+		game_time.game_start_time += real_time.dt * game_time.time_scale;
+		game_time.frame_count++;
 	}
 
 	if (change_to_game)
@@ -183,7 +183,7 @@ void Application::FinishUpdate()
 	// SAVE & LOAD FUNCTIONS ------------------------
 	if (want_to_save == true)
 	{
-		actualScene = Json_seria->SaveScene();
+		actual_scene = json_seria->SaveScene();
 		want_to_save = false;
 	}
 
@@ -192,30 +192,30 @@ void Application::FinishUpdate()
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		App->scene->ClearAllVariablesScript();
 		App->scene->DeleteAllGameObjects(App->scene->root); //TODO->Elliot
-		Json_seria->LoadScene(actualScene.c_str());
+		json_seria->LoadScene(actual_scene.c_str());
 		App->resource_manager->ReImportAllScripts();
 		want_to_load = false;
 	}
 	// ---------------------------------------------
 
 	// Framerate calculations ----------------------
-	if (realTime.last_sec_frame_time.Read() > 1000)
+	if (real_time.last_sec_frame_time.Read() > 1000)
 	{
-		realTime.last_sec_frame_time.Start();
-		realTime.prev_last_sec_frame_count = realTime.last_sec_frame_count;
+		real_time.last_sec_frame_time.Start();
+		real_time.prev_last_sec_frame_count = real_time.last_sec_frame_count;
 
-		fps_log[frame_index] = realTime.prev_last_sec_frame_count;
+		fps_log[frame_index] = real_time.prev_last_sec_frame_count;
 		frame_index = (frame_index + 1) % IM_ARRAYSIZE(fps_log);
 
-		realTime.last_sec_frame_count = 0;
+		real_time.last_sec_frame_count = 0;
 	}
 
-	float avg_fps = float(realTime.frame_count) / realTime.engineStart_time.ReadSec();
-	float seconds_since_startup = realTime.engineStart_time.ReadSec();
-	realTime.last_frame_ms = realTime.frame_time.Read();
-	uint32 frames_on_last_update = realTime.prev_last_sec_frame_count;
+	float avg_fps = float(real_time.frame_count) / real_time.engine_start_time.ReadSec();
+	float seconds_since_startup = real_time.engine_start_time.ReadSec();
+	real_time.last_frame_ms = real_time.frame_time.Read();
+	uint32 frames_on_last_update = real_time.prev_last_sec_frame_count;
 	
-	ms_log[ms_index] = realTime.last_frame_ms;
+	ms_log[ms_index] = real_time.last_frame_ms;
 
 	//Get all performance data-------------------
 	std::vector<Module*>::iterator item = list_modules.begin();
@@ -234,14 +234,14 @@ void Application::FinishUpdate()
 	ms_index = (ms_index + 1) % IM_ARRAYSIZE(ms_log); //ms_index works for all the logs (same size)
 
 
-	if (realTime.capped_ms > 0 && realTime.last_frame_ms < realTime.capped_ms)
+	if (real_time.capped_ms > 0 && real_time.last_frame_ms < real_time.capped_ms)
 	{
-		SDL_Delay(realTime.capped_ms - realTime.last_frame_ms);
+		SDL_Delay(real_time.capped_ms - real_time.last_frame_ms);
 	}
 
-	if (gameTime.play_frame)
+	if (game_time.play_frame)
 	{
-		gameTime.play_frame = false;
+		game_time.play_frame = false;
 		SetState(EngineState::PAUSE);
 	}
 }
@@ -270,15 +270,15 @@ update_status Application::Update()
 		{
 			if ((*item) == camera)
 			{
-				ret = (*item)->PreUpdate(realTime.dt); // Camera can't be affected by Game Time Scale (0 dt = 0 movement)
+				ret = (*item)->PreUpdate(real_time.dt); // Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 			}
 			else
 			{
-				if (engineState == EngineState::PLAY || engineState == EngineState::PLAYFRAME)
+				if (engine_state == EngineState::PLAY || engine_state == EngineState::PLAYFRAME)
 				{
-					ret = (*item)->PreUpdate(realTime.dt * gameTime.timeScale);
+					ret = (*item)->PreUpdate(real_time.dt * game_time.time_scale);
 				}
-				else if (engineState == EngineState::PAUSE || engineState == EngineState::STOP)
+				else if (engine_state == EngineState::PAUSE || engine_state == EngineState::STOP)
 				{
 					ret = (*item)->PreUpdate(0);
 				}
@@ -300,15 +300,15 @@ update_status Application::Update()
 			if ((*item) == camera)
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
-				ret = (*item)->Update(realTime.dt);
+				ret = (*item)->Update(real_time.dt);
 			}
 			else
 			{
-				if (engineState == EngineState::PLAY || engineState == EngineState::PLAYFRAME)
+				if (engine_state == EngineState::PLAY || engine_state == EngineState::PLAYFRAME)
 				{
-					ret = (*item)->Update(realTime.dt * gameTime.timeScale);
+					ret = (*item)->Update(real_time.dt * game_time.time_scale);
 				}
-				else if (engineState == EngineState::PAUSE || engineState == EngineState::STOP)
+				else if (engine_state == EngineState::PAUSE || engine_state == EngineState::STOP)
 				{
 					ret = (*item)->Update(0);
 				}
@@ -318,12 +318,12 @@ update_status Application::Update()
 	}
 
 	//PERFORMANCE WINDOW -----------------------
-	if (showperformance)
+	if (show_performance)
 	{
 		static bool stop_perf = false;
 		item = list_modules.begin();
 
-		if (!ImGui::Begin("PERFORMANCE", &showperformance, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_NoCollapse))
+		if (!ImGui::Begin("PERFORMANCE", &show_performance, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_NoCollapse))
 		{
 			ImGui::End();
 			stop_perf = true;
@@ -353,15 +353,15 @@ update_status Application::Update()
 			if ((*item) == camera)
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
-				ret = (*item)->PostUpdate(realTime.dt);
+				ret = (*item)->PostUpdate(real_time.dt);
 			}
 			else
 			{
-				if (engineState == EngineState::PLAY || engineState == EngineState::PLAYFRAME)
+				if (engine_state == EngineState::PLAY || engine_state == EngineState::PLAYFRAME)
 				{
-					ret = (*item)->PostUpdate(realTime.dt * gameTime.timeScale);
+					ret = (*item)->PostUpdate(real_time.dt * game_time.time_scale);
 				}
-				else if (engineState == EngineState::PAUSE || engineState == EngineState::STOP)
+				else if (engine_state == EngineState::PAUSE || engine_state == EngineState::STOP)
 				{
 					ret = (*item)->PostUpdate(0);
 				}
@@ -376,14 +376,14 @@ update_status Application::Update()
 
 void Application::Config()
 {
-	if (showconfig)
+	if (show_config)
 	{
 		static bool stop_conf = false;
 		bool ret = true;
 		std::vector<Module*>::iterator item = list_modules.begin();
 		item = list_modules.begin();
 
-		if (!BeginDock("CONFIGURATION", &showconfig, 0))
+		if (!BeginDock("CONFIGURATION", &show_config, 0))
 		{
 			EndDock();
 			stop_conf = true;
@@ -401,9 +401,9 @@ void Application::Config()
 			else
 			{
 				ImGui::Text("App Name:"); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), appName.c_str());
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), app_name.c_str());
 				ImGui::Text("Organization Name:"); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), orgName.c_str());
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), org_name.c_str());
 				static int fps = maxFPS;
 				ImGui::SliderInt("Max FPS", &fps, 0, 60);
 				ImGui::SameLine(); ShowHelpMarker("0 = no framerate cap"); ImGui::SameLine();
@@ -428,18 +428,18 @@ void Application::Config()
 					ImGui::PopStyleColor();
 
 					ImGui::Text("Time Since Startup:"); ImGui::SameLine();
-					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.0f s", realTime.engineStart_time.ReadSec());
+					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.0f s", real_time.engine_start_time.ReadSec());
 					ImGui::Text("Frames in Last Second:"); ImGui::SameLine();
-					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%u", realTime.prev_last_sec_frame_count);
+					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%u", real_time.prev_last_sec_frame_count);
 					
 					ImGui::Spacing();
 
 					ImGui::TextColored(ImVec4(1.0f,1.0f,0.0f,1.0f), "GAME CLOCK");
-					ImGui::SliderFloat("Time Scale", &gameTime.timeScale, 0.0f, 5.0f);
+					ImGui::SliderFloat("Time Scale", &game_time.time_scale, 0.0f, 5.0f);
 					ImGui::Text("Time Since Game Started:"); ImGui::SameLine();
-					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f s", gameTime.gameStart_time);
+					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f s", game_time.game_start_time);
 					ImGui::Text("Total Frames:"); ImGui::SameLine();
-					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%u", gameTime.frame_count);
+					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%u", game_time.frame_count);
 
 					ImGui::TreePop();
 				}
@@ -500,7 +500,7 @@ void Application::Config()
 					}
 					else
 					{
-						ret = (*item)->UpdateConfig(realTime.dt);
+						ret = (*item)->UpdateConfig(real_time.dt);
 						configuration->_EndDock();
 					}
 				}
@@ -545,11 +545,11 @@ void Application::SetFpsCap(uint fps)
 
 	if (fps > 0)
 	{
-		realTime.capped_ms = 1000 / fps;
+		real_time.capped_ms = 1000 / fps;
 	}
 	else
 	{
-		realTime.capped_ms = 0;
+		real_time.capped_ms = 0;
 	}
 }
 
@@ -572,13 +572,13 @@ bool Application::SaveConfig()
 		config = json_value_get_object(config_file);
 		config_node = json_object_get_object(config, "Application");
 
-		json_object_set_string(config_node, "App Name", appName.c_str());
-		json_object_set_string(config_node, "Org Name", orgName.c_str());
+		json_object_set_string(config_node, "App Name", app_name.c_str());
+		json_object_set_string(config_node, "Org Name", org_name.c_str());
 		json_object_set_number(config_node, "Max FPS", maxFPS);
 		json_object_set_boolean(config_node, "VSYNC", vsync);
 		 
 		//Save ActualScene ----- 
-		json_object_set_string(config_node, "ActualScene", actualScene.c_str());
+		json_object_set_string(config_node, "ActualScene", actual_scene.c_str());
 
 
 		//Iterate all modules to save each respective info
@@ -625,11 +625,11 @@ void Application::SetState(EngineState state)
 	if (state == EngineState::PLAY)
 	{
 		// If it's already Game Mode, exit and start again Editor Mode
-		if (engineState == EngineState::PLAY)
+		if (engine_state == EngineState::PLAY)
 		{
-			engineState = EngineState::STOP;
-			gameTime.gameStart_time = 0.0f;
-			gameTime.frame_count = 0.0f;
+			engine_state = EngineState::STOP;
+			game_time.game_start_time = 0.0f;
+			game_time.frame_count = 0.0f;
 			ChangeCamera("Scene"); // To notice renderer3D to change to Scene Camera
 
 			// Clear static objects vector
@@ -642,32 +642,32 @@ void Application::SetState(EngineState state)
 		{
 			if (App->renderer3D->game_camera != nullptr)
 			{
-				engineState = EngineState::PLAY;
+				engine_state = EngineState::PLAY;
 				ChangeCamera("Game"); // To notice renderer3D to change to Gcene Camera
 
 				// Fill static objects vector when play
 				scene->FillStaticObjectsVector(true); 
 
-				scene->sceneBuff->WantRefreshRatio();
+				scene->scene_buff->WantRefreshRatio();
 
 				//To Save all elements in the scene to load them correctly when exiting Game Mode
-				actualScene = Json_seria->SaveScene();
+				actual_scene = json_seria->SaveScene();
 			}
 			else
 			{
-				showCameraPopup = true;
+				show_camera_popup = true;
 			}
 		}
 	}
 	else 
 	{
 		// PAUSE & PLAYFRAME buttons only work if you are in game mode
-		if (engineState != EngineState::STOP)
+		if (engine_state != EngineState::STOP)
 		{
-			engineState = state;
+			engine_state = state;
 		}
 	}
-	LOG("Engine State is Now: %i", engineState);
+	LOG("Engine State is Now: %i", engine_state);
 }
 
 void Application::WantToSave()
@@ -696,12 +696,12 @@ void Application::ChangeCamera(const char* window)
 
 std::string Application::GetActualScene()
 {
-	return actualScene;
+	return actual_scene;
 }
 
 void Application::SetActualScene(std::string scene)
 {
-	actualScene = scene;
+	actual_scene = scene;
 }
 
 const std::vector<Module*>* Application::GetModuleList() const

@@ -239,7 +239,7 @@ void GameObject::Init()
 {
 }
 
-void GameObject::preUpdate(float dt)
+void GameObject::PreUpdate(float dt)
 {
 	to_delete = false;
 
@@ -256,7 +256,7 @@ void GameObject::preUpdate(float dt)
 			{
 				if (components[i]->IsActive())
 				{
-					components[i]->preUpdate(dt);
+					components[i]->PreUpdate(dt);
 				}
 			}
 		}
@@ -272,7 +272,7 @@ void GameObject::preUpdate(float dt)
 			{
 				if (childs[i]->IsActive())
 				{
-					childs[i]->preUpdate(dt);
+					childs[i]->PreUpdate(dt);
 				}
 			}
 		}
@@ -470,7 +470,7 @@ void GameObject::ShowHierarchy()
 	}
 	bool treeNod = false;
 	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow;
-	if (((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetSelected() == this)
+	if (((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetSelected() == this)
 	{
 		node_flags |= ImGuiTreeNodeFlags_Selected;
 	}
@@ -486,8 +486,8 @@ void GameObject::ShowHierarchy()
 	if (ImGui::IsItemClicked())
 	{
 		//Set inspector window of this Game Object
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->LinkObject(this);
-		((Hierarchy*)App->gui->winManager[WindowName::HIERARCHY])->SetGameObjectSelected(this);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->LinkObject(this);
+		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjectSelected(this);
 		App->camera->SetFocus(this);
 		App->scene->drag = this;
 	}
@@ -536,11 +536,11 @@ void GameObject::ShowGameObjectOptions()
 	//Create child Game Objects / Components
 	if (ImGui::MenuItem("Copy"))
 	{
-		((Hierarchy*)App->gui->winManager[WindowName::HIERARCHY])->SetGameObjectCopy(this);
+		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjectCopy(this);
 	}
 	if (ImGui::MenuItem("Paste"))
 	{
-		((Hierarchy*)App->gui->winManager[WindowName::HIERARCHY])->CopyGameObject(this);
+		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->CopyGameObject(this);
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Rename", NULL, false, false))
@@ -553,9 +553,9 @@ void GameObject::ShowGameObjectOptions()
 	}
 	if (ImGui::MenuItem("Delete"))
 	{
-		if (App->engineState == EngineState::STOP)
+		if (App->engine_state == EngineState::STOP)
 		{
-			((Hierarchy*)App->gui->winManager[WindowName::HIERARCHY])->SetGameObjecttoDelete(this);
+			((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjecttoDelete(this);
 		}
 		else
 		{
@@ -566,12 +566,12 @@ void GameObject::ShowGameObjectOptions()
 	if (ImGui::MenuItem("Create Empty"))
 	{
 		GameObject* empty = App->scene->CreateGameObject(this);
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->LinkObject(empty);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->LinkObject(empty);
 	}
 	if (ImGui::MenuItem("Create Cube"))
 	{
 		GameObject* cube = App->scene->CreateCube(this);
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->LinkObject(cube);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->LinkObject(cube);
 	}
 	//if (ImGui::MenuItem("Sphere"))
 	//{
@@ -659,7 +659,7 @@ void GameObject::ShowInspectorInfo()
 		ImGui::Text(""); ImGui::SameLine(8);
 		if (ImGui::Checkbox("##2", &static_obj))
 		{
-			if (App->engineState == EngineState::STOP)
+			if (App->engine_state == EngineState::STOP)
 			{
 				window_active = true;
 				static_object = static_obj;
@@ -1271,9 +1271,9 @@ void GameObject::DeleteAllComponents()
 {
 	for (int i = 0; i < components.size(); i++)
 	{
-		if (((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
+		if (((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
 		{
-			((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetLinkComponentNull();
+			((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetLinkComponentNull();
 		}
 		components[i]->Clear();
 		RELEASE(components[i]);
@@ -1290,9 +1290,9 @@ void GameObject::DeleteComponent(Component* component)
 		{
 			if (component == components[i])
 			{
-				if (((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
+				if (((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
 				{
-					((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetLinkComponentNull();
+					((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetLinkComponentNull();
 				}
 				components[i]->Clear();
 				components.erase(item);

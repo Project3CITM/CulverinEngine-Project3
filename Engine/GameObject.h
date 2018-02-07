@@ -37,7 +37,7 @@ public:
 	GameObject* GetGameObjectfromScene(int);
 
 	void Init();
-	void preUpdate(float dt);
+	void PreUpdate(float dt);
 	void Update(float dt);
 	void postUpdate();
 	bool CleanUp();

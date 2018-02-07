@@ -55,14 +55,14 @@ public:
 	VarType type = Var_UNKNOWN;
 	void* value = nullptr;
 	std::string str_value;
-	GameObject* gameObject = nullptr;
-	bool selectGameObject = false; //Only use for GameObjects
+	GameObject* game_object = nullptr;
+	bool select_game_object = false; //Only use for GameObjects
 	VarAccess access = VarAccess::Var_PRIVATE;
 
 private:
 	//Mono properties to link with he script
-	MonoClassField* monoField = nullptr;
-	MonoType* monoType = nullptr;
+	MonoClassField* mono_field = nullptr;
+	MonoType* mono_type = nullptr;
 
 	//To access the script
 	CSharpScript* script = nullptr;
@@ -158,7 +158,7 @@ private:
 	MonoClass* CSClass = nullptr;
 	MonoObject* CSObject = nullptr;
 	MonoObject* CSSelfObject = nullptr;
-	GameObject* ownGameObject = nullptr;
+	GameObject* own_game_object = nullptr;
 
 	// Main Functions
 	MainMonoMethod Start;
@@ -168,10 +168,11 @@ private:
 	MainMonoMethod OnEnable;
 	MainMonoMethod OnDisable;
 
-	GameObject* currentGameObject = nullptr;
-	std::vector<uint> reLoadValues;
+	GameObject* current_game_object = nullptr;
+	std::vector<uint> re_load_values;
+
 public:
-	std::map<MonoObject*, GameObject*> gameObjects;
+	std::map<MonoObject*, GameObject*> game_objects;
 
 };
 

@@ -28,8 +28,9 @@ public:
 
 
 private:
+
 	ImVec2 mouse_pos;
-	float4 SceneWindow = float4::zero;
+	float4 scene_window = float4::zero;
 
 };
 

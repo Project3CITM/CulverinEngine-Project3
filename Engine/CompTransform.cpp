@@ -61,13 +61,13 @@ void CompTransform::Update(float dt)
 	}
 
 	// Show gizmo when object selected
-	if (((Inspector*)App->gui->winManager[INSPECTOR])->GetSelected() == parent && App->engineState == EngineState::STOP)
+	if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == parent && App->engine_state == EngineState::STOP)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuizmo::Enable(true);
 
 		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
-		screen = ((SceneWorld*)App->gui->winManager[SCENEWORLD])->GetWindowParams();
+		screen = ((SceneWorld*)App->gui->win_manager[SCENEWORLD])->GetWindowParams();
 		ImGuizmo::SetRect(screen.x, screen.y, screen.z, screen.w);
 
 		// Get global transform of the object and transpose it to edit with Guizmo
@@ -141,21 +141,21 @@ void CompTransform::ShowOptions()
 	}
 	if (ImGui::MenuItem("Copy Component", NULL, false))
 	{
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetComponentCopy(this);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
-	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		if (parent->FindComponentByType(((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
-			|| ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+		if (parent->FindComponentByType(((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
+			|| ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
 		{
-			parent->AddComponentCopy(*((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied());
+			parent->AddComponentCopy(*((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied());
 		}
 	}
-	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		if (this->GetType() == ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
+		if (this->GetType() == ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
 		{
-			CopyValues(((CompTransform*)((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()));
+			CopyValues(((CompTransform*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
 		}
 	}
 	ImGui::Separator();
@@ -206,7 +206,7 @@ void CompTransform::ShowInspectorInfo()
 	//}
 
 	// SHOW OUTPUT (depending on mode and if transform is freezed) ---------------
-	if (App->engineState == EngineState::STOP)
+	if (App->engine_state == EngineState::STOP)
 	{
 		ShowTransform(0.5f); // 0.5f = drag speed of editor variables of the transform
 	}

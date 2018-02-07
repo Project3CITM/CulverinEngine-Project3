@@ -4,7 +4,7 @@
 
 ResourceMesh::ResourceMesh(uint uid) : Resource(uid, Resource::Type::MESH, Resource::State::UNLOADED)
 {
-	NumGameObjectsUseMe = 0;
+	num_game_objects_use_me = 0;
 	LOG("Resource Mesh Created!");
 }
 
@@ -25,7 +25,7 @@ void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_
 		ver.pos = vert[i];
 
 		// Vertex Normals --------------------
-		if (hasNormals)
+		if (has_normals)
 		{
 			ver.norm = vert_normals[i];
 		}
@@ -63,7 +63,7 @@ void ResourceMesh::InitRanges(uint num_vert, uint num_ind, uint num_normals)
 
 	if (num_normals > 0)
 	{
-		hasNormals = true;
+		has_normals = true;
 	}
 }
 
@@ -84,7 +84,7 @@ void ResourceMesh::DeleteToMemory()
 
 	num_vertices = 0;
 	num_indices = 0;
-	hasNormals = false;
+	has_normals = false;
 
 	vertices.clear();
 	indices.clear();

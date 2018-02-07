@@ -15,8 +15,8 @@ struct Vertex;
 struct ReImport
 {
 	uint uuid = 0;
-	const char* nameMesh = nullptr;
-	const char* directoryObj = nullptr;
+	const char* name_mesh = nullptr;
+	const char* directory_obj = nullptr;
 };
 
 class ModuleResourceManager : public Module
@@ -50,16 +50,19 @@ public:
 	void Load();
 
 public:
-	std::vector<ReImport> resourcesToReimport;
-	std::vector<uint> filestoDelete;
+	
+	std::vector<ReImport> resources_to_reimport;
+	std::vector<uint> files_to_delete;
+
 private:
+	
 	std::map<uint, Resource*> resources;
-	std::vector<const char*> filesReimport;
-	bool reimportNow = false;
-	bool deleteNow = false;
-	bool loadResources = true;
-	bool reimportedScripts = false;
-	bool scriptsSetNormal = false;
+	std::vector<const char*> files_reimport;
+	bool reimport_now = false;
+	bool delete_now = false;
+	bool load_resources = true;
+	bool reimported_scripts = false;
+	bool scripts_set_normal = false;
 };
 
 #endif

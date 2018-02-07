@@ -39,7 +39,7 @@ public:
 	virtual bool Enable();
 	virtual bool Disable();
 	virtual void Init();
-	virtual void preUpdate(float dt);
+	virtual void PreUpdate(float dt);
 	virtual void Update(float dt);
 	virtual void Draw();
 	virtual void Clear();

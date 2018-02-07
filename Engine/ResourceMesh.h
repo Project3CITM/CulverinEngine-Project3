@@ -27,7 +27,7 @@ public:
 	Resource::State IsLoadedToMemory();
 
 public:
-	bool hasNormals = false;
+	bool has_normals = false;
 	uint num_vertices = 0;
 	uint num_indices = 0;
 	std::vector<Vertex> vertices;

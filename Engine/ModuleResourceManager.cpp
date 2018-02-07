@@ -26,14 +26,14 @@ ModuleResourceManager::~ModuleResourceManager()
 		it++;
 	}
 	resources.clear();
-	filesReimport.clear();
-	for (int i = 0; i < resourcesToReimport.size(); i++)
+	files_reimport.clear();
+	for (int i = 0; i < resources_to_reimport.size(); i++)
 	{
-		RELEASE_ARRAY(resourcesToReimport[i].directoryObj);
-		RELEASE_ARRAY(resourcesToReimport[i].nameMesh);
+		RELEASE_ARRAY(resources_to_reimport[i].directory_obj);
+		RELEASE_ARRAY(resources_to_reimport[i].name_mesh);
 	}
-	resourcesToReimport.clear();
-	filestoDelete.clear();
+	resources_to_reimport.clear();
+	files_to_delete.clear();
 }
 
 bool ModuleResourceManager::Start()
@@ -59,35 +59,35 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 		App->input->dropedfiles.clear();
 	}
 
-	if (resourcesToReimport.size() > 0)
+	if (resources_to_reimport.size() > 0)
 	{
 		// Now ReImport the new Resources ------
 		// First put all fbx and textures to vector, with this we dont repeat import.
-		filesReimport.push_back(resourcesToReimport[0].directoryObj);
-		for (int i = 1; i < resourcesToReimport.size(); i++)
+		files_reimport.push_back(resources_to_reimport[0].directory_obj);
+		for (int i = 1; i < resources_to_reimport.size(); i++)
 		{
-			if (strcmp(filesReimport[filesReimport.size() - 1], resourcesToReimport[i].directoryObj) != 0)
+			if (strcmp(files_reimport[files_reimport.size() - 1], resources_to_reimport[i].directory_obj) != 0)
 			{
-				filesReimport.push_back(resourcesToReimport[i].directoryObj);
+				files_reimport.push_back(resources_to_reimport[i].directory_obj);
 			}
 		}
 		// Then delete all Resources that want ReImport
 		std::map<uint, Resource*>::iterator it;
-		for (int i = 0; i < resourcesToReimport.size(); i++)
+		for (int i = 0; i < resources_to_reimport.size(); i++)
 		{
-			it = resources.find(resourcesToReimport[i].uuid);
+			it = resources.find(resources_to_reimport[i].uuid);
 			it->second->SetState(Resource::State::REIMPORTED);
 			//delete it->second;
 			//resources.erase(it);
 		}
-		reimportNow = true;
+		reimport_now = true;
 	}
 
 	// Delete Resource from Memory if anyone use it.
 	std::map<uint, Resource*>::iterator it = resources.begin();
 	for (int i = 0; i < resources.size(); i++)
 	{
-		if (it->second->NumGameObjectsUseMe == 0 && it->second->GetType() != Resource::Type::SCRIPT)
+		if (it->second->num_game_objects_use_me == 0 && it->second->GetType() != Resource::Type::SCRIPT)
 		{
 			if (it->second->IsLoadedToMemory() == Resource::State::LOADED)
 			{
@@ -99,20 +99,20 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 	}
 
 	// Prepare to Delete Resources and File in Library, so first set the resource state to WANTDELETE
-	if (filestoDelete.size() > 0)
+	if (files_to_delete.size() > 0)
 	{
 		std::map<uint, Resource*>::iterator it;
-		for (int i = 0; i < filestoDelete.size(); i++)
+		for (int i = 0; i < files_to_delete.size(); i++)
 		{
-			it = resources.find(filestoDelete[i]);
+			it = resources.find(files_to_delete[i]);
 			it->second->SetState(Resource::State::WANTDELETE);
 		}
-		deleteNow = true;
+		delete_now = true;
 	}
-	if (reimportedScripts)
+	if (reimported_scripts)
 	{
-		scriptsSetNormal = true;
-		reimportedScripts = false;
+		scripts_set_normal = true;
+		reimported_scripts = false;
 	}
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -120,13 +120,13 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 
 update_status ModuleResourceManager::PostUpdate(float dt)
 {
-	if (resourcesToReimport.size() > 0 && reimportNow)
+	if (resources_to_reimport.size() > 0 && reimport_now)
 	{
 		// if a Resource state == Resource::State::REIMPORT delete it.
 		std::map<uint, Resource*>::iterator it;
-		for (int i = 0; i < resourcesToReimport.size(); i++)
+		for (int i = 0; i < resources_to_reimport.size(); i++)
 		{
-			it = resources.find(resourcesToReimport[i].uuid);
+			it = resources.find(resources_to_reimport[i].uuid);
 			if (it->second->GetState() == Resource::State::REIMPORTED)
 			{
 				// First Delete file save in Library
@@ -150,22 +150,22 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 
 		// Now ReImport
 		LOG("ReImporting...");
-		ImportFile(filesReimport, resourcesToReimport);
+		ImportFile(files_reimport, resources_to_reimport);
 		LOG("Finished ReImport.");
 		// After reimport, update time of vector of files in filesystem.
 		App->fs->UpdateFilesAsstes();
-		filesReimport.clear();
-		for (int i = 0; i < resourcesToReimport.size(); i++)
+		files_reimport.clear();
+		for (int i = 0; i < resources_to_reimport.size(); i++)
 		{
-			RELEASE_ARRAY(resourcesToReimport[i].directoryObj);
-			RELEASE_ARRAY(resourcesToReimport[i].nameMesh);
+			RELEASE_ARRAY(resources_to_reimport[i].directory_obj);
+			RELEASE_ARRAY(resources_to_reimport[i].name_mesh);
 		}
-		resourcesToReimport.clear();
-		reimportNow = false;
+		resources_to_reimport.clear();
+		reimport_now = false;
 	}
 
 	// Now Delete Resources and file in Library.
-	if (filestoDelete.size() > 0 && deleteNow)
+	if (files_to_delete.size() > 0 && delete_now)
 	{
 		LOG("Deleting Resources...");
 		std::map<uint, Resource*>::iterator it = resources.begin();
@@ -201,14 +201,14 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 			}
 		}
 		LOG("Finished Delete Resources");
-		filestoDelete.clear();
-		deleteNow = false;
+		files_to_delete.clear();
+		delete_now = false;
 	}
 
 	// If a script modificated return to normal stat
-	if (scriptsSetNormal)
+	if (scripts_set_normal)
 	{
-		scriptsSetNormal = false;
+		scripts_set_normal = false;
 		std::map<uint, Resource*>::iterator it = resources.begin();
 		for (int i = 0; i < resources.size(); i++)
 		{
@@ -250,11 +250,11 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 			if (dropped_File_type == Resource::Type::FOLDER)
 			{
 				App->fs->GetAllFilesFromFolder(it._Ptr->_Myval, file);
-				std::string newDirectory = it._Ptr->_Myval;
-				newDirectory = App->fs->FixName_directory(newDirectory);
-				std::string temp = "\\" + newDirectory;
-				newDirectory = ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory() + temp;
-				((Project*)App->gui->winManager[WindowName::PROJECT])->SetDirectory(App->fs->CreateFolder(newDirectory.c_str(), true).c_str());
+				std::string new_directory = it._Ptr->_Myval;
+				new_directory = App->fs->FixName_directory(new_directory);
+				std::string temp = "\\" + new_directory;
+				new_directory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory() + temp;
+				((Project*)App->gui->win_manager[WindowName::PROJECT])->SetDirectory(App->fs->CreateFolder(new_directory.c_str(), true).c_str());
 				file.erase(it);
 				i = -1;
 				it = file.begin();
@@ -262,7 +262,7 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 			else if (App->importer->Import(it._Ptr->_Myval, dropped_File_type))
 			{
 				// Copy file to Specify folder in Assets (This folder is the folder active)
-				App->fs->CopyFileToAssets(it._Ptr->_Myval, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory());
+				App->fs->CopyFileToAssets(it._Ptr->_Myval, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory());
 				it++;
 			}
 		}
@@ -271,7 +271,7 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(it._Ptr->_Myval).c_str(), App->fs->GetExtension(it._Ptr->_Myval));
 		}
 	}
-	((Project*)App->gui->winManager[WindowName::PROJECT])->UpdateNow();
+	((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
 	App->fs->UpdateFilesAsstes();
 }
 
@@ -296,7 +296,7 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(file[i]).c_str(), App->fs->GetExtension(file[i]));
 		}
 	}
-	((Project*)App->gui->winManager[WindowName::PROJECT])->UpdateNow();
+	((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
 	App->fs->UpdateFilesAsstes();
 }
 
@@ -470,7 +470,7 @@ Resource*  ModuleResourceManager::ShowResources(bool& active, Resource::Type typ
 			ImGui::PushID(i);
 			if (type == it->second->GetType())
 			{
-				if (type == Resource::Type::SCRIPT && it->second->NumGameObjectsUseMe > 0)
+				if (type == Resource::Type::SCRIPT && it->second->num_game_objects_use_me > 0)
 				{
 				}
 				else
@@ -546,13 +546,13 @@ void ModuleResourceManager::ShowAllResources(bool& active)
 					//TODO ELLIOT SaveMeta
 				}
 				ImGui::Text("Number of GameObjects Use this Resource: "); ImGui::SameLine();
-				if (it->second->NumGameObjectsUseMe > 0)
+				if (it->second->num_game_objects_use_me > 0)
 				{
-					ImGui::TextColored(ImVec4(0, 0.933, 0, 1), "%i", it->second->NumGameObjectsUseMe);
+					ImGui::TextColored(ImVec4(0, 0.933, 0, 1), "%i", it->second->num_game_objects_use_me);
 				}
 				else
 				{
-					ImGui::TextColored(ImVec4(0.933, 0, 0, 1), "%i", it->second->NumGameObjectsUseMe);
+					ImGui::TextColored(ImVec4(0.933, 0, 0, 1), "%i", it->second->num_game_objects_use_me);
 				}
 				ImGui::Text("UID of Resource:"); ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0, 0.666, 1, 1), "%i", it->second->GetUUID());
@@ -573,7 +573,7 @@ void ModuleResourceManager::ShowAllResources(bool& active)
 bool ModuleResourceManager::ReImportAllScripts()
 {
 	bool ret = true;
-	reimportedScripts = true;
+	reimported_scripts = true;
 	std::map<uint, Resource*>::iterator it = resources.begin();
 	for (int i = 0; i < resources.size(); i++)
 	{
@@ -609,13 +609,13 @@ void ModuleResourceManager::Save()
 		config = json_value_get_object(config_file);
 		config_node = json_object_get_object(config, "Resources");
 		json_object_clear(config_node);
-		int numResources = resources.size() - ResourcePrimitive;
-		json_object_dotset_number_with_std(config_node, "Info.Number of Resources", numResources);
-		json_object_dotset_boolean_with_std(config_node, "Info.Load Resources", loadResources);
+		int num_resources = resources.size() - ResourcePrimitive;
+		json_object_dotset_number_with_std(config_node, "Info.Number of Resources", num_resources);
+		json_object_dotset_boolean_with_std(config_node, "Info.Load Resources", load_resources);
 		// Update Resoruces
 		std::map<uint, Resource*>::iterator it = resources.begin();
 		it++; // ++ = Resource "Cube" dont save - ResourcePrimitive
-		for (uint i = 0; i < numResources; i++)
+		for (uint i = 0; i < num_resources; i++)
 		{
 			std::string name = "Resource " + std::to_string(i);
 			name += ".";
@@ -643,13 +643,13 @@ void ModuleResourceManager::Load()
 	{
 		config = json_value_get_object(config_file);
 		config_node = json_object_get_object(config, "Resources");
-		int NumberResources = json_object_dotget_number(config_node, "Info.Number of Resources");
-		loadResources = json_object_dotget_boolean(config_node, "Info.Load Resources");
-		if (loadResources)
+		int number_resources = json_object_dotget_number(config_node, "Info.Number of Resources");
+		load_resources = json_object_dotget_boolean(config_node, "Info.Load Resources");
+		if (load_resources)
 		{
-			if (NumberResources > 0)
+			if (number_resources > 0)
 			{
-				for (int i = 0; i < NumberResources; i++)
+				for (int i = 0; i < number_resources; i++)
 				{
 					std::string name = "Resource " + std::to_string(i);
 					name += ".";

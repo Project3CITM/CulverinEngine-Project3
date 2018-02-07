@@ -16,7 +16,7 @@ public:
 	CompMaterial(const CompMaterial& copy, GameObject* parent);
 	~CompMaterial();
 
-	void preUpdate(float dt);
+	void PreUpdate(float dt);
 	void Clear();
 	void SetColor(float r, float g, float b, float a);
 	void SetUUIDMesh(uint uuid);
@@ -36,14 +36,17 @@ public:
 	// --------------------------------------------
 
 public:
-	ResourceMaterial* resourceMaterial = nullptr;
+
+	ResourceMaterial* resource_material = nullptr;
 	ShaderProgram* material_shader = nullptr;
+
 private:
+
 	Color color = White;
-	bool selectMaterial = false;
+	bool select_material = false;
 
 	uint uuid_material = 0;
-	uint uuidResourceReimported = 0;
+	uint uuid_resource_reimported = 0;
 };
 
 #endif

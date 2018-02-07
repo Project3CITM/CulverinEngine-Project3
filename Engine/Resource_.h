@@ -27,6 +27,7 @@ public:
 	};
 
 public:
+
 	Resource(uint uuid, Resource::Type type, Resource::State state);
 	virtual ~Resource();
 
@@ -35,21 +36,21 @@ public:
 	uint GetUUID() const;
 	void SetState(Resource::State state);
 
-	virtual void DeleteToMemory(){}
-	virtual Resource::State IsLoadedToMemory()
-	{
-		return state;
-	}
+	virtual void DeleteToMemory();
+	virtual Resource::State IsLoadedToMemory();
 
 protected:
+
 	Type type = Type::UNKNOWN;
 	State state = State::UNLOADED;
 	uint uuid = 0;
 
 public:
+
 	char* name = "Name Resource";
 	std::string path_assets;
-	uint NumGameObjectsUseMe = 0;
+	uint num_game_objects_use_me = 0;
+
 };
 
 #endif

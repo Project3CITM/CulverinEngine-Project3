@@ -34,11 +34,11 @@ ModuleGUI::ModuleGUI(bool start_enabled): Module(start_enabled)
 
 ModuleGUI::~ModuleGUI()
 {
-	for (int i = 0; i < winManager.size(); i++)
+	for (int i = 0; i < win_manager.size(); i++)
 	{
-		delete winManager[i];
+		delete win_manager[i];
 	}
-	winManager.clear();
+	win_manager.clear();
 }
 
 
@@ -53,23 +53,23 @@ bool ModuleGUI::Start()
 	io.Fonts->AddFontFromFileTTF("Fonts\\Ruda-Bold.ttf", 15);
 	io.Fonts->AddFontDefault();
 
-	App->scene->sceneBuff = new FrameBuffer();
-	App->scene->sceneBuff->Create(App->window->GetWidth(), App->window->GetHeight());
+	App->scene->scene_buff = new FrameBuffer();
+	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
-	winManager.push_back(new Hardware());		//0---- HARDWARE
-	winManager.push_back(new Inspector());		//1---- INSPECTOR
-	winManager.push_back(new Hierarchy());		//2---- Hierarchy
-	winManager.push_back(new SceneWorld());		//3---- SceneWorld
-	winManager.push_back(new Project());		//4---- Project
+	win_manager.push_back(new Hardware());		//0---- HARDWARE
+	win_manager.push_back(new Inspector());		//1---- INSPECTOR
+	win_manager.push_back(new Hierarchy());		//2---- Hierarchy
+	win_manager.push_back(new SceneWorld());		//3---- SceneWorld
+	win_manager.push_back(new Project());		//4---- Project
 	
 	//TODO ELLIOT NEED ACTIVE bye JSON, Also Console
-	winManager[INSPECTOR]->active[0].active = true;
-	winManager[HIERARCHY]->active[0].active = true;
-	winManager[SCENEWORLD]->active[0].active = true;
-	winManager[PROJECT]->active[0].active = true;
+	win_manager[INSPECTOR]->active[0].active = true;
+	win_manager[HIERARCHY]->active[0].active = true;
+	win_manager[SCENEWORLD]->active[0].active = true;
+	win_manager[PROJECT]->active[0].active = true;
 
-	std::vector<WindowManager*>::iterator window = winManager.begin();
-	for (int i = 0; i < winManager.size(); i++)
+	std::vector<WindowManager*>::iterator window = win_manager.begin();
+	for (int i = 0; i < win_manager.size(); i++)
 	{
 		window[i]->Start();
 	}
@@ -95,9 +95,9 @@ update_status ModuleGUI::Update(float dt)
 	//ShowTest -----------------------
 	if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
 	{
-		ShowTest = !ShowTest;
+		show_test = !show_test;
 	}
-	if (ShowTest)
+	if (show_test)
 	{
 		ImGui::ShowTestWindow();
 	}
@@ -109,7 +109,7 @@ update_status ModuleGUI::Update(float dt)
 		{
 			if (ImGui::MenuItem("New Scene", "Ctrl + N"))
 			{
-				if (App->scene->SceneSaved)
+				if (App->scene->scene_saved)
 				{
 					App->scene->ClearAllVariablesScript();
 					App->scene->DeleteAllGameObjects(App->scene->root);
@@ -137,7 +137,7 @@ update_status ModuleGUI::Update(float dt)
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit", NULL, &window_exit))
 			{
-				if (isSaved)
+				if (is_saved)
 				{
 					ImGui::EndMenu();
 					ImGui::EndMainMenuBar();
@@ -185,12 +185,12 @@ update_status ModuleGUI::Update(float dt)
 		{
 			if (ImGui::MenuItem("Inspector"))
 			{
-				winManager[INSPECTOR]->active[0].OpenClose();
+				win_manager[INSPECTOR]->active[0].OpenClose();
 				//LogOpenCloseWindow(winManager[INSPECTOR]->active[0].active, winManager[INSPECTOR]->name);
 			}
 			if (ImGui::MenuItem("Hardware"))
 			{
-				winManager[HARDWARE]->active[0].OpenClose();
+				win_manager[HARDWARE]->active[0].OpenClose();
 				//LogOpenCloseWindow(winManager[HARDWARE]->active[0].active, winManager[HARDWARE]->name);
 			}
 			if (ImGui::MenuItem("Console", "º"))
@@ -200,17 +200,17 @@ update_status ModuleGUI::Update(float dt)
 			}
 			if (ImGui::MenuItem("Scene"))
 			{
-				winManager[SCENEWORLD]->active[0].OpenClose();
+				win_manager[SCENEWORLD]->active[0].OpenClose();
 				//LogOpenCloseWindow(winManager[SCENEWORLD]->active[0].active, winManager[SCENEWORLD]->name);
 			}
 			if (ImGui::MenuItem("Hierarchy"))
 			{
-				winManager[HIERARCHY]->active[0].OpenClose();
+				win_manager[HIERARCHY]->active[0].OpenClose();
 				//LogOpenCloseWindow(winManager[HIERARCHY]->active[0].active, winManager[HIERARCHY]->name);
 			}
 			if (ImGui::MenuItem("Project"))
 			{
-				winManager[PROJECT]->active[0].OpenClose();
+				win_manager[PROJECT]->active[0].OpenClose();
 				//LogOpenCloseWindow(winManager[PROJECT]->active[0].active, winManager[PROJECT]->name);
 			}
 			ImGui::Separator();
@@ -226,22 +226,22 @@ update_status ModuleGUI::Update(float dt)
 			}
 			if (ImGui::MenuItem("Random Generator"))
 			{
-				window_Random_generator = !window_Random_generator;
+				window_random_generator = !window_random_generator;
 				//LogOpenCloseWindow(window_Random_generator, std::string("Random Generator"));
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Resources"))
 			{
-				window_ShowAllResources = !window_ShowAllResources;
+				window_show_all_resources = !window_show_all_resources;
 			}
 			if (ImGui::MenuItem("Performance"))
 			{
-				App->showperformance = !App->showperformance;
+				App->show_performance = !App->show_performance;
 				//LogOpenCloseWindow(App->showperformance, std::string("Performance"));
 			}
 			if (ImGui::MenuItem("Configuration"))
 			{
-				App->showconfig = !App->showconfig;
+				App->show_config = !App->show_config;
 				//LogOpenCloseWindow(App->showconfig, std::string("Configuration"));
 			}
 			ImGui::EndMenu();
@@ -314,7 +314,7 @@ update_status ModuleGUI::Update(float dt)
 			}
 			if (ImGui::MenuItem("C# Script"))
 			{
-				window_CreateNewScript = !window_CreateNewScript;
+				window_create_new_script = !window_create_new_script;
 			}
 			ImGui::EndMenu();
 		}
@@ -325,10 +325,10 @@ update_status ModuleGUI::Update(float dt)
 	}
 
 	//Machine Generator -------------------
-	if (window_Random_generator)
+	if (window_random_generator)
 	{
 		static LCG random_generator;
-		ImGui::Begin("Random Numbers Generator", &window_Random_generator, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Begin("Random Numbers Generator", &window_random_generator, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_AlwaysAutoResize);
 		ImGui::Spacing();
 		ImGui::PushItemWidth(60);
 		static int numbers_f = 0;
@@ -395,9 +395,9 @@ update_status ModuleGUI::Update(float dt)
 	}
 	
 	// Create New Script ------------------
-	if (window_CreateNewScript)
+	if (window_create_new_script)
 	{
-		App->importer->iScript->CreateNewScript(window_CreateNewScript);
+		App->importer->iScript->CreateNewScript(window_create_new_script);
 	}
 	//----------------------------------------------
 	// Window About Us... ---------------------------------
@@ -511,9 +511,9 @@ update_status ModuleGUI::Update(float dt)
 	}
 
 	// Show All Resources ------------------
-	if (window_ShowAllResources)
+	if (window_show_all_resources)
 	{
-		App->resource_manager->ShowAllResources(window_ShowAllResources);
+		App->resource_manager->ShowAllResources(window_show_all_resources);
 	}
 
 	//Window Style -----------------------
@@ -549,27 +549,27 @@ update_status ModuleGUI::UpdateConfig(float dt)
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 3));
 	ImGui::Text("Windows:");
-	ImGui::Checkbox("##SceneActive", &winManager[SCENEWORLD]->active[0].active); ImGui::SameLine();
+	ImGui::Checkbox("##SceneActive", &win_manager[SCENEWORLD]->active[0].active); ImGui::SameLine();
 	ImGui::Text("Scene");
-	ImGui::Checkbox("##InspectorActive", &winManager[INSPECTOR]->active[0].active); ImGui::SameLine();
+	ImGui::Checkbox("##InspectorActive", &win_manager[INSPECTOR]->active[0].active); ImGui::SameLine();
 	ImGui::Text("Inspector");
-	ImGui::Checkbox("##HierarchyActive", &winManager[HIERARCHY]->active[0].active); ImGui::SameLine();
+	ImGui::Checkbox("##HierarchyActive", &win_manager[HIERARCHY]->active[0].active); ImGui::SameLine();
 	ImGui::Text("Hierarchy");
 	ImGui::Bullet();  ImGui::SameLine();
 	ImGui::Text("Show Window Confirm Delete");  ImGui::SameLine(); 
-	if(ImGui::Checkbox("##HierarchyConfirmDelete", &((Hierarchy*)winManager[HIERARCHY])->showconfirmDelete))
+	if(ImGui::Checkbox("##HierarchyConfirmDelete", &((Hierarchy*)win_manager[HIERARCHY])->show_confirm_delete))
 	{
-		((Hierarchy*)winManager[HIERARCHY])->ChangeShowConfirmDelete();
+		((Hierarchy*)win_manager[HIERARCHY])->ChangeShowConfirmDelete();
 	}
 	ImGui::Checkbox("##ConsoleActive", &App->console->console_activated); ImGui::SameLine();
 	ImGui::Text("Console");
-	ImGui::Checkbox("##HardwareActive", &winManager[HARDWARE]->active[0].active); ImGui::SameLine();
+	ImGui::Checkbox("##HardwareActive", &win_manager[HARDWARE]->active[0].active); ImGui::SameLine();
 	ImGui::Text("Hardware");
-	ImGui::Checkbox("##RandomActive", &window_Random_generator); ImGui::SameLine();
+	ImGui::Checkbox("##RandomActive", &window_random_generator); ImGui::SameLine();
 	ImGui::Text("Random Generation");
 	ImGui::Checkbox("##AboutActive", &window_about_us); ImGui::SameLine();
 	ImGui::Text("About Culverin");
-	ImGui::Checkbox("##PerformanceActive", &App->showperformance); ImGui::SameLine();
+	ImGui::Checkbox("##PerformanceActive", &App->show_performance); ImGui::SameLine();
 	ImGui::Text("Performance");
 	ImGui::Checkbox("##StyleEsditorActive", &window_style); ImGui::SameLine();
 	ImGui::Text("Style Editor");
@@ -836,7 +836,7 @@ void ModuleGUI::LogOpenCloseWindow(bool active, std::string name)
 
 void ModuleGUI::SetLinkInspector(GameObject* obj)
 {
-	((Inspector*)winManager[INSPECTOR])->LinkObject(obj);
+	((Inspector*)win_manager[INSPECTOR])->LinkObject(obj);
 }
 
 void ModuleGUI::UpdateWindows(float dt)
@@ -869,7 +869,7 @@ void ModuleGUI::UpdateWindows(float dt)
 		{
 			if (App->scene->CheckNoFails())
 			{
-				int exc = App->engineState;
+				int exc = App->engine_state;
 				App->SetState(EngineState::PLAY); // OR STOP
 
 				if (exc == EngineState::STOP)
@@ -888,17 +888,17 @@ void ModuleGUI::UpdateWindows(float dt)
 		if (ImGui::ImageButton((ImTextureID*)icon_playframe, pos_icon))
 		{
 			App->SetState(EngineState::PLAYFRAME);
-			App->gameTime.prepare_frame = true;
+			App->game_time.prepare_frame = true;
 		}
 		ImGui::PopStyleColor(1);
 
 		//Text that indicates the state of the engine (PLAY/PAUSE/PLAYFRAME)
-		if (App->engineState != EngineState::STOP)
+		if (App->engine_state != EngineState::STOP)
 		{
 			ImGui::SameLine(width * 0.5 + 60);
 			ShowEngineState();
 		}
-		if (App->showCameraPopup)
+		if (App->show_camera_popup)
 		{
 			ShowCameraMissing();
 		}
@@ -912,8 +912,8 @@ void ModuleGUI::UpdateWindows(float dt)
 
 	App->Config();
 
-	std::vector<WindowManager*>::iterator window = winManager.begin();
-	for (int i = 0; i < winManager.size(); i++)
+	std::vector<WindowManager*>::iterator window = win_manager.begin();
+	for (int i = 0; i < win_manager.size(); i++)
 	{
 		window[i]->Update(dt);
 	}
@@ -977,15 +977,15 @@ void ModuleGUI::ShowWindowExit(bool* active)
 	if (ImGui::Button("Save"))
 	{
 		reposition_exit = true;
-		isSaved = true;
-		gameSave = true;
+		is_saved = true;
+		game_save = true;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Don't Save"))
 	{
 		reposition_exit = true;
-		isSaved = true;
-		gameSave = true;
+		is_saved = true;
+		game_save = true;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Cancel"))
@@ -1012,7 +1012,7 @@ void ModuleGUI::ShowCameraMissing()
 		ImGui::Text(""); ImGui::SameLine(width - 20);
 		if (ImGui::Button("OK", ImVec2(40, 20)))
 		{
-			App->showCameraPopup = false;
+			App->show_camera_popup = false;
 		}
 	}
 	ImGui::EndPopup();
@@ -1022,15 +1022,15 @@ void ModuleGUI::ShowEngineState()
 {
 	ImGui::AlignFirstTextHeightToWidgets();
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.25f, 1.00f, 0.00f, 1.00f));
-	if (App->engineState == EngineState::PLAY)
+	if (App->engine_state == EngineState::PLAY)
 	{
 		ImGui::Text("PLAY");
 	}
-	else if (App->engineState == EngineState::PAUSE)
+	else if (App->engine_state == EngineState::PAUSE)
 	{
 		ImGui::Text("PAUSE");
 	}
-	else if (App->engineState == EngineState::PLAYFRAME)
+	else if (App->engine_state == EngineState::PLAYFRAME)
 	{
 		ImGui::Text("PLAYFRAME");
 	}

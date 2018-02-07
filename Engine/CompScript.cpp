@@ -18,19 +18,19 @@ CompScript::CompScript(Comp_Type t, GameObject* parent) : Component(t, parent)
 
 CompScript::CompScript(const CompScript & copy, GameObject * parent) : Component(Comp_Type::C_SCRIPT, parent)
 {
-	name_component = copy.nameScript.c_str();
+	name_component = copy.name_script.c_str();
 }
 
 CompScript::~CompScript()
 {
-	if (resourcescript != nullptr)
+	if (resource_script != nullptr)
 	{
-		if (resourcescript->NumGameObjectsUseMe > 0)
+		if (resource_script->num_game_objects_use_me > 0)
 		{
-			resourcescript->NumGameObjectsUseMe--;
+			resource_script->num_game_objects_use_me--;
 		}
 	}
-	resourcescript = nullptr;
+	resource_script = nullptr;
 }
 
 void CompScript::Init()
@@ -42,49 +42,49 @@ void CompScript::Init()
 	//editor->SaveScript();
 }
 
-void CompScript::preUpdate(float dt)
+void CompScript::PreUpdate(float dt)
 {
 	//Check if have public in script
 	//std::string allscript = editor->editor.GetText();
 	//size_t firstPublic = allscript.find_first_of("public");
 	// Before delete Resource, Set this pointer to nullptr
-	if (resourcescript != nullptr)
+	if (resource_script != nullptr)
 	{
-		if (resourcescript->GetState() == Resource::State::WANTDELETE)
+		if (resource_script->GetState() == Resource::State::WANTDELETE)
 		{
-			resourcescript = nullptr;
+			resource_script = nullptr;
 		}
-		else if (resourcescript->GetState() == Resource::State::REIMPORTED)
+		else if (resource_script->GetState() == Resource::State::REIMPORTED)
 		{
-			uuidResourceReimported = resourcescript->GetUUID();
-			resourcescript = nullptr;
+			uuid_resource_reimported = resource_script->GetUUID();
+			resource_script = nullptr;
 		}
 	}
 	else
 	{
-		if (uuidResourceReimported != 0)
+		if (uuid_resource_reimported != 0)
 		{
-			resourcescript = (ResourceScript*)App->resource_manager->GetResource(uuidResourceReimported);
-			if (resourcescript != nullptr)
+			resource_script = (ResourceScript*)App->resource_manager->GetResource(uuid_resource_reimported);
+			if (resource_script != nullptr)
 			{
-				resourcescript->NumGameObjectsUseMe++;
+				resource_script->num_game_objects_use_me++;
 
 				// Check if loaded
-				if (resourcescript->IsCompiled() == Resource::State::UNLOADED)
+				if (resource_script->IsCompiled() == Resource::State::UNLOADED)
 				{
-					if (App->importer->iScript->LoadResource(resourcescript->GetPathAssets().c_str(), resourcescript))
+					if (App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script))
 					{
-						resourcescript->SetState(Resource::State::LOADED);
+						resource_script->SetState(Resource::State::LOADED);
 					}
 					else
 					{
-						resourcescript->SetState(Resource::State::FAILED);
+						resource_script->SetState(Resource::State::FAILED);
 					}
 				}
-				uuidResourceReimported = 0;
-				if (resourcescript->GetState() != Resource::State::FAILED)
+				uuid_resource_reimported = 0;
+				if (resource_script->GetState() != Resource::State::FAILED)
 				{
-					resourcescript->SetOwnGameObject(parent);
+					resource_script->SetOwnGameObject(parent);
 				}
 			}
 		}
@@ -93,37 +93,37 @@ void CompScript::preUpdate(float dt)
 
 void CompScript::Start()
 {
-	if (resourcescript != nullptr && (App->engineState == EngineState::PLAY || App->engineState == EngineState::PLAYFRAME))
+	if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
 	{
-		App->importer->iScript->SetCurrentScript(resourcescript->GetCSharpScript());
-		resourcescript->SetCurrentGameObject(parent);
-		resourcescript->Start();
+		App->importer->iScript->SetCurrentScript(resource_script->GetCSharpScript());
+		resource_script->SetCurrentGameObject(parent);
+		resource_script->Start();
 	}
 }
 
 void CompScript::Update(float dt)
 {
-	if (resourcescript != nullptr && resourcescript->GetState() == Resource::State::REIMPORTEDSCRIPT)
+	if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
 	{
-		resourcescript->LoadValuesGameObject();
-		resourcescript->SetOwnGameObject(parent);
+		resource_script->LoadValuesGameObject();
+		resource_script->SetOwnGameObject(parent);
 	}
-	if (resourcescript != nullptr && (App->engineState == EngineState::PLAY || App->engineState == EngineState::PLAYFRAME))
+	if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
 	{
-		App->importer->iScript->SetCurrentScript(resourcescript->GetCSharpScript());
-		resourcescript->SetCurrentGameObject(parent);
-		resourcescript->Update(dt);
+		App->importer->iScript->SetCurrentScript(resource_script->GetCSharpScript());
+		resource_script->SetCurrentGameObject(parent);
+		resource_script->Update(dt);
 	}
 }
 
 bool CompScript::CheckAllVariables()
 {
 	//Access chsharp script, it contains a vector of all variables with their respective info
-	for (uint i = 0; i < resourcescript->GetCSharpScript()->variables.size(); i++)
+	for (uint i = 0; i < resource_script->GetCSharpScript()->variables.size(); i++)
 	{
-		if (resourcescript->GetCSharpScript()->variables[i]->type == VarType::Var_GAMEOBJECT)
+		if (resource_script->GetCSharpScript()->variables[i]->type == VarType::Var_GAMEOBJECT)
 		{
-			if (resourcescript->GetCSharpScript()->variables[i]->gameObject == nullptr)
+			if (resource_script->GetCSharpScript()->variables[i]->game_object == nullptr)
 			{
 				return false;
 			}
@@ -134,23 +134,23 @@ bool CompScript::CheckAllVariables()
 
 void CompScript::RemoveReferences(GameObject* go)
 {
-	resourcescript->GetCSharpScript()->RemoveReferences(go);
+	resource_script->GetCSharpScript()->RemoveReferences(go);
 }
 
 void CompScript::ClearVariables()
 {
-	if (resourcescript != nullptr)
+	if (resource_script != nullptr)
 	{
-		resourcescript->GetCSharpScript()->Clear();
+		resource_script->GetCSharpScript()->Clear();
 	}
 }
 
 bool CompScript::CheckScript()
 {
-	if (resourcescript != nullptr)
+	if (resource_script != nullptr)
 	{
-		if (resourcescript->IsCompiled() != Resource::State::FAILED &&
-			resourcescript->IsCompiled() != Resource::State::UNLOADED)
+		if (resource_script->IsCompiled() != Resource::State::FAILED &&
+			resource_script->IsCompiled() != Resource::State::UNLOADED)
 		{
 			if (CheckAllVariables() == false)
 			{
@@ -192,34 +192,34 @@ void CompScript::ShowOptions()
 	}
 	if (ImGui::MenuItem("Copy Component"))
 	{
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetComponentCopy(this);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
-	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		if (parent->FindComponentByType(((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
-			|| ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+		if (parent->FindComponentByType(((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
+			|| ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
 		{
-			parent->AddComponentCopy(*((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied());
+			parent->AddComponentCopy(*((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied());
 		}
 	}
-	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		if (this->GetType() == ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
+		if (this->GetType() == ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
 		{
-			CopyValues(((CompScript*)((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()));
+			CopyValues(((CompScript*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
 		}
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Reset Script"))
 	{
-		if (resourcescript != nullptr)
+		if (resource_script != nullptr)
 		{
-			if (resourcescript->NumGameObjectsUseMe > 0)
+			if (resource_script->num_game_objects_use_me > 0)
 			{
-				resourcescript->NumGameObjectsUseMe--;
+				resource_script->num_game_objects_use_me--;
 			}
 		}
-		resourcescript = nullptr;
+		resource_script = nullptr;
 		ImGui::CloseCurrentPopup();
 	}
 }
@@ -244,8 +244,8 @@ void CompScript::ShowInspectorInfo()
 
 	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.00f));
 	//ImGui::Text("Script"); ImGui::SameLine();
-	static bool activeScript = false;
-	if (resourcescript != nullptr)
+	static bool active_script = false;
+	if (resource_script != nullptr)
 	{
 		ImGui::Selectable("< Edit Script >", false);
 		if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
@@ -253,9 +253,9 @@ void CompScript::ShowInspectorInfo()
 			//LOG("%.2f - %.2f  / /  %.2f - %.2f", ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y, ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y);
 			if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
 			{
-				if (resourcescript != nullptr)
+				if (resource_script != nullptr)
 				{
-					activeScript = !activeScript;
+					active_script = !active_script;
 				}
 			}
 		}
@@ -264,7 +264,7 @@ void CompScript::ShowInspectorInfo()
 	ImGui::PopStyleColor();
 	ImGui::PopStyleVar();
 
-	if (resourcescript == nullptr)
+	if (resource_script == nullptr)
 	{
 		ImGui::Text("NAME:"); ImGui::SameLine();
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Script)");
@@ -274,7 +274,7 @@ void CompScript::ShowInspectorInfo()
 		}
 	}
 
-	if (resourcescript != nullptr)
+	if (resource_script != nullptr)
 	{
 		static bool active = IsActive();
 		if (ImGui::Checkbox("Active", &active))
@@ -284,7 +284,7 @@ void CompScript::ShowInspectorInfo()
 
 		/* Name of the Script */
 		ImGui::Text("NAME:"); ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resourcescript->name);
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resource_script->name);
 
 		ImGui::Spacing();
 
@@ -307,51 +307,51 @@ void CompScript::ShowInspectorInfo()
 
 	}
 
-	if (resourcescript == nullptr || selectScript)
+	if (resource_script == nullptr || select_script)
 	{
-		if (resourcescript == nullptr)
+		if (resource_script == nullptr)
 		{
 			if (ImGui::Button("Select Script..."))
 			{
-				selectScript = true;
+				select_script = true;
 			}
 		}
-		if (selectScript)
+		if (select_script)
 		{
-			ResourceScript* temp = (ResourceScript*)App->resource_manager->ShowResources(selectScript, Resource::Type::SCRIPT);
+			ResourceScript* temp = (ResourceScript*)App->resource_manager->ShowResources(select_script, Resource::Type::SCRIPT);
 			if (temp != nullptr)
 			{
-				if (resourcescript != nullptr)
+				if (resource_script != nullptr)
 				{
-					if (resourcescript->NumGameObjectsUseMe > 0)
+					if (resource_script->num_game_objects_use_me > 0)
 					{
-						resourcescript->NumGameObjectsUseMe--;
+						resource_script->num_game_objects_use_me--;
 					}
 				}
-				resourcescript = temp;
-				resourcescript->NumGameObjectsUseMe++;
-				if (resourcescript->IsCompiled() == Resource::State::UNLOADED)
+				resource_script = temp;
+				resource_script->num_game_objects_use_me++;
+				if (resource_script->IsCompiled() == Resource::State::UNLOADED)
 				{
-					if (App->importer->iScript->LoadResource(resourcescript->GetPathAssets().c_str(), resourcescript))
+					if (App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script))
 					{
-						resourcescript->SetState(Resource::State::LOADED);
+						resource_script->SetState(Resource::State::LOADED);
 					}
 					else
 					{
-						resourcescript->SetState(Resource::State::FAILED);
+						resource_script->SetState(Resource::State::FAILED);
 					}
 				}
-				if (resourcescript->GetState() != Resource::State::FAILED)
+				if (resource_script->GetState() != Resource::State::FAILED)
 				{
-					resourcescript->SetOwnGameObject(parent);
+					resource_script->SetOwnGameObject(parent);
 				}
 				Enable();
 			}
 		}
 	}
-	if (activeScript && resourcescript != nullptr)
+	if (active_script && resource_script != nullptr)
 	{
-		resourcescript->ShowEditor(activeScript);
+		resource_script->ShowEditor(active_script);
 	}
 
 	ImGui::TreePop();
@@ -359,21 +359,21 @@ void CompScript::ShowInspectorInfo()
 
 void CompScript::ShowVariablesInfo()
 {
-	if (resourcescript->GetState() == Resource::State::LOADED)
+	if (resource_script->GetState() == Resource::State::LOADED)
 	{
 		//Access chsharp script, it contains a vector of all variables with their respective info
-		for (uint i = 0; i < resourcescript->GetCSharpScript()->variables.size(); i++)
+		for (uint i = 0; i < resource_script->GetCSharpScript()->variables.size(); i++)
 		{
 			ImGui::PushID(i);
 
 			//Show variable TYPE --------------------------
-			ShowVarType(resourcescript->GetCSharpScript()->variables[i]); ImGui::SameLine();
+			ShowVarType(resource_script->GetCSharpScript()->variables[i]); ImGui::SameLine();
 
 			//Show variable NAME -------------------------
-			ImGui::Text(" %s", resourcescript->GetCSharpScript()->variables[i]->name); ImGui::SameLine();
+			ImGui::Text(" %s", resource_script->GetCSharpScript()->variables[i]->name); ImGui::SameLine();
 
 			//Show variable VALUE -------------------------
-			ShowVarValue(resourcescript->GetCSharpScript()->variables[i], i);
+			ShowVarValue(resource_script->GetCSharpScript()->variables[i], i);
 
 			ImGui::PopID();
 		}
@@ -449,36 +449,36 @@ void CompScript::ShowVarValue(ScriptVariable* var, int pushi)
 	}
 	else if (var->type == VarType::Var_GAMEOBJECT)
 	{
-		if (var->gameObject == nullptr)
+		if (var->game_object == nullptr)
 		{
 			ImGui::PushID(pushi);
 			if (ImGui::Button("Select GO..."))
 			{
-				var->selectGameObject = true;
+				var->select_game_object = true;
 			}
 
-			if (var->selectGameObject)
+			if (var->select_game_object)
 			{
-				GameObject* temp = App->scene->GetGameObjectfromScene(var->selectGameObject);
+				GameObject* temp = App->scene->GetGameObjectfromScene(var->select_game_object);
 				if (temp != nullptr)
 				{
-					var->gameObject = temp;
-					var->SetMonoValue((GameObject*)var->gameObject);
+					var->game_object = temp;
+					var->SetMonoValue((GameObject*)var->game_object);
 				}
 			}
 			ImGui::PopID();
 		}
 		else
 		{
-			if (!var->gameObject->WanttoDelete())
+			if (!var->game_object->WanttoDelete())
 			{
-				ImGui::Text("%s", var->gameObject->GetName()); ImGui::SameLine();
-				if (App->engineState != EngineState::PLAY)
+				ImGui::Text("%s", var->game_object->GetName()); ImGui::SameLine();
+				if (App->engine_state != EngineState::PLAY)
 				{
 					if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 					{
-						var->EreaseMonoValue(var->gameObject);
-						var->selectGameObject = true;
+						var->EreaseMonoValue(var->game_object);
+						var->select_game_object = true;
 					}
 				}
 			}
@@ -500,19 +500,19 @@ void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uin
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", Comp_Type::C_SCRIPT);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
-	if (resourcescript != nullptr)
+	if (resource_script != nullptr)
 	{
-		json_object_dotset_number_with_std(object, name + "Resource Script UUID", resourcescript->GetUUID());
+		json_object_dotset_number_with_std(object, name + "Resource Script UUID", resource_script->GetUUID());
 		// Now Save Info in CSharp
-		resourcescript->Save(object, name);
+		resource_script->Save(object, name);
 	}
-	json_object_dotset_string_with_std(object, name + "Name Script", nameScript.c_str());
+	json_object_dotset_string_with_std(object, name + "Name Script", name_script.c_str());
 }
 
 void CompScript::Load(const JSON_Object* object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
-	nameScript = json_object_dotget_string_with_std(object, name + "Name Script");
+	name_script = json_object_dotget_string_with_std(object, name + "Name Script");
 	uint resourceID = uid = json_object_dotget_number_with_std(object, name + "Resource Script UUID");
 	//std::string temp = nameScript + " (Script)";
 	//nameComponent = "Script";
@@ -520,20 +520,20 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 	//editor->Start(nameScript.c_str(), false);
 	if (resourceID > 0)
 	{
-		resourcescript = (ResourceScript*)App->resource_manager->GetResource(resourceID);
-		if (resourcescript != nullptr)
+		resource_script = (ResourceScript*)App->resource_manager->GetResource(resourceID);
+		if (resource_script != nullptr)
 		{
-			resourcescript->NumGameObjectsUseMe++;
+			resource_script->num_game_objects_use_me++;
 
 			// LOAD SCRIPT -------------------------
-			if (resourcescript->IsLoadedToMemory() == Resource::State::UNLOADED)
+			if (resource_script->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
-				App->importer->iScript->LoadResource(resourcescript->GetPathAssets().c_str(), resourcescript);
+				App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script);
 			}
-			resourcescript->Load(object, name);
-			if (resourcescript->GetState() != Resource::State::FAILED)
+			resource_script->Load(object, name);
+			if (resource_script->GetState() != Resource::State::FAILED)
 			{
-				resourcescript->SetOwnGameObject(parent);
+				resource_script->SetOwnGameObject(parent);
 			}
 
 		}

@@ -122,9 +122,9 @@ bool ImportScript::Import(const char* file, uint uuid)
 
 
 			// Then Create Meta
-			std::string Newdirectory = ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory();
+			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
 			Newdirectory += "\\" + App->fs->FixName_directory(file);
-			App->Json_seria->SaveScript(res_script, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+			App->json_seria->SaveScript(res_script, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 
 		}
 	}
@@ -158,9 +158,9 @@ bool ImportScript::LoadResource(const char* file, ResourceScript* resourceScript
 
 
 		// Then Create Meta
-		std::string Newdirectory = ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory();
+		std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
 		Newdirectory += "\\" + App->fs->FixName_directory(file);
-		App->Json_seria->SaveScript(resourceScript, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+		App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 	}
 	return true;
 }
@@ -290,9 +290,9 @@ bool ImportScript::CreateNewScript(bool& active)
 
 
 					// Then Create Meta
-					std::string Newdirectory = ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory();
+					std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
 					Newdirectory += "/" + App->fs->GetOnlyName(fileassets) + ".cs";
-					App->Json_seria->SaveScript(res_script, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+					App->json_seria->SaveScript(res_script, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 				}
 			}
 		}
@@ -606,7 +606,7 @@ int ImportScript::GetMouseYAxis()
 
 float ImportScript::GetDeltaTime()
 {
-	return App->gameTime.timeScale * App->realTime.dt;
+	return App->game_time.time_scale * App->real_time.dt;
 }
 
 mono_bool ImportScript::IsGOActive(MonoObject* object)

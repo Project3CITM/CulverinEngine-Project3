@@ -32,7 +32,7 @@ void Component::Init()
 {
 }
 
-void Component::preUpdate(float dt)
+void Component::PreUpdate(float dt)
 {
 }
 

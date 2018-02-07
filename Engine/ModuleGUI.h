@@ -61,9 +61,9 @@ public:
 	Capsule Capsule_B;
 	Line line;
 	Plane plane;*/
-	bool ShowTest = false;
-	bool isSaved = false;
-	std::vector<WindowManager*> winManager;
+	bool show_test = false;
+	bool is_saved = false;
+	std::vector<WindowManager*> win_manager;
 
 	//RANDOM NUMBERS TEST ----------
 	std::vector<float> floats_list;
@@ -72,20 +72,20 @@ public:
 
 private:
 	//WINDOW EXIT -------------
-	bool gameSave = false;
+	bool game_save = false;
 	bool reposition_exit = true;
 
 	// bools statics ----------------------
 	bool window_create_objects = false;
 	bool window_show_objects = false;
-	bool window_Random_generator = false;
+	bool window_random_generator = false;
 	bool window_about_us = false;
 	bool configuration = false;
 	bool window_infoMouse = false;
 	bool window_exit = false;
 	bool window_style = false;
-	bool window_CreateNewScript = false;
-	bool window_ShowAllResources = false;
+	bool window_create_new_script = false;
+	bool window_show_all_resources = false;
 	//bool window_NewScene = false;
 
 	int menu_height = 0;

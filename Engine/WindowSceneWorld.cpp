@@ -37,7 +37,7 @@ void SceneWorld::Draw()
 {
 	if (active[0].active)
 	{
-		ImGui::Image((void*)App->scene->sceneBuff->GetTexture(), ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((void*)App->scene->scene_buff->GetTexture(), ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
 	}
 }
 
@@ -56,20 +56,20 @@ void SceneWorld::ShowSceneWorld()
 	// Generate mouse ray ---------------------------
 	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN && App->input->GetKey(SDL_SCANCODE_LALT) != KEY_REPEAT)
 	{
-		mouse_pos.x = ImGui::GetMousePos().x - SceneWindow.x;
-		mouse_pos.y = ImGui::GetMousePos().y - SceneWindow.y;
+		mouse_pos.x = ImGui::GetMousePos().x - scene_window.x;
+		mouse_pos.y = ImGui::GetMousePos().y - scene_window.y;
 
 		if (mouse_pos.x >= 0 && mouse_pos.y >= 0 &&
-			mouse_pos.x <= SceneWindow.z && mouse_pos.y <= SceneWindow.w && ImGui::IsMouseHoveringWindow())
+			mouse_pos.x <= scene_window.z && mouse_pos.y <= scene_window.w && ImGui::IsMouseHoveringWindow())
 		{
-			App->camera->MousePick(mouse_pos.x, mouse_pos.y + PICK_OFFSET_Y, SceneWindow.z, SceneWindow.w);
+			App->camera->MousePick(mouse_pos.x, mouse_pos.y + PICK_OFFSET_Y, scene_window.z, scene_window.w);
 			//LOG("MOUSE CLICK (%f, %f).", mouse_pos.x, mouse_pos.y);
 		}
 	}
 
 	App->camera->can_move_cam = ImGui::IsMouseHoveringWindow(); //TODO ELLIOT CHange to variable in WindowManager.h
 	
-	ImGui::Image((void*)App->scene->sceneBuff->GetTexture(), ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0)); // Set texture to buffer
+	ImGui::Image((void*)App->scene->scene_buff->GetTexture(), ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0)); // Set texture to buffer
 
 	EndDock();
 }
@@ -81,10 +81,10 @@ bool SceneWorld::CleanUp()
 
 void SceneWorld::SetWindowParams() 
 {
-	SceneWindow = GetDockParams("Scene");
+	scene_window = GetDockParams("Scene");
 }
 
 float4 SceneWorld::GetWindowParams() const
 {
-	return SceneWindow;
+	return scene_window;
 }

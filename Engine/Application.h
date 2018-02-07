@@ -45,8 +45,8 @@ enum EngineState
 // Game Mode structure to manage the Game Time
 struct GameClock
 {
-	float gameStart_time = 0.0f; // To count the time in 
-	float timeScale = 1.0f; // Time multiplier
+	float game_start_time = 0.0f; // To count the time in 
+	float time_scale = 1.0f; // Time multiplier
 	uint64 frame_count = 0;  // Total Updates since Game Mode started
 
 	// Variables to play only for 1 update
@@ -57,7 +57,7 @@ struct GameClock
 // Editor Mode structure to manage the Real Time
 struct RealTimeClock
 {
-	Timer engineStart_time;
+	Timer engine_start_time;
 	Timer last_sec_frame_time;
 	Timer frame_time;
 	Timer ms_timer;
@@ -102,6 +102,7 @@ public:
 	const std::vector<Module*>* GetModuleList() const;
 
 private:
+
 	void AddModule(Module* mod);
 	void PrepareUpdate();
 	void FinishUpdate();
@@ -128,9 +129,10 @@ private:
 
 	// TIME -----------------------------
 public:
-	RealTimeClock realTime;
-	GameClock gameTime;
-	EngineState engineState = EngineState::STOP; // To manage if we are in Game Mode or not
+	
+	RealTimeClock real_time;
+	GameClock game_time;
+	EngineState engine_state = EngineState::STOP; // To manage if we are in Game Mode or not
 
 	/* Performance Variables */
 	int		frame_index = 0;
@@ -145,21 +147,22 @@ public:
 public:
 	// Variables for enable different windows ---
 	LCG* random = nullptr;
-	bool showconfig = false;
-	bool showperformance = false;
-	bool showCameraPopup = false;
+	bool show_config = false;
+	bool show_performance = false;
+	bool show_camera_popup = false;
 	// -------------------------------------------
 
-	float4 SceneDock = { 0, 0, 0, 0 };
+	float4 scene_dock = { 0, 0, 0, 0 };
 
 	//Use for Serialization scene or prefabs 
-	JSONSerialization* Json_seria = nullptr;
+	JSONSerialization* json_seria = nullptr;
 
 private:
-	std::string appName;
-	std::string orgName;
 
-	std::string actualScene;
+	std::string app_name;
+	std::string org_name;
+
+	std::string actual_scene;
 
 	bool want_to_save = false;
 	bool want_to_load = false;

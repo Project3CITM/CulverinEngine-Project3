@@ -433,20 +433,20 @@ ReImport JSONSerialization::GetUUIDPrefab(const char* file, uint id)
 		config_node = json_object_get_object(config, "Prefab");
 		std::string temp = "Info.Resources";
 		int numResources = json_object_dotget_number_with_std(config_node, temp + ".Number of Resources");
-		info.directoryObj = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Prefab.Info.Directory Prefab"));
+		info.directory_obj = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Prefab.Info.Directory Prefab"));
 		if (id < numResources)
 		{
 			temp += ".Resource " + std::to_string(id);
 			info.uuid = json_object_dotget_number_with_std(config_node, temp + ".UUID Resource");
-			info.nameMesh = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config_node, temp + ".Name"));
-			if (strcmp(file, info.directoryObj) == 0)
+			info.name_mesh = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config_node, temp + ".Name"));
+			if (strcmp(file, info.directory_obj) == 0)
 			{
 				json_value_free(config_file);
 				return info;
 			}
 			else
 			{
-				info.directoryObj = nullptr;
+				info.directory_obj = nullptr;
 			}
 
 		}
@@ -470,16 +470,16 @@ ReImport JSONSerialization::GetUUIDMaterial(const char* file)
 		config = json_value_get_object(config_file);
 		//config_node = json_object_get_object(config, "Material");
 		info.uuid = json_object_dotget_number_with_std(config, "Material.UUID Resource");
-		info.directoryObj = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Material.Directory Material"));
-		info.nameMesh = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Material.Name"));
-		if (strcmp(file, info.directoryObj) == 0)
+		info.directory_obj = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Material.Directory Material"));
+		info.name_mesh = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Material.Name"));
+		if (strcmp(file, info.directory_obj) == 0)
 		{
 			json_value_free(config_file);
 			return info;
 		}
 		else
 		{
-			info.directoryObj = nullptr;
+			info.directory_obj = nullptr;
 		}
 	}
 	json_value_free(config_file);

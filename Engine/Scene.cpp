@@ -42,7 +42,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 Scene::~Scene()
 {
 	//DeleteGameObjects(root, true); //TODO-> Elliot
-	RELEASE(sceneBuff);
+	RELEASE(scene_buff);
 	RELEASE(skybox);
 }
 
@@ -56,7 +56,7 @@ bool Scene::Start()
 	if (strcmp(App->GetActualScene().c_str(), "") != 0)
 	{
 		newScene = false;
-		App->Json_seria->LoadScene(App->GetActualScene().c_str());
+		App->json_seria->LoadScene(App->GetActualScene().c_str());
 	}
 
 	/* Init Quadtree */
@@ -94,7 +94,7 @@ update_status Scene::PreUpdate(float dt)
 	// PreUpdate GameObjects ------------------------
 	if (root->WanttoDelete() == false)
 	{
-		root->preUpdate(dt);
+		root->PreUpdate(dt);
 	}
 	else
 	{
@@ -174,7 +174,7 @@ void Scene::EditorQuadtree()
 		/* Remake Quadtree with actual static objects*/
 		if (ImGui::Button("UPDATE QUADTREE"))
 		{
-			if (App->engineState == EngineState::STOP)
+			if (App->engine_state == EngineState::STOP)
 			{
 				if (size_quadtree != quadtree.size)
 				{
@@ -432,9 +432,9 @@ void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 		{
 			App->camera->SetFocusNull();
 		}
-		if (((Inspector*)App->gui->winManager[INSPECTOR])->GetSelected() == gameobject->GetChildbyIndex(i))
+		if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == gameobject->GetChildbyIndex(i))
 		{
-			((Inspector*)App->gui->winManager[INSPECTOR])->SetLinkObjectNull();
+			((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
 		}
 		// First delete all components
 		if (gameobject->GetChildbyIndex(i)->GetNumComponents() > 0)
@@ -459,7 +459,7 @@ void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 	{
 		App->camera->SetFocusNull();
 		App->renderer3D->SetGameCamera(nullptr);
-		((Inspector*)App->gui->winManager[INSPECTOR])->SetLinkObjectNull();
+		((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
 	}
 }
 
@@ -475,9 +475,9 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 
 		SetScriptVariablesToNull(gameobject);
 
-		if (((Inspector*)App->gui->winManager[INSPECTOR])->GetSelected() == gameobject)
+		if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == gameobject)
 		{
-			((Inspector*)App->gui->winManager[INSPECTOR])->SetLinkObjectNull();
+			((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
 		}
 		// First Delete All Childs and their components
 		if (gameobject->GetNumChilds() > 0)
@@ -551,14 +551,14 @@ GameObject* Scene::CreateCube(GameObject* parent)
 
 	CompMesh* mesh = (CompMesh*)obj->AddComponent(C_MESH);
 	mesh->Enable();
-	mesh->resourceMesh = (ResourceMesh*)App->resource_manager->GetResource(1); // 1 == Cube
-	if (mesh->resourceMesh != nullptr)
+	mesh->resource_mesh = (ResourceMesh*)App->resource_manager->GetResource(1); // 1 == Cube
+	if (mesh->resource_mesh != nullptr)
 	{
-		mesh->resourceMesh->NumGameObjectsUseMe++;
+		mesh->resource_mesh->num_game_objects_use_me++;
 		// LOAD MESH
-		if (mesh->resourceMesh->IsLoadedToMemory() == Resource::State::UNLOADED)
+		if (mesh->resource_mesh->IsLoadedToMemory() == Resource::State::UNLOADED)
 		{
-			App->importer->iMesh->LoadResource(std::to_string(mesh->resourceMesh->GetUUID()).c_str(), mesh->resourceMesh);
+			App->importer->iMesh->LoadResource(std::to_string(mesh->resource_mesh->GetUUID()).c_str(), mesh->resource_mesh);
 		}
 	}
 	OBB* box = new OBB();
