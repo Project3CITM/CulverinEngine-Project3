@@ -21,6 +21,7 @@ enum ActionEditor
 class Script_editor
 {
 public:
+
 	Script_editor(ResourceScript* parent);
 	~Script_editor();
 
@@ -32,13 +33,15 @@ public:
 	void SaveScript(bool ReImport = false);
 
 public:
+
 	TextEditor editor;
-	std::string textSelected;
+	std::string text_selected;
 	std::string name;
 	std::string directory;
 
 private:
-	ResourceScript* parent;
+
+	ResourceScript* parent = nullptr;
 };
 
 

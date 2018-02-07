@@ -56,7 +56,7 @@ public:
 	// -------------------------------------
 
 public:
-	FrameBuffer* sceneBuff = nullptr;
+	FrameBuffer* scene_buff = nullptr;
 
 	//Container of all Game Objects
 	GameObject* root = nullptr;
@@ -65,7 +65,7 @@ public:
 	std::vector<GameObject*> static_objects;
 
 	// Scene Saved
-	bool SceneSaved = true; // TODO XAVI - need implementation with Event System
+	bool scene_saved = true; // TODO XAVI - need implementation with Event System
 
 	// Quadtree ----------------
 	Quadtree quadtree;

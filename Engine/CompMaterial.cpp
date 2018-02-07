@@ -8,6 +8,7 @@
 #include "ResourceMaterial.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
+#include "ModuleRenderer3D.h"
 #include "Scene.h"
 
 CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent)
@@ -15,64 +16,66 @@ CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent
 	uid = App->random->Int();
 	color = White;
 	name_component = "Material";
+	material_shader = *App->renderer3D->default_shader;
 }
 
 CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Component(Comp_Type::C_MATERIAL, parent)
 {
 	uid = App->random->Int();
 	color = copy.color;
-	resourceMaterial = copy.resourceMaterial;
-	if (resourceMaterial != nullptr)
+	resource_material = copy.resource_material;
+	if (resource_material != nullptr)
 	{
-		resourceMaterial->NumGameObjectsUseMe++;
+		resource_material->num_game_objects_use_me++;
 	}
 
 	name_component = "Material";
+	material_shader = *App->renderer3D->default_shader;
 }
 
 CompMaterial::~CompMaterial()
 {
-	if (resourceMaterial != nullptr)
+	if (resource_material != nullptr)
 	{
-		if (resourceMaterial->NumGameObjectsUseMe > 0)
+		if (resource_material->num_game_objects_use_me > 0)
 		{
-			resourceMaterial->NumGameObjectsUseMe--;
+			resource_material->num_game_objects_use_me--;
 		}
 	}
-	resourceMaterial = nullptr;
+	resource_material = nullptr;
 }
 
-void CompMaterial::preUpdate(float dt)
+void CompMaterial::PreUpdate(float dt)
 {
 	// Manage Resource -------------------------------------------------
 	// Before delete Resource, Set this pointer to nullptr
-	if (resourceMaterial != nullptr)
+	if (resource_material != nullptr)
 	{
-		if (resourceMaterial->GetState() == Resource::State::WANTDELETE)
+		if (resource_material->GetState() == Resource::State::WANTDELETE)
 		{
-			resourceMaterial = nullptr;
+			resource_material = nullptr;
 		}
-		else if (resourceMaterial->GetState() == Resource::State::REIMPORTED)
+		else if (resource_material->GetState() == Resource::State::REIMPORTED)
 		{
-			uuidResourceReimported = resourceMaterial->GetUUID();
-			resourceMaterial = nullptr;
+			uuid_resource_reimported = resource_material->GetUUID();
+			resource_material = nullptr;
 		}
 	}
 	else
 	{
-		if (uuidResourceReimported != 0)
+		if (uuid_resource_reimported != 0)
 		{
-			resourceMaterial = (ResourceMaterial*)App->resource_manager->GetResource(uuidResourceReimported);
-			if (resourceMaterial != nullptr)
+			resource_material = (ResourceMaterial*)App->resource_manager->GetResource(uuid_resource_reimported);
+			if (resource_material != nullptr)
 			{
-				resourceMaterial->NumGameObjectsUseMe++;
+				resource_material->num_game_objects_use_me++;
 
 				// Check if loaded
-				if (resourceMaterial->IsLoadedToMemory() == Resource::State::UNLOADED)
+				if (resource_material->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
-					App->importer->iMaterial->LoadResource(std::to_string(resourceMaterial->GetUUID()).c_str(), resourceMaterial);
+					App->importer->iMaterial->LoadResource(std::to_string(resource_material->GetUUID()).c_str(), resource_material);
 				}
-				uuidResourceReimported = 0;
+				uuid_resource_reimported = 0;
 			}
 		}
 	}
@@ -81,7 +84,7 @@ void CompMaterial::preUpdate(float dt)
 
 void CompMaterial::Clear()
 {
-	resourceMaterial = nullptr;
+	resource_material = nullptr;
 }
 
 void CompMaterial::SetColor(float r, float g, float b, float a)
@@ -99,9 +102,9 @@ Color CompMaterial::GetColor() const
 
 uint CompMaterial::GetTextureID() const
 {
-	if (resourceMaterial != nullptr)
+	if (resource_material != nullptr)
 	{
-		return resourceMaterial->GetTextureID();
+		return resource_material->GetTextureID();
 	}
 
 	return 0;
@@ -141,40 +144,40 @@ void CompMaterial::ShowOptions()
 	}
 	if (ImGui::MenuItem("Copy Component"))
 	{
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetComponentCopy(this);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
-	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		if (parent->FindComponentByType(((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
-			|| ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+		if (parent->FindComponentByType(((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
+			|| ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
 		{
-			parent->AddComponentCopy(*((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied());
+			parent->AddComponentCopy(*((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied());
 		}
 	}
-	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		if (this->GetType() == ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
+		if (this->GetType() == ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
 		{
-			CopyValues(((CompMaterial*)((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()));
+			CopyValues(((CompMaterial*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
 		}
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Reset Material"))
 	{
-		if (resourceMaterial != nullptr)
+		if (resource_material != nullptr)
 		{
-			if (resourceMaterial->NumGameObjectsUseMe > 0)
+			if (resource_material->num_game_objects_use_me > 0)
 			{
-				resourceMaterial->NumGameObjectsUseMe--;
+				resource_material->num_game_objects_use_me--;
 			}
 		}
-		resourceMaterial = nullptr;
+		resource_material = nullptr;
 		ImGui::CloseCurrentPopup();
 	}
 	/* Select Material */
 	if (ImGui::MenuItem("Select Material..."))
 	{
-		selectMaterial = true;
+		select_material = true;
 		ImGui::CloseCurrentPopup();
 	}
 }
@@ -197,50 +200,74 @@ void CompMaterial::ShowInspectorInfo()
 	}
 	ImGui::PopStyleVar();
 	ImGui::ColorEdit3("", (float*)&color);
-
-	if (resourceMaterial != nullptr)
+	
+	if (resource_material != nullptr)
 	{
-		/* Name of the material */
+		// Name of the material
 		ImGui::Text("Name:"); ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resourceMaterial->name);
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resource_material->name);
 		
-		/* Image of the texture */
-		ImGui::Image((ImTextureID*)resourceMaterial->GetTextureID(), ImVec2(170, 170), ImVec2(-1, 1), ImVec2(0, 0));
+		// Image of the texture 
+		ImGui::Image((ImTextureID*)resource_material->GetTextureID(), ImVec2(170, 170), ImVec2(-1, 1), ImVec2(0, 0));
 	}
 
-	if(resourceMaterial == nullptr || selectMaterial)
+	int shader_pos = 0;
+	std::string shaders_names;
+	for (int i = 0; i < App->renderer3D->shader_manager.programs.size(); i++) {
+		shaders_names += App->renderer3D->shader_manager.programs[i]->name;
+		shaders_names += '\0';
+	}
+	if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
+		material_shader = *App->renderer3D->shader_manager.programs[shader_pos];
+
+	}
+	std::vector<TextureVar>::iterator item = material_shader.textures.begin();
+	int i = 0;
+	while (item != material_shader.textures.end()) {
+		ShowTextureVariable(i);
+		i++;
+		item++;
+
+	}
+	/*
+	if(resource_material == nullptr || select_material)
 	{
-		if (resourceMaterial == nullptr)
+		if (resource_material == nullptr)
 		{
 			ImGui::Text("Name:"); ImGui::SameLine();
 			ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Material)");
 			if (ImGui::Button("Select Material..."))
 			{
-				selectMaterial = true;
+				select_material = true;
 			}
 		}
-		if (selectMaterial)
+		
+		if (select_material)
 		{
-			ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(selectMaterial, Resource::Type::MATERIAL);
+			ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(select_material, Resource::Type::MATERIAL);
 			if (temp != nullptr)
 			{
-				if (resourceMaterial != nullptr)
+				if (resource_material != nullptr)
 				{
-					if (resourceMaterial->NumGameObjectsUseMe > 0)
+					if (resource_material->num_game_objects_use_me > 0)
 					{			
-						resourceMaterial->NumGameObjectsUseMe--;
+						resource_material->num_game_objects_use_me--;
 					}
 				}
-				resourceMaterial = temp;
-				resourceMaterial->NumGameObjectsUseMe++;
-				if (resourceMaterial->IsLoadedToMemory() == Resource::State::UNLOADED)
+				resource_material = temp;
+				resource_material->num_game_objects_use_me++;
+				if (resource_material->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
-					App->importer->iMaterial->LoadResource(std::to_string(resourceMaterial->GetUUID()).c_str(), resourceMaterial);
+					App->importer->iMaterial->LoadResource(std::to_string(resource_material->GetUUID()).c_str(), resource_material);
 				}
 				Enable();
 			}
 		}
-	}
+		
+		
+		
+
+	}*/
 
 	ImGui::TreePop();
 }
@@ -250,6 +277,7 @@ void CompMaterial::CopyValues(const CompMaterial* component)
 	//more...
 }
 
+
 void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
@@ -257,9 +285,13 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 	float4 tempColor = { color.r, color.g, color.b, color.a };
 	App->fs->json_array_dotset_float4(object, name + "Color", tempColor);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
-	if (resourceMaterial != nullptr)
+
+	//Save Shaders and shaders values
+
+	//
+	if (resource_material != nullptr)
 	{
-		json_object_dotset_number_with_std(object, name + "Resource Material UUID", resourceMaterial->GetUUID());
+		json_object_dotset_number_with_std(object, name + "Resource Material UUID", resource_material->GetUUID());
 	}
 	else
 	{
@@ -273,19 +305,73 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 	color.Set(tempColor.x, tempColor.y, tempColor.z, tempColor.w);
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Material UUID");
+
+	//Load Shaders and shaders values
+
+	//
+
 	if (resourceID > 0)
 	{
-		resourceMaterial = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
-		if (resourceMaterial != nullptr)
+		resource_material = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+		if (resource_material != nullptr)
 		{
-			resourceMaterial->NumGameObjectsUseMe++;
+			resource_material->num_game_objects_use_me++;
 
 			// LOAD MATERIAL -------------------------
-			if (resourceMaterial->IsLoadedToMemory() == Resource::State::UNLOADED)
+			if (resource_material->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
-				App->importer->iMaterial->LoadResource(std::to_string(resourceMaterial->GetUUID()).c_str(), resourceMaterial);
+				App->importer->iMaterial->LoadResource(std::to_string(resource_material->GetUUID()).c_str(), resource_material);
 			}
 		}
 	}
 	Enable();
+}
+
+
+
+void CompMaterial::ShowTextureVariable(int index)
+{
+	ImGui::PushID(index);
+
+	TextureVar* texture_var = &material_shader.textures[index];
+
+	/* Name of the material */
+	ImGui::Text("Name:"); ImGui::SameLine();
+	ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", texture_var->var_name.c_str());
+
+	if (texture_var->res_material != nullptr)
+	{
+		/* Image of the texture */
+		ImGui::Image((ImTextureID*)texture_var->res_material->GetTextureID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0));
+	}
+
+	else{
+
+		if (ImGui::Button("Select Material..."))
+		{
+			texture_var->selected = true;
+		}
+	}
+	if (texture_var->selected)
+	{
+		ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(texture_var->selected, Resource::Type::MATERIAL);
+		if (temp != nullptr)
+		{
+			if (texture_var->res_material != nullptr)
+			{
+				if (texture_var->res_material->num_game_objects_use_me > 0)
+				{
+					texture_var->res_material->num_game_objects_use_me--;
+				}
+			}
+			texture_var->res_material = temp;
+			texture_var->res_material->num_game_objects_use_me++;
+			if (texture_var->res_material->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iMaterial->LoadResource(std::to_string(texture_var->res_material->GetUUID()).c_str(), texture_var->res_material);
+			}
+			Enable();
+		}
+	}
+	ImGui::PopID();
 }

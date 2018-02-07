@@ -7,6 +7,7 @@
 
 #include "ShadersLib.h"
 
+
 class ResourceMaterial;
 
 class CompMaterial : public Component
@@ -16,7 +17,7 @@ public:
 	CompMaterial(const CompMaterial& copy, GameObject* parent);
 	~CompMaterial();
 
-	void preUpdate(float dt);
+	void PreUpdate(float dt);
 	void Clear();
 	void SetColor(float r, float g, float b, float a);
 	void SetUUIDMesh(uint uuid);
@@ -28,6 +29,7 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompMaterial * component);
+	void ShowTextureVariable(int index);
 	// -------------------------
 
 	// SAVE - LOAD METHODS ------------------------
@@ -36,14 +38,17 @@ public:
 	// --------------------------------------------
 
 public:
-	ResourceMaterial* resourceMaterial = nullptr;
-	ShaderProgram* material_shader = nullptr;
+
+	ResourceMaterial* resource_material = nullptr;
+	ShaderProgram material_shader;
+
 private:
+
 	Color color = White;
-	bool selectMaterial = false;
+	bool select_material = false;
 
 	uint uuid_material = 0;
-	uint uuidResourceReimported = 0;
+	uint uuid_resource_reimported = 0;
 };
 
 #endif

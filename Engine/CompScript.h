@@ -15,7 +15,7 @@ public:
 	~CompScript();
 
 	void Init();
-	void preUpdate(float dt);
+	void PreUpdate(float dt);
 
 	void Start();
 	void Update(float dt);
@@ -40,13 +40,15 @@ public:
 	// -------------------------------------
 
 public:
-	std::string nameScript;
+
+	std::string name_script;
 	//Script_editor* editor = nullptr;
-	ResourceScript* resourcescript = nullptr;
+	ResourceScript* resource_script = nullptr;
 
 private:
-	bool selectScript = false;
-	uint uuidResourceReimported = 0;
+
+	bool select_script = false;
+	uint uuid_resource_reimported = 0;
 };
 
 

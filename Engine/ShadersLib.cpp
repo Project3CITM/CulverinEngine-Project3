@@ -86,6 +86,7 @@
 			"in vec3 ourNormal;\n"
 			"out vec4 color;\n"
 			"uniform sampler2D _texture;\n"
+			"uniform sampler2D _texture2;\n"
 			"void main()\n"
 			"{\n"
 			"vec3 lightDir = vec3(1);\n"
@@ -140,24 +141,19 @@
 
 		defaultShader->AddVertex(newVertex);
 
-		//SHOULD DO THIS IN THE ENGINE :(
+		uint var_size = defaultShader->GetVariablesSize();
+		for (int i = 0; i < var_size; i++) {
+			UniformVar temp = defaultShader->GetVariableInfo(i);
 
-		/*
-		UUID obj_uuid = IID_NULL;
-		UUID null_uuid; UuidCreateNil(&null_uuid);
-		RPC_STATUS stat;
-
-		//TODO probably dont need
-		if (UuidCompare(&obj_uuid, &null_uuid, &stat) == 0) {
-		Resource* res = App->resources->CreateNewResource(Resource::shader_program);
-		res->file = "default.material";
-		res->exported_file = "default.material";
-		res->type = Resource::shader_program;
-		obj_uuid = res->uuid;
+			//Textures
+			if (temp.type == 35678) {
+				TextureVar texture_var;
+				texture_var.var_name = temp.name;				
+				defaultShader->textures.push_back(texture_var);
+			}
 
 		}
-		*/
-
+		
 		programs.push_back(defaultShader);
 		shaders.push_back(newFragment);
 		shaders.push_back(newVertex);

@@ -15,6 +15,7 @@
 #include "CompMaterial.h"
 #include "CompCamera.h"
 #include "CompScript.h"
+#include "CompAnimation.h"
 #include "CompButton.h"
 #include "CompCheckBox.h"
 #include "CompImage.h"
@@ -22,6 +23,7 @@
 #include "CompEditText.h"
 #include "CompCanvas.h"
 #include "CompCanvasRender.h"
+#include "CompAudio.h"
 
 GameObject::GameObject(GameObject* parent) :parent(parent)
 {
@@ -239,7 +241,7 @@ void GameObject::Init()
 {
 }
 
-void GameObject::preUpdate(float dt)
+void GameObject::PreUpdate(float dt)
 {
 	to_delete = false;
 
@@ -256,7 +258,7 @@ void GameObject::preUpdate(float dt)
 			{
 				if (components[i]->IsActive())
 				{
-					components[i]->preUpdate(dt);
+					components[i]->PreUpdate(dt);
 				}
 			}
 		}
@@ -272,7 +274,7 @@ void GameObject::preUpdate(float dt)
 			{
 				if (childs[i]->IsActive())
 				{
-					childs[i]->preUpdate(dt);
+					childs[i]->PreUpdate(dt);
 				}
 			}
 		}
@@ -470,7 +472,7 @@ void GameObject::ShowHierarchy()
 	}
 	bool treeNod = false;
 	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow;
-	if (((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetSelected() == this)
+	if (((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetSelected() == this)
 	{
 		node_flags |= ImGuiTreeNodeFlags_Selected;
 	}
@@ -486,8 +488,8 @@ void GameObject::ShowHierarchy()
 	if (ImGui::IsItemClicked())
 	{
 		//Set inspector window of this Game Object
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->LinkObject(this);
-		((Hierarchy*)App->gui->winManager[WindowName::HIERARCHY])->SetGameObjectSelected(this);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->LinkObject(this);
+		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjectSelected(this);
 		App->camera->SetFocus(this);
 		App->scene->drag = this;
 	}
@@ -536,11 +538,11 @@ void GameObject::ShowGameObjectOptions()
 	//Create child Game Objects / Components
 	if (ImGui::MenuItem("Copy"))
 	{
-		((Hierarchy*)App->gui->winManager[WindowName::HIERARCHY])->SetGameObjectCopy(this);
+		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjectCopy(this);
 	}
 	if (ImGui::MenuItem("Paste"))
 	{
-		((Hierarchy*)App->gui->winManager[WindowName::HIERARCHY])->CopyGameObject(this);
+		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->CopyGameObject(this);
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Rename", NULL, false, false))
@@ -553,9 +555,9 @@ void GameObject::ShowGameObjectOptions()
 	}
 	if (ImGui::MenuItem("Delete"))
 	{
-		if (App->engineState == EngineState::STOP)
+		if (App->engine_state == EngineState::STOP)
 		{
-			((Hierarchy*)App->gui->winManager[WindowName::HIERARCHY])->SetGameObjecttoDelete(this);
+			((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjecttoDelete(this);
 		}
 		else
 		{
@@ -566,12 +568,12 @@ void GameObject::ShowGameObjectOptions()
 	if (ImGui::MenuItem("Create Empty"))
 	{
 		GameObject* empty = App->scene->CreateGameObject(this);
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->LinkObject(empty);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->LinkObject(empty);
 	}
 	if (ImGui::MenuItem("Create Cube"))
 	{
 		GameObject* cube = App->scene->CreateCube(this);
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->LinkObject(cube);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->LinkObject(cube);
 	}
 	//if (ImGui::MenuItem("Sphere"))
 	//{
@@ -598,25 +600,37 @@ void GameObject::ShowGameObjectOptions()
 	{
 		AddComponent(Comp_Type::C_SCRIPT);
 	}
-	if (ImGui::MenuItem("Canvas"))
+	if (ImGui::MenuItem("Animation"))
 	{
-		AddComponent(Comp_Type::C_CANVAS);
+		AddComponent(Comp_Type::C_ANIMATION);
 	}
-	if (ImGui::MenuItem("Button"))
+	if (ImGui::BeginMenu("UI"))
 	{
-		AddComponent(Comp_Type::C_BUTTON);
+		if (ImGui::MenuItem("Canvas"))
+		{
+			AddComponent(Comp_Type::C_CANVAS);
+		}
+		if (ImGui::MenuItem("Button"))
+		{
+			AddComponent(Comp_Type::C_BUTTON);
+		}
+		if (ImGui::MenuItem("Image"))
+		{
+			AddComponent(Comp_Type::C_IMAGE);
+		}
+		if (ImGui::MenuItem("Text"))
+		{
+			AddComponent(Comp_Type::C_TEXT);
+		}
+		if (ImGui::MenuItem("Edit Text"))
+		{
+			AddComponent(Comp_Type::C_EDIT_TEXT);
+		}
+		ImGui::EndMenu();
 	}
-	if (ImGui::MenuItem("Image"))
+	if (ImGui::MenuItem("Audio"))
 	{
-		AddComponent(Comp_Type::C_IMAGE);
-	}
-	if (ImGui::MenuItem("Text"))
-	{
-		AddComponent(Comp_Type::C_TEXT);
-	}
-	if (ImGui::MenuItem("Edit Text"))
-	{
-		AddComponent(Comp_Type::C_EDIT_TEXT);
+		AddComponent(Comp_Type::C_AUDIO);
 	}
 	// -------------------------------------------------------------
 }
@@ -659,7 +673,7 @@ void GameObject::ShowInspectorInfo()
 		ImGui::Text(""); ImGui::SameLine(8);
 		if (ImGui::Checkbox("##2", &static_obj))
 		{
-			if (App->engineState == EngineState::STOP)
+			if (App->engine_state == EngineState::STOP)
 			{
 				window_active = true;
 				static_object = static_obj;
@@ -748,7 +762,7 @@ void GameObject::ShowInspectorInfo()
 	}
 	ImGui::PopStyleColor();
 	ImVec2 pos_min = ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y);
-	ImVec2 pos_max = ImVec2(pos_min.x + (ImGui::GetWindowWidth() / 2), pos_min.y + (WIDTH_ADDCOMPONENT / 2));
+	ImVec2 pos_max = ImVec2(pos_min.x + (ImGui::GetWindowWidth() / 2) + 42, pos_min.y + (WIDTH_ADDCOMPONENT / 2) + 20); // Magic number
 	if (add_component)
 	{
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.258f, 0.258f, 0.258f, 1.00f));
@@ -789,8 +803,39 @@ void GameObject::ShowInspectorInfo()
 			AddComponent(Comp_Type::C_SCRIPT);
 			add_component = false;
 		}
+		if (ImGui::MenuItem("Animation"))
+		{
+			AddComponent(Comp_Type::C_ANIMATION);
+			add_component = false;
+		}
+		if (ImGui::BeginMenu("UI"))
+		{
+			if (ImGui::MenuItem("Canvas"))
+			{
+				AddComponent(Comp_Type::C_CANVAS);
+				add_component = false;
+			}
+			if (ImGui::MenuItem("Image"))
+			{
+				AddComponent(Comp_Type::C_IMAGE);
+				add_component = false;
+			}
+			if (ImGui::MenuItem("Text"))
+			{
+				AddComponent(Comp_Type::C_TEXT);
+				add_component = false;
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::MenuItem("Audio"))
+		{
+			AddComponent(Comp_Type::C_AUDIO);
+			add_component = false;
+		}
+
 		ImGui::End();
 		ImGui::PopStyleColor();
+		
 	}
 	if (ImGui::IsMouseHoveringRect(pos_min, pos_max) == false)
 	{
@@ -1096,6 +1141,20 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(script);
 			return script;
 		}
+		else if (type == Comp_Type::C_ANIMATION)
+		{
+			LOG("Adding ANIMATION COMPONENT.");
+			CompAnimation* anim = new CompAnimation(type, this);
+			components.push_back(anim);
+			return anim;
+		}
+		else if (type == Comp_Type::C_AUDIO)
+		{
+			LOG("Adding AUDIO COMPONENT.");
+			CompAudio* audio = new CompAudio(type, this);
+			components.push_back(audio);
+			return audio;
+		}
 	}
 
 	return nullptr;
@@ -1153,6 +1212,18 @@ void GameObject::AddComponentCopy(const Component& copy)
 	{
 		CompScript* script = new CompScript((CompScript&)copy, this); //Script copy constructor
 		components.push_back(script);
+		break;
+	}
+	case (Comp_Type::C_ANIMATION):
+	{
+		CompAnimation* anim = new CompAnimation((CompAnimation&)copy, this); //Anim copy constructor
+		components.push_back(anim);
+		break;
+	}
+	case (Comp_Type::C_AUDIO):
+	{
+		CompAudio* audio = new CompAudio((CompAudio&)copy, this); //Audio copy constructor
+		components.push_back(audio);
 		break;
 	}
 	default:
@@ -1219,6 +1290,12 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		case Comp_Type::C_SCRIPT:
 			this->AddComponent(Comp_Type::C_SCRIPT, true);
 			break;
+		case Comp_Type::C_ANIMATION:
+			this->AddComponent(Comp_Type::C_ANIMATION, true);
+			break;
+		case Comp_Type::C_AUDIO:
+			this->AddComponent(Comp_Type::C_AUDIO, true);
+			break;
 		default:
 			break;
 		}
@@ -1257,6 +1334,11 @@ CompScript* GameObject::GetComponentScript() const
 	return (CompScript*)FindComponentByType(Comp_Type::C_SCRIPT);
 }
 
+CompAnimation * GameObject::GetComponentAnimation() const
+{
+	return (CompAnimation*)FindComponentByType(Comp_Type::C_ANIMATION);
+}
+
 
 Component* GameObject::GetComponentbyIndex(uint i) const
 {
@@ -1271,9 +1353,9 @@ void GameObject::DeleteAllComponents()
 {
 	for (int i = 0; i < components.size(); i++)
 	{
-		if (((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
+		if (((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
 		{
-			((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetLinkComponentNull();
+			((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetLinkComponentNull();
 		}
 		components[i]->Clear();
 		RELEASE(components[i]);
@@ -1290,9 +1372,9 @@ void GameObject::DeleteComponent(Component* component)
 		{
 			if (component == components[i])
 			{
-				if (((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
+				if (((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
 				{
-					((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetLinkComponentNull();
+					((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetLinkComponentNull();
 				}
 				components[i]->Clear();
 				components.erase(item);

@@ -69,10 +69,10 @@ CompCamera::~CompCamera()
 {
 }
 
-void CompCamera::preUpdate(float dt)
+void CompCamera::PreUpdate(float dt)
 {
 	// Only the main camera will be able to apply culling (Game Mode)
-	if (culling && App->engineState != EngineState::STOP && is_main)
+	if (culling && App->engine_state != EngineState::STOP && is_main)
 	{
 		// Iterate All GameObjects and apply culling
 		DoCulling();
@@ -99,7 +99,7 @@ void CompCamera::UpdateFrustum()
 void CompCamera::Draw()
 {
 	// Only draw frustums on editor mode, not in game mode
-	if (App->engineState == EngineState::STOP)
+	if (App->engine_state == EngineState::STOP)
 	{
 		DebugDraw();
 	}
@@ -161,21 +161,21 @@ void CompCamera::ShowOptions()
 	}
 	if (ImGui::MenuItem("Copy Component"))
 	{
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetComponentCopy(this);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
-	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		if (parent->FindComponentByType(((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
-			|| ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+		if (parent->FindComponentByType(((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
+			|| ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
 		{
-			parent->AddComponentCopy(*((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied());
+			parent->AddComponentCopy(*((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied());
 		}
 	}
-	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		if (this->GetType() == ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
+		if (this->GetType() == ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
 		{
-			CopyValues(((CompCamera*)((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()));
+			CopyValues(((CompCamera*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
 		}
 	}
 }
@@ -200,7 +200,7 @@ void CompCamera::ShowInspectorInfo()
 	if (ImGui::Checkbox("Main Camera", &is_main))
 	{
 		// Change this only out of Game Mode
-		if (App->engineState == EngineState::STOP) 
+		if (App->engine_state == EngineState::STOP) 
 		{
 			SetMain(is_main);
 		}

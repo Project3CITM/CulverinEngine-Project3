@@ -40,9 +40,9 @@ bool Project::Start()
 	//Iterate_files(folders);
 	//ReorderFiles(folders);
 	//folders[0].active = true;
-	sizeFiles = 50;
-	timeFolders.Start();
-	timeFiles.Start();
+	size_files = 50;
+	time_folders.Start();
+	time_files.Start();
 	App->fs->GetAllFolders("", directory_see, folders);
 	App->fs->GetAllFiles(directory_see, files);
 	return true;
@@ -160,7 +160,7 @@ void Project::ShowProject()
 		ImGui::PushItemWidth(100);
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(20, 2));
 		ImGui::Text("Size:"); ImGui::SameLine();
-		ImGui::SliderInt("##Size1", &sizeFiles, 25, 100);
+		ImGui::SliderInt("##Size1", &size_files, 25, 100);
 		ImGui::PopStyleVar();
 		ImGui::PopItemWidth();
 	}
@@ -173,10 +173,10 @@ void Project::ShowProject()
 	//Column 1 LEFT ------------------------
 	ImGui::Spacing();
 	// Folders ---------------------
-	if (timeFolders.ReadSec() > 30 || updateFoldersNow)
+	if (time_folders.ReadSec() > 30 || update_folders_now)
 	{
-		timeFolders.Start();
-		updateFoldersNow = false;
+		time_folders.Start();
+		update_folders_now = false;
 		App->fs->GetAllFolders("", directory_see, folders);
 	}
 
@@ -186,10 +186,10 @@ void Project::ShowProject()
 	ImGui::Separator();
 	//GetAllFiles
 	//files = App->fs->GetAllFilesNew(directory_see);
-	if (timeFiles.ReadSec() > 30 || updateFilesNow)
+	if (time_files.ReadSec() > 30 || update_files_now)
 	{
-		timeFiles.Start();
-		updateFilesNow = false;
+		time_files.Start();
+		update_files_now = false;
 		App->fs->GetAllFiles(directory_see, files);
 	}
 
@@ -225,7 +225,7 @@ void Project::Folders_update(std::vector<FoldersNew>& folders)
 			{
 				ImGui::Text("Edit name:");
 				ImGuiInputTextFlags text_flag;
-				if (folders[i].haveSomething)
+				if (folders[i].have_something)
 				{
 					text_flag = ImGuiInputTextFlags_ReadOnly;
 				}
@@ -256,9 +256,9 @@ void Project::Folders_update(std::vector<FoldersNew>& folders)
 				{
 					if (ImGui::Button("Remove"))
 					{
-						if (folders[i].haveSomething)
+						if (folders[i].have_something)
 						{
-							App->fs->GetAllFilesFromFolder(folders[i].directory_name, App->resource_manager->filestoDelete);
+							App->fs->GetAllFilesFromFolder(folders[i].directory_name, App->resource_manager->files_to_delete);
 						}
 						std::experimental::filesystem::remove_all(folders[i].directory_name);
 						UpdateNow();
@@ -276,8 +276,8 @@ void Project::Folders_update(std::vector<FoldersNew>& folders)
 				{
 					SetAllFolderBool(folders, false);
 					folders[i].active = true;
-					updateFoldersNow = true;
-					updateFilesNow = true;
+					update_folders_now = true;
+					update_files_now = true;
 					directory_see = App->GetCharfromConstChar(folders[i].directory_name);
 				}
 			}
@@ -310,14 +310,14 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 		}
 		//ImVec2 size_name = ImGui::CalcTextSize(namebySize.c_str(), NULL, true);
 		ImVec2 size_name = ImGui::CalcTextSize(nameTemp, NULL, true);
-		if (size_name.x > sizeFiles)
+		if (size_name.x > size_files)
 		{
 			int siz = strlen(nameTemp);
 			for (uint ds = siz; ds > 0; ds--)
 			{
 				uint st = strlen(nameTemp);
 				size_name = ImGui::CalcTextSize(nameTemp, NULL, true);
-				if (size_name.x < sizeFiles)
+				if (size_name.x < size_files)
 				{
 					nameTemp[st - 3] = '.';
 					nameTemp[st - 2] = '.';
@@ -334,13 +334,13 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 		{
 		case TYPE_FILE::NON:
 		{
-			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_unknown, nameTemp, ImVec2(sizeFiles, sizeFiles), ImVec2(-1, 1), ImVec2(0, 0));
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_unknown, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 
 			break;
 		}
 		case TYPE_FILE::FOLDER:
 		{
-			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)folder_icon, nameTemp, ImVec2(sizeFiles, sizeFiles), ImVec2(-1, 1), ImVec2(0, 0));
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)folder_icon, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 			{
 				//LOG("%.2f - %.2f  / /  %.2f - %.2f", ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y, ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y);
@@ -348,15 +348,15 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 				{
 					//ChangefileViwer(files[i].parentFolder->folder_child, files[i].file_name);
 					directory_see = App->GetCharfromConstChar(files[i].directory_name);
-					updateFilesNow = true;
-					updateFoldersNow = true;
+					update_files_now = true;
+					update_folders_now = true;
 				}
 			}
 			break;
 		}
 		case TYPE_FILE::FBX:
 		{
-			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_fbx, nameTemp, ImVec2(sizeFiles, sizeFiles), ImVec2(-1, 1), ImVec2(0, 0));
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_fbx, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 			{
 				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
@@ -365,7 +365,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 					directory_prebaf += "/";
 					directory_prebaf += files[i].file_name;
 					directory_prebaf += ".meta.json";
-					App->Json_seria->LoadPrefab(directory_prebaf.c_str());
+					App->json_seria->LoadPrefab(directory_prebaf.c_str());
 					directory_prebaf.clear();
 				}
 			}
@@ -373,7 +373,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 		}
 		case TYPE_FILE::OBJ:
 		{
-			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_obj, nameTemp, ImVec2(sizeFiles, sizeFiles), ImVec2(-1, 1), ImVec2(0, 0));
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_obj, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 			{
 				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
@@ -382,7 +382,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 					directory_prebaf += "/";
 					directory_prebaf += files[i].file_name;
 					directory_prebaf += ".meta.json";
-					App->Json_seria->LoadPrefab(directory_prebaf.c_str());
+					App->json_seria->LoadPrefab(directory_prebaf.c_str());
 					directory_prebaf.clear();
 				}
 			}
@@ -390,22 +390,22 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 		}
 		case TYPE_FILE::SCRIPT:
 		{
-			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_script, nameTemp, ImVec2(sizeFiles, sizeFiles), ImVec2(-1, 1), ImVec2(0, 0));
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_script, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 			break;
 		}
 		case TYPE_FILE::PNG:
 		{
-			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_png, nameTemp, ImVec2(sizeFiles, sizeFiles), ImVec2(-1, 1), ImVec2(0, 0));
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_png, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 			break;
 		}
 		case TYPE_FILE::JPG:
 		{
-			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_jpg, nameTemp, ImVec2(sizeFiles, sizeFiles), ImVec2(-1, 1), ImVec2(0, 0));
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_jpg, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 			break;
 		}
 		case TYPE_FILE::SCENE:
 		{
-			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_scene, nameTemp, ImVec2(sizeFiles, sizeFiles), ImVec2(-1, 1), ImVec2(0, 0));
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_scene, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 			{
 				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
@@ -416,7 +416,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 					std::string directory_scene = GetDirectory();
 					directory_scene += "/";
 					directory_scene += files[i].file_name;
-					App->Json_seria->LoadScene(directory_scene.c_str());
+					App->json_seria->LoadScene(directory_scene.c_str());
 					App->SetActualScene(directory_scene.c_str());
 					App->resource_manager->ReImportAllScripts();
 				}
@@ -424,7 +424,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 			break;
 		}
 		}
-		width += sizeFiles + MARGEBUTTON + DISTANCEBUTTONS; // Size of imatge + marge button + between buttons
+		width += size_files + MARGEBUTTON + DISTANCEBUTTONS; // Size of imatge + marge button + between buttons
 		int temp = ImGui::GetWindowWidth();
 		if ((width + DISTANCEBUTTONS + SPERATIONCOLUMN) > temp)
 		{
@@ -456,9 +456,9 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 			{
 				if (i <= folders.size())
 				{
-					if (folders[i].haveSomething)
+					if (folders[i].have_something)
 					{
-						App->fs->GetUUIDFromFile(files[i].directory_name, App->resource_manager->filestoDelete);
+						App->fs->GetUUIDFromFile(files[i].directory_name, App->resource_manager->files_to_delete);
 					}
 				}
 
@@ -480,14 +480,14 @@ const char* Project::GetDirectory() const
 void Project::SetDirectory(const char* newDirectory)
 {
 	directory_see = App->GetCharfromConstChar(newDirectory);
-	updateFoldersNow = true;
-	updateFilesNow = true;
+	update_folders_now = true;
+	update_files_now = true;
 }
 
 void Project::UpdateNow()
 {
-	updateFoldersNow = true;
-	updateFilesNow = true;
+	update_folders_now = true;
+	update_files_now = true;
 }
 
 void Project::SetAllFolderBool(std::vector<FoldersNew>& folders, bool setBoolean)

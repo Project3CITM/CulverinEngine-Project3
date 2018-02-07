@@ -185,7 +185,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	perf_timer.Start();
 
 	// 
-	App->scene->sceneBuff->Bind("Scene");
+	App->scene->scene_buff->Bind("Scene");
 
 	// Refresh Projection of the camera
 	UpdateProjection(active_camera);
@@ -247,7 +247,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	//glEnd();
 
-	App->scene->sceneBuff->UnBind("Scene");
+	App->scene->scene_buff->UnBind("Scene");
 
 	//if (game_camera != nullptr)
 	//{

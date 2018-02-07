@@ -156,7 +156,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					std::string temp = std::to_string(resource_mat->GetUUID());
 					App->importer->iMaterial->LoadResource(temp.c_str(), resource_mat);
 				}
-				materialComp->resourceMaterial = resource_mat;
+				materialComp->resource_material = resource_mat;
 				resource_mat->path_assets = normalPath;
 			}
 		}

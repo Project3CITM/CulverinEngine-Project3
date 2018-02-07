@@ -27,34 +27,10 @@ bool ModuleFS::Init(JSON_Object * node)
 {
 	// Will contain exe path
 	GetCurrentDirectory(MAX_PATH, ownPth);
-	directory_Game = ownPth
-	directory_Assets = directory_Game + "\\Assets";
+	directory_Assets = ownPth;
+	directory_Game = directory_Assets + "\\Assets";
 	LOG("%s", directory_Assets);
 	LOG("%s", directory_Game);
-
-	/*HMODULE hModule = GetModuleHandle(NULL);
-	if (hModule != NULL)
-	{
-		// When passing NULL to GetModuleHandle, it returns handle of exe itself
-		GetModuleFileName(hModule, ownPth, (sizeof(ownPth)));
-	}
-	directory_Game = ownPth;*/
-
-	//In release this code: -----------------------------------------
-	//size_t EndName = directory_Game.find_last_of("\\");
-	//directory_Game = directory_Game.substr(0, EndName);
-	//directory_Assets = directory_Game;
-	//directory_Game += "\\Assets"; // "\\Game\\Assets"
-	//LOG("%s", directory_Assets);
-	//LOG("%s", directory_Game);
-
-	//Not release this: ---------------------------------------------
-	/*size_t EndName = directory_Game.find_last_of("\\");
-	directory_Game = directory_Game.substr(0, EndName);
-	EndName = directory_Game.find_last_of("\\");
-	directory_Game = directory_Game.substr(0, EndName);
-	directory_Assets = directory_Game + "\\Game";
-	directory_Game += "\\Game\\Assets"; // "\\Game\\Assets"*/
 
 	// Check if Main Folders exist --------------------
 	CreateFolder("Library");
@@ -193,7 +169,7 @@ void ModuleFS::GetAllFolders(std::experimental::filesystem::path path, std::stri
 				{
 					folder_temp.active = true;
 				}
-				folder_temp.haveSomething = GetAllFoldersChild(iter->path().string(), folderActive, folder_temp.folder_child);
+				folder_temp.have_something = GetAllFoldersChild(iter->path().string(), folderActive, folder_temp.folder_child);
 				folders.push_back(folder_temp);
 			}
 			RELEASE_ARRAY(isFolderAssets);
@@ -229,7 +205,7 @@ bool ModuleFS::GetAllFoldersChild(std::experimental::filesystem::path path, std:
 			{
 				folder_temp.active = true;
 			}
-			folder_temp.haveSomething = GetAllFoldersChild(iter->path().string(), folderActive, folder_temp.folder_child);
+			folder_temp.have_something = GetAllFoldersChild(iter->path().string(), folderActive, folder_temp.folder_child);
 			folders.push_back(folder_temp);
 		}
 	}
@@ -259,7 +235,7 @@ void ModuleFS::GetAllFiles(std::experimental::filesystem::path path, std::vector
 				files_temp.directory_name_next = nullptr;
 
 			files_temp.file_name = ConverttoChar(FixName_directory(iter->path().string()));
-			files_temp.file_type = ((Project*)App->gui->winManager[PROJECT])->SetType(files_temp.file_name);
+			files_temp.file_type = ((Project*)App->gui->win_manager[PROJECT])->SetType(files_temp.file_name);
 			files.push_back(files_temp);
 		}
 		extension.clear();
@@ -358,10 +334,10 @@ void ModuleFS::GetAllFilesFromFolder(std::experimental::filesystem::path path, s
 				bool finish = false; int id = 0;
 				while (finish == false)
 				{
-					ReImport temp = App->Json_seria->GetUUIDPrefab(directory.c_str(), id++);
+					ReImport temp = App->json_seria->GetUUIDPrefab(directory.c_str(), id++);
 					if (temp.uuid != 0)
 					{
-						App->resource_manager->filestoDelete.push_back(temp.uuid);
+						App->resource_manager->files_to_delete.push_back(temp.uuid);
 					}
 					else
 					{
@@ -372,10 +348,10 @@ void ModuleFS::GetAllFilesFromFolder(std::experimental::filesystem::path path, s
 			}
 			case Resource::Type::MATERIAL:
 			{
-				ReImport temp = App->Json_seria->GetUUIDMaterial(directory.c_str());
+				ReImport temp = App->json_seria->GetUUIDMaterial(directory.c_str());
 				if (temp.uuid != 0)
 				{
-					App->resource_manager->filestoDelete.push_back(temp.uuid);
+					App->resource_manager->files_to_delete.push_back(temp.uuid);
 				}
 				break;
 			}
@@ -412,10 +388,10 @@ void ModuleFS::GetUUIDFromFile(std::string path, std::vector<uint>& files)
 			bool finish = false; int id = 0;
 			while (finish == false)
 			{
-				ReImport temp = App->Json_seria->GetUUIDPrefab(path.c_str(), id++);
+				ReImport temp = App->json_seria->GetUUIDPrefab(path.c_str(), id++);
 				if (temp.uuid != 0)
 				{
-					App->resource_manager->filestoDelete.push_back(temp.uuid);
+					App->resource_manager->files_to_delete.push_back(temp.uuid);
 					//RELEASE_ARRAY(temp.directoryObj);
 					//RELEASE_ARRAY(temp.nameMesh);
 				}
@@ -428,10 +404,10 @@ void ModuleFS::GetUUIDFromFile(std::string path, std::vector<uint>& files)
 		}
 		case Resource::Type::MATERIAL:
 		{
-			ReImport temp = App->Json_seria->GetUUIDMaterial(path.c_str());
+			ReImport temp = App->json_seria->GetUUIDMaterial(path.c_str());
 			if (temp.uuid != 0)
 			{
-				App->resource_manager->filestoDelete.push_back(temp.uuid);
+				App->resource_manager->files_to_delete.push_back(temp.uuid);
 				//RELEASE_ARRAY(temp.directoryObj);
 				//RELEASE_ARRAY(temp.nameMesh);
 			}
@@ -477,10 +453,10 @@ bool ModuleFS::AnyfileModificated(std::vector<AllFiles>& files)
 						bool finish = false; int id = 0;
 						while (finish == false)
 						{
-							ReImport temp = App->Json_seria->GetUUIDPrefab(files[idpath - 1].directory_name, id++);
+							ReImport temp = App->json_seria->GetUUIDPrefab(files[idpath - 1].directory_name, id++);
 							if (temp.uuid != 0)
 							{
-								App->resource_manager->resourcesToReimport.push_back(temp);
+								App->resource_manager->resources_to_reimport.push_back(temp);
 							}
 							else
 							{
@@ -491,7 +467,7 @@ bool ModuleFS::AnyfileModificated(std::vector<AllFiles>& files)
 					}
 					case Resource::Type::MATERIAL:
 					{
-						App->resource_manager->resourcesToReimport.push_back(App->Json_seria->GetUUIDMaterial(files[idpath - 1].directory_name));
+						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDMaterial(files[idpath - 1].directory_name));
 						break;
 					}
 					}
@@ -539,10 +515,10 @@ bool ModuleFS::AnyfileModificatedFolder(std::experimental::filesystem::path path
 						bool finish = false; int id = 0;
 						while (finish == false)
 						{
-							ReImport temp = App->Json_seria->GetUUIDPrefab(files[idpath - 1].directory_name, id++);
+							ReImport temp = App->json_seria->GetUUIDPrefab(files[idpath - 1].directory_name, id++);
 							if (temp.uuid != 0)
 							{
-								App->resource_manager->resourcesToReimport.push_back(temp);
+								App->resource_manager->resources_to_reimport.push_back(temp);
 							}
 							else
 							{
@@ -553,7 +529,7 @@ bool ModuleFS::AnyfileModificatedFolder(std::experimental::filesystem::path path
 					}
 					case Resource::Type::MATERIAL:
 					{
-						App->resource_manager->resourcesToReimport.push_back(App->Json_seria->GetUUIDMaterial(files[idpath - 1].directory_name));
+						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDMaterial(files[idpath - 1].directory_name));
 						break;
 					}
 					}

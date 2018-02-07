@@ -1,5 +1,5 @@
-#ifndef _WWISHED_H_
-#define _WWISHED_H_
+#ifndef WWISHED_H
+#define WWISHED_H
 
 #include <AK/SoundEngine/Common/AkTypes.h>
 

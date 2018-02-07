@@ -8,7 +8,7 @@ struct Texture
 {
 	uint id;
 	//Const char* ?
-	std::string nameExt;
+	std::string name_ext;
 	//std::string path;
 	std::string name;
 

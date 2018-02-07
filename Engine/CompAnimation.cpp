@@ -1,33 +1,59 @@
-#include "CompRectTransform.h"
+#include "CompAnimation.h"
+#include "Component.h"
+#include "GameObject.h"
 #include "Application.h"
 #include "ModuleGUI.h"
-#include "WindowInspector.h"
-#include "GameObject.h"
+#include "ModuleInput.h"
+#include "CompCamera.h"
 #include "Scene.h"
-
-
-
-
-CompRectTransform::CompRectTransform(Comp_Type t, GameObject * parent) :Component(t, parent)
+#include "ModuleConsole.h"
+#include "ModuleWindow.h"
+#include "WindowInspector.h"
+#include "WindowSceneWorld.h"
+CompAnimation::CompAnimation(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
-	uid = App->random->Int();
-	name_component = "Rect Transform";
+	name_component = "Animation";
 }
 
-CompRectTransform::CompRectTransform(const CompRectTransform & copy, GameObject * parent) : Component(Comp_Type::C_RECT_TRANSFORM, parent)
-{
-}
-
-CompRectTransform::~CompRectTransform()
+CompAnimation::CompAnimation(const CompAnimation & copy, GameObject * parent) : Component(Comp_Type::C_ANIMATION, parent)
 {
 }
 
-void CompRectTransform::ShowOptions()
+CompAnimation::~CompAnimation()
 {
-	//ImGui::MenuItem("CREATE", NULL, false, false);
+}
+
+void CompAnimation::DrawBones()
+{
+}
+
+void CompAnimation::Clear()
+{
+}
+
+void CompAnimation::PreUpdate(float dt)
+{
+}
+
+void CompAnimation::Update(float dt)
+{
+}
+
+void CompAnimation::CopyValues(const CompAnimation* component)
+{
+	//more...
+}
+
+
+void CompAnimation::ShowOptions()
+{
+	if (ImGui::MenuItem("Remove Component"))
+	{
+		to_delete = true;
+	}
 	if (ImGui::MenuItem("Reset"))
 	{
-		// Not implmented yet.
+		ImGui::CloseCurrentPopup();
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Move to Front", NULL, false, false))
@@ -38,19 +64,7 @@ void CompRectTransform::ShowOptions()
 	{
 		// Not implmented yet.
 	}
-	if (ImGui::MenuItem("Remove Component"))
-	{
-		to_delete = true;
-	}
-	if (ImGui::MenuItem("Move Up", NULL, false, false))
-	{
-		// Not implmented yet.
-	}
-	if (ImGui::MenuItem("Move Down", NULL, false, false))
-	{
-		// Not implmented yet.
-	}
-	if (ImGui::MenuItem("Copy Component"))
+	if (ImGui::MenuItem("Copy Component", NULL, false))
 	{
 		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
@@ -66,47 +80,38 @@ void CompRectTransform::ShowOptions()
 	{
 		if (this->GetType() == ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
 		{
-			CopyValues(((CompRectTransform*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
+			CopyValues(((CompAnimation*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
 		}
 	}
 }
 
-void CompRectTransform::ShowInspectorInfo()
+void CompAnimation::ShowInspectorInfo()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 0));
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ImGui::OpenPopup("OptionsMesh");
+		ImGui::OpenPopup("Animation Options");
 	}
 	ImGui::PopStyleVar();
 
 	// Button Options --------------------------------------
-	if (ImGui::BeginPopup("OptionsMesh"))
+	if (ImGui::BeginPopup("Animation Options"))
 	{
 		ShowOptions();
 		ImGui::EndPopup();
 	}
-
 	ImGui::TreePop();
 }
 
-void CompRectTransform::CopyValues(const CompRectTransform* component)
-{
-	//more...
-}
-
-void CompRectTransform::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
+void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
-	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	json_object_dotset_number_with_std(object, name + "UUID", uid);
-	//...
+	json_object_dotset_number_with_std(object, name + "Type", C_ANIMATION);
+	//¿No falta aquí la UID?
+
 }
 
-void CompRectTransform::Load(const JSON_Object* object, std::string name)
+void CompAnimation::Load(const JSON_Object * object, std::string name)
 {
-	uid = json_object_dotget_number_with_std(object, name + "UUID");
-	//...
-	Enable();
 }

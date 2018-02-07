@@ -37,7 +37,7 @@ struct FoldersNew
 {
 	const char* directory_name = nullptr;
 	bool active = false;
-	bool haveSomething = false;
+	bool have_something = false;
 	char* file_name = nullptr;
 	std::vector<FoldersNew> folder_child;
 };
@@ -70,11 +70,11 @@ private:
 
 	//std::vector<Folders> folders;
 	char* directory_see = nullptr;
-	int sizeFiles;
+	int size_files;
 	std::vector<FoldersNew> folders;
 	std::vector<FilesNew> files;
-	bool updateFoldersNow = false;
-	bool updateFilesNow = false;
+	bool update_folders_now = false;
+	bool update_files_now = false;
 
 	uint folder_icon;
 	uint icon_png;
@@ -84,8 +84,8 @@ private:
 	uint icon_script;
 	uint icon_unknown;
 	uint icon_scene;
-	Timer timeFolders;
-	Timer timeFiles;
+	Timer time_folders;
+	Timer time_files;
 };
 
 #endif

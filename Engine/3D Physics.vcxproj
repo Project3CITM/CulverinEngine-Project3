@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -107,6 +107,8 @@
     <ClInclude Include="Algorithm\Random\LCG.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="CompAnimation.h" />
+    <ClInclude Include="CompAudio.h" />
     <ClInclude Include="CompButton.h" />
     <ClInclude Include="CompCamera.h" />
     <ClInclude Include="CompCanvas.h" />
@@ -248,6 +250,8 @@
     <ClCompile Include="Algorithm\Random\LCG.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="CompAnimation.cpp" />
+    <ClCompile Include="CompAudio.cpp" />
     <ClCompile Include="CompButton.cpp" />
     <ClCompile Include="CompCamera.cpp" />
     <ClCompile Include="CompCanvas.cpp" />

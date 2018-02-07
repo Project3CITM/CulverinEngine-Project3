@@ -21,7 +21,7 @@ public:
 	CompCamera(const CompCamera& copy, GameObject* parent);
 	~CompCamera();
 
-	void preUpdate(float dt);
+	void PreUpdate(float dt);
 	void Update(float dt);
 	void UpdateFrustum();
 	void Draw();

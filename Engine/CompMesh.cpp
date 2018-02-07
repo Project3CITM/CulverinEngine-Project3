@@ -25,13 +25,13 @@ CompMesh::CompMesh(Comp_Type t, GameObject* parent) : Component(t, parent)
 CompMesh::CompMesh(const CompMesh& copy, GameObject* parent) :Component(Comp_Type::C_MESH, parent)
 {
 	name = copy.name;
-	resourceMesh = copy.resourceMesh;
-	if (resourceMesh != nullptr)
+	resource_mesh = copy.resource_mesh;
+	if (resource_mesh != nullptr)
 	{
-		resourceMesh->NumGameObjectsUseMe++;
+		resource_mesh->num_game_objects_use_me++;
 	}
 	//material = material;
-	hasNormals = copy.hasNormals;
+	has_normals = copy.has_normals;
 	render = copy.render;
 
 	name_component = "Mesh";
@@ -40,15 +40,15 @@ CompMesh::CompMesh(const CompMesh& copy, GameObject* parent) :Component(Comp_Typ
 CompMesh::~CompMesh()
 {
 	//RELEASE_ARRAY(name);
-	if (resourceMesh != nullptr)
+	if (resource_mesh != nullptr)
 	{
-		if (resourceMesh->NumGameObjectsUseMe > 0)
+		if (resource_mesh->num_game_objects_use_me > 0)
 		{
-			resourceMesh->NumGameObjectsUseMe--;
+			resource_mesh->num_game_objects_use_me--;
 		}
 	}
 	material = nullptr;
-	resourceMesh = nullptr;
+	resource_mesh = nullptr;
 }
 
 //void CompMesh::Init(std::vector<_Vertex> v, std::vector<uint> i)
@@ -62,36 +62,36 @@ CompMesh::~CompMesh()
 //	SetupMesh();
 //}
 
-void CompMesh::preUpdate(float dt)
+void CompMesh::PreUpdate(float dt)
 {
 	// Manage Resource -------------------------------------------------
 	// Before delete Resource Set this pointer to nullptr
-	if (resourceMesh != nullptr)
+	if (resource_mesh != nullptr)
 	{
-		if (resourceMesh->GetState() == Resource::State::WANTDELETE)
+		if (resource_mesh->GetState() == Resource::State::WANTDELETE)
 		{
-			resourceMesh = nullptr;
+			resource_mesh = nullptr;
 		}
-		else if (resourceMesh->GetState() == Resource::State::REIMPORTED)
+		else if (resource_mesh->GetState() == Resource::State::REIMPORTED)
 		{
-			uuidResourceReimported = resourceMesh->GetUUID();
-			resourceMesh = nullptr;
+			uuid_resource_reimported = resource_mesh->GetUUID();
+			resource_mesh = nullptr;
 		}
 	}
 	else
 	{
-		if (uuidResourceReimported != 0)
+		if (uuid_resource_reimported != 0)
 		{
-			resourceMesh = (ResourceMesh*)App->resource_manager->GetResource(uuidResourceReimported);
-			if (resourceMesh != nullptr)
+			resource_mesh = (ResourceMesh*)App->resource_manager->GetResource(uuid_resource_reimported);
+			if (resource_mesh != nullptr)
 			{
-				resourceMesh->NumGameObjectsUseMe++;
+				resource_mesh->num_game_objects_use_me++;
 				// Check if loaded!
-				if (resourceMesh->IsLoadedToMemory() == Resource::State::UNLOADED)
+				if (resource_mesh->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
-					App->importer->iMesh->LoadResource(std::to_string(resourceMesh->GetUUID()).c_str(), resourceMesh);
+					App->importer->iMesh->LoadResource(std::to_string(resource_mesh->GetUUID()).c_str(), resource_mesh);
 				}
-				uuidResourceReimported = 0;
+				uuid_resource_reimported = 0;
 			}
 		}
 	}
@@ -132,39 +132,39 @@ void CompMesh::ShowOptions()
 	}
 	if (ImGui::MenuItem("Copy Component"))
 	{
-		((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->SetComponentCopy(this);
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetComponentCopy(this);
 	}
-	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		if (parent->FindComponentByType(((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
-			|| ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+		if (parent->FindComponentByType(((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
+			|| ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
 		{
-			parent->AddComponentCopy(*((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied());
+			parent->AddComponentCopy(*((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied());
 		}
 	}
-	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
-		if (this->GetType() == ((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
+		if (this->GetType() == ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
 		{
-			CopyValues(((CompMesh*)((Inspector*)App->gui->winManager[WindowName::INSPECTOR])->GetComponentCopied()));
+			CopyValues(((CompMesh*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
 		}
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Reset Mesh"))
 	{
-		if (resourceMesh != nullptr)
+		if (resource_mesh != nullptr)
 		{
-			if (resourceMesh->NumGameObjectsUseMe > 0)
+			if (resource_mesh->num_game_objects_use_me > 0)
 			{
-				resourceMesh->NumGameObjectsUseMe--;
+				resource_mesh->num_game_objects_use_me--;
 			}
 		}
-		resourceMesh = nullptr;
+		resource_mesh = nullptr;
 		ImGui::CloseCurrentPopup();
 	}
 	if (ImGui::MenuItem("Select Mesh..."))
 	{
-		SelectMesh = true;
+		select_mesh = true;
 		ImGui::CloseCurrentPopup();
 	}
 }
@@ -186,48 +186,48 @@ void CompMesh::ShowInspectorInfo()
 		ImGui::EndPopup();
 	}
 
-	if (resourceMesh != nullptr)
+	if (resource_mesh != nullptr)
 	{
 		ImGui::Text("Name:"); ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resourceMesh->name);
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resource_mesh->name);
 		ImGui::Text("Vertices:"); ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%i", resourceMesh->num_vertices);
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%i", resource_mesh->num_vertices);
 		ImGui::Text("Indices:"); ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%i", resourceMesh->num_indices);
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%i", resource_mesh->num_indices);
 
 		ImGui::Checkbox("Render", &render);
 	}
-	if (resourceMesh == nullptr)
+	if (resource_mesh == nullptr)
 	{
 		ImGui::Text("Name:"); ImGui::SameLine();
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Mesh)");
 		if (ImGui::Button("Select Mesh..."))
 		{
-			SelectMesh = true;
+			select_mesh = true;
 		}
 	}
-	if (resourceMesh == nullptr || SelectMesh)
+	if (resource_mesh == nullptr || select_mesh)
 	{
-		if (SelectMesh)
+		if (select_mesh)
 		{
-			ResourceMesh* temp = (ResourceMesh*)App->resource_manager->ShowResources(SelectMesh, Resource::Type::MESH);
+			ResourceMesh* temp = (ResourceMesh*)App->resource_manager->ShowResources(select_mesh, Resource::Type::MESH);
 			if (temp != nullptr)
 			{
-				if (resourceMesh != nullptr)
+				if (resource_mesh != nullptr)
 				{
-					if (resourceMesh->NumGameObjectsUseMe > 0)
+					if (resource_mesh->num_game_objects_use_me > 0)
 					{
-						resourceMesh->NumGameObjectsUseMe--;
+						resource_mesh->num_game_objects_use_me--;
 					}
 				}
-				resourceMesh = temp;
-				resourceMesh->NumGameObjectsUseMe++;
-				if (resourceMesh->IsLoadedToMemory() == Resource::State::UNLOADED)
+				resource_mesh = temp;
+				resource_mesh->num_game_objects_use_me++;
+				if (resource_mesh->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
-					App->importer->iMesh->LoadResource(std::to_string(resourceMesh->GetUUID()).c_str(), resourceMesh);
+					App->importer->iMesh->LoadResource(std::to_string(resource_mesh->GetUUID()).c_str(), resource_mesh);
 				}
 				Enable();
-				parent->AddBoundingBox(resourceMesh);
+				parent->AddBoundingBox(resource_mesh);
 			}
 		}
 	}
@@ -237,19 +237,19 @@ void CompMesh::ShowInspectorInfo()
 void CompMesh::Draw()
 {
 
-	App->renderer3D->default_shader->Bind();
-	if (render && resourceMesh != nullptr)
+	
+	if (render && resource_mesh != nullptr)
 	{
-		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
-		if (transform != nullptr)
-		{
-			/* Push Matrix to Draw with transform applied, only if it contains a transform component */
-		//	glMatrixMode(GL_MODELVIEW);
-			//glPushMatrix();
-			//glMultMatrixf(transform->GetMultMatrixForOpenGL());
-		}
+		ShaderProgram* shader = App->renderer3D->default_shader;
+		//if (material->material_shader)
+			//shader = material->material_shader;
 
-		if (resourceMesh->vertices.size() > 0 && resourceMesh->indices.size() > 0)
+		shader->Bind();
+
+		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
+	
+
+		if (resource_mesh->vertices.size() > 0 && resource_mesh->indices.size() > 0)
 		{
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glEnableClientState(GL_NORMAL_ARRAY);
@@ -272,7 +272,10 @@ void CompMesh::Draw()
 			{
 				glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
 			}
+			//
 
+
+			//Future Delete
 			if (App->renderer3D->texture_2d)
 			{
 				CompMaterial* temp = parent->GetComponentMaterial();
@@ -293,47 +296,49 @@ void CompMesh::Draw()
 
 				}
 			}		
-
+			//
 			
 
 
 			// NORMALS ----------------------------------
-			if (App->renderer3D->normals && hasNormals)
+			if (App->renderer3D->normals && has_normals)
 			{
-				glBindBuffer(GL_ARRAY_BUFFER, resourceMesh->vertices_norm_id);
+				glBindBuffer(GL_ARRAY_BUFFER, resource_mesh->vertices_norm_id);
 				glVertexPointer(3, GL_FLOAT, sizeof(float3), NULL);
-				glDrawArrays(GL_LINES, 0, resourceMesh->vertices.size() * 2);
+				glDrawArrays(GL_LINES, 0, resource_mesh->vertices.size() * 2);
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 			}
 
 	
-			GLint view2Loc = glGetUniformLocation(App->renderer3D->default_shader->programID, "view");
 			Frustum camFrust = App->camera->GetFrustum();
 			float4x4 temp = camFrust.ViewMatrix();
 
-			glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
+			GLint view2Loc = glGetUniformLocation(shader->programID, "view");
+			GLint modelLoc = glGetUniformLocation(shader->programID, "model");
+			GLint viewLoc =  glGetUniformLocation(shader->programID, "viewproj");
 
-			GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetMultMatrixForOpenGL());
+			
 
-			GLint viewLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "viewproj");
-
+			glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());			
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetMultMatrixForOpenGL());			
 			glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 
-			int tota_save_buffer = 8;
 
-			if (resourceMesh->vertices.size()>0) {
-				glBindBuffer(GL_ARRAY_BUFFER, resourceMesh->id_total_buffer);
+			int total_save_buffer = 8;
+
+			if (resource_mesh->vertices.size()>0) {
+				glBindBuffer(GL_ARRAY_BUFFER, resource_mesh->id_total_buffer);
+
 				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, tota_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
 				glEnableVertexAttribArray(1);
-				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, tota_save_buffer * sizeof(GLfloat), (char *)NULL + (3 * sizeof(float)));
+				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (3 * sizeof(float)));
 				glEnableVertexAttribArray(2);
-				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, tota_save_buffer * sizeof(GLfloat), (char *)NULL + (5 * sizeof(float)));
+				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (5 * sizeof(float)));
 
 				glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resourceMesh->indices_id);
-				glDrawElements(GL_TRIANGLES, resourceMesh->num_indices, GL_UNSIGNED_INT, NULL);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource_mesh->indices_id);
+				glDrawElements(GL_TRIANGLES, resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);
 
 			}
 
@@ -353,24 +358,20 @@ void CompMesh::Draw()
 			glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-			App->renderer3D->default_shader->Unbind();
+			shader->Unbind();
+			
 		}
 
 		else
 		{
 			LOG("Cannot draw the mesh");
 		}
-
-		if (transform != nullptr)
-		{
-			//glPopMatrix();
-		}
 	}
 }
 
 void CompMesh::Clear()
 {
-	resourceMesh = nullptr;
+	resource_mesh = nullptr;
 }
 
 
@@ -379,7 +380,7 @@ void CompMesh::Render(bool render)
 	this->render = render;
 }
 
-bool CompMesh::isRendering() const
+bool CompMesh::IsRendering() const
 {
 	return render;
 }
@@ -395,31 +396,31 @@ void CompMesh::LinkMaterial(const CompMaterial* mat)
 
 void CompMesh::SetResource(ResourceMesh* resourse_mesh, bool isImport)
 {
-	if (resourceMesh != resourse_mesh)
+	if (resource_mesh != resourse_mesh)
 	{
-		if (resourceMesh != nullptr)
+		if (resource_mesh != nullptr)
 		{
-			if (resourceMesh->NumGameObjectsUseMe > 0)
+			if (resource_mesh->num_game_objects_use_me > 0)
 			{
-				resourceMesh->NumGameObjectsUseMe--;
+				resource_mesh->num_game_objects_use_me--;
 			}
 		}
-		resourceMesh = resourse_mesh;
+		resource_mesh = resourse_mesh;
 		if (isImport)
 		{
 			// Fix Bug with Delete Import -----
-			resourceMesh->NumGameObjectsUseMe = 0;
+			resource_mesh->num_game_objects_use_me = 0;
 		}
 		else
 		{
-			resourceMesh->NumGameObjectsUseMe++;
+			resource_mesh->num_game_objects_use_me++;
 		}
 	}
 }
 
 void CompMesh::CopyValues(const CompMesh* component)
 {
-	resourceMesh = component->resourceMesh;
+	resource_mesh = component->resource_mesh;
 	//more...
 }
 
@@ -428,16 +429,16 @@ void CompMesh::Save(JSON_Object* object, std::string name, bool saveScene, uint&
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", C_MESH);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
-	if(resourceMesh != nullptr)
+	if(resource_mesh != nullptr)
 	{
 		if (saveScene == false)
 		{
 			// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
 			std::string temp = std::to_string(countResources++);
-			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".UUID Resource", resourceMesh->GetUUID());
-			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", resourceMesh->name);
+			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".UUID Resource", resource_mesh->GetUUID());
+			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", resource_mesh->name);
 		}
-		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", resourceMesh->GetUUID());
+		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", resource_mesh->GetUUID());
 	}
 	else
 	{
@@ -451,18 +452,18 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID");
 	if (resourceID > 0)
 	{
-		resourceMesh = (ResourceMesh*)App->resource_manager->GetResource(resourceID);
-		if (resourceMesh != nullptr)
+		resource_mesh = (ResourceMesh*)App->resource_manager->GetResource(resourceID);
+		if (resource_mesh != nullptr)
 		{
-			resourceMesh->NumGameObjectsUseMe++;
+			resource_mesh->num_game_objects_use_me++;
 			
 			// LOAD MESH ----------------------------
-			if (resourceMesh->IsLoadedToMemory() == Resource::State::UNLOADED)
+			if (resource_mesh->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
-				App->importer->iMesh->LoadResource(std::to_string(resourceMesh->GetUUID()).c_str(), resourceMesh);			
+				App->importer->iMesh->LoadResource(std::to_string(resource_mesh->GetUUID()).c_str(), resource_mesh);
 			}
 			// Add bounding box ------
-			parent->AddBoundingBox(resourceMesh);
+			parent->AddBoundingBox(resource_mesh);
 		}
 	}
 	Enable();

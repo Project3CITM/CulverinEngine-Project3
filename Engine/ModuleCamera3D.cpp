@@ -90,7 +90,7 @@ update_status ModuleCamera3D::Update(float dt)
 {
 	perf_timer.Start();
 
-	if (App->engineState == EngineState::STOP) //Block camera movement while game is executing
+	if (App->engine_state == EngineState::STOP) //Block camera movement while game is executing
 	{
 		ImGuiIO& io = ImGui::GetIO();
 
@@ -335,12 +335,12 @@ void ModuleCamera3D::CheckGeometryIntersection()
 			float4x4 object_transform = it->second->GetComponentTransform()->GetGlobalTransform();
 			ray_local_space.Transform(object_transform.Inverted());
 
-			for (uint i = 0; i < mesh->resourceMesh->num_indices; i += 3)
+			for (uint i = 0; i < mesh->resource_mesh->num_indices; i += 3)
 			{
 				// Set Triangle vertices
-				tri.a = mesh->resourceMesh->vertices[mesh->resourceMesh->indices[i]].pos;
-				tri.b = mesh->resourceMesh->vertices[mesh->resourceMesh->indices[i + 1]].pos;
-				tri.c = mesh->resourceMesh->vertices[mesh->resourceMesh->indices[i + 2]].pos;
+				tri.a = mesh->resource_mesh->vertices[mesh->resource_mesh->indices[i]].pos;
+				tri.b = mesh->resource_mesh->vertices[mesh->resource_mesh->indices[i + 1]].pos;
+				tri.c = mesh->resource_mesh->vertices[mesh->resource_mesh->indices[i + 2]].pos;
 				hit = ray_local_space.Intersects(tri, &entry_dist, &hit_point);
 
 				if (hit)
@@ -359,7 +359,7 @@ void ModuleCamera3D::CheckGeometryIntersection()
 	if (best_candidate != nullptr)
 	{
 		//Set inspector window of this Game Object
-		((Inspector*)App->gui->winManager[INSPECTOR])->LinkObject(best_candidate);
+		((Inspector*)App->gui->win_manager[INSPECTOR])->LinkObject(best_candidate);
 		App->camera->SetFocus(best_candidate);
 	}
 }

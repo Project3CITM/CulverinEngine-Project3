@@ -28,16 +28,17 @@ enum Type_Primitive
 class CompMesh: public Component
 {
 public:
+
 	CompMesh(Comp_Type t, GameObject* parent);
 	CompMesh(const CompMesh& copy, GameObject* parent);
 	~CompMesh();
 
 	void Draw();
 	void Clear();
-	void preUpdate(float dt);
+	void PreUpdate(float dt);
 	void Update(float dt);
 	void Render(bool render);
-	bool isRendering() const;
+	bool IsRendering() const;
 
 	// EDITOR METHODS ---------
 	void ShowOptions();
@@ -56,18 +57,18 @@ public:
 	// -------------------------------------
 
 public:
-	char* name = "MESH NAME";
-	bool hasNormals = false;
 
-	ResourceMesh* resourceMesh = nullptr;
+	char* name = "MESH NAME";
+	bool has_normals = false;
+
+	ResourceMesh* resource_mesh = nullptr;
 
 private:
+
 	bool render = true;
-	bool SelectMesh = false;
+	bool select_mesh = false;
 	const CompMaterial* material = nullptr;
-	uint uuidResourceReimported = 0;
+	uint uuid_resource_reimported = 0;
 
 };
-
-
 #endif

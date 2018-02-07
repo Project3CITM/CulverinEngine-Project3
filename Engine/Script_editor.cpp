@@ -106,7 +106,7 @@ void Script_editor::Show(bool& active)
 				SetAction(ActionEditor::COPY);
 			}
 			bool activepaste = false;
-			if (textSelected != "")
+			if (text_selected != "")
 			{
 				activepaste = true;
 			}
@@ -168,12 +168,12 @@ void Script_editor::SetAction(ActionEditor action)
 	{
 	case ActionEditor::COPY:
 	{
-		textSelected = editor.GetSelectedText();
+		text_selected = editor.GetSelectedText();
 		break;
 	}
 	case ActionEditor::PASTE:
 	{
-		editor.InsertText(textSelected);
+		editor.InsertText(text_selected);
 		break;
 	}
 	case ActionEditor::UNDO:

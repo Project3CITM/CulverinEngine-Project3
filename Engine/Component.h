@@ -20,6 +20,7 @@ enum Comp_Type
 	C_CAMERA,
 	C_UNIQUE_SEPARATOR,
 	C_SCRIPT,
+	C_ANIMATION,
 	C_BUTTON,
 	C_CHECK_BOX,
 	C_CANVAS,
@@ -27,7 +28,7 @@ enum Comp_Type
 	C_TEXT,
 	C_EDIT_TEXT,
 	C_IMAGE,
-
+	C_AUDIO
 };
 
 class Component
@@ -39,7 +40,7 @@ public:
 	virtual bool Enable();
 	virtual bool Disable();
 	virtual void Init();
-	virtual void preUpdate(float dt);
+	virtual void PreUpdate(float dt);
 	virtual void Update(float dt);
 	virtual void Draw();
 	virtual void Clear();

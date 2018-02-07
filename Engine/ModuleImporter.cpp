@@ -162,7 +162,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 		bool isReimported = false;
 		for (int i = 0; i < resourcesToReimport.size(); i++)
 		{
-			if (strcmp(node->mName.C_Str(), resourcesToReimport[i].nameMesh) == 0)
+			if (strcmp(node->mName.C_Str(), resourcesToReimport[i].name_mesh) == 0)
 			{
 				iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), resourcesToReimport[i].uuid);
 				isReimported = true;
@@ -234,9 +234,9 @@ bool ModuleImporter::Import(const char* file, Resource::Type type)
 			obj->SetName(App->GetCharfromConstChar(App->fs->FixName_directory(file).c_str()));
 
 			//Now Save Serialitzate OBJ -> Prefab
-			std::string Newdirectory = ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory();
+			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
 			Newdirectory += "\\" + App->fs->FixName_directory(file);
-			App->Json_seria->SavePrefab(*obj, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+			App->json_seria->SavePrefab(*obj, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 
 			//App->scene->gameobjects.push_back(obj);
 			App->scene->DeleteGameObject(obj, true);
@@ -297,9 +297,9 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 			obj->SetName(App->GetCharfromConstChar(App->fs->FixName_directory(file).c_str()));
 
 			//Now Save Serialitzate OBJ -> Prefab
-			std::string Newdirectory = ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory();
+			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
 			Newdirectory += "\\" + App->fs->FixName_directory(file);
-			App->Json_seria->SavePrefab(*obj, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+			App->json_seria->SavePrefab(*obj, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 
 			//TODO-> Elliot -------------------------------------------
 			App->scene->root->AddChildGameObject(obj); // Temp obj needs to be erased
@@ -321,7 +321,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 		bool isReImport = false;
 		for (int i = 0; i < resourcesToReimport.size(); i++)
 		{
-			if (strcmp(file, resourcesToReimport[i].directoryObj) == 0)
+			if (strcmp(file, resourcesToReimport[i].directory_obj) == 0)
 			{
 				iMaterial->Import(file, resourcesToReimport[i].uuid);
 				isReImport = true;
@@ -341,7 +341,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 		bool isReImport = false;
 		for (int i = 0; i < resourcesToReimport.size(); i++)
 		{
-			if (strcmp(file, resourcesToReimport[i].directoryObj) == 0)
+			if (strcmp(file, resourcesToReimport[i].directory_obj) == 0)
 			{
 				iScript->Import(file, resourcesToReimport[i].uuid);
 				isReImport = true;

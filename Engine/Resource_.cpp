@@ -31,3 +31,13 @@ void Resource::SetState(Resource::State newstate)
 	state = newstate;
 }
 
+void Resource::DeleteToMemory()
+{
+
+}
+
+Resource::State Resource::IsLoadedToMemory()
+{
+	return state;
+}
+

@@ -23,7 +23,7 @@ update_status Hardware::Update(float dt)
 {
 	if (active[0].active)
 	{
-		if (!ImGui::Begin("Hardware", &App->gui->winManager[HARDWARE]->active[0].active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_ShowBorders)) //TODO ELLIOT CLOSE Windows example
+		if (!ImGui::Begin("Hardware", &App->gui->win_manager[HARDWARE]->active[0].active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_ShowBorders)) //TODO ELLIOT CLOSE Windows example
 		{
 			ImGui::End();
 			return UPDATE_CONTINUE;

@@ -4,7 +4,7 @@
 
 ResourceMaterial::ResourceMaterial(uint uuid) : Resource(uuid, Resource::Type::MATERIAL, Resource::State::UNLOADED)
 {
-	NumGameObjectsUseMe = 0;
+	num_game_objects_use_me = 0;
 	LOG("Resource Material Created!");
 }
 
@@ -12,7 +12,7 @@ ResourceMaterial::ResourceMaterial(uint uuid) : Resource(uuid, Resource::Type::M
 ResourceMaterial::~ResourceMaterial()
 {
 	texture.name.clear();
-	texture.nameExt.clear();
+	texture.name_ext.clear();
 }
 
 void ResourceMaterial::InitInfo(const char* nameResource)
