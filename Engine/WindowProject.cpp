@@ -454,14 +454,14 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 
 			if (ImGui::Button("Remove"))
 			{
-				if (i <= folders.size())
+				if (i < folders.size()) // TODO ELLIOT 
 				{
 					if (folders[i].have_something)
 					{
-						App->fs->GetUUIDFromFile(files[i].directory_name, App->resource_manager->files_to_delete);
+						//App->fs->GetUUIDFromFile(files[i].directory_name, App->resource_manager->files_to_delete);
 					}
 				}
-
+				App->fs->GetUUIDFromFile(files[i].directory_name, App->resource_manager->files_to_delete);
 				std::experimental::filesystem::remove_all(files[i].directory_name);
 				UpdateNow();
 				ImGui::CloseCurrentPopup();

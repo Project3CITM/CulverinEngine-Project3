@@ -417,7 +417,7 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 	return obj;
 }
 
-//TODO -> Elliot -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 {
 	for (int i = 0; i < gameobject->GetNumChilds(); i++)
