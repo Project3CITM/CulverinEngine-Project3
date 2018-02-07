@@ -510,6 +510,9 @@
     <ClInclude Include="ModuleRenderGui.h">
       <Filter>Engine\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="CompAnimation.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -829,6 +832,9 @@
     </ClCompile>
     <ClCompile Include="ModuleRenderGui.cpp">
       <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="CompAnimation.cpp">
+      <Filter>Engine\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

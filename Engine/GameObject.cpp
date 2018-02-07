@@ -15,6 +15,7 @@
 #include "CompMaterial.h"
 #include "CompCamera.h"
 #include "CompScript.h"
+#include "CompAnimation.h"
 #include "CompButton.h"
 #include "CompCheckBox.h"
 #include "CompImage.h"
@@ -598,6 +599,10 @@ void GameObject::ShowGameObjectOptions()
 	{
 		AddComponent(Comp_Type::C_SCRIPT);
 	}
+	if (ImGui::MenuItem("Animation"))
+	{
+		AddComponent(Comp_Type::C_ANIMATION);
+	}
 	if (ImGui::MenuItem("Canvas"))
 	{
 		AddComponent(Comp_Type::C_CANVAS);
@@ -787,6 +792,11 @@ void GameObject::ShowInspectorInfo()
 		if (ImGui::MenuItem("Script"))
 		{
 			AddComponent(Comp_Type::C_SCRIPT);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Animation"))
+		{
+			AddComponent(Comp_Type::C_ANIMATION);
 			add_component = false;
 		}
 		ImGui::End();
@@ -1096,6 +1106,13 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(script);
 			return script;
 		}
+		else if (type == Comp_Type::C_ANIMATION)
+		{
+			LOG("Adding ANIMATION COMPONENT.");
+			CompAnimation* anim = new CompAnimation(type, this);
+			components.push_back(anim);
+			return anim;
+		}
 	}
 
 	return nullptr;
@@ -1153,6 +1170,12 @@ void GameObject::AddComponentCopy(const Component& copy)
 	{
 		CompScript* script = new CompScript((CompScript&)copy, this); //Script copy constructor
 		components.push_back(script);
+		break;
+	}
+	case (Comp_Type::C_ANIMATION):
+	{
+		CompAnimation* anim = new CompAnimation((CompAnimation&)copy, this); //Anim copy constructor
+		components.push_back(anim);
 		break;
 	}
 	default:
@@ -1219,6 +1242,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		case Comp_Type::C_SCRIPT:
 			this->AddComponent(Comp_Type::C_SCRIPT, true);
 			break;
+		case Comp_Type::C_ANIMATION:
+			this->AddComponent(Comp_Type::C_ANIMATION, true);
+			break;
 		default:
 			break;
 		}
@@ -1255,6 +1281,11 @@ CompMaterial* GameObject::GetComponentMaterial() const
 CompScript* GameObject::GetComponentScript() const
 {
 	return (CompScript*)FindComponentByType(Comp_Type::C_SCRIPT);
+}
+
+CompAnimation * GameObject::GetComponentAnimation() const
+{
+	return (CompAnimation*)FindComponentByType(Comp_Type::C_ANIMATION);
 }
 
 
