@@ -109,7 +109,7 @@ bool Application::Init()
 		SetFpsCap(maxFPS);
 		// ---------------------------------------------------
 
-		actual_scene = json_object_get_string(config_node, "ActualScene");
+		//actual_scene = json_object_get_string(config_node, "ActualScene");
 
 		// Call Init() in all modules
 		std::vector<Module*>::iterator item = list_modules.begin();
@@ -578,7 +578,7 @@ bool Application::SaveConfig()
 		json_object_set_boolean(config_node, "VSYNC", vsync);
 		 
 		//Save ActualScene ----- 
-		json_object_set_string(config_node, "ActualScene", actual_scene.c_str());
+		//json_object_set_string(config_node, "ActualScene", actual_scene.c_str()); TODO ELLIOT
 
 
 		//Iterate all modules to save each respective info
