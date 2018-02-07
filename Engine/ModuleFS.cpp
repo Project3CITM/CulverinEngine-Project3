@@ -6,6 +6,7 @@
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
+#include "ModuleImporter.h"
 #include "TextEditor.h"
 
 ModuleFS::ModuleFS(bool start_enabled) : Module(start_enabled)
@@ -57,20 +58,11 @@ bool ModuleFS::Start()
 update_status ModuleFS::PreUpdate(float dt)
 {
 	perf_timer.Start();
-
-	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
+	static bool ImportAutoFiles = true;
+	if (ImportAutoFiles)
 	{
-		//App->resource_manager->resourcesToReimport.push_back(App->Json_seria->GetUUIDPrefab(allfilesAsstes[0].directory_name, 0));
-		//char* buffer = nullptr;
-
-		//// Loading File
-		//uint size = LoadFile(files[1].c_str(), &buffer);
-		//int x = 0;
-
-		//CopyFileToAssets("C:\\Users\\Administrador\\Documents\\GitHub\\3D-Engine\\Engine\\Game\\Assets\\TEST_Time.png", "C:\\Users\\Administrador\\Documents\\GitHub\\3D-Engine\\Engine\\Game\\Library\\TEST_Time.png");
-		//
-		//uint temp = App->random->Int();
-		//LOG("%i", temp);
+		ImportAllFilesNoMeta(allfilesAsstes);
+		ImportAutoFiles = false;
 	}
 
 	if (checkAssets.ReadSec() > 20)
@@ -270,6 +262,19 @@ void ModuleFS::GetAllFilesAssets(std::experimental::filesystem::path path, std::
 			GetAllFilesAssets(iter->path().string(), files);
 		}
 	}
+}
+
+bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
+{
+	for (int i = 0; i < files.size(); i++)
+	{
+		std::string temp = FixExtension(files[i].directory_name, ".meta.json");
+		if (std::experimental::filesystem::exists(temp) == false && strcmp(GetExtension(files[i].directory_name).c_str(), "scene.json") != 0)
+		{
+			App->importer->Import(files[i].directory_name, App->resource_manager->CheckFileType(files[i].directory_name));
+		}
+	}
+	return true;
 }
 
 void ModuleFS::GetAllFilesFromFolder(std::experimental::filesystem::path path, std::list<const char*>& files)
@@ -548,7 +553,7 @@ bool ModuleFS::IsPermitiveExtension(const char* extension)
 {
 	if (strcmp(extension, "png") == 0 || strcmp(extension, "jpg") == 0 ||
 		strcmp(extension, "fbx") == 0 || strcmp(extension, "obj") == 0 || 
-		strcmp(extension, "tga") == 0)
+		strcmp(extension, "tga") == 0 || strcmp(extension, "cs") == 0)
 	{
 		return true;
 	}

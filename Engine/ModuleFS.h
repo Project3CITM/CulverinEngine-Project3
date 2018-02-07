@@ -52,6 +52,9 @@ public:
 
 	//update_status UpdateConfig(float dt);
 
+	// Imort all files with havent ".meta".
+	bool ImportAllFilesNoMeta(std::vector<AllFiles>& files);
+
 	uint LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT directory = IMPORT_DEFAULT);
 	
 	//Name of the file (NOT DIRECTORY) ------------------
