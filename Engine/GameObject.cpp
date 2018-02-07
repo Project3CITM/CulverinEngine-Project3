@@ -753,7 +753,7 @@ void GameObject::ShowInspectorInfo()
 	}
 	ImGui::PopStyleColor();
 	ImVec2 pos_min = ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y);
-	ImVec2 pos_max = ImVec2(pos_min.x + (ImGui::GetWindowWidth() / 2), pos_min.y + (WIDTH_ADDCOMPONENT / 2));
+	ImVec2 pos_max = ImVec2(pos_min.x + (ImGui::GetWindowWidth() / 2) + 42, pos_min.y + (WIDTH_ADDCOMPONENT / 2) + 20); // Magic number
 	if (add_component)
 	{
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.258f, 0.258f, 0.258f, 1.00f));
@@ -798,6 +798,25 @@ void GameObject::ShowInspectorInfo()
 		{
 			AddComponent(Comp_Type::C_ANIMATION);
 			add_component = false;
+		}
+		if (ImGui::BeginMenu("UI"))
+		{
+			if (ImGui::MenuItem("Canvas"))
+			{
+				AddComponent(Comp_Type::C_CANVAS);
+				add_component = false;
+			}
+			if (ImGui::MenuItem("Image"))
+			{
+				AddComponent(Comp_Type::C_IMAGE);
+				add_component = false;
+			}
+			if (ImGui::MenuItem("Text"))
+			{
+				AddComponent(Comp_Type::C_TEXT);
+				add_component = false;
+			}
+			ImGui::EndMenu();
 		}
 		ImGui::End();
 		ImGui::PopStyleColor();

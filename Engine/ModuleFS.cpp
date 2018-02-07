@@ -32,30 +32,6 @@ bool ModuleFS::Init(JSON_Object * node)
 	LOG("%s", directory_Assets);
 	LOG("%s", directory_Game);
 
-	/*HMODULE hModule = GetModuleHandle(NULL);
-	if (hModule != NULL)
-	{
-		// When passing NULL to GetModuleHandle, it returns handle of exe itself
-		GetModuleFileName(hModule, ownPth, (sizeof(ownPth)));
-	}
-	directory_Game = ownPth;*/
-
-	//In release this code: -----------------------------------------
-	//size_t EndName = directory_Game.find_last_of("\\");
-	//directory_Game = directory_Game.substr(0, EndName);
-	//directory_Assets = directory_Game;
-	//directory_Game += "\\Assets"; // "\\Game\\Assets"
-	//LOG("%s", directory_Assets);
-	//LOG("%s", directory_Game);
-
-	//Not release this: ---------------------------------------------
-	/*size_t EndName = directory_Game.find_last_of("\\");
-	directory_Game = directory_Game.substr(0, EndName);
-	EndName = directory_Game.find_last_of("\\");
-	directory_Game = directory_Game.substr(0, EndName);
-	directory_Assets = directory_Game + "\\Game";
-	directory_Game += "\\Game\\Assets"; // "\\Game\\Assets"*/
-
 	// Check if Main Folders exist --------------------
 	CreateFolder("Library");
 	CreateFolder("Library\\Meshes");
