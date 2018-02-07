@@ -603,25 +603,29 @@ void GameObject::ShowGameObjectOptions()
 	{
 		AddComponent(Comp_Type::C_ANIMATION);
 	}
-	if (ImGui::MenuItem("Canvas"))
+	if (ImGui::BeginMenu("UI"))
 	{
-		AddComponent(Comp_Type::C_CANVAS);
-	}
-	if (ImGui::MenuItem("Button"))
-	{
-		AddComponent(Comp_Type::C_BUTTON);
-	}
-	if (ImGui::MenuItem("Image"))
-	{
-		AddComponent(Comp_Type::C_IMAGE);
-	}
-	if (ImGui::MenuItem("Text"))
-	{
-		AddComponent(Comp_Type::C_TEXT);
-	}
-	if (ImGui::MenuItem("Edit Text"))
-	{
-		AddComponent(Comp_Type::C_EDIT_TEXT);
+		if (ImGui::MenuItem("Canvas"))
+		{
+			AddComponent(Comp_Type::C_CANVAS);
+		}
+		if (ImGui::MenuItem("Button"))
+		{
+			AddComponent(Comp_Type::C_BUTTON);
+		}
+		if (ImGui::MenuItem("Image"))
+		{
+			AddComponent(Comp_Type::C_IMAGE);
+		}
+		if (ImGui::MenuItem("Text"))
+		{
+			AddComponent(Comp_Type::C_TEXT);
+		}
+		if (ImGui::MenuItem("Edit Text"))
+		{
+			AddComponent(Comp_Type::C_EDIT_TEXT);
+		}
+		ImGui::EndMenu();
 	}
 	// -------------------------------------------------------------
 }
