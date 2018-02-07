@@ -28,7 +28,7 @@ bool ModuleFS::Init(JSON_Object * node)
 {
 	// Will contain exe path
 	GetCurrentDirectory(MAX_PATH, ownPth);
-	directory_game = ownPth
+	directory_game = ownPth;
 	directory_assets = directory_game + "\\Assets";
 	LOG("%s", directory_game);
 	LOG("%s", directory_assets);
