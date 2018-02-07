@@ -142,6 +142,7 @@
     <ClInclude Include="ModuleResourceManager.h" />
     <ClInclude Include="Quadtree.h" />
     <ClInclude Include="JSONSerialization.h" />
+    <ClInclude Include="ResourceAnimation.h" />
     <ClInclude Include="ResourceFont.h" />
     <ClInclude Include="ResourceMaterial.h" />
     <ClInclude Include="ResourceMesh.h" />
@@ -283,6 +284,7 @@
     <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="JSONSerialization.cpp" />
+    <ClCompile Include="ResourceAnimation.cpp" />
     <ClCompile Include="ResourceFont.cpp" />
     <ClCompile Include="ResourceMaterial.cpp" />
     <ClCompile Include="ResourceMesh.cpp" />

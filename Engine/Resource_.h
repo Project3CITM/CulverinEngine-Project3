@@ -15,7 +15,8 @@ public:
 		MATERIAL,
 		MESH,
 		SCRIPT,
-		FONT
+		FONT,
+		ANIMATION
 	};
 	enum State {
 		UNLOADED,

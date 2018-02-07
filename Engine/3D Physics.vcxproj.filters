@@ -516,6 +516,9 @@
     <ClInclude Include="CompAudio.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceAnimation.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -841,6 +844,9 @@
     </ClCompile>
     <ClCompile Include="CompAudio.cpp">
       <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceAnimation.cpp">
+      <Filter>Engine\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
