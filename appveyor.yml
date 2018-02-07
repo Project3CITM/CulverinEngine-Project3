@@ -54,9 +54,6 @@ notifications:
 
   # Email
   - provider: Email
-    to:
-      - martimyc@gmail.com
-      - yotolivenza@gmail.com
     subject: 'Build {{status}}'                  # optional
     message: "{{message}}, {{commitId}}, ..."    # optional
     on_build_success: false
