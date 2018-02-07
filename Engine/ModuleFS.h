@@ -116,20 +116,18 @@ public:
 	float2 json_array_dotget_float2_string(const JSON_Object* object, std::string name);
 	float4 json_array_dotget_float4_string(const JSON_Object* object, std::string name);
 
-
 	//Don't used for now -------------------------
 	std::string GetAssetsDirectory();
 
 	std::string AddDirectorybyType(std::string name, DIRECTORY_IMPORT directory);
-
 
 private:
 	Timer checkAssets;
 	std::vector<AllFiles> allfilesAsstes;
 
 	char ownPth[MAX_PATH];
-	std::string directory_Game;
-	std::string directory_Assets;
+	std::string directory_assets;
+	std::string directory_game;
 };
 
 #endif

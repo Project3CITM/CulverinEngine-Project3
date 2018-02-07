@@ -27,10 +27,10 @@ bool ModuleFS::Init(JSON_Object * node)
 {
 	// Will contain exe path
 	GetCurrentDirectory(MAX_PATH, ownPth);
-	directory_Assets = ownPth;
-	directory_Game = directory_Assets + "\\Assets";
-	LOG("%s", directory_Assets);
-	LOG("%s", directory_Game);
+	directory_game = ownPth;
+	directory_assets = directory_game + "\\Assets";
+	LOG("%s", directory_game);
+	LOG("%s", directory_assets);
 
 	// Check if Main Folders exist --------------------
 	CreateFolder("Library");
@@ -47,7 +47,7 @@ bool ModuleFS::Start()
 
 
 	// Get All Files From Assets
-	GetAllFilesAssets(directory_Game, allfilesAsstes);
+	GetAllFilesAssets(directory_assets, allfilesAsstes);
 	checkAssets.Start();
 
 	Start_t = perf_timer.ReadMs();
@@ -77,7 +77,7 @@ update_status ModuleFS::PreUpdate(float dt)
 	{
 		checkAssets.Start();
 		//DeleteAllFilesAssets(allfilesAsstes);
-		//GetAllFilesAssets(directory_Game, allfilesAsstes);
+		//GetAllFilesAssets(directory_assets, allfilesAsstes);
 
 		// Need something...
 		//AnyfileModificated(allfilesAsstes); 
@@ -150,7 +150,7 @@ void ModuleFS::GetAllFolders(std::experimental::filesystem::path path, std::stri
 
 	if (path == "")
 	{
-		path = directory_Assets;
+		path = directory_game;
 	}
 
 	for (stdfs::directory_iterator iter{ path }; iter != end; ++iter)
@@ -186,7 +186,7 @@ bool ModuleFS::GetAllFoldersChild(std::experimental::filesystem::path path, std:
 
 	if (path == "")
 	{
-		path = directory_Game;
+		path = directory_assets;
 	}
 
 	bool have_something = false;
@@ -423,7 +423,7 @@ bool ModuleFS::AnyfileModificated(std::vector<AllFiles>& files)
 	namespace stdfs = std::experimental::filesystem;
 
 	const stdfs::directory_iterator end{};
-	std::experimental::filesystem::path path = directory_Game;
+	std::experimental::filesystem::path path = directory_assets;
 	uint idpath = 0;
 	for (stdfs::directory_iterator iter{ path }; iter != end; ++iter)
 	{
@@ -560,7 +560,7 @@ void ModuleFS::UpdateFilesAsstes()
 {
 	checkAssets.Start();
 	DeleteAllFilesAssets(allfilesAsstes);
-	GetAllFilesAssets(directory_Game, allfilesAsstes);
+	GetAllFilesAssets(directory_assets, allfilesAsstes);
 }
 
 // If focused window check if have a file was modificated and reimport.-
@@ -825,7 +825,7 @@ bool ModuleFS::CheckIsFileExist(const std::string& name) {
 
 std::string ModuleFS::GetMainDirectory()
 {
-	return directory_Game;
+	return directory_assets;
 }
 
 void ModuleFS::FixNames_directories(std::vector<std::string>& files)
@@ -925,7 +925,7 @@ const char* ModuleFS::ConverttoConstChar(std::string name)
 
 std::string ModuleFS::GetAssetsDirectory()
 {
-	return directory_Assets;
+	return directory_game;
 }
 
 std::string ModuleFS::AddDirectorybyType(std::string name, DIRECTORY_IMPORT directory)
