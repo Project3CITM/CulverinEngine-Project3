@@ -16,7 +16,7 @@ CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent
 	uid = App->random->Int();
 	color = White;
 	name_component = "Material";
-	material_shader = App->renderer3D->default_shader;
+	material_shader = *App->renderer3D->default_shader;
 }
 
 CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Component(Comp_Type::C_MATERIAL, parent)
@@ -30,7 +30,7 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 	}
 
 	name_component = "Material";
-	material_shader = App->renderer3D->default_shader;
+	material_shader = *App->renderer3D->default_shader;
 }
 
 CompMaterial::~CompMaterial()
@@ -200,17 +200,36 @@ void CompMaterial::ShowInspectorInfo()
 	}
 	ImGui::PopStyleVar();
 	ImGui::ColorEdit3("", (float*)&color);
-
+	
 	if (resource_material != nullptr)
 	{
-		/* Name of the material */
+		// Name of the material
 		ImGui::Text("Name:"); ImGui::SameLine();
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resource_material->name);
 		
-		/* Image of the texture */
+		// Image of the texture 
 		ImGui::Image((ImTextureID*)resource_material->GetTextureID(), ImVec2(170, 170), ImVec2(-1, 1), ImVec2(0, 0));
 	}
 
+	int shader_pos = 0;
+	std::string shaders_names;
+	for (int i = 0; i < App->renderer3D->shader_manager.programs.size(); i++) {
+		shaders_names += App->renderer3D->shader_manager.programs[i]->name;
+		shaders_names += '\0';
+	}
+	if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
+		material_shader = *App->renderer3D->shader_manager.programs[shader_pos];
+
+	}
+	std::vector<TextureVar>::iterator item = material_shader.textures.begin();
+	int i = 0;
+	while (item != material_shader.textures.end()) {
+		ShowTextureVariable(i);
+		i++;
+		item++;
+
+	}
+	/*
 	if(resource_material == nullptr || select_material)
 	{
 		if (resource_material == nullptr)
@@ -222,6 +241,7 @@ void CompMaterial::ShowInspectorInfo()
 				select_material = true;
 			}
 		}
+		
 		if (select_material)
 		{
 			ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(select_material, Resource::Type::MATERIAL);
@@ -243,37 +263,11 @@ void CompMaterial::ShowInspectorInfo()
 				Enable();
 			}
 		}
+		
+		
+		
 
-		int shader_pos = 0;
-		std::string shaders_names;
-		for (int i = 0; i < App->renderer3D->shader_manager.programs.size(); i++) {
-			shaders_names += App->renderer3D->shader_manager.programs[i]->name;
-			shaders_names += '\0';
-		}
-		if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
-			material_shader = App->renderer3D->shader_manager.programs[shader_pos];
-			/*
-			for (std::map<UUID, Resource*>::iterator it = App->resources->resources.begin(); it != App->resources->resources.end(); ++it) {
-				if ((*it).second != nullptr && (*it).second->type == Resource::shader_program) {
-					ResourceShaderProgram* res = (ResourceShaderProgram*)(*it).second;
-
-					if (res->res_shader_program != nullptr && res->res_shader_program->shader_name == shader->shader_name) {
-						this->res_uuid = res->uuid;
-						break;
-					}
-				}
-			}*/
-		}
-		std::vector<TextureVar>::iterator item = material_shader->textures.begin();
-		int i = 0;
-		while (item != material_shader->textures.end()) {
-			ShowTextureVariable(i);
-				i++;
-				item++;
-
-		}
-
-	}
+	}*/
 
 	ImGui::TreePop();
 }
@@ -291,6 +285,10 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 	float4 tempColor = { color.r, color.g, color.b, color.a };
 	App->fs->json_array_dotset_float4(object, name + "Color", tempColor);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+	//Save Shaders and shaders values
+
+	//
 	if (resource_material != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Material UUID", resource_material->GetUUID());
@@ -307,6 +305,11 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 	color.Set(tempColor.x, tempColor.y, tempColor.z, tempColor.w);
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Material UUID");
+
+	//Load Shaders and shaders values
+
+	//
+
 	if (resourceID > 0)
 	{
 		resource_material = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
@@ -330,22 +333,20 @@ void CompMaterial::ShowTextureVariable(int index)
 {
 	ImGui::PushID(index);
 
-	TextureVar* texture_var = &material_shader->textures[index];
+	TextureVar* texture_var = &material_shader.textures[index];
+
+	/* Name of the material */
+	ImGui::Text("Name:"); ImGui::SameLine();
+	ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", texture_var->var_name.c_str());
 
 	if (texture_var->res_material != nullptr)
 	{
-		/* Name of the material */
-		ImGui::Text("Name:"); ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", texture_var->var_name);
-
 		/* Image of the texture */
 		ImGui::Image((ImTextureID*)texture_var->res_material->GetTextureID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0));
 	}
 
 	else{
-		ImGui::Text("Name:"); ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Material)");
-		
+
 		if (ImGui::Button("Select Material..."))
 		{
 			texture_var->selected = true;

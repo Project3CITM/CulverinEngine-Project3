@@ -91,7 +91,7 @@
 			"{\n"
 			"vec3 lightDir = vec3(1);\n"
 			"float angle = dot(lightDir, ourNormal);\n"
-			"color = texture(_texture, TexCoord) + texture(_texture2, TexCoord);\n"
+			"color = texture(_texture, TexCoord);\n"
 			"}\n"
 		};
 

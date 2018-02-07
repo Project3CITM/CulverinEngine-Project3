@@ -241,8 +241,8 @@ void CompMesh::Draw()
 	if (render && resource_mesh != nullptr)
 	{
 		ShaderProgram* shader = App->renderer3D->default_shader;
-		if (material->material_shader != nullptr)
-			shader = material->material_shader;
+		//if (material->material_shader)
+			//shader = material->material_shader;
 
 		shader->Bind();
 

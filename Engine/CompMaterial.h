@@ -40,7 +40,7 @@ public:
 public:
 
 	ResourceMaterial* resource_material = nullptr;
-	ShaderProgram* material_shader = nullptr;
+	ShaderProgram material_shader;
 
 private:
 
