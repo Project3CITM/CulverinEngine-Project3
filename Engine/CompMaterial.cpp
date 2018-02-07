@@ -16,6 +16,7 @@ CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent
 	uid = App->random->Int();
 	color = White;
 	name_component = "Material";
+	material_shader = App->renderer3D->default_shader;
 }
 
 CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Component(Comp_Type::C_MATERIAL, parent)
@@ -29,6 +30,7 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 	}
 
 	name_component = "Material";
+	material_shader = App->renderer3D->default_shader;
 }
 
 CompMaterial::~CompMaterial()
@@ -262,6 +264,15 @@ void CompMaterial::ShowInspectorInfo()
 				}
 			}*/
 		}
+		std::vector<TextureVar>::iterator item = material_shader->textures.begin();
+		int i = 0;
+		while (item != material_shader->textures.end()) {
+			ShowTextureVariable(i);
+				i++;
+				item++;
+
+		}
+
 	}
 
 	ImGui::TreePop();
@@ -271,6 +282,7 @@ void CompMaterial::CopyValues(const CompMaterial* component)
 {
 	//more...
 }
+
 
 void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
@@ -310,4 +322,55 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 		}
 	}
 	Enable();
+}
+
+
+
+void CompMaterial::ShowTextureVariable(int index)
+{
+	ImGui::PushID(index);
+
+	TextureVar* texture_var = &material_shader->textures[index];
+
+	if (texture_var->res_material != nullptr)
+	{
+		/* Name of the material */
+		ImGui::Text("Name:"); ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", texture_var->var_name);
+
+		/* Image of the texture */
+		ImGui::Image((ImTextureID*)texture_var->res_material->GetTextureID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0));
+	}
+
+	else{
+		ImGui::Text("Name:"); ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Material)");
+		
+		if (ImGui::Button("Select Material..."))
+		{
+			texture_var->selected = true;
+		}
+	}
+	if (texture_var->selected)
+	{
+		ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(texture_var->selected, Resource::Type::MATERIAL);
+		if (temp != nullptr)
+		{
+			if (texture_var->res_material != nullptr)
+			{
+				if (texture_var->res_material->num_game_objects_use_me > 0)
+				{
+					texture_var->res_material->num_game_objects_use_me--;
+				}
+			}
+			texture_var->res_material = temp;
+			texture_var->res_material->num_game_objects_use_me++;
+			if (texture_var->res_material->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iMaterial->LoadResource(std::to_string(texture_var->res_material->GetUUID()).c_str(), texture_var->res_material);
+			}
+			Enable();
+		}
+	}
+	ImGui::PopID();
 }

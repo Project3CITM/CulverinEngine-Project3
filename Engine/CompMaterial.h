@@ -7,6 +7,7 @@
 
 #include "ShadersLib.h"
 
+
 class ResourceMaterial;
 
 class CompMaterial : public Component
@@ -28,6 +29,7 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompMaterial * component);
+	void ShowTextureVariable(int index);
 	// -------------------------
 
 	// SAVE - LOAD METHODS ------------------------
