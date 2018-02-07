@@ -57,6 +57,21 @@ notifications:
     to:		
       - martimyc@gmail.com
       - nico.babotaltisen@gmail.com
+      - andreu.rbj@gmail.com
+      - jordior97@gmail.com
+      - yotolivenza@gmail.com
+      - mizquierdo97@gmail.com
+      - marcfv97@gmail.com
+      - elliot.jimenez1@gmail.com
+      - ferranmartinvila21@gmail.com
+      - adriancl1996@gmail.com
+      - imbecilustotalus@gmail.com
+      - marc.lafrwy@gmail.com
+      - pere.rifaplanellas@gmail.com
+      - josef21296@gmail.com
+      - carcasanchez@gmail.com
+      - th_sola@hotmail.com
+      - dlopez3a@gmail.com
     subject: 'Build {{status}}'                  # optional
     message: "{{message}}, {{commitId}}, ..."    # optional
     on_build_success: false
