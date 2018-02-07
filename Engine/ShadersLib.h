@@ -5,6 +5,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 #include "GL3W\include\glew.h"
 
 #pragma comment (lib, "GL3W/libx86/glew32.lib") 
@@ -98,8 +99,8 @@ public:
 public:
 
 
-	std::list<Shader*> shaders;
-	std::list<ShaderProgram*> programs;
+	std::vector<Shader*> shaders;
+	std::vector<ShaderProgram*> programs;
 };
 
 

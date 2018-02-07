@@ -8,6 +8,7 @@
 #include "ResourceMaterial.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
+#include "ModuleRenderer3D.h"
 #include "Scene.h"
 
 CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent)
@@ -239,6 +240,27 @@ void CompMaterial::ShowInspectorInfo()
 				}
 				Enable();
 			}
+		}
+
+		int shader_pos = 0;
+		std::string shaders_names;
+		for (int i = 0; i < App->renderer3D->shader_manager.programs.size(); i++) {
+			shaders_names += App->renderer3D->shader_manager.programs[i]->name;
+			shaders_names += '\0';
+		}
+		if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
+			material_shader = App->renderer3D->shader_manager.programs[shader_pos];
+			/*
+			for (std::map<UUID, Resource*>::iterator it = App->resources->resources.begin(); it != App->resources->resources.end(); ++it) {
+				if ((*it).second != nullptr && (*it).second->type == Resource::shader_program) {
+					ResourceShaderProgram* res = (ResourceShaderProgram*)(*it).second;
+
+					if (res->res_shader_program != nullptr && res->res_shader_program->shader_name == shader->shader_name) {
+						this->res_uuid = res->uuid;
+						break;
+					}
+				}
+			}*/
 		}
 	}
 

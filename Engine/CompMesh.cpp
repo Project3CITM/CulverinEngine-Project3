@@ -237,17 +237,17 @@ void CompMesh::ShowInspectorInfo()
 void CompMesh::Draw()
 {
 
-	App->renderer3D->default_shader->Bind();
+	
 	if (render && resource_mesh != nullptr)
 	{
+		ShaderProgram* shader = App->renderer3D->default_shader;
+		if (material->material_shader != nullptr)
+			shader = material->material_shader;
+
+		shader->Bind();
+
 		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
-		if (transform != nullptr)
-		{
-			/* Push Matrix to Draw with transform applied, only if it contains a transform component */
-		//	glMatrixMode(GL_MODELVIEW);
-			//glPushMatrix();
-			//glMultMatrixf(transform->GetMultMatrixForOpenGL());
-		}
+	
 
 		if (resource_mesh->vertices.size() > 0 && resource_mesh->indices.size() > 0)
 		{
@@ -272,7 +272,10 @@ void CompMesh::Draw()
 			{
 				glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
 			}
+			//
 
+
+			//Future Delete
 			if (App->renderer3D->texture_2d)
 			{
 				CompMaterial* temp = parent->GetComponentMaterial();
@@ -293,7 +296,7 @@ void CompMesh::Draw()
 
 				}
 			}		
-
+			//
 			
 
 
@@ -307,29 +310,31 @@ void CompMesh::Draw()
 			}
 
 	
-			GLint view2Loc = glGetUniformLocation(App->renderer3D->default_shader->programID, "view");
 			Frustum camFrust = App->camera->GetFrustum();
 			float4x4 temp = camFrust.ViewMatrix();
 
-			glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
+			GLint view2Loc = glGetUniformLocation(shader->programID, "view");
+			GLint modelLoc = glGetUniformLocation(shader->programID, "model");
+			GLint viewLoc =  glGetUniformLocation(shader->programID, "viewproj");
 
-			GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetMultMatrixForOpenGL());
+			
 
-			GLint viewLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "viewproj");
-
+			glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());			
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetMultMatrixForOpenGL());			
 			glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 
-			int tota_save_buffer = 8;
+
+			int total_save_buffer = 8;
 
 			if (resource_mesh->vertices.size()>0) {
 				glBindBuffer(GL_ARRAY_BUFFER, resource_mesh->id_total_buffer);
+
 				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, tota_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
 				glEnableVertexAttribArray(1);
-				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, tota_save_buffer * sizeof(GLfloat), (char *)NULL + (3 * sizeof(float)));
+				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (3 * sizeof(float)));
 				glEnableVertexAttribArray(2);
-				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, tota_save_buffer * sizeof(GLfloat), (char *)NULL + (5 * sizeof(float)));
+				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (5 * sizeof(float)));
 
 				glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource_mesh->indices_id);
@@ -353,17 +358,13 @@ void CompMesh::Draw()
 			glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-			App->renderer3D->default_shader->Unbind();
+			shader->Unbind();
+			
 		}
 
 		else
 		{
 			LOG("Cannot draw the mesh");
-		}
-
-		if (transform != nullptr)
-		{
-			//glPopMatrix();
 		}
 	}
 }
