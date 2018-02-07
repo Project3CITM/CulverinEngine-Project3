@@ -1,6 +1,5 @@
-
-#ifndef _INCLUDE_WWISE_H_
-#define _INCLUDE_WWISE_H_
+#ifndef INCLUDE_WWISE_H
+#define INCLUDE_WWISE_H
 
 
 #include <AK/SoundEngine/Common/AkSoundEngine.h>	  

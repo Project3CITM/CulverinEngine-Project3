@@ -23,6 +23,7 @@
 #include "CompEditText.h"
 #include "CompCanvas.h"
 #include "CompCanvasRender.h"
+#include "CompAudio.h"
 
 GameObject::GameObject(GameObject* parent) :parent(parent)
 {
@@ -627,6 +628,10 @@ void GameObject::ShowGameObjectOptions()
 		}
 		ImGui::EndMenu();
 	}
+	if (ImGui::MenuItem("Audio"))
+	{
+		AddComponent(Comp_Type::C_AUDIO);
+	}
 	// -------------------------------------------------------------
 }
 
@@ -822,8 +827,15 @@ void GameObject::ShowInspectorInfo()
 			}
 			ImGui::EndMenu();
 		}
+		if (ImGui::MenuItem("Audio"))
+		{
+			AddComponent(Comp_Type::C_AUDIO);
+			add_component = false;
+		}
+
 		ImGui::End();
 		ImGui::PopStyleColor();
+		
 	}
 	if (ImGui::IsMouseHoveringRect(pos_min, pos_max) == false)
 	{
@@ -1136,6 +1148,13 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(anim);
 			return anim;
 		}
+		else if (type == Comp_Type::C_AUDIO)
+		{
+			LOG("Adding AUDIO COMPONENT.");
+			CompAudio* audio = new CompAudio(type, this);
+			components.push_back(audio);
+			return audio;
+		}
 	}
 
 	return nullptr;
@@ -1199,6 +1218,12 @@ void GameObject::AddComponentCopy(const Component& copy)
 	{
 		CompAnimation* anim = new CompAnimation((CompAnimation&)copy, this); //Anim copy constructor
 		components.push_back(anim);
+		break;
+	}
+	case (Comp_Type::C_AUDIO):
+	{
+		CompAudio* audio = new CompAudio((CompAudio&)copy, this); //Audio copy constructor
+		components.push_back(audio);
 		break;
 	}
 	default:
@@ -1267,6 +1292,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			break;
 		case Comp_Type::C_ANIMATION:
 			this->AddComponent(Comp_Type::C_ANIMATION, true);
+			break;
+		case Comp_Type::C_AUDIO:
+			this->AddComponent(Comp_Type::C_AUDIO, true);
 			break;
 		default:
 			break;

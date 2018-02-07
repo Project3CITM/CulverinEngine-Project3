@@ -513,6 +513,9 @@
     <ClInclude Include="CompAnimation.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="CompAudio.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -834,6 +837,9 @@
       <Filter>Engine\Modules</Filter>
     </ClCompile>
     <ClCompile Include="CompAnimation.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompAudio.cpp">
       <Filter>Engine\Components</Filter>
     </ClCompile>
   </ItemGroup>

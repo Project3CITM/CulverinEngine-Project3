@@ -28,7 +28,7 @@ enum Comp_Type
 	C_TEXT,
 	C_EDIT_TEXT,
 	C_IMAGE,
-
+	C_AUDIO
 };
 
 class Component
