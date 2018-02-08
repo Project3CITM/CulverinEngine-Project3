@@ -130,6 +130,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 		"in float ourTime;\n"
 		"in vec2 TexCoord;\n"
 		"in vec3 ourNormal;\n"
+		"in vec4 gl_FragCoord;\n"
 		"out vec4 color;\n"
 		"uniform sampler2D _texture;\n"
 		"uniform sampler2D _texture2;\n"
@@ -138,6 +139,8 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 		"vec3 lightDir = vec3(1);\n"
 		"float angle = dot(lightDir, ourNormal);\n"
 		"color = texture(_texture, TexCoord) * texture(_texture2, TexCoord);\n"
+		//Z-Buffer Line Shader
+		"color= gl_FragCoord.z*texture(_texture, TexCoord);\n"
 		"}\n"
 	};
 

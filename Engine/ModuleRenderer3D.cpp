@@ -161,7 +161,8 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 	ResourceMaterial* default_mat = new ResourceMaterial(App->random->Int());
 	default_mat->Init(default_texture);
-	
+
+	if (default_shader->textures.size()>0)
 	default_shader->textures[0].res_material = default_mat;
 
 
