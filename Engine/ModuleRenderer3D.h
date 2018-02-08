@@ -6,7 +6,7 @@
 #include "Light.h"
 #include "parson.h"
 
-#include "ShadersLib.h"
+#include "ModuleShaders.h"
 
 #include <gl/GL.h>
 #include <gl/GLU.h>
@@ -66,7 +66,7 @@ public:
 
 	// Shaders
 	ShaderProgram* default_shader = nullptr;
-	ShaderManager shader_manager;
+	ModuleShaders shader_manager;
 };
 
 #endif

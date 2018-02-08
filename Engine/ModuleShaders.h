@@ -1,6 +1,20 @@
 #ifndef MODULE_SHADERS_H_
 #define MODULE_SHADERS_H_
 #include"Module.h"
+#include "MathGeoLib.h"
+
+
+#include <string>
+#include <list>
+#include <vector>
+#include "GL3W\include\glew.h"
+#include "Resource_.h"
+#include "ResourceMaterial.h"
+#include "ShadersLib.h"
+
+#pragma comment (lib, "GL3W/libx86/glew32.lib") 
+typedef unsigned int uint;
+
 
 class ModuleShaders:public Module
 {
@@ -19,8 +33,17 @@ public:
 
 	bool CleanUp();
 
-private:
+	ShaderProgram * CreateShader(char* name);
 
+	ShaderProgram*   CreateDefaultShader();
+
+	Shader*   CompileShader(std::string path, ShaderType type);
+
+	void   AddShaderList(Shader* newShader);
+
+
+	std::vector<Shader*> shaders;
+	std::vector<ShaderProgram*> programs;
 };
 
 

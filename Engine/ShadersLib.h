@@ -27,7 +27,7 @@ struct UniformVar {
 	GLenum type = GL_ZERO;
 
 };
-struct TextureVar{
+struct TextureVar {
 	std::string var_name;
 	bool selected = false;
 	ResourceMaterial* res_material = nullptr;
@@ -35,22 +35,27 @@ struct TextureVar{
 
 struct float3Var {
 	std::string var_name;
-	float3 vector = float3::zero;	
+	float3 vector = float3::zero;
 };
 
-struct ColorVar{
+struct ColorVar {
 	std::string var_name;
 	float4 color = float4::zero;
 };
 
-struct floatVar{
+struct floatVar {
 	std::string var_name;
 	float value = 0;
 };
 
-struct intVar {	
+struct intVar {
 	std::string var_name;
 	int value = 0;
+};
+
+struct boolVar {
+	std::string var_name;
+	bool value = false;
 };
 
 class Shader {
@@ -112,29 +117,7 @@ public:
 	std::vector<floatVar> float_variables;
 	std::vector<float3Var> float3_variables;
 	std::vector<ColorVar> float4_variables;
-
-};
-
-
-class ShaderManager
-{
-public:
-
-
-	ShaderProgram * CreateShader(char* name);
-
-	ShaderProgram*   CreateDefaultShader();
-
-	Shader*   CompileShader(std::string path, ShaderType type);
-
-	void   AddShaderList(Shader* newShader);
-
-
-public:
-
-
-	std::vector<Shader*> shaders;
-	std::vector<ShaderProgram*> programs;
+	std::vector<boolVar> bool_variables;
 };
 
 
