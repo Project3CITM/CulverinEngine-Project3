@@ -94,7 +94,7 @@ void CompAudio::Save(JSON_Object * object, std::string name, bool saveScene, uin
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	
 }
 
 void CompAudio::Load(const JSON_Object * object, std::string name)

@@ -88,10 +88,8 @@ bool Wwished::InitWwished(const wchar_t* base_path, const char* language)
 	Utility::SetLanguage(language);
 
 	//Loads the Init Sound Bank
-	Utility::LoadBank("Init.bnk");
+	return Utility::LoadBank("Init.bnk");
 
-
-	return true;
 }
 
 void Wwished::ProcessAudio()
