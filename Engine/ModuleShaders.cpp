@@ -25,10 +25,7 @@ update_status ModuleShaders::PreUpdate(float dt)
 
 update_status ModuleShaders::Update(float dt)
 {
-	int p = 324;
-	if (p == 324) {
-		LOG("willy");
-	}
+	
 	return update_status::UPDATE_CONTINUE;
 }
 
