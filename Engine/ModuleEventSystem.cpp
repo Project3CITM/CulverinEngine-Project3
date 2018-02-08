@@ -1,8 +1,6 @@
 #include "Application.h"
 #include "ModuleEventSystem.h"
 
-int MaxEvents = EventType::MAXEVENTS - 1;
-
 void PushEvent(Event& event)
 {
 	App->event_system->PushEvent(event);
@@ -26,7 +24,7 @@ ModuleEventSystem::~ModuleEventSystem()
 bool ModuleEventSystem::Init(JSON_Object* node)
 {
 	//creation of event-listeners map
-	for (int i = 0; i < MaxEvents; i++)
+	for (int i = 0; i < EventType::MAXEVENTS; i++)
 	{
 		std::vector<Module*> ListenersVec;
 		MEventListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, ListenersVec));

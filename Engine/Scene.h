@@ -11,6 +11,9 @@
 class GameObject;
 class SkyBox;
 
+//Event system test
+union Event;
+
 class Scene : public Module
 {
 public:
@@ -24,6 +27,10 @@ public:
 	//update_status PostUpdate(float dt);
 	update_status UpdateConfig(float dt);
 	bool CleanUp();
+
+	//Event system test
+	bool SetEventListenrs();
+	void OnEvent(Event& event);
 
 	// Editor outputs ----
 	void EditorQuadtree();
