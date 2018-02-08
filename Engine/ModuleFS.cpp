@@ -268,7 +268,8 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 {
 	for (int i = 0; i < files.size(); i++)
 	{
-		std::string temp = FixExtension(files[i].directory_name, ".meta.json");
+		std::string temp = files[i].directory_name;
+		temp += ".meta.json";
 		if (std::experimental::filesystem::exists(temp) == false && strcmp(GetExtension(files[i].directory_name).c_str(), "scene.json") != 0)
 		{
 			App->importer->Import(files[i].directory_name, App->resource_manager->CheckFileType(files[i].directory_name));

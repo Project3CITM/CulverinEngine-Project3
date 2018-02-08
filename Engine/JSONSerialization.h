@@ -44,7 +44,7 @@ public:
 	void SaveScript(const ResourceScript* script, const char* directory, const char* fileName);
 	// --------------------------------------
 
-	// MESH & MATERIAL -------------------------------
+	// Get UUIDs -------------------------------
 	ReImport GetUUIDPrefab(const char * file, uint id);
 	ReImport GetUUIDMaterial(const char* file);
 	ReImport GetUUIDScript(const char* file);
