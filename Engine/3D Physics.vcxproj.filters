@@ -519,6 +519,9 @@
     <ClInclude Include="ResourceAnimation.h">
       <Filter>Engine\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleShaders.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -847,6 +850,9 @@
     </ClCompile>
     <ClCompile Include="ResourceAnimation.cpp">
       <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleShaders.cpp">
+      <Filter>Engine\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

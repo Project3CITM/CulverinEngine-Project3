@@ -15,7 +15,7 @@
 #include "parson.h"
 #include "PerfTimer.h"
 #include "WindowSceneWorld.h"
-
+#include"ModuleShaders.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
 #include "ImGui/ImGuizmo.h"
@@ -46,6 +46,8 @@ Application::Application()
 	random = new math::LCG();
 	json_seria = new JSONSerialization();
 
+	module_shaders = new ModuleShaders();
+
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
@@ -59,6 +61,7 @@ Application::Application()
 	AddModule(audio);
 	AddModule(console);
 	AddModule(scene);
+	AddModule(module_shaders);
 	AddModule(gui);
 	AddModule(importer);
 	AddModule(textures);

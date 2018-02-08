@@ -31,7 +31,7 @@ class ModuleFS;
 class ModuleTextures;
 class ModuleResourceManager;
 class ModuleEventSystem;
-
+class ModuleShaders;
 class JSONSerialization;
 
 enum EngineState
@@ -122,6 +122,7 @@ public:
 	ModuleTextures* textures = nullptr;
 	ModuleResourceManager* resource_manager = nullptr;
 	ModuleEventSystem* event_system = nullptr;
+	ModuleShaders* module_shaders = nullptr;
 
 private:
 	std::vector<Module*> list_modules;

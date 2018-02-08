@@ -140,6 +140,7 @@
     <ClInclude Include="ModuleFramebuffers.h" />
     <ClInclude Include="ModuleRenderGui.h" />
     <ClInclude Include="ModuleResourceManager.h" />
+    <ClInclude Include="ModuleShaders.h" />
     <ClInclude Include="Quadtree.h" />
     <ClInclude Include="JSONSerialization.h" />
     <ClInclude Include="ResourceAnimation.h" />
@@ -282,6 +283,7 @@
     <ClCompile Include="ModuleFramebuffers.cpp" />
     <ClCompile Include="ModuleRenderGui.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
+    <ClCompile Include="ModuleShaders.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="JSONSerialization.cpp" />
     <ClCompile Include="ResourceAnimation.cpp" />
