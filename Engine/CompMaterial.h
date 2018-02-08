@@ -5,7 +5,7 @@
 #include "Color.h"
 #include <string>
 
-#include "ShadersLib.h"
+#include "ModuleShaders.h"
 
 
 class ResourceMaterial;
