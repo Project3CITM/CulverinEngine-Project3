@@ -94,6 +94,7 @@ bool ModuleAudio::SaveConfig(JSON_Object * node)
 // Called before quitting
 bool ModuleAudio::CleanUp()
 {
+	UnloadAllBanks();
 	LOG("Unloading Wwished library");
 	return Wwished::CloseWwished();
 }
@@ -189,6 +190,15 @@ void ModuleAudio::DrawOnEditor()
 			}
 		}
 		ImGui::EndPopup();		
+	}
+}
+
+void ModuleAudio::UnloadAllBanks()
+{
+	LOG("Unloading all audio banks");
+	for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end(); it++)
+	{
+		Wwished::Utility::UnLoadBank((*it).c_str());
 	}
 }
 

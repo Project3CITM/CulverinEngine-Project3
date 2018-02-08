@@ -24,6 +24,7 @@ public:
 	bool CleanUp();
 
 	void DrawOnEditor();
+	void UnloadAllBanks();
 
 	update_status UpdateConfig(float dt);
 
