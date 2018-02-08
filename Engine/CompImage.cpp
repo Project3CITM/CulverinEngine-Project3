@@ -4,7 +4,8 @@
 #include "WindowInspector.h"
 #include "GameObject.h"
 #include "Scene.h"
-
+#include "ImportMaterial.h"
+#include "ResourceMaterial.h"
 
 
 
@@ -20,6 +21,42 @@ CompImage::CompImage(const CompImage & copy, GameObject * parent) :CompGraphic(C
 
 CompImage::~CompImage()
 {
+}
+
+void CompImage::PreUpdate(float dt)
+{
+	// Manage Resource -------------------------------------------------
+	// Before delete Resource Set this pointer to nullptr
+	if (source_image != nullptr)
+	{
+		if (source_image->GetState() == Resource::State::WANTDELETE)
+		{
+			source_image = nullptr;
+		}
+		else if (source_image->GetState() == Resource::State::REIMPORTED)
+		{
+			uuid_source_image = source_image->GetUUID();
+			source_image = nullptr;
+		}
+	}
+	else
+	{
+		if (uuid_source_image != 0)
+		{
+			source_image = (ResourceMaterial*)App->resource_manager->GetResource(uuid_source_image);
+			if (source_image != nullptr)
+			{
+				source_image->num_game_objects_use_me++;
+				// Check if loaded!
+				if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
+				}
+				uuid_source_image = 0;
+			}
+		}
+	}
+	// -------------------------------------------------------------------
 }
 
 void CompImage::ShowOptions()
@@ -77,12 +114,12 @@ void CompImage::ShowInspectorInfo()
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ImGui::OpenPopup("OptionsMesh");
+		ImGui::OpenPopup("OptionsImage");
 	}
 	ImGui::PopStyleVar();
 
 	// Button Options --------------------------------------
-	if (ImGui::BeginPopup("OptionsMesh"))
+	if (ImGui::BeginPopup("OptionsImage"))
 	{
 		ShowOptions();
 		ImGui::EndPopup();
@@ -100,11 +137,43 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+	if (source_image != nullptr)
+	{
+		if (saveScene == false)
+		{
+			// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
+			std::string temp = std::to_string(countResources++);
+			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".UUID Resource", source_image->GetUUID());
+			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", source_image->name);
+		}
+		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", source_image->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", 0);
+	}
 }
 
 void CompImage::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	//...
+	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID");
+	if (resourceID > 0)
+	{
+		source_image = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+		if (source_image != nullptr)
+		{
+			source_image->num_game_objects_use_me++;
+
+			// LOAD MESH ----------------------------
+			if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
+			}
+
+		}
+	}
 	Enable();
 }

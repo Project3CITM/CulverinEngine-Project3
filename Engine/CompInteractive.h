@@ -16,6 +16,8 @@ public:
 
 
 	void PreUpdate(float dt);
+	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
+	void Load(const JSON_Object * object, std::string name);
 	//Setters Color tint parameters
 	void SetNormalColor(const float4& set_rgba);
 	void SetNormalColor(float set_r, float set_g, float set_b, float set_a);
@@ -45,8 +47,8 @@ protected:
 	float4 highlighted_color;
 	float4 pressed_color;
 	float4 disabled_color;
-	float color_multiply;
-	float fade_duration;
+	float color_multiply=1.0f;
+	float fade_duration=0.1f;
 	//Sprite Swap parameters
 	ResourceMaterial* sprite[3];
 	uint uuid_reimported_sprite[3];
