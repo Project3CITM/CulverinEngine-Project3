@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="125">
+	<RootPaths>
+		<ProjectRoot>C:\Users\Kay\Documents\WwiseProjects\ProyectoPrueba\</ProjectRoot>
+		<SourceFilesRoot>C:\Users\Kay\Documents\WwiseProjects\ProyectoPrueba\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>C:\Users\Kay\Documents\GitHub\Asiergine\Assets\Soundbanks\</SoundBanksRoot>
+		<ExternalSourcesInputFile></ExternalSourcesInputFile>
+		<ExternalSourcesOutputRoot>C:\Users\Kay\Documents\WwiseProjects\ProyectoPrueba\GeneratedSoundBanks\Windows\</ExternalSourcesOutputRoot>
+	</RootPaths>
+	<DialogueEvents/>
+	<StreamedFiles/>
+	<MediaFilesNotInAnyBank/>
+	<SoundBanks>
+		<SoundBank Id="1355168291" Language="SFX">
+			<ObjectPath>Init</ObjectPath>
+			<ShortName>Init</ShortName>
+			<Path>Init.bnk</Path>
+		</SoundBank>
+		<SoundBank Id="3161908922" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\Main</ObjectPath>
+			<ShortName>Main</ShortName>
+			<Path>Main.bnk</Path>
+			<IncludedEvents>
+				<Event Id="3864097025" Name="Pause_All" ObjectPath="\Events\Default Work Unit\Pause_All"/>
+				<Event Id="2932040671" Name="Play_Music" ObjectPath="\Events\Default Work Unit\Play_Music"/>
+				<Event Id="3679762312" Name="Resume_All" ObjectPath="\Events\Default Work Unit\Resume_All"/>
+				<Event Id="251412229" Name="Shot" ObjectPath="\Events\Default Work Unit\Shot"/>
+				<Event Id="2837384057" Name="Stop_Music" ObjectPath="\Events\Default Work Unit\Stop_Music"/>
+				<Event Id="3412057565" Name="Train" ObjectPath="\Events\Default Work Unit\Train"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="8751515" Language="SFX">
+					<ShortName>Polvos_mañaneros.wav</ShortName>
+					<Path>SFX\Polvos_mañaneros_F17FB28C.wem</Path>
+				</File>
+				<File Id="200967748" Language="SFX">
+					<ShortName>No_todo_es_seda.wav</ShortName>
+					<Path>SFX\No_todo_es_seda_F17FB28C.wem</Path>
+				</File>
+				<File Id="601521417" Language="SFX">
+					<ShortName>Train_fx.wav</ShortName>
+					<Path>SFX\Train_fx_F17FB28C.wem</Path>
+				</File>
+				<File Id="1011403894" Language="SFX">
+					<ShortName>Shot.wav</ShortName>
+					<Path>SFX\Shot_1C9C67B2.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
+	</SoundBanks>
+</SoundBanksInfo>

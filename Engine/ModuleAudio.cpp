@@ -102,8 +102,8 @@ void ModuleAudio::DrawOnEditor()
 {
 	if (init_bank_not_loaded)
 	{
-		//ImGui::TextColored(ImVec4(255, 0, 0, 255), "Init audiobank is not loaded!");
-		//return;
+		ImGui::TextColored(ImVec4(255, 0, 0, 255), "Init audiobank is not loaded!");
+		return;
 	}
 
 	if (loaded_banks.empty())
@@ -122,6 +122,7 @@ void ModuleAudio::DrawOnEditor()
 			
 			if (ImGui::Button("Unload"))
 			{
+				Wwished::Utility::UnLoadBank((*it).c_str());
 				it = loaded_banks.erase(it);
 			}
 			else 
@@ -145,19 +146,38 @@ void ModuleAudio::DrawOnEditor()
 		ImGui::OpenPopup("Load Audio Bank");
 		ImGui::SetNextWindowSize(ImVec2(200, 500));
 		ImGui::SetNextWindowPosCenter();
-
+	
 		if (ImGui::BeginPopupModal("Load Audio Bank", nullptr))
 		{
 			ImGui::BeginChildFrame(0, ImVec2(150, 420));
-
 			
 			for (std::experimental::filesystem::recursive_directory_iterator::value_type it : std::experimental::filesystem::recursive_directory_iterator(banks_full_path.c_str()))
 			{
+				std::string extension_file = std::experimental::filesystem::path(it.path().string().c_str()).extension().string().c_str();
+
+				if (extension_file.compare(".bnk") != 0)
+					continue;
+
 				std::string bank_name = std::experimental::filesystem::path(it.path().string().c_str()).stem().string().c_str();
+				if (bank_name.compare("Init") == 0)
+					continue;
+				
 				if (ImGui::Selectable(bank_name.c_str()))
 				{
-					loaded_banks.push_back(bank_name);
+					int ret = Wwished::Utility::LoadBank(bank_name.c_str());
+					if (ret == 1)
+					{
+						loaded_banks.push_back(bank_name);
+					}
+					else
+					{
+						if (ret == 2)
+						 LOG("WARNING: Bank already loaded");
+						if (ret == 0)
+						 LOG("WARNING: Bank not found");
+					}			
 					load_bank_window_opened = false;
+					break;
 				}
 			}
 
@@ -168,11 +188,8 @@ void ModuleAudio::DrawOnEditor()
 				load_bank_window_opened = false;
 			}
 		}
-
-
-		ImGui::EndPopup();
+		ImGui::EndPopup();		
 	}
-
 }
 
 

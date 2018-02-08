@@ -44,7 +44,7 @@ namespace Wwished
 	namespace Utility
 	{
 		void SetLanguage(const char* language);
-		bool LoadBank(const char* path);
+		int LoadBank(const char* path);
 		bool UnLoadBank(const char* path);
 		SoundEmitter* CreateEmitter(unsigned long id, const char* name,  float x, float y, float z, bool is_default_listener = false);
 		void ChangeState(const char* group, const char* new_state);	

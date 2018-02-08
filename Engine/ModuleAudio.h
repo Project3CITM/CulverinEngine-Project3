@@ -27,8 +27,9 @@ public:
 
 	update_status UpdateConfig(float dt);
 
-private:
 
+private:
+	
 	std::vector <std::string> loaded_banks;
 
 	int volume = 0;
@@ -36,6 +37,7 @@ private:
 
 	bool init_bank_not_loaded = false;
 	bool load_bank_window_opened = false;
+	bool error_window_opened = false;
 
 	std::string banks_full_path;
 };
