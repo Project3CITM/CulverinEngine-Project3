@@ -96,6 +96,7 @@ bool ImportScript::Import(const char* file, uint uuid)
 		if (res_script != nullptr)
 		{
 			std::string fileassets = App->fs->CopyFileToAssetsS(file);
+
 			// Create TextEditor from the script.
 			res_script->SetScriptEditor(App->fs->GetOnlyName(fileassets));
 
@@ -362,28 +363,78 @@ bool ImportScript::IsNameUnique(std::string name) const
 
 int ImportScript::CompileScript(const char* file, std::string& libraryScript, const char* uid)
 {
-	// Get the path of the project ----
-	std::string script_path = file;
 
-	// Get mono directory -------------
-	std::string command = GetMonoPath();
-
-	// Save dll to Library Directory --------------------
+	//dll path to Library Directory --------------------
 	libraryScript = App->fs->GetFullPath("Library/Scripts/");
 	std::string nameFile = uid;
 	nameFile += ".dll";
 	libraryScript += nameFile;
 
-	// Compile the script -----------------------------
-	command += "/monobin/mcs -target:library -out:" + libraryScript + " ";
-	std::string CulverinEditorpath = App->fs->GetFullPath("ScriptManager/AssemblyReference/CulverinEditor.dll");
-	command += "-r:" + CulverinEditorpath + " ";
-	command += "-lib:" + CulverinEditorpath + " ";
-	command += script_path;
-	//ShowWindow(FindWindowA("ConsoleWindowClass", NULL), false); -> Hide console (good or bad?)
-	LOG("%s", command.c_str());
-	return system(command.c_str());
-	//system("pause");
+	//Load compiler dll
+	std::string compiler_path = App->fs->GetFullPath("ScriptManager/Compiler/Compiler.dll");
+
+	//Open the comiler assembly
+	MonoAssembly* compile_assembly = nullptr;
+	compile_assembly = mono_domain_assembly_open(GetDomain(), compiler_path.c_str());
+
+	if (!compile_assembly)
+	{
+		LOG("[error] Compiler assembly not loaded");
+		return 1;
+	}
+
+	//Load the compiler class and method
+	MonoImage* image = mono_assembly_get_image(compile_assembly);
+	MonoClass* _class = mono_class_from_name(image, "MonoScripting", "Compiler");
+	MonoMethod* compile_dll = mono_class_get_method_from_name(_class, "CompileDll", 2);
+
+	//Create the arguments
+	void* arguments[2];
+	MonoString* cs_path = mono_string_new(GetDomain(), file);
+	MonoString* cs_name = mono_string_new(GetDomain(), libraryScript.c_str());
+
+	arguments[0] = cs_path;
+	arguments[1] = cs_name;
+
+	//Instantiate the compiler class
+	MonoObject* compiler = mono_object_new(GetDomain(), _class);
+
+	//Execute compiler
+	MonoObject* exception = nullptr;
+	MonoString* handle = (MonoString*)mono_runtime_invoke(compile_dll, compiler, arguments, NULL);
+
+	if (exception)
+	{
+		mono_print_unhandled_exception(exception);
+	}
+
+	const char* returned_message = mono_string_to_utf8(handle);
+
+	LOG(returned_message);
+	return 0;
+
+	//// Get the path of the project ----
+	//std::string script_path = file;
+
+	//// Get mono directory -------------
+	//std::string command = GetMonoPath();
+
+	//// Save dll to Library Directory --------------------
+	//libraryScript = App->fs->GetFullPath("Library/Scripts/");
+	//std::string nameFile = "Compiler";
+	//nameFile += ".dll";
+	//libraryScript += nameFile;
+
+	//// Compile the script -----------------------------
+	//command += "/monobin/mcs -target:library -out:" + libraryScript + " ";
+	//std::string CulverinEditorpath = App->fs->GetFullPath("ScriptManager/AssemblyReference/CulverinEditor.dll");
+	//command += "-r:" + CulverinEditorpath + " ";
+	//command += "-lib:" + CulverinEditorpath + " ";
+	//command += script_path;
+	////ShowWindow(FindWindowA("ConsoleWindowClass", NULL), false); -> Hide console (good or bad?)
+	//LOG("%s", command.c_str());
+	//return system(command.c_str());
+	//////system("pause");
 }
 
 CSharpScript* ImportScript::LoadScript_CSharp(std::string file)

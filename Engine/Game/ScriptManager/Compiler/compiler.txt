@@ -1,0 +1,44 @@
+//C# compiler
+using System.CodeDom.Compiler;
+using System.Diagnostics;
+using System;
+using System.IO;
+
+namespace MonoScripting
+{
+class Compiler
+{
+	public string CompileDll(string path, string name)
+	{
+		//return string
+		string ret = "";
+
+		CodeDomProvider code_provider = CodeDomProvider.CreateProvider("CSharp");
+		CompilerParameters comp_parameters = new CompilerParameters();
+
+		//Set the compilation settings
+		comp_parameters.GenerateInMemory = true;
+            	comp_parameters.GenerateExecutable = false;
+            	comp_parameters.IncludeDebugInformation = true;
+            	comp_parameters.OutputAssembly = name; // Compilation name
+
+		//Add libraries
+		comp_parameters.ReferencedAssemblies.Add(Directory.GetCurrentDirectory() + "/ScriptManager/AssemblyReference/CulverinEditor.dll");
+		comp_parameters.ReferencedAssemblies.Add("System.dll");
+		comp_parameters.ReferencedAssemblies.Add("System.Windows.Forms.dll");
+		comp_parameters.ReferencedAssemblies.Add("Microsoft.VisualBasic.dll");
+
+		//Compile
+		CompilerResults results = code_provider.CompileAssemblyFromFile(comp_parameters, path);
+
+		//Look for errors
+		if(results.Errors.Count > 0)
+		{
+			ret = "[error] Compile with Errors:" + results.Errors[0];
+		}
+
+		code_provider.Dispose();
+		return ret;
+	}	
+}
+}
