@@ -48,7 +48,7 @@ private:
 	bool select_material = false;
 
 	uint uuid_material = 0;
-	uint uuid_resource_reimported = 0;
+	
 };
 
 #endif

@@ -48,6 +48,72 @@ CompMaterial::~CompMaterial()
 
 void CompMaterial::PreUpdate(float dt)
 {
+
+	for (int i = 0; i < material_shader.textures.size(); i++)
+	{
+		if (material_shader.textures[i].res_material != nullptr)
+		{
+			if (material_shader.textures[i].res_material->GetState() == Resource::State::WANTDELETE)
+			{
+				material_shader.textures[i].res_material = nullptr;
+			}
+			else if (material_shader.textures[i].res_material->GetState() == Resource::State::REIMPORTED)
+			{
+				material_shader.textures[i].uuid_to_reimport = material_shader.textures[i].res_material->GetUUID();
+
+
+				material_shader.textures[i].res_material = nullptr;
+			}
+		}
+	}
+	for (int i = 0; i < material_shader.textures.size(); i++)
+	{
+		if (material_shader.textures[i].res_material == nullptr)
+		{
+
+			if (material_shader.textures[i].uuid_to_reimport != 0)
+			{
+				material_shader.textures[i].res_material = (ResourceMaterial*)App->resource_manager->GetResource(material_shader.textures[i].uuid_to_reimport);
+				if (material_shader.textures[i].res_material != nullptr)
+				{
+					material_shader.textures[i].res_material->num_game_objects_use_me++;
+
+					// Check if loaded
+					if (material_shader.textures[i].res_material->IsLoadedToMemory() == Resource::State::UNLOADED)
+					{
+						App->importer->iMaterial->LoadResource(std::to_string(resource_material->GetUUID()).c_str(), material_shader.textures[i].res_material);
+					}
+					material_shader.textures[i].uuid_to_reimport = 0;
+
+				}
+			}
+		}
+	}
+}
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+
+
+
 	// Manage Resource -------------------------------------------------
 	// Before delete Resource, Set this pointer to nullptr
 	if (resource_material != nullptr)
@@ -64,6 +130,8 @@ void CompMaterial::PreUpdate(float dt)
 	}
 	else
 	{
+
+		//TODO change this
 		if (uuid_resource_reimported != 0)
 		{
 			resource_material = (ResourceMaterial*)App->resource_manager->GetResource(uuid_resource_reimported);
@@ -81,7 +149,7 @@ void CompMaterial::PreUpdate(float dt)
 		}
 	}
 	// -------------------------------------------------
-}
+}*/
 
 void CompMaterial::Clear()
 {
@@ -279,10 +347,6 @@ void CompMaterial::ShowInspectorInfo()
 				Enable();
 			}
 		}
-		
-		
-		
-
 	}*/
 
 	ImGui::TreePop();

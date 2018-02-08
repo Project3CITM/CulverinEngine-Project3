@@ -31,6 +31,7 @@ struct TextureVar {
 	std::string var_name;
 	bool selected = false;
 	ResourceMaterial* res_material = nullptr;
+	uint uuid_to_reimport = 0;
 };
 
 struct float3Var {
