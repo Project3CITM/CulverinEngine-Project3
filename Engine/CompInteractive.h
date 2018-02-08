@@ -16,6 +16,8 @@ public:
 
 
 	void PreUpdate(float dt);
+	void ShowOptions();
+	void CopyValues(const CompInteractive * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
 	//Setters Color tint parameters

@@ -29,18 +29,6 @@ void CompImage::PreUpdate(float dt)
 	// Before delete Resource Set this pointer to nullptr
 	if (source_image != nullptr)
 	{
-		if (source_image->GetState() == Resource::State::WANTDELETE)
-		{
-			source_image = nullptr;
-		}
-		else if (source_image->GetState() == Resource::State::REIMPORTED)
-		{
-			uuid_source_image = source_image->GetUUID();
-			source_image = nullptr;
-		}
-	}
-	else
-	{
 		if (uuid_source_image != 0)
 		{
 			source_image = (ResourceMaterial*)App->resource_manager->GetResource(uuid_source_image);
@@ -56,6 +44,20 @@ void CompImage::PreUpdate(float dt)
 			}
 		}
 	}
+
+	if (source_image != nullptr)
+	{
+		if (source_image->GetState() == Resource::State::WANTDELETE)
+		{
+			source_image = nullptr;
+		}
+		else if (source_image->GetState() == Resource::State::REIMPORTED)
+		{
+			uuid_source_image = source_image->GetUUID();
+			source_image = nullptr;
+		}
+	}
+	
 	// -------------------------------------------------------------------
 }
 
@@ -121,10 +123,45 @@ void CompImage::ShowInspectorInfo()
 	// Button Options --------------------------------------
 	if (ImGui::BeginPopup("OptionsImage"))
 	{
-		ShowOptions();
+		ShowOptions();	
 		ImGui::EndPopup();
 	}
+	if (source_image != nullptr)
+	{
+		ImGui::Image((ImTextureID*)source_image->GetTextureID(), ImVec2(170, 170), ImVec2(-1, 1), ImVec2(0, 0));
 
+	}		
+	
+	if (ImGui::Button("Select Sprite..."))
+	{
+		select_source_image = true;
+	}
+	ImGui::ColorEdit4("Color##image_rgba", color.ptr());
+	ImGui::Checkbox("RayCast Target", &raycast_target);
+	if (source_image == nullptr || select_source_image)
+	{
+		if (select_source_image)
+		{
+			ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(select_source_image, Resource::Type::MATERIAL);
+			if (temp != nullptr)
+			{
+				if (source_image != nullptr)
+				{
+					if (source_image->num_game_objects_use_me > 0)
+					{
+						source_image->num_game_objects_use_me--;
+					}
+				}
+				source_image = temp;
+				source_image->num_game_objects_use_me++;
+				if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
+				}
+				Enable();
+			}
+		}
+	}
 	ImGui::TreePop();
 }
 
@@ -176,4 +213,29 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 		}
 	}
 	Enable();
+}
+
+void CompImage::SetSourceImage(ResourceMaterial * set_source_image)
+{
+	source_image = set_source_image;
+}
+
+void CompImage::SetColor(const float4 & set_rgba)
+{
+	color = set_rgba;
+}
+
+void CompImage::SetColor(float set_r, float set_g, float set_b, float set_a)
+{
+	SetColor(float4(set_r,set_g,set_b,set_a));
+}
+
+float4 CompImage::GetColor() const
+{
+	return color;
+}
+
+ResourceMaterial * CompImage::GetSourceImage() const
+{
+	return source_image;
 }

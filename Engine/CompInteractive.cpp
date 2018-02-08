@@ -1,6 +1,8 @@
 #include "CompInteractive.h"
 #include "Application.h"
 #include "ImportMaterial.h"
+#include "ModuleGUI.h"
+#include "WindowInspector.h"
 
 #include "ResourceMaterial.h"
 
@@ -39,18 +41,6 @@ void CompInteractive::PreUpdate(float dt)
 	{
 		if (sprite[i] != nullptr)
 		{
-			if (sprite[i]->GetState() == Resource::State::WANTDELETE)
-			{
-				sprite[i] = nullptr;
-			}
-			else if (sprite[i]->GetState() == Resource::State::REIMPORTED)
-			{
-				uuid_reimported_sprite[i] = sprite[i]->GetUUID();
-				sprite[i] = nullptr;
-			}
-		}
-		else
-		{
 			if (uuid_reimported_sprite[i] != 0)
 			{
 				sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(uuid_reimported_sprite[i]);
@@ -65,10 +55,102 @@ void CompInteractive::PreUpdate(float dt)
 					uuid_reimported_sprite[i] = 0;
 				}
 			}
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (sprite[i] != nullptr)
+		{
+			if (sprite[i]->GetState() == Resource::State::WANTDELETE)
+			{
+				sprite[i] = nullptr;
+			}
+			else if (sprite[i]->GetState() == Resource::State::REIMPORTED)
+			{
+				uuid_reimported_sprite[i] = sprite[i]->GetUUID();
+				sprite[i] = nullptr;
+			}
 		}
 	}
 	
+	}
+	
 	// -------------------------------------------------------------------
+}
+
+void CompInteractive::ShowOptions()
+{
+	if (ImGui::MenuItem("Reset", NULL, false, false))
+	{
+		// Not implmented yet.
+	}
+	ImGui::Separator();
+	if (ImGui::MenuItem("Move to Front", NULL, false, false))
+	{
+		// Not implmented yet.
+	}
+	if (ImGui::MenuItem("Move to Back", NULL, false, false))
+	{
+		// Not implmented yet.
+	}
+	if (ImGui::MenuItem("Remove Component"))
+	{
+		to_delete = true;
+	}
+	if (ImGui::MenuItem("Move Up", NULL, false, false))
+	{
+		// Not implmented yet.
+	}
+	if (ImGui::MenuItem("Move Down", NULL, false, false))
+	{
+		// Not implmented yet.
+	}
+	if (ImGui::MenuItem("Copy Component"))
+	{
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetComponentCopy(this);
+	}
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	{
+		if (parent->FindComponentByType(((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
+			|| ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+		{
+			parent->AddComponentCopy(*((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied());
+		}
+	}
+	if (ImGui::MenuItem("Paste Component Values", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	{
+		if (this->GetType() == ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
+		{
+			CopyValues(((CompInteractive*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
+		}
+	}
+	ImGui::Separator();
+	if (ImGui::MenuItem("Reset Material"))
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			if (sprite[i] != nullptr)
+			{
+				if (sprite[i]->num_game_objects_use_me > 0)
+				{
+					sprite[i]->num_game_objects_use_me--;
+				}
+			}
+			sprite[i] = nullptr;
+
+		}
+		
+		ImGui::CloseCurrentPopup();
+	}
+	/* Select Material */
+	if (ImGui::MenuItem("Select Material..."))
+	{
+		ImGui::CloseCurrentPopup();
+	}
+}
+void CompInteractive::CopyValues(const CompInteractive* component)
+{
+	//more...
 }
 void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
