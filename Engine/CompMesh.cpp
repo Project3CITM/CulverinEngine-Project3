@@ -280,6 +280,21 @@ void CompMesh::Draw()
 			{
 				CompMaterial* temp = parent->GetComponentMaterial();
 				if (temp != nullptr) {
+					for (int i = 0; i < temp->material_shader.textures.size(); i++) {
+						glActiveTexture(GL_TEXTURE0 + i);
+
+						if (temp->material_shader.textures[i].res_material == nullptr)
+						{
+							glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+						}
+						else
+						{
+							glBindTexture(GL_TEXTURE_2D, temp->material_shader.textures[i].res_material->GetTextureID());
+						}
+
+					}
+					/*
+
 					uint texture_2D_sampler = 0;
 					glActiveTexture(GL_TEXTURE0);
 					if (temp->GetTextureID() == 0)
@@ -292,7 +307,7 @@ void CompMesh::Draw()
 					}
 					texture_2D_sampler = glGetUniformLocation(App->renderer3D->default_shader->programID, "_texture");
 					glUniform1i(texture_2D_sampler, 0);
-
+					*/
 
 				}
 			}		

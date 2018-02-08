@@ -132,7 +132,6 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 		fog_density = json_object_get_number(node, "Density");	
 	}
 
-	default_shader = shader_manager.CreateDefaultShader();
 	for (int i = 0; i < 64; i++) {
 		for (int j = 0; j < 32; j++) {
 			//int c = ((((i & 0x8) == 0) ^ (((j & 0x8)) == 0))) * 255;
@@ -152,6 +151,19 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	
+
+	default_shader = shader_manager.CreateDefaultShader();
+
+	Texture default_texture;
+	default_texture.name = "default_texture";
+	default_texture.id = id_checkImage;
+
+	ResourceMaterial* default_mat = new ResourceMaterial(App->random->Int());
+	default_mat->Init(default_texture);
+	
+	default_shader->textures[0].res_material = default_mat;
+
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;

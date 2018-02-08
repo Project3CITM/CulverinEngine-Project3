@@ -17,6 +17,7 @@ CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent
 	color = White;
 	name_component = "Material";
 	material_shader = *App->renderer3D->default_shader;
+
 }
 
 CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Component(Comp_Type::C_MATERIAL, parent)
@@ -164,13 +165,27 @@ void CompMaterial::ShowOptions()
 	ImGui::Separator();
 	if (ImGui::MenuItem("Reset Material"))
 	{
+		for (int i = 0; i < material_shader.textures.size(); i++) {
+			TextureVar* texture_var = &material_shader.textures[i];
+			if (texture_var->res_material != nullptr)
+			{
+				if (texture_var->res_material->num_game_objects_use_me > 0)
+				{
+					texture_var->res_material->num_game_objects_use_me--;
+				}
+			}
+			texture_var->res_material = nullptr;
+			
+		}
+		/*
 		if (resource_material != nullptr)
 		{
 			if (resource_material->num_game_objects_use_me > 0)
 			{
 				resource_material->num_game_objects_use_me--;
 			}
-		}
+		}*/
+
 		resource_material = nullptr;
 		ImGui::CloseCurrentPopup();
 	}
@@ -198,6 +213,7 @@ void CompMaterial::ShowInspectorInfo()
 		ShowOptions();
 		ImGui::EndPopup();
 	}
+
 	ImGui::PopStyleVar();
 	ImGui::ColorEdit3("", (float*)&color);
 	
