@@ -27,6 +27,10 @@
 
 //#include "..\..\3D-Engine\ScriptingSystem\ScriptingSystem\ScriptManager.h"
 
+//Event system test
+#include "EventDef.h"
+#include "ModuleEventSystem.h"
+
 #define SPHERE_DEFINITION 1536
 
 Scene::Scene(bool start_enabled) : Module(start_enabled)
@@ -156,6 +160,22 @@ bool Scene::CleanUp()
 	root->CleanUp();
 
 	return true;
+}
+
+bool Scene::SetEventListenrs()
+{
+	AddListener(EventType::EVENT_DELETE_GO, this);
+	return true;
+}
+
+void Scene::OnEvent(Event & event)
+{
+	switch (event.type)
+	{
+	case EventType::EVENT_DELETE_GO:
+		DeleteGameObject(event.deletego.Todelte);
+		break;
+	}
 }
 
 void Scene::EditorQuadtree()

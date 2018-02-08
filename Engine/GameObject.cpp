@@ -25,6 +25,10 @@
 #include "CompCanvasRender.h"
 #include "CompAudio.h"
 
+//Event system test
+#include "EventDef.h"
+#include "ModuleEventSystem.h"
+
 GameObject::GameObject(GameObject* parent) :parent(parent)
 {
 	Enable();
@@ -557,7 +561,11 @@ void GameObject::ShowGameObjectOptions()
 	{
 		if (App->engine_state == EngineState::STOP)
 		{
-			((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjecttoDelete(this);
+			//((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjecttoDelete(this);
+			Event e;
+			e.deletego.type = EventType::EVENT_DELETE_GO;
+			e.deletego.Todelte = this;
+			PushEvent(e);
 		}
 		else
 		{
