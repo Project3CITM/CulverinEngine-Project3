@@ -110,13 +110,31 @@ void ModuleAudio::DrawOnEditor()
 	{
 		ImGui::Text("No audiobanks loaded");
 	}
-	else for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end(); it++)
+	else
 	{
-		ImGui::Text((*it).c_str());
-		ImGui::SameLine();
-		ImGui::Button("Unload");
-	}
+		int index = 0;
+		for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end();)
+		{
 
+			ImGui::Text((*it).c_str());
+			ImGui::SameLine();
+			ImGui::PushID(index);
+			
+			if (ImGui::Button("Unload"))
+			{
+				it = loaded_banks.erase(it);
+			}
+			else 
+			{
+				it++;
+				index++;
+			}
+			ImGui::PopID();
+		}
+
+
+	}
+	ImGui::Separator();
 	if (ImGui::Button("Load Audiobank"))
 	{
 		load_bank_window_opened = true;
