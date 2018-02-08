@@ -363,6 +363,8 @@ void CompMesh::Draw()
 			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			glBindTexture(GL_TEXTURE_2D, 0);
 
+			glActiveTexture(GL_TEXTURE0);
+
 			//Disable Wireframe -> only this object will be wireframed
 			if (App->renderer3D->wireframe)
 			{
