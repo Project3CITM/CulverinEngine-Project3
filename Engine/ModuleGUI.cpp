@@ -15,6 +15,7 @@
 #include "ModuleImporter.h"
 #include "ImportScript.h"
 #include "GameObject.h"
+#include "ModuleAudio.h"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
@@ -207,6 +208,10 @@ update_status ModuleGUI::Update(float dt)
 			{
 				win_manager[HIERARCHY]->active[0].OpenClose();
 				//LogOpenCloseWindow(winManager[HIERARCHY]->active[0].active, winManager[HIERARCHY]->name);
+			}
+			if (ImGui::MenuItem("Audio Banks"))
+			{
+				window_audio = !window_audio;
 			}
 			if (ImGui::MenuItem("Project"))
 			{
@@ -514,6 +519,13 @@ update_status ModuleGUI::Update(float dt)
 	if (window_show_all_resources)
 	{
 		App->resource_manager->ShowAllResources(window_show_all_resources);
+	}
+
+	if (window_audio)
+	{
+		ImGui::Begin("Audio Banks", &window_audio, ImGuiWindowFlags_ShowBorders);
+		App->audio->DrawOnEditor();
+		ImGui::End();
 	}
 
 	//Window Style -----------------------

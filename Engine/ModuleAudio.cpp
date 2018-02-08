@@ -30,9 +30,9 @@ bool ModuleAudio::Init(JSON_Object* node)
 	//Convert the char path to wstring
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	std::wstring base_path = converter.from_bytes(App->fs->GetFullPath("AudioBanks"));
-	bool init_bank_loaded = Wwished::InitWwished(base_path.c_str(), "English(US)");
+	init_bank_not_loaded = !Wwished::InitWwished(base_path.c_str(), "English(US)");
 
-	if (!init_bank_loaded)
+	if (init_bank_not_loaded)
 		LOG("CAUTION: Init sound bank not loaded");
 
 	volume = json_object_get_number(node, "Volume");
@@ -95,6 +95,21 @@ bool ModuleAudio::CleanUp()
 {
 	LOG("Unloading Wwished library");
 	return Wwished::CloseWwished();
+}
+
+void ModuleAudio::DrawOnEditor()
+{
+	if (init_bank_not_loaded)
+	{
+		ImGui::TextColored(ImVec4(255, 0, 0, 255), "Init audiobank is not loaded!");
+		return;
+	}
+
+	if (loaded_banks.empty())
+	{
+		ImGui::Text("No audiobanks loaded");
+	}
+	//else
 }
 
 

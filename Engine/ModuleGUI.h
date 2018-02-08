@@ -86,6 +86,7 @@ private:
 	bool window_style = false;
 	bool window_create_new_script = false;
 	bool window_show_all_resources = false;
+	bool window_audio = false;
 	//bool window_NewScene = false;
 
 	int menu_height = 0;
