@@ -122,8 +122,6 @@ public:
 	//Don't used for now -------------------------
 	std::string GetAssetsDirectory();
 
-	std::string AddDirectorybyType(std::string name, DIRECTORY_IMPORT directory);
-
 private:
 	Timer checkAssets;
 	std::vector<AllFiles> allfilesAsstes;

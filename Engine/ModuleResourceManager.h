@@ -15,7 +15,7 @@ struct Vertex;
 struct ReImport
 {
 	uint uuid = 0;
-	const char* name_mesh = nullptr;
+	const char* name_mesh = nullptr; //TODO ELLIOT no name_mesh
 	const char* directory_obj = nullptr;
 };
 
