@@ -35,6 +35,9 @@ private:
 	bool mute = false;
 
 	bool init_bank_not_loaded = false;
+	bool load_bank_window_opened = false;
+
+	std::string banks_full_path;
 };
 
 #endif // __ModuleAudio_H__

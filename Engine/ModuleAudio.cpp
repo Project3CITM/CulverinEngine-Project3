@@ -29,7 +29,8 @@ bool ModuleAudio::Init(JSON_Object* node)
 
 	//Convert the char path to wstring
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	std::wstring base_path = converter.from_bytes(App->fs->GetFullPath("AudioBanks"));
+	banks_full_path = App->fs->GetFullPath("AudioBanks");
+	std::wstring base_path = converter.from_bytes(banks_full_path.c_str());
 	init_bank_not_loaded = !Wwished::InitWwished(base_path.c_str(), "English(US)");
 
 	if (init_bank_not_loaded)
@@ -101,15 +102,59 @@ void ModuleAudio::DrawOnEditor()
 {
 	if (init_bank_not_loaded)
 	{
-		ImGui::TextColored(ImVec4(255, 0, 0, 255), "Init audiobank is not loaded!");
-		return;
+		//ImGui::TextColored(ImVec4(255, 0, 0, 255), "Init audiobank is not loaded!");
+		//return;
 	}
 
 	if (loaded_banks.empty())
 	{
 		ImGui::Text("No audiobanks loaded");
 	}
-	//else
+	else for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end(); it++)
+	{
+		ImGui::Text((*it).c_str());
+		ImGui::SameLine();
+		ImGui::Button("Unload");
+	}
+
+	if (ImGui::Button("Load Audiobank"))
+	{
+		load_bank_window_opened = true;
+	}
+
+	if (load_bank_window_opened)
+	{
+		ImGui::OpenPopup("Load Audio Bank");
+		ImGui::SetNextWindowSize(ImVec2(200, 500));
+		ImGui::SetNextWindowPosCenter();
+
+		if (ImGui::BeginPopupModal("Load Audio Bank", nullptr))
+		{
+			ImGui::BeginChildFrame(0, ImVec2(150, 420));
+
+			
+			for (std::experimental::filesystem::recursive_directory_iterator::value_type it : std::experimental::filesystem::recursive_directory_iterator(banks_full_path.c_str()))
+			{
+				std::string bank_name = std::experimental::filesystem::path(it.path().string().c_str()).stem().string().c_str();
+				if (ImGui::Selectable(bank_name.c_str()))
+				{
+					loaded_banks.push_back(bank_name);
+					load_bank_window_opened = false;
+				}
+			}
+
+			ImGui::EndChildFrame();
+
+			if (ImGui::Button("Cancel"))
+			{
+				load_bank_window_opened = false;
+			}
+		}
+
+
+		ImGui::EndPopup();
+	}
+
 }
 
 
