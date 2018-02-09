@@ -370,10 +370,12 @@ int ImportScript::CompileScript(const char* file, std::string& libraryScript, co
 	std::string command = GetMonoPath();
 
 	// Save dll to Library Directory --------------------
-	libraryScript = App->fs->GetFullPath("Library/Scripts");
+	libraryScript = App->fs->GetFullPath("Library/MyScripts/");
 	std::string nameFile = uid;
 	nameFile += ".dll";
 	libraryScript += nameFile;
+
+	//libraryScript = "\"" + libraryScript + "\"";
 
 	// Compile the script -----------------------------
 	command += "/monobin/mcs -target:library -out:" + libraryScript + " ";

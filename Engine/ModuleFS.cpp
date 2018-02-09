@@ -37,7 +37,7 @@ bool ModuleFS::Init(JSON_Object * node)
 	CreateFolder("Library");
 	CreateFolder("Library\\Meshes");
 	CreateFolder("Library\\Materials");
-	CreateFolder("Library\\Scripts");
+	CreateFolder("Library\\MyScripts");
 	CreateFolder("Assets");
 	return true;
 }
