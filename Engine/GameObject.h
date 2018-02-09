@@ -76,6 +76,7 @@ public:
 	int GetNumComponents() const;
 	Component* FindComponentByType(Comp_Type type) const;
 	CompTransform* GetComponentTransform() const;
+	CompRectTransform * GetComponentRectTransform() const;
 	CompMesh* GetComponentMesh() const;
 	CompMaterial* GetComponentMaterial() const;
 	CompScript * GetComponentScript() const;

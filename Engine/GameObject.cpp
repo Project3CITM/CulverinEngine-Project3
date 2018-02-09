@@ -994,6 +994,10 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		}
 		else if (type == Comp_Type::C_RECT_TRANSFORM)
 		{
+			if (FindComponentByType(Comp_Type::C_RECT_TRANSFORM) != nullptr)
+			{
+				return nullptr;
+			}
 			LOG("Adding RECT TRANSFORM COMPONENT.");
 			CompRectTransform* transform = new CompRectTransform(type, this);
 			if (!components.empty())
@@ -1027,6 +1031,7 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		}
 		else if (type == Comp_Type::C_CANVAS)
 		{
+			AddComponent(Comp_Type::C_RECT_TRANSFORM);
 			LOG("Adding CANVAS COMPONENT.");
 			CompCanvas* canvas = new CompCanvas(type, this);
 			components.push_back(canvas);
@@ -1324,9 +1329,22 @@ int GameObject::GetNumComponents() const
 
 CompTransform* GameObject::GetComponentTransform() const
 {
-	return (CompTransform*)FindComponentByType(Comp_Type::C_TRANSFORM);
-}
+	CompTransform* ret = (CompTransform*)FindComponentByType(Comp_Type::C_TRANSFORM);
+	if (ret != nullptr)
+	{
+		return ret;
+	}
+	else
+	{
+		return (CompTransform*)FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
 
+	}
+
+}
+CompRectTransform* GameObject::GetComponentRectTransform() const
+{
+		return (CompRectTransform*)FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
+}
 CompMesh* GameObject::GetComponentMesh() const
 {
 	return (CompMesh*)FindComponentByType(Comp_Type::C_MESH);
