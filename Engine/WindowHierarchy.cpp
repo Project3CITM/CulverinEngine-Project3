@@ -104,7 +104,7 @@ void Hierarchy::ShowOptions()
 {
 	if (ImGui::MenuItem("Copy"))
 	{
-		if (selected != nullptr)
+		if (selected != nullptr && selected->GetUUID() != 1)
 		{
 			copy = selected;
 		}

@@ -484,6 +484,10 @@ void GameObject::ShowHierarchy()
 	{
 		node_flags |= ImGuiTreeNodeFlags_Leaf;
 	}
+	if (GetUUID() == 1) // this is Scene
+	{
+		node_flags |= ImGuiTreeNodeFlags_DefaultOpen;
+	}
 	//ImGui::SetNextTreeNodeOpen(true);
 	if (ImGui::TreeNodeEx(name, node_flags))
 	{
@@ -591,54 +595,57 @@ void GameObject::ShowGameObjectOptions()
 
 	ImGui::Separator();
 	// Add Components -----------------------------------------------
-	ImGui::MenuItem("ADD COMPONENT", NULL, false, false);
-	if (ImGui::MenuItem("Transform"))
+	//ImGui::MenuItem("ADD COMPONENT", NULL, false, false);
+	if (this->GetUUID() != 1)
 	{
-		AddComponent(Comp_Type::C_TRANSFORM);
-	}
-	if (ImGui::MenuItem("Mesh"))
-	{
-		AddComponent(Comp_Type::C_MESH);
-	}
-	if (ImGui::MenuItem("Material"))
-	{
-		AddComponent(Comp_Type::C_MATERIAL);
-	}
-	if (ImGui::MenuItem("Script"))
-	{
-		AddComponent(Comp_Type::C_SCRIPT);
-	}
-	if (ImGui::MenuItem("Animation"))
-	{
-		AddComponent(Comp_Type::C_ANIMATION);
-	}
-	if (ImGui::BeginMenu("UI"))
-	{
-		if (ImGui::MenuItem("Canvas"))
+		if (ImGui::MenuItem("Transform"))
 		{
-			AddComponent(Comp_Type::C_CANVAS);
+			AddComponent(Comp_Type::C_TRANSFORM);
 		}
-		if (ImGui::MenuItem("Button"))
+		if (ImGui::MenuItem("Mesh"))
 		{
-			AddComponent(Comp_Type::C_BUTTON);
+			AddComponent(Comp_Type::C_MESH);
 		}
-		if (ImGui::MenuItem("Image"))
+		if (ImGui::MenuItem("Material"))
 		{
-			AddComponent(Comp_Type::C_IMAGE);
+			AddComponent(Comp_Type::C_MATERIAL);
 		}
-		if (ImGui::MenuItem("Text"))
+		if (ImGui::MenuItem("Script"))
 		{
-			AddComponent(Comp_Type::C_TEXT);
+			AddComponent(Comp_Type::C_SCRIPT);
 		}
-		if (ImGui::MenuItem("Edit Text"))
+		if (ImGui::MenuItem("Animation"))
 		{
-			AddComponent(Comp_Type::C_EDIT_TEXT);
+			AddComponent(Comp_Type::C_ANIMATION);
 		}
-		ImGui::EndMenu();
-	}
-	if (ImGui::MenuItem("Audio"))
-	{
-		AddComponent(Comp_Type::C_AUDIO);
+		if (ImGui::BeginMenu("UI"))
+		{
+			if (ImGui::MenuItem("Canvas"))
+			{
+				AddComponent(Comp_Type::C_CANVAS);
+			}
+			if (ImGui::MenuItem("Button"))
+			{
+				AddComponent(Comp_Type::C_BUTTON);
+			}
+			if (ImGui::MenuItem("Image"))
+			{
+				AddComponent(Comp_Type::C_IMAGE);
+			}
+			if (ImGui::MenuItem("Text"))
+			{
+				AddComponent(Comp_Type::C_TEXT);
+			}
+			if (ImGui::MenuItem("Edit Text"))
+			{
+				AddComponent(Comp_Type::C_EDIT_TEXT);
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::MenuItem("Audio"))
+		{
+			AddComponent(Comp_Type::C_AUDIO);
+		}
 	}
 	// -------------------------------------------------------------
 }
