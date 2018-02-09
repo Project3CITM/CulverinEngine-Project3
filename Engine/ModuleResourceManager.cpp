@@ -153,7 +153,7 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 		ImportFile(files_reimport, resources_to_reimport);
 		LOG("Finished ReImport.");
 		// After reimport, update time of vector of files in filesystem.
-		App->fs->UpdateFilesAsstes();
+		App->fs->UpdateFilesAssets();
 		files_reimport.clear();
 		for (int i = 0; i < resources_to_reimport.size(); i++)
 		{
@@ -272,7 +272,7 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 		}
 	}
 	((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
-	App->fs->UpdateFilesAsstes();
+	App->fs->UpdateFilesAssets();
 }
 
 void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vector<ReImport>& resourcesToReimport)
@@ -297,7 +297,7 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 		}
 	}
 	((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
-	App->fs->UpdateFilesAsstes();
+	App->fs->UpdateFilesAssets();
 }
 
 Resource* ModuleResourceManager::CreateNewResource(Resource::Type type, uint uuid)

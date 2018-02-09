@@ -120,7 +120,12 @@ void Console::Draw(const char* title)
 
 	ImGui::TextWrapped("Enter 'HELP' for help, press TAB to use text completion.");
 
-	if (ImGui::SmallButton("Clear")) ClearLog(); ImGui::SameLine();
+	if (ImGui::SmallButton("Clear"))
+	{
+		ClearLog();
+		system("cls");
+	}
+	ImGui::SameLine();
 	bool copy_to_clipboard = ImGui::SmallButton("Copy"); ImGui::SameLine();
 	if (ImGui::SmallButton("Scroll to bottom")) ScrollToBottom = true;
 
@@ -210,6 +215,7 @@ void Console::ExecCommand(const char * command_line)
 	if (Stricmp(command_line, "CLEAR") == 0)
 	{
 		ClearLog();
+		system("cls");
 	}
 	else if (Stricmp(command_line, "HELP") == 0)
 	{

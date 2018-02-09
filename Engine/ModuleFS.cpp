@@ -562,7 +562,7 @@ bool ModuleFS::IsPermitiveExtension(const char* extension)
 }
 
 // If we Import a new File!
-void ModuleFS::UpdateFilesAsstes()
+void ModuleFS::UpdateFilesAssets()
 {
 	checkAssets.Start();
 	DeleteAllFilesAssets(allfilesAsstes);

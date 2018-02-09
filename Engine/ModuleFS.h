@@ -77,7 +77,7 @@ public:
 	bool AnyfileModificated(std::vector<AllFiles>& files);
 	bool AnyfileModificatedFolder(std::experimental::filesystem::path path, std::vector<AllFiles>& files, uint& id);
 	bool IsPermitiveExtension(const char * extension);
-	void UpdateFilesAsstes();
+	void UpdateFilesAssets();
 	void CheckNowfilesAssets();
 
 	// Delete Methods -----------------------------------

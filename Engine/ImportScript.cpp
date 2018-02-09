@@ -121,7 +121,6 @@ bool ImportScript::Import(const char* file, uint uuid)
 				res_script->SetCSharp(newCSharp);
 			}
 
-
 			// Then Create Meta
 			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
 			Newdirectory += "\\" + App->fs->FixName_directory(file);
@@ -308,6 +307,7 @@ bool ImportScript::CreateNewScript(bool& active)
 		else if (result == 2)
 		{
 			ImGui::TextColored(ImVec4(0.109, 0.933, 0, 1), "Script: %s, Compiled without errors", nameNewScript.c_str());
+			App->fs->UpdateFilesAssets();
 		}
 	}
 	else if (result != 0)
@@ -370,8 +370,8 @@ int ImportScript::CompileScript(const char* file, std::string& libraryScript, co
 	std::string command = GetMonoPath();
 
 	// Save dll to Library Directory --------------------
-	libraryScript = App->fs->GetFullPath("Library/Scripts/");
-	std::string nameFile = "Compiler";
+	libraryScript = App->fs->GetFullPath("Library/Scripts");
+	std::string nameFile = uid;
 	nameFile += ".dll";
 	libraryScript += nameFile;
 
