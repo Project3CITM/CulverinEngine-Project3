@@ -45,6 +45,7 @@ public:
 	Resource* ShowResources(bool& active, Resource::Type type);
 	void ShowAllResources(bool& active);
 	bool ReImportAllScripts();
+	void ReImportAll();
 
 	void Save();
 	void Load();
@@ -53,6 +54,8 @@ public:
 	
 	std::vector<ReImport> resources_to_reimport;
 	std::vector<uint> files_to_delete;
+
+	bool reimportAll = false;
 
 private:
 	

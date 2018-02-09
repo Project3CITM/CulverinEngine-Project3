@@ -91,6 +91,7 @@ public:
 private:
 	int size_plane = 0;
 	float size_quadtree = 0.0f;
+	uint icon_resetAll = 0;
 };
 
 #endif

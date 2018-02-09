@@ -20,7 +20,7 @@ public:
 	ResourceMaterial(uint uid);
 	virtual ~ResourceMaterial();
 
-	void InitInfo(const char* name);
+	void InitInfo(const char* name, const char* path);
 	void Init(Texture texture);
 	void DeleteToMemory();
 

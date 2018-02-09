@@ -20,7 +20,7 @@ public:
 
 	void Init(const float3* vert, const uint* ind, const float3* vert_normals, const float2* texCoord);
 	void InitRanges(uint num_vert, uint num_ind, uint num_normals);
-	void InitInfo(const char* name);
+	void InitInfo(const char* name, const char* path);
 
 	void DeleteToMemory();
 	bool LoadToMemory();

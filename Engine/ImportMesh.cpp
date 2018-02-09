@@ -219,7 +219,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 	// Set Info ResoruceMesh
 	std::string fileName = std::to_string(uuid_mesh);
-	res_mesh->InitInfo(name);
+	res_mesh->InitInfo(name, App->fs->GetFullPath(name).c_str());
 	//std::string path_assets = name;
 	//res_mesh->path_assets = App->fs->GetFullPath(path_assets);
 
@@ -275,7 +275,7 @@ void ImportMesh::Import(uint num_vertices, uint num_indices, uint num_normals, s
 	ResourceMesh* res_mesh = (ResourceMesh*)App->resource_manager->CreateNewResource(Resource::Type::MESH, uuid);
 	// Set info
 	std::string fileName = std::to_string(uuid);
-	res_mesh->InitInfo("Cube");
+	res_mesh->InitInfo("Cube", "");
 
 	// Save Mesh
 	App->fs->SaveFile(data, fileName, size, IMPORT_DIRECTORY_LIBRARY_MESHES);

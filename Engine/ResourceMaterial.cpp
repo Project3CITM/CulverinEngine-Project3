@@ -15,9 +15,10 @@ ResourceMaterial::~ResourceMaterial()
 	texture.name_ext.clear();
 }
 
-void ResourceMaterial::InitInfo(const char* nameResource)
+void ResourceMaterial::InitInfo(const char* nameResource, const char* path)
 {
 	name = App->GetCharfromConstChar(nameResource);
+	path_assets = path;
 }
 
 void ResourceMaterial::Init(Texture textureloaded)

@@ -463,6 +463,9 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 				}
 				App->fs->GetUUIDFromFile(files[i].directory_name, App->resource_manager->files_to_delete);
 				std::experimental::filesystem::remove_all(files[i].directory_name);
+				std::string meta = files[i].directory_name;
+				meta += ".meta.json";
+				std::experimental::filesystem::remove_all(meta);
 				UpdateNow();
 				ImGui::CloseCurrentPopup();
 			}

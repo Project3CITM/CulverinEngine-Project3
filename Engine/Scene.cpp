@@ -80,6 +80,7 @@ bool Scene::Start()
 
 
 	icon_options_transform = App->textures->LoadTexture("Images/UI/icon_options_transform.png");
+	icon_resetAll = App->textures->LoadTexture("Images/UI/icon_resetAll.png");
 
 	/* Init Skybox */ 
 	skybox = new SkyBox();
@@ -148,7 +149,18 @@ update_status Scene::UpdateConfig(float dt)
 
 	/* Skybox configuration */
 	EditorSkybox();
-	
+
+	/* ReImport all and delete Resources */
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 0.761f, 0.00f, 1.00f));
+	ImGui::Text("WARNING!");
+	ImGui::PopStyleColor();
+	ImGui::BulletText("This button delete all resources and reimport all the files in assets with UUID from his .meta.json.");
+	ImGui::BulletText("Only use this if you have a problem with Load and Save scene or some other kind of problem.");
+	if (ImGui::ImageButton((ImTextureID*)icon_resetAll, ImVec2(60, 60), ImVec2(-1, 1), ImVec2(0, 0)))
+	{
+		App->resource_manager->reimportAll = true;
+	}
+
 	return UPDATE_CONTINUE;
 }
 
