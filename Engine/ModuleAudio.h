@@ -27,7 +27,8 @@ public:
 	void UnloadAllBanks();
 
 	update_status UpdateConfig(float dt);
-
+	
+	void SaveAudioBanks(JSON_Object* config_node);
 
 private:
 	

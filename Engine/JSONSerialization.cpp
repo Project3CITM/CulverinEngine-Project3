@@ -6,6 +6,7 @@
 #include "ModuleResourceManager.h"
 #include "Scene.h"
 #include "GameObject.h"
+#include "ModuleAudio.h"
 
 JSONSerialization::JSONSerialization()
 {
@@ -40,13 +41,13 @@ std::string JSONSerialization::SaveScene()
 		json_object_dotset_number_with_std(config, "Scene.Info.Number of GameObjects", count);
 		config_node = json_object_get_object(config, "Scene");
 
-		std::string nameScene = "Scene.Propeties.";
+		std::string nameScene = "Scene.Properties.";
 		// UUID--------
 		json_object_dotset_number_with_std(config_node, nameScene + "UUID", App->scene->root->GetUUID());
 		// Name --------
 		json_object_dotset_string_with_std(config_node, nameScene + "Name", App->scene->root->GetName());
 
-		// Propreties Scene
+		// Scene properties
 		std::string name = "GameObject" + std::to_string(count);
 		name += ".";
 
@@ -57,6 +58,11 @@ std::string JSONSerialization::SaveScene()
 				SaveChildGameObject(config_node, *App->scene->root->GetChildbyIndex(i), count, countResources);
 			}
 		}
+
+		//AudioBanks
+		App->audio->SaveAudioBanks(config);
+
+
 	}
 	json_object_dotset_number_with_std(config_node, "Info.Number of GameObjects", count);
 	json_serialize_to_file(config_file, nameJson.c_str());

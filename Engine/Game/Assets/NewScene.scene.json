@@ -1,0 +1,44 @@
+{
+	"Scene": {
+		"Info": {
+			"Number of GameObjects": 1,
+			"Number of Audio Banks": 1
+		},
+		"Scene": {
+			"Properties": {
+				"UUID": 1,
+				"Name": "NewScene"
+			}
+		},
+		"GameObject0": {
+			"UUID": 1985025712,
+			"Parent": -1,
+			"Name": "MainCamera",
+			"Bounding Box": false,
+			"Static": false,
+			"Number of Components": 2,
+			"Components": {
+				"Component 0": {
+					"Component:": "Transformation",
+					"Type": 0,
+					"Position": [ 0, 0, 0 ],
+					"Rotation": [ 0, 0, 0, 1 ],
+					"Scale": [ 1, 1, 1 ]
+				},
+				"Component 1": {
+					"Component:": "Camera",
+					"Type": 4,
+					"Position": [ 0, 0, 0 ],
+					"Front": [ 0, 0, 1 ],
+					"Up": [ 0, 1, -0 ],
+					"Near Plane": 0.20000000298023224,
+					"Far Plane": 1000,
+					"Vertical Pov": 1.0471975803375244,
+					"Main Camera": true,
+					"Culling": false
+				}
+			}
+		}
+	},
+	"AudioBanks": { "Bank 0": "Main" }
+}

@@ -220,3 +220,17 @@ update_status ModuleAudio::UpdateConfig(float dt)
 	}
 	return UPDATE_CONTINUE;
 }
+
+void ModuleAudio::SaveAudioBanks(JSON_Object * config_node)
+{
+
+	json_object_dotset_number_with_std(config_node, "Scene.Info.Number of Audio Banks", loaded_banks.size());
+
+	std::string audio_banks = "AudioBanks.";
+
+	int i = 0;
+	for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end(); it++, i++)
+	{		
+		json_object_dotset_string_with_std(config_node, audio_banks + "Bank " + std::to_string(i).c_str(), (*it).c_str());
+	}
+}
