@@ -22,7 +22,7 @@ CompTransform::CompTransform(Comp_Type t, GameObject* parent) : Component(t, par
 	name_component = "Transformation";
 }
 
-CompTransform::CompTransform(const CompTransform& copy, GameObject* parent) : Component(Comp_Type::C_TRANSFORM, parent)
+CompTransform::CompTransform(const CompTransform& copy, GameObject* parent) : Component(copy.GetType(), parent)
 {
 	freeze = copy.freeze; //To enable/disable editing transforms
 	transform_mode = copy.transform_mode; //LOCAL or WORLD

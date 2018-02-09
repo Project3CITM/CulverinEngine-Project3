@@ -66,7 +66,7 @@ public:
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
 
-private:
+protected:
 	Axis axis;
 	bool toUpdate = false;
 	bool freeze = false;
