@@ -1,7 +1,7 @@
 #ifndef COMPONENT_GRAPHIC_H
 #define COMPONENT_GRAPHIC_H
 #include "Component.h"
-
+class CompRectTransform;
 class CompGraphic : public Component
 {
 public:
@@ -11,9 +11,11 @@ public:
 
 	void SetTextureID(uint set_texture_id);
 	uint GetTextureID()const;
+	CompRectTransform* GetRectTrasnform()const;
 private:
 public:
 private:
+	CompRectTransform* transform = nullptr;
 	uint texture_id = 0;
 };
 

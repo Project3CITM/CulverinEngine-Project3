@@ -4,7 +4,7 @@
 #include "WindowInspector.h"
 #include "GameObject.h"
 #include "Scene.h"
-
+#include "CompCanvasRender.h"
 
 
 CompCanvas::CompCanvas(Comp_Type t, GameObject * parent) :Component(t, parent)
@@ -108,4 +108,12 @@ void CompCanvas::Load(const JSON_Object* object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	//...
 	Enable();
+}
+
+void CompCanvas::DrawCanvasRender()
+{
+	for (int i = 0; i < canvas_render.size(); i++)
+	{
+		canvas_render[i]->Draw();
+	}
 }

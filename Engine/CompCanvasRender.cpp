@@ -6,11 +6,14 @@
 #include "Scene.h"
 #include "CompImage.h"
 #include "CompText.h"
-
+#include "CompRectTransform.h"
 CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Canvas Render";
+
+	glGenBuffers(1, &vertices_id);
+	glGenBuffers(1, &indices_id);
 }
 
 CompCanvasRender::CompCanvasRender(const CompCanvasRender & copy, GameObject * parent) : Component(Comp_Type::C_CANVAS_RENDER, parent)
@@ -113,40 +116,97 @@ void CompCanvasRender::Load(const JSON_Object* object, std::string name)
 void CompCanvasRender::ProcessImage(CompImage * image)
 {
 	graphic = image;
-	/*
-	buffer.vertices.clear();
-	buffer.indices.clear();
+	//UV Setup
+	//0,1-------1,1
+	//|	3     /	2|
+	//|		/	 |
+	//|	0 /		1|
+	//0,0-------1,0
+	vertices.clear();
+	indices.clear();
 
 
 		CanvasVertex ver;
-		ver.position = my_go->GetRectTransform()->GetSouthWest();
-		ver.tex_coords = image->GetUV0();
-		buffer.vertices.push_back(ver);
-		ver.position = my_go->GetRectTransform()->GetNorthWest();
-		ver.tex_coords = float2(image->GetUV0().x, image->GetUV1().y);
-		buffer.vertices.push_back(ver);
+		ver.position = parent->GetComponentRectTransform()->GetSouthWestPosition();
+		ver.tex_coords=float2(0.0f,0.0f);
+		vertices.push_back(ver);
 
-		ver.position = my_go->GetRectTransform()->GetNorthEeast();
-		ver.tex_coords = image->GetUV1();
-		buffer.vertices.push_back(ver);
+		ver.position = parent->GetComponentRectTransform()->GetSouthWestPosition();
+		ver.tex_coords = float2(1.0f, 0.0f);
+		vertices.push_back(ver);
 
-		ver.position = my_go->GetRectTransform()->GetSouthEast();
-		ver.tex_coords = float2(image->GetUV1().x, image->GetUV0().y);
-		buffer.vertices.push_back(ver);
+		ver.position = parent->GetComponentRectTransform()->GetNorthEastPosition();
+		ver.tex_coords = float2(1.0f, 1.0f);
+		vertices.push_back(ver);
+
+		ver.position = parent->GetComponentRectTransform()->GetNorthWestPosition();
+		ver.tex_coords = float2(0.0f, 1.0f);
+		vertices.push_back(ver);
 
 		uint lastIndex = 0;
 
-		buffer.indices.push_back(lastIndex);
-		buffer.indices.push_back(lastIndex + 1);
-		buffer.indices.push_back(lastIndex + 2);
-		buffer.indices.push_back(lastIndex + 2);
-		buffer.indices.push_back(lastIndex + 3);
-		buffer.indices.push_back(lastIndex );
-	*/
+		indices.push_back(lastIndex);
+		indices.push_back(lastIndex + 1);
+		indices.push_back(lastIndex + 2);
+		indices.push_back(lastIndex + 2);
+		indices.push_back(lastIndex + 3);
+		indices.push_back(lastIndex );
+
+		//----
+		glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CanvasVertex), &vertices[0], GL_STATIC_DRAW);
+
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
+		
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void CompCanvasRender::PorcessText(CompText * text)
 {
 	graphic = text;
+
+}
+
+void CompCanvasRender::DrawGraphic()
+{
+	if (graphic == nullptr)
+	{
+		return;
+	}
+	glPushMatrix();
+	glMultMatrixf((float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
+
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	if (graphic->GetTextureID() != -1)
+	{
+		glBindTexture(GL_TEXTURE_2D, graphic->GetTextureID());
+		//	glColor4f(image->GetImage()->GetRGBA().x, image->GetImage()->GetRGBA().y, image->GetImage()->GetRGBA().z, image->GetImage()->GetRGBA().w);
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
+	glVertexPointer(3, GL_FLOAT, sizeof(CanvasVertex), NULL);
+	//glNormalPointer(GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normals));
+	glTexCoordPointer(2, GL_FLOAT, sizeof(CanvasVertex), (void*)offsetof(CanvasVertex, tex_coords));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
 
 }

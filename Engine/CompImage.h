@@ -3,6 +3,7 @@
 #include "Math\float4.h"
 #include "CompGraphic.h"
 class ResourceMaterial;
+class CompRectTransform;
 class CompImage:public CompGraphic
 {
 public:

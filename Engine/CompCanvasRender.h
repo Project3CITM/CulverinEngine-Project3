@@ -10,7 +10,7 @@ class CompGraphic;
 struct CanvasVertex
 {
 	float3 position;
-	float3 text_cord;
+	float2 tex_coords;
 };
 class CompCanvasRender:public Component
 {
@@ -26,7 +26,7 @@ public:
 
 	void ProcessImage(CompImage* image);
 	void PorcessText(CompText* text);
-
+	void DrawGraphic();
 private:
 public:
 private:
