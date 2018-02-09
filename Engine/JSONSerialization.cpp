@@ -408,9 +408,7 @@ void JSONSerialization::SaveScript(const ResourceScript* script, const char * di
 	JSON_Value* config_file;
 	JSON_Object* config;
 
-	std::string nameJson = directory;
-	nameJson += "/";
-	nameJson += script->name;
+	std::string nameJson = fileName;
 	nameJson += ".meta.json";
 	config_file = json_value_init_object();
 
