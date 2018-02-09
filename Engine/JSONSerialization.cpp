@@ -177,6 +177,11 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			}
 		}
 		templist.clear();
+
+
+		//Load Audio Banks
+		int number_of_audio_banks = json_object_dotget_number(config_node, "Info.Number of AudioBanks");
+		App->audio->LoadAudioBanks(number_of_audio_banks, config_node);
 	}
 	json_value_free(config_file);
 }

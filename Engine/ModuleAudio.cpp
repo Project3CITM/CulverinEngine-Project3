@@ -234,3 +234,14 @@ void ModuleAudio::SaveAudioBanks(JSON_Object * config_node)
 		json_object_dotset_string_with_std(config_node, audio_banks + "Bank " + std::to_string(i).c_str(), (*it).c_str());
 	}
 }
+
+void ModuleAudio::LoadAudioBanks(int number_of_banks, JSON_Object * config_node)
+{
+	for (int i = 0; i < number_of_banks; i++)
+	{
+		std::string bank_name = "AudioBanks.Bank ";
+		bank_name += std::to_string(i).c_str();
+		//Wwished::Utility::LoadBank(json_object_dotget_string(config_node, bank_name.c_str()));
+	
+	}
+}
