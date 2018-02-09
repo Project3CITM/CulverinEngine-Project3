@@ -123,8 +123,8 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		config = json_value_get_object(config_file);
 		config_node = json_object_get_object(config, "Scene");
 		int NUmberGameObjects = json_object_dotget_number(config_node, "Info.Number of GameObjects");
-		App->scene->root->SetUUID(json_object_dotget_number(config_node, "Scene.Propeties.UUID"));
-		App->scene->root->SetName(App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, "Scene.Propeties.Name")));
+		App->scene->root->SetUUID(json_object_dotget_number(config_node, "Scene.Properties.UUID"));
+		App->scene->root->SetName(App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, "Scene.Properties.Name")));
 		std::vector<LoadSceneSt> templist;
 		if (NUmberGameObjects > 0)
 		{
