@@ -16,6 +16,10 @@ CompRectTransform::CompRectTransform(Comp_Type t, GameObject * parent) :CompTran
 {
 	uid = App->random->Int();
 	name_component = "Rect Transform";
+	max_anchor = float2(0.5f, 0.5f);
+	min_anchor = float2(0.5f, 0.5f);
+	pivot = float2(0.5f, 0.5f);
+
 }
 
 CompRectTransform::CompRectTransform(const CompRectTransform & copy, GameObject * parent) : CompTransform(Comp_Type::C_RECT_TRANSFORM, parent)
@@ -245,6 +249,29 @@ void CompRectTransform::ShowTransform(float drag_speed)
 		{
 			SetHeight(height);
 		}
+
+		bool open_anchor = ImGui::TreeNodeEx("Anchor", ImGuiTreeNodeFlags_DefaultOpen);
+		if(open_anchor)
+		{
+			ImGui::Text("Max X,Y"); ImGui::SameLine(op + 30);
+			if (ImGui::DragFloat2("##max", &max_anchor[0], drag_speed, 0.0f, 1.0f))
+			{
+				SetMaxAnchor(max_anchor);
+			}
+
+			ImGui::Text("Min X,Y"); ImGui::SameLine(op + 30);
+			if (ImGui::DragFloat2("##min", &min_anchor[0], drag_speed, 0.0f, 1.0f))
+			{
+				SetMinAnchor(min_anchor);
+			}
+			ImGui::TreePop();
+		}
+
+		ImGui::Text("Pivot X,Y"); ImGui::SameLine(op + 30);
+		if (ImGui::DragFloat2("##min", &min_anchor[0], drag_speed, 0.0f, 1.0f))
+		{
+			SetMinAnchor(min_anchor);
+		}
 		break;
 	}
 	default:
@@ -287,12 +314,64 @@ void CompRectTransform::SetHeight(int set_height)
 	height = set_height;
 }
 
-int CompRectTransform::GetWidth()
+void CompRectTransform::SetMaxAnchor(float2 set_max_anchor)
+{
+	max_anchor = set_max_anchor;
+}
+
+void CompRectTransform::SetMinAnchor(float2 set_min_anchor)
+{
+	min_anchor = set_min_anchor;
+}
+
+void CompRectTransform::SetPivot(float2 set_pivot)
+{
+	left_pivot = pivot;
+	right_pivot = float2(1.0f - pivot.x, 1.0f - pivot.y);
+	pivot = set_pivot;
+}
+
+int CompRectTransform::GetWidth()const
 {
 	return height;
 }
 
-int CompRectTransform::GetHeight()
+int CompRectTransform::GetHeight()const
 {
 	return height;
+}
+
+float2 CompRectTransform::GetMaxAnchor()const
+{
+	return max_anchor;
+}
+
+float2 CompRectTransform::GetMinAnchor()const
+{
+	return min_anchor;
+}
+
+float2 CompRectTransform::GetPivot()const
+{
+	return pivot;
+}
+
+float3 CompRectTransform::GetNorthEastPosition()const
+{
+	return float3(GetPos().x + width*right_pivot.x, GetPos().y - height * left_pivot.y, GetPos().z);
+}
+
+float3 CompRectTransform::GetNorthWestPosition()const
+{
+	return float3(GetPos().x - width*left_pivot.x, GetPos().y - height * left_pivot.y, GetPos().z);
+}
+
+float3 CompRectTransform::GetSouthEastPosition()const
+{
+	return float3(GetPos().x + width*right_pivot.x, GetPos().y + height * right_pivot.y, GetPos().z);
+}
+
+float3 CompRectTransform::GetSouthWestPosition()const
+{
+	return float3(GetPos().x - width*left_pivot.x, GetPos().y + height * right_pivot.y, GetPos().z);
 }
