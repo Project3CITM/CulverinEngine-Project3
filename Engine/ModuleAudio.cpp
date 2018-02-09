@@ -165,18 +165,7 @@ void ModuleAudio::DrawOnEditor()
 				
 				if (ImGui::Selectable(bank_name.c_str()))
 				{
-					int ret = Wwished::Utility::LoadBank(bank_name.c_str());
-					if (ret == 1)
-					{
-						loaded_banks.push_back(bank_name);
-					}
-					else
-					{
-						if (ret == 2)
-						 LOG("WARNING: Bank already loaded");
-						if (ret == 0)
-						 LOG("WARNING: Bank not found");
-					}			
+					LoadBank(bank_name.c_str());		
 					load_bank_window_opened = false;
 					break;
 				}
@@ -200,6 +189,7 @@ void ModuleAudio::UnloadAllBanks()
 	{
 		Wwished::Utility::UnLoadBank((*it).c_str());
 	}
+	loaded_banks.clear();
 }
 
 
@@ -235,13 +225,36 @@ void ModuleAudio::SaveAudioBanks(JSON_Object * config_node)
 	}
 }
 
-void ModuleAudio::LoadAudioBanks(int number_of_banks, JSON_Object * config_node)
+void ModuleAudio::LoadAudioBanksFromScene(int number_of_banks, JSON_Object * config_node)
 {
+	UnloadAllBanks();
 	for (int i = 0; i < number_of_banks; i++)
 	{
-		std::string bank_name = "AudioBanks.Bank ";
-		bank_name += std::to_string(i).c_str();
-		//Wwished::Utility::LoadBank(json_object_dotget_string(config_node, bank_name.c_str()));
-	
+		std::string bank_number = "AudioBanks.Bank ";
+		bank_number += std::to_string(i).c_str();
+		std::string bank_name = json_object_dotget_string_with_std(config_node, bank_number.c_str());
+		LoadBank(bank_name.c_str());		
 	}
 }
+
+int ModuleAudio::LoadBank(const char * bank_name)
+{
+	int result = Wwished::Utility::LoadBank(bank_name);
+	if (result == 1)
+	{
+		loaded_banks.push_back(bank_name);
+		LOG("AudioBank %s Loaded", bank_name)
+	}
+	else if (result == 0)
+	{
+		LOG("WARNING: AudioBank %s not found", bank_name)
+	}
+	else if (result == 2)
+	{
+		LOG("WARNING: AudioBank %s already loaded", bank_name)
+	}
+
+
+	return result;
+}
+

@@ -180,8 +180,8 @@ void JSONSerialization::LoadScene(const char* sceneName)
 
 
 		//Load Audio Banks
-		int number_of_audio_banks = json_object_dotget_number(config_node, "Info.Number of AudioBanks");
-		App->audio->LoadAudioBanks(number_of_audio_banks, config_node);
+		int number_of_audio_banks = json_object_dotget_number(config_node, "Info.Number of Audio Banks");
+		App->audio->LoadAudioBanksFromScene(number_of_audio_banks, config);
 	}
 	json_value_free(config_file);
 }
