@@ -17,3 +17,13 @@ CompGraphic::CompGraphic(const CompGraphic & copy, GameObject * parent) : Compon
 CompGraphic::~CompGraphic()
 {
 }
+
+void CompGraphic::SetTextureID(uint set_texture_id)
+{
+	texture_id = set_texture_id;
+}
+
+uint CompGraphic::GetTextureID() const
+{
+	return texture_id;
+}

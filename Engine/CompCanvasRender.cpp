@@ -4,6 +4,8 @@
 #include "WindowInspector.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "CompImage.h"
+#include "CompText.h"
 
 CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
@@ -106,4 +108,45 @@ void CompCanvasRender::Load(const JSON_Object* object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	//...
 	Enable();
+}
+
+void CompCanvasRender::ProcessImage(CompImage * image)
+{
+	graphic = image;
+	/*
+	buffer.vertices.clear();
+	buffer.indices.clear();
+
+
+		CanvasVertex ver;
+		ver.position = my_go->GetRectTransform()->GetSouthWest();
+		ver.tex_coords = image->GetUV0();
+		buffer.vertices.push_back(ver);
+		ver.position = my_go->GetRectTransform()->GetNorthWest();
+		ver.tex_coords = float2(image->GetUV0().x, image->GetUV1().y);
+		buffer.vertices.push_back(ver);
+
+		ver.position = my_go->GetRectTransform()->GetNorthEeast();
+		ver.tex_coords = image->GetUV1();
+		buffer.vertices.push_back(ver);
+
+		ver.position = my_go->GetRectTransform()->GetSouthEast();
+		ver.tex_coords = float2(image->GetUV1().x, image->GetUV0().y);
+		buffer.vertices.push_back(ver);
+
+		uint lastIndex = 0;
+
+		buffer.indices.push_back(lastIndex);
+		buffer.indices.push_back(lastIndex + 1);
+		buffer.indices.push_back(lastIndex + 2);
+		buffer.indices.push_back(lastIndex + 2);
+		buffer.indices.push_back(lastIndex + 3);
+		buffer.indices.push_back(lastIndex );
+	*/
+}
+
+void CompCanvasRender::PorcessText(CompText * text)
+{
+	graphic = text;
+
 }
