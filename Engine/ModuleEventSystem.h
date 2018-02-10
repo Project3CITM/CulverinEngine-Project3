@@ -30,7 +30,9 @@
 
 #include "Module.h"
 
+//You use this function to push new events to the system, with that is no needed to use App->eventsystem->PushEvent(event), only PushEvent(event)
 void PushEvent(Event& event);
+//Used in SetEventListenrs method of Modules to register this module to receive one event type
 void AddListener(EventType type, Module* listener);
 
 class ModuleEventSystem : public Module
