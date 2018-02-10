@@ -3,6 +3,7 @@
 #include "ModuleAudio.h"
 #include "wwished.h"
 #include "ModuleFS.h"
+#include "CompAudio.h"
 
 #include <locale>
 #include <codecvt>
@@ -236,6 +237,22 @@ void ModuleAudio::LoadAudioBanksFromScene(int number_of_banks, JSON_Object * con
 		LoadBank(bank_name.c_str());		
 	}
 }
+
+//Given nullptr, it sets the current listener to nullptr
+void ModuleAudio::SetListener(CompAudio * c)
+{
+	if (current_listener != nullptr)
+	{
+		current_listener->ResetAudio();
+	}
+
+	current_listener = c;
+
+	if(current_listener)
+		Wwished::SetDefaultListener(current_listener->GetEmitterID());
+}
+
+
 
 int ModuleAudio::LoadBank(const char * bank_name)
 {

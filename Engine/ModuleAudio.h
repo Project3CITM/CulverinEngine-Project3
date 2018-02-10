@@ -6,7 +6,8 @@
 #include <vector>
 #include <string>
 
-#define DEFAULT_MUSIC_FADE_TIME 2.0f
+
+class CompAudio;
 
 class ModuleAudio : public Module
 {
@@ -32,12 +33,15 @@ public:
 	void SaveAudioBanks(JSON_Object* config_node);
 	void LoadAudioBanksFromScene(int number_of_banks, JSON_Object* config_node);
 
+
+	void SetListener(CompAudio* c);
+
 private:
 
 	int LoadBank(const char* name);
 
 
-
+private:
 	
 	std::vector <std::string> loaded_banks;
 
@@ -46,9 +50,11 @@ private:
 
 	bool init_bank_not_loaded = false;
 	bool load_bank_window_opened = false;
-	bool error_window_opened = false;
+
 
 	std::string banks_full_path;
+
+	CompAudio* current_listener = nullptr;
 };
 
 #endif // __ModuleAudio_H__

@@ -3,8 +3,15 @@
 
 
 #include "Component.h"
+#include "wwished.h"
 
 class GameObject;
+
+enum AUDIO_TYPE
+{
+	FX,
+	LISTENER
+};
 
 class CompAudio : public Component
 {
@@ -29,7 +36,15 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
 
+	uint GetEmitterID() const;
+	void ResetAudio();
+
 private:
 
+	void CreateEmitter();
+	
+private:
+	Wwished::SoundEmitter* emitter = nullptr;
+	AUDIO_TYPE audio_type = FX;
 };
 #endif

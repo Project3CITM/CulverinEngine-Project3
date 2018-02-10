@@ -5,9 +5,13 @@
 #include "GameObject.h"
 #include "Scene.h"
 
+#include "CompTransform.h"
+#include "ModuleAudio.h"
+
 CompAudio::CompAudio(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	name_component = "Audio";
+	CreateEmitter();
 }
 
 CompAudio::CompAudio(const CompAudio & copy, GameObject * parent) : Component(Comp_Type::C_AUDIO, parent)
@@ -16,6 +20,10 @@ CompAudio::CompAudio(const CompAudio & copy, GameObject * parent) : Component(Co
 
 CompAudio::~CompAudio()
 {
+	delete emitter;
+
+	if (audio_type == AUDIO_TYPE::LISTENER)
+		App->audio->SetListener(nullptr);
 }
 
 void CompAudio::ShowOptions()
@@ -77,12 +85,33 @@ void CompAudio::ShowInspectorInfo()
 	}
 	ImGui::PopStyleVar();
 
+
 	// Button Options --------------------------------------
 	if (ImGui::BeginPopup("Audio Options"))
 	{
 		ShowOptions();
 		ImGui::EndPopup();
 	}
+
+
+	//Audio component options -------------------
+	int selected_opt = audio_type;
+	if (ImGui::Combo("Audio type", &selected_opt, "FX\0Listener\0", 2))
+	{
+		if (selected_opt == 1 && audio_type != LISTENER)
+		{
+			audio_type = LISTENER;
+			App->audio->SetListener(this);
+		}
+		else if (selected_opt == 0)
+		{
+			if(audio_type==LISTENER)
+				App->audio->SetListener(nullptr);			
+			audio_type = FX;
+		}		
+	}
+
+
 	ImGui::TreePop();
 }
 
@@ -102,4 +131,22 @@ void CompAudio::Load(const JSON_Object * object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	//...
 	Enable();
+}
+
+uint CompAudio::GetEmitterID() const
+{
+	return emitter ? emitter->GetID() : 0;
+}
+
+void CompAudio::ResetAudio()
+{
+	audio_type = AUDIO_TYPE::FX;
+}
+
+void CompAudio::CreateEmitter()
+{
+	unsigned long emitter_id = parent->GetUUID();
+	CompTransform* transf = parent->GetComponentTransform();
+	float3 pos = transf->GetPosGlobal();
+	emitter = Wwished::Utility::CreateEmitter(emitter_id, parent->GetName(), pos.x, pos.y, pos.z);
 }
