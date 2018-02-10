@@ -89,7 +89,7 @@ update_status ModuleImporter::PreUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
-GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj)
+GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, const char* file)
 {	
 	static int count = 0;
 	GameObject* objChild = new GameObject(obj);
@@ -118,13 +118,13 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 		}
 
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		iMesh->Import(scene, mesh, newObj, node->mName.C_Str());
+		iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), file);
 	}
 
 	// Process children
 	for (uint i = 0; i < node->mNumChildren; i++)
 	{
-		ProcessNode(node->mChildren[i], scene, objChild);
+		ProcessNode(node->mChildren[i], scene, objChild, file);
 	}
 
 	return objChild;
@@ -164,7 +164,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 		{
 			if (strcmp(node->mName.C_Str(), resourcesToReimport[i].name_mesh) == 0)
 			{
-				iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), resourcesToReimport[i].uuid);
+				iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), resourcesToReimport[i].directory_obj, resourcesToReimport[i].uuid);
 				isReimported = true;
 			}
 		}
@@ -230,7 +230,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type)
 		const aiScene* scene = aiImportFile(file, aiProcessPreset_TargetRealtime_MaxQuality);
 		if (scene != nullptr)
 		{
-			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr);
+			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, file);
 			obj->SetName(App->GetCharfromConstChar(App->fs->FixName_directory(file).c_str()));
 
 			//Now Save Serialitzate OBJ -> Prefab

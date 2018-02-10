@@ -423,6 +423,59 @@ void ModuleFS::GetUUIDFromFile(std::string path, std::vector<uint>& files)
 	}
 }
 
+void ModuleFS::ReImportAllFiles()
+{
+	namespace stdfs = std::experimental::filesystem;
+
+	const stdfs::directory_iterator end{};
+	std::experimental::filesystem::path path = directory_assets;
+	uint idpath = 0;
+	for (stdfs::directory_iterator iter{ path }; iter != end; ++iter)
+	{
+		if (stdfs::is_directory(*iter) == false)
+		{
+			std::string extension = GetExtension(iter->path().string());
+			//Set lowercase the extension to normalize it
+			for (std::string::iterator it = extension.begin(); it != extension.end(); it++)
+			{
+				*it = tolower(*it);
+			}
+			if (IsPermitiveExtension(extension.c_str()))
+			{
+				switch (App->resource_manager->CheckFileType(extension.c_str()))
+				{
+				case Resource::Type::MESH:
+				{
+					bool finish = false; int id = 0;
+					while (finish == false)
+					{
+						ReImport temp = App->json_seria->GetUUIDPrefab(allfilesAsstes[idpath].directory_name, id++);
+						if (temp.uuid != 0)
+						{
+							App->resource_manager->resources_to_reimport.push_back(temp);
+						}
+						else
+						{
+							finish = true;
+						}
+					}
+					break;
+				}
+				case Resource::Type::MATERIAL:
+				{
+					App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDMaterial(allfilesAsstes[idpath].directory_name));
+					break;
+				}
+				}
+				idpath++;
+			}
+		}
+		else
+		{
+			AnyfileModificatedFolder(iter->path().string(), allfilesAsstes, idpath);
+		}
+	}
+}
 
 bool ModuleFS::AnyfileModificated(std::vector<AllFiles>& files)
 {
@@ -868,6 +921,10 @@ std::string ModuleFS::GetFullPath(std::string path)
 	{
 		std::experimental::filesystem::path getpath(path);
 		std::experimental::filesystem::path full_path = std::experimental::filesystem::system_complete(getpath);
+		if (std::experimental::filesystem::is_directory(full_path) == false)
+		{
+			full_path = std::experimental::filesystem::absolute(full_path);
+		}
 		return full_path.string();
 	}
 	return "";

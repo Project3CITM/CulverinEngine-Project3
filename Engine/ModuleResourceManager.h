@@ -45,7 +45,6 @@ public:
 	Resource* ShowResources(bool& active, Resource::Type type);
 	void ShowAllResources(bool& active);
 	bool ReImportAllScripts();
-	void ReImportAll();
 
 	void Save();
 	void Load();

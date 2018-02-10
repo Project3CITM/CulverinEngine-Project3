@@ -63,7 +63,7 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 	//Reimport All files ----------------
 	if (reimportAll)
 	{
-		ReImportAll();
+		App->fs->ReImportAllFiles();
 	}
 
 	if (resources_to_reimport.size() > 0)
@@ -613,55 +613,6 @@ bool ModuleResourceManager::ReImportAllScripts()
 		it++;
 	}
 	return ret;
-}
-
-void ModuleResourceManager::ReImportAll()
-{
-	std::map<uint, Resource*>::iterator it = resources.begin();
-	it++;
-	for (int i = 1; i < resources.size(); i++) // i = 1 -> ResourcePrimitive
-	{
-		switch (it->second->GetType())
-		{
-		case Resource::Type::MESH:
-		{
-			bool finish = false; int id = 0;
-			while (finish == false)
-			{
-				std::string file = it->second->path_assets.c_str();
-				file += ".fbx";
-				ReImport temp = App->json_seria->GetUUIDPrefab(file.c_str(), id++);
-				if (temp.uuid != 0)
-				{
-					resources_to_reimport.push_back(temp);
-				}
-				else
-				{
-					finish = true;
-				}
-			}
-			break;
-		}
-		case Resource::Type::MATERIAL:
-		{
-			resources_to_reimport.push_back(App->json_seria->GetUUIDMaterial(it->second->path_assets.c_str()));
-			break;
-		}
-		case Resource::Type::SCRIPT:
-		{
-			//resources_to_reimport.push_back(App->json_seria->GetUUIDMaterial(it->second->path_assets.c_str()));
-			break;
-		}
-		}
-	}
-
-	std::map<uint, Resource*>::iterator it2 = resources.begin();
-	it2++;
-	for (int i = 1; i < resources.size(); i++) // i = 1 -> ResourcePrimitive
-	{
-		it2->second->SetState(Resource::State::REIMPORTED);
-		it2++;
-	}
 }
 
 void ModuleResourceManager::Save()

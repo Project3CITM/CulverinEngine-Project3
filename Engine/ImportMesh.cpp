@@ -31,7 +31,7 @@ bool ImportMesh::Load(const char* exported_file, Texture* resource)
 }
 
 // Import Mesh -----------------------------------------------------------------------------------------------------------------------------
-bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* obj, const char* name, uint uuid)
+bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* obj, const char* name, const char* file, uint uuid)
 {
 	bool ret = true;
 	uint num_vertices = 0;
@@ -219,7 +219,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 	// Set Info ResoruceMesh
 	std::string fileName = std::to_string(uuid_mesh);
-	res_mesh->InitInfo(name, App->fs->GetFullPath(name).c_str());
+	res_mesh->InitInfo(name, file);
 	//std::string path_assets = name;
 	//res_mesh->path_assets = App->fs->GetFullPath(path_assets);
 

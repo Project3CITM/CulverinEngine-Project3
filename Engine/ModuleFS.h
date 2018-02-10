@@ -74,6 +74,7 @@ public:
 	void GetAllFilesFromFolder(std::experimental::filesystem::path path, std::list<const char*>& files);
 	void GetAllFilesFromFolder(std::experimental::filesystem::path path, std::vector<uint>& files);
 	void GetUUIDFromFile(std::string path, std::vector<uint>& files);
+	void ReImportAllFiles();
 	bool AnyfileModificated(std::vector<AllFiles>& files);
 	bool AnyfileModificatedFolder(std::experimental::filesystem::path path, std::vector<AllFiles>& files, uint& id);
 	bool IsPermitiveExtension(const char * extension);
