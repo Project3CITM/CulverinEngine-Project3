@@ -145,16 +145,31 @@ void Hierarchy::ShowOptions()
 		GameObject* empty = App->scene->CreateGameObject();
 		App->gui->SetLinkInspector(empty);
 	}
-	if (ImGui::MenuItem("Create Cube"))
+	if (ImGui::BeginMenu("3D Object"))
 	{
-		GameObject* cube = App->scene->CreateCube();
-		App->gui->SetLinkInspector(cube);
+		if (ImGui::MenuItem("Create Cube"))
+		{
+			GameObject* cube = App->scene->CreateCube();
+			App->gui->SetLinkInspector(cube);
+		}
+		ImGui::MenuItem("Create Sphere", NULL, false, false);
+		ImGui::MenuItem("Create Capsule", NULL, false, false);
+		ImGui::MenuItem("Create Cylinder", NULL, false, false);
+		ImGui::MenuItem("Create Plane", NULL, false, false);
+		ImGui::EndMenu();
 	}
-	//if (ImGui::MenuItem("Create Sphere"))
-	//{
-	//	GameObject* sphere = App->scene->CreateSphere();
-	//	App->gui->SetLinkInspector(sphere);
-	//}
+	if (ImGui::BeginMenu("UI"))
+	{
+		if (ImGui::MenuItem("Text", NULL, false, false))
+		{
+			//GameObject* cube = App->scene->CreateCube();
+			//App->gui->SetLinkInspector(cube);
+		}
+		ImGui::MenuItem("Image", NULL, false, false);
+		ImGui::MenuItem("Button", NULL, false, false);
+		ImGui::MenuItem("Canvas", NULL, false, false);
+		ImGui::EndMenu();
+	}
 }
 
 void Hierarchy::ShowDeleteWindow()

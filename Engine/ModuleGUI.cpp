@@ -182,6 +182,58 @@ update_status ModuleGUI::Update(float dt)
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("GameObject"))
+		{
+			if (ImGui::MenuItem("Create Empty", "Ctrl+Shift+N"))
+			{
+				// Link inspector to the GameObject Created to call its Inspector window.
+				GameObject* empty = App->scene->CreateGameObject();
+				App->gui->SetLinkInspector(empty);
+				App->camera->SetFocus(empty);
+			}
+			ImGui::MenuItem("Create Empty Child", "Alt+Shift+N", false, false);
+			if (ImGui::BeginMenu("3D Object"))
+			{
+				if (ImGui::MenuItem("Cube"))
+				{
+					// Link inspector to the GameObject Created to call its Inspector window.
+					GameObject* cube = App->scene->CreateCube();
+					App->gui->SetLinkInspector(cube);
+					App->camera->SetFocus(cube);
+				}
+				ImGui::MenuItem("Create Sphere", NULL, false, false);
+				ImGui::MenuItem("Create Capsule", NULL, false, false);
+				ImGui::MenuItem("Create Cylinder", NULL, false, false);
+				ImGui::MenuItem("Create Plane", NULL, false, false);
+				// CreateNewScript
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("UI"))
+			{
+				if (ImGui::MenuItem("Text", NULL, false, false))
+				{
+					//GameObject* cube = App->scene->CreateCube();
+					//App->gui->SetLinkInspector(cube);
+				}
+				ImGui::MenuItem("Image", NULL, false, false);
+				ImGui::MenuItem("Button", NULL, false, false);
+				ImGui::MenuItem("Canvas", NULL, false, false);
+				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem("C# Script"))
+			{
+				window_create_new_script = !window_create_new_script;
+			}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Component", false))
+		{
+			ImGui::MenuItem("Add...", NULL, false, false);
+			ImGui::MenuItem("Mesh", NULL, false, false);
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("Windows"))
 		{
 			if (ImGui::MenuItem("Inspector"))
@@ -296,36 +348,7 @@ update_status ModuleGUI::Update(float dt)
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Create"))
-		{
-			if (ImGui::BeginMenu("Object"))
-			{
-				if (ImGui::MenuItem("Cube"))
-				{
-					// Link inspector to the GameObject Created to call its Inspector window.
-					GameObject* cube = App->scene->CreateCube();
-					App->gui->SetLinkInspector(cube);
-					App->camera->SetFocus(cube);
-				}
-				if (ImGui::MenuItem("Empty"))
-				{
-					// Link inspector to the GameObject Created to call its Inspector window.
-					GameObject* empty = App->scene->CreateGameObject();
-					App->gui->SetLinkInspector(empty);
-					App->camera->SetFocus(empty);
-				}
-				// CreateNewScript
-				ImGui::EndMenu();
-			}
-			if (ImGui::MenuItem("C# Script"))
-			{
-				window_create_new_script = !window_create_new_script;
-			}
-			ImGui::EndMenu();
-		}
-
 		menu_height = ImGui::GetWindowSize().y;
-
 		ImGui::EndMainMenuBar();
 	}
 
