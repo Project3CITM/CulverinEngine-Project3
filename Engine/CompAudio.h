@@ -6,6 +6,7 @@
 #include "wwished.h"
 
 class GameObject;
+class CompTransform;
 
 enum AUDIO_TYPE
 {
@@ -21,7 +22,7 @@ public:
 	CompAudio(const CompAudio& copy, GameObject* parent);
 	~CompAudio();
 
-
+	void Update(float dt);
 	
 	// EDITOR METHODS ---------
 	void ShowOptions();
@@ -44,6 +45,7 @@ private:
 	void CreateEmitter();
 	
 private:
+	CompTransform * transf = nullptr;
 	Wwished::SoundEmitter* emitter = nullptr;
 	AUDIO_TYPE audio_type = FX;
 };

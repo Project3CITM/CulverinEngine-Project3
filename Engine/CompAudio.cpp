@@ -4,6 +4,7 @@
 #include "ModuleGUI.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "ModuleInput.h"
 
 #include "CompTransform.h"
 #include "ModuleAudio.h"
@@ -24,6 +25,27 @@ CompAudio::~CompAudio()
 
 	if (audio_type == AUDIO_TYPE::LISTENER)
 		App->audio->SetListener(nullptr);
+}
+
+void CompAudio::Update(float dt)
+{
+	if (transf != nullptr)
+	{
+		float3 pos = transf->GetPosGlobal();
+		Quat rot = transf->GetRot();
+
+		float3 up = rot.Transform(float3(0, 1, 0));
+		float3 front = rot.Transform(float3(0, 0, 1));
+
+		up.Normalize();
+		front.Normalize();
+		emitter->SetPosition(-pos.x, pos.y, pos.z, -front.x, front.y, front.z, -up.x, up.y, up.z);
+	}
+	
+	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+	{
+		emitter->PlayEvent("Shot");
+	}
 }
 
 void CompAudio::ShowOptions()
@@ -92,8 +114,7 @@ void CompAudio::ShowInspectorInfo()
 		ShowOptions();
 		ImGui::EndPopup();
 	}
-
-
+	
 	//Audio component options -------------------
 	int selected_opt = audio_type;
 	if (ImGui::Combo("Audio type", &selected_opt, "FX\0Listener\0", 2))
@@ -110,7 +131,6 @@ void CompAudio::ShowInspectorInfo()
 			audio_type = FX;
 		}		
 	}
-
 
 	ImGui::TreePop();
 }
@@ -146,7 +166,7 @@ void CompAudio::ResetAudio()
 void CompAudio::CreateEmitter()
 {
 	unsigned long emitter_id = parent->GetUUID();
-	CompTransform* transf = parent->GetComponentTransform();
+	transf = parent->GetComponentTransform();
 	float3 pos = transf->GetPosGlobal();
 	emitter = Wwished::Utility::CreateEmitter(emitter_id, parent->GetName(), pos.x, pos.y, pos.z);
 }
