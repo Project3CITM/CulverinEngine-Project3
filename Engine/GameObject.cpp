@@ -622,23 +622,69 @@ void GameObject::ShowGameObjectOptions()
 		{
 			if (ImGui::MenuItem("Canvas"))
 			{
-				AddComponent(Comp_Type::C_CANVAS);
-			}
-			if (ImGui::MenuItem("Button"))
-			{
-				AddComponent(Comp_Type::C_BUTTON);
+				GameObject* canvas = App->scene->CreateCanvas(this);
+				App->gui->SetLinkInspector(canvas);
+
 			}
 			if (ImGui::MenuItem("Image"))
 			{
-				AddComponent(Comp_Type::C_IMAGE);
+				CompCanvas* comp_canvas = (CompCanvas*)FindParentComponentByType(Comp_Type::C_CANVAS);
+				GameObject* parent = this;
+				if (comp_canvas == nullptr)
+				{
+					parent = App->scene->CreateCanvas(this);
+				}
+				GameObject* image = App->scene->CreateImage(parent);
+				App->gui->SetLinkInspector(image);
+
+			}
+			if (ImGui::MenuItem("Button"))
+			{
+				CompCanvas* comp_canvas = (CompCanvas*)FindParentComponentByType(Comp_Type::C_CANVAS);
+				GameObject* parent = this;
+				if (comp_canvas == nullptr)
+				{
+					parent = App->scene->CreateCanvas(this);
+				}
+				GameObject* button = App->scene->CreateButton(parent);
+				App->gui->SetLinkInspector(button);
+
+			}
+			if (ImGui::MenuItem("Check Box"))
+			{
+				CompCanvas* comp_canvas = (CompCanvas*)FindParentComponentByType(Comp_Type::C_CANVAS);
+				GameObject* parent = this;
+				if (comp_canvas == nullptr)
+				{
+					parent = App->scene->CreateCanvas(this);
+				}
+				GameObject* check_box = App->scene->CreateCheckBox(parent);
+				App->gui->SetLinkInspector(check_box);
+
 			}
 			if (ImGui::MenuItem("Text"))
 			{
-				AddComponent(Comp_Type::C_TEXT);
+				CompCanvas* comp_canvas = (CompCanvas*)FindParentComponentByType(Comp_Type::C_CANVAS);
+				GameObject* parent = this;
+				if (comp_canvas == nullptr)
+				{
+					parent = App->scene->CreateCanvas(this);
+				}
+				GameObject* text = App->scene->CreateText(parent);
+				App->gui->SetLinkInspector(text);
+
 			}
 			if (ImGui::MenuItem("Edit Text"))
 			{
-				AddComponent(Comp_Type::C_EDIT_TEXT);
+				CompCanvas* comp_canvas = (CompCanvas*)FindParentComponentByType(Comp_Type::C_CANVAS);
+				GameObject* parent = this;
+				if (comp_canvas == nullptr)
+				{
+					parent = App->scene->CreateCanvas(this);
+				}
+				GameObject* edit_text = App->scene->CreateEditText(parent);
+				App->gui->SetLinkInspector(edit_text);
+
 			}
 			ImGui::EndMenu();
 		}
@@ -960,12 +1006,12 @@ Component* GameObject::FindComponentByType(Comp_Type type) const
 
 Component * GameObject::FindParentComponentByType(Comp_Type type)const
 {
+	
 	Component * ret = nullptr;
-	ret = parent->FindComponentByType(Comp_Type::C_CANVAS);
+	ret = FindComponentByType(Comp_Type::C_CANVAS);
 	if (ret == nullptr)
 	{
-		GameObject* item = nullptr;
-		item = parent->GetParent();
+		GameObject* item = parent;
 		while (item != nullptr)
 		{
 			ret = ((CompCanvas*)item->FindComponentByType(Comp_Type::C_CANVAS));
@@ -1080,7 +1126,7 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			//If is not RectTransform
 			//TODO change transform
 			LOG("Adding CANVAS RENDER COMPONENT.");
-			CompCanvasRender* canvas_renderer = new CompCanvasRender(type, this);
+			CompCanvasRender* canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
 			components.push_back(canvas_renderer);
 			LOG("Adding IMAGE COMPONENT.");
 			CompImage* image = new CompImage(type, this);
@@ -1093,7 +1139,7 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			//If is not RectTransform
 			//TODO change transform
 			LOG("Adding CANVAS RENDER COMPONENT.");
-			CompCanvasRender* canvas_renderer = new CompCanvasRender(type, this);
+			CompCanvasRender* canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
 			components.push_back(canvas_renderer);
 			LOG("Adding TEXT COMPONENT.");
 			CompText* text = new CompText(type, this);

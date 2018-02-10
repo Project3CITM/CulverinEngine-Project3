@@ -162,7 +162,7 @@ void Hierarchy::ShowOptions()
 	{
 		if (ImGui::MenuItem("Canvas"))
 		{
-			GameObject* canvas = App->scene->CreateCanvas(canvas);
+			GameObject* canvas = App->scene->CreateCanvas();
 			App->gui->SetLinkInspector(canvas);
 
 		}
