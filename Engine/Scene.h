@@ -55,9 +55,17 @@ public:
 	void FillStaticObjectsVector(bool fill);
 
 	//OBJECTS CREATION / DELETION ---------------------
+	GameObject* FindCanvas();
 	GameObject* CreateGameObject(GameObject* parent = nullptr);
 	GameObject* CreateCube(GameObject* parent = nullptr);
 	GameObject* CreateMainCamera(GameObject* parent = nullptr);
+	GameObject* CreateCanvas(GameObject* parent = nullptr);
+	GameObject* CreateImage(GameObject* parent = nullptr);
+	GameObject* CreateButton(GameObject* parent = nullptr);
+	GameObject* CreateCheckBox(GameObject* parent = nullptr);
+	GameObject* CreateText(GameObject* parent = nullptr);
+	GameObject* CreateEditText(GameObject* parent = nullptr);
+
 	void DeleteAllGameObjects(GameObject* gameobject, bool isMain = true);
 	void DeleteGameObject(GameObject* gameobject, bool isImport = false);
 	// -------------------------------------

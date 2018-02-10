@@ -958,6 +958,25 @@ Component* GameObject::FindComponentByType(Comp_Type type) const
 	return comp;
 }
 
+Component * GameObject::FindParentComponentByType(Comp_Type type)const
+{
+	Component * ret = nullptr;
+	ret = parent->FindComponentByType(Comp_Type::C_CANVAS);
+	if (ret == nullptr)
+	{
+		GameObject* item = nullptr;
+		item = parent->GetParent();
+		while (item != nullptr)
+		{
+			ret = ((CompCanvas*)item->FindComponentByType(Comp_Type::C_CANVAS));
+			if (ret != nullptr)
+				break;
+			item = item->GetParent();
+		}
+	}
+	return ret;
+}
+
 Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 {
 	bool dupe = false;

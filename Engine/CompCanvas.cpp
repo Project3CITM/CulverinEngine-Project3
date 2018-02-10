@@ -110,6 +110,26 @@ void CompCanvas::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompCanvas::AddCanvasRender(CompCanvasRender* to_add)
+{
+	canvas_render.push_back(to_add);
+}
+
+void CompCanvas::RemoveCanvasRender(CompCanvasRender* to_remove)
+{
+	for (int i = 0; i < canvas_render.size(); i++)
+	{
+		if (canvas_render[i] == to_remove)
+		{
+			LOG("CanvasRender Removed from Canvas");
+			canvas_render.erase(canvas_render.begin()+i);
+			return;
+		}
+	}
+	LOG("Error:CanvasRender not found on this Canvas");
+
+}
+
 void CompCanvas::DrawCanvasRender()
 {
 	for (int i = 0; i < canvas_render.size(); i++)

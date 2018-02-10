@@ -7,6 +7,7 @@
 #include "CompImage.h"
 #include "CompText.h"
 #include "CompRectTransform.h"
+#include "CompCanvas.h"
 CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
@@ -113,6 +114,25 @@ void CompCanvasRender::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompCanvasRender::AddToCanvas()
+{
+	if (my_canvas == nullptr)
+	{
+		LOG("ERROR:CanvasRender with UID &i don't have Canvas", parent->GetUUID());
+	}
+	my_canvas->AddCanvasRender(this);
+}
+
+void CompCanvasRender::RemoveFromCanvas()
+{
+	if (my_canvas == nullptr)
+	{
+		LOG("ERROR:CanvasRender with UID &i don't have Canvas", parent->GetUUID());
+	}
+	my_canvas->RemoveCanvasRender(this);
+
+}
+
 void CompCanvasRender::ProcessImage(CompImage * image)
 {
 	graphic = image;
@@ -122,6 +142,8 @@ void CompCanvasRender::ProcessImage(CompImage * image)
 	//|		/	 |
 	//|	0 /		1|
 	//0,0-------1,0
+	
+	//Clear All Vertices and indices
 	vertices.clear();
 	indices.clear();
 
@@ -209,4 +231,9 @@ void CompCanvasRender::DrawGraphic()
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 
+}
+
+void CompCanvasRender::SetGraphic(CompGraphic * set_graphic)
+{
+	graphic = set_graphic;
 }

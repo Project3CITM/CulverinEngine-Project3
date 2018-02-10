@@ -160,14 +160,67 @@ void Hierarchy::ShowOptions()
 	}
 	if (ImGui::BeginMenu("UI"))
 	{
-		if (ImGui::MenuItem("Text", NULL, false, false))
+		if (ImGui::MenuItem("Canvas"))
 		{
-			//GameObject* cube = App->scene->CreateCube();
-			//App->gui->SetLinkInspector(cube);
+			GameObject* canvas = App->scene->CreateCanvas(canvas);
+			App->gui->SetLinkInspector(canvas);
+
 		}
-		ImGui::MenuItem("Image", NULL, false, false);
-		ImGui::MenuItem("Button", NULL, false, false);
-		ImGui::MenuItem("Canvas", NULL, false, false);
+		if (ImGui::MenuItem("Image"))
+		{
+			GameObject* canvas = App->scene->FindCanvas();
+			if (canvas == nullptr)
+			{
+				canvas = App->scene->CreateCanvas(canvas);
+			}
+			GameObject* text = App->scene->CreateImage(canvas);	
+			App->gui->SetLinkInspector(text);
+
+		}
+		if (ImGui::MenuItem("Button"))
+		{
+			GameObject* canvas = App->scene->FindCanvas();
+			if (canvas == nullptr)
+			{
+				canvas = App->scene->CreateCanvas(canvas);
+			}
+			GameObject* button = App->scene->CreateButton(canvas);	
+			App->gui->SetLinkInspector(button);
+
+		}
+		if (ImGui::MenuItem("Check Box"))
+		{
+			GameObject* canvas = App->scene->FindCanvas();
+			if (canvas == nullptr)
+			{
+				canvas = App->scene->CreateCanvas(canvas);
+			}
+			GameObject* check_box = App->scene->CreateCheckBox(canvas);
+			App->gui->SetLinkInspector(check_box);
+
+		}
+		if (ImGui::MenuItem("Text"))
+		{
+			GameObject* canvas = App->scene->FindCanvas();
+			if (canvas == nullptr)
+			{
+				canvas = App->scene->CreateCanvas(canvas);
+			}
+			GameObject* text = App->scene->CreateText(canvas);
+			App->gui->SetLinkInspector(text);
+
+		}
+		if (ImGui::MenuItem("Check Box"))
+		{
+			GameObject* canvas = App->scene->FindCanvas();
+			if (canvas == nullptr)
+			{
+				canvas = App->scene->CreateCanvas(canvas);
+			}
+			GameObject* edit_text = App->scene->CreateEditText(canvas);
+			App->gui->SetLinkInspector(edit_text);
+
+		}
 		ImGui::EndMenu();
 	}
 }

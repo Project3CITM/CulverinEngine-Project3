@@ -1,7 +1,7 @@
 #include "CompGraphic.h"
 #include "Application.h"
 #include "GameObject.h"
-
+#include "CompCanvasRender.h"
 
 
 CompGraphic::CompGraphic(Comp_Type t, GameObject * parent) :Component(t, parent)
@@ -17,6 +17,16 @@ CompGraphic::CompGraphic(const CompGraphic & copy, GameObject * parent) : Compon
 
 CompGraphic::~CompGraphic()
 {
+}
+
+void CompGraphic::AddCanvasRender()
+{
+	CompCanvasRender* my_canvas_render = (CompCanvasRender*)parent->FindComponentByType(Comp_Type::C_CANVAS_RENDER);
+	if (my_canvas_render != nullptr)
+	{
+		my_canvas_render->SetGraphic(this);
+	}
+
 }
 
 void CompGraphic::SetTextureID(uint set_texture_id)

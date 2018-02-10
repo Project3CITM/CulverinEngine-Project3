@@ -8,6 +8,13 @@
 #include "GameObject.h"
 #include "Component.h"
 #include "CompTransform.h"
+#include "CompRectTransform.h"
+#include "CompButton.h"
+#include "CompCheckBox.h"
+#include "CompImage.h"
+#include "CompCanvas.h"
+#include "CompEditText.h"
+#include "CompText.h"
 #include "CompMesh.h"
 #include "ResourceMesh.h"
 #include "ImportMesh.h"
@@ -423,6 +430,28 @@ void Scene::FillStaticObjectsVector(bool fill)
 	}
 }
 
+GameObject * Scene::FindCanvas()
+{
+	std::queue<GameObject*> queue;
+	queue.push(root);
+	CompCanvas* tmp = nullptr;
+	while (!queue.empty())
+	{
+		tmp = (CompCanvas*)queue.front()->FindComponentByType(Comp_Type::C_CANVAS);
+		if (tmp != nullptr)
+		{
+			return queue.front();
+		}
+		for (int i = 0;  i < queue.front()->GetChildsVec().size(); i++)
+		{
+		
+			queue.push(queue.front()->GetChildsVec()[i]);
+		}
+		queue.pop();
+	}
+	return nullptr;
+}
+
 GameObject* Scene::CreateGameObject(GameObject* parent)
 {
 	GameObject* obj = new GameObject(parent);
@@ -647,5 +676,193 @@ GameObject* Scene::CreateMainCamera(GameObject* parent)
 
 	LOG("MAIN CAMERA Created.");
 
+	return obj;
+}
+
+GameObject * Scene::CreateCanvas(GameObject * parent)
+{
+	GameObject* obj = new GameObject(parent);
+
+	// SET NAME -----------------------------------
+	std::string name = "Canvas";
+	char* name_str = new char[name.size() + 1];
+	strcpy(name_str, name.c_str());
+	obj->SetName(name_str);
+
+	// TRANSFORM COMPONENT --------------
+	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
+	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
+	transform->Enable();
+
+	// CANVAS COMPONENT -----------------
+	CompCanvas* canvas = (CompCanvas*)obj->AddComponent(Comp_Type::C_CANVAS);
+	canvas->Enable();
+
+	if (parent == nullptr)
+	{
+		// Only add to GameObjects list the Root Game Objects
+		App->scene->root->AddChildGameObject(obj);
+	}
+
+	LOG("CANVAS Created.");
+
+	return obj;
+}
+
+GameObject * Scene::CreateImage(GameObject * parent)
+{
+	GameObject* obj = new GameObject(parent);
+
+	// SET NAME -----------------------------------
+	std::string name = "Image";
+	char* name_str = new char[name.size() + 1];
+	strcpy(name_str, name.c_str());
+	obj->SetName(name_str);
+
+	// TRANSFORM COMPONENT --------------
+	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
+	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
+	transform->Enable();
+
+	// IMAGE COMPONENT -----------------
+	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
+	image->Enable();
+
+	if (parent == nullptr)
+	{
+		// Only add to GameObjects list the Root Game Objects
+		App->scene->root->AddChildGameObject(obj);
+	}
+
+	LOG("IMAGE Created.");
+
+	return obj;
+}
+
+GameObject * Scene::CreateButton(GameObject * parent)
+{
+	GameObject* obj = new GameObject(parent);
+
+	// SET NAME -----------------------------------
+	std::string name = "Button";
+	char* name_str = new char[name.size() + 1];
+	strcpy(name_str, name.c_str());
+	obj->SetName(name_str);
+
+	// TRANSFORM COMPONENT --------------
+	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
+	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
+	transform->Enable();
+
+	// IMAGE COMPONENT -----------------
+	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
+	image->Enable();
+
+	// BUTTON COMPONENT -----------------
+	CompButton* button = (CompButton*)obj->AddComponent(Comp_Type::C_BUTTON);
+	button->Enable();
+
+	if (parent == nullptr)
+	{
+		// Only add to GameObjects list the Root Game Objects
+		App->scene->root->AddChildGameObject(obj);
+	}
+
+	LOG("BUTTON Created.");
+
+	return obj;
+}
+
+GameObject * Scene::CreateCheckBox(GameObject * parent)
+{
+	GameObject* obj = new GameObject(parent);
+
+	// SET NAME -----------------------------------
+	std::string name = "Check Box";
+	char* name_str = new char[name.size() + 1];
+	strcpy(name_str, name.c_str());
+	obj->SetName(name_str);
+
+	// TRANSFORM COMPONENT --------------
+	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
+	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
+	transform->Enable();
+
+	// IMAGE COMPONENT -----------------
+	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
+	image->Enable();
+
+	// BUTTON COMPONENT -----------------
+	CompCheckBox* check_box = (CompCheckBox*)obj->AddComponent(Comp_Type::C_CHECK_BOX);
+	check_box->Enable();
+
+	if (parent == nullptr)
+	{
+		// Only add to GameObjects list the Root Game Objects
+		App->scene->root->AddChildGameObject(obj);
+	}
+
+	LOG("CHECK BOX Created.");
+
+	return obj;
+}
+
+GameObject * Scene::CreateText(GameObject * parent)
+{
+	GameObject* obj = new GameObject(parent);
+
+	// SET NAME -----------------------------------
+	std::string name = "Text";
+	char* name_str = new char[name.size() + 1];
+	strcpy(name_str, name.c_str());
+	obj->SetName(name_str);
+
+	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
+	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
+	transform->Enable();
+	// TEXT COMPONENT -----------------
+	CompText* text = (CompText*)obj->AddComponent(Comp_Type::C_TEXT);
+	text->Enable();
+
+
+
+	if (parent == nullptr)
+	{
+		// Only add to GameObjects list the Root Game Objects
+		App->scene->root->AddChildGameObject(obj);
+	}
+	LOG("TEXT Created.");
+
+	return obj;
+}
+
+GameObject * Scene::CreateEditText(GameObject * parent)
+{
+	GameObject* obj = new GameObject(parent);
+
+	// SET NAME -----------------------------------
+	std::string name = "Edit Text";
+	char* name_str = new char[name.size() + 1];
+	strcpy(name_str, name.c_str());
+	obj->SetName(name_str);
+
+	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
+	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
+	transform->Enable();
+
+	// TEXT COMPONENT -----------------
+	CompText* text = (CompText*)obj->AddComponent(Comp_Type::C_TEXT);
+	text->Enable();
+
+	// TEXT COMPONENT -----------------
+	CompEditText* edit_text = (CompEditText*)obj->AddComponent(Comp_Type::C_EDIT_TEXT);
+	text->Enable();
+
+	if (parent == nullptr)
+	{
+		// Only add to GameObjects list the Root Game Objects
+		App->scene->root->AddChildGameObject(obj);
+	}
+	LOG("EDIT TEXT Created.");
 	return obj;
 }

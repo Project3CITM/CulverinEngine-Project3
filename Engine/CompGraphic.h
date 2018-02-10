@@ -2,6 +2,7 @@
 #define COMPONENT_GRAPHIC_H
 #include "Component.h"
 class CompRectTransform;
+class CompCanvasRender;
 class CompGraphic : public Component
 {
 public:
@@ -9,12 +10,16 @@ public:
 	CompGraphic(const CompGraphic& copy, GameObject* parent);
 	~CompGraphic();
 
+	void AddCanvasRender();
+
 	void SetTextureID(uint set_texture_id);
+
 	uint GetTextureID()const;
 	CompRectTransform* GetRectTrasnform()const;
 private:
 public:
 private:
+	CompCanvasRender* my_canvas_render = nullptr;
 	CompRectTransform* transform = nullptr;
 	uint texture_id = 0;
 };

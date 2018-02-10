@@ -16,6 +16,8 @@ public:
 	void CopyValues(const CompCanvas * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+	void AddCanvasRender(CompCanvasRender* to_add);
+	void RemoveCanvasRender(CompCanvasRender* to_remove);
 	void DrawCanvasRender();
 private:
 public:

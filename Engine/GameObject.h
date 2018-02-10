@@ -71,10 +71,13 @@ public:
 	void NameNotRepeat(std::string& name, bool haveParent, GameObject* parent);
 
 	// Components -----------------------------
+
 	Component* AddComponent(Comp_Type type, bool isFromLoader = false);
 	void AddComponentCopy(const Component& copy);
 	int GetNumComponents() const;
 	Component* FindComponentByType(Comp_Type type) const;
+	Component* FindParentComponentByType(Comp_Type type)const;
+
 	CompTransform* GetComponentTransform() const;
 	CompRectTransform * GetComponentRectTransform() const;
 	CompMesh* GetComponentMesh() const;
