@@ -34,6 +34,9 @@ public:
 	void LoadAudioBanksFromScene(int number_of_banks, JSON_Object* config_node);
 
 
+	void ChangeVolume(float volume);
+	void Mute();
+
 	void SetListener(CompAudio* c);
 
 private:
@@ -45,8 +48,9 @@ private:
 	
 	std::vector <std::string> loaded_banks;
 
-	int volume = 0;
-	bool mute = false;
+	float volume = 0;
+	bool muted = false;
+	float last_volume = 0;
 
 	bool init_bank_not_loaded = false;
 	bool load_bank_window_opened = false;

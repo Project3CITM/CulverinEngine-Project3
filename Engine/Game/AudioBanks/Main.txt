@@ -1,19 +1,6 @@
 Event	ID	Name			Wwise Object Path	Notes
 	251412229	Shot			\Default Work Unit\Shot	
-	2837384057	Stop_Music			\Default Work Unit\Stop_Music	
-	2932040671	Play_Music			\Default Work Unit\Play_Music	
-	3412057565	Train			\Default Work Unit\Train	
-	3679762312	Resume_All			\Default Work Unit\Resume_All	
-	3864097025	Pause_All			\Default Work Unit\Pause_All	
-
-Game Parameter	ID	Name			Wwise Object Path	Notes
-	191401384	MaxDistanceAttenuation			\Default Work Unit\MaxDistanceAttenuation	
-	421429125	GeneralVolume			\Default Work Unit\GeneralVolume	
-	1908158473	Pitch			\Default Work Unit\Pitch	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	8751515	Polvos_mañaneros	C:\Users\Kay\Documents\WwiseProjects\ProyectoPrueba\.cache\Windows\SFX\Polvos_mañaneros_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\music1\music1_battle\battle_base\Polvos_mañaneros		39347776
-	200967748	No_todo_es_seda	C:\Users\Kay\Documents\WwiseProjects\ProyectoPrueba\.cache\Windows\SFX\No_todo_es_seda_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\music1\music1_overworld\overworld_base\No_todo_es_seda		56144124
-	601521417	Train	C:\Users\Kay\Documents\WwiseProjects\ProyectoPrueba\.cache\Windows\SFX\Train_fx_F17FB28C.wem		\Actor-Mixer Hierarchy\Default Work Unit\Train		3233344
-	1011403894	Shot	C:\Users\Kay\Documents\WwiseProjects\ProyectoPrueba\.cache\Windows\SFX\Shot_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shot		221116
+	351584646	Shot	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Shot_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shot		221116
 

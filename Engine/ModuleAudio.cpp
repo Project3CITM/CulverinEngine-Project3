@@ -38,7 +38,9 @@ bool ModuleAudio::Init(JSON_Object* node)
 		LOG("CAUTION: Init sound bank not loaded");
 
 	volume = json_object_get_number(node, "Volume");
-	mute = json_object_get_boolean(node, "Mute");
+	muted = json_object_get_boolean(node, "Mute");
+	last_volume = json_object_get_number(node, "LastVolume");
+	ChangeVolume(volume);
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;
@@ -87,7 +89,9 @@ bool ModuleAudio::SaveConfig(JSON_Object * node)
 {
 	//Save audio config info --------------------------------
 	json_object_set_number(node, "Volume", volume);
-	json_object_set_boolean(node, "Mute", mute);
+	json_object_set_boolean(node, "Mute", muted);
+	json_object_set_number(node, "LastVolume", last_volume);
+
 	// ------------------------------------------------------
 	return true;
 }
@@ -197,17 +201,19 @@ void ModuleAudio::UnloadAllBanks()
 
 update_status ModuleAudio::UpdateConfig(float dt)
 {
-	if (ImGui::SliderInt("Volume", &volume, 0, 100))
+	if (ImGui::SliderFloat("Volume", &volume, 0, 100))
 	{
-		if (mute == false)
+		if (muted == false)
 		{
-			//change volume
+			ChangeVolume(volume);
 		}
+		else volume = 0;
 	}
 
-	if (ImGui::Checkbox("Mute", &mute))
+	static bool m = muted;
+	if (ImGui::Checkbox("Mute", &m))
 	{
-		//mute
+		Mute();
 	}
 	return UPDATE_CONTINUE;
 }
@@ -253,7 +259,26 @@ void ModuleAudio::SetListener(CompAudio * c)
 	else 	Wwished::SetDefaultListener(0);
 }
 
+void ModuleAudio::ChangeVolume(float new_volume)
+{
+	volume = new_volume;
+	Wwished::Utility::SetRTPCValue("General_Volume", volume);
+}
 
+void ModuleAudio::Mute()
+{
+	if (muted == false)
+	{
+		last_volume = volume;
+		ChangeVolume(0);
+		muted = true;
+	}
+	else if (muted == true)
+	{
+		ChangeVolume(last_volume);
+		muted = false;
+	}
+}
 
 int ModuleAudio::LoadBank(const char * bank_name)
 {
