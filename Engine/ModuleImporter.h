@@ -44,7 +44,7 @@ public:
 	bool CleanUp();
 
 
-	bool Import(const char* file, Resource::Type type);
+	bool Import(const char* file, Resource::Type type, bool isAutoImport = false);
 	bool Import(const char* file, Resource::Type type, std::vector<ReImport>& resourcesToReimport);
 	//FileTypeImport CheckFileType(char* filedir);
 	//bool Import();

@@ -73,7 +73,7 @@ void ImportScript::ShutdownMono()
 	mono_jit_cleanup(mono_domain_get());
 }
 
-bool ImportScript::Import(const char* file, uint uuid)
+bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
 {
 	uint uuid_script = 0;
 	if (uuid == 0) // if direfent create a new resource with the resource deleted
@@ -127,8 +127,14 @@ bool ImportScript::Import(const char* file, uint uuid)
 			// Then Create Meta
 			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
 			Newdirectory += "\\" + App->fs->FixName_directory(file);
-			App->json_seria->SaveScript(res_script, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
-
+			if (isAutoImport)
+			{
+				App->json_seria->SaveScript(res_script, App->fs->GetFullPath(file).c_str(), Newdirectory.c_str());
+			}
+			else
+			{
+				App->json_seria->SaveScript(res_script, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+			}
 		}
 	}
 	return true;

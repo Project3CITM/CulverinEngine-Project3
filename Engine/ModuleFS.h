@@ -97,6 +97,7 @@ public:
 	std::string FixName_directory(std::string files);
 	std::string FixExtension(std::string file, const char* newExtension = nullptr);
 	std::string GetFullPath(std::string path);
+	std::string GetOnlyPath(std::string file);
 	std::string GetExtension(std::string file);
 	char* ConverttoChar(std::string name);
 	void NormalitzatePath(std::string& path) const;

@@ -22,7 +22,7 @@ ImportMaterial::~ImportMaterial()
 {
 }
 
-bool ImportMaterial::Import(const char* file, uint uuid)
+bool ImportMaterial::Import(const char* file, uint uuid, bool isAutoImport)
 {
 	bool ret = false;
 	char* buffer;
@@ -48,8 +48,15 @@ bool ImportMaterial::Import(const char* file, uint uuid)
 			ResourceMaterial* res_material = (ResourceMaterial*)App->resource_manager->CreateNewResource(Resource::Type::MATERIAL, uuid_mesh);
 			res_material->InitInfo(App->fs->FixName_directory(file).c_str(), file);
 			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-			Newdirectory += "\\" +App->fs->FixName_directory(file);
-			App->json_seria->SaveMaterial(res_material, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+			Newdirectory += "\\" + App->fs->FixName_directory(file);
+			if (isAutoImport)
+			{
+				App->json_seria->SaveMaterial(res_material, App->fs->GetOnlyPath(file).c_str(), Newdirectory.c_str());
+			}
+			else
+			{
+				App->json_seria->SaveMaterial(res_material, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+			}
 			std::string name = std::to_string(uuid_mesh);
 			name = App->fs->FixName_directory(name);//?
 			name = App->fs->FixExtension(name, ".dds");

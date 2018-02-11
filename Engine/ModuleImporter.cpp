@@ -215,7 +215,7 @@ bool ModuleImporter::CleanUp()
 	return true;
 }
 
-bool ModuleImporter::Import(const char* file, Resource::Type type)
+bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoImport)
 {
 	bool ret = true;
 
@@ -236,7 +236,15 @@ bool ModuleImporter::Import(const char* file, Resource::Type type)
 			//Now Save Serialitzate OBJ -> Prefab
 			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
 			Newdirectory += "\\" + App->fs->FixName_directory(file);
-			App->json_seria->SavePrefab(*obj, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+			if (isAutoImport)
+			{
+				
+				App->json_seria->SavePrefab(*obj, App->fs->GetOnlyPath(file).c_str(), Newdirectory.c_str());
+			}
+			else
+			{
+				App->json_seria->SavePrefab(*obj, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+			}
 
 			//App->scene->gameobjects.push_back(obj);
 			App->scene->DeleteGameObject(obj, true);
@@ -252,14 +260,14 @@ bool ModuleImporter::Import(const char* file, Resource::Type type)
 	case Resource::Type::MATERIAL:
 	{
 		LOG("IMPORTING TEXTURE, File Path: %s", file);
-		iMaterial->Import(file);
+		iMaterial->Import(file, 0, isAutoImport);
 
 		break;
 	}
 	case Resource::Type::SCRIPT:
 	{
 		LOG("IMPORTING SCRIPT, File Path: %s", file);
-		iScript->Import(file);
+		iScript->Import(file, 0, isAutoImport);
 
 		break;
 	}

@@ -272,7 +272,7 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 		temp += ".meta.json";
 		if (std::experimental::filesystem::exists(temp) == false && strcmp(GetExtension(files[i].directory_name).c_str(), "scene.json") != 0)
 		{
-			App->importer->Import(files[i].directory_name, App->resource_manager->CheckFileType(files[i].directory_name));
+			App->importer->Import(files[i].directory_name, App->resource_manager->CheckFileType(files[i].directory_name), true);
 		}
 	}
 	return true;
@@ -921,13 +921,17 @@ std::string ModuleFS::GetFullPath(std::string path)
 	{
 		std::experimental::filesystem::path getpath(path);
 		std::experimental::filesystem::path full_path = std::experimental::filesystem::system_complete(getpath);
-		if (std::experimental::filesystem::is_directory(full_path) == false)
-		{
-			full_path = std::experimental::filesystem::absolute(full_path);
-		}
 		return full_path.string();
 	}
 	return "";
+}
+
+std::string ModuleFS::GetOnlyPath(std::string file)
+{
+	NormalitzatePath(file);
+	size_t EndName = file.find_last_of("/");
+	file = file.substr(0, EndName);
+	return file;
 }
 
 std::string ModuleFS::GetExtension(std::string file)

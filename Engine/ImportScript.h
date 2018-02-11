@@ -24,7 +24,7 @@ public:
 	bool InitScriptingSystem();
 	void ShutdownMono();
 
-	bool Import(const char* file, uint uuid = 0);
+	bool Import(const char* file, uint uuid = 0, bool isAutoImport = false);
 	bool LoadResource(const char* file, ResourceScript* resourceScript);
 	bool ReImportScript(std::string fileAssets, std::string uid_script, ResourceScript * resourceScript);
 	MonoDomain* Load_domain();
