@@ -268,9 +268,11 @@ void CompScript::ShowInspectorInfo()
 	{
 		ImGui::Text("NAME:"); ImGui::SameLine();
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Script)");
-		if (ImGui::Button("Create New Script"))
+		char creat_string[50];
+		sprintf(creat_string,"Create New Script##%i", uid);
+		if (ImGui::Button(creat_string))
 		{
-			//Need Implementation... TODO
+			App->gui->ShowCreateNewScriptWindow();
 		}
 	}
 
@@ -311,7 +313,9 @@ void CompScript::ShowInspectorInfo()
 	{
 		if (resource_script == nullptr)
 		{
-			if (ImGui::Button("Select Script..."))
+			char select_str[50];
+			sprintf(select_str, "Select Script...##%i", uid);
+			if (ImGui::Button(select_str))
 			{
 				select_script = true;
 			}

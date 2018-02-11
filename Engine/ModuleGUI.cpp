@@ -1071,3 +1071,8 @@ void ModuleGUI::ShowEngineState()
 	}
 	ImGui::PopStyleColor();
 }
+
+void ModuleGUI::ShowCreateNewScriptWindow()
+{
+	window_create_new_script = true;
+}
