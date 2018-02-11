@@ -34,6 +34,8 @@ class ModuleEventSystem;
 class ModuleShaders;
 class JSONSerialization;
 class ModuleRenderGui;
+class ModulePhysics;
+
 enum EngineState
 {
 	PLAY = 0,
@@ -124,6 +126,7 @@ public:
 	ModuleEventSystem* event_system = nullptr;
 	ModuleShaders* module_shaders = nullptr;
 	ModuleRenderGui* render_gui = nullptr;
+	ModulePhysics* physics = nullptr;
 
 private:
 	std::vector<Module*> list_modules;

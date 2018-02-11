@@ -13,6 +13,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleEventSystem.h"
 #include "ModuleRenderGui.h"
+#include "ModulePhysics.h"
 #include "parson.h"
 #include "PerfTimer.h"
 #include "WindowSceneWorld.h"
@@ -51,6 +52,8 @@ Application::Application()
 
 	module_shaders = new ModuleShaders();
 
+	physics = new ModulePhysics();
+
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
@@ -60,6 +63,7 @@ Application::Application()
 	AddModule(fs);
 	AddModule(camera);
 	AddModule(resource_manager);
+	AddModule(physics);
 	AddModule(input);
 	AddModule(audio);
 	AddModule(console);
