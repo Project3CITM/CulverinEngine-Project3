@@ -41,7 +41,10 @@ public:
 
 	void   AddShaderList(Shader* newShader);
 
+	void ImportShaders();
 
+
+	std::string Shader_Directory_fs;
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;
 };

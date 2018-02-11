@@ -1,5 +1,7 @@
 #include "ModuleShaders.h"
 #include "ShadersLib.h"
+#include "ModuleFS.h"
+#include"Application.h"
 
 ModuleShaders::ModuleShaders()
 {
@@ -11,11 +13,14 @@ ModuleShaders::~ModuleShaders()
 
 bool ModuleShaders::Init(JSON_Object * node)
 {
+	Shader_Directory_fs = "Assets/Shaders";
+
 	return true;
 }
 
 bool ModuleShaders::Start()
 {
+	ImportShaders();
 	return true;
 }
 
@@ -281,4 +286,46 @@ Shader* ModuleShaders::CompileShader(std::string path, ShaderType type)
 void ModuleShaders::AddShaderList(Shader* newShader)
 {
 	shaders.push_back(newShader);
+}
+
+void ModuleShaders::ImportShaders()
+{
+	namespace stdfs = std::experimental::filesystem;
+
+	for (stdfs::directory_iterator::value_type item : stdfs::directory_iterator(Shader_Directory_fs))
+	{
+		std::string str_path = item.path().string().c_str();
+
+		std::string extension_path=	App->fs->GetExtension(str_path);
+
+		if (extension_path == "vert" || extension_path == "frag" || extension_path == "geom") {
+
+			char* buffer;
+			App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
+
+			if (extension_path == "vert") {
+
+				if (buffer != nullptr) {
+					Shader* shader_temp = CompileShader(str_path, ShaderType::vertex);
+				}
+
+			}
+			else if (extension_path == "frag") {
+
+				if (buffer != nullptr) {
+					Shader* shader_temp = CompileShader(str_path, ShaderType::fragment);
+				}
+
+			}
+			else if (extension_path == "geom") {
+
+				if (buffer != nullptr) {
+					Shader* shader_temp = CompileShader(str_path, ShaderType::geometry);
+				}
+			}
+
+			//maybe delete buffer?
+
+		}
+	}
 }

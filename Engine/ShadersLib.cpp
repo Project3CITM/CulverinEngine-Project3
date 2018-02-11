@@ -87,3 +87,4 @@ GLint ShaderProgram::GetVariablesSize() const
 	glGetProgramiv(programID, GL_ACTIVE_UNIFORMS, &total);
 	return total;
 }
+

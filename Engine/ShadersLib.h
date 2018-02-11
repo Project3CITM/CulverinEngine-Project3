@@ -102,7 +102,6 @@ public:
 
 	GLint  GetVariablesSize()const;
 
-
 public:
 	std::string name;
 
