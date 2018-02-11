@@ -46,6 +46,7 @@ public:
 	void ShowWindowExit(bool* active);
 	void ShowCameraMissing();
 	void ShowEngineState();
+	void ShowCreateNewScriptWindow();
 
 	void ShowStyleEditor(ImGuiStyle* ref = NULL);
 	//void ShowConfig();
@@ -71,6 +72,7 @@ public:
 	//------------------------------
 
 private:
+
 	//WINDOW EXIT -------------
 	bool game_save = false;
 	bool reposition_exit = true;
