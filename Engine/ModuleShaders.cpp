@@ -48,6 +48,21 @@ update_status ModuleShaders::PreUpdate(float dt)
 
 update_status ModuleShaders::Update(float dt)
 {
+	std::vector<ShaderProgram*>::iterator item = programs.begin();
+	static float time_dt = 0;
+	time_dt += dt * App->game_time.time_scale;
+	while (item != programs.end())
+	{
+		(*item)->Bind();
+
+		//TIME		
+		GLint timeLoc = glGetUniformLocation((*item)->programID, "_time");
+		glUniform1f(timeLoc, time_dt);
+
+
+		(*item)->Unbind();
+		item++;
+	}
 	
 	return update_status::UPDATE_CONTINUE;
 }

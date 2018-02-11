@@ -14,7 +14,7 @@
 #include "WindowInspector.h"
 #include "ModuleCamera3D.h"
 #include <vector>
-
+#include "CompCamera.h"
 
 CompMesh::CompMesh(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
@@ -241,8 +241,8 @@ void CompMesh::Draw()
 	if (render && resource_mesh != nullptr)
 	{
 		ShaderProgram* shader = App->renderer3D->default_shader;
-		//if (material->material_shader)
-			//shader = material->material_shader;
+		//if (material->material_shader != nullptr)
+			shader = (ShaderProgram*)&material->material_shader;
 
 		shader->Bind();
 
@@ -325,7 +325,7 @@ void CompMesh::Draw()
 			}
 
 	
-			Frustum camFrust = App->camera->GetFrustum();
+			Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 			float4x4 temp = camFrust.ViewMatrix();
 
 			GLint view2Loc = glGetUniformLocation(shader->programID, "view");

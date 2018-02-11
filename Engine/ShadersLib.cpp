@@ -47,6 +47,19 @@ bool ShaderProgram::LoadProgram()
 	}
 
 
+	uint var_size = GetVariablesSize();
+	for (int i = 0; i < var_size; i++) {
+		UniformVar temp = GetVariableInfo(i);
+
+		//Textures
+		if (temp.type == 35678) {
+			TextureVar texture_var;
+			texture_var.var_name = temp.name;
+			textures.push_back(texture_var);
+		}
+
+	}
+
 	return true;
 
 }
