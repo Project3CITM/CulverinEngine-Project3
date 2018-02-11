@@ -280,6 +280,21 @@ void ModuleAudio::Mute()
 	}
 }
 
+void ModuleAudio::StopSounds()
+{
+	Wwished::Utility::StopAllSounds();
+}
+
+void ModuleAudio::PauseSounds()
+{
+	Wwished::Utility::PauseAllSounds();
+}
+
+void ModuleAudio::ResumeSounds()
+{
+	Wwished::Utility::RestartAllSounds();
+}
+
 int ModuleAudio::LoadBank(const char * bank_name)
 {
 	int result = Wwished::Utility::LoadBank(bank_name);

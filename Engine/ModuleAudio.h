@@ -37,6 +37,10 @@ public:
 	void ChangeVolume(float volume);
 	void Mute();
 
+	void StopSounds();
+	void PauseSounds();
+	void ResumeSounds();
+
 	void SetListener(CompAudio* c);
 
 private:
