@@ -1028,7 +1028,7 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 	for (uint i = 0; i < components.size(); i++)
 	{
 		//We need to check if there is already a component of that type (no duplication)
-		if (components[i]->GetType() == type) 
+		if (components[i]->GetType() == type && type != Comp_Type::C_SCRIPT) 
 		{
 			dupe = true;
 			LOG("There's already one component of this type in '%s'.", name);
