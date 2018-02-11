@@ -308,11 +308,13 @@ void CompRectTransform::Load(const JSON_Object* object, std::string name)
 
 void CompRectTransform::SetWidth(int set_width)
 {
+	update_rect = true;
 	width = set_width;
 }
 
 void CompRectTransform::SetHeight(int set_height)
 {
+	update_rect = true;
 	height = set_height;
 }
 
@@ -331,6 +333,11 @@ void CompRectTransform::SetPivot(float2 set_pivot)
 	left_pivot = pivot;
 	right_pivot = float2(1.0f - pivot.x, 1.0f - pivot.y);
 	pivot = set_pivot;
+}
+
+void CompRectTransform::SetUpdateRect(bool set_update_rect)
+{
+	update_rect = set_update_rect;
 }
 
 int CompRectTransform::GetWidth()const
@@ -356,6 +363,11 @@ float2 CompRectTransform::GetMinAnchor()const
 float2 CompRectTransform::GetPivot()const
 {
 	return pivot;
+}
+
+bool CompRectTransform::GetUpdateRect() const
+{
+	return update_rect;
 }
 
 float3 CompRectTransform::GetNorthEastPosition()const

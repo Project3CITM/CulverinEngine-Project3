@@ -11,6 +11,7 @@ public:
 	CompImage(const CompImage& copy, GameObject* parent);
 	~CompImage();
 	void PreUpdate(float dt);
+	void Update(float dt);
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompImage * component);

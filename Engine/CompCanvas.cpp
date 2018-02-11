@@ -32,6 +32,17 @@ void CompCanvas::Update(float dt)
 	PushEvent(draw_mode);
 }
 
+void CompCanvas::Clear()
+{
+	for (int i = 0;i<App->render_gui->screen_space_canvas.size(); i++)
+	{
+		if (App->render_gui->screen_space_canvas[i] == this)
+		{
+			App->render_gui->screen_space_canvas.erase(App->render_gui->screen_space_canvas.begin() + i);
+		}
+	}
+}
+
 void CompCanvas::ShowOptions()
 {
 	//ImGui::MenuItem("CREATE", NULL, false, false);

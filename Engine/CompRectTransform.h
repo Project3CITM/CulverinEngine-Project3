@@ -21,12 +21,14 @@ public:
 	void SetMaxAnchor(float2 set_max_anchor);
 	void SetMinAnchor(float2 set_min_anchor);
 	void SetPivot(float2 set_pivot);
+	void SetUpdateRect(bool set_update_rect);
 
 	int GetWidth()const;
 	int GetHeight()const;
 	float2 GetMaxAnchor()const;
 	float2 GetMinAnchor()const;
 	float2 GetPivot()const;
+	bool GetUpdateRect()const;
 
 	float3 GetNorthEastPosition()const;
 	float3 GetNorthWestPosition()const;
@@ -41,6 +43,7 @@ private:
 	float2 pivot;
 	float2 left_pivot;
 	float2 right_pivot;
+	bool update_rect = false;
 	bool ignore_z = false;
 };
 

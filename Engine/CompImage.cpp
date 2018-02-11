@@ -7,7 +7,7 @@
 #include "ImportMaterial.h"
 #include "ResourceMaterial.h"
 #include "CompCanvasRender.h"
-
+#include "CompRectTransform.h"
 
 CompImage::CompImage(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
@@ -64,6 +64,21 @@ void CompImage::PreUpdate(float dt)
 	// -------------------------------------------------------------------
 }
 
+
+
+void CompImage::Update(float dt)
+{
+
+	if (transform != nullptr)
+	{
+		if (transform->GetUpdateRect() && my_canvas_render!=nullptr)
+		{
+			my_canvas_render->ProcessImage(this);
+			transform->SetUpdateRect(false);
+		}
+	}
+
+}
 void CompImage::ShowOptions()
 {	
 	//ImGui::MenuItem("CREATE", NULL, false, false);

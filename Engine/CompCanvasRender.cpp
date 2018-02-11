@@ -187,13 +187,12 @@ void CompCanvasRender::ProcessImage(CompImage * image)
 		//----
 		glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CanvasVertex), &vertices[0], GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
-		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void CompCanvasRender::PorcessText(CompText * text)
@@ -220,18 +219,18 @@ void CompCanvasRender::DrawGraphic()
 	if (graphic->GetTextureID() != -1)
 	{
 		glBindTexture(GL_TEXTURE_2D, graphic->GetTextureID());
-		//	glColor4f(image->GetImage()->GetRGBA().x, image->GetImage()->GetRGBA().y, image->GetImage()->GetRGBA().z, image->GetImage()->GetRGBA().w);
+		//glColor4f(image->GetImage()->GetRGBA().x, image->GetImage()->GetRGBA().y, image->GetImage()->GetRGBA().z, image->GetImage()->GetRGBA().w);
 	}
+	
 	*/
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
+	glBindBuffer(GL_ARRAY_BUFFER, this->vertices_id);
 	glVertexPointer(3, GL_FLOAT, sizeof(CanvasVertex), NULL);
 	//glNormalPointer(GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normals));
 	glTexCoordPointer(2, GL_FLOAT, sizeof(CanvasVertex), (void*)offsetof(CanvasVertex, tex_coords));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indices_id);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 

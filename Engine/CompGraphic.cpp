@@ -20,9 +20,10 @@ CompGraphic::~CompGraphic()
 {
 }
 
+
 void CompGraphic::AddCanvasRender()
 {
-	CompCanvasRender* my_canvas_render = (CompCanvasRender*)parent->FindComponentByType(Comp_Type::C_CANVAS_RENDER);
+	my_canvas_render = (CompCanvasRender*)parent->FindComponentByType(Comp_Type::C_CANVAS_RENDER);
 	if (my_canvas_render != nullptr)
 	{
 		my_canvas_render->SetGraphic(this);
@@ -43,4 +44,9 @@ uint CompGraphic::GetTextureID() const
 CompRectTransform * CompGraphic::GetRectTrasnform() const
 {
 	return transform;
+}
+
+CompCanvasRender * CompGraphic::GetCanvasRender() const
+{
+	return my_canvas_render;
 }

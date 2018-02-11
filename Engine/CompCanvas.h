@@ -13,7 +13,7 @@ public:
 	CompCanvas(const CompCanvas& copy, GameObject* parent);
 	~CompCanvas();
 	void Update(float dt);
-
+	void Clear();
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompCanvas * component);
