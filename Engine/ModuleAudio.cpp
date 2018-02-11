@@ -250,6 +250,7 @@ void ModuleAudio::SetListener(CompAudio * c)
 
 	if(current_listener)
 		Wwished::SetDefaultListener(current_listener->GetEmitterID());
+	else 	Wwished::SetDefaultListener(0);
 }
 
 
