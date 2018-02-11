@@ -2,6 +2,7 @@
 #include "ShadersLib.h"
 #include "ModuleFS.h"
 #include"Application.h"
+#include"JSONSerialization.h"
 
 ModuleShaders::ModuleShaders()
 {
@@ -20,15 +21,18 @@ bool ModuleShaders::Init(JSON_Object * node)
 
 bool ModuleShaders::Start()
 {
-	ImportShaders();
-	
-	ShaderProgram* test = new ShaderProgram();
+	ImportShaderObjects();
+
+	/*ShaderProgram* test = new ShaderProgram();
 	test->AddFragment(shaders[0]);
 	test->AddVertex(shaders[1]);
 	test->LoadProgram();
 	test->name = "Test_Material";
-	test->path = Shader_Directory_fs+"/Test_Material";
-	test->CreateMaterialFile();
+	test->path = Shader_Directory_fs+"/Test_Material.mat";
+	test->CreateMaterialFile();*/
+
+	ImportShaderMaterials();
+
 	return true;
 }
 
@@ -299,7 +303,7 @@ void ModuleShaders::AddShaderList(Shader* newShader)
 	shaders.push_back(newShader);
 }
 
-void ModuleShaders::ImportShaders()
+void ModuleShaders::ImportShaderObjects()
 {
 	namespace stdfs = std::experimental::filesystem;
 
@@ -309,7 +313,8 @@ void ModuleShaders::ImportShaders()
 
 		std::string extension_path=	App->fs->GetExtension(str_path);
 
-		if (extension_path == "vert" || extension_path == "frag" || extension_path == "geom") {
+		if (extension_path == "vert" || extension_path == "frag" || extension_path == "geom" || extension_path == "mat") 
+		{
 
 			size_t size_name_front = str_path.rfind("\\")+1;
 			size_t size_name_end = str_path.rfind(".");
@@ -318,29 +323,105 @@ void ModuleShaders::ImportShaders()
 			char* buffer;
 			App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
 
-			if (extension_path == "vert") {
+			if (extension_path == "vert") 
+			{
 
-				if (buffer != nullptr) {
+				if (buffer != nullptr) 
+				{
 					Shader* shader_temp = CompileShader(str_path, name,ShaderType::vertex);
 				}
 
 			}
-			else if (extension_path == "frag") {
+			else if (extension_path == "frag") 
+			{
 
-				if (buffer != nullptr) {
+				if (buffer != nullptr) 
+				{
 					Shader* shader_temp = CompileShader(str_path, name,ShaderType::fragment);
 				}
 
 			}
-			else if (extension_path == "geom") {
+			else if (extension_path == "geom") 
+			{
 
-				if (buffer != nullptr) {
+				if (buffer != nullptr) 
+				{
 					Shader* shader_temp = CompileShader(str_path, name,ShaderType::geometry);
 				}
 			}
+		
+
 
 			//maybe delete buffer?
 
 		}
 	}
+}
+
+void ModuleShaders::ImportShaderMaterials()
+{
+
+	namespace stdfs = std::experimental::filesystem;
+
+	for (stdfs::directory_iterator::value_type item : stdfs::directory_iterator(Shader_Directory_fs))
+	{
+		std::string str_path = item.path().string().c_str();
+
+		std::string extension_path = App->fs->GetExtension(str_path);
+
+			if (extension_path == "mat")
+			{
+
+				size_t size_name_front = str_path.rfind("\\") + 1;
+				size_t size_name_end = str_path.rfind(".");
+				std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
+
+				char* buffer;
+				App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
+
+				if (buffer != nullptr)
+				{
+					JSON_Object* obj_proj;
+					JSON_Value* file_proj;
+					App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, str_path.c_str());
+					ShaderProgram* mat_shader = CreateShader("name");
+					if (json_object_has_value(obj_proj, "Fragment Shader") > 0)
+					{
+						std::string frag_name = json_object_get_string(obj_proj, "Fragment Shader");
+						mat_shader->fragment = GetShaderByName(frag_name.c_str());
+					}
+					if (json_object_has_value(obj_proj, "Vertex Shader") > 0)
+					{
+						std::string vertex_name = json_object_get_string(obj_proj, "Vertex Shader");
+						mat_shader->vertex = GetShaderByName(vertex_name.c_str());
+					}
+					if (json_object_has_value(obj_proj, "Geometry Shader"))
+					{
+						std::string geometry_name = json_object_get_string(obj_proj, "Geometry Shader");
+						mat_shader->geometry = GetShaderByName(geometry_name.c_str());
+					}
+
+					mat_shader->LoadProgram();
+					mat_shader->CreateMaterialFile();
+				}
+			}
+
+	}
+
+
+}
+
+Shader * ModuleShaders::GetShaderByName(const char * name)
+{
+
+	for (std::vector<Shader*>::const_iterator item = shaders.cbegin(); item != shaders.cend(); item++) 
+	{
+
+		if ((*item)->name == name) 
+		{
+			return *item;
+		}
+
+	}
+	return nullptr;
 }

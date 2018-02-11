@@ -50,7 +50,9 @@ public:
 	ReImport GetUUIDScript(const char* file);
 	// -----------------------------------------------
 
+	// This function will recive a path and will return a json_obj and json_value pointing to the file, to read and write
 	void Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile);
+	//----------------------------------------------------------------
 
 private:
 	// UUID & Name

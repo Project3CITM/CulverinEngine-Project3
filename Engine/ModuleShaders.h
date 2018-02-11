@@ -41,8 +41,11 @@ public:
 
 	void   AddShaderList(Shader* newShader);
 
-	void ImportShaders();
+	void ImportShaderObjects();
 
+	void ImportShaderMaterials();
+
+	Shader* GetShaderByName(const char* name);
 
 	std::string Shader_Directory_fs;
 	std::vector<Shader*> shaders;

@@ -504,7 +504,8 @@ ReImport JSONSerialization::GetUUIDScript(const char * file)
 	return ReImport();
 }
 
-void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile) {
+void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile) 
+{
 	json_set_allocation_functions(counted_malloc, counted_free);
 
 	*root_value_scene = json_value_init_object();
@@ -580,7 +581,10 @@ void JSONSerialization::GetAllNames(const std::vector<GameObject*>& gameobjects)
 	}
 }
 
-static void *counted_malloc(size_t size) {
+//Functions to support the function Create_Json_Doc-------------------
+
+static void *counted_malloc(size_t size) 
+{
 	void *res = malloc(size);
 	if (res != NULL) {
 		malloc_count++;
@@ -588,9 +592,12 @@ static void *counted_malloc(size_t size) {
 	return res;
 }
 
-static void counted_free(void *ptr) {
+static void counted_free(void *ptr) 
+{
 	if (ptr != NULL) {
 		malloc_count--;
 	}
 	free(ptr);
 }
+
+//---------------------------------------------------------------------------
