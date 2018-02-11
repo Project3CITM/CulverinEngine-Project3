@@ -264,6 +264,8 @@
     <ClInclude Include="PhysX\Include\GeomUtils\GuContactPoint.h" />
     <ClInclude Include="PhysX\Include\gpu\PxGpu.h" />
     <ClInclude Include="PhysX\Include\gpu\PxParticleGpu.h" />
+    <ClInclude Include="PhysX\Include\jpPhysicsRigidBody.h" />
+    <ClInclude Include="PhysX\Include\jpPhysicsWorld.h" />
     <ClInclude Include="PhysX\Include\particles\PxParticleBase.h" />
     <ClInclude Include="PhysX\Include\particles\PxParticleBaseFlag.h" />
     <ClInclude Include="PhysX\Include\particles\PxParticleCreationData.h" />
@@ -467,6 +469,8 @@
     <ClCompile Include="ModuleRenderGui.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleShaders.cpp" />
+    <ClCompile Include="PhysX\Include\jpPhysicsRigidBody.cpp" />
+    <ClCompile Include="PhysX\Include\jpPhysicsWorld.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="JSONSerialization.cpp" />
     <ClCompile Include="ResourceAnimation.cpp" />

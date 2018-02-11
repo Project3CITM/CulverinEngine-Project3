@@ -276,7 +276,7 @@ public:
 
 	@see PxClothFabric PxClothFabric.release() PxCloth
 	*/
-	PX_DEPRECATED virtual PxClothFabric*	createClothFabric(const PxClothFabricDesc& desc) = 0;
+//	PX_DEPRECATED virtual PxClothFabric*	createClothFabric(const PxClothFabricDesc& desc) = 0;
 
 	/**
 	\brief Return the number of cloth fabrics that currently exist.

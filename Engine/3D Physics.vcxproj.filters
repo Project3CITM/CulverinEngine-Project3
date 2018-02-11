@@ -124,6 +124,9 @@
     <Filter Include="Engine\PhysX\Task">
       <UniqueIdentifier>{fd80a174-032b-4611-a524-f57e6d7ac4a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\PhysX\jpPhysX">
+      <UniqueIdentifier>{1ef8a2bb-0ccd-42f5-adcb-e22c9e15b491}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -1116,6 +1119,12 @@
     <ClInclude Include="ModulePhysics.h">
       <Filter>Engine\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="PhysX\Include\jpPhysicsRigidBody.h">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\jpPhysicsWorld.h">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1450,6 +1459,12 @@
     </ClCompile>
     <ClCompile Include="ModulePhysics.cpp">
       <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysX\Include\jpPhysicsRigidBody.cpp">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysX\Include\jpPhysicsWorld.cpp">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
