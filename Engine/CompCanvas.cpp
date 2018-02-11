@@ -5,12 +5,17 @@
 #include "GameObject.h"
 #include "Scene.h"
 #include "CompCanvasRender.h"
-
-
+#include "EventDef.h"
+#include "ModuleEventSystem.h"
+#include "ModuleRenderGui.h"
 CompCanvas::CompCanvas(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Canvas";
+	draw_mode.type = EventType::EVENT_DRAW;
+	draw_mode.draw.Dtype = draw_mode.draw.DRAW_2D;
+	draw_mode.draw.ToDraw = this;
+	draw_mode.draw.DistanceCamToObject = 0.0f;
 }
 
 CompCanvas::CompCanvas(const CompCanvas & copy, GameObject * parent) :Component(Comp_Type::C_CANVAS, parent)
@@ -19,6 +24,12 @@ CompCanvas::CompCanvas(const CompCanvas & copy, GameObject * parent) :Component(
 
 CompCanvas::~CompCanvas()
 {
+}
+
+void CompCanvas::Update(float dt)
+{
+	App->render_gui->screen_space_canvas.push_back(this);
+	PushEvent(draw_mode);
 }
 
 void CompCanvas::ShowOptions()
@@ -134,6 +145,7 @@ void CompCanvas::DrawCanvasRender()
 {
 	for (int i = 0; i < canvas_render.size(); i++)
 	{
-		canvas_render[i]->Draw();
+		canvas_render[i]->DrawGraphic();
 	}
+	canvas_render.clear();
 }

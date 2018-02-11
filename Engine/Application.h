@@ -33,7 +33,7 @@ class ModuleResourceManager;
 class ModuleEventSystem;
 class ModuleShaders;
 class JSONSerialization;
-
+class ModuleRenderGui;
 enum EngineState
 {
 	PLAY = 0,
@@ -123,6 +123,7 @@ public:
 	ModuleResourceManager* resource_manager = nullptr;
 	ModuleEventSystem* event_system = nullptr;
 	ModuleShaders* module_shaders = nullptr;
+	ModuleRenderGui* render_gui = nullptr;
 
 private:
 	std::vector<Module*> list_modules;

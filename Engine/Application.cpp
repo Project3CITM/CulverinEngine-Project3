@@ -12,6 +12,7 @@
 #include "ModuleFS.h"
 #include "ModuleResourceManager.h"
 #include "ModuleEventSystem.h"
+#include "ModuleRenderGui.h"
 #include "parson.h"
 #include "PerfTimer.h"
 #include "WindowSceneWorld.h"
@@ -33,6 +34,8 @@ Application::Application()
 	input = new ModuleInput();
 	audio = new ModuleAudio(true);
 	renderer3D = new ModuleRenderer3D();
+	render_gui = new ModuleRenderGui();
+
 	camera = new ModuleCamera3D();
 	scene = new Scene();
 	console = new Console();
@@ -66,9 +69,10 @@ Application::Application()
 	AddModule(importer);
 	AddModule(textures);
 	AddModule(event_system); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
-
 	// Renderer last!
 	AddModule(renderer3D);
+	AddModule(render_gui);
+
 }
 
 Application::~Application()

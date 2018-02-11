@@ -996,12 +996,11 @@ Component* GameObject::FindComponentByType(Comp_Type type) const
 	{
 		if (components[i]->GetType() == type) // We need to check if the component is ACTIVE first?¿
 		{
-			comp = components[i];
-			break;
+			return components[i];
+		
 		}
 	}
-
-	return comp;
+	return nullptr;
 }
 
 Component * GameObject::FindParentComponentByType(Comp_Type type)const
@@ -1131,6 +1130,7 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			LOG("Adding IMAGE COMPONENT.");
 			CompImage* image = new CompImage(type, this);
 			components.push_back(image);
+			canvas_renderer->ProcessImage(image);
 			return image;
 		}
 		else if (type == Comp_Type::C_TEXT)

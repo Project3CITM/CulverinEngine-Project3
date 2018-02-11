@@ -102,7 +102,8 @@ bool Scene::Start()
 update_status Scene::PreUpdate(float dt)
 {
 	perf_timer.Start();
-
+	if(root ==nullptr)
+		return UPDATE_CONTINUE;
 	// PreUpdate GameObjects ------------------------
 	if (root->WanttoDelete() == false)
 	{

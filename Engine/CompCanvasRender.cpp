@@ -8,11 +8,13 @@
 #include "CompText.h"
 #include "CompRectTransform.h"
 #include "CompCanvas.h"
+#include "ModuleRenderer3D.h"
 CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Canvas Render";
 
+	my_canvas=(CompCanvas*)parent->FindParentComponentByType(Comp_Type::C_CANVAS);
 	glGenBuffers(1, &vertices_id);
 	glGenBuffers(1, &indices_id);
 }
@@ -23,6 +25,11 @@ CompCanvasRender::CompCanvasRender(const CompCanvasRender & copy, GameObject * p
 
 CompCanvasRender::~CompCanvasRender()
 {
+}
+
+void CompCanvasRender::Update(float dt)
+{
+	AddToCanvas();
 }
 
 void CompCanvasRender::ShowOptions()
@@ -119,7 +126,9 @@ void CompCanvasRender::AddToCanvas()
 	if (my_canvas == nullptr)
 	{
 		LOG("ERROR:CanvasRender with UID &i don't have Canvas", parent->GetUUID());
+		return;
 	}
+	
 	my_canvas->AddCanvasRender(this);
 }
 
@@ -128,6 +137,7 @@ void CompCanvasRender::RemoveFromCanvas()
 	if (my_canvas == nullptr)
 	{
 		LOG("ERROR:CanvasRender with UID &i don't have Canvas", parent->GetUUID());
+		return;
 	}
 	my_canvas->RemoveCanvasRender(this);
 
@@ -136,12 +146,12 @@ void CompCanvasRender::RemoveFromCanvas()
 void CompCanvasRender::ProcessImage(CompImage * image)
 {
 	graphic = image;
-	//UV Setup
-	//0,1-------1,1
-	//|	3     /	2|
-	//|		/	 |
-	//|	0 /		1|
-	//0,0-------1,0
+		//UV Setup
+//-x+y	//0,1-------1,1 //+x+y
+		//|	3     /	2|
+		//|		/	 |
+		//|	0 /		1|
+//-x-y	//0,0-------1,0 //+x-y
 	
 	//Clear All Vertices and indices
 	vertices.clear();
@@ -153,7 +163,7 @@ void CompCanvasRender::ProcessImage(CompImage * image)
 		ver.tex_coords=float2(0.0f,0.0f);
 		vertices.push_back(ver);
 
-		ver.position = parent->GetComponentRectTransform()->GetSouthWestPosition();
+		ver.position = parent->GetComponentRectTransform()->GetSouthEastPosition();
 		ver.tex_coords = float2(1.0f, 0.0f);
 		vertices.push_back(ver);
 
@@ -198,27 +208,27 @@ void CompCanvasRender::DrawGraphic()
 	{
 		return;
 	}
-	glPushMatrix();
-	glMultMatrixf((float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
-
+//	glPushMatrix();
+//	glMultMatrixf((float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
+//	App->renderer3D->default_shader->Bind();
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+	/*
 	if (graphic->GetTextureID() != -1)
 	{
 		glBindTexture(GL_TEXTURE_2D, graphic->GetTextureID());
 		//	glColor4f(image->GetImage()->GetRGBA().x, image->GetImage()->GetRGBA().y, image->GetImage()->GetRGBA().z, image->GetImage()->GetRGBA().w);
 	}
+	*/
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
 	glVertexPointer(3, GL_FLOAT, sizeof(CanvasVertex), NULL);
 	//glNormalPointer(GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normals));
 	glTexCoordPointer(2, GL_FLOAT, sizeof(CanvasVertex), (void*)offsetof(CanvasVertex, tex_coords));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
@@ -229,7 +239,8 @@ void CompCanvasRender::DrawGraphic()
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glPopMatrix();
+//	glPopMatrix();
+//	App->renderer3D->default_shader->Unbind();
 
 }
 

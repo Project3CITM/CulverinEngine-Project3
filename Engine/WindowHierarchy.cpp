@@ -162,7 +162,7 @@ void Hierarchy::ShowOptions()
 	{
 		if (ImGui::MenuItem("Canvas"))
 		{
-			GameObject* canvas = App->scene->CreateCanvas();
+			GameObject* canvas = App->scene->CreateCanvas(nullptr);
 			App->gui->SetLinkInspector(canvas);
 
 		}
@@ -171,7 +171,7 @@ void Hierarchy::ShowOptions()
 			GameObject* canvas = App->scene->FindCanvas();
 			if (canvas == nullptr)
 			{
-				canvas = App->scene->CreateCanvas(canvas);
+				canvas = App->scene->CreateCanvas(nullptr);
 			}
 			GameObject* text = App->scene->CreateImage(canvas);	
 			App->gui->SetLinkInspector(text);
@@ -182,7 +182,7 @@ void Hierarchy::ShowOptions()
 			GameObject* canvas = App->scene->FindCanvas();
 			if (canvas == nullptr)
 			{
-				canvas = App->scene->CreateCanvas(canvas);
+				canvas = App->scene->CreateCanvas(nullptr);
 			}
 			GameObject* button = App->scene->CreateButton(canvas);	
 			App->gui->SetLinkInspector(button);
@@ -193,7 +193,7 @@ void Hierarchy::ShowOptions()
 			GameObject* canvas = App->scene->FindCanvas();
 			if (canvas == nullptr)
 			{
-				canvas = App->scene->CreateCanvas(canvas);
+				canvas = App->scene->CreateCanvas(nullptr);
 			}
 			GameObject* check_box = App->scene->CreateCheckBox(canvas);
 			App->gui->SetLinkInspector(check_box);
@@ -204,7 +204,7 @@ void Hierarchy::ShowOptions()
 			GameObject* canvas = App->scene->FindCanvas();
 			if (canvas == nullptr)
 			{
-				canvas = App->scene->CreateCanvas(canvas);
+				canvas = App->scene->CreateCanvas(nullptr);
 			}
 			GameObject* text = App->scene->CreateText(canvas);
 			App->gui->SetLinkInspector(text);
@@ -215,7 +215,7 @@ void Hierarchy::ShowOptions()
 			GameObject* canvas = App->scene->FindCanvas();
 			if (canvas == nullptr)
 			{
-				canvas = App->scene->CreateCanvas(canvas);
+				canvas = App->scene->CreateCanvas(nullptr);
 			}
 			GameObject* edit_text = App->scene->CreateEditText(canvas);
 			App->gui->SetLinkInspector(edit_text);

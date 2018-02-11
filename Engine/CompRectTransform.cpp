@@ -19,7 +19,9 @@ CompRectTransform::CompRectTransform(Comp_Type t, GameObject * parent) :CompTran
 	max_anchor = float2(0.5f, 0.5f);
 	min_anchor = float2(0.5f, 0.5f);
 	pivot = float2(0.5f, 0.5f);
-
+	SetPivot(pivot);
+	width = 50;
+	height = 50;
 }
 
 CompRectTransform::CompRectTransform(const CompRectTransform & copy, GameObject * parent) : CompTransform(Comp_Type::C_RECT_TRANSFORM, parent)
@@ -358,20 +360,20 @@ float2 CompRectTransform::GetPivot()const
 
 float3 CompRectTransform::GetNorthEastPosition()const
 {
-	return float3(GetPos().x + width*right_pivot.x, GetPos().y - height * left_pivot.y, GetPos().z);
+	return float3(GetPos().x + width*right_pivot.x, GetPos().y + height * left_pivot.y, GetPos().z);
 }
 
 float3 CompRectTransform::GetNorthWestPosition()const
 {
-	return float3(GetPos().x - width*left_pivot.x, GetPos().y - height * left_pivot.y, GetPos().z);
+	return float3(GetPos().x - width*left_pivot.x, GetPos().y + height * left_pivot.y, GetPos().z);
 }
 
 float3 CompRectTransform::GetSouthEastPosition()const
 {
-	return float3(GetPos().x + width*right_pivot.x, GetPos().y + height * right_pivot.y, GetPos().z);
+	return float3(GetPos().x + width*right_pivot.x, GetPos().y - height * right_pivot.y, GetPos().z);
 }
 
 float3 CompRectTransform::GetSouthWestPosition()const
 {
-	return float3(GetPos().x - width*left_pivot.x, GetPos().y + height * right_pivot.y, GetPos().z);
+	return float3(GetPos().x - width*left_pivot.x, GetPos().y - height * right_pivot.y, GetPos().z);
 }

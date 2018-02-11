@@ -2,6 +2,7 @@
 #define COMPONENT_CANVAS_H
 
 #include "Component.h"
+#include "EventDef.h"
 #include <vector>
 class CompCanvasRender;
 
@@ -11,6 +12,8 @@ public:
 	CompCanvas(Comp_Type t, GameObject* parent);
 	CompCanvas(const CompCanvas& copy, GameObject* parent);
 	~CompCanvas();
+	void Update(float dt);
+
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompCanvas * component);
@@ -22,6 +25,8 @@ public:
 private:
 public:
 private:
+	Event draw_mode;
+
 	std::vector<CompCanvasRender*> canvas_render;
 };
 

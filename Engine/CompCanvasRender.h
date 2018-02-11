@@ -8,6 +8,7 @@ class CompText;
 class CompImage;
 class CompGraphic;
 class CompCanvas;
+
 struct CanvasVertex
 {
 	float3 position;
@@ -19,6 +20,7 @@ public:
 	CompCanvasRender(Comp_Type t, GameObject* parent);
 	CompCanvasRender(const CompCanvasRender& copy, GameObject* parent);
 	~CompCanvasRender();
+	void Update(float dt);
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompCanvasRender * component);

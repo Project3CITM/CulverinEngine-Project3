@@ -4,7 +4,7 @@
 #include "Globals.h"
 
 
-
+class CompCanvas;
 class ModuleRenderGui : public Module
 {
 public:
@@ -16,11 +16,15 @@ public:
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
+	bool SetEventListenrs();
+	
+	void OnEvent(Event& event);
 	void WorldSpaceDraw();
 
 	void ScreenSpaceDraw();
 
 	bool CleanUp();
+	std::vector<CompCanvas*> screen_space_canvas;
 
 
 
@@ -32,7 +36,6 @@ private:
 	int window_height = 0;
 	int window_scale = 1;
 	//std::vector<ComponentCanvas*> world_space_canvas;
-	//std::vector<ComponentCanvas*> screen_space_canvas;
 
 };
 #endif //_MODULERENDERERGUI_

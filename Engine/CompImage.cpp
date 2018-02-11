@@ -6,13 +6,16 @@
 #include "Scene.h"
 #include "ImportMaterial.h"
 #include "ResourceMaterial.h"
-
+#include "CompCanvasRender.h"
 
 
 CompImage::CompImage(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Image";
+
+//	((CompCanvasRender*)parent->FindParentComponentByType(Comp_Type::C_CANVAS_RENDER))->ProcessImage(this);
+
 }
 
 CompImage::CompImage(const CompImage & copy, GameObject * parent) :CompGraphic(Comp_Type::C_IMAGE, parent)

@@ -1,5 +1,9 @@
 #include "Application.h"
 #include "ModuleRenderGui.h"
+#include "EventDef.h"
+#include "CompCanvas.h"
+#include "ModuleEventSystem.h"
+#include "ModuleWindow.h"
 #include "SDL/include/SDL_opengl.h"
 #include "GL3W/include/glew.h"
 #include <gl/GL.h>
@@ -13,6 +17,8 @@ ModuleRenderGui::ModuleRenderGui(bool start_enabled) : Module(start_enabled)
 	preUpdate_enabled = true;
 	Update_enabled = true;
 	postUpdate_enabled = true;
+	name = "Render Gui";
+
 }
 
 ModuleRenderGui::~ModuleRenderGui()
@@ -21,6 +27,8 @@ ModuleRenderGui::~ModuleRenderGui()
 
 bool ModuleRenderGui::Init(JSON_Object * node)
 {
+	window_width=App->window->GetWidth();
+	window_height=App->window->GetHeight();
 	return true;
 }
 
@@ -50,14 +58,25 @@ update_status ModuleRenderGui::Update(float dt)
 update_status ModuleRenderGui::PostUpdate(float dt)
 {
 	perf_timer.Start();
-	/*
-	if (!world_space_canvas.empty())
-		WorldSpaceDraw();
+	
+	//if (!world_space_canvas.empty())
+	//	WorldSpaceDraw();
 	if (!screen_space_canvas.empty())
 		ScreenSpaceDraw();
-	*/
+	
 	postUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
+}
+
+bool ModuleRenderGui::SetEventListenrs()
+{
+	AddListener(EventType::EVENT_DRAW, this);
+	return true;
+}
+
+void ModuleRenderGui::OnEvent(Event & this_event)
+{
+	this_event.draw.ToDraw->Draw();
 }
 
 void ModuleRenderGui::WorldSpaceDraw()
@@ -72,7 +91,7 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	if (total_width == 0 || total_height == 0)
 		return;
 	//Save 3D last config
-	
+	/*
 	GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
 	GLint last_polygon_mode[2]; glGetIntegerv(GL_POLYGON_MODE, last_polygon_mode);
 	GLint last_viewport[4]; glGetIntegerv(GL_VIEWPORT, last_viewport);
@@ -108,16 +127,19 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-
+	*/
 
 
 	//Draw
 
-
+	for (int i = 0; i < screen_space_canvas.size(); i++)
+	{
+		screen_space_canvas[i]->DrawCanvasRender();
+	}
 
 
 	//End Draw
-
+	/*
 	// Restore modified GL state
 	glBindTexture(GL_TEXTURE_2D, (GLuint)last_texture);
 	glPolygonMode(GL_FRONT, last_polygon_mode[0]); glPolygonMode(GL_BACK, last_polygon_mode[1]);
@@ -131,8 +153,8 @@ void ModuleRenderGui::ScreenSpaceDraw()
 //	if (last_enable_scissor_test) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
 	glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
 //	glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
-	
-
+	*/
+	screen_space_canvas.clear();
 }
 
 
