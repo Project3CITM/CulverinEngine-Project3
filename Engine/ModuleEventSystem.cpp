@@ -132,7 +132,9 @@ void ModuleEventSystem::PushEvent(Event& event)
 	case EventType::EVENT_DRAW:
 		switch (event.draw.type)
 		{
-		case event.draw.DRAW_3D: MM3DDrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
+		case
+			event.draw.DRAW_3D: MM3DDrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event));
+			break;
 		case event.draw.DRAW_3D_ALPHA: MM3DADrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event));  break;
 		case event.draw.DRAW_2D: MM2DCanvasDrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event)); break;
 		case event.draw.DRAW_WORLD_CANVAS: MM3DADrawEvent.insert(std::pair<float, Event>(event.draw.DistanceCamToObject, event));  break;
