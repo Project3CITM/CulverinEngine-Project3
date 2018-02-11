@@ -28,7 +28,7 @@ ImportScript::~ImportScript()
 bool ImportScript::InitScriptingSystem()
 {
 	//Set the working directory of the console to Mono/bin to execute "mcs" command (to compile scripts)
-	system("cd Mono/monobin");
+	//system("cd Mono/monobin");
 
 	char my_path[FILENAME_MAX];
 	// Fill my_path char array with the path of the .dll
@@ -368,9 +368,10 @@ int ImportScript::CompileScript(const char* file, std::string& libraryScript, co
 {
 	// Get the path of the project ----
 	std::string script_path = file;
+	script_path= "\"" + script_path + "\"";
 
 	// Save dll to Library Directory --------------------
-	libraryScript = App->fs->GetFullPath("Library/Scripts/");
+	libraryScript = "Library/Scripts/";
 	std::string nameFile = uid;
 	nameFile += ".dll";
 	libraryScript += nameFile;
@@ -379,8 +380,8 @@ int ImportScript::CompileScript(const char* file, std::string& libraryScript, co
 	std::string temp_path = "\"" + libraryScript + "\"";
 
 	// Compile the script -----------------------------
-	std::string command = "mcs -target:library -out:" + temp_path + " ";
-	std::string CulverinEditorpath = App->fs->GetFullPath("ScriptManager/AssemblyReference/CulverinEditor.dll");
+	std::string command = "Mono\\monobin\\mcs -target:library -out:" + temp_path + " ";
+	std::string CulverinEditorpath = "ScriptManager/AssemblyReference/CulverinEditor.dll";
 	command += "-r:" + CulverinEditorpath + " ";
 	command += "-lib:" + CulverinEditorpath + " ";
 	command += script_path;
