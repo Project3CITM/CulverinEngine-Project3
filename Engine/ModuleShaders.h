@@ -33,7 +33,7 @@ public:
 
 	bool CleanUp();
 
-	ShaderProgram * CreateShader(char* name);
+	ShaderProgram * CreateShader(const char* name);
 
 	ShaderProgram*   CreateDefaultShader();
 

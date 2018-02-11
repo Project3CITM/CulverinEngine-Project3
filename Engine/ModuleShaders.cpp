@@ -72,7 +72,7 @@ bool ModuleShaders::CleanUp()
 	return true;
 }
 
-ShaderProgram* ModuleShaders::CreateShader(char* name)
+ShaderProgram* ModuleShaders::CreateShader(const char* name)
 {
 
 	ShaderProgram* newProgram = new ShaderProgram();
@@ -404,7 +404,7 @@ void ModuleShaders::ImportShaderMaterials()
 					App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, str_path.c_str());
 
 					//Creating the shader program
-					ShaderProgram* mat_shader = CreateShader(name.c_str);
+					ShaderProgram* mat_shader = CreateShader(name.c_str());
 
 					//If the program has a fragment shader
 					if (json_object_has_value(obj_proj, "Fragment Shader") > 0)
