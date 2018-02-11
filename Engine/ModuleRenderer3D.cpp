@@ -153,7 +153,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
 
-	default_shader = shader_manager.CreateDefaultShader();
+	default_shader = App->module_shaders->CreateDefaultShader();
 
 	Texture default_texture;
 	default_texture.name = "default_texture";

@@ -66,7 +66,7 @@ public:
 
 	// Shaders
 	ShaderProgram* default_shader = nullptr;
-	ModuleShaders shader_manager;
+
 };
 
 #endif

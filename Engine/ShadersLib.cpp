@@ -3,6 +3,7 @@
 #include"Application.h"
 #include"ModuleFS.h"
 #include"JSONSerialization.h"
+#include "ModuleRenderer3D.h"
 #pragma comment (lib, "GL3W/libx86/glew32.lib") 
 
 void ShaderProgram::AddFragment(Shader* newFragment)

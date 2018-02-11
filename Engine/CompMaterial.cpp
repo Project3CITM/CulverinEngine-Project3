@@ -293,12 +293,12 @@ void CompMaterial::ShowInspectorInfo()
 
 	int shader_pos = 0;
 	std::string shaders_names;
-	for (int i = 0; i < App->renderer3D->shader_manager.programs.size(); i++) {
-		shaders_names += App->renderer3D->shader_manager.programs[i]->name;
+	for (int i = 0; i < App->module_shaders->programs.size(); i++) {
+		shaders_names += App->module_shaders->programs[i]->name;
 		shaders_names += '\0';
 	}
 	if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
-		material_shader = *App->renderer3D->shader_manager.programs[shader_pos];
+		material_shader = *App->module_shaders->programs[shader_pos];
 
 	}
 	std::vector<TextureVar>::iterator item = material_shader.textures.begin();

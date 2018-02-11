@@ -435,6 +435,7 @@ void ModuleShaders::ImportShaderMaterials()
 
 					//Store the program
 					mat_shader->LoadProgram();
+					
 					mat_shader->CreateMaterialFile();
 				}
 			}
