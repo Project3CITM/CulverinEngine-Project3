@@ -21,7 +21,12 @@ bool ModuleShaders::Init(JSON_Object * node)
 
 bool ModuleShaders::Start()
 {
+
+	//Import all the asset files related to shaders
+
 	ImportShaderObjects();
+
+	ImportShaderMaterials();
 
 	/*ShaderProgram* test = new ShaderProgram();
 	test->AddFragment(shaders[0]);
@@ -31,7 +36,7 @@ bool ModuleShaders::Start()
 	test->path = Shader_Directory_fs+"/Test_Material.mat";
 	test->CreateMaterialFile();*/
 
-	ImportShaderMaterials();
+
 
 	return true;
 }
@@ -307,50 +312,60 @@ void ModuleShaders::ImportShaderObjects()
 {
 	namespace stdfs = std::experimental::filesystem;
 
+	//Iterating all files
 	for (stdfs::directory_iterator::value_type item : stdfs::directory_iterator(Shader_Directory_fs))
 	{
 		std::string str_path = item.path().string().c_str();
 
+		//Extracting the extension file
 		std::string extension_path=	App->fs->GetExtension(str_path);
 
 		if (extension_path == "vert" || extension_path == "frag" || extension_path == "geom" || extension_path == "mat") 
 		{
 
+			//Extracting name of the file
 			size_t size_name_front = str_path.rfind("\\")+1;
 			size_t size_name_end = str_path.rfind(".");
 			std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
 
+			//Loading the file to extract the file buffer information
 			char* buffer;
 			App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
 
+			//If the shader object is vertex
 			if (extension_path == "vert") 
 			{
-
+				
 				if (buffer != nullptr) 
 				{
+					//Compile shader
 					Shader* shader_temp = CompileShader(str_path, name,ShaderType::vertex);
 				}
 
 			}
+
+			//If the shader object is fragment
 			else if (extension_path == "frag") 
 			{
 
 				if (buffer != nullptr) 
 				{
+					//Compile shader
 					Shader* shader_temp = CompileShader(str_path, name,ShaderType::fragment);
 				}
 
 			}
+
+			//If the shader object is geometry
 			else if (extension_path == "geom") 
 			{
 
 				if (buffer != nullptr) 
 				{
+					//Compile shader
 					Shader* shader_temp = CompileShader(str_path, name,ShaderType::geometry);
 				}
 			}
-		
-
 
 			//maybe delete buffer?
 
@@ -362,20 +377,22 @@ void ModuleShaders::ImportShaderMaterials()
 {
 
 	namespace stdfs = std::experimental::filesystem;
-
+	//Iterating all files
 	for (stdfs::directory_iterator::value_type item : stdfs::directory_iterator(Shader_Directory_fs))
 	{
 		std::string str_path = item.path().string().c_str();
 
+		//Extracting the extension file
 		std::string extension_path = App->fs->GetExtension(str_path);
 
 			if (extension_path == "mat")
 			{
-
+				//Extracting name of the file
 				size_t size_name_front = str_path.rfind("\\") + 1;
 				size_t size_name_end = str_path.rfind(".");
 				std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
 
+				//Loading the file to extract the file buffer information
 				char* buffer;
 				App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
 
@@ -383,32 +400,45 @@ void ModuleShaders::ImportShaderMaterials()
 				{
 					JSON_Object* obj_proj;
 					JSON_Value* file_proj;
+					//Point JSON_Object and JSON_Value to the path we want
 					App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, str_path.c_str());
-					ShaderProgram* mat_shader = CreateShader("name");
+
+					//Creating the shader program
+					ShaderProgram* mat_shader = CreateShader(name.c_str);
+
+					//If the program has a fragment shader
 					if (json_object_has_value(obj_proj, "Fragment Shader") > 0)
 					{
 						std::string frag_name = json_object_get_string(obj_proj, "Fragment Shader");
+
+						//Find the shader object by name
 						mat_shader->fragment = GetShaderByName(frag_name.c_str());
 					}
+
+					//If the program has a vertex shader
 					if (json_object_has_value(obj_proj, "Vertex Shader") > 0)
 					{
 						std::string vertex_name = json_object_get_string(obj_proj, "Vertex Shader");
+
+						//Find the shader object by name
 						mat_shader->vertex = GetShaderByName(vertex_name.c_str());
 					}
+
+					//If the program has a geometry shader
 					if (json_object_has_value(obj_proj, "Geometry Shader"))
 					{
 						std::string geometry_name = json_object_get_string(obj_proj, "Geometry Shader");
+
+						//Find the shader object by name
 						mat_shader->geometry = GetShaderByName(geometry_name.c_str());
 					}
 
+					//Store the program
 					mat_shader->LoadProgram();
 					mat_shader->CreateMaterialFile();
 				}
 			}
-
 	}
-
-
 }
 
 Shader * ModuleShaders::GetShaderByName(const char * name)
