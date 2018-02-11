@@ -21,6 +21,14 @@ bool ModuleShaders::Init(JSON_Object * node)
 bool ModuleShaders::Start()
 {
 	ImportShaders();
+	
+	ShaderProgram* test = new ShaderProgram();
+	test->AddFragment(shaders[0]);
+	test->AddVertex(shaders[1]);
+	test->LoadProgram();
+	test->name = "Test_Material";
+	test->path = Shader_Directory_fs+"/Test_Material";
+	test->CreateMaterialFile();
 	return true;
 }
 
@@ -183,6 +191,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 	newFragment->shaderID = fragmentShader;
 	newFragment->shaderText = *fragmentShaderSource;
 	newFragment->shaderType = ShaderType::fragment;
+	newFragment->name = "default_shader_frag";
 	newFragment->shaderPath = "";
 
 	defaultShader->AddFragment(newFragment);
@@ -191,6 +200,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 	newVertex->shaderID = vertexShader;
 	newVertex->shaderText = *vertexShaderSource;
 	newVertex->shaderType = ShaderType::vertex;
+	newFragment->name = "default_shader_vert";
 	newVertex->shaderPath = "";
 
 	defaultShader->AddVertex(newVertex);
@@ -216,7 +226,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 
 }
 
-Shader* ModuleShaders::CompileShader(std::string path, ShaderType type)
+Shader* ModuleShaders::CompileShader(std::string path, std::string name, ShaderType type)
 {
 	uint id = 0;
 	switch (type) {
@@ -274,6 +284,7 @@ Shader* ModuleShaders::CompileShader(std::string path, ShaderType type)
 	Shader* newShader = new Shader();
 	newShader->shaderType = type;
 	newShader->shaderID = id;
+	newShader->name = name;
 	newShader->shaderPath = path;
 	newShader->shaderText = buffer;
 
@@ -300,27 +311,31 @@ void ModuleShaders::ImportShaders()
 
 		if (extension_path == "vert" || extension_path == "frag" || extension_path == "geom") {
 
+			size_t size_name_front = str_path.rfind("\\")+1;
+			size_t size_name_end = str_path.rfind(".");
+			std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
+
 			char* buffer;
 			App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
 
 			if (extension_path == "vert") {
 
 				if (buffer != nullptr) {
-					Shader* shader_temp = CompileShader(str_path, ShaderType::vertex);
+					Shader* shader_temp = CompileShader(str_path, name,ShaderType::vertex);
 				}
 
 			}
 			else if (extension_path == "frag") {
 
 				if (buffer != nullptr) {
-					Shader* shader_temp = CompileShader(str_path, ShaderType::fragment);
+					Shader* shader_temp = CompileShader(str_path, name,ShaderType::fragment);
 				}
 
 			}
 			else if (extension_path == "geom") {
 
 				if (buffer != nullptr) {
-					Shader* shader_temp = CompileShader(str_path, ShaderType::geometry);
+					Shader* shader_temp = CompileShader(str_path, name,ShaderType::geometry);
 				}
 			}
 

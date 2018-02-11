@@ -37,7 +37,7 @@ public:
 
 	ShaderProgram*   CreateDefaultShader();
 
-	Shader*   CompileShader(std::string path, ShaderType type);
+	Shader*   CompileShader(std::string path, std::string name, ShaderType type);
 
 	void   AddShaderList(Shader* newShader);
 

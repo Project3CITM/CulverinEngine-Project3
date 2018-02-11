@@ -1,7 +1,8 @@
 
 #include "ShadersLib.h"  
-
-
+#include"Application.h"
+#include"ModuleFS.h"
+#include"JSONSerialization.h"
 #pragma comment (lib, "GL3W/libx86/glew32.lib") 
 
 void ShaderProgram::AddFragment(Shader* newFragment)
@@ -86,5 +87,33 @@ GLint ShaderProgram::GetVariablesSize() const
 	GLint total = 0;
 	glGetProgramiv(programID, GL_ACTIVE_UNIFORMS, &total);
 	return total;
+}
+
+void ShaderProgram::CreateMaterialFile()
+{
+	const char* buffer;
+
+
+	JSON_Object* obj_proj;
+	JSON_Value* file_proj;
+	App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, path.c_str());
+	JSON_Object* node;
+	int i = 0;
+
+	if (fragment!=nullptr) {
+		json_object_set_string(obj_proj, "Fragment Shader", fragment->name.c_str());
+	}
+
+	if (vertex != nullptr) {
+		json_object_set_string(obj_proj, "Vertex Shader", vertex->name.c_str());
+	}
+
+	if (geometry != nullptr) {
+		json_object_set_string(obj_proj, "Geometry Shader", geometry->name.c_str());
+	}
+
+	char* serialized_string = json_serialize_to_string_pretty(file_proj);
+	json_serialize_to_file(file_proj, path.c_str());
+
 }
 

@@ -8,6 +8,10 @@
 #include "GameObject.h"
 #include "ModuleAudio.h"
 
+static int malloc_count;
+static void *counted_malloc(size_t size);
+static void counted_free(void *ptr);
+
 JSONSerialization::JSONSerialization()
 {
 }
@@ -500,6 +504,24 @@ ReImport JSONSerialization::GetUUIDScript(const char * file)
 	return ReImport();
 }
 
+void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile) {
+	json_set_allocation_functions(counted_malloc, counted_free);
+
+	*root_value_scene = json_value_init_object();
+	*root_object_scene = json_value_get_object(*root_value_scene);
+
+	*root_value_scene = json_parse_file(namefile);
+	if (*root_value_scene == NULL) {
+		*root_value_scene = json_value_init_object();
+		json_serialize_to_file(*root_value_scene, namefile);
+		*root_object_scene = json_value_get_object(*root_value_scene);
+	}
+	else {
+		*root_object_scene = json_value_get_object(*root_value_scene);
+	}
+
+}
+
 void JSONSerialization::ChangeUUIDs(GameObject& gameObject)
 {
 	for (int i = 0; i < gameObject.GetNumChilds(); i++)
@@ -556,4 +578,19 @@ void JSONSerialization::GetAllNames(const std::vector<GameObject*>& gameobjects)
 			GetAllNames(gameobjects[i]->GetChildsVec());
 		}
 	}
+}
+
+static void *counted_malloc(size_t size) {
+	void *res = malloc(size);
+	if (res != NULL) {
+		malloc_count++;
+	}
+	return res;
+}
+
+static void counted_free(void *ptr) {
+	if (ptr != NULL) {
+		malloc_count--;
+	}
+	free(ptr);
 }

@@ -70,6 +70,8 @@ public:
 public:
 	uint shaderID = 0;
 
+	std::string name = "";
+
 	std::string shaderPath = "";
 
 	std::string shaderText = "";
@@ -102,9 +104,11 @@ public:
 
 	GLint  GetVariablesSize()const;
 
+	void CreateMaterialFile();
+
 public:
 	std::string name;
-
+	std::string path;
 	uint programID = 0;
 
 	Shader* fragment = nullptr;
