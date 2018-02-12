@@ -26,7 +26,6 @@
 #include "CompAudio.h"
 
 //Event system test
-#include "EventDef.h"
 #include "ModuleEventSystem.h"
 
 GameObject::GameObject(GameObject* parent) :parent(parent)
@@ -363,6 +362,13 @@ void GameObject::Draw()
 			if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_MESH)
 			{
 				components[i]->Draw();
+				/*
+				Event draw_event;
+				draw_event.draw.type = EventType::EVENT_DRAW;
+				draw_event.draw.Dtype = draw_event.draw.DRAW_3D;
+				draw_event.draw.ToDraw = components[i];
+				PushEvent(draw_event);
+				*/
 			}
 		}
 

@@ -17,7 +17,7 @@
 /*-----------All forwad declarations here-----------*/
 /*--------------------------------------------------*/
 class GameObject;
-class CompMesh;
+class Component;
 
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
@@ -78,7 +78,7 @@ struct EDraw
 	};
 	DrawType Dtype;
 	//float DistanceCamToObject;
-	CompMesh* ToDraw;
+	Component* ToDraw;
 };
 
 struct EDroppedFile

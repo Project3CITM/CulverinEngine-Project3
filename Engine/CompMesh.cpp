@@ -485,8 +485,3 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 	}
 	Enable();
 }
-
-float3 CompMesh::GetGameObjectPos() const
-{
-	return ((CompTransform*)parent->FindComponentByType(C_TRANSFORM))->GetPosGlobal();
-}

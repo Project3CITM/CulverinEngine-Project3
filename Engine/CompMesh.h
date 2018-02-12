@@ -56,8 +56,6 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
 
-	float3 GetGameObjectPos() const;
-
 public:
 
 	char* name = "MESH NAME";
