@@ -24,18 +24,30 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 {
 	uid = App->random->Int();
 	color = copy.color;
-	resource_material = copy.resource_material;
-	if (resource_material != nullptr)
-	{
-		resource_material->num_game_objects_use_me++;
+	material_shader = copy.material_shader;
+	//resource_material = copy.resource_material;
+	for (int i = 0; i < material_shader.textures.size(); i++) {
+		if (material_shader.textures[i].res_material != nullptr)
+		{
+			material_shader.textures[i].res_material->num_game_objects_use_me++;
+		}
 	}
-
 	name_component = "Material";
 	material_shader = *App->renderer3D->default_shader;
 }
 
 CompMaterial::~CompMaterial()
 {
+
+	for (int i = 0; i < material_shader.textures.size(); i++) {
+		if (material_shader.textures[i].res_material != nullptr)
+		{
+			if(material_shader.textures[i].res_material->num_game_objects_use_me > 0 )
+				material_shader.textures[i].res_material->num_game_objects_use_me--;
+		}
+		material_shader.textures[i].res_material = nullptr;
+	}
+	/*
 	if (resource_material != nullptr)
 	{
 		if (resource_material->num_game_objects_use_me > 0)
@@ -43,7 +55,7 @@ CompMaterial::~CompMaterial()
 			resource_material->num_game_objects_use_me--;
 		}
 	}
-	resource_material = nullptr;
+	resource_material = nullptr;*/
 }
 
 void CompMaterial::PreUpdate(float dt)
@@ -149,7 +161,11 @@ void CompMaterial::PreUpdate(float dt)
 
 void CompMaterial::Clear()
 {
-	resource_material = nullptr;
+	for (int i = 0; i < material_shader.textures.size(); i++) {
+		material_shader.textures[i].res_material = nullptr;
+		
+	}
+	
 }
 
 void CompMaterial::SetColor(float r, float g, float b, float a)
@@ -167,10 +183,12 @@ Color CompMaterial::GetColor() const
 
 uint CompMaterial::GetTextureID() const
 {
+	/*
 	if (resource_material != nullptr)
 	{
 		return resource_material->GetTextureID();
 	}
+	*/
 
 	return 0;
 }
@@ -249,8 +267,15 @@ void CompMaterial::ShowOptions()
 				resource_material->num_game_objects_use_me--;
 			}
 		}*/
-
-		resource_material = nullptr;
+		for (int i = 0; i < material_shader.textures.size(); i++) {
+			if (material_shader.textures[i].res_material != nullptr)
+			{
+				if (material_shader.textures[i].res_material->num_game_objects_use_me > 0)
+					material_shader.textures[i].res_material->num_game_objects_use_me--;
+			}
+			material_shader.textures[i].res_material = nullptr;
+		}
+		
 		ImGui::CloseCurrentPopup();
 	}
 	/* Select Material */
@@ -281,15 +306,6 @@ void CompMaterial::ShowInspectorInfo()
 	ImGui::PopStyleVar();
 	ImGui::ColorEdit3("", (float*)&color);
 	
-	if (resource_material != nullptr)
-	{
-		// Name of the material
-		ImGui::Text("Name:"); ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resource_material->name);
-		
-		// Image of the texture 
-		ImGui::Image((ImTextureID*)resource_material->GetTextureID(), ImVec2(170, 170), ImVec2(-1, 1), ImVec2(0, 0));
-	}
 
 	int shader_pos = 0;
 	std::string shaders_names;
@@ -365,14 +381,14 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 	//Save Shaders and shaders values
 
 	//
-	if (resource_material != nullptr)
+	/*if (resource_material != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Material UUID", resource_material->GetUUID());
 	}
 	else
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Material UUID", 0);
-	}
+	}*/
 }
 
 void CompMaterial::Load(const JSON_Object* object, std::string name)
@@ -385,7 +401,7 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 	//Load Shaders and shaders values
 
 	//
-
+	/*
 	if (resourceID > 0)
 	{
 		resource_material = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
@@ -399,7 +415,7 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 				App->importer->iMaterial->LoadResource(std::to_string(resource_material->GetUUID()).c_str(), resource_material);
 			}
 		}
-	}
+	}*/
 	Enable();
 }
 
