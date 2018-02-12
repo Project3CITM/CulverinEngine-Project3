@@ -5,10 +5,15 @@
 #include "GameObject.h"
 #include "Scene.h"
 #include "ResourceFont.h"
+#include "SDL2_ttf/include/SDL_ttf.h"
+
+
 CompText::CompText(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Text";
+
+
 }
 
 CompText::CompText(const CompText & copy, GameObject * parent) : CompGraphic(Comp_Type::C_TEXT, parent)
@@ -18,20 +23,21 @@ CompText::CompText(const CompText & copy, GameObject * parent) : CompGraphic(Com
 CompText::~CompText()
 {
 }
+
 void CompText::PreUpdate(float dt)
 {
 	// Manage Resource -------------------------------------------------
 	// Before delete Resource Set this pointer to nullptr
-	if (resource_font != nullptr)
+	if (text != nullptr)
 	{
-		if (resource_font->GetState() == Resource::State::WANTDELETE)
+		if (text->GetState() == Resource::State::WANTDELETE)
 		{
-			resource_font = nullptr;
+			text = nullptr;
 		}
-		else if (resource_font->GetState() == Resource::State::REIMPORTED)
+		else if (text->GetState() == Resource::State::REIMPORTED)
 		{
 		//	uuid_resource_reimported = resource_font->GetUUID();
-			resource_font = nullptr;
+			text = nullptr;
 		}
 	}
 	else
@@ -122,6 +128,57 @@ void CompText::ShowInspectorInfo()
 	}
 
 	ImGui::TreePop();
+}
+
+void CompText::SetRect(float x, float y, float width, float height)
+{
+	text_rect.x = x;
+	text_rect.y = y;
+	text_rect.width = width;
+	text_rect.height = height;
+}
+
+void CompText::SetString(std::string input)
+{
+	text_str = input;
+	UpdateText();
+}
+
+void CompText::UpdateText()
+{
+	if (!text->font || text_str.empty())
+		return;
+	else if (s_font != NULL && text_str.empty())
+	{
+		FreeFont();
+		return;
+	}
+	if (s_font != NULL)
+	{
+		FreeFont();
+	}
+	update_text = true;
+
+	s_font = TTF_RenderText_Blended(text->font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) });
+
+	GLuint texture;
+	glGenTextures(1, &uid);
+	glBindTexture(GL_TEXTURE_2D, uid);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s_font->w, s_font->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, s_font->pixels);
+	SetRect(0.0f, 0.0f, s_font->w, s_font->h);
+
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	SDL_FreeSurface(s_font);
+
+}
+
+void CompText::FreeFont()
+{
+	glDeleteTextures(1, &uid);
 }
 
 void CompText::CopyValues(const CompText * component)
