@@ -598,25 +598,33 @@ void GameObject::ShowGameObjectOptions()
 	//ImGui::MenuItem("ADD COMPONENT", NULL, false, false);
 	if (this->GetUUID() != 1)
 	{
-		if (ImGui::MenuItem("Transform"))
+		if (ImGui::BeginMenu("Add Component"))
 		{
-			AddComponent(Comp_Type::C_TRANSFORM);
-		}
-		if (ImGui::MenuItem("Mesh"))
-		{
-			AddComponent(Comp_Type::C_MESH);
-		}
-		if (ImGui::MenuItem("Material"))
-		{
-			AddComponent(Comp_Type::C_MATERIAL);
-		}
-		if (ImGui::MenuItem("Script"))
-		{
-			AddComponent(Comp_Type::C_SCRIPT);
-		}
-		if (ImGui::MenuItem("Animation"))
-		{
-			AddComponent(Comp_Type::C_ANIMATION);
+			if (ImGui::MenuItem("Transform"))
+			{
+				AddComponent(Comp_Type::C_TRANSFORM);
+			}
+			if (ImGui::MenuItem("Mesh"))
+			{
+				AddComponent(Comp_Type::C_MESH);
+			}
+			if (ImGui::MenuItem("Material"))
+			{
+				AddComponent(Comp_Type::C_MATERIAL);
+			}
+			if (ImGui::MenuItem("Script"))
+			{
+				AddComponent(Comp_Type::C_SCRIPT);
+			}
+			if (ImGui::MenuItem("Animation"))
+			{
+				AddComponent(Comp_Type::C_ANIMATION);
+			}
+			if (ImGui::MenuItem("Audio"))
+			{
+				AddComponent(Comp_Type::C_AUDIO);
+			}
+			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("UI"))
 		{
@@ -688,10 +696,8 @@ void GameObject::ShowGameObjectOptions()
 			}
 			ImGui::EndMenu();
 		}
-		if (ImGui::MenuItem("Audio"))
-		{
-			AddComponent(Comp_Type::C_AUDIO);
-		}
+
+
 	}
 	// -------------------------------------------------------------
 }
