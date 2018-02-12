@@ -17,7 +17,7 @@
 /*-----------All forwad declarations here-----------*/
 /*--------------------------------------------------*/
 class GameObject;
-class Component;
+class CompMesh;
 
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
@@ -77,8 +77,8 @@ struct EDraw
 		DRAW_SCREEN_CANVAS	//Screen space canvas
 	};
 	DrawType Dtype;
-	float DistanceCamToObject;
-	Component* ToDraw;
+	//float DistanceCamToObject;
+	CompMesh* ToDraw;
 };
 
 struct EDroppedFile
