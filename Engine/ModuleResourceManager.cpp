@@ -280,11 +280,15 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 				i = -1;
 				it = file.begin();
 			}
-			else if (App->importer->Import(it._Ptr->_Myval, dropped_File_type))
+			else
 			{
-				// Copy file to Specify folder in Assets (This folder is the folder active)
 				App->fs->CopyFileToAssets(it._Ptr->_Myval, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory());
-				it++;
+				if (App->importer->Import(it._Ptr->_Myval, dropped_File_type))
+				{
+					// Copy file to Specify folder in Assets (This folder is the folder active)
+
+					it++;
+				}
 			}
 		}
 		else
