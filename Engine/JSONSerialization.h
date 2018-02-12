@@ -4,6 +4,7 @@
 #include "parson.h"
 #include "Globals.h"
 #include <vector>
+#include <filesystem>
 
 class GameObject;
 class ResourceMaterial;
@@ -45,9 +46,15 @@ public:
 	// --------------------------------------
 
 	// Get UUIDs -------------------------------
-	ReImport GetUUIDPrefab(const char * file, uint id);
+	ReImport GetUUIDPrefab(const char* file, uint id);
 	ReImport GetUUIDMaterial(const char* file);
 	ReImport GetUUIDScript(const char* file);
+	// -----------------------------------------------
+
+	// Get Last Write -------------------------------
+	std::time_t GetLastWritePrefab(const char* file);
+	std::time_t GetLastWriteMaterial(const char* file);
+	std::time_t GetLastWriteScript(const char* file);
 	// -----------------------------------------------
 
 	// This function will recive a path and will return a json_obj and json_value pointing to the file, to read and write
