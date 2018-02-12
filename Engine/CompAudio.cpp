@@ -132,7 +132,49 @@ void CompAudio::ShowInspectorInfo()
 		}		
 	}
 
+	ShowEventsInfo();
+
 	ImGui::TreePop();
+}
+
+void CompAudio::ShowEventsInfo()
+{
+	ImGui::BeginChild(1, ImVec2(300, 150));
+	int i = 0;
+	for (std::multimap<int, AudioEvent>::iterator it = audio_events.begin(); it != audio_events.end(); i++)
+	{
+		ImGui::Separator();
+		ImGui::PushID(i);
+		ImGui::Text("Gameplay ev: %i", (*it).first);
+		ImGui::SameLine();
+		ImGui::Text("Audio ev: %s", (*it).second.name.c_str());
+
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Play"))
+		{
+			emitter->PlayEvent((*it).second.name.c_str());
+		}
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Stop"))
+		{
+			emitter->StopEvent((*it).second.name.c_str());
+		}
+		ImGui::SameLine();
+
+		if (ImGui::SmallButton("X"))
+		{
+			it = audio_events.erase(it);
+		}
+		else it++;
+
+		ImGui::PopID();
+	}
+
+	ImGui::EndChild();
+	if (ImGui::Button("AddEvent"))
+	{
+		CreateAudioEvent("", 0);
+	}
 }
 
 void CompAudio::CopyValues(const CompAudio * component)
@@ -170,3 +212,12 @@ void CompAudio::CreateEmitter()
 	float3 pos = transf->GetPosGlobal();
 	emitter = Wwished::Utility::CreateEmitter(emitter_id, parent->GetName(), pos.x, pos.y, pos.z);
 }
+
+void CompAudio::CreateAudioEvent(std::string audio_event, int gameplay_event)
+{
+	AudioEvent new_ev;
+	new_ev.name = audio_event;
+	audio_events.insert(std::pair<int, AudioEvent> (gameplay_event, new_ev));
+}
+
+

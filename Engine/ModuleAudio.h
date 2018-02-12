@@ -43,6 +43,7 @@ public:
 
 	void SetListener(CompAudio* c);
 
+
 private:
 
 	int LoadBank(const char* name);

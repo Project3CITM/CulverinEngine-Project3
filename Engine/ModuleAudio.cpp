@@ -259,6 +259,8 @@ void ModuleAudio::SetListener(CompAudio * c)
 	else 	Wwished::SetDefaultListener(0);
 }
 
+
+
 void ModuleAudio::ChangeVolume(float new_volume)
 {
 	volume = new_volume;
