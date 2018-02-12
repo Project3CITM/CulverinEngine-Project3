@@ -8,6 +8,8 @@
 #include "CompText.h"
 #include "CompRectTransform.h"
 #include "CompCanvas.h"
+#include "ModuleRenderer3D.h"
+#include "CompCamera.h"
 
 #include "SDL/include/SDL_opengl.h"
 #include "GL3W/include/glew.h"
@@ -233,9 +235,11 @@ void CompCanvasRender::DrawGraphic()
 		return;
 	}
 
-	glPushMatrix();
-	glMultMatrixf((float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
-//	App->renderer3D->default_shader->Bind();
+	//glPushMatrix();
+	//glMultMatrixf((float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
+	App->renderer3D->default_shader->Bind();
+
+
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
@@ -251,19 +255,40 @@ void CompCanvasRender::DrawGraphic()
 	}
 	*/
 	
+	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
+	float4x4 temp = camFrust.ViewMatrix();
+	CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
+
+
+
+
+	GLint view2Loc = glGetUniformLocation(App->renderer3D->default_shader->programID, "view");
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
+	GLint viewLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "viewproj");
+
+
+
+	glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
+	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+	
+
 	glBindBuffer(GL_ARRAY_BUFFER, this->vertices_id);
-	CheckOpenGlError("glBindBuffer vertices_id");
-	glVertexPointer(3, GL_FLOAT, sizeof(CanvasVertex), NULL);
-	CheckOpenGlError("glVertexPointer position");
-	//glNormalPointer(GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normals));
-	glTexCoordPointer(2, GL_FLOAT, sizeof(CanvasVertex), (void*)offsetof(CanvasVertex, tex_coords));
-	CheckOpenGlError("glTexCoordPointer tex_coords");
+
+	
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (char *)NULL + (3 * sizeof(float)));
+	
+	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	CheckOpenGlError("glBindBuffer vertices_id 0");
 
+	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indices_id);
 	CheckOpenGlError("glBindBuffer indices_id");
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	CheckOpenGlError("glDrawElements indices");
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	CheckOpenGlError("glBindBuffer indices_id 0 ");
@@ -274,8 +299,9 @@ void CompCanvasRender::DrawGraphic()
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glPopMatrix();
-//	App->renderer3D->default_shader->Unbind();
+
+	App->renderer3D->default_shader->Unbind();
+
 
 }
 

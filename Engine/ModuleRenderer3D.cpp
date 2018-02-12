@@ -251,7 +251,8 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	{
 		App->scene->quadtree.DebugDraw();
 	}
-
+	App->render_gui->ScreenSpaceDraw();
+	
 	// Draw Mouse Picking Ray
 	//glBegin(GL_LINES);
 	//glLineWidth(3.0f);
@@ -289,7 +290,8 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	//	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//	//glLoadIdentity();
 	//}
-	App->render_gui->ScreenSpaceDraw();
+
+	
 	ImGui::Render();
 
 	SDL_GL_SwapWindow(App->window->window);
