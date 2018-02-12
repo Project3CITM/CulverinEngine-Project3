@@ -76,7 +76,7 @@ bool ModuleRenderGui::SetEventListenrs()
 
 void ModuleRenderGui::OnEvent(Event & this_event)
 {
-	this_event.draw.ToDraw->Draw();
+	//this_event.draw.ToDraw->Draw();
 }
 
 void ModuleRenderGui::WorldSpaceDraw()
