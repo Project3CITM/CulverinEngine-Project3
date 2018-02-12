@@ -15,8 +15,22 @@ CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(
 	name_component = "Canvas Render";
 
 	my_canvas=(CompCanvas*)parent->FindParentComponentByType(Comp_Type::C_CANVAS);
+
+	GLenum error = GL_NO_ERROR;
+
+
 	glGenBuffers(1, &vertices_id);
+	error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		LOG("[error]Error glGenBuffers vertices_id OpenGL! %s\n", gluErrorString(error));
+	}
 	glGenBuffers(1, &indices_id);
+	error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		LOG("[error]Error glGenBuffers indices_id OpenGL! %s\n", gluErrorString(error));
+	}
 }
 
 CompCanvasRender::CompCanvasRender(const CompCanvasRender & copy, GameObject * parent) : Component(Comp_Type::C_CANVAS_RENDER, parent)
@@ -185,14 +199,46 @@ void CompCanvasRender::ProcessImage(CompImage * image)
 		indices.push_back(lastIndex );
 
 		//----
+		GLenum error = GL_NO_ERROR;
+	
 		glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
+		error = glGetError();
+		if (error != GL_NO_ERROR)
+		{
+			LOG("[error]Error glBindBuffer vertices_id OpenGL! %s\n", gluErrorString(error));
+		}
+	
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CanvasVertex), &vertices[0], GL_STATIC_DRAW);
+		error = glGetError();
+		if (error != GL_NO_ERROR)
+		{
+			LOG("[error]Error glBufferData vertices OpenGL! %s\n", gluErrorString(error));
+		}
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+		error = glGetError();
+		if (error != GL_NO_ERROR)
+		{
+			LOG("[error]Error glBindBuffer vertices_id to 0 OpenGL! %s\n", gluErrorString(error));
+		}
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
+		error = glGetError();
+		if (error != GL_NO_ERROR)
+		{
+			LOG("[error]Error glBindBuffer indices_id OpenGL! %s\n", gluErrorString(error));
+		}
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
+		error = glGetError();
+		if (error != GL_NO_ERROR)
+		{
+			LOG("[error]Error glBufferData indices OpenGL! %s\n", gluErrorString(error));
+		}
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		error = glGetError();
+		if (error != GL_NO_ERROR)
+		{
+			LOG("[error]Error glBindBuffer indices 0 OpenGL! %s\n", gluErrorString(error));
+		}
 }
 
 void CompCanvasRender::PorcessText(CompText * text)
@@ -218,21 +264,54 @@ void CompCanvasRender::DrawGraphic()
 	/*
 	if (graphic->GetTextureID() != -1)
 	{
-		glBindTexture(GL_TEXTURE_2D, graphic->GetTextureID());
+		glBindTexture(GL_TEXTURE_2D, 1);
 		//glColor4f(image->GetImage()->GetRGBA().x, image->GetImage()->GetRGBA().y, image->GetImage()->GetRGBA().z, image->GetImage()->GetRGBA().w);
 	}
 	
 	*/
 	glBindBuffer(GL_ARRAY_BUFFER, this->vertices_id);
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		LOG("[error]Error glBindBuffer OpenGL! %s\n", gluErrorString(error));
+	}
 	glVertexPointer(3, GL_FLOAT, sizeof(CanvasVertex), NULL);
+	error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		LOG("[error]Error glVertexPointer OpenGL! %s\n", gluErrorString(error));
+	}
 	//glNormalPointer(GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normals));
 	glTexCoordPointer(2, GL_FLOAT, sizeof(CanvasVertex), (void*)offsetof(CanvasVertex, tex_coords));
+	error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		LOG("[error]Error glTexCoordPointer OpenGL! %s\n", gluErrorString(error));
+	}
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+	error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		LOG("[error]Error glBindBuffer OpenGL! %s\n", gluErrorString(error));
+	}
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indices_id);
+	error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		LOG("[error]Error glBindBuffer OpenGL! %s\n", gluErrorString(error));
+	}
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
+	error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		LOG("[error]Error glDrawElements OpenGL! %s\n", gluErrorString(error));
+	}
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+	error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		LOG("[error]Error glBindBuffer OpenGL! %s\n", gluErrorString(error));
+	}
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
