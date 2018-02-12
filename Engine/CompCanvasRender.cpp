@@ -8,17 +8,17 @@
 #include "CompText.h"
 #include "CompRectTransform.h"
 #include "CompCanvas.h"
-#include "ModuleRenderer3D.h"
+
+#include "SDL/include/SDL_opengl.h"
+#include "GL3W/include/glew.h"
+#include <gl/GL.h>
+#include <gl/GLU.h>
 CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Canvas Render";
 
 	my_canvas=(CompCanvas*)parent->FindParentComponentByType(Comp_Type::C_CANVAS);
-
-	GLenum error = GL_NO_ERROR;
-
-
 	glGenBuffers(1, &vertices_id);
 	CheckOpenGlError("glGenBuffers vertices");
 
@@ -38,6 +38,15 @@ CompCanvasRender::~CompCanvasRender()
 void CompCanvasRender::Update(float dt)
 {
 	AddToCanvas();
+}
+
+void CompCanvasRender::Clear()
+{
+	glDeleteBuffers(1, &vertices_id);
+	vertices_id = 0;
+	glDeleteBuffers(1, &indices_id);
+	indices_id = 0;
+
 }
 
 void CompCanvasRender::ShowOptions()
@@ -193,24 +202,19 @@ void CompCanvasRender::ProcessImage(CompImage * image)
 		indices.push_back(lastIndex );
 
 		//----
-		GLenum error = GL_NO_ERROR;
 	
 		glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
 		CheckOpenGlError("glBindBuffer vertices");
-
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CanvasVertex), &vertices[0], GL_STATIC_DRAW);
 		CheckOpenGlError("glBufferData vertices");
-
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		CheckOpenGlError("glBindBuffer vertices 0");
 
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
 		CheckOpenGlError("glBindBuffer indices");
-
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
 		CheckOpenGlError("glBufferData indices");
-
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		CheckOpenGlError("glBindBuffer indices 0");
 
@@ -236,33 +240,29 @@ void CompCanvasRender::DrawGraphic()
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	/*
+	
 	if (graphic->GetTextureID() != -1)
 	{
 		glBindTexture(GL_TEXTURE_2D, 1);
+		CheckOpenGlError("glBindTexture color");
 		//glColor4f(image->GetImage()->GetRGBA().x, image->GetImage()->GetRGBA().y, image->GetImage()->GetRGBA().z, image->GetImage()->GetRGBA().w);
 	}
 	
-	*/
+	
 	glBindBuffer(GL_ARRAY_BUFFER, this->vertices_id);
 	CheckOpenGlError("glBindBuffer vertices_id");
-
 	glVertexPointer(3, GL_FLOAT, sizeof(CanvasVertex), NULL);
 	CheckOpenGlError("glVertexPointer position");
-
 	//glNormalPointer(GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normals));
 	glTexCoordPointer(2, GL_FLOAT, sizeof(CanvasVertex), (void*)offsetof(CanvasVertex, tex_coords));
 	CheckOpenGlError("glTexCoordPointer tex_coords");
-
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	CheckOpenGlError("glBindBuffer vertices_id 0");
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indices_id);
 	CheckOpenGlError("glBindBuffer indices_id");
-
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
 	CheckOpenGlError("glDrawElements indices");
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	CheckOpenGlError("glBindBuffer indices_id 0 ");
 
