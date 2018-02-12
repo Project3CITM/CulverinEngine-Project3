@@ -2,7 +2,7 @@
 #version 330 core
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 texCoord;
-layout (location = 2) in vec3 normals;
+layout (location = 2) in vec3 normal;
 layout (location = 3) in vec3 color;
 out vec3 ourColor;
 out vec2 TexCoord;
@@ -10,9 +10,9 @@ out vec3 pos;
 out vec3 Position;
 out vec3 Normals;
 out vec3 Vposition;
-uniform mat4 mat_model;
-uniform mat4 projection_view;
-uniform float time;
+uniform mat4 model;
+uniform mat4 viewproj;
+uniform float _time;
 
 vec3 rotate(vec3 v, vec3 axis, float angle);
 mat4 rotationMatrix(vec3 axis, float angle);
@@ -26,17 +26,17 @@ Position = position;
 pos = vec3(position);
 
 
-pos.z = position.z + (sin(time+pos.x-pos.y)+0.8*sin(time+pos.x+pos.y));
+pos.z = position.z + (sin(_time+pos.x-pos.y)+0.8*sin(_time+pos.x+pos.y));
 
- gl_Position = projection_view * mat_model* vec4(pos, 1.0f);
+ gl_Position = viewproj * model* vec4(pos, 1.0f);
 
  
- Normals = normals;
+ Normals = normal;
  TexCoord = texCoord;
   Vposition = position;
- Vposition.z = position.z + 0.8*(sin(time+pos.x-pos.y));
+ Vposition.z = position.z + 0.8*(sin(_time+pos.x-pos.y));
 
-Normals = rotate(Normals,vec3(0,1,0),radians(abs(sin(time/2*pi))))+position.z + (cos(time+pos.x-pos.y))*0.5;
+Normals = rotate(Normals,vec3(0,1,0),radians(abs(sin(_time/2*pi))))+position.z + (cos(_time+pos.x-pos.y))*0.5;
 
 
 }
