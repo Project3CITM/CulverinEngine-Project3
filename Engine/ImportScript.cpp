@@ -247,7 +247,7 @@ void ImportScript::Unload_domain()
 bool ImportScript::CreateNewScript(bool& active)
 {
 	//ImGui::PushStyleVar() // Center
-	ImGui::Begin("Create New Script", &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_ShowBorders);
+	ImGui::Begin("Create New Script", &active, ImGuiWindowFlags_NoCollapse);
 	static Timer timeshowResult;
 	static int result = 0;
 	ImGui::Text("Put Name Name Class: ");

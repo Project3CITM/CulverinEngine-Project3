@@ -356,7 +356,7 @@ update_status ModuleGUI::Update(float dt)
 	if (window_random_generator)
 	{
 		static LCG random_generator;
-		ImGui::Begin("Random Numbers Generator", &window_random_generator, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Begin("Random Numbers Generator", &window_random_generator, ImGuiWindowFlags_AlwaysAutoResize);
 		ImGui::Spacing();
 		ImGui::PushItemWidth(60);
 		static int numbers_f = 0;
@@ -431,7 +431,7 @@ update_status ModuleGUI::Update(float dt)
 	// Window About Us... ---------------------------------
 	if (window_about_us)
 	{
-		if (!ImGui::Begin("About Culverin", &window_about_us, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+		if (!ImGui::Begin("About Culverin", &window_about_us, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::End();
 			return UPDATE_CONTINUE;
@@ -546,7 +546,7 @@ update_status ModuleGUI::Update(float dt)
 
 	if (window_audio)
 	{
-		ImGui::Begin("Audio Banks", &window_audio, ImGuiWindowFlags_ShowBorders);
+		ImGui::Begin("Audio Banks", &window_audio);
 		App->audio->DrawOnEditor();
 		ImGui::End();
 	}
@@ -554,7 +554,7 @@ update_status ModuleGUI::Update(float dt)
 	//Window Style -----------------------
 	if (window_style)
 	{
-		ImGui::Begin("Style Editor", &window_style, ImGuiWindowFlags_ShowBorders);
+		ImGui::Begin("Style Editor", &window_style);
 		ShowStyleEditor();
 		ImGui::End();
 	}
@@ -686,7 +686,7 @@ void ModuleGUI::ShowStyleEditor(ImGuiStyle* ref) //TODO need reposition
 	if (ImGui::TreeNode("Rendering"))
 	{
 		ImGui::Checkbox("Anti-aliased lines", &style.AntiAliasedLines); ImGui::SameLine(); App->ShowHelpMarker("When disabling anti-aliasing lines, you'll probably want to disable borders in your style as well.");
-		ImGui::Checkbox("Anti-aliased shapes", &style.AntiAliasedShapes);
+		ImGui::Checkbox("Anti-aliased shapes", &style.AntiAliasedFill);
 		ImGui::PushItemWidth(100);
 		ImGui::DragFloat("Curve Tessellation Tolerance", &style.CurveTessellationTol, 0.02f, 0.10f, FLT_MAX, NULL, 2.0f);
 		if (style.CurveTessellationTol < 0.0f) style.CurveTessellationTol = 0.10f;
@@ -699,7 +699,7 @@ void ModuleGUI::ShowStyleEditor(ImGuiStyle* ref) //TODO need reposition
 	{
 		ImGui::SliderFloat2("WindowPadding", (float*)&style.WindowPadding, 0.0f, 20.0f, "%.0f");
 		ImGui::SliderFloat("WindowRounding", &style.WindowRounding, 0.0f, 16.0f, "%.0f");
-		ImGui::SliderFloat("ChildWindowRounding", &style.ChildWindowRounding, 0.0f, 16.0f, "%.0f");
+		ImGui::SliderFloat("ChildWindowRounding", &style.ChildRounding, 0.0f, 16.0f, "%.0f");
 		ImGui::SliderFloat2("FramePadding", (float*)&style.FramePadding, 0.0f, 20.0f, "%.0f");
 		ImGui::SliderFloat("FrameRounding", &style.FrameRounding, 0.0f, 16.0f, "%.0f");
 		ImGui::SliderFloat2("ItemSpacing", (float*)&style.ItemSpacing, 0.0f, 20.0f, "%.0f");
@@ -830,7 +830,7 @@ void ModuleGUI::ShowStyleEditor(ImGuiStyle* ref) //TODO need reposition
 									ImGui::BeginTooltip();
 									ImGui::Text("Codepoint: U+%04X", base + n);
 									ImGui::Separator();
-									ImGui::Text("XAdvance+1: %.1f", glyph->XAdvance);
+									ImGui::Text("XAdvance+1: %.1f", glyph->AdvanceX);
 									ImGui::Text("Pos: (%.2f,%.2f)->(%.2f,%.2f)", glyph->X0, glyph->Y0, glyph->X1, glyph->Y1);
 									ImGui::Text("UV: (%.3f,%.3f)->(%.3f,%.3f)", glyph->U0, glyph->V0, glyph->U1, glyph->V1);
 									ImGui::EndTooltip();
@@ -888,7 +888,7 @@ void ModuleGUI::UpdateWindows(float dt)
 	ImGui::Begin("MasterWindow", &show_scene3, ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoFocusOnAppearing);
-	ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4(0.211f, 0.211f, 0.211f, 1.00f));
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.211f, 0.211f, 0.211f, 1.00f));
 	if (ImGui::BeginChild(ImGui::GetID("MasterWindow"), ImVec2(ImGui::GetWindowWidth(), 30), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
 	{
 		static GLuint icon_play = App->textures->LoadTexture("Images/UI/IconPlay.png");

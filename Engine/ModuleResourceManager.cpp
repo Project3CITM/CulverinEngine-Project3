@@ -481,7 +481,7 @@ Resource*  ModuleResourceManager::ShowResources(bool& active, Resource::Type typ
 		nameWindow = "Select Script";
 		subname = "All Scripts:";
 	}
-	if (!ImGui::Begin(nameWindow, &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_ShowBorders)) //TODO ELLIOT CLOSE Windows example
+	if (!ImGui::Begin(nameWindow, &active, ImGuiWindowFlags_NoCollapse)) //TODO ELLIOT CLOSE Windows example
 	{
 		ImGui::End();
 	}
@@ -523,7 +523,7 @@ Resource*  ModuleResourceManager::ShowResources(bool& active, Resource::Type typ
 
 void ModuleResourceManager::ShowAllResources(bool& active) 
 {
-	if (!ImGui::Begin("Resources", &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_ShowBorders))
+	if (!ImGui::Begin("Resources", &active, ImGuiWindowFlags_NoCollapse))
 	{
 		ImGui::End();
 	}

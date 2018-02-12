@@ -98,7 +98,7 @@ void Console::ClearLog()
 	ScrollToBottom = true;
 }
 
-void Console::AddLog(const char* fmt, ...) IM_PRINTFARGS(2)
+void Console::AddLog(const char* fmt, ...) IM_FMTARGS(2)
 {
 	char buf[1024];
 	va_list args;
@@ -137,7 +137,7 @@ void Console::Draw(const char* title)
 	ImGui::PopStyleVar();
 	ImGui::Separator();
 
-	ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+	ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
 	if (ImGui::BeginPopupContextWindow())
 	{
 		if (ImGui::Selectable("Clear")) ClearLog();

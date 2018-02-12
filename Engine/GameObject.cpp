@@ -710,7 +710,7 @@ void GameObject::ShowGameObjectOptions()
 
 void GameObject::ShowInspectorInfo()
 {
-	ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4(0.211f, 0.211f, 0.211f, 1.00f));
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.211f, 0.211f, 0.211f, 1.00f));
 	if (ImGui::BeginChild(ImGui::GetID("Inspector"), ImVec2(ImGui::GetWindowWidth(), 90)))
 	{
 		static GLuint icon_GameObject = App->textures->LoadTexture("Images/UI/icon_GameObject.png");
@@ -841,8 +841,8 @@ void GameObject::ShowInspectorInfo()
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.258f, 0.258f, 0.258f, 1.00f));
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y + ImGui::GetItemRectSize().y));
 		ImGui::SetNextWindowSize(ImVec2(WIDTH_ADDCOMPONENT, WIDTH_ADDCOMPONENT / 2));
-		ImGui::Begin("AddComponent", NULL, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
-		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4(0.311f, 0.311f, 0.311f, 1.00f));
+		ImGui::Begin("AddComponent", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.311f, 0.311f, 0.311f, 1.00f));
 		if (ImGui::BeginChild(ImGui::GetID("AddComponent"), ImVec2(ImGui::GetWindowWidth(), 20), false, ImGuiWindowFlags_NoScrollWithMouse))
 		{
 			ImGui::Text("");

@@ -312,7 +312,7 @@ void Scene::SetScriptVariablesToNull(GameObject* go)
 
 GameObject* Scene::GetGameObjectfromScene(bool& active)
 {
-	if (!ImGui::Begin("GameObjects in Scene", &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_ShowBorders))
+	if (!ImGui::Begin("GameObjects in Scene", &active, ImGuiWindowFlags_NoCollapse))
 	{
 		ImGui::End();
 	}
