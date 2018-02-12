@@ -427,7 +427,7 @@ void ModuleShaders::ImportShaderMaterials()
 						std::string frag_name = json_object_get_string(obj_proj, "Fragment Shader");
 
 						//Find the shader object by name
-						mat_shader->fragment = GetShaderByName(frag_name.c_str());
+						mat_shader->fragment = GetShaderByName(frag_name.c_str(), ShaderType::fragment);
 					}
 
 					//If the program has a vertex shader
@@ -436,7 +436,7 @@ void ModuleShaders::ImportShaderMaterials()
 						std::string vertex_name = json_object_get_string(obj_proj, "Vertex Shader");
 
 						//Find the shader object by name
-						mat_shader->vertex = GetShaderByName(vertex_name.c_str());
+						mat_shader->vertex = GetShaderByName(vertex_name.c_str(), ShaderType::vertex);
 					}
 
 					//If the program has a geometry shader
@@ -445,7 +445,7 @@ void ModuleShaders::ImportShaderMaterials()
 						std::string geometry_name = json_object_get_string(obj_proj, "Geometry Shader");
 
 						//Find the shader object by name
-						mat_shader->geometry = GetShaderByName(geometry_name.c_str());
+						mat_shader->geometry = GetShaderByName(geometry_name.c_str(), ShaderType::geometry);
 					}
 
 					//Store the program
@@ -457,17 +457,31 @@ void ModuleShaders::ImportShaderMaterials()
 	}
 }
 
-Shader * ModuleShaders::GetShaderByName(const char * name)
+Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)
 {
 
 	for (std::vector<Shader*>::const_iterator item = shaders.cbegin(); item != shaders.cend(); item++) 
 	{
-
+		std::string str_path = (*item)->shaderPath.c_str();
+		std::string extension_path = App->fs->GetExtension(str_path);
 		if ((*item)->name == name) 
 		{
-			return *item;
-		}
 
+			//This is to led all the shader objects to have the same name and the engine will
+			//find them searching by name and extension too.
+
+			switch (type) 
+			{
+			case ShaderType::fragment:
+				if (extension_path=="frag") return *item;break;
+
+			case ShaderType::vertex:
+				if (extension_path == "vert") return *item;break;
+
+			case ShaderType::geometry:
+				if (extension_path == "geom") return *item;break;
+			}
+		}
 	}
 	return nullptr;
 }

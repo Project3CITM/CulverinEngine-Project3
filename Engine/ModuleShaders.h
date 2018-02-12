@@ -45,7 +45,7 @@ public:
 
 	void ImportShaderMaterials();
 
-	Shader* GetShaderByName(const char* name);
+	Shader* GetShaderByName(const char* name, ShaderType type);
 
 	std::string Shader_Directory_fs;
 	std::vector<Shader*> shaders;
