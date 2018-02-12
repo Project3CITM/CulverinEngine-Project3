@@ -30,6 +30,7 @@ public:
 	void ShowInspectorInfo();
 	void CopyValues(const CompMaterial * component);
 	void ShowTextureVariable(int index);
+	void ShowShadersEditors();
 	// -------------------------
 
 	// SAVE - LOAD METHODS ------------------------

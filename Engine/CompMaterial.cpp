@@ -317,6 +317,40 @@ void CompMaterial::ShowInspectorInfo()
 		material_shader = *App->module_shaders->programs[shader_pos];
 
 	}
+
+	if (material_shader.fragment != nullptr) {
+		if (ImGui::Button("Edit Fragment"))
+		{
+			material_shader.edit_fragment = true;
+			material_shader.edit_vertex = false;
+			material_shader.edit_geometry = false;
+			material_shader.get_shader_text = true;
+		}
+		
+	}
+
+	if (material_shader.vertex != nullptr) {
+		if (ImGui::Button("Edit Vertex"))
+		{
+			material_shader.edit_vertex = true;
+			material_shader.edit_fragment = false;
+			material_shader.edit_geometry = false;
+			material_shader.get_shader_text = true;
+		}
+	}
+
+	if (material_shader.geometry != nullptr) {
+		if (ImGui::Button("Edit Geometry"))
+		{
+			material_shader.edit_geometry = true;
+			material_shader.edit_fragment = false;
+			material_shader.edit_vertex = false;
+			material_shader.get_shader_text = true;
+		}
+	}
+
+	ShowShadersEditors();
+
 	std::vector<TextureVar>::iterator item = material_shader.textures.begin();
 	int i = 0;
 	while (item != material_shader.textures.end()) {
@@ -325,42 +359,7 @@ void CompMaterial::ShowInspectorInfo()
 		item++;
 
 	}
-	/*
-	if(resource_material == nullptr || select_material)
-	{
-		if (resource_material == nullptr)
-		{
-			ImGui::Text("Name:"); ImGui::SameLine();
-			ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Material)");
-			if (ImGui::Button("Select Material..."))
-			{
-				select_material = true;
-			}
-		}
-		
-		if (select_material)
-		{
-			ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(select_material, Resource::Type::MATERIAL);
-			if (temp != nullptr)
-			{
-				if (resource_material != nullptr)
-				{
-					if (resource_material->num_game_objects_use_me > 0)
-					{			
-						resource_material->num_game_objects_use_me--;
-					}
-				}
-				resource_material = temp;
-				resource_material->num_game_objects_use_me++;
-				if (resource_material->IsLoadedToMemory() == Resource::State::UNLOADED)
-				{
-					App->importer->iMaterial->LoadResource(std::to_string(resource_material->GetUUID()).c_str(), resource_material);
-				}
-				Enable();
-			}
-		}
-	}*/
-
+	
 	ImGui::TreePop();
 }
 
@@ -379,7 +378,7 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 
 	//Save Shaders and shaders values
-
+	//TODO
 	//
 	/*if (resource_material != nullptr)
 	{
@@ -399,7 +398,7 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Material UUID");
 
 	//Load Shaders and shaders values
-
+	//TODO
 	//
 	/*
 	if (resourceID > 0)
@@ -467,3 +466,89 @@ void CompMaterial::ShowTextureVariable(int index)
 	}
 	ImGui::PopID();
 }
+
+void CompMaterial::ShowShadersEditors()
+{
+	Shader* shader = nullptr;
+	bool* edit_shader = nullptr;
+	ShaderType shader_type;
+
+	if (material_shader.edit_fragment) {
+		shader = material_shader.fragment;
+		edit_shader = &material_shader.edit_fragment;
+		shader_type = ShaderType::fragment;
+	}
+	else if (material_shader.edit_vertex) {
+		shader = material_shader.vertex;
+		edit_shader = &material_shader.edit_vertex;
+		shader_type = ShaderType::vertex;
+	}
+	else if (material_shader.edit_vertex) {
+		shader = material_shader.vertex;
+		edit_shader = &material_shader.edit_geometry;
+		shader_type = ShaderType::geometry;
+	}
+
+	if (shader == nullptr) return;
+
+
+		if (ImGui::Begin("Edit sHADER", edit_shader)) {
+
+			if (ImGui::Button("Save") && material_shader.programID != App->renderer3D->default_shader->programID) {
+
+				uint buffer_size = strlen(material_shader.shader_editor.GetText().c_str());
+
+				FILE* pFile = fopen(shader->shaderPath.c_str(), "wb");
+				fwrite(material_shader.shader_editor.GetText().c_str(), sizeof(char), buffer_size, pFile);
+				fclose(pFile);
+
+				uint last_shader_id = shader->shaderID;
+
+				Shader* new_shader = App->module_shaders->CompileShader(shader->shaderPath, shader->name,shader_type);
+
+				switch(shader_type){
+				case ShaderType::fragment:
+							material_shader.UpdateShaderProgram(0, new_shader->shaderID, 0);
+							break;
+				case ShaderType::vertex:
+					material_shader.UpdateShaderProgram(new_shader->shaderID,0,0);
+					break;
+
+				case ShaderType::geometry:
+					material_shader.UpdateShaderProgram(0,0,new_shader->shaderID);
+					break;
+					
+				}
+
+				glDeleteShader(last_shader_id);
+				
+			}
+
+			if (material_shader.get_shader_text)
+			{
+				if (strcmp(shader->shaderPath.c_str(), "") != 0) {
+					char* buffer;
+					buffer = shader->GetShaderText();
+
+					material_shader.shader_editor.SetText(buffer);
+					
+				}
+				else {
+					material_shader.shader_editor.SetText("YOU CAN'T MODIFY THE DEFAULT SHADER");
+				}
+				material_shader.get_shader_text = false;
+		}
+
+			ImGuiIO& io = ImGui::GetIO();
+			ImGui::PushFont(io.Fonts->Fonts[1]);
+			material_shader.shader_editor.Render("Editor");
+			ImGui::PopFont();
+
+			ImGui::End();
+		}
+
+
+	
+}
+
+
