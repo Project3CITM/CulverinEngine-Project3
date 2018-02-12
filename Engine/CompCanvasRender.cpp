@@ -20,17 +20,11 @@ CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(
 
 
 	glGenBuffers(1, &vertices_id);
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		LOG("[error]Error glGenBuffers vertices_id OpenGL! %s\n", gluErrorString(error));
-	}
+	CheckOpenGlError("glGenBuffers vertices");
+
 	glGenBuffers(1, &indices_id);
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		LOG("[error]Error glGenBuffers indices_id OpenGL! %s\n", gluErrorString(error));
-	}
+	CheckOpenGlError("glGenBuffers indices_id");
+
 }
 
 CompCanvasRender::CompCanvasRender(const CompCanvasRender & copy, GameObject * parent) : Component(Comp_Type::C_CANVAS_RENDER, parent)
@@ -202,43 +196,24 @@ void CompCanvasRender::ProcessImage(CompImage * image)
 		GLenum error = GL_NO_ERROR;
 	
 		glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
-		error = glGetError();
-		if (error != GL_NO_ERROR)
-		{
-			LOG("[error]Error glBindBuffer vertices_id OpenGL! %s\n", gluErrorString(error));
-		}
-	
+		CheckOpenGlError("glBindBuffer vertices");
+
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CanvasVertex), &vertices[0], GL_STATIC_DRAW);
-		error = glGetError();
-		if (error != GL_NO_ERROR)
-		{
-			LOG("[error]Error glBufferData vertices OpenGL! %s\n", gluErrorString(error));
-		}
+		CheckOpenGlError("glBufferData vertices");
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		error = glGetError();
-		if (error != GL_NO_ERROR)
-		{
-			LOG("[error]Error glBindBuffer vertices_id to 0 OpenGL! %s\n", gluErrorString(error));
-		}
+		CheckOpenGlError("glBindBuffer vertices 0");
+
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
-		error = glGetError();
-		if (error != GL_NO_ERROR)
-		{
-			LOG("[error]Error glBindBuffer indices_id OpenGL! %s\n", gluErrorString(error));
-		}
+		CheckOpenGlError("glBindBuffer indices");
+
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
-		error = glGetError();
-		if (error != GL_NO_ERROR)
-		{
-			LOG("[error]Error glBufferData indices OpenGL! %s\n", gluErrorString(error));
-		}
+		CheckOpenGlError("glBufferData indices");
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		error = glGetError();
-		if (error != GL_NO_ERROR)
-		{
-			LOG("[error]Error glBindBuffer indices 0 OpenGL! %s\n", gluErrorString(error));
-		}
+		CheckOpenGlError("glBindBuffer indices 0");
+
 }
 
 void CompCanvasRender::PorcessText(CompText * text)
@@ -270,48 +245,26 @@ void CompCanvasRender::DrawGraphic()
 	
 	*/
 	glBindBuffer(GL_ARRAY_BUFFER, this->vertices_id);
-	GLenum error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		LOG("[error]Error glBindBuffer OpenGL! %s\n", gluErrorString(error));
-	}
+	CheckOpenGlError("glBindBuffer vertices_id");
+
 	glVertexPointer(3, GL_FLOAT, sizeof(CanvasVertex), NULL);
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		LOG("[error]Error glVertexPointer OpenGL! %s\n", gluErrorString(error));
-	}
+	CheckOpenGlError("glVertexPointer position");
+
 	//glNormalPointer(GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normals));
 	glTexCoordPointer(2, GL_FLOAT, sizeof(CanvasVertex), (void*)offsetof(CanvasVertex, tex_coords));
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		LOG("[error]Error glTexCoordPointer OpenGL! %s\n", gluErrorString(error));
-	}
+	CheckOpenGlError("glTexCoordPointer tex_coords");
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		LOG("[error]Error glBindBuffer OpenGL! %s\n", gluErrorString(error));
-	}
+	CheckOpenGlError("glBindBuffer vertices_id 0");
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indices_id);
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		LOG("[error]Error glBindBuffer OpenGL! %s\n", gluErrorString(error));
-	}
+	CheckOpenGlError("glBindBuffer indices_id");
+
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		LOG("[error]Error glDrawElements OpenGL! %s\n", gluErrorString(error));
-	}
+	CheckOpenGlError("glDrawElements indices");
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		LOG("[error]Error glBindBuffer OpenGL! %s\n", gluErrorString(error));
-	}
+	CheckOpenGlError("glBindBuffer indices_id 0 ");
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
@@ -325,4 +278,13 @@ void CompCanvasRender::DrawGraphic()
 void CompCanvasRender::SetGraphic(CompGraphic * set_graphic)
 {
 	graphic = set_graphic;
+}
+
+void CompCanvasRender::CheckOpenGlError(std::string info)
+{
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		LOG("[error]Error %s, %s\n", info.c_str(),gluErrorString(error));
+	}
 }

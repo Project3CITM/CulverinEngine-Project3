@@ -34,6 +34,8 @@ public:
 
 	void SetGraphic(CompGraphic* set_graphic);
 
+	void CheckOpenGlError(std::string info);
+
 private:
 public:
 private:
