@@ -61,8 +61,8 @@ update_status ModuleRenderGui::PostUpdate(float dt)
 	
 	//if (!world_space_canvas.empty())
 	//	WorldSpaceDraw();
-	if (!screen_space_canvas.empty())
-		ScreenSpaceDraw();
+	//if (!screen_space_canvas.empty())
+	//	ScreenSpaceDraw();
 	
 	postUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -90,8 +90,9 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	int total_height = (int)(window_height * window_scale);
 	if (total_width == 0 || total_height == 0)
 		return;
-/*
+
 	// Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers, polygon fill.
+	/*
 	GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
 	GLint last_polygon_mode[2]; glGetIntegerv(GL_POLYGON_MODE, last_polygon_mode);
 	GLint last_viewport[4]; glGetIntegerv(GL_VIEWPORT, last_viewport);
@@ -112,7 +113,7 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	*/
+*/	
 	//Draw
 
 	for (int i = 0; i < screen_space_canvas.size(); i++)
@@ -127,16 +128,18 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindTexture(GL_TEXTURE_2D, (GLuint)last_texture);
+	
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glPopAttrib();
+
 	glPolygonMode(GL_FRONT, last_polygon_mode[0]); glPolygonMode(GL_BACK, last_polygon_mode[1]);
 	glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
 
-
 	*/
+	
 	screen_space_canvas.clear();
 }
 

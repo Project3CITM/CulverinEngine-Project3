@@ -17,7 +17,7 @@ CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(
 {
 	uid = App->random->Int();
 	name_component = "Canvas Render";
-
+	glGetError();
 	my_canvas=(CompCanvas*)parent->FindParentComponentByType(Comp_Type::C_CANVAS);
 	glGenBuffers(1, &vertices_id);
 	CheckOpenGlError("glGenBuffers vertices");
@@ -142,7 +142,7 @@ void CompCanvasRender::AddToCanvas()
 {
 	if (my_canvas == nullptr)
 	{
-		LOG("ERROR:CanvasRender with UID &i don't have Canvas", parent->GetUUID());
+		LOG("ERROR:CanvasRender don't found");
 		return;
 	}
 	
@@ -202,7 +202,7 @@ void CompCanvasRender::ProcessImage(CompImage * image)
 		indices.push_back(lastIndex );
 
 		//----
-	
+		glGetError();
 		glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
 		CheckOpenGlError("glBindBuffer vertices");
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CanvasVertex), &vertices[0], GL_STATIC_DRAW);
@@ -232,22 +232,24 @@ void CompCanvasRender::DrawGraphic()
 	{
 		return;
 	}
-//	glPushMatrix();
-//	glMultMatrixf((float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
+
+	glPushMatrix();
+	glMultMatrixf((float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
 //	App->renderer3D->default_shader->Bind();
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glGetError();
 
-	
+	/*
 	if (graphic->GetTextureID() != -1)
 	{
-		glBindTexture(GL_TEXTURE_2D, 1);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		CheckOpenGlError("glBindTexture color");
 		//glColor4f(image->GetImage()->GetRGBA().x, image->GetImage()->GetRGBA().y, image->GetImage()->GetRGBA().z, image->GetImage()->GetRGBA().w);
 	}
-	
+	*/
 	
 	glBindBuffer(GL_ARRAY_BUFFER, this->vertices_id);
 	CheckOpenGlError("glBindBuffer vertices_id");
@@ -266,11 +268,13 @@ void CompCanvasRender::DrawGraphic()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	CheckOpenGlError("glBindBuffer indices_id 0 ");
 
+	//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glBindTexture(GL_TEXTURE_2D, 0);
-//	glPopMatrix();
+	glPopMatrix();
 //	App->renderer3D->default_shader->Unbind();
 
 }

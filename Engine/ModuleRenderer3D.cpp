@@ -8,7 +8,7 @@
 #include "SkyBox.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera3D.h"
-
+#include "ModuleRenderGui.h"
 #include "SDL/include/SDL_opengl.h"
 #include "GL3W/include/glew.h"
 #include <gl/GL.h>
@@ -289,7 +289,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	//	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//	//glLoadIdentity();
 	//}
-
+	App->render_gui->ScreenSpaceDraw();
 	ImGui::Render();
 
 	SDL_GL_SwapWindow(App->window->window);
