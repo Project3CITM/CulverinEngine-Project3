@@ -4,6 +4,7 @@
 #include "ModuleInput.h"
 #include "ModuleImporter.h"
 #include "ImportScript.h"
+#include "ModuleGUI.h"
 #include "CompTransform.h"
 #include "GameObject.h"
 #include "Scene.h"
@@ -840,6 +841,12 @@ void CSharpScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
 		transform->IncrementRot(new_rot);
 	}
+}
+
+// Map ------------------------------------------------
+MonoString* CSharpScript::GetMapString(MonoObject* object)
+{
+	return mono_string_new(CSdomain, App->gui->map_string.c_str());
 }
 
 void CSharpScript::Save(JSON_Object* object, std::string name) const

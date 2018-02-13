@@ -25,6 +25,7 @@
 #include "Quadtree.h"
 #include "JSONSerialization.h"
 #include "SkyBox.h"
+#include "ModuleRenderGui.h"
 
 #include "Gl3W/include/glew.h"
 #include "ImGui/imgui.h"
@@ -133,6 +134,17 @@ update_status Scene::Update(float dt)
 
 	// Update GameObjects -----------
 	root->Update(dt);
+
+	// Draw Skybox (direct mode for now)
+	if (App->scene->draw_skybox) App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+	// Draw Plane
+	DrawPlane();
+	// Draw GameObjects
+	root->Draw();
+	// Draw Quadtree
+	if (App->scene->quadtree_draw) App->scene->quadtree.DebugDraw();
+	// Draw GUI
+	//App->render_gui->ScreenSpaceDraw();
 
 	Update_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;

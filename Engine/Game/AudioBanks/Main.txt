@@ -1,8 +1,10 @@
 Event	ID	Name			Wwise Object Path	Notes
 	251412229	Shot			\Default Work Unit\Shot	
+	417627684	PlayMusic			\Default Work Unit\PlayMusic	
 	3240900869	ResumeAll			\Default Work Unit\ResumeAll	
 	4091047182	PauseAll			\Default Work Unit\PauseAll	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	351584646	Shot	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Shot_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shot		221116
+	990784722	14783144220180213163025	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\14783144220180213163025_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\NoPuedoParar\14783144220180213163025		25439552
 

@@ -17,12 +17,14 @@ public:
 	~ModuleAudio();
 
 	bool Init(JSON_Object* node);
-	//bool Start();
-	//update_status PreUpdate(float dt);
-	//update_status Update(float dt);
+
+	bool SetEventListenrs();
+	void OnEvent(Event& event);
+
 	update_status PostUpdate(float dt);
 	bool SaveConfig(JSON_Object* node);
 	bool CleanUp();
+
 
 	void DrawOnEditor();
 	void UnloadAllBanks();
@@ -42,6 +44,8 @@ public:
 	void ResumeSounds();
 
 	void SetListener(CompAudio* c);
+
+
 
 
 private:

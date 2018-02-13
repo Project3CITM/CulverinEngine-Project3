@@ -241,26 +241,31 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 	perf_timer.Start();
 	
+	//All draw functions moved to Scene Update
+
 	// Draw Skybox (direct mode for now)
-	if (App->scene->draw_skybox)
-	{
-		App->scene->skybox->DrawSkybox(800, active_camera->frustum.pos, App->scene->skybox_index);
-	}
+	//if (App->scene->draw_skybox)
+	//{
+	//	App->scene->skybox->DrawSkybox(800, active_camera->frustum.pos, App->scene->skybox_index);
+	//}
+
 	//Draw Test Cube
 	//App->scene->DrawCube(5);
 
 	// Draw Plane
-	App->scene->DrawPlane();
+	//App->scene->DrawPlane();
 
 	// Draw GameObjects
-	App->scene->root->Draw();
+	//App->scene->root->Draw();
 	
 
 	// Draw Quadtree
-	if (App->scene->quadtree_draw)
-	{
-		App->scene->quadtree.DebugDraw();
-	}
+	//if (App->scene->quadtree_draw)
+	//{
+	//	App->scene->quadtree.DebugDraw();
+	//}
+
+	// Draw GUI
 	App->render_gui->ScreenSpaceDraw();
 	
 	// Draw Mouse Picking Ray
@@ -431,13 +436,13 @@ void ModuleRenderer3D::UpdateProjection(CompCamera* cam)
 void ModuleRenderer3D::OnResize(int width, int height)
 {
 	float ratio = (float)width / (float)height;
-	active_camera->SetRatio(ratio);
+	active_camera->SetFov(height);
 	glViewport(0, 0, width, height);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	
-	glLoadMatrixf(active_camera->GetProjectionMatrix());
+	//glLoadMatrixf(active_camera->GetProjectionMatrix());
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

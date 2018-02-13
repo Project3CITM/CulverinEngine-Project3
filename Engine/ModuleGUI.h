@@ -71,6 +71,9 @@ public:
 	std::vector<int> ints_list;
 	//------------------------------
 
+	//Map ----------
+	std::string map_string;
+
 private:
 
 	//WINDOW EXIT -------------

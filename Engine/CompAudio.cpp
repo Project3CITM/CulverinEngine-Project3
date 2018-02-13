@@ -197,11 +197,46 @@ void CompAudio::Save(JSON_Object * object, std::string name, bool saveScene, uin
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());	
+
+	json_object_dotset_number_with_std(object, name + "Audio Type", (int)audio_type);
+
+	json_object_dotset_number_with_std(object, name + "Number of Syncs", audio_events.size());
+
+	int i = 0;
+	for (std::vector<std::pair<int, AudioEvent>>::const_iterator it = audio_events.begin(); it != audio_events.end(); it++, i++)
+	{
+		std::string num_event = "Sync ";
+		num_event += std::to_string(i);
+		json_object_dotset_string_with_std(object, name + "GameSyncs." + num_event.c_str() + ".AudioEv",  (*it).second.name.c_str());
+		json_object_dotset_number_with_std(object, name + "GameSyncs." + num_event.c_str() + ".GameEv", (*it).first);
+	}
+
+	//json_object_dotset_number_with_std(object, name + "Events:", (int)audio_type);
 }
 
 void CompAudio::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	audio_type = (AUDIO_TYPE)(int)json_object_dotget_number_with_std(object, name + "Audio Type");
+	if (audio_type == LISTENER)
+		App->audio->SetListener(this);
+
+	int number_of_syncs = json_object_dotget_number_with_std(object, name + "Number of Syncs");
+
+	for (int i = 0; i < number_of_syncs; i++)
+	{
+		std::string audio_ev;
+		int game_ev;
+
+		std::string num_event = "Sync ";
+		num_event += std::to_string(i);
+		audio_ev = json_object_dotget_string_with_std(object, name + "GameSyncs." + num_event.c_str() + ".AudioEv");
+		game_ev = json_object_dotget_number_with_std(object, name + "GameSyncs." + num_event.c_str() + ".GameEv");
+
+		CreateAudioEvent(audio_ev, game_ev);
+	}
+
+
 	//...
 	Enable();
 }
