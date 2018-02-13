@@ -51,6 +51,8 @@ bool ModuleGUI::Start()
 	ImGui_ImplSdlGL3_Init(App->window->window);
 	ImGuiIO& io{ ImGui::GetIO() };
 
+	map_string = "Hola Joan";
+
 	io.Fonts->AddFontFromFileTTF("Fonts\\Ruda-Bold.ttf", 15);
 	io.Fonts->AddFontDefault();
 

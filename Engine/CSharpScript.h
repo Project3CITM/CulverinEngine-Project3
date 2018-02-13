@@ -137,6 +137,9 @@ public:
 	void SetRotation(MonoObject* object, MonoObject* vector3);
 	void IncrementRotation(MonoObject* object, MonoObject* vector3);
 
+	// Map --------------------
+	MonoString* GetMapString(MonoObject* object);
+
 	// LOAD - SAVE METHODS ------------------
 	void Save(JSON_Object* object, std::string name) const;
 	void Load(const JSON_Object* object, std::string name);

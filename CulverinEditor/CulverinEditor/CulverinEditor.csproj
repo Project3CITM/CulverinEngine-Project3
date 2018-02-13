@@ -38,6 +38,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Map.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Transform.cs" />
