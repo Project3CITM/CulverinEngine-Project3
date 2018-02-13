@@ -518,7 +518,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Time::DeltaTime", (const void*)GetDeltaTime);
 
 	//MAP FUNCTIONS ----------------------
-	mono_add_internal_call("CulverinEditor.Map::GetMapString", (const void*)GetMapString);
+	mono_add_internal_call("CulverinEditor.Map.Map::GetMapString", (const void*)GetMapString);
 }
 
 //Log messages into Engine Console
