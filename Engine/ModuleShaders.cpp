@@ -177,7 +177,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 		"float angle = dot(lightDir, ourNormal);\n"
 		"color = texture(_texture, TexCoord) * texture(_texture2, TexCoord);\n"
 		//Z-Buffer Line Shader
-		"color= gl_FragCoord.z*texture(_texture, TexCoord);\n"
+		"color= vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1) *texture(_texture, TexCoord);\n"
 		"}\n"
 	};
 
