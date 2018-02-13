@@ -288,6 +288,10 @@ update_status ModuleGUI::Update(float dt)
 				window_random_generator = !window_random_generator;
 				//LogOpenCloseWindow(window_Random_generator, std::string("Random Generator"));
 			}
+			if (ImGui::MenuItem("Edit Map Tiles"))
+			{
+				window_create_map = !window_create_map;
+			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Resources"))
 			{
@@ -430,6 +434,100 @@ update_status ModuleGUI::Update(float dt)
 		App->importer->iScript->CreateNewScript(window_create_new_script);
 	}
 	//----------------------------------------------
+	//MAP ----------------------
+	if (window_create_map)
+	{
+		if (!ImGui::Begin("Edit Map Tile", &window_create_map, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::End();
+		}
+		static int ws = 10, hs = 10;
+		ImGui::PushItemWidth(70);
+		ImGui::Text("Edit the tiles. Click ID and set type of /nthe ID (Walkable / No-Walkable / ...)");
+		ImGui::InputInt("width", &ws); ImGui::SameLine();
+		ImGui::InputInt("height", &hs);
+		
+		ImGui::PopItemWidth();
+		ImGui::PushItemWidth(10);
+		static bool map_created = false;
+		if (ImGui::Button("Create Map Tiled"))
+		{
+			map_created = true;
+		}
+		if (map_created)
+		{
+			static int selected_type = -1;
+			static std::string type_Name[] = { "Walkable", "No-Walkable", "Joan" };
+			//Frist Select Type
+			ImGui::Separator();
+			static int ray[30][30];
+			static bool te = true;
+			if (te)
+			{
+				te = false;
+				for (int i = 0; i < 30; i++)
+				{
+					for (int j = 0; j < 30; j++)
+					{
+						ray[i][j] = -1;
+					}
+				}
+				for (int i = 0; i < ws; i++)
+				{
+					for (int j = 0; j < hs; j++)
+					{
+						ray[i][j] = 0;
+					}
+				}
+			}
+
+			for (int i = 0; i < ws; i++)
+			{
+				for (int j = 0; j < hs; j++)
+				{
+					if (j > 0) ImGui::SameLine();
+					ImGui::PushID(j + i * 1000);
+					if (ray[i][j] > 0)
+					{
+						if (ray[i][j] == 1)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+						}
+						else if (ray[i][j] == 2)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+						}
+						else if (ray[i][j] == 3)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
+						}
+					}
+					if (ImGui::Button("ID"))
+						ImGui::OpenPopup("ID");
+					if (ray[i][j] > 0)
+					{
+						ImGui::PopStyleColor();
+					}
+					if (ImGui::BeginPopup("ID"))
+					{
+						for (int k = 0; k < IM_ARRAYSIZE(type_Name); k++)
+							if (ImGui::Selectable(type_Name[k].c_str()))
+							{
+								ray[i][j] = k + 1;
+							}
+						ImGui::EndPopup();
+					}
+					ImGui::PopID();
+				}
+			}
+		}
+		ImGui::PopItemWidth();
+		ImGui::End();
+	}
+	//----------------------------------------------
+
+
+
 	// Window About Us... ---------------------------------
 	if (window_about_us)
 	{
