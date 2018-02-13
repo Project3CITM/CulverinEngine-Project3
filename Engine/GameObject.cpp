@@ -378,6 +378,11 @@ void GameObject::Draw()
 				PushEvent(draw_event);
 				/**/
 			}
+
+			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_CAMERA)
+			{
+				components[i]->Draw();
+			}
 		}
 
 		//Draw child Game Objects -------------------
