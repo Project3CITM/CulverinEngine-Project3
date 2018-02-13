@@ -10,7 +10,7 @@
 #include "CompCanvas.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
-
+#include "ModuleRenderGui.h"
 #include "SDL/include/SDL_opengl.h"
 #include "GL3W/include/glew.h"
 #include <gl/GL.h>
@@ -237,7 +237,7 @@ void CompCanvasRender::DrawGraphic()
 
 	//glPushMatrix();
 	//glMultMatrixf((float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
-	App->renderer3D->default_shader->Bind();
+	App->render_gui->default_ui_shader->Bind();
 
 
 	
@@ -254,13 +254,25 @@ void CompCanvasRender::DrawGraphic()
 		//glColor4f(image->GetImage()->GetRGBA().x, image->GetImage()->GetRGBA().y, image->GetImage()->GetRGBA().z, image->GetImage()->GetRGBA().w);
 	}
 	*/
+	ImGuiIO& io = ImGui::GetIO();
+	const float ortho_projection[4][4] =
+	{
+		{ 0.5f, 0.0f, 0.0f, 0.0f },
+		{ 0.0f,0.5f, 0.0f, 0.0f },
+		{ 0.0f,0.0f,0.5f, 0.0f },
+		{ 0.5f, 0.5f,  0.0f, 1.0f },
+	};
+	uint g_AttribLocationProjMtx = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "ProjMtx");
+	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 	
+
+
 	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 	float4x4 temp = camFrust.ViewMatrix();
 	CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
 
 
-
+	/*
 
 	GLint view2Loc = glGetUniformLocation(App->renderer3D->default_shader->programID, "view");
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
@@ -271,7 +283,7 @@ void CompCanvasRender::DrawGraphic()
 	glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
 	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
-	
+	*/
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->vertices_id);
 
@@ -300,7 +312,7 @@ void CompCanvasRender::DrawGraphic()
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	App->renderer3D->default_shader->Unbind();
+	App->render_gui->default_ui_shader->Unbind();
 
 
 }
