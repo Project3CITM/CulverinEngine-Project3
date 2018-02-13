@@ -85,12 +85,13 @@ void FrameBuffer::Destroy()
 
 void FrameBuffer::Resize(int width, int height)
 {
-	
+	if (this->width != width || this->height != height || refresh)
+	{
 		Destroy();
 		Create(width, height);
 		App->renderer3D->OnResize(width, height);
 		refresh = false;
-	
+	}
 }
 
 void FrameBuffer::WantRefreshRatio()

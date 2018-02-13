@@ -9,6 +9,8 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include"ModuleShaders.h"
+#include "Scene.h"
+#include "ModuleFramebuffers.h"
 #include"ShadersLib.h"
 
 
@@ -170,7 +172,12 @@ update_status ModuleRenderGui::PreUpdate(float dt)
 {
 	perf_timer.Start();
 
+	if (last_size_dock.x != GetSizeDock("Scene").x || last_size_dock.y != GetSizeDock("Scene").y)
+	{
+		App->scene->scene_buff->WantRefreshRatio();
+	}
 
+	last_size_dock = GetSizeDock("Scene");
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }

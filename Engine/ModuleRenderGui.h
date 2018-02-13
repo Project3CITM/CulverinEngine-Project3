@@ -40,7 +40,7 @@ private:
 	int window_height = 0;
 	int window_scale = 1;
 
-
+	float2 last_size_dock = float2(0, 0);
 	//std::vector<ComponentCanvas*> world_space_canvas;
 
 };
