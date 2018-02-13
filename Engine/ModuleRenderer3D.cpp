@@ -79,20 +79,21 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 			LOG("[error]Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
-
-		error = glewInit();
-		if (error != GL_NO_ERROR)
-		{
-			LOG("[error]Error initializing GL3W! %s\n", gluErrorString(error));
-			ret = false;
-		}
-		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glClearDepth(1.0f);
+
+		
 		
 		//Initialize clear color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_COLOR_MATERIAL);
+		glEnable(GL_TEXTURE_2D);
 
 		//Check for error
 		error = glGetError();
@@ -116,6 +117,15 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 		GLfloat MaterialDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse);
+
+		error = glewInit();
+		if (error != GL_NO_ERROR)
+		{
+			LOG("[error]Error initializing GL3W! %s\n", gluErrorString(error));
+			ret = false;
+		}
+
+
 
 		//Load render config info -------
 		depth_test = json_object_get_boolean(node, "Depth Test");

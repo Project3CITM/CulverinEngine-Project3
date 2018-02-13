@@ -332,10 +332,17 @@ void CompMesh::Draw()
 			GLint modelLoc = glGetUniformLocation(shader->programID, "model");
 			GLint viewLoc =  glGetUniformLocation(shader->programID, "viewproj");
 
+			float4x4 matrixfloat = transform->GetGlobalTransform();
+			GLfloat matrix[16] =
+			{
+				matrixfloat[0][0],matrixfloat[1][0],matrixfloat[2][0],matrixfloat[3][0],
+				matrixfloat[0][1],matrixfloat[1][1],matrixfloat[2][1],matrixfloat[3][1],
+				matrixfloat[0][2],matrixfloat[1][2],matrixfloat[2][2],matrixfloat[3][2],
+				matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
+			};
 			
-
 			glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());			
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->GetMultMatrixForOpenGL());			
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
 			glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 
 
