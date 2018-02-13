@@ -1125,6 +1125,9 @@
     <ClInclude Include="PhysX\Include\jpPhysicsWorld.h">
       <Filter>Engine\PhysX\jpPhysX</Filter>
     </ClInclude>
+    <ClInclude Include="ImGui\imgui_graph_nodes.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1465,6 +1468,9 @@
     </ClCompile>
     <ClCompile Include="PhysX\Include\jpPhysicsWorld.cpp">
       <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_graph_nodes.cpp">
+      <Filter>Engine\Tools\ImGUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

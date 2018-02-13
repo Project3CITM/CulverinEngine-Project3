@@ -129,6 +129,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ImGui\ImGuizmo.h" />
     <ClInclude Include="ImGui\imgui_dock_v2.h" />
+    <ClInclude Include="ImGui\imgui_graph_nodes.h" />
     <ClInclude Include="ImportMesh.h" />
     <ClInclude Include="ImportMaterial.h" />
     <ClInclude Include="CompMesh.h" />
@@ -457,6 +458,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ImGui\ImGuizmo.cpp" />
     <ClCompile Include="ImGui\imgui_dock_v2.cpp" />
+    <ClCompile Include="ImGui\imgui_graph_nodes.cpp" />
     <ClCompile Include="ImportMesh.cpp" />
     <ClCompile Include="ImportMaterial.cpp" />
     <ClCompile Include="CompMesh.cpp" />
