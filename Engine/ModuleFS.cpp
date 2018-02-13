@@ -38,6 +38,7 @@ bool ModuleFS::Init(JSON_Object * node)
 	CreateFolder("Library\\Meshes");
 	CreateFolder("Library\\Materials");
 	CreateFolder("Library\\Scripts");
+	CreateFolder("Library\\Animations");
 	CreateFolder("Assets");
 	return true;
 }
@@ -743,6 +744,11 @@ bool ModuleFS::DeleteFileLibrary(const char* file, DIRECTORY_IMPORT directory)
 		//temp = DIRECTORY_LIBRARY_SCRIPTS + temp + "";
 		break;
 	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_ANIMATIONS:
+	{
+		temp = DIRECTORY_LIBRARY_ANIMATIONS + temp;
+		break;
+	}
 	}
 	if (std::remove(temp.c_str()) == 0)
 	{
@@ -780,6 +786,11 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 	case IMPORT_DIRECTORY_LIBRARY_MATERIALS:
 	{
 		temp = DIRECTORY_LIBRARY_MATERIALS + temp + ".dds";
+		break;
+	}
+	case IMPORT_DIRECTORY_LIBRARY_ANIMATIONS:
+	{
+		temp = DIRECTORY_LIBRARY_ANIMATIONS + temp;
 		break;
 	}
 	}
@@ -841,6 +852,11 @@ bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY
 	case IMPORT_DIRECTORY_LIBRARY_MATERIALS:
 	{
 		name = DIRECTORY_LIBRARY_MATERIALS + name;
+		break;
+	}
+	case IMPORT_DIRECTORY_LIBRARY_ANIMATIONS:
+	{
+		name = DIRECTORY_LIBRARY_ANIMATIONS + name;
 		break;
 	}
 	}

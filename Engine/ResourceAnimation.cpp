@@ -1,4 +1,5 @@
 #include "ResourceAnimation.h"
+#include "Application.h"
 
 AnimBone::~AnimBone()
 {
@@ -25,6 +26,12 @@ ResourceAnimation::~ResourceAnimation()
 	{
 		RELEASE((*temp));
 	}
+}
+
+void ResourceAnimation::InitInfo(const char * resource_name, const char * path)
+{
+	name = App->GetCharfromConstChar(resource_name);
+	path_assets = path;
 }
 
 bool ResourceAnimation::LoadToMemory()

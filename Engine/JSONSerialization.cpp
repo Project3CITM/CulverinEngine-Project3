@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ResourceMaterial.h"
 #include "ResourceScript.h"
+#include "ResourceAnimation.h"
 #include "ModuleFS.h"
 #include "ModuleResourceManager.h"
 #include "Scene.h"
@@ -430,6 +431,30 @@ void JSONSerialization::SaveScript(const ResourceScript* script, const char * di
 		json_object_dotset_string_with_std(config, "Material.Directory Script", fileName);
 		json_object_dotset_number_with_std(config, "Material.UUID Resource", script->GetUUID());
 		json_object_dotset_string_with_std(config, "Material.Name", script->name);
+		json_serialize_to_file(config_file, nameJson.c_str());
+	}
+	json_value_free(config_file);
+}
+
+void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const char * directory, const char * fileName)
+{
+	LOG("SAVING Animation %s -----", animation->name);
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = fileName;
+	nameJson += ".meta.json";
+	config_file = json_value_init_object();
+
+	uint count = 0;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		json_object_clear(config);
+		json_object_dotset_string_with_std(config, "Material.Directory Script", fileName);
+		json_object_dotset_number_with_std(config, "Material.UUID Resource", animation->GetUUID());
+		json_object_dotset_string_with_std(config, "Material.Name", animation->name);
 		json_serialize_to_file(config_file, nameJson.c_str());
 	}
 	json_value_free(config_file);

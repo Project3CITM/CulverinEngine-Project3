@@ -230,6 +230,16 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 		const aiScene* scene = aiImportFile(file, aiProcessPreset_TargetRealtime_MaxQuality);
 		if (scene != nullptr)
 		{
+			/*if (scene->HasAnimations())
+			{
+				for (int i = 0; i < scene->mNumAnimations; i++)
+				{
+					scene->mAnimations[i]->mName = file;
+					scene->mAnimations[i]->mName.Append("Animation");
+					scene->mAnimations[i]->mName.Append(std::to_string(i).c_str());
+					LOG("IMPORTING ANIMATION, File Path: %s", file);
+				}
+			}*/
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, file);
 			obj->SetName(App->GetCharfromConstChar(App->fs->FixName_directory(file).c_str()));
 
