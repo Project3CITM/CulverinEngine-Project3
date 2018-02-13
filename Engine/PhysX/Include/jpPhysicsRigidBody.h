@@ -1,7 +1,10 @@
-#ifndef __JP_PHYSICS_RIGIDBODY_H__
-#define __JP_PHYSICS_RIGIDBODY_H__
+#ifndef JP_PHYSICS_RIGIDBODY_H__
+#define JP_PHYSICS_RIGIDBODY_H__
 
 #include "PxPhysicsAPI.h"
+
+#include "../../Math/float3.h"
+#include "../../Math/Quat.h"
 
 enum JP_COLLIDER_TYPE
 {
@@ -15,16 +18,16 @@ enum JP_COLLIDER_TYPE
 class jpPhysicsRigidBody
 {
 public:
-	jpPhysicsRigidBody(physx::PxPhysics* px_physics);
+	jpPhysicsRigidBody(physx::PxPhysics* px_physics, bool is_dynamic = false);
 	~jpPhysicsRigidBody();
 
 	void ActivateShape();
 	void DeActivateShape();
 
 	// Set Methods
-	////true == dynamic, fale == Kinematic(Static)
-	void SetDynamic(bool is_dynamic);
+	void SetAsKinematic(bool kinematic);
 	void SetTransform(float* trans_mat);
+	void SetTransform(float3 pos, Quat rotation, bool autoawake = true);
 	void SetGeometry(physx::PxGeometry new_geometry); //DO NOT USE, does nothing, will be later on defined to use with convexmesh
 	
 	void SetMaterial(float &static_friction, float &dynamic_friction, float &restitution);
@@ -36,8 +39,8 @@ public:
 	void SetMass(float &mass);
 
 	// Get Methods
-	void GetTransform(physx::PxVec3& pos, physx::PxQuat& quat);
-	physx::PxRigidBody* GetPxBody();
+	void GetTransform(float3& pos, Quat& rotation);
+	physx::PxRigidActor* GetActor();
 
 	// Check Methods
 	bool Sleeping();
@@ -51,13 +54,16 @@ public:
 	// Move Kinematic
 	void MoveKinematic(physx::PxTransform dest);
 
-public:
-	physx::PxRigidDynamic* px_body = nullptr;
+private:
+	// main body
+	physx::PxRigidActor* body = nullptr;
+	// Shape
 	physx::PxShape* body_shape = nullptr;
-
-	//Store a default material since we can't create a new one without the PxPhysics
+	// Material
 	physx::PxMaterial* default_material = nullptr;
+	// Static/Dynamic
+	bool is_dynamic = false;
 };
 
-#endif // !__JP_PHYSICS_RIGIDBODY_H__
+#endif // !JP_PHYSICS_RIGIDBODY_H__
 

@@ -105,13 +105,13 @@ physx::PxCooking * jpPhysicsWorld::GetCooking()
 	return nullptr;
 }
 
-jpPhysicsRigidBody * jpPhysicsWorld::CreateRigidBody(physx::PxScene * curr_scene)
+jpPhysicsRigidBody * jpPhysicsWorld::CreateRigidBody(physx::PxScene * curr_scene, bool dynamic)
 {
 	jpPhysicsRigidBody* new_body = nullptr;
 	if (jpWorld) {
-		new_body = new jpPhysicsRigidBody(jpWorld);
+		new_body = new jpPhysicsRigidBody(jpWorld, dynamic);
 		if (curr_scene != nullptr)
-			curr_scene->addActor(*new_body->px_body);
+			curr_scene->addActor(*new_body->GetActor());
 	}
 	
 	return new_body;
