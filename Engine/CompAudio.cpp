@@ -139,16 +139,24 @@ void CompAudio::ShowInspectorInfo()
 
 void CompAudio::ShowEventsInfo()
 {
-	ImGui::BeginChild(1, ImVec2(300, 150));
+	//ImGui::BeginChild(1, ImVec2(300, 150));
 	int i = 0;
-	for (std::multimap<int, AudioEvent>::iterator it = audio_events.begin(); it != audio_events.end(); i++)
+	for (std::vector<std::pair<int, AudioEvent>>::iterator it = audio_events.begin(); it != audio_events.end(); i++)
 	{
-		ImGui::Separator();
 		ImGui::PushID(i);
-		ImGui::Text("Gameplay ev: %i", (*it).first);
-		ImGui::SameLine();
-		ImGui::Text("Audio ev: %s", (*it).second.name.c_str());
 
+		ImGui::InputInt("Gameplay ev", &(*it).first);
+		ImGui::SameLine();
+		//char tmp[41];
+		//(*it).second.name.copy(tmp, 40);
+		char tmp[41];
+		(*it).second.name.copy(tmp, 41);
+	
+		if (ImGui::InputText("Audio ev", tmp, 40))
+		{
+			(*it).second.name = tmp;
+		}
+		
 		ImGui::SameLine();
 		if (ImGui::SmallButton("Play"))
 		{
@@ -170,10 +178,10 @@ void CompAudio::ShowEventsInfo()
 		ImGui::PopID();
 	}
 
-	ImGui::EndChild();
+	//ImGui::EndChild();
 	if (ImGui::Button("AddEvent"))
 	{
-		CreateAudioEvent("", 0);
+		CreateAudioEvent("None", 0);
 	}
 }
 
@@ -184,8 +192,7 @@ void CompAudio::CopyValues(const CompAudio * component)
 void CompAudio::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
-	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	
+	json_object_dotset_number_with_std(object, name + "Type", this->GetType());	
 }
 
 void CompAudio::Load(const JSON_Object * object, std::string name)
@@ -217,7 +224,7 @@ void CompAudio::CreateAudioEvent(std::string audio_event, int gameplay_event)
 {
 	AudioEvent new_ev;
 	new_ev.name = audio_event;
-	audio_events.insert(std::pair<int, AudioEvent> (gameplay_event, new_ev));
+	audio_events.push_back(std::pair<int, AudioEvent> (gameplay_event, new_ev));
 }
 
 

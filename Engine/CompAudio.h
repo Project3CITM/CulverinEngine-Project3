@@ -5,7 +5,7 @@
 #include "Component.h"
 #include "wwished.h"
 #include <string>
-#include <map>
+#include <vector>
 
 class GameObject;
 class CompTransform;
@@ -59,6 +59,6 @@ private:
 	Wwished::SoundEmitter* emitter = nullptr;
 	AUDIO_TYPE audio_type = FX;
 
-	std::multimap<int, AudioEvent> audio_events;
+	std::vector<std::pair<int, AudioEvent>> audio_events;
 };
 #endif
