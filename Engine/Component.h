@@ -3,6 +3,7 @@
 
 #include "Globals.h"
 #include "ImGui/imgui.h"
+#include "Math\float3.h"
 #include <string>
 
 struct json_object_t;
@@ -62,6 +63,7 @@ public:
 	const char* GetName() const;
 	bool WantDelete() const;
 
+	float3 GetGameObjectPos() const;
 
 private:
 	Comp_Type type = C_UNKNOWN;

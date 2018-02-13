@@ -4,10 +4,12 @@
 #include "parson.h"
 #include "Globals.h"
 #include <vector>
+#include <filesystem>
 
 class GameObject;
 class ResourceMaterial;
 class ResourceScript;
+class ResourceAnimation;
 struct ReImport;
 
 struct LoadSceneSt
@@ -40,14 +42,24 @@ public:
 	//void LoadMaterial(const char* Material); At the moment no need this
 	// --------------------------------------
 
-	// SAVE & LOAD MATERIAL --------------------------
+	// SAVE & LOAD SCRIPT --------------------------
 	void SaveScript(const ResourceScript* script, const char* directory, const char* fileName);
 	// --------------------------------------
 
+	// SAVE & LOAD ANIMATION --------------------------
+	void SaveAnimation(const ResourceAnimation* script, const char* directory, const char* fileName);
+	// --------------------------------------
+
 	// Get UUIDs -------------------------------
-	ReImport GetUUIDPrefab(const char * file, uint id);
+	ReImport GetUUIDPrefab(const char* file, uint id);
 	ReImport GetUUIDMaterial(const char* file);
 	ReImport GetUUIDScript(const char* file);
+	// -----------------------------------------------
+
+	// Get Last Write -------------------------------
+	std::time_t GetLastWritePrefab(const char* file);
+	std::time_t GetLastWriteMaterial(const char* file);
+	std::time_t GetLastWriteScript(const char* file);
 	// -----------------------------------------------
 
 	// This function will recive a path and will return a json_obj and json_value pointing to the file, to read and write

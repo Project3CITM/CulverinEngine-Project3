@@ -486,7 +486,7 @@ void CompCamera::SetFar(float far_p)
 void CompCamera::SetFov(float vertical)
 {
 	frustum.verticalFov = vertical * DEGTORAD;
-	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
+	frustum.horizontalFov = (2 * math::Atan(math::Tan(frustum.verticalFov / 2) *(GetSizeDock("Scene").x/GetSizeDock("Scene").y)));
 }
 
 void CompCamera::SetRatio(float ratio)

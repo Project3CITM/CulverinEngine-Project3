@@ -30,6 +30,7 @@ public:
 	void ShowInspectorInfo();
 	void CopyValues(const CompMaterial * component);
 	void ShowTextureVariable(int index);
+	void ShowShadersEditors();
 	// -------------------------
 
 	// SAVE - LOAD METHODS ------------------------
@@ -39,7 +40,7 @@ public:
 
 public:
 
-	ResourceMaterial* resource_material = nullptr;
+	//ResourceMaterial* resource_material = nullptr;
 	ShaderProgram material_shader;
 
 private:

@@ -17,12 +17,14 @@ public:
 	~ModuleAudio();
 
 	bool Init(JSON_Object* node);
-	//bool Start();
-	//update_status PreUpdate(float dt);
-	//update_status Update(float dt);
+
+	bool SetEventListenrs();
+	void OnEvent(Event& event);
+
 	update_status PostUpdate(float dt);
 	bool SaveConfig(JSON_Object* node);
 	bool CleanUp();
+
 
 	void DrawOnEditor();
 	void UnloadAllBanks();
@@ -34,7 +36,17 @@ public:
 	void LoadAudioBanksFromScene(int number_of_banks, JSON_Object* config_node);
 
 
+	void ChangeVolume(float volume);
+	void Mute();
+
+	void StopSounds();
+	void PauseSounds();
+	void ResumeSounds();
+
 	void SetListener(CompAudio* c);
+
+
+
 
 private:
 
@@ -45,8 +57,9 @@ private:
 	
 	std::vector <std::string> loaded_banks;
 
-	int volume = 0;
-	bool mute = false;
+	float volume = 0;
+	bool muted = false;
+	float last_volume = 0;
 
 	bool init_bank_not_loaded = false;
 	bool load_bank_window_opened = false;

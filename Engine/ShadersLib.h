@@ -10,6 +10,7 @@
 #include "GL3W\include\glew.h"
 #include "Resource_.h"
 #include "ResourceMaterial.h"
+#include "TextEditor.h"
 
 #pragma comment (lib, "GL3W/libx86/glew32.lib") 
 typedef unsigned int uint;
@@ -67,6 +68,8 @@ public:
 	~Shader() {
 
 	}
+
+	char* GetShaderText();
 public:
 	uint shaderID = 0;
 
@@ -95,6 +98,7 @@ public:
 	void  AddGeometry(Shader* geometry);
 
 	bool  LoadProgram();
+	bool UpdateShaderProgram(uint fragmentID, uint vertexID, uint geometryID);
 
 	bool  Bind();
 
@@ -122,6 +126,14 @@ public:
 	std::vector<float3Var> float3_variables;
 	std::vector<ColorVar> float4_variables;
 	std::vector<boolVar> bool_variables;
+
+	TextEditor shader_editor;
+
+	bool get_shader_text = false;
+
+	bool edit_fragment = false;
+	bool edit_vertex = false;
+	bool edit_geometry = false;
 };
 
 

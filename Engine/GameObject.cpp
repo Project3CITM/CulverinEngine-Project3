@@ -26,7 +26,6 @@
 #include "CompAudio.h"
 
 //Event system test
-#include "EventDef.h"
 #include "ModuleEventSystem.h"
 
 GameObject::GameObject(GameObject* parent) :parent(parent)
@@ -40,6 +39,14 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 		// Push this game object into the childs list of its parent
 		parent->childs.push_back(this);
 	}
+}
+
+GameObject::GameObject(char* nameGameObject)
+{
+	Enable();
+	SetVisible(true);
+	uid = App->random->Int();
+	name = nameGameObject;
 }
 
 GameObject::GameObject(char* nameGameObject, uint uuid)
@@ -362,7 +369,14 @@ void GameObject::Draw()
 		{
 			if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_MESH)
 			{
-				components[i]->Draw();
+				//components[i]->Draw();
+				/**/
+				Event draw_event;
+				draw_event.draw.type = EventType::EVENT_DRAW;
+				draw_event.draw.Dtype = draw_event.draw.DRAW_3D;
+				draw_event.draw.ToDraw = components[i];
+				PushEvent(draw_event);
+				/**/
 			}
 		}
 
@@ -598,25 +612,33 @@ void GameObject::ShowGameObjectOptions()
 	//ImGui::MenuItem("ADD COMPONENT", NULL, false, false);
 	if (this->GetUUID() != 1)
 	{
-		if (ImGui::MenuItem("Transform"))
+		if (ImGui::BeginMenu("Add Component"))
 		{
-			AddComponent(Comp_Type::C_TRANSFORM);
-		}
-		if (ImGui::MenuItem("Mesh"))
-		{
-			AddComponent(Comp_Type::C_MESH);
-		}
-		if (ImGui::MenuItem("Material"))
-		{
-			AddComponent(Comp_Type::C_MATERIAL);
-		}
-		if (ImGui::MenuItem("Script"))
-		{
-			AddComponent(Comp_Type::C_SCRIPT);
-		}
-		if (ImGui::MenuItem("Animation"))
-		{
-			AddComponent(Comp_Type::C_ANIMATION);
+			if (ImGui::MenuItem("Transform"))
+			{
+				AddComponent(Comp_Type::C_TRANSFORM);
+			}
+			if (ImGui::MenuItem("Mesh"))
+			{
+				AddComponent(Comp_Type::C_MESH);
+			}
+			if (ImGui::MenuItem("Material"))
+			{
+				AddComponent(Comp_Type::C_MATERIAL);
+			}
+			if (ImGui::MenuItem("Script"))
+			{
+				AddComponent(Comp_Type::C_SCRIPT);
+			}
+			if (ImGui::MenuItem("Animation"))
+			{
+				AddComponent(Comp_Type::C_ANIMATION);
+			}
+			if (ImGui::MenuItem("Audio"))
+			{
+				AddComponent(Comp_Type::C_AUDIO);
+			}
+			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("UI"))
 		{
@@ -688,17 +710,15 @@ void GameObject::ShowGameObjectOptions()
 			}
 			ImGui::EndMenu();
 		}
-		if (ImGui::MenuItem("Audio"))
-		{
-			AddComponent(Comp_Type::C_AUDIO);
-		}
+
+
 	}
 	// -------------------------------------------------------------
 }
 
 void GameObject::ShowInspectorInfo()
 {
-	ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4(0.211f, 0.211f, 0.211f, 1.00f));
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.211f, 0.211f, 0.211f, 1.00f));
 	if (ImGui::BeginChild(ImGui::GetID("Inspector"), ImVec2(ImGui::GetWindowWidth(), 90)))
 	{
 		static GLuint icon_GameObject = App->textures->LoadTexture("Images/UI/icon_GameObject.png");
@@ -829,8 +849,8 @@ void GameObject::ShowInspectorInfo()
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.258f, 0.258f, 0.258f, 1.00f));
 		ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y + ImGui::GetItemRectSize().y));
 		ImGui::SetNextWindowSize(ImVec2(WIDTH_ADDCOMPONENT, WIDTH_ADDCOMPONENT / 2));
-		ImGui::Begin("AddComponent", NULL, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
-		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4(0.311f, 0.311f, 0.311f, 1.00f));
+		ImGui::Begin("AddComponent", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.311f, 0.311f, 0.311f, 1.00f));
 		if (ImGui::BeginChild(ImGui::GetID("AddComponent"), ImVec2(ImGui::GetWindowWidth(), 20), false, ImGuiWindowFlags_NoScrollWithMouse))
 		{
 			ImGui::Text("");

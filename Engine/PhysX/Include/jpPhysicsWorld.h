@@ -21,7 +21,7 @@ public:
 	physx::PxCooking* GetCooking();
 
 	//No Scene passed creates a sceneless rigidBody
-	jpPhysicsRigidBody* CreateRigidBody(physx::PxScene* curr_scene = nullptr);
+	jpPhysicsRigidBody* CreateRigidBody(physx::PxScene* curr_scene = nullptr, bool dynamic = false);
 
 private:
 	// World, only one can be created

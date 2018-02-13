@@ -48,6 +48,21 @@ update_status ModuleShaders::PreUpdate(float dt)
 
 update_status ModuleShaders::Update(float dt)
 {
+	std::vector<ShaderProgram*>::iterator item = programs.begin();
+	static float time_dt = 0;
+	time_dt += dt * App->game_time.time_scale;
+	while (item != programs.end())
+	{
+		(*item)->Bind();
+
+		//TIME		
+		GLint timeLoc = glGetUniformLocation((*item)->programID, "_time");
+		glUniform1f(timeLoc, time_dt);
+
+
+		(*item)->Unbind();
+		item++;
+	}
 	
 	return update_status::UPDATE_CONTINUE;
 }
@@ -162,7 +177,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 		"float angle = dot(lightDir, ourNormal);\n"
 		"color = texture(_texture, TexCoord) * texture(_texture2, TexCoord);\n"
 		//Z-Buffer Line Shader
-		"color= gl_FragCoord.z*texture(_texture, TexCoord);\n"
+		"color= vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1) *texture(_texture, TexCoord);\n"
 		"}\n"
 	};
 
@@ -412,7 +427,7 @@ void ModuleShaders::ImportShaderMaterials()
 						std::string frag_name = json_object_get_string(obj_proj, "Fragment Shader");
 
 						//Find the shader object by name
-						mat_shader->fragment = GetShaderByName(frag_name.c_str());
+						mat_shader->fragment = GetShaderByName(frag_name.c_str(), ShaderType::fragment);
 					}
 
 					//If the program has a vertex shader
@@ -421,7 +436,7 @@ void ModuleShaders::ImportShaderMaterials()
 						std::string vertex_name = json_object_get_string(obj_proj, "Vertex Shader");
 
 						//Find the shader object by name
-						mat_shader->vertex = GetShaderByName(vertex_name.c_str());
+						mat_shader->vertex = GetShaderByName(vertex_name.c_str(), ShaderType::vertex);
 					}
 
 					//If the program has a geometry shader
@@ -430,28 +445,43 @@ void ModuleShaders::ImportShaderMaterials()
 						std::string geometry_name = json_object_get_string(obj_proj, "Geometry Shader");
 
 						//Find the shader object by name
-						mat_shader->geometry = GetShaderByName(geometry_name.c_str());
+						mat_shader->geometry = GetShaderByName(geometry_name.c_str(), ShaderType::geometry);
 					}
 
 					//Store the program
 					mat_shader->LoadProgram();
+					
 					mat_shader->CreateMaterialFile();
 				}
 			}
 	}
 }
 
-Shader * ModuleShaders::GetShaderByName(const char * name)
+Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)
 {
 
 	for (std::vector<Shader*>::const_iterator item = shaders.cbegin(); item != shaders.cend(); item++) 
 	{
-
+		std::string str_path = (*item)->shaderPath.c_str();
+		std::string extension_path = App->fs->GetExtension(str_path);
 		if ((*item)->name == name) 
 		{
-			return *item;
-		}
 
+			//This is to led all the shader objects to have the same name and the engine will
+			//find them searching by name and extension too.
+
+			switch (type) 
+			{
+			case ShaderType::fragment:
+				if (extension_path=="frag") return *item;break;
+
+			case ShaderType::vertex:
+				if (extension_path == "vert") return *item;break;
+
+			case ShaderType::geometry:
+				if (extension_path == "geom") return *item;break;
+			}
+		}
 	}
 	return nullptr;
 }

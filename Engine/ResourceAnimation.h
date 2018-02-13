@@ -33,6 +33,7 @@ public:
 	ResourceAnimation(uint uid);
 	~ResourceAnimation();
 
+	void InitInfo(const char* name, const char* path);
 	bool LoadToMemory();
 	bool UnloadFromMemory();
 

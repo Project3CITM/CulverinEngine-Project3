@@ -134,7 +134,7 @@ void Project::ShowProject()
 		EndDock();
 		return;
 	}
-	ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4(0.211f, 0.211f, 0.211f, 1.00f));
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.211f, 0.211f, 0.211f, 1.00f));
 	if (ImGui::BeginChild(ImGui::GetID("Project"), ImVec2(ImGui::GetWindowWidth(), 20)))
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 2));

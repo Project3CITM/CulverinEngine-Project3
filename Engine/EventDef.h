@@ -77,7 +77,7 @@ struct EDraw
 		DRAW_SCREEN_CANVAS	//Screen space canvas
 	};
 	DrawType Dtype;
-	float DistanceCamToObject;
+	//float DistanceCamToObject;
 	Component* ToDraw;
 };
 

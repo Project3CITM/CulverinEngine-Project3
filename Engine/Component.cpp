@@ -1,6 +1,7 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "Application.h"
+#include "CompTransform.h"
 
 Component::Component(Comp_Type t, GameObject* parent) :type(t), parent(parent), active(true)
 {
@@ -74,6 +75,13 @@ const char * Component::GetName() const
 bool Component::WantDelete() const
 {
 	return to_delete;
+}
+
+float3 Component::GetGameObjectPos() const
+{
+	CompTransform* transfrom = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
+	if (transfrom != nullptr) return transfrom->GetPosGlobal();
+	else return float3::zero;
 }
 
 void Component::SetActive(bool active)

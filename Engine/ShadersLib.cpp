@@ -3,6 +3,7 @@
 #include"Application.h"
 #include"ModuleFS.h"
 #include"JSONSerialization.h"
+#include "ModuleRenderer3D.h"
 #pragma comment (lib, "GL3W/libx86/glew32.lib") 
 
 void ShaderProgram::AddFragment(Shader* newFragment)
@@ -46,6 +47,19 @@ bool ShaderProgram::LoadProgram()
 	}
 
 
+	uint var_size = GetVariablesSize();
+	for (int i = 0; i < var_size; i++) {
+		UniformVar temp = GetVariableInfo(i);
+
+		//Textures
+		if (temp.type == 35678) {
+			TextureVar texture_var;
+			texture_var.var_name = temp.name;
+			textures.push_back(texture_var);
+		}
+
+	}
+
 	return true;
 
 }
@@ -78,7 +92,7 @@ UniformVar ShaderProgram::GetVariableInfo(uint index)
 		&name_len, &num, &ret.type, ret.name);
 
 	ret.name[name_len] = 0;
-
+	
 	return ret;
 }
 
@@ -117,3 +131,92 @@ void ShaderProgram::CreateMaterialFile()
 
 }
 
+
+char * Shader::GetShaderText()
+{
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+	std::string string_buffer;
+	pFile = fopen(shaderPath.c_str(), "rb");
+
+	if (pFile == NULL) { fputs("File error", stderr); exit(1); }
+
+	// obtain file size:
+	fseek(pFile, 0, SEEK_END);
+	lSize = ftell(pFile);
+	rewind(pFile);
+
+	// allocate memory to contain the whole file:
+	buffer = new char[lSize + 1];
+	memset(buffer, 0, lSize + 1);
+
+	if (buffer == NULL) { fputs("Memory error", stderr); exit(2); }
+
+	// copy the file into the buffer:
+	result = fread(buffer, 1, lSize, pFile);
+
+	fclose(pFile);
+
+	return buffer;
+}
+
+
+bool ShaderProgram::UpdateShaderProgram(uint VertexID, uint FragmentID, uint GeometryID)
+{
+
+	GLint programSuccess = GL_TRUE;
+
+
+	if (VertexID != 0) {
+
+
+		glDetachShader(programID, vertex->shaderID);
+		glAttachShader(programID, VertexID);
+
+		vertex->shaderID = VertexID;
+	}
+
+	if (FragmentID != 0) {
+		
+		glDetachShader(programID, fragment->shaderID);
+		glAttachShader(programID, FragmentID);
+
+		fragment->shaderID = FragmentID;
+	}
+
+	if (GeometryID != 0) {
+		
+		glDetachShader(programID, geometry->shaderID);
+		glAttachShader(programID, GeometryID);
+
+		fragment->shaderID = GeometryID;
+	}
+
+	glLinkProgram(programID);
+	glGetProgramiv(programID, GL_LINK_STATUS, &programSuccess);
+
+	if (programSuccess != GL_TRUE) {
+
+		printf("Error linking program %d!\n", programID);
+		int infoLogLength = 0;
+		int maxLength = infoLogLength;
+
+		glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &maxLength);
+
+		char* infoLog = new char[maxLength];
+		glGetProgramInfoLog(programID, maxLength, &infoLogLength, infoLog);
+
+		if (infoLogLength > 0) {
+
+			LOG("%s\n", infoLog);
+		}
+
+		delete[] infoLog;
+
+		return false;
+	}
+
+	return true;
+}

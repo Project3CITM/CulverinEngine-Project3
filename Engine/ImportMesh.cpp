@@ -1,4 +1,5 @@
 #include "ModuleImporter.h"
+
 #include "ImportMesh.h"
 #include "ModuleFS.h"
 #include "GameObject.h"
@@ -10,7 +11,7 @@
 #include "CompMaterial.h"
 #include "CompTransform.h"
 #include "ModuleTextures.h"
-
+#include "ModuleRenderer3D.h"
 #include <filesystem>
 #include <iostream>
 #include <experimental/filesystem>
@@ -187,7 +188,9 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					std::string temp = std::to_string(resource_mat->GetUUID());
 					App->importer->iMaterial->LoadResource(temp.c_str(), resource_mat);
 				}
-				materialComp->resource_material = resource_mat;
+				materialComp->material_shader = *App->renderer3D->default_shader;
+				materialComp->material_shader.textures[0].res_material = resource_mat;
+				
 				resource_mat->path_assets = normalPath;
 			}
 		}

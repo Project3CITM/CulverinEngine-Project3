@@ -23,7 +23,7 @@ public:
 	bool IsOpen();
 
 	void ClearLog();
-	void AddLog(const char*, ...) IM_PRINTFARGS(2);
+	void AddLog(const char*, ...) IM_FMTARGS(2);
 
 	void Draw(const char* title);
 

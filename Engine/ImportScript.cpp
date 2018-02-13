@@ -247,7 +247,7 @@ void ImportScript::Unload_domain()
 bool ImportScript::CreateNewScript(bool& active)
 {
 	//ImGui::PushStyleVar() // Center
-	ImGui::Begin("Create New Script", &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_ShowBorders);
+	ImGui::Begin("Create New Script", &active, ImGuiWindowFlags_NoCollapse);
 	static Timer timeshowResult;
 	static int result = 0;
 	ImGui::Text("Put Name Name Class: ");
@@ -516,6 +516,9 @@ void ImportScript::LinkFunctions()
 
 	//TIME FUNCTIONS -------------------
 	mono_add_internal_call("CulverinEditor.Time::DeltaTime", (const void*)GetDeltaTime);
+
+	//MAP FUNCTIONS ----------------------
+	mono_add_internal_call("CulverinEditor.Map.Map::GetMapString", (const void*)GetMapString);
 }
 
 //Log messages into Engine Console
@@ -684,4 +687,10 @@ void ImportScript::SetRotation(MonoObject* object, MonoObject* vector3)
 void ImportScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 {
 	current->IncrementRotation(object, vector3);
+}
+
+// Map Funcitons -------------
+MonoString* ImportScript::GetMapString(MonoObject* object)
+{
+	return current->GetMapString(object);
 }

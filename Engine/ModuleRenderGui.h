@@ -3,6 +3,7 @@
 #include "Module.h"
 #include "Globals.h"
 
+class ShaderProgram;
 
 class CompCanvas;
 class ModuleRenderGui : public Module
@@ -29,12 +30,17 @@ public:
 
 
 	void OnResize(int width, int height);
+
+	ShaderProgram* default_ui_shader = nullptr;
+
 private:
 	int total_width = 0;
 	int total_height = 0;
 	int window_width = 0;
 	int window_height = 0;
 	int window_scale = 1;
+
+	float2 last_size_dock = float2(0, 0);
 	//std::vector<ComponentCanvas*> world_space_canvas;
 
 };

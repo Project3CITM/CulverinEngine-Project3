@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ResourceMaterial.h"
 #include "ResourceScript.h"
+#include "ResourceAnimation.h"
 #include "ModuleFS.h"
 #include "ModuleResourceManager.h"
 #include "Scene.h"
@@ -214,6 +215,9 @@ void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* dir
 		json_object_dotset_number_with_std(config, "Prefab.Info.Number of GameObjects", count);
 		json_object_dotset_string_with_std(config, "Prefab.Info.Directory Prefab", fileName);
 		json_object_dotset_number_with_std(config, "Prefab.Info.Resources.Number of Resources", countResources);
+		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
+		std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
+		json_object_dotset_number_with_std(config, "Prefab.Info.Resources.Last Write", cftime);
 		config_node = json_object_get_object(config, "Prefab");
 		std::string name = "GameObject" + std::to_string(count++);
 		name += ".";
@@ -396,6 +400,9 @@ void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const cha
 		json_object_dotset_string_with_std(config, "Material.Directory Material", fileName);
 		json_object_dotset_number_with_std(config, "Material.UUID Resource", material->GetUUID());
 		json_object_dotset_string_with_std(config, "Material.Name", material->name);
+		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
+		std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
+		json_object_dotset_number_with_std(config, "Material.Last Write", cftime);
 		json_serialize_to_file(config_file, nameJson.c_str());
 	}
 	json_value_free(config_file);
@@ -424,6 +431,30 @@ void JSONSerialization::SaveScript(const ResourceScript* script, const char * di
 		json_object_dotset_string_with_std(config, "Material.Directory Script", fileName);
 		json_object_dotset_number_with_std(config, "Material.UUID Resource", script->GetUUID());
 		json_object_dotset_string_with_std(config, "Material.Name", script->name);
+		json_serialize_to_file(config_file, nameJson.c_str());
+	}
+	json_value_free(config_file);
+}
+
+void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const char * directory, const char * fileName)
+{
+	LOG("SAVING Animation %s -----", animation->name);
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = fileName;
+	nameJson += ".meta.json";
+	config_file = json_value_init_object();
+
+	uint count = 0;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		json_object_clear(config);
+		json_object_dotset_string_with_std(config, "Material.Directory Script", fileName);
+		json_object_dotset_number_with_std(config, "Material.UUID Resource", animation->GetUUID());
+		json_object_dotset_string_with_std(config, "Material.Name", animation->name);
 		json_serialize_to_file(config_file, nameJson.c_str());
 	}
 	json_value_free(config_file);
@@ -499,9 +530,52 @@ ReImport JSONSerialization::GetUUIDMaterial(const char* file)
 	return info;
 }
 
-ReImport JSONSerialization::GetUUIDScript(const char * file)
+ReImport JSONSerialization::GetUUIDScript(const char* file)
 {
 	return ReImport();
+}
+
+std::time_t JSONSerialization::GetLastWritePrefab(const char* file)
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = file;
+	nameJson += ".meta.json";
+	config_file = json_parse_file(nameJson.c_str());
+
+	std::time_t last_write = 0;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		last_write = json_object_dotget_number(config, "Prefab.Info.Resources.Last Write");
+	}
+	json_value_free(config_file);
+	return last_write;
+}
+
+std::time_t JSONSerialization::GetLastWriteMaterial(const char* file)
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = file;
+	nameJson += ".meta.json";
+	config_file = json_parse_file(nameJson.c_str());
+
+	std::time_t last_write = 0;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		last_write = json_object_dotget_number(config, "Material.Last Write");
+	}
+	json_value_free(config_file);
+	return last_write;
+}
+
+std::time_t JSONSerialization::GetLastWriteScript(const char* file)
+{
+	return std::time_t();
 }
 
 void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile) 

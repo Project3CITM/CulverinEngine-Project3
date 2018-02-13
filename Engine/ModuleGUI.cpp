@@ -51,6 +51,8 @@ bool ModuleGUI::Start()
 	ImGui_ImplSdlGL3_Init(App->window->window);
 	ImGuiIO& io{ ImGui::GetIO() };
 
+	map_string = "Hola Joan";
+
 	io.Fonts->AddFontFromFileTTF("Fonts\\Ruda-Bold.ttf", 15);
 	io.Fonts->AddFontDefault();
 
@@ -286,6 +288,10 @@ update_status ModuleGUI::Update(float dt)
 				window_random_generator = !window_random_generator;
 				//LogOpenCloseWindow(window_Random_generator, std::string("Random Generator"));
 			}
+			if (ImGui::MenuItem("Edit Map Tiles"))
+			{
+				window_create_map = !window_create_map;
+			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Resources"))
 			{
@@ -356,7 +362,7 @@ update_status ModuleGUI::Update(float dt)
 	if (window_random_generator)
 	{
 		static LCG random_generator;
-		ImGui::Begin("Random Numbers Generator", &window_random_generator, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Begin("Random Numbers Generator", &window_random_generator, ImGuiWindowFlags_AlwaysAutoResize);
 		ImGui::Spacing();
 		ImGui::PushItemWidth(60);
 		static int numbers_f = 0;
@@ -428,10 +434,104 @@ update_status ModuleGUI::Update(float dt)
 		App->importer->iScript->CreateNewScript(window_create_new_script);
 	}
 	//----------------------------------------------
+	//MAP ----------------------
+	if (window_create_map)
+	{
+		if (!ImGui::Begin("Edit Map Tile", &window_create_map, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::End();
+		}
+		static int ws = 10, hs = 10;
+		ImGui::PushItemWidth(70);
+		ImGui::Text("Edit the tiles. Click ID and set type of /nthe ID (Walkable / No-Walkable / ...)");
+		ImGui::InputInt("width", &ws); ImGui::SameLine();
+		ImGui::InputInt("height", &hs);
+		
+		ImGui::PopItemWidth();
+		ImGui::PushItemWidth(10);
+		static bool map_created = false;
+		if (ImGui::Button("Create Map Tiled"))
+		{
+			map_created = true;
+		}
+		if (map_created)
+		{
+			static int selected_type = -1;
+			static std::string type_Name[] = { "Walkable", "No-Walkable", "Joan" };
+			//Frist Select Type
+			ImGui::Separator();
+			static int ray[30][30];
+			static bool te = true;
+			if (te)
+			{
+				te = false;
+				for (int i = 0; i < 30; i++)
+				{
+					for (int j = 0; j < 30; j++)
+					{
+						ray[i][j] = -1;
+					}
+				}
+				for (int i = 0; i < ws; i++)
+				{
+					for (int j = 0; j < hs; j++)
+					{
+						ray[i][j] = 0;
+					}
+				}
+			}
+
+			for (int i = 0; i < ws; i++)
+			{
+				for (int j = 0; j < hs; j++)
+				{
+					if (j > 0) ImGui::SameLine();
+					ImGui::PushID(j + i * 1000);
+					if (ray[i][j] > 0)
+					{
+						if (ray[i][j] == 1)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+						}
+						else if (ray[i][j] == 2)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+						}
+						else if (ray[i][j] == 3)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
+						}
+					}
+					if (ImGui::Button("ID"))
+						ImGui::OpenPopup("ID");
+					if (ray[i][j] > 0)
+					{
+						ImGui::PopStyleColor();
+					}
+					if (ImGui::BeginPopup("ID"))
+					{
+						for (int k = 0; k < IM_ARRAYSIZE(type_Name); k++)
+							if (ImGui::Selectable(type_Name[k].c_str()))
+							{
+								ray[i][j] = k + 1;
+							}
+						ImGui::EndPopup();
+					}
+					ImGui::PopID();
+				}
+			}
+		}
+		ImGui::PopItemWidth();
+		ImGui::End();
+	}
+	//----------------------------------------------
+
+
+
 	// Window About Us... ---------------------------------
 	if (window_about_us)
 	{
-		if (!ImGui::Begin("About Culverin", &window_about_us, ImGuiWindowFlags_ShowBorders | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+		if (!ImGui::Begin("About Culverin", &window_about_us, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::End();
 			return UPDATE_CONTINUE;
@@ -546,7 +646,7 @@ update_status ModuleGUI::Update(float dt)
 
 	if (window_audio)
 	{
-		ImGui::Begin("Audio Banks", &window_audio, ImGuiWindowFlags_ShowBorders);
+		ImGui::Begin("Audio Banks", &window_audio);
 		App->audio->DrawOnEditor();
 		ImGui::End();
 	}
@@ -554,7 +654,7 @@ update_status ModuleGUI::Update(float dt)
 	//Window Style -----------------------
 	if (window_style)
 	{
-		ImGui::Begin("Style Editor", &window_style, ImGuiWindowFlags_ShowBorders);
+		ImGui::Begin("Style Editor", &window_style);
 		ShowStyleEditor();
 		ImGui::End();
 	}
@@ -686,7 +786,7 @@ void ModuleGUI::ShowStyleEditor(ImGuiStyle* ref) //TODO need reposition
 	if (ImGui::TreeNode("Rendering"))
 	{
 		ImGui::Checkbox("Anti-aliased lines", &style.AntiAliasedLines); ImGui::SameLine(); App->ShowHelpMarker("When disabling anti-aliasing lines, you'll probably want to disable borders in your style as well.");
-		ImGui::Checkbox("Anti-aliased shapes", &style.AntiAliasedShapes);
+		ImGui::Checkbox("Anti-aliased shapes", &style.AntiAliasedFill);
 		ImGui::PushItemWidth(100);
 		ImGui::DragFloat("Curve Tessellation Tolerance", &style.CurveTessellationTol, 0.02f, 0.10f, FLT_MAX, NULL, 2.0f);
 		if (style.CurveTessellationTol < 0.0f) style.CurveTessellationTol = 0.10f;
@@ -699,7 +799,7 @@ void ModuleGUI::ShowStyleEditor(ImGuiStyle* ref) //TODO need reposition
 	{
 		ImGui::SliderFloat2("WindowPadding", (float*)&style.WindowPadding, 0.0f, 20.0f, "%.0f");
 		ImGui::SliderFloat("WindowRounding", &style.WindowRounding, 0.0f, 16.0f, "%.0f");
-		ImGui::SliderFloat("ChildWindowRounding", &style.ChildWindowRounding, 0.0f, 16.0f, "%.0f");
+		ImGui::SliderFloat("ChildWindowRounding", &style.ChildRounding, 0.0f, 16.0f, "%.0f");
 		ImGui::SliderFloat2("FramePadding", (float*)&style.FramePadding, 0.0f, 20.0f, "%.0f");
 		ImGui::SliderFloat("FrameRounding", &style.FrameRounding, 0.0f, 16.0f, "%.0f");
 		ImGui::SliderFloat2("ItemSpacing", (float*)&style.ItemSpacing, 0.0f, 20.0f, "%.0f");
@@ -830,7 +930,7 @@ void ModuleGUI::ShowStyleEditor(ImGuiStyle* ref) //TODO need reposition
 									ImGui::BeginTooltip();
 									ImGui::Text("Codepoint: U+%04X", base + n);
 									ImGui::Separator();
-									ImGui::Text("XAdvance+1: %.1f", glyph->XAdvance);
+									ImGui::Text("XAdvance+1: %.1f", glyph->AdvanceX);
 									ImGui::Text("Pos: (%.2f,%.2f)->(%.2f,%.2f)", glyph->X0, glyph->Y0, glyph->X1, glyph->Y1);
 									ImGui::Text("UV: (%.3f,%.3f)->(%.3f,%.3f)", glyph->U0, glyph->V0, glyph->U1, glyph->V1);
 									ImGui::EndTooltip();
@@ -888,7 +988,7 @@ void ModuleGUI::UpdateWindows(float dt)
 	ImGui::Begin("MasterWindow", &show_scene3, ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoFocusOnAppearing);
-	ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4(0.211f, 0.211f, 0.211f, 1.00f));
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.211f, 0.211f, 0.211f, 1.00f));
 	if (ImGui::BeginChild(ImGui::GetID("MasterWindow"), ImVec2(ImGui::GetWindowWidth(), 30), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
 	{
 		static GLuint icon_play = App->textures->LoadTexture("Images/UI/IconPlay.png");
@@ -1070,4 +1170,9 @@ void ModuleGUI::ShowEngineState()
 		ImGui::Text("PLAYFRAME");
 	}
 	ImGui::PopStyleColor();
+}
+
+void ModuleGUI::ShowCreateNewScriptWindow()
+{
+	window_create_new_script = true;
 }

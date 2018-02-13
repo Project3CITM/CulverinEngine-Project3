@@ -16,7 +16,8 @@ public:
 		MESH,
 		SCRIPT,
 		FONT,
-		ANIMATION
+		ANIMATION,
+		SKELETON
 	};
 	enum State {
 		UNLOADED,

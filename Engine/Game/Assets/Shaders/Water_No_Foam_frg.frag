@@ -16,8 +16,8 @@ uniform vec4 Color1;
 uniform vec4 Color2;
 uniform vec4 Color3;
 
-uniform float time;
-float Time = time;
+uniform float _time;
+float Time = _time;
 float ar = 0;
 float ar2 = 0;
 void main()

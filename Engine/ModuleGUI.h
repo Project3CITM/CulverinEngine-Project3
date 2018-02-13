@@ -46,6 +46,7 @@ public:
 	void ShowWindowExit(bool* active);
 	void ShowCameraMissing();
 	void ShowEngineState();
+	void ShowCreateNewScriptWindow();
 
 	void ShowStyleEditor(ImGuiStyle* ref = NULL);
 	//void ShowConfig();
@@ -70,7 +71,11 @@ public:
 	std::vector<int> ints_list;
 	//------------------------------
 
+	//Map ----------
+	std::string map_string;
+
 private:
+
 	//WINDOW EXIT -------------
 	bool game_save = false;
 	bool reposition_exit = true;
@@ -87,6 +92,7 @@ private:
 	bool window_create_new_script = false;
 	bool window_show_all_resources = false;
 	bool window_audio = false;
+	bool window_create_map = false;
 	//bool window_NewScene = false;
 
 	int menu_height = 0;

@@ -21,6 +21,8 @@ public:
 	CompCanvasRender(const CompCanvasRender& copy, GameObject* parent);
 	~CompCanvasRender();
 	void Update(float dt);
+	void Clear();
+
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompCanvasRender * component);
@@ -34,6 +36,8 @@ public:
 
 	void SetGraphic(CompGraphic* set_graphic);
 
+	void CheckOpenGlError(std::string info);
+
 private:
 public:
 private:
@@ -45,7 +49,6 @@ private:
 	uint vertices_id = 0;		/* VERTICES ID */
 	uint indices_id = 0;		/* INDICES ID */
 	//uint vertices_norm_id = 0;	/* NORMALS OF VERTICES ID */
-	uint id_total_buffer=0; /*MESH INFO BUFFER ID*/
 };
 
 #endif // !COMPONENT_CANVAS_RENDER_H

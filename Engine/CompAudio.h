@@ -4,14 +4,21 @@
 
 #include "Component.h"
 #include "wwished.h"
+#include <string>
+#include <vector>
 
 class GameObject;
 class CompTransform;
 
 enum AUDIO_TYPE
 {
-	FX,
+	FX = 0,
 	LISTENER
+};
+
+struct AudioEvent
+{
+	std::string name;
 };
 
 class CompAudio : public Component
@@ -27,6 +34,7 @@ public:
 	// EDITOR METHODS ---------
 	void ShowOptions();
 	void ShowInspectorInfo();
+	
 	// ------------------------
 
 	//void SetResource(ResourceAnimation * resource_animation, bool isImport = false);
@@ -42,11 +50,15 @@ public:
 
 private:
 
+	void ShowEventsInfo();
 	void CreateEmitter();
+	void CreateAudioEvent(std::string audio_event, int gameplay_event);
 	
 private:
 	CompTransform * transf = nullptr;
 	Wwished::SoundEmitter* emitter = nullptr;
 	AUDIO_TYPE audio_type = FX;
+
+	std::vector<std::pair<int, AudioEvent>> audio_events;
 };
 #endif

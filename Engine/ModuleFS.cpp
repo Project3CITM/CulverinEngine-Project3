@@ -38,6 +38,7 @@ bool ModuleFS::Init(JSON_Object * node)
 	CreateFolder("Library\\Meshes");
 	CreateFolder("Library\\Materials");
 	CreateFolder("Library\\Scripts");
+	CreateFolder("Library\\Animations");
 	CreateFolder("Assets");
 	return true;
 }
@@ -266,13 +267,61 @@ void ModuleFS::GetAllFilesAssets(std::experimental::filesystem::path path, std::
 
 bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 {
+	namespace fs = std::experimental::filesystem;
 	for (int i = 0; i < files.size(); i++)
 	{
 		std::string temp = files[i].directory_name;
 		temp += ".meta.json";
-		if (std::experimental::filesystem::exists(temp) == false && strcmp(GetExtension(files[i].directory_name).c_str(), "scene.json") != 0)
+		if (fs::exists(temp) == false && strcmp(GetExtension(files[i].directory_name).c_str(), "scene.json") != 0)
 		{
 			App->importer->Import(files[i].directory_name, App->resource_manager->CheckFileType(files[i].directory_name), true);
+		}
+		else 
+		{
+			std::string extension = GetExtension(files[i].directory_name);
+			//Set lowercase the extension to normalize it
+			for (std::string::iterator it = extension.begin(); it != extension.end(); it++)
+			{
+				*it = tolower(*it);
+			}
+			if (IsPermitiveExtension(extension.c_str()))
+			{
+				fs::file_time_type temp = fs::last_write_time(files[i].directory_name);
+				std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
+				switch (App->resource_manager->CheckFileType(extension.c_str()))
+				{
+				case Resource::Type::MESH:
+				{
+					std::time_t last_write = App->json_seria->GetLastWritePrefab(files[i].directory_name);
+					if (last_write != cftime)
+					{
+						bool finish = false; int id = 0;
+						while (finish == false)
+						{
+							ReImport temp = App->json_seria->GetUUIDPrefab(files[i].directory_name, id++);
+							if (temp.uuid != 0)
+							{
+								App->resource_manager->resources_to_reimport.push_back(temp);
+							}
+							else
+							{
+								finish = true;
+							}
+						}
+					}
+					break;
+				}
+				case Resource::Type::MATERIAL:
+				{
+					std::time_t last_write = App->json_seria->GetLastWriteMaterial(files[i].directory_name);
+					if (last_write != cftime)
+					{
+						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDMaterial(files[i].directory_name));
+					}
+					break;
+				}
+				}
+			}
 		}
 	}
 	return true;
@@ -695,6 +744,11 @@ bool ModuleFS::DeleteFileLibrary(const char* file, DIRECTORY_IMPORT directory)
 		//temp = DIRECTORY_LIBRARY_SCRIPTS + temp + "";
 		break;
 	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_ANIMATIONS:
+	{
+		temp = DIRECTORY_LIBRARY_ANIMATIONS + temp;
+		break;
+	}
 	}
 	if (std::remove(temp.c_str()) == 0)
 	{
@@ -732,6 +786,11 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 	case IMPORT_DIRECTORY_LIBRARY_MATERIALS:
 	{
 		temp = DIRECTORY_LIBRARY_MATERIALS + temp + ".dds";
+		break;
+	}
+	case IMPORT_DIRECTORY_LIBRARY_ANIMATIONS:
+	{
+		temp = DIRECTORY_LIBRARY_ANIMATIONS + temp;
 		break;
 	}
 	}
@@ -793,6 +852,11 @@ bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY
 	case IMPORT_DIRECTORY_LIBRARY_MATERIALS:
 	{
 		name = DIRECTORY_LIBRARY_MATERIALS + name;
+		break;
+	}
+	case IMPORT_DIRECTORY_LIBRARY_ANIMATIONS:
+	{
+		name = DIRECTORY_LIBRARY_ANIMATIONS + name;
 		break;
 	}
 	}

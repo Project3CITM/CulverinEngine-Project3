@@ -8,7 +8,7 @@
 #include "SDL/include/SDL.h"
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
-
+#pragma comment ( lib, "SDL2_ttf/lib/x86/SDL2_ttf.lib")
 #include "GL3W/include/glew.h"
 #include "SDL/include/SDL_opengl.h"
 #include <gl/GL.h>

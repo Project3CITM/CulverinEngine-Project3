@@ -106,3 +106,8 @@ void CompEditText::Load(const JSON_Object* object, std::string name)
 	//...
 	Enable();
 }
+
+uint CompEditText::GetCurrentPos() const
+{
+	return cursor_pos;
+}

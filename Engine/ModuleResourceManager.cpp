@@ -3,6 +3,7 @@
 #include "ResourceMaterial.h"
 #include "ResourceMesh.h"
 #include "ResourceScript.h"
+#include "ResourceAnimation.h"
 #include "ImportMesh.h"
 #include "JSONSerialization.h"
 #include "ModuleFS.h"
@@ -150,6 +151,10 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 					//need delete
 					//App->fs->DeleteFileLibrary(std::to_string(it->second->GetUUID()).c_str(), DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_MESHES);
 				}
+				else if (it->second->GetType() == Resource::Type::ANIMATION)
+				{
+					App->fs->DeleteFileLibrary(std::to_string(it->second->GetUUID()).c_str(), DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_ANIMATIONS);
+				}
 				delete it->second;
 				resources.erase(it);
 			}
@@ -280,11 +285,15 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 				i = -1;
 				it = file.begin();
 			}
-			else if (App->importer->Import(it._Ptr->_Myval, dropped_File_type))
+			else
 			{
-				// Copy file to Specify folder in Assets (This folder is the folder active)
 				App->fs->CopyFileToAssets(it._Ptr->_Myval, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory());
-				it++;
+				if (App->importer->Import(it._Ptr->_Myval, dropped_File_type))
+				{
+					// Copy file to Specify folder in Assets (This folder is the folder active)
+
+					it++;
+				}
 			}
 		}
 		else
@@ -335,6 +344,7 @@ Resource* ModuleResourceManager::CreateNewResource(Resource::Type type, uint uui
 	case Resource::MATERIAL: ret = (Resource*) new ResourceMaterial(uid); break;
 	case Resource::MESH: ret = (Resource*) new ResourceMesh(uid); break;
 	case Resource::SCRIPT: ret = (Resource*) new ResourceScript(uid); break;
+	case Resource::ANIMATION: ret = (Resource*) new ResourceAnimation(uid); break;
 	}
 	if (ret != nullptr)
 		resources[uid] = ret;
@@ -477,7 +487,12 @@ Resource*  ModuleResourceManager::ShowResources(bool& active, Resource::Type typ
 		nameWindow = "Select Script";
 		subname = "All Scripts:";
 	}
-	if (!ImGui::Begin(nameWindow, &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_ShowBorders)) //TODO ELLIOT CLOSE Windows example
+	else if (type == Resource::Type::ANIMATION)
+	{
+		nameWindow = "Select Animations";
+		subname = "All Animations:";
+	}
+	if (!ImGui::Begin(nameWindow, &active, ImGuiWindowFlags_NoCollapse)) //TODO ELLIOT CLOSE Windows example
 	{
 		ImGui::End();
 	}
@@ -519,16 +534,16 @@ Resource*  ModuleResourceManager::ShowResources(bool& active, Resource::Type typ
 
 void ModuleResourceManager::ShowAllResources(bool& active) 
 {
-	if (!ImGui::Begin("Resources", &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_ShowBorders))
+	if (!ImGui::Begin("Resources", &active, ImGuiWindowFlags_NoCollapse))
 	{
 		ImGui::End();
 	}
 	else
 	{
 		static int selected_type = -1;
-		static std::string type_Name[] = { "Material", "Mesh", "Script"};
+		static std::string type_Name[] = { "Material", "Mesh", "Script", "Animation"};
 		static Resource::Type type_R[] = { Resource::Type::MATERIAL,
-			Resource::Type::MESH, Resource::Type::SCRIPT};
+			Resource::Type::MESH, Resource::Type::SCRIPT, Resource::Type::ANIMATION};
 		//Frist Select Type
 		ImGui::Text("Select Type Resource:");
 		if (ImGui::Button("Select"))
@@ -697,6 +712,14 @@ void ModuleResourceManager::Load()
 						ResourceScript* script = (ResourceScript*)CreateNewResource(type, uid);
 						script->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
 						script->name = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+						break;
+					}
+					case Resource::Type::ANIMATION:
+					{
+						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
+						ResourceAnimation* animation = (ResourceAnimation*)CreateNewResource(type, uid);
+						animation->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
+						animation->name = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
 						break;
 					}
 					case Resource::Type::UNKNOWN:
