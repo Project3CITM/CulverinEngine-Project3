@@ -41,7 +41,10 @@ public:
 	uint vertices_id = 0;		/* VERTICES ID */
 	uint indices_id = 0;		/* INDICES ID */
 	uint vertices_norm_id = 0;	/* NORMALS OF VERTICES ID */
-	uint id_total_buffer; /*MESH INFO BUFFER ID*/
+	uint id_total_buffer;		/* MESH INFO BUFFER ID */
+
+private:
+
 };
 
 #endif

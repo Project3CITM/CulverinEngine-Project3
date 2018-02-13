@@ -15,15 +15,13 @@
 #include <iostream>
 #include <experimental/filesystem>
 #include <fstream>
+#include <queue>
 
 ImportMesh::ImportMesh()
-{
-}
-
+{}
 
 ImportMesh::~ImportMesh()
-{
-}
+{}
 
 bool ImportMesh::Load(const char* exported_file, Texture* resource)
 {
@@ -38,6 +36,15 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	uint num_indices = 0;
 	uint num_normals = 0;
 	uint num_textures = 0;
+	uint num_joints = 0;
+
+	//Skeleton
+	char** joint_names = nullptr;
+	uint joint_names_size = 0;
+	aiMatrix4x4* bone_offsets = nullptr;
+	uint* num_weights = nullptr;
+	Weight** weights = nullptr;
+	//--
 
 	float3* vertices = nullptr;
 	uint* indices = nullptr;
@@ -86,7 +93,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		}
 		else
 		{
-			LOG("- Mesh %s hasn't got Faces", mesh->mName.C_Str());
+			LOG("- Mesh %s does not have Faces", mesh->mName.C_Str());
 		}
 
 		// SET NORMAL DATA -------------------------------
@@ -100,7 +107,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		else
 		{
 			num_normals = 0;
-			LOG("- Mesh %s hasn't got Normals", mesh->mName.C_Str());
+			LOG("- Mesh %s does not have Normals", mesh->mName.C_Str());
 		}
 
 		// SET TEX COORD DATA -------------------------------
@@ -123,8 +130,32 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				tex_coords[i] = float2(0, 0);//TODO-> change default value
 			}
 
-			LOG("- Mesh %s hasn't got Tex Coords", mesh->mName.C_Str());
+			LOG("- Mesh %s does not have Tex Coords", mesh->mName.C_Str());
 		}
+
+		// Skeleton
+		if (mesh->HasBones())
+		{
+			//must change into list and hirarchy separately
+			joint_names = new char*[mesh->mNumBones];
+			bone_offsets = new aiMatrix4x4[mesh->mNumBones];
+			num_weights = new uint[mesh->mNumBones];
+			weights = new Weight*[mesh->mNumBones];
+			uint num_joints_imported = 0;
+			ImportBone(scene->mRootNode, mesh, joint_names, joint_names_size, bone_offsets, num_weights, weights, num_joints_imported);
+
+			if (num_joints_imported == mesh->mNumBones)
+			{
+				LOG("- Imported all Bones from data");
+			}
+			else
+			{
+				LOG("Imported joints and Num joints do not mach");
+			}
+		}
+		else
+			LOG("- Mesh %s does not have Bones", mesh->mName.C_Str());
+
 		LOG("Imported all data");
 	}
 	else
@@ -176,9 +207,8 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	ResourceMesh* res_mesh = (ResourceMesh*)App->resource_manager->CreateNewResource(Resource::Type::MESH, uuid_mesh);
 	meshComp->SetResource(res_mesh, true);
 
-
 	// ALLOCATING DATA INTO BUFFER ------------------------
-	uint ranges[3] = { num_vertices, num_indices, num_normals }; //,num_tex_coords };
+	uint ranges[4] = { num_vertices, num_indices, num_normals, num_joints }; //,num_tex_coords };
 
 	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices;
 
@@ -210,6 +240,9 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	bytes = sizeof(float2) * num_vertices; //num_tex_coords;
 	memcpy(cursor, tex_coords, bytes);
 
+	//SKELETON
+	//bone
+
 	// Release all pointers
 	RELEASE_ARRAY(vertices);
 	RELEASE_ARRAY(indices);
@@ -227,7 +260,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	App->fs->SaveFile(data, fileName, size, IMPORT_DIRECTORY_LIBRARY_MESHES);
 
 	RELEASE_ARRAY(data);
-
 
 	return ret;
 }
@@ -353,4 +385,33 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 	}
 	RELEASE_ARRAY(buffer);
 	return true;
+}
+
+void ImportMesh::ImportBone(const aiNode * node, const aiMesh * mesh, char** joint_names, uint& joint_names_size, aiMatrix4x4* bone_offsets, uint* num_weights, Weight** weights, uint& num_joints) const
+{
+	uint byte_size = 0;
+
+	for (int i = 0; i < mesh->mNumBones; ++i)
+	{
+		if (node->mName == mesh->mBones[i]->mName)
+		{
+			memcpy(joint_names[num_joints], mesh->mBones[i]->mName.C_Str(), mesh->mBones[i]->mName.length + 1);
+			joint_names_size += mesh->mBones[i]->mName.length + 1;
+
+			bone_offsets[num_joints] = mesh->mBones[i]->mOffsetMatrix;
+
+			num_weights [num_joints] = mesh->mBones[i]->mNumWeights;
+
+			for (int r = 0; r < mesh->mBones[i]->mNumWeights; ++r)
+			{
+				weights[num_joints]->vertex_id = mesh->mBones[i]->mWeights->mVertexId;
+				weights[num_joints]->weight = mesh->mBones[i]->mWeights->mWeight;
+			}
+
+			break;
+		}
+	}
+
+	for (int i = 0; i < node->mNumChildren; i++)
+		ImportBone(node, mesh, joint_names, joint_names_size, bone_offsets, num_weights, weights, ++num_joints);
 }

@@ -111,7 +111,6 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 			CompTransform* newTrans = (CompTransform*)newObj->AddComponent(C_TRANSFORM);
 			ProcessTransform(node, newTrans);
 		}
-
 		else
 		{
 			newObj = objChild;
