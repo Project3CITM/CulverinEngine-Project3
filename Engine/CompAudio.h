@@ -12,7 +12,7 @@ class CompTransform;
 
 enum AUDIO_TYPE
 {
-	FX,
+	FX = 0,
 	LISTENER
 };
 
