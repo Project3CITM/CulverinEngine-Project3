@@ -40,12 +40,7 @@ void CompAudio::Update(float dt)
 		up.Normalize();
 		front.Normalize();
 		emitter->SetPosition(-pos.x, pos.y, pos.z, -front.x, front.y, front.z, -up.x, up.y, up.z);
-	}
-	
-	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
-	{
-		emitter->PlayEvent("Shot");
-	}
+	}	
 }
 
 void CompAudio::ShowOptions()
@@ -132,20 +127,30 @@ void CompAudio::ShowInspectorInfo()
 		}		
 	}
 
-	ShowEventsInfo();
+	if (audio_type == FX)
+		ShowEventsInfo();
 
 	ImGui::TreePop();
 }
 
 void CompAudio::ShowEventsInfo()
 {
-	ImGui::BeginChild(1, ImVec2(600, 20* audio_events.size()));
+
+	if (ImGui::Button("Add Event"))
+	{
+		CreateAudioEvent("None", 0);
+	}
+	ImGui::BeginChild(1, ImVec2(600, 300));
 	int i = 0;
 	for (std::vector<std::pair<int, AudioEvent>>::iterator it = audio_events.begin(); it != audio_events.end(); i++)
 	{
+		ImGui::Separator();
 		ImGui::PushID(i);
-		ImGui::PushItemWidth(60.0);
-		ImGui::InputInt("Gameplay ev", &(*it).first);
+		ImGui::PushItemWidth(80.0);
+		if (ImGui::InputInt("Gameplay ev", &(*it).first))
+		{
+			emitter->StopEvent((*it).second.name.c_str());
+		}
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 		char tmp[41];
@@ -154,6 +159,7 @@ void CompAudio::ShowEventsInfo()
 		ImGui::PushItemWidth(100.0);
 		if (ImGui::InputText("Audio ev", tmp, 40))
 		{
+			emitter->StopEvent((*it).second.name.c_str());
 			(*it).second.name = tmp;
 		}
 		ImGui::PopItemWidth();
@@ -172,6 +178,7 @@ void CompAudio::ShowEventsInfo()
 
 		if (ImGui::SmallButton("X"))
 		{
+			emitter->StopEvent((*it).second.name.c_str());
 			it = audio_events.erase(it);
 		}
 		else it++;
@@ -179,10 +186,7 @@ void CompAudio::ShowEventsInfo()
 	}
 
 	ImGui::EndChild();
-	if (ImGui::Button("AddEvent"))
-	{
-		CreateAudioEvent("None", 0);
-	}
+	
 }
 
 void CompAudio::CopyValues(const CompAudio * component)
