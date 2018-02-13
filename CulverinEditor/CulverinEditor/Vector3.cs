@@ -92,8 +92,47 @@ namespace CulverinEditor
             }
         }
 
+        public float Length
+        {
+            get
+            {
+                return Magnitude(this);
+            }
+        }
 
-        public float Magnitude(Vector3 vector)
+        //public Vector3 MoveTowards(Vector3 current, Vector3 target, float maxDistance)
+        //{
+        //    Vector3 diff = target - current;
+        //    float magnitude = Magnitude(diff);
+        //    Vector3 ret;
+        //    if (magnitude <= maxDistance || magnitude < Mathf.Epsilon)
+        //    {
+        //        ret = target;
+        //    }
+        //    else
+        //    {
+        //        ret = current + diff / magnitude * maxDistance;
+        //    }
+        //    return ret;
+        //}
+
+        public static Vector3 MoveTowards(Vector3 current, Vector3 target, float maxDistance)
+        {
+            Vector3 diff = target - current;
+            float magnitude = diff.Length;
+            Vector3 ret;
+            if (magnitude <= maxDistance || magnitude < Mathf.Epsilon)
+            {
+                ret = target;
+            }
+            else
+            {
+                ret = current + diff / magnitude * maxDistance;
+            }
+            return ret;
+        }
+
+        public static float Magnitude(Vector3 vector)
         {
             return Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
         }
@@ -151,6 +190,11 @@ namespace CulverinEditor
         }
 
         public static Vector3 operator *(float d, Vector3 v1)
+        {
+            return new Vector3(v1.x * d, v1.y * d, v1.z * d);
+        }
+
+        public static Vector3 operator *(Vector3 v1, float d)
         {
             return new Vector3(v1.x * d, v1.y * d, v1.z * d);
         }
