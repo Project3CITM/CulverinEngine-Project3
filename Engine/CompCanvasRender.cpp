@@ -279,15 +279,13 @@ void CompCanvasRender::DrawGraphic()
 	/*
 
 	GLint view2Loc = glGetUniformLocation(App->renderer3D->default_shader->programID, "view");
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
 	GLint viewLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "viewproj");
-
-
-
 	glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
 	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 	*/
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
+
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->vertices_id);
 
