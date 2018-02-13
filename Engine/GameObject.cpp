@@ -41,6 +41,14 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 	}
 }
 
+GameObject::GameObject(char* nameGameObject)
+{
+	Enable();
+	SetVisible(true);
+	uid = App->random->Int();
+	name = nameGameObject;
+}
+
 GameObject::GameObject(char* nameGameObject, uint uuid)
 {
 	Enable();
