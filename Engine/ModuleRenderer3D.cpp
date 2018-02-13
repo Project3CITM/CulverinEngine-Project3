@@ -436,13 +436,13 @@ void ModuleRenderer3D::UpdateProjection(CompCamera* cam)
 void ModuleRenderer3D::OnResize(int width, int height)
 {
 	float ratio = (float)width / (float)height;
-	active_camera->SetRatio(ratio);
+	active_camera->SetFov(height);
 	glViewport(0, 0, width, height);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	
-	glLoadMatrixf(active_camera->GetProjectionMatrix());
+	//glLoadMatrixf(active_camera->GetProjectionMatrix());
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
