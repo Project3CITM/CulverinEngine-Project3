@@ -334,6 +334,7 @@
     <ClInclude Include="ResourceMaterial.h" />
     <ClInclude Include="ResourceMesh.h" />
     <ClInclude Include="ResourceScript.h" />
+    <ClInclude Include="ResourceSkeleton.h" />
     <ClInclude Include="Resource_.h" />
     <ClInclude Include="Script_editor.h" />
     <ClInclude Include="ShadersLib.h" />
@@ -481,6 +482,7 @@
     <ClCompile Include="ResourceMaterial.cpp" />
     <ClCompile Include="ResourceMesh.cpp" />
     <ClCompile Include="ResourceScript.cpp" />
+    <ClCompile Include="ResourceSkeleton.cpp" />
     <ClCompile Include="Resource_.cpp" />
     <ClCompile Include="Script_editor.cpp" />
     <ClCompile Include="ShadersLib.cpp" />

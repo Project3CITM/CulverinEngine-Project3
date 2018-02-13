@@ -1128,6 +1128,9 @@
     <ClInclude Include="ImGui\imgui_graph_nodes.h">
       <Filter>Engine\Tools\ImGUI</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceSkeleton.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1471,6 +1474,9 @@
     </ClCompile>
     <ClCompile Include="ImGui\imgui_graph_nodes.cpp">
       <Filter>Engine\Tools\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceSkeleton.cpp">
+      <Filter>Engine\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
