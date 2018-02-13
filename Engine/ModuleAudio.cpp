@@ -4,6 +4,7 @@
 #include "wwished.h"
 #include "ModuleFS.h"
 #include "CompAudio.h"
+#include "ModuleEventSystem.h"
 
 #include <locale>
 #include <codecvt>
@@ -46,6 +47,41 @@ bool ModuleAudio::Init(JSON_Object* node)
 	return ret;
 }
 
+bool ModuleAudio::SetEventListenrs()
+{
+	AddListener(EventType::EVENT_TIME_MANAGER, this);
+	return true;
+}
+
+void ModuleAudio::OnEvent(Event& event)
+{
+	//ETimeManager::TIME_PLAY
+	switch (event.type)
+	{
+	case EventType::EVENT_TIME_MANAGER:
+		{
+			switch (event.time.time)
+			{
+			case (ETimeManager::TIME_UNPAUSE):
+			{
+				ResumeSounds();
+				break;
+			}
+			case (ETimeManager::TIME_STOP):
+			{
+				StopSounds();
+				break;
+			}
+			case (ETimeManager::TIME_PAUSE):
+			{
+				PauseSounds();
+				break;
+			}
+			}
+		}
+	}
+}
+
 //bool ModuleWindow::Start()
 //{
 //	perf_timer.Start();
@@ -80,7 +116,9 @@ bool ModuleAudio::Init(JSON_Object* node)
 
 update_status ModuleAudio::PostUpdate(float dt)
 {
+	perf_timer.Start();
 	Wwished::ProcessAudio();
+	postUpdate_t = perf_timer.ReadMs();
 
 	return UPDATE_CONTINUE;
 }
@@ -196,7 +234,6 @@ void ModuleAudio::UnloadAllBanks()
 	}
 	loaded_banks.clear();
 }
-
 
 
 update_status ModuleAudio::UpdateConfig(float dt)
