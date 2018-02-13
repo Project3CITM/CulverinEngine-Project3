@@ -139,24 +139,25 @@ void CompAudio::ShowInspectorInfo()
 
 void CompAudio::ShowEventsInfo()
 {
-	//ImGui::BeginChild(1, ImVec2(300, 150));
+	ImGui::BeginChild(1, ImVec2(600, 20* audio_events.size()));
 	int i = 0;
 	for (std::vector<std::pair<int, AudioEvent>>::iterator it = audio_events.begin(); it != audio_events.end(); i++)
 	{
 		ImGui::PushID(i);
-
+		ImGui::PushItemWidth(60.0);
 		ImGui::InputInt("Gameplay ev", &(*it).first);
+		ImGui::PopItemWidth();
 		ImGui::SameLine();
-		//char tmp[41];
-		//(*it).second.name.copy(tmp, 40);
 		char tmp[41];
 		(*it).second.name.copy(tmp, 41);
-	
+		tmp[(*it).second.name.length()] = '\0';	
+		ImGui::PushItemWidth(100.0);
 		if (ImGui::InputText("Audio ev", tmp, 40))
 		{
 			(*it).second.name = tmp;
 		}
-		
+		ImGui::PopItemWidth();
+
 		ImGui::SameLine();
 		if (ImGui::SmallButton("Play"))
 		{
@@ -174,11 +175,10 @@ void CompAudio::ShowEventsInfo()
 			it = audio_events.erase(it);
 		}
 		else it++;
-
 		ImGui::PopID();
 	}
 
-	//ImGui::EndChild();
+	ImGui::EndChild();
 	if (ImGui::Button("AddEvent"))
 	{
 		CreateAudioEvent("None", 0);
