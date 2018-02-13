@@ -3,6 +3,18 @@
 
 #include "Module.h"
 
+class jpPhysicsWorld;
+class jpPhysicsRigidBody;
+
+namespace physx 
+{
+	class PxPhysics;
+	class PxScene;
+	class PxSceneDesc;
+	class PxRigidStatic;
+	class PxRigidDynamic;
+	class PxBounds3;
+}
 
 class ModulePhysics : public Module
 {
@@ -19,8 +31,19 @@ public:
 	bool SaveConfig(JSON_Object* node);
 	bool CleanUp();
 
-private:
+	// PhysX Methods ----------------
+	jpPhysicsRigidBody* GetNewRigidBody(bool dynamic = false);
 
+	// Chenge Actor type: static/dynamic
+	void ChangeRigidBodyToStatic(jpPhysicsRigidBody* actor);
+	void ChangeRigidBodyToDynamic(jpPhysicsRigidBody* actor);
+
+
+private:
+	physx::PxPhysics* mPhysics = nullptr;
+
+	jpPhysicsWorld * physics_world = nullptr;
+	physx::PxScene* mScene = nullptr;
 };
 
-#endif
+#endif // !MODULEPHYSICS_H_

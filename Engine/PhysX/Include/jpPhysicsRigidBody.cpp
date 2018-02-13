@@ -22,8 +22,6 @@ jpPhysicsRigidBody::jpPhysicsRigidBody(physx::PxPhysics* px_physics, bool is_dyn
 		body = physx::PxCreateStatic(*px_physics, physx::PxTransform(physx::PxIDENTITY()), physx::PxBoxGeometry(0.5,0.5,0.5), *default_material);
 		body->getShapes(&body_shape, 1);
 	}
-	
-	
 }
 
 jpPhysicsRigidBody::~jpPhysicsRigidBody()
@@ -31,6 +29,38 @@ jpPhysicsRigidBody::~jpPhysicsRigidBody()
 	if (body)
 	{
 		body->release();
+	}
+}
+
+void jpPhysicsRigidBody::ToStatic(physx::PxPhysics* px_physics)
+{
+	if (is_dynamic && px_physics)
+	{
+		physx::PxScene*	scene = body->getScene();
+		physx::PxRigidActor* temp_body = physx::PxCreateStatic(*px_physics, body->getGlobalPose(), body_shape->getGeometry().any(),*default_material);
+		body->release();
+
+		body = temp_body;
+		body->getShapes(&body_shape, 1);
+		scene->addActor(*temp_body);
+
+		is_dynamic = false;
+	}
+}
+
+void jpPhysicsRigidBody::ToDynamic(physx::PxPhysics* px_physics)
+{
+	if (!is_dynamic && px_physics)
+	{
+		physx::PxScene*	scene = body->getScene();
+		physx::PxRigidActor* temp_body = physx::PxCreateDynamic(*px_physics, body->getGlobalPose(), body_shape->getGeometry().any(), *default_material, 1.0f);
+		body->release();
+
+		body = temp_body;
+		body->getShapes(&body_shape, 1);
+		scene->addActor(*temp_body);
+
+		is_dynamic = true;
 	}
 }
 
@@ -130,15 +160,23 @@ void jpPhysicsRigidBody::SetShape(physx::PxShape * new_shape)
 	}
 }
 
-void jpPhysicsRigidBody::SetGeometry(physx::PxVec3 scale, float radius, JP_COLLIDER_TYPE type)
+void jpPhysicsRigidBody::SetGeometry(float3 new_scale, float radius, JP_COLLIDER_TYPE type)
 {
+	if (!new_scale.IsFinite())
+	{
+		return;
+	}
+
+	physx::PxVec3 scale = physx::PxVec3(new_scale.x, new_scale.y, new_scale.z);
+	
 	if (radius < 0)
 		radius = -radius;
 	if(scale.isFinite())
 		scale = scale.abs();
 	else scale = physx::PxVec3(0.0, 0.0, 0.0);
 		
-	if (body_shape) {
+	if (body_shape) 
+	{
 		body->detachShape(*body_shape);
 		body_shape = nullptr;
 	}
@@ -171,9 +209,11 @@ void jpPhysicsRigidBody::SetGeometry(physx::PxVec3 scale, float radius, JP_COLLI
 	}
 }
 
-void jpPhysicsRigidBody::SetShapeScale(physx::PxVec3 scale, float radius, JP_COLLIDER_TYPE shape_type)
+void jpPhysicsRigidBody::SetShapeScale(float3 new_scale, float radius, JP_COLLIDER_TYPE shape_type)
 {
 	if (body_shape) {
+		physx::PxVec3 scale = physx::PxVec3(new_scale.x, new_scale.y, new_scale.z);
+
 		// Get absolute values for scale and radius
 		if (radius < 0)
 			radius = -radius;
@@ -210,26 +250,6 @@ void jpPhysicsRigidBody::SetShapeScale(physx::PxVec3 scale, float radius, JP_COL
 			body_shape->setGeometry(box);
 		}
 		break;
-		case physx::PxGeometryType::eCONVEXMESH: {
-			physx::PxConvexMeshGeometry convmesh = body_shape->getGeometry().convexMesh();
-			convmesh.scale = scale;
-			body_shape->setGeometry(convmesh);
-		}
-			break;
-		case physx::PxGeometryType::eTRIANGLEMESH: {
-			physx::PxTriangleMeshGeometry trimesh = body_shape->getGeometry().triangleMesh();
-			trimesh.scale = scale;
-			body_shape->setGeometry(trimesh);
-		}
-			break;
-		case physx::PxGeometryType::eHEIGHTFIELD: {
-			physx::PxHeightFieldGeometry heightfield = body_shape->getGeometry().heightField();
-			heightfield.heightScale = scale.z;
-			heightfield.rowScale = scale.x;
-			heightfield.columnScale = scale.y;
-			body_shape->setGeometry(heightfield);
-		}
-			break;
 		default:
 			break;
 		}
@@ -238,13 +258,19 @@ void jpPhysicsRigidBody::SetShapeScale(physx::PxVec3 scale, float radius, JP_COL
 
 void jpPhysicsRigidBody::SetMass(float & mass)
 {
-	if (mass < 0)
-		mass = 0;
-	if (mass > PX_MAX_F32)
-		mass = PX_MAX_F32 - 1;
-	
 	if (is_dynamic)
+	{
+		if (mass < 0)
+		{
+			mass = 0;
+		}
+		if (mass > PX_MAX_F32)
+		{
+			mass = PX_MAX_F32 - 1;
+		}
+
 		static_cast<physx::PxRigidDynamic*> (body)->setMass(mass);
+	}
 }
 
 void jpPhysicsRigidBody::GetTransform(float3 & pos, Quat & rotation)
@@ -264,8 +290,10 @@ void jpPhysicsRigidBody::GetTransform(float3 & pos, Quat & rotation)
 
 physx::PxRigidActor * jpPhysicsRigidBody::GetActor()
 {
-	if(body)
+	if (body)
+	{
 		return body;
+	}
 }
 
 bool jpPhysicsRigidBody::Sleeping()
@@ -280,42 +308,42 @@ bool jpPhysicsRigidBody::Sleeping()
 	}
 }
 
-void jpPhysicsRigidBody::ApplyForce(physx::PxVec3 force)
+void jpPhysicsRigidBody::ApplyForce(float3 force)
 {
-	if (is_dynamic && force.isFinite())
+	if (is_dynamic && force.IsFinite())
 	{
-		static_cast<physx::PxRigidDynamic*> (body)->addForce(force);
+		static_cast<physx::PxRigidDynamic*> (body)->addForce(physx::PxVec3(force.x, force.y, force.z));
 	}
 }
 
-void jpPhysicsRigidBody::ApplyImpulse(physx::PxVec3 impulse)
+void jpPhysicsRigidBody::ApplyImpulse(float3 impulse)
 {
-	if (is_dynamic && impulse.isFinite())
+	if (is_dynamic && impulse.IsFinite())
 	{
-		static_cast<physx::PxRigidDynamic*> (body)->addForce(impulse, physx::PxForceMode::Enum::eIMPULSE);
+		static_cast<physx::PxRigidDynamic*> (body)->addForce(physx::PxVec3(impulse.x, impulse.y, impulse.z), physx::PxForceMode::Enum::eIMPULSE);
 	}
 }
 
-void jpPhysicsRigidBody::ApplyTorqueForce(physx::PxVec3 force)
+void jpPhysicsRigidBody::ApplyTorqueForce(float3 force)
 {
-	if (is_dynamic && force.isFinite())
+	if (is_dynamic && force.IsFinite())
 	{
-		static_cast<physx::PxRigidDynamic*> (body)->addTorque(force);
+		static_cast<physx::PxRigidDynamic*> (body)->addTorque(physx::PxVec3(force.x, force.y, force.z));
 	}
 }
 
-void jpPhysicsRigidBody::ApplyTorqueImpulse(physx::PxVec3 impulse)
+void jpPhysicsRigidBody::ApplyTorqueImpulse(float3 impulse)
 {
-	if (is_dynamic && impulse.isFinite())
+	if (is_dynamic && impulse.IsFinite())
 	{
-		static_cast<physx::PxRigidDynamic*> (body)->addTorque(impulse, physx::PxForceMode::Enum::eIMPULSE);
+		static_cast<physx::PxRigidDynamic*> (body)->addTorque(physx::PxVec3(impulse.x, impulse.y, impulse.z), physx::PxForceMode::Enum::eIMPULSE);
 	}
 }
 
-void jpPhysicsRigidBody::MoveKinematic(physx::PxTransform dest)
+void jpPhysicsRigidBody::MoveKinematic(float3 pos, Quat rotation)
 {
-	if (is_dynamic)
+	if (is_dynamic && pos.IsFinite() && rotation.IsFinite())
 	{
-		static_cast<physx::PxRigidDynamic*> (body)->setKinematicTarget(dest);
+		static_cast<physx::PxRigidDynamic*> (body)->setKinematicTarget(physx::PxTransform(physx::PxVec3(pos.x, pos.y, pos.z), physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
 	}
 }

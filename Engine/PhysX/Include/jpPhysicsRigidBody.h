@@ -21,6 +21,9 @@ public:
 	jpPhysicsRigidBody(physx::PxPhysics* px_physics, bool is_dynamic = false);
 	~jpPhysicsRigidBody();
 
+	void ToStatic(physx::PxPhysics* px_physics);
+	void ToDynamic(physx::PxPhysics* px_physics);
+
 	void ActivateShape();
 	void DeActivateShape();
 
@@ -33,8 +36,8 @@ public:
 	void SetMaterial(float &static_friction, float &dynamic_friction, float &restitution);
 	void SetShape(physx::PxShape* new_shape);
 
-	void SetGeometry(physx::PxVec3 pos, float radius, JP_COLLIDER_TYPE type);
-	void SetShapeScale(physx::PxVec3 scale, float radius, JP_COLLIDER_TYPE type);
+	void SetGeometry(float3 new_scale, float radius, JP_COLLIDER_TYPE type);
+	void SetShapeScale(float3 new_scale, float radius, JP_COLLIDER_TYPE type);
 
 	void SetMass(float &mass);
 
@@ -42,17 +45,18 @@ public:
 	void GetTransform(float3& pos, Quat& rotation);
 	physx::PxRigidActor* GetActor();
 
+	// Dynamic Body Methods ---------
 	// Check Methods
 	bool Sleeping();
 
 	// Simulation Methods
-	void ApplyForce(physx::PxVec3 force);
-	void ApplyImpulse(physx::PxVec3 impulse);
-	void ApplyTorqueForce(physx::PxVec3 force);
-	void ApplyTorqueImpulse(physx::PxVec3 impulse);
+	void ApplyForce(float3 force);
+	void ApplyImpulse(float3 impulse);
+	void ApplyTorqueForce(float3 force);
+	void ApplyTorqueImpulse(float3 impulse);
 
 	// Move Kinematic
-	void MoveKinematic(physx::PxTransform dest);
+	void MoveKinematic(float3 pos, Quat rotation);
 
 private:
 	// main body
