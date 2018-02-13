@@ -144,5 +144,10 @@ namespace CulverinEditor
         {
             return (float)Math.Tanh(s);
         }
+
+        public static float Lerp(float first, float second, float by)
+        {
+            return first * by + second * (1 - by);
+        }
     }
 }

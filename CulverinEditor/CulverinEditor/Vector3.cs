@@ -22,6 +22,13 @@ namespace CulverinEditor
             this.z = z;
         }
 
+        public Vector3(Vector3 cpy)
+        {
+            this.x = cpy.x;
+            this.y = cpy.y;
+            this.z = cpy.z;
+        }
+
         public float x;
         public float y;
         public float z;
@@ -100,21 +107,74 @@ namespace CulverinEditor
             }
         }
 
-        //public Vector3 MoveTowards(Vector3 current, Vector3 target, float maxDistance)
-        //{
-        //    Vector3 diff = target - current;
-        //    float magnitude = Magnitude(diff);
-        //    Vector3 ret;
-        //    if (magnitude <= maxDistance || magnitude < Mathf.Epsilon)
-        //    {
-        //        ret = target;
-        //    }
-        //    else
-        //    {
-        //        ret = current + diff / magnitude * maxDistance;
-        //    }
-        //    return ret;
-        //}
+
+        //Math operations ---------------------------------
+        public static float Angle(Vector3 from, Vector3 to)
+        {
+            return Mathf.Atan2(to.y, to.x) - Mathf.Atan2(from.y, from.x);
+        }
+
+        public static Vector3 ClampMagnitude(Vector3 vector, float maxLength)
+        {
+            return vector.Normalized * maxLength;
+        }
+
+        public static Vector3 Cross(Vector3 lhs, Vector3 rhs)
+        {
+            float x, y, z;
+            x = lhs.y * rhs.z - rhs.y * lhs.z;
+            y = (lhs.x * rhs.z - rhs.x * lhs.z) * -1;
+            z = lhs.x * rhs.y - rhs.x * lhs.y;
+
+            Vector3 rtnvector = new Vector3(x, y, z);
+            return rtnvector;
+        }
+
+        public float Distance(Vector3 v1, Vector3 v2)
+        {
+            Vector3 temp_vector = new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+            return Mathf.Sqrt(temp_vector.x * temp_vector.x + temp_vector.y * temp_vector.y + temp_vector.z * temp_vector.z);
+        }
+
+        public static float Dot(Vector3 lhs, Vector3 rhs)
+        {
+            return lhs.x * rhs.x + lhs.y * rhs.y;
+        }
+
+        public static Vector3 Lerp(Vector3 a, Vector3 b, float t)
+        {
+            float l_x = Mathf.Lerp(a.x, b.x, t);
+            float l_y = Mathf.Lerp(a.y, b.y, t);
+            float l_z = Mathf.Lerp(a.z, b.z, t);
+            return new Vector3(l_x, l_y, l_z);
+        }
+
+        public static float Magnitude(Vector3 vector)
+        {
+            return Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
+        }
+
+        public static Vector3 Max(Vector3 lhs, Vector3 rhs)
+        {
+            float x = lhs.x;
+            if (rhs.x > x) x = rhs.x;
+            float y = lhs.y;
+            if (rhs.y > y) y = rhs.y;
+            float z = lhs.z;
+            if (rhs.z > z) z = rhs.z;
+            return new Vector3(x, y, z);
+        }
+
+        public static Vector3 Min(Vector3 lhs, Vector3 rhs)
+        {
+            float x = lhs.x;
+            if (rhs.x < x) x = rhs.x;
+            float y = lhs.y;
+            if (rhs.y < y) y = rhs.y;
+            float z = lhs.z;
+            if (rhs.z < z) z = rhs.z;
+            return new Vector3(x, y, z);
+        }
 
         public static Vector3 MoveTowards(Vector3 current, Vector3 target, float maxDistance)
         {
@@ -132,19 +192,6 @@ namespace CulverinEditor
             return ret;
         }
 
-        public static float Magnitude(Vector3 vector)
-        {
-            return Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
-        }
-
-        public Vector3 Normalized
-        {
-            get
-            {
-                return Normalize(this);
-            }
-        }
-
         public Vector3 Normalize(Vector3 vector)
         {
             Vector3 value;
@@ -160,10 +207,40 @@ namespace CulverinEditor
             return value;
         }
 
-        public float Distance(Vector3 v1, Vector3 v2)
+        public static Vector3 Project(Vector3 vector, Vector3 onNormal)
         {
-            Vector3 temp_vector = new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
-            return Mathf.Sqrt(temp_vector.x * temp_vector.x + temp_vector.y * temp_vector.y + temp_vector.z * temp_vector.z);
+            return new Vector3(((vector * onNormal) / onNormal.Length) * (onNormal / onNormal.Length));
+        }
+
+        public static Vector3 ProjectOnPlane(Vector3 vector, Vector3 planeNormal)
+        {
+            float distance = -Vector3.Dot(planeNormal.Normalized, vector);
+            return vector + planeNormal * distance;
+        }
+
+        /*public static Vector3 Reflect(Vector3 inDirection, Vector3 inNormal)
+        {
+
+        }
+
+        public static Vector3 Slerp(Vector3 a, Vector3 b, float t)
+        {
+            Mathf.
+        }*/
+
+        public Vector3 Normalized
+        {
+            get
+            {
+                return Normalize(this);
+            }
+        }
+
+        public void Scale(Vector3 scale)
+        {
+            this.x *= scale.x;
+            this.y *= scale.y;
+            this.z *= scale.z;
         }
 
         public void Set(float x, float y, float z)
@@ -173,7 +250,18 @@ namespace CulverinEditor
             this.z = z;
         }
 
-        // Operators -----------------------------------------
+        public override int GetHashCode()
+        {
+            return x.GetHashCode() + y.GetHashCode() + z.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            string temp = (x.ToString() + ", " + y.ToString() + ", " + z.ToString());
+            return temp;
+        }
+
+        // Operators --------------------------------------
         public static Vector3 operator +(Vector3 v1, Vector3 v2)
         {
             return new Vector3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
@@ -233,18 +321,5 @@ namespace CulverinEditor
             }
             return ret;
         }
-
-        public override int GetHashCode()
-        {
-            return x.GetHashCode() + y.GetHashCode() + z.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            string temp = (x.ToString()+", "+ y.ToString() + ", " + z.ToString());
-            return temp;
-        }
-
-
     }
 }
