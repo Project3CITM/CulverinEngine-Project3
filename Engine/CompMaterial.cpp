@@ -422,22 +422,50 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 
 	
-	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Material UUID");
+	//uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Material UUID");
 
 	std::string shader_name = json_object_dotget_string_with_std(object, name + "ShaderName:");
 	ShaderProgram* temp_shader = nullptr;
-	for (int i = 0; i < App->module_shaders->programs.size(); i++) {
-		if (strcmp(App->module_shaders->programs[i]->name.c_str(), shader_name.c_str() )==0) {
+	for (int i = 0; i < App->module_shaders->programs.size(); i++)
+	{
+		if (strcmp(App->module_shaders->programs[i]->name.c_str(), shader_name.c_str() )==0) 
+		{
 			temp_shader = App->module_shaders->programs[i];
 			break;
 		}
 
 	}
-	if (temp_shader != nullptr) {
+	if (temp_shader != nullptr)
+	{
 		material_shader = *temp_shader;
-	
+		uint num_textures = json_object_dotget_number_with_std(object, name + "Num Textures:");
+		for (int i = 0; i < num_textures; i++) 
+		{
+			char mat_name[128] = { 0 };
 
+			char* num = new char[4];
+			itoa(i, num, 10);
+			strcat(mat_name, "Resource Material UUID ");
+			strcat(mat_name, num);
+			RELEASE_ARRAY(num);
 
+			uint uuid = json_object_dotget_number_with_std(object, name + mat_name);
+
+			material_shader.textures[i].res_material = (ResourceMaterial*)App->resource_manager->GetResource(uuid);
+			if (material_shader.textures[i].res_material != nullptr)
+			{
+				material_shader.textures[i].res_material->num_game_objects_use_me++;
+
+				// LOAD MATERIAL -------------------------
+				if (material_shader.textures[i].res_material->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(material_shader.textures[i].res_material->GetUUID()).c_str(), material_shader.textures[i].res_material);
+				}
+			}
+			else {
+				material_shader.textures[i].res_material = App->renderer3D->default_mat;
+			}
+		}
 	}
 	else
 		material_shader = *App->renderer3D->default_shader;

@@ -40,12 +40,10 @@
 https://developercommunity.visualstudio.com/content/problem/66047/possible-compiler-bug.html
 */
 /*
-// if Crash Update to VisualStudio 2017 15.6
 #if (PX_VC == 15) && PX_WINDOWS
 #error Visual studio 2017 is not supported because of a compiler bug, support will be enabled once a fix is out.
 #endif
 */
-
 // define API function declaration (public API only needed because of extensions)
 #if defined PX_PHYSX_STATIC_LIB || defined PX_PHYSX_CORE_STATIC_LIB
 	#define PX_PHYSX_CORE_API

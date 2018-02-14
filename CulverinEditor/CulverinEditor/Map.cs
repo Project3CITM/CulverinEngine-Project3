@@ -11,5 +11,11 @@ namespace CulverinEditor.Map
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern string GetMapString();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern int GetHeightMap();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern int GetWidthMap();
     }
 }

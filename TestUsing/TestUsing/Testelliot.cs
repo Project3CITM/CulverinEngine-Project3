@@ -2,36 +2,27 @@
 using CulverinEditor.Debug;
 
 //Attach this script to the tank parent object if you want to see it rotate
-public class myTank
+public class Testelliot
 {
-    private float movSpeed = 0.0f;
-    Vector3 endPosition;
-    int distanceToMove = 10;
+    public float a = 5.0f;
+    public float b = 6.0f;
+    public Test test;
 
     void Start()
     {
-        endPosition = GameObject.gameObject.GetComponent<Transform>().Position;
+   
     }
 
     void Update()
     {
-        GameObject.gameObject.GetComponent<Transform>().Position = Vector3.MoveTowards(GameObject.gameObject.GetComponent<Transform>().Position, endPosition, movSpeed * Time.DeltaTime());
+        if (Input.KeyDown("S"))
+        {
+            test.PrintName();
+        }
+    }
 
-        if (Input.KeyDown("A")) //Left
-        {
-            endPosition = new Vector3(endPosition.x + distanceToMove, endPosition.y, endPosition.z);
-        }
-        if (Input.KeyDown("D")) //Right
-        {
-            endPosition = new Vector3(endPosition.x - distanceToMove, endPosition.y, endPosition.z);
-        }
-        if (Input.KeyDown("W")) //Up
-        {
-            endPosition = new Vector3(endPosition.x, endPosition.y, endPosition.z + distanceToMove);
-        }
-        if (Input.KeyDown("S")) //Down
-        {
-            endPosition = new Vector3(endPosition.x, endPosition.y, endPosition.z - distanceToMove);
-        }
+    public float AwesomeNumber()
+    {
+        return a + b;
     }
 }

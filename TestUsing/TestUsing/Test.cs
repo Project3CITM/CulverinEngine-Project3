@@ -2,20 +2,28 @@
 using CulverinEditor.Debug;
 
 //To check string variables and Log functionality
-public class TestLog
+public class Test
 {
-    public string name;
-    public string surname;
+    public Testelliot elliot;
+    public string name = "Jordi";
+    public string surname = "Elliot";
+    public float a = 3.0f;
 
     void Start()
     {
-        name = "Jordi";
-        surname = "Elliot";
+        //elliot = GameObject.gameObject.GetComponent<Testelliot>();
     }
 
     void Update()
     {
-        string final_name = name + surname;
-        Debug.Log(final_name);
+        if(Input.KeyDown("W"))
+        {
+            a = elliot.AwesomeNumber();
+        }
+    }
+
+    public void PrintName()
+    {
+        Debug.Log(name + surname);
     }
 }

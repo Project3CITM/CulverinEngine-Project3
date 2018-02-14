@@ -1,4 +1,4 @@
-// Prototype of standalone node graph editor for ImGui
+// Prototype of standalone node graph editor for ImGui started by @ChemiaAion: https://gist.github.com/ChemiaAion/0b93553b06beac9fd3824cfeb989d50e
 // Thread: https://github.com/ocornut/imgui/issues/306
 //
 // This is based on code by:
@@ -110,7 +110,6 @@ namespace ImGui
 
 	void Nodes::DisplayNodes(ImDrawList* drawList, ImVec2 offset)
 	{
-		ImGui::GetIO().FontAllowUserScaling = true; 
 		ImGui::SetWindowFontScale(canvas_scale_);
 
 		for (auto& node : nodes_)
@@ -129,6 +128,7 @@ namespace ImGui
 
 		node->id_ = -++id_;
 		node->name_ = type.name_ + std::to_string(id_).c_str();
+		node->script_name = type.name_ + "Script" + std::to_string(id_).c_str();
 		node->position_ = pos;
 
 		{
@@ -165,7 +165,7 @@ namespace ImGui
 
 		////////////////////////////////////////////////////////////////////////////////
 
-		ImVec2 title_size = ImGui::CalcTextSize(node->name_.c_str());
+		ImVec2 title_and_script_name_size = ImGui::CalcTextSize(node->name_.c_str()) + ImGui::CalcTextSize(node->script_name.c_str());
 
 		const float vertical_padding = 1.5f;
 
@@ -189,11 +189,11 @@ namespace ImGui
 
 		////////////////////////////////////////////////////////////////////////////////
 
-		node->size_.x = ImMax((inputs_size.x + outputs_size.x), title_size.x);
-		node->size_.x += title_size.y * 6.0f;
+		node->size_.x = ImMax((inputs_size.x + outputs_size.x), title_and_script_name_size.x);
+		node->size_.x += title_and_script_name_size.y * 6.0f;
 
-		node->collapsed_height = (title_size.y * 2.0f);
-		node->full_height = (title_size.y * 3.0f) + ImMax(inputs_size.y, outputs_size.y);
+		node->collapsed_height = (title_and_script_name_size.y * 2.0f);
+		node->full_height = (title_and_script_name_size.y * 3.0f) + ImMax(inputs_size.y, outputs_size.y);
 
 		node->size_.y = node->full_height;
 
@@ -201,7 +201,7 @@ namespace ImGui
 
 		////////////////////////////////////////////////////////////////////////////////
 
-		inputs_size = ImVec2(title_size.y * 0.75f, title_size.y * 2.5f);
+		inputs_size = ImVec2(title_and_script_name_size.y * 0.75f, title_and_script_name_size.y * 2.5f);
 		for (auto& connection : node->inputs_)
 		{
 			const float half = ((ImGui::CalcTextSize(connection->name_.c_str()).y * vertical_padding) / 2.0f);
@@ -211,7 +211,7 @@ namespace ImGui
 			inputs_size.y += half;
 		}
 
-		outputs_size = ImVec2(node->size_.x - (title_size.y * 0.75f), title_size.y * 2.5f);
+		outputs_size = ImVec2(node->size_.x - (title_and_script_name_size.y * 0.75f), title_and_script_name_size.y * 2.5f);
 		for (auto& connection : node->outputs_)
 		{
 			const float half = ((ImGui::CalcTextSize(connection->name_.c_str()).y * vertical_padding) / 2.0f);
@@ -367,6 +367,33 @@ namespace ImGui
 			{
 				element_.state_ = NodesState_SelectedConnection;
 			}
+
+			else if (ImGui::IsMouseClicked(1))
+			{
+				element_.state_ = NodesState_SelectedConnection;
+				bool consider_menu = !ImGui::IsAnyItemHovered();
+				consider_menu &= ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
+
+				if (consider_menu)
+				{
+					ImGuiContext* context = ImGui::GetCurrentContext();
+
+					if (context->IO.MouseDragMaxDistanceSqr[1] < 36.0f)
+					{
+						ImGui::OpenPopup("ConextionsContextMenu");
+					}
+				}
+
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
+				if (ImGui::BeginPopup("ConextionsContextMenu"))
+				{
+					//TODO: Create a transition condition
+
+					ImGui::EndPopup();
+				}
+				ImGui::PopStyleVar();
+			}
+
 
 		} break;
 
@@ -803,19 +830,33 @@ namespace ImGui
 			if (node.state_ > 0)
 			{
 				drawList->AddRectFilled(node_rect_min, node_rect_max, ImColor(0.25f, 0.25f, 0.25f, 0.9f), corner, ImDrawCornerFlags_All);
-				drawList->AddRectFilled(node_rect_min, title_area, ImColor(0.25f, 0.0f, 0.125f, 0.9f), corner, ImDrawCornerFlags_Top);
+				drawList->AddRectFilled(node_rect_min, title_area, ImColor(0.1f, 0.09f, 0.12f, 1.0f), corner, ImDrawCornerFlags_Top);
 
 				title_pos.y = node_rect_min.y + ((title_name_size.y * 2.0f) / 2.0f) - (title_name_size.y / 2.0f);
+
+				//Script component TODO
+				ImVec2 script_name_size = ImGui::CalcTextSize(node.script_name.c_str());
+				ImVec2 script_name_pos;
+				script_name_pos.x = node_rect_min.x + ((node_rect_max.x - node_rect_min.x) / 2.0f) - (script_name_size.x / 2.0f);
+				script_name_pos.y = node_rect_min.y + title_name_size.y * 2.0f + script_name_size.y;
+				ImGui::SetCursorScreenPos(script_name_pos);
+				ImGui::Text(node.script_name.c_str());
 			}
 			else
 			{
-				drawList->AddRectFilled(node_rect_min, node_rect_max, ImColor(0.25f, 0.0f, 0.125f, 0.9f), corner, ImDrawCornerFlags_All);
+				drawList->AddRectFilled(node_rect_min, node_rect_max, ImColor(0.1f, 0.09f, 0.12f, 1.0f), corner, ImDrawCornerFlags_All);
 
 				title_pos.y = node_rect_min.y + ((node_rect_max.y - node_rect_min.y) / 2.0f) - (title_name_size.y / 2.0f);
 			}
 
 			ImGui::SetCursorScreenPos(title_pos);
-			ImGui::Text("%s", node.name_.c_str());
+			ImGui::PushItemWidth(title_name_size.x + 2.0f);
+			char * writable_title = new char[32];
+			std::copy(node.name_.begin(), node.name_.end(), writable_title);
+			writable_title[node.name_.size()] = '\0';
+			ImGui::InputText("", writable_title, 32);
+			node.name_ = writable_title;
+			delete[] writable_title;
 		}
 
 		////////////////////////////////////////////////////////////////////////////////

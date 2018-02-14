@@ -4,7 +4,7 @@
 #include "ModuleInput.h"
 #include "ModuleImporter.h"
 #include "ImportScript.h"
-#include "ModuleGUI.h"
+#include "ModuleMap.h"
 #include "CompTransform.h"
 #include "GameObject.h"
 #include "Scene.h"
@@ -289,6 +289,7 @@ void CSharpScript::Clear()
 		if (variables[i]->game_object != nullptr)
 		{
 			variables[i]->game_object->FixedDelete(true);
+			variables[i]->select_game_object = false;
 		}
 	}
 }
@@ -401,6 +402,7 @@ void CSharpScript::RemoveReferences(GameObject* go)
 		if (variables[i]->type == VarType::Var_GAMEOBJECT && variables[i]->game_object == go)
 		{
 			variables[i]->game_object = nullptr;
+			variables[i]->select_game_object = false;
 		}
 	}
 }
@@ -846,7 +848,7 @@ void CSharpScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 // Map ------------------------------------------------
 MonoString* CSharpScript::GetMapString(MonoObject* object)
 {
-	return mono_string_new(CSdomain, App->gui->map_string.c_str());
+	return mono_string_new(CSdomain, App->map->map_string.c_str());
 }
 
 void CSharpScript::Save(JSON_Object* object, std::string name) const

@@ -1,32 +1,15 @@
 ﻿using System.Runtime.CompilerServices;
 using System;
+using System.Collections.Generic;
+using System.Security;
 
 namespace CulverinEditor
 {
-    public class GameObject
+    public sealed class GameObject : Object
     {
         public GameObject()
         {
             CreateGameObject(this);
-        }
-        //public GameObject gameObject
-        //{
-        //    get
-        //    {
-        //        return GetGameObject();
-        //    }
-        //}
-
-        public string name
-        {
-            get
-            {
-                return GetName();
-            }
-            set
-            {
-                SetName(value);
-            }
         }
 
         public static GameObject gameObject
@@ -37,8 +20,36 @@ namespace CulverinEditor
             }
         }
 
-        //[MethodImpl(MethodImplOptions.InternalCall)]
-        //private extern GameObject GetGameObject();
+        public string tag
+        {
+            get
+            {
+                return GetTag();
+            }
+
+            set
+            {
+                SetTag(value);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern string GetTag();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetTag(string tg);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern GameObject Find(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern GameObject[] FindGameObjectsWithTag(string tag);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern GameObject FindGameObjectWithTag(string tag);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool CompareTag(string tag);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private extern void CreateGameObject(GameObject go);
@@ -79,5 +90,14 @@ namespace CulverinEditor
         {
             return GetComponent(typeof(T)) as T;
         }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Component[] GetComponents(Type type);
+
+        public T GetComponents<T>() where T : Component
+        {
+            return GetComponents(typeof(T)) as T;
+        }
+
     }
 }

@@ -23,6 +23,7 @@ namespace ImGui
 	enum ConnectionType : uint32_t
 	{
 		ConnectionType_None = 0,
+		CONNECTION_TYPE_FSM,
 		ConnectionType_Vec3,
 		ConnectionType_Float,
 		ConnectionType_Int,
@@ -66,6 +67,25 @@ namespace ImGui
 
 	static const std::vector<ImGui::NodeType> nodes_types_ =
 	{
+		////////////////////////////////////////////////////////////////////////////////
+		{
+			{ std::string("Node") },
+
+			{
+				{ std::string(" "), ImGui::CONNECTION_TYPE_FSM },
+				{ std::string(" "), ImGui::CONNECTION_TYPE_FSM },
+				{ std::string(" "), ImGui::CONNECTION_TYPE_FSM },
+				{ std::string(" "), ImGui::CONNECTION_TYPE_FSM },
+				{ std::string(" "), ImGui::CONNECTION_TYPE_FSM }
+			},				    
+							    
+			{				    
+				{ std::string(" "), ImGui::CONNECTION_TYPE_FSM },
+				{ std::string(" "), ImGui::CONNECTION_TYPE_FSM },
+				{ std::string(" "), ImGui::CONNECTION_TYPE_FSM },
+				{ std::string(" "), ImGui::CONNECTION_TYPE_FSM },
+				{ std::string(" "), ImGui::CONNECTION_TYPE_FSM } }
+		},
 		////////////////////////////////////////////////////////////////////////////////
 		{
 			{ std::string("Test") },
@@ -167,6 +187,8 @@ namespace ImGui
 		enum NodeStateFlag : int32_t
 		{
 			NodeStateFlag_Default = 1,
+			NodeStateFlag_Active,
+			NodeStateFlag_UnActive
 		};
 
 		struct Node
@@ -183,6 +205,9 @@ namespace ImGui
 			std::string name_;
 			std::vector<std::unique_ptr<Connection>> inputs_;
 			std::vector<std::unique_ptr<Connection>> outputs_;
+
+			//Component Script
+			std::string script_name;
 
 			Node()
 			{

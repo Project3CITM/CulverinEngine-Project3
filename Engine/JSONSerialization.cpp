@@ -443,7 +443,7 @@ void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const
 	JSON_Value* config_file;
 	JSON_Object* config;
 
-	std::string nameJson = fileName;
+	std::string nameJson = directory;
 	nameJson += ".meta.json";
 	config_file = json_value_init_object();
 

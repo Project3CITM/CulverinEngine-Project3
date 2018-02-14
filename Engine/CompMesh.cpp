@@ -237,19 +237,15 @@ void CompMesh::ShowInspectorInfo()
 
 void CompMesh::Draw()
 {
-
-	
 	if (render && resource_mesh != nullptr)
 	{
 		ShaderProgram* shader = App->renderer3D->default_shader;
 		//if (material->material_shader != nullptr)
-			shader = (ShaderProgram*)&material->material_shader;
-
+		if (material != nullptr) shader = (ShaderProgram*)&material->material_shader;
 		shader->Bind();
 
 		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
 	
-
 		if (resource_mesh->vertices.size() > 0 && resource_mesh->indices.size() > 0)
 		{
 			glEnableClientState(GL_VERTEX_ARRAY);

@@ -118,42 +118,7 @@ void Script_editor::Show(bool& active)
 		}
 		ImGui::EndMenuBar();
 	}
-
-	if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_STATE::KEY_DOWN ||
-		App->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_STATE::KEY_DOWN)
-	{
-		SetAction(ActionEditor::RETURN);
-	}
-
-	// Copy ----------------------------------------------------------
-	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_STATE::KEY_REPEAT &&
-		App->input->GetKey(SDL_SCANCODE_C) == KEY_STATE::KEY_DOWN)
-	{
-		SetAction(ActionEditor::COPY);
-	}
-
-
-	// Paste ----------------------------------------------------------
-	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_STATE::KEY_REPEAT &&
-		App->input->GetKey(SDL_SCANCODE_V) == KEY_STATE::KEY_DOWN)
-	{
-		SetAction(ActionEditor::PASTE);
-	}
-
-	// Undo ----------------------------------------------------------
-	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_STATE::KEY_REPEAT &&
-		App->input->GetKey(SDL_SCANCODE_Z) == KEY_STATE::KEY_DOWN)
-	{
-		SetAction(ActionEditor::UNDO);
-	}
-
-	// ReUndo ----------------------------------------------------------
-	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_STATE::KEY_REPEAT &&
-		App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_STATE::KEY_REPEAT &&
-		App->input->GetKey(SDL_SCANCODE_Z) == KEY_STATE::KEY_DOWN)
-	{
-		SetAction(ActionEditor::REUNDO);
-	}
+	
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::PushFont(io.Fonts->Fonts[1]);
 	editor.Render("Render...");

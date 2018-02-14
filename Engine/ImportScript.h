@@ -52,9 +52,9 @@ private:
 	static void ConsoleLog(MonoString* string);
 
 	/* Input */
-	static mono_bool KeyDown(MonoString* string);
-	static mono_bool KeyUp(MonoString* string);
-	static mono_bool KeyRepeat(MonoString* string);
+	static mono_bool KeyDown(MonoObject* obj, MonoObject* key);
+	static mono_bool KeyUp(MonoObject* obj, MonoObject* key);
+	static mono_bool KeyRepeat(MonoObject* obj, MonoObject* key);
 	static mono_bool MouseButtonDown(int buttonmouse);
 	static mono_bool MouseButtonUp(int buttonmouse);
 	static mono_bool MouseButtonRepeat(int buttonmouse);
@@ -79,7 +79,12 @@ private:
 	static MonoObject* GetRotation(MonoObject* object);
 	static void SetRotation(MonoObject* object, MonoObject* vector3);
 	static void IncrementRotation(MonoObject* object, MonoObject* vector3);
+
+	/* Map */
 	static MonoString* GetMapString(MonoObject* object);
+	static int GetHeightMap();
+	static int GetWidthMap();
+
 private:
 	std::string nameNewScript;
 	std::string mono_path;

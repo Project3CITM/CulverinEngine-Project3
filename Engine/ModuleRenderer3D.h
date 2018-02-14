@@ -66,6 +66,7 @@ public:
 
 	// Shaders
 	ShaderProgram* default_shader = nullptr;
+	ResourceMaterial* default_mat = nullptr;
 
 };
 

@@ -35,6 +35,7 @@ class ModuleShaders;
 class JSONSerialization;
 class ModuleRenderGui;
 class ModulePhysics;
+class ModuleMap;
 
 enum EngineState
 {
@@ -127,6 +128,7 @@ public:
 	ModuleShaders* module_shaders = nullptr;
 	ModuleRenderGui* render_gui = nullptr;
 	ModulePhysics* physics = nullptr;
+	ModuleMap* map = nullptr;
 
 private:
 	std::vector<Module*> list_modules;

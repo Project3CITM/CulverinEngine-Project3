@@ -10,13 +10,13 @@ namespace CulverinEditor
     public class Input
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool KeyDown(string message);
+        public static extern bool KeyDown(KeyCode key);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool KeyUp(string message);
+        public static extern bool KeyUp(KeyCode key);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool KeyRepeat(string message);
+        public static extern bool KeyRepeat(KeyCode key);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool MouseButtonDown(int button);
