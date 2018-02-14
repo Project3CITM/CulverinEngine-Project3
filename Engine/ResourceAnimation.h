@@ -37,7 +37,7 @@ public:
 	bool LoadToMemory();
 	bool UnloadFromMemory();
 
-private:
+public:
 
 	std::vector<AnimBone*> bones;
 	float duration;

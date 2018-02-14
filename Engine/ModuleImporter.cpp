@@ -3,6 +3,7 @@
 #include "ImportMesh.h"
 #include "ImportMaterial.h"
 #include "ImportScript.h"
+#include "ImportAnimation.h"
 #include "CompMaterial.h"
 #include "CompTransform.h"
 #include "ModuleFS.h"
@@ -48,7 +49,7 @@ bool ModuleImporter::Init(JSON_Object* node)
 	iMesh = new ImportMesh();
 	iMaterial = new ImportMaterial();
 	iScript = new ImportScript();
-
+	iAnimation = new ImportAnimation();
 	Awake_t = perf_timer.ReadMs();
 	return true;
 }
@@ -229,16 +230,18 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 		const aiScene* scene = aiImportFile(file, aiProcessPreset_TargetRealtime_MaxQuality);
 		if (scene != nullptr)
 		{
-			/*if (scene->HasAnimations())
+			if (scene->HasAnimations())
 			{
+				std::string fbx_name = App->fs->GetOnlyName(file);
 				for (int i = 0; i < scene->mNumAnimations; i++)
 				{
-					scene->mAnimations[i]->mName = file;
+					scene->mAnimations[i]->mName = fbx_name;
 					scene->mAnimations[i]->mName.Append("Animation");
 					scene->mAnimations[i]->mName.Append(std::to_string(i).c_str());
-					LOG("IMPORTING ANIMATION, File Path: %s", file);
+					LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[i]->mName.C_Str());
+					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str(), 0, isAutoImport);
 				}
-			}*/
+			}
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, file);
 			obj->SetName(App->GetCharfromConstChar(App->fs->FixName_directory(file).c_str()));
 
