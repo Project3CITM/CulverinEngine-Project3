@@ -1131,6 +1131,9 @@
     <ClInclude Include="ResourceSkeleton.h">
       <Filter>Engine\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="ImportAnimation.h">
+      <Filter>Engine\Importer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1477,6 +1480,9 @@
     </ClCompile>
     <ClCompile Include="ResourceSkeleton.cpp">
       <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportAnimation.cpp">
+      <Filter>Engine\Importer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
