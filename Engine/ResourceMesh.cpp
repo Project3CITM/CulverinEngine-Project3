@@ -52,8 +52,6 @@ void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_
 		vertices_normals.push_back(float3(vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z));
 		vertices_normals.push_back(float3(vertices[i].pos.x + vertices[i].norm.x, vertices[i].pos.y + vertices[i].norm.y, vertices[i].pos.z + vertices[i].norm.z));
 	}
-
-
 }
 
 void ResourceMesh::InitRanges(uint num_vert, uint num_ind, uint num_normals)

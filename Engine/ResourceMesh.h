@@ -5,6 +5,8 @@
 #include "Math/float3.h"
 #include "Math/float2.h"
 
+class Skeleton;
+
 struct Vertex
 {
 	float3 pos;
@@ -44,6 +46,7 @@ public:
 	uint id_total_buffer;		/* MESH INFO BUFFER ID */
 
 private:
+	Skeleton * skeleton = nullptr;
 
 };
 

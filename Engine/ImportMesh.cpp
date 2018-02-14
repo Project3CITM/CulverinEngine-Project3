@@ -37,19 +37,21 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	uint num_indices = 0;
 	uint num_normals = 0;
 	uint num_textures = 0;
-	uint num_bones = 0;
-
-	//Skeleton
-	ImportBone* bones = nullptr;
-	char* bone_hirarchy_names = nullptr;
-	uint* bone_hirarchy_name_sizes = nullptr;
-	uint* bone_hirarchy_num_childs = nullptr;
-	//--
 
 	float3* vertices = nullptr;
 	uint* indices = nullptr;
 	float3* vert_normals = nullptr;
 	float2* tex_coords = nullptr;
+
+	//Skeleton
+	uint num_bones = 0;
+	uint bone_names_size = 0;
+
+	ImportBone* bones = nullptr;
+	char* bone_hirarchy_names = nullptr;
+	uint* bone_hirarchy_name_sizes = nullptr;
+	uint* bone_hirarchy_num_childs = nullptr;
+	//--
 
 	for (uint i = 0; i < mesh->mNumFaces; i++)
 	{
@@ -139,7 +141,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			//must change into list and hirarchy separately
 			num_bones = mesh->mNumBones;
 			bones = new ImportBone[num_bones];
-			uint bone_names_size = 0;
 
 			for(int i = 0; i < num_bones; i++)
 			{
@@ -266,9 +267,13 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	meshComp->SetResource(res_mesh, true);
 
 	// ALLOCATING DATA INTO BUFFER ------------------------
-	uint ranges[3] = { num_vertices, num_indices, num_normals}; //,num_tex_coords };
+	uint ranges[4] = { num_vertices, num_indices, num_normals, num_bones}; //,num_tex_coords };
 
 	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices;
+	
+	//Skeleton
+	size += sizeof(ImportBone) * num_bones + bone_names_size + sizeof(uint) + sizeof(uint) * num_bones + sizeof(uint) * num_bones; // bones & hirarchy (bone names, bone name sizes and bone num childs)
+	//--
 
 	// Allocating all data 
 	char* data = new char[size];
@@ -298,8 +303,35 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	bytes = sizeof(float2) * num_vertices; //num_tex_coords;
 	memcpy(cursor, tex_coords, bytes);
 
-	//SKELETON
-	//bone
+	//Skeleton
+	if (mesh->HasBones())
+	{
+		//Bones
+		cursor += bytes;
+		bytes = sizeof(ImportBone) * num_bones;
+		memcpy(cursor, &bones[0], bytes);
+
+		//Bone name sizes
+		cursor += bytes;
+		bytes = sizeof(uint) * num_bones;
+		memcpy(cursor, bone_hirarchy_name_sizes, bytes);
+
+		//Bone num childs
+		cursor += bytes;
+		bytes = sizeof(uint) * num_bones;
+		memcpy(cursor, bone_hirarchy_num_childs, bytes);
+
+		//Bone hirarchy names
+		cursor += bytes;
+		bytes = bone_names_size;
+		memcpy(cursor, bone_hirarchy_names, bytes);
+
+		RELEASE_ARRAY(bones);
+		RELEASE_ARRAY(bone_hirarchy_names);
+		RELEASE_ARRAY(bone_hirarchy_name_sizes);
+		RELEASE_ARRAY(bone_hirarchy_num_childs);
+	}
+	//--
 
 	// Release all pointers
 	RELEASE_ARRAY(vertices);
@@ -329,7 +361,6 @@ void ImportMesh::Import(uint num_vertices, uint num_indices, uint num_normals, s
 	uint ranges[3] = { num_vertices, num_indices, num_normals }; //,num_tex_coords };
 
 	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices;
-
 
 	float3* vert_normals = nullptr;
 	// Allocating all data 
@@ -386,6 +417,17 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 	float3* vert_normals = nullptr;
 	float2* tex_coords = nullptr;
 	//Texture* texture = nullptr;
+
+	//Skeleton
+	uint num_bones = 0;
+	uint bone_names_size = 0;
+
+	ImportBone* bones = nullptr;
+	char* bone_hirarchy_names = nullptr;
+	uint* bone_hirarchy_name_sizes = nullptr;
+	uint* bone_hirarchy_num_childs = nullptr;
+	//--
+
 	// Loading File
 	uint size = App->fs->LoadFile(file, &buffer, IMPORT_DIRECTORY_LIBRARY_MESHES);
 
@@ -394,7 +436,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 		char* cursor = buffer;
 
 		// Amount vertices, amount indices, amount normals
-		uint ranges[3];
+		uint ranges[4];
 		uint bytes = sizeof(ranges);
 		memcpy(ranges, cursor, bytes);
 
@@ -403,6 +445,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 		num_indices = ranges[1];
 		num_normals = ranges[2];
 		//num_tex_coords = ranges[3];
+		num_bones = ranges[3];
 
 		//Load Vertices
 		cursor += bytes;
@@ -430,6 +473,40 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 		bytes = sizeof(float2) * num_vertices; //num_tex_coords;
 		tex_coords = new float2[num_vertices];
 		memcpy(tex_coords, cursor, bytes);
+
+		//Skeleton
+		if (num_bones > 0)
+		{
+			//Bones
+			cursor += bytes;
+			bytes = sizeof(ImportBone) * num_bones;
+			ImportBone* bones = new ImportBone[num_bones];
+			memcpy(bones, cursor, bytes);
+
+			//Bone name sizes
+			cursor += bytes;
+			bytes = sizeof(uint) * num_bones;
+			uint* bone_hirarchy_name_sizes = new uint[num_bones];
+			memcpy(bone_hirarchy_name_sizes, cursor, bytes);
+
+			//Bone num childs
+			cursor += bytes;
+			bytes = sizeof(uint) * num_bones;
+			uint* bone_hirarchy_num_childs = new uint[num_bones];
+			memcpy(bone_hirarchy_num_childs, cursor, bytes);
+
+			//Bone hirarchy names
+			cursor += bytes;
+			bytes = sizeof(uint);
+			uint bone_hirarchy_names_size = *cursor;
+
+			//Bone hirarchy names
+			cursor += bytes;
+			bytes = bone_names_size;
+			char* bone_hirarchy_num_childs = new char[bone_hirarchy_names_size];
+			memcpy(bone_hirarchy_names, cursor, bytes);
+		}
+		//--
 
 		resourceMesh->InitRanges(num_vertices, num_indices, num_normals);
 		resourceMesh->Init(vertices, indices, vert_normals, tex_coords);
