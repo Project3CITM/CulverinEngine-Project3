@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CulverinEditor">
-      <HintPath>..\..\Engine\Game\ScriptManager\AssemblyReference\CulverinEditor.dll</HintPath>
+      <HintPath>..\..\..\3D-Engine\Engine\Game\ScriptManager\AssemblyReference\CulverinEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

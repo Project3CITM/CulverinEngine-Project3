@@ -1,4 +1,4 @@
-﻿using CulverinEditor;
+using CulverinEditor;
 using CulverinEditor.Debug;
 
 //To check string variables and Log functionality
@@ -16,7 +16,7 @@ public class Test
 
     void Update()
     {
-        if(Input.KeyDown("W"))
+        if (Input.KeyDown("W"))
         {
             a = elliot.AwesomeNumber();
         }
