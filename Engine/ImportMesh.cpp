@@ -37,14 +37,13 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	uint num_indices = 0;
 	uint num_normals = 0;
 	uint num_textures = 0;
-	uint num_joints = 0;
+	uint num_bones = 0;
 
 	//Skeleton
-	char** joint_names = nullptr;
-	uint joint_names_size = 0;
-	aiMatrix4x4* bone_offsets = nullptr;
-	uint* num_weights = nullptr;
-	Weight** weights = nullptr;
+	ImportBone* bones = nullptr;
+	char* bone_hirarchy_names = nullptr;
+	uint* bone_hirarchy_name_sizes = nullptr;
+	uint* bone_hirarchy_num_childs = nullptr;
 	//--
 
 	float3* vertices = nullptr;
@@ -138,14 +137,68 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		if (mesh->HasBones())
 		{
 			//must change into list and hirarchy separately
-			joint_names = new char*[mesh->mNumBones];
-			bone_offsets = new aiMatrix4x4[mesh->mNumBones];
-			num_weights = new uint[mesh->mNumBones];
-			weights = new Weight*[mesh->mNumBones];
-			uint num_joints_imported = 0;
-			ImportBone(scene->mRootNode, mesh, joint_names, joint_names_size, bone_offsets, num_weights, weights, num_joints_imported);
+			num_bones = mesh->mNumBones;
+			bones = new ImportBone[num_bones];
+			uint bone_names_size = 0;
 
-			if (num_joints_imported == mesh->mNumBones)
+			for(int i = 0; i < num_bones; i++)
+			{
+				bones[i].name_length = mesh->mBones[i]->mName.length + 1;
+				bone_names_size += bones[i].name_length;
+				bones[i].name = new char[bones[i].name_length];
+				memcpy(bones[i].name, mesh->mBones[i]->mName.C_Str(), bones[i].name_length);
+
+				bones[i].offset = mesh->mBones[i]->mOffsetMatrix;
+
+				bones[i].num_weights = mesh->mBones[i]->mNumWeights;
+
+				bones[i].weights.reserve(bones[i].num_weights);
+
+				for (int r = 0; r < mesh->mBones[i]->mNumWeights; ++r)
+				{
+					bones[i].weights[r].vertex_id = mesh->mBones[i]->mWeights[r].mVertexId;
+					bones[i].weights[r].weight = mesh->mBones[i]->mWeights[r].mWeight;
+				}
+			}
+
+			std::queue<aiNode*> nodes;
+			bone_hirarchy_name_sizes = new uint[num_bones];
+			bone_hirarchy_names = new char[bone_names_size];
+			bone_hirarchy_num_childs = new uint[num_bones];
+
+			uint joints_saved = 0;
+			uint name_iterator = 0;
+
+			nodes.push(scene->mRootNode);
+
+			while (nodes.size > 0)
+			{
+				aiNode* current_node = nodes.front();
+
+				bool is_joint = false;
+
+				for (int i = 0; i < mesh->mNumBones; i++)
+					if (current_node->mName == mesh->mBones[i]->mName)
+					{
+						is_joint = true;
+						break;
+					}
+
+				if (is_joint == true)
+				{
+					for (int i = 0; i < current_node->mNumChildren; i++)
+						nodes.push(current_node->mChildren[i]);
+
+					bone_hirarchy_name_sizes[joints_saved] = current_node->mName.length + 1;
+					name_iterator += bone_hirarchy_name_sizes[joints_saved];
+					memcpy(&bone_hirarchy_names[name_iterator], current_node->mName.C_Str(), bone_hirarchy_name_sizes[joints_saved]);
+					bone_hirarchy_num_childs[joints_saved] = current_node->mNumChildren;
+
+					joints_saved++;
+				}
+			}
+
+			if (joints_saved == mesh->mNumBones)
 			{
 				LOG("- Imported all Bones from data");
 			}
@@ -155,7 +208,9 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			}
 		}
 		else
+		{
 			LOG("- Mesh %s does not have Bones", mesh->mName.C_Str());
+		}
 
 		LOG("Imported all data");
 	}
@@ -388,33 +443,4 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 	}
 	RELEASE_ARRAY(buffer);
 	return true;
-}
-
-void ImportMesh::ImportBone(const aiNode * node, const aiMesh * mesh, char** joint_names, uint& joint_names_size, aiMatrix4x4* bone_offsets, uint* num_weights, Weight** weights, uint& num_joints) const
-{
-	uint byte_size = 0;
-
-	for (int i = 0; i < mesh->mNumBones; ++i)
-	{
-		if (node->mName == mesh->mBones[i]->mName)
-		{
-			memcpy(joint_names[num_joints], mesh->mBones[i]->mName.C_Str(), mesh->mBones[i]->mName.length + 1);
-			joint_names_size += mesh->mBones[i]->mName.length + 1;
-
-			bone_offsets[num_joints] = mesh->mBones[i]->mOffsetMatrix;
-
-			num_weights [num_joints] = mesh->mBones[i]->mNumWeights;
-
-			for (int r = 0; r < mesh->mBones[i]->mNumWeights; ++r)
-			{
-				weights[num_joints]->vertex_id = mesh->mBones[i]->mWeights->mVertexId;
-				weights[num_joints]->weight = mesh->mBones[i]->mWeights->mWeight;
-			}
-
-			break;
-		}
-	}
-
-	for (int i = 0; i < node->mNumChildren; i++)
-		ImportBone(node, mesh, joint_names, joint_names_size, bone_offsets, num_weights, weights, ++num_joints);
 }
