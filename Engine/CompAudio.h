@@ -47,18 +47,20 @@ public:
 
 	uint GetEmitterID() const;
 	void ResetAudio();
+	//void CreateAudioEvent(std::string audio_event, int gameplay_event);
+	void PlayAudioEvent(const char* event_name);
+	void StopAudioEvent(const char* event_name);
+
 
 private:
-
-	void ShowEventsInfo();
+	//void ShowEventsInfo();
 	void CreateEmitter();
-	void CreateAudioEvent(std::string audio_event, int gameplay_event);
-	
+		
 private:
 	CompTransform * transf = nullptr;
 	Wwished::SoundEmitter* emitter = nullptr;
 	AUDIO_TYPE audio_type = FX;
 
-	std::vector<std::pair<int, AudioEvent>> audio_events;
+	//std::vector<std::pair<int, AudioEvent>> audio_events;
 };
 #endif

@@ -296,6 +296,16 @@ void ModuleAudio::SetListener(CompAudio * c)
 	else 	Wwished::SetDefaultListener(0);
 }
 
+void ModuleAudio::SetAudioVariableValue(const char * variable_name, float value)
+{
+	Wwished::Utility::SetRTPCValue(variable_name, value);
+}
+
+void ModuleAudio::ChangeState(const char * group, const char * new_state)
+{
+	Wwished::Utility::ChangeState(group, new_state);
+}
+
 
 
 void ModuleAudio::ChangeVolume(float new_volume)

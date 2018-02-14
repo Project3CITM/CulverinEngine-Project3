@@ -127,13 +127,13 @@ void CompAudio::ShowInspectorInfo()
 		}		
 	}
 
-	if (audio_type == FX)
-		ShowEventsInfo();
+	//if (audio_type == FX)
+	//	ShowEventsInfo();
 
 	ImGui::TreePop();
 }
 
-void CompAudio::ShowEventsInfo()
+/*void CompAudio::ShowEventsInfo()
 {
 
 	if (ImGui::Button("Add Event"))
@@ -187,7 +187,7 @@ void CompAudio::ShowEventsInfo()
 
 	ImGui::EndChild();
 	
-}
+}*/
 
 void CompAudio::CopyValues(const CompAudio * component)
 {
@@ -200,7 +200,7 @@ void CompAudio::Save(JSON_Object * object, std::string name, bool saveScene, uin
 
 	json_object_dotset_number_with_std(object, name + "Audio Type", (int)audio_type);
 
-	json_object_dotset_number_with_std(object, name + "Number of Syncs", audio_events.size());
+	/*json_object_dotset_number_with_std(object, name + "Number of Syncs", audio_events.size());
 
 	int i = 0;
 	for (std::vector<std::pair<int, AudioEvent>>::const_iterator it = audio_events.begin(); it != audio_events.end(); it++, i++)
@@ -209,7 +209,7 @@ void CompAudio::Save(JSON_Object * object, std::string name, bool saveScene, uin
 		num_event += std::to_string(i);
 		json_object_dotset_string_with_std(object, name + "GameSyncs." + num_event.c_str() + ".AudioEv",  (*it).second.name.c_str());
 		json_object_dotset_number_with_std(object, name + "GameSyncs." + num_event.c_str() + ".GameEv", (*it).first);
-	}
+	}*/
 
 	//json_object_dotset_number_with_std(object, name + "Events:", (int)audio_type);
 }
@@ -221,7 +221,7 @@ void CompAudio::Load(const JSON_Object * object, std::string name)
 	if (audio_type == LISTENER)
 		App->audio->SetListener(this);
 
-	int number_of_syncs = json_object_dotget_number_with_std(object, name + "Number of Syncs");
+	/*int number_of_syncs = json_object_dotget_number_with_std(object, name + "Number of Syncs");
 
 	for (int i = 0; i < number_of_syncs; i++)
 	{
@@ -234,7 +234,7 @@ void CompAudio::Load(const JSON_Object * object, std::string name)
 		game_ev = json_object_dotget_number_with_std(object, name + "GameSyncs." + num_event.c_str() + ".GameEv");
 
 		CreateAudioEvent(audio_ev, game_ev);
-	}
+	}*/
 
 
 	//...
@@ -259,11 +259,21 @@ void CompAudio::CreateEmitter()
 	emitter = Wwished::Utility::CreateEmitter(emitter_id, parent->GetName(), pos.x, pos.y, pos.z);
 }
 
-void CompAudio::CreateAudioEvent(std::string audio_event, int gameplay_event)
+/*void CompAudio::CreateAudioEvent(std::string audio_event, int gameplay_event)
 {
 	AudioEvent new_ev;
 	new_ev.name = audio_event;
 	audio_events.push_back(std::pair<int, AudioEvent> (gameplay_event, new_ev));
+}*/
+
+void CompAudio::PlayAudioEvent(const char * event_name)
+{
+	emitter->PlayEvent(event_name);
+}
+
+void CompAudio::StopAudioEvent(const char * event_name)
+{
+	emitter->StopEvent(event_name);
 }
 
 
