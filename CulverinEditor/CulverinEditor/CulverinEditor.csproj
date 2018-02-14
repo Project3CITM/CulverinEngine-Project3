@@ -38,7 +38,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CulverinBehaviour.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="Object.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Transform.cs" />
@@ -49,6 +51,9 @@
     <Compile Include="KeyCode.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Vector3.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
