@@ -16,6 +16,7 @@
 #include "ImportScript.h"
 #include "GameObject.h"
 #include "ModuleAudio.h"
+#include "ModuleMap.h"
 
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
@@ -50,8 +51,6 @@ bool ModuleGUI::Start()
 	LOG("Using Glew %s", glewGetString(GLEW_VERSION));
 	ImGui_ImplSdlGL3_Init(App->window->window);
 	ImGuiIO& io{ ImGui::GetIO() };
-
-	map_string = "Hola Joan";
 
 	io.Fonts->AddFontFromFileTTF("Fonts\\Ruda-Bold.ttf", 15);
 	io.Fonts->AddFontDefault();
@@ -288,6 +287,10 @@ update_status ModuleGUI::Update(float dt)
 				window_random_generator = !window_random_generator;
 				//LogOpenCloseWindow(window_Random_generator, std::string("Random Generator"));
 			}
+			if (ImGui::MenuItem("Edit Map Tiles"))
+			{
+				window_create_map = !window_create_map;
+			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Resources"))
 			{
@@ -430,6 +433,13 @@ update_status ModuleGUI::Update(float dt)
 		App->importer->iScript->CreateNewScript(window_create_new_script);
 	}
 	//----------------------------------------------
+	//MAP ----------------------
+	if (window_create_map)
+	{
+		App->map->ShowEditorMap(window_create_map);
+	}
+	//----------------------------------------------
+
 	// Window About Us... ---------------------------------
 	if (window_about_us)
 	{

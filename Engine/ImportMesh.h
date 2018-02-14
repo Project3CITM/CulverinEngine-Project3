@@ -8,6 +8,12 @@
 struct Texture;
 class ResourceMesh;
 
+struct Weight
+{
+	float weight;
+	uint vertex_id;
+};
+
 class ImportMesh
 {
 public:
@@ -22,6 +28,7 @@ public:
 	bool LoadResource(const char * file, ResourceMesh* resourceMesh);
 
 private:
+	void ImportBone(const aiNode* node, const aiMesh* mesh, char** joint_names, uint& joint_names_size, aiMatrix4x4* bone_offsets, uint* num_weights, Weight** weights, uint& num_joints) const;
 
 };
 

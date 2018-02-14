@@ -195,12 +195,12 @@ void Wwished::Utility::StopAllSounds()
 
 void Wwished::Utility::PauseAllSounds()
 {
-	AK::SoundEngine::PostEvent("Pause_All", AK_INVALID_GAME_OBJECT);
+	AK::SoundEngine::PostEvent("PauseAll", AK_INVALID_GAME_OBJECT);
 }
 
 void Wwished::Utility::RestartAllSounds()
 {
-	AK::SoundEngine::PostEvent("Resume_All", AK_INVALID_GAME_OBJECT);
+	AK::SoundEngine::PostEvent("ResumeAll", AK_INVALID_GAME_OBJECT);
 }
 
 void Wwished::Utility::SetRTPCValue(const char * name, float value, AkGameObjectID id)

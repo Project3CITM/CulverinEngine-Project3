@@ -130,6 +130,7 @@
     <ClInclude Include="ImGui\ImGuizmo.h" />
     <ClInclude Include="ImGui\imgui_dock_v2.h" />
     <ClInclude Include="ImGui\imgui_graph_nodes.h" />
+    <ClInclude Include="ImportAnimation.h" />
     <ClInclude Include="ImportMesh.h" />
     <ClInclude Include="ImportMaterial.h" />
     <ClInclude Include="CompMesh.h" />
@@ -140,6 +141,7 @@
     <ClInclude Include="ModuleEventSystem.h" />
     <ClInclude Include="ModuleFS.h" />
     <ClInclude Include="ModuleFramebuffers.h" />
+    <ClInclude Include="ModuleMap.h" />
     <ClInclude Include="ModulePhysics.h" />
     <ClInclude Include="ModuleRenderGui.h" />
     <ClInclude Include="ModuleResourceManager.h" />
@@ -334,6 +336,7 @@
     <ClInclude Include="ResourceMaterial.h" />
     <ClInclude Include="ResourceMesh.h" />
     <ClInclude Include="ResourceScript.h" />
+    <ClInclude Include="ResourceSkeleton.h" />
     <ClInclude Include="Resource_.h" />
     <ClInclude Include="Script_editor.h" />
     <ClInclude Include="ShadersLib.h" />
@@ -459,6 +462,7 @@
     <ClCompile Include="ImGui\ImGuizmo.cpp" />
     <ClCompile Include="ImGui\imgui_dock_v2.cpp" />
     <ClCompile Include="ImGui\imgui_graph_nodes.cpp" />
+    <ClCompile Include="ImportAnimation.cpp" />
     <ClCompile Include="ImportMesh.cpp" />
     <ClCompile Include="ImportMaterial.cpp" />
     <ClCompile Include="CompMesh.cpp" />
@@ -468,6 +472,7 @@
     <ClCompile Include="ModuleEventSystem.cpp" />
     <ClCompile Include="ModuleFS.cpp" />
     <ClCompile Include="ModuleFramebuffers.cpp" />
+    <ClCompile Include="ModuleMap.cpp" />
     <ClCompile Include="ModulePhysics.cpp" />
     <ClCompile Include="ModuleRenderGui.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
@@ -481,6 +486,7 @@
     <ClCompile Include="ResourceMaterial.cpp" />
     <ClCompile Include="ResourceMesh.cpp" />
     <ClCompile Include="ResourceScript.cpp" />
+    <ClCompile Include="ResourceSkeleton.cpp" />
     <ClCompile Include="Resource_.cpp" />
     <ClCompile Include="Script_editor.cpp" />
     <ClCompile Include="ShadersLib.cpp" />

@@ -22,6 +22,7 @@
 			<Path>Main.bnk</Path>
 			<IncludedEvents>
 				<Event Id="4091047182" Name="PauseAll" ObjectPath="\Events\Default Work Unit\PauseAll"/>
+				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Default Work Unit\PlayMusic"/>
 				<Event Id="3240900869" Name="ResumeAll" ObjectPath="\Events\Default Work Unit\ResumeAll"/>
 				<Event Id="251412229" Name="Shot" ObjectPath="\Events\Default Work Unit\Shot"/>
 			</IncludedEvents>
@@ -29,6 +30,10 @@
 				<File Id="351584646" Language="SFX">
 					<ShortName>Shot.wav</ShortName>
 					<Path>SFX\Shot_1C9C67B2.wem</Path>
+				</File>
+				<File Id="990784722" Language="SFX">
+					<ShortName>14783144220180213163025.wav</ShortName>
+					<Path>SFX\14783144220180213163025_F17FB28C.wem</Path>
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>

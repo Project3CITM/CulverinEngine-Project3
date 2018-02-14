@@ -41,6 +41,14 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 	}
 }
 
+GameObject::GameObject(char* nameGameObject)
+{
+	Enable();
+	SetVisible(true);
+	uid = App->random->Int();
+	name = nameGameObject;
+}
+
 GameObject::GameObject(char* nameGameObject, uint uuid)
 {
 	Enable();
@@ -369,6 +377,11 @@ void GameObject::Draw()
 				draw_event.draw.ToDraw = components[i];
 				PushEvent(draw_event);
 				/**/
+			}
+
+			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_CAMERA)
+			{
+				components[i]->Draw();
 			}
 		}
 

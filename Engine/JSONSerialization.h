@@ -9,6 +9,7 @@
 class GameObject;
 class ResourceMaterial;
 class ResourceScript;
+class ResourceAnimation;
 struct ReImport;
 
 struct LoadSceneSt
@@ -41,8 +42,12 @@ public:
 	//void LoadMaterial(const char* Material); At the moment no need this
 	// --------------------------------------
 
-	// SAVE & LOAD MATERIAL --------------------------
+	// SAVE & LOAD SCRIPT --------------------------
 	void SaveScript(const ResourceScript* script, const char* directory, const char* fileName);
+	// --------------------------------------
+
+	// SAVE & LOAD ANIMATION --------------------------
+	void SaveAnimation(const ResourceAnimation* script, const char* directory, const char* fileName);
 	// --------------------------------------
 
 	// Get UUIDs -------------------------------

@@ -13,12 +13,40 @@ public class TestMovement
     void Start()
     {
         int[,] array2Da;//
-        array2Da = new int[3, 2];
+        array2Da = new int[5, 5];
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                array2Da[i, j] = 0;
+            }
+        }
         array2Da[0,0] = 1;
         Debug.Log(array2Da[0,0].ToString());
         endPosition = GameObject.gameObject.GetComponent<Transform>().Position;
         string map = Map.GetMapString();
         Debug.Log(map);
+        int t = 0;
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                array2Da[i, j] = int.Parse(map[t].ToString());
+                t += 1;
+            }
+        }
+        Debug.Log(array2Da[0, 0].ToString());
+        Debug.Log(array2Da[1, 1].ToString());
+        Debug.Log(array2Da[1, 0].ToString());
+        Debug.Log(array2Da[0, 1].ToString());
+        Debug.Log("Map?");
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                Debug.Log(array2Da[i, j].ToString());
+            }
+        }
     }
 
     void Update()

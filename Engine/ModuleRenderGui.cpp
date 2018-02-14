@@ -9,6 +9,8 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include"ModuleShaders.h"
+#include "Scene.h"
+#include "ModuleFramebuffers.h"
 #include"ShadersLib.h"
 
 
@@ -53,6 +55,7 @@ bool ModuleRenderGui::Start()
 	{
 		"#version 330\n"
 		"uniform mat4 ProjMtx;\n"
+		"uniform mat4 model;\n"
 		"layout(location = 0) in vec3 position;\n"
 		"layout(location = 1) in vec2 texCoord;\n"
 		"in vec4 Color;\n"
@@ -62,7 +65,7 @@ bool ModuleRenderGui::Start()
 		"{\n"
 		"	Frag_UV = texCoord;\n"
 		"	Frag_Color = Color;\n"
-		"	gl_Position = ProjMtx * vec4(position.xy,0,1);\n"
+		"	gl_Position = ProjMtx * model * vec4(position.xy,0,1);\n"
 		"}\n"
 	};
 
@@ -169,7 +172,12 @@ update_status ModuleRenderGui::PreUpdate(float dt)
 {
 	perf_timer.Start();
 
+	if (last_size_dock.x != GetSizeDock("Scene").x || last_size_dock.y != GetSizeDock("Scene").y)
+	{
+		App->scene->scene_buff->WantRefreshRatio();
+	}
 
+	last_size_dock = GetSizeDock("Scene");
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
@@ -224,15 +232,19 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
 	GLint last_polygon_mode[2]; glGetIntegerv(GL_POLYGON_MODE, last_polygon_mode);
 	GLint last_viewport[4]; glGetIntegerv(GL_VIEWPORT, last_viewport);
+	GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
+	GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
+	GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
+	GLboolean last_enable_texture_2D = glIsEnabled(GL_TEXTURE_2D);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_DEPTH_CLAMP);
 	glEnable(GL_TEXTURE_2D);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	/*
 	glViewport(0, 0, (GLsizei)total_width, (GLsizei)total_height);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -241,7 +253,7 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-
+	*/
 	//Draw
 
 	for (int i = 0; i < screen_space_canvas.size(); i++)
@@ -262,6 +274,10 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glPopAttrib();
+	if (last_enable_blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
+	if (last_enable_cull_face) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
+	if (last_enable_depth_test) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+	if (last_enable_texture_2D) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
 
 	glPolygonMode(GL_FRONT, last_polygon_mode[0]); glPolygonMode(GL_BACK, last_polygon_mode[1]);
 	glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);

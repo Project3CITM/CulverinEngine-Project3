@@ -17,6 +17,7 @@
 #include "parson.h"
 #include "PerfTimer.h"
 #include "WindowSceneWorld.h"
+#include "ModuleMap.h"
 #include"ModuleShaders.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
@@ -24,6 +25,7 @@
 #include "SDL/include/SDL.h"
 #include "JSONSerialization.h"
 #include "mmgr/mmgr.h"
+#include "ModuleEventSystem.h"
 
 static int malloc_count;
 static void *counted_malloc(size_t size);
@@ -51,8 +53,8 @@ Application::Application()
 	json_seria = new JSONSerialization();
 
 	module_shaders = new ModuleShaders();
-
 	physics = new ModulePhysics();
+	map = new ModuleMap();
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -70,6 +72,7 @@ Application::Application()
 	AddModule(scene);
 	AddModule(module_shaders);
 	AddModule(gui);
+	AddModule(map); // Possible change position
 	AddModule(importer);
 	AddModule(textures);
 	AddModule(event_system); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
@@ -633,11 +636,61 @@ char* Application::GetCharfromConstChar(const char* name)
 
 void Application::SetState(EngineState state)
 {
+
+	switch (state)
+	{
+	case EngineState::PLAYFRAME:
+	case EngineState::PLAY:
+		{
+			if (engine_state == EngineState::STOP)
+			{
+				//Send Play event
+				Event play_event;
+				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.time.time = play_event.time.TIME_PLAY;
+				PushEvent(play_event);
+			}
+			else if (engine_state == EngineState::PAUSE)
+			{
+				//Send unpause Event
+				Event play_event;
+				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.time.time = play_event.time.TIME_UNPAUSE;
+				PushEvent(play_event);				
+			}
+			else if (engine_state == EngineState::PLAY)
+			{
+				//Send unpause Event
+				Event play_event;
+				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.time.time = play_event.time.TIME_STOP;
+				PushEvent(play_event);
+			}
+			break;
+		}
+
+
+	case EngineState::PAUSE:
+	{
+		//Send Pause Event
+		Event play_event;
+		play_event.time.type = EventType::EVENT_TIME_MANAGER;
+		play_event.time.time = play_event.time.TIME_PAUSE;
+		PushEvent(play_event);
+		break;
+	}
+	}
+
+
+
 	if (state == EngineState::PLAY)
 	{
 		// If it's already Game Mode, exit and start again Editor Mode
 		if (engine_state == EngineState::PLAY)
 		{
+
+			//STOP ENGINE ------------
+
 			engine_state = EngineState::STOP;
 			game_time.game_start_time = 0.0f;
 			game_time.frame_count = 0.0f;
@@ -653,6 +706,9 @@ void Application::SetState(EngineState state)
 		{
 			if (App->renderer3D->game_camera != nullptr)
 			{
+
+				//PLAY ENGINE -------
+
 				engine_state = EngineState::PLAY;
 				ChangeCamera("Game"); // To notice renderer3D to change to Gcene Camera
 

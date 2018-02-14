@@ -25,7 +25,8 @@ class CompCheckBox;
 class GameObject
 {
 public:
-	GameObject(GameObject* parent);
+	GameObject(GameObject* parent = nullptr);
+	GameObject(char* nameGameObject);
 	GameObject(char* nameGameObject, uint uuid);
 	GameObject(const GameObject& copy, bool haveparent = false, GameObject* parent = nullptr);
 	~GameObject();

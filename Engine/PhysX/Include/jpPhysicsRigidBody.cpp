@@ -1,67 +1,129 @@
 #include "jpPhysicsRigidBody.h"
 
 
-jpPhysicsRigidBody::jpPhysicsRigidBody(physx::PxPhysics* px_physics)
+jpPhysicsRigidBody::jpPhysicsRigidBody(physx::PxPhysics* px_physics, bool is_dynamic) : is_dynamic(is_dynamic)
 {
-	//Create a default rigidbody 
+	//Create a default material 
 	default_material = px_physics->createMaterial(0.5f, 0.5f, 0.0f);
-	px_body = physx::PxCreateDynamic(*px_physics, physx::PxTransform(physx::PxIDENTITY()), physx::PxBoxGeometry(0.5f, 0.5f, 0.5f), *default_material, 1.0f);
 
-	//Detach the shape by default,
-	px_body->getShapes(&body_shape, 1);
-
-	//Shape must be activated using calling a diferent function
-	//Made like this to separet the rigidbody from the collider
-	px_body->detachShape(*body_shape);
-	body_shape = nullptr;
+	if (is_dynamic)
+	{
+		//Create RigidDynamic with default properties
+		body = physx::PxCreateDynamic(*px_physics, physx::PxTransform(physx::PxIDENTITY()), physx::PxBoxGeometry(0.5f, 0.5f, 0.5f), *default_material, 1.0f);
+		
+		//Default RigidDynamics don't have shape so we remove it after creation time
+		body->getShapes(&body_shape, 1);
+		body->detachShape(*body_shape);
+		body_shape = nullptr;
+	}
+	else
+	{
+		//Create RigidStatic with default properties
+		body = physx::PxCreateStatic(*px_physics, physx::PxTransform(physx::PxIDENTITY()), physx::PxBoxGeometry(0.5,0.5,0.5), *default_material);
+		body->getShapes(&body_shape, 1);
+	}
 }
 
 jpPhysicsRigidBody::~jpPhysicsRigidBody()
 {
-	if(px_body)
-		px_body->release();
+	if (body)
+	{
+		body->release();
+	}
+}
+
+void jpPhysicsRigidBody::ToStatic(physx::PxPhysics* px_physics)
+{
+	if (is_dynamic && px_physics)
+	{
+		physx::PxScene*	scene = body->getScene();
+		physx::PxRigidActor* temp_body = physx::PxCreateStatic(*px_physics, body->getGlobalPose(), body_shape->getGeometry().any(),*default_material);
+		body->release();
+
+		body = temp_body;
+		body->getShapes(&body_shape, 1);
+		scene->addActor(*temp_body);
+
+		is_dynamic = false;
+	}
+}
+
+void jpPhysicsRigidBody::ToDynamic(physx::PxPhysics* px_physics)
+{
+	if (!is_dynamic && px_physics)
+	{
+		physx::PxScene*	scene = body->getScene();
+		physx::PxRigidActor* temp_body = physx::PxCreateDynamic(*px_physics, body->getGlobalPose(), body_shape->getGeometry().any(), *default_material, 1.0f);
+		body->release();
+
+		body = temp_body;
+		body->getShapes(&body_shape, 1);
+		scene->addActor(*temp_body);
+
+		is_dynamic = true;
+	}
 }
 
 void jpPhysicsRigidBody::ActivateShape()
 {
-	if (body_shape != nullptr)
-		px_body->attachShape(*body_shape);
+	if (body_shape && body)
+	{
+		body->attachShape(*body_shape);
+	}
 }
 
 void jpPhysicsRigidBody::DeActivateShape()
 {
-	if (body_shape != nullptr)
-		px_body->detachShape(*body_shape);
+	if (body_shape && body)
+	{
+		body->detachShape(*body_shape);
+	}
+	
 	body_shape = nullptr;
 }
 
-void jpPhysicsRigidBody::SetDynamic(bool is_dynamic)
+void jpPhysicsRigidBody::SetAsKinematic(bool kinematic)
 {
 	if (is_dynamic)
 	{
-		px_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-	}
-	else
-	{
-		px_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+		if (kinematic)
+		{
+			static_cast<physx::PxRigidDynamic*> (body)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+		}
+		else
+		{
+			static_cast<physx::PxRigidDynamic*> (body)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+		}
 	}
 }
 
 void jpPhysicsRigidBody::SetTransform(float * trans_mat)
 {
 	physx::PxMat44 mat = physx::PxMat44(trans_mat);
-	px_body->setGlobalPose(physx::PxTransform(mat));
+
+	if (body)
+	{
+		body->setGlobalPose(physx::PxTransform(mat));
+	}
+}
+
+void jpPhysicsRigidBody::SetTransform(float3 pos, Quat rotation, bool autoawake)
+{
+	if (body && pos.IsFinite() && rotation.IsFinite())
+	{
+		body->setGlobalPose(physx::PxTransform(physx::PxVec3(pos.x, pos.y, pos.z), physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)), autoawake);
+	}
 }
 
 void jpPhysicsRigidBody::SetGeometry(physx::PxGeometry new_geometry)
 {
 	//Get the current material for the new shape
-	physx::PxMaterial* body_material = nullptr;
-	body_shape->getMaterials(&body_material, 1);
+//	physx::PxMaterial* body_material = nullptr;
+//	body_shape->getMaterials(&body_material, 1);
 
-	px_body->detachShape(*body_shape);
-	body_shape = px_body->createShape(new_geometry, *body_material);
-	px_body->attachShape(*body_shape);
+	body->detachShape(*body_shape);
+	body_shape = body->createShape(new_geometry, *default_material);
+	body->attachShape(*body_shape);
 }
 
 void jpPhysicsRigidBody::SetMaterial(float &static_friction, float &dynamic_friction, float &restitution)
@@ -75,60 +137,69 @@ void jpPhysicsRigidBody::SetMaterial(float &static_friction, float &dynamic_fric
 	if (restitution < 0) restitution = 0;
 	else if (restitution > 1) restitution = 1;
 
-	physx::PxMaterial* material;
-	body_shape->getMaterials(&material, 1);
-	material->setStaticFriction(static_friction);
-	material->setDynamicFriction(dynamic_friction);
-	material->setRestitution(restitution);
+	//physx::PxMaterial* material;
+	//body_shape->getMaterials(&material, 1);
+	default_material->setStaticFriction(static_friction);
+	default_material->setDynamicFriction(dynamic_friction);
+	default_material->setRestitution(restitution);
 }
 
 void jpPhysicsRigidBody::SetShape(physx::PxShape * new_shape)
 {
 	//Might not work
-	px_body->detachShape(*body_shape);
+	if (body_shape)
+	{
+		body->detachShape(*body_shape);
+	}
+	
 	body_shape = new_shape;
+	
+	if (body_shape)
+	{
+		body->attachShape(*body_shape);
+	}
 }
 
-void jpPhysicsRigidBody::SetGeometry(physx::PxVec3 scale, float radius, JP_COLLIDER_TYPE type)
+void jpPhysicsRigidBody::SetGeometry(float3 new_scale, float radius, JP_COLLIDER_TYPE type)
 {
+	if (!new_scale.IsFinite())
+	{
+		return;
+	}
+
+	physx::PxVec3 scale = physx::PxVec3(new_scale.x, new_scale.y, new_scale.z);
+	
 	if (radius < 0)
 		radius = -radius;
 	if(scale.isFinite())
 		scale = scale.abs();
 	else scale = physx::PxVec3(0.0, 0.0, 0.0);
 		
-	if (body_shape) {
-		px_body->detachShape(*body_shape);
+	if (body_shape) 
+	{
+		body->detachShape(*body_shape);
 		body_shape = nullptr;
 	}
 	
 	switch (type)
 	{
 	case COLL_SPHERE:
-		body_shape = px_body->createShape(physx::PxSphereGeometry(radius), *default_material);
+		body_shape = body->createShape(physx::PxSphereGeometry(radius), *default_material);
 		break;
 	case COLL_PLANE:{
 		scale = scale*0.5;
-		body_shape = px_body->createShape(physx::PxBoxGeometry(scale.x, physx::PxReal(0.01), scale.z), *default_material);
+		body_shape = body->createShape(physx::PxBoxGeometry(scale.x, physx::PxReal(0.01), scale.z), *default_material);
 	}
 		break;
 	case COLL_CAPSULE:
-		body_shape = px_body->createShape(physx::PxCapsuleGeometry(radius, scale.z), *default_material);
+		body_shape = body->createShape(physx::PxCapsuleGeometry(radius, scale.z), *default_material);
 		break;
 	case COLL_BOX: {
 		scale = scale*0.5;
-		body_shape = px_body->createShape(physx::PxBoxGeometry(scale.x, scale.y, scale.z), *default_material);
+		body_shape = body->createShape(physx::PxBoxGeometry(scale.x, scale.y, scale.z), *default_material);
 	}
 		break;
-		// TODO: add cooking to create convex mesh ----------
-	/*case COLL_CONVEXMESH:
-		break;
-	case COLL_TRIANGLEMESH:
-		break;
-	case COLL_HEIGHTFIELD:
-		break;
-		*/
-	default: body_shape = px_body->createShape(physx::PxSphereGeometry(0.5), *default_material);
+	default: body_shape = body->createShape(physx::PxSphereGeometry(0.5), *default_material);
 		break;
 	}	
 
@@ -138,9 +209,11 @@ void jpPhysicsRigidBody::SetGeometry(physx::PxVec3 scale, float radius, JP_COLLI
 	}
 }
 
-void jpPhysicsRigidBody::SetShapeScale(physx::PxVec3 scale, float radius, JP_COLLIDER_TYPE shape_type)
+void jpPhysicsRigidBody::SetShapeScale(float3 new_scale, float radius, JP_COLLIDER_TYPE shape_type)
 {
 	if (body_shape) {
+		physx::PxVec3 scale = physx::PxVec3(new_scale.x, new_scale.y, new_scale.z);
+
 		// Get absolute values for scale and radius
 		if (radius < 0)
 			radius = -radius;
@@ -177,24 +250,6 @@ void jpPhysicsRigidBody::SetShapeScale(physx::PxVec3 scale, float radius, JP_COL
 			body_shape->setGeometry(box);
 		}
 		break;
-		case physx::PxGeometryType::eCONVEXMESH: {
-			physx::PxConvexMeshGeometry convmesh = body_shape->getGeometry().convexMesh();
-			convmesh.scale = scale;
-			body_shape->setGeometry(convmesh);
-		}
-			break;
-		case physx::PxGeometryType::eTRIANGLEMESH: {
-			physx::PxTriangleMeshGeometry trimesh = body_shape->getGeometry().triangleMesh();
-			trimesh.scale = scale;
-			body_shape->setGeometry(trimesh);
-		}
-			break;
-		case physx::PxGeometryType::eHEIGHTFIELD: {
-			physx::PxHeightFieldGeometry heightfield = body_shape->getGeometry().heightField();
-			heightfield.heightScale = scale.z;
-			body_shape->setGeometry(heightfield);
-		}
-			break;
 		default:
 			break;
 		}
@@ -203,60 +258,92 @@ void jpPhysicsRigidBody::SetShapeScale(physx::PxVec3 scale, float radius, JP_COL
 
 void jpPhysicsRigidBody::SetMass(float & mass)
 {
-	if (mass < 0)
-		mass = 0;
-	if (mass > PX_MAX_F32)
-		mass = PX_MAX_F32 - 1;
-	
-	if (px_body)
-		px_body->setMass(mass);
+	if (is_dynamic)
+	{
+		if (mass < 0)
+		{
+			mass = 0;
+		}
+		if (mass > PX_MAX_F32)
+		{
+			mass = PX_MAX_F32 - 1;
+		}
+
+		static_cast<physx::PxRigidDynamic*> (body)->setMass(mass);
+	}
 }
 
-void jpPhysicsRigidBody::GetTransform(physx::PxVec3& pos, physx::PxQuat& quat)
+void jpPhysicsRigidBody::GetTransform(float3 & pos, Quat & rotation)
 {
-	physx::PxTransform transf = px_body->getGlobalPose();
-	pos = transf.p;
-	quat = transf.q;
+	if (is_dynamic)
+	{
+		physx::PxTransform transf = static_cast<physx::PxRigidDynamic*> (body)->getGlobalPose();
+		pos = float3(transf.p.x, transf.p.y, transf.p.z);
+		rotation = Quat(transf.q.x, transf.q.y, transf.q.z, transf.q.w);
+	}
+	else
+	{
+		pos = float3::zero;
+		rotation = Quat::identity;
+	}
 }
 
-physx::PxRigidBody * jpPhysicsRigidBody::GetPxBody()
+physx::PxRigidActor * jpPhysicsRigidBody::GetActor()
 {
-	return px_body;
+	if (body)
+	{
+		return body;
+	}
 }
 
 bool jpPhysicsRigidBody::Sleeping()
 {
-	if (px_body && px_body->isSleeping())
+	if (is_dynamic && ((physx::PxRigidDynamic*)body)->isSleeping())
+	{
 		return true;
-	return false;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-void jpPhysicsRigidBody::ApplyForce(physx::PxVec3 force)
+void jpPhysicsRigidBody::ApplyForce(float3 force)
 {
-	if (px_body && force.isFinite())
-		px_body->addForce(force);
+	if (is_dynamic && force.IsFinite())
+	{
+		static_cast<physx::PxRigidDynamic*> (body)->addForce(physx::PxVec3(force.x, force.y, force.z));
+	}
 }
 
-void jpPhysicsRigidBody::ApplyImpulse(physx::PxVec3 impulse)
+void jpPhysicsRigidBody::ApplyImpulse(float3 impulse)
 {
-	if (px_body && impulse.isFinite())
-		px_body->addForce(impulse, physx::PxForceMode::Enum::eIMPULSE);
+	if (is_dynamic && impulse.IsFinite())
+	{
+		static_cast<physx::PxRigidDynamic*> (body)->addForce(physx::PxVec3(impulse.x, impulse.y, impulse.z), physx::PxForceMode::Enum::eIMPULSE);
+	}
 }
 
-void jpPhysicsRigidBody::ApplyTorqueForce(physx::PxVec3 force)
+void jpPhysicsRigidBody::ApplyTorqueForce(float3 force)
 {
-	if (px_body && force.isFinite())
-		px_body->addTorque(force);
+	if (is_dynamic && force.IsFinite())
+	{
+		static_cast<physx::PxRigidDynamic*> (body)->addTorque(physx::PxVec3(force.x, force.y, force.z));
+	}
 }
 
-void jpPhysicsRigidBody::ApplyTorqueImpulse(physx::PxVec3 impulse)
+void jpPhysicsRigidBody::ApplyTorqueImpulse(float3 impulse)
 {
-	if (px_body && impulse.isFinite())
-		px_body->addTorque(impulse, physx::PxForceMode::Enum::eIMPULSE);
+	if (is_dynamic && impulse.IsFinite())
+	{
+		static_cast<physx::PxRigidDynamic*> (body)->addTorque(physx::PxVec3(impulse.x, impulse.y, impulse.z), physx::PxForceMode::Enum::eIMPULSE);
+	}
 }
 
-void jpPhysicsRigidBody::MoveKinematic(physx::PxTransform dest)
+void jpPhysicsRigidBody::MoveKinematic(float3 pos, Quat rotation)
 {
-	if (px_body)
-		px_body->setKinematicTarget(dest);
+	if (is_dynamic && pos.IsFinite() && rotation.IsFinite())
+	{
+		static_cast<physx::PxRigidDynamic*> (body)->setKinematicTarget(physx::PxTransform(physx::PxVec3(pos.x, pos.y, pos.z), physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
+	}
 }

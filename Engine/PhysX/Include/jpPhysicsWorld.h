@@ -1,5 +1,5 @@
-#ifndef __JP_PHYSICS_WORLD_H__
-#define __JP_PHYSICS_WORLD_H__
+#ifndef JP_PHYSICS_WORLD_H__
+#define JP_PHYSICS_WORLD_H__
 
 #include "PxPhysicsAPI.h"
 #include "jpPhysicsRigidBody.h"
@@ -21,7 +21,8 @@ public:
 	physx::PxCooking* GetCooking();
 
 	//No Scene passed creates a sceneless rigidBody
-	jpPhysicsRigidBody* CreateRigidBody(physx::PxScene* curr_scene = nullptr);
+	jpPhysicsRigidBody* CreateRigidBody(physx::PxScene* curr_scene = nullptr, bool dynamic = false);
+
 
 private:
 	// World, only one can be created
@@ -33,4 +34,4 @@ private:
 	physx::PxDefaultErrorCallback gDefaultErrorCallback;
 	physx::PxDefaultAllocator gDefaultAllocatorCallback;
 };
-#endif // !__JP_PHYSICS_WORLD_H__
+#endif // !JP_PHYSICS_WORLD_H__

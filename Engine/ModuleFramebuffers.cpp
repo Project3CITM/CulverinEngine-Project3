@@ -1,6 +1,7 @@
 #include "ModuleFramebuffers.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleWindow.h"
 
 FrameBuffer::FrameBuffer()
 {
@@ -64,8 +65,9 @@ bool FrameBuffer::Create(int width, int height)
 
 void FrameBuffer::Bind(const char* window)
 {
-	size = GetSizeDock(window);
-	Resize(size.x, size.y);
+	//size = GetSizeDock(window);
+	
+	Resize(App->window->GetWidth(), App->window->GetHeight());
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
 }
 

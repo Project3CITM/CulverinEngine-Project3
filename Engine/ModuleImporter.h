@@ -15,6 +15,7 @@
 
 class ImportMesh;
 class ImportMaterial;
+class ImportAnimation;
 class ImportScript;
 class CompTransform;
 struct ReImport;
@@ -56,6 +57,7 @@ public:
 	ImportMesh* iMesh = nullptr;
 	ImportMaterial* iMaterial = nullptr;
 	ImportScript* iScript = nullptr;
+	ImportAnimation* iAnimation = nullptr;
 
 private:
 

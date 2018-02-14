@@ -71,9 +71,6 @@ public:
 	std::vector<int> ints_list;
 	//------------------------------
 
-	//Map ----------
-	std::string map_string;
-
 private:
 
 	//WINDOW EXIT -------------
@@ -92,6 +89,7 @@ private:
 	bool window_create_new_script = false;
 	bool window_show_all_resources = false;
 	bool window_audio = false;
+	bool window_create_map = false;
 	//bool window_NewScene = false;
 
 	int menu_height = 0;

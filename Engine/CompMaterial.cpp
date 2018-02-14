@@ -377,6 +377,31 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 	App->fs->json_array_dotset_float4(object, name + "Color", tempColor);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 
+	json_object_dotset_string_with_std(object, name + "ShaderName:", material_shader.name.c_str());
+
+	json_object_dotset_number_with_std(object, name + "Num Textures:", material_shader.textures.size());
+
+	for (int i = 0; i < material_shader.textures.size(); i++)
+	{
+		char mat_name[128] = { 0 };
+
+		char* num = new char[4];
+		itoa(i, num, 10);
+		strcat(mat_name, "Resource Material UUID ");
+		strcat(mat_name, num);
+		RELEASE_ARRAY(num);
+
+		if (material_shader.textures[i].res_material != nullptr && material_shader.textures[i].res_material->GetTextureID() != App->renderer3D->id_checkImage)
+		{
+			json_object_dotset_number_with_std(object, name + mat_name, material_shader.textures[i].res_material->GetUUID());
+		}
+		else
+		{			
+			json_object_dotset_number_with_std(object, name + mat_name, 0);
+		}		
+
+	}
+
 	//Save Shaders and shaders values
 	//TODO
 	//
@@ -395,7 +420,27 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 	float4 tempColor = App->fs->json_array_dotget_float4_string(object, name + "Color");
 	color.Set(tempColor.x, tempColor.y, tempColor.z, tempColor.w);
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+
+	
 	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Material UUID");
+
+	std::string shader_name = json_object_dotget_string_with_std(object, name + "ShaderName:");
+	ShaderProgram* temp_shader = nullptr;
+	for (int i = 0; i < App->module_shaders->programs.size(); i++) {
+		if (strcmp(App->module_shaders->programs[i]->name.c_str(), shader_name.c_str() )==0) {
+			temp_shader = App->module_shaders->programs[i];
+			break;
+		}
+
+	}
+	if (temp_shader != nullptr) {
+		material_shader = *temp_shader;
+	
+
+
+	}
+	else
+		material_shader = *App->renderer3D->default_shader;
 
 	//Load Shaders and shaders values
 	//TODO

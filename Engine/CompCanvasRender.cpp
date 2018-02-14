@@ -15,6 +15,7 @@
 #include "GL3W/include/glew.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
+
 CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
@@ -255,13 +256,16 @@ void CompCanvasRender::DrawGraphic()
 	}
 	*/
 	ImGuiIO& io = ImGui::GetIO();
+
 	const float ortho_projection[4][4] =
 	{
-		{ 0.5f, 0.0f, 0.0f, 0.0f },
-		{ 0.0f,0.5f, 0.0f, 0.0f },
-		{ 0.0f,0.0f,0.5f, 0.0f },
-		{ 0.5f, 0.5f,  0.0f, 1.0f },
+		{ 2.0f / io.DisplaySize.x,	 0.0f,								0.0f,		0.0f },
+		{ 0.0f,							     2.0f / -io.DisplaySize.y,  0.0f,		0.0f },
+		{ 0.0f,								 0.0f,							  -1.0f,	0.0f },
+		{ -1.0f,							 1.0f,							  0.0f,		1.0f },
 	};
+	int width_dock = GetSizeDock("Scene").x;
+	int height_dock = GetSizeDock("Scene").y;
 	uint g_AttribLocationProjMtx = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "ProjMtx");
 	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 	
@@ -275,15 +279,13 @@ void CompCanvasRender::DrawGraphic()
 	/*
 
 	GLint view2Loc = glGetUniformLocation(App->renderer3D->default_shader->programID, "view");
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
 	GLint viewLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "viewproj");
-
-
-
 	glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
 	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 	*/
+	GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
+
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->vertices_id);
 
