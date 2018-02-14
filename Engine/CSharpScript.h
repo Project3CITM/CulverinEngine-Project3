@@ -122,22 +122,30 @@ public:
 	MonoObject* GetMousePosition();
 
 	/*Game Object*/
-	mono_bool IsGOActive(MonoObject* object);
-	void SetGOActive(MonoObject* object, mono_bool active);
-	MonoObject* GetOwnGameObject();
-	void SetCurrentGameObject(GameObject* current);
-	void SetOwnGameObject(GameObject* gameobject);
-	void CreateGameObject(MonoObject* object);
-	bool DestroyGameObject(MonoObject* object);
-	void SetGOName(MonoObject* object, MonoString* name);
+	mono_bool	IsActive(MonoObject* object);
+	void		SetActive(MonoObject* object, mono_bool active);
+	void		SetName(MonoObject* object, MonoString* name);
 	MonoString* GetName(MonoObject* object);
-	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
+	void		SetTag(MonoObject* object, MonoString* tag);
+	MonoString* GetTag(MonoObject* object);
+
+	MonoObject* GetOwnGameObject();
+	void		SetCurrentGameObject(GameObject* current);
+	void		SetOwnGameObject(GameObject* gameobject);
+	void		CreateGameObject(MonoObject* object);
+	bool		DestroyGameObject(MonoObject* object);
 
 	MonoObject* GetPosition(MonoObject* object);
-	void SetPosition(MonoObject* object, MonoObject* vector3);
+	void		SetPosition(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetRotation(MonoObject* object);
-	void SetRotation(MonoObject* object, MonoObject* vector3);
-	void IncrementRotation(MonoObject* object, MonoObject* vector3);
+	void		SetRotation(MonoObject* object, MonoObject* vector3);
+	void		IncrementRotation(MonoObject* object, MonoObject* vector3);
+
+	/*Components*/
+	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
+
+	/*Childs*/
+	MonoObject* Find(MonoObject* object, MonoString* name);
 
 	// Map --------------------
 	MonoString* GetMapString(MonoObject* object);

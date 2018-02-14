@@ -582,7 +582,7 @@ MonoObject* CSharpScript::GetMousePosition()
 	return nullptr;
 }
 
-mono_bool CSharpScript::IsGOActive(MonoObject* object)
+mono_bool CSharpScript::IsActive(MonoObject* object)
 {
 	if (!CheckMonoObject(object))
 	{
@@ -599,7 +599,7 @@ mono_bool CSharpScript::IsGOActive(MonoObject* object)
 	}
 }
 
-void CSharpScript::SetGOActive(MonoObject* object, mono_bool active)
+void CSharpScript::SetActive(MonoObject* object, mono_bool active)
 {
 	if (!CheckMonoObject(object))
 	{
@@ -661,7 +661,7 @@ bool CSharpScript::DestroyGameObject(MonoObject* object)
 	}
 }
 
-void CSharpScript::SetGOName(MonoObject * object, MonoString * name)
+void CSharpScript::SetName(MonoObject * object, MonoString * name)
 {
 	if (!CheckMonoObject(object))
 	{
@@ -690,6 +690,34 @@ MonoString* CSharpScript::GetName(MonoObject* object)
 		return nullptr;
 	}
 	return mono_string_new(CSdomain, current_game_object->GetName());
+}
+
+void CSharpScript::SetTag(MonoObject * object, MonoString * tag)
+{
+	if (!CheckMonoObject(object))
+	{
+		LOG("[error] MonoObject invalid");
+	}
+	else
+	{
+		if (current_game_object != nullptr)
+		{
+			current_game_object->SetTag(mono_string_to_utf8(tag));
+		}
+	}
+}
+
+MonoString * CSharpScript::GetTag(MonoObject * object)
+{
+	if (!CheckMonoObject(object))
+	{
+		return nullptr;
+	}
+	if (current_game_object == nullptr)
+	{
+		return nullptr;
+	}
+	return mono_string_new(CSdomain, current_game_object->GetTag());
 }
 
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)
@@ -723,6 +751,15 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 			return new_object;
 		}
 	}
+	return nullptr;
+}
+
+MonoObject * CSharpScript::Find(MonoObject * object, MonoString * name)
+{
+
+
+	//return (MonoObject*)current_game_object->GetChildbyName(mono_string_to_utf8(name));
+
 	return nullptr;
 }
 

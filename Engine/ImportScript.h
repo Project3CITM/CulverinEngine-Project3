@@ -52,33 +52,35 @@ private:
 	static void ConsoleLog(MonoString* string);
 
 	/* Input */
-	static mono_bool KeyDown(MonoObject* obj, MonoObject* key);
-	static mono_bool KeyUp(MonoObject* obj, MonoObject* key);
-	static mono_bool KeyRepeat(MonoObject* obj, MonoObject* key);
-	static mono_bool MouseButtonDown(int buttonmouse);
-	static mono_bool MouseButtonUp(int buttonmouse);
-	static mono_bool MouseButtonRepeat(int buttonmouse);
-	static MonoObject* GetMousePosition();
-	static int GetMouseXAxis();
-	static int GetMouseYAxis();
+	static mono_bool	KeyDown(MonoObject* obj, MonoObject* key);
+	static mono_bool	KeyUp(MonoObject* obj, MonoObject* key);
+	static mono_bool	KeyRepeat(MonoObject* obj, MonoObject* key);
+	static mono_bool	MouseButtonDown(int buttonmouse);
+	static mono_bool	MouseButtonUp(int buttonmouse);
+	static mono_bool	MouseButtonRepeat(int buttonmouse);
+	static MonoObject*	GetMousePosition();
+	static int			GetMouseXAxis();
+	static int			GetMouseYAxis();
 
 	/* Time */
 	static float GetDeltaTime();
 
 	/* GameObject */
-	static mono_bool IsGOActive(MonoObject* object);
-	static void SetGOActive(MonoObject* object, mono_bool active);
-	static MonoObject* GetOwnGameObject();
-	static void SetName(MonoObject* object, MonoString* name);
-	static MonoString* GetName(MonoObject* object);
-	static void CreateGameObject(MonoObject* object);
-	static void DeleteGameObject(MonoObject* object);
-	static MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
-	static MonoObject* GetPosition(MonoObject* object);
-	static void SetPosition(MonoObject* object, MonoObject* vector3);
-	static MonoObject* GetRotation(MonoObject* object);
-	static void SetRotation(MonoObject* object, MonoObject* vector3);
-	static void IncrementRotation(MonoObject* object, MonoObject* vector3);
+	static mono_bool	IsActive(MonoObject* object);
+	static void			SetActive(MonoObject* object, mono_bool active);
+	static MonoObject*	GetOwnGameObject();
+	static void			SetName(MonoObject* object, MonoString* name);
+	static MonoString*	GetName(MonoObject* object);
+	static MonoString*	GetTag(MonoObject* object);
+	static void			SetTag(MonoObject* object, MonoString* name);
+	static void			CreateGameObject(MonoObject* object);
+	static void			DeleteGameObject(MonoObject* object);
+	static MonoObject*	GetComponent(MonoObject* object, MonoReflectionType* type);
+	static MonoObject*	GetPosition(MonoObject* object);
+	static void			SetPosition(MonoObject* object, MonoObject* vector3);
+	static MonoObject*	GetRotation(MonoObject* object);
+	static void			SetRotation(MonoObject* object, MonoObject* vector3);
+	static void			IncrementRotation(MonoObject* object, MonoObject* vector3);
 
 	/* Map */
 	static MonoString* GetMapString(MonoObject* object);

@@ -427,9 +427,19 @@ void GameObject::SetName(char * name)
 	this->name = name;
 }
 
+void GameObject::SetTag(char * tag)
+{
+	this->tag = tag;
+}
+
 const char* GameObject::GetName() const
 {
 	return name;
+}
+
+const char * GameObject::GetTag() const
+{
+	return tag;
 }
 
 void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* parent_)

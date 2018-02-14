@@ -53,12 +53,14 @@ public:
 	void SetStatic(bool set_static);
 	void FixedDelete(bool check_delete);
 	void SetName(char* name);
+	void SetTag(char* tag);
 
 	bool IsActive() const;
 	bool IsVisible() const;
 	bool IsStatic() const;
 	bool IsDeleteFixed() const;
 	const char* GetName() const;
+	const char* GetTag()const;
 
 	// EDITOR METHODS ------------------
 	void ShowHierarchy();
@@ -132,6 +134,7 @@ public:
 private:
 	uint uid = 0;
 	char* name = "CHANGE THIS";
+	char* tag = "undefined";
 	bool active = false;
 	bool visible = false;
 	bool static_obj = false;

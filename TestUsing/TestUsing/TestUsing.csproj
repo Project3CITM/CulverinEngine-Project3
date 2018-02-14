@@ -38,13 +38,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Testelliot.cs" />
     <Compile Include="TestMovement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CulverinEditor">
-      <HintPath>..\..\..\3D-Engine\Engine\Game\ScriptManager\AssemblyReference\CulverinEditor.dll</HintPath>
+      <HintPath>..\..\Engine\Game\ScriptManager\AssemblyReference\CulverinEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

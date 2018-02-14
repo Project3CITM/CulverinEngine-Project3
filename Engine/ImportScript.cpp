@@ -486,11 +486,13 @@ MonoClass* ImportScript::GetMonoClassFromImage(MonoImage* image, std::string& na
 void ImportScript::LinkFunctions()
 {
 	//GAMEOBJECT FUNCTIONS ---------------
+	mono_add_internal_call("CulverinEditor.GameObject::GetTag", (const void*)GetTag);
+	mono_add_internal_call("CulverinEditor.GameObject::SetTag", (const void*)SetTag);
 	mono_add_internal_call("CulverinEditor.GameObject::CreateGameObject",(const void*)CreateGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::GetOwnGameObject", (const void*)GetOwnGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::Destroy",(const void*)DeleteGameObject);
-	mono_add_internal_call("CulverinEditor.GameObject::SetActive",(const void*)SetGOActive);
-	mono_add_internal_call("CulverinEditor.GameObject::IsActive",(const void*)IsGOActive);
+	mono_add_internal_call("CulverinEditor.GameObject::SetActive",(const void*)SetActive);
+	mono_add_internal_call("CulverinEditor.GameObject::IsActive",(const void*)IsActive);
 	//mono_add_internal_call("CulverinEditor.GameObject::SetParent",(const void*)SetParent);
 	mono_add_internal_call("CulverinEditor.GameObject::SetName",(const void*)SetName);
 	mono_add_internal_call("CulverinEditor.GameObject::GetName",(const void*)GetName);
@@ -621,14 +623,14 @@ float ImportScript::GetDeltaTime()
 	return App->game_time.time_scale * App->real_time.dt;
 }
 
-mono_bool ImportScript::IsGOActive(MonoObject* object)
+mono_bool ImportScript::IsActive(MonoObject* object)
 {
-	return current->IsGOActive(object);
+	return current->IsActive(object);
 }
 
-void ImportScript::SetGOActive(MonoObject* object, mono_bool active)
+void ImportScript::SetActive(MonoObject* object, mono_bool active)
 {
-	current->SetGOActive(object, active);
+	current->SetActive(object, active);
 }
 
 MonoObject* ImportScript::GetOwnGameObject()
@@ -638,12 +640,22 @@ MonoObject* ImportScript::GetOwnGameObject()
 
 void ImportScript::SetName(MonoObject* object, MonoString * name)
 {
-	current->SetGOName(object, name);
+	current->SetName(object, name);
 }
 
 MonoString* ImportScript::GetName(MonoObject* object)
 {
 	return current->GetName(object);
+}
+
+MonoString * ImportScript::GetTag(MonoObject * object)
+{
+	return current->GetTag(object);
+}
+
+void ImportScript::SetTag(MonoObject * object, MonoString * name)
+{
+
 }
 
 void ImportScript::CreateGameObject(MonoObject* object)
