@@ -98,6 +98,36 @@ ShaderProgram* ModuleShaders::CreateShader(const char* name)
 	return newProgram;
 }
 
+char * ModuleShaders::GetShaderText(std::string path)
+{
+
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+	std::string string_buffer;
+	fopen_s(&pFile, path.c_str(), "rb");
+	if (pFile == NULL) { fputs("File error", stderr); exit(1); }
+
+	// obtain file size:
+	fseek(pFile, 0, SEEK_END);
+	lSize = ftell(pFile);
+	rewind(pFile);
+
+	// allocate memory to contain the whole file:
+	buffer = new char[lSize + 1];// (char*)malloc(sizeof(char)*lSize);
+	memset(buffer, 0, lSize + 1);
+	if (buffer == NULL) { fputs("Memory error", stderr); exit(2); }
+
+	// copy the file into the buffer:
+	result = fread(buffer, 1, lSize, pFile);
+
+	fclose(pFile);
+
+
+	return buffer;
+}
+
 ShaderProgram * ModuleShaders::CreateDefaultShader()
 {
 	ShaderProgram* defaultShader = new ShaderProgram();
@@ -302,7 +332,8 @@ Shader* ModuleShaders::CompileShader(std::string path, std::string name, ShaderT
 	glGetShaderiv(id, GL_COMPILE_STATUS, &fShaderCompiled);
 	if (fShaderCompiled != GL_TRUE)
 	{
-		return 0;
+		last_shader_error = GetShaderError(id);
+		return nullptr;
 	}
 
 	Shader* newShader = new Shader();
@@ -316,6 +347,29 @@ Shader* ModuleShaders::CompileShader(std::string path, std::string name, ShaderT
 
 	return newShader;
 
+}
+
+std::string ModuleShaders::GetShaderError(uint ID)
+{
+	std::string ret = "";
+	
+	int infoLogLength = 0;
+	int maxLength = infoLogLength;
+
+	glGetShaderiv(ID, GL_INFO_LOG_LENGTH, &maxLength);
+
+	char* infoLog = new char[maxLength];
+	glGetShaderInfoLog(ID, maxLength, &infoLogLength, infoLog);
+
+	if (infoLogLength > 0) {
+
+		//LOG("%s\n", infoLog);
+		ret = infoLog;
+	}
+
+	delete[] infoLog;
+
+	return ret;
 }
 
 void ModuleShaders::AddShaderList(Shader* newShader)

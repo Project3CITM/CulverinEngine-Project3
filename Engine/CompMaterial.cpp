@@ -565,35 +565,72 @@ void CompMaterial::ShowShadersEditors()
 	if (shader == nullptr) return;
 
 
-		if (ImGui::Begin("Edit sHADER", edit_shader)) {
-
+		if (ImGui::Begin("Edit shader", edit_shader)) {
+			Shader* new_shader = nullptr;
+			
 			if (ImGui::Button("Save") && material_shader.programID != App->renderer3D->default_shader->programID) {
+
+
+				char* last_text = App->module_shaders->GetShaderText(shader->shaderPath);
 
 				uint buffer_size = strlen(material_shader.shader_editor.GetText().c_str());
 
-				FILE* pFile = fopen(shader->shaderPath.c_str(), "wb");
+				FILE* pFile = fopen(shader->shaderPath.c_str(), "wb");				
 				fwrite(material_shader.shader_editor.GetText().c_str(), sizeof(char), buffer_size, pFile);
 				fclose(pFile);
 
 				uint last_shader_id = shader->shaderID;
 
-				Shader* new_shader = App->module_shaders->CompileShader(shader->shaderPath, shader->name,shader_type);
+				new_shader = App->module_shaders->CompileShader(shader->shaderPath, shader->name,shader_type);
 
-				switch(shader_type){
-				case ShaderType::fragment:
-							material_shader.UpdateShaderProgram(0, new_shader->shaderID, 0);
-							break;
-				case ShaderType::vertex:
-					material_shader.UpdateShaderProgram(new_shader->shaderID,0,0);
-					break;
+				if (new_shader != nullptr) {
+					
+					switch (shader_type) {
+					case ShaderType::fragment:
+						cant_comiple_shader = !material_shader.UpdateShaderProgram(0, new_shader->shaderID, 0);
+						break;
+					case ShaderType::vertex:
+						cant_comiple_shader = !material_shader.UpdateShaderProgram(new_shader->shaderID, 0, 0);
+						break;
 
-				case ShaderType::geometry:
-					material_shader.UpdateShaderProgram(0,0,new_shader->shaderID);
-					break;
+					case ShaderType::geometry:
+						cant_comiple_shader = !material_shader.UpdateShaderProgram(0, 0, new_shader->shaderID);
+						break;
+
+					}
+
+					glDeleteShader(last_shader_id);
+				}
+				else {
+					cant_comiple_shader = true;
+
+					uint last_buffer_size = strlen(last_text);
+					FILE* last_pFile = fopen(shader->shaderPath.c_str(), "wb");
+					fwrite(last_text, sizeof(char), last_buffer_size, last_pFile);
+					fclose(pFile);
+
+					//material_shader.shader_editor.SetText(last_text);
+
+					delete[] last_text;
+				}
+				
+			}
+
+			if (cant_comiple_shader) {
+				if (ImGui::Begin("ERROR", &cant_comiple_shader)) {
+
+					std::string program_error = material_shader.LogProgramLastError();
+					ImGui::Text("ERROR COMPILING SHADER:\n");
+					if (App->module_shaders->last_shader_error != "") {
+						ImGui::Text("SHADER ERROR: %s\n", App->module_shaders->last_shader_error.c_str());
+					}
+					if (program_error != "") {
+						ImGui::Text("PROGRAM ERROR: %s\n",program_error.c_str());
+					}
+					
+					ImGui::End();
 					
 				}
-
-				glDeleteShader(last_shader_id);
 				
 			}
 

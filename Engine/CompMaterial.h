@@ -47,7 +47,8 @@ private:
 
 	Color color = White;
 	bool select_material = false;
-
+	bool cant_comiple_shader = false;
+	std::string last_error_shader;
 	uint uuid_material = 0;
 	
 };

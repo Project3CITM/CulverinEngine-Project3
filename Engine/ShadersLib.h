@@ -28,6 +28,13 @@ struct UniformVar {
 	GLenum type = GL_ZERO;
 
 };
+
+struct AttributeVar {
+
+	char name[64] = "0";
+	GLenum type = GL_ZERO;
+
+};
 struct TextureVar {
 	std::string var_name;
 	bool selected = false;
@@ -70,6 +77,8 @@ public:
 	}
 
 	char* GetShaderText();
+	std::string LogShaderLastError();
+
 public:
 	uint shaderID = 0;
 
@@ -105,10 +114,15 @@ public:
 	void  Unbind();
 
 	UniformVar  GetVariableInfo(uint index);
+	AttributeVar GetAttributeInfo(uint index);
 
 	GLint  GetVariablesSize()const;
+	GLint  GetAttributesSize()const;
 
 	void CreateMaterialFile();
+
+	std::string LogProgramLastError();
+
 
 public:
 	std::string name;

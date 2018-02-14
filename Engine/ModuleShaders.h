@@ -34,10 +34,11 @@ public:
 	bool CleanUp();
 
 	ShaderProgram * CreateShader(const char* name);
-
+	char* GetShaderText(std::string path);
 	ShaderProgram*   CreateDefaultShader();
 
 	Shader*   CompileShader(std::string path, std::string name, ShaderType type);
+	std::string GetShaderError(uint ID);
 
 	void   AddShaderList(Shader* newShader);
 
@@ -50,6 +51,10 @@ public:
 	std::string Shader_Directory_fs;
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;
+
+public:
+	std::string last_shader_error = "";
+
 };
 
 

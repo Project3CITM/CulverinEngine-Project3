@@ -96,11 +96,32 @@ UniformVar ShaderProgram::GetVariableInfo(uint index)
 	return ret;
 }
 
+AttributeVar ShaderProgram::GetAttributeInfo(uint index)
+{
+	AttributeVar ret;
+	int name_len = -1, num = -1;
+	GLenum type = GL_ZERO;
+	char name[100];
+	glGetActiveAttrib(programID, GLuint(index), sizeof(ret.name) - 1,
+		&name_len, &num, &ret.type, ret.name);
+
+	ret.name[name_len] = 0;
+
+	return ret;
+}
+
 GLint ShaderProgram::GetVariablesSize() const
 {
 	GLint total = 0;
 	glGetProgramiv(programID, GL_ACTIVE_UNIFORMS, &total);
 	return total;
+}
+
+GLint ShaderProgram::GetAttributesSize() const
+{
+	GLint total = 0;
+	glGetProgramiv(programID, GL_ACTIVE_ATTRIBUTES, &total);
+	return total;	
 }
 
 void ShaderProgram::CreateMaterialFile()
@@ -129,6 +150,51 @@ void ShaderProgram::CreateMaterialFile()
 	char* serialized_string = json_serialize_to_string_pretty(file_proj);
 	json_serialize_to_file(file_proj, path.c_str());
 
+}
+
+std::string ShaderProgram::LogProgramLastError()
+{
+	std::string ret = "";
+	
+	int infoLogLength = 0;
+	int maxLength = infoLogLength;
+
+	glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &maxLength);
+
+	char* infoLog = new char[maxLength];
+	glGetProgramInfoLog(programID, maxLength, &infoLogLength, infoLog);
+
+	if (infoLogLength > 0) {
+
+		//LOG("%s\n", infoLog);
+		ret = infoLog;
+	}
+	
+	delete[] infoLog;
+	return ret;
+}
+
+std::string Shader::LogShaderLastError()
+{
+	std::string ret = "";
+	printf("Error linking program %d!\n", shaderID);
+	int infoLogLength = 0;
+	int maxLength = infoLogLength;
+
+	glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
+
+	char* infoLog = new char[maxLength];
+	glGetShaderInfoLog(shaderID, maxLength, &infoLogLength, infoLog);
+
+	if (infoLogLength > 0) {
+
+		//LOG("%s\n", infoLog);
+		ret = infoLog;
+	}
+
+	delete[] infoLog;
+
+	return ret;
 }
 
 
@@ -197,26 +263,38 @@ bool ShaderProgram::UpdateShaderProgram(uint VertexID, uint FragmentID, uint Geo
 	glLinkProgram(programID);
 	glGetProgramiv(programID, GL_LINK_STATUS, &programSuccess);
 
-	if (programSuccess != GL_TRUE) {
-
-		printf("Error linking program %d!\n", programID);
-		int infoLogLength = 0;
-		int maxLength = infoLogLength;
-
-		glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &maxLength);
-
-		char* infoLog = new char[maxLength];
-		glGetProgramInfoLog(programID, maxLength, &infoLogLength, infoLog);
-
-		if (infoLogLength > 0) {
-
-			LOG("%s\n", infoLog);
-		}
-
-		delete[] infoLog;
+	if (programSuccess != GL_TRUE) {	
 
 		return false;
 	}
+
+
+	uint var_size = GetVariablesSize();
+	uint atrib_size = GetAttributesSize();
+	for (int i = 0; i < var_size; i++) {
+		UniformVar temp = GetVariableInfo(i);
+
+		//Textures
+		if (temp.type == GL_SAMPLER_2D) {
+			TextureVar texture_var;
+			texture_var.var_name = temp.name;
+			textures.push_back(texture_var);
+		}
+
+	}
+
+	for (int i = 0; i < atrib_size; i++) {
+		AttributeVar temp = GetAttributeInfo(i);
+
+		//Textures
+		if (temp.type == GL_SAMPLER_2D) {
+			TextureVar texture_var;
+			texture_var.var_name = temp.name;
+			textures.push_back(texture_var);
+		}
+
+	}
+
 
 	return true;
 }
