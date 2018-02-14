@@ -149,17 +149,14 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				bones[i].name = new char[bones[i].name_length];
 				memcpy(bones[i].name, mesh->mBones[i]->mName.C_Str(), bones[i].name_length);
 
-				bones[i].offset = mesh->mBones[i]->mOffsetMatrix;
+				memcpy(&bones[i].offset[0][0], &mesh->mBones[i]->mOffsetMatrix.a1, sizeof(float) * 4 * 4);
 
 				bones[i].num_weights = mesh->mBones[i]->mNumWeights;
 
 				bones[i].weights.reserve(bones[i].num_weights);
 
 				for (int r = 0; r < mesh->mBones[i]->mNumWeights; ++r)
-				{
-					bones[i].weights[r].vertex_id = mesh->mBones[i]->mWeights[r].mVertexId;
-					bones[i].weights[r].weight = mesh->mBones[i]->mWeights[r].mWeight;
-				}
+					bones[i].weights.push_back(ImportBone::Weight(mesh->mBones[i]->mWeights[r].mVertexId, mesh->mBones[i]->mWeights[r].mWeight));
 			}
 
 			std::queue<aiNode*> nodes;
@@ -172,7 +169,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 			nodes.push(scene->mRootNode);
 
-			while (nodes.size > 0)
+			while (nodes.size() > 0)
 			{
 				aiNode* current_node = nodes.front();
 
@@ -187,16 +184,18 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 				if (is_joint == true)
 				{
-					for (int i = 0; i < current_node->mNumChildren; i++)
-						nodes.push(current_node->mChildren[i]);
-
 					bone_hirarchy_name_sizes[joints_saved] = current_node->mName.length + 1;
-					name_iterator += bone_hirarchy_name_sizes[joints_saved];
 					memcpy(&bone_hirarchy_names[name_iterator], current_node->mName.C_Str(), bone_hirarchy_name_sizes[joints_saved]);
+					name_iterator += bone_hirarchy_name_sizes[joints_saved];
 					bone_hirarchy_num_childs[joints_saved] = current_node->mNumChildren;
 
 					joints_saved++;
 				}
+
+				for (int i = 0; i < current_node->mNumChildren; i++)
+					nodes.push(current_node->mChildren[i]);
+
+				nodes.pop();
 			}
 
 			if (joints_saved == mesh->mNumBones)
@@ -419,13 +418,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 	//Texture* texture = nullptr;
 
 	//Skeleton
-	uint num_bones = 0;
-	uint bone_names_size = 0;
-
-	ImportBone* bones = nullptr;
-	char* bone_hirarchy_names = nullptr;
-	uint* bone_hirarchy_name_sizes = nullptr;
-	uint* bone_hirarchy_num_childs = nullptr;
+	uint num_bones;
 	//--
 
 	// Loading File
@@ -477,34 +470,40 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 		//Skeleton
 		if (num_bones > 0)
 		{
+			SkeletonSource* skeleton_source = new SkeletonSource;
+
+			skeleton_source->num_bones = num_bones;
+
 			//Bones
 			cursor += bytes;
 			bytes = sizeof(ImportBone) * num_bones;
-			ImportBone* bones = new ImportBone[num_bones];
-			memcpy(bones, cursor, bytes);
+			skeleton_source->bones = new ImportBone[num_bones];
+			memcpy(skeleton_source->bones, cursor, bytes);
 
 			//Bone name sizes
 			cursor += bytes;
 			bytes = sizeof(uint) * num_bones;
-			uint* bone_hirarchy_name_sizes = new uint[num_bones];
-			memcpy(bone_hirarchy_name_sizes, cursor, bytes);
+			skeleton_source->bone_hirarchy_name_sizes = new uint[num_bones];
+			memcpy(skeleton_source->bone_hirarchy_name_sizes, cursor, bytes);
 
 			//Bone num childs
 			cursor += bytes;
 			bytes = sizeof(uint) * num_bones;
-			uint* bone_hirarchy_num_childs = new uint[num_bones];
-			memcpy(bone_hirarchy_num_childs, cursor, bytes);
+			skeleton_source->bone_hirarchy_num_childs = new uint[num_bones];
+			memcpy(skeleton_source->bone_hirarchy_num_childs, cursor, bytes);
 
 			//Bone hirarchy names
 			cursor += bytes;
 			bytes = sizeof(uint);
-			uint bone_hirarchy_names_size = *cursor;
+			skeleton_source->bone_names_size = *cursor;
 
 			//Bone hirarchy names
 			cursor += bytes;
-			bytes = bone_names_size;
-			char* bone_hirarchy_num_childs = new char[bone_hirarchy_names_size];
-			memcpy(bone_hirarchy_names, cursor, bytes);
+			bytes = skeleton_source->bone_names_size;
+			skeleton_source->bone_hirarchy_names = new char[skeleton_source->bone_names_size];
+			memcpy(skeleton_source->bone_hirarchy_names, cursor, bytes);
+
+			resourceMesh->SetSkeleton(skeleton_source);
 		}
 		//--
 

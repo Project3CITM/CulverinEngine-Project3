@@ -1134,6 +1134,9 @@
     <ClInclude Include="ImportAnimation.h">
       <Filter>Engine\Importer</Filter>
     </ClInclude>
+    <ClInclude Include="CompBone.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1483,6 +1486,9 @@
     </ClCompile>
     <ClCompile Include="ImportAnimation.cpp">
       <Filter>Engine\Importer</Filter>
+    </ClCompile>
+    <ClCompile Include="CompBone.cpp">
+      <Filter>Engine\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

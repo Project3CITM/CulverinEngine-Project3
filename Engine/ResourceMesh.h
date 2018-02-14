@@ -5,7 +5,7 @@
 #include "Math/float3.h"
 #include "Math/float2.h"
 
-class Skeleton;
+struct ImportBone;
 
 struct Vertex
 {
@@ -13,6 +13,18 @@ struct Vertex
 	float3 norm;
 	float2 texCoords;
 };
+
+struct SkeletonSource
+{
+	uint num_bones = 0;
+	uint bone_names_size = 0;
+	ImportBone* bones = nullptr;
+	char* bone_hirarchy_names = nullptr;
+	uint* bone_hirarchy_name_sizes = nullptr;
+	uint* bone_hirarchy_num_childs = nullptr;
+};
+
+struct ImportBone;
 
 class ResourceMesh : public Resource
 {
@@ -28,6 +40,9 @@ public:
 	bool LoadToMemory();
 	Resource::State IsLoadedToMemory();
 
+	bool HasSkeleton() const;
+	void SetSkeleton(SkeletonSource* skeleton);
+
 public:
 	bool has_normals = false;
 	uint num_vertices = 0;
@@ -35,7 +50,6 @@ public:
 	std::vector<Vertex> vertices;
 	std::vector<uint> indices;
 	std::vector<float3> vertices_normals;
-
 
 	//std::vector<FaceCenter> face_centers;
 
@@ -45,9 +59,9 @@ public:
 	uint vertices_norm_id = 0;	/* NORMALS OF VERTICES ID */
 	uint id_total_buffer;		/* MESH INFO BUFFER ID */
 
-private:
-	Skeleton * skeleton = nullptr;
+	SkeletonSource * skeleton = nullptr;
 
+private:
 };
 
 #endif

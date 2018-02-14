@@ -24,6 +24,10 @@ enum Type_Primitive
 	TYPE_CUBE
 };
 
+struct Skeleton
+{
+	std::vector<GameObject*> bones;
+};
 
 class CompMesh: public Component
 {
@@ -56,6 +60,9 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
 
+	bool HasSkeleton() const;
+	void GenSkeleton();
+
 public:
 
 	char* name = "MESH NAME";
@@ -69,6 +76,8 @@ private:
 	bool select_mesh = false;
 	const CompMaterial* material = nullptr;
 	uint uuid_resource_reimported = 0;
+
+	Skeleton* skeleton = nullptr;
 
 };
 #endif

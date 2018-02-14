@@ -13,6 +13,8 @@ ResourceMesh::~ResourceMesh()
 	vertices.clear();
 	indices.clear();
 	vertices_normals.clear();
+
+	delete skeleton;
 }
 
 void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_normals, const float2* texCoord)
@@ -95,7 +97,6 @@ bool ResourceMesh::LoadToMemory()
 {
 	LOG("Resources: %s, Loaded in Memory!", this->name);
 
-
 	//----------Starting to change to one buffer
 
 	char* total_buffer_mesh = nullptr;
@@ -155,4 +156,14 @@ bool ResourceMesh::LoadToMemory()
 Resource::State ResourceMesh::IsLoadedToMemory()
 {
 	return state;
+}
+
+bool ResourceMesh::HasSkeleton() const
+{
+	return skeleton != nullptr;
+}
+
+void ResourceMesh::SetSkeleton(SkeletonSource * skeleton)
+{
+	this->skeleton = skeleton;
 }

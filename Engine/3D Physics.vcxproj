@@ -110,6 +110,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="CompAnimation.h" />
     <ClInclude Include="CompAudio.h" />
+    <ClInclude Include="CompBone.h" />
     <ClInclude Include="CompButton.h" />
     <ClInclude Include="CompCamera.h" />
     <ClInclude Include="CompCanvas.h" />
@@ -442,6 +443,7 @@
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="CompAnimation.cpp" />
     <ClCompile Include="CompAudio.cpp" />
+    <ClCompile Include="CompBone.cpp" />
     <ClCompile Include="CompButton.cpp" />
     <ClCompile Include="CompCamera.cpp" />
     <ClCompile Include="CompCanvas.cpp" />

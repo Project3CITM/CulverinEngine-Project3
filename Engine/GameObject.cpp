@@ -24,6 +24,7 @@
 #include "CompCanvas.h"
 #include "CompCanvasRender.h"
 #include "CompAudio.h"
+#include "CompBone.h"
 
 //Event system test
 #include "ModuleEventSystem.h"
@@ -643,6 +644,10 @@ void GameObject::ShowGameObjectOptions()
 			{
 				AddComponent(Comp_Type::C_AUDIO);
 			}
+			if (ImGui::MenuItem("Bone"))
+			{
+				AddComponent(Comp_Type::C_BONE);
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("UI"))
@@ -916,6 +921,11 @@ void GameObject::ShowInspectorInfo()
 		if (ImGui::MenuItem("Audio"))
 		{
 			AddComponent(Comp_Type::C_AUDIO);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Bone"))
+		{
+			AddComponent(Comp_Type::C_BONE);
 			add_component = false;
 		}
 
@@ -1265,6 +1275,13 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(audio);
 			return audio;
 		}
+		else if (type == Comp_Type::C_BONE)
+		{
+			LOG("Adding BONE COMPONENT.");
+			CompBone* bone = new CompBone(type, this);
+			components.push_back(bone);
+			return bone;
+		}
 	}
 
 	return nullptr;
@@ -1334,6 +1351,12 @@ void GameObject::AddComponentCopy(const Component& copy)
 	{
 		CompAudio* audio = new CompAudio((CompAudio&)copy, this); //Audio copy constructor
 		components.push_back(audio);
+		break;
+	}
+	case (Comp_Type::C_BONE):
+	{
+		CompBone* bone = new CompBone((CompBone&)copy, this); //Audio copy constructor
+		components.push_back(bone);
 		break;
 	}
 	default:
@@ -1406,6 +1429,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		case Comp_Type::C_AUDIO:
 			this->AddComponent(Comp_Type::C_AUDIO, true);
 			break;
+		case Comp_Type::C_BONE:
+			this->AddComponent(Comp_Type::C_BONE, true);
+			break;
 		default:
 			break;
 		}
@@ -1416,6 +1442,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 	{
 		std::string temp = name + "Component " + std::to_string(i) + ".";
 		components[i]->Load(object, temp);
+
+		if (components[i]->GetType() == Comp_Type::C_MESH && ((CompMesh*)components[i])->HasSkeleton())
+			((CompMesh*)components[i])->GenSkeleton();
 	}
 }
 

@@ -15,6 +15,7 @@
 #include "ModuleCamera3D.h"
 #include <vector>
 #include "CompCamera.h"
+#include "CompBone.h"
 
 CompMesh::CompMesh(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
@@ -491,4 +492,61 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 		}
 	}
 	Enable();
+}
+
+bool CompMesh::HasSkeleton() const
+{
+	return resource_mesh->HasSkeleton();
+}
+
+void CompMesh::GenSkeleton()
+{
+	SkeletonSource* source = resource_mesh->skeleton;
+	skeleton = new Skeleton;
+
+	char* name_iterator = source->bone_hirarchy_names;
+
+	GameObject* current = parent;
+	int current_parent_id = -1;
+	uint generated_bones = 0;
+	uint child_num = 0;
+
+	while (generated_bones < source->num_bones)
+	{
+		GameObject* new_bone = new GameObject(name_iterator);
+		name_iterator += source->bone_hirarchy_name_sizes[generated_bones];
+
+		float4x4 local_transform;
+		CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
+
+		for (int i = 0; i < source->num_bones; i++)
+			if (source->bones[i].name == new_bone->GetName())
+			{
+				local_transform = parent->GetComponentTransform()->GetGlobalTransform() * source->bones[i].offset;
+				comp_bone->offset = source->bones[i].offset;
+
+				for (int j = 0; j < source->bones[i].num_weights; i++)
+					comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));				
+			}
+
+		float3 pos;
+		Quat rot;
+		float3 scale;
+
+		local_transform.Decompose(pos, rot, scale);
+		new_bone->GetComponentTransform()->SetPos(pos.xyz());
+		new_bone->GetComponentTransform()->SetRot(rot);
+		new_bone->GetComponentTransform()->SetScale(scale);
+
+		current->AddChildGameObject(new_bone);
+
+		if (++child_num >= source->bone_hirarchy_num_childs[current_parent_id])
+		{
+			current = current->GetChildbyIndex(0);
+			child_num = 0;
+			current_parent_id = generated_bones;
+		}
+
+		generated_bones++;
+	}
 }
