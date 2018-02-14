@@ -10,7 +10,6 @@
 
 class GameObject;
 class SkyBox;
-
 //Event system test
 union Event;
 
@@ -94,7 +93,7 @@ public:
 	// ---------------------------
 
 	GameObject* drag = nullptr;
-	GLuint icon_options_transform = 0;
+	uint icon_options_transform = 0;
 
 private:
 	int size_plane = 0;

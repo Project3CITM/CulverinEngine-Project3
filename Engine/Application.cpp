@@ -17,6 +17,7 @@
 #include "parson.h"
 #include "PerfTimer.h"
 #include "WindowSceneWorld.h"
+#include "ModuleMap.h"
 #include"ModuleShaders.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
@@ -52,8 +53,8 @@ Application::Application()
 	json_seria = new JSONSerialization();
 
 	module_shaders = new ModuleShaders();
-
 	physics = new ModulePhysics();
+	map = new ModuleMap();
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -71,6 +72,7 @@ Application::Application()
 	AddModule(scene);
 	AddModule(module_shaders);
 	AddModule(gui);
+	AddModule(map); // Possible change position
 	AddModule(importer);
 	AddModule(textures);
 	AddModule(event_system); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
