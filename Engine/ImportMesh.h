@@ -14,16 +14,17 @@ struct ImportBone
 	{
 		Weight(float weight, uint vertex_id) : weight(weight), vertex_id(vertex_id)
 		{}
+		Weight() : weight(0.0f), vertex_id(0)
+		{}
 
 		float weight;
 		uint vertex_id;
 	};
 
-	uint name_length;
-	char* name;
+	std::string name;
 	float4x4 offset;
 	uint num_weights;
-	std::vector<Weight> weights;
+	Weight* weights;
 };
 
 class ImportMesh

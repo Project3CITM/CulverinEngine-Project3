@@ -137,7 +137,6 @@ bool ResourceMesh::LoadToMemory()
 		}
 	}
 
-
 	glGenBuffers(1, &id_total_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, id_total_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) *total_size_buffer, &total_buffer_mesh[0], GL_STATIC_DRAW);

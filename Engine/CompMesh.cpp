@@ -516,6 +516,8 @@ void CompMesh::GenSkeleton()
 		GameObject* new_bone = new GameObject(name_iterator);
 		name_iterator += source->bone_hirarchy_name_sizes[generated_bones];
 
+		CompTransform* transform = (CompTransform*)new_bone->AddComponent(Comp_Type::C_TRANSFORM);
+
 		float4x4 local_transform;
 		CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
 
@@ -525,7 +527,7 @@ void CompMesh::GenSkeleton()
 				local_transform = parent->GetComponentTransform()->GetGlobalTransform() * source->bones[i].offset;
 				comp_bone->offset = source->bones[i].offset;
 
-				for (int j = 0; j < source->bones[i].num_weights; i++)
+				for (int j = 0; j < source->bones[i].num_weights; j++)
 					comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));				
 			}
 
@@ -534,13 +536,13 @@ void CompMesh::GenSkeleton()
 		float3 scale;
 
 		local_transform.Decompose(pos, rot, scale);
-		new_bone->GetComponentTransform()->SetPos(pos.xyz());
-		new_bone->GetComponentTransform()->SetRot(rot);
-		new_bone->GetComponentTransform()->SetScale(scale);
+		transform->SetPos(pos);
+		transform->SetRot(rot);
+		transform->SetScale(scale);
 
 		current->AddChildGameObject(new_bone);
 
-		if (++child_num >= source->bone_hirarchy_num_childs[current_parent_id])
+		if ((current_parent_id == -1)||(++child_num >= source->bone_hirarchy_num_childs[current_parent_id]))
 		{
 			current = current->GetChildbyIndex(0);
 			child_num = 0;

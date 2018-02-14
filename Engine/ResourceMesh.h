@@ -17,7 +17,6 @@ struct Vertex
 struct SkeletonSource
 {
 	uint num_bones = 0;
-	uint bone_names_size = 0;
 	ImportBone* bones = nullptr;
 	char* bone_hirarchy_names = nullptr;
 	uint* bone_hirarchy_name_sizes = nullptr;
