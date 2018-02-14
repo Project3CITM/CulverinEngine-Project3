@@ -62,17 +62,6 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 	const std::vector<Module*>* ModuleList = App->GetModuleList();
 	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
 
-	//iterate and send MMNormalEvent
-	for (std::multimap<EventType, Event>::const_iterator item = MMNormalEvent.cbegin(); item != MMNormalEvent.cend(); ++item)
-	{
-		if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
-			EListener = MEventListeners.find(item._Ptr->_Myval.first);
-		if (EListener != MEventListeners.end())
-			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-				(*item2)->OnEvent(item._Ptr->_Myval.second);
-		else continue;
-	}
-
 	std::multimap<float, Event>& MultimapToIterate = MM3DDrawEvent;
 	for (int i = 0; i < 3; i++)
 	{
@@ -118,6 +107,17 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 		{
 			//TODO Set perspective back to perspective here
 		}
+	}
+
+	//iterate and send MMNormalEvent
+	for (std::multimap<EventType, Event>::const_iterator item = MMNormalEvent.cbegin(); item != MMNormalEvent.cend(); ++item)
+	{
+		if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
+			EListener = MEventListeners.find(item._Ptr->_Myval.first);
+		if (EListener != MEventListeners.end())
+			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+				(*item2)->OnEvent(item._Ptr->_Myval.second);
+		else continue;
 	}
 
 	//We had analysed all events, just clean them and wait for new ones in the next frame
