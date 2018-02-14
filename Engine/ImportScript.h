@@ -82,6 +82,9 @@ private:
 
 	/* Map */
 	static MonoString* GetMapString(MonoObject* object);
+	static int GetHeightMap();
+	static int GetWidthMap();
+
 private:
 	std::string nameNewScript;
 	std::string mono_path;

@@ -49,11 +49,10 @@ void ModuleMap::ShowEditorMap(bool &active)
 	{
 		ImGui::End();
 	}
-	static int ws = 10, hs = 10;
 	ImGui::PushItemWidth(70);
 	ImGui::Text("Edit the tiles. Click ID and set type of /nthe ID (Walkable / No-Walkable / ...)");
-	ImGui::InputInt("width", &ws); ImGui::SameLine();
-	ImGui::InputInt("height", &hs);
+	ImGui::InputInt("width", &width_map); ImGui::SameLine();
+	ImGui::InputInt("height", &height_map);
 
 	ImGui::PopItemWidth();
 	ImGui::PushItemWidth(10);
@@ -69,9 +68,9 @@ void ModuleMap::ShowEditorMap(bool &active)
 					map[i][j] = -1;
 				}
 			}
-			for (int i = 0; i < ws; i++)
+			for (int i = 0; i < width_map; i++)
 			{
-				for (int j = 0; j < hs; j++)
+				for (int j = 0; j < height_map; j++)
 				{
 					map[i][j] = 0;
 				}
@@ -91,9 +90,9 @@ void ModuleMap::ShowEditorMap(bool &active)
 					map[i][j] = -1;
 				}
 			}
-			for (int i = 0; i < ws; i++)
+			for (int i = 0; i < width_map; i++)
 			{
-				for (int j = 0; j < hs; j++)
+				for (int j = 0; j < height_map; j++)
 				{
 					map[i][j] = 0;
 				}
@@ -114,9 +113,9 @@ void ModuleMap::ShowEditorMap(bool &active)
 		ImGui::SameLine();
 		if (ImGui::Button("Complet with No-Walk"))
 		{
-			for (int i = 0; i < ws; i++)
+			for (int i = 0; i < width_map; i++)
 			{
-				for (int j = 0; j < hs; j++)
+				for (int j = 0; j < height_map; j++)
 				{
 					if (map[i][j] == 0)
 					{
@@ -129,10 +128,10 @@ void ModuleMap::ShowEditorMap(bool &active)
 		static std::string type_Name[] = { "Walkable", "No-Walkable", "Joan" };
 		//Frist Select Type
 		ImGui::Separator();
-		int total_map = ws * hs;
-		for (int i = 0; i < ws; i++)
+		int total_map = width_map * height_map;
+		for (int i = 0; i < width_map; i++)
 		{
-			for (int j = 0; j < hs; j++)
+			for (int j = 0; j < height_map; j++)
 			{
 				if (j > 0) ImGui::SameLine();
 				ImGui::PushID(j + i * 1000);
@@ -177,9 +176,9 @@ void ModuleMap::ShowEditorMap(bool &active)
 			if (ImGui::Button("Save Map"))
 			{
 				map_string = "";
-				for (int i = 0; i < ws; i++)
+				for (int i = 0; i < width_map; i++)
 				{
-					for (int j = 0; j < hs; j++)
+					for (int j = 0; j < height_map; j++)
 					{
 						map_string += std::to_string(map[i][j]);
 					}
@@ -200,9 +199,9 @@ void ModuleMap::ShowEditorMap(bool &active)
 			if (ImGui::Button("Create Level Map"))
 			{
 				//map_string = "";
-				for (int i = 0; i < ws; i++)
+				for (int i = 0; i < width_map; i++)
 				{
-					for (int j = 0; j < hs; j++)
+					for (int j = 0; j < height_map; j++)
 					{
 						if (map[i][j] > 0)
 						{
@@ -233,4 +232,14 @@ void ModuleMap::ShowEditorMap(bool &active)
 	}
 	ImGui::PopItemWidth();
 	ImGui::End();
+}
+
+int ModuleMap::GetHeightMap()
+{
+	return height_map;
+}
+
+int ModuleMap::GetWidthMap()
+{
+	return width_map;
 }

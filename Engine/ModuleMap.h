@@ -20,11 +20,18 @@ public:
 	update_status PostUpdate(float dt);
 
 	void ShowEditorMap(bool & active);
+	int GetHeightMap();
+	int GetWidthMap();
+
 
 public:
 	//Map ----------
 	std::string map_string;
 	int map[MAX_ARRAY][MAX_ARRAY];
+
+private:
+	int height_map = 10;
+	int width_map = 10;
 
 };
 

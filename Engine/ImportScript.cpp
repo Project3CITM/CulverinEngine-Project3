@@ -5,6 +5,7 @@
 #include "ModuleGUI.h"
 #include "ModuleInput.h"
 #include "ResourceScript.h"
+#include "ModuleMap.h"
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
 #include "CSharpScript.h"
@@ -519,6 +520,8 @@ void ImportScript::LinkFunctions()
 
 	//MAP FUNCTIONS ----------------------
 	mono_add_internal_call("CulverinEditor.Map.Map::GetMapString", (const void*)GetMapString);
+	mono_add_internal_call("CulverinEditor.Map.Map::GetHeightMap", (const void*)GetHeightMap);
+	mono_add_internal_call("CulverinEditor.Map.Map::GetWidthMap", (const void*)GetWidthMap);
 }
 
 //Log messages into Engine Console
@@ -693,4 +696,14 @@ void ImportScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 MonoString* ImportScript::GetMapString(MonoObject* object)
 {
 	return current->GetMapString(object);
+}
+
+int ImportScript::GetHeightMap()
+{
+	return App->map->GetHeightMap();
+}
+
+int ImportScript::GetWidthMap()
+{
+	return App->map->GetHeightMap();
 }
