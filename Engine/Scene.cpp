@@ -319,7 +319,10 @@ void Scene::ClearAllVariablesScript()
 
 void Scene::SetScriptVariablesToNull(GameObject* go)
 {
-	root->RemoveScriptReference(go);
+	for (uint i = 0; i < root->GetNumChilds(); i++)
+	{
+		root->GetChildbyIndex(i)->RemoveScriptReference(go);
+	}
 }
 
 GameObject* Scene::GetGameObjectfromScene(bool& active)
@@ -501,6 +504,8 @@ void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 			DeleteAllGameObjects(gameobject->GetChildbyIndex(i), false);
 		}
 
+		SetScriptVariablesToNull(gameobject->GetChildbyIndex(i));
+
 		// First of all, Set nullptr all pointer to this GameObject
 		if (App->camera->GetFocus() == gameobject->GetChildbyIndex(i))
 		{
@@ -517,6 +522,7 @@ void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 		}
 		// Now Delete GameObject
 		GameObject* it = gameobject->GetChildbyIndex(i);
+
 		if(it != nullptr)
 		{
 			if (!it->IsDeleteFixed())
@@ -553,18 +559,20 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 		{
 			((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
 		}
+
 		// First Delete All Childs and their components
 		if (gameobject->GetNumChilds() > 0)
 		{
 			DeleteAllGameObjects(gameobject, false);
 		}
+
 		// Then Delete Components
 		if (gameobject->GetNumComponents() > 0)
 		{
 			gameobject->DeleteAllComponents();
 		}
 
-		// Finnaly Check have Parent and remove from childs
+		// Finally Check have Parent and remove from childs
 		if (gameobject->GetParent() != nullptr)
 		{
 			int index = gameobject->GetParent()->GetIndexChildbyName(gameobject->GetName());

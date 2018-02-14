@@ -289,6 +289,7 @@ void CSharpScript::Clear()
 		if (variables[i]->game_object != nullptr)
 		{
 			variables[i]->game_object->FixedDelete(true);
+			variables[i]->select_game_object = false;
 		}
 	}
 }
@@ -401,6 +402,7 @@ void CSharpScript::RemoveReferences(GameObject* go)
 		if (variables[i]->type == VarType::Var_GAMEOBJECT && variables[i]->game_object == go)
 		{
 			variables[i]->game_object = nullptr;
+			variables[i]->select_game_object = false;
 		}
 	}
 }

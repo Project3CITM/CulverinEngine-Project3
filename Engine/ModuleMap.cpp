@@ -220,7 +220,7 @@ void ModuleMap::ShowEditorMap(bool &active)
 								GameObject* obj = App->scene->CreateCube();
 								CompTransform* transform = obj->GetComponentTransform();
 								math::float3 pos = transform->GetPos();
-								pos.x += i * 2; pos.z += j * 2;
+								pos.x -= i * 2; pos.z -= j * 2;
 								transform->SetPos(pos);
 								//App->scene->root->AddChildGameObject(obj);
 							}

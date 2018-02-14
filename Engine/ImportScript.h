@@ -79,6 +79,8 @@ private:
 	static MonoObject* GetRotation(MonoObject* object);
 	static void SetRotation(MonoObject* object, MonoObject* vector3);
 	static void IncrementRotation(MonoObject* object, MonoObject* vector3);
+
+	/* Map */
 	static MonoString* GetMapString(MonoObject* object);
 private:
 	std::string nameNewScript;
