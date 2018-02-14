@@ -51,24 +51,25 @@ public class TestMovement
 
     void Update()
     {
-
         GameObject.gameObject.GetComponent<Transform>().Position = Vector3.MoveTowards(GameObject.gameObject.GetComponent<Transform>().Position, endPosition, movSpeed * Time.DeltaTime());
-
-        if (Input.KeyDown("A")) //Left
+        if (GameObject.gameObject.GetComponent<Transform>().Position == endPosition)
         {
-            endPosition = new Vector3(endPosition.x + distanceToMove, endPosition.y, endPosition.z);
-        }
-        else if (Input.KeyDown("D")) //Right
-        {
-            endPosition = new Vector3(endPosition.x - distanceToMove, endPosition.y, endPosition.z);
-        }
-        else if (Input.KeyDown("W")) //Up
-        {
-            endPosition = new Vector3(endPosition.x, endPosition.y, endPosition.z + distanceToMove);
-        }
-        else if (Input.KeyDown("S")) //Down
-        {
-            endPosition = new Vector3(endPosition.x, endPosition.y, endPosition.z - distanceToMove);
+            if (Input.KeyDown("A")) //Left
+            {
+                endPosition = new Vector3(endPosition.x + distanceToMove, endPosition.y, endPosition.z);
+            }
+            else if (Input.KeyDown("D")) //Right
+            {
+                endPosition = new Vector3(endPosition.x - distanceToMove, endPosition.y, endPosition.z);
+            }
+            else if (Input.KeyDown("W")) //Up
+            {
+                endPosition = new Vector3(endPosition.x, endPosition.y, endPosition.z + distanceToMove);
+            }
+            else if (Input.KeyDown("S")) //Down
+            {
+                endPosition = new Vector3(endPosition.x, endPosition.y, endPosition.z - distanceToMove);
+            }
         }
     }
 }
