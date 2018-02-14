@@ -211,7 +211,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	meshComp->SetResource(res_mesh, true);
 
 	// ALLOCATING DATA INTO BUFFER ------------------------
-	uint ranges[4] = { num_vertices, num_indices, num_normals, num_joints }; //,num_tex_coords };
+	uint ranges[3] = { num_vertices, num_indices, num_normals}; //,num_tex_coords };
 
 	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices;
 
