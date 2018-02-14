@@ -1,4 +1,4 @@
-﻿using CulverinEditor;
+using CulverinEditor;
 using CulverinEditor.Debug;
 
 //Attach this script to the tank parent object if you want to see it rotate
@@ -10,7 +10,7 @@ public class Testelliot
 
     void Start()
     {
-   
+
     }
 
     void Update()
