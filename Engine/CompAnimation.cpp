@@ -10,6 +10,7 @@
 #include "ModuleWindow.h"
 #include "WindowInspector.h"
 #include "WindowSceneWorld.h"
+
 CompAnimation::CompAnimation(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	name_component = "Animation";

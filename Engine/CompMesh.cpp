@@ -520,6 +520,8 @@ void CompMesh::GenSkeleton()
 
 		float4x4 local_transform;
 		CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
+		comp_bone->resource_mesh = resource_mesh;
+		resource_mesh->num_game_objects_use_me++;
 
 		for (int i = 0; i < source->num_bones; i++)
 			if (source->bones[i].name == new_bone->GetName())

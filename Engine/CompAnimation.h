@@ -13,7 +13,6 @@ public:
 	CompAnimation(const CompAnimation& copy, GameObject* parent);
 	~CompAnimation();
 
-
 	void DrawBones();
 	void Clear();
 	void PreUpdate(float dt);

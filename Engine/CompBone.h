@@ -19,6 +19,15 @@ public:
 	void Draw();
 	void Clear();
 	void ShowOptions();
+	void ShowInspectorInfo();
+	void CopyValues(const CompBone* comp);
+
+	// SAVE - LOAD METHODS ----------------
+	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
+	void Load(const JSON_Object* object, std::string name);
+	// -------------------------------------
+
+	uint uuid_resource_reimported = 0;
 
 	struct Weight
 	{
