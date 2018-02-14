@@ -50,3 +50,8 @@ CompCanvasRender * CompGraphic::GetCanvasRender() const
 {
 	return my_canvas_render;
 }
+
+float4 CompGraphic::GetColor() const
+{
+	return color;
+}

@@ -1,6 +1,5 @@
 #ifndef COMPONENT_IMAGE_H
 #define COMPONENT_IMAGE_H
-#include "Math\float4.h"
 #include "CompGraphic.h"
 class ResourceMaterial;
 class CompRectTransform;
@@ -21,6 +20,7 @@ public:
 	void SetSourceImage(ResourceMaterial* set_source_image);
 	void SetColor(const float4& set_rgba);
 	void SetColor(float set_r, float set_g, float set_b, float set_a);
+	void SetTextureID(uint uid);
 
 	float4 GetColor()const;
 	ResourceMaterial* GetSourceImage()const;
@@ -30,7 +30,6 @@ public:
 private:
 	ResourceMaterial* source_image = nullptr;
 	uint uuid_source_image = 0;
-	float4 color=float4::one;
 	bool raycast_target=true;
 	bool select_source_image =false;
 

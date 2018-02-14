@@ -58,13 +58,10 @@ bool ModuleRenderGui::Start()
 		"uniform mat4 model;\n"
 		"layout(location = 0) in vec3 position;\n"
 		"layout(location = 1) in vec2 texCoord;\n"
-		"in vec4 Color;\n"
 		"out vec2 Frag_UV;\n"
-		"out vec4 Frag_Color;\n"
 		"void main()\n"
 		"{\n"
 		"	Frag_UV = texCoord;\n"
-		"	Frag_Color = Color;\n"
 		"	gl_Position = ProjMtx * model * vec4(position.xy,0,1);\n"
 		"}\n"
 	};
@@ -95,12 +92,14 @@ bool ModuleRenderGui::Start()
 	{
 		"#version 330\n"
 		"uniform sampler2D Texture;\n"
+		"uniform vec4 Color;\n"
+
 		"in vec2 Frag_UV;\n"
 		"in vec4 Frag_Color;\n"
 		"out vec4 Out_Color;\n"
 		"void main()\n"
 		"{\n"
-		"	Out_Color = vec4(1,0,0,1);\n"
+		"	Out_Color = Color ;\n"
 		"}\n"
 	};
 

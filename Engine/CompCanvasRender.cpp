@@ -235,9 +235,6 @@ void CompCanvasRender::DrawGraphic()
 	{
 		return;
 	}
-
-	//glPushMatrix();
-	//glMultMatrixf((float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
 	App->render_gui->default_ui_shader->Bind();
 
 
@@ -245,16 +242,8 @@ void CompCanvasRender::DrawGraphic()
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glGetError();
 
-	/*
-	if (graphic->GetTextureID() != -1)
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
-		CheckOpenGlError("glBindTexture color");
-		//glColor4f(image->GetImage()->GetRGBA().x, image->GetImage()->GetRGBA().y, image->GetImage()->GetRGBA().z, image->GetImage()->GetRGBA().w);
-	}
-	*/
+	
 	ImGuiIO& io = ImGui::GetIO();
 
 	const float ortho_projection[4][4] =
@@ -264,30 +253,32 @@ void CompCanvasRender::DrawGraphic()
 		{ 0.0f,								 0.0f,							  -1.0f,	0.0f },
 		{ -1.0f,							 1.0f,							  0.0f,		1.0f },
 	};
-	int width_dock = GetSizeDock("Scene").x;
-	int height_dock = GetSizeDock("Scene").y;
-	uint g_AttribLocationProjMtx = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "ProjMtx");
-	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
-	
 
 
-	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
-	float4x4 temp = camFrust.ViewMatrix();
-	CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
 
-
-	/*
-
-	GLint view2Loc = glGetUniformLocation(App->renderer3D->default_shader->programID, "view");
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "viewproj");
-	glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
-	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
-	*/
+	GLint g_AttribLocationProjMtx = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "ProjMtx");
+	GLint g_AttribLocationColor = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "Color");
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
+	uint g_AttribLocationTexture = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "Texture");
 
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&graphic->GetRectTrasnform()->GetGlobalTransform().Transposed());
+	CompRectTransform* transform = (CompRectTransform*)parent->FindComponentByType(C_RECT_TRANSFORM);
+
+	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&transform->GetGlobalTransform().Transposed());
+	glUniform1i(g_AttribLocationTexture, graphic->GetTextureID());
+	glUniform4f(g_AttribLocationColor,graphic->GetColor().x, graphic->GetColor().y, graphic->GetColor().z, graphic->GetColor().w);
+	
+	glGetError();
+
+	glActiveTexture(GL_TEXTURE0);
+	if (graphic->GetTextureID() != 0)
+	{
+		glBindTexture(GL_TEXTURE_2D, graphic->GetTextureID());
+		CheckOpenGlError("glBindTexture color");
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->vertices_id);
+	CheckOpenGlError("glBindBuffer vertices_id");
 
 	
 	glEnableVertexAttribArray(0);
@@ -307,8 +298,9 @@ void CompCanvasRender::DrawGraphic()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	CheckOpenGlError("glBindBuffer indices_id 0 ");
 
-	//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	//glBindTexture(GL_TEXTURE_2D, 0);
+	//Reset TextureColor
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);

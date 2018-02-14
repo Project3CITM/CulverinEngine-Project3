@@ -372,20 +372,20 @@ bool CompRectTransform::GetUpdateRect() const
 
 float3 CompRectTransform::GetNorthEastPosition()const
 {
-	return float3(GetPos().x + width*right_pivot.x, GetPos().y + height * left_pivot.y, GetPos().z);
+	return float3(width*right_pivot.x, height * left_pivot.y, GetPos().z);
 }
 
 float3 CompRectTransform::GetNorthWestPosition()const
 {
-	return float3(GetPos().x - width*left_pivot.x, GetPos().y + height * left_pivot.y, GetPos().z);
+	return float3(- width*left_pivot.x, height * left_pivot.y, GetPos().z);
 }
 
 float3 CompRectTransform::GetSouthEastPosition()const
 {
-	return float3(GetPos().x + width*right_pivot.x, GetPos().y - height * right_pivot.y, GetPos().z);
+	return float3(width*right_pivot.x, - height * right_pivot.y, GetPos().z);
 }
 
 float3 CompRectTransform::GetSouthWestPosition()const
 {
-	return float3(GetPos().x - width*left_pivot.x, GetPos().y - height * right_pivot.y, GetPos().z);
+	return float3(- width*left_pivot.x,- height * right_pivot.y, GetPos().z);
 }

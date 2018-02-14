@@ -175,6 +175,8 @@ void CompImage::ShowInspectorInfo()
 				if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
+					SetTextureID(source_image->GetTextureID());
+
 				}
 				Enable();
 			}
@@ -226,6 +228,7 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 			if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
 				App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
+				SetTextureID(source_image->GetTextureID());
 			}
 
 		}
@@ -248,6 +251,11 @@ void CompImage::SetColor(float set_r, float set_g, float set_b, float set_a)
 	SetColor(float4(set_r,set_g,set_b,set_a));
 }
 
+void CompImage::SetTextureID(uint uid)
+{
+	texture_id = uid;
+}
+
 float4 CompImage::GetColor() const
 {
 	return color;
@@ -257,3 +265,4 @@ ResourceMaterial * CompImage::GetSourceImage() const
 {
 	return source_image;
 }
+

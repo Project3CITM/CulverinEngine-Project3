@@ -5,6 +5,7 @@
 #include "Math\float4.h"
 
 
+
 class ResourceMaterial;
 class CompInteractive:public Component
 {
@@ -42,6 +43,26 @@ public:
 	ResourceMaterial* GetHighligtedSprite()const;
 	ResourceMaterial* GetPressedSprite()const;
 	ResourceMaterial* GetDisabledSprite()const;
+public:
+	enum States
+	{
+		STATE_NONE =-1,
+		STATE_NORMAL,
+		STATE_HIGHLIGHTED,
+		STATE_PRESSED,
+		STATE_DISABLED,
+		STATE_MAX
+	};
+	enum Transition
+	{
+		TRANSITION_NONE,
+		TRANSITION_COLOR,
+		TRANSITION_SPRITE,
+		TRANSITION_ANIMATION,
+		TRANSITION_MAX
+	};
+private:
+	//static std::list<CompInteractive> s_List;
 
 protected:
 	//Color tint parameters
@@ -54,6 +75,7 @@ protected:
 	//Sprite Swap parameters
 	ResourceMaterial* sprite[3];
 	uint uuid_reimported_sprite[3];
+
 
 };
 #endif // !COMPONENT_INTERACTIVE_H
