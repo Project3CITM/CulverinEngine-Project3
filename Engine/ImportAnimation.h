@@ -1,3 +1,4 @@
+#ifndef _IMPORT_ANIMATION_
 #define _IMPORT_ANIMATION_
 
 #include "Module.h"
