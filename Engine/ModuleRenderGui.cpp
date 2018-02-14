@@ -56,9 +56,11 @@ bool ModuleRenderGui::Start()
 		"#version 330\n"
 		"uniform mat4 ProjMtx;\n"
 		"uniform mat4 model;\n"
+		"uniform vec4 Color_UI_ME;\n"
 		"layout(location = 0) in vec3 position;\n"
 		"layout(location = 1) in vec2 texCoord;\n"
 		"out vec2 Frag_UV;\n"
+
 		"void main()\n"
 		"{\n"
 		"	Frag_UV = texCoord;\n"
@@ -78,7 +80,7 @@ bool ModuleRenderGui::Start()
 	if (vShaderCompiled != GL_TRUE)
 	{
 		//ShaderLog(vertexShader);
-		return nullptr;
+		//return nullptr;
 	}
 
 	//Attach vertex shader to program
@@ -92,14 +94,14 @@ bool ModuleRenderGui::Start()
 	{
 		"#version 330\n"
 		"uniform sampler2D Texture;\n"
-		"uniform vec4 Color;\n"
+		"uniform vec4 Color_UI_ME;\n"
 
 		"in vec2 Frag_UV;\n"
 		"in vec4 Frag_Color;\n"
 		"out vec4 Out_Color;\n"
 		"void main()\n"
 		"{\n"
-		"	Out_Color = Color ;\n"
+		"	Out_Color = Color_UI_ME*texture(Texture,Frag_UV.st);\n"
 		"}\n"
 	};
 
@@ -116,7 +118,7 @@ bool ModuleRenderGui::Start()
 	{
 
 		//ShaderLog(fragmentShader);
-		return nullptr;
+		//return nullptr;
 	}
 
 	//Attach fragment shader to program
@@ -130,7 +132,7 @@ bool ModuleRenderGui::Start()
 	if (programSuccess != GL_TRUE)
 	{
 		//ProgramLog(default_shader.mProgramID);
-		return nullptr;
+		//return nullptr;
 	}
 
 	Shader* newFragment = new Shader();

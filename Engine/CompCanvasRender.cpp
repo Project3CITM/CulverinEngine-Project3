@@ -257,17 +257,16 @@ void CompCanvasRender::DrawGraphic()
 
 
 	GLint g_AttribLocationProjMtx = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "ProjMtx");
-	GLint g_AttribLocationColor = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "Color");
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
-	uint g_AttribLocationTexture = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "Texture");
+	GLint g_AttribLocationColor = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "Color_UI_ME");
+	GLint modelLoc = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "model");
+	GLint g_AttribLocationTexture = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "Texture");
 
 	CompRectTransform* transform = (CompRectTransform*)parent->FindComponentByType(C_RECT_TRANSFORM);
 
 	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&transform->GetGlobalTransform().Transposed());
-	glUniform1i(g_AttribLocationTexture, graphic->GetTextureID());
-	glUniform4f(g_AttribLocationColor,graphic->GetColor().x, graphic->GetColor().y, graphic->GetColor().z, graphic->GetColor().w);
-	
+	//glUniform1i(g_AttribLocationTexture, graphic->GetTextureID());
+	glUniform4f(g_AttribLocationColor,graphic->GetColor().x, graphic->GetColor().y, graphic->GetColor().z, 1);
 	glGetError();
 
 	glActiveTexture(GL_TEXTURE0);
