@@ -56,9 +56,9 @@
 #include "PxSmoothNormals.h"
 #include "PxSimpleFactory.h"
 #include "PxStringTableExt.h"
-//#include "PxClothFabricCooker.h"
+#include "PxClothFabricCooker.h"
 #include "PxBroadPhaseExt.h"
-//#include "PxClothMeshQuadifier.h"
+#include "PxClothMeshQuadifier.h"
 #include "PxMassProperties.h"
 #include "PxSceneQueryExt.h"
 

@@ -1,8 +1,7 @@
 #include "ModulePhysics.h"
 
 #include "PhysX/Include/PxPhysicsAPI.h"
-#include "PhysX/Include/jpPhysicsWorld.h"
-#include "PhysX/Include/jpPhysicsRigidBody.h"
+#include "jpPhysicsWorld.h"
 
 ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 {

@@ -1119,12 +1119,6 @@
     <ClInclude Include="ModulePhysics.h">
       <Filter>Engine\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="PhysX\Include\jpPhysicsRigidBody.h">
-      <Filter>Engine\PhysX\jpPhysX</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysX\Include\jpPhysicsWorld.h">
-      <Filter>Engine\PhysX\jpPhysX</Filter>
-    </ClInclude>
     <ClInclude Include="ImGui\imgui_graph_nodes.h">
       <Filter>Engine\Tools\ImGUI</Filter>
     </ClInclude>
@@ -1136,6 +1130,12 @@
     </ClInclude>
     <ClInclude Include="ModuleMap.h">
       <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="jpPhysicsRigidBody.h">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="jpPhysicsWorld.h">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1472,12 +1472,6 @@
     <ClCompile Include="ModulePhysics.cpp">
       <Filter>Engine\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="PhysX\Include\jpPhysicsRigidBody.cpp">
-      <Filter>Engine\PhysX\jpPhysX</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysX\Include\jpPhysicsWorld.cpp">
-      <Filter>Engine\PhysX\jpPhysX</Filter>
-    </ClCompile>
     <ClCompile Include="ImGui\imgui_graph_nodes.cpp">
       <Filter>Engine\Tools\ImGUI</Filter>
     </ClCompile>
@@ -1489,6 +1483,12 @@
     </ClCompile>
     <ClCompile Include="ModuleMap.cpp">
       <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="jpPhysicsRigidBody.cpp">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="jpPhysicsWorld.cpp">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

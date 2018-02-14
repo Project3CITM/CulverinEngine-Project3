@@ -42,6 +42,11 @@
 #include "PxShape.h"
 
 
+#if PX_USE_CLOTH_API
+#include "cloth/PxClothTypes.h"
+#include "cloth/PxClothFabric.h"
+#endif
+
 
 #if !PX_DOXYGEN
 namespace physx
@@ -276,7 +281,7 @@ public:
 
 	@see PxClothFabric PxClothFabric.release() PxCloth
 	*/
-//	PX_DEPRECATED virtual PxClothFabric*	createClothFabric(const PxClothFabricDesc& desc) = 0;
+	PX_DEPRECATED virtual PxClothFabric*	createClothFabric(const PxClothFabricDesc& desc) = 0;
 
 	/**
 	\brief Return the number of cloth fabrics that currently exist.
@@ -406,6 +411,24 @@ public:
 	@see PxParticleFluid PxRegisterParticles
 	*/
 	PX_DEPRECATED virtual PxParticleFluid*	createParticleFluid(PxU32 maxParticles, bool perParticleRestOffset = false) = 0;
+#endif
+
+
+#if PX_USE_CLOTH_API
+	/**
+	\brief Creates a cloth.
+
+	\param globalPose The world space transform of the cloth.
+	\param fabric The fabric the cloth should use.
+	\param particles Particle definition buffer. The size of the buffer has to match fabric.getNbParticles().
+	\param flags Cloth flags.
+	\return The new cloth.
+
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+	
+	@see PxCloth PxClothFabric PxClothFlags PxRegisterCloth
+	*/
+	PX_DEPRECATED virtual PxCloth*	createCloth(const PxTransform& globalPose, PxClothFabric& fabric, const PxClothParticle* particles, PxClothFlags flags) = 0;
 #endif
 
 	/**

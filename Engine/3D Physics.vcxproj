@@ -14,7 +14,7 @@
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
     <ProjectName>CulverinEngine</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -136,6 +136,8 @@
     <ClInclude Include="CompMesh.h" />
     <ClInclude Include="ImportScript.h" />
     <ClInclude Include="include_wwise.h" />
+    <ClInclude Include="jpPhysicsRigidBody.h" />
+    <ClInclude Include="jpPhysicsWorld.h" />
     <ClInclude Include="mmgr\mmgr.h" />
     <ClInclude Include="mmgr\nommgr.h" />
     <ClInclude Include="ModuleEventSystem.h" />
@@ -268,8 +270,6 @@
     <ClInclude Include="PhysX\Include\GeomUtils\GuContactPoint.h" />
     <ClInclude Include="PhysX\Include\gpu\PxGpu.h" />
     <ClInclude Include="PhysX\Include\gpu\PxParticleGpu.h" />
-    <ClInclude Include="PhysX\Include\jpPhysicsRigidBody.h" />
-    <ClInclude Include="PhysX\Include\jpPhysicsWorld.h" />
     <ClInclude Include="PhysX\Include\particles\PxParticleBase.h" />
     <ClInclude Include="PhysX\Include\particles\PxParticleBaseFlag.h" />
     <ClInclude Include="PhysX\Include\particles\PxParticleCreationData.h" />
@@ -468,6 +468,8 @@
     <ClCompile Include="CompMesh.cpp" />
     <ClCompile Include="ImportScript.cpp" />
     <ClCompile Include="include_wwise.cpp" />
+    <ClCompile Include="jpPhysicsRigidBody.cpp" />
+    <ClCompile Include="jpPhysicsWorld.cpp" />
     <ClCompile Include="mmgr\mmgr.cpp" />
     <ClCompile Include="ModuleEventSystem.cpp" />
     <ClCompile Include="ModuleFS.cpp" />
@@ -477,8 +479,6 @@
     <ClCompile Include="ModuleRenderGui.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleShaders.cpp" />
-    <ClCompile Include="PhysX\Include\jpPhysicsRigidBody.cpp" />
-    <ClCompile Include="PhysX\Include\jpPhysicsWorld.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="JSONSerialization.cpp" />
     <ClCompile Include="ResourceAnimation.cpp" />
