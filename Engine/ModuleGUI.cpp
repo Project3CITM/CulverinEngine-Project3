@@ -450,61 +450,103 @@ update_status ModuleGUI::Update(float dt)
 		ImGui::PopItemWidth();
 		ImGui::PushItemWidth(10);
 		static bool map_created = false;
-		if (ImGui::Button("Create Map Tiled"))
+		if (map_created == false)
 		{
-			map_created = true;
-		}
-		if (map_created)
-		{
-			static int selected_type = -1;
-			static std::string type_Name[] = { "Walkable", "No-Walkable", "Joan" };
-			//Frist Select Type
-			ImGui::Separator();
-			static int ray[30][30];
-			static bool te = true;
-			if (te)
+			if (ImGui::Button("Create Map Tiled"))
 			{
-				te = false;
-				for (int i = 0; i < 30; i++)
+				for (int i = 0; i < MAX_ARRAY; i++)
 				{
-					for (int j = 0; j < 30; j++)
+					for (int j = 0; j < MAX_ARRAY; j++)
 					{
-						ray[i][j] = -1;
+						map[i][j] = -1;
 					}
 				}
 				for (int i = 0; i < ws; i++)
 				{
 					for (int j = 0; j < hs; j++)
 					{
-						ray[i][j] = 0;
+						map[i][j] = 0;
+					}
+				}
+				map_created = true;
+			}
+		}
+		if (map_created)
+		{
+			ImGui::Separator();
+			if (ImGui::Button("Reset Map"))
+			{
+				for (int i = 0; i < MAX_ARRAY; i++)
+				{
+					for (int j = 0; j < MAX_ARRAY; j++)
+					{
+						map[i][j] = -1;
+					}
+				}
+				for (int i = 0; i < ws; i++)
+				{
+					for (int j = 0; j < hs; j++)
+					{
+						map[i][j] = 0;
 					}
 				}
 			}
-
+			ImGui::SameLine();
+			if (ImGui::Button("Delete Map"))
+			{
+				for (int i = 0; i < MAX_ARRAY; i++)
+				{
+					for (int j = 0; j < MAX_ARRAY; j++)
+					{
+						map[i][j] = -1;
+					}
+				}
+				map_created = false;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Complet with No-Walk"))
+			{
+				for (int i = 0; i < ws; i++)
+				{
+					for (int j = 0; j < hs; j++)
+					{
+						if (map[i][j] == 0)
+						{
+							map[i][j] = 2;
+						}
+					}
+				}
+			}
+			static int selected_type = -1;
+			static std::string type_Name[] = { "Walkable", "No-Walkable", "Joan" };
+			//Frist Select Type
+			ImGui::Separator();
+			int total_map = ws * hs;
 			for (int i = 0; i < ws; i++)
 			{
 				for (int j = 0; j < hs; j++)
 				{
 					if (j > 0) ImGui::SameLine();
 					ImGui::PushID(j + i * 1000);
-					if (ray[i][j] > 0)
+					if (map[i][j] > 0)
 					{
-						if (ray[i][j] == 1)
+						if (map[i][j] == 1)
 						{
 							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
 						}
-						else if (ray[i][j] == 2)
+						else if (map[i][j] == 2)
 						{
 							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 						}
-						else if (ray[i][j] == 3)
+						else if (map[i][j] == 3)
 						{
 							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
 						}
+						total_map--;
 					}
 					if (ImGui::Button("ID"))
 						ImGui::OpenPopup("ID");
-					if (ray[i][j] > 0)
+					if (map[i][j] > 0)
 					{
 						ImGui::PopStyleColor();
 					}
@@ -513,11 +555,39 @@ update_status ModuleGUI::Update(float dt)
 						for (int k = 0; k < IM_ARRAYSIZE(type_Name); k++)
 							if (ImGui::Selectable(type_Name[k].c_str()))
 							{
-								ray[i][j] = k + 1;
+								map[i][j] = k + 1;
 							}
 						ImGui::EndPopup();
 					}
 					ImGui::PopID();
+				}
+			}
+			ImGui::Text("Finish");
+			if (total_map == 0)
+			{
+				ImGui::SameLine(); 
+				if (ImGui::Button("Save Map"))
+				{
+					map_string = "";
+					for (int i = 0; i < ws; i++)
+					{
+						for (int j = 0; j < hs; j++)
+						{
+							map_string += std::to_string(map[i][j]);
+						}
+					}
+				}
+				if (ImGui::Button("Export Map ('Name'.map.json)"))
+				{
+					//map_string = "";
+					//for (int i = 0; i < ws; i++)
+					//{
+					//	for (int j = 0; j < hs; j++)
+					//	{
+					//		map_string += std::to_string(map[i][j]);
+					//	}
+					//}
+					// ...........
 				}
 			}
 		}

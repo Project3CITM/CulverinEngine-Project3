@@ -13,6 +13,7 @@
 class GameObject;
 
 #define IM_NEWLINE "\r\n"
+#define MAX_ARRAY 100
 
 enum WindowName
 {
@@ -73,6 +74,7 @@ public:
 
 	//Map ----------
 	std::string map_string;
+	int map[MAX_ARRAY][MAX_ARRAY];
 
 private:
 
