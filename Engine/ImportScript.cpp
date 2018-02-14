@@ -535,45 +535,39 @@ void ImportScript::ConsoleLog(MonoString* string)
 	}
 }
 
-mono_bool ImportScript::KeyDown(MonoString* string)
+mono_bool ImportScript::KeyDown(MonoObject* obj, MonoObject* key)
 {
-	const char* key_ = mono_string_to_utf8(string);
-	SDL_Scancode key = App->input->GetKeyFromName(key_);
-	if (App->input->GetKey(key) == KEY_STATE::KEY_DOWN)
+	if (App->input->GetKey((int)key) == KEY_STATE::KEY_DOWN)
 	{
 		return true;
 	}
-	if(key == SDL_SCANCODE_UNKNOWN)
+	if((int)key == SDL_SCANCODE_UNKNOWN)
 	{
 		LOG("[error]Error with key pressed!");
 	}
 	return false;
 }
 
-mono_bool ImportScript::KeyUp(MonoString* string)
+mono_bool ImportScript::KeyUp(MonoObject* obj, MonoObject* key)
 {
-	const char* key_ = mono_string_to_utf8(string);
-	SDL_Scancode key = App->input->GetKeyFromName(key_);
-	if (App->input->GetKey(key) == KEY_STATE::KEY_UP)
+	if (App->input->GetKey((int)key) == KEY_STATE::KEY_UP)
 	{
 		return true;
 	}
-	if (key == SDL_SCANCODE_UNKNOWN)
+	if ((int)key == SDL_SCANCODE_UNKNOWN)
 	{
 		LOG("[error]Error with key pressed!");
 	}
 	return false;
 }
 
-mono_bool ImportScript::KeyRepeat(MonoString* string)
+mono_bool ImportScript::KeyRepeat(MonoObject* obj, MonoObject* key)
 {
-	const char* key_ = mono_string_to_utf8(string);
-	SDL_Scancode key = App->input->GetKeyFromName(key_);
-	if (App->input->GetKey(key) == KEY_STATE::KEY_REPEAT)
+	if (App->input->GetKey((int)key) == KEY_STATE::KEY_REPEAT)
 	{
 		return true;
 	}
-	if (key == SDL_SCANCODE_UNKNOWN)
+	if ((int)key == SDL_SCANCODE_UNKNOWN)
 	{
 		LOG("[error]Error with key pressed!");
 	}

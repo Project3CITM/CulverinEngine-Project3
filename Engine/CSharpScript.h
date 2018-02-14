@@ -118,8 +118,10 @@ public:
 	void SetVarValue(ScriptVariable* variable, void* new_val);
 	// ------------------------------------------------------------------
 
+	/*Input*/
 	MonoObject* GetMousePosition();
 
+	/*Game Object*/
 	mono_bool IsGOActive(MonoObject* object);
 	void SetGOActive(MonoObject* object, mono_bool active);
 	MonoObject* GetOwnGameObject();
