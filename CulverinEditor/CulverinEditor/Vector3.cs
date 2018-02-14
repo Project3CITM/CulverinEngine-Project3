@@ -217,17 +217,7 @@ namespace CulverinEditor
             float distance = -Vector3.Dot(planeNormal.Normalized, vector);
             return vector + planeNormal * distance;
         }
-
-        /*public static Vector3 Reflect(Vector3 inDirection, Vector3 inNormal)
-        {
-
-        }
-
-        public static Vector3 Slerp(Vector3 a, Vector3 b, float t)
-        {
-            Mathf.
-        }*/
-
+       
         public Vector3 Normalized
         {
             get

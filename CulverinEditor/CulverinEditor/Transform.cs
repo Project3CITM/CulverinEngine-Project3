@@ -2,7 +2,7 @@
 
 namespace CulverinEditor
 {
-    public class Transform : Component
+    public class Transform : CulverinBehaviour
     {
         //protected Transform();        
         public Vector3 Position {
