@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "JSONSerialization.h"
 #include "ModuleEventSystem.h"
+#include "ModuleGUI.h"
 
 ModuleShaders::ModuleShaders()
 {
@@ -78,6 +79,10 @@ update_status ModuleShaders::Update(float dt)
 
 	Enable_Text_Editor();
 	
+	if (App->gui->shader_program_creation) {
+		SendEventWithAllShaders();
+	}
+
 	return update_status::UPDATE_CONTINUE;
 }
 
@@ -566,8 +571,7 @@ void ModuleShaders::OnEvent(Event & event)
 	switch (event.type)
 	{
 	case EventType::EVENT_OPEN_SHADER_EDITOR:
-		JSON_Object* obj_proj;
-		JSON_Value* file_proj;
+
 		std::string path= Shader_Directory_fs+ "/" + event.shadereditor.name;
 
 		switch (event.shadereditor.shader_type)
@@ -586,10 +590,7 @@ void ModuleShaders::OnEvent(Event & event)
 		shader_text_active.shaderPath = path;
 		shader_text_active.shaderType = event.shadereditor.shader_type;
 		enable_editor = event.shadereditor.open_editor;
-		
-		
-		
-		
+	
 		//----------------------
 		/*App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, path.c_str());
 
@@ -652,4 +653,12 @@ void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, int & v)
 	GLint var_loc = glGetUniformLocation(ID, uniformName);
 	glUniform1i(var_loc, v);
 
+}
+
+void ModuleShaders::SendEventWithAllShaders() 
+{
+	Event shader_event;
+	shader_event.shadereditor.type = EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
+	//need to fix std::pair
+	//shader_event.sendshaderobject.shaders = shaders;
 }

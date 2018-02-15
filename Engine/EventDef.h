@@ -1,6 +1,5 @@
 #ifndef _EVENTDEF_
 #define _EVENTDEF_
-
 /*-----------------------------------------------------------------------------------------------------------*/
 /*---Add new events:-----------------------------------------------------------------------------------------*/
 /*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))--------------*/
@@ -19,6 +18,7 @@
 class GameObject;
 class Component;
 enum ShaderType;
+class Shader;
 
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
@@ -42,9 +42,10 @@ enum EventType
 	/*----------------------Physics---------------------*/
 
 	/*------------------Shader Pipeline-----------------*/
-	EVENT_CREATE_SHADER,
 	EVENT_CREATE_SHADER_PROGRAM,
+	EVENT_SEND_ALL_SHADER_OBJECTS,
 	EVENT_OPEN_SHADER_EDITOR,
+
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
@@ -133,19 +134,21 @@ struct EWindowResize
 /*--------------------------------------------------*/
 /*------------------Shader Pipeline-----------------*/
 /*--------------------------------------------------*/
-struct ECreateShader
-{
-	EventType type;
-	ShaderType shader_type;
-	const char* name;	//std::string?
-	
-};
-
 struct ECreateShaderProgram
 {
 	EventType type;
 	const char* name;	//std::string?
-	//std::queue<int> ShaderObjects;
+	Shader* Shader1;
+	Shader* Shader2;
+};
+
+struct ESendAllShaderObject
+{
+	ESendAllShaderObject() {}
+	EventType type= EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
+	//This vector makes std pair of the cpp errors
+	//need to fix this
+	//std::vector<Shader*> shaders;
 };
 
 struct EOpenShaderEditor
@@ -171,6 +174,8 @@ struct EOpenShaderEditor
 /*--------------------------------------------------*/
 union Event
 {
+	Event() {};
+	~Event() {};
 	EventType type;
 	/*----------------------Engine----------------------*/
 	EDeleteGO deletego;
@@ -188,8 +193,8 @@ union Event
 	/*----------------------Physics---------------------*/
 
 	/*------------------Shader Pipeline-----------------*/
-	ECreateShader shader;
 	ECreateShaderProgram shaderprogram;
+	ESendAllShaderObject sendshaderobject;
 	EOpenShaderEditor shadereditor;
 	/*----------------Skeletal Animation----------------*/
 

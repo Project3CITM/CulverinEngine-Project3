@@ -236,7 +236,8 @@ update_status ModuleGUI::Update(float dt)
 				}
 				if (ImGui::MenuItem("Create Shader Program"))
 				{
-
+					shader_program_creation_UI = true;
+					shader_program_creation = true;
 				}
 				ImGui::EndMenu();
 			}
@@ -492,6 +493,49 @@ update_status ModuleGUI::Update(float dt)
 	
 	}
 
+	if (shader_program_creation_UI) {
+
+		ImGui::Begin("Shader Object Definition", &shader_obj_creation);
+
+		ImGui::InputText("Name of the Shader", str_shad_prg_temp, 64);
+
+		std::string shader_options;
+		std::string name;
+		for (int i = 0; i < vec_temp_shader.size(); i++) {
+			shader_options += vec_temp_shader[i]->name;
+			shader_options += '\0';
+		}
+
+		int combo_shaders_obj=-1;
+		int combo_shaders_obj2 =-1;
+
+		ImGui::Combo("Shader 1:", &combo_shaders_obj, shader_options.c_str());
+
+		ImGui::Combo("Shader 2:", &combo_shaders_obj2, shader_options.c_str());
+
+		if (ImGui::Button("Create")) {
+
+			Event shader_event_prg;
+			shader_event_prg.shaderprogram.type = EventType::EVENT_CREATE_SHADER_PROGRAM;
+			shader_event_prg.shaderprogram.name = str_shad_prg_temp;
+
+			if (combo_shaders_obj != -1) {
+				shader_event_prg.shaderprogram.Shader1 = vec_temp_shader[combo_shaders_obj];
+			}
+
+			if (combo_shaders_obj2 != -1) {
+				shader_event_prg.shaderprogram.Shader2 = vec_temp_shader[combo_shaders_obj2];
+			}
+
+			PushEvent(shader_event_prg);
+
+			vec_temp_shader.clear();
+
+			shader_program_creation_UI = false;
+		}
+
+		ImGui::End();
+	}
 
 	//-----------------------------------------------------------
 
@@ -1142,4 +1186,22 @@ void ModuleGUI::ShowEngineState()
 void ModuleGUI::ShowCreateNewScriptWindow()
 {
 	window_create_new_script = true;
+}
+
+bool ModuleGUI::SetEventListenrs()
+{
+	AddListener(EventType::EVENT_SEND_ALL_SHADER_OBJECTS, this);
+	return true;
+}
+
+void ModuleGUI::OnEvent(Event& event)
+{
+	switch (event.type)
+	{
+	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:
+		//need to fix std::pair
+		//vec_temp_shader = event.sendshaderobject.shaders;
+		break;
+	}
+
 }

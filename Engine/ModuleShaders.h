@@ -56,7 +56,6 @@ public:
 
 	Shader*   CompileShader(std::string path, std::string name, ShaderType type);
 	std::string GetShaderError(uint ID);
-
 	
 	void   AddShaderList(Shader* newShader);
 
@@ -87,7 +86,7 @@ public:
 	void OnEvent(Event& event);
 
 	void Enable_Text_Editor();
-
+	void SendEventWithAllShaders();
 	std::string Shader_Directory_fs;
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;
