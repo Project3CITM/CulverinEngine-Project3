@@ -552,8 +552,26 @@ void ModuleShaders::OnEvent(Event & event)
 	switch (event.type)
 	{
 	case EventType::EVENT_CREATE_SHADER:
-		//(ECreateShader*)event
-		//CompileShader()
+		JSON_Object* obj_proj;
+		JSON_Value* file_proj;
+		std::string path= Shader_Directory_fs+ "/" + event.shader.name;
+		App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, path.c_str());
+		switch (event.shader.shader_type) {
+		case ShaderType::fragment:
+			path += ".frag";
+			break;
+		case ShaderType::vertex:
+			path += ".vert";
+			break;
+		case ShaderType::geometry:
+			path += ".geom";
+			break;
+		}
+
+		char* serialized_string = json_serialize_to_string_pretty(file_proj);
+		json_serialize_to_file(file_proj, path.c_str());
+		Shader* new_shader = CompileShader(path, event.shader.name, event.shader.shader_type);
+
 		break;
 	}
 }

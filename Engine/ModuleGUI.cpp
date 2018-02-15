@@ -466,7 +466,7 @@ update_status ModuleGUI::Update(float dt)
 	
 		shader_obj_creation = true;
 		
-		char str_shad_temp[64]="";
+	
 		ImGui::InputText("Name of the Shader", str_shad_temp, 64);
 
 		
