@@ -741,6 +741,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "Transform";
 	}
+	else if (name == "CulverinEditor.Audio")
+	{
+		comp_name = "Audio";
+	}
 
 	MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", comp_name);
 	if (classT)

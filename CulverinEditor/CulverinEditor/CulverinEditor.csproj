@@ -38,6 +38,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audio.cs" />
+    <Compile Include="CompAudio.cs" />
     <Compile Include="CulverinBehaviour.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Object.cs" />

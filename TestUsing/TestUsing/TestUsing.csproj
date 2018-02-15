@@ -38,6 +38,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioTest.cs" />
     <Compile Include="Code.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Testelliot.cs" />

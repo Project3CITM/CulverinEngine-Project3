@@ -88,6 +88,14 @@ private:
 	static int GetHeightMap();
 	static int GetWidthMap();
 
+	/*Audio*/
+
+	static void StopAllSounds();
+	static void PauseAllSounds();
+	static void ResumeAllSounds();
+
+	static void PlayAudioEvent();
+
 private:
 	std::string nameNewScript;
 	std::string mono_path;

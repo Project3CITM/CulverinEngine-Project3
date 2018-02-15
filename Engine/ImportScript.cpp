@@ -10,7 +10,7 @@
 #include "JSONSerialization.h"
 #include "CSharpScript.h"
 #include "Timer.h"
-
+#include "ModuleAudio.h"
 #include <direct.h>
 #pragma comment(lib, "mono-2.0-sgen.lib")
 
@@ -504,7 +504,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Transform::SetRotation", (const void*)SetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::GetRotation", (const void*)GetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::RotateAroundAxis", (const void*)IncrementRotation);
-
+	
 	//CONSOLE FUNCTIONS ------------------
 	mono_add_internal_call("CulverinEditor.Debug.Debug::Log", (const void*)ConsoleLog);
 	//INPUT FUNCTIONS -------------------
@@ -525,6 +525,14 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Map.Map::GetMapString", (const void*)GetMapString);
 	mono_add_internal_call("CulverinEditor.Map.Map::GetHeightMap", (const void*)GetHeightMap);
 	mono_add_internal_call("CulverinEditor.Map.Map::GetWidthMap", (const void*)GetWidthMap);
+
+	//AUDIO FUNCTIONS --------------------
+	mono_add_internal_call("CulverinEditor.Audio::StopAllSounds", (const void*)StopAllSounds);
+	mono_add_internal_call("CulverinEditor.Audio::PauseAllSounds", (const void*)PauseAllSounds);
+	mono_add_internal_call("CulverinEditor.Audio::ResumeAllSounds", (const void*)ResumeAllSounds);
+
+	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
+
 }
 
 //Log messages into Engine Console
@@ -704,7 +712,7 @@ void ImportScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 	current->IncrementRotation(object, vector3);
 }
 
-// Map Funcitons -------------
+// Map Functions -------------
 MonoString* ImportScript::GetMapString(MonoObject* object)
 {
 	return current->GetMapString(object);
@@ -718,4 +726,27 @@ int ImportScript::GetHeightMap()
 int ImportScript::GetWidthMap()
 {
 	return App->map->GetHeightMap();
+}
+
+
+// Audio Functions ------------
+
+void ImportScript::StopAllSounds()
+{
+	App->audio->StopSounds();
+}
+
+void ImportScript::PauseAllSounds()
+{
+	App->audio->PauseSounds();
+}
+
+void ImportScript::ResumeAllSounds()
+{
+	App->audio->ResumeSounds();
+}
+
+void ImportScript::PlayAudioEvent()
+{
+	//current->cu
 }
