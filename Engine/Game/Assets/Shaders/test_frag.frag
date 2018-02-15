@@ -20,6 +20,7 @@ uniform float _time;
 uniform float test;
 uniform vec4 col;
 uniform vec4 col2;
+uniform bool test_bool;
 out vec4 color;
 
 
@@ -32,6 +33,9 @@ uniform mat4 view;
 
 void main()
 {
-
-color = col + col2;
+vec4 final_col = col;
+if(!test_bool){
+final_col = col2;
+}
+color =final_col;
 }

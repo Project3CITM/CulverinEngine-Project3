@@ -502,8 +502,9 @@ void CompMesh::SetUniformVariables(ShaderProgram * shader)
 	//BOOL
 	if(shader->bool_variables.size() != 0)
 	while (shader->it_bool_variables != shader->bool_variables.end()) {
+
 		GLint bool_loc = glGetUniformLocation(shader->programID, (*shader->it_bool_variables).var_name.c_str());
-		glUniform1i(bool_loc,(int)(*shader->it_bool_variables).value);
+		glUniform1i(bool_loc,(*shader->it_bool_variables).value);
 		shader->it_bool_variables++;
 	}
 	//INT
@@ -515,7 +516,7 @@ void CompMesh::SetUniformVariables(ShaderProgram * shader)
 	}
 	if (shader->float_variables.size() != 0)
 	while (shader->it_float_variables != shader->float_variables.end()) {
-		GLint float_loc = glGetUniformLocation(shader->programID, (*shader->it_float_variables).var_name.c_str());
+		GLint float_loc = glGetUniformLocation(shader->programID, (*shader->it_float_variables).var_name.c_str());		
 		glUniform1f(float_loc, (*shader->it_float_variables).value);
 		shader->it_float_variables++;
 	}

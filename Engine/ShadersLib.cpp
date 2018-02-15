@@ -316,7 +316,7 @@ void ShaderProgram::GetProgramVariables()
 		}
 
 		//Bool
-		if (temp.type == GL_FLOAT_VEC4)
+		if (temp.type == GL_BOOL)
 		{
 			boolVar bool_var;
 			bool_var.var_name = temp.name;
