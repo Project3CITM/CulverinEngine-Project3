@@ -1,28 +1,28 @@
-Status (New, Duplicated, Wontfix, Could not reproduce, Need more information, Rejected)
+- Status (New, Duplicated, Wontfix, Could not reproduce, Need more information, Rejected)
 
 New
 
-Category (Gamplay, animation, scripting, particles, physics,...)
+- Category (Gamplay, animation, scripting, particles, physics,...)
 
 
 
-Description (Explain with detail the issue)
+- Description (Explain with detail the issue)
 
 
 
-Steps to reproduce (Explain the exact steps to reproduce this issue)
+- Steps to reproduce (Explain the exact steps to reproduce this issue)
 
 
 
-Priority (P1:Critical, P2:High, P3:Medium, P4;Low)
+- Priority (P1:Critical, P2:High, P3:Medium, P4;Low)
 
 
 
-Screenshot
+- Screenshot
 
 
 
-Annex (In case you don't know which Priority to put):
+- Annex (In case you don't know which Priority to put):
 
   Priority: Indicates the urgency with which it needs to be fixed.
   
