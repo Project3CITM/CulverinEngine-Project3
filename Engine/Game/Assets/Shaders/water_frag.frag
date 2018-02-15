@@ -6,7 +6,7 @@ in vec3 ourPos;
 in float wave_height;
 uniform float _time;
 out vec4 color;
-uniform sampler2D texture_;
+uniform sampler2D albedo;
 uniform sampler2D normal_map;
 uniform sampler2D texture3;
 
@@ -46,7 +46,7 @@ vec3 lcolor =ourColor.xyz;
 vec3 viewDirection = normalize(vec3( view *vec4(0,0,0, 1.0) - model * vec4(ourPos*2,1)));
 
 
-vec3 color_texture = texture(texture_, TexCoord/1.2 + ((sin(_time/2)+1)/20)).xyz * diffuse;
+vec3 color_texture = texture(albedo, TexCoord/1.2 + ((sin(_time/2)+1)/20)).xyz * diffuse;
 vec3 normal_map = texture(normal_map, TexCoord).xyz;
 vec3 foam_tex = texture(texture3,TexCoord/1.2 +  ((sin(_time*3))/100)).xyz * 0.7;
 

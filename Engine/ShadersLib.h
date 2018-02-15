@@ -49,7 +49,7 @@ struct float3Var {
 
 struct ColorVar {
 	std::string var_name;
-	float4 color = float4::zero;
+	float4 color = float4(256,256,256,256);
 };
 
 struct floatVar {

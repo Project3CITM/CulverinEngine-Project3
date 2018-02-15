@@ -1,4 +1,4 @@
-#ifndef _LIGHT_
+/*#ifndef _LIGHT_
 #define _LIGHT_
 
 #include "Color.h"
@@ -22,3 +22,4 @@ struct Light
 };
 
 #endif
+*/
