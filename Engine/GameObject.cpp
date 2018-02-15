@@ -1053,11 +1053,23 @@ void GameObject::GetComponentsByType(Comp_Type type, std::vector<Component*>* fi
 {
 	for (uint i = 0; i < components.size(); i++)
 	{
-		if (components[i]->GetType() == type) // We need to check if the component is ACTIVE first?¿
+		if (components[i]->GetType() == type)
 		{
 			fill_comp->push_back(components[i]);
 		}
 	}
+}
+
+Component* GameObject::GetComponentByName(const char* name_component) const
+{
+	for (uint i = 0; i < components.size(); i++)
+	{
+		if (strcmp(components[i]->GetName(), name_component) == 0)
+		{
+			return components[i];
+		}
+	}
+	return nullptr;
 }
 
 Component* GameObject::FindParentComponentByType(Comp_Type type)const

@@ -776,7 +776,11 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	}
 	else
 	{
-		classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", comp_name);
+		GameObject* actual_temp = game_objects[object];
+		if (actual_temp->GetComponentByName(comp_name) != nullptr) // if has component
+		{
+			classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", comp_name);
+		}
 	}
 
 	if (classT)

@@ -81,6 +81,7 @@ public:
 	Component* FindComponentByType(Comp_Type type) const;
 	Component* FindParentComponentByType(Comp_Type type)const;
 	void GetComponentsByType(Comp_Type type, std::vector<Component*>* fill_comp) const;
+	Component* GetComponentByName(const char* name_component) const;
 
 	CompTransform* GetComponentTransform() const;
 	CompRectTransform * GetComponentRectTransform() const;
