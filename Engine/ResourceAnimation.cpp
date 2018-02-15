@@ -52,8 +52,6 @@ AnimBone::~AnimBone()
 
 void AnimBone::UpdateBone(GameObject* bone, std::vector<AnimationClip*>& clip_vec) const
 {
-	if ((*clip_vec.begin()) != nullptr)
-	{
 		float3 pos;
 		Quat rot;
 		float3 scale;
@@ -63,16 +61,14 @@ void AnimBone::UpdateBone(GameObject* bone, std::vector<AnimationClip*>& clip_ve
 			pos = GetPosition(*it);
 			rot = GetRotation(*it);
 			scale = GetScale(*it);
+
+			CompTransform* transform = bone->GetComponentTransform();
+
+			transform->SetPos(pos);
+			transform->SetRot(rot);
+			transform->SetScale(scale);
 		}
-
 		//TODO Blending
-
-		CompTransform* transform = bone->GetComponentTransform();
-
-		transform->SetPos(pos);
-		transform->SetRot(rot);
-		transform->SetScale(scale);
-	}
 }
 
 
