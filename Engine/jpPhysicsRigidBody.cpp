@@ -32,34 +32,39 @@ jpPhysicsRigidBody::~jpPhysicsRigidBody()
 	}
 }
 
-void jpPhysicsRigidBody::ToStatic(physx::PxPhysics* px_physics)
+void jpPhysicsRigidBody::ToStatic()
 {
-	if (is_dynamic && px_physics)
+	if (is_dynamic)
 	{
 		physx::PxScene*	scene = body->getScene();
-		physx::PxRigidActor* temp_body = physx::PxCreateStatic(*px_physics, body->getGlobalPose(), body_shape->getGeometry().any(),*default_material);
-		body->release();
 
-		body = temp_body;
-		body->getShapes(&body_shape, 1);
-		scene->addActor(*temp_body);
+		if (scene)
+		{
+			physx::PxRigidActor* temp_body = physx::PxCreateStatic(scene->getPhysics(), body->getGlobalPose(), body_shape->getGeometry().any(), *default_material);
+			body->release();
 
+			body = temp_body;
+			body->getShapes(&body_shape, 1);
+			scene->addActor(*temp_body);
+		}
 		is_dynamic = false;
 	}
 }
 
-void jpPhysicsRigidBody::ToDynamic(physx::PxPhysics* px_physics)
+void jpPhysicsRigidBody::ToDynamic()
 {
-	if (!is_dynamic && px_physics)
+	if (!is_dynamic)
 	{
 		physx::PxScene*	scene = body->getScene();
-		physx::PxRigidActor* temp_body = physx::PxCreateDynamic(*px_physics, body->getGlobalPose(), body_shape->getGeometry().any(), *default_material, 1.0f);
-		body->release();
+		if (scene)
+		{
+			physx::PxRigidActor* temp_body = physx::PxCreateDynamic(scene->getPhysics(), body->getGlobalPose(), body_shape->getGeometry().any(), *default_material, 1.0f);
+			body->release();
 
-		body = temp_body;
-		body->getShapes(&body_shape, 1);
-		scene->addActor(*temp_body);
-
+			body = temp_body;
+			body->getShapes(&body_shape, 1);
+			scene->addActor(*temp_body);
+		}
 		is_dynamic = true;
 	}
 }
@@ -97,6 +102,23 @@ void jpPhysicsRigidBody::SetAsKinematic(bool kinematic)
 	}
 }
 
+void jpPhysicsRigidBody::SetAsTrigger(bool trigger)
+{
+	if (body_shape)
+	{
+		if (trigger)
+		{
+			body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else
+		{
+			body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+			body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+		}
+	}
+}
+
 void jpPhysicsRigidBody::SetTransform(float * trans_mat)
 {
 	physx::PxMat44 mat = physx::PxMat44(trans_mat);
@@ -117,31 +139,31 @@ void jpPhysicsRigidBody::SetTransform(float3 pos, Quat rotation, bool autoawake)
 
 void jpPhysicsRigidBody::SetGeometry(physx::PxGeometry new_geometry)
 {
-	//Get the current material for the new shape
-//	physx::PxMaterial* body_material = nullptr;
-//	body_shape->getMaterials(&body_material, 1);
-
-	body->detachShape(*body_shape);
-	body_shape = body->createShape(new_geometry, *default_material);
-	body->attachShape(*body_shape);
+	if (body)
+	{
+		body->detachShape(*body_shape);
+		body_shape = body->createShape(new_geometry, *default_material);
+		body->attachShape(*body_shape);
+	}
 }
 
 void jpPhysicsRigidBody::SetMaterial(float &static_friction, float &dynamic_friction, float &restitution)
 {
-	if (static_friction < 0) static_friction = 0;
-	else if (static_friction > PX_MAX_F32) static_friction = PX_MAX_F32-1;
+	if (default_material)
+	{
+		if (static_friction < 0) static_friction = 0;
+		else if (static_friction > PX_MAX_F32) static_friction = PX_MAX_F32 - 1;
 
-	if (dynamic_friction < 0) dynamic_friction = 0;
-	else if (dynamic_friction > PX_MAX_F32) dynamic_friction = PX_MAX_F32-1;
+		if (dynamic_friction < 0) dynamic_friction = 0;
+		else if (dynamic_friction > PX_MAX_F32) dynamic_friction = PX_MAX_F32 - 1;
 
-	if (restitution < 0) restitution = 0;
-	else if (restitution > 1) restitution = 1;
+		if (restitution < 0) restitution = 0;
+		else if (restitution > 1) restitution = 1;
 
-	//physx::PxMaterial* material;
-	//body_shape->getMaterials(&material, 1);
-	default_material->setStaticFriction(static_friction);
-	default_material->setDynamicFriction(dynamic_friction);
-	default_material->setRestitution(restitution);
+		default_material->setStaticFriction(static_friction);
+		default_material->setDynamicFriction(dynamic_friction);
+		default_material->setRestitution(restitution);
+	}
 }
 
 void jpPhysicsRigidBody::SetShape(physx::PxShape * new_shape)
@@ -151,11 +173,10 @@ void jpPhysicsRigidBody::SetShape(physx::PxShape * new_shape)
 	{
 		body->detachShape(*body_shape);
 	}
-	
-	body_shape = new_shape;
-	
-	if (body_shape)
+		
+	if (new_shape)
 	{
+		body_shape = new_shape;
 		body->attachShape(*body_shape);
 	}
 }
@@ -294,6 +315,7 @@ physx::PxRigidActor * jpPhysicsRigidBody::GetActor()
 	{
 		return body;
 	}
+	else return nullptr;
 }
 
 bool jpPhysicsRigidBody::Sleeping()

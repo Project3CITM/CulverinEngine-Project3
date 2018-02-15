@@ -34,11 +34,6 @@ public:
 	// PhysX Methods ----------------
 	jpPhysicsRigidBody* GetNewRigidBody(bool dynamic = false);
 
-	// Chenge Actor type: static/dynamic
-	void ChangeRigidBodyToStatic(jpPhysicsRigidBody* actor);
-	void ChangeRigidBodyToDynamic(jpPhysicsRigidBody* actor);
-
-
 private:
 	physx::PxPhysics* mPhysics = nullptr;
 
