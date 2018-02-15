@@ -52,13 +52,17 @@ public:
 	bool SetEventListenrs();
 	void OnEvent(Event& event);
 
+	void Enable_Text_Editor();
+
 	std::string Shader_Directory_fs;
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;
 
 public:
 	std::string last_shader_error = "";
-
+	TextEditor editor_shaders;
+	bool enable_editor = false;
+	Shader shader_text_active;
 };
 
 

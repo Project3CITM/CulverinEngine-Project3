@@ -460,42 +460,36 @@ update_status ModuleGUI::Update(float dt)
 	// Window Creating Shader Object --------------------------------
 
 	if (shader_obj_creation) {
-
 		ImGui::Begin("Shader Object Definition", &shader_obj_creation);
 
-	
-		shader_obj_creation = true;
-		
-	
 		ImGui::InputText("Name of the Shader", str_shad_temp, 64);
-
-		
 
 		ImGui::Combo("Shaders Mode", &combo_shaders, "Vertex Shader\0Fragment Shader\0Geometry Shader");
 
 		if (ImGui::Button("Create")) {
 
 			Event shader_event;
-			shader_event.shader.type = EventType::EVENT_CREATE_SHADER;
-			shader_event.shader.name = str_shad_temp;
+			shader_event.shadereditor.type = EventType::EVENT_OPEN_SHADER_EDITOR;
+			shader_event.shadereditor.name = str_shad_temp;
 
 			switch (combo_shaders) {
 			case 0:
-				shader_event.shader.shader_type = ShaderType::vertex;
+				shader_event.shadereditor.shader_type = ShaderType::vertex;
 				break;
 			case 1:
-				shader_event.shader.shader_type = ShaderType::fragment;
+				shader_event.shadereditor.shader_type = ShaderType::fragment;
 				break;
 			case 2:
-				shader_event.shader.shader_type = ShaderType::geometry;
+				shader_event.shadereditor.shader_type = ShaderType::geometry;
 				break;
 			}
-
+			shader_event.shadereditor.open_editor = true;
 			PushEvent(shader_event);
 
+			shader_obj_creation = false;
 		}
-
-		ImGui::End();
+			ImGui::End();
+	
 	}
 
 

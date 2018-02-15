@@ -64,6 +64,8 @@ update_status ModuleShaders::Update(float dt)
 		(*item)->Unbind();
 		item++;
 	}
+
+	Enable_Text_Editor();
 	
 	return update_status::UPDATE_CONTINUE;
 }
@@ -543,7 +545,7 @@ Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)
 
 bool ModuleShaders::SetEventListenrs()
 {
-	AddListener(EventType::EVENT_CREATE_SHADER, this);
+	AddListener(EventType::EVENT_OPEN_SHADER_EDITOR, this);
 	return true;
 }
 
@@ -551,12 +553,13 @@ void ModuleShaders::OnEvent(Event & event)
 {
 	switch (event.type)
 	{
-	case EventType::EVENT_CREATE_SHADER:
+	case EventType::EVENT_OPEN_SHADER_EDITOR:
 		JSON_Object* obj_proj;
 		JSON_Value* file_proj;
-		std::string path= Shader_Directory_fs+ "/" + event.shader.name;
-		App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, path.c_str());
-		switch (event.shader.shader_type) {
+		std::string path= Shader_Directory_fs+ "/" + event.shadereditor.name;
+
+		switch (event.shadereditor.shader_type)
+		{
 		case ShaderType::fragment:
 			path += ".frag";
 			break;
@@ -567,11 +570,50 @@ void ModuleShaders::OnEvent(Event & event)
 			path += ".geom";
 			break;
 		}
+		shader_text_active.name = event.shadereditor.name;
+		shader_text_active.shaderPath = path;
+		shader_text_active.shaderType = event.shadereditor.shader_type;
+		enable_editor = event.shadereditor.open_editor;
+		
+		
+		
+		
+		//----------------------
+		/*App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, path.c_str());
 
-		char* serialized_string = json_serialize_to_string_pretty(file_proj);
+		char* serialized_string = "#version 330 core\n void main(){\n }";
 		json_serialize_to_file(file_proj, path.c_str());
 		Shader* new_shader = CompileShader(path, event.shader.name, event.shader.shader_type);
-
+		*/
 		break;
 	}
+}
+
+void ModuleShaders::Enable_Text_Editor()
+{
+
+
+	if (enable_editor) {
+	
+			std::string temp_name= "Shader editor";
+			ImGui::Begin(temp_name.c_str(), &enable_editor);
+
+			if (editor_shaders.GetText().size()==0) {
+				editor_shaders.InsertText("#version 330 core\n void main(){\n }");
+			}
+			editor_shaders.Render(temp_name.c_str());
+			if (ImGui::Button("Save"))
+			{
+				FILE* pFile = fopen(shader_text_active.shaderPath.c_str(), "wb");
+				uint buffer_size = strlen(editor_shaders.GetText().c_str());
+				fwrite(editor_shaders.GetText().c_str(), sizeof(char), buffer_size, pFile);
+				fclose(pFile);
+				CompileShader(shader_text_active.shaderPath, shader_text_active.name, shader_text_active.shaderType);
+				enable_editor = false;
+			}
+			ImGui::End();
+	}
+
+
+
 }

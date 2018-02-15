@@ -73,6 +73,7 @@ public:
 
 	int combo_shaders = 0;
 	bool shader_obj_creation = false;
+	bool shader_obj_creation_begin = false;
 	char str_shad_temp[64] = "";
 
 private:

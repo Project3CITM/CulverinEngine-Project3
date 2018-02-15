@@ -44,6 +44,7 @@ enum EventType
 	/*------------------Shader Pipeline-----------------*/
 	EVENT_CREATE_SHADER,
 	EVENT_CREATE_SHADER_PROGRAM,
+	EVENT_OPEN_SHADER_EDITOR,
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
@@ -137,7 +138,7 @@ struct ECreateShader
 	EventType type;
 	ShaderType shader_type;
 	const char* name;	//std::string?
-	//const char* code;	//std::string?
+	
 };
 
 struct ECreateShaderProgram
@@ -145,6 +146,15 @@ struct ECreateShaderProgram
 	EventType type;
 	const char* name;	//std::string?
 	//std::queue<int> ShaderObjects;
+};
+
+struct EOpenShaderEditor
+{
+	EventType type;
+	ShaderType shader_type;
+	const char* name;
+	bool open_editor;	
+	
 };
 
 /*--------------------------------------------------*/
@@ -180,6 +190,7 @@ union Event
 	/*------------------Shader Pipeline-----------------*/
 	ECreateShader shader;
 	ECreateShaderProgram shaderprogram;
+	EOpenShaderEditor shadereditor;
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
