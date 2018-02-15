@@ -415,12 +415,13 @@ void CompInteractive::StartTransitionColor(float4 color_to_change, bool no_fade)
 {
 	if (no_fade)
 	{
+		target_graphic->SetColor(color_to_change);
+		return;
+	}
+	
 		start_transition = true;
-	}
-	else
-	{
 
-	}
+	
 }
 
 void CompInteractive::UpdateTransitionColor(float dt)
@@ -432,5 +433,5 @@ void CompInteractive::StartTransitionSprite(ResourceMaterial * sprite_to_change)
 {
 	if (image == nullptr)
 		return;
-
+	image->SetOverwriteImage(sprite_to_change);
 }

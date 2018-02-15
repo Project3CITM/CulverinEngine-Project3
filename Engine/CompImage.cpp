@@ -256,6 +256,11 @@ void CompImage::SetTextureID(uint uid)
 	texture_id = uid;
 }
 
+void CompImage::SetOverwriteImage(ResourceMaterial * set_overwrite_image)
+{
+	overwrite_image = set_overwrite_image;
+}
+
 float4 CompImage::GetColor() const
 {
 	return color;
@@ -264,5 +269,19 @@ float4 CompImage::GetColor() const
 ResourceMaterial * CompImage::GetSourceImage() const
 {
 	return source_image;
+}
+
+ResourceMaterial * CompImage::GetCurrentTexture() const
+{
+	if (overwrite_image == nullptr)
+	{
+		if (source_image == nullptr)
+		{
+			// return default texture;
+		}
+		return source_image;
+
+	}
+	return overwrite_image;
 }
 

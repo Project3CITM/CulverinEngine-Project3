@@ -266,7 +266,7 @@ void CompCanvasRender::DrawGraphic()
 	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&transform->GetGlobalTransform().Transposed());
 	//glUniform1i(g_AttribLocationTexture, graphic->GetTextureID());
-	glUniform4f(g_AttribLocationColor,graphic->GetColor().x, graphic->GetColor().y, graphic->GetColor().z, 1);
+	glUniform4f(g_AttribLocationColor,graphic->GetColor().x, graphic->GetColor().y, graphic->GetColor().z, graphic->GetColor().w);
 	glGetError();
 
 	glActiveTexture(GL_TEXTURE0);
