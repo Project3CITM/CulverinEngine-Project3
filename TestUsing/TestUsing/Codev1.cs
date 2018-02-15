@@ -3,6 +3,8 @@ using CulverinEditor.Debug;
 
 public class Codev1 : CulverinBehaviour
 {
+    public int a = 3;
+
     void Start()
     {
 
@@ -10,12 +12,12 @@ public class Codev1 : CulverinBehaviour
 
     void Update()
     {
-
+        Debug.Log(a.ToString());
     }
 
     public void Test()
     {
-        Debug.Log(gameObject.tag);
+        Debug.Log(a.ToString());
     }
 
 }
