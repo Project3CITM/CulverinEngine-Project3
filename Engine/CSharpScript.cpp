@@ -6,6 +6,9 @@
 #include "ImportScript.h"
 #include "ModuleMap.h"
 #include "CompTransform.h"
+#include "CompScript.h"
+#include "ResourceScript.h"
+#include "ModuleResourceManager.h"
 #include "GameObject.h"
 #include "Scene.h"
 #include "CompAudio.h"
@@ -81,6 +84,7 @@ CSharpScript::CSharpScript()
 
 CSharpScript::~CSharpScript()
 {
+	temp.clear();
 }
 
 
@@ -180,7 +184,7 @@ void CSharpScript::DoMainFunction(FunctionBase function)
 void CSharpScript::DoFunction(MonoMethod* function, void ** parameter)
 {
 	MonoObject* exception = nullptr;
-	
+
 	// Do Main Function
 	mono_runtime_invoke(function, CSObject, parameter, &exception);
 	if (exception)
@@ -708,7 +712,7 @@ void CSharpScript::SetTag(MonoObject * object, MonoString * tag)
 	}
 }
 
-MonoString * CSharpScript::GetTag(MonoObject * object)
+MonoString* CSharpScript::GetTag(MonoObject* object)
 {
 	if (!CheckMonoObject(object))
 	{
@@ -735,19 +739,50 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 
 	MonoType* t = mono_reflection_type_get_type(type);
 	std::string name = mono_type_get_name(t);
-
 	const char* comp_name = "";
 
+	MonoClass* classT = nullptr;
+
+	/* Components */
 	if (name == "CulverinEditor.Transform")
 	{
 		comp_name = "Transform";
 	}
-	else if (name == "CulverinEditor.Audio")
+	else if (name == "CulverinEditor.CompAudio")
 	{
-		comp_name = "Audio";
+		comp_name = "CompAudio";
 	}
 
-	MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", comp_name);
+	/* Scripts */
+	if (comp_name == "")
+	{
+		if (App->resource_manager->GetResource(name.c_str()) != nullptr)
+		{
+			GameObject* actual_temp = game_objects[object];
+			if (actual_temp != nullptr)
+			{
+				temp.clear();
+				actual_temp->GetComponentsByType(Comp_Type::C_SCRIPT, &temp);
+				for (int i = 0; i < temp.size(); i++)
+				{
+					if (strcmp(((CompScript*)temp[i])->resource_script->name, name.c_str()) == 0)
+					{
+						comp_name = name.c_str();
+						classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "", comp_name);
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		GameObject* actual_temp = game_objects[object];
+		if (actual_temp->GetComponentByName(comp_name) != nullptr) // if has component
+		{
+			classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", comp_name);
+		}
+	}
+
 	if (classT)
 	{
 		MonoObject* new_object = mono_object_new(CSdomain, classT);
@@ -759,7 +794,15 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	return nullptr;
 }
 
-MonoObject * CSharpScript::Find(MonoObject * object, MonoString * name)
+MonoObject* CSharpScript::GetParentGameObject()
+{
+	if (CSSelfObject != nullptr && own_game_object != nullptr)
+	{
+		return CSSelfObject;
+	}
+}
+
+MonoObject* CSharpScript::Find(MonoObject * object, MonoString * name)
 {
 	GameObject* found = nullptr;
 	found = current_game_object->GetChildbyName(mono_string_to_utf8(name));

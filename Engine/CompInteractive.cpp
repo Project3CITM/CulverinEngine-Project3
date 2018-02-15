@@ -3,25 +3,31 @@
 #include "ImportMaterial.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
-
+#include "ModuleEventSystem.h"
+#include "EventDef.h"
 #include "ResourceMaterial.h"
-
+#include "CompGraphic.h"
+#include "CompImage.h"
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
 #define PRESSED_SPRITE 1
 #define DISSABLED_SPRITE 2
 //---
+std::list<CompInteractive*> CompInteractive::iteractive_list;
+
 CompInteractive::CompInteractive(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
 	sprite[HIGHLIGHTED_SPRITE] = nullptr;
 	sprite[PRESSED_SPRITE] = nullptr;
 	sprite[DISSABLED_SPRITE] = nullptr;
-
 	uuid_reimported_sprite[0] = 0;
 	uuid_reimported_sprite[1] = 0;
 	uuid_reimported_sprite[2] = 0;
-	name_component = "Canvas";
+
+	iteractive_list.push_back(this);
+
+	name_component = "Interactive";
 }
 
 CompInteractive::CompInteractive(const CompInteractive & copy, GameObject * parent) :Component(copy.GetType(), parent)
@@ -76,6 +82,14 @@ void CompInteractive::PreUpdate(float dt)
 	}
 	
 	// -------------------------------------------------------------------
+}
+
+void CompInteractive::Update(float dt)
+{
+	if (start_transition)
+	{
+		UpdateTransitionColor(dt);
+	}
 }
 
 void CompInteractive::ShowOptions()
@@ -207,6 +221,24 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 	}
 	Enable();
 }
+bool CompInteractive::IsActive()const
+{
+	return disabled;
+}
+
+void CompInteractive::Desactive()
+{
+	disabled = true;
+	current_selection_state = SelectionStates::STATE_DISABLED;
+}
+
+void CompInteractive::SetTargetGraphic(CompGraphic * set_target_graphic)
+{
+	target_graphic = set_target_graphic;
+	if (target_graphic->GetType() == C_IMAGE)
+		image = (CompImage*)target_graphic;
+}
+
 void CompInteractive::SetNormalColor(const float4& set_rgba)
 {
 	normal_color = set_rgba;
@@ -300,4 +332,106 @@ ResourceMaterial * CompInteractive::GetPressedSprite() const
 ResourceMaterial * CompInteractive::GetDisabledSprite() const
 {
 	return sprite[DISSABLED_SPRITE];
+}
+
+bool CompInteractive::IsPressed()
+{
+	if(IsActive())
+		return false;
+	return true;
+}
+
+bool CompInteractive::IsHighlighted(Event event_data)
+{
+	if (IsActive())
+		return false;
+
+	if (IsPressed())
+		return false;
+
+	return false;
+}
+
+void CompInteractive::UpdateSelectionState(Event event_data)
+{
+	if (IsPressed())
+	{
+		current_selection_state = SelectionStates::STATE_PRESSED;
+		return;
+	}
+	if (IsHighlighted(event_data))
+	{
+		current_selection_state = SelectionStates::STATE_HIGHLIGHTED;
+		return;
+	}
+	current_selection_state = SelectionStates::STATE_NORMAL;
+}
+
+void CompInteractive::HandleTransition()
+{
+	float4 desired_color;
+	ResourceMaterial* desired_sprite = nullptr;
+	switch (current_selection_state)
+	{
+	case  SelectionStates::STATE_NORMAL:
+		desired_color = normal_color;
+		desired_sprite = nullptr;
+		break;
+	case  SelectionStates::STATE_HIGHLIGHTED:
+		desired_color = highlighted_color;
+		desired_sprite = sprite[HIGHLIGHTED_SPRITE];
+		break;
+	case  SelectionStates::STATE_PRESSED:
+		desired_color = pressed_color;
+		desired_sprite = sprite[PRESSED_SPRITE];
+
+		break;
+	case  SelectionStates::STATE_DISABLED:
+		desired_color = disabled_color;
+		desired_sprite = sprite[DISSABLED_SPRITE];
+		break;
+	default:
+		break;
+	}
+	switch (current_transition_mode)
+	{
+	case  Transition::TRANSITION_COLOR:
+		StartTransitionColor(desired_color,no_fade);
+		break;
+	case  Transition::TRANSITION_SPRITE:
+		StartTransitionSprite(desired_sprite);
+		break;
+	case  Transition::TRANSITION_ANIMATION:
+
+		break;
+	default:
+		break;
+	}
+}
+
+
+
+void CompInteractive::StartTransitionColor(float4 color_to_change, bool no_fade)
+{
+	if (no_fade)
+	{
+		target_graphic->SetColor(color_to_change);
+		return;
+	}
+	
+		start_transition = true;
+
+	
+}
+
+void CompInteractive::UpdateTransitionColor(float dt)
+{
+	
+}
+
+void CompInteractive::StartTransitionSprite(ResourceMaterial * sprite_to_change)
+{
+	if (image == nullptr)
+		return;
+	image->SetOverwriteImage(sprite_to_change);
 }

@@ -11,7 +11,7 @@
 
 CompAudio::CompAudio(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
-	name_component = "Audio";
+	name_component = "CompAudio";
 	CreateEmitter();
 }
 

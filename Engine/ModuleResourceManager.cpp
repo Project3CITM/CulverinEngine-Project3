@@ -359,12 +359,12 @@ Resource* ModuleResourceManager::GetResource(uint id)
 	return nullptr;
 }
 
-Resource* ModuleResourceManager::GetResource(const char* material)
+Resource* ModuleResourceManager::GetResource(const char* name)
 {
 	std::map<uint, Resource*>::iterator it = resources.begin();
 	for (int i = 0; i < resources.size(); i++)
 	{
-		if (strcmp(it->second->name, material) == 0)
+		if (strcmp(it->second->name, name) == 0)
 		{
 			return it->second;
 		}

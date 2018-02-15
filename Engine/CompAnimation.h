@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include <vector>
+#include "ResourceAnimation.h"
 
 class GameObject;
 class AnimBone;
@@ -44,9 +45,12 @@ public:
 	// EDITOR METHODS ---------
 	void ShowOptions();
 	void ShowInspectorInfo();
+	void ShowAnimationInfo();
 	// ------------------------
 
-	//void SetResource(ResourceAnimation * resource_animation, bool isImport = false);
+
+
+	void SetResource(ResourceAnimation * resource_animation, bool isImport = false);
 	void CopyValues(const CompAnimation * component);
 
 	// SAVE - LOAD METHODS ----------------
@@ -54,11 +58,18 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
 
+	void CreateAnimationClip();
+
+public:
+
+	ResourceAnimation* animation_resource = nullptr;
+
 private:
 
+	bool select_animation = false;
 	std::vector<AnimationClip*> animation_clips;
 
 	std::vector<std::pair<GameObject*, const AnimBone*>> bone_update_vector;
-
+	bool debug_draw = false;
 };
 #endif

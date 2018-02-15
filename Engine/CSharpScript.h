@@ -15,6 +15,7 @@
 
 class CSharpScript;
 class GameObject;
+class Component;
 typedef struct json_object_t JSON_Object;
 
 enum FunctionBase
@@ -147,6 +148,7 @@ public:
 
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
+	MonoObject* GetParentGameObject();
 
 	/*Childs*/
 	MonoObject* Find(MonoObject* object, MonoString* name);
@@ -187,6 +189,9 @@ private:
 
 	GameObject* current_game_object = nullptr;
 	std::vector<uint> re_load_values;
+
+	/* Components */
+	std::vector<Component*> temp;
 
 public:
 	std::map<MonoObject*, GameObject*> game_objects;

@@ -4,6 +4,9 @@
 #include "Application.h"
 #include "JSONSerialization.h"
 #include "ModuleEventSystem.h"
+#include "ModuleRenderer3D.h"
+#include "CompCamera.h"
+#include "ModuleCamera3D.h"
 #include "ModuleGUI.h"
 
 ModuleShaders::ModuleShaders()
@@ -63,15 +66,21 @@ update_status ModuleShaders::Update(float dt)
 		GLint timeLoc = glGetUniformLocation((*item)->programID, "_time");
 		glUniform1f(timeLoc, time_dt);
 
+		//CAMERA POSITION
+		float3 cam_pos = App->camera->GetPos();
+		GLint cameraLoc = glGetUniformLocation((*item)->programID, "_cameraPosition");
+		glUniform3fv(cameraLoc, 1, &cam_pos[0]);
+
 		//LIGHTS
 		GLint lightsizeLoc = glGetUniformLocation((*item)->programID, "_numLights");
 		glUniform1i(lightsizeLoc, lights.size());
 		for (size_t i = 0; i < lights.size(); ++i) {
 			SetLightUniform((*item)->programID, "position", i, lights[i].position);
-			SetLightUniform((*item)->programID, "intensities", i, lights[i].color);
+			SetLightUniform((*item)->programID, "type", i, lights[i].type);
+			SetLightUniform((*item)->programID, "l_color", i, lights[i].color);
 			SetLightUniform((*item)->programID, "attenuation", i, lights[i].attenuation);
 			SetLightUniform((*item)->programID, "ambientCoefficient", i, lights[i].ambientCoefficient);
-	
+
 		}
 		(*item)->Unbind();
 		item++;

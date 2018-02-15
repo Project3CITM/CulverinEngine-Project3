@@ -21,14 +21,17 @@ public:
 	void SetColor(const float4& set_rgba);
 	void SetColor(float set_r, float set_g, float set_b, float set_a);
 	void SetTextureID(uint uid);
-
+	void SetOverwriteImage(ResourceMaterial* overwrite_image);
 	float4 GetColor()const;
 	ResourceMaterial* GetSourceImage()const;
+	ResourceMaterial* GetCurrentTexture()const;
 
 private:
 public:
 private:
 	ResourceMaterial* source_image = nullptr;
+	ResourceMaterial* overwrite_image = nullptr;
+
 	uint uuid_source_image = 0;
 	bool raycast_target=true;
 	bool select_source_image =false;
