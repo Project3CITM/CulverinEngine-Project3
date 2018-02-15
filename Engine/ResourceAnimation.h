@@ -37,6 +37,8 @@ public:
 	Quat GetRotation(AnimationClip* clip_vec) const;
 	float3 GetScale(AnimationClip* clip_vec) const;
 
+	void DrawDebug(GameObject* bone) const;
+
 public:
 	std::string name;
 

@@ -28,8 +28,15 @@ CompAnimation::~CompAnimation()
 {
 }
 
-void CompAnimation::DrawBones()
+void CompAnimation::Draw()
 {
+	if (debug_draw == true)
+	{
+		for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
+		{
+			it->second->DrawDebug(it->first);
+		}
+	}
 }
 
 void CompAnimation::Clear()
@@ -213,6 +220,7 @@ void CompAnimation::ShowAnimationInfo()
 		ImGui::Text("Duration: %f", animation_resource->duration);
 		ImGui::Text("Ticks Per Second: %f", animation_resource->ticks_per_sec);
 		ImGui::Text("Number of Bones: %i", animation_resource->bones.size());
+		ImGui::Checkbox("Draw Debug", &debug_draw);
 	}
 	if (ImGui::Button("Create Animation Clip", ImVec2(125, 25)))
 	{
