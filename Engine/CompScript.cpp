@@ -84,7 +84,7 @@ void CompScript::PreUpdate(float dt)
 				uuid_resource_reimported = 0;
 				if (resource_script->GetState() != Resource::State::FAILED)
 				{
-					resource_script->SetOwnGameObject(parent);
+					SetOwnGameObject(parent);
 				}
 			}
 		}
@@ -95,9 +95,9 @@ void CompScript::Start()
 {
 	if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
 	{
-		App->importer->iScript->SetCurrentScript(resource_script->GetCSharpScript());
-		resource_script->SetCurrentGameObject(parent);
-		resource_script->Start();
+		App->importer->iScript->SetCurrentScript(csharp);
+		SetCurrentGameObject(parent);
+		StartScript();
 	}
 }
 
@@ -105,25 +105,25 @@ void CompScript::Update(float dt)
 {
 	if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
 	{
-		resource_script->LoadValuesGameObject();
-		resource_script->SetOwnGameObject(parent);
+		LoadValuesGameObjectScript();
+		SetOwnGameObject(parent);
 	}
 	if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
 	{
-		App->importer->iScript->SetCurrentScript(resource_script->GetCSharpScript());
-		resource_script->SetCurrentGameObject(parent);
-		resource_script->Update(dt);
+		App->importer->iScript->SetCurrentScript(csharp);
+		SetCurrentGameObject(parent);
+		UpdateScript(dt);
 	}
 }
 
 bool CompScript::CheckAllVariables()
 {
 	//Access chsharp script, it contains a vector of all variables with their respective info
-	for (uint i = 0; i < resource_script->GetCSharpScript()->variables.size(); i++)
+	for (uint i = 0; i < csharp->variables.size(); i++)
 	{
-		if (resource_script->GetCSharpScript()->variables[i]->type == VarType::Var_GAMEOBJECT)
+		if (csharp->variables[i]->type == VarType::Var_GAMEOBJECT)
 		{
-			if (resource_script->GetCSharpScript()->variables[i]->game_object == nullptr)
+			if (csharp->variables[i]->game_object == nullptr)
 			{
 				return false;
 			}
@@ -134,15 +134,56 @@ bool CompScript::CheckAllVariables()
 
 void CompScript::RemoveReferences(GameObject* go)
 {
-	resource_script->GetCSharpScript()->RemoveReferences(go);
+	csharp->RemoveReferences(go);
+}
+
+void CompScript::SetCurrentGameObject(GameObject* current)
+{
+	if (csharp != nullptr)
+	{
+		csharp->SetCurrentGameObject(current);
+	}
+}
+
+void CompScript::SetOwnGameObject(GameObject* owenerofScript)
+{
+	if (csharp != nullptr)
+	{
+		csharp->SetOwnGameObject(owenerofScript);
+	}
+}
+
+void CompScript::SetCSharp(CSharpScript* csharp_)
+{
+	csharp = csharp_;
 }
 
 void CompScript::ClearVariables()
 {
 	if (resource_script != nullptr)
 	{
-		resource_script->GetCSharpScript()->Clear();
+		csharp->Clear();
 	}
+}
+
+bool CompScript::StartScript()
+{
+	if (csharp != nullptr)
+	{
+		csharp->DoMainFunction(FunctionBase::CS_Start);
+		return true;
+	}
+	return false;
+}
+
+bool CompScript::UpdateScript(float dt)
+{
+	if (csharp != nullptr)
+	{
+		csharp->DoMainFunction(FunctionBase::CS_Update);
+		return true;
+	}
+	return false;
 }
 
 bool CompScript::CheckScript()
@@ -346,8 +387,9 @@ void CompScript::ShowInspectorInfo()
 					}
 				}
 				if (resource_script->GetState() != Resource::State::FAILED)
-				{
-					resource_script->SetOwnGameObject(parent);
+				{ 
+					csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
+					SetOwnGameObject(parent);
 				}
 				Enable();
 			}
@@ -363,21 +405,21 @@ void CompScript::ShowInspectorInfo()
 
 void CompScript::ShowVariablesInfo()
 {
-	if (resource_script->GetState() == Resource::State::LOADED)
+	if (resource_script->GetState() == Resource::State::LOADED && csharp != nullptr)
 	{
 		//Access chsharp script, it contains a vector of all variables with their respective info
-		for (uint i = 0; i < resource_script->GetCSharpScript()->variables.size(); i++)
+		for (uint i = 0; i < csharp->variables.size(); i++)
 		{
 			ImGui::PushID(i);
 
 			//Show variable TYPE --------------------------
-			ShowVarType(resource_script->GetCSharpScript()->variables[i]); ImGui::SameLine();
+			ShowVarType(csharp->variables[i]); ImGui::SameLine();
 
 			//Show variable NAME -------------------------
-			ImGui::Text(" %s", resource_script->GetCSharpScript()->variables[i]->name); ImGui::SameLine();
+			ImGui::Text(" %s", csharp->variables[i]->name); ImGui::SameLine();
 
 			//Show variable VALUE -------------------------
-			ShowVarValue(resource_script->GetCSharpScript()->variables[i], i);
+			ShowVarValue(csharp->variables[i], i);
 
 			ImGui::PopID();
 		}
@@ -508,7 +550,7 @@ void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uin
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Script UUID", resource_script->GetUUID());
 		// Now Save Info in CSharp
-		resource_script->Save(object, name);
+		SaveScript(object, name);
 	}
 	json_object_dotset_string_with_std(object, name + "Name Script", name_script.c_str());
 }
@@ -534,13 +576,39 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 			{
 				App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script);
 			}
-			resource_script->Load(object, name);
+			LoadScript(object, name);
 			if (resource_script->GetState() != Resource::State::FAILED)
 			{
-				resource_script->SetOwnGameObject(parent);
+				SetOwnGameObject(parent);
 			}
 
 		}
 	}
 	Enable();
+}
+
+void CompScript::SaveScript(JSON_Object * object, std::string name) const
+{
+	//Save Values
+	if (csharp != nullptr)
+	{
+		csharp->Save(object, name);
+	}
+}
+
+void CompScript::LoadScript(const JSON_Object * object, std::string name)
+{
+	//Load Values
+	if (csharp != nullptr)
+	{
+		csharp->Load(object, name);
+	}
+}
+
+void CompScript::LoadValuesGameObjectScript()
+{
+	if (csharp != nullptr)
+	{
+		csharp->LoadValues();
+	}
 }

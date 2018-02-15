@@ -112,7 +112,7 @@ bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
 				res_script->InitInfo(path_dll, fileassets);
 				res_script->SetState(Resource::State::FAILED);
 				CSharpScript* script = new CSharpScript();
-				res_script->SetCSharp(script);
+				//res_script->SetCSharp(script);
 				return false;
 			}
 			else
@@ -122,7 +122,7 @@ bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
 				res_script->SetState(Resource::State::LOADED);
 				//now 
 				CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
-				res_script->SetCSharp(newCSharp);
+				//res_script->SetCSharp(newCSharp);
 			}
 
 			// Then Create Meta
@@ -163,7 +163,7 @@ bool ImportScript::LoadResource(const char* file, ResourceScript* resourceScript
 			resourceScript->SetScriptEditor(App->fs->GetOnlyName(App->fs->GetOnlyName(file).c_str()));
 			//now 
 			CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
-			resourceScript->SetCSharp(newCSharp);
+			//resourceScript->SetCSharp(newCSharp);
 		}
 
 
@@ -295,7 +295,7 @@ bool ImportScript::CreateNewScript(bool& active)
 						res_script->SetState(Resource::State::LOADED);
 						//now 
 						CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
-						res_script->SetCSharp(newCSharp);
+						//res_script->SetCSharp(newCSharp);
 					}
 
 
