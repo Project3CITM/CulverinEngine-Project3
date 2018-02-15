@@ -68,6 +68,7 @@ private:
 	/* GameObject */
 	static mono_bool	IsActive(MonoObject* object);
 	static void			SetActive(MonoObject* object, mono_bool active);
+	static MonoObject*	Find(MonoObject* object, MonoString* name);
 	static MonoObject*	GetOwnGameObject();
 	static void			SetName(MonoObject* object, MonoString* name);
 	static MonoString*	GetName(MonoObject* object);

@@ -493,6 +493,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::Destroy",(const void*)DeleteGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::SetActive",(const void*)SetActive);
 	mono_add_internal_call("CulverinEditor.GameObject::IsActive",(const void*)IsActive);
+	mono_add_internal_call("CulverinEditor.GameObject::Find", (const void*)Find);
 	//mono_add_internal_call("CulverinEditor.GameObject::SetParent",(const void*)SetParent);
 	mono_add_internal_call("CulverinEditor.GameObject::SetName",(const void*)SetName);
 	mono_add_internal_call("CulverinEditor.GameObject::GetName",(const void*)GetName);
@@ -631,6 +632,11 @@ mono_bool ImportScript::IsActive(MonoObject* object)
 void ImportScript::SetActive(MonoObject* object, mono_bool active)
 {
 	current->SetActive(object, active);
+}
+
+MonoObject * ImportScript::Find(MonoObject * object, MonoString * name)
+{
+	return current->Find(object, name);
 }
 
 MonoObject* ImportScript::GetOwnGameObject()

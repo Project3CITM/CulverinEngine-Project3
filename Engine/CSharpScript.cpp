@@ -756,9 +756,24 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 
 MonoObject * CSharpScript::Find(MonoObject * object, MonoString * name)
 {
+	GameObject* found = nullptr;
+	found = current_game_object->GetChildbyName(mono_string_to_utf8(name));
 
+	if (found != nullptr)
+	{
+		std::map<MonoObject*, GameObject*>::iterator iter = game_objects.begin();
+		while (iter != game_objects.end())
+		{
+			if (iter._Ptr->_Myval.second == found)
+			{
+				return iter._Ptr->_Myval.first;
+			}
 
-	//return (MonoObject*)current_game_object->GetChildbyName(mono_string_to_utf8(name));
+			iter++;
+		}
+	}
+	
+	LOG("Obj not found!");
 
 	return nullptr;
 }
