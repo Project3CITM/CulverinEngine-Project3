@@ -13,7 +13,7 @@ namespace CulverinEditor
         {
             get
             {
-                return gameObject;
+                return GetParentGameObject();
             }
         }
 
@@ -49,6 +49,9 @@ namespace CulverinEditor
                 SetEnabled(value);
             }
         }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern GameObject GetParentGameObject();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool GetEnabled();

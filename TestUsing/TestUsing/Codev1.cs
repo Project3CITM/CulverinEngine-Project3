@@ -1,15 +1,21 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
-public class Code : CulverinBehaviour
+public class Codev1 : CulverinBehaviour
 {
     void Start()
     {
+
     }
 
     void Update()
     {
-        GetComponent<Codev1>().Test();
+
+    }
+
+    public void Test()
+    {
+        Debug.Log(gameObject.tag);
     }
 
 }

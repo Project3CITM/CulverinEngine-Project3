@@ -62,8 +62,14 @@ bool ImportScript::InitScriptingSystem()
 	if (culverin_assembly)
 	{
 		culverin_mono_image = mono_assembly_get_image(culverin_assembly);
+		std::string monoCmdOptions = "--soft-breakpoints";
+		char *options = new char[monoCmdOptions.size() + 1];
+		strcpy(options, monoCmdOptions.c_str());
+		mono_jit_parse_options(1, &options);
 		return true;
 	}
+
+	
 
 	return false;
 }
@@ -294,7 +300,7 @@ bool ImportScript::CreateNewScript(bool& active)
 						res_script->InitInfo(path_dll, fileassets);
 						res_script->SetState(Resource::State::LOADED);
 						//now 
-						CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
+						//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
 						//res_script->SetCSharp(newCSharp);
 					}
 
@@ -504,6 +510,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Transform::SetRotation", (const void*)SetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::GetRotation", (const void*)GetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::RotateAroundAxis", (const void*)IncrementRotation);
+
+	// Component ---------------------------
+	mono_add_internal_call("CulverinEditor.Component::GetParentGameObject", (const void*)GetParentGameObject);
 	
 	//CONSOLE FUNCTIONS ------------------
 	mono_add_internal_call("CulverinEditor.Debug.Debug::Log", (const void*)ConsoleLog);
@@ -642,7 +651,7 @@ void ImportScript::SetActive(MonoObject* object, mono_bool active)
 	current->SetActive(object, active);
 }
 
-MonoObject * ImportScript::Find(MonoObject * object, MonoString * name)
+MonoObject* ImportScript::Find(MonoObject* object, MonoString* name)
 {
 	return current->Find(object, name);
 }
@@ -652,7 +661,7 @@ MonoObject* ImportScript::GetOwnGameObject()
 	return current->GetOwnGameObject();
 }
 
-void ImportScript::SetName(MonoObject* object, MonoString * name)
+void ImportScript::SetName(MonoObject* object, MonoString* name)
 {
 	current->SetName(object, name);
 }
@@ -662,12 +671,12 @@ MonoString* ImportScript::GetName(MonoObject* object)
 	return current->GetName(object);
 }
 
-MonoString * ImportScript::GetTag(MonoObject * object)
+MonoString* ImportScript::GetTag(MonoObject* object)
 {
 	return current->GetTag(object);
 }
 
-void ImportScript::SetTag(MonoObject * object, MonoString * name)
+void ImportScript::SetTag(MonoObject* object, MonoString* name)
 {
 
 }
@@ -710,6 +719,12 @@ void ImportScript::SetRotation(MonoObject* object, MonoObject* vector3)
 void ImportScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 {
 	current->IncrementRotation(object, vector3);
+}
+
+// Component ---------------------
+MonoObject* ImportScript::GetParentGameObject()
+{
+	return current->GetParentGameObject();
 }
 
 // Map Functions -------------

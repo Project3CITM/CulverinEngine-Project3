@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Audio.cs" />
+    <Compile Include="Codev1.cs" />
     <Compile Include="CompAudio.cs" />
     <Compile Include="CulverinBehaviour.cs" />
     <Compile Include="Map.cs" />

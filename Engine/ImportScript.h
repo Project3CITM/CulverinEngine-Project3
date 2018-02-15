@@ -83,6 +83,10 @@ private:
 	static void			SetRotation(MonoObject* object, MonoObject* vector3);
 	static void			IncrementRotation(MonoObject* object, MonoObject* vector3);
 
+	/* Component */
+
+	static MonoObject* GetParentGameObject();
+
 	/* Map */
 	static MonoString* GetMapString(MonoObject* object);
 	static int GetHeightMap();

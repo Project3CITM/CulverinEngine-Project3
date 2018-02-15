@@ -119,13 +119,16 @@ void CompScript::Update(float dt)
 bool CompScript::CheckAllVariables()
 {
 	//Access chsharp script, it contains a vector of all variables with their respective info
-	for (uint i = 0; i < csharp->variables.size(); i++)
+	if (csharp != nullptr)
 	{
-		if (csharp->variables[i]->type == VarType::Var_GAMEOBJECT)
+		for (uint i = 0; i < csharp->variables.size(); i++)
 		{
-			if (csharp->variables[i]->game_object == nullptr)
+			if (csharp->variables[i]->type == VarType::Var_GAMEOBJECT)
 			{
-				return false;
+				if (csharp->variables[i]->game_object == nullptr)
+				{
+					return false;
+				}
 			}
 		}
 	}
