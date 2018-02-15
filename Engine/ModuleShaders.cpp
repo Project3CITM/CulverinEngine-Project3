@@ -1,8 +1,9 @@
 #include "ModuleShaders.h"
 #include "ShadersLib.h"
 #include "ModuleFS.h"
-#include"Application.h"
-#include"JSONSerialization.h"
+#include "Application.h"
+#include "JSONSerialization.h"
+#include "ModuleEventSystem.h"
 
 ModuleShaders::ModuleShaders()
 {
@@ -538,4 +539,21 @@ Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)
 		}
 	}
 	return nullptr;
+}
+
+bool ModuleShaders::SetEventListenrs()
+{
+	AddListener(EventType::EVENT_CREATE_SHADER, this);
+	return true;
+}
+
+void ModuleShaders::OnEvent(Event & event)
+{
+	switch (event.type)
+	{
+	case EventType::EVENT_CREATE_SHADER:
+		//(ECreateShader*)event
+		//CompileShader()
+		break;
+	}
 }

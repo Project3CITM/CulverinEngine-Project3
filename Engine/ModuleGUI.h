@@ -71,6 +71,9 @@ public:
 	std::vector<int> ints_list;
 	//------------------------------
 
+	int combo_shaders = 0;
+	bool shader_obj_creation = false;
+
 private:
 
 	//WINDOW EXIT -------------

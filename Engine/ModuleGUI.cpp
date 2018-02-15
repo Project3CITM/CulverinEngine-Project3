@@ -17,7 +17,9 @@
 #include "GameObject.h"
 #include "ModuleAudio.h"
 #include "ModuleMap.h"
-
+#include "ModuleEventSystem.h"
+#include "ShadersLib.h"
+#include "EventDef.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
 #include "ImGui/imgui_dock_v2.h"
@@ -225,6 +227,21 @@ update_status ModuleGUI::Update(float dt)
 			{
 				window_create_new_script = !window_create_new_script;
 			}
+
+			if (ImGui::BeginMenu("Shaders"))
+			{
+				if (ImGui::MenuItem("Create Shader Object"))
+				{
+					shader_obj_creation = true;
+				}
+				if (ImGui::MenuItem("Create Shader Program"))
+				{
+
+				}
+				ImGui::EndMenu();
+			}
+
+
 			ImGui::EndMenu();
 		}
 
@@ -439,6 +456,50 @@ update_status ModuleGUI::Update(float dt)
 		App->map->ShowEditorMap(window_create_map);
 	}
 	//----------------------------------------------
+
+	// Window Creating Shader Object --------------------------------
+
+	if (shader_obj_creation) {
+
+		ImGui::Begin("Shader Object Definition", &shader_obj_creation);
+
+	
+		shader_obj_creation = true;
+		
+		char str_shad_temp[64]="";
+		ImGui::InputText("Name of the Shader", str_shad_temp, 64);
+
+		
+
+		ImGui::Combo("Shaders Mode", &combo_shaders, "Vertex Shader\0Fragment Shader\0Geometry Shader");
+
+		if (ImGui::Button("Create")) {
+
+			Event shader_event;
+			shader_event.shader.type = EventType::EVENT_CREATE_SHADER;
+			shader_event.shader.name = str_shad_temp;
+
+			switch (combo_shaders) {
+			case 0:
+				shader_event.shader.shader_type = ShaderType::vertex;
+				break;
+			case 1:
+				shader_event.shader.shader_type = ShaderType::fragment;
+				break;
+			case 2:
+				shader_event.shader.shader_type = ShaderType::geometry;
+				break;
+			}
+
+			PushEvent(shader_event);
+
+		}
+
+		ImGui::End();
+	}
+
+
+	//-----------------------------------------------------------
 
 	// Window About Us... ---------------------------------
 	if (window_about_us)

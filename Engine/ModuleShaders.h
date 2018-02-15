@@ -48,6 +48,10 @@ public:
 
 	Shader* GetShaderByName(const char* name, ShaderType type);
 
+	//Event system test
+	bool SetEventListenrs();
+	void OnEvent(Event& event);
+
 	std::string Shader_Directory_fs;
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;

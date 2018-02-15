@@ -6,7 +6,7 @@
 /*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))--------------*/
 /*---Add the new Event struct (in the proper place and alphabetical order (easier to search))----------------*/
 /*---Its mandatory to put "EventType type;" at the begining of every Event struct----------------------------*/
-/*---In the new Event structure DON'T define anything (this can be modified in the future)-------------------*/
+/*---In the new Event structure DON'T DEFINE ANYTHING (this can be modified in the future)-------------------*/
 /*---Add the new Event in the Event union (in the proper place and alphabetical order (easier to search))----*/
 /*---If you are testing and don't put in the proper place and alphabetical order the events copy&paste this:-*/
 /*---(Not ordered)-------------------------------------------------------------------------------------------*/
@@ -18,6 +18,7 @@
 /*--------------------------------------------------*/
 class GameObject;
 class Component;
+enum ShaderType;
 
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
@@ -134,8 +135,9 @@ struct EWindowResize
 struct ECreateShader
 {
 	EventType type;
+	ShaderType shader_type;
 	const char* name;	//std::string?
-	const char* code;	//std::string?
+	//const char* code;	//std::string?
 };
 
 struct ECreateShaderProgram

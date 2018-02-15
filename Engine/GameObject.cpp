@@ -617,6 +617,8 @@ void GameObject::ShowGameObjectOptions()
 		GameObject* cube = App->scene->CreateCube(this);
 		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->LinkObject(cube);
 	}
+	
+
 	//if (ImGui::MenuItem("Sphere"))
 	//{
 	//	GameObject* sphere = App->scene->CreateSphere(this);
@@ -730,7 +732,6 @@ void GameObject::ShowGameObjectOptions()
 			}
 			ImGui::EndMenu();
 		}
-
 
 	}
 	// -------------------------------------------------------------
