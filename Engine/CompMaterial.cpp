@@ -99,66 +99,6 @@ void CompMaterial::PreUpdate(float dt)
 	}
 }
 
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-
-
-
-
-	// Manage Resource -------------------------------------------------
-	// Before delete Resource, Set this pointer to nullptr
-	if (resource_material != nullptr)
-	{
-		if (resource_material->GetState() == Resource::State::WANTDELETE)
-		{
-			resource_material = nullptr;
-		}
-		else if (resource_material->GetState() == Resource::State::REIMPORTED)
-		{
-			uuid_resource_reimported = resource_material->GetUUID();
-			resource_material = nullptr;
-		}
-	}
-	else
-	{
-
-		//TODO change this
-		if (uuid_resource_reimported != 0)
-		{
-			resource_material = (ResourceMaterial*)App->resource_manager->GetResource(uuid_resource_reimported);
-			if (resource_material != nullptr)
-			{
-				resource_material->num_game_objects_use_me++;
-
-				// Check if loaded
-				if (resource_material->IsLoadedToMemory() == Resource::State::UNLOADED)
-				{
-					App->importer->iMaterial->LoadResource(std::to_string(resource_material->GetUUID()).c_str(), resource_material);
-				}
-				uuid_resource_reimported = 0;
-			}
-		}
-	}
-	// -------------------------------------------------
-}*/
-
 void CompMaterial::Clear()
 {
 	for (int i = 0; i < material_shader.textures.size(); i++) {
@@ -351,6 +291,75 @@ void CompMaterial::ShowInspectorInfo()
 
 	ShowShadersEditors();
 
+	material_shader.it_textures = material_shader.textures.begin();
+	material_shader.it_int_variables = material_shader.int_variables.begin();
+	material_shader.it_float_variables = material_shader.float_variables.begin();
+	material_shader.it_float3_variables = material_shader.float3_variables.begin();
+	material_shader.it_color_variables = material_shader.color_variables.begin();
+	material_shader.it_bool_variables = material_shader.bool_variables.begin();
+	
+	uint var_size = material_shader.GetVariablesSize();
+	for (int i = 0; i < var_size; i++)
+	{
+		UniformVar temp = material_shader.GetVariableInfo(i);
+
+		// Variables started with '_' reserved for global variables
+		if (temp.name != nullptr && temp.name[0] == '_') continue;
+
+		//Textures
+		if (temp.type == GL_SAMPLER_2D &&material_shader.textures.size() != 0)
+		{
+			ShowTextureVariable(i, &(*material_shader.it_textures));
+			material_shader.it_textures++;			
+		}
+
+		//Vec3
+		if (temp.type == GL_FLOAT_VEC3 && material_shader.int_variables.size() != 0)
+		{
+			ShowVec3Variable(i, &(*material_shader.it_float3_variables));
+			material_shader.it_float3_variables++;
+		}
+
+		//Int
+		if (temp.type == GL_INT && material_shader.int_variables.size() != 0)
+		{
+			ShowIntVariable(i, &(*material_shader.it_int_variables));
+			material_shader.it_int_variables++;
+		}
+
+		//Float
+		if (temp.type == GL_FLOAT && material_shader.float_variables.size() != 0)
+		{
+			ShowFloatVariable(i, &(*material_shader.it_float_variables));
+			material_shader.it_float_variables++;
+		}
+
+		//Bool
+		if (temp.type == GL_BOOL && material_shader.bool_variables.size() != 0)
+		{
+			ShowBoolVariable(i, &(*material_shader.it_bool_variables));
+			material_shader.it_bool_variables++;
+		}
+
+
+		//Color
+		if (temp.type == GL_FLOAT_VEC4 && material_shader.color_variables.size() != 0)
+		{
+			ShowColorVariable(i, &(*material_shader.it_color_variables));
+			material_shader.it_color_variables++;
+		}
+
+	}
+
+	material_shader.it_textures = material_shader.textures.begin();
+	material_shader.it_int_variables = material_shader.int_variables.begin();
+	material_shader.it_float_variables = material_shader.float_variables.begin();
+	material_shader.it_float3_variables = material_shader.float3_variables.begin();
+	material_shader.it_color_variables = material_shader.color_variables.begin();
+	material_shader.it_bool_variables = material_shader.bool_variables.begin();
+
+
+	/*
 	std::vector<TextureVar>::iterator item = material_shader.textures.begin();
 	int i = 0;
 	while (item != material_shader.textures.end()) {
@@ -359,7 +368,7 @@ void CompMaterial::ShowInspectorInfo()
 		item++;
 
 	}
-	
+	*/
 	ImGui::TreePop();
 }
 
@@ -402,17 +411,6 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 
 	}
 
-	//Save Shaders and shaders values
-	//TODO
-	//
-	/*if (resource_material != nullptr)
-	{
-		json_object_dotset_number_with_std(object, name + "Resource Material UUID", resource_material->GetUUID());
-	}
-	else
-	{
-		json_object_dotset_number_with_std(object, name + "Resource Material UUID", 0);
-	}*/
 }
 
 void CompMaterial::Load(const JSON_Object* object, std::string name)
@@ -493,11 +491,11 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 
 
 
-void CompMaterial::ShowTextureVariable(int index)
+void CompMaterial::ShowTextureVariable(int index, TextureVar* texture)
 {
 	ImGui::PushID(index);
 
-	TextureVar* texture_var = &material_shader.textures[index];
+	TextureVar* texture_var = texture;
 
 	/* Name of the material */
 	ImGui::Text("Name:"); ImGui::SameLine();
@@ -538,6 +536,46 @@ void CompMaterial::ShowTextureVariable(int index)
 		}
 	}
 	ImGui::PopID();
+}
+
+void CompMaterial::ShowIntVariable(int index, intVar * var)
+{
+	ImGui::PushID(index);
+	ImGui::InputInt(var->var_name.c_str(),&var->value);
+	ImGui::PopID();
+
+}
+
+void CompMaterial::ShowFloatVariable(int index, floatVar * var)
+{
+	ImGui::PushID(index);
+	ImGui::InputFloat(var->var_name.c_str(), &var->value);
+	ImGui::PopID();
+
+}
+
+void CompMaterial::ShowVec3Variable(int index, float3Var * var)
+{
+	ImGui::PushID(index);
+	ImGui::InputFloat3(var->var_name.c_str(), &var->vector[0]);
+	ImGui::PopID();
+
+}
+
+void CompMaterial::ShowBoolVariable(int index, boolVar * var)
+{
+	ImGui::PushID(index);
+	ImGui::Checkbox(var->var_name.c_str(), &var->value);
+	ImGui::PopID();
+
+}
+
+void CompMaterial::ShowColorVariable(int index, ColorVar *var)
+{
+	ImGui::PushID(index);
+	ImGui::ColorPicker4(var->var_name.c_str(), &var->color[0]);
+	ImGui::PopID();
+
 }
 
 void CompMaterial::ShowShadersEditors()

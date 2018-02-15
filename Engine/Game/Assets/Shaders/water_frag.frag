@@ -6,9 +6,9 @@ in vec3 ourPos;
 in float wave_height;
 uniform float _time;
 out vec4 color;
-uniform sampler2D _texture;
-uniform sampler2D _normal_map;
-uniform sampler2D _texture3;
+uniform sampler2D texture_;
+uniform sampler2D normal_map;
+uniform sampler2D texture3;
 
 uniform  mat4 viewproj;
 uniform mat4 model;
@@ -26,7 +26,7 @@ vec2 phase = fract(xy*Tile);
 
 vec3 s = normalize(lightDir);
 vec3 v = normalize(view * vec4(-ourPos,1)).xyz;
-vec3 n = texture( _normal_map,phase ).xyz*ourNormal*2 ;//ourNormal * texture(_normal_map, TexCoord).xyz;
+vec3 n = texture( normal_map,phase ).xyz*ourNormal*2 ;//ourNormal * texture(_normal_map, TexCoord).xyz;
 vec3 h = normalize(v+s);
 float diffuse = Ka + Kd * lightInt * max(0.0, dot(n, s)+0.8);
 float spec = Ks * pow(max(0.0, dot(reflect(-lightDir,n),h)), shininess);
@@ -46,9 +46,9 @@ vec3 lcolor =ourColor.xyz;
 vec3 viewDirection = normalize(vec3( view *vec4(0,0,0, 1.0) - model * vec4(ourPos*2,1)));
 
 
-vec3 color_texture = texture(_texture, TexCoord/1.2 + ((sin(_time/2)+1)/20)).xyz * diffuse;
-vec3 normal_map = texture(_normal_map, TexCoord).xyz;
-vec3 foam_tex = texture(_texture3,TexCoord/1.2 +  ((sin(_time*3))/100)).xyz * 0.7;
+vec3 color_texture = texture(texture_, TexCoord/1.2 + ((sin(_time/2)+1)/20)).xyz * diffuse;
+vec3 normal_map = texture(normal_map, TexCoord).xyz;
+vec3 foam_tex = texture(texture3,TexCoord/1.2 +  ((sin(_time*3))/100)).xyz * 0.7;
 
 float y = normal_map.y;
 normal_map.x = (2*normal_map.x)-1;

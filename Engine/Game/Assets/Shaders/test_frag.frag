@@ -4,14 +4,22 @@ in vec2 TexCoord;
 in vec3 ourNormal;
 in vec3 ourPos;
 
-in struct Light{
-    vec3 position;
-    
+#define MAX_LIGHTS 10
+uniform int numLights;
+uniform struct Light {
+   vec3 position;
+   vec3 intensities; //a.k.a the color of the light
+   float attenuation;
+   float ambientCoefficient;
+   float coneAngle;
+   vec3 coneDirection;
+} _lights[MAX_LIGHTS];
 
-};
 
-in Light[4] lights;
 uniform float _time;
+uniform float test;
+uniform vec4 col;
+uniform vec4 col2;
 out vec4 color;
 
 
@@ -25,5 +33,5 @@ uniform mat4 view;
 void main()
 {
 
-color =  vec4(1 ,0,0,1);
+color = col + col2;
 }

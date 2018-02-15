@@ -9,6 +9,7 @@
 class ResourceMesh;
 class GameObject;
 class CompMaterial;
+class ShaderProgram;
 struct Vertex;
 
 struct FaceCenter
@@ -59,6 +60,8 @@ public:
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
+
+	void SetUniformVariables(ShaderProgram* shader);
 
 	bool HasSkeleton() const;
 	void GenSkeleton();

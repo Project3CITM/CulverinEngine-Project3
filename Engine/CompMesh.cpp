@@ -309,7 +309,7 @@ void CompMesh::Draw()
 				}
 			}		
 			//
-			
+			SetUniformVariables(shader);
 
 
 			// NORMALS ----------------------------------
@@ -488,6 +488,58 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 		}
 	}
 	Enable();
+}
+
+void CompMesh::SetUniformVariables(ShaderProgram * shader)
+{
+	shader->it_textures = shader->textures.begin();
+	shader->it_int_variables = shader->int_variables.begin();
+	shader->it_float_variables = shader->float_variables.begin();
+	shader->it_float3_variables = shader->float3_variables.begin();
+	shader->it_color_variables = shader->color_variables.begin();
+	shader->it_bool_variables = shader->bool_variables.begin();
+
+	//BOOL
+	if(shader->bool_variables.size() != 0)
+	while (shader->it_bool_variables != shader->bool_variables.end()) {
+		GLint bool_loc = glGetUniformLocation(shader->programID, (*shader->it_bool_variables).var_name.c_str());
+		glUniform1i(bool_loc,(int)(*shader->it_bool_variables).value);
+		shader->it_bool_variables++;
+	}
+	//INT
+	if (shader->int_variables.size() != 0)
+	while (shader->it_int_variables != shader->int_variables.end()) {
+		GLint int_loc = glGetUniformLocation(shader->programID, (*shader->it_int_variables).var_name.c_str());
+		glUniform1i(int_loc, (*shader->it_int_variables).value);
+		shader->it_int_variables++;
+	}
+	if (shader->float_variables.size() != 0)
+	while (shader->it_float_variables != shader->float_variables.end()) {
+		GLint float_loc = glGetUniformLocation(shader->programID, (*shader->it_float_variables).var_name.c_str());
+		glUniform1f(float_loc, (*shader->it_float_variables).value);
+		shader->it_float_variables++;
+	}
+
+	if (shader->float3_variables.size() != 0)
+	while (shader->it_float3_variables != shader->float3_variables.end()) {
+		GLint float3_loc = glGetUniformLocation(shader->programID, (*shader->it_float3_variables).var_name.c_str());
+		glUniform3fv(float3_loc,1, &(*shader->it_float3_variables).vector[0]);
+		shader->it_float3_variables++;
+	}
+
+	if (shader->color_variables.size() != 0)
+	while (shader->it_color_variables != shader->color_variables.end()) {
+		GLint color_loc = glGetUniformLocation(shader->programID, (*shader->it_color_variables).var_name.c_str());
+		glUniform4fv(color_loc,1, &(*shader->it_color_variables).color[0]);
+		shader->it_color_variables++;
+	}
+
+	shader->it_textures = shader->textures.begin();
+	shader->it_int_variables = shader->int_variables.begin();
+	shader->it_float_variables =shader->float_variables.begin();
+	shader->it_float3_variables = shader->float3_variables.begin();
+	shader->it_color_variables =shader->color_variables.begin();
+	shader->it_bool_variables =shader->bool_variables.begin();
 }
 
 bool CompMesh::HasSkeleton() const
