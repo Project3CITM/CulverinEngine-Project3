@@ -632,16 +632,17 @@ void ModuleResourceManager::Save()
 	JSON_Object* config;
 	JSON_Object* config_node;
 
-	config_file = json_parse_file("Resources.json");
+	//config_file = json_parse_file("Resources.json");
+	config_file = json_value_init_object();
 
 	if (config_file != nullptr)
 	{
 		config = json_value_get_object(config_file);
-		config_node = json_object_get_object(config, "Resources");
-		json_object_clear(config_node);
+		json_object_clear(config);
 		int num_resources = resources.size() - ResourcePrimitive;
-		json_object_dotset_number_with_std(config_node, "Info.Number of Resources", num_resources);
-		json_object_dotset_boolean_with_std(config_node, "Info.Load Resources", load_resources);
+		json_object_dotset_number_with_std(config, "Resources.Info.Number of Resources", num_resources);
+		json_object_dotset_boolean_with_std(config, "Resources.Info.Load Resources", load_resources);
+		config_node = json_object_get_object(config, "Resources");
 		// Update Resoruces
 		std::map<uint, Resource*>::iterator it = resources.begin();
 		it++; // ++ = Resource "Cube" dont save - ResourcePrimitive
