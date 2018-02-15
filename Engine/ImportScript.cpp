@@ -746,7 +746,7 @@ void ImportScript::ResumeAllSounds()
 	App->audio->ResumeSounds();
 }
 
-void ImportScript::PlayAudioEvent()
+void ImportScript::PlayAudioEvent(MonoString* name)
 {
-	//current->cu
+	current->PlayAudioEvent(name);	
 }

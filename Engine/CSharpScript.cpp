@@ -8,6 +8,7 @@
 #include "CompTransform.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "CompAudio.h"
 
 //SCRIPT VARIABLE UTILITY METHODS ------
 ScriptVariable::ScriptVariable(const char* name, VarType type, VarAccess access, CSharpScript* script) : name(name), type(type), access(access), script(script)
@@ -898,6 +899,18 @@ void CSharpScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 
 		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
 		transform->IncrementRot(new_rot);
+	}
+}
+
+void CSharpScript::PlayAudioEvent(MonoString* event_name)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAudio* audio = (CompAudio*)current_game_object->FindComponentByType(Comp_Type::C_AUDIO);
+		if (audio != nullptr)
+		{
+			audio->PlayAudioEvent(mono_string_to_utf8(event_name));
+		}
 	}
 }
 
