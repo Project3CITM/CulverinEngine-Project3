@@ -52,25 +52,27 @@ AnimBone::~AnimBone()
 
 void AnimBone::UpdateBone(GameObject* bone, std::vector<AnimationClip*>& clip_vec) const
 {
-	float3 pos;
-	Quat rot;
-	float3 scale;
-
-	for (std::vector<AnimationClip*>::const_iterator it = clip_vec.begin(); it != clip_vec.end(); ++it)
+	if ((*clip_vec.begin()) != nullptr)
 	{
-		pos = GetPosition(*it);
-		rot = GetRotation(*it);
-		scale = GetScale(*it);
+		float3 pos;
+		Quat rot;
+		float3 scale;
+
+		for (std::vector<AnimationClip*>::const_iterator it = clip_vec.begin(); it != clip_vec.end(); ++it)
+		{
+			pos = GetPosition(*it);
+			rot = GetRotation(*it);
+			scale = GetScale(*it);
+		}
+
+		//TODO Blending
+
+		CompTransform* transform = bone->GetComponentTransform();
+
+		transform->SetPos(pos);
+		transform->SetRot(rot);
+		transform->SetScale(scale);
 	}
-
-	//TODO Blending
-	
-	CompTransform* transform = bone->GetComponentTransform();
-
-	transform->SetPos(pos);
-	transform->SetRot(rot);
-	transform->SetScale({1,1,1});
-
 }
 
 
