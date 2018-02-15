@@ -26,7 +26,7 @@ New
 
   Status: Marks in which condition is the issue.
   
-  A new issue should be "New", then when the issue is processed, a new status will be set. (Duplicated, Wontfix, Could not reproduce, Need more information, Rejected)
+  A new issue should be "New", then when the issue is processed, a new status will be set. (Assigned, WIP, Could not reproduce, Need more information, Duplicated, Wontfix, Rejected, ToVerify, Reopened)
   
   Priority: Indicates the urgency with which it needs to be fixed.
   
