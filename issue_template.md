@@ -22,15 +22,7 @@ New
 
 
 
-- Annex (In case you don't know which Priority to put or know more about status of the issue):
+- Annex:
 
-  Status: Marks in which condition is the issue.
-  
-  A new issue should be "New", then when the issue is processed, a new status will be set. (Assigned, WIP, Could not reproduce, Need more information, Duplicated, Wontfix, Rejected, ToVerify, Reopened)
-  
-  Priority: Indicates the urgency with which it needs to be fixed.
-  
-    P1 (Critical): Entire functionality is blocked and no testing can proceed as a result of this.
-    P2 (High): Feature is not usable as it’s supposed to be.
-    P3 (Medium): Must be solved as it can cause problems in the future.
-    P4 (Low): Mostly cosmetic issues and low performance/gameplay impact.
+If you do not know what to put in one of the sections or whant to know more about the QA workflow, access the following link:
+https://docs.google.com/document/d/14ptI3YJ2dVoYKWJplgXgIlCXABCUqtt3bDMPxxyA6AY/edit?usp=sharing
