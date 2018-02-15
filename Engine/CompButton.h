@@ -1,7 +1,6 @@
 #ifndef COMPONENT_BUTTON_H
 #define COMPONENT_BUTTON_H
 #include "CompInteractive.h"
-class CompImage;
 
 class CompButton:public CompInteractive
 {
@@ -18,7 +17,6 @@ public:
 private:
 public:
 private:
-	CompImage* target_graphic = nullptr;
 
 
 };
