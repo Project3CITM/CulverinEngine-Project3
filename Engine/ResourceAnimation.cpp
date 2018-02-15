@@ -1,6 +1,8 @@
 #include "ResourceAnimation.h"
 #include "CompAnimation.h"
 #include "Application.h"
+#include "GameObject.h"
+#include "CompTransform.h"
 
 ResourceAnimation::ResourceAnimation(uint uid):Resource(uid, Resource::Type::ANIMATION, Resource::State::UNLOADED)
 {
@@ -62,16 +64,18 @@ void AnimBone::UpdateBone(GameObject* bone, std::vector<AnimationClip*>& clip_ve
 	}
 
 	//TODO Blending
+	
+	CompTransform* transform = bone->GetComponentTransform();
 
-	/*CompTransform* trans = (CompTransform*)bone->FindComponent(Component_Transform);
-	trans->SetPosition(pos);
-	trans->SetRotation(rot);
-	trans->SetScale(scale);*/
+	transform->SetPos(pos);
+	transform->SetRot(rot);
+	transform->SetScale({1,1,1});
+
 }
+
 
 float3 AnimBone::GetPosition(AnimationClip* clip_vec) const
 {
-	//for(std::vector<PositionKey*>::iterator )
 	if (position_keys.size() > 1)
 	{
 		float3 actual_pos;
@@ -81,19 +85,20 @@ float3 AnimBone::GetPosition(AnimationClip* clip_vec) const
 
 		for (std::vector<PositionKey*>::const_iterator it = position_keys.begin(); it != position_keys.end(); ++it)
 		{
-			if (clip_vec->time < (*it)->time)
-				continue;
-			else if (it == position_keys.end() - 1)
+			if ((*it)->time <= clip_vec->time)
 			{
-				return (*position_keys.end() - 1)->position;
-			}
-			else
-			{
-				actual_pos = (*it)->position;
-				actual_time = (*it)->time;
-				next_pos = (*(it + 1))->position;
-				next_time = (*(it + 1))->time;
-				break;
+				if (it == position_keys.end() - 1)
+				{
+					return position_keys[position_keys.size() - 1]->position;
+				}
+				else
+				{
+					actual_pos = (*it)->position;
+					actual_time = (*it)->time;
+					next_pos = (*(it + 1))->position;
+					next_time = (*(it + 1))->time;
+
+				}
 			}
 		}
 		//if no interpolation get clip 0 
@@ -117,19 +122,20 @@ Quat AnimBone::GetRotation(AnimationClip* clip_vec) const
 
 		for (std::vector<RotationKey*>::const_iterator it = rotation_keys.begin(); it != rotation_keys.end(); ++it)
 		{
-			if (clip_vec->time < (*it)->time)
-				continue;
-			else if (it == rotation_keys.end() - 1)
+			if ((*it)->time <= clip_vec->time)
 			{
-				return (*rotation_keys.end() - 1)->rotation;
-			}
-			else
-			{
-				actual_pos = (*it)->rotation;
-				actual_time = (*it)->time;
-				next_pos = (*(it + 1))->rotation;
-				next_time = (*(it + 1))->time;
-				break;
+				if (it == rotation_keys.end() - 1)
+				{
+					return rotation_keys[rotation_keys.size() - 1]->rotation;
+				}
+				else
+				{
+					actual_pos = (*it)->rotation;
+					actual_time = (*it)->time;
+					next_pos = (*(it + 1))->rotation;
+					next_time = (*(it + 1))->time;
+
+				}
 			}
 		}
 		//if no interpolation get clip 0 
@@ -138,7 +144,12 @@ Quat AnimBone::GetRotation(AnimationClip* clip_vec) const
 
 		return actual_pos.Slerp(next_pos, weight);
 	}
-	return rotation_keys[0]->rotation;
+	else
+	{
+		
+		return rotation_keys[0]->rotation;
+		
+	}
 }
 
 float3 AnimBone::GetScale(AnimationClip* clip_vec) const
@@ -152,19 +163,20 @@ float3 AnimBone::GetScale(AnimationClip* clip_vec) const
 
 		for (std::vector<ScaleKey*>::const_iterator it = scale_keys.begin(); it != scale_keys.end(); ++it)
 		{
-			if (clip_vec->time < (*it)->time)
-				continue;
-			else if (it == scale_keys.end() - 1)
+			if ((*it)->time <= clip_vec->time)
 			{
-				return (*scale_keys.end() - 1)->scale;
-			}
-			else
-			{
-				actual_pos = (*it)->scale;
-				actual_time = (*it)->time;
-				next_pos = (*(it + 1))->scale;
-				next_time = (*(it + 1))->time;
-				break;
+				if (it == scale_keys.end() - 1)
+				{
+					return scale_keys[scale_keys.size() - 1]->scale;
+				}
+				else
+				{
+					actual_pos = (*it)->scale;
+					actual_time = (*it)->time;
+					next_pos = (*(it + 1))->scale;
+					next_time = (*(it + 1))->time;
+
+				}
 			}
 		}
 		//if no interpolation get clip 0 

@@ -45,7 +45,10 @@ public:
 	// EDITOR METHODS ---------
 	void ShowOptions();
 	void ShowInspectorInfo();
+	void ShowAnimationInfo();
 	// ------------------------
+
+
 
 	void SetResource(ResourceAnimation * resource_animation, bool isImport = false);
 	void CopyValues(const CompAnimation * component);
@@ -54,6 +57,8 @@ public:
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
+
+	void CreateAnimationClip();
 
 public:
 
@@ -65,6 +70,6 @@ private:
 	std::vector<AnimationClip*> animation_clips;
 
 	std::vector<std::pair<GameObject*, const AnimBone*>> bone_update_vector;
-
+	bool debug_draw = false;
 };
 #endif

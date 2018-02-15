@@ -2,6 +2,7 @@
 #include "ResourceAnimation.h"
 #include "Component.h"
 #include "GameObject.h"
+#include "CompTransform.h"
 #include "Application.h"
 #include "ModuleResourceManager.h"
 #include "ModuleImporter.h"
@@ -20,6 +21,7 @@ CompAnimation::CompAnimation(Comp_Type t, GameObject * parent) : Component(t, pa
 
 CompAnimation::CompAnimation(const CompAnimation & copy, GameObject * parent) : Component(Comp_Type::C_ANIMATION, parent)
 {
+
 }
 
 CompAnimation::~CompAnimation()
@@ -42,9 +44,10 @@ void CompAnimation::Update(float dt)
 {
 	std::vector<AnimationClip*> clips_playing;
 	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
+	{
 		if ((*it)->state == AnimationState::A_PLAY)
 		{
-			(*it)->time += dt;
+			(*it)->time += 1;
 			if ((*it)->time > (*it)->end_frame_time)
 			{
 				if ((*it)->loop == true)
@@ -60,9 +63,11 @@ void CompAnimation::Update(float dt)
 				clips_playing.push_back(*it);
 
 		}
-
+	}
 	for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
+	{
 		it->second->UpdateBone(it->first, clips_playing);
+	}
 }
 
 void CompAnimation::SetResource(ResourceAnimation * resource_animation, bool isImport)
@@ -180,12 +185,47 @@ void CompAnimation::ShowInspectorInfo()
 				if (animation_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					App->importer->iAnimation->LoadResource(animation_resource->path_assets.c_str(), animation_resource);
+					if (animation_resource != nullptr)
+					{
+						for (int i = 0; i < animation_resource->bones.size(); i++)
+						{
+							GameObject* bone = parent->GetChildDeepSearch(animation_resource->bones[i]->name.c_str());
+							bone_update_vector.push_back(std::make_pair(bone, animation_resource->bones[i]));
+						}
+					}
 				}
 				Enable();
 			}
 		}
 	}
+	if (animation_resource != nullptr)
+	{
+		ShowAnimationInfo();
+	}
 	ImGui::TreePop();
+}
+
+void CompAnimation::ShowAnimationInfo()
+{
+	if (animation_resource != nullptr)
+	{
+		ImGui::Text("Name: %s", animation_resource->name);
+		ImGui::Text("Duration: %f", animation_resource->duration);
+		ImGui::Text("Ticks Per Second: %f", animation_resource->ticks_per_sec);
+		ImGui::Text("Number of Bones: %i", animation_resource->bones.size());
+	}
+	if (ImGui::Button("Create Animation Clip", ImVec2(125, 25)))
+	{
+		CreateAnimationClip();
+	}
+	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
+	{
+		if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
+		{
+		
+			ImGui::TreePop();
+		}
+	}
 }
 
 void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
@@ -258,6 +298,14 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 		temp->end_frame_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime");
 		temp->state = (AnimationState)(int)json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".State");
 	}
+}
+
+void CompAnimation::CreateAnimationClip()
+{
+	AnimationClip* tempanimclip = new AnimationClip();
+	tempanimclip->name += std::to_string(animation_clips.size()).c_str();
+	tempanimclip->end_frame_time = animation_resource->duration;
+	animation_clips.push_back(tempanimclip);
 }
 
 void AnimationClip::RestartAnimationClip()

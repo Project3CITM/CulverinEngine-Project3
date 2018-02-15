@@ -1607,7 +1607,12 @@ GameObject * GameObject::GetChildDeepSearch(const char * name) const
 		{
 			for (int i = 0; i < childs.size(); i++)
 			{
+
 				found = childs[i]->GetChildDeepSearch(name);
+				if (found != nullptr)
+				{
+					break;
+				}
 			}
 		}
 	}
