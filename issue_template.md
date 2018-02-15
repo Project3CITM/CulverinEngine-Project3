@@ -1,4 +1,4 @@
-- Status (New, Duplicated, Wontfix, Could not reproduce, Need more information, Rejected)
+- Status
 
 New
 
@@ -22,8 +22,12 @@ New
 
 
 
-- Annex (In case you don't know which Priority to put):
+- Annex (In case you don't know which Priority to put or know more about status of the issue):
 
+  Status: Marks in which condition is the issue.
+  
+  A new issue should be "New", then when the issue is processed, a new status will be set. (Duplicated, Wontfix, Could not reproduce, Need more information, Rejected)
+  
   Priority: Indicates the urgency with which it needs to be fixed.
   
     P1 (Critical): Entire functionality is blocked and no testing can proceed as a result of this.
