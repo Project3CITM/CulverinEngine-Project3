@@ -409,12 +409,12 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 }
 
 // Import Primitive -----------------------------------------------------------------------------------------------------------------------------
-void ImportMesh::Import(uint num_vertices, uint num_indices, uint num_normals, std::vector<uint> indices, std::vector<float3> vertices, uint uuid)
+void ImportMesh::Import(uint num_vertices, uint num_indices, uint num_normals, uint num_bones, std::vector<uint> indices, std::vector<float3> vertices, uint uuid)
 {
 	// ALLOCATING DATA INTO BUFFER ------------------------
-	uint ranges[3] = { num_vertices, num_indices, num_normals }; //,num_tex_coords };
+	uint ranges[4] = { num_vertices, num_indices, num_normals, num_bones}; //,num_tex_coords };
 
-	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices;
+	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices + sizeof(uint) * num_bones;
 
 	float3* vert_normals = nullptr;
 	// Allocating all data 

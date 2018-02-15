@@ -545,7 +545,8 @@ void CompMesh::SetUniformVariables(ShaderProgram * shader)
 
 bool CompMesh::HasSkeleton() const
 {
-	return resource_mesh->HasSkeleton();
+	if (resource_mesh != nullptr) return resource_mesh->HasSkeleton();
+	return false;
 }
 
 void CompMesh::GenSkeleton()
