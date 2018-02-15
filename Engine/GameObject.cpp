@@ -1585,6 +1585,23 @@ GameObject* GameObject::GetChildbyName(const char* name) const
 	return nullptr;
 }
 
+GameObject * GameObject::GetChildDeepSearch(const char * name) const
+{
+	GameObject* found = GetChildbyName(name);
+
+	if (found == nullptr)
+	{
+		if (childs.size() > 0)
+		{
+			for (int i = 0; i < childs.size(); i++)
+			{
+				found = childs[i]->GetChildDeepSearch(name);
+			}
+		}
+	}
+	return found;
+}
+
 uint GameObject::GetIndexChildbyName(const char * name) const
 {
 	if (childs.size() > 0)
