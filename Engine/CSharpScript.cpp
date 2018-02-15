@@ -748,9 +748,9 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "Transform";
 	}
-	else if (name == "CulverinEditor.Audio")
+	else if (name == "CulverinEditor.CompAudio")
 	{
-		comp_name = "Audio";
+		comp_name = "CompAudio";
 	}
 
 	/* Scripts */
