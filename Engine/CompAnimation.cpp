@@ -192,12 +192,72 @@ void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene,
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", C_ANIMATION);
-	//¿No falta aquí la UID?
+	json_object_dotset_number_with_std(object, name + "UUID", uid);
 
+	if (animation_resource != nullptr)
+	{
+		if (saveScene == false)
+		{
+			// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
+			std::string temp = std::to_string(countResources++);
+			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".UUID Resource", animation_resource->GetUUID());
+			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", animation_resource->name);
+		}
+		json_object_dotset_number_with_std(object, name + "Resource Animation UUID", animation_resource->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Resource Animation UUID", 0);
+	}
+
+	json_object_dotset_number_with_std(object, name + "NumberOfClips", animation_clips.size());
+
+	int i = 0;
+	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
+	{
+		json_object_dotset_string_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Name", (*it)->name.c_str());
+		json_object_dotset_boolean_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Loop", (*it)->loop);
+		json_object_dotset_boolean_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Finished", (*it)->finished);
+		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Time", (*it)->time);
+		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".StartTime", (*it)->start_frame_time);
+		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime", (*it)->end_frame_time);
+		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".State", (*it)->state);
+		i++;
+	}
 }
 
 void CompAnimation::Load(const JSON_Object * object, std::string name)
 {
+	uid = json_object_dotget_number_with_std(object, name + "UUID");
+
+	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Animation UUID");
+	if (resourceID > 0)
+	{
+		animation_resource = (ResourceAnimation*)App->resource_manager->GetResource(resourceID);
+		if (animation_resource != nullptr)
+		{
+			animation_resource->num_game_objects_use_me++;
+
+			// LOAD ANIMATION ----------------------------
+			if (animation_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iAnimation->LoadResource(std::to_string(animation_resource->GetUUID()).c_str(), animation_resource);
+			}
+		}
+	}
+
+	int num_clips = json_object_dotget_number_with_std(object, name + "NumberOfClips");
+	for (int i = 0; i < num_clips; i++)
+	{
+		AnimationClip* temp = new AnimationClip();
+		temp->name = json_object_dotget_string_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Name");
+		temp->loop = json_object_dotget_boolean_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Loop");
+		temp->finished = json_object_dotget_boolean_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Finished");
+		temp->time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Time");
+		temp->start_frame_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".StartTime");
+		temp->end_frame_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime");
+		temp->state = (AnimationState)(int)json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".State");
+	}
 }
 
 void AnimationClip::RestartAnimationClip()
