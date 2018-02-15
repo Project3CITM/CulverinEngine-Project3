@@ -3,11 +3,12 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "Application.h"
+#include "ModuleResourceManager.h"
+#include "ModuleImporter.h"
+#include "ImportAnimation.h"
 #include "ModuleGUI.h"
 #include "ModuleInput.h"
-#include "CompCamera.h"
 #include "Scene.h"
-#include "ModuleConsole.h"
 #include "ModuleWindow.h"
 #include "WindowInspector.h"
 #include "WindowSceneWorld.h"
@@ -64,6 +65,30 @@ void CompAnimation::Update(float dt)
 		it->second->UpdateBone(it->first, clips_playing);
 }
 
+void CompAnimation::SetResource(ResourceAnimation * resource_animation, bool isImport)
+{
+	if (animation_resource != resource_animation)
+	{
+		if (animation_resource != nullptr)
+		{
+			if (animation_resource->num_game_objects_use_me > 0)
+			{
+				animation_resource->num_game_objects_use_me--;
+			}
+		}
+		animation_resource = resource_animation;
+		if (isImport)
+		{
+			// Fix Bug with Delete Import -----
+			animation_resource->num_game_objects_use_me = 0;
+		}
+		else
+		{
+			animation_resource->num_game_objects_use_me++;
+		}
+	}
+}
+
 void CompAnimation::CopyValues(const CompAnimation* component)
 {
 	//more...
@@ -108,6 +133,7 @@ void CompAnimation::ShowOptions()
 			CopyValues(((CompAnimation*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
 		}
 	}
+	
 }
 
 void CompAnimation::ShowInspectorInfo()
@@ -125,6 +151,39 @@ void CompAnimation::ShowInspectorInfo()
 	{
 		ShowOptions();
 		ImGui::EndPopup();
+	}
+	if (animation_resource == nullptr)
+	{
+		ImGui::Text("Name:"); ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Animation)");
+		if (ImGui::Button("Select Animation..."))
+		{
+			select_animation = true;
+		}
+	}
+	if (animation_resource == nullptr || select_animation)
+	{
+		if (select_animation)
+		{
+			ResourceAnimation* temp = (ResourceAnimation*)App->resource_manager->ShowResources(select_animation, Resource::Type::ANIMATION);
+			if (temp != nullptr)
+			{
+				if (animation_resource != nullptr)
+				{
+					if (animation_resource->num_game_objects_use_me > 0)
+					{
+						animation_resource->num_game_objects_use_me--;
+					}
+				}
+				animation_resource = temp;
+				animation_resource->num_game_objects_use_me++;
+				if (animation_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iAnimation->LoadResource(animation_resource->path_assets.c_str(), animation_resource);
+				}
+				Enable();
+			}
+		}
 	}
 	ImGui::TreePop();
 }
