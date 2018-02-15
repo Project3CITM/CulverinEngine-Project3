@@ -101,7 +101,7 @@ bool ModuleRenderGui::Start()
 		"out vec4 Out_Color;\n"
 		"void main()\n"
 		"{\n"
-		"	Out_Color = Color_UI_ME*texture(Texture,Frag_UV.st);\n"
+		"	Out_Color = Color_UI_ME*texture(Texture,vec2(Frag_UV.s, 1.0 - Frag_UV.t).st);\n"
 		"}\n"
 	};
 
