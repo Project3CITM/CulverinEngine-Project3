@@ -37,7 +37,9 @@ bool ModuleShaders::Start()
 	test->path = Shader_Directory_fs+"/Test_Material.mat";
 	test->CreateMaterialFile();*/
 
-
+	Light new_light;
+	new_light.position = float3(1, 1, 0);
+	lights.push_back(new_light);
 
 	return true;
 }
@@ -60,7 +62,16 @@ update_status ModuleShaders::Update(float dt)
 		GLint timeLoc = glGetUniformLocation((*item)->programID, "_time");
 		glUniform1f(timeLoc, time_dt);
 
-
+		//LIGHTS
+		GLint lightsizeLoc = glGetUniformLocation((*item)->programID, "_numLights");
+		glUniform1i(lightsizeLoc, lights.size());
+		for (size_t i = 0; i < lights.size(); ++i) {
+			SetLightUniform((*item)->programID, "position", i, lights[i].position);
+			SetLightUniform((*item)->programID, "intensities", i, lights[i].color);
+			SetLightUniform((*item)->programID, "attenuation", i, lights[i].attenuation);
+			SetLightUniform((*item)->programID, "ambientCoefficient", i, lights[i].ambientCoefficient);
+	
+		}
 		(*item)->Unbind();
 		item++;
 	}
@@ -202,15 +213,15 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 		"in vec3 ourNormal;\n"
 		"in vec4 gl_FragCoord;\n"
 		"out vec4 color;\n"
-		"uniform sampler2D _texture;\n"
-		"uniform sampler2D _texture2;\n"
+		"uniform sampler2D albedo;\n"
+		
 		"void main()\n"
 		"{\n"
 		"vec3 lightDir = vec3(1);\n"
 		"float angle = dot(lightDir, ourNormal);\n"
-		"color = texture(_texture, TexCoord) * texture(_texture2, TexCoord);\n"
+		
 		//Z-Buffer Line Shader
-		"color= vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1) *texture(_texture, TexCoord);\n"
+		"color= vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1) *texture(albedo, TexCoord);\n"
 		"}\n"
 	};
 
@@ -543,6 +554,7 @@ Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)
 	return nullptr;
 }
 
+
 bool ModuleShaders::SetEventListenrs()
 {
 	AddListener(EventType::EVENT_OPEN_SHADER_EDITOR, this);
@@ -613,7 +625,31 @@ void ModuleShaders::Enable_Text_Editor()
 			}
 			ImGui::End();
 	}
+}
 
+void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, float3 & v)
+{
+	GLint var_loc = glGetUniformLocation(ID, uniformName);
+	glUniform3fv(var_loc, 1, &v[0]);
 
+}
+void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, float4 & v)
+{
+	GLint var_loc = glGetUniformLocation(ID, uniformName);
+	glUniform4fv(var_loc, 1, &v[0]);
+
+}
+
+void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, float & v)
+{
+	GLint var_loc = glGetUniformLocation(ID, uniformName);
+	glUniform1f(var_loc, v);
+
+}
+
+void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, int & v)
+{
+	GLint var_loc = glGetUniformLocation(ID, uniformName);
+	glUniform1i(var_loc, v);
 
 }

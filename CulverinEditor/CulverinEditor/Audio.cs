@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace CulverinEditor
 {
-    public class Audio
+    public class Audio : CulverinBehaviour
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void StopAllSounds();

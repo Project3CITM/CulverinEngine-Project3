@@ -1,4 +1,5 @@
 #include "CompAnimation.h"
+#include "ResourceAnimation.h"
 #include "Component.h"
 #include "GameObject.h"
 #include "Application.h"
@@ -38,6 +39,29 @@ void CompAnimation::PreUpdate(float dt)
 
 void CompAnimation::Update(float dt)
 {
+	std::vector<AnimationClip*> clips_playing;
+	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
+		if ((*it)->state == AnimationState::A_PLAY)
+		{
+			(*it)->time += dt;
+			if ((*it)->time > (*it)->end_frame_time)
+			{
+				if ((*it)->loop == true)
+				{
+					(*it)->RestartAnimationClip();
+
+					clips_playing.push_back(*it);
+				}
+				else
+					(*it)->state = AnimationState::A_STOP;
+			}
+			else
+				clips_playing.push_back(*it);
+
+		}
+
+	for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
+		it->second->UpdateBone(it->first, clips_playing);
 }
 
 void CompAnimation::CopyValues(const CompAnimation* component)
@@ -115,4 +139,9 @@ void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene,
 
 void CompAnimation::Load(const JSON_Object * object, std::string name)
 {
+}
+
+void AnimationClip::RestartAnimationClip()
+{
+	time = start_frame_time;
 }

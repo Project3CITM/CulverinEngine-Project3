@@ -2,8 +2,31 @@
 #define COMPONENT_ANIMATION_H
 
 #include "Component.h"
+#include <vector>
 
 class GameObject;
+class AnimBone;
+
+enum AnimationState
+{
+	A_PLAY,
+	A_STOP,
+	A_PAUSED
+};
+class AnimationClip
+{
+public:
+	std::string name = "Animation Clip";
+	bool loop = true;
+	float time = start_frame_time;
+	float start_frame_time = 0.0f;
+	float end_frame_time = 0.0f;
+
+	bool finished = true;
+	AnimationState state = A_PLAY;
+
+	void RestartAnimationClip();
+};
 
 class CompAnimation : public Component
 {
@@ -32,6 +55,10 @@ public:
 	// -------------------------------------
 
 private:
+
+	std::vector<AnimationClip*> animation_clips;
+
+	std::vector<std::pair<GameObject*, const AnimBone*>> bone_update_vector;
 
 };
 #endif

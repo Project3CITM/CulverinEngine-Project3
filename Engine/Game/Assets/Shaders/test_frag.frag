@@ -5,7 +5,7 @@ in vec3 ourNormal;
 in vec3 ourPos;
 
 #define MAX_LIGHTS 10
-uniform int numLights;
+uniform int _numLights;
 uniform struct Light {
    vec3 position;
    vec3 intensities; //a.k.a the color of the light
@@ -37,5 +37,5 @@ vec4 final_col = col;
 if(!test_bool){
 final_col = col2;
 }
-color =final_col;
+color =col2;
 }

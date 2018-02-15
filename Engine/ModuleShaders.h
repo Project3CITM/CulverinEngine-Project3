@@ -16,6 +16,23 @@
 typedef unsigned int uint;
 
 
+struct Light {
+	Light() {
+		position = float3::zero;
+		color = float4(255, 255, 255, 255);
+		type = 0;
+		attenuation = 1;
+		ambientCoefficient = 1;
+	}
+
+	float3 position;
+	float4 color; //a.k.a. the color of the light
+	int type;
+	float attenuation;
+	float ambientCoefficient;
+
+};
+
 class ModuleShaders:public Module
 {
 public:
@@ -40,6 +57,7 @@ public:
 	Shader*   CompileShader(std::string path, std::string name, ShaderType type);
 	std::string GetShaderError(uint ID);
 
+	
 	void   AddShaderList(Shader* newShader);
 
 	void ImportShaderObjects();
@@ -47,6 +65,22 @@ public:
 	void ImportShaderMaterials();
 
 	Shader* GetShaderByName(const char* name, ShaderType type);
+
+	template <typename T>
+	void SetLightUniform(uint ID, const char* propertyName, size_t lightIndex, const T& value) {
+
+		std::ostringstream ss;
+		ss << "_lights[" << lightIndex << "]." << propertyName;
+		std::string uniformName = ss.str();
+
+		SetUniform(ID, uniformName.c_str(), (T)value);
+
+	}
+
+	void SetUniform(uint ID, const GLchar* uniformName, float3& v);
+	void SetUniform(uint ID, const GLchar* uniformName, float4& v);
+	void SetUniform(uint ID, const GLchar* uniformName, int& v);
+	void SetUniform(uint ID, const GLchar* uniformName, float& v);
 
 	//Event system test
 	bool SetEventListenrs();
@@ -59,7 +93,7 @@ public:
 	std::vector<ShaderProgram*> programs;
 
 public:
-	std::string last_shader_error = "";
+	std::string last_shader_error = "";	std::vector<Light> lights;
 	TextEditor editor_shaders;
 	bool enable_editor = false;
 	Shader shader_text_active;
@@ -67,3 +101,5 @@ public:
 
 
 #endif
+
+
