@@ -399,10 +399,7 @@ int ImportScript::CompileScript(const char* file, std::string& libraryScript, co
 	command += "-lib:" + CulverinEditorpath + " ";
 	command += script_path;
 
-	//ShowWindow(FindWindowA("ConsoleWindowClass", NULL), false); -> Hide console (good or bad?)
-	LOG("%s", command.c_str());
 	return system(command.c_str());
-	////system("pause");
 }
 
 CSharpScript* ImportScript::LoadScript_CSharp(std::string file)
