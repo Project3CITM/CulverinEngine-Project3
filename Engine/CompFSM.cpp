@@ -105,3 +105,94 @@ void CompFiniteStateMachine::Load(const JSON_Object * object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	Enable();
 }
+
+FSM_State::FSM_State()
+{
+}
+
+FSM_State::FSM_State(const FSM_State & copy) : script(copy.script)	//doesn't copy the transitions
+{	
+}
+
+FSM_State::~FSM_State()
+{
+	delete script;
+	for (std::vector<FSM_Transition*>::iterator it = transitions.begin(); it != transitions.end(); it++)
+		delete *it;
+}
+
+FSM_Transition * FSM_State::GetTransitions()
+{
+	return transitions[0];
+}
+
+FSM_Transition::FSM_Transition(FSM_State * target_state_) : target_state(target_state_)
+{
+}
+
+FSM_Transition::~FSM_Transition()
+{
+	delete target_state;
+	for (std::vector<FSM_Condition*>::iterator it = conditions.begin(); it != conditions.end(); it++)
+		delete *it;
+}
+
+bool FSM_Transition::IsTriggered()
+{
+	//TODO: Check all conditions
+	for (std::vector<FSM_Condition*>::iterator it = conditions.begin(); it != conditions.end(); it++)
+		return false;
+	return false;
+}
+
+FSM_State * FSM_Transition::GetTargetState()
+{
+	return target_state;
+}
+
+FSM_Condition::FSM_Condition()
+{
+}
+
+FSM_Condition::~FSM_Condition()
+{
+}
+
+FSM_ConditionBool::FSM_ConditionBool(bool condition_) : condition(condition_)
+{
+}
+
+FSM_ConditionBool::~FSM_ConditionBool()
+{
+}
+
+bool FSM_ConditionBool::Test()
+{
+	return condition;
+}
+
+FSM_ConditionEqualInt::FSM_ConditionEqualInt(int condition_) : condition(condition_)
+{
+}
+
+FSM_ConditionEqualInt::~FSM_ConditionEqualInt()
+{
+}
+
+bool FSM_ConditionEqualInt::Test(int i)
+{
+	return i == condition;
+}
+
+FSM_ConditionGreaterThanInt::FSM_ConditionGreaterThanInt(int condition_) :condition(condition_)
+{
+}
+
+FSM_ConditionGreaterThanInt::~FSM_ConditionGreaterThanInt()
+{
+}
+
+bool FSM_ConditionGreaterThanInt::Test(int i)
+{
+	return i > condition;
+}
