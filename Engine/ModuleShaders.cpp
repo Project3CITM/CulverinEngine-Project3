@@ -648,7 +648,11 @@ void ModuleShaders::Enable_Text_Editor()
 			if (editor_shaders.GetText().size()==0) {
 				editor_shaders.InsertText("#version 330 core\n void main(){\n }");
 			}
+
+			ImGuiIO& io = ImGui::GetIO();
+			ImGui::PushFont(io.Fonts->Fonts[1]);
 			editor_shaders.Render(temp_name.c_str());
+			ImGui::PopFont();
 			if (ImGui::Button("Save"))
 			{
 				FILE* pFile = fopen(shader_text_active.shaderPath.c_str(), "wb");

@@ -615,8 +615,8 @@ void CompMaterial::ShowIntVariable(int index, intVar * var)
 
 void CompMaterial::ShowFloatVariable(int index, floatVar * var)
 {
-	ImGui::PushID(index);
-	ImGui::InputFloat(var->var_name.c_str(), &var->value);
+	ImGui::PushID(index);	
+	ImGui::InputFloat(var->var_name.c_str(), &var->value, 0.01f,0.1f,3);
 	ImGui::PopID();
 
 }
