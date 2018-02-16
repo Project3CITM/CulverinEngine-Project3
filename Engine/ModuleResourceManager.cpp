@@ -359,12 +359,12 @@ Resource* ModuleResourceManager::GetResource(uint id)
 	return nullptr;
 }
 
-Resource* ModuleResourceManager::GetResource(const char* material)
+Resource* ModuleResourceManager::GetResource(const char* name)
 {
 	std::map<uint, Resource*>::iterator it = resources.begin();
 	for (int i = 0; i < resources.size(); i++)
 	{
-		if (strcmp(it->second->name, material) == 0)
+		if (strcmp(it->second->name, name) == 0)
 		{
 			return it->second;
 		}
@@ -463,7 +463,7 @@ void ModuleResourceManager::CreateResourceCube()
 	std::vector<uint> indices;
 	std::vector<float3> vertices;
 	Init_IndexVertex(vertices_array, 36, indices, vertices);
-	App->importer->iMesh->Import(8, 36, 0, indices, vertices, 2); // 2 == Cube
+	App->importer->iMesh->Import(8, 36, 0, 0, indices, vertices, 2); // 2 == Cube
 	RELEASE_ARRAY(vertices_array);
 	RELEASE(bounding_box);
 }
@@ -506,21 +506,15 @@ Resource*  ModuleResourceManager::ShowResources(bool& active, Resource::Type typ
 			ImGui::PushID(i);
 			if (type == it->second->GetType())
 			{
-				if (type == Resource::Type::SCRIPT && it->second->num_game_objects_use_me > 0)
+				ImGui::ButtonEx(it->second->name);
+				if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 				{
-				}
-				else
-				{
-					ImGui::ButtonEx(it->second->name);
-					if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+					if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
 					{
-						if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
-						{
-							ImGui::PopID();
-							ImGui::End();
-							active = false;
-							return GetResource(it->second->GetUUID());
-						}
+						ImGui::PopID();
+						ImGui::End();
+						active = false;
+						return GetResource(it->second->GetUUID());
 					}
 				}
 			}
@@ -638,16 +632,17 @@ void ModuleResourceManager::Save()
 	JSON_Object* config;
 	JSON_Object* config_node;
 
-	config_file = json_parse_file("Resources.json");
+	//config_file = json_parse_file("Resources.json");
+	config_file = json_value_init_object();
 
 	if (config_file != nullptr)
 	{
 		config = json_value_get_object(config_file);
-		config_node = json_object_get_object(config, "Resources");
-		json_object_clear(config_node);
+		json_object_clear(config);
 		int num_resources = resources.size() - ResourcePrimitive;
-		json_object_dotset_number_with_std(config_node, "Info.Number of Resources", num_resources);
-		json_object_dotset_boolean_with_std(config_node, "Info.Load Resources", load_resources);
+		json_object_dotset_number_with_std(config, "Resources.Info.Number of Resources", num_resources);
+		json_object_dotset_boolean_with_std(config, "Resources.Info.Load Resources", load_resources);
+		config_node = json_object_get_object(config, "Resources");
 		// Update Resoruces
 		std::map<uint, Resource*>::iterator it = resources.begin();
 		it++; // ++ = Resource "Cube" dont save - ResourcePrimitive

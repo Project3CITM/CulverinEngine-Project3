@@ -69,7 +69,7 @@ bool ImportAnimation::Import(const aiAnimation * animation, const char * name, c
 				rotation_key_name += ".";
 				json_object_dotset_number_with_std(config, bone_name + rotation_key_name + "Time", animation->mChannels[i]->mRotationKeys[p].mTime);
 
-				float4 rot = { animation->mChannels[i]->mRotationKeys[p].mValue.w ,animation->mChannels[i]->mRotationKeys[p].mValue.x ,animation->mChannels[i]->mRotationKeys[p].mValue.y ,animation->mChannels[i]->mRotationKeys[p].mValue.z};
+				float4 rot = { animation->mChannels[i]->mRotationKeys[p].mValue.x ,animation->mChannels[i]->mRotationKeys[p].mValue.y ,animation->mChannels[i]->mRotationKeys[p].mValue.z ,animation->mChannels[i]->mRotationKeys[p].mValue.w};
 				App->fs->json_array_dotset_float4(config, bone_name + rotation_key_name + "Rotation",rot );
 			}
 			json_object_dotset_number_with_std(config, bone_name + "NumScaleKeys", animation->mChannels[i]->mNumScalingKeys);
@@ -121,7 +121,7 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 				PositionKey* temp_pos_key = new PositionKey();
 				JSON_Object* config_pos_key;
 
-				std::string name_pos = "Position_Key" + std::to_string(i);
+				std::string name_pos = "Position_Key" + std::to_string(p);
 				config_pos_key = json_object_get_object(config_bone, name_pos.c_str());
 
 				temp_pos_key->time = json_object_dotget_number(config_pos_key, "Time");
@@ -135,12 +135,12 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 				RotationKey* temp_rot_key = new RotationKey();
 				JSON_Object* config_rot_key;
 
-				std::string name_rot = "Rotation_Key" + std::to_string(i);
+				std::string name_rot = "Rotation_Key" + std::to_string(j);
 				config_rot_key = json_object_get_object(config_bone, name_rot.c_str());
 
 				temp_rot_key->time = json_object_dotget_number(config_rot_key, "Time");
 				float4 rot = App->fs->json_array_dotget_float4_string(config_rot_key, "Rotation");
-				temp_rot_key->rotation = { Quat(rot.w, rot.x, rot.y, rot.z) };
+				temp_rot_key->rotation = { Quat(rot.x, rot.y, rot.z, rot.w) };
 				temp_bone->rotation_keys.push_back(temp_rot_key);
 			}
 			int num_scale_keys = json_object_dotget_number(config_bone, "NumScaleKeys");
@@ -149,7 +149,7 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 				ScaleKey* temp_scale_key = new ScaleKey();
 				JSON_Object* config_scale_key;
 
-				std::string name_scale = "Scale_Key" + std::to_string(i);
+				std::string name_scale = "Scale_Key" + std::to_string(z);
 				config_scale_key = json_object_get_object(config_bone, name_scale.c_str());
 
 				temp_scale_key->time = json_object_dotget_number(config_scale_key, "Time");

@@ -21,14 +21,15 @@ public:
 	jpPhysicsRigidBody(physx::PxPhysics* px_physics, bool is_dynamic = false);
 	~jpPhysicsRigidBody();
 
-	void ToStatic(physx::PxPhysics* px_physics);
-	void ToDynamic(physx::PxPhysics* px_physics);
+	void ToStatic();
+	void ToDynamic();
 
 	void ActivateShape();
 	void DeActivateShape();
 
 	// Set Methods
 	void SetAsKinematic(bool kinematic);
+	void SetAsTrigger(bool trigger);
 	void SetTransform(float* trans_mat);
 	void SetTransform(float3 pos, Quat rotation, bool autoawake = true);
 	void SetGeometry(physx::PxGeometry new_geometry); //DO NOT USE, does nothing, will be later on defined to use with convexmesh

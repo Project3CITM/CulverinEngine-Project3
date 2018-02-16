@@ -14,7 +14,8 @@ public:
 	void AddCanvasRender();
 
 	void SetTextureID(uint set_texture_id);
-
+	void SetColor(const float4& set_rgba);
+	void SetColor(float set_r, float set_g, float set_b, float set_a);
 	uint GetTextureID()const;
 	CompRectTransform* GetRectTrasnform()const;
 	CompCanvasRender* GetCanvasRender()const;

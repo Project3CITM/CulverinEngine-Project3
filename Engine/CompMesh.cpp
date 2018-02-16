@@ -309,7 +309,7 @@ void CompMesh::Draw()
 				}
 			}		
 			//
-			
+			SetUniformVariables(shader);
 
 
 			// NORMALS ----------------------------------
@@ -490,9 +490,63 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompMesh::SetUniformVariables(ShaderProgram * shader)
+{
+	shader->it_textures = shader->textures.begin();
+	shader->it_int_variables = shader->int_variables.begin();
+	shader->it_float_variables = shader->float_variables.begin();
+	shader->it_float3_variables = shader->float3_variables.begin();
+	shader->it_color_variables = shader->color_variables.begin();
+	shader->it_bool_variables = shader->bool_variables.begin();
+
+	//BOOL
+	if(shader->bool_variables.size() != 0)
+	while (shader->it_bool_variables != shader->bool_variables.end()) {
+
+		GLint bool_loc = glGetUniformLocation(shader->programID, (*shader->it_bool_variables).var_name.c_str());
+		glUniform1i(bool_loc,(*shader->it_bool_variables).value);
+		shader->it_bool_variables++;
+	}
+	//INT
+	if (shader->int_variables.size() != 0)
+	while (shader->it_int_variables != shader->int_variables.end()) {
+		GLint int_loc = glGetUniformLocation(shader->programID, (*shader->it_int_variables).var_name.c_str());
+		glUniform1i(int_loc, (*shader->it_int_variables).value);
+		shader->it_int_variables++;
+	}
+	if (shader->float_variables.size() != 0)
+	while (shader->it_float_variables != shader->float_variables.end()) {
+		GLint float_loc = glGetUniformLocation(shader->programID, (*shader->it_float_variables).var_name.c_str());		
+		glUniform1f(float_loc, (*shader->it_float_variables).value);
+		shader->it_float_variables++;
+	}
+
+	if (shader->float3_variables.size() != 0)
+	while (shader->it_float3_variables != shader->float3_variables.end()) {
+		GLint float3_loc = glGetUniformLocation(shader->programID, (*shader->it_float3_variables).var_name.c_str());
+		glUniform3fv(float3_loc,1, &(*shader->it_float3_variables).vector[0]);
+		shader->it_float3_variables++;
+	}
+
+	if (shader->color_variables.size() != 0)
+	while (shader->it_color_variables != shader->color_variables.end()) {
+		GLint color_loc = glGetUniformLocation(shader->programID, (*shader->it_color_variables).var_name.c_str());
+		glUniform4fv(color_loc,1, &(*shader->it_color_variables).color[0]);
+		shader->it_color_variables++;
+	}
+
+	shader->it_textures = shader->textures.begin();
+	shader->it_int_variables = shader->int_variables.begin();
+	shader->it_float_variables =shader->float_variables.begin();
+	shader->it_float3_variables = shader->float3_variables.begin();
+	shader->it_color_variables =shader->color_variables.begin();
+	shader->it_bool_variables =shader->bool_variables.begin();
+}
+
 bool CompMesh::HasSkeleton() const
 {
-	return resource_mesh->HasSkeleton();
+	if (resource_mesh != nullptr) return resource_mesh->HasSkeleton();
+	return false;
 }
 
 void CompMesh::GenSkeleton()
@@ -502,51 +556,47 @@ void CompMesh::GenSkeleton()
 
 	char* name_iterator = source->bone_hirarchy_names;
 
-	GameObject* current = parent;
-	int current_parent_id = -1;
 	uint generated_bones = 0;
-	uint child_num = 0;
 
-	while (generated_bones < source->num_bones)
-	{
-		GameObject* new_bone = new GameObject(name_iterator);
-		name_iterator += source->bone_hirarchy_name_sizes[generated_bones];
+	parent->AddChildGameObject(GenBone(&name_iterator, source, generated_bones));
+}
 
-		CompTransform* transform = (CompTransform*)new_bone->AddComponent(Comp_Type::C_TRANSFORM);
+GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* source, uint& generated_bones)
+{
+	GameObject* new_bone = new GameObject(*name_iterator);
+	*name_iterator += strlen(new_bone->GetName()) + 1;
 
-		float4x4 local_transform;
-		CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
-		comp_bone->resource_mesh = resource_mesh;
-		resource_mesh->num_game_objects_use_me++;
+	CompTransform* transform = (CompTransform*)new_bone->AddComponent(Comp_Type::C_TRANSFORM);
 
-		for (int i = 0; i < source->num_bones; i++)
-			if (source->bones[i].name == new_bone->GetName())
-			{
-				local_transform = parent->GetComponentTransform()->GetGlobalTransform() * source->bones[i].offset;
-				comp_bone->offset = source->bones[i].offset;
+	float4x4 local_transform;
+	CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
+	comp_bone->resource_mesh = resource_mesh;
+	resource_mesh->num_game_objects_use_me++;
 
-				for (int j = 0; j < source->bones[i].num_weights; j++)
-					comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));				
-			}
-
-		float3 pos;
-		Quat rot;
-		float3 scale;
-
-		local_transform.Decompose(pos, rot, scale);
-		transform->SetPos(pos);
-		transform->SetRot(rot);
-		transform->SetScale(scale);
-
-		current->AddChildGameObject(new_bone);
-
-		if ((current_parent_id == -1)||(++child_num >= source->bone_hirarchy_num_childs[current_parent_id]))
+	for (int i = 0; i < source->num_bones; i++)
+		if (source->bones[i].name == new_bone->GetName())
 		{
-			current = current->GetChildbyIndex(0);
-			child_num = 0;
-			current_parent_id = generated_bones;
+			local_transform = parent->GetComponentTransform()->GetGlobalTransform() * source->bones[i].offset;
+			comp_bone->offset = source->bones[i].offset;
+
+			for (int j = 0; j < source->bones[i].num_weights; j++)
+				comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));
 		}
 
-		generated_bones++;
-	}
+	float3 pos;
+	Quat rot;
+	float3 scale;
+
+	local_transform.Decompose(pos, rot, scale);
+	transform->SetPos(pos);
+	transform->SetRot(rot);
+	transform->SetScale(scale);
+
+	uint num_childs = source->bone_hirarchy_num_childs[generated_bones];
+	generated_bones++;
+
+	for (int i = 0; i < num_childs; i++)
+		new_bone->AddChildGameObject(GenBone(name_iterator, source, generated_bones));
+
+	return new_bone;
 }

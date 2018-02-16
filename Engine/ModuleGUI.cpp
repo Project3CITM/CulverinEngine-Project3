@@ -17,7 +17,9 @@
 #include "GameObject.h"
 #include "ModuleAudio.h"
 #include "ModuleMap.h"
-
+#include "ModuleEventSystem.h"
+#include "ShadersLib.h"
+#include "EventDef.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
 #include "ImGui/imgui_dock_v2.h"
@@ -225,6 +227,22 @@ update_status ModuleGUI::Update(float dt)
 			{
 				window_create_new_script = !window_create_new_script;
 			}
+
+			if (ImGui::BeginMenu("Shaders"))
+			{
+				if (ImGui::MenuItem("Create Shader Object"))
+				{
+					shader_obj_creation = true;
+				}
+				if (ImGui::MenuItem("Create Shader Program"))
+				{
+					shader_program_creation_UI = true;
+					shader_program_creation = true;
+				}
+				ImGui::EndMenu();
+			}
+
+
 			ImGui::EndMenu();
 		}
 
@@ -439,6 +457,92 @@ update_status ModuleGUI::Update(float dt)
 		App->map->ShowEditorMap(window_create_map);
 	}
 	//----------------------------------------------
+
+	// Window Creating Shader Object --------------------------------
+
+	if (shader_obj_creation) {
+		ImGui::Begin("Shader Object Definition", &shader_obj_creation);
+
+		ImGui::InputText("Name of the Shader", str_shad_temp, 64);
+
+		ImGui::Combo("Shaders Mode", &combo_shaders, "Vertex Shader\0Fragment Shader\0Geometry Shader");
+
+		if (ImGui::Button("Create")) {
+
+			Event shader_event;
+			shader_event.shadereditor.type = EventType::EVENT_OPEN_SHADER_EDITOR;
+			shader_event.shadereditor.name = str_shad_temp;
+
+			switch (combo_shaders) {
+			case 0:
+				shader_event.shadereditor.shader_type = ShaderType::vertex;
+				break;
+			case 1:
+				shader_event.shadereditor.shader_type = ShaderType::fragment;
+				break;
+			case 2:
+				shader_event.shadereditor.shader_type = ShaderType::geometry;
+				break;
+			}
+			shader_event.shadereditor.open_editor = true;
+			PushEvent(shader_event);
+
+			shader_obj_creation = false;
+		}
+			ImGui::End();
+	
+	}
+
+	if (shader_program_creation_UI) 
+	{
+
+		ImGui::Begin("Shader Object Definition", &shader_obj_creation);
+
+		ImGui::InputText("Name of the Shader", str_shad_prg_temp, 64);
+
+		std::string shader_options;
+		std::string name;
+
+		for (int i = 0; i < vec_temp_shader.size(); i++) 
+		{
+			name = vec_temp_shader[i]->name;
+			shader_options += name;
+			shader_options += '\0';
+		}
+
+	
+
+		ImGui::Combo("Shader 1:", &combo_shaders_obj, shader_options.c_str());
+
+		ImGui::Combo("Shader 2:", &combo_shaders_obj2, shader_options.c_str());
+
+		if (ImGui::Button("Create")) 
+		{
+
+			Event shader_event_prg;
+			shader_event_prg.shaderprogram.type = EventType::EVENT_CREATE_SHADER_PROGRAM;
+			shader_event_prg.shaderprogram.name = str_shad_prg_temp;
+
+			if (combo_shaders_obj != -1)
+			{
+				shader_event_prg.shaderprogram.Shader1 = vec_temp_shader[combo_shaders_obj];
+			}
+
+			if (combo_shaders_obj2 != -1) {
+				shader_event_prg.shaderprogram.Shader2 = vec_temp_shader[combo_shaders_obj2];
+			}
+
+			PushEvent(shader_event_prg);
+
+			vec_temp_shader.clear();
+
+			shader_program_creation_UI = false;
+		}
+
+		ImGui::End();
+	}
+
+	//-----------------------------------------------------------
 
 	// Window About Us... ---------------------------------
 	if (window_about_us)
@@ -1087,4 +1191,22 @@ void ModuleGUI::ShowEngineState()
 void ModuleGUI::ShowCreateNewScriptWindow()
 {
 	window_create_new_script = true;
+}
+
+bool ModuleGUI::SetEventListenrs()
+{
+	AddListener(EventType::EVENT_SEND_ALL_SHADER_OBJECTS, this);
+	return true;
+}
+
+void ModuleGUI::OnEvent(Event& event)
+{
+	switch (event.type)
+	{
+	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:
+		//need to fix std::pair
+		vec_temp_shader = *event.sendshaderobject.shaders;
+		break;
+	}
+
 }

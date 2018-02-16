@@ -9,7 +9,9 @@
 class ResourceMesh;
 class GameObject;
 class CompMaterial;
+class ShaderProgram;
 struct Vertex;
+class SkeletonSource;
 
 struct FaceCenter
 {
@@ -60,8 +62,11 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
 
+	void SetUniformVariables(ShaderProgram* shader);
+
 	bool HasSkeleton() const;
 	void GenSkeleton();
+	GameObject* GenBone(char** name_iterator, const SkeletonSource* source, uint& generated_bones);
 
 public:
 

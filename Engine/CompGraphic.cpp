@@ -36,6 +36,16 @@ void CompGraphic::SetTextureID(uint set_texture_id)
 	texture_id = set_texture_id;
 }
 
+void CompGraphic::SetColor(const float4 & set_rgba)
+{
+	color = set_rgba;
+}
+
+void CompGraphic::SetColor(float set_r, float set_g, float set_b, float set_a)
+{
+	SetColor(float4(set_r, set_g, set_b, set_a));
+}
+
 uint CompGraphic::GetTextureID() const
 {
 	return texture_id;

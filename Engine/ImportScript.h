@@ -83,10 +83,24 @@ private:
 	static void			SetRotation(MonoObject* object, MonoObject* vector3);
 	static void			IncrementRotation(MonoObject* object, MonoObject* vector3);
 
+	/* Component */
+
+	static MonoObject* GetParentGameObject();
+
 	/* Map */
 	static MonoString* GetMapString(MonoObject* object);
 	static int GetHeightMap();
 	static int GetWidthMap();
+
+	/*Audio*/
+
+	static void StopAllSounds();
+	static void PauseAllSounds();
+	static void ResumeAllSounds();
+	static void ChangeRTPC(MonoString* var_name, float value);
+
+	/*Component Audio*/
+	static void PlayAudioEvent(MonoObject* object, MonoString* name);
 
 private:
 	std::string nameNewScript;

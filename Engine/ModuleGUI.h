@@ -56,6 +56,10 @@ public:
 
 	void SetLinkInspector(GameObject* obj);
 
+	//Event system test
+	bool SetEventListenrs();
+	void OnEvent(Event& event);
+
 public:
 
 	/*Capsule Capsule_A;
@@ -70,6 +74,19 @@ public:
 	std::vector<float> floats_list;
 	std::vector<int> ints_list;
 	//------------------------------
+
+	// Shader Ui stuff-----------------
+	int combo_shaders = 0;
+	bool shader_obj_creation = false;
+	bool shader_program_creation= false;
+	bool shader_program_creation_UI = false;
+	bool shader_obj_creation_begin = false;
+	char str_shad_temp[64] = "";
+	char str_shad_prg_temp[64] = "";
+	std::vector<Shader*> vec_temp_shader;
+	int combo_shaders_obj = -1;
+	int combo_shaders_obj2 = -1;
+	//-----------------
 
 private:
 

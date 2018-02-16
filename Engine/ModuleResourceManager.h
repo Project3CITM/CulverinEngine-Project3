@@ -36,7 +36,7 @@ public:
 	
 	Resource* CreateNewResource(Resource::Type type, uint uuid = 0);
 	Resource* GetResource(uint id);
-	Resource* GetResource(const char* material); //Only Use in ImportMesh -> Add ResourceMaterial
+	Resource* GetResource(const char* name);
 	Resource::Type CheckFileType(const char* filedir);
 
 	void Init_IndexVertex(float3* vertex_triangulate, uint num_index, std::vector<uint>& indices, std::vector<float3>& vertices);

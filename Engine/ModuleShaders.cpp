@@ -1,8 +1,13 @@
 #include "ModuleShaders.h"
 #include "ShadersLib.h"
 #include "ModuleFS.h"
-#include"Application.h"
-#include"JSONSerialization.h"
+#include "Application.h"
+#include "JSONSerialization.h"
+#include "ModuleEventSystem.h"
+#include "ModuleRenderer3D.h"
+#include "CompCamera.h"
+#include "ModuleCamera3D.h"
+#include "ModuleGUI.h"
 
 ModuleShaders::ModuleShaders()
 {
@@ -36,7 +41,9 @@ bool ModuleShaders::Start()
 	test->path = Shader_Directory_fs+"/Test_Material.mat";
 	test->CreateMaterialFile();*/
 
-
+	Light new_light;
+	new_light.position = float3(1, 1, 0);
+	lights.push_back(new_light);
 
 	return true;
 }
@@ -59,11 +66,32 @@ update_status ModuleShaders::Update(float dt)
 		GLint timeLoc = glGetUniformLocation((*item)->programID, "_time");
 		glUniform1f(timeLoc, time_dt);
 
+		//CAMERA POSITION
+		float3 cam_pos = App->camera->GetPos();
+		GLint cameraLoc = glGetUniformLocation((*item)->programID, "_cameraPosition");
+		glUniform3fv(cameraLoc, 1, &cam_pos[0]);
 
+		//LIGHTS
+		GLint lightsizeLoc = glGetUniformLocation((*item)->programID, "_numLights");
+		glUniform1i(lightsizeLoc, lights.size());
+		for (size_t i = 0; i < lights.size(); ++i) {
+			SetLightUniform((*item)->programID, "position", i, lights[i].position);
+			SetLightUniform((*item)->programID, "type", i, lights[i].type);
+			SetLightUniform((*item)->programID, "l_color", i, lights[i].color);
+			SetLightUniform((*item)->programID, "attenuation", i, lights[i].attenuation);
+			SetLightUniform((*item)->programID, "ambientCoefficient", i, lights[i].ambientCoefficient);
+
+		}
 		(*item)->Unbind();
 		item++;
 	}
+
+	Enable_Text_Editor();
 	
+	if (App->gui->shader_program_creation) {
+		SendEventWithAllShaders();
+	}
+
 	return update_status::UPDATE_CONTINUE;
 }
 
@@ -199,15 +227,15 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 		"in vec3 ourNormal;\n"
 		"in vec4 gl_FragCoord;\n"
 		"out vec4 color;\n"
-		"uniform sampler2D _texture;\n"
-		"uniform sampler2D _texture2;\n"
+		"uniform sampler2D albedo;\n"
+		
 		"void main()\n"
 		"{\n"
 		"vec3 lightDir = vec3(1);\n"
 		"float angle = dot(lightDir, ourNormal);\n"
-		"color = texture(_texture, TexCoord) * texture(_texture2, TexCoord);\n"
+		
 		//Z-Buffer Line Shader
-		"color= vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1) *texture(_texture, TexCoord);\n"
+		"color= vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1) *texture(albedo, TexCoord);\n"
 		"}\n"
 	};
 
@@ -254,7 +282,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 	newVertex->shaderID = vertexShader;
 	newVertex->shaderText = *vertexShaderSource;
 	newVertex->shaderType = ShaderType::vertex;
-	newFragment->name = "default_shader_vert";
+	newVertex->name = "default_shader_vert";
 	newVertex->shaderPath = "";
 
 	defaultShader->AddVertex(newVertex);
@@ -538,4 +566,135 @@ Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)
 		}
 	}
 	return nullptr;
+}
+
+
+bool ModuleShaders::SetEventListenrs()
+{
+	AddListener(EventType::EVENT_OPEN_SHADER_EDITOR, this);
+	AddListener(EventType::EVENT_CREATE_SHADER_PROGRAM, this);
+	return true;
+}
+
+void ModuleShaders::OnEvent(Event & event)
+{
+	std::string path;
+	switch (event.type)
+	{
+	case EventType::EVENT_OPEN_SHADER_EDITOR:
+
+		path = Shader_Directory_fs+ "/" + event.shadereditor.name;
+
+		switch (event.shadereditor.shader_type)
+		{
+		case ShaderType::fragment:
+			path += ".frag";
+			break;
+		case ShaderType::vertex:
+			path += ".vert";
+			break;
+		case ShaderType::geometry:
+			path += ".geom";
+			break;
+		}
+		shader_text_active.name = event.shadereditor.name;
+		shader_text_active.shaderPath = path;
+		shader_text_active.shaderType = event.shadereditor.shader_type;
+		enable_editor = event.shadereditor.open_editor;
+		break;
+	case EventType::EVENT_CREATE_SHADER_PROGRAM:
+		path = Shader_Directory_fs + "/" + event.shaderprogram.name + ".mat";
+		ShaderProgram * program=CreateShader(event.shaderprogram.name);
+		program->path = path;
+		switch (event.shaderprogram.Shader1->shaderType) {
+		case ShaderType::vertex:
+			program->AddVertex(event.shaderprogram.Shader1);
+			break;
+		case ShaderType::fragment:
+			program->AddFragment(event.shaderprogram.Shader2);
+			break;
+		case ShaderType::geometry:
+			program->AddGeometry(event.shaderprogram.Shader2);
+			break;
+		}
+
+		switch (event.shaderprogram.Shader2->shaderType) {
+		case ShaderType::vertex:
+			program->AddVertex(event.shaderprogram.Shader2);
+			break;
+		case ShaderType::fragment:
+			program->AddFragment(event.shaderprogram.Shader2);
+			break;
+		case ShaderType::geometry:
+			program->AddGeometry(event.shaderprogram.Shader2);
+			break;
+		}
+		program->LoadProgram();
+		program->CreateMaterialFile();
+		break;
+
+	}
+}
+
+void ModuleShaders::Enable_Text_Editor()
+{
+
+
+	if (enable_editor) {
+	
+			std::string temp_name= "Shader editor";
+			ImGui::Begin(temp_name.c_str(), &enable_editor);
+
+			if (editor_shaders.GetText().size()==0) {
+				editor_shaders.InsertText("#version 330 core\n void main(){\n }");
+			}
+			editor_shaders.Render(temp_name.c_str());
+			if (ImGui::Button("Save"))
+			{
+				FILE* pFile = fopen(shader_text_active.shaderPath.c_str(), "wb");
+				uint buffer_size = strlen(editor_shaders.GetText().c_str());
+				fwrite(editor_shaders.GetText().c_str(), sizeof(char), buffer_size, pFile);
+				fclose(pFile);
+				CompileShader(shader_text_active.shaderPath, shader_text_active.name, shader_text_active.shaderType);
+				enable_editor = false;
+			}
+			ImGui::End();
+	}
+}
+
+void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, float3 & v)
+{
+	GLint var_loc = glGetUniformLocation(ID, uniformName);
+	glUniform3fv(var_loc, 1, &v[0]);
+
+}
+void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, float4 & v)
+{
+	GLint var_loc = glGetUniformLocation(ID, uniformName);
+	glUniform4fv(var_loc, 1, &v[0]);
+
+}
+
+void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, float & v)
+{
+	GLint var_loc = glGetUniformLocation(ID, uniformName);
+	glUniform1f(var_loc, v);
+
+}
+
+void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, int & v)
+{
+	GLint var_loc = glGetUniformLocation(ID, uniformName);
+	glUniform1i(var_loc, v);
+
+}
+
+void ModuleShaders::SendEventWithAllShaders() 
+{
+	Event shader_event;
+	shader_event.shadereditor.type = EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
+	//need to fix std::pair
+	shader_event.sendshaderobject.shaders = &shaders;
+	PushEvent(shader_event);
+	App->gui->shader_program_creation = false;
 }

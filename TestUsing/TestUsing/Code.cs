@@ -1,10 +1,19 @@
 ﻿using CulverinEditor;
+using CulverinEditor.Debug;
 
 public class Code : CulverinBehaviour
 {
+    Codev1 test;
+
     void Start()
     {
-        GetComponent<Transform>().enabled = false;
-        gameObject.GetComponent<Transform>().enabled = true;
+        test = GetComponent<Codev1>();
+    }
+
+    void Update()
+    {
+        Debug.Log("---");
+        test.Test();
+        Debug.Log("---");
     }
 }

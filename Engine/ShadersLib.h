@@ -49,7 +49,7 @@ struct float3Var {
 
 struct ColorVar {
 	std::string var_name;
-	float4 color = float4::zero;
+	float4 color = float4(256,256,256,256);
 };
 
 struct floatVar {
@@ -96,7 +96,7 @@ public:
 class ShaderProgram {
 public:
 	ShaderProgram() {
-
+		
 	}
 	~ShaderProgram() {
 
@@ -119,6 +119,8 @@ public:
 	GLint  GetVariablesSize()const;
 	GLint  GetAttributesSize()const;
 
+	void GetProgramVariables();
+
 	void CreateMaterialFile();
 
 	std::string LogProgramLastError();
@@ -134,12 +136,20 @@ public:
 	Shader* geometry = nullptr;
 
 	//Variables Vector
-	std::vector<TextureVar> textures;
-	std::vector<intVar> int_variables;
-	std::vector<floatVar> float_variables;
-	std::vector<float3Var> float3_variables;
-	std::vector<ColorVar> float4_variables;
-	std::vector<boolVar> bool_variables;
+	std::vector<TextureVar>	textures;
+	std::vector<intVar>		int_variables;
+	std::vector<floatVar>	float_variables;
+	std::vector<float3Var>	float3_variables;
+	std::vector<ColorVar>	color_variables;
+	std::vector<boolVar>	bool_variables;
+
+	std::vector<TextureVar>::iterator	it_textures;
+	std::vector<intVar>::iterator		it_int_variables;
+	std::vector<floatVar>::iterator		it_float_variables;
+	std::vector<float3Var>::iterator	it_float3_variables;
+	std::vector<ColorVar>::iterator		it_color_variables;
+	std::vector<boolVar>::iterator		it_bool_variables;
+
 
 	TextEditor shader_editor;
 

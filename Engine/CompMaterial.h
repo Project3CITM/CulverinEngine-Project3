@@ -29,7 +29,12 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompMaterial * component);
-	void ShowTextureVariable(int index);
+	void ShowTextureVariable(int index, TextureVar*);
+	void ShowIntVariable(int index, intVar*);
+	void ShowFloatVariable(int index, floatVar*);
+	void ShowVec3Variable(int index, float3Var*);
+	void ShowBoolVariable(int index, boolVar*);
+	void ShowColorVariable(int index, ColorVar*);
 	void ShowShadersEditors();
 	// -------------------------
 

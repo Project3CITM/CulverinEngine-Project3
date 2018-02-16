@@ -12,6 +12,7 @@ public class Test
     void Start()
     {
         //elliot = GameObject.gameObject.GetComponent<Testelliot>();
+       
     }
 
     void Update()

@@ -1,11 +1,12 @@
 #ifndef COMPONENT_INTERACTIVE_H
 #define COMPONENT_INTERACTIVE_H
 #include "Component.h"
-#include <vector>
+#include <list>
 #include "Math\float4.h"
 
-
-
+union Event;
+class CompGraphic;
+class CompImage;
 class ResourceMaterial;
 class CompInteractive:public Component
 {
@@ -17,10 +18,16 @@ public:
 
 
 	void PreUpdate(float dt);
+	void Update(float dt);
 	void ShowOptions();
 	void CopyValues(const CompInteractive * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+
+	virtual bool IsActive()const;
+	void Desactive();
+
+	void SetTargetGraphic(CompGraphic* target_graphic);
 	//Setters Color tint parameters
 	void SetNormalColor(const float4& set_rgba);
 	void SetNormalColor(float set_r, float set_g, float set_b, float set_a);
@@ -43,8 +50,19 @@ public:
 	ResourceMaterial* GetHighligtedSprite()const;
 	ResourceMaterial* GetPressedSprite()const;
 	ResourceMaterial* GetDisabledSprite()const;
+
+protected:
+	virtual bool IsPressed();
+	virtual bool IsHighlighted(Event event_data);
+	virtual void UpdateSelectionState(Event event_data);
+private:
+	void HandleTransition();
+
+	void StartTransitionColor(float4 color_to_change, bool no_fade);
+	void UpdateTransitionColor(float dt);
+	void StartTransitionSprite(ResourceMaterial* sprite_to_change);
 public:
-	enum States
+	enum SelectionStates
 	{
 		STATE_NONE =-1,
 		STATE_NORMAL,
@@ -61,21 +79,34 @@ public:
 		TRANSITION_ANIMATION,
 		TRANSITION_MAX
 	};
-private:
-	//static std::list<CompInteractive> s_List;
 
+private:
+	static std::list<CompInteractive*> iteractive_list;
+	
+	SelectionStates current_selection_state = STATE_NORMAL;
+	Transition current_transition_mode = TRANSITION_NONE;
+
+	bool disabled = false;
 protected:
 	//Color tint parameters
 	float4 normal_color;
 	float4 highlighted_color;
 	float4 pressed_color;
 	float4 disabled_color;
-	float color_multiply=1.0f;
-	float fade_duration=0.1f;
+	float4 desired_color;
+	float color_multiply = 1.0f;
+	float fade_duration = 0.1f;
+	bool no_fade = false;
+	bool start_transition = false;
+
 	//Sprite Swap parameters
 	ResourceMaterial* sprite[3];
 	uint uuid_reimported_sprite[3];
+	CompGraphic* target_graphic = nullptr;
+	CompImage* image = nullptr;
 
+private:
+	
 
 };
 #endif // !COMPONENT_INTERACTIVE_H

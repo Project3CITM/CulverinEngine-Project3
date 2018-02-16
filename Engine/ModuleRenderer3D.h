@@ -41,7 +41,7 @@ public:
 	
 public:
 
-	Light lights[MAX_LIGHTS];
+	
 	SDL_GLContext context;
 	CompCamera* active_camera = nullptr; /* Render the scene through the active camera (it can be SCENE camera or GAME camera)*/
 	CompCamera* scene_camera = nullptr;

@@ -106,11 +106,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 		GLfloat LightModelAmbient[] = {0.0f, 0.0f, 0.0f, 1.0f};
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 		
-		lights[0].ref = GL_LIGHT0;
-		lights[0].ambient.Set(0.5f, 0.5f, 0.5f, 1.0f);
-		lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
-		lights[0].SetPos(0.0f, 5.0f, 5.0f);
-		lights[0].Init();
+	
 		
 		GLfloat MaterialAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
@@ -184,7 +180,7 @@ bool ModuleRenderer3D::Start()
 {
 	perf_timer.Start();
 
-	lights[0].Active(true);
+
 	(depth_test) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	(cull_face) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 	(lighting) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
@@ -220,11 +216,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glLoadMatrixf(active_camera->GetViewMatrix());
 
 	// light 0 on cam pos
-	lights[0].SetPos(active_camera->frustum.pos.x, active_camera->frustum.pos.y, active_camera->frustum.pos.z);
-
-	for(uint i = 0; i < MAX_LIGHTS; ++i)
-		lights[i].Render();
-
+	
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }

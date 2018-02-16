@@ -34,19 +34,16 @@ public:
 
 	void SaveAudioBanks(JSON_Object* config_node);
 	void LoadAudioBanksFromScene(int number_of_banks, JSON_Object* config_node);
-
-
-	void ChangeVolume(float volume);
-	void Mute();
+	
+	void SetListener(CompAudio* c);
 
 	void StopSounds();
 	void PauseSounds();
 	void ResumeSounds();
-
-	void SetListener(CompAudio* c);
 	void SetAudioVariableValue(const char* variable_name, float value);
 	void ChangeState(const char* group, const char* new_state);
-
+	void ChangeVolume(float volume);
+	void Mute();
 
 
 private:

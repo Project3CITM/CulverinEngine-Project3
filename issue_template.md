@@ -1,13 +1,28 @@
-##Summary (When Issue Happens)
+- Status
 
-##Type (Gamplay, animation, scripting, particles, physics,...)
+New
 
-##Severity (A:Critical,crash, B:Important , C:Cosmetic,polish)
+- Category (Gamplay, animation, scripting, particles, physics,...)
 
-##Steps to reproduce (Explain the steps to reproduce this issue)
 
-##Actual result (Explain what you happens)
 
-##Expected result (Explain what you expect to happen)
+- Description (Explain with detail the issue)
 
-##Build (In which build this issue happens)
+
+
+- Steps to reproduce (Explain the exact steps to reproduce this issue)
+
+
+
+- Priority (P1:Critical, P2:High, P3:Medium, P4;Low)
+
+
+
+- Screenshot
+
+
+
+- Annex:
+
+If you do not know what to put in one of the sections or whant to know more about the QA workflow, access the following link:
+https://docs.google.com/document/d/14ptI3YJ2dVoYKWJplgXgIlCXABCUqtt3bDMPxxyA6AY/edit?usp=sharing

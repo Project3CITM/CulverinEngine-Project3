@@ -46,19 +46,7 @@ bool ShaderProgram::LoadProgram()
 		return false;
 	}
 
-
-	uint var_size = GetVariablesSize();
-	for (int i = 0; i < var_size; i++) {
-		UniformVar temp = GetVariableInfo(i);
-
-		//Textures
-		if (temp.type == 35678) {
-			TextureVar texture_var;
-			texture_var.var_name = temp.name;
-			textures.push_back(texture_var);
-		}
-
-	}
+	GetProgramVariables();
 
 	return true;
 
@@ -269,32 +257,81 @@ bool ShaderProgram::UpdateShaderProgram(uint VertexID, uint FragmentID, uint Geo
 	}
 
 
-	uint var_size = GetVariablesSize();
-	uint atrib_size = GetAttributesSize();
-	for (int i = 0; i < var_size; i++) {
-		UniformVar temp = GetVariableInfo(i);
-
-		//Textures
-		if (temp.type == GL_SAMPLER_2D) {
-			TextureVar texture_var;
-			texture_var.var_name = temp.name;
-			textures.push_back(texture_var);
-		}
-
-	}
-
-	for (int i = 0; i < atrib_size; i++) {
-		AttributeVar temp = GetAttributeInfo(i);
-
-		//Textures
-		if (temp.type == GL_SAMPLER_2D) {
-			TextureVar texture_var;
-			texture_var.var_name = temp.name;
-			textures.push_back(texture_var);
-		}
-
-	}
-
+	GetProgramVariables();
 
 	return true;
+}
+
+
+void ShaderProgram::GetProgramVariables()
+{
+
+	textures.clear();
+	float3_variables.clear();
+	float_variables.clear();
+	int_variables.clear();
+	bool_variables.clear();
+	color_variables.clear();
+
+
+	uint var_size = GetVariablesSize();
+	for (int i = 0; i < var_size; i++)
+	{
+		UniformVar temp = GetVariableInfo(i);
+
+		// Variables started with '_' reserved for global variables
+		if (temp.name != nullptr && temp.name[0] == '_') continue;
+
+
+		//Textures
+		if (temp.type == GL_SAMPLER_2D)
+		{
+			TextureVar texture_var;
+			texture_var.var_name = temp.name;
+			textures.push_back(texture_var);
+		}
+
+		//Vec3
+		if (temp.type == GL_FLOAT_VEC3 ) 
+		{
+			float3Var float3_var;
+			float3_var.var_name = temp.name;
+			float3_variables.push_back(float3_var);
+		}
+
+		//Int
+		if (temp.type == GL_INT)
+		{
+			intVar int_var;
+			int_var.var_name = temp.name;
+			int_variables.push_back(int_var);
+		}
+
+		//Float
+		if (temp.type == GL_FLOAT) 
+		{
+			floatVar float_var;
+			float_var.var_name = temp.name;
+			float_variables.push_back(float_var);
+		}
+
+		//Bool
+		if (temp.type == GL_BOOL)
+		{
+			boolVar bool_var;
+			bool_var.var_name = temp.name;
+			bool_variables.push_back(bool_var);
+		}
+
+
+		//Color
+		if (temp.type == GL_FLOAT_VEC4)
+		{
+			ColorVar color_var;
+			color_var.var_name = temp.name;
+			color_variables.push_back(color_var);
+		}
+
+	}
+
 }

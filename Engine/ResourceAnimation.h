@@ -6,6 +6,9 @@
 #include "Math/Quat.h"
 #include <vector>
 
+class AnimationClip;
+class GameObject;
+
 struct PositionKey
 {
 	float time;
@@ -27,12 +30,14 @@ struct ScaleKey
 class AnimBone
 {
 public:
-	//void UpdateBone(GameObject* gameobject, std::vector<AnimationClip>& clip_vec) const;
+	void UpdateBone(GameObject* bone, std::vector<AnimationClip*>& clip_vec) const;
 	~AnimBone();
 
-	//float3 GetPosition(AnimationClip clip_vec) const;
-	//Quat GetRotation(AnimationClip* clip_vec) const;
-	//float3 GetScale(AnimationClip* clip_vec) const;
+	float3 GetPosition(AnimationClip* clip_vec) const;
+	Quat GetRotation(AnimationClip* clip_vec) const;
+	float3 GetScale(AnimationClip* clip_vec) const;
+
+	void DrawDebug(GameObject* bone) const;
 
 public:
 	std::string name;

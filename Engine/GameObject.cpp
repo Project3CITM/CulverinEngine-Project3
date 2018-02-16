@@ -379,8 +379,11 @@ void GameObject::Draw()
 				PushEvent(draw_event);
 				/**/
 			}
-
 			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_CAMERA)
+			{
+				components[i]->Draw();
+			}
+			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_ANIMATION)
 			{
 				components[i]->Draw();
 			}
@@ -617,6 +620,8 @@ void GameObject::ShowGameObjectOptions()
 		GameObject* cube = App->scene->CreateCube(this);
 		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->LinkObject(cube);
 	}
+	
+
 	//if (ImGui::MenuItem("Sphere"))
 	//{
 	//	GameObject* sphere = App->scene->CreateSphere(this);
@@ -730,7 +735,6 @@ void GameObject::ShowGameObjectOptions()
 			}
 			ImGui::EndMenu();
 		}
-
 
 	}
 	// -------------------------------------------------------------
@@ -1048,7 +1052,30 @@ Component* GameObject::FindComponentByType(Comp_Type type) const
 	return nullptr;
 }
 
-Component * GameObject::FindParentComponentByType(Comp_Type type)const
+void GameObject::GetComponentsByType(Comp_Type type, std::vector<Component*>* fill_comp) const
+{
+	for (uint i = 0; i < components.size(); i++)
+	{
+		if (components[i]->GetType() == type)
+		{
+			fill_comp->push_back(components[i]);
+		}
+	}
+}
+
+Component* GameObject::GetComponentByName(const char* name_component) const
+{
+	for (uint i = 0; i < components.size(); i++)
+	{
+		if (strcmp(components[i]->GetName(), name_component) == 0)
+		{
+			return components[i];
+		}
+	}
+	return nullptr;
+}
+
+Component* GameObject::FindParentComponentByType(Comp_Type type)const
 {
 	
 	Component * ret = nullptr;
@@ -1571,6 +1598,28 @@ GameObject* GameObject::GetChildbyName(const char* name) const
 		}
 	}
 	return nullptr;
+}
+
+GameObject * GameObject::GetChildDeepSearch(const char * name) const
+{
+	GameObject* found = GetChildbyName(name);
+
+	if (found == nullptr)
+	{
+		if (childs.size() > 0)
+		{
+			for (int i = 0; i < childs.size(); i++)
+			{
+
+				found = childs[i]->GetChildDeepSearch(name);
+				if (found != nullptr)
+				{
+					break;
+				}
+			}
+		}
+	}
+	return found;
 }
 
 uint GameObject::GetIndexChildbyName(const char * name) const

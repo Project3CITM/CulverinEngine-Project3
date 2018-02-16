@@ -1,12 +1,12 @@
 #ifndef _EVENTDEF_
 #define _EVENTDEF_
-
+#include<vector>
 /*-----------------------------------------------------------------------------------------------------------*/
 /*---Add new events:-----------------------------------------------------------------------------------------*/
 /*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))--------------*/
 /*---Add the new Event struct (in the proper place and alphabetical order (easier to search))----------------*/
 /*---Its mandatory to put "EventType type;" at the begining of every Event struct----------------------------*/
-/*---In the new Event structure DON'T define anything (this can be modified in the future)-------------------*/
+/*---In the new Event structure DON'T DEFINE ANYTHING (this can be modified in the future)-------------------*/
 /*---Add the new Event in the Event union (in the proper place and alphabetical order (easier to search))----*/
 /*---If you are testing and don't put in the proper place and alphabetical order the events copy&paste this:-*/
 /*---(Not ordered)-------------------------------------------------------------------------------------------*/
@@ -18,6 +18,8 @@
 /*--------------------------------------------------*/
 class GameObject;
 class Component;
+enum ShaderType;
+class Shader;
 
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
@@ -41,8 +43,10 @@ enum EventType
 	/*----------------------Physics---------------------*/
 
 	/*------------------Shader Pipeline-----------------*/
-	EVENT_CREATE_SHADER,
 	EVENT_CREATE_SHADER_PROGRAM,
+	EVENT_SEND_ALL_SHADER_OBJECTS,
+	EVENT_OPEN_SHADER_EDITOR,
+
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
@@ -131,18 +135,31 @@ struct EWindowResize
 /*--------------------------------------------------*/
 /*------------------Shader Pipeline-----------------*/
 /*--------------------------------------------------*/
-struct ECreateShader
-{
-	EventType type;
-	const char* name;	//std::string?
-	const char* code;	//std::string?
-};
-
 struct ECreateShaderProgram
 {
 	EventType type;
 	const char* name;	//std::string?
-	//std::queue<int> ShaderObjects;
+	Shader* Shader1;
+	Shader* Shader2;
+};
+
+struct ESendAllShaderObject
+{
+	ESendAllShaderObject() {}
+	EventType type= EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
+	
+	//This vector makes std pair of the cpp errors
+	//need to fix this
+	std::vector<Shader*>* shaders;
+};
+
+struct EOpenShaderEditor
+{
+	EventType type;
+	ShaderType shader_type;
+	const char* name;
+	bool open_editor;	
+	
 };
 
 /*--------------------------------------------------*/
@@ -159,6 +176,8 @@ struct ECreateShaderProgram
 /*--------------------------------------------------*/
 union Event
 {
+	Event() {};
+	~Event() {};
 	EventType type;
 	/*----------------------Engine----------------------*/
 	EDeleteGO deletego;
@@ -176,8 +195,9 @@ union Event
 	/*----------------------Physics---------------------*/
 
 	/*------------------Shader Pipeline-----------------*/
-	ECreateShader shader;
 	ECreateShaderProgram shaderprogram;
+	ESendAllShaderObject sendshaderobject;
+	EOpenShaderEditor shadereditor;
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/

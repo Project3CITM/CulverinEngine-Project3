@@ -10,7 +10,7 @@
 #include "JSONSerialization.h"
 #include "CSharpScript.h"
 #include "Timer.h"
-
+#include "ModuleAudio.h"
 #include <direct.h>
 #pragma comment(lib, "mono-2.0-sgen.lib")
 
@@ -62,8 +62,14 @@ bool ImportScript::InitScriptingSystem()
 	if (culverin_assembly)
 	{
 		culverin_mono_image = mono_assembly_get_image(culverin_assembly);
+		std::string monoCmdOptions = "--soft-breakpoints";
+		char *options = new char[monoCmdOptions.size() + 1];
+		strcpy(options, monoCmdOptions.c_str());
+		mono_jit_parse_options(1, &options);
 		return true;
 	}
+
+	
 
 	return false;
 }
@@ -112,7 +118,7 @@ bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
 				res_script->InitInfo(path_dll, fileassets);
 				res_script->SetState(Resource::State::FAILED);
 				CSharpScript* script = new CSharpScript();
-				res_script->SetCSharp(script);
+				//res_script->SetCSharp(script);
 				return false;
 			}
 			else
@@ -122,7 +128,7 @@ bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
 				res_script->SetState(Resource::State::LOADED);
 				//now 
 				CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
-				res_script->SetCSharp(newCSharp);
+				//res_script->SetCSharp(newCSharp);
 			}
 
 			// Then Create Meta
@@ -163,7 +169,7 @@ bool ImportScript::LoadResource(const char* file, ResourceScript* resourceScript
 			resourceScript->SetScriptEditor(App->fs->GetOnlyName(App->fs->GetOnlyName(file).c_str()));
 			//now 
 			CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
-			resourceScript->SetCSharp(newCSharp);
+			//resourceScript->SetCSharp(newCSharp);
 		}
 
 
@@ -294,8 +300,8 @@ bool ImportScript::CreateNewScript(bool& active)
 						res_script->InitInfo(path_dll, fileassets);
 						res_script->SetState(Resource::State::LOADED);
 						//now 
-						CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
-						res_script->SetCSharp(newCSharp);
+						//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
+						//res_script->SetCSharp(newCSharp);
 					}
 
 
@@ -393,10 +399,7 @@ int ImportScript::CompileScript(const char* file, std::string& libraryScript, co
 	command += "-lib:" + CulverinEditorpath + " ";
 	command += script_path;
 
-	//ShowWindow(FindWindowA("ConsoleWindowClass", NULL), false); -> Hide console (good or bad?)
-	LOG("%s", command.c_str());
 	return system(command.c_str());
-	////system("pause");
 }
 
 CSharpScript* ImportScript::LoadScript_CSharp(std::string file)
@@ -505,6 +508,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Transform::GetRotation", (const void*)GetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::RotateAroundAxis", (const void*)IncrementRotation);
 
+	// Component ---------------------------
+	mono_add_internal_call("CulverinEditor.Component::GetParentGameObject", (const void*)GetParentGameObject);
+	
 	//CONSOLE FUNCTIONS ------------------
 	mono_add_internal_call("CulverinEditor.Debug.Debug::Log", (const void*)ConsoleLog);
 	//INPUT FUNCTIONS -------------------
@@ -525,6 +531,15 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Map.Map::GetMapString", (const void*)GetMapString);
 	mono_add_internal_call("CulverinEditor.Map.Map::GetHeightMap", (const void*)GetHeightMap);
 	mono_add_internal_call("CulverinEditor.Map.Map::GetWidthMap", (const void*)GetWidthMap);
+
+	//AUDIO FUNCTIONS --------------------
+	mono_add_internal_call("CulverinEditor.Audio::StopAllSounds", (const void*)StopAllSounds);
+	mono_add_internal_call("CulverinEditor.Audio::PauseAllSounds", (const void*)PauseAllSounds);
+	mono_add_internal_call("CulverinEditor.Audio::ResumeAllSounds", (const void*)ResumeAllSounds);
+	mono_add_internal_call("CulverinEditor.Audio::SetAudioVariableValue", (const void*)ChangeRTPC);
+
+	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
+	
 }
 
 //Log messages into Engine Console
@@ -634,7 +649,7 @@ void ImportScript::SetActive(MonoObject* object, mono_bool active)
 	current->SetActive(object, active);
 }
 
-MonoObject * ImportScript::Find(MonoObject * object, MonoString * name)
+MonoObject* ImportScript::Find(MonoObject* object, MonoString* name)
 {
 	return current->Find(object, name);
 }
@@ -644,7 +659,7 @@ MonoObject* ImportScript::GetOwnGameObject()
 	return current->GetOwnGameObject();
 }
 
-void ImportScript::SetName(MonoObject* object, MonoString * name)
+void ImportScript::SetName(MonoObject* object, MonoString* name)
 {
 	current->SetName(object, name);
 }
@@ -654,12 +669,12 @@ MonoString* ImportScript::GetName(MonoObject* object)
 	return current->GetName(object);
 }
 
-MonoString * ImportScript::GetTag(MonoObject * object)
+MonoString* ImportScript::GetTag(MonoObject* object)
 {
 	return current->GetTag(object);
 }
 
-void ImportScript::SetTag(MonoObject * object, MonoString * name)
+void ImportScript::SetTag(MonoObject* object, MonoString* name)
 {
 
 }
@@ -704,7 +719,13 @@ void ImportScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 	current->IncrementRotation(object, vector3);
 }
 
-// Map Funcitons -------------
+// Component ---------------------
+MonoObject* ImportScript::GetParentGameObject()
+{
+	return current->GetParentGameObject();
+}
+
+// Map Functions -------------
 MonoString* ImportScript::GetMapString(MonoObject* object)
 {
 	return current->GetMapString(object);
@@ -718,4 +739,34 @@ int ImportScript::GetHeightMap()
 int ImportScript::GetWidthMap()
 {
 	return App->map->GetHeightMap();
+}
+
+
+// Module Audio Functions ------------
+
+void ImportScript::StopAllSounds()
+{
+	App->audio->StopSounds();
+}
+
+void ImportScript::PauseAllSounds()
+{
+	App->audio->PauseSounds();
+}
+
+void ImportScript::ResumeAllSounds()
+{
+	App->audio->ResumeSounds();
+}
+
+void ImportScript::ChangeRTPC(MonoString* var_name, float value)
+{
+	App->audio->SetAudioVariableValue(mono_string_to_utf8(var_name), value);
+}
+
+// Component Audio Functions ------------
+
+void ImportScript::PlayAudioEvent(MonoObject* object, MonoString* name)
+{
+	current->PlayAudioEvent(object, name);
 }

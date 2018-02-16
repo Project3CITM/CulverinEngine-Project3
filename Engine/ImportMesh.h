@@ -37,10 +37,11 @@ public:
 	bool Load(const char* exported_file, Texture* resource);
 
 	bool Import(const aiScene * scene, const aiMesh* mesh, GameObject* obj, const char* name, const char* file, uint uuid = 0);
-	void Import(uint num_vertices, uint num_indices, uint num_normals, std::vector<uint> indices, std::vector<float3> vertices, uint uid = 0);
+	void Import(uint num_vertices, uint num_indices, uint num_normals, uint num_bones, std::vector<uint> indices, std::vector<float3> vertices, uint uid = 0);
 	bool LoadResource(const char * file, ResourceMesh* resourceMesh);
 
 private:
+	void ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, char* bone_hirarchy_names, uint* bone_hirarchy_num_childs, uint& name_iterator, uint& joints_saved);
 };
 
 #endif

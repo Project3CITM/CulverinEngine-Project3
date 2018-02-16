@@ -11,7 +11,7 @@ ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 
 	have_config = false; // not yet
 	name = "Physics";
-/*
+
 	// Create Physics World
 	physics_world = new jpPhysicsWorld();
 	physics_world->CreateNewPhysicsWorld();
@@ -19,7 +19,7 @@ ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 	// Create and Get Current Scene and Physics world
 	mScene = physics_world->CreateNewScene();
 	mPhysics = physics_world->GetPhysicsWorld();
-	*/
+	
 }
 
 ModulePhysics::~ModulePhysics()
@@ -52,12 +52,12 @@ bool ModulePhysics::Start()
 // -----------------------------------------------------------------
 update_status ModulePhysics::PreUpdate(float dt)
 {
-	/*
+	
 	// Update Physics World
 	if (dt > 0) {
 		physics_world->Simulate(dt);
 	}
-	*/
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -117,18 +117,3 @@ jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(bool dynamic)
 	}
 }
 
-void ModulePhysics::ChangeRigidBodyToStatic(jpPhysicsRigidBody * rigidbody)
-{
-	if (physics_world && rigidbody)
-	{
-		rigidbody->ToStatic(mPhysics);
-	}
-}
-
-void ModulePhysics::ChangeRigidBodyToDynamic(jpPhysicsRigidBody * rigidbody)
-{
-	if (physics_world && rigidbody)
-	{
-		rigidbody->ToDynamic(mPhysics);
-	}
-}

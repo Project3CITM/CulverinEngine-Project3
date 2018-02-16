@@ -12,7 +12,7 @@ namespace CulverinEditor
             CreateGameObject(this);
         }
 
-        public static GameObject gameObject
+        public GameObject gameObject
         {
             get
             {
