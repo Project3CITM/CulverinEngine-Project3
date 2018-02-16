@@ -1140,6 +1140,9 @@
     <ClInclude Include="CompBone.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="CompLight.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1494,6 +1497,9 @@
       <Filter>Engine\PhysX\jpPhysX</Filter>
     </ClCompile>
     <ClCompile Include="CompBone.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompLight.cpp">
       <Filter>Engine\Components</Filter>
     </ClCompile>
   </ItemGroup>

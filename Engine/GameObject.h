@@ -20,6 +20,7 @@ class CompText;
 class CompEditText;
 class CompButton;
 class CompCheckBox;
+class CompLight;
 
 
 class GameObject
@@ -90,6 +91,7 @@ public:
 	CompMaterial* GetComponentMaterial() const;
 	CompScript * GetComponentScript() const;
 	CompAnimation* GetComponentAnimation() const;
+	CompLight* GetComponentLight() const;
 
 	Component* GetComponentbyIndex(uint i) const;
 	void DeleteAllComponents();

@@ -1533,6 +1533,11 @@ CompAnimation * GameObject::GetComponentAnimation() const
 	return (CompAnimation*)FindComponentByType(Comp_Type::C_ANIMATION);
 }
 
+CompLight * GameObject::GetComponentLight() const
+{
+	return (CompLight*)FindComponentByType(Comp_Type::C_LIGHT);
+}
+
 
 Component* GameObject::GetComponentbyIndex(uint i) const
 {

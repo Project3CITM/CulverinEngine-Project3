@@ -120,6 +120,7 @@
     <ClInclude Include="CompGraphic.h" />
     <ClInclude Include="CompImage.h" />
     <ClInclude Include="CompInteractive.h" />
+    <ClInclude Include="CompLight.h" />
     <ClInclude Include="CompMaterial.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="CompRectTransform.h" />
@@ -454,6 +455,7 @@
     <ClCompile Include="CompGraphic.cpp" />
     <ClCompile Include="CompImage.cpp" />
     <ClCompile Include="CompInteractive.cpp" />
+    <ClCompile Include="CompLight.cpp" />
     <ClCompile Include="CompMaterial.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="CompRectTransform.cpp" />
