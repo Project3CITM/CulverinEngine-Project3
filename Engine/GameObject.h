@@ -61,6 +61,7 @@ public:
 	bool IsDeleteFixed() const;
 	const char* GetName() const;
 	const char* GetTag()const;
+	bool CompareTag(const char* str)const;
 
 	// EDITOR METHODS ------------------
 	void ShowHierarchy();

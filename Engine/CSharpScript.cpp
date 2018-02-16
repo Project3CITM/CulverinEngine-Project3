@@ -725,6 +725,11 @@ MonoString* CSharpScript::GetTag(MonoObject* object)
 	return mono_string_new(CSdomain, current_game_object->GetTag());
 }
 
+bool CSharpScript::CompareTag(MonoObject * object, MonoString * tag)
+{
+	return current_game_object->CompareTag(mono_string_to_utf8(tag));
+}
+
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)
 {
 	if (!CheckMonoObject(object))

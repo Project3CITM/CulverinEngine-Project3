@@ -74,6 +74,7 @@ private:
 	static MonoString*	GetName(MonoObject* object);
 	static MonoString*	GetTag(MonoObject* object);
 	static void			SetTag(MonoObject* object, MonoString* name);
+	static mono_bool	CompareTag(MonoObject* object, MonoString* tag);
 	static void			CreateGameObject(MonoObject* object);
 	static void			DeleteGameObject(MonoObject* object);
 	static MonoObject*	GetComponent(MonoObject* object, MonoReflectionType* type);

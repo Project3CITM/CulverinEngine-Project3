@@ -129,6 +129,7 @@ public:
 	MonoString* GetName(MonoObject* object);
 	void		SetTag(MonoObject* object, MonoString* tag);
 	MonoString* GetTag(MonoObject* object);
+	bool		CompareTag(MonoObject* object, MonoString* tag);
 
 	MonoObject* GetOwnGameObject();
 	void		SetCurrentGameObject(GameObject* current);
