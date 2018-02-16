@@ -52,9 +52,9 @@ private:
 	static void ConsoleLog(MonoString* string);
 
 	/* Input */
-	static mono_bool	GetKeyDown(MonoObject* obj, MonoObject* key);
-	static mono_bool	GetKeyUp(MonoObject* obj, MonoObject* key);
-	static mono_bool	GetKeyRepeat(MonoObject* obj, MonoObject* key);
+	static mono_bool	GetKeyDown(int key);
+	static mono_bool	GetKeyUp(int key);
+	static mono_bool	GetKeyRepeat(int key);
 	static mono_bool	GetMouseButtonDown(int buttonmouse);
 	static mono_bool	GetMouseButtonUp(int buttonmouse);
 	static mono_bool	GetMouseButtonRepeat(int buttonmouse);

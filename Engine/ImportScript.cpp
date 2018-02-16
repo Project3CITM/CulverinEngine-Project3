@@ -515,12 +515,12 @@ void ImportScript::LinkFunctions()
 	//CONSOLE FUNCTIONS ------------------
 	mono_add_internal_call("CulverinEditor.Debug.Debug::Log", (const void*)ConsoleLog);
 	//INPUT FUNCTIONS -------------------
-	mono_add_internal_call("CulverinEditor.Input::KeyDown", (const void*)GetKeyDown);
-	mono_add_internal_call("CulverinEditor.Input::KeyUp", (const void*)GetKeyUp);
-	mono_add_internal_call("CulverinEditor.Input::KeyRepeat", (const void*)GetKeyRepeat);
-	mono_add_internal_call("CulverinEditor.Input::MouseButtonDown", (const void*)GetMouseButtonDown);
-	mono_add_internal_call("CulverinEditor.Input::MouseButtonUp", (const void*)GetMouseButtonUp);
-	mono_add_internal_call("CulverinEditor.Input::MouseButtonRepeat", (const void*)GetMouseButtonRepeat);
+	mono_add_internal_call("CulverinEditor.Input::GetKeyDown", (const void*)GetKeyDown);
+	mono_add_internal_call("CulverinEditor.Input::GetKeyUp", (const void*)GetKeyUp);
+	mono_add_internal_call("CulverinEditor.Input::GetKeyRepeat", (const void*)GetKeyRepeat);
+	mono_add_internal_call("CulverinEditor.Input::GetMouseButtonDown", (const void*)GetMouseButtonDown);
+	mono_add_internal_call("CulverinEditor.Input::GetMouseButtonUp", (const void*)GetMouseButtonUp);
+	mono_add_internal_call("CulverinEditor.Input::GetMouseButtonRepeat", (const void*)GetMouseButtonRepeat);
 	mono_add_internal_call("CulverinEditor.Input::GetMousePosition", (const void*)GetMousePosition);
 	mono_add_internal_call("CulverinEditor.Input::GetMouseXAxis", (const void*)GetMouseXAxis);
 	mono_add_internal_call("CulverinEditor.Input::GetMouseYAxis", (const void*)GetMouseYAxis);
@@ -559,39 +559,39 @@ void ImportScript::ConsoleLog(MonoString* string)
 	}
 }
 
-mono_bool ImportScript::GetKeyDown(MonoObject* obj, MonoObject* key)
+mono_bool ImportScript::GetKeyDown(int key)
 {
-	if (App->input->GetKey((int)key) == KEY_STATE::KEY_DOWN)
+	if (App->input->GetKey(key) == KEY_STATE::KEY_DOWN)
 	{
 		return true;
 	}
-	if((int)key == SDL_SCANCODE_UNKNOWN)
+	if(key == SDL_SCANCODE_UNKNOWN)
 	{
 		LOG("[error]Error with key pressed!");
 	}
 	return false;
 }
 
-mono_bool ImportScript::GetKeyUp(MonoObject* obj, MonoObject* key)
+mono_bool ImportScript::GetKeyUp(int key)
 {
-	if (App->input->GetKey((int)key) == KEY_STATE::KEY_UP)
+	if (App->input->GetKey(key) == KEY_STATE::KEY_UP)
 	{
 		return true;
 	}
-	if ((int)key == SDL_SCANCODE_UNKNOWN)
+	if (key == SDL_SCANCODE_UNKNOWN)
 	{
 		LOG("[error]Error with key pressed!");
 	}
 	return false;
 }
 
-mono_bool ImportScript::GetKeyRepeat(MonoObject* obj, MonoObject* key)
+mono_bool ImportScript::GetKeyRepeat(int key)
 {
-	if (App->input->GetKey((int)key) == KEY_STATE::KEY_REPEAT)
+	if (App->input->GetKey(key) == KEY_STATE::KEY_REPEAT)
 	{
 		return true;
 	}
-	if ((int)key == SDL_SCANCODE_UNKNOWN)
+	if (key == SDL_SCANCODE_UNKNOWN)
 	{
 		LOG("[error]Error with key pressed!");
 	}

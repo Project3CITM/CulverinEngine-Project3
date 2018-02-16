@@ -35,7 +35,10 @@ public:
 
 	KEY_STATE GetKey(int id) const
 	{
-		return keyboard[id];
+		if (id < 300 && id >= 0)
+		{
+			return keyboard[id];
+		}
 	}
 
 	KEY_STATE GetMouseButton(int id) const
