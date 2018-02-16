@@ -539,9 +539,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Audio::StopAllSounds", (const void*)StopAllSounds);
 	mono_add_internal_call("CulverinEditor.Audio::PauseAllSounds", (const void*)PauseAllSounds);
 	mono_add_internal_call("CulverinEditor.Audio::ResumeAllSounds", (const void*)ResumeAllSounds);
+	mono_add_internal_call("CulverinEditor.Audio::SetAudioVariableValue", (const void*)ChangeRTPC);
 
 	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
-
+	
 }
 
 //Log messages into Engine Console
@@ -744,7 +745,7 @@ int ImportScript::GetWidthMap()
 }
 
 
-// Audio Functions ------------
+// Module Audio Functions ------------
 
 void ImportScript::StopAllSounds()
 {
@@ -760,6 +761,13 @@ void ImportScript::ResumeAllSounds()
 {
 	App->audio->ResumeSounds();
 }
+
+void ImportScript::ChangeRTPC(MonoString* var_name, float value)
+{
+	App->audio->SetAudioVariableValue(mono_string_to_utf8(var_name), value);
+}
+
+// Component Audio Functions ------------
 
 void ImportScript::PlayAudioEvent(MonoObject* object, MonoString* name)
 {

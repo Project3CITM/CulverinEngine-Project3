@@ -97,7 +97,9 @@ private:
 	static void StopAllSounds();
 	static void PauseAllSounds();
 	static void ResumeAllSounds();
+	static void ChangeRTPC(MonoString* var_name, float value);
 
+	/*Component Audio*/
 	static void PlayAudioEvent(MonoObject* object, MonoString* name);
 
 private:
