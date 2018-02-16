@@ -445,6 +445,11 @@ const char * GameObject::GetTag() const
 	return tag;
 }
 
+bool GameObject::CompareTag(const char * str) const
+{
+	return strcmp(tag,str) == 0;
+}
+
 void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* parent_)
 {
 	bool stop = false;
