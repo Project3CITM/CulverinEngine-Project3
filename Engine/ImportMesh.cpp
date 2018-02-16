@@ -370,7 +370,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 }
 
 // Import Primitive -----------------------------------------------------------------------------------------------------------------------------
-void ImportMesh::Import(uint num_vertices, uint num_indices, uint num_normals, uint num_bones, std::vector<uint> indices, std::vector<float3> vertices, uint uuid)
+void ImportMesh::Import(uint num_vertices, uint num_indices, uint num_normals, uint num_bones, std::vector<uint> indices, std::vector<float3> vertices, const char* name, uint uuid)
 {
 	// ALLOCATING DATA INTO BUFFER ------------------------
 	uint ranges[4] = { num_vertices, num_indices, num_normals, num_bones}; //,num_tex_coords };
@@ -404,17 +404,30 @@ void ImportMesh::Import(uint num_vertices, uint num_indices, uint num_normals, u
 	RELEASE_ARRAY(vertices_);
 	RELEASE_ARRAY(indices_);
 	RELEASE_ARRAY(vert_normals);
-	indices.clear();
-	vertices.clear();
+
 
 	// Create Resource ----------------------
 	ResourceMesh* res_mesh = (ResourceMesh*)App->resource_manager->CreateNewResource(Resource::Type::MESH, uuid);
 	// Set info
+	res_mesh->num_indices = num_indices;
+	res_mesh->num_vertices = num_vertices;
+	if (vertices.size()) {
+
+		for (int i = 0; i < num_vertices; i++) {
+			Vertex vert;
+			vert.pos = vertices[i];
+			res_mesh->vertices.push_back(vert);
+		}
+		res_mesh->indices = indices;
+	}
 	std::string fileName = std::to_string(uuid);
-	res_mesh->InitInfo("Cube", "");
+	res_mesh->InitInfo(name, "");
 
 	// Save Mesh
 	App->fs->SaveFile(data, fileName, size, IMPORT_DIRECTORY_LIBRARY_MESHES);
+
+	indices.clear();
+	vertices.clear();
 
 	RELEASE_ARRAY(data);
 }

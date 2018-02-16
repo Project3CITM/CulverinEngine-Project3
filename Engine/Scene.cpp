@@ -688,7 +688,7 @@ GameObject * Scene::CreatePlane(GameObject * parent)
 
 	CompMesh* mesh = (CompMesh*)obj->AddComponent(C_MESH);
 	mesh->Enable();
-	mesh->resource_mesh = (ResourceMesh*)App->resource_manager->GetResource(3); // 2 == Cube
+	mesh->resource_mesh = (ResourceMesh*)App->resource_manager->GetResource(4); //3 == Plane
 	if (mesh->resource_mesh != nullptr)
 	{
 		mesh->resource_mesh->num_game_objects_use_me++;

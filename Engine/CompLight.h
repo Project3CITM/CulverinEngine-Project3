@@ -24,9 +24,15 @@ public:
 	void Draw();
 	void Clear();
 
+	// EDITOR METHODS -----------------
+	virtual void ShowOptions();
+	virtual void ShowInspectorInfo();
+	// --------------------------------
+
 public:
 	//Billboard to show where are the lights----
 	uint texture_bulb = 0;
+	ResourceMesh* plane;
 	//---------------------------------------------
 	float3 position;
 	float4 color; //a.k.a. the color of the light

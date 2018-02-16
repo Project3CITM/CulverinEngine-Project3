@@ -466,7 +466,7 @@ void ModuleResourceManager::CreateResourceCube()
 	std::vector<uint> indices;
 	std::vector<float3> vertices;
 	Init_IndexVertex(vertices_array, 36, indices, vertices);
-	App->importer->iMesh->Import(8, 36, 0, 0, indices, vertices, 2); // 2 == Cube
+	App->importer->iMesh->Import(8, 36, 0, 0, indices, vertices, "cube_default",2); // 2 == Cube
 	RELEASE_ARRAY(vertices_array);
 	RELEASE(bounding_box);
 }
@@ -501,7 +501,7 @@ void ModuleResourceManager::CreateResourcePlane()
 		1,1,0
 	};*/
 
-	App->importer->iMesh->Import(4, 6, 0, 0, indices, vertices, 3); // 3 == Plane
+	App->importer->iMesh->Import(4, 6, 0, 0, indices, vertices, "plane_default",4); // 3 == Plane
 
 }
 

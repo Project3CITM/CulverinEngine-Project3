@@ -26,6 +26,7 @@
 #include "CompAudio.h"
 #include "CompBone.h"
 #include "CompFSM.h"
+#include"CompLight.h"
 
 //Event system test
 #include "ModuleEventSystem.h"
@@ -673,6 +674,10 @@ void GameObject::ShowGameObjectOptions()
 			{
 				AddComponent(Comp_Type::C_FSM);
 			}
+			if (ImGui::MenuItem("Light"))
+			{
+				AddComponent(Comp_Type::C_LIGHT);
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("UI"))
@@ -926,6 +931,11 @@ void GameObject::ShowInspectorInfo()
 		if (ImGui::MenuItem("Finite State Machine"))
 		{
 			AddComponent(Comp_Type::C_FSM);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Light"))
+		{
+			AddComponent(Comp_Type::C_LIGHT);
 			add_component = false;
 		}
 		if (ImGui::BeginMenu("UI"))
@@ -1340,6 +1350,13 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			CompFiniteStateMachine* fsm = new CompFiniteStateMachine(type, this);
 			components.push_back(fsm);
 			return fsm;
+		}
+		else if (type == Comp_Type::C_LIGHT)
+		{
+			LOG("Adding LIGHT COMPONENT.");
+			CompLight* light = new CompLight(type, this);
+			components.push_back(light);
+			return light;
 		}
 	}
 
