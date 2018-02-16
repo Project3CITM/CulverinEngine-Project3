@@ -945,7 +945,7 @@ void CSharpScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 	}
 }
 
-void CSharpScript::PlayAudioEvent(MonoString* event_name)
+void CSharpScript::PlayAudioEvent(MonoObject* object, MonoString* event_name)
 {
 	if (current_game_object != nullptr)
 	{

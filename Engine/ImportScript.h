@@ -98,7 +98,7 @@ private:
 	static void PauseAllSounds();
 	static void ResumeAllSounds();
 
-	static void PlayAudioEvent(MonoString* name);
+	static void PlayAudioEvent(MonoObject* object, MonoString* name);
 
 private:
 	std::string nameNewScript;

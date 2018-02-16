@@ -143,7 +143,7 @@ public:
 	void		IncrementRotation(MonoObject* object, MonoObject* vector3);
 
 	/*Audio*/
-	void		PlayAudioEvent(MonoString* event_name);
+	void		PlayAudioEvent(MonoObject* object, MonoString* event_name);
 
 
 	/*Components*/
