@@ -28,6 +28,6 @@ namespace CulverinEditor
         public static extern void ChangeVolume(float volume);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void Mute();
+        public static extern void Mute(bool m);
     }
 }

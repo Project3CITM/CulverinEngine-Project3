@@ -250,7 +250,7 @@ update_status ModuleAudio::UpdateConfig(float dt)
 	static bool m = muted;
 	if (ImGui::Checkbox("Mute", &m))
 	{
-		Mute();
+		Mute(m);
 	}
 	return UPDATE_CONTINUE;
 }
@@ -314,15 +314,15 @@ void ModuleAudio::ChangeVolume(float new_volume)
 	Wwished::Utility::SetRTPCValue("General_Volume", volume);
 }
 
-void ModuleAudio::Mute()
+void ModuleAudio::Mute(bool m)
 {
-	if (muted == false)
+	if (!muted && m == true)
 	{
 		last_volume = volume;
 		ChangeVolume(0);
 		muted = true;
 	}
-	else if (muted == true)
+	else if (muted && m == false)
 	{
 		ChangeVolume(last_volume);
 		muted = false;

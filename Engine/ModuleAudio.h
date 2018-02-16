@@ -43,7 +43,7 @@ public:
 	void SetAudioVariableValue(const char* variable_name, float value);
 	void ChangeState(const char* group, const char* new_state);
 	void ChangeVolume(float volume);
-	void Mute();
+	void Mute(bool m);
 
 
 private:

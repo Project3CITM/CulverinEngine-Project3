@@ -98,6 +98,9 @@ private:
 	static void PauseAllSounds();
 	static void ResumeAllSounds();
 	static void ChangeRTPC(MonoString* var_name, float value);
+	static void ChangeState(MonoString* group_name, MonoString* state_name);
+	static void ChangeVolume(float volume);
+	static void Mute(bool m);
 
 	/*Component Audio*/
 	static void PlayAudioEvent(MonoObject* object, MonoString* name);

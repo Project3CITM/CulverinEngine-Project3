@@ -537,6 +537,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Audio::PauseAllSounds", (const void*)PauseAllSounds);
 	mono_add_internal_call("CulverinEditor.Audio::ResumeAllSounds", (const void*)ResumeAllSounds);
 	mono_add_internal_call("CulverinEditor.Audio::SetAudioVariableValue", (const void*)ChangeRTPC);
+	mono_add_internal_call("CulverinEditor.Audio::ChangeState", (const void*)ChangeState);
+	mono_add_internal_call("CulverinEditor.Audio::ChangeVolume", (const void*)ChangeVolume);
+	mono_add_internal_call("CulverinEditor.Audio::Mute", (const void*)Mute);
+	
 
 	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
 	
@@ -762,6 +766,21 @@ void ImportScript::ResumeAllSounds()
 void ImportScript::ChangeRTPC(MonoString* var_name, float value)
 {
 	App->audio->SetAudioVariableValue(mono_string_to_utf8(var_name), value);
+}
+
+void ImportScript::ChangeState(MonoString * group_name, MonoString * state_name)
+{
+	App->audio->ChangeState(mono_string_to_utf8(group_name), mono_string_to_utf8(state_name));
+}
+
+void ImportScript::ChangeVolume(float volume)
+{
+	App->audio->ChangeVolume(volume);
+}
+
+void ImportScript::Mute(bool m)
+{
+	App->audio->Mute(m);
 }
 
 // Component Audio Functions ------------
