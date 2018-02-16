@@ -66,7 +66,7 @@ vec3 ApplyLight(Light light,int type, vec3 surfaceColor, vec3 normal, vec3 surfa
 
 
 void main() {
-    vec3 normal = normalize(transpose(inverse(mat3(model))) * ourNormal);
+    vec3 normal = ;
     vec3 surfacePos =vec3(model * vec4(ourPos, 1));
     vec4 surfaceColor = texture(materialTex, TexCoord);
     vec3 surfaceToCamera = normalize(_cameraPosition - surfacePos);

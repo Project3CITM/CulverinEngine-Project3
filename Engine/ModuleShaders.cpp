@@ -42,8 +42,12 @@ bool ModuleShaders::Start()
 	test->CreateMaterialFile();*/
 
 	Light new_light;
-	new_light.position = float3(1, 1, 0);
+	new_light.position = float3(-3, 1, 0);
 	lights.push_back(new_light);
+
+	Light new_light2;
+	new_light2.position = float3(3, 1, 0);
+	lights.push_back(new_light2);
 
 	return true;
 }
