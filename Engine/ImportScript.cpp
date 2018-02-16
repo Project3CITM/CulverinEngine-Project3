@@ -543,7 +543,8 @@ void ImportScript::LinkFunctions()
 	
 
 	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
-	
+	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
+
 }
 
 //Log messages into Engine Console
@@ -788,4 +789,9 @@ void ImportScript::Mute(bool m)
 void ImportScript::PlayAudioEvent(MonoObject* object, MonoString* name)
 {
 	current->PlayAudioEvent(object, name);
+}
+
+void ImportScript::StopAudioEvent(MonoObject* object, MonoString* name)
+{
+	current->StopAudioEvent(object, name);
 }

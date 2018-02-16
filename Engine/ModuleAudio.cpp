@@ -307,7 +307,6 @@ void ModuleAudio::ChangeState(const char * group, const char * new_state)
 }
 
 
-
 void ModuleAudio::ChangeVolume(float new_volume)
 {
 	volume = new_volume;

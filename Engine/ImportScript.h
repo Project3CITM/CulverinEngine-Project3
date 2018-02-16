@@ -104,6 +104,8 @@ private:
 
 	/*Component Audio*/
 	static void PlayAudioEvent(MonoObject* object, MonoString* name);
+	static void StopAudioEvent(MonoObject* object, MonoString* name);
+
 
 private:
 	std::string nameNewScript;

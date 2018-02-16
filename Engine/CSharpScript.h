@@ -144,6 +144,7 @@ public:
 
 	/*Audio*/
 	void		PlayAudioEvent(MonoObject* object, MonoString* event_name);
+	void		StopAudioEvent(MonoObject* object, MonoString* event_name);
 
 
 	/*Components*/
