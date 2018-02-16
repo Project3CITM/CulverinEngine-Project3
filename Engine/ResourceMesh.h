@@ -19,7 +19,6 @@ struct SkeletonSource
 	uint num_bones = 0;
 	ImportBone* bones = nullptr;
 	char* bone_hirarchy_names = nullptr;
-	uint* bone_hirarchy_name_sizes = nullptr;
 	uint* bone_hirarchy_num_childs = nullptr;
 };
 

@@ -41,6 +41,7 @@ public:
 	bool LoadResource(const char * file, ResourceMesh* resourceMesh);
 
 private:
+	void ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, char* bone_hirarchy_names, uint* bone_hirarchy_num_childs, uint& name_iterator, uint& joints_saved);
 };
 
 #endif

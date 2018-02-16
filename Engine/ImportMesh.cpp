@@ -55,7 +55,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	ImportBone::Weight** weights = nullptr;
 	uint* num_weights = nullptr;
 	char* bone_hirarchy_names = nullptr;
-	uint* bone_hirarchy_name_sizes = nullptr;
 	uint* bone_hirarchy_num_childs = nullptr;
 	//--
 
@@ -173,52 +172,20 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				}				
 			}
 
-			std::queue<aiNode*> nodes;
-			bone_hirarchy_name_sizes = new uint[num_bones];
 			bone_hirarchy_names = new char[total_names_size];
 			bone_hirarchy_num_childs = new uint[num_bones];
 
-			uint joints_saved = 0;
 			uint name_iterator = 0;
+			uint joints_saved = 0;
+			ImportBoneHirarchy(scene->mRootNode, mesh, bone_hirarchy_names, bone_hirarchy_num_childs, name_iterator, joints_saved);
 
-			nodes.push(scene->mRootNode);
-
-			while (nodes.size() > 0)
+			if (joints_saved != num_bones)
 			{
-				aiNode* current_node = nodes.front();
-
-				bool is_joint = false;
-
-				for (int i = 0; i < mesh->mNumBones; i++)
-					if (current_node->mName == mesh->mBones[i]->mName)
-					{
-						is_joint = true;
-						break;
-					}
-
-				if (is_joint == true)
-				{
-					bone_hirarchy_name_sizes[joints_saved] = current_node->mName.length + 1;
-					memcpy(&bone_hirarchy_names[name_iterator], current_node->mName.C_Str(), bone_hirarchy_name_sizes[joints_saved]);
-					name_iterator += bone_hirarchy_name_sizes[joints_saved];
-					bone_hirarchy_num_childs[joints_saved] = current_node->mNumChildren;
-
-					joints_saved++;
-				}
-
-				for (int i = 0; i < current_node->mNumChildren; i++)
-					nodes.push(current_node->mChildren[i]);
-
-				nodes.pop();
-			}
-
-			if (joints_saved == mesh->mNumBones)
-			{
-				LOG("- Imported all Bones from data");
+				LOG("Imported joints and Num joints do not mach");
 			}
 			else
 			{
-				LOG("Imported joints and Num joints do not mach");
+				LOG("Imported joints correctly");
 			}
 		}
 		else
@@ -358,11 +325,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			memcpy(cursor, weights[i], bytes);
 		}
 
-		//Bone hirarchy name sizes
-		cursor += bytes;
-		bytes = sizeof(uint) * num_bones;
-		memcpy(cursor, bone_hirarchy_name_sizes, bytes);
-
 		//total bone_names_size
 		cursor += bytes;
 		bytes = sizeof(uint);
@@ -382,7 +344,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		RELEASE_ARRAY(bone_name_sizes);
 		RELEASE_ARRAY(bone_names);
 		RELEASE_ARRAY(bone_hirarchy_names);
-		RELEASE_ARRAY(bone_hirarchy_name_sizes);
 		RELEASE_ARRAY(bone_hirarchy_num_childs);
 	}
 	//--
@@ -568,12 +529,6 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 				memcpy(skeleton_source->bones[i].weights, cursor, bytes);
 			}
 
-			//Bone name sizes
-			cursor += bytes;
-			bytes = sizeof(uint) * num_bones;
-			skeleton_source->bone_hirarchy_name_sizes = new uint[num_bones];
-			memcpy(skeleton_source->bone_hirarchy_name_sizes, cursor, bytes);
-
 			//Bone hirarchy names total_size
 			cursor += bytes;
 			bytes = sizeof(uint);
@@ -607,4 +562,27 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 	}
 	RELEASE_ARRAY(buffer);
 	return true;
+}
+
+void ImportMesh::ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, char* bone_hirarchy_names, uint* bone_hirarchy_num_childs, uint& name_iterator, uint& joints_saved)
+{
+	bool is_joint = false;
+
+	for (int i = 0; i < mesh->mNumBones; i++)
+		if (node->mName == mesh->mBones[i]->mName)
+		{
+			is_joint = true;
+			break;
+		}
+
+	if (is_joint == true)
+	{
+		memcpy(&bone_hirarchy_names[name_iterator], node->mName.C_Str(), node->mName.length + 1);
+		name_iterator += node->mName.length + 1;
+		bone_hirarchy_num_childs[joints_saved] = node->mNumChildren;
+		joints_saved++;
+	}
+
+	for (int i = 0; i < node->mNumChildren; i++)
+		ImportBoneHirarchy(node->mChildren[i], mesh, bone_hirarchy_names, bone_hirarchy_num_childs, name_iterator, joints_saved);
 }

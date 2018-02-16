@@ -11,6 +11,7 @@ class GameObject;
 class CompMaterial;
 class ShaderProgram;
 struct Vertex;
+class SkeletonSource;
 
 struct FaceCenter
 {
@@ -65,6 +66,7 @@ public:
 
 	bool HasSkeleton() const;
 	void GenSkeleton();
+	GameObject* GenBone(char** name_iterator, const SkeletonSource* source, uint& generated_bones);
 
 public:
 

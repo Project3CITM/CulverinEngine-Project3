@@ -556,51 +556,47 @@ void CompMesh::GenSkeleton()
 
 	char* name_iterator = source->bone_hirarchy_names;
 
-	GameObject* current = parent;
-	int current_parent_id = -1;
 	uint generated_bones = 0;
-	uint child_num = 0;
 
-	while (generated_bones < source->num_bones)
-	{
-		GameObject* new_bone = new GameObject(name_iterator);
-		name_iterator += source->bone_hirarchy_name_sizes[generated_bones];
+	parent->AddChildGameObject(GenBone(&name_iterator, source, generated_bones));
+}
 
-		CompTransform* transform = (CompTransform*)new_bone->AddComponent(Comp_Type::C_TRANSFORM);
+GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* source, uint& generated_bones)
+{
+	GameObject* new_bone = new GameObject(*name_iterator);
+	*name_iterator += strlen(new_bone->GetName()) + 1;
 
-		float4x4 local_transform;
-		CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
-		comp_bone->resource_mesh = resource_mesh;
-		resource_mesh->num_game_objects_use_me++;
+	CompTransform* transform = (CompTransform*)new_bone->AddComponent(Comp_Type::C_TRANSFORM);
 
-		for (int i = 0; i < source->num_bones; i++)
-			if (source->bones[i].name == new_bone->GetName())
-			{
-				local_transform = parent->GetComponentTransform()->GetGlobalTransform() * source->bones[i].offset;
-				comp_bone->offset = source->bones[i].offset;
+	float4x4 local_transform;
+	CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
+	comp_bone->resource_mesh = resource_mesh;
+	resource_mesh->num_game_objects_use_me++;
 
-				for (int j = 0; j < source->bones[i].num_weights; j++)
-					comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));				
-			}
-
-		float3 pos;
-		Quat rot;
-		float3 scale;
-
-		local_transform.Decompose(pos, rot, scale);
-		transform->SetPos(pos);
-		transform->SetRot(rot);
-		transform->SetScale(scale);
-
-		current->AddChildGameObject(new_bone);
-
-		if ((current_parent_id == -1)||(++child_num >= source->bone_hirarchy_num_childs[current_parent_id]))
+	for (int i = 0; i < source->num_bones; i++)
+		if (source->bones[i].name == new_bone->GetName())
 		{
-			current = current->GetChildbyIndex(0);
-			child_num = 0;
-			current_parent_id = generated_bones;
+			local_transform = parent->GetComponentTransform()->GetGlobalTransform() * source->bones[i].offset;
+			comp_bone->offset = source->bones[i].offset;
+
+			for (int j = 0; j < source->bones[i].num_weights; j++)
+				comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));
 		}
 
-		generated_bones++;
-	}
+	float3 pos;
+	Quat rot;
+	float3 scale;
+
+	local_transform.Decompose(pos, rot, scale);
+	transform->SetPos(pos);
+	transform->SetRot(rot);
+	transform->SetScale(scale);
+
+	uint num_childs = source->bone_hirarchy_num_childs[generated_bones];
+	generated_bones++;
+
+	for (int i = 0; i < num_childs; i++)
+		new_bone->AddChildGameObject(GenBone(name_iterator, source, generated_bones));
+
+	return new_bone;
 }
