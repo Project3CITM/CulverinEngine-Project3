@@ -172,14 +172,14 @@ bool ModuleRenderGui::Start()
 update_status ModuleRenderGui::PreUpdate(float dt)
 {
 	perf_timer.Start();
-	/*
+	
 	if (last_size_dock.x != GetSizeDock("Scene").x || last_size_dock.y != GetSizeDock("Scene").y)
 	{
 		App->scene->scene_buff->WantRefreshRatio();
 	}
 
 	last_size_dock = GetSizeDock("Scene");
-	*/
+	
 	iteractive_button.clear();
 	
 	
