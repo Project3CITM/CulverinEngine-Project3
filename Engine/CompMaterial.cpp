@@ -392,7 +392,57 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 		}		
 
 	}
+	json_object_dotset_number_with_std(object, name + "Num Bools:", material_shader.bool_variables.size());
+	for (int i = 0; i < material_shader.bool_variables.size(); i++)
+	{
+		std::ostringstream ss;
+		ss << name  << "Bool:" << i;
+		std::string json_name = ss.str();
+		
+		json_object_dotset_boolean_with_std(object, json_name, material_shader.bool_variables[i].value);
 
+	}
+	json_object_dotset_number_with_std(object, name + "Num Ints:", material_shader.int_variables.size());
+	for (int i = 0; i < material_shader.int_variables.size(); i++)
+	{
+		std::ostringstream ss;
+		ss << name << "Int:" << i;
+		std::string json_name = ss.str();
+
+		json_object_dotset_number_with_std(object, json_name, material_shader.int_variables[i].value);
+
+	}
+	json_object_dotset_number_with_std(object, name + "Num Floats:", material_shader.float_variables.size());
+	for (int i = 0; i < material_shader.float_variables.size(); i++)
+	{
+		std::ostringstream ss;
+		ss << name  << "Float:" << i;
+		std::string json_name = ss.str();
+		
+		json_object_dotset_number_with_std(object, json_name, material_shader.float_variables[i].value);
+
+	}
+	json_object_dotset_number_with_std(object, name + "Num Float3:", material_shader.float3_variables.size());
+	for (int i = 0; i < material_shader.float3_variables.size(); i++)
+	{
+		std::ostringstream ss;
+		ss << name << "Float3:" << i;
+		std::string json_name = ss.str();
+
+		App->fs->json_array_dotset_float3(object, json_name, material_shader.float3_variables[i].value);
+	}
+
+	json_object_dotset_number_with_std(object, name + "Num Colors:", material_shader.color_variables.size());
+	for (int i = 0; i < material_shader.color_variables.size(); i++)
+	{
+		std::ostringstream ss;
+		ss << name << "Color:" << i;
+		std::string json_name = ss.str();
+
+		App->fs->json_array_dotset_float4(object, json_name, material_shader.color_variables[i].value);
+
+
+	}
 }
 
 void CompMaterial::Load(const JSON_Object* object, std::string name)
@@ -421,6 +471,7 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 		uint num_textures = json_object_dotget_number_with_std(object, name + "Num Textures:");
 		for (int i = 0; i < num_textures; i++) 
 		{
+			if (i >= material_shader.textures.size()) break;
 			char mat_name[128] = { 0 };
 
 			char* num = new char[4];
@@ -446,6 +497,58 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 				material_shader.textures[i].value = App->renderer3D->default_mat;
 			}
 		}
+		uint num_bools = json_object_dotget_number_with_std(object, name + "Num Bools:");
+		for (int i = 0; i < num_bools; i++)
+		{
+			std::ostringstream ss;
+			ss << name << "Bool:" << i;
+			std::string json_name = ss.str();
+
+			if (i >= material_shader.bool_variables.size()) break;
+			material_shader.bool_variables[i].value = json_object_dotget_boolean_with_std(object, json_name);
+		}
+		uint num_ints = json_object_dotget_number_with_std(object, name + "Num Int:");
+		for (int i = 0; i < num_ints; i++)
+		{
+			std::ostringstream ss;
+			ss << name << "Int:" << i;
+			std::string json_name = ss.str();
+
+			if (i >= material_shader.bool_variables.size()) break;
+			material_shader.int_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+		}
+
+		uint num_floats = json_object_dotget_number_with_std(object, name + "Num Floats:");
+		for (int i = 0; i < num_floats; i++)
+		{
+			std::ostringstream ss;
+			ss << name << "Float:" << i;
+			std::string json_name = ss.str();
+
+			if (i >= material_shader.float_variables.size()) break;
+			material_shader.float_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+		}
+		uint num_float3 = json_object_dotget_number_with_std(object, name + "Num Float3:");
+		for (int i = 0; i < num_float3; i++)
+		{
+			std::ostringstream ss;
+			ss << name << "Float3:" << i;
+			std::string json_name = ss.str();
+
+			if (i >= material_shader.float3_variables.size()) break;
+			material_shader.float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, json_name); 
+		}
+		uint num_colors = json_object_dotget_number_with_std(object, name + "Num Colors:");
+		for (int i = 0; i < num_colors; i++)
+		{
+			std::ostringstream ss;
+			ss << name << "Color:" << i;
+			std::string json_name = ss.str();
+
+			if (i >= material_shader.color_variables.size()) break;
+			material_shader.color_variables[i].value = App->fs->json_array_dotget_float4_string(object, json_name);
+		}
+
 	}
 	else
 		material_shader = *App->renderer3D->default_shader;
