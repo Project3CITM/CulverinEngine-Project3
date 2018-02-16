@@ -146,6 +146,7 @@
     <ClInclude Include="ModuleEventSystem.h" />
     <ClInclude Include="ModuleFS.h" />
     <ClInclude Include="ModuleFramebuffers.h" />
+    <ClInclude Include="ModuleLightning.h" />
     <ClInclude Include="ModuleMap.h" />
     <ClInclude Include="ModulePhysics.h" />
     <ClInclude Include="ModuleRenderGui.h" />
@@ -480,6 +481,7 @@
     <ClCompile Include="ModuleEventSystem.cpp" />
     <ClCompile Include="ModuleFS.cpp" />
     <ClCompile Include="ModuleFramebuffers.cpp" />
+    <ClCompile Include="ModuleLightning.cpp" />
     <ClCompile Include="ModuleMap.cpp" />
     <ClCompile Include="ModulePhysics.cpp" />
     <ClCompile Include="ModuleRenderGui.cpp" />
