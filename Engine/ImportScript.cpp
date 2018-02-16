@@ -515,12 +515,12 @@ void ImportScript::LinkFunctions()
 	//CONSOLE FUNCTIONS ------------------
 	mono_add_internal_call("CulverinEditor.Debug.Debug::Log", (const void*)ConsoleLog);
 	//INPUT FUNCTIONS -------------------
-	mono_add_internal_call("CulverinEditor.Input::KeyDown", (const void*)KeyDown);
-	mono_add_internal_call("CulverinEditor.Input::KeyUp", (const void*)KeyUp);
-	mono_add_internal_call("CulverinEditor.Input::KeyRepeat", (const void*)KeyRepeat);
-	mono_add_internal_call("CulverinEditor.Input::MouseButtonDown", (const void*)MouseButtonDown);
-	mono_add_internal_call("CulverinEditor.Input::MouseButtonUp", (const void*)MouseButtonUp);
-	mono_add_internal_call("CulverinEditor.Input::MouseButtonRepeat", (const void*)MouseButtonRepeat);
+	mono_add_internal_call("CulverinEditor.Input::KeyDown", (const void*)GetKeyDown);
+	mono_add_internal_call("CulverinEditor.Input::KeyUp", (const void*)GetKeyUp);
+	mono_add_internal_call("CulverinEditor.Input::KeyRepeat", (const void*)GetKeyRepeat);
+	mono_add_internal_call("CulverinEditor.Input::MouseButtonDown", (const void*)GetMouseButtonDown);
+	mono_add_internal_call("CulverinEditor.Input::MouseButtonUp", (const void*)GetMouseButtonUp);
+	mono_add_internal_call("CulverinEditor.Input::MouseButtonRepeat", (const void*)GetMouseButtonRepeat);
 	mono_add_internal_call("CulverinEditor.Input::GetMousePosition", (const void*)GetMousePosition);
 	mono_add_internal_call("CulverinEditor.Input::GetMouseXAxis", (const void*)GetMouseXAxis);
 	mono_add_internal_call("CulverinEditor.Input::GetMouseYAxis", (const void*)GetMouseYAxis);
@@ -559,7 +559,7 @@ void ImportScript::ConsoleLog(MonoString* string)
 	}
 }
 
-mono_bool ImportScript::KeyDown(MonoObject* obj, MonoObject* key)
+mono_bool ImportScript::GetKeyDown(MonoObject* obj, MonoObject* key)
 {
 	if (App->input->GetKey((int)key) == KEY_STATE::KEY_DOWN)
 	{
@@ -572,7 +572,7 @@ mono_bool ImportScript::KeyDown(MonoObject* obj, MonoObject* key)
 	return false;
 }
 
-mono_bool ImportScript::KeyUp(MonoObject* obj, MonoObject* key)
+mono_bool ImportScript::GetKeyUp(MonoObject* obj, MonoObject* key)
 {
 	if (App->input->GetKey((int)key) == KEY_STATE::KEY_UP)
 	{
@@ -585,7 +585,7 @@ mono_bool ImportScript::KeyUp(MonoObject* obj, MonoObject* key)
 	return false;
 }
 
-mono_bool ImportScript::KeyRepeat(MonoObject* obj, MonoObject* key)
+mono_bool ImportScript::GetKeyRepeat(MonoObject* obj, MonoObject* key)
 {
 	if (App->input->GetKey((int)key) == KEY_STATE::KEY_REPEAT)
 	{
@@ -598,7 +598,7 @@ mono_bool ImportScript::KeyRepeat(MonoObject* obj, MonoObject* key)
 	return false;
 }
 
-mono_bool ImportScript::MouseButtonDown(int buttonmouse)
+mono_bool ImportScript::GetMouseButtonDown(int buttonmouse)
 {
 	if (buttonmouse >= 0 && buttonmouse < 4)
 	{
@@ -607,7 +607,7 @@ mono_bool ImportScript::MouseButtonDown(int buttonmouse)
 	return false;
 }
 
-mono_bool ImportScript::MouseButtonUp(int buttonmouse)
+mono_bool ImportScript::GetMouseButtonUp(int buttonmouse)
 {
 	if (buttonmouse >= 0 && buttonmouse < 4)
 	{
@@ -616,7 +616,7 @@ mono_bool ImportScript::MouseButtonUp(int buttonmouse)
 	return false;
 }
 
-mono_bool ImportScript::MouseButtonRepeat(int buttonmouse)
+mono_bool ImportScript::GetMouseButtonRepeat(int buttonmouse)
 {
 	if (buttonmouse >= 0 && buttonmouse < 4)
 	{

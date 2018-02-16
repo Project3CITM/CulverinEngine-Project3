@@ -10,22 +10,22 @@ namespace CulverinEditor
     public class Input
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool KeyDown(KeyCode key);
+        public static extern bool GetKeyDown(KeyCode key);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool KeyUp(KeyCode key);
+        public static extern bool GetKeyUp(KeyCode key);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool KeyRepeat(KeyCode key);
+        public static extern bool GetKeyRepeat(KeyCode key);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool MouseButtonDown(int button);
+        public static extern bool GetMouseButtonDown(int button);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool MouseButtonUp(int button);
+        public static extern bool GetMouseButtonUp(int button);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool MouseButtonRepeat(int button);
+        public static extern bool GetMouseButtonRepeat(int button);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern Vector3 GetMousePosition();
