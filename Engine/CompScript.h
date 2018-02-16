@@ -63,6 +63,7 @@ private:
 
 	bool select_script = false;
 	uint uuid_resource_reimported = 0;
+	bool active_script = false;
 };
 
 
