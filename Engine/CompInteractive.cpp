@@ -232,6 +232,44 @@ void CompInteractive::Desactive()
 	current_selection_state = SelectionStates::STATE_DISABLED;
 }
 
+void CompInteractive::OnPointDown(Event event_input)
+{
+	point_down = true;
+	UpdateSelectionState(event_input);
+}
+
+void CompInteractive::OnPointUP(Event event_input)
+{
+	point_down = false;
+	UpdateSelectionState(event_input);
+}
+
+void CompInteractive::OnPointEnter(Event event_input)
+{
+	point_inside = true;
+	UpdateSelectionState(event_input);
+}
+
+void CompInteractive::OnPointExit(Event event_input)
+{
+	point_inside = false;
+	UpdateSelectionState(event_input);
+
+}
+
+void CompInteractive::OnInteractiveSelected(Event event_input)
+{
+	interactive_selected = true;
+	UpdateSelectionState(event_input);
+
+}
+
+void CompInteractive::OnInteractiveUnSelected(Event event_input)
+{
+	interactive_selected = false;
+	UpdateSelectionState(event_input);
+}
+
 void CompInteractive::SetTargetGraphic(CompGraphic * set_target_graphic)
 {
 	target_graphic = set_target_graphic;

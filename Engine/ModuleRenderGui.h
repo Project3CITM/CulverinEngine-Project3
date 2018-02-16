@@ -6,6 +6,7 @@
 class ShaderProgram;
 
 class CompCanvas;
+class CompInteractive;
 class ModuleRenderGui : public Module
 {
 public:
@@ -41,6 +42,8 @@ private:
 	int window_scale = 1;
 
 	float2 last_size_dock = float2(0, 0);
+	std::vector<CompInteractive*> iteractive_button;
+
 	//std::vector<ComponentCanvas*> world_space_canvas;
 
 };

@@ -26,6 +26,12 @@ public:
 
 	virtual bool IsActive()const;
 	void Desactive();
+	virtual void OnPointDown(Event event_input);
+	virtual void OnPointUP(Event event_input);
+	virtual void OnPointEnter(Event event_input);
+	virtual void OnPointExit(Event event_input);
+	virtual void OnInteractiveSelected(Event event_input);
+	virtual void OnInteractiveUnSelected(Event event_input);
 
 	void SetTargetGraphic(CompGraphic* target_graphic);
 	//Setters Color tint parameters
@@ -87,6 +93,9 @@ private:
 	Transition current_transition_mode = TRANSITION_NONE;
 
 	bool disabled = false;
+	bool point_down = false;
+	bool point_inside = false;
+	bool interactive_selected = false;
 protected:
 	//Color tint parameters
 	float4 normal_color;

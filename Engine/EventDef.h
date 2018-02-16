@@ -1,6 +1,7 @@
 #ifndef _EVENTDEF_
 #define _EVENTDEF_
 #include<vector>
+#include "Math\float2.h"
 /*-----------------------------------------------------------------------------------------------------------*/
 /*---Add new events:-----------------------------------------------------------------------------------------*/
 /*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))--------------*/
@@ -50,7 +51,9 @@ enum EventType
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
-	
+	EVENT_BUTTON_DOWN,
+	EVENT_BUTTON_UP,
+	EVENT_MOUSE_MOTION,
 	MAXEVENTS//Keep this at the bottom, needed to know how many events se have
 };
 
@@ -84,7 +87,22 @@ struct EDraw
 	//float DistanceCamToObject;
 	Component* ToDraw;
 };
+struct EPoint
+{
+	EventType type;
+	enum InputButton
+	{
+		INPUT_NONE = -1,
+		INPUT_MOUSE_LEFT,			
+		INPUT_MOUSE_RIGHT,
+		INPUT_MOUSE_MIDDLE,
+		INPUT_MAX	
+	};
+	InputButton button;
+	float2 position;
+	float2 motion;
 
+};
 struct EDroppedFile
 {
 	EventType type;
