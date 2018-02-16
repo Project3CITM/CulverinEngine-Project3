@@ -493,7 +493,8 @@ update_status ModuleGUI::Update(float dt)
 	
 	}
 
-	if (shader_program_creation_UI) {
+	if (shader_program_creation_UI) 
+	{
 
 		ImGui::Begin("Shader Object Definition", &shader_obj_creation);
 
@@ -501,25 +502,29 @@ update_status ModuleGUI::Update(float dt)
 
 		std::string shader_options;
 		std::string name;
-		for (int i = 0; i < vec_temp_shader.size(); i++) {
-			shader_options += vec_temp_shader[i]->name;
+
+		for (int i = 0; i < vec_temp_shader.size(); i++) 
+		{
+			name = vec_temp_shader[i]->name;
+			shader_options += name;
 			shader_options += '\0';
 		}
 
-		int combo_shaders_obj=-1;
-		int combo_shaders_obj2 =-1;
+	
 
 		ImGui::Combo("Shader 1:", &combo_shaders_obj, shader_options.c_str());
 
 		ImGui::Combo("Shader 2:", &combo_shaders_obj2, shader_options.c_str());
 
-		if (ImGui::Button("Create")) {
+		if (ImGui::Button("Create")) 
+		{
 
 			Event shader_event_prg;
 			shader_event_prg.shaderprogram.type = EventType::EVENT_CREATE_SHADER_PROGRAM;
 			shader_event_prg.shaderprogram.name = str_shad_prg_temp;
 
-			if (combo_shaders_obj != -1) {
+			if (combo_shaders_obj != -1)
+			{
 				shader_event_prg.shaderprogram.Shader1 = vec_temp_shader[combo_shaders_obj];
 			}
 
@@ -1200,7 +1205,7 @@ void ModuleGUI::OnEvent(Event& event)
 	{
 	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:
 		//need to fix std::pair
-		//vec_temp_shader = event.sendshaderobject.shaders;
+		vec_temp_shader = *event.sendshaderobject.shaders;
 		break;
 	}
 
