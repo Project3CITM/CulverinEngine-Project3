@@ -11,6 +11,11 @@ void PushEvent(Event& event)
 	App->event_system->PushEvent(event);
 }
 
+void PushImmediateEvent(Event& event)
+{
+	App->event_system->PushImmediateEvent(event);
+}
+
 //Used in SetEventListenrs method of Modules to register this module to receive one event type
 void AddListener(EventType type, Module* listener)
 {
@@ -164,6 +169,14 @@ void ModuleEventSystem::PushEvent(Event& event)
 	}
 	default: MMNormalEvent.insert(std::pair<EventType, Event>(event.type, event)); break;
 	}
+}
+
+void ModuleEventSystem::PushImmediateEvent(Event & event)
+{
+	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.find(event.type);
+	if (EListener != MEventListeners.end())
+		for (std::vector<Module*>::const_iterator item = EListener._Ptr->_Myval.second.cbegin(); item != EListener._Ptr->_Myval.second.cend(); ++item)
+			(*item)->OnEvent(event);
 }
 
 void ModuleEventSystem::AddListener(EventType type, Module* listener)

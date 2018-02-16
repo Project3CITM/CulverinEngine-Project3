@@ -50,6 +50,7 @@ public:
 	bool CleanUp();
 
 	void PushEvent(Event& event);
+	void PushImmediateEvent(Event& event);
 	void AddListener(EventType type, Module* listener);
 
 private:
