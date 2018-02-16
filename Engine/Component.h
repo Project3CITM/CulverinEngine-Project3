@@ -30,7 +30,8 @@ enum Comp_Type
 	C_EDIT_TEXT,
 	C_IMAGE,
 	C_AUDIO,
-	C_BONE
+	C_BONE,
+	C_FSM
 };
 
 class Component

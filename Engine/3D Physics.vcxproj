@@ -117,6 +117,7 @@
     <ClInclude Include="CompCanvasRender.h" />
     <ClInclude Include="CompCheckBox.h" />
     <ClInclude Include="CompEditText.h" />
+    <ClInclude Include="CompFSM.h" />
     <ClInclude Include="CompGraphic.h" />
     <ClInclude Include="CompImage.h" />
     <ClInclude Include="CompInteractive.h" />
@@ -451,6 +452,7 @@
     <ClCompile Include="CompCanvasRender.cpp" />
     <ClCompile Include="CompCheckBox.cpp" />
     <ClCompile Include="CompEditText.cpp" />
+    <ClCompile Include="CompFSM.cpp" />
     <ClCompile Include="CompGraphic.cpp" />
     <ClCompile Include="CompImage.cpp" />
     <ClCompile Include="CompInteractive.cpp" />

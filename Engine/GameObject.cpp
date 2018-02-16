@@ -25,6 +25,7 @@
 #include "CompCanvasRender.h"
 #include "CompAudio.h"
 #include "CompBone.h"
+#include "CompFSM.h"
 
 //Event system test
 #include "ModuleEventSystem.h"
@@ -668,6 +669,10 @@ void GameObject::ShowGameObjectOptions()
 			{
 				AddComponent(Comp_Type::C_BONE);
 			}
+			if (ImGui::MenuItem("Finite State Machine"))
+			{
+				AddComponent(Comp_Type::C_FSM);
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("UI"))
@@ -916,6 +921,11 @@ void GameObject::ShowInspectorInfo()
 		if (ImGui::MenuItem("Animation"))
 		{
 			AddComponent(Comp_Type::C_ANIMATION);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Finite State Machine"))
+		{
+			AddComponent(Comp_Type::C_FSM);
 			add_component = false;
 		}
 		if (ImGui::BeginMenu("UI"))
@@ -1324,6 +1334,13 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(bone);
 			return bone;
 		}
+		else if (type == Comp_Type::C_FSM)
+		{
+			LOG("Adding FINITE STATE MACHINE COMPONENT.");
+			CompFiniteStateMachine* fsm = new CompFiniteStateMachine(type, this);
+			components.push_back(fsm);
+			return fsm;
+		}
 	}
 
 	return nullptr;
@@ -1397,8 +1414,14 @@ void GameObject::AddComponentCopy(const Component& copy)
 	}
 	case (Comp_Type::C_BONE):
 	{
-		CompBone* bone = new CompBone((CompBone&)copy, this); //Audio copy constructor
+		CompBone* bone = new CompBone((CompBone&)copy, this); //Bone copy constructor
 		components.push_back(bone);
+		break;
+	}
+	case (Comp_Type::C_FSM):
+	{
+		CompFiniteStateMachine* fsm = new CompFiniteStateMachine((CompFiniteStateMachine&)copy, this); //FSM copy constructor
+		components.push_back(fsm);
 		break;
 	}
 	default:
@@ -1473,6 +1496,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			break;
 		case Comp_Type::C_BONE:
 			this->AddComponent(Comp_Type::C_BONE, true);
+			break;
+		case Comp_Type::C_FSM:
+			this->AddComponent(Comp_Type::C_FSM, true);
 			break;
 		default:
 			break;
