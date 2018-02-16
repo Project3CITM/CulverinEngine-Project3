@@ -1140,6 +1140,9 @@
     <ClInclude Include="CompBone.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="CompFSM.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
     <ClInclude Include="CompLight.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
@@ -1497,6 +1500,9 @@
       <Filter>Engine\PhysX\jpPhysX</Filter>
     </ClCompile>
     <ClCompile Include="CompBone.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompFSM.cpp">
       <Filter>Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="CompLight.cpp">

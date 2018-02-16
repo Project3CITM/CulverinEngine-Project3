@@ -370,6 +370,11 @@ bool CompRectTransform::GetUpdateRect() const
 	return update_rect;
 }
 
+float4 CompRectTransform::GetRect()const
+{
+	return float4(position.x,position.y,(float)width, (float)height);
+}
+
 float3 CompRectTransform::GetNorthEastPosition()const
 {
 	return float3(width*right_pivot.x, height * left_pivot.y, GetPos().z);

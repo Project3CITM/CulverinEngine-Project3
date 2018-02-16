@@ -3,11 +3,17 @@
 #include "Component.h"
 #include <list>
 #include "Math\float4.h"
+#include "Math\float2.h"
 
 union Event;
 class CompGraphic;
 class CompImage;
 class ResourceMaterial;
+enum NavigationMode
+{
+	NAVIGATION_NONE = -1,
+	NAVIGATION_EXTRICTE
+};
 class CompInteractive:public Component
 {
 public:
@@ -26,13 +32,15 @@ public:
 
 	virtual bool IsActive()const;
 	void Desactive();
+	virtual void ForceClear(Event event_input);
+
 	virtual void OnPointDown(Event event_input);
 	virtual void OnPointUP(Event event_input);
 	virtual void OnPointEnter(Event event_input);
 	virtual void OnPointExit(Event event_input);
 	virtual void OnInteractiveSelected(Event event_input);
 	virtual void OnInteractiveUnSelected(Event event_input);
-
+	bool PointerInside(float2 position);
 	void SetTargetGraphic(CompGraphic* target_graphic);
 	//Setters Color tint parameters
 	void SetNormalColor(const float4& set_rgba);
@@ -56,7 +64,8 @@ public:
 	ResourceMaterial* GetHighligtedSprite()const;
 	ResourceMaterial* GetPressedSprite()const;
 	ResourceMaterial* GetDisabledSprite()const;
-
+	//OtherGetters
+	NavigationMode GetNavigationMode()const;
 protected:
 	virtual bool IsPressed();
 	virtual bool IsHighlighted(Event event_data);
@@ -68,6 +77,7 @@ private:
 	void UpdateTransitionColor(float dt);
 	void StartTransitionSprite(ResourceMaterial* sprite_to_change);
 public:
+
 	enum SelectionStates
 	{
 		STATE_NONE =-1,
@@ -91,7 +101,7 @@ private:
 	
 	SelectionStates current_selection_state = STATE_NORMAL;
 	Transition current_transition_mode = TRANSITION_NONE;
-
+	NavigationMode current_navigation_mode = NAVIGATION_NONE;
 	bool disabled = false;
 	bool point_down = false;
 	bool point_inside = false;

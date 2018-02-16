@@ -18,11 +18,10 @@ public:
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
+	void OnEvent(Event& event);
 	bool SetEventListenrs();
 	
-	void OnEvent(Event& event);
 	void WorldSpaceDraw();
-
 	void ScreenSpaceDraw();
 
 	bool CleanUp();
@@ -43,7 +42,7 @@ private:
 
 	float2 last_size_dock = float2(0, 0);
 	std::vector<CompInteractive*> iteractive_button;
-
+	CompInteractive* focus = nullptr;
 	//std::vector<ComponentCanvas*> world_space_canvas;
 
 };

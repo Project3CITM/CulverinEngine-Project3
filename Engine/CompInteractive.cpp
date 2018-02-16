@@ -8,6 +8,8 @@
 #include "ResourceMaterial.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
+#include "GameObject.h"
+#include "CompRectTransform.h"
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
 #define PRESSED_SPRITE 1
@@ -80,7 +82,7 @@ void CompInteractive::PreUpdate(float dt)
 	}
 	
 	}
-	
+	//PushImmediateEvent()
 	// -------------------------------------------------------------------
 }
 
@@ -232,6 +234,15 @@ void CompInteractive::Desactive()
 	current_selection_state = SelectionStates::STATE_DISABLED;
 }
 
+void CompInteractive::ForceClear(Event event_input)
+{
+	point_down = false;
+	point_inside = false;
+	interactive_selected = false;
+	UpdateSelectionState(event_input);
+
+}
+
 void CompInteractive::OnPointDown(Event event_input)
 {
 	point_down = true;
@@ -268,6 +279,17 @@ void CompInteractive::OnInteractiveUnSelected(Event event_input)
 {
 	interactive_selected = false;
 	UpdateSelectionState(event_input);
+}
+
+bool CompInteractive::PointerInside(float2 position)
+{
+	float4 rect = parent->GetComponentRectTransform()->GetRect();
+	if(rect.x<position.x &&
+	rect.x+rect.z>position.x &&
+		rect.y<position.y &&
+		rect.y + rect.w>position.y)
+
+	return false;
 }
 
 void CompInteractive::SetTargetGraphic(CompGraphic * set_target_graphic)
@@ -370,6 +392,11 @@ ResourceMaterial * CompInteractive::GetPressedSprite() const
 ResourceMaterial * CompInteractive::GetDisabledSprite() const
 {
 	return sprite[DISSABLED_SPRITE];
+}
+
+NavigationMode CompInteractive::GetNavigationMode() const
+{
+	return NavigationMode();
 }
 
 bool CompInteractive::IsPressed()
