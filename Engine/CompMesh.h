@@ -71,7 +71,7 @@ public:
 public:
 
 	char* name = "MESH NAME";
-	bool has_normals = false;
+	//bool has_normals = false;
 
 	ResourceMesh* resource_mesh = nullptr;
 

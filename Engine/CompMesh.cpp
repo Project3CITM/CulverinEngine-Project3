@@ -32,7 +32,7 @@ CompMesh::CompMesh(const CompMesh& copy, GameObject* parent) :Component(Comp_Typ
 		resource_mesh->num_game_objects_use_me++;
 	}
 	//material = material;
-	has_normals = copy.has_normals;
+
 	render = copy.render;
 
 	name_component = "Mesh";
@@ -310,17 +310,7 @@ void CompMesh::Draw()
 			}		
 			//
 			SetUniformVariables(shader);
-
-
-			// NORMALS ----------------------------------
-			if (App->renderer3D->normals && has_normals)
-			{
-				glBindBuffer(GL_ARRAY_BUFFER, resource_mesh->vertices_norm_id);
-				glVertexPointer(3, GL_FLOAT, sizeof(float3), NULL);
-				glDrawArrays(GL_LINES, 0, resource_mesh->vertices.size() * 2);
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-			}
-
+			
 	
 			Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 			float4x4 temp = camFrust.ViewMatrix();
