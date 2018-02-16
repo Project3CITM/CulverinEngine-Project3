@@ -69,7 +69,7 @@ bool ImportAnimation::Import(const aiAnimation * animation, const char * name, c
 				rotation_key_name += ".";
 				json_object_dotset_number_with_std(config, bone_name + rotation_key_name + "Time", animation->mChannels[i]->mRotationKeys[p].mTime);
 
-				float4 rot = { animation->mChannels[i]->mRotationKeys[p].mValue.w ,animation->mChannels[i]->mRotationKeys[p].mValue.x ,animation->mChannels[i]->mRotationKeys[p].mValue.y ,animation->mChannels[i]->mRotationKeys[p].mValue.z};
+				float4 rot = { animation->mChannels[i]->mRotationKeys[p].mValue.x ,animation->mChannels[i]->mRotationKeys[p].mValue.y ,animation->mChannels[i]->mRotationKeys[p].mValue.z ,animation->mChannels[i]->mRotationKeys[p].mValue.w};
 				App->fs->json_array_dotset_float4(config, bone_name + rotation_key_name + "Rotation",rot );
 			}
 			json_object_dotset_number_with_std(config, bone_name + "NumScaleKeys", animation->mChannels[i]->mNumScalingKeys);
@@ -140,7 +140,7 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 
 				temp_rot_key->time = json_object_dotget_number(config_rot_key, "Time");
 				float4 rot = App->fs->json_array_dotget_float4_string(config_rot_key, "Rotation");
-				temp_rot_key->rotation = { Quat(rot.w, rot.x, rot.y, rot.z) };
+				temp_rot_key->rotation = { Quat(rot.x, rot.y, rot.z, rot.w) };
 				temp_bone->rotation_keys.push_back(temp_rot_key);
 			}
 			int num_scale_keys = json_object_dotget_number(config_bone, "NumScaleKeys");

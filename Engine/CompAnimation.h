@@ -37,7 +37,7 @@ public:
 	CompAnimation(const CompAnimation& copy, GameObject* parent);
 	~CompAnimation();
 
-	void DrawBones();
+	void Draw();
 	void Clear();
 	void PreUpdate(float dt);
 	void Update(float dt);

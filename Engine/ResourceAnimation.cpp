@@ -52,8 +52,6 @@ AnimBone::~AnimBone()
 
 void AnimBone::UpdateBone(GameObject* bone, std::vector<AnimationClip*>& clip_vec) const
 {
-	if ((*clip_vec.begin()) != nullptr)
-	{
 		float3 pos;
 		Quat rot;
 		float3 scale;
@@ -63,16 +61,14 @@ void AnimBone::UpdateBone(GameObject* bone, std::vector<AnimationClip*>& clip_ve
 			pos = GetPosition(*it);
 			rot = GetRotation(*it);
 			scale = GetScale(*it);
+
+			CompTransform* transform = bone->GetComponentTransform();
+
+			transform->SetPos(pos);
+			transform->SetRot(rot);
+			transform->SetScale(scale);
 		}
-
 		//TODO Blending
-
-		CompTransform* transform = bone->GetComponentTransform();
-
-		transform->SetPos(pos);
-		transform->SetRot(rot);
-		transform->SetScale(scale);
-	}
 }
 
 
@@ -189,4 +185,22 @@ float3 AnimBone::GetScale(AnimationClip* clip_vec) const
 
 	}
 	return scale_keys[0]->scale;
+}
+
+void AnimBone::DrawDebug(GameObject * bone) const
+{
+	CompTransform* comp_transform = bone->GetComponentTransform();
+	float3 trans = comp_transform->GetGlobalTransform().TranslatePart();
+
+	for (int i = 0; i < bone->GetNumChilds(); i++)
+	{
+		GameObject* temp_child = bone->GetChildbyIndex(i);
+		CompTransform* child_comp_transform = temp_child->GetComponentTransform();
+		float3 child_trans = child_comp_transform->GetGlobalTransform().TranslatePart();
+
+		glBegin(GL_LINES);
+		glVertex3f(trans.x, trans.y, trans.z);
+		glVertex3f(child_trans.x, child_trans.y, child_trans.z);
+		glEnd();
+	}
 }
