@@ -288,10 +288,12 @@ void CompScript::ShowInspectorInfo()
 
 	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.00f));
 	//ImGui::Text("Script"); ImGui::SameLine();
-	static bool active_script = false;
+
 	if (resource_script != nullptr)
 	{
-		ImGui::Selectable("< Edit Script >", false);
+		char buffer[50];
+		sprintf(buffer, "< Edit Script >##%i", uid);
+		ImGui::Selectable(buffer, false);
 		if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 		{
 			//LOG("%.2f - %.2f  / /  %.2f - %.2f", ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y, ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y);
