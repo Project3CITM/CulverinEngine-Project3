@@ -392,7 +392,6 @@ void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const cha
 	nameJson += ".meta.json";
 	config_file = json_value_init_object();
 
-	uint count = 0;
 	if (config_file != nullptr)
 	{
 		config = json_value_get_object(config_file);
@@ -412,7 +411,7 @@ void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const cha
 
 // Utilities --------------------------------------------------------------------------
 
-void JSONSerialization::SaveScript(const ResourceScript* script, const char * directory, const char * fileName)
+void JSONSerialization::SaveScript(const ResourceScript* script, const char* directory, const char* fileName)
 {
 	LOG("SAVING Script %s -----", script->name);
 
@@ -423,14 +422,14 @@ void JSONSerialization::SaveScript(const ResourceScript* script, const char * di
 	nameJson += ".meta.json";
 	config_file = json_value_init_object();
 
-	uint count = 0;
 	if (config_file != nullptr)
 	{
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
-		json_object_dotset_string_with_std(config, "Material.Directory Script", fileName);
-		json_object_dotset_number_with_std(config, "Material.UUID Resource", script->GetUUID());
-		json_object_dotset_string_with_std(config, "Material.Name", script->name);
+		json_object_dotset_string_with_std(config, "Script.Directory Script", fileName);
+		json_object_dotset_number_with_std(config, "Script.UUID Resource", script->GetUUID());
+		json_object_dotset_string_with_std(config, "Script.Name", script->name);
+		json_object_dotset_string_with_std(config, "Script.PathDLL", script->GetPathdll().c_str());
 		json_serialize_to_file(config_file, nameJson.c_str());
 	}
 	json_value_free(config_file);
@@ -532,7 +531,33 @@ ReImport JSONSerialization::GetUUIDMaterial(const char* file)
 
 ReImport JSONSerialization::GetUUIDScript(const char* file)
 {
-	return ReImport();
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = file;
+	nameJson += ".meta.json";
+	config_file = json_parse_file(nameJson.c_str());
+
+	ReImport info;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		//config_node = json_object_get_object(config, "Material");
+		info.uuid = json_object_dotget_number_with_std(config, "Script.UUID Resource");
+		info.directory_obj = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Script.Directory Script"));
+		info.name_mesh = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Script.Name"));
+		info.path_dll = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Script.PathDLL"));
+		if (strcmp(file, info.directory_obj) == 0)
+		{
+			json_value_free(config_file);
+			return info;
+		}
+		else
+		{
+			info.directory_obj = nullptr;
+		}
+	}
+	json_value_free(config_file);
 }
 
 std::time_t JSONSerialization::GetLastWritePrefab(const char* file)

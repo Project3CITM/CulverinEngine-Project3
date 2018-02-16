@@ -137,7 +137,10 @@ bool CompScript::CheckAllVariables()
 
 void CompScript::RemoveReferences(GameObject* go)
 {
-	csharp->RemoveReferences(go);
+	if (csharp != nullptr)
+	{
+		csharp->RemoveReferences(go);
+	}
 }
 
 void CompScript::SetCurrentGameObject(GameObject* current)
@@ -163,7 +166,7 @@ void CompScript::SetCSharp(CSharpScript* csharp_)
 
 void CompScript::ClearVariables()
 {
-	if (resource_script != nullptr)
+	if (resource_script != nullptr && csharp != nullptr)
 	{
 		csharp->Clear();
 	}

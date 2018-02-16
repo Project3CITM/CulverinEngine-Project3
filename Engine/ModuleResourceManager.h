@@ -15,8 +15,9 @@ struct Vertex;
 struct ReImport
 {
 	uint uuid = 0;
-	const char* name_mesh = nullptr; //TODO ELLIOT no name_mesh
+	const char* name_mesh = nullptr;
 	const char* directory_obj = nullptr;
+	const char* path_dll = nullptr; //Only use Script 
 };
 
 class ModuleResourceManager : public Module

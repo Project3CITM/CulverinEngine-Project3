@@ -33,6 +33,7 @@ ModuleResourceManager::~ModuleResourceManager()
 	{
 		RELEASE_ARRAY(resources_to_reimport[i].directory_obj);
 		RELEASE_ARRAY(resources_to_reimport[i].name_mesh);
+		RELEASE_ARRAY(resources_to_reimport[i].path_dll);
 	}
 	resources_to_reimport.clear();
 	files_to_delete.clear();
@@ -184,6 +185,7 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 		{
 			RELEASE_ARRAY(resources_to_reimport[i].directory_obj);
 			RELEASE_ARRAY(resources_to_reimport[i].name_mesh);
+			RELEASE_ARRAY(resources_to_reimport[i].path_dll);
 		}
 		resources_to_reimport.clear();
 		reimport_now = false;
