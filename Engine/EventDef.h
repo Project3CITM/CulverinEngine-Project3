@@ -219,7 +219,7 @@ union Event
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
-
+	EPoint pointer;
 };
 
 #endif //_EVENTDEF_

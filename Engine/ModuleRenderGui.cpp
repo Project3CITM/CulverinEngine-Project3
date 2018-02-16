@@ -12,7 +12,7 @@
 #include "Scene.h"
 #include "ModuleFramebuffers.h"
 #include"ShadersLib.h"
-
+#include "CompInteractive.h"
 
 ModuleRenderGui::ModuleRenderGui(bool start_enabled) : Module(start_enabled)
 {
@@ -172,13 +172,17 @@ bool ModuleRenderGui::Start()
 update_status ModuleRenderGui::PreUpdate(float dt)
 {
 	perf_timer.Start();
-
+	/*
 	if (last_size_dock.x != GetSizeDock("Scene").x || last_size_dock.y != GetSizeDock("Scene").y)
 	{
 		App->scene->scene_buff->WantRefreshRatio();
 	}
 
 	last_size_dock = GetSizeDock("Scene");
+	*/
+	iteractive_button.clear();
+	
+	
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
@@ -213,6 +217,90 @@ bool ModuleRenderGui::SetEventListenrs()
 
 void ModuleRenderGui::OnEvent(Event & this_event)
 {
+	switch (this_event.type)
+	{
+	case EventType::EVENT_BUTTON_DOWN:
+	case EventType::EVENT_BUTTON_UP:
+	case EventType::EVENT_MOUSE_MOTION:
+		if (focus != nullptr)
+		{
+			if (focus->PointerInside(this_event.pointer.position))
+			{
+				if (this_event.type == EventType::EVENT_BUTTON_DOWN)
+				{
+					focus->OnPointDown(this_event);
+					if (focus->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
+					{
+						focus->OnInteractiveSelected(this_event);
+					}
+
+				}
+				if (this_event.type == EventType::EVENT_BUTTON_UP)
+				{
+					focus->OnPointUP(this_event);
+
+				}
+				if (this_event.type == EventType::EVENT_MOUSE_MOTION)
+				{
+					focus->OnPointEnter(this_event);
+				}
+			}
+			else
+			{
+				if (this_event.type == EventType::EVENT_MOUSE_MOTION)
+				{
+					focus->OnPointExit(this_event);
+
+				}
+			}
+		}
+		else
+		{
+			bool positive_colision = false;
+			std::vector<CompInteractive*>::reverse_iterator it = iteractive_button.rbegin();
+			for (; it != iteractive_button.rend(); it++)
+			{
+				if ((*it)->PointerInside(this_event.pointer.position))
+				{
+					if (positive_colision)
+					{
+						(*it)->ForceClear(this_event);
+					}
+					if (this_event.type == EventType::EVENT_BUTTON_DOWN)
+					{
+						(*it)->OnPointDown(this_event);
+						if ((*it)->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
+						{
+							(*it)->OnInteractiveSelected(this_event);
+						}
+
+					}
+					if (this_event.type == EventType::EVENT_BUTTON_UP)
+					{
+						(*it)->OnPointUP(this_event);
+
+					}
+					if (this_event.type == EventType::EVENT_MOUSE_MOTION)
+					{
+						(*it)->OnPointEnter(this_event);
+					}
+
+					positive_colision = true;
+
+				}
+				else
+				{
+					if (this_event.type == EventType::EVENT_MOUSE_MOTION)
+					{
+						(*it)->OnPointExit(this_event);
+					}
+				}
+			}
+		}
+		break;
+	default:
+		break;
+	}
 	//this_event.draw.ToDraw->Draw();
 }
 
