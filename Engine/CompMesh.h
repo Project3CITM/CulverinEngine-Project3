@@ -23,7 +23,8 @@ enum Type_Primitive
 {
 	TYPE_NON,
 	TYPE_SPHERE,
-	TYPE_CUBE
+	TYPE_CUBE,
+	TYPE_PLANE
 };
 
 struct Skeleton

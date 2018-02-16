@@ -45,6 +45,7 @@ bool ModuleResourceManager::Start()
 
 	// Create Resource Cube
 	CreateResourceCube();
+	CreateResourcePlane();
 	Load();
 
 	Start_t = perf_timer.ReadMs();
@@ -468,6 +469,40 @@ void ModuleResourceManager::CreateResourceCube()
 	App->importer->iMesh->Import(8, 36, 0, 0, indices, vertices, 2); // 2 == Cube
 	RELEASE_ARRAY(vertices_array);
 	RELEASE(bounding_box);
+}
+
+void ModuleResourceManager::CreateResourcePlane()
+{
+
+	std::vector<uint> indices;
+	std::vector<float3> vertices;
+
+	indices.push_back(0);
+	indices.push_back(3);
+	indices.push_back(2);
+	indices.push_back(0);
+	indices.push_back(1);
+	indices.push_back(3);
+
+	vertices.push_back(float3(0, 0, 1));
+	vertices.push_back(float3(1, 0, 1));
+	vertices.push_back(float3(0, 0, 0));
+	vertices.push_back(float3(1, 0, 0));
+
+	/*uint indices[6]{
+		0,3,2,
+		0,1,3
+	};
+
+	float vertices[4*3]{
+		0,0,0,
+		1,0,0,
+		0,1,0,
+		1,1,0
+	};*/
+
+	App->importer->iMesh->Import(4, 6, 0, 0, indices, vertices, 3); // 3 == Plane
+
 }
 
 Resource*  ModuleResourceManager::ShowResources(bool& active, Resource::Type type)

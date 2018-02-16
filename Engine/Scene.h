@@ -57,6 +57,7 @@ public:
 	GameObject* FindCanvas();
 	GameObject* CreateGameObject(GameObject* parent = nullptr);
 	GameObject* CreateCube(GameObject* parent = nullptr);
+	GameObject* CreatePlane(GameObject* parent = nullptr);
 	GameObject* CreateMainCamera(GameObject* parent = nullptr);
 	GameObject* CreateCanvas(GameObject* parent = nullptr);
 	GameObject* CreateImage(GameObject* parent = nullptr);

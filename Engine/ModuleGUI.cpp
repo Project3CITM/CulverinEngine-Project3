@@ -207,7 +207,11 @@ update_status ModuleGUI::Update(float dt)
 				ImGui::MenuItem("Create Sphere", NULL, false, false);
 				ImGui::MenuItem("Create Capsule", NULL, false, false);
 				ImGui::MenuItem("Create Cylinder", NULL, false, false);
-				ImGui::MenuItem("Create Plane", NULL, false, false);
+				if (ImGui::MenuItem("Create Plane")) {
+					GameObject* plane = App->scene->CreatePlane();
+					App->gui->SetLinkInspector(plane);
+					App->camera->SetFocus(plane);
+				}
 				// CreateNewScript
 				ImGui::EndMenu();
 			}
