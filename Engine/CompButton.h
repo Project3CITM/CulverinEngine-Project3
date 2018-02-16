@@ -15,9 +15,12 @@ public:
 	void Load(const JSON_Object * object, std::string name);
 
 private:
+	void ShowInspectorColorTransition();
+	void ShowInspectorSpriteTransition();
+	void ShowInspectorAnimationTransition();
 public:
 private:
-
+	
 
 };
 

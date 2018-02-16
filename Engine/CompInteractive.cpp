@@ -4,12 +4,12 @@
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 #include "ModuleEventSystem.h"
-#include "EventDef.h"
 #include "ResourceMaterial.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
 #include "GameObject.h"
 #include "CompRectTransform.h"
+
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
 #define PRESSED_SPRITE 1
@@ -20,6 +20,7 @@ std::list<CompInteractive*> CompInteractive::iteractive_list;
 CompInteractive::CompInteractive(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
+	
 	sprite[HIGHLIGHTED_SPRITE] = nullptr;
 	sprite[PRESSED_SPRITE] = nullptr;
 	sprite[DISSABLED_SPRITE] = nullptr;
@@ -27,6 +28,9 @@ CompInteractive::CompInteractive(Comp_Type t, GameObject * parent) :Component(t,
 	uuid_reimported_sprite[1] = 0;
 	uuid_reimported_sprite[2] = 0;
 
+	component_event.pass_component.type = EventType::EVENT_PASS_COMPONENT;
+	component_event.pass_component.component = this;
+	
 	iteractive_list.push_back(this);
 
 	name_component = "Interactive";
@@ -88,10 +92,19 @@ void CompInteractive::PreUpdate(float dt)
 
 void CompInteractive::Update(float dt)
 {
+	PushImmediateEvent(component_event);
 	if (start_transition)
 	{
 		UpdateTransitionColor(dt);
 	}
+}
+
+void CompInteractive::Clear()
+{
+	target_graphic = nullptr;
+	image = nullptr;
+	if (!iteractive_list.empty())
+		iteractive_list.remove(this);
 }
 
 void CompInteractive::ShowOptions()
@@ -294,6 +307,8 @@ bool CompInteractive::PointerInside(float2 position)
 
 void CompInteractive::SetTargetGraphic(CompGraphic * set_target_graphic)
 {
+	if (set_target_graphic == nullptr)
+		return;
 	target_graphic = set_target_graphic;
 	if (target_graphic->GetType() == C_IMAGE)
 		image = (CompImage*)target_graphic;

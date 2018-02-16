@@ -54,6 +54,7 @@ enum EventType
 	EVENT_BUTTON_DOWN,
 	EVENT_BUTTON_UP,
 	EVENT_MOUSE_MOTION,
+	EVENT_PASS_COMPONENT,
 	MAXEVENTS//Keep this at the bottom, needed to know how many events se have
 };
 
@@ -87,22 +88,7 @@ struct EDraw
 	//float DistanceCamToObject;
 	Component* ToDraw;
 };
-struct EPoint
-{
-	EventType type;
-	enum InputButton
-	{
-		INPUT_NONE = -1,
-		INPUT_MOUSE_LEFT,			
-		INPUT_MOUSE_RIGHT,
-		INPUT_MOUSE_MIDDLE,
-		INPUT_MAX	
-	};
-	InputButton button;
-	float2 position;
-	float2 motion;
 
-};
 struct EDroppedFile
 {
 	EventType type;
@@ -148,8 +134,28 @@ struct EWindowResize
 /*--------------------------------------------------*/
 /*----------------------Physics---------------------*/
 /*--------------------------------------------------*/
+struct EPoint
+{
+	EventType type;
+	enum InputButton
+	{
+		INPUT_NONE = -1,
+		INPUT_MOUSE_LEFT,
+		INPUT_MOUSE_RIGHT,
+		INPUT_MOUSE_MIDDLE,
+		INPUT_MAX
+	};
+	InputButton button;
+	float2 position;
+	float2 motion;
 
+};
+struct EPassComponent
+{
+	EventType type;
+	Component* component = nullptr;
 
+};
 /*--------------------------------------------------*/
 /*------------------Shader Pipeline-----------------*/
 /*--------------------------------------------------*/
@@ -220,6 +226,7 @@ union Event
 
 	/*------------------User Interface------------------*/
 	EPoint pointer;
+	EPassComponent pass_component;
 };
 
 #endif //_EVENTDEF_

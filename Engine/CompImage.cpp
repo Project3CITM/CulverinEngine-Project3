@@ -154,7 +154,10 @@ void CompImage::ShowInspectorInfo()
 	{
 		select_source_image = true;
 	}
-	ImGui::ColorEdit4("Color##image_rgba", color.ptr());
+	if (ImGui::ColorEdit4("Color##image_rgba", color.ptr()))
+	{
+		SetColor(color);
+	}
 	ImGui::Checkbox("RayCast Target", &raycast_target);
 	if (source_image == nullptr || select_source_image)
 	{
@@ -187,6 +190,12 @@ void CompImage::ShowInspectorInfo()
 
 void CompImage::CopyValues(const CompImage * component)
 {
+}
+
+void CompImage::Clear()
+{
+	source_image = nullptr;
+	overwrite_image = nullptr;
 }
 
 void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const

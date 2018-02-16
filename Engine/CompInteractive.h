@@ -4,8 +4,8 @@
 #include <list>
 #include "Math\float4.h"
 #include "Math\float2.h"
+#include "EventDef.h"
 
-union Event;
 class CompGraphic;
 class CompImage;
 class ResourceMaterial;
@@ -25,6 +25,7 @@ public:
 
 	void PreUpdate(float dt);
 	void Update(float dt);
+	void Clear();
 	void ShowOptions();
 	void CopyValues(const CompInteractive * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
@@ -89,7 +90,7 @@ public:
 	};
 	enum Transition
 	{
-		TRANSITION_NONE,
+		TRANSITION_NONE=-1,
 		TRANSITION_COLOR,
 		TRANSITION_SPRITE,
 		TRANSITION_ANIMATION,
@@ -99,20 +100,21 @@ public:
 private:
 	static std::list<CompInteractive*> iteractive_list;
 	
-	SelectionStates current_selection_state = STATE_NORMAL;
-	Transition current_transition_mode = TRANSITION_NONE;
-	NavigationMode current_navigation_mode = NAVIGATION_NONE;
+
 	bool disabled = false;
 	bool point_down = false;
 	bool point_inside = false;
 	bool interactive_selected = false;
 protected:
+	SelectionStates current_selection_state = STATE_NORMAL;
+	Transition current_transition_mode = TRANSITION_COLOR;
+	NavigationMode current_navigation_mode = NAVIGATION_NONE;
 	//Color tint parameters
-	float4 normal_color;
-	float4 highlighted_color;
-	float4 pressed_color;
-	float4 disabled_color;
-	float4 desired_color;
+	float4 normal_color = float4::one;
+	float4 highlighted_color = float4::one;
+	float4 pressed_color = float4::one;
+	float4 disabled_color = float4::one;
+	float4 desired_color = float4::zero;
 	float color_multiply = 1.0f;
 	float fade_duration = 0.1f;
 	bool no_fade = false;
@@ -126,7 +128,7 @@ protected:
 
 private:
 	
-
+	Event component_event;
 };
 #endif // !COMPONENT_INTERACTIVE_H
 

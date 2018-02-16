@@ -41,7 +41,7 @@ private:
 	int window_scale = 1;
 
 	float2 last_size_dock = float2(0, 0);
-	std::vector<CompInteractive*> iteractive_button;
+	std::vector<CompInteractive*> iteractive_vector;
 	CompInteractive* focus = nullptr;
 	//std::vector<ComponentCanvas*> world_space_canvas;
 
