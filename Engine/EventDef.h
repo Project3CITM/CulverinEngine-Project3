@@ -1,5 +1,6 @@
 #ifndef _EVENTDEF_
 #define _EVENTDEF_
+#include<vector>
 /*-----------------------------------------------------------------------------------------------------------*/
 /*---Add new events:-----------------------------------------------------------------------------------------*/
 /*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))--------------*/
@@ -146,9 +147,10 @@ struct ESendAllShaderObject
 {
 	ESendAllShaderObject() {}
 	EventType type= EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
+	
 	//This vector makes std pair of the cpp errors
 	//need to fix this
-	//std::vector<Shader*> shaders;
+	std::vector<Shader*>* shaders;
 };
 
 struct EOpenShaderEditor

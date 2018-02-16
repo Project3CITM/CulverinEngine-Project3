@@ -282,7 +282,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 	newVertex->shaderID = vertexShader;
 	newVertex->shaderText = *vertexShaderSource;
 	newVertex->shaderType = ShaderType::vertex;
-	newFragment->name = "default_shader_vert";
+	newVertex->name = "default_shader_vert";
 	newVertex->shaderPath = "";
 
 	defaultShader->AddVertex(newVertex);
@@ -572,16 +572,18 @@ Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)
 bool ModuleShaders::SetEventListenrs()
 {
 	AddListener(EventType::EVENT_OPEN_SHADER_EDITOR, this);
+	AddListener(EventType::EVENT_CREATE_SHADER_PROGRAM, this);
 	return true;
 }
 
 void ModuleShaders::OnEvent(Event & event)
 {
+	std::string path;
 	switch (event.type)
 	{
 	case EventType::EVENT_OPEN_SHADER_EDITOR:
 
-		std::string path= Shader_Directory_fs+ "/" + event.shadereditor.name;
+		path = Shader_Directory_fs+ "/" + event.shadereditor.name;
 
 		switch (event.shadereditor.shader_type)
 		{
@@ -599,15 +601,38 @@ void ModuleShaders::OnEvent(Event & event)
 		shader_text_active.shaderPath = path;
 		shader_text_active.shaderType = event.shadereditor.shader_type;
 		enable_editor = event.shadereditor.open_editor;
-	
-		//----------------------
-		/*App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, path.c_str());
-
-		char* serialized_string = "#version 330 core\n void main(){\n }";
-		json_serialize_to_file(file_proj, path.c_str());
-		Shader* new_shader = CompileShader(path, event.shader.name, event.shader.shader_type);
-		*/
 		break;
+	case EventType::EVENT_CREATE_SHADER_PROGRAM:
+		path = Shader_Directory_fs + "/" + event.shaderprogram.name + ".mat";
+		ShaderProgram * program=CreateShader(event.shaderprogram.name);
+		program->path = path;
+		switch (event.shaderprogram.Shader1->shaderType) {
+		case ShaderType::vertex:
+			program->AddVertex(event.shaderprogram.Shader1);
+			break;
+		case ShaderType::fragment:
+			program->AddFragment(event.shaderprogram.Shader2);
+			break;
+		case ShaderType::geometry:
+			program->AddGeometry(event.shaderprogram.Shader2);
+			break;
+		}
+
+		switch (event.shaderprogram.Shader2->shaderType) {
+		case ShaderType::vertex:
+			program->AddVertex(event.shaderprogram.Shader2);
+			break;
+		case ShaderType::fragment:
+			program->AddFragment(event.shaderprogram.Shader2);
+			break;
+		case ShaderType::geometry:
+			program->AddGeometry(event.shaderprogram.Shader2);
+			break;
+		}
+		program->LoadProgram();
+		program->CreateMaterialFile();
+		break;
+
 	}
 }
 
@@ -669,5 +694,7 @@ void ModuleShaders::SendEventWithAllShaders()
 	Event shader_event;
 	shader_event.shadereditor.type = EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
 	//need to fix std::pair
-	//shader_event.sendshaderobject.shaders = shaders;
+	shader_event.sendshaderobject.shaders = &shaders;
+	PushEvent(shader_event);
+	App->gui->shader_program_creation = false;
 }
