@@ -55,7 +55,7 @@ vec3 ApplyLight(Light light,int type, vec3 surfaceColor, vec3 normal, vec3 surfa
     
     //specular
     float specularCoefficient = 0.0;
-    if(diffuseCoefficient > 0.0)
+    //if(diffuseCoefficient > 0.0)
         specularCoefficient = pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), materialShininess);
     vec3 specular =specularCoefficient * materialSpecularColor.rgb;// * light.l_color.rgb;
 

@@ -265,6 +265,12 @@ bool ShaderProgram::UpdateShaderProgram(uint VertexID, uint FragmentID, uint Geo
 
 void ShaderProgram::GetProgramVariables()
 {
+	auto temp_textures = textures;
+	auto temp_float = float_variables;
+	auto temp_float3 = float3_variables;
+	auto temp_color = color_variables;
+	auto temp_bool = bool_variables;
+	auto  temp_int = int_variables;
 
 	textures.clear();
 	float3_variables.clear();
@@ -282,10 +288,10 @@ void ShaderProgram::GetProgramVariables()
 		// Variables started with '_' reserved for global variables
 		if (temp.name != nullptr && temp.name[0] == '_') continue;
 
-
+		bool exist_variable = false;
 		//Textures
 		if (temp.type == GL_SAMPLER_2D)
-		{
+		{			
 			TextureVar texture_var;
 			texture_var.var_name = temp.name;
 			textures.push_back(texture_var);
@@ -334,4 +340,77 @@ void ShaderProgram::GetProgramVariables()
 
 	}
 
+	for (auto item = temp_textures.begin(); item != temp_textures.end(); item++)
+	{
+		for (auto item2 = textures.begin(); item2 != textures.end(); item2++)
+		{
+			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str())==0) {
+				(*item2).value = (*item).value;
+			}
+		}
+	}
+	for (auto item = temp_float.begin(); item != temp_float.end(); item++)
+	{
+		for (auto item2 = float_variables.begin(); item2 != float_variables.end(); item2++)
+		{
+			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
+				(*item2).value = (*item).value;
+			}
+		}
+	}
+
+	for (auto item = temp_int.begin(); item != temp_int.end(); item++)
+	{
+		for (auto item2 = int_variables.begin(); item2 != int_variables.end(); item2++)
+		{
+			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
+				(*item2).value = (*item).value;
+			}
+		}
+	}
+
+	for (auto item = temp_bool.begin(); item != temp_bool.end(); item++)
+	{
+		for (auto item2 = bool_variables.begin(); item2 != bool_variables.end(); item2++)
+		{
+			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
+				(*item2).value = (*item).value;
+			}
+		}
+	}
+
+	for (auto item = temp_color.begin(); item != temp_color.end(); item++)
+	{
+		for (auto item2 = color_variables.begin(); item2 != color_variables.end(); item2++)
+		{
+			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
+				(*item2).value = (*item).value;
+			}
+		}
+	}
+
+	for (auto item = temp_float3.begin(); item != temp_float3.end(); item++)
+	{
+		for (auto item2 = float3_variables.begin(); item2 != float3_variables.end(); item2++)
+		{
+			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
+				(*item2).value = (*item).value;
+			}
+		}
+	}
+
+
+
+
 }
+
+void ShaderProgram::RestartIterators()
+{
+	it_textures = textures.begin();
+	it_int_variables = int_variables.begin();
+	it_float_variables = float_variables.begin();
+	it_float3_variables = float3_variables.begin();
+	it_color_variables =color_variables.begin();
+	it_bool_variables = bool_variables.begin();
+}
+

@@ -27,9 +27,9 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 	material_shader = copy.material_shader;
 	//resource_material = copy.resource_material;
 	for (int i = 0; i < material_shader.textures.size(); i++) {
-		if (material_shader.textures[i].res_material != nullptr)
+		if (material_shader.textures[i].value != nullptr)
 		{
-			material_shader.textures[i].res_material->num_game_objects_use_me++;
+			material_shader.textures[i].value->num_game_objects_use_me++;
 		}
 	}
 	name_component = "Material";
@@ -40,12 +40,12 @@ CompMaterial::~CompMaterial()
 {
 
 	for (int i = 0; i < material_shader.textures.size(); i++) {
-		if (material_shader.textures[i].res_material != nullptr)
+		if (material_shader.textures[i].value != nullptr)
 		{
-			if(material_shader.textures[i].res_material->num_game_objects_use_me > 0 )
-				material_shader.textures[i].res_material->num_game_objects_use_me--;
+			if(material_shader.textures[i].value->num_game_objects_use_me > 0 )
+				material_shader.textures[i].value->num_game_objects_use_me--;
 		}
-		material_shader.textures[i].res_material = nullptr;
+		material_shader.textures[i].value = nullptr;
 	}
 	/*
 	if (resource_material != nullptr)
@@ -62,19 +62,19 @@ void CompMaterial::PreUpdate(float dt)
 {
 	for (int i = 0; i < material_shader.textures.size(); i++)
 	{
-		if (material_shader.textures[i].res_material == nullptr)
+		if (material_shader.textures[i].value == nullptr)
 		{
 			if (material_shader.textures[i].uuid_to_reimport != 0)
 			{
-				material_shader.textures[i].res_material = (ResourceMaterial*)App->resource_manager->GetResource(material_shader.textures[i].uuid_to_reimport);
-				if (material_shader.textures[i].res_material != nullptr)
+				material_shader.textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(material_shader.textures[i].uuid_to_reimport);
+				if (material_shader.textures[i].value != nullptr)
 				{
-					material_shader.textures[i].res_material->num_game_objects_use_me++;
+					material_shader.textures[i].value->num_game_objects_use_me++;
 
 					// Check if loaded
-					if (material_shader.textures[i].res_material->IsLoadedToMemory() == Resource::State::UNLOADED)
+					if (material_shader.textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
 					{
-						App->importer->iMaterial->LoadResource(std::to_string(material_shader.textures[i].res_material->GetUUID()).c_str(), material_shader.textures[i].res_material);
+						App->importer->iMaterial->LoadResource(std::to_string(material_shader.textures[i].value->GetUUID()).c_str(), material_shader.textures[i].value);
 					}
 					material_shader.textures[i].uuid_to_reimport = 0;
 
@@ -84,16 +84,16 @@ void CompMaterial::PreUpdate(float dt)
 	}
 	for (int i = 0; i < material_shader.textures.size(); i++)
 	{
-		if (material_shader.textures[i].res_material != nullptr)
+		if (material_shader.textures[i].value != nullptr)
 		{
-			if (material_shader.textures[i].res_material->GetState() == Resource::State::WANTDELETE)
+			if (material_shader.textures[i].value->GetState() == Resource::State::WANTDELETE)
 			{
-				material_shader.textures[i].res_material = nullptr;
+				material_shader.textures[i].value = nullptr;
 			}
-			else if (material_shader.textures[i].res_material->GetState() == Resource::State::REIMPORTED)
+			else if (material_shader.textures[i].value->GetState() == Resource::State::REIMPORTED)
 			{
-				material_shader.textures[i].uuid_to_reimport = material_shader.textures[i].res_material->GetUUID();
-				material_shader.textures[i].res_material = nullptr;
+				material_shader.textures[i].uuid_to_reimport = material_shader.textures[i].value->GetUUID();
+				material_shader.textures[i].value = nullptr;
 			}
 		}
 	}
@@ -102,7 +102,7 @@ void CompMaterial::PreUpdate(float dt)
 void CompMaterial::Clear()
 {
 	for (int i = 0; i < material_shader.textures.size(); i++) {
-		material_shader.textures[i].res_material = nullptr;
+		material_shader.textures[i].value = nullptr;
 		
 	}
 	
@@ -189,14 +189,14 @@ void CompMaterial::ShowOptions()
 	{
 		for (int i = 0; i < material_shader.textures.size(); i++) {
 			TextureVar* texture_var = &material_shader.textures[i];
-			if (texture_var->res_material != nullptr)
+			if (texture_var->value != nullptr)
 			{
-				if (texture_var->res_material->num_game_objects_use_me > 0)
+				if (texture_var->value->num_game_objects_use_me > 0)
 				{
-					texture_var->res_material->num_game_objects_use_me--;
+					texture_var->value->num_game_objects_use_me--;
 				}
 			}
-			texture_var->res_material = nullptr;
+			texture_var->value = nullptr;
 			
 		}
 		/*
@@ -208,12 +208,12 @@ void CompMaterial::ShowOptions()
 			}
 		}*/
 		for (int i = 0; i < material_shader.textures.size(); i++) {
-			if (material_shader.textures[i].res_material != nullptr)
+			if (material_shader.textures[i].value != nullptr)
 			{
-				if (material_shader.textures[i].res_material->num_game_objects_use_me > 0)
-					material_shader.textures[i].res_material->num_game_objects_use_me--;
+				if (material_shader.textures[i].value->num_game_objects_use_me > 0)
+					material_shader.textures[i].value->num_game_objects_use_me--;
 			}
-			material_shader.textures[i].res_material = nullptr;
+			material_shader.textures[i].value = nullptr;
 		}
 		
 		ImGui::CloseCurrentPopup();
@@ -291,13 +291,10 @@ void CompMaterial::ShowInspectorInfo()
 
 	ShowShadersEditors();
 
-	material_shader.it_textures = material_shader.textures.begin();
-	material_shader.it_int_variables = material_shader.int_variables.begin();
-	material_shader.it_float_variables = material_shader.float_variables.begin();
-	material_shader.it_float3_variables = material_shader.float3_variables.begin();
-	material_shader.it_color_variables = material_shader.color_variables.begin();
-	material_shader.it_bool_variables = material_shader.bool_variables.begin();
 	
+	material_shader.RestartIterators();
+	
+
 	uint var_size = material_shader.GetVariablesSize();
 	for (int i = 0; i < var_size; i++)
 	{
@@ -351,24 +348,9 @@ void CompMaterial::ShowInspectorInfo()
 
 	}
 
-	material_shader.it_textures = material_shader.textures.begin();
-	material_shader.it_int_variables = material_shader.int_variables.begin();
-	material_shader.it_float_variables = material_shader.float_variables.begin();
-	material_shader.it_float3_variables = material_shader.float3_variables.begin();
-	material_shader.it_color_variables = material_shader.color_variables.begin();
-	material_shader.it_bool_variables = material_shader.bool_variables.begin();
+	material_shader.RestartIterators();
 
 
-	/*
-	std::vector<TextureVar>::iterator item = material_shader.textures.begin();
-	int i = 0;
-	while (item != material_shader.textures.end()) {
-		ShowTextureVariable(i);
-		i++;
-		item++;
-
-	}
-	*/
 	ImGui::TreePop();
 }
 
@@ -400,9 +382,9 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 		strcat(mat_name, num);
 		RELEASE_ARRAY(num);
 
-		if (material_shader.textures[i].res_material != nullptr && material_shader.textures[i].res_material->GetTextureID() != App->renderer3D->id_checkImage)
+		if (material_shader.textures[i].value != nullptr && material_shader.textures[i].value->GetTextureID() != App->renderer3D->id_checkImage)
 		{
-			json_object_dotset_number_with_std(object, name + mat_name, material_shader.textures[i].res_material->GetUUID());
+			json_object_dotset_number_with_std(object, name + mat_name, material_shader.textures[i].value->GetUUID());
 		}
 		else
 		{			
@@ -449,43 +431,25 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 
 			uint uuid = json_object_dotget_number_with_std(object, name + mat_name);
 
-			material_shader.textures[i].res_material = (ResourceMaterial*)App->resource_manager->GetResource(uuid);
-			if (material_shader.textures[i].res_material != nullptr)
+			material_shader.textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(uuid);
+			if (material_shader.textures[i].value != nullptr)
 			{
-				material_shader.textures[i].res_material->num_game_objects_use_me++;
+				material_shader.textures[i].value->num_game_objects_use_me++;
 
 				// LOAD MATERIAL -------------------------
-				if (material_shader.textures[i].res_material->IsLoadedToMemory() == Resource::State::UNLOADED)
+				if (material_shader.textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
-					App->importer->iMaterial->LoadResource(std::to_string(material_shader.textures[i].res_material->GetUUID()).c_str(), material_shader.textures[i].res_material);
+					App->importer->iMaterial->LoadResource(std::to_string(material_shader.textures[i].value->GetUUID()).c_str(), material_shader.textures[i].value);
 				}
 			}
 			else {
-				material_shader.textures[i].res_material = App->renderer3D->default_mat;
+				material_shader.textures[i].value = App->renderer3D->default_mat;
 			}
 		}
 	}
 	else
 		material_shader = *App->renderer3D->default_shader;
 
-	//Load Shaders and shaders values
-	//TODO
-	//
-	/*
-	if (resourceID > 0)
-	{
-		resource_material = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
-		if (resource_material != nullptr)
-		{
-			resource_material->num_game_objects_use_me++;
-
-			// LOAD MATERIAL -------------------------
-			if (resource_material->IsLoadedToMemory() == Resource::State::UNLOADED)
-			{
-				App->importer->iMaterial->LoadResource(std::to_string(resource_material->GetUUID()).c_str(), resource_material);
-			}
-		}
-	}*/
 	Enable();
 }
 
@@ -501,10 +465,10 @@ void CompMaterial::ShowTextureVariable(int index, TextureVar* texture)
 	ImGui::Text("Name:"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", texture_var->var_name.c_str());
 
-	if (texture_var->res_material != nullptr)
+	if (texture_var->value != nullptr)
 	{
 		/* Image of the texture */
-		ImGui::Image((ImTextureID*)texture_var->res_material->GetTextureID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0));
+		ImGui::Image((ImTextureID*)texture_var->value->GetTextureID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0));
 	}
 
 	else{
@@ -519,18 +483,18 @@ void CompMaterial::ShowTextureVariable(int index, TextureVar* texture)
 		ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(texture_var->selected, Resource::Type::MATERIAL);
 		if (temp != nullptr)
 		{
-			if (texture_var->res_material != nullptr)
+			if (texture_var->value != nullptr)
 			{
-				if (texture_var->res_material->num_game_objects_use_me > 0)
+				if (texture_var->value->num_game_objects_use_me > 0)
 				{
-					texture_var->res_material->num_game_objects_use_me--;
+					texture_var->value->num_game_objects_use_me--;
 				}
 			}
-			texture_var->res_material = temp;
-			texture_var->res_material->num_game_objects_use_me++;
-			if (texture_var->res_material->IsLoadedToMemory() == Resource::State::UNLOADED)
+			texture_var->value = temp;
+			texture_var->value->num_game_objects_use_me++;
+			if (texture_var->value->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
-				App->importer->iMaterial->LoadResource(std::to_string(texture_var->res_material->GetUUID()).c_str(), texture_var->res_material);
+				App->importer->iMaterial->LoadResource(std::to_string(texture_var->value->GetUUID()).c_str(), texture_var->value);
 			}
 			Enable();
 		}
@@ -557,7 +521,7 @@ void CompMaterial::ShowFloatVariable(int index, floatVar * var)
 void CompMaterial::ShowVec3Variable(int index, float3Var * var)
 {
 	ImGui::PushID(index);
-	ImGui::InputFloat3(var->var_name.c_str(), &var->vector[0]);
+	ImGui::InputFloat3(var->var_name.c_str(), &var->value[0]);
 	ImGui::PopID();
 
 }
@@ -573,7 +537,7 @@ void CompMaterial::ShowBoolVariable(int index, boolVar * var)
 void CompMaterial::ShowColorVariable(int index, ColorVar *var)
 {
 	ImGui::PushID(index);
-	ImGui::ColorPicker4(var->var_name.c_str(), &var->color[0]);
+	ImGui::ColorPicker4(var->var_name.c_str(), &var->value[0]);
 	ImGui::PopID();
 
 }
