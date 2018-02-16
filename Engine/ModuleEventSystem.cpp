@@ -11,6 +11,7 @@ void PushEvent(Event& event)
 	App->event_system->PushEvent(event);
 }
 
+//You use this function to send events directly, this event send system doesn't wait until postupdate, with that is no needed to use App->eventsystem->PushImmediateEvent(event), only PushImmediateEvent(event)
 void PushImmediateEvent(Event& event)
 {
 	App->event_system->PushImmediateEvent(event);
