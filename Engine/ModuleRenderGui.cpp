@@ -13,7 +13,8 @@
 #include "ModuleFramebuffers.h"
 #include"ShadersLib.h"
 #include "CompInteractive.h"
-
+#include "ModuleRenderer3D.h"
+#include "CompCamera.h"
 ModuleRenderGui::ModuleRenderGui(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
@@ -348,17 +349,23 @@ void ModuleRenderGui::ScreenSpaceDraw()
 
 	glViewport(0, 0, (GLsizei)total_width, (GLsizei)total_height);
 
+
 	const float ortho_projection[4][4] =
 	{
 		{ 2.0f / io.DisplaySize.x,	0.0f,						 0.0f, 0.0f },
 		{ 0.0f,						2.0f / io.DisplaySize.y,	 0.0f, 0.0f },
 		{ 0.0f,						0.0f,						-1.0f, 0.0f },
-		{ 0.0f,						0.0f,						 0.0f, 1.0f },
+		{ -1.0f,						-1.0f,						 0.0f, 1.0f },
 	};
 	//Draw
 	default_ui_shader->Bind();
-	GLint g_AttribLocationProjMtx = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "ProjMtx");
+	GLint g_AttribLocationProjMtx = glGetUniformLocation(default_ui_shader->programID, "ProjMtx");
 	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
+
+
+	//Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
+	//GLint viewLoc = glGetUniformLocation(default_ui_shader->programID, "ProjMtx");
+	//glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 
 	for (int i = 0; i < screen_space_canvas.size(); i++)
 	{

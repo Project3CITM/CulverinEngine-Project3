@@ -74,12 +74,12 @@ void CompCheckBox::ShowInspectorInfo()
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ImGui::OpenPopup("OptionsMesh");
+		ImGui::OpenPopup("OptionsCheckBox");
 	}
 	ImGui::PopStyleVar();
 
 	// Button Options --------------------------------------
-	if (ImGui::BeginPopup("OptionsMesh"))
+	if (ImGui::BeginPopup("OptionsCheckBox"))
 	{
 		ShowOptions();
 		ImGui::EndPopup();
