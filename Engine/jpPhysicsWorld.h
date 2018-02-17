@@ -4,10 +4,32 @@
 #include "PhysX/Include/PxPhysicsAPI.h"
 #include "jpPhysicsRigidBody.h"
 
+class ModulePhysics;
+
+class jpCollisionCallback : public physx::PxSimulationEventCallback
+{
+public:
+	jpCollisionCallback() {};
+	jpCollisionCallback(ModulePhysics* callback) : callback_module(callback) {};
+	~jpCollisionCallback() {};
+
+	void 	onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count) {};
+	void 	onWake(physx::PxActor **actors, physx::PxU32 count) {};
+	void 	onSleep(physx::PxActor **actors, physx::PxU32 count) {};
+	void 	onContact(const physx::PxContactPairHeader &pairHeader, const physx::PxContactPair *pairs, physx::PxU32 nbPairs) {};
+	void	onTrigger(physx::PxTriggerPair *pairs, physx::PxU32 count);
+	void 	onAdvance(const physx::PxRigidBody *const *bodyBuffer, const physx::PxTransform *poseBuffer, const physx::PxU32 count) {};
+
+private:
+	ModulePhysics * callback_module = nullptr;
+};
+
+
 class jpPhysicsWorld
 {
 public:
 	jpPhysicsWorld();
+	jpPhysicsWorld(ModulePhysics* module_callback);
 	~jpPhysicsWorld();
 
 	bool CreateNewPhysicsWorld();
@@ -33,5 +55,8 @@ private:
 	//physx::PxCooking* jpCooking = nullptr;
 	physx::PxDefaultErrorCallback gDefaultErrorCallback;
 	physx::PxDefaultAllocator gDefaultAllocatorCallback;
+
+	jpCollisionCallback* collision_callback = nullptr;
 };
+
 #endif // !JP_PHYSICS_WORLD_H__
