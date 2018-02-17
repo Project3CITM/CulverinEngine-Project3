@@ -587,9 +587,9 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 			LoadScript(object, name);
 			if (resource_script->GetState() != Resource::State::FAILED)
 			{
+				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
 				SetOwnGameObject(parent);
 			}
-
 		}
 	}
 	Enable();
@@ -604,7 +604,7 @@ void CompScript::SaveScript(JSON_Object * object, std::string name) const
 	}
 }
 
-void CompScript::LoadScript(const JSON_Object * object, std::string name)
+void CompScript::LoadScript(const JSON_Object* object, std::string name)
 {
 	//Load Values
 	if (csharp != nullptr)

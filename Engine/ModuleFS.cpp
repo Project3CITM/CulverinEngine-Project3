@@ -322,7 +322,7 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 				}
 				case Resource::Type::SCRIPT:
 				{
-					std::time_t last_write = App->json_seria->GetLastWriteMaterial(files[i].directory_name);
+					std::time_t last_write = App->json_seria->GetLastWriteScript(files[i].directory_name);
 					if (last_write != cftime)
 					{
 						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDScript(files[i].directory_name));

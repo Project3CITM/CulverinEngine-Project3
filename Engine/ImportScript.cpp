@@ -131,16 +131,19 @@ bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
 				//res_script->SetCSharp(newCSharp);
 			}
 
-			// Then Create Meta
-			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-			Newdirectory += "\\" + App->fs->FixName_directory(file);
-			if (isAutoImport)
+			if (App->mode_game == false)
 			{
-				App->json_seria->SaveScript(res_script, App->fs->GetFullPath(file).c_str(), Newdirectory.c_str());
-			}
-			else
-			{
-				App->json_seria->SaveScript(res_script, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+				// Then Create Meta
+				std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+				Newdirectory += "\\" + App->fs->FixName_directory(file);
+				if (isAutoImport)
+				{
+					App->json_seria->SaveScript(res_script, App->fs->GetFullPath(file).c_str(), Newdirectory.c_str());
+				}
+				else
+				{
+					App->json_seria->SaveScript(res_script, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+				}
 			}
 		}
 	}
@@ -172,11 +175,13 @@ bool ImportScript::LoadResource(const char* file, ResourceScript* resourceScript
 			//resourceScript->SetCSharp(newCSharp);
 		}
 
-
-		// Then Create Meta
-		std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-		Newdirectory += "\\" + App->fs->FixName_directory(file);
-		App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+		if (App->mode_game == false)
+		{
+			// Then Create Meta
+			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+			Newdirectory += "\\" + App->fs->FixName_directory(file);
+			App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+		}
 	}
 	return true;
 }

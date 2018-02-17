@@ -204,7 +204,10 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	perf_timer.Start();
 
 	// 
-	App->scene->scene_buff->Bind("Scene");
+	if (App->mode_game == false)
+	{
+		App->scene->scene_buff->Bind("Scene");
+	}
 
 	// Refresh Projection of the camera
 	UpdateProjection(active_camera);

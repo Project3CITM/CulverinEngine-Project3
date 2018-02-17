@@ -19,7 +19,7 @@
 
 CompTransform::CompTransform(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
-	name_component = "Transformation";
+	name_component = "Transform";
 }
 
 CompTransform::CompTransform(const CompTransform& copy, GameObject* parent) : Component(copy.GetType(), parent)
@@ -29,7 +29,7 @@ CompTransform::CompTransform(const CompTransform& copy, GameObject* parent) : Co
 	
 	Init(copy.GetPos(), copy.GetRotEuler(), copy.GetScale()); //Set Local matrix
 
-	name_component = "Transformation";
+	name_component = "Transform";
 }
 
 CompTransform::~CompTransform()
@@ -59,60 +59,62 @@ void CompTransform::Update(float dt)
 	{
 		editing_transform = false;
 	}
-
-	// Show gizmo when object selected
-	if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == parent && App->engine_state == EngineState::STOP)
+	if (App->mode_game == false)
 	{
-		ImGuiIO& io = ImGui::GetIO();
-		ImGuizmo::Enable(true);
-
-		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
-		screen = ((SceneWorld*)App->gui->win_manager[SCENEWORLD])->GetWindowParams();
-		ImGuizmo::SetRect(screen.x, screen.y, screen.z, screen.w);
-
-		// Get global transform of the object and transpose it to edit with Guizmo
-		global_transposed = global_transform.Transposed();
-
-		if (io.WantTextInput == false)
+		// Show gizmo when object selected
+		if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == parent && App->engine_state == EngineState::STOP)
 		{
-			// SET GUIZMO OPERATION ----------------------------------
-			if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-			{
-				mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-			}
-			else if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
-			{
-				mCurrentGizmoOperation = ImGuizmo::ROTATE;
-			}
-			else if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
-			{
-				mCurrentGizmoOperation = ImGuizmo::SCALE;
-			}
-		}
+			ImGuiIO& io = ImGui::GetIO();
+			ImGuizmo::Enable(true);
 
-		// EDIT TRANSFORM QITH GUIZMO
-		ImGuizmo::Manipulate(App->camera->GetViewMatrix(), App->camera->GetProjMatrix(), mCurrentGizmoOperation, transform_mode, global_transposed.ptr());
+			static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+			screen = ((SceneWorld*)App->gui->win_manager[SCENEWORLD])->GetWindowParams();
+			ImGuizmo::SetRect(screen.x, screen.y, screen.z, screen.w);
 
-		// Only edit transforms with guizmo if it's selected first
-		if (ImGuizmo::IsUsing() && App->input->GetKey(SDL_SCANCODE_LALT) != KEY_REPEAT && !editing_transform && !freeze)
-		{
-			global_transposed.Transpose();
+			// Get global transform of the object and transpose it to edit with Guizmo
+			global_transposed = global_transform.Transposed();
 
-			//If it's a root node, global and local transforms are the same
-			if (parent->GetParent() == nullptr)
+			if (io.WantTextInput == false)
 			{
-				local_transform = global_transposed;
-			}
-			else
-			{
-				//Otherwise, set local matrix from parent global matrix (inverted)
-				const CompTransform* transform = parent->GetParent()->GetComponentTransform();
-				local_transform = transform->GetGlobalTransform().Inverted() * global_transposed;
+				// SET GUIZMO OPERATION ----------------------------------
+				if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+				{
+					mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+				}
+				else if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
+				{
+					mCurrentGizmoOperation = ImGuizmo::ROTATE;
+				}
+				else if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
+				{
+					mCurrentGizmoOperation = ImGuizmo::SCALE;
+				}
 			}
 
-			local_transform.Decompose(position, rotation, scale);
-			rotation_euler = rotation.ToEulerXYZ() * RADTODEG;
-			toUpdate = true;
+			// EDIT TRANSFORM QITH GUIZMO
+			ImGuizmo::Manipulate(App->camera->GetViewMatrix(), App->camera->GetProjMatrix(), mCurrentGizmoOperation, transform_mode, global_transposed.ptr());
+
+			// Only edit transforms with guizmo if it's selected first
+			if (ImGuizmo::IsUsing() && App->input->GetKey(SDL_SCANCODE_LALT) != KEY_REPEAT && !editing_transform && !freeze)
+			{
+				global_transposed.Transpose();
+
+				//If it's a root node, global and local transforms are the same
+				if (parent->GetParent() == nullptr)
+				{
+					local_transform = global_transposed;
+				}
+				else
+				{
+					//Otherwise, set local matrix from parent global matrix (inverted)
+					const CompTransform* transform = parent->GetParent()->GetComponentTransform();
+					local_transform = transform->GetGlobalTransform().Inverted() * global_transposed;
+				}
+
+				local_transform.Decompose(position, rotation, scale);
+				rotation_euler = rotation.ToEulerXYZ() * RADTODEG;
+				toUpdate = true;
+			}
 		}
 	}
 

@@ -65,10 +65,32 @@ bool Scene::Start()
 	// First of all create New Scene
 	root = new GameObject("NewScene", 1);
 	bool newScene = true;
+
 	if (strcmp(App->GetActualScene().c_str(), "") != 0)
 	{
 		newScene = false;
 		App->json_seria->LoadScene(App->GetActualScene().c_str());
+		if (App->mode_game)
+		{
+			if (App->scene->CheckNoFails())
+			{
+				int exc = App->engine_state;
+				App->SetState(EngineState::PLAY); // OR STOP
+
+				if (exc == EngineState::STOP)
+				{
+					//Start all scripts
+					App->scene->StartScripts();
+				}
+			}
+		}
+	}
+	if (newScene)
+	{
+		/* Create Default Main Camera Game Object */
+		CreateMainCamera(nullptr);
+
+		// Also Light??
 	}
 
 	/* Init Quadtree */
@@ -77,14 +99,6 @@ bool Scene::Start()
 
 	/* Set size of the plane of the scene */
 	size_plane = 50;
-
-	if (newScene)
-	{
-		/* Create Default Main Camera Game Object */
-		CreateMainCamera(nullptr);
-
-		// Also Light??
-	}
 
 
 	icon_options_transform = App->textures->LoadTexture("Images/UI/icon_options_transform.png");
@@ -114,6 +128,16 @@ update_status Scene::PreUpdate(float dt)
 	{
 		DeleteGameObject(root);
 	}
+
+	//static bool ttt = true;
+	//if (ttt)
+	//{
+	//	if (strcmp(App->GetActualScene().c_str(), "") != 0)
+	//	{
+	//		ttt = false;
+	//		App->json_seria->LoadScene(App->GetActualScene().c_str());
+	//	}
+	//}
 
 	//// PreUpdate GameObjects ------------------------
 	//for (uint i = 0; i < gameobjects_inscene->GetNumChilds(); i++)

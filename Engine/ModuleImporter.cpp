@@ -50,6 +50,17 @@ bool ModuleImporter::Init(JSON_Object* node)
 	iMaterial = new ImportMaterial();
 	iScript = new ImportScript();
 	iAnimation = new ImportAnimation();
+
+	// Now InitSystem Domain Mono
+	if (iScript->InitScriptingSystem())
+	{
+		LOG("Culverin Assembly Init SUCCESS.");
+	}
+	else
+	{
+		LOG("Culverin Assembly Init FAIL.");
+	}
+
 	Awake_t = perf_timer.ReadMs();
 	return true;
 }
@@ -61,16 +72,6 @@ bool ModuleImporter::Start()
 	struct aiLogStream stream;
 	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
 	aiAttachLogStream(&stream);
-
-	// Now InitSystem Domain Mono
-	if (iScript->InitScriptingSystem())
-	{
-		LOG("Culverin Assembly Init SUCCESS.");
-	}
-	else
-	{
-		LOG("Culverin Assembly Init FAIL.");
-	}
 
 	Start_t = perf_timer.ReadMs();
 	return true;

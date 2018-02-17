@@ -430,6 +430,9 @@ void JSONSerialization::SaveScript(const ResourceScript* script, const char* dir
 		json_object_dotset_number_with_std(config, "Script.UUID Resource", script->GetUUID());
 		json_object_dotset_string_with_std(config, "Script.Name", script->name);
 		json_object_dotset_string_with_std(config, "Script.PathDLL", script->GetPathdll().c_str());
+		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
+		std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
+		json_object_dotset_number_with_std(config, "Script.Last Write", cftime);
 		json_serialize_to_file(config_file, nameJson.c_str());
 	}
 	json_value_free(config_file);
@@ -600,7 +603,21 @@ std::time_t JSONSerialization::GetLastWriteMaterial(const char* file)
 
 std::time_t JSONSerialization::GetLastWriteScript(const char* file)
 {
-	return std::time_t();
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = file;
+	nameJson += ".meta.json";
+	config_file = json_parse_file(nameJson.c_str());
+
+	std::time_t last_write = 0;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		last_write = json_object_dotget_number(config, "Script.Last Write");
+	}
+	json_value_free(config_file);
+	return last_write;
 }
 
 void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile) 

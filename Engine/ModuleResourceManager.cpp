@@ -329,7 +329,10 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(file[i]).c_str(), App->fs->GetExtension(file[i]));
 		}
 	}
-	((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
+	if (App->mode_game == false)
+	{
+		((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
+	}
 	App->fs->UpdateFilesAssets();
 }
 
