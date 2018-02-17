@@ -144,6 +144,11 @@ void CompScript::RemoveReferences(GameObject* go)
 	}
 }
 
+const char * CompScript::GetScriptName() const
+{
+	return name_script.c_str();
+}
+
 void CompScript::SetCurrentGameObject(GameObject* current)
 {
 	if (csharp != nullptr)
@@ -382,8 +387,12 @@ void CompScript::ShowInspectorInfo()
 						resource_script->num_game_objects_use_me--;
 					}
 				}
+
+				//Link the Resource to the Component
 				resource_script = temp;
 				resource_script->num_game_objects_use_me++;
+				name_script = resource_script->name;
+
 				if (resource_script->IsCompiled() == Resource::State::UNLOADED)
 				{
 					if (App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script))

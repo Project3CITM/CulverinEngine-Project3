@@ -30,6 +30,8 @@ public:
 	bool CheckAllVariables();
 	void RemoveReferences(GameObject* go);
 
+	const char* GetScriptName() const;
+
 	void SetCurrentGameObject(GameObject* current_);
 	void SetOwnGameObject(GameObject* owenerofScript);
 	void SetCSharp(CSharpScript* csharp_);
@@ -47,7 +49,8 @@ public:
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
-	// LOAD - SAVE METHODS ------------------
+
+	// LOAD - SAVE METHODS (SCRIPT)------------------
 	void SaveScript(JSON_Object* object, std::string name) const;
 	void LoadScript(const JSON_Object* object, std::string name);
 	void LoadValuesGameObjectScript();

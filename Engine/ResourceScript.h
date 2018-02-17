@@ -8,6 +8,7 @@
 
 class Script_editor;
 class GameObject;
+class CompScript;
 
 class ResourceScript : public Resource
 {
@@ -33,6 +34,8 @@ public:
 	bool LoadToMemory();
 	Resource::State IsCompiled();
 
+	void IterateSceneToCheckScripts(GameObject* obj, std::vector<CompScript*>* to_fill_vec);
+
 	//// LOAD - SAVE METHODS ------------------
 	//void Save(JSON_Object* object, std::string name) const;
 	//void Load(const JSON_Object* object, std::string name);
@@ -41,6 +44,7 @@ public:
 private:
 	std::string path_dll;
 	Script_editor* editor = nullptr;
+	std::vector<CompScript*> to_fill_vec;
 };
 
 

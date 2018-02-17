@@ -91,7 +91,7 @@ bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
 	{
 		uuid_script = uuid;
 	}
-	if (IsNameUnique(App->fs->GetOnlyName(file)) == false && uuid == 0)
+	if (IsNameUnique(App->fs->GetOnlyName(file)) == false)
 	{
 		LOG("[error] Script: %s, The Name of Script must be unique, there is already a script with that name.", App->fs->GetOnlyName(file).c_str());
 		return false;
