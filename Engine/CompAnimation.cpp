@@ -230,6 +230,7 @@ void CompAnimation::ShowAnimationInfo()
 
 			ImGui::InputFloat("Start Frame:", &(*it)->start_frame_time);
 			ImGui::InputFloat("End Frame:", &(*it)->end_frame_time);
+			ImGui::InputFloat("Blend-in Time", &(*it)->total_blending_time);
 			ImGui::Checkbox("Loop", &(*it)->loop);
 			std::string state_names;
 			state_names += "Play";
@@ -257,6 +258,17 @@ void CompAnimation::ShowAnimationInfo()
 						current_animation = (*it);
 						current_animation->RestartAnimationClip();
 					}	
+				}
+				else if ((*it)->state == A_PLAY && current_animation == (*it) && (AnimationState)state == A_STOP)
+				{
+					(*it)->state = AnimationState::A_STOP;
+					current_animation = nullptr;
+					if (blending_animation != nullptr)
+					{
+						current_animation = blending_animation;
+						blending_animation->state = AnimationState::A_PLAY;
+						blending_animation = nullptr;
+					}
 				}
 				else
 				{
@@ -301,6 +313,8 @@ void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene,
 		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Time", (*it)->time);
 		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".StartTime", (*it)->start_frame_time);
 		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime", (*it)->end_frame_time);
+		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".BlendTime", (*it)->total_blending_time);
+		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".CurrentBlendTime", (*it)->current_blending_time);
 		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".State", (*it)->state);
 		i++;
 	}
@@ -336,7 +350,18 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 		temp->time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Time");
 		temp->start_frame_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".StartTime");
 		temp->end_frame_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime");
+		temp->total_blending_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".BlendTime");
+		temp->total_blending_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".CurrentBlendTime");
 		temp->state = (AnimationState)(int)json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".State");
+		animation_clips.push_back(temp);
+		if (temp->state == AnimationState::A_PLAY)
+		{
+			current_animation = temp;
+		}
+		else if (temp->state == AnimationState::A_BLENDING)
+		{
+			blending_animation = temp;
+		}
 	}
 }
 

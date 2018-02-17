@@ -25,7 +25,7 @@ public:
 	float start_frame_time = 0.0f;
 	float end_frame_time = 0.0f;
 
-	float total_blending_time = 3.0f;
+	float total_blending_time = 0.666f;
 	float current_blending_time = total_blending_time;
 
 	bool finished = true;
