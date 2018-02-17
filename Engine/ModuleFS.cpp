@@ -235,6 +235,30 @@ void ModuleFS::GetAllFiles(std::experimental::filesystem::path path, std::vector
 	}
 }
 
+void ModuleFS::GetAllFilesByExtension(std::experimental::filesystem::path path, std::vector<std::string>& files, const char* ext)
+{
+	namespace stdfs = std::experimental::filesystem;
+
+	const stdfs::directory_iterator end{};
+
+	for (stdfs::directory_iterator iter{ path }; iter != end; ++iter)
+	{
+		std::string extension = GetExtension(iter->path().string());
+		for (std::string::iterator it = extension.begin(); it != extension.end(); it++)
+		{
+			*it = tolower(*it);
+		}
+		if (strcmp(extension.c_str(), ext) == 0)
+		{
+			files.push_back(iter->path().string());
+		}
+		if (stdfs::is_directory(*iter))
+		{
+			GetAllFilesByExtension(iter->path().string(), files, ext);
+		}
+	}
+}
+
 void ModuleFS::GetAllFilesAssets(std::experimental::filesystem::path path, std::vector<AllFiles>& files)
 {
 	namespace stdfs = std::experimental::filesystem;
@@ -950,7 +974,8 @@ std::string ModuleFS::LoadScript(std::string file)
 	return "";
 }
 
-bool ModuleFS::CheckIsFileExist(const std::string& name) {
+bool ModuleFS::CheckIsFileExist(const std::string& name)
+{
 	std::ifstream fil(name.c_str());
 	return fil.good();
 }
