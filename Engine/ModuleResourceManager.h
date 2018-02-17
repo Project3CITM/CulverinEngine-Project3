@@ -8,7 +8,7 @@
 #include <list>
 #include "Math\float3.h"
 
-#define ResourcePrimitive 1
+#define ResourcePrimitive 2
 
 struct Vertex;
 

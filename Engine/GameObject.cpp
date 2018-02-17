@@ -389,6 +389,10 @@ void GameObject::Draw()
 			{
 				components[i]->Draw();
 			}
+			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_LIGHT)
+			{
+				components[i]->Draw();
+			}
 		}
 
 		//Draw child Game Objects -------------------

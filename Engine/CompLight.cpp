@@ -82,9 +82,19 @@ void CompLight::PreUpdate(float dt)
 void CompLight::Update(float dt)
 {
 
+}
+
+void CompLight::Draw()
+{
+
 	App->renderer3D->default_shader->Bind();
 
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+	glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
 
 	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 	float4x4 temp = camFrust.ViewMatrix();
@@ -93,7 +103,7 @@ void CompLight::Update(float dt)
 	GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
 	GLint viewLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "viewproj");
 
-	
+
 
 	float4x4 matrixfloat = parent->GetComponentTransform()->GetGlobalTransform();
 	GLfloat matrix[16] =
@@ -124,15 +134,14 @@ void CompLight::Update(float dt)
 		glDrawElements(GL_TRIANGLES, plane->num_indices, GL_UNSIGNED_INT, NULL);
 
 	}
-	
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	App->renderer3D->default_shader->Unbind();
 
-
-}
-
-void CompLight::Draw()
-{
 }
 
 void CompLight::Clear()

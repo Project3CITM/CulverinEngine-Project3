@@ -484,22 +484,10 @@ void ModuleResourceManager::CreateResourcePlane()
 	indices.push_back(1);
 	indices.push_back(3);
 
-	vertices.push_back(float3(0, 0, 1));
-	vertices.push_back(float3(1, 0, 1));
-	vertices.push_back(float3(0, 0, 0));
-	vertices.push_back(float3(1, 0, 0));
-
-	/*uint indices[6]{
-		0,3,2,
-		0,1,3
-	};
-
-	float vertices[4*3]{
-		0,0,0,
-		1,0,0,
-		0,1,0,
-		1,1,0
-	};*/
+	vertices.push_back(float3(-0.5, 0, 0.5));
+	vertices.push_back(float3(0.5, 0, 0.5));
+	vertices.push_back(float3(-0.5, 0, -0.5));
+	vertices.push_back(float3(0.5, 0, -0.5));
 
 	App->importer->iMesh->Import(4, 6, 0, 0, indices, vertices, "plane_default",4); // 3 == Plane
 
