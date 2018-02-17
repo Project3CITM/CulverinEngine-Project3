@@ -124,14 +124,18 @@ bool Application::Init()
 		maxFPS = json_object_get_number(config_node, "Max FPS");
 		vsync = json_object_get_boolean(config_node, "VSYNC");
 		mode_game = json_object_get_boolean(config_node, "Mode Game");
+
+		actual_scene = json_object_get_string(config_node, "ActualScene");
+		if (strcmp(actual_scene.c_str(), "") == 0)
+		{
+			mode_game = false;
+		}
 		if (mode_game)
 		{
 			gui->enabled = false;
 		}
 		SetFpsCap(maxFPS);
 		// ---------------------------------------------------
-
-		actual_scene = json_object_get_string(config_node, "ActualScene");
 
 		// Call Init() in all modules
 		std::vector<Module*>::iterator item = list_modules.begin();
