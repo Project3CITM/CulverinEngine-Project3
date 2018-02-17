@@ -17,11 +17,14 @@ uniform mat4 model;
 uniform mat4 viewproj;
 uniform mat4 view;
 
+uniform sampler2D height_map;
+
 void main()
 {
 TexCoord = texCoord;
 ourTime = _time;
 ourPos = position;
 ourNormal = normal;
-gl_Position = viewproj *  model * vec4(position.x,position.y,position.z, 1.0f);
+
+gl_Position = viewproj *  model * vec4(position, 1.0f);
 }

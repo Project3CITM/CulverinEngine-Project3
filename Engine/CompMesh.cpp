@@ -287,7 +287,14 @@ void CompMesh::Draw()
 				CompMaterial* temp = parent->GetComponentMaterial();
 				if (temp != nullptr) {
 					for (int i = 0; i < temp->material_shader.textures.size(); i++) {
-						glActiveTexture(GL_TEXTURE0 + i);
+					
+
+						uint texLoc = glGetUniformLocation(temp->material_shader.programID, temp->material_shader.textures[i].var_name.c_str());
+						glUniform1i(texLoc, i);
+
+
+						glActiveTexture(GL_TEXTURE0 +i);
+					
 
 						if (temp->material_shader.textures[i].value == nullptr)
 						{
