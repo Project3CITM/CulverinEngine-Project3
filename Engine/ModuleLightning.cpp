@@ -1,5 +1,14 @@
 #include "ModuleLightning.h"
 #include "GL3W/include/glew.h"
+#include"MathGeoLib.h"
+#include"Application.h"
+#include"ShadersLib.h"
+#include"Application.h"
+#include"Scene.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+using namespace glm;
+
 
 DepthFrameBuffer::DepthFrameBuffer()
 {
@@ -97,6 +106,139 @@ bool ModuleLightning::Start()
 	AddShadowMapCastViews(shadow_cast_points_count);
 
 	Start_t = perf_timer.ReadMs();
+
+	text.Create(shadow_maps_res_w, shadow_maps_res_h);
+
+	//------------------------------------
+
+
+	shadow_Shader = new ShaderProgram();
+	shadow_Shader->name = "Default Shader";
+	//Success flag
+	GLint programSuccess = GL_TRUE;
+
+	//Generate program
+	shadow_Shader->programID = glCreateProgram();
+
+	//Create vertex shader
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+	//Get vertex source
+	const GLchar* vertexShaderSource[] =
+	{
+		"#version 330 core\n"
+		"layout(location = 0) in vec3 position;\n"
+		"layout(location = 1) in vec2 texCoord;\n"
+		"layout(location = 2) in vec3 normal;\n"
+		"layout(location = 3) in vec4 color;\n"
+		
+		"uniform mat4 depthMVP;\n"
+		"uniform mat4 model;\n"
+
+		"void main()\n"
+		"{\n"
+		" gl_Position =  depthMVP* model * vec4(position,1);\n"
+		"}\n"
+	};
+
+	//Set vertex source
+	glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
+
+	//Compile vertex source
+	glCompileShader(vertexShader);
+
+	//Check vertex shader for errors
+	GLint vShaderCompiled = GL_FALSE;
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
+	if (vShaderCompiled != GL_TRUE)
+	{
+		//ShaderLog(vertexShader);
+		//return nullptr;
+	}
+
+	//Attach vertex shader to program
+	glAttachShader(shadow_Shader->programID, vertexShader);
+
+	//Create fragment shader
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+	//Get fragment source
+	const GLchar* fragmentShaderSource[] =
+	{
+		"#version 330 core\n"
+		"layout(location = 0) out vec4 fragmentdepth;\n"
+
+		"void main()\n"
+		"{\n"
+		"fragmentdepth = vec4(vec3(gl_FragCoord.z),1);\n"
+		"}\n"
+	};
+
+	//Set fragment source
+	glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
+
+	//Compile fragment source
+	glCompileShader(fragmentShader);
+
+	//Check fragment shader for errors
+	GLint fShaderCompiled = GL_FALSE;
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
+	if (fShaderCompiled != GL_TRUE)
+	{
+
+		//ShaderLog(fragmentShader);
+		//return nullptr;
+	}
+
+	//Attach fragment shader to program
+	glAttachShader(shadow_Shader->programID, fragmentShader);
+
+	//Link program
+	glLinkProgram(shadow_Shader->programID);
+
+	//Check for errors
+	glGetProgramiv(shadow_Shader->programID, GL_LINK_STATUS, &programSuccess);
+	if (programSuccess != GL_TRUE)
+	{
+		//ProgramLog(default_shader.mProgramID);
+		//return nullptr;
+	}
+
+	Shader* newFragment = new Shader();
+	newFragment->shaderID = fragmentShader;
+	newFragment->shaderText = *fragmentShaderSource;
+	newFragment->shaderType = ShaderType::fragment;
+	newFragment->name = "default_shader_frag";
+	newFragment->shaderPath = "";
+
+	shadow_Shader->AddFragment(newFragment);
+
+	Shader* newVertex = new Shader();
+	newVertex->shaderID = vertexShader;
+	newVertex->shaderText = *vertexShaderSource;
+	newVertex->shaderType = ShaderType::vertex;
+	newVertex->name = "default_shader_vert";
+	newVertex->shaderPath = "";
+
+	shadow_Shader->AddVertex(newVertex);
+
+	uint var_size = shadow_Shader->GetVariablesSize();
+	for (int i = 0; i < var_size; i++) {
+		UniformVar temp = shadow_Shader->GetVariableInfo(i);
+
+		//Textures
+		if (temp.type == 35678) {
+			TextureVar texture_var;
+			texture_var.var_name = temp.name;
+			shadow_Shader->textures.push_back(texture_var);
+		}
+
+	}
+
+	//-------------------------------------
+
+
+
 	return true;
 }
 
@@ -111,6 +253,33 @@ update_status ModuleLightning::PreUpdate(float dt)
 
 update_status ModuleLightning::Update(float dt)
 {
+
+
+	shadow_Shader->Bind();
+	text.Bind("peter");
+
+	glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
+
+	// Compute the MVP matrix from the light's point of view
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+	glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 depthModelMatrix = glm::mat4(1.0);
+	glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+
+	
+
+
+	uint depthMatrixID= glGetUniformLocation(shadow_Shader->programID, "depthMVP");
+	glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
+
+	App->scene->scene_buff->Bind("Scene");
+	//ImGui::Image((ImTextureID*)text.frame_id, ImVec2(shadow_maps_res_w, shadow_maps_res_h));
+	shadow_Shader->Unbind();
+	//text.UnBind("peter");
+
+
+
+
 	return UPDATE_CONTINUE;
 }
 
