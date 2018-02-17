@@ -1,0 +1,6 @@
+Event	ID	Name			Wwise Object Path	Notes
+	4251938927	TorchAmbient			\Scene1\TorchAmbient	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	861775916	Torch	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Fire Burning Sound Effect_50963DE6.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch		2716432
+

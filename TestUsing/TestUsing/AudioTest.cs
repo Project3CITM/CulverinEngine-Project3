@@ -8,6 +8,6 @@ public class AudioTest : CulverinBehaviour
 	// Use this for initialization
 	void Start() {
         CompAudio comp_audio = GetComponent<CompAudio>();
-        comp_audio.StopEvent("Shot");
+        comp_audio.PlayEvent("TorchAmbient");
     }
 }

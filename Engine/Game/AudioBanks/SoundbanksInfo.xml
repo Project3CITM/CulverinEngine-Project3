@@ -16,26 +16,28 @@
 			<ShortName>Init</ShortName>
 			<Path>Init.bnk</Path>
 		</SoundBank>
+		<SoundBank Id="1544306476" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\Scene1</ObjectPath>
+			<ShortName>Scene1</ShortName>
+			<Path>Scene1.bnk</Path>
+			<IncludedEvents>
+				<Event Id="4251938927" Name="TorchAmbient" ObjectPath="\Events\Scene1\TorchAmbient"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="861775916" Language="SFX">
+					<ShortName>Fire Burning Sound Effect.wav</ShortName>
+					<Path>SFX\Fire Burning Sound Effect_50963DE6.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
 		<SoundBank Id="3161908922" Language="SFX">
 			<ObjectPath>\SoundBanks\Default Work Unit\Main</ObjectPath>
 			<ShortName>Main</ShortName>
 			<Path>Main.bnk</Path>
 			<IncludedEvents>
 				<Event Id="4091047182" Name="PauseAll" ObjectPath="\Events\Default Work Unit\PauseAll"/>
-				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Default Work Unit\PlayMusic"/>
 				<Event Id="3240900869" Name="ResumeAll" ObjectPath="\Events\Default Work Unit\ResumeAll"/>
-				<Event Id="251412229" Name="Shot" ObjectPath="\Events\Default Work Unit\Shot"/>
 			</IncludedEvents>
-			<IncludedMemoryFiles>
-				<File Id="351584646" Language="SFX">
-					<ShortName>Shot.wav</ShortName>
-					<Path>SFX\Shot_1C9C67B2.wem</Path>
-				</File>
-				<File Id="990784722" Language="SFX">
-					<ShortName>14783144220180213163025.wav</ShortName>
-					<Path>SFX\14783144220180213163025_F17FB28C.wem</Path>
-				</File>
-			</IncludedMemoryFiles>
 		</SoundBank>
 	</SoundBanks>
 </SoundBanksInfo>

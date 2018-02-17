@@ -39,7 +39,7 @@ void CompAudio::Update(float dt)
 
 		up.Normalize();
 		front.Normalize();
-		emitter->SetPosition(-pos.x, pos.y, pos.z, -front.x, front.y, front.z, -up.x, up.y, up.z);
+		emitter->SetPosition(pos.x, pos.y, pos.z, front.x, front.y, front.z, -up.x, up.y, up.z);
 	}	
 }
 
