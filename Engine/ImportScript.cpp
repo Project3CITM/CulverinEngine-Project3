@@ -309,6 +309,7 @@ bool ImportScript::CreateNewScript(bool& active)
 						//res_script->SetCSharp(newCSharp);
 					}
 
+					App->fs->UpdateFilesAssets();
 
 					// Then Create Meta
 					std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
@@ -328,7 +329,6 @@ bool ImportScript::CreateNewScript(bool& active)
 		else if (result == 2)
 		{
 			ImGui::TextColored(ImVec4(0.109, 0.933, 0, 1), "Script: %s, Compiled without errors", nameNewScript.c_str());
-			App->fs->UpdateFilesAssets();
 		}
 	}
 	else if (result != 0)
