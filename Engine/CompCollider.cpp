@@ -30,6 +30,10 @@ void CompCollider::ShowOptions()
 		// Not implemented yet.
 	}
 	ImGui::Separator();
+	if (ImGui::MenuItem("Remove Component"))
+	{
+		to_delete = true;
+	}
 	if (ImGui::MenuItem("Move to Front", NULL, false, false))
 	{
 		// Not implemented yet.
@@ -37,10 +41,6 @@ void CompCollider::ShowOptions()
 	if (ImGui::MenuItem("Move to Back", NULL, false, false))
 	{
 		// Not implemented yet.
-	}
-	if (ImGui::MenuItem("Remove Component"))
-	{
-		to_delete = true;
 	}
 	if (ImGui::MenuItem("Move Up", NULL, false, false))
 	{
@@ -57,7 +57,7 @@ void CompCollider::ShowOptions()
 	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
 	{
 		if (parent->FindComponentByType(((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
-			|| ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+			|| ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_UNIQUE_SEPARATOR)
 		{
 			parent->AddComponentCopy(*((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied());
 		}
@@ -85,7 +85,7 @@ void CompCollider::ShowInspectorInfo()
 		ShowOptions();
 		ImGui::EndPopup();
 	}
-
+	ImGui::TreePop();
 }
 
 void CompCollider::CopyValues(const CompCollider * component)
@@ -93,4 +93,15 @@ void CompCollider::CopyValues(const CompCollider * component)
 	//more...
 }
 
+void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
+{
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
+	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
+	json_object_dotset_number_with_std(object, name + "UUID", uid);
+}
 
+void CompCollider::Load(const JSON_Object * object, std::string name)
+{
+	uid = json_object_dotget_number_with_std(object, name + "UUID");
+
+}

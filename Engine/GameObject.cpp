@@ -996,7 +996,7 @@ void GameObject::ShowInspectorInfo()
 		}
 		if (ImGui::MenuItem("Collider"))
 		{
-//			AddComponent(Comp_Type::C_COLLIDER);
+			AddComponent(Comp_Type::C_COLLIDER);
 			add_component = false;
 		}
 
