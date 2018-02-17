@@ -48,7 +48,7 @@ public:
 	void ResetAudio();
 	void PlayAudioEvent(const char* event_name);
 	void StopAudioEvent(const char* event_name);
-
+	void SetAuxiliarySend(const char* target_bus, float value);
 
 private:
 	void CreateEmitter();

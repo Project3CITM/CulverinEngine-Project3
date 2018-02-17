@@ -302,7 +302,7 @@ void Wwished::SoundEmitter::StopEvent(const char * name)const
 	AK::SoundEngine::ExecuteActionOnEvent(name, AK::SoundEngine::AkActionOnEventType_Stop);
 }
 
-void Wwished::SoundEmitter::SetAuxiliarySends(AkReal32 value, const char * target_bus, AkGameObjectID listener_id)const
+void Wwished::SoundEmitter::SetAuxiliarySends(const char * target_bus, AkReal32 value, AkGameObjectID listener_id)const
 {
 	AkAuxSendValue environment;
 	environment.listenerID = listener_id;

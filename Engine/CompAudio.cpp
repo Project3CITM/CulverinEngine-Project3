@@ -276,4 +276,9 @@ void CompAudio::StopAudioEvent(const char * event_name)
 	emitter->StopEvent(event_name);
 }
 
+void CompAudio::SetAuxiliarySend(const char * target_bus, float value)
+{
+	emitter->SetAuxiliarySends(target_bus, value);
+}
+
 
