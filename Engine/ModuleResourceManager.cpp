@@ -674,6 +674,7 @@ void ModuleResourceManager::Save()
 		// Update Resoruces
 		std::map<uint, Resource*>::iterator it = resources.begin();
 		it++; // ++ = Resource "Cube" dont save - ResourcePrimitive
+		it++; // ++ = Resource "Plane" dont save - ResourcePrimitive
 		for (uint i = 0; i < num_resources; i++)
 		{
 			std::string name = "Resource " + std::to_string(i);

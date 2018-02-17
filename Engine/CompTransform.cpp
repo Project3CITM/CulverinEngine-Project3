@@ -288,6 +288,12 @@ void CompTransform::SetRotGlobal(float3 rot_g)
 	toUpdate = true;
 }
 
+void CompTransform::SetRotGlobal(Quat rot_g)
+{
+	rotation_global = rot_g;
+	toUpdate = true;
+}
+
 void CompTransform::SetScaleGlobal(float3 scale)
 {
 	scale_global = scale;
