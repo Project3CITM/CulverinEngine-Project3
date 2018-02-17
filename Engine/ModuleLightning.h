@@ -11,6 +11,26 @@
 
 class CompLight;
 
+class DepthFrameBuffer
+{
+public:
+	DepthFrameBuffer();
+	DepthFrameBuffer(int width, int height);
+	~DepthFrameBuffer();
+
+	void Create(int width, int height);
+	void Destroy();
+	void Resize(int width, int height);
+
+	uint GetTexture()const;
+
+public:
+	int width = 0;
+	int height = 0;
+	uint frame_id = 0;
+	uint texture = 0;
+};
+
 class ModuleLightning : public Module
 {
 public:
@@ -29,7 +49,7 @@ public:
 	void SetShadowCastPoints(uint points);
 	void ResizeShadowMaps(uint w_res, uint h_res);
 
-	std::vector<FrameBuffer>* GetShadowMaps();
+	std::vector<DepthFrameBuffer>* GetShadowMaps();
 	void GetShadowMapsResolution(uint& w_res, uint& h_res);
 
 	void OnLightCreated(CompLight* l);
@@ -42,7 +62,7 @@ public:
 
 private:
 	uint shadow_cast_points_count = DEFAULT_SHADOW_CAST_POINTS_COUNT; // This value should be able to change from config and modiffied on load
-	std::vector<FrameBuffer> shadow_maps;
+	std::vector<DepthFrameBuffer> shadow_maps;
 	uint shadow_maps_res_w = 1024;
 	uint shadow_maps_res_h = 1024;
 
