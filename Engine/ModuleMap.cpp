@@ -7,6 +7,7 @@
 #include "CompTransform.h"
 #include "CompMesh.h"
 #include "ModuleResourceManager.h"
+#include "JSONSerialization.h"
 
 
 ModuleMap::ModuleMap()
@@ -17,6 +18,8 @@ ModuleMap::ModuleMap()
 
 ModuleMap::~ModuleMap()
 {
+	prefabs.clear();
+	all_prefabs.clear();
 }
 
 bool ModuleMap::Init(JSON_Object* node)
@@ -287,7 +290,7 @@ void ModuleMap::ShowWalkableMap()
 	}
 	if (ImGui::Button("Export Map ('Name'.map.json)"))
 	{
-
+		
 	}
 	if (ImGui::Button("Create Level Map"))
 	{
@@ -333,23 +336,30 @@ void ModuleMap::ShowCreationMap()
 	{
 		ImGui::Text("Select number of Prefabs we will use...");
 		ImGui::PushItemWidth(70);
-		ImGui::InputInt("Num Prefabs", &numPrefabs);
+		static bool force_reload = false;
+		if (ImGui::InputInt("Num Prefabs", &numPrefabs))
+		{
+			force_reload = true;
+		}
 		ImGui::Text("Press to load all prefabs:");
 		static bool go_select_prefab = false;
-		if (ImGui::Button("Load Prefabs"))
+		if (ImGui::Button("Load / Reload Prefabs") || force_reload)
 		{
+			prefabs.clear();
+			all_prefabs.clear();
 			App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "fbx");
 			App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "obj");
 			App->fs->FixNames_directories(all_prefabs);
 			if (numPrefabs > all_prefabs.size())
 				numPrefabs = all_prefabs.size();
 			go_select_prefab = true;
+			force_reload = false;
 			for (int i = 0; i < numPrefabs; i++)
 			{
 				prefabs.push_back("");
 			}
 		}
-		if (numPrefabs > 0 && go_select_prefab)
+		if (numPrefabs > 0 && go_select_prefab && numPrefabs == prefabs.size())
 		{
 			ImGui::PushItemWidth(150);
 			for (int i = 0; i < numPrefabs; i++)
@@ -435,6 +445,48 @@ void ModuleMap::ShowCreationMap()
 				}
 				ImGui::PopID();
 			}
+		}
+		if (ImGui::Button("Save Map"))
+		{
+
+		} 
+		ImGui::SameLine();
+		if (ImGui::Button("Export Map ('Name'.map.json)"))
+		{
+
+		} 
+		ImGui::SameLine();
+		if (ImGui::Button("Create Level Map"))
+		{
+			GameObject* obj = App->scene->CreateGameObject();
+			obj->SetName("New Map");
+			for (int i = 0; i < width_map; i++)
+			{
+				for (int j = 0; j < height_map; j++)
+				{
+					if (map[i][j] > -1)
+					{
+						for (int n = 0; n < prefabs.size(); n++)
+						{
+							if (map[i][j] == n)
+							{
+								std::string directory_prebaf = App->fs->GetMainDirectory();
+								directory_prebaf += "/";
+								directory_prebaf += prefabs[n];
+								directory_prebaf += ".meta.json";
+								GameObject* temp = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
+								CompTransform* transform = temp->GetComponentTransform();
+								math::float3 pos = transform->GetPos();
+								pos.x -= i * 2; pos.z -= j * 2;
+								transform->SetPos(pos);
+								transform->SetScale(math::float3(0.1f, 0.1f, 0.1f));
+								obj->AddChildGameObject(temp);
+							}
+						}
+					}
+				}
+			}
+			// ...........
 		}
 	}
 }
