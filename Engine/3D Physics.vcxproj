@@ -126,6 +126,7 @@
     <ClInclude Include="CompMaterial.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="CompRectTransform.h" />
+    <ClInclude Include="CompRigidBody.h" />
     <ClInclude Include="CompScript.h" />
     <ClInclude Include="CompText.h" />
     <ClInclude Include="CSharpScript.h" />
@@ -464,6 +465,7 @@
     <ClCompile Include="CompMaterial.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="CompRectTransform.cpp" />
+    <ClCompile Include="CompRigidBody.cpp" />
     <ClCompile Include="CompScript.cpp" />
     <ClCompile Include="CompText.cpp" />
     <ClCompile Include="CSharpScript.cpp" />

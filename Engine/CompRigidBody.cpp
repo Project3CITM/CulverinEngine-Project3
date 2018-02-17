@@ -1,29 +1,27 @@
-#include "CompCollider.h"
+#include "CompRigidBody.h"
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 #include "Scene.h"
 
-#include "jpPhysicsRigidBody.h"
-
-CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, parent)
+CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Collider";
+	name_component = "RigidBody";
 }
 
-CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Component(Comp_Type::C_COLLIDER, parent)
+CompRigidBody::CompRigidBody(const CompRigidBody & copy, GameObject * parent) : Component(Comp_Type::C_COLLIDER, parent)
 {
 	uid = App->random->Int();
-	name_component = "Collider";
+	name_component = "RigidBody";
 }
 
-CompCollider::~CompCollider()
+CompRigidBody::~CompRigidBody()
 {
 }
 
-void CompCollider::ShowOptions()
+void CompRigidBody::ShowOptions()
 {
 	if (ImGui::MenuItem("Reset", NULL, false, false))
 	{
@@ -66,12 +64,12 @@ void CompCollider::ShowOptions()
 	{
 		if (this->GetType() == ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType())
 		{
-			CopyValues(((CompCollider*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
+			CopyValues(((CompRigidBody*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
 		}
 	}
 }
 
-void CompCollider::ShowInspectorInfo()
+void CompRigidBody::ShowInspectorInfo()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 0));
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
@@ -88,19 +86,19 @@ void CompCollider::ShowInspectorInfo()
 	ImGui::TreePop();
 }
 
-void CompCollider::CopyValues(const CompCollider * component)
+void CompRigidBody::CopyValues(const CompRigidBody * component)
 {
 	//more...
 }
 
-void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
+void CompRigidBody::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 }
 
-void CompCollider::Load(const JSON_Object * object, std::string name)
+void CompRigidBody::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 }
