@@ -36,24 +36,28 @@ uniform float a_shininess;
 
 vec2 blinnPhongDir(Light light, float lightInt, float Ka, float Kd, float Ks, float shininess)
 {
+
+
+ vec3 N =normalize(texture2D(normal_map,TexCoord).rgb*2 -1);
+
 vec3 surfacePos =vec3(model * vec4(ourPos, 1));
 vec3 surfaceToCamera =  normalize(_cameraPosition - surfacePos);
 vec3 lightDir;
-vec3 normal = normalize(transpose(inverse(mat3(model))) * ourNormal);
+
+vec3 normal = normalize(transpose(inverse(mat3(model)))* ourNormal * N ) ;
+
 if(light.type != 0){
 
+
 lightDir = normalize(light.position);
-vec2 Tile = vec2(1,1);
-vec2 xy = TexCoord.xy;
-vec2 phase = fract(xy*Tile);
 
 
 vec3 s = normalize(lightDir);
 
-float diffuse = Ka+ Kd * lightInt * max(0, dot(normal, s));
+float diffuse = Ka+ Kd * lightInt *  max( dot(-normal ,s),0);
 float spec = 0;
 
-spec = Ks* pow(max(0, dot(surfaceToCamera,reflect(-lightDir,normal))), shininess);
+spec = Ks* pow(max(0, dot(surfaceToCamera,reflect(-s,normal))), shininess);
 return vec2(diffuse, spec);
 
 }
@@ -61,13 +65,16 @@ return vec2(diffuse, spec);
 else {
 
 
+
 vec3 s = normalize(light.position - surfacePos);
 
 float distanceToLight = length(light.position - surfacePos);
-float attenuation = lightInt/ (1.0 + 0.1 * pow(distanceToLight,2));
+float attenuation = 1/ (1.0 + 0.1 * pow(distanceToLight,2));
 
-float diffuse = Ka + attenuation * Kd  * max(0, dot(normal, s));
-float spec = attenuation * Ks * pow(max(0, dot(surfaceToCamera, reflect(-s, normal))), shininess);
+float diffuse = Ka + attenuation * Kd *lightInt * max(0, dot(-normal , s));
+float spec = 0;
+if (diffuse >0)
+ spec = attenuation * Ks *lightInt* pow(max(0, dot(surfaceToCamera, reflect(-s, normal))), shininess);
  
 return vec2(diffuse,spec);
 
@@ -88,14 +95,7 @@ vec3 viewDirection = normalize(vec3( view *vec4(1,1,1, 1.0) - model * vec4(ourPo
 
 
 vec3 color_texture = texture(albedo, TexCoord).xyz;
-vec3 normal_map = texture(normal_map, TexCoord).xyz;
 
-
-float y = normal_map.y;
-normal_map.x = (2*normal_map.x)-1;
-normal_map.y = (2*normal_map.z)-1;
-normal_map.z = y;
-normal_map = normalize(normal_map);
 vec3 normal =normalize(ourNormal);// + normal_map.x * vec3(1,0,0) + normal_map.y* vec3(0,1,0); 
 vec3 specularReflection;
 
@@ -105,6 +105,6 @@ inten += blinnPhongDir(_lights[i], a_LightInt, a_Ka, a_Kd, a_Ks, a_shininess);
 }
 
 
-color = vec4(color_texture *( inten.x + inten.y) , 1);
-
+color =vec4(color_texture *( inten.x + inten.y) , 1);
+//color = texture(normal_map, TexCoord);
 }
