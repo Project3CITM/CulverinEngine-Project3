@@ -40,6 +40,7 @@ public:
 private:
 	int height_map = 10;
 	int width_map = 10;
+	float size_separation = 25.4;
 	std::vector<std::string> all_prefabs; // Vector with all fbx/obj in Assets
 	std::vector<std::string> prefabs; // Vector with all fbx/obj in Assets
 

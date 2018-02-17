@@ -383,6 +383,8 @@ void ModuleMap::ShowCreationMap()
 				ImGui::PopID();
 			}
 		}
+		ImGui::Text("Select size of separation: "); ImGui::SameLine();
+		ImGui::InputFloat("##Separation", &size_separation);
 		ImGui::PushItemWidth(10);
 	}
 	else
@@ -477,9 +479,8 @@ void ModuleMap::ShowCreationMap()
 								GameObject* temp = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
 								CompTransform* transform = temp->GetComponentTransform();
 								math::float3 pos = transform->GetPos();
-								pos.x -= i * 2; pos.z -= j * 2;
+								pos.x += i * size_separation; pos.z += j * size_separation;
 								transform->SetPos(pos);
-								transform->SetScale(math::float3(0.1f, 0.1f, 0.1f));
 								obj->AddChildGameObject(temp);
 							}
 						}
