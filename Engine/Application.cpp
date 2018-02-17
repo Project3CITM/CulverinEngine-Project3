@@ -123,10 +123,15 @@ bool Application::Init()
 		org_name = json_object_get_string(config_node, "Org Name");
 		maxFPS = json_object_get_number(config_node, "Max FPS");
 		vsync = json_object_get_boolean(config_node, "VSYNC");
+		mode_game = json_object_get_boolean(config_node, "Mode Game");
+		if (mode_game)
+		{
+			gui->enabled = false;
+		}
 		SetFpsCap(maxFPS);
 		// ---------------------------------------------------
 
-		//actual_scene = json_object_get_string(config_node, "ActualScene");
+		actual_scene = json_object_get_string(config_node, "ActualScene");
 
 		// Call Init() in all modules
 		std::vector<Module*>::iterator item = list_modules.begin();
@@ -593,9 +598,10 @@ bool Application::SaveConfig()
 		json_object_set_string(config_node, "Org Name", org_name.c_str());
 		json_object_set_number(config_node, "Max FPS", maxFPS);
 		json_object_set_boolean(config_node, "VSYNC", vsync);
+		json_object_set_boolean(config_node, "Mode Game", mode_game);
 		 
 		//Save ActualScene ----- 
-		//json_object_set_string(config_node, "ActualScene", actual_scene.c_str()); TODO ELLIOT
+		json_object_set_string(config_node, "ActualScene", actual_scene.c_str()); //TODO ELLIOT
 
 
 		//Iterate all modules to save each respective info
@@ -718,7 +724,10 @@ void Application::SetState(EngineState state)
 				// Fill static objects vector when play
 				scene->FillStaticObjectsVector(true); 
 
-				scene->scene_buff->WantRefreshRatio();
+				if (mode_game == false)
+				{
+					scene->scene_buff->WantRefreshRatio();
+				}
 
 				//To Save all elements in the scene to load them correctly when exiting Game Mode
 				actual_scene = json_seria->SaveScene();

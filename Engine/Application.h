@@ -153,6 +153,8 @@ public:
 	bool vsync = true;
 	// ----------------------------------
 
+	bool mode_game = false;
+
 public:
 	// Variables for enable different windows ---
 	LCG* random = nullptr;
