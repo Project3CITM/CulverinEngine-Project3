@@ -14,6 +14,8 @@ class CompLight :
 {
 public:
 	CompLight(Comp_Type t, GameObject * parent);
+	CompLight(const CompLight & copy, GameObject * parent);
+
 	~CompLight();
 
 	bool Enable();
@@ -28,6 +30,11 @@ public:
 	virtual void ShowOptions();
 	virtual void ShowInspectorInfo();
 	// --------------------------------
+
+	// SAVE - LOAD METHODS ----------------
+	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
+	void Load(const JSON_Object* object, std::string name);
+	// -------------------------------------
 
 public:
 	//Billboard to show where are the lights----

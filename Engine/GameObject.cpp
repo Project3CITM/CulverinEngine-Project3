@@ -1445,6 +1445,12 @@ void GameObject::AddComponentCopy(const Component& copy)
 		components.push_back(fsm);
 		break;
 	}
+	case (Comp_Type::C_LIGHT):
+	{
+		CompLight* light = new CompLight((CompLight&)copy, this); //FSM copy constructor
+		components.push_back(light);
+		break;
+	}
 	default:
 		break;
 	}
@@ -1520,6 +1526,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			break;
 		case Comp_Type::C_FSM:
 			this->AddComponent(Comp_Type::C_FSM, true);
+			break;
+		case Comp_Type::C_LIGHT:
+			this->AddComponent(Comp_Type::C_LIGHT, true);
 			break;
 		default:
 			break;

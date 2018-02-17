@@ -65,6 +65,11 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 
 }
 
+CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Comp_Type::C_LIGHT, parent)
+{
+	
+}
+
 CompLight::~CompLight()
 {
 }
@@ -237,5 +242,27 @@ void CompLight::ShowInspectorInfo()
 
 	ImGui::TreePop();
 
+}
+
+void CompLight::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
+{
+
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
+	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
+
+	json_object_dotset_number_with_std(object, name + "Light Type", (int)type);
+	json_object_dotset_number_with_std(object, name + "Attenuation", attenuation);
+	json_object_dotset_number_with_std(object, name + "Ambient Coefficient", ambientCoefficient);
+
+}
+
+void CompLight::Load(const JSON_Object * object, std::string name)
+{
+
+	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	ui_light_type =json_object_dotget_number_with_std(object, name + "Attenuation");
+	type = (Light_type)ui_light_type;
+	ambientCoefficient = json_object_dotget_number_with_std(object, name + "Ambient Coefficient");
+	attenuation = json_object_dotget_number_with_std(object, name + "Attenuation");
 }
 
