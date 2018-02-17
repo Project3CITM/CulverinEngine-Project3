@@ -13,6 +13,7 @@ enum AnimationState
 	A_PLAY,
 	A_STOP,
 	A_PAUSED,
+	A_BLENDING,
 	A_NONE
 };
 class AnimationClip
@@ -24,8 +25,11 @@ public:
 	float start_frame_time = 0.0f;
 	float end_frame_time = 0.0f;
 
+	float total_blending_time = 3.0f;
+	float current_blending_time = total_blending_time;
+
 	bool finished = true;
-	AnimationState state = A_PLAY;
+	AnimationState state = A_STOP;
 
 	void RestartAnimationClip();
 };
@@ -60,6 +64,7 @@ public:
 	// -------------------------------------
 
 	void CreateAnimationClip();
+	void ManageAnimationClips(AnimationClip* animation_clip, float dt);
 
 public:
 
@@ -70,7 +75,13 @@ private:
 	bool select_animation = false;
 	std::vector<AnimationClip*> animation_clips;
 
+	AnimationClip* current_animation = nullptr;
+	AnimationClip* blending_animation = nullptr;
+
 	std::vector<std::pair<GameObject*, const AnimBone*>> bone_update_vector;
 	bool debug_draw = false;
+
+	bool bones_placed = false;
 };
+
 #endif

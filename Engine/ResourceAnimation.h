@@ -30,8 +30,10 @@ struct ScaleKey
 class AnimBone
 {
 public:
-	void UpdateBone(GameObject* bone, std::vector<AnimationClip*>& clip_vec) const;
+
 	~AnimBone();
+
+	void UpdateBone(GameObject * bone, AnimationClip * playing_clip = nullptr, AnimationClip * blending_clip = nullptr) const;
 
 	float3 GetPosition(AnimationClip* clip_vec) const;
 	Quat GetRotation(AnimationClip* clip_vec) const;

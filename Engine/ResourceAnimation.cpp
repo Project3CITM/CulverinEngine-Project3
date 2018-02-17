@@ -50,25 +50,43 @@ AnimBone::~AnimBone()
 	}
 }
 
-void AnimBone::UpdateBone(GameObject* bone, std::vector<AnimationClip*>& clip_vec) const
+void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, AnimationClip* blending_clip) const
 {
-		float3 pos;
-		Quat rot;
-		float3 scale;
+	if (playing_clip != nullptr)
+	{
+		float3 pos, blending_pos, last_pos;
+		Quat rot, blending_rot, last_rot;
+		float3 scale, blending_scale, last_scale;
 
-		for (std::vector<AnimationClip*>::const_iterator it = clip_vec.begin(); it != clip_vec.end(); ++it)
+		CompTransform* transform = bone->GetComponentTransform();
+
+		pos = GetPosition(playing_clip);
+		rot = GetRotation(playing_clip);
+		scale = GetScale(playing_clip);
+
+		if (blending_clip == nullptr)
 		{
-			pos = GetPosition(*it);
-			rot = GetRotation(*it);
-			scale = GetScale(*it);
-
-			CompTransform* transform = bone->GetComponentTransform();
-
 			transform->SetPos(pos);
 			transform->SetRot(rot);
 			transform->SetScale(scale);
 		}
-		//TODO Blending
+		else
+		{
+			blending_pos = GetPosition(blending_clip);
+			blending_rot = GetRotation(blending_clip);
+			blending_scale = GetScale(blending_clip);
+
+			float weight = (blending_clip->total_blending_time - blending_clip->current_blending_time) / blending_clip->total_blending_time;
+
+			last_pos = pos.Lerp(blending_pos, weight);
+			last_rot = rot.Slerp(blending_rot, weight);
+			last_scale = scale.Lerp(blending_scale, weight);
+
+			transform->SetPos(last_pos);
+			transform->SetRot(last_rot);
+			transform->SetScale(last_scale);
+		}
+	}
 }
 
 

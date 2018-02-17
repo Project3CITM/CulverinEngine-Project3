@@ -45,36 +45,31 @@ void CompAnimation::Clear()
 
 void CompAnimation::PreUpdate(float dt)
 {
+	if (bones_placed == false)
+	{
+		if (animation_resource != nullptr)
+		{
+			for (int i = 0; i < animation_resource->bones.size(); i++)
+			{
+				GameObject* bone = parent->GetChildDeepSearch(animation_resource->bones[i]->name.c_str());
+				bone_update_vector.push_back(std::make_pair(bone, animation_resource->bones[i]));
+			}
+			bones_placed = true;
+		}
+	}
 }
 
 void CompAnimation::Update(float dt)
 {
-	std::vector<AnimationClip*> clips_playing;
-	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
+	ManageAnimationClips(current_animation,dt);
+	ManageAnimationClips(blending_animation, dt);
+
+	if (current_animation != nullptr)
 	{
-		if ((*it)->state == AnimationState::A_PLAY)
+		for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
 		{
-			(*it)->time += dt;
-			(*it)->time += animation_resource->ticks_per_sec / animation_resource->duration;
-			if ((*it)->time > (*it)->end_frame_time)
-			{
-				if ((*it)->loop == true)
-				{
-					(*it)->RestartAnimationClip();
-
-					clips_playing.push_back(*it);
-				}
-				else
-					(*it)->state = AnimationState::A_STOP;
-			}
-			else
-				clips_playing.push_back(*it);
-
+			it->second->UpdateBone(it->first, current_animation, blending_animation);
 		}
-	}
-	for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
-	{
-		it->second->UpdateBone(it->first, clips_playing);
 	}
 }
 
@@ -193,14 +188,7 @@ void CompAnimation::ShowInspectorInfo()
 				if (animation_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					App->importer->iAnimation->LoadResource(animation_resource->path_assets.c_str(), animation_resource);
-					if (animation_resource != nullptr)
-					{
-						for (int i = 0; i < animation_resource->bones.size(); i++)
-						{
-							GameObject* bone = parent->GetChildDeepSearch(animation_resource->bones[i]->name.c_str());
-							bone_update_vector.push_back(std::make_pair(bone, animation_resource->bones[i]));
-						}
-					}
+		
 				}
 				Enable();
 			}
@@ -250,10 +238,30 @@ void CompAnimation::ShowAnimationInfo()
 			state_names += '\0';
 			state_names += "Pause";
 			state_names += '\0';
+			state_names += "Blending";
+			state_names += '\0';
 			int state = (*it)->state;
-			if(ImGui::Combo("State", &state, state_names.c_str()))
+			if (ImGui::Combo("State", &state, state_names.c_str()))
 			{
+				if ((*it)->state == A_STOP && (AnimationState)state == A_PLAY)
+				{
+					if (current_animation != nullptr)
+					{
+						(*it)->state = A_BLENDING;
+						blending_animation = (*it);
+						blending_animation->RestartAnimationClip();
+					}
+					else
+					{
+						(*it)->state = A_PLAY;
+						current_animation = (*it);
+						current_animation->RestartAnimationClip();
+					}	
+				}
+				else
+				{
 				(*it)->state = (AnimationState)state;
+				}
 			}
 			ImGui::TreePop();
 		}
@@ -313,7 +321,7 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			// LOAD ANIMATION ----------------------------
 			if (animation_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
-				App->importer->iAnimation->LoadResource(std::to_string(animation_resource->GetUUID()).c_str(), animation_resource);
+				App->importer->iAnimation->LoadResource(animation_resource->path_assets.c_str(), animation_resource);
 			}
 		}
 	}
@@ -340,7 +348,40 @@ void CompAnimation::CreateAnimationClip()
 	animation_clips.push_back(tempanimclip);
 }
 
+void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt)
+{
+	if(animation_clip != nullptr)
+	{
+		animation_clip->time += dt;
+		//animation_clip->time += animation_resource->ticks_per_sec / (1.0f/dt);
+		animation_clip->time += animation_resource->ticks_per_sec / animation_resource->duration;
+
+		if (animation_clip->state == AnimationState::A_BLENDING)
+		{
+			animation_clip->current_blending_time -= dt;
+
+			if (animation_clip->current_blending_time <= 0)
+			{
+				current_animation->state = AnimationState::A_STOP;
+				current_animation = animation_clip;
+				animation_clip->state = AnimationState::A_PLAY;
+				blending_animation = nullptr;
+			}
+		}
+		if (animation_clip->time > animation_clip->end_frame_time)
+		{
+			if (animation_clip->loop == true)
+			{
+				animation_clip->RestartAnimationClip();
+			}
+			else
+				animation_clip->state = AnimationState::A_STOP;
+		}
+	}
+}
+
 void AnimationClip::RestartAnimationClip()
 {
 	time = start_frame_time;
+	current_blending_time = total_blending_time;
 }
