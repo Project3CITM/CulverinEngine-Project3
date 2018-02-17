@@ -16,13 +16,22 @@
 
 CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
-	position = float3::zero;
 	color = float4(255, 255, 255, 255);
 	type = NO_LIGHT_TYPE;
 	attenuation = 1;
 	ambientCoefficient = 1;
 	plane = (ResourceMesh*)App->resource_manager->GetResource(4);
 	name_component = "Light component";
+
+	types_lights += "Point Light";
+	types_lights += '\0';	
+	types_lights += "Directional Light";
+	types_lights += '\0';
+
+	color_temp[0] = 1;
+	color_temp[1] = 1;
+	color_temp[2] = 1;
+	color_temp[3] = 1;
 
 	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png",&texture_bulb);
 
@@ -213,6 +222,18 @@ void CompLight::ShowInspectorInfo()
 		ShowOptions();
 		ImGui::EndPopup();
 	}
+
+
+	ImGui::ColorPicker4("Light Color", color_temp);
+	color.x = color_temp[0];
+	color.y = color_temp[1];
+	color.z = color_temp[2];
+	color.w = color_temp[3];
+
+	ImGui::DragFloat("Atenuation", &attenuation);
+	ImGui::DragFloat("Ambient Coefficient", &ambientCoefficient);
+	ImGui::Combo("Light Type", &ui_light_type, types_lights.c_str());
+	type = (Light_type)ui_light_type;
 
 	ImGui::TreePop();
 

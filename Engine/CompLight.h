@@ -34,11 +34,17 @@ public:
 	uint texture_bulb = 0;
 	ResourceMesh* plane;
 	//---------------------------------------------
-	float3 position;
 	float4 color; //a.k.a. the color of the light
 	float attenuation;
 	float ambientCoefficient;
 	Light_type type;
+
+	//UI variables------------
+	float color_temp[4];
+	std::string types_lights;
+	int ui_light_type;
+	//---------
+
 };
 
 #endif
