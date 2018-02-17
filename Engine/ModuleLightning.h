@@ -54,6 +54,10 @@ public:
 
 	void OnLightCreated(CompLight* l);
 	void OnLightDestroyed(CompLight* l);
+
+	std::vector<CompLight*> GetSceneLights()const;
+	void PushLight(CompLight* light);
+	void DeleteLight(CompLight* light);
 	
 private:
 	void AddShadowMapCastViews(uint ammount);
@@ -63,7 +67,8 @@ public:
 	ShaderProgram * shadow_Shader = nullptr;
 
 	FrameBuffer text;
-
+	ResourceMesh*  light_UI_plane = nullptr;
+	uint texture_bulb = 0;
 private:
 	uint shadow_cast_points_count = DEFAULT_SHADOW_CAST_POINTS_COUNT; // This value should be able to change from config and modiffied on load
 	std::vector<DepthFrameBuffer> shadow_maps;
@@ -73,6 +78,8 @@ private:
 
 	std::vector<CompLight*> scene_lights;
 	std::vector<CompLight*> frame_used_lights;
+
+	
 };
 
 #endif // __MODULELIGHTNING_H__

@@ -16,22 +16,7 @@
 typedef unsigned int uint;
 
 
-struct Light {
-	Light() {
-		position = float3::zero;
-		color = float4(255, 255, 255, 255);
-		type = 0;
-		attenuation = 1;
-		ambientCoefficient = 1;
-	}
 
-	float3 position;
-	float4 color; //a.k.a. the color of the light
-	int type;
-	float attenuation;
-	float ambientCoefficient;
-
-};
 
 class ModuleShaders:public Module
 {
@@ -92,7 +77,7 @@ public:
 	std::vector<ShaderProgram*> programs;
 
 public:
-	std::string last_shader_error = "";	std::vector<Light> lights;
+	std::string last_shader_error = "";
 	TextEditor editor_shaders;
 	bool enable_editor = false;
 	Shader shader_text_active;

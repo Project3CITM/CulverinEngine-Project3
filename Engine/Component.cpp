@@ -84,6 +84,11 @@ float3 Component::GetGameObjectPos() const
 	else return float3::zero;
 }
 
+GameObject* Component::GetParent() const
+{
+	return parent;
+}
+
 void Component::SetActive(bool active)
 {
 	this->active = active;

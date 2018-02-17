@@ -8,6 +8,10 @@
 #include "CompCamera.h"
 #include "ModuleCamera3D.h"
 #include "ModuleGUI.h"
+#include "ModuleLightning.h"
+#include "CompLight.h"
+#include "GameObject.h"
+#include "CompTransform.h"
 
 ModuleShaders::ModuleShaders()
 {
@@ -41,13 +45,6 @@ bool ModuleShaders::Start()
 	test->path = Shader_Directory_fs+"/Test_Material.mat";
 	test->CreateMaterialFile();*/
 
-	Light new_light;
-	new_light.position = float3(-3, 1, 0);
-	lights.push_back(new_light);
-
-	Light new_light2;
-	new_light2.position = float3(3, 1, 0);
-	lights.push_back(new_light2);
 
 	return true;
 }
@@ -74,16 +71,21 @@ update_status ModuleShaders::Update(float dt)
 		float3 cam_pos = App->camera->GetPos();
 		GLint cameraLoc = glGetUniformLocation((*item)->programID, "_cameraPosition");
 		glUniform3fv(cameraLoc, 1, &cam_pos[0]);
-
+		
 		//LIGHTS
 		GLint lightsizeLoc = glGetUniformLocation((*item)->programID, "_numLights");
+		std::vector<CompLight*> lights = App->module_lightning->GetSceneLights();
 		glUniform1i(lightsizeLoc, lights.size());
 		for (size_t i = 0; i < lights.size(); ++i) {
-			SetLightUniform((*item)->programID, "position", i, lights[i].position);
-			SetLightUniform((*item)->programID, "type", i, lights[i].type);
-			SetLightUniform((*item)->programID, "l_color", i, lights[i].color);
-			SetLightUniform((*item)->programID, "attenuation", i, lights[i].attenuation);
-			SetLightUniform((*item)->programID, "ambientCoefficient", i, lights[i].ambientCoefficient);
+
+			if(lights[i]->type == Light_type::DIRECTIONAL_LIGHT)
+			SetLightUniform((*item)->programID, "position", i,lights[i]->GetParent()->GetComponentTransform()->GetRotEuler());
+			if (lights[i]->type == Light_type::POINT_LIGHT)
+				SetLightUniform((*item)->programID, "position", i, lights[i]->GetParent()->GetComponentTransform()->GetPos());
+			SetLightUniform((*item)->programID, "type", i, (int)lights[i]->type);
+			SetLightUniform((*item)->programID, "l_color", i, lights[i]->color);
+			SetLightUniform((*item)->programID, "attenuation", i, lights[i]->attenuation);
+			SetLightUniform((*item)->programID, "ambientCoefficient", i, lights[i]->ambientCoefficient);
 
 		}
 		(*item)->Unbind();

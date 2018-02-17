@@ -70,6 +70,8 @@ public:
 
 	float3 GetGameObjectPos() const;
 
+	GameObject* GetParent()const;
+
 private:
 	Comp_Type type = C_UNKNOWN;
 	bool active = true;

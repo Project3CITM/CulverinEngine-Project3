@@ -7,6 +7,8 @@
 #include"Scene.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "ModuleRenderer3D.h"
+#include "ModuleResourceManager.h"
 using namespace glm;
 
 
@@ -222,21 +224,39 @@ bool ModuleLightning::Start()
 
 	shadow_Shader->AddVertex(newVertex);
 
-	uint var_size = shadow_Shader->GetVariablesSize();
-	for (int i = 0; i < var_size; i++) {
-		UniformVar temp = shadow_Shader->GetVariableInfo(i);
-
-		//Textures
-		if (temp.type == 35678) {
-			TextureVar texture_var;
-			texture_var.var_name = temp.name;
-			shadow_Shader->textures.push_back(texture_var);
-		}
-
-	}
 
 	//-------------------------------------
+	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png", &texture_bulb);
 
+	light_UI_plane = (ResourceMesh*)App->resource_manager->GetResource(4);
+
+	light_UI_plane->vertices[0].texCoords = float2(0, 0);
+	light_UI_plane->vertices[1].texCoords = float2(1, 0);
+	light_UI_plane->vertices[2].texCoords = float2(0, 1);
+	light_UI_plane->vertices[3].texCoords = float2(1, 1);
+
+
+	char* total_buffer_mesh = nullptr;
+	int total_size_buffer = 0;
+
+	if (light_UI_plane->vertices.size()>0)
+	{
+		total_size_buffer += light_UI_plane->num_vertices * 3;
+		total_size_buffer += light_UI_plane->num_vertices * 2;
+	}
+
+	total_buffer_mesh = new char[total_size_buffer * sizeof(float)];
+	char* cursor = total_buffer_mesh;
+
+	for (int i = 0; i <light_UI_plane->num_vertices; i++) {
+		memcpy(cursor, &light_UI_plane->vertices[i].pos, 3 * sizeof(float));
+		cursor += 3 * sizeof(float);
+
+		memcpy(cursor, &light_UI_plane->vertices[i].texCoords, 2 * sizeof(float));
+		cursor += 2 * sizeof(float);
+	}
+	light_UI_plane->num_game_objects_use_me++;
+	light_UI_plane->LoadToMemory();
 
 
 	return true;
@@ -378,6 +398,25 @@ void ModuleLightning::OnLightDestroyed(CompLight* l)
 			return;
 		}
 	}
+}
+
+std::vector<CompLight*> ModuleLightning::GetSceneLights() const
+{
+	return scene_lights;
+}
+
+void ModuleLightning::PushLight(CompLight * light)
+{
+	scene_lights.push_back(light);
+}
+
+void ModuleLightning::DeleteLight(CompLight * light)
+{
+	for (auto item = scene_lights.begin(); item != scene_lights.end(); item++) {
+		if ((*item) == light)
+			scene_lights.erase(item);
+	}
+
 }
 
 void ModuleLightning::AddShadowMapCastViews(uint ammount)
