@@ -26,7 +26,8 @@
 #include "CompAudio.h"
 #include "CompBone.h"
 #include "CompFSM.h"
-#include"CompLight.h"
+#include "CompLight.h"
+#include "CompCollider.h"
 
 //Event system test
 #include "ModuleEventSystem.h"
@@ -700,6 +701,10 @@ void GameObject::ShowGameObjectOptions()
 			{
 				AddComponent(Comp_Type::C_LIGHT);
 			}
+			if (ImGui::MenuItem("Collider"))
+			{
+				AddComponent(Comp_Type::C_COLLIDER);
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("UI"))
@@ -987,6 +992,11 @@ void GameObject::ShowInspectorInfo()
 		if (ImGui::MenuItem("Bone"))
 		{
 			AddComponent(Comp_Type::C_BONE);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Collider"))
+		{
+			AddComponent(Comp_Type::C_COLLIDER);
 			add_component = false;
 		}
 
@@ -1380,6 +1390,13 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(light);
 			return light;
 		}
+		else if (type == Comp_Type::C_COLLIDER)
+		{
+			LOG("Addin COLLIDER COMPONENT");
+			CompCollider* collider = new CompCollider(type, this);
+			components.push_back(collider);
+			return collider;
+		}
 	}
 
 	return nullptr;
@@ -1469,6 +1486,12 @@ void GameObject::AddComponentCopy(const Component& copy)
 		components.push_back(light);
 		break;
 	}
+	case (Comp_Type::C_COLLIDER):
+	{
+		CompCollider* collider = new CompCollider((CompCollider&)copy, this); //Collider copy constructor
+		components.push_back(collider);
+		break;
+	}
 	default:
 		break;
 	}
@@ -1547,6 +1570,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			break;
 		case Comp_Type::C_LIGHT:
 			this->AddComponent(Comp_Type::C_LIGHT, true);
+			break;
+		case Comp_Type::C_COLLIDER:
+			this->AddComponent(Comp_Type::C_COLLIDER, true);
 			break;
 		default:
 			break;

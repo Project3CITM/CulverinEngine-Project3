@@ -1149,6 +1149,9 @@
     <ClInclude Include="ModuleLightning.h">
       <Filter>Engine\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="CompCollider.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1513,6 +1516,9 @@
     </ClCompile>
     <ClCompile Include="ModuleLightning.cpp">
       <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="CompCollider.cpp">
+      <Filter>Engine\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
