@@ -18,6 +18,7 @@ struct Vertex
 struct SkeletonSource
 {
 	float4x4 transform;
+	float4x4* bone_hirarchy_local_transforms = nullptr;
 	uint num_bones = 0;
 	ImportBone* bones = nullptr;
 	char* bone_hirarchy_names = nullptr;

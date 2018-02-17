@@ -45,6 +45,9 @@
 #include "../Math/Quat.h"
 #include "Triangle.h"
 
+//for debug
+#include "../GL3W/include/glew.h"
+
 #ifdef MATH_GRAPHICSENGINE_INTEROP
 #include "VertexBuffer.h"
 #endif
@@ -69,6 +72,73 @@ Sphere::Sphere(const float3 &a, const float3 &b, const float3 &c)
 Sphere::Sphere(const float3 &a, const float3 &b, const float3 &c, const float3 &d)
 {
 	*this = FitThroughPoints(a, b, c, d);
+}
+
+void Sphere::Draw(float red, float green, float blue, float alpha, int num_segments) const
+{
+	glLineWidth(3.0f);
+	glColor4f(red, green, blue, alpha);
+
+	// X/Y circle
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * pi * float(i) / float(num_segments);
+		float x_z = r * cosf(theta);
+		float x = x_z * sinf(pi / 4);
+		float z = x_z * cosf(pi / 4);
+		float y = r * sinf(theta);
+		glVertex3f(x + pos.x, y + pos.y, z + pos.z);
+	}
+	glEnd();
+
+	// Z/Y circle
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * pi * float(i) / float(num_segments);
+		float x_z = r * cosf(theta);
+		float x = x_z * sinf(pi / 4);
+		float z = x_z * cosf(pi / 4);
+		float y = r * sinf(theta);
+		glVertex3f(x + pos.x, y + pos.y, -z + pos.z);
+	}
+	glEnd();
+
+	// X/Y circle
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * pi * float(i) / float(num_segments);
+		float x = r * cosf(theta);
+		float y = r * sinf(theta);
+		glVertex3f(x + pos.x, y + pos.y, pos.z);
+	}
+	glEnd();
+
+	// X/Z circle
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * pi * float(i) / float(num_segments);
+		float x = r * cosf(theta);
+		float z = r * sinf(theta);
+		glVertex3f(x + pos.x, pos.y, z + pos.z);
+	}
+	glEnd();
+
+	// Y/Z circle
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < num_segments; ++i)
+	{
+		float theta = 2.0f * pi * float(i) / float(num_segments);
+		float y = r * cosf(theta);
+		float z = r * sinf(theta);
+		glVertex3f(pos.x, y + pos.y, z + pos.z);
+	}
+	glEnd();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void Sphere::Translate(const float3 &offset)

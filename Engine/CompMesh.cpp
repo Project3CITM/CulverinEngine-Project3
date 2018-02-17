@@ -14,6 +14,7 @@
 #include "WindowInspector.h"
 #include "ModuleCamera3D.h"
 #include <vector>
+#include "Math\float3.h"
 #include "CompCamera.h"
 #include "CompBone.h"
 
@@ -197,6 +198,14 @@ void CompMesh::ShowInspectorInfo()
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%i", resource_mesh->num_indices);
 
 		ImGui::Checkbox("Render", &render);
+
+		if (skeleton != nullptr)
+		{
+			ImGui::Checkbox("Debug Skeleton", &debug_skeleton);
+
+			if (debug_skeleton)
+				skeleton->DebugDraw();
+		}
 	}
 	if (resource_mesh == nullptr)
 	{
@@ -482,7 +491,6 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 
 void CompMesh::SetUniformVariables(ShaderProgram * shader)
 {
-
 	shader->RestartIterators();
 	//BOOL
 	if(shader->bool_variables.size() != 0)
@@ -552,30 +560,17 @@ void CompMesh::GenSkeleton()
 	transform->SetScale(scale);
 
 	parent->AddChildGameObject(new_skeleton);
-	new_skeleton->AddChildGameObject(GenBone(&name_iterator, source, generated_bones));
+	new_skeleton->AddChildGameObject(GenBone(&name_iterator, source, generated_bones, skeleton));
 }
 
-GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* source, uint& generated_bones)
+GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* source, uint& generated_bones, Skeleton* skeleton)
 {
 	GameObject* new_bone = new GameObject(*name_iterator);
 	*name_iterator += strlen(new_bone->GetName()) + 1;
 
 	CompTransform* transform = (CompTransform*)new_bone->AddComponent(Comp_Type::C_TRANSFORM);
 
-	float4x4 local_transform;
-	CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
-	comp_bone->resource_mesh = resource_mesh;
-	resource_mesh->num_game_objects_use_me++;
-
-	for (int i = 0; i < source->num_bones; i++)
-		if (source->bones[i].name == new_bone->GetName())
-		{
-			local_transform = parent->GetComponentTransform()->GetGlobalTransform() * source->bones[i].offset;
-			comp_bone->offset = source->bones[i].offset;
-
-			for (int j = 0; j < source->bones[i].num_weights; j++)
-				comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));
-		}
+	float4x4 local_transform = source->bone_hirarchy_local_transforms[generated_bones];
 
 	float3 pos;
 	Quat rot;
@@ -586,11 +581,97 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 	transform->SetRot(rot);
 	transform->SetScale(scale);
 
+	CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
+	comp_bone->resource_mesh = resource_mesh;
+	resource_mesh->num_game_objects_use_me++;
+
+	for (int i = 0; i < source->num_bones; i++)
+		if (source->bones[i].name == new_bone->GetName())
+		{
+			comp_bone->offset = source->bones[i].offset;
+
+			for (int j = 0; j < source->bones[i].num_weights; j++)
+				comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));
+		}
+
 	uint num_childs = source->bone_hirarchy_num_childs[generated_bones];
 	generated_bones++;
+	
+	skeleton->bones.push_back(new_bone);
 
 	for (int i = 0; i < num_childs; i++)
-		new_bone->AddChildGameObject(GenBone(name_iterator, source, generated_bones));
+		new_bone->AddChildGameObject(GenBone(name_iterator, source, generated_bones, skeleton));
 
 	return new_bone;
+}
+
+void Skeleton::DebugDraw() const
+{
+	float joint_sphere_radius = 0.5f;
+
+	for (std::vector<GameObject*>::const_iterator it = bones.begin(); it != bones.end(); ++it)
+	{
+		glBegin(GL_LINES);
+
+		float4 pos(0.0f, 0.0f, 0.0f, 1.0f);
+		float4 x(1.0f, 0.0f, 0.0f, 1.0f);
+		float4 y(0.0f, 1.0f, 0.0f, 1.0f);
+		float4 z(0.0f, 0.0f, 1.0f, 1.0f);
+
+		float4x4 transform((*it)->GetComponentTransform()->GetGlobalTransform());
+
+		pos = transform * pos;
+
+		x = transform * x;
+		float3 x_vec(x.xyz() - pos.xyz());
+		x_vec = x_vec / x_vec.Length() * joint_sphere_radius;
+		x_vec = pos.xyz() + x_vec;
+
+		y = transform * y;
+		float3 y_vec(y.xyz() - pos.xyz());
+		y_vec = y_vec / y_vec.Length() * joint_sphere_radius;
+		y_vec = pos.xyz() + y_vec;
+
+		z = transform * z;
+		float3 z_vec(z.xyz() - pos.xyz());
+		z_vec = z_vec / z_vec.Length() * joint_sphere_radius;
+		z_vec = pos.xyz() + z_vec;
+
+		//X
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		glVertex3f(pos.x, pos.y, pos.z); glVertex3f(x_vec.x, x_vec.y, x_vec.z);
+
+		//Y
+		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+		glVertex3f(pos.x, pos.y, pos.z); glVertex3f(y_vec.x, y_vec.y, y_vec.z);
+
+		//Z
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+		glVertex3f(pos.x, pos.y, pos.z); glVertex3f(z_vec.x, z_vec.y, z_vec.z);
+
+		//Bones
+		glColor4f(1.0f, 0.65f, 0.0f, 1.0f);
+
+		for (int i  = 0; i < (*it)->GetNumChilds(); i++)
+		{
+			if ((*it)->GetChildbyIndex(i)->GetComponentBone() != nullptr)
+			{
+				float4 child_vec(0.0f, 0.0f, 0.0f, 1.0f);
+
+				float4x4 child_world_transform((*it)->GetChildbyIndex(i)->GetComponentTransform()->GetGlobalTransform());
+				child_vec = child_world_transform * child_vec;
+
+				glVertex3f(pos.x, pos.y, pos.z);
+				glVertex3f(child_vec.x, child_vec.y, child_vec.z);
+			}
+		}
+
+		glEnd();
+
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+		//Sphere
+		Sphere sphere(pos.xyz() , joint_sphere_radius);
+		sphere.Draw(0.0f, 0.65f, 1.0f, 1.0f);
+	}
 }

@@ -56,6 +56,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 	ImportBone::Weight** weights = nullptr;
 	uint* num_weights = nullptr;
+	aiMatrix4x4* bone_hirarchy_local_transforms = nullptr;
 	char* bone_hirarchy_names = nullptr;
 	uint* bone_hirarchy_num_childs = nullptr;
 	//--
@@ -174,27 +175,34 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				}				
 			}
 
-			skeleton_transform = new aiMatrix4x4;
-
 			aiNode* skeleton_root = FindSkeletonRootNode(scene, mesh);
 			aiNode* mesh_node = FindMeshNode(scene, mesh);
 
-			aiNode* node_iterator = skeleton_root->mParent;
-
-			while (node_iterator->mParent == scene->mRootNode)
-			{
-				node_iterator = node_iterator->mParent;
-				(*skeleton_transform) = node_iterator->mTransformation * (*skeleton_transform);
-			}
-
-			(*skeleton_transform) = mesh_node->mTransformation.Inverse() * (*skeleton_transform);
-
+			aiMatrix4x4 mesh_global = GetGlobalTransform(mesh_node);
+			aiMatrix4x4 skeleton_root_global = GetGlobalTransform(skeleton_root->mParent);
+			
+			skeleton_transform = new aiMatrix4x4(mesh_global.Inverse() * skeleton_root_global);
+			
 			bone_hirarchy_names = new char[total_names_size];
 			bone_hirarchy_num_childs = new uint[num_bones];
+			bone_hirarchy_local_transforms = new aiMatrix4x4[num_bones];
 
 			uint name_iterator = 0;
 			uint joints_saved = 0;
-			ImportBoneHirarchy(scene->mRootNode, mesh, bone_hirarchy_names, bone_hirarchy_num_childs, name_iterator, joints_saved);
+
+			ImportBoneHirarchy(scene->mRootNode, mesh, bone_hirarchy_local_transforms, bone_hirarchy_names, bone_hirarchy_num_childs, name_iterator, joints_saved);
+
+			for (int i = 0; i < scene->mRootNode->mNumChildren; i++)
+			{
+				if (IsInSkeletonBranch(scene->mRootNode->mChildren[i], mesh))
+				{
+					scene->mRootNode->mChildren[i] = nullptr;
+					scene->mRootNode->mNumChildren--;
+
+					for(int j = i; j < scene->mRootNode->mNumChildren; j++)
+						scene->mRootNode->mChildren[i] = scene->mRootNode->mChildren[j + 1];
+				}
+			}
 
 			if (joints_saved != num_bones)
 			{
@@ -267,6 +275,8 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices;
 	
+	if (mesh->HasBones())
+	{
 	//Skeleton
 	size += sizeof(float4x4) * num_bones; //bone offsets
 	size += total_names_size; //bone names
@@ -274,11 +284,13 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	size += sizeof(uint) * num_bones; // num_weights
 	size += sizeof(ImportBone::Weight) * total_weights; //weights
 	size += sizeof(float) * 4 * 4; //skeleton transform
+	size += sizeof(float) * 4 * 4 * num_bones; //bone hyrarchy local transforms
 	size += total_names_size; //bone hyrarchy names
 	size += sizeof(uint); //names_sizes
 	size += sizeof(uint) * num_bones; //bone hyrarchy name sizes
 	size += sizeof(uint) * num_bones; //bone num childs
 	//--
+	}
 
 	// Allocating all data 
 	char* data = new char[size];
@@ -345,7 +357,12 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		//Skeleton transform
 		cursor += bytes;
 		bytes = sizeof(float) * 4 * 4;
-		memcpy(cursor, skeleton_transform, bytes);
+		memcpy(cursor, &skeleton_transform->a1, bytes);
+
+		//Bone local transforms
+		cursor += bytes;
+		bytes = sizeof(float) * 4 * 4 * num_bones;
+		memcpy(cursor, bone_hirarchy_local_transforms, bytes);
 
 		//total bone_names_size
 		cursor += bytes;
@@ -565,10 +582,19 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 				memcpy(skeleton_source->bones[i].weights, cursor, bytes);
 			}
 
-			//Bone hirarchy names total_size
+			//Skeleton transform
 			cursor += bytes;
-			bytes = sizeof(float) * 4 * 4;
-			memcpy(&skeleton_source->transform[0][0], cursor, bytes);
+			bytes = sizeof(float) * 4;
+			for (int i = 0; i < 4; i++)
+			{
+				memcpy(&skeleton_source->transform[i][0], cursor, bytes);
+				cursor += bytes;
+			}
+
+			//Bone local transforms
+			bytes = sizeof(float) * 4 * 4 * num_bones;
+			skeleton_source->bone_hirarchy_local_transforms = new float4x4[num_bones];
+			memcpy(skeleton_source->bone_hirarchy_local_transforms, cursor, bytes);
 
 			//Bone hirarchy names total_size
 			cursor += bytes;
@@ -605,7 +631,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 	return true;
 }
 
-void ImportMesh::ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, char* bone_hirarchy_names, uint* bone_hirarchy_num_childs, uint& name_iterator, uint& joints_saved)
+void ImportMesh::ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, aiMatrix4x4* bone_hirarchy_local_transforms, char* bone_hirarchy_names, uint* bone_hirarchy_num_childs, uint& name_iterator, uint& joints_saved)
 {
 	bool is_joint = false;
 
@@ -620,12 +646,13 @@ void ImportMesh::ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, char* bone
 	{
 		memcpy(&bone_hirarchy_names[name_iterator], node->mName.C_Str(), node->mName.length + 1);
 		name_iterator += node->mName.length + 1;
+		memcpy(&bone_hirarchy_local_transforms[joints_saved].a1, &node->mTransformation.a1, sizeof(float) * 4 * 4);
 		bone_hirarchy_num_childs[joints_saved] = node->mNumChildren;
 		joints_saved++;
 	}
 
 	for (int i = 0; i < node->mNumChildren; i++)
-		ImportBoneHirarchy(node->mChildren[i], mesh, bone_hirarchy_names, bone_hirarchy_num_childs, name_iterator, joints_saved);
+		ImportBoneHirarchy(node->mChildren[i], mesh, bone_hirarchy_local_transforms, bone_hirarchy_names, bone_hirarchy_num_childs, name_iterator, joints_saved);
 }
 
 aiNode * ImportMesh::FindSkeletonRootNode(const aiScene * scene, const aiMesh* mesh)
@@ -714,4 +741,21 @@ bool ImportMesh::IsInSkeletonBranch(const aiNode * node, const aiMesh* mesh)
 	}
 	
 	return ret;
+}
+
+aiMatrix4x4 ImportMesh::GetGlobalTransform(const aiNode * node)
+{
+	if (node->mParent == nullptr)
+		return node->mTransformation;
+
+	aiMatrix4x4 transform = node->mTransformation;
+	const aiNode* iterator = node->mParent;
+
+	while (iterator->mParent != nullptr)
+	{
+		transform = iterator->mTransformation * transform;
+		iterator = iterator->mParent;
+	}
+
+	return transform;
 }

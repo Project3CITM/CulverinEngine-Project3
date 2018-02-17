@@ -30,6 +30,8 @@ enum Type_Primitive
 struct Skeleton
 {
 	std::vector<GameObject*> bones;
+
+	void DebugDraw() const;
 };
 
 class CompMesh: public Component
@@ -67,7 +69,7 @@ public:
 
 	bool HasSkeleton() const;
 	void GenSkeleton();
-	GameObject* GenBone(char** name_iterator, const SkeletonSource* source, uint& generated_bones);
+	GameObject* GenBone(char** name_iterator, const SkeletonSource* source, uint& generated_bones, Skeleton* skeleton);
 
 public:
 
@@ -84,6 +86,7 @@ private:
 	uint uuid_resource_reimported = 0;
 
 	Skeleton* skeleton = nullptr;
+	bool debug_skeleton = false;
 
 };
 #endif

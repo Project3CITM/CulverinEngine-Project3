@@ -1581,6 +1581,11 @@ CompLight * GameObject::GetComponentLight() const
 	return (CompLight*)FindComponentByType(Comp_Type::C_LIGHT);
 }
 
+CompBone * GameObject::GetComponentBone() const
+{
+	return (CompBone*)FindComponentByType(Comp_Type::C_BONE);
+}
+
 
 Component* GameObject::GetComponentbyIndex(uint i) const
 {

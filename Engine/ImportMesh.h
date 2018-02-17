@@ -41,12 +41,14 @@ public:
 	bool LoadResource(const char * file, ResourceMesh* resourceMesh);
 
 private:
-	void ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, char* bone_hirarchy_names, uint* bone_hirarchy_num_childs, uint& name_iterator, uint& joints_saved);
+	void ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, aiMatrix4x4* bone_hirarchy_local_transforms, char* bone_hirarchy_names, uint* bone_hirarchy_num_childs, uint& name_iterator, uint& joints_saved);
 	aiNode* FindSkeletonRootNode(const aiScene* scene, const aiMesh* mesh);
 	aiNode* FindMeshNode(const aiScene* scene, const aiMesh* mesh);
 	aiNode* GetSkeletonRoot(aiNode* node, const aiMesh* mesh);
 	aiNode* GetMeshNode(aiNode* node, const aiMesh* mesh, const aiScene * scene);
 	bool IsInSkeletonBranch(const aiNode* node, const aiMesh* mesh);
+
+	aiMatrix4x4 GetGlobalTransform(const aiNode* node);
 };
 
 #endif
