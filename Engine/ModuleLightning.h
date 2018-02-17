@@ -21,6 +21,7 @@ public:
 	bool Start() override;
 	update_status PreUpdate(float dt) override;
 	update_status Update(float dt) override;
+	update_status UpdateConfig(float dt) override;
 	bool SaveConfig(JSON_Object* node) override;
 	bool CleanUp() override;
 

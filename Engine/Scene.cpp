@@ -4,6 +4,7 @@
 #include "ModuleTextures.h"
 #include "ModuleCamera3D.h"
 #include "ModuleGUI.h"
+#include "ModuleLightning.h"
 #include "ModuleRenderer3D.h"
 #include "GameObject.h"
 #include "Component.h"
@@ -163,6 +164,8 @@ update_status Scene::Update(float dt)
 	if (App->scene->draw_skybox) App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
 	// Draw Plane
 	DrawPlane();
+	// Before render the scene calc shadow maps
+	App->module_lightning->CalShadowMaps();
 	// Draw GameObjects
 	root->Draw();
 	// Draw Quadtree

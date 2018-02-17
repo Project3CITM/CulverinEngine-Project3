@@ -5,6 +5,7 @@
 ModuleLightning::ModuleLightning(bool start_enabled) : Module(start_enabled)
 {
 	name = "Lightning";
+	have_config = true;
 }
 
 
@@ -15,14 +16,14 @@ ModuleLightning::~ModuleLightning()
 bool ModuleLightning::Init(JSON_Object* node)
 {
 	// TODO: Read ammount of shadow cast point from config. Will use default for now for testing purposes
-	shadow_cast_points_count = 1;
+	shadow_cast_points_count = 3;
 
 	return true;
 }
 
 bool ModuleLightning::Start()
 {
-	//AddShadowMapCastViews(shadow_cast_points_count);
+	AddShadowMapCastViews(shadow_cast_points_count);
 
 	return true;
 }
@@ -57,6 +58,11 @@ bool ModuleLightning::CleanUp()
 void ModuleLightning::CalShadowMaps()
 {
 	//TODO: Actually calc the shadow maps
+	//TODO: Need to get the main/render camera somehow
+
+	// Start rendering z buffer into the frame buffer
+
+
 }
 
 void ModuleLightning::SetShadowCastPoints(uint points)
@@ -129,4 +135,47 @@ void ModuleLightning::AddShadowMapCastViews(uint ammount)
 		buff.Create(shadow_maps_res_w, shadow_maps_res_h);
 		shadow_maps.push_back(buff);
 	}
+}
+
+// ------------- UI -----------------------------------------
+
+update_status ModuleLightning::UpdateConfig(float dt)
+{
+	//TODO: Add possibility to change this. For now just info display
+	ImGui::Text("Shadow cast points used:"); ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", shadow_cast_points_count);
+
+	ImGui::Text("Shadow maps resolution:"); ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i x %i", shadow_maps_res_w, shadow_maps_res_h);
+
+	ImGui::Text("Lights in the scene:"); ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", scene_lights.size());
+
+	ImGui::Text("Lights used on frame:"); ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", frame_used_lights.size());
+
+	if(ImGui::TreeNodeEx("Shadow maps"))
+	{
+		for(uint i = 0; i < shadow_maps.size(); ++i)
+		{
+			if(i == shadow_cast_points_count)
+			{
+				ImGui::TextColored(ImVec4(1.0f, 0.6f, 0.0f, 1.0f), "This shadow maps are not used currently!");
+				ImGui::Separator();
+			}
+
+			std::string shadowmap_name = "Shadow map: " + std::to_string(i);
+			if(ImGui::TreeNodeEx(shadowmap_name.c_str()))
+			{
+				FrameBuffer* frame = &shadow_maps[i];
+				ImGui::Image((ImTextureID*)frame->GetTexture(), ImVec2(256, 256));
+
+				ImGui::TreePop();
+			}
+		}
+
+		ImGui::TreePop();
+	}
+
+	return UPDATE_CONTINUE;
 }
