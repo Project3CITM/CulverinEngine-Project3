@@ -1134,9 +1134,19 @@ Component* GameObject::GetComponentByName(const char* name_component) const
 {
 	for (uint i = 0; i < components.size(); i++)
 	{
-		if (strcmp(components[i]->GetName(), name_component) == 0)
+		if (components[i]->GetType() != Comp_Type::C_SCRIPT)
 		{
-			return components[i];
+			if (strcmp(components[i]->GetName(), name_component) == 0)
+			{
+				return components[i];
+			}
+		}
+		else
+		{
+			if (strcmp(((CompScript*)components[i])->GetScriptName(), name_component) == 0)
+			{
+				return components[i];
+			}
 		}
 	}
 	return nullptr;
