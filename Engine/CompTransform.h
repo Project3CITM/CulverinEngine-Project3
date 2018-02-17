@@ -33,6 +33,7 @@ public:
 
 	void SetPosGlobal(float3 pos);
 	void SetRotGlobal(float3 rot);
+	void SetRotGlobal(Quat rot);
 	void SetScaleGlobal(float3 scale);
 	void SetPos(float3 pos);
 	void IncrementRot(float3 rot);

@@ -9,6 +9,9 @@
 #include"CompCamera.h"
 #include"WindowInspector.h"
 #include"ModuleGUI.h"
+#include"Math\Quat.h"
+#include"CompTransform.h"
+#include"CompCamera.h"
 
 CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
@@ -81,7 +84,10 @@ void CompLight::PreUpdate(float dt)
 
 void CompLight::Update(float dt)
 {
-
+	CompTransform* trans=parent->GetComponentTransform();
+	float3 Direction = App->renderer3D->active_camera->frustum.pos - trans->GetPos();
+	Quat Rotation = Quat::LookAt(float3(0.0f, 1.0f, 0.0f), Direction, float3(0.0f, 0.0f, -1.0f), float3(0.0f, 1.0f, 0.0f));
+	trans->SetRot(Rotation);
 }
 
 void CompLight::Draw()
