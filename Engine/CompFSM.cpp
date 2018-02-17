@@ -106,6 +106,47 @@ void CompFiniteStateMachine::Load(const JSON_Object * object, std::string name)
 	Enable();
 }
 
+FSM_State * CompFiniteStateMachine::CreateState()
+{
+	LOG("Creating FSM State.");
+	FSM_State* new_state = new FSM_State();
+
+	if (states.empty())
+		SetInitialState(new_state);
+
+	states.push_back(new_state);
+
+	return new_state;
+}
+
+bool CompFiniteStateMachine::SetCurrentState(FSM_State * new_current_state)
+{
+	if (new_current_state == nullptr)
+		return false;
+
+	current_state = new_current_state;
+	return true;
+}
+
+bool CompFiniteStateMachine::SetInitialState(FSM_State * new_initial_state)
+{
+	if (new_initial_state == nullptr)
+		return false;
+
+	initial_state = new_initial_state;
+	return true;
+}
+
+FSM_State * CompFiniteStateMachine::GetCurrentState() const
+{
+	return current_state;
+}
+
+FSM_State * CompFiniteStateMachine::GetInitialState() const
+{
+	return initial_state;
+}
+
 FSM_State::FSM_State()
 {
 }
@@ -121,9 +162,32 @@ FSM_State::~FSM_State()
 		delete *it;
 }
 
-FSM_Transition * FSM_State::GetTransitions()
+bool FSM_State::AddScript(CompScript * script_to_add)
+{
+	if (script != nullptr || script_to_add == nullptr)	//Only support 1 script per node yet
+		return false;
+
+	script = script_to_add;
+	return true;
+}
+
+FSM_Transition * FSM_State::AddTransition(FSM_State * target_state)
+{
+	LOG("Creating FSM Transition.");
+	FSM_Transition* new_transition = new FSM_Transition(target_state);
+	transitions.push_back(new_transition);
+
+	return new_transition;
+}
+
+FSM_Transition * FSM_State::GetTransitions() const
 {
 	return transitions[0];
+}
+
+uint FSM_State::GetNumTransitions() const
+{
+	return transitions.size();
 }
 
 FSM_Transition::FSM_Transition(FSM_State * target_state_) : target_state(target_state_)
@@ -135,6 +199,118 @@ FSM_Transition::~FSM_Transition()
 	delete target_state;
 	for (std::vector<FSM_Condition*>::iterator it = conditions.begin(); it != conditions.end(); it++)
 		delete *it;
+}
+
+FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, bool condition)
+{
+	LOG("Creating FSM Condition.");
+	FSM_Condition* new_condition = nullptr;
+
+	switch (condition_type)
+	{
+	case FSM_COND_NONE:
+		LOG("Incorrect FSM Condition Type.");
+		break;
+	case FSM_COND_BOOL:
+		new_condition = new FSM_ConditionBool(condition);
+		break;
+	case FSM_COND_EQUAL_INT:
+	case FSM_COND_GREATER_THAN_INT:
+	case FSM_COND_GREATER_EQUAL_INT:
+	case FSM_COND_LOWER_THAN_INT:
+	case FSM_COND_LOWER_EQUAL_INT:
+	case FSM_COND_EQUAL_FLOAT:
+	case FSM_COND_GREATER_THAN_FLOAT:
+	case FSM_COND_GREATER_EQUAL_FLOAT:
+	case FSM_COND_LOWER_THAN_FLOAT:
+	case FSM_COND_LOWER_EQUAL_FLOAT:
+	case FSM_COND_MAX:
+	default:
+		LOG("Incorrect FSM Condition Type.");
+		break;
+	}
+
+	return new_condition;
+}
+
+FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, int condition)
+{
+	LOG("Creating FSM Condition.");
+	FSM_Condition* new_condition = nullptr;
+
+	switch (condition_type)
+	{
+	case FSM_COND_NONE:
+	case FSM_COND_BOOL:
+		LOG("Incorrect FSM Condition Type.");
+		break;
+	case FSM_COND_EQUAL_INT:
+		new_condition = new FSM_ConditionEqualInt(condition);
+		break;
+	case FSM_COND_GREATER_THAN_INT:
+		new_condition = new FSM_ConditionGreaterThanInt(condition);
+		break;
+	case FSM_COND_GREATER_EQUAL_INT:
+		new_condition = new FSM_ConditionGreaterEqualInt(condition);
+		break;
+	case FSM_COND_LOWER_THAN_INT:
+		new_condition = new FSM_ConditionLowerThanInt(condition);
+		break;
+	case FSM_COND_LOWER_EQUAL_INT:
+		new_condition = new FSM_ConditionLowerEqualInt(condition);
+		break;
+	case FSM_COND_EQUAL_FLOAT:
+	case FSM_COND_GREATER_THAN_FLOAT:
+	case FSM_COND_GREATER_EQUAL_FLOAT:
+	case FSM_COND_LOWER_THAN_FLOAT:
+	case FSM_COND_LOWER_EQUAL_FLOAT:
+	case FSM_COND_MAX:
+	default:
+		LOG("Incorrect FSM Condition Type.");
+		break;
+	}
+
+	return new_condition;
+}
+
+FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, float condition)
+{
+	LOG("Creating FSM Condition.");
+	FSM_Condition* new_condition = nullptr;
+
+	switch (condition_type)
+	{
+	case FSM_COND_NONE:
+	case FSM_COND_BOOL:
+	case FSM_COND_EQUAL_INT:
+	case FSM_COND_GREATER_THAN_INT:
+	case FSM_COND_GREATER_EQUAL_INT:
+	case FSM_COND_LOWER_THAN_INT:
+	case FSM_COND_LOWER_EQUAL_INT:
+		LOG("Incorrect FSM Condition Type.");
+		break;
+	case FSM_COND_EQUAL_FLOAT:
+		new_condition = new FSM_ConditionEqualFloat(condition);
+		break; 
+	case FSM_COND_GREATER_THAN_FLOAT:
+		new_condition = new FSM_ConditionGreaterThanFloat(condition);
+		break;
+	case FSM_COND_GREATER_EQUAL_FLOAT:
+		new_condition = new FSM_ConditionGreaterEqualFloat(condition);
+		break;
+	case FSM_COND_LOWER_THAN_FLOAT:
+		new_condition = new FSM_ConditionLowerThanFloat(condition);
+		break;
+	case FSM_COND_LOWER_EQUAL_FLOAT:
+		new_condition = new FSM_ConditionLowerEqualFloat(condition);
+		break;
+	case FSM_COND_MAX:
+	default:
+		LOG("Incorrect FSM Condition Type.");
+		break;
+	}
+
+	return new_condition;
 }
 
 bool FSM_Transition::IsTriggered()
@@ -150,7 +326,7 @@ FSM_State * FSM_Transition::GetTargetState()
 	return target_state;
 }
 
-FSM_Condition::FSM_Condition()
+FSM_Condition::FSM_Condition(FSM_CONDITION_TYPE condition_type)
 {
 }
 
@@ -158,7 +334,12 @@ FSM_Condition::~FSM_Condition()
 {
 }
 
-FSM_ConditionBool::FSM_ConditionBool(bool condition_) : condition(condition_)
+FSM_CONDITION_TYPE FSM_Condition::GetConditionType() const
+{
+	return condition_type;
+}
+
+FSM_ConditionBool::FSM_ConditionBool(bool condition_) : FSM_Condition(FSM_COND_BOOL), condition(condition_)
 {
 }
 
@@ -171,7 +352,7 @@ bool FSM_ConditionBool::Test()
 	return condition;
 }
 
-FSM_ConditionEqualInt::FSM_ConditionEqualInt(int condition_) : condition(condition_)
+FSM_ConditionEqualInt::FSM_ConditionEqualInt(int condition_) : FSM_Condition(FSM_COND_EQUAL_INT), condition(condition_)
 {
 }
 
@@ -184,7 +365,7 @@ bool FSM_ConditionEqualInt::Test(int i)
 	return i == condition;
 }
 
-FSM_ConditionGreaterThanInt::FSM_ConditionGreaterThanInt(int condition_) :condition(condition_)
+FSM_ConditionGreaterThanInt::FSM_ConditionGreaterThanInt(int condition_) : FSM_Condition(FSM_COND_GREATER_THAN_INT), condition(condition_)
 {
 }
 
@@ -195,4 +376,108 @@ FSM_ConditionGreaterThanInt::~FSM_ConditionGreaterThanInt()
 bool FSM_ConditionGreaterThanInt::Test(int i)
 {
 	return i > condition;
+}
+
+FSM_ConditionGreaterEqualInt::FSM_ConditionGreaterEqualInt(int condition_) : FSM_Condition(FSM_COND_GREATER_EQUAL_INT), condition(condition_)
+{
+}
+
+FSM_ConditionGreaterEqualInt::~FSM_ConditionGreaterEqualInt()
+{
+}
+
+bool FSM_ConditionGreaterEqualInt::Test(int i)
+{
+	return i >= condition;
+}
+
+FSM_ConditionLowerThanInt::FSM_ConditionLowerThanInt(int condition_) : FSM_Condition(FSM_COND_LOWER_THAN_INT), condition(condition_)
+{
+}
+
+FSM_ConditionLowerThanInt::~FSM_ConditionLowerThanInt()
+{
+}
+
+bool FSM_ConditionLowerThanInt::Test(int i)
+{
+	return i < condition;
+}
+
+FSM_ConditionLowerEqualInt::FSM_ConditionLowerEqualInt(int condition_) : FSM_Condition(FSM_COND_LOWER_EQUAL_INT), condition(condition_)
+{
+}
+
+FSM_ConditionLowerEqualInt::~FSM_ConditionLowerEqualInt()
+{
+}
+
+bool FSM_ConditionLowerEqualInt::Test(int i)
+{
+	return i <= condition;
+}
+
+FSM_ConditionEqualFloat::FSM_ConditionEqualFloat(float condition_) : FSM_Condition(FSM_COND_EQUAL_FLOAT), condition(condition_)
+{
+}
+
+FSM_ConditionEqualFloat::~FSM_ConditionEqualFloat()
+{
+}
+
+bool FSM_ConditionEqualFloat::Test(float i)
+{
+	return i == condition;
+}
+
+FSM_ConditionGreaterThanFloat::FSM_ConditionGreaterThanFloat(float condition_) : FSM_Condition(FSM_COND_GREATER_THAN_FLOAT), condition(condition_)
+{
+}
+
+FSM_ConditionGreaterThanFloat::~FSM_ConditionGreaterThanFloat()
+{
+}
+
+bool FSM_ConditionGreaterThanFloat::Test(float i)
+{
+	return i > condition;
+}
+
+FSM_ConditionGreaterEqualFloat::FSM_ConditionGreaterEqualFloat(float condition_) : FSM_Condition(FSM_COND_GREATER_EQUAL_FLOAT), condition(condition_)
+{
+}
+
+FSM_ConditionGreaterEqualFloat::~FSM_ConditionGreaterEqualFloat()
+{
+}
+
+bool FSM_ConditionGreaterEqualFloat::Test(float i)
+{
+	return i >= condition;
+}
+
+FSM_ConditionLowerThanFloat::FSM_ConditionLowerThanFloat(float condition_) : FSM_Condition(FSM_COND_LOWER_THAN_FLOAT), condition(condition_)
+{
+}
+
+FSM_ConditionLowerThanFloat::~FSM_ConditionLowerThanFloat()
+{
+}
+
+bool FSM_ConditionLowerThanFloat::Test(float i)
+{
+	return i < condition;
+}
+
+FSM_ConditionLowerEqualFloat::FSM_ConditionLowerEqualFloat(float condition_) : FSM_Condition(FSM_COND_LOWER_EQUAL_FLOAT), condition(condition_)
+{
+}
+
+FSM_ConditionLowerEqualFloat::~FSM_ConditionLowerEqualFloat()
+{
+}
+
+bool FSM_ConditionLowerEqualFloat::Test(float i)
+{
+	return i <= condition;
 }
