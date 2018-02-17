@@ -44,6 +44,7 @@
     <Compile Include="CulverinBehaviour.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Object.cs" />
+    <Compile Include="Pathfinder.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Transform.cs" />
