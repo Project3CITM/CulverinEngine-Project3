@@ -12,7 +12,8 @@ enum AnimationState
 {
 	A_PLAY,
 	A_STOP,
-	A_PAUSED
+	A_PAUSED,
+	A_NONE
 };
 class AnimationClip
 {

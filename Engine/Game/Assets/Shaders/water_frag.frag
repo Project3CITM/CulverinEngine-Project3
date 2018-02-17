@@ -3,7 +3,7 @@ in vec4 ourColor;
 in vec2 TexCoord;
 in vec3 ourNormal;
 in vec3 ourPos;
-in float wave_height;
+uniform float wave_height;
 uniform float _time;
 out vec4 color;
 uniform sampler2D albedo;
@@ -79,9 +79,8 @@ if(height > min_height)
 
 color = vec4(mix(color_texture * inten.x + specularReflection,color_texture * inten.x + specularReflection + vec3(height-min_height)*foam_tex , 0.6 ) ,1);
 }
-else 
-{
-color = vec4(color_texture * inten.x + specularReflection , 1);
-}
+
+color = vec4(color_texture,1);// * inten.x + specularReflection , 1);
+
 
 }

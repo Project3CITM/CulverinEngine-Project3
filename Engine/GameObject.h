@@ -20,6 +20,7 @@ class CompText;
 class CompEditText;
 class CompButton;
 class CompCheckBox;
+class CompLight;
 
 
 class GameObject
@@ -61,6 +62,7 @@ public:
 	bool IsDeleteFixed() const;
 	const char* GetName() const;
 	const char* GetTag()const;
+	bool CompareTag(const char* str)const;
 
 	// EDITOR METHODS ------------------
 	void ShowHierarchy();
@@ -89,6 +91,7 @@ public:
 	CompMaterial* GetComponentMaterial() const;
 	CompScript * GetComponentScript() const;
 	CompAnimation* GetComponentAnimation() const;
+	CompLight* GetComponentLight() const;
 
 	Component* GetComponentbyIndex(uint i) const;
 	void DeleteAllComponents();

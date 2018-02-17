@@ -725,6 +725,11 @@ MonoString* CSharpScript::GetTag(MonoObject* object)
 	return mono_string_new(CSdomain, current_game_object->GetTag());
 }
 
+bool CSharpScript::CompareTag(MonoObject * object, MonoString * tag)
+{
+	return current_game_object->CompareTag(mono_string_to_utf8(tag));
+}
+
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)
 {
 	if (!CheckMonoObject(object))
@@ -945,7 +950,7 @@ void CSharpScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 	}
 }
 
-void CSharpScript::PlayAudioEvent(MonoString* event_name)
+void CSharpScript::PlayAudioEvent(MonoObject* object, MonoString* event_name)
 {
 	if (current_game_object != nullptr)
 	{
@@ -953,6 +958,18 @@ void CSharpScript::PlayAudioEvent(MonoString* event_name)
 		if (audio != nullptr)
 		{
 			audio->PlayAudioEvent(mono_string_to_utf8(event_name));
+		}
+	}
+}
+
+void CSharpScript::StopAudioEvent(MonoObject* object, MonoString* event_name)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAudio* audio = (CompAudio*)current_game_object->FindComponentByType(Comp_Type::C_AUDIO);
+		if (audio != nullptr)
+		{
+			audio->StopAudioEvent(mono_string_to_utf8(event_name));
 		}
 	}
 }

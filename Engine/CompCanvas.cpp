@@ -8,10 +8,19 @@
 #include "EventDef.h"
 #include "ModuleEventSystem.h"
 #include "ModuleRenderGui.h"
+#include "CompRectTransform.h"
 CompCanvas::CompCanvas(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Canvas";
+	my_transform = (CompRectTransform*)parent->FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
+	ImGuiIO& io = ImGui::GetIO();
+
+	my_transform->SetPos(float3(io.DisplaySize.x*0.5f, io.DisplaySize.y*0.5f,0.0f));
+
+	my_transform->SetWidth(io.DisplaySize.x);
+	my_transform->SetHeight(io.DisplaySize.y);
+
 	/*
 	draw_mode.type = EventType::EVENT_DRAW;
 	draw_mode.draw.Dtype = draw_mode.draw.DRAW_2D;
@@ -32,6 +41,7 @@ void CompCanvas::Update(float dt)
 {
 	App->render_gui->screen_space_canvas.push_back(this);
 	PushEvent(draw_mode);
+
 }
 
 void CompCanvas::Clear()
@@ -100,12 +110,12 @@ void CompCanvas::ShowInspectorInfo()
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ImGui::OpenPopup("OptionsMesh");
+		ImGui::OpenPopup("OptionsCanvas");
 	}
 	ImGui::PopStyleVar();
 
 	// Button Options --------------------------------------
-	if (ImGui::BeginPopup("OptionsMesh"))
+	if (ImGui::BeginPopup("OptionsCanvas"))
 	{
 		ShowOptions();
 		ImGui::EndPopup();

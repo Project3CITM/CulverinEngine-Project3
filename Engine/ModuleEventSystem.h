@@ -32,6 +32,8 @@
 
 //You use this function to push new events to the system, with that is no needed to use App->eventsystem->PushEvent(event), only PushEvent(event)
 void PushEvent(Event& event);
+//You use this function to send events directly, this event send system doesn't wait until postupdate, with that is no needed to use App->eventsystem->PushImmediateEvent(event), only PushImmediateEvent(event)
+void PushImmediateEvent(Event& event);
 //Used in SetEventListenrs method of Modules to register this module to receive one event type
 void AddListener(EventType type, Module* listener);
 
@@ -50,6 +52,7 @@ public:
 	bool CleanUp();
 
 	void PushEvent(Event& event);
+	void PushImmediateEvent(Event& event);
 	void AddListener(EventType type, Module* listener);
 
 private:

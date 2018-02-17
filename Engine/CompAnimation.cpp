@@ -54,7 +54,8 @@ void CompAnimation::Update(float dt)
 	{
 		if ((*it)->state == AnimationState::A_PLAY)
 		{
-			(*it)->time += 1;
+			(*it)->time += dt;
+			(*it)->time += animation_resource->ticks_per_sec / animation_resource->duration;
 			if ((*it)->time > (*it)->end_frame_time)
 			{
 				if ((*it)->loop == true)
@@ -230,7 +231,30 @@ void CompAnimation::ShowAnimationInfo()
 	{
 		if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
 		{
-		
+			char namedit[50];
+			strcpy_s(namedit, 50, (*it)->name.c_str());
+			ImGui::Text("Name: ");
+			ImGui::SameLine();
+			if (ImGui::InputText("##nameModel", namedit, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+			{
+				(*it)->name = std::string(namedit);
+			}
+
+			ImGui::InputFloat("Start Frame:", &(*it)->start_frame_time);
+			ImGui::InputFloat("End Frame:", &(*it)->end_frame_time);
+			ImGui::Checkbox("Loop", &(*it)->loop);
+			std::string state_names;
+			state_names += "Play";
+			state_names += '\0';
+			state_names += "Stop";
+			state_names += '\0';
+			state_names += "Pause";
+			state_names += '\0';
+			int state = (*it)->state;
+			if(ImGui::Combo("State", &state, state_names.c_str()))
+			{
+				(*it)->state = (AnimationState)state;
+			}
 			ImGui::TreePop();
 		}
 	}

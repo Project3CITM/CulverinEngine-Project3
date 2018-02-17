@@ -169,7 +169,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	default_mat->Init(default_texture);
 
 	if (default_shader->textures.size()>0)
-	default_shader->textures[0].res_material = default_mat;
+	default_shader->textures[0].value = default_mat;
 
 
 	Awake_t = perf_timer.ReadMs();

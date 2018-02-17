@@ -52,12 +52,12 @@ private:
 	static void ConsoleLog(MonoString* string);
 
 	/* Input */
-	static mono_bool	KeyDown(MonoObject* obj, MonoObject* key);
-	static mono_bool	KeyUp(MonoObject* obj, MonoObject* key);
-	static mono_bool	KeyRepeat(MonoObject* obj, MonoObject* key);
-	static mono_bool	MouseButtonDown(int buttonmouse);
-	static mono_bool	MouseButtonUp(int buttonmouse);
-	static mono_bool	MouseButtonRepeat(int buttonmouse);
+	static mono_bool	GetKeyDown(int key);
+	static mono_bool	GetKeyUp(int key);
+	static mono_bool	GetKeyRepeat(int key);
+	static mono_bool	GetMouseButtonDown(int buttonmouse);
+	static mono_bool	GetMouseButtonUp(int buttonmouse);
+	static mono_bool	GetMouseButtonRepeat(int buttonmouse);
 	static MonoObject*	GetMousePosition();
 	static int			GetMouseXAxis();
 	static int			GetMouseYAxis();
@@ -74,6 +74,7 @@ private:
 	static MonoString*	GetName(MonoObject* object);
 	static MonoString*	GetTag(MonoObject* object);
 	static void			SetTag(MonoObject* object, MonoString* name);
+	static mono_bool	CompareTag(MonoObject* object, MonoString* tag);
 	static void			CreateGameObject(MonoObject* object);
 	static void			DeleteGameObject(MonoObject* object);
 	static MonoObject*	GetComponent(MonoObject* object, MonoReflectionType* type);
@@ -97,8 +98,15 @@ private:
 	static void StopAllSounds();
 	static void PauseAllSounds();
 	static void ResumeAllSounds();
+	static void ChangeRTPC(MonoString* var_name, float value);
+	static void ChangeState(MonoString* group_name, MonoString* state_name);
+	static void ChangeVolume(float volume);
+	static void Mute(bool m);
 
-	static void PlayAudioEvent(MonoString* name);
+	/*Component Audio*/
+	static void PlayAudioEvent(MonoObject* object, MonoString* name);
+	static void StopAudioEvent(MonoObject* object, MonoString* name);
+
 
 private:
 	std::string nameNewScript;

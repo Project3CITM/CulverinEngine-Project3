@@ -14,6 +14,7 @@
 #include "ModuleEventSystem.h"
 #include "ModuleRenderGui.h"
 #include "ModulePhysics.h"
+#include "ModuleLightning.h"
 #include "parson.h"
 #include "PerfTimer.h"
 #include "WindowSceneWorld.h"
@@ -52,6 +53,7 @@ Application::Application()
 	random = new math::LCG();
 	json_seria = new JSONSerialization();
 
+	module_lightning = new ModuleLightning();
 	module_shaders = new ModuleShaders();
 	physics = new ModulePhysics();
 	map = new ModuleMap();
@@ -70,6 +72,7 @@ Application::Application()
 	AddModule(audio);
 	AddModule(console);
 	AddModule(scene);
+	AddModule(module_lightning); // Ask this module creators before changing the order, possible dependencies with scene and shaders module.
 	AddModule(module_shaders);
 	AddModule(gui);
 	AddModule(map); // Possible change position

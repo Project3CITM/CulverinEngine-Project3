@@ -399,10 +399,7 @@ int ImportScript::CompileScript(const char* file, std::string& libraryScript, co
 	command += "-lib:" + CulverinEditorpath + " ";
 	command += script_path;
 
-	//ShowWindow(FindWindowA("ConsoleWindowClass", NULL), false); -> Hide console (good or bad?)
-	LOG("%s", command.c_str());
 	return system(command.c_str());
-	////system("pause");
 }
 
 CSharpScript* ImportScript::LoadScript_CSharp(std::string file)
@@ -494,6 +491,7 @@ void ImportScript::LinkFunctions()
 	//GAMEOBJECT FUNCTIONS ---------------
 	mono_add_internal_call("CulverinEditor.GameObject::GetTag", (const void*)GetTag);
 	mono_add_internal_call("CulverinEditor.GameObject::SetTag", (const void*)SetTag);
+	mono_add_internal_call("CulverinEditor.GameObject::CompareTag", (const void*)CompareTag);
 	mono_add_internal_call("CulverinEditor.GameObject::CreateGameObject",(const void*)CreateGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::GetOwnGameObject", (const void*)GetOwnGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::Destroy",(const void*)DeleteGameObject);
@@ -517,12 +515,12 @@ void ImportScript::LinkFunctions()
 	//CONSOLE FUNCTIONS ------------------
 	mono_add_internal_call("CulverinEditor.Debug.Debug::Log", (const void*)ConsoleLog);
 	//INPUT FUNCTIONS -------------------
-	mono_add_internal_call("CulverinEditor.Input::KeyDown", (const void*)KeyDown);
-	mono_add_internal_call("CulverinEditor.Input::KeyUp", (const void*)KeyUp);
-	mono_add_internal_call("CulverinEditor.Input::KeyRepeat", (const void*)KeyRepeat);
-	mono_add_internal_call("CulverinEditor.Input::MouseButtonDown", (const void*)MouseButtonDown);
-	mono_add_internal_call("CulverinEditor.Input::MouseButtonUp", (const void*)MouseButtonUp);
-	mono_add_internal_call("CulverinEditor.Input::MouseButtonRepeat", (const void*)MouseButtonRepeat);
+	mono_add_internal_call("CulverinEditor.Input::GetKeyDown", (const void*)GetKeyDown);
+	mono_add_internal_call("CulverinEditor.Input::GetKeyUp", (const void*)GetKeyUp);
+	mono_add_internal_call("CulverinEditor.Input::GetKeyRepeat", (const void*)GetKeyRepeat);
+	mono_add_internal_call("CulverinEditor.Input::GetMouseButtonDown", (const void*)GetMouseButtonDown);
+	mono_add_internal_call("CulverinEditor.Input::GetMouseButtonUp", (const void*)GetMouseButtonUp);
+	mono_add_internal_call("CulverinEditor.Input::GetMouseButtonRepeat", (const void*)GetMouseButtonRepeat);
 	mono_add_internal_call("CulverinEditor.Input::GetMousePosition", (const void*)GetMousePosition);
 	mono_add_internal_call("CulverinEditor.Input::GetMouseXAxis", (const void*)GetMouseXAxis);
 	mono_add_internal_call("CulverinEditor.Input::GetMouseYAxis", (const void*)GetMouseYAxis);
@@ -539,8 +537,14 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Audio::StopAllSounds", (const void*)StopAllSounds);
 	mono_add_internal_call("CulverinEditor.Audio::PauseAllSounds", (const void*)PauseAllSounds);
 	mono_add_internal_call("CulverinEditor.Audio::ResumeAllSounds", (const void*)ResumeAllSounds);
+	mono_add_internal_call("CulverinEditor.Audio::SetAudioVariableValue", (const void*)ChangeRTPC);
+	mono_add_internal_call("CulverinEditor.Audio::ChangeState", (const void*)ChangeState);
+	mono_add_internal_call("CulverinEditor.Audio::ChangeVolume", (const void*)ChangeVolume);
+	mono_add_internal_call("CulverinEditor.Audio::Mute", (const void*)Mute);
+	
 
 	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
+	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
 
 }
 
@@ -555,46 +559,46 @@ void ImportScript::ConsoleLog(MonoString* string)
 	}
 }
 
-mono_bool ImportScript::KeyDown(MonoObject* obj, MonoObject* key)
+mono_bool ImportScript::GetKeyDown(int key)
 {
-	if (App->input->GetKey((int)key) == KEY_STATE::KEY_DOWN)
+	if (App->input->GetKey(key) == KEY_STATE::KEY_DOWN)
 	{
 		return true;
 	}
-	if((int)key == SDL_SCANCODE_UNKNOWN)
+	if(key == SDL_SCANCODE_UNKNOWN)
 	{
 		LOG("[error]Error with key pressed!");
 	}
 	return false;
 }
 
-mono_bool ImportScript::KeyUp(MonoObject* obj, MonoObject* key)
+mono_bool ImportScript::GetKeyUp(int key)
 {
-	if (App->input->GetKey((int)key) == KEY_STATE::KEY_UP)
+	if (App->input->GetKey(key) == KEY_STATE::KEY_UP)
 	{
 		return true;
 	}
-	if ((int)key == SDL_SCANCODE_UNKNOWN)
+	if (key == SDL_SCANCODE_UNKNOWN)
 	{
 		LOG("[error]Error with key pressed!");
 	}
 	return false;
 }
 
-mono_bool ImportScript::KeyRepeat(MonoObject* obj, MonoObject* key)
+mono_bool ImportScript::GetKeyRepeat(int key)
 {
-	if (App->input->GetKey((int)key) == KEY_STATE::KEY_REPEAT)
+	if (App->input->GetKey(key) == KEY_STATE::KEY_REPEAT)
 	{
 		return true;
 	}
-	if ((int)key == SDL_SCANCODE_UNKNOWN)
+	if (key == SDL_SCANCODE_UNKNOWN)
 	{
 		LOG("[error]Error with key pressed!");
 	}
 	return false;
 }
 
-mono_bool ImportScript::MouseButtonDown(int buttonmouse)
+mono_bool ImportScript::GetMouseButtonDown(int buttonmouse)
 {
 	if (buttonmouse >= 0 && buttonmouse < 4)
 	{
@@ -603,7 +607,7 @@ mono_bool ImportScript::MouseButtonDown(int buttonmouse)
 	return false;
 }
 
-mono_bool ImportScript::MouseButtonUp(int buttonmouse)
+mono_bool ImportScript::GetMouseButtonUp(int buttonmouse)
 {
 	if (buttonmouse >= 0 && buttonmouse < 4)
 	{
@@ -612,7 +616,7 @@ mono_bool ImportScript::MouseButtonUp(int buttonmouse)
 	return false;
 }
 
-mono_bool ImportScript::MouseButtonRepeat(int buttonmouse)
+mono_bool ImportScript::GetMouseButtonRepeat(int buttonmouse)
 {
 	if (buttonmouse >= 0 && buttonmouse < 4)
 	{
@@ -678,7 +682,12 @@ MonoString* ImportScript::GetTag(MonoObject* object)
 
 void ImportScript::SetTag(MonoObject* object, MonoString* name)
 {
+	current->SetTag(object, name);
+}
 
+mono_bool ImportScript::CompareTag(MonoObject * object, MonoString * tag)
+{
+	return current->CompareTag(object, tag);
 }
 
 void ImportScript::CreateGameObject(MonoObject* object)
@@ -744,7 +753,7 @@ int ImportScript::GetWidthMap()
 }
 
 
-// Audio Functions ------------
+// Module Audio Functions ------------
 
 void ImportScript::StopAllSounds()
 {
@@ -761,7 +770,34 @@ void ImportScript::ResumeAllSounds()
 	App->audio->ResumeSounds();
 }
 
-void ImportScript::PlayAudioEvent(MonoString* name)
+void ImportScript::ChangeRTPC(MonoString* var_name, float value)
 {
-	current->PlayAudioEvent(name);	
+	App->audio->SetAudioVariableValue(mono_string_to_utf8(var_name), value);
+}
+
+void ImportScript::ChangeState(MonoString * group_name, MonoString * state_name)
+{
+	App->audio->ChangeState(mono_string_to_utf8(group_name), mono_string_to_utf8(state_name));
+}
+
+void ImportScript::ChangeVolume(float volume)
+{
+	App->audio->ChangeVolume(volume);
+}
+
+void ImportScript::Mute(bool m)
+{
+	App->audio->Mute(m);
+}
+
+// Component Audio Functions ------------
+
+void ImportScript::PlayAudioEvent(MonoObject* object, MonoString* name)
+{
+	current->PlayAudioEvent(object, name);
+}
+
+void ImportScript::StopAudioEvent(MonoObject* object, MonoString* name)
+{
+	current->StopAudioEvent(object, name);
 }

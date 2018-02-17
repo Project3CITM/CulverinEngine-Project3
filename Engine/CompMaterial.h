@@ -43,6 +43,8 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	// --------------------------------------------
 
+
+
 public:
 
 	//ResourceMaterial* resource_material = nullptr;

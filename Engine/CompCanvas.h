@@ -5,7 +5,7 @@
 #include "EventDef.h"
 #include <vector>
 class CompCanvasRender;
-
+class CompRectTransform;
 class CompCanvas:public Component
 {
 public:
@@ -26,7 +26,7 @@ private:
 public:
 private:
 	Event draw_mode;
-
+	CompRectTransform* my_transform = nullptr;
 	std::vector<CompCanvasRender*> canvas_render;
 };
 

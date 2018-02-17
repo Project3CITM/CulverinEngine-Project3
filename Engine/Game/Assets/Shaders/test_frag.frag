@@ -8,7 +8,7 @@ in vec3 ourPos;
 uniform int _numLights;
 uniform struct Light {
    vec3 position;
-   vec3 intensities; //a.k.a the color of the light
+   vec4 l_color; //a.k.a the color of the light
    float attenuation;
    float ambientCoefficient;
    float coneAngle;

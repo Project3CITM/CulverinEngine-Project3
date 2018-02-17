@@ -25,6 +25,8 @@
 #include "CompCanvasRender.h"
 #include "CompAudio.h"
 #include "CompBone.h"
+#include "CompFSM.h"
+#include"CompLight.h"
 
 //Event system test
 #include "ModuleEventSystem.h"
@@ -445,6 +447,11 @@ const char * GameObject::GetTag() const
 	return tag;
 }
 
+bool GameObject::CompareTag(const char * str) const
+{
+	return strcmp(tag,str) == 0;
+}
+
 void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* parent_)
 {
 	bool stop = false;
@@ -662,6 +669,14 @@ void GameObject::ShowGameObjectOptions()
 			if (ImGui::MenuItem("Bone"))
 			{
 				AddComponent(Comp_Type::C_BONE);
+			}
+			if (ImGui::MenuItem("Finite State Machine"))
+			{
+				AddComponent(Comp_Type::C_FSM);
+			}
+			if (ImGui::MenuItem("Light"))
+			{
+				AddComponent(Comp_Type::C_LIGHT);
 			}
 			ImGui::EndMenu();
 		}
@@ -911,6 +926,16 @@ void GameObject::ShowInspectorInfo()
 		if (ImGui::MenuItem("Animation"))
 		{
 			AddComponent(Comp_Type::C_ANIMATION);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Finite State Machine"))
+		{
+			AddComponent(Comp_Type::C_FSM);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Light"))
+		{
+			AddComponent(Comp_Type::C_LIGHT);
 			add_component = false;
 		}
 		if (ImGui::BeginMenu("UI"))
@@ -1319,6 +1344,20 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(bone);
 			return bone;
 		}
+		else if (type == Comp_Type::C_FSM)
+		{
+			LOG("Adding FINITE STATE MACHINE COMPONENT.");
+			CompFiniteStateMachine* fsm = new CompFiniteStateMachine(type, this);
+			components.push_back(fsm);
+			return fsm;
+		}
+		else if (type == Comp_Type::C_LIGHT)
+		{
+			LOG("Adding LIGHT COMPONENT.");
+			CompLight* light = new CompLight(type, this);
+			components.push_back(light);
+			return light;
+		}
 	}
 
 	return nullptr;
@@ -1392,8 +1431,14 @@ void GameObject::AddComponentCopy(const Component& copy)
 	}
 	case (Comp_Type::C_BONE):
 	{
-		CompBone* bone = new CompBone((CompBone&)copy, this); //Audio copy constructor
+		CompBone* bone = new CompBone((CompBone&)copy, this); //Bone copy constructor
 		components.push_back(bone);
+		break;
+	}
+	case (Comp_Type::C_FSM):
+	{
+		CompFiniteStateMachine* fsm = new CompFiniteStateMachine((CompFiniteStateMachine&)copy, this); //FSM copy constructor
+		components.push_back(fsm);
 		break;
 	}
 	default:
@@ -1469,6 +1514,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		case Comp_Type::C_BONE:
 			this->AddComponent(Comp_Type::C_BONE, true);
 			break;
+		case Comp_Type::C_FSM:
+			this->AddComponent(Comp_Type::C_FSM, true);
+			break;
 		default:
 			break;
 		}
@@ -1526,6 +1574,11 @@ CompScript* GameObject::GetComponentScript() const
 CompAnimation * GameObject::GetComponentAnimation() const
 {
 	return (CompAnimation*)FindComponentByType(Comp_Type::C_ANIMATION);
+}
+
+CompLight * GameObject::GetComponentLight() const
+{
+	return (CompLight*)FindComponentByType(Comp_Type::C_LIGHT);
 }
 
 

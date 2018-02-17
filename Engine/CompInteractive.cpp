@@ -4,10 +4,12 @@
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 #include "ModuleEventSystem.h"
-#include "EventDef.h"
 #include "ResourceMaterial.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
+#include "GameObject.h"
+#include "CompRectTransform.h"
+
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
 #define PRESSED_SPRITE 1
@@ -18,6 +20,7 @@ std::list<CompInteractive*> CompInteractive::iteractive_list;
 CompInteractive::CompInteractive(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
+	
 	sprite[HIGHLIGHTED_SPRITE] = nullptr;
 	sprite[PRESSED_SPRITE] = nullptr;
 	sprite[DISSABLED_SPRITE] = nullptr;
@@ -25,6 +28,9 @@ CompInteractive::CompInteractive(Comp_Type t, GameObject * parent) :Component(t,
 	uuid_reimported_sprite[1] = 0;
 	uuid_reimported_sprite[2] = 0;
 
+	component_event.pass_component.type = EventType::EVENT_PASS_COMPONENT;
+	component_event.pass_component.component = this;
+	
 	iteractive_list.push_back(this);
 
 	name_component = "Interactive";
@@ -80,16 +86,25 @@ void CompInteractive::PreUpdate(float dt)
 	}
 	
 	}
-	
+	//PushImmediateEvent()
 	// -------------------------------------------------------------------
 }
 
 void CompInteractive::Update(float dt)
 {
+	PushImmediateEvent(component_event);
 	if (start_transition)
 	{
 		UpdateTransitionColor(dt);
 	}
+}
+
+void CompInteractive::Clear()
+{
+	target_graphic = nullptr;
+	image = nullptr;
+	if (!iteractive_list.empty())
+		iteractive_list.remove(this);
 }
 
 void CompInteractive::ShowOptions()
@@ -232,8 +247,68 @@ void CompInteractive::Desactive()
 	current_selection_state = SelectionStates::STATE_DISABLED;
 }
 
+void CompInteractive::ForceClear(Event event_input)
+{
+	point_down = false;
+	point_inside = false;
+	interactive_selected = false;
+	UpdateSelectionState(event_input);
+
+}
+
+void CompInteractive::OnPointDown(Event event_input)
+{
+	point_down = true;
+	UpdateSelectionState(event_input);
+}
+
+void CompInteractive::OnPointUP(Event event_input)
+{
+	point_down = false;
+	UpdateSelectionState(event_input);
+}
+
+void CompInteractive::OnPointEnter(Event event_input)
+{
+	point_inside = true;
+	UpdateSelectionState(event_input);
+}
+
+void CompInteractive::OnPointExit(Event event_input)
+{
+	point_inside = false;
+	UpdateSelectionState(event_input);
+
+}
+
+void CompInteractive::OnInteractiveSelected(Event event_input)
+{
+	interactive_selected = true;
+	UpdateSelectionState(event_input);
+
+}
+
+void CompInteractive::OnInteractiveUnSelected(Event event_input)
+{
+	interactive_selected = false;
+	UpdateSelectionState(event_input);
+}
+
+bool CompInteractive::PointerInside(float2 position)
+{
+	float4 rect = parent->GetComponentRectTransform()->GetRect();
+	if(rect.x<position.x &&
+	rect.x+rect.z>position.x &&
+		rect.y<position.y &&
+		rect.y + rect.w>position.y)
+
+	return false;
+}
+
 void CompInteractive::SetTargetGraphic(CompGraphic * set_target_graphic)
 {
+	if (set_target_graphic == nullptr)
+		return;
 	target_graphic = set_target_graphic;
 	if (target_graphic->GetType() == C_IMAGE)
 		image = (CompImage*)target_graphic;
@@ -332,6 +407,11 @@ ResourceMaterial * CompInteractive::GetPressedSprite() const
 ResourceMaterial * CompInteractive::GetDisabledSprite() const
 {
 	return sprite[DISSABLED_SPRITE];
+}
+
+NavigationMode CompInteractive::GetNavigationMode() const
+{
+	return NavigationMode();
 }
 
 bool CompInteractive::IsPressed()

@@ -107,12 +107,12 @@ void CompCanvasRender::ShowInspectorInfo()
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ImGui::OpenPopup("OptionsMesh");
+		ImGui::OpenPopup("OptionCanvasRender");
 	}
 	ImGui::PopStyleVar();
 
 	// Button Options --------------------------------------
-	if (ImGui::BeginPopup("OptionsMesh"))
+	if (ImGui::BeginPopup("OptionCanvasRender"))
 	{
 		ShowOptions();
 		ImGui::EndPopup();
@@ -235,7 +235,6 @@ void CompCanvasRender::DrawGraphic()
 	{
 		return;
 	}
-	App->render_gui->default_ui_shader->Bind();
 
 
 	
@@ -244,26 +243,16 @@ void CompCanvasRender::DrawGraphic()
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	
-	ImGuiIO& io = ImGui::GetIO();
-
-	const float ortho_projection[4][4] =
-	{
-		{ 2.0f / io.DisplaySize.x,	0.0f,						 0.0f, 0.0f },
-		{ 0.0f,						2.0f / io.DisplaySize.y,	 0.0f, 0.0f },
-		{ 0.0f,						0.0f,						-1.0f, 0.0f },
-		{ 0.0f,						0.0f,						 0.0f, 1.0f },
-	};
 
 
 
-	GLint g_AttribLocationProjMtx = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "ProjMtx");
+
 	GLint g_AttribLocationColor = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "Color_UI_ME");
 	GLint modelLoc = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "model");
 	GLint g_AttribLocationTexture = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "Texture");
 
 	CompRectTransform* transform = (CompRectTransform*)parent->FindComponentByType(C_RECT_TRANSFORM);
 
-	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&transform->GetGlobalTransform().Transposed());
 	//glUniform1i(g_AttribLocationTexture, graphic->GetTextureID());
 	glUniform4f(g_AttribLocationColor,graphic->GetColor().x, graphic->GetColor().y, graphic->GetColor().z, graphic->GetColor().w);
@@ -305,7 +294,6 @@ void CompCanvasRender::DrawGraphic()
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	App->render_gui->default_ui_shader->Unbind();
 
 
 }

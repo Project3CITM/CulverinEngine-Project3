@@ -132,7 +132,8 @@ bool ResourceMesh::LoadToMemory()
 
 		if (vertices_normals.size() > 0)
 		{
-			memcpy(cursor, &vertices_normals[i], 3 * sizeof(float));
+	
+			memcpy(cursor, &vertices[i].norm, 3 * sizeof(float));
 			cursor += 3 * sizeof(float);
 		}
 	}

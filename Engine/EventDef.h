@@ -1,5 +1,7 @@
 #ifndef _EVENTDEF_
 #define _EVENTDEF_
+#include<vector>
+#include "Math\float2.h"
 /*-----------------------------------------------------------------------------------------------------------*/
 /*---Add new events:-----------------------------------------------------------------------------------------*/
 /*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))--------------*/
@@ -49,7 +51,10 @@ enum EventType
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
-	
+	EVENT_BUTTON_DOWN,
+	EVENT_BUTTON_UP,
+	EVENT_MOUSE_MOTION,
+	EVENT_PASS_COMPONENT,
 	MAXEVENTS//Keep this at the bottom, needed to know how many events se have
 };
 
@@ -129,8 +134,28 @@ struct EWindowResize
 /*--------------------------------------------------*/
 /*----------------------Physics---------------------*/
 /*--------------------------------------------------*/
+struct EPoint
+{
+	EventType type;
+	enum InputButton
+	{
+		INPUT_NONE = -1,
+		INPUT_MOUSE_LEFT,
+		INPUT_MOUSE_RIGHT,
+		INPUT_MOUSE_MIDDLE,
+		INPUT_MAX
+	};
+	InputButton button;
+	float2 position;
+	float2 motion;
 
+};
+struct EPassComponent
+{
+	EventType type;
+	Component* component = nullptr;
 
+};
 /*--------------------------------------------------*/
 /*------------------Shader Pipeline-----------------*/
 /*--------------------------------------------------*/
@@ -146,9 +171,10 @@ struct ESendAllShaderObject
 {
 	ESendAllShaderObject() {}
 	EventType type= EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
+	
 	//This vector makes std pair of the cpp errors
 	//need to fix this
-	//std::vector<Shader*> shaders;
+	std::vector<Shader*>* shaders;
 };
 
 struct EOpenShaderEditor
@@ -199,7 +225,8 @@ union Event
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
-
+	EPoint pointer;
+	EPassComponent pass_component;
 };
 
 #endif //_EVENTDEF_

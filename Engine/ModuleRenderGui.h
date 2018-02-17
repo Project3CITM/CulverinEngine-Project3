@@ -6,6 +6,7 @@
 class ShaderProgram;
 
 class CompCanvas;
+class CompInteractive;
 class ModuleRenderGui : public Module
 {
 public:
@@ -17,11 +18,10 @@ public:
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
+	void OnEvent(Event& event);
 	bool SetEventListenrs();
 	
-	void OnEvent(Event& event);
 	void WorldSpaceDraw();
-
 	void ScreenSpaceDraw();
 
 	bool CleanUp();
@@ -41,6 +41,8 @@ private:
 	int window_scale = 1;
 
 	float2 last_size_dock = float2(0, 0);
+	std::vector<CompInteractive*> iteractive_vector;
+	CompInteractive* focus = nullptr;
 	//std::vector<ComponentCanvas*> world_space_canvas;
 
 };

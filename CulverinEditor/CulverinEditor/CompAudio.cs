@@ -11,5 +11,8 @@ namespace CulverinEditor
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void PlayEvent(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void StopEvent(string name);
     }
 }

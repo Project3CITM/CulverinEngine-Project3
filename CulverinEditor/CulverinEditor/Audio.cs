@@ -19,7 +19,7 @@ namespace CulverinEditor
         public static extern void ResumeAllSounds();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void SetAudioVariableValue(string variable_name, float value);
+        public static extern void SetAudioVariableValue(string var_name, float value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void ChangeState(string group, string new_state);
@@ -28,6 +28,6 @@ namespace CulverinEditor
         public static extern void ChangeVolume(float volume);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void Mute();
+        public static extern void Mute(bool m);
     }
 }

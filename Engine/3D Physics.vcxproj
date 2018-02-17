@@ -117,9 +117,11 @@
     <ClInclude Include="CompCanvasRender.h" />
     <ClInclude Include="CompCheckBox.h" />
     <ClInclude Include="CompEditText.h" />
+    <ClInclude Include="CompFSM.h" />
     <ClInclude Include="CompGraphic.h" />
     <ClInclude Include="CompImage.h" />
     <ClInclude Include="CompInteractive.h" />
+    <ClInclude Include="CompLight.h" />
     <ClInclude Include="CompMaterial.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="CompRectTransform.h" />
@@ -144,6 +146,7 @@
     <ClInclude Include="ModuleEventSystem.h" />
     <ClInclude Include="ModuleFS.h" />
     <ClInclude Include="ModuleFramebuffers.h" />
+    <ClInclude Include="ModuleLightning.h" />
     <ClInclude Include="ModuleMap.h" />
     <ClInclude Include="ModulePhysics.h" />
     <ClInclude Include="ModuleRenderGui.h" />
@@ -451,9 +454,11 @@
     <ClCompile Include="CompCanvasRender.cpp" />
     <ClCompile Include="CompCheckBox.cpp" />
     <ClCompile Include="CompEditText.cpp" />
+    <ClCompile Include="CompFSM.cpp" />
     <ClCompile Include="CompGraphic.cpp" />
     <ClCompile Include="CompImage.cpp" />
     <ClCompile Include="CompInteractive.cpp" />
+    <ClCompile Include="CompLight.cpp" />
     <ClCompile Include="CompMaterial.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="CompRectTransform.cpp" />
@@ -476,6 +481,7 @@
     <ClCompile Include="ModuleEventSystem.cpp" />
     <ClCompile Include="ModuleFS.cpp" />
     <ClCompile Include="ModuleFramebuffers.cpp" />
+    <ClCompile Include="ModuleLightning.cpp" />
     <ClCompile Include="ModuleMap.cpp" />
     <ClCompile Include="ModulePhysics.cpp" />
     <ClCompile Include="ModuleRenderGui.cpp" />

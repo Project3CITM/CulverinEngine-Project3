@@ -1140,6 +1140,15 @@
     <ClInclude Include="CompBone.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="CompFSM.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompLight.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleLightning.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1495,6 +1504,15 @@
     </ClCompile>
     <ClCompile Include="CompBone.cpp">
       <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompFSM.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompLight.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleLightning.cpp">
+      <Filter>Engine\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

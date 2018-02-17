@@ -37,7 +37,6 @@ public:
 	
 	// ------------------------
 
-	//void SetResource(ResourceAnimation * resource_animation, bool isImport = false);
 	void CopyValues(const CompAudio * component);
 
 	// SAVE - LOAD METHODS ----------------
@@ -47,20 +46,16 @@ public:
 
 	uint GetEmitterID() const;
 	void ResetAudio();
-	//void CreateAudioEvent(std::string audio_event, int gameplay_event);
 	void PlayAudioEvent(const char* event_name);
 	void StopAudioEvent(const char* event_name);
 
 
 private:
-	//void ShowEventsInfo();
 	void CreateEmitter();
 		
 private:
 	CompTransform * transf = nullptr;
 	Wwished::SoundEmitter* emitter = nullptr;
 	AUDIO_TYPE audio_type = FX;
-
-	//std::vector<std::pair<int, AudioEvent>> audio_events;
 };
 #endif

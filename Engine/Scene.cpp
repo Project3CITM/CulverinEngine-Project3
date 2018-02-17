@@ -667,6 +667,61 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	return obj;
 }
 
+GameObject * Scene::CreatePlane(GameObject * parent)
+{
+	GameObject* obj = new GameObject(parent);
+
+	// SET NAME -----------------------------------
+	static uint plane_count = 0;
+	std::string name = "Plane ";
+	name += std::to_string(plane_count++);
+	char* name_str = new char[name.size() + 1];
+	strcpy(name_str, name.c_str());
+	obj->SetName(name_str);
+
+	/* Predefined Cube has 3 Base components: Transform, Mesh & Material */
+
+	//TRANSFORM COMPONENT --------------
+	CompTransform* transform = (CompTransform*)obj->AddComponent(C_TRANSFORM);
+	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1)); // TRANSFORM WILL ACCUMULATE PARENTS TRANSFORMS
+	transform->Enable();
+
+	CompMesh* mesh = (CompMesh*)obj->AddComponent(C_MESH);
+	mesh->Enable();
+	mesh->resource_mesh = (ResourceMesh*)App->resource_manager->GetResource(4); //3 == Plane
+	if (mesh->resource_mesh != nullptr)
+	{
+		mesh->resource_mesh->num_game_objects_use_me++;
+		// LOAD MESH
+		if (mesh->resource_mesh->IsLoadedToMemory() == Resource::State::UNLOADED)
+		{
+			App->importer->iMesh->LoadResource(std::to_string(mesh->resource_mesh->GetUUID()).c_str(), mesh->resource_mesh);
+		}
+	}
+	OBB* box = new OBB();
+	box->pos = float3::zero;
+	box->r = float3::one;
+	box->axis[0] = float3(1, 0, 0);
+	box->axis[1] = float3(0, 1, 0);
+	box->axis[2] = float3(0, 0, 1);
+
+	obj->bounding_box = new AABB(*box);
+
+	//MATERIAL COMPONENT -------------------
+	CompMaterial* mat = (CompMaterial*)obj->AddComponent(C_MATERIAL);
+	mat->Enable();
+
+	if (parent == nullptr)
+	{
+		// Only add to GameObjects list the Root Game Objects
+		App->scene->root->AddChildGameObject(obj);
+	}
+
+	LOG("Plane Created.");
+	RELEASE(box);
+	return obj;
+}
+
 GameObject* Scene::CreateMainCamera(GameObject* parent)
 {
 	GameObject* obj = new GameObject(parent);

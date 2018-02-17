@@ -162,12 +162,12 @@ void CompRectTransform::ShowInspectorInfo()
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ImGui::OpenPopup("OptionsTransform");
+		ImGui::OpenPopup("OptionsRectTransform");
 	}
 	ImGui::PopStyleVar();
 
 	// Options Button --------------------------------------------------
-	if (ImGui::BeginPopup("OptionsTransform"))
+	if (ImGui::BeginPopup("OptionsRectTransform"))
 	{
 		ShowOptions();
 		ImGui::EndPopup();
@@ -256,13 +256,13 @@ void CompRectTransform::ShowTransform(float drag_speed)
 		if(open_anchor)
 		{
 			ImGui::Text("Max X,Y"); ImGui::SameLine(op + 30);
-			if (ImGui::DragFloat2("##max", &max_anchor[0], drag_speed, 0.0f, 1.0f))
+			if (ImGui::DragFloat2("##max_anchor", &max_anchor[0], 0.1f, 0.0f, 1.0f))
 			{
 				SetMaxAnchor(max_anchor);
 			}
 
 			ImGui::Text("Min X,Y"); ImGui::SameLine(op + 30);
-			if (ImGui::DragFloat2("##min", &min_anchor[0], drag_speed, 0.0f, 1.0f))
+			if (ImGui::DragFloat2("##min_anchor", &min_anchor[0], 0.1f, 0.0f, 1.0f))
 			{
 				SetMinAnchor(min_anchor);
 			}
@@ -270,9 +270,9 @@ void CompRectTransform::ShowTransform(float drag_speed)
 		}
 
 		ImGui::Text("Pivot X,Y"); ImGui::SameLine(op + 30);
-		if (ImGui::DragFloat2("##min", &min_anchor[0], drag_speed, 0.0f, 1.0f))
+		if (ImGui::DragFloat2("##min_pivot", &pivot[0], 0.1f, 0.0f, 1.0f))
 		{
-			SetMinAnchor(min_anchor);
+			SetPivot(pivot);
 		}
 		break;
 	}
@@ -368,6 +368,11 @@ float2 CompRectTransform::GetPivot()const
 bool CompRectTransform::GetUpdateRect() const
 {
 	return update_rect;
+}
+
+float4 CompRectTransform::GetRect()const
+{
+	return float4(position.x,position.y,(float)width, (float)height);
 }
 
 float3 CompRectTransform::GetNorthEastPosition()const

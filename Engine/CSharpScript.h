@@ -129,6 +129,7 @@ public:
 	MonoString* GetName(MonoObject* object);
 	void		SetTag(MonoObject* object, MonoString* tag);
 	MonoString* GetTag(MonoObject* object);
+	bool		CompareTag(MonoObject* object, MonoString* tag);
 
 	MonoObject* GetOwnGameObject();
 	void		SetCurrentGameObject(GameObject* current);
@@ -143,7 +144,8 @@ public:
 	void		IncrementRotation(MonoObject* object, MonoObject* vector3);
 
 	/*Audio*/
-	void		PlayAudioEvent(MonoString* event_name);
+	void		PlayAudioEvent(MonoObject* object, MonoString* event_name);
+	void		StopAudioEvent(MonoObject* object, MonoString* event_name);
 
 
 	/*Components*/

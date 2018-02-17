@@ -32,7 +32,7 @@ CompMesh::CompMesh(const CompMesh& copy, GameObject* parent) :Component(Comp_Typ
 		resource_mesh->num_game_objects_use_me++;
 	}
 	//material = material;
-	has_normals = copy.has_normals;
+
 	render = copy.render;
 
 	name_component = "Mesh";
@@ -280,13 +280,13 @@ void CompMesh::Draw()
 					for (int i = 0; i < temp->material_shader.textures.size(); i++) {
 						glActiveTexture(GL_TEXTURE0 + i);
 
-						if (temp->material_shader.textures[i].res_material == nullptr)
+						if (temp->material_shader.textures[i].value == nullptr)
 						{
 							glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
 						}
 						else
 						{
-							glBindTexture(GL_TEXTURE_2D, temp->material_shader.textures[i].res_material->GetTextureID());
+							glBindTexture(GL_TEXTURE_2D, temp->material_shader.textures[i].value->GetTextureID());
 						}
 
 					}
@@ -310,17 +310,7 @@ void CompMesh::Draw()
 			}		
 			//
 			SetUniformVariables(shader);
-
-
-			// NORMALS ----------------------------------
-			if (App->renderer3D->normals && has_normals)
-			{
-				glBindBuffer(GL_ARRAY_BUFFER, resource_mesh->vertices_norm_id);
-				glVertexPointer(3, GL_FLOAT, sizeof(float3), NULL);
-				glDrawArrays(GL_LINES, 0, resource_mesh->vertices.size() * 2);
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-			}
-
+			
 	
 			Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 			float4x4 temp = camFrust.ViewMatrix();
@@ -492,13 +482,8 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 
 void CompMesh::SetUniformVariables(ShaderProgram * shader)
 {
-	shader->it_textures = shader->textures.begin();
-	shader->it_int_variables = shader->int_variables.begin();
-	shader->it_float_variables = shader->float_variables.begin();
-	shader->it_float3_variables = shader->float3_variables.begin();
-	shader->it_color_variables = shader->color_variables.begin();
-	shader->it_bool_variables = shader->bool_variables.begin();
 
+	shader->RestartIterators();
 	//BOOL
 	if(shader->bool_variables.size() != 0)
 	while (shader->it_bool_variables != shader->bool_variables.end()) {
@@ -524,23 +509,19 @@ void CompMesh::SetUniformVariables(ShaderProgram * shader)
 	if (shader->float3_variables.size() != 0)
 	while (shader->it_float3_variables != shader->float3_variables.end()) {
 		GLint float3_loc = glGetUniformLocation(shader->programID, (*shader->it_float3_variables).var_name.c_str());
-		glUniform3fv(float3_loc,1, &(*shader->it_float3_variables).vector[0]);
+		glUniform3fv(float3_loc,1, &(*shader->it_float3_variables).value[0]);
 		shader->it_float3_variables++;
 	}
 
 	if (shader->color_variables.size() != 0)
 	while (shader->it_color_variables != shader->color_variables.end()) {
 		GLint color_loc = glGetUniformLocation(shader->programID, (*shader->it_color_variables).var_name.c_str());
-		glUniform4fv(color_loc,1, &(*shader->it_color_variables).color[0]);
+		glUniform4fv(color_loc,1, &(*shader->it_color_variables).value[0]);
 		shader->it_color_variables++;
 	}
 
-	shader->it_textures = shader->textures.begin();
-	shader->it_int_variables = shader->int_variables.begin();
-	shader->it_float_variables =shader->float_variables.begin();
-	shader->it_float3_variables = shader->float3_variables.begin();
-	shader->it_color_variables =shader->color_variables.begin();
-	shader->it_bool_variables =shader->bool_variables.begin();
+	shader->RestartIterators();
+
 }
 
 bool CompMesh::HasSkeleton() const

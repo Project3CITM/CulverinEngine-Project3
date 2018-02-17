@@ -38,18 +38,18 @@ struct AttributeVar {
 struct TextureVar {
 	std::string var_name;
 	bool selected = false;
-	ResourceMaterial* res_material = nullptr;
+	ResourceMaterial* value = nullptr;
 	uint uuid_to_reimport = 0;
 };
 
 struct float3Var {
 	std::string var_name;
-	float3 vector = float3::zero;
+	float3 value = float3::zero;
 };
 
 struct ColorVar {
 	std::string var_name;
-	float4 color = float4(256,256,256,256);
+	float4 value = float4(256,256,256,256);
 };
 
 struct floatVar {
@@ -124,6 +124,7 @@ public:
 	void CreateMaterialFile();
 
 	std::string LogProgramLastError();
+	void RestartIterators();
 
 
 public:
