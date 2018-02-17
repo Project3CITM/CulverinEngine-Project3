@@ -1,7 +1,7 @@
 #ifndef EVENTSYSTEM
 #define EVENTSYSTEM
 
-//TEMPORAL WARNING: DON'T PUSH EVENTS INSIDE EVENTS, YOU CAN CALL IMMEDIATE EVENTS INSTEAD, FIX INCOMMING
+//TEMPORAL WARRNING: DON'T PUSH EVEENTS INSIDE EVENTS, YOU CAAN CALL IMMEDIATE EEVENTS INSTEAD, FFIX INCOMMING
 
 /*--------------------------------------------------------------------------------------------------------------*/
 /*---To use "void PushEvent(Event& event);" & "AddListener(EventType type, Module* listener);" include this-----*/
