@@ -19,7 +19,9 @@ enum Comp_Type
 	C_MESH,
 	C_MATERIAL,
 	C_CAMERA,
-	C_UNIQUE_SEPARATOR,
+	C_COLLIDER,
+	C_RIGIDBODY,
+	C_UNIQUE_SEPARATOR,   //Components above this will be unique
 	C_SCRIPT,
 	C_ANIMATION,
 	C_BUTTON,

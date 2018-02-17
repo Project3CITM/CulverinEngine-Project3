@@ -352,6 +352,73 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 	json_value_free(config_file);
 }
 
+GameObject* JSONSerialization::GetLoadPrefab(const char* prefab)
+{
+	LOG("LOADING PREFAB %s -----", prefab);
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+	JSON_Object* config_node;
+
+	config_file = json_parse_file(prefab);
+	GameObject* mainParent = nullptr;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		config_node = json_object_get_object(config, "Prefab");
+		int NUmberGameObjects = json_object_dotget_number(config_node, "Info.Number of GameObjects");
+		if (NUmberGameObjects > 0)
+		{
+			// First, check name is not repete.
+			// Frist reset Vector Names
+			//for (int i = 0; i < namesScene.size(); i++)
+			//{
+			//	RELEASE_ARRAY(namesScene[i]);
+			//}
+			namesScene.clear();
+			// Now GetAll Names from Scene
+			GetAllNames(App->scene->root->GetChildsVec());
+
+			for (int i = 0; i < NUmberGameObjects; i++)
+			{
+				std::string name = "GameObject" + std::to_string(i);
+				name += ".";
+				char* nameGameObject = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
+				GameObject* obj = new GameObject(nameGameObject, uid);
+				// Now Check that the name is not repet
+				CheckChangeName(*obj);
+				//Load Components
+				int NumberofComponents = json_object_dotget_number_with_std(config_node, name + "Number of Components");
+				if (NumberofComponents > 0)
+				{
+					obj->LoadComponents(config_node, name + "Components.", NumberofComponents);
+				}
+				int uuid_parent = json_object_dotget_number_with_std(config_node, name + "Parent");
+
+				//Add GameObject
+				if (uuid_parent == -1)
+				{
+					//App->scene->gameobjects.push_back(obj);
+					mainParent = obj;
+				}
+				else
+				{
+					LoadChildLoadPrefab(*mainParent, *obj, uuid_parent);
+				}
+			}
+			// Now Iterate All GameObjects and Components and create a new UUID!
+			mainParent->SetUUIDRandom();
+			if (mainParent->GetNumChilds() > 0)
+			{
+				ChangeUUIDs(*mainParent);
+			}
+		}
+	}
+	json_value_free(config_file);
+	return mainParent;
+}
+
 void JSONSerialization::LoadChildLoadPrefab(GameObject& parent, GameObject& child, int uuidParent)
 {
 	if (parent.GetNumChilds() > 0)
@@ -538,6 +605,8 @@ ReImport JSONSerialization::GetUUIDScript(const char* file)
 	JSON_Object* config;
 
 	std::string nameJson = file;
+	std::string name_path = file;
+	App->fs->NormalitzatePath(name_path);
 	nameJson += ".meta.json";
 	config_file = json_parse_file(nameJson.c_str());
 
@@ -548,9 +617,11 @@ ReImport JSONSerialization::GetUUIDScript(const char* file)
 		//config_node = json_object_get_object(config, "Material");
 		info.uuid = json_object_dotget_number_with_std(config, "Script.UUID Resource");
 		info.directory_obj = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Script.Directory Script"));
+		std::string dir = info.directory_obj;
+		App->fs->NormalitzatePath(dir);
 		info.name_mesh = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Script.Name"));
 		info.path_dll = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Script.PathDLL"));
-		if (strcmp(file, info.directory_obj) == 0)
+		if (strcmp(name_path.c_str(), dir.c_str()) == 0)
 		{
 			json_value_free(config_file);
 			return info;

@@ -19,7 +19,14 @@ public:
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
 
-	void ShowEditorMap(bool & active);
+	void ShowEditorMap(bool& active);
+
+	void ShowWalkableMap();
+	void ShowCreationMap();
+	void ShowNavigationMap();
+
+	void ShowTextWithColor(ImGuiCol_ type, int id);
+
 	int GetHeightMap();
 	int GetWidthMap();
 
@@ -28,10 +35,14 @@ public:
 	//Map ----------
 	std::string map_string;
 	int map[MAX_ARRAY][MAX_ARRAY];
+	std::vector<std::string> map_files; // Vector with all fbx/obj in Assets
 
 private:
 	int height_map = 10;
 	int width_map = 10;
+	std::vector<std::string> all_prefabs; // Vector with all fbx/obj in Assets
+	std::vector<std::string> prefabs; // Vector with all fbx/obj in Assets
+
 
 };
 

@@ -10,7 +10,7 @@
 #define DEFAULT_SHADOW_CAST_POINTS_COUNT 4
 
 class CompLight;
-
+class ShaderProgram;
 class DepthFrameBuffer
 {
 public:
@@ -59,12 +59,17 @@ private:
 	void AddShadowMapCastViews(uint ammount);
 
 public:
+	//test
+	ShaderProgram * shadow_Shader = nullptr;
+
+	FrameBuffer text;
 
 private:
 	uint shadow_cast_points_count = DEFAULT_SHADOW_CAST_POINTS_COUNT; // This value should be able to change from config and modiffied on load
 	std::vector<DepthFrameBuffer> shadow_maps;
 	uint shadow_maps_res_w = 1024;
 	uint shadow_maps_res_h = 1024;
+
 
 	std::vector<CompLight*> scene_lights;
 	std::vector<CompLight*> frame_used_lights;

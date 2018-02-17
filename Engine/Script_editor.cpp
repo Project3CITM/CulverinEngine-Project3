@@ -6,6 +6,7 @@
 #include "ImportScript.h"
 #include "Resource_.h"
 #include "ResourceScript.h"
+#include "JSONSerialization.h"
 
 #include <filesystem>
 #include <iostream>
@@ -164,6 +165,8 @@ void Script_editor::SaveScript(bool ReImport)
 	App->fs->SaveScript(name, editor, DIRECTORY_IMPORT::IMPORT_DIRECTORY_ASSETS);
 	if (ReImport)
 	{
+		//App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDScript(App->fs->GetFullPath(parent->GetPathAssets()).c_str()));
+
 		if (App->importer->iScript->ReImportScript(parent->GetPathAssets(), std::to_string(parent->GetUUID()), parent))
 		{
 			LOG("ReImported Succesfully Script: %s", App->fs->GetOnlyName(parent->GetPathAssets()).c_str());

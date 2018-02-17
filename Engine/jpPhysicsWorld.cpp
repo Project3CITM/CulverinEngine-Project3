@@ -1,6 +1,7 @@
 #include "jpPhysicsWorld.h"
 //#include "Globals.h"
 #include "Math.h"
+#include "ModulePhysics.h"
 
 //PhysX libraries for debug builds
 #ifdef _DEBUG
@@ -28,6 +29,11 @@
 
 jpPhysicsWorld::jpPhysicsWorld()
 {	
+}
+
+jpPhysicsWorld::jpPhysicsWorld(ModulePhysics * module_callback)
+{
+	collision_callback = new jpCollisionCallback(module_callback);
 }
 
 jpPhysicsWorld::~jpPhysicsWorld()
@@ -83,8 +89,8 @@ physx::PxScene * jpPhysicsWorld::CreateNewScene()
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
 	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	sceneDesc.simulationEventCallback = collision_callback;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_PCM;
-
 	return jpWorld->createScene(sceneDesc);
 }
 
@@ -115,4 +121,19 @@ jpPhysicsRigidBody * jpPhysicsWorld::CreateRigidBody(physx::PxScene * curr_scene
 	}
 	
 	return new_body;
+}
+
+void jpCollisionCallback::onTrigger(physx::PxTriggerPair * pairs, physx::PxU32 count)
+{
+	if (callback_module)
+	{
+		for (uint i = 0; i < count; i++)
+		{
+			// Notify first contact -----------
+			if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
+			{
+				callback_module->OnTrigger(pairs[i].triggerActor, pairs[i].otherActor);
+			}
+		}
+	}
 }

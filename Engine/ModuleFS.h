@@ -70,6 +70,7 @@ public:
 	void GetAllFolders(std::experimental::filesystem::path path, std::string folderActive, std::vector<FoldersNew>& folders);
 	bool GetAllFoldersChild(std::experimental::filesystem::path path, std::string folderActive, std::vector<FoldersNew>& folders);
 	void GetAllFiles(std::experimental::filesystem::path path, std::vector<FilesNew>& files);
+	void GetAllFilesByExtension(std::experimental::filesystem::path path, std::vector<std::string>& files, const char* extension);
 
 	// Get Files to check if a file was modificated ---------------------------------
 	void GetAllFilesAssets(std::experimental::filesystem::path path, std::vector<AllFiles>& files);
