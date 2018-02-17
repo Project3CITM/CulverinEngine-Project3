@@ -151,7 +151,7 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 				else if (it->second->GetType() == Resource::Type::SCRIPT)
 				{
 					//need delete
-					//App->fs->DeleteFileLibrary(std::to_string(it->second->GetUUID()).c_str(), DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_MESHES);
+					App->fs->DeleteFileLibrary(std::to_string(it->second->GetUUID()).c_str(), DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_SCRIPTS);
 				}
 				else if (it->second->GetType() == Resource::Type::ANIMATION)
 				{

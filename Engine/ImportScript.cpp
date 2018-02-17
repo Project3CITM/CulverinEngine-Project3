@@ -91,7 +91,7 @@ bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
 	{
 		uuid_script = uuid;
 	}
-	if (IsNameUnique(App->fs->GetOnlyName(file)) == false)
+	if (IsNameUnique(App->fs->GetOnlyName(file)) == false && uuid == 0)
 	{
 		LOG("[error] Script: %s, The Name of Script must be unique, there is already a script with that name.", App->fs->GetOnlyName(file).c_str());
 		return false;
@@ -117,7 +117,7 @@ bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
 				LOG("[error] Script: %s, Not Compiled", App->fs->GetOnlyName(fileassets).c_str());
 				res_script->InitInfo(path_dll, fileassets);
 				res_script->SetState(Resource::State::FAILED);
-				CSharpScript* script = new CSharpScript();
+				//CSharpScript* script = new CSharpScript();
 				//res_script->SetCSharp(script);
 				return false;
 			}
@@ -127,7 +127,7 @@ bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
 				res_script->InitInfo(path_dll, fileassets);
 				res_script->SetState(Resource::State::LOADED);
 				//now 
-				CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
+				//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
 				//res_script->SetCSharp(newCSharp);
 			}
 

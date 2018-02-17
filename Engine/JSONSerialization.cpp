@@ -538,6 +538,8 @@ ReImport JSONSerialization::GetUUIDScript(const char* file)
 	JSON_Object* config;
 
 	std::string nameJson = file;
+	std::string name_path = file;
+	App->fs->NormalitzatePath(name_path);
 	nameJson += ".meta.json";
 	config_file = json_parse_file(nameJson.c_str());
 
@@ -548,9 +550,11 @@ ReImport JSONSerialization::GetUUIDScript(const char* file)
 		//config_node = json_object_get_object(config, "Material");
 		info.uuid = json_object_dotget_number_with_std(config, "Script.UUID Resource");
 		info.directory_obj = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Script.Directory Script"));
+		std::string dir = info.directory_obj;
+		App->fs->NormalitzatePath(dir);
 		info.name_mesh = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Script.Name"));
 		info.path_dll = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Script.PathDLL"));
-		if (strcmp(file, info.directory_obj) == 0)
+		if (strcmp(name_path.c_str(), dir.c_str()) == 0)
 		{
 			json_value_free(config_file);
 			return info;

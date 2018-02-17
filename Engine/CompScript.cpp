@@ -84,6 +84,7 @@ void CompScript::PreUpdate(float dt)
 				uuid_resource_reimported = 0;
 				if (resource_script->GetState() != Resource::State::FAILED)
 				{
+					csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
 					SetOwnGameObject(parent);
 				}
 			}
@@ -558,6 +559,7 @@ void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uin
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Script UUID", resource_script->GetUUID());
 		// Now Save Info in CSharp
+		App->fs->NormalitzatePath(name);
 		SaveScript(object, name);
 	}
 	json_object_dotset_string_with_std(object, name + "Name Script", name_script.c_str());
