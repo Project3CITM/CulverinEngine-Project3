@@ -12,6 +12,7 @@
 #include"Math\Quat.h"
 #include"CompTransform.h"
 #include"CompCamera.h"
+#include"ModuleFS.h"
 
 CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
@@ -23,17 +24,12 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 	plane = (ResourceMesh*)App->resource_manager->GetResource(4);
 	name_component = "Light component";
 
-	uint tex_coord[8]{
-		0,0,
-		1,0,
-		1,1,
-		0,1
-	};
+	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png",&texture_bulb);
 
 	plane->vertices[0].texCoords = float2(0, 0);
 	plane->vertices[1].texCoords = float2(1, 0);
-	plane->vertices[2].texCoords = float2(1, 1);
-	plane->vertices[3].texCoords = float2(0, 1);
+	plane->vertices[2].texCoords = float2(0, 1);
+	plane->vertices[3].texCoords = float2(1, 1);
 		
 
 	char* total_buffer_mesh = nullptr;
@@ -92,6 +88,10 @@ void CompLight::Update(float dt)
 
 void CompLight::Draw()
 {
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.8);
+
+
 
 	App->renderer3D->default_shader->Bind();
 
@@ -100,7 +100,7 @@ void CompLight::Draw()
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+	glBindTexture(GL_TEXTURE_2D, texture_bulb);
 
 	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 	float4x4 temp = camFrust.ViewMatrix();
@@ -147,7 +147,7 @@ void CompLight::Draw()
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	App->renderer3D->default_shader->Unbind();
-
+	glDisable(GL_ALPHA_TEST);
 }
 
 void CompLight::Clear()

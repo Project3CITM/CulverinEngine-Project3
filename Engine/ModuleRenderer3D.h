@@ -38,7 +38,10 @@ public:
 	void UpdateProjection(CompCamera* cam);
 
 	void OnResize(int width, int height);
-	
+
+	float2 LoadImage_devil(const char * theFileName, GLuint *buff);
+	bool loadTextureFromPixels32(GLuint * id_pixels, GLuint width_img, GLuint height_img, GLuint *buff);
+
 public:
 
 	
