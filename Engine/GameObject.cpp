@@ -28,6 +28,7 @@
 #include "CompFSM.h"
 #include "CompLight.h"
 #include "CompCollider.h"
+#include "CompRigidBody.h"
 
 //Event system test
 #include "ModuleEventSystem.h"
@@ -705,6 +706,10 @@ void GameObject::ShowGameObjectOptions()
 			{
 				AddComponent(Comp_Type::C_COLLIDER);
 			}
+			if (ImGui::MenuItem("Rigid Body"))
+			{
+				AddComponent(Comp_Type::C_RIGIDBODY);
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("UI"))
@@ -997,6 +1002,11 @@ void GameObject::ShowInspectorInfo()
 		if (ImGui::MenuItem("Collider"))
 		{
 			AddComponent(Comp_Type::C_COLLIDER);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Rigid Body"))
+		{
+			AddComponent(Comp_Type::C_RIGIDBODY);
 			add_component = false;
 		}
 
@@ -1392,10 +1402,17 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		}
 		else if (type == Comp_Type::C_COLLIDER)
 		{
-			LOG("Addin COLLIDER COMPONENT");
+			LOG("Adding COLLIDER COMPONENT");
 			CompCollider* collider = new CompCollider(type, this);
 			components.push_back(collider);
 			return collider;
+		}
+		else if (type == Comp_Type::C_RIGIDBODY)
+		{
+			LOG("Adding RIGIDBODY COMPONENT");
+			CompRigidBody* rigid_body = new CompRigidBody(type, this);
+			components.push_back(rigid_body);
+			return rigid_body;
 		}
 	}
 
@@ -1492,6 +1509,12 @@ void GameObject::AddComponentCopy(const Component& copy)
 		components.push_back(collider);
 		break;
 	}
+	case (Comp_Type::C_RIGIDBODY):
+	{
+		CompRigidBody* rigid_body = new CompRigidBody((CompRigidBody&)copy, this); //Rigid Body contructor
+		components.push_back(rigid_body);
+		break;
+	}
 	default:
 		break;
 	}
@@ -1573,6 +1596,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			break;
 		case Comp_Type::C_COLLIDER:
 			this->AddComponent(Comp_Type::C_COLLIDER, true);
+			break;
+		case Comp_Type::C_RIGIDBODY:
+			this->AddComponent(Comp_Type::C_RIGIDBODY, true);
 			break;
 		default:
 			break;
