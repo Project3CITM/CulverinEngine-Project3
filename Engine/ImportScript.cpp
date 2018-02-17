@@ -497,6 +497,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::GetTag", (const void*)GetTag);
 	mono_add_internal_call("CulverinEditor.GameObject::SetTag", (const void*)SetTag);
 	mono_add_internal_call("CulverinEditor.GameObject::CompareTag", (const void*)CompareTag);
+	mono_add_internal_call("CulverinEditor.GameObject::FindGameObjectWithTag", (const void*)FindGameObjectWithTag);
 	mono_add_internal_call("CulverinEditor.GameObject::CreateGameObject",(const void*)CreateGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::GetOwnGameObject", (const void*)GetOwnGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::Destroy",(const void*)DeleteGameObject);
@@ -693,6 +694,11 @@ void ImportScript::SetTag(MonoObject* object, MonoString* name)
 mono_bool ImportScript::CompareTag(MonoObject * object, MonoString * tag)
 {
 	return current->CompareTag(object, tag);
+}
+
+MonoObject * ImportScript::FindGameObjectWithTag(MonoObject * object, MonoString * tag)
+{
+	return current->FindGameObjectWithTag(object, tag);
 }
 
 void ImportScript::CreateGameObject(MonoObject* object)

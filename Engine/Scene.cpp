@@ -392,6 +392,14 @@ GameObject* Scene::GetGameObjectbyuid(uint uid)
 	return nullptr;
 }
 
+GameObject * Scene::FindGameObjectWithTag(const char * str)
+{
+	std::vector<GameObject*> objs;
+	root->FindChildsWithTag(str, &objs);
+	if (objs.size() > 0)return objs[0];
+	else return nullptr;
+}
+
 void Scene::DrawPlane()
 {
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);

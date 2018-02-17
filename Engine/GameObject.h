@@ -39,6 +39,8 @@ public:
 	void ClearAllVariablesScript();
 	GameObject* GetGameObjectbyuid(uint uid);
 	GameObject* GetGameObjectfromScene(int);
+	void FindChildsWithTag(const char* tag, std::vector<GameObject*>* vec);
+	GameObject * FindGameObjectWithTag(const char * tag);
 
 	void Init();
 	void PreUpdate(float dt);

@@ -233,6 +233,13 @@ namespace CulverinEditor
             this.z *= scale.z;
         }
 
+        public void Add(float x,float y,float z)
+        {
+            this.x += x;
+            this.y += y;
+            this.z += z;
+        }
+
         public void Set(float x, float y, float z)
         {
             this.x = x;

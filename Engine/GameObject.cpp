@@ -251,6 +251,24 @@ GameObject* GameObject::GetGameObjectfromScene(int id)
 	return nullptr;
 }
 
+void GameObject::FindChildsWithTag(const char * tag,std::vector<GameObject*>* vec)
+{
+	uint size = childs.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (strcmp(childs[k]->GetTag(), tag) == 0)
+		{
+			vec->push_back(childs[k]);
+		}
+		childs[k]->FindChildsWithTag(tag, vec);
+	}
+}
+
+GameObject * GameObject::FindGameObjectWithTag(const char * tag)
+{
+	return App->scene->FindGameObjectWithTag(tag);
+}
+
 void GameObject::Init()
 {
 }

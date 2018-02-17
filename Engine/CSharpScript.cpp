@@ -730,6 +730,22 @@ bool CSharpScript::CompareTag(MonoObject * object, MonoString * tag)
 	return current_game_object->CompareTag(mono_string_to_utf8(tag));
 }
 
+MonoObject* CSharpScript::FindGameObjectWithTag(MonoObject * object, MonoString * tag)
+{
+	std::map<MonoObject*, GameObject*>::iterator iter = game_objects.begin();
+	GameObject* target = nullptr;
+	target = App->scene->FindGameObjectWithTag(mono_string_to_utf8(tag));
+	if (target == nullptr)return nullptr;
+
+	while (iter != game_objects.end())
+	{
+		if (iter._Ptr->_Myval.second == target)return iter._Ptr->_Myval.first;
+
+		iter++;
+	}
+	return nullptr;
+}
+
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)
 {
 	if (!CheckMonoObject(object))

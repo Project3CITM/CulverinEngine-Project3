@@ -51,13 +51,13 @@ namespace CulverinEditor
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern GameObject GetParentGameObject();
+        private extern GameObject GetParentGameObject();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool GetEnabled();
+        public extern bool GetEnabled();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void SetEnabled(bool val);
+        public extern void SetEnabled(bool val);
 
         public bool CompareTag(string tag)
         {
@@ -73,16 +73,5 @@ namespace CulverinEditor
         {
             return gameObject.GetComponent(typeof(T)) as T;
         }
-
-        public Component[] GetComponents(Type type)
-        {
-            return gameObject.GetComponents(type);
-        }
-
-        public T GetComponents<T>() where T : Component
-        {
-            return gameObject.GetComponents(typeof(T)) as T;
-        }
-
     }
 }

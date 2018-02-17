@@ -34,28 +34,25 @@ namespace CulverinEditor
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern string GetTag();
+        public  extern string GetTag();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void SetTag(string tg);
+        public  extern void SetTag(string tg);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern GameObject Find(string name);
+        public  extern GameObject Find(string name);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern GameObject[] FindGameObjectsWithTag(string tag);
+        public  extern GameObject FindGameObjectWithTag(string tag);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern GameObject FindGameObjectWithTag(string tag);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool CompareTag(string tag);
+        public extern bool CompareTag(string tag);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private extern void CreateGameObject(GameObject go);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void Destroy(GameObject go);
+        public  extern void Destroy(GameObject go);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetActive(bool go_active);
@@ -73,7 +70,7 @@ namespace CulverinEditor
         public extern string GetName();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private static extern GameObject GetOwnGameObject();
+        private  extern GameObject GetOwnGameObject();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern Component AddComponent(Type componentType);
@@ -90,14 +87,5 @@ namespace CulverinEditor
         {
             return GetComponent(typeof(T)) as T;
         }
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern Component[] GetComponents(Type type);
-
-        public T GetComponents<T>() where T : Component
-        {
-            return GetComponents(typeof(T)) as T;
-        }
-
     }
 }

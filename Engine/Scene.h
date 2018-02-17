@@ -45,7 +45,9 @@ public:
 
 	GameObject* GetGameObjectfromScene(bool& active);
 	GameObject* GetGameObjectbyuid(uint uid);
+	GameObject* FindGameObjectWithTag(const char* str);
 
+	
 	// DRAWING METHODS ---------
 	void DrawPlane();
 	void DrawCube(float size);
