@@ -587,9 +587,9 @@ void ModuleShaders::OnEvent(Event & event)
 	{
 	case EventType::EVENT_OPEN_SHADER_EDITOR:
 
-		path = Shader_Directory_fs+ "/" + event.shadereditor.name;
+		path = Shader_Directory_fs+ "/" + event.shader_editor.name;
 
-		switch (event.shadereditor.shader_type)
+		switch (event.shader_editor.shader_type)
 		{
 		case ShaderType::fragment:
 			path += ".frag";
@@ -601,36 +601,36 @@ void ModuleShaders::OnEvent(Event & event)
 			path += ".geom";
 			break;
 		}
-		shader_text_active.name = event.shadereditor.name;
+		shader_text_active.name = event.shader_editor.name;
 		shader_text_active.shaderPath = path;
-		shader_text_active.shaderType = event.shadereditor.shader_type;
-		enable_editor = event.shadereditor.open_editor;
+		shader_text_active.shaderType = event.shader_editor.shader_type;
+		enable_editor = event.shader_editor.open_editor;
 		break;
 	case EventType::EVENT_CREATE_SHADER_PROGRAM:
-		path = Shader_Directory_fs + "/" + event.shaderprogram.name + ".mat";
-		ShaderProgram * program=CreateShader(event.shaderprogram.name);
+		path = Shader_Directory_fs + "/" + event.shader_program.name + ".mat";
+		ShaderProgram * program=CreateShader(event.shader_program.name);
 		program->path = path;
-		switch (event.shaderprogram.Shader1->shaderType) {
+		switch (event.shader_program.Shader1->shaderType) {
 		case ShaderType::vertex:
-			program->AddVertex(event.shaderprogram.Shader1);
+			program->AddVertex(event.shader_program.Shader1);
 			break;
 		case ShaderType::fragment:
-			program->AddFragment(event.shaderprogram.Shader2);
+			program->AddFragment(event.shader_program.Shader2);
 			break;
 		case ShaderType::geometry:
-			program->AddGeometry(event.shaderprogram.Shader2);
+			program->AddGeometry(event.shader_program.Shader2);
 			break;
 		}
 
-		switch (event.shaderprogram.Shader2->shaderType) {
+		switch (event.shader_program.Shader2->shaderType) {
 		case ShaderType::vertex:
-			program->AddVertex(event.shaderprogram.Shader2);
+			program->AddVertex(event.shader_program.Shader2);
 			break;
 		case ShaderType::fragment:
-			program->AddFragment(event.shaderprogram.Shader2);
+			program->AddFragment(event.shader_program.Shader2);
 			break;
 		case ShaderType::geometry:
-			program->AddGeometry(event.shaderprogram.Shader2);
+			program->AddGeometry(event.shader_program.Shader2);
 			break;
 		}
 		program->LoadProgram();
@@ -700,9 +700,8 @@ void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, int & v)
 void ModuleShaders::SendEventWithAllShaders() 
 {
 	Event shader_event;
-	shader_event.shadereditor.type = EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
-	//need to fix std::pair
-	shader_event.sendshaderobject.shaders = &shaders;
+	shader_event.send_shader_object.type = EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
+	shader_event.send_shader_object.shaders = &shaders;
 	PushEvent(shader_event);
 	App->gui->shader_program_creation = false;
 }

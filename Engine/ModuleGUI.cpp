@@ -474,21 +474,21 @@ update_status ModuleGUI::Update(float dt)
 		if (ImGui::Button("Create")) {
 
 			Event shader_event;
-			shader_event.shadereditor.type = EventType::EVENT_OPEN_SHADER_EDITOR;
-			shader_event.shadereditor.name = str_shad_temp;
+			shader_event.shader_editor.type = EventType::EVENT_OPEN_SHADER_EDITOR;
+			shader_event.shader_editor.name = str_shad_temp;
 
 			switch (combo_shaders) {
 			case 0:
-				shader_event.shadereditor.shader_type = ShaderType::vertex;
+				shader_event.shader_editor.shader_type = ShaderType::vertex;
 				break;
 			case 1:
-				shader_event.shadereditor.shader_type = ShaderType::fragment;
+				shader_event.shader_editor.shader_type = ShaderType::fragment;
 				break;
 			case 2:
-				shader_event.shadereditor.shader_type = ShaderType::geometry;
+				shader_event.shader_editor.shader_type = ShaderType::geometry;
 				break;
 			}
-			shader_event.shadereditor.open_editor = true;
+			shader_event.shader_editor.open_editor = true;
 			PushEvent(shader_event);
 
 			shader_obj_creation = false;
@@ -524,16 +524,16 @@ update_status ModuleGUI::Update(float dt)
 		{
 
 			Event shader_event_prg;
-			shader_event_prg.shaderprogram.type = EventType::EVENT_CREATE_SHADER_PROGRAM;
-			shader_event_prg.shaderprogram.name = str_shad_prg_temp;
+			shader_event_prg.shader_program.type = EventType::EVENT_CREATE_SHADER_PROGRAM;
+			shader_event_prg.shader_program.name = str_shad_prg_temp;
 
 			if (combo_shaders_obj != -1)
 			{
-				shader_event_prg.shaderprogram.Shader1 = vec_temp_shader[combo_shaders_obj];
+				shader_event_prg.shader_program.Shader1 = vec_temp_shader[combo_shaders_obj];
 			}
 
 			if (combo_shaders_obj2 != -1) {
-				shader_event_prg.shaderprogram.Shader2 = vec_temp_shader[combo_shaders_obj2];
+				shader_event_prg.shader_program.Shader2 = vec_temp_shader[combo_shaders_obj2];
 			}
 
 			PushEvent(shader_event_prg);
@@ -1209,8 +1209,7 @@ void ModuleGUI::OnEvent(Event& event)
 	{
 	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:
 		//need to fix std::pair
-		vec_temp_shader = *event.sendshaderobject.shaders;
+		vec_temp_shader = *event.send_shader_object.shaders;
 		break;
 	}
-
 }

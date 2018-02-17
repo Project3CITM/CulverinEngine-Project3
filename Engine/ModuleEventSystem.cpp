@@ -70,6 +70,19 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 	uint size = 0;
 	uint count = 0;
 
+	if (!QShadowMapEvent.empty())
+	{
+		size = QShadowMapEvent.size();
+		EListener = MEventListeners.find(EventType::EVENT_SHADOW_MAP_GEN);
+		if (EListener != MEventListeners.end())
+			for (int i = 0; i < size; i++)
+			{
+				for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+					(*item2)->OnEvent(QShadowMapEvent.front());
+				QShadowMapEvent.pop();
+			}
+	}
+	
 	std::multimap<float, Event>& MultimapToIterate = MM3DDrawEvent;
 	for (int i = 0; i < 3; i++)
 	{
@@ -180,6 +193,7 @@ void ModuleEventSystem::PushEvent(Event& event)
 		}
 		break;
 	}
+	case EventType::EVENT_SHADOW_MAP_GEN: QShadowMapEvent.push(event); break;
 	default: MMNormalEvent.insert(std::pair<EventType, Event>(event.type, event)); break;
 	}
 }

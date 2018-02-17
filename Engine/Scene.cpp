@@ -232,7 +232,7 @@ void Scene::OnEvent(Event & event)
 	switch (event.type)
 	{
 	case EventType::EVENT_DELETE_GO:
-		DeleteGameObject(event.deletego.Todelte);
+		DeleteGameObject(event.delete_go.Todelte);
 		break;
 	}
 }

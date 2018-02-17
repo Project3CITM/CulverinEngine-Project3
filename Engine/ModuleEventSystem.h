@@ -57,6 +57,7 @@ public:
 
 private:
 	std::multimap<EventType, Event> MMNormalEvent;	//All the events that are not draw type
+	std::queue<Event> QShadowMapEvent;				//Shadow map generation added here, called before all draw
 	std::multimap<float, Event> MM3DDrawEvent;		//3D Game Objects without alpha added here
 	std::multimap<float, Event> MM3DADrawEvent;		//3D Game Objects with alpha & World space canvas added here
 	std::multimap<float, Event> MM2DCanvasDrawEvent;//2D Game Objects & Screen space canvas added here

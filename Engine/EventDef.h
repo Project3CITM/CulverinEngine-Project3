@@ -1,6 +1,7 @@
 #ifndef _EVENTDEF_
 #define _EVENTDEF_
-#include<vector>
+#include <vector>
+#include <map>
 #include "Math\float2.h"
 /*-----------------------------------------------------------------------------------------------------------*/
 /*---Add new events:-----------------------------------------------------------------------------------------*/
@@ -21,6 +22,7 @@ class GameObject;
 class Component;
 enum ShaderType;
 class Shader;
+union Event;
 
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
@@ -46,6 +48,7 @@ enum EventType
 	/*------------------Shader Pipeline-----------------*/
 	EVENT_CREATE_SHADER_PROGRAM,
 	EVENT_SEND_ALL_SHADER_OBJECTS,
+	EVENT_SHADOW_MAP_GEN,
 	EVENT_OPEN_SHADER_EDITOR,
 
 	/*----------------Skeletal Animation----------------*/
@@ -169,12 +172,15 @@ struct ECreateShaderProgram
 
 struct ESendAllShaderObject
 {
-	ESendAllShaderObject() {}
-	EventType type= EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
-	
-	//This vector makes std pair of the cpp errors
-	//need to fix this
+	EventType type;
 	std::vector<Shader*>* shaders;
+};
+
+struct EShadowMapGen
+{
+	EventType type;
+	std::multimap<float, Event>& MM3DDrawEvent;
+	std::multimap<float, Event>& MM3DADrawEvent;
 };
 
 struct EOpenShaderEditor
@@ -182,8 +188,7 @@ struct EOpenShaderEditor
 	EventType type;
 	ShaderType shader_type;
 	const char* name;
-	bool open_editor;	
-	
+	bool open_editor;
 };
 
 /*--------------------------------------------------*/
@@ -200,16 +205,16 @@ struct EOpenShaderEditor
 /*--------------------------------------------------*/
 union Event
 {
-	Event() {};
-	~Event() {};
+	Event() {}
+	~Event() {}
 	EventType type;
 	/*----------------------Engine----------------------*/
-	EDeleteGO deletego;
-	EDockingModif dockmodif;
+	EDeleteGO delete_go;
+	EDockingModif dock_modif;
 	EDraw draw;
-	EDroppedFile filedrop;
+	EDroppedFile file_drop;
 	ETimeManager time;
-	EWindowResize windowresize;
+	EWindowResize window_resize;
 	/*-------------------Audio Engine-------------------*/
 
 	/*------------------Gameplay System-----------------*/
@@ -219,9 +224,10 @@ union Event
 	/*----------------------Physics---------------------*/
 
 	/*------------------Shader Pipeline-----------------*/
-	ECreateShaderProgram shaderprogram;
-	ESendAllShaderObject sendshaderobject;
-	EOpenShaderEditor shadereditor;
+	ECreateShaderProgram shader_program;
+	ESendAllShaderObject send_shader_object;
+	EShadowMapGen shadow_map_gen;
+	EOpenShaderEditor shader_editor;
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/

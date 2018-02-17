@@ -629,8 +629,8 @@ void GameObject::ShowGameObjectOptions()
 		{
 			//((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjecttoDelete(this);
 			Event e;
-			e.deletego.type = EventType::EVENT_DELETE_GO;
-			e.deletego.Todelte = this;
+			e.delete_go.type = EventType::EVENT_DELETE_GO;
+			e.delete_go.Todelte = this;
 			PushEvent(e);
 		}
 		else
