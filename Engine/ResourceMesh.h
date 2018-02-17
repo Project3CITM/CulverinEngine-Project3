@@ -2,6 +2,7 @@
 #define _RESOURCEMESH_
 
 #include "Resource_.h"
+#include "Math\float4x4.h"
 #include "Math/float3.h"
 #include "Math/float2.h"
 
@@ -16,13 +17,12 @@ struct Vertex
 
 struct SkeletonSource
 {
+	float4x4 transform;
 	uint num_bones = 0;
 	ImportBone* bones = nullptr;
 	char* bone_hirarchy_names = nullptr;
 	uint* bone_hirarchy_num_childs = nullptr;
 };
-
-struct ImportBone;
 
 class ResourceMesh : public Resource
 {

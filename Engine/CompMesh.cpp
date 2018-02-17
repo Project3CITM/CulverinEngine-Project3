@@ -558,7 +558,20 @@ void CompMesh::GenSkeleton()
 
 	uint generated_bones = 0;
 
-	parent->AddChildGameObject(GenBone(&name_iterator, source, generated_bones));
+	GameObject* new_skeleton = new GameObject("Skeleton");
+	CompTransform* transform = (CompTransform*)new_skeleton->AddComponent(Comp_Type::C_TRANSFORM);
+
+	float3 pos;
+	Quat rot;
+	float3 scale;
+
+	source->transform.Decompose(pos, rot, scale);
+	transform->SetPos(pos);
+	transform->SetRot(rot);
+	transform->SetScale(scale);
+
+	parent->AddChildGameObject(new_skeleton);
+	new_skeleton->AddChildGameObject(GenBone(&name_iterator, source, generated_bones));
 }
 
 GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* source, uint& generated_bones)

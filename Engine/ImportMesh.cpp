@@ -48,6 +48,8 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	uint total_names_size = 0;
 	uint total_weights = 0;
 
+	aiMatrix4x4* skeleton_transform = nullptr;
+
 	float4x4* bone_offsets = nullptr;
 	char** bone_names = nullptr;
 	uint* bone_name_sizes = nullptr;
@@ -172,6 +174,21 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				}				
 			}
 
+			skeleton_transform = new aiMatrix4x4;
+
+			aiNode* skeleton_root = FindSkeletonRootNode(scene, mesh);
+			aiNode* mesh_node = FindMeshNode(scene, mesh);
+
+			aiNode* node_iterator = skeleton_root->mParent;
+
+			while (node_iterator->mParent == scene->mRootNode)
+			{
+				node_iterator = node_iterator->mParent;
+				(*skeleton_transform) = node_iterator->mTransformation * (*skeleton_transform);
+			}
+
+			(*skeleton_transform) = mesh_node->mTransformation.Inverse() * (*skeleton_transform);
+
 			bone_hirarchy_names = new char[total_names_size];
 			bone_hirarchy_num_childs = new uint[num_bones];
 
@@ -200,7 +217,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		LOG("Can't Import Mesh");
 		ret = false;
 	}
-
 	
 	// SET MATERIAL DATA -----------------------------------------
 	if (mesh->mMaterialIndex >= 0)
@@ -257,6 +273,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	size += sizeof(uint)* num_bones; //num name sizes
 	size += sizeof(uint) * num_bones; // num_weights
 	size += sizeof(ImportBone::Weight) * total_weights; //weights
+	size += sizeof(float) * 4 * 4; //skeleton transform
 	size += total_names_size; //bone hyrarchy names
 	size += sizeof(uint); //names_sizes
 	size += sizeof(uint) * num_bones; //bone hyrarchy name sizes
@@ -325,6 +342,11 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			memcpy(cursor, weights[i], bytes);
 		}
 
+		//Skeleton transform
+		cursor += bytes;
+		bytes = sizeof(float) * 4 * 4;
+		memcpy(cursor, skeleton_transform, bytes);
+
 		//total bone_names_size
 		cursor += bytes;
 		bytes = sizeof(uint);
@@ -343,6 +365,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		RELEASE_ARRAY(bone_offsets);
 		RELEASE_ARRAY(bone_name_sizes);
 		RELEASE_ARRAY(bone_names);
+		RELEASE(skeleton_transform);
 		RELEASE_ARRAY(bone_hirarchy_names);
 		RELEASE_ARRAY(bone_hirarchy_num_childs);
 	}
@@ -531,6 +554,11 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 
 			//Bone hirarchy names total_size
 			cursor += bytes;
+			bytes = sizeof(float) * 4 * 4;
+			memcpy(&skeleton_source->transform[0][0], cursor, bytes);
+
+			//Bone hirarchy names total_size
+			cursor += bytes;
 			bytes = sizeof(uint);
 			uint bone_names_size = *((uint*)cursor);
 
@@ -585,4 +613,92 @@ void ImportMesh::ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, char* bone
 
 	for (int i = 0; i < node->mNumChildren; i++)
 		ImportBoneHirarchy(node->mChildren[i], mesh, bone_hirarchy_names, bone_hirarchy_num_childs, name_iterator, joints_saved);
+}
+
+aiNode * ImportMesh::FindSkeletonRootNode(const aiScene * scene, const aiMesh* mesh)
+{
+	aiNode* ret = nullptr;
+
+	for (int i = 0; i < scene->mRootNode->mNumChildren; i++)
+	{
+		ret = GetSkeletonRoot(scene->mRootNode->mChildren[i], mesh);
+		if (ret != nullptr)
+			return ret;
+	}
+
+	return ret;
+}
+
+aiNode * ImportMesh::FindMeshNode(const aiScene * scene, const aiMesh * mesh)
+{
+	aiNode* ret = nullptr;
+
+	for (int i = 0; i < scene->mRootNode->mNumChildren; i++)
+	{
+		ret = GetMeshNode(scene->mRootNode->mChildren[i], mesh, scene);
+		if (ret != nullptr)
+			return ret;
+	}
+
+	return ret;
+}
+
+aiNode * ImportMesh::GetSkeletonRoot(aiNode * node, const aiMesh * mesh)
+{
+	bool is_joint = false;
+
+	for (int i = 0; i < mesh->mNumBones; i++)
+		if (node->mName == mesh->mBones[i]->mName)
+			return node;
+
+	aiNode* ret = nullptr;
+
+	for (int i = 0; i < node->mNumChildren; i++)
+	{
+		ret = GetSkeletonRoot(node->mChildren[i], mesh);
+		if (ret != nullptr)
+			break;
+	}
+
+	return ret;
+}
+
+aiNode * ImportMesh::GetMeshNode(aiNode * node, const aiMesh * mesh, const aiScene * scene)
+{
+	bool is_joint = false;
+
+	for (int i = 0; i < node->mNumMeshes; i++)
+		if (scene->mMeshes[node->mMeshes[i]] == mesh)
+			return node;
+
+	aiNode* ret = nullptr;
+
+	for (int i = 0; i < node->mNumChildren; i++)
+	{
+		ret = GetMeshNode(node->mChildren[i], mesh, scene);
+		if (ret != nullptr)
+			break;
+	}
+
+	return ret;
+}
+
+bool ImportMesh::IsInSkeletonBranch(const aiNode * node, const aiMesh* mesh)
+{
+	bool is_joint = false;
+
+	for (int i = 0; i < mesh->mNumBones; i++)
+		if (node->mName == mesh->mBones[i]->mName)
+			return true;
+
+	bool ret = false;
+
+	for (int i = 0; i < node->mNumChildren; i++)
+	{
+		ret = IsInSkeletonBranch(node->mChildren[i], mesh);
+		if (ret == true)
+			break;
+	}
+	
+	return ret;
 }
