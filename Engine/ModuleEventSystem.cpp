@@ -67,6 +67,8 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 {
 	const std::vector<Module*>* ModuleList = App->GetModuleList();
 	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
+	uint size = 0;
+	uint count = 0;
 
 	std::multimap<float, Event>& MultimapToIterate = MM3DDrawEvent;
 	for (int i = 0; i < 3; i++)
@@ -85,8 +87,11 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 			//TODO Set perspective to orthographic here
 			break; 
 		}
-		for (std::multimap<float, Event>::const_iterator item = MultimapToIterate.cbegin(); item != MultimapToIterate.cend(); ++item)
+		size = MultimapToIterate.size();
+		count = 0;
+		for (std::multimap<float, Event>::const_iterator item = MultimapToIterate.cbegin(); item != MultimapToIterate.cend();)
 		{
+			if (count >= size) break;
 			if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
 				EListener = MEventListeners.find(item._Ptr->_Myval.second.type);
 			if (EListener != MEventListeners.end())
@@ -108,6 +113,8 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 					}
 				}
 			else continue;
+			item = MultimapToIterate.erase(item);
+			count++;
 		}
 		if (i == 2)
 		{
@@ -116,21 +123,26 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 	}
 
 	//iterate and send MMNormalEvent
-	for (std::multimap<EventType, Event>::const_iterator item = MMNormalEvent.cbegin(); item != MMNormalEvent.cend(); ++item)
+	size = MMNormalEvent.size();
+	count = 0;
+	for (std::multimap<EventType, Event>::const_iterator item = MMNormalEvent.cbegin(); item != MMNormalEvent.cend();)
 	{
+		if (count >= size) break;
 		if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
 			EListener = MEventListeners.find(item._Ptr->_Myval.first);
 		if (EListener != MEventListeners.end())
 			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
 				(*item2)->OnEvent(item._Ptr->_Myval.second);
 		else continue;
+		item = MMNormalEvent.erase(item);
+		count++;
 	}
 
 	//We had analysed all events, just clean them and wait for new ones in the next frame
-	MMNormalEvent.clear();
-	MM3DDrawEvent.clear();
-	MM3DADrawEvent.clear();
-	MM2DCanvasDrawEvent.clear();
+	//MMNormalEvent.clear();
+	//MM3DDrawEvent.clear();
+	//MM3DADrawEvent.clear();
+	//MM2DCanvasDrawEvent.clear();
 
 	return update_status::UPDATE_CONTINUE;
 }
