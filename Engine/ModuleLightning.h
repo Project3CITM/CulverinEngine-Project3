@@ -4,7 +4,8 @@
 #include "Module.h"
 
 #include "ModuleFramebuffers.h"
-
+#include "glm\glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 #include <vector>
 
 #define DEFAULT_SHADOW_CAST_POINTS_COUNT 4
@@ -74,6 +75,9 @@ public:
 	FrameBuffer text;
 	ResourceMesh*  light_UI_plane = nullptr;
 	uint texture_bulb = 0;
+
+	glm::mat4 depthBiasMVP;
+
 private:
 	uint shadow_cast_points_count = DEFAULT_SHADOW_CAST_POINTS_COUNT; // This value should be able to change from config and modiffied on load
 	std::vector<DepthFrameBuffer> shadow_maps;

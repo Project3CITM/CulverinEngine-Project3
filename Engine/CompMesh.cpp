@@ -290,7 +290,7 @@ void CompMesh::Draw()
 			{
 				CompMaterial* temp = parent->GetComponentMaterial();
 				if (temp != nullptr) {
-					for (int i = 0; i < temp->material_shader.textures.size(); i++) {
+					/*for (int i = 0; i < temp->material_shader.textures.size(); i++) {
 					
 
 						uint texLoc = glGetUniformLocation(temp->material_shader.programID, temp->material_shader.textures[i].var_name.c_str());
@@ -309,7 +309,7 @@ void CompMesh::Draw()
 							glBindTexture(GL_TEXTURE_2D, temp->material_shader.textures[i].value->GetTextureID());
 						}
 
-					}
+					}*/
 					/*
 
 					uint texture_2D_sampler = 0;
@@ -352,24 +352,32 @@ void CompMesh::Draw()
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
 			glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 
+			//---------------------------------------------
+	
+			float4x4 ProjectionMatrix = camFrust.ProjectionMatrix();
+			float4x4 ViewMatrix = camFrust.ViewMatrix();
+			float4x4 ModelMatrix = camFrust.ProjectionMatrix().Inverted()*camFrust.ViewProjMatrix();
+			float4x4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
-			/*
-			uint depthMatrixID = glGetUniformLocation(App->module_lightning->shadow_Shader->programID, "depthMVP");
+			
+			uint depthMatrixID = glGetUniformLocation(shader->programID, "depthMVP");
+			uint depthBiasID = glGetUniformLocation(shader->programID, "depthBias");
+
+			glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
+			glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &App->module_lightning->depthBiasMVP[0][0]);
 
 
-			glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
+			// Bind our texture in Texture Unit 0
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, App->renderer3D->default_mat->GetTextureID());
+			// Set our "myTextureSampler" sampler to use Texture Unit 0
+			glUniform1i(shader->programID, App->renderer3D->default_mat->GetTextureID());
 
-			// Compute the MVP matrix from the light's point of view
-			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-			glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-			glm::mat4 depthModelMatrix = glm::mat4(1.0);
-			glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, App->module_lightning->text.GetTexture());
+			glUniform1i(shader->programID, App->module_lightning->text.GetTexture());
 
 
-
-
-			glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
-			*/
 
 			int total_save_buffer = 8;
 

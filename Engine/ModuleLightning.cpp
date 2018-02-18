@@ -428,16 +428,10 @@ void ModuleLightning::OnEvent(Event & event)
 					}
 					//
 					
-
-
 					Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 					float4x4 temp = camFrust.ViewMatrix();
 				
-					GLint modelLoc = glGetUniformLocation(shadow_Shader->programID, "model");
-					uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
-
-					
-
+	
 					float4x4 matrixfloat = transform->GetGlobalTransform();
 					GLfloat matrix[16] =
 					{
@@ -466,6 +460,21 @@ void ModuleLightning::OnEvent(Event & event)
 					glm::mat4 depthModelMatrix = glm::mat4(1.0);
 					glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
 
+					//This is needed for the shadow projection in CompMesh cpp
+
+					glm::mat4 biasMatrix(
+						0.5, 0.0, 0.0, 0.0,
+						0.0, 0.5, 0.0, 0.0,
+						0.0, 0.0, 0.5, 0.0,
+						0.5, 0.5, 0.5, 1.0
+					);
+
+					depthBiasMVP = biasMatrix * depthMVP;
+
+					//----------------------------
+
+					GLint modelLoc = glGetUniformLocation(shadow_Shader->programID, "model");
+					uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
 
 
 					glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
@@ -506,7 +515,6 @@ void ModuleLightning::OnEvent(Event & event)
 					glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-					
 
 				}
 
@@ -524,7 +532,6 @@ void ModuleLightning::OnEvent(Event & event)
 	App->scene->scene_buff->Bind("Scene");
 	
 	shadow_Shader->Unbind();
-
 }
 
 void ModuleLightning::CalShadowMaps()
