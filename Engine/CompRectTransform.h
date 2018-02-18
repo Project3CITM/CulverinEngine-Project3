@@ -30,6 +30,7 @@ public:
 	float2 GetPivot()const;
 	bool GetUpdateRect()const;
 	float4 GetRect()const;
+	float4 GetGlobalRect() const;
 	float3 GetNorthEastPosition()const;
 	float3 GetNorthWestPosition()const;
 	float3 GetSouthEastPosition()const;

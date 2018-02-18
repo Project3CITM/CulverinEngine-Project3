@@ -251,7 +251,9 @@ void CompInteractive::ForceClear(Event event_input)
 	point_down = false;
 	point_inside = false;
 	interactive_selected = false;
+
 	UpdateSelectionState(event_input);
+	PrepareHandleTransition();
 
 }
 
@@ -266,24 +268,32 @@ void CompInteractive::OnPointDown(Event event_input)
 	point_down = true;
 
 	UpdateSelectionState(event_input);
+	PrepareHandleTransition();
+
 }
 
 void CompInteractive::OnPointUP(Event event_input)
 {
 	point_down = false;
 	UpdateSelectionState(event_input);
+	PrepareHandleTransition();
+
 }
 
 void CompInteractive::OnPointEnter(Event event_input)
 {
 	point_inside = true;
 	UpdateSelectionState(event_input);
+	PrepareHandleTransition();
+
 }
 
 void CompInteractive::OnPointExit(Event event_input)
 {
 	point_inside = false;
 	UpdateSelectionState(event_input);
+	PrepareHandleTransition();
+
 
 }
 
@@ -291,6 +301,8 @@ void CompInteractive::OnInteractiveSelected(Event event_input)
 {
 	interactive_selected = true;
 	UpdateSelectionState(event_input);
+	PrepareHandleTransition();
+
 
 }
 
@@ -298,15 +310,34 @@ void CompInteractive::OnInteractiveUnSelected(Event event_input)
 {
 	interactive_selected = false;
 	UpdateSelectionState(event_input);
+	PrepareHandleTransition();
+
 }
 
 bool CompInteractive::PointerInside(float2 position)
 {
-	float4 rect = parent->GetComponentRectTransform()->GetRect();
-	if(rect.x<position.x &&
-	rect.x+rect.z>position.x &&
-		rect.y<position.y &&
-		rect.y + rect.w>position.y)
+	float4 rect = parent->GetComponentRectTransform()->GetGlobalRect();
+	ImGuiIO& io = ImGui::GetIO();
+	float mouse_x = position.x - GetPositionDock("Scene").x;
+	float mouse_y = -(position.y - (GetPositionDock("Scene").y + GetSizeDock("Scene").y));
+
+	mouse_x = (mouse_x*io.DisplaySize.x) / GetSizeDock("Scene").x;
+	mouse_y = (mouse_y*io.DisplaySize.y)/GetSizeDock("Scene").y;
+
+	LOG("Rect.x %.2f,Rect.y %.2f,Rect.w %.2f,Rect.h %.2f", rect.x, rect.y, rect.z, rect.w);
+	LOG("Rect.x+width %.2f,Rect.y+height %.2f", rect.x + rect.z, rect.y - rect.w);
+	LOG("mouse.y %.2f,mouse.y %.2f", mouse_x, mouse_y);
+
+
+
+	if (rect.x <= mouse_x &&
+		rect.x + rect.z >= mouse_x &&
+		rect.y >= mouse_y &&
+		rect.y - rect.w  <= mouse_y)
+	{
+
+		return true;
+	}
 
 	return false;
 }
@@ -469,6 +500,8 @@ void CompInteractive::PrepareHandleTransition()
 
 void CompInteractive::HandleTransition(SelectionStates selection_state)
 {
+	if (target_graphic == nullptr)
+		return;
 	float4 desired_color;
 	ResourceMaterial* desired_sprite = nullptr;
 	switch (selection_state)
