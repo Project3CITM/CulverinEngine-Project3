@@ -170,11 +170,62 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+	//Collider type
+	json_object_dotset_number_with_std(object, name + "ColliderType", collider_type);
+
+
+	//Position
+	json_object_dotset_number_with_std(object, name + "Postion_X", position.x);
+	json_object_dotset_number_with_std(object, name + "Postion_Y", position.y);
+	json_object_dotset_number_with_std(object, name + "Postion_Z", position.z);
+
+	//Angle
+	json_object_dotset_number_with_std(object, name + "Angle_X", angle.x);
+	json_object_dotset_number_with_std(object, name + "Angle_Y", angle.y);
+	json_object_dotset_number_with_std(object, name + "Angle_Z", angle.z);
+
+	//Material
+	json_object_dotset_number_with_std(object, name + "Material_X", material.x);
+	json_object_dotset_number_with_std(object, name + "Material_Y", material.y);
+	json_object_dotset_number_with_std(object, name + "Material_Z", material.z);
+
+	//Size
+	json_object_dotset_number_with_std(object, name + "Size_X", size.x);
+	json_object_dotset_number_with_std(object, name + "Size_Y", size.y);
+	json_object_dotset_number_with_std(object, name + "Size_Z", size.z);
+
+	//Rad
+	json_object_dotset_number_with_std(object, name + "Rad", rad);
+
 }
 
 void CompCollider::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+
+	//Position
+	position.x = json_object_dotget_number_with_std(object, name + "Postion_X");
+	position.y = json_object_dotget_number_with_std(object, name + "Postion_Y");
+	position.z = json_object_dotget_number_with_std(object, name + "Postion_Z");
+
+	//Angle	
+	angle.x = json_object_dotget_number_with_std(object, name + "Angle_X");
+	angle.y = json_object_dotget_number_with_std(object, name + "Angle_Y");
+	angle.z = json_object_dotget_number_with_std(object, name + "Angle_Z");
+
+	//Material	
+	angle.x = json_object_dotget_number_with_std(object, name + "Material_X");
+	angle.y = json_object_dotget_number_with_std(object, name + "Material_Y");
+	angle.z = json_object_dotget_number_with_std(object, name + "Material_Z");
+
+	//Size	
+	angle.x = json_object_dotget_number_with_std(object, name + "Size_X");
+	angle.y = json_object_dotget_number_with_std(object, name + "Size_Y");
+	angle.z = json_object_dotget_number_with_std(object, name + "Size_Z");
+
+	//Rad	
+	rad = json_object_dotget_number_with_std(object, name + "Rad");
 }
 
 // -----------------------------------------------------------------
