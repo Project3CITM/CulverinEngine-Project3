@@ -358,7 +358,7 @@ void CompTransform::LookAt(float3 target_pos)
 		0, 0, 0, 1
 	};
 
-	float3 rot = pm.ToEulerXYX();
+	float3 rot = pm.ToEulerXYZ();
 	rot.x = rot.x*RADTODEG;
 	rot.y = rot.y*RADTODEG;
 	rot.z = rot.z*RADTODEG;
@@ -366,6 +366,8 @@ void CompTransform::LookAt(float3 target_pos)
 	SetRot(rot);
 	SetLocalTransform();
 	SetGlobalTransform();
+	UpdateLocalTransform();
+	UpdateGlobalTransform();
 }
 
 void CompTransform::ResetMatrix()
