@@ -9,7 +9,7 @@ layout(location = 3) in vec4 color;
 // Output data ; will be interpolated for each fragment.
 out vec2 UV;
 out vec4 ShadowCoord;
-out vec4 our_pos;
+out vec3 ourNormal;
 // Values that stay constant for the whole mesh.
 uniform mat4 depthMVP;
 uniform mat4 depthBias;
@@ -21,10 +21,10 @@ uniform mat4 viewproj;
 void main(){
 
 	// Output position of the vertex, in clip space : MVP * position
-	our_pos =  depthMVP* model*vec4(position,1);
+	gl_Position =  viewproj*model*vec4(position,1);
 	
-	ShadowCoord = depthBias * model*vec4(position,1);
-	
+	ShadowCoord = depthBias*model*vec4(position,1);
+	ourNormal = normal;
 	// UV of the vertex. No special space for this one.
 	UV = texCoord;
 }

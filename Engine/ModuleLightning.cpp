@@ -41,21 +41,26 @@ void DepthFrameBuffer::Create(int width, int height)
 	this->width = width;
 	this->height = height;
 
-	glGenFramebuffers(1, &frame_id);
 
+
+	glGenFramebuffers(1, &frame_id);
+	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height,
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, width, height,
 				0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
+
 	glDrawBuffer(GL_NONE); // Since we dont need the color buffer we must tell OpenGl explicitly
-	glReadBuffer(GL_NONE);
+
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -146,7 +151,7 @@ bool ModuleLightning::Start()
 
 		"void main()\n"
 		"{\n"
-		" gl_Position =  depthMVP * model * vec4(position,1);\n"
+		" gl_Position =  depthMVP *model * vec4(position,1);\n"
 		"}\n"
 	};
 
@@ -179,7 +184,7 @@ bool ModuleLightning::Start()
 
 		"void main()\n"
 		"{\n"
-		"fragmentdepth = vec4(vec3(gl_FragCoord.z),1);\n"
+		"fragmentdepth = vec4(gl_FragCoord.z);\n"
 		"}\n"
 	};
 
@@ -456,20 +461,14 @@ void ModuleLightning::OnEvent(Event & event)
 
 					// Compute the MVP matrix from the light's point of view
 					glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-					glm::mat4 depthViewMatrix = glm::lookAt(vec3(rot_eu_ang.x, rot_eu_ang.y, rot_eu_ang.z), glm::vec3(pos_light.x, pos_light.y, pos_light.z), glm::vec3(0, 1, 0));
+					//glm::mat4 depthViewMatrix = glm::lookAt(vec3(rot_eu_ang.x, rot_eu_ang.y, rot_eu_ang.z), glm::vec3(pos_light.x, pos_light.y, pos_light.z), glm::vec3(0, 1, 0));
+					glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 					glm::mat4 depthModelMatrix = glm::mat4(1.0);
 					glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
 
 					//This is needed for the shadow projection in CompMesh cpp
 
-					glm::mat4 biasMatrix(
-						0.5, 0.0, 0.0, 0.0,
-						0.0, 0.5, 0.0, 0.0,
-						0.0, 0.0, 0.5, 0.0,
-						0.5, 0.5, 0.5, 1.0
-					);
 
-					depthBiasMVP = biasMatrix * depthMVP;
 
 					//----------------------------
 

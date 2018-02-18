@@ -354,31 +354,45 @@ void CompMesh::Draw()
 
 			//---------------------------------------------
 	
-			float4x4 ProjectionMatrix = camFrust.ProjectionMatrix();
-			float4x4 ViewMatrix = camFrust.ViewMatrix();
-			float4x4 ModelMatrix = camFrust.ProjectionMatrix().Inverted()*camFrust.ViewProjMatrix();
-			float4x4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-
+		//--------------this
+			float4x4 MVP =  camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
 			
-			uint depthMatrixID = glGetUniformLocation(shader->programID, "depthMVP");
-			uint depthBiasID = glGetUniformLocation(shader->programID, "depthBias");
+			glm::mat4 biasMatrix(
+				0.5, 0.0, 0.0, 0,
+				0.0, 0.5, 0.0, 0,
+				0.0, 0.0, 0.5, 0,
+				0.5, 0.5, 0.5, 1.0
+			);
+
+		
+			glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
+			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+			//glm::mat4 depthViewMatrix = glm::lookAt(vec3(rot_eu_ang.x, rot_eu_ang.y, rot_eu_ang.z), glm::vec3(pos_light.x, pos_light.y, pos_light.z), glm::vec3(0, 1, 0));
+			glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+			glm::mat4 depthModelMatrix = glm::mat4(1.0);
+			glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+			glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
+			
+			int depthMatrixID = glGetUniformLocation(shader->programID, "depthMVP");
+			int depthBiasID = glGetUniformLocation(shader->programID, "depthBias");
+			GLuint ShadowMapID = glGetUniformLocation(shader->programID, "shadowMap");
+			//-----------------------
+
 
 			glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
-			glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &App->module_lightning->depthBiasMVP[0][0]);
+			glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
 
 
-			// Bind our texture in Texture Unit 0
+		
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, App->renderer3D->default_mat->GetTextureID());
-			// Set our "myTextureSampler" sampler to use Texture Unit 0
-			glUniform1i(shader->programID, App->renderer3D->default_mat->GetTextureID());
+			glBindTexture(GL_TEXTURE_2D, App->module_lightning->text.GetTexture());
+			glUniform1i(shader->programID, App->module_lightning->text.rbo);
+			glUniform1i(ShadowMapID, 0);
 
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, App->module_lightning->text.GetTexture());
-			glUniform1i(shader->programID, App->module_lightning->text.GetTexture());
-
-
-
+			glUniform1i(shader->programID, App->module_lightning->text.rbo);
+			glUniform1i(ShadowMapID, 1);
 			int total_save_buffer = 8;
 
 			if (resource_mesh->vertices.size()>0) {
