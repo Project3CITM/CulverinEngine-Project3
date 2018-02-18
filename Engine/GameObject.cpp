@@ -415,7 +415,7 @@ void GameObject::Draw()
 				Event draw_event;
 				draw_event.request_3d3damm.type = EventType::EVENT_REQUEST_3D_3DA_MM;
 				draw_event.request_3d3damm.light = (CompLight*)components[i];
-				PushImmediateEvent(draw_event);
+				PushEvent(draw_event);
 				components[i]->Draw();
 			}
 		}
