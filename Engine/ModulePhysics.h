@@ -41,8 +41,10 @@ public:
 	void OnEvent(Event& event);
 
 	// PhysX Methods ----------------
-	jpPhysicsRigidBody* GetNewRigidBody(bool dynamic = false);
 	jpPhysicsRigidBody* GetNewRigidBody(Component* component, bool dynamic = false);
+
+	void ChangeRigidActorToStatic(jpPhysicsRigidBody* actor, Component* comp);
+	void ChangeRigidActorToDynamic(jpPhysicsRigidBody* actor, Component* comp);
 
 	// Collision Callback -----------
 	void OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor, JP_COLLISION_TYPE type);
@@ -62,9 +64,6 @@ private:
 	bool render_on_play = false;
 
 	std::map<physx::PxRigidActor*, Component*> colliders;
-
-	//jpPhysicsRigidBody* trigger_test = nullptr;
-	//jpPhysicsRigidBody* collider_test = nullptr;
 };
 
 

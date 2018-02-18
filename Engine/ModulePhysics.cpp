@@ -58,18 +58,6 @@ bool ModulePhysics::Start()
 
 	LOG("Setting up Physics");
 
-	/* Simple Trigger Test
-	jpPhysicsRigidBody* floor = GetNewRigidBody();
-	floor->SetGeometry(float3(20.f, 1.f, 20.f), 0, JP_COLLIDER_TYPE::COLL_PLANE);
-
-	trigger_test = GetNewRigidBody();
-	trigger_test->SetAsTrigger(true);
-	trigger_test->SetTransform(float3(0.5f, 2.f, 0.f), Quat::identity);
-
-	collider_test = GetNewRigidBody(true);
-	collider_test->SetGeometry(float3(.5f, .5f, .5f), 0.5, JP_COLLIDER_TYPE::COLL_BOX);
-	collider_test->SetTransform(float3(0.f, 5.f, 0.f), Quat::identity);
-	*/
 	bool ret = true;
 
 	Start_t = perf_timer.ReadMs();
@@ -138,10 +126,13 @@ bool ModulePhysics::CleanUp()
 	{
 		delete physics_world;
 	}
+
+	colliders.clear();
 	
 	return true;
 }
 
+// -----------------------------------------------------------------
 bool ModulePhysics::SetEventListenrs()
 {
 	AddListener(EventType::EVENT_TRIGGER_COLLISION, this);
@@ -156,13 +147,12 @@ void ModulePhysics::OnEvent(Event & event)
 		{
 		case JP_COLLISION_TYPE::TRIGGER_ENTER:
 		{
-			// Call component (Trigger) OnTriggerEnter(event.physics_collision.actor);
 			static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerEnter(event.physics_collision.actor);
 			break;
 		}
 		case JP_COLLISION_TYPE::TRIGGER_LOST:
 		{
-			// Call component (Trigger) OnTriggerLost(event.physics_collision.actor);
+			static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerLost(event.physics_collision.actor);
 			break;
 		}
 		}
@@ -170,18 +160,6 @@ void ModulePhysics::OnEvent(Event & event)
 }
 
 // -----------------------------------------------------------------
-jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(bool dynamic)
-{
-	if (physics_world)
-	{
-		return physics_world->CreateRigidBody(physics_world->GetScene(0), dynamic);
-	}
-	else
-	{
-		return nullptr;
-	}
-}
-
 jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(Component * component, bool dynamic)
 {
 	if (physics_world && component)
@@ -193,6 +171,7 @@ jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(Component * component, bool 
 		}
 		else
 		{
+			delete body;
 			return nullptr;
 		}
 	}
@@ -201,6 +180,24 @@ jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(Component * component, bool 
 		return nullptr;
 	}
 	
+}
+
+void ModulePhysics::ChangeRigidActorToStatic(jpPhysicsRigidBody * actor, Component* comp)
+{
+	if (actor && comp) {
+		colliders.erase(actor->GetActor());
+		actor->ToStatic();
+		colliders.insert(std::pair<physx::PxRigidActor*, Component*>(actor->GetActor(), comp));
+	}
+}
+
+void ModulePhysics::ChangeRigidActorToDynamic(jpPhysicsRigidBody * actor, Component* comp)
+{
+	if (actor && comp) {
+		colliders.erase(actor->GetActor());
+		actor->ToDynamic();
+		colliders.insert(std::pair<physx::PxRigidActor*, Component*>(actor->GetActor(), comp));
+	}
 }
 
 void ModulePhysics::OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor, JP_COLLISION_TYPE type)
@@ -213,18 +210,35 @@ void ModulePhysics::OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor*
 	collision.physics_collision.collision_type = type;
 
 	npair = colliders.find(trigger);
-	collision.physics_collision.trigger = npair._Ptr->_Myval.second;
+	if (npair != colliders.end())
+	{
+		collision.physics_collision.trigger = npair._Ptr->_Myval.second;
 
-	npair = colliders.find(actor);
-	collision.physics_collision.actor = npair._Ptr->_Myval.second;
-	
+		npair = colliders.find(actor);
+		if (npair != colliders.end())
+		{
+			collision.physics_collision.actor = npair._Ptr->_Myval.second;
+		}
+		else
+		{
+			return;
+		}
+	}
+	else
+	{
+		return;
+	}
+
 	PushEvent(collision);
 }
 
 // -----------------------------------------------------------------
 void ModulePhysics::DrawPhysics()
 {
-	if ((!render_on_play && App->engine_state == PLAY) || !render_physics) return;
+	if (!render_physics || (!render_on_play && App->engine_state == PLAY))
+	{
+		return;
+	}
 
 	if (App->engine_state == STOP)
 	{
