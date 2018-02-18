@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "Scene.h"
 
-CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr), current_state(nullptr), selected_state(nullptr), show_fsm(false)
+CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr), current_state(nullptr), selected_state(nullptr), show_fsm(false), show_create_transition_window(false)
 {
 	name_component = "Finite State Machine";
 }
@@ -48,16 +48,9 @@ void CompFiniteStateMachine::Update(float dt)
 
 			for (std::vector<FSM_State*>::const_iterator it = states.begin(); it != states.end(); it++)
 			{
-				ImGui::Text("State %s", (*it)->GetScriptName());
+				ImGui::Separator();
 
-				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(1))
-				{
-					selected_state = (*it);
-					ImGui::OpenPopup("New Transition Popup");
-				}
-				else if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
-					selected_state = (*it);
-
+				ImGui::Text("%s:\n", (*it)->GetStateName());					CheckOpenStateOptions(*it);
 				//DEBUG for now START
 				if ((*it) == initial_state)
 				{
@@ -70,7 +63,78 @@ void CompFiniteStateMachine::Update(float dt)
 					ImGui::Text(" <-- Selected");
 				}
 				//DEBUG for now END
+				ImGui::Text("Script: %s", (*it)->GetScriptName());				CheckOpenStateOptions(*it);
+				ImGui::Text("Transitions (%i):", (*it)->GetNumTransitions());	CheckOpenStateOptions(*it);
+
+				ImGui::Separator();
 			}
+		}
+
+		if (show_create_transition_window)
+		{
+			if (ImGui::Begin("Create Transition", &show_create_transition_window))
+			{
+				std::vector<const char*> listbox_items;
+				static int selected = 0;
+				for (std::vector<FSM_State*>::const_iterator it = states.begin(); it != states.end(); it++)
+					if (*it != selected_state)
+						listbox_items.push_back((*it)->GetStateName());
+				
+				ImGui::Text("Choose the target State");
+				//TODO: Change 'Header' color pls
+				ImGui::ListBox("", &selected, &listbox_items[0], (listbox_items.size()), 4);
+				
+				if (ImGui::Button("+"))
+					new_conditions.push_back(0);
+				
+				int i = 0;
+				for (std::vector<int>::iterator it = new_conditions.begin(); it != new_conditions.end(); it++)
+				{
+					i++;
+					ImGui::Text("Condition %i:", i); ImGui::SameLine();
+
+					if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(1))
+					{
+						condition_to_erase = it;
+						ImGui::OpenPopup("Delete Condition Popup");
+					}
+
+					ImGui::PushID(i);
+					ImGui::Combo("", &(*it), "Bool\0Equal Int\0Greater Int\0Greater or Equal Int\0Lower Int\0Lower or Equal Int\0Equal Float\0Greater Float\0Greater or Equal Float\0Lower Float\0Lower or Equal Float\0\0");
+					ImGui::PopID();
+
+					switch (*it)
+					{
+					case 0:	//Bool
+						//ImGui::Checkbox("", &condition);
+						break;
+					default:
+						break;
+					}
+				}
+
+				// --------------------------------  POPUPS  -------------------------------- //
+				if (ImGui::BeginPopup("Delete Condition Popup"))
+				{
+					if (ImGui::Button("Delete"))
+					{
+						new_conditions.erase(condition_to_erase);
+					}
+					ImGui::EndPopup();
+				}
+				// --------------------------------  POPUPS  -------------------------------- //
+
+				if (ImGui::Button("Create Transition"))
+				{
+					//TODO
+					FSM_Transition* new_transition = selected_state->AddTransition(states[selected]);
+
+					//TODO: new_transition->AddCondition(conditions[i]);
+					new_conditions.clear();
+					show_create_transition_window = false;
+				}
+			}
+			ImGui::End();
 		}
 
 		// --------------------------------  POPUPS  -------------------------------- //
@@ -82,11 +146,12 @@ void CompFiniteStateMachine::Update(float dt)
 			}
 			ImGui::EndPopup();
 		}
-		if (ImGui::BeginPopup("New Transition Popup"))
+		if (ImGui::BeginPopup("State Options Popup"))
 		{
 			if (ImGui::Button("Create New Transition"))
 			{
-				//TODO stateX->AddTransition(target_stateY);
+				show_create_transition_window = true;
+				//selected_state->AddTransition();
 			}
 			if (ImGui::Button("Set as initial state"))
 			{
@@ -196,6 +261,8 @@ FSM_State * CompFiniteStateMachine::CreateState()
 		SetInitialState(new_state);
 
 	states.push_back(new_state);
+	std::string state_name = "State " + std::to_string(states.size());
+	new_state->SetStateName(state_name.c_str());
 
 	return new_state;
 }
@@ -218,6 +285,11 @@ bool CompFiniteStateMachine::SetInitialState(FSM_State * new_initial_state)
 	return true;
 }
 
+uint CompFiniteStateMachine::GetNumStates() const
+{
+	return states.size();
+}
+
 FSM_State * CompFiniteStateMachine::GetCurrentState() const
 {
 	return current_state;
@@ -226,6 +298,17 @@ FSM_State * CompFiniteStateMachine::GetCurrentState() const
 FSM_State * CompFiniteStateMachine::GetInitialState() const
 {
 	return initial_state;
+}
+
+void CompFiniteStateMachine::CheckOpenStateOptions(FSM_State* state)
+{
+	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(1))
+	{
+		selected_state = state;
+		ImGui::OpenPopup("State Options Popup");
+	}
+	else if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+		selected_state = state;
 }
 
 FSM_State::FSM_State() : script(nullptr)
@@ -287,9 +370,19 @@ bool FSM_State::CheckTriggeredTransition(FSM_Transition * transition) const
 	return false;
 }
 
+void FSM_State::SetStateName(const char * new_name)
+{
+	state_name = new_name;
+}
+
 uint FSM_State::GetNumTransitions() const
 {
 	return transitions.size();
+}
+
+const char * FSM_State::GetStateName() const
+{
+	return state_name.c_str();
 }
 
 const char * FSM_State::GetScriptName() const

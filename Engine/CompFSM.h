@@ -41,11 +41,14 @@ public:
 	// ------------------------
 
 	// GETTERS ----------------
+	uint GetNumStates()const;
 	FSM_State* GetCurrentState()const;
 	FSM_State* GetInitialState()const;
 	// ------------------------
 
 private:
+	void CheckOpenStateOptions(FSM_State* state);
+
 	std::vector<FSM_State*> states;
 	FSM_State* initial_state;
 	FSM_State* current_state;
@@ -53,6 +56,10 @@ private:
 
 	//Visual Scripting
 	bool show_fsm;
+	bool show_create_transition_window;
+	std::vector<int> new_conditions;
+	std::vector<int>::iterator condition_to_erase;
+	//std::vector<bool> bool_condition;
 };
 
 // --------------------------------  STATES  -------------------------------- //
@@ -73,13 +80,18 @@ public:
 	FSM_Transition* AddTransition(FSM_State* target_state);
 	bool CheckTriggeredTransition(FSM_Transition* transition)const;
 
+	// SETTERS ----------------
+	void SetStateName(const char* new_name);
+	// ------------------------
+
 	// GETTERS ----------------
 	uint GetNumTransitions()const;
+	const char* GetStateName()const;
 	const char* GetScriptName()const;
 	// ------------------------
 
 private:
-
+	std::string state_name;
 	CompScript* script;
 	std::vector<FSM_Transition*> transitions;
 };
