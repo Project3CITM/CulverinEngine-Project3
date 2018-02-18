@@ -7,6 +7,7 @@
 
 class GameObject;
 class AnimBone;
+class AnimationTransition;
 
 enum AnimationState
 {
@@ -34,6 +35,29 @@ public:
 	void RestartAnimationClip();
 };
 
+class AnimationNode
+{
+public:
+	~AnimationNode();
+
+	void CreateTransition();
+
+	AnimationClip* clip = nullptr;
+	bool active = false;
+	std::string name = "Animation Node ";
+	std::vector<AnimationTransition*> transitions;
+};
+
+class AnimationTransition
+{
+public:
+	std::string name = "Transition ";
+
+	AnimationNode* destination = nullptr;
+
+	bool condition = false;
+};
+
 class CompAnimation : public Component
 {
 public:
@@ -47,13 +71,13 @@ public:
 	void PreUpdate(float dt);
 	void Update(float dt);
 
+	void PlayAnimation(AnimationNode* node);
+
 	// EDITOR METHODS ---------
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void ShowAnimationInfo();
 	// ------------------------
-
-
 
 	void SetResource(ResourceAnimation * resource_animation, bool isImport = false);
 	void CopyValues(const CompAnimation * component);
@@ -66,6 +90,9 @@ public:
 	void CreateAnimationClip();
 	void ManageAnimationClips(AnimationClip* animation_clip, float dt);
 
+	void CreateAnimationNode();
+	void CheckNodesConditions(AnimationNode* node);
+
 public:
 
 	ResourceAnimation* animation_resource = nullptr;
@@ -74,6 +101,7 @@ private:
 
 	bool select_animation = false;
 	std::vector<AnimationClip*> animation_clips;
+	std::vector<AnimationNode*> animation_nodes;
 
 	AnimationClip* current_animation = nullptr;
 	AnimationClip* blending_animation = nullptr;
