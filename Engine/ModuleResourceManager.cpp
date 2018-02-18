@@ -683,6 +683,11 @@ void ModuleResourceManager::Save()
 			json_object_dotset_number_with_std(config_node, name + "Type", (int)it->second->GetType());
 			json_object_dotset_string_with_std(config_node, name + "Name", it->second->name);
 			json_object_dotset_string_with_std(config_node, name + "PathAssets", it->second->path_assets.c_str());
+			if (it->second->GetType() == Resource::Type::SCRIPT)
+			{
+				json_object_dotset_string_with_std(config_node, name + "PathDll", ((ResourceScript*)it->second)->GetPathdll().c_str());
+			}
+
 			it++;
 		}
 	}
@@ -736,6 +741,7 @@ void ModuleResourceManager::Load()
 						ResourceScript* script = (ResourceScript*)CreateNewResource(type, uid);
 						script->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
 						script->name = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+						script->SetPathDll(json_object_dotget_string_with_std(config_node, name + "PathDll"));
 						break;
 					}
 					case Resource::Type::ANIMATION:

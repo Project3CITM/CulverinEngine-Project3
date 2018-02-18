@@ -50,6 +50,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 
 	name = "Scene";
 	have_config = true;
+	load_scene = true;
 }
 
 Scene::~Scene()
@@ -65,34 +66,6 @@ bool Scene::Start()
 
 	// First of all create New Scene
 	root = new GameObject("NewScene", 1);
-	bool newScene = true;
-
-	if (strcmp(App->GetActualScene().c_str(), "") != 0)
-	{
-		newScene = false;
-		App->json_seria->LoadScene(App->GetActualScene().c_str());
-		if (App->mode_game)
-		{
-			if (App->scene->CheckNoFails())
-			{
-				int exc = App->engine_state;
-				App->SetState(EngineState::PLAY); // OR STOP
-
-				if (exc == EngineState::STOP)
-				{
-					//Start all scripts
-					App->scene->StartScripts();
-				}
-			}
-		}
-	}
-	if (newScene)
-	{
-		/* Create Default Main Camera Game Object */
-		CreateMainCamera(nullptr);
-
-		// Also Light??
-	}
 
 	/* Init Quadtree */
 	size_quadtree = 50.0f;
@@ -118,8 +91,17 @@ bool Scene::Start()
 update_status Scene::PreUpdate(float dt)
 {
 	perf_timer.Start();
-	if(root ==nullptr)
+
+	if (root == nullptr)
+	{
 		return UPDATE_CONTINUE;
+	}
+
+	if (load_scene)
+	{
+		LoadScene();
+	}
+
 	// PreUpdate GameObjects ------------------------
 	if (root->WanttoDelete() == false)
 	{
@@ -222,6 +204,40 @@ bool Scene::CleanUp()
 	root->CleanUp();
 
 	return true;
+}
+
+void Scene::LoadScene()
+{
+	bool new_scene = true;
+
+	if (strcmp(App->GetActualScene().c_str(), "") != 0)
+	{
+		new_scene = false;
+		App->json_seria->LoadScene(App->GetActualScene().c_str());
+		if (App->mode_game)
+		{
+			if (App->scene->CheckNoFails())
+			{
+				int exc = App->engine_state;
+				App->SetState(EngineState::PLAY); // OR STOP
+
+				if (exc == EngineState::STOP)
+				{
+					//Start all scripts
+					App->scene->StartScripts();
+				}
+			}
+		}
+	}
+	if (new_scene)
+	{
+		/* Create Default Main Camera Game Object */
+		CreateMainCamera(nullptr);
+
+		// Also Light??
+	}
+
+	load_scene = false;
 }
 
 bool Scene::SetEventListenrs()

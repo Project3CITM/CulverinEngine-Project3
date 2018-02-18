@@ -110,6 +110,11 @@ std::string ResourceScript::GetPathdll() const
 	return path_dll;
 }
 
+void ResourceScript::SetPathDll(const char * path)
+{
+	path_dll = path;
+}
+
 //CSharpScript* ResourceScript::GetCSharpScript()
 //{
 //	if (csharp != nullptr)
