@@ -20,15 +20,23 @@ public:
 	void CopyValues(const CompCollider* component);
 	//------------------------------
 
+	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
+	void Load(const JSON_Object* object, std::string name);
+
+
 	// Collision Events ------------
 	void OnTriggerEnter(Component* actor);
 	void OnTriggerLost(Component* actor);
 	
 	void ChangeCollider();
+	void UpdateCollider();
 
+	//Setters -------------------
+	void SetSizeFromBoundingBox();
 
-	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
-	void Load(const JSON_Object* object, std::string name);
+	//Getters
+	float3 GetPosition() const;
+	Quat GetLocalQuat() const;
 
 private:
 	

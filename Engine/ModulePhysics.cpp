@@ -167,7 +167,7 @@ jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(Component * component, bool 
 		jpPhysicsRigidBody* body = physics_world->CreateRigidBody(physics_world->GetScene(0), dynamic);
 		if (body->GetActor()) {
 			colliders.insert(std::pair<physx::PxRigidActor*, Component*>(body->GetActor(), component));
-			return physics_world->CreateRigidBody(physics_world->GetScene(0), dynamic);
+			return body;
 		}
 		else
 		{

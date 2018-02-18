@@ -5,6 +5,7 @@
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 #include "Scene.h"
+#include "MathGeoLib.h"
 
 #include "jpPhysicsRigidBody.h"
 
@@ -26,7 +27,7 @@ CompCollider::~CompCollider()
 {
 	if (body)
 	{
-		delete body;
+	//	delete body;
 	}
 }
 
@@ -114,6 +115,46 @@ void CompCollider::ShowInspectorInfo()
 		body->SetTransform(position, local_quat);	
 	}
 
+	// Collider options
+	switch (curr_type)
+	{
+	case COLL_BOX:
+		if (ImGui::InputFloat3("Size", &size.x, 2, ImGuiInputTextFlags_EnterReturnsTrue))
+			UpdateCollider();
+		break;
+	case COLL_SPHERE:
+		if (ImGui::InputFloat("Radius", &rad, 0.1f, 1.f, 2, ImGuiInputTextFlags_EnterReturnsTrue))
+			UpdateCollider();
+		break;
+	case COLL_PLANE:
+		if (ImGui::InputFloat3("Size", &size.x, 2, ImGuiInputTextFlags_EnterReturnsTrue))
+			UpdateCollider();
+		break;
+	case COLL_CAPSULE:
+		if ((ImGui::InputFloat("Half height", &size.z, 0.1f, 1.f, 2, ImGuiInputTextFlags_EnterReturnsTrue))
+			|| (ImGui::InputFloat("Radius", &rad, 0.1f, 1.f, 2, ImGuiInputTextFlags_EnterReturnsTrue)))
+			UpdateCollider();
+		break;
+	default:
+		break;
+	}
+
+	if (ImGui::Button("Size From AABB", ImVec2(100, 20))) 
+	{
+		SetSizeFromBoundingBox();
+	}
+
+	// Material
+	ImGui::Text("Friction: Static/Dynamic");
+	if (ImGui::InputFloat2("", &material.x, 2, ImGuiInputTextFlags_EnterReturnsTrue) && body) 
+	{
+		body->SetMaterial(material.x, material.y, material.z);
+	}
+	ImGui::Text("Restitution");
+	if (ImGui::InputFloat("[0,1]", &material.z, 0.1f, 1.f, 3, ImGuiInputTextFlags_EnterReturnsTrue) && body) 
+	{
+		body->SetMaterial(material.x, material.y, material.z);
+	}
 
 	ImGui::TreePop();
 }
@@ -121,6 +162,19 @@ void CompCollider::ShowInspectorInfo()
 void CompCollider::CopyValues(const CompCollider * component)
 {
 	//more...
+}
+
+// -----------------------------------------------------------------
+void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
+{
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
+	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
+	json_object_dotset_number_with_std(object, name + "UUID", uid);
+}
+
+void CompCollider::Load(const JSON_Object * object, std::string name)
+{
+	uid = json_object_dotget_number_with_std(object, name + "UUID");
 }
 
 // -----------------------------------------------------------------
@@ -142,15 +196,37 @@ void CompCollider::ChangeCollider()
 	}
 }
 
-// -----------------------------------------------------------------
-void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
+void CompCollider::UpdateCollider()
 {
-	json_object_dotset_string_with_std(object, name + "Component:", name_component);
-	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	if (body != nullptr)
+	{
+		body->SetShapeScale(size, rad, curr_type);
+	}
 }
 
-void CompCollider::Load(const JSON_Object * object, std::string name)
+void CompCollider::SetSizeFromBoundingBox()
 {
-	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	AABB box = parent->box_fixed;
+	if (box.IsFinite())
+	{
+		size = float3(box.MaxX() - box.MinX(), box.MaxY() - box.MinY(), box.MaxZ() - box.MinZ());
+		rad = size.x*0.5f;
+		UpdateCollider();
+	}
+	else 
+	{
+		size = float3(1.f, 1.f, 1.f);
+		rad = 0.5;
+	}
 }
+
+float3 CompCollider::GetPosition() const
+{
+	return position;
+}
+
+Quat CompCollider::GetLocalQuat() const
+{
+	return local_quat;
+}
+
