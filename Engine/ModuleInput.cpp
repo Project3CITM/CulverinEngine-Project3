@@ -78,7 +78,8 @@ update_status ModuleInput::PreUpdate(float dt)
 	}
 
 	Uint32 buttons = SDL_GetMouseState(&mouse_x, &mouse_y);
-
+	ImGuiIO& io = ImGui::GetIO();
+	mouse_y = io.DisplaySize.y - mouse_y;
 	// No Restrictios With Move Camera ----------------------------------
 	mouse_x_motion_global = mouse_x_global;
 	mouse_y_motion_global = mouse_y_global;
@@ -131,6 +132,10 @@ update_status ModuleInput::PreUpdate(float dt)
 		{
 			case SDL_MOUSEBUTTONDOWN:
 			{
+
+				LOG("mouse down");
+				mouse_x = e.motion.x / SCREEN_SIZE;
+				mouse_y = e.motion.y / SCREEN_SIZE;
 				Event mouse_event;
 				mouse_event.pointer.type = EventType::EVENT_BUTTON_DOWN;
 				if (e.button.button == SDL_BUTTON_LEFT)
@@ -141,11 +146,14 @@ update_status ModuleInput::PreUpdate(float dt)
 					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_RIGHT;
 				mouse_event.pointer.position.x = mouse_x;
 				mouse_event.pointer.position.y = mouse_y;
+				mouse_event.pointer.focus = nullptr;
 				PushEvent(mouse_event);
 			}
 			break;
 			case SDL_MOUSEBUTTONUP:
 			{
+				mouse_x = e.motion.x / SCREEN_SIZE;
+				mouse_y = e.motion.y / SCREEN_SIZE;
 				Event mouse_event;
 				mouse_event.pointer.type = EventType::EVENT_BUTTON_UP;
 				if (e.button.button == SDL_BUTTON_LEFT)
@@ -156,6 +164,8 @@ update_status ModuleInput::PreUpdate(float dt)
 					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_RIGHT;
 				mouse_event.pointer.position.x = mouse_x;
 				mouse_event.pointer.position.y = mouse_y;
+				mouse_event.pointer.focus = nullptr;
+
 				PushEvent(mouse_event);
 			}
 			break;
@@ -178,6 +188,8 @@ update_status ModuleInput::PreUpdate(float dt)
 				mouse_event.pointer.position.y = mouse_y;
 				mouse_event.pointer.motion.x = mouse_x_motion;
 				mouse_event.pointer.motion.y = mouse_y_motion;
+				mouse_event.pointer.focus = nullptr;
+
 				PushEvent(mouse_event);
 			}
 			break;

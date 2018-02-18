@@ -142,41 +142,9 @@ void CompButton::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
-void CompButton::ShowInspectorColorTransition()
-{
-	int op = ImGui::GetWindowWidth() / 4;
 
-	ImGui::Text("Normal"); ImGui::SameLine(op + 30);
-	ImGui::ColorEdit4("##normal_rgba", normal_color.ptr());
-	ImGui::Text("Highlighted"); ImGui::SameLine(op + 30);
-	ImGui::ColorEdit4("##highlighted_rgba", highlighted_color.ptr());
-	ImGui::Text("Pressed"); ImGui::SameLine(op + 30);
-	ImGui::ColorEdit4("##pressed_rgba", pressed_color.ptr());	
-	ImGui::Text("Disabled"); ImGui::SameLine(op + 30);
-	ImGui::ColorEdit4("##disabled_rgba", disabled_color.ptr());
-	ImGui::Text("Color multiply"); ImGui::SameLine(op + 30);
-	ImGui::DragFloat("##color_multiply", &color_multiply, 0.1f, 0.0f, 5.0f);
-	ImGui::Text("Fade duration"); ImGui::SameLine(op + 30);
-	if (ImGui::DragFloat("##fade_duration", &fade_duration, 0.1f, 0.0f, 2.0f))
-	{
-		if (fade_duration < 0.0001)
-		{
-			no_fade = true;
-		}
-		else
-		{
-			no_fade = false;
-		}
-	}
 
-	//ImGui::DragFloat()
-}
 
-void CompButton::ShowInspectorSpriteTransition()
-{
-	int op = ImGui::GetWindowWidth() / 4;
-
-}
 
 void CompButton::ShowInspectorAnimationTransition()
 {

@@ -322,11 +322,8 @@ bool CompInteractive::PointerInside(float2 position)
 	float mouse_y = -(position.y - (GetPositionDock("Scene").y + GetSizeDock("Scene").y));
 
 	mouse_x = (mouse_x*io.DisplaySize.x) / GetSizeDock("Scene").x;
-	mouse_y = (mouse_y*io.DisplaySize.y)/GetSizeDock("Scene").y;
+	mouse_y = (mouse_y*io.DisplaySize.y)/GetSizeDock("Scene").y+30;
 
-	LOG("Rect.x %.2f,Rect.y %.2f,Rect.w %.2f,Rect.h %.2f", rect.x, rect.y, rect.z, rect.w);
-	LOG("Rect.x+width %.2f,Rect.y+height %.2f", rect.x + rect.z, rect.y - rect.w);
-	LOG("mouse.y %.2f,mouse.y %.2f", mouse_x, mouse_y);
 
 
 
@@ -455,7 +452,7 @@ bool CompInteractive::IsPressed()
 {
 	if(IsActive())
 		return false;
-	return point_down&&point_inside;
+	return point_down && point_inside;
 }
 
 bool CompInteractive::IsHighlighted(Event event_data)
@@ -542,6 +539,97 @@ void CompInteractive::HandleTransition(SelectionStates selection_state)
 	}
 }
 
+void CompInteractive::ShowInspectorColorTransition()
+{
+	int op = ImGui::GetWindowWidth() / 4;
+
+	ImGui::Text("Normal"); ImGui::SameLine(op + 30);
+	ImGui::ColorEdit4("##normal_rgba", normal_color.ptr());
+	ImGui::Text("Highlighted"); ImGui::SameLine(op + 30);
+	ImGui::ColorEdit4("##highlighted_rgba", highlighted_color.ptr());
+	ImGui::Text("Pressed"); ImGui::SameLine(op + 30);
+	ImGui::ColorEdit4("##pressed_rgba", pressed_color.ptr());
+	ImGui::Text("Disabled"); ImGui::SameLine(op + 30);
+	ImGui::ColorEdit4("##disabled_rgba", disabled_color.ptr());
+	ImGui::Text("Color multiply"); ImGui::SameLine(op + 30);
+	ImGui::DragFloat("##color_multiply", &color_multiply, 0.1f, 0.0f, 5.0f);
+	ImGui::Text("Fade duration"); ImGui::SameLine(op + 30);
+	if (ImGui::DragFloat("##fade_duration", &fade_duration, 0.1f, 0.0f, 2.0f))
+	{
+		if (fade_duration < 0.0001)
+		{
+			no_fade = true;
+		}
+		else
+		{
+			no_fade = false;
+		}
+	}
+}
+
+void CompInteractive::ShowInspectorSpriteTransition()
+{
+	int op = ImGui::GetWindowWidth() / 4;
+	if (ImGui::Button("Select Highlighted Sprite..."))
+	{
+		sprite_value = HIGHLIGHTED_SPRITE;
+		select_sprite = true;
+	}
+	if (sprite[HIGHLIGHTED_SPRITE] != nullptr)
+	{
+		ImGui::SameLine(op + 120);
+		ImGui::Image((ImTextureID*)sprite[HIGHLIGHTED_SPRITE]->GetTextureID(), ImVec2(25, 25), ImVec2(-1, 1), ImVec2(0, 0));
+
+	}
+	if (ImGui::Button("Select Pressed Sprite..."))
+	{
+		sprite_value = PRESSED_SPRITE;
+		select_sprite = true;
+	}
+	if (sprite[PRESSED_SPRITE] != nullptr)
+	{
+		ImGui::SameLine(op + 120);
+		ImGui::Image((ImTextureID*)sprite[PRESSED_SPRITE]->GetTextureID(), ImVec2(25, 25), ImVec2(-1, 1), ImVec2(0, 0));
+
+	}
+	if (ImGui::Button("Select Disabled Sprite..."))
+	{
+		sprite_value = DISSABLED_SPRITE;
+		select_sprite = true;
+	}
+	if (sprite[DISSABLED_SPRITE] != nullptr)
+	{
+		ImGui::SameLine(op + 120);
+		ImGui::Image((ImTextureID*)sprite[DISSABLED_SPRITE]->GetTextureID(), ImVec2(25, 25), ImVec2(-1, 1), ImVec2(0, 0));
+	}
+// PRESSED_SPRITE 
+// DISSABLED_SPRITE 
+	if (sprite[sprite_value] == nullptr || select_sprite)
+	{
+		if (select_sprite)
+		{
+			ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(select_sprite, Resource::Type::MATERIAL);
+			if (temp != nullptr)
+			{
+				if (sprite[sprite_value] != nullptr)
+				{
+					if (sprite[sprite_value]->num_game_objects_use_me > 0)
+					{
+						sprite[sprite_value]->num_game_objects_use_me--;
+					}
+				}
+				sprite[sprite_value] = temp;
+				sprite[sprite_value]->num_game_objects_use_me++;
+				if (sprite[sprite_value]->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(sprite[sprite_value]->GetUUID()).c_str(), sprite[sprite_value]);
+				}
+				Enable();
+			}
+		}
+	}
+}
+
 
 void CompInteractive::StartTransitionColor(float4 color_to_change, bool no_fade)
 {
@@ -566,4 +654,5 @@ void CompInteractive::StartTransitionSprite(ResourceMaterial * sprite_to_change)
 	if (image == nullptr)
 		return;
 	image->SetOverwriteImage(sprite_to_change);
+	image->UpdatesPriteId();
 }

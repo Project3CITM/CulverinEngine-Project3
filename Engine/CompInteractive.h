@@ -88,12 +88,14 @@ protected:
 	virtual bool IsPressed();
 	virtual bool IsHighlighted(Event event_data);
 	virtual void UpdateSelectionState(Event event_data);
+	void ShowInspectorColorTransition();
+	void ShowInspectorSpriteTransition();
 private:
 	void PrepareHandleTransition();
 
 	void HandleTransition(SelectionStates selection_state);
 
-
+	
 	void StartTransitionColor(float4 color_to_change, bool no_fade);
 	void UpdateTransitionColor(float dt);
 	void StartTransitionSprite(ResourceMaterial* sprite_to_change);
@@ -129,6 +131,9 @@ protected:
 	uint uuid_reimported_sprite[3];
 	CompGraphic* target_graphic = nullptr;
 	CompImage* image = nullptr;
+	int sprite_value = -1;
+	bool select_sprite = false;
+
 
 private:
 	

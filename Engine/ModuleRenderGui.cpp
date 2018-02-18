@@ -221,6 +221,7 @@ bool ModuleRenderGui::SetEventListenrs()
 
 void ModuleRenderGui::OnEvent(Event & this_event)
 {
+
 	if (focus != nullptr)
 		this_event.pointer.focus = focus->GetParent();
 	switch (this_event.type)
@@ -231,6 +232,8 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	case EventType::EVENT_BUTTON_DOWN:
 	case EventType::EVENT_BUTTON_UP:
 	case EventType::EVENT_MOUSE_MOTION:
+		if (App->mode_game)
+			return;
 		if (focus != nullptr)
 		{
 			if (focus->PointerInside(this_event.pointer.position))
@@ -361,7 +364,7 @@ void ModuleRenderGui::ScreenSpaceDraw()
 
 	glViewport(0, 0, (GLsizei)total_width, (GLsizei)total_height);
 
-
+	
 	const float ortho_projection[4][4] =
 	{
 		{ 2.0f / io.DisplaySize.x,	0.0f,						 0.0f, 0.0f },
@@ -372,7 +375,17 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	//Draw
 	default_ui_shader->Bind();
 	GLint g_AttribLocationProjMtx = glGetUniformLocation(default_ui_shader->programID, "ProjMtx");
-	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
+//	if (App->mode_game)
+//	{
+		glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
+
+//	}
+	//else
+	//{
+	//	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
+	//	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+
+	//}
 
 
 	//Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();

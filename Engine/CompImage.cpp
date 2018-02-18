@@ -321,6 +321,23 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 	Enable();
 }
 
+void CompImage::UpdatesPriteId()
+{
+	if (overwrite_image == nullptr)
+	{
+		if (source_image == nullptr)
+		{
+			// return default texture;
+			SetTextureID(0);
+			return;
+		}
+		SetTextureID(source_image->GetTextureID());
+		return;
+
+	}
+	SetTextureID(overwrite_image->GetTextureID());
+}
+
 void CompImage::SetSourceImage(ResourceMaterial * set_source_image)
 {
 	source_image = set_source_image;
