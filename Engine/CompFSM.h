@@ -49,6 +49,10 @@ private:
 	std::vector<FSM_State*> states;
 	FSM_State* initial_state;
 	FSM_State* current_state;
+	FSM_State* selected_state;
+
+	//Visual Scripting
+	bool show_fsm;
 };
 
 // --------------------------------  STATES  -------------------------------- //
@@ -62,15 +66,16 @@ public:
 
 	//TODO
 	void DoEntryAction();
-	void DoAction();
+	void DoAction(float dt);
 	void DoExitAction();
 
 	bool AddScript(CompScript* script_to_add);	//Only support 1 script per node yet
 	FSM_Transition* AddTransition(FSM_State* target_state);
+	bool CheckTriggeredTransition(FSM_Transition* transition)const;
 
 	// GETTERS ----------------
-	FSM_Transition* GetTransitions()const;
 	uint GetNumTransitions()const;
+	const char* GetScriptName()const;
 	// ------------------------
 
 private:
@@ -93,7 +98,7 @@ public:
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, int condition);
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, float condition);
 
-	bool IsTriggered();
+	bool IsTriggered()const;
 	FSM_State* GetTargetState();
 
 private:
@@ -128,7 +133,7 @@ public:
 	FSM_Condition(FSM_CONDITION_TYPE condition_type);
 	~FSM_Condition();
 
-	virtual bool Test() { return false; };
+	virtual bool Test(bool b) { return false; };
 	virtual bool Test(int i) { return false; };
 	virtual bool Test(float f) { return false; };
 
@@ -148,7 +153,7 @@ public:
 	FSM_ConditionBool(bool condition_);
 	~FSM_ConditionBool();
 
-	bool Test();
+	bool Test(bool b);
 
 private:
 	bool condition;
