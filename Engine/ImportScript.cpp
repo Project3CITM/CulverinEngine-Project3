@@ -191,6 +191,11 @@ bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script
 	// UnloadDomain
 	Unload_domain();
 
+	if (resourceScript == nullptr)
+	{
+		resourceScript = (ResourceScript*)App->resource_manager->CreateNewResource(Resource::Type::SCRIPT, atoi(uid_script.c_str()));
+	}
+
 	// ReCompile The CSharp
 	std::string path_dll;
 	if (CompileScript(fileAssets.c_str(), path_dll, uid_script.c_str()) != 0)
@@ -201,6 +206,7 @@ bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script
 	else
 	{
 		LOG("Script: %s, Compiled without errors", App->fs->GetOnlyName(fileAssets).c_str());
+		resourceScript->InitInfo(path_dll, fileAssets);
 	}
 	// childDomain
 	childDomain = Load_domain();
@@ -217,9 +223,9 @@ bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script
 	//resourceScript->SetCSharp(newCSharp);
 
 	// Then Create Meta
-	//std::string Newdirectory = ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory();
-	//Newdirectory += "\\" + App->fs->FixName_directory(fileAssets);
-	//App->Json_seria->SaveScript(resourceScript, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+	std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+	Newdirectory += "/" + App->fs->FixName_directory(fileAssets);
+	App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 	return true;
 }
 
