@@ -23,6 +23,7 @@ public:
 
 	void ShowWalkableMap();
 	void ShowCreationMap();
+	void GetSizePrefab(GameObject* obj, float& min_size, float& max_size);
 	void ShowNavigationMap();
 
 	void ShowTextWithColor(ImGuiCol_ type, int id);

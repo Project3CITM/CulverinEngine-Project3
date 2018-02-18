@@ -144,7 +144,7 @@ void ModuleMap::ShowEditorMap(bool &active)
 				{
 					for (int j = 0; j < MAX_ARRAY; j++)
 					{
-						map[i][j] = -1;
+						map[j][i] = -1;
 					}
 				}
 				map_created = true;
@@ -159,7 +159,7 @@ void ModuleMap::ShowEditorMap(bool &active)
 				{
 					for (int j = 0; j < MAX_ARRAY; j++)
 					{
-						map[i][j] = -1;
+						map[j][i] = -1;
 					}
 				}
 			}
@@ -170,7 +170,7 @@ void ModuleMap::ShowEditorMap(bool &active)
 				{
 					for (int j = 0; j < MAX_ARRAY; j++)
 					{
-						map[i][j] = -1;
+						map[j][i] = -1;
 					}
 				}
 				map_created = false;
@@ -178,13 +178,13 @@ void ModuleMap::ShowEditorMap(bool &active)
 			ImGui::SameLine();
 			if (ImGui::Button("Complet with No-Walk"))
 			{
-				for (int i = 0; i < width_map; i++)
+				for (int i = 0; i < height_map; i++)
 				{
-					for (int j = 0; j < height_map; j++)
+					for (int j = 0; j < width_map; j++)
 					{
-						if (map[i][j] == -1)
+						if (map[j][i] == -1)
 						{
-							map[i][j] = 1;
+							map[j][i] = 1;
 						}
 					}
 				}
@@ -248,28 +248,28 @@ void ModuleMap::ShowWalkableMap()
 	ImGui::PushItemWidth(10);
 	//Frist Select Type
 	ImGui::Separator();
-	for (int i = 0; i < width_map; i++)
+	for (int i = 0; i < height_map; i++)
 	{
-		for (int j = 0; j < height_map; j++)
+		for (int j = 0; j < width_map; j++)
 		{
 			if (j > 0) ImGui::SameLine();
 			ImGui::PushID(j + i * 1000);
-			if (map[i][j] > -1)
+			if (map[j][i] > -1)
 			{
-				ShowTextWithColor(ImGuiCol_Button, map[i][j]);
+				ShowTextWithColor(ImGuiCol_Button, map[j][i]);
 			}
 			//	ImGui::OpenPopup("ID");
 			bool force_pop = false;
-			if (map[i][j] > -1)
+			if (map[j][i] > -1)
 			{
 				force_pop = true;
 			}
 			if (ImGui::Button("ID"))
 			{
-				map[i][j] = paint;
+				map[j][i] = paint;
 			}
 
-			if (map[i][j] > -1 && force_pop)
+			if (map[j][i] > -1 && force_pop)
 			{
 				ImGui::PopStyleColor();
 			}
@@ -280,11 +280,11 @@ void ModuleMap::ShowWalkableMap()
 	if (ImGui::Button("Save Map"))
 	{
 		map_string = "";
-		for (int i = 0; i < width_map; i++)
+		for (int i = 0; i < height_map; i++)
 		{
-			for (int j = 0; j < height_map; j++)
+			for (int j = 0; j < width_map; j++)
 			{
-				map_string += std::to_string(map[i][j]);
+				map_string += std::to_string(map[j][i]);
 			}
 		}
 	}
@@ -295,13 +295,13 @@ void ModuleMap::ShowWalkableMap()
 	if (ImGui::Button("Create Level Map"))
 	{
 		//map_string = "";
-		for (int i = 0; i < width_map; i++)
+		for (int i = 0; i < height_map; i++)
 		{
-			for (int j = 0; j < height_map; j++)
+			for (int j = 0; j < width_map; j++)
 			{
-				if (map[i][j] > -1)
+				if (map[j][i] > -1)
 				{
-					if (map[i][j] == 0)
+					if (map[j][i] == 0)
 					{
 						GameObject* obj = App->scene->CreateCube();
 						CompTransform* transform = obj->GetComponentTransform();
@@ -417,29 +417,29 @@ void ModuleMap::ShowCreationMap()
 		//Frist Select Type
 		ImGui::Separator();
 		int total_map = width_map * height_map;
-		for (int i = 0; i < width_map; i++)
+		for (int i = 0; i < height_map; i++)
 		{
-			for (int j = 0; j < height_map; j++)
+			for (int j = 0; j < width_map; j++)
 			{
 				if (j > 0) ImGui::SameLine();
 				ImGui::PushID(j + i * 1000);
-				if (map[i][j] > -1)
+				if (map[j][i] > -1)
 				{
-					ShowTextWithColor(ImGuiCol_Button, map[i][j]);
+					ShowTextWithColor(ImGuiCol_Button, map[j][i]);
 					total_map--;
 				}
 				//	ImGui::OpenPopup("ID");
 				bool force_pop = false;
-				if (map[i][j] > -1)
+				if (map[j][i] > -1)
 				{
 					force_pop = true;
 				}
 				if (ImGui::Button("ID"))
 				{
-					map[i][j] = paint;
+					map[j][i] = paint;
 				}
 
-				if (map[i][j] > -1 && force_pop)
+				if (map[j][i] > -1 && force_pop)
 				{
 					ImGui::PopStyleColor();
 				}
@@ -460,15 +460,15 @@ void ModuleMap::ShowCreationMap()
 		{
 			GameObject* obj = App->scene->CreateGameObject();
 			obj->SetName("New Map");
-			for (int i = 0; i < width_map; i++)
+			for (int i = 0; i < height_map; i++)
 			{
-				for (int j = 0; j < height_map; j++)
+				for (int j = 0; j < width_map; j++)
 				{
-					if (map[i][j] > -1)
+					if (map[j][i] > -1)
 					{
 						for (int n = 0; n < prefabs.size(); n++)
 						{
-							if (map[i][j] == n)
+							if (map[j][i] == n)
 							{
 								std::string directory_prebaf = App->fs->GetMainDirectory();
 								directory_prebaf += "/";
@@ -477,8 +477,11 @@ void ModuleMap::ShowCreationMap()
 								GameObject* temp = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
 								CompTransform* transform = temp->GetComponentTransform();
 								math::float3 pos = transform->GetPos();
-								float t = temp->bounding_box->MaxX();
-								pos.x += i * 1; pos.z += j * 1;
+								float min_size = 0;
+								float max_size = 0;
+								GetSizePrefab(temp, min_size, max_size);
+								float t = max_size - min_size;
+								pos.x += i * t; pos.z += j * t;
 								transform->SetPos(pos);
 								obj->AddChildGameObject(temp);
 							}
@@ -487,6 +490,25 @@ void ModuleMap::ShowCreationMap()
 				}
 			}
 		}
+	}
+}
+
+void ModuleMap::GetSizePrefab(GameObject* obj, float& min_size, float& max_size)
+{
+	if (obj->GetComponentMesh() != nullptr)
+	{
+		if (min_size > obj->bounding_box->MinX())
+		{
+			min_size = obj->bounding_box->MinX();
+		}
+		if (max_size < obj->bounding_box->MaxX())
+		{
+			max_size = obj->bounding_box->MaxX();
+		}
+	}
+	for (int i = 0; i < obj->GetNumChilds(); i++)
+	{
+		GetSizePrefab(obj->GetChildbyIndex(i), min_size, max_size);
 	}
 }
 
