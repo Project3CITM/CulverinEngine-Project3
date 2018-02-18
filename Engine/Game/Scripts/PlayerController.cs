@@ -1,4 +1,4 @@
-﻿using CulverinEditor;
+using CulverinEditor;
 using CulverinEditor.Debug;
 
 //To check string variables and Log functionality
@@ -30,7 +30,7 @@ public class PlayerController : CulverinBehaviour
     {
         CheckDamage(); // Auxiliar method
 
-        if (hp > 0) 
+        if (hp > 0)
         {
             CheckStamina(); // Auxiliar method
 
@@ -38,10 +38,10 @@ public class PlayerController : CulverinBehaviour
             switch (state)
             {
                 case STATES.ACTIVE:
-                    {            
+                    {
                         CheckAttack();
 
-                        if(current_stamina == 0)
+                        if (current_stamina == 0)
                         {
                             Debug.Log("I'M TIRED");
                             state = STATES.TIRED;
@@ -49,11 +49,11 @@ public class PlayerController : CulverinBehaviour
 
                         break;
                     }
-                
+
 
                 case STATES.TIRED:
                     {
-                        //Posible tired animations ?¿
+                        //Posible tired animations ?�
 
                         if (current_stamina > 0) ;
                         {
@@ -61,7 +61,7 @@ public class PlayerController : CulverinBehaviour
                             state = STATES.ACTIVE;
                         }
                         break;
-                    }                  
+                    }
 
                 default:
                     break;
@@ -115,7 +115,7 @@ public class PlayerController : CulverinBehaviour
 
     void CheckDamage()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             Debug.Log("ARGHHH!!");
             hp -= 10;
