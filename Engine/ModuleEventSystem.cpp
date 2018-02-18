@@ -140,6 +140,11 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 	count = 0;
 	for (std::multimap<EventType, Event>::const_iterator item = MMNormalEvent.cbegin(); item != MMNormalEvent.cend();)
 	{
+		if ((item._Ptr->_Myval.first < 0) || (item._Ptr->_Myval.first > EventType::MAXEVENTS))
+		{
+			item = MMNormalEvent.erase(item);
+			continue;
+		}
 		if (count >= size) break;
 		if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
 			EListener = MEventListeners.find(item._Ptr->_Myval.first);

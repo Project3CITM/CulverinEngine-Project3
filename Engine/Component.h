@@ -34,7 +34,8 @@ enum Comp_Type
 	C_AUDIO,
 	C_BONE,
 	C_FSM,
-	C_LIGHT
+	C_LIGHT,
+	C_PARTICLE_SYSTEM
 };
 
 class Component
