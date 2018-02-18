@@ -500,7 +500,7 @@ update_status ModuleGUI::Update(float dt)
 	if (shader_program_creation_UI) 
 	{
 
-		ImGui::Begin("Shader Object Definition", &shader_obj_creation);
+		ImGui::Begin("Shader Program Definition", &shader_program_creation_UI);
 
 		ImGui::InputText("Name of the Shader", str_shad_prg_temp, 64);
 

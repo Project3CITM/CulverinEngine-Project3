@@ -1,19 +1,21 @@
 #include "ModuleLightning.h"
+#include"Application.h"
 #include "GL3W/include/glew.h"
 #include"MathGeoLib.h"
-#include"Application.h"
 #include"ShadersLib.h"
-#include"Application.h"
 #include"Scene.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
 #include "ModuleResourceManager.h"
 #include "ModuleEventSystem.h"
 #include "CompTransform.h"
-#include "CompMaterial.h"
+#include "ModuleShaders.h"
 #include "GameObject.h"
+#include "CompMesh.h"
+#include "CompMaterial.h"
+#include "CompLight.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 using namespace glm;
 
 
@@ -335,12 +337,15 @@ void ModuleLightning::OnEvent(Event & event)
 
 	shadow_Shader->Bind();
 
-	/*
+
+	
 	switch (event.type)
 	{
-	case EventType::
-		for (std::multimap<float, Event>::iterator item = event.shadow_map_gen.MM3DDrawEvent->begin(); item != event.shadow_map_gen.MM3DDrawEvent->end();item++)
+	case EventType::EVENT_SEND_3D_3DA_MM:
+
+		for (std::multimap<float, Event>::const_iterator item = event.send_3d3damm.MM3DDrawEvent->begin(); item != event.send_3d3damm.MM3DDrawEvent->end();item++)
 		{
+
 			CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
 
 			if (m->resource_mesh != nullptr)
@@ -427,10 +432,11 @@ void ModuleLightning::OnEvent(Event & event)
 
 					Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 					float4x4 temp = camFrust.ViewMatrix();
-
 				
-					GLint modelLoc = glGetUniformLocation(shader->programID, "model");
+					GLint modelLoc = glGetUniformLocation(shadow_Shader->programID, "model");
 					uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
+
+					
 
 					float4x4 matrixfloat = transform->GetGlobalTransform();
 					GLfloat matrix[16] =
@@ -441,13 +447,22 @@ void ModuleLightning::OnEvent(Event & event)
 						matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
 					};
 
+					const CompLight* light = event.send_3d3damm.light;
+					
+					GameObject* parent = light->GetParent();
+					CompTransform* trans = parent->GetComponentTransform();
+					
+					
+					float3 pos_light = light->GetParent()->GetComponentTransform()->GetPos();
+					float3 rot_eu_ang= light->GetParent()->GetComponentTransform()->GetRotEuler();
+
 
 
 					glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
 
 					// Compute the MVP matrix from the light's point of view
 					glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-					glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+					glm::mat4 depthViewMatrix = glm::lookAt(vec3(rot_eu_ang.x, rot_eu_ang.y, rot_eu_ang.z), glm::vec3(pos_light.x, pos_light.y, pos_light.z), glm::vec3(0, 1, 0));
 					glm::mat4 depthModelMatrix = glm::mat4(1.0);
 					glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
 
@@ -504,7 +519,7 @@ void ModuleLightning::OnEvent(Event & event)
 		}
 		break;
 	}
-	*/
+	
 	ImGui::Image((ImTextureID*)text.GetTexture(), ImVec2(500, 500));
 	App->scene->scene_buff->Bind("Scene");
 	
@@ -615,7 +630,7 @@ void ModuleLightning::DeleteLight(CompLight * light)
 
 bool ModuleLightning::SetEventListenrs()
 {
-	//AddListener(EventType::EVENT_SHADOW_MAP_GEN, this);
+	AddListener(EventType::EVENT_SEND_3D_3DA_MM, this);
 	return false;
 }
 

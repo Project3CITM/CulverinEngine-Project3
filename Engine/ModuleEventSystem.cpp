@@ -212,11 +212,12 @@ void ModuleEventSystem::PushImmediateEvent(Event & event)
 		{
 		case EventType::EVENT_REQUEST_3D_3DA_MM:
 		{
-			Event event;
-			event.send_3d3damm.type = EventType::EVENT_SEND_3D_3DA_MM;
-			event.send_3d3damm.MM3DDrawEvent = &MM3DDrawEvent;
-			event.send_3d3damm.MM3DADrawEvent = &MM3DADrawEvent;
-			PushImmediateEvent(event);
+			Event event_temp;
+			event_temp.send_3d3damm.type = EventType::EVENT_SEND_3D_3DA_MM;
+			event_temp.send_3d3damm.MM3DDrawEvent = &MM3DDrawEvent;
+			event_temp.send_3d3damm.MM3DADrawEvent = &MM3DADrawEvent;
+			event_temp.send_3d3damm.light = event_temp.request_3d3damm.light;
+			PushImmediateEvent(event_temp);
 			break;
 		}
 		default:

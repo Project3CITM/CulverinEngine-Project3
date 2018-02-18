@@ -23,6 +23,7 @@ class Component;
 enum ShaderType;
 class Shader;
 union Event;
+class CompLight;
 enum JP_COLLISION_TYPE;
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
@@ -187,6 +188,7 @@ struct ESendAllShaderObject
 struct ERequest3D3DAMM
 {
 	EventType type;
+	const CompLight* light;
 };
 
 struct ESend3D3DAMM
@@ -194,6 +196,7 @@ struct ESend3D3DAMM
 	EventType type;
 	const std::multimap<float, Event>* MM3DDrawEvent;
 	const std::multimap<float, Event>* MM3DADrawEvent;
+	const CompLight* light;
 };
 
 struct EOpenShaderEditor
