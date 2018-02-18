@@ -332,6 +332,35 @@ void CompTransform::SetScale(float3 scal)
 	toUpdate = true;
 }
 
+void CompTransform::LookAt(float3 target_pos)
+{
+	float3 lookat = { target_pos.x, target_pos.y, target_pos.z };
+	float3 pos = { position.x, position.y, position.z };
+	float3 objectUpVector = { 0.0f, 1.0f, 0.0f };
+
+	float3 zaxis = lookat - pos;
+	zaxis = zaxis.Normalized();
+	float3 xaxis = objectUpVector.Cross(zaxis);
+	xaxis = xaxis.Normalized();
+	float3 yaxis = zaxis.Cross(xaxis);
+
+	math::float4x4 pm = {
+		xaxis.x, yaxis.x, zaxis.x, 0,
+		xaxis.y, yaxis.y, zaxis.y, 0,
+		xaxis.z, yaxis.z, zaxis.z, 0,
+		0, 0, 0, 1
+	};
+
+	float3 rot = pm.ToEulerXYX();
+	rot.x = rot.x*RADTODEG;
+	rot.y = rot.y*RADTODEG;
+	rot.z = rot.z*RADTODEG;
+
+	SetRot(rot);
+	SetLocalTransform();
+	SetGlobalTransform();
+}
+
 void CompTransform::ResetMatrix()
 {
 	SetPos(float3::zero);
