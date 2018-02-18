@@ -761,7 +761,7 @@ int ImportScript::GetHeightMap()
 
 int ImportScript::GetWidthMap()
 {
-	return App->map->GetHeightMap();
+	return App->map->GetWidthMap();
 }
 
 
