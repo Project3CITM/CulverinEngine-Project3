@@ -171,7 +171,7 @@ bool ImportScript::LoadResource(const char* file, ResourceScript* resourceScript
 			resourceScript->SetState(Resource::State::LOADED);
 			resourceScript->SetScriptEditor(App->fs->GetOnlyName(App->fs->GetOnlyName(file).c_str()));
 			//now 
-			CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
+			//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
 			//resourceScript->SetCSharp(newCSharp);
 		}
 
