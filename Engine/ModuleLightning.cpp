@@ -335,10 +335,11 @@ void ModuleLightning::OnEvent(Event & event)
 
 	shadow_Shader->Bind();
 
+	/*
 	switch (event.type)
 	{
-	case EventType::EVENT_SHADOW_MAP_GEN:
-/*		for (std::multimap<float, Event>::iterator item = event.shadow_map_gen.MM3DDrawEvent->begin(); item != event.shadow_map_gen.MM3DDrawEvent->end();item++)
+	case EventType::
+		for (std::multimap<float, Event>::iterator item = event.shadow_map_gen.MM3DDrawEvent->begin(); item != event.shadow_map_gen.MM3DDrawEvent->end();item++)
 		{
 			CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
 
@@ -500,12 +501,10 @@ void ModuleLightning::OnEvent(Event & event)
 				}
 			}
 
-		}*/
-
-		
+		}
 		break;
-
 	}
+	*/
 	ImGui::Image((ImTextureID*)text.GetTexture(), ImVec2(500, 500));
 	App->scene->scene_buff->Bind("Scene");
 	
@@ -616,8 +615,7 @@ void ModuleLightning::DeleteLight(CompLight * light)
 
 bool ModuleLightning::SetEventListenrs()
 {
-
-	AddListener(EventType::EVENT_SHADOW_MAP_GEN, this);
+	//AddListener(EventType::EVENT_SHADOW_MAP_GEN, this);
 	return false;
 }
 
