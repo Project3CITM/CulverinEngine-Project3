@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "ImGui/imgui.h"
 #include "Math\float3.h"
+#include "Math\Quat.h"
 #include <string>
 
 struct json_object_t;

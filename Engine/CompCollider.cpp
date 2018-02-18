@@ -1,6 +1,7 @@
 #include "CompCollider.h"
 #include "GameObject.h"
 #include "Application.h"
+#include "ModulePhysics.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 #include "Scene.h"
@@ -11,6 +12,8 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 {
 	uid = App->random->Int();
 	name_component = "Collider";
+
+	body = App->physics->GetNewRigidBody(this);
 }
 
 CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Component(Comp_Type::C_COLLIDER, parent)
@@ -21,6 +24,10 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 
 CompCollider::~CompCollider()
 {
+	if (body)
+	{
+		delete body;
+	}
 }
 
 // -----------------------------------------------------------------
@@ -86,6 +93,28 @@ void CompCollider::ShowInspectorInfo()
 		ShowOptions();
 		ImGui::EndPopup();
 	}
+
+	// Collider type
+	if (ImGui::Combo("Collider", (int*)&collider_type, "Sphere\0Plane\0Capsule\0Box\0", 4) && curr_type != collider_type) 
+	{
+		curr_type = collider_type;
+		ChangeCollider();
+	}
+	// Collider Position
+	if (ImGui::InputFloat3("Position", &position.x, 2, ImGuiInputTextFlags_EnterReturnsTrue) && body) 
+	{
+		body->SetTransform(position, local_quat);		
+	}
+
+	// Collider Angle
+	if (ImGui::InputFloat3("Angle", &angle.x, 2, ImGuiInputTextFlags_EnterReturnsTrue) && body) 
+	{
+		// Set Good Rotation
+		local_quat = Quat::FromEulerXYZ(angle.x*DEGTORAD, angle.y*DEGTORAD, angle.z*DEGTORAD);
+		body->SetTransform(position, local_quat);	
+	}
+
+
 	ImGui::TreePop();
 }
 
@@ -103,6 +132,14 @@ void CompCollider::OnTriggerEnter(Component * actor)
 void CompCollider::OnTriggerLost(Component * actor)
 {
 	// Call Listner OnTriggerLost(Component* actor);
+}
+
+void CompCollider::ChangeCollider()
+{
+	if (body != nullptr)
+	{
+		body->SetGeometry(size, rad, curr_type);
+	}
 }
 
 // -----------------------------------------------------------------
