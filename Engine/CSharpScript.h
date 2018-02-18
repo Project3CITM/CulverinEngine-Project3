@@ -147,6 +147,7 @@ public:
 	/*Audio*/
 	void		PlayAudioEvent(MonoObject* object, MonoString* event_name);
 	void		StopAudioEvent(MonoObject* object, MonoString* event_name);
+	void		SetAuxiliarySends(MonoObject* object, MonoString* bus, float value);
 
 
 	/*Components*/

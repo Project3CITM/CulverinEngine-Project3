@@ -14,5 +14,8 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void StopEvent(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetAuxiliarySends(string bus, float value);
     }
 }

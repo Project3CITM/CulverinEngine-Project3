@@ -107,6 +107,7 @@ private:
 	/*Component Audio*/
 	static void PlayAudioEvent(MonoObject* object, MonoString* name);
 	static void StopAudioEvent(MonoObject* object, MonoString* name);
+	static void SetAuxiliarySends(MonoObject* object, MonoString* bus, float value);
 
 
 private:

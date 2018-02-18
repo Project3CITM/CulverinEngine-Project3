@@ -990,6 +990,18 @@ void CSharpScript::StopAudioEvent(MonoObject* object, MonoString* event_name)
 	}
 }
 
+void CSharpScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, float value)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAudio* audio = (CompAudio*)current_game_object->FindComponentByType(Comp_Type::C_AUDIO);
+		if (audio != nullptr)
+		{
+			audio->SetAuxiliarySend(mono_string_to_utf8(bus), value);
+		}
+	}
+}
+
 // Map ------------------------------------------------
 MonoString* CSharpScript::GetMapString(MonoObject* object)
 {

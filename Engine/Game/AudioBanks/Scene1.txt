@@ -1,6 +1,20 @@
 Event	ID	Name			Wwise Object Path	Notes
+	251412229	Shot			\Scene1\Shot	
 	4251938927	TorchAmbient			\Scene1\TorchAmbient	
 
+Game Parameter	ID	Name			Wwise Object Path	Notes
+	2822317760	General_Volume			\Default Work Unit\General_Volume	
+
+Audio Bus	ID	Name			Wwise Object Path	Notes
+	3803692087	Master Audio Bus			\Default Work Unit\Master Audio Bus	
+
+Auxiliary Bus	ID	Name			Wwise Object Path	Notes
+	4063189299	Corridor			\Default Work Unit\Master Audio Bus\Corridor	
+
+Effect plug-ins	ID	Name	Type				Notes
+	4113267698	Hall_Guns	Wwise RoomVerb			
+
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	861775916	Torch	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Fire Burning Sound Effect_50963DE6.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch		2716432
+	861775916	Torch	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Fire Burning Sound Effect_951A003C.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch		2716432
+	977479696	Shot	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Shot_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Shot		221116
 

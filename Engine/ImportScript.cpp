@@ -548,9 +548,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Audio::ChangeVolume", (const void*)ChangeVolume);
 	mono_add_internal_call("CulverinEditor.Audio::Mute", (const void*)Mute);
 	
-
+	//COMPONENT AUDIO FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
+	mono_add_internal_call("CulverinEditor.CompAudio::SetAuxiliarySends", (const void*)SetAuxiliarySends);
 
 }
 
@@ -811,4 +812,9 @@ void ImportScript::PlayAudioEvent(MonoObject* object, MonoString* name)
 void ImportScript::StopAudioEvent(MonoObject* object, MonoString* name)
 {
 	current->StopAudioEvent(object, name);
+}
+
+void ImportScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, float value)
+{
+	current->SetAuxiliarySends(object, bus, value);
 }
