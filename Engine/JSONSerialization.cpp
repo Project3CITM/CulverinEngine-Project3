@@ -446,7 +446,7 @@ void JSONSerialization::LoadChildLoadPrefab(GameObject& parent, GameObject& chil
 	}
 }
 
-void JSONSerialization::SaveMapWalkable(std::vector<std::string>& map, int height_map, int width_map, const char * name)
+void JSONSerialization::SaveMapWalkable(std::vector<std::string>& map, int height_map, int width_map, const char* name)
 {
 	LOG("SAVING Map %s -----", name);
 
@@ -464,6 +464,7 @@ void JSONSerialization::SaveMapWalkable(std::vector<std::string>& map, int heigh
 	{
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
+		json_object_dotset_string_with_std(config, "Map.Info.Name Map", name);
 		json_object_dotset_number_with_std(config, "Map.Info.Height Map", height_map);
 		json_object_dotset_number_with_std(config, "Map.Info.Width Map", width_map);
 		config_node = json_object_get_object(config, "Map");
