@@ -182,9 +182,9 @@ void ModuleMap::ShowEditorMap(bool &active)
 				{
 					for (int j = 0; j < height_map; j++)
 					{
-						if (map[i][j] == 0)
+						if (map[i][j] == -1)
 						{
-							map[i][j] = 0;
+							map[i][j] = 1;
 						}
 					}
 				}
@@ -383,8 +383,6 @@ void ModuleMap::ShowCreationMap()
 				ImGui::PopID();
 			}
 		}
-		ImGui::Text("Select size of separation: "); ImGui::SameLine();
-		ImGui::InputFloat("##Separation", &size_separation);
 		ImGui::PushItemWidth(10);
 	}
 	else
@@ -479,7 +477,8 @@ void ModuleMap::ShowCreationMap()
 								GameObject* temp = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
 								CompTransform* transform = temp->GetComponentTransform();
 								math::float3 pos = transform->GetPos();
-								pos.x += i * size_separation; pos.z += j * size_separation;
+								float t = temp->bounding_box->MaxX();
+								pos.x += i * 1; pos.z += j * 1;
 								transform->SetPos(pos);
 								obj->AddChildGameObject(temp);
 							}
@@ -487,7 +486,6 @@ void ModuleMap::ShowCreationMap()
 					}
 				}
 			}
-			// ...........
 		}
 	}
 }
