@@ -16,7 +16,7 @@ namespace CulverinEditor
             }
         }
 
-        public Vector3 Rotation
+        public Vector3 rotation
         {
             get
             {
@@ -25,6 +25,18 @@ namespace CulverinEditor
             set
             {
                 SetRotation(value);
+            }
+        }
+
+        public Vector3 scale
+        {
+            get
+            {
+                return GetScale();
+            }
+            set
+            {
+                SetScale(value);
             }
         }
 

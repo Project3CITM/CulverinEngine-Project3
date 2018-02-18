@@ -509,11 +509,16 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::GetName",(const void*)GetName);
 	//mono_add_internal_call("CulverinEditor.GameObject::AddComponent",(const void*)AddComponent);
 	mono_add_internal_call("CulverinEditor.GameObject::GetComponent",(const void*)GetComponent);
+	
+	// Transform ---------------------------
 	mono_add_internal_call("CulverinEditor.Transform::GetPosition", (const void*)GetPosition);
 	mono_add_internal_call("CulverinEditor.Transform::SetPosition", (const void*)SetPosition);
 	mono_add_internal_call("CulverinEditor.Transform::SetRotation", (const void*)SetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::GetRotation", (const void*)GetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::RotateAroundAxis", (const void*)IncrementRotation);
+	mono_add_internal_call("CulverinEditor.Transform::SetScale", (const void*)SetScale);
+	mono_add_internal_call("CulverinEditor.Transform::GetScale", (const void*)GetScale);
+	mono_add_internal_call("CulverinEditor.Transform::LookAt", (const void*)LookAt);
 
 	// Component ---------------------------
 	mono_add_internal_call("CulverinEditor.Component::GetParentGameObject", (const void*)GetParentGameObject);
@@ -740,6 +745,21 @@ void ImportScript::SetRotation(MonoObject* object, MonoObject* vector3)
 void ImportScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 {
 	current->IncrementRotation(object, vector3);
+}
+
+void ImportScript::SetScale(MonoObject * object, MonoObject * vector3)
+{
+	current->SetScale(object, vector3);
+}
+
+MonoObject * ImportScript::GetScale(MonoObject * object)
+{
+	return current->GetScale(object);
+}
+
+void ImportScript::LookAt(MonoObject * object, MonoObject * vector3)
+{
+	current->LookAt(object, vector3);
 }
 
 // Component ---------------------

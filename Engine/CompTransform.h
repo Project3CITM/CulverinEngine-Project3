@@ -40,6 +40,7 @@ public:
 	void SetRot(float3 rot);	//"rot" is "rotation_euler" updated, so we don't need to update it inside this method
 	void SetRot(Quat rot);		//"rot" is the quaternion we want to set to our rotation quaternion
 	void SetScale(float3 scale);
+	void LookAt(float3 target_pos);
 	void SetLocalTransform();
 	void SetGlobalTransform();
 	void UpdateLocalTransform();

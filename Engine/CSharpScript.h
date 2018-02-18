@@ -143,6 +143,9 @@ public:
 	MonoObject* GetRotation(MonoObject* object);
 	void		SetRotation(MonoObject* object, MonoObject* vector3);
 	void		IncrementRotation(MonoObject* object, MonoObject* vector3);
+	void		SetScale(MonoObject* object, MonoObject* vector3);
+	MonoObject* GetScale(MonoObject* object);
+	void		LookAt(MonoObject* object, MonoObject* vector3);
 
 	/*Audio*/
 	void		PlayAudioEvent(MonoObject* object, MonoString* event_name);
