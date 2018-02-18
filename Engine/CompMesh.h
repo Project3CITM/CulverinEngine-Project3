@@ -71,6 +71,9 @@ public:
 	void GenSkeleton();
 	GameObject* GenBone(char** name_iterator, const SkeletonSource* source, uint& generated_bones, Skeleton* skeleton);
 
+	CompMaterial* GetMaterial() const;
+
+
 public:
 
 	char* name = "MESH NAME";
