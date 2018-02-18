@@ -94,8 +94,13 @@ void ModuleMap::ShowEditorMap(bool &active)
 			}
 			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("Edit"))
+		if (ImGui::BeginMenu("Options"))
 		{
+			//show_numeration
+			if (ImGui::MenuItem("Show Numeration", NULL, show_numeration))
+			{
+				show_numeration = !show_numeration;
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Close"))
@@ -305,32 +310,65 @@ void ModuleMap::ShowWalkableMap()
 	ImGui::PushItemWidth(10);
 	//Frist Select Type
 	ImGui::Separator();
+	bool do_numeration = false;
+	if (show_numeration)
+	{
+		do_numeration = true;
+	}
 	for (int y = 0; y < height_map; y++)
 	{
-		for (int x = 0; x < width_map; x++)
+		if (do_numeration)
 		{
-			if (x > 0) ImGui::SameLine();
-			ImGui::PushID(x + y * 1000);
-			if (map[x][y] > -1)
+			do_numeration = false;
+			ShowTextWithColor(ImGuiCol_Button, 10);
+			ImGui::ButtonEx("", ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+			ImGui::SameLine();
+			ImGui::PopStyleColor();
+			for (int n = 0; n < width_map; n++)
 			{
-				ShowTextWithColor(ImGuiCol_Button, map[x][y]);
-			}
-			//	ImGui::OpenPopup("ID");
-			bool force_pop = false;
-			if (map[x][y] > -1)
-			{
-				force_pop = true;
-			}
-			if (ImGui::Button("ID"))
-			{
-				map[x][y] = paint;
-			}
-
-			if (map[x][y] > -1 && force_pop)
-			{
+				ShowTextWithColor(ImGuiCol_Button, 10);
+				ImGui::ButtonEx(std::to_string(n).c_str(), ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+				if(n + 1 < width_map)
+					ImGui::SameLine();
 				ImGui::PopStyleColor();
 			}
-			ImGui::PopID();
+			y--;
+		}
+		else
+		{
+			if (show_numeration)
+			{
+				ShowTextWithColor(ImGuiCol_Button, 10);
+				ImGui::ButtonEx(std::to_string(y).c_str(), ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+				ImGui::SameLine();
+				ImGui::PopStyleColor();
+			}
+			for (int x = 0; x < width_map; x++)
+			{
+				if (x > 0) ImGui::SameLine();
+				ImGui::PushID(x + y * 1000);
+
+				if (map[x][y] > -1)
+				{
+					ShowTextWithColor(ImGuiCol_Button, map[x][y]);
+				}
+				//	ImGui::OpenPopup("ID");
+				bool force_pop = false;
+				if (map[x][y] > -1)
+				{
+					force_pop = true;
+				}
+				if (ImGui::Button("ID"))
+				{
+					map[x][y] = paint;
+				}
+
+				if (map[x][y] > -1 && force_pop)
+				{
+					ImGui::PopStyleColor();
+				}
+				ImGui::PopID();
+			}
 		}
 	}
 	ImGui::Separator();
@@ -637,6 +675,14 @@ void ModuleMap::ShowTextWithColor(ImGuiCol_ type,int id)
 	else if (id == 8) // White
 	{
 		ImGui::PushStyleColor(type, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+	else if (id == 9) // Grey
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+	}
+	else if (id == 10) // Same Background
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.136f, 0.136f, 0.136f, 1.0f));
 	}
 }
 

@@ -49,6 +49,7 @@ private:
 	std::vector<std::string> export_map;
 	
 	bool map_created = false;
+	bool show_numeration = false;
 
 };
 
