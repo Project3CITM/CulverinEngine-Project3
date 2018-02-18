@@ -48,9 +48,9 @@ enum EventType
 	/*------------------Shader Pipeline-----------------*/
 	EVENT_CREATE_SHADER_PROGRAM,
 	EVENT_SEND_ALL_SHADER_OBJECTS,
-	EVENT_SHADOW_MAP_GEN,
+	EVENT_REQUEST_3D_3DA_MM, //Call it from your code to get a reference to the multimaps
+	EVENT_SEND_3D_3DA_MM,	 //This event is sent if you call EVENT_REQUEST_3D_3DA_MM
 	EVENT_OPEN_SHADER_EDITOR,
-
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
@@ -184,11 +184,16 @@ struct ESendAllShaderObject
 	std::vector<Shader*>* shaders;
 };
 
-struct EShadowMapGen
+struct ERequest3D3DAMM
 {
 	EventType type;
-	std::multimap<float, Event>& MM3DDrawEvent;
-	std::multimap<float, Event>& MM3DADrawEvent;
+};
+
+struct ESend3D3DAMM
+{
+	EventType type;
+	const std::multimap<float, Event>* MM3DDrawEvent;
+	const std::multimap<float, Event>* MM3DADrawEvent;
 };
 
 struct EOpenShaderEditor
@@ -234,7 +239,8 @@ union Event
 	/*------------------Shader Pipeline-----------------*/
 	ECreateShaderProgram shader_program;
 	ESendAllShaderObject send_shader_object;
-	EShadowMapGen shadow_map_gen;
+	ERequest3D3DAMM request_3d3damm;
+	ESend3D3DAMM send_3d3damm;
 	EOpenShaderEditor shader_editor;
 	/*----------------Skeletal Animation----------------*/
 
