@@ -84,8 +84,33 @@ public class TestMovement : CulverinBehaviour
             //Quaternion rot_step = Quaternion.RotateTowards(Quaternion.FromEulerAngles(transform.rotation), Quaternion.FromEulerAngles(endRotation), movSpeed * 20 * Time.DeltaTime());
             //transform.Rotation = Quaternion.ToEulerAngles();
         }
+      if(Input.GetMouseButtonUp(2))
+        {
+            Vector3 forwards = Vector3.Zero;
+            Vector3 rightwards = new Vector3(0, 90, 0);
+            Vector3 backwards = new Vector3(0, 180, 0);
+            Vector3 leftwards = new Vector3(0, 270, 0);
 
-        GetComponent<Transform>().position = Vector3.MoveTowards(GetComponent<Transform>().position, endPosition, movSpeed * Time.DeltaTime());
+            float curr_rot_y = transform.Rotation.y;
+
+            if (curr_rot_y < 45 || curr_rot_y > 315)
+            {
+                endRotation = forwards;
+            }
+            if (curr_rot_y > 45 && curr_rot_y < 135)
+            {
+                endRotation = rightwards;
+            }
+            if (curr_rot_y > 135 && curr_rot_y < 225)
+            {
+                endRotation = backwards;
+            }
+            if (curr_rot_y > 255 && curr_rot_y < 315)
+            {
+                endRotation = leftwards;
+            }
+        }
+
         if (GetComponent<Transform>().position == endPosition && transform.Rotation == endRotation)
         {
             //2D coordinates, y=z in 3D coordinates
@@ -126,6 +151,10 @@ public class TestMovement : CulverinBehaviour
                 curr_x += tile_mov_x;
                 curr_y += tile_mov_y;
             }
+        }
+        else
+        {
+            GetComponent<Transform>().position = Vector3.MoveTowards(GetComponent<Transform>().position, endPosition, movSpeed * Time.DeltaTime());
         }
     }
 }
