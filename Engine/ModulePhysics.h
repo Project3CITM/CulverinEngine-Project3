@@ -3,6 +3,8 @@
 
 #include "Module.h"
 
+#include <map>
+
 #define DEBUG_PHYSX_DT 0.000000000001
 
 class jpPhysicsWorld;
@@ -35,11 +37,15 @@ public:
 	bool SaveConfig(JSON_Object* node);
 	bool CleanUp();
 
+	bool SetEventListenrs();
+	void OnEvent(Event& event);
+
 	// PhysX Methods ----------------
 	jpPhysicsRigidBody* GetNewRigidBody(bool dynamic = false);
+	jpPhysicsRigidBody* GetNewRigidBody(Component* component, bool dynamic = false);
 
 	// Collision Callback -----------
-	void OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor);
+	void OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor, JP_COLLISION_TYPE type);
 
 	// Debug Methods ----------------
 	void DrawPhysics();
@@ -54,6 +60,8 @@ private:
 	// Use only as a debug tool -----
 	bool render_physics = false;
 	bool render_on_play = false;
+
+	std::map<physx::PxRigidActor*, Component*> colliders;
 
 	//jpPhysicsRigidBody* trigger_test = nullptr;
 	//jpPhysicsRigidBody* collider_test = nullptr;

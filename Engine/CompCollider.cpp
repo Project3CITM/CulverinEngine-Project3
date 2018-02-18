@@ -23,6 +23,7 @@ CompCollider::~CompCollider()
 {
 }
 
+// -----------------------------------------------------------------
 void CompCollider::ShowOptions()
 {
 	if (ImGui::MenuItem("Reset", NULL, false, false))
@@ -93,6 +94,18 @@ void CompCollider::CopyValues(const CompCollider * component)
 	//more...
 }
 
+// -----------------------------------------------------------------
+void CompCollider::OnTriggerEnter(Component * actor)
+{
+	// Call Listner OnTriggerEnter(Component* actor);
+}
+
+void CompCollider::OnTriggerLost(Component * actor)
+{
+	// Call Listner OnTriggerLost(Component* actor);
+}
+
+// -----------------------------------------------------------------
 void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);

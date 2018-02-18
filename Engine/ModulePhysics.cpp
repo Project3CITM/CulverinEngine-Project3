@@ -1,6 +1,9 @@
+#include "Application.h"
+#include "ModuleEventSystem.h"
 #include "ModulePhysics.h"
 
-#include "Application.h"
+#include "Component.h"
+#include "CompCollider.h"
 
 #include "PhysX/Include/PxPhysicsAPI.h"
 #include "jpPhysicsWorld.h"
@@ -139,6 +142,33 @@ bool ModulePhysics::CleanUp()
 	return true;
 }
 
+bool ModulePhysics::SetEventListenrs()
+{
+	AddListener(EventType::EVENT_TRIGGER_COLLISION, this);
+	return false;
+}
+
+void ModulePhysics::OnEvent(Event & event)
+{
+	if (event.type == EventType::EVENT_TRIGGER_COLLISION)
+	{
+		switch (event.physics_collision.collision_type)
+		{
+		case JP_COLLISION_TYPE::TRIGGER_ENTER:
+		{
+			// Call component (Trigger) OnTriggerEnter(event.physics_collision.actor);
+			static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerEnter(event.physics_collision.actor);
+			break;
+		}
+		case JP_COLLISION_TYPE::TRIGGER_LOST:
+		{
+			// Call component (Trigger) OnTriggerLost(event.physics_collision.actor);
+			break;
+		}
+		}
+	}
+}
+
 // -----------------------------------------------------------------
 jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(bool dynamic)
 {
@@ -152,10 +182,43 @@ jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(bool dynamic)
 	}
 }
 
-void ModulePhysics::OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor)
+jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(Component * component, bool dynamic)
 {
-	// Send Event
-	LOG("Collision Detected");
+	if (physics_world && component)
+	{
+		jpPhysicsRigidBody* body = physics_world->CreateRigidBody(physics_world->GetScene(0), dynamic);
+		if (body->GetActor()) {
+			colliders.insert(std::pair<physx::PxRigidActor*, Component*>(body->GetActor(), component));
+			return physics_world->CreateRigidBody(physics_world->GetScene(0), dynamic);
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+	else
+	{
+		return nullptr;
+	}
+	
+}
+
+void ModulePhysics::OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor, JP_COLLISION_TYPE type)
+{
+	// Send Trigger event to execute on postupdate 
+	std::map<physx::PxRigidActor*, Component*>::const_iterator npair;
+
+	Event collision;
+	collision.physics_collision.type = EventType::EVENT_TRIGGER_COLLISION;
+	collision.physics_collision.collision_type = type;
+
+	npair = colliders.find(trigger);
+	collision.physics_collision.trigger = npair._Ptr->_Myval.second;
+
+	npair = colliders.find(actor);
+	collision.physics_collision.actor = npair._Ptr->_Myval.second;
+	
+	PushEvent(collision);
 }
 
 // -----------------------------------------------------------------

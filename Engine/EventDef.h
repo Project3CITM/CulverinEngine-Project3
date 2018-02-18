@@ -23,7 +23,7 @@ class Component;
 enum ShaderType;
 class Shader;
 union Event;
-
+enum JP_COLLISION_TYPE;
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
 /*--------------------------------------------------*/
@@ -44,7 +44,7 @@ enum EventType
 	/*------------------Particle System-----------------*/
 
 	/*----------------------Physics---------------------*/
-
+	EVENT_TRIGGER_COLLISION,
 	/*------------------Shader Pipeline-----------------*/
 	EVENT_CREATE_SHADER_PROGRAM,
 	EVENT_SEND_ALL_SHADER_OBJECTS,
@@ -137,6 +137,14 @@ struct EWindowResize
 /*--------------------------------------------------*/
 /*----------------------Physics---------------------*/
 /*--------------------------------------------------*/
+struct ETrigger
+{
+	EventType type;
+	JP_COLLISION_TYPE collision_type;
+	Component* trigger;
+	Component* actor;
+};
+
 struct EPoint
 {
 	EventType type;
@@ -222,7 +230,7 @@ union Event
 	/*------------------Particle System-----------------*/
 
 	/*----------------------Physics---------------------*/
-
+	ETrigger physics_collision;
 	/*------------------Shader Pipeline-----------------*/
 	ECreateShaderProgram shader_program;
 	ESendAllShaderObject send_shader_object;
