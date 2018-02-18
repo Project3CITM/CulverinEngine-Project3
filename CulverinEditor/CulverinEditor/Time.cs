@@ -7,8 +7,10 @@ using System.Runtime.CompilerServices;
 
 namespace CulverinEditor
 {
-    public class Time
+    public sealed class Time
     {
+        public Time() { }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern float DeltaTime();
     }
