@@ -446,6 +446,46 @@ void JSONSerialization::LoadChildLoadPrefab(GameObject& parent, GameObject& chil
 	}
 }
 
+void JSONSerialization::SaveMapWalkable(std::vector<std::string>& map, int height_map, int width_map, const char * name)
+{
+	LOG("SAVING Map %s -----", name);
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+	JSON_Object* config_node;
+
+	std::string nameJson = App->fs->GetMainDirectory();
+	nameJson += "/Maps/";
+	nameJson += name;
+	nameJson += ".mapwalk.json";
+	config_file = json_value_init_object();
+
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		json_object_clear(config);
+		json_object_dotset_number_with_std(config, "Map.Info.Height Map", height_map);
+		json_object_dotset_number_with_std(config, "Map.Info.Width Map", width_map);
+		config_node = json_object_get_object(config, "Map");
+
+		if (height_map == map.size())
+		{
+			for (int i = 0; i < map.size(); i++)
+			{
+				std::string line = "Line_" + std::to_string(i);
+				//line += ".";
+				json_object_dotset_string_with_std(config_node, line, map[i].c_str());
+			}
+		}
+		else
+		{
+			LOG("[error]Error with Save Map!");
+		}
+	}
+	json_serialize_to_file(config_file, nameJson.c_str());
+	json_value_free(config_file);
+}
+
 void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const char* directory, const char* fileName)
 {
 	LOG("SAVING Material %s -----", material->name);
