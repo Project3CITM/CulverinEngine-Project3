@@ -1679,6 +1679,10 @@ CompBone * GameObject::GetComponentBone() const
 	return (CompBone*)FindComponentByType(Comp_Type::C_BONE);
 }
 
+CompImage * GameObject::GetComponentImage() const
+{
+	return (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
+}
 
 Component* GameObject::GetComponentbyIndex(uint i) const
 {

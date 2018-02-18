@@ -4,10 +4,13 @@
 #include <vector>
 #include "Math\float2.h"
 #include "Math\float3.h"
+#include "CompImage.h"
 class CompText;
 class CompImage;
 class CompGraphic;
 class CompCanvas;
+
+enum FillMethod;
 
 struct CanvasVertex
 {
@@ -31,6 +34,7 @@ public:
 	void AddToCanvas();
 	void RemoveFromCanvas();
 	void ProcessImage(CompImage* image);
+	void ProcessQuad(const std::vector<float2>&ver_quad, const std::vector<float2>&uv_coord);
 	void PorcessText(CompText* text);
 	void DrawGraphic();
 

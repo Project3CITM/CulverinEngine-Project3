@@ -95,6 +95,7 @@ public:
 	CompAnimation* GetComponentAnimation() const;
 	CompLight* GetComponentLight() const;
 	CompBone* GetComponentBone() const;
+	CompImage* GetComponentImage() const;
 
 	Component* GetComponentbyIndex(uint i) const;
 	void DeleteAllComponents();

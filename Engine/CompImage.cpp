@@ -8,13 +8,12 @@
 #include "ResourceMaterial.h"
 #include "CompCanvasRender.h"
 #include "CompRectTransform.h"
+#include <vector>
 
 CompImage::CompImage(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Image";
-
-//	((CompCanvasRender*)parent->FindParentComponentByType(Comp_Type::C_CANVAS_RENDER))->ProcessImage(this);
 
 }
 
@@ -60,7 +59,11 @@ void CompImage::PreUpdate(float dt)
 			source_image = nullptr;
 		}
 	}
-	
+	if (parent->GetComponentImage() != nullptr)
+	{
+		to_fill = parent->GetComponentImage();
+		Type = FILLED;
+	}
 	// -------------------------------------------------------------------
 }
 
@@ -185,7 +188,83 @@ void CompImage::ShowInspectorInfo()
 			}
 		}
 	}
+	int selection = 0;
+	ImGui::Text("Image Type:"); ImGui::SameLine();
+	if (ImGui::Combo("##type", &selection, "SIMPLE\0FILLED"))
+	{
+		if (selection == Type::SIMPLE)
+		{
+			filler = false;
+			Type = SIMPLE;
+		}
+		if (selection == Type::FILLED)
+		{
+			filler = true;
+			Type = FILLED;
+		}
+	}
+	selection = 0;
+	if (Type == FILLED)
+	{
+		ImGui::Text("Fill Method:"); ImGui::SameLine();
+		if (ImGui::Combo("##fillMethod", &selection, "Horitzontal\0Vertical\0 Radial"))
+		{
+			if (selection == FillMethod::HORITZONTAL)
+				Method = HORITZONTAL;
+			if (selection == FillMethod::VERTICAL)
+				Method = VERTICAL;
+			if (selection == FillMethod::RADIAL360)
+				Method = RADIAL360;
+		}
+		if (ImGui::DragFloat("##fillQuantity", &filled, 0.01f, 0.0f, 1.0f))
+		{
+			GenerateFilledSprite(filled, Method);
+		}
+	}
 	ImGui::TreePop();
+}
+
+void CompImage::GenerateFilledSprite(float to_fill, FillMethod Method)
+{
+	float4 v = parent->GetComponentRectTransform()->GetRect();
+	float4 outer = { 0.0f,0.0f,1.0f,1.0f };	
+	std::vector<float2> quad_pos;
+	std::vector<float2> quad_uv;
+	
+	float tx0 = outer.x;
+	float ty0 = outer.y;
+	float tx1 = outer.z;
+	float ty1 = outer.w;
+
+	if (Method == HORITZONTAL || Method == VERTICAL)
+	{
+		if (Method == HORITZONTAL)
+		{
+			float fill = (tx1 - tx0) * to_fill;
+
+			v.z = v.x + (v.z - v.x) * fill;
+			tx1 = tx0 + to_fill;
+		}
+		else if (Method == VERTICAL)
+		{
+			float fill = (ty1 - ty0) * to_fill;
+
+			v.w = v.y + (v.w - v.y) * fill;
+			ty1 = ty0 + to_fill;
+		}
+	}
+	
+	quad_pos.push_back(float2({ v.x,v.y }));
+	quad_pos.push_back(float2({ v.x,v.w }));
+	quad_pos.push_back(float2({ v.z,v.w,}));
+	quad_pos.push_back(float2({ v.z,v.y,}));
+
+	quad_uv.push_back(float2({ tx0,ty0 }));
+	quad_uv.push_back(float2({ tx0,ty1,}));
+	quad_uv.push_back(float2({ tx1,ty1,}));
+	quad_uv.push_back(float2({ tx1,ty0,}));
+
+	my_canvas_render->ProcessQuad(quad_pos, quad_uv);
 }
 
 void CompImage::CopyValues(const CompImage * component)

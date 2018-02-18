@@ -165,62 +165,118 @@ void CompCanvasRender::RemoveFromCanvas()
 
 void CompCanvasRender::ProcessImage(CompImage * image)
 {
-	graphic = image;
-		//UV Setup
-//-x+y	//0,1-------1,1 //+x+y
-		//|	3     /	2|
-		//|		/	 |
-		//|	0 /		1|
-//-x-y	//0,0-------1,0 //+x-y
-	
+	//UV Setup
+	//-x+y	//0,1-------1,1 //+x+y
+			//|	3     /	2|
+			//|		/	 |
+			//|	0 /		1|
+	//-x-y	//0,0-------1,0 //+x-y
+
 	//Clear All Vertices and indices
 	vertices.clear();
 	indices.clear();
+	CanvasVertex ver;
+
+	ver.position = parent->GetComponentRectTransform()->GetSouthWestPosition();
+	ver.tex_coords = float2(0.0f, 0.0f);
+	vertices.push_back(ver);
+
+	ver.position = parent->GetComponentRectTransform()->GetSouthEastPosition();
+	ver.tex_coords = float2(1.0f, 0.0f);
+	vertices.push_back(ver);
+
+	ver.position = parent->GetComponentRectTransform()->GetNorthEastPosition();
+	ver.tex_coords = float2(1.0f, 1.0f);
+	vertices.push_back(ver);
+
+	ver.position = parent->GetComponentRectTransform()->GetNorthWestPosition();
+	ver.tex_coords = float2(0.0f, 1.0f);
+	vertices.push_back(ver);
+
+	uint lastIndex = 0;
+
+	indices.push_back(lastIndex);
+	indices.push_back(lastIndex + 1);
+	indices.push_back(lastIndex + 2);
+	indices.push_back(lastIndex + 2);
+	indices.push_back(lastIndex + 3);
+	indices.push_back(lastIndex);
+
+	//----
+	glGetError();
+	glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
+	CheckOpenGlError("glBindBuffer vertices");
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CanvasVertex), &vertices[0], GL_STATIC_DRAW);
+	CheckOpenGlError("glBufferData vertices");
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	CheckOpenGlError("glBindBuffer vertices 0");
 
 
-		CanvasVertex ver;
-		ver.position = parent->GetComponentRectTransform()->GetSouthWestPosition();
-		ver.tex_coords=float2(0.0f,0.0f);
-		vertices.push_back(ver);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
+	CheckOpenGlError("glBindBuffer indices");
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
+	CheckOpenGlError("glBufferData indices");
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	CheckOpenGlError("glBindBuffer indices 0");
 
-		ver.position = parent->GetComponentRectTransform()->GetSouthEastPosition();
-		ver.tex_coords = float2(1.0f, 0.0f);
-		vertices.push_back(ver);
+}
 
-		ver.position = parent->GetComponentRectTransform()->GetNorthEastPosition();
-		ver.tex_coords = float2(1.0f, 1.0f);
-		vertices.push_back(ver);
+void CompCanvasRender::ProcessQuad(const std::vector<float2>& ver_quad, const std::vector<float2>& uv_coord)
+{
+	//UV Setup
+	//-x+y	 //0,1-------1,1 //+x+y
+			//|	3     /	2|
+			//|		/	 |
+			//|	0 /		1|
+	//-x-y	//0,0-------1,0 //+x-y
+	vertices.clear();
+	indices.clear();
+	CanvasVertex ver;
 
-		ver.position = parent->GetComponentRectTransform()->GetNorthWestPosition();
-		ver.tex_coords = float2(0.0f, 1.0f);
-		vertices.push_back(ver);
+	ver.position = float3(ver_quad[0],0);
+	ver.tex_coords = uv_coord[0];
+	vertices.push_back(ver);
 
-		uint lastIndex = 0;
+	ver.position = float3(ver_quad[1], 0);
+	ver.tex_coords = uv_coord[1];
+	vertices.push_back(ver);
 
-		indices.push_back(lastIndex);
-		indices.push_back(lastIndex + 1);
-		indices.push_back(lastIndex + 2);
-		indices.push_back(lastIndex + 2);
-		indices.push_back(lastIndex + 3);
-		indices.push_back(lastIndex );
+	ver.position = float3(ver_quad[2], 0);
+	ver.tex_coords = uv_coord[2];
+	vertices.push_back(ver);
 
-		//----
-		glGetError();
-		glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
-		CheckOpenGlError("glBindBuffer vertices");
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CanvasVertex), &vertices[0], GL_STATIC_DRAW);
-		CheckOpenGlError("glBufferData vertices");
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		CheckOpenGlError("glBindBuffer vertices 0");
+	ver.position = float3(ver_quad[3], 0);
+	ver.tex_coords = uv_coord[3];
+	vertices.push_back(ver);
 
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
-		CheckOpenGlError("glBindBuffer indices");
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
-		CheckOpenGlError("glBufferData indices");
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		CheckOpenGlError("glBindBuffer indices 0");
 
+
+	uint lastIndex = 0;
+
+	indices.push_back(lastIndex);
+	indices.push_back(lastIndex + 1);
+	indices.push_back(lastIndex + 2);
+	indices.push_back(lastIndex + 2);
+	indices.push_back(lastIndex + 3);
+	indices.push_back(lastIndex);
+
+	//----
+	glGetError();
+	glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
+	CheckOpenGlError("glBindBuffer vertices");
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CanvasVertex), &vertices[0], GL_STATIC_DRAW);
+	CheckOpenGlError("glBufferData vertices");
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	CheckOpenGlError("glBindBuffer vertices 0");
+
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
+	CheckOpenGlError("glBindBuffer indices");
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
+	CheckOpenGlError("glBufferData indices");
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	CheckOpenGlError("glBindBuffer indices 0");
 }
 
 void CompCanvasRender::PorcessText(CompText * text)

@@ -3,6 +3,15 @@
 #include "CompGraphic.h"
 class ResourceMaterial;
 class CompRectTransform;
+
+enum FillMethod
+{
+	HORITZONTAL,
+	VERTICAL,
+	RADIAL360,
+	NONE
+};
+
 class CompImage:public CompGraphic
 {
 public:
@@ -13,6 +22,7 @@ public:
 	void Update(float dt);
 	void ShowOptions();
 	void ShowInspectorInfo();
+	void GenerateFilledSprite(float fill, FillMethod method);
 	void CopyValues(const CompImage * component);
 	void Clear();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
@@ -29,13 +39,33 @@ public:
 
 private:
 public:
+	enum Type
+	{
+		SIMPLE,
+		FILLED
+	};
+	enum OriginHoritzontal
+	{
+		RIGHT,
+		LEFT
+	};
+	enum OriginVertical
+	{
+		TOP,
+		BOTTOM
+	};
+
 private:
 	ResourceMaterial* source_image = nullptr;
 	ResourceMaterial* overwrite_image = nullptr;
+	CompImage* to_fill = nullptr;
+	Type Type = SIMPLE;
+	FillMethod Method = NONE;
 
 	uint uuid_source_image = 0;
-	bool raycast_target=true;
-	bool select_source_image =false;
-
+	bool raycast_target = true;
+	bool select_source_image = false;
+	bool filler = false;
+	float filled = 1.0f;
 };
 #endif//COMPONENT_IMAGE_H
