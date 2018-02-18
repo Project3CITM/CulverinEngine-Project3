@@ -55,7 +55,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 
 Scene::~Scene()
 {
-	//DeleteGameObjects(root, true); //TODO-> Elliot
+	DeleteAllGameObjects(root); //TODO-> Elliot
 	RELEASE(scene_buff);
 	RELEASE(skybox);
 }
