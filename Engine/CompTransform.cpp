@@ -306,6 +306,13 @@ void CompTransform::SetPos(float3 pos_g)
 	toUpdate = true;
 }
 
+void CompTransform::Translate(float3 translation)
+{
+	position.x += translation.x;
+	position.y += translation.y;
+	position.z += translation.z;
+}
+
 void CompTransform::IncrementRot(float3 rot)
 {
 	rotation_euler += rot;

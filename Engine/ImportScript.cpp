@@ -513,6 +513,7 @@ void ImportScript::LinkFunctions()
 	// Transform ---------------------------
 	mono_add_internal_call("CulverinEditor.Transform::GetPosition", (const void*)GetPosition);
 	mono_add_internal_call("CulverinEditor.Transform::SetPosition", (const void*)SetPosition);
+	mono_add_internal_call("CulverinEditor.Transform::Translate", (const void*)Translate);
 	mono_add_internal_call("CulverinEditor.Transform::SetRotation", (const void*)SetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::GetRotation", (const void*)GetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::RotateAroundAxis", (const void*)IncrementRotation);
@@ -730,6 +731,11 @@ MonoObject* ImportScript::GetPosition(MonoObject* object)
 void ImportScript::SetPosition(MonoObject* object, MonoObject* vector3)
 {
 	current->SetPosition(object, vector3);
+}
+
+void ImportScript::Translate(MonoObject * object, MonoObject * vector3)
+{
+	current->Translate(object, vector3);
 }
 
 MonoObject* ImportScript::GetRotation(MonoObject* object)

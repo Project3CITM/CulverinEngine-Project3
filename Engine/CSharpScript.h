@@ -140,6 +140,7 @@ public:
 
 	MonoObject* GetPosition(MonoObject* object);
 	void		SetPosition(MonoObject* object, MonoObject* vector3);
+	void		Translate(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetRotation(MonoObject* object);
 	void		SetRotation(MonoObject* object, MonoObject* vector3);
 	void		IncrementRotation(MonoObject* object, MonoObject* vector3);

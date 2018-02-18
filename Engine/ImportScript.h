@@ -83,6 +83,7 @@ private:
 	/*Transform*/
 	static MonoObject*	GetPosition(MonoObject* object);
 	static void			SetPosition(MonoObject* object, MonoObject* vector3);
+	static void			Translate(MonoObject* object, MonoObject* vector3);
 	static MonoObject*	GetRotation(MonoObject* object);
 	static void			SetRotation(MonoObject* object, MonoObject* vector3);
 	static void			IncrementRotation(MonoObject* object, MonoObject* vector3);

@@ -897,6 +897,26 @@ void CSharpScript::SetPosition(MonoObject* object, MonoObject* vector3)
 	}
 }
 
+void CSharpScript::Translate(MonoObject * object, MonoObject * vector3)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_object_get_class(vector3);
+		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+		float3 added_pos;
+
+		if (x_field) mono_field_get_value(vector3, x_field, &added_pos.x);
+		if (y_field) mono_field_get_value(vector3, y_field, &added_pos.y);
+		if (z_field) mono_field_get_value(vector3, z_field, &added_pos.z);
+
+		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		transform->Translate(added_pos);
+	}
+}
+
 MonoObject* CSharpScript::GetRotation(MonoObject* object)
 {
 	if (current_game_object != nullptr)

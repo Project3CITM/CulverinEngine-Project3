@@ -92,7 +92,9 @@ void CompCamera::UpdateFrustum()
 	float4x4 trans = transform->GetGlobalTransform();
 
 	frustum.pos = trans.TranslatePart();
-	frustum.front = trans.WorldZ().Normalized();
+	float3 val = trans.WorldZ();
+	if (val == float3::zero)val = float3::unitZ;
+	frustum.front = val.Normalized();
 	frustum.up = frustum.front.Cross(-frustum.WorldRight()).Normalized();
 }
 

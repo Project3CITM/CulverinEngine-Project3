@@ -41,25 +41,28 @@ namespace CulverinEditor
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern Vector3 GetPosition();
+        public extern Vector3 GetPosition();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern void SetPosition(Vector3 value);
+        public extern void SetPosition(Vector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern Vector3 GetRotation();
+        public extern void Translate(Vector3 translation);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern void SetRotation(Vector3 value);
+        public extern Vector3 GetRotation();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetRotation(Vector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void RotateAroundAxis(Vector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern Vector3 GetScale();
+        public extern Vector3 GetScale();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern void SetScale(Vector3 value);
+        public extern void SetScale(Vector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void LookAt(Vector3 value);
