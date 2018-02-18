@@ -29,6 +29,7 @@
 #include "CompLight.h"
 #include "CompCollider.h"
 #include "CompRigidBody.h"
+#include "CompParticleSystem.h"
 
 //Event system test
 #include "ModuleEventSystem.h"
@@ -411,6 +412,10 @@ void GameObject::Draw()
 			}
 			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_LIGHT)
 			{
+				Event draw_event;
+				draw_event.request_3d3damm.type = EventType::EVENT_REQUEST_3D_3DA_MM;
+				draw_event.request_3d3damm.light = (CompLight*)components[i];
+				PushImmediateEvent(draw_event);
 				components[i]->Draw();
 			}
 		}
@@ -709,6 +714,10 @@ void GameObject::ShowGameObjectOptions()
 			if (ImGui::MenuItem("Rigid Body"))
 			{
 				AddComponent(Comp_Type::C_RIGIDBODY);
+			}
+			if (ImGui::MenuItem("Particle System"))
+			{
+				AddComponent(Comp_Type::C_PARTICLE_SYSTEM);
 			}
 			ImGui::EndMenu();
 		}
@@ -1009,6 +1018,11 @@ void GameObject::ShowInspectorInfo()
 			AddComponent(Comp_Type::C_RIGIDBODY);
 			add_component = false;
 		}
+		if (ImGui::MenuItem("Particle System"))
+		{
+			AddComponent(Comp_Type::C_PARTICLE_SYSTEM);
+			add_component = false;
+		}
 
 		ImGui::End();
 		ImGui::PopStyleColor();
@@ -1187,37 +1201,29 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 
 	if (!dupe)
 	{
-		if (type == Comp_Type::C_MESH)
+		switch (type)
+		{
+		case Comp_Type::C_MESH:
 		{
 			LOG("Adding MESH COMPONENT.");
 			CompMesh* mesh = new CompMesh(type, this);
 			components.push_back(mesh);
 			/* Link Material to the Mesh if exists */
 			const CompMaterial* material_link = (CompMaterial*)FindComponentByType(Comp_Type::C_MATERIAL);
-			if (material_link != nullptr)
-			{
-				mesh->LinkMaterial(material_link);
-			}
-			else
-			{
-				LOG("Havent Material");
-			}
+			if (material_link != nullptr) mesh->LinkMaterial(material_link);
+			else LOG("Havent Material");
 			return mesh;
 		}
-
-		else if (type == Comp_Type::C_TRANSFORM)
+		case Comp_Type::C_TRANSFORM:
 		{
 			LOG("Adding TRANSFORM COMPONENT.");
 			CompTransform* transform = new CompTransform(type, this);
 			components.push_back(transform);
 			return transform;
 		}
-		else if (type == Comp_Type::C_RECT_TRANSFORM)
+		case Comp_Type::C_RECT_TRANSFORM:
 		{
-			if (FindComponentByType(Comp_Type::C_RECT_TRANSFORM) != nullptr)
-			{
-				return nullptr;
-			}
+			if (FindComponentByType(Comp_Type::C_RECT_TRANSFORM) != nullptr) return nullptr;
 			LOG("Adding RECT TRANSFORM COMPONENT.");
 			CompRectTransform* transform = new CompRectTransform(type, this);
 			if (!components.empty())
@@ -1225,52 +1231,39 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 				RELEASE(components[0]);
 				components.at(0) = transform;
 			}
-			else
-			{
-				components.push_back(transform);
-			}
+			else components.push_back(transform);
 			return transform;
 		}
-		else if (type == Comp_Type::C_MATERIAL)
+		case Comp_Type::C_MATERIAL:
 		{
 			LOG("Adding MATERIAL COMPONENT.");
 			CompMaterial* material = new CompMaterial(type, this);
 			components.push_back(material);
-
 			/* Link Material to the Mesh if exists */
 			CompMesh* mesh_to_link = (CompMesh*)FindComponentByType(Comp_Type::C_MESH);
-			if (mesh_to_link != nullptr)
-			{
-				mesh_to_link->LinkMaterial(material);
-			}
-			else
-			{
-				LOG("MATERIAL not linked to any mesh");
-			}
+			if (mesh_to_link != nullptr) mesh_to_link->LinkMaterial(material);
+			else LOG("MATERIAL not linked to any mesh");
 			return material;
 		}
-		else if (type == Comp_Type::C_CANVAS)
+		case Comp_Type::C_CANVAS:
 		{
 			AddComponent(Comp_Type::C_RECT_TRANSFORM);
 			LOG("Adding CANVAS COMPONENT.");
 			CompCanvas* canvas = new CompCanvas(type, this);
 			components.push_back(canvas);
-
 			//If is not RectTransform
 			//TODO change transform
 			return canvas;
 		}
-		else if (type == Comp_Type::C_CANVAS_RENDER)
+		case Comp_Type::C_CANVAS_RENDER:
 		{
 			LOG("Adding CANVAS RENDER COMPONENT.");
 			CompCanvasRender* canvas_renderer = new CompCanvasRender(type, this);
 			components.push_back(canvas_renderer);
-
 			return canvas_renderer;
 		}
-		else if (type == Comp_Type::C_IMAGE)
+		case Comp_Type::C_IMAGE:
 		{
-
 			//If is not RectTransform
 			//TODO change transform
 			LOG("Adding CANVAS RENDER COMPONENT.");
@@ -1282,9 +1275,8 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			canvas_renderer->ProcessImage(image);
 			return image;
 		}
-		else if (type == Comp_Type::C_TEXT)
+		case Comp_Type::C_TEXT:
 		{
-
 			//If is not RectTransform
 			//TODO change transform
 			LOG("Adding CANVAS RENDER COMPONENT.");
@@ -1295,134 +1287,126 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(text);
 			return text;
 		}
-		else if (type == Comp_Type::C_EDIT_TEXT)
+		case Comp_Type::C_EDIT_TEXT:
 		{
-
 			//If is not RectTransform
 			//TODO change transform
 			LOG("Adding EDIT TEXT COMPONENT.");
 			CompEditText* edit_text = new CompEditText(type, this);
 			components.push_back(edit_text);
-
 			/* Link image to the button if exists */
 			CompText* text_to_link = (CompText*)FindComponentByType(Comp_Type::C_TEXT);
 			if (text_to_link != nullptr)
 			{
+
 			}
-			else
-			{
-				LOG("TEXT not linked to any Edit Text");
-			}
+			else LOG("TEXT not linked to any Edit Text");
 			return edit_text;
 		}
-		else if (type == Comp_Type::C_BUTTON)
+		case Comp_Type::C_BUTTON:
 		{
-
 			//If is not RectTransform
 			//TODO change transform
 			LOG("Adding BUTTON COMPONENT.");
 			CompButton* button = new CompButton(type, this);
 			components.push_back(button);
-
 			/* Link image to the button if exists */
 			CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
 			if (image_to_link != nullptr)
 			{
+
 			}
-			else
-			{
-				LOG("IMAGE not linked to any Button");
-			}
+			else LOG("IMAGE not linked to any Button");
 			return button;
 		}
-		else if (type == Comp_Type::C_CHECK_BOX)
+		case Comp_Type::C_CHECK_BOX:
 		{
-
 			//If is not RectTransform
 			//TODO change transform
 			LOG("Adding CHECK BOX COMPONENT.");
 			CompCheckBox* check_box = new CompCheckBox(type, this);
 			components.push_back(check_box);
-
 			/* Link image to the button if exists */
 			CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
 			if (image_to_link != nullptr)
 			{
 
 			}
-			else
-			{
-				LOG("IMAGE not linked to any CheckBox");
-			}
+			else LOG("IMAGE not linked to any CheckBox");
 			return check_box;
 		}
-		else if (type == Comp_Type::C_CAMERA)
+		case Comp_Type::C_CAMERA:
 		{
 			LOG("Adding CAMERA COMPONENT.");
 			CompCamera* camera = new CompCamera(type, this);
 			components.push_back(camera);
 			return camera;
 		}
-
-		else if (type == Comp_Type::C_SCRIPT)
+		case Comp_Type::C_SCRIPT:
 		{
 			LOG("Adding SCRIPT COMPONENT.");
 			CompScript* script = new CompScript(type, this);
-			if (isFromLoader == false)
-			{
-				script->Init();
-			}
+			if (!isFromLoader) script->Init();
 			components.push_back(script);
 			return script;
 		}
-		else if (type == Comp_Type::C_ANIMATION)
+		case Comp_Type::C_ANIMATION:
 		{
 			LOG("Adding ANIMATION COMPONENT.");
 			CompAnimation* anim = new CompAnimation(type, this);
 			components.push_back(anim);
 			return anim;
 		}
-		else if (type == Comp_Type::C_AUDIO)
+		case Comp_Type::C_AUDIO:
 		{
 			LOG("Adding AUDIO COMPONENT.");
 			CompAudio* audio = new CompAudio(type, this);
 			components.push_back(audio);
 			return audio;
 		}
-		else if (type == Comp_Type::C_BONE)
+		case Comp_Type::C_BONE:
 		{
 			LOG("Adding BONE COMPONENT.");
 			CompBone* bone = new CompBone(type, this);
 			components.push_back(bone);
 			return bone;
 		}
-		else if (type == Comp_Type::C_FSM)
+		case Comp_Type::C_FSM:
 		{
 			LOG("Adding FINITE STATE MACHINE COMPONENT.");
 			CompFiniteStateMachine* fsm = new CompFiniteStateMachine(type, this);
 			components.push_back(fsm);
 			return fsm;
 		}
-		else if (type == Comp_Type::C_LIGHT)
+		case Comp_Type::C_LIGHT:
 		{
 			LOG("Adding LIGHT COMPONENT.");
 			CompLight* light = new CompLight(type, this);
 			components.push_back(light);
 			return light;
 		}
-		else if (type == Comp_Type::C_COLLIDER)
+		case Comp_Type::C_COLLIDER:
 		{
 			LOG("Adding COLLIDER COMPONENT");
 			CompCollider* collider = new CompCollider(type, this);
 			components.push_back(collider);
 			return collider;
 		}
-		else if (type == Comp_Type::C_RIGIDBODY)
+		case Comp_Type::C_RIGIDBODY:
 		{
 			LOG("Adding RIGIDBODY COMPONENT");
 			CompRigidBody* rigid_body = new CompRigidBody(type, this);
 			components.push_back(rigid_body);
 			return rigid_body;
+		}
+		case Comp_Type::C_PARTICLE_SYSTEM:
+		{
+			LOG("Adding Particle system COMPONENT.");
+			CompParticleSystem* particlesystem = new CompParticleSystem(type, this);
+			components.push_back(particlesystem);
+			return particlesystem;
+		}
+
 		}
 	}
 
@@ -1433,13 +1417,13 @@ void GameObject::AddComponentCopy(const Component& copy)
 {
 	switch (copy.GetType())
 	{
-	case (Comp_Type::C_TRANSFORM):
+	case Comp_Type::C_TRANSFORM:
 	{
 		CompTransform* transform = new CompTransform((CompTransform&)copy, this); //Transform copy constructor
 		components.push_back(transform);
 		break;
 	}
-	case (Comp_Type::C_MESH):
+	case Comp_Type::C_MESH:
 	{
 		CompMesh* mesh = new CompMesh((CompMesh&)copy, this); //Mesh copy constructor
 		components.push_back(mesh);
@@ -1455,7 +1439,7 @@ void GameObject::AddComponentCopy(const Component& copy)
 		}
 		break;
 	}
-	case (Comp_Type::C_MATERIAL):
+	case Comp_Type::C_MATERIAL:
 	{
 		CompMaterial* material = new CompMaterial((CompMaterial&)copy, this); //Material copy constructor
 		components.push_back(material);
@@ -1471,58 +1455,64 @@ void GameObject::AddComponentCopy(const Component& copy)
 		}
 		break;
 	}
-	case (Comp_Type::C_CAMERA):
+	case Comp_Type::C_CAMERA:
 	{
 		CompCamera* camera = new CompCamera((CompCamera&)copy, this); //Camera copy constructor
 		components.push_back(camera);
 		break;
 	}
-	case (Comp_Type::C_SCRIPT):
+	case Comp_Type::C_SCRIPT:
 	{
 		CompScript* script = new CompScript((CompScript&)copy, this); //Script copy constructor
 		components.push_back(script);
 		break;
 	}
-	case (Comp_Type::C_ANIMATION):
+	case Comp_Type::C_ANIMATION:
 	{
 		CompAnimation* anim = new CompAnimation((CompAnimation&)copy, this); //Anim copy constructor
 		components.push_back(anim);
 		break;
 	}
-	case (Comp_Type::C_AUDIO):
+	case Comp_Type::C_AUDIO:
 	{
 		CompAudio* audio = new CompAudio((CompAudio&)copy, this); //Audio copy constructor
 		components.push_back(audio);
 		break;
 	}
-	case (Comp_Type::C_BONE):
+	case Comp_Type::C_BONE:
 	{
 		CompBone* bone = new CompBone((CompBone&)copy, this); //Bone copy constructor
 		components.push_back(bone);
 		break;
 	}
-	case (Comp_Type::C_FSM):
+	case Comp_Type::C_FSM:
 	{
 		CompFiniteStateMachine* fsm = new CompFiniteStateMachine((CompFiniteStateMachine&)copy, this); //FSM copy constructor
 		components.push_back(fsm);
 		break;
 	}
-	case (Comp_Type::C_LIGHT):
+	case Comp_Type::C_LIGHT:
 	{
-		CompLight* light = new CompLight((CompLight&)copy, this); //FSM copy constructor
+		CompLight* light = new CompLight((CompLight&)copy, this); //Light copy constructor
 		components.push_back(light);
 		break;
 	}
-	case (Comp_Type::C_COLLIDER):
+	case Comp_Type::C_COLLIDER:
 	{
 		CompCollider* collider = new CompCollider((CompCollider&)copy, this); //Collider copy constructor
 		components.push_back(collider);
 		break;
 	}
-	case (Comp_Type::C_RIGIDBODY):
+	case Comp_Type::C_RIGIDBODY:
 	{
 		CompRigidBody* rigid_body = new CompRigidBody((CompRigidBody&)copy, this); //Rigid Body contructor
 		components.push_back(rigid_body);
+		break;
+	}
+	case Comp_Type::C_PARTICLE_SYSTEM:
+	{
+		CompParticleSystem* particle_system = new CompParticleSystem((CompParticleSystem&)copy, this); //Particle System constructor
+		components.push_back(particle_system);
 		break;
 	}
 	default:
@@ -1590,25 +1580,28 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			this->AddComponent(Comp_Type::C_SCRIPT, true);
 			break;
 		case Comp_Type::C_ANIMATION:
-			this->AddComponent(Comp_Type::C_ANIMATION, true);
+			this->AddComponent(Comp_Type::C_ANIMATION);
 			break;
 		case Comp_Type::C_AUDIO:
-			this->AddComponent(Comp_Type::C_AUDIO, true);
+			this->AddComponent(Comp_Type::C_AUDIO);
 			break;
 		case Comp_Type::C_BONE:
-			this->AddComponent(Comp_Type::C_BONE, true);
+			this->AddComponent(Comp_Type::C_BONE);
 			break;
 		case Comp_Type::C_FSM:
-			this->AddComponent(Comp_Type::C_FSM, true);
+			this->AddComponent(Comp_Type::C_FSM);
 			break;
 		case Comp_Type::C_LIGHT:
-			this->AddComponent(Comp_Type::C_LIGHT, true);
+			this->AddComponent(Comp_Type::C_LIGHT);
 			break;
 		case Comp_Type::C_COLLIDER:
-			this->AddComponent(Comp_Type::C_COLLIDER, true);
+			this->AddComponent(Comp_Type::C_COLLIDER);
 			break;
 		case Comp_Type::C_RIGIDBODY:
-			this->AddComponent(Comp_Type::C_RIGIDBODY, true);
+			this->AddComponent(Comp_Type::C_RIGIDBODY);
+			break;
+		case Comp_Type::C_PARTICLE_SYSTEM:
+			this->AddComponent(Comp_Type::C_PARTICLE_SYSTEM);
 			break;
 		default:
 			break;

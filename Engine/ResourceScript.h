@@ -26,6 +26,8 @@ public:
 	std::string GetPathAssets() const;
 	std::string GetPathdll() const;
 
+	void SetPathDll(const char* path);
+
 	//To access script thorug extern modules
 	//CSharpScript* GetCSharpScript();
 

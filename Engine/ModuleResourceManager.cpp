@@ -39,14 +39,23 @@ ModuleResourceManager::~ModuleResourceManager()
 	files_to_delete.clear();
 }
 
+bool ModuleResourceManager::Init(JSON_Object* node)
+{
+	CreateResourceCube();
+	CreateResourcePlane();
+	Load();
+
+	return true;
+}
+
 bool ModuleResourceManager::Start()
 {
 	perf_timer.Start();
 
 	// Create Resource Cube
-	CreateResourceCube();
-	CreateResourcePlane();
-	Load();
+	//CreateResourceCube();
+	//CreateResourcePlane();
+	//Load();
 
 	Start_t = perf_timer.ReadMs();
 	return true;
@@ -134,7 +143,7 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 	{
 		// if a Resource state == Resource::State::REIMPORT delete it.
 		std::map<uint, Resource*>::iterator it;
-		for (int i = 1; i < resources_to_reimport.size(); i++) // i = 1 -> ResourcePrimitive
+		for (int i = 0; i < resources_to_reimport.size(); i++) // i = 1 -> ResourcePrimitive
 		{
 			it = resources.find(resources_to_reimport[i].uuid);
 			if (it->second->GetState() == Resource::State::REIMPORTED)
@@ -683,6 +692,11 @@ void ModuleResourceManager::Save()
 			json_object_dotset_number_with_std(config_node, name + "Type", (int)it->second->GetType());
 			json_object_dotset_string_with_std(config_node, name + "Name", it->second->name);
 			json_object_dotset_string_with_std(config_node, name + "PathAssets", it->second->path_assets.c_str());
+			if (it->second->GetType() == Resource::Type::SCRIPT)
+			{
+				json_object_dotset_string_with_std(config_node, name + "PathDll", ((ResourceScript*)it->second)->GetPathdll().c_str());
+			}
+
 			it++;
 		}
 	}
@@ -736,6 +750,7 @@ void ModuleResourceManager::Load()
 						ResourceScript* script = (ResourceScript*)CreateNewResource(type, uid);
 						script->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
 						script->name = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+						script->SetPathDll(json_object_dotget_string_with_std(config_node, name + "PathDll"));
 						break;
 					}
 					case Resource::Type::ANIMATION:

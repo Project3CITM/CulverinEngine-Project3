@@ -26,6 +26,7 @@ public:
 	ModuleResourceManager(bool start_enabled = true);
 	virtual ~ModuleResourceManager();
 
+	bool Init(JSON_Object* node);
 	bool Start();
 	update_status PreUpdate(float dt);
 	//update_status Update(float dt);

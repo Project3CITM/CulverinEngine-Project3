@@ -35,11 +35,12 @@ bool ModuleFS::Init(JSON_Object * node)
 
 	// Check if Main Folders exist --------------------
 	CreateFolder("Library");
-	CreateFolder("Library\\Meshes");
-	CreateFolder("Library\\Materials");
-	CreateFolder("Library\\Scripts");
-	CreateFolder("Library\\Animations");
+	CreateFolder("Library/Meshes");
+	CreateFolder("Library/Materials");
+	CreateFolder("Library/Scripts");
+	CreateFolder("Library/Animations");
 	CreateFolder("Assets");
+	CreateFolder("Assets/Maps");
 	return true;
 }
 

@@ -897,6 +897,26 @@ void CSharpScript::SetPosition(MonoObject* object, MonoObject* vector3)
 	}
 }
 
+void CSharpScript::Translate(MonoObject * object, MonoObject * vector3)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_object_get_class(vector3);
+		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+		float3 added_pos;
+
+		if (x_field) mono_field_get_value(vector3, x_field, &added_pos.x);
+		if (y_field) mono_field_get_value(vector3, y_field, &added_pos.y);
+		if (z_field) mono_field_get_value(vector3, z_field, &added_pos.z);
+
+		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		transform->Translate(added_pos);
+	}
+}
+
 MonoObject* CSharpScript::GetRotation(MonoObject* object)
 {
 	if (current_game_object != nullptr)
@@ -966,6 +986,75 @@ void CSharpScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 	}
 }
 
+void CSharpScript::SetScale(MonoObject * object, MonoObject * vector3)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_object_get_class(vector3);
+		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+		float3 new_scale;
+
+		if (x_field) mono_field_get_value(vector3, x_field, &new_scale.x);
+		if (y_field) mono_field_get_value(vector3, y_field, &new_scale.y);
+		if (z_field) mono_field_get_value(vector3, z_field, &new_scale.z);
+
+		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		transform->SetScale(new_scale);
+	}
+}
+
+MonoObject * CSharpScript::GetScale(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
+		if (classT)
+		{
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				float3 get_scale;
+				get_scale = transform->GetScale();
+
+				if (x_field) mono_field_set_value(new_object, x_field, &get_scale.x);
+				if (y_field) mono_field_set_value(new_object, y_field, &get_scale.y);
+				if (z_field) mono_field_set_value(new_object, z_field, &get_scale.z);
+
+				return new_object;
+			}
+		}
+		return nullptr;
+	}
+}
+
+void CSharpScript::LookAt(MonoObject * object, MonoObject * vector3)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_object_get_class(vector3);
+		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+		float3 target_pos;
+
+		if (x_field) mono_field_get_value(vector3, x_field, &target_pos.x);
+		if (y_field) mono_field_get_value(vector3, y_field, &target_pos.y);
+		if (z_field) mono_field_get_value(vector3, z_field, &target_pos.z);
+
+		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		transform->LookAt(target_pos);
+	}
+}
+
 void CSharpScript::PlayAudioEvent(MonoObject* object, MonoString* event_name)
 {
 	if (current_game_object != nullptr)
@@ -986,6 +1075,18 @@ void CSharpScript::StopAudioEvent(MonoObject* object, MonoString* event_name)
 		if (audio != nullptr)
 		{
 			audio->StopAudioEvent(mono_string_to_utf8(event_name));
+		}
+	}
+}
+
+void CSharpScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, float value)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAudio* audio = (CompAudio*)current_game_object->FindComponentByType(Comp_Type::C_AUDIO);
+		if (audio != nullptr)
+		{
+			audio->SetAuxiliarySend(mono_string_to_utf8(bus), value);
 		}
 	}
 }

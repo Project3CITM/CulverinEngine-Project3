@@ -1155,6 +1155,9 @@
     <ClInclude Include="CompRigidBody.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="CompParticleSystem.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1524,6 +1527,9 @@
       <Filter>Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="CompRigidBody.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompParticleSystem.cpp">
       <Filter>Engine\Components</Filter>
     </ClCompile>
   </ItemGroup>

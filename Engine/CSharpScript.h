@@ -140,13 +140,18 @@ public:
 
 	MonoObject* GetPosition(MonoObject* object);
 	void		SetPosition(MonoObject* object, MonoObject* vector3);
+	void		Translate(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetRotation(MonoObject* object);
 	void		SetRotation(MonoObject* object, MonoObject* vector3);
 	void		IncrementRotation(MonoObject* object, MonoObject* vector3);
+	void		SetScale(MonoObject* object, MonoObject* vector3);
+	MonoObject* GetScale(MonoObject* object);
+	void		LookAt(MonoObject* object, MonoObject* vector3);
 
 	/*Audio*/
 	void		PlayAudioEvent(MonoObject* object, MonoString* event_name);
 	void		StopAudioEvent(MonoObject* object, MonoString* event_name);
+	void		SetAuxiliarySends(MonoObject* object, MonoString* bus, float value);
 
 
 	/*Components*/

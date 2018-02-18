@@ -73,7 +73,7 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 	if (!QShadowMapEvent.empty())
 	{
 		size = QShadowMapEvent.size();
-		EListener = MEventListeners.find(EventType::EVENT_SHADOW_MAP_GEN);
+		EListener = MEventListeners.find(EventType::EVENT_REQUEST_3D_3DA_MM);
 		if (EListener != MEventListeners.end())
 			for (int i = 0; i < size; i++)
 			{
@@ -140,6 +140,11 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 	count = 0;
 	for (std::multimap<EventType, Event>::const_iterator item = MMNormalEvent.cbegin(); item != MMNormalEvent.cend();)
 	{
+		if ((item._Ptr->_Myval.first < 0) || (item._Ptr->_Myval.first > EventType::MAXEVENTS))
+		{
+			item = MMNormalEvent.erase(item);
+			continue;
+		}
 		if (count >= size) break;
 		if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
 			EListener = MEventListeners.find(item._Ptr->_Myval.first);
@@ -193,7 +198,7 @@ void ModuleEventSystem::PushEvent(Event& event)
 		}
 		break;
 	}
-	case EventType::EVENT_SHADOW_MAP_GEN: QShadowMapEvent.push(event); break;
+	case EventType::EVENT_REQUEST_3D_3DA_MM: QShadowMapEvent.push(event); break;
 	default: MMNormalEvent.insert(std::pair<EventType, Event>(event.type, event)); break;
 	}
 }
@@ -202,8 +207,24 @@ void ModuleEventSystem::PushImmediateEvent(Event & event)
 {
 	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.find(event.type);
 	if (EListener != MEventListeners.end())
-		for (std::vector<Module*>::const_iterator item = EListener._Ptr->_Myval.second.cbegin(); item != EListener._Ptr->_Myval.second.cend(); ++item)
-			(*item)->OnEvent(event);
+	{
+		switch (event.type)
+		{
+		case EventType::EVENT_REQUEST_3D_3DA_MM:
+		{
+			Event event_temp;
+			event_temp.send_3d3damm.type = EventType::EVENT_SEND_3D_3DA_MM;
+			event_temp.send_3d3damm.MM3DDrawEvent = &MM3DDrawEvent;
+			event_temp.send_3d3damm.MM3DADrawEvent = &MM3DADrawEvent;
+			event_temp.send_3d3damm.light = event_temp.request_3d3damm.light;
+			PushImmediateEvent(event_temp);
+			break;
+		}
+		default:
+			for (std::vector<Module*>::const_iterator item = EListener._Ptr->_Myval.second.cbegin(); item != EListener._Ptr->_Myval.second.cend(); ++item)
+				(*item)->OnEvent(event);
+		}
+	}
 }
 
 void ModuleEventSystem::AddListener(EventType type, Module* listener)

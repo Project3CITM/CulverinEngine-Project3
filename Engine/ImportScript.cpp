@@ -171,7 +171,7 @@ bool ImportScript::LoadResource(const char* file, ResourceScript* resourceScript
 			resourceScript->SetState(Resource::State::LOADED);
 			resourceScript->SetScriptEditor(App->fs->GetOnlyName(App->fs->GetOnlyName(file).c_str()));
 			//now 
-			CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
+			//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
 			//resourceScript->SetCSharp(newCSharp);
 		}
 
@@ -191,6 +191,11 @@ bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script
 	// UnloadDomain
 	Unload_domain();
 
+	if (resourceScript == nullptr)
+	{
+		resourceScript = (ResourceScript*)App->resource_manager->CreateNewResource(Resource::Type::SCRIPT, atoi(uid_script.c_str()));
+	}
+
 	// ReCompile The CSharp
 	std::string path_dll;
 	if (CompileScript(fileAssets.c_str(), path_dll, uid_script.c_str()) != 0)
@@ -201,6 +206,7 @@ bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script
 	else
 	{
 		LOG("Script: %s, Compiled without errors", App->fs->GetOnlyName(fileAssets).c_str());
+		resourceScript->InitInfo(path_dll, fileAssets);
 	}
 	// childDomain
 	childDomain = Load_domain();
@@ -217,9 +223,9 @@ bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script
 	//resourceScript->SetCSharp(newCSharp);
 
 	// Then Create Meta
-	//std::string Newdirectory = ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory();
-	//Newdirectory += "\\" + App->fs->FixName_directory(fileAssets);
-	//App->Json_seria->SaveScript(resourceScript, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+	std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+	Newdirectory += "/" + App->fs->FixName_directory(fileAssets);
+	App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 	return true;
 }
 
@@ -509,11 +515,17 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::GetName",(const void*)GetName);
 	//mono_add_internal_call("CulverinEditor.GameObject::AddComponent",(const void*)AddComponent);
 	mono_add_internal_call("CulverinEditor.GameObject::GetComponent",(const void*)GetComponent);
+	
+	// Transform ---------------------------
 	mono_add_internal_call("CulverinEditor.Transform::GetPosition", (const void*)GetPosition);
 	mono_add_internal_call("CulverinEditor.Transform::SetPosition", (const void*)SetPosition);
+	mono_add_internal_call("CulverinEditor.Transform::Translate", (const void*)Translate);
 	mono_add_internal_call("CulverinEditor.Transform::SetRotation", (const void*)SetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::GetRotation", (const void*)GetRotation);
 	mono_add_internal_call("CulverinEditor.Transform::RotateAroundAxis", (const void*)IncrementRotation);
+	mono_add_internal_call("CulverinEditor.Transform::SetScale", (const void*)SetScale);
+	mono_add_internal_call("CulverinEditor.Transform::GetScale", (const void*)GetScale);
+	mono_add_internal_call("CulverinEditor.Transform::LookAt", (const void*)LookAt);
 
 	// Component ---------------------------
 	mono_add_internal_call("CulverinEditor.Component::GetParentGameObject", (const void*)GetParentGameObject);
@@ -548,9 +560,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Audio::ChangeVolume", (const void*)ChangeVolume);
 	mono_add_internal_call("CulverinEditor.Audio::Mute", (const void*)Mute);
 	
-
+	//COMPONENT AUDIO FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
+	mono_add_internal_call("CulverinEditor.CompAudio::SetAuxiliarySends", (const void*)SetAuxiliarySends);
 
 }
 
@@ -726,6 +739,11 @@ void ImportScript::SetPosition(MonoObject* object, MonoObject* vector3)
 	current->SetPosition(object, vector3);
 }
 
+void ImportScript::Translate(MonoObject * object, MonoObject * vector3)
+{
+	current->Translate(object, vector3);
+}
+
 MonoObject* ImportScript::GetRotation(MonoObject* object)
 {
 	return current->GetRotation(object);
@@ -739,6 +757,21 @@ void ImportScript::SetRotation(MonoObject* object, MonoObject* vector3)
 void ImportScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 {
 	current->IncrementRotation(object, vector3);
+}
+
+void ImportScript::SetScale(MonoObject * object, MonoObject * vector3)
+{
+	current->SetScale(object, vector3);
+}
+
+MonoObject * ImportScript::GetScale(MonoObject * object)
+{
+	return current->GetScale(object);
+}
+
+void ImportScript::LookAt(MonoObject * object, MonoObject * vector3)
+{
+	current->LookAt(object, vector3);
 }
 
 // Component ---------------------
@@ -760,7 +793,7 @@ int ImportScript::GetHeightMap()
 
 int ImportScript::GetWidthMap()
 {
-	return App->map->GetHeightMap();
+	return App->map->GetWidthMap();
 }
 
 
@@ -811,4 +844,9 @@ void ImportScript::PlayAudioEvent(MonoObject* object, MonoString* name)
 void ImportScript::StopAudioEvent(MonoObject* object, MonoString* name)
 {
 	current->StopAudioEvent(object, name);
+}
+
+void ImportScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, float value)
+{
+	current->SetAuxiliarySends(object, bus, value);
 }

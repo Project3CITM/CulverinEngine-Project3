@@ -27,11 +27,14 @@ public:
 	update_status UpdateConfig(float dt);
 	bool CleanUp();
 
+	//Scene Loading
+	void LoadScene();
+
 	//Event system test
 	bool SetEventListenrs();
 	void OnEvent(Event& event);
 
-	// Editor outputs ----
+	// Editor outputs 
 	void EditorQuadtree();
 	void EditorSkybox();
 
@@ -102,6 +105,7 @@ private:
 	int size_plane = 0;
 	float size_quadtree = 0.0f;
 	uint icon_resetAll = 0;
+	bool load_scene = true;
 };
 
 #endif

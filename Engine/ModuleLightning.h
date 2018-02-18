@@ -22,6 +22,7 @@ public:
 	void Destroy();
 	void Resize(int width, int height);
 
+
 	uint GetTexture()const;
 
 public:
@@ -44,6 +45,7 @@ public:
 	update_status UpdateConfig(float dt) override;
 	bool SaveConfig(JSON_Object* node) override;
 	bool CleanUp() override;
+	void OnEvent(Event& event);
 
 	void CalShadowMaps();
 	void SetShadowCastPoints(uint points);
@@ -58,6 +60,9 @@ public:
 	std::vector<CompLight*> GetSceneLights()const;
 	void PushLight(CompLight* light);
 	void DeleteLight(CompLight* light);
+
+	bool SetEventListenrs();
+
 	
 private:
 	void AddShadowMapCastViews(uint ammount);

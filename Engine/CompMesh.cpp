@@ -17,6 +17,10 @@
 #include "Math\float3.h"
 #include "CompCamera.h"
 #include "CompBone.h"
+#include "ModuleLightning.h"
+//Delete this
+#include "glm\glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 CompMesh::CompMesh(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
@@ -252,7 +256,7 @@ void CompMesh::Draw()
 		//if (material->material_shader != nullptr)
 		if (material != nullptr) shader = (ShaderProgram*)&material->material_shader;
 		shader->Bind();
-
+	
 		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
 	
 		if (resource_mesh->vertices.size() > 0 && resource_mesh->indices.size() > 0)
@@ -349,6 +353,24 @@ void CompMesh::Draw()
 			glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 
 
+			/*
+			uint depthMatrixID = glGetUniformLocation(App->module_lightning->shadow_Shader->programID, "depthMVP");
+
+
+			glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
+
+			// Compute the MVP matrix from the light's point of view
+			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+			glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+			glm::mat4 depthModelMatrix = glm::mat4(1.0);
+			glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+
+
+
+
+			glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
+			*/
+
 			int total_save_buffer = 8;
 
 			if (resource_mesh->vertices.size()>0) {
@@ -384,7 +406,7 @@ void CompMesh::Draw()
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
+		
 			shader->Unbind();
 			
 		}
@@ -610,6 +632,11 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 		new_bone->AddChildGameObject(GenBone(name_iterator, source, generated_bones, skeleton));
 
 	return new_bone;
+}
+
+CompMaterial * CompMesh::GetMaterial() const
+{
+	return (CompMaterial*)material;
 }
 
 void Skeleton::DebugDraw() const

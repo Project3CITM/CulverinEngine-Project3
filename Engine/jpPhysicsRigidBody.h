@@ -14,6 +14,12 @@ enum JP_COLLIDER_TYPE
 	COLL_BOX
 };
 
+enum JP_COLLISION_TYPE
+{
+	TRIGGER_ENTER,
+	TRIGGER_LOST,
+};
+
 //Simple abstraction of the physX rigiddynamic class for an easier implementation with component system
 class jpPhysicsRigidBody
 {

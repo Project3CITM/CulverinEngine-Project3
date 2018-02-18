@@ -595,10 +595,11 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 			{
 				App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script);
 			}
-			LoadScript(object, name);
+
 			if (resource_script->GetState() != Resource::State::FAILED)
 			{
 				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
+				LoadScript(object, name);
 				SetOwnGameObject(parent);
 			}
 		}

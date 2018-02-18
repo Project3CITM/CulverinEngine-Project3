@@ -157,10 +157,7 @@ void CompImage::ShowInspectorInfo()
 	{
 		select_source_image = true;
 	}
-	if (ImGui::ColorEdit4("Color##image_rgba", color.ptr()))
-	{
-		SetColor(color);
-	}
+	ImGui::ColorEdit4("Color##image_rgba", color.ptr());
 	ImGui::Checkbox("RayCast Target", &raycast_target);
 	if (source_image == nullptr || select_source_image)
 	{

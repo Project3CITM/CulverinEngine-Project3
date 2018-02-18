@@ -23,6 +23,7 @@ public:
 
 	void ShowWalkableMap();
 	void ShowCreationMap();
+	void GetSizePrefab(GameObject* obj, float& min_size, float& max_size);
 	void ShowNavigationMap();
 
 	void ShowTextWithColor(ImGuiCol_ type, int id);
@@ -40,10 +41,15 @@ public:
 private:
 	int height_map = 10;
 	int width_map = 10;
-	float size_separation = 25.4;
+	char* name_map = nullptr;
+	//float size_separation = 25.4;
 	std::vector<std::string> all_prefabs; // Vector with all fbx/obj in Assets
 	std::vector<std::string> prefabs; // Vector with all fbx/obj in Assets
 
+	std::vector<std::string> export_map;
+	
+	bool map_created = false;
+	bool show_numeration = false;
 
 };
 

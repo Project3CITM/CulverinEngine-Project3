@@ -364,7 +364,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 		{
 			if (strcmp(file, resourcesToReimport[i].directory_obj) == 0)
 			{
-				iScript->Import(file, resourcesToReimport[i].uuid);
+				iScript->ReImportScript(file, std::to_string(resourcesToReimport[i].uuid), nullptr);
 				isReImport = true;
 				break;
 			}

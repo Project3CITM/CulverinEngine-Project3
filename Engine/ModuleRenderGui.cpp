@@ -280,6 +280,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 					if (positive_colision)
 					{
 						(*it)->ForceClear(this_event);
+						continue;
 					}
 					if (this_event.type == EventType::EVENT_BUTTON_DOWN)
 					{

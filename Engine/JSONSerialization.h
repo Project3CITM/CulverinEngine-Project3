@@ -39,6 +39,17 @@ public:
 	void LoadChildLoadPrefab(GameObject& parent, GameObject& child, int uuidParent);
 	// --------------------------------------
 
+	// SAVE & LOAD MAP ---------------------------
+	void SaveMapWalkable(std::vector<std::string>& map, int height_map, int width_map, const char* name);
+	void LoadMapWalkable(const char* file);
+
+	void SaveMapCreation(const char* file);
+	void LoadMapCreation(const char* file);
+
+	void SaveMapNavigation(const char* file);
+	void LoadMapNavigation(const char* file);
+	// --------------------------------------
+
 	// SAVE & LOAD MATERIAL --------------------------
 	void SaveMaterial(const ResourceMaterial* material, const char* directory, const char* fileName);
 	//void LoadMaterial(const char* Material); At the moment no need this

@@ -13,6 +13,7 @@
 ModuleMap::ModuleMap()
 {
 	name = "Map";
+	name_map = "New Map";
 }
 
 
@@ -50,18 +51,80 @@ update_status ModuleMap::PostUpdate(float dt)
 
 void ModuleMap::ShowEditorMap(bool &active)
 {
-	if (!ImGui::Begin("Edit Map Tile", &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+	if (!ImGui::Begin("Edit Map Tile", &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar))
 	{
 		ImGui::End();
 	}
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New Map"))
+			{
+				for (int y = 0; y < MAX_ARRAY; y++)
+				{
+					for (int x = 0; x < MAX_ARRAY; x++)
+					{
+						map[x][y] = -1;
+					}
+				}
+				map_created = false;
+			}
+			if (ImGui::MenuItem("Open Map", NULL, false, false))
+			{
+
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Save Scene"))
+			{
+				
+			}
+			if (ImGui::MenuItem("Save Scene as...", NULL, false, false))
+			{
+
+			}
+			if (ImGui::MenuItem("Load Map"))
+			{
+				
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Exit"))
+			{
+				active = !active;
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Options"))
+		{
+			//show_numeration
+			if (ImGui::MenuItem("Show Numeration", NULL, show_numeration))
+			{
+				show_numeration = !show_numeration;
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Close"))
+		{
+			active = !active;
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+
 	ImGui::PushItemWidth(70);
 	ImGui::Text("Edit the tiles. Click ID and set type of /nthe ID (Walkable / No-Walkable / ...)");
 	ImGui::InputInt("width", &width_map); ImGui::SameLine();
 	ImGui::InputInt("height", &height_map);
+	ImGui::Text("Set Name: "); ImGui::SameLine();
+	char namedit[50];
+	strcpy_s(namedit, 50, name_map);
+	if (ImGui::InputText("##nameModel", namedit, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+	{
+		name_map = App->fs->ConverttoChar(std::string(namedit).c_str());
+	}
 
 	ImGui::PopItemWidth();
 	ImGui::PushItemWidth(10);
-	static bool map_created = false;
 	static std::string mode[] = { "Edit Walkable Map", "Create 3D Map (fast)", "Edit Navigation Map (IA)" };
 	static int selected_type = -1;
 	static const char* current_item_2 = NULL;
@@ -92,7 +155,7 @@ void ModuleMap::ShowEditorMap(bool &active)
 			{
 				ImGui::BeginTooltip();
 				ImGui::PushTextWrapPos(450.0f);
-				ImGui::TextUnformatted("Edit Walkable Map");
+				ImGui::TextUnformatted("Edit Walkable Map, this export and inport with 'Name'.mapwalk.json");
 				ImGui::PopTextWrapPos();
 				ImGui::EndTooltip();
 			}
@@ -104,7 +167,7 @@ void ModuleMap::ShowEditorMap(bool &active)
 			{
 				ImGui::BeginTooltip();
 				ImGui::PushTextWrapPos(450.0f);
-				ImGui::TextUnformatted("Create 3D Map (fast)");
+				ImGui::TextUnformatted("Create 3D Map (fast), this export and inport with 'Name'.map3d.json");
 				ImGui::PopTextWrapPos();
 				ImGui::EndTooltip();
 			}
@@ -116,7 +179,7 @@ void ModuleMap::ShowEditorMap(bool &active)
 			{
 				ImGui::BeginTooltip();
 				ImGui::PushTextWrapPos(450.0f);
-				ImGui::TextUnformatted("Edit Navigation Map (IA)");
+				ImGui::TextUnformatted("Edit Navigation Map (IA), this export and inport with 'Name'.mapnavi.json");
 				ImGui::PopTextWrapPos();
 				ImGui::EndTooltip();
 			}
@@ -140,11 +203,11 @@ void ModuleMap::ShowEditorMap(bool &active)
 			//ImGui::Separator();
 			if (ImGui::Button("Create Map Tiled"))
 			{
-				for (int i = 0; i < MAX_ARRAY; i++)
+				for (int y = 0; y < MAX_ARRAY; y++)
 				{
-					for (int j = 0; j < MAX_ARRAY; j++)
+					for (int x = 0; x < MAX_ARRAY; x++)
 					{
-						map[i][j] = -1;
+						map[x][y] = -1;
 					}
 				}
 				map_created = true;
@@ -152,25 +215,24 @@ void ModuleMap::ShowEditorMap(bool &active)
 		}
 		if (map_created)
 		{
-			ImGui::Separator();
 			if (ImGui::Button("Reset Map"))
 			{
-				for (int i = 0; i < MAX_ARRAY; i++)
+				for (int y = 0; y < MAX_ARRAY; y++)
 				{
-					for (int j = 0; j < MAX_ARRAY; j++)
+					for (int x = 0; x < MAX_ARRAY; x++)
 					{
-						map[i][j] = -1;
+						map[x][y] = -1;
 					}
 				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Delete Map"))
 			{
-				for (int i = 0; i < MAX_ARRAY; i++)
+				for (int y = 0; y < MAX_ARRAY; y++)
 				{
-					for (int j = 0; j < MAX_ARRAY; j++)
+					for (int x = 0; x < MAX_ARRAY; x++)
 					{
-						map[i][j] = -1;
+						map[x][y] = -1;
 					}
 				}
 				map_created = false;
@@ -178,13 +240,13 @@ void ModuleMap::ShowEditorMap(bool &active)
 			ImGui::SameLine();
 			if (ImGui::Button("Complet with No-Walk"))
 			{
-				for (int i = 0; i < width_map; i++)
+				for (int y = 0; y < height_map; y++)
 				{
-					for (int j = 0; j < height_map; j++)
+					for (int x = 0; x < width_map; x++)
 					{
-						if (map[i][j] == 0)
+						if (map[x][y] == -1)
 						{
-							map[i][j] = 0;
+							map[x][y] = 1;
 						}
 					}
 				}
@@ -248,65 +310,117 @@ void ModuleMap::ShowWalkableMap()
 	ImGui::PushItemWidth(10);
 	//Frist Select Type
 	ImGui::Separator();
-	for (int i = 0; i < width_map; i++)
+	bool do_numeration = false;
+	if (show_numeration)
 	{
-		for (int j = 0; j < height_map; j++)
+		do_numeration = true;
+	}
+	for (int y = 0; y < height_map; y++)
+	{
+		if (do_numeration)
 		{
-			if (j > 0) ImGui::SameLine();
-			ImGui::PushID(j + i * 1000);
-			if (map[i][j] > -1)
+			do_numeration = false;
+			ShowTextWithColor(ImGuiCol_Button, 10);
+			ImGui::ButtonEx("", ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+			ImGui::SameLine();
+			ImGui::PopStyleColor();
+			for (int n = 0; n < width_map; n++)
 			{
-				ShowTextWithColor(ImGuiCol_Button, map[i][j]);
-			}
-			//	ImGui::OpenPopup("ID");
-			bool force_pop = false;
-			if (map[i][j] > -1)
-			{
-				force_pop = true;
-			}
-			if (ImGui::Button("ID"))
-			{
-				map[i][j] = paint;
-			}
-
-			if (map[i][j] > -1 && force_pop)
-			{
+				ShowTextWithColor(ImGuiCol_Button, 10);
+				ImGui::ButtonEx(std::to_string(n).c_str(), ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+				if(n + 1 < width_map)
+					ImGui::SameLine();
 				ImGui::PopStyleColor();
 			}
-			ImGui::PopID();
+			y--;
+		}
+		else
+		{
+			if (show_numeration)
+			{
+				ShowTextWithColor(ImGuiCol_Button, 10);
+				ImGui::ButtonEx(std::to_string(y).c_str(), ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+				ImGui::SameLine();
+				ImGui::PopStyleColor();
+			}
+			for (int x = 0; x < width_map; x++)
+			{
+				if (x > 0) ImGui::SameLine();
+				ImGui::PushID(x + y * 1000);
+
+				if (map[x][y] > -1)
+				{
+					ShowTextWithColor(ImGuiCol_Button, map[x][y]);
+				}
+				//	ImGui::OpenPopup("ID");
+				bool force_pop = false;
+				if (map[x][y] > -1)
+				{
+					force_pop = true;
+				}
+				if (ImGui::Button("ID"))
+				{
+					map[x][y] = paint;
+				}
+
+				if (map[x][y] > -1 && force_pop)
+				{
+					ImGui::PopStyleColor();
+				}
+				ImGui::PopID();
+			}
 		}
 	}
 	ImGui::Separator();
 	if (ImGui::Button("Save Map"))
 	{
 		map_string = "";
-		for (int i = 0; i < width_map; i++)
+		for (int y = 0; y < height_map; y++)
 		{
-			for (int j = 0; j < height_map; j++)
+			for (int x = 0; x < width_map; x++)
 			{
-				map_string += std::to_string(map[i][j]);
+				map_string += std::to_string(map[x][y]);
 			}
 		}
 	}
-	if (ImGui::Button("Export Map ('Name'.map.json)"))
+ 	if (ImGui::Button("Export Map ('Name'.map.json)"))
 	{
-		
+		for (int y = 0; y < height_map; y++)
+		{
+			for (int x = 0; x < width_map; x++)
+			{
+				if (map[x][y] == -1)
+				{
+					map[x][y] == 1;
+				}
+			}
+		}
+		for (int y = 0; y < height_map; y++)
+		{
+			std::string line = "";
+			for (int x = 0; x < width_map; x++)
+			{
+				line += std::to_string(map[x][y]);
+			}
+			export_map.push_back(line);
+		}
+		App->json_seria->SaveMapWalkable(export_map, height_map, width_map, name_map);
 	}
 	if (ImGui::Button("Create Level Map"))
 	{
 		//map_string = "";
-		for (int i = 0; i < width_map; i++)
+		for (int y = 0; y < height_map; y++)
 		{
-			for (int j = 0; j < height_map; j++)
+			for (int x = 0; x < width_map; x++)
 			{
-				if (map[i][j] > -1)
+				if (map[x][y] > -1)
 				{
-					if (map[i][j] == 0)
+					if (map[x][y] == 0)
 					{
 						GameObject* obj = App->scene->CreateCube();
 						CompTransform* transform = obj->GetComponentTransform();
 						math::float3 pos = transform->GetPos();
-						pos.x -= i * 2; pos.z -= j * 2;
+						pos.x += x * 2; pos.z += y * 2;
 						transform->SetPos(pos);
 						//App->scene->root->AddChildGameObject(obj);
 					}
@@ -319,176 +433,204 @@ void ModuleMap::ShowWalkableMap()
 
 void ModuleMap::ShowCreationMap()
 {
-	static bool settings = false;
+	//static bool settings = false;
 	static int numPrefabs = 0;
-	if (ImGui::Button("Open Settings"))
+	//if (ImGui::Button("Open Settings"))
+	//{
+	//	settings = true;
+	//	//GetAllFilesByExtension
+	//}
+	//ImGui::SameLine();
+	//if (ImGui::Button("Close Settings"))
+	//{
+	//	settings = false;
+	//	//GetAllFilesByExtension
+	//}
+	ImGui::Separator();
+	ImGui::BeginColumns("Setting_map", 2, ImGuiColumnsFlags_GrowParentContentsSize);
+	ImGui::SetColumnWidth(0, 180);
+	ImGui::Text("Select number of Prefabs we will use...");
+	ImGui::PushItemWidth(70);
+	static bool force_reload = false;
+	if (ImGui::InputInt("Num Prefabs", &numPrefabs))
 	{
-		settings = true;
-		//GetAllFilesByExtension
+		force_reload = true;
+	}
+	ImGui::Text("Press to load all prefabs:");
+	static bool go_select_prefab = false;
+	if (ImGui::Button("Load / Reload Prefabs") || force_reload)
+	{
+		prefabs.clear();
+		all_prefabs.clear();
+		App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "fbx");
+		App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "obj");
+		App->fs->FixNames_directories(all_prefabs);
+		if (numPrefabs > all_prefabs.size())
+			numPrefabs = all_prefabs.size();
+		go_select_prefab = true;
+		force_reload = false;
+		for (int i = 0; i < numPrefabs; i++)
+		{
+			prefabs.push_back("");
+		}
+	}
+	if (numPrefabs > 0 && go_select_prefab && numPrefabs == prefabs.size())
+	{
+		ImGui::PushItemWidth(150);
+		for (int i = 0; i < numPrefabs; i++)
+		{
+			ImGui::PushID(i * 10);
+			ShowTextWithColor(ImGuiCol_Text, i);
+			ImGui::Text("%i: ", i); ImGui::SameLine();
+			if (ImGui::BeginCombo("##Pref", prefabs[i].c_str()))
+			{
+				for (int n = 0; n < all_prefabs.size(); n++)
+				{
+					if (ImGui::Selectable(all_prefabs[n].c_str()))
+					{
+						prefabs[i] = all_prefabs[n];
+						ImGui::SetItemDefaultFocus();//
+					}
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::PopStyleColor();
+			ImGui::PopID();
+		}
+	}
+
+	ImGui::NextColumn();
+	ImGui::PushItemWidth(10);
+	//ImGui::Separator();
+	static int paint = -1;
+	static const char* current_item_2 = NULL;
+	ImGui::PushItemWidth(150);
+	ImGui::Text("Select Color (Mode)"); ImGui::SameLine();
+	ShowTextWithColor(ImGuiCol_Text, paint);
+	bool do_pop = false;
+	if (paint > -1)
+		do_pop = true;
+	if (ImGui::BeginCombo("##TypeCreateMap", current_item_2))
+	{
+		for (int i = 0; i < numPrefabs; i++)
+		{
+			ShowTextWithColor(ImGuiCol_Text, i);
+			if (ImGui::Selectable(prefabs[i].c_str()))
+			{
+				paint = i;
+				current_item_2 = prefabs[i].c_str();
+				ImGui::SetItemDefaultFocus();
+			}
+			ImGui::PopStyleColor();
+		}
+		ImGui::EndCombo();
+	}
+	if (paint > -1 && do_pop)
+		ImGui::PopStyleColor();
+	ImGui::PushItemWidth(10);
+	//Frist Select Type
+	int total_map = width_map * height_map;
+	for (int y = 0; y < height_map; y++)
+	{
+		for (int x = 0; x < width_map; x++)
+		{
+			if (x > 0) ImGui::SameLine();
+			ImGui::PushID(x + y * 1000);
+			if (map[x][y] > -1)
+			{
+				ShowTextWithColor(ImGuiCol_Button, map[x][y]);
+				total_map--;
+			}
+			//	ImGui::OpenPopup("ID");
+			bool force_pop = false;
+			if (map[x][y] > -1)
+			{
+				force_pop = true;
+			}
+			if (ImGui::Button("ID"))
+			{
+				map[x][y] = paint;
+			}
+
+			if (map[x][y] > -1 && force_pop)
+			{
+				ImGui::PopStyleColor();
+			}
+			ImGui::PopID();
+		}
+	}
+	ImGui::EndColumns();
+	ImGui::Separator();
+	if (ImGui::Button("Save Map"))
+	{
+
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Close Settings"))
+	if (ImGui::Button("Export Map ('Name'.map.json)"))
 	{
-		settings = false;
-		//GetAllFilesByExtension
+
 	}
-	if (settings)
+	ImGui::SameLine();
+	if (ImGui::Button("Create Level Map"))
 	{
-		ImGui::Text("Select number of Prefabs we will use...");
-		ImGui::PushItemWidth(70);
-		static bool force_reload = false;
-		if (ImGui::InputInt("Num Prefabs", &numPrefabs))
+		GameObject* obj = App->scene->CreateGameObject();
+		obj->SetName("New Map");
+		for (int y = 0; y < height_map; y++)
 		{
-			force_reload = true;
-		}
-		ImGui::Text("Press to load all prefabs:");
-		static bool go_select_prefab = false;
-		if (ImGui::Button("Load / Reload Prefabs") || force_reload)
-		{
-			prefabs.clear();
-			all_prefabs.clear();
-			App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "fbx");
-			App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "obj");
-			App->fs->FixNames_directories(all_prefabs);
-			if (numPrefabs > all_prefabs.size())
-				numPrefabs = all_prefabs.size();
-			go_select_prefab = true;
-			force_reload = false;
-			for (int i = 0; i < numPrefabs; i++)
+			for (int x = 0; x < width_map; x++)
 			{
-				prefabs.push_back("");
-			}
-		}
-		if (numPrefabs > 0 && go_select_prefab && numPrefabs == prefabs.size())
-		{
-			ImGui::PushItemWidth(150);
-			for (int i = 0; i < numPrefabs; i++)
-			{
-				ImGui::PushID(i * 10);
-				ShowTextWithColor(ImGuiCol_Text, i);
-				ImGui::Text("%i: ", i); ImGui::SameLine();
-				if (ImGui::BeginCombo("##Pref", prefabs[i].c_str()))
+				if (map[x][y] > -1)
 				{
-					for (int n = 0; n < all_prefabs.size(); n++)
+					for (int n = 0; n < prefabs.size(); n++)
 					{
-						if (ImGui::Selectable(all_prefabs[n].c_str()))
+						if (map[x][y] == n)
 						{
-							prefabs[i] = all_prefabs[n];
-							ImGui::SetItemDefaultFocus();//
-						}
-					}
-					ImGui::EndCombo();
-				}
-				ImGui::PopStyleColor();
-				ImGui::PopID();
-			}
-		}
-		ImGui::Text("Select size of separation: "); ImGui::SameLine();
-		ImGui::InputFloat("##Separation", &size_separation);
-		ImGui::PushItemWidth(10);
-	}
-	else
-	{
-		ImGui::Separator();
-		static int paint = -1;
-		static const char* current_item_2 = NULL;
-		ImGui::PushItemWidth(150);
-		ImGui::Text("Select Color (Mode)"); ImGui::SameLine();
-		ShowTextWithColor(ImGuiCol_Text, paint);
-		bool do_pop = false;
-		if (paint > -1)
-			do_pop = true;
-		if (ImGui::BeginCombo("##TypeCreateMap", current_item_2))
-		{
-			for (int i = 0; i < numPrefabs; i++)
-			{
-				ShowTextWithColor(ImGuiCol_Text, i);
-				if (ImGui::Selectable(prefabs[i].c_str()))
-				{
-					paint = i;
-					current_item_2 = prefabs[i].c_str();
-					ImGui::SetItemDefaultFocus();
-				}
-				ImGui::PopStyleColor();
-			}
-			ImGui::EndCombo();
-		}
-		if (paint > -1 && do_pop)
-			ImGui::PopStyleColor();
-		ImGui::PushItemWidth(10);
-		//Frist Select Type
-		ImGui::Separator();
-		int total_map = width_map * height_map;
-		for (int i = 0; i < width_map; i++)
-		{
-			for (int j = 0; j < height_map; j++)
-			{
-				if (j > 0) ImGui::SameLine();
-				ImGui::PushID(j + i * 1000);
-				if (map[i][j] > -1)
-				{
-					ShowTextWithColor(ImGuiCol_Button, map[i][j]);
-					total_map--;
-				}
-				//	ImGui::OpenPopup("ID");
-				bool force_pop = false;
-				if (map[i][j] > -1)
-				{
-					force_pop = true;
-				}
-				if (ImGui::Button("ID"))
-				{
-					map[i][j] = paint;
-				}
-
-				if (map[i][j] > -1 && force_pop)
-				{
-					ImGui::PopStyleColor();
-				}
-				ImGui::PopID();
-			}
-		}
-		if (ImGui::Button("Save Map"))
-		{
-
-		} 
-		ImGui::SameLine();
-		if (ImGui::Button("Export Map ('Name'.map.json)"))
-		{
-
-		} 
-		ImGui::SameLine();
-		if (ImGui::Button("Create Level Map"))
-		{
-			GameObject* obj = App->scene->CreateGameObject();
-			obj->SetName("New Map");
-			for (int i = 0; i < width_map; i++)
-			{
-				for (int j = 0; j < height_map; j++)
-				{
-					if (map[i][j] > -1)
-					{
-						for (int n = 0; n < prefabs.size(); n++)
-						{
-							if (map[i][j] == n)
-							{
-								std::string directory_prebaf = App->fs->GetMainDirectory();
-								directory_prebaf += "/";
-								directory_prebaf += prefabs[n];
-								directory_prebaf += ".meta.json";
-								GameObject* temp = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
-								CompTransform* transform = temp->GetComponentTransform();
-								math::float3 pos = transform->GetPos();
-								pos.x += i * size_separation; pos.z += j * size_separation;
-								transform->SetPos(pos);
-								obj->AddChildGameObject(temp);
-							}
+							std::string directory_prebaf = App->fs->GetMainDirectory();
+							directory_prebaf += "/";
+							directory_prebaf += prefabs[n];
+							directory_prebaf += ".meta.json";
+							GameObject* temp = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
+							CompTransform* transform = temp->GetComponentTransform();
+							math::float3 pos = transform->GetPos();
+							float min_size = 0;
+							float max_size = 0;
+							GetSizePrefab(temp, min_size, max_size);
+							float t = max_size - min_size;
+							pos.x += x * t; pos.z += y * t;
+							transform->SetPos(pos);
+							obj->AddChildGameObject(temp);
 						}
 					}
 				}
 			}
-			// ...........
 		}
+	}
+	//if (settings)
+	//{
+
+	//}
+	//else
+	//{
+
+	//}
+}
+
+void ModuleMap::GetSizePrefab(GameObject* obj, float& min_size, float& max_size)
+{
+	if (obj->GetComponentMesh() != nullptr)
+	{
+		if (min_size > obj->bounding_box->MinX())
+		{
+			min_size = obj->bounding_box->MinX();
+		}
+		if (max_size < obj->bounding_box->MaxX())
+		{
+			max_size = obj->bounding_box->MaxX();
+		}
+	}
+	for (int i = 0; i < obj->GetNumChilds(); i++)
+	{
+		GetSizePrefab(obj->GetChildbyIndex(i), min_size, max_size);
 	}
 }
 
@@ -533,6 +675,14 @@ void ModuleMap::ShowTextWithColor(ImGuiCol_ type,int id)
 	else if (id == 8) // White
 	{
 		ImGui::PushStyleColor(type, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+	else if (id == 9) // Grey
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+	}
+	else if (id == 10) // Same Background
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.136f, 0.136f, 0.136f, 1.0f));
 	}
 }
 

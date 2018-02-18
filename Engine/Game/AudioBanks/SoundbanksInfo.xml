@@ -21,12 +21,17 @@
 			<ShortName>Scene1</ShortName>
 			<Path>Scene1.bnk</Path>
 			<IncludedEvents>
+				<Event Id="251412229" Name="Shot" ObjectPath="\Events\Scene1\Shot"/>
 				<Event Id="4251938927" Name="TorchAmbient" ObjectPath="\Events\Scene1\TorchAmbient"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
 				<File Id="861775916" Language="SFX">
 					<ShortName>Fire Burning Sound Effect.wav</ShortName>
-					<Path>SFX\Fire Burning Sound Effect_50963DE6.wem</Path>
+					<Path>SFX\Fire Burning Sound Effect_951A003C.wem</Path>
+				</File>
+				<File Id="977479696" Language="SFX">
+					<ShortName>Shot.wav</ShortName>
+					<Path>SFX\Shot_1C9C67B2.wem</Path>
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>

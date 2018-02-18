@@ -374,7 +374,10 @@ float4 CompRectTransform::GetRect()const
 {
 	return float4(position.x,position.y,(float)width, (float)height);
 }
-
+float4 CompRectTransform::GetGlobalRect()const
+{
+	return float4(global_transform.TranslatePart().x-( width*left_pivot.x), global_transform.TranslatePart().y + (height*left_pivot.y), (float)width, (float)height);
+}
 float3 CompRectTransform::GetNorthEastPosition()const
 {
 	return float3(width*right_pivot.x, height * left_pivot.y, GetPos().z);

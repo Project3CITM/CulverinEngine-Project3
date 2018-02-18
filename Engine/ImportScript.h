@@ -79,11 +79,17 @@ private:
 	static void			CreateGameObject(MonoObject* object);
 	static void			DeleteGameObject(MonoObject* object);
 	static MonoObject*	GetComponent(MonoObject* object, MonoReflectionType* type);
+	
+	/*Transform*/
 	static MonoObject*	GetPosition(MonoObject* object);
 	static void			SetPosition(MonoObject* object, MonoObject* vector3);
+	static void			Translate(MonoObject* object, MonoObject* vector3);
 	static MonoObject*	GetRotation(MonoObject* object);
 	static void			SetRotation(MonoObject* object, MonoObject* vector3);
 	static void			IncrementRotation(MonoObject* object, MonoObject* vector3);
+	static void			SetScale(MonoObject* object, MonoObject* vector3);
+	static MonoObject*	GetScale(MonoObject* object);
+	static void			LookAt(MonoObject* object, MonoObject* vector3);
 
 	/* Component */
 
@@ -107,6 +113,7 @@ private:
 	/*Component Audio*/
 	static void PlayAudioEvent(MonoObject* object, MonoString* name);
 	static void StopAudioEvent(MonoObject* object, MonoString* name);
+	static void SetAuxiliarySends(MonoObject* object, MonoString* bus, float value);
 
 
 private:

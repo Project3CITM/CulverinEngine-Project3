@@ -401,8 +401,12 @@ void ModuleCamera3D::CenterToObject()
 		}
 		else
 		{
-			center = focus->GetComponentTransform()->GetPosGlobal();
-			cam->frustum.pos.Set(center.x + 30.0f, center.y + 30.0f, center.z + 30.0f);
+			CompTransform* trans = focus->GetComponentTransform();
+			if (trans != nullptr)
+			{
+				center = trans->GetPosGlobal();
+				cam->frustum.pos.Set(center.x + 30.0f, center.y + 30.0f, center.z + 30.0f);
+			}
 		}
 
 		// Make the camera to look at the center of the box

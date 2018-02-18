@@ -1,14 +1,21 @@
 #include "ModuleLightning.h"
+#include"Application.h"
 #include "GL3W/include/glew.h"
 #include"MathGeoLib.h"
-#include"Application.h"
 #include"ShadersLib.h"
-#include"Application.h"
 #include"Scene.h"
+#include "ModuleRenderer3D.h"
+#include "CompCamera.h"
+#include "ModuleResourceManager.h"
+#include "ModuleEventSystem.h"
+#include "CompTransform.h"
+#include "ModuleShaders.h"
+#include "GameObject.h"
+#include "CompMesh.h"
+#include "CompMaterial.h"
+#include "CompLight.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "ModuleRenderer3D.h"
-#include "ModuleResourceManager.h"
 using namespace glm;
 
 
@@ -139,7 +146,7 @@ bool ModuleLightning::Start()
 
 		"void main()\n"
 		"{\n"
-		" gl_Position =  depthMVP* model * vec4(position,1);\n"
+		" gl_Position =  depthMVP * model * vec4(position,1);\n"
 		"}\n"
 	};
 
@@ -155,7 +162,7 @@ bool ModuleLightning::Start()
 	if (vShaderCompiled != GL_TRUE)
 	{
 		//ShaderLog(vertexShader);
-		//return nullptr;
+		return nullptr;
 	}
 
 	//Attach vertex shader to program
@@ -189,7 +196,7 @@ bool ModuleLightning::Start()
 	{
 
 		//ShaderLog(fragmentShader);
-		//return nullptr;
+		return nullptr;
 	}
 
 	//Attach fragment shader to program
@@ -203,7 +210,7 @@ bool ModuleLightning::Start()
 	if (programSuccess != GL_TRUE)
 	{
 		//ProgramLog(default_shader.mProgramID);
-		//return nullptr;
+		return nullptr;
 	}
 
 	Shader* newFragment = new Shader();
@@ -274,7 +281,7 @@ update_status ModuleLightning::PreUpdate(float dt)
 update_status ModuleLightning::Update(float dt)
 {
 
-
+/*
 	shadow_Shader->Bind();
 	text.Bind("peter");
 
@@ -293,11 +300,11 @@ update_status ModuleLightning::Update(float dt)
 	glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
 
 	App->scene->scene_buff->Bind("Scene");
-	//ImGui::Image((ImTextureID*)text.frame_id, ImVec2(shadow_maps_res_w, shadow_maps_res_h));
+	ImGui::Image((ImTextureID*)text.frame_id, ImVec2(shadow_maps_res_w, shadow_maps_res_h));
 	shadow_Shader->Unbind();
 	//text.UnBind("peter");
 
-
+	*/
 
 
 	return UPDATE_CONTINUE;
@@ -316,6 +323,208 @@ bool ModuleLightning::CleanUp()
 	}
 
 	return true;
+}
+
+void ModuleLightning::OnEvent(Event & event)
+{
+	text.Bind("peter");
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK); // Cull back-facing triangles -> draw only front-facing triangles
+	
+						 // Clear the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	shadow_Shader->Bind();
+
+
+	
+	switch (event.type)
+	{
+	case EventType::EVENT_SEND_3D_3DA_MM:
+
+		for (std::multimap<float, Event>::const_iterator item = event.send_3d3damm.MM3DDrawEvent->begin(); item != event.send_3d3damm.MM3DDrawEvent->end();item++)
+		{
+
+			CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
+
+			if (m->resource_mesh != nullptr)
+			{
+				ShaderProgram* shader = App->renderer3D->default_shader;
+				//if (material->material_shader != nullptr)
+				if (m->GetMaterial()!= nullptr) shader = (ShaderProgram*)&m->GetMaterial()->material_shader;
+				//shader->Bind();
+
+				CompTransform* transform = (CompTransform*)m->GetParent()->FindComponentByType(C_TRANSFORM);
+
+				if (m->resource_mesh->vertices.size() > 0 && m->resource_mesh->indices.size() > 0)
+				{
+					glEnableClientState(GL_VERTEX_ARRAY);
+					glEnableClientState(GL_NORMAL_ARRAY);
+					glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+					//Set Wireframe
+					if (App->renderer3D->wireframe)
+					{
+						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+					}
+
+					//Temporary, future delete incoming
+					//Set Color
+					if (m->GetMaterial() != nullptr)
+					{
+						glColor4f(m->GetMaterial()->GetColor().r, m->GetMaterial()->GetColor().g, m->GetMaterial()->GetColor().b, m->GetMaterial()->GetColor().a);
+					}
+					else
+					{
+						glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+					}
+					//
+
+
+					//Future Delete
+					if (App->renderer3D->texture_2d)
+					{
+						CompMaterial* temp = m->GetParent()->GetComponentMaterial();
+						if (temp != nullptr) {
+							for (int i = 0; i < temp->material_shader.textures.size(); i++) {
+
+
+								uint texLoc = glGetUniformLocation(temp->material_shader.programID, temp->material_shader.textures[i].var_name.c_str());
+								glUniform1i(texLoc, i);
+
+
+								glActiveTexture(GL_TEXTURE0 + i);
+
+
+								if (temp->material_shader.textures[i].value == nullptr)
+								{
+									glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+								}
+								else
+								{
+									glBindTexture(GL_TEXTURE_2D, temp->material_shader.textures[i].value->GetTextureID());
+								}
+
+							}
+							
+
+							uint texture_2D_sampler = 0;
+							glActiveTexture(GL_TEXTURE0);
+							if (temp->GetTextureID() == 0)
+							{
+							glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+							}
+							else
+							{
+							glBindTexture(GL_TEXTURE_2D, temp->GetTextureID());
+							}
+							texture_2D_sampler = glGetUniformLocation(App->renderer3D->default_shader->programID, "_texture");
+							glUniform1i(texture_2D_sampler, 0);
+							
+
+						}
+					}
+					//
+					
+
+
+					Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
+					float4x4 temp = camFrust.ViewMatrix();
+				
+					GLint modelLoc = glGetUniformLocation(shadow_Shader->programID, "model");
+					uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
+
+					
+
+					float4x4 matrixfloat = transform->GetGlobalTransform();
+					GLfloat matrix[16] =
+					{
+						matrixfloat[0][0],matrixfloat[1][0],matrixfloat[2][0],matrixfloat[3][0],
+						matrixfloat[0][1],matrixfloat[1][1],matrixfloat[2][1],matrixfloat[3][1],
+						matrixfloat[0][2],matrixfloat[1][2],matrixfloat[2][2],matrixfloat[3][2],
+						matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
+					};
+
+					const CompLight* light = event.send_3d3damm.light;
+					
+					GameObject* parent = light->GetParent();
+					CompTransform* trans = parent->GetComponentTransform();
+					
+					
+					float3 pos_light = light->GetParent()->GetComponentTransform()->GetPos();
+					float3 rot_eu_ang= light->GetParent()->GetComponentTransform()->GetRotEuler();
+
+
+
+					glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
+
+					// Compute the MVP matrix from the light's point of view
+					glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+					glm::mat4 depthViewMatrix = glm::lookAt(vec3(rot_eu_ang.x, rot_eu_ang.y, rot_eu_ang.z), glm::vec3(pos_light.x, pos_light.y, pos_light.z), glm::vec3(0, 1, 0));
+					glm::mat4 depthModelMatrix = glm::mat4(1.0);
+					glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+
+
+
+					glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
+		
+					glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
+
+
+					int total_save_buffer = 8;
+
+					if (m->resource_mesh->vertices.size()>0) {
+						glBindBuffer(GL_ARRAY_BUFFER, m->resource_mesh->id_total_buffer);
+
+						glEnableVertexAttribArray(0);
+						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
+						
+
+						glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->resource_mesh->indices_id);
+						glDrawElements(GL_TRIANGLES, m->resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);
+
+					}
+
+					//-----------------
+
+					//Reset TextureColor
+					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+					glBindTexture(GL_TEXTURE_2D, 0);
+
+					glActiveTexture(GL_TEXTURE0);
+
+					//Disable Wireframe -> only this object will be wireframed
+					if (App->renderer3D->wireframe)
+					{
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					}
+					glDisableClientState(GL_VERTEX_ARRAY);
+					glDisableClientState(GL_NORMAL_ARRAY);
+					glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
+					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+					
+
+				}
+
+				else
+				{
+					LOG("Cannot draw the mesh");
+				}
+			}
+
+		}
+		break;
+	}
+	
+	ImGui::Image((ImTextureID*)text.GetTexture(), ImVec2(500, 500));
+	App->scene->scene_buff->Bind("Scene");
+	
+	shadow_Shader->Unbind();
+
 }
 
 void ModuleLightning::CalShadowMaps()
@@ -417,6 +626,12 @@ void ModuleLightning::DeleteLight(CompLight * light)
 			scene_lights.erase(item);
 	}
 
+}
+
+bool ModuleLightning::SetEventListenrs()
+{
+	AddListener(EventType::EVENT_SEND_3D_3DA_MM, this);
+	return false;
 }
 
 void ModuleLightning::AddShadowMapCastViews(uint ammount)
