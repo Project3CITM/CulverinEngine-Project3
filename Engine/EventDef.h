@@ -151,7 +151,7 @@ struct EPoint
 	InputButton button;
 	float2 position;
 	float2 motion;
-
+	GameObject* focus = nullptr;
 };
 struct EPassComponent
 {

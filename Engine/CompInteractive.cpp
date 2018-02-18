@@ -244,7 +244,6 @@ bool CompInteractive::IsActive()const
 void CompInteractive::Desactive()
 {
 	disabled = true;
-	current_selection_state = SelectionStates::STATE_DISABLED;
 }
 
 void CompInteractive::ForceClear(Event event_input)
@@ -258,7 +257,14 @@ void CompInteractive::ForceClear(Event event_input)
 
 void CompInteractive::OnPointDown(Event event_input)
 {
+	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
+	{
+		return;
+	}
+
+
 	point_down = true;
+
 	UpdateSelectionState(event_input);
 }
 
@@ -418,7 +424,7 @@ bool CompInteractive::IsPressed()
 {
 	if(IsActive())
 		return false;
-	return true;
+	return point_down&&point_inside;
 }
 
 bool CompInteractive::IsHighlighted(Event event_data)
@@ -429,7 +435,12 @@ bool CompInteractive::IsHighlighted(Event event_data)
 	if (IsPressed())
 		return false;
 
-	return false;
+	bool selected = interactive_selected;
+	selected |= (point_down && !point_inside && event_data.pointer.focus == parent)
+		|| (!point_down && point_inside && event_data.pointer.focus == parent)
+		|| (!point_down && point_inside && event_data.pointer.focus == nullptr);
+
+	return selected;
 }
 
 void CompInteractive::UpdateSelectionState(Event event_data)
@@ -446,12 +457,21 @@ void CompInteractive::UpdateSelectionState(Event event_data)
 	}
 	current_selection_state = SelectionStates::STATE_NORMAL;
 }
+void CompInteractive::PrepareHandleTransition()
+{
+	SelectionStates selection_state = current_selection_state;
+	if (IsActive())
+	{
+		selection_state = SelectionStates::STATE_DISABLED;
+	}
+	HandleTransition(selection_state);
+}
 
-void CompInteractive::HandleTransition()
+void CompInteractive::HandleTransition(SelectionStates selection_state)
 {
 	float4 desired_color;
 	ResourceMaterial* desired_sprite = nullptr;
-	switch (current_selection_state)
+	switch (selection_state)
 	{
 	case  SelectionStates::STATE_NORMAL:
 		desired_color = normal_color;
@@ -488,7 +508,6 @@ void CompInteractive::HandleTransition()
 		break;
 	}
 }
-
 
 
 void CompInteractive::StartTransitionColor(float4 color_to_change, bool no_fade)

@@ -7,7 +7,7 @@
 #include "ModuleResourceManager.h"
 #include "SDL2_ttf/include/SDL_ttf.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
-
+#include "ModuleEventSystem.h"
 #define MAX_KEYS 300
 
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
@@ -129,18 +129,57 @@ update_status ModuleInput::PreUpdate(float dt)
 
 		switch(e.type)
 		{
+			case SDL_MOUSEBUTTONDOWN:
+			{
+				Event mouse_event;
+				mouse_event.pointer.type = EventType::EVENT_BUTTON_DOWN;
+				if (e.button.button == SDL_BUTTON_LEFT)
+					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
+				if (e.button.button == SDL_BUTTON_MIDDLE)
+					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_MIDDLE;
+				if (e.button.button == SDL_BUTTON_RIGHT)
+					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_RIGHT;
+				mouse_event.pointer.position.x = mouse_x;
+				mouse_event.pointer.position.y = mouse_y;
+				PushEvent(mouse_event);
+			}
+			break;
+			case SDL_MOUSEBUTTONUP:
+			{
+				Event mouse_event;
+				mouse_event.pointer.type = EventType::EVENT_BUTTON_UP;
+				if (e.button.button == SDL_BUTTON_LEFT)
+					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
+				if (e.button.button == SDL_BUTTON_MIDDLE)
+					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_MIDDLE;
+				if (e.button.button == SDL_BUTTON_RIGHT)
+					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_RIGHT;
+				mouse_event.pointer.position.x = mouse_x;
+				mouse_event.pointer.position.y = mouse_y;
+				PushEvent(mouse_event);
+			}
+			break;
 			case SDL_MOUSEWHEEL:
 			mouse_z = e.wheel.y;
 			break;
 			
 			case SDL_MOUSEMOTION:
+			
 			mouse_x = e.motion.x / SCREEN_SIZE;
 			mouse_y = e.motion.y / SCREEN_SIZE;
 
 
 			mouse_x_motion = e.motion.xrel / SCREEN_SIZE;
 			mouse_y_motion = e.motion.yrel / SCREEN_SIZE;
-
+			{
+				Event mouse_event;
+				mouse_event.pointer.type = EventType::EVENT_MOUSE_MOTION;
+				mouse_event.pointer.position.x = mouse_x;
+				mouse_event.pointer.position.y = mouse_y;
+				mouse_event.pointer.motion.x = mouse_x_motion;
+				mouse_event.pointer.motion.y = mouse_y_motion;
+				PushEvent(mouse_event);
+			}
 			break;
 
 			case SDL_DROPFILE:

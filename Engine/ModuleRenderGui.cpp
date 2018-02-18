@@ -221,6 +221,8 @@ bool ModuleRenderGui::SetEventListenrs()
 
 void ModuleRenderGui::OnEvent(Event & this_event)
 {
+	if (focus != nullptr)
+		this_event.pointer.focus = focus->GetParent();
 	switch (this_event.type)
 	{
 	case EventType::EVENT_PASS_COMPONENT:
@@ -254,10 +256,16 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 			}
 			else
 			{
+			
 				if (this_event.type == EventType::EVENT_MOUSE_MOTION)
 				{
 					focus->OnPointExit(this_event);
 
+				}
+				if (this_event.type == EventType::EVENT_BUTTON_DOWN)
+				{
+					focus->ForceClear(this_event);
+					focus = nullptr;
 				}
 			}
 		}
@@ -279,6 +287,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 						if ((*it)->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
 						{
 							(*it)->OnInteractiveSelected(this_event);
+							focus = (*it);
 						}
 
 					}
@@ -303,6 +312,8 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 					}
 				}
 			}
+			if (!positive_colision)
+				focus = nullptr;
 		}
 		break;
 	default:

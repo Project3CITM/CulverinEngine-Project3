@@ -67,21 +67,9 @@ public:
 	ResourceMaterial* GetDisabledSprite()const;
 	//OtherGetters
 	NavigationMode GetNavigationMode()const;
-protected:
-	virtual bool IsPressed();
-	virtual bool IsHighlighted(Event event_data);
-	virtual void UpdateSelectionState(Event event_data);
-private:
-	void HandleTransition();
-
-	void StartTransitionColor(float4 color_to_change, bool no_fade);
-	void UpdateTransitionColor(float dt);
-	void StartTransitionSprite(ResourceMaterial* sprite_to_change);
-public:
-
 	enum SelectionStates
 	{
-		STATE_NONE =-1,
+		STATE_NONE = -1,
 		STATE_NORMAL,
 		STATE_HIGHLIGHTED,
 		STATE_PRESSED,
@@ -90,12 +78,28 @@ public:
 	};
 	enum Transition
 	{
-		TRANSITION_NONE=-1,
+		TRANSITION_NONE = -1,
 		TRANSITION_COLOR,
 		TRANSITION_SPRITE,
 		TRANSITION_ANIMATION,
 		TRANSITION_MAX
 	};
+protected:
+	virtual bool IsPressed();
+	virtual bool IsHighlighted(Event event_data);
+	virtual void UpdateSelectionState(Event event_data);
+private:
+	void PrepareHandleTransition();
+
+	void HandleTransition(SelectionStates selection_state);
+
+
+	void StartTransitionColor(float4 color_to_change, bool no_fade);
+	void UpdateTransitionColor(float dt);
+	void StartTransitionSprite(ResourceMaterial* sprite_to_change);
+public:
+
+	
 
 private:
 	static std::list<CompInteractive*> iteractive_list;

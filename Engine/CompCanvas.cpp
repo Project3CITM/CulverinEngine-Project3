@@ -40,7 +40,7 @@ CompCanvas::~CompCanvas()
 void CompCanvas::Update(float dt)
 {
 	App->render_gui->screen_space_canvas.push_back(this);
-	PushEvent(draw_mode);
+	//PushEvent(draw_mode);
 
 }
 
