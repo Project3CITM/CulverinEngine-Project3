@@ -159,6 +159,11 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				templist.push_back(temp);
 			}
 		}
+		//Sync components
+		for (int i = 0; i < templist.size(); i++)
+		{
+			templist[i].go->SyncComponents();
+		}
 		// Now with uid parent add childs.
 		for (int i = 0; i < templist.size(); i++)
 		{

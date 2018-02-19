@@ -241,9 +241,7 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 
 	if (target_graphic != nullptr)
 	{
-		json_object_dotset_string_with_std(object, name + "Graphic Component:", target_graphic->GetName());
-		json_object_dotset_number_with_std(object, name + "Graphic Type", target_graphic->GetType());
-		json_object_dotset_number_with_std(object, name + "Graphic UUID", target_graphic->GetUUID());
+		json_object_dotset_number_with_std(object, name + "Graphic UUID", target_graphic_uid);
 	}
 	else
 	{
@@ -287,8 +285,17 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 	fade_duration=json_object_dotget_number_with_std(object, name + "Fade Duration");
 	no_fade=json_object_dotget_boolean_with_std(object, name + "Fade Active");
 	start_transition=json_object_dotget_boolean_with_std(object, name + "Transition Start");
+	target_graphic_uid=json_object_dotget_number_with_std(object, name + "Graphic UUID");
 
 	Enable();
+}
+void CompInteractive::SyncComponent()
+{
+	if (target_graphic_uid == 0)
+		return;
+	target_graphic=(CompGraphic*)parent->FindComponentByUUID(target_graphic_uid);
+	TryConversion();
+
 }
 bool CompInteractive::IsActive()const
 {
@@ -402,6 +409,7 @@ void CompInteractive::SetTargetGraphic(CompGraphic * set_target_graphic)
 	if (set_target_graphic == nullptr)
 		return;
 	target_graphic = set_target_graphic;
+	target_graphic_uid = target_graphic->GetUUID();
 	TryConversion();
 }
 

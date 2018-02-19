@@ -1193,6 +1193,21 @@ Component* GameObject::FindParentComponentByType(Comp_Type type)const
 	return ret;
 }
 
+Component * GameObject::FindComponentByUUID(uint uid) const
+{
+
+	Component* comp = nullptr;
+
+	for (uint i = 0; i < components.size(); i++)
+	{
+		if (components[i]->GetUUID() == uid) // We need to check if the component is ACTIVE first?¿
+		{
+			return components[i];
+		}
+	}
+	return nullptr;
+}
+
 Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 {
 	bool dupe = false;
@@ -1624,6 +1639,15 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 
 		if (components[i]->GetType() == Comp_Type::C_MESH && ((CompMesh*)components[i])->HasSkeleton())
 			((CompMesh*)components[i])->GenSkeleton();
+	}
+}
+void GameObject::SyncComponents()
+{
+	
+	// Now Iterate All components and Load variables
+	for (int i = 0; i < components.size(); i++)
+	{
+		components[i]->SyncComponent();
 	}
 }
 

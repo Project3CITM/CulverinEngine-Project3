@@ -106,3 +106,7 @@ void Component::Save(JSON_Object* object, std::string name, bool saveScene, uint
 void Component::Load(const JSON_Object* object, std::string name)
 {
 }
+
+void Component::SyncComponent()
+{
+}

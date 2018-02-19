@@ -30,7 +30,7 @@ public:
 	void CopyValues(const CompInteractive * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
-
+	void SyncComponent();
 	virtual bool IsActive()const;
 	void Activate();
 
@@ -133,6 +133,7 @@ protected:
 	ResourceMaterial* sprite[3];
 	uint uuid_reimported_sprite[3];
 	CompGraphic* target_graphic = nullptr;
+	uint target_graphic_uid = 0;
 	CompImage* image = nullptr;
 	int sprite_value = -1;
 	bool select_sprite = false;
