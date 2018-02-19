@@ -104,6 +104,7 @@ private:
 	static void			SetRotation(MonoObject* object, MonoObject* vector3);
 	static void			SetGlobalRotation(MonoObject* object, MonoObject* vector3);
 	static void			IncrementRotation(MonoObject* object, MonoObject* vector3);
+	static void			RotateAroundAxis(MonoObject* object, MonoObject* vector3, float angle);
 	static void			SetScale(MonoObject* object, MonoObject* vector3);
 	static MonoObject*	GetScale(MonoObject* object);
 	static void			LookAt(MonoObject* object, MonoObject* vector3);

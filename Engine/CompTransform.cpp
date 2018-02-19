@@ -325,6 +325,14 @@ void CompTransform::IncrementRot(float3 rot)
 	toUpdate = true;
 }
 
+void CompTransform::RotateAroundAxis(float3 rot, float angle)
+{
+	rot = rot.Normalized();
+	float3 euler_ang = { rot.x * angle,rot.y*angle,rot.z*angle };
+	rotation_euler += euler_ang;
+	toUpdate = true;
+}
+
 void CompTransform::SetRot(Quat rot)
 {
 	rotation_euler = rot.ToEulerXYZ() * RADTODEG;

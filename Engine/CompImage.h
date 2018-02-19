@@ -59,8 +59,8 @@ private:
 	ResourceMaterial* source_image = nullptr;
 	ResourceMaterial* overwrite_image = nullptr;
 	CompImage* to_fill = nullptr;
-	Type Type = SIMPLE;
-	FillMethod Method = NONE;
+	Type type = SIMPLE;
+	FillMethod method = HORITZONTAL;
 
 	uint uuid_source_image = 0;
 	bool raycast_target = true;

@@ -162,6 +162,7 @@ public:
 	void		SetRotation(MonoObject* object, MonoObject* vector3);
 	void		SetGlobalRotation(MonoObject* object, MonoObject* vector3);
 	void		IncrementRotation(MonoObject* object, MonoObject* vector3);
+	void		RotateAroundAxis(MonoObject* object, MonoObject* vector3, float value);
 	void		SetScale(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetScale(MonoObject* object);
 	void		LookAt(MonoObject* object, MonoObject* vector3);

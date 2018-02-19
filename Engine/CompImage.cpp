@@ -59,11 +59,7 @@ void CompImage::PreUpdate(float dt)
 			source_image = nullptr;
 		}
 	}
-	if (parent->GetComponentImage() != nullptr)
-	{
-		to_fill = parent->GetComponentImage();
-		Type = FILLED;
-	}
+
 	// -------------------------------------------------------------------
 }
 
@@ -186,37 +182,37 @@ void CompImage::ShowInspectorInfo()
 			}
 		}
 	}
-	int selection = 0;
+	int selection = type;
 	ImGui::Text("Image Type:"); ImGui::SameLine();
-	if (ImGui::Combo("##type", &selection, "SIMPLE\0FILLED"))
+	if (ImGui::Combo("##type", &selection, "SIMPLE\0FILLED", 2))
 	{
 		if (selection == Type::SIMPLE)
 		{
 			filler = false;
-			Type = SIMPLE;
+			type = Type::SIMPLE;
 		}
 		if (selection == Type::FILLED)
 		{
 			filler = true;
-			Type = FILLED;
+			type = Type::FILLED;
 		}
 	}
-	selection = 0;
-	if (Type == FILLED)
+	selection = HORITZONTAL;
+	if (type == Type::FILLED)
 	{
 		ImGui::Text("Fill Method:"); ImGui::SameLine();
-		if (ImGui::Combo("##fillMethod", &selection, "Horitzontal\0Vertical\0 Radial"))
+		if (ImGui::Combo("##fillMethod", &selection, "None\0Horitzontal\0Vertical\0 Radial",))
 		{
 			if (selection == FillMethod::HORITZONTAL)
-				Method = HORITZONTAL;
+				method = FillMethod::HORITZONTAL;
 			if (selection == FillMethod::VERTICAL)
-				Method = VERTICAL;
+				method = FillMethod::VERTICAL;
 			if (selection == FillMethod::RADIAL360)
-				Method = RADIAL360;
+				method = FillMethod::RADIAL360;
 		}
 		if (ImGui::DragFloat("##fillQuantity", &filled, 0.01f, 0.0f, 1.0f))
 		{
-			GenerateFilledSprite(filled, Method);
+			GenerateFilledSprite(filled, method);
 		}
 	}
 	ImGui::TreePop();

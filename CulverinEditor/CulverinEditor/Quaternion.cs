@@ -1,7 +1,7 @@
 ﻿
 namespace CulverinEditor
 {
-    class Quaternion
+    public sealed class Quaternion
     {
         public Quaternion()
         {
