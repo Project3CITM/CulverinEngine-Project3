@@ -1158,6 +1158,9 @@
     <ClInclude Include="CompParticleSystem.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="DefaultShaders.h">
+      <Filter>Engine\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
