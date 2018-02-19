@@ -4,6 +4,7 @@
 #include "Component.h"
 
 class jpPhysicsRigidBody;
+class CompRigidBody;
 class CompTransform;
 class CompScript;
 
@@ -46,9 +47,9 @@ public:
 
 private:
 	
-	jpPhysicsRigidBody * body;
-	
-	CompTransform* transform;
+	jpPhysicsRigidBody * body = nullptr;
+	CompRigidBody* rigid_body_comp = nullptr;
+	CompTransform* transform = nullptr;
 
 	// Two defintions of the type are needed to avoid conflict when changing types
 	JP_COLLIDER_TYPE	collider_type = (JP_COLLIDER_TYPE)3;	//Defines the next type of collider when changing it via editor

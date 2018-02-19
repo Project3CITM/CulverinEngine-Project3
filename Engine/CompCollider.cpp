@@ -11,16 +11,26 @@
 #include "MathGeoLib.h"
 
 #include "jpPhysicsRigidBody.h"
+#include "CompRigidBody.h"
 
 CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Collider";
 
-	body = App->physics->GetNewRigidBody(this);
-	
+
 	if (parent)
 	{
+		rigid_body_comp = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
+		if (rigid_body_comp != nullptr)
+		{
+			LOG("Collider using the RigidBody comp...");
+		}
+		else
+		{
+			LOG("Creating a new physics bbody for the collider...");
+			body = App->physics->GetNewRigidBody(this);
+		}
 		transform = parent->GetComponentTransform();
 		if (!transform->GetToUpdate())
 		{
@@ -33,6 +43,40 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 {
 	uid = App->random->Int();
 	name_component = "Collider";
+
+	//Same as regular constructor since this properties depend on the parent
+	if (parent)
+	{
+		rigid_body_comp = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
+		if (rigid_body_comp != nullptr)
+		{
+			LOG("Collider using the RigidBody comp...");
+		}
+		else
+		{
+			LOG("Creating a new physics bbody for the collider...");
+			body = App->physics->GetNewRigidBody(this);
+		}
+		transform = parent->GetComponentTransform();
+		if (!transform->GetToUpdate())
+		{
+			SetColliderPosition();
+		}
+	}
+
+	//Copy
+	collider_type	= copy.collider_type;
+	curr_type		= copy.curr_type;
+
+	local_quat	= copy.local_quat;
+	position	= copy.position;
+	angle		 = copy.angle;
+
+	material	= copy.material;
+	size		= copy.size;
+	rad			= copy.rad;
+
+
 }
 
 CompCollider::~CompCollider()
@@ -307,7 +351,14 @@ void CompCollider::SetColliderPosition()
 {
 	Quat quat = transform->GetRotGlobal()*local_quat;
 	float3 fpos = transform->GetPosGlobal() + quat * position;
-	body->SetTransform(fpos, quat);
+	if (body != nullptr)
+	{
+		body->SetTransform(fpos, quat);
+	}
+	else if (rigid_body_comp != nullptr && rigid_body_comp->GetPhysicsBody() != nullptr)
+	{
+		rigid_body_comp->GetPhysicsBody()->SetTransform(fpos, quat);
+	}
 }
 
 void CompCollider::SetSizeFromBoundingBox()
