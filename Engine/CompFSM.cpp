@@ -406,7 +406,8 @@ FSM_State * CompFiniteStateMachine::GetInitialState() const
 
 CompScript * CompFiniteStateMachine::SelectScript(FSM_State* state_to_add_script)
 {
-	CompScript* new_script = new CompScript()
+	/*
+	CompScript* new_script = new CompScript();
 
 	ResourceScript* temp = (ResourceScript*)App->resource_manager->ShowResources(select_script, Resource::Type::SCRIPT);
 	if (temp != nullptr)
@@ -443,7 +444,7 @@ CompScript * CompFiniteStateMachine::SelectScript(FSM_State* state_to_add_script
 		Enable();
 		return this;
 	}
-
+	*/
 	return nullptr;
 }
 
