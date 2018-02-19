@@ -131,6 +131,7 @@
     <ClInclude Include="CompScript.h" />
     <ClInclude Include="CompText.h" />
     <ClInclude Include="CSharpScript.h" />
+    <ClInclude Include="DefaultShaders.h" />
     <ClInclude Include="EventDef.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ImGui\ImGuizmo.h" />

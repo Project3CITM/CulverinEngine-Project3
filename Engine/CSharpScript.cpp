@@ -7,6 +7,7 @@
 #include "ModuleMap.h"
 #include "CompTransform.h"
 #include "CompScript.h"
+#include "CompInteractive.h"
 #include "ResourceScript.h"
 #include "ModuleResourceManager.h"
 #include "GameObject.h"
@@ -877,7 +878,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompAudio";
 	}
-
+	else if (name == "CulverinEditor.CompButton")
+	{
+		comp_name = "Button";
+	}
 	/* Scripts */
 	if (comp_name == "")
 	{
@@ -1623,6 +1627,47 @@ void CSharpScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, floa
 	}
 }
 
+void CSharpScript::Activate(MonoObject* object, int uid)
+{
+	if (current_game_object != nullptr)
+	{
+		
+		CompInteractive* interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_BUTTON);
+		if (interactive != nullptr)
+		{
+			interactive->Activate();
+			return;
+		}		
+		interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_CHECK_BOX);
+		if (interactive != nullptr)
+		{
+			interactive->Activate();
+			return;
+
+		}
+	}
+}
+
+void CSharpScript::Deactivate(MonoObject * object, int uid)
+{
+	if (current_game_object != nullptr)
+	{
+
+		CompInteractive* interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_BUTTON);
+		if (interactive != nullptr)
+		{
+			interactive->Deactive();
+			return;
+		}
+		interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_CHECK_BOX);
+		if (interactive != nullptr)
+		{
+			interactive->Deactive();
+			return;
+
+		}
+	}
+}
 // Map ------------------------------------------------
 MonoString* CSharpScript::GetMapString(MonoObject* object)
 {

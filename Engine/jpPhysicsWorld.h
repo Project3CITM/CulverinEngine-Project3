@@ -34,6 +34,7 @@ public:
 
 	bool CreateNewPhysicsWorld();
 	bool Simulate(float dt);
+	bool StopSimulation(bool priority = true);
 
 	physx::PxScene* CreateNewScene();
 	physx::PxScene* GetScene(int scene_index) const;

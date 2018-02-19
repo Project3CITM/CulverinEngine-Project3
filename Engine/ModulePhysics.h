@@ -31,7 +31,7 @@ public:
 	bool Init(JSON_Object* node);
 	bool Start();
 	update_status PreUpdate(float dt);
-	//update_status Update(float dt);
+	update_status Update(float dt);
 	update_status PostUpdate(float dt);
 	update_status UpdateConfig(float dt);
 	bool SaveConfig(JSON_Object* node);
@@ -42,6 +42,7 @@ public:
 
 	// PhysX Methods ----------------
 	jpPhysicsRigidBody* GetNewRigidBody(Component* component, bool dynamic = false);
+	bool DeleteCollider(Component* component, jpPhysicsRigidBody* body);
 
 	void ChangeRigidActorToStatic(jpPhysicsRigidBody* actor, Component* comp);
 	void ChangeRigidActorToDynamic(jpPhysicsRigidBody* actor, Component* comp);

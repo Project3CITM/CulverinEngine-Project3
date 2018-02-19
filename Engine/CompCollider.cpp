@@ -1,6 +1,8 @@
 #include "CompCollider.h"
 #include "GameObject.h"
 #include "CompTransform.h"
+#include "CompScript.h"
+#include "CSharpScript.h"
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "ModuleGUI.h"
@@ -9,16 +11,26 @@
 #include "MathGeoLib.h"
 
 #include "jpPhysicsRigidBody.h"
+#include "CompRigidBody.h"
 
 CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Collider";
 
-	body = App->physics->GetNewRigidBody(this);
-	
+
 	if (parent)
 	{
+		rigid_body_comp = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
+		if (rigid_body_comp != nullptr)
+		{
+			LOG("Collider using the RigidBody comp...");
+		}
+		else
+		{
+			LOG("Creating a new physics bbody for the collider...");
+			body = App->physics->GetNewRigidBody(this);
+		}
 		transform = parent->GetComponentTransform();
 		if (!transform->GetToUpdate())
 		{
@@ -31,14 +43,44 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 {
 	uid = App->random->Int();
 	name_component = "Collider";
+
+	//Same as regular constructor since this properties depend on the parent
+	if (parent)
+	{
+		rigid_body_comp = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
+		if (rigid_body_comp != nullptr)
+		{
+			LOG("Collider using the RigidBody comp...");
+		}
+		else
+		{
+			LOG("Creating a new physics bbody for the collider...");
+			body = App->physics->GetNewRigidBody(this);
+		}
+		transform = parent->GetComponentTransform();
+		if (!transform->GetToUpdate())
+		{
+			SetColliderPosition();
+		}
+	}
+
+	//Copy
+	collider_type	= copy.collider_type;
+	curr_type		= copy.curr_type;
+
+	local_quat	= copy.local_quat;
+	position	= copy.position;
+	angle		 = copy.angle;
+
+	material	= copy.material;
+	size		= copy.size;
+	rad			= copy.rad;
+
+
 }
 
 CompCollider::~CompCollider()
 {
-	if (body)
-	{
-	//	delete body;
-	}
 }
 
 void CompCollider::Update(float dt)
@@ -46,6 +88,15 @@ void CompCollider::Update(float dt)
 	if (transform->GetUpdated())
 	{
 		SetColliderPosition();
+	}
+}
+
+void CompCollider::Clear()
+{
+	if (body)
+	{
+		delete body;
+		body = nullptr;
 	}
 }
 
@@ -111,6 +162,27 @@ void CompCollider::ShowInspectorInfo()
 	{
 		ShowOptions();
 		ImGui::EndPopup();
+	}
+
+	// Set as Trigger
+	if (ImGui::Checkbox("Trigger", &trigger))
+	{
+		// change later (check if body is static)
+		body->SetAsTrigger(trigger);
+		if (trigger == false)
+		{
+			listener = nullptr;
+		}
+	}
+	
+	// Listener selection
+	if (trigger && listener == nullptr)
+	{
+		CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT);
+		if (sc != nullptr)
+		{
+			listener = sc;
+		}
 	}
 
 	// Collider type
@@ -250,11 +322,13 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 void CompCollider::OnTriggerEnter(Component * actor)
 {
 	// Call Listner OnTriggerEnter(Component* actor);
+	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter, (void**)&actor);
 }
 
 void CompCollider::OnTriggerLost(Component * actor)
 {
 	// Call Listner OnTriggerLost(Component* actor);
+	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost, (void**)&actor);
 }
 
 void CompCollider::ChangeCollider()
@@ -277,7 +351,14 @@ void CompCollider::SetColliderPosition()
 {
 	Quat quat = transform->GetRotGlobal()*local_quat;
 	float3 fpos = transform->GetPosGlobal() + quat * position;
-	body->SetTransform(fpos, quat);
+	if (body != nullptr)
+	{
+		body->SetTransform(fpos, quat);
+	}
+	else if (rigid_body_comp != nullptr && rigid_body_comp->GetPhysicsBody() != nullptr)
+	{
+		rigid_body_comp->GetPhysicsBody()->SetTransform(fpos, quat);
+	}
 }
 
 void CompCollider::SetSizeFromBoundingBox()

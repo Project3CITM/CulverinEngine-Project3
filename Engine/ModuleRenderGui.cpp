@@ -15,6 +15,7 @@
 #include "CompInteractive.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
+#include "DefaultShaders.h"
 ModuleRenderGui::ModuleRenderGui(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
@@ -40,132 +41,7 @@ bool ModuleRenderGui::Init(JSON_Object * node)
 bool ModuleRenderGui::Start()
 {
 
-	default_ui_shader = new ShaderProgram();
-	default_ui_shader->name = "Default Ui Shader";
-	//Success flag
-	GLint programSuccess = GL_TRUE;
-
-	//Generate program
-	default_ui_shader->programID = glCreateProgram();
-
-	//Create vertex shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-	//Get vertex source
-	const GLchar* vertexShaderSource[] =
-	{
-		"#version 330\n"
-		"uniform mat4 ProjMtx;\n"
-		"uniform mat4 model;\n"
-		"uniform vec4 Color_UI_ME;\n"
-		"layout(location = 0) in vec3 position;\n"
-		"layout(location = 1) in vec2 texCoord;\n"
-		"out vec2 Frag_UV;\n"
-
-		"void main()\n"
-		"{\n"
-		"	Frag_UV = texCoord;\n"
-		"	gl_Position = ProjMtx * model * vec4(position.xy,0,1);\n"
-		"}\n"
-	};
-
-	//Set vertex source
-	glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
-
-	//Compile vertex source
-	glCompileShader(vertexShader);
-
-	//Check vertex shader for errors
-	GLint vShaderCompiled = GL_FALSE;
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
-	if (vShaderCompiled != GL_TRUE)
-	{
-		//ShaderLog(vertexShader);
-		//return nullptr;
-	}
-
-	//Attach vertex shader to program
-	glAttachShader(default_ui_shader->programID, vertexShader);
-
-	//Create fragment shader
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	//Get fragment source
-	const GLchar* fragmentShaderSource[] =
-	{
-		"#version 330\n"
-		"uniform sampler2D Texture;\n"
-		"uniform vec4 Color_UI_ME;\n"
-
-		"in vec2 Frag_UV;\n"
-		"in vec4 Frag_Color;\n"
-		"out vec4 Out_Color;\n"
-		"void main()\n"
-		"{\n"
-		"	Out_Color = Color_UI_ME*texture(Texture,vec2(Frag_UV.s, 1.0 - Frag_UV.t).st);\n"
-		"}\n"
-	};
-
-	//Set fragment source
-	glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
-
-	//Compile fragment source
-	glCompileShader(fragmentShader);
-
-	//Check fragment shader for errors
-	GLint fShaderCompiled = GL_FALSE;
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
-	if (fShaderCompiled != GL_TRUE)
-	{
-
-		//ShaderLog(fragmentShader);
-		//return nullptr;
-	}
-
-	//Attach fragment shader to program
-	glAttachShader(default_ui_shader->programID, fragmentShader);
-
-	//Link program
-	glLinkProgram(default_ui_shader->programID);
-
-	//Check for errors
-	glGetProgramiv(default_ui_shader->programID, GL_LINK_STATUS, &programSuccess);
-	if (programSuccess != GL_TRUE)
-	{
-		//ProgramLog(default_shader.mProgramID);
-		//return nullptr;
-	}
-
-	Shader* newFragment = new Shader();
-	newFragment->shaderID = fragmentShader;
-	newFragment->shaderText = *fragmentShaderSource;
-	newFragment->shaderType = ShaderType::fragment;
-	newFragment->name = "default_ui_shader_frag";
-	newFragment->shaderPath = "";
-
-	default_ui_shader->AddFragment(newFragment);
-
-	Shader* newVertex = new Shader();
-	newVertex->shaderID = vertexShader;
-	newVertex->shaderText = *vertexShaderSource;
-	newVertex->shaderType = ShaderType::vertex;
-	newFragment->name = "default_ui_shader_vert";
-	newVertex->shaderPath = "";
-
-	default_ui_shader->AddVertex(newVertex);
-
-	uint var_size = default_ui_shader->GetVariablesSize();
-	for (int i = 0; i < var_size; i++) {
-		UniformVar temp = default_ui_shader->GetVariableInfo(i);
-
-		//Textures
-		if (temp.type == 35678) {
-			TextureVar texture_var;
-			texture_var.var_name = temp.name;
-			default_ui_shader->textures.push_back(texture_var);
-		}
-
-	}
+	default_ui_shader = App->module_shaders->CreateDefaultShader(UIShaderFrag, UIShaderVert, "default shader");	
 
 	return true;
 }

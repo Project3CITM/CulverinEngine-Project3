@@ -17,6 +17,7 @@
 #include "CompEditText.h"
 #include "CompText.h"
 #include "CompMesh.h"
+#include "CompScript.h"
 #include "ResourceMesh.h"
 #include "ImportMesh.h"
 #include "CompMaterial.h"
@@ -665,6 +666,33 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 	}
 }
 // -------------------------------------------------------------------------------------
+
+Component * Scene::BlitSceneComponentsAsButtons(Comp_Type type)
+{
+	temp_vector.clear();
+	root->GetComponentsByType(type, &temp_vector,true);
+
+	uint size = temp_vector.size();
+	for (uint k = 0; k < size; k++)
+	{
+		char buffer[100];
+		if (temp_vector[k]->GetType() == Comp_Type::C_SCRIPT)
+		{
+			sprintf(buffer, "%s.%s", temp_vector[k]->GetParent()->GetName(), ((CompScript*)temp_vector[k])->GetScriptName());
+		}
+		else
+		{
+			sprintf(buffer, "%s.%s", temp_vector[k]->GetParent()->GetName(), temp_vector[k]->GetName());
+		}
+
+		if(ImGui::Selectable(buffer))
+		{
+			return temp_vector[k];
+		}
+	}
+		
+	return nullptr;
+}
 
 GameObject* Scene::CreateCube(GameObject* parent)
 {

@@ -75,13 +75,18 @@ update_status ModulePhysics::PreUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
-//update_status ModulePhysics::Update(float dt)
-//{
-//	perf_timer.Start();
+update_status ModulePhysics::Update(float dt)
+{
+	perf_timer.Start();
 
-//	Update_t = perf_timer.ReadMs();
-//	return UPDATE_CONTINUE;
-//}
+	if (dt > 0) 
+	{
+		physics_world->StopSimulation();
+	}
+
+	Update_t = perf_timer.ReadMs();
+	return UPDATE_CONTINUE;
+}
 
 update_status ModulePhysics::PostUpdate(float dt)
 {
@@ -125,6 +130,7 @@ bool ModulePhysics::CleanUp()
 	if (physics_world)
 	{
 		delete physics_world;
+		physics_world = nullptr;
 	}
 
 	colliders.clear();
@@ -180,6 +186,17 @@ jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(Component * component, bool 
 		return nullptr;
 	}
 	
+}
+
+bool ModulePhysics::DeleteCollider(Component * component, jpPhysicsRigidBody * body)
+{
+	if (physics_world && colliders.find(body->GetActor()) != colliders.end())
+	{
+		colliders.erase(body->GetActor());
+		delete body;
+		return true;
+	}
+	else return false;
 }
 
 void ModulePhysics::ChangeRigidActorToStatic(jpPhysicsRigidBody * actor, Component* comp)

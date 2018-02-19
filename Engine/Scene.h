@@ -75,6 +75,10 @@ public:
 	void DeleteGameObject(GameObject* gameobject, bool isImport = false);
 	// -------------------------------------
 
+	// UI ----------------------------------
+	Component* BlitSceneComponentsAsButtons(Comp_Type type);
+	// -------------------------------------
+
 public:
 	FrameBuffer* scene_buff = nullptr;
 
@@ -102,10 +106,13 @@ public:
 	uint icon_options_transform = 0;
 
 private:
+
 	int size_plane = 0;
 	float size_quadtree = 0.0f;
 	uint icon_resetAll = 0;
 	bool load_scene = true;
+	std::vector<Component*> temp_vector;
+	
 };
 
 #endif

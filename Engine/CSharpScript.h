@@ -175,6 +175,10 @@ public:
 	void		StopAudioEvent(MonoObject* object, MonoString* event_name);
 	void		SetAuxiliarySends(MonoObject* object, MonoString* bus, float value);
 
+	/*UI-Interactive*/
+	void		Activate(MonoObject * object, int uid);
+	void		Deactivate(MonoObject * object, int uid);
+
 
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
@@ -182,6 +186,7 @@ public:
 
 	/*Childs*/
 	MonoObject* Find(MonoObject* object, MonoString* name);
+
 
 	// Map --------------------
 	MonoString* GetMapString(MonoObject* object);

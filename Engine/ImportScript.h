@@ -134,7 +134,9 @@ private:
 	static void StopAudioEvent(MonoObject* object, MonoString* name);
 	static void SetAuxiliarySends(MonoObject* object, MonoString* bus, float value);
 
-
+	/*Component Audio*/
+	static void Activate(MonoObject* object, int uid);
+	static void Deactivate(MonoObject* object, int uid);
 private:
 	std::string nameNewScript;
 	std::string mono_path;
