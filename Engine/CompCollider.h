@@ -37,6 +37,9 @@ public:
 	void ChangeCollider();
 	void UpdateCollider();
 
+	//Meant to only be used by rigidbody to get the phsyics body
+	jpPhysicsRigidBody* GivePhysicsBody(CompRigidBody* new_rigid_body);
+
 	//Setters -------------------
 	void SetColliderPosition();
 	void SetSizeFromBoundingBox();
@@ -44,7 +47,6 @@ public:
 	//Getters -------------------
 	float3 GetPosition() const;
 	Quat GetLocalQuat() const;
-	jpPhysicsRigidBody* GetPhysicsBody();
 
 private:
 	

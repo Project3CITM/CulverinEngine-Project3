@@ -23,7 +23,7 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 
 	//Getters ----------------------
-	jpPhysicsRigidBody* GetPhysicsBody();
+	jpPhysicsRigidBody* GetPhysicsBody() const;
 
 private:
 

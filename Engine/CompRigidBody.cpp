@@ -20,7 +20,8 @@ CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, pa
 		if (collider_comp != nullptr)
 		{
 			LOG("Getting the physics body from the Collider");
-			//TODO: Do it
+			body = collider_comp->GivePhysicsBody(this);
+			App->physics->ChangeRigidActorToDynamic(body, this);
 		}
 		else
 		{
@@ -34,6 +35,25 @@ CompRigidBody::CompRigidBody(const CompRigidBody & copy, GameObject * parent) : 
 {
 	uid = App->random->Int();
 	name_component = "RigidBody";
+
+	//Same as regular constructor since this properties depend on the parent
+	if (parent)
+	{
+		collider_comp = (CompCollider*)parent->FindComponentByType(Comp_Type::C_COLLIDER);
+		if (collider_comp != nullptr)
+		{
+			LOG("Getting the physics body from the Collider");
+			body = collider_comp->GivePhysicsBody(this);
+			App->physics->ChangeRigidActorToDynamic(body, this);
+		}
+		else
+		{
+			LOG("Creating a new physics body for the RigidBody...");
+			body = App->physics->GetNewRigidBody(this, true);
+		}
+	}
+
+	kinematic = copy.kinematic;
 }
 
 CompRigidBody::~CompRigidBody()
@@ -128,7 +148,7 @@ void CompRigidBody::Load(const JSON_Object * object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 }
 
-jpPhysicsRigidBody * CompRigidBody::GetPhysicsBody()
+jpPhysicsRigidBody * CompRigidBody::GetPhysicsBody() const
 {
 	return body;
 }

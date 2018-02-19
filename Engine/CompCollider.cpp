@@ -387,8 +387,16 @@ Quat CompCollider::GetLocalQuat() const
 	return local_quat;
 }
 
-jpPhysicsRigidBody * CompCollider::GetPhysicsBody()
+jpPhysicsRigidBody* CompCollider::GivePhysicsBody(CompRigidBody* new_rigid_body)
 {
-	return body;
+	if (new_rigid_body)
+	{
+		LOG("Collider physics body is being given to RigidBody...");
+		rigid_body_comp = new_rigid_body;
+		jpPhysicsRigidBody* ret = body;
+		body = nullptr;
+		return ret;
+	}
+	return nullptr;
 }
 
