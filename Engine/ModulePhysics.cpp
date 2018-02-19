@@ -130,6 +130,7 @@ bool ModulePhysics::CleanUp()
 	if (physics_world)
 	{
 		delete physics_world;
+		physics_world = nullptr;
 	}
 
 	colliders.clear();
@@ -185,6 +186,17 @@ jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(Component * component, bool 
 		return nullptr;
 	}
 	
+}
+
+bool ModulePhysics::DeleteCollider(Component * component, jpPhysicsRigidBody * body)
+{
+	if (physics_world && colliders.find(body->GetActor()) != colliders.end())
+	{
+		colliders.erase(body->GetActor());
+		delete body;
+		return true;
+	}
+	else return false;
 }
 
 void ModulePhysics::ChangeRigidActorToStatic(jpPhysicsRigidBody * actor, Component* comp)
