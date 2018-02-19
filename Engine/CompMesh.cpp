@@ -284,22 +284,19 @@ void CompMesh::Draw()
 			}
 			//
 
-
 			//Future Delete
 			if (App->renderer3D->texture_2d)
 			{
 				CompMaterial* temp = parent->GetComponentMaterial();
-				if (temp != nullptr) {
-					for (int i = 0; i < temp->material_shader.textures.size(); i++) {
-					
-
+				if (temp != nullptr) 
+				{
+					for (int i = 0; i < temp->material_shader.textures.size(); i++)
+					{
 						uint texLoc = glGetUniformLocation(temp->material_shader.programID, temp->material_shader.textures[i].var_name.c_str());
 						glUniform1i(texLoc, i);
 
-
 						glActiveTexture(GL_TEXTURE0 +i);
 					
-
 						if (temp->material_shader.textures[i].value == nullptr)
 						{
 							glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
@@ -308,10 +305,9 @@ void CompMesh::Draw()
 						{
 							glBindTexture(GL_TEXTURE_2D, temp->material_shader.textures[i].value->GetTextureID());
 						}
-
 					}
+					
 					/*
-
 					uint texture_2D_sampler = 0;
 					glActiveTexture(GL_TEXTURE0);
 					if (temp->GetTextureID() == 0)
@@ -325,13 +321,11 @@ void CompMesh::Draw()
 					texture_2D_sampler = glGetUniformLocation(App->renderer3D->default_shader->programID, "_texture");
 					glUniform1i(texture_2D_sampler, 0);
 					*/
-
 				}
 			}		
 			//
 			SetUniformVariables(shader);
-			
-	
+
 			Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 			float4x4 temp = camFrust.ViewMatrix();
 
@@ -340,6 +334,7 @@ void CompMesh::Draw()
 			GLint viewLoc =  glGetUniformLocation(shader->programID, "viewproj");
 
 			float4x4 matrixfloat = transform->GetGlobalTransform();
+
 			GLfloat matrix[16] =
 			{
 				matrixfloat[0][0],matrixfloat[1][0],matrixfloat[2][0],matrixfloat[3][0],
@@ -363,7 +358,6 @@ void CompMesh::Draw()
 				0.0, 0.0, 0.5, 0,
 				0.5, 0.5, 0.5, 1.0
 			);
-
 		
 			glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
 			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
@@ -378,12 +372,11 @@ void CompMesh::Draw()
 			GLuint ShadowMapID = glGetUniformLocation(shader->programID, "shadowMap");
 			//-----------------------
 
-
 			//glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
 			//glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
 
-
-			if (shader->name == "Shadow_World_Render") {
+			if (shader->name == "Shadow_World_Render")
+			{
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, App->module_lightning->text.GetTexture());
 				glUniform1i(shader->programID, App->module_lightning->text.rbo);
@@ -394,9 +387,14 @@ void CompMesh::Draw()
 				glUniform1i(shader->programID, App->module_lightning->text.rbo);
 				glUniform1i(ShadowMapID, 1);
 			}
+
 			int total_save_buffer = 8;
 
-			if (resource_mesh->vertices.size()>0) {
+			if (skeleton != nullptr)
+				total_save_buffer += 16;
+
+			if (resource_mesh->vertices.size() > 0)
+			{
 				glBindBuffer(GL_ARRAY_BUFFER, resource_mesh->id_total_buffer);
 
 				glEnableVertexAttribArray(0);
@@ -406,10 +404,17 @@ void CompMesh::Draw()
 				glEnableVertexAttribArray(2);
 				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (5 * sizeof(float)));
 
+				if (skeleton != nullptr)
+				{
+					glEnableVertexAttribArray(3);
+					glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (8 * sizeof(float)));
+					glEnableVertexAttribArray(4);
+					glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (12 * sizeof(float)));
+				}
+
 				glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource_mesh->indices_id);
 				glDrawElements(GL_TRIANGLES, resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);
-
 			}
 
 			//-----------------
@@ -430,10 +435,8 @@ void CompMesh::Draw()
 			glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		
-			shader->Unbind();
-			
+			shader->Unbind();		
 		}
-
 		else
 		{
 			LOG("Cannot draw the mesh");
@@ -581,7 +584,6 @@ void CompMesh::SetUniformVariables(ShaderProgram * shader)
 	}
 
 	shader->RestartIterators();
-
 }
 
 bool CompMesh::HasSkeleton() const
@@ -610,6 +612,18 @@ void CompMesh::GenSkeleton()
 	transform->SetPos(pos);
 	transform->SetRot(rot);
 	transform->SetScale(scale);
+
+	skeleton->bones.reserve(source->num_bones);
+	skeleton->bones.reserve(resource_mesh->num_vertices);
+	skeleton->draw_buffer = new float[source->buffer_size];
+	memcpy(skeleton->draw_buffer, source->draw_buffer_source, source->buffer_size);
+
+	for (int i = 0; i < resource_mesh->num_vertices; i++)
+		skeleton->influences.push_back(std::vector<GameObject*>());
+
+	glGenBuffers(1, &skeleton->id_draw_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, skeleton->id_draw_buffer);
+	glBufferData(GL_ARRAY_BUFFER, source->buffer_size * sizeof(float), skeleton->draw_buffer, GL_DYNAMIC_DRAW);
 
 	parent->AddChildGameObject(new_skeleton);
 	new_skeleton->AddChildGameObject(GenBone(&name_iterator, source, generated_bones, skeleton));
@@ -645,6 +659,10 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 			for (int j = 0; j < source->bones[i].num_weights; j++)
 				comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));
 		}
+
+	ImportBone& bone = source->bones[generated_bones];
+	for (int i = 0; i < bone.num_weights; i++)
+		skeleton->influences[bone.weights->vertex_id].push_back(new_bone);
 
 	uint num_childs = source->bone_hirarchy_num_childs[generated_bones];
 	generated_bones++;

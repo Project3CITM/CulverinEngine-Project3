@@ -31,6 +31,17 @@ struct Skeleton
 {
 	std::vector<GameObject*> bones;
 
+	std::vector<std::vector<GameObject*>> influences;
+
+	float* draw_buffer = nullptr;
+	uint id_draw_buffer;
+
+	~Skeleton()
+	{
+		delete draw_buffer;
+		glDeleteBuffers(1, &id_draw_buffer);
+	}
+
 	void DebugDraw() const;
 };
 

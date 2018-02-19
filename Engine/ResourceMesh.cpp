@@ -73,8 +73,6 @@ void ResourceMesh::InitInfo(const char* nameResource, const char* path)
 	path_assets = path;
 }
 
-
-
 void ResourceMesh::DeleteToMemory()
 {
 	state = Resource::State::UNLOADED;
@@ -101,46 +99,68 @@ bool ResourceMesh::LoadToMemory()
 
 	char* total_buffer_mesh = nullptr;
 
-	int total_size_buffer = 0;
+	int vertex_size_in_buffer = 0;
 
-	if (vertices.size()>0)
+	if (vertices.size() > 0)
 	{
-		total_size_buffer += num_vertices * 3;
-		total_size_buffer += num_vertices * 2;
+		vertex_size_in_buffer += 3;
+		vertex_size_in_buffer += 2;
 	}
 
 	if (vertices_normals.size() > 0)
 	{
-		total_size_buffer += num_vertices * 3;
+		vertex_size_in_buffer += 3;
 	}
 
-	total_buffer_mesh = new char[total_size_buffer * sizeof(float)];
+	if (skeleton != nullptr)
+	{
+		vertex_size_in_buffer += 68;// 4 weights + 64 for 12 3x4mats
+		skeleton->buffer_size = vertex_size_in_buffer * num_vertices * sizeof(float);
+	}
+
+	total_buffer_mesh = new char[vertex_size_in_buffer * num_vertices * sizeof(float)];
 	char* cursor = total_buffer_mesh;
 
 	for (int i = 0; i < num_vertices; i++)
 	{
-
-		if (vertices.size()>0)
+		if (vertices.size() > 0)
 		{
 			memcpy(cursor, &vertices[i].pos, 3 * sizeof(float));
 			cursor += 3 * sizeof(float);
 
 			memcpy(cursor, &vertices[i].texCoords, 2 * sizeof(float));
 			cursor += 2 * sizeof(float);
-
 		}
 
 		if (vertices_normals.size() > 0)
 		{
-	
 			memcpy(cursor, &vertices[i].norm, 3 * sizeof(float));
 			cursor += 3 * sizeof(float);
 		}
+
+		if (skeleton != nullptr)
+		{
+			memcpy(cursor, &skeleton->weights[i], 4 * sizeof(float));
+			cursor += 4 * sizeof(float);
+
+			//for skining matrices later
+			memset(cursor, 0.0f, 64 * sizeof(float));
+			cursor += 64 * sizeof(float);
+		}
 	}
 
-	glGenBuffers(1, &id_total_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, id_total_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) *total_size_buffer, &total_buffer_mesh[0], GL_STATIC_DRAW);
+	if (skeleton != nullptr)
+	{
+		skeleton->draw_buffer_source = new float[vertex_size_in_buffer * num_vertices];
+		memcpy(skeleton->draw_buffer_source, total_buffer_mesh, vertex_size_in_buffer * num_vertices * sizeof(float));
+	}
+	else
+	{
+		glGenBuffers(1, &id_total_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, id_total_buffer);
+		glBufferData(GL_ARRAY_BUFFER, vertex_size_in_buffer * num_vertices * sizeof(float), &total_buffer_mesh[0], GL_STATIC_DRAW);
+	}
+
 
 	delete[] total_buffer_mesh;	
 

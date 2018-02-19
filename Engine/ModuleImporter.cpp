@@ -228,7 +228,8 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 
 		//Clear vector of textures, but dont import same textures!
 		//iMesh->PrepareToImport();
-		const aiScene* scene = aiImportFile(file, aiProcessPreset_TargetRealtime_MaxQuality);
+		unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_LimitBoneWeights;
+		const aiScene* scene = aiImportFile(file, flags);
 		if (scene != nullptr)
 		{
 			if (scene->HasAnimations())
@@ -251,7 +252,6 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 			Newdirectory += "\\" + App->fs->FixName_directory(file);
 			if (isAutoImport)
 			{
-				
 				App->json_seria->SavePrefab(*obj, App->fs->GetOnlyPath(file).c_str(), Newdirectory.c_str());
 			}
 			else

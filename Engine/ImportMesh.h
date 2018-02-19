@@ -8,25 +8,6 @@
 struct Texture;
 class ResourceMesh;
 
-struct ImportBone
-{
-	struct Weight
-	{
-		Weight(float weight, uint vertex_id) : weight(weight), vertex_id(vertex_id)
-		{}
-		Weight() : weight(0.0f), vertex_id(0)
-		{}
-
-		float weight;
-		uint vertex_id;
-	};
-
-	std::string name;
-	float4x4 offset;
-	uint num_weights;
-	Weight* weights;
-};
-
 class ImportMesh
 {
 public:

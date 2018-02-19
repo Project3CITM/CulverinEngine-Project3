@@ -398,10 +398,6 @@ void ShaderProgram::GetProgramVariables()
 			}
 		}
 	}
-
-
-
-
 }
 
 void ShaderProgram::RestartIterators()
@@ -410,7 +406,7 @@ void ShaderProgram::RestartIterators()
 	it_int_variables = int_variables.begin();
 	it_float_variables = float_variables.begin();
 	it_float3_variables = float3_variables.begin();
-	it_color_variables =color_variables.begin();
+	it_color_variables = color_variables.begin();
 	it_bool_variables = bool_variables.begin();
 }
 
