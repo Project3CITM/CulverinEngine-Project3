@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "Scene.h"
 
-CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr), current_state(nullptr), selected_state(nullptr), target_state(nullptr), new_transition(nullptr), candidate_state_to_delete(nullptr), candidate_transition_to_delete(nullptr), show_fsm(false), show_create_transition_window(false), show_create_conditions_window(false)
+CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr), current_state(nullptr), selected_state(nullptr), target_state(nullptr), new_transition(nullptr), candidate_state_to_delete(nullptr), candidate_transition_to_delete(nullptr), show_fsm(false), show_create_transition_window(false), show_create_conditions_window(false), show_select_script_window(false)
 {
 	name_component = "Finite State Machine";
 }
@@ -17,6 +17,12 @@ CompFiniteStateMachine::CompFiniteStateMachine(const CompFiniteStateMachine & co
 
 CompFiniteStateMachine::~CompFiniteStateMachine()
 {
+}
+
+void CompFiniteStateMachine::Start()
+{
+	for (std::vector<FSM_State*>::const_iterator it = states.begin(); it != states.end(); it++)
+		(*it)->StartScripts();
 }
 
 void CompFiniteStateMachine::Update(float dt)
@@ -231,6 +237,11 @@ void CompFiniteStateMachine::Update(float dt)
 			ImGui::End();
 		}
 
+		if (show_select_script_window)
+		{
+			SelectScript(selected_state);
+		}
+
 		// --------------------------------  POPUPS  -------------------------------- //
 		if (ImGui::BeginPopup("New State Popup"))
 		{
@@ -246,6 +257,9 @@ void CompFiniteStateMachine::Update(float dt)
 
 			if (ImGui::Button("Set as initial state"))
 				SetInitialState(selected_state);
+
+			if (ImGui::Button("Add Script"))
+				show_select_script_window = true;
 
 			ImGui::EndPopup();
 		}
@@ -390,6 +404,49 @@ FSM_State * CompFiniteStateMachine::GetInitialState() const
 	return initial_state;
 }
 
+CompScript * CompFiniteStateMachine::SelectScript(FSM_State* state_to_add_script)
+{
+	CompScript* new_script = new CompScript()
+
+	ResourceScript* temp = (ResourceScript*)App->resource_manager->ShowResources(select_script, Resource::Type::SCRIPT);
+	if (temp != nullptr)
+	{
+		if (resource_script != nullptr)
+		{
+			if (resource_script->num_game_objects_use_me > 0)
+			{
+				resource_script->num_game_objects_use_me--;
+			}
+		}
+
+		//Link the Resource to the Component
+		resource_script = temp;
+		resource_script->num_game_objects_use_me++;
+		name_script = resource_script->name;
+
+		if (resource_script->IsCompiled() == Resource::State::UNLOADED)
+		{
+			if (App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script))
+			{
+				resource_script->SetState(Resource::State::LOADED);
+			}
+			else
+			{
+				resource_script->SetState(Resource::State::FAILED);
+			}
+		}
+		if (resource_script->GetState() != Resource::State::FAILED)
+		{
+			csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
+			SetOwnGameObject(parent);
+		}
+		Enable();
+		return this;
+	}
+
+	return nullptr;
+}
+
 void CompFiniteStateMachine::CheckOpenStateOptions(FSM_State* state)
 {
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(1))
@@ -414,6 +471,15 @@ FSM_State::~FSM_State()
 	delete script;
 	for (std::vector<FSM_Transition*>::iterator it = transitions.begin(); it != transitions.end(); it++)
 		delete *it;
+}
+
+bool FSM_State::StartScripts()
+{
+	if (script == nullptr)
+		return false;
+	
+	script->Start();
+	return true;
 }
 
 void FSM_State::DoEntryAction()

@@ -17,6 +17,7 @@ public:
 	~CompFiniteStateMachine();
 
 	//Game loop ---------
+	void Start();
 	void Update(float dt);
 	void Clear();
 	// ------------------------
@@ -47,6 +48,7 @@ public:
 	// ------------------------
 
 private:
+	CompScript* SelectScript(FSM_State* state_to_add_script);
 	void CheckOpenStateOptions(FSM_State* state);
 
 	// ----- Needed Updating States -----//
@@ -64,6 +66,7 @@ private:
 	// ----- Visual Scripting ----- //
 	bool show_fsm;
 	bool show_create_transition_window;
+	bool show_select_script_window;
 	std::vector<int> new_conditions;	//Saves the type and number of the new condition that are being created
 	std::vector<int>::iterator condition_to_erase;
 	bool show_create_conditions_window;
@@ -81,6 +84,7 @@ public:
 	FSM_State(const FSM_State& copy);	//doesn't copy the transitions, makes no sense
 	~FSM_State();
 
+	bool StartScripts();
 	//TODO
 	void DoEntryAction();
 	void DoAction(float dt);
@@ -105,7 +109,7 @@ public:
 	const char* GetScriptName()const;
 	// ------------------------
 
-private:
+private:	
 	std::string state_name;
 	CompScript* script;
 	std::vector<FSM_Transition*> transitions;
