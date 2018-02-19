@@ -4,11 +4,30 @@
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 #include "Scene.h"
+#include "ModulePhysics.h"
+
+#include "jpPhysicsRigidBody.h"
+#include "CompCollider.h"
 
 CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "RigidBody";
+
+	if (parent)
+	{
+		collider_comp = (CompCollider*)parent->FindComponentByType(Comp_Type::C_COLLIDER);
+		if (collider_comp != nullptr)
+		{
+			LOG("Getting the physics body from the Collider");
+			//TODO: Do it
+		}
+		else
+		{
+			LOG("Creating a new physics body for the RigidBody...");
+			body = App->physics->GetNewRigidBody(this, true);
+		}
+	}
 }
 
 CompRigidBody::CompRigidBody(const CompRigidBody & copy, GameObject * parent) : Component(Comp_Type::C_RIGIDBODY, parent)
@@ -83,6 +102,12 @@ void CompRigidBody::ShowInspectorInfo()
 		ShowOptions();
 		ImGui::EndPopup();
 	}
+
+	if (ImGui::Checkbox("Kinematic", &kinematic))
+	{
+		body->SetAsKinematic(true);
+	}
+
 	ImGui::TreePop();
 }
 
@@ -101,4 +126,9 @@ void CompRigidBody::Save(JSON_Object * object, std::string name, bool saveScene,
 void CompRigidBody::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+}
+
+jpPhysicsRigidBody * CompRigidBody::GetPhysicsBody()
+{
+	return body;
 }

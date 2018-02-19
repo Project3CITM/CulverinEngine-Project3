@@ -3,6 +3,9 @@
 
 #include "Component.h"
 
+class jpPhysicsRigidBody;
+class CompCollider;
+
 class CompRigidBody : public Component
 {
 public:
@@ -18,6 +21,17 @@ public:
 
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+
+	//Getters ----------------------
+	jpPhysicsRigidBody* GetPhysicsBody();
+
+private:
+
+	jpPhysicsRigidBody* body = nullptr;
+	CompCollider* collider_comp = nullptr;
+
+	bool kinematic = false;
+
 };
 
 #endif // !COMP_RIGIDBODY_H

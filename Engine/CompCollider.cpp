@@ -28,7 +28,7 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 		}
 		else
 		{
-			LOG("Creating a new physics bbody for the collider...");
+			LOG("Creating a new physics body for the collider...");
 			body = App->physics->GetNewRigidBody(this);
 		}
 		transform = parent->GetComponentTransform();
@@ -385,5 +385,10 @@ float3 CompCollider::GetPosition() const
 Quat CompCollider::GetLocalQuat() const
 {
 	return local_quat;
+}
+
+jpPhysicsRigidBody * CompCollider::GetPhysicsBody()
+{
+	return body;
 }
 

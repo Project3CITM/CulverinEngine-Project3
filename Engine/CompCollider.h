@@ -41,9 +41,10 @@ public:
 	void SetColliderPosition();
 	void SetSizeFromBoundingBox();
 
-	//Getters
+	//Getters -------------------
 	float3 GetPosition() const;
 	Quat GetLocalQuat() const;
+	jpPhysicsRigidBody* GetPhysicsBody();
 
 private:
 	
