@@ -1126,8 +1126,7 @@ Component* GameObject::FindComponentByType(Comp_Type type) const
 	{
 		if (components[i]->GetType() == type) // We need to check if the component is ACTIVE first?¿
 		{
-			return components[i];
-		
+			return components[i];		
 		}
 	}
 	return nullptr;

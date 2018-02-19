@@ -52,6 +52,8 @@ public:
 	void SetMonoField(MonoClassField* mfield);
 	void SetMonoType(MonoType* mtype);
 
+	void Serialize(JSON_Object* object, const std::string& name);
+
 public:
 	const char* name = nullptr;
 	VarType type = Var_UNKNOWN;

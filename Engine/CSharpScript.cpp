@@ -76,6 +76,75 @@ void ScriptVariable::SetMonoType(MonoType* mtype)
 	}
 }
 
+void ScriptVariable::Serialize(JSON_Object * object, const std::string& title)
+{
+	const char* type_name = nullptr;
+
+	//SET VAR NAME --------------------
+	json_object_dotset_string_with_std(object, title + "Name: ", name);
+	
+	//SAVE VAR TYPE -------------------
+	switch (type)
+	{
+	case Var_UNKNOWN:
+		type_name = "unknown";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		json_object_dotset_string_with_std(object, title + "Value: ", type_name);
+		break;
+
+	case Var_INT:
+		type_name = "int";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		json_object_dotset_number_with_std(object, title + "Value: ", *(int*)value);
+		break;
+
+	case Var_FLOAT:
+		type_name = "float";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		json_object_dotset_number_with_std(object, title + "Value: ", *(float*)value);
+		break;
+
+	case Var_BOOL:
+		type_name = "bool";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		json_object_dotset_boolean_with_std(object, title + "Value: ", *(bool*)value);
+		break;
+
+	case Var_STRING:
+		type_name = "string";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		json_object_dotset_string_with_std(object, title + "Value: ", str_value.c_str());
+		break;
+
+	case Var_CLASS:
+		type_name = "class";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		break;
+
+	case Var_GAMEOBJECT:
+		type_name = "GameObject";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		if (game_object != nullptr)
+		{
+			json_object_dotset_number_with_std(object, title + "GameObject UUID: ", game_object->GetUUID());
+		}
+		else
+		{
+			//-1 Any GameObject is assigned
+			json_object_dotset_number_with_std(object, title + "GameObject UUID: ", -1);
+		}
+
+		break;
+
+	default:
+		break;
+	}
+
+	//SAVE VAR VALUE ----------------------
+
+
+}
+
 //CSHARP SCRIPT FUNCTIONS ---------------
 CSharpScript::CSharpScript()
 {
@@ -1562,8 +1631,19 @@ MonoString* CSharpScript::GetMapString(MonoObject* object)
 
 void CSharpScript::Save(JSON_Object* object, std::string name) const
 {
+	std::string vars = name;
+	vars += "Number of Variables: ";
+	json_object_dotset_number_with_std(object, vars, variables.size());
+
+	std::string temp_var = name;
+
 	for (int i = 0; i < variables.size(); i++)
 	{
+		temp_var = name + "Variables.Variable " + std::to_string(i);
+		temp_var += ".";
+		
+		variables[i]->Serialize(object, temp_var);
+
 		if (variables[i]->type == VarType::Var_GAMEOBJECT)
 		{
 			if (variables[i]->game_object != nullptr)
