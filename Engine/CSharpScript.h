@@ -21,7 +21,7 @@ typedef struct json_object_t JSON_Object;
 
 enum FunctionBase
 {
-	CS_Start, CS_Update, CS_FixedUpdate, CS_OnGUI, CS_OnEnable, CS_OnDisable
+	CS_Start, CS_Update, CS_FixedUpdate, CS_OnGUI, CS_OnEnable, CS_OnDisable, CS_OnTriggerEnter, CS_OnTriggerLost
 };
 
 enum VarType
@@ -88,7 +88,7 @@ public:
 	bool ReImport(std::string pathdll);
 	void Clear();
 	MainMonoMethod CreateMainFunction(std::string function, int parameters, FunctionBase type);
-	void DoMainFunction(FunctionBase function);
+	void DoMainFunction(FunctionBase function, void** parameters = nullptr);
 	void DoFunction(MonoMethod* function, void ** parameter);
 
 	bool CheckMonoObject(MonoObject* object);
@@ -214,6 +214,8 @@ private:
 	MainMonoMethod OnGUI;
 	MainMonoMethod OnEnable;
 	MainMonoMethod OnDisable;
+	MainMonoMethod OnTriggerEnter;
+	MainMonoMethod OnTriggerLost;
 
 	GameObject* current_game_object = nullptr;
 	std::vector<uint> re_load_values;

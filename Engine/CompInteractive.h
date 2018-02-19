@@ -34,6 +34,7 @@ public:
 	virtual bool IsActive()const;
 	void Desactive();
 	virtual void ForceClear(Event event_input);
+	void TryConversion();
 
 	virtual void OnPointDown(Event event_input);
 	virtual void OnPointUP(Event event_input);

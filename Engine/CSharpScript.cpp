@@ -105,6 +105,8 @@ void CSharpScript::LoadScript()
 		OnGUI = CreateMainFunction("OnGUI", DefaultParam, FunctionBase::CS_OnGUI);
 		OnEnable = CreateMainFunction("OnEnable", DefaultParam, FunctionBase::CS_OnEnable);
 		OnDisable = CreateMainFunction("OnDisable", DefaultParam, FunctionBase::CS_OnDisable);
+		OnTriggerEnter = CreateMainFunction("OnTriggerEnter", DefaultParam, FunctionBase::CS_OnTriggerEnter);
+		OnTriggerLost = CreateMainFunction("OnTriggerLost", DefaultParam, FunctionBase::CS_OnTriggerLost);
 
 		//Get Script Variables info (from c# to c++)
 		GetScriptVariables();
@@ -123,7 +125,7 @@ MainMonoMethod CSharpScript::CreateMainFunction(std::string function, int parame
 }
 
 //Depending on the function passed, script will perform its actions
-void CSharpScript::DoMainFunction(FunctionBase function)
+void CSharpScript::DoMainFunction(FunctionBase function, void** parameters)
 {
 	switch (function)
 	{
@@ -133,6 +135,22 @@ void CSharpScript::DoMainFunction(FunctionBase function)
 		{
 			DoFunction(Start.method, nullptr);
 			UpdateScriptVariables();
+		}
+		break;
+	}
+	case FunctionBase::CS_OnTriggerEnter:
+	{
+		if (OnTriggerEnter.method != nullptr)
+		{
+			DoFunction(OnTriggerEnter.method, parameters);
+		}
+		break;
+	}
+	case FunctionBase::CS_OnTriggerLost:
+	{
+		if (OnTriggerLost.method != nullptr)
+		{
+			DoFunction(OnTriggerLost.method, parameters);
 		}
 		break;
 	}

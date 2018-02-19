@@ -201,7 +201,7 @@ void CompImage::ShowInspectorInfo()
 	if (type == Type::FILLED)
 	{
 		ImGui::Text("Fill Method:"); ImGui::SameLine();
-		if (ImGui::Combo("##fillMethod", &selection, "None\0Horitzontal\0Vertical\0 Radial",))
+		if (ImGui::Combo("##fillMethod", &selection, "None\0Horitzontal\0Vertical\0 Radial",3))
 		{
 			if (selection == FillMethod::HORITZONTAL)
 				method = FillMethod::HORITZONTAL;
