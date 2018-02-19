@@ -1395,6 +1395,26 @@ void CSharpScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 	}
 }
 
+void CSharpScript::RotateAroundAxis(MonoObject * object, MonoObject * vector3, float value)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_object_get_class(vector3);
+		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+		float3 new_rot;
+
+		if (x_field) mono_field_get_value(vector3, x_field, &new_rot.x);
+		if (y_field) mono_field_get_value(vector3, y_field, &new_rot.y);
+		if (z_field) mono_field_get_value(vector3, z_field, &new_rot.z);
+
+		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		transform->RotateAroundAxis(new_rot, value);
+	}
+}
+
 void CSharpScript::SetScale(MonoObject * object, MonoObject * vector3)
 {
 	if (current_game_object != nullptr)

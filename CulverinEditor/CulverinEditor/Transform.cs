@@ -200,7 +200,7 @@ namespace CulverinEditor
         public extern void SetGlobalRotation(Vector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern void RotateAroundAxis(Vector3 value);
+        public extern void RotateAroundAxis(Vector3 value,float angle);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern Vector3 GetScale();
