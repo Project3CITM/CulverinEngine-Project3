@@ -25,6 +25,7 @@ public:
 	float time = start_frame_time;
 	float start_frame_time = 0.0f;
 	float end_frame_time = 0.0f;
+	float speed_factor = 1.0f;
 
 	float total_blending_time = 0.666f;
 	float current_blending_time = total_blending_time;
@@ -110,6 +111,8 @@ private:
 	bool debug_draw = false;
 
 	bool bones_placed = false;
+
+	bool show_asm_window = false;
 };
 
 #endif

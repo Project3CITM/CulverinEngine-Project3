@@ -26,6 +26,14 @@ CompAnimation::CompAnimation(const CompAnimation & copy, GameObject * parent) : 
 
 CompAnimation::~CompAnimation()
 {
+	for (std::vector<AnimationNode*>::iterator temp = animation_nodes.begin(); temp != animation_nodes.end(); temp++)
+	{
+		RELEASE((*temp));
+	}
+	for (std::vector<AnimationClip*>::iterator temp = animation_clips.begin(); temp != animation_clips.end(); temp++)
+	{
+		RELEASE((*temp));
+	}
 }
 
 void CompAnimation::Draw()
@@ -246,10 +254,6 @@ void CompAnimation::ShowAnimationInfo()
 	{
 		CreateAnimationClip();
 	}
-	if (ImGui::Button("Create Animation Node", ImVec2(125, 25)))
-	{
-		CreateAnimationNode();
-	}
 	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
 	{
 		if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
@@ -265,6 +269,7 @@ void CompAnimation::ShowAnimationInfo()
 
 			ImGui::InputFloat("Start Frame:", &(*it)->start_frame_time);
 			ImGui::InputFloat("End Frame:", &(*it)->end_frame_time);
+			ImGui::InputFloat("Speed Factor", &(*it)->speed_factor);
 			ImGui::InputFloat("Blend-in Time", &(*it)->total_blending_time);
 			ImGui::Checkbox("Loop", &(*it)->loop);
 			std::string state_names;
@@ -292,7 +297,7 @@ void CompAnimation::ShowAnimationInfo()
 						(*it)->state = A_PLAY;
 						current_animation = (*it);
 						current_animation->RestartAnimationClip();
-					}	
+					}
 				}
 				else if ((*it)->state == A_PLAY && current_animation == (*it) && (AnimationState)state == A_STOP)
 				{
@@ -307,85 +312,100 @@ void CompAnimation::ShowAnimationInfo()
 				}
 				else
 				{
-				(*it)->state = (AnimationState)state;
+					(*it)->state = (AnimationState)state;
 				}
 			}
 			ImGui::TreePop();
 		}
 	}
-
-	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	if (ImGui::Button("Show ASM"))
 	{
-		if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
+		show_asm_window = true;
+	}
+	if (show_asm_window)
+	{
+		if (ImGui::Begin("Animation State Machine", &show_asm_window))
 		{
-			char name_node[50];
-			strcpy_s(name_node, 50, (*it)->name.c_str());
-			ImGui::Text("Name: ");
-			ImGui::SameLine();
-			if (ImGui::InputText("##nameNode", name_node, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+			if (ImGui::Button("Create Animation Node", ImVec2(125, 25)))
 			{
-				(*it)->name = std::string(name_node);
+				CreateAnimationNode();
 			}
-			std::string clip_names;
-			int combo_pos = 0;
-			int i = 0;
-			for (std::vector<AnimationClip*>::const_iterator item = animation_clips.begin(); item != animation_clips.end(); ++item)
+			for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
 			{
-				clip_names += (*item)->name;
-				clip_names += '\0';			
-				if ((*item) == (*it)->clip)
+				if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
 				{
-					combo_pos = i;
-				}
-				i++;
-			}
-			if (ImGui::Combo("Clip", &combo_pos, clip_names.c_str()))
-			{
-				(*it)->clip = animation_clips.at(combo_pos);
-			}
-			if (ImGui::Button("Create Transition", ImVec2(125, 25)))
-			{
-				(*it)->CreateTransition();
-			}
-
-			for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
-			{
-				if (ImGui::TreeNodeEx((*trans_it)->name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					char name_transition[50];
-					strcpy_s(name_transition, 50, (*it)->name.c_str());
+					char name_node[50];
+					strcpy_s(name_node, 50, (*it)->name.c_str());
 					ImGui::Text("Name: ");
 					ImGui::SameLine();
-					if (ImGui::InputText("##nameTransition", name_transition, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+					if (ImGui::InputText("##nameNode", name_node, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
 					{
-						(*it)->name = std::string(name_transition);
+						(*it)->name = std::string(name_node);
 					}
-
-					ImGui::Checkbox("Active", &(*trans_it)->condition);
-
-					std::string node_names;
-					combo_pos = 0;
-					i = 0;
-					for (std::vector<AnimationNode*>::const_iterator iter = animation_nodes.begin(); iter != animation_nodes.end(); ++iter)
+					std::string clip_names;
+					int combo_pos = 0;
+					int i = 0;
+					for (std::vector<AnimationClip*>::const_iterator item = animation_clips.begin(); item != animation_clips.end(); ++item)
 					{
-						node_names += (*iter)->name;
-						node_names += '\0';		
-						if ((*iter) == (*trans_it)->destination)
+						clip_names += (*item)->name;
+						clip_names += '\0';
+						if ((*item) == (*it)->clip)
 						{
 							combo_pos = i;
 						}
 						i++;
 					}
-					if (ImGui::Combo("##Transition Node", &combo_pos, node_names.c_str()))
+					if (ImGui::Combo("Clip", &combo_pos, clip_names.c_str()))
 					{
-						(*trans_it)->destination = animation_nodes.at(combo_pos);
+						(*it)->clip = animation_clips.at(combo_pos);
 					}
-				}
-				ImGui::TreePop();
-			}
+					if (ImGui::Button("Create Transition", ImVec2(125, 25)))
+					{
+						(*it)->CreateTransition();
+					}
 
+					for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
+					{
+						if (ImGui::TreeNodeEx((*trans_it)->name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
+						{
+							char name_transition[50];
+							strcpy_s(name_transition, 50, (*trans_it)->name.c_str());
+							ImGui::Text("Name: ");
+							ImGui::SameLine();
+							if (ImGui::InputText("##nameTransition", name_transition, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+							{
+								(*trans_it)->name = std::string(name_transition);
+							}
+
+							ImGui::Checkbox("Active", &(*trans_it)->condition);
+
+							std::string node_names;
+							combo_pos = 0;
+							i = 0;
+							for (std::vector<AnimationNode*>::const_iterator iter = animation_nodes.begin(); iter != animation_nodes.end(); ++iter)
+							{
+								node_names += (*iter)->name;
+								node_names += '\0';
+								if ((*iter) == (*trans_it)->destination)
+								{
+									combo_pos = i;
+								}
+								i++;
+							}
+							ImGui::Text("Destination:");
+							ImGui::SameLine();
+							if (ImGui::Combo("##Transition Node", &combo_pos, node_names.c_str()))
+							{
+								(*trans_it)->destination = animation_nodes.at(combo_pos);
+							}
+							ImGui::TreePop(); //Transitions
+						}					
+					}
+					ImGui::TreePop(); //Nodes
+				}
+			}
 		}
-		ImGui::TreePop();
+		ImGui::End();
 	}
 }
 
@@ -424,6 +444,7 @@ void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene,
 		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime", (*it)->end_frame_time);
 		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".BlendTime", (*it)->total_blending_time);
 		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".CurrentBlendTime", (*it)->current_blending_time);
+		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".SpeedFactor", (*it)->speed_factor);
 		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".State", (*it)->state);
 		i++;
 	}
@@ -460,7 +481,8 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 		temp->start_frame_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".StartTime");
 		temp->end_frame_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime");
 		temp->total_blending_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".BlendTime");
-		temp->total_blending_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".CurrentBlendTime");
+		temp->current_blending_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".CurrentBlendTime");
+		temp->speed_factor = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".SpeedFactor");
 		temp->state = (AnimationState)(int)json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".State");
 		animation_clips.push_back(temp);
 		if (temp->state == AnimationState::A_PLAY)
@@ -486,10 +508,9 @@ void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt
 {
 	if(animation_clip != nullptr)
 	{
-		animation_clip->time += dt;
+		animation_clip->time += dt * animation_clip->speed_factor;
 		//animation_clip->time += animation_resource->ticks_per_sec / (1.0f/dt);
-		animation_clip->time += animation_resource->ticks_per_sec / animation_resource->duration;
-
+		//animation_clip->time += animation_resource->ticks_per_sec / animation_resource->duration;
 		if (animation_clip->state == AnimationState::A_BLENDING)
 		{
 			animation_clip->current_blending_time -= dt;
@@ -548,6 +569,10 @@ void AnimationClip::RestartAnimationClip()
 
 AnimationNode::~AnimationNode()
 {
+	for (std::vector<AnimationTransition*>::iterator temp = transitions.begin(); temp != transitions.end(); temp++)
+	{
+		RELEASE((*temp));
+	}
 }
 
 void AnimationNode::CreateTransition()
