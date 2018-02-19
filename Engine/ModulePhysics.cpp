@@ -75,13 +75,18 @@ update_status ModulePhysics::PreUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
-//update_status ModulePhysics::Update(float dt)
-//{
-//	perf_timer.Start();
+update_status ModulePhysics::Update(float dt)
+{
+	perf_timer.Start();
 
-//	Update_t = perf_timer.ReadMs();
-//	return UPDATE_CONTINUE;
-//}
+	if (dt > 0) 
+	{
+		physics_world->StopSimulation();
+	}
+
+	Update_t = perf_timer.ReadMs();
+	return UPDATE_CONTINUE;
+}
 
 update_status ModulePhysics::PostUpdate(float dt)
 {

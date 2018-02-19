@@ -5,6 +5,7 @@
 
 class jpPhysicsRigidBody;
 class CompTransform;
+class CompScript;
 
 enum JP_COLLIDER_TYPE;
 
@@ -16,6 +17,7 @@ public:
 	~CompCollider();
 
 	void Update(float dt);
+	void Clear();
 
 	//EDITOR METHODS ---------------
 	void ShowOptions();
@@ -60,6 +62,8 @@ private:
 	float3				material = float3(0.5f, 0.5f, 0.0f);
 	float3				size = float3(1.f, 1.f, 1.f);
 	float				rad = 0.5f;
+
+	bool				trigger = false;	
 
 };
 

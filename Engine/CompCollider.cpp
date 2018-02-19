@@ -35,10 +35,6 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 
 CompCollider::~CompCollider()
 {
-	if (body)
-	{
-	//	delete body;
-	}
 }
 
 void CompCollider::Update(float dt)
@@ -46,6 +42,15 @@ void CompCollider::Update(float dt)
 	if (transform->GetUpdated())
 	{
 		SetColliderPosition();
+	}
+}
+
+void CompCollider::Clear()
+{
+	if (body)
+	{
+		delete body;
+		body = nullptr;
 	}
 }
 
@@ -111,6 +116,13 @@ void CompCollider::ShowInspectorInfo()
 	{
 		ShowOptions();
 		ImGui::EndPopup();
+	}
+
+	// Set as Trigger
+	if (ImGui::Checkbox("Draw Debug", &trigger))
+	{
+		// change later (check if body is static)
+		body->SetAsTrigger(trigger);
 	}
 
 	// Collider type

@@ -73,11 +73,24 @@ bool jpPhysicsWorld::CreateNewPhysicsWorld()
 
 bool jpPhysicsWorld::Simulate(float dt)
 {
-	if (jpWorld && jpWorld->getNbScenes() > 0) {
+	if (jpWorld && jpWorld->getNbScenes() > 0) 
+	{
 		physx::PxScene* scene;
 		jpWorld->getScenes(&scene, 1, 0);
 		scene->simulate(dt);
-		return scene->fetchResults(true);
+		//return scene->fetchResults(true);
+		return true;
+	}
+	return false;
+}
+
+bool jpPhysicsWorld::StopSimulation(bool priority)
+{
+	if (jpWorld && jpWorld->getNbScenes() > 0) 
+	{
+		physx::PxScene* scene;
+		jpWorld->getScenes(&scene, 1, 0);
+		return scene->fetchResults(priority);
 	}
 	return false;
 }
@@ -91,6 +104,7 @@ physx::PxScene * jpPhysicsWorld::CreateNewScene()
 	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.simulationEventCallback = collision_callback;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_PCM;
+
 	return jpWorld->createScene(sceneDesc);
 }
 
