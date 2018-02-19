@@ -49,17 +49,25 @@ public:
 private:
 	void CheckOpenStateOptions(FSM_State* state);
 
+	// ----- Needed Updating States -----//
 	std::vector<FSM_State*> states;
 	FSM_State* initial_state;
 	FSM_State* current_state;
-	FSM_State* selected_state;
+	// ----- Needed Updating States -----//
 
-	//Visual Scripting
+	// ----- Needed Creating States ----- //
+	FSM_State* selected_state;
+	FSM_State* target_state;		//for creating transitions
+	FSM_Transition* new_transition;	//When creating a new transition, in order to fill all the conditions
+	// ----- Needed Creating states ----- //
+
+	// ----- Visual Scripting ----- //
 	bool show_fsm;
 	bool show_create_transition_window;
-	std::vector<int> new_conditions;
+	std::vector<int> new_conditions;	//Saves the type and number of the new condition that are being created
 	std::vector<int>::iterator condition_to_erase;
-	//std::vector<bool> bool_condition;
+	bool show_create_conditions_window;
+	// ----- Visual Scripting ----- //
 };
 
 // --------------------------------  STATES  -------------------------------- //
@@ -79,6 +87,10 @@ public:
 	bool AddScript(CompScript* script_to_add);	//Only support 1 script per node yet
 	FSM_Transition* AddTransition(FSM_State* target_state);
 	bool CheckTriggeredTransition(FSM_Transition* transition)const;
+
+	// ----- Visual Scripting ----- //
+	void DisplayTransitionsInfo();
+	// ----- Visual Scripting ----- //
 
 	// SETTERS ----------------
 	void SetStateName(const char* new_name);
@@ -106,12 +118,22 @@ public:
 	FSM_Transition(FSM_State* target_state_);
 	~FSM_Transition();
 
+	// TODO: Should Ints/Floats transform in each other in case of using wrong function to avoid errors ???
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, bool condition);
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, int condition);
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, float condition);
 
 	bool IsTriggered()const;
 	FSM_State* GetTargetState();
+
+	// --- Visual Scripting --- //
+	void CreateConditionsModifyingOptions();
+	void DisplayConditionsInfo();
+	// --- Visual Scripting --- //
+
+	// GETTERS ----------------
+	uint GetNumConditions()const;
+	// ------------------------
 
 private:
 	FSM_State* target_state;
@@ -142,13 +164,19 @@ enum FSM_CONDITION_TYPE
 class FSM_Condition
 {
 public:
-	FSM_Condition(FSM_CONDITION_TYPE condition_type);
+	FSM_Condition(FSM_CONDITION_TYPE condition_type_);
 	~FSM_Condition();
 
-	virtual bool Test(bool b) { return false; };
-	virtual bool Test(int i) { return false; };
-	virtual bool Test(float f) { return false; };
+	virtual bool Test(bool b)	{ return false; };
+	virtual bool Test(int i)	{ return false; };
+	virtual bool Test(float f)	 { return false; };
 
+	// SETTERS ----------------
+	virtual bool SetCondition(bool condition_)	{ return false; }
+	virtual bool SetCondition(int condition_)	{ return false; }
+	virtual bool SetCondition(float condition_)	{ return false; }
+	// ------------------------
+	
 	// GETTERS ----------------
 	FSM_CONDITION_TYPE GetConditionType()const;
 	// ------------------------
@@ -167,6 +195,14 @@ public:
 
 	bool Test(bool b);
 
+	// SETTERS ----------------
+	bool SetCondition(bool condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	bool GetCondition()const;
+	// ------------------------
+
 private:
 	bool condition;
 };
@@ -182,6 +218,14 @@ public:
 
 	bool Test(int i);
 
+	// SETTERS ----------------
+	bool SetCondition(int condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	int GetCondition()const;
+	// ------------------------
+
 private:
 	int condition;
 };
@@ -193,6 +237,14 @@ public:
 	~FSM_ConditionGreaterThanInt();
 
 	bool Test(int i);
+
+	// SETTERS ----------------
+	bool SetCondition(int condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	int GetCondition()const;
+	// ------------------------
 
 private:
 	int condition;
@@ -206,6 +258,14 @@ public:
 
 	bool Test(int i);
 
+	// SETTERS ----------------
+	bool SetCondition(int condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	int GetCondition()const;
+	// ------------------------
+
 private:
 	int condition;
 };
@@ -218,6 +278,14 @@ public:
 
 	bool Test(int i);
 
+	// SETTERS ----------------
+	bool SetCondition(int condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	int GetCondition()const;
+	// ------------------------
+
 private:
 	int condition;
 };
@@ -229,6 +297,14 @@ public:
 	~FSM_ConditionLowerEqualInt();
 
 	bool Test(int i);
+
+	// SETTERS ----------------
+	bool SetCondition(int condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	int GetCondition()const;
+	// ------------------------
 
 private:
 	int condition;
@@ -245,6 +321,14 @@ public:
 
 	bool Test(float i);
 
+	// SETTERS ----------------
+	bool SetCondition(float condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	float GetCondition()const;
+	// ------------------------
+
 private:
 	float condition;
 };
@@ -256,6 +340,14 @@ public:
 	~FSM_ConditionGreaterThanFloat();
 
 	bool Test(float i);
+
+	// SETTERS ----------------
+	bool SetCondition(float condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	float GetCondition()const;
+	// ------------------------
 
 private:
 	float condition;
@@ -269,6 +361,14 @@ public:
 
 	bool Test(float i);
 
+	// SETTERS ----------------
+	bool SetCondition(float condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	float GetCondition()const;
+	// ------------------------
+
 private:
 	float condition;
 };
@@ -281,6 +381,14 @@ public:
 
 	bool Test(float i);
 
+	// SETTERS ----------------
+	bool SetCondition(float condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	float GetCondition()const;
+	// ------------------------
+
 private:
 	float condition;
 };
@@ -292,6 +400,14 @@ public:
 	~FSM_ConditionLowerEqualFloat();
 
 	bool Test(float i);
+
+	// SETTERS ----------------
+	bool SetCondition(float condition_);
+	// ------------------------
+
+	// GETTERS ----------------
+	float GetCondition()const;
+	// ------------------------
 
 private:
 	float condition;

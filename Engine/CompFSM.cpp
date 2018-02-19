@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "Scene.h"
 
-CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr), current_state(nullptr), selected_state(nullptr), show_fsm(false), show_create_transition_window(false)
+CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr), current_state(nullptr), selected_state(nullptr), target_state(nullptr), new_transition(nullptr), show_fsm(false), show_create_transition_window(false), show_create_conditions_window(false)
 {
 	name_component = "Finite State Machine";
 }
@@ -46,6 +46,7 @@ void CompFiniteStateMachine::Update(float dt)
 			if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(1))
 				ImGui::OpenPopup("New State Popup");
 
+			// Shows basic information of all States
 			for (std::vector<FSM_State*>::const_iterator it = states.begin(); it != states.end(); it++)
 			{
 				ImGui::Separator();
@@ -65,28 +66,40 @@ void CompFiniteStateMachine::Update(float dt)
 				//DEBUG for now END
 				ImGui::Text("Script: %s", (*it)->GetScriptName());				CheckOpenStateOptions(*it);
 				ImGui::Text("Transitions (%i):", (*it)->GetNumTransitions());	CheckOpenStateOptions(*it);
+				(*it)->DisplayTransitionsInfo();
 
 				ImGui::Separator();
 			}
+			//-------------------------------------
 		}
 
 		if (show_create_transition_window)
 		{
 			if (ImGui::Begin("Create Transition", &show_create_transition_window))
 			{
-				std::vector<const char*> listbox_items;
+				// --------------  Transitions  -------------- //
+				std::vector<const char*> listbox_states;
 				static int selected = 0;
 				for (std::vector<FSM_State*>::const_iterator it = states.begin(); it != states.end(); it++)
 					if (*it != selected_state)
-						listbox_items.push_back((*it)->GetStateName());
+						listbox_states.push_back((*it)->GetStateName());
 				
 				ImGui::Text("Choose the target State");
-				//TODO: Change 'Header' color pls
-				ImGui::ListBox("", &selected, &listbox_items[0], (listbox_items.size()), 4);
-				
+				ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.35f, 0.1f, 0.4f, 1.00f));
+				ImGui::ListBox("", &selected, &listbox_states[0], (listbox_states.size()));
+				ImGui::PopStyleColor();
+
+				for (std::vector<FSM_State*>::const_iterator it_states = states.begin(); it_states != states.end(); it_states++)
+					if ((*it_states)->GetStateName() == listbox_states[selected])
+						target_state = *it_states;
+				// --------------  Transitions  -------------- //
+
+				// --------------  Conditions  -------------- //
 				if (ImGui::Button("+"))
 					new_conditions.push_back(0);
 				
+				ImGui::SameLine(); App->ShowHelpMarker("Click to add a new Condition");
+
 				int i = 0;
 				for (std::vector<int>::iterator it = new_conditions.begin(); it != new_conditions.end(); it++)
 				{
@@ -102,37 +115,101 @@ void CompFiniteStateMachine::Update(float dt)
 					ImGui::PushID(i);
 					ImGui::Combo("", &(*it), "Bool\0Equal Int\0Greater Int\0Greater or Equal Int\0Lower Int\0Lower or Equal Int\0Equal Float\0Greater Float\0Greater or Equal Float\0Lower Float\0Lower or Equal Float\0\0");
 					ImGui::PopID();
-
-					switch (*it)
-					{
-					case 0:	//Bool
-						//ImGui::Checkbox("", &condition);
-						break;
-					default:
-						break;
-					}
 				}
+				// --------------  Conditions  -------------- //
 
 				// --------------------------------  POPUPS  -------------------------------- //
 				if (ImGui::BeginPopup("Delete Condition Popup"))
 				{
 					if (ImGui::Button("Delete"))
-					{
 						new_conditions.erase(condition_to_erase);
-					}
+
 					ImGui::EndPopup();
 				}
 				// --------------------------------  POPUPS  -------------------------------- //
 
-				if (ImGui::Button("Create Transition"))
+				if (ImGui::Button("Confirm Transition"))
 				{
-					//TODO
-					FSM_Transition* new_transition = selected_state->AddTransition(states[selected]);
+					// --- Create new Transition --- //
+					new_transition = selected_state->AddTransition(target_state);
 
-					//TODO: new_transition->AddCondition(conditions[i]);
-					new_conditions.clear();
+					// --- Add Conditions to the new Transition --- //
+					for (std::vector<int>::iterator it = new_conditions.begin(); it != new_conditions.end(); it++)
+					{
+						switch (*it)
+						{
+							// --- Bools --- //
+						case 0:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_BOOL, true);
+							break;
+							// --- Bools --- //
+							
+							// --- Ints --- //
+						case 1:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_EQUAL_INT, 0);
+							break;
+						case 2:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_THAN_INT, 0);
+							break;
+						case 3:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_EQUAL_INT, 0);
+							break;
+						case 4:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_THAN_INT, 0);
+							break;
+						case 5:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_EQUAL_INT, 0);
+							break;
+							// --- Ints --- //
+							
+							// --- Floats --- //
+						case 6:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_EQUAL_FLOAT, 0.0f);
+							break;
+						case 7:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_THAN_FLOAT, 0.0f);
+							break;
+						case 8:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_EQUAL_FLOAT, 0.0f);
+							break;
+						case 9:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_THAN_FLOAT, 0.0f);
+							break;
+						case 10:
+							new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_EQUAL_FLOAT, 0.0f);
+							break;
+							// --- Floats --- //
+
+						default:
+							break;
+						}
+					}
+					// --- Add Conditions to the new Transition --- //
+
+					show_create_conditions_window = true;
 					show_create_transition_window = false;
 				}
+			}
+			ImGui::End();
+		}
+
+		if (show_create_conditions_window)
+		{
+			if (ImGui::Begin("Create Conditions", &show_create_conditions_window))
+			{
+				// --------------  Conditions  -------------- //
+				new_transition->CreateConditionsModifyingOptions();
+				
+				//TODO: Some way to save the values from the cript we will compare the conditions to
+				// --------------  Conditions  -------------- //
+
+				// --------------  Creates Transition with Conditions  -------------- //
+				if (ImGui::Button("Confirm Conditions"))
+				{
+					new_conditions.clear();
+					show_create_conditions_window = false;
+				}
+				// --------------  Creates Transition with Conditions  -------------- //
 			}
 			ImGui::End();
 		}
@@ -141,22 +218,18 @@ void CompFiniteStateMachine::Update(float dt)
 		if (ImGui::BeginPopup("New State Popup"))
 		{
 			if (ImGui::Button("Create New State"))
-			{
 				CreateState();
-			}
+
 			ImGui::EndPopup();
 		}
 		if (ImGui::BeginPopup("State Options Popup"))
 		{
 			if (ImGui::Button("Create New Transition"))
-			{
 				show_create_transition_window = true;
-				//selected_state->AddTransition();
-			}
+
 			if (ImGui::Button("Set as initial state"))
-			{
 				SetInitialState(selected_state);
-			}
+
 			ImGui::EndPopup();
 		}
 		// --------------------------------  POPUPS  -------------------------------- //
@@ -370,6 +443,16 @@ bool FSM_State::CheckTriggeredTransition(FSM_Transition * transition) const
 	return false;
 }
 
+void FSM_State::DisplayTransitionsInfo()
+{
+	for (std::vector<FSM_Transition*>::const_iterator it_transitions = transitions.begin(); it_transitions != transitions.end(); it_transitions++)
+	{
+		ImGui::Text("     - Target State: %s", (*it_transitions)->GetTargetState()->GetStateName());	//TODO Open Popup to delete a transition
+		ImGui::Text("          - Conditions (%i):", (*it_transitions)->GetNumConditions());
+		(*it_transitions)->DisplayConditionsInfo();
+	}
+}
+
 void FSM_State::SetStateName(const char * new_name)
 {
 	state_name = new_name;
@@ -412,6 +495,7 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 	{
 	case FSM_COND_NONE:
 		LOG("Incorrect FSM Condition Type.");
+		return nullptr;
 		break;
 	case FSM_COND_BOOL:
 		new_condition = new FSM_ConditionBool(condition);
@@ -429,8 +513,11 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 	case FSM_COND_MAX:
 	default:
 		LOG("Incorrect FSM Condition Type.");
+		return nullptr;
 		break;
 	}
+
+	conditions.push_back(new_condition);
 
 	return new_condition;
 }
@@ -445,6 +532,7 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 	case FSM_COND_NONE:
 	case FSM_COND_BOOL:
 		LOG("Incorrect FSM Condition Type.");
+		return nullptr;
 		break;
 	case FSM_COND_EQUAL_INT:
 		new_condition = new FSM_ConditionEqualInt(condition);
@@ -469,8 +557,11 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 	case FSM_COND_MAX:
 	default:
 		LOG("Incorrect FSM Condition Type.");
+		return nullptr;
 		break;
 	}
+
+	conditions.push_back(new_condition);
 
 	return new_condition;
 }
@@ -490,6 +581,7 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 	case FSM_COND_LOWER_THAN_INT:
 	case FSM_COND_LOWER_EQUAL_INT:
 		LOG("Incorrect FSM Condition Type.");
+		return nullptr;
 		break;
 	case FSM_COND_EQUAL_FLOAT:
 		new_condition = new FSM_ConditionEqualFloat(condition);
@@ -509,8 +601,11 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 	case FSM_COND_MAX:
 	default:
 		LOG("Incorrect FSM Condition Type.");
+		return nullptr;
 		break;
 	}
+
+	conditions.push_back(new_condition);
 
 	return new_condition;
 }
@@ -525,21 +620,21 @@ bool FSM_Transition::IsTriggered()const
 		case FSM_COND_NONE:
 			break;
 		case FSM_COND_BOOL:
-//				return true;
+// TODO				return true;
 			break;
 		case FSM_COND_EQUAL_INT:
 		case FSM_COND_GREATER_THAN_INT:
 		case FSM_COND_GREATER_EQUAL_INT:
 		case FSM_COND_LOWER_THAN_INT:
 		case FSM_COND_LOWER_EQUAL_INT:
-//				return true; 
+// TODO				return true; 
 			break;
 		case FSM_COND_EQUAL_FLOAT:
 		case FSM_COND_GREATER_THAN_FLOAT:
 		case FSM_COND_GREATER_EQUAL_FLOAT:
 		case FSM_COND_LOWER_THAN_FLOAT:
 		case FSM_COND_LOWER_EQUAL_FLOAT:
-//				return true; 
+// TODO				return true; 
 			break;
 		case FSM_COND_MAX:
 			break;
@@ -556,7 +651,118 @@ FSM_State * FSM_Transition::GetTargetState()
 	return target_state;
 }
 
-FSM_Condition::FSM_Condition(FSM_CONDITION_TYPE condition_type)
+void FSM_Transition::CreateConditionsModifyingOptions()
+{
+	int id = 0;
+	for (std::vector<FSM_Condition*>::const_iterator it = conditions.begin(); it != conditions.end(); it++, id++)
+	{
+		bool b = ((FSM_ConditionBool*)*it)->GetCondition();
+		int i = 0;
+		float f = 0.0f;
+
+		ImGui::PushID(id);
+		switch ((*it)->GetConditionType())
+		{
+		case FSM_COND_NONE:
+			break;
+
+		case FSM_COND_BOOL:
+			if (ImGui::Checkbox("true", &b))
+				((FSM_ConditionBool*)*it)->SetCondition(b);
+			break;
+
+		case FSM_COND_EQUAL_INT:
+			i = ((FSM_ConditionEqualInt*)*it)->GetCondition();
+			ImGui::Text("Equal to: ");
+			if (ImGui::InputInt("", &i))
+				((FSM_ConditionEqualInt*)*it)->SetCondition(i);
+			break;
+
+		case FSM_COND_GREATER_THAN_INT:
+			i = ((FSM_ConditionGreaterThanInt*)*it)->GetCondition();
+			ImGui::Text("Greater than: ");
+			if (ImGui::InputInt("", &i))
+				((FSM_ConditionGreaterThanInt*)*it)->SetCondition(i);
+			break;
+
+		case FSM_COND_GREATER_EQUAL_INT:
+			i = ((FSM_ConditionGreaterEqualInt*)*it)->GetCondition();
+			ImGui::Text("Greater or Equal than: ");
+			if (ImGui::InputInt("", &i))
+				((FSM_ConditionGreaterEqualInt*)*it)->SetCondition(i);
+			break;
+
+		case FSM_COND_LOWER_THAN_INT:
+			i = ((FSM_ConditionLowerThanInt*)*it)->GetCondition();
+			ImGui::Text("Lower than: ");
+			if (ImGui::InputInt("", &i))
+				((FSM_ConditionLowerThanInt*)*it)->SetCondition(i);
+			break;
+
+		case FSM_COND_LOWER_EQUAL_INT:
+			i = ((FSM_ConditionLowerEqualInt*)*it)->GetCondition();
+			ImGui::Text("Lower or Equal than: ");
+			if (ImGui::InputInt("", &i))
+				((FSM_ConditionLowerEqualInt*)*it)->SetCondition(i);
+			break;
+
+		case FSM_COND_EQUAL_FLOAT:
+			f = ((FSM_ConditionEqualFloat*)*it)->GetCondition();
+			ImGui::Text("Equal to: ");
+			if (ImGui::InputFloat("", &f))
+				((FSM_ConditionEqualFloat*)*it)->SetCondition(f);
+			break;
+
+		case FSM_COND_GREATER_THAN_FLOAT:
+			f = ((FSM_ConditionGreaterThanFloat*)*it)->GetCondition();
+			ImGui::Text("Greater than: ");
+			if (ImGui::InputFloat("", &f))
+				((FSM_ConditionGreaterThanFloat*)*it)->SetCondition(f);
+			break;
+
+		case FSM_COND_GREATER_EQUAL_FLOAT:
+			f = ((FSM_ConditionGreaterEqualFloat*)*it)->GetCondition();
+			ImGui::Text("Greater or Equal than: ");
+			if (ImGui::InputFloat("", &f))
+				((FSM_ConditionGreaterEqualFloat*)*it)->SetCondition(f);
+			break;
+
+		case FSM_COND_LOWER_THAN_FLOAT:
+			f = ((FSM_ConditionLowerThanFloat*)*it)->GetCondition();
+			ImGui::Text("Lower than: ");
+			if (ImGui::InputFloat("", &f))
+				((FSM_ConditionLowerThanFloat*)*it)->SetCondition(f);
+			break;
+
+		case FSM_COND_LOWER_EQUAL_FLOAT:
+			f = ((FSM_ConditionLowerEqualFloat*)*it)->GetCondition();
+			ImGui::Text("Lower or Equal than: ");
+			if (ImGui::InputFloat("", &f))
+				((FSM_ConditionLowerEqualFloat*)*it)->SetCondition(f);
+			break;
+
+		case FSM_COND_MAX:
+			break;
+
+		default:
+			break;
+		}
+		ImGui::PopID();
+	}
+}
+
+void FSM_Transition::DisplayConditionsInfo()
+{
+	for (std::vector<FSM_Condition*>::const_iterator it_conditions = conditions.begin(); it_conditions != conditions.end(); it_conditions++)
+		ImGui::Text("               - Condition %i", (*it_conditions)->GetConditionType());	//TODO Open Popup to delete a condition
+}
+
+uint FSM_Transition::GetNumConditions() const
+{
+	return conditions.size();
+}
+
+FSM_Condition::FSM_Condition(FSM_CONDITION_TYPE condition_type_) : condition_type(condition_type_)
 {
 }
 
@@ -582,6 +788,17 @@ bool FSM_ConditionBool::Test(bool b)
 	return condition == b;
 }
 
+bool FSM_ConditionBool::SetCondition(bool condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+bool FSM_ConditionBool::GetCondition() const
+{
+	return condition;
+}
+
 FSM_ConditionEqualInt::FSM_ConditionEqualInt(int condition_) : FSM_Condition(FSM_COND_EQUAL_INT), condition(condition_)
 {
 }
@@ -593,6 +810,17 @@ FSM_ConditionEqualInt::~FSM_ConditionEqualInt()
 bool FSM_ConditionEqualInt::Test(int i)
 {
 	return i == condition;
+}
+
+bool FSM_ConditionEqualInt::SetCondition(int condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+int FSM_ConditionEqualInt::GetCondition() const
+{
+	return condition;
 }
 
 FSM_ConditionGreaterThanInt::FSM_ConditionGreaterThanInt(int condition_) : FSM_Condition(FSM_COND_GREATER_THAN_INT), condition(condition_)
@@ -608,6 +836,17 @@ bool FSM_ConditionGreaterThanInt::Test(int i)
 	return i > condition;
 }
 
+bool FSM_ConditionGreaterThanInt::SetCondition(int condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+int FSM_ConditionGreaterThanInt::GetCondition() const
+{
+	return condition;
+}
+
 FSM_ConditionGreaterEqualInt::FSM_ConditionGreaterEqualInt(int condition_) : FSM_Condition(FSM_COND_GREATER_EQUAL_INT), condition(condition_)
 {
 }
@@ -619,6 +858,17 @@ FSM_ConditionGreaterEqualInt::~FSM_ConditionGreaterEqualInt()
 bool FSM_ConditionGreaterEqualInt::Test(int i)
 {
 	return i >= condition;
+}
+
+bool FSM_ConditionGreaterEqualInt::SetCondition(int condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+int FSM_ConditionGreaterEqualInt::GetCondition() const
+{
+	return condition;
 }
 
 FSM_ConditionLowerThanInt::FSM_ConditionLowerThanInt(int condition_) : FSM_Condition(FSM_COND_LOWER_THAN_INT), condition(condition_)
@@ -634,6 +884,17 @@ bool FSM_ConditionLowerThanInt::Test(int i)
 	return i < condition;
 }
 
+bool FSM_ConditionLowerThanInt::SetCondition(int condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+int FSM_ConditionLowerThanInt::GetCondition() const
+{
+	return condition;
+}
+
 FSM_ConditionLowerEqualInt::FSM_ConditionLowerEqualInt(int condition_) : FSM_Condition(FSM_COND_LOWER_EQUAL_INT), condition(condition_)
 {
 }
@@ -645,6 +906,17 @@ FSM_ConditionLowerEqualInt::~FSM_ConditionLowerEqualInt()
 bool FSM_ConditionLowerEqualInt::Test(int i)
 {
 	return i <= condition;
+}
+
+bool FSM_ConditionLowerEqualInt::SetCondition(int condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+int FSM_ConditionLowerEqualInt::GetCondition() const
+{
+	return condition;
 }
 
 FSM_ConditionEqualFloat::FSM_ConditionEqualFloat(float condition_) : FSM_Condition(FSM_COND_EQUAL_FLOAT), condition(condition_)
@@ -660,6 +932,17 @@ bool FSM_ConditionEqualFloat::Test(float i)
 	return i == condition;
 }
 
+bool FSM_ConditionEqualFloat::SetCondition(float condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+float FSM_ConditionEqualFloat::GetCondition() const
+{
+	return condition;
+}
+
 FSM_ConditionGreaterThanFloat::FSM_ConditionGreaterThanFloat(float condition_) : FSM_Condition(FSM_COND_GREATER_THAN_FLOAT), condition(condition_)
 {
 }
@@ -671,6 +954,17 @@ FSM_ConditionGreaterThanFloat::~FSM_ConditionGreaterThanFloat()
 bool FSM_ConditionGreaterThanFloat::Test(float i)
 {
 	return i > condition;
+}
+
+bool FSM_ConditionGreaterThanFloat::SetCondition(float condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+float FSM_ConditionGreaterThanFloat::GetCondition() const
+{
+	return condition;
 }
 
 FSM_ConditionGreaterEqualFloat::FSM_ConditionGreaterEqualFloat(float condition_) : FSM_Condition(FSM_COND_GREATER_EQUAL_FLOAT), condition(condition_)
@@ -686,6 +980,17 @@ bool FSM_ConditionGreaterEqualFloat::Test(float i)
 	return i >= condition;
 }
 
+bool FSM_ConditionGreaterEqualFloat::SetCondition(float condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+float FSM_ConditionGreaterEqualFloat::GetCondition() const
+{
+	return condition;
+}
+
 FSM_ConditionLowerThanFloat::FSM_ConditionLowerThanFloat(float condition_) : FSM_Condition(FSM_COND_LOWER_THAN_FLOAT), condition(condition_)
 {
 }
@@ -699,6 +1004,17 @@ bool FSM_ConditionLowerThanFloat::Test(float i)
 	return i < condition;
 }
 
+bool FSM_ConditionLowerThanFloat::SetCondition(float condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+float FSM_ConditionLowerThanFloat::GetCondition() const
+{
+	return condition;
+}
+
 FSM_ConditionLowerEqualFloat::FSM_ConditionLowerEqualFloat(float condition_) : FSM_Condition(FSM_COND_LOWER_EQUAL_FLOAT), condition(condition_)
 {
 }
@@ -710,4 +1026,15 @@ FSM_ConditionLowerEqualFloat::~FSM_ConditionLowerEqualFloat()
 bool FSM_ConditionLowerEqualFloat::Test(float i)
 {
 	return i <= condition;
+}
+
+bool FSM_ConditionLowerEqualFloat::SetCondition(float condition_)
+{
+	condition = condition_;
+	return true;
+}
+
+float FSM_ConditionLowerEqualFloat::GetCondition() const
+{
+	return condition;
 }
