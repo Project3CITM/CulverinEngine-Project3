@@ -122,6 +122,11 @@ void CompTransform::Update(float dt)
 	{
 		UpdateMatrix(transform_mode);
 		toUpdate = false;
+		updated = true;
+	}
+	else
+	{
+		updated = false;
 	}
 }
 
@@ -428,6 +433,7 @@ void CompTransform::UpdateGlobalTransform()
 		global_transform = global_transform * matrix;
 		item++;
 	}
+	global_transform.Decompose(position_global, rotation_global, scale_global);
 }
 
 // Update Global transform and call this function for all its childs
@@ -555,9 +561,38 @@ float3 CompTransform::GetPosGlobal() const
 	return position_global;
 }
 
+float3 CompTransform::GetPosParent() const
+{
+	if (parent->GetParent()->GetUUID() != 1)
+	{
+		parent->GetParent()->GetComponentTransform()->GetPos();
+	}
+	else
+	{
+		return float3(0.f, 0.f, 0.f);
+	}
+}
+
 Quat CompTransform::GetRot() const
 {
 	return rotation;
+}
+
+Quat CompTransform::GetRotGlobal() const
+{
+	return rotation_global;
+}
+
+Quat CompTransform::GetRotParent() const
+{
+	if (parent->GetParent()->GetUUID() != 1)
+	{
+		parent->GetParent()->GetComponentTransform()->GetRotGlobal();
+	}	
+	else
+	{
+		return Quat(0.f,0.f,0.f,1.f);
+	}
 }
 
 float3 CompTransform::GetRotEuler() const
@@ -575,6 +610,23 @@ float3 CompTransform::GetScale() const
 	return scale;
 }
 
+float3 CompTransform::GetGlobalScale() const
+{
+	return scale_global;
+}
+
+float3 CompTransform::GetParentScale() const
+{
+	if (parent->GetParent()->GetUUID() != 1)
+	{
+		parent->GetParent()->GetComponentTransform()->GetGlobalScale();
+	}
+	else
+	{
+		return float3(1.f, 1.f, 1.f);
+	}
+}
+
 float4x4 CompTransform::GetLocalTransform() const
 {
 	return local_transform;
@@ -588,6 +640,16 @@ float4x4 CompTransform::GetGlobalTransform() const
 ImGuizmo::MODE CompTransform::GetMode() const
 {
 	return transform_mode;
+}
+
+bool CompTransform::GetToUpdate() const
+{
+	return toUpdate;
+}
+
+bool CompTransform::GetUpdated() const
+{
+	return updated;
 }
 
 void CompTransform::Freeze(bool freeze)
@@ -616,7 +678,6 @@ void CompTransform::Save(JSON_Object* object, std::string name, bool saveScene, 
 	App->fs->json_array_dotset_float4(object, name + "Rotation", float4(GetRot().x, GetRot().y, GetRot().z, GetRot().w));
 	// Scale
 	App->fs->json_array_dotset_float3(object, name + "Scale", GetScale());
-
 }
 
 void CompTransform::Load(const JSON_Object* object, std::string name)

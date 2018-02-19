@@ -65,13 +65,20 @@ public:
 	void SetLeftVector(float3 vec);
 	float3 GetPos() const;
 	float3 GetPosGlobal() const;
+	float3 GetPosParent() const;
 	Quat GetRot() const;
+	Quat GetRotGlobal() const;
+	Quat GetRotParent() const;
 	float3 GetRotEuler() const;
 	float3 GetGlobalRotEuler()const;
 	float3 GetScale() const;
+	float3 GetGlobalScale() const;
+	float3 GetParentScale() const;
 	float4x4 GetLocalTransform() const;
 	float4x4 GetGlobalTransform() const;
 	ImGuizmo::MODE GetMode() const;
+	bool GetToUpdate() const;
+	bool GetUpdated() const;
 
 	void Freeze(bool freeze);
 
@@ -85,6 +92,7 @@ public:
 protected:
 	Axis axis;
 	bool toUpdate = false;
+	bool updated = false;
 	bool freeze = false;
 	bool editing_transform = false;
 

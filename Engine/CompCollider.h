@@ -4,6 +4,7 @@
 #include "Component.h"
 
 class jpPhysicsRigidBody;
+class CompTransform;
 
 enum JP_COLLIDER_TYPE;
 
@@ -13,6 +14,8 @@ public:
 	CompCollider(Comp_Type t, GameObject* parent);
 	CompCollider(const CompCollider& copy, GameObject* parent);
 	~CompCollider();
+
+	void Update(float dt);
 
 	//EDITOR METHODS ---------------
 	void ShowOptions();
@@ -32,6 +35,7 @@ public:
 	void UpdateCollider();
 
 	//Setters -------------------
+	void SetColliderPosition();
 	void SetSizeFromBoundingBox();
 
 	//Getters
@@ -42,11 +46,11 @@ private:
 	
 	jpPhysicsRigidBody * body;
 	
+	CompTransform* transform;
+
 	// Two defintions of the type are needed to avoid conflict when changing types
 	JP_COLLIDER_TYPE	collider_type = (JP_COLLIDER_TYPE)3;	//Defines the next type of collider when changing it via editor
 	JP_COLLIDER_TYPE	curr_type = (JP_COLLIDER_TYPE)3;		//Defines the current type of the collider
-
-
 
 	// Collider Data
 	Quat				local_quat = Quat(0, 0, 0, 1);

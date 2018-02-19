@@ -1,5 +1,6 @@
 #include "CompCollider.h"
 #include "GameObject.h"
+#include "CompTransform.h"
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "ModuleGUI.h"
@@ -15,6 +16,15 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 	name_component = "Collider";
 
 	body = App->physics->GetNewRigidBody(this);
+	
+	if (parent)
+	{
+		transform = parent->GetComponentTransform();
+		if (!transform->GetToUpdate())
+		{
+			SetColliderPosition();
+		}
+	}
 }
 
 CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Component(Comp_Type::C_COLLIDER, parent)
@@ -28,6 +38,14 @@ CompCollider::~CompCollider()
 	if (body)
 	{
 	//	delete body;
+	}
+}
+
+void CompCollider::Update(float dt)
+{
+	if (transform->GetUpdated())
+	{
+		SetColliderPosition();
 	}
 }
 
@@ -104,7 +122,7 @@ void CompCollider::ShowInspectorInfo()
 	// Collider Position
 	if (ImGui::InputFloat3("Position", &position.x, 2, ImGuiInputTextFlags_EnterReturnsTrue) && body) 
 	{
-		body->SetTransform(position, local_quat);		
+		SetColliderPosition();
 	}
 
 	// Collider Angle
@@ -112,7 +130,7 @@ void CompCollider::ShowInspectorInfo()
 	{
 		// Set Good Rotation
 		local_quat = Quat::FromEulerXYZ(angle.x*DEGTORAD, angle.y*DEGTORAD, angle.z*DEGTORAD);
-		body->SetTransform(position, local_quat);	
+		SetColliderPosition();
 	}
 
 	// Collider options
@@ -253,6 +271,13 @@ void CompCollider::UpdateCollider()
 	{
 		body->SetShapeScale(size, rad, curr_type);
 	}
+}
+
+void CompCollider::SetColliderPosition()
+{
+	Quat quat = transform->GetRotGlobal()*local_quat;
+	float3 fpos = transform->GetPosGlobal() + quat * position;
+	body->SetTransform(fpos, quat);
 }
 
 void CompCollider::SetSizeFromBoundingBox()
