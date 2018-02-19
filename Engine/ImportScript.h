@@ -81,6 +81,18 @@ private:
 	static MonoObject*	GetComponent(MonoObject* object, MonoReflectionType* type);
 	
 	/*Transform*/
+	static MonoObject*	GetForwardVector(MonoObject* object);
+	static MonoObject*	GetBackwardVector(MonoObject* object);
+	static MonoObject*	GetUpVector(MonoObject* object);
+	static MonoObject*	GetDownVector(MonoObject* object);
+	static MonoObject*	GetRightVector(MonoObject* object);
+	static MonoObject*	GetLeftVector(MonoObject* object);
+	static void			SetForwardVector(MonoObject* object, MonoObject* vector3);
+	static void			SetBackwardVector(MonoObject* object, MonoObject* vector3);
+	static void			SetUpVector(MonoObject* object, MonoObject* vector3);
+	static void			SetDownVector(MonoObject* object, MonoObject* vector3);
+	static void			SetRightVector(MonoObject* object, MonoObject* vector3);
+	static void			SetLeftVector(MonoObject* object, MonoObject* vector3);
 	static MonoObject*	GetPosition(MonoObject* object);
 	static MonoObject*	GetGlobalPosition(MonoObject* object);
 	static void			SetPosition(MonoObject* object, MonoObject* vector3);

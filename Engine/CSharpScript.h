@@ -138,6 +138,18 @@ public:
 	void		CreateGameObject(MonoObject* object);
 	bool		DestroyGameObject(MonoObject* object);
 
+	MonoObject* GetForwardVector(MonoObject* object);
+	MonoObject* GetBackwardVector(MonoObject* object);
+	MonoObject* GetUpVector(MonoObject* object);
+	MonoObject* GetDownVector(MonoObject* object);
+	MonoObject* GetRightVector(MonoObject* object);
+	MonoObject* GetLeftVector(MonoObject* object);
+	void		SetForwardVector(MonoObject* object, MonoObject* vector3);
+	void		SetBackwardVector(MonoObject* object, MonoObject* vector3);
+	void		SetUpVector(MonoObject* object, MonoObject* vector3);
+	void		SetDownVector(MonoObject* object, MonoObject* vector3);
+	void		SetRightVector(MonoObject* object, MonoObject* vector3);
+	void		SetLeftVector(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetPosition(MonoObject* object);
 	MonoObject* GetGlobalPosition(MonoObject* object);
 	void		SetPosition(MonoObject* object, MonoObject* vector3);

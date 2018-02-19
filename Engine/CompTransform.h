@@ -51,6 +51,18 @@ public:
 	void ResetMatrix();
 	void UpdateMatrix(ImGuizmo::MODE mode);
 
+	float3 GetForwardVector()const;
+	float3 GetBackwardVector()const;
+	float3 GetUpVector()const;
+	float3 GetDownVector()const;
+	float3 GetRightVector()const;
+	float3 GetLeftVector()const;
+	void SetForwardVector(float3 vec);
+	void SetBackwardVector(float3 vec);
+	void SetUpVector(float3 vec);
+	void SetDownVector(float3 vec);
+	void SetRightVector(float3 vec);
+	void SetLeftVector(float3 vec);
 	float3 GetPos() const;
 	float3 GetPosGlobal() const;
 	Quat GetRot() const;

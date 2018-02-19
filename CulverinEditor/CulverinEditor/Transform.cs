@@ -16,7 +16,7 @@ namespace CulverinEditor
             }
         }
 
-        public Vector3 global_position
+        public Vector3 position
         {
             get
             {
@@ -40,7 +40,7 @@ namespace CulverinEditor
             }
         }
 
-        public Vector3 global_rotation
+        public Vector3 rotation
         {
             get
             {
@@ -52,7 +52,7 @@ namespace CulverinEditor
             }
         }
 
-        /*public Vector3 forward
+        public Vector3 forward
         {
             get
             {
@@ -62,7 +62,67 @@ namespace CulverinEditor
             {
                 SetForwardVector(value);
             }
-        }*/
+        }
+
+        public Vector3 backward
+        {
+            get
+            {
+                return GetBackwardVector();
+            }
+            set
+            {
+                SetBackwardVector(value);
+            }
+        }
+
+        public Vector3 up
+        {
+            get
+            {
+                return GetUpVector();
+            }
+            set
+            {
+                SetUpVector(value);
+            }
+        }
+
+        public Vector3 down
+        {
+            get
+            {
+                return GetDownVector();
+            }
+            set
+            {
+                SetDownVector(value);
+            }
+        }
+
+        public Vector3 right
+        {
+            get
+            {
+                return GetRightVector();
+            }
+            set
+            {
+                SetRightVector(value);
+            }
+        }
+
+        public Vector3 left
+        {
+            get
+            {
+                return GetLeftVector();
+            }
+            set
+            {
+                SetLeftVector(value);
+            }
+        }
 
         public Vector3 scale
         {
@@ -75,6 +135,42 @@ namespace CulverinEditor
                 SetScale(value);
             }
         }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 GetForwardVector();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 SetForwardVector(Vector3 value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 GetBackwardVector();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 SetBackwardVector(Vector3 value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 GetUpVector();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 SetUpVector(Vector3 value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 GetDownVector();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 SetDownVector(Vector3 value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 GetRightVector();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 SetRightVector(Vector3 value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 GetLeftVector();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 SetLeftVector(Vector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern Vector3 GetPosition();

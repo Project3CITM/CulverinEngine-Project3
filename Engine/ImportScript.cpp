@@ -517,6 +517,18 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::GetComponent",(const void*)GetComponent);
 	
 	// Transform ---------------------------
+	mono_add_internal_call("CulverinEditor.Transform::GetForwardVector", (const void*)GetForwardVector);
+	mono_add_internal_call("CulverinEditor.Transform::GetBackwardVector", (const void*)GetBackwardVector);
+	mono_add_internal_call("CulverinEditor.Transform::GetUpVector", (const void*)GetUpVector);
+	mono_add_internal_call("CulverinEditor.Transform::GetDownVector", (const void*)GetDownVector);
+	mono_add_internal_call("CulverinEditor.Transform::GetLeftVector", (const void*)GetLeftVector);
+	mono_add_internal_call("CulverinEditor.Transform::GetRightVector", (const void*)GetRightVector);
+	mono_add_internal_call("CulverinEditor.Transform::SetForwardVector", (const void*)SetForwardVector);
+	mono_add_internal_call("CulverinEditor.Transform::SetBackwardVector", (const void*)SetBackwardVector);
+	mono_add_internal_call("CulverinEditor.Transform::SetUpVector", (const void*)SetUpVector);
+	mono_add_internal_call("CulverinEditor.Transform::SetDownVector", (const void*)SetDownVector);
+	mono_add_internal_call("CulverinEditor.Transform::SetRightVector", (const void*)SetRightVector);
+	mono_add_internal_call("CulverinEditor.Transform::SetLeftVector", (const void*)SetLeftVector);
 	mono_add_internal_call("CulverinEditor.Transform::GetPosition", (const void*)GetPosition);
 	mono_add_internal_call("CulverinEditor.Transform::GetGlobalPosition", (const void*)GetGlobalPosition);
 	mono_add_internal_call("CulverinEditor.Transform::SetPosition", (const void*)SetPosition);
@@ -732,6 +744,66 @@ void ImportScript::DeleteGameObject(MonoObject* object)
 MonoObject* ImportScript::GetComponent(MonoObject* object, MonoReflectionType* type)
 {
 	return current->GetComponent(object, type);
+}
+
+MonoObject * ImportScript::GetForwardVector(MonoObject * object)
+{
+	return current->GetForwardVector(object);
+}
+
+MonoObject * ImportScript::GetBackwardVector(MonoObject * object)
+{
+	return current->GetBackwardVector(object);
+}
+
+MonoObject * ImportScript::GetUpVector(MonoObject * object)
+{
+	return current->GetUpVector(object);
+}
+
+MonoObject * ImportScript::GetDownVector(MonoObject * object)
+{
+	return current->GetDownVector(object);
+}
+
+MonoObject * ImportScript::GetRightVector(MonoObject * object)
+{
+	return current->GetRightVector(object);
+}
+
+MonoObject * ImportScript::GetLeftVector(MonoObject * object)
+{
+	return current->GetLeftVector(object);
+}
+
+void ImportScript::SetForwardVector(MonoObject * object, MonoObject * vector3)
+{
+	current->SetForwardVector(object, vector3);
+}
+
+void ImportScript::SetBackwardVector(MonoObject * object, MonoObject * vector3)
+{
+	current->SetBackwardVector(object, vector3);
+}
+
+void ImportScript::SetUpVector(MonoObject * object, MonoObject * vector3)
+{
+	current->SetUpVector(object, vector3);
+}
+
+void ImportScript::SetDownVector(MonoObject * object, MonoObject * vector3)
+{
+	current->SetDownVector(object, vector3);
+}
+
+void ImportScript::SetRightVector(MonoObject * object, MonoObject * vector3)
+{
+	current->SetRightVector(object, vector3);
+}
+
+void ImportScript::SetLeftVector(MonoObject * object, MonoObject * vector3)
+{
+	current->SetLeftVector(object, vector3);
 }
 
 MonoObject* ImportScript::GetPosition(MonoObject* object)
