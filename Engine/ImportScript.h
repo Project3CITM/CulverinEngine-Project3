@@ -66,6 +66,7 @@ private:
 	static float GetDeltaTime();
 
 	/* GameObject */
+	static mono_bool	IsStatic(MonoObject* object);
 	static mono_bool	IsActive(MonoObject* object);
 	static void			SetActive(MonoObject* object, mono_bool active);
 	static MonoObject*	Find(MonoObject* object, MonoString* name);

@@ -33,6 +33,14 @@ namespace CulverinEditor
             }
         }
 
+        public Transform transform
+        {
+            get
+            {
+                return GetComponent<Transform>();
+            }
+        }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public  extern string GetTag();
 
@@ -59,6 +67,9 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern bool IsActive();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern bool IsStatic();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetParent(GameObject go_parent);

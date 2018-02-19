@@ -123,6 +123,7 @@ public:
 	MonoObject* GetMousePosition();
 
 	/*Game Object*/
+	bool		IsStatic(MonoObject* object);
 	mono_bool	IsActive(MonoObject* object);
 	void		SetActive(MonoObject* object, mono_bool active);
 	void		SetName(MonoObject* object, MonoString* name);

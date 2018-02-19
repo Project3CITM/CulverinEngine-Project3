@@ -587,6 +587,23 @@ MonoObject* CSharpScript::GetMousePosition()
 	return nullptr;
 }
 
+bool CSharpScript::IsStatic(MonoObject * object)
+{
+	if (!CheckMonoObject(object))
+	{
+		return false;
+	}
+
+	if (current_game_object != nullptr)
+	{
+		return current_game_object->IsStatic();
+	}
+	else
+	{
+		LOG("[error] GameObject was null.");
+	}
+}
+
 mono_bool CSharpScript::IsActive(MonoObject* object)
 {
 	if (!CheckMonoObject(object))

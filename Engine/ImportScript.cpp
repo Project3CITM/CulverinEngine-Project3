@@ -509,6 +509,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::Destroy",(const void*)DeleteGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::SetActive",(const void*)SetActive);
 	mono_add_internal_call("CulverinEditor.GameObject::IsActive",(const void*)IsActive);
+	mono_add_internal_call("CulverinEditor.GameObject::IsStatic", (const void*)IsStatic);
 	mono_add_internal_call("CulverinEditor.GameObject::Find", (const void*)Find);
 	//mono_add_internal_call("CulverinEditor.GameObject::SetParent",(const void*)SetParent);
 	mono_add_internal_call("CulverinEditor.GameObject::SetName",(const void*)SetName);
@@ -679,6 +680,11 @@ int ImportScript::GetMouseYAxis()
 float ImportScript::GetDeltaTime()
 {
 	return App->game_time.time_scale * App->real_time.dt;
+}
+
+mono_bool ImportScript::IsStatic(MonoObject * object)
+{
+	return current->IsStatic(object);
 }
 
 mono_bool ImportScript::IsActive(MonoObject* object)
