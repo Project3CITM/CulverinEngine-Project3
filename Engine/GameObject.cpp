@@ -1133,13 +1133,22 @@ Component* GameObject::FindComponentByType(Comp_Type type) const
 	return nullptr;
 }
 
-void GameObject::GetComponentsByType(Comp_Type type, std::vector<Component*>* fill_comp) const
+void GameObject::GetComponentsByType(Comp_Type type, std::vector<Component*>* fill_comp, bool iterate_hierarchy) const
 {
 	for (uint i = 0; i < components.size(); i++)
 	{
 		if (components[i]->GetType() == type)
 		{
 			fill_comp->push_back(components[i]);
+		}
+	}
+
+	if (iterate_hierarchy)
+	{
+		uint size = childs.size();
+		for (uint k = 0; k < size; k++)
+		{
+			childs[k]->GetComponentsByType(type, fill_comp, iterate_hierarchy);
 		}
 	}
 }

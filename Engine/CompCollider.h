@@ -64,6 +64,7 @@ private:
 	float				rad = 0.5f;
 
 	bool				trigger = false;	
+	CompScript*			listener = nullptr;
 
 };
 

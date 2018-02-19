@@ -1,6 +1,8 @@
 #include "CompCollider.h"
 #include "GameObject.h"
 #include "CompTransform.h"
+#include "CompScript.h"
+#include "CSharpScript.h"
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "ModuleGUI.h"
@@ -119,10 +121,24 @@ void CompCollider::ShowInspectorInfo()
 	}
 
 	// Set as Trigger
-	if (ImGui::Checkbox("Draw Debug", &trigger))
+	if (ImGui::Checkbox("Trigger", &trigger))
 	{
 		// change later (check if body is static)
 		body->SetAsTrigger(trigger);
+		if (trigger == false)
+		{
+			listener = nullptr;
+		}
+	}
+	
+	// Listener selection
+	if (trigger && listener == nullptr)
+	{
+		CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT);
+		if (sc != nullptr)
+		{
+			listener = sc;
+		}
 	}
 
 	// Collider type
@@ -262,11 +278,13 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 void CompCollider::OnTriggerEnter(Component * actor)
 {
 	// Call Listner OnTriggerEnter(Component* actor);
+	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter, (void**)&actor);
 }
 
 void CompCollider::OnTriggerLost(Component * actor)
 {
 	// Call Listner OnTriggerLost(Component* actor);
+	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost, (void**)&actor);
 }
 
 void CompCollider::ChangeCollider()
