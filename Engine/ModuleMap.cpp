@@ -122,6 +122,9 @@ void ModuleMap::ShowEditorMap(bool &active)
 	{
 		name_map = App->fs->ConverttoChar(std::string(namedit).c_str());
 	}
+	ImGui::SameLine();
+	ImGui::Text("Set Separation: "); ImGui::SameLine();
+	ImGui::InputFloat("##Separation2", &size_separation);
 
 	ImGui::PopItemWidth();
 	ImGui::PushItemWidth(10);
@@ -592,11 +595,11 @@ void ModuleMap::ShowCreationMap()
 							GameObject* temp = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
 							CompTransform* transform = temp->GetComponentTransform();
 							math::float3 pos = transform->GetPos();
-							float min_size = 0;
-							float max_size = 0;
-							GetSizePrefab(temp, min_size, max_size);
-							float t = max_size - min_size;
-							pos.x += x * t; pos.z += y * t;
+							//float min_size = 0;
+							//float max_size = 0;
+							//GetSizePrefab(temp, min_size, max_size);
+							//float t = max_size - min_size;
+							pos.x += x * size_separation; pos.z += y * size_separation;
 							transform->SetPos(pos);
 							obj->AddChildGameObject(temp);
 						}
