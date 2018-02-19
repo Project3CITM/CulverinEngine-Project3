@@ -330,6 +330,7 @@ void CompTransform::RotateAroundAxis(float3 rot, float angle)
 	rot = rot.Normalized();
 	float3 euler_ang = { rot.x * angle,rot.y*angle,rot.z*angle };
 	rotation_euler += euler_ang;
+	SetRot(rotation_euler);
 	toUpdate = true;
 }
 
