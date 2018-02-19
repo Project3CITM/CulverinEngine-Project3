@@ -645,6 +645,17 @@ float4x4 CompTransform::GetGlobalTransform() const
 	return global_transform;
 }
 
+float3 CompTransform::GetEulerToDirection() const
+{
+	float3 dir;
+	float3 rot = DEGTORAD * rotation_euler;
+	dir.x = -cos(rot.z) * sin(rot.y)*sin(rot.x) - sin(rot.z)* cos(rot.x);
+	dir.y = -sin(rot.z) * sin(rot.y) * sin(rot.x) + cos(rot.z) * cos(rot.x);
+	dir.z = cos(rot.y) * sin(rot.x);
+		
+	return dir;
+}
+
 ImGuizmo::MODE CompTransform::GetMode() const
 {
 	return transform_mode;

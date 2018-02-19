@@ -77,6 +77,7 @@ public:
 	float3 GetParentScale() const;
 	float4x4 GetLocalTransform() const;
 	float4x4 GetGlobalTransform() const;
+	float3 GetEulerToDirection() const;
 	ImGuizmo::MODE GetMode() const;
 	bool GetToUpdate() const;
 	bool GetUpdated() const;

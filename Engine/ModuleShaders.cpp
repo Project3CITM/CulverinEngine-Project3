@@ -41,17 +41,7 @@ bool ModuleShaders::Start()
 	//Import all the asset files related to shaders
 
 	ImportShaderObjects();
-
-	ImportShaderMaterials();
-
-	/*ShaderProgram* test = new ShaderProgram();
-	test->AddFragment(shaders[0]);
-	test->AddVertex(shaders[1]);
-	test->LoadProgram();
-	test->name = "Test_Material";
-	test->path = Shader_Directory_fs+"/Test_Material.mat";
-	test->CreateMaterialFile();*/
-
+	ImportShaderMaterials();	
 
 	return true;
 }
@@ -86,7 +76,7 @@ update_status ModuleShaders::Update(float dt)
 		for (size_t i = 0; i < lights.size(); ++i) {
 
 			if(lights[i]->type == Light_type::DIRECTIONAL_LIGHT)
-			SetLightUniform((*item)->programID, "position", i,lights[i]->GetParent()->GetComponentTransform()->GetRotEuler());
+			SetLightUniform((*item)->programID, "position", i,lights[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
 			if (lights[i]->type == Light_type::POINT_LIGHT)
 				SetLightUniform((*item)->programID, "position", i, lights[i]->GetParent()->GetComponentTransform()->GetPos());
 			SetLightUniform((*item)->programID, "type", i, (int)lights[i]->type);
