@@ -746,6 +746,7 @@ void CompMaterial::ShowShadersEditors()
 					buffer = shader->GetShaderText();
 
 					material_shader.shader_editor.SetText(buffer);
+					delete[] buffer;
 					
 				}
 				else {

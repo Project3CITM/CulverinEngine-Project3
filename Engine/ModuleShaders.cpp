@@ -19,6 +19,13 @@ ModuleShaders::ModuleShaders()
 
 ModuleShaders::~ModuleShaders()
 {
+	for (auto item = shaders.begin(); item != shaders.end(); item++) {
+		delete (*item);
+
+	}
+	for (auto item = programs.begin(); item != programs.end(); item++) {
+		delete (*item);
+	}
 }
 
 bool ModuleShaders::Init(JSON_Object * node)
@@ -378,7 +385,7 @@ Shader* ModuleShaders::CompileShader(std::string path, std::string name, ShaderT
 	newShader->shaderText = buffer;
 
 	AddShaderList(newShader);
-
+	delete[] buffer;
 	return newShader;
 
 }

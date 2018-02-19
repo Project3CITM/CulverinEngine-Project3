@@ -310,7 +310,7 @@ void CompCanvasRender::DrawGraphic()
 	CompRectTransform* transform = (CompRectTransform*)parent->FindComponentByType(C_RECT_TRANSFORM);
 
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&transform->GetGlobalTransform().Transposed());
-	//glUniform1i(g_AttribLocationTexture, graphic->GetTextureID());
+	glUniform1i(g_AttribLocationTexture, 0);
 	glUniform4f(g_AttribLocationColor,graphic->GetColor().x, graphic->GetColor().y, graphic->GetColor().z, graphic->GetColor().w);
 	glGetError();
 
@@ -318,6 +318,7 @@ void CompCanvasRender::DrawGraphic()
 	if (graphic->GetTextureID() != 0)
 	{
 		glBindTexture(GL_TEXTURE_2D, graphic->GetTextureID());
+		
 		CheckOpenGlError("glBindTexture color");
 	}
 

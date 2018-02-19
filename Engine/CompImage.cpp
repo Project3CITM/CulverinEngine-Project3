@@ -178,9 +178,10 @@ void CompImage::ShowInspectorInfo()
 				if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
-					SetTextureID(source_image->GetTextureID());
+					
 
 				}
+				SetTextureID(source_image->GetTextureID());
 				Enable();
 			}
 		}
