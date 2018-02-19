@@ -9,7 +9,7 @@
 #include "CompImage.h"
 #include "GameObject.h"
 #include "CompRectTransform.h"
-
+#include "ModuleFS.h"
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
 #define PRESSED_SPRITE 1
@@ -179,6 +179,28 @@ void CompInteractive::ShowOptions()
 }
 void CompInteractive::CopyValues(const CompInteractive* component)
 {
+	normal_color = component->normal_color;
+	highlighted_color = component->highlighted_color;
+
+	pressed_color = component->pressed_color;
+
+	disabled_color = component->disabled_color;
+
+	desired_color = component->desired_color;
+
+	color_multiply = component->color_multiply;
+	fade_duration = component->fade_duration;
+	no_fade = component->no_fade;
+	start_transition = component->start_transition;
+
+	sprite[HIGHLIGHTED_SPRITE] = component->sprite[HIGHLIGHTED_SPRITE];
+	sprite[PRESSED_SPRITE] = component->sprite[PRESSED_SPRITE];
+	sprite[DISSABLED_SPRITE] = component->sprite[DISSABLED_SPRITE];
+
+	target_graphic = component->target_graphic;
+	TryConversion();
+
+
 	//more...
 }
 void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
@@ -207,6 +229,28 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
 		}
 	}
+	App->fs->json_array_dotset_float4(object, name + "Normal Color", normal_color);
+	App->fs->json_array_dotset_float4(object, name + "Highlighted Color", highlighted_color);
+	App->fs->json_array_dotset_float4(object, name + "Pressed Color", pressed_color);
+	App->fs->json_array_dotset_float4(object, name + "Disabled Color", disabled_color);
+	App->fs->json_array_dotset_float4(object, name + "Desired Color", desired_color);
+	json_object_dotset_number_with_std(object, name + "Color Multiply", color_multiply);
+	json_object_dotset_number_with_std(object, name + "Fade Duration", fade_duration);
+	json_object_dotset_boolean_with_std(object, name + "Fade Active", no_fade);
+	json_object_dotset_boolean_with_std(object, name + "Transition Start", start_transition);
+
+	if (target_graphic != nullptr)
+	{
+		json_object_dotset_string_with_std(object, name + "Graphic Component:", target_graphic->GetName());
+		json_object_dotset_number_with_std(object, name + "Graphic Type", target_graphic->GetType());
+		json_object_dotset_number_with_std(object, name + "Graphic UUID", target_graphic->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Graphic UUID", 0);
+
+	}
+	
 }
 
 void CompInteractive::Load(const JSON_Object * object, std::string name)
@@ -225,7 +269,7 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 			{
 				sprite[i]->num_game_objects_use_me++;
 
-				// LOAD MESH ----------------------------
+				// LOAD All Materials ----------------------------
 				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
@@ -234,6 +278,16 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 			}
 		}
 	}
+	normal_color=App->fs->json_array_dotget_float4_string(object, name + "Normal Color");
+	highlighted_color=App->fs->json_array_dotget_float4_string(object, name + "Highlighted Color");
+	pressed_color=App->fs->json_array_dotget_float4_string(object, name + "Pressed Color");
+	disabled_color=App->fs->json_array_dotget_float4_string(object, name + "Disabled Color");
+	desired_color=App->fs->json_array_dotget_float4_string(object, name + "Desired Color");
+	color_multiply= json_object_dotget_number_with_std(object, name + "Color Multiply");
+	fade_duration=json_object_dotget_number_with_std(object, name + "Fade Duration");
+	no_fade=json_object_dotget_boolean_with_std(object, name + "Fade Active");
+	start_transition=json_object_dotget_boolean_with_std(object, name + "Transition Start");
+
 	Enable();
 }
 bool CompInteractive::IsActive()const
@@ -344,6 +398,11 @@ void CompInteractive::SetTargetGraphic(CompGraphic * set_target_graphic)
 	if (set_target_graphic == nullptr)
 		return;
 	target_graphic = set_target_graphic;
+	TryConversion();
+}
+
+void CompInteractive::TryConversion()
+{
 	if (target_graphic->GetType() == C_IMAGE)
 		image = (CompImage*)target_graphic;
 }
