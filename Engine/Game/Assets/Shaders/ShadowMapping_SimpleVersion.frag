@@ -13,9 +13,10 @@ uniform sampler2D myTextureSampler;
 uniform sampler2DShadow shadowMap;
 uniform sampler2D _shadowText;
 uniform mat4 model;
+uniform vec3 _light_dir;
 void main(){
 
-vec3 n = ourNormal * mat3(model);
+vec3 n = mat3(model)*ourNormal;
 /*
 vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
 	
@@ -34,7 +35,7 @@ vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
 
 */
 
-float cosTheta = dot(n,vec3(0.5f, 2, 2));
+float cosTheta = dot(n,_light_dir);
 float bias = 0.005*tan(acos(cosTheta)); // cosTheta is dot( n,l ), clamped between 0 and 1
 bias = clamp(bias, 0,0.01);
   float visibility = 1.0f;

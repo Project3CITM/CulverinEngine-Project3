@@ -379,8 +379,8 @@ void CompMesh::Draw()
 			//-----------------------
 
 
-			glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
-			glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
+			//glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
+			//glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
 
 
 			if (shader->name == "Shadow_World_Render") {
