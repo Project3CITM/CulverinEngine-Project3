@@ -16,7 +16,11 @@ public:
 	CompFiniteStateMachine(const CompFiniteStateMachine& copy,GameObject* parent);
 	~CompFiniteStateMachine();
 
-	//Game loop ---------
+	// --------- Game loop ---------
+		// Basically for calling the Scripts loop
+	void Init();
+	void PreUpdate(float dt); 
+
 	void Start();
 	void Update(float dt);
 	void Clear();
@@ -35,6 +39,7 @@ public:
 	// -------------------------------------
 
 	FSM_State* CreateState();
+	bool DeleteState(FSM_State* state_to_delete);
 
 	// SETTERS ----------------
 	bool SetCurrentState(FSM_State* new_current_state);
@@ -59,6 +64,8 @@ private:
 
 	// ----- Needed Creating States ----- //
 	FSM_State* selected_state;
+	FSM_Transition* selected_transition;
+	FSM_Condition* selected_condition;
 	FSM_State* target_state;		//for creating transitions
 	FSM_Transition* new_transition;	//When creating a new transition, in order to fill all the conditions
 	// ----- Needed Creating states ----- //
@@ -67,11 +74,9 @@ private:
 	bool show_fsm;
 	bool show_create_transition_window;
 	bool show_select_script_window;
-	std::vector<int> new_conditions;	//Saves the type and number of the new condition that are being created
+	std::vector<int> new_conditions;	// Saves the type and number of the new condition that are being created
 	std::vector<int>::iterator condition_to_erase;
 	bool show_create_conditions_window;
-	FSM_State* candidate_state_to_delete;
-	FSM_Transition* candidate_transition_to_delete;
 	// ----- Visual Scripting ----- //
 };
 
@@ -84,19 +89,23 @@ public:
 	FSM_State(const FSM_State& copy);	//doesn't copy the transitions, makes no sense
 	~FSM_State();
 
+	bool Init();
+	bool PreUpdate(float dt);
 	bool StartScripts();
 	//TODO
 	void DoEntryAction();
 	void DoAction(float dt);
 	void DoExitAction();
 
+	bool CheckTriggeredTransition(FSM_Transition* transition)const;	
+	
 	bool AddScript(CompScript* script_to_add);	//Only support 1 script per node yet
 	FSM_Transition* AddTransition(FSM_State* target_state);
+	bool DeleteAllTransitions();
 	bool DeleteTransition(FSM_Transition* transition_to_delete);
-	bool CheckTriggeredTransition(FSM_Transition* transition)const;
 
 	// ----- Visual Scripting ----- //
-	FSM_Transition* DisplayTransitionsInfo();	//returns a transition if it must be deleted
+	bool DisplayTransitionsInfo(FSM_Transition** selected_transition, FSM_Condition** selected_condition); // Returns true if any condition was selected
 	// ----- Visual Scripting ----- //
 
 	// SETTERS ----------------
@@ -135,8 +144,11 @@ public:
 
 	// --- Visual Scripting --- //
 	void CreateConditionsModifyingOptions();
-	void DisplayConditionsInfo();
+	bool DisplayConditionsInfo(FSM_Condition** selected_condition); // Returns true if any condition was selected
 	// --- Visual Scripting --- //
+
+	bool DeleteAllConditions();
+	bool DeleteCondition(FSM_Condition* condition_to_delete);
 
 	// GETTERS ----------------
 	uint GetNumConditions()const;
