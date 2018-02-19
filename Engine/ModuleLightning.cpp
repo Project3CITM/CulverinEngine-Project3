@@ -340,7 +340,6 @@ void ModuleLightning::OnEvent(Event & event)
 						 // Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	shadow_Shader->Bind();
 
 
 	
@@ -351,6 +350,7 @@ void ModuleLightning::OnEvent(Event & event)
 		for (std::multimap<float, Event>::const_iterator item = event.send_3d3damm.MM3DDrawEvent->begin(); item != event.send_3d3damm.MM3DDrawEvent->end();item++)
 		{
 
+			shadow_Shader->Bind();
 			CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
 
 			if (m->resource_mesh != nullptr)
@@ -447,24 +447,41 @@ void ModuleLightning::OnEvent(Event & event)
 					};
 
 					const CompLight* light = event.send_3d3damm.light;
-					
+
 					GameObject* parent = light->GetParent();
 					CompTransform* trans = parent->GetComponentTransform();
-					
-					
+
+
 					float3 pos_light = light->GetParent()->GetComponentTransform()->GetPos();
-					float3 rot_eu_ang= light->GetParent()->GetComponentTransform()->GetRotEuler();
+					float3 rot_eu_ang = light->GetParent()->GetComponentTransform()->GetRotEuler();
 
 
+					Quat rot = light->GetParent()->GetComponentTransform()->GetRot();
 
-					glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
+					float3 dir = float3(1, 1, 1);
 
-					// Compute the MVP matrix from the light's point of view
+					float4x4 MVP = camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
+
+					glm::mat4 biasMatrix(
+						0.5, 0.0, 0.0, 0,
+						0.0, 0.5, 0.0, 0,
+						0.0, 0.0, 0.5, 0,
+						0.5, 0.5, 0.5, 1.0
+					);
+
+
 					glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
 					//glm::mat4 depthViewMatrix = glm::lookAt(vec3(rot_eu_ang.x, rot_eu_ang.y, rot_eu_ang.z), glm::vec3(pos_light.x, pos_light.y, pos_light.z), glm::vec3(0, 1, 0));
-					glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+					glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(dir.x, dir.y, dir.z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 					glm::mat4 depthModelMatrix = glm::mat4(1.0);
+					//	depthModelMatrix[3][0] = pos_light.x;
+					//depthModelMatrix[3][1] = pos_light.y;
+					//depthModelMatrix[3][2] = pos_light.z;
+
+
+
 					glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+					glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
 
 					//This is needed for the shadow projection in CompMesh cpp
 
@@ -495,6 +512,27 @@ void ModuleLightning::OnEvent(Event & event)
 						glDrawElements(GL_TRIANGLES, m->resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);
 
 					}
+
+					if (shader->name == "Shadow_World_Render") {
+					
+						shader->Bind();
+
+						
+
+
+						int depthMatrixID = glGetUniformLocation(shader->programID, "depthMVP");
+						int depthBiasID = glGetUniformLocation(shader->programID, "depthBias");
+						GLuint ShadowMapID = glGetUniformLocation(shader->programID, "shadowMap");
+						GLuint light_dir_id = glGetUniformLocation(shader->programID, "_light_dir");
+						//-----------------------
+
+
+						glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
+						glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
+						glUniform3fv(light_dir_id, 1, dir.ptr());
+						shader->Unbind();
+					}
+					shadow_Shader->Bind();
 
 					//-----------------
 
