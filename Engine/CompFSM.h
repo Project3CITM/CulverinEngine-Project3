@@ -67,6 +67,8 @@ private:
 	std::vector<int> new_conditions;	//Saves the type and number of the new condition that are being created
 	std::vector<int>::iterator condition_to_erase;
 	bool show_create_conditions_window;
+	FSM_State* candidate_state_to_delete;
+	FSM_Transition* candidate_transition_to_delete;
 	// ----- Visual Scripting ----- //
 };
 
@@ -86,10 +88,11 @@ public:
 
 	bool AddScript(CompScript* script_to_add);	//Only support 1 script per node yet
 	FSM_Transition* AddTransition(FSM_State* target_state);
+	bool DeleteTransition(FSM_Transition* transition_to_delete);
 	bool CheckTriggeredTransition(FSM_Transition* transition)const;
 
 	// ----- Visual Scripting ----- //
-	void DisplayTransitionsInfo();
+	FSM_Transition* DisplayTransitionsInfo();	//returns a transition if it must be deleted
 	// ----- Visual Scripting ----- //
 
 	// SETTERS ----------------

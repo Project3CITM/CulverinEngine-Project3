@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "Scene.h"
 
-CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr), current_state(nullptr), selected_state(nullptr), target_state(nullptr), new_transition(nullptr), show_fsm(false), show_create_transition_window(false), show_create_conditions_window(false)
+CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr), current_state(nullptr), selected_state(nullptr), target_state(nullptr), new_transition(nullptr), candidate_state_to_delete(nullptr), candidate_transition_to_delete(nullptr), show_fsm(false), show_create_transition_window(false), show_create_conditions_window(false)
 {
 	name_component = "Finite State Machine";
 }
@@ -66,9 +66,26 @@ void CompFiniteStateMachine::Update(float dt)
 				//DEBUG for now END
 				ImGui::Text("Script: %s", (*it)->GetScriptName());				CheckOpenStateOptions(*it);
 				ImGui::Text("Transitions (%i):", (*it)->GetNumTransitions());	CheckOpenStateOptions(*it);
-				(*it)->DisplayTransitionsInfo();
-
+				if (candidate_transition_to_delete != nullptr)
+					(*it)->DisplayTransitionsInfo();				
+				else
+				{
+					candidate_state_to_delete = (*it); // Just using the pointer temporarly
+					candidate_transition_to_delete = (*it)->DisplayTransitionsInfo();
+				}
 				ImGui::Separator();
+			}
+
+			if (ImGui::BeginPopup("Erase Transition Popup"))
+			{
+				if (ImGui::Button("Delete") && candidate_state_to_delete != nullptr)
+				{
+					candidate_state_to_delete->DeleteTransition(candidate_transition_to_delete);
+					candidate_state_to_delete = nullptr;
+					candidate_transition_to_delete = nullptr;
+				}
+
+				ImGui::EndPopup();
 			}
 			//-------------------------------------
 		}
@@ -431,6 +448,24 @@ FSM_Transition * FSM_State::AddTransition(FSM_State * target_state)
 	return new_transition;
 }
 
+bool FSM_State::DeleteTransition(FSM_Transition * transition_to_delete)
+{
+	if (transition_to_delete == nullptr)
+		return false;
+
+	for (std::vector<FSM_Transition*>::const_iterator it = transitions.begin(); it != transitions.end(); it++)
+	{
+		if ((*it) == transition_to_delete)
+		{
+			transitions.erase(it);
+			delete transition_to_delete;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool FSM_State::CheckTriggeredTransition(FSM_Transition * transition) const
 {
 	for (std::vector<FSM_Transition*>::const_iterator it = transitions.begin(); it != transitions.end(); it++)
@@ -439,18 +474,26 @@ bool FSM_State::CheckTriggeredTransition(FSM_Transition * transition) const
 			transition = *it;
 			return true;
 		}
-
 	return false;
 }
 
-void FSM_State::DisplayTransitionsInfo()
+FSM_Transition* FSM_State::DisplayTransitionsInfo()
 {
+	FSM_Transition* candidate_transition_to_delete = nullptr;
 	for (std::vector<FSM_Transition*>::const_iterator it_transitions = transitions.begin(); it_transitions != transitions.end(); it_transitions++)
 	{
 		ImGui::Text("     - Target State: %s", (*it_transitions)->GetTargetState()->GetStateName());	//TODO Open Popup to delete a transition
+		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(1))
+			candidate_transition_to_delete = (*it_transitions);
+
 		ImGui::Text("          - Conditions (%i):", (*it_transitions)->GetNumConditions());
 		(*it_transitions)->DisplayConditionsInfo();
 	}
+
+	if (candidate_transition_to_delete != nullptr)
+		ImGui::OpenPopup("Erase Transition Popup");
+
+	return candidate_transition_to_delete;
 }
 
 void FSM_State::SetStateName(const char * new_name)
@@ -481,7 +524,7 @@ FSM_Transition::FSM_Transition(FSM_State * target_state_) : target_state(target_
 
 FSM_Transition::~FSM_Transition()
 {
-	delete target_state;
+	target_state = nullptr;
 	for (std::vector<FSM_Condition*>::iterator it = conditions.begin(); it != conditions.end(); it++)
 		delete *it;
 }
