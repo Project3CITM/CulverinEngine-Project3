@@ -25,6 +25,7 @@ public class TestMovement : CulverinBehaviour
     int curr_y = 0;
     int map_width = 0;
     int map_height = 0;
+    public bool blocked_camera = false;
 
     void Start()
     {
@@ -74,7 +75,7 @@ public class TestMovement : CulverinBehaviour
     void Update()
     {
 
-        if (Input.GetMouseButtonRepeat(2))
+        if (Input.GetMouseButtonRepeat(2) && !blocked_camera)
         {
             Debug.Log("Trying to rotate");
             float rot_x = Input.GetMouseYAxis();
@@ -172,6 +173,16 @@ public class TestMovement : CulverinBehaviour
         {
             GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.DeltaTime());
         }
+    }
+
+    public void BlockCamera()
+    {
+        blocked_camera = true;
+    }
+
+    public void UnBlockCamera()
+    {
+        blocked_camera = false;
     }
 
     //public void MoveForward(int tile_mov_x, int tile_mov_y)
