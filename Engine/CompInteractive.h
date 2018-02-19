@@ -32,7 +32,9 @@ public:
 	void Load(const JSON_Object * object, std::string name);
 
 	virtual bool IsActive()const;
-	void Desactive();
+	void Activate();
+
+	void Deactive();
 	virtual void ForceClear(Event event_input);
 	void TryConversion();
 

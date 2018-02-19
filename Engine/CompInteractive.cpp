@@ -295,7 +295,11 @@ bool CompInteractive::IsActive()const
 	return disabled;
 }
 
-void CompInteractive::Desactive()
+void CompInteractive::Activate()
+{
+	disabled = false;
+}
+void CompInteractive::Deactive()
 {
 	disabled = true;
 }

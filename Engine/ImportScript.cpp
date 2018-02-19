@@ -610,6 +610,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::SetAuxiliarySends", (const void*)SetAuxiliarySends);
 
+	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
+	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
+	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
 }
 
 //Log messages into Engine Console
@@ -989,4 +992,16 @@ void ImportScript::StopAudioEvent(MonoObject* object, MonoString* name)
 void ImportScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, float value)
 {
 	current->SetAuxiliarySends(object, bus, value);
+}
+
+void ImportScript::Activate(MonoObject * object, int uid)
+{
+	current->Activate(object, uid);
+
+}
+
+void ImportScript::Deactivate(MonoObject * object, int uid)
+{
+	current->Deactivate(object, uid);
+
 }

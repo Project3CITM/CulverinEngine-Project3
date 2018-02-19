@@ -365,6 +365,6 @@ void CompCanvasRender::CheckOpenGlError(std::string info)
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
-		LOG("[error]Error %s, %s\n", info.c_str(),gluErrorString(error));
+	//	LOG("[error]Error %s, %s\n", info.c_str(),gluErrorString(error));
 	}
 }
