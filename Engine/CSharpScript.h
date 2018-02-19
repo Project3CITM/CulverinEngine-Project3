@@ -139,14 +139,19 @@ public:
 	bool		DestroyGameObject(MonoObject* object);
 
 	MonoObject* GetPosition(MonoObject* object);
+	MonoObject* GetGlobalPosition(MonoObject* object);
 	void		SetPosition(MonoObject* object, MonoObject* vector3);
+	void		SetGlobalPosition(MonoObject* object, MonoObject* vector3);
 	void		Translate(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetRotation(MonoObject* object);
+	MonoObject* GetGlobalRotation(MonoObject* object);
 	void		SetRotation(MonoObject* object, MonoObject* vector3);
+	void		SetGlobalRotation(MonoObject* object, MonoObject* vector3);
 	void		IncrementRotation(MonoObject* object, MonoObject* vector3);
 	void		SetScale(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetScale(MonoObject* object);
 	void		LookAt(MonoObject* object, MonoObject* vector3);
+	void		LookAtTrans(MonoObject * object, MonoObject * transform);
 
 	/*Audio*/
 	void		PlayAudioEvent(MonoObject* object, MonoString* event_name);

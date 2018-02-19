@@ -55,6 +55,7 @@ public:
 	float3 GetPosGlobal() const;
 	Quat GetRot() const;
 	float3 GetRotEuler() const;
+	float3 GetGlobalRotEuler()const;
 	float3 GetScale() const;
 	float4x4 GetLocalTransform() const;
 	float4x4 GetGlobalTransform() const;

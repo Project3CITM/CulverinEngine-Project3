@@ -82,14 +82,19 @@ private:
 	
 	/*Transform*/
 	static MonoObject*	GetPosition(MonoObject* object);
+	static MonoObject*	GetGlobalPosition(MonoObject* object);
 	static void			SetPosition(MonoObject* object, MonoObject* vector3);
+	static void			SetGlobalPosition(MonoObject* object, MonoObject* vector3);
 	static void			Translate(MonoObject* object, MonoObject* vector3);
 	static MonoObject*	GetRotation(MonoObject* object);
+	static MonoObject*	GetGlobalRotation(MonoObject* object);
 	static void			SetRotation(MonoObject* object, MonoObject* vector3);
+	static void			SetGlobalRotation(MonoObject* object, MonoObject* vector3);
 	static void			IncrementRotation(MonoObject* object, MonoObject* vector3);
 	static void			SetScale(MonoObject* object, MonoObject* vector3);
 	static MonoObject*	GetScale(MonoObject* object);
 	static void			LookAt(MonoObject* object, MonoObject* vector3);
+	static void			LookAtTrans(MonoObject* object, MonoObject* trans);
 
 	/* Component */
 

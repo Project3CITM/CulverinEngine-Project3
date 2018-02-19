@@ -518,14 +518,19 @@ void ImportScript::LinkFunctions()
 	
 	// Transform ---------------------------
 	mono_add_internal_call("CulverinEditor.Transform::GetPosition", (const void*)GetPosition);
+	mono_add_internal_call("CulverinEditor.Transform::GetGlobalPosition", (const void*)GetGlobalPosition);
 	mono_add_internal_call("CulverinEditor.Transform::SetPosition", (const void*)SetPosition);
+	mono_add_internal_call("CulverinEditor.Transform::SetGlobalPosition", (const void*)SetGlobalPosition);
 	mono_add_internal_call("CulverinEditor.Transform::Translate", (const void*)Translate);
 	mono_add_internal_call("CulverinEditor.Transform::SetRotation", (const void*)SetRotation);
+	mono_add_internal_call("CulverinEditor.Transform::SetGlobalRotation", (const void*)SetGlobalRotation);
 	mono_add_internal_call("CulverinEditor.Transform::GetRotation", (const void*)GetRotation);
+	mono_add_internal_call("CulverinEditor.Transform::GetGlobalRotation", (const void*)GetGlobalRotation);
 	mono_add_internal_call("CulverinEditor.Transform::RotateAroundAxis", (const void*)IncrementRotation);
 	mono_add_internal_call("CulverinEditor.Transform::SetScale", (const void*)SetScale);
 	mono_add_internal_call("CulverinEditor.Transform::GetScale", (const void*)GetScale);
 	mono_add_internal_call("CulverinEditor.Transform::LookAt", (const void*)LookAt);
+	mono_add_internal_call("CulverinEditor.Transform::LookAtTrans", (const void*)LookAtTrans);
 
 	// Component ---------------------------
 	mono_add_internal_call("CulverinEditor.Component::GetParentGameObject", (const void*)GetParentGameObject);
@@ -734,9 +739,19 @@ MonoObject* ImportScript::GetPosition(MonoObject* object)
 	return current->GetPosition(object);
 }
 
+MonoObject * ImportScript::GetGlobalPosition(MonoObject * object)
+{
+	return current->GetGlobalPosition(object);
+}
+
 void ImportScript::SetPosition(MonoObject* object, MonoObject* vector3)
 {
 	current->SetPosition(object, vector3);
+}
+
+void ImportScript::SetGlobalPosition(MonoObject * object, MonoObject * vector3)
+{
+	current->SetGlobalPosition(object, vector3);
 }
 
 void ImportScript::Translate(MonoObject * object, MonoObject * vector3)
@@ -749,9 +764,19 @@ MonoObject* ImportScript::GetRotation(MonoObject* object)
 	return current->GetRotation(object);
 }
 
+MonoObject * ImportScript::GetGlobalRotation(MonoObject * object)
+{
+	return current->GetGlobalRotation(object);
+}
+
 void ImportScript::SetRotation(MonoObject* object, MonoObject* vector3)
 {
 	current->SetRotation(object, vector3);
+}
+
+void ImportScript::SetGlobalRotation(MonoObject * object, MonoObject * vector3)
+{
+	current->SetGlobalRotation(object, vector3);
 }
 
 void ImportScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
@@ -772,6 +797,11 @@ MonoObject * ImportScript::GetScale(MonoObject * object)
 void ImportScript::LookAt(MonoObject * object, MonoObject * vector3)
 {
 	current->LookAt(object, vector3);
+}
+
+void ImportScript::LookAtTrans(MonoObject * object, MonoObject * trans)
+{
+	current->LookAtTrans(object, trans);
 }
 
 // Component ---------------------

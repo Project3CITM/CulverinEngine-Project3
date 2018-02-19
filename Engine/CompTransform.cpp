@@ -481,6 +481,11 @@ float3 CompTransform::GetRotEuler() const
 	return rotation_euler;
 }
 
+float3 CompTransform::GetGlobalRotEuler() const
+{
+	return rotation_euler_global;
+}
+
 float3 CompTransform::GetScale() const
 {
 	return scale;

@@ -5,7 +5,7 @@ namespace CulverinEditor
     public class Transform : Component
     {
         //protected Transform();        
-        public Vector3 position {
+        public Vector3 local_position {
             get
             {
                 return GetPosition();
@@ -16,7 +16,19 @@ namespace CulverinEditor
             }
         }
 
-        public Vector3 rotation
+        public Vector3 global_position
+        {
+            get
+            {
+                return GetGlobalPosition();
+            }
+            set
+            {
+                SetGlobalPosition(value);
+            }
+        }
+
+        public Vector3 local_rotation
         {
             get
             {
@@ -27,6 +39,30 @@ namespace CulverinEditor
                 SetRotation(value);
             }
         }
+
+        public Vector3 global_rotation
+        {
+            get
+            {
+                return GetGlobalRotation();
+            }
+            set
+            {
+                SetGlobalRotation(value);
+            }
+        }
+
+        /*public Vector3 forward
+        {
+            get
+            {
+                return GetForwardVector();
+            }
+            set
+            {
+                SetForwardVector(value);
+            }
+        }*/
 
         public Vector3 scale
         {
@@ -44,7 +80,13 @@ namespace CulverinEditor
         public extern Vector3 GetPosition();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 GetGlobalPosition();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetPosition(Vector3 value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetGlobalPosition(Vector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void Translate(Vector3 translation);
@@ -53,7 +95,13 @@ namespace CulverinEditor
         public extern Vector3 GetRotation();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 GetGlobalRotation();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetRotation(Vector3 value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetGlobalRotation(Vector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void RotateAroundAxis(Vector3 value);
@@ -66,5 +114,8 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void LookAt(Vector3 value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void LookAtTrans(Transform value);
     }
 }
