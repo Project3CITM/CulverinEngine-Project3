@@ -851,6 +851,49 @@ MonoObject* CSharpScript::FindGameObjectWithTag(MonoObject * object, MonoString 
 	return nullptr;
 }
 
+int CSharpScript::ChildCount(MonoObject * object)
+{
+	return current_game_object->GetNumChilds();
+}
+
+MonoObject * CSharpScript::GetChildByIndex(MonoObject * object, int index)
+{
+	GameObject* target = current_game_object->GetChildbyIndex(index);
+	if (target == nullptr)return nullptr;
+	
+	std::map<MonoObject*,GameObject*>::iterator iter = game_objects.begin();
+	while (iter != game_objects.end())
+	{
+		if (iter._Ptr->_Myval.second == target)
+		{
+			return iter._Ptr->_Myval.first;
+		}
+
+		iter++;
+	}
+
+	return nullptr;
+}
+
+MonoObject * CSharpScript::GetChildByName(MonoObject * object, MonoString * name)
+{
+	GameObject* target = current_game_object->GetChildbyName(mono_string_to_utf8(name));
+	if (target == nullptr)return nullptr;
+
+	std::map<MonoObject*, GameObject*>::iterator iter = game_objects.begin();
+	while (iter != game_objects.end())
+	{
+		if (iter._Ptr->_Myval.second == target)
+		{
+			return iter._Ptr->_Myval.first;
+		}
+
+		iter++;
+	}
+
+	return nullptr;
+}
+
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)
 {
 	if (!CheckMonoObject(object))

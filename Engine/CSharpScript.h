@@ -136,6 +136,10 @@ public:
 	bool		CompareTag(MonoObject* object, MonoString* tag);
 	MonoObject* FindGameObjectWithTag(MonoObject* object, MonoString* tag);
 
+	int			ChildCount(MonoObject* object);
+	MonoObject* GetChildByIndex(MonoObject* object, int index);
+	MonoObject* GetChildByName(MonoObject* object, MonoString* name);
+
 	MonoObject* GetOwnGameObject();
 	void		SetCurrentGameObject(GameObject* current);
 	void		SetOwnGameObject(GameObject* gameobject);

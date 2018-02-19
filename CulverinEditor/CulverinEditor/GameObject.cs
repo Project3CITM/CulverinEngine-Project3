@@ -84,6 +84,15 @@ namespace CulverinEditor
         private  extern GameObject GetOwnGameObject();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern int ChildCount();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern GameObject GetChildByIndex(int index);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern GameObject GetChildByName(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern Component AddComponent(Type componentType);
 
         public T AddComponent<T>() where T : Component

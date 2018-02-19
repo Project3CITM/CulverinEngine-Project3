@@ -71,6 +71,9 @@ private:
 	static void			SetActive(MonoObject* object, mono_bool active);
 	static MonoObject*	Find(MonoObject* object, MonoString* name);
 	static MonoObject*	GetOwnGameObject();
+	static int			ChildCount(MonoObject* object);
+	static MonoObject*	GetChildByIndex(MonoObject* object, int index);
+	static MonoObject*	GetChildByName(MonoObject* object, MonoString* name);
 	static void			SetName(MonoObject* object, MonoString* name);
 	static MonoString*	GetName(MonoObject* object);
 	static MonoString*	GetTag(MonoObject* object);
