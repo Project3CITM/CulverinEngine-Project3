@@ -5,6 +5,17 @@ using CulverinEditor.Map;
 //Attach this script to the tank parent object if you want to see it rotate
 public class TestMovement : CulverinBehaviour
 {
+    //public enum Direction
+    //{
+    //    NORTH = 0,
+    //    EAST,
+    //    SOUTH,
+    //    WEAST
+    //}
+
+
+    //public Direction curr_dir = Direction.NORTH;
+    public int start_direction = 0;
     private float movSpeed = 0.0f;
     Vector3 endPosition;
     Vector3 endRotation;
@@ -17,6 +28,7 @@ public class TestMovement : CulverinBehaviour
 
     void Start()
     {
+        //curr_dir = (Direction)start_direction;
         map_width = Map.GetWidthMap();
         map_height = Map.GetHeightMap();
         array2Da = new int[map_width, map_height];
@@ -62,7 +74,7 @@ public class TestMovement : CulverinBehaviour
     void Update()
     {
 
-      if(Input.GetMouseButtonRepeat(2))
+        if (Input.GetMouseButtonRepeat(2))
         {
             Debug.Log("Trying to rotate");
             float rot_x = Input.GetMouseYAxis();
@@ -82,32 +94,36 @@ public class TestMovement : CulverinBehaviour
         {
 
             //Quaternion rot_step = Quaternion.RotateTowards(Quaternion.FromEulerAngles(transform.rotation), Quaternion.FromEulerAngles(endRotation), movSpeed * 20 * Time.DeltaTime());
-            //transform.Rotation = Quaternion.ToEulerAngles();
+            //transform.local_rotation = Quaternion.ToEulerAngles();
         }
-      if(Input.GetMouseButtonUp(2))
+        if (Input.GetMouseButtonUp(2))
         {
-            Vector3 forwards = Vector3.Zero;
-            Vector3 rightwards = new Vector3(0, 90, 0);
-            Vector3 backwards = new Vector3(0, 180, 0);
-            Vector3 leftwards = new Vector3(0, 270, 0);
+            Vector3 rot_north = Vector3.Zero;
+            Vector3 rot_east = new Vector3(0, 90, 0);
+            Vector3 rot_south = new Vector3(0, 180, 0);
+            Vector3 rot_weast = new Vector3(0, 270, 0);
 
             float curr_rot_y = transform.local_rotation.y;
 
             if (curr_rot_y < 45 || curr_rot_y > 315)
             {
-                endRotation = forwards;
+                endRotation = rot_north;
+                //curr_dir = Direction.NORTH;
             }
             if (curr_rot_y > 45 && curr_rot_y < 135)
             {
-                endRotation = rightwards;
+                endRotation = rot_east;
+                //curr_dir = Direction.EAST;
             }
             if (curr_rot_y > 135 && curr_rot_y < 225)
             {
-                endRotation = backwards;
+                endRotation = rot_south;
+                //curr_dir = Direction.SOUTH;
             }
             if (curr_rot_y > 255 && curr_rot_y < 315)
             {
-                endRotation = leftwards;
+                endRotation = rot_weast;
+                //curr_dir = Direction.WEAST;
             }
         }
 
@@ -129,19 +145,19 @@ public class TestMovement : CulverinBehaviour
 
             if (Input.GetKeyDown(KeyCode.A)) //Left
             {
-                tile_mov_x =  - 1;
+                //MoveLeft(tile_mov_x, tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.D)) //Right
             {
-                tile_mov_x = 1;
+                //MoveRight(tile_mov_x, tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.W)) //Up
             {
-                tile_mov_y = 1;
+                //MoveForward(tile_mov_x, tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.S)) //Down
             {
-                tile_mov_y = - 1;
+                //MoveBackward(tile_mov_x, tile_mov_y);
             }
 
             //Calculate endPosition
@@ -157,4 +173,85 @@ public class TestMovement : CulverinBehaviour
             GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.DeltaTime());
         }
     }
+
+    //public void MoveForward(int tile_mov_x, int tile_mov_y)
+    //{
+    //    if (curr_dir == Direction.NORTH)
+    //    {
+    //        tile_mov_y = 1;
+    //    }
+    //    if (curr_dir == Direction.EAST)
+    //    {
+    //        tile_mov_x = 1;
+    //    }
+    //    if (curr_dir == Direction.SOUTH)
+    //    {
+    //        tile_mov_y = -1;
+    //    }
+    //    if (curr_dir == Direction.WEAST)
+    //    {
+    //        tile_mov_x = -1;
+    //    }
+    //}
+
+    //public void MoveRight(int tile_mov_x, int tile_mov_y)
+    //{
+    //    if (curr_dir == Direction.NORTH)
+    //    {
+    //        tile_mov_x = 1;
+    //    }
+    //    if (curr_dir == Direction.EAST)
+    //    {
+    //        tile_mov_y = -1;
+    //    }
+    //    if (curr_dir == Direction.SOUTH)
+    //    {
+    //        tile_mov_x = -1;
+    //    }
+    //    if (curr_dir == Direction.WEAST)
+    //    {
+    //        tile_mov_y = 1;
+    //    }
+    //}
+
+    //public void MoveBackward(int tile_mov_x, int tile_mov_y)
+    //{
+    //    if (curr_dir == Direction.NORTH)
+    //    {
+    //        tile_mov_y = -1;
+    //    }
+    //    if (curr_dir == Direction.EAST)
+    //    {
+    //        tile_mov_x = -1;
+    //    }
+    //    if (curr_dir == Direction.SOUTH)
+    //    {
+    //        tile_mov_y = 1;
+    //    }
+    //    if (curr_dir == Direction.WEAST)
+    //    {
+    //        tile_mov_x = 1;
+    //    }
+    //}
+
+    //public void MoveLeft(int tile_mov_x, int tile_mov_y)
+    //{
+    //    if (curr_dir == Direction.NORTH)
+    //    {
+    //        tile_mov_x = -1;
+    //    }
+    //    if (curr_dir == Direction.EAST)
+    //    {
+    //        tile_mov_y = 1;
+    //    }
+    //    if (curr_dir == Direction.SOUTH)
+    //    {
+    //        tile_mov_x = 1;
+    //    }
+    //    if (curr_dir == Direction.WEAST)
+    //    {
+    //        tile_mov_y = -1;
+    //    }
+    //}
+
 }

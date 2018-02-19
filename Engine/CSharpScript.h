@@ -2,6 +2,7 @@
 #define _CSHARPSCRIPT_
 
 // Info-> http://docs.go-mono.com/?link=root:/embed
+// new Info? http://docs.go-mono.com/index.aspx?link=root:/classlib
 
 #define DefaultParam 0
 
