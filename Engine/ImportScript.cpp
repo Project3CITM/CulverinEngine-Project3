@@ -467,6 +467,32 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image)
 		else
 		{
 			LOG("[error]Failed loading class %s\n", classname.c_str());
+			std::list<MonoClass*> class_list;
+
+			const MonoTableInfo* table_info = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+
+			int rows = mono_table_info_get_rows(table_info);
+
+			/* For each row, get some of its values */
+			for (int i = 1; i < rows; i++)
+			{
+				MonoClass* _class = nullptr;
+				uint32_t cols[MONO_TYPEDEF_SIZE];
+				mono_metadata_decode_row(table_info, i, cols, MONO_TYPEDEF_SIZE);
+				const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+				classname = name;
+				const char* name_space_ = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+				name_space = name_space_;
+				_class = mono_class_from_name(image, name_space_, name);
+				class_list.push_back(_class);
+			}
+			CSharpScript* csharp = new CSharpScript();
+			csharp->SetDomain(GetMainDomain());
+			csharp->SetImage(image);
+			csharp->SetClass(class_list.begin()._Ptr->_Myval);
+			csharp->SetClassName(classname);
+			csharp->SetNameSpace(name_space);
+			return csharp;
 		}
 	}
 	return nullptr;
