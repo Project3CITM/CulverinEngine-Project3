@@ -1,6 +1,7 @@
 #ifndef _COMPONENT_MESH_
 #define _COMPONENT_MESH_
 
+#include "GL3W\include\glew.h"
 #include "Component.h"
 #include "Math/float3.h"
 #include "Math/float2.h"
