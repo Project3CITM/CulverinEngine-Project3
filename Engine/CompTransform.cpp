@@ -572,7 +572,7 @@ float3 CompTransform::GetPosGlobal() const
 
 float3 CompTransform::GetPosParent() const
 {
-	if (parent->GetParent()->GetUUID() != 1)
+	if (parent->GetParent() && parent->GetParent()->GetUUID() != 1)
 	{
 		parent->GetParent()->GetComponentTransform()->GetPos();
 	}
@@ -594,7 +594,7 @@ Quat CompTransform::GetRotGlobal() const
 
 Quat CompTransform::GetRotParent() const
 {
-	if (parent->GetParent()->GetUUID() != 1)
+	if (parent->GetParent() && parent->GetParent()->GetUUID() != 1)
 	{
 		parent->GetParent()->GetComponentTransform()->GetRotGlobal();
 	}	
@@ -626,7 +626,7 @@ float3 CompTransform::GetGlobalScale() const
 
 float3 CompTransform::GetParentScale() const
 {
-	if (parent->GetParent()->GetUUID() != 1)
+	if (parent->GetParent() && parent->GetParent()->GetUUID() != 1)
 	{
 		parent->GetParent()->GetComponentTransform()->GetGlobalScale();
 	}

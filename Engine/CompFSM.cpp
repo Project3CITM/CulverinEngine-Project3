@@ -98,6 +98,17 @@ void CompFiniteStateMachine::Update(float dt)
 					ImGui::Separator();
 				}
 
+				// --------------------------------  POPUPS  -------------------------------- //
+				if (ImGui::BeginPopup("Create New Condition"))
+				{
+					if (ImGui::Button("New Condition (Not working yet)") && selected_transition != nullptr)
+					{
+						//TODO: Create new condition here
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+
 				if (ImGui::BeginPopup("Erase Transition Popup"))
 				{
 					if (ImGui::Button("Delete") && selected_transition != nullptr)
@@ -119,129 +130,138 @@ void CompFiniteStateMachine::Update(float dt)
 					}
 					ImGui::EndPopup();
 				}
+				// --------------------------------  POPUPS  -------------------------------- //
 				//-------------------------------------
 			}
 
 			if (show_create_transition_window)
 			{
-				if (ImGui::Begin("Create Transition", &show_create_transition_window))
+				if (states.size() <= 1)
 				{
-					// --------------  Transitions  -------------- //
-					std::vector<const char*> listbox_states;
-					static int selected = 0;
-					for (std::vector<FSM_State*>::const_iterator it = states.begin(); it != states.end(); it++)
-						if (*it != selected_state)
-							listbox_states.push_back((*it)->GetStateName());
-
-					ImGui::Text("Choose the target State");
-					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.35f, 0.1f, 0.4f, 1.00f));
-					ImGui::ListBox("", &selected, &listbox_states[0], (listbox_states.size()));
-					ImGui::PopStyleColor();
-
-					for (std::vector<FSM_State*>::const_iterator it_states = states.begin(); it_states != states.end(); it_states++)
-						if ((*it_states)->GetStateName() == listbox_states[selected])
-							target_state = *it_states;
-					// --------------  Transitions  -------------- //
-
-					// --------------  Conditions  -------------- //
-					if (ImGui::Button("+"))
-						new_conditions.push_back(0);
-
-					ImGui::SameLine(); App->ShowHelpMarker("Click to add a new Condition");
-
-					int i = 0;
-					for (std::vector<int>::iterator it = new_conditions.begin(); it != new_conditions.end(); it++)
+					show_create_transition_window = false;
+					LOG("Can't create a transition between states if you dont have 2 States");
+				}
+				else
+				{
+					if (ImGui::Begin("Create Transition", &show_create_transition_window))
 					{
-						i++;
-						ImGui::Text("Condition %i:", i); ImGui::SameLine();
+						// --------------  Transitions  -------------- //
+						std::vector<const char*> listbox_states;
+						static int selected = 0;
+						for (std::vector<FSM_State*>::const_iterator it = states.begin(); it != states.end(); it++)
+							if (*it != selected_state)
+								listbox_states.push_back((*it)->GetStateName());
 
-						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(1))
-						{
-							condition_to_erase = it;
-							ImGui::OpenPopup("Delete Condition Popup");
-						}
+						ImGui::Text("Choose the target State");
+						ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.35f, 0.1f, 0.4f, 1.00f));
+						ImGui::ListBox("", &selected, &listbox_states[0], (listbox_states.size()));
+						ImGui::PopStyleColor();
 
-						ImGui::PushID(i);
-						ImGui::Combo("", &(*it), "Bool\0Equal Int\0Greater Int\0Greater or Equal Int\0Lower Int\0Lower or Equal Int\0Equal Float\0Greater Float\0Greater or Equal Float\0Lower Float\0Lower or Equal Float\0\0");
-						ImGui::PopID();
-					}
-					// --------------  Conditions  -------------- //
+						for (std::vector<FSM_State*>::const_iterator it_states = states.begin(); it_states != states.end(); it_states++)
+							if ((*it_states)->GetStateName() == listbox_states[selected])
+								target_state = *it_states;
+						// --------------  Transitions  -------------- //
 
-					// --------------------------------  POPUPS  -------------------------------- //
-					if (ImGui::BeginPopup("Delete Condition Popup"))
-					{
-						if (ImGui::Button("Delete"))
-						{
-							new_conditions.erase(condition_to_erase);
-							ImGui::CloseCurrentPopup();
-						}
-						ImGui::EndPopup();
-					}
-					// --------------------------------  POPUPS  -------------------------------- //
+						// --------------  Conditions  -------------- //
+						if (ImGui::Button("+"))
+							new_conditions.push_back(0);
 
-					if (ImGui::Button("Confirm Transition"))
-					{
-						// --- Create new Transition --- //
-						new_transition = selected_state->AddTransition(target_state);
+						ImGui::SameLine(); App->ShowHelpMarker("Click to add a new Condition");
 
-						// --- Add Conditions to the new Transition --- //
+						int i = 0;
 						for (std::vector<int>::iterator it = new_conditions.begin(); it != new_conditions.end(); it++)
 						{
-							switch (*it)
+							i++;
+							ImGui::Text("Condition %i:", i); ImGui::SameLine();
+
+							if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(1))
 							{
-								// --- Bools --- //
-							case 0:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_BOOL, true);
-								break;
-								// --- Bools --- //
-
-								// --- Ints --- //
-							case 1:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_EQUAL_INT, 0);
-								break;
-							case 2:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_THAN_INT, 0);
-								break;
-							case 3:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_EQUAL_INT, 0);
-								break;
-							case 4:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_THAN_INT, 0);
-								break;
-							case 5:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_EQUAL_INT, 0);
-								break;
-								// --- Ints --- //
-
-								// --- Floats --- //
-							case 6:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_EQUAL_FLOAT, 0.0f);
-								break;
-							case 7:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_THAN_FLOAT, 0.0f);
-								break;
-							case 8:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_EQUAL_FLOAT, 0.0f);
-								break;
-							case 9:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_THAN_FLOAT, 0.0f);
-								break;
-							case 10:
-								new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_EQUAL_FLOAT, 0.0f);
-								break;
-								// --- Floats --- //
-
-							default:
-								break;
+								condition_to_erase = it;
+								ImGui::OpenPopup("Delete Condition Popup");
 							}
-						}
-						// --- Add Conditions to the new Transition --- //
 
-						show_create_conditions_window = true;
-						show_create_transition_window = false;
+							ImGui::PushID(i);
+							ImGui::Combo("", &(*it), "Bool\0Equal Int\0Greater Int\0Greater or Equal Int\0Lower Int\0Lower or Equal Int\0Equal Float\0Greater Float\0Greater or Equal Float\0Lower Float\0Lower or Equal Float\0\0");
+							ImGui::PopID();
+						}
+						// --------------  Conditions  -------------- //
+
+						// --------------------------------  POPUPS  -------------------------------- //
+						if (ImGui::BeginPopup("Delete Condition Popup"))
+						{
+							if (ImGui::Button("Delete"))
+							{
+								new_conditions.erase(condition_to_erase);
+								ImGui::CloseCurrentPopup();
+							}
+							ImGui::EndPopup();
+						}
+						// --------------------------------  POPUPS  -------------------------------- //
+
+						if (ImGui::Button("Confirm Transition"))
+						{
+							// --- Create new Transition --- //
+							new_transition = selected_state->AddTransition(target_state);
+
+							// --- Add Conditions to the new Transition --- //
+							for (std::vector<int>::iterator it = new_conditions.begin(); it != new_conditions.end(); it++)
+							{
+								switch (*it)
+								{
+									// --- Bools --- //
+								case 0:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_BOOL, true);
+									break;
+									// --- Bools --- //
+
+									// --- Ints --- //
+								case 1:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_EQUAL_INT, 0);
+									break;
+								case 2:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_THAN_INT, 0);
+									break;
+								case 3:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_EQUAL_INT, 0);
+									break;
+								case 4:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_THAN_INT, 0);
+									break;
+								case 5:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_EQUAL_INT, 0);
+									break;
+									// --- Ints --- //
+
+									// --- Floats --- //
+								case 6:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_EQUAL_FLOAT, 0.0f);
+									break;
+								case 7:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_THAN_FLOAT, 0.0f);
+									break;
+								case 8:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_EQUAL_FLOAT, 0.0f);
+									break;
+								case 9:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_THAN_FLOAT, 0.0f);
+									break;
+								case 10:
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_EQUAL_FLOAT, 0.0f);
+									break;
+									// --- Floats --- //
+
+								default:
+									break;
+								}
+							}
+							// --- Add Conditions to the new Transition --- //
+
+							show_create_conditions_window = true;
+							show_create_transition_window = false;
+						}
 					}
+					ImGui::End();
 				}
-				ImGui::End();
 			}
 
 			if (show_create_conditions_window)
@@ -266,12 +286,8 @@ void CompFiniteStateMachine::Update(float dt)
 			}
 
 			if (show_selecting_script_window)
-			{
 				if (!selected_state->SelectScript(show_selecting_script_window) && !show_selecting_script_window)
-				{
-					//TODO This enters only if the user closes the window instead of adding the script, so we have to delete the 'new CompScript' we created at creating the window
-				}
-			}
+					selected_state->RemoveScript();
 
 			// --------------------------------  POPUPS  -------------------------------- //
 			if (ImGui::BeginPopup("New State Popup"))
@@ -290,6 +306,12 @@ void CompFiniteStateMachine::Update(float dt)
 				{
 					selected_state->AddScript(new CompScript(Comp_Type::C_SCRIPT, parent));
 					show_selecting_script_window = true;
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::Button("Remove Script"))
+				{
+					selected_state->RemoveScript();
 					ImGui::CloseCurrentPopup();
 				}
 
@@ -572,6 +594,16 @@ bool FSM_State::SelectScript(bool& selecting)
 	return script->SelectScript(selecting);
 }
 
+bool FSM_State::RemoveScript()
+{
+	if (script == nullptr)
+		return false;
+
+	delete script;
+	script = nullptr;
+	return true;
+}
+
 FSM_Transition * FSM_State::AddTransition(FSM_State * target_state)
 {
 	LOG("Creating FSM Transition.");
@@ -631,9 +663,18 @@ bool FSM_State::DisplayTransitionsInfo(FSM_Transition** selected_transition, FSM
 {
 	bool candidate_to_delete = false;
 	bool transition_selected = false;
+	bool open_new_condition_popup = false;
+	int i = 0;
 
-	for (std::vector<FSM_Transition*>::const_iterator it_transitions = transitions.begin(); it_transitions != transitions.end(); it_transitions++)
+	for (std::vector<FSM_Transition*>::const_iterator it_transitions = transitions.begin(); it_transitions != transitions.end(); it_transitions++, i++)
 	{
+		ImGui::Text("     - Transition %i:", i);
+		if (ImGui::IsItemHovered() && (ImGui::IsMouseClicked(1) || ImGui::IsMouseClicked(0)))
+		{
+			*selected_transition = *it_transitions;
+			candidate_to_delete = true;
+			transition_selected = true;
+		}
 		ImGui::Text("     - Target State: %s", (*it_transitions)->GetTargetState()->GetStateName());
 		if (ImGui::IsItemHovered() && (ImGui::IsMouseClicked(1) || ImGui::IsMouseClicked(0)))
 		{
@@ -647,7 +688,16 @@ bool FSM_State::DisplayTransitionsInfo(FSM_Transition** selected_transition, FSM
 			*selected_transition = *it_transitions;
 			transition_selected = true;
 		}
+		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(1))
+		{
+			*selected_transition = *it_transitions;
+			transition_selected = true;
+			open_new_condition_popup = true;
+		}
 	}
+
+	if (open_new_condition_popup)
+		ImGui::OpenPopup("Create New Condition");
 
 	if (candidate_to_delete)
 		ImGui::OpenPopup("Erase Transition Popup");
@@ -956,9 +1006,16 @@ void FSM_Transition::CreateConditionsModifyingOptions()
 bool FSM_Transition::DisplayConditionsInfo(FSM_Condition** selected_condition)
 {
 	bool candidate_to_delete = false;
-	for (std::vector<FSM_Condition*>::const_iterator it_conditions = conditions.begin(); it_conditions != conditions.end(); it_conditions++)
+	int i = 0;
+	for (std::vector<FSM_Condition*>::const_iterator it_conditions = conditions.begin(); it_conditions != conditions.end(); it_conditions++, i++)
 	{
-		ImGui::Text("               - Condition %i", (*it_conditions)->GetConditionType());	//TODO Open Popup to delete a condition
+		ImGui::Text("               - Condition %i:", i);
+		if (ImGui::IsItemHovered() && (ImGui::IsMouseClicked(1) || ImGui::IsMouseClicked(0)))
+		{
+			*selected_condition = *it_conditions;
+			candidate_to_delete = true;
+		}
+		ImGui::Text("                    - %s", (*it_conditions)->GetConditionTypeStr());
 		if (ImGui::IsItemHovered() && (ImGui::IsMouseClicked(1) || ImGui::IsMouseClicked(0)))
 		{
 			*selected_condition = *it_conditions;
@@ -1021,6 +1078,55 @@ FSM_Condition::~FSM_Condition()
 FSM_CONDITION_TYPE FSM_Condition::GetConditionType() const
 {
 	return condition_type;
+}
+
+const char * FSM_Condition::GetConditionTypeStr() const
+{
+	switch (condition_type)
+	{
+	case FSM_COND_NONE:
+		return "Condition type ERROR";
+		break;
+	case FSM_COND_BOOL:
+		return "Bool";
+		break;
+	case FSM_COND_EQUAL_INT:
+		return "Equal Int";
+		break;
+	case FSM_COND_GREATER_THAN_INT:
+		return "Greater Int";
+		break;
+	case FSM_COND_GREATER_EQUAL_INT:
+		return "Greater or Equal Int";
+		break;
+	case FSM_COND_LOWER_THAN_INT:
+		return "Lower Int";
+		break;
+	case FSM_COND_LOWER_EQUAL_INT:
+		return "Lower or Equal Int";
+		break;
+	case FSM_COND_EQUAL_FLOAT:
+		return "Equal Float";
+		break;
+	case FSM_COND_GREATER_THAN_FLOAT:
+		return "Greater Float";
+		break;
+	case FSM_COND_GREATER_EQUAL_FLOAT:
+		return "Greater or Equal Float";
+		break;
+	case FSM_COND_LOWER_THAN_FLOAT:
+		return "Lower Float";
+		break;
+	case FSM_COND_LOWER_EQUAL_FLOAT:
+		return "Lower or Equal Float";
+		break;
+	case FSM_COND_MAX:
+	default:
+		return "Condition type ERROR";
+		break;
+	}
+
+	return "Condition type ERROR";
 }
 
 FSM_ConditionBool::FSM_ConditionBool(bool condition_) : FSM_Condition(FSM_COND_BOOL), condition(condition_)

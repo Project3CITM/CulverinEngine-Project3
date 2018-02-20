@@ -89,7 +89,7 @@ CompCollider::~CompCollider()
 
 void CompCollider::Update(float dt)
 {
-	if (transform->GetUpdated())
+	if (transform->GetUpdated() && rigid_body_comp == nullptr)
 	{
 		SetColliderPosition();
 	}
@@ -101,12 +101,15 @@ void CompCollider::Clear()
 	{
 		//Set the collider comp in rigidbody to nullptr
 		rigid_body_comp->SetColliderComp(nullptr);
+		rigid_body_comp = nullptr;
+		body = nullptr;
 		LOG("Deleted collider, physics body deletion passed to RigidBody");
 	}
 	else if (body != nullptr)
 	{
 		LOG("Comp collider didn't find RigidBody comp, releasing physics body...");
 		App->physics->DeleteCollider(this, body);
+		body = nullptr;
 	}
 }
 

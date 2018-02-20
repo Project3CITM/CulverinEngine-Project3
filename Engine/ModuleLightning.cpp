@@ -68,8 +68,8 @@ void DepthFrameBuffer::Create(int width, int height)
 	glGenTextures(1, &depthTex);
 	glBindTexture(GL_TEXTURE_2D, depthTex);
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
@@ -268,7 +268,8 @@ void ModuleLightning::OnEvent(Event & event)
 	test_fix.Bind("peter");
 
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK); // Cull back-facing triangles -> draw only front-facing triangles
+	glCullFace(GL_FRONT);
+	 // Cull back-facing triangles -> draw only front-facing triangles
 	
 						 // Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -500,7 +501,7 @@ void ModuleLightning::OnEvent(Event & event)
 	
 	ImGui::Image((ImTextureID*)test_fix.depthTex, ImVec2(500, 500));
 	App->scene->scene_buff->Bind("Scene");
-	
+	glCullFace(GL_BACK);
 	shadow_Shader->Unbind();
 }
 

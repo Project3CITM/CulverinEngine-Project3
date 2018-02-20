@@ -5,6 +5,7 @@
 
 class jpPhysicsRigidBody;
 class CompCollider;
+class CompTransform;
 
 class CompRigidBody : public Component
 {
@@ -13,6 +14,8 @@ public:
 	CompRigidBody(const CompRigidBody& copy, GameObject* parent);
 	~CompRigidBody();
 
+	void PreUpdate(float dt);
+	void Update(float dt);
 	void Clear();
 
 	//EDITOR METHODS ---------------
@@ -25,17 +28,21 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 
 	//Setters ----------------------
+	void SetColliderPosition();
 	void SetColliderComp(CompCollider* new_comp);
 
 	//Getters ----------------------
 	jpPhysicsRigidBody* GetPhysicsBody() const;
+	void UpdateParentPosition();
 
 private:
 
 	jpPhysicsRigidBody* body = nullptr;
 	CompCollider* collider_comp = nullptr;
+	CompTransform* transform = nullptr;
 
 	bool kinematic = false;
+	bool own_update = false;
 
 };
 
