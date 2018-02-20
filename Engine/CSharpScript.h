@@ -187,6 +187,9 @@ public:
 	void		Deactivate(MonoObject * object, int uid);
 	void		Clicked(MonoObject* object);
 
+	/*Collider*/
+	MonoObject* GetCollidedObject(MonoObject* object);
+
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
 	MonoObject* GetParentGameObject();

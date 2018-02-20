@@ -3,15 +3,13 @@ using CulverinEditor.Debug;
 
 public class Codev1 : CulverinBehaviour
 {
-    void Start()
+    void OnTriggerEnter()
     {
-        GetComponent<CompButton>().Clicked();
-        GetComponent<CompButton>().Deactivate();
+        Debug.Log(GetComponent<CompCollider>().GetCollidedObject().tag);
     }
 
-    void OnClick()
+    void OnTriggerLost()
     {
-        Debug.Log("button down");
+        Debug.Log("lost");
     }
-
 }

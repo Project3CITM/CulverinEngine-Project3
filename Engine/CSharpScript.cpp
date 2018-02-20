@@ -14,6 +14,7 @@
 #include "Scene.h"
 #include "CompAudio.h"
 #include "CompButton.h"
+#include "CompCollider.h"
 
 //SCRIPT VARIABLE UTILITY METHODS ------
 ScriptVariable::ScriptVariable(const char* name, VarType type, VarAccess access, CSharpScript* script) : name(name), type(type), access(access), script(script)
@@ -993,6 +994,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "Button";
 	}
+	else if (name == "CulverinEditor.CompCollider")
+	{
+		comp_name = "CompCollider";
+	}
 	/* Scripts */
 	if (comp_name == "")
 	{
@@ -1790,6 +1795,25 @@ void CSharpScript::Clicked(MonoObject * object)
 			interactive->OnClick();
 		}
 	}
+}
+
+MonoObject * CSharpScript::GetCollidedObject(MonoObject * object)
+{
+	GameObject* target = ((CompCollider*)current_game_object->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
+	if (target == nullptr)((CompCollider*)current_game_object->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
+	if (target == nullptr)return nullptr;
+
+	std::map<MonoObject*, GameObject*>::iterator iter = game_objects.begin();
+	while (iter != game_objects.end())
+	{
+		if (iter._Ptr->_Myval.second == target)
+		{
+			return iter._Ptr->_Myval.first;
+		}
+
+		iter++;
+	}
+	return nullptr;
 }
 
 // Map ------------------------------------------------

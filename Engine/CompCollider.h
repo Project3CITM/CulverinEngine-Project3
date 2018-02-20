@@ -49,7 +49,8 @@ public:
 	//Getters -------------------
 	float3 GetPosition() const;
 	Quat GetLocalQuat() const;
-
+	GameObject* GetCollidedObject()const;
+	
 private:
 	
 	jpPhysicsRigidBody * body = nullptr;
@@ -71,6 +72,7 @@ private:
 
 	bool				trigger = false;	
 	CompScript*			listener = nullptr;
+	GameObject*			collided_object = nullptr;
 	std::string			script_name;
 
 };

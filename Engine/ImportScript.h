@@ -144,6 +144,9 @@ private:
 	/*Component Interactive Button*/
 	static void Clicked(MonoObject * object);
 
+	/*Component Collier*/
+	static MonoObject* GetCollidedObject(MonoObject * object);
+
 private:
 	std::string nameNewScript;
 	std::string mono_path;
