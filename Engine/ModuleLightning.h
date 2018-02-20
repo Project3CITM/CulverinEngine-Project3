@@ -22,7 +22,8 @@ public:
 	void Create(int width, int height);
 	void Destroy();
 	void Resize(int width, int height);
-
+	void Bind(const char* window);
+	void UnBind(const char* window);
 
 	uint GetTexture()const;
 
@@ -31,6 +32,7 @@ public:
 	int height = 0;
 	uint frame_id = 0;
 	uint texture = 0;
+	uint depthTex=0;
 };
 
 class ModuleLightning : public Module
@@ -73,6 +75,7 @@ public:
 	ShaderProgram * shadow_Shader = nullptr;
 
 	FrameBuffer text;
+	DepthFrameBuffer test_fix;
 	ResourceMesh*  light_UI_plane = nullptr;
 	uint texture_bulb = 0;
 

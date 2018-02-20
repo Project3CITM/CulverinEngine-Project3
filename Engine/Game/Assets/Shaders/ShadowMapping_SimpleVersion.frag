@@ -36,7 +36,7 @@ vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
 */
 
 float cosTheta = dot(n,_light_dir);
-float bias = 0.005*tan(acos(cosTheta)); // cosTheta is dot( n,l ), clamped between 0 and 1
+float bias = 0.02; // cosTheta is dot( n,l ), clamped between 0 and 1
 bias = clamp(bias, 0,0.01);
   float visibility = 1.0f;
 /* vec4 ShadowPos = ShadowCoord/ShadowCoord.w;

@@ -385,13 +385,13 @@ void CompMesh::Draw()
 
 			if (shader->name == "Shadow_World_Render") {
 				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, App->module_lightning->text.GetTexture());
-				glUniform1i(shader->programID, App->module_lightning->text.rbo);
+				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
+				glUniform1i(shader->programID, App->module_lightning->test_fix.depthTex);
 				glUniform1i(ShadowMapID, 0);
 
 				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, App->module_lightning->text.GetTexture());
-				glUniform1i(shader->programID, App->module_lightning->text.rbo);
+				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
+				glUniform1i(shader->programID, App->module_lightning->test_fix.depthTex);
 				glUniform1i(ShadowMapID, 1);
 			}
 			int total_save_buffer = 8;
