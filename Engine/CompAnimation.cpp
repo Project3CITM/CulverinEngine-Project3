@@ -522,14 +522,64 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			blending_animation = temp;
 		}
 	}
+	int num_nodes = json_object_dotget_number_with_std(object, name + "NumberOfNodes");
+
+	for (int i = 0; i < num_nodes; i++)
+	{
+		AnimationNode* temp = new AnimationNode();
+		temp->name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Name");
+		std::string clip_name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".ClipName");
+		for (std::vector<AnimationClip*>::iterator temp_it = animation_clips.begin(); temp_it != animation_clips.end(); temp_it++)
+		{
+			if ((*temp_it)->name == clip_name)
+			{
+				temp->clip = (*temp_it);
+				break;
+			}
+		}
+		animation_nodes.push_back(temp);
+	}
+
+	for (int i = 0; i < num_nodes; i++)
+	{
+		int num_transitions = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + "NumberOfTransitions");
+		for (int j = 0; j < num_transitions; j++)
+		{
+			AnimationTransition* temp_transition = new AnimationTransition();
+			temp_transition->name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".Name");
+			temp_transition->condition = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".Condition");
+			temp_transition->has_exit_time = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".HasExitTime");
+			temp_transition->has_exit_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".ExitTime");
+
+			std::string node_name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".DestinationName");
+			for (std::vector<AnimationNode*>::iterator temp_it = animation_nodes.begin(); temp_it != animation_nodes.end(); temp_it++)
+			{
+				if ((*temp_it)->name == node_name)
+				{
+					temp_transition->destination = (*temp_it);
+					break;
+				}
+			}
+			animation_nodes.at(i)->transitions.push_back(temp_transition);
+		}
+	}
 }
 
 void CompAnimation::CreateAnimationClip()
 {
-	AnimationClip* tempanimclip = new AnimationClip();
-	tempanimclip->name += std::to_string(animation_clips.size()).c_str();
-	tempanimclip->end_frame_time = animation_resource->duration;
-	animation_clips.push_back(tempanimclip);
+	AnimationClip* temp_anim_clip = new AnimationClip();
+	temp_anim_clip->name += std::to_string(animation_clips.size()).c_str();
+	temp_anim_clip->end_frame_time = animation_resource->duration;
+	animation_clips.push_back(temp_anim_clip);
+
+	if (animation_nodes.size() == 0)
+	{
+		AnimationNode* entry_node = new AnimationNode();
+		entry_node->clip = temp_anim_clip;
+		entry_node->active = true;
+		entry_node->name = "Entry";
+		animation_nodes.push_back(entry_node);
+	}
 }
 
 void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt)
@@ -565,14 +615,17 @@ void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt
 
 void CompAnimation::CreateAnimationNode()
 {
-	AnimationNode* temp_anim_node = new AnimationNode();
-	temp_anim_node->name += std::to_string(animation_nodes.size()).c_str();
-	temp_anim_node->clip = current_animation;
-	if (animation_nodes.size() == 0)
+	if (animation_clips.size() > 0)
 	{
-		temp_anim_node->active = true;
+		AnimationNode* temp_anim_node = new AnimationNode();
+		temp_anim_node->name += std::to_string(animation_nodes.size()).c_str();
+		temp_anim_node->clip = animation_clips[0];
+		if (animation_nodes.size() == 0)
+		{
+			temp_anim_node->active = true;
+		}
+		animation_nodes.push_back(temp_anim_node);
 	}
-	animation_nodes.push_back(temp_anim_node);
 }
 
 void CompAnimation::CheckNodesConditions(AnimationNode * node)
@@ -626,5 +679,6 @@ void AnimationNode::CreateTransition()
 {
 	AnimationTransition* temp_transition = new AnimationTransition();
 	temp_transition->name += std::to_string(transitions.size()).c_str();
+	temp_transition->destination = this;
 	transitions.push_back(temp_transition);
 }
