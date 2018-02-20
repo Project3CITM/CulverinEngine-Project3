@@ -493,20 +493,35 @@ void JSONSerialization::SaveMapWalkable(std::vector<std::string>& map, int heigh
 	json_value_free(config_file);
 }
 
-void JSONSerialization::LoadMapWalkable(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* name)
+bool JSONSerialization::LoadMapWalkable(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* file, std::string& name_map)
 {
-	LOG("LOADING MAP %s -----", name);
+	//LOG("LOADING MAP %s -----", file);
 
 	JSON_Value* config_file;
 	JSON_Object* config;
 	JSON_Object* config_node;
 
-	config_file = json_parse_file(name);
+	config_file = json_parse_file(file);
 	if (config_file)
 	{
+		config = json_value_get_object(config_file);
+		config_node = json_object_get_object(config, "Map");
+		height_map = json_object_dotget_number_with_std(config_node, "Info.Height Map");
+		width_map = json_object_dotget_number_with_std(config_node, "Info.Width Map");
+		separation = json_object_dotget_number_with_std(config_node, "Info.Separation");
+		name_map = json_object_dotget_string_with_std(config_node, "Info.Name Map");
 
+		for (int i = 0; i < height_map; i++)
+		{
+			std::string line = "Line_" + std::to_string(i);
+			//line += ".";
+			map.push_back(json_object_dotget_string_with_std(config_node, line));
+		}
+		json_value_free(config_file);
+		return true;
 	}
 	json_value_free(config_file);
+	return false;
 }
 
 void JSONSerialization::SaveMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int height_map, int width_map, float separation, const char * name)

@@ -39,12 +39,15 @@ public:
 	void DeleteMap();
 	void ResetMap();
 	void CompletNoWalk();
+	void ShowEditableStyle();
 
+	void ImportMap();
 	TypeMap CheckTypeMap(const char* map);
 
 	int GetHeightMap();
 	int GetWidthMap();
 
+	bool SaveConfig(JSON_Object* node);
 
 public:
 	//Map ----------
@@ -57,7 +60,7 @@ public:
 private:
 	int height_map = 10;
 	int width_map = 10;
-	char* name_map = nullptr;
+	std::string name_map;
 	float size_separation = 25.4;
 	std::vector<std::string> all_prefabs; // Vector with all fbx/obj in Assets
 	std::vector<std::string> prefabs; // Vector with all fbx/obj in Assets
@@ -66,6 +69,14 @@ private:
 	
 	bool map_created = false;
 	bool show_numeration = false;
+	bool show_editable_style = false;
+
+	int frame_padding_x = 4;
+	int frame_padding_y = 3;
+
+	int item_spacing_x = 8;
+	int item_spacing_y = 4;
+
 
 };
 

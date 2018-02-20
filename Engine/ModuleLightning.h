@@ -12,6 +12,9 @@
 
 class CompLight;
 class ShaderProgram;
+
+bool OrderLights(CompLight* l1, CompLight* l2);
+
 class DepthFrameBuffer
 {
 public:
@@ -61,8 +64,7 @@ public:
 	void OnLightDestroyed(CompLight* l);
 
 	std::vector<CompLight*> GetSceneLights()const;
-	void PushLight(CompLight* light);
-	void DeleteLight(CompLight* light);
+	std::vector<CompLight*>* GetActiveLights(); // Return the point active lights for that frame.
 
 	bool SetEventListenrs();
 

@@ -104,9 +104,13 @@ void CompScript::Start()
 
 void CompScript::Update(float dt)
 {
-	if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
+	// Link GameObject* variables of the script
+	if (csharp != nullptr)
 	{
 		LoadValuesGameObjectScript();
+	}
+	if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
+	{
 		SetOwnGameObject(parent);
 	}
 	if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
@@ -589,10 +593,7 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	name_script = json_object_dotget_string_with_std(object, name + "Name Script");
 	uint resourceID = uid = json_object_dotget_number_with_std(object, name + "Resource Script UUID");
-	//std::string temp = nameScript + " (Script)";
-	//nameComponent = "Script";
-	//editor = new Script_editor();
-	//editor->Start(nameScript.c_str(), false);
+
 	if (resourceID > 0)
 	{
 		resource_script = (ResourceScript*)App->resource_manager->GetResource(resourceID);
@@ -617,6 +618,17 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompScript::LoadValuesGameObjectScript()
+{
+	if (csharp != nullptr)
+	{
+		if (csharp->NeedToLinkGO())
+		{
+			csharp->LoadValuesGO();
+		}
+	}
+}
+
 void CompScript::SaveScript(JSON_Object * object, std::string name) const
 {
 	//Save Values
@@ -635,10 +647,3 @@ void CompScript::LoadScript(const JSON_Object* object, std::string name)
 	}
 }
 
-void CompScript::LoadValuesGameObjectScript()
-{
-	if (csharp != nullptr)
-	{
-		csharp->LoadValues();
-	}
-}

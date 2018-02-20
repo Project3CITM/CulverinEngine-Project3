@@ -30,6 +30,7 @@
 #include "CompCollider.h"
 #include "CompRigidBody.h"
 #include "CompParticleSystem.h"
+#include <queue>
 
 //Event system test
 #include "ModuleEventSystem.h"
@@ -213,16 +214,27 @@ void GameObject::ClearAllVariablesScript()
 
 GameObject* GameObject::GetGameObjectbyuid(uint uid)
 {
+	std::queue<GameObject*> obj_queue;
+
 	if (active)
 	{
-		if (GetUUID() == uid)
+		obj_queue.push(this);
+
+		while (!obj_queue.empty())
 		{
-			return this;
-		}
-		//Check child Game Objects -------------------
-		for (uint i = 0; i < childs.size(); i++)
-		{
-			childs[i]->GetGameObjectbyuid(uid);
+			// Return GameObject with specified UID
+			if (obj_queue.front()->GetUUID() == uid)
+			{
+				return obj_queue.front();
+			}
+
+			// Check child Game Objects -------------------
+			for (uint i = 0; i < obj_queue.front()->childs.size(); i++)
+			{
+				obj_queue.push(childs[i]);
+			}
+
+			obj_queue.pop();
 		}
 	}
 	return nullptr;
@@ -1194,9 +1206,8 @@ Component* GameObject::FindParentComponentByType(Comp_Type type)const
 	return ret;
 }
 
-Component * GameObject::FindComponentByUUID(uint uid) const
+Component* GameObject::FindComponentByUUID(uint uid) const
 {
-
 	Component* comp = nullptr;
 
 	for (uint i = 0; i < components.size(); i++)
@@ -1206,6 +1217,7 @@ Component * GameObject::FindComponentByUUID(uint uid) const
 			return components[i];
 		}
 	}
+
 	return nullptr;
 }
 

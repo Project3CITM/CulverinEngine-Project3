@@ -16,7 +16,7 @@
 CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Collider";
+	name_component = "CompCollider";
 
 
 	if (parent)
@@ -45,7 +45,7 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Component(Comp_Type::C_COLLIDER, parent)
 {
 	uid = App->random->Int();
-	name_component = "Collider";
+	name_component = "CompCollider";
 
 	//Copy
 	collider_type = copy.collider_type;
@@ -195,6 +195,7 @@ void CompCollider::ShowInspectorInfo()
 		if (sc != nullptr)
 		{
 			listener = sc;
+			script_name = listener->GetName();
 		}
 	}
 
@@ -301,6 +302,9 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 	//Rad
 	json_object_dotset_number_with_std(object, name + "Rad", rad);
 
+	json_object_dotset_boolean_with_std(object, name + "Trigger", trigger);
+
+	json_object_dotset_string_with_std(object, name + "ScriptName", script_name.c_str());
 }
 
 void CompCollider::Load(const JSON_Object * object, std::string name)
@@ -329,19 +333,49 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 	//Rad	
 	rad = json_object_dotget_number_with_std(object, name + "Rad");
+
+	trigger = json_object_dotget_boolean_with_std(object, name + "Trigger");
+
+	//Script name
+	script_name = json_object_dotget_string_with_std(object, name + "ScriptName");
+}
+
+void CompCollider::SyncComponent()
+{
+	UpdateCollider();
+	SetColliderPosition();
+	if (trigger)
+	{
+		std::vector<Component*> script_vec;
+		parent->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec);
+
+		for (int i = 0; i < script_vec.size(); i++)
+		{
+			if (((CompScript*)script_vec[i])->GetName() == script_name)
+			{
+				listener = (CompScript*)script_vec[i];
+				break;
+			}
+		}
+
+	}
 }
 
 // -----------------------------------------------------------------
 void CompCollider::OnTriggerEnter(Component * actor)
 {
+	if (listener == nullptr)return;
+
 	// Call Listner OnTriggerEnter(Component* actor);
-	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter, (void**)&actor);
+	collided_object = actor->GetParent();
+	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
 }
 
 void CompCollider::OnTriggerLost(Component * actor)
 {
+	collided_object = nullptr;
 	// Call Listner OnTriggerLost(Component* actor);
-	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost, (void**)&actor);
+	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
 }
 
 void CompCollider::ChangeCollider()
@@ -403,6 +437,11 @@ float3 CompCollider::GetPosition() const
 Quat CompCollider::GetLocalQuat() const
 {
 	return local_quat;
+}
+
+GameObject * CompCollider::GetCollidedObject() const
+{
+	return collided_object;
 }
 
 jpPhysicsRigidBody* CompCollider::GivePhysicsBody(CompRigidBody* new_rigid_body)

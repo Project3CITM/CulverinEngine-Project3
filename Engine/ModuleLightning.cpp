@@ -18,6 +18,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "DefaultShaders.h"
 #include"ModuleWindow.h"
+#include "ModuleRenderer3D.h"
+
 using namespace glm;
 
 
@@ -146,7 +148,7 @@ bool ModuleLightning::Init(JSON_Object* node)
 	perf_timer.Start();
 
 	// TODO: Read ammount of shadow cast point from config. Will use default for now for testing purposes
-	shadow_cast_points_count = 1;
+	shadow_cast_points_count = 2;
 
 	Awake_t = perf_timer.ReadMs();
 	return true;
@@ -206,8 +208,24 @@ bool ModuleLightning::Start()
 
 update_status ModuleLightning::PreUpdate(float dt)
 {
-	// TODO: Calc here the closest lights used, need the main/active camera pos
 	perf_timer.Start();
+
+	//TODO: Should think on optimitzations on this.
+
+	frame_used_lights.clear();
+	std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
+	for(uint i = 0; i < shadow_cast_points_count; ++i)
+	{
+		if(i < scene_lights.size())
+		{
+			CompLight* l = scene_lights[i];
+			if (l->type == Light_type::POINT_LIGHT)
+			{
+				frame_used_lights.push_back(l);
+			}
+		}
+	}
+
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -561,15 +579,11 @@ void ModuleLightning::GetShadowMapsResolution(uint& w_res, uint& h_res)
 
 void ModuleLightning::OnLightCreated(CompLight* l)
 {
-	//TODO: Link this with component creation
-
 	scene_lights.push_back(l);
 }
 
 void ModuleLightning::OnLightDestroyed(CompLight* l)
 {
-	//TODO: Link this with component destruction
-
 	for(std::vector<CompLight*>::iterator it = scene_lights.begin(); it != scene_lights.end(); ++it)
 	{
 		if((*it) == l)
@@ -592,18 +606,9 @@ std::vector<CompLight*> ModuleLightning::GetSceneLights() const
 	return scene_lights;
 }
 
-void ModuleLightning::PushLight(CompLight * light)
+std::vector<CompLight*>* ModuleLightning::GetActiveLights() 
 {
-	scene_lights.push_back(light);
-}
-
-void ModuleLightning::DeleteLight(CompLight * light)
-{
-	for (auto item = scene_lights.begin(); item != scene_lights.end(); item++) {
-		if ((*item) == light)
-			scene_lights.erase(item);
-	}
-
+	return &frame_used_lights;
 }
 
 bool ModuleLightning::SetEventListenrs()
@@ -639,6 +644,11 @@ update_status ModuleLightning::UpdateConfig(float dt)
 	ImGui::Text("Lights used on frame:"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", frame_used_lights.size());
 
+	for(std::vector<CompLight*>::iterator it = frame_used_lights.begin(); it != frame_used_lights.end(); ++it)
+	{
+		ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "\tName: %s - x:%f y:%f z:%f", (*it)->GetParent()->GetName(), (*it)->GetGameObjectPos().x, (*it)->GetGameObjectPos().y, (*it)->GetGameObjectPos().z);
+	}
+
 	if(ImGui::TreeNodeEx("Shadow maps"))
 	{
 		for(uint i = 0; i < shadow_maps.size(); ++i)
@@ -663,4 +673,23 @@ update_status ModuleLightning::UpdateConfig(float dt)
 	}
 
 	return UPDATE_CONTINUE;
+}
+
+bool OrderLights(CompLight* l1, CompLight* l2)
+{
+	if (!l1 || !l2) return false;
+
+	if(l1->type == Light_type::POINT_LIGHT && l2->type == Light_type::POINT_LIGHT)
+	{
+		// Only point lights must be ordered
+		
+		// Must calc distance to main camera from both lights.
+		Frustum* cam = &App->renderer3D->GetActiveCamera()->frustum;
+
+		float l1_dist = cam->Distance(l1->GetGameObjectPos());
+		float l2_dist = cam->Distance(l2->GetGameObjectPos());;
+
+		if (l1_dist < l2_dist) return true;
+	}
+	return false;
 }

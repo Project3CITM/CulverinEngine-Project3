@@ -32,7 +32,7 @@ private:
 public:
 
 private:
-
+	int number_script = 0;
 	std::vector<CompScript*> linked_scripts;
 
 };

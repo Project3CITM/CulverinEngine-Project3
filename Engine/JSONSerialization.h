@@ -41,7 +41,7 @@ public:
 
 	// SAVE & LOAD MAP ---------------------------
 	void SaveMapWalkable(std::vector<std::string>& map, int height_map, int width_map, float separation, const char* name);
-	void LoadMapWalkable(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* name);
+	bool LoadMapWalkable(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* name, std::string& name_map);
 
 	void SaveMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int height_map, int width_map, float separation, const char* name);
 	void LoadMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int height_map, int width_map, float separation, const char* name);

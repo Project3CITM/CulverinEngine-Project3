@@ -32,7 +32,6 @@ enum EventType
 {
 	EVENT_UNKNOWN = -1,
 	/*----------------------Engine----------------------*/
-	EVENT_DELETE_GO,
 	EVENT_DOCKING_MODIF,
 	EVENT_DRAW,
 	EVENT_DROPPED_FILE,
@@ -59,6 +58,8 @@ enum EventType
 	EVENT_BUTTON_UP,
 	EVENT_MOUSE_MOTION,
 	EVENT_PASS_COMPONENT,
+
+	EVENT_DELETE_GO, //Keep this event last
 	MAXEVENTS//Keep this at the bottom, needed to know how many events se have
 };
 
@@ -146,28 +147,7 @@ struct ETrigger
 	Component* actor;
 };
 
-struct EPoint
-{
-	EventType type;
-	enum InputButton
-	{
-		INPUT_NONE = -1,
-		INPUT_MOUSE_LEFT,
-		INPUT_MOUSE_RIGHT,
-		INPUT_MOUSE_MIDDLE,
-		INPUT_MAX
-	};
-	InputButton button;
-	float2 position;
-	float2 motion;
-	GameObject* focus = nullptr;
-};
-struct EPassComponent
-{
-	EventType type;
-	Component* component = nullptr;
 
-};
 /*--------------------------------------------------*/
 /*------------------Shader Pipeline-----------------*/
 /*--------------------------------------------------*/
@@ -215,7 +195,28 @@ struct EOpenShaderEditor
 /*--------------------------------------------------*/
 /*------------------User Interface------------------*/
 /*--------------------------------------------------*/
+struct EPoint
+{
+	EventType type;
+	enum InputButton
+	{
+		INPUT_NONE = -1,
+		INPUT_MOUSE_LEFT,
+		INPUT_MOUSE_RIGHT,
+		INPUT_MOUSE_MIDDLE,
+		INPUT_MAX
+	};
+	InputButton button;
+	float2 position;
+	float2 motion;
+	GameObject* focus = nullptr;
+};
+struct EPassComponent
+{
+	EventType type;
+	Component* component = nullptr;
 
+};
 /*--------------------------------------------------*/
 /*----------------------Event-----------------------*/
 /*--------------------------------------------------*/
