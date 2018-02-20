@@ -219,7 +219,7 @@ void Application::FinishUpdate()
 		App->scene->ClearAllVariablesScript();
 		App->scene->DeleteAllGameObjects(App->scene->root); //TODO->Elliot
 		json_seria->LoadScene(actual_scene.c_str());
-		App->resource_manager->ReImportAllScripts();
+		//App->resource_manager->ReImportAllScripts();
 		want_to_load = false;
 	}
 	// ---------------------------------------------
