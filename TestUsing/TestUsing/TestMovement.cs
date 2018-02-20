@@ -15,7 +15,7 @@ public class TestMovement : CulverinBehaviour
 
 
     public Direction curr_dir = Direction.NORTH;
-    public int start_direction = 0;
+    public int start_direction = 1;
     private float movSpeed = 0.0f;
     Vector3 endPosition;
     Vector3 endRotation;
@@ -28,7 +28,11 @@ public class TestMovement : CulverinBehaviour
     public bool blocked_camera = false;
 
     //2D coordinates, y=z in 3D coordinates
+    public float speedH = 2.0f;
+    public float speedV = 2.0f;
 
+    private float yaw = 0.0f;
+    private float pitch = 0.0f;
 
     void Start()
     {
@@ -83,22 +87,25 @@ public class TestMovement : CulverinBehaviour
         if (Input.GetMouseButtonRepeat(2) && !blocked_camera)
         {
             Debug.Log("Trying to rotate");
-            float rot_x = Input.GetMouseYAxis();
-            float rot_y = Input.GetMouseXAxis();
+            //float rot_x = Input.GetMouseYAxis();
+            //float rot_y = Input.GetMouseXAxis();
+            yaw += speedH * Input.GetMouseXAxis();
+            pitch -= speedV * Input.GetMouseYAxis();
 
-            if (rot_x != 0)
-            {
-                transform.local_rotation = new Vector3(transform.local_rotation.x - rot_x, transform.local_rotation.y, 0);
-            }
 
-            if (rot_y != 0)
-            {
-                transform.local_rotation = new Vector3(transform.local_rotation.x, transform.local_rotation.y + rot_y, 0);
-            }
+            transform.local_rotation = new Vector3(pitch, yaw, 0);
+            //if (rot_x != 0)
+            //{
+            //    transform.local_rotation = new Vector3(transform.local_rotation.x - rot_x, transform.local_rotation.y, 0);
+            //}
+
+            //if (rot_y != 0)
+            //{
+            //    transform.local_rotation = new Vector3(transform.local_rotation.x, transform.local_rotation.y + rot_y, 0);
+            //}
         }
         else
         {
-
             //Quaternion rot_step = Quaternion.RotateTowards(Quaternion.FromEulerAngles(transform.rotation), Quaternion.FromEulerAngles(endRotation), movSpeed * 20 * Time.DeltaTime());
             //transform.local_rotation = rot_step.ToEulerAngles();
         }
@@ -172,9 +179,9 @@ public class TestMovement : CulverinBehaviour
             }
             else
             {
-                Debug.Log("Failed to move");
-                Debug.Log(tile_mov_x.ToString());
-                Debug.Log(tile_mov_y.ToString());
+                //Debug.Log("Failed to move");
+                //Debug.Log(tile_mov_x.ToString());
+                //Debug.Log(tile_mov_y.ToString());
             }
         }
         else
@@ -199,35 +206,33 @@ public class TestMovement : CulverinBehaviour
         tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
         {
-            Debug.Log("Enter");
             tile_mov_y = 1;
         }
         if (curr_dir == Direction.EAST)
         {
-            Debug.Log("Enter");
             tile_mov_x = 1;
         }
         if (curr_dir == Direction.SOUTH)
         {
-            Debug.Log("Enter");
             tile_mov_y = -1;
         }
         if (curr_dir == Direction.WEAST)
         {
-            Debug.Log("Enter");
             tile_mov_x = -1;
         }
     }
 
     public void MoveRight(out int tile_mov_x, out int tile_mov_y)
     {
+        tile_mov_x = 0;
+        tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
         {
             tile_mov_x = 1;
         }
         if (curr_dir == Direction.EAST)
         {
-            tile_mov_y = -1;
+            tile_mov_y = 1;
         }
         if (curr_dir == Direction.SOUTH)
         {
@@ -235,14 +240,14 @@ public class TestMovement : CulverinBehaviour
         }
         if (curr_dir == Direction.WEAST)
         {
-            tile_mov_y = 1;
+            tile_mov_y = -1;
         }
-        tile_mov_x = 0;
-        tile_mov_y = 0;
     }
 
     public void MoveBackward(out int tile_mov_x, out int tile_mov_y)
     {
+        tile_mov_x = 0;
+        tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
         {
             tile_mov_y = -1;
@@ -259,19 +264,19 @@ public class TestMovement : CulverinBehaviour
         {
             tile_mov_x = 1;
         }
-        tile_mov_x = 0;
-        tile_mov_y = 0;
     }
 
     public void MoveLeft(out int tile_mov_x, out int tile_mov_y)
     {
+        tile_mov_x = 0;
+        tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
         {
             tile_mov_x = -1;
         }
         if (curr_dir == Direction.EAST)
         {
-            tile_mov_y = 1;
+            tile_mov_y = -1;
         }
         if (curr_dir == Direction.SOUTH)
         {
@@ -279,10 +284,8 @@ public class TestMovement : CulverinBehaviour
         }
         if (curr_dir == Direction.WEAST)
         {
-            tile_mov_y = -1;
+            tile_mov_y = 1;
         }
-        tile_mov_x = 0;
-        tile_mov_y = 0;
     }
 
 }
