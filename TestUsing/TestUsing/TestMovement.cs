@@ -28,8 +28,7 @@ public class TestMovement : CulverinBehaviour
     public bool blocked_camera = false;
 
     //2D coordinates, y=z in 3D coordinates
-    int tile_mov_x = 0;
-    int tile_mov_y = 0;
+
 
     void Start()
     {
@@ -78,6 +77,8 @@ public class TestMovement : CulverinBehaviour
 
     void Update()
     {
+        int tile_mov_x = 0;
+        int tile_mov_y = 0;
 
         if (Input.GetMouseButtonRepeat(2) && !blocked_camera)
         {
@@ -98,8 +99,8 @@ public class TestMovement : CulverinBehaviour
         else
         {
 
-            Quaternion rot_step = Quaternion.RotateTowards(Quaternion.FromEulerAngles(transform.rotation), Quaternion.FromEulerAngles(endRotation), movSpeed * 20 * Time.DeltaTime());
-            transform.local_rotation = rot_step.ToEulerAngles();
+            //Quaternion rot_step = Quaternion.RotateTowards(Quaternion.FromEulerAngles(transform.rotation), Quaternion.FromEulerAngles(endRotation), movSpeed * 20 * Time.DeltaTime());
+            //transform.local_rotation = rot_step.ToEulerAngles();
         }
         if (Input.GetMouseButtonUp(2))
         {
@@ -194,25 +195,28 @@ public class TestMovement : CulverinBehaviour
 
     public void MoveForward(out int tile_mov_x, out int tile_mov_y)
     {
+        tile_mov_x = 0;
+        tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
         {
+            Debug.Log("Enter");
             tile_mov_y = 1;
         }
         if (curr_dir == Direction.EAST)
         {
+            Debug.Log("Enter");
             tile_mov_x = 1;
         }
         if (curr_dir == Direction.SOUTH)
         {
+            Debug.Log("Enter");
             tile_mov_y = -1;
         }
         if (curr_dir == Direction.WEAST)
         {
+            Debug.Log("Enter");
             tile_mov_x = -1;
         }
-
-        tile_mov_x = 0;
-        tile_mov_y = 0;
     }
 
     public void MoveRight(out int tile_mov_x, out int tile_mov_y)
