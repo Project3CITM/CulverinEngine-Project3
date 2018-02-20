@@ -439,16 +439,41 @@ void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene,
 	int i = 0;
 	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
 	{
-		json_object_dotset_string_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Name", (*it)->name.c_str());
-		json_object_dotset_boolean_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Loop", (*it)->loop);
-		json_object_dotset_boolean_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Finished", (*it)->finished);
-		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Time", (*it)->time);
-		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".StartTime", (*it)->start_frame_time);
-		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime", (*it)->end_frame_time);
-		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".BlendTime", (*it)->total_blending_time);
-		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".CurrentBlendTime", (*it)->current_blending_time);
-		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".SpeedFactor", (*it)->speed_factor);
-		json_object_dotset_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".State", (*it)->state);
+		json_object_dotset_string_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".Name", (*it)->name.c_str());
+		json_object_dotset_boolean_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".Loop", (*it)->loop);
+		json_object_dotset_boolean_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".Finished", (*it)->finished);
+		json_object_dotset_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".Time", (*it)->time);
+		json_object_dotset_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".StartTime", (*it)->start_frame_time);
+		json_object_dotset_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime", (*it)->end_frame_time);
+		json_object_dotset_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".BlendTime", (*it)->total_blending_time);
+		json_object_dotset_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".CurrentBlendTime", (*it)->current_blending_time);
+		json_object_dotset_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".SpeedFactor", (*it)->speed_factor);
+		json_object_dotset_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".State", (*it)->state);
+		i++;
+	}
+
+	i = 0;
+	json_object_dotset_number_with_std(object, name + "NumberOfNodes", animation_nodes.size());
+
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	{
+		json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Name", (*it)->name.c_str());
+		json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".ClipName", (*it)->clip->name.c_str());
+		json_object_dotset_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Active", (*it)->active);
+		
+		int r = 0;
+
+		json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + "NumberOfTransitions", (*it)->transitions.size());
+
+		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
+		{
+			json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(r) + ".Name", (*trans_it)->name.c_str());
+			json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(r) + ".DestinationName", (*trans_it)->destination->name.c_str());
+			json_object_dotset_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(r) + ".Condition", (*trans_it)->condition);
+			json_object_dotset_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(r) + ".HasExitTime", (*trans_it)->has_exit_time);
+			json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(r) + ".ExitTime", (*trans_it)->exit_time);
+			r++;
+		}
 		i++;
 	}
 }
@@ -477,16 +502,16 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 	for (int i = 0; i < num_clips; i++)
 	{
 		AnimationClip* temp = new AnimationClip();
-		temp->name = json_object_dotget_string_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Name");
-		temp->loop = json_object_dotget_boolean_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Loop");
-		temp->finished = json_object_dotget_boolean_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Finished");
-		temp->time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".Time");
-		temp->start_frame_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".StartTime");
-		temp->end_frame_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime");
-		temp->total_blending_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".BlendTime");
-		temp->current_blending_time = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".CurrentBlendTime");
-		temp->speed_factor = json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".SpeedFactor");
-		temp->state = (AnimationState)(int)json_object_dotget_number_with_std(object, "Info.AnimationClips.Clip" + std::to_string(i) + ".State");
+		temp->name = json_object_dotget_string_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".Name");
+		temp->loop = json_object_dotget_boolean_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".Loop");
+		temp->finished = json_object_dotget_boolean_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".Finished");
+		temp->time = json_object_dotget_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".Time");
+		temp->start_frame_time = json_object_dotget_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".StartTime");
+		temp->end_frame_time = json_object_dotget_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".EndTime");
+		temp->total_blending_time = json_object_dotget_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".BlendTime");
+		temp->current_blending_time = json_object_dotget_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".CurrentBlendTime");
+		temp->speed_factor = json_object_dotget_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".SpeedFactor");
+		temp->state = (AnimationState)(int)json_object_dotget_number_with_std(object, name + "Info.AnimationClips.Clip" + std::to_string(i) + ".State");
 		animation_clips.push_back(temp);
 		if (temp->state == AnimationState::A_PLAY)
 		{
