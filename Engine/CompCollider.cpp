@@ -195,6 +195,7 @@ void CompCollider::ShowInspectorInfo()
 		if (sc != nullptr)
 		{
 			listener = sc;
+			script_name = listener->GetName();
 		}
 	}
 
@@ -301,6 +302,8 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 	//Rad
 	json_object_dotset_number_with_std(object, name + "Rad", rad);
 
+
+	json_object_dotset_string_with_std(object, name + "ScriptName", script_name.c_str());
 }
 
 void CompCollider::Load(const JSON_Object * object, std::string name)
@@ -329,6 +332,30 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 	//Rad	
 	rad = json_object_dotget_number_with_std(object, name + "Rad");
+
+	//Script name
+	script_name = json_object_dotget_string_with_std(object, name + "ScriptName");
+}
+
+void CompCollider::SyncComponent()
+{
+	UpdateCollider();
+	SetColliderPosition();
+	if (trigger)
+	{
+		std::vector<Component*> script_vec;
+		parent->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec);
+
+		for (int i = 0; i < script_vec.size(); i++)
+		{
+			if (((CompScript*)script_vec[i])->GetName() == script_name)
+			{
+				listener = (CompScript*)script_vec[i];
+				break;
+			}
+		}
+
+	}
 }
 
 // -----------------------------------------------------------------

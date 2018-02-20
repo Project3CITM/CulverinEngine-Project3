@@ -191,6 +191,11 @@ void CompRigidBody::Load(const JSON_Object * object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 }
 
+void CompRigidBody::SyncComponent()
+{
+	body->SetAsKinematic(kinematic);
+}
+
 void CompRigidBody::SetColliderPosition()
 {
 	Quat quat = transform->GetRotGlobal();
