@@ -37,7 +37,6 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png",&texture_bulb);
 
 	plane = App->module_lightning->light_UI_plane;
-	App->module_lightning->PushLight(this);
 
 
 
@@ -69,17 +68,19 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 
 	//---------------------------------------------
 
-
+	App->module_lightning->OnLightCreated(this);
 
 }
 
 CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Comp_Type::C_LIGHT, parent)
 {
-	App->module_lightning->DeleteLight(this);
+	//App->module_lightning->OnLightDestroyed(this); //TODO/CHECK: Why delete the light?? Should add it to the list. Why create another method, already one to erase a light from the list on module lighting.
+	App->module_lightning->OnLightCreated(this);
 }
 
 CompLight::~CompLight()
 {
+	App->module_lightning->OnLightDestroyed(this);
 }
 
 bool CompLight::Enable()
