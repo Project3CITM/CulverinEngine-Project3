@@ -4,6 +4,9 @@
 #include "ParticleSystem.h"
 #include "ResourceMaterial.h"
 #include "parson.h"
+#include "ModuleRenderer3D.h"
+#include "CompCamera.h"
+#include "GameObject.h"
 
 CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
@@ -27,19 +30,11 @@ void CompParticleSystem::Init()
 
 void CompParticleSystem::PreUpdate(float dt)
 {
-	//If the engine is in play mode unpaused, try to get main camera pos
-/*	if (App->engine_state == EngineState::PLAY)
-	{
-		const ComponentCamera* camera = App->scene->GetActiveCamera();
-		//If we have main camera, get pos and load
-		if (camera != nullptr) PartSystem->SetCameraPosToFollow(camera->parent->GetTransform()->GetPos());
-		//If not, continue loading editor pos
-		else PartSystem->SetCameraPosToFollow(App->camera->Position);
-	}
-	//Load editor camera pos
-	else PartSystem->SetCameraPosToFollow(App->camera->Position);
-	PartSystem->PreUpdate(dt);
-	return true;*/
+	const CompCamera* camera = App->renderer3D->GetActiveCamera();
+	if (camera != nullptr)
+		part_system->SetCameraPosToFollow(camera->GetGameObjectPos());
+
+	part_system->PreUpdate(dt);
 }
 
 void CompParticleSystem::Update(float dt)
@@ -58,6 +53,8 @@ void CompParticleSystem::Clear()
 
 }
 
+// LOAD / SAVE ---------------------------------------------------------
+
 void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
 
@@ -68,6 +65,228 @@ void CompParticleSystem::Load(const JSON_Object* object, std::string name)
 
 }
 
+bool CompParticleSystem::SaveParticleStates(const ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const
+{
+	/*JSON_Object* file_conf = nullptr;
+
+	//If this entry does not exist, create it
+	if (json_object_get_object(root_object, "particlestate") == NULL)
+		json_object_set_value(root_object, "particlestate", json_value_init_object());
+	//Save
+	file_conf = json_object_get_object(root_object, "particlestate");
+
+	const ParticleState* State = nullptr;
+	JSON_Object* conf = nullptr;
+
+	if (TextureResource != nullptr)
+	{
+		json_object_set_value(file_conf, "texture", json_value_init_object());
+		conf = json_object_get_object(file_conf, "texture");
+		SetString(conf, "texture_path", TextureResource->GetOriginalFile().c_str());
+		SetInt(conf, "columns", TexData->columns);
+		SetInt(conf, "rows", TexData->rows);
+		SetInt(conf, "numberOfFrames", TexData->numberOfFrames);
+		SetUInt(conf, "AnimationOrder", TexData->AnimationOrder);
+	}
+
+	for (uint i = 0; i < 2; i++)
+	{
+		if (i == 0)
+		{
+			State = stateI;
+			json_object_set_value(file_conf, "initial_state", json_value_init_object());
+			conf = json_object_get_object(file_conf, "initial_state");
+		}
+		else
+		{
+			State = stateF;
+			json_object_set_value(file_conf, "final_state", json_value_init_object());
+			conf = json_object_get_object(file_conf, "final_state");
+		}
+		SetFloat3(conf, "force", State->force);
+		SetFloat3(conf, "forceVariation", State->forceVariation);
+		SetFloat(conf, "Size", State->Size);
+		SetFloat(conf, "SizeVariation", State->SizeVariation);
+		SetFloat4(conf, "RGBATint", State->RGBATint);
+		SetFloat4(conf, "RGBATintVariation", State->RGBATintVariation);
+		SetBool(conf, "alpha_preview", State->alpha_preview);
+		SetBool(conf, "alpha_half_preview", State->alpha_half_preview);
+		SetBool(conf, "options_menu", State->options_menu);
+		SetBool(conf, "alpha", State->alpha);
+		SetBool(conf, "alpha_bar", State->alpha_bar);
+		SetBool(conf, "side_preview", State->side_preview);
+		SetUInt(conf, "inputs_mode", State->inputs_mode);
+		SetUInt(conf, "picker_mode", State->picker_mode);
+	}
+
+	json_serialize_to_file(root_value, file_name.c_str());*/
+	return true;
+}
+/*
+bool CompParticleSystem::LoadParticleStates(CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF) const
+{
+	JSON_Object* file_conf = nullptr;
+	file_conf = json_object_get_object(root_object, "particlestate");
+
+	ParticleState* State = nullptr;
+	JSON_Object* conf = nullptr;
+
+	conf = json_object_get_object(file_conf, "texture");
+	if (conf != nullptr)
+	{
+		const char* Path = App->parsonjson->GetString(conf, "texture_path");
+		int columns = App->parsonjson->GetInt(conf, "columns");
+		int rows = App->parsonjson->GetInt(conf, "rows");
+		int numberOfFrames = App->parsonjson->GetInt(conf, "numberOfFrames");
+		uint AnimationOrder = App->parsonjson->GetUInt(conf, "AnimationOrder");
+		system->SetTextureResource(Path, columns, rows, numberOfFrames, AnimationOrder);
+	}
+
+	for (uint i = 0; i < 2; i++)
+	{
+		if (i == 0)
+		{
+			State = &stateI;
+			conf = json_object_get_object(file_conf, "initial_state");
+		}
+		else
+		{
+			State = &stateF;
+			conf = json_object_get_object(file_conf, "final_state");
+		}
+
+		State->force = GetFloat3(conf, "force");
+		State->forceVariation = GetFloat3(conf, "forceVariation");
+		State->Size = GetFloat(conf, "Size");
+		State->SizeVariation = GetFloat(conf, "SizeVariation");
+		State->RGBATint = GetFloat4(conf, "RGBATint");
+		State->RGBATintVariation = GetFloat4(conf, "RGBATintVariation");
+		State->alpha_preview = GetBool(conf, "alpha_preview");
+		State->alpha_half_preview = GetBool(conf, "alpha_half_preview");
+		State->options_menu = GetBool(conf, "options_menu");
+		State->alpha = GetBool(conf, "alpha");
+		State->alpha_bar = GetBool(conf, "alpha_bar");
+		State->side_preview = GetBool(conf, "side_preview");
+		State->inputs_mode = GetUInt(conf, "inputs_mode");
+		State->picker_mode = GetUInt(conf, "picker_mode");
+	}
+
+	return true;
+}
+
+bool CompParticleSystem::SaveParticleEmitter(CompParticleSystem* system, const ParticleEmitter* emitter) const
+{
+	JSON_Object* conf = nullptr;
+
+	//If this entry does not exist, create it
+	if (json_object_get_object(root_object, "emitter") == NULL)
+		json_object_set_value(root_object, "emitter", json_value_init_object());
+	//Save
+	conf = json_object_get_object(root_object, "emitter");
+
+	bool ShowEmitterBoundBox = false;
+	bool ShowEmitter = false;
+	system->GetDebugOptions(ShowEmitterBoundBox, ShowEmitter);
+	SetBool(conf, "ShowEmitterBoundBox", ShowEmitterBoundBox);
+	SetBool(conf, "ShowEmitter", ShowEmitter);
+
+	if (system->GetChildParticle() != nullptr)
+		SetString(conf, "ChildParticle", system->GetChildParticle()->c_str());
+	if (system->GetChildEmitter() != nullptr)
+		SetString(conf, "ChildEmitter", system->GetChildEmitter()->c_str());
+
+	SetFloat(conf, "EmitterLifeMax", emitter->EmitterLifeMax);
+	SetFloat4x4(conf, "Transform", emitter->Transform);
+	SetUInt(conf, "SpawnRate", emitter->SpawnRate);
+	SetFloat(conf, "Lifetime", emitter->Lifetime);
+	SetFloat(conf, "LifetimeVariation", emitter->LifetimeVariation);
+	SetFloat(conf, "EmissionDuration", emitter->EmissionDuration);
+	SetBool(conf, "Loop", emitter->Loop);
+	SetFloat(conf, "Speed", emitter->Speed);
+	SetFloat(conf, "SpeedVariation", emitter->SpeedVariation);
+	SetFloat3(conf, "BoundingBox_min", emitter->BoundingBox.minPoint);
+	SetFloat3(conf, "BoundingBox_max", emitter->BoundingBox.maxPoint);
+	//SetUInt(conf, "EmissionType", emitter->EmissionType);
+	SetUInt(conf, "Type", emitter->Type);
+	SetUInt(conf, "ParticleFacingOptions", emitter->ParticleFacingOptions);
+
+	switch (emitter->Type)
+	{
+	case 0: //EmitterType_Sphere
+	case 1: //EmitterType_SemiSphere
+		SetFloat(conf, "Radius", emitter->EmitterShape.Sphere_Shape.r);
+		break;
+	case 2: //EmitterType_Cone
+		SetFloat(conf, "URadius", emitter->EmitterShape.ConeTrunk_Shape.Upper_Circle.r);
+		SetFloat(conf, "BRadius", emitter->EmitterShape.ConeTrunk_Shape.Bottom_Circle.r);
+		SetFloat(conf, "heigth", emitter->EmitterShape.ConeTrunk_Shape.heigth);
+		break;
+	case 3: //EmitterType_Box
+		SetFloat3(conf, "EmitterAABB_min", emitter->EmitterShape.Box_Shape.minPoint);
+		SetFloat3(conf, "EmitterAABB_max", emitter->EmitterShape.Box_Shape.maxPoint);
+		break;
+	case 4: //EmitterType_Circle
+		SetFloat(conf, "Radius", emitter->EmitterShape.Circle_Shape.r);
+		break;
+	}
+
+	json_serialize_to_file(root_value, file_name.c_str());
+	return true;
+}
+
+bool CompParticleSystem::LoadParticleEmitter(CompParticleSystem* system, ParticleEmitter& emitter) const
+{
+	JSON_Object* conf = nullptr;
+	conf = json_object_get_object(root_object, "emitter");
+
+	bool ShowEmitterBoundBox = GetBool(conf, "ShowEmitterBoundBox");
+	bool ShowEmitter = GetBool(conf, "ShowEmitter");
+	system->SetDebugOptions(ShowEmitterBoundBox, ShowEmitter);
+
+	const char* ChildParticle = GetString(conf, "ChildParticle");
+	const char* ChildEmitter = GetString(conf, "ChildEmitter");
+	if ((ChildParticle != nullptr) && (ChildEmitter != nullptr))
+		system->SetChild(ChildParticle, ChildEmitter);
+
+	emitter.EmitterLifeMax = GetFloat(conf, "EmitterLifeMax");
+	emitter.Transform = GetFloat4x4(conf, "Transform");
+	emitter.SpawnRate = GetUInt(conf, "SpawnRate");
+	emitter.Lifetime = GetFloat(conf, "Lifetime");
+	emitter.LifetimeVariation = GetFloat(conf, "LifetimeVariation");
+	emitter.EmissionDuration = GetFloat(conf, "EmissionDuration");
+	emitter.Loop = GetBool(conf, "Loop");
+	emitter.Speed = GetFloat(conf, "Speed");
+	emitter.SpeedVariation = GetFloat(conf, "SpeedVariation");
+	emitter.BoundingBox.minPoint = GetFloat3(conf, "BoundingBox_min");
+	emitter.BoundingBox.maxPoint = GetFloat3(conf, "BoundingBox_max");
+	//emitter.EmissionType = (ParticleEmitter::TypeEmission)GetUInt(conf, "EmissionType");
+	emitter.Type = (ParticleEmitter::TypeEmitter)GetUInt(conf, "Type");
+	emitter.ParticleFacingOptions = (ParticleEmitter::TypeBillboard)GetUInt(conf, "ParticleFacingOptions");
+
+	switch (emitter.Type)
+	{
+	case 0: //EmitterType_Sphere
+	case 1: //EmitterType_SemiSphere
+		emitter.EmitterShape.Sphere_Shape.r = GetFloat(conf, "Radius");
+		break;
+	case 2: //EmitterType_Cone
+		emitter.EmitterShape.ConeTrunk_Shape.Upper_Circle.r = GetFloat(conf, "URadius");
+		emitter.EmitterShape.ConeTrunk_Shape.Bottom_Circle.r = GetFloat(conf, "BRadius");
+		emitter.EmitterShape.ConeTrunk_Shape.heigth = GetFloat(conf, "heigth");
+		break;
+	case 3: //EmitterType_Box
+		emitter.EmitterShape.Box_Shape.minPoint = GetFloat3(conf, "EmitterAABB_min");
+		emitter.EmitterShape.Box_Shape.maxPoint = GetFloat3(conf, "EmitterAABB_max");
+		break;
+	case 4: //EmitterType_Circle
+		emitter.EmitterShape.Circle_Shape.r = GetFloat(conf, "Radius");
+		break;
+	}
+
+	return true;
+}*/
+
+//-----------------------------------------------------------
 void CompParticleSystem::ShowOptions()
 {
 
@@ -92,6 +311,7 @@ void CompParticleSystem::ShowInspectorInfo()
 
 	ImGui::TreePop();
 }
+
 
 
 // PopUps ---------------------------------------------------

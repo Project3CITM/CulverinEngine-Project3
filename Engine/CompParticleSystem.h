@@ -5,6 +5,9 @@
 
 class ParticleSystem;
 class ResourceMaterial;
+struct ParticleState;
+struct ParticleTextureData;
+class ParticleEmitter;
 
 class CompParticleSystem :public Component
 {
@@ -38,6 +41,12 @@ public:
 
 private:
 	void DrawDirectory(const char* directory);
+
+	bool SaveParticleStates(const ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const;
+	bool LoadParticleStates(CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF) const;
+
+	bool SaveParticleEmitter(CompParticleSystem* system, const ParticleEmitter* emitter) const;
+	bool LoadParticleEmitter(CompParticleSystem* system, ParticleEmitter& emitter) const;
 
 private:
 

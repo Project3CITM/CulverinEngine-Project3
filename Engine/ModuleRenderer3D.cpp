@@ -419,6 +419,11 @@ void ModuleRenderer3D::SetGameCamera(CompCamera* cam)
 	game_camera = cam;
 }
 
+CompCamera * ModuleRenderer3D::GetActiveCamera()
+{
+	return active_camera;
+}
+
 void ModuleRenderer3D::UpdateProjection(CompCamera* cam)
 {
 	if (cam != nullptr)

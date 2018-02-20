@@ -34,6 +34,7 @@ public:
 	void SetActiveCamera(CompCamera* cam);
 	void SetSceneCamera(CompCamera* cam);
 	void SetGameCamera(CompCamera* cam);
+	CompCamera* GetActiveCamera();
 
 	void UpdateProjection(CompCamera* cam);
 
