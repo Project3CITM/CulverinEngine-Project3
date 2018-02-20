@@ -32,6 +32,7 @@ public:
 private:
 public:
 protected:
+	bool raycast_target = true;
 	CompCanvas* my_canvas = nullptr;
 	CompCanvasRender* my_canvas_render = nullptr;
 	CompRectTransform* transform = nullptr;

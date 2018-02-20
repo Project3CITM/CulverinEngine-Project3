@@ -61,7 +61,6 @@ private:
 	Type type = SIMPLE;
 	FillMethod method = HORITZONTAL;
 	uint uuid_source_image = 0;
-	bool raycast_target = true;
 	bool select_source_image = false;
 	float filled = 1.0f;
 };

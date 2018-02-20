@@ -42,6 +42,8 @@
     <Compile Include="Codev1.cs" />
     <Compile Include="CompAudio.cs" />
     <Compile Include="CompButton.cs" />
+    <Compile Include="CompGraphic.cs" />
+    <Compile Include="CompImage.cs" />
     <Compile Include="CompInteractive.cs" />
     <Compile Include="CulverinBehaviour.cs" />
     <Compile Include="Map.cs" />
