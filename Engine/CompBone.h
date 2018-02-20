@@ -40,6 +40,6 @@ public:
 
 	float4x4 offset;
 	std::vector<Weight> weights;
-	ResourceMesh* resource_mesh;
+	ResourceMesh* resource_mesh = nullptr;
 };
 
