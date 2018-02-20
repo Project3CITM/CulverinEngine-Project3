@@ -270,7 +270,7 @@ void ModuleRenderGui::ScreenSpaceDraw()
 
 	for (int i = 0; i < screen_space_canvas.size(); i++)
 	{
-		screen_space_canvas[i]->DrawCanvasRender();
+		screen_space_canvas[i]->DrawGraphic();
 	}
 
 	

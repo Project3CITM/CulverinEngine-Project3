@@ -27,7 +27,7 @@ public:
 	void Clear();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
-	void UpdatesPriteId();
+	void UpdateSpriteId();
 	void SetSourceImage(ResourceMaterial* set_source_image);
 	void SetColor(const float4& set_rgba);
 	void SetColor(float set_r, float set_g, float set_b, float set_a);
@@ -58,14 +58,11 @@ public:
 private:
 	ResourceMaterial* source_image = nullptr;
 	ResourceMaterial* overwrite_image = nullptr;
-	CompImage* to_fill = nullptr;
 	Type type = SIMPLE;
 	FillMethod method = HORITZONTAL;
-
 	uint uuid_source_image = 0;
 	bool raycast_target = true;
 	bool select_source_image = false;
-	bool filler = false;
 	float filled = 1.0f;
 };
 #endif//COMPONENT_IMAGE_H

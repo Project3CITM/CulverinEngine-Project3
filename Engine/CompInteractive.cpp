@@ -726,5 +726,5 @@ void CompInteractive::StartTransitionSprite(ResourceMaterial * sprite_to_change)
 	if (image == nullptr)
 		return;
 	image->SetOverwriteImage(sprite_to_change);
-	image->UpdatesPriteId();
+	image->UpdateSpriteId();
 }

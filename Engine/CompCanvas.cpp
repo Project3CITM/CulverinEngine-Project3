@@ -144,31 +144,31 @@ void CompCanvas::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
-void CompCanvas::AddCanvasRender(CompCanvasRender* to_add)
+
+
+void CompCanvas::AddGraphic(CompGraphic * to_add)
 {
-	canvas_render.push_back(to_add);
+	graphic_vector.push_back(to_add);
 }
 
-void CompCanvas::RemoveCanvasRender(CompCanvasRender* to_remove)
+void CompCanvas::RemoveGraphic(CompGraphic * to_remove)
 {
-	for (int i = 0; i < canvas_render.size(); i++)
+	for (int i = 0; i < graphic_vector.size(); i++)
 	{
-		if (canvas_render[i] == to_remove)
+		if (graphic_vector[i] == to_remove)
 		{
 			LOG("CanvasRender Removed from Canvas");
-			canvas_render.erase(canvas_render.begin()+i);
+			graphic_vector.erase(graphic_vector.begin() + i);
 			return;
 		}
 	}
 	LOG("Error:CanvasRender not found on this Canvas");
-
 }
 
-void CompCanvas::DrawCanvasRender()
+void CompCanvas::DrawGraphic()
 {
-	for (int i = 0; i < canvas_render.size(); i++)
+	for (int i = 0; i < graphic_vector.size(); i++)
 	{
-		canvas_render[i]->DrawGraphic();
+		graphic_vector[i]->DrawGraphic();
 	}
-	canvas_render.clear();
 }
