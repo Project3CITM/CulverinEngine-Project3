@@ -223,10 +223,6 @@ update_status ModuleLightning::PreUpdate(float dt)
 			{
 				frame_used_lights.push_back(l);
 			}
-			else
-			{
-				--i;
-			}
 		}
 	}
 

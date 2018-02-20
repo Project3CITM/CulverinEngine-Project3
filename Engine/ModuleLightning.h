@@ -64,7 +64,7 @@ public:
 	void OnLightDestroyed(CompLight* l);
 
 	std::vector<CompLight*> GetSceneLights()const;
-	std::vector<CompLight*>* GetActiveLights()const; // Return the point active lights for that frame.
+	std::vector<CompLight*>* GetActiveLights(); // Return the point active lights for that frame.
 
 	bool SetEventListenrs();
 
