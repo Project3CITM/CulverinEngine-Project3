@@ -31,11 +31,32 @@ bool ModuleMap::Init(JSON_Object* node)
 bool ModuleMap::Start()
 {
 	map_string = "Hola Joan";
+	imported_map.clear();
 	return true;
 }
 
 update_status ModuleMap::PreUpdate(float dt)
 {
+	if (imported_map.size() > 0)
+	{
+		TypeMap type = App->map->CheckTypeMap(imported_map.c_str());
+		vector_map.clear();
+		switch (type)
+		{
+		case TypeMap::MAP_WALKABLE:
+		{
+			App->json_seria->LoadMapWalkable(vector_map, height_map, width_map, size_separation, imported_map.c_str());
+		}
+		case TypeMap::MAP_3D:
+		{
+
+		}
+		case TypeMap::MAP_NAVIGATION:
+		{
+
+		}
+		}
+	}
 	return update_status::UPDATE_CONTINUE;
 }
 
@@ -83,9 +104,21 @@ void ModuleMap::ShowEditorMap(bool &active)
 			{
 
 			}
-			if (ImGui::MenuItem("Load Map"))
+			if (ImGui::BeginMenu("Import Map"))
 			{
-				
+				if (ImGui::MenuItem("Import Walkable Map", NULL, false, false))
+				{
+
+				}
+				if (ImGui::MenuItem("Import 3D Map", NULL, false, false))
+				{
+
+				}
+				if (ImGui::MenuItem("Import Navigation Map", NULL, false, false))
+				{
+
+				}
+				ImGui::EndMenu();
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit"))
@@ -220,39 +253,17 @@ void ModuleMap::ShowEditorMap(bool &active)
 		{
 			if (ImGui::Button("Reset Map"))
 			{
-				for (int y = 0; y < MAX_ARRAY; y++)
-				{
-					for (int x = 0; x < MAX_ARRAY; x++)
-					{
-						map[x][y] = -1;
-					}
-				}
+				ResetMap();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Delete Map"))
 			{
-				for (int y = 0; y < MAX_ARRAY; y++)
-				{
-					for (int x = 0; x < MAX_ARRAY; x++)
-					{
-						map[x][y] = -1;
-					}
-				}
-				map_created = false;
+				DeleteMap();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Complet with No-Walk"))
 			{
-				for (int y = 0; y < height_map; y++)
-				{
-					for (int x = 0; x < width_map; x++)
-					{
-						if (map[x][y] == -1)
-						{
-							map[x][y] = 1;
-						}
-					}
-				}
+				CompletNoWalk();
 			}
 			if (selected_type != -1)
 			{
@@ -388,16 +399,9 @@ void ModuleMap::ShowWalkableMap()
 	}
  	if (ImGui::Button("Export Map ('Name'.map.json)"))
 	{
-		for (int y = 0; y < height_map; y++)
-		{
-			for (int x = 0; x < width_map; x++)
-			{
-				if (map[x][y] == -1)
-				{
-					map[x][y] == 1;
-				}
-			}
-		}
+		// First complet map to export
+		CompletNoWalk();
+		vector_map.clear();
 		for (int y = 0; y < height_map; y++)
 		{
 			std::string line = "";
@@ -405,9 +409,9 @@ void ModuleMap::ShowWalkableMap()
 			{
 				line += std::to_string(map[x][y]);
 			}
-			export_map.push_back(line);
+			vector_map.push_back(line);
 		}
-		App->json_seria->SaveMapWalkable(export_map, height_map, width_map, name_map);
+		App->json_seria->SaveMapWalkable(vector_map, height_map, width_map, size_separation, name_map);
 	}
 	if (ImGui::Button("Create Level Map"))
 	{
@@ -484,7 +488,7 @@ void ModuleMap::ShowCreationMap()
 		{
 			ImGui::PushID(i * 10);
 			ShowTextWithColor(ImGuiCol_Text, i);
-			ImGui::Text("%i: ", i); ImGui::SameLine();
+			ImGui::Text("%i: ", i + 1); ImGui::SameLine();
 			if (ImGui::BeginCombo("##Pref", prefabs[i].c_str()))
 			{
 				for (int n = 0; n < all_prefabs.size(); n++)
@@ -571,7 +575,24 @@ void ModuleMap::ShowCreationMap()
 	ImGui::SameLine();
 	if (ImGui::Button("Export Map ('Name'.map.json)"))
 	{
-
+		vector_map.clear();
+		for (int y = 0; y < height_map; y++)
+		{
+			for (int x = 0; x < width_map; x++)
+			{
+				map[x][y] += 1;
+			}
+		}
+		for (int y = 0; y < height_map; y++)
+		{
+			std::string line = "";
+			for (int x = 0; x < width_map; x++)
+			{
+				line += std::to_string(map[x][y]);
+			}
+			vector_map.push_back(line);
+		}
+		App->json_seria->SaveMapCreation(vector_map, prefabs, height_map, width_map, size_separation, name_map);
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Create Level Map"))
@@ -641,6 +662,8 @@ void ModuleMap::ShowNavigationMap()
 {
 }
 
+
+
 void ModuleMap::ShowTextWithColor(ImGuiCol_ type,int id)
 {
 	if (id == 0) // Green
@@ -687,6 +710,76 @@ void ModuleMap::ShowTextWithColor(ImGuiCol_ type,int id)
 	{
 		ImGui::PushStyleColor(type, ImVec4(0.136f, 0.136f, 0.136f, 1.0f));
 	}
+}
+
+void ModuleMap::DeleteMap()
+{
+	for (int y = 0; y < MAX_ARRAY; y++)
+	{
+		for (int x = 0; x < MAX_ARRAY; x++)
+		{
+			map[x][y] = -1;
+		}
+	}
+	map_created = false;
+}
+
+void ModuleMap::ResetMap()
+{
+	for (int y = 0; y < MAX_ARRAY; y++)
+	{
+		for (int x = 0; x < MAX_ARRAY; x++)
+		{
+			map[x][y] = -1;
+		}
+	}
+}
+
+void ModuleMap::CompletNoWalk()
+{
+	for (int y = 0; y < height_map; y++)
+	{
+		for (int x = 0; x < width_map; x++)
+		{
+			if (map[x][y] == -1)
+			{
+				map[x][y] = 1;
+			}
+		}
+	}
+}
+
+TypeMap ModuleMap::CheckTypeMap(const char* map)
+{
+	std::string file = map;
+	std::string extension = map;
+
+	size_t extension_pos = file.find_last_of(".");
+
+	extension = file.substr(extension_pos + 1);
+	std::string extension_map = file.substr(0, extension_pos);;
+	if (extension == "json")
+	{
+		extension_pos = extension_map.find_last_of(".");
+		extension_map = extension_map.substr(extension_pos + 1);
+		if (extension_map == "mapwalk")
+		{
+			return TypeMap::MAP_WALKABLE;
+		}
+		else if (extension_map == "map3d")
+		{
+			return TypeMap::MAP_3D;
+		}
+		else if (extension_map == "mapnavi")
+		{
+			return TypeMap::MAP_NAVIGATION;
+		}
+	}
+	else
+	{
+		return TypeMap::MAP_NON;
+	}
+	return TypeMap::MAP_NON;
 }
 
 int ModuleMap::GetHeightMap()
