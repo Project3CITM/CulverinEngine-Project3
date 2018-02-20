@@ -295,9 +295,43 @@ void CompScript::ShowInspectorInfo()
 		ImGui::EndPopup();
 	}
 
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.00f));
-	//ImGui::Text("Script"); ImGui::SameLine();
+	ImGui::PopStyleVar();
+	ShowFSMInspectorInfo();
 
+	ImGui::TreePop();
+}
+
+void CompScript::ShowVariablesInfo()
+{
+	if (resource_script->GetState() == Resource::State::LOADED && csharp != nullptr)
+	{
+		//Access chsharp script, it contains a vector of all variables with their respective info
+		for (uint i = 0; i < csharp->variables.size(); i++)
+		{
+			ImGui::PushID(i);
+
+			//Show variable TYPE --------------------------
+			ShowVarType(csharp->variables[i]); ImGui::SameLine();
+
+			//Show variable NAME -------------------------
+			ImGui::Text(" %s", csharp->variables[i]->name); ImGui::SameLine();
+
+			//Show variable VALUE -------------------------
+			ShowVarValue(csharp->variables[i], i);
+
+			ImGui::PopID();
+		}
+	}
+	else
+	{
+		ImGui::TextColored(ImVec4(1.0f,0.223f,0.233f,1.0f),"SCRIPT NOT COMPILED CORRECTLY");
+	}
+}
+
+void CompScript::ShowFSMInspectorInfo()
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 0));
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.00f));
 	if (resource_script != nullptr)
 	{
 		char buffer[50];
@@ -324,7 +358,7 @@ void CompScript::ShowInspectorInfo()
 		ImGui::Text("NAME:"); ImGui::SameLine();
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Script)");
 		char creat_string[50];
-		sprintf(creat_string,"Create New Script##%i", uid);
+		sprintf(creat_string, "Create New Script##%i", uid);
 		if (ImGui::Button(creat_string))
 		{
 			App->gui->ShowCreateNewScriptWindow();
@@ -381,35 +415,6 @@ void CompScript::ShowInspectorInfo()
 	if (active_script && resource_script != nullptr)
 	{
 		resource_script->ShowEditor(active_script);
-	}
-
-	ImGui::TreePop();
-}
-
-void CompScript::ShowVariablesInfo()
-{
-	if (resource_script->GetState() == Resource::State::LOADED && csharp != nullptr)
-	{
-		//Access chsharp script, it contains a vector of all variables with their respective info
-		for (uint i = 0; i < csharp->variables.size(); i++)
-		{
-			ImGui::PushID(i);
-
-			//Show variable TYPE --------------------------
-			ShowVarType(csharp->variables[i]); ImGui::SameLine();
-
-			//Show variable NAME -------------------------
-			ImGui::Text(" %s", csharp->variables[i]->name); ImGui::SameLine();
-
-			//Show variable VALUE -------------------------
-			ShowVarValue(csharp->variables[i], i);
-
-			ImGui::PopID();
-		}
-	}
-	else
-	{
-		ImGui::TextColored(ImVec4(1.0f,0.223f,0.233f,1.0f),"SCRIPT NOT COMPILED CORRECTLY");
 	}
 }
 

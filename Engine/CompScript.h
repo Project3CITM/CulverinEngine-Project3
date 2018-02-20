@@ -40,6 +40,7 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void ShowVariablesInfo();
+	void ShowFSMInspectorInfo(); // Only a part of the inspector is shown in the FSM
 	void ShowVarType(ScriptVariable* var);
 	void ShowVarValue(ScriptVariable* var, int i);
 	void CopyValues(const CompScript * component);

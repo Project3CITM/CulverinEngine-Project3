@@ -47,10 +47,8 @@ void CompFiniteStateMachine::Update(float dt)
 	if (current_state != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
 	{
 		FSM_Transition* triggered_transition = nullptr;
-
-		current_state->CheckTriggeredTransition(triggered_transition);
-
-		if (triggered_transition != nullptr)
+		
+		if (current_state->CheckTriggeredTransition(&triggered_transition))
 		{
 			FSM_State* target_state = triggered_transition->GetTargetState();
 			current_state->DoExitAction();
@@ -90,6 +88,8 @@ void CompFiniteStateMachine::Update(float dt)
 					}
 					//DEBUG for now END
 					ImGui::Text("Script: %s", (*it)->GetScriptName());				CheckOpenStateOptions(*it);
+					if(!show_selecting_script_window)
+						(*it)->ShowScriptInfo();
 					ImGui::Text("Transitions (%i):", (*it)->GetNumTransitions());	CheckOpenStateOptions(*it);
 					// --- Show Transitions + Manages the selected state/transition/condition --- //
 					if ((*it)->DisplayTransitionsInfo(&selected_transition, &selected_condition))
@@ -455,7 +455,7 @@ bool CompFiniteStateMachine::DeleteState(FSM_State * state_to_delete)
 
 	if (state_to_delete == initial_state)
 	{
-		if (states.size() >= 1)
+		if (states.size() > 1)
 		{
 			if (state_to_delete == states[0])
 				initial_state = current_state = states[1];
@@ -648,12 +648,12 @@ bool FSM_State::DeleteTransition(FSM_Transition * transition_to_delete)
 	return false;
 }
 
-bool FSM_State::CheckTriggeredTransition(FSM_Transition * transition) const
+bool FSM_State::CheckTriggeredTransition(FSM_Transition** transition) const
 {
 	for (std::vector<FSM_Transition*>::const_iterator it = transitions.begin(); it != transitions.end(); it++)
 		if ((*it)->IsTriggered())
 		{
-			transition = *it;
+			*transition = *it;
 			return true;
 		}
 	return false;
@@ -703,6 +703,20 @@ bool FSM_State::DisplayTransitionsInfo(FSM_Transition** selected_transition, FSM
 		ImGui::OpenPopup("Erase Transition Popup");
 
 	return transition_selected;
+}
+
+bool FSM_State::ShowScriptInfo()
+{
+	if (script == nullptr)
+		return false;
+
+	if (ImGui::TreeNodeEx("Script Info:", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		script->ShowFSMInspectorInfo();
+		ImGui::TreePop();
+	}
+
+	return true;
 }
 
 void FSM_State::SetStateName(const char * new_name)

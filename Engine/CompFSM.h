@@ -96,7 +96,7 @@ public:
 	void DoAction(float dt);
 	void DoExitAction();
 
-	bool CheckTriggeredTransition(FSM_Transition* transition)const;	
+	bool CheckTriggeredTransition(FSM_Transition** transition)const;	
 	
 	bool AddScript(CompScript* script_to_add);	//Only support 1 script per node yet
 	bool SelectScript(bool& selecting);
@@ -107,6 +107,7 @@ public:
 
 	// ----- Visual Scripting ----- //
 	bool DisplayTransitionsInfo(FSM_Transition** selected_transition, FSM_Condition** selected_condition); // Returns true if any condition was selected
+	bool ShowScriptInfo();
 	// ----- Visual Scripting ----- //
 
 	// SETTERS ----------------
