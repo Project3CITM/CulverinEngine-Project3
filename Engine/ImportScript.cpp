@@ -617,6 +617,9 @@ void ImportScript::LinkFunctions()
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
+
+	//COMPONENT COLLIDER FUNCTIONS -----------------------
+	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 }
 
 //Log messages into Engine Console
@@ -1026,4 +1029,9 @@ void ImportScript::Deactivate(MonoObject * object, int uid)
 void ImportScript::Clicked(MonoObject * object)
 {
 	current->Clicked(object);
+}
+
+MonoObject * ImportScript::GetCollidedObject(MonoObject * object)
+{
+	return current->GetCollidedObject(object);
 }

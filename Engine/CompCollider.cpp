@@ -16,7 +16,7 @@
 CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Collider";
+	name_component = "CompCollider";
 
 
 	if (parent)
@@ -45,7 +45,7 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Component(Comp_Type::C_COLLIDER, parent)
 {
 	uid = App->random->Int();
-	name_component = "Collider";
+	name_component = "CompCollider";
 
 	//Copy
 	collider_type = copy.collider_type;
@@ -364,14 +364,18 @@ void CompCollider::SyncComponent()
 // -----------------------------------------------------------------
 void CompCollider::OnTriggerEnter(Component * actor)
 {
+	if (listener == nullptr)return;
+
 	// Call Listner OnTriggerEnter(Component* actor);
-	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter, (void**)&actor);
+	collided_object = actor->GetParent();
+	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
 }
 
 void CompCollider::OnTriggerLost(Component * actor)
 {
+	collided_object = nullptr;
 	// Call Listner OnTriggerLost(Component* actor);
-	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost, (void**)&actor);
+	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
 }
 
 void CompCollider::ChangeCollider()
@@ -433,6 +437,11 @@ float3 CompCollider::GetPosition() const
 Quat CompCollider::GetLocalQuat() const
 {
 	return local_quat;
+}
+
+GameObject * CompCollider::GetCollidedObject() const
+{
+	return collided_object;
 }
 
 jpPhysicsRigidBody* CompCollider::GivePhysicsBody(CompRigidBody* new_rigid_body)
