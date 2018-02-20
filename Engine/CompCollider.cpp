@@ -302,6 +302,7 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 	//Rad
 	json_object_dotset_number_with_std(object, name + "Rad", rad);
 
+	json_object_dotset_boolean_with_std(object, name + "Trigger", trigger);
 
 	json_object_dotset_string_with_std(object, name + "ScriptName", script_name.c_str());
 }
@@ -332,6 +333,8 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 	//Rad	
 	rad = json_object_dotget_number_with_std(object, name + "Rad");
+
+	trigger = json_object_dotget_boolean_with_std(object, name + "Trigger");
 
 	//Script name
 	script_name = json_object_dotget_string_with_std(object, name + "ScriptName");

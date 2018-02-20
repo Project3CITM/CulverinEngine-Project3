@@ -184,11 +184,15 @@ void CompRigidBody::Save(JSON_Object * object, std::string name, bool saveScene,
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+	json_object_dotset_boolean_with_std(object, name + "Kinematic", kinematic);
 }
 
 void CompRigidBody::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+
+	kinematic = json_object_dotget_boolean_with_std(object, name + "Kinematic");
 }
 
 void CompRigidBody::SyncComponent()
