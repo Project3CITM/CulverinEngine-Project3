@@ -40,9 +40,7 @@ struct SkeletonSource
 	ImportBone* bones = nullptr;
 	char* bone_hirarchy_names = nullptr;
 	uint* bone_hirarchy_num_childs = nullptr;
-	float* weights = nullptr;
-	float* draw_buffer_source = nullptr;
-	uint buffer_size = 0;
+	std::vector<std::vector<std::pair<uint, float>>> vertex_weights;
 
 	~SkeletonSource()
 	{
@@ -50,8 +48,6 @@ struct SkeletonSource
 		delete [] bones;
 		delete [] bone_hirarchy_names;
 		delete [] bone_hirarchy_num_childs;
-		delete [] weights;
-		delete [] draw_buffer_source;
 	}
 };
 

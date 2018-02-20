@@ -113,10 +113,7 @@ bool ResourceMesh::LoadToMemory()
 	}
 
 	if (skeleton != nullptr)
-	{
-		vertex_size_in_buffer += 68;// 4 weights + 64 for 12 3x4mats
-		skeleton->buffer_size = vertex_size_in_buffer * num_vertices * sizeof(float);
-	}
+		vertex_size_in_buffer += 4;// 4 weights
 
 	total_buffer_mesh = new char[vertex_size_in_buffer * num_vertices * sizeof(float)];
 	char* cursor = total_buffer_mesh;
@@ -140,27 +137,27 @@ bool ResourceMesh::LoadToMemory()
 
 		if (skeleton != nullptr)
 		{
-			memcpy(cursor, &skeleton->weights[i], 4 * sizeof(float));
-			cursor += 4 * sizeof(float);
+			for (std::vector<std::pair<uint, float>>::iterator it = skeleton->vertex_weights[i].begin(); it != skeleton->vertex_weights[i].end(); ++it)
+			{
+				memcpy(cursor, &it->second, sizeof(float));
+				cursor += sizeof(float);
+			}
 
-			//for skining matrices later
-			memset(cursor, 0.0f, 64 * sizeof(float));
-			cursor += 64 * sizeof(float);
+			if (skeleton->vertex_weights[i].size() < 4)
+			{
+				float zero = 0.0f;
+				for (int j = 0; j < 4 - skeleton->vertex_weights[i].size(); j++)
+				{
+					memcpy(cursor, &zero, sizeof(float));
+					cursor += sizeof(float);
+				}
+			}
 		}
 	}
 
-	if (skeleton != nullptr)
-	{
-		skeleton->draw_buffer_source = new float[vertex_size_in_buffer * num_vertices];
-		memcpy(skeleton->draw_buffer_source, total_buffer_mesh, vertex_size_in_buffer * num_vertices * sizeof(float));
-	}
-	else
-	{
-		glGenBuffers(1, &id_total_buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, id_total_buffer);
-		glBufferData(GL_ARRAY_BUFFER, vertex_size_in_buffer * num_vertices * sizeof(float), &total_buffer_mesh[0], GL_STATIC_DRAW);
-	}
-
+	glGenBuffers(1, &id_total_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, id_total_buffer);
+	glBufferData(GL_ARRAY_BUFFER, vertex_size_in_buffer * num_vertices * sizeof(float), &total_buffer_mesh[0], GL_STATIC_DRAW);
 
 	delete[] total_buffer_mesh;	
 

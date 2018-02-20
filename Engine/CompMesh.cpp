@@ -614,16 +614,10 @@ void CompMesh::GenSkeleton()
 	transform->SetScale(scale);
 
 	skeleton->bones.reserve(source->num_bones);
-	skeleton->bones.reserve(resource_mesh->num_vertices);
-	skeleton->draw_buffer = new float[source->buffer_size];
-	memcpy(skeleton->draw_buffer, source->draw_buffer_source, source->buffer_size);
+	skeleton->influences.resize(resource_mesh->num_vertices);
 
 	for (int i = 0; i < resource_mesh->num_vertices; i++)
-		skeleton->influences.push_back(std::vector<GameObject*>());
-
-	glGenBuffers(1, &skeleton->id_draw_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, skeleton->id_draw_buffer);
-	glBufferData(GL_ARRAY_BUFFER, source->buffer_size * sizeof(float), skeleton->draw_buffer, GL_DYNAMIC_DRAW);
+		skeleton->influences[i].resize(source->vertex_weights[i].size());
 
 	parent->AddChildGameObject(new_skeleton);
 	new_skeleton->AddChildGameObject(GenBone(&name_iterator, source, generated_bones, skeleton));
@@ -661,8 +655,20 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 		}
 
 	ImportBone& bone = source->bones[generated_bones];
+
 	for (int i = 0; i < bone.num_weights; i++)
-		skeleton->influences[bone.weights->vertex_id].push_back(new_bone);
+	{
+		uint pos = 0;
+
+		for (std::vector<std::pair<uint, float>>::const_iterator it = source->vertex_weights[i].begin(); it != source->vertex_weights[i].end(); ++it)
+		{
+			if (it->first == generated_bones)
+				break;
+			pos++;
+		}
+		
+		skeleton->influences[bone.weights->vertex_id][pos] = new_bone;
+	}
 
 	uint num_childs = source->bone_hirarchy_num_childs[generated_bones];
 	generated_bones++;

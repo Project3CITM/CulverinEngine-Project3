@@ -17,6 +17,7 @@
 #include <experimental/filesystem>
 #include <fstream>
 #include <queue>
+#include <algorithm>
 
 ImportMesh::ImportMesh()
 {}
@@ -59,7 +60,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	aiMatrix4x4* bone_hirarchy_local_transforms = nullptr;
 	char* bone_hirarchy_names = nullptr;
 	uint* bone_hirarchy_num_childs = nullptr;
-	float* vertex_weights = nullptr;
+	std::vector<std::vector<std::pair<uint,float>>> vertex_weights;
 	//--
 
 	for (uint i = 0; i < mesh->mNumFaces; i++)
@@ -154,8 +155,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			bone_name_sizes = new uint[num_bones];
 			num_weights = new uint[num_bones];
 			weights = new ImportBone::Weight*[num_bones];
-			vertex_weights = new float[num_vertices * 4];
-			memset(vertex_weights, 0.0f, num_vertices * 4);
+			vertex_weights.resize(num_vertices * 4);
 
 			for(int i = 0; i < num_bones; i++)
 			{
@@ -176,12 +176,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					weights[i][r].weight = mesh->mBones[i]->mWeights[r].mWeight;
 					weights[i][r].vertex_id = mesh->mBones[i]->mWeights[r].mVertexId;
 
-					float* cursor = &vertex_weights[mesh->mBones[i]->mWeights[r].mVertexId * 4];
-
-					while (*cursor != 0.0f)
-						cursor++;
-
-					memcpy(cursor, &mesh->mBones[i]->mWeights[r].mWeight, sizeof(float));
+					vertex_weights[i].push_back(std::make_pair(i, mesh->mBones[i]->mWeights[r].mWeight));
 				}				
 			}
 
@@ -297,7 +292,8 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	size += sizeof(float) * 4 * 4 * num_bones; //bone hyrarchy local transforms
 	size += total_names_size; //bone hyrarchy names
 	size += sizeof(uint); //names_sizes
-	size += sizeof(float) * 4 * num_vertices; //weights per vertex
+	size += sizeof(std::pair<uint,float>) * total_weights; //weights per vertex
+	size += sizeof(uint) * num_vertices; //weight vec sizes
 	size += sizeof(uint) * num_bones; //bone hyrarchy name sizes
 	size += sizeof(uint) * num_bones; //bone num childs
 	//--
@@ -358,9 +354,17 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		memcpy(cursor, num_weights, bytes);
 
 		//Weights per vertex
-		cursor += bytes;
-		bytes = sizeof(float) * 4 * num_vertices;
-		memcpy(cursor, vertex_weights, bytes);
+		for (int i = 0; i < num_vertices; i++)
+		{
+			cursor += bytes;
+			bytes = sizeof(uint);
+			uint size = vertex_weights[i].size();
+			memcpy(cursor, &size, bytes);
+
+			cursor += bytes;
+			bytes = sizeof(std::pair<uint,float>) * vertex_weights[i].size();
+			memcpy(cursor, vertex_weights[i].data(), bytes);
+		}
 
 		//Bone weights
 		for (int i = 0; i < num_bones; i++)
@@ -460,7 +464,6 @@ void ImportMesh::Import(uint num_vertices, uint num_indices, uint num_normals, u
 	RELEASE_ARRAY(vertices_);
 	RELEASE_ARRAY(indices_);
 	RELEASE_ARRAY(vert_normals);
-
 
 	// Create Resource ----------------------
 	ResourceMesh* res_mesh = (ResourceMesh*)App->resource_manager->CreateNewResource(Resource::Type::MESH, uuid);
@@ -589,10 +592,19 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 			memcpy(num_weights, cursor, bytes);
 
 			//Weights per vertex
-			cursor += bytes;
-			bytes = sizeof(float) * 4 * num_vertices;
-			skeleton_source->weights = new float[4 * num_vertices];
-			memcpy(skeleton_source->weights, cursor, bytes);
+			skeleton_source->vertex_weights.resize(num_vertices);
+			for (int i = 0; i < num_vertices; i++)
+			{
+				cursor += bytes;
+				bytes = sizeof(uint);
+				uint size;
+				memcpy(&size, cursor, bytes);
+
+				skeleton_source->vertex_weights[i].resize(size);
+				cursor += bytes;
+				bytes = sizeof(std::pair<uint, float>) * size;
+				memcpy(cursor, skeleton_source->vertex_weights[i].data(), bytes);
+			}
 
 			//Bone weights
 			for (int i = 0; i < num_bones; i++)
