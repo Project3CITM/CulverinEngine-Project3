@@ -156,6 +156,7 @@
     <ClInclude Include="ModuleRenderGui.h" />
     <ClInclude Include="ModuleResourceManager.h" />
     <ClInclude Include="ModuleShaders.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PhysX\Include\characterkinematic\PxBoxController.h" />
     <ClInclude Include="PhysX\Include\characterkinematic\PxCapsuleController.h" />
     <ClInclude Include="PhysX\Include\characterkinematic\PxCharacter.h" />
@@ -494,6 +495,7 @@
     <ClCompile Include="ModuleRenderGui.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleShaders.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="JSONSerialization.cpp" />
     <ClCompile Include="ResourceAnimation.cpp" />
