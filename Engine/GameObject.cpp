@@ -1005,24 +1005,25 @@ void GameObject::ShowInspectorInfo()
 			AddComponent(Comp_Type::C_LIGHT);
 			add_component = false;
 		}
-		if (ImGui::BeginMenu("UI"))
+		//if (ImGui::BeginMenu("UI"))
+		//{
+
+		//	ImGui::EndMenu();
+		//}
+		if (ImGui::MenuItem("Canvas"))
 		{
-			if (ImGui::MenuItem("Canvas"))
-			{
-				AddComponent(Comp_Type::C_CANVAS);
-				add_component = false;
-			}
-			if (ImGui::MenuItem("Image"))
-			{
-				AddComponent(Comp_Type::C_IMAGE);
-				add_component = false;
-			}
-			if (ImGui::MenuItem("Text"))
-			{
-				AddComponent(Comp_Type::C_TEXT);
-				add_component = false;
-			}
-			ImGui::EndMenu();
+			AddComponent(Comp_Type::C_CANVAS);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Image"))
+		{
+			AddComponent(Comp_Type::C_IMAGE);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Text"))
+		{
+			AddComponent(Comp_Type::C_TEXT);
+			add_component = false;
 		}
 		if (ImGui::MenuItem("Audio"))
 		{
