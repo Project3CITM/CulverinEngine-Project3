@@ -3,24 +3,15 @@ using CulverinEditor.Debug;
 
 public class Codev1 : CulverinBehaviour
 {
-    int a = 3;
-
     void Start()
     {
-
+        GetComponent<CompButton>().Clicked();
+        GetComponent<CompButton>().Deactivate();
     }
 
-    void Update()
+    void OnClick()
     {
-        Debug.Log(a.ToString());
-    }
-
-    public void Test()
-    {
-        //Debug.Log(a.ToString());
-        
-        gameObject.SetTag("uned");
-        Debug.Log(gameObject.GetTag());
+        Debug.Log("button down");
     }
 
 }

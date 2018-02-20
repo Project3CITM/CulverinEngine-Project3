@@ -308,6 +308,7 @@ void CompInteractive::Activate()
 }
 void CompInteractive::Deactive()
 {
+	LOG("ILOSAE");
 	disabled = true;
 }
 

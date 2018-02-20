@@ -1016,11 +1016,14 @@ void ImportScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, floa
 void ImportScript::Activate(MonoObject * object, int uid)
 {
 	current->Activate(object, uid);
-
 }
 
 void ImportScript::Deactivate(MonoObject * object, int uid)
 {
 	current->Deactivate(object, uid);
+}
 
+void ImportScript::Clicked(MonoObject * object)
+{
+	current->Clicked(object);
 }

@@ -182,7 +182,7 @@ public:
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
 	void		Deactivate(MonoObject * object, int uid);
-
+	void		Clicked(MonoObject* object);
 
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);

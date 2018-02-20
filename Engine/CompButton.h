@@ -21,10 +21,11 @@ public:
 
 	void AddLinkedScript(const CompScript* script);
 
+	void OnClick();
 
 private:
 
-	void OnClick();
+
 	void OnPointDown(Event event_input);
 	void ShowInspectorAnimationTransition();
 

@@ -13,6 +13,7 @@
 #include "GameObject.h"
 #include "Scene.h"
 #include "CompAudio.h"
+#include "CompButton.h"
 
 //SCRIPT VARIABLE UTILITY METHODS ------
 ScriptVariable::ScriptVariable(const char* name, VarType type, VarAccess access, CSharpScript* script) : name(name), type(type), access(access), script(script)
@@ -1720,6 +1721,19 @@ void CSharpScript::Deactivate(MonoObject * object, int uid)
 		}
 	}
 }
+
+void CSharpScript::Clicked(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		CompButton* interactive = (CompButton*)current_game_object->FindComponentByType(Comp_Type::C_BUTTON);
+		if (interactive != nullptr)
+		{
+			interactive->OnClick();
+		}
+	}
+}
+
 // Map ------------------------------------------------
 MonoString* CSharpScript::GetMapString(MonoObject* object)
 {
