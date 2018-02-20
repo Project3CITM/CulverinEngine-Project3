@@ -658,16 +658,9 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 
 	for (int i = 0; i < bone.num_weights; i++)
 	{
-		uint pos = 0;
-
 		for (std::vector<std::pair<uint, float>>::const_iterator it = source->vertex_weights[i].begin(); it != source->vertex_weights[i].end(); ++it)
-		{
 			if (it->first == generated_bones)
-				break;
-			pos++;
-		}
-		
-		skeleton->influences[bone.weights->vertex_id][pos] = new_bone;
+				skeleton->influences[bone.weights->vertex_id][it - source->vertex_weights[i].begin()] = new_bone;
 	}
 
 	uint num_childs = source->bone_hirarchy_num_childs[generated_bones];

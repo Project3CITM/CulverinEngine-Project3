@@ -176,7 +176,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					weights[i][r].weight = mesh->mBones[i]->mWeights[r].mWeight;
 					weights[i][r].vertex_id = mesh->mBones[i]->mWeights[r].mVertexId;
 
-					vertex_weights[i].push_back(std::make_pair(i, mesh->mBones[i]->mWeights[r].mWeight));
+					vertex_weights[mesh->mBones[i]->mWeights[r].mVertexId].push_back(std::make_pair(i, mesh->mBones[i]->mWeights[r].mWeight));
 				}				
 			}
 
@@ -282,21 +282,21 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	
 	if (mesh->HasBones())
 	{
-	//Skeleton
-	size += sizeof(float4x4) * num_bones; //bone offsets
-	size += total_names_size; //bone names
-	size += sizeof(uint)* num_bones; //num name sizes
-	size += sizeof(uint) * num_bones; // num_weights
-	size += sizeof(ImportBone::Weight) * total_weights; //weights
-	size += sizeof(float) * 4 * 4; //skeleton transform
-	size += sizeof(float) * 4 * 4 * num_bones; //bone hyrarchy local transforms
-	size += total_names_size; //bone hyrarchy names
-	size += sizeof(uint); //names_sizes
-	size += sizeof(std::pair<uint,float>) * total_weights; //weights per vertex
-	size += sizeof(uint) * num_vertices; //weight vec sizes
-	size += sizeof(uint) * num_bones; //bone hyrarchy name sizes
-	size += sizeof(uint) * num_bones; //bone num childs
-	//--
+		//Skeleton
+		size += sizeof(float4x4) * num_bones; //bone offsets
+		size += total_names_size; //bone names
+		size += sizeof(uint)* num_bones; //num name sizes
+		size += sizeof(uint) * num_bones; // num_weights
+		size += sizeof(ImportBone::Weight) * total_weights; //weights
+		size += sizeof(float) * 4 * 4; //skeleton transform
+		size += sizeof(float) * 4 * 4 * num_bones; //bone hyrarchy local transforms
+		size += total_names_size; //bone hyrarchy names
+		size += sizeof(uint); //names_sizes
+		size += sizeof(std::pair<uint,float>) * total_weights; //weights per vertex
+		size += sizeof(uint) * num_vertices; //weight vec sizes
+		size += sizeof(uint) * num_bones; //bone hyrarchy name sizes
+		size += sizeof(uint) * num_bones; //bone num childs
+		//--
 	}
 
 	// Allocating all data 
@@ -583,7 +583,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 				bytes = bone_name_sizes[i];
 
 				skeleton_source->bones[i].offset = bone_offsets[i];
-			}			
+			}		
 
 			//Bone weight num
 			cursor += bytes;
@@ -603,7 +603,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 				skeleton_source->vertex_weights[i].resize(size);
 				cursor += bytes;
 				bytes = sizeof(std::pair<uint, float>) * size;
-				memcpy(cursor, skeleton_source->vertex_weights[i].data(), bytes);
+				memcpy(skeleton_source->vertex_weights[i].data(), cursor, bytes);
 			}
 
 			//Bone weights
