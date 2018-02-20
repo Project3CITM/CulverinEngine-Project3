@@ -376,42 +376,7 @@ void CompScript::ShowInspectorInfo()
 			}
 		}
 		if (select_script)
-		{
-			ResourceScript* temp = (ResourceScript*)App->resource_manager->ShowResources(select_script, Resource::Type::SCRIPT);
-			if (temp != nullptr)
-			{
-				if (resource_script != nullptr)
-				{
-					if (resource_script->num_game_objects_use_me > 0)
-					{
-						resource_script->num_game_objects_use_me--;
-					}
-				}
-
-				//Link the Resource to the Component
-				resource_script = temp;
-				resource_script->num_game_objects_use_me++;
-				name_script = resource_script->name;
-
-				if (resource_script->IsCompiled() == Resource::State::UNLOADED)
-				{
-					if (App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script))
-					{
-						resource_script->SetState(Resource::State::LOADED);
-					}
-					else
-					{
-						resource_script->SetState(Resource::State::FAILED);
-					}
-				}
-				if (resource_script->GetState() != Resource::State::FAILED)
-				{ 
-					csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
-					SetOwnGameObject(parent);
-				}
-				Enable();
-			}
-		}
+			SelectScript(select_script);
 	}
 	if (active_script && resource_script != nullptr)
 	{
@@ -557,6 +522,46 @@ void CompScript::ShowVarValue(ScriptVariable* var, int pushi)
 void CompScript::CopyValues(const CompScript* component)
 {
 	//more...
+}
+
+bool CompScript::SelectScript(bool& selecting)
+{
+	ResourceScript* temp = (ResourceScript*)App->resource_manager->ShowResources(selecting, Resource::Type::SCRIPT);
+	if (temp != nullptr)
+	{
+		if (resource_script != nullptr)
+		{
+			if (resource_script->num_game_objects_use_me > 0)
+			{
+				resource_script->num_game_objects_use_me--;
+			}
+		}
+
+		//Link the Resource to the Component
+		resource_script = temp;
+		resource_script->num_game_objects_use_me++;
+		name_script = resource_script->name;
+
+		if (resource_script->IsCompiled() == Resource::State::UNLOADED)
+		{
+			if (App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script))
+			{
+				resource_script->SetState(Resource::State::LOADED);
+			}
+			else
+			{
+				resource_script->SetState(Resource::State::FAILED);
+			}
+		}
+		if (resource_script->GetState() != Resource::State::FAILED)
+		{
+			csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
+			SetOwnGameObject(parent);
+		}
+		Enable();
+		return true;
+	}
+	return false;
 }
 
 void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const

@@ -43,6 +43,7 @@ public:
 	void ShowVarType(ScriptVariable* var);
 	void ShowVarValue(ScriptVariable* var, int i);
 	void CopyValues(const CompScript * component);
+	bool SelectScript(bool& selecting);
 	// -------------------------
 
 	// SAVE - LOAD METHODS ----------------

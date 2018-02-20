@@ -53,7 +53,6 @@ public:
 	// ------------------------
 
 private:
-	CompScript* SelectScript(FSM_State* state_to_add_script);
 	void CheckOpenStateOptions(FSM_State* state);
 
 	// ----- Needed Updating States -----//
@@ -73,10 +72,10 @@ private:
 	// ----- Visual Scripting ----- //
 	bool show_fsm;
 	bool show_create_transition_window;
-	bool show_select_script_window;
 	std::vector<int> new_conditions;	// Saves the type and number of the new condition that are being created
 	std::vector<int>::iterator condition_to_erase;
 	bool show_create_conditions_window;
+	bool show_selecting_script_window;
 	// ----- Visual Scripting ----- //
 };
 
@@ -100,6 +99,7 @@ public:
 	bool CheckTriggeredTransition(FSM_Transition* transition)const;	
 	
 	bool AddScript(CompScript* script_to_add);	//Only support 1 script per node yet
+	bool SelectScript(bool& selecting);
 	FSM_Transition* AddTransition(FSM_State* target_state);
 	bool DeleteAllTransitions();
 	bool DeleteTransition(FSM_Transition* transition_to_delete);

@@ -5,9 +5,9 @@
 #include "GameObject.h"
 #include "Scene.h"
 
-CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr), 
+CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr),
 current_state(nullptr), selected_state(nullptr), selected_transition(nullptr), selected_condition(nullptr), target_state(nullptr), new_transition(nullptr),
-show_fsm(false), show_create_transition_window(false), show_create_conditions_window(false), show_select_script_window(false)
+show_fsm(false), show_create_transition_window(false), show_create_conditions_window(false), show_selecting_script_window(false)
 {
 	name_component = "Finite State Machine";
 }
@@ -265,9 +265,12 @@ void CompFiniteStateMachine::Update(float dt)
 				ImGui::End();
 			}
 
-			if (show_select_script_window)
+			if (show_selecting_script_window)
 			{
-				SelectScript(selected_state);
+				if (!selected_state->SelectScript(show_selecting_script_window) && !show_selecting_script_window)
+				{
+					//TODO This enters only if the user closes the window instead of adding the script, so we have to delete the 'new CompScript' we created at creating the window
+				}
 			}
 
 			// --------------------------------  POPUPS  -------------------------------- //
@@ -285,7 +288,8 @@ void CompFiniteStateMachine::Update(float dt)
 			{
 				if (ImGui::Button("Add Script"))
 				{
-					show_select_script_window = true;
+					selected_state->AddScript(new CompScript(Comp_Type::C_SCRIPT, parent));
+					show_selecting_script_window = true;
 					ImGui::CloseCurrentPopup();
 				}
 
@@ -487,50 +491,6 @@ FSM_State * CompFiniteStateMachine::GetInitialState() const
 	return initial_state;
 }
 
-CompScript * CompFiniteStateMachine::SelectScript(FSM_State* state_to_add_script)
-{
-	/*
-	CompScript* new_script = new CompScript();
-
-	ResourceScript* temp = (ResourceScript*)App->resource_manager->ShowResources(select_script, Resource::Type::SCRIPT);
-	if (temp != nullptr)
-	{
-		if (resource_script != nullptr)
-		{
-			if (resource_script->num_game_objects_use_me > 0)
-			{
-				resource_script->num_game_objects_use_me--;
-			}
-		}
-
-		//Link the Resource to the Component
-		resource_script = temp;
-		resource_script->num_game_objects_use_me++;
-		name_script = resource_script->name;
-
-		if (resource_script->IsCompiled() == Resource::State::UNLOADED)
-		{
-			if (App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script))
-			{
-				resource_script->SetState(Resource::State::LOADED);
-			}
-			else
-			{
-				resource_script->SetState(Resource::State::FAILED);
-			}
-		}
-		if (resource_script->GetState() != Resource::State::FAILED)
-		{
-			csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
-			SetOwnGameObject(parent);
-		}
-		Enable();
-		return this;
-	}
-	*/
-	return nullptr;
-}
-
 void CompFiniteStateMachine::CheckOpenStateOptions(FSM_State* state)
 {
 	if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(1))
@@ -605,6 +565,11 @@ bool FSM_State::AddScript(CompScript * script_to_add)
 
 	script = script_to_add;
 	return true;
+}
+
+bool FSM_State::SelectScript(bool& selecting)
+{
+	return script->SelectScript(selecting);
 }
 
 FSM_Transition * FSM_State::AddTransition(FSM_State * target_state)
