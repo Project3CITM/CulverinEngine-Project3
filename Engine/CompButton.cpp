@@ -4,9 +4,8 @@
 #include "WindowInspector.h"
 #include "GameObject.h"
 #include "Scene.h"
-
-
-
+#include "CompScript.h"
+#include "CSharpScript.h"
 
 CompButton::CompButton(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
 {
@@ -93,6 +92,9 @@ void CompButton::ShowInspectorInfo()
 		SetTargetGraphic((CompGraphic*)parent->FindComponentByType(Comp_Type::C_IMAGE));
 		//select_source_image = true;
 	}
+
+
+
 	int selected_opt = current_transition_mode;
 	ImGui::Text("Transition"); ImGui::SameLine(op + 30);
 
@@ -119,6 +121,26 @@ void CompButton::ShowInspectorInfo()
 	default:
 		break;
 	}
+
+	ImGui::Text("On Click");
+	if (ImGui::Button("Add Script"))
+	{
+		ImGui::OpenPopup("Add Script");
+	}
+
+	if (ImGui::BeginPopup("Add Script"))
+	{
+		CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT);
+		if(sc != nullptr)linked_scripts.push_back(sc);
+		ImGui::EndPopup();
+	}
+
+	uint size = linked_scripts.size();
+	for (uint k = 0; k < size; k++)
+	{
+		ImGui::Text(linked_scripts[k]->GetScriptName());
+	}
+
 	ImGui::TreePop();
 }
 
@@ -142,9 +164,38 @@ void CompButton::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompButton::AddLinkedScript(const CompScript * script)
+{
+	linked_scripts.push_back((CompScript*)script);
+}
 
+void CompButton::OnClick()
+{
+	if (linked_scripts.empty())
+	{
+		return;
+	}
 
+	uint size = linked_scripts.size();
+	for (uint k = 0; k < size; k++)
+	{
+		linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
+	}
+}
 
+void CompButton::OnPointDown(Event event_input)
+{
+	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
+	{
+		return;
+	}
+
+	OnClick();
+	point_down = true;
+
+	UpdateSelectionState(event_input);
+	PrepareHandleTransition();
+}
 
 void CompButton::ShowInspectorAnimationTransition()
 {

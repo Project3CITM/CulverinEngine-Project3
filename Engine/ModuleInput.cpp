@@ -133,7 +133,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			case SDL_MOUSEBUTTONDOWN:
 			{
 
-				LOG("mouse down");
+				//LOG("mouse down");
 				mouse_x = e.motion.x / SCREEN_SIZE;
 				mouse_y = e.motion.y / SCREEN_SIZE;
 				Event mouse_event;
