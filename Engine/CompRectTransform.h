@@ -22,7 +22,7 @@ public:
 	void SetMinAnchor(float2 set_min_anchor);
 	void SetPivot(float2 set_pivot);
 	void SetUpdateRect(bool set_update_rect);
-
+	std::vector<float3> GenerateQuadVertices();
 	int GetWidth()const;
 	int GetHeight()const;
 	float2 GetMaxAnchor()const;

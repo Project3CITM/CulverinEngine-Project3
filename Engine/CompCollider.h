@@ -43,6 +43,7 @@ public:
 	//Setters -------------------
 	void SetColliderPosition();
 	void SetSizeFromBoundingBox();
+	void SetRigidBodyComp(CompRigidBody* new_comp);
 
 	//Getters -------------------
 	float3 GetPosition() const;

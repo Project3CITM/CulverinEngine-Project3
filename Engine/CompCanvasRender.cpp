@@ -21,7 +21,6 @@ CompCanvasRender::CompCanvasRender(Comp_Type t, GameObject * parent) :Component(
 	uid = App->random->Int();
 	name_component = "Canvas Render";
 	glGetError();
-	my_canvas=(CompCanvas*)parent->FindParentComponentByType(Comp_Type::C_CANVAS);
 	glGenBuffers(1, &vertices_id);
 	CheckOpenGlError("glGenBuffers vertices");
 
@@ -40,11 +39,15 @@ CompCanvasRender::~CompCanvasRender()
 
 void CompCanvasRender::Update(float dt)
 {
-	AddToCanvas();
+
+	//AddToCanvas();
 }
 
 void CompCanvasRender::Clear()
 {
+	
+	graphic = nullptr;
+
 	glDeleteBuffers(1, &vertices_id);
 	vertices_id = 0;
 	glDeleteBuffers(1, &indices_id);
@@ -137,31 +140,18 @@ void CompCanvasRender::Save(JSON_Object* object, std::string name, bool saveScen
 void CompCanvasRender::Load(const JSON_Object* object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+
 	//...
 	Enable();
 }
 
-void CompCanvasRender::AddToCanvas()
+void CompCanvasRender::SyncComponent()
 {
-	if (my_canvas == nullptr)
-	{
-		LOG("ERROR:CanvasRender don't found");
-		return;
-	}
 	
-	my_canvas->AddCanvasRender(this);
 }
 
-void CompCanvasRender::RemoveFromCanvas()
-{
-	if (my_canvas == nullptr)
-	{
-		LOG("ERROR:CanvasRender with UID &i don't have Canvas", parent->GetUUID());
-		return;
-	}
-	my_canvas->RemoveCanvasRender(this);
 
-}
+
 
 void CompCanvasRender::ProcessImage(CompImage * image)
 {
@@ -221,6 +211,63 @@ void CompCanvasRender::ProcessImage(CompImage * image)
 
 }
 
+void CompCanvasRender::ProcessQuad(const std::vector<float3>& ver_quad)
+{
+	//UV Setup
+	//-x+y	 //0,1-------1,1 //+x+y
+			//|	3     /	2|
+			//|		/	 |
+			//|	0 /		1|
+	//-x-y	//0,0-------1,0 //+x-y
+	vertices.clear();
+	indices.clear();
+	CanvasVertex ver;
+
+	ver.position = ver_quad[0];
+	ver.tex_coords = float2(0.0f, 0.0f);
+	vertices.push_back(ver);
+
+	ver.position = ver_quad[1];
+	ver.tex_coords = float2(1.0f, 0.0f);
+	vertices.push_back(ver);
+
+	ver.position = ver_quad[2];
+	ver.tex_coords = float2(1.0f, 1.0f);
+	vertices.push_back(ver);
+
+	ver.position = ver_quad[3];
+	ver.tex_coords = float2(0.0f, 1.0f);
+	vertices.push_back(ver);
+
+
+
+
+	uint lastIndex = 0;
+
+	indices.push_back(lastIndex);
+	indices.push_back(lastIndex + 1);
+	indices.push_back(lastIndex + 2);
+	indices.push_back(lastIndex + 2);
+	indices.push_back(lastIndex + 3);
+	indices.push_back(lastIndex);
+
+	//----
+	glGetError();
+	glBindBuffer(GL_ARRAY_BUFFER, vertices_id);
+	CheckOpenGlError("glBindBuffer vertices");
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(CanvasVertex), &vertices[0], GL_STATIC_DRAW);
+	CheckOpenGlError("glBufferData vertices");
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	CheckOpenGlError("glBindBuffer vertices 0");
+
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
+	CheckOpenGlError("glBindBuffer indices");
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
+	CheckOpenGlError("glBufferData indices");
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	CheckOpenGlError("glBindBuffer indices 0");
+}
 void CompCanvasRender::ProcessQuad(const std::vector<float2>& ver_quad, const std::vector<float2>& uv_coord)
 {
 	//UV Setup

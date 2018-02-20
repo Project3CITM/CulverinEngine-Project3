@@ -33,6 +33,7 @@ public:
 	bool finished = true;
 	AnimationState state = A_STOP;
 
+	bool IsAnimOverXTime(float num_between_0_and_1);
 	void RestartAnimationClip();
 };
 
@@ -57,6 +58,9 @@ public:
 	AnimationNode* destination = nullptr;
 
 	bool condition = false;
+
+	bool has_exit_time = false;
+	float exit_time = 0.0f;
 };
 
 class CompAnimation : public Component

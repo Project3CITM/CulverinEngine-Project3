@@ -60,6 +60,21 @@ CompRigidBody::~CompRigidBody()
 {
 }
 
+void CompRigidBody::Clear()
+{
+	if (collider_comp != nullptr)
+	{
+		App->physics->ChangeRigidActorToStatic(body, collider_comp);
+		collider_comp->SetRigidBodyComp(nullptr);
+		LOG("RigidBody deleted, physics body deletion passed to collider...");
+	}
+	else
+	{
+		LOG("Deleted physics body form RigidBody comp...");
+		App->physics->DeleteCollider(this, body);
+	}
+}
+
 void CompRigidBody::ShowOptions()
 {
 	if (ImGui::MenuItem("Reset", NULL, false, false))
@@ -146,6 +161,11 @@ void CompRigidBody::Save(JSON_Object * object, std::string name, bool saveScene,
 void CompRigidBody::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+}
+
+void CompRigidBody::SetColliderComp(CompCollider * new_comp)
+{
+	collider_comp = new_comp;
 }
 
 jpPhysicsRigidBody * CompRigidBody::GetPhysicsBody() const
