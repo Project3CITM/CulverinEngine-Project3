@@ -379,6 +379,9 @@ void CompAnimation::ShowAnimationInfo()
 
 							ImGui::Checkbox("Active", &(*trans_it)->condition);
 
+							ImGui::Checkbox("Has Exit Time", &(*trans_it)->has_exit_time);
+							ImGui::InputFloat("Exit Time:", &(*trans_it)->exit_time);
+
 							std::string node_names;
 							combo_pos = 0;
 							i = 0;
@@ -551,6 +554,16 @@ void CompAnimation::CheckNodesConditions(AnimationNode * node)
 {
 	for (std::vector<AnimationTransition*>::iterator it = node->transitions.begin(); it != node->transitions.end(); it++)
 	{
+		if ((*it)->has_exit_time == true)
+		{
+			if (node->clip->IsAnimOverXTime((*it)->exit_time))
+			{
+				node->active = false;
+				node->clip->state = AnimationState::A_STOP;
+				PlayAnimation((*it)->destination);
+				return;
+			}
+		}
 		if ((*it)->condition == true)
 		{
 			(*it)->condition = false;
@@ -559,6 +572,15 @@ void CompAnimation::CheckNodesConditions(AnimationNode * node)
 			PlayAnimation((*it)->destination);
 		}
 	}
+}
+
+bool AnimationClip::IsAnimOverXTime(float num_between_0_and_1)
+{
+	if ((time / end_frame_time) >= num_between_0_and_1)
+	{
+		return true;
+	}
+	return false;
 }
 
 void AnimationClip::RestartAnimationClip()
