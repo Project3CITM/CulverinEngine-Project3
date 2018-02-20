@@ -10,6 +10,7 @@ layout(location = 3) in vec4 color;
 out vec2 UV;
 out vec4 ShadowCoord;
 out vec3 ourNormal;
+out vec3 ourPos;
 // Values that stay constant for the whole mesh.
 uniform mat4 depthMVP;
 uniform mat4 depthBias;
@@ -27,5 +28,6 @@ void main(){
 	ourNormal = normal;
 	// UV of the vertex. No special space for this one.
 	UV = texCoord;
+	ourPos = position.xyz;
 }
 
