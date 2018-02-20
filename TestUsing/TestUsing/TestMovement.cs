@@ -28,11 +28,6 @@ public class TestMovement : CulverinBehaviour
     public bool blocked_camera = false;
 
     //2D coordinates, y=z in 3D coordinates
-    public float speedH = 2.0f;
-    public float speedV = 2.0f;
-
-    private float yaw = 0.0f;
-    private float pitch = 0.0f;
 
     void Start()
     {
@@ -87,22 +82,18 @@ public class TestMovement : CulverinBehaviour
         if (Input.GetMouseButtonRepeat(2) && !blocked_camera)
         {
             Debug.Log("Trying to rotate");
-            //float rot_x = Input.GetMouseYAxis();
-            //float rot_y = Input.GetMouseXAxis();
-            yaw += speedH * Input.GetMouseXAxis();
-            pitch -= speedV * Input.GetMouseYAxis();
+            float rot_x = Input.GetMouseYAxis();
+            float rot_y = Input.GetMouseXAxis();
 
+            if (rot_x != 0)
+            {
+                transform.local_rotation = new Vector3(transform.local_rotation.x - rot_x, transform.local_rotation.y, 0);
+            }
 
-            transform.local_rotation = new Vector3(pitch, yaw, 0);
-            //if (rot_x != 0)
-            //{
-            //    transform.local_rotation = new Vector3(transform.local_rotation.x - rot_x, transform.local_rotation.y, 0);
-            //}
-
-            //if (rot_y != 0)
-            //{
-            //    transform.local_rotation = new Vector3(transform.local_rotation.x, transform.local_rotation.y + rot_y, 0);
-            //}
+            if (rot_y != 0)
+            {
+                transform.local_rotation = new Vector3(transform.local_rotation.x, transform.local_rotation.y + rot_y, 0);
+            }
         }
         else
         {
