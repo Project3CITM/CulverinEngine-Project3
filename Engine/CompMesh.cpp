@@ -401,6 +401,7 @@ void CompMesh::Draw()
 
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, skeleton->skinning_mats_id);
+				glUniform1i(shader->programID, 0);
 			}
 
 			if (resource_mesh->vertices.size() > 0)
@@ -709,7 +710,7 @@ void Skeleton::GenSkinningTexture(const GameObject* mesh_go)
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, influences.size(), 4*3, 0, GL_BGRA, GL_FLOAT, skinning_mats);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, influences.size(), 4 * 3, 0, GL_BGRA, GL_FLOAT, skinning_mats);
 }
 
 void Skeleton::DebugDraw() const
