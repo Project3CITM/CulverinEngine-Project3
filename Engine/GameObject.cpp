@@ -935,13 +935,26 @@ void GameObject::ShowInspectorInfo()
 		add_component = !add_component;
 	}
 	ImGui::PopStyleColor();
-	ImVec2 pos_min = ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y);
-	ImVec2 pos_max = ImVec2(pos_min.x + (ImGui::GetWindowWidth() / 2) + 42, pos_min.y + (WIDTH_ADDCOMPONENT / 2) + 20); // Magic number
+	ImVec2 pos_min = ImVec2(0,0);
+	ImVec2 pos_max = ImVec2(0, 0);
 	if (add_component)
 	{
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.258f, 0.258f, 0.258f, 1.00f));
-		ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y + ImGui::GetItemRectSize().y));
-		ImGui::SetNextWindowSize(ImVec2(WIDTH_ADDCOMPONENT, WIDTH_ADDCOMPONENT / 2));
+		ImVec2 pos_win_act = ImGui::GetItemRectMin();
+		if (pos_win_act.y + WIDTH_ADDCOMPONENT + 24 > ImGui::GetWindowHeight() + 100)
+		{
+			ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y - 204));
+			pos_min = ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y - 204);
+			pos_max = ImVec2(pos_min.x + (ImGui::GetWindowWidth() / 2) + 42, pos_min.y + (WIDTH_ADDCOMPONENT)+20); // Magic number
+		}
+		else
+		{
+			pos_min = ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y);
+			pos_max = ImVec2(pos_min.x + (ImGui::GetWindowWidth() / 2) + 42, pos_min.y + (WIDTH_ADDCOMPONENT)+20); // Magic number
+			ImGui::SetNextWindowPos(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y + ImGui::GetItemRectSize().y));
+		}
+
+		ImGui::SetNextWindowSize(ImVec2(WIDTH_ADDCOMPONENT, WIDTH_ADDCOMPONENT));
 		ImGui::Begin("AddComponent", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.311f, 0.311f, 0.311f, 1.00f));
 		if (ImGui::BeginChild(ImGui::GetID("AddComponent"), ImVec2(ImGui::GetWindowWidth(), 20), false, ImGuiWindowFlags_NoScrollWithMouse))

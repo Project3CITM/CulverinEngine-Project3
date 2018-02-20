@@ -146,7 +146,7 @@ update_status Scene::Update(float dt)
 	// Draw Skybox (direct mode for now)
 	if (App->scene->draw_skybox) App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
 	// Draw Plane
-	if (App->mode_game == false)
+	if (App->engine_state != EngineState::PLAY)
 	{
 		DrawPlane();
 	}
