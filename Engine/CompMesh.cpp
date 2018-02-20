@@ -391,7 +391,17 @@ void CompMesh::Draw()
 			int total_save_buffer = 8;
 
 			if (skeleton != nullptr)
-				total_save_buffer += 16;
+			{
+				total_save_buffer += 4; // 4 weights
+
+				//Gen text
+				skeleton->GenSkinningTexture(parent);
+
+				glBindTexture(GL_TEXTURE_2D, skeleton->skinning_mats_id);
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, skeleton->skinning_mats_id);
+			}
 
 			if (resource_mesh->vertices.size() > 0)
 			{
@@ -408,8 +418,6 @@ void CompMesh::Draw()
 				{
 					glEnableVertexAttribArray(3);
 					glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (8 * sizeof(float)));
-					glEnableVertexAttribArray(4);
-					glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (12 * sizeof(float)));
 				}
 
 				glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
@@ -613,6 +621,9 @@ void CompMesh::GenSkeleton()
 	transform->SetRot(rot);
 	transform->SetScale(scale);
 
+	skeleton->skinning_mats = new GLfloat[resource_mesh->num_vertices * 4 * 3 * 4]; //every vertex will be influenced by 4 float3x4
+	glGenTextures(1, &skeleton->skinning_mats_id);
+
 	skeleton->bones.reserve(source->num_bones);
 	skeleton->influences.resize(resource_mesh->num_vertices);
 
@@ -677,6 +688,28 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 CompMaterial * CompMesh::GetMaterial() const
 {
 	return (CompMaterial*)material;
+}
+
+void Skeleton::GenSkinningTexture(const GameObject* mesh_go)
+{
+	for (int i = 0; i < influences.size(); i++)
+	{
+		for (int j = 0; j < 4; j++) //Num influences
+		{
+			if (influences[i].size() > j)
+			{
+				GameObject* bone = influences[i][j];
+				float3x4 skinning_mat = bone->GetComponentBone()->GetSkinningMatrix(mesh_go);
+				memcpy(&skinning_mats[i * j * 3 * 4], &skinning_mat[0][0], sizeof(float) * 3 * 4);
+			}
+		}
+	}
+
+	glBindTexture(GL_TEXTURE_2D, skinning_mats_id);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, influences.size(), 4*3, 0, GL_BGRA, GL_FLOAT, skinning_mats);
 }
 
 void Skeleton::DebugDraw() const

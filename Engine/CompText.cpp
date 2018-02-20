@@ -170,10 +170,8 @@ void CompText::UpdateText()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s_font->w, s_font->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, s_font->pixels);
 	SetRect(0.0f, 0.0f, s_font->w, s_font->h);
 
-
 	glBindTexture(GL_TEXTURE_2D, 0);
 	SDL_FreeSurface(s_font);
-
 }
 
 void CompText::FreeFont()

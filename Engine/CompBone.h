@@ -27,6 +27,8 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
 
+	float3x4 GetSkinningMatrix(const GameObject* mesh_go);
+
 	uint uuid_resource_reimported = 0;
 
 	struct Weight

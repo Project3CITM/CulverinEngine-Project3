@@ -30,9 +30,16 @@ enum Type_Primitive
 struct Skeleton
 {
 	std::vector<GameObject*> bones;
-
 	std::vector<std::vector<GameObject*>> influences;
+	GLuint skinning_mats_id;
+	GLfloat* skinning_mats = nullptr;
 
+	~Skeleton()
+	{
+		delete [] skinning_mats;
+	}
+
+	void GenSkinningTexture(const GameObject* mesh_go);
 	void DebugDraw() const;
 };
 

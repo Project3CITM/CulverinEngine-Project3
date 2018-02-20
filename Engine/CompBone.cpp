@@ -6,6 +6,7 @@
 #include "ImportMesh.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "CompTransform.h"
 #include "CompBone.h"
 
 CompBone::CompBone(Comp_Type t, GameObject * parent): Component(t, parent)
@@ -163,4 +164,22 @@ void CompBone::Save(JSON_Object * object, std::string name, bool saveScene, uint
 
 void CompBone::Load(const JSON_Object * object, std::string name)
 {
+}
+
+float3x4 CompBone::GetSkinningMatrix(const GameObject* mesh_go)
+{
+	float4x4 transform = parent->GetComponentTransform()->GetLocalTransform();
+
+	GameObject* iterator = parent->GetParent();
+
+	while (iterator != mesh_go)
+	{
+		float4x4 parent_transform = iterator->GetComponentTransform()->GetLocalTransform();
+		transform = parent_transform * transform;
+		iterator = iterator->GetParent();
+	}
+
+	transform = offset.Inverted() * transform;
+
+	return transform.Float3x4Part();
 }
