@@ -13,6 +13,8 @@ public:
 	CompRigidBody(const CompRigidBody& copy, GameObject* parent);
 	~CompRigidBody();
 
+	void Clear();
+
 	//EDITOR METHODS ---------------
 	void ShowOptions();
 	void ShowInspectorInfo();
@@ -21,6 +23,9 @@ public:
 
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+
+	//Setters ----------------------
+	void SetColliderComp(CompCollider* new_comp);
 
 	//Getters ----------------------
 	jpPhysicsRigidBody* GetPhysicsBody() const;
