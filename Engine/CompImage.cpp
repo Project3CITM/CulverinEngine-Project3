@@ -195,6 +195,8 @@ void CompImage::ShowInspectorInfo()
 		{
 			type = Type::FILLED;
 		}
+		CompRectTransform* trans = GetRectTrasnform();
+		GetRectTrasnform()->SetLeftPivot(trans->GetPivot()*trans->GetHeight());
 	}
 	selection = HORITZONTAL;
 	if (type == Type::FILLED)

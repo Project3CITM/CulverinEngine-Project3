@@ -335,6 +335,11 @@ void CompRectTransform::SetPivot(float2 set_pivot)
 	pivot = set_pivot;
 }
 
+void CompRectTransform::SetLeftPivot(float2 set_pivot)
+{
+	left_pivot = set_pivot;
+}
+
 void CompRectTransform::SetUpdateRect(bool set_update_rect)
 {
 	update_rect = set_update_rect;

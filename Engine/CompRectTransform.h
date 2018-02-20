@@ -21,6 +21,7 @@ public:
 	void SetMaxAnchor(float2 set_max_anchor);
 	void SetMinAnchor(float2 set_min_anchor);
 	void SetPivot(float2 set_pivot);
+	void SetLeftPivot(float2 set_pivot);
 	void SetUpdateRect(bool set_update_rect);
 	std::vector<float3> GenerateQuadVertices();
 	int GetWidth()const;
