@@ -27,6 +27,7 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 			LOG("Collider using the RigidBody comp...");
 			rigid_body_comp->SetColliderComp(this);
 			body = rigid_body_comp->GetPhysicsBody();
+			body->SetGeometry(size, rad, curr_type);
 		}
 		else
 		{
@@ -46,6 +47,18 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 	uid = App->random->Int();
 	name_component = "Collider";
 
+	//Copy
+	collider_type = copy.collider_type;
+	curr_type = copy.curr_type;
+
+	local_quat = copy.local_quat;
+	position = copy.position;
+	angle = copy.angle;
+
+	material = copy.material;
+	size = copy.size;
+	rad = copy.rad;
+
 	//Same as regular constructor since this properties depend on the parent
 	if (parent)
 	{
@@ -55,6 +68,7 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 			LOG("Collider using the RigidBody comp...");
 			rigid_body_comp->SetColliderComp(this);
 			body = rigid_body_comp->GetPhysicsBody();
+			body->SetGeometry(size, rad, curr_type);
 		}
 		else
 		{
@@ -67,20 +81,6 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 			SetColliderPosition();
 		}
 	}
-
-	//Copy
-	collider_type	= copy.collider_type;
-	curr_type		= copy.curr_type;
-
-	local_quat	= copy.local_quat;
-	position	= copy.position;
-	angle		 = copy.angle;
-
-	material	= copy.material;
-	size		= copy.size;
-	rad			= copy.rad;
-
-
 }
 
 CompCollider::~CompCollider()
