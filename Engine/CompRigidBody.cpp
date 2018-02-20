@@ -8,6 +8,7 @@
 
 #include "jpPhysicsRigidBody.h"
 #include "CompCollider.h"
+#include "CompTransform.h"
 
 CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
@@ -16,6 +17,7 @@ CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, pa
 
 	if (parent)
 	{
+		transform = parent->GetComponentTransform();
 		collider_comp = (CompCollider*)parent->FindComponentByType(Comp_Type::C_COLLIDER);
 		if (collider_comp != nullptr)
 		{
@@ -27,6 +29,7 @@ CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, pa
 		{
 			LOG("Creating a new physics body for the RigidBody...");
 			body = App->physics->GetNewRigidBody(this, true);
+			SetColliderPosition();
 		}
 	}
 }
@@ -54,10 +57,50 @@ CompRigidBody::CompRigidBody(const CompRigidBody & copy, GameObject * parent) : 
 	}
 
 	kinematic = copy.kinematic;
+	body->SetAsKinematic(kinematic);
 }
 
 CompRigidBody::~CompRigidBody()
 {
+}
+
+void CompRigidBody::PreUpdate(float dt)
+{
+	if (dt > 0 && body)
+	{
+		own_update = true;
+		UpdateParentPosition();
+	}
+}
+
+void CompRigidBody::Update(float dt)
+{
+	if (transform->GetUpdated() && !own_update)
+	{
+		SetColliderPosition();
+	}
+	else
+	{
+		own_update = false;
+	}
+}
+
+void CompRigidBody::Clear()
+{
+	if (collider_comp != nullptr)
+	{
+		App->physics->ChangeRigidActorToStatic(body, collider_comp);
+		collider_comp->SetRigidBodyComp(nullptr);
+		collider_comp = nullptr;
+		body = nullptr;
+		LOG("RigidBody deleted, physics body deletion passed to collider...");
+	}
+	else if(body != nullptr)
+	{
+		LOG("Deleted physics body form RigidBody comp...");
+		App->physics->DeleteCollider(this, body);
+		body = nullptr;
+	}
 }
 
 void CompRigidBody::ShowOptions()
@@ -141,14 +184,70 @@ void CompRigidBody::Save(JSON_Object * object, std::string name, bool saveScene,
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+	json_object_dotset_boolean_with_std(object, name + "Kinematic", kinematic);
 }
 
 void CompRigidBody::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+
+	kinematic = json_object_dotget_boolean_with_std(object, name + "Kinematic");
+}
+
+void CompRigidBody::SyncComponent()
+{
+	body->SetAsKinematic(kinematic);
+}
+
+void CompRigidBody::SetColliderPosition()
+{
+	Quat quat = transform->GetRotGlobal();
+	float3 fpos = transform->GetPosGlobal();
+
+	if (collider_comp)
+	{
+		 quat = quat*collider_comp->GetLocalQuat();
+		 fpos = fpos + quat * collider_comp->GetPosition();
+	}
+
+	body->SetTransform(fpos, quat);
+}
+
+void CompRigidBody::SetColliderComp(CompCollider * new_comp)
+{
+	collider_comp = new_comp;
 }
 
 jpPhysicsRigidBody * CompRigidBody::GetPhysicsBody() const
 {
 	return body;
+}
+
+void CompRigidBody::UpdateParentPosition()
+{
+	// Change variables to mathgeolib
+	float3 fpos;
+	Quat quat;
+	body->GetTransform(fpos, quat);
+
+	Quat global_rot = transform->GetRotParent().Conjugated();
+
+	// Global to local transform
+	float3 p_pos = transform->GetPosParent();
+	float3 p_scale = transform->GetParentScale();
+	quat = global_rot * quat;
+	fpos = global_rot * (fpos - transform->GetPosParent());
+	fpos = float3(fpos.x / p_scale.x, fpos.y / p_scale.y, fpos.z / p_scale.z);
+
+	// Collider to local transform
+	if (collider_comp) {
+		Quat local_rot = collider_comp->GetLocalQuat().Conjugated();
+		fpos -= quat * collider_comp->GetPosition();
+		quat = quat * local_rot;
+	}
+
+	// GameObject local transform and position
+	transform->SetPos(fpos);
+	transform->SetRot(quat);
 }

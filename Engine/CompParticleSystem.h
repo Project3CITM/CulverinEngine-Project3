@@ -2,6 +2,8 @@
 #define _COMPONENT_PARTICLE_SYSTEM_
 
 #include "Component.h"
+#include "parson.h"
+#include "Color.h"
 
 class ParticleSystem;
 class ResourceMaterial;
@@ -16,7 +18,6 @@ public:
 	CompParticleSystem(const CompParticleSystem& copy, GameObject* parent);
 	~CompParticleSystem();
 
-	void Init();
 	void PreUpdate(float dt);
 	void Update(float dt);
 	void Draw();
@@ -42,11 +43,27 @@ public:
 private:
 	void DrawDirectory(const char* directory);
 
-	bool SaveParticleStates(const ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const;
+
+
+	bool SaveParticleStates(const char* file_name, const ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const;
 	bool LoadParticleStates(CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF) const;
 
 	bool SaveParticleEmitter(CompParticleSystem* system, const ParticleEmitter* emitter) const;
 	bool LoadParticleEmitter(CompParticleSystem* system, ParticleEmitter& emitter) const;
+
+	/*JSON FUNCS*/
+	bool SetInt(JSON_Object* conf, const char* field, int value) const;
+	bool SetUInt(JSON_Object* conf, const char* field, uint value) const;
+	bool SetFloat(JSON_Object* conf, const char* field, float value) const;
+	bool SetDouble(JSON_Object* conf, const char* field, double value) const;
+	bool SetBool(JSON_Object* conf, const char* field, bool value) const;
+	bool SetString(JSON_Object* conf, const char* field, const char* value) const;
+	bool SetFloat2(JSON_Object* conf, const char* field, float2 value) const;
+	bool SetFloat3(JSON_Object* conf, const char* field, float3 value) const;
+	bool SetFloat4(JSON_Object* conf, const char* field, float4 value) const;
+	bool SetFloat4x4(JSON_Object* conf, const char* field, float4x4 value) const;
+	bool SetQuat(JSON_Object* conf, const char* field, Quat value) const;
+	bool SetColor(JSON_Object* conf, const char* field, Color color) const;
 
 private:
 
@@ -75,5 +92,8 @@ private:
 		Child_Emitter_Resource,
 		MeshResource
 	} file_type = Texture_Resource;
+
+
+	
 };
 #endif //_COMPONENT_PARTICLE_SYSTEM_

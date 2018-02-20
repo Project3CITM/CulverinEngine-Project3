@@ -286,11 +286,13 @@ void CompMesh::Draw()
 
 
 			//Future Delete
+			int i = 0;
 			if (App->renderer3D->texture_2d)
 			{
 				CompMaterial* temp = parent->GetComponentMaterial();
 				if (temp != nullptr) {
-					for (int i = 0; i < temp->material_shader.textures.size(); i++) {
+				
+					for (i = 0; i < temp->material_shader.textures.size(); i++) {
 					
 
 						uint texLoc = glGetUniformLocation(temp->material_shader.programID, temp->material_shader.textures[i].var_name.c_str());
@@ -384,15 +386,12 @@ void CompMesh::Draw()
 
 
 			if (shader->name == "Shadow_World_Render") {
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, App->module_lightning->text.GetTexture());
-				glUniform1i(shader->programID, App->module_lightning->text.rbo);
-				glUniform1i(ShadowMapID, 0);
+				glActiveTexture(GL_TEXTURE0 + i +1);
+				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
+				glUniform1i(shader->programID, App->module_lightning->test_fix.depthTex);
+				glUniform1i(ShadowMapID, i+1);
 
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, App->module_lightning->text.GetTexture());
-				glUniform1i(shader->programID, App->module_lightning->text.rbo);
-				glUniform1i(ShadowMapID, 1);
+			
 			}
 			int total_save_buffer = 8;
 

@@ -270,7 +270,7 @@ void ModuleRenderGui::ScreenSpaceDraw()
 
 	for (int i = 0; i < screen_space_canvas.size(); i++)
 	{
-		screen_space_canvas[i]->DrawCanvasRender();
+		screen_space_canvas[i]->DrawGraphic();
 	}
 
 	
@@ -305,6 +305,8 @@ void ModuleRenderGui::ScreenSpaceDraw()
 
 bool ModuleRenderGui::CleanUp()
 {
+
+	RELEASE(default_ui_shader);
 	return true;
 }
 

@@ -3,19 +3,20 @@
 #include "Scene.h"
 #include "ParticleSystem.h"
 #include "ResourceMaterial.h"
-#include "parson.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
 #include "GameObject.h"
+#include "ModuleFS.h"
 
 CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
 	name_component = "Particle_System";
+	part_system = new ParticleSystem();
+	uid = App->random->Int();
 }
 
 CompParticleSystem::CompParticleSystem(const CompParticleSystem& copy, GameObject* parent) : Component(copy.GetType(), parent)
 {
-
 }
 
 CompParticleSystem::~CompParticleSystem()
@@ -23,16 +24,12 @@ CompParticleSystem::~CompParticleSystem()
 
 }
 
-void CompParticleSystem::Init()
-{
-
-}
 
 void CompParticleSystem::PreUpdate(float dt)
 {
 	const CompCamera* camera = App->renderer3D->GetActiveCamera();
 	if (camera != nullptr)
-		part_system->SetCameraPosToFollow(camera->GetGameObjectPos());
+		part_system->SetCameraPosToFollow(camera->frustum.pos);
 
 	part_system->PreUpdate(dt);
 }
@@ -41,6 +38,8 @@ void CompParticleSystem::Update(float dt)
 {
 	if (pop_up_load_open) ImGuiLoadPopUp();
 	if (pop_up_save_open) ImGuiSavePopUp();
+
+	//SaveParticleStates("Test_file.json", nullptr, nullptr, part_system->GetInitialState(), part_system->GetFinalState());
 }
 
 void CompParticleSystem::Draw()
@@ -65,9 +64,20 @@ void CompParticleSystem::Load(const JSON_Object* object, std::string name)
 
 }
 
-bool CompParticleSystem::SaveParticleStates(const ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const
+bool CompParticleSystem::SaveParticleStates(const char* file_name, const ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const
 {
-	/*JSON_Object* file_conf = nullptr;
+	JSON_Value* root_value = nullptr;
+	JSON_Object* root_object = nullptr;
+	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Particles");
+	file_path += "\\";
+	file_path += file_name;
+
+	root_value = json_parse_file(file_path.c_str());
+	if (root_value == NULL)
+		root_value = json_value_init_object();
+	root_object = json_value_get_object(root_value);
+
+	JSON_Object* file_conf = nullptr;
 
 	//If this entry does not exist, create it
 	if (json_object_get_object(root_object, "particlestate") == NULL)
@@ -75,14 +85,14 @@ bool CompParticleSystem::SaveParticleStates(const ResourceMaterial* TextureResou
 	//Save
 	file_conf = json_object_get_object(root_object, "particlestate");
 
-	const ParticleState* State = nullptr;
+	const ParticleState* state = nullptr;
 	JSON_Object* conf = nullptr;
 
 	if (TextureResource != nullptr)
 	{
 		json_object_set_value(file_conf, "texture", json_value_init_object());
 		conf = json_object_get_object(file_conf, "texture");
-		SetString(conf, "texture_path", TextureResource->GetOriginalFile().c_str());
+		//SetString(conf, "texture_path", TextureResource->GetTextureName());  TODO
 		SetInt(conf, "columns", TexData->columns);
 		SetInt(conf, "rows", TexData->rows);
 		SetInt(conf, "numberOfFrames", TexData->numberOfFrames);
@@ -93,33 +103,34 @@ bool CompParticleSystem::SaveParticleStates(const ResourceMaterial* TextureResou
 	{
 		if (i == 0)
 		{
-			State = stateI;
+			state = stateI;
 			json_object_set_value(file_conf, "initial_state", json_value_init_object());
 			conf = json_object_get_object(file_conf, "initial_state");
 		}
 		else
 		{
-			State = stateF;
+			state = stateF;
 			json_object_set_value(file_conf, "final_state", json_value_init_object());
 			conf = json_object_get_object(file_conf, "final_state");
 		}
-		SetFloat3(conf, "force", State->force);
-		SetFloat3(conf, "forceVariation", State->forceVariation);
-		SetFloat(conf, "Size", State->Size);
-		SetFloat(conf, "SizeVariation", State->SizeVariation);
-		SetFloat4(conf, "RGBATint", State->RGBATint);
-		SetFloat4(conf, "RGBATintVariation", State->RGBATintVariation);
-		SetBool(conf, "alpha_preview", State->alpha_preview);
-		SetBool(conf, "alpha_half_preview", State->alpha_half_preview);
-		SetBool(conf, "options_menu", State->options_menu);
-		SetBool(conf, "alpha", State->alpha);
-		SetBool(conf, "alpha_bar", State->alpha_bar);
-		SetBool(conf, "side_preview", State->side_preview);
-		SetUInt(conf, "inputs_mode", State->inputs_mode);
-		SetUInt(conf, "picker_mode", State->picker_mode);
+
+		SetFloat3(conf, "force", state->force);
+		SetFloat3(conf, "forceVariation", state->forceVariation);
+		SetFloat(conf, "Size", state->Size);
+		SetFloat(conf, "SizeVariation", state->SizeVariation);
+		SetFloat4(conf, "RGBATint", state->RGBATint);
+		SetFloat4(conf, "RGBATintVariation", state->RGBATintVariation);
+		SetBool(conf, "alpha_preview", state->alpha_preview);
+		SetBool(conf, "alpha_half_preview", state->alpha_half_preview);
+		SetBool(conf, "options_menu", state->options_menu);
+		SetBool(conf, "alpha", state->alpha);
+		SetBool(conf, "alpha_bar", state->alpha_bar);
+		SetBool(conf, "side_preview", state->side_preview);
+		SetUInt(conf, "inputs_mode", state->inputs_mode);
+		SetUInt(conf, "picker_mode", state->picker_mode);
 	}
 
-	json_serialize_to_file(root_value, file_name.c_str());*/
+	json_serialize_to_file(root_value, file_path.c_str());
 	return true;
 }
 /*
@@ -493,4 +504,175 @@ void CompParticleSystem::ImGuiSaveEmitterPopUp()
 	bool Meta = parsonjson->Init();
 	if (Meta) parsonjson->SaveParticleEmitter(this, &Emitter);
 	RELEASE(parsonjson);*/
+}
+
+
+
+//JSON FUNC XAVI WTF ---------------------------------------
+bool CompParticleSystem::SetInt(JSON_Object* conf, const char * field, int value) const
+{
+	return json_object_set_number(conf, field, (double)value) == JSONSuccess;
+}
+
+bool CompParticleSystem::SetUInt(JSON_Object* conf, const char * field, uint value) const
+{
+	return json_object_set_number(conf, field, (double)value) == JSONSuccess;
+}
+
+bool CompParticleSystem::SetFloat(JSON_Object* conf, const char * field, float value) const
+{
+	return json_object_set_number(conf, field, (double)value) == JSONSuccess;
+}
+
+bool CompParticleSystem::SetDouble(JSON_Object* conf, const char * field, double value) const
+{
+	return json_object_set_number(conf, field, (double)value) == JSONSuccess;
+}
+
+bool CompParticleSystem::SetBool(JSON_Object* conf, const char * field, bool value) const
+{
+	uint boolean = 0;
+	if (value) boolean = 1;
+	return json_object_set_boolean(conf, field, boolean) == JSONSuccess;
+}
+
+bool CompParticleSystem::SetString(JSON_Object* conf, const char * field, const char* value) const
+{
+	if (value != nullptr) return json_object_set_string(conf, field, value) == JSONSuccess;
+	return false;
+}
+
+bool CompParticleSystem::SetFloat2(JSON_Object* conf, const char* field, float2 value) const
+{
+	bool ret = true;
+	JSON_Object* float2_iterate = nullptr;
+	//If this entry does not exist, create it
+	if (json_object_get_object(conf, field) == NULL)
+		json_object_set_value(conf, field, json_value_init_object());
+	float2_iterate = json_object_get_object(conf, field);
+
+	ret = SetFloat(float2_iterate, "x", value.x);
+	if (!ret) return false;
+	ret = SetFloat(float2_iterate, "y", value.y);
+	return ret;
+}
+
+bool CompParticleSystem::SetFloat3(JSON_Object* conf, const char* field, float3 value) const
+{
+	bool ret = true;
+	JSON_Object* float3_iterate = nullptr;
+	//If this entry does not exist, create it
+	if (json_object_get_object(conf, field) == NULL)
+		json_object_set_value(conf, field, json_value_init_object());
+	float3_iterate = json_object_get_object(conf, field);
+
+	ret = SetFloat(float3_iterate, "x", value.x);
+	if (!ret) return false;
+	ret = SetFloat(float3_iterate, "y", value.y);
+	if (!ret) return false;
+	ret = SetFloat(float3_iterate, "z", value.z);
+	return ret;
+}
+
+bool CompParticleSystem::SetFloat4(JSON_Object * conf, const char * field, float4 value) const
+{
+	bool ret = true;
+	JSON_Object* float4_iterate = nullptr;
+	//If this entry does not exist, create it
+	if (json_object_get_object(conf, field) == NULL)
+		json_object_set_value(conf, field, json_value_init_object());
+	float4_iterate = json_object_get_object(conf, field);
+
+	ret = SetFloat(float4_iterate, "x", value.x);
+	if (!ret) return false;
+	ret = SetFloat(float4_iterate, "y", value.y);
+	if (!ret) return false;
+	ret = SetFloat(float4_iterate, "z", value.z);
+	if (!ret) return false;
+	ret = SetFloat(float4_iterate, "w", value.w);
+	return ret;
+}
+
+bool CompParticleSystem::SetFloat4x4(JSON_Object* conf, const char* field, float4x4 value) const
+{
+	bool ret = true;
+	JSON_Object* float4x4_iterate = nullptr;
+	//If this entry does not exist, create it
+	if (json_object_get_object(conf, field) == NULL)
+		json_object_set_value(conf, field, json_value_init_object());
+	float4x4_iterate = json_object_get_object(conf, field);
+
+	ret = SetFloat(float4x4_iterate, "00", value[0][0]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "01", value[0][1]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "02", value[0][2]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "03", value[0][3]);
+
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "10", value[1][0]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "11", value[1][1]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "12", value[1][2]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "13", value[1][3]);
+
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "20", value[2][0]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "21", value[2][1]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "22", value[2][2]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "23", value[2][3]);
+
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "30", value[3][0]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "31", value[3][1]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "32", value[3][2]);
+	if (!ret) return false;
+	ret = SetFloat(float4x4_iterate, "33", value[3][3]);
+	return ret;
+}
+
+bool CompParticleSystem::SetQuat(JSON_Object* conf, const char* field, Quat value) const
+{
+	bool ret = true;
+	JSON_Object* quat_iterate = nullptr;
+	//If this entry does not exist, create it
+	if (json_object_get_object(conf, field) == NULL)
+		json_object_set_value(conf, field, json_value_init_object());
+	quat_iterate = json_object_get_object(conf, field);
+
+	ret = SetFloat(quat_iterate, "x", value.x);
+	if (!ret) return false;
+	ret = SetFloat(quat_iterate, "y", value.y);
+	if (!ret) return false;
+	ret = SetFloat(quat_iterate, "z", value.z);
+	if (!ret) return false;
+	ret = SetFloat(quat_iterate, "w", value.w);
+	return ret;
+}
+
+bool CompParticleSystem::SetColor(JSON_Object* conf, const char* field, Color color) const
+{
+	bool ret = true;
+	JSON_Object* color_iterate = nullptr;
+	//If this entry does not exist, create it
+	if (json_object_get_object(conf, field) == NULL)
+		json_object_set_value(conf, field, json_value_init_object());
+	color_iterate = json_object_get_object(conf, field);
+
+	ret = SetFloat(color_iterate, "r", color.r);
+	if (!ret) return false;
+	ret = SetFloat(color_iterate, "g", color.g);
+	if (!ret) return false;
+	ret = SetFloat(color_iterate, "b", color.b);
+	if (!ret) return false;
+	ret = SetFloat(color_iterate, "a", color.a);
+	return ret;
 }

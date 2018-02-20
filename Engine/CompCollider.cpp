@@ -25,6 +25,9 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 		if (rigid_body_comp != nullptr)
 		{
 			LOG("Collider using the RigidBody comp...");
+			rigid_body_comp->SetColliderComp(this);
+			body = rigid_body_comp->GetPhysicsBody();
+			body->SetGeometry(size, rad, curr_type);
 		}
 		else
 		{
@@ -44,6 +47,18 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 	uid = App->random->Int();
 	name_component = "Collider";
 
+	//Copy
+	collider_type = copy.collider_type;
+	curr_type = copy.curr_type;
+
+	local_quat = copy.local_quat;
+	position = copy.position;
+	angle = copy.angle;
+
+	material = copy.material;
+	size = copy.size;
+	rad = copy.rad;
+
 	//Same as regular constructor since this properties depend on the parent
 	if (parent)
 	{
@@ -51,6 +66,9 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 		if (rigid_body_comp != nullptr)
 		{
 			LOG("Collider using the RigidBody comp...");
+			rigid_body_comp->SetColliderComp(this);
+			body = rigid_body_comp->GetPhysicsBody();
+			body->SetGeometry(size, rad, curr_type);
 		}
 		else
 		{
@@ -63,20 +81,6 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 			SetColliderPosition();
 		}
 	}
-
-	//Copy
-	collider_type	= copy.collider_type;
-	curr_type		= copy.curr_type;
-
-	local_quat	= copy.local_quat;
-	position	= copy.position;
-	angle		 = copy.angle;
-
-	material	= copy.material;
-	size		= copy.size;
-	rad			= copy.rad;
-
-
 }
 
 CompCollider::~CompCollider()
@@ -85,7 +89,7 @@ CompCollider::~CompCollider()
 
 void CompCollider::Update(float dt)
 {
-	if (transform->GetUpdated())
+	if (transform->GetUpdated() && rigid_body_comp == nullptr)
 	{
 		SetColliderPosition();
 	}
@@ -93,9 +97,18 @@ void CompCollider::Update(float dt)
 
 void CompCollider::Clear()
 {
-	if (body)
+	if (rigid_body_comp != nullptr)
 	{
-		delete body;
+		//Set the collider comp in rigidbody to nullptr
+		rigid_body_comp->SetColliderComp(nullptr);
+		rigid_body_comp = nullptr;
+		body = nullptr;
+		LOG("Deleted collider, physics body deletion passed to RigidBody");
+	}
+	else if (body != nullptr)
+	{
+		LOG("Comp collider didn't find RigidBody comp, releasing physics body...");
+		App->physics->DeleteCollider(this, body);
 		body = nullptr;
 	}
 }
@@ -182,6 +195,7 @@ void CompCollider::ShowInspectorInfo()
 		if (sc != nullptr)
 		{
 			listener = sc;
+			script_name = listener->GetName();
 		}
 	}
 
@@ -288,6 +302,9 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 	//Rad
 	json_object_dotset_number_with_std(object, name + "Rad", rad);
 
+	json_object_dotset_boolean_with_std(object, name + "Trigger", trigger);
+
+	json_object_dotset_string_with_std(object, name + "ScriptName", script_name.c_str());
 }
 
 void CompCollider::Load(const JSON_Object * object, std::string name)
@@ -316,6 +333,32 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 	//Rad	
 	rad = json_object_dotget_number_with_std(object, name + "Rad");
+
+	trigger = json_object_dotget_boolean_with_std(object, name + "Trigger");
+
+	//Script name
+	script_name = json_object_dotget_string_with_std(object, name + "ScriptName");
+}
+
+void CompCollider::SyncComponent()
+{
+	UpdateCollider();
+	SetColliderPosition();
+	if (trigger)
+	{
+		std::vector<Component*> script_vec;
+		parent->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec);
+
+		for (int i = 0; i < script_vec.size(); i++)
+		{
+			if (((CompScript*)script_vec[i])->GetName() == script_name)
+			{
+				listener = (CompScript*)script_vec[i];
+				break;
+			}
+		}
+
+	}
 }
 
 // -----------------------------------------------------------------
@@ -377,6 +420,11 @@ void CompCollider::SetSizeFromBoundingBox()
 	}
 }
 
+void CompCollider::SetRigidBodyComp(CompRigidBody * new_comp)
+{
+	rigid_body_comp = new_comp;
+}
+
 float3 CompCollider::GetPosition() const
 {
 	return position;
@@ -394,7 +442,6 @@ jpPhysicsRigidBody* CompCollider::GivePhysicsBody(CompRigidBody* new_rigid_body)
 		LOG("Collider physics body is being given to RigidBody...");
 		rigid_body_comp = new_rigid_body;
 		jpPhysicsRigidBody* ret = body;
-		body = nullptr;
 		return ret;
 	}
 	return nullptr;

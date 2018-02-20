@@ -885,6 +885,7 @@ GameObject * Scene::CreateImage(GameObject * parent)
 	// IMAGE COMPONENT -----------------
 	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
 	image->Enable();
+	image->SyncComponent();
 
 	if (parent == nullptr)
 	{
@@ -915,7 +916,7 @@ GameObject * Scene::CreateButton(GameObject * parent)
 	// IMAGE COMPONENT -----------------
 	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
 	image->Enable();
-
+	image->SyncComponent();
 	// BUTTON COMPONENT -----------------
 	CompButton* button = (CompButton*)obj->AddComponent(Comp_Type::C_BUTTON);
 	button->Enable();
@@ -949,6 +950,7 @@ GameObject * Scene::CreateCheckBox(GameObject * parent)
 	// IMAGE COMPONENT -----------------
 	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
 	image->Enable();
+	image->SyncComponent();
 
 	// BUTTON COMPONENT -----------------
 	CompCheckBox* check_box = (CompCheckBox*)obj->AddComponent(Comp_Type::C_CHECK_BOX);
@@ -981,6 +983,7 @@ GameObject * Scene::CreateText(GameObject * parent)
 	// TEXT COMPONENT -----------------
 	CompText* text = (CompText*)obj->AddComponent(Comp_Type::C_TEXT);
 	text->Enable();
+	text->SyncComponent();
 
 
 
@@ -1011,6 +1014,7 @@ GameObject * Scene::CreateEditText(GameObject * parent)
 	// TEXT COMPONENT -----------------
 	CompText* text = (CompText*)obj->AddComponent(Comp_Type::C_TEXT);
 	text->Enable();
+	text->SyncComponent();
 
 	// TEXT COMPONENT -----------------
 	CompEditText* edit_text = (CompEditText*)obj->AddComponent(Comp_Type::C_EDIT_TEXT);

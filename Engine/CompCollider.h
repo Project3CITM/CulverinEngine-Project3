@@ -28,6 +28,7 @@ public:
 
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+	void SyncComponent();
 
 
 	// Collision Events ------------
@@ -43,6 +44,7 @@ public:
 	//Setters -------------------
 	void SetColliderPosition();
 	void SetSizeFromBoundingBox();
+	void SetRigidBodyComp(CompRigidBody* new_comp);
 
 	//Getters -------------------
 	float3 GetPosition() const;
@@ -69,6 +71,7 @@ private:
 
 	bool				trigger = false;	
 	CompScript*			listener = nullptr;
+	std::string			script_name;
 
 };
 

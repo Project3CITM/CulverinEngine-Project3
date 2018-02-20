@@ -750,6 +750,7 @@ void GameObject::ShowGameObjectOptions()
 					parent = App->scene->CreateCanvas(this);
 				}
 				GameObject* image = App->scene->CreateImage(parent);
+
 				App->gui->SetLinkInspector(image);
 
 			}
@@ -1307,7 +1308,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			LOG("Adding IMAGE COMPONENT.");
 			CompImage* image = new CompImage(type, this);
 			components.push_back(image);
-			canvas_renderer->ProcessImage(image);
 			return image;
 		}
 		case Comp_Type::C_TEXT:

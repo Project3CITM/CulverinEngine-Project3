@@ -100,6 +100,7 @@ public:
 	
 	bool AddScript(CompScript* script_to_add);	//Only support 1 script per node yet
 	bool SelectScript(bool& selecting);
+	bool RemoveScript();
 	FSM_Transition* AddTransition(FSM_State* target_state);
 	bool DeleteAllTransitions();
 	bool DeleteTransition(FSM_Transition* transition_to_delete);
@@ -198,6 +199,7 @@ public:
 	
 	// GETTERS ----------------
 	FSM_CONDITION_TYPE GetConditionType()const;
+	const char* GetConditionTypeStr()const;
 	// ------------------------
 
 private:

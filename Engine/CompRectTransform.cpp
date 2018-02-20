@@ -340,6 +340,16 @@ void CompRectTransform::SetUpdateRect(bool set_update_rect)
 	update_rect = set_update_rect;
 }
 
+std::vector<float3> CompRectTransform::GenerateQuadVertices()
+{
+	std::vector<float3> ret;
+	ret.push_back(GetSouthWestPosition());
+	ret.push_back(GetSouthEastPosition());
+	ret.push_back(GetNorthEastPosition());
+	ret.push_back(GetNorthWestPosition());
+	return ret;
+}
+
 int CompRectTransform::GetWidth()const
 {
 	return height;

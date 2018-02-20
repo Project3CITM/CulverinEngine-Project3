@@ -17,6 +17,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "DefaultShaders.h"
+#include"ModuleWindow.h"
 using namespace glm;
 
 
@@ -44,7 +45,7 @@ void DepthFrameBuffer::Create(int width, int height)
 
 
 
-	glGenFramebuffers(1, &frame_id);
+	/*glGenFramebuffers(1, &frame_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -59,6 +60,30 @@ void DepthFrameBuffer::Create(int width, int height)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
+
+	glDrawBuffer(GL_NONE); // Since we dont need the color buffer we must tell OpenGl explicitly
+	*/
+
+	
+	glGenTextures(1, &depthTex);
+	glBindTexture(GL_TEXTURE_2D, depthTex);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+
+	// Assign the depth buffer texture to texture channel 0
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, depthTex);
+
+	// Create and set up the FBO
+	glGenFramebuffers(1, &frame_id);
+	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_TEXTURE_2D, depthTex, 0);
 
 	glDrawBuffer(GL_NONE); // Since we dont need the color buffer we must tell OpenGl explicitly
 
@@ -80,6 +105,19 @@ void DepthFrameBuffer::Resize(int width, int height)
 		Destroy();
 		Create(width, height);
 	}
+}
+
+void DepthFrameBuffer::Bind(const char* window)
+{
+	//size = GetSizeDock(window);
+
+	Resize(App->window->GetWidth(), App->window->GetHeight());
+	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
+}
+
+void DepthFrameBuffer::UnBind(const char* window)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 uint DepthFrameBuffer::GetTexture() const
@@ -122,7 +160,7 @@ bool ModuleLightning::Start()
 
 	Start_t = perf_timer.ReadMs();
 
-	text.Create(shadow_maps_res_w, shadow_maps_res_h);
+	test_fix.Create(shadow_maps_res_w, shadow_maps_res_h);
 
 	//------------------------------------
 
@@ -219,15 +257,19 @@ bool ModuleLightning::CleanUp()
 		(*it).Destroy();
 	}
 
+	RELEASE(shadow_Shader);
+
+
 	return true;
 }
 
 void ModuleLightning::OnEvent(Event & event)
 {
-	text.Bind("peter");
+	test_fix.Bind("peter");
 
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK); // Cull back-facing triangles -> draw only front-facing triangles
+	glCullFace(GL_FRONT);
+	 // Cull back-facing triangles -> draw only front-facing triangles
 	
 						 // Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -350,7 +392,7 @@ void ModuleLightning::OnEvent(Event & event)
 
 					Quat rot = light->GetParent()->GetComponentTransform()->GetRot();
 
-					float3 dir = float3(1, 1, 1);
+					float3 dir = light->GetParent()->GetComponentTransform()->GetEulerToDirection();
 
 					float4x4 MVP = camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
 
@@ -457,9 +499,9 @@ void ModuleLightning::OnEvent(Event & event)
 		break;
 	}
 	
-	ImGui::Image((ImTextureID*)text.GetTexture(), ImVec2(500, 500));
+	ImGui::Image((ImTextureID*)test_fix.depthTex, ImVec2(500, 500));
 	App->scene->scene_buff->Bind("Scene");
-	
+	glCullFace(GL_BACK);
 	shadow_Shader->Unbind();
 }
 
