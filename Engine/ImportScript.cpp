@@ -518,6 +518,7 @@ MonoClass* ImportScript::GetMonoClassFromImage(MonoImage* image, std::string& na
 			classname = classnameCS;
 		}
 	}
+	entity = mono_class_from_name(image, name_space.c_str(), classname.c_str()); // Not correctly process! Todo elliot
 	return entity;
 }
 
