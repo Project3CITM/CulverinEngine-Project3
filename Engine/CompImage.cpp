@@ -8,6 +8,7 @@
 #include "ResourceMaterial.h"
 #include "CompCanvasRender.h"
 #include "CompRectTransform.h"
+#include "CompCanvas.h"
 #include <vector>
 
 CompImage::CompImage(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
@@ -72,7 +73,7 @@ void CompImage::Update(float dt)
 	{
 		if (transform->GetUpdateRect() && my_canvas_render!=nullptr)
 		{
-			my_canvas_render->ProcessImage(this);
+			my_canvas_render->ProcessQuad(transform->GenerateQuadVertices());
 			transform->SetUpdateRect(false);
 		}
 	}
@@ -188,14 +189,14 @@ void CompImage::ShowInspectorInfo()
 	{
 		if (selection == Type::SIMPLE)
 		{
-			filler = false;
 			type = Type::SIMPLE;
 		}
 		if (selection == Type::FILLED)
 		{
-			filler = true;
 			type = Type::FILLED;
 		}
+		CompRectTransform* trans = GetRectTrasnform();
+		GetRectTrasnform()->SetLeftPivot(trans->GetPivot()*trans->GetHeight());
 	}
 	selection = HORITZONTAL;
 	if (type == Type::FILLED)
@@ -272,6 +273,14 @@ void CompImage::Clear()
 {
 	source_image = nullptr;
 	overwrite_image = nullptr;
+	if (my_canvas != nullptr)
+		my_canvas->RemoveGraphic(this);
+	my_canvas = nullptr;
+	my_canvas_render = nullptr;
+	transform = nullptr;
+
+
+	
 }
 
 void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
@@ -295,6 +304,12 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", 0);
 	}
+
+	json_object_dotset_boolean_with_std(object, name + "RayCast Target", raycast_target);
+	json_object_dotset_number_with_std(object, name + "Fill Amount", filled);
+	json_object_dotset_number_with_std(object, name + "Image Type", type);
+	json_object_dotset_number_with_std(object, name + "Fill Method", method);
+
 }
 
 void CompImage::Load(const JSON_Object * object, std::string name)
@@ -309,19 +324,23 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 		{
 			source_image->num_game_objects_use_me++;
 
-			// LOAD MESH ----------------------------
+			// LOAD Image ----------------------------
 			if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
 				App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
-				SetTextureID(source_image->GetTextureID());
 			}
-
+			UpdateSpriteId();
 		}
 	}
+	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
+	filled=json_object_dotget_number_with_std(object, name + "Fill Amount");
+	type = static_cast<CompImage::Type>((int)json_object_dotget_number_with_std(object, name + "Image Type"));
+	method = static_cast<FillMethod>((int)json_object_dotget_number_with_std(object, name + "Fill Method"));
+
 	Enable();
 }
 
-void CompImage::UpdatesPriteId()
+void CompImage::UpdateSpriteId()
 {
 	if (overwrite_image == nullptr)
 	{

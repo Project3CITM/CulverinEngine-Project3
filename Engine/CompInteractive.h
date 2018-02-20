@@ -30,9 +30,11 @@ public:
 	void CopyValues(const CompInteractive * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
-
+	void SyncComponent();
 	virtual bool IsActive()const;
-	void Desactive();
+	void Activate();
+
+	void Deactive();
 	virtual void ForceClear(Event event_input);
 	void TryConversion();
 
@@ -91,10 +93,11 @@ protected:
 	virtual void UpdateSelectionState(Event event_data);
 	void ShowInspectorColorTransition();
 	void ShowInspectorSpriteTransition();
-private:
 	void PrepareHandleTransition();
-
 	void HandleTransition(SelectionStates selection_state);
+
+private:
+
 
 	
 	void StartTransitionColor(float4 color_to_change, bool no_fade);
@@ -108,10 +111,6 @@ private:
 	static std::list<CompInteractive*> iteractive_list;
 	
 
-	bool disabled = false;
-	bool point_down = false;
-	bool point_inside = false;
-	bool interactive_selected = false;
 protected:
 	SelectionStates current_selection_state = STATE_NORMAL;
 	Transition current_transition_mode = TRANSITION_COLOR;
@@ -131,10 +130,17 @@ protected:
 	ResourceMaterial* sprite[3];
 	uint uuid_reimported_sprite[3];
 	CompGraphic* target_graphic = nullptr;
+	uint target_graphic_uid = 0;
 	CompImage* image = nullptr;
 	int sprite_value = -1;
 	bool select_sprite = false;
 
+	//State values
+
+	bool disabled = false;
+	bool point_down = false;
+	bool point_inside = false;
+	bool interactive_selected = false;
 
 private:
 	

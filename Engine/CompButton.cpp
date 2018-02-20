@@ -4,10 +4,9 @@
 #include "WindowInspector.h"
 #include "GameObject.h"
 #include "Scene.h"
-
-
-
-
+#include "CompScript.h"
+#include "CSharpScript.h"
+#define BUTTON_LIMIT 10
 CompButton::CompButton(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
 {
 	uid = App->random->Int();
@@ -93,6 +92,9 @@ void CompButton::ShowInspectorInfo()
 		SetTargetGraphic((CompGraphic*)parent->FindComponentByType(Comp_Type::C_IMAGE));
 		//select_source_image = true;
 	}
+
+
+
 	int selected_opt = current_transition_mode;
 	ImGui::Text("Transition"); ImGui::SameLine(op + 30);
 
@@ -119,6 +121,67 @@ void CompButton::ShowInspectorInfo()
 	default:
 		break;
 	}
+
+	ImGui::Text("On Click");
+
+	ImGui::Text("Number of Script"); 
+	ImGui::SameLine(op + 60);
+	ImGui::PushItemWidth(100);
+	if (ImGui::InputInt("##number_script", &number_script))
+	{	
+		if (number_script < 0)
+		{
+			number_script = 0;
+		}
+		else if (number_script >= BUTTON_LIMIT)
+		{
+			number_script = BUTTON_LIMIT;
+		}
+		if(linked_scripts.size()<number_script)
+		{
+			for (int i = linked_scripts.size(); i < number_script; i++)
+			{
+				CompScript* sc = nullptr;
+				linked_scripts.push_back(sc);
+			}
+		}
+		else
+		{
+			int size = linked_scripts.size() - number_script;
+			for (int i = 0; i < size; i++)
+			{
+				linked_scripts.pop_back();
+			}
+		}
+	}
+	ImGui::PopItemWidth();
+
+
+	uint size = linked_scripts.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (linked_scripts[k] != nullptr)
+		{
+			std::string name = linked_scripts[k]->GetScriptName()==""?"Empty Script": linked_scripts[k]->GetScriptName();
+			ImGui::Text(name.c_str());
+			ImGui::SameLine();
+		}
+		std::string temp = std::to_string(k);
+		std::string name = "Add Script" + temp;
+
+		if (ImGui::Button(name.c_str()))
+		{
+			ImGui::OpenPopup(name.c_str());
+		}
+		if (ImGui::BeginPopup(name.c_str()))
+		{
+			CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT);
+			if (sc != nullptr)
+				linked_scripts[k]=sc;
+			ImGui::EndPopup();
+		}
+	}
+
 	ImGui::TreePop();
 }
 
@@ -142,9 +205,40 @@ void CompButton::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompButton::AddLinkedScript(const CompScript * script)
+{
+	linked_scripts.push_back((CompScript*)script);
+}
 
+void CompButton::OnClick()
+{
+	if (linked_scripts.empty())
+	{
+		return;
+	}
 
+	uint size = linked_scripts.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (linked_scripts[k] == nullptr)
+			continue;
+		linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
+	}
+}
 
+void CompButton::OnPointDown(Event event_input)
+{
+	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
+	{
+		return;
+	}
+
+	OnClick();
+	point_down = true;
+
+	UpdateSelectionState(event_input);
+	PrepareHandleTransition();
+}
 
 void CompButton::ShowInspectorAnimationTransition()
 {

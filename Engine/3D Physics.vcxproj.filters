@@ -127,6 +127,9 @@
     <Filter Include="Engine\PhysX\jpPhysX">
       <UniqueIdentifier>{1ef8a2bb-0ccd-42f5-adcb-e22c9e15b491}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Tools\OliEngine">
+      <UniqueIdentifier>{75bb7a05-f41d-436e-bf28-310d18c1268c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -1158,6 +1161,12 @@
     <ClInclude Include="CompParticleSystem.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="DefaultShaders.h">
+      <Filter>Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Engine\Tools\OliEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1531,6 +1540,9 @@
     </ClCompile>
     <ClCompile Include="CompParticleSystem.cpp">
       <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Engine\Tools\OliEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

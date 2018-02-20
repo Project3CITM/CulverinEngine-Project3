@@ -37,17 +37,50 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png",&texture_bulb);
 
 	plane = App->module_lightning->light_UI_plane;
-	App->module_lightning->PushLight(this);
+
+
+
+	//-Frustrum Creation----------------
+	float width = 0.0f;
+	float height = 0.0f;
+	float aspect_ratio = 0.0f;
+	float near_plane = 0.0f;
+	float far_plane = 0.0f;
+	float vertical_fov = 0.0f;
+
+	width = 16;
+	height = 9;
+	aspect_ratio = width / height; // We set aspect ratio 16:9 by now
+
+	near_plane = 0.2;
+	far_plane = 1000;
+	vertical_fov = 60; /* In degrees */
+
+					   /* Set frustum vars */
+	frustum.type = PerspectiveFrustum;
+	frustum.pos = parent->GetComponentTransform()->GetPosGlobal();
+	frustum.front.Set(0, -1, 0);
+	frustum.up.Set(0, 0, 1);
+	frustum.nearPlaneDistance = near_plane;
+	frustum.farPlaneDistance = far_plane;
+	frustum.verticalFov = vertical_fov * DEGTORAD;
+	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
+
+	//---------------------------------------------
+
+	App->module_lightning->OnLightCreated(this);
 
 }
 
 CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Comp_Type::C_LIGHT, parent)
 {
-	App->module_lightning->DeleteLight(this);
+	//App->module_lightning->OnLightDestroyed(this); //TODO/CHECK: Why delete the light?? Should add it to the list. Why create another method, already one to erase a light from the list on module lighting.
+	App->module_lightning->OnLightCreated(this);
 }
 
 CompLight::~CompLight()
 {
+	App->module_lightning->OnLightDestroyed(this);
 }
 
 bool CompLight::Enable()
@@ -70,8 +103,7 @@ void CompLight::PreUpdate(float dt)
 
 void CompLight::Update(float dt)
 {
-	
-	
+
 }
 
 void CompLight::Draw()
@@ -79,7 +111,12 @@ void CompLight::Draw()
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.8);
 
+	//Frustum Operations-------------------------------
 
+	UpdateFrustum();
+	FrustumDebug();
+
+	//---------------------------------------------------
 
 	App->renderer3D->default_shader->Bind();
 
@@ -234,5 +271,41 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	type = (Light_type)ui_light_type;
 	ambientCoefficient = json_object_dotget_number_with_std(object, name + "Ambient Coefficient");
 	attenuation = json_object_dotget_number_with_std(object, name + "Attenuation");
+}
+
+void CompLight::UpdateFrustum()
+{
+
+	const CompTransform* transform = parent->GetComponentTransform();
+
+	float4x4 trans_mat = transform->GetGlobalTransform();
+
+	frustum.pos = trans_mat.TranslatePart();
+	float3 val = -trans_mat.WorldY();
+	if (val == float3::zero)val = -float3::unitY;
+	frustum.front = val.Normalized();
+	frustum.up = frustum.front.Cross(-frustum.WorldRight()).Normalized();
+
+}
+
+void CompLight::FrustumDebug()
+{
+
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBegin(GL_LINES);
+	glLineWidth(3.0f);
+	glColor4f(0.25f, 1.0f, 0.0f, 1.0f);
+
+	for (uint i = 0; i < 12; i++)
+	{
+		glVertex3f(frustum.Edge(i).a.x, frustum.Edge(i).a.y, frustum.Edge(i).a.z);
+		glVertex3f(frustum.Edge(i).b.x, frustum.Edge(i).b.y, frustum.Edge(i).b.z);
+	}
+
+	glEnd();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+
 }
 

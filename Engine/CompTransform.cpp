@@ -330,6 +330,7 @@ void CompTransform::RotateAroundAxis(float3 rot, float angle)
 	rot = rot.Normalized();
 	float3 euler_ang = { rot.x * angle,rot.y*angle,rot.z*angle };
 	rotation_euler += euler_ang;
+	SetRot(rotation_euler);
 	toUpdate = true;
 }
 
@@ -571,7 +572,7 @@ float3 CompTransform::GetPosGlobal() const
 
 float3 CompTransform::GetPosParent() const
 {
-	if (parent->GetParent()->GetUUID() != 1)
+	if (parent->GetParent() && parent->GetParent()->GetUUID() != 1)
 	{
 		parent->GetParent()->GetComponentTransform()->GetPos();
 	}
@@ -593,7 +594,7 @@ Quat CompTransform::GetRotGlobal() const
 
 Quat CompTransform::GetRotParent() const
 {
-	if (parent->GetParent()->GetUUID() != 1)
+	if (parent->GetParent() && parent->GetParent()->GetUUID() != 1)
 	{
 		parent->GetParent()->GetComponentTransform()->GetRotGlobal();
 	}	
@@ -625,7 +626,7 @@ float3 CompTransform::GetGlobalScale() const
 
 float3 CompTransform::GetParentScale() const
 {
-	if (parent->GetParent()->GetUUID() != 1)
+	if (parent->GetParent() && parent->GetParent()->GetUUID() != 1)
 	{
 		parent->GetParent()->GetComponentTransform()->GetGlobalScale();
 	}

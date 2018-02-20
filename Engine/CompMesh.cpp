@@ -285,6 +285,7 @@ void CompMesh::Draw()
 			//
 
 			//Future Delete
+			int i = 0;
 			if (App->renderer3D->texture_2d)
 			{
 				CompMaterial* temp = parent->GetComponentMaterial();
@@ -375,17 +376,13 @@ void CompMesh::Draw()
 			//glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
 			//glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
 
+
 			if (shader->name == "Shadow_World_Render")
 			{
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, App->module_lightning->text.GetTexture());
-				glUniform1i(shader->programID, App->module_lightning->text.rbo);
-				glUniform1i(ShadowMapID, 0);
-
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, App->module_lightning->text.GetTexture());
-				glUniform1i(shader->programID, App->module_lightning->text.rbo);
-				glUniform1i(ShadowMapID, 1);
+				glActiveTexture(GL_TEXTURE0 + i +1);
+				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
+				glUniform1i(shader->programID, App->module_lightning->test_fix.depthTex);
+				glUniform1i(ShadowMapID, i+1);
 			}
 
 			int total_save_buffer = 8;

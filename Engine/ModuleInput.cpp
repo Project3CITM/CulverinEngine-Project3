@@ -4,6 +4,7 @@
 #include "ModuleFS.h"
 #include "ModuleGUI.h"
 #include "WindowProject.h"
+#include "ModuleMap.h"
 #include "ModuleResourceManager.h"
 #include "SDL2_ttf/include/SDL_ttf.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
@@ -133,7 +134,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			case SDL_MOUSEBUTTONDOWN:
 			{
 
-				LOG("mouse down");
+				//LOG("mouse down");
 				mouse_x = e.motion.x / SCREEN_SIZE;
 				mouse_y = e.motion.y / SCREEN_SIZE;
 				Event mouse_event;
@@ -215,6 +216,10 @@ update_status ModuleInput::PreUpdate(float dt)
 				{
 					LOG("Importing file: %s", e.drop.file);
 					dropedfiles.push_back(e.drop.file);
+				}
+				else if (App->map->CheckTypeMap(e.drop.file) != TypeMap::MAP_NON)
+				{
+					App->map->imported_map = e.drop.file;
 				}
 			}
 			break;

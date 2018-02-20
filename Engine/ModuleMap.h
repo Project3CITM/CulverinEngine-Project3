@@ -6,6 +6,14 @@
 
 #define MAX_ARRAY 100
 
+enum TypeMap
+{
+	MAP_NON = 0,
+	MAP_WALKABLE,
+	MAP_3D,
+	MAP_NAVIGATION
+};
+
 class ModuleMap : public Module
 {
 public:
@@ -28,28 +36,47 @@ public:
 
 	void ShowTextWithColor(ImGuiCol_ type, int id);
 
+	void DeleteMap();
+	void ResetMap();
+	void CompletNoWalk();
+	void ShowEditableStyle();
+
+	void ImportMap();
+	TypeMap CheckTypeMap(const char* map);
+
 	int GetHeightMap();
 	int GetWidthMap();
 
+	bool SaveConfig(JSON_Object* node);
 
 public:
 	//Map ----------
 	std::string map_string;
 	int map[MAX_ARRAY][MAX_ARRAY];
 	std::vector<std::string> map_files; // Vector with all fbx/obj in Assets
+	
+	std::string imported_map;
 
 private:
 	int height_map = 10;
 	int width_map = 10;
-	char* name_map = nullptr;
+	std::string name_map;
 	float size_separation = 25.4;
 	std::vector<std::string> all_prefabs; // Vector with all fbx/obj in Assets
 	std::vector<std::string> prefabs; // Vector with all fbx/obj in Assets
 
-	std::vector<std::string> export_map;
+	std::vector<std::string> vector_map;
 	
 	bool map_created = false;
 	bool show_numeration = false;
+	bool show_editable_style = false;
+
+	int frame_padding_x = 4;
+	int frame_padding_y = 3;
+
+	int item_spacing_x = 8;
+	int item_spacing_y = 4;
+
 
 };
 

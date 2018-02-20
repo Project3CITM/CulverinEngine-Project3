@@ -104,9 +104,13 @@ void CompScript::Start()
 
 void CompScript::Update(float dt)
 {
-	if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
+	// Link GameObject* variables of the script
+	if (csharp != nullptr)
 	{
 		LoadValuesGameObjectScript();
+	}
+	if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
+	{
 		SetOwnGameObject(parent);
 	}
 	if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
@@ -295,9 +299,43 @@ void CompScript::ShowInspectorInfo()
 		ImGui::EndPopup();
 	}
 
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.00f));
-	//ImGui::Text("Script"); ImGui::SameLine();
+	ImGui::PopStyleVar();
+	ShowFSMInspectorInfo();
 
+	ImGui::TreePop();
+}
+
+void CompScript::ShowVariablesInfo()
+{
+	if (resource_script->GetState() == Resource::State::LOADED && csharp != nullptr)
+	{
+		//Access chsharp script, it contains a vector of all variables with their respective info
+		for (uint i = 0; i < csharp->variables.size(); i++)
+		{
+			ImGui::PushID(i);
+
+			//Show variable TYPE --------------------------
+			ShowVarType(csharp->variables[i]); ImGui::SameLine();
+
+			//Show variable NAME -------------------------
+			ImGui::Text(" %s", csharp->variables[i]->name); ImGui::SameLine();
+
+			//Show variable VALUE -------------------------
+			ShowVarValue(csharp->variables[i], i);
+
+			ImGui::PopID();
+		}
+	}
+	else
+	{
+		ImGui::TextColored(ImVec4(1.0f,0.223f,0.233f,1.0f),"SCRIPT NOT COMPILED CORRECTLY");
+	}
+}
+
+void CompScript::ShowFSMInspectorInfo()
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 0));
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.00f));
 	if (resource_script != nullptr)
 	{
 		char buffer[50];
@@ -324,7 +362,7 @@ void CompScript::ShowInspectorInfo()
 		ImGui::Text("NAME:"); ImGui::SameLine();
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "None (Script)");
 		char creat_string[50];
-		sprintf(creat_string,"Create New Script##%i", uid);
+		sprintf(creat_string, "Create New Script##%i", uid);
 		if (ImGui::Button(creat_string))
 		{
 			App->gui->ShowCreateNewScriptWindow();
@@ -376,75 +414,11 @@ void CompScript::ShowInspectorInfo()
 			}
 		}
 		if (select_script)
-		{
-			ResourceScript* temp = (ResourceScript*)App->resource_manager->ShowResources(select_script, Resource::Type::SCRIPT);
-			if (temp != nullptr)
-			{
-				if (resource_script != nullptr)
-				{
-					if (resource_script->num_game_objects_use_me > 0)
-					{
-						resource_script->num_game_objects_use_me--;
-					}
-				}
-
-				//Link the Resource to the Component
-				resource_script = temp;
-				resource_script->num_game_objects_use_me++;
-				name_script = resource_script->name;
-
-				if (resource_script->IsCompiled() == Resource::State::UNLOADED)
-				{
-					if (App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script))
-					{
-						resource_script->SetState(Resource::State::LOADED);
-					}
-					else
-					{
-						resource_script->SetState(Resource::State::FAILED);
-					}
-				}
-				if (resource_script->GetState() != Resource::State::FAILED)
-				{ 
-					csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
-					SetOwnGameObject(parent);
-				}
-				Enable();
-			}
-		}
+			SelectScript(select_script);
 	}
 	if (active_script && resource_script != nullptr)
 	{
 		resource_script->ShowEditor(active_script);
-	}
-
-	ImGui::TreePop();
-}
-
-void CompScript::ShowVariablesInfo()
-{
-	if (resource_script->GetState() == Resource::State::LOADED && csharp != nullptr)
-	{
-		//Access chsharp script, it contains a vector of all variables with their respective info
-		for (uint i = 0; i < csharp->variables.size(); i++)
-		{
-			ImGui::PushID(i);
-
-			//Show variable TYPE --------------------------
-			ShowVarType(csharp->variables[i]); ImGui::SameLine();
-
-			//Show variable NAME -------------------------
-			ImGui::Text(" %s", csharp->variables[i]->name); ImGui::SameLine();
-
-			//Show variable VALUE -------------------------
-			ShowVarValue(csharp->variables[i], i);
-
-			ImGui::PopID();
-		}
-	}
-	else
-	{
-		ImGui::TextColored(ImVec4(1.0f,0.223f,0.233f,1.0f),"SCRIPT NOT COMPILED CORRECTLY");
 	}
 }
 
@@ -559,6 +533,46 @@ void CompScript::CopyValues(const CompScript* component)
 	//more...
 }
 
+bool CompScript::SelectScript(bool& selecting)
+{
+	ResourceScript* temp = (ResourceScript*)App->resource_manager->ShowResources(selecting, Resource::Type::SCRIPT);
+	if (temp != nullptr)
+	{
+		if (resource_script != nullptr)
+		{
+			if (resource_script->num_game_objects_use_me > 0)
+			{
+				resource_script->num_game_objects_use_me--;
+			}
+		}
+
+		//Link the Resource to the Component
+		resource_script = temp;
+		resource_script->num_game_objects_use_me++;
+		name_script = resource_script->name;
+
+		if (resource_script->IsCompiled() == Resource::State::UNLOADED)
+		{
+			if (App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script))
+			{
+				resource_script->SetState(Resource::State::LOADED);
+			}
+			else
+			{
+				resource_script->SetState(Resource::State::FAILED);
+			}
+		}
+		if (resource_script->GetState() != Resource::State::FAILED)
+		{
+			csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
+			SetOwnGameObject(parent);
+		}
+		Enable();
+		return true;
+	}
+	return false;
+}
+
 void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
@@ -579,10 +593,7 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	name_script = json_object_dotget_string_with_std(object, name + "Name Script");
 	uint resourceID = uid = json_object_dotget_number_with_std(object, name + "Resource Script UUID");
-	//std::string temp = nameScript + " (Script)";
-	//nameComponent = "Script";
-	//editor = new Script_editor();
-	//editor->Start(nameScript.c_str(), false);
+
 	if (resourceID > 0)
 	{
 		resource_script = (ResourceScript*)App->resource_manager->GetResource(resourceID);
@@ -607,6 +618,17 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompScript::LoadValuesGameObjectScript()
+{
+	if (csharp != nullptr)
+	{
+		if (csharp->NeedToLinkGO())
+		{
+			csharp->LoadValuesGO();
+		}
+	}
+}
+
 void CompScript::SaveScript(JSON_Object * object, std::string name) const
 {
 	//Save Values
@@ -625,10 +647,3 @@ void CompScript::LoadScript(const JSON_Object* object, std::string name)
 	}
 }
 
-void CompScript::LoadValuesGameObjectScript()
-{
-	if (csharp != nullptr)
-	{
-		csharp->LoadValues();
-	}
-}

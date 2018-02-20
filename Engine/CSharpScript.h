@@ -21,7 +21,7 @@ typedef struct json_object_t JSON_Object;
 
 enum FunctionBase
 {
-	CS_Start, CS_Update, CS_FixedUpdate, CS_OnGUI, CS_OnEnable, CS_OnDisable, CS_OnTriggerEnter, CS_OnTriggerLost
+	CS_Start, CS_Update, CS_FixedUpdate, CS_OnGUI, CS_OnEnable, CS_OnDisable, CS_OnTriggerEnter, CS_OnTriggerLost, CS_OnClick
 };
 
 enum VarType
@@ -51,6 +51,10 @@ public:
 	void EreaseMonoValue(void* newVal);
 	void SetMonoField(MonoClassField* mfield);
 	void SetMonoType(MonoType* mtype);
+
+	//SAVE - LOAD ---------------
+	void Save(JSON_Object* object, const std::string& name);
+	void Load(const JSON_Object* object, const std::string& name, std::vector<uint>& re_load_values);
 
 public:
 	const char* name = nullptr;
@@ -112,6 +116,7 @@ public:
 	void GetScriptVariables();
 	void UpdateScriptVariables();
 	void RemoveReferences(GameObject* go);
+	bool NeedToLinkGO() const;
 
 	VarType GetTypeFromMono(MonoType* mtype);
 	bool GetValueFromMono(ScriptVariable* variable, MonoClassField* mfield, MonoType* mtype);
@@ -133,6 +138,10 @@ public:
 	MonoString* GetTag(MonoObject* object);
 	bool		CompareTag(MonoObject* object, MonoString* tag);
 	MonoObject* FindGameObjectWithTag(MonoObject* object, MonoString* tag);
+
+	int			ChildCount(MonoObject* object);
+	MonoObject* GetChildByIndex(MonoObject* object, int index);
+	MonoObject* GetChildByName(MonoObject* object, MonoString* name);
 
 	MonoObject* GetOwnGameObject();
 	void		SetCurrentGameObject(GameObject* current);
@@ -173,6 +182,13 @@ public:
 	void		StopAudioEvent(MonoObject* object, MonoString* event_name);
 	void		SetAuxiliarySends(MonoObject* object, MonoString* bus, float value);
 
+	/*UI-Interactive*/
+	void		Activate(MonoObject * object, int uid);
+	void		Deactivate(MonoObject * object, int uid);
+	void		Clicked(MonoObject* object);
+
+	/*Collider*/
+	MonoObject* GetCollidedObject(MonoObject* object);
 
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
@@ -181,13 +197,14 @@ public:
 	/*Childs*/
 	MonoObject* Find(MonoObject* object, MonoString* name);
 
+
 	// Map --------------------
 	MonoString* GetMapString(MonoObject* object);
 
 	// LOAD - SAVE METHODS ------------------
 	void Save(JSON_Object* object, std::string name) const;
 	void Load(const JSON_Object* object, std::string name);
-	void LoadValues();
+	void LoadValuesGO();
 
 public:
 	//Variables/Info containers (public to have access through other modules)
@@ -216,6 +233,7 @@ private:
 	MainMonoMethod OnDisable;
 	MainMonoMethod OnTriggerEnter;
 	MainMonoMethod OnTriggerLost;
+	MainMonoMethod OnClick;
 
 	GameObject* current_game_object = nullptr;
 	std::vector<uint> re_load_values;

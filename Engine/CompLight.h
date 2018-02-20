@@ -36,6 +36,9 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
 
+	void UpdateFrustum();
+	void FrustumDebug();
+
 public:
 	//Billboard to show where are the lights----
 	uint texture_bulb = 0;
@@ -45,7 +48,7 @@ public:
 	float attenuation;
 	float ambientCoefficient;
 	Light_type type;
-
+	Frustum frustum;
 	//UI variables------------
 	float color_temp[4];
 	std::string types_lights;

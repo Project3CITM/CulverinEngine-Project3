@@ -55,6 +55,11 @@ Resource::State ResourceMaterial::IsLoadedToMemory()
 	return state;
 }
 
+const char * ResourceMaterial::GetTextureName()
+{
+	return texture.name.c_str();
+}
+
 
 
 

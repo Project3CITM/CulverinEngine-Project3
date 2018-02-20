@@ -13,7 +13,6 @@
 ModuleMap::ModuleMap()
 {
 	name = "Map";
-	name_map = "New Map";
 }
 
 
@@ -25,17 +24,36 @@ ModuleMap::~ModuleMap()
 
 bool ModuleMap::Init(JSON_Object* node)
 {
+	name_map = json_object_get_string(node, "Walkable Map");
+	if (name_map.size() > 0)
+	{
+		imported_map = App->fs->GetMainDirectory();
+		imported_map += "/Maps/";
+		imported_map += name_map;
+		imported_map += ".mapwalk.json";
+		ImportMap();
+		map_created = true;
+	}
+	else
+	{
+		name_map = "New Map";
+	}
 	return true;
 }
 
 bool ModuleMap::Start()
 {
 	map_string = "Hola Joan";
+	imported_map.clear();
 	return true;
 }
 
 update_status ModuleMap::PreUpdate(float dt)
 {
+	if (imported_map.size() > 0)
+	{
+		ImportMap();
+	}
 	return update_status::UPDATE_CONTINUE;
 }
 
@@ -51,6 +69,7 @@ update_status ModuleMap::PostUpdate(float dt)
 
 void ModuleMap::ShowEditorMap(bool &active)
 {
+	//ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.176f, 0.176f, 0.176f, 1.0f));
 	if (!ImGui::Begin("Edit Map Tile", &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar))
 	{
 		ImGui::End();
@@ -75,20 +94,32 @@ void ModuleMap::ShowEditorMap(bool &active)
 
 			}
 			ImGui::Separator();
-			if (ImGui::MenuItem("Save Scene"))
+			if (ImGui::MenuItem("Save Map", NULL, false, false))
 			{
 				
 			}
-			if (ImGui::MenuItem("Save Scene as...", NULL, false, false))
+			if (ImGui::MenuItem("Save Map as...", NULL, false, false))
 			{
 
 			}
-			if (ImGui::MenuItem("Load Map"))
+			if (ImGui::BeginMenu("Import Map"))
 			{
-				
+				if (ImGui::MenuItem("Import Walkable Map", NULL, false, false))
+				{
+
+				}
+				if (ImGui::MenuItem("Import 3D Map", NULL, false, false))
+				{
+
+				}
+				if (ImGui::MenuItem("Import Navigation Map", NULL, false, false))
+				{
+
+				}
+				ImGui::EndMenu();
 			}
 			ImGui::Separator();
-			if (ImGui::MenuItem("Exit"))
+			if (ImGui::MenuItem("Close", NULL, !active))
 			{
 				active = !active;
 			}
@@ -101,27 +132,36 @@ void ModuleMap::ShowEditorMap(bool &active)
 			{
 				show_numeration = !show_numeration;
 			}
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Close"))
-		{
-			active = !active;
+			if (ImGui::MenuItem("Show Editable Style", NULL, show_editable_style))
+			{
+				show_editable_style = !show_editable_style;
+			}
+			if (ImGui::MenuItem("Revert Style"))
+			{
+				frame_padding_x = 4;
+				frame_padding_y = 3;
+				item_spacing_x = 8;
+				item_spacing_y = 4;
+			}
+
 			ImGui::EndMenu();
 		}
 		ImGui::EndMenuBar();
 	}
 
-	ImGui::PushItemWidth(70);
+	ImGui::PushItemWidth(150);
 	ImGui::Text("Edit the tiles. Click ID and set type of /nthe ID (Walkable / No-Walkable / ...)");
 	ImGui::InputInt("width", &width_map); ImGui::SameLine();
 	ImGui::InputInt("height", &height_map);
+	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Set Name: "); ImGui::SameLine();
 	char namedit[50];
-	strcpy_s(namedit, 50, name_map);
+	strcpy_s(namedit, 50, name_map.c_str());
 	if (ImGui::InputText("##nameModel", namedit, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
 	{
-		name_map = App->fs->ConverttoChar(std::string(namedit).c_str());
+		name_map = std::string(namedit);
 	}
+	ImGui::PushItemWidth(70);
 	ImGui::SameLine();
 	ImGui::Text("Set Separation: "); ImGui::SameLine();
 	ImGui::InputFloat("##Separation2", &size_separation);
@@ -129,9 +169,10 @@ void ModuleMap::ShowEditorMap(bool &active)
 	ImGui::PopItemWidth();
 	ImGui::PushItemWidth(10);
 	static std::string mode[] = { "Edit Walkable Map", "Create 3D Map (fast)", "Edit Navigation Map (IA)" };
-	static int selected_type = -1;
-	static const char* current_item_2 = NULL;
+	static int selected_type = 0;
+	static const char* current_item_2 = "Edit Walkable Map";
 	ImGui::PushItemWidth(150);
+	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Select Map Mode: "); ImGui::SameLine();
 	if (ImGui::BeginCombo("##Mode", current_item_2))
 	{
@@ -218,41 +259,19 @@ void ModuleMap::ShowEditorMap(bool &active)
 		}
 		if (map_created)
 		{
-			if (ImGui::Button("Reset Map"))
-			{
-				for (int y = 0; y < MAX_ARRAY; y++)
-				{
-					for (int x = 0; x < MAX_ARRAY; x++)
-					{
-						map[x][y] = -1;
-					}
-				}
-			}
-			ImGui::SameLine();
 			if (ImGui::Button("Delete Map"))
 			{
-				for (int y = 0; y < MAX_ARRAY; y++)
-				{
-					for (int x = 0; x < MAX_ARRAY; x++)
-					{
-						map[x][y] = -1;
-					}
-				}
-				map_created = false;
+				DeleteMap();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Reset Map"))
+			{
+				ResetMap();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Complet with No-Walk"))
 			{
-				for (int y = 0; y < height_map; y++)
-				{
-					for (int x = 0; x < width_map; x++)
-					{
-						if (map[x][y] == -1)
-						{
-							map[x][y] = 1;
-						}
-					}
-				}
+				CompletNoWalk();
 			}
 			if (selected_type != -1)
 			{
@@ -285,9 +304,10 @@ void ModuleMap::ShowWalkableMap()
 {
 	// General BeginCombo() API, you have full control over your selection data and display type
 	static std::string type_Name[] = { "Walkable", "No-Walkable", "Initial Position" };
-	static int paint = -1;
-	static const char* current_item_2 = NULL;
+	static int paint = 0;
+	static const char* current_item_2 = "Walkable";
 	ImGui::PushItemWidth(150);
+	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Select Color (Mode)"); ImGui::SameLine();
 	ShowTextWithColor(ImGuiCol_Text, paint);
 	bool do_pop = false;
@@ -310,6 +330,12 @@ void ModuleMap::ShowWalkableMap()
 	}
 	if (paint > -1 && do_pop)
 		ImGui::PopStyleColor();
+
+	if (show_editable_style)
+	{
+		ShowEditableStyle();
+	}
+
 	ImGui::PushItemWidth(10);
 	//Frist Select Type
 	ImGui::Separator();
@@ -318,6 +344,8 @@ void ModuleMap::ShowWalkableMap()
 	{
 		do_numeration = true;
 	}
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(frame_padding_x, frame_padding_y));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(item_spacing_x, item_spacing_y));
 	for (int y = 0; y < height_map; y++)
 	{
 		if (do_numeration)
@@ -374,7 +402,10 @@ void ModuleMap::ShowWalkableMap()
 			}
 		}
 	}
+	ImGui::PopStyleVar(2);
 	ImGui::Separator();
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
 	if (ImGui::Button("Save Map"))
 	{
 		map_string = "";
@@ -382,33 +413,55 @@ void ModuleMap::ShowWalkableMap()
 		{
 			for (int x = 0; x < width_map; x++)
 			{
+				if (map[x][y] > 2)
+				{
+					map[x][y] = 1;
+				}
 				map_string += std::to_string(map[x][y]);
 			}
 		}
 	}
- 	if (ImGui::Button("Export Map ('Name'.map.json)"))
+	ImGui::SameLine();
+	ImGui::Text("Save your map and can use for test, don't forget export the map!");
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
+	if (ImGui::Button("Load Map"))
 	{
-		for (int y = 0; y < height_map; y++)
-		{
-			for (int x = 0; x < width_map; x++)
-			{
-				if (map[x][y] == -1)
-				{
-					map[x][y] == 1;
-				}
-			}
-		}
+		imported_map = App->fs->GetMainDirectory();
+		imported_map += "/Maps/";
+		imported_map += name_map;
+		imported_map += ".mapwalk.json";
+		ImportMap();
+		map_created = true;
+	}
+	ImGui::SameLine();
+	ImGui::Text("Load the map with the actual name use for map!");
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
+ 	if (ImGui::Button("Export Map"))
+	{
+		// First complet map to export
+		CompletNoWalk();
+		vector_map.clear();
 		for (int y = 0; y < height_map; y++)
 		{
 			std::string line = "";
 			for (int x = 0; x < width_map; x++)
 			{
+				if (map[x][y] > 2)
+				{
+					map[x][y] = 1;
+				}
 				line += std::to_string(map[x][y]);
 			}
-			export_map.push_back(line);
+			vector_map.push_back(line);
 		}
-		App->json_seria->SaveMapWalkable(export_map, height_map, width_map, name_map);
+		App->json_seria->SaveMapWalkable(vector_map, height_map, width_map, size_separation, name_map.c_str());
 	}
+	ImGui::SameLine();
+	ImGui::Text("Export Map with -> ('Name Map'.mapwalk.json) it saved in Assets/Maps/...");
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
 	if (ImGui::Button("Create Level Map"))
 	{
 		//map_string = "";
@@ -432,6 +485,8 @@ void ModuleMap::ShowWalkableMap()
 		}
 		// ...........
 	}
+	ImGui::SameLine();
+	ImGui::Text("Test...");
 }
 
 void ModuleMap::ShowCreationMap()
@@ -452,7 +507,7 @@ void ModuleMap::ShowCreationMap()
 	ImGui::Separator();
 	ImGui::BeginColumns("Setting_map", 2, ImGuiColumnsFlags_GrowParentContentsSize);
 	ImGui::SetColumnWidth(0, 180);
-	ImGui::Text("Select number of Prefabs we will use...");
+	ImGui::Text("Select Prefabs we will use...");
 	ImGui::PushItemWidth(70);
 	static bool force_reload = false;
 	if (ImGui::InputInt("Num Prefabs", &numPrefabs))
@@ -484,7 +539,7 @@ void ModuleMap::ShowCreationMap()
 		{
 			ImGui::PushID(i * 10);
 			ShowTextWithColor(ImGuiCol_Text, i);
-			ImGui::Text("%i: ", i); ImGui::SameLine();
+			ImGui::Text("%i: ", i + 1); ImGui::SameLine();
 			if (ImGui::BeginCombo("##Pref", prefabs[i].c_str()))
 			{
 				for (int n = 0; n < all_prefabs.size(); n++)
@@ -530,6 +585,14 @@ void ModuleMap::ShowCreationMap()
 	}
 	if (paint > -1 && do_pop)
 		ImGui::PopStyleColor();
+
+	if (show_editable_style)
+	{
+		ShowEditableStyle();
+	}
+
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(frame_padding_x, frame_padding_y));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(item_spacing_x, item_spacing_y));
 	ImGui::PushItemWidth(10);
 	//Frist Select Type
 	int total_map = width_map * height_map;
@@ -563,17 +626,67 @@ void ModuleMap::ShowCreationMap()
 		}
 	}
 	ImGui::EndColumns();
+	ImGui::PopStyleVar(2);
 	ImGui::Separator();
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
 	if (ImGui::Button("Save Map"))
 	{
-
+		//map_string = "";
+		//for (int y = 0; y < height_map; y++)
+		//{
+		//	for (int x = 0; x < width_map; x++)
+		//	{
+		//		if (map[x][y] > 2)
+		//		{
+		//			map[x][y] = 1;
+		//		}
+		//		map_string += std::to_string(map[x][y]);
+		//	}
+		//}
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Export Map ('Name'.map.json)"))
+	ImGui::Text("Disabled until further notice...");
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
+	if (ImGui::Button("Load Map"))
 	{
-
+		imported_map = App->fs->GetMainDirectory();
+		imported_map += "/Maps/";
+		imported_map += name_map;
+		imported_map += ".map3d.json";
+		ImportMap();
+		map_created = true;
 	}
 	ImGui::SameLine();
+	ImGui::Text("Load the map with the actual name use for map!");
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
+	if (ImGui::Button("Export Map"))
+	{
+		vector_map.clear();
+		for (int y = 0; y < height_map; y++)
+		{
+			for (int x = 0; x < width_map; x++)
+			{
+				map[x][y] += 1;
+			}
+		}
+		for (int y = 0; y < height_map; y++)
+		{
+			std::string line = "";
+			for (int x = 0; x < width_map; x++)
+			{
+				line += std::to_string(map[x][y]);
+			}
+			vector_map.push_back(line);
+		}
+		App->json_seria->SaveMapCreation(vector_map, prefabs, height_map, width_map, size_separation, name_map.c_str());
+	}
+	ImGui::SameLine();
+	ImGui::Text("Export Map with -> ('Name Map'.map3d.json) it saved in Assets/Maps/...");
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
 	if (ImGui::Button("Create Level Map"))
 	{
 		GameObject* obj = App->scene->CreateGameObject();
@@ -608,6 +721,8 @@ void ModuleMap::ShowCreationMap()
 			}
 		}
 	}
+	ImGui::SameLine();
+	ImGui::Text("Create a map level with the tile map you have made...");
 	//if (settings)
 	//{
 
@@ -640,6 +755,8 @@ void ModuleMap::GetSizePrefab(GameObject* obj, float& min_size, float& max_size)
 void ModuleMap::ShowNavigationMap()
 {
 }
+
+
 
 void ModuleMap::ShowTextWithColor(ImGuiCol_ type,int id)
 {
@@ -689,6 +806,132 @@ void ModuleMap::ShowTextWithColor(ImGuiCol_ type,int id)
 	}
 }
 
+void ModuleMap::DeleteMap()
+{
+	for (int y = 0; y < MAX_ARRAY; y++)
+	{
+		for (int x = 0; x < MAX_ARRAY; x++)
+		{
+			map[x][y] = -1;
+		}
+	}
+	map_created = false;
+}
+
+void ModuleMap::ResetMap()
+{
+	for (int y = 0; y < MAX_ARRAY; y++)
+	{
+		for (int x = 0; x < MAX_ARRAY; x++)
+		{
+			map[x][y] = -1;
+		}
+	}
+}
+
+void ModuleMap::CompletNoWalk()
+{
+	for (int y = 0; y < height_map; y++)
+	{
+		for (int x = 0; x < width_map; x++)
+		{
+			if (map[x][y] == -1)
+			{
+				map[x][y] = 1;
+			}
+		}
+	}
+}
+
+void ModuleMap::ShowEditableStyle()
+{
+	ImGui::PushItemWidth(20);
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
+	ImGui::Text("Edit Frame Padding: "); ImGui::SameLine(); ImGui::Text("x:"); ImGui::SameLine();
+	App->ShowHelpMarker("Disabled until further notice."); 	ImGui::SameLine();
+	ImGui::InputInt("##frame_padding_x", &frame_padding_x, 0, 100, ImGuiInputTextFlags_ReadOnly);  ImGui::SameLine(); ImGui::Text("y:"); ImGui::SameLine();
+	ImGui::PushItemWidth(70);
+	ImGui::InputInt("##frame_padding_y", &frame_padding_y);
+	ImGui::Bullet();
+	ImGui::Text("Edit Item Spacing: "); ImGui::SameLine(); ImGui::Text("x:"); ImGui::SameLine();
+	ImGui::InputInt("##item_spacing_x", &item_spacing_x); ImGui::SameLine(); ImGui::Text("y:"); ImGui::SameLine();
+	ImGui::InputInt("##item_spacing_y", &item_spacing_y);
+}
+
+void ModuleMap::ImportMap()
+{
+	TypeMap type = App->map->CheckTypeMap(imported_map.c_str());
+	vector_map.clear();
+	switch (type)
+	{
+	case TypeMap::MAP_WALKABLE:
+	{
+		if (App->json_seria->LoadMapWalkable(vector_map, height_map, width_map, size_separation, imported_map.c_str(), name_map))
+		{
+			for (int y = 0; y < height_map; y++)
+			{
+				std::string line = vector_map[y];
+				for (int x = 0; x < width_map; x++)
+				{
+					std::string number;
+					number += line[x];
+					map[x][y] = atoi(number.c_str());
+					//t += 1;
+				}
+			}
+			LOG("Walkable Map Loaded -----------");
+		}
+		else
+		{
+			LOG("[error] Faild with loading walkable map -----------");
+		}
+	}
+	case TypeMap::MAP_3D:
+	{
+
+	}
+	case TypeMap::MAP_NAVIGATION:
+	{
+
+	}
+	}
+	imported_map.clear();
+}
+
+TypeMap ModuleMap::CheckTypeMap(const char* map)
+{
+	std::string file = map;
+	std::string extension = map;
+
+	size_t extension_pos = file.find_last_of(".");
+
+	extension = file.substr(extension_pos + 1);
+	std::string extension_map = file.substr(0, extension_pos);;
+	if (extension == "json")
+	{
+		extension_pos = extension_map.find_last_of(".");
+		extension_map = extension_map.substr(extension_pos + 1);
+		if (extension_map == "mapwalk")
+		{
+			return TypeMap::MAP_WALKABLE;
+		}
+		else if (extension_map == "map3d")
+		{
+			return TypeMap::MAP_3D;
+		}
+		else if (extension_map == "mapnavi")
+		{
+			return TypeMap::MAP_NAVIGATION;
+		}
+	}
+	else
+	{
+		return TypeMap::MAP_NON;
+	}
+	return TypeMap::MAP_NON;
+}
+
 int ModuleMap::GetHeightMap()
 {
 	return height_map;
@@ -697,4 +940,17 @@ int ModuleMap::GetHeightMap()
 int ModuleMap::GetWidthMap()
 {
 	return width_map;
+}
+
+bool ModuleMap::SaveConfig(JSON_Object* node)
+{
+	//Save --------------------------------
+	json_object_set_string(node, "Walkable Map", name_map.c_str());
+
+	// Navigation maps
+	//json_object_set_string(node, "Walkable Map", map_string.c_str());
+	//json_object_set_string(node, "Walkable Map", map_string.c_str());
+	//json_object_set_string(node, "Walkable Map", map_string.c_str());
+	// ------------------------------------------------------
+	return true;
 }

@@ -71,6 +71,9 @@ private:
 	static void			SetActive(MonoObject* object, mono_bool active);
 	static MonoObject*	Find(MonoObject* object, MonoString* name);
 	static MonoObject*	GetOwnGameObject();
+	static int			ChildCount(MonoObject* object);
+	static MonoObject*	GetChildByIndex(MonoObject* object, int index);
+	static MonoObject*	GetChildByName(MonoObject* object, MonoString* name);
 	static void			SetName(MonoObject* object, MonoString* name);
 	static MonoString*	GetName(MonoObject* object);
 	static MonoString*	GetTag(MonoObject* object);
@@ -134,6 +137,15 @@ private:
 	static void StopAudioEvent(MonoObject* object, MonoString* name);
 	static void SetAuxiliarySends(MonoObject* object, MonoString* bus, float value);
 
+	/*Component Interactive*/
+	static void Activate(MonoObject* object, int uid);
+	static void Deactivate(MonoObject* object, int uid);
+
+	/*Component Interactive Button*/
+	static void Clicked(MonoObject * object);
+
+	/*Component Collier*/
+	static MonoObject* GetCollidedObject(MonoObject * object);
 
 private:
 	std::string nameNewScript;

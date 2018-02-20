@@ -11,6 +11,7 @@
 
 CompAudio::CompAudio(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
+	uid = App->random->Int();
 	name_component = "CompAudio";
 	CreateEmitter();
 }

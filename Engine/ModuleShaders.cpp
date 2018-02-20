@@ -20,11 +20,11 @@ ModuleShaders::ModuleShaders()
 ModuleShaders::~ModuleShaders()
 {
 	for (auto item = shaders.begin(); item != shaders.end(); item++) {
-		delete (*item);
+		RELEASE(*item);
 
 	}
 	for (auto item = programs.begin(); item != programs.end(); item++) {
-		delete (*item);
+		RELEASE(*item);
 	}
 }
 
@@ -159,10 +159,10 @@ char * ModuleShaders::GetShaderText(std::string path)
 	return buffer;
 }
 
-ShaderProgram * ModuleShaders::CreateDefaultShader()
+ShaderProgram * ModuleShaders::CreateDefaultShader(const GLchar* const* fragment_text, const GLchar* const * vertex_text, char* name_text, bool push_in_list)
 {
 	ShaderProgram* defaultShader = new ShaderProgram();
-	defaultShader->name = "Default Shader";
+	defaultShader->name = name_text;
 	//Success flag
 	GLint programSuccess = GL_TRUE;
 
@@ -172,35 +172,8 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 	//Create vertex shader
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
-	//Get vertex source
-	const GLchar* vertexShaderSource[] =
-	{
-		"#version 330 core\n"
-		"layout(location = 0) in vec3 position;\n"
-		"layout(location = 1) in vec2 texCoord;\n"
-		"layout(location = 2) in vec3 normal;\n"
-		"layout(location = 3) in vec4 color;\n"
-		"out float ourTime;\n"
-		"out vec4 ourColor;\n"
-		"out vec3 ourNormal;\n"
-		"out vec2 TexCoord;\n"
-		"uniform float _time;\n"
-		"uniform vec4 _color;\n"
-		"uniform mat4 model;\n"
-		"uniform mat4 viewproj;\n"
-		"uniform mat4 view;\n"
-		"void main()\n"
-		"{\n"
-		"gl_Position = viewproj *  model * vec4(position.x,position.y,position.z, 1.0f);\n"
-		"ourColor = _color;\n"
-		"TexCoord = texCoord;\n"
-		"ourTime = _time;\n"
-		"ourNormal = mat3(model) * normal;"
-		"}\n"
-	};
-
 	//Set vertex source
-	glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
+	glShaderSource(vertexShader, 1, vertex_text, NULL);
 
 	//Compile vertex source
 	glCompileShader(vertexShader);
@@ -220,30 +193,9 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 	//Create fragment shader
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-	//Get fragment source
-	const GLchar* fragmentShaderSource[] =
-	{
-		"#version 330 core\n"
-		"in vec4 ourColor;\n"
-		"in float ourTime;\n"
-		"in vec2 TexCoord;\n"
-		"in vec3 ourNormal;\n"
-		"in vec4 gl_FragCoord;\n"
-		"out vec4 color;\n"
-		"uniform sampler2D albedo;\n"
-		
-		"void main()\n"
-		"{\n"
-		"vec3 lightDir = vec3(1);\n"
-		"float angle = dot(lightDir, ourNormal);\n"
-		
-		//Z-Buffer Line Shader
-		"color= vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1) *texture(albedo, TexCoord);\n"
-		"}\n"
-	};
 
 	//Set fragment source
-	glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
+	glShaderSource(fragmentShader, 1, fragment_text, NULL);
 
 	//Compile fragment source
 	glCompileShader(fragmentShader);
@@ -274,23 +226,26 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 
 	Shader* newFragment = new Shader();
 	newFragment->shaderID = fragmentShader;
-	newFragment->shaderText = *fragmentShaderSource;
+	newFragment->shaderText = *fragment_text;
 	newFragment->shaderType = ShaderType::fragment;
-	newFragment->name = "default_shader_frag";
+	newFragment->name =  name_text;
+	newFragment->name.append("_frag");
 	newFragment->shaderPath = "";
 
 	defaultShader->AddFragment(newFragment);
 
 	Shader* newVertex = new Shader();
 	newVertex->shaderID = vertexShader;
-	newVertex->shaderText = *vertexShaderSource;
+	newVertex->shaderText = *vertex_text;
 	newVertex->shaderType = ShaderType::vertex;
-	newVertex->name = "default_shader_vert";
+	newVertex->name = name_text;
+	newVertex->name.append("_vert");
 	newVertex->shaderPath = "";
 
 	defaultShader->AddVertex(newVertex);
 
 	uint var_size = defaultShader->GetVariablesSize();
+	//Change this
 	for (int i = 0; i < var_size; i++) {
 		UniformVar temp = defaultShader->GetVariableInfo(i);
 
@@ -300,13 +255,16 @@ ShaderProgram * ModuleShaders::CreateDefaultShader()
 			texture_var.var_name = temp.name;
 			defaultShader->textures.push_back(texture_var);
 		}
+	}
+	
+
+	if (push_in_list) {
+		programs.push_back(defaultShader);
+		shaders.push_back(newFragment);
+		shaders.push_back(newVertex);
 
 	}
-
-	programs.push_back(defaultShader);
-	shaders.push_back(newFragment);
-	shaders.push_back(newVertex);
-
+	defaultShader->GetProgramVariables();
 	return defaultShader;
 
 }
@@ -411,7 +369,7 @@ void ModuleShaders::AddShaderList(Shader* newShader)
 void ModuleShaders::ImportShaderObjects()
 {
 	namespace stdfs = std::experimental::filesystem;
-
+	char* buffer = nullptr;
 	//Iterating all files
 	for (stdfs::directory_iterator::value_type item : stdfs::directory_iterator(Shader_Directory_fs))
 	{
@@ -429,7 +387,7 @@ void ModuleShaders::ImportShaderObjects()
 			std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
 
 			//Loading the file to extract the file buffer information
-			char* buffer;
+			
 			App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
 
 			//If the shader object is vertex
@@ -468,15 +426,20 @@ void ModuleShaders::ImportShaderObjects()
 			}
 
 			//maybe delete buffer?
-
+			RELEASE_ARRAY(buffer);
 		}
 	}
+
+	
+
 }
 
 void ModuleShaders::ImportShaderMaterials()
 {
 
 	namespace stdfs = std::experimental::filesystem;
+	ShaderProgram* mat_shader = nullptr;
+	char* buffer = nullptr;
 	//Iterating all files
 	for (stdfs::directory_iterator::value_type item : stdfs::directory_iterator(Shader_Directory_fs))
 	{
@@ -493,7 +456,7 @@ void ModuleShaders::ImportShaderMaterials()
 				std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
 
 				//Loading the file to extract the file buffer information
-				char* buffer;
+			
 				App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
 
 				if (buffer != nullptr)
@@ -504,7 +467,7 @@ void ModuleShaders::ImportShaderMaterials()
 					App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, str_path.c_str());
 
 					//Creating the shader program
-					ShaderProgram* mat_shader = CreateShader(name.c_str());
+					mat_shader = CreateShader(name.c_str());
 
 					//If the program has a fragment shader
 					if (json_object_has_value(obj_proj, "Fragment Shader") > 0)
@@ -537,8 +500,12 @@ void ModuleShaders::ImportShaderMaterials()
 					mat_shader->LoadProgram();
 					
 					mat_shader->CreateMaterialFile();
+					RELEASE_ARRAY(buffer);
 				}
+
 			}
+
+		
 	}
 }
 

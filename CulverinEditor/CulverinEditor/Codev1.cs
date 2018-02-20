@@ -3,24 +3,13 @@ using CulverinEditor.Debug;
 
 public class Codev1 : CulverinBehaviour
 {
-    int a = 3;
-
-    void Start()
+    void OnTriggerEnter()
     {
-
+        Debug.Log(GetComponent<CompCollider>().GetCollidedObject().tag);
     }
 
-    void Update()
+    void OnTriggerLost()
     {
-        Debug.Log(a.ToString());
+        Debug.Log("lost");
     }
-
-    public void Test()
-    {
-        //Debug.Log(a.ToString());
-        
-        gameObject.SetTag("uned");
-        Debug.Log(gameObject.GetTag());
-    }
-
 }

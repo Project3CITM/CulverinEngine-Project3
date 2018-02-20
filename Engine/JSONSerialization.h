@@ -40,14 +40,14 @@ public:
 	// --------------------------------------
 
 	// SAVE & LOAD MAP ---------------------------
-	void SaveMapWalkable(std::vector<std::string>& map, int height_map, int width_map, const char* name);
-	void LoadMapWalkable(const char* file);
+	void SaveMapWalkable(std::vector<std::string>& map, int height_map, int width_map, float separation, const char* name);
+	bool LoadMapWalkable(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* name, std::string& name_map);
 
-	void SaveMapCreation(const char* file);
-	void LoadMapCreation(const char* file);
+	void SaveMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int height_map, int width_map, float separation, const char* name);
+	void LoadMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int height_map, int width_map, float separation, const char* name);
 
-	void SaveMapNavigation(const char* file);
-	void LoadMapNavigation(const char* file);
+	void SaveMapNavigation(std::vector<std::string>& map, int height_map, int width_map, float separation, const char* name);
+	void LoadMapNavigation(std::vector<std::string>& map, int height_map, int width_map, float separation,const char* name);
 	// --------------------------------------
 
 	// SAVE & LOAD MATERIAL --------------------------

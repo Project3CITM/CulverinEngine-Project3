@@ -6,6 +6,7 @@
 #include <vector>
 class CompCanvasRender;
 class CompRectTransform;
+class CompGraphic;
 class CompCanvas:public Component
 {
 public:
@@ -19,15 +20,18 @@ public:
 	void CopyValues(const CompCanvas * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
-	void AddCanvasRender(CompCanvasRender* to_add);
-	void RemoveCanvasRender(CompCanvasRender* to_remove);
-	void DrawCanvasRender();
+
+
+	void AddGraphic(CompGraphic* to_add);
+	void RemoveGraphic(CompGraphic* to_remove);
+	void DrawGraphic();
 private:
 public:
 private:
 	Event draw_mode;
 	CompRectTransform* my_transform = nullptr;
-	std::vector<CompCanvasRender*> canvas_render;
+	std::vector<CompGraphic*> graphic_vector;
+
 };
 
 #endif // !COMPONENT_CANVAS_H

@@ -4,6 +4,7 @@
 #include "Component.h"
 
 class jpPhysicsRigidBody;
+class CompRigidBody;
 class CompTransform;
 class CompScript;
 
@@ -27,6 +28,7 @@ public:
 
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+	void SyncComponent();
 
 
 	// Collision Events ------------
@@ -36,19 +38,24 @@ public:
 	void ChangeCollider();
 	void UpdateCollider();
 
+	//Meant to only be used by rigidbody to get the phsyics body
+	jpPhysicsRigidBody* GivePhysicsBody(CompRigidBody* new_rigid_body);
+
 	//Setters -------------------
 	void SetColliderPosition();
 	void SetSizeFromBoundingBox();
+	void SetRigidBodyComp(CompRigidBody* new_comp);
 
-	//Getters
+	//Getters -------------------
 	float3 GetPosition() const;
 	Quat GetLocalQuat() const;
-
+	GameObject* GetCollidedObject()const;
+	
 private:
 	
-	jpPhysicsRigidBody * body;
-	
-	CompTransform* transform;
+	jpPhysicsRigidBody * body = nullptr;
+	CompRigidBody* rigid_body_comp = nullptr;
+	CompTransform* transform = nullptr;
 
 	// Two defintions of the type are needed to avoid conflict when changing types
 	JP_COLLIDER_TYPE	collider_type = (JP_COLLIDER_TYPE)3;	//Defines the next type of collider when changing it via editor
@@ -64,6 +71,9 @@ private:
 	float				rad = 0.5f;
 
 	bool				trigger = false;	
+	CompScript*			listener = nullptr;
+	GameObject*			collided_object = nullptr;
+	std::string			script_name;
 
 };
 

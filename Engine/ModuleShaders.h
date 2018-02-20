@@ -37,7 +37,7 @@ public:
 
 	ShaderProgram * CreateShader(const char* name);
 	char* GetShaderText(std::string path);
-	ShaderProgram*   CreateDefaultShader();
+	ShaderProgram*   CreateDefaultShader(const GLchar* const* fragment, const GLchar* const* vertex, char* name, bool push_in_list = false);
 
 	Shader*   CompileShader(std::string path, std::string name, ShaderType type);
 	std::string GetShaderError(uint ID);

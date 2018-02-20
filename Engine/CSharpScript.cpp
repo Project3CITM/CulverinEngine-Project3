@@ -7,11 +7,14 @@
 #include "ModuleMap.h"
 #include "CompTransform.h"
 #include "CompScript.h"
+#include "CompInteractive.h"
 #include "ResourceScript.h"
 #include "ModuleResourceManager.h"
 #include "GameObject.h"
 #include "Scene.h"
 #include "CompAudio.h"
+#include "CompButton.h"
+#include "CompCollider.h"
 
 //SCRIPT VARIABLE UTILITY METHODS ------
 ScriptVariable::ScriptVariable(const char* name, VarType type, VarAccess access, CSharpScript* script) : name(name), type(type), access(access), script(script)
@@ -76,6 +79,128 @@ void ScriptVariable::SetMonoType(MonoType* mtype)
 	}
 }
 
+void ScriptVariable::Save(JSON_Object * object, const std::string& title)
+{
+	const char* type_name = nullptr;
+	
+	//SAVE VAR TYPE -------------------
+	switch (type)
+	{
+	case Var_UNKNOWN:
+		type_name = "unknown";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		json_object_dotset_string_with_std(object, title + "Value: ", type_name);
+		break;
+
+	case Var_INT:
+		type_name = "int";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		json_object_dotset_number_with_std(object, title + "Value: ", *(int*)value);
+		break;
+
+	case Var_FLOAT:
+		type_name = "float";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		json_object_dotset_number_with_std(object, title + "Value: ", *(float*)value);
+		break;
+
+	case Var_BOOL:
+		type_name = "bool";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		json_object_dotset_boolean_with_std(object, title + "Value: ", *(bool*)value);
+		break;
+
+	case Var_STRING:
+		type_name = "string";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		json_object_dotset_string_with_std(object, title + "Value: ", str_value.c_str());
+		break;
+
+	case Var_CLASS:
+		type_name = "class";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		break;
+
+	case Var_GAMEOBJECT:
+		type_name = "GameObject";
+		json_object_dotset_string_with_std(object, title + "Type: ", type_name);
+		if (game_object != nullptr)
+		{
+			json_object_dotset_number_with_std(object, title + "GameObject UUID: ", game_object->GetUUID());
+		}
+		else
+		{
+			//-1 Any GameObject is assigned
+			json_object_dotset_number_with_std(object, title + "GameObject UUID: ", -1);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	//SET VAR NAME --------------------
+	json_object_dotset_string_with_std(object, title + "Name: ", name);
+}
+
+void ScriptVariable::Load(const JSON_Object * object, const std::string& title, std::vector<uint>& re_load_values)
+{
+	// Load values from inspector previously saved
+	switch (type)
+	{
+	case Var_UNKNOWN:
+	{
+		break;
+	}
+
+	case Var_INT:
+	{
+		int ival = json_object_dotget_number_with_std(object, title + "Value: ");
+		*(int*)value = ival;
+		SetMonoValue((int*)value);
+		break;
+	}
+
+	case Var_FLOAT:
+	{
+		float fval = json_object_dotget_number_with_std(object, title + "Value: ");
+		*(float*)value = fval;
+		SetMonoValue((float*)value);
+		break;
+	}
+
+	case Var_BOOL:
+	{
+		bool bval = json_object_dotget_boolean_with_std(object, title + "Value: ");
+		*(bool*)value = bval;
+		SetMonoValue((bool*)value);
+		break;
+	}
+
+	case Var_STRING:
+	{
+		break;
+	}
+
+	case Var_CLASS:
+	{
+		break;
+	}
+
+	case Var_GAMEOBJECT:
+	{
+		uint obj_uid = json_object_dotget_number_with_std(object, title + "GameObject UUID: ");
+		re_load_values.push_back(obj_uid);
+		break;
+	}
+
+	default:
+	{
+		break;
+	}
+	}
+}
+
 //CSHARP SCRIPT FUNCTIONS ---------------
 CSharpScript::CSharpScript()
 {
@@ -107,6 +232,7 @@ void CSharpScript::LoadScript()
 		OnDisable = CreateMainFunction("OnDisable", DefaultParam, FunctionBase::CS_OnDisable);
 		OnTriggerEnter = CreateMainFunction("OnTriggerEnter", DefaultParam, FunctionBase::CS_OnTriggerEnter);
 		OnTriggerLost = CreateMainFunction("OnTriggerLost", DefaultParam, FunctionBase::CS_OnTriggerLost);
+		OnClick = CreateMainFunction("OnClick", DefaultParam, FunctionBase::CS_OnClick);
 
 		//Get Script Variables info (from c# to c++)
 		GetScriptVariables();
@@ -177,6 +303,14 @@ void CSharpScript::DoMainFunction(FunctionBase function, void** parameters)
 		if (OnGUI.method != nullptr)
 		{
 			DoFunction(OnGUI.method, nullptr);
+		}
+		break;
+	}
+	case FunctionBase::CS_OnClick:
+	{
+		if (OnClick.method != nullptr)
+		{
+			DoFunction(OnClick.method, nullptr);
 		}
 		break;
 	}
@@ -428,6 +562,11 @@ void CSharpScript::RemoveReferences(GameObject* go)
 			variables[i]->select_game_object = false;
 		}
 	}
+}
+
+bool CSharpScript::NeedToLinkGO() const
+{
+	return re_load_values.size() > 0;
 }
 
 
@@ -781,6 +920,49 @@ MonoObject* CSharpScript::FindGameObjectWithTag(MonoObject * object, MonoString 
 	return nullptr;
 }
 
+int CSharpScript::ChildCount(MonoObject * object)
+{
+	return current_game_object->GetNumChilds();
+}
+
+MonoObject * CSharpScript::GetChildByIndex(MonoObject * object, int index)
+{
+	GameObject* target = current_game_object->GetChildbyIndex(index);
+	if (target == nullptr)return nullptr;
+	
+	std::map<MonoObject*,GameObject*>::iterator iter = game_objects.begin();
+	while (iter != game_objects.end())
+	{
+		if (iter._Ptr->_Myval.second == target)
+		{
+			return iter._Ptr->_Myval.first;
+		}
+
+		iter++;
+	}
+
+	return nullptr;
+}
+
+MonoObject * CSharpScript::GetChildByName(MonoObject * object, MonoString * name)
+{
+	GameObject* target = current_game_object->GetChildbyName(mono_string_to_utf8(name));
+	if (target == nullptr)return nullptr;
+
+	std::map<MonoObject*, GameObject*>::iterator iter = game_objects.begin();
+	while (iter != game_objects.end())
+	{
+		if (iter._Ptr->_Myval.second == target)
+		{
+			return iter._Ptr->_Myval.first;
+		}
+
+		iter++;
+	}
+
+	return nullptr;
+}
+
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)
 {
 	if (!CheckMonoObject(object))
@@ -808,7 +990,14 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompAudio";
 	}
-
+	else if (name == "CulverinEditor.CompButton")
+	{
+		comp_name = "Button";
+	}
+	else if (name == "CulverinEditor.CompCollider")
+	{
+		comp_name = "CompCollider";
+	}
 	/* Scripts */
 	if (comp_name == "")
 	{
@@ -1554,6 +1743,79 @@ void CSharpScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, floa
 	}
 }
 
+void CSharpScript::Activate(MonoObject* object, int uid)
+{
+	if (current_game_object != nullptr)
+	{
+		
+		CompInteractive* interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_BUTTON);
+		if (interactive != nullptr)
+		{
+			interactive->Activate();
+			return;
+		}		
+		interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_CHECK_BOX);
+		if (interactive != nullptr)
+		{
+			interactive->Activate();
+			return;
+
+		}
+	}
+}
+
+void CSharpScript::Deactivate(MonoObject * object, int uid)
+{
+	if (current_game_object != nullptr)
+	{
+
+		CompInteractive* interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_BUTTON);
+		if (interactive != nullptr)
+		{
+			interactive->Deactive();
+			return;
+		}
+		interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_CHECK_BOX);
+		if (interactive != nullptr)
+		{
+			interactive->Deactive();
+			return;
+
+		}
+	}
+}
+
+void CSharpScript::Clicked(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		CompButton* interactive = (CompButton*)current_game_object->FindComponentByType(Comp_Type::C_BUTTON);
+		if (interactive != nullptr)
+		{
+			interactive->OnClick();
+		}
+	}
+}
+
+MonoObject * CSharpScript::GetCollidedObject(MonoObject * object)
+{
+	GameObject* target = ((CompCollider*)current_game_object->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
+	if (target == nullptr)((CompCollider*)current_game_object->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
+	if (target == nullptr)return nullptr;
+
+	std::map<MonoObject*, GameObject*>::iterator iter = game_objects.begin();
+	while (iter != game_objects.end())
+	{
+		if (iter._Ptr->_Myval.second == target)
+		{
+			return iter._Ptr->_Myval.first;
+		}
+
+		iter++;
+	}
+	return nullptr;
+}
+
 // Map ------------------------------------------------
 MonoString* CSharpScript::GetMapString(MonoObject* object)
 {
@@ -1562,32 +1824,39 @@ MonoString* CSharpScript::GetMapString(MonoObject* object)
 
 void CSharpScript::Save(JSON_Object* object, std::string name) const
 {
+	std::string vars = name;
+	vars += "Number of Variables: ";
+	json_object_dotset_number_with_std(object, vars, variables.size());
+
+	std::string temp_var = name;
+
 	for (int i = 0; i < variables.size(); i++)
 	{
-		if (variables[i]->type == VarType::Var_GAMEOBJECT)
-		{
-			if (variables[i]->game_object != nullptr)
-			{
-				json_object_dotset_number_with_std(object, name + "Variables GameObject UUID " + std::to_string(i), variables[i]->game_object->GetUUID());
-			}
-		}
+		temp_var = name + "Variables.Variable " + std::to_string(i);
+		temp_var += ".";
+		
+		variables[i]->Save(object, temp_var);
 	}
 }
 
 void CSharpScript::Load(const JSON_Object* object, std::string name)
 {
 	game_objects.clear(); // memory leak
+	re_load_values.clear();
+	std::string temp_var = name;
+
+	//Once set the default values for the variables, update them to the inspector values saved previously
 	for (int i = 0; i < variables.size(); i++)
 	{
-		if (variables[i]->type == VarType::Var_GAMEOBJECT)
-		{
-			uint temp = json_object_dotget_number_with_std(object, name + "Variables GameObject UUID " + std::to_string(i));
-			re_load_values.push_back(temp);
-		}
+		temp_var = name + "Variables.Variable " + std::to_string(i);
+		temp_var += ".";
+
+		variables[i]->Load(object, temp_var, re_load_values);
 	}
 }
 
-void CSharpScript::LoadValues()
+// Link script variables that has GameObjects assigned
+void CSharpScript::LoadValuesGO()
 {
 	for (int i = 0, j = 0; i < variables.size(); i++)
 	{
@@ -1599,3 +1868,4 @@ void CSharpScript::LoadValues()
 	}
 	re_load_values.clear();
 }
+

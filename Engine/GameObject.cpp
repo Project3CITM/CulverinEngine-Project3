@@ -30,6 +30,7 @@
 #include "CompCollider.h"
 #include "CompRigidBody.h"
 #include "CompParticleSystem.h"
+#include <queue>
 
 //Event system test
 #include "ModuleEventSystem.h"
@@ -213,16 +214,27 @@ void GameObject::ClearAllVariablesScript()
 
 GameObject* GameObject::GetGameObjectbyuid(uint uid)
 {
+	std::queue<GameObject*> obj_queue;
+
 	if (active)
 	{
-		if (GetUUID() == uid)
+		obj_queue.push(this);
+
+		while (!obj_queue.empty())
 		{
-			return this;
-		}
-		//Check child Game Objects -------------------
-		for (uint i = 0; i < childs.size(); i++)
-		{
-			childs[i]->GetGameObjectbyuid(uid);
+			// Return GameObject with specified UID
+			if (obj_queue.front()->GetUUID() == uid)
+			{
+				return obj_queue.front();
+			}
+
+			// Check child Game Objects -------------------
+			for (uint i = 0; i < obj_queue.front()->childs.size(); i++)
+			{
+				obj_queue.push(childs[i]);
+			}
+
+			obj_queue.pop();
 		}
 	}
 	return nullptr;
@@ -738,6 +750,7 @@ void GameObject::ShowGameObjectOptions()
 					parent = App->scene->CreateCanvas(this);
 				}
 				GameObject* image = App->scene->CreateImage(parent);
+
 				App->gui->SetLinkInspector(image);
 
 			}
@@ -1126,20 +1139,28 @@ Component* GameObject::FindComponentByType(Comp_Type type) const
 	{
 		if (components[i]->GetType() == type) // We need to check if the component is ACTIVE first?¿
 		{
-			return components[i];
-		
+			return components[i];		
 		}
 	}
 	return nullptr;
 }
 
-void GameObject::GetComponentsByType(Comp_Type type, std::vector<Component*>* fill_comp) const
+void GameObject::GetComponentsByType(Comp_Type type, std::vector<Component*>* fill_comp, bool iterate_hierarchy) const
 {
 	for (uint i = 0; i < components.size(); i++)
 	{
 		if (components[i]->GetType() == type)
 		{
 			fill_comp->push_back(components[i]);
+		}
+	}
+
+	if (iterate_hierarchy)
+	{
+		uint size = childs.size();
+		for (uint k = 0; k < size; k++)
+		{
+			childs[k]->GetComponentsByType(type, fill_comp, iterate_hierarchy);
 		}
 	}
 }
@@ -1183,6 +1204,21 @@ Component* GameObject::FindParentComponentByType(Comp_Type type)const
 		}
 	}
 	return ret;
+}
+
+Component* GameObject::FindComponentByUUID(uint uid) const
+{
+	Component* comp = nullptr;
+
+	for (uint i = 0; i < components.size(); i++)
+	{
+		if (components[i]->GetUUID() == uid) // We need to check if the component is ACTIVE first?¿
+		{
+			return components[i];
+		}
+	}
+
+	return nullptr;
 }
 
 Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
@@ -1272,7 +1308,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			LOG("Adding IMAGE COMPONENT.");
 			CompImage* image = new CompImage(type, this);
 			components.push_back(image);
-			canvas_renderer->ProcessImage(image);
 			return image;
 		}
 		case Comp_Type::C_TEXT:
@@ -1616,6 +1651,15 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 
 		if (components[i]->GetType() == Comp_Type::C_MESH && ((CompMesh*)components[i])->HasSkeleton())
 			((CompMesh*)components[i])->GenSkeleton();
+	}
+}
+void GameObject::SyncComponents()
+{
+	
+	// Now Iterate All components and Load variables
+	for (int i = 0; i < components.size(); i++)
+	{
+		components[i]->SyncComponent();
 	}
 }
 

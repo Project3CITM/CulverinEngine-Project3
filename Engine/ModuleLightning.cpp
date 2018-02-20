@@ -16,6 +16,10 @@
 #include "CompLight.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "DefaultShaders.h"
+#include"ModuleWindow.h"
+#include "ModuleRenderer3D.h"
+
 using namespace glm;
 
 
@@ -43,7 +47,7 @@ void DepthFrameBuffer::Create(int width, int height)
 
 
 
-	glGenFramebuffers(1, &frame_id);
+	/*glGenFramebuffers(1, &frame_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -58,6 +62,30 @@ void DepthFrameBuffer::Create(int width, int height)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
+
+	glDrawBuffer(GL_NONE); // Since we dont need the color buffer we must tell OpenGl explicitly
+	*/
+
+	
+	glGenTextures(1, &depthTex);
+	glBindTexture(GL_TEXTURE_2D, depthTex);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+
+	// Assign the depth buffer texture to texture channel 0
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, depthTex);
+
+	// Create and set up the FBO
+	glGenFramebuffers(1, &frame_id);
+	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_TEXTURE_2D, depthTex, 0);
 
 	glDrawBuffer(GL_NONE); // Since we dont need the color buffer we must tell OpenGl explicitly
 
@@ -79,6 +107,19 @@ void DepthFrameBuffer::Resize(int width, int height)
 		Destroy();
 		Create(width, height);
 	}
+}
+
+void DepthFrameBuffer::Bind(const char* window)
+{
+	//size = GetSizeDock(window);
+
+	Resize(App->window->GetWidth(), App->window->GetHeight());
+	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
+}
+
+void DepthFrameBuffer::UnBind(const char* window)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 uint DepthFrameBuffer::GetTexture() const
@@ -107,7 +148,7 @@ bool ModuleLightning::Init(JSON_Object* node)
 	perf_timer.Start();
 
 	// TODO: Read ammount of shadow cast point from config. Will use default for now for testing purposes
-	shadow_cast_points_count = 1;
+	shadow_cast_points_count = 2;
 
 	Awake_t = perf_timer.ReadMs();
 	return true;
@@ -121,123 +162,14 @@ bool ModuleLightning::Start()
 
 	Start_t = perf_timer.ReadMs();
 
-	text.Create(shadow_maps_res_w, shadow_maps_res_h);
+	test_fix.Create(shadow_maps_res_w, shadow_maps_res_h);
 
 	//------------------------------------
 
-
-	shadow_Shader = new ShaderProgram();
-	shadow_Shader->name = "Default Shader";
-	//Success flag
-	GLint programSuccess = GL_TRUE;
-
-	//Generate program
-	shadow_Shader->programID = glCreateProgram();
-
-	//Create vertex shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-	//Get vertex source
-	const GLchar* vertexShaderSource[] =
-	{
-		"#version 330 core\n"
-		"layout(location = 0) in vec3 position;\n"
-		"layout(location = 1) in vec2 texCoord;\n"
-		"layout(location = 2) in vec3 normal;\n"
-		"layout(location = 3) in vec4 color;\n"
-		
-		"uniform mat4 depthMVP;\n"
-		"uniform mat4 model;\n"
-
-		"void main()\n"
-		"{\n"
-		" gl_Position =  depthMVP *model * vec4(position,1);\n"
-		"}\n"
-	};
-
-	//Set vertex source
-	glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
-
-	//Compile vertex source
-	glCompileShader(vertexShader);
-
-	//Check vertex shader for errors
-	GLint vShaderCompiled = GL_FALSE;
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
-	if (vShaderCompiled != GL_TRUE)
-	{
-		//ShaderLog(vertexShader);
-		return nullptr;
-	}
-
-	//Attach vertex shader to program
-	glAttachShader(shadow_Shader->programID, vertexShader);
-
-	//Create fragment shader
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	//Get fragment source
-	const GLchar* fragmentShaderSource[] =
-	{
-		"#version 330 core\n"
-		"layout(location = 0) out vec4 fragmentdepth;\n"
-
-		"void main()\n"
-		"{\n"
-		"fragmentdepth = vec4(gl_FragCoord.z);\n"
-		"}\n"
-	};
-
-	//Set fragment source
-	glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
-
-	//Compile fragment source
-	glCompileShader(fragmentShader);
-
-	//Check fragment shader for errors
-	GLint fShaderCompiled = GL_FALSE;
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
-	if (fShaderCompiled != GL_TRUE)
-	{
-
-		//ShaderLog(fragmentShader);
-		return nullptr;
-	}
-
-	//Attach fragment shader to program
-	glAttachShader(shadow_Shader->programID, fragmentShader);
-
-	//Link program
-	glLinkProgram(shadow_Shader->programID);
-
-	//Check for errors
-	glGetProgramiv(shadow_Shader->programID, GL_LINK_STATUS, &programSuccess);
-	if (programSuccess != GL_TRUE)
-	{
-		//ProgramLog(default_shader.mProgramID);
-		return nullptr;
-	}
-
-	Shader* newFragment = new Shader();
-	newFragment->shaderID = fragmentShader;
-	newFragment->shaderText = *fragmentShaderSource;
-	newFragment->shaderType = ShaderType::fragment;
-	newFragment->name = "default_shader_frag";
-	newFragment->shaderPath = "";
-
-	shadow_Shader->AddFragment(newFragment);
-
-	Shader* newVertex = new Shader();
-	newVertex->shaderID = vertexShader;
-	newVertex->shaderText = *vertexShaderSource;
-	newVertex->shaderType = ShaderType::vertex;
-	newVertex->name = "default_shader_vert";
-	newVertex->shaderPath = "";
-
-	shadow_Shader->AddVertex(newVertex);
-
-
+	shadow_Shader = App->module_shaders->CreateDefaultShader(ShadowMapFrag, ShadowMapVert, "Shadow_Map");
+	
 	//-------------------------------------
+
 	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png", &texture_bulb);
 
 	light_UI_plane = (ResourceMesh*)App->resource_manager->GetResource(4);
@@ -276,8 +208,24 @@ bool ModuleLightning::Start()
 
 update_status ModuleLightning::PreUpdate(float dt)
 {
-	// TODO: Calc here the closest lights used, need the main/active camera pos
 	perf_timer.Start();
+
+	//TODO: Should think on optimitzations on this.
+
+	frame_used_lights.clear();
+	std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
+	for(uint i = 0; i < shadow_cast_points_count; ++i)
+	{
+		if(i < scene_lights.size())
+		{
+			CompLight* l = scene_lights[i];
+			if (l->type == Light_type::POINT_LIGHT)
+			{
+				frame_used_lights.push_back(l);
+			}
+		}
+	}
+
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -327,15 +275,19 @@ bool ModuleLightning::CleanUp()
 		(*it).Destroy();
 	}
 
+	RELEASE(shadow_Shader);
+
+
 	return true;
 }
 
 void ModuleLightning::OnEvent(Event & event)
 {
-	text.Bind("peter");
+	test_fix.Bind("peter");
 
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK); // Cull back-facing triangles -> draw only front-facing triangles
+	glCullFace(GL_FRONT);
+	 // Cull back-facing triangles -> draw only front-facing triangles
 	
 						 // Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -458,7 +410,7 @@ void ModuleLightning::OnEvent(Event & event)
 
 					Quat rot = light->GetParent()->GetComponentTransform()->GetRot();
 
-					float3 dir = float3(1, 1, 1);
+					float3 dir = light->GetParent()->GetComponentTransform()->GetEulerToDirection();
 
 					float4x4 MVP = camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
 
@@ -565,9 +517,9 @@ void ModuleLightning::OnEvent(Event & event)
 		break;
 	}
 	
-	ImGui::Image((ImTextureID*)text.GetTexture(), ImVec2(500, 500));
+	ImGui::Image((ImTextureID*)test_fix.depthTex, ImVec2(500, 500));
 	App->scene->scene_buff->Bind("Scene");
-	
+	glCullFace(GL_BACK);
 	shadow_Shader->Unbind();
 }
 
@@ -627,15 +579,11 @@ void ModuleLightning::GetShadowMapsResolution(uint& w_res, uint& h_res)
 
 void ModuleLightning::OnLightCreated(CompLight* l)
 {
-	//TODO: Link this with component creation
-
 	scene_lights.push_back(l);
 }
 
 void ModuleLightning::OnLightDestroyed(CompLight* l)
 {
-	//TODO: Link this with component destruction
-
 	for(std::vector<CompLight*>::iterator it = scene_lights.begin(); it != scene_lights.end(); ++it)
 	{
 		if((*it) == l)
@@ -658,18 +606,9 @@ std::vector<CompLight*> ModuleLightning::GetSceneLights() const
 	return scene_lights;
 }
 
-void ModuleLightning::PushLight(CompLight * light)
+std::vector<CompLight*>* ModuleLightning::GetActiveLights() 
 {
-	scene_lights.push_back(light);
-}
-
-void ModuleLightning::DeleteLight(CompLight * light)
-{
-	for (auto item = scene_lights.begin(); item != scene_lights.end(); item++) {
-		if ((*item) == light)
-			scene_lights.erase(item);
-	}
-
+	return &frame_used_lights;
 }
 
 bool ModuleLightning::SetEventListenrs()
@@ -705,6 +644,11 @@ update_status ModuleLightning::UpdateConfig(float dt)
 	ImGui::Text("Lights used on frame:"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", frame_used_lights.size());
 
+	for(std::vector<CompLight*>::iterator it = frame_used_lights.begin(); it != frame_used_lights.end(); ++it)
+	{
+		ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "\tName: %s - x:%f y:%f z:%f", (*it)->GetParent()->GetName(), (*it)->GetGameObjectPos().x, (*it)->GetGameObjectPos().y, (*it)->GetGameObjectPos().z);
+	}
+
 	if(ImGui::TreeNodeEx("Shadow maps"))
 	{
 		for(uint i = 0; i < shadow_maps.size(); ++i)
@@ -729,4 +673,23 @@ update_status ModuleLightning::UpdateConfig(float dt)
 	}
 
 	return UPDATE_CONTINUE;
+}
+
+bool OrderLights(CompLight* l1, CompLight* l2)
+{
+	if (!l1 || !l2) return false;
+
+	if(l1->type == Light_type::POINT_LIGHT && l2->type == Light_type::POINT_LIGHT)
+	{
+		// Only point lights must be ordered
+		
+		// Must calc distance to main camera from both lights.
+		Frustum* cam = &App->renderer3D->GetActiveCamera()->frustum;
+
+		float l1_dist = cam->Distance(l1->GetGameObjectPos());
+		float l2_dist = cam->Distance(l2->GetGameObjectPos());;
+
+		if (l1_dist < l2_dist) return true;
+	}
+	return false;
 }

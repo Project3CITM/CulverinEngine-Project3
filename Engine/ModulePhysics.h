@@ -42,6 +42,7 @@ public:
 
 	// PhysX Methods ----------------
 	jpPhysicsRigidBody* GetNewRigidBody(Component* component, bool dynamic = false);
+	bool DeleteCollider(Component* component, jpPhysicsRigidBody* body);
 
 	void ChangeRigidActorToStatic(jpPhysicsRigidBody* actor, Component* comp);
 	void ChangeRigidActorToDynamic(jpPhysicsRigidBody* actor, Component* comp);

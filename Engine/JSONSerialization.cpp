@@ -159,6 +159,11 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				templist.push_back(temp);
 			}
 		}
+		//Sync components
+		for (int i = 0; i < templist.size(); i++)
+		{
+			templist[i].go->SyncComponents();
+		}
 		// Now with uid parent add childs.
 		for (int i = 0; i < templist.size(); i++)
 		{
@@ -446,7 +451,7 @@ void JSONSerialization::LoadChildLoadPrefab(GameObject& parent, GameObject& chil
 	}
 }
 
-void JSONSerialization::SaveMapWalkable(std::vector<std::string>& map, int height_map, int width_map, const char* name)
+void JSONSerialization::SaveMapWalkable(std::vector<std::string>& map, int height_map, int width_map, float separation, const char* name)
 {
 	LOG("SAVING Map %s -----", name);
 
@@ -467,8 +472,95 @@ void JSONSerialization::SaveMapWalkable(std::vector<std::string>& map, int heigh
 		json_object_dotset_string_with_std(config, "Map.Info.Name Map", name);
 		json_object_dotset_number_with_std(config, "Map.Info.Height Map", height_map);
 		json_object_dotset_number_with_std(config, "Map.Info.Width Map", width_map);
+		json_object_dotset_number_with_std(config, "Map.Info.Separation", separation);
 		config_node = json_object_get_object(config, "Map");
 
+		if (height_map == map.size())
+		{
+			for (int i = 0; i < map.size(); i++)
+			{
+				std::string line = "Line_" + std::to_string(i);
+				//line += ".";
+				json_object_dotset_string_with_std(config_node, line, map[i].c_str());
+			}
+		}
+		else
+		{
+			LOG("[error]Error with Save Map!");
+		}
+	}
+	json_serialize_to_file(config_file, nameJson.c_str());
+	json_value_free(config_file);
+}
+
+bool JSONSerialization::LoadMapWalkable(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* file, std::string& name_map)
+{
+	//LOG("LOADING MAP %s -----", file);
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+	JSON_Object* config_node;
+
+	config_file = json_parse_file(file);
+	if (config_file)
+	{
+		config = json_value_get_object(config_file);
+		config_node = json_object_get_object(config, "Map");
+		height_map = json_object_dotget_number_with_std(config_node, "Info.Height Map");
+		width_map = json_object_dotget_number_with_std(config_node, "Info.Width Map");
+		separation = json_object_dotget_number_with_std(config_node, "Info.Separation");
+		name_map = json_object_dotget_string_with_std(config_node, "Info.Name Map");
+
+		for (int i = 0; i < height_map; i++)
+		{
+			std::string line = "Line_" + std::to_string(i);
+			//line += ".";
+			map.push_back(json_object_dotget_string_with_std(config_node, line));
+		}
+		json_value_free(config_file);
+		return true;
+	}
+	json_value_free(config_file);
+	return false;
+}
+
+void JSONSerialization::SaveMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int height_map, int width_map, float separation, const char * name)
+{
+	LOG("SAVING Map %s -----", name);
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+	JSON_Object* config_node;
+
+	std::string nameJson = App->fs->GetMainDirectory();
+	nameJson += "/Maps/";
+	nameJson += name;
+	nameJson += ".map3d.json";
+	config_file = json_value_init_object();
+
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		json_object_clear(config);
+		json_object_dotset_string_with_std(config, "Map.Info.Name Map", name);
+		json_object_dotset_number_with_std(config, "Map.Info.Height Map", height_map);
+		json_object_dotset_number_with_std(config, "Map.Info.Width Map", width_map);
+		json_object_dotset_number_with_std(config, "Map.Info.Separation", separation);
+		if (prefabs.size() > 0)
+		{
+			json_object_dotset_number_with_std(config, "Map.Prefabs.Number of Prefabs", prefabs.size());
+			for (int i = 0; i < prefabs.size(); i++)
+			{
+				std::string pref = "Map.Prefabs.Prefab " + std::to_string(i);
+				//line += ".";
+				json_object_dotset_string_with_std(config, pref, prefabs[i].c_str());
+			}
+		}
+		else
+		{
+			LOG("[error]Can't save this maps, you have to select Prefabs");
+		}
+		config_node = json_object_get_object(config, "Map");
 		if (height_map == map.size())
 		{
 			for (int i = 0; i < map.size(); i++)

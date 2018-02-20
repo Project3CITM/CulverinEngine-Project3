@@ -14,6 +14,7 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include"Devil\include\ilut.h"
+#include "DefaultShaders.h"
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
@@ -164,7 +165,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
 
-	default_shader = App->module_shaders->CreateDefaultShader();
+	default_shader = App->module_shaders->CreateDefaultShader(fragmentShaderSource, vertexShaderSource,"Default Shader", true);
 
 	Texture default_texture;
 	default_texture.name = "default_texture";
@@ -416,6 +417,11 @@ void ModuleRenderer3D::SetSceneCamera(CompCamera* cam)
 void ModuleRenderer3D::SetGameCamera(CompCamera* cam)
 {
 	game_camera = cam;
+}
+
+CompCamera * ModuleRenderer3D::GetActiveCamera()
+{
+	return active_camera;
 }
 
 void ModuleRenderer3D::UpdateProjection(CompCamera* cam)

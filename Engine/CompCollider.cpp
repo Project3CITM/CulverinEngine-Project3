@@ -1,6 +1,8 @@
 #include "CompCollider.h"
 #include "GameObject.h"
 #include "CompTransform.h"
+#include "CompScript.h"
+#include "CSharpScript.h"
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "ModuleGUI.h"
@@ -9,16 +11,29 @@
 #include "MathGeoLib.h"
 
 #include "jpPhysicsRigidBody.h"
+#include "CompRigidBody.h"
 
 CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Collider";
+	name_component = "CompCollider";
 
-	body = App->physics->GetNewRigidBody(this);
-	
+
 	if (parent)
 	{
+		rigid_body_comp = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
+		if (rigid_body_comp != nullptr)
+		{
+			LOG("Collider using the RigidBody comp...");
+			rigid_body_comp->SetColliderComp(this);
+			body = rigid_body_comp->GetPhysicsBody();
+			body->SetGeometry(size, rad, curr_type);
+		}
+		else
+		{
+			LOG("Creating a new physics body for the collider...");
+			body = App->physics->GetNewRigidBody(this);
+		}
 		transform = parent->GetComponentTransform();
 		if (!transform->GetToUpdate())
 		{
@@ -30,7 +45,42 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Component(Comp_Type::C_COLLIDER, parent)
 {
 	uid = App->random->Int();
-	name_component = "Collider";
+	name_component = "CompCollider";
+
+	//Copy
+	collider_type = copy.collider_type;
+	curr_type = copy.curr_type;
+
+	local_quat = copy.local_quat;
+	position = copy.position;
+	angle = copy.angle;
+
+	material = copy.material;
+	size = copy.size;
+	rad = copy.rad;
+
+	//Same as regular constructor since this properties depend on the parent
+	if (parent)
+	{
+		rigid_body_comp = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
+		if (rigid_body_comp != nullptr)
+		{
+			LOG("Collider using the RigidBody comp...");
+			rigid_body_comp->SetColliderComp(this);
+			body = rigid_body_comp->GetPhysicsBody();
+			body->SetGeometry(size, rad, curr_type);
+		}
+		else
+		{
+			LOG("Creating a new physics bbody for the collider...");
+			body = App->physics->GetNewRigidBody(this);
+		}
+		transform = parent->GetComponentTransform();
+		if (!transform->GetToUpdate())
+		{
+			SetColliderPosition();
+		}
+	}
 }
 
 CompCollider::~CompCollider()
@@ -39,7 +89,7 @@ CompCollider::~CompCollider()
 
 void CompCollider::Update(float dt)
 {
-	if (transform->GetUpdated())
+	if (transform->GetUpdated() && rigid_body_comp == nullptr)
 	{
 		SetColliderPosition();
 	}
@@ -47,9 +97,18 @@ void CompCollider::Update(float dt)
 
 void CompCollider::Clear()
 {
-	if (body)
+	if (rigid_body_comp != nullptr)
 	{
-		delete body;
+		//Set the collider comp in rigidbody to nullptr
+		rigid_body_comp->SetColliderComp(nullptr);
+		rigid_body_comp = nullptr;
+		body = nullptr;
+		LOG("Deleted collider, physics body deletion passed to RigidBody");
+	}
+	else if (body != nullptr)
+	{
+		LOG("Comp collider didn't find RigidBody comp, releasing physics body...");
+		App->physics->DeleteCollider(this, body);
 		body = nullptr;
 	}
 }
@@ -119,10 +178,25 @@ void CompCollider::ShowInspectorInfo()
 	}
 
 	// Set as Trigger
-	if (ImGui::Checkbox("Draw Debug", &trigger))
+	if (ImGui::Checkbox("Trigger", &trigger))
 	{
 		// change later (check if body is static)
 		body->SetAsTrigger(trigger);
+		if (trigger == false)
+		{
+			listener = nullptr;
+		}
+	}
+	
+	// Listener selection
+	if (trigger && listener == nullptr)
+	{
+		CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT);
+		if (sc != nullptr)
+		{
+			listener = sc;
+			script_name = listener->GetName();
+		}
 	}
 
 	// Collider type
@@ -228,6 +302,9 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 	//Rad
 	json_object_dotset_number_with_std(object, name + "Rad", rad);
 
+	json_object_dotset_boolean_with_std(object, name + "Trigger", trigger);
+
+	json_object_dotset_string_with_std(object, name + "ScriptName", script_name.c_str());
 }
 
 void CompCollider::Load(const JSON_Object * object, std::string name)
@@ -256,17 +333,49 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 	//Rad	
 	rad = json_object_dotget_number_with_std(object, name + "Rad");
+
+	trigger = json_object_dotget_boolean_with_std(object, name + "Trigger");
+
+	//Script name
+	script_name = json_object_dotget_string_with_std(object, name + "ScriptName");
+}
+
+void CompCollider::SyncComponent()
+{
+	UpdateCollider();
+	SetColliderPosition();
+	if (trigger)
+	{
+		std::vector<Component*> script_vec;
+		parent->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec);
+
+		for (int i = 0; i < script_vec.size(); i++)
+		{
+			if (((CompScript*)script_vec[i])->GetName() == script_name)
+			{
+				listener = (CompScript*)script_vec[i];
+				break;
+			}
+		}
+
+	}
 }
 
 // -----------------------------------------------------------------
 void CompCollider::OnTriggerEnter(Component * actor)
 {
+	if (listener == nullptr)return;
+
 	// Call Listner OnTriggerEnter(Component* actor);
+	collided_object = actor->GetParent();
+	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
 }
 
 void CompCollider::OnTriggerLost(Component * actor)
 {
+	collided_object = nullptr;
 	// Call Listner OnTriggerLost(Component* actor);
+	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
 }
 
 void CompCollider::ChangeCollider()
@@ -289,7 +398,14 @@ void CompCollider::SetColliderPosition()
 {
 	Quat quat = transform->GetRotGlobal()*local_quat;
 	float3 fpos = transform->GetPosGlobal() + quat * position;
-	body->SetTransform(fpos, quat);
+	if (body != nullptr)
+	{
+		body->SetTransform(fpos, quat);
+	}
+	else if (rigid_body_comp != nullptr && rigid_body_comp->GetPhysicsBody() != nullptr)
+	{
+		rigid_body_comp->GetPhysicsBody()->SetTransform(fpos, quat);
+	}
 }
 
 void CompCollider::SetSizeFromBoundingBox()
@@ -308,6 +424,11 @@ void CompCollider::SetSizeFromBoundingBox()
 	}
 }
 
+void CompCollider::SetRigidBodyComp(CompRigidBody * new_comp)
+{
+	rigid_body_comp = new_comp;
+}
+
 float3 CompCollider::GetPosition() const
 {
 	return position;
@@ -316,5 +437,22 @@ float3 CompCollider::GetPosition() const
 Quat CompCollider::GetLocalQuat() const
 {
 	return local_quat;
+}
+
+GameObject * CompCollider::GetCollidedObject() const
+{
+	return collided_object;
+}
+
+jpPhysicsRigidBody* CompCollider::GivePhysicsBody(CompRigidBody* new_rigid_body)
+{
+	if (new_rigid_body)
+	{
+		LOG("Collider physics body is being given to RigidBody...");
+		rigid_body_comp = new_rigid_body;
+		jpPhysicsRigidBody* ret = body;
+		return ret;
+	}
+	return nullptr;
 }
 

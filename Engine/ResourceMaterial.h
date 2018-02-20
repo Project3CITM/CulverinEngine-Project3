@@ -27,6 +27,7 @@ public:
 	bool LoadToMemory();
 	uint GetTextureID();
 	Resource::State IsLoadedToMemory();
+	const char* GetTextureName();
 
 private:
 	Texture texture;

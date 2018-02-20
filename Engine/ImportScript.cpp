@@ -518,6 +518,7 @@ MonoClass* ImportScript::GetMonoClassFromImage(MonoImage* image, std::string& na
 			classname = classnameCS;
 		}
 	}
+	entity = mono_class_from_name(image, name_space.c_str(), classname.c_str()); // Not correctly process! Todo elliot
 	return entity;
 }
 
@@ -532,6 +533,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::FindGameObjectWithTag", (const void*)FindGameObjectWithTag);
 	mono_add_internal_call("CulverinEditor.GameObject::CreateGameObject",(const void*)CreateGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::GetOwnGameObject", (const void*)GetOwnGameObject);
+	mono_add_internal_call("CulverinEditor.GameObject::ChildCount", (const void*)ChildCount);
+	mono_add_internal_call("CulverinEditor.GameObject::GetChildByIndex", (const void*)GetChildByIndex);
+	mono_add_internal_call("CulverinEditor.GameObject::GetChildByName", (const void*)GetChildByName);
 	mono_add_internal_call("CulverinEditor.GameObject::Destroy",(const void*)DeleteGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::SetActive",(const void*)SetActive);
 	mono_add_internal_call("CulverinEditor.GameObject::IsActive",(const void*)IsActive);
@@ -610,6 +614,12 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::SetAuxiliarySends", (const void*)SetAuxiliarySends);
 
+	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
+	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
+	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
+
+	//COMPONENT COLLIDER FUNCTIONS -----------------------
+	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 }
 
 //Log messages into Engine Console
@@ -732,6 +742,21 @@ MonoObject* ImportScript::Find(MonoObject* object, MonoString* name)
 MonoObject* ImportScript::GetOwnGameObject()
 {
 	return current->GetOwnGameObject();
+}
+
+int ImportScript::ChildCount(MonoObject * object)
+{
+	return current->ChildCount(object);
+}
+
+MonoObject * ImportScript::GetChildByIndex(MonoObject * object, int index)
+{
+	return current->GetChildByIndex(object, index);
+}
+
+MonoObject * ImportScript::GetChildByName(MonoObject * object, MonoString * name)
+{
+	return current->GetChildByName(object, name);
 }
 
 void ImportScript::SetName(MonoObject* object, MonoString* name)
@@ -989,4 +1014,24 @@ void ImportScript::StopAudioEvent(MonoObject* object, MonoString* name)
 void ImportScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, float value)
 {
 	current->SetAuxiliarySends(object, bus, value);
+}
+
+void ImportScript::Activate(MonoObject * object, int uid)
+{
+	current->Activate(object, uid);
+}
+
+void ImportScript::Deactivate(MonoObject * object, int uid)
+{
+	current->Deactivate(object, uid);
+}
+
+void ImportScript::Clicked(MonoObject * object)
+{
+	current->Clicked(object);
+}
+
+MonoObject * ImportScript::GetCollidedObject(MonoObject * object)
+{
+	return current->GetCollidedObject(object);
 }
