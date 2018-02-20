@@ -20,11 +20,11 @@ ModuleShaders::ModuleShaders()
 ModuleShaders::~ModuleShaders()
 {
 	for (auto item = shaders.begin(); item != shaders.end(); item++) {
-		delete (*item);
+		RELEASE(*item);
 
 	}
 	for (auto item = programs.begin(); item != programs.end(); item++) {
-		delete (*item);
+		RELEASE(*item);
 	}
 }
 
@@ -369,7 +369,7 @@ void ModuleShaders::AddShaderList(Shader* newShader)
 void ModuleShaders::ImportShaderObjects()
 {
 	namespace stdfs = std::experimental::filesystem;
-
+	char* buffer = nullptr;
 	//Iterating all files
 	for (stdfs::directory_iterator::value_type item : stdfs::directory_iterator(Shader_Directory_fs))
 	{
@@ -387,7 +387,7 @@ void ModuleShaders::ImportShaderObjects()
 			std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
 
 			//Loading the file to extract the file buffer information
-			char* buffer;
+			
 			App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
 
 			//If the shader object is vertex
@@ -426,15 +426,20 @@ void ModuleShaders::ImportShaderObjects()
 			}
 
 			//maybe delete buffer?
-
+			RELEASE_ARRAY(buffer);
 		}
 	}
+
+	
+
 }
 
 void ModuleShaders::ImportShaderMaterials()
 {
 
 	namespace stdfs = std::experimental::filesystem;
+	ShaderProgram* mat_shader = nullptr;
+	char* buffer = nullptr;
 	//Iterating all files
 	for (stdfs::directory_iterator::value_type item : stdfs::directory_iterator(Shader_Directory_fs))
 	{
@@ -451,7 +456,7 @@ void ModuleShaders::ImportShaderMaterials()
 				std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
 
 				//Loading the file to extract the file buffer information
-				char* buffer;
+			
 				App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
 
 				if (buffer != nullptr)
@@ -462,7 +467,7 @@ void ModuleShaders::ImportShaderMaterials()
 					App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, str_path.c_str());
 
 					//Creating the shader program
-					ShaderProgram* mat_shader = CreateShader(name.c_str());
+					mat_shader = CreateShader(name.c_str());
 
 					//If the program has a fragment shader
 					if (json_object_has_value(obj_proj, "Fragment Shader") > 0)
@@ -495,8 +500,12 @@ void ModuleShaders::ImportShaderMaterials()
 					mat_shader->LoadProgram();
 					
 					mat_shader->CreateMaterialFile();
+					RELEASE_ARRAY(buffer);
 				}
+
 			}
+
+		
 	}
 }
 

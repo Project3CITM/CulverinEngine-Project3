@@ -257,6 +257,9 @@ bool ModuleLightning::CleanUp()
 		(*it).Destroy();
 	}
 
+	RELEASE(shadow_Shader);
+
+
 	return true;
 }
 

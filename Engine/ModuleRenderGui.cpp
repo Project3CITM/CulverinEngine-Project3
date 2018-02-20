@@ -305,6 +305,8 @@ void ModuleRenderGui::ScreenSpaceDraw()
 
 bool ModuleRenderGui::CleanUp()
 {
+
+	RELEASE(default_ui_shader);
 	return true;
 }
 
