@@ -52,7 +52,9 @@ public:
 	void SetMonoField(MonoClassField* mfield);
 	void SetMonoType(MonoType* mtype);
 
-	void Serialize(JSON_Object* object, const std::string& name);
+	//SAVE - LOAD ---------------
+	void Save(JSON_Object* object, const std::string& name);
+	void Load(const JSON_Object* object, const std::string& name, std::vector<uint>& re_load_values);
 
 public:
 	const char* name = nullptr;
@@ -114,6 +116,7 @@ public:
 	void GetScriptVariables();
 	void UpdateScriptVariables();
 	void RemoveReferences(GameObject* go);
+	bool NeedToLinkGO() const;
 
 	VarType GetTypeFromMono(MonoType* mtype);
 	bool GetValueFromMono(ScriptVariable* variable, MonoClassField* mfield, MonoType* mtype);
@@ -201,7 +204,7 @@ public:
 	// LOAD - SAVE METHODS ------------------
 	void Save(JSON_Object* object, std::string name) const;
 	void Load(const JSON_Object* object, std::string name);
-	void LoadValues();
+	void LoadValuesGO();
 
 public:
 	//Variables/Info containers (public to have access through other modules)

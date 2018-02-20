@@ -49,12 +49,12 @@ public:
 	// SAVE - LOAD METHODS ----------------
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+	void LoadValuesGameObjectScript();
 	// -------------------------------------
 
 	// LOAD - SAVE METHODS (SCRIPT)------------------
 	void SaveScript(JSON_Object* object, std::string name) const;
 	void LoadScript(const JSON_Object* object, std::string name);
-	void LoadValuesGameObjectScript();
 
 public:
 

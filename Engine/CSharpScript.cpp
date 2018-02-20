@@ -79,12 +79,9 @@ void ScriptVariable::SetMonoType(MonoType* mtype)
 	}
 }
 
-void ScriptVariable::Serialize(JSON_Object * object, const std::string& title)
+void ScriptVariable::Save(JSON_Object * object, const std::string& title)
 {
 	const char* type_name = nullptr;
-
-	//SET VAR NAME --------------------
-	json_object_dotset_string_with_std(object, title + "Name: ", name);
 	
 	//SAVE VAR TYPE -------------------
 	switch (type)
@@ -136,16 +133,72 @@ void ScriptVariable::Serialize(JSON_Object * object, const std::string& title)
 			//-1 Any GameObject is assigned
 			json_object_dotset_number_with_std(object, title + "GameObject UUID: ", -1);
 		}
-
 		break;
 
 	default:
 		break;
 	}
 
-	//SAVE VAR VALUE ----------------------
+	//SET VAR NAME --------------------
+	json_object_dotset_string_with_std(object, title + "Name: ", name);
+}
 
+void ScriptVariable::Load(const JSON_Object * object, const std::string& title, std::vector<uint>& re_load_values)
+{
+	// Load values from inspector previously saved
+	switch (type)
+	{
+	case Var_UNKNOWN:
+	{
+		break;
+	}
 
+	case Var_INT:
+	{
+		int ival = json_object_dotget_number_with_std(object, title + "Value: ");
+		*(int*)value = ival;
+		SetMonoValue((int*)value);
+		break;
+	}
+
+	case Var_FLOAT:
+	{
+		float fval = json_object_dotget_number_with_std(object, title + "Value: ");
+		*(float*)value = fval;
+		SetMonoValue((float*)value);
+		break;
+	}
+
+	case Var_BOOL:
+	{
+		bool bval = json_object_dotget_boolean_with_std(object, title + "Value: ");
+		*(bool*)value = bval;
+		SetMonoValue((bool*)value);
+		break;
+	}
+
+	case Var_STRING:
+	{
+		break;
+	}
+
+	case Var_CLASS:
+	{
+		break;
+	}
+
+	case Var_GAMEOBJECT:
+	{
+		uint obj_uid = json_object_dotget_number_with_std(object, title + "GameObject UUID: ");
+		re_load_values.push_back(obj_uid);
+		break;
+	}
+
+	default:
+	{
+		break;
+	}
+	}
 }
 
 //CSHARP SCRIPT FUNCTIONS ---------------
@@ -509,6 +562,11 @@ void CSharpScript::RemoveReferences(GameObject* go)
 			variables[i]->select_game_object = false;
 		}
 	}
+}
+
+bool CSharpScript::NeedToLinkGO() const
+{
+	return re_load_values.size() > 0;
 }
 
 
@@ -1777,32 +1835,28 @@ void CSharpScript::Save(JSON_Object* object, std::string name) const
 		temp_var = name + "Variables.Variable " + std::to_string(i);
 		temp_var += ".";
 		
-		variables[i]->Serialize(object, temp_var);
-
-		if (variables[i]->type == VarType::Var_GAMEOBJECT)
-		{
-			if (variables[i]->game_object != nullptr)
-			{
-				json_object_dotset_number_with_std(object, name + "Variables GameObject UUID " + std::to_string(i), variables[i]->game_object->GetUUID());
-			}
-		}
+		variables[i]->Save(object, temp_var);
 	}
 }
 
 void CSharpScript::Load(const JSON_Object* object, std::string name)
 {
 	game_objects.clear(); // memory leak
+	re_load_values.clear();
+	std::string temp_var = name;
+
+	//Once set the default values for the variables, update them to the inspector values saved previously
 	for (int i = 0; i < variables.size(); i++)
 	{
-		if (variables[i]->type == VarType::Var_GAMEOBJECT)
-		{
-			uint temp = json_object_dotget_number_with_std(object, name + "Variables GameObject UUID " + std::to_string(i));
-			re_load_values.push_back(temp);
-		}
+		temp_var = name + "Variables.Variable " + std::to_string(i);
+		temp_var += ".";
+
+		variables[i]->Load(object, temp_var, re_load_values);
 	}
 }
 
-void CSharpScript::LoadValues()
+// Link script variables that has GameObjects assigned
+void CSharpScript::LoadValuesGO()
 {
 	for (int i = 0, j = 0; i < variables.size(); i++)
 	{
@@ -1814,3 +1868,4 @@ void CSharpScript::LoadValues()
 	}
 	re_load_values.clear();
 }
+
