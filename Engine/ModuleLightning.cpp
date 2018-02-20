@@ -391,7 +391,7 @@ void ModuleLightning::OnEvent(Event & event)
 
 					Quat rot = light->GetParent()->GetComponentTransform()->GetRot();
 
-					float3 dir = float3(1, 1, 1);
+					float3 dir = light->GetParent()->GetComponentTransform()->GetEulerToDirection();
 
 					float4x4 MVP = camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
 
