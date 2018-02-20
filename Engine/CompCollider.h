@@ -39,11 +39,11 @@ public:
 
 	//Meant to only be used by rigidbody to get the phsyics body
 	jpPhysicsRigidBody* GivePhysicsBody(CompRigidBody* new_rigid_body);
-	void ReceivePhysicsBody(jpPhysicsRigidBody* new_body);
 
 	//Setters -------------------
 	void SetColliderPosition();
 	void SetSizeFromBoundingBox();
+	void SetRigidBodyComp(CompRigidBody* new_comp);
 
 	//Getters -------------------
 	float3 GetPosition() const;

@@ -26,6 +26,7 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 		{
 			LOG("Collider using the RigidBody comp...");
 			rigid_body_comp->SetColliderComp(this);
+			body = rigid_body_comp->GetPhysicsBody();
 		}
 		else
 		{
@@ -52,6 +53,8 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 		if (rigid_body_comp != nullptr)
 		{
 			LOG("Collider using the RigidBody comp...");
+			rigid_body_comp->SetColliderComp(this);
+			body = rigid_body_comp->GetPhysicsBody();
 		}
 		else
 		{
@@ -384,6 +387,11 @@ void CompCollider::SetSizeFromBoundingBox()
 	}
 }
 
+void CompCollider::SetRigidBodyComp(CompRigidBody * new_comp)
+{
+	rigid_body_comp = new_comp;
+}
+
 float3 CompCollider::GetPosition() const
 {
 	return position;
@@ -401,16 +409,8 @@ jpPhysicsRigidBody* CompCollider::GivePhysicsBody(CompRigidBody* new_rigid_body)
 		LOG("Collider physics body is being given to RigidBody...");
 		rigid_body_comp = new_rigid_body;
 		jpPhysicsRigidBody* ret = body;
-		body = nullptr;
 		return ret;
 	}
 	return nullptr;
-}
-
-//Used when deleting the rigidBody component from the GameObject DO NOT use it outside this functionality
-void CompCollider::ReceivePhysicsBody(jpPhysicsRigidBody * new_body)
-{
-	rigid_body_comp = nullptr;
-	App->physics->ChangeRigidActorToStatic(body, this);
 }
 

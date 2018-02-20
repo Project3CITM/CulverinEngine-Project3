@@ -64,8 +64,8 @@ void CompRigidBody::Clear()
 {
 	if (collider_comp != nullptr)
 	{
-		collider_comp->ReceivePhysicsBody(body);
-		body = nullptr;
+		App->physics->ChangeRigidActorToStatic(body, collider_comp);
+		collider_comp->SetRigidBodyComp(nullptr);
 		LOG("RigidBody deleted, physics body deletion passed to collider...");
 	}
 	else
