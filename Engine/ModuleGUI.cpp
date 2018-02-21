@@ -26,6 +26,7 @@
 #include "Gl3W/include/glew.h"
 #include "Algorithm/Random/LCG.h"
 #include "SDL/include/SDL.h"
+#include "ModuleShaders.h"
 
 ModuleGUI::ModuleGUI(bool start_enabled): Module(start_enabled)
 {
@@ -245,10 +246,10 @@ update_status ModuleGUI::Update(float dt)
 				}
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Material"))
+			if (ImGui::MenuItem("Material"))
 			{
-				//material__creation;
-				ImGui::EndMenu();
+				material_creation = true;
+				
 			}
 
 			ImGui::EndMenu();
@@ -500,7 +501,7 @@ update_status ModuleGUI::Update(float dt)
 			ImGui::End();
 	
 	}
-
+	
 	if (shader_program_creation_UI) 
 	{
 
@@ -548,6 +549,49 @@ update_status ModuleGUI::Update(float dt)
 		}
 
 		ImGui::End();
+	}
+	
+	if (material_creation) {
+		if (ImGui::Begin("Shader Program Definition", &material_creation))
+		{
+			ImGui::InputText("Name of the Material", str_mat_temp, 64);
+
+			std::string material_options;
+			std::string name;
+
+			for (int i = 0; i < App->module_shaders->programs.size(); i++)
+			{
+				name = App->module_shaders->programs[i]->name;
+				material_options += name;
+				material_options += '\0';
+			}
+
+			static ShaderProgram* selected_shader_program = nullptr;
+
+			if (ImGui::Combo("Program 1:", &combo_material_obj, material_options.c_str())) {
+				selected_shader_program = App->module_shaders->programs[combo_material_obj];
+
+			}
+
+		
+
+			if (ImGui::Button("Create") && selected_shader_program != nullptr)
+			{
+
+				Material* new_mat = new Material();
+				new_mat->name = str_mat_temp;
+				new_mat->material_shader = selected_shader_program;
+				App->module_shaders->materials.push_back(new_mat);
+				selected_shader_program = nullptr;
+
+				material_creation = false;
+			}
+
+			
+
+		}
+		ImGui::End();
+
 	}
 
 	//-----------------------------------------------------------

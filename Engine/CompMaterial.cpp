@@ -257,13 +257,24 @@ void CompMaterial::ShowInspectorInfo()
 
 	int shader_pos = 0;
 	std::string shaders_names;
-	for (int i = 0; i < App->module_shaders->programs.size(); i++) {
-		shaders_names += App->module_shaders->programs[i]->name;
+	for (int i = 0; i < App->module_shaders->materials.size(); i++) {
+		shaders_names += App->module_shaders->materials[i]->name;
 		shaders_names += '\0';
 	}
 	if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
-		material->material_shader = App->module_shaders->programs[shader_pos];
 
+		
+		ResourceMaterial* resource_mat = (ResourceMaterial*)App->resource_manager->GetResource(App->module_shaders->materials[shader_pos]->path.c_str());
+		if (resource_mat != nullptr)
+		{
+			resource_mat->num_game_objects_use_me++;
+			if (resource_mat->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				std::string temp = std::to_string(resource_mat->GetUUID());
+				App->importer->iMaterial->LoadResource(temp.c_str(), resource_mat);
+			}
+		}
+		material = App->module_shaders->materials[shader_pos];
 	}
 
 	if (GetShaderProgram()->fragment != nullptr) {
@@ -571,12 +582,12 @@ void CompMaterial::ShowTextureVariable(int index, TextureVar* texture)
 	ImGui::PushID(index);
 
 	TextureVar* texture_var = texture;
-
+	static bool open = false;
 	/* Name of the material */
 	ImGui::Text("Name:"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", texture_var->var_name.c_str());
 
-	if (texture_var->value != nullptr)
+	if (texture->value != nullptr)
 	{
 		/* Image of the texture */
 		ImGui::Image((ImTextureID*)texture_var->value->GetTextureID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0));
@@ -586,12 +597,12 @@ void CompMaterial::ShowTextureVariable(int index, TextureVar* texture)
 
 		if (ImGui::Button("Select Material..."))
 		{
-			texture_var->selected = true;
+			open = true;
 		}
 	}
-	if (texture_var->selected)
+	if (open)
 	{
-		ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(texture_var->selected, Resource::Type::MATERIAL);
+		ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(open, Resource::Type::MATERIAL);
 		if (temp != nullptr)
 		{
 			if (texture_var->value != nullptr)
