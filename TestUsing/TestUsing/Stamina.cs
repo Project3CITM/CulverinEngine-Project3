@@ -17,7 +17,7 @@ public class Stamina : CulverinBehaviour
 
     void Update()
     {
-        if(actual_stamina<max_stamina)
+        if (actual_stamina < max_stamina) 
         {
             actual_stamina += regen;
             //if(actual_stamina > max_stamina)
@@ -25,15 +25,22 @@ public class Stamina : CulverinBehaviour
             //    actual_stamina = max_stamina;
             //}
         }
-        GetDamage(stamina_cost);
+
+        DecreaseStamina(stamina_cost);
     }
 
-    void GetDamage(float cost)
+    public void DecreaseStamina(float cost)
     {
         if (actual_stamina > cost)
         {
             actual_stamina -= stamina_cost;
         }
+
         stamina_bar.FillAmount(actual_stamina);
+    }
+
+    public float GetCurrentStamina()
+    {
+        return actual_stamina;
     }
 }
