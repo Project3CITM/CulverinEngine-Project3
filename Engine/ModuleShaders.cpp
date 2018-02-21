@@ -26,6 +26,9 @@ ModuleShaders::~ModuleShaders()
 	for (auto item = programs.begin(); item != programs.end(); item++) {
 		RELEASE(*item);
 	}
+	for (auto item = materials.begin(); item != materials.end(); item++) {
+		RELEASE(*item);
+	}
 }
 
 bool ModuleShaders::Init(JSON_Object * node)
@@ -283,7 +286,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const 
 		shaders.push_back(newVertex);
 
 	}
-	defaultShader->GetProgramVariables();
+	
 	return defaultShader;
 
 }

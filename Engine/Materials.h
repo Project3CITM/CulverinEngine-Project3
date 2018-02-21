@@ -31,7 +31,7 @@ public:
 
 public:
 
-	ShaderProgram material_shader;
+	ShaderProgram* material_shader;
 	std::string name = "";
 	std::string path = "";
 

@@ -21,7 +21,8 @@ enum TYPE_FILE
 	JPG,
 	SCRIPT,
 	DDS,
-	SCENE
+	SCENE,
+	SHADER
 };
 
 

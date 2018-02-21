@@ -112,6 +112,10 @@ TYPE_FILE Project::SetType(std::string name)
 		{
 			return TYPE_FILE::SCENE;
 		}
+		else if (temp == "frag" || temp == "vert")
+		{
+			return TYPE_FILE::SHADER;
+		}
 		else
 		{
 			return TYPE_FILE::NON;
@@ -407,6 +411,20 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_jpg, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 			break;
 		}
+		case TYPE_FILE::SHADER:
+		{
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_script, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
+			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+			{
+				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+				{
+
+				}
+
+			}
+			break;
+		}
+			
 		case TYPE_FILE::SCENE:
 		{
 			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_scene, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));

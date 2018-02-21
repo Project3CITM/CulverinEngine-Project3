@@ -202,7 +202,7 @@ void Material::GetProgramVariables()
 
 uint Material::GetProgramID()const
 {
-	return material_shader.programID;
+	return material_shader->programID;
 }
 
 void Material::RestartIterators()

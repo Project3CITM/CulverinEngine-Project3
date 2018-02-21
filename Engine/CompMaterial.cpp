@@ -138,7 +138,7 @@ uint CompMaterial::GetTextureID() const
 
 ShaderProgram * CompMaterial::GetShaderProgram()const
 {
-	return &material->material_shader;
+	return material->material_shader;
 }
 
 void CompMaterial::SetUUIDMesh(uint uuid)
@@ -257,12 +257,12 @@ void CompMaterial::ShowInspectorInfo()
 
 	int shader_pos = 0;
 	std::string shaders_names;
-	for (int i = 0; i < App->module_shaders->materials.size(); i++) {
-		shaders_names += App->module_shaders->materials[i]->name;
+	for (int i = 0; i < App->module_shaders->programs.size(); i++) {
+		shaders_names += App->module_shaders->programs[i]->name;
 		shaders_names += '\0';
 	}
 	if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
-		material = App->module_shaders->materials[shader_pos];
+		material->material_shader = App->module_shaders->programs[shader_pos];
 
 	}
 
@@ -299,7 +299,7 @@ void CompMaterial::ShowInspectorInfo()
 
 	ShowShadersEditors();
 
-	
+	material->GetProgramVariables();
 	material->RestartIterators();
 	
 
