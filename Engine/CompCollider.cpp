@@ -18,7 +18,6 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 	uid = App->random->Int();
 	name_component = "CompCollider";
 
-
 	if (parent)
 	{
 		rigid_body_comp = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
@@ -178,9 +177,8 @@ void CompCollider::ShowInspectorInfo()
 	}
 
 	// Set as Trigger
-	if (ImGui::Checkbox("Trigger", &trigger))
+	if (!rigid_body_comp && ImGui::Checkbox("Trigger", &trigger))
 	{
-		// change later (check if body is static)
 		body->SetAsTrigger(trigger);
 		if (trigger == false)
 		{
@@ -276,7 +274,7 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 
 	//Collider type
-	json_object_dotset_number_with_std(object, name + "ColliderType", collider_type);
+	json_object_dotset_number_with_std(object, name + "ColliderType", curr_type);
 
 
 	//Position
@@ -311,6 +309,10 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 
+	//Collider Type
+	collider_type = (JP_COLLIDER_TYPE)((int)json_object_dotget_number_with_std(object, name + "ColliderType"));
+	curr_type = collider_type;
+
 	//Position
 	position.x = json_object_dotget_number_with_std(object, name + "Postion_X");
 	position.y = json_object_dotget_number_with_std(object, name + "Postion_Y");
@@ -322,14 +324,14 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 	angle.z = json_object_dotget_number_with_std(object, name + "Angle_Z");
 
 	//Material	
-	angle.x = json_object_dotget_number_with_std(object, name + "Material_X");
-	angle.y = json_object_dotget_number_with_std(object, name + "Material_Y");
-	angle.z = json_object_dotget_number_with_std(object, name + "Material_Z");
+	material.x = json_object_dotget_number_with_std(object, name + "Material_X");
+	material.y = json_object_dotget_number_with_std(object, name + "Material_Y");
+	material.z = json_object_dotget_number_with_std(object, name + "Material_Z");
 
 	//Size	
-	angle.x = json_object_dotget_number_with_std(object, name + "Size_X");
-	angle.y = json_object_dotget_number_with_std(object, name + "Size_Y");
-	angle.z = json_object_dotget_number_with_std(object, name + "Size_Z");
+	size.x = json_object_dotget_number_with_std(object, name + "Size_X");
+	size.y = json_object_dotget_number_with_std(object, name + "Size_Y");
+	size.z = json_object_dotget_number_with_std(object, name + "Size_Z");
 
 	//Rad	
 	rad = json_object_dotget_number_with_std(object, name + "Rad");
@@ -342,13 +344,16 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 void CompCollider::SyncComponent()
 {
-	UpdateCollider();
+	ChangeCollider();
 	SetColliderPosition();
 	if (trigger)
 	{
+		body->SetAsTrigger(trigger);
+
+		// TODO: Get Script from any GameObject 
 		std::vector<Component*> script_vec;
 		parent->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec);
-
+		
 		for (int i = 0; i < script_vec.size(); i++)
 		{
 			if (((CompScript*)script_vec[i])->GetName() == script_name)
@@ -364,18 +369,20 @@ void CompCollider::SyncComponent()
 // -----------------------------------------------------------------
 void CompCollider::OnTriggerEnter(Component * actor)
 {
-	if (listener == nullptr)return;
-
-	// Call Listner OnTriggerEnter(Component* actor);
-	collided_object = actor->GetParent();
-	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
+	if (listener != nullptr)
+	{
+		collided_object = actor->GetParent();
+		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
+	}
 }
 
 void CompCollider::OnTriggerLost(Component * actor)
 {
-	collided_object = nullptr;
-	// Call Listner OnTriggerLost(Component* actor);
-	listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
+	if (listener != nullptr)
+	{
+		collided_object = nullptr;
+		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
+	}
 }
 
 void CompCollider::ChangeCollider()
@@ -398,14 +405,7 @@ void CompCollider::SetColliderPosition()
 {
 	Quat quat = transform->GetRotGlobal()*local_quat;
 	float3 fpos = transform->GetPosGlobal() + quat * position;
-	if (body != nullptr)
-	{
-		body->SetTransform(fpos, quat);
-	}
-	else if (rigid_body_comp != nullptr && rigid_body_comp->GetPhysicsBody() != nullptr)
-	{
-		rigid_body_comp->GetPhysicsBody()->SetTransform(fpos, quat);
-	}
+	body->SetTransform(fpos, quat);
 }
 
 void CompCollider::SetSizeFromBoundingBox()
@@ -415,13 +415,14 @@ void CompCollider::SetSizeFromBoundingBox()
 	{
 		size = float3(box.MaxX() - box.MinX(), box.MaxY() - box.MinY(), box.MaxZ() - box.MinZ());
 		rad = size.x*0.5f;
-		UpdateCollider();
 	}
 	else 
 	{
 		size = float3(1.f, 1.f, 1.f);
 		rad = 0.5;
 	}
+
+	UpdateCollider();
 }
 
 void CompCollider::SetRigidBodyComp(CompRigidBody * new_comp)
@@ -449,10 +450,18 @@ jpPhysicsRigidBody* CompCollider::GivePhysicsBody(CompRigidBody* new_rigid_body)
 	if (new_rigid_body)
 	{
 		LOG("Collider physics body is being given to RigidBody...");
+		if (trigger)
+		{
+			trigger = false;
+			listener = false;
+			body->SetAsTrigger(trigger);
+		}
 		rigid_body_comp = new_rigid_body;
-		jpPhysicsRigidBody* ret = body;
-		return ret;
+		return body;
 	}
-	return nullptr;
+	else
+	{
+		return nullptr;
+	}
 }
 

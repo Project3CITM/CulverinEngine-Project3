@@ -44,7 +44,7 @@ public:
 	void SetShape(physx::PxShape* new_shape);
 
 	void SetGeometry(float3 new_scale, float radius, JP_COLLIDER_TYPE type);
-	void SetShapeScale(float3 new_scale, float radius, JP_COLLIDER_TYPE type);
+	void SetShapeScale(float3& new_scale, float& radius, JP_COLLIDER_TYPE type);
 
 	void SetMass(float &mass);
 

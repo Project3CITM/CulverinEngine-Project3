@@ -230,7 +230,7 @@ void jpPhysicsRigidBody::SetGeometry(float3 new_scale, float radius, JP_COLLIDER
 	}
 }
 
-void jpPhysicsRigidBody::SetShapeScale(float3 new_scale, float radius, JP_COLLIDER_TYPE shape_type)
+void jpPhysicsRigidBody::SetShapeScale(float3& new_scale, float& radius, JP_COLLIDER_TYPE shape_type)
 {
 	if (body_shape) {
 		physx::PxVec3 scale = physx::PxVec3(new_scale.x, new_scale.y, new_scale.z);
@@ -240,8 +240,14 @@ void jpPhysicsRigidBody::SetShapeScale(float3 new_scale, float radius, JP_COLLID
 			radius = -radius;
 
 		if (scale.isFinite())
+		{
 			scale = scale.abs();
-		else scale = physx::PxVec3(0.0, 0.0, 0.0);
+			new_scale = float3(scale.x, scale.y, scale.z);
+		}
+		else
+		{
+			scale = physx::PxVec3(0.0, 0.0, 0.0);
+		}
 
 		// Modify Geometry Scale
 		physx::PxGeometryType::Enum type = body_shape->getGeometryType();

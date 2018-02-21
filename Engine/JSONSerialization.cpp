@@ -159,11 +159,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				templist.push_back(temp);
 			}
 		}
-		//Sync components
-		for (int i = 0; i < templist.size(); i++)
-		{
-			templist[i].go->SyncComponents();
-		}
+	
 		// Now with uid parent add childs.
 		for (int i = 0; i < templist.size(); i++)
 		{
@@ -177,6 +173,11 @@ void JSONSerialization::LoadScene(const char* sceneName)
 					}
 				}
 			}
+		}
+		//Sync components
+		for (int i = 0; i < templist.size(); i++)
+		{
+			templist[i].go->SyncComponents();
 		}
 		// Now pass vector to root in scene
 		for (int i = 0; i < templist.size(); i++)
