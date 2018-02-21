@@ -112,6 +112,73 @@ void CompAnimation::PlayAnimation(AnimationNode * node)
 	}
 }
 
+void CompAnimation::PlayClip(const char * clip_name, bool blending)
+{
+	AnimationClip* temp = nullptr;
+	for (std::vector<AnimationClip*>::iterator it = animation_clips.begin(); it != animation_clips.end(); it++)
+	{
+		if ((*it)->name == clip_name)
+		{
+			temp = (*it);
+			break;
+		}
+	}
+	if (temp == nullptr)
+	{
+		LOG("Clip with name %s can't be found and won't play.", clip_name);
+		return;
+	}
+	else if (blending == true && current_animation != nullptr && current_animation != temp && blending_animation != temp)
+	{	
+		current_animation->state = AnimationState::A_PLAY;
+		temp->state = AnimationState::A_BLENDING;
+		blending_animation = temp;
+	}
+	else
+	{
+		temp->RestartAnimationClip();
+		temp->state = AnimationState::A_PLAY;
+		current_animation = temp;
+		if (blending_animation != nullptr)
+		{
+			blending_animation->state = AnimationState::A_STOP;
+			blending_animation = nullptr;
+		}
+	}
+}
+
+void CompAnimation::SetNode(const char * node_name)
+{
+	AnimationNode* temp = nullptr;
+	AnimationNode* prev_node = nullptr;
+
+	for (std::vector<AnimationNode*>::iterator it = animation_nodes.begin(); it != animation_nodes.end(); it++)
+	{
+		if ((*it)->name == node_name)
+		{
+			temp = (*it);
+		}
+		else
+		{
+			if ((*it)->active == true)
+			{
+				prev_node = (*it);
+			}
+		}
+	}
+
+	if (temp == nullptr)
+	{
+		LOG("Node with name %s can't be found and won't be set.", node_name);
+		return;
+	}
+	else if(temp != prev_node)
+	{
+		prev_node->active = false;
+		PlayAnimation(temp);
+	}
+}
+
 void CompAnimation::SetResource(ResourceAnimation * resource_animation, bool isImport)
 {
 	if (animation_resource != resource_animation)
@@ -579,6 +646,7 @@ void CompAnimation::CreateAnimationClip()
 		entry_node->active = true;
 		entry_node->name = "Entry";
 		animation_nodes.push_back(entry_node);
+		PlayAnimation(entry_node);
 	}
 }
 
