@@ -350,8 +350,7 @@ bool CSharpScript::CheckMonoObject(MonoObject* object)
 {
 	if (object != nullptr)
 	{
-		// Link MonoObject with GameObject to enable script control it
-		current_game_object = game_objects[object];
+		current_game_object = App->importer->iScript->GetGameObject(object);
 		return true;
 	}
 	return false;
@@ -801,10 +800,7 @@ void CSharpScript::SetActive(MonoObject* object, mono_bool active)
 
 MonoObject* CSharpScript::GetOwnGameObject()
 {
-	if (CSSelfObject != nullptr && own_game_object != nullptr)
-	{
-		return CSSelfObject;
-	}
+	return App->importer->iScript->GetMonoObject(own_game_object);
 }
 
 void CSharpScript::SetCurrentGameObject(GameObject* current)
@@ -869,6 +865,7 @@ MonoString* CSharpScript::GetName(MonoObject* object)
 	{
 		return nullptr;
 	}
+
 	return mono_string_new(CSdomain, current_game_object->GetName());
 }
 
@@ -1030,10 +1027,13 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	}
 	else
 	{
-		GameObject* actual_temp = game_objects[object];
-		if (actual_temp->GetComponentByName(comp_name) != nullptr) // if has component
+		GameObject* actual_temp = App->importer->iScript->GetGameObject(object);
+		if (actual_temp)
 		{
-			classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", comp_name);
+			if (actual_temp->GetComponentByName(comp_name) != nullptr) // if has component
+			{
+				classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", comp_name);
+			}
 		}
 	}
 
@@ -1050,10 +1050,7 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 
 MonoObject* CSharpScript::GetParentGameObject()
 {
-	if (CSSelfObject != nullptr && own_game_object != nullptr)
-	{
-		return CSSelfObject;
-	}
+	return App->importer->iScript->GetMonoObject(own_game_object);
 }
 
 MonoObject* CSharpScript::Find(MonoObject * object, MonoString * name)
@@ -1831,23 +1828,12 @@ void CSharpScript::FillAmount(MonoObject * object, float value)
 }
 
 // CompCollider -----------------------------------------------------------
-MonoObject * CSharpScript::GetCollidedObject(MonoObject * object)
+MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 {
 	GameObject* target = ((CompCollider*)current_game_object->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
-	if (target == nullptr)((CompCollider*)current_game_object->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
 	if (target == nullptr)return nullptr;
 
-	std::map<MonoObject*, GameObject*>::iterator iter = game_objects.begin();
-	while (iter != game_objects.end())
-	{
-		if (iter._Ptr->_Myval.second == target)
-		{
-			return iter._Ptr->_Myval.first;
-		}
-
-		iter++;
-	}
-	return nullptr;
+	return App->importer->iScript->GetMonoObject(target);
 }
 
 // CompRigidBody ----------------------------------------------------------
