@@ -274,18 +274,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const 
 
 	defaultShader->AddVertex(newVertex);
 
-	uint var_size = defaultShader->GetVariablesSize();
-	//Change this
-	for (int i = 0; i < var_size; i++) {
-		UniformVar temp = defaultShader->GetVariableInfo(i);
 
-		//Textures
-		if (temp.type == 35678) {
-			TextureVar texture_var;
-			texture_var.var_name = temp.name;
-			defaultShader->textures.push_back(texture_var);
-		}
-	}
 	
 
 	if (push_in_list) {

@@ -7,7 +7,10 @@
 #include "ModuleInput.h"
 #include "WindowSceneWorld.h"
 #include "ModuleCamera3D.h"
+#include "ModuleFS.h"
+
 #include "ImGui/ImGuizmo.h"
+
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
@@ -296,13 +299,60 @@ void CompRectTransform::Save(JSON_Object* object, std::string name, bool saveSce
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	// TRANSFORM -----------
+
+	App->fs->json_array_dotset_float3(object, name + "Position", GetPos());
+	// Rotation
+	App->fs->json_array_dotset_float4(object, name + "Rotation", float4(GetRot().x, GetRot().y, GetRot().z, GetRot().w));
+	// Scale
+	App->fs->json_array_dotset_float3(object, name + "Scale", GetScale());
+
 	//...
+	App->fs->json_array_dotset_float2(object, name + "Max Anchor", max_anchor);
+
+	App->fs->json_array_dotset_float2(object, name + "Min Anchor", min_anchor);
+
+	App->fs->json_array_dotset_float2(object, name + "RPivot", right_pivot);
+
+	App->fs->json_array_dotset_float2(object, name + "LPivot", left_pivot);
+
+	App->fs->json_array_dotset_float2(object, name + "Pivot", pivot);
+
+
+	json_object_dotset_number_with_std(object, name + "Width", width);
+
+	json_object_dotset_number_with_std(object, name + "Height", height);
+
+	json_object_dotset_boolean_with_std(object, name + "Ignore Z", ignore_z);
+
 }
 
 void CompRectTransform::Load(const JSON_Object* object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	//...
+	float3 position = App->fs->json_array_dotget_float3_string(object, name + "Position");
+	float4 rotation = App->fs->json_array_dotget_float4_string(object, name + "Rotation");
+	float3 scale = App->fs->json_array_dotget_float3_string(object, name + "Scale");
+	max_anchor=App->fs->json_array_dotget_float2_string(object, name + "Max Anchor" );
+
+	min_anchor=App->fs->json_array_dotget_float2_string(object, name + "Min Anchor" );
+
+	right_pivot=App->fs->json_array_dotget_float2_string(object, name + "RPivot" );
+
+	left_pivot=App->fs->json_array_dotget_float2_string(object, name + "LPivot" );
+
+	pivot=App->fs->json_array_dotget_float2_string(object, name + "Pivot" );
+
+
+	width=json_object_dotget_number_with_std(object, name + "Width" );
+
+	height=json_object_dotget_number_with_std(object, name + "Height" );
+
+	ignore_z=json_object_dotget_boolean_with_std(object, name + "Ignore Z" );
+
+	Init(position, rotation, scale);
+
 	Enable();
 }
 

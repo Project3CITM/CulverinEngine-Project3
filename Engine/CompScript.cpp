@@ -578,7 +578,7 @@ void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uin
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", Comp_Type::C_SCRIPT);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
-	json_object_dotset_string_with_std(object, name + "Name Script", name_script.c_str());
+	json_object_dotset_string_with_std(object, name + "Name Script", strcmp(name_script.c_str(),"")==0?"Empty Script":name_script.c_str());
 	if (resource_script != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Script UUID", resource_script->GetUUID());

@@ -15,6 +15,7 @@
 #include <gl/GLU.h>
 #include"Devil\include\ilut.h"
 #include "DefaultShaders.h"
+#include "Materials.h"
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
@@ -164,18 +165,23 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
+	Texture default_text;
+	default_text.name = "default_texture";
+	default_text.id = id_checkImage;
+
+	default_texture = new ResourceMaterial(App->random->Int());
+	default_texture->Init(default_text);
+
 
 	default_shader = App->module_shaders->CreateDefaultShader("Default Shader", fragmentShaderSource, vertexShaderSource, nullptr, true);
 
-	Texture default_texture;
-	default_texture.name = "default_texture";
-	default_texture.id = id_checkImage;
+	default_material = new Material();
+	default_material->name = "Default Material";
+	default_material->material_shader = default_shader;
+	default_material->GetProgramVariables();	
 
-	default_mat = new ResourceMaterial(App->random->Int());
-	default_mat->Init(default_texture);
-
-	if (default_shader->textures.size()>0)
-	default_shader->textures[0].value = default_mat;
+	if (default_material->textures.size()>0)
+		default_material->textures[0].value = default_texture;
 
 
 	Awake_t = perf_timer.ReadMs();

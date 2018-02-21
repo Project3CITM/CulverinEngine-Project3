@@ -11,6 +11,7 @@
 #include "Resource_.h"
 #include "ResourceMaterial.h"
 #include "ShadersLib.h"
+#include "Materials.h"
 
 #pragma comment (lib, "GL3W/libx86/glew32.lib") 
 typedef unsigned int uint;
@@ -75,6 +76,7 @@ public:
 	std::string Shader_Directory_fs;
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;
+	std::vector<Material*> materials;
 
 public:
 	std::string last_shader_error = "";
