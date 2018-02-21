@@ -20,6 +20,7 @@
 #include "CompScript.h"
 #include "ResourceMesh.h"
 #include "ImportMesh.h"
+#include "ImportScript.h"
 #include "CompMaterial.h"
 #include "WindowInspector.h"
 #include "CompCamera.h"
@@ -222,8 +223,11 @@ void Scene::LoadScene()
 				int exc = App->engine_state;
 				App->SetState(EngineState::PLAY); // OR STOP
 
+				App->importer->iScript->ClearMonoMap();
+
 				if (exc == EngineState::STOP)
 				{
+					App->importer->iScript->SetMonoMap(App->scene->root, true);
 					//Start all scripts
 					App->scene->StartScripts();
 				}

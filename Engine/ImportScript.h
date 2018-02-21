@@ -11,9 +11,11 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mono-gc.h>
 #include <list>
+#include <map>
 
 class CSharpScript;
 class ResourceScript;
+class GameObject;
 
 class ImportScript
 {
@@ -41,6 +43,11 @@ public:
 	std::string GetMonoPath() const;
 
 	void SetCurrentScript(CSharpScript* current);
+
+	// Map <MonoObject, GameObject>
+	void SetMonoMap(GameObject* root, bool is_root = false); // Only used in "Play"
+	void ClearMonoMap();
+	void UpdateMonoMap(GameObject* modificate);
 
 	bool IsNameUnique(std::string name) const;
 
@@ -160,6 +167,8 @@ private:
 	MonoImage* culverin_mono_image = nullptr;
 	std::list<std::string> nameScripts;
 	static CSharpScript* current;
+
+	std::map<MonoObject*, GameObject*> mono_map;
 };
 
 #endif

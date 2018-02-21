@@ -6,6 +6,7 @@
 #include "ModuleInput.h"
 #include "ResourceScript.h"
 #include "ModuleMap.h"
+#include "Scene.h"
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
 #include "CSharpScript.h"
@@ -370,6 +371,60 @@ std::string ImportScript::GetMonoPath() const
 void ImportScript::SetCurrentScript(CSharpScript* current_)
 {
 	current = current_;
+}
+
+void ImportScript::SetMonoMap(GameObject* gameobject, bool is_root)
+{
+	for (int i = 0; i < gameobject->GetNumChilds(); i++)
+	{
+		SetMonoMap(gameobject->GetChildbyIndex(i), false);
+	}
+
+	if (is_root == false)
+	{
+		MonoClass* c = mono_class_from_name(GetCulverinImage(), "CulverinEditor", "GameObject");
+		if (c)
+		{
+			MonoObject* new_object = mono_object_new(GetMainDomain(), c);
+			if (new_object)
+			{
+				//CSSelfObject = new_object;
+				mono_map[new_object] = gameobject;
+			}
+		}
+	}
+}
+
+void ImportScript::ClearMonoMap()
+{
+	mono_map.clear();
+}
+
+void ImportScript::UpdateMonoMap(GameObject* modificate)
+{
+	if (modificate->IsDeleteFixed())
+	{
+		// Delete from map
+		//MonoClassField* mono_field = nullptr;
+		//mono_field_set_value(GetMonoObject(), mono_field, newVal);
+		//MonoObject* object = mono_field_get_value_object(App->importer->iScript->GetDomain(), mono_field, script->GetMonoObject());
+		//get_mono_object
+
+	}
+	else
+	{
+		// Add in map.
+		MonoClass* c = mono_class_from_name(GetCulverinImage(), "CulverinEditor", "GameObject");
+		if (c)
+		{
+			MonoObject* new_object = mono_object_new(GetMainDomain(), c);
+			if (new_object)
+			{
+				//CSSelfObject = new_object;
+				mono_map[new_object] = modificate;
+			}
+		}
+	}
 }
 
 bool ImportScript::IsNameUnique(std::string name) const
@@ -883,12 +938,12 @@ void ImportScript::SetPosition(MonoObject* object, MonoObject* vector3)
 	current->SetPosition(object, vector3);
 }
 
-void ImportScript::SetGlobalPosition(MonoObject * object, MonoObject * vector3)
+void ImportScript::SetGlobalPosition(MonoObject* object, MonoObject* vector3)
 {
 	current->SetGlobalPosition(object, vector3);
 }
 
-void ImportScript::Translate(MonoObject * object, MonoObject * vector3)
+void ImportScript::Translate(MonoObject* object, MonoObject* vector3)
 {
 	current->Translate(object, vector3);
 }
@@ -898,7 +953,7 @@ MonoObject* ImportScript::GetRotation(MonoObject* object)
 	return current->GetRotation(object);
 }
 
-MonoObject * ImportScript::GetGlobalRotation(MonoObject * object)
+MonoObject * ImportScript::GetGlobalRotation(MonoObject* object)
 {
 	return current->GetGlobalRotation(object);
 }
@@ -1046,7 +1101,7 @@ void ImportScript::FillAmount(MonoObject * object, float value)
 
 }
 
-MonoObject * ImportScript::GetCollidedObject(MonoObject * object)
+MonoObject * ImportScript::GetCollidedObject(MonoObject* object)
 {
 	return current->GetCollidedObject(object);
 }
