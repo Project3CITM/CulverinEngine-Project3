@@ -372,7 +372,10 @@ void CompCollider::OnTriggerEnter(Component * actor)
 	if (listener != nullptr)
 	{
 		collided_object = actor->GetParent();
+		((CompCollider*)collided_object->GetComponentByName("CompCollider"))->SetCollidedObject(GetParent());
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
+		((CompCollider*)collided_object->GetComponentByName("CompCollider"))->SetCollidedObject(nullptr);
+		collided_object = nullptr;
 	}
 }
 
@@ -380,8 +383,11 @@ void CompCollider::OnTriggerLost(Component * actor)
 {
 	if (listener != nullptr)
 	{
-		collided_object = nullptr;
+		collided_object = actor->GetParent();
+		((CompCollider*)collided_object->GetComponentByName("CompCollider"))->SetCollidedObject(GetParent());
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
+		((CompCollider*)collided_object->GetComponentByName("CompCollider"))->SetCollidedObject(nullptr);
+		collided_object = nullptr;
 	}
 }
 
@@ -430,14 +436,35 @@ void CompCollider::SetRigidBodyComp(CompRigidBody * new_comp)
 	rigid_body_comp = new_comp;
 }
 
+void CompCollider::SetCollidedObject(GameObject * trigger_object)
+{
+	collided_object = trigger_object;
+}
+
 float3 CompCollider::GetPosition() const
 {
 	return position;
 }
 
+float3 CompCollider::GetGlobalPosition() const
+{
+	float3 ret_position = float3::zero;
+	Quat ret_quaternion = Quat::identity;
+	body->GetTransform(ret_position, ret_quaternion);
+	return ret_position;
+}
+
 Quat CompCollider::GetLocalQuat() const
 {
 	return local_quat;
+}
+
+Quat CompCollider::GetGlobalQuat() const
+{
+	float3 ret_position = float3::zero;
+	Quat ret_quaternion = Quat::identity;
+	body->GetTransform(ret_position, ret_quaternion);
+	return ret_quaternion;
 }
 
 GameObject * CompCollider::GetCollidedObject() const

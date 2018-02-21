@@ -1003,6 +1003,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompCollider";
 	}
+	else if (name == "CulverinEditor.CompRigidBody")
+	{
+		comp_name = "CompRigidBody";
+	}
 	/* Scripts */
 	if (comp_name == "")
 	{
@@ -1826,6 +1830,7 @@ void CSharpScript::FillAmount(MonoObject * object, float value)
 	}
 }
 
+// CompCollider -----------------------------------------------------------
 MonoObject * CSharpScript::GetCollidedObject(MonoObject * object)
 {
 	GameObject* target = ((CompCollider*)current_game_object->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
@@ -1843,6 +1848,70 @@ MonoObject * CSharpScript::GetCollidedObject(MonoObject * object)
 		iter++;
 	}
 	return nullptr;
+}
+
+// CompRigidBody ----------------------------------------------------------
+MonoObject * CSharpScript::GetColliderPosition(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
+		if (classT)
+		{
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+				float3 pos = ((CompCollider*)current_game_object->GetComponentByName("CompCollider"))->GetGlobalPosition();
+
+				if (x_field) mono_field_set_value(new_object, x_field, &pos.x);
+				if (y_field) mono_field_set_value(new_object, y_field, &pos.y);
+				if (z_field) mono_field_set_value(new_object, z_field, &pos.z);
+
+				return new_object;
+			}
+		}
+	}
+	
+	return nullptr;
+}
+
+MonoObject * CSharpScript::GetColliderQuaternion(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Quaternion");
+		if (classT)
+		{
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+				MonoClassField* w_field = mono_class_get_field_from_name(classT, "w");
+
+
+				Quat pos = Quat::identity;//((CompCollider*)current_game_object->GetComponentByName("CompCollider"))->GetGlobalPosition();
+
+				if (x_field) mono_field_set_value(new_object, x_field, &pos.x);
+				if (y_field) mono_field_set_value(new_object, y_field, &pos.y);
+				if (z_field) mono_field_set_value(new_object, z_field, &pos.z);
+				if (w_field) mono_field_set_value(new_object, w_field, &pos.w);
+
+				return new_object;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+void CSharpScript::MoveKinematic(MonoObject * object, MonoObject * position, MonoObject * rotation)
+{
 }
 
 // Map ------------------------------------------------

@@ -13,7 +13,7 @@
 CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "RigidBody";
+	name_component = "CompRigidBody";
 
 	if (parent)
 	{
@@ -37,7 +37,7 @@ CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, pa
 CompRigidBody::CompRigidBody(const CompRigidBody & copy, GameObject * parent) : Component(Comp_Type::C_RIGIDBODY, parent)
 {
 	uid = App->random->Int();
-	name_component = "RigidBody";
+	name_component = "CompRigidBody";
 
 	//Same as regular constructor since this properties depend on the parent
 	if (parent)

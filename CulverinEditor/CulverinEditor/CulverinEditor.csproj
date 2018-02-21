@@ -45,6 +45,7 @@
     <Compile Include="CompGraphic.cs" />
     <Compile Include="CompImage.cs" />
     <Compile Include="CompInteractive.cs" />
+    <Compile Include="CompRigidBody.cs" />
     <Compile Include="CulverinBehaviour.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Object.cs" />

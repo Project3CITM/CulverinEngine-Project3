@@ -45,10 +45,13 @@ public:
 	void SetColliderPosition();
 	void SetSizeFromBoundingBox();
 	void SetRigidBodyComp(CompRigidBody* new_comp);
+	void SetCollidedObject(GameObject* trigger_object);
 
 	//Getters -------------------
 	float3 GetPosition() const;
+	float3 GetGlobalPosition() const;
 	Quat GetLocalQuat() const;
+	Quat GetGlobalQuat() const;
 	GameObject* GetCollidedObject()const;
 	
 private:

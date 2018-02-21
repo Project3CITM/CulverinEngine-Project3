@@ -193,6 +193,11 @@ public:
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
 
+	/*RigidBody*/
+	MonoObject* GetColliderPosition(MonoObject* object);
+	MonoObject* GetColliderQuaternion(MonoObject* object);
+	void		MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation);
+
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
 	MonoObject* GetParentGameObject();
