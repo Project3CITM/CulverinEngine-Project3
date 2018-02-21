@@ -166,7 +166,7 @@ void CompBone::Load(const JSON_Object * object, std::string name)
 {
 }
 
-float3x4 CompBone::GetSkinningMatrix(const GameObject* mesh_go)
+void CompBone::GenSkinningMatrix(const GameObject * mesh_go)
 {
 	float4x4 transform = parent->GetComponentTransform()->GetLocalTransform();
 
@@ -181,5 +181,10 @@ float3x4 CompBone::GetSkinningMatrix(const GameObject* mesh_go)
 
 	transform = offset.Inverted() * transform;
 
-	return transform.Float3x4Part();
+	skinning_matrix = transform.Float3x4Part();
+}
+
+const float3x4& CompBone::GetSkinningMatrix()
+{
+	return skinning_matrix;
 }

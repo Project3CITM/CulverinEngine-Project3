@@ -667,9 +667,16 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 
 	for (int i = 0; i < bone.num_weights; i++)
 	{
-		for (std::vector<std::pair<uint, float>>::const_iterator it = source->vertex_weights[i].begin(); it != source->vertex_weights[i].end(); ++it)
-			if (it->first == generated_bones)
-				skeleton->influences[bone.weights->vertex_id][it - source->vertex_weights[i].begin()] = new_bone;
+		uint vertex_id = bone.weights[i].vertex_id;
+
+		for (int j = 0; j < source->vertex_weights[vertex_id].size(); j++)
+		{
+			if (source->vertex_weights[vertex_id][j].first == generated_bones)
+			{
+				skeleton->influences[vertex_id][j] = new_bone;
+				break;
+			}
+		}
 	}
 
 	uint num_childs = source->bone_hirarchy_num_childs[generated_bones];
@@ -690,6 +697,9 @@ CompMaterial * CompMesh::GetMaterial() const
 
 void Skeleton::GenSkinningTexture(const GameObject* mesh_go)
 {
+	for (std::vector<GameObject*>::iterator it = bones.begin(); it != bones.end(); ++it)
+		(*it)->GetComponentBone()->GenSkinningMatrix(mesh_go);
+
 	for (int i = 0; i < influences.size(); i++)
 	{
 		for (int j = 0; j < 4; j++) //Num influences
@@ -697,7 +707,7 @@ void Skeleton::GenSkinningTexture(const GameObject* mesh_go)
 			if (influences[i].size() > j)
 			{
 				GameObject* bone = influences[i][j];
-				float3x4 skinning_mat = bone->GetComponentBone()->GetSkinningMatrix(mesh_go);
+				float3x4 skinning_mat = bone->GetComponentBone()->GetSkinningMatrix();
 				memcpy(&skinning_mats[i * j * 3 * 4], &skinning_mat[0][0], sizeof(float) * 3 * 4);
 			}
 		}
