@@ -176,6 +176,8 @@ namespace CulverinEditor.Pathfinding
             }
 
             path_list.Reverse();
+            path_list.Remove(path_list[0]);
+
         }
 
         public int GetMapWidth()
