@@ -62,6 +62,7 @@ private:
 	// ----- Needed Updating States -----//
 
 	// ----- Needed Creating States ----- //
+	uint states_id;
 	FSM_State* selected_state;
 	FSM_Transition* selected_transition;
 	FSM_Condition* selected_condition;
@@ -84,8 +85,8 @@ private:
 class FSM_State
 {
 public:
-	FSM_State();
-	FSM_State(const FSM_State& copy);	//doesn't copy the transitions, makes no sense
+	FSM_State(int state_id_);
+	FSM_State(const FSM_State& copy, int state_id_);	//doesn't copy the transitions, makes no sense
 	~FSM_State();
 
 	bool Init();
@@ -95,6 +96,12 @@ public:
 	void DoEntryAction();
 	void DoAction(float dt);
 	void DoExitAction();
+
+	// SAVE - LOAD METHODS ----------------
+	void SaveState(JSON_Object * object, std::string name, bool saveScene, uint & countResources, int state_num);
+	void LoadState(const JSON_Object * object, std::string name, int num_state);
+	void LoadTransitionsTargetStates(const std::vector<FSM_State*>& states);
+	// -------------------------------------
 
 	bool CheckTriggeredTransition(FSM_Transition** transition)const;	
 	
@@ -115,12 +122,14 @@ public:
 	// ------------------------
 
 	// GETTERS ----------------
+	int GetStateID()const;
 	uint GetNumTransitions()const;
 	const char* GetStateName()const;
 	const char* GetScriptName()const;
 	// ------------------------
 
 private:	
+	uint state_id;
 	std::string state_name;
 	CompScript* script;
 	std::vector<FSM_Transition*> transitions;
@@ -133,8 +142,14 @@ private:
 class FSM_Transition
 {
 public:
+	FSM_Transition();
 	FSM_Transition(FSM_State* target_state_);
 	~FSM_Transition();
+
+	// SAVE - LOAD METHODS ----------------
+	void SaveTransition(JSON_Object * object, std::string name, bool saveScene, uint & countResources, int state_num, int transition_num);
+	void LoadTransition(const JSON_Object * object, std::string name, int num_state, int num_transition);
+	// -------------------------------------
 
 	// TODO: Should Ints/Floats transform in each other in case of using wrong function to avoid errors ???
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, bool condition);
@@ -142,7 +157,6 @@ public:
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, float condition);
 
 	bool IsTriggered()const;
-	FSM_State* GetTargetState();
 
 	// --- Visual Scripting --- //
 	void CreateConditionsModifyingOptions();
@@ -152,11 +166,18 @@ public:
 	bool DeleteAllConditions();
 	bool DeleteCondition(FSM_Condition* condition_to_delete);
 
+	// SETTERS ----------------
+	void SetTargetState(FSM_State* new_target_state);
+	// ------------------------
+	
 	// GETTERS ----------------
+	int GetTargetStateID();
+	FSM_State* GetTargetState();
 	uint GetNumConditions()const;
 	// ------------------------
 
 private:
+	int target_state_id;
 	FSM_State* target_state;
 	std::vector<FSM_Condition*> conditions;
 };
@@ -185,8 +206,15 @@ enum FSM_CONDITION_TYPE
 class FSM_Condition
 {
 public:
+	FSM_Condition();
 	FSM_Condition(FSM_CONDITION_TYPE condition_type_);
 	~FSM_Condition();
+
+	// SAVE - LOAD METHODS ----------------
+		// TODO
+	virtual void SaveCondition(JSON_Object * object, std::string name, bool saveScene, uint & countResources) {}
+	virtual void LoadCondition(const JSON_Object * object, std::string name) {}
+	// -------------------------------------
 
 	virtual bool Test(bool b)	{ return false; };
 	virtual bool Test(int i)	{ return false; };

@@ -7,7 +7,7 @@
 
 CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr),
 current_state(nullptr), selected_state(nullptr), selected_transition(nullptr), selected_condition(nullptr), target_state(nullptr), new_transition(nullptr),
-show_fsm(false), show_create_transition_window(false), show_create_conditions_window(false), show_selecting_script_window(false)
+show_fsm(false), show_create_transition_window(false), show_create_conditions_window(false), show_selecting_script_window(false), states_id(0)
 {
 	name_component = "Finite State Machine";
 }
@@ -422,19 +422,52 @@ void CompFiniteStateMachine::Save(JSON_Object * object, std::string name, bool s
 	json_object_dotset_number_with_std(object, name + "Type", C_FSM);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 	json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", 0);
+
+	json_object_dotset_number_with_std(object, name + "States ID", states_id);
+	int num_states = 0;
+	for (std::vector<FSM_State*>::const_iterator it_states = states.begin(); it_states != states.end(); it_states++)
+	{
+		num_states++;
+		if(initial_state == (*it_states))
+			json_object_dotset_number_with_std(object, name + "Initial State Num", num_states);
+
+		(*it_states)->SaveState(object, name, saveScene, countResources, num_states);
+	}
+	json_object_dotset_number_with_std(object, name + "Number States", num_states);
 }
 
 void CompFiniteStateMachine::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	
+	int num_states = json_object_dotget_number_with_std(object, name + "Number States");
+	int initial_state_num = initial_state_num = json_object_dotget_number_with_std(object, name + "Initial State Num");
+	for (int i = 1; i <= num_states; i++)
+	{
+		FSM_State* new_state = new FSM_State(-1);
+		new_state->LoadState(object, name, i);
+
+		if (i == initial_state_num)
+			initial_state = current_state = new_state;
+
+		states.push_back(new_state);
+	}
+
+	// Must Load the Transitions state targets
+	for (std::vector<FSM_State*>::const_iterator it_states = states.begin(); it_states != states.end(); it_states++)
+		(*it_states)->LoadTransitionsTargetStates(states);
+
+	states_id = json_object_dotget_number_with_std(object, name + "States ID");
+
 	Enable();
 }
 
 FSM_State * CompFiniteStateMachine::CreateState()
 {
 	LOG("Creating FSM State.");
-	FSM_State* new_state = new FSM_State();
-
+	states_id++;
+	FSM_State* new_state = new FSM_State(states_id);
+	
 	if (states.empty())
 	{
 		SetInitialState(new_state);
@@ -524,11 +557,11 @@ void CompFiniteStateMachine::CheckOpenStateOptions(FSM_State* state)
 		selected_state = state;
 }
 
-FSM_State::FSM_State() : script(nullptr)
+FSM_State::FSM_State(int state_id_) : script(nullptr), state_id(state_id_)
 {
 }
 
-FSM_State::FSM_State(const FSM_State & copy) : script(copy.script)	//doesn't copy the transitions
+FSM_State::FSM_State(const FSM_State & copy, int state_id_) : script(copy.script), state_id(state_id_)	//doesn't copy the transitions
 {	
 }
 
@@ -578,6 +611,44 @@ void FSM_State::DoAction(float dt)
 
 void FSM_State::DoExitAction()
 {
+}
+
+void FSM_State::SaveState(JSON_Object * object, std::string name, bool saveScene, uint & countResources, int state_num)
+{
+	json_object_dotset_number_with_std(object, name + "State ID" + std::to_string(state_num), state_id);
+	json_object_dotset_string_with_std(object, name + "State Name" + std::to_string(state_num), state_name.c_str());
+	//TODO: Save Script // Call Save from CompScript ???
+
+	int num_transitions = 0;
+	for (std::vector<FSM_Transition*>::const_iterator it_transitions = transitions.begin(); it_transitions != transitions.end(); it_transitions++)
+	{
+		num_transitions++;
+		(*it_transitions)->SaveTransition(object, name, saveScene, countResources, state_num, num_transitions);
+	}
+	json_object_dotset_number_with_std(object, name + "Number Transitions State" + std::to_string(state_num), num_transitions);
+}
+
+void FSM_State::LoadState(const JSON_Object * object, std::string name, int num_state)
+{
+	state_id = json_object_dotget_number_with_std(object, name + "State ID" + std::to_string(num_state));
+	state_name = json_object_dotget_string_with_std(object, name + "State Name" + std::to_string(num_state));
+	//TODO: Load script // Call Load from CompScript ???
+
+	int num_transitions = json_object_dotget_number_with_std(object, name + "Number Transitions State" + std::to_string(num_state));
+	for (int i = 0; i < num_transitions; i++)
+	{
+		FSM_Transition* new_transition = new FSM_Transition();
+		new_transition->LoadTransition(object, name, num_state, i);
+		transitions.push_back(new_transition);
+	}
+}
+
+void FSM_State::LoadTransitionsTargetStates(const std::vector<FSM_State*>& states)
+{
+	for (std::vector<FSM_Transition*>::const_iterator it_transitions = transitions.begin(); it_transitions != transitions.end(); it_transitions++)
+		for (std::vector<FSM_State*>::const_iterator it_states = states.begin(); it_states != states.end(); it_states++)
+			if ((*it_transitions)->GetTargetStateID() == (*it_states)->GetStateID())
+				(*it_transitions)->SetTargetState(*it_states);
 }
 
 bool FSM_State::AddScript(CompScript * script_to_add)
@@ -724,6 +795,11 @@ void FSM_State::SetStateName(const char * new_name)
 	state_name = new_name;
 }
 
+int FSM_State::GetStateID() const
+{
+	return state_id;
+}
+
 uint FSM_State::GetNumTransitions() const
 {
 	return transitions.size();
@@ -741,7 +817,11 @@ const char * FSM_State::GetScriptName() const
 	return nullptr;
 }
 
-FSM_Transition::FSM_Transition(FSM_State * target_state_) : target_state(target_state_)
+FSM_Transition::FSM_Transition() : target_state(nullptr), target_state_id(-1)
+{
+}
+
+FSM_Transition::FSM_Transition(FSM_State * target_state_) : target_state(target_state_), target_state_id(target_state_->GetStateID())
 {
 }
 
@@ -750,6 +830,33 @@ FSM_Transition::~FSM_Transition()
 	target_state = nullptr;
 	for (std::vector<FSM_Condition*>::iterator it = conditions.begin(); it != conditions.end(); it++)
 		delete *it;
+}
+
+void FSM_Transition::SaveTransition(JSON_Object * object, std::string name, bool saveScene, uint & countResources, int state_num, int transition_num)
+{
+	json_object_dotset_number_with_std(object, name + "Target State ID", target_state->GetStateID());
+
+	int num_conditions = 0;
+	for (std::vector<FSM_Condition*>::const_iterator it_conditions = conditions.begin(); it_conditions != conditions.end(); it_conditions++)
+	{
+		num_conditions++;
+		(*it_conditions)->SaveCondition(object, name, saveScene, countResources);
+	}
+	json_object_dotset_number_with_std(object, name + "Number Conditions State" + std::to_string(state_num) + " Transition" + std::to_string(transition_num), num_conditions);
+}
+
+void FSM_Transition::LoadTransition(const JSON_Object * object, std::string name, int num_state, int num_transition)
+{
+	// The target state must be applied later because the state may not be created yet
+	target_state_id = json_object_dotget_number_with_std(object, name + "Target State ID");
+
+	int num_conditions = json_object_dotget_number_with_std(object, name + "Number Conditions State" + std::to_string(num_state) + " Transition" + std::to_string(num_transition));
+	for (int i = 0; i < num_conditions; i++)
+	{
+		FSM_Condition* new_condition = new FSM_Condition();
+		new_condition->LoadCondition(object, name);	// TODO
+		conditions.push_back(new_condition);
+	}
 }
 
 FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, bool condition)
@@ -912,11 +1019,6 @@ bool FSM_Transition::IsTriggered()const
 	return false;
 }
 
-FSM_State * FSM_Transition::GetTargetState()
-{
-	return target_state;
-}
-
 void FSM_Transition::CreateConditionsModifyingOptions()
 {
 	int id = 0;
@@ -1076,9 +1178,29 @@ bool FSM_Transition::DeleteCondition(FSM_Condition* condition_to_delete)
 	return false;
 }
 
+void FSM_Transition::SetTargetState(FSM_State* new_target_state)
+{
+	target_state = new_target_state;
+	target_state_id = new_target_state->GetStateID();
+}
+
+int FSM_Transition::GetTargetStateID()
+{
+	return target_state_id;
+}
+
+FSM_State * FSM_Transition::GetTargetState()
+{
+	return target_state;
+}
+
 uint FSM_Transition::GetNumConditions() const
 {
 	return conditions.size();
+}
+
+FSM_Condition::FSM_Condition() : condition_type(FSM_CONDITION_TYPE::FSM_COND_NONE)
+{
 }
 
 FSM_Condition::FSM_Condition(FSM_CONDITION_TYPE condition_type_) : condition_type(condition_type_)
