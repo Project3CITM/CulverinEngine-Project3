@@ -183,7 +183,9 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const 
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
 	if (vShaderCompiled != GL_TRUE)
 	{
-		//ShaderLog(vertexShader);
+		GLchar infoLog[1024];
+		glGetShaderInfoLog(vertexShader, 1024, NULL, infoLog);
+		LOG("Vertex shader compile error [%s]: %s", name_text, infoLog);
 		return nullptr;
 	}
 
@@ -205,8 +207,9 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const 
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
 	if (fShaderCompiled != GL_TRUE)
 	{
-
-		//ShaderLog(fragmentShader);
+		GLchar infoLog[1024];
+		glGetShaderInfoLog(fragmentShader, 1024, NULL, infoLog);
+		LOG("Fragment shader compile error [%s]: %s", name_text, infoLog);
 		return nullptr;
 	}
 
@@ -230,7 +233,9 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const 
 		glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &gShaderCompiled);
 		if (gShaderCompiled != GL_TRUE)
 		{
-			//ShaderLog(geometryShader);
+			GLchar infoLog[1024];
+			glGetShaderInfoLog(geometryShader, 1024, NULL, infoLog);
+			LOG("Geometry shader compile error [%s]: %s", name_text, infoLog);
 			return nullptr;
 		}
 

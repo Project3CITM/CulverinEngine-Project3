@@ -165,6 +165,7 @@ bool ModuleLightning::Start()
 	//------------------------------------
 
 	shadow_Shader = App->module_shaders->CreateDefaultShader("Shadow_Map", ShadowMapFrag, ShadowMapVert);
+	point_light_shadow_depth_shader = App->module_shaders->CreateDefaultShader("Point_Shadow_Map", PointShadowMapFrag, PointShadowMapVert, PointShadowMapGeo);
 	
 	//-------------------------------------
 

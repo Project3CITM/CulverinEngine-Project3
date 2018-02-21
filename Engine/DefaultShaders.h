@@ -119,4 +119,52 @@ static const GLchar* UIShaderFrag[] =
 	"}\n"
 };
 
+static const GLchar* PointShadowMapVert[] = 
+{
+	"#version 330 core\n"
+	"layout (location = 0) in vec3 position;\n"
+	"uniform mat4 model;\n"
+	"void main()\n"
+	"{\n"
+	"	gl_Position = model * vec4(position, 1.0);\n"
+	"}\n"
+};
+
+static const GLchar* PointShadowMapGeo[] =
+{
+	"#version 330 core\n"
+	"layout (triangles) in;\n"
+	"layout (triangle_strip, max_vertices=18) out;\n"
+	"uniform mat4 shadow_matrices[6];\n"
+	"out vec4 FragPos;\n"
+	"void main()\n"
+	"{\n"
+	"	for(int face = 0; face < 6; ++face)\n"
+	"	{\n"
+	"		gl_Layer = face;\n"
+	"		for(int i = 0; i < 3; ++i)\n"
+	"		{\n"
+	"			FragPos = gl_in[i].gl_Position;\n"
+	"			gl_Position = shadow_matrices[face] * FragPos;\n"
+	"			EmitVertex();\n"
+	"		}\n"
+	"		EndPrimitive();\n"
+	"	}\n"
+	"}\n"
+};
+
+static const GLchar* PointShadowMapFrag[] =
+{
+	"#version 330 core\n"
+	"in vec4 FragPos;\n"
+	"uniform vec3 light_pos;\n"
+	"uniform float far_plane;\n"
+	"void main()\n"
+	"{\n"
+	"	float light_dist = length(FragPos.xyz - light_pos);\n"
+	"	light_dist = light_dist / far_plane; // Normalize it\n"
+	"	gl_FragDepth = light_dist;\n"
+	"}\n"
+};
+
 #endif // !_DEFAULT_SHADERS_

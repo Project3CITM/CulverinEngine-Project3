@@ -75,6 +75,7 @@ private:
 public:
 	//test
 	ShaderProgram * shadow_Shader = nullptr;
+	ShaderProgram* point_light_shadow_depth_shader = nullptr;
 
 	FrameBuffer text;
 	DepthFrameBuffer test_fix;
