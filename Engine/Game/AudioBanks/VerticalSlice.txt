@@ -1,0 +1,31 @@
+Event	ID	Name			Wwise Object Path	Notes
+	27719897	MetalHit			\Scene1\MetalHit	
+	2385628198	Footsteps			\Scene1\Footsteps	
+	2862913083	FleshCut			\Scene1\FleshCut	
+	3035439363	PlayTorch			\Scene1\PlayTorch	
+	3113731383	SwordSlash			\Scene1\SwordSlash	
+
+Game Parameter	ID	Name			Wwise Object Path	Notes
+	2822317760	General_Volume			\Default Work Unit\General_Volume	
+
+Audio Bus	ID	Name			Wwise Object Path	Notes
+	3803692087	Master Audio Bus			\Default Work Unit\Master Audio Bus	
+
+Auxiliary Bus	ID	Name			Wwise Object Path	Notes
+	4063189299	Corridor			\Default Work Unit\Master Audio Bus\Corridor	
+
+Effect plug-ins	ID	Name	Type				Notes
+	3442768367	Hall_Large_Dark	Wwise RoomVerb			
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	154437360	Slash_Cover_Fx	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_Cover_Fx_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Slash_Cover_Fx		229384
+	363816187	Slash_metal_FX_02	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_3AAF368C.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX_02		118140
+	366644699	Slash_flesh_FX	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_flesh_FX_7C59AFFE.wem		\Actor-Mixer Hierarchy\Default Work Unit\Slash_flesh_FX		82672
+	418306352	Slash_metal_FX_01	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_FBBFA598.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX_01		123720
+	455601767	Torch_FX_04	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Torch_FX_1_6F1DCA5D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch\Torch_FX_04		228432
+	501715201	Step_gravel_FX	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Step_gravel_FX_2D3F927F.wem		\Actor-Mixer Hierarchy\Default Work Unit\FootSepts_Grave\Step_gravel_FX		88840
+	545175549	Torch_FX_01	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Torch_FX_1_452B3A86.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch\Torch_FX_01		228432
+	914320357	Slash_metal_FX_03	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_75052F69.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX_03		125432
+	916330453	Slash_metal_FX	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_24B4364E.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX		140308
+	1031725299	Torch_Fx_03	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Torch_Fx2_55E6AA05.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch\Torch_Fx_03		228700
+

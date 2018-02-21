@@ -16,22 +16,57 @@
 			<ShortName>Init</ShortName>
 			<Path>Init.bnk</Path>
 		</SoundBank>
-		<SoundBank Id="1544306476" Language="SFX">
-			<ObjectPath>\SoundBanks\Default Work Unit\Scene1</ObjectPath>
-			<ShortName>Scene1</ShortName>
-			<Path>Scene1.bnk</Path>
+		<SoundBank Id="2645192023" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\VerticalSlice</ObjectPath>
+			<ShortName>VerticalSlice</ShortName>
+			<Path>VerticalSlice.bnk</Path>
 			<IncludedEvents>
-				<Event Id="251412229" Name="Shot" ObjectPath="\Events\Scene1\Shot"/>
-				<Event Id="4251938927" Name="TorchAmbient" ObjectPath="\Events\Scene1\TorchAmbient"/>
+				<Event Id="2862913083" Name="FleshCut" ObjectPath="\Events\Scene1\FleshCut"/>
+				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene1\Footsteps"/>
+				<Event Id="27719897" Name="MetalHit" ObjectPath="\Events\Scene1\MetalHit"/>
+				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene1\PlayTorch"/>
+				<Event Id="3113731383" Name="SwordSlash" ObjectPath="\Events\Scene1\SwordSlash"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
-				<File Id="861775916" Language="SFX">
-					<ShortName>Fire Burning Sound Effect.wav</ShortName>
-					<Path>SFX\Fire Burning Sound Effect_951A003C.wem</Path>
+				<File Id="154437360" Language="SFX">
+					<ShortName>Slash_Cover_Fx.wav</ShortName>
+					<Path>SFX\Slash_Cover_Fx_1C9C67B2.wem</Path>
 				</File>
-				<File Id="977479696" Language="SFX">
-					<ShortName>Shot.wav</ShortName>
-					<Path>SFX\Shot_1C9C67B2.wem</Path>
+				<File Id="363816187" Language="SFX">
+					<ShortName>Slash_metal_FX.wav</ShortName>
+					<Path>SFX\Slash_metal_FX_3AAF368C.wem</Path>
+				</File>
+				<File Id="366644699" Language="SFX">
+					<ShortName>Slash_flesh_FX.wav</ShortName>
+					<Path>SFX\Slash_flesh_FX_7C59AFFE.wem</Path>
+				</File>
+				<File Id="418306352" Language="SFX">
+					<ShortName>Slash_metal_FX.wav</ShortName>
+					<Path>SFX\Slash_metal_FX_FBBFA598.wem</Path>
+				</File>
+				<File Id="455601767" Language="SFX">
+					<ShortName>Torch_FX_1.wav</ShortName>
+					<Path>SFX\Torch_FX_1_6F1DCA5D.wem</Path>
+				</File>
+				<File Id="501715201" Language="SFX">
+					<ShortName>Step_gravel_FX.wav</ShortName>
+					<Path>SFX\Step_gravel_FX_2D3F927F.wem</Path>
+				</File>
+				<File Id="545175549" Language="SFX">
+					<ShortName>Torch_FX_1.wav</ShortName>
+					<Path>SFX\Torch_FX_1_452B3A86.wem</Path>
+				</File>
+				<File Id="914320357" Language="SFX">
+					<ShortName>Slash_metal_FX.wav</ShortName>
+					<Path>SFX\Slash_metal_FX_75052F69.wem</Path>
+				</File>
+				<File Id="916330453" Language="SFX">
+					<ShortName>Slash_metal_FX.wav</ShortName>
+					<Path>SFX\Slash_metal_FX_24B4364E.wem</Path>
+				</File>
+				<File Id="1031725299" Language="SFX">
+					<ShortName>Torch_Fx2.wav</ShortName>
+					<Path>SFX\Torch_Fx2_55E6AA05.wem</Path>
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>

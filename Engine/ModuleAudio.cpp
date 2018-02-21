@@ -19,7 +19,10 @@ ModuleAudio::ModuleAudio(bool start_enabled) : Module(start_enabled)
 
 // Destructor
 ModuleAudio::~ModuleAudio()
-{}
+{
+	UnloadAllBanks();
+	Wwished::CloseWwished();
+}
 
 // Called before render is available
 bool ModuleAudio::Init(JSON_Object* node)
@@ -137,9 +140,7 @@ bool ModuleAudio::SaveConfig(JSON_Object * node)
 // Called before quitting
 bool ModuleAudio::CleanUp()
 {
-	UnloadAllBanks();
-	LOG("Unloading Wwished library");
-	return Wwished::CloseWwished();
+	return true;
 }
 
 void ModuleAudio::DrawOnEditor()
@@ -227,7 +228,7 @@ void ModuleAudio::DrawOnEditor()
 
 void ModuleAudio::UnloadAllBanks()
 {
-	LOG("Unloading all audio banks");
+	//LOG("Unloading all audio banks");
 	for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end(); it++)
 	{
 		Wwished::Utility::UnLoadBank((*it).c_str());
