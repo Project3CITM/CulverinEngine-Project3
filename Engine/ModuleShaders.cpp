@@ -159,7 +159,7 @@ char * ModuleShaders::GetShaderText(std::string path)
 	return buffer;
 }
 
-ShaderProgram * ModuleShaders::CreateDefaultShader(const GLchar* const* fragment_text, const GLchar* const * vertex_text, char* name_text, bool push_in_list)
+ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const GLchar* const* fragment_text, const GLchar* const* vertex_text, const GLchar* const* geometry_text, bool push_in_list)
 {
 	ShaderProgram* defaultShader = new ShaderProgram();
 	defaultShader->name = name_text;
@@ -212,6 +212,31 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const GLchar* const* fragment
 
 	//Attach fragment shader to program
 	glAttachShader(defaultShader->programID, fragmentShader);
+
+	if(geometry_text != nullptr)
+	{
+		// Create geometry shader
+		GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+
+		// Set geometry source
+		glShaderSource(geometryShader, 1, geometry_text, NULL);
+
+		// Compile geometry
+		glCompileShader(geometryShader);
+
+		// Check errors on geometry
+		GLint gShaderCompiled = GL_FALSE;
+		
+		glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &gShaderCompiled);
+		if (gShaderCompiled != GL_TRUE)
+		{
+			//ShaderLog(geometryShader);
+			return nullptr;
+		}
+
+		//Attach geometry shader to program
+		glAttachShader(defaultShader->programID, geometryShader);
+	}
 
 	//Link program
 	glLinkProgram(defaultShader->programID);

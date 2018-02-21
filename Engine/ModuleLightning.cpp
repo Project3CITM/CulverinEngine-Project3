@@ -148,7 +148,7 @@ bool ModuleLightning::Init(JSON_Object* node)
 	perf_timer.Start();
 
 	// TODO: Read ammount of shadow cast point from config. Will use default for now for testing purposes
-	shadow_cast_points_count = 2;
+	shadow_cast_points_count = 1;
 
 	Awake_t = perf_timer.ReadMs();
 	return true;
@@ -160,13 +160,11 @@ bool ModuleLightning::Start()
 
 	AddShadowMapCastViews(shadow_cast_points_count);
 
-	Start_t = perf_timer.ReadMs();
-
 	test_fix.Create(shadow_maps_res_w, shadow_maps_res_h);
 
 	//------------------------------------
 
-	shadow_Shader = App->module_shaders->CreateDefaultShader(ShadowMapFrag, ShadowMapVert, "Shadow_Map");
+	shadow_Shader = App->module_shaders->CreateDefaultShader("Shadow_Map", ShadowMapFrag, ShadowMapVert);
 	
 	//-------------------------------------
 
@@ -202,6 +200,7 @@ bool ModuleLightning::Start()
 	light_UI_plane->num_game_objects_use_me++;
 	light_UI_plane->LoadToMemory();
 
+	Start_t = perf_timer.ReadMs();
 
 	return true;
 }

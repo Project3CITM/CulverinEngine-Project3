@@ -41,7 +41,7 @@ bool ModuleRenderGui::Init(JSON_Object * node)
 bool ModuleRenderGui::Start()
 {
 
-	default_ui_shader = App->module_shaders->CreateDefaultShader(UIShaderFrag, UIShaderVert, "default shader");	
+	default_ui_shader = App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert);
 
 	return true;
 }
