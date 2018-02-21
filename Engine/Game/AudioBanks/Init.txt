@@ -23,5 +23,5 @@ Auxiliary Bus	ID	Name			Wwise Object Path	Notes
 	4063189299	Corridor			\Default Work Unit\Master Audio Bus\Corridor	
 
 Effect plug-ins	ID	Name	Type				Notes
-	4113267698	Hall_Guns	Wwise RoomVerb			
+	3442768367	Hall_Large_Dark	Wwise RoomVerb			
 

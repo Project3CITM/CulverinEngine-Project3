@@ -69,7 +69,6 @@ Application::Application()
 	AddModule(resource_manager);
 	AddModule(physics);
 	AddModule(input);
-	AddModule(audio);
 	AddModule(console);
 	AddModule(scene);
 	AddModule(module_lightning); // Ask this module creators before changing the order, possible dependencies with scene and shaders module.
@@ -78,6 +77,7 @@ Application::Application()
 	AddModule(map); // Possible change position
 	AddModule(importer);
 	AddModule(textures);
+	AddModule(audio);
 	AddModule(event_system); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
 	// Renderer last!
 	AddModule(renderer3D);

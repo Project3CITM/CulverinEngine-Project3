@@ -40,7 +40,7 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 
 CompMaterial::~CompMaterial()
 {
-
+	/*
 	for (int i = 0; i < material->textures.size(); i++) {
 		if (material->textures[i].value != nullptr)
 		{
@@ -48,7 +48,7 @@ CompMaterial::~CompMaterial()
 				material->textures[i].value->num_game_objects_use_me--;
 		}
 		material->textures[i].value = nullptr;
-	}
+	}*/
 	/*
 	if (resource_material != nullptr)
 	{
@@ -103,8 +103,9 @@ void CompMaterial::PreUpdate(float dt)
 
 void CompMaterial::Clear()
 {
+	
 	for (int i = 0; i < material->textures.size(); i++) {
-		material->textures[i].value = nullptr;
+		//material->textures[i].value = nullptr;
 		
 	}
 	
@@ -137,7 +138,7 @@ uint CompMaterial::GetTextureID() const
 
 ShaderProgram * CompMaterial::GetShaderProgram()const
 {
-	return material->material_shader;
+	return &material->material_shader;
 }
 
 void CompMaterial::SetUUIDMesh(uint uuid)

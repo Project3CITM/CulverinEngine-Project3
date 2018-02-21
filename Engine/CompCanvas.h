@@ -13,6 +13,7 @@ public:
 	CompCanvas(Comp_Type t, GameObject* parent);
 	CompCanvas(const CompCanvas& copy, GameObject* parent);
 	~CompCanvas();
+	void PreUpdate(float dt);
 	void Update(float dt);
 	void Clear();
 	void ShowOptions();
@@ -21,6 +22,10 @@ public:
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
 
+
+	void SyncComponent();
+
+	void UpdateCanvasScale();
 
 	void AddGraphic(CompGraphic* to_add);
 	void RemoveGraphic(CompGraphic* to_remove);

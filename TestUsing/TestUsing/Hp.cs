@@ -23,13 +23,20 @@ public class Hp : CulverinBehaviour
         }
     }
 
-    void GetDamage(float dmg)
+    public void GetDamage(float dmg)
     {
         current_hp -= dmg;
+
         if(current_hp < 0)
         {
             current_hp = 0;
         }
+
         hp_bar.FillAmount(current_hp);
+    }
+
+    public float GetCurrentHealth()
+    {
+        return current_hp;
     }
 }
