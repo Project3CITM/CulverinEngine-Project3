@@ -53,7 +53,7 @@ CompMesh::~CompMesh()
 			resource_mesh->num_game_objects_use_me--;
 		}
 	}
-	material = nullptr;
+	comp_material = nullptr;
 	resource_mesh = nullptr;
 }
 
@@ -252,10 +252,10 @@ void CompMesh::Draw()
 {
 	if (render && resource_mesh != nullptr)
 	{
-		ShaderProgram* shader = App->renderer3D->default_shader;
+		Material* material = App->renderer3D->default_material;
 		//if (material->material_shader != nullptr)
-		if (material != nullptr) shader = (ShaderProgram*)&material->material_shader;
-		shader->Bind();
+		if (comp_material != nullptr) material = comp_material->material;
+		material->Bind();
 	
 		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
 	
@@ -274,7 +274,7 @@ void CompMesh::Draw()
 
 			//Temporary, future delete incoming
 			//Set Color
-			if (material != nullptr)
+		/*	if (material != nullptr)
 			{
 				glColor4f(material->GetColor().r, material->GetColor().g, material->GetColor().b, material->GetColor().a);
 			}
@@ -282,7 +282,7 @@ void CompMesh::Draw()
 			{
 				glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
 			}
-			//
+			//*/
 
 			//Future Delete
 			int i = 0;
@@ -291,20 +291,20 @@ void CompMesh::Draw()
 				CompMaterial* temp = parent->GetComponentMaterial();
 				if (temp != nullptr) 
 				{
-					for (int i = 0; i < temp->material_shader.textures.size(); i++)
+					for (int i = 0; i < temp->material->textures.size(); i++)
 					{
-						uint texLoc = glGetUniformLocation(temp->material_shader.programID, temp->material_shader.textures[i].var_name.c_str());
+						uint texLoc = glGetUniformLocation(temp->material->GetProgramID(), temp->material->textures[i].var_name.c_str());
 						glUniform1i(texLoc, i);
 
 						glActiveTexture(GL_TEXTURE0 +i);
 					
-						if (temp->material_shader.textures[i].value == nullptr)
+						if (temp->material->textures[i].value == nullptr)
 						{
 							glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
 						}
 						else
 						{
-							glBindTexture(GL_TEXTURE_2D, temp->material_shader.textures[i].value->GetTextureID());
+							glBindTexture(GL_TEXTURE_2D, temp->material->textures[i].value->GetTextureID());
 						}
 					}
 					
@@ -325,14 +325,14 @@ void CompMesh::Draw()
 				}
 			}		
 			//
-			SetUniformVariables(shader);
+			SetUniformVariables(material);
 
 			Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 			float4x4 temp = camFrust.ViewMatrix();
 
-			GLint view2Loc = glGetUniformLocation(shader->programID, "view");
-			GLint modelLoc = glGetUniformLocation(shader->programID, "model");
-			GLint viewLoc =  glGetUniformLocation(shader->programID, "viewproj");
+			GLint view2Loc = glGetUniformLocation(material->GetProgramID(), "view");
+			GLint modelLoc = glGetUniformLocation(material->GetProgramID(), "model");
+			GLint viewLoc =  glGetUniformLocation(material->GetProgramID(), "viewproj");
 
 			float4x4 matrixfloat = transform->GetGlobalTransform();
 
@@ -368,20 +368,20 @@ void CompMesh::Draw()
 			glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
 			glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
 			
-			int depthMatrixID = glGetUniformLocation(shader->programID, "depthMVP");
-			int depthBiasID = glGetUniformLocation(shader->programID, "depthBias");
-			GLuint ShadowMapID = glGetUniformLocation(shader->programID, "shadowMap");
+			int depthMatrixID = glGetUniformLocation(material->GetProgramID(), "depthMVP");
+			int depthBiasID = glGetUniformLocation(material->GetProgramID(), "depthBias");
+			GLuint ShadowMapID = glGetUniformLocation(material->GetProgramID(), "shadowMap");
 			//-----------------------
 
 			//glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
 			//glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
 
 
-			if (shader->name == "Shadow_World_Render")
+			if (material->name == "Shadow_World_Render")
 			{
 				glActiveTexture(GL_TEXTURE0 + i +1);
 				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
-				glUniform1i(shader->programID, App->module_lightning->test_fix.depthTex);
+				glUniform1i(material->GetProgramID(), App->module_lightning->test_fix.depthTex);
 				glUniform1i(ShadowMapID, i+1);
 			}
 
@@ -398,7 +398,7 @@ void CompMesh::Draw()
 
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, skeleton->skinning_mats_id);
-				glUniform1i(shader->programID, 0);
+				glUniform1i(material->GetProgramID(), 0);
 			}
 
 			if (resource_mesh->vertices.size() > 0)
@@ -441,7 +441,7 @@ void CompMesh::Draw()
 			glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		
-			shader->Unbind();		
+			material->Unbind();		
 		}
 		else
 		{
@@ -470,7 +470,7 @@ void CompMesh::LinkMaterial(const CompMaterial* mat)
 {
 	if (mat != nullptr)
 	{
-		material = mat;
+		comp_material = mat;
 		LOG("MATERIAL linked to MESH %s", name);
 	}
 }
@@ -550,46 +550,46 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
-void CompMesh::SetUniformVariables(ShaderProgram * shader)
+void CompMesh::SetUniformVariables(Material * material)
 {
-	shader->RestartIterators();
+	material->RestartIterators();
 	//BOOL
-	if(shader->bool_variables.size() != 0)
-	while (shader->it_bool_variables != shader->bool_variables.end()) {
+	if(material->bool_variables.size() != 0)
+	while (material->it_bool_variables != material->bool_variables.end()) {
 
-		GLint bool_loc = glGetUniformLocation(shader->programID, (*shader->it_bool_variables).var_name.c_str());
-		glUniform1i(bool_loc,(*shader->it_bool_variables).value);
-		shader->it_bool_variables++;
+		GLint bool_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_bool_variables).var_name.c_str());
+		glUniform1i(bool_loc,(*material->it_bool_variables).value);
+		material->it_bool_variables++;
 	}
 	//INT
-	if (shader->int_variables.size() != 0)
-	while (shader->it_int_variables != shader->int_variables.end()) {
-		GLint int_loc = glGetUniformLocation(shader->programID, (*shader->it_int_variables).var_name.c_str());
-		glUniform1i(int_loc, (*shader->it_int_variables).value);
-		shader->it_int_variables++;
+	if (material->int_variables.size() != 0)
+	while (material->it_int_variables != material->int_variables.end()) {
+		GLint int_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_int_variables).var_name.c_str());
+		glUniform1i(int_loc, (*material->it_int_variables).value);
+		material->it_int_variables++;
 	}
-	if (shader->float_variables.size() != 0)
-	while (shader->it_float_variables != shader->float_variables.end()) {
-		GLint float_loc = glGetUniformLocation(shader->programID, (*shader->it_float_variables).var_name.c_str());		
-		glUniform1f(float_loc, (*shader->it_float_variables).value);
-		shader->it_float_variables++;
-	}
-
-	if (shader->float3_variables.size() != 0)
-	while (shader->it_float3_variables != shader->float3_variables.end()) {
-		GLint float3_loc = glGetUniformLocation(shader->programID, (*shader->it_float3_variables).var_name.c_str());
-		glUniform3fv(float3_loc,1, &(*shader->it_float3_variables).value[0]);
-		shader->it_float3_variables++;
+	if (material->float_variables.size() != 0)
+	while (material->it_float_variables != material->float_variables.end()) {
+		GLint float_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_float_variables).var_name.c_str());
+		glUniform1f(float_loc, (*material->it_float_variables).value);
+		material->it_float_variables++;
 	}
 
-	if (shader->color_variables.size() != 0)
-	while (shader->it_color_variables != shader->color_variables.end()) {
-		GLint color_loc = glGetUniformLocation(shader->programID, (*shader->it_color_variables).var_name.c_str());
-		glUniform4fv(color_loc,1, &(*shader->it_color_variables).value[0]);
-		shader->it_color_variables++;
+	if (material->float3_variables.size() != 0)
+	while (material->it_float3_variables != material->float3_variables.end()) {
+		GLint float3_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_float3_variables).var_name.c_str());
+		glUniform3fv(float3_loc,1, &(*material->it_float3_variables).value[0]);
+		material->it_float3_variables++;
 	}
 
-	shader->RestartIterators();
+	if (material->color_variables.size() != 0)
+	while (material->it_color_variables != material->color_variables.end()) {
+		GLint color_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_color_variables).var_name.c_str());
+		glUniform4fv(color_loc,1, &(*material->it_color_variables).value[0]);
+		material->it_color_variables++;
+	}
+
+	material->RestartIterators();
 }
 
 bool CompMesh::HasSkeleton() const
@@ -685,7 +685,7 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 
 CompMaterial * CompMesh::GetMaterial() const
 {
-	return (CompMaterial*)material;
+	return (CompMaterial*)comp_material;
 }
 
 void Skeleton::GenSkinningTexture(const GameObject* mesh_go)

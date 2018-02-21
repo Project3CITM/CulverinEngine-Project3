@@ -24,6 +24,7 @@ public:
 
 	Color GetColor() const;
 	uint GetTextureID() const;
+	ShaderProgram* GetShaderProgram()const;
 
 	// EDITOR METHODS ----------
 	void ShowOptions();
@@ -48,7 +49,7 @@ public:
 public:
 
 	//ResourceMaterial* resource_material = nullptr;
-	ShaderProgram material_shader;
+	//ShaderProgram material_shader;
 	Material* material;
 private:
 

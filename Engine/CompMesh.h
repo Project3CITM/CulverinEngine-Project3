@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "Math/float3.h"
 #include "Math/float2.h"
+
 #include <vector>
 
 class ResourceMesh;
@@ -13,6 +14,7 @@ class CompMaterial;
 class ShaderProgram;
 struct Vertex;
 class SkeletonSource;
+class Material;
 
 struct FaceCenter
 {
@@ -75,7 +77,7 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
 
-	void SetUniformVariables(ShaderProgram* shader);
+	void SetUniformVariables(Material* shader);
 
 	bool HasSkeleton() const;
 	void GenSkeleton();
@@ -95,7 +97,7 @@ private:
 
 	bool render = true;
 	bool select_mesh = false;
-	const CompMaterial* material = nullptr;
+	const CompMaterial* comp_material = nullptr;
 	uint uuid_resource_reimported = 0;
 
 	Skeleton* skeleton = nullptr;

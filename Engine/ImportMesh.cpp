@@ -273,10 +273,11 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					App->module_shaders->materials.push_back(new_mat);
 					new_mat->material_shader = App->renderer3D->default_shader;
 					new_mat->GetProgramVariables();
-
+					materialComp->material = new_mat;
 					if(new_mat->textures.size() > 0 )
-						materialComp->material_shader.textures[0].value = resource_mat;
+						new_mat->textures[0].value = resource_mat;
 				}
+
 			
 				resource_mat->path_assets = normalPath;
 			}

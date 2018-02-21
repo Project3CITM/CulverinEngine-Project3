@@ -17,7 +17,7 @@ CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent
 	uid = App->random->Int();
 	color = White;
 	name_component = "Material";
-	material_shader = *App->renderer3D->default_shader;
+	material = App->renderer3D->default_material;
 
 }
 
@@ -25,28 +25,29 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 {
 	uid = App->random->Int();
 	color = copy.color;
-	material_shader = copy.material_shader;
+	material = copy.material;
 	//resource_material = copy.resource_material;
-	for (int i = 0; i < material_shader.textures.size(); i++) {
-		if (material_shader.textures[i].value != nullptr)
+	for (int i = 0; i < material->textures.size(); i++) {
+		if (material->textures[i].value != nullptr)
 		{
-			material_shader.textures[i].value->num_game_objects_use_me++;
+			material->textures[i].value->num_game_objects_use_me++;
 		}
 	}
 	name_component = "Material";
-	material_shader = *App->renderer3D->default_shader;
+	if(material == nullptr)
+	material = App->renderer3D->default_material;
 }
 
 CompMaterial::~CompMaterial()
 {
 
-	for (int i = 0; i < material_shader.textures.size(); i++) {
-		if (material_shader.textures[i].value != nullptr)
+	for (int i = 0; i < material->textures.size(); i++) {
+		if (material->textures[i].value != nullptr)
 		{
-			if(material_shader.textures[i].value->num_game_objects_use_me > 0 )
-				material_shader.textures[i].value->num_game_objects_use_me--;
+			if(material->textures[i].value->num_game_objects_use_me > 0 )
+				material->textures[i].value->num_game_objects_use_me--;
 		}
-		material_shader.textures[i].value = nullptr;
+		material->textures[i].value = nullptr;
 	}
 	/*
 	if (resource_material != nullptr)
@@ -61,40 +62,40 @@ CompMaterial::~CompMaterial()
 
 void CompMaterial::PreUpdate(float dt)
 {
-	for (int i = 0; i < material_shader.textures.size(); i++)
+	for (int i = 0; i < material->textures.size(); i++)
 	{
-		if (material_shader.textures[i].value == nullptr)
+		if (material->textures[i].value == nullptr)
 		{
-			if (material_shader.textures[i].uuid_to_reimport != 0)
+			if (material->textures[i].uuid_to_reimport != 0)
 			{
-				material_shader.textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(material_shader.textures[i].uuid_to_reimport);
-				if (material_shader.textures[i].value != nullptr)
+				material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(material->textures[i].uuid_to_reimport);
+				if (material->textures[i].value != nullptr)
 				{
-					material_shader.textures[i].value->num_game_objects_use_me++;
+					material->textures[i].value->num_game_objects_use_me++;
 
 					// Check if loaded
-					if (material_shader.textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
+					if (material->textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
 					{
-						App->importer->iMaterial->LoadResource(std::to_string(material_shader.textures[i].value->GetUUID()).c_str(), material_shader.textures[i].value);
+						App->importer->iMaterial->LoadResource(std::to_string(material->textures[i].value->GetUUID()).c_str(), material->textures[i].value);
 					}
-					material_shader.textures[i].uuid_to_reimport = 0;
+					material->textures[i].uuid_to_reimport = 0;
 
 				}
 			}
 		}
 	}
-	for (int i = 0; i < material_shader.textures.size(); i++)
+	for (int i = 0; i < material->textures.size(); i++)
 	{
-		if (material_shader.textures[i].value != nullptr)
+		if (material->textures[i].value != nullptr)
 		{
-			if (material_shader.textures[i].value->GetState() == Resource::State::WANTDELETE)
+			if (material->textures[i].value->GetState() == Resource::State::WANTDELETE)
 			{
-				material_shader.textures[i].value = nullptr;
+				material->textures[i].value = nullptr;
 			}
-			else if (material_shader.textures[i].value->GetState() == Resource::State::REIMPORTED)
+			else if (material->textures[i].value->GetState() == Resource::State::REIMPORTED)
 			{
-				material_shader.textures[i].uuid_to_reimport = material_shader.textures[i].value->GetUUID();
-				material_shader.textures[i].value = nullptr;
+				material->textures[i].uuid_to_reimport = material->textures[i].value->GetUUID();
+				material->textures[i].value = nullptr;
 			}
 		}
 	}
@@ -102,8 +103,8 @@ void CompMaterial::PreUpdate(float dt)
 
 void CompMaterial::Clear()
 {
-	for (int i = 0; i < material_shader.textures.size(); i++) {
-		material_shader.textures[i].value = nullptr;
+	for (int i = 0; i < material->textures.size(); i++) {
+		material->textures[i].value = nullptr;
 		
 	}
 	
@@ -132,6 +133,11 @@ uint CompMaterial::GetTextureID() const
 	*/
 
 	return 0;
+}
+
+ShaderProgram * CompMaterial::GetShaderProgram()const
+{
+	return material->material_shader;
 }
 
 void CompMaterial::SetUUIDMesh(uint uuid)
@@ -188,8 +194,8 @@ void CompMaterial::ShowOptions()
 	ImGui::Separator();
 	if (ImGui::MenuItem("Reset Material"))
 	{
-		for (int i = 0; i < material_shader.textures.size(); i++) {
-			TextureVar* texture_var = &material_shader.textures[i];
+		for (int i = 0; i < material->textures.size(); i++) {
+			TextureVar* texture_var = &material->textures[i];
 			if (texture_var->value != nullptr)
 			{
 				if (texture_var->value->num_game_objects_use_me > 0)
@@ -208,13 +214,13 @@ void CompMaterial::ShowOptions()
 				resource_material->num_game_objects_use_me--;
 			}
 		}*/
-		for (int i = 0; i < material_shader.textures.size(); i++) {
-			if (material_shader.textures[i].value != nullptr)
+		for (int i = 0; i < material->textures.size(); i++) {
+			if (material->textures[i].value != nullptr)
 			{
-				if (material_shader.textures[i].value->num_game_objects_use_me > 0)
-					material_shader.textures[i].value->num_game_objects_use_me--;
+				if (material->textures[i].value->num_game_objects_use_me > 0)
+					material->textures[i].value->num_game_objects_use_me--;
 			}
-			material_shader.textures[i].value = nullptr;
+			material->textures[i].value = nullptr;
 		}
 		
 		ImGui::CloseCurrentPopup();
@@ -250,106 +256,106 @@ void CompMaterial::ShowInspectorInfo()
 
 	int shader_pos = 0;
 	std::string shaders_names;
-	for (int i = 0; i < App->module_shaders->programs.size(); i++) {
-		shaders_names += App->module_shaders->programs[i]->name;
+	for (int i = 0; i < App->module_shaders->materials.size(); i++) {
+		shaders_names += App->module_shaders->materials[i]->name;
 		shaders_names += '\0';
 	}
 	if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
-		material_shader = *App->module_shaders->programs[shader_pos];
+		material = App->module_shaders->materials[shader_pos];
 
 	}
 
-	if (material_shader.fragment != nullptr) {
+	if (GetShaderProgram()->fragment != nullptr) {
 		if (ImGui::Button("Edit Fragment"))
 		{
-			material_shader.edit_fragment = true;
-			material_shader.edit_vertex = false;
-			material_shader.edit_geometry = false;
-			material_shader.get_shader_text = true;
+			GetShaderProgram()->edit_fragment = true;
+			GetShaderProgram()->edit_vertex = false;
+			GetShaderProgram()->edit_geometry = false;
+			GetShaderProgram()->get_shader_text = true;
 		}
 		
 	}
 
-	if (material_shader.vertex != nullptr) {
+	if (GetShaderProgram()->vertex != nullptr) {
 		if (ImGui::Button("Edit Vertex"))
 		{
-			material_shader.edit_vertex = true;
-			material_shader.edit_fragment = false;
-			material_shader.edit_geometry = false;
-			material_shader.get_shader_text = true;
+			GetShaderProgram()->edit_vertex = true;
+			GetShaderProgram()->edit_fragment = false;
+			GetShaderProgram()->edit_geometry = false;
+			GetShaderProgram()->get_shader_text = true;
 		}
 	}
 
-	if (material_shader.geometry != nullptr) {
+	if (GetShaderProgram()->geometry != nullptr) {
 		if (ImGui::Button("Edit Geometry"))
 		{
-			material_shader.edit_geometry = true;
-			material_shader.edit_fragment = false;
-			material_shader.edit_vertex = false;
-			material_shader.get_shader_text = true;
+			GetShaderProgram()->edit_geometry = true;
+			GetShaderProgram()->edit_fragment = false;
+			GetShaderProgram()->edit_vertex = false;
+			GetShaderProgram()->get_shader_text = true;
 		}
 	}
 
 	ShowShadersEditors();
 
 	
-	material_shader.RestartIterators();
+	material->RestartIterators();
 	
 
-	uint var_size = material_shader.GetVariablesSize();
+	uint var_size = material->GetVariablesSize();
 	for (int i = 0; i < var_size; i++)
 	{
-		UniformVar temp = material_shader.GetVariableInfo(i);
+		UniformVar temp = material->GetVariableInfo(i);
 
 		// Variables started with '_' reserved for global variables
 		if (temp.name != nullptr && temp.name[0] == '_') continue;
 
 		//Textures
-		if (temp.type == GL_SAMPLER_2D &&material_shader.textures.size() != 0)
+		if (temp.type == GL_SAMPLER_2D &&material->textures.size() != 0)
 		{
-			ShowTextureVariable(i, &(*material_shader.it_textures));
-			material_shader.it_textures++;			
+			ShowTextureVariable(i, &(*material->it_textures));
+			material->it_textures++;			
 		}
 
 		//Vec3
-		if (temp.type == GL_FLOAT_VEC3 && material_shader.int_variables.size() != 0)
+		if (temp.type == GL_FLOAT_VEC3 && material->int_variables.size() != 0)
 		{
-			ShowVec3Variable(i, &(*material_shader.it_float3_variables));
-			material_shader.it_float3_variables++;
+			ShowVec3Variable(i, &(*material->it_float3_variables));
+			material->it_float3_variables++;
 		}
 
 		//Int
-		if (temp.type == GL_INT && material_shader.int_variables.size() != 0)
+		if (temp.type == GL_INT && material->int_variables.size() != 0)
 		{
-			ShowIntVariable(i, &(*material_shader.it_int_variables));
-			material_shader.it_int_variables++;
+			ShowIntVariable(i, &(*material->it_int_variables));
+			material->it_int_variables++;
 		}
 
 		//Float
-		if (temp.type == GL_FLOAT && material_shader.float_variables.size() != 0)
+		if (temp.type == GL_FLOAT && material->float_variables.size() != 0)
 		{
-			ShowFloatVariable(i, &(*material_shader.it_float_variables));
-			material_shader.it_float_variables++;
+			ShowFloatVariable(i, &(*material->it_float_variables));
+			material->it_float_variables++;
 		}
 
 		//Bool
-		if (temp.type == GL_BOOL && material_shader.bool_variables.size() != 0)
+		if (temp.type == GL_BOOL && material->bool_variables.size() != 0)
 		{
-			ShowBoolVariable(i, &(*material_shader.it_bool_variables));
-			material_shader.it_bool_variables++;
+			ShowBoolVariable(i, &(*material->it_bool_variables));
+			material->it_bool_variables++;
 		}
 
 
 		//Color
-		if (temp.type == GL_FLOAT_VEC4 && material_shader.color_variables.size() != 0)
+		if (temp.type == GL_FLOAT_VEC4 && material->color_variables.size() != 0)
 		{
-			ShowColorVariable(i, &(*material_shader.it_color_variables));
-			material_shader.it_color_variables++;
+			ShowColorVariable(i, &(*material->it_color_variables));
+			material->it_color_variables++;
 		}
 
 	}
 
-	material_shader.RestartIterators();
+	material->RestartIterators();
 
 
 	ImGui::TreePop();
@@ -369,11 +375,11 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 	App->fs->json_array_dotset_float4(object, name + "Color", tempColor);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 
-	json_object_dotset_string_with_std(object, name + "ShaderName:", material_shader.name.c_str());
+	json_object_dotset_string_with_std(object, name + "ShaderName:", material->name.c_str());
 
-	json_object_dotset_number_with_std(object, name + "Num Textures:", material_shader.textures.size());
+	json_object_dotset_number_with_std(object, name + "Num Textures:", material->textures.size());
 
-	for (int i = 0; i < material_shader.textures.size(); i++)
+	for (int i = 0; i < material->textures.size(); i++)
 	{
 		char mat_name[128] = { 0 };
 
@@ -383,9 +389,9 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 		strcat(mat_name, num);
 		RELEASE_ARRAY(num);
 
-		if (material_shader.textures[i].value != nullptr && material_shader.textures[i].value->GetTextureID() != App->renderer3D->id_checkImage)
+		if (material->textures[i].value != nullptr && material->textures[i].value->GetTextureID() != App->renderer3D->id_checkImage)
 		{
-			json_object_dotset_number_with_std(object, name + mat_name, material_shader.textures[i].value->GetUUID());
+			json_object_dotset_number_with_std(object, name + mat_name, material->textures[i].value->GetUUID());
 		}
 		else
 		{			
@@ -393,54 +399,54 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 		}		
 
 	}
-	json_object_dotset_number_with_std(object, name + "Num Bools:", material_shader.bool_variables.size());
-	for (int i = 0; i < material_shader.bool_variables.size(); i++)
+	json_object_dotset_number_with_std(object, name + "Num Bools:", material->bool_variables.size());
+	for (int i = 0; i < material->bool_variables.size(); i++)
 	{
 		std::ostringstream ss;
 		ss << name  << "Bool:" << i;
 		std::string json_name = ss.str();
 		
-		json_object_dotset_boolean_with_std(object, json_name, material_shader.bool_variables[i].value);
+		json_object_dotset_boolean_with_std(object, json_name, material->bool_variables[i].value);
 
 	}
-	json_object_dotset_number_with_std(object, name + "Num Ints:", material_shader.int_variables.size());
-	for (int i = 0; i < material_shader.int_variables.size(); i++)
+	json_object_dotset_number_with_std(object, name + "Num Ints:", material->int_variables.size());
+	for (int i = 0; i < material->int_variables.size(); i++)
 	{
 		std::ostringstream ss;
 		ss << name << "Int:" << i;
 		std::string json_name = ss.str();
 
-		json_object_dotset_number_with_std(object, json_name, material_shader.int_variables[i].value);
+		json_object_dotset_number_with_std(object, json_name, material->int_variables[i].value);
 
 	}
-	json_object_dotset_number_with_std(object, name + "Num Floats:", material_shader.float_variables.size());
-	for (int i = 0; i < material_shader.float_variables.size(); i++)
+	json_object_dotset_number_with_std(object, name + "Num Floats:", material->float_variables.size());
+	for (int i = 0; i < material->float_variables.size(); i++)
 	{
 		std::ostringstream ss;
 		ss << name  << "Float:" << i;
 		std::string json_name = ss.str();
 		
-		json_object_dotset_number_with_std(object, json_name, material_shader.float_variables[i].value);
+		json_object_dotset_number_with_std(object, json_name, material->float_variables[i].value);
 
 	}
-	json_object_dotset_number_with_std(object, name + "Num Float3:", material_shader.float3_variables.size());
-	for (int i = 0; i < material_shader.float3_variables.size(); i++)
+	json_object_dotset_number_with_std(object, name + "Num Float3:", material->float3_variables.size());
+	for (int i = 0; i < material->float3_variables.size(); i++)
 	{
 		std::ostringstream ss;
 		ss << name << "Float3:" << i;
 		std::string json_name = ss.str();
 
-		App->fs->json_array_dotset_float3(object, json_name, material_shader.float3_variables[i].value);
+		App->fs->json_array_dotset_float3(object, json_name, material->float3_variables[i].value);
 	}
 
-	json_object_dotset_number_with_std(object, name + "Num Colors:", material_shader.color_variables.size());
-	for (int i = 0; i < material_shader.color_variables.size(); i++)
+	json_object_dotset_number_with_std(object, name + "Num Colors:", material->color_variables.size());
+	for (int i = 0; i < material->color_variables.size(); i++)
 	{
 		std::ostringstream ss;
 		ss << name << "Color:" << i;
 		std::string json_name = ss.str();
 
-		App->fs->json_array_dotset_float4(object, json_name, material_shader.color_variables[i].value);
+		App->fs->json_array_dotset_float4(object, json_name, material->color_variables[i].value);
 
 
 	}
@@ -456,23 +462,23 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 	//uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Material UUID");
 
 	std::string shader_name = json_object_dotget_string_with_std(object, name + "ShaderName:");
-	ShaderProgram* temp_shader = nullptr;
-	for (int i = 0; i < App->module_shaders->programs.size(); i++)
+	Material* temp_material = nullptr;
+	for (int i = 0; i < App->module_shaders->materials.size(); i++)
 	{
-		if (strcmp(App->module_shaders->programs[i]->name.c_str(), shader_name.c_str() )==0) 
+		if (strcmp(App->module_shaders->materials[i]->name.c_str(), shader_name.c_str() )==0)
 		{
-			temp_shader = App->module_shaders->programs[i];
+			temp_material = App->module_shaders->materials[i];
 			break;
 		}
 
 	}
-	if (temp_shader != nullptr)
+	if (temp_material != nullptr)
 	{
-		material_shader = *temp_shader;
+		material = temp_material;
 		uint num_textures = json_object_dotget_number_with_std(object, name + "Num Textures:");
 		for (int i = 0; i < num_textures; i++) 
 		{
-			if (i >= material_shader.textures.size()) break;
+			if (i >= material->textures.size()) break;
 			char mat_name[128] = { 0 };
 
 			char* num = new char[4];
@@ -483,19 +489,19 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 
 			uint uuid = json_object_dotget_number_with_std(object, name + mat_name);
 
-			material_shader.textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(uuid);
-			if (material_shader.textures[i].value != nullptr)
+			material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(uuid);
+			if (material->textures[i].value != nullptr)
 			{
-				material_shader.textures[i].value->num_game_objects_use_me++;
+				material->textures[i].value->num_game_objects_use_me++;
 
 				// LOAD MATERIAL -------------------------
-				if (material_shader.textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
+				if (material->textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
-					App->importer->iMaterial->LoadResource(std::to_string(material_shader.textures[i].value->GetUUID()).c_str(), material_shader.textures[i].value);
+					App->importer->iMaterial->LoadResource(std::to_string(material->textures[i].value->GetUUID()).c_str(), material->textures[i].value);
 				}
 			}
 			else {
-				material_shader.textures[i].value = App->renderer3D->default_texture;
+				material->textures[i].value = App->renderer3D->default_texture;
 			}
 		}
 		uint num_bools = json_object_dotget_number_with_std(object, name + "Num Bools:");
@@ -505,8 +511,8 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 			ss << name << "Bool:" << i;
 			std::string json_name = ss.str();
 
-			if (i >= material_shader.bool_variables.size()) break;
-			material_shader.bool_variables[i].value = json_object_dotget_boolean_with_std(object, json_name);
+			if (i >= material->bool_variables.size()) break;
+			material->bool_variables[i].value = json_object_dotget_boolean_with_std(object, json_name);
 		}
 		uint num_ints = json_object_dotget_number_with_std(object, name + "Num Int:");
 		for (int i = 0; i < num_ints; i++)
@@ -515,8 +521,8 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 			ss << name << "Int:" << i;
 			std::string json_name = ss.str();
 
-			if (i >= material_shader.bool_variables.size()) break;
-			material_shader.int_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+			if (i >= material->bool_variables.size()) break;
+			material->int_variables[i].value = json_object_dotget_number_with_std(object, json_name);
 		}
 
 		uint num_floats = json_object_dotget_number_with_std(object, name + "Num Floats:");
@@ -526,8 +532,8 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 			ss << name << "Float:" << i;
 			std::string json_name = ss.str();
 
-			if (i >= material_shader.float_variables.size()) break;
-			material_shader.float_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+			if (i >= material->float_variables.size()) break;
+			material->float_variables[i].value = json_object_dotget_number_with_std(object, json_name);
 		}
 		uint num_float3 = json_object_dotget_number_with_std(object, name + "Num Float3:");
 		for (int i = 0; i < num_float3; i++)
@@ -536,8 +542,8 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 			ss << name << "Float3:" << i;
 			std::string json_name = ss.str();
 
-			if (i >= material_shader.float3_variables.size()) break;
-			material_shader.float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, json_name); 
+			if (i >= material->float3_variables.size()) break;
+			material->float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, json_name); 
 		}
 		uint num_colors = json_object_dotget_number_with_std(object, name + "Num Colors:");
 		for (int i = 0; i < num_colors; i++)
@@ -546,13 +552,13 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 			ss << name << "Color:" << i;
 			std::string json_name = ss.str();
 
-			if (i >= material_shader.color_variables.size()) break;
-			material_shader.color_variables[i].value = App->fs->json_array_dotget_float4_string(object, json_name);
+			if (i >= material->color_variables.size()) break;
+			material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, json_name);
 		}
 
 	}
 	else
-		material_shader = *App->renderer3D->default_shader;
+		material = App->renderer3D->default_material;
 
 	Enable();
 }
@@ -652,19 +658,19 @@ void CompMaterial::ShowShadersEditors()
 	bool* edit_shader = nullptr;
 	ShaderType shader_type;
 
-	if (material_shader.edit_fragment) {
-		shader = material_shader.fragment;
-		edit_shader = &material_shader.edit_fragment;
+	if (GetShaderProgram()->edit_fragment) {
+		shader = GetShaderProgram()->fragment;
+		edit_shader = &GetShaderProgram()->edit_fragment;
 		shader_type = ShaderType::fragment;
 	}
-	else if (material_shader.edit_vertex) {
-		shader = material_shader.vertex;
-		edit_shader = &material_shader.edit_vertex;
+	else if (GetShaderProgram()->edit_vertex) {
+		shader = GetShaderProgram()->vertex;
+		edit_shader = &GetShaderProgram()->edit_vertex;
 		shader_type = ShaderType::vertex;
 	}
-	else if (material_shader.edit_vertex) {
-		shader = material_shader.vertex;
-		edit_shader = &material_shader.edit_geometry;
+	else if (GetShaderProgram()->edit_vertex) {
+		shader = GetShaderProgram()->vertex;
+		edit_shader = &GetShaderProgram()->edit_geometry;
 		shader_type = ShaderType::geometry;
 	}
 
@@ -674,15 +680,15 @@ void CompMaterial::ShowShadersEditors()
 		if (ImGui::Begin("Edit shader", edit_shader)) {
 			Shader* new_shader = nullptr;
 			
-			if (ImGui::Button("Save") && material_shader.programID != App->renderer3D->default_shader->programID) {
+			if (ImGui::Button("Save") && material->GetProgramID() != App->renderer3D->default_shader->programID) {
 
 
 				char* last_text = App->module_shaders->GetShaderText(shader->shaderPath);
 
-				uint buffer_size = strlen(material_shader.shader_editor.GetText().c_str());
+				uint buffer_size = strlen(GetShaderProgram()->shader_editor.GetText().c_str());
 
 				FILE* pFile = fopen(shader->shaderPath.c_str(), "wb");				
-				fwrite(material_shader.shader_editor.GetText().c_str(), sizeof(char), buffer_size, pFile);
+				fwrite(GetShaderProgram()->shader_editor.GetText().c_str(), sizeof(char), buffer_size, pFile);
 				fclose(pFile);
 
 				uint last_shader_id = shader->shaderID;
@@ -693,14 +699,14 @@ void CompMaterial::ShowShadersEditors()
 					
 					switch (shader_type) {
 					case ShaderType::fragment:
-						cant_comiple_shader = !material_shader.UpdateShaderProgram(0, new_shader->shaderID, 0);
+						cant_comiple_shader = !GetShaderProgram()->UpdateShaderProgram(0, new_shader->shaderID, 0);
 						break;
 					case ShaderType::vertex:
-						cant_comiple_shader = !material_shader.UpdateShaderProgram(new_shader->shaderID, 0, 0);
+						cant_comiple_shader = !GetShaderProgram()->UpdateShaderProgram(new_shader->shaderID, 0, 0);
 						break;
 
 					case ShaderType::geometry:
-						cant_comiple_shader = !material_shader.UpdateShaderProgram(0, 0, new_shader->shaderID);
+						cant_comiple_shader = !GetShaderProgram()->UpdateShaderProgram(0, 0, new_shader->shaderID);
 						break;
 
 					}
@@ -725,7 +731,7 @@ void CompMaterial::ShowShadersEditors()
 			if (cant_comiple_shader) {
 				if (ImGui::Begin("ERROR", &cant_comiple_shader)) {
 
-					std::string program_error = material_shader.LogProgramLastError();
+					std::string program_error = GetShaderProgram()->LogProgramLastError();
 					ImGui::Text("ERROR COMPILING SHADER:\n");
 					if (App->module_shaders->last_shader_error != "") {
 						ImGui::Text("SHADER ERROR: %s\n", App->module_shaders->last_shader_error.c_str());
@@ -740,25 +746,25 @@ void CompMaterial::ShowShadersEditors()
 				
 			}
 
-			if (material_shader.get_shader_text)
+			if (GetShaderProgram()->get_shader_text)
 			{
 				if (strcmp(shader->shaderPath.c_str(), "") != 0) {
 					char* buffer;
 					buffer = shader->GetShaderText();
 
-					material_shader.shader_editor.SetText(buffer);
+					GetShaderProgram()->shader_editor.SetText(buffer);
 					delete[] buffer;
 					
 				}
 				else {
-					material_shader.shader_editor.SetText("YOU CAN'T MODIFY THE DEFAULT SHADER");
+					GetShaderProgram()->shader_editor.SetText("YOU CAN'T MODIFY THE DEFAULT SHADER");
 				}
-				material_shader.get_shader_text = false;
+				GetShaderProgram()->get_shader_text = false;
 		}
 
 			ImGuiIO& io = ImGui::GetIO();
 			ImGui::PushFont(io.Fonts->Fonts[1]);
-			material_shader.shader_editor.Render("Editor");
+			GetShaderProgram()->shader_editor.Render("Editor");
 			ImGui::PopFont();
 
 			ImGui::End();

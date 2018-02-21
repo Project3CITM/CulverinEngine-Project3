@@ -46,26 +46,6 @@ void DepthFrameBuffer::Create(int width, int height)
 	this->height = height;
 
 
-
-	/*glGenFramebuffers(1, &frame_id);
-	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, width, height,
-				0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
-
-	glDrawBuffer(GL_NONE); // Since we dont need the color buffer we must tell OpenGl explicitly
-	*/
-
 	
 	glGenTextures(1, &depthTex);
 	glBindTexture(GL_TEXTURE_2D, depthTex);
@@ -313,9 +293,9 @@ void ModuleLightning::OnEvent(Event & event)
 
 				shadow_Shader->Bind();
 
-				ShaderProgram* shader = App->renderer3D->default_shader;
+				Material* material = App->renderer3D->default_material;
 				//if (material->material_shader != nullptr)
-				if (m->GetMaterial()!= nullptr) shader = (ShaderProgram*)&m->GetMaterial()->material_shader;
+				if (m->GetMaterial()!= nullptr) material = m->GetMaterial()->material;
 				//shader->Bind();
 
 				CompTransform* transform = (CompTransform*)m->GetParent()->FindComponentByType(C_TRANSFORM);
@@ -351,23 +331,23 @@ void ModuleLightning::OnEvent(Event & event)
 					{
 						CompMaterial* temp = m->GetParent()->GetComponentMaterial();
 						if (temp != nullptr) {
-							for (int i = 0; i < temp->material_shader.textures.size(); i++) {
+							for (int i = 0; i < temp->material->textures.size(); i++) {
 
 
-								uint texLoc = glGetUniformLocation(temp->material_shader.programID, temp->material_shader.textures[i].var_name.c_str());
+								uint texLoc = glGetUniformLocation(temp->material->GetProgramID(), temp->material->textures[i].var_name.c_str());
 								glUniform1i(texLoc, i);
 
 
 								glActiveTexture(GL_TEXTURE0 + i);
 
 
-								if (temp->material_shader.textures[i].value == nullptr)
+								if (temp->material->textures[i].value == nullptr)
 								{
 									glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
 								}
 								else
 								{
-									glBindTexture(GL_TEXTURE_2D, temp->material_shader.textures[i].value->GetTextureID());
+									glBindTexture(GL_TEXTURE_2D, temp->material->textures[i].value->GetTextureID());
 								}
 
 							}
@@ -471,24 +451,24 @@ void ModuleLightning::OnEvent(Event & event)
 
 					}
 
-					if (shader->name == "Shadow_World_Render") {
+					if (material->name == "Shadow_World_Render") {
 					
-						shader->Bind();
+						material->Bind();
 
 						
 
 
-						int depthMatrixID = glGetUniformLocation(shader->programID, "depthMVP");
-						int depthBiasID = glGetUniformLocation(shader->programID, "depthBias");
-						GLuint ShadowMapID = glGetUniformLocation(shader->programID, "shadowMap");
-						GLuint light_dir_id = glGetUniformLocation(shader->programID, "_light_dir");
+						int depthMatrixID = glGetUniformLocation(material->GetProgramID(), "depthMVP");
+						int depthBiasID = glGetUniformLocation(material->GetProgramID(), "depthBias");
+						GLuint ShadowMapID = glGetUniformLocation(material->GetProgramID(), "shadowMap");
+						GLuint light_dir_id = glGetUniformLocation(material->GetProgramID(), "_light_dir");
 						//-----------------------
 
 
 						glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
 						glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
 						glUniform3fv(light_dir_id, 1, dir.ptr());
-						shader->Unbind();
+						material->Unbind();
 					}
 					shadow_Shader->Bind();
 
