@@ -9,6 +9,7 @@
 #include "CompImage.h"
 #include "GameObject.h"
 #include "CompRectTransform.h"
+#include "CompButton.h"
 #include "ModuleFS.h"
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
@@ -248,7 +249,8 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 		json_object_dotset_number_with_std(object, name + "Graphic UUID", 0);
 
 	}
-	
+
+
 }
 
 void CompInteractive::Load(const JSON_Object * object, std::string name)
@@ -295,6 +297,10 @@ void CompInteractive::SyncComponent()
 		return;
 	target_graphic=(CompGraphic*)parent->FindComponentByUUID(target_graphic_uid);
 	TryConversion();
+	if (GetType() == Comp_Type::C_BUTTON)
+	{
+		static_cast<CompButton*>(this)->SyncScript();
+	}
 
 }
 bool CompInteractive::IsActive()const

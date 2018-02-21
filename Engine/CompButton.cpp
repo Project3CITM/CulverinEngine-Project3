@@ -6,6 +6,10 @@
 #include "Scene.h"
 #include "CompScript.h"
 #include "CSharpScript.h"
+#include "ModuleFS.h"
+#include "ResourceMaterial.h"
+#include "ImportMaterial.h"
+
 #define BUTTON_LIMIT 10
 CompButton::CompButton(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
 {
@@ -160,9 +164,10 @@ void CompButton::ShowInspectorInfo()
 	uint size = linked_scripts.size();
 	for (uint k = 0; k < size; k++)
 	{
-		if (linked_scripts[k] != nullptr)
+		CompScript* item_sc = linked_scripts[k];
+		if (item_sc != nullptr)
 		{
-			std::string name = linked_scripts[k]->GetScriptName()==""?"Empty Script": linked_scripts[k]->GetScriptName();
+			std::string name = strcmp(item_sc->GetScriptName(), "") == 0?"Empty Script": item_sc->GetScriptName();
 			ImGui::Text(name.c_str());
 			ImGui::SameLine();
 		}
@@ -177,7 +182,7 @@ void CompButton::ShowInspectorInfo()
 		{
 			CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT);
 			if (sc != nullptr)
-				linked_scripts[k]=sc;
+				linked_scripts[k] =sc;
 			ImGui::EndPopup();
 		}
 	}
@@ -190,19 +195,132 @@ void CompButton::CopyValues(const CompButton* component)
 	//more...
 }
 
-void CompButton::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
+void CompButton::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
-	//...
+	for (int i = 0; i < 3; i++)
+	{
+		std::string resource_count = std::to_string(i);
+
+		if (sprite[i] != nullptr)
+		{
+			if (saveScene == false)
+			{
+				// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
+				std::string temp = std::to_string(countResources++);
+
+				json_object_dotset_number_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".UUID Resource", sprite[i]->GetUUID());
+				json_object_dotset_string_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".Name", sprite[i]->name);
+			}
+			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, sprite[i]->GetUUID());
+		}
+		else
+		{
+			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
+		}
+	}
+	App->fs->json_array_dotset_float4(object, name + "Normal Color", normal_color);
+	App->fs->json_array_dotset_float4(object, name + "Highlighted Color", highlighted_color);
+	App->fs->json_array_dotset_float4(object, name + "Pressed Color", pressed_color);
+	App->fs->json_array_dotset_float4(object, name + "Disabled Color", disabled_color);
+	App->fs->json_array_dotset_float4(object, name + "Desired Color", desired_color);
+	json_object_dotset_number_with_std(object, name + "Color Multiply", color_multiply);
+	json_object_dotset_number_with_std(object, name + "Fade Duration", fade_duration);
+	json_object_dotset_boolean_with_std(object, name + "Fade Active", no_fade);
+	json_object_dotset_boolean_with_std(object, name + "Transition Start", start_transition);
+
+	if (target_graphic != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Graphic UUID", target_graphic_uid);
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Graphic UUID", 0);
+	}
+	json_object_dotset_number_with_std(object, name + "Linked Spites Size", linked_scripts.size());
+	for (int i = 0; i < linked_scripts.size(); i++)
+	{
+		std::string temp = std::to_string(i);
+		CompScript* sc = linked_scripts[i];
+		if (sc != nullptr)
+			json_object_dotset_number_with_std(object, name + "Linked Spites " + temp + " UUID", linked_scripts[i]->GetUUID());
+		else
+			json_object_dotset_number_with_std(object, name + "Linked Spites " + temp + " UUID", 0);
+	}
+
 }
 
-void CompButton::Load(const JSON_Object* object, std::string name)
+void CompButton::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	//...
+	for (int i = 0; i < 3; i++)
+	{
+		std::string resource_count = std::to_string(i);
+
+		uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID " + resource_count);
+		if (resourceID > 0)
+		{
+			sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+			if (sprite[i] != nullptr)
+			{
+				sprite[i]->num_game_objects_use_me++;
+
+				// LOAD All Materials ----------------------------
+				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
+				}
+
+			}
+		}
+	}
+	normal_color = App->fs->json_array_dotget_float4_string(object, name + "Normal Color");
+	highlighted_color = App->fs->json_array_dotget_float4_string(object, name + "Highlighted Color");
+	pressed_color = App->fs->json_array_dotget_float4_string(object, name + "Pressed Color");
+	disabled_color = App->fs->json_array_dotget_float4_string(object, name + "Disabled Color");
+	desired_color = App->fs->json_array_dotget_float4_string(object, name + "Desired Color");
+	color_multiply = json_object_dotget_number_with_std(object, name + "Color Multiply");
+	fade_duration = json_object_dotget_number_with_std(object, name + "Fade Duration");
+	no_fade = json_object_dotget_boolean_with_std(object, name + "Fade Active");
+	start_transition = json_object_dotget_boolean_with_std(object, name + "Transition Start");
+	target_graphic_uid = json_object_dotget_number_with_std(object, name + "Graphic UUID");
+	int size = json_object_dotget_number_with_std(object, name + "Linked Spites Size");
+	uid_linked_scripts = new int[size];
+	for (int i = 0; i < size; i++)
+	{
+		std::string temp = std::to_string(i++);
+		uid_linked_scripts[i]= json_object_dotget_number_with_std(object, name + "Linked Spites " + temp + " UUID");
+	}
 	Enable();
+}
+
+
+void CompButton::SyncScript()
+{
+
+	int size = 0;
+	if(uid_linked_scripts!=nullptr)
+		size = sizeof(uid_linked_scripts);
+
+	for (int i = 0; i < size; i++)
+	{
+		CompScript* comp_script = nullptr;
+		//Find Component with uid
+		if (uid_linked_scripts[i] != 0)
+		{
+			comp_script = (CompScript*)parent->FindComponentByUUID(uid_linked_scripts[i]);
+		}
+		linked_scripts.push_back(comp_script);
+	}
+	RELEASE_ARRAY(uid_linked_scripts);
+
+	if (target_graphic_uid == 0)
+		return;
+	target_graphic = (CompGraphic*)parent->FindComponentByUUID(target_graphic_uid);
+	TryConversion();
 }
 
 void CompButton::AddLinkedScript(const CompScript * script)
@@ -220,7 +338,9 @@ void CompButton::OnClick()
 	uint size = linked_scripts.size();
 	for (uint k = 0; k < size; k++)
 	{
-		if (linked_scripts[k] == nullptr)
+		CompScript* comp_script = linked_scripts[k];
+
+		if (comp_script == nullptr)
 			continue;
 		linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
 	}

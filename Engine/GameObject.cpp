@@ -1316,9 +1316,13 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		{
 			//If is not RectTransform
 			//TODO change transform
-			LOG("Adding CANVAS RENDER COMPONENT.");
-			CompCanvasRender* canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
-			components.push_back(canvas_renderer);
+			CompCanvasRender* canvas_renderer = (CompCanvasRender*)FindComponentByType(Comp_Type::C_CANVAS_RENDER);
+			if (canvas_renderer == nullptr)
+			{
+				LOG("Adding CANVAS RENDER COMPONENT.");
+				canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
+				components.push_back(canvas_renderer);
+			}
 			LOG("Adding IMAGE COMPONENT.");
 			CompImage* image = new CompImage(type, this);
 			components.push_back(image);
@@ -1328,9 +1332,13 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		{
 			//If is not RectTransform
 			//TODO change transform
-			LOG("Adding CANVAS RENDER COMPONENT.");
-			CompCanvasRender* canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
-			components.push_back(canvas_renderer);
+			CompCanvasRender* canvas_renderer = (CompCanvasRender*)FindComponentByType(Comp_Type::C_CANVAS_RENDER);
+			if (canvas_renderer == nullptr)
+			{
+				LOG("Adding CANVAS RENDER COMPONENT.");
+				canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
+				components.push_back(canvas_renderer);
+			}
 			LOG("Adding TEXT COMPONENT.");
 			CompText* text = new CompText(type, this);
 			components.push_back(text);
