@@ -618,6 +618,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
 
+	//COMPONENT UI_GRAPHIC FUNCTIONS -----------------
+	mono_add_internal_call("CulverinEditor.CompGraphic::SetRaycastTarget", (const void*)SetRaycastTarget);
+	mono_add_internal_call("CulverinEditor.CompImage::FillAmount", (const void*)FillAmount);
+
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 }
@@ -1029,6 +1033,17 @@ void ImportScript::Deactivate(MonoObject * object, int uid)
 void ImportScript::Clicked(MonoObject * object)
 {
 	current->Clicked(object);
+}
+
+void ImportScript::SetRaycastTarget(MonoObject * object, mono_bool flag)
+{
+	current->SetRaycastTarget(object, flag);
+}
+
+void ImportScript::FillAmount(MonoObject * object, float value)
+{
+	current->FillAmount(object, value);
+
 }
 
 MonoObject * ImportScript::GetCollidedObject(MonoObject * object)

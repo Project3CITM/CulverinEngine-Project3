@@ -144,6 +144,11 @@ private:
 	/*Component Interactive Button*/
 	static void Clicked(MonoObject * object);
 
+	/*Component Graphic*/
+	static void SetRaycastTarget(MonoObject * object, mono_bool flag);
+	/*Component Graphic Image*/
+	static void FillAmount(MonoObject * object, float value);
+
 	/*Component Collier*/
 	static MonoObject* GetCollidedObject(MonoObject * object);
 

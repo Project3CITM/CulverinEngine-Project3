@@ -15,7 +15,8 @@
 #include "CompAudio.h"
 #include "CompButton.h"
 #include "CompCollider.h"
-
+#include "CompGraphic.h"
+#include "CompImage.h"
 //SCRIPT VARIABLE UTILITY METHODS ------
 ScriptVariable::ScriptVariable(const char* name, VarType type, VarAccess access, CSharpScript* script) : name(name), type(type), access(access), script(script)
 {
@@ -992,7 +993,11 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	}
 	else if (name == "CulverinEditor.CompButton")
 	{
-		comp_name = "Button";
+		comp_name = "CompButton";
+	}
+	else if (name == "CulverinEditor.CompImage")
+	{
+		comp_name = "CompImage";
 	}
 	else if (name == "CulverinEditor.CompCollider")
 	{
@@ -1793,6 +1798,30 @@ void CSharpScript::Clicked(MonoObject * object)
 		if (interactive != nullptr)
 		{
 			interactive->OnClick();
+		}
+	}
+}
+
+void CSharpScript::SetRaycastTarget(MonoObject * object, mono_bool flag)
+{
+	if (current_game_object != nullptr)
+	{
+		CompImage* graphic = (CompImage*)current_game_object->FindComponentByType(Comp_Type::C_IMAGE);
+		if (graphic != nullptr)
+		{
+			graphic->SetRaycastTarget(flag);
+		}
+	}
+}
+
+void CSharpScript::FillAmount(MonoObject * object, float value)
+{
+	if (current_game_object != nullptr)
+	{
+		CompImage* image = (CompImage*)current_game_object->FindComponentByType(Comp_Type::C_IMAGE);
+		if (image != nullptr)
+		{
+			image->FillAmount(value);
 		}
 	}
 }

@@ -22,6 +22,7 @@ public:
 	void Update(float dt);
 	void ShowOptions();
 	void ShowInspectorInfo();
+	void FillAmount(float value);
 	void GenerateFilledSprite(float fill, FillMethod method);
 	void CopyValues(const CompImage * component);
 	void Clear();

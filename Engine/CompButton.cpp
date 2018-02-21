@@ -10,7 +10,7 @@
 CompButton::CompButton(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Button";
+	name_component = "CompButton";
 }
 
 

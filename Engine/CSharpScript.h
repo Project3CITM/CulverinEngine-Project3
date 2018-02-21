@@ -187,6 +187,9 @@ public:
 	void		Deactivate(MonoObject * object, int uid);
 	void		Clicked(MonoObject* object);
 
+	/*UI-Graphics*/
+	void		SetRaycastTarget(MonoObject * object, mono_bool flag);
+	void		FillAmount(MonoObject * object, float value);
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
 

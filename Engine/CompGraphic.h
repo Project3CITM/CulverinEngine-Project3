@@ -18,12 +18,12 @@ public:
 	void AddCanvasRender();
 	void AddRectTransform();
 	void SyncComponent();
+	void DrawGraphic();
 
 	void SetTextureID(uint set_texture_id);
 	void SetColor(const float4& set_rgba);
 	void SetColor(float set_r, float set_g, float set_b, float set_a);
-	void DrawGraphic();
-
+	void SetRaycastTarget(bool flag);
 	uint GetTextureID()const;
 	CompRectTransform* GetRectTrasnform()const;
 	CompCanvasRender* GetCanvasRender()const;

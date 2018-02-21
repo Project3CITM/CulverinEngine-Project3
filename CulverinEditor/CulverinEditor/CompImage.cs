@@ -6,5 +6,7 @@ namespace CulverinEditor
     public class CompImage : CompGraphic
     {
         //functions like fillamount
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void FillAmount(float value);
     }
 }

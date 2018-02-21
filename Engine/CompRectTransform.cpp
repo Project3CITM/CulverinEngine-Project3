@@ -335,10 +335,7 @@ void CompRectTransform::SetPivot(float2 set_pivot)
 	pivot = set_pivot;
 }
 
-void CompRectTransform::SetLeftPivot(float2 set_pivot)
-{
-	left_pivot = set_pivot;
-}
+
 
 void CompRectTransform::SetUpdateRect(bool set_update_rect)
 {
@@ -387,7 +384,7 @@ bool CompRectTransform::GetUpdateRect() const
 
 float4 CompRectTransform::GetRect()const
 {
-	return float4(position.x,position.y,(float)width, (float)height);
+	return float4(-width*left_pivot.x, -height*left_pivot.y,width*right_pivot.x, height*right_pivot.y);
 }
 float4 CompRectTransform::GetGlobalRect()const
 {

@@ -14,7 +14,7 @@
 CompImage::CompImage(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Image";
+	name_component = "CompImage";
 
 }
 
@@ -195,8 +195,6 @@ void CompImage::ShowInspectorInfo()
 		{
 			type = Type::FILLED;
 		}
-		CompRectTransform* trans = GetRectTrasnform();
-		GetRectTrasnform()->SetLeftPivot(trans->GetPivot()*trans->GetHeight());
 	}
 	selection = HORITZONTAL;
 	if (type == Type::FILLED)
@@ -205,14 +203,14 @@ void CompImage::ShowInspectorInfo()
 		if (ImGui::Combo("##fillMethod", &selection, "Horitzontal\0Vertical\0Radial", 3))
 		{
 			method = (FillMethod)selection;
-			/*
+			
 			if (selection == FillMethod::HORITZONTAL)
 				method = FillMethod::HORITZONTAL;
 			if (selection == FillMethod::VERTICAL)
 				method = FillMethod::VERTICAL;
 			if (selection == FillMethod::RADIAL360)
 				method = FillMethod::RADIAL360;
-			*/
+			
 		}
 		if (ImGui::DragFloat("##fillQuantity", &filled, 0.01f, 0.0f, 1.0f))
 		{
@@ -222,6 +220,19 @@ void CompImage::ShowInspectorInfo()
 	ImGui::TreePop();
 }
 
+void CompImage::FillAmount(float value)
+{
+	float fill = value;
+	if (fill < 0.0f)
+	{
+		fill = 0.0f;
+	}
+	else if (value > 1.0f)
+	{
+		fill = 1.0f;
+	}
+	GenerateFilledSprite(fill, method);
+}
 void CompImage::GenerateFilledSprite(float to_fill, FillMethod Method)
 {
 	float4 v = parent->GetComponentRectTransform()->GetRect();
