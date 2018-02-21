@@ -897,7 +897,7 @@ GameObject * Scene::CreateImage(GameObject * parent)
 	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
 	image->Enable();
 	image->SyncComponent();
-
+	image->SetTextureID(App->renderer3D->id_checkImage);
 	if (parent == nullptr)
 	{
 		// Only add to GameObjects list the Root Game Objects
@@ -928,6 +928,7 @@ GameObject * Scene::CreateButton(GameObject * parent)
 	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
 	image->Enable();
 	image->SyncComponent();
+	image->SetTextureID(App->renderer3D->id_checkImage);
 	// BUTTON COMPONENT -----------------
 	CompButton* button = (CompButton*)obj->AddComponent(Comp_Type::C_BUTTON);
 	button->Enable();
@@ -962,6 +963,7 @@ GameObject * Scene::CreateCheckBox(GameObject * parent)
 	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
 	image->Enable();
 	image->SyncComponent();
+	image->SetTextureID(App->renderer3D->id_checkImage);
 
 	// BUTTON COMPONENT -----------------
 	CompCheckBox* check_box = (CompCheckBox*)obj->AddComponent(Comp_Type::C_CHECK_BOX);

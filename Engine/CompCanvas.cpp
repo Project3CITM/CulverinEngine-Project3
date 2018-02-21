@@ -14,12 +14,7 @@ CompCanvas::CompCanvas(Comp_Type t, GameObject * parent) :Component(t, parent)
 	uid = App->random->Int();
 	name_component = "Canvas";
 	my_transform = (CompRectTransform*)parent->FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
-	ImGuiIO& io = ImGui::GetIO();
-
-	my_transform->SetPos(float3(io.DisplaySize.x*0.5f, io.DisplaySize.y*0.5f,0.0f));
-
-	my_transform->SetWidth(io.DisplaySize.x);
-	my_transform->SetHeight(io.DisplaySize.y);
+	UpdateCanvasScale();
 
 	/*
 	draw_mode.type = EventType::EVENT_DRAW;
@@ -36,7 +31,10 @@ CompCanvas::CompCanvas(const CompCanvas & copy, GameObject * parent) :Component(
 CompCanvas::~CompCanvas()
 {
 }
-
+void CompCanvas::PreUpdate(float dt)
+{
+	UpdateCanvasScale();
+}
 void CompCanvas::Update(float dt)
 {
 	App->render_gui->screen_space_canvas.push_back(this);
@@ -144,8 +142,21 @@ void CompCanvas::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompCanvas::SyncComponent()
+{
+	my_transform = (CompRectTransform*)parent->FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
 
+}
+void CompCanvas::UpdateCanvasScale()
+{
+	ImGuiIO& io = ImGui::GetIO();
 
+	my_transform->SetPos(float3(io.DisplaySize.x*0.5f, io.DisplaySize.y*0.5f, 0.0f));
+
+	my_transform->SetWidth(io.DisplaySize.x);
+	my_transform->SetHeight(io.DisplaySize.y);
+
+}
 void CompCanvas::AddGraphic(CompGraphic * to_add)
 {
 	graphic_vector.push_back(to_add);

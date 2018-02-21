@@ -108,92 +108,93 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	case EventType::EVENT_BUTTON_DOWN:
 	case EventType::EVENT_BUTTON_UP:
 	case EventType::EVENT_MOUSE_MOTION:
-		if (App->mode_game)
-			return;
-		if (focus != nullptr)
+		if (App->engine_state != EngineState::STOP)
 		{
-			if (focus->PointerInside(this_event.pointer.position))
+			if (focus != nullptr)
 			{
-				if (this_event.type == EventType::EVENT_BUTTON_DOWN)
+				if (focus->PointerInside(this_event.pointer.position))
 				{
-					focus->OnPointDown(this_event);
-					if (focus->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
-					{
-						focus->OnInteractiveSelected(this_event);
-					}
-
-				}
-				if (this_event.type == EventType::EVENT_BUTTON_UP)
-				{
-					focus->OnPointUP(this_event);
-
-				}
-				if (this_event.type == EventType::EVENT_MOUSE_MOTION)
-				{
-					focus->OnPointEnter(this_event);
-				}
-			}
-			else
-			{
-			
-				if (this_event.type == EventType::EVENT_MOUSE_MOTION)
-				{
-					focus->OnPointExit(this_event);
-
-				}
-				if (this_event.type == EventType::EVENT_BUTTON_DOWN)
-				{
-					focus->ForceClear(this_event);
-					focus = nullptr;
-				}
-			}
-		}
-		else
-		{
-			bool positive_colision = false;
-			std::vector<CompInteractive*>::reverse_iterator it = iteractive_vector.rbegin();
-			for (; it != iteractive_vector.rend(); it++)
-			{
-				if ((*it)->PointerInside(this_event.pointer.position))
-				{
-					if (positive_colision)
-					{
-						(*it)->ForceClear(this_event);
-						continue;
-					}
 					if (this_event.type == EventType::EVENT_BUTTON_DOWN)
 					{
-						(*it)->OnPointDown(this_event);
-						if ((*it)->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
+						focus->OnPointDown(this_event);
+						if (focus->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
 						{
-							(*it)->OnInteractiveSelected(this_event);
-							focus = (*it);
+							focus->OnInteractiveSelected(this_event);
 						}
 
 					}
 					if (this_event.type == EventType::EVENT_BUTTON_UP)
 					{
-						(*it)->OnPointUP(this_event);
+						focus->OnPointUP(this_event);
 
 					}
 					if (this_event.type == EventType::EVENT_MOUSE_MOTION)
 					{
-						(*it)->OnPointEnter(this_event);
+						focus->OnPointEnter(this_event);
 					}
-
-					positive_colision = true;
-
 				}
 				else
 				{
+
 					if (this_event.type == EventType::EVENT_MOUSE_MOTION)
 					{
-						(*it)->OnPointExit(this_event);
+						focus->OnPointExit(this_event);
+
+					}
+					if (this_event.type == EventType::EVENT_BUTTON_DOWN)
+					{
+						focus->ForceClear(this_event);
+						focus = nullptr;
 					}
 				}
 			}
-			if (!positive_colision)
-				focus = nullptr;
+			else
+			{
+				bool positive_colision = false;
+				std::vector<CompInteractive*>::reverse_iterator it = iteractive_vector.rbegin();
+				for (; it != iteractive_vector.rend(); it++)
+				{
+					if ((*it)->PointerInside(this_event.pointer.position))
+					{
+						if (positive_colision)
+						{
+							(*it)->ForceClear(this_event);
+							continue;
+						}
+						if (this_event.type == EventType::EVENT_BUTTON_DOWN)
+						{
+							(*it)->OnPointDown(this_event);
+							if ((*it)->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
+							{
+								(*it)->OnInteractiveSelected(this_event);
+								focus = (*it);
+							}
+
+						}
+						if (this_event.type == EventType::EVENT_BUTTON_UP)
+						{
+							(*it)->OnPointUP(this_event);
+
+						}
+						if (this_event.type == EventType::EVENT_MOUSE_MOTION)
+						{
+							(*it)->OnPointEnter(this_event);
+						}
+
+						positive_colision = true;
+
+					}
+					else
+					{
+						if (this_event.type == EventType::EVENT_MOUSE_MOTION)
+						{
+							(*it)->OnPointExit(this_event);
+						}
+					}
+				}
+				if (!positive_colision)
+					focus = nullptr;
+			}
 		}
 		break;
 	default:
@@ -251,29 +252,21 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	//Draw
 	default_ui_shader->Bind();
 	GLint g_AttribLocationProjMtx = glGetUniformLocation(default_ui_shader->programID, "ProjMtx");
-//	if (App->mode_game)
-//	{
+	if(App->engine_state!=EngineState::STOP)
+	{
 		glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 
-//	}
-	//else
-	//{
-	//	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
-	//	glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+	}
+	else
+	{
+		Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
+		glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 
-	//}
-
-
-	//Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
-	//GLint viewLoc = glGetUniformLocation(default_ui_shader->programID, "ProjMtx");
-	//glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
-
+	}
 	for (int i = 0; i < screen_space_canvas.size(); i++)
 	{
 		screen_space_canvas[i]->DrawGraphic();
 	}
-
-	
 	//End Draw
 	// Restore modified state
 	default_ui_shader->Unbind();

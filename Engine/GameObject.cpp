@@ -4,6 +4,7 @@
 #include "WindowHierarchy.h"
 #include "ModuleCamera3D.h"
 #include "ModuleInput.h"
+#include "ModuleRenderer3D.h"
 #include "ModuleFS.h"
 #include "Scene.h"
 #include "ModuleGUI.h"
@@ -1017,12 +1018,14 @@ void GameObject::ShowInspectorInfo()
 		}
 		if (ImGui::MenuItem("Image"))
 		{
-			AddComponent(Comp_Type::C_IMAGE);
+			CompImage* image =(CompImage*)AddComponent(Comp_Type::C_IMAGE);
+			image->SetTextureID(App->renderer3D->id_checkImage);
 			add_component = false;
 		}
 		if (ImGui::MenuItem("Text"))
 		{
-			AddComponent(Comp_Type::C_TEXT);
+			CompText* text = (CompText*)AddComponent(Comp_Type::C_TEXT);
+			text->SetTextureID(App->renderer3D->id_checkImage);
 			add_component = false;
 		}
 		if (ImGui::MenuItem("Audio"))
@@ -1325,6 +1328,7 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			}
 			LOG("Adding IMAGE COMPONENT.");
 			CompImage* image = new CompImage(type, this);
+
 			components.push_back(image);
 			return image;
 		}
@@ -1341,6 +1345,7 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			}
 			LOG("Adding TEXT COMPONENT.");
 			CompText* text = new CompText(type, this);
+
 			components.push_back(text);
 			return text;
 		}

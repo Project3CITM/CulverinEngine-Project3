@@ -362,12 +362,9 @@ void CompCanvasRender::DrawGraphic()
 	glGetError();
 
 	glActiveTexture(GL_TEXTURE0);
-	int texture = App->renderer3D->id_checkImage;
-	if (graphic->GetTextureID() != 0)
-	{
-		texture = graphic->GetTextureID();
+	int texture = graphic->GetTextureID();
 		
-	}
+	
 	glBindTexture(GL_TEXTURE_2D, texture);
 	CheckOpenGlError("glBindTexture color");
 
