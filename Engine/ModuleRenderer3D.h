@@ -7,6 +7,7 @@
 #include "parson.h"
 
 #include "ModuleShaders.h"
+#include "Materials.h"
 
 #include <gl/GL.h>
 #include <gl/GLU.h>
@@ -70,8 +71,9 @@ public:
 
 	// Shaders
 	ShaderProgram* default_shader = nullptr;
-	ResourceMaterial* default_mat = nullptr;
+	ResourceMaterial* default_texture = nullptr;
 
+	Material* default_material = nullptr;
 };
 
 #endif

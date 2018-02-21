@@ -1,5 +1,25 @@
 #include "Materials.h"
 
+Material::Material()
+{
+}
+
+Material::~Material()
+{
+}
+
+bool Material::Bind()
+{
+	glUseProgram(GetProgramID());
+	
+	return true;
+}
+
+void Material::Unbind()
+{
+	glUseProgram(NULL);
+}
+
 UniformVar Material::GetVariableInfo(uint index)
 {
 	UniformVar ret;

@@ -495,7 +495,7 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 				}
 			}
 			else {
-				material_shader.textures[i].value = App->renderer3D->default_mat;
+				material_shader.textures[i].value = App->renderer3D->default_texture;
 			}
 		}
 		uint num_bools = json_object_dotget_number_with_std(object, name + "Num Bools:");

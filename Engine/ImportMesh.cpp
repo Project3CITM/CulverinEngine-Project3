@@ -253,9 +253,31 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					std::string temp = std::to_string(resource_mat->GetUUID());
 					App->importer->iMaterial->LoadResource(temp.c_str(), resource_mat);
 				}
-				materialComp->material_shader = *App->renderer3D->default_shader;
-				materialComp->material_shader.textures[0].value = resource_mat;
-				
+				std::string name = App->fs->GetOnlyName(normalPath);
+
+				bool exists = false;
+				for (auto item = App->module_shaders->materials.begin(); item < App->module_shaders->materials.end(); item++)
+				{
+					if (strcmp((*item)->name.c_str(), name.c_str()) == 0)
+					{
+						materialComp->material = (*item);
+						exists = true;
+						break;
+					}
+				}
+				if (!exists)
+				{
+					Material* new_mat = new Material();
+					new_mat->name = name;
+
+					App->module_shaders->materials.push_back(new_mat);
+					new_mat->material_shader = App->renderer3D->default_shader;
+					new_mat->GetProgramVariables();
+
+					if(new_mat->textures.size() > 0 )
+						materialComp->material_shader.textures[0].value = resource_mat;
+				}
+			
 				resource_mat->path_assets = normalPath;
 			}
 		}

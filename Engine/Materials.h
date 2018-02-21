@@ -1,5 +1,5 @@
 #ifndef _MATERIALS_
-#define _MATERIALS
+#define _MATERIALS_
 
 #include <string>
 #include <vector>
@@ -32,6 +32,8 @@ public:
 public:
 
 	ShaderProgram * material_shader;
+	std::string name = "";
+	std::string path = "";
 
 	//Variables Vector
 	std::vector<TextureVar>	textures;
