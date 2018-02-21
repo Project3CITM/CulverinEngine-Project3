@@ -48,6 +48,8 @@ public:
 	void SetMonoMap(GameObject* root, bool is_root = false); // Only used in "Play"
 	void ClearMonoMap();
 	void UpdateMonoMap(GameObject* modificate);
+	MonoObject* GetMonoObject(GameObject* gameobject);
+	GameObject* GetGameObject(MonoObject* monoobject);
 
 	bool IsNameUnique(std::string name) const;
 

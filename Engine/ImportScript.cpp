@@ -427,6 +427,33 @@ void ImportScript::UpdateMonoMap(GameObject* modificate)
 	}
 }
 
+MonoObject* ImportScript::GetMonoObject(GameObject* gameobject)
+{
+	if (gameobject != nullptr/* && gameobject->IsDeleteFixed()*/)
+	{
+		std::map<MonoObject*, GameObject*>::iterator it = mono_map.begin();
+		while (it != mono_map.end())
+		{
+			if (it->second == gameobject)
+			{
+				return it->first;
+			}
+			it++;
+		}
+	}
+}
+
+GameObject* ImportScript::GetGameObject(MonoObject* monoobject)
+{
+	if (monoobject != nullptr)
+	{
+		std::map<MonoObject*, GameObject*>::iterator it = mono_map.find(monoobject);
+		if (it != mono_map.end())
+			return it->second;
+	}
+}
+
+
 bool ImportScript::IsNameUnique(std::string name) const
 {
 	if (name != "")
