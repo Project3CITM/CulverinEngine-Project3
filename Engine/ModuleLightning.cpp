@@ -270,12 +270,13 @@ bool ModuleLightning::SaveConfig(JSON_Object* node)
 
 bool ModuleLightning::CleanUp()
 {
-	for (std::vector<DepthFrameBuffer>::iterator it = shadow_maps.begin(); it != shadow_maps.end(); ++it)
+	for (std::vector<DepthCubeMap*>::iterator it = shadow_point_lights_maps.begin(); it != shadow_point_lights_maps.end(); ++it)
 	{
-		(*it).Destroy();
+		RELEASE((*it));
 	}
 
 	RELEASE(shadow_Shader);
+	RELEASE(point_light_shadow_depth_shader);
 
 
 	return true;
@@ -302,11 +303,16 @@ void ModuleLightning::OnEvent(Event & event)
 		for (std::multimap<float, Event>::const_iterator item = event.send_3d3damm.MM3DDrawEvent->begin(); item != event.send_3d3damm.MM3DDrawEvent->end();item++)
 		{
 
-			shadow_Shader->Bind();
 			CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
 
 			if (m->resource_mesh != nullptr)
 			{
+				// Calc point lights shadow maps
+				if(!frame_used_lights.empty())
+					CalPointShadowMaps(m);
+
+				shadow_Shader->Bind();
+
 				ShaderProgram* shader = App->renderer3D->default_shader;
 				//if (material->material_shader != nullptr)
 				if (m->GetMaterial()!= nullptr) shader = (ShaderProgram*)&m->GetMaterial()->material_shader;
@@ -523,35 +529,97 @@ void ModuleLightning::OnEvent(Event & event)
 	shadow_Shader->Unbind();
 }
 
-void ModuleLightning::CalShadowMaps()
+void ModuleLightning::CalPointShadowMaps(CompMesh* mesh_to_render)
 {
-	//TODO: Actually calc the shadow maps
-	//TODO: Need to get the main/render camera somehow
+	if (!mesh_to_render || !mesh_to_render->resource_mesh) return;
+	if(mesh_to_render->resource_mesh->vertices.size() <= 0) return;
 
-	// Start rendering z buffer into the frame buffer
+	// First  check if the mesh is in range of the point light
+	float3 object_pos = mesh_to_render->GetGameObjectPos();
 
-	// Should render from lights perspectives. For now will use hardcoded positions in order to test.
+	uint depth_cube_map_index = 0;
+	for(std::vector<CompLight*>::iterator it = frame_used_lights.begin(); it != frame_used_lights.end(); ++it)
+	{
+		if((*it)->type == Light_type::POINT_LIGHT)
+		{
+			float3 light_pos = (*it)->GetGameObjectPos();
+			//TODO: Add range to point lights
+			//if(light_pos.Distance(object_pos) <= (*it)->range * (*it)->range)
+			//{
+			//	
+			//}
 
-	//float3 lisght_pos(4.f, 10.f, 0.f);
-	//float3 look_at(0.f, 0.f, 0.f);
+			// If is range bind the frame buffer and the shader
+			DepthCubeMap* fbo = shadow_point_lights_maps[depth_cube_map_index];
 
-	//for(uint i = 0; i < shadow_maps.size(); ++i)
-	//{
-	//	DepthFrameBuffer* frame = &shadow_maps[i];
-	//
-	//
-	//}
+			fbo->Bind();
+			point_light_shadow_depth_shader->Bind();
+			
+			// Actually render the mesh
+
+			//Get vieport and resize it to shadow res
+			GLint viewport_size[4];
+			glGetIntegerv(GL_VIEWPORT, viewport_size);
+			uint shadow_w, shadow_h;
+			fbo->GetShadowResolution(shadow_w, shadow_h);
+			glViewport(0, 0, shadow_w, shadow_h);
+
+			//
+			float near_plane = 1.f;
+			float far_plane = 25.f; //TODO: Change it for light range
+			glm::mat4 shadow_proj = glm::perspective(glm::radians(90.f), (float)shadow_w / (float)shadow_h, near_plane, far_plane);
+
+			std::vector<glm::mat4> shadow_transforms;
+			glm::vec3 l_pos = glm::vec3(light_pos.x, light_pos.y, light_pos.z);
+			shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
+			shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
+			shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.f, 0.f, 1.f)));
+			shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, -1.f)));
+			shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
+			shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
+
+			uint sh_id = point_light_shadow_depth_shader->programID;
+			for(uint i = 0; i < 6; ++i)
+			{
+				glUniformMatrix4fv(glGetUniformLocation(sh_id, ("shadow_matrices[" + std::to_string(i) + "]").c_str()),
+					1, GL_FALSE, &((shadow_transforms[i])[0][0]));
+			}
+			glUniform1f(glGetUniformLocation(sh_id, "far_plane"), far_plane);
+			glUniform3fv(glGetUniformLocation(sh_id, "light_pos"), 1, &l_pos.x);
+
+			ResourceMesh* m = mesh_to_render->resource_mesh;
+			glBindBuffer(GL_ARRAY_BUFFER, m->id_total_buffer);
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (char*)NULL + (0 * sizeof(float)));
+
+
+			glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->indices_id);
+			glDrawElements(GL_TRIANGLES, m->num_indices, GL_UNSIGNED_INT, NULL);
+
+
+			//Reset viewport
+			glViewport(viewport_size[0], viewport_size[1], viewport_size[2], viewport_size[3]);
+			
+			//Unbind shader and cube map
+			point_light_shadow_depth_shader->Unbind();
+			fbo->UnBind();
+
+			++depth_cube_map_index;
+		}
+	}
 }
 
 void ModuleLightning::SetShadowCastPoints(uint points)
 {
 	shadow_cast_points_count = points;
-	if(shadow_cast_points_count > shadow_maps.size())
+	if(shadow_cast_points_count > shadow_point_lights_maps.size())
 	{
 		// Then create new frame buffers
 		// TODO: Probably would be better to add a max ammount of shadow maps
 
-		AddShadowMapCastViews(shadow_cast_points_count - shadow_maps.size());
+		AddShadowMapCastViews(shadow_cast_points_count - shadow_point_lights_maps.size());
 	}
 }
 
@@ -560,15 +628,15 @@ void ModuleLightning::ResizeShadowMaps(uint w_res, uint h_res)
 	shadow_maps_res_w = w_res;
 	shadow_maps_res_h = h_res;
 
-	for(std::vector<DepthFrameBuffer>::iterator it = shadow_maps.begin(); it != shadow_maps.end(); ++it)
+	for(std::vector<DepthCubeMap*>::iterator it = shadow_point_lights_maps.begin(); it != shadow_point_lights_maps.end(); ++it)
 	{
-		(*it).Resize(shadow_maps_res_w, shadow_maps_res_h);
+		(*it)->Resize(shadow_maps_res_w, shadow_maps_res_h);
 	}
 }
 
-std::vector<DepthFrameBuffer>* ModuleLightning::GetShadowMaps()
+std::vector<DepthCubeMap*>* ModuleLightning::GetShadowMaps()
 {
-	return &shadow_maps;
+	return &shadow_point_lights_maps;
 }
 
 void ModuleLightning::GetShadowMapsResolution(uint& w_res, uint& h_res)
@@ -621,9 +689,9 @@ void ModuleLightning::AddShadowMapCastViews(uint ammount)
 {
 	for(int i = 0; i < ammount; ++i)
 	{
-		DepthFrameBuffer buff;
-		buff.Create(shadow_maps_res_w, shadow_maps_res_h);
-		shadow_maps.push_back(buff);
+		DepthCubeMap* buff = new DepthCubeMap(shadow_maps_res_w, shadow_maps_res_h);
+		buff->Create();
+		shadow_point_lights_maps.push_back(buff);
 	}
 }
 
@@ -651,7 +719,7 @@ update_status ModuleLightning::UpdateConfig(float dt)
 
 	if(ImGui::TreeNodeEx("Shadow maps"))
 	{
-		for(uint i = 0; i < shadow_maps.size(); ++i)
+		for(uint i = 0; i < shadow_point_lights_maps.size(); ++i)
 		{
 			if(i == shadow_cast_points_count)
 			{
@@ -662,7 +730,7 @@ update_status ModuleLightning::UpdateConfig(float dt)
 			std::string shadowmap_name = "Shadow map: " + std::to_string(i);
 			if(ImGui::TreeNodeEx(shadowmap_name.c_str()))
 			{
-				DepthFrameBuffer* frame = &shadow_maps[i];
+				DepthCubeMap* frame = shadow_point_lights_maps[i];
 				ImGui::Image((ImTextureID*)frame->GetTexture(), ImVec2(256, 256));
 
 				ImGui::TreePop();

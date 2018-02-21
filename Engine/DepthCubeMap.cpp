@@ -16,7 +16,7 @@ DepthCubeMap::~DepthCubeMap()
 void DepthCubeMap::Create()
 {
 	glGenFramebuffers(1, &depth_map_fbo);
-	glGenTextures(GL_TEXTURE_CUBE_MAP, &depth_cubemap_texture);
+	glGenTextures(1, &depth_cubemap_texture);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, depth_cubemap_texture);
 	
 	for (unsigned int i = 0; i < 6; ++i)

@@ -4,6 +4,7 @@
 #include "Module.h"
 
 #include "ModuleFramebuffers.h"
+#include "DepthCubeMap.h"
 #include "glm\glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <vector>
@@ -12,6 +13,7 @@
 
 class CompLight;
 class ShaderProgram;
+class CompMesh;
 
 bool OrderLights(CompLight* l1, CompLight* l2);
 
@@ -53,11 +55,10 @@ public:
 	bool CleanUp() override;
 	void OnEvent(Event& event);
 
-	void CalShadowMaps();
 	void SetShadowCastPoints(uint points);
 	void ResizeShadowMaps(uint w_res, uint h_res);
 
-	std::vector<DepthFrameBuffer>* GetShadowMaps();
+	std::vector<DepthCubeMap*>* GetShadowMaps();
 	void GetShadowMapsResolution(uint& w_res, uint& h_res);
 
 	void OnLightCreated(CompLight* l);
@@ -71,6 +72,7 @@ public:
 	
 private:
 	void AddShadowMapCastViews(uint ammount);
+	void CalPointShadowMaps(CompMesh* mesh_to_render);
 
 public:
 	//test
@@ -86,7 +88,7 @@ public:
 
 private:
 	uint shadow_cast_points_count = DEFAULT_SHADOW_CAST_POINTS_COUNT; // This value should be able to change from config and modiffied on load
-	std::vector<DepthFrameBuffer> shadow_maps;
+	std::vector<DepthCubeMap*> shadow_point_lights_maps;
 	uint shadow_maps_res_w = 1024;
 	uint shadow_maps_res_h = 1024;
 
