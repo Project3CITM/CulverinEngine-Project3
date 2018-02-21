@@ -11,6 +11,7 @@
 #include "ModuleRenderer3D.h"
 #include "Scene.h"
 
+
 CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent)
 {
 	uid = App->random->Int();

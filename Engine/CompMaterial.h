@@ -6,7 +6,7 @@
 #include <string>
 
 #include "ModuleShaders.h"
-
+#include "Materials.h"
 
 class ResourceMaterial;
 
@@ -49,7 +49,7 @@ public:
 
 	//ResourceMaterial* resource_material = nullptr;
 	ShaderProgram material_shader;
-
+	Material* material;
 private:
 
 	Color color = White;
