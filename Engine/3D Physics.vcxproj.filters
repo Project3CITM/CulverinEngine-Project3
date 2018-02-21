@@ -1170,6 +1170,9 @@
     <ClInclude Include="DepthCubeMap.h">
       <Filter>Engine\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="Materials.h">
+      <Filter>Engine\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1549,6 +1552,9 @@
     </ClCompile>
     <ClCompile Include="DepthCubeMap.cpp">
       <Filter>Engine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials.cpp">
+      <Filter>Engine\Shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
