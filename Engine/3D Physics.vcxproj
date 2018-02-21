@@ -132,6 +132,7 @@
     <ClInclude Include="CompText.h" />
     <ClInclude Include="CSharpScript.h" />
     <ClInclude Include="DefaultShaders.h" />
+    <ClInclude Include="DepthCubeMap.h" />
     <ClInclude Include="EventDef.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ImGui\ImGuizmo.h" />
@@ -473,6 +474,7 @@
     <ClCompile Include="CompScript.cpp" />
     <ClCompile Include="CompText.cpp" />
     <ClCompile Include="CSharpScript.cpp" />
+    <ClCompile Include="DepthCubeMap.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ImGui\ImGuizmo.cpp" />
     <ClCompile Include="ImGui\imgui_dock_v2.cpp" />

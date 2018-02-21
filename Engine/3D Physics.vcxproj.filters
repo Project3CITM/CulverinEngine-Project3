@@ -1167,6 +1167,9 @@
     <ClInclude Include="ParticleSystem.h">
       <Filter>Engine\Tools\OliEngine</Filter>
     </ClInclude>
+    <ClInclude Include="DepthCubeMap.h">
+      <Filter>Engine\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1543,6 +1546,9 @@
     </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Engine\Tools\OliEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthCubeMap.cpp">
+      <Filter>Engine\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

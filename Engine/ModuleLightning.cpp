@@ -18,7 +18,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "DefaultShaders.h"
 #include"ModuleWindow.h"
-#include "ModuleRenderer3D.h"
+#include "DepthCubeMap.h"
 
 using namespace glm;
 
