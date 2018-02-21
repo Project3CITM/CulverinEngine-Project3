@@ -180,7 +180,7 @@ void CompButton::ShowInspectorInfo()
 		}
 		if (ImGui::BeginPopup(name.c_str()))
 		{
-			CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT);
+			CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT, script_name);
 			if (sc != nullptr)
 				linked_scripts[k] =sc;
 			ImGui::EndPopup();

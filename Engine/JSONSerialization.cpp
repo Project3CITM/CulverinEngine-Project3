@@ -174,11 +174,6 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				}
 			}
 		}
-		//Sync components
-		for (int i = 0; i < templist.size(); i++)
-		{
-			templist[i].go->SyncComponents();
-		}
 		// Now pass vector to root in scene
 		for (int i = 0; i < templist.size(); i++)
 		{
@@ -186,6 +181,11 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			{
 				App->scene->root->AddChildGameObject(templist[i].go);
 			}
+		}
+		//Sync components
+		for (int i = 0; i < templist.size(); i++)
+		{
+			templist[i].go->SyncComponents();
 		}
 		templist.clear();
 

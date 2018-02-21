@@ -77,6 +77,7 @@ private:
 	CompScript*			listener = nullptr;
 	GameObject*			collided_object = nullptr;
 	std::string			script_name;
+	uint				uid_script_asigned = 0;
 
 };
 

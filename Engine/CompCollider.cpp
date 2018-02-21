@@ -187,15 +187,16 @@ void CompCollider::ShowInspectorInfo()
 	}
 	
 	// Listener selection
-	if (trigger && listener == nullptr)
+	if (trigger)
 	{
-		CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT);
+		CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT, script_name);
 		if (sc != nullptr)
 		{
 			listener = sc;
-			script_name = listener->GetName();
+			uid_script_asigned = listener->GetUUID();
 		}
 	}
+
 
 	// Collider type
 	if (ImGui::Combo("Collider", (int*)&collider_type, "Sphere\0Plane\0Capsule\0Box\0", 4) && curr_type != collider_type) 
@@ -303,6 +304,8 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 	json_object_dotset_boolean_with_std(object, name + "Trigger", trigger);
 
 	json_object_dotset_string_with_std(object, name + "ScriptName", script_name.c_str());
+	json_object_dotset_number_with_std(object, name + "Script UID", uid_script_asigned);
+
 }
 
 void CompCollider::Load(const JSON_Object * object, std::string name)
@@ -340,6 +343,7 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 	//Script name
 	script_name = json_object_dotget_string_with_std(object, name + "ScriptName");
+	uid_script_asigned = json_object_dotget_number_with_std(object, name + "Script UID");
 }
 
 void CompCollider::SyncComponent()
@@ -350,19 +354,16 @@ void CompCollider::SyncComponent()
 	{
 		body->SetAsTrigger(trigger);
 
-		// TODO: Get Script from any GameObject 
 		std::vector<Component*> script_vec;
-		parent->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec);
-		
+		App->scene->root->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec, true);
+
 		for (int i = 0; i < script_vec.size(); i++)
 		{
-			if (((CompScript*)script_vec[i])->GetName() == script_name)
+			if (script_vec[i]->GetUUID() == uid_script_asigned)
 			{
 				listener = (CompScript*)script_vec[i];
-				break;
 			}
 		}
-
 	}
 }
 

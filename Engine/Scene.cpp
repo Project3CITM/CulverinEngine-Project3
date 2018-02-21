@@ -668,31 +668,41 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 }
 // -------------------------------------------------------------------------------------
 
-Component * Scene::BlitSceneComponentsAsButtons(Comp_Type type)
+Component* Scene::BlitSceneComponentsAsButtons(Comp_Type type, std::string& current_item)
 {
-	temp_vector.clear();
-	root->GetComponentsByType(type, &temp_vector,true);
-
-	uint size = temp_vector.size();
-	for (uint k = 0; k < size; k++)
+	Component* ret = nullptr;
+	if (type != actualType)
 	{
-		char buffer[100];
-		if (temp_vector[k]->GetType() == Comp_Type::C_SCRIPT)
-		{
-			sprintf(buffer, "%s.%s", temp_vector[k]->GetParent()->GetName(), ((CompScript*)temp_vector[k])->GetScriptName());
-		}
-		else
-		{
-			sprintf(buffer, "%s.%s", temp_vector[k]->GetParent()->GetName(), temp_vector[k]->GetName());
-		}
-
-		if(ImGui::Selectable(buffer))
-		{
-			return temp_vector[k];
-		}
+		temp_vector.clear();
+		root->GetComponentsByType(type, &temp_vector, true);
 	}
-		
-	return nullptr;
+
+	//ImGui::PushItemWidth(150);
+	ImGui::Text("Select: "); ImGui::SameLine();
+
+	if (ImGui::BeginCombo("##SelectComponent", current_item.c_str()))
+	{
+		for (int i = 0; i < temp_vector.size(); i++)
+		{
+			char buffer[100];
+			if (temp_vector[i]->GetType() == Comp_Type::C_SCRIPT)
+			{
+				sprintf(buffer, "%s.%s", temp_vector[i]->GetParent()->GetName(), ((CompScript*)temp_vector[i])->GetScriptName());
+			}
+			else
+			{
+				sprintf(buffer, "%s.%s", temp_vector[i]->GetParent()->GetName(), temp_vector[i]->GetName());
+			}
+			if (ImGui::Selectable(buffer))
+			{
+				current_item = buffer;
+				ret = temp_vector[i];
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+	return ret;
 }
 
 GameObject* Scene::CreateCube(GameObject* parent)

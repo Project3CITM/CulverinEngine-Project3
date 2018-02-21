@@ -36,6 +36,7 @@ private:
 	int number_script = 0;
 	std::vector<CompScript*> linked_scripts;
 	int* uid_linked_scripts =nullptr;
+	std::string	script_name;
 };
 
 #endif//COMPONENT_BUTTON_H

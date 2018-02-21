@@ -76,7 +76,7 @@ public:
 	// -------------------------------------
 
 	// UI ----------------------------------
-	Component* BlitSceneComponentsAsButtons(Comp_Type type);
+	Component* BlitSceneComponentsAsButtons(Comp_Type type, std::string& current_item);
 	// -------------------------------------
 
 public:
@@ -112,7 +112,7 @@ private:
 	uint icon_resetAll = 0;
 	bool load_scene = true;
 	std::vector<Component*> temp_vector;
-	
+	Comp_Type actualType = Comp_Type::C_UNKNOWN;
 };
 
 #endif
