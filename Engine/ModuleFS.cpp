@@ -293,17 +293,40 @@ void ModuleFS::GetAllFilesAssets(std::experimental::filesystem::path path, std::
 bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 {
 	namespace fs = std::experimental::filesystem;
+	std::list<std::string> files_to_import;
 	for (int i = 0; i < files.size(); i++)
 	{
 		std::string temp = files[i].directory_name;
 		temp += ".meta.json";
 		if (fs::exists(temp) == false && strcmp(GetExtension(files[i].directory_name).c_str(), "scene.json") != 0)
 		{
-			App->importer->Import(files[i].directory_name, App->resource_manager->CheckFileType(files[i].directory_name), true);
+			if (App->resource_manager->CheckFileType(files[i].directory_name) == Resource::Type::MESH)
+			{
+				files_to_import.push_back(files[i].directory_name);
+			}
+			else if (App->resource_manager->CheckFileType(files[i].directory_name) == Resource::Type::MATERIAL)
+			{
+				files_to_import.push_front(files[i].directory_name);
+			}
+			else if (App->resource_manager->CheckFileType(files[i].directory_name) == Resource::Type::SCRIPT)
+			{
+				files_to_import.push_back(files[i].directory_name);
+			}
+		}
+	}
+	std::list<std::string>::iterator it = files_to_import.begin();
+	for (int i = 0; i < files_to_import.size(); i++)
+	{
+		std::string temp = it._Ptr->_Myval.c_str();
+		temp += ".meta.json";
+		if (fs::exists(temp) == false && strcmp(GetExtension(it._Ptr->_Myval.c_str()).c_str(), "scene.json") != 0)
+		{
+			App->importer->Import(it._Ptr->_Myval.c_str(), App->resource_manager->CheckFileType(it._Ptr->_Myval.c_str()), true);
+			//App->importer->Import(files[i].directory_name, App->resource_manager->CheckFileType(files[i].directory_name), true);
 		}
 		else 
 		{
-			std::string extension = GetExtension(files[i].directory_name);
+			std::string extension = GetExtension(it._Ptr->_Myval.c_str());
 			//Set lowercase the extension to normalize it
 			for (std::string::iterator it = extension.begin(); it != extension.end(); it++)
 			{
@@ -311,19 +334,19 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 			}
 			if (IsPermitiveExtension(extension.c_str()))
 			{
-				fs::file_time_type temp = fs::last_write_time(files[i].directory_name);
+				fs::file_time_type temp = fs::last_write_time(it._Ptr->_Myval.c_str());
 				std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
 				switch (App->resource_manager->CheckFileType(extension.c_str()))
 				{
 				case Resource::Type::MESH:
 				{
-					std::time_t last_write = App->json_seria->GetLastWritePrefab(files[i].directory_name);
+					std::time_t last_write = App->json_seria->GetLastWritePrefab(it._Ptr->_Myval.c_str());
 					if (last_write != cftime)
 					{
 						bool finish = false; int id = 0;
 						while (finish == false)
 						{
-							ReImport temp = App->json_seria->GetUUIDPrefab(files[i].directory_name, id++);
+							ReImport temp = App->json_seria->GetUUIDPrefab(it._Ptr->_Myval.c_str(), id++);
 							if (temp.uuid != 0)
 							{
 								App->resource_manager->resources_to_reimport.push_back(temp);
@@ -338,25 +361,26 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 				}
 				case Resource::Type::MATERIAL:
 				{
-					std::time_t last_write = App->json_seria->GetLastWriteMaterial(files[i].directory_name);
+					std::time_t last_write = App->json_seria->GetLastWriteMaterial(it._Ptr->_Myval.c_str());
 					if (last_write != cftime)
 					{
-						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDMaterial(files[i].directory_name));
+						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDMaterial(it._Ptr->_Myval.c_str()));
 					}
 					break;
 				}
 				case Resource::Type::SCRIPT:
 				{
-					std::time_t last_write = App->json_seria->GetLastWriteScript(files[i].directory_name);
+					std::time_t last_write = App->json_seria->GetLastWriteScript(it._Ptr->_Myval.c_str());
 					if (last_write != cftime)
 					{
-						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDScript(files[i].directory_name));
+						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDScript(it._Ptr->_Myval.c_str()));
 					}
 					break;
 				}
 				}
 			}
 		}
+		it++;
 	}
 	return true;
 }

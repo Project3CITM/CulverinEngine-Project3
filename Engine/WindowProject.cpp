@@ -219,6 +219,10 @@ void Project::Folders_update(std::vector<FoldersNew>& folders)
 		{
 			node_flags |= ImGuiTreeNodeFlags_Leaf;
 		}
+		if (strcmp(folders[i].file_name, "Assets") == 0)
+		{
+			node_flags |= ImGuiTreeNodeFlags_DefaultOpen;
+		}
 		if (ImGui::TreeNodeEx(folders[i].file_name, node_flags))
 		{
 			if (ImGui::BeginPopupContextItem("rename context menu"))
