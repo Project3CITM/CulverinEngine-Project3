@@ -177,7 +177,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 	default_material = new Material();
 	default_material->name = "Default Material";
-	default_material->material_shader = default_shader;
+	default_material->material_shader = *default_shader;
 	default_material->GetProgramVariables();	
 
 	if (default_material->textures.size()>0)
