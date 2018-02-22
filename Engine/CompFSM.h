@@ -99,7 +99,7 @@ public:
 
 	// SAVE - LOAD METHODS ----------------
 	void SaveState(JSON_Object * object, std::string name, bool saveScene, uint & countResources, int state_num);
-	void LoadState(const JSON_Object * object, std::string name, int num_state);
+	void LoadState(const JSON_Object * object, std::string name, int num_state, GameObject* parent);
 	void LoadTransitionsTargetStates(const std::vector<FSM_State*>& states);
 	// -------------------------------------
 

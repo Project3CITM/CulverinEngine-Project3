@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "parson.h"
 #include "Color.h"
+#include "MathGeoLib.h"
 
 class ParticleSystem;
 class ResourceMaterial;
@@ -41,15 +42,27 @@ public:
 	void ImGuiSaveEmitterPopUp();
 
 private:
+
+	void SetChild(const char* Particle, const char* Emitter);
+
+	void SetTextureResource(uint uuid, int columns = 1, int rows = 1, int numberOfFrames = 1, uint AnimationOrder = 0);
+	void SetTextureResource(const char* Path, int columns, int rows, int numberOfFrames, uint AnimationOrder);
+
+	const std::string* GetChildParticle() const;
+	const std::string* GetChildEmitter() const;
+
 	void DrawDirectory(const char* directory);
 
+	/*DEBUG FUNCS*/
+	void SetDebugOptions(bool ShowEmitterBoundBox, bool ShowEmitter);
+	void GetDebugOptions(bool& ShowEmitterBoundBox, bool& ShowEmitter);
 
 
-	bool SaveParticleStates(const char* file_name, const ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const;
-	bool LoadParticleStates(CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF) const;
+	bool SaveParticleStates(const char* file_name,  ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const;
+	bool LoadParticleStates(const char* file_name, CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF) const;
 
-	bool SaveParticleEmitter(CompParticleSystem* system, const ParticleEmitter* emitter) const;
-	bool LoadParticleEmitter(CompParticleSystem* system, ParticleEmitter& emitter) const;
+	bool SaveParticleEmitter(const char* file_name, CompParticleSystem* system, const ParticleEmitter* emitter) const;
+	bool LoadParticleEmitter(const char* file_name, CompParticleSystem* system, ParticleEmitter& emitter) const;
 
 	/*JSON FUNCS*/
 	bool SetInt(JSON_Object* conf, const char* field, int value) const;
@@ -64,6 +77,19 @@ private:
 	bool SetFloat4x4(JSON_Object* conf, const char* field, float4x4 value) const;
 	bool SetQuat(JSON_Object* conf, const char* field, Quat value) const;
 	bool SetColor(JSON_Object* conf, const char* field, Color color) const;
+
+	int GetInt(JSON_Object* conf, const char* field, int default = 0) const;
+	uint GetUInt(JSON_Object* conf, const char* field, uint default = 0) const;
+	float GetFloat(JSON_Object* conf, const char* field, float default = 0.0f) const;
+	double GetDouble(JSON_Object* conf, const char* field, double default = 0.0) const;
+	bool GetBool(JSON_Object* conf, const char* field, bool default = false) const;
+	const char* GetString(JSON_Object* conf, const char* field, const char* default = "") const;
+	float2 GetFloat2(JSON_Object* conf, const char* field, float2 default = float2::zero) const;
+	float3 GetFloat3(JSON_Object* conf, const char* field, float3 default = float3::zero) const;
+	float4 GetFloat4(JSON_Object* conf, const char* field, float4 default = float4::zero) const;
+	float4x4 GetFloat4x4(JSON_Object* conf, const char* field, float4x4 default = float4x4::identity) const;
+	Quat GetQuat(JSON_Object* conf, const char* field, Quat default = Quat::identity) const;
+	Color GetColor(JSON_Object* conf, const char* field, Color default = White) const;
 
 private:
 

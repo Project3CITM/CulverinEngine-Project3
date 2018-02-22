@@ -800,12 +800,12 @@ void ParticleSystem::GetEmitter(ParticleEmitter & emitter) const
 	emitter = Emitter;
 }
 
-const ParticleState * ParticleSystem::GetInitialState() const
+ParticleState * ParticleSystem::GetInitialState()
 {
 	return &InitialState;
 }
 
-const ParticleState * ParticleSystem::GetFinalState() const
+ParticleState * ParticleSystem::GetFinalState()
 {
 	return &FinalState;
 }
@@ -834,7 +834,7 @@ void ParticleSystem::DrawImGuiEditorWindow()
 {
 	if (EditorWindowOpen)
 	{
-		ImGui::Begin("Particle Editor", &EditorWindowOpen);
+		ImGui::Begin("Particle Editor", &EditorWindowOpen, ImVec2(1200, 800));
 
 		ImVec2 WindowSize = ImGui::GetWindowSize();
 		float ChildsWidth = (WindowSize.x - 28.0f) * 0.33f;

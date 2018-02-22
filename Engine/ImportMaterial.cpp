@@ -97,6 +97,9 @@ Texture ImportMaterial::Load(const char* file)
 			iluFlipImage();
 		}
 
+		texture.w = ilGetInteger(IL_IMAGE_WIDTH);
+		texture.h = ilGetInteger(IL_IMAGE_HEIGHT);
+
 		// Convert the image into a suitable format to work with
 		if (!ilConvertImage(ilGetInteger(IL_IMAGE_FORMAT), IL_UNSIGNED_BYTE))
 		{

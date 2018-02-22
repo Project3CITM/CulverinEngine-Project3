@@ -583,7 +583,8 @@ update_status ModuleGUI::Update(float dt)
 				new_mat->material_shader = selected_shader_program;
 				App->module_shaders->materials.push_back(new_mat);
 				selected_shader_program = nullptr;
-
+				new_mat->GetProgramVariables();
+				new_mat->Save();
 				material_creation = false;
 			}
 

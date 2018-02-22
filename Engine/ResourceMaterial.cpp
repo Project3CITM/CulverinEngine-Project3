@@ -60,6 +60,16 @@ const char * ResourceMaterial::GetTextureName()
 	return texture.name.c_str();
 }
 
+uint ResourceMaterial::GetTextureWidth() const
+{
+	return texture.w;
+}
+
+uint ResourceMaterial::GetTextureHeight() const
+{
+	return texture.h;
+}
+
 
 
 

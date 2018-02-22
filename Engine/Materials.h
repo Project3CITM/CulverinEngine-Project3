@@ -16,6 +16,9 @@ public:
 
 	void  Unbind();
 
+	void Save()const;
+	void Load();
+
 	UniformVar  GetVariableInfo(uint index);
 	AttributeVar GetAttributeInfo(uint index);
 

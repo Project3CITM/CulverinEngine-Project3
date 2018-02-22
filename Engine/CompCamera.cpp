@@ -9,7 +9,7 @@
 #include "GameObject.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
-
+#include"ModuleWindow.h"
 #include "SDL\include\SDL_opengl.h"
 #include <math.h>
 
@@ -488,7 +488,12 @@ void CompCamera::SetFar(float far_p)
 void CompCamera::SetFov(float vertical)
 {
 	frustum.verticalFov = vertical * DEGTORAD;
-	frustum.horizontalFov = (2 * math::Atan(math::Tan(frustum.verticalFov / 2) *(GetSizeDock("Scene").x/GetSizeDock("Scene").y)));
+	if (!App->mode_game) {
+		frustum.horizontalFov = (2 * math::Atan(math::Tan(frustum.verticalFov / 2) *(GetSizeDock("Scene").x / GetSizeDock("Scene").y)));
+	}
+	else {
+		frustum.horizontalFov = (2 * math::Atan(math::Tan(frustum.verticalFov / 2) *(App->window->GetWidth() / App->window->GetHeight())));
+	}
 }
 
 void CompCamera::SetRatio(float ratio)
