@@ -34,39 +34,39 @@
 				</File>
 				<File Id="363816187" Language="SFX">
 					<ShortName>Slash_metal_FX.wav</ShortName>
-					<Path>SFX\Slash_metal_FX_3AAF368C.wem</Path>
+					<Path>SFX\Slash_metal_FX_15B9CD21.wem</Path>
 				</File>
 				<File Id="366644699" Language="SFX">
 					<ShortName>Slash_flesh_FX.wav</ShortName>
-					<Path>SFX\Slash_flesh_FX_7C59AFFE.wem</Path>
+					<Path>SFX\Slash_flesh_FX_D0D703D6.wem</Path>
 				</File>
 				<File Id="418306352" Language="SFX">
 					<ShortName>Slash_metal_FX.wav</ShortName>
-					<Path>SFX\Slash_metal_FX_FBBFA598.wem</Path>
+					<Path>SFX\Slash_metal_FX_7B26E054.wem</Path>
 				</File>
 				<File Id="455601767" Language="SFX">
 					<ShortName>Torch_FX_1.wav</ShortName>
-					<Path>SFX\Torch_FX_1_6F1DCA5D.wem</Path>
+					<Path>SFX\Torch_FX_1_36D2EB39.wem</Path>
 				</File>
 				<File Id="501715201" Language="SFX">
 					<ShortName>Step_gravel_FX.wav</ShortName>
-					<Path>SFX\Step_gravel_FX_2D3F927F.wem</Path>
+					<Path>SFX\Step_gravel_FX_E53EA02B.wem</Path>
 				</File>
 				<File Id="545175549" Language="SFX">
 					<ShortName>Torch_FX_1.wav</ShortName>
-					<Path>SFX\Torch_FX_1_452B3A86.wem</Path>
+					<Path>SFX\Torch_FX_1_FF5F5112.wem</Path>
 				</File>
 				<File Id="914320357" Language="SFX">
 					<ShortName>Slash_metal_FX.wav</ShortName>
-					<Path>SFX\Slash_metal_FX_75052F69.wem</Path>
+					<Path>SFX\Slash_metal_FX_DBA93091.wem</Path>
 				</File>
 				<File Id="916330453" Language="SFX">
 					<ShortName>Slash_metal_FX.wav</ShortName>
-					<Path>SFX\Slash_metal_FX_24B4364E.wem</Path>
+					<Path>SFX\Slash_metal_FX_7CFB7881.wem</Path>
 				</File>
 				<File Id="1031725299" Language="SFX">
 					<ShortName>Torch_Fx2.wav</ShortName>
-					<Path>SFX\Torch_Fx2_55E6AA05.wem</Path>
+					<Path>SFX\Torch_Fx2_3CEE9FD5.wem</Path>
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>

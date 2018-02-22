@@ -27,10 +27,14 @@ public class TestMovement : CulverinBehaviour
     int map_height = 0;
     public bool blocked_camera = false;
 
+    private CompAudio audio;
+
     //2D coordinates, y=z in 3D coordinates
 
     void Start()
     {
+
+        audio = GetComponent<CompAudio>();
         curr_dir = (Direction)start_direction;
         map_width = Map.GetWidthMap();
         map_height = Map.GetHeightMap();
@@ -145,18 +149,22 @@ public class TestMovement : CulverinBehaviour
 
             if (Input.GetKeyDown(KeyCode.A)) //Left
             {
+                audio.PlayEvent("Footsteps");
                 MoveLeft(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.D)) //Right
             {
+                audio.PlayEvent("Footsteps");
                 MoveRight(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.W)) //Up
             {
+                audio.PlayEvent("Footsteps");
                 MoveForward(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.S)) //Down
             {
+                audio.PlayEvent("Footsteps");
                 MoveBackward(out tile_mov_x, out tile_mov_y);
             }
 
