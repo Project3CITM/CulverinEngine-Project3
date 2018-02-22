@@ -77,6 +77,8 @@ public:
 	void Update(float dt);
 
 	void PlayAnimation(AnimationNode* node);
+	void PlayClip(const char* clip_name, bool blending = true);
+	void SetNode(const char* node_name);
 
 	// EDITOR METHODS ---------
 	void ShowOptions();
