@@ -147,21 +147,46 @@ bool ModulePhysics::SetEventListenrs()
 
 void ModulePhysics::OnEvent(Event & event)
 {
-	if (event.type == EventType::EVENT_TRIGGER_COLLISION)
+	switch (event.type)
 	{
+	case EventType::EVENT_TRIGGER_COLLISION:
 		switch (event.physics_collision.collision_type)
 		{
 		case JP_COLLISION_TYPE::TRIGGER_ENTER:
-		{
+			{
 			static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerEnter(event.physics_collision.actor);
 			break;
-		}
+			}
 		case JP_COLLISION_TYPE::TRIGGER_LOST:
-		{
+			{
 			static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerLost(event.physics_collision.actor);
 			break;
+			}
 		}
+		break;
+	case EventType::EVENT_TIME_MANAGER:
+		switch (event.time.time)
+		{
+		case event.time.TIME_PLAY:
+
+			for (std::map<physx::PxRigidActor*, Component*>::const_iterator item = colliders.cbegin(); item != colliders.cend(); item++)
+			{
+				if (item->second->GetType() != Comp_Type::C_RIGIDBODY)
+				{
+					continue;
+				}
+				((physx::PxRigidBody*)item->first)->setLinearVelocity(physx::PxVec3(0, 0, 0));
+				((physx::PxRigidBody*)item->first)->setAngularVelocity(physx::PxVec3(0, 0, 0));
+
+			}
+
+			break;
+		default:
+			break;
 		}
+		break;
+	default:
+		break;
 	}
 }
 
