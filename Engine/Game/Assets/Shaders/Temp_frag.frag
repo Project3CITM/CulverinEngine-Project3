@@ -36,7 +36,7 @@ uniform float a_Ks;
 uniform float a_shininess;
 
 
-vec2 blinnPhongDir(Light light, float lightInt, float Ka, float Kd, float Ks, float shininess)
+vec3 blinnPhongDir(Light light, float lightInt, float Ka, float Kd, float Ks, float shininess)
 {
 
 
@@ -60,7 +60,7 @@ float diffuse = Ka+ Kd * lightInt *  max( dot(normal ,s),0);
 float spec = 0;
 
 spec = Ks* pow(max(0, dot(surfaceToCamera,reflect(-s,normal))), shininess);
-return vec2(diffuse, spec);
+return vec3(diffuse, spec,1);
 
 }
 
@@ -78,7 +78,7 @@ float spec = 0;
 if (diffuse >0)
  spec = attenuation * Ks *lightInt* pow(max(0, dot(surfaceToCamera, reflect(-s, normal))), shininess);
  
-return vec2(diffuse,spec);
+return vec3(diffuse,spec,attenuation);
 
 
 }
@@ -102,12 +102,22 @@ vec3 occlusion_texture = texture(occlusion_map,TexCoord).xyz;
 vec3 normal =normalize(ourNormal);// + normal_map.x * vec3(1,0,0) + normal_map.y* vec3(0,1,0); 
 vec3 specularReflection;
 
-vec2 inten = vec2(0);
+vec3 inten = vec3(0);
+vec3 inten_final = vec3(0);
+vec3 tot_light_ilu_color = vec3(0);
+vec4 light_colors[MAX_LIGHTS];
 for(int i = 0; i <_numLights; ++i){
-inten += blinnPhongDir(_lights[i], a_LightInt, a_Ka, a_Kd, a_Ks, a_shininess);
+inten = blinnPhongDir(_lights[i], a_LightInt, a_Ka, a_Kd, a_Ks, a_shininess);
+inten_final.xy += inten.xy;
+light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);
 }
 
+vec3 final_color = vec3(0);
+for(int i =0; i<_numLights;++i){
+ final_color += vec3(light_colors[i]) * light_colors[i].a;
+}
+final_color= normalize(final_color);
 
-color =vec4(color_texture * ( inten.x + inten.y)*occlusion_texture , 1);
+color =vec4(color_texture * ( inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb , 1);
 
 }
