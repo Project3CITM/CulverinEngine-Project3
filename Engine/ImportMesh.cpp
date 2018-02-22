@@ -532,6 +532,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 
 	//Skeleton
 	uint num_bones;
+	std::vector<std::vector<std::pair<uint, float>>> vertex_weights;
 	//--
 
 	// Loading File
@@ -617,7 +618,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 			memcpy(num_weights, cursor, bytes);
 
 			//Weights per vertex
-			skeleton_source->vertex_weights.resize(num_vertices);
+			vertex_weights.resize(num_vertices);
 			for (int i = 0; i < num_vertices; i++)
 			{
 				cursor += bytes;
@@ -625,10 +626,10 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 				uint size;
 				memcpy(&size, cursor, bytes);
 
-				skeleton_source->vertex_weights[i].resize(size);
+				vertex_weights[i].resize(size);
 				cursor += bytes;
 				bytes = sizeof(std::pair<uint, float>) * size;
-				memcpy(skeleton_source->vertex_weights[i].data(), cursor, bytes);
+				memcpy(vertex_weights[i].data(), cursor, bytes);
 			}
 
 			//Bone weights
@@ -678,7 +679,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 
 		resourceMesh->InitRanges(num_vertices, num_indices, num_normals);
 		resourceMesh->Init(vertices, indices, vert_normals, tex_coords);
-		resourceMesh->LoadToMemory();
+		resourceMesh->LoadToMemory( &vertex_weights);
 		RELEASE_ARRAY(vertices);
 		RELEASE_ARRAY(indices);
 		RELEASE_ARRAY(vert_normals);

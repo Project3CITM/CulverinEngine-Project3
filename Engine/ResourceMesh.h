@@ -40,7 +40,6 @@ struct SkeletonSource
 	ImportBone* bones = nullptr;
 	char* bone_hirarchy_names = nullptr;
 	uint* bone_hirarchy_num_childs = nullptr;
-	std::vector<std::vector<std::pair<uint, float>>> vertex_weights;
 
 	~SkeletonSource()
 	{
@@ -62,7 +61,7 @@ public:
 	void InitInfo(const char* name, const char* path);
 
 	void DeleteToMemory();
-	bool LoadToMemory();
+	bool LoadToMemory(const std::vector<std::vector<std::pair<uint, float>>>* array_ptr = nullptr);
 	Resource::State IsLoadedToMemory();
 
 	bool HasSkeleton() const;

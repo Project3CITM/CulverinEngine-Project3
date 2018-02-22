@@ -91,9 +91,11 @@ void ResourceMesh::DeleteToMemory()
 	LOG("UnLoaded Resource Mesh");
 }
 
-bool ResourceMesh::LoadToMemory()
+bool ResourceMesh::LoadToMemory( const std::vector<std::vector<std::pair<uint, float>>>* array_ptr)
 {
 	LOG("Resources: %s, Loaded in Memory!", this->name);
+
+	const std::vector<std::vector<std::pair<uint, float>>>& vertex_weights = *array_ptr;
 
 	//----------Starting to change to one buffer
 
@@ -117,10 +119,11 @@ bool ResourceMesh::LoadToMemory()
 	if (skeleton != nullptr)
 	{
 		vertex_size_in_buffer += 4;// 4 weights
-		bone_ids_size = 4 * sizeof(int);
+		bone_ids_size = 4 * sizeof(int) * num_vertices;
 	}
 
-	total_buffer_mesh = new char[vertex_size_in_buffer * num_vertices * sizeof(float) + bone_ids_size];
+	uint total_byte_size = vertex_size_in_buffer * num_vertices * sizeof(float) + bone_ids_size;
+	total_buffer_mesh = new char[total_byte_size];
 	char* cursor = total_buffer_mesh;
 
 	for (int i = 0; i < num_vertices; i++)
@@ -142,33 +145,35 @@ bool ResourceMesh::LoadToMemory()
 
 		if (skeleton != nullptr)
 		{
-			for (std::vector<std::pair<uint, float>>::iterator it = skeleton->vertex_weights[i].begin(); it != skeleton->vertex_weights[i].end(); ++it)
+			//weights
+			for (std::vector<std::pair<uint, float>>::const_iterator it = vertex_weights[i].begin(); it != vertex_weights[i].end(); ++it)
 			{
 				memcpy(cursor, &it->second, sizeof(float));
 				cursor += sizeof(float);
 			}
 
-			if (skeleton->vertex_weights[i].size() < 4)
+			if (vertex_weights[i].size() < 4)
 			{
 				float zero = 0.0f;
-				for (int j = 0; j < 4 - skeleton->vertex_weights[i].size(); j++)
+				for (int j = 0; j < 4 - vertex_weights[i].size(); j++)
 				{
 					memcpy(cursor, &zero, sizeof(float));
 					cursor += sizeof(float);
 				}
 			}
 
-			for (std::vector<std::pair<uint, float>>::iterator it = skeleton->vertex_weights[i].begin(); it != skeleton->vertex_weights[i].end(); ++it)
+			//bone IDs
+			for (std::vector<std::pair<uint, float>>::const_iterator it = vertex_weights[i].begin(); it != vertex_weights[i].end(); ++it)
 			{
 				int tmp = it->first;
 				memcpy(cursor, &tmp, sizeof(int));
 				cursor += sizeof(int);
 			}
 
-			if (skeleton->vertex_weights[i].size() < 4)
+			if (vertex_weights[i].size() < 4)
 			{
 				int tmp = -1;
-				for (int j = 0; j < 4 - skeleton->vertex_weights[i].size(); j++)
+				for (int j = 0; j < 4 - vertex_weights[i].size(); j++)
 				{
 					memcpy(cursor, &tmp, sizeof(int));
 					cursor += sizeof(int);
@@ -179,7 +184,7 @@ bool ResourceMesh::LoadToMemory()
 
 	glGenBuffers(1, &id_total_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, id_total_buffer);
-	glBufferData(GL_ARRAY_BUFFER, vertex_size_in_buffer * num_vertices * sizeof(float), &total_buffer_mesh[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, total_byte_size, &total_buffer_mesh[0], GL_STATIC_DRAW);
 
 	delete[] total_buffer_mesh;	
 
