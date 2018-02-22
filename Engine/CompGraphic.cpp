@@ -41,6 +41,7 @@ void CompGraphic::AddCanvas()
 			current->RemoveGraphic(this);
 		}
 		my_canvas->AddGraphic(this);
+	//	if(graphic)
 	}
 }
 

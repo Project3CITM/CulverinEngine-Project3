@@ -49,6 +49,9 @@ bool ModuleRenderGui::Start()
 update_status ModuleRenderGui::PreUpdate(float dt)
 {
 	perf_timer.Start();
+
+
+
 	if (last_size_dock.x != GetSizeDock("Scene").x || last_size_dock.y != GetSizeDock("Scene").y)
 	{
 		App->scene->scene_buff->WantRefreshRatio();
@@ -209,9 +212,10 @@ void ModuleRenderGui::WorldSpaceDraw()
 
 void ModuleRenderGui::ScreenSpaceDraw()
 {
+	ImGuiIO& io = ImGui::GetIO();
 
-	int total_width = (int)(window_width * window_scale);
-	int total_height = (int)(window_height * window_scale);
+	int total_width = (int)(io.DisplaySize.x * window_scale);
+	int total_height = (int)(io.DisplaySize.y * window_scale);
 	if (total_width == 0 || total_height == 0)
 		return;
 
@@ -237,7 +241,6 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	glEnable(GL_TEXTURE_2D);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	ImGuiIO& io = ImGui::GetIO();
 
 	glViewport(0, 0, (GLsizei)total_width, (GLsizei)total_height);
 

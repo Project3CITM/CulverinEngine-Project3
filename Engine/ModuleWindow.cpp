@@ -351,8 +351,13 @@ void ModuleWindow::SetWindowRes(int i)
 		break;
 	}
 	}
-
 	SDL_SetWindowSize(window, width, height);
+}
+
+void ModuleWindow::SetWindowSize(int set_width, int set_height)
+{
+	width = set_width* SCREEN_SIZE;
+	height = set_height* SCREEN_SIZE;
 }
 
 uint ModuleWindow::GetScale() const

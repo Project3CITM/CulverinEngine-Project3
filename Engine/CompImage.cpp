@@ -358,7 +358,7 @@ void CompImage::UpdateSpriteId()
 		if (source_image == nullptr)
 		{
 			// return default texture;
-			SetTextureID(0);
+			SetTextureID(my_canvas->GetDefaultTexture());
 			return;
 		}
 		SetTextureID(source_image->GetTextureID());
