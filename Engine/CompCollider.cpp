@@ -23,14 +23,12 @@ CompCollider::CompCollider(Comp_Type t, GameObject * parent) : Component(t, pare
 		rigid_body_comp = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
 		if (rigid_body_comp != nullptr)
 		{
-			LOG("Collider using the RigidBody comp...");
 			rigid_body_comp->SetColliderComp(this);
 			body = rigid_body_comp->GetPhysicsBody();
 			body->SetGeometry(size, rad, curr_type);
 		}
 		else
 		{
-			LOG("Creating a new physics body for the collider...");
 			body = App->physics->GetNewRigidBody(this);
 		}
 		transform = parent->GetComponentTransform();
@@ -64,14 +62,12 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 		rigid_body_comp = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
 		if (rigid_body_comp != nullptr)
 		{
-			LOG("Collider using the RigidBody comp...");
 			rigid_body_comp->SetColliderComp(this);
 			body = rigid_body_comp->GetPhysicsBody();
 			body->SetGeometry(size, rad, curr_type);
 		}
 		else
 		{
-			LOG("Creating a new physics bbody for the collider...");
 			body = App->physics->GetNewRigidBody(this);
 		}
 		transform = parent->GetComponentTransform();
@@ -88,9 +84,10 @@ CompCollider::~CompCollider()
 
 void CompCollider::Update(float dt)
 {
-	if (transform->GetUpdated() && rigid_body_comp == nullptr)
+	if (transform->GetUpdated() && rigid_body_comp == nullptr && App->engine_state != EngineState::PLAY)
 	{
 		SetColliderPosition();
+		App->physics->DebugDrawUpdate();
 	}
 }
 
@@ -102,11 +99,9 @@ void CompCollider::Clear()
 		rigid_body_comp->SetColliderComp(nullptr);
 		rigid_body_comp = nullptr;
 		body = nullptr;
-		LOG("Deleted collider, physics body deletion passed to RigidBody");
 	}
 	else if (body != nullptr)
 	{
-		LOG("Comp collider didn't find RigidBody comp, releasing physics body...");
 		App->physics->DeleteCollider(this, body);
 		body = nullptr;
 	}
@@ -357,7 +352,7 @@ void CompCollider::SyncComponent()
 		std::vector<Component*> script_vec;
 		App->scene->root->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec, true);
 
-		for (int i = 0; i < script_vec.size(); i++)
+		for (uint i = 0; i < script_vec.size(); i++)
 		{
 			if (script_vec[i]->GetUUID() == uid_script_asigned)
 			{
@@ -479,7 +474,6 @@ jpPhysicsRigidBody* CompCollider::GivePhysicsBody(CompRigidBody* new_rigid_body)
 {
 	if (new_rigid_body)
 	{
-		LOG("Collider physics body is being given to RigidBody...");
 		if (trigger)
 		{
 			trigger = false;

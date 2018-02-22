@@ -21,13 +21,11 @@ CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, pa
 		collider_comp = (CompCollider*)parent->FindComponentByType(Comp_Type::C_COLLIDER);
 		if (collider_comp != nullptr)
 		{
-			LOG("Getting the physics body from the Collider");
 			body = collider_comp->GivePhysicsBody(this);
 			App->physics->ChangeRigidActorToDynamic(body, this);
 		}
 		else
 		{
-			LOG("Creating a new physics body for the RigidBody...");
 			body = App->physics->GetNewRigidBody(this, true);
 			SetColliderPosition();
 		}
@@ -45,13 +43,11 @@ CompRigidBody::CompRigidBody(const CompRigidBody & copy, GameObject * parent) : 
 		collider_comp = (CompCollider*)parent->FindComponentByType(Comp_Type::C_COLLIDER);
 		if (collider_comp != nullptr)
 		{
-			LOG("Getting the physics body from the Collider");
 			body = collider_comp->GivePhysicsBody(this);
 			App->physics->ChangeRigidActorToDynamic(body, this);
 		}
 		else
 		{
-			LOG("Creating a new physics body for the RigidBody...");
 			body = App->physics->GetNewRigidBody(this, true);
 		}
 	}
@@ -78,6 +74,10 @@ void CompRigidBody::Update(float dt)
 	if (transform->GetUpdated() && !own_update)
 	{
 		SetColliderPosition();
+		if (App->engine_state != EngineState::PLAY)
+		{
+			App->physics->DebugDrawUpdate();
+		}
 	}
 	else
 	{
@@ -93,11 +93,9 @@ void CompRigidBody::Clear()
 		collider_comp->SetRigidBodyComp(nullptr);
 		collider_comp = nullptr;
 		body = nullptr;
-		LOG("RigidBody deleted, physics body deletion passed to collider...");
 	}
 	else if(body != nullptr)
 	{
-		LOG("Deleted physics body form RigidBody comp...");
 		App->physics->DeleteCollider(this, body);
 		body = nullptr;
 	}

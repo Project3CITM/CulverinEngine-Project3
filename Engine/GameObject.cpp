@@ -47,6 +47,8 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 		// Push this game object into the childs list of its parent
 		parent->childs.push_back(this);
 	}
+
+	box_fixed.SetNegativeInfinity();
 }
 
 GameObject::GameObject(char* nameGameObject)
@@ -55,6 +57,7 @@ GameObject::GameObject(char* nameGameObject)
 	SetVisible(true);
 	uid = App->random->Int();
 	name = nameGameObject;
+	box_fixed.SetNegativeInfinity();
 }
 
 GameObject::GameObject(char* nameGameObject, uint uuid)
@@ -63,6 +66,7 @@ GameObject::GameObject(char* nameGameObject, uint uuid)
 	SetVisible(true);
 	uid = uuid;
 	name = nameGameObject;
+	box_fixed.SetNegativeInfinity();
 }
 
 GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* parent_)
@@ -99,6 +103,7 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 		childs.push_back(new GameObject(*copy.GetChildbyIndex(i), haveparent, parent_));
 		childs[i]->parent = this;
 	}
+	box_fixed.SetNegativeInfinity();
 }
 
 GameObject::~GameObject()
