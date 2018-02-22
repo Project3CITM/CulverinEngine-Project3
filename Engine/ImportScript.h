@@ -70,6 +70,8 @@ private:
 	static MonoObject*	GetMousePosition();
 	static int			GetMouseXAxis();
 	static int			GetMouseYAxis();
+	static int			GetMouseMoutionX();
+	static int			GetMouseMoutionY();
 
 	/* Time */
 	static float GetDeltaTime();

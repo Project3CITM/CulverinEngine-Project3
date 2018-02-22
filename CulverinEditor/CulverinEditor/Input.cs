@@ -35,5 +35,12 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern int GetMouseYAxis();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern int GetMouseMoutionX();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern int GetMouseMoutionY();
+
     }
 }

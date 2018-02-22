@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "ModuleFS.h"
 #include "CompTransform.h"
+#include "ModuleTextures.h"
 #include "CompMesh.h"
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
@@ -45,6 +46,11 @@ bool ModuleMap::Start()
 {
 	map_string = "Hola Joan";
 	imported_map.clear();
+	icon_arrow_north = App->textures->LoadTexture("Images/UI/Arrow_north.png");
+	icon_arrow_east = App->textures->LoadTexture("Images/UI/Arrow_east.png");
+	icon_arrow_south = App->textures->LoadTexture("Images/UI/Arrow_south.png");
+	icon_arrow_west = App->textures->LoadTexture("Images/UI/Arrow_west.png");
+	icon_circle = App->textures->LoadTexture("Images/UI/Circle.png");
 	return true;
 }
 
@@ -733,6 +739,182 @@ void ModuleMap::ShowCreationMap()
 	//}
 }
 
+void ModuleMap::ShowNavigationMap()
+{
+	// General BeginCombo() API, you have full control over your selection data and display type
+	static std::string type_Name[] = { "North", "East", "South", "West" };
+	static int paint = 0;
+	static const char* current_item_2 = "North";
+	ImGui::PushItemWidth(150);
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Select Direction (Mode)"); ImGui::SameLine();
+	ShowTextWithColor(ImGuiCol_Text, paint);
+	bool do_pop = false;
+	if (paint > -1)
+		do_pop = true;
+	if (ImGui::BeginCombo("##TypeWalkable", current_item_2))
+	{
+		for (int n = 0; n < IM_ARRAYSIZE(type_Name); n++)
+		{
+			ShowTextWithColor(ImGuiCol_Text, n);
+			if (ImGui::Selectable(type_Name[n].c_str()))
+			{
+				paint = n;
+				current_item_2 = type_Name[n].c_str();
+				ImGui::SetItemDefaultFocus();
+			}
+			ImGui::PopStyleColor();
+		}
+		ImGui::EndCombo();
+	}
+	if (paint > -1 && do_pop)
+		ImGui::PopStyleColor();
+
+	if (show_editable_style)
+	{
+		ShowEditableStyle();
+	}
+
+	ImGui::PushItemWidth(10);
+	//Frist Select Type
+	ImGui::Separator();
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(frame_padding_x, frame_padding_y));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(item_spacing_x, item_spacing_y));
+	for (int y = 0; y < height_map; y++)
+	{
+
+		for (int x = 0; x < width_map; x++)
+		{
+			if (x > 0) ImGui::SameLine();
+			ImGui::PushID(x + y * 1000);
+
+
+			if (map[x][y] > -1)
+			{
+				ImTextureID id_direction = 0;
+				if (map[x][y] == 0)
+				{
+					id_direction = (ImTextureID*)icon_arrow_north;
+				}
+				else if (map[x][y] == 1)
+				{
+					id_direction = (ImTextureID*)icon_arrow_east;
+				}
+				else if (map[x][y] == 2)
+				{
+					id_direction = (ImTextureID*)icon_arrow_south;
+				}
+				else if (map[x][y] == 3)
+				{
+					id_direction = (ImTextureID*)icon_arrow_west;
+				}
+				else
+					id_direction = (ImTextureID*)icon_circle;
+				if (ImGui::ImageButton(id_direction, ImVec2(11, 15), ImVec2(-1, 1), ImVec2(0, 0)))
+				{
+					map[x][y] = paint;
+				}
+			}
+			else
+			{
+				if (ImGui::Button("ID"))
+				{
+					map[x][y] = paint;
+				}
+			}
+
+
+			ImGui::PopID();
+		}
+	}
+	ImGui::PopStyleVar(2);
+	ImGui::Separator();
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
+	if (ImGui::Button("Save Map"))
+	{
+		map_string = "";
+		for (int y = 0; y < height_map; y++)
+		{
+			for (int x = 0; x < width_map; x++)
+			{
+				if (map[x][y] > 2)
+				{
+					map[x][y] = 1;
+				}
+				map_string += std::to_string(map[x][y]);
+			}
+		}
+	}
+	ImGui::SameLine();
+	ImGui::Text("Save your map and can use for test, don't forget export the map!");
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
+	if (ImGui::Button("Load Map"))
+	{
+		imported_map = App->fs->GetMainDirectory();
+		imported_map += "/Maps/";
+		imported_map += name_map;
+		imported_map += ".mapwalk.json";
+		ImportMap();
+		map_created = true;
+	}
+	ImGui::SameLine();
+	ImGui::Text("Load the map with the actual name use for map!");
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
+	if (ImGui::Button("Export Map"))
+	{
+		// First complet map to export
+		CompletNoWalk();
+		vector_map.clear();
+		for (int y = 0; y < height_map; y++)
+		{
+			std::string line = "";
+			for (int x = 0; x < width_map; x++)
+			{
+				if (map[x][y] > 2)
+				{
+					map[x][y] = 1;
+				}
+				line += std::to_string(map[x][y]);
+			}
+			vector_map.push_back(line);
+		}
+		App->json_seria->SaveMapWalkable(vector_map, height_map, width_map, size_separation, name_map.c_str());
+	}
+	ImGui::SameLine();
+	ImGui::Text("Export Map with -> ('Name Map'.mapwalk.json) it saved in Assets/Maps/...");
+	ImGui::AlignTextToFramePadding();
+	ImGui::Bullet();
+	if (ImGui::Button("Create Level Map"))
+	{
+		//map_string = "";
+		for (int y = 0; y < height_map; y++)
+		{
+			for (int x = 0; x < width_map; x++)
+			{
+				if (map[x][y] > -1)
+				{
+					if (map[x][y] == 0)
+					{
+						GameObject* obj = App->scene->CreateCube();
+						CompTransform* transform = obj->GetComponentTransform();
+						math::float3 pos = transform->GetPos();
+						pos.x += x * 2; pos.z += y * 2;
+						transform->SetPos(pos);
+						//App->scene->root->AddChildGameObject(obj);
+					}
+				}
+			}
+		}
+		// ...........
+	}
+	ImGui::SameLine();
+	ImGui::Text("Test...");
+
+}
+
 void ModuleMap::GetSizePrefab(GameObject* obj, float& min_size, float& max_size)
 {
 	if (obj->GetComponentMesh() != nullptr)
@@ -750,10 +932,6 @@ void ModuleMap::GetSizePrefab(GameObject* obj, float& min_size, float& max_size)
 	{
 		GetSizePrefab(obj->GetChildbyIndex(i), min_size, max_size);
 	}
-}
-
-void ModuleMap::ShowNavigationMap()
-{
 }
 
 

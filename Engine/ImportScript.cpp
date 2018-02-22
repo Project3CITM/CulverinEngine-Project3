@@ -673,6 +673,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::GetMousePosition", (const void*)GetMousePosition);
 	mono_add_internal_call("CulverinEditor.Input::GetMouseXAxis", (const void*)GetMouseXAxis);
 	mono_add_internal_call("CulverinEditor.Input::GetMouseYAxis", (const void*)GetMouseYAxis);
+	mono_add_internal_call("CulverinEditor.Input::GetMouseMoutionX", (const void*)GetMouseMoutionX);
+	mono_add_internal_call("CulverinEditor.Input::GetMouseMoutionY", (const void*)GetMouseMoutionY);
 
 	//TIME FUNCTIONS -------------------
 	mono_add_internal_call("CulverinEditor.Time::DeltaTime", (const void*)GetDeltaTime);
@@ -798,6 +800,16 @@ int ImportScript::GetMouseXAxis()
 int ImportScript::GetMouseYAxis()
 {
 	return App->input->GetMouseYMotionNormalized();
+}
+
+int ImportScript::GetMouseMoutionX()
+{
+	return App->input->GetMouseXMotionGlobal();
+}
+
+int ImportScript::GetMouseMoutionY()
+{
+	return App->input->GetMouseYMotionGlobal();
 }
 
 float ImportScript::GetDeltaTime()

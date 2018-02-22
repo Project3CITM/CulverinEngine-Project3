@@ -71,6 +71,12 @@ private:
 	bool show_numeration = false;
 	bool show_editable_style = false;
 
+	uint icon_arrow_north = 0;
+	uint icon_arrow_east = 0;
+	uint icon_arrow_south = 0;
+	uint icon_arrow_west = 0;
+	uint icon_circle = 0;
+
 	int frame_padding_x = 4;
 	int frame_padding_y = 3;
 
