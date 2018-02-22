@@ -430,17 +430,17 @@ void CompMaterial::ShowTextureVariable(int index, TextureVar* texture)
 {
 	ImGui::PushID(index);
 
-	TextureVar* texture_var = texture;
+	
 	static bool open = false;
 	/* Name of the material */
 	ImGui::Text("Name:"); ImGui::SameLine();
-	ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", texture_var->var_name.c_str());
+	ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", texture->var_name.c_str());
 
 	if (texture->value != nullptr)
 	{
 		/* Image of the texture */
-		if (ImGui::ImageButton((ImTextureID*)texture_var->value->GetTextureID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0))) {
-			open = true;
+		if (ImGui::ImageButton((ImTextureID*)texture->value->GetTextureID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0))) {
+			texture->selected = true;
 
 		}
 	}
@@ -449,26 +449,26 @@ void CompMaterial::ShowTextureVariable(int index, TextureVar* texture)
 
 		if (ImGui::Button("Select Material..."))
 		{
-			open = true;
+			texture->selected = true;
 		}
 	}
-	if (open)
+	if (texture->selected)
 	{
-		ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(open, Resource::Type::MATERIAL);
+		ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(texture->selected, Resource::Type::MATERIAL);
 		if (temp != nullptr)
 		{
-			if (texture_var->value != nullptr)
+			if (texture->value != nullptr)
 			{
-				if (texture_var->value->num_game_objects_use_me > 0)
+				if (texture->value->num_game_objects_use_me > 0)
 				{
-					texture_var->value->num_game_objects_use_me--;
+					texture->value->num_game_objects_use_me--;
 				}
 			}
-			texture_var->value = temp;
-			texture_var->value->num_game_objects_use_me++;
-			if (texture_var->value->IsLoadedToMemory() == Resource::State::UNLOADED)
+			texture->value = temp;
+			texture->value->num_game_objects_use_me++;
+			if (texture->value->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
-				App->importer->iMaterial->LoadResource(std::to_string(texture_var->value->GetUUID()).c_str(), texture_var->value);
+				App->importer->iMaterial->LoadResource(std::to_string(texture->value->GetUUID()).c_str(), texture->value);
 			}
 			Enable();
 		}

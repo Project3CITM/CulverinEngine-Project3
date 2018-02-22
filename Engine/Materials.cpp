@@ -197,7 +197,7 @@ void Material::GetProgramVariables()
 		if (temp.type == GL_SAMPLER_2D)
 		{
 			TextureVar texture_var;
-			texture_var.var_name = temp.name;
+			texture_var.var_name = temp.name;		
 			textures.push_back(texture_var);
 		}
 
@@ -250,7 +250,9 @@ void Material::GetProgramVariables()
 		{
 			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
 				(*item2).value = (*item).value;
+				(*item2).selected = (*item).selected;
 			}
+			
 		}
 	}
 	for (auto item = temp_float.begin(); item != temp_float.end(); item++)
