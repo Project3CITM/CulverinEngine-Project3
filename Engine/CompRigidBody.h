@@ -36,6 +36,9 @@ public:
 	jpPhysicsRigidBody* GetPhysicsBody() const;
 	void UpdateParentPosition();
 
+	//PhysX Methods
+	void MoveKinematic(float3 pos, Quat rot);
+
 private:
 
 	jpPhysicsRigidBody* body = nullptr;

@@ -38,6 +38,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttackTarget.cs" />
     <Compile Include="AudioTest.cs" />
     <Compile Include="Code.cs" />
     <Compile Include="Codev1.cs" />

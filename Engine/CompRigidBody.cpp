@@ -251,3 +251,11 @@ void CompRigidBody::UpdateParentPosition()
 	transform->SetPos(fpos);
 	transform->SetRot(quat);
 }
+
+void CompRigidBody::MoveKinematic(float3 pos, Quat rot)
+{
+	if (body && this->kinematic)
+	{
+		body->MoveKinematic(pos, rot);
+	}
+}

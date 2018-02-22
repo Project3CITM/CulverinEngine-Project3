@@ -1162,6 +1162,20 @@ MonoObject * ImportScript::GetCollidedObject(MonoObject* object)
 	return current->GetCollidedObject(object);
 }
 
+MonoObject* ImportScript::GetColliderPosition(MonoObject* object)
+{
+	return current->GetColliderPosition(object);
+}
+
+MonoObject* ImportScript::GetColliderQuaternion(MonoObject* object)
+{
+	return current->GetColliderQuaternion(object);
+}
+
+void ImportScript::MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation)
+{
+	return current->MoveKinematic(object, position, rotation);
+}
 void ImportScript::PlayAnimation(MonoObject * object, MonoString * string, mono_bool blending)
 {
 	current->PlayAnimation(object, string, blending);

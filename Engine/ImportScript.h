@@ -170,6 +170,11 @@ private:
 	/*Component Collier*/
 	static MonoObject* GetCollidedObject(MonoObject * object);
 
+	/*Component RigidBody*/
+	static MonoObject* GetColliderPosition(MonoObject* object);
+	static MonoObject* GetColliderQuaternion(MonoObject* object);
+	static void		   MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation);
+
 	/*Component Animation*/
 	static void PlayAnimation(MonoObject* object, MonoString* string, mono_bool blending);
 	static void SetTransition(MonoObject* object, MonoString* string, mono_bool condition);

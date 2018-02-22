@@ -16,6 +16,7 @@
 #include "CompAnimation.h"
 #include "CompButton.h"
 #include "CompCollider.h"
+#include "CompRigidBody.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
 
@@ -1831,7 +1832,7 @@ MonoObject * CSharpScript::GetColliderPosition(MonoObject * object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				float3 pos = ((CompCollider*)current_game_object->GetComponentByName("CompCollider"))->GetGlobalPosition();
+				float3 pos = ((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->GetGlobalPosition();
 
 				if (x_field) mono_field_set_value(new_object, x_field, &pos.x);
 				if (y_field) mono_field_set_value(new_object, y_field, &pos.y);
@@ -1861,12 +1862,12 @@ MonoObject * CSharpScript::GetColliderQuaternion(MonoObject * object)
 				MonoClassField* w_field = mono_class_get_field_from_name(classT, "w");
 
 
-				Quat pos = Quat::identity;//((CompCollider*)current_game_object->GetComponentByName("CompCollider"))->GetGlobalPosition();
+				Quat rot = ((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->GetGlobalQuat();
 
-				if (x_field) mono_field_set_value(new_object, x_field, &pos.x);
-				if (y_field) mono_field_set_value(new_object, y_field, &pos.y);
-				if (z_field) mono_field_set_value(new_object, z_field, &pos.z);
-				if (w_field) mono_field_set_value(new_object, w_field, &pos.w);
+				if (x_field) mono_field_set_value(new_object, x_field, &rot.x);
+				if (y_field) mono_field_set_value(new_object, y_field, &rot.y);
+				if (z_field) mono_field_set_value(new_object, z_field, &rot.z);
+				if (w_field) mono_field_set_value(new_object, w_field, &rot.w);
 
 				return new_object;
 			}
@@ -1878,7 +1879,36 @@ MonoObject * CSharpScript::GetColliderQuaternion(MonoObject * object)
 
 void CSharpScript::MoveKinematic(MonoObject * object, MonoObject * position, MonoObject * rotation)
 {
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classP = mono_object_get_class(position);
+		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classP, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classP, "z");
+
+		float3 new_pos;
+
+		if (x_field) mono_field_get_value(position, x_field, &new_pos.x);
+		if (y_field) mono_field_get_value(position, y_field, &new_pos.y);
+		if (z_field) mono_field_get_value(position, z_field, &new_pos.z);
+
+		MonoClass* classR = mono_object_get_class(rotation);
+		x_field = mono_class_get_field_from_name(classR, "x");
+		y_field = mono_class_get_field_from_name(classR, "y");
+		z_field = mono_class_get_field_from_name(classR, "z");
+		MonoClassField* w_field = mono_class_get_field_from_name(classR, "w");
+
+		Quat new_rot;
+
+		if (x_field) mono_field_get_value(position, x_field, &new_rot.x);
+		if (y_field) mono_field_get_value(position, y_field, &new_rot.y);
+		if (z_field) mono_field_get_value(position, z_field, &new_rot.z);
+		if (w_field) mono_field_get_value(position, w_field, &new_rot.w);
+
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->MoveKinematic(new_pos, new_rot);
+	}
 }
+
 
 // Map ------------------------------------------------
 MonoString* CSharpScript::GetMapString(MonoObject* object)
