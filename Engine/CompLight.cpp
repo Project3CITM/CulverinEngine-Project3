@@ -24,10 +24,12 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 	
 	name_component = "Light component";
 
+
 	types_lights += "Point Light";
-	types_lights += '\0';	
+	types_lights += '\0';
 	types_lights += "Directional Light";
 	types_lights += '\0';
+
 
 	color_temp[0] = 1;
 	color_temp[1] = 1;
@@ -256,6 +258,7 @@ void CompLight::Save(JSON_Object * object, std::string name, bool saveScene, uin
 
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
+	App->fs->json_array_dotset_float4(object, name + "Color", color);
 
 	json_object_dotset_number_with_std(object, name + "Light Type", (int)type);
 	json_object_dotset_number_with_std(object, name + "Attenuation", attenuation);
@@ -267,10 +270,13 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 {
 
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
-	ui_light_type =json_object_dotget_number_with_std(object, name + "Attenuation");
+	ui_light_type =json_object_dotget_number_with_std(object, name + "Light Type");
 	type = (Light_type)ui_light_type;
 	ambientCoefficient = json_object_dotget_number_with_std(object, name + "Ambient Coefficient");
 	attenuation = json_object_dotget_number_with_std(object, name + "Attenuation");
+	color=App->fs->json_array_dotget_float4_string(object, name + "Color");
+	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
+
 }
 
 void CompLight::UpdateFrustum()
