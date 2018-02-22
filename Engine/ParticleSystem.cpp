@@ -800,12 +800,12 @@ void ParticleSystem::GetEmitter(ParticleEmitter & emitter) const
 	emitter = Emitter;
 }
 
-const ParticleState * ParticleSystem::GetInitialState() const
+ParticleState * ParticleSystem::GetInitialState()
 {
 	return &InitialState;
 }
 
-const ParticleState * ParticleSystem::GetFinalState() const
+ParticleState * ParticleSystem::GetFinalState()
 {
 	return &FinalState;
 }

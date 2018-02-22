@@ -11,7 +11,8 @@ struct Texture
 	std::string name_ext;
 	//std::string path;
 	std::string name;
-
+	uint w = 0;
+	uint h = 0;
 };
 
 class ResourceMaterial : public Resource
@@ -28,6 +29,9 @@ public:
 	uint GetTextureID();
 	Resource::State IsLoadedToMemory();
 	const char* GetTextureName();
+	uint GetTextureWidth() const ;
+	uint GetTextureHeight() const;
+
 
 private:
 	Texture texture;

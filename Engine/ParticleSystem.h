@@ -293,8 +293,8 @@ public:
 	void GetInitialState(ParticleState& state) const;			//Get Particle Initial State if you want to save it as a resource
 	void GetFinalState(ParticleState& state) const;				//Get Particle Final State if you want to save it as a resource
 	void GetEmitter(ParticleEmitter& emitter) const;			//Get Particle Emitter if you want to save it as a resource
-	const ParticleState* GetInitialState() const;				//Get Particle Initial State if you want to save it as a resource
-	const ParticleState* GetFinalState() const;					//Get Particle Final State if you want to save it as a resource
+	ParticleState* GetInitialState() ;				//Get Particle Initial State if you want to save it as a resource
+	ParticleState* GetFinalState() ;					//Get Particle Final State if you want to save it as a resource
 	const ParticleEmitter* GetEmitter() const;					//Get Particle Emitter if you want to save it as a resource
 
 	void SetEmitterTransform(const float4x4& transform);		//Set emitter transformation
