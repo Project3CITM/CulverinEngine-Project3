@@ -97,7 +97,7 @@ bool ResourceMesh::LoadToMemory()
 
 	//----------Starting to change to one buffer
 
-	char* total_buffer_mesh = nullptr;
+	float* total_buffer_mesh = nullptr;
 
 	int vertex_size_in_buffer = 0;
 
@@ -115,24 +115,24 @@ bool ResourceMesh::LoadToMemory()
 	if (skeleton != nullptr)
 		vertex_size_in_buffer += 4;// 4 weights
 
-	total_buffer_mesh = new char[vertex_size_in_buffer * num_vertices * sizeof(float)];
-	char* cursor = total_buffer_mesh;
+	total_buffer_mesh = new float[vertex_size_in_buffer * num_vertices];
+	float* cursor = total_buffer_mesh;
 
 	for (int i = 0; i < num_vertices; i++)
 	{
 		if (vertices.size() > 0)
 		{
 			memcpy(cursor, &vertices[i].pos, 3 * sizeof(float));
-			cursor += 3 * sizeof(float);
+			cursor += 3;
 
 			memcpy(cursor, &vertices[i].texCoords, 2 * sizeof(float));
-			cursor += 2 * sizeof(float);
+			cursor += 2;
 		}
 
 		if (vertices_normals.size() > 0)
 		{
 			memcpy(cursor, &vertices[i].norm, 3 * sizeof(float));
-			cursor += 3 * sizeof(float);
+			cursor += 3;
 		}
 
 		if (skeleton != nullptr)
@@ -140,7 +140,7 @@ bool ResourceMesh::LoadToMemory()
 			for (std::vector<std::pair<uint, float>>::iterator it = skeleton->vertex_weights[i].begin(); it != skeleton->vertex_weights[i].end(); ++it)
 			{
 				memcpy(cursor, &it->second, sizeof(float));
-				cursor += sizeof(float);
+				cursor++;
 			}
 
 			if (skeleton->vertex_weights[i].size() < 4)
@@ -149,7 +149,7 @@ bool ResourceMesh::LoadToMemory()
 				for (int j = 0; j < 4 - skeleton->vertex_weights[i].size(); j++)
 				{
 					memcpy(cursor, &zero, sizeof(float));
-					cursor += sizeof(float);
+					cursor++;
 				}
 			}
 		}

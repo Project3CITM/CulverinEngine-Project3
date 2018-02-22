@@ -291,12 +291,12 @@ void CompMesh::Draw()
 				CompMaterial* temp = parent->GetComponentMaterial();
 				if (temp != nullptr) 
 				{
-					for (int i = 0; i < temp->material->textures.size(); i++)
+					for ( i = 0; i < temp->material->textures.size(); i++)
 					{
 						uint texLoc = glGetUniformLocation(temp->material->GetProgramID(), temp->material->textures[i].var_name.c_str());
 						glUniform1i(texLoc, i);
 
-						glActiveTexture(GL_TEXTURE0 +i);
+						glActiveTexture(GL_TEXTURE0 + i);
 					
 						if (temp->material->textures[i].value == nullptr)
 						{
@@ -379,10 +379,10 @@ void CompMesh::Draw()
 
 			if (material->name == "Shadow_World_Render")
 			{
-				glActiveTexture(GL_TEXTURE0 + i +1);
+				glActiveTexture(GL_TEXTURE0 + (++i));
 				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
 				glUniform1i(material->GetProgramID(), App->module_lightning->test_fix.depthTex);
-				glUniform1i(ShadowMapID, i+1);
+				glUniform1i(ShadowMapID, i);
 			}
 
 			int total_save_buffer = 8;
@@ -391,14 +391,17 @@ void CompMesh::Draw()
 			{
 				total_save_buffer += 4; // 4 weights
 
+				GLuint skinning_texture_id = glGetUniformLocation(material->GetProgramID(), "_skinning_text");
+				GLuint num_pixels = glGetUniformLocation(material->GetProgramID(), "_num_pixels");
+
 				//Gen text
 				skeleton->GenSkinningTexture(parent);
 
-				glBindTexture(GL_TEXTURE_2D, skeleton->skinning_mats_id);
-
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, skeleton->skinning_mats_id);
-				glUniform1i(material->GetProgramID(), 0);
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_BUFFER, skeleton->skinning_mats_id);
+				glUniform1i(skinning_texture_id, i);
+				int tmp = resource_mesh->num_vertices * 4 * 4;
+				glUniform1i(num_pixels, tmp);
 			}
 
 			if (resource_mesh->vertices.size() > 0)
@@ -415,7 +418,7 @@ void CompMesh::Draw()
 				if (skeleton != nullptr)
 				{
 					glEnableVertexAttribArray(3);
-					glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (8 * sizeof(float)));
+					glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (8 * sizeof(float)));
 				}
 
 				glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
@@ -619,8 +622,7 @@ void CompMesh::GenSkeleton()
 	transform->SetRot(rot);
 	transform->SetScale(scale);
 
-	skeleton->skinning_mats = new GLfloat[resource_mesh->num_vertices * 4 * 3 * 4]; //every vertex will be influenced by 4 float3x4
-	glGenTextures(1, &skeleton->skinning_mats_id);
+	skeleton->skinning_mats = new GLfloat[resource_mesh->num_vertices * 4 * 4 * 4]; //every vertex will be influenced by 4 float4x4
 
 	skeleton->bones.reserve(source->num_bones);
 	skeleton->influences.resize(resource_mesh->num_vertices);
@@ -707,17 +709,38 @@ void Skeleton::GenSkinningTexture(const GameObject* mesh_go)
 			if (influences[i].size() > j)
 			{
 				GameObject* bone = influences[i][j];
-				float3x4 skinning_mat = bone->GetComponentBone()->GetSkinningMatrix();
-				memcpy(&skinning_mats[i * j * 3 * 4], &skinning_mat[0][0], sizeof(float) * 3 * 4);
+				float4x4 skinning_mat = bone->GetComponentBone()->GetSkinningMatrix();
+				uint pos_in_buffer = (i * 4 * 4 * 4) + (j * 4 * 4);
+
+				float4 col1 (skinning_mat.Col(0));
+				memcpy(&skinning_mats[pos_in_buffer], &col1.x, sizeof(float) * 4);
+				float4 col2(skinning_mat.Col(1));
+				memcpy(&skinning_mats[pos_in_buffer + 3], &col2.x, sizeof(float) * 4);
+				float4 col3(skinning_mat.Col(2));
+				memcpy(&skinning_mats[pos_in_buffer + 6], &col3.x, sizeof(float) * 4);
+				float4 col4(skinning_mat.Col(3));
+				memcpy(&skinning_mats[pos_in_buffer + 9], &col4.x, sizeof(float) * 4);
 			}
 		}
 	}
 
-	glBindTexture(GL_TEXTURE_2D, skinning_mats_id);
+	GLint size = influences.size() * 4 * 4;
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, influences.size(), 4 * 3, 0, GL_BGRA, GL_FLOAT, skinning_mats);
+	glDeleteBuffers(1, &buffer_id);
+	glGenBuffers(1, &buffer_id);
+
+	glBindBuffer(GL_TEXTURE_BUFFER, buffer_id);
+	glBufferData(GL_TEXTURE_BUFFER, size * sizeof(float), &skinning_mats[0], GL_DYNAMIC_READ);
+
+	glBindBuffer(GL_TEXTURE_BUFFER, 0);
+
+	glDeleteTextures(1, &skinning_mats_id);
+	glGenTextures(1, &skinning_mats_id);
+	glBindTexture(GL_TEXTURE_BUFFER, skinning_mats_id);
+
+	glTexBuffer(GL_TEXTURE_BUFFER, GL_R32F, buffer_id);
+
+	glBindTexture(GL_TEXTURE_BUFFER, 0);
 }
 
 void Skeleton::DebugDraw() const

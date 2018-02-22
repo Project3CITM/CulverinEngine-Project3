@@ -28,7 +28,7 @@ public:
 	// -------------------------------------
 
 	void GenSkinningMatrix(const GameObject* mesh_go);
-	const float3x4& GetSkinningMatrix();
+	const float4x4& GetSkinningMatrix();
 
 	uint uuid_resource_reimported = 0;
 
@@ -42,7 +42,7 @@ public:
 	};
 
 	float4x4 offset;
-	float3x4 skinning_matrix;
+	float4x4 skinning_matrix;
 	std::vector<Weight> weights;
 	ResourceMesh* resource_mesh = nullptr;
 };

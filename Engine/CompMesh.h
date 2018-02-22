@@ -34,6 +34,7 @@ struct Skeleton
 {
 	std::vector<GameObject*> bones;
 	std::vector<std::vector<GameObject*>> influences;
+	GLuint buffer_id;
 	GLuint skinning_mats_id;
 	GLfloat* skinning_mats = nullptr;
 
