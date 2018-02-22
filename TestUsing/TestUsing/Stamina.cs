@@ -24,7 +24,7 @@ public class Stamina : CulverinBehaviour
         {
             DecreaseStamina(stamina_cost);
         }
-      
+        stamina_bar.FillAmount(actual_stamina);
     }
 
     public void DecreaseStamina(float cost)

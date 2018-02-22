@@ -708,7 +708,9 @@ void ImportScript::LinkFunctions()
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
-
+	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
+	mono_add_internal_call("CulverinEditor.CompButton::Activate", (const void*)Activate);
+	mono_add_internal_call("CulverinEditor.CompButton::Deactivate", (const void*)Deactivate);
 	//COMPONENT UI_GRAPHIC FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetRaycastTarget", (const void*)SetRaycastTarget);
 	mono_add_internal_call("CulverinEditor.CompImage::FillAmount", (const void*)FillAmount);
