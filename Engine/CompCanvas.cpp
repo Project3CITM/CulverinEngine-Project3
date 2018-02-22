@@ -142,6 +142,8 @@ void CompCanvas::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+
+
 void CompCanvas::SyncComponent()
 {
 	my_transform = (CompRectTransform*)parent->FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
@@ -183,3 +185,12 @@ void CompCanvas::DrawGraphic()
 		graphic_vector[i]->DrawGraphic();
 	}
 }
+void CompCanvas::SetDefaultTexture(int texture)
+{
+	default_texture_id = texture;
+}
+int CompCanvas::GetDefaultTexture()const
+{
+	return default_texture_id;
+}
+

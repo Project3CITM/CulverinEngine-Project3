@@ -330,6 +330,8 @@ void CompButton::AddLinkedScript(const CompScript * script)
 
 void CompButton::OnClick()
 {
+	if (IsActivate() || !IsActive())
+		return;
 	if (linked_scripts.empty())
 	{
 		return;

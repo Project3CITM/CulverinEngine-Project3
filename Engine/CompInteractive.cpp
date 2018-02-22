@@ -303,7 +303,7 @@ void CompInteractive::SyncComponent()
 	}
 
 }
-bool CompInteractive::IsActive()const
+bool CompInteractive::IsActivate()const
 {
 	return disabled;
 }
@@ -388,15 +388,21 @@ void CompInteractive::OnInteractiveUnSelected(Event event_input)
 
 bool CompInteractive::PointerInside(float2 position)
 {
+
+
 	float4 rect = parent->GetComponentRectTransform()->GetGlobalRect();
 	ImGuiIO& io = ImGui::GetIO();
-	float mouse_x = position.x - GetPositionDock("Scene").x;
-	float mouse_y = -(position.y - (GetPositionDock("Scene").y + GetSizeDock("Scene").y));
+	float mouse_x = position.x;
+	float mouse_y = position.y;
+	if (!App->mode_game)
+	{
+	mouse_x = position.x - GetPositionDock("Scene").x;
+	mouse_y = -(position.y - (GetPositionDock("Scene").y + GetSizeDock("Scene").y));
 
 	mouse_x = (mouse_x*io.DisplaySize.x) / GetSizeDock("Scene").x;
 	mouse_y = (mouse_y*io.DisplaySize.y)/GetSizeDock("Scene").y+30;
 
-
+	}
 
 
 	if (rect.x <= mouse_x &&
@@ -528,14 +534,14 @@ NavigationMode CompInteractive::GetNavigationMode() const
 
 bool CompInteractive::IsPressed()
 {
-	if(IsActive())
+	if(IsActivate())
 		return false;
 	return point_down && point_inside;
 }
 
 bool CompInteractive::IsHighlighted(Event event_data)
 {
-	if (IsActive())
+	if (IsActivate())
 		return false;
 
 	if (IsPressed())
@@ -566,7 +572,7 @@ void CompInteractive::UpdateSelectionState(Event event_data)
 void CompInteractive::PrepareHandleTransition()
 {
 	SelectionStates selection_state = current_selection_state;
-	if (IsActive())
+	if (IsActivate())
 	{
 		selection_state = SelectionStates::STATE_DISABLED;
 	}

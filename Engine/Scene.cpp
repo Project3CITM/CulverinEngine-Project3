@@ -569,9 +569,12 @@ void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 		{
 			App->camera->SetFocusNull();
 		}
-		if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == gameobject->GetChildbyIndex(i))
+		if (!App->mode_game)
 		{
-			((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
+			if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == gameobject->GetChildbyIndex(i))
+			{
+				((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
+			}
 		}
 		// First delete all components
 		if (gameobject->GetChildbyIndex(i)->GetNumComponents() > 0)
@@ -597,7 +600,10 @@ void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 	{
 		App->camera->SetFocusNull();
 		App->renderer3D->SetGameCamera(nullptr);
-		((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
+		if (!App->mode_game)
+		{
+			((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
+		}
 	}
 }
 
@@ -868,6 +874,7 @@ GameObject * Scene::CreateCanvas(GameObject * parent)
 	// CANVAS COMPONENT -----------------
 	CompCanvas* canvas = (CompCanvas*)obj->AddComponent(Comp_Type::C_CANVAS);
 	canvas->Enable();
+	canvas->SetDefaultTexture(App->renderer3D->id_checkImage);
 
 	if (parent == nullptr)
 	{
@@ -899,7 +906,8 @@ GameObject * Scene::CreateImage(GameObject * parent)
 	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
 	image->Enable();
 	image->SyncComponent();
-	image->SetTextureID(App->renderer3D->id_checkImage);
+	image->UpdateSpriteId();
+
 	if (parent == nullptr)
 	{
 		// Only add to GameObjects list the Root Game Objects
@@ -930,7 +938,8 @@ GameObject * Scene::CreateButton(GameObject * parent)
 	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
 	image->Enable();
 	image->SyncComponent();
-	image->SetTextureID(App->renderer3D->id_checkImage);
+	image->UpdateSpriteId();
+
 	// BUTTON COMPONENT -----------------
 	CompButton* button = (CompButton*)obj->AddComponent(Comp_Type::C_BUTTON);
 	button->Enable();
@@ -965,8 +974,7 @@ GameObject * Scene::CreateCheckBox(GameObject * parent)
 	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
 	image->Enable();
 	image->SyncComponent();
-	image->SetTextureID(App->renderer3D->id_checkImage);
-
+	image->UpdateSpriteId();
 	// BUTTON COMPONENT -----------------
 	CompCheckBox* check_box = (CompCheckBox*)obj->AddComponent(Comp_Type::C_CHECK_BOX);
 	check_box->Enable();

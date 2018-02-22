@@ -30,10 +30,13 @@ public:
 	void AddGraphic(CompGraphic* to_add);
 	void RemoveGraphic(CompGraphic* to_remove);
 	void DrawGraphic();
+	void SetDefaultTexture(int texture);
+	int GetDefaultTexture()const;
 private:
 public:
 private:
 	Event draw_mode;
+	int default_texture_id;
 	CompRectTransform* my_transform = nullptr;
 	std::vector<CompGraphic*> graphic_vector;
 

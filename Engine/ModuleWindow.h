@@ -27,6 +27,7 @@ public:
 
 	void SetWindowOption(int i);
 	void SetWindowRes(int i);
+	void SetWindowSize(int width,int height);
 
 	// Retrieve window scale
 	uint GetScale() const;
