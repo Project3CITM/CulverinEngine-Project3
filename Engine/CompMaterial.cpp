@@ -260,6 +260,8 @@ void CompMaterial::ShowInspectorInfo()
 	for (int i = 0; i < App->module_shaders->materials.size(); i++) {
 		shaders_names += App->module_shaders->materials[i]->name;
 		shaders_names += '\0';
+		if (material->name.compare(App->module_shaders->materials[i]->name) == 0)
+			shader_pos = i;
 	}
 	if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
 
