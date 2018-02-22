@@ -126,6 +126,7 @@ public:
 	uint GetNumTransitions()const;
 	const char* GetStateName()const;
 	const char* GetScriptName()const;
+	CompScript* GetScript()const;
 	// ------------------------
 
 private:	
@@ -152,14 +153,14 @@ public:
 	// -------------------------------------
 
 	// TODO: Should Ints/Floats transform in each other in case of using wrong function to avoid errors ???
-	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, bool condition);
-	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, int condition);
-	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, float condition);
+	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, bool condition_a, bool condition_b);
+	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, int condition_a, int condition_b);
+	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, float condition_a, float condition_b);
 
 	bool IsTriggered()const;
 
 	// --- Visual Scripting --- //
-	void CreateConditionsModifyingOptions();
+	void CreateConditionsModifyingOptions(FSM_State* selected_state);
 	bool DisplayConditionsInfo(FSM_Condition** selected_condition); // Returns true if any condition was selected
 	// --- Visual Scripting --- //
 
@@ -180,6 +181,7 @@ private:
 	int target_state_id;
 	FSM_State* target_state;
 	std::vector<FSM_Condition*> conditions;
+	bool add_second_variable_from_script = false;
 };
 
 // --------------------------------  TRANSITIONS  -------------------------------- //
@@ -211,25 +213,25 @@ public:
 	~FSM_Condition();
 
 	// SAVE - LOAD METHODS ----------------
-		// TODO
 	virtual void SaveCondition(JSON_Object * object, std::string name, bool saveScene, uint & countResources) {}
 	virtual void LoadCondition(const JSON_Object * object, std::string name) {}
 	// -------------------------------------
 
-	virtual bool Test(bool b)	{ return false; };
-	virtual bool Test(int i)	{ return false; };
-	virtual bool Test(float f)	 { return false; };
+	virtual bool Test()	{ return false; };
 
 	// SETTERS ----------------
-	virtual bool SetCondition(bool condition_)	{ return false; }
-	virtual bool SetCondition(int condition_)	{ return false; }
-	virtual bool SetCondition(float condition_)	{ return false; }
+	virtual bool SetCondition(bool condition_a_, bool condition_b_)	{ return false; }
+	virtual bool SetCondition(int condition_a_, int condition_b_)	{ return false; }
+	virtual bool SetCondition(float condition_a_, float condition_b_)	{ return false; }
 	// ------------------------
 	
 	// GETTERS ----------------
 	FSM_CONDITION_TYPE GetConditionType()const;
 	const char* GetConditionTypeStr()const;
 	// ------------------------
+
+	ScriptVariable* variable_a;
+	ScriptVariable* variable_b;
 
 private:
 	FSM_CONDITION_TYPE condition_type;
@@ -240,21 +242,22 @@ private:
 struct FSM_ConditionBool : public FSM_Condition
 {
 public:
-	FSM_ConditionBool(bool condition_);
+	FSM_ConditionBool(bool condition_a_, bool condition_b_);
 	~FSM_ConditionBool();
 
-	bool Test(bool b);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(bool condition_);
+	bool SetCondition(bool condition_a_, bool condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	bool GetCondition()const;
+	bool GetConditionA()const;
 	// ------------------------
 
 private:
-	bool condition;
+	bool condition_a;
+	bool condition_b;
 };
 
 	// ------------------------
@@ -263,101 +266,106 @@ private:
 struct FSM_ConditionEqualInt : public FSM_Condition
 {
 public:
-	FSM_ConditionEqualInt(int condition_);
+	FSM_ConditionEqualInt(int condition_a_, int condition_b_);
 	~FSM_ConditionEqualInt();
 
-	bool Test(int i);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(int condition_);
+	bool SetCondition(int condition_a_, int condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	int GetCondition()const;
+	int GetConditionA()const;
 	// ------------------------
 
 private:
-	int condition;
+	int condition_a;
+	int condition_b;
 };
 
 struct FSM_ConditionGreaterThanInt : public FSM_Condition
 {
 public:
-	FSM_ConditionGreaterThanInt(int condition_);
+	FSM_ConditionGreaterThanInt(int condition_a_, int condition_b_);
 	~FSM_ConditionGreaterThanInt();
 
-	bool Test(int i);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(int condition_);
+	bool SetCondition(int condition_a_, int condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	int GetCondition()const;
+	int GetConditionA()const;
 	// ------------------------
 
 private:
-	int condition;
+	int condition_a;
+	int condition_b;
 };
 
 struct FSM_ConditionGreaterEqualInt : public FSM_Condition
 {
 public:
-	FSM_ConditionGreaterEqualInt(int condition_);
+	FSM_ConditionGreaterEqualInt(int condition_a_, int condition_b_);
 	~FSM_ConditionGreaterEqualInt();
 
-	bool Test(int i);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(int condition_);
+	bool SetCondition(int condition_a_, int condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	int GetCondition()const;
+	int GetConditionA()const;
 	// ------------------------
 
 private:
-	int condition;
+	int condition_a;
+	int condition_b;
 };
 
 struct FSM_ConditionLowerThanInt : public FSM_Condition
 {
 public:
-	FSM_ConditionLowerThanInt(int condition_);
+	FSM_ConditionLowerThanInt(int condition_a_, int condition_b_);
 	~FSM_ConditionLowerThanInt();
 
-	bool Test(int i);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(int condition_);
+	bool SetCondition(int condition_a_, int condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	int GetCondition()const;
+	int GetConditionA()const;
 	// ------------------------
 
 private:
-	int condition;
+	int condition_a;
+	int condition_b;
 };
 
 struct FSM_ConditionLowerEqualInt : public FSM_Condition
 {
 public:
-	FSM_ConditionLowerEqualInt(int condition_);
+	FSM_ConditionLowerEqualInt(int condition_a_, int condition_b_);
 	~FSM_ConditionLowerEqualInt();
 
-	bool Test(int i);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(int condition_);
+	bool SetCondition(int condition_a_, int condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	int GetCondition()const;
+	int GetConditionA()const;
 	// ------------------------
 
 private:
-	int condition;
+	int condition_a;
+	int condition_b;
 };
 
 	// ------------------------
@@ -366,101 +374,106 @@ private:
 struct FSM_ConditionEqualFloat : public FSM_Condition
 {
 public:
-	FSM_ConditionEqualFloat(float condition_);
+	FSM_ConditionEqualFloat(float condition_a_, float condition_b_);
 	~FSM_ConditionEqualFloat();
 
-	bool Test(float i);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(float condition_);
+	bool SetCondition(float condition_a_, float condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	float GetCondition()const;
+	float GetConditionA()const;
 	// ------------------------
 
 private:
-	float condition;
+	float condition_a;
+	float condition_b;
 };
 
 struct FSM_ConditionGreaterThanFloat : public FSM_Condition
 {
 public:
-	FSM_ConditionGreaterThanFloat(float condition_);
+	FSM_ConditionGreaterThanFloat(float condition_a_, float condition_b_);
 	~FSM_ConditionGreaterThanFloat();
 
-	bool Test(float i);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(float condition_);
+	bool SetCondition(float condition_a_, float condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	float GetCondition()const;
+	float GetConditionA()const;
 	// ------------------------
 
 private:
-	float condition;
+	float condition_a;
+	float condition_b;
 };
 
 struct FSM_ConditionGreaterEqualFloat : public FSM_Condition
 {
 public:
-	FSM_ConditionGreaterEqualFloat(float condition_);
+	FSM_ConditionGreaterEqualFloat(float condition_a_, float condition_b_);
 	~FSM_ConditionGreaterEqualFloat();
 
-	bool Test(float i);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(float condition_);
+	bool SetCondition(float condition_a_, float condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	float GetCondition()const;
+	float GetConditionA()const;
 	// ------------------------
 
 private:
-	float condition;
+	float condition_a;
+	float condition_b;
 };
 
 struct FSM_ConditionLowerThanFloat : public FSM_Condition
 {
 public:
-	FSM_ConditionLowerThanFloat(float condition_);
+	FSM_ConditionLowerThanFloat(float condition_a_, float condition_b_);
 	~FSM_ConditionLowerThanFloat();
 
-	bool Test(float i);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(float condition_);
+	bool SetCondition(float condition_a_, float condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	float GetCondition()const;
+	float GetConditionA()const;
 	// ------------------------
 
 private:
-	float condition;
+	float condition_a;
+	float condition_b;
 };
 
 struct FSM_ConditionLowerEqualFloat : public FSM_Condition
 {
 public:
-	FSM_ConditionLowerEqualFloat(float condition_);
+	FSM_ConditionLowerEqualFloat(float condition_a_, float condition_b_);
 	~FSM_ConditionLowerEqualFloat();
 
-	bool Test(float i);
+	bool Test();
 
 	// SETTERS ----------------
-	bool SetCondition(float condition_);
+	bool SetCondition(float condition_a_, float condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	float GetCondition()const;
+	float GetConditionA()const;
 	// ------------------------
 
 private:
-	float condition;
+	float condition_a;
+	float condition_b;
 };
 	// ------------------------
 

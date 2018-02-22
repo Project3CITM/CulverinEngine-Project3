@@ -4,6 +4,8 @@
 #include "ModuleGUI.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "CompScript.h"
+#include "CSharpScript.h"
 
 CompFiniteStateMachine::CompFiniteStateMachine(Comp_Type c_type, GameObject * parent) : Component(c_type, parent), initial_state(nullptr),
 current_state(nullptr), selected_state(nullptr), selected_transition(nullptr), selected_condition(nullptr), target_state(nullptr), new_transition(nullptr),
@@ -205,54 +207,55 @@ void CompFiniteStateMachine::Update(float dt)
 
 							// --- Add Conditions to the new Transition --- //
 							for (std::vector<int>::iterator it = new_conditions.begin(); it != new_conditions.end(); it++)
-							{
+							{								
 								switch (*it)
 								{
 									// --- Bools --- //
 								case 0:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_BOOL, true);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_BOOL, true, true);
 									break;
 									// --- Bools --- //
 
 									// --- Ints --- //
 								case 1:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_EQUAL_INT, 0);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_EQUAL_INT, 0, 0);
 									break;
 								case 2:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_THAN_INT, 0);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_THAN_INT, 0, 0);
 									break;
 								case 3:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_EQUAL_INT, 0);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_EQUAL_INT, 0, 0);
 									break;
 								case 4:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_THAN_INT, 0);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_THAN_INT, 0, 0);
 									break;
 								case 5:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_EQUAL_INT, 0);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_EQUAL_INT, 0, 0);
 									break;
 									// --- Ints --- //
 
 									// --- Floats --- //
 								case 6:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_EQUAL_FLOAT, 0.0f);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_EQUAL_FLOAT, 0.0f, 0.0f);
 									break;
 								case 7:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_THAN_FLOAT, 0.0f);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_THAN_FLOAT, 0.0f, 0.0f);
 									break;
 								case 8:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_EQUAL_FLOAT, 0.0f);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_GREATER_EQUAL_FLOAT, 0.0f, 0.0f);
 									break;
 								case 9:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_THAN_FLOAT, 0.0f);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_THAN_FLOAT, 0.0f, 0.0f);
 									break;
 								case 10:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_EQUAL_FLOAT, 0.0f);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_LOWER_EQUAL_FLOAT, 0.0f, 0.0f);
 									break;
 									// --- Floats --- //
 
 								default:
 									break;
 								}
+								
 							}
 							// --- Add Conditions to the new Transition --- //
 
@@ -269,7 +272,7 @@ void CompFiniteStateMachine::Update(float dt)
 				if (ImGui::Begin("Create Conditions", &show_create_conditions_window))
 				{
 					// --------------  Conditions  -------------- //
-					new_transition->CreateConditionsModifyingOptions();
+					new_transition->CreateConditionsModifyingOptions(selected_state);
 
 					//TODO: Some way to save the values from the script we will compare the conditions to
 					// --------------  Conditions  -------------- //
@@ -617,7 +620,14 @@ void FSM_State::SaveState(JSON_Object * object, std::string name, bool saveScene
 {
 	json_object_dotset_number_with_std(object, name + "State ID" + std::to_string(state_num), state_id);
 	json_object_dotset_string_with_std(object, name + "State Name" + std::to_string(state_num), state_name.c_str());
-	json_object_dotset_string_with_std(object, name + "Script Name" + std::to_string(state_num), script->GetScriptName());
+	
+	if (script == nullptr)
+		json_object_dotset_boolean_with_std(object, name + "Has Script" + std::to_string(state_num), false);
+	else
+	{
+		json_object_dotset_boolean_with_std(object, name + "Has Script" + std::to_string(state_num), true);
+		json_object_dotset_string_with_std(object, name + "Script Name" + std::to_string(state_num), script->GetScriptName());
+	}
 
 	int num_transitions = 0;
 	for (std::vector<FSM_Transition*>::const_iterator it_transitions = transitions.begin(); it_transitions != transitions.end(); it_transitions++)
@@ -633,9 +643,12 @@ void FSM_State::LoadState(const JSON_Object * object, std::string name, int num_
 	state_id = json_object_dotget_number_with_std(object, name + "State ID" + std::to_string(num_state));
 	state_name = json_object_dotget_string_with_std(object, name + "State Name" + std::to_string(num_state));
 
-	script = new CompScript(Comp_Type::C_SCRIPT, parent);
-	script->name_script = json_object_dotget_string_with_std(object, name + "Script Name" + std::to_string(num_state));
-	script->AddScriptbyName(script->name_script.c_str());
+	if (json_object_dotget_boolean_with_std(object, name + "Has Script" + std::to_string(num_state)))
+	{
+		script = new CompScript(Comp_Type::C_SCRIPT, parent);
+		script->name_script = json_object_dotget_string_with_std(object, name + "Script Name" + std::to_string(num_state));
+		script->AddScriptbyName(script->name_script.c_str()); // Doesn't load the variables :(
+	}
 
 	int num_transitions = json_object_dotget_number_with_std(object, name + "Number Transitions State" + std::to_string(num_state));
 	for (int i = 0; i < num_transitions; i++)
@@ -820,6 +833,14 @@ const char * FSM_State::GetScriptName() const
 	return nullptr;
 }
 
+CompScript * FSM_State::GetScript() const
+{
+	if (script != nullptr)
+		return script;
+
+	return nullptr;
+}
+
 FSM_Transition::FSM_Transition() : target_state(nullptr), target_state_id(-1)
 {
 }
@@ -862,7 +883,7 @@ void FSM_Transition::LoadTransition(const JSON_Object * object, std::string name
 	}
 }
 
-FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, bool condition)
+FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, bool condition_a, bool condition_b)
 {
 	LOG("Creating FSM Condition.");
 	FSM_Condition* new_condition = nullptr;
@@ -874,7 +895,7 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 		return nullptr;
 		break;
 	case FSM_COND_BOOL:
-		new_condition = new FSM_ConditionBool(condition);
+		new_condition = new FSM_ConditionBool(condition_a, condition_b);
 		break;
 	case FSM_COND_EQUAL_INT:
 	case FSM_COND_GREATER_THAN_INT:
@@ -898,7 +919,7 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 	return new_condition;
 }
 
-FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, int condition)
+FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, int condition_a, int condition_b)
 {
 	LOG("Creating FSM Condition.");
 	FSM_Condition* new_condition = nullptr;
@@ -911,19 +932,19 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 		return nullptr;
 		break;
 	case FSM_COND_EQUAL_INT:
-		new_condition = new FSM_ConditionEqualInt(condition);
+		new_condition = new FSM_ConditionEqualInt(condition_a, condition_b);
 		break;
 	case FSM_COND_GREATER_THAN_INT:
-		new_condition = new FSM_ConditionGreaterThanInt(condition);
+		new_condition = new FSM_ConditionGreaterThanInt(condition_a, condition_b);
 		break;
 	case FSM_COND_GREATER_EQUAL_INT:
-		new_condition = new FSM_ConditionGreaterEqualInt(condition);
+		new_condition = new FSM_ConditionGreaterEqualInt(condition_a, condition_b);
 		break;
 	case FSM_COND_LOWER_THAN_INT:
-		new_condition = new FSM_ConditionLowerThanInt(condition);
+		new_condition = new FSM_ConditionLowerThanInt(condition_a, condition_b);
 		break;
 	case FSM_COND_LOWER_EQUAL_INT:
-		new_condition = new FSM_ConditionLowerEqualInt(condition);
+		new_condition = new FSM_ConditionLowerEqualInt(condition_a, condition_b);
 		break;
 	case FSM_COND_EQUAL_FLOAT:
 	case FSM_COND_GREATER_THAN_FLOAT:
@@ -942,7 +963,7 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 	return new_condition;
 }
 
-FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, float condition)
+FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, float condition_a, float condition_b)
 {
 	LOG("Creating FSM Condition.");
 	FSM_Condition* new_condition = nullptr;
@@ -960,19 +981,19 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 		return nullptr;
 		break;
 	case FSM_COND_EQUAL_FLOAT:
-		new_condition = new FSM_ConditionEqualFloat(condition);
+		new_condition = new FSM_ConditionEqualFloat(condition_a, condition_b);
 		break; 
 	case FSM_COND_GREATER_THAN_FLOAT:
-		new_condition = new FSM_ConditionGreaterThanFloat(condition);
+		new_condition = new FSM_ConditionGreaterThanFloat(condition_a, condition_b);
 		break;
 	case FSM_COND_GREATER_EQUAL_FLOAT:
-		new_condition = new FSM_ConditionGreaterEqualFloat(condition);
+		new_condition = new FSM_ConditionGreaterEqualFloat(condition_a, condition_b);
 		break;
 	case FSM_COND_LOWER_THAN_FLOAT:
-		new_condition = new FSM_ConditionLowerThanFloat(condition);
+		new_condition = new FSM_ConditionLowerThanFloat(condition_a, condition_b);
 		break;
 	case FSM_COND_LOWER_EQUAL_FLOAT:
-		new_condition = new FSM_ConditionLowerEqualFloat(condition);
+		new_condition = new FSM_ConditionLowerEqualFloat(condition_a, condition_b);
 		break;
 	case FSM_COND_MAX:
 	default:
@@ -1022,26 +1043,87 @@ bool FSM_Transition::IsTriggered()const
 	return false;
 }
 
-void FSM_Transition::CreateConditionsModifyingOptions()
+void FSM_Transition::CreateConditionsModifyingOptions(FSM_State* selected_state)
 {
 	int id = 0;
 	for (std::vector<FSM_Condition*>::const_iterator it = conditions.begin(); it != conditions.end(); it++, id++)
 	{
-		bool b = ((FSM_ConditionBool*)*it)->GetCondition();
+		CompScript* state_script = selected_state->GetScript();
+
+		if (state_script == nullptr)
+		{
+			LOG("Need a script to get its variables");
+			return;
+		}
+
+		bool b = ((FSM_ConditionBool*)*it)->GetConditionA();
 		int i = 0;
 		float f = 0.0f;
 
 		ImGui::PushID(id);
+		
+		// TODO
 		switch ((*it)->GetConditionType())
 		{
 		case FSM_COND_NONE:
 			break;
 
 		case FSM_COND_BOOL:
-			if (ImGui::Checkbox("true", &b))
-				((FSM_ConditionBool*)*it)->SetCondition(b);
-			break;
+			for (std::vector<ScriptVariable*>::const_iterator it_variables = state_script->csharp->variables.begin(); it_variables != state_script->csharp->variables.end(); it_variables++)
+			{
+				if ((*it_variables)->type == VarType::Var_BOOL)
+				{
+					ImGui::Text("Variable A:"); ImGui::SameLine();
+					static int i = 0;
+					// TODO:
+					/*
+					Component* ret = nullptr;
+	if (type != actualType)
+	{
+		temp_vector.clear();
+		root->GetComponentsByType(type, &temp_vector, true);
+	}
 
+	//ImGui::PushItemWidth(150);
+	ImGui::Text("Select: "); ImGui::SameLine();
+
+	if (ImGui::BeginCombo("##SelectComponent", current_item.c_str()))
+	{
+		for (int i = 0; i < temp_vector.size(); i++)
+		{
+			char buffer[100];
+			if (temp_vector[i]->GetType() == Comp_Type::C_SCRIPT)
+			{
+				sprintf(buffer, "%s.%s", temp_vector[i]->GetParent()->GetName(), ((CompScript*)temp_vector[i])->GetScriptName());
+			}
+			else
+			{
+				sprintf(buffer, "%s.%s", temp_vector[i]->GetParent()->GetName(), temp_vector[i]->GetName());
+			}
+			if (ImGui::Selectable(buffer))
+			{
+				current_item = buffer;
+				ret = temp_vector[i];
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+	return ret;
+	*/				//Change this:
+					if (ImGui::Combo("", &i, "\0Testing1\0Testing2\0\0"))
+						(*it)->variable_a = (*it_variables);
+
+					if (!add_second_variable_from_script)
+						if (ImGui::Button("Add Script Variable"))
+							add_second_variable_from_script = true;
+				}
+			}
+
+			if (ImGui::Button("Confitm Condition"))
+				((FSM_ConditionBool*)*it)->SetCondition(b, b);
+			break;
+/*
 		case FSM_COND_EQUAL_INT:
 			i = ((FSM_ConditionEqualInt*)*it)->GetCondition();
 			ImGui::Text("Equal to: ");
@@ -1111,13 +1193,13 @@ void FSM_Transition::CreateConditionsModifyingOptions()
 			if (ImGui::InputFloat("", &f))
 				((FSM_ConditionLowerEqualFloat*)*it)->SetCondition(f);
 			break;
-
+*/
 		case FSM_COND_MAX:
 			break;
 
 		default:
 			break;
-		}
+		}		
 		ImGui::PopID();
 	}
 }
@@ -1202,11 +1284,11 @@ uint FSM_Transition::GetNumConditions() const
 	return conditions.size();
 }
 
-FSM_Condition::FSM_Condition() : condition_type(FSM_CONDITION_TYPE::FSM_COND_NONE)
+FSM_Condition::FSM_Condition() : condition_type(FSM_CONDITION_TYPE::FSM_COND_NONE), variable_a(nullptr), variable_b(nullptr)
 {
 }
 
-FSM_Condition::FSM_Condition(FSM_CONDITION_TYPE condition_type_) : condition_type(condition_type_)
+FSM_Condition::FSM_Condition(FSM_CONDITION_TYPE condition_type_) : condition_type(condition_type_), variable_a(nullptr), variable_b(nullptr)
 {
 }
 
@@ -1268,7 +1350,7 @@ const char * FSM_Condition::GetConditionTypeStr() const
 	return "Condition type ERROR";
 }
 
-FSM_ConditionBool::FSM_ConditionBool(bool condition_) : FSM_Condition(FSM_COND_BOOL), condition(condition_)
+FSM_ConditionBool::FSM_ConditionBool(bool condition_a_, bool condition_b_) : FSM_Condition(FSM_COND_BOOL), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1276,23 +1358,24 @@ FSM_ConditionBool::~FSM_ConditionBool()
 {
 }
 
-bool FSM_ConditionBool::Test(bool b)
+bool FSM_ConditionBool::Test()
 {
-	return condition == b;
+	return condition_a == condition_b;
 }
 
-bool FSM_ConditionBool::SetCondition(bool condition_)
+bool FSM_ConditionBool::SetCondition(bool condition_a_, bool condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;
 	return true;
 }
 
-bool FSM_ConditionBool::GetCondition() const
+bool FSM_ConditionBool::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
 
-FSM_ConditionEqualInt::FSM_ConditionEqualInt(int condition_) : FSM_Condition(FSM_COND_EQUAL_INT), condition(condition_)
+FSM_ConditionEqualInt::FSM_ConditionEqualInt(int condition_a_, int condition_b_) : FSM_Condition(FSM_COND_EQUAL_INT), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1300,23 +1383,24 @@ FSM_ConditionEqualInt::~FSM_ConditionEqualInt()
 {
 }
 
-bool FSM_ConditionEqualInt::Test(int i)
+bool FSM_ConditionEqualInt::Test()
 {
-	return i == condition;
+	return condition_a == condition_b;
 }
 
-bool FSM_ConditionEqualInt::SetCondition(int condition_)
+bool FSM_ConditionEqualInt::SetCondition(int condition_a_, int condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;	
 	return true;
 }
 
-int FSM_ConditionEqualInt::GetCondition() const
+int FSM_ConditionEqualInt::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
 
-FSM_ConditionGreaterThanInt::FSM_ConditionGreaterThanInt(int condition_) : FSM_Condition(FSM_COND_GREATER_THAN_INT), condition(condition_)
+FSM_ConditionGreaterThanInt::FSM_ConditionGreaterThanInt(int condition_a_, int condition_b_) : FSM_Condition(FSM_COND_GREATER_THAN_INT), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1324,23 +1408,24 @@ FSM_ConditionGreaterThanInt::~FSM_ConditionGreaterThanInt()
 {
 }
 
-bool FSM_ConditionGreaterThanInt::Test(int i)
+bool FSM_ConditionGreaterThanInt::Test()
 {
-	return i > condition;
+	return condition_a > condition_b;
 }
 
-bool FSM_ConditionGreaterThanInt::SetCondition(int condition_)
+bool FSM_ConditionGreaterThanInt::SetCondition(int condition_a_, int condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;
 	return true;
 }
 
-int FSM_ConditionGreaterThanInt::GetCondition() const
+int FSM_ConditionGreaterThanInt::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
 
-FSM_ConditionGreaterEqualInt::FSM_ConditionGreaterEqualInt(int condition_) : FSM_Condition(FSM_COND_GREATER_EQUAL_INT), condition(condition_)
+FSM_ConditionGreaterEqualInt::FSM_ConditionGreaterEqualInt(int condition_a_, int condition_b_) : FSM_Condition(FSM_COND_GREATER_EQUAL_INT), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1348,23 +1433,24 @@ FSM_ConditionGreaterEqualInt::~FSM_ConditionGreaterEqualInt()
 {
 }
 
-bool FSM_ConditionGreaterEqualInt::Test(int i)
+bool FSM_ConditionGreaterEqualInt::Test()
 {
-	return i >= condition;
+	return condition_a >= condition_b;
 }
 
-bool FSM_ConditionGreaterEqualInt::SetCondition(int condition_)
+bool FSM_ConditionGreaterEqualInt::SetCondition(int condition_a_, int condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;
 	return true;
 }
 
-int FSM_ConditionGreaterEqualInt::GetCondition() const
+int FSM_ConditionGreaterEqualInt::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
 
-FSM_ConditionLowerThanInt::FSM_ConditionLowerThanInt(int condition_) : FSM_Condition(FSM_COND_LOWER_THAN_INT), condition(condition_)
+FSM_ConditionLowerThanInt::FSM_ConditionLowerThanInt(int condition_a_, int condition_b_) : FSM_Condition(FSM_COND_LOWER_THAN_INT), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1372,23 +1458,24 @@ FSM_ConditionLowerThanInt::~FSM_ConditionLowerThanInt()
 {
 }
 
-bool FSM_ConditionLowerThanInt::Test(int i)
+bool FSM_ConditionLowerThanInt::Test()
 {
-	return i < condition;
+	return condition_a < condition_b;
 }
 
-bool FSM_ConditionLowerThanInt::SetCondition(int condition_)
+bool FSM_ConditionLowerThanInt::SetCondition(int condition_a_, int condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;
 	return true;
 }
 
-int FSM_ConditionLowerThanInt::GetCondition() const
+int FSM_ConditionLowerThanInt::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
 
-FSM_ConditionLowerEqualInt::FSM_ConditionLowerEqualInt(int condition_) : FSM_Condition(FSM_COND_LOWER_EQUAL_INT), condition(condition_)
+FSM_ConditionLowerEqualInt::FSM_ConditionLowerEqualInt(int condition_a_, int condition_b_) : FSM_Condition(FSM_COND_LOWER_EQUAL_INT), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1396,23 +1483,24 @@ FSM_ConditionLowerEqualInt::~FSM_ConditionLowerEqualInt()
 {
 }
 
-bool FSM_ConditionLowerEqualInt::Test(int i)
+bool FSM_ConditionLowerEqualInt::Test()
 {
-	return i <= condition;
+	return condition_a <= condition_b;
 }
 
-bool FSM_ConditionLowerEqualInt::SetCondition(int condition_)
+bool FSM_ConditionLowerEqualInt::SetCondition(int condition_a_, int condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;
 	return true;
 }
 
-int FSM_ConditionLowerEqualInt::GetCondition() const
+int FSM_ConditionLowerEqualInt::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
 
-FSM_ConditionEqualFloat::FSM_ConditionEqualFloat(float condition_) : FSM_Condition(FSM_COND_EQUAL_FLOAT), condition(condition_)
+FSM_ConditionEqualFloat::FSM_ConditionEqualFloat(float condition_a_, float condition_b_) : FSM_Condition(FSM_COND_EQUAL_FLOAT), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1420,23 +1508,24 @@ FSM_ConditionEqualFloat::~FSM_ConditionEqualFloat()
 {
 }
 
-bool FSM_ConditionEqualFloat::Test(float i)
+bool FSM_ConditionEqualFloat::Test()
 {
-	return i == condition;
+	return condition_a == condition_b;
 }
 
-bool FSM_ConditionEqualFloat::SetCondition(float condition_)
+bool FSM_ConditionEqualFloat::SetCondition(float condition_a_, float condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;
 	return true;
 }
 
-float FSM_ConditionEqualFloat::GetCondition() const
+float FSM_ConditionEqualFloat::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
 
-FSM_ConditionGreaterThanFloat::FSM_ConditionGreaterThanFloat(float condition_) : FSM_Condition(FSM_COND_GREATER_THAN_FLOAT), condition(condition_)
+FSM_ConditionGreaterThanFloat::FSM_ConditionGreaterThanFloat(float condition_a_, float condition_b_) : FSM_Condition(FSM_COND_GREATER_THAN_FLOAT), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1444,23 +1533,24 @@ FSM_ConditionGreaterThanFloat::~FSM_ConditionGreaterThanFloat()
 {
 }
 
-bool FSM_ConditionGreaterThanFloat::Test(float i)
+bool FSM_ConditionGreaterThanFloat::Test()
 {
-	return i > condition;
+	return condition_a > condition_b;
 }
 
-bool FSM_ConditionGreaterThanFloat::SetCondition(float condition_)
+bool FSM_ConditionGreaterThanFloat::SetCondition(float condition_a_, float condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;
 	return true;
 }
 
-float FSM_ConditionGreaterThanFloat::GetCondition() const
+float FSM_ConditionGreaterThanFloat::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
 
-FSM_ConditionGreaterEqualFloat::FSM_ConditionGreaterEqualFloat(float condition_) : FSM_Condition(FSM_COND_GREATER_EQUAL_FLOAT), condition(condition_)
+FSM_ConditionGreaterEqualFloat::FSM_ConditionGreaterEqualFloat(float condition_a_, float condition_b_) : FSM_Condition(FSM_COND_GREATER_EQUAL_FLOAT), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1468,23 +1558,24 @@ FSM_ConditionGreaterEqualFloat::~FSM_ConditionGreaterEqualFloat()
 {
 }
 
-bool FSM_ConditionGreaterEqualFloat::Test(float i)
+bool FSM_ConditionGreaterEqualFloat::Test()
 {
-	return i >= condition;
+	return condition_a >= condition_b;
 }
 
-bool FSM_ConditionGreaterEqualFloat::SetCondition(float condition_)
+bool FSM_ConditionGreaterEqualFloat::SetCondition(float condition_a_, float condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;
 	return true;
 }
 
-float FSM_ConditionGreaterEqualFloat::GetCondition() const
+float FSM_ConditionGreaterEqualFloat::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
 
-FSM_ConditionLowerThanFloat::FSM_ConditionLowerThanFloat(float condition_) : FSM_Condition(FSM_COND_LOWER_THAN_FLOAT), condition(condition_)
+FSM_ConditionLowerThanFloat::FSM_ConditionLowerThanFloat(float condition_a_, float condition_b_) : FSM_Condition(FSM_COND_LOWER_THAN_FLOAT), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1492,23 +1583,24 @@ FSM_ConditionLowerThanFloat::~FSM_ConditionLowerThanFloat()
 {
 }
 
-bool FSM_ConditionLowerThanFloat::Test(float i)
+bool FSM_ConditionLowerThanFloat::Test()
 {
-	return i < condition;
+	return condition_a < condition_b;
 }
 
-bool FSM_ConditionLowerThanFloat::SetCondition(float condition_)
+bool FSM_ConditionLowerThanFloat::SetCondition(float condition_a_, float condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;
 	return true;
 }
 
-float FSM_ConditionLowerThanFloat::GetCondition() const
+float FSM_ConditionLowerThanFloat::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
 
-FSM_ConditionLowerEqualFloat::FSM_ConditionLowerEqualFloat(float condition_) : FSM_Condition(FSM_COND_LOWER_EQUAL_FLOAT), condition(condition_)
+FSM_ConditionLowerEqualFloat::FSM_ConditionLowerEqualFloat(float condition_a_, float condition_b_) : FSM_Condition(FSM_COND_LOWER_EQUAL_FLOAT), condition_a(condition_a_), condition_b(condition_b_)
 {
 }
 
@@ -1516,18 +1608,19 @@ FSM_ConditionLowerEqualFloat::~FSM_ConditionLowerEqualFloat()
 {
 }
 
-bool FSM_ConditionLowerEqualFloat::Test(float i)
+bool FSM_ConditionLowerEqualFloat::Test()
 {
-	return i <= condition;
+	return condition_a <= condition_b;
 }
 
-bool FSM_ConditionLowerEqualFloat::SetCondition(float condition_)
+bool FSM_ConditionLowerEqualFloat::SetCondition(float condition_a_, float condition_b_)
 {
-	condition = condition_;
+	condition_a = condition_a_;
+	condition_b = condition_b_;
 	return true;
 }
 
-float FSM_ConditionLowerEqualFloat::GetCondition() const
+float FSM_ConditionLowerEqualFloat::GetConditionA() const
 {
-	return condition;
+	return condition_a;
 }
