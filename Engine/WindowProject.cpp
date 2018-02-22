@@ -96,7 +96,7 @@ TYPE_FILE Project::SetType(std::string name)
 		{
 			return TYPE_FILE::FBX;
 		}
-		else if (temp == "FBX")
+		else if (temp == "FBX" || temp == "dae" || temp == "DAE")
 		{
 			return TYPE_FILE::FBX;
 		}

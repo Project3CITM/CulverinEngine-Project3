@@ -714,7 +714,7 @@ bool ModuleFS::AnyfileModificatedFolder(std::experimental::filesystem::path path
 bool ModuleFS::IsPermitiveExtension(const char* extension)
 {
 	if (strcmp(extension, "png") == 0 || strcmp(extension, "jpg") == 0 ||
-		strcmp(extension, "fbx") == 0 || strcmp(extension, "obj") == 0 || 
+		strcmp(extension, "fbx") == 0 || strcmp(extension, "obj") == 0 || strcmp(extension, "dae") == 0 || strcmp(extension, "DAE") == 0 ||
 		strcmp(extension, "tga") == 0 || strcmp(extension, "cs") == 0)
 	{
 		return true;

@@ -409,7 +409,7 @@ Resource::Type ModuleResourceManager::CheckFileType(const char* filedir)
 		{
 			return Resource::Type::MATERIAL;
 		}
-		else if (file_type == "fbx" || file_type == "obj" || file_type == "FBX")
+		else if (file_type == "fbx" || file_type == "obj" || file_type == "FBX" || file_type == "dae" || file_type == "DAE")
 		{
 			return Resource::Type::MESH;
 		}
