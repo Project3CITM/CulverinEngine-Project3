@@ -30,11 +30,14 @@ void Material::Save() const
 	JSON_Value* config_file;
 	JSON_Object* object;
 
+	char ownPth[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, ownPth);
+	std::string directory_assets = ownPth;
+	directory_assets += "\\Assets";
 
-	std::string nameJson = App->fs->GetMainDirectory();
-	nameJson += "/Shaders/Materials/";
-	nameJson += name;
-	nameJson += ".material";
+	directory_assets += "/Shaders/Materials/";
+	directory_assets += name;
+	directory_assets += ".material";
 	config_file = json_value_init_object();
 
 
@@ -116,7 +119,7 @@ void Material::Save() const
 
 	}
 
-	json_serialize_to_file(config_file, nameJson.c_str());
+	json_serialize_to_file(config_file, directory_assets.c_str());
 	json_value_free(config_file);
 }
 

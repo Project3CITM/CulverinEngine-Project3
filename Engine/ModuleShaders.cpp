@@ -22,6 +22,9 @@ ModuleShaders::ModuleShaders()
 
 ModuleShaders::~ModuleShaders()
 {
+	for (auto item = materials.begin(); item != materials.end(); item++) {
+		RELEASE(*item);
+	}
 	for (auto item = shaders.begin(); item != shaders.end(); item++) {
 		RELEASE(*item);
 
@@ -29,9 +32,7 @@ ModuleShaders::~ModuleShaders()
 	for (auto item = programs.begin(); item != programs.end(); item++) {
 		RELEASE(*item);
 	}
-	for (auto item = materials.begin(); item != materials.end(); item++) {
-		RELEASE(*item);
-	}
+
 }
 
 bool ModuleShaders::Init(JSON_Object * node)
@@ -122,6 +123,11 @@ bool ModuleShaders::SaveConfig(JSON_Object * node)
 
 bool ModuleShaders::CleanUp()
 {
+
+	for (auto item = materials.begin(); item != materials.end(); item++) {
+		(*item)->Save();
+		
+	}
 	return true;
 }
 

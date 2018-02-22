@@ -418,6 +418,21 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 		material = App->renderer3D->default_material;
 
 	}
+	else {
+		for (int i = 0; i < material->textures.size(); i++)
+		{
+			if (material->textures[i].value != nullptr)
+			{
+				material->textures[i].value->num_game_objects_use_me++;
+
+				// LOAD MATERIAL -------------------------
+				if (material->textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(material->textures[i].value->GetUUID()).c_str(), material->textures[i].value);
+				}
+			}
+		}
+	}
 
 
 
