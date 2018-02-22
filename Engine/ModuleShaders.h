@@ -49,6 +49,8 @@ public:
 
 	void ImportShaderMaterials();
 
+	Material* LoadMaterial(std::string path);
+
 	Shader* GetShaderByName(const char* name, ShaderType type);
 
 	template <typename T>
@@ -74,6 +76,7 @@ public:
 	void Enable_Text_Editor();
 	void SendEventWithAllShaders();
 	std::string Shader_Directory_fs;
+	std::string Material_Directory_fs;
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;
 	std::vector<Material*> materials;
