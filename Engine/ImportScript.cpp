@@ -427,6 +427,11 @@ void ImportScript::UpdateMonoMap(GameObject* modificate)
 	}
 }
 
+void ImportScript::UpdateMonoMap(GameObject* modificate, MonoObject* object)
+{
+	mono_map[object] = modificate;
+}
+
 MonoObject* ImportScript::GetMonoObject(GameObject* gameobject)
 {
 	if (gameobject != nullptr/* && gameobject->IsDeleteFixed()*/)
@@ -608,6 +613,8 @@ MonoClass* ImportScript::GetMonoClassFromImage(MonoImage* image, std::string& na
 //that users will use in their scripts with C++ functions of the application
 void ImportScript::LinkFunctions()
 {
+	//GetLinkedObject
+	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetLinkedObject", (const void*)GetLinkedObject);
 	//GAMEOBJECT FUNCTIONS ---------------
 	mono_add_internal_call("CulverinEditor.GameObject::GetTag", (const void*)GetTag);
 	mono_add_internal_call("CulverinEditor.GameObject::SetTag", (const void*)SetTag);
@@ -708,6 +715,10 @@ void ImportScript::LinkFunctions()
 
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
+
+	//COMPONENT ANIMATION FUNCTIONS
+	mono_add_internal_call("CulverinEditor.CompAnimation::PlayAnimation", (const void*)PlayAnimation);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetTransition", (const void*)SetTransition);
 }
 
 //Log messages into Engine Console
@@ -815,6 +826,12 @@ int ImportScript::GetMouseMoutionY()
 float ImportScript::GetDeltaTime()
 {
 	return App->game_time.time_scale * App->real_time.dt;
+}
+
+MonoObject* ImportScript::GetLinkedObject(MonoObject* object, MonoString* name)
+{
+	std::string name_variable = mono_string_to_utf8(name);
+	return current->GetMonoObjectLink(name_variable);
 }
 
 mono_bool ImportScript::IsStatic(MonoObject * object)
@@ -1143,4 +1160,14 @@ void ImportScript::FillAmount(MonoObject * object, float value)
 MonoObject * ImportScript::GetCollidedObject(MonoObject* object)
 {
 	return current->GetCollidedObject(object);
+}
+
+void ImportScript::PlayAnimation(MonoObject * object, MonoString * string, mono_bool blending)
+{
+	current->PlayAnimation(object, string, blending);
+}
+
+void ImportScript::SetTransition(MonoObject * object, MonoString * string, mono_bool condition)
+{
+	current->SetTransition(object, string, condition);
 }

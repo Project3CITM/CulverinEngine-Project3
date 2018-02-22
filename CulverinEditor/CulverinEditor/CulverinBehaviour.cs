@@ -11,5 +11,13 @@ namespace CulverinEditor
     {
         public CulverinBehaviour() { }
 
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern GameObject GetLinkedObject(string name_variable);
+
+
+
     }
+
+
 }

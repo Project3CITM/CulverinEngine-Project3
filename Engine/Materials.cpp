@@ -32,7 +32,7 @@ void Material::Save() const
 
 
 	std::string nameJson = App->fs->GetMainDirectory();
-	nameJson += "/Materials/";
+	nameJson += "/Shaders/Materials/";
 	nameJson += name;
 	nameJson += ".material";
 	config_file = json_value_init_object();

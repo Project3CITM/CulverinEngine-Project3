@@ -75,6 +75,9 @@ void CompParticleSystem::Update(float dt)
 	part_system->Update(dt);
 	if (part_system->EditorWindowOpen)
 		part_system->DrawImGuiEditorWindow();
+
+
+	part_system->PostUpdate(dt);
 }
 
 void CompParticleSystem::Draw()
@@ -84,7 +87,8 @@ void CompParticleSystem::Draw()
 
 void CompParticleSystem::Clear()
 {
-
+	part_system->CleanUp();
+	RELEASE(part_system);
 }
 
 void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, int numberOfFrames, uint AnimationOrder)
@@ -441,6 +445,69 @@ void CompParticleSystem::ShowInspectorInfo()
 		ImGui::OpenPopup("OptionsParticleSystem");
 	}
 	ImGui::PopStyleVar();
+
+	ImGui::Checkbox("Show Particle Editor", &part_system->EditorWindowOpen);
+	if (ImGui::Button("Save Particles Resource", ImVec2(170, 30)))
+	{
+		file_type = Particle_Resource;
+		pop_up_save_open = true;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Load Particles Resource", ImVec2(170, 30)))
+	{
+		file_type = Particle_Resource;
+		pop_up_load_open = true;
+	}
+	if (ImGui::Button("Save Emitter Resource", ImVec2(170, 30)))
+	{
+		file_type = Emitter_Resource;
+		pop_up_save_open = true;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Load Emitter Resource", ImVec2(170, 30)))
+	{
+		file_type = Emitter_Resource;
+		pop_up_load_open = true;
+	}
+	if (ImGui::Button("Load Child Particles Res", ImVec2(170, 30)))
+	{
+		file_type = Child_Particle_Resource;
+		pop_up_load_open = true;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Load Child Emitter Res", ImVec2(170, 30)))
+	{
+		file_type = Child_Emitter_Resource;
+		pop_up_load_open = true;
+	}
+	if (ImGui::Button("Unload children", ImVec2(120, 30)))
+		child_particle = child_emitter = "";
+	char title[1000] = "";
+	if (child_particle.length() <= 950)
+	{
+		sprintf_s(title, 1000, "Loaded Child Particle: %s", child_particle.c_str());
+		ImGui::Text(title);
+	}
+	if (child_emitter.length() <= 950)
+	{
+		sprintf_s(title, 1000, "Loaded Child Emitter: %s", child_emitter.c_str());
+		ImGui::Text(title);
+	}
+	/*
+	if (ImGui::Button("Load Mesh", ImVec2(120, 30)))
+	{
+	FileType = MeshResource;
+	PopUpLoadOpen = true;
+	}
+	*/
+	if (ImGui::Button("Load Texture", ImVec2(120, 30)))
+	{
+		file_type = Texture_Resource;
+		pop_up_load_open = true;
+	}
+
+
+
 
 	// Button Options --------------------------------------
 	if (ImGui::BeginPopup("OptionsParticleSystem"))

@@ -16,7 +16,7 @@
 
 CompAnimation::CompAnimation(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
-	name_component = "Animation";
+	name_component = "CompAnimation";
 }
 
 CompAnimation::CompAnimation(const CompAnimation & copy, GameObject * parent) : Component(Comp_Type::C_ANIMATION, parent)
@@ -80,19 +80,17 @@ void CompAnimation::Update(float dt)
 		}
 	}
 
-	for (std::vector<AnimationNode*>::iterator it = animation_nodes.begin(); it != animation_nodes.end(); it++)
+	if (active_node != nullptr)
 	{
-		if ((*it)->active == true)
-		{
-			CheckNodesConditions((*it));
-			break;
-		}
+		CheckNodesConditions((active_node));
 	}
+
 }
 
 void CompAnimation::PlayAnimation(AnimationNode * node)
 {
 	node->active = true;
+	active_node = node;
 
 	if (node->clip->state == A_STOP)
 	{	
@@ -120,6 +118,7 @@ void CompAnimation::PlayClip(const char * clip_name, bool blending)
 		if ((*it)->name == clip_name)
 		{
 			temp = (*it);
+			temp->RestartAnimationClip();
 			break;
 		}
 	}
@@ -136,7 +135,6 @@ void CompAnimation::PlayClip(const char * clip_name, bool blending)
 	}
 	else
 	{
-		temp->RestartAnimationClip();
 		temp->state = AnimationState::A_PLAY;
 		current_animation = temp;
 		if (blending_animation != nullptr)
@@ -176,6 +174,21 @@ void CompAnimation::SetNode(const char * node_name)
 	{
 		prev_node->active = false;
 		PlayAnimation(temp);
+	}
+}
+
+void CompAnimation::SetTransition(const char * transition_name, bool value)
+{
+	if (active_node != nullptr)
+	{
+		for (std::vector<AnimationTransition*>::iterator it = active_node->transitions.begin(); it != active_node->transitions.end(); it++)
+		{
+			if ((*it)->name == transition_name)
+			{
+				(*it)->condition = value;
+				break;
+			}
+		}
 	}
 }
 
@@ -595,6 +608,11 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 	{
 		AnimationNode* temp = new AnimationNode();
 		temp->name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Name");
+		temp->active = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Active");
+		if (temp->active == true)
+		{
+			active_node = temp;
+		}
 		std::string clip_name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".ClipName");
 		for (std::vector<AnimationClip*>::iterator temp_it = animation_clips.begin(); temp_it != animation_clips.end(); temp_it++)
 		{
@@ -616,7 +634,7 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			temp_transition->name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".Name");
 			temp_transition->condition = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".Condition");
 			temp_transition->has_exit_time = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".HasExitTime");
-			temp_transition->has_exit_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".ExitTime");
+			temp_transition->exit_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".ExitTime");
 
 			std::string node_name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(j) + ".DestinationName");
 			for (std::vector<AnimationNode*>::iterator temp_it = animation_nodes.begin(); temp_it != animation_nodes.end(); temp_it++)
@@ -691,6 +709,7 @@ void CompAnimation::CreateAnimationNode()
 		if (animation_nodes.size() == 0)
 		{
 			temp_anim_node->active = true;
+			PlayAnimation(temp_anim_node);
 		}
 		animation_nodes.push_back(temp_anim_node);
 	}

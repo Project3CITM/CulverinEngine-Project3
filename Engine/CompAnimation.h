@@ -79,6 +79,7 @@ public:
 	void PlayAnimation(AnimationNode* node);
 	void PlayClip(const char* clip_name, bool blending = true);
 	void SetNode(const char* node_name);
+	void SetTransition(const char* transition_name, bool value = true);
 
 	// EDITOR METHODS ---------
 	void ShowOptions();
@@ -112,6 +113,7 @@ private:
 
 	AnimationClip* current_animation = nullptr;
 	AnimationClip* blending_animation = nullptr;
+	AnimationNode* active_node = nullptr;
 
 	std::vector<std::pair<GameObject*, const AnimBone*>> bone_update_vector;
 	bool debug_draw = false;

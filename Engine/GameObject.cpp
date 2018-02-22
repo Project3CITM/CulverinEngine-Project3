@@ -103,7 +103,7 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 
 GameObject::~GameObject()
 {
-	RELEASE_ARRAY(name);
+	//RELEASE_ARRAY(name); FIX THIS
 	delete bounding_box;
 	bounding_box = nullptr;
 	parent = nullptr;

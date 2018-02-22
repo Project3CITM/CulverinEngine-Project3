@@ -109,6 +109,8 @@ public:
 	void SetClassName(std::string _name);
 	void SetNameSpace(std::string _name_space);
 
+	//Special
+	MonoObject* GetMonoObjectLink(std::string name);
 
 	//Variables METHODS -------------------------------------------------
 	void ResetScriptVariables();
@@ -182,6 +184,10 @@ public:
 	void		StopAudioEvent(MonoObject* object, MonoString* event_name);
 	void		SetAuxiliarySends(MonoObject* object, MonoString* bus, float value);
 
+	/*Animation*/
+	void		PlayAnimation(MonoObject* object, MonoString* name, mono_bool blending);
+	void		SetTransition(MonoObject* object, MonoString* name, mono_bool condition);
+
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
 	void		Deactivate(MonoObject * object, int uid);
@@ -229,7 +235,7 @@ private:
 	MonoImage* CSimage = nullptr;
 	MonoClass* CSClass = nullptr;
 	MonoObject* CSObject = nullptr;
-	MonoObject* CSSelfObject = nullptr;
+	//MonoObject* CSSelfObject = nullptr;
 	GameObject* own_game_object = nullptr;
 
 	// Main Functions
@@ -248,9 +254,6 @@ private:
 
 	/* Components */
 	std::vector<Component*> temp;
-
-public:
-	std::map<MonoObject*, GameObject*> game_objects;
 
 };
 

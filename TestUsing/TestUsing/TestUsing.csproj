@@ -46,6 +46,7 @@
     <Compile Include="PlayerController.cs" />
     <Compile Include="Stamina.cs" />
     <Compile Include="Test.cs" />
+    <Compile Include="TestAnimation.cs" />
     <Compile Include="Testelliot.cs" />
     <Compile Include="TestMovement.cs" />
     <Compile Include="WeaponController.cs" />
