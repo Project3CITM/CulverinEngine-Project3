@@ -37,7 +37,7 @@ ModuleShaders::~ModuleShaders()
 bool ModuleShaders::Init(JSON_Object * node)
 {
 	Shader_Directory_fs = "Assets/Shaders";
-	Material_Directory_fs = "Assets/Materials";
+	Material_Directory_fs = "Assets/Shaders/Materials";
 
 	return true;
 }
