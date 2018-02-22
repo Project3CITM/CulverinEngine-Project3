@@ -14,5 +14,11 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetTransition(string name, bool condition = true);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern bool IsAnimationStopped(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern bool IsAnimationRunning(string name);
     }
 }

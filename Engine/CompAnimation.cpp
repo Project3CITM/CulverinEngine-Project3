@@ -192,6 +192,46 @@ void CompAnimation::SetTransition(const char * transition_name, bool value)
 	}
 }
 
+bool CompAnimation::IsAnimationStopped(const char * clip_name) const
+{
+	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); it++)
+	{
+		if ((*it)->name == clip_name)
+		{
+			if ((*it)->state == AnimationState::A_STOP)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	LOG("Couldn't find animation clip with name %s!", clip_name)
+	return false;
+}
+
+bool CompAnimation::IsAnimationRunning(const char * clip_name) const
+{
+	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); it++)
+	{
+		if ((*it)->name == clip_name)
+		{
+			if ((*it)->state == AnimationState::A_PLAY || (*it)->state == AnimationState::A_BLENDING)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	LOG("Couldn't find animation clip with name %s!", clip_name)
+		return false;
+}
+
 void CompAnimation::SetResource(ResourceAnimation * resource_animation, bool isImport)
 {
 	if (animation_resource != resource_animation)

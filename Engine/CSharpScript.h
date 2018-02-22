@@ -187,6 +187,8 @@ public:
 	/*Animation*/
 	void		PlayAnimation(MonoObject* object, MonoString* name, mono_bool blending);
 	void		SetTransition(MonoObject* object, MonoString* name, mono_bool condition);
+	mono_bool	IsAnimationStopped(MonoObject* object, MonoString* name);
+	mono_bool	IsAnimationRunning(MonoObject* object, MonoString* name);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);

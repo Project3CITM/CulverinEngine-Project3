@@ -721,6 +721,8 @@ void ImportScript::LinkFunctions()
 	//COMPONENT ANIMATION FUNCTIONS
 	mono_add_internal_call("CulverinEditor.CompAnimation::PlayAnimation", (const void*)PlayAnimation);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetTransition", (const void*)SetTransition);
+	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationStopped", (const void*)IsAnimationStopped);
+	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationRunning", (const void*)IsAnimationRunning);
 }
 
 //Log messages into Engine Console
@@ -1186,4 +1188,14 @@ void ImportScript::PlayAnimation(MonoObject * object, MonoString * string, mono_
 void ImportScript::SetTransition(MonoObject * object, MonoString * string, mono_bool condition)
 {
 	current->SetTransition(object, string, condition);
+}
+
+mono_bool ImportScript::IsAnimationStopped(MonoObject * object, MonoString * string)
+{
+	return current->IsAnimationStopped(object, string);
+}
+
+mono_bool ImportScript::IsAnimationRunning(MonoObject * object, MonoString * string)
+{
+	return current->IsAnimationRunning(object, string);
 }

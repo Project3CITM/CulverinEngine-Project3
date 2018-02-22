@@ -81,6 +81,9 @@ public:
 	void SetNode(const char* node_name);
 	void SetTransition(const char* transition_name, bool value = true);
 
+	bool IsAnimationStopped(const char* clip_name) const;
+	bool IsAnimationRunning(const char* clip_name) const;
+
 	// EDITOR METHODS ---------
 	void ShowOptions();
 	void ShowInspectorInfo();

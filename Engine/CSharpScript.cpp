@@ -1730,6 +1730,30 @@ void CSharpScript::SetTransition(MonoObject * object, MonoString * name, mono_bo
 	}
 }
 
+mono_bool CSharpScript::IsAnimationStopped(MonoObject * object, MonoString * name)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			return animation->IsAnimationStopped(mono_string_to_utf8(name));
+		}
+	}
+}
+
+mono_bool CSharpScript::IsAnimationRunning(MonoObject * object, MonoString * name)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			return animation->IsAnimationRunning(mono_string_to_utf8(name));
+		}
+	}
+}
+
 void CSharpScript::Activate(MonoObject* object, int uid)
 {
 	if (current_game_object != nullptr)

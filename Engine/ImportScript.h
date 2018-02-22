@@ -178,6 +178,8 @@ private:
 	/*Component Animation*/
 	static void PlayAnimation(MonoObject* object, MonoString* string, mono_bool blending);
 	static void SetTransition(MonoObject* object, MonoString* string, mono_bool condition);
+	static mono_bool IsAnimationStopped(MonoObject* object, MonoString* string);
+	static mono_bool IsAnimationRunning(MonoObject* object, MonoString* string);
 
 public: 
 	std::map<std::string, GameObject*> map_link_variables;
