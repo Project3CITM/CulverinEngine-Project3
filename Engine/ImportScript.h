@@ -163,6 +163,10 @@ private:
 	/*Component Collier*/
 	static MonoObject* GetCollidedObject(MonoObject * object);
 
+	/*Component Animation*/
+	static void PlayAnimation(MonoObject* object, MonoString* string, mono_bool blending);
+	static void SetTransition(MonoObject* object, MonoString* string, mono_bool condition);
+
 private:
 	std::string nameNewScript;
 	std::string mono_path;

@@ -182,6 +182,10 @@ public:
 	void		StopAudioEvent(MonoObject* object, MonoString* event_name);
 	void		SetAuxiliarySends(MonoObject* object, MonoString* bus, float value);
 
+	/*Animation*/
+	void		PlayAnimation(MonoObject* object, MonoString* name, mono_bool blending);
+	void		SetTransition(MonoObject* object, MonoString* name, mono_bool condition);
+
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
 	void		Deactivate(MonoObject * object, int uid);

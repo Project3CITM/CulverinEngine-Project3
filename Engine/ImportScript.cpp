@@ -708,6 +708,10 @@ void ImportScript::LinkFunctions()
 
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
+
+	//COMPONENT ANIMATION FUNCTIONS
+	mono_add_internal_call("CulverinEditor.CompAnimation::PlayAnimation", (const void*)PlayAnimation);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetTransition", (const void*)SetTransition);
 }
 
 //Log messages into Engine Console
@@ -1143,4 +1147,14 @@ void ImportScript::FillAmount(MonoObject * object, float value)
 MonoObject * ImportScript::GetCollidedObject(MonoObject* object)
 {
 	return current->GetCollidedObject(object);
+}
+
+void ImportScript::PlayAnimation(MonoObject * object, MonoString * string, mono_bool blending)
+{
+	current->PlayAnimation(object, string, blending);
+}
+
+void ImportScript::SetTransition(MonoObject * object, MonoString * string, mono_bool condition)
+{
+	current->SetTransition(object, string, condition);
 }

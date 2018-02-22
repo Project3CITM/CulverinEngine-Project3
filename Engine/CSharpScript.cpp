@@ -13,10 +13,12 @@
 #include "GameObject.h"
 #include "Scene.h"
 #include "CompAudio.h"
+#include "CompAnimation.h"
 #include "CompButton.h"
 #include "CompCollider.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
+
 //SCRIPT VARIABLE UTILITY METHODS ------
 ScriptVariable::ScriptVariable(const char* name, VarType type, VarAccess access, CSharpScript* script) : name(name), type(type), access(access), script(script)
 {
@@ -1004,6 +1006,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompRigidBody";
 	}
+	else if (name == "CulverinEditor.CompAnimation")
+	{
+		comp_name = "CompAnimation";
+	}
 	/* Scripts */
 	if (comp_name == "")
 	{
@@ -1745,6 +1751,30 @@ void CSharpScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, floa
 		if (audio != nullptr)
 		{
 			audio->SetAuxiliarySend(mono_string_to_utf8(bus), value);
+		}
+	}
+}
+
+void CSharpScript::PlayAnimation(MonoObject * object, MonoString * name, mono_bool blending)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			animation->PlayClip(mono_string_to_utf8(name), blending);
+		}
+	}
+}
+
+void CSharpScript::SetTransition(MonoObject * object, MonoString * name, mono_bool condition)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			animation->SetTransition(mono_string_to_utf8(name), condition);
 		}
 	}
 }
