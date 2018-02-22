@@ -71,6 +71,7 @@ public:
 
 	// Shaders
 	ShaderProgram* default_shader = nullptr;
+	ShaderProgram* lights_billboard_shader = nullptr;
 	ResourceMaterial* default_texture = nullptr;
 
 	Material* default_material = nullptr;

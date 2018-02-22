@@ -103,7 +103,7 @@ static const GLchar* fragmentShaderSource[] =
 "																												 \n"
 "		vec3 s = normalize(lightDir);																			 \n"
 "																												 \n"
-"		float diffuse = Ka + Kd * lightInt *  max(dot(normal ,s),0);											 \n"
+"		float diffuse = Kd * lightInt *  max(dot(normal ,s),0);											 \n"
 "		float spec = 0;																							 \n"
 "																												 \n"
 "		spec = Ks* pow(max(0, dot(surfaceToCamera,reflect(-s,normal))), shininess);								 \n"
@@ -120,7 +120,7 @@ static const GLchar* fragmentShaderSource[] =
 "		float distanceToLight = length(light.position - surfacePos);											 \n"
 "		float attenuation = 1 / (1.0 + 0.1 * pow(distanceToLight,2));											 \n"
 "																												 \n"
-"		float diffuse = Ka + attenuation * Kd *lightInt * max(0, dot(normal , s));								 \n"
+"		float diffuse = attenuation * Kd *lightInt * max(0, dot(normal , s));								 \n"
 "		float spec = 0;																							 \n"
 "		if (diffuse >0)																							 \n"
 "			spec = attenuation * Ks *lightInt* pow(max(0, dot(surfaceToCamera, reflect(-s, normal))), shininess);\n"
@@ -159,18 +159,67 @@ static const GLchar* fragmentShaderSource[] =
 "		inten_final.xy += inten.xy;																				 \n"
 "		light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);													 \n"
 "	}																											 \n"
-"																												 \n"
+"	float final_ambient = 0;																											 \n"
 "	vec3 final_color = vec3(0);																					 \n"
 "	for (int i = 0; i<_numLights; ++i) {																		 \n"
 "		final_color += vec3(light_colors[i]) * light_colors[i].a;												 \n"
+"		final_ambient += _lights[i].ambientCoefficient;\n"
 "	}																											 \n"
+"	final_ambient = final_ambient/_numLights;\n"
 "	final_color = normalize(final_color);																		 \n"
 "																												 \n"
-"	color = vec4(color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb , 1);		 \n"
+"	color = vec4(final_ambient* color_texture + color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb , 1);		 \n"
 "																												 \n"
 "}																												 \n"
 };
 
+static const GLchar* DefaultVert[] =
+{
+	"#version 330 core\n"
+	"layout(location = 0) in vec3 position;\n"
+	"layout(location = 1) in vec2 texCoord;\n"
+	"layout(location = 2) in vec3 normal;\n"
+	"layout(location = 3) in vec4 color;\n"
+	"out float ourTime;\n"
+	"out vec4 ourColor;\n"
+	"out vec3 ourNormal;\n"
+	"out vec2 TexCoord;\n"
+	"uniform float _time;\n"
+	"uniform vec4 _color;\n"
+	"uniform mat4 model;\n"
+	"uniform mat4 viewproj;\n"
+	"uniform mat4 view;\n"
+	"void main()\n"
+	"{\n"
+	"gl_Position = viewproj *  model * vec4(position.x,position.y,position.z, 1.0f);\n"
+	"ourColor = _color;\n"
+	"TexCoord = texCoord;\n"
+	"ourTime = _time;\n"
+	"ourNormal = mat3(model) * normal;"
+	"}\n"
+
+};
+
+static const GLchar* DefaultFrag[] =
+{
+	"#version 330 core\n"
+	"in vec4 ourColor;\n"
+	"in float ourTime;\n"
+	"in vec2 TexCoord;\n"
+	"in vec3 ourNormal;\n"
+	"in vec4 gl_FragCoord;\n"
+	"out vec4 color;\n"
+	"uniform sampler2D albedo;\n"
+
+	"void main()\n"
+	"{\n"
+	"vec3 lightDir = vec3(1);\n"
+	"float angle = dot(lightDir, ourNormal);\n"
+
+	//Z-Buffer Line Shader
+	"color= vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1) *texture(albedo, TexCoord);\n"
+	"}\n"
+};
 
 static const GLchar* ShadowMapVert[] =
 {

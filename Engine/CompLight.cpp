@@ -158,7 +158,7 @@ void CompLight::Draw()
 
 	//---------------------------------------------------
 
-	App->renderer3D->default_shader->Bind();
+	App->renderer3D->lights_billboard_shader->Bind();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
@@ -176,6 +176,7 @@ void CompLight::Draw()
 
 	CompTransform* trans = parent->GetComponentTransform();
 	float3 Direction = App->renderer3D->active_camera->frustum.pos - trans->GetPos();
+	Direction = Direction.Normalized();
 	Quat Rotation = Quat::LookAt(float3(0.0f, 1.0f, 0.0f), Direction, float3(0.0f, 0.0f, -1.0f), float3(0.0f, 1.0f, 0.0f));
 	
 	auto mat = float4x4::FromTRS(trans->GetPos(), Rotation, float3(1, 1, 1)).Transposed();
@@ -207,7 +208,7 @@ void CompLight::Draw()
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	App->renderer3D->default_shader->Unbind();
+	App->renderer3D->lights_billboard_shader->Unbind();
 	glDisable(GL_ALPHA_TEST);
 }
 
