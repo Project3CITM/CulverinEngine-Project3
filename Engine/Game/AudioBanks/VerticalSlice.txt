@@ -1,5 +1,6 @@
 Event	ID	Name			Wwise Object Path	Notes
 	27719897	MetalHit			\Scene1\MetalHit	
+	417627684	PlayMusic			\Scene1\PlayMusic	
 	2385628198	Footsteps			\Scene1\Footsteps	
 	2862913083	FleshCut			\Scene1\FleshCut	
 	3035439363	PlayTorch			\Scene1\PlayTorch	
@@ -25,6 +26,7 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	455601767	Torch_FX_04	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Torch_FX_1_36D2EB39.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch\Torch_FX_04		228432
 	501715201	Step_gravel_FX	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Step_gravel_FX_E53EA02B.wem		\Actor-Mixer Hierarchy\Default Work Unit\FootSepts_Grave\Step_gravel_FX		88840
 	545175549	Torch_FX_01	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Torch_FX_1_FF5F5112.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch\Torch_FX_01		228432
+	904842615	Rains_of_Castemere_Little	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Rains_of_Castemere_Little_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\Rains_of_Castemere_Little\Rains_of_Castemere_Little		12058432
 	914320357	Slash_metal_FX_03	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_DBA93091.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX_03		125432
 	916330453	Slash_metal_FX	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_7CFB7881.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX		140308
 	1031725299	Torch_Fx_03	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Torch_Fx2_3CEE9FD5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch\Torch_Fx_03		228700

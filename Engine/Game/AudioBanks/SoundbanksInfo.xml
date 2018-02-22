@@ -24,6 +24,7 @@
 				<Event Id="2862913083" Name="FleshCut" ObjectPath="\Events\Scene1\FleshCut"/>
 				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene1\Footsteps"/>
 				<Event Id="27719897" Name="MetalHit" ObjectPath="\Events\Scene1\MetalHit"/>
+				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene1\PlayMusic"/>
 				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene1\PlayTorch"/>
 				<Event Id="3113731383" Name="SwordSlash" ObjectPath="\Events\Scene1\SwordSlash"/>
 			</IncludedEvents>
@@ -55,6 +56,10 @@
 				<File Id="545175549" Language="SFX">
 					<ShortName>Torch_FX_1.wav</ShortName>
 					<Path>SFX\Torch_FX_1_FF5F5112.wem</Path>
+				</File>
+				<File Id="904842615" Language="SFX">
+					<ShortName>Rains_of_Castemere_Little.wav</ShortName>
+					<Path>SFX\Rains_of_Castemere_Little_F17FB28C.wem</Path>
 				</File>
 				<File Id="914320357" Language="SFX">
 					<ShortName>Slash_metal_FX.wav</ShortName>
