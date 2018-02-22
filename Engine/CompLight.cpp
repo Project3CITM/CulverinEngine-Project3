@@ -282,7 +282,7 @@ void CompLight::ShowInspectorInfo()
 	color.z = color_temp[2];
 	color.w = color_temp[3];
 
-	ImGui::DragFloat("Atenuation", &intensity);
+	ImGui::DragFloat("Intensity", &intensity);
 	ImGui::DragFloat("Ambient Coefficient", &ambientCoefficient);
 	ImGui::Combo("Light Type", &ui_light_type, types_lights.c_str());
 	type = (Light_type)ui_light_type;
