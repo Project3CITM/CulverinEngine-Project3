@@ -75,6 +75,9 @@ void CompParticleSystem::Update(float dt)
 	part_system->Update(dt);
 	if (part_system->EditorWindowOpen)
 		part_system->DrawImGuiEditorWindow();
+
+
+	part_system->PostUpdate(dt);
 }
 
 void CompParticleSystem::Draw()
@@ -84,7 +87,8 @@ void CompParticleSystem::Draw()
 
 void CompParticleSystem::Clear()
 {
-
+	part_system->CleanUp();
+	RELEASE(part_system);
 }
 
 void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, int numberOfFrames, uint AnimationOrder)
