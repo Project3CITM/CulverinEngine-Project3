@@ -295,7 +295,10 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 	start_transition = json_object_dotget_boolean_with_std(object, name + "Transition Start");
 	target_graphic_uid = json_object_dotget_number_with_std(object, name + "Graphic UUID");
 	number_script = json_object_dotget_number_with_std(object, name + "Linked Spites Size");
+	if (number_script != 0)
+	{
 	uid_linked_scripts = new int[number_script];
+	}
 	for (int i = 0; i < number_script; i++)
 	{
 		std::string temp = std::to_string(i);
@@ -307,12 +310,7 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 
 void CompButton::SyncScript()
 {
-
-	int size = 0;
-	if(uid_linked_scripts!=nullptr)
-		size = sizeof(uid_linked_scripts)/sizeof(uid_linked_scripts[0]);
-
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < number_script; i++)
 	{
 		CompScript* comp_script = nullptr;
 		//Find Component with uid
