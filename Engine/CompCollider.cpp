@@ -398,6 +398,7 @@ void CompCollider::ChangeCollider()
 	{
 		body->SetGeometry(size, rad, curr_type);
 	}
+	App->physics->DebugDrawUpdate();
 }
 
 void CompCollider::UpdateCollider()
@@ -406,6 +407,7 @@ void CompCollider::UpdateCollider()
 	{
 		body->SetShapeScale(size, rad, curr_type);
 	}
+	App->physics->DebugDrawUpdate();
 }
 
 void CompCollider::SetColliderPosition()

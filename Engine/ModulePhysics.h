@@ -52,6 +52,7 @@ public:
 
 	// Debug Methods ----------------
 	void DrawPhysics();
+	void DebugDrawUpdate();
 
 private:
 	physx::PxPhysics* mPhysics = nullptr;
@@ -63,6 +64,7 @@ private:
 	// Use only as a debug tool -----
 	bool render_physics = false;
 	bool render_on_play = false;
+	bool update_debug_draw = false;
 
 	std::map<physx::PxRigidActor*, Component*> colliders;
 };

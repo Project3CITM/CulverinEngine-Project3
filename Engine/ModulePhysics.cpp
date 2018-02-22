@@ -168,6 +168,7 @@ void ModulePhysics::OnEvent(Event & event)
 // -----------------------------------------------------------------
 jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(Component * component, bool dynamic)
 {
+	update_debug_draw = true;
 	if (physics_world && component)
 	{
 		jpPhysicsRigidBody* body = physics_world->CreateRigidBody(physics_world->GetScene(0), dynamic);
@@ -257,10 +258,11 @@ void ModulePhysics::DrawPhysics()
 		return;
 	}
 
-	if (App->engine_state == STOP)
+	if (App->engine_state == STOP && update_debug_draw)
 	{
 		mScene->simulate((physx::PxReal)DEBUG_PHYSX_DT);
 		mScene->fetchResults(true);
+		update_debug_draw = false;
 	}
 	const physx::PxRenderBuffer& rb = mScene->getRenderBuffer();
 
@@ -278,4 +280,9 @@ void ModulePhysics::DrawPhysics()
 	glLineWidth(1.0f);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
+}
+
+void ModulePhysics::DebugDrawUpdate()
+{
+	update_debug_draw = true;
 }
