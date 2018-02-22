@@ -29,7 +29,7 @@ bool test = false;
 
     for(int i = 0; i < 4; i++)
     {
-        int start_buffer_pos = gl_VertexID * 4 * 4 + i * 4;
+        int start_buffer_pos = gl_VertexID * 4 * 4 * 4 + i * 4 * 4;
 
         mat4 skinning_mat = mat4(
         //Column 0
@@ -53,12 +53,11 @@ bool test = false;
         texelFetch(_skinning_text, start_buffer_pos + 14).r,
         texelFetch(_skinning_text, start_buffer_pos + 15).r
         );
-        
-        //if(test == false && skinning_mat[0][0] == 0.923594534f) test = true; //0.923594534f
-        if(test == false && influences[i] == 1.0) test = true;
 
-        skinned_pos += (skinning_mat * vec4(position, 1.0f)) * influences[i];
-        skinned_normal += (skinning_mat * vec4(normal, 0.0f)) * influences[i];
+        if(test == false && skinning_mat[1][2] == 0.680028439) test = true;
+
+        skinned_pos = (skinning_mat * (vec4(position, 1.0f)) * influences[i]) + skinned_pos;
+        skinned_normal = ((skinning_mat * vec4(normal, 0.0f)) * influences[i]) + skinned_normal;
 
         total_weight += influences[i];
         
@@ -66,12 +65,13 @@ bool test = false;
             break;
     }
     
-	gl_Position = viewproj *  model * vec4(position.xyz, 1.0f);
+	gl_Position = viewproj *  model * vec4(skinned_pos.xyz, 1.0f);
 
 if(test == true) ourColor = vec4(1.0, 0.0, 0.0, 1.0);
 else
 	ourColor = _color;
 	TexCoord = texCoord;
 	ourTime = _time;
-	ourNormal = mat3(model) * normalize(skinned_normal.xyz);
+	//ourNormal = mat3(model) * normalize(skinned_normal.xyz);
+ourNormal = mat3(model) * normal;
 }

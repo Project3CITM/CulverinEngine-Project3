@@ -36,6 +36,7 @@ struct Skeleton
 	std::vector<std::vector<GameObject*>> influences;
 	GLuint buffer_id;
 	GLuint skinning_mats_id;
+	GameObject* root_bone = nullptr;
 	GLfloat* skinning_mats = nullptr;
 
 	~Skeleton()
@@ -43,7 +44,7 @@ struct Skeleton
 		delete [] skinning_mats;
 	}
 
-	void GenSkinningTexture(const GameObject* mesh_go);
+	void GenSkinningTexture();
 	void DebugDraw() const;
 };
 

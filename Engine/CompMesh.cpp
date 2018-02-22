@@ -395,7 +395,7 @@ void CompMesh::Draw()
 				GLuint num_pixels = glGetUniformLocation(material->GetProgramID(), "_num_pixels");
 
 				//Gen text
-				skeleton->GenSkinningTexture(parent);
+				skeleton->GenSkinningTexture();
 
 				glActiveTexture(GL_TEXTURE0 + i);
 				glBindTexture(GL_TEXTURE_BUFFER, skeleton->skinning_mats_id);
@@ -419,6 +419,8 @@ void CompMesh::Draw()
 				{
 					glEnableVertexAttribArray(3);
 					glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (8 * sizeof(float)));
+					//glEnableVertexAttribArray(4);
+					//glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (8 * sizeof(float)));
 				}
 
 				glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
@@ -631,7 +633,8 @@ void CompMesh::GenSkeleton()
 		skeleton->influences[i].resize(source->vertex_weights[i].size());
 
 	parent->AddChildGameObject(new_skeleton);
-	new_skeleton->AddChildGameObject(GenBone(&name_iterator, source, generated_bones, skeleton));
+	skeleton->root_bone = GenBone(&name_iterator, source, generated_bones, skeleton);
+	new_skeleton->AddChildGameObject(skeleton->root_bone);
 }
 
 GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* source, uint& generated_bones, Skeleton* skeleton)
@@ -697,34 +700,45 @@ CompMaterial * CompMesh::GetMaterial() const
 	return (CompMaterial*)comp_material;
 }
 
-void Skeleton::GenSkinningTexture(const GameObject* mesh_go)
+void Skeleton::GenSkinningTexture()
 {
-	for (std::vector<GameObject*>::iterator it = bones.begin(); it != bones.end(); ++it)
-		(*it)->GetComponentBone()->GenSkinningMatrix(mesh_go);
+	root_bone->GetComponentBone()->GenSkinningMatrix(root_bone->GetParent()->GetComponentTransform()->GetLocalTransform());
 
 	for (int i = 0; i < influences.size(); i++)
 	{
 		for (int j = 0; j < 4; j++) //Num influences
 		{
+			uint pos_in_buffer = (i * 4 * 4 * 4) + (j * 4 * 4);
+
 			if (influences[i].size() > j)
 			{
 				GameObject* bone = influences[i][j];
 				float4x4 skinning_mat = bone->GetComponentBone()->GetSkinningMatrix();
-				uint pos_in_buffer = (i * 4 * 4 * 4) + (j * 4 * 4);
 
 				float4 col1 (skinning_mat.Col(0));
 				memcpy(&skinning_mats[pos_in_buffer], &col1.x, sizeof(float) * 4);
 				float4 col2(skinning_mat.Col(1));
-				memcpy(&skinning_mats[pos_in_buffer + 3], &col2.x, sizeof(float) * 4);
+				memcpy(&skinning_mats[pos_in_buffer + 4], &col2.x, sizeof(float) * 4);
 				float4 col3(skinning_mat.Col(2));
-				memcpy(&skinning_mats[pos_in_buffer + 6], &col3.x, sizeof(float) * 4);
+				memcpy(&skinning_mats[pos_in_buffer + 8], &col3.x, sizeof(float) * 4);
 				float4 col4(skinning_mat.Col(3));
-				memcpy(&skinning_mats[pos_in_buffer + 9], &col4.x, sizeof(float) * 4);
+				memcpy(&skinning_mats[pos_in_buffer + 12], &col4.x, sizeof(float) * 4);
+			}
+			else
+			{
+				float4 col1(1.0f, 0.0f, 0.0f, 0.0f);
+				memcpy(&skinning_mats[pos_in_buffer], &col1.x, sizeof(float) * 4);
+				float4 col2(0.0f, 1.0f, 0.0f, 0.0f);
+				memcpy(&skinning_mats[pos_in_buffer + 4], &col2.x, sizeof(float) * 4);
+				float4 col3(0.0f, 0.0f, 1.0f, 0.0f);
+				memcpy(&skinning_mats[pos_in_buffer + 8], &col3.x, sizeof(float) * 4);
+				float4 col4(0.0f, 0.0f, 0.0f, 1.0f);
+				memcpy(&skinning_mats[pos_in_buffer + 12], &col4.x, sizeof(float) * 4);
 			}
 		}
 	}
 
-	GLint size = influences.size() * 4 * 4;
+	GLint size = influences.size() * 4 * 4 * 4;
 
 	glDeleteBuffers(1, &buffer_id);
 	glGenBuffers(1, &buffer_id);
@@ -737,6 +751,9 @@ void Skeleton::GenSkinningTexture(const GameObject* mesh_go)
 	glDeleteTextures(1, &skinning_mats_id);
 	glGenTextures(1, &skinning_mats_id);
 	glBindTexture(GL_TEXTURE_BUFFER, skinning_mats_id);
+
+	GLint max_size;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
 
 	glTexBuffer(GL_TEXTURE_BUFFER, GL_R32F, buffer_id);
 

@@ -97,7 +97,7 @@ bool ResourceMesh::LoadToMemory()
 
 	//----------Starting to change to one buffer
 
-	float* total_buffer_mesh = nullptr;
+	char* total_buffer_mesh = nullptr;
 
 	int vertex_size_in_buffer = 0;
 
@@ -112,27 +112,32 @@ bool ResourceMesh::LoadToMemory()
 		vertex_size_in_buffer += 3;
 	}
 
-	if (skeleton != nullptr)
-		vertex_size_in_buffer += 4;// 4 weights
+	uint bone_ids_size = 0;
 
-	total_buffer_mesh = new float[vertex_size_in_buffer * num_vertices];
-	float* cursor = total_buffer_mesh;
+	if (skeleton != nullptr)
+	{
+		vertex_size_in_buffer += 4;// 4 weights
+		bone_ids_size = 4 * sizeof(int);
+	}
+
+	total_buffer_mesh = new char[vertex_size_in_buffer * num_vertices * sizeof(float) + bone_ids_size];
+	char* cursor = total_buffer_mesh;
 
 	for (int i = 0; i < num_vertices; i++)
 	{
 		if (vertices.size() > 0)
 		{
 			memcpy(cursor, &vertices[i].pos, 3 * sizeof(float));
-			cursor += 3;
+			cursor += 3 * sizeof(float);
 
 			memcpy(cursor, &vertices[i].texCoords, 2 * sizeof(float));
-			cursor += 2;
+			cursor += 2 * sizeof(float);
 		}
 
 		if (vertices_normals.size() > 0)
 		{
 			memcpy(cursor, &vertices[i].norm, 3 * sizeof(float));
-			cursor += 3;
+			cursor += 3 * sizeof(float);
 		}
 
 		if (skeleton != nullptr)
@@ -140,7 +145,7 @@ bool ResourceMesh::LoadToMemory()
 			for (std::vector<std::pair<uint, float>>::iterator it = skeleton->vertex_weights[i].begin(); it != skeleton->vertex_weights[i].end(); ++it)
 			{
 				memcpy(cursor, &it->second, sizeof(float));
-				cursor++;
+				cursor += sizeof(float);
 			}
 
 			if (skeleton->vertex_weights[i].size() < 4)
@@ -149,7 +154,24 @@ bool ResourceMesh::LoadToMemory()
 				for (int j = 0; j < 4 - skeleton->vertex_weights[i].size(); j++)
 				{
 					memcpy(cursor, &zero, sizeof(float));
-					cursor++;
+					cursor += sizeof(float);
+				}
+			}
+
+			for (std::vector<std::pair<uint, float>>::iterator it = skeleton->vertex_weights[i].begin(); it != skeleton->vertex_weights[i].end(); ++it)
+			{
+				int tmp = it->first;
+				memcpy(cursor, &tmp, sizeof(int));
+				cursor += sizeof(int);
+			}
+
+			if (skeleton->vertex_weights[i].size() < 4)
+			{
+				int tmp = -1;
+				for (int j = 0; j < 4 - skeleton->vertex_weights[i].size(); j++)
+				{
+					memcpy(cursor, &tmp, sizeof(int));
+					cursor += sizeof(int);
 				}
 			}
 		}
