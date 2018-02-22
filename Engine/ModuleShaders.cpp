@@ -12,6 +12,9 @@
 #include "CompLight.h"
 #include "GameObject.h"
 #include "CompTransform.h"
+#include "ModuleResourceManager.h"
+#include "ModuleImporter.h"
+#include "ImportMaterial.h"
 
 ModuleShaders::ModuleShaders()
 {
@@ -34,6 +37,7 @@ ModuleShaders::~ModuleShaders()
 bool ModuleShaders::Init(JSON_Object * node)
 {
 	Shader_Directory_fs = "Assets/Shaders";
+	Material_Directory_fs = "Assets/Materials";
 
 	return true;
 }
@@ -526,9 +530,155 @@ void ModuleShaders::ImportShaderMaterials()
 				}
 
 			}
-
 		
 	}
+
+	for (stdfs::directory_iterator::value_type item : stdfs::directory_iterator(Material_Directory_fs))
+	{
+		std::string str_path = item.path().string().c_str();
+
+		//Extracting the extension file
+		std::string extension_path = App->fs->GetExtension(str_path);
+
+		if (extension_path == "material")
+		{
+			LoadMaterial(str_path);
+
+		}
+	}
+}
+
+Material * ModuleShaders::LoadMaterial(std::string str_path)
+{
+
+	
+	char* buffer = nullptr;
+	App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
+
+	JSON_Object* object;
+	JSON_Value* file_proj;
+	//Point JSON_Object and JSON_Value to the path we want
+	App->json_seria->Create_Json_Doc(&file_proj, &object, str_path.c_str());
+	std::string name = App->fs->GetOnlyName(str_path);
+	std::string program_name = json_object_dotget_string_with_std(object, name + "ShaderName:");
+	Material* material = nullptr;
+	ShaderProgram* program = nullptr;
+	for (int i = 0; i < App->module_shaders->programs.size(); i++)
+	{
+		if (strcmp(App->module_shaders->programs[i]->name.c_str(), program_name.c_str()) == 0)
+		{
+			program = App->module_shaders->programs[i];
+			
+			break;
+		}
+
+	}
+	if (program != nullptr)
+	{
+		std::string material_name = App->fs->GetOnlyName(str_path);
+		Material* material = nullptr;
+		for (int i = 0; i < App->module_shaders->materials.size(); i++)
+		{
+			if (strcmp(App->module_shaders->materials[i]->name.c_str(), material_name.c_str()) == 0)
+			{
+				material = App->module_shaders->materials[i];
+				
+				break;
+			}
+
+		}
+
+		if (material == nullptr) {
+			material = new Material();
+			material->material_shader = program;
+			material->name = material_name;
+			material->GetProgramVariables();
+			uint num_textures = json_object_dotget_number_with_std(object, name + "Num Textures:");
+			for (int i = 0; i < num_textures; i++)
+			{
+				if (i >= material->textures.size()) break;
+				char mat_name[128] = { 0 };
+
+				char* num = new char[4];
+				itoa(i, num, 10);
+				strcat(mat_name, "Resource Material UUID ");
+				strcat(mat_name, num);
+				RELEASE_ARRAY(num);
+
+				uint uuid = json_object_dotget_number_with_std(object, name + mat_name);
+
+				material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(uuid);
+				if (material->textures[i].value != nullptr)
+				{
+					material->textures[i].value->num_game_objects_use_me++;
+
+					// LOAD MATERIAL -------------------------
+					if (material->textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
+					{
+						App->importer->iMaterial->LoadResource(std::to_string(material->textures[i].value->GetUUID()).c_str(), material->textures[i].value);
+					}
+				}
+				else {
+					material->textures[i].value = App->renderer3D->default_texture;
+				}
+			}
+			uint num_bools = json_object_dotget_number_with_std(object, name + "Num Bools:");
+			for (int i = 0; i < num_bools; i++)
+			{
+				std::ostringstream ss;
+				ss << name << "Bool:" << i;
+				std::string json_name = ss.str();
+
+				if (i >= material->bool_variables.size()) break;
+				material->bool_variables[i].value = json_object_dotget_boolean_with_std(object, json_name);
+			}
+			uint num_ints = json_object_dotget_number_with_std(object, name + "Num Int:");
+			for (int i = 0; i < num_ints; i++)
+			{
+				std::ostringstream ss;
+				ss << name << "Int:" << i;
+				std::string json_name = ss.str();
+
+				if (i >= material->bool_variables.size()) break;
+				material->int_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+			}
+
+			uint num_floats = json_object_dotget_number_with_std(object, name + "Num Floats:");
+			for (int i = 0; i < num_floats; i++)
+			{
+				std::ostringstream ss;
+				ss << name << "Float:" << i;
+				std::string json_name = ss.str();
+
+				if (i >= material->float_variables.size()) break;
+				material->float_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+			}
+			uint num_float3 = json_object_dotget_number_with_std(object, name + "Num Float3:");
+			for (int i = 0; i < num_float3; i++)
+			{
+				std::ostringstream ss;
+				ss << name << "Float3:" << i;
+				std::string json_name = ss.str();
+
+				if (i >= material->float3_variables.size()) break;
+				material->float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, json_name);
+			}
+			uint num_colors = json_object_dotget_number_with_std(object, name + "Num Colors:");
+			for (int i = 0; i < num_colors; i++)
+			{
+				std::ostringstream ss;
+				ss << name << "Color:" << i;
+				std::string json_name = ss.str();
+
+				if (i >= material->color_variables.size()) break;
+				material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, json_name);
+			}
+			App->module_shaders->materials.push_back(material);
+		}
+	}
+	
+
+	return nullptr;
 }
 
 Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)

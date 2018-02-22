@@ -109,6 +109,8 @@ public:
 	void SetClassName(std::string _name);
 	void SetNameSpace(std::string _name_space);
 
+	//Special
+	MonoObject* GetMonoObjectLink(std::string name);
 
 	//Variables METHODS -------------------------------------------------
 	void ResetScriptVariables();
@@ -233,7 +235,7 @@ private:
 	MonoImage* CSimage = nullptr;
 	MonoClass* CSClass = nullptr;
 	MonoObject* CSObject = nullptr;
-	MonoObject* CSSelfObject = nullptr;
+	//MonoObject* CSSelfObject = nullptr;
 	GameObject* own_game_object = nullptr;
 
 	// Main Functions
@@ -252,9 +254,6 @@ private:
 
 	/* Components */
 	std::vector<Component*> temp;
-
-public:
-	std::map<MonoObject*, GameObject*> game_objects;
 
 };
 

@@ -3,7 +3,6 @@ using CulverinEditor.Debug;
 
 public class Hp : CulverinBehaviour
 {
-    GameObject hp_obj;
     CompImage hp_bar;
     float max_hp = 1.0f;
     float current_hp = 1.0f;
@@ -12,7 +11,7 @@ public class Hp : CulverinBehaviour
 
     void Start()
     {
-        hp_bar = hp_obj.GetComponent<CompImage>();
+        hp_bar = GetComponent<CompImage>();
     }
 
     void Update()

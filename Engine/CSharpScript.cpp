@@ -35,8 +35,11 @@ void ScriptVariable::SetMonoValue(void* newVal)
 		mono_field_set_value(script->GetMonoObject(), mono_field, newVal);
 		if (type == VarType::Var_GAMEOBJECT)
 		{
-			MonoObject* object = mono_field_get_value_object(App->importer->iScript->GetDomain(), mono_field, script->GetMonoObject());
-			script->game_objects[object] = game_object;
+			/*MonoObject* object = mono_field_get_value_object(App->importer->iScript->GetDomain(), mono_field, script->GetMonoObject());
+			App->importer->iScript->UpdateMonoMap(game_object);
+			//script->game_objects[object] = game_object;*/
+			std::string temp = mono_field_get_name(mono_field);
+			App->importer->iScript->map_link_variables[temp] = game_object;
 		}
 	}
 	else
@@ -52,7 +55,10 @@ void ScriptVariable::EreaseMonoValue(void* newVal)
 		MonoObject* object = mono_field_get_value_object(App->importer->iScript->GetDomain(), mono_field, script->GetMonoObject());
 		if (object)
 		{
-			script->game_objects.erase(script->game_objects.find(object));
+			GameObject* temp = App->importer->iScript->GetGameObject(object);
+			temp->SettoDelete();
+			App->importer->iScript->UpdateMonoMap(temp);
+			//script->game_objects.erase(script->game_objects.find(object));
 			game_object = nullptr;
 		}
 	}
@@ -398,6 +404,11 @@ void CSharpScript::SetNameSpace(std::string _name_space)
 	name_space = _name_space;
 }
 
+MonoObject* CSharpScript::GetMonoObjectLink(std::string name)
+{
+	return App->importer->iScript->GetMonoObject(App->importer->iScript->map_link_variables[name]);
+}
+
 bool CSharpScript::ReImport(std::string pathdll)
 {
 	MonoAssembly* assembly_ = mono_domain_assembly_open(App->importer->iScript->GetDomain(), pathdll.c_str());
@@ -475,16 +486,7 @@ void CSharpScript::SetOwnGameObject(GameObject* gameobject)
 
 void CSharpScript::CreateOwnGameObject()
 {
-	MonoClass* c = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "GameObject");
-	if (c)
-	{
-		MonoObject* new_object = mono_object_new(CSdomain, c);
-		if (new_object)
-		{
-			CSSelfObject = new_object;
-			game_objects[CSSelfObject] = own_game_object;
-		}
-	}
+	App->importer->iScript->UpdateMonoMap(own_game_object);
 }
 
 void CSharpScript::GetScriptVariables()
@@ -818,7 +820,8 @@ void CSharpScript::SetVarValue(ScriptVariable* variable, void* new_val)
 void CSharpScript::CreateGameObject(MonoObject* object)
 {
 	GameObject* gameobject = App->scene->CreateGameObject();
-	game_objects[object] = gameobject;
+	App->importer->iScript->UpdateMonoMap(gameobject, object);
+	//game_objects[object] = gameobject;
 }
 
 bool CSharpScript::DestroyGameObject(MonoObject* object)
@@ -904,20 +907,10 @@ bool CSharpScript::CompareTag(MonoObject * object, MonoString * tag)
 	return current_game_object->CompareTag(mono_string_to_utf8(tag));
 }
 
-MonoObject* CSharpScript::FindGameObjectWithTag(MonoObject * object, MonoString * tag)
+MonoObject* CSharpScript::FindGameObjectWithTag(MonoObject* object, MonoString * tag)
 {
-	std::map<MonoObject*, GameObject*>::iterator iter = game_objects.begin();
-	GameObject* target = nullptr;
-	target = App->scene->FindGameObjectWithTag(mono_string_to_utf8(tag));
-	if (target == nullptr)return nullptr;
-
-	while (iter != game_objects.end())
-	{
-		if (iter._Ptr->_Myval.second == target)return iter._Ptr->_Myval.first;
-
-		iter++;
-	}
-	return nullptr;
+	GameObject* target = App->scene->FindGameObjectWithTag(mono_string_to_utf8(tag));
+	return App->importer->iScript->GetMonoObject(target);
 }
 
 int CSharpScript::ChildCount(MonoObject * object)
@@ -925,42 +918,16 @@ int CSharpScript::ChildCount(MonoObject * object)
 	return current_game_object->GetNumChilds();
 }
 
-MonoObject * CSharpScript::GetChildByIndex(MonoObject * object, int index)
+MonoObject * CSharpScript::GetChildByIndex(MonoObject* object, int index)
 {
 	GameObject* target = current_game_object->GetChildbyIndex(index);
-	if (target == nullptr)return nullptr;
-	
-	std::map<MonoObject*,GameObject*>::iterator iter = game_objects.begin();
-	while (iter != game_objects.end())
-	{
-		if (iter._Ptr->_Myval.second == target)
-		{
-			return iter._Ptr->_Myval.first;
-		}
-
-		iter++;
-	}
-
-	return nullptr;
+	return App->importer->iScript->GetMonoObject(target);
 }
 
 MonoObject * CSharpScript::GetChildByName(MonoObject * object, MonoString * name)
 {
 	GameObject* target = current_game_object->GetChildbyName(mono_string_to_utf8(name));
-	if (target == nullptr)return nullptr;
-
-	std::map<MonoObject*, GameObject*>::iterator iter = game_objects.begin();
-	while (iter != game_objects.end())
-	{
-		if (iter._Ptr->_Myval.second == target)
-		{
-			return iter._Ptr->_Myval.first;
-		}
-
-		iter++;
-	}
-
-	return nullptr;
+	return App->importer->iScript->GetMonoObject(target);
 }
 
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)
@@ -1015,7 +982,7 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		if (App->resource_manager->GetResource(name.c_str()) != nullptr)
 		{
-			GameObject* actual_temp = game_objects[object];
+			GameObject* actual_temp = App->importer->iScript->GetGameObject(object);
 			if (actual_temp != nullptr)
 			{
 				temp.clear();
@@ -1063,24 +1030,7 @@ MonoObject* CSharpScript::Find(MonoObject * object, MonoString * name)
 {
 	GameObject* found = nullptr;
 	found = current_game_object->GetChildbyName(mono_string_to_utf8(name));
-
-	if (found != nullptr)
-	{
-		std::map<MonoObject*, GameObject*>::iterator iter = game_objects.begin();
-		while (iter != game_objects.end())
-		{
-			if (iter._Ptr->_Myval.second == found)
-			{
-				return iter._Ptr->_Myval.first;
-			}
-
-			iter++;
-		}
-	}
-	
-	LOG("Obj not found!");
-
-	return nullptr;
+	return App->importer->iScript->GetMonoObject(found);
 }
 
 MonoObject * CSharpScript::GetForwardVector(MonoObject * object)
@@ -1955,7 +1905,6 @@ void CSharpScript::Save(JSON_Object* object, std::string name) const
 
 void CSharpScript::Load(const JSON_Object* object, std::string name)
 {
-	game_objects.clear(); // memory leak
 	re_load_values.clear();
 	std::string temp_var = name;
 

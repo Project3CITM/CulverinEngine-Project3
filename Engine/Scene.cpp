@@ -57,6 +57,8 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 Scene::~Scene()
 {
 	DeleteAllGameObjects(root); //TODO-> Elliot
+	App->importer->iScript->ClearMonoMap();
+
 	RELEASE(scene_buff);
 	RELEASE(skybox);
 }
@@ -220,7 +222,7 @@ void Scene::LoadScene()
 				int exc = App->engine_state;
 				App->SetState(EngineState::PLAY); // OR STOP
 
-				App->importer->iScript->ClearMonoMap();
+				//App->importer->iScript->ClearMonoMap();
 
 				if (exc == EngineState::STOP)
 				{

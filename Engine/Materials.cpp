@@ -1,4 +1,8 @@
 #include "Materials.h"
+#include "parson.h"
+#include "Application.h"
+#include "ModuleFS.h"
+#include "ModuleRenderer3D.h"
 
 Material::Material()
 {
@@ -19,6 +23,106 @@ bool Material::Bind()
 void Material::Unbind()
 {
 	glUseProgram(NULL);
+}
+
+void Material::Save() const
+{
+	JSON_Value* config_file;
+	JSON_Object* object;
+
+
+	std::string nameJson = App->fs->GetMainDirectory();
+	nameJson += "/Materials/";
+	nameJson += name;
+	nameJson += ".material";
+	config_file = json_value_init_object();
+
+
+	object = json_value_get_object(config_file);
+	json_object_clear(object);
+
+	json_object_dotset_string_with_std(object, name + "ShaderName:", material_shader->name.c_str());
+	json_object_dotset_number_with_std(object, name + "Num Textures:", textures.size());
+
+	for (int i = 0; i < textures.size(); i++)
+	{
+		char mat_name[128] = { 0 };
+
+		char* num = new char[4];
+		itoa(i, num, 10);
+		strcat(mat_name, "Resource Material UUID ");
+		strcat(mat_name, num);
+		RELEASE_ARRAY(num);
+
+		if (textures[i].value != nullptr && textures[i].value->GetTextureID() != App->renderer3D->id_checkImage)
+		{
+			json_object_dotset_number_with_std(object, name + mat_name, textures[i].value->GetUUID());
+		}
+		else
+		{
+			json_object_dotset_number_with_std(object, name + mat_name, 0);
+		}
+
+	}
+	json_object_dotset_number_with_std(object, name + "Num Bools:", bool_variables.size());
+	for (int i = 0; i < bool_variables.size(); i++)
+	{
+		std::ostringstream ss;
+		ss << name << "Bool:" << i;
+		std::string json_name = ss.str();
+
+		json_object_dotset_boolean_with_std(object, json_name, bool_variables[i].value);
+
+	}
+	json_object_dotset_number_with_std(object, name + "Num Ints:", int_variables.size());
+	for (int i = 0; i < int_variables.size(); i++)
+	{
+		std::ostringstream ss;
+		ss << name << "Int:" << i;
+		std::string json_name = ss.str();
+
+		json_object_dotset_number_with_std(object, json_name, int_variables[i].value);
+
+	}
+	json_object_dotset_number_with_std(object, name + "Num Floats:", float_variables.size());
+	for (int i = 0; i < float_variables.size(); i++)
+	{
+		std::ostringstream ss;
+		ss << name << "Float:" << i;
+		std::string json_name = ss.str();
+
+		json_object_dotset_number_with_std(object, json_name, float_variables[i].value);
+
+	}
+	json_object_dotset_number_with_std(object, name + "Num Float3:", float3_variables.size());
+	for (int i = 0; i < float3_variables.size(); i++)
+	{
+		std::ostringstream ss;
+		ss << name << "Float3:" << i;
+		std::string json_name = ss.str();
+
+		App->fs->json_array_dotset_float3(object, json_name, float3_variables[i].value);
+	}
+
+	json_object_dotset_number_with_std(object, name + "Num Colors:", color_variables.size());
+	for (int i = 0; i < color_variables.size(); i++)
+	{
+		std::ostringstream ss;
+		ss << name << "Color:" << i;
+		std::string json_name = ss.str();
+
+		App->fs->json_array_dotset_float4(object, json_name, color_variables[i].value);
+
+
+	}
+
+	json_serialize_to_file(config_file, nameJson.c_str());
+	json_value_free(config_file);
+}
+
+void Material::Load()
+{
+	
 }
 
 UniformVar Material::GetVariableInfo(uint index)

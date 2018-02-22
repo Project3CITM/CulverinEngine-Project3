@@ -43,20 +43,26 @@ public:
 
 private:
 
+	void SetChild(const char* Particle, const char* Emitter);
+
 	void SetTextureResource(uint uuid, int columns = 1, int rows = 1, int numberOfFrames = 1, uint AnimationOrder = 0);
 	void SetTextureResource(const char* Path, int columns, int rows, int numberOfFrames, uint AnimationOrder);
 
-
+	const std::string* GetChildParticle() const;
+	const std::string* GetChildEmitter() const;
 
 	void DrawDirectory(const char* directory);
 
+	/*DEBUG FUNCS*/
+	void SetDebugOptions(bool ShowEmitterBoundBox, bool ShowEmitter);
+	void GetDebugOptions(bool& ShowEmitterBoundBox, bool& ShowEmitter);
 
 
 	bool SaveParticleStates(const char* file_name,  ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const;
 	bool LoadParticleStates(const char* file_name, CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF) const;
 
-	bool SaveParticleEmitter(CompParticleSystem* system, const ParticleEmitter* emitter) const;
-	bool LoadParticleEmitter(CompParticleSystem* system, ParticleEmitter& emitter) const;
+	bool SaveParticleEmitter(const char* file_name, CompParticleSystem* system, const ParticleEmitter* emitter) const;
+	bool LoadParticleEmitter(const char* file_name, CompParticleSystem* system, ParticleEmitter& emitter) const;
 
 	/*JSON FUNCS*/
 	bool SetInt(JSON_Object* conf, const char* field, int value) const;

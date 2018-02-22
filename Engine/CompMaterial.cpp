@@ -590,7 +590,10 @@ void CompMaterial::ShowTextureVariable(int index, TextureVar* texture)
 	if (texture->value != nullptr)
 	{
 		/* Image of the texture */
-		ImGui::Image((ImTextureID*)texture_var->value->GetTextureID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0));
+		if (ImGui::ImageButton((ImTextureID*)texture_var->value->GetTextureID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0))) {
+			open = true;
+
+		}
 	}
 
 	else{
@@ -627,7 +630,8 @@ void CompMaterial::ShowTextureVariable(int index, TextureVar* texture)
 void CompMaterial::ShowIntVariable(int index, intVar * var)
 {
 	ImGui::PushID(index);
-	ImGui::InputInt(var->var_name.c_str(),&var->value);
+	if(ImGui::InputInt(var->var_name.c_str(),&var->value))
+		material->Save();
 	ImGui::PopID();
 
 }
@@ -635,7 +639,8 @@ void CompMaterial::ShowIntVariable(int index, intVar * var)
 void CompMaterial::ShowFloatVariable(int index, floatVar * var)
 {
 	ImGui::PushID(index);	
-	ImGui::InputFloat(var->var_name.c_str(), &var->value, 0.01f,0.1f,3);
+	if(ImGui::InputFloat(var->var_name.c_str(), &var->value, 0.01f,0.1f,3))
+		material->Save();
 	ImGui::PopID();
 
 }
@@ -643,7 +648,8 @@ void CompMaterial::ShowFloatVariable(int index, floatVar * var)
 void CompMaterial::ShowVec3Variable(int index, float3Var * var)
 {
 	ImGui::PushID(index);
-	ImGui::InputFloat3(var->var_name.c_str(), &var->value[0]);
+	if (ImGui::InputFloat3(var->var_name.c_str(), &var->value[0]))
+		material->Save();
 	ImGui::PopID();
 
 }
@@ -651,7 +657,8 @@ void CompMaterial::ShowVec3Variable(int index, float3Var * var)
 void CompMaterial::ShowBoolVariable(int index, boolVar * var)
 {
 	ImGui::PushID(index);
-	ImGui::Checkbox(var->var_name.c_str(), &var->value);
+	if(ImGui::Checkbox(var->var_name.c_str(), &var->value))
+		material->Save();
 	ImGui::PopID();
 
 }
@@ -659,7 +666,8 @@ void CompMaterial::ShowBoolVariable(int index, boolVar * var)
 void CompMaterial::ShowColorVariable(int index, ColorVar *var)
 {
 	ImGui::PushID(index);
-	ImGui::ColorPicker4(var->var_name.c_str(), &var->value[0]);
+	if(ImGui::ColorPicker4(var->var_name.c_str(), &var->value[0]))
+		material->Save();
 	ImGui::PopID();
 
 }
