@@ -1075,7 +1075,7 @@ void ModuleGUI::UpdateWindows(float dt)
 				int exc = App->engine_state;
 				App->SetState(EngineState::PLAY); // OR STOP
 				// -------------
-				App->importer->iScript->ClearMonoMap();
+				//App->importer->iScript->ClearMonoMap();
 
 				if (exc == EngineState::STOP)
 				{

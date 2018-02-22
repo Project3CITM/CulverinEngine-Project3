@@ -48,8 +48,12 @@ public:
 	void SetMonoMap(GameObject* root, bool is_root = false); // Only used in "Play"
 	void ClearMonoMap();
 	void UpdateMonoMap(GameObject* modificate);
+	void UpdateMonoMap(GameObject* modificate, MonoObject* object);
 	MonoObject* GetMonoObject(GameObject* gameobject);
 	GameObject* GetGameObject(MonoObject* monoobject);
+
+	GameObject* GetGameObjectLink(std::string name);
+
 
 	bool IsNameUnique(std::string name) const;
 
@@ -75,6 +79,9 @@ private:
 
 	/* Time */
 	static float GetDeltaTime();
+
+	/* Link */
+	static MonoObject* GetLinkedObject(MonoObject* object, MonoString* name);
 
 	/* GameObject */
 	static mono_bool	IsStatic(MonoObject* object);
@@ -163,6 +170,9 @@ private:
 	/*Component Collier*/
 	static MonoObject* GetCollidedObject(MonoObject * object);
 
+public: 
+	std::map<std::string, GameObject*> map_link_variables;
+
 private:
 	std::string nameNewScript;
 	std::string mono_path;
@@ -173,6 +183,7 @@ private:
 	static CSharpScript* current;
 
 	std::map<MonoObject*, GameObject*> mono_map;
+
 };
 
 #endif
