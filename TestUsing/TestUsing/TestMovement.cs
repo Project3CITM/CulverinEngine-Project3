@@ -27,6 +27,11 @@ public class TestMovement : CulverinBehaviour
     int map_height = 0;
     public bool blocked_camera = false;
 
+    private int angle = 0;
+    private float speed_rotation = 30;
+    private float actual_angle = 0;
+    private bool rotating = false;
+
     private CompAudio audio;
 
     //2D coordinates, y=z in 3D coordinates
@@ -104,67 +109,71 @@ public class TestMovement : CulverinBehaviour
             //Quaternion rot_step = Quaternion.RotateTowards(Quaternion.FromEulerAngles(transform.rotation), Quaternion.FromEulerAngles(endRotation), movSpeed * 20 * Time.DeltaTime());
             //transform.local_rotation = rot_step.ToEulerAngles();
         }
-        if (Input.GetMouseButtonUp(2))
-        {
-            Vector3 rot_north = Vector3.Zero;
-            Vector3 rot_east = new Vector3(0, 90, 0);
-            Vector3 rot_south = new Vector3(0, 180, 0);
-            Vector3 rot_weast = new Vector3(0, 270, 0);
+        //if (Input.GetMouseButtonUp(2))
+        //{
+        //    Vector3 rot_north = Vector3.Zero;
+        //    Vector3 rot_east = new Vector3(0, 90, 0);
+        //    Vector3 rot_south = new Vector3(0, 180, 0);
+        //    Vector3 rot_weast = new Vector3(0, 270, 0);
 
-            float curr_rot_y = transform.local_rotation.y;
+        //    float curr_rot_y = transform.local_rotation.y;
 
-            if (curr_rot_y < 45 || curr_rot_y > 315)
-            {
-                endRotation = rot_north;
-                //curr_dir = Direction.NORTH;
-            }
-            if (curr_rot_y > 45 && curr_rot_y < 135)
-            {
-                endRotation = rot_east;
-                //curr_dir = Direction.EAST;
-            }
-            if (curr_rot_y > 135 && curr_rot_y < 225)
-            {
-                endRotation = rot_south;
-                //curr_dir = Direction.SOUTH;
-            }
-            if (curr_rot_y > 255 && curr_rot_y < 315)
-            {
-                endRotation = rot_weast;
-                //curr_dir = Direction.WEAST;
-            }
-        }
+        //    if (curr_rot_y < 45 || curr_rot_y > 315)
+        //    {
+        //        endRotation = rot_north;
+        //        //curr_dir = Direction.NORTH;
+        //    }
+        //    if (curr_rot_y > 45 && curr_rot_y < 135)
+        //    {
+        //        endRotation = rot_east;
+        //        //curr_dir = Direction.EAST;
+        //    }
+        //    if (curr_rot_y > 135 && curr_rot_y < 225)
+        //    {
+        //        endRotation = rot_south;
+        //        //curr_dir = Direction.SOUTH;
+        //    }
+        //    if (curr_rot_y > 255 && curr_rot_y < 315)
+        //    {
+        //        endRotation = rot_weast;
+        //        //curr_dir = Direction.WEAST;
+        //    }
+        //}
 
-        if (GetComponent<Transform>().local_position == endPosition && transform.local_rotation == endRotation)
+        if (GetComponent<Transform>().local_position == endPosition && rotating == false)
         {
 
             if (Input.GetKeyDown(KeyCode.Q)) //Left
             {
-                endRotation = new Vector3(transform.local_rotation.x, transform.local_rotation.y - 90, 0);
+                actual_angle = 0;
+                angle = -10;
+                rotating = true;
             }
-            if (Input.GetKeyDown(KeyCode.E)) //Left
+            if (Input.GetKeyDown(KeyCode.E)) //Right
             {
-                endRotation = new Vector3(transform.local_rotation.x, transform.local_rotation.y + 90, 0);
+                actual_angle = 0;
+                angle = 10;
+                rotating = true;
             }
 
             if (Input.GetKeyDown(KeyCode.A)) //Left
             {
-                audio.PlayEvent("Footsteps");
+                //audio.PlayEvent("Footsteps");
                 MoveLeft(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.D)) //Right
             {
-                audio.PlayEvent("Footsteps");
+                //audio.PlayEvent("Footsteps");
                 MoveRight(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.W)) //Up
             {
-                audio.PlayEvent("Footsteps");
+                //audio.PlayEvent("Footsteps");
                 MoveForward(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.S)) //Down
             {
-                audio.PlayEvent("Footsteps");
+                //audio.PlayEvent("Footsteps");
                 MoveBackward(out tile_mov_x, out tile_mov_y);
             }
 
@@ -182,6 +191,39 @@ public class TestMovement : CulverinBehaviour
                 //Debug.Log(tile_mov_x.ToString());
                 //Debug.Log(tile_mov_y.ToString());
             }
+        }
+        else if (rotating)
+        {
+            transform.RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.DeltaTime());
+            float moved_angle = (float)angle * speed_rotation * Time.DeltaTime();
+            Debug.Log(Time.DeltaTime().ToString());
+            if (angle < 0)
+            {
+                actual_angle += (moved_angle * -1);
+            }
+            else
+            {
+                actual_angle += moved_angle;
+            }
+            Debug.Log(actual_angle.ToString());
+
+            if (actual_angle >= 90)
+            {
+                rotating = false;
+                if(actual_angle > 90)
+                {
+                    float marge = actual_angle - 90;
+                    if (angle < 0)
+                    {
+                        transform.RotateAroundAxis(Vector3.Up, marge);
+                    }
+                    else
+                    {
+                        transform.RotateAroundAxis(Vector3.Up, -marge);
+                    }
+                }
+            }
+
         }
         else
         {
