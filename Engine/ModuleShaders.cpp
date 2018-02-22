@@ -89,7 +89,7 @@ update_status ModuleShaders::Update(float dt)
 				SetLightUniform((*item)->programID, "position", i, lights[i]->GetParent()->GetComponentTransform()->GetPos());
 			SetLightUniform((*item)->programID, "type", i, (int)lights[i]->type);
 			SetLightUniform((*item)->programID, "l_color", i, lights[i]->color);
-			SetLightUniform((*item)->programID, "attenuation", i, lights[i]->attenuation);
+			SetLightUniform((*item)->programID, "intensity", i, lights[i]->intensity);
 			SetLightUniform((*item)->programID, "ambientCoefficient", i, lights[i]->ambientCoefficient);
 
 		}

@@ -19,7 +19,7 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	color = float4(255, 255, 255, 255);
 	type = NO_LIGHT_TYPE;
-	attenuation = 1;
+	intensity = 1;
 	ambientCoefficient = 1;
 	
 	name_component = "Light component";
@@ -78,7 +78,7 @@ CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Co
 {
 	//App->module_lightning->OnLightDestroyed(this); //TODO/CHECK: Why delete the light?? Should add it to the list. Why create another method, already one to erase a light from the list on module lighting.
 	this->ambientCoefficient = copy.ambientCoefficient;
-	this->attenuation = copy.attenuation;
+	this->intensity = copy.intensity;
 	this->color = copy.color;
 	this->type = copy.type;
 	this->types_lights = copy.types_lights;
@@ -282,7 +282,7 @@ void CompLight::ShowInspectorInfo()
 	color.z = color_temp[2];
 	color.w = color_temp[3];
 
-	ImGui::DragFloat("Atenuation", &attenuation);
+	ImGui::DragFloat("Atenuation", &intensity);
 	ImGui::DragFloat("Ambient Coefficient", &ambientCoefficient);
 	ImGui::Combo("Light Type", &ui_light_type, types_lights.c_str());
 	type = (Light_type)ui_light_type;
@@ -299,7 +299,7 @@ void CompLight::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	App->fs->json_array_dotset_float4(object, name + "Color", color);
 
 	json_object_dotset_number_with_std(object, name + "Light Type", (int)type);
-	json_object_dotset_number_with_std(object, name + "Attenuation", attenuation);
+	json_object_dotset_number_with_std(object, name + "Attenuation", intensity);
 	json_object_dotset_number_with_std(object, name + "Ambient Coefficient", ambientCoefficient);
 
 }
@@ -311,7 +311,7 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	ui_light_type =json_object_dotget_number_with_std(object, name + "Light Type");
 	type = (Light_type)ui_light_type;
 	ambientCoefficient = json_object_dotget_number_with_std(object, name + "Ambient Coefficient");
-	attenuation = json_object_dotget_number_with_std(object, name + "Attenuation");
+	intensity = json_object_dotget_number_with_std(object, name + "Attenuation");
 	color=App->fs->json_array_dotget_float4_string(object, name + "Color");
 	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
 
