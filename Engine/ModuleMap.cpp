@@ -33,6 +33,7 @@ bool ModuleMap::Init(JSON_Object* node)
 		imported_map += name_map;
 		imported_map += ".mapwalk.json";
 		ImportMap();
+
 		map_created = true;
 	}
 	else
@@ -1056,6 +1057,18 @@ void ModuleMap::ImportMap()
 					number += line[x];
 					map[x][y] = atoi(number.c_str());
 					//t += 1;
+				}
+			}
+			map_string = "";
+			for (int y = 0; y < height_map; y++)
+			{
+				for (int x = 0; x < width_map; x++)
+				{
+					if (map[x][y] > 2)
+					{
+						map[x][y] = 1;
+					}
+					map_string += std::to_string(map[x][y]);
 				}
 			}
 			LOG("Walkable Map Loaded -----------");
