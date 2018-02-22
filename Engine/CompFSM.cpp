@@ -445,7 +445,7 @@ void CompFiniteStateMachine::Load(const JSON_Object * object, std::string name)
 	for (int i = 1; i <= num_states; i++)
 	{
 		FSM_State* new_state = new FSM_State(-1);
-		new_state->LoadState(object, name, i);
+		new_state->LoadState(object, name, i, parent);
 
 		if (i == initial_state_num)
 			initial_state = current_state = new_state;
@@ -617,7 +617,7 @@ void FSM_State::SaveState(JSON_Object * object, std::string name, bool saveScene
 {
 	json_object_dotset_number_with_std(object, name + "State ID" + std::to_string(state_num), state_id);
 	json_object_dotset_string_with_std(object, name + "State Name" + std::to_string(state_num), state_name.c_str());
-	//TODO: Save Script // Call Save from CompScript ???
+	json_object_dotset_string_with_std(object, name + "Script Name" + std::to_string(state_num), script->GetScriptName());
 
 	int num_transitions = 0;
 	for (std::vector<FSM_Transition*>::const_iterator it_transitions = transitions.begin(); it_transitions != transitions.end(); it_transitions++)
@@ -628,11 +628,14 @@ void FSM_State::SaveState(JSON_Object * object, std::string name, bool saveScene
 	json_object_dotset_number_with_std(object, name + "Number Transitions State" + std::to_string(state_num), num_transitions);
 }
 
-void FSM_State::LoadState(const JSON_Object * object, std::string name, int num_state)
+void FSM_State::LoadState(const JSON_Object * object, std::string name, int num_state, GameObject* parent)
 {
 	state_id = json_object_dotget_number_with_std(object, name + "State ID" + std::to_string(num_state));
 	state_name = json_object_dotget_string_with_std(object, name + "State Name" + std::to_string(num_state));
-	//TODO: Load script // Call Load from CompScript ???
+
+	script = new CompScript(Comp_Type::C_SCRIPT, parent);
+	script->name_script = json_object_dotget_string_with_std(object, name + "Script Name" + std::to_string(num_state));
+	script->AddScriptbyName(script->name_script.c_str());
 
 	int num_transitions = json_object_dotget_number_with_std(object, name + "Number Transitions State" + std::to_string(num_state));
 	for (int i = 0; i < num_transitions; i++)
