@@ -293,10 +293,12 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 }
 void CompInteractive::SyncComponent()
 {
-	if (target_graphic_uid == 0)
-		return;
-	target_graphic=(CompGraphic*)parent->FindComponentByUUID(target_graphic_uid);
-	TryConversion();
+	if (target_graphic_uid != 0)
+	{
+		target_graphic = (CompGraphic*)parent->FindComponentByUUID(target_graphic_uid);
+		TryConversion();
+	}
+
 	if (GetType() == Comp_Type::C_BUTTON)
 	{
 		static_cast<CompButton*>(this)->SyncScript();
@@ -311,11 +313,13 @@ bool CompInteractive::IsActivate()const
 void CompInteractive::Activate()
 {
 	disabled = false;
+	current_selection_state = SelectionStates::STATE_NORMAL;
+	PrepareHandleTransition();
 }
 void CompInteractive::Deactive()
 {
-	LOG("ILOSAE");
 	disabled = true;
+	PrepareHandleTransition();
 }
 
 void CompInteractive::ForceClear(Event event_input)

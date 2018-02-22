@@ -125,7 +125,14 @@ void CompButton::ShowInspectorInfo()
 	default:
 		break;
 	}
+	int navigation_opt = current_navigation_mode;
+	ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
+	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Sprite transition\0 Animation transition", 1))
+	{
+		if (navigation_opt == NavigationMode::NAVIGATION_NONE)
+			current_navigation_mode = NavigationMode::NAVIGATION_NONE;
 
+	}
 	ImGui::Text("On Click");
 
 	ImGui::Text("Number of Script"); 
@@ -287,11 +294,11 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 	no_fade = json_object_dotget_boolean_with_std(object, name + "Fade Active");
 	start_transition = json_object_dotget_boolean_with_std(object, name + "Transition Start");
 	target_graphic_uid = json_object_dotget_number_with_std(object, name + "Graphic UUID");
-	int size = json_object_dotget_number_with_std(object, name + "Linked Spites Size");
-	uid_linked_scripts = new int[size];
-	for (int i = 0; i < size; i++)
+	number_script = json_object_dotget_number_with_std(object, name + "Linked Spites Size");
+	uid_linked_scripts = new int[number_script];
+	for (int i = 0; i < number_script; i++)
 	{
-		std::string temp = std::to_string(i++);
+		std::string temp = std::to_string(i);
 		uid_linked_scripts[i]= json_object_dotget_number_with_std(object, name + "Linked Spites " + temp + " UUID");
 	}
 	Enable();
@@ -303,24 +310,16 @@ void CompButton::SyncScript()
 
 	int size = 0;
 	if(uid_linked_scripts!=nullptr)
-		size = sizeof(uid_linked_scripts);
+		size = sizeof(uid_linked_scripts)/sizeof(uid_linked_scripts[0]);
 
 	for (int i = 0; i < size; i++)
 	{
 		CompScript* comp_script = nullptr;
 		//Find Component with uid
-		if (uid_linked_scripts[i] != 0)
-		{
-			comp_script = (CompScript*)parent->FindComponentByUUID(uid_linked_scripts[i]);
-		}
+		comp_script = (CompScript*)parent->FindComponentByUUID(uid_linked_scripts[i]);
 		linked_scripts.push_back(comp_script);
 	}
 	RELEASE_ARRAY(uid_linked_scripts);
-
-	if (target_graphic_uid == 0)
-		return;
-	target_graphic = (CompGraphic*)parent->FindComponentByUUID(target_graphic_uid);
-	TryConversion();
 }
 
 void CompButton::AddLinkedScript(const CompScript * script)

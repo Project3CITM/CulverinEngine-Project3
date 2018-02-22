@@ -39,7 +39,7 @@ private:
 	int window_width = 0;
 	int window_height = 0;
 	int window_scale = 1;
-
+	bool mouse_down = false;
 	float2 last_size_dock = float2(0, 0);
 	std::vector<CompInteractive*> iteractive_vector;
 	CompInteractive* focus = nullptr;

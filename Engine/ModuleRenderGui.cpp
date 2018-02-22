@@ -113,46 +113,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	case EventType::EVENT_MOUSE_MOTION:
 		if (App->engine_state != EngineState::STOP)
 		{
-			if (focus != nullptr)
-			{
-				if (focus->PointerInside(this_event.pointer.position))
-				{
-					if (this_event.type == EventType::EVENT_BUTTON_DOWN)
-					{
-						focus->OnPointDown(this_event);
-						if (focus->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
-						{
-							focus->OnInteractiveSelected(this_event);
-						}
-
-					}
-					if (this_event.type == EventType::EVENT_BUTTON_UP)
-					{
-						focus->OnPointUP(this_event);
-
-					}
-					if (this_event.type == EventType::EVENT_MOUSE_MOTION)
-					{
-						focus->OnPointEnter(this_event);
-					}
-				}
-				else
-				{
-
-					if (this_event.type == EventType::EVENT_MOUSE_MOTION)
-					{
-						focus->OnPointExit(this_event);
-
-					}
-					if (this_event.type == EventType::EVENT_BUTTON_DOWN)
-					{
-						focus->ForceClear(this_event);
-						focus = nullptr;
-					}
-				}
-			}
-			else
-			{
+			
 				bool positive_colision = false;
 				std::vector<CompInteractive*>::reverse_iterator it = iteractive_vector.rbegin();
 				for (; it != iteractive_vector.rend(); it++)
@@ -167,16 +128,20 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 						if (this_event.type == EventType::EVENT_BUTTON_DOWN)
 						{
 							(*it)->OnPointDown(this_event);
-							if ((*it)->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
-							{
-								(*it)->OnInteractiveSelected(this_event);
-								focus = (*it);
-							}
+							//if ((*it)->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
+						//	{
+						//		(*it)->OnInteractiveSelected(this_event);
+						//	}
+							focus = (*it);
+							mouse_down = true;
 
 						}
 						if (this_event.type == EventType::EVENT_BUTTON_UP)
 						{
 							(*it)->OnPointUP(this_event);
+							focus = nullptr;
+							mouse_down = false;
+
 
 						}
 						if (this_event.type == EventType::EVENT_MOUSE_MOTION)
@@ -189,15 +154,23 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 					}
 					else
 					{
+						if (this_event.type == EventType::EVENT_BUTTON_UP)
+						{
+							(*it)->OnPointUP(this_event);
+							focus = nullptr;
+							mouse_down = false;
+						}
 						if (this_event.type == EventType::EVENT_MOUSE_MOTION)
 						{
 							(*it)->OnPointExit(this_event);
 						}
 					}
 				}
-				if (!positive_colision)
+				if (!positive_colision&&!mouse_down)
+				{
 					focus = nullptr;
-			}
+				}
+						
 		}
 		break;
 	default:
