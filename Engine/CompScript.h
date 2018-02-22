@@ -47,6 +47,9 @@ public:
 	bool SelectScript(bool& selecting);
 	// -------------------------
 
+	//Special --------------
+	void AddScriptbyName(const char* name_script);
+
 	// SAVE - LOAD METHODS ----------------
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);

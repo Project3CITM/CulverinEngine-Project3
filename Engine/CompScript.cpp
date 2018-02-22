@@ -528,6 +528,30 @@ void CompScript::ShowVarValue(ScriptVariable* var, int pushi)
 	}
 }
 
+void CompScript::AddScriptbyName(const char* name_script)
+{
+	if (name_script != nullptr)
+	{
+		resource_script = (ResourceScript*)App->resource_manager->GetResource(name_script);
+		if (resource_script != nullptr)
+		{
+			resource_script->num_game_objects_use_me++;
+
+			// LOAD SCRIPT -------------------------
+			if (resource_script->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script);
+			}
+
+			if (resource_script->GetState() != Resource::State::FAILED)
+			{
+				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
+				SetOwnGameObject(parent);
+			}
+		}
+	}
+}
+
 void CompScript::CopyValues(const CompScript* component)
 {
 	//more...
