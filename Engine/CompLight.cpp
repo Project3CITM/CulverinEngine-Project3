@@ -77,6 +77,44 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Comp_Type::C_LIGHT, parent)
 {
 	//App->module_lightning->OnLightDestroyed(this); //TODO/CHECK: Why delete the light?? Should add it to the list. Why create another method, already one to erase a light from the list on module lighting.
+	this->ambientCoefficient = copy.ambientCoefficient;
+	this->attenuation = copy.attenuation;
+	this->color = copy.color;
+	this->type = copy.type;
+	this->types_lights = copy.types_lights;
+	this->ui_light_type = copy.ui_light_type;
+	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png", &texture_bulb);
+
+	plane = App->module_lightning->light_UI_plane;
+
+
+
+	//-Frustrum Creation----------------
+	float width = 0.0f;
+	float height = 0.0f;
+	float aspect_ratio = 0.0f;
+	float near_plane = 0.0f;
+	float far_plane = 0.0f;
+	float vertical_fov = 0.0f;
+
+	width = 16;
+	height = 9;
+	aspect_ratio = width / height; // We set aspect ratio 16:9 by now
+
+	near_plane = 0.2;
+	far_plane = 1000;
+	vertical_fov = 60; /* In degrees */
+
+					   /* Set frustum vars */
+	frustum.type = PerspectiveFrustum;
+	frustum.pos = parent->GetComponentTransform()->GetPosGlobal();
+	frustum.front.Set(0, -1, 0);
+	frustum.up.Set(0, 0, 1);
+	frustum.nearPlaneDistance = near_plane;
+	frustum.farPlaneDistance = far_plane;
+	frustum.verticalFov = vertical_fov * DEGTORAD;
+	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
+
 	App->module_lightning->OnLightCreated(this);
 }
 
