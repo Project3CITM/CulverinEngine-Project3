@@ -37,8 +37,9 @@ public class AttackTarget : CulverinBehaviour
     {
         if (dynamic_collider != null)
         {
-            Vector3 position = dynamic_collider.GetGlobalPosition() + transform.forward;
-            Quaternion rotation = dynamic_collider.GetGlobalQuaternion();
+            Vector3 position = dynamic_collider.GetColliderPosition();
+            position += transform.forward;
+            Quaternion rotation = dynamic_collider.GetColliderQuaternion();
 
             dynamic_collider.MoveKinematic(position, rotation);
             expecting_collision = true;
@@ -49,8 +50,9 @@ public class AttackTarget : CulverinBehaviour
     {
         if (dynamic_collider != null)
         {
-            Vector3 position = dynamic_collider.GetGlobalPosition() - transform.forward;
-            Quaternion rotation = dynamic_collider.GetGlobalQuaternion();
+            Vector3 position = dynamic_collider.GetColliderPosition();
+            position -= transform.forward;
+            Quaternion rotation = dynamic_collider.GetColliderQuaternion();
 
             dynamic_collider.MoveKinematic(position, rotation);
         }
