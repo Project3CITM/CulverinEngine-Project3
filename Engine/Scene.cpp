@@ -256,6 +256,7 @@ void Scene::OnEvent(Event & event)
 	switch (event.type)
 	{
 	case EventType::EVENT_DELETE_GO:
+		LOG("Delete Component");
 		DeleteGameObject(event.delete_go.Todelte);
 		break;
 	}
@@ -936,7 +937,10 @@ GameObject * Scene::CreateCanvas(GameObject * parent)
 	GameObject* obj = new GameObject(parent);
 
 	// SET NAME -----------------------------------
-	std::string name = "Canvas";
+	static uint canvas_count = 0;
+
+	std::string name = "Canvas ";
+	name += std::to_string(canvas_count++);
 	char* name_str = new char[name.size() + 1];
 	strcpy(name_str, name.c_str());
 	obj->SetName(name_str);
@@ -966,8 +970,12 @@ GameObject * Scene::CreateImage(GameObject * parent)
 {
 	GameObject* obj = new GameObject(parent);
 
+
 	// SET NAME -----------------------------------
-	std::string name = "Image";
+	static uint image_count = 0;
+
+	std::string name = "Image ";
+	name += std::to_string(image_count++);
 	char* name_str = new char[name.size() + 1];
 	strcpy(name_str, name.c_str());
 	obj->SetName(name_str);
@@ -998,8 +1006,12 @@ GameObject * Scene::CreateButton(GameObject * parent)
 {
 	GameObject* obj = new GameObject(parent);
 
+
 	// SET NAME -----------------------------------
-	std::string name = "Button";
+	static uint button_count = 0;
+
+	std::string name = "Button ";
+	name += std::to_string(button_count++);
 	char* name_str = new char[name.size() + 1];
 	strcpy(name_str, name.c_str());
 	obj->SetName(name_str);
@@ -1034,8 +1046,12 @@ GameObject * Scene::CreateCheckBox(GameObject * parent)
 {
 	GameObject* obj = new GameObject(parent);
 
+
 	// SET NAME -----------------------------------
-	std::string name = "Check Box";
+	static uint check_box_count = 0;
+
+	std::string name = "Check Box ";
+	name += std::to_string(check_box_count++);
 	char* name_str = new char[name.size() + 1];
 	strcpy(name_str, name.c_str());
 	obj->SetName(name_str);
@@ -1069,12 +1085,16 @@ GameObject * Scene::CreateText(GameObject * parent)
 {
 	GameObject* obj = new GameObject(parent);
 
+
 	// SET NAME -----------------------------------
-	std::string name = "Text";
+	static uint text_count = 0;
+
+	std::string name = "Text Box ";
+	name += std::to_string(text_count++);
 	char* name_str = new char[name.size() + 1];
 	strcpy(name_str, name.c_str());
 	obj->SetName(name_str);
-
+	//TRANSFORM -------------
 	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
 	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
 	transform->Enable();
@@ -1099,12 +1119,17 @@ GameObject * Scene::CreateEditText(GameObject * parent)
 {
 	GameObject* obj = new GameObject(parent);
 
+
 	// SET NAME -----------------------------------
-	std::string name = "Edit Text";
+	static uint edit_text_count = 0;
+
+	std::string name = "Edit Text ";
+	name += std::to_string(edit_text_count++);
 	char* name_str = new char[name.size() + 1];
 	strcpy(name_str, name.c_str());
 	obj->SetName(name_str);
 
+	// TRANSFORM ----------------
 	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
 	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
 	transform->Enable();
