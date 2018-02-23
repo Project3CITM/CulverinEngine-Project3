@@ -23,6 +23,7 @@ ModuleRenderGui::ModuleRenderGui(bool start_enabled) : Module(start_enabled)
 	preUpdate_enabled = true;
 	Update_enabled = true;
 	postUpdate_enabled = true;
+	have_config = true;
 	name = "Render Gui";
 
 }
@@ -84,6 +85,15 @@ update_status ModuleRenderGui::PostUpdate(float dt)
 	//	ScreenSpaceDraw();
 	
 	postUpdate_t = perf_timer.ReadMs();
+	return UPDATE_CONTINUE;
+}
+
+update_status ModuleRenderGui::UpdateConfig(float dt)
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 3));
+	ImGui::Checkbox("Debug Draw", &debug_draw);
+	
+	ImGui::PopStyleVar();
 	return UPDATE_CONTINUE;
 }
 
@@ -183,7 +193,7 @@ void ModuleRenderGui::WorldSpaceDraw()
 {
 }
 
-void ModuleRenderGui::ScreenSpaceDraw()
+void ModuleRenderGui::ScreenSpaceDraw(bool debug)
 {
 	ImGuiIO& io = ImGui::GetIO();
 
@@ -232,7 +242,7 @@ void ModuleRenderGui::ScreenSpaceDraw()
 	}
 	default_ui_shader->Bind();
 	GLint g_AttribLocationProjMtx = glGetUniformLocation(default_ui_shader->programID, "ProjMtx");
-	if(App->engine_state!=EngineState::STOP)
+	if(App->engine_state!=EngineState::STOP|| debug_draw)
 	{
 		glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 

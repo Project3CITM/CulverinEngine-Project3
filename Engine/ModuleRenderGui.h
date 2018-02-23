@@ -18,11 +18,12 @@ public:
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
+	update_status UpdateConfig(float dt);
 	void OnEvent(Event& event);
 	bool SetEventListenrs();
 	
 	void WorldSpaceDraw();
-	void ScreenSpaceDraw();
+	void ScreenSpaceDraw(bool debug=false);
 
 	bool CleanUp();
 	std::vector<CompCanvas*> screen_space_canvas;
@@ -40,6 +41,7 @@ private:
 	int window_height = 0;
 	int window_scale = 1;
 	bool mouse_down = false;
+	bool debug_draw = false;
 	float2 last_size_dock = float2(0, 0);
 	std::vector<CompInteractive*> iteractive_vector;
 	CompInteractive* focus = nullptr;
