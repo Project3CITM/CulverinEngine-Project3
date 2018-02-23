@@ -23,6 +23,8 @@ public class CharacterController : CulverinBehaviour
     bool combat_mode = false;                   // True when enemy is in a near tile 
     public string anim_name = "Idle";
 
+    float anim_time = 0.0f; // 
+
     void Start()
     {
         // Link GameObject variables with Scene GameObjects
@@ -31,9 +33,9 @@ public class CharacterController : CulverinBehaviour
         lweapon_obj = GetLinkedObject("lweapon_obj");
         rweapon_obj = GetLinkedObject("rweapon_obj");
 
-        // L
-        anim_controller = GetComponent<CompAnimation>();
-        anim_controller.PlayAnimation(anim_name);
+        // Start Idle animation
+        //anim_controller = GetComponent<CompAnimation>();
+        //anim_controller.PlayAnimation(anim_name);
     }
 
     void Update()
@@ -52,22 +54,29 @@ public class CharacterController : CulverinBehaviour
                     {
                         //Check For Input + It has to check if he's moving to block attack (¿?)
                         CheckAttack();
+                        //Debug.Log("IDLE");
+                        anim_time = 0.0f;
                         break;
                     }
                 case State.ATTACKING:
                     {
                         //Check for end of the Attack animation
-                        anim_controller = GetComponent<CompAnimation>();
-                        if (anim_controller.IsAnimationStopped(anim_name))
+                        //anim_controller = GetComponent<CompAnimation>();
+                        //if (anim_controller.IsAnimationStopped(anim_name))
+                        //{
+                        //    anim_controller = GetComponent<CompAnimation>();
+                        //    anim_controller.PlayAnimation("Idle");
+                        //    state = State.IDLE;
+                        //}
+                        //else
+                        //{
+                        //    // Keep playing specific attack animation  until it ends
+                        //    Debug.Log("Attacking");
+                        //}
+                        anim_time += Time.DeltaTime();
+                        if(anim_time>= 3.0f)
                         {
-                            anim_controller = GetComponent<CompAnimation>();
-                            anim_controller.PlayAnimation("Idle");
-                            state = State.IDLE;
-                        }
-                        else
-                        {
-                            // Keep playing specific attack animation  until it ends
-                            Debug.Log("Attacking");
+                            SetState(State.IDLE);
                         }
                         break;
                     }
@@ -118,6 +127,7 @@ public class CharacterController : CulverinBehaviour
 
     public void CheckHealth()
     {
+        // Debug for check Health control
         if (Input.GetKeyDown(KeyCode.O))
         {
             health = health_obj.GetComponent<Hp>();

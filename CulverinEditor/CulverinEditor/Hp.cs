@@ -1,34 +1,34 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
-public class Hp2 : CulverinBehaviour
+public class Hp : CulverinBehaviour
 {
     CompImage hp_bar;
-    float max_hp = 1.0f;
-    float current_hp = 1.0f;
-    float damage = 0.01f;
-    bool bleeding = true;
+    float max_hp = 100.0f;
+    float current_hp = 100.0f;
+    float calc_hp = 1.0f;
 
     void Start()
     {
-        hp_bar = GetComponent<CompImage>();
     }
 
     void Update()
     {
-
     }
 
     public void GetDamage(float dmg)
     {
         current_hp -= dmg;
-
         if(current_hp < 0)
         {
             current_hp = 0;
         }
 
-        hp_bar.FillAmount(current_hp);
+        calc_hp = current_hp / max_hp;
+        hp_bar = GetComponent<CompImage>();
+        hp_bar.FillAmount(calc_hp);
+
+        Debug.Log("Get Damage -> Current HP: " + current_hp.ToString());
     }
 
     public float GetCurrentHealth()

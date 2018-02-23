@@ -671,11 +671,20 @@ void ModuleMap::ShowCreationMap()
 	if (ImGui::Button("Export Map"))
 	{
 		vector_map.clear();
+		int map_temp[MAX_ARRAY][MAX_ARRAY];
 		for (int y = 0; y < height_map; y++)
 		{
 			for (int x = 0; x < width_map; x++)
 			{
-				map[x][y] += 1;
+				map_temp[x][y] = -1;
+			}
+		}
+		for (int y = 0; y < height_map; y++)
+		{
+			for (int x = 0; x < width_map; x++)
+			{
+				map_temp[x][y] = map[x][y];
+				map_temp[x][y] += 1;
 			}
 		}
 		for (int y = 0; y < height_map; y++)
@@ -683,7 +692,7 @@ void ModuleMap::ShowCreationMap()
 			std::string line = "";
 			for (int x = 0; x < width_map; x++)
 			{
-				line += std::to_string(map[x][y]);
+				line += std::to_string(map_temp[x][y]);
 			}
 			vector_map.push_back(line);
 		}

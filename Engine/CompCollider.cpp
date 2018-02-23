@@ -192,15 +192,15 @@ void CompCollider::ShowInspectorInfo()
 	}
 	
 	// Listener selection
-	if (trigger)
-	{
+	//if (trigger)
+	//{
 		CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT, script_name);
 		if (sc != nullptr)
 		{
 			listener = sc;
 			uid_script_asigned = listener->GetUUID();
 		}
-	}
+	//}
 
 
 	// Collider type
@@ -380,7 +380,6 @@ void CompCollider::OnTriggerEnter(Component * actor)
 		collided_object = actor->GetParent();
 		((CompCollider*)collided_object->GetComponentByName("CompCollider"))->SetCollidedObject(GetParent());
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
-		((CompCollider*)collided_object->GetComponentByName("CompCollider"))->SetCollidedObject(nullptr);
 		collided_object = nullptr;
 	}
 }
@@ -392,7 +391,6 @@ void CompCollider::OnTriggerLost(Component * actor)
 		collided_object = actor->GetParent();
 		((CompCollider*)collided_object->GetComponentByName("CompCollider"))->SetCollidedObject(GetParent());
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
-		((CompCollider*)collided_object->GetComponentByName("CompCollider"))->SetCollidedObject(nullptr);
 		collided_object = nullptr;
 	}
 }

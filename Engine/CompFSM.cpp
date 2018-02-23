@@ -78,6 +78,11 @@ void CompFiniteStateMachine::Update(float dt)
 
 					ImGui::Text("%s:\n", (*it)->GetStateName());					CheckOpenStateOptions(*it);
 					//DEBUG for now START
+					if ((*it) == current_state)
+					{
+						ImGui::SameLine();
+						ImGui::Text(" <-- Current State");
+					}
 					if ((*it) == initial_state)
 					{
 						ImGui::SameLine();
@@ -183,7 +188,9 @@ void CompFiniteStateMachine::Update(float dt)
 							}
 
 							ImGui::PushID(i);
+							ImGui::Text("Only Bools working atm");
 							ImGui::Combo("", &(*it), "Bool\0Equal Int\0Greater Int\0Greater or Equal Int\0Lower Int\0Lower or Equal Int\0Equal Float\0Greater Float\0Greater or Equal Float\0Lower Float\0Lower or Equal Float\0\0");
+							*it = 0;// <-- TODO: Only Bools working atm
 							ImGui::PopID();
 						}
 						// --------------  Conditions  -------------- //
@@ -212,7 +219,7 @@ void CompFiniteStateMachine::Update(float dt)
 								{
 									// --- Bools --- //
 								case 0:
-									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_BOOL, true, true);
+									new_transition->AddCondition(FSM_CONDITION_TYPE::FSM_COND_BOOL, true);
 									break;
 									// --- Bools --- //
 
@@ -273,11 +280,10 @@ void CompFiniteStateMachine::Update(float dt)
 				{
 					// --------------  Conditions  -------------- //
 					new_transition->CreateConditionsModifyingOptions(selected_state);
-
-					//TODO: Some way to save the values from the script we will compare the conditions to
 					// --------------  Conditions  -------------- //
 
 					// --------------  Creates Transition with Conditions  -------------- //
+					ImGui::Separator();
 					if (ImGui::Button("Confirm Conditions"))
 					{
 						new_conditions.clear();
@@ -452,7 +458,7 @@ void CompFiniteStateMachine::Load(const JSON_Object * object, std::string name)
 
 		if (i == initial_state_num)
 			initial_state = current_state = new_state;
-
+	
 		states.push_back(new_state);
 	}
 
@@ -609,7 +615,7 @@ void FSM_State::DoEntryAction()
 void FSM_State::DoAction(float dt)
 {
 	if (script != nullptr)
-		script->UpdateScript(dt);
+		script->Update(dt);
 }
 
 void FSM_State::DoExitAction()
@@ -651,10 +657,10 @@ void FSM_State::LoadState(const JSON_Object * object, std::string name, int num_
 	}
 
 	int num_transitions = json_object_dotget_number_with_std(object, name + "Number Transitions State" + std::to_string(num_state));
-	for (int i = 0; i < num_transitions; i++)
+	for (int i = 1; i <= num_transitions; i++)
 	{
 		FSM_Transition* new_transition = new FSM_Transition();
-		new_transition->LoadTransition(object, name, num_state, i);
+		new_transition->LoadTransition(object, name, num_state, i, this);
 		transitions.push_back(new_transition);
 	}
 }
@@ -738,7 +744,7 @@ bool FSM_State::DeleteTransition(FSM_Transition * transition_to_delete)
 bool FSM_State::CheckTriggeredTransition(FSM_Transition** transition) const
 {
 	for (std::vector<FSM_Transition*>::const_iterator it = transitions.begin(); it != transitions.end(); it++)
-		if ((*it)->IsTriggered())
+		if ((*it)->IsTriggered(this))
 		{
 			*transition = *it;
 			return true;
@@ -864,26 +870,60 @@ void FSM_Transition::SaveTransition(JSON_Object * object, std::string name, bool
 	for (std::vector<FSM_Condition*>::const_iterator it_conditions = conditions.begin(); it_conditions != conditions.end(); it_conditions++)
 	{
 		num_conditions++;
+		json_object_dotset_number_with_std(object, name + "Condition Type Condition" + std::to_string(num_conditions), (*it_conditions)->GetConditionType());
 		(*it_conditions)->SaveCondition(object, name, saveScene, countResources);
 	}
-	json_object_dotset_number_with_std(object, name + "Number Conditions State" + std::to_string(state_num) + " Transition" + std::to_string(transition_num), num_conditions);
+	json_object_dotset_number_with_std(object, name + "Number Conditions State" + std::to_string(state_num) + "Transition" + std::to_string(transition_num), num_conditions);
 }
 
-void FSM_Transition::LoadTransition(const JSON_Object * object, std::string name, int num_state, int num_transition)
+void FSM_Transition::LoadTransition(const JSON_Object * object, std::string name, int num_state, int num_transition, FSM_State* state_loading)
 {
 	// The target state must be applied later because the state may not be created yet
 	target_state_id = json_object_dotget_number_with_std(object, name + "Target State ID");
 
-	int num_conditions = json_object_dotget_number_with_std(object, name + "Number Conditions State" + std::to_string(num_state) + " Transition" + std::to_string(num_transition));
-	for (int i = 0; i < num_conditions; i++)
+	int num_conditions = json_object_dotget_number_with_std(object, name + "Number Conditions State" + std::to_string(num_state) + "Transition" + std::to_string(num_transition));
+	for (int i = 1; i <= num_conditions; i++)
 	{
-		FSM_Condition* new_condition = new FSM_Condition();
-		new_condition->LoadCondition(object, name);	// TODO
-		conditions.push_back(new_condition);
+		FSM_CONDITION_TYPE condition_type = (FSM_CONDITION_TYPE)(int)json_object_dotget_number_with_std(object, name + "Condition Type Condition" + std::to_string(num_conditions));
+		FSM_ConditionBool * new_condition = new FSM_ConditionBool(true);
+		switch (condition_type)
+		{
+		case FSM_COND_NONE:
+			break;
+		case FSM_COND_BOOL:
+			new_condition->LoadCondition(object, name, state_loading);
+			conditions.push_back(new_condition);
+			break;
+		case FSM_COND_EQUAL_INT:
+			//TODO: Rest of cases:
+			break;
+		case FSM_COND_GREATER_THAN_INT:
+			break;
+		case FSM_COND_GREATER_EQUAL_INT:
+			break;
+		case FSM_COND_LOWER_THAN_INT:
+			break;
+		case FSM_COND_LOWER_EQUAL_INT:
+			break;
+		case FSM_COND_EQUAL_FLOAT:
+			break;
+		case FSM_COND_GREATER_THAN_FLOAT:
+			break;
+		case FSM_COND_GREATER_EQUAL_FLOAT:
+			break;
+		case FSM_COND_LOWER_THAN_FLOAT:
+			break;
+		case FSM_COND_LOWER_EQUAL_FLOAT:
+			break;
+		case FSM_COND_MAX:
+			break;
+		default:
+			break;
+		}
 	}
 }
 
-FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, bool condition_a, bool condition_b)
+FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, bool condition_b)
 {
 	LOG("Creating FSM Condition.");
 	FSM_Condition* new_condition = nullptr;
@@ -895,7 +935,7 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 		return nullptr;
 		break;
 	case FSM_COND_BOOL:
-		new_condition = new FSM_ConditionBool(condition_a, condition_b);
+		new_condition = new FSM_ConditionBool(condition_b);
 		break;
 	case FSM_COND_EQUAL_INT:
 	case FSM_COND_GREATER_THAN_INT:
@@ -1007,46 +1047,23 @@ FSM_Condition * FSM_Transition::AddCondition(FSM_CONDITION_TYPE condition_type, 
 	return new_condition;
 }
 
-bool FSM_Transition::IsTriggered()const
+bool FSM_Transition::IsTriggered(const FSM_State* current_state)const
 {
-	//TODO: Check all conditions
+	bool ret = true;
 	for (std::vector<FSM_Condition*>::const_iterator it = conditions.begin(); it != conditions.end(); it++)
-	{
-		switch ((*it)->GetConditionType())
+		if (!(*it)->Test(current_state))
 		{
-		case FSM_COND_NONE:
-			break;
-		case FSM_COND_BOOL:
-// TODO				return true;
-			break;
-		case FSM_COND_EQUAL_INT:
-		case FSM_COND_GREATER_THAN_INT:
-		case FSM_COND_GREATER_EQUAL_INT:
-		case FSM_COND_LOWER_THAN_INT:
-		case FSM_COND_LOWER_EQUAL_INT:
-// TODO				return true; 
-			break;
-		case FSM_COND_EQUAL_FLOAT:
-		case FSM_COND_GREATER_THAN_FLOAT:
-		case FSM_COND_GREATER_EQUAL_FLOAT:
-		case FSM_COND_LOWER_THAN_FLOAT:
-		case FSM_COND_LOWER_EQUAL_FLOAT:
-// TODO				return true; 
-			break;
-		case FSM_COND_MAX:
-			break;
-		default:
+			ret = false;
 			break;
 		}
-	}
-
-	return false;
+	return ret;
 }
 
 void FSM_Transition::CreateConditionsModifyingOptions(FSM_State* selected_state)
 {
 	int id = 0;
-	for (std::vector<FSM_Condition*>::const_iterator it = conditions.begin(); it != conditions.end(); it++, id++)
+	int id2 = 0;
+	for (std::vector<FSM_Condition*>::const_iterator it = conditions.begin(); it != conditions.end(); it++, id++,id2++)
 	{
 		CompScript* state_script = selected_state->GetScript();
 
@@ -1056,74 +1073,62 @@ void FSM_Transition::CreateConditionsModifyingOptions(FSM_State* selected_state)
 			return;
 		}
 
-		bool b = ((FSM_ConditionBool*)*it)->GetConditionA();
+		ScriptVariable* condition_a = nullptr;
+		bool bool_b = false;
 		int i = 0;
 		float f = 0.0f;
 
-		ImGui::PushID(id);
-		
-		// TODO
+		ImGui::PushID(id);		
 		switch ((*it)->GetConditionType())
 		{
 		case FSM_COND_NONE:
 			break;
 
 		case FSM_COND_BOOL:
-			for (std::vector<ScriptVariable*>::const_iterator it_variables = state_script->csharp->variables.begin(); it_variables != state_script->csharp->variables.end(); it_variables++)
+			condition_a = ((FSM_ConditionBool*)(*it))->GetConditionA();
+			bool_b = ((FSM_ConditionBool*)(*it))->GetConditionB();
+			
+			ImGui::PushID(id2);
+			if (ImGui::BeginCombo("##SelectVariable", (*it)->variable_a_name))
 			{
-				if ((*it_variables)->type == VarType::Var_BOOL)
+				for (std::vector<ScriptVariable*>::iterator it_variables = state_script->csharp->variables.begin(); it_variables != state_script->csharp->variables.end(); it_variables++)
 				{
-					ImGui::Text("Variable A:"); ImGui::SameLine();
-					static int i = 0;
-					// TODO:
-					/*
-					Component* ret = nullptr;
-	if (type != actualType)
-	{
-		temp_vector.clear();
-		root->GetComponentsByType(type, &temp_vector, true);
-	}
+					if ((*it_variables)->type == VarType::Var_BOOL)
+					{
+						bool is_selected = ((*it)->variable_a_name == (*it_variables)->name);
+						if (ImGui::Selectable((*it_variables)->name, is_selected))
+						{
+							(*it)->variable_a_name = (*it_variables)->name;
+							condition_a = (*it_variables);
+							((FSM_ConditionBool*)(*it))->SetScriptVariable(&(*it_variables));
+						}
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
+				}				
+				ImGui::EndCombo();
+			}
+			ImGui::PopID();
 
-	//ImGui::PushItemWidth(150);
-	ImGui::Text("Select: "); ImGui::SameLine();
-
-	if (ImGui::BeginCombo("##SelectComponent", current_item.c_str()))
-	{
-		for (int i = 0; i < temp_vector.size(); i++)
-		{
-			char buffer[100];
-			if (temp_vector[i]->GetType() == Comp_Type::C_SCRIPT)
+			if (!add_second_variable_from_script)
 			{
-				sprintf(buffer, "%s.%s", temp_vector[i]->GetParent()->GetName(), ((CompScript*)temp_vector[i])->GetScriptName());
-			}
-			else
-			{
-				sprintf(buffer, "%s.%s", temp_vector[i]->GetParent()->GetName(), temp_vector[i]->GetName());
-			}
-			if (ImGui::Selectable(buffer))
-			{
-				current_item = buffer;
-				ret = temp_vector[i];
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-		ImGui::EndCombo();
-	}
-	return ret;
-	*/				//Change this:
-					if (ImGui::Combo("", &i, "\0Testing1\0Testing2\0\0"))
-						(*it)->variable_a = (*it_variables);
+				ImGui::SameLine();
+				ImGui::PushID(id2);
+				if (ImGui::Checkbox("True", &bool_b))
+					(*it)->SetConditionB(bool_b);
 
-					if (!add_second_variable_from_script)
-						if (ImGui::Button("Add Script Variable"))
-							add_second_variable_from_script = true;
-				}
+				ImGui::PopID();
 			}
+			ImGui::PushID(id2);
+			if (ImGui::Button("Save Condition"))
+				((FSM_ConditionBool*)*it)->SetConditionB(bool_b);
+			ImGui::PopID();
 
-			if (ImGui::Button("Confitm Condition"))
-				((FSM_ConditionBool*)*it)->SetCondition(b, b);
+			ImGui::SameLine();
+			App->ShowHelpMarker("Conditions need to be saved before Confirming them");
 			break;
 /*
+// TODO
 		case FSM_COND_EQUAL_INT:
 			i = ((FSM_ConditionEqualInt*)*it)->GetCondition();
 			ImGui::Text("Equal to: ");
@@ -1284,16 +1289,21 @@ uint FSM_Transition::GetNumConditions() const
 	return conditions.size();
 }
 
-FSM_Condition::FSM_Condition() : condition_type(FSM_CONDITION_TYPE::FSM_COND_NONE), variable_a(nullptr), variable_b(nullptr)
+FSM_Condition::FSM_Condition() : condition_type(FSM_CONDITION_TYPE::FSM_COND_NONE)
 {
 }
 
-FSM_Condition::FSM_Condition(FSM_CONDITION_TYPE condition_type_) : condition_type(condition_type_), variable_a(nullptr), variable_b(nullptr)
+FSM_Condition::FSM_Condition(FSM_CONDITION_TYPE condition_type_) : condition_type(condition_type_)
 {
 }
 
 FSM_Condition::~FSM_Condition()
 {
+}
+
+void FSM_Condition::SetConditionType(FSM_CONDITION_TYPE condition_type_)
+{
+	condition_type = condition_type_;
 }
 
 FSM_CONDITION_TYPE FSM_Condition::GetConditionType() const
@@ -1350,7 +1360,7 @@ const char * FSM_Condition::GetConditionTypeStr() const
 	return "Condition type ERROR";
 }
 
-FSM_ConditionBool::FSM_ConditionBool(bool condition_a_, bool condition_b_) : FSM_Condition(FSM_COND_BOOL), condition_a(condition_a_), condition_b(condition_b_)
+FSM_ConditionBool::FSM_ConditionBool(bool condition_b_) : FSM_Condition(FSM_COND_BOOL), condition_b(condition_b_), condition_script_a(nullptr)
 {
 }
 
@@ -1358,21 +1368,47 @@ FSM_ConditionBool::~FSM_ConditionBool()
 {
 }
 
-bool FSM_ConditionBool::Test()
+void FSM_ConditionBool::SaveCondition(JSON_Object * object, std::string name, bool saveScene, uint & countResources)
 {
-	return condition_a == condition_b;
+	json_object_dotset_boolean_with_std(object, name + "Condition B", condition_b);
 }
 
-bool FSM_ConditionBool::SetCondition(bool condition_a_, bool condition_b_)
+void FSM_ConditionBool::LoadCondition(const JSON_Object * object, std::string name, FSM_State* loading_state)
 {
-	condition_a = condition_a_;
-	condition_b = condition_b_;
+	condition_b = json_object_dotget_boolean_with_std(object, name + "Condition B");
+
+	for (std::vector<ScriptVariable*>::iterator it_variables = loading_state->GetScript()->csharp->variables.begin(); it_variables != loading_state->GetScript()->csharp->variables.end(); it_variables++)
+		if ((*it_variables)->type == VarType::Var_BOOL)
+			SetScriptVariable(&(*it_variables));
+}
+
+bool FSM_ConditionBool::Test(const FSM_State* current_state)
+{
+	return *(bool*)condition_script_a->value == condition_b;
+}
+
+bool FSM_ConditionBool::SetScriptVariable(ScriptVariable ** script_variable)
+{
+	if (script_variable == nullptr)
+		return false;
+
+	condition_script_a = *script_variable;
 	return true;
 }
 
-bool FSM_ConditionBool::GetConditionA() const
+void FSM_ConditionBool::SetConditionB(bool condition_b_)
 {
-	return condition_a;
+	condition_b = condition_b_;
+}
+
+ScriptVariable* FSM_ConditionBool::GetConditionA() const
+{
+	return condition_script_a;
+}
+
+bool FSM_ConditionBool::GetConditionB() const
+{
+	return condition_b;
 }
 
 FSM_ConditionEqualInt::FSM_ConditionEqualInt(int condition_a_, int condition_b_) : FSM_Condition(FSM_COND_EQUAL_INT), condition_a(condition_a_), condition_b(condition_b_)

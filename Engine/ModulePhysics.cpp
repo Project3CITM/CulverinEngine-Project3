@@ -4,6 +4,7 @@
 
 #include "Component.h"
 #include "CompCollider.h"
+#include "CompRigidBody.h"
 
 #include "PhysX/Include/PxPhysicsAPI.h"
 #include "jpPhysicsWorld.h"
@@ -155,11 +156,13 @@ void ModulePhysics::OnEvent(Event & event)
 		case JP_COLLISION_TYPE::TRIGGER_ENTER:
 			{
 			static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerEnter(event.physics_collision.actor);
+			static_cast<CompRigidBody*>(event.physics_collision.actor)->OnTriggerEnter(event.physics_collision.trigger);
 			break;
 			}
 		case JP_COLLISION_TYPE::TRIGGER_LOST:
 			{
 			static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerLost(event.physics_collision.actor);
+			static_cast<CompRigidBody*>(event.physics_collision.actor)->OnTriggerLost(event.physics_collision.trigger);
 			break;
 			}
 		}

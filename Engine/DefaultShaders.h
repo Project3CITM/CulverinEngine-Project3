@@ -48,7 +48,7 @@ static const GLchar* fragmentShaderSource[] =
 "	#version 330 core																							 \n"
 "																												 \n"
 "																												 \n"
-"#define MAX_LIGHTS 10																							 \n"
+"#define MAX_LIGHTS 30																							 \n"
 "	uniform int _numLights;																						 \n"
 "uniform struct Light {																							 \n"
 "	vec3 position;																								 \n"
