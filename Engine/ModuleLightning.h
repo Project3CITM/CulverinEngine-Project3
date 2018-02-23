@@ -86,6 +86,8 @@ public:
 
 	glm::mat4 depthBiasMVP;
 
+	bool light_extense_debug_info = false;
+
 private:
 	uint shadow_cast_points_count = DEFAULT_SHADOW_CAST_POINTS_COUNT; // This value should be able to change from config and modiffied on load
 	std::vector<DepthCubeMap*> shadow_point_lights_maps;
