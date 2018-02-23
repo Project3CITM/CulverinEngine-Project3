@@ -250,6 +250,22 @@ void CompRigidBody::UpdateParentPosition()
 	transform->SetRot(quat);
 }
 
+void CompRigidBody::OnTriggerEnter(Component * trigger)
+{
+	if (collider_comp)
+	{
+		OnTriggerEnter(trigger);
+	}
+}
+
+void CompRigidBody::OnTriggerLost(Component * trigger)
+{
+	if (collider_comp)
+	{
+		OnTriggerLost(trigger);
+	}
+}
+
 void CompRigidBody::MoveKinematic(float3 pos, Quat rot)
 {
 	if (body && this->kinematic)
