@@ -15,6 +15,7 @@ public:
 	void CopyValues(const CompRectTransform * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+	void DrawRectTransform();
 
 	void SetWidth(int set_width);
 	void SetHeight(int set_height);

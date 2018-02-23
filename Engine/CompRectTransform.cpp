@@ -362,6 +362,32 @@ void CompRectTransform::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompRectTransform::DrawRectTransform()
+{
+	float3 south_west = GetSouthWestPosition();
+	float3 south_east = GetSouthEastPosition();
+	float3 north_west = GetNorthWestPosition();
+	float3 north_east = GetNorthEastPosition();
+
+	glBegin(GL_LINES);
+	glLineWidth(20.0f);
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	glVertex3f(position.x+south_west.x, position.y + south_west.y, south_west.z);
+	glVertex3f(position.x + south_east.x, position.y + south_east.y, south_east.z);
+
+	glVertex3f(position.x + south_east.x, position.y + south_east.y, south_east.z);
+	glVertex3f(position.x + north_east.x, position.y + north_east.y, north_east.z);
+
+	glVertex3f(position.x + north_east.x, position.y + north_east.y, north_east.z);
+	glVertex3f(position.x + north_west.x, position.y + north_west.y, north_west.z);
+
+	glVertex3f(position.x + north_west.x, position.y + north_west.y, north_west.z);
+	glVertex3f(position.x + south_west.x, position.y + south_west.y, south_west.z);
+
+	glEnd();
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
 void CompRectTransform::SetWidth(int set_width)
 {
 	update_rect = true;
