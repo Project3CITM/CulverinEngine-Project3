@@ -45,6 +45,7 @@ public class WeaponController : CulverinBehaviour
         player.SetAttackAnim(true);
 
         //Reproduce specific audio
+        sound_fx = GetComponent<CompAudio>();
         sound_fx.PlayEvent("Attack");
     }
 
@@ -57,7 +58,6 @@ public class WeaponController : CulverinBehaviour
         }
     }
 
-
     void OnClick()
     {
         if (player.stamina.GetCurrentStamina() > stamina_cost)
@@ -68,6 +68,7 @@ public class WeaponController : CulverinBehaviour
             button.Deactivate();
             //...
 
+            player = GetComponent<PlayerController>();
             player.SetState(PlayerController.State.ATTACKING);
         }
         else

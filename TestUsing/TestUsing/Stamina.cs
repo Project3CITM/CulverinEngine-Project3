@@ -1,7 +1,7 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
-public class Stamina : CulverinBehaviour
+public class Stamina2 : CulverinBehaviour
 {
     CompImage stamina_bar;
     float regen = 0.0005f;

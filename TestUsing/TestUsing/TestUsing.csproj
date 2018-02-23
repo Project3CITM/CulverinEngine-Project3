@@ -42,8 +42,10 @@
     <Compile Include="AudioTest.cs" />
     <Compile Include="Code.cs" />
     <Compile Include="Codev1.cs" />
+    <Compile Include="CoolDown.cs" />
     <Compile Include="EnemyController.cs" />
     <Compile Include="Hp.cs" />
+    <Compile Include="PlayerController2.cs" />
     <Compile Include="PlayerController.cs" />
     <Compile Include="Stamina.cs" />
     <Compile Include="Test.cs" />

@@ -1,7 +1,7 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
-public class Hp : CulverinBehaviour
+public class Hp2 : CulverinBehaviour
 {
     CompImage hp_bar;
     float max_hp = 1.0f;
