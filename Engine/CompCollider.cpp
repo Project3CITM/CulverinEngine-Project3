@@ -86,8 +86,18 @@ void CompCollider::Update(float dt)
 {
 	if (transform->GetUpdated() && rigid_body_comp == nullptr && App->engine_state != EngineState::PLAY)
 	{
+		if(trigger && !on_move)
+		{
+			body->SetAsTrigger(false);
+			on_move = true;
+		}
 		SetColliderPosition();
 		App->physics->DebugDrawUpdate();
+	}
+	else if (!rigid_body_comp && trigger && on_move)
+	{
+		body->SetAsTrigger(trigger);
+		on_move = false;
 	}
 }
 
@@ -468,6 +478,20 @@ Quat CompCollider::GetGlobalQuat() const
 GameObject * CompCollider::GetCollidedObject() const
 {
 	return collided_object;
+}
+
+void CompCollider::MoveStaticTo(float3 fpos)
+{
+	if (body)
+	{
+		if (trigger && !on_move)
+		{
+			body->SetAsTrigger(false);
+			on_move = true;
+		}
+		Quat quat = transform->GetRotGlobal()*local_quat;
+		body->SetTransform(fpos, quat);
+	}
 }
 
 jpPhysicsRigidBody* CompCollider::GivePhysicsBody(CompRigidBody* new_rigid_body)

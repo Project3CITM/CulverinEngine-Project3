@@ -66,6 +66,7 @@ public:
 
 	std::vector<CompLight*> GetSceneLights()const;
 	std::vector<CompLight*>* GetActiveLights(); // Return the point active lights for that frame.
+	void GetActiveLightsCount(uint ammount, std::vector<CompLight*>& to_fill); // Fills the parameter vector with the asked amount of closest lights
 
 	bool SetEventListenrs();
 
@@ -85,6 +86,8 @@ public:
 	uint texture_bulb = 0;
 
 	glm::mat4 depthBiasMVP;
+
+	bool light_extense_debug_info = false;
 
 private:
 	uint shadow_cast_points_count = DEFAULT_SHADOW_CAST_POINTS_COUNT; // This value should be able to change from config and modiffied on load

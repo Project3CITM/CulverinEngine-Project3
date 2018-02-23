@@ -659,6 +659,22 @@ std::vector<CompLight*>* ModuleLightning::GetActiveLights()
 	return &frame_used_lights;
 }
 
+void ModuleLightning::GetActiveLightsCount(uint ammount, std::vector<CompLight*>& to_fill)
+{
+	for(uint i = 0; i < ammount; ++i)
+	{
+		if (i < scene_lights.size())
+		{
+			to_fill.push_back(scene_lights[i]);
+		}
+		else
+		{
+			// If index ammount is passing the lights ammount just return.
+			return;
+		}
+	}
+}
+
 bool ModuleLightning::SetEventListenrs()
 {
 	AddListener(EventType::EVENT_SEND_3D_3DA_MM, this);
@@ -692,9 +708,22 @@ update_status ModuleLightning::UpdateConfig(float dt)
 	ImGui::Text("Lights used on frame:"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", frame_used_lights.size());
 
-	for(std::vector<CompLight*>::iterator it = frame_used_lights.begin(); it != frame_used_lights.end(); ++it)
+	ImGui::Checkbox("Display extense debug info", &light_extense_debug_info);
+	if (light_extense_debug_info)
 	{
-		ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "\tName: %s - x:%f y:%f z:%f", (*it)->GetParent()->GetName(), (*it)->GetGameObjectPos().x, (*it)->GetGameObjectPos().y, (*it)->GetGameObjectPos().z);
+		Frustum* cam = &App->renderer3D->active_camera->frustum;
+		ImGui::TextColored(ImVec4(0.f, 0.5f, 1.f, 1.f), "Camera pos: x:%.3f y:%.3f z:%.3f", cam->pos.x, cam->pos.y, cam->pos.z);
+		for (std::vector<CompLight*>::iterator it = scene_lights.begin(); it != scene_lights.end(); ++it)
+		{
+			ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "\tName: %s - x:%f y:%f z:%f ---- Dist to active camera: %.3f", (*it)->GetParent()->GetName(), (*it)->GetGameObjectPos().x, (*it)->GetGameObjectPos().y, (*it)->GetGameObjectPos().z, cam->pos.Distance((*it)->GetGameObjectPos()));
+		}
+
+		ImGui::Separator();
+
+		for (std::vector<CompLight*>::iterator it = frame_used_lights.begin(); it != frame_used_lights.end(); ++it)
+		{
+			ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "\tName: %s", (*it)->GetParent()->GetName());
+		}
 	}
 
 	if(ImGui::TreeNodeEx("Shadow maps"))
@@ -734,8 +763,8 @@ bool OrderLights(CompLight* l1, CompLight* l2)
 		// Must calc distance to main camera from both lights.
 		Frustum* cam = &App->renderer3D->GetActiveCamera()->frustum;
 
-		float l1_dist = cam->Distance(l1->GetGameObjectPos());
-		float l2_dist = cam->Distance(l2->GetGameObjectPos());;
+		float l1_dist = cam->pos.Distance(l1->GetGameObjectPos());
+		float l2_dist = cam->pos.Distance(l2->GetGameObjectPos());;
 
 		if (l1_dist < l2_dist) return true;
 	}

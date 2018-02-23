@@ -1876,6 +1876,25 @@ MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 	return App->importer->iScript->GetMonoObject(target);
 }
 
+void CSharpScript::MoveStaticColliderTo(MonoObject * object, MonoObject * position)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classP = mono_object_get_class(position);
+		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classP, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classP, "z");
+
+		float3 new_pos;
+
+		if (x_field) mono_field_get_value(position, x_field, &new_pos.x);
+		if (y_field) mono_field_get_value(position, y_field, &new_pos.y);
+		if (z_field) mono_field_get_value(position, z_field, &new_pos.z);
+
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->MoveStaticTo(new_pos);
+	}
+}
+
 // CompRigidBody ----------------------------------------------------------
 MonoObject * CSharpScript::GetColliderPosition(MonoObject * object)
 {

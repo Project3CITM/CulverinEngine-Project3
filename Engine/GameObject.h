@@ -111,6 +111,7 @@ public:
 	uint GetNumChilds() const;
 	GameObject* GetChildbyIndex(uint pos_inVec) const;
 	GameObject* GetChildbyName(const char* name) const;
+	GameObject* GetChildByRealName(std::string name) const;
 	GameObject* GetChildDeepSearch(const char* name) const;
 	uint GetIndexChildbyName(const char* name) const;
 	void RemoveChildbyIndex(uint index);

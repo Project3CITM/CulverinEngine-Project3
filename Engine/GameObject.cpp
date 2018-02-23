@@ -1827,9 +1827,26 @@ GameObject* GameObject::GetChildbyName(const char* name) const
 	return nullptr;
 }
 
+GameObject * GameObject::GetChildByRealName(std::string name) const
+{
+	if (childs.size() > 0)
+	{
+		for (int i = 0; i < childs.size(); i++)
+		{
+			std::string child_name = childs[i]->GetName();
+			std::size_t found = child_name.find(name);
+			if (found != std::string::npos)
+			{
+				return childs[i];
+			}
+		}
+	}
+	return nullptr;
+}
+
 GameObject * GameObject::GetChildDeepSearch(const char * name) const
 {
-	GameObject* found = GetChildbyName(name);
+	GameObject* found = GetChildByRealName(name);
 
 	if (found == nullptr)
 	{
