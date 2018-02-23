@@ -15,6 +15,7 @@ class ShaderProgram;
 struct Vertex;
 class SkeletonSource;
 class Material;
+class GameObject;
 
 struct FaceCenter
 {
@@ -44,7 +45,7 @@ struct Skeleton
 		delete [] skinning_mats;
 	}
 
-	void GenSkinningTexture();
+	void GenSkinningTexture(const GameObject* mesh_go);
 	void DebugDraw() const;
 };
 
