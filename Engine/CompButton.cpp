@@ -102,7 +102,7 @@ void CompButton::ShowInspectorInfo()
 	int selected_opt = current_transition_mode;
 	ImGui::Text("Transition"); ImGui::SameLine(op + 30);
 
-	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0 Animation transition", 3))
+	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0 Animation transition"))
 	{
 		if (selected_opt == Transition::TRANSITION_COLOR)
 			current_transition_mode = Transition::TRANSITION_COLOR;
@@ -127,7 +127,7 @@ void CompButton::ShowInspectorInfo()
 	}
 	int navigation_opt = current_navigation_mode;
 	ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
-	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Sprite transition\0 Animation transition", 1))
+	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0"))
 	{
 		if (navigation_opt == NavigationMode::NAVIGATION_NONE)
 			current_navigation_mode = NavigationMode::NAVIGATION_NONE;
@@ -257,6 +257,10 @@ void CompButton::Save(JSON_Object * object, std::string name, bool saveScene, ui
 			json_object_dotset_number_with_std(object, name + "Linked Spites " + temp + " UUID", 0);
 	}
 
+	json_object_dotset_number_with_std(object, name + "Selection Mode", current_selection_state);
+	json_object_dotset_number_with_std(object, name + "Transition Mode", current_transition_mode);
+	json_object_dotset_number_with_std(object, name + "Navigation Mode", current_navigation_mode);
+
 }
 
 void CompButton::Load(const JSON_Object * object, std::string name)
@@ -295,6 +299,10 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 	start_transition = json_object_dotget_boolean_with_std(object, name + "Transition Start");
 	target_graphic_uid = json_object_dotget_number_with_std(object, name + "Graphic UUID");
 	number_script = json_object_dotget_number_with_std(object, name + "Linked Spites Size");
+
+	current_selection_state = static_cast<SelectionStates>((int)json_object_dotget_number_with_std(object, name + "Selection Mode"));
+	current_transition_mode = static_cast<Transition>((int)json_object_dotget_number_with_std(object, name + "Transition Mode"));
+	current_navigation_mode = static_cast<NavigationMode>((int)json_object_dotget_number_with_std(object, name + "Navigation Mode"));
 	if (number_script != 0)
 	{
 	uid_linked_scripts = new int[number_script];

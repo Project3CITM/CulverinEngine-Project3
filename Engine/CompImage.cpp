@@ -185,7 +185,7 @@ void CompImage::ShowInspectorInfo()
 	}
 	int selection = type;
 	ImGui::Text("Image Type:"); ImGui::SameLine();
-	if (ImGui::Combo("##type", &selection, "SIMPLE\0FILLED", 2))
+	if (ImGui::Combo("##type", &selection, "SIMPLE\0FILLED"))
 	{
 		if (selection == Type::SIMPLE)
 		{
@@ -196,11 +196,11 @@ void CompImage::ShowInspectorInfo()
 			type = Type::FILLED;
 		}
 	}
-	selection = HORITZONTAL;
+	selection = method;
 	if (type == Type::FILLED)
 	{
 		ImGui::Text("Fill Method:"); ImGui::SameLine();
-		if (ImGui::Combo("##fillMethod", &selection, "Horitzontal\0Vertical\0Radial", 3))
+		if (ImGui::Combo("##fillMethod", &selection, "Horitzontal\0Vertical\0Radial"))
 		{
 			method = (FillMethod)selection;
 			

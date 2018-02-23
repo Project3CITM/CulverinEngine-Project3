@@ -11,7 +11,7 @@ class CompImage;
 class ResourceMaterial;
 enum NavigationMode
 {
-	NAVIGATION_NONE = -1,
+	NAVIGATION_NONE,
 	NAVIGATION_EXTRICTE
 };
 class CompInteractive:public Component
