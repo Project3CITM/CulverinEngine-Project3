@@ -33,8 +33,8 @@ public:
 	void Unload_domain();
 	bool CreateNewScript(bool & active);
 	int CompileScript(const char* file, std::string& libraryScript, const char* uid);
-	CSharpScript* LoadScript_CSharp(std::string);
-	CSharpScript* CreateCSharp(MonoImage* image);
+	CSharpScript* LoadScript_CSharp(std::string, std::string name = NULL);
+	CSharpScript* CreateCSharp(MonoImage* image, std::string nameClass = NULL);
 	MonoClass* GetMonoClassFromImage(MonoImage* image, std::string& name_space, std::string& classname);
 
 	MonoDomain* GetMainDomain() const;

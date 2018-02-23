@@ -84,7 +84,7 @@ void CompScript::PreUpdate(float dt)
 				uuid_resource_reimported = 0;
 				if (resource_script->GetState() != Resource::State::FAILED)
 				{
-					csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
+					csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll(), resource_script->name);
 					SetOwnGameObject(parent);
 				}
 			}
@@ -328,7 +328,7 @@ void CompScript::ShowVariablesInfo()
 	}
 	else
 	{
-		ImGui::TextColored(ImVec4(1.0f,0.223f,0.233f,1.0f),"SCRIPT NOT COMPILED CORRECTLY");
+		ImGui::TextColored(ImVec4(1.0f, 0.223f, 0.233f, 1.0f), "SCRIPT NOT COMPILED CORRECTLY");
 	}
 }
 
@@ -426,7 +426,7 @@ void CompScript::ShowVarType(ScriptVariable* var)
 {
 	if (var->type == VarType::Var_INT)
 	{
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f),"INT");
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "INT");
 	}
 	else if (var->type == VarType::Var_FLOAT)
 	{
@@ -437,7 +437,7 @@ void CompScript::ShowVarType(ScriptVariable* var)
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "BOOL");
 	}
 	else if (var->type == VarType::Var_STRING)
-	{	
+	{
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "STRING");
 	}
 	else if (var->type == VarType::Var_GAMEOBJECT)
@@ -545,7 +545,7 @@ void CompScript::AddScriptbyName(const char* name_script)
 
 			if (resource_script->GetState() != Resource::State::FAILED)
 			{
-				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
+				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll(), resource_script->name);
 				SetOwnGameObject(parent);
 			}
 		}
@@ -588,7 +588,7 @@ bool CompScript::SelectScript(bool& selecting)
 		}
 		if (resource_script->GetState() != Resource::State::FAILED)
 		{
-			csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
+			csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll(), resource_script->name);
 			SetOwnGameObject(parent);
 		}
 		Enable();
@@ -602,7 +602,7 @@ void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uin
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", Comp_Type::C_SCRIPT);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
-	json_object_dotset_string_with_std(object, name + "Name Script", strcmp(name_script.c_str(),"")==0?"Empty Script":name_script.c_str());
+	json_object_dotset_string_with_std(object, name + "Name Script", strcmp(name_script.c_str(), "") == 0 ? "Empty Script" : name_script.c_str());
 	if (resource_script != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Script UUID", resource_script->GetUUID());
@@ -633,7 +633,7 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 
 			if (resource_script->GetState() != Resource::State::FAILED)
 			{
-				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll());
+				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll(), resource_script->name);
 				LoadScript(object, name);
 				SetOwnGameObject(parent);
 			}

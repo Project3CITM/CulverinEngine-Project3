@@ -370,6 +370,11 @@ MonoObject* CSharpScript::GetMonoObject() const
 	return CSObject;
 }
 
+void CSharpScript::SetMonoObject(MonoObject* new_object)
+{
+	CSObject = new_object;
+}
+
 MonoClass* CSharpScript::GetMonoClass() const
 {
 	return CSClass;
@@ -410,7 +415,7 @@ MonoObject* CSharpScript::GetMonoObjectLink(std::string name)
 	return App->importer->iScript->GetMonoObject(App->importer->iScript->map_link_variables[name]);
 }
 
-bool CSharpScript::ReImport(std::string pathdll)
+bool CSharpScript::ReImport(std::string pathdll, std::string nameClass)
 {
 	MonoAssembly* assembly_ = mono_domain_assembly_open(App->importer->iScript->GetDomain(), pathdll.c_str());
 	if (assembly_)
@@ -419,12 +424,13 @@ bool CSharpScript::ReImport(std::string pathdll)
 		if (image_)
 		{
 			std::string classname_, name_space_;
-			MonoClass* entity_ = App->importer->iScript->GetMonoClassFromImage(image_, name_space_, classname_);
-			if (entity_)
+			MonoClass* entity = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "", nameClass.c_str());
+			//MonoClass* entity_ = App->importer->iScript->GetMonoClassFromImage(image_, name_space_, nameClass);
+			if (entity)
 			{
 				SetImage(image_);
-				SetClass(entity_);
-				SetClassName(classname_);
+				SetClass(entity);
+				SetClassName(nameClass);
 				SetNameSpace(name_space_);
 
 				//Set script info and functionality
@@ -435,7 +441,7 @@ bool CSharpScript::ReImport(std::string pathdll)
 			}
 			else
 			{
-				LOG("[error]Failed loading class %s\n", classname_.c_str());
+				LOG("[error]Failed loading class %s\n", nameClass.c_str());
 				return false;
 			}
 		}
@@ -993,7 +999,35 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 					if (strcmp(((CompScript*)temp[i])->resource_script->name, name.c_str()) == 0)
 					{
 						comp_name = name.c_str();
-						classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "", comp_name);
+						//classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "", comp_name);
+						////OnDisable", DefaultParam
+						//MonoMethod* tem = mono_class_get_method_from_name(((CompScript*)temp[i])->csharp->GetMonoClass(), "Test", 1);
+						//MonoObject* exception = nullptr;
+						//void* ferran[1];
+						//int k = 0;
+						//ferran[0] = &k;
+						//mono_runtime_invoke(tem, ((CompScript*)temp[i])->csharp->GetMonoObject(), ferran, &exception);
+						////////////////classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "", comp_name);
+						////////////////MonoObject* new_object = mono_object_new(CSdomain, classT);
+						////////////////if (new_object)
+						////////////////{
+						////////////////	if (ferran == nullptr)
+						////////////////	{
+						////////////////		ferran = new_object;
+						////////////////		((CompScript*)temp[i])->csharp->SetMonoObject(ferran);
+						////////////////	}
+						////////////////	else
+						////////////////	{
+						////////////////		return ((CompScript*)temp[i])->csharp->GetMonoObject();
+						////////////////	}
+						////////////////	return new_object;
+						////////////////}
+						//classT = ((CompScript*)temp[i])->csharp->GetMonoClass();
+						//classT = GetMonoClass();
+						//return mono_object_isinst(((CompScript*)temp[i])->csharp->GetMonoObject(), ((CompScript*)temp[i])->csharp->GetMonoClass());
+
+
+						return ((CompScript*)temp[i])->csharp->GetMonoObject();
 					}
 				}
 			}
@@ -1013,6 +1047,7 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 
 	if (classT)
 	{
+
 		MonoObject* new_object = mono_object_new(CSdomain, classT);
 		if (new_object)
 		{

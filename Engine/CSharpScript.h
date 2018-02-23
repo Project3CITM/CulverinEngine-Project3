@@ -89,7 +89,7 @@ public:
 
 	//Importing/Reimporting/Initializing --------
 	void LoadScript();
-	bool ReImport(std::string pathdll);
+	bool ReImport(std::string pathdll, std::string nameClass = NULL);
 	void Clear();
 	MainMonoMethod CreateMainFunction(std::string function, int parameters, FunctionBase type);
 	void DoMainFunction(FunctionBase function, void** parameters = nullptr);
@@ -99,6 +99,7 @@ public:
 
 	//GET functions ------------------------------------
 	MonoObject* GetMonoObject() const;
+	void SetMonoObject(MonoObject* new_object);
 	MonoClass* GetMonoClass() const;
 
 	// Functions set initial info ------------------------

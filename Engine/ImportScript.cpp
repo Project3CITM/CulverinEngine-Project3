@@ -500,7 +500,7 @@ int ImportScript::CompileScript(const char* file, std::string& libraryScript, co
 	return system(command.c_str());
 }
 
-CSharpScript* ImportScript::LoadScript_CSharp(std::string file)
+CSharpScript* ImportScript::LoadScript_CSharp(std::string file, std::string name)
 {
 	if (file != "")
 	{
@@ -508,10 +508,10 @@ CSharpScript* ImportScript::LoadScript_CSharp(std::string file)
 		if (assembly)
 		{
 			// First Get the Image
-			MonoImage* image = mono_assembly_get_image(assembly);
-			if (image)
+			//MonoImage* image = mono_assembly_get_image(assembly);
+			if (App->importer->iScript->GetCulverinImage())
 			{
-				CSharpScript* csharp = CreateCSharp(image);
+				CSharpScript* csharp = CreateCSharp(App->importer->iScript->GetCulverinImage(), name);
 				if (csharp != nullptr)
 				{
 					csharp->SetAssembly(assembly);
@@ -535,17 +535,17 @@ CSharpScript* ImportScript::LoadScript_CSharp(std::string file)
 	}
 }
 
-CSharpScript* ImportScript::CreateCSharp(MonoImage* image)
+CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass)
 {
 	if (image)
 	{
 		std::string classname, name_space;
-		MonoClass* entity = GetMonoClassFromImage(image, name_space, classname);
+		MonoClass* entity = mono_class_from_name(image, "", nameClass.c_str());
 		if (entity)
 		{
 			CSharpScript* csharp = new CSharpScript();
-			csharp->SetDomain(GetMainDomain());
-			csharp->SetImage(image);
+			csharp->SetDomain(GetDomain());
+			csharp->SetImage(App->importer->iScript->GetCulverinImage());
 			csharp->SetClass(entity);
 			csharp->SetClassName(classname);
 			csharp->SetNameSpace(name_space);
@@ -586,13 +586,14 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image)
 }
 
 
+
 MonoClass* ImportScript::GetMonoClassFromImage(MonoImage* image, std::string& name_space, std::string& classname)
 {
 	MonoClass* entity = nullptr;
 	const MonoTableInfo* table_info = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
 	int rows = mono_table_info_get_rows(table_info);
 	/* For each row, get some of its values */
-	for (int i = 0; i < rows; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		uint32_t cols[MONO_TYPEDEF_SIZE];
 		mono_metadata_decode_row(table_info, i, cols, MONO_TYPEDEF_SIZE);

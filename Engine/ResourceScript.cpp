@@ -67,7 +67,7 @@ bool ResourceScript::ReImportScript(std::string path_dll_)
 	{
 		for (uint i = 0; i < to_fill_vec.size(); i++)
 		{
-			ret = to_fill_vec[i]->csharp->ReImport(path_dll_);
+			ret = to_fill_vec[i]->csharp->ReImport(path_dll_, to_fill_vec[i]->name_script);
 		}
 	}
 
