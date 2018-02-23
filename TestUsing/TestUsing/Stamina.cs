@@ -27,6 +27,8 @@ public class Stamina : CulverinBehaviour
         calc_stamina = curr_stamina / max_stamina;
         stamina_bar = GetComponent<CompImage>();
         stamina_bar.FillAmount(calc_stamina);
+
+        Debug.Log("Decrease Stamina -> Current Stamina: " + curr_stamina.ToString());
     }
 
     public float GetCurrentStamina()
