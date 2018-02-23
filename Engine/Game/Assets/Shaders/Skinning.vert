@@ -3,7 +3,7 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 layout(location = 3) in vec4 influences;
-layout(location = 4) in ivec4 bones;
+layout(location = 4) in vec4 bones;
 
 out float ourTime;
 out vec4 ourColor;
@@ -21,8 +21,8 @@ uniform int _num_pixels;
 
 void main()
 {
-    vec4 skinned_pos = vec4(0.0f, 0.0f, 0.0f, 1.0);
-    vec4 skinned_normal = vec4(0.0f, 0.0f, 0.0f, 0.0);
+    vec3 skinned_pos = vec3(0.0f, 0.0f, 0.0f);
+    vec3 skinned_normal = vec3(0.0f, 0.0f, 0.0f);
     
     float total_weight = 0.0f;
 
@@ -30,11 +30,12 @@ bool test = false;
 
     for(int i = 0; i < 4; i++)
     {
-        if(bones[i] == -1)
+        int bone_id = int (bones[i]);
+
+        if(bone_id == -1)
             break;
 
-        //int start_buffer_pos = gl_VertexID * 4 * 4 * 4 + i * 4 * 4;
-        int start_buffer_pos = bones[i] * 4 * 4;
+        int start_buffer_pos = bone_id * 4 * 4;
 
         mat4 skinning_mat = mat4(
         //Column 0
@@ -59,12 +60,12 @@ bool test = false;
         texelFetch(_skinning_text, start_buffer_pos + 15).r
         );
 
-        //if(test == false && skinning_mat[3][2] == 0.0264277458) test = true;
-        //if(test == false && texelFetch(_skinning_text, 30).r == 0.0285735130) test = true;
-        if(test == false && bones[i] > 2) test = true;
+        vec4 moved_pos = skinning_mat * vec4(position, 1.0f);
+        vec3 normalized_pos = moved_pos.xyz / moved_pos.w;
+        skinned_pos = normalized_pos * influences[i] + skinned_pos;
 
-        skinned_pos = (skinning_mat * (vec4(position, 1.0f)) * influences[i]) + skinned_pos;
-        skinned_normal = ((skinning_mat * vec4(normal, 0.0f)) * influences[i]) + skinned_normal;
+        vec4 moved_normals = skinning_mat * vec4(normal, 0.0f);
+        skinned_normal = moved_normals.xyz * influences[i] + skinned_normal;
 
         total_weight += influences[i];
         
@@ -72,13 +73,9 @@ bool test = false;
             break;
     }
     
-	gl_Position = viewproj *  model * vec4(position.xyz, 1.0f);
-
-if(test == true) ourColor = vec4(1.0, 0.0, 0.0, 1.0);
-else
+	gl_Position = viewproj *  model * vec4(skinned_pos, 1.0f);
 	ourColor = _color;
 	TexCoord = texCoord;
 	ourTime = _time;
-	//ourNormal = mat3(model) * normalize(skinned_normal.xyz);
-ourNormal = mat3(model) * normal;
+	ourNormal = mat3(model) * normalize(skinned_normal);
 }

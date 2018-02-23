@@ -44,6 +44,8 @@ public:
 	float4x4 offset;
 	float4x4 skinning_matrix;
 	std::vector<Weight> weights;
+	std::vector<CompBone*> childs;
+	GameObject* go = nullptr;
 	ResourceMesh* resource_mesh = nullptr;
 };
 

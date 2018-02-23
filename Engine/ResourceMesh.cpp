@@ -116,7 +116,7 @@ bool ResourceMesh::LoadToMemory()
 	if (skeleton != nullptr)
 	{
 		vertex_size_in_buffer += 4 * sizeof(float);// 4 weights
-		vertex_size_in_buffer += 4 * sizeof(int);
+		vertex_size_in_buffer += 4 * sizeof(float);
 	}
 
 	uint total_byte_size = vertex_size_in_buffer * num_vertices;
@@ -162,18 +162,18 @@ bool ResourceMesh::LoadToMemory()
 			//bone IDs
 			for (std::vector<std::pair<uint, float>>::const_iterator it = skeleton->vertex_weights[i].begin(); it != skeleton->vertex_weights[i].end(); ++it)
 			{
-				int tmp = it->first;
-				memcpy(cursor, &tmp, sizeof(int));
-				cursor += sizeof(int);
+				float tmp = it->first;
+				memcpy(cursor, &tmp, sizeof(float));
+				cursor += sizeof(float);
 			}
 
 			if (skeleton->vertex_weights[i].size() < 4)
 			{
-				int tmp = -1;
+				float tmp = -1.00000000;
 				for (int j = 0; j < 4 - skeleton->vertex_weights[i].size(); j++)
 				{
-					memcpy(cursor, &tmp, sizeof(int));
-					cursor += sizeof(int);
+					memcpy(cursor, &tmp, sizeof(float));
+					cursor += sizeof(float);
 				}
 			}
 		}

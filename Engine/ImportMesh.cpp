@@ -816,5 +816,7 @@ aiMatrix4x4 ImportMesh::GetGlobalTransform(const aiNode * node)
 		iterator = iterator->mParent;
 	}
 
+	transform = iterator->mTransformation * transform;
+
 	return transform;
 }

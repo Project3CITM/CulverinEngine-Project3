@@ -421,7 +421,7 @@ void CompMesh::Draw()
 					glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (8 * sizeof(float)));
 
 					glEnableVertexAttribArray(4);
-					glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (12 * sizeof(float)));
+					glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (12 * sizeof(float)));
 				}
 
 				glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
@@ -628,7 +628,7 @@ void CompMesh::GenSkeleton()
 	skeleton->skinning_mats = new GLfloat[source->num_bones * 4 * 4]; //every vertex will be influenced by 4 float4x4
 	//skeleton->skinning_mats = new GLfloat[resource_mesh->num_vertices * 4 * 4 * 4];
 
-	skeleton->bones.reserve(source->num_bones);
+	skeleton->bones.resize(source->num_bones);
 	skeleton->influences.resize(resource_mesh->num_vertices);
 
 	for (int i = 0; i < resource_mesh->num_vertices; i++)
@@ -637,8 +637,6 @@ void CompMesh::GenSkeleton()
 	parent->AddChildGameObject(new_skeleton);
 	skeleton->root_bone = GenBone(&name_iterator, source, generated_bones, skeleton);
 	new_skeleton->AddChildGameObject(skeleton->root_bone);
-
-
 }
 
 GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* source, uint& generated_bones, Skeleton* skeleton)
@@ -660,12 +658,15 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 	transform->SetScale(scale);
 
 	CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
+	comp_bone->go = new_bone;
 	comp_bone->resource_mesh = resource_mesh;
 	resource_mesh->num_game_objects_use_me++;
 
 	for (int i = 0; i < source->num_bones; i++)
 		if (source->bones[i].name == new_bone->GetName())
 		{
+			skeleton->bones[i] = new_bone;
+
 			comp_bone->offset = source->bones[i].offset;
 
 			for (int j = 0; j < source->bones[i].num_weights; j++)
@@ -690,11 +691,13 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 
 	uint num_childs = source->bone_hirarchy_num_childs[generated_bones];
 	generated_bones++;
-	
-	skeleton->bones.push_back(new_bone);
 
 	for (int i = 0; i < num_childs; i++)
-		new_bone->AddChildGameObject(GenBone(name_iterator, source, generated_bones, skeleton));
+	{
+		GameObject* child = GenBone(name_iterator, source, generated_bones, skeleton);
+		new_bone->AddChildGameObject(child);
+		comp_bone->childs.push_back(child->GetComponentBone());
+	}		
 
 	return new_bone;
 }

@@ -168,16 +168,12 @@ void CompBone::Load(const JSON_Object * object, std::string name)
 
 void CompBone::GenSkinningMatrix(const float4x4& parent_transform)
 {
-	float4x4 transform(parent_transform * parent->GetComponentTransform()->GetLocalTransform());
+	float4x4 transform(parent_transform * go->GetComponentTransform()->GetLocalTransform());
 
 	skinning_matrix = transform * offset;
 
-	for (int i = 0; i < parent->GetNumChilds(); i++)
-	{
-		CompBone* bone = parent->GetChildbyIndex(i)->GetComponentBone();
-		if (bone != nullptr)
-			bone->GenSkinningMatrix(transform);
-	}
+	for (std::vector<CompBone*>::iterator it = childs.begin(); it != childs.end(); ++it)
+		(*it)->GenSkinningMatrix(transform);
 }
 
 const float4x4& CompBone::GetSkinningMatrix()
