@@ -20,7 +20,7 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 	color = float4(255, 255, 255, 255);
 	type = NO_LIGHT_TYPE;
 	intensity = 1;
-	ambientCoefficient = 1;
+	ambientCoefficient = 0.2;
 	
 	name_component = "Light component";
 
