@@ -27,7 +27,7 @@ private:
 	aiNode* FindMeshNode(const aiScene* scene, const aiMesh* mesh);
 	aiNode* GetSkeletonRoot(aiNode* node, const aiMesh* mesh);
 	aiNode* GetMeshNode(aiNode* node, const aiMesh* mesh, const aiScene * scene);
-	bool IsInSkeletonBranch(const aiNode* node, const aiMesh* mesh);
+	bool IsInSkeletonBranch(const aiNode* node, const aiMesh* mesh, const aiNode * skeleton_root);
 
 	aiMatrix4x4 GetGlobalTransform(const aiNode* node);
 };

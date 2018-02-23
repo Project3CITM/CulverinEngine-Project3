@@ -18,6 +18,7 @@
 #include "CompCamera.h"
 #include "CompBone.h"
 #include "ModuleLightning.h"
+
 //Delete this
 #include "glm\glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -626,7 +627,6 @@ void CompMesh::GenSkeleton()
 	transform->SetScale(scale);
 
 	skeleton->skinning_mats = new GLfloat[source->num_bones * 4 * 4]; //every vertex will be influenced by 4 float4x4
-	//skeleton->skinning_mats = new GLfloat[resource_mesh->num_vertices * 4 * 4 * 4];
 
 	skeleton->bones.resize(source->num_bones);
 	skeleton->influences.resize(resource_mesh->num_vertices);
@@ -647,6 +647,9 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 	CompTransform* transform = (CompTransform*)new_bone->AddComponent(Comp_Type::C_TRANSFORM);
 
 	float4x4 local_transform = source->bone_hirarchy_local_transforms[generated_bones];
+
+	if (generated_bones == 65)
+		int i = 0;
 
 	float3 pos;
 	Quat rot;
@@ -673,14 +676,12 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 				comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));
 		}
 
-	ImportBone& bone = source->bones[generated_bones];
-
-	for (int i = 0; i < bone.num_weights; i++)
+	for (int i = 0; i < source->bones[generated_bones].num_weights; i++)
 	{
-		uint vertex_id = bone.weights[i].vertex_id;
+		uint vertex_id = source->bones[generated_bones].weights[i].vertex_id;
 		
-			for (int j = 0; j < source->vertex_weights[vertex_id].size(); j++)
-			 {
+		for (int j = 0; j < source->vertex_weights[vertex_id].size(); j++)
+		{
 			if (source->vertex_weights[vertex_id][j].first == generated_bones)
 			{
 				skeleton->influences[vertex_id][j] = new_bone;

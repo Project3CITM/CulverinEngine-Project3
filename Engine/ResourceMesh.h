@@ -35,19 +35,16 @@ struct ImportBone
 struct SkeletonSource
 {
 	float4x4 transform;
-	float4x4* bone_hirarchy_local_transforms = nullptr;
+	std::vector<float4x4> bone_hirarchy_local_transforms;
 	uint num_bones = 0;
-	ImportBone* bones = nullptr;
+	std::vector<ImportBone> bones;
 	char* bone_hirarchy_names = nullptr;
-	uint* bone_hirarchy_num_childs = nullptr;
+	std::vector<uint> bone_hirarchy_num_childs;
 	std::vector<std::vector<std::pair<uint, float>>> vertex_weights;
 
 	~SkeletonSource()
 	{
-		delete [] bone_hirarchy_local_transforms;
-		delete [] bones;
 		delete [] bone_hirarchy_names;
-		delete [] bone_hirarchy_num_childs;
 	}
 };
 

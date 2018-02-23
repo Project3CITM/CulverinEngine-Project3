@@ -199,7 +199,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 			for (int i = 0; i < scene->mRootNode->mNumChildren; i++)
 			{
-				if (IsInSkeletonBranch(scene->mRootNode->mChildren[i], mesh))
+				if (IsInSkeletonBranch(scene->mRootNode->mChildren[i], mesh, skeleton_root))
 				{
 					scene->mRootNode->mChildren[i] = nullptr;
 					scene->mRootNode->mNumChildren--;
@@ -586,7 +586,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 			SkeletonSource* skeleton_source = new SkeletonSource;
 
 			skeleton_source->num_bones = num_bones;
-			skeleton_source->bones = new ImportBone[num_bones];
+			skeleton_source->bones.resize(num_bones);
 
 			//Bone names
 			cursor += bytes;
@@ -652,19 +652,20 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 
 			//Bone local transforms
 			bytes = sizeof(float) * 4 * 4 * num_bones;
-			skeleton_source->bone_hirarchy_local_transforms = new float4x4[num_bones];
-			memcpy(skeleton_source->bone_hirarchy_local_transforms, cursor, bytes);
+			skeleton_source->bone_hirarchy_local_transforms.resize(num_bones);
+			memcpy(skeleton_source->bone_hirarchy_local_transforms.data(), cursor, bytes);
 
 			//Bone hirarchy names total_size
 			cursor += bytes;
 			bytes = sizeof(uint);
-			uint bone_names_size = *((uint*)cursor);
+			uint bone_names_size;
+			memcpy(&bone_names_size, cursor, bytes);
 
 			//Bone num childs
 			cursor += bytes;
 			bytes = sizeof(uint) * num_bones;
-			skeleton_source->bone_hirarchy_num_childs = new uint[num_bones];
-			memcpy(skeleton_source->bone_hirarchy_num_childs, cursor, bytes);
+			skeleton_source->bone_hirarchy_num_childs.resize(num_bones);
+			memcpy(skeleton_source->bone_hirarchy_num_childs.data(), cursor, bytes);
 
 			//Bone hirarchy names
 			cursor += bytes;
@@ -692,21 +693,33 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 
 void ImportMesh::ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, aiMatrix4x4* bone_hirarchy_local_transforms, char* bone_hirarchy_names, uint* bone_hirarchy_num_childs, uint& name_iterator, uint& joints_saved)
 {
-	bool is_joint = false;
+	bool is_bone = false;
 
 	for (int i = 0; i < mesh->mNumBones; i++)
+	{
 		if (node->mName == mesh->mBones[i]->mName)
-		{
-			is_joint = true;
-			break;
-		}
+			is_bone = true;
+	}
 
-	if (is_joint == true)
+	if (is_bone)
 	{
 		memcpy(&bone_hirarchy_names[name_iterator], node->mName.C_Str(), node->mName.length + 1);
 		name_iterator += node->mName.length + 1;
 		memcpy(&bone_hirarchy_local_transforms[joints_saved].a1, &node->mTransformation.a1, sizeof(float) * 4 * 4);
-		bone_hirarchy_num_childs[joints_saved] = node->mNumChildren;
+
+		uint num_childs = 0;
+
+		for (int i = 0; i < node->mNumChildren; i++)
+		{
+			for (int i = 0; i < mesh->mNumBones; i++)
+			{
+				if (node->mName == mesh->mBones[i]->mName)
+					num_childs++;
+			}
+		}
+
+		bone_hirarchy_num_childs[joints_saved] = num_childs;
+
 		joints_saved++;
 	}
 
@@ -744,8 +757,6 @@ aiNode * ImportMesh::FindMeshNode(const aiScene * scene, const aiMesh * mesh)
 
 aiNode * ImportMesh::GetSkeletonRoot(aiNode * node, const aiMesh * mesh)
 {
-	bool is_joint = false;
-
 	for (int i = 0; i < mesh->mNumBones; i++)
 		if (node->mName == mesh->mBones[i]->mName)
 			return node;
@@ -782,19 +793,16 @@ aiNode * ImportMesh::GetMeshNode(aiNode * node, const aiMesh * mesh, const aiSce
 	return ret;
 }
 
-bool ImportMesh::IsInSkeletonBranch(const aiNode * node, const aiMesh* mesh)
+bool ImportMesh::IsInSkeletonBranch(const aiNode * node, const aiMesh* mesh, const aiNode * skeleton_root)
 {
-	bool is_joint = false;
-
-	for (int i = 0; i < mesh->mNumBones; i++)
-		if (node->mName == mesh->mBones[i]->mName)
-			return true;
-
 	bool ret = false;
 
 	for (int i = 0; i < node->mNumChildren; i++)
+		if(node->mChildren[i] == skeleton_root)
+
+	for (int i = 0; i < node->mNumChildren; i++)
 	{
-		ret = IsInSkeletonBranch(node->mChildren[i], mesh);
+		ret = IsInSkeletonBranch(node->mChildren[i], mesh, skeleton_root);
 		if (ret == true)
 			break;
 	}
