@@ -153,8 +153,10 @@ void CompLight::Draw()
 
 	//Frustum Operations-------------------------------
 
-	UpdateFrustum();
-	FrustumDebug();
+	if (App->mode_game == false) {
+		UpdateFrustum();
+		FrustumDebug();
+	}
 
 	//---------------------------------------------------
 
