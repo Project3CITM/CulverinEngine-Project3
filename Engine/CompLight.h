@@ -46,7 +46,7 @@ public:
 	ResourceMesh* plane;
 	//---------------------------------------------
 	float4 color; //a.k.a. the color of the light
-	float intensity=1;
+	float intensity=0;
 	float ambientCoefficient=0.2;
 	Light_type type;
 	Frustum frustum;
