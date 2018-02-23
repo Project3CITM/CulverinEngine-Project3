@@ -149,11 +149,11 @@ public:
 
 	// SAVE - LOAD METHODS ----------------
 	void SaveTransition(JSON_Object * object, std::string name, bool saveScene, uint & countResources, int state_num, int transition_num);
-	void LoadTransition(const JSON_Object * object, std::string name, int num_state, int num_transition);
+	void LoadTransition(const JSON_Object * object, std::string name, int num_state, int num_transition, FSM_State* state_loading);
 	// -------------------------------------
 
 	// TODO: Should Ints/Floats transform in each other in case of using wrong function to avoid errors ???
-	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, bool condition_a, bool condition_b);
+	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, bool condition_b);
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, int condition_a, int condition_b);
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, float condition_a, float condition_b);
 
@@ -214,7 +214,7 @@ public:
 
 	// SAVE - LOAD METHODS ----------------
 	virtual void SaveCondition(JSON_Object * object, std::string name, bool saveScene, uint & countResources) {}
-	virtual void LoadCondition(const JSON_Object * object, std::string name) {}
+	virtual void LoadCondition(const JSON_Object * object, std::string name, FSM_State* loading_state) {}
 	// -------------------------------------
 
 	virtual bool Test(const FSM_State* current_state)	{ return false; }
@@ -223,6 +223,7 @@ public:
 	virtual void SetConditionB(bool condition_b_) { }
 	virtual bool SetCondition(int condition_a_, int condition_b_)	{ return false; }
 	virtual bool SetCondition(float condition_a_, float condition_b_)	{ return false; }
+	void SetConditionType(FSM_CONDITION_TYPE condition_type_);
 	// ------------------------
 	
 	// GETTERS ----------------
@@ -241,9 +242,14 @@ private:
 struct FSM_ConditionBool : public FSM_Condition
 {
 public:
-	FSM_ConditionBool(bool condition_a_, bool condition_b_);
+	FSM_ConditionBool(bool condition_b_);
 	~FSM_ConditionBool();
 
+	// SAVE - LOAD METHODS ----------------
+	void SaveCondition(JSON_Object * object, std::string name, bool saveScene, uint & countResources);
+	void LoadCondition(const JSON_Object * object, std::string name, FSM_State* loading_state);
+	// -------------------------------------
+	
 	bool Test(const FSM_State* current_state);
 
 	// SETTERS ----------------
