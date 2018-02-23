@@ -7,7 +7,7 @@ using CulverinEditor.Debug;
 public class WeaponController : CulverinBehaviour
 {
     public GameObject player_obj;
-    public PlayerController player;
+    public CharacterController player;
     public AttackTarget attack_collider;
     public GameObject button_obj;
     public CompButton button;
@@ -22,10 +22,9 @@ public class WeaponController : CulverinBehaviour
 
     void Start()
     {
-        player = player_obj.GetComponent<PlayerController>();
-        attack_collider = GetComponent<AttackTarget>();
-        button = button_obj.GetComponent<CompButton>();
-        sound_fx = GetComponent<CompAudio>();
+        // Link GameObject variables with Scene GameObjects
+        player_obj = GetLinkedObject("player_obj");
+        button_obj = GetLinkedObject("button_obj");
     }
 
     public void Attack()
@@ -38,15 +37,16 @@ public class WeaponController : CulverinBehaviour
         }
 
         //Decrease stamina
-        player.stamina.DecreaseStamina(stamina_cost);
+        player = player_obj.GetComponent<CharacterController>();
+        player.DecreaseStamina(stamina_cost);
 
         //Play specific animation
-        //...
-        player.SetAttackAnim(true);
+        player = player_obj.GetComponent<CharacterController>();
+        player.SetAnim("Attack");
 
         //Reproduce specific audio
         sound_fx = GetComponent<CompAudio>();
-        sound_fx.PlayEvent("Attack");
+        sound_fx.PlayEvent("SwordSlash");
     }
 
     public void AttackHit()
@@ -60,16 +60,12 @@ public class WeaponController : CulverinBehaviour
 
     void OnClick()
     {
-        if (player.stamina.GetCurrentStamina() > stamina_cost)
+        if (player.GetCurrentStamina() > stamina_cost)
         {
             Attack();
 
-            //Deactive button and apply cooldown
-            button.Deactivate();
-            //...
-
-            player = GetComponent<PlayerController>();
-            player.SetState(PlayerController.State.ATTACKING);
+            player = player_obj.GetComponent<CharacterController>();
+            player.SetState(CharacterController.State.ATTACKING);
         }
         else
         {
