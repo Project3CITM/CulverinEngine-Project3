@@ -66,6 +66,7 @@ public:
 
 	std::vector<CompLight*> GetSceneLights()const;
 	std::vector<CompLight*>* GetActiveLights(); // Return the point active lights for that frame.
+	void GetActiveLightsCount(uint ammount, std::vector<CompLight*>& to_fill); // Fills the parameter vector with the asked amount of closest lights
 
 	bool SetEventListenrs();
 

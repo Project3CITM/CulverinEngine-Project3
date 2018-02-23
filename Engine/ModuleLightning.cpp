@@ -659,6 +659,22 @@ std::vector<CompLight*>* ModuleLightning::GetActiveLights()
 	return &frame_used_lights;
 }
 
+void ModuleLightning::GetActiveLightsCount(uint ammount, std::vector<CompLight*>& to_fill)
+{
+	for(uint i = 0; i < ammount; ++i)
+	{
+		if (i < scene_lights.size())
+		{
+			to_fill.push_back(scene_lights[i]);
+		}
+		else
+		{
+			// If index ammount is passing the lights ammount just return.
+			return;
+		}
+	}
+}
+
 bool ModuleLightning::SetEventListenrs()
 {
 	AddListener(EventType::EVENT_SEND_3D_3DA_MM, this);
