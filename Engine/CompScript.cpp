@@ -616,7 +616,7 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	name_script = json_object_dotget_string_with_std(object, name + "Name Script");
-	uint resourceID = uid = json_object_dotget_number_with_std(object, name + "Resource Script UUID");
+	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Script UUID");
 
 	if (resourceID > 0)
 	{

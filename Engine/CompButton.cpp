@@ -310,12 +310,26 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 
 void CompButton::SyncScript()
 {
+	std::vector<Component*> script_vec;
+	App->scene->root->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec, true);
 	for (int i = 0; i < number_script; i++)
 	{
-		CompScript* comp_script = nullptr;
 		//Find Component with uid
-		comp_script = (CompScript*)parent->FindComponentByUUID(uid_linked_scripts[i]);
-		linked_scripts.push_back(comp_script);
+		if (uid_linked_scripts[i] == 0)
+		{
+			CompScript* comp_script = nullptr;
+			linked_scripts.push_back(comp_script);
+			continue;
+		}
+		for (uint j = 0; j < script_vec.size(); j++)
+		{
+			if (script_vec[j]->GetUUID() == uid_linked_scripts[i])
+			{
+				linked_scripts.push_back((CompScript*)script_vec[j]);
+
+			}
+		}
+
 	}
 	RELEASE_ARRAY(uid_linked_scripts);
 }
