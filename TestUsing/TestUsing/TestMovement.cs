@@ -78,6 +78,7 @@ public class TestMovement : CulverinBehaviour
                     curr_x = x;
                     curr_y = y;
                     array2Da[x, y] = 0;
+                    MovePositionInitial(new Vector3(curr_x * distanceToMove, GetComponent<Transform>().position.y, curr_y * distanceToMove));
                 }
             }
         }
@@ -148,32 +149,35 @@ public class TestMovement : CulverinBehaviour
                 actual_angle = 0;
                 angle = -10;
                 rotating = true;
+                ModificateCurrentDirection(true);
+
             }
             if (Input.GetKeyDown(KeyCode.E)) //Right
             {
                 actual_angle = 0;
                 angle = 10;
                 rotating = true;
+                ModificateCurrentDirection(false);
             }
 
             if (Input.GetKeyDown(KeyCode.A)) //Left
             {
-                //audio.PlayEvent("Footsteps");
+                audio.PlayEvent("Footsteps");
                 MoveLeft(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.D)) //Right
             {
-                //audio.PlayEvent("Footsteps");
+                audio.PlayEvent("Footsteps");
                 MoveRight(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.W)) //Up
             {
-                //audio.PlayEvent("Footsteps");
+                audio.PlayEvent("Footsteps");
                 MoveForward(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.S)) //Down
             {
-                //audio.PlayEvent("Footsteps");
+                audio.PlayEvent("Footsteps");
                 MoveBackward(out tile_mov_x, out tile_mov_y);
             }
 
@@ -239,6 +243,53 @@ public class TestMovement : CulverinBehaviour
     public void UnBlockCamera()
     {
         blocked_camera = false;
+    }
+
+    void MovePositionInitial(Vector3 newpos)
+    {
+        GetComponent<Transform>().SetPosition(newpos);
+    }
+
+    void ModificateCurrentDirection(bool left)
+    {
+        if (left)
+        {
+            if (curr_dir == Direction.NORTH)
+            {
+                curr_dir = Direction.WEAST;
+            }
+            else if (curr_dir == Direction.EAST)
+            {
+                curr_dir = Direction.SOUTH;
+            }
+            else if (curr_dir == Direction.SOUTH)
+            {
+                curr_dir = Direction.EAST;
+            }
+            else if (curr_dir == Direction.WEAST)
+            {
+                curr_dir = Direction.NORTH;
+            }
+        }
+        else
+        {
+            if (curr_dir == Direction.NORTH)
+            {
+                curr_dir = Direction.EAST;
+            }
+            else if (curr_dir == Direction.EAST)
+            {
+                curr_dir = Direction.SOUTH;
+            }
+            else if (curr_dir == Direction.SOUTH)
+            {
+                curr_dir = Direction.WEAST;
+            }
+            else if (curr_dir == Direction.WEAST)
+            {
+                curr_dir = Direction.NORTH;
+            }
+        }
     }
 
     public void MoveForward(out int tile_mov_x, out int tile_mov_y)
