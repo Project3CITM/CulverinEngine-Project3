@@ -3,6 +3,7 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 layout(location = 3) in vec4 influences;
+layout(location = 4) in ivec4 bones;
 
 out float ourTime;
 out vec4 ourColor;
@@ -29,7 +30,11 @@ bool test = false;
 
     for(int i = 0; i < 4; i++)
     {
-        int start_buffer_pos = gl_VertexID * 4 * 4 * 4 + i * 4 * 4;
+        if(bones[i] == -1)
+            break;
+
+        //int start_buffer_pos = gl_VertexID * 4 * 4 * 4 + i * 4 * 4;
+        int start_buffer_pos = bones[i] * 4 * 4;
 
         mat4 skinning_mat = mat4(
         //Column 0
