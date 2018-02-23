@@ -49,17 +49,17 @@ struct float3Var {
 
 struct ColorVar {
 	std::string var_name;
-	float4 value = float4(256,256,256,256);
+	float4 value = float4(255,255,255,255);
 };
 
 struct floatVar {
 	std::string var_name;
-	float value = 0;
+	float value = 1;
 };
 
 struct intVar {
 	std::string var_name;
-	int value = 0;
+	int value = 1;
 };
 
 struct boolVar {

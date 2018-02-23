@@ -49,7 +49,7 @@ bool ModuleShaders::Start()
 	//Import all the asset files related to shaders
 
 	ImportShaderObjects();
-	ImportShaderMaterials();	
+	//ImportShaderMaterials();	
 
 	return true;
 }

@@ -8,6 +8,7 @@
 #include "JSONSerialization.h"
 #include "ModuleImporter.h"
 #include "TextEditor.h"
+#include "ModuleShaders.h"
 
 ModuleFS::ModuleFS(bool start_enabled) : Module(start_enabled)
 {
@@ -64,7 +65,8 @@ update_status ModuleFS::PreUpdate(float dt)
 	static bool ImportAutoFiles = true;
 	if (ImportAutoFiles)
 	{
-		ImportAllFilesNoMeta(allfilesAsstes); //First material!! and next meshes... TODO ELLIOT
+		ImportAllFilesNoMeta(allfilesAsstes); 
+		App->module_shaders->ImportShaderMaterials();//First material!! and next meshes... TODO ELLIOT
 		ImportAutoFiles = false;
 	}
 
