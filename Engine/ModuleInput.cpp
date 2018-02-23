@@ -47,6 +47,14 @@ bool ModuleInput::Init(JSON_Object* node)
 	}
 
 	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+	//SDL_SetWindowGrab(App->window->window, SDL_TRUE); // "Get relative moution"
+	//SDL_SetRelativeMouseMode(SDL_TRUE);
+
+
+	//SDL_Cursor* cursor;
+	//cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+	//SDL_SetCursor(cursor);
+	//SDL_ShowCursor(SDL_ENABLE);
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;
@@ -77,6 +85,7 @@ update_status ModuleInput::PreUpdate(float dt)
 				keyboard[i] = KEY_IDLE;
 		}
 	}
+
 
 	Uint32 buttons = SDL_GetMouseState(&mouse_x, &mouse_y);
 	ImGuiIO& io = ImGui::GetIO();
@@ -128,15 +137,16 @@ update_status ModuleInput::PreUpdate(float dt)
 	while(SDL_PollEvent(&e))
 	{
 		ImGui_ImplSdlGL3_ProcessEvent(&e);
-
 		switch(e.type)
 		{
+
 			case SDL_MOUSEBUTTONDOWN:
 			{
 
 				//LOG("mouse down");
 				mouse_x = e.motion.x / SCREEN_SIZE;
 				mouse_y = e.motion.y / SCREEN_SIZE;
+
 				Event mouse_event;
 				mouse_event.pointer.type = EventType::EVENT_BUTTON_DOWN;
 				if (e.button.button == SDL_BUTTON_LEFT)
@@ -244,6 +254,8 @@ update_status ModuleInput::PreUpdate(float dt)
 			}
 		}
 	}
+
+	//LOG(std::to_string(mouse_x_motion).c_str());
 
 	if(quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
 		return UPDATE_STOP;
