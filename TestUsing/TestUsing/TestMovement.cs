@@ -88,6 +88,7 @@ public class TestMovement : CulverinBehaviour
     {
         int tile_mov_x = 0;
         int tile_mov_y = 0;
+        start_direction = (int)curr_dir;
 
         if (Input.GetMouseButtonRepeat(2) && !blocked_camera)
         {
@@ -147,7 +148,7 @@ public class TestMovement : CulverinBehaviour
             if (Input.GetKeyDown(KeyCode.Q)) //Left
             {
                 actual_angle = 0;
-                angle = -10;
+                angle = 10;
                 rotating = true;
                 ModificateCurrentDirection(true);
 
@@ -155,7 +156,7 @@ public class TestMovement : CulverinBehaviour
             if (Input.GetKeyDown(KeyCode.E)) //Right
             {
                 actual_angle = 0;
-                angle = 10;
+                angle = -10;
                 rotating = true;
                 ModificateCurrentDirection(false);
             }
@@ -260,7 +261,7 @@ public class TestMovement : CulverinBehaviour
             }
             else if (curr_dir == Direction.EAST)
             {
-                curr_dir = Direction.SOUTH;
+                curr_dir = Direction.NORTH;
             }
             else if (curr_dir == Direction.SOUTH)
             {
@@ -268,7 +269,7 @@ public class TestMovement : CulverinBehaviour
             }
             else if (curr_dir == Direction.WEAST)
             {
-                curr_dir = Direction.NORTH;
+                curr_dir = Direction.SOUTH;
             }
         }
         else
@@ -298,7 +299,7 @@ public class TestMovement : CulverinBehaviour
         tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
         {
-            tile_mov_y = 1;
+            tile_mov_y = -1;
         }
         if (curr_dir == Direction.EAST)
         {
@@ -306,7 +307,7 @@ public class TestMovement : CulverinBehaviour
         }
         if (curr_dir == Direction.SOUTH)
         {
-            tile_mov_y = -1;
+            tile_mov_y = 1;
         }
         if (curr_dir == Direction.WEAST)
         {
@@ -342,7 +343,7 @@ public class TestMovement : CulverinBehaviour
         tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
         {
-            tile_mov_y = -1;
+            tile_mov_y = 1;
         }
         if (curr_dir == Direction.EAST)
         {
@@ -350,7 +351,7 @@ public class TestMovement : CulverinBehaviour
         }
         if (curr_dir == Direction.SOUTH)
         {
-            tile_mov_y = 1;
+            tile_mov_y = -1;
         }
         if (curr_dir == Direction.WEAST)
         {

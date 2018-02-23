@@ -45,7 +45,6 @@ bool ModuleMap::Init(JSON_Object* node)
 
 bool ModuleMap::Start()
 {
-	map_string = "Hola Joan";
 	imported_map.clear();
 	icon_arrow_north = App->textures->LoadTexture("Images/UI/Arrow_north.png");
 	icon_arrow_east = App->textures->LoadTexture("Images/UI/Arrow_east.png");
