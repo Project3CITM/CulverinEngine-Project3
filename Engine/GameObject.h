@@ -126,6 +126,7 @@ public:
 	// Parent ----------------
 	GameObject* GetParent() const; //Not const pointer to enable parent variables modification
 	bool HaveParent() const;
+	void SetParent(GameObject* new_parent);
 
 	// Bounding Box -----------------------
 	void AddBoundingBox(const ResourceMesh* mesh);

@@ -289,6 +289,11 @@ const GameObject* Hierarchy::GetCopied() const
 	return copy;
 }
 
+GameObject* Hierarchy::GetSelected()
+{
+	return selected;
+}
+
 void Hierarchy::SetGameObjectSelected(GameObject* select)
 {
 	if (select != nullptr)

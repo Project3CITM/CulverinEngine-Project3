@@ -50,6 +50,8 @@ public:
 	GameObject* GetGameObjectbyuid(uint uid);
 	GameObject* FindGameObjectWithTag(const char* str);
 
+	void ModificateParent(GameObject* child, GameObject* new_parent);
+
 	
 	// DRAWING METHODS ---------
 	void DrawPlane();
