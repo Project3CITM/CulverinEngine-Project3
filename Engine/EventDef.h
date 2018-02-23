@@ -85,6 +85,7 @@ struct EDraw
 	{
 		DRAW_3D,			//3D Game Objects without alpha
 		DRAW_3D_ALPHA,		//3D Game Objects with alpha & World space canvas
+		DRAW_3D_ALPHA_PARTICLE, //3D alpha particles
 		DRAW_2D,			//2D GameObject / game object you want to draw with orthogonal perspective
 		DRAW_WORLD_CANVAS,	//World space canvas
 		DRAW_SCREEN_CANVAS	//Screen space canvas

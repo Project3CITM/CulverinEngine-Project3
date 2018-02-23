@@ -75,14 +75,12 @@ void CompParticleSystem::Update(float dt)
 	part_system->Update(dt);
 	if (part_system->EditorWindowOpen)
 		part_system->DrawImGuiEditorWindow();
-
-
-	part_system->PostUpdate(dt);
+	
 }
 
 void CompParticleSystem::Draw()
 {
-
+	part_system->PostUpdate(0);
 }
 
 void CompParticleSystem::Clear()

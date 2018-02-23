@@ -272,6 +272,7 @@ ParticleEmitter::EmitterShapeUnion::EmitterShapeUnion()
 
 Particle::Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax) : ParentParticleSystem(parent)
 {
+	
 	SetAssignedStateFromVariables(InitialState, Initial);
 	SetAssignedStateFromVariables(FinalState, Final);
 	Properties.Speed = Speed;
@@ -298,13 +299,14 @@ bool Particle::PreUpdate(float dt)
 bool Particle::Update(float dt)
 {
 	OrientateParticle();
-	if (!MeshChanged) DrawParticle();
 	return true;
 }
 
 bool Particle::PostUpdate(float dt)
 {
+	if (!MeshChanged) DrawParticle();
 	if (Properties.LifetimeActual >= Properties.LifetimeMax) ToDelete = true;
+
 	return true;
 }
 

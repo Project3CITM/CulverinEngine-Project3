@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include "MathGeoLib.h"
+#include "CompMesh.h"
 
 
 #ifdef NULL
@@ -214,7 +215,8 @@ public:
 	long double CameraDistance = 0.0;							//Store camera distance of this particle, used to sort them and draw with correct order
 
 private:
-	bool ToDelete = false;										//If this particle is dead, we set this bool to true and wait to the right time to delete it
+	bool ToDelete = false;	//If this particle is dead, we set this bool to true and wait to the right time to delete it
+
 };
 
 struct ParticleMeshData							//Very similar to MeshDataResource, but we copy it here to separate as much as we can the particle code from engine code (easier to export/make a library)

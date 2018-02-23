@@ -436,6 +436,7 @@ void GameObject::Draw()
 				PushEvent(draw_event);
 				components[i]->Draw();
 			}
+
 		}
 
 		//Draw child Game Objects -------------------

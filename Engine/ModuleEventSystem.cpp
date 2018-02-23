@@ -4,6 +4,7 @@
 #include "CompCamera.h"
 #include "CompMesh.h"
 #include "EventDef.h"
+#include "CompParticleSystem.h"
 
 //You use this function to push new events to the system, with that is no needed to use App->eventsystem->PushEvent(event), only PushEvent(event)
 void PushEvent(Event& event)
@@ -117,12 +118,16 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 					case EDraw::DrawType::DRAW_2D:
 						((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
 						break;
+					case EDraw::DrawType::DRAW_3D_ALPHA_PARTICLE:
+						((CompParticleSystem*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
+						break;
 					case EDraw::DrawType::DRAW_SCREEN_CANVAS:
 						(*item2)->OnEvent(item._Ptr->_Myval.second);
 						break;
 					case EDraw::DrawType::DRAW_WORLD_CANVAS:
 						//TODO
 						break;
+
 					}
 				}
 			else continue;
