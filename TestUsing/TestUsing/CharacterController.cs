@@ -38,16 +38,19 @@ public class CharacterController : CulverinBehaviour
 
     void Update()
     {
+        // Debug method to control Hp
+        CheckHealth();
+
         // First check if you are alive
         health = health_obj.GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)
-        {
+        {       
             /* Player is alive */
             switch (state)
             {
                 case State.IDLE:
                     {
-                        //Check For Input
+                        //Check For Input + It has to check if he's moving to block attack (¿?)
                         CheckAttack();
                         break;
                     }
@@ -57,15 +60,14 @@ public class CharacterController : CulverinBehaviour
                         anim_controller = GetComponent<CompAnimation>();
                         if (anim_controller.IsAnimationStopped(anim_name))
                         {
+                            anim_controller = GetComponent<CompAnimation>();
+                            anim_controller.PlayAnimation("Idle");
                             state = State.IDLE;
                         }
                         else
                         {
                             // Keep playing specific attack animation  until it ends
-                            /*    if(anim_controller.HasEnded())
-                                {
-                                    attack_anim = false;
-                                }*/
+                            Debug.Log("Attacking");
                         }
                         break;
                     }
@@ -86,13 +88,13 @@ public class CharacterController : CulverinBehaviour
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             left_weapon = lweapon_obj.GetComponent<WeaponController>();
-            left_weapon.button.Clicked();
+            left_weapon.PrepareAttack();
 
         }
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             right_weapon = rweapon_obj.GetComponent<WeaponController>();
-            right_weapon.button.Clicked();
+            right_weapon.PrepareAttack();
         }
     }
 
@@ -114,10 +116,30 @@ public class CharacterController : CulverinBehaviour
         stamina.DecreaseStamina(stamina_cost);        
     }
 
+    public void CheckHealth()
+    {
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            health = health_obj.GetComponent<Hp>();
+            health.GetDamage(10.0f);
+
+        }
+        else if (Input.GetKeyDown(KeyCode.P))
+        {
+            health = health_obj.GetComponent<Hp>();
+            health.GetDamage(-10.0f);
+        }
+    }
+
     public void SetAnim(string anim_name)
     {
         anim_controller = GetComponent<CompAnimation>();
         anim_controller.PlayAnimation(anim_name);
+    }
+
+    public void SetAnimName(string new_name)
+    {
+        anim_name = new_name;
     }
 
 }

@@ -11,6 +11,7 @@ public class WeaponController : CulverinBehaviour
     public AttackTarget attack_collider;
     public GameObject button_obj;
     public CompButton button;
+    public CoolDown cd;
     public EnemyController enemy;
     public CompAudio sound_fx;
 
@@ -29,47 +30,67 @@ public class WeaponController : CulverinBehaviour
 
     public void Attack()
     {
-        //Gen collider and check for hit with enemy
+        // Gen collider and check for hit with enemy
         //...
         if (attack_collider != null)
         {
             attack_collider.CheckAttackTarget();
         }
 
-        //Decrease stamina
+        // Decrease stamina
         player = player_obj.GetComponent<CharacterController>();
         player.DecreaseStamina(stamina_cost);
 
-        //Play specific animation
+        // Play specific animation
         player = player_obj.GetComponent<CharacterController>();
-        player.SetAnim("Attack");
+        player.SetAnim("Attack"); // Differentiate between Attack1 and Attack2
+        player.SetAnimName("Attack");
 
-        //Reproduce specific audio
+        // Reproduce specific audio
         sound_fx = GetComponent<CompAudio>();
-        sound_fx.PlayEvent("SwordSlash");
+        sound_fx.PlayEvent("SwordSlash"); // Differentiate between Sound of Attack1 and Sound of Attack2
     }
 
-    public void AttackHit()
-    {
-        //Get the GameObject from the collider hit
-        if (enemy != null)
-        {
-            enemy.Hit(attack_dmg);
-        }
-    }
-
+    // This method will be called when the associated button to this weapon is pressed
     void OnClick()
     {
+        // Check if player has enough stamina to perform its attack
+        player = player_obj.GetComponent<CharacterController>();
         if (player.GetCurrentStamina() > stamina_cost)
         {
-            Attack();
+            cd = button_obj.GetComponent<CoolDown>();
+            if (!cd.in_cd)
+            {
+                // First, OnClick of WeaponController, then, onClick of Cooldown
+                Attack();
 
-            player = player_obj.GetComponent<CharacterController>();
-            player.SetState(CharacterController.State.ATTACKING);
+                // Set Attacking State
+                player = player_obj.GetComponent<CharacterController>();
+                player.SetState(CharacterController.State.ATTACKING);
+            }
+            else
+            {
+                Debug.Log("Ability in CD");
+            }
         }
         else
         {
             Debug.Log("Not Enough Stamina");
+        }
+    }
+
+    public void PrepareAttack()
+    {
+        button = button_obj.GetComponent<CompButton>();
+        button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
+    }
+
+    public void AttackHit()
+    {
+        // Get the GameObject from the collider hit
+        if (enemy != null)
+        {
+            enemy.Hit(attack_dmg);
         }
     }
 }

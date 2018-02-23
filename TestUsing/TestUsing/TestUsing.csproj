@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="AttackTarget.cs" />
     <Compile Include="AudioTest.cs" />
+    <Compile Include="CharacterController.cs" />
     <Compile Include="Code.cs" />
     <Compile Include="Codev1.cs" />
     <Compile Include="CoolDown.cs" />
@@ -50,6 +51,8 @@
     <Compile Include="Stamina.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="TestAnimation.cs" />
+    <Compile Include="TestButton1.cs" />
+    <Compile Include="TestButton2.cs" />
     <Compile Include="Testelliot.cs" />
     <Compile Include="TestMovement.cs" />
     <Compile Include="WeaponController.cs" />

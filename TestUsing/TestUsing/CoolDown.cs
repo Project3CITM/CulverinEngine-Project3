@@ -6,7 +6,7 @@ public class CoolDown : CulverinBehaviour
     CompButton button_cd;
     float cd_time = 2.0f;
     float act_time = 0.0f;
-    bool in_cd = false;
+    public bool in_cd = false;
 
     void Start()
     { 
@@ -20,9 +20,9 @@ public class CoolDown : CulverinBehaviour
             if (act_time >= cd_time)
             {
                 in_cd = false;
+                button_cd = GetComponent<CompButton>();
                 button_cd.Activate();
             }
-            Debug.Log(act_time.ToString());
         }
 
     }
@@ -31,15 +31,15 @@ public class CoolDown : CulverinBehaviour
     {
         if (in_cd == false)
         {
-            ActivateHability();
+            ActivateAbility();
         }
     }
 
-    public void ActivateHability()
+    public void ActivateAbility()
     {
         button_cd = GetComponent<CompButton>();
         button_cd.Deactivate();
-        Debug.Log("clicked");
+        Debug.Log("Clicked");
         act_time = 0.0f;
         in_cd = true;
     }
