@@ -254,7 +254,7 @@ void CompRigidBody::OnTriggerEnter(Component * trigger)
 {
 	if (collider_comp)
 	{
-		OnTriggerEnter(trigger);
+		collider_comp->OnTriggerEnter(trigger);
 	}
 }
 
@@ -262,7 +262,7 @@ void CompRigidBody::OnTriggerLost(Component * trigger)
 {
 	if (collider_comp)
 	{
-		OnTriggerLost(trigger);
+		collider_comp->OnTriggerLost(trigger);
 	}
 }
 

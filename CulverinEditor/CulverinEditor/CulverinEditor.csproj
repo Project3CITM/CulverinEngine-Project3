@@ -38,7 +38,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttackTarget.cs" />
     <Compile Include="Audio.cs" />
+    <Compile Include="CharacterController.cs" />
     <Compile Include="CompAnimation.cs" />
     <Compile Include="CompAudio.cs" />
     <Compile Include="CompButton.cs" />
@@ -48,6 +50,7 @@
     <Compile Include="CompInteractive.cs" />
     <Compile Include="CompRigidBody.cs" />
     <Compile Include="CulverinBehaviour.cs" />
+    <Compile Include="EnemyController.cs" />
     <Compile Include="Hp.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Object.cs" />
@@ -55,8 +58,6 @@
     <Compile Include="PathNode.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="Stamina.cs" />
-    <Compile Include="TestButton1.cs" />
-    <Compile Include="TestButton2.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Component.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="KeyCode.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Vector3.cs" />
+    <Compile Include="WeaponController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

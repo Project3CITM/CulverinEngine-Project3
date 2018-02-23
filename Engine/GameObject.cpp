@@ -237,7 +237,7 @@ GameObject* GameObject::GetGameObjectbyuid(uint uid)
 			// Check child Game Objects -------------------
 			for (uint i = 0; i < obj_queue.front()->childs.size(); i++)
 			{
-				obj_queue.push(childs[i]);
+				obj_queue.push(obj_queue.front()->childs[i]);
 			}
 
 			obj_queue.pop();

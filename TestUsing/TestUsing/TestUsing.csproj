@@ -57,10 +57,5 @@
     <Compile Include="TestMovement.cs" />
     <Compile Include="WeaponController.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="CulverinEditor">
-      <HintPath>..\..\Engine\Game\ScriptManager\AssemblyReference\CulverinEditor.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

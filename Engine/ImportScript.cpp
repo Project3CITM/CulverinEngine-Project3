@@ -709,17 +709,27 @@ void ImportScript::LinkFunctions()
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
+	
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompButton::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompButton::Deactivate", (const void*)Deactivate);
+	
 	//COMPONENT UI_GRAPHIC FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetRaycastTarget", (const void*)SetRaycastTarget);
 	mono_add_internal_call("CulverinEditor.CompImage::FillAmount", (const void*)FillAmount);
 
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
+	mono_add_internal_call("CulverinEditor.CompCollider::MoveKinematic", (const void*)MoveStaticColliderTo);
 
-	//COMPONENT ANIMATION FUNCTIONS
+
+	//COMPONENT RIGID BODY FUNCTIONS -----------------------
+	mono_add_internal_call("CulverinEditor.CompRigidBody::GetColliderPosition", (const void*)GetColliderPosition);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::GetColliderQuaternion", (const void*)GetColliderQuaternion);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::MoveKinematic", (const void*)MoveKinematic);
+
+
+	//COMPONENT ANIMATION FUNCTIONS -------------------------
 	mono_add_internal_call("CulverinEditor.CompAnimation::PlayAnimation", (const void*)PlayAnimation);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetTransition", (const void*)SetTransition);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationStopped", (const void*)IsAnimationStopped);
@@ -1184,7 +1194,7 @@ MonoObject* ImportScript::GetColliderQuaternion(MonoObject* object)
 
 void ImportScript::MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation)
 {
-	return current->MoveKinematic(object, position, rotation);
+	current->MoveKinematic(object, position, rotation);
 }
 void ImportScript::PlayAnimation(MonoObject * object, MonoString * string, mono_bool blending)
 {

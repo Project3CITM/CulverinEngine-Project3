@@ -8,6 +8,6 @@ namespace CulverinEditor
         public extern GameObject GetCollidedObject();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern GameObject MoveKinematic(Vector3 pos);
+        public extern void MoveKinematic(Vector3 pos);
     }
 }
