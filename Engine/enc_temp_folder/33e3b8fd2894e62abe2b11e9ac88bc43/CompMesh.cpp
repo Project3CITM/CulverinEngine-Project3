@@ -419,7 +419,6 @@ void CompMesh::Draw()
 				{
 					glEnableVertexAttribArray(3);
 					glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (8 * sizeof(float)));
-
 					glEnableVertexAttribArray(4);
 					glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (12 * sizeof(float)));
 				}

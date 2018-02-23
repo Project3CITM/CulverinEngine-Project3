@@ -59,7 +59,9 @@ bool test = false;
         texelFetch(_skinning_text, start_buffer_pos + 15).r
         );
 
-        if(test == false && skinning_mat[1][2] == 0.680028439) test = true;
+        //if(test == false && skinning_mat[3][2] == 0.0264277458) test = true;
+        //if(test == false && texelFetch(_skinning_text, 30).r == 0.0285735130) test = true;
+        if(test == false && bones[i] > 2) test = true;
 
         skinned_pos = (skinning_mat * (vec4(position, 1.0f)) * influences[i]) + skinned_pos;
         skinned_normal = ((skinning_mat * vec4(normal, 0.0f)) * influences[i]) + skinned_normal;
@@ -70,7 +72,7 @@ bool test = false;
             break;
     }
     
-	gl_Position = viewproj *  model * vec4(skinned_pos.xyz, 1.0f);
+	gl_Position = viewproj *  model * vec4(position.xyz, 1.0f);
 
 if(test == true) ourColor = vec4(1.0, 0.0, 0.0, 1.0);
 else

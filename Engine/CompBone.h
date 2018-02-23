@@ -27,7 +27,7 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	// -------------------------------------
 
-	void GenSkinningMatrix(const GameObject* mesh_go);
+	void GenSkinningMatrix(const float4x4& parent_transform);
 	const float4x4& GetSkinningMatrix();
 
 	uint uuid_resource_reimported = 0;
