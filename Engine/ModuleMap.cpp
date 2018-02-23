@@ -357,13 +357,13 @@ void ModuleMap::ShowWalkableMap()
 		if (do_numeration)
 		{
 			do_numeration = false;
-			ShowTextWithColor(ImGuiCol_Button, 10);
+			ShowTextWithColor(ImGuiCol_Button, 20);
 			ImGui::ButtonEx("", ImVec2(19, 0), ImGuiButtonFlags_Disabled);
 			ImGui::SameLine();
 			ImGui::PopStyleColor();
 			for (int n = 0; n < width_map; n++)
 			{
-				ShowTextWithColor(ImGuiCol_Button, 10);
+				ShowTextWithColor(ImGuiCol_Button, 20);
 				ImGui::ButtonEx(std::to_string(n).c_str(), ImVec2(19, 0), ImGuiButtonFlags_Disabled);
 				if(n + 1 < width_map)
 					ImGui::SameLine();
@@ -375,7 +375,7 @@ void ModuleMap::ShowWalkableMap()
 		{
 			if (show_numeration)
 			{
-				ShowTextWithColor(ImGuiCol_Button, 10);
+				ShowTextWithColor(ImGuiCol_Button, 20);
 				ImGui::ButtonEx(std::to_string(y).c_str(), ImVec2(19, 0), ImGuiButtonFlags_Disabled);
 				ImGui::SameLine();
 				ImGui::PopStyleColor();
@@ -979,6 +979,34 @@ void ModuleMap::ShowTextWithColor(ImGuiCol_ type,int id)
 		ImGui::PushStyleColor(type, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
 	}
 	else if (id == 10) // Same Background
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.59f, 0.91f, 0.94f, 1.0f));
+	}
+	else if (id == 11) // Same Background
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.36f, 0.63f, 0.65f, 1.0f));
+	}
+	else if (id == 12) // Same Background
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.47f, 0.82f, 0.63f, 1.0f));
+	}
+	else if (id == 13) // Same Background
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.36f, 0.58f, 0.47f, 1.0f));
+	}
+	else if (id == 14) // Same Background
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.74f, 0.94f, 0.27f, 1.0f));
+	}
+	else if (id == 15) // Same Background
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.49f, 0.54f, 0.3f, 1.0f));
+	}
+	else if (id == 16) // Same Background
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.55f, 0.45f, 0.3f, 1.0f));
+	}
+	else if (id == 20) // Same Background
 	{
 		ImGui::PushStyleColor(type, ImVec4(0.136f, 0.136f, 0.136f, 1.0f));
 	}
