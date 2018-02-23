@@ -157,7 +157,7 @@ public:
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, int condition_a, int condition_b);
 	FSM_Condition* AddCondition(FSM_CONDITION_TYPE condition_type, float condition_a, float condition_b);
 
-	bool IsTriggered()const;
+	bool IsTriggered(const FSM_State* current_state)const;
 
 	// --- Visual Scripting --- //
 	void CreateConditionsModifyingOptions(FSM_State* selected_state);
@@ -217,10 +217,10 @@ public:
 	virtual void LoadCondition(const JSON_Object * object, std::string name) {}
 	// -------------------------------------
 
-	virtual bool Test()	{ return false; };
+	virtual bool Test(const FSM_State* current_state)	{ return false; }
 
 	// SETTERS ----------------
-	virtual bool SetCondition(bool condition_a_, bool condition_b_)	{ return false; }
+	virtual void SetConditionB(bool condition_b_) { }
 	virtual bool SetCondition(int condition_a_, int condition_b_)	{ return false; }
 	virtual bool SetCondition(float condition_a_, float condition_b_)	{ return false; }
 	// ------------------------
@@ -230,8 +230,7 @@ public:
 	const char* GetConditionTypeStr()const;
 	// ------------------------
 
-	ScriptVariable* variable_a;
-	ScriptVariable* variable_b;
+	const char* variable_a_name = NULL;
 
 private:
 	FSM_CONDITION_TYPE condition_type;
@@ -245,19 +244,23 @@ public:
 	FSM_ConditionBool(bool condition_a_, bool condition_b_);
 	~FSM_ConditionBool();
 
-	bool Test();
+	bool Test(const FSM_State* current_state);
 
 	// SETTERS ----------------
-	bool SetCondition(bool condition_a_, bool condition_b_);
+	bool SetScriptVariable(ScriptVariable** script_variable);
+	void SetConditionB(bool condition_b_);
 	// ------------------------
 
 	// GETTERS ----------------
-	bool GetConditionA()const;
+	ScriptVariable* GetConditionA()const;
+	bool GetConditionB()const;
 	// ------------------------
 
 private:
-	bool condition_a;
+	//bool condition_a;
 	bool condition_b;
+	ScriptVariable* condition_script_a;
+	//ScriptVariable* condition_script_b;
 };
 
 	// ------------------------
@@ -269,7 +272,7 @@ public:
 	FSM_ConditionEqualInt(int condition_a_, int condition_b_);
 	~FSM_ConditionEqualInt();
 
-	bool Test();
+	bool Test();//TODODODOOD
 
 	// SETTERS ----------------
 	bool SetCondition(int condition_a_, int condition_b_);
