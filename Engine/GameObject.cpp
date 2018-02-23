@@ -641,6 +641,17 @@ void GameObject::ShowGameObjectOptions()
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->CopyGameObject(this);
 	}
 	ImGui::Separator();
+	//selected
+	bool modificate_parent = false;
+	if (((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected() != this)
+	{
+		modificate_parent = true;
+	}
+	if (ImGui::MenuItem("Selected go Child this", NULL, false, modificate_parent))
+	{
+		App->scene->ModificateParent(((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected(), this);
+	}
+	ImGui::Separator();
 	if (ImGui::MenuItem("Rename", NULL, false, false))
 	{
 		// Not functional
@@ -1953,6 +1964,11 @@ GameObject* GameObject::GetParent() const
 bool GameObject::HaveParent() const
 {
 	return (parent != nullptr);
+}
+
+void GameObject::SetParent(GameObject* new_parent)
+{
+	this->parent = new_parent;
 }
 
 void GameObject::AddBoundingBox(const ResourceMesh* mesh)

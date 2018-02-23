@@ -423,6 +423,44 @@ GameObject * Scene::FindGameObjectWithTag(const char * str)
 	else return nullptr;
 }
 
+void Scene::ModificateParent(GameObject* child, GameObject* new_parent)
+{
+	if (child->IsDeleteFixed() == false && new_parent->IsDeleteFixed() == false)
+	{
+		if (child->HaveParent())
+		{
+			for (int i = 0; i < child->GetParent()->GetChildsVec().size(); i++)
+			{
+				if (child->GetParent()->GetChildsVec()[i] == child)
+				{
+					child->GetParent()->GetChildsPtr()->erase(child->GetParent()->GetChildsPtr()->begin() + i);
+					break;
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < root->GetChildsVec().size(); i++)
+			{
+				if (root->GetChildsVec()[i] == child)
+				{
+					root->GetChildsPtr()->erase(root->GetChildsPtr()->begin() + i);
+					break;
+				}
+			}
+		}
+		if (new_parent->GetUUID() == 1)
+		{
+			child->SetParent(nullptr);
+		}
+		else
+		{
+			child->SetParent(new_parent);
+		}
+		new_parent->AddChildGameObject(child);
+	}
+}
+
 void Scene::DrawPlane()
 {
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);

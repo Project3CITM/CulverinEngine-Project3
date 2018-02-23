@@ -40,24 +40,7 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 
 CompMaterial::~CompMaterial()
 {
-	/*
-	for (int i = 0; i < material->textures.size(); i++) {
-		if (material->textures[i].value != nullptr)
-		{
-			if(material->textures[i].value->num_game_objects_use_me > 0 )
-				material->textures[i].value->num_game_objects_use_me--;
-		}
-		material->textures[i].value = nullptr;
-	}*/
-	/*
-	if (resource_material != nullptr)
-	{
-		if (resource_material->num_game_objects_use_me > 0)
-		{
-			resource_material->num_game_objects_use_me--;
-		}
-	}
-	resource_material = nullptr;*/
+	
 }
 
 void CompMaterial::PreUpdate(float dt)
@@ -102,12 +85,8 @@ void CompMaterial::PreUpdate(float dt)
 }
 
 void CompMaterial::Clear()
-{
-	
-	for (int i = 0; i < material->textures.size(); i++) {
-		//material->textures[i].value = nullptr;
-		
-	}
+{	
+
 	
 }
 
@@ -126,13 +105,7 @@ Color CompMaterial::GetColor() const
 
 uint CompMaterial::GetTextureID() const
 {
-	/*
-	if (resource_material != nullptr)
-	{
-		return resource_material->GetTextureID();
-	}
-	*/
-
+	
 	return 0;
 }
 
@@ -207,14 +180,7 @@ void CompMaterial::ShowOptions()
 			texture_var->value = nullptr;
 			
 		}
-		/*
-		if (resource_material != nullptr)
-		{
-			if (resource_material->num_game_objects_use_me > 0)
-			{
-				resource_material->num_game_objects_use_me--;
-			}
-		}*/
+		
 		for (int i = 0; i < material->textures.size(); i++) {
 			if (material->textures[i].value != nullptr)
 			{
@@ -256,12 +222,20 @@ void CompMaterial::ShowInspectorInfo()
 	
 
 	int shader_pos = 0;
+	int program_pos = 0;
 	std::string shaders_names;
+	std::string program_names;
 	for (int i = 0; i < App->module_shaders->materials.size(); i++) {
 		shaders_names += App->module_shaders->materials[i]->name;
 		shaders_names += '\0';
 		if (material->name.compare(App->module_shaders->materials[i]->name) == 0)
 			shader_pos = i;
+	}
+	for (int i = 0; i < App->module_shaders->programs.size(); i++) {
+		program_names += App->module_shaders->programs[i]->name;
+		program_names += '\0';
+		if (material->material_shader->name.compare(App->module_shaders->programs[i]->name) == 0)
+			program_pos = i;
 	}
 	if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
 
@@ -277,6 +251,13 @@ void CompMaterial::ShowInspectorInfo()
 			}
 		}
 		material = App->module_shaders->materials[shader_pos];
+	}
+
+	if (ImGui::Combo("Programs", &program_pos, program_names.c_str())) {
+		
+		material->material_shader = App->module_shaders->programs[program_pos];
+		material->GetProgramVariables();
+
 	}
 
 	if (GetShaderProgram()->fragment != nullptr) {
@@ -435,8 +416,6 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 			}
 		}
 	}
-
-
 
 	Enable();
 }
