@@ -53,6 +53,9 @@ public:
 	Quat GetLocalQuat() const;
 	Quat GetGlobalQuat() const;
 	GameObject* GetCollidedObject()const;
+
+	//Scripting Method ----------
+	void MoveStaticTo(float3 pos);
 	
 private:
 	
@@ -74,6 +77,7 @@ private:
 	float				rad = 0.5f;
 
 	bool				trigger = false;	
+	bool				on_move = false;
 	CompScript*			listener = nullptr;
 	GameObject*			collided_object = nullptr;
 	std::string			script_name;

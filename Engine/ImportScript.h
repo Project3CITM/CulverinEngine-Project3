@@ -169,6 +169,7 @@ private:
 
 	/*Component Collier*/
 	static MonoObject* GetCollidedObject(MonoObject * object);
+	static void		   MoveStaticColliderTo(MonoObject* object, MonoObject* position);
 
 	/*Component RigidBody*/
 	static MonoObject* GetColliderPosition(MonoObject* object);

@@ -1167,6 +1167,11 @@ MonoObject * ImportScript::GetCollidedObject(MonoObject* object)
 	return current->GetCollidedObject(object);
 }
 
+void ImportScript::MoveStaticColliderTo(MonoObject * object, MonoObject * position)
+{
+	current->MoveStaticColliderTo(object, position);
+}
+
 MonoObject* ImportScript::GetColliderPosition(MonoObject* object)
 {
 	return current->GetColliderPosition(object);

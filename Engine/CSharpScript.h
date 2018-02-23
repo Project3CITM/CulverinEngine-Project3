@@ -201,6 +201,7 @@ public:
 	void		FillAmount(MonoObject * object, float value);
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
+	void		MoveStaticColliderTo(MonoObject* object, MonoObject* positio);
 
 	/*RigidBody*/
 	MonoObject* GetColliderPosition(MonoObject* object);

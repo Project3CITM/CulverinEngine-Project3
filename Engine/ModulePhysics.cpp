@@ -219,6 +219,7 @@ bool ModulePhysics::DeleteCollider(Component * component, jpPhysicsRigidBody * b
 	if (physics_world && colliders.find(body->GetActor()) != colliders.end())
 	{
 		colliders.erase(body->GetActor());
+		update_debug_draw = true;
 		delete body;
 		return true;
 	}
