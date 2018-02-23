@@ -66,6 +66,7 @@ public:
 	GameObject* CreateCube(GameObject* parent = nullptr);
 	GameObject* CreatePlane(GameObject* parent = nullptr);
 	GameObject* CreateMainCamera(GameObject* parent = nullptr);
+	GameObject* CreateMainLight(GameObject* parent = nullptr);
 	GameObject* CreateCanvas(GameObject* parent = nullptr);
 	GameObject* CreateImage(GameObject* parent = nullptr);
 	GameObject* CreateButton(GameObject* parent = nullptr);

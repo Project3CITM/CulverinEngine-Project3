@@ -28,7 +28,7 @@
 #include "JSONSerialization.h"
 #include "SkyBox.h"
 #include "ModuleRenderGui.h"
-
+#include "CompLight.h"
 #include "Gl3W/include/glew.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
@@ -237,6 +237,7 @@ void Scene::LoadScene()
 	{
 		/* Create Default Main Camera Game Object */
 		CreateMainCamera(nullptr);
+		CreateMainLight(nullptr);
 
 		// Also Light??
 	}
@@ -882,6 +883,42 @@ GameObject* Scene::CreateMainCamera(GameObject* parent)
 	CompCamera* camera = (CompCamera*)obj->AddComponent(C_CAMERA);
 	camera->Enable();
 	camera->SetMain(true);
+
+	if (parent == nullptr)
+	{
+		// Only add to GameObjects list the Root Game Objects
+		App->scene->root->AddChildGameObject(obj);
+	}
+
+	LOG("MAIN CAMERA Created.");
+
+	return obj;
+}
+
+GameObject * Scene::CreateMainLight(GameObject * parent)
+{
+	GameObject* obj = new GameObject(parent);
+
+	// SET NAME -----------------------------------
+	std::string name = "Main light";
+	char* name_str = new char[name.size() + 1];
+	strcpy(name_str, name.c_str());
+	obj->SetName(name_str);
+
+	/* Predefined Main Camera has 2 Base components: Transform & Camera */
+
+	// TRANSFORM COMPONENT --------------
+	CompTransform* transform = (CompTransform*)obj->AddComponent(C_TRANSFORM);
+	transform->Init(float3(0, 60, -40), float3(-40, 0, 0), float3(1, 1, 1));
+	transform->Enable();
+
+	// CAMERA COMPONENT -----------------
+	CompLight* camera = (CompLight*)obj->AddComponent(C_LIGHT);
+	camera->type = Light_type::DIRECTIONAL_LIGHT;
+	camera->ui_light_type = 1;
+	//camera->types_lights= 1;
+	//camera->Enable();
+	//camera->SetMain(true);
 
 	if (parent == nullptr)
 	{

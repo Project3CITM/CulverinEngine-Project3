@@ -264,6 +264,8 @@ bool ModuleLightning::CleanUp()
 
 void ModuleLightning::OnEvent(Event & event)
 {
+	//This is only for shadows 
+	/*
 	test_fix.Bind("peter");
 
 	glEnable(GL_CULL_FACE);
@@ -279,7 +281,8 @@ void ModuleLightning::OnEvent(Event & event)
 	switch (event.type)
 	{
 	case EventType::EVENT_SEND_3D_3DA_MM:
-
+		
+	
 		for (std::multimap<float, Event>::const_iterator item = event.send_3d3damm.MM3DDrawEvent->begin(); item != event.send_3d3damm.MM3DDrawEvent->end();item++)
 		{
 
@@ -506,7 +509,7 @@ void ModuleLightning::OnEvent(Event & event)
 	ImGui::Image((ImTextureID*)test_fix.depthTex, ImVec2(500, 500));
 	App->scene->scene_buff->Bind("Scene");
 	glCullFace(GL_BACK);
-	shadow_Shader->Unbind();
+	shadow_Shader->Unbind();*/
 }
 
 void ModuleLightning::CalPointShadowMaps(CompMesh* mesh_to_render)
