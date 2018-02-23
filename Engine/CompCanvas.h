@@ -29,6 +29,7 @@ public:
 
 	void AddGraphic(CompGraphic* to_add);
 	void RemoveGraphic(CompGraphic* to_remove);
+	void DrawDebugRectTransform();
 	void DrawGraphic();
 	void SetDefaultTexture(int texture);
 	int GetDefaultTexture()const;

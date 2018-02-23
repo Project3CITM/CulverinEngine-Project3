@@ -226,6 +226,10 @@ void ModuleRenderGui::ScreenSpaceDraw()
 		{ -1.0f,						-1.0f,						 0.0f, 1.0f },
 	};
 	//Draw
+	for (int i = 0; i < screen_space_canvas.size(); i++)
+	{
+		screen_space_canvas[i]->DrawDebugRectTransform();
+	}
 	default_ui_shader->Bind();
 	GLint g_AttribLocationProjMtx = glGetUniformLocation(default_ui_shader->programID, "ProjMtx");
 	if(App->engine_state!=EngineState::STOP)

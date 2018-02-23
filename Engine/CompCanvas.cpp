@@ -39,7 +39,7 @@ void CompCanvas::Update(float dt)
 {
 	App->render_gui->screen_space_canvas.push_back(this);
 	//PushEvent(draw_mode);
-
+	
 }
 
 void CompCanvas::Clear()
@@ -177,13 +177,20 @@ void CompCanvas::RemoveGraphic(CompGraphic * to_remove)
 	}
 	LOG("Error:CanvasRender not found on this Canvas");
 }
-
+void CompCanvas::DrawDebugRectTransform()
+{
+	if (App->engine_state == EngineState::STOP)
+	{
+		my_transform->DrawRectTransform();
+	}
+}
 void CompCanvas::DrawGraphic()
 {
 	for (int i = 0; i < graphic_vector.size(); i++)
 	{
 		graphic_vector[i]->DrawGraphic();
 	}
+	
 }
 void CompCanvas::SetDefaultTexture(int texture)
 {
