@@ -392,8 +392,6 @@ void CompInteractive::OnInteractiveUnSelected(Event event_input)
 
 bool CompInteractive::PointerInside(float2 position)
 {
-
-
 	float4 rect = parent->GetComponentRectTransform()->GetGlobalRect();
 	ImGuiIO& io = ImGui::GetIO();
 	float mouse_x = position.x;
@@ -404,8 +402,12 @@ bool CompInteractive::PointerInside(float2 position)
 	mouse_y = -(position.y - (GetPositionDock("Scene").y + GetSizeDock("Scene").y));
 
 	mouse_x = (mouse_x*io.DisplaySize.x) / GetSizeDock("Scene").x;
-	mouse_y = (mouse_y*io.DisplaySize.y)/GetSizeDock("Scene").y+30;
+	mouse_y = (mouse_y*io.DisplaySize.y)/GetSizeDock("Scene").y;
 
+	}
+	else
+	{
+		mouse_y = io.DisplaySize.y - position.y;
 	}
 
 

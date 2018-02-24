@@ -9,10 +9,10 @@ public class CharacterController : CulverinBehaviour
         ATTACKING,
     }
 
-    //public GameObject health_obj;
-    //public Hp health;                           // To handle current hp
-    //public GameObject stamina_obj;
-    //public Stamina stamina;                     // To handle current stamina
+    public GameObject health_obj;
+    public Hp health;                           // To handle current hp
+    public GameObject stamina_obj;
+    public Stamina stamina;                     // To handle current stamina
     public GameObject rweapon_obj;
     public WeaponController right_weapon;       // Script that will handle right weapon the player is carrying (with its own progression system, stats...)
     public GameObject lweapon_obj;
@@ -28,8 +28,8 @@ public class CharacterController : CulverinBehaviour
     void Start()
     {
         // Link GameObject variables with Scene GameObjects
-        //health_obj = GetLinkedObject("health_obj");
-        //stamina_obj = GetLinkedObject("stamina_obj");
+        health_obj = GetLinkedObject("health_obj");
+        stamina_obj = GetLinkedObject("stamina_obj");
         lweapon_obj = GetLinkedObject("lweapon_obj");
         rweapon_obj = GetLinkedObject("rweapon_obj");
 
@@ -41,11 +41,12 @@ public class CharacterController : CulverinBehaviour
     void Update()
     {
         // Debug method to control Hp
-        //CheckHealth();
+        CheckHealth();
 
         // First check if you are alive
-        //health = health_obj.GetComponent<Hp>();
-        if (/*health.GetCurrentHealth() > 0*/ 1 == 1)
+        health_obj = GetLinkedObject("health_obj");
+        health = health_obj.GetComponent<Hp>();
+        if (health.GetCurrentHealth() > 0)
         {       
             /* Player is alive */
             switch (state)
@@ -98,12 +99,14 @@ public class CharacterController : CulverinBehaviour
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             Debug.Log("Pressed 1");
+            lweapon_obj = GetLinkedObject("lweapon_obj");
             left_weapon = lweapon_obj.GetComponent<WeaponController>();
             left_weapon.PrepareAttack();
         }
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Pressed 2");
+            rweapon_obj = GetLinkedObject("rweapon_obj");
             right_weapon = rweapon_obj.GetComponent<WeaponController>();
             right_weapon.PrepareAttack();
         }
@@ -114,34 +117,45 @@ public class CharacterController : CulverinBehaviour
         state = new_state;
     }
 
-    //public float GetCurrentStamina()
-    //{
-    //    stamina = stamina_obj.GetComponent<Stamina>();
-    //    float ret = stamina.GetCurrentStamina();
-    //    return ret;
-    //}
+    public float GetCurrentStamina()
+    {
+        stamina_obj = GetLinkedObject("stamina_obj");
+        stamina = stamina_obj.GetComponent<Stamina>();
+        float ret = stamina.GetCurrentStamina();
+        return ret;
+    }
 
-    //public void DecreaseStamina(float stamina_cost)
-    //{
-    //    stamina = stamina_obj.GetComponent<Stamina>();
-    //    stamina.DecreaseStamina(stamina_cost);        
-    //}
+    public void DecreaseStamina(float stamina_cost)
+    {
+        Debug.Log("Decrease Stamina");
+        stamina_obj = GetLinkedObject("stamina_obj");
+        stamina = stamina_obj.GetComponent<Stamina>();
+        stamina.DecreaseStamina(stamina_cost);
+    }
 
-    //public void CheckHealth()
-    //{
-    //    // Debug for check Health control
-    //    if (Input.GetKeyDown(KeyCode.O))
-    //    {
-    //        health = health_obj.GetComponent<Hp>();
-    //        health.GetDamage(10.0f);
+    public void CheckHealth()
+    {
+        // Debug for check Health control
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            health_obj = GetLinkedObject("health_obj");
+            health = health_obj.GetComponent<Hp>();
+            health.GetDamage(10.0f);
+        }
+        else if (Input.GetKeyDown(KeyCode.P))
+        {
+            health_obj = GetLinkedObject("health_obj");
+            health = health_obj.GetComponent<Hp>();
+            health.GetDamage(-10.0f);
+        }
+    }
 
-    //    }
-    //    else if (Input.GetKeyDown(KeyCode.P))
-    //    {
-    //        health = health_obj.GetComponent<Hp>();
-    //        health.GetDamage(-10.0f);
-    //    }
-    //}
+    public void GetDamage(float dmg)
+    {
+        health_obj = GetLinkedObject("health_obj");
+        health = health_obj.GetComponent<Hp>();
+        health.GetDamage(dmg);
+    }
 
     //public void SetAnim(string anim_name)
     //{

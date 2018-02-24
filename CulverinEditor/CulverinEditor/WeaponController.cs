@@ -14,9 +14,9 @@ public class WeaponController : CulverinBehaviour
     public GameObject player_obj;
     public CharacterController player;
     public AttackTarget attack_collider;
-    //public GameObject button_obj;
-    //public CompButton button;
-    //public CoolDown cd;
+    public GameObject button_obj;
+    public CompButton button;
+    public CoolDown cd;
     public GameObject enemy_obj;
     public EnemyController enemy;
     //public CompAudio sound_fx;
@@ -33,8 +33,8 @@ public class WeaponController : CulverinBehaviour
     {
         // Link GameObject variables with Scene GameObjects
         player_obj = GetLinkedObject("player_obj");
-        //button_obj = GetLinkedObject("button_obj");
-        //enemy_obj = GetLinkedObject("enemy_obj");
+        button_obj = GetLinkedObject("button_obj");
+        enemy_obj = GetLinkedObject("enemy_obj");
     }
 
     public void Attack()
@@ -42,20 +42,21 @@ public class WeaponController : CulverinBehaviour
         Debug.Log("Attack");
 
         // Gen collider and check for hit with enemy
-        attack_collider = GetComponent<AttackTarget>();
-        if(attack_collider == null)
-        {
-            Debug.Log("NULL");
-        }
-        else
-        {
-            Debug.Log("not null");
-        }
-        attack_collider.CheckAttackTarget();
+        //attack_collider = GetComponent<AttackTarget>();
+        //if(attack_collider == null)
+        //{
+        //    Debug.Log("NULL");
+        //}
+        //else
+        //{
+        //    Debug.Log("not null");
+        //}
+        //attack_collider.CheckAttackTarget();
 
         // Decrease stamina
-        //player = player_obj.GetComponent<CharacterController>();
-        //player.DecreaseStamina(stamina_cost);
+        player_obj = GetLinkedObject("player_obj");
+        player = player_obj.GetComponent<CharacterController>();
+        player.DecreaseStamina(stamina_cost);
         Debug.Log("SetAnim");
         // Play specific animation
         SetCurrentAnim();
@@ -66,6 +67,7 @@ public class WeaponController : CulverinBehaviour
 
         Debug.Log("Going to hit");
         // Temp Method
+        enemy_obj = GetLinkedObject("enemy_obj");
         enemy = enemy_obj.GetComponent<EnemyController>();
         enemy.Hit(attack_dmg);
     }
@@ -74,17 +76,21 @@ public class WeaponController : CulverinBehaviour
     void OnClick()
     {
         // Check if player has enough stamina to perform its attack
-        //player = player_obj.GetComponent<CharacterController>();
-        if (/*player.GetCurrentStamina() > stamina_cost*/ 1 == 1)
+        player_obj = GetLinkedObject("player_obj");
+        player = player_obj.GetComponent<CharacterController>();
+        if (player.GetCurrentStamina() > stamina_cost)
         {
-            //cd = button_obj.GetComponent<CoolDown>();
-            if (/*!cd.in_cd*/ 1 == 1)
+            button_obj = GetLinkedObject("button_obj");
+            cd = button_obj.GetComponent<CoolDown>();
+            if (!cd.in_cd)
             {
                 Debug.Log("Going to Attack");
+
                 // First, OnClick of WeaponController, then, onClick of Cooldown
                 Attack();
 
                 // Set Attacking State
+                player_obj = GetLinkedObject("player_obj");
                 player = player_obj.GetComponent<CharacterController>();
                 player.SetState(CharacterController.State.ATTACKING);
             }
@@ -101,10 +107,11 @@ public class WeaponController : CulverinBehaviour
 
     public void PrepareAttack()
     {
-        //button = button_obj.GetComponent<CompButton>();
-        //button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
         Debug.Log("Prepare Attack");
-        OnClick(); // Temp call
+        button_obj = GetLinkedObject("button_obj");
+        button = button_obj.GetComponent<CompButton>();
+        button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
+        //OnClick(); // Temp call
     }
 
     public void AttackHit()
@@ -112,6 +119,7 @@ public class WeaponController : CulverinBehaviour
         // Get the GameObject from the collider hit
         if (enemy_obj != null)
         {
+            enemy_obj = GetLinkedObject("enemy_obj");
             enemy = enemy_obj.GetComponent<EnemyController>();
             enemy.Hit(attack_dmg);
         }
@@ -120,7 +128,6 @@ public class WeaponController : CulverinBehaviour
     public void SetCurrentAnim()
     {
         //player = player_obj.GetComponent<CharacterController>();
-
         switch (weapon_type)
         {
             case 1:
