@@ -735,6 +735,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetTransition", (const void*)SetTransition);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationStopped", (const void*)IsAnimationStopped);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationRunning", (const void*)IsAnimationRunning);
+	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimOverXTime", (const void*)IsAnimOverXTime);
 }
 
 //Log messages into Engine Console
@@ -1174,7 +1175,6 @@ void ImportScript::SetRaycastTarget(MonoObject * object, mono_bool flag)
 void ImportScript::FillAmount(MonoObject * object, float value)
 {
 	current->FillAmount(object, value);
-
 }
 
 MonoObject * ImportScript::GetCollidedObject(MonoObject* object)
@@ -1219,4 +1219,9 @@ mono_bool ImportScript::IsAnimationStopped(MonoObject * object, MonoString * str
 mono_bool ImportScript::IsAnimationRunning(MonoObject * object, MonoString * string)
 {
 	return current->IsAnimationRunning(object, string);
+}
+
+mono_bool ImportScript::IsAnimOverXTime(MonoObject * object, float num_between_0_1)
+{
+	return current->IsAnimOverXTime(object, num_between_0_1);
 }

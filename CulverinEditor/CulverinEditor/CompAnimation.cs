@@ -20,5 +20,8 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern bool IsAnimationRunning(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern bool IsAnimOverXTime(float num_between_0_1);
     }
 }

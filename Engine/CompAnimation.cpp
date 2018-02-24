@@ -238,6 +238,11 @@ bool CompAnimation::IsAnimationRunning(const char * clip_name) const
 		return false;
 }
 
+AnimationClip * CompAnimation::GetCurrentClip() const
+{
+	return current_animation;
+}
+
 void CompAnimation::SetResource(ResourceAnimation * resource_animation, bool isImport)
 {
 	if (animation_resource != resource_animation)

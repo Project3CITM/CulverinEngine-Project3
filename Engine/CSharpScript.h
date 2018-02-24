@@ -190,6 +190,7 @@ public:
 	void		SetTransition(MonoObject* object, MonoString* name, mono_bool condition);
 	mono_bool	IsAnimationStopped(MonoObject* object, MonoString* name);
 	mono_bool	IsAnimationRunning(MonoObject* object, MonoString* name);
+	mono_bool	IsAnimOverXTime(MonoObject* object, float number_between_0_1);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);

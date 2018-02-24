@@ -181,6 +181,7 @@ private:
 	static void SetTransition(MonoObject* object, MonoString* string, mono_bool condition);
 	static mono_bool IsAnimationStopped(MonoObject* object, MonoString* string);
 	static mono_bool IsAnimationRunning(MonoObject* object, MonoString* string);
+	static mono_bool IsAnimOverXTime(MonoObject* object, float num_between_0_1);
 
 public: 
 	std::map<std::string, GameObject*> map_link_variables;

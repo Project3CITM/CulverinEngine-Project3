@@ -1789,6 +1789,18 @@ mono_bool CSharpScript::IsAnimationRunning(MonoObject * object, MonoString * nam
 	}
 }
 
+mono_bool CSharpScript::IsAnimOverXTime(MonoObject * object, float number_between_0_1)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			return animation->GetCurrentClip()->IsAnimOverXTime(number_between_0_1);
+		}
+	}
+}
+
 void CSharpScript::Activate(MonoObject* object, int uid)
 {
 	if (current_game_object != nullptr)

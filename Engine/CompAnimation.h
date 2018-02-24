@@ -84,6 +84,8 @@ public:
 	bool IsAnimationStopped(const char* clip_name) const;
 	bool IsAnimationRunning(const char* clip_name) const;
 
+	AnimationClip* GetCurrentClip() const;
+
 	// EDITOR METHODS ---------
 	void ShowOptions();
 	void ShowInspectorInfo();
