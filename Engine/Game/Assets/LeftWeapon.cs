@@ -93,9 +93,8 @@ public class LeftWeapon : CulverinBehaviour
                     Attack();
 
                     //// Set Attacking State
-                    //player_obj = GetLinkedObject("player_obj");
-                    //player = player_obj.GetComponent<CharacterController>();
-                    //player.SetState(CharacterController.State.ATTACKING);
+                    player_obj = GetLinkedObject("player_obj");
+                    player_obj.GetComponent<CharacterController>().anim_controller.SetTransition("ToAttack1");
                 }
                 else
                 {

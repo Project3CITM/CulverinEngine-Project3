@@ -17,7 +17,7 @@ public class CharacterController : CulverinBehaviour
     public RightWeapon right_weapon;       // Script that will handle right weapon the player is carrying (with its own progression system, stats...)
     public GameObject lweapon_obj;
     public LeftWeapon left_weapon;        // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
-    //public CompAnimation anim_controller;       // Animation component to handle animations
+    public CompAnimation anim_controller;       // Animation component to handle animations
 
     State state = State.IDLE;                   // To manage player state
     bool combat_mode = false;                   // True when enemy is in a near tile 
@@ -62,24 +62,22 @@ public class CharacterController : CulverinBehaviour
                 case State.ATTACKING:
                     {
                         //Check for end of the Attack animation
-                        //anim_controller = GetComponent<CompAnimation>();
-                        //if (anim_controller.IsAnimationStopped(anim_name))
-                        //{
-                        //    anim_controller = GetComponent<CompAnimation>();
-                        //    anim_controller.PlayAnimation("Idle");
-                        //    state = State.IDLE;
-                        //}
-                        //else
-                        //{
-                        //    // Keep playing specific attack animation  until it ends
-                        //    Debug.Log("Attacking");
-                        //}
-                        anim_time += Time.DeltaTime();
-                        if(anim_time >= 3.0f)
+                        anim_controller = GetComponent<CompAnimation>();
+                        if (anim_controller.IsAnimationStopped("Attack1"))
                         {
-                            SetState(State.IDLE);
-                            Debug.Log("Changed State to IDLE");
+                            state = State.IDLE;
                         }
+                        else
+                        {
+                            // Keep playing specific attack animation  until it ends
+                            Debug.Log("Attacking");
+                        }
+                        //anim_time += Time.DeltaTime();
+                        //if(anim_time >= 3.0f)
+                        //{
+                        //    SetState(State.IDLE);
+                        //    Debug.Log("Changed State to IDLE");
+                        //}
                         break;
                     }
                 default:
