@@ -1127,7 +1127,7 @@ MonoObject * CSharpScript::GetBackwardVector(MonoObject * object)
 	}
 }
 
-MonoObject * CSharpScript::GetUpVector(MonoObject * object)
+MonoObject* CSharpScript::GetUpVector(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
@@ -1392,7 +1392,7 @@ MonoObject* CSharpScript::GetPosition(MonoObject* object)
 	}
 }
 
-MonoObject * CSharpScript::GetGlobalPosition(MonoObject * object)
+MonoObject* CSharpScript::GetGlobalPosition(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
@@ -1620,7 +1620,7 @@ void CSharpScript::RotateAroundAxis(MonoObject * object, MonoObject * vector3, f
 	}
 }
 
-void CSharpScript::SetScale(MonoObject * object, MonoObject * vector3)
+void CSharpScript::SetScale(MonoObject* object, MonoObject* vector3)
 {
 	if (current_game_object != nullptr)
 	{
@@ -1729,7 +1729,7 @@ void CSharpScript::StopAudioEvent(MonoObject* object, MonoString* event_name)
 	}
 }
 
-void CSharpScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, float value)
+void CSharpScript::SetAuxiliarySends(MonoObject* object, MonoString* bus, float value)
 {
 	if (current_game_object != nullptr)
 	{
@@ -1741,7 +1741,7 @@ void CSharpScript::SetAuxiliarySends(MonoObject * object, MonoString * bus, floa
 	}
 }
 
-void CSharpScript::PlayAnimation(MonoObject * object, MonoString * name, mono_bool blending)
+void CSharpScript::PlayAnimation(MonoObject* object, MonoString* name, mono_bool blending)
 {
 	if (current_game_object != nullptr)
 	{
@@ -1753,7 +1753,7 @@ void CSharpScript::PlayAnimation(MonoObject * object, MonoString * name, mono_bo
 	}
 }
 
-void CSharpScript::SetTransition(MonoObject * object, MonoString * name, mono_bool condition)
+void CSharpScript::SetTransition(MonoObject* object, MonoString* name, mono_bool condition)
 {
 	if (current_game_object != nullptr)
 	{
@@ -1814,7 +1814,6 @@ void CSharpScript::Deactivate(MonoObject * object, int uid)
 {
 	if (current_game_object != nullptr)
 	{
-
 		CompInteractive* interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_BUTTON);
 		if (interactive != nullptr)
 		{
@@ -1870,10 +1869,14 @@ void CSharpScript::FillAmount(MonoObject * object, float value)
 // CompCollider -----------------------------------------------------------
 MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 {
-	GameObject* target = ((CompCollider*)current_game_object->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
-	if (target == nullptr)return nullptr;
+	if (current_game_object != nullptr)
+	{
+		GameObject* target = ((CompCollider*)current_game_object->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
+		if (target == nullptr)return nullptr;
 
-	return App->importer->iScript->GetMonoObject(target);
+		return App->importer->iScript->GetMonoObject(target);
+	}
+	return nullptr;
 }
 
 void CSharpScript::MoveStaticColliderTo(MonoObject * object, MonoObject * position)

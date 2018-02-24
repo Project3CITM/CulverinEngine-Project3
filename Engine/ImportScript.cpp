@@ -713,6 +713,7 @@ void ImportScript::LinkFunctions()
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompButton::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompButton::Deactivate", (const void*)Deactivate);
+	mono_add_internal_call("CulverinEditor.CompButton::Clicked", (const void*)Clicked);
 	
 	//COMPONENT UI_GRAPHIC FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetRaycastTarget", (const void*)SetRaycastTarget);
@@ -846,6 +847,10 @@ float ImportScript::GetDeltaTime()
 MonoObject* ImportScript::GetLinkedObject(MonoObject* object, MonoString* name)
 {
 	std::string name_variable = mono_string_to_utf8(name);
+	if (name_variable == "lweapon_obj")
+	{
+		int c = 0;
+	}
 	return current->GetMonoObjectLink(name_variable);
 }
 

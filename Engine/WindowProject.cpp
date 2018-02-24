@@ -10,6 +10,7 @@ Project::Project()
 {
 	active.push_back(Active());
 	name = "Project";
+	directory_see = App->GetCharfromConstChar(App->fs->GetMainDirectory().c_str());
 }
 
 
@@ -34,7 +35,6 @@ bool Project::Start()
 
 	//directory_see = App->fs->GetMainDirectory();
 	//directory_see = "Assets\\";
-	directory_see = App->GetCharfromConstChar(App->fs->GetMainDirectory().c_str());
 	//directory_see = "";
 	//folders = App->fs->Get_AllFolders(directory_see);
 	//Iterate_files(folders);
