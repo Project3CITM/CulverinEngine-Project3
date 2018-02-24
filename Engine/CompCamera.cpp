@@ -487,22 +487,21 @@ void CompCamera::SetFar(float far_p)
 
 void CompCamera::SetFov(float vertical)
 {
-	frustum.verticalFov = vertical * DEGTORAD;
-	if (!App->mode_game) {
+	if (!App->mode_game)
+	{
 		float w = GetSizeDock("Scene").x;
 		float h = GetSizeDock("Scene").y;
 		float div = (w/h);
-		frustum.verticalFov = 90 * DEGTORAD;
+		frustum.verticalFov = vertical * DEGTORAD;
 		frustum.horizontalFov = (2 * math::Atan(math::Tan(frustum.verticalFov / 2.0f) *div));
 	}
-	else {
+	else
+	{
 		int w=App->window->GetWidth();
 		int h = App->window->GetHeight();
 		float div = ((float)w / (float)h);
-		App->renderer3D->active_camera->frustum.verticalFov = 90 * DEGTORAD;
+		App->renderer3D->active_camera->frustum.verticalFov = vertical * DEGTORAD;
 		App->renderer3D->active_camera->frustum.horizontalFov = (2.0f * math::Atan(math::Tan(App->renderer3D->active_camera->frustum.verticalFov / 2.0f) *div));
-		//div = ((float)w / (float)h);
-
 	}
 }
 
