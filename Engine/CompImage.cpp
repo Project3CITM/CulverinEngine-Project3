@@ -9,6 +9,7 @@
 #include "CompCanvasRender.h"
 #include "CompRectTransform.h"
 #include "CompCanvas.h"
+#include "ModuleFS.h"
 #include <vector>
 
 CompImage::CompImage(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
@@ -320,6 +321,7 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	json_object_dotset_number_with_std(object, name + "Fill Amount", filled);
 	json_object_dotset_number_with_std(object, name + "Image Type", type);
 	json_object_dotset_number_with_std(object, name + "Fill Method", method);
+	App->fs->json_array_dotset_float4(object, name + "Image Color", color);
 
 }
 
@@ -347,6 +349,7 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 	filled=json_object_dotget_number_with_std(object, name + "Fill Amount");
 	type = static_cast<CompImage::Type>((int)json_object_dotget_number_with_std(object, name + "Image Type"));
 	method = static_cast<FillMethod>((int)json_object_dotget_number_with_std(object, name + "Fill Method"));
+	color = App->fs->json_array_dotget_float4_string(object, name + "Image Color");
 
 	Enable();
 }
