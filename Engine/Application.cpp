@@ -551,7 +551,10 @@ bool Application::CleanUp()
 	bool ret = true;
 
 	//Before Cleaning, save data to config file
-	SaveConfig();
+	if (App->mode_game == false)
+	{
+		SaveConfig();
+	}
 
 	std::vector<Module*>::iterator item = list_modules.end();
 
@@ -608,10 +611,7 @@ bool Application::SaveConfig()
 		json_object_set_boolean(config_node, "Mode Game", mode_game);
 		 
 		//Save ActualScene ----- 
-		if (mode_game == false)
-		{
-			json_object_set_string(config_node, "ActualScene", actual_scene.c_str()); //TODO ELLIOT
-		}
+		json_object_set_string(config_node, "ActualScene", actual_scene.c_str()); //TODO ELLIOT
 
 
 		//Iterate all modules to save each respective info
@@ -738,9 +738,11 @@ void Application::SetState(EngineState state)
 				{
 					scene->scene_buff->WantRefreshRatio();
 				}
-
-				//To Save all elements in the scene to load them correctly when exiting Game Mode
-				actual_scene = json_seria->SaveScene();
+				if (App->mode_game == false)
+				{
+					//To Save all elements in the scene to load them correctly when exiting Game Mode
+					actual_scene = json_seria->SaveScene();
+				}
 			}
 			else
 			{

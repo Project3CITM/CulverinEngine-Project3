@@ -50,11 +50,8 @@ bool ModuleFS::Start()
 {
 	perf_timer.Start();
 
-	if (App->mode_game == false)
-	{
-		// Get All Files From Assets
-		GetAllFilesAssets(directory_assets, allfilesAsstes);
-	}
+	// Get All Files From Assets
+	GetAllFilesAssets(directory_assets, allfilesAsstes);
 	checkAssets.Start();
 
 	Start_t = perf_timer.ReadMs();

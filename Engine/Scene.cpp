@@ -56,8 +56,8 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 
 Scene::~Scene()
 {
-	DeleteAllGameObjects(root); //TODO-> Elliot
-	App->importer->iScript->ClearMonoMap();
+	//DeleteAllGameObjects(root); //TODO-> Elliot
+	//App->importer->iScript->ClearMonoMap();
 
 	RELEASE(scene_buff);
 	RELEASE(skybox);
