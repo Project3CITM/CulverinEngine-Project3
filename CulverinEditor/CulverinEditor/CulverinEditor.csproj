@@ -58,6 +58,7 @@
     <Compile Include="PathNode.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="Stamina.cs" />
+    <Compile Include="TestMovement.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Component.cs" />
