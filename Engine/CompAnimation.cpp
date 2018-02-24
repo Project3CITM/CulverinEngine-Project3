@@ -42,7 +42,10 @@ void CompAnimation::Draw()
 	{
 		for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
 		{
-			it->second->DrawDebug(it->first);
+			if (it->first != nullptr)
+			{
+				it->second->DrawDebug(it->first);
+			}
 		}
 	}
 }
@@ -76,7 +79,10 @@ void CompAnimation::Update(float dt)
 	{
 		for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
 		{
-			it->second->UpdateBone(it->first, current_animation, blending_animation);
+			if (it->first != nullptr)
+			{
+				it->second->UpdateBone(it->first, current_animation, blending_animation);
+			}
 		}
 	}
 
