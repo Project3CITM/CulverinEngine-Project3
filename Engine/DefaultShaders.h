@@ -168,7 +168,7 @@ static const GLchar* fragmentShaderSource[] =
 "	final_ambient = final_ambient/_numLights;\n"
 "	final_color = normalize(final_color);																		 \n"
 "																												 \n"
-"	color = vec4(final_ambient* color_texture + color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb , 1);		 \n"
+"	color = vec4(final_ambient* color_texture +vec3(0,0.03,0.07) + color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb , 1);		 \n"
 "																												 \n"
 "}																												 \n"
 };

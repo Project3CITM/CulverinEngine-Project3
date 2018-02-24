@@ -11,6 +11,8 @@ using CulverinEditor.Debug;
 
 public class LeftWeapon : CulverinBehaviour
 {
+    public GameObject rweapon_obj;
+    public GameObject lweapon_obj;
     public GameObject player_obj;
     public CharacterController player;
     public AttackTarget attack_collider;
@@ -19,9 +21,8 @@ public class LeftWeapon : CulverinBehaviour
     public CoolDownLeft cd;
     public GameObject enemy_obj;
     public EnemyController enemy;
+    public CompAnimation animation_weapon;
     //public CompAudio sound_fx;
-
-    public int weapon_type = 0;
 
     // WEAPON STATS -------------
     public float attack_dmg = 10.0f;
@@ -29,48 +30,75 @@ public class LeftWeapon : CulverinBehaviour
     public float stamina_cost = 30.0f;
     // ---------------------------
 
+    int step_counter = -1;
+
     void Start()
     {
         // Link GameObject variables with Scene GameObjects
         player_obj = GetLinkedObject("player_obj");
         l_button_obj = GetLinkedObject("l_button_obj");
         enemy_obj = GetLinkedObject("enemy_obj");
+
+        step_counter = -1;
+    }
+
+    void Update()
+    {
+        if (step_counter == 0)
+        {
+            Debug.Log("Reseting collider...");
+            lweapon_obj = GetLinkedObject("lweapon_obj");
+            Vector3 position = lweapon_obj.GetComponent<CompRigidBody>().GetColliderPosition();
+            position -= transform.forward;
+            Quaternion rotation = lweapon_obj.GetComponent<CompRigidBody>().GetColliderQuaternion();
+            lweapon_obj.GetComponent<CompRigidBody>().MoveKinematic(position, rotation);
+
+            Debug.Log("Collider reseted");
+            step_counter--;
+        }
+        else if (step_counter > 0)
+        {
+            step_counter--;
+        }
     }
 
     public void Attack()
     {
         Debug.Log("Attack Left");
 
-        // Gen collider and check for hit with enemy
-        //attack_collider = GetComponent<AttackTarget>();
-        //if(attack_collider == null)
-        //{
-        //    Debug.Log("NULL");
-        //}
-        //else
-        //{
-        //    Debug.Log("not null");
-        //}
-        //attack_collider.CheckAttackTarget();
+        lweapon_obj = GetLinkedObject("lweapon_obj");
+        Vector3 position = lweapon_obj.GetComponent<CompRigidBody>().GetColliderPosition();
+        position += transform.forward;
+        Quaternion rotation = lweapon_obj.GetComponent<CompRigidBody>().GetColliderQuaternion();
+        lweapon_obj.GetComponent<CompRigidBody>().MoveKinematic(position, rotation);
+        Debug.Log("Kinematic collider moved");
+        step_counter = 1;
 
         // Decrease stamina
         player_obj = GetLinkedObject("player_obj");
         player = player_obj.GetComponent<CharacterController>();
         player.DecreaseStamina(stamina_cost);
 
-        Debug.Log("SetAnim");
-        // Play specific animation
-        SetCurrentAnim();
-
-        Debug.Log("PlayFx");
         // Play specific sound
         PlayFx();
 
         Debug.Log("Going to hit");
+
         // Temp Method
         enemy_obj = GetLinkedObject("enemy_obj");
         enemy = enemy_obj.GetComponent<EnemyController>();
         enemy.Hit(attack_dmg);
+    }
+
+    void OnTriggerEnter()
+    {
+        Debug.Log("Trigger enter");
+
+        enemy_obj = GetLinkedObject("enemy_obj");
+        enemy = enemy_obj.GetComponent<EnemyController>();
+        enemy.Hit(attack_dmg);
+
+        Debug.Log("Damage to enemy done");
     }
 
     // This method will be called when the associated button to this weapon is pressed
@@ -93,8 +121,13 @@ public class LeftWeapon : CulverinBehaviour
                     Attack();
 
                     //// Set Attacking State
-                    player_obj = GetLinkedObject("player_obj");
-                    player_obj.GetComponent<CharacterController>().anim_controller.SetTransition("ToAttack1");
+                    lweapon_obj = GetLinkedObject("lweapon_obj");
+                    animation_weapon = lweapon_obj.GetComponent<CompAnimation>();
+                    animation_weapon.SetTransition("ToAttack1");
+
+                    GameObject this_obj_rightweapon = GetLinkedObject("rweapon_obj");
+                    animation_weapon = this_obj_rightweapon.GetComponent<CompAnimation>();
+                    animation_weapon.SetTransition("ToAttack1");
                 }
                 else
                 {
@@ -114,7 +147,6 @@ public class LeftWeapon : CulverinBehaviour
         l_button_obj = GetLinkedObject("l_button_obj");
         button = l_button_obj.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
-        //OnClick(); // Temp call
     }
 
     public void AttackHit()

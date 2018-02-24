@@ -11,6 +11,7 @@ using CulverinEditor.Debug;
 
 public class RightWeapon : CulverinBehaviour
 {
+    public GameObject rweapon_obj;
     public GameObject player_obj;
     public CharacterController player;
     public AttackTarget attack_collider;
@@ -19,9 +20,8 @@ public class RightWeapon : CulverinBehaviour
     public CoolDownRight cd;
     public GameObject enemy_obj;
     public EnemyController enemy;
+    public CompAnimation animation_weapon;
     //public CompAudio sound_fx;
-
-    public int weapon_type = 0;
 
     // WEAPON STATS -------------
     public float attack_dmg = 0.0f;
@@ -29,44 +29,32 @@ public class RightWeapon : CulverinBehaviour
     public float stamina_cost = 10.0f;
     // ---------------------------
 
+    int step_counter = -1;
+
     void Start()
     {
         // Link GameObject variables with Scene GameObjects
         player_obj = GetLinkedObject("player_obj");
         r_button_obj = GetLinkedObject("r_button_obj");
         enemy_obj = GetLinkedObject("enemy_obj");
+
+        step_counter = -1;
     }
 
     public void Attack()
     {
         Debug.Log("Attack Right");
 
-        // Gen collider and check for hit with enemy
-        //attack_collider = GetComponent<AttackTarget>();
-        //if(attack_collider == null)
-        //{
-        //    Debug.Log("NULL");
-        //}
-        //else
-        //{
-        //    Debug.Log("not null");
-        //}
-        //attack_collider.CheckAttackTarget();
-
         // Decrease stamina
         player_obj = GetLinkedObject("player_obj");
         player = player_obj.GetComponent<CharacterController>();
         player.DecreaseStamina(stamina_cost);
 
-        Debug.Log("SetAnim");
-        // Play specific animation
-        SetCurrentAnim();
-
-        Debug.Log("PlayFx");
         // Play specific sound
         PlayFx();
 
         Debug.Log("Going to block");
+
         // Temp Method
         enemy_obj = GetLinkedObject("enemy_obj");
         enemy = enemy_obj.GetComponent<EnemyController>();
@@ -92,10 +80,14 @@ public class RightWeapon : CulverinBehaviour
                     // First, OnClick of WeaponController, then, onClick of Cooldown
                     Attack();
 
-                    //// Set Attacking State
-                    //player_obj = GetLinkedObject("player_obj");
-                    //player = player_obj.GetComponent<CharacterController>();
-                    //player.SetState(CharacterController.State.ATTACKING);
+                    // Set Animation
+                    rweapon_obj = GetLinkedObject("rweapon_obj");
+                    animation_weapon = rweapon_obj.GetComponent<CompAnimation>();
+                    animation_weapon.SetTransition("ToCover");
+
+                    GameObject lweapon_obj = GetLinkedObject("lweapon_obj");
+                    animation_weapon = lweapon_obj.GetComponent<CompAnimation>();
+                    animation_weapon.SetTransition("ToCover");
                 }
                 else
                 {
@@ -111,11 +103,10 @@ public class RightWeapon : CulverinBehaviour
 
     public void PrepareAttack()
     {
-        Debug.Log("Prepare Attack");
+        Debug.Log("Prepare Block");
         r_button_obj = GetLinkedObject("r_button_obj");
         button = r_button_obj.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
-        //OnClick(); // Temp call
     }
 
     public void AttackHit()
