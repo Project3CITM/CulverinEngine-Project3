@@ -268,7 +268,7 @@ void CompRigidBody::OnTriggerLost(Component * trigger)
 
 void CompRigidBody::MoveKinematic(float3 pos, Quat rot)
 {
-	if (body && this->kinematic)
+	if (body && kinematic)
 	{
 		body->MoveKinematic(pos, rot);
 	}

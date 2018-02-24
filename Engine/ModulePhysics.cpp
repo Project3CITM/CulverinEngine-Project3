@@ -249,6 +249,12 @@ void ModulePhysics::ChangeRigidActorToDynamic(jpPhysicsRigidBody * actor, Compon
 
 void ModulePhysics::OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor, JP_COLLISION_TYPE type)
 {
+	//Avoid Sending trigger events on edition mode
+	if (App->engine_state != EngineState::PLAY)
+	{
+		return;
+	}
+
 	// Send Trigger event to execute on postupdate 
 	std::map<physx::PxRigidActor*, Component*>::const_iterator npair;
 

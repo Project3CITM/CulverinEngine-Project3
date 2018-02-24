@@ -1978,10 +1978,10 @@ void CSharpScript::MoveKinematic(MonoObject * object, MonoObject * position, Mon
 
 		Quat new_rot;
 
-		if (x_field) mono_field_get_value(position, x_field, &new_rot.x);
-		if (y_field) mono_field_get_value(position, y_field, &new_rot.y);
-		if (z_field) mono_field_get_value(position, z_field, &new_rot.z);
-		if (w_field) mono_field_get_value(position, w_field, &new_rot.w);
+		if (x_field) mono_field_get_value(rotation, x_field, &new_rot.x);
+		if (y_field) mono_field_get_value(rotation, y_field, &new_rot.y);
+		if (z_field) mono_field_get_value(rotation, z_field, &new_rot.z);
+		if (w_field) mono_field_get_value(rotation, w_field, &new_rot.w);
 
 		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->MoveKinematic(new_pos, new_rot);
 	}

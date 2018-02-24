@@ -358,7 +358,9 @@ void CompCollider::SyncComponent()
 	if (trigger)
 	{
 		body->SetAsTrigger(trigger);
-
+	}
+	if (uid_script_asigned != 0)
+	{
 		std::vector<Component*> script_vec;
 		App->scene->root->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec, true);
 
@@ -370,6 +372,7 @@ void CompCollider::SyncComponent()
 			}
 		}
 	}
+
 }
 
 // -----------------------------------------------------------------
