@@ -50,6 +50,8 @@
     <Compile Include="CompInteractive.cs" />
     <Compile Include="CompRigidBody.cs" />
     <Compile Include="CoolDown.cs" />
+    <Compile Include="CoolDownRight.cs" />
+    <Compile Include="CoolDownLeft.cs" />
     <Compile Include="CulverinBehaviour.cs" />
     <Compile Include="EnemyController.cs" />
     <Compile Include="Hp.cs" />
@@ -58,6 +60,7 @@
     <Compile Include="Pathfinder.cs" />
     <Compile Include="PathNode.cs" />
     <Compile Include="Quaternion.cs" />
+    <Compile Include="RightWeapon.cs" />
     <Compile Include="Stamina.cs" />
     <Compile Include="TestMovement.cs" />
     <Compile Include="Time.cs" />
@@ -69,6 +72,7 @@
     <Compile Include="KeyCode.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Vector3.cs" />
+    <Compile Include="LeftWeapon.cs" />
     <Compile Include="WeaponController.cs" />
   </ItemGroup>
   <ItemGroup>

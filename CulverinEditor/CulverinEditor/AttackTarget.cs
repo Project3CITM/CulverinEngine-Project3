@@ -4,7 +4,8 @@ using CulverinEditor.Debug;
 public class AttackTarget : CulverinBehaviour
 {
     CompRigidBody dynamic_collider = null;
-    WeaponController weapon_controller = null;
+    //WeaponController weapon_controller = null;
+    LeftWeapon weapon_controller = null; // FIX THIS
 
     bool expecting_collision = false;
 
@@ -27,9 +28,9 @@ public class AttackTarget : CulverinBehaviour
         GameObject target = GetComponent<CompCollider>().GetCollidedObject();
         target = GetLinkedObject("target");
 
-        weapon_controller = GetComponent<WeaponController>();
+        weapon_controller = GetComponent<LeftWeapon>();
         weapon_controller.enemy_obj = target;
-        weapon_controller = GetComponent<WeaponController>();
+        weapon_controller = GetComponent<LeftWeapon>();
         weapon_controller.AttackHit();
     }
 
