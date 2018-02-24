@@ -6,18 +6,6 @@ Event	ID	Name			Wwise Object Path	Notes
 	3035439363	PlayTorch			\Scene1\PlayTorch	
 	3113731383	SwordSlash			\Scene1\SwordSlash	
 
-Game Parameter	ID	Name			Wwise Object Path	Notes
-	2822317760	General_Volume			\Default Work Unit\General_Volume	
-
-Audio Bus	ID	Name			Wwise Object Path	Notes
-	3803692087	Master Audio Bus			\Default Work Unit\Master Audio Bus	
-
-Auxiliary Bus	ID	Name			Wwise Object Path	Notes
-	4063189299	Corridor			\Default Work Unit\Master Audio Bus\Corridor	
-
-Effect plug-ins	ID	Name	Type				Notes
-	3442768367	Hall_Large_Dark	Wwise RoomVerb			
-
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	154437360	Slash_Cover_Fx	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_Cover_Fx_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Slash_Cover_Fx		229384
 	363816187	Slash_metal_FX_02	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_15B9CD21.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX_02		118140
