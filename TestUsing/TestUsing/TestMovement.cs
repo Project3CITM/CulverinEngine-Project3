@@ -21,8 +21,8 @@ public class TestMovement : CulverinBehaviour
     Vector3 endRotation;
     public float distanceToMove = 10.0f;
     int[,] array2Da;
-    int curr_x = 0;
-    int curr_y = 0;
+    public int curr_x = 0;
+    public int curr_y = 0;
     int map_width = 0;
     int map_height = 0;
     public bool blocked_camera = false;
