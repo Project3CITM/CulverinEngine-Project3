@@ -492,15 +492,13 @@ void CompCamera::SetFov(float vertical)
 		float w = GetSizeDock("Scene").x;
 		float h = GetSizeDock("Scene").y;
 		float div = (w/h);
-		frustum.verticalFov = vertical * DEGTORAD;
-		frustum.horizontalFov = (2 * math::Atan(math::Tan(frustum.verticalFov / 2.0f) *div));
+		frustum.horizontalFov = (2.0f * math::Atan(math::Tan(frustum.verticalFov / 2.0f) *div));
 	}
 	else
 	{
 		int w=App->window->GetWidth();
 		int h = App->window->GetHeight();
 		float div = ((float)w / (float)h);
-		App->renderer3D->active_camera->frustum.verticalFov = vertical * DEGTORAD;
 		App->renderer3D->active_camera->frustum.horizontalFov = (2.0f * math::Atan(math::Tan(App->renderer3D->active_camera->frustum.verticalFov / 2.0f) *div));
 	}
 }
@@ -508,7 +506,7 @@ void CompCamera::SetFov(float vertical)
 void CompCamera::SetRatio(float ratio)
 {
 	aspect_ratio = ratio;
-	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
+	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2.0f)) * 2.0f;
 }
 
 float CompCamera::GetNear() const
