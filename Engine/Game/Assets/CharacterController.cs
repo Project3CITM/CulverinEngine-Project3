@@ -14,9 +14,9 @@ public class CharacterController : CulverinBehaviour
     public GameObject stamina_obj;
     public Stamina stamina;                     // To handle current stamina
     public GameObject rweapon_obj;
-    public WeaponController right_weapon;       // Script that will handle right weapon the player is carrying (with its own progression system, stats...)
+    public RightWeapon right_weapon;       // Script that will handle right weapon the player is carrying (with its own progression system, stats...)
     public GameObject lweapon_obj;
-    public WeaponController left_weapon;        // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
+    public LeftWeapon left_weapon;        // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
     //public CompAnimation anim_controller;       // Animation component to handle animations
 
     State state = State.IDLE;                   // To manage player state
@@ -100,14 +100,14 @@ public class CharacterController : CulverinBehaviour
         {
             Debug.Log("Pressed 1");
             lweapon_obj = GetLinkedObject("lweapon_obj");
-            left_weapon = lweapon_obj.GetComponent<WeaponController>();
+            left_weapon = lweapon_obj.GetComponent<LeftWeapon>();
             left_weapon.PrepareAttack();
         }
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Pressed 2");
             rweapon_obj = GetLinkedObject("rweapon_obj");
-            right_weapon = rweapon_obj.GetComponent<WeaponController>();
+            right_weapon = rweapon_obj.GetComponent<RightWeapon>();
             right_weapon.PrepareAttack();
         }
     }
@@ -115,6 +115,11 @@ public class CharacterController : CulverinBehaviour
     public void SetState(State new_state)
     {
         state = new_state;
+    }
+
+    public int GetState()
+    {
+        return (int)state;
     }
 
     public float GetCurrentStamina()

@@ -117,6 +117,11 @@ public class CharacterController : CulverinBehaviour
         state = new_state;
     }
 
+    public int GetState()
+    {
+        return (int)state;
+    }
+
     public float GetCurrentStamina()
     {
         stamina_obj = GetLinkedObject("stamina_obj");

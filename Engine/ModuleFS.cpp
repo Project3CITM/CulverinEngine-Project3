@@ -50,9 +50,11 @@ bool ModuleFS::Start()
 {
 	perf_timer.Start();
 
-
-	// Get All Files From Assets
-	GetAllFilesAssets(directory_assets, allfilesAsstes);
+	if (App->mode_game == false)
+	{
+		// Get All Files From Assets
+		GetAllFilesAssets(directory_assets, allfilesAsstes);
+	}
 	checkAssets.Start();
 
 	Start_t = perf_timer.ReadMs();
@@ -65,7 +67,10 @@ update_status ModuleFS::PreUpdate(float dt)
 	static bool ImportAutoFiles = true;
 	if (ImportAutoFiles)
 	{
-		ImportAllFilesNoMeta(allfilesAsstes); 
+		if (App->mode_game == false)
+		{
+			ImportAllFilesNoMeta(allfilesAsstes);
+		}
 		App->module_shaders->ImportShaderMaterials();//First material!! and next meshes... TODO ELLIOT
 		ImportAutoFiles = false;
 	}

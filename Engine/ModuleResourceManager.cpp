@@ -263,7 +263,10 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	Save();
+	if (App->mode_game == false)
+	{
+		Save();
+	}
 	std::map<uint, Resource*>::iterator it = resources.begin();
 	for (int i = 0; i < resources.size(); i++)
 	{

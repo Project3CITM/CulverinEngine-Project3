@@ -3,6 +3,7 @@ using CulverinEditor.Debug;
 
 public class Hp : CulverinBehaviour
 {
+    GameObject this_obj_hp;
     CompImage hp_bar;
     float max_hp = 100.0f;
     float current_hp = 100.0f;
@@ -18,6 +19,7 @@ public class Hp : CulverinBehaviour
 
     public void GetDamage(float dmg)
     {
+        this_obj_hp = GetLinkedObject("this_obj_hp");
         current_hp -= dmg;
         if(current_hp < 0)
         {
@@ -25,7 +27,7 @@ public class Hp : CulverinBehaviour
         }
 
         calc_hp = current_hp / max_hp;
-        hp_bar = GetComponent<CompImage>();
+        hp_bar = this_obj_hp.GetComponent<CompImage>();
         hp_bar.FillAmount(calc_hp);
 
         Debug.Log("Get Damage -> Current HP: " + current_hp.ToString());

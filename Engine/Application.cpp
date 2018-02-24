@@ -209,7 +209,10 @@ void Application::FinishUpdate()
 	// SAVE & LOAD FUNCTIONS ------------------------
 	if (want_to_save == true)
 	{
-		actual_scene = json_seria->SaveScene();
+		if (App->mode_game == false)
+		{
+			actual_scene = json_seria->SaveScene();
+		}
 		want_to_save = false;
 	}
 
@@ -217,7 +220,7 @@ void Application::FinishUpdate()
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		App->scene->ClearAllVariablesScript();
-		App->scene->DeleteAllGameObjects(App->scene->root); //TODO->Elliot
+		App->scene->DeleteAllGameObjects(App->scene->root);
 		json_seria->LoadScene(actual_scene.c_str());
 		//App->resource_manager->ReImportAllScripts();
 		want_to_load = false;
@@ -605,7 +608,10 @@ bool Application::SaveConfig()
 		json_object_set_boolean(config_node, "Mode Game", mode_game);
 		 
 		//Save ActualScene ----- 
-		json_object_set_string(config_node, "ActualScene", actual_scene.c_str()); //TODO ELLIOT
+		if (mode_game == false)
+		{
+			json_object_set_string(config_node, "ActualScene", actual_scene.c_str()); //TODO ELLIOT
+		}
 
 
 		//Iterate all modules to save each respective info
