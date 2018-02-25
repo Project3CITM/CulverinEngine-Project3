@@ -91,57 +91,7 @@ public class TestMovement : CulverinBehaviour
         int tile_mov_y = 0;
         start_direction = (int)curr_dir;
 
-        //if (Input.GetMouseButtonRepeat(2) && !blocked_camera)
-        //{
-        //    Debug.Log("Trying to rotate");
-        //    float rot_x = Input.GetMouseYAxis();
-        //    float rot_y = Input.GetMouseXAxis();
-
-        //    if (rot_x != 0)
-        //    {
-        //        transform.local_rotation = new Vector3(transform.local_rotation.x - rot_x, transform.local_rotation.y, 0);
-        //    }
-
-        //    if (rot_y != 0)
-        //    {
-        //        transform.local_rotation = new Vector3(transform.local_rotation.x, transform.local_rotation.y + rot_y, 0);
-        //    }
-        //}
-        //else
-        //{
-        //    //Quaternion rot_step = Quaternion.RotateTowards(Quaternion.FromEulerAngles(transform.rotation), Quaternion.FromEulerAngles(endRotation), movSpeed * 20 * Time.DeltaTime());
-        //    //transform.local_rotation = rot_step.ToEulerAngles();
-        //}
-        //if (Input.GetMouseButtonUp(2))
-        //{
-        //    Vector3 rot_north = Vector3.Zero;
-        //    Vector3 rot_east = new Vector3(0, 90, 0);
-        //    Vector3 rot_south = new Vector3(0, 180, 0);
-        //    Vector3 rot_weast = new Vector3(0, 270, 0);
-
-        //    float curr_rot_y = transform.local_rotation.y;
-
-        //    if (curr_rot_y < 45 || curr_rot_y > 315)
-        //    {
-        //        endRotation = rot_north;
-        //        //curr_dir = Direction.NORTH;
-        //    }
-        //    if (curr_rot_y > 45 && curr_rot_y < 135)
-        //    {
-        //        endRotation = rot_east;
-        //        //curr_dir = Direction.EAST;
-        //    }
-        //    if (curr_rot_y > 135 && curr_rot_y < 225)
-        //    {
-        //        endRotation = rot_south;
-        //        //curr_dir = Direction.SOUTH;
-        //    }
-        //    if (curr_rot_y > 255 && curr_rot_y < 315)
-        //    {
-        //        endRotation = rot_weast;
-        //        //curr_dir = Direction.WEAST;
-        //    }
-        //}
+        CheckIsWalkable();
 
         if (GetComponent<Transform>().local_position == endPosition && rotating == false)
         {
@@ -383,4 +333,36 @@ public class TestMovement : CulverinBehaviour
         }
     }
 
+    void CheckIsWalkable()
+    {
+        if (array2Da[curr_x, curr_y] == 1) // no walkable
+        {
+            int temp_x = curr_x;
+            int temp_y = curr_y;
+            if (array2Da[temp_x + 1, temp_y] == 0)
+            {
+                endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)1, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)0);
+                curr_x += 1;
+                curr_y += 0;
+            }
+            else if (array2Da[temp_x - 1, temp_y] == 0)
+            {
+                endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)-1, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)0);
+                curr_x -= 1;
+                curr_y += 0;
+            }
+            else if (array2Da[temp_x, temp_y + 1] == 0)
+            {
+                endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)0, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)1);
+                curr_x += 0;
+                curr_y += 1;
+            }
+            else if (array2Da[temp_x, temp_y - 1] == 0)
+            {
+                endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)0, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)-1);
+                curr_x += 0;
+                curr_y -= 1;
+            }
+        }
+    }
 }

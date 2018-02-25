@@ -229,8 +229,8 @@ public class AIManager : CulverinBehaviour
         if (my_path.Count == 0)
         {
             path_reached = true;
-            
-           
+            GetLinkedObject("this_obj_enemy").GetComponent<Transform>().SetPosition(new Vector3(current_x * tile_size, GetLinkedObject("this_obj_enemy").GetComponent<Transform>().position.y, current_y * tile_size));
+
             return;
         }
 
