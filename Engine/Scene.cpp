@@ -158,6 +158,27 @@ update_status Scene::Update(float dt)
 	if (App->scene->quadtree_draw) App->scene->quadtree.DebugDraw();
 	// Draw GUI
 	//App->render_gui->ScreenSpaceDraw();
+	static int nico = 0;
+	static bool noenter = false;
+	nico++;
+	if (App->mode_game && nico > 5 && noenter == false)
+	{
+		noenter = true;
+		if (App->scene->CheckNoFails())
+		{
+			int exc = App->engine_state;
+			App->SetState(EngineState::PLAY); // OR STOP
+
+			//App->importer->iScript->ClearMonoMap();
+
+			if (exc == EngineState::STOP)
+			{
+				App->importer->iScript->SetMonoMap(App->scene->root, true);
+				//Start all scripts
+				App->scene->StartScripts();
+			}
+		}
+	}
 
 	Update_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -215,23 +236,7 @@ void Scene::LoadScene()
 	{
 		new_scene = false;
 		App->json_seria->LoadScene(App->GetActualScene().c_str());
-		if (App->mode_game)
-		{
-			if (App->scene->CheckNoFails())
-			{
-				int exc = App->engine_state;
-				App->SetState(EngineState::PLAY); // OR STOP
 
-				//App->importer->iScript->ClearMonoMap();
-
-				if (exc == EngineState::STOP)
-				{
-					App->importer->iScript->SetMonoMap(App->scene->root, true);
-					//Start all scripts
-					App->scene->StartScripts();
-				}
-			}
-		}
 	}
 	if (new_scene)
 	{
