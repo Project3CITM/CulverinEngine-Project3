@@ -110,13 +110,13 @@ public class LeftWeapon : CulverinBehaviour
 
     void OnTriggerEnter()
     {
-        Debug.Log("Trigger enter");
+        //Debug.Log("Trigger enter");
 
-        enemy_obj = GetLinkedObject("enemy_obj");
-        enemy = enemy_obj.GetComponent<EnemyController>();
-        enemy.Hit(attack_dmg);
+        //enemy_obj = GetLinkedObject("enemy_obj");
+        //enemy = enemy_obj.GetComponent<EnemyController>();
+        //enemy.Hit(attack_dmg);
 
-        Debug.Log("Damage to enemy done");
+        //Debug.Log("Damage to enemy done");
     }
 
     bool EnemyInFront()

@@ -89,6 +89,8 @@ public class AIManager : CulverinBehaviour
         PlayerDetected();
         AmIAlive();
 
+        Debug.Log(state.ToString());
+
         switch (state)
         {
             case MYSTATE.IDLE:
@@ -160,7 +162,10 @@ public class AIManager : CulverinBehaviour
                         animation_controller = enemy_anim.GetComponent<CompAnimation>();
 
                         if (animation_controller.IsAnimationStopped("Attack"))
+                        {
                             Attack();
+                            state = MYSTATE.MOVE_TO_PLAYER;
+                        }
                     }
                     else
                     {

@@ -45,16 +45,6 @@ public class RightWeapon : CulverinBehaviour
         player_obj = GetLinkedObject("player_obj");
         player = player_obj.GetComponent<CharacterController>();
         player.DecreaseStamina(stamina_cost);
-
-        // Play specific sound
-        PlayFx();
-
-        Debug.Log("Going to block");
-
-        // Temp Method
-        enemy_obj = GetLinkedObject("enemy_obj");
-        enemy = enemy_obj.GetComponent<EnemyController>();
-        enemy.Hit(attack_dmg);
     }
 
     // This method will be called when the associated button to this weapon is pressed
@@ -121,12 +111,5 @@ public class RightWeapon : CulverinBehaviour
     {
         //player = player_obj.GetComponent<CharacterController>();
         Debug.Log("Hand Block");
-    }
-
-    public void PlayFx()
-    {
-        // Reproduce specific audio
-        //sound_fx = GetComponent<CompAudio>();
-        Debug.Log("Metal Hit");
     }
 }
