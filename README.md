@@ -16,7 +16,7 @@
 
 nJoy Game is an accessible dungeon crawler game based on Game of Thrones TV series universe featuring King's Landing as a playable level. 
 
-...
+You can find more information about our game in our GDD: https://github.com/Project3CITM/CulverinEngine-Project3/wiki/Game-Design-Document
 
 ![KingsLanding](https://gyazo.com/2544c62547298f0e347c9d63ce75dd20.jpg)
 
@@ -101,8 +101,16 @@ allow higher framerate on lower end machines.  nJoy Game will run
 in Xbit color depth.
 
 ## 5) CONTROLS
+As a player you can execute the following controls:
 
-...
+* Press E to rotate the camera to the Right.
+* Press Q to rotate the camera to the Left.
+* Press W to move forward one tile.
+* Press S to move backward one tile.
+* Press D to move one tile to your Right.
+* Press A to move one tile to your Left.
+* Press 1 to perform your attack.
+* Press 2 to block an incoming attack.
 
 ![Controls](https://gyazo.com/c1760fade1baf6bf3b9edc391442ffc2.jpg)
 
