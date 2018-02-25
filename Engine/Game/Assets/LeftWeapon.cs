@@ -21,6 +21,8 @@ public class LeftWeapon : CulverinBehaviour
     public GameObject enemy_obj;
     public EnemyController enemy;
     public CompAnimation animation_weapon;
+    public AIManager enemy_tile;
+
     //public CompAudio sound_fx;
 
     // WEAPON STATS -------------
@@ -43,35 +45,53 @@ public class LeftWeapon : CulverinBehaviour
 
     void Update()
     {
-        if (step_counter == 0)
-        {
-            Debug.Log("Reseting collider...");
-            GameObject lweapon_obj = GetLinkedObject("lweapon_obj");
-            Vector3 position = lweapon_obj.GetComponent<CompRigidBody>().GetColliderPosition();
-            position -= transform.forward;
-            Quaternion rotation = lweapon_obj.GetComponent<CompRigidBody>().GetColliderQuaternion();
-            lweapon_obj.GetComponent<CompRigidBody>().MoveKinematic(position, rotation);
+        //if (step_counter == 0)
+        //{
+        //    Debug.Log("Reseting collider...");
+        //    player_obj = GetLinkedObject("player_obj");
+        //    GameObject lweapon_obj = GetLinkedObject("lweapon_obj");
+        //    Vector3 position = lweapon_obj.GetComponent<CompRigidBody>().GetColliderPosition();
+        //    TestMovement move = GetLinkedObject("player_obj").GetComponent<TestMovement>();
+        //    if ((int)move.curr_dir == (int)TestMovement.Direction.NORTH || (int)move.curr_dir == (int)TestMovement.Direction.SOUTH)
+        //    {
+        //        position -= player_obj.transform.backward*10;
+        //    }
+        //    else
+        //    {
+        //        position -= player_obj.transform.forward*10;
+        //    }
+        //    Quaternion rotation = lweapon_obj.GetComponent<CompRigidBody>().GetColliderQuaternion();
+        //    lweapon_obj.GetComponent<CompRigidBody>().MoveKinematic(position, rotation);
 
-            Debug.Log("Collider reseted");
-            step_counter--;
-        }
-        else if (step_counter > 0)
-        {
-            step_counter--;
-        }
+        //    Debug.Log("Collider reseted");
+        //    step_counter--;
+        //}
+        //else if (step_counter > 0)
+        //{
+        //    step_counter--;
+        //}
     }
 
     public void Attack()
     {
         Debug.Log("Attack Left");
 
-        GameObject lweapon_obj = GetLinkedObject("lweapon_obj");
-        Vector3 position = lweapon_obj.GetComponent<CompRigidBody>().GetColliderPosition();
-        position += transform.forward;
-        Quaternion rotation = lweapon_obj.GetComponent<CompRigidBody>().GetColliderQuaternion();
-        lweapon_obj.GetComponent<CompRigidBody>().MoveKinematic(position, rotation);
-        Debug.Log("Kinematic collider moved");
-        step_counter = 1;
+        //GameObject lweapon_obj = GetLinkedObject("lweapon_obj");
+        //Vector3 position = lweapon_obj.GetComponent<CompRigidBody>().GetColliderPosition();
+        //player_obj = GetLinkedObject("player_obj");
+        //TestMovement move = GetLinkedObject("player_obj").GetComponent<TestMovement>();
+        //if ((int)move.curr_dir == (int)TestMovement.Direction.NORTH || (int)move.curr_dir == (int)TestMovement.Direction.SOUTH)
+        //{
+        //    position += player_obj.transform.backward*10;
+        //}
+        //else
+        //{
+        //    position += player_obj.transform.forward*10;
+        //}
+        //Quaternion rotation = lweapon_obj.GetComponent<CompRigidBody>().GetColliderQuaternion();
+        //lweapon_obj.GetComponent<CompRigidBody>().MoveKinematic(position, rotation);
+        //Debug.Log("Kinematic collider moved");
+        //step_counter = 1;
 
         // Decrease stamina
         player_obj = GetLinkedObject("player_obj");
@@ -83,10 +103,14 @@ public class LeftWeapon : CulverinBehaviour
 
         Debug.Log("Going to hit");
 
-        // Temp Method
-        enemy_obj = GetLinkedObject("enemy_obj");
-        enemy = enemy_obj.GetComponent<EnemyController>();
-        enemy.Hit(attack_dmg);
+         if(EnemyInFront())
+        {
+            enemy_obj = GetLinkedObject("enemy_obj");
+            enemy = enemy_obj.GetComponent<EnemyController>();
+            enemy.Hit(attack_dmg);
+        }
+
+       
     }
 
     void OnTriggerEnter()
@@ -98,6 +122,63 @@ public class LeftWeapon : CulverinBehaviour
         enemy.Hit(attack_dmg);
 
         Debug.Log("Damage to enemy done");
+    }
+
+    bool EnemyInFront()
+    {
+        TestMovement tmp = GetLinkedObject("player_obj").GetComponent<TestMovement>();
+
+        int direction = (int)tmp.curr_dir;
+
+        int position_front_x = tmp.curr_x;
+        int position_front_y = tmp.curr_y;
+
+        switch (direction)
+        {
+            case (int)TestMovement.Direction.NORTH:
+                {
+                    position_front_y -= 1;
+
+
+                    break;
+                }
+
+            case (int)TestMovement.Direction.SOUTH:
+                {
+                    position_front_y += 1;
+
+                    break;
+                }
+
+            case (int)TestMovement.Direction.EAST:
+                {
+                    position_front_x += 1;
+
+                    break;
+                }
+
+            case (int)TestMovement.Direction.WEAST:
+                {
+                    position_front_x -= 1;
+
+                    break;
+                }
+
+             default:
+                {
+
+                    break;
+                }
+
+        }
+
+        if(position_front_x == GetLinkedObject("enemy_obj").GetComponent<AIManager>().current_x && 
+            position_front_y == GetLinkedObject("enemy_obj").GetComponent<AIManager>().current_y)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     // This method will be called when the associated button to this weapon is pressed
