@@ -1,4 +1,180 @@
-﻿# Culverin 3D Engine
+# nJoy Game
+## CONTENTS
+
+	0) WHAT IS OUR GAME?
+	1) SYSTEM REQUIREMENTS
+	2) INSTALLATION
+	3) GENERAL INFORMATION
+	4) CONFIGURATION
+	5) CONTROLS
+	6) KNOWN ISSUES
+	7) DRIVERS
+	8) CONTACT INFORMATION
+
+## 0) WHAT IS OUR GAME?
+
+nJoy Game is an accessible dungeon crawler game based on Game of Thrones TV series universe featuring King's Landing as a playable level. 
+
+...
+
+![KingsLanding](https://gyazo.com/2544c62547298f0e347c9d63ce75dd20.jpg)
+
+## 1) SYSTEM REQUIREMENTS
+
+nJoy Game uses and requires Microsoft DirectX 11.0.
+
+### Supported Operating Systems are:
+
+	Windows 10
+	...
+
+### The following operating systems are NOT supported:
+
+	Linux?
+	...
+
+### Minimum Hardware Requirements
+//EXAMPLES	
+
+	1.2 GHz Intel core i3? or 800 MHz AMD Athlon 
+	or 1.2GHz Intel Celeron or 1.2 GHz AMD Duron processor 
+	X MB of RAM
+	X MB of free hard disk space 
+	X MB video card with DirectX 11.0 compatible drivers 
+	Example: ("GeForce2"/"Radeon 8500" or better)
+	Sound Card
+	Keyboard
+	Mouse
+ 
+## 2) INSTALLATION
+
+Download our latest build at https://github.com/Project3CITM/CulverinEngine-Project3/releases
+
+### Footprint:
+nJoy Game requires X MB of free hard disk space.
+
+### Save Games:
+
+nJoy Game uses the subdirectory "X" of the main install directory to store
+game data.  This is where we store your save games and game configuration data.
+
+## 3) GENERAL INFORMATION
+
+### DirectX:
+nJoy Game requires Microsoft DirectX 11.0 to run.  For the game
+to run properly, it is necessary to have video drivers that are DirectX 11.0
+compliant.
+
+### Windows 10:
+We recommend manufacturer distributed drivers for Windows 10 (i.e. drivers that expose
+the user controls for changing settings on the particular piece of hardware), instead
+of the default drivers installed by Microsoft as part of the machine setup process. 
+
+### Memory:
+nJoy Game requires at least X MB of memory to run. For optimal performance
+at least X MB is recommended.
+
+### Video Memory:
+nJoy Game requires a video card with at least X MB of video memory 
+to run.
+
+### Restore Options To Defaults:
+To restore the game's settings to their defaults select the "Restore Options To Defaults" from the start menu (Start -> XX...).  Your language, video options, and sound card driver are set back to the values they had when the game was first installed.
+
+## 4) CONFIGURATION
+
+### Sound Provider:
+The first time you launch Midnight Club II, we auto-detect the best sound 
+provider for your available Sound Card. You can also manually select alternatives
+in the game.
+
+### Screen Resolution:
+Selecting lower Screen Resolutions in nJoy Game display setup will
+allow higher framerate on lower end machines.  nJoy Game will run
+in Xbit color depth.
+
+## 5) CONTROLS
+
+...
+
+![Controls](https://gyazo.com/c1760fade1baf6bf3b9edc391442ffc2.jpg)
+
+## 6) KNOWN ISSUES
+
+...
+
+## 7) DRIVERS
+
+### Video Drivers:
+We recommend using the latest available video drivers for your video card. 
+
+Below for convenience are common video card manufacturer's websites. nJoy Game may not support some or all video cards by a particular manufacturer. Inclusion of a manufacturer in this list does not mean there are any assurances of compatibility.
+
+* AMD: https://support.amd.com/en-us/download
+* Intel: http://www.intel.com/
+* nVidia: http://www.nvidia.com/
+
+## 8) CONTACT INFORMATION
+
+Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Culverin 3D Engine
 This is a project consistent of creating a Game Engine that allows you to use tools to create video games.
 
 It's created for educational purposes, and we are two students that are studying a Video Games Development and Design degree at CITM, Terrassa (UPC).
