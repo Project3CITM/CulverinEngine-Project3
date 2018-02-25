@@ -60,9 +60,9 @@ game data.  This is where we store your save games and game configuration data.
 
 ## 3) GENERAL INFORMATION
 
-### DirectX:
-nJoy Game requires Microsoft DirectX 11.0 to run.  For the game
-to run properly, it is necessary to have video drivers that are DirectX 11.0
+### OpenGL:
+nJoy Game requires OpenGL 3.3 to run.  For the game
+to run properly, it is necessary to have video drivers that are OpenGL 3.3
 compliant.
 
 ### Windows 10:
