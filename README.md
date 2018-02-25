@@ -9,7 +9,8 @@
 	5) CONTROLS
 	6) KNOWN ISSUES
 	7) CONTACT INFORMATION
-	8) TEAM
+	8) CHANGELOG
+	9) TEAM
 
 ## 0) WHAT IS OUR GAME?
 
@@ -92,7 +93,24 @@ https://github.com/Project3CITM/CulverinEngine-Project3/issues
 
 Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
-## 8) TEAM
+## 8) CHANGELOG
+
+### Vertical Slice 1 v0.8: 
+	* Character can Move between tiles and rotate.
+	* Character can Attack and block.
+	* Simple combat with the AI.
+	* AI Pathfinding.
+	* Character Arms model and his Animations
+	* Character Sword
+	* Enemy Model and his Animations
+	* Hand-painted Textures
+	* Environment Props
+	* 1 Level
+	* Interactive UI Buttons
+	* Healt and Stamina UI representation
+	* Level Music and FX such as footsteps, torch fire…
+
+## 9) TEAM
 
 | Member        |Rol           |
 | ------------- |:-------------:| 
