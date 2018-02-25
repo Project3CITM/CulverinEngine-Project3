@@ -7,17 +7,20 @@ public class CharacterController : CulverinBehaviour
     {
         IDLE = 0,
         ATTACKING,
+        BLOCKING,
+        COVER
     }
 
     public GameObject health_obj;
-    public Hp health;                           // To handle current hp
+    public Hp health;                               // To handle current hp
     public GameObject stamina_obj;
-    public Stamina stamina;                     // To handle current stamina
+    public Stamina stamina;                         // To handle current stamina
     public GameObject rweapon_obj;
-    public RightWeapon right_weapon;       // Script that will handle right weapon the player is carrying (with its own progression system, stats...)
+    public RightWeapon right_weapon;                // Script that will handle right weapon the player is carrying (with its own progression system, stats...)
     public GameObject lweapon_obj;
-    public LeftWeapon left_weapon;        // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
-    //public CompAnimation anim_controller;       // Animation component to handle animations
+    public LeftWeapon left_weapon;                  // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
+    public CompAnimation anim_controller_left;      // Animation component to handle animations
+    public CompAnimation anim_controller_right;     // Animation component to handle animations
 
     State state = State.IDLE;                   // To manage player state
     bool combat_mode = false;                   // True when enemy is in a near tile 
@@ -34,8 +37,12 @@ public class CharacterController : CulverinBehaviour
         rweapon_obj = GetLinkedObject("rweapon_obj");
 
         // Start Idle animation
-        //anim_controller = GetComponent<CompAnimation>();
-        //anim_controller.PlayAnimation(anim_name);
+        lweapon_obj = GetLinkedObject("lweapon_obj");
+        anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+        anim_controller_left.PlayAnimation("Idle");
+        rweapon_obj = GetLinkedObject("rweapon_obj");
+        anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
+        anim_controller_right.PlayAnimation("Idle");
     }
 
     void Update()
@@ -62,23 +69,49 @@ public class CharacterController : CulverinBehaviour
                 case State.ATTACKING:
                     {
                         //Check for end of the Attack animation
-                        //anim_controller = GetComponent<CompAnimation>();
-                        //if (anim_controller.IsAnimationStopped(anim_name))
-                        //{
-                        //    anim_controller = GetComponent<CompAnimation>();
-                        //    anim_controller.PlayAnimation("Idle");
-                        //    state = State.IDLE;
-                        //}
-                        //else
-                        //{
-                        //    // Keep playing specific attack animation  until it ends
-                        //    Debug.Log("Attacking");
-                        //}
-                        anim_time += Time.DeltaTime();
-                        if(anim_time >= 3.0f)
+                        lweapon_obj = GetLinkedObject("lweapon_obj");
+                        anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+                        if (anim_controller_left.IsAnimationStopped("Attack1"))
                         {
-                            SetState(State.IDLE);
-                            Debug.Log("Changed State to IDLE");
+                            state = State.IDLE;
+                        }
+                        else
+                        {
+                            // Keep playing specific attack animation  until it ends
+                            Debug.Log("Attacking");
+                        }
+                        break;
+                    }
+                case State.COVER:
+                    {
+                        //Check for end of the Attack animation
+                        lweapon_obj = GetLinkedObject("lweapon_obj");
+                        anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+
+                        if (anim_controller_left.IsAnimationStopped("Cover"))
+                        {
+                            state = State.IDLE;
+                        }
+                        else
+                        {
+                            // Keep playing specific attack animation  until it ends
+                            Debug.Log("Covering");
+                        }
+                        break;
+                    }
+                case State.BLOCKING:
+                    {
+                        //Check for end of the Attack animation
+                        lweapon_obj = GetLinkedObject("lweapon_obj");
+                        anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+                        if (anim_controller_left.IsAnimationStopped("Block"))
+                        {
+                            state = State.IDLE;
+                        }
+                        else
+                        {
+                            // Keep playing specific attack animation  until it ends
+                            Debug.Log("Blocking");
                         }
                         break;
                     }
@@ -134,10 +167,7 @@ public class CharacterController : CulverinBehaviour
     {
         Debug.Log("Decrease Stamina");
         stamina_obj = GetLinkedObject("stamina_obj");
-        Debug.Log(stamina_obj.GetName());
         stamina = stamina_obj.GetComponent<Stamina>();
-        Debug.Log(stamina_obj.GetName());
-        Debug.Log("2");
         stamina.DecreaseStamina(stamina_cost);
     }
 
@@ -160,16 +190,34 @@ public class CharacterController : CulverinBehaviour
 
     public void GetDamage(float dmg)
     {
-        health_obj = GetLinkedObject("health_obj");
-        health = health_obj.GetComponent<Hp>();
-        health.GetDamage(dmg);
-    }
+        if (state == State.COVER)
+        {
+            rweapon_obj = GetLinkedObject("rweapon_obj");
+            anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
+            anim_controller_right.SetTransition("ToBlock");
 
-    //public void SetAnim(string anim_name)
-    //{
-    //    anim_controller = GetComponent<CompAnimation>();
-    //    anim_controller.PlayAnimation(anim_name);
-    //}
+            lweapon_obj = GetLinkedObject("lweapon_obj");
+            anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+            anim_controller_left.SetTransition("ToBlock");
+
+            SetState(State.BLOCKING);
+        }
+        else
+        {
+            health_obj = GetLinkedObject("health_obj");
+            health = health_obj.GetComponent<Hp>();
+            health.GetDamage(dmg);
+
+            // SET HIT ANIMATION
+            rweapon_obj = GetLinkedObject("rweapon_obj");
+            anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
+            anim_controller_right.SetTransition("ToHit");
+
+            lweapon_obj = GetLinkedObject("lweapon_obj");
+            anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+            anim_controller_left.SetTransition("ToHit");
+        }
+    }
 
     public void SetAnimName(string new_name)
     {

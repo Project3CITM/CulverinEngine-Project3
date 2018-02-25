@@ -42,7 +42,7 @@ bool ModulePhysics::Init(JSON_Object * node)
 	render_physics = json_object_get_boolean(node, "Render Physics");
 	render_on_play = json_object_get_boolean(node, "Render on Play");
 
-	if (render_physics)
+	if (!App->mode_game && render_physics)
 	{
 		mScene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
 		mScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
@@ -93,7 +93,10 @@ update_status ModulePhysics::PostUpdate(float dt)
 {
 	perf_timer.Start();
 
-	DrawPhysics();
+	if (!App->mode_game)
+	{
+		DrawPhysics();
+	}
 
 	postUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
