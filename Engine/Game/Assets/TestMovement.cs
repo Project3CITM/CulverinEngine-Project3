@@ -55,7 +55,7 @@ public class TestMovement : CulverinBehaviour
         //array2Da[0,0] = 1;
         //Debug.Log(array2Da[0,0].ToString());
         endPosition = GetComponent<Transform>().local_position;
-        endRotation = transform.local_rotation;
+        endRotation = GetComponent<Transform>().local_rotation;
 
         string map = Map.GetMapString();
         Debug.Log(map);
@@ -164,21 +164,25 @@ public class TestMovement : CulverinBehaviour
 
             if (Input.GetKeyDown(KeyCode.A)) //Left
             {
+                audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveLeft(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.D)) //Right
             {
+                audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveRight(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.W)) //Up
             {
+                audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveForward(out tile_mov_x, out tile_mov_y);
             }
             else if (Input.GetKeyDown(KeyCode.S)) //Down
             {
+                audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveBackward(out tile_mov_x, out tile_mov_y);
             }
@@ -199,7 +203,7 @@ public class TestMovement : CulverinBehaviour
         }
         else if (rotating)
         {
-            transform.RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.DeltaTime());
+            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.DeltaTime());
             float moved_angle = (float)angle * speed_rotation * Time.DeltaTime();
             if (angle < 0)
             {
@@ -218,11 +222,11 @@ public class TestMovement : CulverinBehaviour
                     float marge = actual_angle - 90;
                     if (angle < 0)
                     {
-                        transform.RotateAroundAxis(Vector3.Up, marge);
+                        GetComponent<Transform>().RotateAroundAxis(Vector3.Up, marge);
                     }
                     else
                     {
-                        transform.RotateAroundAxis(Vector3.Up, -marge);
+                        GetComponent<Transform>().RotateAroundAxis(Vector3.Up, -marge);
                     }
                 }
             }
