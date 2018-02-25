@@ -133,7 +133,24 @@ Below for convenience are common video card manufacturer's websites. nJoy Game m
 
 Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
-## 9) TEAM
+## 9) CHANGELOG
+
+### Vertical Slice 1 v0.8: 
+	* Character can Move between tiles and rotate.
+	* Character can Attack and block.
+	* Simple combat with the AI.
+	* AI Pathfinding.
+	* Character Arms model and his Animations
+	* Character Sword
+	* Enemy Model and his Animations
+	* Hand-painted Textures
+	* Environment Props
+	* 1 Level
+	* Interactive UI Buttons
+	* Healt and Stamina UI representation
+	* Level Music and FX such as footsteps, torch fire…
+
+## 10) TEAM
 
 | Member        |Rol           |
 | ------------- |:-------------:| 
@@ -170,8 +187,8 @@ Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 | Design| | 
 | Aleix Cardona Zuecos | Designer| 
 | Sebastian Delgado Vargas | Designer | 
-|  Adrián Higuero Torres | Designer | 
-|Marc  López Fàbregas | Designer | 
+| Adrián Higuero Torres | Designer | 
+| Marc  López Fàbregas | Lead Designer | 
 | Francisco Ruiz Giménez | Designer | 
 | Sergio Sáez Calero | Designer | 
 | Rubén Gonzalo Sardón Roldán | Designer | 
