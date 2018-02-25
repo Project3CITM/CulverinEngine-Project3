@@ -443,6 +443,8 @@ void CompTransform::UpdateGlobalTransform()
 		item++;
 	}
 	global_transform.Decompose(position_global, rotation_global, scale_global);
+	updated = true;
+	toUpdate = true;
 }
 
 // Update Global transform and call this function for all its childs

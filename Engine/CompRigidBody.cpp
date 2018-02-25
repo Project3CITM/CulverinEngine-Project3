@@ -62,7 +62,7 @@ CompRigidBody::~CompRigidBody()
 
 void CompRigidBody::PreUpdate(float dt)
 {
-	if (dt > 0 && body)
+	if (dt > 0 && body && !kinematic)
 	{
 		own_update = true;
 		UpdateParentPosition();
