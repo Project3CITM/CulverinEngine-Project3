@@ -802,7 +802,8 @@ bool ImportMesh::IsInSkeletonBranch(const aiNode * node, const aiMesh* mesh, con
 	bool ret = false;
 
 	for (int i = 0; i < node->mNumChildren; i++)
-		if(node->mChildren[i] == skeleton_root)
+		if (node->mChildren[i] == skeleton_root)
+			return true;
 
 	for (int i = 0; i < node->mNumChildren; i++)
 	{
