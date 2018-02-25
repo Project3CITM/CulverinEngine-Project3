@@ -1,4 +1,4 @@
-# nJoy Game
+﻿# nJoy Game
 ## CONTENTS
 
 	0) WHAT IS OUR GAME?
@@ -10,6 +10,7 @@
 	6) KNOWN ISSUES
 	7) DRIVERS
 	8) CONTACT INFORMATION
+	9) TEAM
 
 ## 0) WHAT IS OUR GAME?
 
@@ -60,6 +61,8 @@ game data.  This is where we store your save games and game configuration data.
 
 ## 3) GENERAL INFORMATION
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ### OpenGL:
 nJoy Game requires OpenGL 3.3 to run.  For the game
 to run properly, it is necessary to have video drivers that are OpenGL 3.3
@@ -80,6 +83,10 @@ to run.
 
 ### Restore Options To Defaults:
 To restore the game's settings to their defaults select the "Restore Options To Defaults" from the start menu (Start -> XX...).  Your language, video options, and sound card driver are set back to the values they had when the game was first installed.
+
+
+[![Build status](https://ci.appveyor.com/api/projects/status/2e9av5y6o70lle38?svg=true)](https://ci.appveyor.com/project/martimyc/culverinengine-project3)
+
 
 ## 4) CONFIGURATION
 
@@ -118,7 +125,48 @@ Below for convenience are common video card manufacturer's websites. nJoy Game m
 
 Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
+## 9) TEAM
 
+| Member        |Rol           |
+| ------------- |:-------------:| 
+| Management | | 
+| Carlos Peralta Sorolla| Producer| 
+| Art | | 
+| Sergio Alvarez Llorca |Artist | 
+| Gerard Gil Calvo | Artist | 
+| Daniel Olóndriz Rosique |Lead Artist | 
+| Javier Ariel Ortiz Peirano  | Artist | 
+| Guillermo Jesus  Pinto Henriques | Artist | 
+| José Antonio Rodriguez Millán | Artist | 
+|Marc Samper Tarancón| Artist | 
+| Pau Serra Colome| Artist | 
+| Daniel Triviño Merida| Artist | 
+|Code | | 
+| Nicolás Babot Altisén| Programmer |
+| Carlos Cabreira Sánchez| Programmer | 
+| Josep Casanovas Vidal | Programmer | 
+| Adrián Castillo López| Programmer | 
+| Marc Fabián Vilà| Programmer | 
+| Miquel Izquierdo Cunill| Programmer | 
+| Elliot Jiménez Bosch| Programmer | 
+|Marc Latorre Freixes| Programmer | 
+| Daniel López López| Programmer | 
+| Martí Majó Ylla-Català| Programmer | 
+|Ferran Martín Vilà | Programmer | 
+|Xavier Olivenza Busquets |Lead Programmer | 
+| Jordi Oña Rufí| Programmer | 
+| Joan Pareja Piñol| Programmer | 
+|Pere Rifà Planella | Programmer | 
+|Andreu Rojas Barrera| Programmer | 
+| Èric Solà Vila | Programmer | 
+| Design| | 
+| Aleix Cardona Zuecos | Designer| 
+| Sebastian Delgado Vargas | Designer | 
+|  Adrián Higuero Torres | Designer | 
+|Marc  López Fàbregas | Designer | 
+| Francisco Ruiz Giménez | Designer | 
+| Sergio Sáez Calero | Designer | 
+| Rubén Gonzalo Sardón Roldán | Designer | 
 
 
 
