@@ -628,7 +628,7 @@ float3 CompTransform::GetParentScale() const
 {
 	if (parent->GetParent() && parent->GetParent()->GetUUID() != 1)
 	{
-		parent->GetParent()->GetComponentTransform()->GetGlobalScale();
+		return parent->GetParent()->GetComponentTransform()->GetGlobalScale();
 	}
 	else
 	{
