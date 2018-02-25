@@ -89,8 +89,6 @@ public class AIManager : CulverinBehaviour
         PlayerDetected();
         AmIAlive();
 
-        Debug.Log(state.ToString());
-
         switch (state)
         {
             case MYSTATE.IDLE:
@@ -249,7 +247,7 @@ public class AIManager : CulverinBehaviour
                 current_x = my_path[0].GetTileX();
                 current_y = my_path[0].GetTileY();
 
-                UpdateCollider();
+                //UpdateCollider();
 
                 my_path.Remove(my_path[0]);
             }
@@ -552,7 +550,7 @@ public class AIManager : CulverinBehaviour
 
     void UpdateCollider()
     {
-        GetComponent<CompCollider>().MoveKinematic(GetComponent<Transform>().local_position);
+        //GetComponent<CompCollider>().MoveKinematic(GetComponent<Transform>().local_position);
     }
 
     void AmIAlive()

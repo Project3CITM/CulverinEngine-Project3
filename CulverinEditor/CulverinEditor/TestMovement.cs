@@ -91,27 +91,27 @@ public class TestMovement : CulverinBehaviour
         int tile_mov_y = 0;
         start_direction = (int)curr_dir;
 
-        if (Input.GetMouseButtonRepeat(2) && !blocked_camera)
-        {
-            Debug.Log("Trying to rotate");
-            float rot_x = Input.GetMouseYAxis();
-            float rot_y = Input.GetMouseXAxis();
+        //if (Input.GetMouseButtonRepeat(2) && !blocked_camera)
+        //{
+        //    Debug.Log("Trying to rotate");
+        //    float rot_x = Input.GetMouseYAxis();
+        //    float rot_y = Input.GetMouseXAxis();
 
-            if (rot_x != 0)
-            {
-                transform.local_rotation = new Vector3(transform.local_rotation.x - rot_x, transform.local_rotation.y, 0);
-            }
+        //    if (rot_x != 0)
+        //    {
+        //        transform.local_rotation = new Vector3(transform.local_rotation.x - rot_x, transform.local_rotation.y, 0);
+        //    }
 
-            if (rot_y != 0)
-            {
-                transform.local_rotation = new Vector3(transform.local_rotation.x, transform.local_rotation.y + rot_y, 0);
-            }
-        }
-        else
-        {
-            //Quaternion rot_step = Quaternion.RotateTowards(Quaternion.FromEulerAngles(transform.rotation), Quaternion.FromEulerAngles(endRotation), movSpeed * 20 * Time.DeltaTime());
-            //transform.local_rotation = rot_step.ToEulerAngles();
-        }
+        //    if (rot_y != 0)
+        //    {
+        //        transform.local_rotation = new Vector3(transform.local_rotation.x, transform.local_rotation.y + rot_y, 0);
+        //    }
+        //}
+        //else
+        //{
+        //    //Quaternion rot_step = Quaternion.RotateTowards(Quaternion.FromEulerAngles(transform.rotation), Quaternion.FromEulerAngles(endRotation), movSpeed * 20 * Time.DeltaTime());
+        //    //transform.local_rotation = rot_step.ToEulerAngles();
+        //}
         //if (Input.GetMouseButtonUp(2))
         //{
         //    Vector3 rot_north = Vector3.Zero;
@@ -189,7 +189,6 @@ public class TestMovement : CulverinBehaviour
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
                 curr_x += tile_mov_x;
                 curr_y += tile_mov_y;
-                Debug.Log("Should be moving");
             }
             else
             {
@@ -202,7 +201,6 @@ public class TestMovement : CulverinBehaviour
         {
             transform.RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.DeltaTime());
             float moved_angle = (float)angle * speed_rotation * Time.DeltaTime();
-            Debug.Log(Time.DeltaTime().ToString());
             if (angle < 0)
             {
                 actual_angle += (moved_angle * -1);
@@ -211,7 +209,6 @@ public class TestMovement : CulverinBehaviour
             {
                 actual_angle += moved_angle;
             }
-            Debug.Log(actual_angle.ToString());
 
             if (actual_angle >= 90)
             {
