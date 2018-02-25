@@ -11,7 +11,7 @@ using CulverinEditor.Debug;
 
 public class RightWeapon : CulverinBehaviour
 {
-    public GameObject rweapon_obj;
+    public GameObject rweapon_obj_anim;
     public GameObject player_obj;
     public CharacterController player;
     public AttackTarget attack_collider;
@@ -81,12 +81,12 @@ public class RightWeapon : CulverinBehaviour
                     Attack();
 
                     // Set Animation
-                    rweapon_obj = GetLinkedObject("rweapon_obj");
-                    animation_weapon = rweapon_obj.GetComponent<CompAnimation>();
+                    rweapon_obj_anim = GetLinkedObject("rweapon_obj_anim");
+                    animation_weapon = rweapon_obj_anim.GetComponent<CompAnimation>();
                     animation_weapon.SetTransition("ToCover");
 
-                    GameObject lweapon_obj = GetLinkedObject("lweapon_obj");
-                    animation_weapon = lweapon_obj.GetComponent<CompAnimation>();
+                    GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
+                    animation_weapon = lweapon_obj_anim.GetComponent<CompAnimation>();
                     animation_weapon.SetTransition("ToCover");
                 }
                 else

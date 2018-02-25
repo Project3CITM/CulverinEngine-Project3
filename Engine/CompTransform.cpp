@@ -574,7 +574,7 @@ float3 CompTransform::GetPosParent() const
 {
 	if (parent->GetParent() && parent->GetParent()->GetUUID() != 1)
 	{
-		parent->GetParent()->GetComponentTransform()->GetPos();
+		return parent->GetParent()->GetComponentTransform()->GetPos();
 	}
 	else
 	{
@@ -596,7 +596,7 @@ Quat CompTransform::GetRotParent() const
 {
 	if (parent->GetParent() && parent->GetParent()->GetUUID() != 1)
 	{
-		parent->GetParent()->GetComponentTransform()->GetRotGlobal();
+		return parent->GetParent()->GetComponentTransform()->GetRotGlobal();
 	}	
 	else
 	{

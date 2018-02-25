@@ -27,6 +27,7 @@ public class EnemyController : CulverinBehaviour
     public void Hit(float damage)
     {
         hp -= damage;
+        GetComponent<CompAudio>().PlayEvent("FleshCut");
         Debug.Log("Hit. Curr HP -> " + hp.ToString());
     }
 }

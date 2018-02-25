@@ -40,6 +40,7 @@ public class TestMovement : CulverinBehaviour
     {
 
         audio = GetComponent<CompAudio>();
+        audio.PlayEvent("PlayMusic");
         curr_dir = (Direction)start_direction;
         map_width = Map.GetWidthMap();
         map_height = Map.GetHeightMap();

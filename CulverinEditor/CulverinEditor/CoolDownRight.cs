@@ -40,6 +40,7 @@ public class CoolDownRight : CulverinBehaviour
                 // Set Attacking State
                 player_obj = GetLinkedObject("player_obj");
                 player_obj.GetComponent<CharacterController>().SetState(CharacterController.State.COVER);
+                Debug.Log("Cover....");
             }
         }
     }

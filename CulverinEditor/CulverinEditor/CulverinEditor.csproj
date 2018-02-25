@@ -38,6 +38,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIManager.cs" />
     <Compile Include="AttackTarget.cs" />
     <Compile Include="Audio.cs" />
     <Compile Include="CharacterController.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Stamina.cs" />
     <Compile Include="TestMovement.cs" />
     <Compile Include="Time.cs" />
+    <Compile Include="Torch_sound.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Debug.cs" />

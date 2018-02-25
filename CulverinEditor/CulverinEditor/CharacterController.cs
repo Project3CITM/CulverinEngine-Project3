@@ -37,11 +37,11 @@ public class CharacterController : CulverinBehaviour
         rweapon_obj = GetLinkedObject("rweapon_obj");
 
         // Start Idle animation
-        lweapon_obj = GetLinkedObject("lweapon_obj");
-        anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+        GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
+        anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();
         anim_controller_left.PlayAnimation("Idle");
-        rweapon_obj = GetLinkedObject("rweapon_obj");
-        anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
+        GameObject rweapon_obj_anim = GetLinkedObject("rweapon_obj_anim");
+        anim_controller_right = rweapon_obj_anim.GetComponent<CompAnimation>();
         anim_controller_right.PlayAnimation("Idle");
     }
 
@@ -69,8 +69,8 @@ public class CharacterController : CulverinBehaviour
                 case State.ATTACKING:
                     {
                         //Check for end of the Attack animation
-                        lweapon_obj = GetLinkedObject("lweapon_obj");
-                        anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+                        GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
+                        anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();
                         if (anim_controller_left.IsAnimationStopped("Attack1"))
                         {
                             state = State.IDLE;
@@ -85,8 +85,8 @@ public class CharacterController : CulverinBehaviour
                 case State.COVER:
                     {
                         //Check for end of the Attack animation
-                        lweapon_obj = GetLinkedObject("lweapon_obj");
-                        anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+                        GameObject rweapon_obj_anim = GetLinkedObject("rweapon_obj_anim");
+                        anim_controller_left = rweapon_obj_anim.GetComponent<CompAnimation>();
 
                         if (anim_controller_left.IsAnimationStopped("Cover"))
                         {
@@ -102,8 +102,8 @@ public class CharacterController : CulverinBehaviour
                 case State.BLOCKING:
                     {
                         //Check for end of the Attack animation
-                        lweapon_obj = GetLinkedObject("lweapon_obj");
-                        anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+                        GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
+                        anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();
                         if (anim_controller_left.IsAnimationStopped("Block"))
                         {
                             state = State.IDLE;
@@ -192,13 +192,16 @@ public class CharacterController : CulverinBehaviour
     {
         if (state == State.COVER)
         {
-            rweapon_obj = GetLinkedObject("rweapon_obj");
-            anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
+            GameObject rweapon_obj_anim = GetLinkedObject("rweapon_obj_anim");
+            anim_controller_right = rweapon_obj_anim.GetComponent<CompAnimation>();
             anim_controller_right.SetTransition("ToBlock");
 
-            lweapon_obj = GetLinkedObject("lweapon_obj");
-            anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+            GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
+            anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();
             anim_controller_left.SetTransition("ToBlock");
+
+            GameObject player_obj = GetLinkedObject("player_obj");
+            player_obj.GetComponent<CompAudio>().PlayEvent("MetalHit");
 
             SetState(State.BLOCKING);
         }
@@ -209,12 +212,12 @@ public class CharacterController : CulverinBehaviour
             health.GetDamage(dmg);
 
             // SET HIT ANIMATION
-            rweapon_obj = GetLinkedObject("rweapon_obj");
-            anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
+            GameObject rweapon_obj_anim = GetLinkedObject("rweapon_obj_anim");
+            anim_controller_right = rweapon_obj_anim.GetComponent<CompAnimation>();
             anim_controller_right.SetTransition("ToHit");
 
-            lweapon_obj = GetLinkedObject("lweapon_obj");
-            anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+            GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
+            anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();
             anim_controller_left.SetTransition("ToHit");
         }
     }

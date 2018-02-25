@@ -11,8 +11,7 @@ using CulverinEditor.Debug;
 
 public class LeftWeapon : CulverinBehaviour
 {
-    public GameObject rweapon_obj;
-    public GameObject lweapon_obj;
+    public GameObject lweapon_obj_anim;
     public GameObject player_obj;
     public CharacterController player;
     public AttackTarget attack_collider;
@@ -47,7 +46,7 @@ public class LeftWeapon : CulverinBehaviour
         if (step_counter == 0)
         {
             Debug.Log("Reseting collider...");
-            lweapon_obj = GetLinkedObject("lweapon_obj");
+            GameObject lweapon_obj = GetLinkedObject("lweapon_obj");
             Vector3 position = lweapon_obj.GetComponent<CompRigidBody>().GetColliderPosition();
             position -= transform.forward;
             Quaternion rotation = lweapon_obj.GetComponent<CompRigidBody>().GetColliderQuaternion();
@@ -66,7 +65,7 @@ public class LeftWeapon : CulverinBehaviour
     {
         Debug.Log("Attack Left");
 
-        lweapon_obj = GetLinkedObject("lweapon_obj");
+        GameObject lweapon_obj = GetLinkedObject("lweapon_obj");
         Vector3 position = lweapon_obj.GetComponent<CompRigidBody>().GetColliderPosition();
         position += transform.forward;
         Quaternion rotation = lweapon_obj.GetComponent<CompRigidBody>().GetColliderQuaternion();
@@ -121,13 +120,16 @@ public class LeftWeapon : CulverinBehaviour
                     Attack();
 
                     //// Set Attacking State
-                    lweapon_obj = GetLinkedObject("lweapon_obj");
-                    animation_weapon = lweapon_obj.GetComponent<CompAnimation>();
+                    lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
+                    animation_weapon = lweapon_obj_anim.GetComponent<CompAnimation>();
                     animation_weapon.SetTransition("ToAttack1");
 
-                    GameObject this_obj_rightweapon = GetLinkedObject("rweapon_obj");
+                    GameObject this_obj_rightweapon = GetLinkedObject("rweapon_obj_anim");
                     animation_weapon = this_obj_rightweapon.GetComponent<CompAnimation>();
                     animation_weapon.SetTransition("ToAttack1");
+
+                    player_obj = GetLinkedObject("player_obj");
+                    player_obj.GetComponent<CompAudio>().PlayEvent("SwordSlash");
                 }
                 else
                 {
