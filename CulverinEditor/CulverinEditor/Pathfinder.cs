@@ -122,7 +122,6 @@ namespace CulverinEditor.Pathfinding
 
             if (open_list.Count == 0)
             {
-                Debug.Debug.Log("Open List is Empty");
                 return null;
             }
 

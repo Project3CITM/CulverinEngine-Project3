@@ -64,8 +64,6 @@ namespace CulverinEditor.Pathfinding
                 parent = new_parent;
                 CalculateCost();
             }
-           
-            Debug.Debug.Log("New Parent was null");
 
         }
 
