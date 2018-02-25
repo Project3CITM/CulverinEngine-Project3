@@ -30,12 +30,6 @@ public class CharacterController : CulverinBehaviour
 
     void Start()
     {
-        // Link GameObject variables with Scene GameObjects
-        health_obj = GetLinkedObject("health_obj");
-        stamina_obj = GetLinkedObject("stamina_obj");
-        lweapon_obj = GetLinkedObject("lweapon_obj");
-        rweapon_obj = GetLinkedObject("rweapon_obj");
-
         // Start Idle animation
         GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
         anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();

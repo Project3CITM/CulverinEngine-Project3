@@ -28,6 +28,7 @@ public class AIManager : CulverinBehaviour
 
     //Pathfinding
     GameObject this_obj_enemy;
+    GameObject enemy_anim;
     Pathfinder path_creator;
     List<PathNode> my_path;
     bool path_reached;
@@ -53,6 +54,7 @@ public class AIManager : CulverinBehaviour
     public float player_time_in_memory;
     private int memory_player_x, memory_player_y;
     float player_memory_timer;
+    CompAnimation animation_controller;
 
     // Use this for initialization
     void Start()
@@ -65,7 +67,9 @@ public class AIManager : CulverinBehaviour
         init_tile_x = current_x;
         init_tile_y = current_y;
 
-        this_obj_enemy = GetLinkedObject("this_obj_enemy");
+        enemy_anim = GetLinkedObject("enemy_anim");
+        animation_controller = enemy_anim.GetComponent<CompAnimation>();
+        animation_controller.PlayAnimation("Idle");
 
         player_memory_timer = 0.0f;
         attack_cooldown_timer = 0.0f;
@@ -93,6 +97,10 @@ public class AIManager : CulverinBehaviour
                 {
                     state = MYSTATE.MOVE_TO_PLAYER;
                     CalculateAdjacentPath(player_x, player_y);
+
+                    enemy_anim = GetLinkedObject("enemy_anim");
+                    animation_controller = enemy_anim.GetComponent<CompAnimation>();
+                    animation_controller.SetTransition("ToChase");
                 }
 
                 break;
@@ -103,6 +111,10 @@ public class AIManager : CulverinBehaviour
                 {
                     state = MYSTATE.RETURN_TO_START;
                     CalculatePath(init_tile_x, init_tile_y);
+
+                    enemy_anim = GetLinkedObject("enemy_anim");
+                    animation_controller = enemy_anim.GetComponent<CompAnimation>();
+                    animation_controller.SetTransition("ToPatrol");
                 }
 
                 if (!path_reached)
@@ -126,6 +138,10 @@ public class AIManager : CulverinBehaviour
                 else
                 {
                     state = MYSTATE.ATTACK;
+
+                    enemy_anim = GetLinkedObject("enemy_anim");
+                    animation_controller = enemy_anim.GetComponent<CompAnimation>();
+                    animation_controller.SetTransition("ToAttack");
                 }
 
 
@@ -140,17 +156,20 @@ public class AIManager : CulverinBehaviour
                 {
                     if (RecheablePlayer())
                     {
-                        if (attack_cooldown_timer >= 1.0f)
-                            Attack();       
-                        else
-                        {
-                            attack_cooldown_timer += Time.DeltaTime();
-                        }
+                        enemy_anim = GetLinkedObject("enemy_anim");
+                        animation_controller = enemy_anim.GetComponent<CompAnimation>();
+
+                        if (animation_controller.IsAnimationStopped("Attack"))
+                            Attack();
                     }
                     else
                     {
                         CalculateAdjacentPath(player_x, player_y);
                         state = MYSTATE.MOVE_TO_PLAYER;
+
+                        enemy_anim = GetLinkedObject("enemy_anim");
+                        animation_controller = enemy_anim.GetComponent<CompAnimation>();
+                        animation_controller.SetTransition("ToChase");
                     }
 
                 }
@@ -171,18 +190,28 @@ public class AIManager : CulverinBehaviour
                     {
                         state = MYSTATE.MOVE_TO_PLAYER;
                         CalculatePath(player_x, player_y);
+
+                        enemy_anim = GetLinkedObject("enemy_anim");
+                        animation_controller = enemy_anim.GetComponent<CompAnimation>();
+                        animation_controller.SetTransition("ToChase");
                     }
                 }
                 else
                 {
                     state = MYSTATE.IDLE;
+
+                    enemy_anim = GetLinkedObject("enemy_anim");
+                    animation_controller = enemy_anim.GetComponent<CompAnimation>();
+                    animation_controller.SetTransition("ToIdle");
                 }
 
                 break;
 
             case MYSTATE.DEAD:
 
-
+                enemy_anim = GetLinkedObject("enemy_anim");
+                animation_controller = enemy_anim.GetComponent<CompAnimation>();
+                animation_controller.SetTransition("ToDie");
 
                 break;
         }

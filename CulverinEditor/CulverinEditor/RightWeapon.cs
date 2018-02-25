@@ -33,10 +33,6 @@ public class RightWeapon : CulverinBehaviour
 
     void Start()
     {
-        // Link GameObject variables with Scene GameObjects
-        player_obj = GetLinkedObject("player_obj");
-        r_button_obj = GetLinkedObject("r_button_obj");
-        enemy_obj = GetLinkedObject("enemy_obj");
 
         step_counter = -1;
     }

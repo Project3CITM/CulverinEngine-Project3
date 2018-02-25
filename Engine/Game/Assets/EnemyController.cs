@@ -16,12 +16,6 @@ public class EnemyController : CulverinBehaviour
 
     void Update()
     {
-        if (hp <= 0)
-        {
-            // DEAD
-            Debug.Log("I'm dead");
-            hp = 100.0f;
-        }
     }
 
     public void Hit(float damage)
