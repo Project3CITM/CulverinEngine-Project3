@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "Application.h"
 #include "ResourceMesh.h"
 #include "ModuleGUI.h"
@@ -6,6 +7,7 @@
 #include "ImportMesh.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "ModuleFS.h"
 #include "CompTransform.h"
 #include "CompBone.h"
 
@@ -160,19 +162,118 @@ void CompBone::CopyValues(const CompBone * comp)
 
 void CompBone::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
+	json_object_dotset_number_with_std(object, name + "Type", C_BONE);
+	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+	if (resource_mesh != nullptr)
+	{
+		if (saveScene == false)
+		{
+			// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
+			std::string temp = std::to_string(countResources++);
+			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".UUID Resource", resource_mesh->GetUUID());
+			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", resource_mesh->name);
+		}
+		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", resource_mesh->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", 0);
+	}
+
+	App->fs->json_array_dotset_float4(object, name + "Offset.Col0", offset.Col(0));
+	App->fs->json_array_dotset_float4(object, name + "Offset.Col1", offset.Col(1));
+	App->fs->json_array_dotset_float4(object, name + "Offset.Col2", offset.Col(2));
+	App->fs->json_array_dotset_float4(object, name + "Offset.Col3", offset.Col(3));
+
+	json_object_dotset_number_with_std(object, name + "Weights Size", weights.size());
+
+	for (int i = 0; i < weights.size(); i++)
+	{
+		char str[255];
+		sprintf(str, "Weight %i", i);
+		std::string tmp(str);
+		json_object_dotset_number_with_std(object, name + tmp + ".VertexID", weights[i].vertex_id);
+		json_object_dotset_number_with_std(object, name + tmp + ".Weight", weights[i].weight);
+	}
+
+	json_object_dotset_number_with_std(object, name + "Childs Size", child_bones.size());
+
+	for (int i = 0; i < child_bones.size(); i++)
+	{
+		char str[255];
+		sprintf(str, "Child %i", i);
+		json_object_dotset_number_with_std(object, name + std::string(str) + ".UUID", child_bones[i]->GetParent()->GetUUID());
+	}
 }
 
 void CompBone::Load(const JSON_Object * object, std::string name)
 {
+	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID");
+
+	if (resourceID > 0)
+	{
+		resource_mesh = (ResourceMesh*)App->resource_manager->GetResource(resourceID);
+		if (resource_mesh != nullptr)
+		{
+			resource_mesh->num_game_objects_use_me++;
+
+			// LOAD MESH ----------------------------
+			if (resource_mesh->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iMesh->LoadResource(std::to_string(resource_mesh->GetUUID()).c_str(), resource_mesh);
+			}
+			// Add bounding box ------
+			parent->AddBoundingBox(resource_mesh);
+		}
+	}
+
+	offset.SetCol(0,App->fs->json_array_dotget_float4_string(object, name + "Offset.Col0"));
+	offset.SetCol(1,App->fs->json_array_dotget_float4_string(object, name + "Offset.Col1"));
+	offset.SetCol(2,App->fs->json_array_dotget_float4_string(object, name + "Offset.Col2"));
+	offset.SetCol(3,App->fs->json_array_dotget_float4_string(object, name + "Offset.Col3"));
+
+	uint weights_size = json_object_dotget_number_with_std(object, name + "Weights Size");
+	weights.resize(weights_size);
+
+	for (int i = 0; i < weights.size(); i++)
+	{
+		char str[255];
+		sprintf(str, "Weight %i", i);
+		std::string tmp(str);
+		weights[i].vertex_id = json_object_dotget_number_with_std(object, name + tmp + ".VertexID");
+		weights[i].weight = json_object_dotget_number_with_std(object, name + tmp + ".Weight");
+	}
+
+	uint childs_size = json_object_dotget_number_with_std(object, name + "Childs Size");
+	child_bones.resize(childs_size);
+	child_uids.resize(childs_size);
+
+	for (int i = 0; i < child_bones.size(); i++)
+	{
+		char str[255];
+		sprintf(str, "Child %i", i);
+		child_uids[i] = json_object_dotget_number_with_std(object, name + std::string (str) + ".UUID");
+	}
+
+	Enable();
+}
+
+void CompBone::Link()
+{
+	for (int i = 0; i < child_bones.size(); i++)
+		child_bones[i] = App->scene->GetGameObjectbyuid(child_uids[i])->GetComponentBone();
 }
 
 void CompBone::GenSkinningMatrix(const float4x4& parent_transform)
 {
-	float4x4 transform(parent_transform * go->GetComponentTransform()->GetLocalTransform());
+	float4x4 transform(parent_transform * parent->GetComponentTransform()->GetLocalTransform());
 
 	skinning_matrix = transform * offset;
 
-	for (std::vector<CompBone*>::iterator it = childs.begin(); it != childs.end(); ++it)
+	for (std::vector<CompBone*>::iterator it = child_bones.begin(); it != child_bones.end(); ++it)
 		(*it)->GenSkinningMatrix(transform);
 }
 

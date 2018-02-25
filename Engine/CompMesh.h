@@ -34,10 +34,13 @@ enum Type_Primitive
 struct Skeleton
 {
 	std::vector<GameObject*> bones;
-	std::vector<std::vector<GameObject*>> influences;
+	std::vector<uint> bone_uids;
+
 	GLuint buffer_id;
 	GLuint skinning_mats_id;
+	uint root_uid;
 	GameObject* root_bone = nullptr;
+	uint root_bone_uid;
 	GLfloat* skinning_mats = nullptr;
 
 	~Skeleton()
@@ -47,6 +50,9 @@ struct Skeleton
 
 	void GenSkinningTexture(const GameObject* mesh_go);
 	void DebugDraw() const;
+	void Save(JSON_Object* object, std::string name) const;
+	void Load(const JSON_Object* object, std::string name);
+	void Link(const SkeletonSource* source);
 };
 
 class CompMesh: public Component
@@ -78,16 +84,17 @@ public:
 	// SAVE - LOAD METHODS ----------------
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+	void LinkSkeleton();
 	// -------------------------------------
 
 	void SetUniformVariables(Material* shader);
 
 	bool HasSkeleton() const;
+	void SetSkeleton(bool has_skeleton);
 	void GenSkeleton();
 	GameObject* GenBone(char** name_iterator, const SkeletonSource* source, uint& generated_bones, Skeleton* skeleton);
 
 	CompMaterial* GetMaterial() const;
-
 
 public:
 
@@ -103,8 +110,9 @@ private:
 	const CompMaterial* comp_material = nullptr;
 	uint uuid_resource_reimported = 0;
 
+	bool has_skeleton = false;
 	Skeleton* skeleton = nullptr;
 	bool debug_skeleton = false;
-
+	bool generated_skeleton = false;
 };
 #endif

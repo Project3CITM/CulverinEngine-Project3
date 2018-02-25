@@ -81,6 +81,7 @@ public:
 	uint vertices_norm_id = 0;	/* NORMALS OF VERTICES ID */
 	uint id_total_buffer;		/* MESH INFO BUFFER ID */
 
+	bool has_skeleton = false;
 	SkeletonSource * skeleton = nullptr;
 
 private:

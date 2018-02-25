@@ -462,7 +462,6 @@ void CompMesh::Clear()
 	resource_mesh = nullptr;
 }
 
-
 void CompMesh::Render(bool render)
 {
 	this->render = render;
@@ -517,6 +516,7 @@ void CompMesh::Save(JSON_Object* object, std::string name, bool saveScene, uint&
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", C_MESH);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
 	if(resource_mesh != nullptr)
 	{
 		if (saveScene == false)
@@ -527,6 +527,12 @@ void CompMesh::Save(JSON_Object* object, std::string name, bool saveScene, uint&
 			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", resource_mesh->name);
 		}
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", resource_mesh->GetUUID());
+
+		json_object_dotset_boolean_with_std(object, name + "Has Skeleton", has_skeleton);
+		json_object_dotset_boolean_with_std(object, name + "Generated Skeleton", generated_skeleton);
+
+		if (skeleton != nullptr)
+			skeleton->Save(object, name);
 	}
 	else
 	{
@@ -538,6 +544,7 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID");
+
 	if (resourceID > 0)
 	{
 		resource_mesh = (ResourceMesh*)App->resource_manager->GetResource(resourceID);
@@ -552,9 +559,31 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 			}
 			// Add bounding box ------
 			parent->AddBoundingBox(resource_mesh);
+
+			has_skeleton = json_object_dotget_boolean_with_std(object, name + "Has Skeleton");
+			generated_skeleton = json_object_dotget_boolean_with_std(object, name + "Generated Skeleton");
+
+			if (has_skeleton == true)
+			{
+				if (generated_skeleton == true)
+				{
+					skeleton = new Skeleton;
+					skeleton->Load(object, name);
+				}
+				else
+					GenSkeleton();
+			}
+
 		}
 	}
+
 	Enable();
+}
+
+void CompMesh::LinkSkeleton()
+{
+	if (skeleton != nullptr)
+		skeleton->Link(resource_mesh->skeleton);
 }
 
 void CompMesh::SetUniformVariables(Material * material)
@@ -605,6 +634,11 @@ bool CompMesh::HasSkeleton() const
 	return false;
 }
 
+void CompMesh::SetSkeleton(bool has_skeleton)
+{
+	this->has_skeleton = has_skeleton;
+}
+
 void CompMesh::GenSkeleton()
 {
 	SkeletonSource* source = resource_mesh->skeleton;
@@ -629,14 +663,12 @@ void CompMesh::GenSkeleton()
 	skeleton->skinning_mats = new GLfloat[source->num_bones * 4 * 4]; //every vertex will be influenced by 4 float4x4
 
 	skeleton->bones.resize(source->num_bones);
-	skeleton->influences.resize(resource_mesh->num_vertices);
-
-	for (int i = 0; i < resource_mesh->num_vertices; i++)
-		skeleton->influences[i].resize(source->vertex_weights[i].size());
 
 	parent->AddChildGameObject(new_skeleton);
 	skeleton->root_bone = GenBone(&name_iterator, source, generated_bones, skeleton);
 	new_skeleton->AddChildGameObject(skeleton->root_bone);
+	has_skeleton = true;
+	generated_skeleton = true;
 }
 
 GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* source, uint& generated_bones, Skeleton* skeleton)
@@ -648,9 +680,6 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 
 	float4x4 local_transform = source->bone_hirarchy_local_transforms[generated_bones];
 
-	if (generated_bones == 65)
-		int i = 0;
-
 	float3 pos;
 	Quat rot;
 	float3 scale;
@@ -661,7 +690,6 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 	transform->SetScale(scale);
 
 	CompBone* comp_bone = (CompBone*)new_bone->AddComponent(Comp_Type::C_BONE);
-	comp_bone->go = new_bone;
 	comp_bone->resource_mesh = resource_mesh;
 	resource_mesh->num_game_objects_use_me++;
 
@@ -673,22 +701,13 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 			comp_bone->offset = source->bones[i].offset;
 
 			for (int j = 0; j < source->bones[i].num_weights; j++)
-				comp_bone->weights.push_back(CompBone::Weight(source->bones[i].weights[j].weight, source->bones[i].weights[j].vertex_id));
-		}
-
-	for (int i = 0; i < source->bones[generated_bones].num_weights; i++)
-	{
-		uint vertex_id = source->bones[generated_bones].weights[i].vertex_id;
-		
-		for (int j = 0; j < source->vertex_weights[vertex_id].size(); j++)
-		{
-			if (source->vertex_weights[vertex_id][j].first == generated_bones)
 			{
-				skeleton->influences[vertex_id][j] = new_bone;
-				break;
+				CompBone::Weight weight;
+				weight.vertex_id = source->bones[i].weights[j].vertex_id;
+				weight.weight = source->bones[i].weights[j].weight;
+				comp_bone->weights.push_back(weight);
 			}
 		}
-	}
 
 	uint num_childs = source->bone_hirarchy_num_childs[generated_bones];
 	generated_bones++;
@@ -697,7 +716,7 @@ GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* sourc
 	{
 		GameObject* child = GenBone(name_iterator, source, generated_bones, skeleton);
 		new_bone->AddChildGameObject(child);
-		comp_bone->childs.push_back(child->GetComponentBone());
+		comp_bone->child_bones.push_back(child->GetComponentBone());
 	}		
 
 	return new_bone;
@@ -710,11 +729,7 @@ CompMaterial * CompMesh::GetMaterial() const
 
 void Skeleton::GenSkinningTexture(const GameObject* mesh_go)
 {
-	/*for (std::vector<GameObject*>::iterator it = bones.begin(); it != bones.end(); ++it)
-		(*it)->GetComponentBone()->GenSkinningMatrix(mesh_go);*/
 	root_bone->GetComponentBone()->GenSkinningMatrix(root_bone->GetParent()->GetComponentTransform()->GetLocalTransform());
-
-	//uint pos_in_buffer = i * 4 * 4;
 
 	for (int i = 0; i < bones.size(); i++)
 	{
@@ -732,42 +747,7 @@ void Skeleton::GenSkinningTexture(const GameObject* mesh_go)
 		memcpy(&skinning_mats[pos_in_buffer + 12], &col4.x, sizeof(float) * 4);
 	}
 
-	/*
-	for (int i = 0; i < influences.size(); i++)
-	{
-		for (int j = 0; j < 4; j++) //Num influences
-		{
-			uint pos_in_buffer = (i * 4 * 4 * 4) + (j * 4 * 4);
-
-			if (influences[i].size() > j)
-			{
-				GameObject* bone = influences[i][j];
-				float4x4 skinning_mat = bone->GetComponentBone()->GetSkinningMatrix();
-				float4 col1(skinning_mat.Col(0));
-				memcpy(&skinning_mats[pos_in_buffer], &col1.x, sizeof(float) * 4);
-				float4 col2(skinning_mat.Col(1));
-				memcpy(&skinning_mats[pos_in_buffer + 4], &col2.x, sizeof(float) * 4);
-				float4 col3(skinning_mat.Col(2));
-				memcpy(&skinning_mats[pos_in_buffer + 8], &col3.x, sizeof(float) * 4);
-				float4 col4(skinning_mat.Col(3));
-				memcpy(&skinning_mats[pos_in_buffer + 12], &col4.x, sizeof(float) * 4);
-			}
-			else
-			{
-				float4 col1(1.0f, 0.0f, 0.0f, 0.0f);
-				memcpy(&skinning_mats[pos_in_buffer], &col1.x, sizeof(float) * 4);
-				float4 col2(0.0f, 1.0f, 0.0f, 0.0f);
-				memcpy(&skinning_mats[pos_in_buffer + 4], &col2.x, sizeof(float) * 4);
-				float4 col3(0.0f, 0.0f, 1.0f, 0.0f);
-				memcpy(&skinning_mats[pos_in_buffer + 8], &col3.x, sizeof(float) * 4);
-				float4 col4(0.0f, 0.0f, 0.0f, 1.0f);
-				memcpy(&skinning_mats[pos_in_buffer + 12], &col4.x, sizeof(float) * 4);
-			}
-		}
-	}*/
-
 	GLint size = bones.size() * 4 * 4;
-	//GLint size = influences.size() * 4 * 4 * 4;
 
 	glDeleteBuffers(1, &buffer_id);
 	glGenBuffers(1, &buffer_id);
@@ -855,4 +835,48 @@ void Skeleton::DebugDraw() const
 		Sphere sphere(pos.xyz() , joint_sphere_radius);
 		sphere.Draw(0.0f, 0.65f, 1.0f, 1.0f);
 	}
+}
+
+void Skeleton::Save(JSON_Object * object, std::string name) const
+{
+	json_object_dotset_number_with_std(object, name + "Bones Size", bones.size());
+
+	for (int i = 0; i < bones.size(); i++)
+	{
+		char tmp[255];
+		sprintf(tmp, "Bone %i.UUID", i);
+		json_object_dotset_number_with_std(object, name + std::string(tmp), bones[i]->GetUUID());
+	}
+
+	json_object_dotset_number_with_std(object, name + "Root UUID", root_bone->GetUUID());
+}
+
+void Skeleton::Load(const JSON_Object * object, std::string name)
+{
+	uint num_bones = json_object_dotget_number_with_std(object, name + "Bones Size");
+	bones.resize(num_bones);
+	bone_uids.resize(num_bones);
+
+	for (int i = 0; i < num_bones; i++)
+	{
+		char tmp[255];
+		sprintf(tmp, "Bone %i.UUID", i);
+		bone_uids[i] = json_object_dotget_number_with_std(object, name + std::string(tmp));
+	}
+
+	skinning_mats = new GLfloat[num_bones * 4 * 4];
+
+	root_bone_uid = json_object_dotget_number_with_std(object, name + "Root UUID");
+}
+
+void Skeleton::Link(const SkeletonSource* source)
+{
+	for (int i = 0; i < bone_uids.size(); i++)
+	{
+		bones[i] = App->scene->GetGameObjectbyuid(bone_uids[i]);
+		bones[i]->GetComponentBone()->Link();
+	}
+
+	root_bone = App->scene->GetGameObjectbyuid(root_bone_uid);
+	root_bone->GetComponentBone()->Link();
 }

@@ -148,6 +148,8 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		// Skeleton
 		if (mesh->HasBones())
 		{
+			meshComp->SetSkeleton(true);
+
 			//must change into list and hirarchy separately
 			num_bones = mesh->mNumBones;
 			bone_offsets = new float4x4[num_bones];
@@ -298,6 +300,8 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		uuid_mesh = uuid;
 	}
 	ResourceMesh* res_mesh = (ResourceMesh*)App->resource_manager->CreateNewResource(Resource::Type::MESH, uuid_mesh);
+	if (mesh->HasBones())
+		res_mesh->has_skeleton = true;
 	meshComp->SetResource(res_mesh, true);
 
 	// ALLOCATING DATA INTO BUFFER ------------------------

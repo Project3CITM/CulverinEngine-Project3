@@ -131,6 +131,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		App->scene->root->SetUUID(json_object_dotget_number(config_node, "Scene.Properties.UUID"));
 		App->scene->root->SetName(App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, "Scene.Properties.Name")));
 		std::vector<LoadSceneSt> templist;
+		std::vector<GameObject*> mesh_gos;
 		if (NUmberGameObjects > 0)
 		{
 			for (int i = 0; i < NUmberGameObjects; i++)
@@ -150,6 +151,8 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				if (NumberofComponents > 0)
 				{
 					obj->LoadComponents(config_node, name + "Components.", NumberofComponents);
+					if (obj->GetComponentMesh() != nullptr)
+						mesh_gos.push_back(obj);
 				}
 				int uuid_parent = json_object_dotget_number_with_std(config_node, name + "Parent");
 
@@ -189,6 +192,11 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		}
 		templist.clear();
 
+		//Link Skeletons
+		for (std::vector<GameObject*>::iterator it = mesh_gos.begin(); it != mesh_gos.end(); it++)
+		{
+			(*it)->GetComponentMesh()->LinkSkeleton();
+		}
 
 		//Load Audio Banks
 		int number_of_audio_banks = json_object_dotget_number(config_node, "Info.Number of Audio Banks");

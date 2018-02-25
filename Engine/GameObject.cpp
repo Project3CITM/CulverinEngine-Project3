@@ -1693,8 +1693,8 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		std::string temp = name + "Component " + std::to_string(i) + ".";
 		components[i]->Load(object, temp);
 
-		if (components[i]->GetType() == Comp_Type::C_MESH && ((CompMesh*)components[i])->HasSkeleton())
-			((CompMesh*)components[i])->GenSkeleton();
+		/*if (components[i]->GetType() == Comp_Type::C_MESH && ((CompMesh*)components[i])->HasSkeleton())
+			((CompMesh*)components[i])->GenSkeleton();*/
 	}
 }
 void GameObject::SyncComponents()

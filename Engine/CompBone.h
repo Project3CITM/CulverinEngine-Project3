@@ -25,6 +25,7 @@ public:
 	// SAVE - LOAD METHODS ----------------
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+	void Link();
 	// -------------------------------------
 
 	void GenSkinningMatrix(const float4x4& parent_transform);
@@ -34,9 +35,6 @@ public:
 
 	struct Weight
 	{
-		Weight(float weight, uint vertex_id) : weight(weight), vertex_id(vertex_id)
-		{}
-
 		float weight;
 		uint vertex_id;		
 	};
@@ -44,8 +42,8 @@ public:
 	float4x4 offset;
 	float4x4 skinning_matrix;
 	std::vector<Weight> weights;
-	std::vector<CompBone*> childs;
-	GameObject* go = nullptr;
+	std::vector<CompBone*> child_bones;
 	ResourceMesh* resource_mesh = nullptr;
+	std::vector<uint> child_uids;
 };
 
