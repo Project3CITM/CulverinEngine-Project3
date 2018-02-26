@@ -532,6 +532,13 @@ void ModuleShaders::ImportShaderMaterials()
 					mat_shader->LoadProgram();
 					
 					mat_shader->CreateMaterialFile();
+
+					//IF default material found, change it
+					if (App->fs->GetOnlyName(str_path).compare("DefaultShader") == 0)
+					{
+						App->renderer3D->default_shader = mat_shader;
+						App->renderer3D->default_material->material_shader = mat_shader;
+					}
 					RELEASE_ARRAY(buffer);
 				}
 
