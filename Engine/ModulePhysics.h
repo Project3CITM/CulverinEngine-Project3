@@ -49,6 +49,7 @@ public:
 
 	// Collision Callback -----------
 	void OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor, JP_COLLISION_TYPE type);
+	void OnContact(physx::PxRigidActor* first, physx::PxRigidActor* second, JP_COLLISION_TYPE type);
 
 	// Debug Methods ----------------
 	void DrawPhysics();
@@ -59,6 +60,8 @@ private:
 
 	jpPhysicsWorld * physics_world = nullptr;
 	physx::PxScene* mScene = nullptr;
+
+	bool did_simulation = false;
 
 	// Config data ------------------
 	// Use only as a debug tool -----

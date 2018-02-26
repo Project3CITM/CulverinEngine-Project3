@@ -18,6 +18,8 @@ enum JP_COLLISION_TYPE
 {
 	TRIGGER_ENTER,
 	TRIGGER_LOST,
+	CONTACT_ENTER,
+	CONTACT_LOST
 };
 
 //Simple abstraction of the physX rigiddynamic class for an easier implementation with component system

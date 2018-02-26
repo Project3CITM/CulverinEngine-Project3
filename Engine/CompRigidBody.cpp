@@ -74,10 +74,6 @@ void CompRigidBody::Update(float dt)
 	if (transform->GetUpdated() && !own_update)
 	{
 		SetColliderPosition();
-		if (App->engine_state != EngineState::PLAY)
-		{
-			App->physics->DebugDrawUpdate();
-		}
 	}
 	else
 	{
@@ -210,6 +206,7 @@ void CompRigidBody::SetColliderPosition()
 	}
 
 	body->SetTransform(fpos, quat);
+	App->physics->DebugDrawUpdate();
 }
 
 void CompRigidBody::SetColliderComp(CompCollider * new_comp)
