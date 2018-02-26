@@ -105,9 +105,9 @@ public:
 
 	bool CheckTriggeredTransition(FSM_Transition** transition)const;	
 	
-	bool AddScript(CompScript* script_to_add);	//Only support 1 script per node yet
+	bool AddScript(CompScript* script_to_add);	// Only support 1 script per node yet
 	bool SelectScript(bool& selecting);
-	bool RemoveScript();
+	bool RemoveScript();	// Also deletes all the transitions(as their conditions deppend on the script variables)
 	FSM_Transition* AddTransition(FSM_State* target_state);
 	void DeleteTransitionsWithTargetState(FSM_State* target_state);
 	bool DeleteAllTransitions();
@@ -235,6 +235,8 @@ public:
 	const char* variable_a_name = NULL;
 
 private:
+	void DeleteCandidateIfRightClicked();
+
 	FSM_CONDITION_TYPE condition_type;
 };
 
@@ -259,6 +261,7 @@ public:
 	// ------------------------
 
 	// GETTERS ----------------
+	const char* GetConditionAName()const;
 	ScriptVariable* GetConditionA()const;
 	bool GetConditionB()const;
 	// ------------------------

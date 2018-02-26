@@ -323,6 +323,8 @@ void CompFiniteStateMachine::Update(float dt)
 					selected_state->RemoveScript();
 					ImGui::CloseCurrentPopup();
 				}
+				ImGui::SameLine();
+				App->ShowHelpMarker("Removing a Script also removes the transitions of the state, as their conditions are related to the script variables");
 
 				if (ImGui::Button("Create New Transition"))
 				{
@@ -698,6 +700,7 @@ bool FSM_State::RemoveScript()
 
 	delete script;
 	script = nullptr;
+	DeleteAllTransitions();
 	return true;
 }
 
@@ -772,7 +775,7 @@ bool FSM_State::DisplayTransitionsInfo(FSM_Transition** selected_transition, FSM
 	bool candidate_to_delete = false;
 	bool transition_selected = false;
 	bool open_new_condition_popup = false;
-	int i = 0;
+	int i = 1;
 
 	for (std::vector<FSM_Transition*>::const_iterator it_transitions = transitions.begin(); it_transitions != transitions.end(); it_transitions++, i++)
 	{
@@ -1230,10 +1233,26 @@ void FSM_Transition::CreateConditionsModifyingOptions(FSM_State* selected_state)
 bool FSM_Transition::DisplayConditionsInfo(FSM_Condition** selected_condition)
 {
 	bool candidate_to_delete = false;
-	int i = 0;
+	int i = 1;
 	for (std::vector<FSM_Condition*>::const_iterator it_conditions = conditions.begin(); it_conditions != conditions.end(); it_conditions++, i++)
 	{
 		ImGui::Text("               - Condition %i:", i);
+		if (ImGui::IsItemHovered() && (ImGui::IsMouseClicked(1) || ImGui::IsMouseClicked(0)))
+		{
+			*selected_condition = *it_conditions;
+			candidate_to_delete = true;
+		}
+		ImGui::Text("                    - %s", ((FSM_ConditionBool*)(*it_conditions))->GetConditionAName());
+		if (ImGui::IsItemHovered() && (ImGui::IsMouseClicked(1) || ImGui::IsMouseClicked(0)))
+		{
+			*selected_condition = *it_conditions;
+			candidate_to_delete = true;
+		}
+		ImGui::SameLine();
+		if (((FSM_ConditionBool*)(*it_conditions))->GetConditionB())
+			ImGui::Text(": Has to be true");
+		else
+			ImGui::Text(": Has to be false");
 		if (ImGui::IsItemHovered() && (ImGui::IsMouseClicked(1) || ImGui::IsMouseClicked(0)))
 		{
 			*selected_condition = *it_conditions;
@@ -1378,6 +1397,10 @@ const char * FSM_Condition::GetConditionTypeStr() const
 	return "Condition type ERROR";
 }
 
+void FSM_Condition::DeleteCandidateIfRightClicked()
+{
+}
+
 FSM_ConditionBool::FSM_ConditionBool(bool condition_b_) : FSM_Condition(FSM_COND_BOOL), condition_b(condition_b_), condition_script_a(nullptr)
 {
 }
@@ -1420,6 +1443,11 @@ bool FSM_ConditionBool::SetScriptVariable(ScriptVariable ** script_variable)
 void FSM_ConditionBool::SetConditionB(bool condition_b_)
 {
 	condition_b = condition_b_;
+}
+
+const char * FSM_ConditionBool::GetConditionAName() const
+{
+	return condition_script_name.c_str();
 }
 
 ScriptVariable* FSM_ConditionBool::GetConditionA() const
