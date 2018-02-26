@@ -492,12 +492,12 @@ const char* GameObject::GetName() const
 
 const char * GameObject::GetTag() const
 {
-	return tag;
+	return tag.c_str();
 }
 
 bool GameObject::CompareTag(const char * str) const
 {
-	return strcmp(tag,str) == 0;
+	return strcmp(tag.c_str(),str) == 0;
 }
 
 void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* parent_)
@@ -855,6 +855,10 @@ void GameObject::ShowInspectorInfo()
 		//ImGui::InputText("##nameModel", name, 256, ImGuiInputTextFlags_ReadOnly);
 		ImGui::SameLine(); App->ShowHelpMarker("Hold SHIFT or use mouse to select text.\n" "CTRL+Left/Right to word jump.\n" "CTRL+A or double-click to select all.\n" "CTRL+X,CTRL+C,CTRL+V clipboard.\n" "CTRL+Z,CTRL+Y undo/redo.\n" "ESCAPE to revert.\n");
 		ImGui::PopStyleVar();
+
+		/*TAG*/
+		ImGui::Text("Tag: "); ImGui::SameLine(); ImGui::Text(tag.c_str());
+		App->scene->TagWindow();
 
 		/* STATIC CHECKBOX */
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 8));

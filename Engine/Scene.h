@@ -49,6 +49,7 @@ public:
 	GameObject* GetGameObjectfromScene(bool& active);
 	GameObject* GetGameObjectbyuid(uint uid);
 	GameObject* FindGameObjectWithTag(const char* str);
+	void TagWindow();
 
 	void ModificateParent(GameObject* child, GameObject* new_parent);
 
@@ -110,12 +111,16 @@ public:
 
 private:
 
-	int size_plane = 0;
-	float size_quadtree = 0.0f;
-	uint icon_resetAll = 0;
-	bool load_scene = true;
+	int		size_plane = 0;
+	float	size_quadtree = 0.0f;
+	uint	icon_resetAll = 0;
+	bool	load_scene = true;
 	std::vector<Component*> temp_vector;
-	Comp_Type actualType = Comp_Type::C_UNKNOWN;
+	Comp_Type				actualType = Comp_Type::C_UNKNOWN;
+	bool					on_tag_edition = false;
+	char					tag_buffer[100];
+	std::vector<std::string> defined_tags;
+
 };
 
 #endif

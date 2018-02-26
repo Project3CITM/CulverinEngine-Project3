@@ -150,7 +150,7 @@ public:
 private:
 	uint uid = 0;
 	char* name = "CHANGE THIS";
-	char* tag = "undefined";
+	std::string tag = "undefined";
 	bool active = false;
 	bool visible = false;
 	bool static_obj = false;

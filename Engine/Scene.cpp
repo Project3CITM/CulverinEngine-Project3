@@ -430,6 +430,41 @@ GameObject * Scene::FindGameObjectWithTag(const char * str)
 	else return nullptr;
 }
 
+void Scene::TagWindow()
+{
+	if (ImGui::BeginCombo("##Select", "Tags"))
+	{
+		for (int i = 0; i < defined_tags.size(); i++)
+		{
+			if (ImGui::Selectable(defined_tags[i].c_str()))
+			{
+				GameObject* target = ((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected();
+				target->SetTag((char*)defined_tags[i].c_str());
+				on_tag_edition = false;
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	if (ImGui::Button("Add Tag"))
+	{
+		on_tag_edition = !on_tag_edition;
+		memset(tag_buffer, '\0', 100);
+	}
+
+	if(on_tag_edition)
+	{
+		ImGui::SameLine();
+		ImGui::SetItemDefaultFocus();
+		if (ImGui::InputText("New Tag", tag_buffer, 100, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			defined_tags.push_back(tag_buffer);
+			memset(tag_buffer, '\0', 100);
+			on_tag_edition = false;
+		}
+	}
+}
+
 void Scene::ModificateParent(GameObject* child, GameObject* new_parent)
 {
 	if (child->IsDeleteFixed() == false && new_parent->IsDeleteFixed() == false)
