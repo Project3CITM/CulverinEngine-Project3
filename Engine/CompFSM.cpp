@@ -495,6 +495,10 @@ bool CompFiniteStateMachine::DeleteState(FSM_State * state_to_delete)
 	if (state_to_delete == nullptr)
 		return false;
 
+	// Check if there is any transition to this state and delete it if so
+	for (std::vector<FSM_State*>::iterator it_states = states.begin(); it_states != states.end(); it_states++)
+		(*it_states)->DeleteTransitionsWithTargetState(state_to_delete);
+		
 	if (state_to_delete == initial_state)
 	{
 		if (states.size() > 1)
@@ -704,6 +708,17 @@ FSM_Transition * FSM_State::AddTransition(FSM_State * target_state)
 	transitions.push_back(new_transition);
 
 	return new_transition;
+}
+
+void FSM_State::DeleteTransitionsWithTargetState(FSM_State * target_state)
+{
+	std::vector<FSM_Transition*> transitions_to_delete;
+	for (std::vector<FSM_Transition*>::iterator it_trans = transitions.begin(); it_trans != transitions.end(); it_trans++)
+		if ((*it_trans)->GetTargetState() == target_state)
+			transitions_to_delete.push_back(*it_trans);
+
+	for (std::vector<FSM_Transition*>::iterator it_trans = transitions_to_delete.begin(); it_trans != transitions_to_delete.end(); it_trans++)
+		DeleteTransition(*it_trans);
 }
 
 bool FSM_State::DeleteAllTransitions()
@@ -1088,27 +1103,30 @@ void FSM_Transition::CreateConditionsModifyingOptions(FSM_State* selected_state)
 			condition_a = ((FSM_ConditionBool*)(*it))->GetConditionA();
 			bool_b = ((FSM_ConditionBool*)(*it))->GetConditionB();
 			
-			ImGui::PushID(id2);
-			if (ImGui::BeginCombo("##SelectVariable", (*it)->variable_a_name))
+			if (state_script->csharp != nullptr && state_script->csharp->variables.size() > 0)
 			{
-				for (std::vector<ScriptVariable*>::iterator it_variables = state_script->csharp->variables.begin(); it_variables != state_script->csharp->variables.end(); it_variables++)
+				ImGui::PushID(id2);
+				if (ImGui::BeginCombo("##SelectVariable", (*it)->variable_a_name))
 				{
-					if ((*it_variables)->type == VarType::Var_BOOL)
+					for (std::vector<ScriptVariable*>::iterator it_variables = state_script->csharp->variables.begin(); it_variables != state_script->csharp->variables.end(); it_variables++)
 					{
-						bool is_selected = ((*it)->variable_a_name == (*it_variables)->name);
-						if (ImGui::Selectable((*it_variables)->name, is_selected))
+						if ((*it_variables)->type == VarType::Var_BOOL)
 						{
-							(*it)->variable_a_name = (*it_variables)->name;
-							condition_a = (*it_variables);
-							((FSM_ConditionBool*)(*it))->SetScriptVariable(&(*it_variables));
+							bool is_selected = ((*it)->variable_a_name == (*it_variables)->name);
+							if (ImGui::Selectable((*it_variables)->name, is_selected))
+							{
+								(*it)->variable_a_name = (*it_variables)->name;
+								condition_a = (*it_variables);
+								((FSM_ConditionBool*)(*it))->SetScriptVariable(&(*it_variables));
+							}
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
 						}
-						if (is_selected)
-							ImGui::SetItemDefaultFocus();
 					}
-				}				
-				ImGui::EndCombo();
+					ImGui::EndCombo();
+				}
+				ImGui::PopID();
 			}
-			ImGui::PopID();
 
 			if (!add_second_variable_from_script)
 			{
@@ -1371,14 +1389,16 @@ FSM_ConditionBool::~FSM_ConditionBool()
 void FSM_ConditionBool::SaveCondition(JSON_Object * object, std::string name, bool saveScene, uint & countResources)
 {
 	json_object_dotset_boolean_with_std(object, name + "Condition B", condition_b);
+	json_object_dotset_string_with_std(object, name + "Script Variable Name", condition_script_name.c_str());
 }
 
 void FSM_ConditionBool::LoadCondition(const JSON_Object * object, std::string name, FSM_State* loading_state)
 {
 	condition_b = json_object_dotget_boolean_with_std(object, name + "Condition B");
+	condition_script_name = json_object_dotget_string_with_std(object, name + "Script Variable Name");
 
 	for (std::vector<ScriptVariable*>::iterator it_variables = loading_state->GetScript()->csharp->variables.begin(); it_variables != loading_state->GetScript()->csharp->variables.end(); it_variables++)
-		if ((*it_variables)->type == VarType::Var_BOOL)
+		if ((*it_variables)->type == VarType::Var_BOOL && (*it_variables)->name == condition_script_name)
 			SetScriptVariable(&(*it_variables));
 }
 
@@ -1392,6 +1412,7 @@ bool FSM_ConditionBool::SetScriptVariable(ScriptVariable ** script_variable)
 	if (script_variable == nullptr)
 		return false;
 
+	condition_script_name = (*script_variable)->name;
 	condition_script_a = *script_variable;
 	return true;
 }

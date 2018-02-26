@@ -109,6 +109,7 @@ public:
 	bool SelectScript(bool& selecting);
 	bool RemoveScript();
 	FSM_Transition* AddTransition(FSM_State* target_state);
+	void DeleteTransitionsWithTargetState(FSM_State* target_state);
 	bool DeleteAllTransitions();
 	bool DeleteTransition(FSM_Transition* transition_to_delete);
 
@@ -263,10 +264,9 @@ public:
 	// ------------------------
 
 private:
-	//bool condition_a;
+	std::string condition_script_name;	//for Load/Save
+	ScriptVariable * condition_script_a;
 	bool condition_b;
-	ScriptVariable* condition_script_a;
-	//ScriptVariable* condition_script_b;
 };
 
 	// ------------------------
