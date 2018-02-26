@@ -192,19 +192,19 @@ update_status ModuleLightning::PreUpdate(float dt)
 
 	//TODO: Should think on optimitzations on this.
 
-	frame_used_lights.clear();
-	std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
-	for(uint i = 0; i < shadow_cast_points_count; ++i)
-	{
-		if(i < scene_lights.size())
-		{
-			CompLight* l = scene_lights[i];
-			if (l->type == Light_type::POINT_LIGHT)
-			{
-				frame_used_lights.push_back(l);
-			}
-		}
-	}
+	//frame_used_lights.clear();
+	//std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
+	//for(uint i = 0; i < shadow_cast_points_count; ++i)
+	//{
+	//	if(i < scene_lights.size())
+	//	{
+	//		CompLight* l = scene_lights[i];
+	//		if (l->type == Light_type::POINT_LIGHT)
+	//		{
+	//			frame_used_lights.push_back(l);
+	//		}
+	//	}
+	//}
 
 
 	preUpdate_t = perf_timer.ReadMs();
