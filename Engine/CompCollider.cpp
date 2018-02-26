@@ -56,6 +56,8 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 	size = copy.size;
 	rad = copy.rad;
 
+	trigger = copy.trigger;
+
 	//Same as regular constructor since this properties depend on the parent
 	if (parent)
 	{
@@ -76,6 +78,11 @@ CompCollider::CompCollider(const CompCollider& copy, GameObject* parent) : Compo
 			SetColliderPosition();
 		}
 	}
+
+	if (trigger)
+	{
+		body->SetAsTrigger(trigger);
+	}
 }
 
 CompCollider::~CompCollider()
@@ -84,7 +91,7 @@ CompCollider::~CompCollider()
 
 void CompCollider::Update(float dt)
 {
-	if (transform->GetUpdated() && rigid_body_comp == nullptr && App->engine_state != EngineState::PLAY)
+	if (transform->GetUpdated() && rigid_body_comp == nullptr && dt == 0.f)
 	{
 		if(trigger && !on_move)
 		{
@@ -92,7 +99,6 @@ void CompCollider::Update(float dt)
 			on_move = true;
 		}
 		SetColliderPosition();
-		App->physics->DebugDrawUpdate();
 	}
 	else if (!rigid_body_comp && trigger && on_move)
 	{
@@ -192,15 +198,14 @@ void CompCollider::ShowInspectorInfo()
 	}
 	
 	// Listener selection
-	//if (trigger)
-	//{
-		CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT, script_name);
-		if (sc != nullptr)
-		{
-			listener = sc;
-			uid_script_asigned = listener->GetUUID();
-		}
-	//}
+	
+	CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT, script_name);
+	if (sc != nullptr)
+	{
+		listener = sc;
+		uid_script_asigned = listener->GetUUID();
+	}
+	
 
 
 	// Collider type
@@ -381,9 +386,7 @@ void CompCollider::OnTriggerEnter(Component * actor)
 	if (listener != nullptr)
 	{
 		collided_object = actor->GetParent();
-		((CompCollider*)collided_object->GetComponentByName("CompCollider"))->SetCollidedObject(GetParent());
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
-		collided_object = nullptr;
 	}
 }
 
@@ -392,9 +395,7 @@ void CompCollider::OnTriggerLost(Component * actor)
 	if (listener != nullptr)
 	{
 		collided_object = actor->GetParent();
-		((CompCollider*)collided_object->GetComponentByName("CompCollider"))->SetCollidedObject(GetParent());
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
-		collided_object = nullptr;
 	}
 }
 
@@ -402,18 +403,34 @@ void CompCollider::ChangeCollider()
 {
 	if (body != nullptr)
 	{
+		if (trigger)
+		{
+			body->SetAsTrigger(false);
+		}
 		body->SetGeometry(size, rad, curr_type);
+		if (trigger)
+		{
+			body->SetAsTrigger(true);
+		}
+		App->physics->DebugDrawUpdate();
 	}
-	App->physics->DebugDrawUpdate();
 }
 
 void CompCollider::UpdateCollider()
 {
 	if (body != nullptr)
 	{
+		if (trigger)
+		{
+			body->SetAsTrigger(false);
+		}
 		body->SetShapeScale(size, rad, curr_type);
+		if (trigger)
+		{
+			body->SetAsTrigger(true);
+		}
+		App->physics->DebugDrawUpdate();
 	}
-	App->physics->DebugDrawUpdate();
 }
 
 void CompCollider::SetColliderPosition()
@@ -421,6 +438,7 @@ void CompCollider::SetColliderPosition()
 	Quat quat = transform->GetRotGlobal()*local_quat;
 	float3 fpos = transform->GetPosGlobal() + quat * position;
 	body->SetTransform(fpos, quat);
+	App->physics->DebugDrawUpdate();
 }
 
 void CompCollider::SetSizeFromBoundingBox()

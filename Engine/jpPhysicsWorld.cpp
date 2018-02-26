@@ -78,7 +78,6 @@ bool jpPhysicsWorld::Simulate(float dt)
 		physx::PxScene* scene;
 		jpWorld->getScenes(&scene, 1, 0);
 		scene->simulate(dt);
-		//return scene->fetchResults(true);
 		return true;
 	}
 	return false;
@@ -135,6 +134,10 @@ jpPhysicsRigidBody * jpPhysicsWorld::CreateRigidBody(physx::PxScene * curr_scene
 	}
 	
 	return new_body;
+}
+
+void jpCollisionCallback::onContact(const physx::PxContactPairHeader & pairHeader, const physx::PxContactPair * pairs, physx::PxU32 nbPairs)
+{
 }
 
 void jpCollisionCallback::onTrigger(physx::PxTriggerPair * pairs, physx::PxU32 count)

@@ -70,9 +70,13 @@ update_status ModulePhysics::PreUpdate(float dt)
 {
 	// Update Physics World
 	if (dt > 0) {
-		physics_world->Simulate(dt);
+		did_simulation = physics_world->Simulate(dt);
 	}
-	
+	else
+	{
+		did_simulation = false;
+	}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -146,6 +150,7 @@ bool ModulePhysics::CleanUp()
 bool ModulePhysics::SetEventListenrs()
 {
 	AddListener(EventType::EVENT_TRIGGER_COLLISION, this);
+	//AddListener(EventType::EVENT_TIME_MANAGER, this);
 	return false;
 }
 
@@ -154,42 +159,56 @@ void ModulePhysics::OnEvent(Event & event)
 	switch (event.type)
 	{
 	case EventType::EVENT_TRIGGER_COLLISION:
+	{
+		if (!did_simulation)
+		{
+			break;
+		}
 		switch (event.physics_collision.collision_type)
 		{
 		case JP_COLLISION_TYPE::TRIGGER_ENTER:
-			{
+		{
 			static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerEnter(event.physics_collision.actor);
 			static_cast<CompRigidBody*>(event.physics_collision.actor)->OnTriggerEnter(event.physics_collision.trigger);
 			break;
-			}
+		}
 		case JP_COLLISION_TYPE::TRIGGER_LOST:
-			{
+		{
 			static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerLost(event.physics_collision.actor);
 			static_cast<CompRigidBody*>(event.physics_collision.actor)->OnTriggerLost(event.physics_collision.trigger);
 			break;
-			}
+		}
+		case JP_COLLISION_TYPE::CONTACT_ENTER:
+		{
+			break;
+		}
+		case JP_COLLISION_TYPE::CONTACT_LOST:
+		{
+			break;
+		}
 		}
 		break;
+	}
 	case EventType::EVENT_TIME_MANAGER:
-		switch (event.time.time)
-		{
-		case event.time.TIME_PLAY:
-
-			for (std::map<physx::PxRigidActor*, Component*>::const_iterator item = colliders.cbegin(); item != colliders.cend(); item++)
-			{
-				if (item->second->GetType() != Comp_Type::C_RIGIDBODY)
-				{
-					continue;
-				}
-				((physx::PxRigidBody*)item->first)->setLinearVelocity(physx::PxVec3(0, 0, 0));
-				((physx::PxRigidBody*)item->first)->setAngularVelocity(physx::PxVec3(0, 0, 0));
-
-			}
-
-			break;
-		default:
-			break;
-		}
+		//switch (event.time.time)
+		//{
+		//case event.time.TIME_PLAY:
+		//
+		//	for (std::map<physx::PxRigidActor*, Component*>::const_iterator item = colliders.cbegin(); item != colliders.cend(); item++)
+		//	{
+		//		if (item->second->GetType() != Comp_Type::C_RIGIDBODY)
+		//		{
+		//			continue;
+		//		}
+		//		((physx::PxRigidBody*)item->first)->setLinearVelocity(physx::PxVec3(0, 0, 0));
+		//		((physx::PxRigidBody*)item->first)->setAngularVelocity(physx::PxVec3(0, 0, 0));
+		//
+		//	}
+		//
+		//	break;
+		//default:
+		//	break;
+		//}
 		break;
 	default:
 		break;
@@ -281,6 +300,10 @@ void ModulePhysics::OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor*
 	}
 
 	PushEvent(collision);
+}
+
+void ModulePhysics::OnContact(physx::PxRigidActor * first, physx::PxRigidActor * second, JP_COLLISION_TYPE type)
+{
 }
 
 // -----------------------------------------------------------------
