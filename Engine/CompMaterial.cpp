@@ -545,7 +545,7 @@ void CompMaterial::ShowShadersEditors()
 		if (ImGui::Begin("Edit shader", edit_shader)) {
 			Shader* new_shader = nullptr;
 			
-			if (ImGui::Button("Save") && material->GetProgramID() != App->renderer3D->default_shader->programID) {
+			if (ImGui::Button("Save") && material->GetProgramID()) {
 
 
 				char* last_text = App->module_shaders->GetShaderText(shader->shaderPath);

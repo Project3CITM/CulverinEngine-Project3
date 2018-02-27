@@ -1,4 +1,5 @@
 
+
 #version 330 core 
 
 #define MAX_LIGHTS 30
@@ -21,8 +22,8 @@ uniform vec4 diff_color;
 out vec4 color;						
 uniform sampler2D albedo;			
 uniform sampler2D normal_map;		
-uniform sampler2D occlusion_map;	
-									
+uniform sampler2D occlusion_map;
+uniform sampler2D specular_map;						
 									
 uniform mat4 viewproj;				
 uniform mat4 model;					
@@ -99,7 +100,7 @@ void main()
 	vec3 color_texture = texture(albedo, TexCoord).xyz;															 
 	vec3 N = normalize(texture(normal_map,TexCoord).xyz);														 
 	vec3 occlusion_texture = texture(occlusion_map,TexCoord).xyz;												 
-
+   vec3 spec_texture = texture(specular_map, TexCoord).xyz;
 	vec3 normal = normalize(ourNormal);// + normal_map.x * vec3(1,0,0) + normal_map.y* vec3(0,1,0); 			 
 	vec3 specularReflection;																					 
 																												 
@@ -121,6 +122,7 @@ void main()
 	final_ambient = final_ambient/_numLights;
 	final_color = normalize(final_color);																	
 																											
-	color = vec4(final_ambient* color_texture +vec3(0,0.03,0.07) + color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb , 1);
+	color = vec4(final_ambient* color_texture +vec3(0,0.03,0.07),1);
+    color +=  vec4(color_texture * (inten_final.x + inten_final.y * spec_texture.r)*occlusion_texture*final_color.rgb , 1);
 
 }	
