@@ -103,7 +103,7 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 	{
 		config = json_value_get_object(config_file);
 		config_node = json_object_get_object(config, "Animation");
-		resource_animation->name = App->GetCharfromConstChar(json_object_dotget_string(config_node, "Name"));
+		resource_animation->name = json_object_dotget_string(config_node, "Name");
 		resource_animation->ticks_per_sec = json_object_dotget_number(config_node, "TicksPerSecond");
 		resource_animation->duration = json_object_dotget_number(config_node, "Duration");
 		int num_bones = json_object_dotget_number(config_node, "NumBones");

@@ -996,7 +996,7 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 				actual_temp->GetComponentsByType(Comp_Type::C_SCRIPT, &temp);
 				for (int i = 0; i < temp.size(); i++)
 				{
-					if (strcmp(((CompScript*)temp[i])->resource_script->name, name.c_str()) == 0)
+					if (strcmp(((CompScript*)temp[i])->resource_script->name.c_str(), name.c_str()) == 0)
 					{
 						comp_name = name.c_str();
 						//classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "", comp_name);

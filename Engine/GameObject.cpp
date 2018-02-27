@@ -51,7 +51,7 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 	box_fixed.SetNegativeInfinity();
 }
 
-GameObject::GameObject(char* nameGameObject)
+GameObject::GameObject(std::string nameGameObject)
 {
 	Enable();
 	SetVisible(true);
@@ -60,7 +60,7 @@ GameObject::GameObject(char* nameGameObject)
 	box_fixed.SetNegativeInfinity();
 }
 
-GameObject::GameObject(char* nameGameObject, uint uuid)
+GameObject::GameObject(std::string nameGameObject, uint uuid)
 {
 	Enable();
 	SetVisible(true);
@@ -78,7 +78,7 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 	nametemp = nametemp.substr(0, EndName - 1);
 	NameNotRepeat(nametemp, haveparent, parent_);
 	//nametemp += " (copy)";
-	name = App->GetCharfromConstChar(nametemp.c_str());
+	name = nametemp.c_str();
 
 	// Same data as the 'copy' gameobject
 	active = copy.IsActive();
@@ -473,12 +473,12 @@ bool GameObject::Disable()
 	return active;
 }
 
-void GameObject::SetName(char * name)
+void GameObject::SetName(const char * name)
 {
 	this->name = name;
 }
 
-void GameObject::SetTag(char * tag)
+void GameObject::SetTag(const char * tag)
 {
 	if (strcmp(this->tag.c_str(), "undefined") != 0)
 	{
@@ -490,7 +490,7 @@ void GameObject::SetTag(char * tag)
 
 const char* GameObject::GetName() const
 {
-	return name;
+	return name.c_str();
 }
 
 const char * GameObject::GetTag() const
@@ -580,7 +580,7 @@ void GameObject::ShowHierarchy()
 		node_flags |= ImGuiTreeNodeFlags_DefaultOpen;
 	}
 	//ImGui::SetNextTreeNodeOpen(true);
-	if (ImGui::TreeNodeEx(name, node_flags))
+	if (ImGui::TreeNodeEx(name.c_str(), node_flags))
 	{
 		treeNod = true;
 	}
@@ -850,7 +850,7 @@ void GameObject::ShowInspectorInfo()
 		ImGui::SameLine();
 		ImGui::PopStyleVar();
 		char namedit[50];
-		strcpy_s(namedit, 50, name);
+		strcpy_s(namedit, 50, name.c_str());
 		if (ImGui::InputText("##nameModel", namedit, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			name = App->fs->ConverttoChar(std::string(namedit).c_str());
@@ -1936,7 +1936,7 @@ void GameObject::AddChildGameObject_Copy(const GameObject* child)
 	temp->uid = App->random->Int();
 	std::string temp_name = temp->name;
 	temp_name += " (1)";
-	temp->name = App->GetCharfromConstChar(temp_name.c_str());
+	temp->name = temp_name.c_str();
 	temp_name.clear();
 	temp->parent = this;
 	childs.push_back(temp);

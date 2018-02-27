@@ -10,7 +10,7 @@ Project::Project()
 {
 	active.push_back(Active());
 	name = "Project";
-	directory_see = App->GetCharfromConstChar(App->fs->GetMainDirectory().c_str());
+	directory_see = App->fs->GetMainDirectory().c_str();
 }
 
 
@@ -19,7 +19,8 @@ Project::~Project()
 	active.clear();
 	App->fs->DeleteFolders(folders);
 	App->fs->DeleteFiles(files);
-	RELEASE_ARRAY(directory_see);
+	//RELEASE_ARRAY(directory_see); TODO: Release it
+	//UNABLE to delete beacuse triggers a huge mem leak from module Audio
 }
 
 bool Project::Start()
@@ -271,7 +272,7 @@ void Project::Folders_update(std::vector<FoldersNew>& folders)
 						std::experimental::filesystem::remove_all(folders[i].directory_name);
 						UpdateNow();
 						SetAllFolderBool(folders, false);
-						directory_see = App->GetCharfromConstChar(App->fs->GetMainDirectory().c_str());
+						directory_see = App->fs->GetMainDirectory().c_str();
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -286,7 +287,7 @@ void Project::Folders_update(std::vector<FoldersNew>& folders)
 					folders[i].active = true;
 					update_folders_now = true;
 					update_files_now = true;
-					directory_see = App->GetCharfromConstChar(folders[i].directory_name);
+					directory_see = folders[i].directory_name;
 				}
 			}
 			if (folders[i].folder_child.size() > 0)
@@ -355,7 +356,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
 				{
 					//ChangefileViwer(files[i].parentFolder->folder_child, files[i].file_name);
-					directory_see = App->GetCharfromConstChar(files[i].directory_name);
+					directory_see = files[i].directory_name;
 					update_files_now = true;
 					update_folders_now = true;
 				}
@@ -504,7 +505,7 @@ const char* Project::GetDirectory() const
 
 void Project::SetDirectory(const char* newDirectory)
 {
-	directory_see = App->GetCharfromConstChar(newDirectory);
+	directory_see = newDirectory;
 	update_folders_now = true;
 	update_files_now = true;
 }

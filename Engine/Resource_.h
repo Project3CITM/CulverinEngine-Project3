@@ -49,7 +49,7 @@ protected:
 
 public:
 
-	char* name = "Name Resource";
+	std::string name = "Name Resource";
 	std::string path_assets;
 	uint num_game_objects_use_me = 0;
 

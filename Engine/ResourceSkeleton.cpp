@@ -24,9 +24,9 @@ ResourceSkeleton::~ResourceSkeleton()
 	}
 }
 
-void ResourceSkeleton::InitInfo(const char * name, const char * path)
+void ResourceSkeleton::InitInfo(char * name, const char * path)
 {
-	name = App->GetCharfromConstChar(name);
+	name = name;
 	path_assets = path;
 }
 

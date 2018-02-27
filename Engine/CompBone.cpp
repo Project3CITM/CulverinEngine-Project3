@@ -173,7 +173,7 @@ void CompBone::Save(JSON_Object * object, std::string name, bool saveScene, uint
 			// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
 			std::string temp = std::to_string(countResources++);
 			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".UUID Resource", resource_mesh->GetUUID());
-			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", resource_mesh->name);
+			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", resource_mesh->name.c_str());
 		}
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", resource_mesh->GetUUID());
 	}

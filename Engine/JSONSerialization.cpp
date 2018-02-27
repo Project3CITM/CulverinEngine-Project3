@@ -148,7 +148,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			App->scene->AddTag(json_object_dotget_string(config_node, buffer));
 		}
 		App->scene->root->SetUUID(json_object_dotget_number(config_node, "Scene.Properties.UUID"));
-		App->scene->root->SetName(App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, "Scene.Properties.Name")));
+		App->scene->root->SetName(json_object_dotget_string_with_std(config_node, "Scene.Properties.Name"));
 		std::vector<LoadSceneSt> templist;
 		std::vector<GameObject*> mesh_gos;
 		if (NUmberGameObjects > 0)
@@ -157,8 +157,8 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			{
 				std::string name = "GameObject" + std::to_string(i);
 				name += ".";
-				char* nameGameObject = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
-				char* tagGameObject = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Tag"));
+				const char* nameGameObject = json_object_dotget_string_with_std(config_node, name + "Name");
+				const char* tagGameObject = json_object_dotget_string_with_std(config_node, name + "Tag");
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
 				if(App->scene->FindGameObjectWithTag(tagGameObject))obj->SetTag(tagGameObject);
@@ -350,7 +350,7 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 			{
 				std::string name = "GameObject" + std::to_string(i);
 				name += ".";
-				char* nameGameObject = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+				const char* nameGameObject = json_object_dotget_string_with_std(config_node, name + "Name");
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
 				// Now Check that the name is not repet
@@ -418,7 +418,7 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab)
 			{
 				std::string name = "GameObject" + std::to_string(i);
 				name += ".";
-				char* nameGameObject = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+				const char* nameGameObject = json_object_dotget_string_with_std(config_node, name + "Name");
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
 				// Now Check that the name is not repet
@@ -628,7 +628,7 @@ void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const cha
 		json_object_clear(config);
 		json_object_dotset_string_with_std(config, "Material.Directory Material", fileName);
 		json_object_dotset_number_with_std(config, "Material.UUID Resource", material->GetUUID());
-		json_object_dotset_string_with_std(config, "Material.Name", material->name);
+		json_object_dotset_string_with_std(config, "Material.Name", material->name.c_str());
 		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
 		std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
 		json_object_dotset_number_with_std(config, "Material.Last Write", cftime);
@@ -658,7 +658,7 @@ void JSONSerialization::SaveScript(const ResourceScript* script, const char* dir
 		json_object_clear(config);
 		json_object_dotset_string_with_std(config, "Script.Directory Script", fileName);
 		json_object_dotset_number_with_std(config, "Script.UUID Resource", script->GetUUID());
-		json_object_dotset_string_with_std(config, "Script.Name", script->name);
+		json_object_dotset_string_with_std(config, "Script.Name", script->name.c_str());
 		json_object_dotset_string_with_std(config, "Script.PathDLL", script->GetPathdll().c_str());
 		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
 		std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
@@ -686,7 +686,7 @@ void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const
 		json_object_clear(config);
 		json_object_dotset_string_with_std(config, "Material.Directory Script", fileName);
 		json_object_dotset_number_with_std(config, "Material.UUID Resource", animation->GetUUID());
-		json_object_dotset_string_with_std(config, "Material.Name", animation->name);
+		json_object_dotset_string_with_std(config, "Material.Name", animation->name.c_str());
 		json_serialize_to_file(config_file, nameJson.c_str());
 	}
 	json_value_free(config_file);
@@ -911,7 +911,7 @@ void JSONSerialization::CheckChangeName(GameObject& gameObject)
 				}
 				if (unique)
 				{
-					gameObject.SetName(App->GetCharfromConstChar(temp.c_str()));
+					gameObject.SetName(temp.c_str());
 					stop = true;
 				}
 			}

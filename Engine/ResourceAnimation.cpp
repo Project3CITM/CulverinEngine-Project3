@@ -20,7 +20,7 @@ ResourceAnimation::~ResourceAnimation()
 
 void ResourceAnimation::InitInfo(const char * resource_name, const char * path)
 {
-	name = App->GetCharfromConstChar(resource_name);
+	name = resource_name;
 	path_assets = path;
 }
 

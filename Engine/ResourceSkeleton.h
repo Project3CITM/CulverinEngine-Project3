@@ -26,7 +26,7 @@ public:
 	ResourceSkeleton(uint uid);
 	~ResourceSkeleton();
 
-	void InitInfo(const char* name, const char* path);
+	void InitInfo(char* name, const char* path);
 	bool LoadToMemory();
 	void DeleteToMemory();
 

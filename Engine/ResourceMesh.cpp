@@ -69,7 +69,7 @@ void ResourceMesh::InitRanges(uint num_vert, uint num_ind, uint num_normals)
 
 void ResourceMesh::InitInfo(const char* nameResource, const char* path)
 {
-	name = App->GetCharfromConstChar(nameResource);
+	name = nameResource;
 	path_assets = path;
 }
 

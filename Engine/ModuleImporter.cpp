@@ -95,7 +95,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 {	
 	static int count = 0;
 	GameObject* objChild = new GameObject(obj);
-	objChild->SetName(App->GetCharfromConstChar(node->mName.C_Str()));
+	objChild->SetName(node->mName.C_Str());
 
 	CompTransform* trans = (CompTransform*)objChild->AddComponent(C_TRANSFORM);
 	ProcessTransform(node, trans);
@@ -109,7 +109,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 		{
 			newObj = new GameObject(obj);
 			std::string newName = "Submesh" + std::to_string(i);
-			newObj->SetName(App->GetCharfromConstChar(newName.c_str()));
+			newObj->SetName(newName.c_str());
 			CompTransform* newTrans = (CompTransform*)newObj->AddComponent(C_TRANSFORM);
 			ProcessTransform(node, newTrans);
 		}
@@ -135,7 +135,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 {
 	static int count = 0;
 	GameObject* objChild = new GameObject(obj);
-	objChild->SetName(App->GetCharfromConstChar(node->mName.C_Str()));
+	objChild->SetName(node->mName.C_Str());
 
 	CompTransform* trans = (CompTransform*)objChild->AddComponent(C_TRANSFORM);
 	ProcessTransform(node, trans);
@@ -149,7 +149,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 		{
 			newObj = new GameObject(obj);
 			std::string newName = "Submesh" + std::to_string(i);
-			newObj->SetName(App->GetCharfromConstChar(newName.c_str()));
+			newObj->SetName(newName.c_str());
 			CompTransform* newTrans = (CompTransform*)newObj->AddComponent(C_TRANSFORM);
 			ProcessTransform(node, newTrans);
 		}
@@ -245,7 +245,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 				}
 			}
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, file);
-			obj->SetName(App->GetCharfromConstChar(App->fs->FixName_directory(file).c_str()));
+			obj->SetName(App->fs->FixName_directory(file).c_str());
 
 			//Now Save Serialitzate OBJ -> Prefab
 			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
@@ -315,7 +315,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 		if (scene != nullptr)
 		{
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, resourcesToReimport);
-			obj->SetName(App->GetCharfromConstChar(App->fs->FixName_directory(file).c_str()));
+			obj->SetName(App->fs->FixName_directory(file).c_str());
 
 			//Now Save Serialitzate OBJ -> Prefab
 			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();

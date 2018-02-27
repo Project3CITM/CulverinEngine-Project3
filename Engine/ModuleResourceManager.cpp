@@ -391,7 +391,7 @@ Resource* ModuleResourceManager::GetResource(const char* name)
 	std::map<uint, Resource*>::iterator it = resources.begin();
 	for (int i = 0; i < resources.size(); i++)
 	{
-		if (strcmp(it->second->name, name) == 0)
+		if (strcmp(it->second->name.c_str(), name) == 0)
 		{
 			return it->second;
 		}
@@ -555,7 +555,7 @@ Resource*  ModuleResourceManager::ShowResources(bool& active, Resource::Type typ
 			ImGui::PushID(i);
 			if (type == it->second->GetType())
 			{
-				ImGui::ButtonEx(it->second->name);
+				ImGui::ButtonEx(it->second->name.c_str());
 				if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 				{
 					if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
@@ -616,7 +616,7 @@ void ModuleResourceManager::ShowAllResources(bool& active)
 				ImGui::Bullet();
 				ImGui::Text("Name: %s", it->second->name);
 				char namedit[50];
-				strcpy_s(namedit, 50, it->second->name);
+				strcpy_s(namedit, 50, it->second->name.c_str());
 				ImGui::AlignFirstTextHeightToWidgets();
 				ImGui::Text("Edit Name: "); ImGui::SameLine();
 				if (ImGui::InputText("##nameModel", namedit, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
@@ -702,7 +702,7 @@ void ModuleResourceManager::Save()
 			name += ".";
 			json_object_dotset_number_with_std(config_node, name + "UUID & UUID Directory", it->second->GetUUID());
 			json_object_dotset_number_with_std(config_node, name + "Type", (int)it->second->GetType());
-			json_object_dotset_string_with_std(config_node, name + "Name", it->second->name);
+			json_object_dotset_string_with_std(config_node, name + "Name", it->second->name.c_str());
 			json_object_dotset_string_with_std(config_node, name + "PathAssets", it->second->path_assets.c_str());
 			if (it->second->GetType() == Resource::Type::SCRIPT)
 			{
@@ -746,14 +746,14 @@ void ModuleResourceManager::Load()
 					{
 						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
 						ResourceMesh* mesh = (ResourceMesh*)CreateNewResource(type, uid);
-						mesh->name = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+						mesh->name = json_object_dotget_string_with_std(config_node, name + "Name");
 						break;
 					}
 					case Resource::Type::MATERIAL:
 					{
 						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
 						ResourceMaterial* material = (ResourceMaterial*)CreateNewResource(type, uid);
-						material->name = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+						material->name = json_object_dotget_string_with_std(config_node, name + "Name");
 						break;
 					}
 					case Resource::Type::SCRIPT:
@@ -761,7 +761,7 @@ void ModuleResourceManager::Load()
 						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
 						ResourceScript* script = (ResourceScript*)CreateNewResource(type, uid);
 						script->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
-						script->name = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+						script->name = json_object_dotget_string_with_std(config_node, name + "Name");
 						script->SetPathDll(json_object_dotget_string_with_std(config_node, name + "PathDll"));
 						break;
 					}
@@ -770,7 +770,7 @@ void ModuleResourceManager::Load()
 						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
 						ResourceAnimation* animation = (ResourceAnimation*)CreateNewResource(type, uid);
 						animation->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
-						animation->name = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+						animation->name = json_object_dotget_string_with_std(config_node, name + "Name");
 						break;
 					}
 					case Resource::Type::UNKNOWN:

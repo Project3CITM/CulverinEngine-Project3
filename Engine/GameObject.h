@@ -27,8 +27,8 @@ class GameObject
 {
 public:
 	GameObject(GameObject* parent = nullptr);
-	GameObject(char* nameGameObject);
-	GameObject(char* nameGameObject, uint uuid);
+	GameObject(std::string nameGameObject);
+	GameObject(std::string nameGameObject, uint uuid);
 	GameObject(const GameObject& copy, bool haveparent = false, GameObject* parent = nullptr);
 	~GameObject();
 
@@ -55,8 +55,8 @@ public:
 	void SetVisible(bool visible);
 	void SetStatic(bool set_static);
 	void FixedDelete(bool check_delete);
-	void SetName(char* name);
-	void SetTag(char* tag);
+	void SetName(const char* name);
+	void SetTag(const char* tag);
 
 	bool IsActive() const;
 	bool IsVisible() const;
@@ -149,7 +149,7 @@ public:
 
 private:
 	uint uid = 0;
-	char* name = "CHANGE THIS";
+	std::string name = "CHANGE THIS";
 	std::string tag = "undefined";
 	bool active = false;
 	bool visible = false;

@@ -23,7 +23,7 @@ ResourceScript::~ResourceScript()
 
 void ResourceScript::InitInfo(std::string path_dll_, std::string path_assets_)
 {
-	name = App->GetCharfromConstChar(App->fs->GetOnlyName(path_assets_).c_str());
+	name = App->fs->GetOnlyName(path_assets_).c_str();
 	path_dll = path_dll_;
 	path_assets = App->fs->GetToAsstes(path_assets_);
 }
@@ -152,7 +152,7 @@ void ResourceScript::IterateSceneToCheckScripts(GameObject * obj, std::vector<Co
 	for (uint i = 0; i < obj->GetNumChilds(); i++)
 	{
 		//Check if the GameObject has the script to reimport
-		CompScript* temp = (CompScript*)obj->GetChildbyIndex(i)->GetComponentByName(name);
+		CompScript* temp = (CompScript*)obj->GetChildbyIndex(i)->GetComponentByName(name.c_str());
 		if (temp != nullptr)
 		{
 			to_fill_vec->push_back(temp);

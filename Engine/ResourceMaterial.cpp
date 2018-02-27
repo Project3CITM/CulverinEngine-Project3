@@ -17,7 +17,7 @@ ResourceMaterial::~ResourceMaterial()
 
 void ResourceMaterial::InitInfo(const char* nameResource, const char* path)
 {
-	name = App->GetCharfromConstChar(nameResource);
+	name = nameResource;
 	path_assets = path;
 }
 

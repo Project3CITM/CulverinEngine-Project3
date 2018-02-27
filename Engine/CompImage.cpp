@@ -308,7 +308,7 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 			// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
 			std::string temp = std::to_string(countResources++);
 			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".UUID Resource", source_image->GetUUID());
-			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", source_image->name);
+			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", source_image->name.c_str());
 		}
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", source_image->GetUUID());
 	}
