@@ -79,7 +79,7 @@ bool Component::WantDelete() const
 
 float3 Component::GetGameObjectPos() const
 {
-	CompTransform* transfrom = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
+   	CompTransform* transfrom = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
 	if (transfrom != nullptr) return transfrom->GetPosGlobal();
 	else return float3::zero;
 }

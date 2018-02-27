@@ -25,6 +25,7 @@ class Shader;
 union Event;
 class CompLight;
 enum JP_COLLISION_TYPE;
+class Particle;
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
 /*--------------------------------------------------*/
@@ -42,7 +43,7 @@ enum EventType
 	/*------------------Gameplay System-----------------*/
 
 	/*------------------Particle System-----------------*/
-
+	EVENT_PARTICLE_DRAW,
 	/*----------------------Physics---------------------*/
 	EVENT_TRIGGER_COLLISION,
 	/*------------------Shader Pipeline-----------------*/
@@ -85,7 +86,6 @@ struct EDraw
 	{
 		DRAW_3D,			//3D Game Objects without alpha
 		DRAW_3D_ALPHA,		//3D Game Objects with alpha & World space canvas
-		DRAW_3D_ALPHA_PARTICLE, //3D alpha particles
 		DRAW_2D,			//2D GameObject / game object you want to draw with orthogonal perspective
 		DRAW_WORLD_CANVAS,	//World space canvas
 		DRAW_SCREEN_CANVAS	//Screen space canvas
@@ -93,6 +93,12 @@ struct EDraw
 	DrawType Dtype;
 	//float DistanceCamToObject;
 	Component* ToDraw;
+};
+
+struct EParticleDraw
+{
+	EventType type;
+	Particle* ToDraw = nullptr;
 };
 
 struct EDroppedFile
@@ -238,7 +244,7 @@ union Event
 	/*------------------Gameplay System-----------------*/
 
 	/*------------------Particle System-----------------*/
-
+	EParticleDraw particle;
 	/*----------------------Physics---------------------*/
 	ETrigger physics_collision;
 	/*------------------Shader Pipeline-----------------*/

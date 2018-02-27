@@ -3,6 +3,7 @@
 #include "ParticleSystem.h"
 #include "GL3W\include\glew.h"
 #include "ImGui\imgui.h"
+#include "ModuleEventSystem.h"
 
 float ParticleSystem_Lerp(float v0, float v1, float time, float Maxtime)
 {
@@ -304,7 +305,14 @@ bool Particle::Update(float dt)
 
 bool Particle::PostUpdate(float dt)
 {
-	if (!MeshChanged) DrawParticle();
+	if (!MeshChanged)
+	{
+		Event draw_event;
+		draw_event.particle.type = EventType::EVENT_PARTICLE_DRAW;
+		draw_event.particle.ToDraw = this;
+
+		PushEvent(draw_event);
+	}
 	if (Properties.LifetimeActual >= Properties.LifetimeMax) ToDelete = true;
 
 	return true;
@@ -418,6 +426,7 @@ void Particle::OrientateParticle()
 	case 1: //Billboard
 	{
 		float3 Direction = ParentParticleSystem->CameraPosition - Properties.Position;
+		Direction.Normalize();
 		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
 		break;
 	}
@@ -577,14 +586,22 @@ bool ParticleSystem::PreUpdate(float dt)
 	}
 	
 	bool ret = true;
-	for (std::list<Particle*>::iterator item = Particles.begin(); item != Particles.cend() && ret == true; ++item)
+	for (std::list<Particle*>::iterator item = Particles.begin(); item != Particles.cend() && ret == true;)
 	{
-		//long double X = (long double)CameraPosition.x - (long double)(*item)->Properties.Position.x;
-		//long double Y = (long double)CameraPosition.y - (long double)(*item)->Properties.Position.y;
-		//long double Z = (long double)CameraPosition.z - (long double)(*item)->Properties.Position.z;
-		//(*item)->CameraDistance = X*X + Y*Y + Z*Z;
+		bool to_delete = false;
+	
+		//Check if particle is alive
+	  /*if ((*item)->isDead())
+		{
+			Emitter.ParticleNumber--;
+			RELEASE(*item);
+			item = Particles.erase(item);
+			continue;
+		}*/
+		
 		(*item)->CameraDistance = (long double)((CameraPosition - (*item)->Properties.Position).Length());
 		ret = (*item)->PreUpdate(dt);
+		++item;		
 	}
 
 	return ret;
@@ -663,17 +680,9 @@ bool ParticleSystem::Update(float dt)
 bool ParticleSystem::PostUpdate(float dt)
 {
 	bool ret = true;
-	for (std::list<Particle*>::iterator item = Particles.begin(); item != Particles.cend() && ret == true; )
+	for (std::list<Particle*>::iterator item = Particles.begin(); item != Particles.cend() && ret == true; item++)
 	{
 		ret = (*item)->PostUpdate(dt);
-		if ((*item)->isDead())
-		{
-			Emitter.ParticleNumber--;
-			RELEASE(*item);
-			item = Particles.erase(item);
-		}
-		else
-			++item;
 	}
 	return ret;
 }

@@ -5,6 +5,7 @@
 #include "CompMesh.h"
 #include "EventDef.h"
 #include "CompParticleSystem.h"
+#include "ParticleSystem.h"
 
 //You use this function to push new events to the system, with that is no needed to use App->eventsystem->PushEvent(event), only PushEvent(event)
 void PushEvent(Event& event)
@@ -111,15 +112,16 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 			if (EListener != MEventListeners.end())
 				for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
 				{
-					switch (item._Ptr->_Myval.second.draw.type)
+					if (item._Ptr->_Myval.second.type == EVENT_PARTICLE_DRAW)
+					{ 
+						((Particle*)item._Ptr->_Myval.second.particle.ToDraw)->DrawParticle();
+					}
+					else switch (item._Ptr->_Myval.second.draw.type)
 					{
 					case EDraw::DrawType::DRAW_3D:
 					case EDraw::DrawType::DRAW_3D_ALPHA:
 					case EDraw::DrawType::DRAW_2D:
 						((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
-						break;
-					case EDraw::DrawType::DRAW_3D_ALPHA_PARTICLE:
-						((CompParticleSystem*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
 						break;
 					case EDraw::DrawType::DRAW_SCREEN_CANVAS:
 						(*item2)->OnEvent(item._Ptr->_Myval.second);
@@ -189,6 +191,9 @@ void ModuleEventSystem::PushEvent(Event& event)
 {
 	switch (event.type)
 	{
+	case EventType::EVENT_PARTICLE_DRAW:
+		MM3DADrawEvent.insert(std::pair<float, Event>(((Particle*)event.particle.ToDraw)->CameraDistance, event));
+		break;
 	case EventType::EVENT_DRAW:
 	{
 		float3 diff_vect = event.draw.ToDraw->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;

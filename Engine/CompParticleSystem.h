@@ -21,7 +21,6 @@ public:
 
 	void PreUpdate(float dt);
 	void Update(float dt);
-	void Draw();
 	void Clear();
 
 	// LOAD - SAVE METHODS ------------------
