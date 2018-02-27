@@ -218,8 +218,7 @@ void CompMaterial::ShowInspectorInfo()
 	}
 
 	ImGui::PopStyleVar();
-	ImGui::ColorEdit3("", (float*)&color);
-	
+	//ImGui::ColorEdit3("", (float*)&color);
 
 	int shader_pos = 0;
 	int program_pos = 0;
@@ -290,6 +289,11 @@ void CompMaterial::ShowInspectorInfo()
 			GetShaderProgram()->get_shader_text = true;
 		}
 	}
+
+	ImGui::Separator();
+	ImGui::SliderFloat("Alpha", &material->alpha, 0.0f, 1.0f);
+	ImGui::Separator();
+
 
 	ShowShadersEditors();
 

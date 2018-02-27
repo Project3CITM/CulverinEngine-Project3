@@ -63,7 +63,7 @@ public:
 	CompMesh(const CompMesh& copy, GameObject* parent);
 	~CompMesh();
 
-	void Draw();
+	void Draw(bool alpha = false);
 	void Clear();
 	void PreUpdate(float dt);
 	void Update(float dt);

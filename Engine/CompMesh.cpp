@@ -249,8 +249,15 @@ void CompMesh::ShowInspectorInfo()
 	ImGui::TreePop();
 }
 
-void CompMesh::Draw()
+void CompMesh::Draw(bool alpha)
 {
+	if (alpha)
+	{
+		glEnable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
+	}
+
+
 	if (render && resource_mesh != nullptr)
 	{
 		Material* material = App->renderer3D->default_material;
@@ -455,6 +462,13 @@ void CompMesh::Draw()
 			LOG("Cannot draw the mesh");
 		}
 	}
+	if (alpha)
+	{
+		glDisable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+	}
+
+
 }
 
 void CompMesh::Clear()

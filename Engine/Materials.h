@@ -38,6 +38,9 @@ public:
 	std::string name = "";
 	std::string path = "";
 
+	//ALPHA
+	float alpha = 1.0f;
+
 	//Variables Vector
 	std::vector<TextureVar>	textures;
 	std::vector<intVar>		int_variables;

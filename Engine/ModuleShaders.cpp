@@ -61,36 +61,41 @@ update_status ModuleShaders::PreUpdate(float dt)
 
 update_status ModuleShaders::Update(float dt)
 {
-	std::vector<ShaderProgram*>::iterator item = programs.begin();
+	std::vector<Material*>::iterator item = materials.begin();
 	static float time_dt = 0;
 	time_dt += dt * App->game_time.time_scale;
-	while (item != programs.end())
+	while (item != materials.end())
 	{
 		(*item)->Bind();
 
 		//TIME		
-		GLint timeLoc = glGetUniformLocation((*item)->programID, "_time");
+		GLint timeLoc = glGetUniformLocation((*item)->GetProgramID(), "_time");
 		glUniform1f(timeLoc, time_dt);
 
 		//CAMERA POSITION
 		float3 cam_pos = App->camera->GetPos();
-		GLint cameraLoc = glGetUniformLocation((*item)->programID, "_cameraPosition");
+		GLint cameraLoc = glGetUniformLocation((*item)->GetProgramID(), "_cameraPosition");
 		glUniform3fv(cameraLoc, 1, &cam_pos[0]);
+
+		//ALPHA
+		float alpha = (*item)->alpha;
+		GLint alphaLoc = glGetUniformLocation((*item)->GetProgramID(), "_alpha");
+		glUniform1f(alphaLoc, alpha);
 		
 		//LIGHTS
-		GLint lightsizeLoc = glGetUniformLocation((*item)->programID, "_numLights");
+		GLint lightsizeLoc = glGetUniformLocation((*item)->GetProgramID(), "_numLights");
 		std::vector<CompLight*> lights = App->module_lightning->GetSceneLights();
 		glUniform1i(lightsizeLoc, lights.size());
 		for (size_t i = 0; i < lights.size(); ++i) {
 
 			if(lights[i]->type == Light_type::DIRECTIONAL_LIGHT)
-			SetLightUniform((*item)->programID, "position", i,lights[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
+			SetLightUniform((*item)->GetProgramID(), "position", i,lights[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
 			if (lights[i]->type == Light_type::POINT_LIGHT)
-				SetLightUniform((*item)->programID, "position", i, lights[i]->GetParent()->GetComponentTransform()->GetPos());
-			SetLightUniform((*item)->programID, "type", i, (int)lights[i]->type);
-			SetLightUniform((*item)->programID, "l_color", i, lights[i]->color);
-			SetLightUniform((*item)->programID, "intensity", i, lights[i]->intensity);
-			SetLightUniform((*item)->programID, "ambientCoefficient", i, lights[i]->ambientCoefficient);
+				SetLightUniform((*item)->GetProgramID(), "position", i, lights[i]->GetParent()->GetComponentTransform()->GetPos());
+			SetLightUniform((*item)->GetProgramID(), "type", i, (int)lights[i]->type);
+			SetLightUniform((*item)->GetProgramID(), "l_color", i, lights[i]->color);
+			SetLightUniform((*item)->GetProgramID(), "intensity", i, lights[i]->intensity);
+			SetLightUniform((*item)->GetProgramID(), "ambientCoefficient", i, lights[i]->ambientCoefficient);
 
 		}
 		(*item)->Unbind();
