@@ -144,6 +144,7 @@
     <ClInclude Include="CompMesh.h" />
     <ClInclude Include="ImportScript.h" />
     <ClInclude Include="include_wwise.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="jpPhysicsRigidBody.h" />
     <ClInclude Include="jpPhysicsWorld.h" />
     <ClInclude Include="Materials.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="ModuleLightning.h" />
     <ClInclude Include="ModuleMap.h" />
     <ClInclude Include="ModulePhysics.h" />
+    <ClInclude Include="ModulePlayerActions.h" />
     <ClInclude Include="ModuleRenderGui.h" />
     <ClInclude Include="ModuleResourceManager.h" />
     <ClInclude Include="ModuleShaders.h" />
@@ -486,6 +488,7 @@
     <ClCompile Include="CompMesh.cpp" />
     <ClCompile Include="ImportScript.cpp" />
     <ClCompile Include="include_wwise.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="jpPhysicsRigidBody.cpp" />
     <ClCompile Include="jpPhysicsWorld.cpp" />
     <ClCompile Include="Materials.cpp" />
@@ -496,6 +499,7 @@
     <ClCompile Include="ModuleLightning.cpp" />
     <ClCompile Include="ModuleMap.cpp" />
     <ClCompile Include="ModulePhysics.cpp" />
+    <ClCompile Include="ModulePlayerActions.cpp" />
     <ClCompile Include="ModuleRenderGui.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleShaders.cpp" />

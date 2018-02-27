@@ -338,28 +338,9 @@ void CompCanvasRender::DrawGraphic()
 	{
 		return;
 	}
-
-
-	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	
-
-
-
-
-	GLint g_AttribLocationColor = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "Color_UI_ME");
-	GLint modelLoc = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "model");
-	GLint g_AttribLocationTexture = glGetUniformLocation(App->render_gui->default_ui_shader->programID, "Texture");
-
-	CompRectTransform* transform = (CompRectTransform*)parent->FindComponentByType(C_RECT_TRANSFORM);
-
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&transform->GetGlobalTransform().Transposed());
-	glUniform1i(g_AttribLocationTexture, 0);
-	glUniform4f(g_AttribLocationColor,graphic->GetColor().x, graphic->GetColor().y, graphic->GetColor().z, graphic->GetColor().w);
-	glGetError();
 
 	glActiveTexture(GL_TEXTURE0);
 	int texture = graphic->GetTextureID();

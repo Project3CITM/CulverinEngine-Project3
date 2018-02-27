@@ -1173,6 +1173,8 @@
     <ClInclude Include="Materials.h">
       <Filter>Engine\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="ModulePlayerActions.h" />
+    <ClInclude Include="InputManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1556,6 +1558,8 @@
     <ClCompile Include="Materials.cpp">
       <Filter>Engine\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="ModulePlayerActions.cpp" />
+    <ClCompile Include="InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">

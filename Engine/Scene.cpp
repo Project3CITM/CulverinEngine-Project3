@@ -32,7 +32,7 @@
 #include "Gl3W/include/glew.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
-
+#include "DefaultShaders.h"
 #include <direct.h>
 
 //#include "..\..\3D-Engine\ScriptingSystem\ScriptingSystem\ScriptManager.h"
@@ -1156,6 +1156,7 @@ GameObject * Scene::CreateCanvas(GameObject * parent)
 	CompCanvas* canvas = (CompCanvas*)obj->AddComponent(Comp_Type::C_CANVAS);
 	canvas->Enable();
 	canvas->SetDefaultTexture(App->renderer3D->id_checkImage);
+	canvas->SetDefaultUIShader(App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert));
 
 	if (parent == nullptr)
 	{

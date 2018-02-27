@@ -4,6 +4,8 @@
 #include "Component.h"
 #include "EventDef.h"
 #include <vector>
+class ShaderProgram;
+
 class CompCanvasRender;
 class CompRectTransform;
 class CompGraphic;
@@ -31,15 +33,25 @@ public:
 	void RemoveGraphic(CompGraphic* to_remove);
 	void DrawDebugRectTransform();
 	void DrawGraphic();
+
+	void SetDefaultUIShader(ShaderProgram* shader);
 	void SetDefaultTexture(int texture);
 	int GetDefaultTexture()const;
+
 private:
 public:
+	enum DisplayMode
+	{
+		SCREEN_VIEW_MODE,
+		WORLD_VIEW_MODE
+	};
 private:
+	DisplayMode display = DisplayMode::SCREEN_VIEW_MODE;
 	Event draw_mode;
 	int default_texture_id;
 	CompRectTransform* my_transform = nullptr;
 	std::vector<CompGraphic*> graphic_vector;
+	ShaderProgram* default_ui_shader = nullptr;
 
 };
 

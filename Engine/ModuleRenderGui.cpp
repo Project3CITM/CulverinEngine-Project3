@@ -42,7 +42,6 @@ bool ModuleRenderGui::Init(JSON_Object * node)
 bool ModuleRenderGui::Start()
 {
 
-	default_ui_shader = App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert);
 
 	return true;
 }
@@ -195,93 +194,16 @@ void ModuleRenderGui::WorldSpaceDraw()
 
 void ModuleRenderGui::ScreenSpaceDraw(bool debug)
 {
-	ImGuiIO& io = ImGui::GetIO();
-
-	int total_width = (int)(io.DisplaySize.x * window_scale);
-	int total_height = (int)(io.DisplaySize.y * window_scale);
-	if (total_width == 0 || total_height == 0)
-		return;
-
-	// Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers, polygon fill.
-	GLenum last_active_texture; glGetIntegerv(GL_ACTIVE_TEXTURE, (GLint*)&last_active_texture);
-	glActiveTexture(GL_TEXTURE0);
-	GLint last_program; glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
-	GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
-	GLint last_array_buffer; glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
-	GLint last_element_array_buffer; glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &last_element_array_buffer);
-	GLint last_vertex_array; glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
-	GLint last_polygon_mode[2]; glGetIntegerv(GL_POLYGON_MODE, last_polygon_mode);
-	GLint last_viewport[4]; glGetIntegerv(GL_VIEWPORT, last_viewport);
-	GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
-	GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
-	GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
-	GLboolean last_enable_texture_2D = glIsEnabled(GL_TEXTURE_2D);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-
-	glViewport(0, 0, (GLsizei)total_width, (GLsizei)total_height);
-
 	
-	const float ortho_projection[4][4] =
-	{
-		{ 2.0f / io.DisplaySize.x,	0.0f,						 0.0f, 0.0f },
-		{ 0.0f,						2.0f / io.DisplaySize.y,	 0.0f, 0.0f },
-		{ 0.0f,						0.0f,						-1.0f, 0.0f },
-		{ -1.0f,						-1.0f,						 0.0f, 1.0f },
-	};
 	//Draw
 	for (int i = 0; i < screen_space_canvas.size(); i++)
 	{
 		screen_space_canvas[i]->DrawDebugRectTransform();
-	}
-	default_ui_shader->Bind();
-	GLint g_AttribLocationProjMtx = glGetUniformLocation(default_ui_shader->programID, "ProjMtx");
-	if(App->engine_state!=EngineState::STOP|| debug_draw)
-	{
-		glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
-
-	}
-	else
-	{
-		Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
-		glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
-
-	}
+	}	
 	for (int i = 0; i < screen_space_canvas.size(); i++)
 	{
 		screen_space_canvas[i]->DrawGraphic();
-	}
-	//End Draw
-	// Restore modified state
-	default_ui_shader->Unbind();
-	glUseProgram(last_program);
-	glBindTexture(GL_TEXTURE_2D, last_texture);
-	glActiveTexture(last_active_texture);
-	glBindVertexArray(last_vertex_array);
-	glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, last_element_array_buffer);
-	
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glPopAttrib();
-	if (last_enable_blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
-	if (last_enable_cull_face) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
-	if (last_enable_depth_test) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
-	if (last_enable_texture_2D) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
-
-	glPolygonMode(GL_FRONT, last_polygon_mode[0]); glPolygonMode(GL_BACK, last_polygon_mode[1]);
-	glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
-
-	
-	
+	}	
 	screen_space_canvas.clear();
 }
 
@@ -289,7 +211,6 @@ void ModuleRenderGui::ScreenSpaceDraw(bool debug)
 bool ModuleRenderGui::CleanUp()
 {
 
-	RELEASE(default_ui_shader);
 	return true;
 }
 

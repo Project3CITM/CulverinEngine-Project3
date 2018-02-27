@@ -1,5 +1,8 @@
 #include "CompCanvas.h"
 #include "Application.h"
+#include "ModuleRenderer3D.h"
+#include "CompCamera.h"
+
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 #include "GameObject.h"
@@ -9,6 +12,10 @@
 #include "ModuleEventSystem.h"
 #include "ModuleRenderGui.h"
 #include "CompRectTransform.h"
+#include "DefaultShaders.h"
+#include"ModuleShaders.h"
+#include "ModuleFramebuffers.h"
+#include"ShadersLib.h"
 CompCanvas::CompCanvas(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
@@ -51,6 +58,8 @@ void CompCanvas::Clear()
 			App->render_gui->screen_space_canvas.erase(App->render_gui->screen_space_canvas.begin() + i);
 		}
 	}
+	RELEASE(default_ui_shader);
+
 }
 
 void CompCanvas::ShowOptions()
@@ -138,6 +147,8 @@ void CompCanvas::Save(JSON_Object* object, std::string name, bool saveScene, uin
 void CompCanvas::Load(const JSON_Object* object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	default_ui_shader=App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert);
+
 	//...
 	Enable();
 }
@@ -186,11 +197,98 @@ void CompCanvas::DrawDebugRectTransform()
 }
 void CompCanvas::DrawGraphic()
 {
-	for (int i = 0; i < graphic_vector.size(); i++)
-	{
-		graphic_vector[i]->DrawGraphic();
-	}
 	
+		ImGuiIO& io = ImGui::GetIO();
+
+		if (io.DisplaySize.x == 0 || io.DisplaySize.y == 0)
+			return;
+
+		// Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers, polygon fill.
+		GLenum last_active_texture; glGetIntegerv(GL_ACTIVE_TEXTURE, (GLint*)&last_active_texture);
+		glActiveTexture(GL_TEXTURE0);
+		GLint last_program; glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
+		GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
+		GLint last_array_buffer; glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
+		GLint last_element_array_buffer; glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &last_element_array_buffer);
+		GLint last_vertex_array; glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
+		GLint last_polygon_mode[2]; glGetIntegerv(GL_POLYGON_MODE, last_polygon_mode);
+		GLint last_viewport[4]; glGetIntegerv(GL_VIEWPORT, last_viewport);
+		GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
+		GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
+		GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
+		GLboolean last_enable_texture_2D = glIsEnabled(GL_TEXTURE_2D);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_TEXTURE_2D);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+		glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
+
+
+		const float ortho_projection[4][4] =
+		{
+			{ 2.0f / io.DisplaySize.x,	0.0f,						 0.0f, 0.0f },
+			{ 0.0f,						2.0f / io.DisplaySize.y,	 0.0f, 0.0f },
+			{ 0.0f,						0.0f,						-1.0f, 0.0f },
+			{ -1.0f,						-1.0f,						 0.0f, 1.0f },
+		};
+		default_ui_shader->Bind();
+		GLint g_AttribLocationProjMtx = glGetUniformLocation(default_ui_shader->programID, "ProjMtx");
+		if (App->engine_state != EngineState::STOP)
+		{
+			glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
+
+		}
+		else
+		{
+			Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
+			glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+
+		}
+		for (int i = 0; i < graphic_vector.size(); i++)
+		{
+			CompGraphic* graphic = graphic_vector[i];
+			GLint g_AttribLocationColor = glGetUniformLocation(default_ui_shader->programID, "Color_UI_ME");
+			GLint modelLoc = glGetUniformLocation(default_ui_shader->programID, "model");
+			GLint g_AttribLocationTexture = glGetUniformLocation(default_ui_shader->programID, "Texture");
+			CompRectTransform* transform = (CompRectTransform*)graphic->GetParent()->FindComponentByType(C_RECT_TRANSFORM);
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)&transform->GetGlobalTransform().Transposed());
+			glUniform1i(g_AttribLocationTexture, 0);
+			glUniform4f(g_AttribLocationColor, graphic->GetColor().x, graphic->GetColor().y, graphic->GetColor().z, graphic->GetColor().w);
+			glGetError();
+			graphic->DrawGraphic();
+
+		}
+		//End Draw
+		// Restore modified state
+		default_ui_shader->Unbind();
+		glUseProgram(last_program);
+		glBindTexture(GL_TEXTURE_2D, last_texture);
+		glActiveTexture(last_active_texture);
+		glBindVertexArray(last_vertex_array);
+		glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, last_element_array_buffer);
+
+		glMatrixMode(GL_MODELVIEW);
+		glPopMatrix();
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glPopAttrib();
+		if (last_enable_blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
+		if (last_enable_cull_face) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
+		if (last_enable_depth_test) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+		if (last_enable_texture_2D) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
+
+		glPolygonMode(GL_FRONT, last_polygon_mode[0]); glPolygonMode(GL_BACK, last_polygon_mode[1]);
+		glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
+}
+void CompCanvas::SetDefaultUIShader(ShaderProgram * shader)
+{
+	default_ui_shader = shader;
 }
 void CompCanvas::SetDefaultTexture(int texture)
 {

@@ -3,7 +3,6 @@
 #include "Module.h"
 #include "Globals.h"
 
-class ShaderProgram;
 
 class CompCanvas;
 class CompInteractive;
@@ -32,7 +31,6 @@ public:
 
 	void OnResize(int width, int height);
 
-	ShaderProgram* default_ui_shader = nullptr;
 
 private:
 	int total_width = 0;
