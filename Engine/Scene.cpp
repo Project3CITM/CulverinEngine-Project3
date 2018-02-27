@@ -440,85 +440,67 @@ void Scene::TagWindow()
 			{
 				GameObject* target = ((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected();
 				target->SetTag((char*)defined_tags[i].c_str());
-				on_tag_edition = false;
+			}
+		}
+
+		//ImGui::Button
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.25f, 1.00f, 0.00f, 1.00f));
+		if (ImGui::Button("+ Add Tag"))
+		{
+			on_tag_creation = !on_tag_creation;
+			on_tag_delete = false;
+			memset(tag_buffer, '\0', 100);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("- Delete Tag") && defined_tags.size() > 0)
+		{
+			on_tag_delete = !on_tag_delete;
+			on_tag_creation = false;
+			memset(tag_buffer, '\0', 100);
+		}
+		ImGui::PopStyleColor();
+
+		if (on_tag_creation)
+		{
+			ImGui::SetItemDefaultFocus();
+			if (ImGui::InputText("New Tag", tag_buffer, 100, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+			{
+				defined_tags.push_back(tag_buffer);
+				memset(tag_buffer, '\0', 100);
+				on_tag_creation = false;
+			}
+		}
+
+		if (on_tag_delete && defined_tags.size() > 0)
+		{
+			uint size = defined_tags.size();
+			if (size == 1)
+			{
+				DeleteObjectsTag(defined_tags.front().c_str());
+				defined_tags.clear();
+				on_tag_delete = false;
+			}
+			else if (ImGui::BeginCombo("##Delete", "Select Delete"))
+			{
+				for (int i = 0; i < size; i++)
+				{
+					if (ImGui::Selectable(defined_tags[i].c_str()))
+					{
+						DeleteObjectsTag(defined_tags[i].c_str());
+
+						for (i; i < size - 1; i++)
+						{
+							defined_tags[i] = defined_tags[i + 1];
+						}
+						defined_tags.pop_back();
+						on_tag_delete = false;
+					}
+				}
+				ImGui::EndCombo();
 			}
 		}
 		ImGui::EndCombo();
-	}
-
-	if (ImGui::Button("Add Tag"))
-	{
-		on_tag_creation = !on_tag_creation;
-		on_tag_delete = false;
-		on_tag_edition = false;
-		memset(tag_buffer, '\0', 100);
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Edit Tag"))
-	{
-		on_tag_edition = !on_tag_edition;
-		on_tag_creation = false;
-		on_tag_delete = false;
-		memset(tag_buffer, '\0', 100);
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Delete Tag") && defined_tags.size() > 0)
-	{
-		on_tag_delete = !on_tag_delete;
-		on_tag_creation = false;
-		on_tag_edition = false;
-		memset(tag_buffer, '\0', 100);
-	}
-
-	if(on_tag_creation)
-	{
-		ImGui::SameLine();
-		ImGui::SetItemDefaultFocus();
-		if (ImGui::InputText("New Tag", tag_buffer, 100, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
-		{
-			defined_tags.push_back(tag_buffer);
-			memset(tag_buffer, '\0', 100);
-			on_tag_creation = false;
-		}
-	}
-
-	if (on_tag_edition)
-	{
-		uint size = defined_tags.size();
-		for (uint k = 0; k < size; k++)
-		{
-
-		}
-	}
-
-	if (on_tag_delete && defined_tags.size() > 0)
-	{
-		uint size = defined_tags.size();
-		if (size == 1)
-		{
-			DeleteObjectsTag(defined_tags.front().c_str());
-			defined_tags.clear();
-			on_tag_delete = false;
-		}
-		else if (ImGui::BeginCombo("##Delete", "Select Delete"))
-		{
-			for (int i = 0; i < size; i++)
-			{
-				if (ImGui::Selectable(defined_tags[i].c_str()))
-				{
-					DeleteObjectsTag(defined_tags[i].c_str());
-
-					for (i; i < size - 1; i++)
-					{
-						defined_tags[i] = defined_tags[i + 1];
-					}
-					defined_tags.pop_back();
-					on_tag_delete = false;
-				}
-			}
-			ImGui::EndCombo();
-		}
-	}
+	}	
 }
 
 void Scene::DeleteObjectsTag(const char * tag)
@@ -536,6 +518,31 @@ void Scene::DeleteObjectsTag(const char * tag)
 		childs[k]->SetTag("undefined");
 	}
 	childs.clear();
+}
+
+bool Scene::FindTag(const char * tag) const
+{
+	uint size = defined_tags.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (strcmp(tag, defined_tags[k].c_str()) == 0)return true;
+	}
+	return false;
+}
+
+uint Scene::TagsSize() const
+{
+	return defined_tags.size();
+}
+
+void Scene::AddTag(const char * str)
+{
+	if(!FindTag(str))defined_tags.push_back(str);
+}
+
+std::vector<std::string>* Scene::GetTagsVec()
+{
+	return &defined_tags;
 }
 
 void Scene::ModificateParent(GameObject* child, GameObject* new_parent)

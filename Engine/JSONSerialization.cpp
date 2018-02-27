@@ -44,6 +44,16 @@ std::string JSONSerialization::SaveScene()
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
 		json_object_dotset_number_with_std(config, "Scene.Info.Number of GameObjects", count);
+		json_object_dotset_number_with_std(config, "Scene.Info.Tags.Number of Tags", App->scene->TagsSize());
+		std::vector<std::string>* tag_ptr = App->scene->GetTagsVec();
+		uint size = tag_ptr->size();
+		for (uint k = 0; k < size; k++)
+		{
+			char buffer[200];
+			sprintf(buffer, "Scene.Info.Tags.Tag%i", k);
+			json_object_dotset_string_with_std(config, buffer, tag_ptr->at(k).c_str());
+		}
+
 		config_node = json_object_get_object(config, "Scene");
 
 		std::string nameScene = "Scene.Properties.";
@@ -130,6 +140,13 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		config = json_value_get_object(config_file);
 		config_node = json_object_get_object(config, "Scene");
 		int NUmberGameObjects = json_object_dotget_number(config_node, "Info.Number of GameObjects");
+		int number_of_tags = json_object_dotget_number(config_node, "Info.Tags.Number of Tags");
+		for (uint k = 0; k < number_of_tags; k++)
+		{
+			char buffer[200];
+			sprintf(buffer, "Info.Tags.Tag%i", k);
+			App->scene->AddTag(json_object_dotget_string(config_node, buffer));
+		}
 		App->scene->root->SetUUID(json_object_dotget_number(config_node, "Scene.Properties.UUID"));
 		App->scene->root->SetName(App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, "Scene.Properties.Name")));
 		std::vector<LoadSceneSt> templist;
@@ -144,7 +161,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				char* tagGameObject = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Tag"));
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
-				obj->SetTag(tagGameObject);
+				if(App->scene->FindGameObjectWithTag(tagGameObject))obj->SetTag(tagGameObject);
 				bool static_obj = json_object_dotget_boolean_with_std(config_node, name + "Static");
 				obj->SetStatic(static_obj);
 				bool aabb_active = json_object_dotget_boolean_with_std(config_node, name + "Bounding Box");
