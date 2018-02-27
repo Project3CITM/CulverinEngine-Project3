@@ -45,9 +45,9 @@ public:
 	void LookAt(float3 target_pos);
 	void SetLocalTransform();
 	void SetGlobalTransform();
-	void UpdateLocalTransform();
 	void UpdateGlobalTransform();
 	void UpdateGlobalMatrixRecursive();
+	void SetToUpdate();
 
 	void ResetMatrix();
 	void UpdateMatrix(ImGuizmo::MODE mode);

@@ -359,12 +359,10 @@ void GameObject::Update(float dt)
 		// BOUNDING BOX -----------------
 		if (bounding_box != nullptr)
 		{
-			//CompMesh* mesh = (CompMesh*)(FindComponentByType(C_MESH));
 			CompTransform* transform = (CompTransform*)(FindComponentByType(C_TRANSFORM));
-			if (transform != nullptr)
+			if (transform != nullptr && transform->GetUpdated());
 			{
 				//Resize the Bounding Box
-				//bounding_box->SetFromCenterAndSize(transform->GetPos(), transform->GetScale()*2);
 				box_fixed = *bounding_box;
 				box_fixed.TransformAsAABB(transform->GetGlobalTransform());
 			}
@@ -1956,7 +1954,7 @@ void GameObject::UpdateChildsMatrices()
 {
 	for (uint i = 0; i < childs.size(); i++)
 	{
-		childs[i]->GetComponentTransform()->UpdateGlobalMatrixRecursive();
+		childs[i]->GetComponentTransform()->SetToUpdate();
 	}
 }
 
