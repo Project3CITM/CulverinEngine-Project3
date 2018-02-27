@@ -91,6 +91,8 @@ void JSONSerialization::SaveChildGameObject(JSON_Object* config_node, const Game
 	json_object_dotset_number_with_std(config_node, name + "Parent", uuidParent);
 	// Name- --------
 	json_object_dotset_string_with_std(config_node, name + "Name", gameObject.GetName());
+	// Tag ----------
+	json_object_dotset_string_with_std(config_node, name + "Tag", gameObject.GetTag());
 	// Bounding Box ---------
 	json_object_dotset_boolean_with_std(config_node, name + "Bounding Box", gameObject.IsAABBActive());
 	// Static ---------
@@ -139,8 +141,10 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				std::string name = "GameObject" + std::to_string(i);
 				name += ".";
 				char* nameGameObject = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Name"));
+				char* tagGameObject = App->GetCharfromConstChar(json_object_dotget_string_with_std(config_node, name + "Tag"));
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
+				obj->SetTag(tagGameObject);
 				bool static_obj = json_object_dotget_boolean_with_std(config_node, name + "Static");
 				obj->SetStatic(static_obj);
 				bool aabb_active = json_object_dotget_boolean_with_std(config_node, name + "Bounding Box");

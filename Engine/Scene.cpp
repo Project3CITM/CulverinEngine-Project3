@@ -498,6 +498,7 @@ void Scene::TagWindow()
 		{
 			DeleteObjectsTag(defined_tags.front().c_str());
 			defined_tags.clear();
+			on_tag_delete = false;
 		}
 		else if (ImGui::BeginCombo("##Delete", "Select Delete"))
 		{
