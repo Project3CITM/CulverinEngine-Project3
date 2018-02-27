@@ -1254,7 +1254,9 @@ bool ParticleSystem::CreateParticle()
 
 	Quat Rotation = Quat::identity;
 	Emitter.GetRotation(Rotation);
+	Direction.Normalize();
 	Quat Rot = Rotation * Quat(Direction, 1.0f) *Rotation.Conjugated();
+	Rot.Normalize();
 	Direction = float3(Rot.x, Rot.y, Rot.z);
 
 	Particle* NewParticle = new Particle(this, InitialState, FinalState, Direction * (Emitter.Speed + RandGen.Float(-Emitter.SpeedVariation, Emitter.SpeedVariation)), offset, Emitter.Lifetime + RandGen.Float(-Emitter.LifetimeVariation, Emitter.LifetimeVariation));
