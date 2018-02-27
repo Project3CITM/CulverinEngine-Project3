@@ -480,7 +480,12 @@ void GameObject::SetName(char * name)
 
 void GameObject::SetTag(char * tag)
 {
+	if (strcmp(this->tag.c_str(), "undefined") != 0)
+	{
+		App->scene->RemoveTaggedObject(this);
+	}
 	this->tag = tag;
+	App->scene->AddTaggedObject(this);
 }
 
 const char* GameObject::GetName() const

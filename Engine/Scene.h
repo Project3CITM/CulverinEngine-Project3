@@ -49,12 +49,16 @@ public:
 	GameObject* GetGameObjectfromScene(bool& active);
 	GameObject* GetGameObjectbyuid(uint uid);
 	GameObject* FindGameObjectWithTag(const char* str);
-	
+	void		FindGameObjectsWithTag(const char* tag, std::vector<GameObject*>* vec); //You get a pointer to the vec not a new one!
+
 	void						TagWindow();
 	void						DeleteObjectsTag(const char* tag);
 	bool						FindTag(const char* tag)const;
 	uint						TagsSize()const;
 	void						AddTag(const char* str);
+	void						DeleteTag(const char* str, uint index = 0);
+	void						RemoveTaggedObject(const GameObject* target);
+	void						AddTaggedObject(const GameObject* target);
 	std::vector<std::string>*	GetTagsVec();
 
 	void ModificateParent(GameObject* child, GameObject* new_parent);
@@ -126,8 +130,8 @@ private:
 	bool					on_tag_creation = false;
 	bool					on_tag_delete = false;
 	char					tag_buffer[100];
-	std::vector<std::string> defined_tags;
-
+	std::vector<std::string>				defined_tags;
+	std::vector<std::vector<GameObject*>*>	tagged_objects;
 };
 
 #endif

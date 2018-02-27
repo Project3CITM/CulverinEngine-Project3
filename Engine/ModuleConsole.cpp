@@ -100,6 +100,8 @@ void Console::ClearLog()
 
 void Console::AddLog(const char* fmt, ...) IM_FMTARGS(2)
 {
+	if (App != NULL && App->mode_game)return;
+	
 	char buf[1024];
 	va_list args;
 	va_start(args, fmt);

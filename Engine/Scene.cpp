@@ -424,10 +424,28 @@ GameObject* Scene::GetGameObjectbyuid(uint uid)
 
 GameObject * Scene::FindGameObjectWithTag(const char * str)
 {
-	std::vector<GameObject*> objs;
-	root->FindChildsWithTag(str, &objs);
-	if (objs.size() > 0)return objs[0];
-	else return nullptr;
+	uint size = defined_tags.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (strcmp(str, defined_tags[k].c_str()) == 0)
+		{
+			if(tagged_objects[k]->empty() == false)return tagged_objects[k]->front();
+			break;
+		}
+	}
+	return nullptr;
+}
+
+void Scene::FindGameObjectsWithTag(const char * tag, std::vector<GameObject*>* vec)
+{
+	uint size = defined_tags.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (strcmp(tag, defined_tags[k].c_str()) == 0)
+		{
+			vec = tagged_objects[k];
+		}
+	}
 }
 
 void Scene::TagWindow()
@@ -465,7 +483,7 @@ void Scene::TagWindow()
 			ImGui::SetItemDefaultFocus();
 			if (ImGui::InputText("New Tag", tag_buffer, 100, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
 			{
-				defined_tags.push_back(tag_buffer);
+				AddTag(tag_buffer);
 				memset(tag_buffer, '\0', 100);
 				on_tag_creation = false;
 			}
@@ -486,13 +504,7 @@ void Scene::TagWindow()
 				{
 					if (ImGui::Selectable(defined_tags[i].c_str()))
 					{
-						DeleteObjectsTag(defined_tags[i].c_str());
-
-						for (i; i < size - 1; i++)
-						{
-							defined_tags[i] = defined_tags[i + 1];
-						}
-						defined_tags.pop_back();
+						DeleteTag(defined_tags[i].c_str(), i);
 						on_tag_delete = false;
 					}
 				}
@@ -538,6 +550,75 @@ uint Scene::TagsSize() const
 void Scene::AddTag(const char * str)
 {
 	if(!FindTag(str))defined_tags.push_back(str);
+	std::vector<GameObject*>* vec = new std::vector<GameObject*>();
+	tagged_objects.push_back(vec);
+}
+
+void Scene::DeleteTag(const char * str, uint index)
+{
+	DeleteObjectsTag(str);
+	uint size = defined_tags.size();
+	if (index == 0)
+	{
+		for (uint k = 0; k < size; k++)
+		{
+			if (strcmp(str, defined_tags[k].c_str()) == 0)
+			{
+				index = k;
+				break;
+			}
+		}
+	}
+	for (index; index < size - 1; index++)
+	{
+		defined_tags[index] = defined_tags[index + 1];
+	}
+	defined_tags.pop_back();
+
+	RELEASE(tagged_objects[index]);
+
+	for (index; index < size - 1; index++)
+	{
+		tagged_objects[index] = tagged_objects[index + 1];
+	}
+	
+	tagged_objects.pop_back();
+}
+
+void Scene::RemoveTaggedObject(const GameObject * target)
+{
+	uint size = defined_tags.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (strcmp(target->GetTag(), defined_tags[k].c_str()) == 0)
+		{
+			uint v_size = tagged_objects[k]->size();
+			for (uint d = 0; d < v_size; d++)
+			{
+				if (tagged_objects[k]->at(d) == target)
+				{
+					for (uint h = d; h < v_size - 1; h++)
+					{
+						tagged_objects[k][d] = tagged_objects[k][d + 1];
+					}
+					tagged_objects[k]->pop_back();
+					return;
+				}
+			}
+		}
+	}
+}
+
+void Scene::AddTaggedObject(const GameObject * target)
+{
+	uint size = defined_tags.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (strcmp(target->GetTag(), defined_tags[k].c_str()) == 0)
+		{
+			tagged_objects[k]->push_back((GameObject*)target);
+		}
+	}
 }
 
 std::vector<std::string>* Scene::GetTagsVec()
