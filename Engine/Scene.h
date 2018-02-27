@@ -49,7 +49,9 @@ public:
 	GameObject* GetGameObjectfromScene(bool& active);
 	GameObject* GetGameObjectbyuid(uint uid);
 	GameObject* FindGameObjectWithTag(const char* str);
+	
 	void TagWindow();
+	void DeleteObjectsTag(const char* tag);
 
 	void ModificateParent(GameObject* child, GameObject* new_parent);
 
@@ -117,7 +119,9 @@ private:
 	bool	load_scene = true;
 	std::vector<Component*> temp_vector;
 	Comp_Type				actualType = Comp_Type::C_UNKNOWN;
+	bool					on_tag_creation = false;
 	bool					on_tag_edition = false;
+	bool					on_tag_delete = false;
 	char					tag_buffer[100];
 	std::vector<std::string> defined_tags;
 

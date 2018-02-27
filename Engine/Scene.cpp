@@ -448,11 +448,29 @@ void Scene::TagWindow()
 
 	if (ImGui::Button("Add Tag"))
 	{
+		on_tag_creation = !on_tag_creation;
+		on_tag_delete = false;
+		on_tag_edition = false;
+		memset(tag_buffer, '\0', 100);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Edit Tag"))
+	{
 		on_tag_edition = !on_tag_edition;
+		on_tag_creation = false;
+		on_tag_delete = false;
+		memset(tag_buffer, '\0', 100);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Delete Tag") && defined_tags.size() > 0)
+	{
+		on_tag_delete = !on_tag_delete;
+		on_tag_creation = false;
+		on_tag_edition = false;
 		memset(tag_buffer, '\0', 100);
 	}
 
-	if(on_tag_edition)
+	if(on_tag_creation)
 	{
 		ImGui::SameLine();
 		ImGui::SetItemDefaultFocus();
@@ -460,9 +478,63 @@ void Scene::TagWindow()
 		{
 			defined_tags.push_back(tag_buffer);
 			memset(tag_buffer, '\0', 100);
-			on_tag_edition = false;
+			on_tag_creation = false;
 		}
 	}
+
+	if (on_tag_edition)
+	{
+		uint size = defined_tags.size();
+		for (uint k = 0; k < size; k++)
+		{
+
+		}
+	}
+
+	if (on_tag_delete && defined_tags.size() > 0)
+	{
+		uint size = defined_tags.size();
+		if (size == 1)
+		{
+			DeleteObjectsTag(defined_tags.front().c_str());
+			defined_tags.clear();
+		}
+		else if (ImGui::BeginCombo("##Delete", "Select Delete"))
+		{
+			for (int i = 0; i < size; i++)
+			{
+				if (ImGui::Selectable(defined_tags[i].c_str()))
+				{
+					DeleteObjectsTag(defined_tags[i].c_str());
+
+					for (i; i < size - 1; i++)
+					{
+						defined_tags[i] = defined_tags[i + 1];
+					}
+					defined_tags.pop_back();
+					on_tag_delete = false;
+				}
+			}
+			ImGui::EndCombo();
+		}
+	}
+}
+
+void Scene::DeleteObjectsTag(const char * tag)
+{
+	if (strcmp(root->GetTag(), tag) == 0)
+	{
+		root->SetTag("undefined");
+	}
+
+	std::vector<GameObject*> childs;
+	root->FindChildsWithTag(tag, &childs);
+	uint size = childs.size();
+	for (uint k = 0; k < size; k++)
+	{
+		childs[k]->SetTag("undefined");
+	}
+	childs.clear();
 }
 
 void Scene::ModificateParent(GameObject* child, GameObject* new_parent)
