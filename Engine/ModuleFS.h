@@ -105,6 +105,7 @@ public:
 	char* ConverttoChar(std::string name);
 	void NormalitzatePath(std::string& path) const;
 	std::string GetOnlyName(std::string file);
+	std::string GetToAsstes(std::string file);
 	const char* ConverttoConstChar(std::string name);
 	std::string CreateFolder(const char* file_name, bool forceCreate);
 	void CreateFolder(const char * file_name);

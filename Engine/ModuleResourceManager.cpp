@@ -70,6 +70,11 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 	{
 		ImportFile(App->input->dropedfiles);
 		App->input->dropedfiles.clear();
+
+		if (App->mode_game == false)
+		{
+			Save();
+		}
 	}
 
 	//Reimport All files ----------------
@@ -188,6 +193,10 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 		LOG("ReImporting...");
 		ImportFile(files_reimport, resources_to_reimport);
 		LOG("Finished ReImport.");
+		if (App->mode_game == false)
+		{
+			Save();
+		}
 		// After reimport, update time of vector of files in filesystem.
 		App->fs->UpdateFilesAssets();
 		files_reimport.clear();

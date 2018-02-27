@@ -298,6 +298,7 @@ void ModuleFS::GetAllFilesAssets(std::experimental::filesystem::path path, std::
 bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 {
 	namespace fs = std::experimental::filesystem;
+	int only_meta = 0;
 	std::list<std::string> files_to_import;
 	for (int i = 0; i < files.size(); i++)
 	{
@@ -327,6 +328,10 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 		if (fs::exists(temp) == false && strcmp(GetExtension(it._Ptr->_Myval.c_str()).c_str(), "scene.json") != 0)
 		{
 			App->importer->Import(it._Ptr->_Myval.c_str(), App->resource_manager->CheckFileType(it._Ptr->_Myval.c_str()), true);
+			if (only_meta == 0)
+			{
+				only_meta = 1;
+			}
 			//App->importer->Import(files[i].directory_name, App->resource_manager->CheckFileType(files[i].directory_name), true);
 		}
 		else 
@@ -361,6 +366,10 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 								finish = true;
 							}
 						}
+						if (only_meta == 0)
+						{
+							only_meta = 2;
+						}
 					}
 					break;
 				}
@@ -370,6 +379,10 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 					if (last_write != cftime)
 					{
 						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDMaterial(it._Ptr->_Myval.c_str()));
+						if (only_meta == 0)
+						{
+							only_meta = 2;
+						}
 					}
 					break;
 				}
@@ -379,6 +392,10 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 					if (last_write != cftime)
 					{
 						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDScript(it._Ptr->_Myval.c_str()));
+						if (only_meta == 0)
+						{
+							only_meta = 2;
+						}
 					}
 					break;
 				}
@@ -386,6 +403,10 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 			}
 		}
 		it++;
+	}
+	if (only_meta == 1 && App->mode_game == false)
+	{
+		App->resource_manager->Save();
 	}
 	return true;
 }
@@ -1107,6 +1128,19 @@ std::string ModuleFS::GetOnlyName(std::string file)
 	EndName = nameFile.find_last_of(".");
 	nameFile = nameFile.substr(0, EndName);
 
+	return nameFile;
+}
+
+std::string ModuleFS::GetToAsstes(std::string file)
+{
+	std::string nameFile = file;
+	NormalitzatePath(nameFile);
+	size_t EndName = nameFile.find_last_of("/");
+	nameFile = nameFile.substr(0, EndName);
+	EndName = nameFile.find_last_of("/");
+	nameFile = file;
+	nameFile = nameFile.substr(EndName + 1);
+	NormalitzatePath(nameFile);
 	return nameFile;
 }
 
