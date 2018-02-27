@@ -480,7 +480,7 @@ void CompTransform::UpdateMatrix(ImGuizmo::MODE mode)
 
 float3 CompTransform::GetForwardVector() const
 {
-	return float3(-local_transform[2][0], -local_transform[2][1], -local_transform[2][2]);
+	return float3(local_transform[0][2], local_transform[1][2], local_transform[2][2]);
 }
 
 float3 CompTransform::GetBackwardVector() const
@@ -490,7 +490,7 @@ float3 CompTransform::GetBackwardVector() const
 
 float3 CompTransform::GetUpVector() const
 {
-	return float3(local_transform[1][0], local_transform[1][1], local_transform[1][2]);
+	return float3(local_transform[0][1], local_transform[1][1], local_transform[2][1]);
 }
 
 float3 CompTransform::GetDownVector() const
@@ -500,7 +500,7 @@ float3 CompTransform::GetDownVector() const
 
 float3 CompTransform::GetRightVector() const
 {
-	return float3(local_transform[0][0], local_transform[0][1], local_transform[0][2]);
+	return float3(local_transform[0][0], local_transform[1][0], local_transform[2][0]);
 }
 
 float3 CompTransform::GetLeftVector() const
@@ -511,8 +511,8 @@ float3 CompTransform::GetLeftVector() const
 void CompTransform::SetForwardVector(float3 vec)
 {
 	vec = vec.Normalized();
-	local_transform[2][0] = vec.x;
-	local_transform[2][1] = vec.y;
+	local_transform[0][2] = vec.x;
+	local_transform[1][2] = vec.y;
 	local_transform[2][2] = vec.z;
 	toUpdate = true;
 }
@@ -520,8 +520,8 @@ void CompTransform::SetForwardVector(float3 vec)
 void CompTransform::SetBackwardVector(float3 vec)
 {
 	vec = vec.Normalized();
-	local_transform[2][0] = -vec.x;
-	local_transform[2][1] = -vec.y;
+	local_transform[0][2] = -vec.x;
+	local_transform[1][2] = -vec.y;
 	local_transform[2][2] = -vec.z;
 	toUpdate = true;
 }
@@ -529,18 +529,18 @@ void CompTransform::SetBackwardVector(float3 vec)
 void CompTransform::SetUpVector(float3 vec)
 {
 	vec = vec.Normalized();
-	local_transform[1][0] = vec.x;
+	local_transform[0][1] = vec.x;
 	local_transform[1][1] = vec.y;
-	local_transform[1][2] = vec.z;
+	local_transform[2][1] = vec.z;
 	toUpdate = true;
 }
 
 void CompTransform::SetDownVector(float3 vec)
 {
 	vec = vec.Normalized();
-	local_transform[1][0] = -vec.x;
+	local_transform[0][1] = -vec.x;
 	local_transform[1][1] = -vec.y;
-	local_transform[1][2] = -vec.z;
+	local_transform[2][1] = -vec.z;
 	toUpdate = true;
 }
 
@@ -548,8 +548,8 @@ void CompTransform::SetRightVector(float3 vec)
 {
 	vec = vec.Normalized();
 	local_transform[0][0] = vec.x;
-	local_transform[0][1] = vec.y;
-	local_transform[0][2] = vec.z;
+	local_transform[1][0] = vec.y;
+	local_transform[2][0] = vec.z;
 	toUpdate = true;
 }
 
@@ -557,8 +557,8 @@ void CompTransform::SetLeftVector(float3 vec)
 {
 	vec = vec.Normalized();
 	local_transform[0][0] = -vec.x;
-	local_transform[0][1] = -vec.y;
-	local_transform[0][2] = -vec.z;
+	local_transform[1][0] = -vec.y;
+	local_transform[2][0] = -vec.z;
 	toUpdate = true;
 }
 

@@ -72,7 +72,7 @@ CompCamera::~CompCamera()
 void CompCamera::PreUpdate(float dt)
 {
 	// Only the main camera will be able to apply culling (Game Mode)
-	if (culling && App->engine_state != EngineState::STOP && is_main)
+	if (culling && dt > 0.f && is_main)
 	{
 		// Iterate All GameObjects and apply culling
 		DoCulling();
@@ -81,7 +81,10 @@ void CompCamera::PreUpdate(float dt)
 
 void CompCamera::Update(float dt)
 {
-	UpdateFrustum();
+	if (parent->GetComponentTransform()->GetUpdated())
+	{
+		UpdateFrustum();
+	}
 }
 
 // Update frustum from transform component of the gameobject
@@ -90,12 +93,9 @@ void CompCamera::UpdateFrustum()
 	const CompTransform* transform = parent->GetComponentTransform();
 	
 	float4x4 trans = transform->GetGlobalTransform();
-
-	frustum.pos = trans.TranslatePart();
-	float3 val = trans.WorldZ();
-	if (val == float3::zero)val = float3::unitZ;
-	frustum.front = val.Normalized();
-	frustum.up = frustum.front.Cross(-frustum.WorldRight()).Normalized();
+	frustum.pos = trans.Col3(3);
+	frustum.front = trans.Col3(2).Normalized();
+	frustum.up = trans.Col3(1).Normalized();
 }
 
 void CompCamera::Draw()
