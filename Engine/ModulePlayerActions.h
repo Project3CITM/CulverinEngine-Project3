@@ -1,9 +1,10 @@
 
-#ifndef _MODULEPLAYERACTION_
-#define _MODULEPLAYERACTION_
+#ifndef MODULE_PLAYER_ACTION_H
+#define MODULE_PLAYER_ACTION_H
 #include "Module.h"
 #include "Globals.h"
 
+typedef union SDL_Event SDL_Event;
 
 class InputManager;
 class ModulePlayerActions : public Module
@@ -12,12 +13,20 @@ public:
 	ModulePlayerActions(bool start_enabled = true);
 	~ModulePlayerActions();
 
+	update_status UpdateConfig(float dt);
+	bool SetEventListenrs();
+
+	void OnEvent(Event& event);
+
 
 	bool SaveConfig(JSON_Object* node);
+	void ReceiveEvent(SDL_Event* input_event);
+	InputManager* GetInputManager(const char* name) const;
+	InputManager* GetInputManager(const char* name);
 
 private:
-
-	std::vector<InputManager*> iteractive_vector;
+	int number_of_inputs = 0;
+	std::vector<InputManager*> interactive_vector;
 
 };
-#endif //_MODULEPLAYERACTION_
+#endif //MODULE_PLAYER_ACTION_H
