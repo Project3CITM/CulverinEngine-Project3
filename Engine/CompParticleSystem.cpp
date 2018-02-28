@@ -127,12 +127,13 @@ const std::string* CompParticleSystem::GetChildEmitter() const
 
 void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
-
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
+	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 }
 
 void CompParticleSystem::Load(const JSON_Object* object, std::string name)
 {
-
+	uid = json_object_dotget_number_with_std(object, name + "UUID");
 }
 
 bool CompParticleSystem::SaveParticleStates(const char* file_name, ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const

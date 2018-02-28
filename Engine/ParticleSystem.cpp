@@ -427,7 +427,7 @@ void Particle::OrientateParticle()
 	{
 		float3 Direction = ParentParticleSystem->CameraPosition - Properties.Position;
 		Direction.Normalize();
-		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		Properties.Rotation = Quat::LookAt(float3(1.0f, 0.0f, 0.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
 		break;
 	}
 	case 2: //VerticalBillboard
@@ -591,13 +591,13 @@ bool ParticleSystem::PreUpdate(float dt)
 		bool to_delete = false;
 	
 		//Check if particle is alive
-	  /*if ((*item)->isDead())
+	  if ((*item)->isDead())
 		{
 			Emitter.ParticleNumber--;
 			RELEASE(*item);
 			item = Particles.erase(item);
 			continue;
-		}*/
+		}
 		
 		(*item)->CameraDistance = (long double)((CameraPosition - (*item)->Properties.Position).Length());
 		ret = (*item)->PreUpdate(dt);

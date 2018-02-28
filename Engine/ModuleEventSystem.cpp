@@ -85,26 +85,26 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 			}
 	}
 	
-	std::multimap<float, Event>& MultimapToIterate = MM3DDrawEvent;
+	std::multimap<float, Event>* MultimapToIterate = &MM3DDrawEvent;
 	for (int i = 0; i < 3; i++)
 	{
 		switch (i)
 		{
 		case 0: //iterate and send MM3DDrawEvent
 			if (MM3DDrawEvent.size() == 0) continue;
-			MultimapToIterate = MM3DDrawEvent; break;
+			MultimapToIterate = &MM3DDrawEvent; break;
 		case 1: //iterate and send MM3DADrawEvent
 			if (MM3DADrawEvent.size() == 0) continue;
-			MultimapToIterate = MM3DADrawEvent; break;
+			MultimapToIterate = &MM3DADrawEvent; break;
 		case 2: //iterate and send MM2DCanvasDrawEvent
 			if (MM2DCanvasDrawEvent.size() == 0) continue;
-			MultimapToIterate = MM2DCanvasDrawEvent;
+			MultimapToIterate = &MM2DCanvasDrawEvent;
 			//TODO Set perspective to orthographic here
 			break; 
 		}
-		size = MultimapToIterate.size();
+		size = MultimapToIterate->size();
 		count = 0;
-		for (std::multimap<float, Event>::const_iterator item = MultimapToIterate.cbegin(); item != MultimapToIterate.cend();)
+		for (std::multimap<float, Event>::const_iterator item = MultimapToIterate->cbegin(); item != MultimapToIterate->cend();)
 		{
 			if (count >= size) break;
 			if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
@@ -133,7 +133,7 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 					}
 				}
 			else continue;
-			item = MultimapToIterate.erase(item);
+			item = MultimapToIterate->erase(item);
 			count++;
 		}
 		if (i == 2)
