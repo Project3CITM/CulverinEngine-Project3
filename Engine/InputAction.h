@@ -4,7 +4,7 @@
 
 class Key_Relation;
 
-enum Action_input_type
+enum ActionInputType
 {
 	UNKNOWN_ACTION=-1,
 	AXIS_ACTION,
@@ -13,18 +13,18 @@ enum Action_input_type
 };
 
 
-class Input_Action
+class InputAction
 {
 public:
 
-	Input_Action();
-	Input_Action(const char* name, Action_input_type action_type = Action_input_type::UNKNOWN_ACTION);
-	~Input_Action();
+	InputAction();
+	InputAction(const char* name, ActionInputType action_type = ActionInputType::UNKNOWN_ACTION);
+	~InputAction();
 
 public:
 
 	std::string name = "";
-	Action_input_type action_type = Action_input_type::UNKNOWN_ACTION;
+	ActionInputType action_type = ActionInputType::UNKNOWN_ACTION;
 	
 
 };

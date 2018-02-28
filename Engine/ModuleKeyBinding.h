@@ -4,6 +4,7 @@
 #include"SDL\include\SDL_scancode.h"
 #include"SDL\include\SDL_gamecontroller.h"
 #include"SDL\include\SDL_events.h"
+
 struct Key_Relation 
 {
 	Key_Relation(std::string name) : name(name) {}
@@ -28,16 +29,22 @@ struct Controller_Button_Device : public Key_Relation
 	SDL_GameControllerButton event_button_controller;
 };
 
+struct Mouse_Button_Device : public Key_Relation
+{
+	Mouse_Button_Device(int type_event, std::string name) :Key_Relation(name), event_button_mouse(type_event) {}
+	int event_button_mouse=0;
+
+	/*
+	#define SDL_BUTTON_LEFT     1
+	#define SDL_BUTTON_MIDDLE   2
+	#define SDL_BUTTON_RIGHT    3
+	*/
+};
+
 struct Mouse_Axis_Device : public Key_Relation
 {
 	Mouse_Axis_Device(SDL_EventType type_event, std::string name) :Key_Relation(name), event_axis_mouse(type_event) {}
 	SDL_EventType event_axis_mouse;
-};
-
-struct Mouse_Button_Device : public Key_Relation
-{
-	Mouse_Button_Device(SDL_EventType type_event, std::string name) :Key_Relation(name), event_button_mouse(type_event) {}
-	SDL_EventType event_button_mouse;
 };
 
 

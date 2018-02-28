@@ -87,12 +87,26 @@ bool ModuleKeyBinding::Init(JSON_Object * node)
 	key_binding_relations.push_back(Keyboard_Device(SDL_Scancode::SDL_SCANCODE_RSHIFT, "Rshift"));
 	
 	// MOUSE INPUT --------------------------------------------------------------
-	//Im not sure about this because here we are setting the mouse button up as an event 
-	//but the keyboard or controller doesn't have a SDL_Event and there is where is stored 
-	//the event of button/key up/down 
-	key_binding_relations.push_back(Mouse_Axis_Device(SDL_EventType::SDL_MOUSEMOTION, "Mousemotion"));
-	key_binding_relations.push_back(Mouse_Axis_Device(SDL_EventType::SDL_MOUSEBUTTONDOWN, "Rshift"));
-	key_binding_relations.push_back(Mouse_Axis_Device(SDL_EventType::SDL_MOUSEBUTTONUP, "Rshift"));
+	key_binding_relations.push_back(Mouse_Axis_Device(SDL_EventType::SDL_MOUSEMOTION, "MouseAxis"));
+	key_binding_relations.push_back(Mouse_Button_Device(1, "ButtonLeft"));
+	key_binding_relations.push_back(Mouse_Button_Device(2, "ButtonWheel"));
+	key_binding_relations.push_back(Mouse_Button_Device(3, "ButtonRight"));
+
+	// CONTROLLER INPUT------------------------------------------------------------
+	key_binding_relations.push_back(Controller_Button_Device(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A, "CButtonA"));
+	key_binding_relations.push_back(Controller_Button_Device(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B, "CButtonB"));
+	key_binding_relations.push_back(Controller_Button_Device(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X, "CButtonX"));
+	key_binding_relations.push_back(Controller_Button_Device(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y, "CButtonY"));
+
+	key_binding_relations.push_back(Controller_Button_Device(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSTICK, "CButtonLeftStick"));
+	key_binding_relations.push_back(Controller_Button_Device(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSTICK, "CButtonRightStick"));
+
+	key_binding_relations.push_back(Controller_Axis_Device(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX, "CRightX"));
+	key_binding_relations.push_back(Controller_Axis_Device(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX, "CLeftX"));
+	key_binding_relations.push_back(Controller_Axis_Device(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY, "CRightY"));
+	key_binding_relations.push_back(Controller_Axis_Device(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY, "CLeftY"));
+
+
 
 	return true;
 }

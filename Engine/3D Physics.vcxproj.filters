@@ -1178,7 +1178,7 @@
     <ClInclude Include="ModuleKeyBinding.h">
       <Filter>Engine\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="Input_Action.h">
+    <ClInclude Include="InputAction.h">
       <Filter>Engine\UI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1569,7 +1569,7 @@
     <ClCompile Include="ModuleKeyBinding.cpp">
       <Filter>Engine\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Input_Action.cpp">
+    <ClCompile Include="InputAction.cpp">
       <Filter>Engine\UI</Filter>
     </ClCompile>
   </ItemGroup>
