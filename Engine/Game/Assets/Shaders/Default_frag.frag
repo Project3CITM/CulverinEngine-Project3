@@ -69,7 +69,7 @@ vec3 blinnPhongDir(Light light, float lightInt, float Ka, float Kd, float Ks, fl
 																										 
 																										 
 		vec3 s =  normalize(light.position - surfacePos);
-        vec3 EyeDirection_tangentspace = TBN * _cameraPosition;
+        vec3 EyeDirection_tangentspace = ourPos;
         vec3 LightDirection_tangentspace = TBN *s;	
 vec3 E = normalize(EyeDirection_tangentspace);
 vec3 l = normalize(LightDirection_tangentspace);
