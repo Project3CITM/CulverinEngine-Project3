@@ -681,12 +681,19 @@ void ModuleResourceManager::Save()
 	JSON_Object* config;
 	JSON_Object* config_node;
 
-	//config_file = json_parse_file("Resources.json");
-	config_file = json_value_init_object();
+	config_file = json_parse_file("Resources.json");
 
-	if (config_file != nullptr)
+
+	if (config_file == nullptr)
+	{
+		config_file = json_value_init_object();
+	}
+	else if (config_file != nullptr)
 	{
 		config = json_value_get_object(config_file);
+	}
+	if (config_file != nullptr)
+	{
 		json_object_clear(config);
 		int num_resources = resources.size() - ResourcePrimitive;
 		json_object_dotset_number_with_std(config, "Resources.Info.Number of Resources", num_resources);
@@ -712,6 +719,7 @@ void ModuleResourceManager::Save()
 			it++;
 		}
 	}
+
 	json_serialize_to_file(config_file, "Resources.json");
 	json_value_free(config_file);
 }

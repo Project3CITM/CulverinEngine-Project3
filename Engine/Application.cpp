@@ -614,7 +614,7 @@ bool Application::SaveConfig()
 		json_object_set_boolean(config_node, "Mode Game", mode_game);
 		 
 		//Save ActualScene ----- 
-		json_object_set_string(config_node, "ActualScene", actual_scene.c_str()); //TODO ELLIOT
+		json_object_set_string(config_node, "ActualScene", fs->GetToAsstes(actual_scene).c_str()); //TODO ELLIOT
 
 
 		//Iterate all modules to save each respective info
