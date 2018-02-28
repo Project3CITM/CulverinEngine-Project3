@@ -4,6 +4,8 @@
 #include "WindowInspector.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "CSharpScript.h"
+#include "CompScript.h"
 
 CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
 {
@@ -78,7 +80,9 @@ void CompCheckBox::ShowInspectorInfo()
 	}
 	ImGui::PopStyleVar();
 
-	// Button Options --------------------------------------
+	current_transition_mode = TRANSITION_SPRITE;
+	ShowInspectorSpriteTransition();
+	// CheckBox Options --------------------------------------
 	if (ImGui::BeginPopup("OptionsCheckBox"))
 	{
 		ShowOptions();
@@ -104,4 +108,39 @@ void CompCheckBox::Load(const JSON_Object * object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	//...
 	Enable();
+}
+
+void CompCheckBox::OnClick()
+{
+	if (IsActivate() || !IsActive())
+		return;
+	if (linked_scripts.empty())
+	{
+		return;
+	}
+
+	uint size = linked_scripts.size();
+	for (uint k = 0; k < size; k++)
+	{
+		CompScript* comp_script = linked_scripts[k];
+
+		if (comp_script == nullptr)
+			continue;
+		linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
+	}
+	
+}
+
+void CompCheckBox::OnPointDown(Event event_input)
+{
+	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
+	{
+		return;
+	}
+
+	OnClick();
+	point_down = true;
+
+	UpdateSelectionState(event_input);
+	CheckBoxSwap();
 }

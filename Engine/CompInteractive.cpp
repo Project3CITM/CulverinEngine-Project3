@@ -585,6 +585,18 @@ void CompInteractive::PrepareHandleTransition()
 	HandleTransition(selection_state);
 }
 
+void CompInteractive::CheckBoxSwap()
+{
+	SelectionStates selection_state = current_selection_state;
+	if (IsActivate())
+	{
+		selection_state = SelectionStates::STATE_PRESSED;
+	}
+	HandleTransition(selection_state);
+}
+
+
+
 void CompInteractive::HandleTransition(SelectionStates selection_state)
 {
 	if (target_graphic == nullptr)

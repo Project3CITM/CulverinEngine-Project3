@@ -2,6 +2,10 @@
 #define COMPONENT_CHECK_BOX_H
 #include "CompInteractive.h"
 
+#include <vector>
+
+class CompScript;
+
 class CompCheckBox:public CompInteractive
 {
 public:
@@ -13,6 +17,11 @@ public:
 	void CopyValues(const CompCheckBox * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+	void OnClick();
+	void OnPointDown(Event event_input);
+
+private:
+	std::vector<CompScript*> linked_scripts;
 };
 
 #endif//COMPONENT_CHECK_BOX_H
