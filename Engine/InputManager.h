@@ -1,6 +1,6 @@
 #ifndef INPUT_MANAGER_H
 #define INPUT_MANAGER_H
-#include <string>
+#include "Globals.h"
 #include <vector>
 typedef union SDL_Event SDL_Event;
 class InputAction;
@@ -22,10 +22,11 @@ public:
 	void DeactiveBlockActive();
 	void ActiveWindowOpen();
 	void DeactiveWIndowOpen();
+
 	void SetActiveInput(bool set);
 	void SetBlockAction(bool set);
-
 	void SetName(const char* name);
+
 	const char* GetName()const;
 	bool GetBlockAction()const;
 	bool GetActiveInput()const;

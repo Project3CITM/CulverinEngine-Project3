@@ -1,6 +1,6 @@
 #include "InputManager.h"
 #include "ImGui/imgui.h"
-
+#include "InputAction.h"
 #define ACTION_LIMIT 50
 
 
@@ -27,7 +27,7 @@ void InputManager::ShowInspectorInfo()
 	ImGui::Text("Number of Action");
 	if (ImGui::InputInt("##number_of_action", &number_of_action))
 	{
-		/*
+		
 		if (number_of_action < 0)
 		{
 			number_of_action = 0;
@@ -40,7 +40,7 @@ void InputManager::ShowInspectorInfo()
 		{
 			for (int i = action_vector.size(); i < number_of_action; i++)
 			{
-				Action* action = new Action();
+				InputAction* action = new InputAction();
 				action_vector.push_back(action);
 			}
 		}
@@ -50,25 +50,25 @@ void InputManager::ShowInspectorInfo()
 			for (int i = 0; i < size; i++)
 			{
 
-				Action* action = action_vector.back();
+				InputAction* action = action_vector.back();
 				action_vector.pop_back();
 				RELEASE(action);
 			}
 		}
-		*/
+		
 	}
-	/*
+	
 	ImGui::Text("Action:");
-	for (std::vector<Action*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
+	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
 	{
-		std::string tree_action_name = (*it)->GetName() +"##"+ std::to_string(std::distance(action_vector.begin(), it));
-		bool active = ImGui::TreeNodeEx(tree_action_name.c_str());
-		if(active)
-		{
-			(*it)->ShowInspectorInfo();
-		}
+		//std::string tree_action_name = (*it)->GetName() +"##"+ std::to_string(std::distance(action_vector.begin(), it));
+	//	bool active = ImGui::TreeNodeEx(tree_action_name.c_str());
+		//if(active)
+	//	{
+		//	(*it)->ShowInspectorInfo();
+	//	}
 	}
-	*/
+	
 
 	ImGui::End();
 

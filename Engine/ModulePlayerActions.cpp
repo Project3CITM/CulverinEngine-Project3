@@ -92,33 +92,65 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 
 bool ModulePlayerActions::SetEventListenrs()
 {
-	/*
+	
 	AddListener(EventType::EVENT_BUTTON_MOUSE, this);
 	AddListener(EventType::EVENT_MOTION_MOUSE, this);
 	AddListener(EventType::EVENT_AXIS_CONTROLLER, this);
 	AddListener(EventType::EVENT_BUTTON_CONTROLLER, this);
-	AddListener(EventType::EVENT_KEYBOARD_CONTROLLER, this);
-	*/
+	AddListener(EventType::EVENT_KEYBOARD, this);
+	
 	return true;
 }
 
 void ModulePlayerActions::OnEvent(Event & custom_event)
 {
-	/*
+	
 	switch (custom_event.type)
 	{
 	case EventType::EVENT_BUTTON_MOUSE:
+		/*
+		RayCast2D
+		HandleInteractive
+		if Raycast2d don't hit Raycast3D
+
+		UpdateActions
+
+		
+		*/
 		break;
 	case EventType::EVENT_MOTION_MOUSE:
+		/*
+		RayCast2D
+		HandleInteractive
+		if Raycast2d don't hit Raycast3D	
+
+		UpdateActions
+		*/
+
 		break;
 	case EventType::EVENT_AXIS_CONTROLLER:
+		/*
+		UpdateActions
+		*/
 		break;
 	case EventType::EVENT_BUTTON_CONTROLLER:
+		/*
+		UpdateActions
+		*/
 		break;
-	case EventType::EVENT_KEYBOARD_CONTROLLER:
+	case EventType::EVENT_KEYBOARD:
+		/*
+		UpdateActions
+
+		Todo: implement a GetKey without InputAction?
+		Think update:
+			-first loop press T
+			-this frame T is pressed
+			-next frame T is not pressed<---how we update this (discuss this tomorrow)		
+		*/
 		break;
 	}
-	*/
+
 }
 
 bool ModulePlayerActions::SaveConfig(JSON_Object * node)

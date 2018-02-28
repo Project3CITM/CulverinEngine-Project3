@@ -60,6 +60,14 @@ enum EventType
 	EVENT_MOUSE_MOTION,
 	EVENT_PASS_COMPONENT,
 
+
+	EVENT_BUTTON_MOUSE,
+	EVENT_MOTION_MOUSE,
+	EVENT_AXIS_CONTROLLER,
+	EVENT_BUTTON_CONTROLLER,
+	EVENT_KEYBOARD,
+
+
 	EVENT_DELETE_GO, //Keep this event last
 	MAXEVENTS//Keep this at the bottom, needed to know how many events se have
 };
@@ -224,6 +232,42 @@ struct EPassComponent
 	Component* component = nullptr;
 
 };
+
+struct EButtonMouse
+{
+	EventType type;
+
+};
+struct EMotionMouse
+{
+	EventType type;
+
+};
+struct EAxisController
+{
+	EventType type;
+
+};
+struct EButtonController
+{
+	EventType type;
+
+};
+struct EKeyboard
+{
+	EventType type;
+
+};
+/*
+
+EVENT_BUTTON_MOUSE,
+EVENT_MOTION_MOUSE,
+EVENT_AXIS_CONTROLLER,
+EVENT_BUTTON_CONTROLLER,
+EVENT_KEYBOARD_CONTROLLER,
+
+
+*/
 /*--------------------------------------------------*/
 /*----------------------Event-----------------------*/
 /*--------------------------------------------------*/
@@ -258,6 +302,12 @@ union Event
 	/*------------------User Interface------------------*/
 	EPoint pointer;
 	EPassComponent pass_component;
+
+	EButtonMouse button_mouse;
+	EMotionMouse motion_mouse;
+	EAxisController axis_controller;
+	EButtonController button_controller;
+	EKeyboard keyboard;
 };
 
 #endif //_EVENTDEF_
