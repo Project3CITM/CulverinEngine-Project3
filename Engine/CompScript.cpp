@@ -36,7 +36,7 @@ CompScript::~CompScript()
 void CompScript::Init()
 {
 	//nameComponent = "New Sript (Script)";
-	//nameScript = "New Sript";
+	//nameScript = "New Script";
 	//editor = new Script_editor();
 	//editor->Start(nameScript.c_str());
 	//editor->SaveScript();
@@ -379,7 +379,7 @@ void CompScript::ShowFSMInspectorInfo()
 
 		/* Name of the Script */
 		ImGui::Text("NAME:"); ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resource_script->name);
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resource_script->name.c_str());
 
 		ImGui::Spacing();
 
