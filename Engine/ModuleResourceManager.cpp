@@ -43,7 +43,7 @@ bool ModuleResourceManager::Init(JSON_Object* node)
 {
 	CreateResourceCube();
 	CreateResourcePlane();
-	Load();
+	//Load();
 
 	return true;
 }

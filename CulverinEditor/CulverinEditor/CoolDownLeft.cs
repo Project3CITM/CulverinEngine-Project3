@@ -26,7 +26,6 @@ public class CoolDownLeft : CulverinBehaviour
                 button_cd.Activate();
             }
         }
-
     }
 
     void OnClick()

@@ -62,7 +62,7 @@ private:
 
 	// FUNCTIONS ---------
 	/* Debug - Console */
-	static void ConsoleLog(MonoString* string);
+	static void ConsoleLog(MonoObject* string);
 
 	/* Input */
 	static mono_bool	GetKeyDown(int key);

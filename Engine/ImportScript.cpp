@@ -739,12 +739,13 @@ void ImportScript::LinkFunctions()
 }
 
 //Log messages into Engine Console
-void ImportScript::ConsoleLog(MonoString* string)
+void ImportScript::ConsoleLog(MonoObject* string)
 {
 	if (string != nullptr)
 	{
 		//Pass from MonoString to const char*
-		const char* message = mono_string_to_utf8(string);
+		MonoString* strings = mono_object_to_string(string, NULL);
+		const char* message = mono_string_to_utf8(strings);
 		LOG(message);
 	}
 }

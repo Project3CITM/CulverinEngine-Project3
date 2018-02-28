@@ -254,7 +254,7 @@ namespace CulverinEditor
 
         public override string ToString()
         {
-            string temp = (x.ToString() + ", " + y.ToString() + ", " + z.ToString());
+            string temp = "(" + (x.ToString() + ", " + y.ToString() + ", " + z.ToString()) + ")";
             return temp;
         }
 
