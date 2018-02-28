@@ -116,12 +116,15 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 					{ 
 						((Particle*)item._Ptr->_Myval.second.particle.ToDraw)->DrawParticle();
 					}
-					else switch (item._Ptr->_Myval.second.draw.type)
+					else switch (item._Ptr->_Myval.second.draw.Dtype)
 					{
 					case EDraw::DrawType::DRAW_3D:
-					case EDraw::DrawType::DRAW_3D_ALPHA:
+					
 					case EDraw::DrawType::DRAW_2D:
 						((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
+						break;
+					case EDraw::DrawType::DRAW_3D_ALPHA:
+						((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
 						break;
 					case EDraw::DrawType::DRAW_SCREEN_CANVAS:
 						(*item2)->OnEvent(item._Ptr->_Myval.second);

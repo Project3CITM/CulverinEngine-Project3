@@ -15,6 +15,7 @@ in vec4 ourColor;
 in vec2 TexCoord;
 in vec3 ourNormal;
 in vec3 ourPos;
+in mat3 TBN;
 
 uniform vec4 diff_color;			
 out vec4 color;						
@@ -39,15 +40,13 @@ uniform float a_shininess;
 									                                                                     
 vec3 blinnPhongDir(Light light, float lightInt, float Ka, float Kd, float Ks, float shininess, vec3 N)
 {																										 
-																										 
-																										 
-                                                                                                         
-																										 
+																							 
 	vec3 surfacePos = vec3(model * vec4(ourPos, 1));													 
 	vec3 surfaceToCamera = normalize(_cameraPosition - surfacePos);										 
 	vec3 lightDir;																						 
-																										 
-	vec3 normal = normalize(transpose(inverse(mat3(model)))*ourNormal * N);								 
+					
+																		 
+	vec3 normal = normalize(mat3(model) * N);//normalize(transpose(inverse(mat3(model)))*ourNormal);								 
 																										 
 	if (light.type != 0) {																				 
 																										 
@@ -69,15 +68,22 @@ vec3 blinnPhongDir(Light light, float lightInt, float Ka, float Kd, float Ks, fl
 																										 
 																										 
 																										 
-		vec3 s = normalize(light.position - surfacePos);												 
+		vec3 s =  normalize(light.position - surfacePos);
+        vec3 EyeDirection_tangentspace = TBN * _cameraPosition;
+        vec3 LightDirection_tangentspace = TBN *s;	
+vec3 E = normalize(EyeDirection_tangentspace);
+vec3 l = normalize(LightDirection_tangentspace);
+float cosTheta = clamp( dot( N,l ), 0,1 );		
+vec3 R = reflect(-l,N);
+float cosAlpha = clamp( dot( E,R ), 0,1 );												 
 																										 
 		float distanceToLight = length(light.position - surfacePos);									 
 		float attenuation = 1 / (1.0 + 0.1 * pow(distanceToLight,2));									 
 																										 
-		float diffuse = attenuation * Kd *lightInt * max(0, dot(normal , s));							 
+		float diffuse = attenuation * Kd *lightInt * cosTheta;//max(0, dot(normal , s));							 
 		float spec = 0;																					 
 		if (diffuse >0)																					 
-			spec = attenuation * Ks *lightInt* pow(max(0, dot(surfaceToCamera, reflect(-s, normal))), shininess);
+			spec = attenuation * Ks *lightInt* pow(cosAlpha, shininess);
 																												 
 		return vec3(diffuse,spec,attenuation);																	 
 																												 
@@ -98,7 +104,7 @@ void main()
 																												 
 																												 
 	vec3 color_texture = texture(albedo, TexCoord).xyz;															 
-	vec3 N = normalize(texture(normal_map,TexCoord).xyz);														 
+	vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1);														 
 	vec3 occlusion_texture = texture(occlusion_map,TexCoord).xyz;												 
     vec3 spec_texture = texture(specular_map, TexCoord).xyz;
 	vec3 normal = normalize(ourNormal);// + normal_map.x * vec3(1,0,0) + normal_map.y* vec3(0,1,0); 			 
@@ -123,4 +129,6 @@ void main()
 	final_color = normalize(final_color);																	
 	vec3 col = final_ambient* color_texture +vec3(0,0.03,0.07) + color_texture * (inten_final.x + inten_final.y * spec_texture.r)*occlusion_texture*final_color.rgb; 																						
 	color = vec4(col,_alpha);
+
+
 }

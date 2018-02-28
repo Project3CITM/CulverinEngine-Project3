@@ -23,6 +23,7 @@
 #include "glm\glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+
 CompMesh::CompMesh(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
 	uid = App->random->Int();
@@ -341,6 +342,7 @@ void CompMesh::Draw(bool alpha)
 			GLint view2Loc = glGetUniformLocation(material->GetProgramID(), "view");
 			GLint modelLoc = glGetUniformLocation(material->GetProgramID(), "model");
 			GLint viewLoc =  glGetUniformLocation(material->GetProgramID(), "viewproj");
+			GLint modelviewLoc = glGetUniformLocation(material->GetProgramID(), "modelview");
 
 			float4x4 matrixfloat = transform->GetGlobalTransform();
 
@@ -352,9 +354,13 @@ void CompMesh::Draw(bool alpha)
 				matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
 			};
 			
+			float4x4 ModelViewMatrix = temp.Inverted() * matrixfloat;
+			
+
 			glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());			
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
 			glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+			glUniformMatrix4fv(modelviewLoc, 1, GL_TRUE, ModelViewMatrix.ptr());
 
 			//---------------------------------------------
 	
@@ -393,7 +399,7 @@ void CompMesh::Draw(bool alpha)
 				glUniform1i(ShadowMapID, i);
 			}
 
-			int total_save_buffer = 8;
+			int total_save_buffer = 14;
 			uint bones_size_in_buffer = 0;
 
 			if (skeleton != nullptr)
@@ -423,7 +429,11 @@ void CompMesh::Draw(bool alpha)
 				glEnableVertexAttribArray(2);
 				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (5 * sizeof(float)));
 
-				if (skeleton != nullptr)
+				glEnableVertexAttribArray(5);
+				glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (8 * sizeof(float)) + bones_size_in_buffer);
+				glEnableVertexAttribArray(6);
+				glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (11 * sizeof(float)) + bones_size_in_buffer);
+				/*if (skeleton != nullptr)
 				{
 					glEnableVertexAttribArray(3);
 					glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (8 * sizeof(float)));
@@ -431,7 +441,7 @@ void CompMesh::Draw(bool alpha)
 					glEnableVertexAttribArray(4);
 					glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (12 * sizeof(float)));
 				}
-
+				*/
 				glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource_mesh->indices_id);
 				glDrawElements(GL_TRIANGLES, resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);

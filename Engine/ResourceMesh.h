@@ -54,7 +54,7 @@ public:
 	ResourceMesh(uint uid);
 	virtual ~ResourceMesh();
 
-	void Init(const float3* vert, const uint* ind, const float3* vert_normals, const float2* texCoord);
+	void Init(const float3* vert, const uint* ind, const float3* vert_normals, const float2* texCoord, const float3* tangs, const float3* bitangs);
 	void InitRanges(uint num_vert, uint num_ind, uint num_normals);
 	void InitInfo(const char* name, const char* path);
 
@@ -70,6 +70,8 @@ public:
 	uint num_vertices = 0;
 	uint num_indices = 0;
 	std::vector<Vertex> vertices;
+	std::vector<float3> tangents;
+	std::vector<float3> bitangents;
 	std::vector<uint> indices;
 	std::vector<float3> vertices_normals;
 

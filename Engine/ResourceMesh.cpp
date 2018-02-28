@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Globals.h"
 
+
 ResourceMesh::ResourceMesh(uint uid) : Resource(uid, Resource::Type::MESH, Resource::State::UNLOADED)
 {
 	num_game_objects_use_me = 0;
@@ -17,7 +18,7 @@ ResourceMesh::~ResourceMesh()
 	delete skeleton;
 }
 
-void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_normals, const float2* texCoord)
+void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_normals, const float2* texCoord, const float3* tangs, const float3* bitangs)
 {
 	// SET VERTEX DATA -------------------------------
 	for (uint i = 0; i < num_vertices; i++)
@@ -54,6 +55,14 @@ void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_
 		vertices_normals.push_back(float3(vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z));
 		vertices_normals.push_back(float3(vertices[i].pos.x + vertices[i].norm.x, vertices[i].pos.y + vertices[i].norm.y, vertices[i].pos.z + vertices[i].norm.z));
 	}
+	//TANGENTS / BITANGENTS ARRAY -----------------
+	for (int i = 0; i < num_vertices; i++)
+	{
+		tangents.push_back(tangs[i]);
+		bitangents.push_back(bitangs[i]);
+	}
+
+
 }
 
 void ResourceMesh::InitRanges(uint num_vert, uint num_ind, uint num_normals)
@@ -111,6 +120,8 @@ bool ResourceMesh::LoadToMemory()
 	if (vertices_normals.size() > 0)
 	{
 		vertex_size_in_buffer += 3 * sizeof(float);
+		vertex_size_in_buffer += 3 * sizeof(float);
+		vertex_size_in_buffer += 3 * sizeof(float);
 	}
 
 	if (skeleton != nullptr)
@@ -122,6 +133,9 @@ bool ResourceMesh::LoadToMemory()
 	uint total_byte_size = vertex_size_in_buffer * num_vertices;
 	total_buffer_mesh = new char[total_byte_size];
 	char* cursor = total_buffer_mesh;
+
+
+	
 
 	for (int i = 0; i < num_vertices; i++)
 	{
@@ -137,6 +151,12 @@ bool ResourceMesh::LoadToMemory()
 		if (vertices_normals.size() > 0)
 		{
 			memcpy(cursor, &vertices[i].norm, 3 * sizeof(float));
+			cursor += 3 * sizeof(float);
+
+			memcpy(cursor, &tangents[i], 3 * sizeof(float));
+			cursor += 3 * sizeof(float);
+
+			memcpy(cursor, &bitangents[i], 3 * sizeof(float));
 			cursor += 3 * sizeof(float);
 		}
 

@@ -43,6 +43,8 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	uint* indices = nullptr;
 	float3* vert_normals = nullptr;
 	float2* tex_coords = nullptr;
+	float3* tangents = nullptr;
+	float3* bitangents = nullptr;
 
 	//Skeleton
 	uint num_bones = 0;
@@ -83,6 +85,13 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		vertices = new float3[num_vertices];
 		memcpy(vertices, mesh->mVertices, sizeof(float3) * num_vertices);
 		LOG("- Imported all vertex from data, total vertex: %i", num_vertices);
+
+		//SET TANGENTS / BITANGENTS
+		tangents = new float3[num_vertices];
+		memcpy(tangents, mesh->mVertices, sizeof(float3) * num_vertices);
+
+		bitangents = new float3[num_vertices];
+		memcpy(bitangents, mesh->mVertices, sizeof(float3) * num_vertices);
 
 		// SET INDEX DATA -----------------------------------------
 		if (mesh->HasFaces())
@@ -307,7 +316,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	// ALLOCATING DATA INTO BUFFER ------------------------
 	uint ranges[4] = { num_vertices, num_indices, num_normals, num_bones}; //,num_tex_coords };
 
-	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices;
+	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices + sizeof(float3) *  num_vertices*2;
 	
 	if (mesh->HasBones())
 	{
@@ -355,6 +364,16 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	cursor += bytes;
 	bytes = sizeof(float2) * num_vertices; //num_tex_coords;
 	memcpy(cursor, tex_coords, bytes);
+
+	// Storing Vertices
+	cursor += bytes;
+	bytes = sizeof(float3) * num_vertices;
+	memcpy(cursor, tangents, bytes);
+
+	// Storing Vertices
+	cursor += bytes;
+	bytes = sizeof(float3) * num_vertices;
+	memcpy(cursor, bitangents, bytes);
 
 	//Skeleton
 	if (mesh->HasBones())
@@ -442,6 +461,8 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	RELEASE_ARRAY(indices);
 	RELEASE_ARRAY(vert_normals);
 	RELEASE_ARRAY(tex_coords);
+	RELEASE_ARRAY(tangents);
+	RELEASE_ARRAY(bitangents);
 	//RELEASE(texture);
 
 	// Set Info ResoruceMesh
@@ -464,7 +485,7 @@ void ImportMesh::Import(uint num_vertices, uint num_indices, uint num_normals, u
 	// ALLOCATING DATA INTO BUFFER ------------------------
 	uint ranges[4] = { num_vertices, num_indices, num_normals, num_bones}; //,num_tex_coords };
 
-	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices + sizeof(uint) * num_bones;
+	uint size = sizeof(ranges) + sizeof(float3) *  num_vertices + sizeof(uint) * num_indices + sizeof(float3) *  num_normals + sizeof(float2) *  num_vertices +  sizeof(uint) * num_bones;
 
 	float3* vert_normals = nullptr;
 	// Allocating all data 
@@ -532,6 +553,8 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 	uint* indices = nullptr;
 	float3* vert_normals = nullptr;
 	float2* tex_coords = nullptr;
+	float3* tangents = nullptr;
+	float3* bitangents = nullptr;
 	//Texture* texture = nullptr;
 
 	//Skeleton
@@ -583,6 +606,18 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 		bytes = sizeof(float2) * num_vertices; //num_tex_coords;
 		tex_coords = new float2[num_vertices];
 		memcpy(tex_coords, cursor, bytes);
+
+		//Load tangents
+		cursor += bytes;
+		bytes = sizeof(float3) * num_vertices;
+		tangents = new float3[num_vertices];
+		memcpy(tangents, cursor, bytes);
+
+		//Load bitangents
+		cursor += bytes;
+		bytes = sizeof(float3) * num_vertices;
+		bitangents = new float3[num_vertices];
+		memcpy(bitangents, cursor, bytes);
 
 		//Skeleton
 		if (num_bones > 0)
@@ -682,7 +717,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 		//--
 
 		resourceMesh->InitRanges(num_vertices, num_indices, num_normals);
-		resourceMesh->Init(vertices, indices, vert_normals, tex_coords);
+		resourceMesh->Init(vertices, indices, vert_normals, tex_coords, tangents, bitangents);
 		resourceMesh->LoadToMemory();
 		RELEASE_ARRAY(vertices);
 		RELEASE_ARRAY(indices);

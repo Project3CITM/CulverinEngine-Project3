@@ -411,11 +411,22 @@ void GameObject::Draw()
 			{
 				//components[i]->Draw();
 				/**/
-				Event draw_event;
-				draw_event.draw.type = EventType::EVENT_DRAW;
-				draw_event.draw.Dtype = draw_event.draw.DRAW_3D;
-				draw_event.draw.ToDraw = components[i];
-				PushEvent(draw_event);
+				CompMesh* comp = (CompMesh*)components[i];
+				if (comp->GetMaterial()->material->alpha < 1.0f) {
+					Event draw_event;
+					draw_event.draw.type = EventType::EVENT_DRAW;
+					draw_event.draw.Dtype = draw_event.draw.DRAW_3D_ALPHA;
+					draw_event.draw.ToDraw = components[i];
+					PushEvent(draw_event);
+				}
+				else
+				{
+					Event draw_event;
+					draw_event.draw.type = EventType::EVENT_DRAW;
+					draw_event.draw.Dtype = draw_event.draw.DRAW_3D;
+					draw_event.draw.ToDraw = components[i];
+					PushEvent(draw_event);
+				}
 				/**/
 			}
 			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_CAMERA)
