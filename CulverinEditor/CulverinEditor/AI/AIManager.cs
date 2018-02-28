@@ -78,7 +78,7 @@ public class AIManager : CulverinBehaviour
         my_path = new List<PathNode>();
 
         //Init Pathfinder 
-        path_creator.Init();
+        path_creator.Start();
 
     }
 

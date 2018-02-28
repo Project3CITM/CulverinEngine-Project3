@@ -9,7 +9,7 @@ using System.Text;
 
 namespace CulverinEditor.Pathfinding
 {
-    public class Pathfinder
+    public class Pathfinder : CulverinBehaviour
     {
         //Map settings
         int[,] tile_map;
@@ -22,7 +22,7 @@ namespace CulverinEditor.Pathfinding
         List<PathNode> path_list;
 
         // Use this for initialization
-        public void Init()
+        public void Start()
         {
             //Pathfinding
             open_list = new List<PathNode>();
