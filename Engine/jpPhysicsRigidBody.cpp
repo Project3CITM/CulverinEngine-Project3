@@ -119,6 +119,17 @@ void jpPhysicsRigidBody::SetAsTrigger(bool trigger)
 	}
 }
 
+void jpPhysicsRigidBody::SetFilterFlags(unsigned int own_flag, unsigned int collision_flags)
+{
+	if (body_shape)
+	{
+		physx::PxFilterData filterData;
+		filterData.word0 = own_flag; // word0 = own ID
+		filterData.word1 = collision_flags;	// word1 = ID mask to filter pairs that trigger a contact callback;
+		body_shape->setSimulationFilterData(filterData);
+	}
+}
+
 void jpPhysicsRigidBody::SetTransform(float * trans_mat)
 {
 	physx::PxMat44 mat = physx::PxMat44(trans_mat);

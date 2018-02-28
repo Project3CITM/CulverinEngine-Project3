@@ -25,8 +25,6 @@
 
 #endif // _DEBUG
 
-
-
 jpPhysicsWorld::jpPhysicsWorld()
 {	
 }
@@ -94,13 +92,36 @@ bool jpPhysicsWorld::StopSimulation(bool priority)
 	return false;
 }
 
+// jp Filter Shader -------------------------------
+physx::PxFilterFlags jpFilterShader(
+	physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
+{
+	// report all contacts with triggers
+	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+		return physx::PxFilterFlag::eDEFAULT;
+	}
+	// generate contacts for all that were not filtered above
+	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+
+	// trigger the contact callback for pairs (A,B) where 
+	// the filtermask of A contains the ID of B and vice versa.
+	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+
+	return physx::PxFilterFlag::eDEFAULT;
+}
+
 // Create Default Scene
 physx::PxScene * jpPhysicsWorld::CreateNewScene()
 {
 	physx::PxSceneDesc sceneDesc(jpWorld->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
-	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	sceneDesc.filterShader = jpFilterShader;
 	sceneDesc.simulationEventCallback = collision_callback;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_PCM;
 

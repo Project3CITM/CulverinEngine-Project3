@@ -9,6 +9,7 @@
 
 class jpPhysicsWorld;
 class jpPhysicsRigidBody;
+class CompCollider;
 
 namespace physx 
 {
@@ -47,6 +48,8 @@ public:
 	void ChangeRigidActorToStatic(jpPhysicsRigidBody* actor, Component* comp);
 	void ChangeRigidActorToDynamic(jpPhysicsRigidBody* actor, Component* comp);
 
+	bool ShowColliderFilterOptions(uint& flags);
+
 	// Collision Callback -----------
 	void OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor, JP_COLLISION_TYPE type);
 	void OnContact(physx::PxRigidActor* first, physx::PxRigidActor* second, JP_COLLISION_TYPE type);
@@ -69,6 +72,7 @@ private:
 	bool render_on_play = false;
 	bool update_debug_draw = false;
 
+	// Map with Physx Actors and its Components
 	std::map<physx::PxRigidActor*, Component*> colliders;
 };
 

@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleEventSystem.h"
 #include "ModulePhysics.h"
+#include "Scene.h"
 
 #include "Component.h"
 #include "CompCollider.h"
@@ -58,6 +59,16 @@ bool ModulePhysics::Start()
 	perf_timer.Start();
 
 	LOG("Setting up Physics");
+
+	// Flags test
+	uint x = 2;
+	uint z = 3;
+	physx::PxU32 flag = 0;
+	flag |= (1 << x);
+	flag |= (1 << x);
+	flag &= ~(1 << x);
+
+
 
 	bool ret = true;
 
@@ -267,6 +278,42 @@ void ModulePhysics::ChangeRigidActorToDynamic(jpPhysicsRigidBody * actor, Compon
 		actor->ToDynamic();
 		colliders.insert(std::pair<physx::PxRigidActor*, Component*>(actor->GetActor(), comp));
 	}
+}
+
+bool ModulePhysics::ShowColliderFilterOptions(uint& flags)
+{
+	bool show_filter_window = true;
+	ImGui::SetNextWindowSize(ImVec2(200.f, 300.f));
+	if (ImGui::Begin("Collision Filter", &show_filter_window, ImGuiWindowFlags_NoCollapse))
+	{
+		if (ImGui::Button("Set Flags") || !show_filter_window)
+		{
+			ImGui::End();
+			return true;
+		}
+		ImGui::Separator();
+
+		std::vector<std::string>* tags = App->scene->GetTagsVec();
+
+		bool flag_state = false;
+		for (uint i = 0; i < tags->size(); i++)
+		{
+			flag_state = (flags & (1 << i));
+			if (ImGui::Checkbox(tags->at(i).c_str(), &flag_state))
+			{
+				if (flag_state)
+				{
+					flags |= (1 << i);
+				}
+				else
+				{
+					flags &= ~(1 << i);
+				}
+			}
+		}
+	}
+	ImGui::End();
+	return false;
 }
 
 void ModulePhysics::OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor, JP_COLLISION_TYPE type)

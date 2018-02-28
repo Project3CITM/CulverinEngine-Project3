@@ -59,6 +59,7 @@ public:
 	void						DeleteTag(const char* str, uint index = 0);
 	void						RemoveTaggedObject(const GameObject* target);
 	void						AddTaggedObject(const GameObject* target);
+	uint						GetTagID(const char* str);
 	std::vector<std::string>*	GetTagsVec();
 
 	void ModificateParent(GameObject* child, GameObject* new_parent);

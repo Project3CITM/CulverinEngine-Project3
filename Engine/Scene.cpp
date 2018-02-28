@@ -622,6 +622,19 @@ void Scene::AddTaggedObject(const GameObject * target)
 	}
 }
 
+uint Scene::GetTagID(const char * tag)
+{
+	uint size = defined_tags.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (strcmp(tag, defined_tags[k].c_str()) == 0)
+		{
+			return k;
+		}
+	}
+	return 0;
+}
+
 std::vector<std::string>* Scene::GetTagsVec()
 {
 	return &defined_tags;

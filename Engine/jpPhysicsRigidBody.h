@@ -38,6 +38,7 @@ public:
 	// Set Methods
 	void SetAsKinematic(bool kinematic);
 	void SetAsTrigger(bool trigger);
+	void SetFilterFlags(unsigned int own_flag, unsigned int collision_flags);
 	void SetTransform(float* trans_mat);
 	void SetTransform(float3 pos, Quat rotation, bool autoawake = true);
 	void SetGeometry(physx::PxGeometry new_geometry); //DO NOT USE, does nothing, will be later on defined to use with convexmesh

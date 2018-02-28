@@ -206,7 +206,20 @@ void CompCollider::ShowInspectorInfo()
 		uid_script_asigned = listener->GetUUID();
 	}
 	
+	if (ImGui::Button("Collision Filter"))
+	{
+		select_flags = true;
+	}
 
+	if (select_flags && App->physics->ShowColliderFilterOptions(collision_flags))
+	{
+		uint own_id = (1 << App->scene->GetTagID(parent->GetTag()));
+		if (body)
+		{
+			body->SetFilterFlags(own_id, collision_flags);
+		}
+		select_flags = false;
+	}
 
 	// Collider type
 	if (ImGui::Combo("Collider", (int*)&collider_type, "Sphere\0Plane\0Capsule\0Box\0", 4) && curr_type != collider_type) 
@@ -313,8 +326,11 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 
 	json_object_dotset_boolean_with_std(object, name + "Trigger", trigger);
 
-	json_object_dotset_string_with_std(object, name + "ScriptName", script_name.c_str());
+	//Scritp uid
 	json_object_dotset_number_with_std(object, name + "Script UID", uid_script_asigned);
+
+	//Collision Flags
+	json_object_dotset_number_with_std(object, name + "Collision Flags", collision_flags);
 
 }
 
@@ -351,9 +367,11 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 	trigger = json_object_dotget_boolean_with_std(object, name + "Trigger");
 
-	//Script name
-	script_name = json_object_dotget_string_with_std(object, name + "ScriptName");
+	//Script
 	uid_script_asigned = json_object_dotget_number_with_std(object, name + "Script UID");
+
+	//Collision Mask
+	collision_flags = json_object_dotget_number_with_std(object, name + "Collision Flags");
 }
 
 void CompCollider::SyncComponent()
@@ -376,6 +394,13 @@ void CompCollider::SyncComponent()
 				listener = (CompScript*)script_vec[i];
 			}
 		}
+	}
+
+	// Setup Filter Shader Masks
+	uint own_id = (1 << App->scene->GetTagID(parent->GetTag()));
+	if (body)
+	{
+		body->SetFilterFlags(own_id, collision_flags);
 	}
 
 }
