@@ -70,6 +70,7 @@ public:
 private:
 
 	//std::vector<Folders> folders;
+	std::string temp;
 	const char* directory_see = nullptr;
 	int size_files;
 	std::vector<FoldersNew> folders;

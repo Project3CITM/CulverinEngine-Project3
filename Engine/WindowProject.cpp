@@ -10,7 +10,8 @@ Project::Project()
 {
 	active.push_back(Active());
 	name = "Project";
-	directory_see = App->fs->GetMainDirectory().c_str();
+	temp = App->fs->GetMainDirectory();
+	directory_see = temp.c_str();
 }
 
 
