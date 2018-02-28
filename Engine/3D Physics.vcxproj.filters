@@ -1175,6 +1175,7 @@
     </ClInclude>
     <ClInclude Include="ModulePlayerActions.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="ModuleKeyBinding.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1560,6 +1561,7 @@
     </ClCompile>
     <ClCompile Include="ModulePlayerActions.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="ModuleKeyBinding.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">

@@ -27,6 +27,7 @@
 #include "JSONSerialization.h"
 #include "mmgr/mmgr.h"
 #include "ModuleEventSystem.h"
+#include "ModuleKeyBinding.h"
 
 static int malloc_count;
 static void *counted_malloc(size_t size);
@@ -36,6 +37,7 @@ Application::Application()
 {
 	window = new ModuleWindow();
 	input = new ModuleInput();
+	module_key_binding= new ModuleKeyBinding();
 	audio = new ModuleAudio(true);
 	renderer3D = new ModuleRenderer3D();
 	render_gui = new ModuleRenderGui();
@@ -69,6 +71,7 @@ Application::Application()
 	AddModule(resource_manager);
 	AddModule(physics);
 	AddModule(input);
+	AddModule(module_key_binding);
 	AddModule(console);
 	AddModule(scene);
 	AddModule(module_lightning); // Ask this module creators before changing the order, possible dependencies with scene and shaders module.
