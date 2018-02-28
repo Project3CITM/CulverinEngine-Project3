@@ -145,6 +145,7 @@
     <ClInclude Include="ImportScript.h" />
     <ClInclude Include="include_wwise.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Input_Action.h" />
     <ClInclude Include="jpPhysicsRigidBody.h" />
     <ClInclude Include="jpPhysicsWorld.h" />
     <ClInclude Include="Materials.h" />
@@ -490,6 +491,7 @@
     <ClCompile Include="ImportScript.cpp" />
     <ClCompile Include="include_wwise.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Input_Action.cpp" />
     <ClCompile Include="jpPhysicsRigidBody.cpp" />
     <ClCompile Include="jpPhysicsWorld.cpp" />
     <ClCompile Include="Materials.cpp" />

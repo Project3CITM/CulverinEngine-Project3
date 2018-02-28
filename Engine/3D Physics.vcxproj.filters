@@ -1175,7 +1175,12 @@
     </ClInclude>
     <ClInclude Include="ModulePlayerActions.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="ModuleKeyBinding.h" />
+    <ClInclude Include="ModuleKeyBinding.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Input_Action.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1561,7 +1566,12 @@
     </ClCompile>
     <ClCompile Include="ModulePlayerActions.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="ModuleKeyBinding.cpp" />
+    <ClCompile Include="ModuleKeyBinding.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Input_Action.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">
