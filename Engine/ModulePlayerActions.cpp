@@ -7,6 +7,7 @@
 ModulePlayerActions::ModulePlayerActions(bool start_enabled)
 {
 	have_config = true;
+	name = "Player Action";
 
 }
 
@@ -63,26 +64,32 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 
 		std::string name = "Input "+std::to_string(k+1);
 		bool active = ImGui::TreeNodeEx(name.c_str(), tree_flags);
-		ImGui::SameLine();
 
-
-		if (ImGui::Button("UP#button_up"))
-		{
-			if(k-1>0)
-				std::swap(interactive_vector[k], interactive_vector[k-1]);
-		}
-		if (ImGui::Button("DOWN#button_down"))
-		{
-			if (k + 1<size)
-				std::swap(interactive_vector[k], interactive_vector[k + 1]);
-		}
 		if (ImGui::IsItemClicked())
 		{
 			input_manager->ActiveWindowOpen();
 		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("UP##button_up"))
+		{
+			if(k-1>0)
+				std::swap(interactive_vector[k], interactive_vector[k-1]);
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("DOWN##button_down"))
+		{
+			if (k + 1<size)
+				std::swap(interactive_vector[k], interactive_vector[k + 1]);
+		}
+		
 		if (input_manager->GetWindowOpen())
 			input_manager->ShowInspectorInfo();
-
+		if (active)
+		{
+			ImGui::TreePop();
+		}
 	}
 
 	
