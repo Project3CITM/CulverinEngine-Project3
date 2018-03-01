@@ -46,6 +46,7 @@
     <Compile Include="AttackTarget.cs" />
     <Compile Include="Audio.cs" />
     <Compile Include="CharacterController.cs" />
+    <Compile Include="CharactersManager.cs" />
     <Compile Include="CompAnimation.cs" />
     <Compile Include="CompAudio.cs" />
     <Compile Include="CompButton.cs" />

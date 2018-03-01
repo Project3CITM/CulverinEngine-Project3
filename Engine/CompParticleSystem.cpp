@@ -24,7 +24,10 @@ CompParticleSystem::CompParticleSystem(const CompParticleSystem& copy, GameObjec
 
 CompParticleSystem::~CompParticleSystem()
 {
-
+	if(texture_resource && texture_resource->num_game_objects_use_me > 0)
+	{
+		texture_resource->num_game_objects_use_me--;
+	}
 }
 
 
@@ -77,6 +80,8 @@ void CompParticleSystem::Update(float dt)
 		part_system->DrawImGuiEditorWindow();
 	
 	part_system->PostUpdate(dt);
+
+	//SaveParticleStates("Test", nullptr, nullptr, nullptr, nullptr);
 }
 
 void CompParticleSystem::Clear()
@@ -94,20 +99,35 @@ void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, in
 	
 	texture_resource = (ResourceMaterial*)App->resource_manager->GetResource(uuid);//(texture_resource*)App->resources->Get(uuid);
 	if (texture_resource != nullptr)
+	{
+		texture_resource->num_game_objects_use_me++;
+
+		if (texture_resource->GetState() != Resource::State::LOADED)
+		{
+			texture_resource->LoadToMemory();
+			App->importer->iMaterial->LoadResource(std::to_string(texture_resource->GetUUID()).c_str(), texture_resource);
+		}
+
 		part_system->SetTextureResource(texture_resource->GetTextureID(), texture_resource->GetTextureWidth(), texture_resource->GetTextureHeight(), columns, rows, numberOfFrames, AnimationOrder);
+	}
 }
 
 void CompParticleSystem::SetTextureResource(const char * Path, int columns, int rows, int numberOfFrames, uint AnimationOrder)
 {
+//	uint Texuuid = App->resources->LoadResource((*App->importer->Get_Library_material_path() + "\\" + FileToLoadName + ".dds").c_str(), FileToLoad.c_str());
 	file_to_load = Path;
 	size_t bar_pos = file_to_load.rfind("\\") + 1;
-	size_t dot_pos = file_to_load.rfind(".");
-	file_to_load_name = file_to_load.substr(bar_pos, dot_pos - bar_pos);
-//	uint Texuuid = App->resources->LoadResource((*App->importer->Get_Library_material_path() + "\\" + FileToLoadName + ".dds").c_str(), FileToLoad.c_str());
-
+	//size_t dot_pos = file_to_load.rfind(".");
+	file_to_load_name = file_to_load.substr(bar_pos);
+	Resource* res = App->resource_manager->GetResource(file_to_load_name.c_str());
+	if (res)
+	{
+		SetTextureResource(res->GetUUID(), columns, rows, numberOfFrames, AnimationOrder);
+	}
+	/*App->resource_manager->
 	uint text_id = App->importer->iMaterial->LoadResource(Path, texture_resource);
 	
-	SetTextureResource(texture_resource->GetTextureID(), columns, rows, numberOfFrames, AnimationOrder);
+	*/
 }
 
 const std::string* CompParticleSystem::GetChildParticle() const
@@ -140,6 +160,7 @@ bool CompParticleSystem::SaveParticleStates(const char* file_name, ResourceMater
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
+	App->fs->CreateFolder("Assets/ParticleSystem/Particles");
 	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Particles");
 	file_path += "\\";
 	file_path += file_name;
@@ -273,6 +294,7 @@ bool CompParticleSystem::SaveParticleEmitter(const char* file_name, CompParticle
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
+	App->fs->CreateFolder("Assets/ParticleSystem/Emitters");
 	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters");
 	file_path += "\\";
 	file_path += file_name;
@@ -344,7 +366,7 @@ bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticle
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
-	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters");
+	std::string file_path = App->fs->GetFullPath("ParticleSystem\\Emitters");
 	file_path += "\\";
 	file_path += file_name;
 
@@ -514,12 +536,56 @@ void CompParticleSystem::ShowInspectorInfo()
 	ImGui::TreePop();
 }
 
-
+void CompParticleSystem::DrawDirectory(const char * directory)
+{
+	for (std::experimental::filesystem::directory_iterator::value_type file_in_path : std::experimental::filesystem::directory_iterator(directory))
+	{
+		char title[1000] = "";
+		if (std::experimental::filesystem::is_directory(file_in_path.path()) && (file_in_path.path().string().length() < 1000))
+		{
+			sprintf_s(title, 1000, "%S", file_in_path.path().filename().c_str());
+			if (ImGui::TreeNodeEx(title, 0))
+			{
+				sprintf_s(title, 1000, "%S", file_in_path.path().c_str());
+				DrawDirectory(title);
+				ImGui::TreePop();
+			}
+		}
+		if (std::experimental::filesystem::is_regular_file(file_in_path.path()) && (file_in_path.path().string().length() < 1000))
+		{
+			sprintf_s(title, 1000, "%S", file_in_path.path().extension().c_str());
+			directory_temporal_str = title;
+			bool Valid = false;
+			//Change Particle_Resource extention to .particle.json
+			//Change Emitter_Resource extention to .emitter.json
+			switch (file_type)
+			{
+			case Texture_Resource: if ((directory_temporal_str == ".png") || (directory_temporal_str == ".PNG") || (directory_temporal_str == ".jpg") || (directory_temporal_str == ".JPG") || (directory_temporal_str == ".tga") || (directory_temporal_str == ".TGA") || (directory_temporal_str == ".dds") || (directory_temporal_str == ".DDS")) Valid = true; break;
+			case Particle_Resource: case Child_Particle_Resource: case Emitter_Resource: case Child_Emitter_Resource: if (directory_temporal_str == ".json") Valid = true; break;
+			case MeshResource: Valid = true; break;
+			}
+			if (Valid)
+			{
+				sprintf_s(title, 1000, "%S", file_in_path.path().filename().c_str());
+				if (ImGui::TreeNodeEx(title, ImGuiTreeNodeFlags_Leaf))
+				{
+					if (ImGui::IsItemClicked())
+					{
+						char path[1000] = "";
+						sprintf_s(path, 1000, "%S", file_in_path.path().c_str());
+						file_to_load = path;
+					}
+					ImGui::TreePop();
+				}
+			}
+		}
+	}
+}
 
 // PopUps ---------------------------------------------------
 void CompParticleSystem::ImGuiLoadPopUp()
 {
-	/*const char* Str = "Wrong Type";
+	const char* Str = "Wrong Type";
 	switch (file_type)
 	{
 	case Texture_Resource: Str = "Load Texture"; break;
@@ -544,10 +610,10 @@ void CompParticleSystem::ImGuiLoadPopUp()
 		ImGui::BeginChild("File Browser##1", ImVec2(300, 300), true);
 		switch (file_type)
 		{
-		case Texture_Resource: DrawDirectory(App->importer->Get_Assets_path()->c_str()); break;
-		case Particle_Resource: case Child_Particle_Resource: DrawDirectory(App->importer->Get_ParticleSystem_Particles_path()->c_str()); break;
-		case Emitter_Resource: case Child_Emitter_Resource: DrawDirectory(App->importer->Get_ParticleSystem_Emitter_path()->c_str()); break;
-		case MeshResource: DrawDirectory(App->importer->Get_Library_mesh_path()->c_str()); break;
+		case Texture_Resource: DrawDirectory(App->fs->GetFullPath("Assets").c_str()); break;
+		case Particle_Resource: case Child_Particle_Resource: DrawDirectory(App->fs->GetFullPath("Assets\\ParticleSystem\\Particles").c_str()); break;
+		case Emitter_Resource: case Child_Emitter_Resource: DrawDirectory(App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters").c_str()); break;
+		case MeshResource: DrawDirectory(App->fs->GetFullPath("Assets").c_str()); break;
 		}
 		ImGui::EndChild();
 		char file_path[1000] = "";
@@ -582,16 +648,20 @@ void CompParticleSystem::ImGuiLoadPopUp()
 			directory_temporal_str.clear();
 		}
 		ImGui::EndPopup();
-	}*/
+	}
 }
 
 void CompParticleSystem::ImGuiLoadTexturePopUp()
 {
-	/*size_t bar_pos = file_to_load.rfind("\\") + 1;
-	size_t dot_pos = file_to_load.rfind(".");
-	file_to_load_name = file_to_load.substr(bar_pos, dot_pos - bar_pos);
-	uint Texuuid = App->resources->LoadResource((*App->importer->Get_Library_material_path() + "\\" + file_to_loadName + ".dds").c_str(), file_to_load.c_str());
-	SetTextureResource(Texuuid);*/
+	size_t bar_pos = file_to_load.rfind("\\") + 1;
+	file_to_load_name = file_to_load.substr(bar_pos);
+	/*ResourceMaterial* new_text = (ResourceMaterial*)App->resource_manager->GetResource(file_to_load_name.c_str());
+	if (new_text == nullptr)
+	{
+		new_text = (ResourceMaterial*)App->resource_manager->CreateNewResource(Resource::Type::MATERIAL);
+		new_text->LoadToMemory();
+	}*/
+	SetTextureResource(file_to_load_name.c_str());
 }
 
 void CompParticleSystem::ImGuiLoadParticlePopUp()

@@ -45,7 +45,7 @@ private:
 	void SetChild(const char* Particle, const char* Emitter);
 
 	void SetTextureResource(uint uuid, int columns = 1, int rows = 1, int numberOfFrames = 1, uint AnimationOrder = 0);
-	void SetTextureResource(const char* Path, int columns, int rows, int numberOfFrames, uint AnimationOrder);
+	void SetTextureResource(const char* Path, int columns = 1, int rows = 1, int numberOfFrames = 1, uint AnimationOrder = 0);
 
 	const std::string* GetChildParticle() const;
 	const std::string* GetChildEmitter() const;

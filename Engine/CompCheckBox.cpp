@@ -6,15 +6,23 @@
 #include "Scene.h"
 #include "CSharpScript.h"
 #include "CompScript.h"
+#include "ResourceMaterial.h"
+#include "ModuleResourceManager.h"
+#include "ModuleImporter.h"
+#include "ImportMaterial.h"
+#include "CompImage.h"
+
 
 CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Check Box";
+	deactived = image;
 }
 
 CompCheckBox::CompCheckBox(const CompCheckBox & copy, GameObject * parent) : CompInteractive(Comp_Type::C_CHECK_BOX, parent)
 {
+
 }
 
 CompCheckBox::~CompCheckBox()
@@ -80,6 +88,10 @@ void CompCheckBox::ShowInspectorInfo()
 	}
 	ImGui::PopStyleVar();
 
+	if (ImGui::Button("Sync Image..."))
+	{
+		SetTargetGraphic((CompGraphic*)parent->FindComponentByType(Comp_Type::C_IMAGE));
+	}
 	current_transition_mode = TRANSITION_SPRITE;
 	ShowInspectorSpriteTransition();
 	// CheckBox Options --------------------------------------
@@ -101,46 +113,80 @@ void CompCheckBox::Save(JSON_Object * object, std::string name, bool saveScene, 
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+	for (int i = 0; i < 3; i++)
+	{
+		std::string resource_count = std::to_string(i);
+
+		if (sprite[i] != nullptr)
+		{
+			if (saveScene == false)
+			{
+				// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
+				std::string temp = std::to_string(countResources++);
+
+				json_object_dotset_number_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".UUID Resource", sprite[i]->GetUUID());
+				json_object_dotset_string_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".Name", sprite[i]->name.c_str());
+			}
+			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, sprite[i]->GetUUID());
+		}
+		else
+		{
+			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
+		}
+	}
+
 }
 
 void CompCheckBox::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	//...
+	for (int i = 0; i < 3; i++)
+	{
+		std::string resource_count = std::to_string(i);
+
+		uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID " + resource_count);
+		if (resourceID > 0)
+		{
+			sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+			if (sprite[i] != nullptr)
+			{
+				sprite[i]->num_game_objects_use_me++;
+
+				// LOAD All Materials ----------------------------
+				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
+				}
+
+			}
+		}
+	}
 	Enable();
-}
-
-void CompCheckBox::OnClick()
-{
-	if (IsActivate() || !IsActive())
-		return;
-	if (linked_scripts.empty())
-	{
-		return;
-	}
-
-	uint size = linked_scripts.size();
-	for (uint k = 0; k < size; k++)
-	{
-		CompScript* comp_script = linked_scripts[k];
-
-		if (comp_script == nullptr)
-			continue;
-		linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
-	}
-	
 }
 
 void CompCheckBox::OnPointDown(Event event_input)
 {
+	
 	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
 	{
 		return;
 	}
-
-	OnClick();
+	//if (IsPressed())
+		active = !active;
+		
 	point_down = true;
 
 	UpdateSelectionState(event_input);
-	CheckBoxSwap();
+	PrepareHandleTransition();
+	Swap();
 }
+
+void CompCheckBox::Swap()
+{
+	if (active)
+		image->SetSourceImage(sprite[1]);
+	else
+		image->SetSourceImage((ResourceMaterial*)deactived);
+}	

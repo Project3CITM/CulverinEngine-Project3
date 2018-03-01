@@ -94,7 +94,6 @@ protected:
 	void ShowInspectorColorTransition();
 	void ShowInspectorSpriteTransition();
 	void PrepareHandleTransition();
-	void CheckBoxSwap();
 	void HandleTransition(SelectionStates selection_state);
 
 private:

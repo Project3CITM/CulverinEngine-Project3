@@ -46,5 +46,8 @@ private:
 	bool block_action = false;
 	bool window_open = false;
 	std::string name;
+	std::string selected_action_name;
+	std::string selected_action_key;
+
 };
 #endif //INPUT_MANAGER_H
