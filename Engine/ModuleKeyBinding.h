@@ -5,33 +5,46 @@
 #include"SDL\include\SDL_gamecontroller.h"
 #include"SDL\include\SDL_events.h"
 
-struct Key_Relation 
-{
-	Key_Relation(std::string name) : name(name) {}
-	std::string name = "";
+enum KeyBindingType {
+
+	NULL_DEVICE=-1,
+	KEYBOARD_DEVICE,
+	CONTROLLER_AXIS_DEVICE,
+	CONTROLLER_BUTTON_DEVICE,
+	MOUSE_BUTTON_DEVICE,
+	MOUSE_AXIS_DEVICE,
+
 };
 
-struct Keyboard_Device: public Key_Relation
+
+struct KeyRelation 
 {
-	Keyboard_Device(SDL_Scancode type_event, std::string name) :Key_Relation(name), event_scancode(type_event) {}
+	KeyRelation(std::string name) : name(name) {}
+	std::string name = "";
+	KeyBindingType key_type = KeyBindingType::NULL_DEVICE;
+};
+
+struct KeyboardDevice: public KeyRelation
+{
+	KeyboardDevice(SDL_Scancode type_event, std::string name) :KeyRelation(name), event_scancode(type_event) {}
 	SDL_Scancode event_scancode;
 };
 
-struct Controller_Axis_Device : public Key_Relation
+struct ControllerAxisDevice : public KeyRelation
 {
-	Controller_Axis_Device(SDL_GameControllerAxis type_event, std::string name) :Key_Relation(name), event_axis_controller(type_event) {}
+	ControllerAxisDevice(SDL_GameControllerAxis type_event, std::string name) :KeyRelation(name), event_axis_controller(type_event) {}
 	SDL_GameControllerAxis event_axis_controller;
 };
 
-struct Controller_Button_Device : public Key_Relation
+struct ControllerButtonDevice : public KeyRelation
 {
-	Controller_Button_Device(SDL_GameControllerButton type_event, std::string name) :Key_Relation(name), event_button_controller(type_event) {}
+	ControllerButtonDevice(SDL_GameControllerButton type_event, std::string name) :KeyRelation(name), event_button_controller(type_event) {}
 	SDL_GameControllerButton event_button_controller;
 };
 
-struct Mouse_Button_Device : public Key_Relation
+struct MouseButtonDevice : public KeyRelation
 {
-	Mouse_Button_Device(int type_event, std::string name) :Key_Relation(name), event_button_mouse(type_event) {}
+	MouseButtonDevice(int type_event, std::string name) :KeyRelation(name), event_button_mouse(type_event) {}
 	int event_button_mouse=0;
 
 	/*
@@ -41,9 +54,9 @@ struct Mouse_Button_Device : public Key_Relation
 	*/
 };
 
-struct Mouse_Axis_Device : public Key_Relation
+struct MouseAxisDevice : public KeyRelation
 {
-	Mouse_Axis_Device(SDL_EventType type_event, std::string name) :Key_Relation(name), event_axis_mouse(type_event) {}
+	MouseAxisDevice(SDL_EventType type_event, std::string name) :KeyRelation(name), event_axis_mouse(type_event) {}
 	SDL_EventType event_axis_mouse;
 };
 
@@ -64,11 +77,11 @@ public:
 	bool SaveConfig(JSON_Object* node);
 	bool CleanUp();
 
-	Key_Relation Find_key_binding(const char* name);
+	KeyRelation Find_key_binding(const char* name);
 
 private:
 
-	std::vector<Key_Relation> key_binding_relations;
+	std::vector<KeyRelation> key_binding_relations;
 
 /*	Key_Relation a_key;
 	Key_Relation b_key;
