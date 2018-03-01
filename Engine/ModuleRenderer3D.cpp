@@ -38,7 +38,10 @@ ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled)
 
 // Destructor
 ModuleRenderer3D::~ModuleRenderer3D()
-{}
+{
+	RELEASE(default_material);
+	RELEASE(default_texture);
+}
 
 // Called before render is available
 bool ModuleRenderer3D::Init(JSON_Object* node)

@@ -33,6 +33,7 @@ ModuleImporter::~ModuleImporter()
 	RELEASE(iMesh);
 	RELEASE(iMaterial);
 	RELEASE(iScript);
+	RELEASE(iAnimation);
 }
 
 bool ModuleImporter::Init(JSON_Object* node)

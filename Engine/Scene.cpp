@@ -1084,10 +1084,7 @@ GameObject* Scene::CreateMainCamera(GameObject* parent)
 	GameObject* obj = new GameObject(parent);
 
 	// SET NAME -----------------------------------
-	std::string name = "MainCamera";
-	char* name_str = new char[name.size() + 1];
-	strcpy(name_str, name.c_str());
-	obj->SetName(name_str);
+	obj->SetName("MainCamera");
 
 	/* Predefined Main Camera has 2 Base components: Transform & Camera */
 
