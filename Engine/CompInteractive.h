@@ -128,7 +128,9 @@ protected:
 
 	//Sprite Swap parameters
 	ResourceMaterial* sprite[3];
+	ResourceMaterial* unact_sprite[3];
 	uint uuid_reimported_sprite[3];
+	uint unact_uuid_reimported_sprite[3];
 	CompGraphic* target_graphic = nullptr;
 	uint target_graphic_uid = 0;
 	CompImage* image = nullptr;

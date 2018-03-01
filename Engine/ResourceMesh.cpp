@@ -61,8 +61,6 @@ void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_
 		tangents.push_back(tangs[i]);
 		bitangents.push_back(bitangs[i]);
 	}
-
-
 }
 
 void ResourceMesh::InitRanges(uint num_vert, uint num_ind, uint num_normals)
@@ -102,7 +100,7 @@ void ResourceMesh::DeleteToMemory()
 
 bool ResourceMesh::LoadToMemory()
 {
-	LOG("Resources: %s, Loaded in Memory!", this->name);
+	LOG("Resources: %s, Loaded in Memory!", this->name.c_str());
 
 	//----------Starting to change to one buffer
 

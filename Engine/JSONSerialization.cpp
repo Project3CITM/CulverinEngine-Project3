@@ -611,7 +611,7 @@ void JSONSerialization::SaveMapCreation(std::vector<std::string>& map, std::vect
 
 void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const char* directory, const char* fileName)
 {
-	LOG("SAVING Material %s -----", material->name);
+	LOG("SAVING Material %s -----", material->name.c_str());
 
 	JSON_Value* config_file;
 	JSON_Object* config;
