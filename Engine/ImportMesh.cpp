@@ -88,10 +88,10 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 		//SET TANGENTS / BITANGENTS
 		tangents = new float3[num_vertices];
-		memcpy(tangents, mesh->mVertices, sizeof(float3) * num_vertices);
+		memcpy(tangents, mesh->mTangents, sizeof(float3) * num_vertices);
 
 		bitangents = new float3[num_vertices];
-		memcpy(bitangents, mesh->mVertices, sizeof(float3) * num_vertices);
+		memcpy(bitangents, mesh->mBitangents, sizeof(float3) * num_vertices);
 
 		// SET INDEX DATA -----------------------------------------
 		if (mesh->HasFaces())
@@ -365,12 +365,12 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	bytes = sizeof(float2) * num_vertices; //num_tex_coords;
 	memcpy(cursor, tex_coords, bytes);
 
-	// Storing Vertices
+	// Storing tangents
 	cursor += bytes;
 	bytes = sizeof(float3) * num_vertices;
 	memcpy(cursor, tangents, bytes);
 
-	// Storing Vertices
+	// Storing bitangents
 	cursor += bytes;
 	bytes = sizeof(float3) * num_vertices;
 	memcpy(cursor, bitangents, bytes);
