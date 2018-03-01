@@ -62,6 +62,7 @@
     <Compile Include="AI\EnemyController.cs" />
     <Compile Include="Hp.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="MovementController.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="Pathfinder.cs" />
     <Compile Include="PathNode.cs" />
