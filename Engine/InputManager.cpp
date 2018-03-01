@@ -18,6 +18,20 @@ void InputManager::LookEvent(SDL_Event * input_event)
 {
 }
 
+KeyAction * InputManager::GetKey(const char * name)
+{
+
+	for (int i = 0; i < action_vector.size(); i++) 
+	{
+		if (action_vector[i]->name == name && action_vector[i]->action_type == ActionInputType::KEY_ACTION)
+		{
+			return (KeyAction*)action_vector[i];
+		}
+	}
+
+	return nullptr;
+}
+
 void InputManager::ShowInspectorInfo()
 {
 	ImGuiWindowFlags window_flags = 0;
@@ -75,12 +89,14 @@ void InputManager::ShowInspectorInfo()
 		{
 			selected = i;
 			selected_action_name = action->name;
-			selected_action_key = action->key_relation.name.c_str();
+			selected_action_key = action->key_relation->name.c_str();
+			action_type = action_vector[selected]->action_type;
+
 		}
 		bool hovered = ImGui::IsItemHovered();
 
 		ImGui::NextColumn();
-		ImGui::Text(action->key_relation.name.c_str());
+		ImGui::Text(action->key_relation->name.c_str());
 		ImGui::NextColumn();
 
 	}
@@ -106,11 +122,15 @@ void InputManager::ShowInspectorInfo()
 	action_type_names += "Controller Button";
 	action_type_names += '\0';
 	
-		int action_type = action_vector[selected]->action_type;
 		ImGui::Combo("Type##type_action", &action_type, action_type_names.c_str());
 		if (ImGui::Button("Apply##apply_action"))
 		{
-
+			InputAction* new_action = CreateNewAction(selected_action_name.c_str(), selected_action_key.c_str(), static_cast<ActionInputType>(action_type));
+			if (new_action != nullptr && selected >= 0 && selected < action_vector.size()) {
+				InputAction* temp = action_vector[selected];
+				RELEASE(temp);
+				action_vector[selected] = new_action;
+			}
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Discard##discard_action"))
@@ -118,7 +138,7 @@ void InputManager::ShowInspectorInfo()
 			if (selected > 0 && selected < action_vector.size())
 			{
 				selected_action_name = action_vector[selected]->name;
-				selected_action_key = action_vector[selected]->key_relation.name.c_str();
+				selected_action_key = action_vector[selected]->key_relation->name.c_str();
 				action_type = action_vector[selected]->action_type;
 			}
 		}
@@ -197,8 +217,8 @@ InputAction* InputManager::CreateNewAction(const char * new_name, const char * n
 
 	/*KeyRelation new_key_relation = KeyRelation(new_name);
 	new_key_relation.key_type= new_type*/
-
-	KeyRelation new_key_relation = App->module_key_binding->Find_key_binding(new_key_binding);
+	
+	KeyRelation* new_key_relation = App->module_key_binding->Find_key_binding(new_key_binding);
 	InputAction* temp = nullptr;
 	bool can_create_action = true;
 	switch (new_type) {

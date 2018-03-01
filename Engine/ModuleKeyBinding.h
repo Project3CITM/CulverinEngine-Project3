@@ -26,25 +26,25 @@ struct KeyRelation
 
 struct KeyboardDevice: public KeyRelation
 {
-	KeyboardDevice(SDL_Scancode type_event, std::string name) :KeyRelation(name), event_scancode(type_event) {}
+	KeyboardDevice(SDL_Scancode type_event, std::string name) :KeyRelation(name), event_scancode(type_event) { key_type = KeyBindingType::KEYBOARD_DEVICE; }
 	SDL_Scancode event_scancode;
 };
 
 struct ControllerAxisDevice : public KeyRelation
 {
-	ControllerAxisDevice(SDL_GameControllerAxis type_event, std::string name) :KeyRelation(name), event_axis_controller(type_event) {}
+	ControllerAxisDevice(SDL_GameControllerAxis type_event, std::string name) :KeyRelation(name), event_axis_controller(type_event) { key_type = KeyBindingType::CONTROLLER_AXIS_DEVICE; }
 	SDL_GameControllerAxis event_axis_controller;
 };
 
 struct ControllerButtonDevice : public KeyRelation
 {
-	ControllerButtonDevice(SDL_GameControllerButton type_event, std::string name) :KeyRelation(name), event_button_controller(type_event) {}
+	ControllerButtonDevice(SDL_GameControllerButton type_event, std::string name) :KeyRelation(name), event_button_controller(type_event) { key_type = KeyBindingType::CONTROLLER_BUTTON_DEVICE; }
 	SDL_GameControllerButton event_button_controller;
 };
 
 struct MouseButtonDevice : public KeyRelation
 {
-	MouseButtonDevice(int type_event, std::string name) :KeyRelation(name), event_button_mouse(type_event) {}
+	MouseButtonDevice(int type_event, std::string name) :KeyRelation(name), event_button_mouse(type_event) { key_type = KeyBindingType::MOUSE_BUTTON_DEVICE; }
 	int event_button_mouse=0;
 
 	/*
@@ -56,7 +56,7 @@ struct MouseButtonDevice : public KeyRelation
 
 struct MouseAxisDevice : public KeyRelation
 {
-	MouseAxisDevice(SDL_EventType type_event, std::string name) :KeyRelation(name), event_axis_mouse(type_event) {}
+	MouseAxisDevice(SDL_EventType type_event, std::string name) :KeyRelation(name), event_axis_mouse(type_event) { key_type = KeyBindingType::MOUSE_AXIS_DEVICE; }
 	SDL_EventType event_axis_mouse;
 };
 
@@ -77,7 +77,7 @@ public:
 	bool SaveConfig(JSON_Object* node);
 	bool CleanUp();
 
-	KeyRelation Find_key_binding(const char* name);
+	KeyRelation* Find_key_binding(const char* name);
 
 private:
 

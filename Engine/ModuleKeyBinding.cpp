@@ -146,19 +146,19 @@ bool ModuleKeyBinding::CleanUp()
 	return true;
 }
 
-KeyRelation ModuleKeyBinding::Find_key_binding(const char* name)
+KeyRelation* ModuleKeyBinding::Find_key_binding(const char* name)
 {
 	for (int i = 0; i < key_binding_relations.size(); i++) 
 	{
 
 		if (key_binding_relations[i].name == name) 
 		{
-			return key_binding_relations[i];
+			return &key_binding_relations[i];
 		}
 
 	}
 
 	KeyRelation temp= KeyRelation("None");
 
-	return temp;
+	return &temp;
 }

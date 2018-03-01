@@ -12,7 +12,7 @@ class ModulePlayerActions : public Module
 public:
 	ModulePlayerActions(bool start_enabled = true);
 	~ModulePlayerActions();
-
+	update_status Update(float dt);
 	update_status UpdateConfig(float dt);
 	bool SetEventListenrs();
 

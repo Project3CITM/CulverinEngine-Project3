@@ -14,6 +14,18 @@ ModulePlayerActions::ModulePlayerActions(bool start_enabled)
 ModulePlayerActions::~ModulePlayerActions()
 {
 }
+
+update_status ModulePlayerActions::Update(float dt)
+{
+
+	/*for (int i = 0; i < interactive_vector.size(); i++)
+	{
+		interactive_vector[i]->GetKey("Jump");
+	}*/
+
+	return update_status::UPDATE_CONTINUE;
+}
+
 update_status ModulePlayerActions::UpdateConfig(float dt)
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 3));

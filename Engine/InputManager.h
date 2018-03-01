@@ -16,7 +16,7 @@ public:
 	void LookEvent(SDL_Event* input_event);
 	//AxisAction* GetAxis(const char* name);
 	//ButtonAction* GetButton(const char* name);
-	//KeyAction* GetKey(const char* name);
+	KeyAction* GetKey(const char* name);
 	void ShowInspectorInfo();
 
 	void ActiveInput();
@@ -48,6 +48,6 @@ private:
 	std::string name;
 	std::string selected_action_name;
 	std::string selected_action_key;
-
+	int action_type = 0;
 };
 #endif //INPUT_MANAGER_H
