@@ -192,19 +192,20 @@ update_status ModuleLightning::PreUpdate(float dt)
 
 	//TODO: Should think on optimitzations on this.
 
-	//frame_used_lights.clear();
-	//std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
-	//for(uint i = 0; i < shadow_cast_points_count; ++i)
-	//{
-	//	if(i < scene_lights.size())
-	//	{
-	//		CompLight* l = scene_lights[i];
-	//		if (l->type == Light_type::POINT_LIGHT)
-	//		{
-	//			frame_used_lights.push_back(l);
-	//		}
-	//	}
-	//}
+	frame_used_lights.clear();
+	std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
+	for(uint i = 0; i < shadow_cast_points_count; ++i)
+	{
+		if(i < scene_lights.size())
+		{
+			CompLight* l = scene_lights[i];
+			if (l->type == Light_type::POINT_LIGHT)
+			{
+				l->use_light_to_render = true;
+				frame_used_lights.push_back(l);
+			}
+		}
+	}
 
 
 	preUpdate_t = perf_timer.ReadMs();
@@ -265,7 +266,7 @@ bool ModuleLightning::CleanUp()
 void ModuleLightning::OnEvent(Event & event)
 {
 	//This is only for shadows 
-	/*
+	
 	test_fix.Bind("peter");
 
 	glEnable(GL_CULL_FACE);
@@ -509,7 +510,7 @@ void ModuleLightning::OnEvent(Event & event)
 	ImGui::Image((ImTextureID*)test_fix.depthTex, ImVec2(500, 500));
 	App->scene->scene_buff->Bind("Scene");
 	glCullFace(GL_BACK);
-	shadow_Shader->Unbind();*/
+	shadow_Shader->Unbind();
 }
 
 void ModuleLightning::CalPointShadowMaps(CompMesh* mesh_to_render)
@@ -710,6 +711,12 @@ update_status ModuleLightning::UpdateConfig(float dt)
 
 	ImGui::Text("Lights used on frame:"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", frame_used_lights.size());
+	
+	int u_l = shadow_cast_points_count;
+	if(ImGui::DragInt("Set used lights", &u_l, 1, 0, 8))
+	{
+		SetShadowCastPoints(u_l);
+	}
 
 	ImGui::Checkbox("Display extense debug info", &light_extense_debug_info);
 	if (light_extense_debug_info)
@@ -718,7 +725,7 @@ update_status ModuleLightning::UpdateConfig(float dt)
 		ImGui::TextColored(ImVec4(0.f, 0.5f, 1.f, 1.f), "Camera pos: x:%.3f y:%.3f z:%.3f", cam->pos.x, cam->pos.y, cam->pos.z);
 		for (std::vector<CompLight*>::iterator it = scene_lights.begin(); it != scene_lights.end(); ++it)
 		{
-			ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "\tName: %s - x:%f y:%f z:%f ---- Dist to active camera: %.3f", (*it)->GetParent()->GetName(), (*it)->GetGameObjectPos().x, (*it)->GetGameObjectPos().y, (*it)->GetGameObjectPos().z, cam->pos.Distance((*it)->GetGameObjectPos()));
+			ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "\tName: %s - x:%f y:%f z:%f ---- Dist to active camera: %.3f \t Used: %s", (*it)->GetParent()->GetName(), (*it)->GetGameObjectPos().x, (*it)->GetGameObjectPos().y, (*it)->GetGameObjectPos().z, cam->pos.Distance((*it)->GetGameObjectPos()), (*it)->use_light_to_render ? "Y" : "N");
 		}
 
 		ImGui::Separator();
@@ -758,6 +765,9 @@ update_status ModuleLightning::UpdateConfig(float dt)
 bool OrderLights(CompLight* l1, CompLight* l2)
 {
 	if (!l1 || !l2) return false;
+
+	l1->use_light_to_render = false;
+	l2->use_light_to_render = false;
 
 	if(l1->type == Light_type::POINT_LIGHT && l2->type == Light_type::POINT_LIGHT)
 	{

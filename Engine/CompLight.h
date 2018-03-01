@@ -56,6 +56,8 @@ public:
 	int ui_light_type=0;
 	//---------
 
+	bool use_light_to_render = false;
+
 };
 
 #endif
