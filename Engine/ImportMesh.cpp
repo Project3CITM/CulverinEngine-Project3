@@ -87,6 +87,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		LOG("- Imported all vertex from data, total vertex: %i", num_vertices);
 
 		//SET TANGENTS / BITANGENTS
+
 		tangents = new float3[num_vertices];
 		memcpy(tangents, mesh->mTangents, sizeof(float3) * num_vertices);
 
@@ -287,10 +288,8 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					new_mat->path = normalPath;
 					if (new_mat->textures.size() > 0)
 						new_mat->textures[0].value = resource_mat;
-					materialComp->material = new_mat;
-					
+					materialComp->material = new_mat;				
 				}
-
 			
 				resource_mat->path_assets = normalPath;
 			}
@@ -750,9 +749,9 @@ void ImportMesh::ImportBoneHirarchy(aiNode* node, const aiMesh* mesh, aiMatrix4x
 
 		for (int i = 0; i < node->mNumChildren; i++)
 		{
-			for (int i = 0; i < mesh->mNumBones; i++)
+			for (int j = 0; j < mesh->mNumBones; j++)
 			{
-				if (node->mName == mesh->mBones[i]->mName)
+				if (node->mChildren[i]->mName == mesh->mBones[j]->mName)
 					num_childs++;
 			}
 		}
@@ -783,6 +782,10 @@ aiNode * ImportMesh::FindSkeletonRootNode(const aiScene * scene, const aiMesh* m
 aiNode * ImportMesh::FindMeshNode(const aiScene * scene, const aiMesh * mesh)
 {
 	aiNode* ret = nullptr;
+
+	for (int i = 0; i < scene->mRootNode->mNumMeshes; i++)
+		if (scene->mMeshes[scene->mRootNode->mMeshes[i]] == mesh)
+			return scene->mRootNode;
 
 	for (int i = 0; i < scene->mRootNode->mNumChildren; i++)
 	{
