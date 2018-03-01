@@ -8,38 +8,57 @@ public class CharacterController : CulverinBehaviour
         IDLE = 0,
         ATTACKING,
         BLOCKING,
-        COVER
+        COVER,
+        DEAD
     }
 
+    public enum Position
+    {
+        CURRENT = 0,
+        BEHIND
+    }
+
+    public GameObject player_obj;
+
+    public MovementController movement;             // To manage when the player is moving to block attacks/abilities
     public GameObject health_obj;
     public Hp health;                               // To handle current hp
     public GameObject stamina_obj;
     public Stamina stamina;                         // To handle current stamina
     public GameObject rweapon_obj;
     public RightWeapon right_weapon;                // Script that will handle right weapon the player is carrying (with its own progression system, stats...)
+    public CompAnimation anim_controller_right;     // Animation component to handle animations
     public GameObject lweapon_obj;
     public LeftWeapon left_weapon;                  // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
     public CompAnimation anim_controller_left;      // Animation component to handle animations
-    public CompAnimation anim_controller_right;     // Animation component to handle animations
 
-    State state = State.IDLE;                   // To manage player state
-    bool combat_mode = false;                   // True when enemy is in a near tile 
-    public string anim_name = "Idle";
-
-    float anim_time = 0.0f; // 
+    State state = State.IDLE;                       // To manage player state
+    Position position = Position.CURRENT;           // To manage player position
 
     void Start()
     {
         // Start Idle animation
-        GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
-        anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();
+        lweapon_obj = GetLinkedObject("lweapon_obj");
+        anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
         anim_controller_left.PlayAnimation("Idle");
-        GameObject rweapon_obj_anim = GetLinkedObject("rweapon_obj_anim");
-        anim_controller_right = rweapon_obj_anim.GetComponent<CompAnimation>();
+        rweapon_obj = GetLinkedObject("rweapon_obj_anim");
+        anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
         anim_controller_right.PlayAnimation("Idle");
     }
 
     void Update()
+    {
+        if (position == Position.CURRENT)
+        {
+            ControlCharacter();
+        }
+        else if(position == Position.BEHIND)
+        {
+            // Special Ability is controlled by CharactersManager
+        }
+    }
+
+    public void ControlCharacter()
     {
         // Debug method to control Hp
         CheckHealth();
@@ -48,81 +67,86 @@ public class CharacterController : CulverinBehaviour
         health_obj = GetLinkedObject("health_obj");
         health = health_obj.GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)
-        {       
-            /* Player is alive */
-            switch (state)
-            {
-                case State.IDLE:
-                    {
-                        //Check For Input + It has to check if he's moving to block attack (¿?)
-                        CheckAttack();
-                        //Debug.Log("IDLE");
-                        anim_time = 0.0f;
-                        break;
-                    }
-                case State.ATTACKING:
-                    {
-                        //Check for end of the Attack animation
-                        GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
-                        anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();
-                        if (anim_controller_left.IsAnimationStopped("Attack1"))
-                        {
-                            state = State.IDLE;
-                        }
-                        else
-                        {
-                            // Keep playing specific attack animation  until it ends
-                            Debug.Log("Attacking");
-                        }
-                        break;
-                    }
-                case State.COVER:
-                    {
-                        //Check for end of the Attack animation
-                        GameObject rweapon_obj_anim = GetLinkedObject("rweapon_obj_anim");
-                        anim_controller_left = rweapon_obj_anim.GetComponent<CompAnimation>();
-
-                        if (anim_controller_left.IsAnimationStopped("Cover"))
-                        {
-                            state = State.IDLE;
-                        }
-                        else
-                        {
-                            // Keep playing specific attack animation  until it ends
-                            Debug.Log("Covering");
-                        }
-                        break;
-                    }
-                case State.BLOCKING:
-                    {
-                        //Check for end of the Attack animation
-                        GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
-                        anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();
-                        if (anim_controller_left.IsAnimationStopped("Block"))
-                        {
-                            state = State.IDLE;
-                        }
-                        else
-                        {
-                            // Keep playing specific attack animation  until it ends
-                            Debug.Log("Blocking");
-                        }
-                        break;
-                    }
-                default:
-                    {
-                        break;
-                    }
-            }
-        }
-        else
         {
-            Debug.Log("WE ARE GOING DOOOWN");
+            // Check if player is moving to block attacks/abilities
+            movement = GetComponent<MovementController>();
+            if (!movement.IsMoving())
+            {
+                /* Player is alive */
+                switch (state)
+                {
+                    case State.IDLE:
+                        {
+                            //Check For Input + It has to check if he's moving to block attack (¿?)
+                            CheckAttack();
+                            break;
+                        }
+                    case State.ATTACKING:
+                        {
+                            //Check for end of the Attack animation
+                            lweapon_obj = GetLinkedObject("lweapon_obj");
+                            anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Attack1"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Attacking");
+                            }
+                            break;
+                        }
+                    case State.COVER:
+                        {
+                            //Check for end of the Attack animation
+                            lweapon_obj = GetLinkedObject("lweapon_obj");
+                            anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+
+                            if (anim_controller_left.IsAnimationStopped("Cover"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Covering");
+                            }
+                            break;
+                        }
+                    case State.BLOCKING:
+                        {
+                            //Check for end of the Attack animation
+                            lweapon_obj = GetLinkedObject("lweapon_obj");
+                            anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Block"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Blocking");
+                            }
+                            break;
+                        }
+                    case State.DEAD:
+                        {
+                            Debug.Log("We are going doown");
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
+            }
         }
     }
 
     public void CheckAttack()
     {
+        //Left Attack
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             Debug.Log("Pressed 1");
@@ -130,6 +154,8 @@ public class CharacterController : CulverinBehaviour
             left_weapon = lweapon_obj.GetComponent<LeftWeapon>();
             left_weapon.PrepareAttack();
         }
+
+        //Right Attack
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Pressed 2");
@@ -186,15 +212,15 @@ public class CharacterController : CulverinBehaviour
     {
         if (state == State.COVER)
         {
-            GameObject rweapon_obj_anim = GetLinkedObject("rweapon_obj_anim");
-            anim_controller_right = rweapon_obj_anim.GetComponent<CompAnimation>();
+            rweapon_obj = GetLinkedObject("rweapon_obj");
+            anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
             anim_controller_right.SetTransition("ToBlock");
 
-            GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
-            anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();
+            lweapon_obj = GetLinkedObject("lweapon_obj");
+            anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
             anim_controller_left.SetTransition("ToBlock");
 
-            GameObject player_obj = GetLinkedObject("player_obj");
+            player_obj = GetLinkedObject("player_obj");
             player_obj.GetComponent<CompAudio>().PlayEvent("MetalHit");
 
             SetState(State.BLOCKING);
@@ -206,19 +232,13 @@ public class CharacterController : CulverinBehaviour
             health.GetDamage(dmg);
 
             // SET HIT ANIMATION
-            GameObject rweapon_obj_anim = GetLinkedObject("rweapon_obj_anim");
-            anim_controller_right = rweapon_obj_anim.GetComponent<CompAnimation>();
+            rweapon_obj = GetLinkedObject("rweapon_obj");
+            anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
             anim_controller_right.SetTransition("ToHit");
 
-            GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
-            anim_controller_left = lweapon_obj_anim.GetComponent<CompAnimation>();
+            lweapon_obj = GetLinkedObject("lweapon_obj");
+            anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
             anim_controller_left.SetTransition("ToHit");
         }
     }
-
-    public void SetAnimName(string new_name)
-    {
-        anim_name = new_name;
-    }
-
 }

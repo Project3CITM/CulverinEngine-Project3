@@ -25,13 +25,13 @@ public class AttackTarget : CulverinBehaviour
 
     void OnTriggerEnter()
     {
-        GameObject target = GetComponent<CompCollider>().GetCollidedObject();
-        target = GetLinkedObject("target");
+        //GameObject target = GetComponent<CompCollider>().GetCollidedObject();
+        //target = GetLinkedObject("target");
 
-        weapon_controller = GetComponent<LeftWeapon>();
-        weapon_controller.enemy_obj = target;
-        weapon_controller = GetComponent<LeftWeapon>();
-        weapon_controller.AttackHit();
+        //weapon_controller = GetComponent<LeftWeapon>();
+        //weapon_controller.enemy_obj = target;
+        //weapon_controller = GetComponent<LeftWeapon>();
+        //weapon_controller.AttackHit();
     }
 
     public void CheckAttackTarget()

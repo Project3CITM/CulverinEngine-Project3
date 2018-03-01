@@ -3,7 +3,7 @@ using CulverinEditor.Debug;
 using CulverinEditor.Map;
 
 //Attach this script to the tank parent object if you want to see it rotate
-public class TestMovement : CulverinBehaviour
+public class MovementController : CulverinBehaviour
 {
     public enum Direction
     {
@@ -12,7 +12,6 @@ public class TestMovement : CulverinBehaviour
         SOUTH,
         WEST
     }
-
 
     public Direction curr_dir = Direction.NORTH;
     public int start_direction = 1;
@@ -23,6 +22,8 @@ public class TestMovement : CulverinBehaviour
     int[,] array2Da;
     public int curr_x = 0;
     public int curr_y = 0;
+    private int tile_mov_x = 0;
+    private int tile_mov_y = 0;
     int map_width = 0;
     int map_height = 0;
     public bool blocked_camera = false;
@@ -30,7 +31,9 @@ public class TestMovement : CulverinBehaviour
     private int angle = 0;
     private float speed_rotation = 30;
     private float actual_angle = 0;
+
     private bool rotating = false;
+    private bool moving = false;
 
     private CompAudio audio;
 
@@ -38,12 +41,13 @@ public class TestMovement : CulverinBehaviour
 
     void Start()
     {
-
         audio = GetComponent<CompAudio>();
         audio.PlayEvent("PlayMusic");
+
         curr_dir = (Direction)start_direction;
         map_width = Map.GetWidthMap();
         map_height = Map.GetHeightMap();
+
         array2Da = new int[map_width, map_height];
         for (int y = 0; y < map_height; y++)
         {
@@ -52,13 +56,12 @@ public class TestMovement : CulverinBehaviour
                 array2Da[x, y] = 0;
             }
         }
-        //array2Da[0,0] = 1;
-        //Debug.Log(array2Da[0,0].ToString());
+
         endPosition = GetComponent<Transform>().local_position;
         endRotation = GetComponent<Transform>().local_rotation;
 
         string map = Map.GetMapString();
-        Debug.Log(map);
+
         int t = 0;
         for (int y = 0; y < map_height; y++)
         {
@@ -87,56 +90,21 @@ public class TestMovement : CulverinBehaviour
 
     void Update()
     {
-        int tile_mov_x = 0;
-        int tile_mov_y = 0;
         start_direction = (int)curr_dir;
 
         CheckIsWalkable();
 
+        // CHARACTER NOT MOVING
         if (GetComponent<Transform>().local_position == endPosition && rotating == false)
         {
+            moving = false;
 
-            if (Input.GetKeyDown(KeyCode.Q)) //Left
-            {
-                actual_angle = 0;
-                angle = -10;
-                rotating = true;
-                ModificateCurrentDirection(true);
+            // CHECK ROTATION --------------------------
+            CheckRotation();
 
-            }
-            if (Input.GetKeyDown(KeyCode.E)) //Right
-            {
-                actual_angle = 0;
-                angle = 10;
-                rotating = true;
-                ModificateCurrentDirection(false);
-            }
-
-            if (Input.GetKeyDown(KeyCode.A)) //Left
-            {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
-                MoveLeft(out tile_mov_x, out tile_mov_y);
-            }
-            else if (Input.GetKeyDown(KeyCode.D)) //Right
-            {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
-                MoveRight(out tile_mov_x, out tile_mov_y);
-            }
-            else if (Input.GetKeyDown(KeyCode.W)) //Up
-            {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
-                MoveForward(out tile_mov_x, out tile_mov_y);
-            }
-            else if (Input.GetKeyDown(KeyCode.S)) //Down
-            {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
-                MoveBackward(out tile_mov_x, out tile_mov_y);
-            }
-
+            // CHECK MOVEMENT --------------------------
+            CheckMovement();
+  
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0) && array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
             {
@@ -144,15 +112,11 @@ public class TestMovement : CulverinBehaviour
                 curr_x += tile_mov_x;
                 curr_y += tile_mov_y;
             }
-            else
-            {
-                //Debug.Log("Failed to move");
-                //Debug.Log(tile_mov_x.ToString());
-                //Debug.Log(tile_mov_y.ToString());
-            }
         }
         else if (rotating)
         {
+            moving = false;
+
             GetComponent<Transform>().RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.DeltaTime());
             float moved_angle = (float)angle * speed_rotation * Time.DeltaTime();
             if (angle < 0)
@@ -167,7 +131,7 @@ public class TestMovement : CulverinBehaviour
             if (actual_angle >= 90)
             {
                 rotating = false;
-                if(actual_angle > 90)
+                if (actual_angle > 90)
                 {
                     float marge = actual_angle - 90;
                     if (angle < 0)
@@ -184,7 +148,55 @@ public class TestMovement : CulverinBehaviour
         }
         else
         {
+            moving = true;
             GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.DeltaTime());
+        }
+    }
+
+    private void CheckRotation()
+    {
+        if (Input.GetKeyDown(KeyCode.Q)) //Left
+        {
+            actual_angle = 0;
+            angle = -10;
+            rotating = true;
+            ModificateCurrentDirection(true);
+
+        }
+        if (Input.GetKeyDown(KeyCode.E)) //Right
+        {
+            actual_angle = 0;
+            angle = 10;
+            rotating = true;
+            ModificateCurrentDirection(false);
+        }
+    }
+
+    private void CheckMovement()
+    {
+        if (Input.GetKeyDown(KeyCode.A)) //Left
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveLeft(out tile_mov_x, out tile_mov_y);
+        }
+        else if (Input.GetKeyDown(KeyCode.D)) //Right
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveRight(out tile_mov_x, out tile_mov_y);
+        }
+        else if (Input.GetKeyDown(KeyCode.W)) //Up
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveForward(out tile_mov_x, out tile_mov_y);
+        }
+        else if (Input.GetKeyDown(KeyCode.S)) //Down
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveBackward(out tile_mov_x, out tile_mov_y);
         }
     }
 
@@ -363,6 +375,18 @@ public class TestMovement : CulverinBehaviour
                 curr_x += 0;
                 curr_y -= 1;
             }
+        }
+    }
+
+    public bool IsMoving()
+    {
+        if(moving || rotating)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }

@@ -1,79 +1,63 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
-/* WEAPON TYPES */
-// 1 -> Metal Hand
-// 2 -> Sword
-
-/* SOUND FX */
-//MetalHit -> 1
-//SwordSlash -> 2
-
 public class RightWeapon : CulverinBehaviour
 {
-    public GameObject rweapon_obj_anim;
-    public GameObject player_obj;
     public CharacterController player;
-    public AttackTarget attack_collider;
     public GameObject r_button_obj;
     public CompButton button;
     public CoolDownRight cd;
     public GameObject enemy_obj;
     public EnemyController enemy;
     public CompAnimation animation_weapon;
-    //public CompAudio sound_fx;
 
     // WEAPON STATS -------------
     public float attack_dmg = 0.0f;
-    public float cooldown = 2.0f;
     public float stamina_cost = 10.0f;
     // ---------------------------
 
-    int step_counter = -1;
-
     void Start()
     {
-
-        step_counter = -1;
     }
 
-    public void Attack()
+    void Update()
     {
-        Debug.Log("Attack Right");
+    }
 
-        // Decrease stamina
-        player_obj = GetLinkedObject("player_obj");
-        player = player_obj.GetComponent<CharacterController>();
+    public void Block()
+    {
+        Debug.Log("Block Right");
+
+        // Decrease stamina -----------
+        player = GetLinkedObject("player_obj").GetComponent<CharacterController>();
         player.DecreaseStamina(stamina_cost);
     }
 
     // This method will be called when the associated button to this weapon is pressed
     void OnClick()
     {
-        // Check if player has enough stamina to perform its attack
-        player_obj = GetLinkedObject("player_obj");
-        player = player_obj.GetComponent<CharacterController>();
-        if(player.GetState() == 0)
+        player = GetLinkedObject("player_obj").GetComponent<CharacterController>();
+        // Check if player is in Idle State
+        if (player.GetState() == 0)
         {
+            // Check if player has enough stamina to perform its attack
             if (player.GetCurrentStamina() > stamina_cost)
             {
                 r_button_obj = GetLinkedObject("r_button_obj");
                 cd = r_button_obj.GetComponent<CoolDownRight>();
+                //Check if the ability is not in cooldown
                 if (!cd.in_cd)
                 {
-                    Debug.Log("Going to Attack");
+                    Debug.Log("Going to Block");
 
-                    // First, OnClick of WeaponController, then, onClick of Cooldown
-                    Attack();
+                    // First, OnClick of RightWeapon, then, onClick of Cooldown
+                    Block();
 
                     // Set Animation
-                    rweapon_obj_anim = GetLinkedObject("rweapon_obj_anim");
-                    animation_weapon = rweapon_obj_anim.GetComponent<CompAnimation>();
-                    animation_weapon.SetTransition("ToCover");
+                    SetBlockAnim();
 
-                    GameObject lweapon_obj_anim = GetLinkedObject("lweapon_obj_anim");
-                    animation_weapon = lweapon_obj_anim.GetComponent<CompAnimation>();
-                    animation_weapon.SetTransition("ToCover");
+                    // Play the Sound FX
+                    //PlayFx();
                 }
                 else
                 {
@@ -95,21 +79,15 @@ public class RightWeapon : CulverinBehaviour
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
-    public void AttackHit()
-    {
-        // Get the GameObject from the collider hit
-        if (enemy_obj != null)
-        {
-            enemy_obj = GetLinkedObject("enemy_obj");
-            enemy = enemy_obj.GetComponent<EnemyController>();
-            enemy.Hit(attack_dmg);
-        }
 
-    }
-
-    public void SetCurrentAnim()
+    public void SetBlockAnim()
     {
-        //player = player_obj.GetComponent<CharacterController>();
-        Debug.Log("Hand Block");
+        GameObject leftweapon = GetLinkedObject("lweapon_obj");
+        animation_weapon = leftweapon.GetComponent<CompAnimation>();
+        animation_weapon.SetTransition("ToCover");
+
+        GameObject rightweapon = GetLinkedObject("rweapon_obj");
+        animation_weapon = rightweapon.GetComponent<CompAnimation>();
+        animation_weapon.SetTransition("ToCover");
     }
 }
