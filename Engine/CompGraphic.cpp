@@ -74,7 +74,12 @@ void CompGraphic::DrawGraphic()
 {
 	if (my_canvas_render == nullptr)
 		return;
-	my_canvas_render->DrawGraphic();
+
+	if (render)
+	{
+		my_canvas_render->DrawGraphic();
+	}
+	
 }
 
 void CompGraphic::SetTextureID(uint set_texture_id)
@@ -92,9 +97,19 @@ void CompGraphic::SetColor(float set_r, float set_g, float set_b, float set_a)
 	SetColor(float4(set_r, set_g, set_b, set_a));
 }
 
+void CompGraphic::SetToRender(bool render)
+{
+	this->render = render;
+}
+
 void CompGraphic::SetRaycastTarget(bool flag)
 {
 	raycast_target = flag;
+}
+
+bool CompGraphic::GetToRender() const
+{
+	return render;
 }
 
 

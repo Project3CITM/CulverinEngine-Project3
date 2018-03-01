@@ -17,15 +17,15 @@ public:
 	void CopyValues(const CompCheckBox * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
-	//void OnClick();
-	void Swap();
+	void OnPointDown(Event event_input);
+	void OnClick();
 
 private:
 	void OnPointDown(Event event_input);
 private:
 	std::vector<CompScript*> linked_scripts;
 	bool active = false;
-	CompImage* deactived = nullptr;
+	CompImage* Check = nullptr;
 };
 
 #endif//COMPONENT_CHECK_BOX_H
