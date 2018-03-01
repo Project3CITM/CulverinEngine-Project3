@@ -47,7 +47,19 @@ namespace CulverinEditor
             set
             {
                 SetEnabled(value);
+                if (value == true) OnEnable();
+                else OnDisable();
             }
+        }
+
+        public virtual void OnEnable()
+        {
+
+        }
+
+        public virtual void OnDisable()
+        {
+
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]

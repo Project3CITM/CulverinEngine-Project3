@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class Movement_Action : Action
 {
     public GameObject   map;
+    public GameObject myself;
     public float        tile_size = 0.0f;
     List<PathNode>      path = null;
 
@@ -21,13 +22,14 @@ public class Movement_Action : Action
     float arrive_distance = 0.0f;
 
 
-    public override bool Start()
+    public override bool ActionStart()
     {
+        Debug.Log("MOVE_START");
         if (path == null) return false;
         return true;
     }
 
-    public override ACTION_RESULT Update()
+    public override ACTION_RESULT ActionUpdate()
     {
         //Velocity calculation
         if(current_acceleration.Length > max_accel)
@@ -72,13 +74,15 @@ public class Movement_Action : Action
 
             if (path.Count == 0)
             {
+                GetComponent<Arrive_Steering>().SetEnabled(false);
+                GetComponent<Seek_Steering>().SetEnabled(false);
                 return ACTION_RESULT.AR_SUCCESS;
             }
         }
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
-    public override bool End()
+    public override bool ActionEnd()
     {
         
         return false;
@@ -87,6 +91,19 @@ public class Movement_Action : Action
     public void GoTo(int cur_x, int cur_y, int obj_x, int obj_y)
     {
         path = GetLinkedObject("map").GetComponent<Pathfinder>().CalculatePath(new PathNode(cur_x, cur_y), new PathNode(obj_x, obj_y));
+        Debug.Log("path_size:" + path.Count.ToString());
+        GameObject target = GetLinkedObject("myself");
+        Debug.Log("A");
+        target.GetComponent<Arrive_Steering>();
+        Debug.Log("B");
+        GetLinkedObject("myself").GetComponent<Arrive_Steering>().GetEnabled();
+        Debug.Log("C");
+        Debug.Log(GetLinkedObject("myself").GetComponent<Arrive_Steering>().GetEnabled().ToString());
+
+        GetComponent<Arrive_Steering>().SetEnabled(true);
+        Debug.Log(GetComponent<Arrive_Steering>().GetEnabled().ToString());
+        GetComponent<Seek_Steering>().SetEnabled(true);
+        Debug.Log("path_size:" + path.Count.ToString());
     }
 
     public void Accelerate(Vector3 acceleration)
@@ -99,7 +116,7 @@ public class Movement_Action : Action
         current_rot_acceleration += rotation;
     }
 
-    bool ReachedTile()
+    public bool ReachedTile()
     {
         Vector3 my_pos = GetComponent<Transform>().local_position;
 
@@ -119,6 +136,21 @@ public class Movement_Action : Action
     {
         x = (int)((float)GetComponent<Transform>().local_position.x / tile_size);
         y = (int)((float)GetComponent<Transform>().local_position.z / tile_size);
+    }
+
+    public Vector3 GetCurrentVelocity()
+    {
+        return current_velocity;
+    }
+
+    public float GetMaxAcceleration()
+    {
+        return max_accel;
+    }
+
+    public float GetDistanceToTarget()
+    {
+        return ((GetComponent<Transform>().local_position) - (GetTargetPosition())).Length;
     }
 }
 

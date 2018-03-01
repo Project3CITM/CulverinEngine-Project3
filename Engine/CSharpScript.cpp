@@ -1062,6 +1062,35 @@ MonoObject* CSharpScript::GetParentGameObject()
 	return App->importer->iScript->GetMonoObject(own_game_object);
 }
 
+void CSharpScript::SetEnabled(MonoObject * object, bool val)
+{
+	if (!CheckMonoObject(object))
+	{
+		LOG("[error] MonoObject invalid");
+	}
+	else
+	{
+		own_component->SetActive(val);
+	}
+}
+
+mono_bool CSharpScript::GetEnabled(MonoObject * object)
+{
+	if (!CheckMonoObject(object))
+	{
+		LOG("[error] MonoObject invalid");
+	}
+	else
+	{
+		return own_component->IsActive();
+	}
+}
+
+void CSharpScript::SetOwnComponent(CompScript * own_component)
+{
+	this->own_component = own_component;
+}
+
 MonoObject* CSharpScript::Find(MonoObject * object, MonoString * name)
 {
 	GameObject* found = nullptr;

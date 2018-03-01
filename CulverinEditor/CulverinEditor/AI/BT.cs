@@ -3,28 +3,28 @@ using CulverinEditor.Debug;
 
 public class BT : CulverinBehaviour
 {
-    Action current_action;
+    Action current_action = null;
 
     void Start()
     {
         current_action = MakeDecision();
-        while (current_action.Start())
+        /*while (current_action.ActionStart() == false)
         {
             Debug.Log("Current action start failed!");
             current_action = MakeDecision();
-        }
+        }*/
     }
 
     void Update()
     {
-        if (current_action != null)
+        if (!(current_action == null))
         {
-            switch (current_action.Update())
+            switch (current_action.ActionUpdate())
             {
                 case Action.ACTION_RESULT.AR_FAIL:
-                    current_action.End();
+                    current_action.ActionEnd();
                     current_action = MakeDecision();
-                    while (current_action.Start())
+                    while (current_action.ActionStart())
                     {
                         Debug.Log("Current action start failed!");
                         current_action = MakeDecision();
@@ -35,9 +35,9 @@ public class BT : CulverinBehaviour
                     break;
 
                 case Action.ACTION_RESULT.AR_SUCCESS:
-                    current_action.End();
+                    current_action.ActionEnd();
                     current_action = MakeDecision();
-                    while(current_action.Start())
+                    while(current_action.ActionStart())
                     {
                         Debug.Log("Current action start failed!");
                         current_action = MakeDecision();
@@ -54,16 +54,20 @@ public class BT : CulverinBehaviour
     public virtual Action MakeDecision()
     {
         Debug.Log("BT decision not defined!");
-        
-        if(Input.GetKeyDown(KeyCode.W))
-        {
-            Movement_Action move = new Movement_Action();
-            int x, y;
-            move.GetCurrentTile(out x, out y);
-            move.GoTo(x, y, 10, 10);
-        }
 
-        return null;
+        //if(Input.GetKeyDown(KeyCode.W))
+        
+        Movement_Action move = GetComponent<Movement_Action>();
+        Debug.Log("BT decision move defined!");
+        int x, y;
+        GetComponent<Movement_Action>().GetCurrentTile(out x, out y);
+        Debug.Log("BT decision move defined!" + x.ToString() + "||" + y.ToString());
+        GetComponent<Movement_Action>().GoTo(x, y, 10, 10);
+        Debug.Log("BT decision move defined!");
+        current_action = GetComponent<Movement_Action>();
+        Debug.Log("BT decision move defined!");
+
+        return GetComponent<Movement_Action>();
     }
 }
 

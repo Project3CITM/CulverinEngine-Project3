@@ -17,6 +17,7 @@
 class CSharpScript;
 class GameObject;
 class Component;
+class CompScript;
 typedef struct json_object_t JSON_Object;
 
 enum FunctionBase
@@ -212,6 +213,9 @@ public:
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
 	MonoObject* GetParentGameObject();
+	void		SetEnabled(MonoObject* object, bool val);
+	mono_bool	GetEnabled(MonoObject* object);
+	void		SetOwnComponent(CompScript* own_component);
 
 	/*Childs*/
 	MonoObject* Find(MonoObject* object, MonoString* name);
@@ -255,6 +259,7 @@ private:
 	MainMonoMethod OnClick;
 
 	GameObject* current_game_object = nullptr;
+	CompScript* own_component = nullptr;
 	std::vector<uint> re_load_values;
 
 	/* Components */

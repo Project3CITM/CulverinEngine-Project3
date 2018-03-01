@@ -668,7 +668,15 @@ void ImportScript::LinkFunctions()
 
 	// Component ---------------------------
 	mono_add_internal_call("CulverinEditor.Component::GetParentGameObject", (const void*)GetParentGameObject);
-	
+	mono_add_internal_call("CulverinEditor.Component::SetEnabled", (const void*)SetEnabled);
+	mono_add_internal_call("CulverinEditor.Component::GetEnabled", (const void*)GetEnabled);
+	mono_add_internal_call("CulverinEditor.Movement_Action::SetEnabled", (const void*)SetEnabled);
+	mono_add_internal_call("CulverinEditor.Movement_Action::GetEnabled", (const void*)GetEnabled);
+	mono_add_internal_call("CulverinEditor.Seek_Steering::SetEnabled", (const void*)SetEnabled);
+	mono_add_internal_call("CulverinEditor.Seek_Steering::GetEnabled", (const void*)GetEnabled);
+	mono_add_internal_call("CulverinEditor.Arrive_Steering::SetEnabled", (const void*)SetEnabled);
+	mono_add_internal_call("CulverinEditor.Arrive_Steering::GetEnabled", (const void*)GetEnabled);
+
 	//CONSOLE FUNCTIONS ------------------
 	mono_add_internal_call("CulverinEditor.Debug.Debug::Log", (const void*)ConsoleLog);
 	//INPUT FUNCTIONS -------------------
@@ -1080,6 +1088,16 @@ void ImportScript::LookAtTrans(MonoObject * object, MonoObject * trans)
 MonoObject* ImportScript::GetParentGameObject()
 {
 	return current->GetParentGameObject();
+}
+
+bool ImportScript::GetEnabled(MonoObject * object)
+{
+	return current->GetEnabled(object);
+}
+
+void ImportScript::SetEnabled(MonoObject * object, bool val)
+{
+	current->SetEnabled(object, val);
 }
 
 // Map Functions -------------

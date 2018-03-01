@@ -133,7 +133,9 @@ private:
 
 	/* Component */
 
-	static MonoObject* GetParentGameObject();
+	static MonoObject*	GetParentGameObject();
+	static bool			GetEnabled(MonoObject* object);
+	static void			SetEnabled(MonoObject* object, bool val);
 
 	/* Map */
 	static MonoString* GetMapString(MonoObject* object);

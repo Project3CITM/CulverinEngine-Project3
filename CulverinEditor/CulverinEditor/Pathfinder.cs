@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 using System.Text;
+using CulverinEditor.Pathfinding;
 
-
-namespace CulverinEditor.Pathfinding
-{
     public class Pathfinder : CulverinBehaviour
     {
         //Map settings
@@ -30,12 +28,12 @@ namespace CulverinEditor.Pathfinding
             path_list = new List<PathNode>();
 
             //Map Settings
-            map_width = Map.Map.GetWidthMap();
-            map_height = Map.Map.GetHeightMap();
+            map_width = Map.GetWidthMap();
+            map_height = Map.GetHeightMap();
 
             tile_map = new int[map_width, map_height];
 
-            string map = Map.Map.GetMapString();
+            string map = Map.GetMapString();
             int string_pos = 0;
 
             //Get the map and put it in array 2d
@@ -48,6 +46,11 @@ namespace CulverinEditor.Pathfinding
                     string_pos += 1;
                 }
             }
+
+        }
+
+        void Update()
+        {
 
         }
 
@@ -222,4 +225,4 @@ namespace CulverinEditor.Pathfinding
         }
 
     }
-}
+

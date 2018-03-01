@@ -85,6 +85,7 @@ void CompScript::PreUpdate(float dt)
 				if (resource_script->GetState() != Resource::State::FAILED)
 				{
 					csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll(), resource_script->name);
+					csharp->SetOwnComponent(this);
 					SetOwnGameObject(parent);
 				}
 			}
@@ -111,6 +112,7 @@ void CompScript::Update(float dt)
 	}
 	if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
 	{
+		csharp->SetOwnComponent(this);
 		SetOwnGameObject(parent);
 	}
 	if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
@@ -291,18 +293,19 @@ void CompScript::ShowInspectorInfo()
 		ImGui::OpenPopup("OptionsScript");
 	}
 
-	// Button Options --------------------------------------
-
+	// Button Options --------------------------------------	
 	if (ImGui::BeginPopup("OptionsScript"))
 	{
 		ShowOptions();
 		ImGui::EndPopup();
+
 	}
 
 	ImGui::PopStyleVar();
 	ShowFSMInspectorInfo();
 
 	ImGui::TreePop();
+	
 }
 
 void CompScript::ShowVariablesInfo()
@@ -546,6 +549,7 @@ void CompScript::AddScriptbyName(const char* name_script)
 			if (resource_script->GetState() != Resource::State::FAILED)
 			{
 				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll(), resource_script->name);
+				csharp->SetOwnComponent(this);
 				SetOwnGameObject(parent);
 			}
 		}
@@ -589,6 +593,7 @@ bool CompScript::SelectScript(bool& selecting)
 		if (resource_script->GetState() != Resource::State::FAILED)
 		{
 			csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll(), resource_script->name);
+			csharp->SetOwnComponent(this);
 			SetOwnGameObject(parent);
 		}
 		Enable();
@@ -635,6 +640,7 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 			{
 				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll(), resource_script->name);
 				LoadScript(object, name);
+				csharp->SetOwnComponent(this);
 				SetOwnGameObject(parent);
 			}
 		}
