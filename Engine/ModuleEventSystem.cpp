@@ -203,7 +203,7 @@ void ModuleEventSystem::PushEvent(Event& event)
 	switch (event.type)
 	{
 	case EventType::EVENT_PARTICLE_DRAW:
-		MM3DADrawEvent.insert(std::pair<float, Event>(((Particle*)event.particle.ToDraw)->CameraDistance, event));
+		MM3DADrawEvent.insert(std::pair<float, Event>(-((Particle*)event.particle.ToDraw)->CameraDistance, event));
 		break;
 	case EventType::EVENT_DRAW:
 	{
