@@ -194,6 +194,16 @@ void CompRigidBody::SyncComponent()
 	body->SetAsKinematic(kinematic);
 }
 
+bool CompRigidBody::IsKinematic()
+{
+	return kinematic;
+}
+
+bool CompRigidBody::HaveBodyShape()
+{
+	return (body != nullptr);
+}
+
 void CompRigidBody::SetColliderPosition()
 {
 	Quat quat = transform->GetRotGlobal();
@@ -207,6 +217,14 @@ void CompRigidBody::SetColliderPosition()
 
 	body->SetTransform(fpos, quat);
 	App->physics->DebugDrawUpdate();
+}
+
+void CompRigidBody::SetMomentumToZero()
+{
+	if (body)
+	{
+		body->ResetForces();
+	}
 }
 
 void CompRigidBody::SetColliderComp(CompCollider * new_comp)

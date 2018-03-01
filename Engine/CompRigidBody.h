@@ -28,12 +28,17 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	void SyncComponent();
 
+	bool IsKinematic();
+	bool HaveBodyShape();
+
 	//Setters ----------------------
 	void SetColliderPosition();
+	void SetMomentumToZero();
 	void SetColliderComp(CompCollider* new_comp);
 
 	//Getters ----------------------
 	jpPhysicsRigidBody* GetPhysicsBody() const;
+
 	void UpdateParentPosition();
 
 	// Collision Events ------------

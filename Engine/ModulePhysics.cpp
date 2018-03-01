@@ -58,17 +58,7 @@ bool ModulePhysics::Start()
 {
 	perf_timer.Start();
 
-	LOG("Setting up Physics");
-
-	// Flags test
-	uint x = 2;
-	uint z = 3;
-	physx::PxU32 flag = 0;
-	flag |= (1 << x);
-	flag |= (1 << x);
-	flag &= ~(1 << x);
-
-
+	//LOG("Setting up Physics");
 
 	bool ret = true;
 
@@ -161,7 +151,7 @@ bool ModulePhysics::CleanUp()
 bool ModulePhysics::SetEventListenrs()
 {
 	AddListener(EventType::EVENT_TRIGGER_COLLISION, this);
-	//AddListener(EventType::EVENT_TIME_MANAGER, this);
+	AddListener(EventType::EVENT_TIME_MANAGER, this);
 	return false;
 }
 
@@ -201,25 +191,30 @@ void ModulePhysics::OnEvent(Event & event)
 		break;
 	}
 	case EventType::EVENT_TIME_MANAGER:
-		//switch (event.time.time)
-		//{
-		//case event.time.TIME_PLAY:
-		//
-		//	for (std::map<physx::PxRigidActor*, Component*>::const_iterator item = colliders.cbegin(); item != colliders.cend(); item++)
-		//	{
-		//		if (item->second->GetType() != Comp_Type::C_RIGIDBODY)
-		//		{
-		//			continue;
-		//		}
-		//		((physx::PxRigidBody*)item->first)->setLinearVelocity(physx::PxVec3(0, 0, 0));
-		//		((physx::PxRigidBody*)item->first)->setAngularVelocity(physx::PxVec3(0, 0, 0));
-		//
-		//	}
-		//
-		//	break;
-		//default:
-		//	break;
-		//}
+		switch (event.time.time)
+		{
+		case event.time.TIME_PLAY:
+		
+			for (std::map<physx::PxRigidActor*, Component*>::const_iterator item = colliders.cbegin(); item != colliders.cend(); item++)
+			{
+				if (item->second->GetType() != Comp_Type::C_RIGIDBODY || ((CompRigidBody*)item->second)->IsKinematic())
+				{
+					continue;
+				}
+				
+				CompRigidBody* rbody = (CompRigidBody*)item->second;
+				if (rbody->HaveBodyShape())
+				{
+					rbody->SetMomentumToZero();
+					rbody->SetColliderPosition();
+				}
+		
+			}
+		
+			break;
+		default:
+			break;
+		}
 		break;
 	default:
 		break;
@@ -351,6 +346,7 @@ void ModulePhysics::OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor*
 
 void ModulePhysics::OnContact(physx::PxRigidActor * first, physx::PxRigidActor * second, JP_COLLISION_TYPE type)
 {
+	LOG("OnContact Succed");
 }
 
 // -----------------------------------------------------------------

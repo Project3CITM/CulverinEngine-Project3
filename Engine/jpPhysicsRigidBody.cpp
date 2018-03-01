@@ -386,3 +386,12 @@ void jpPhysicsRigidBody::MoveKinematic(float3 pos, Quat rotation)
 		static_cast<physx::PxRigidDynamic*> (body)->setKinematicTarget(physx::PxTransform(physx::PxVec3(pos.x, pos.y, pos.z), physx::PxQuat(rotation.x, rotation.y, rotation.z, rotation.w)));
 	}
 }
+
+void jpPhysicsRigidBody::ResetForces()
+{
+	if (body && is_dynamic)
+	{
+		static_cast<physx::PxRigidBody*>(body)->setLinearVelocity(physx::PxVec3(0,0,0));
+		static_cast<physx::PxRigidBody*>(body)->setAngularVelocity(physx::PxVec3(0,0,0));
+	}
+}
