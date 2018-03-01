@@ -87,6 +87,10 @@ bool Scene::Start()
 	skybox_index = 1;
 	draw_skybox = true;
 
+	defined_tags.push_back("undefined");
+	defined_tags.push_back("camera");
+	defined_tags.push_back("player");
+
 	Start_t = perf_timer.ReadMs();
 	return true;
 }
@@ -551,6 +555,12 @@ uint Scene::TagsSize() const
 
 void Scene::AddTag(const char * str)
 {
+	if (defined_tags.size() >= 32)
+	{
+		LOG("Max number of tags defined! Lim: 32");
+		return;
+	}
+
 	if(!FindTag(str))defined_tags.push_back(str);
 	std::vector<GameObject*>* vec = new std::vector<GameObject*>();
 	tagged_objects.push_back(vec);
@@ -613,6 +623,8 @@ void Scene::RemoveTaggedObject(const GameObject * target)
 
 void Scene::AddTaggedObject(const GameObject * target)
 {
+	if (strcmp(target->GetTag(), "undefined") == 0)return;
+
 	uint size = defined_tags.size();
 	for (uint k = 0; k < size; k++)
 	{

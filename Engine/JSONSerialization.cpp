@@ -145,7 +145,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		{
 			char buffer[200];
 			sprintf(buffer, "Info.Tags.Tag%i", k);
-			App->scene->AddTag(json_object_dotget_string(config_node, buffer));
+			if(!App->scene->FindTag(json_object_dotget_string(config_node, buffer)))App->scene->AddTag(json_object_dotget_string(config_node, buffer));
 		}
 		App->scene->root->SetUUID(json_object_dotget_number(config_node, "Scene.Properties.UUID"));
 		App->scene->root->SetName(json_object_dotget_string_with_std(config_node, "Scene.Properties.Name"));
@@ -161,7 +161,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				const char* tagGameObject = json_object_dotget_string_with_std(config_node, name + "Tag");
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
-				if(App->scene->FindGameObjectWithTag(tagGameObject))obj->SetTag(tagGameObject);
+				if(App->scene->FindTag(tagGameObject))obj->SetTag(tagGameObject);
 				bool static_obj = json_object_dotget_boolean_with_std(config_node, name + "Static");
 				obj->SetStatic(static_obj);
 				bool aabb_active = json_object_dotget_boolean_with_std(config_node, name + "Bounding Box");

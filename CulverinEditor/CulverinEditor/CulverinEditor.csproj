@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="AI\Action.cs" />
     <Compile Include="AI\AIManager.cs" />
+    <Compile Include="AI\Arrive_Steering.cs" />
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\Movement_Action.cs" />
     <Compile Include="AI\Seek_Steering.cs" />
