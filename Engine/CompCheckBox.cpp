@@ -134,6 +134,23 @@ void CompCheckBox::Save(JSON_Object * object, std::string name, bool saveScene, 
 		{
 			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
 		}
+
+		if (unact_sprite[i] != nullptr)
+		{
+			if (saveScene == false)
+			{
+				// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
+				std::string temp = std::to_string(countResources++);
+
+				json_object_dotset_number_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".UUID Resource", unact_sprite[i]->GetUUID());
+				json_object_dotset_string_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".Name", unact_sprite[i]->name.c_str());
+			}
+			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, unact_sprite[i]->GetUUID());
+		}
+		else
+		{
+			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
+		}
 	}
 
 }
@@ -158,6 +175,19 @@ void CompCheckBox::Load(const JSON_Object * object, std::string name)
 				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
+				}
+
+			}
+
+			unact_sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+			if (unact_sprite[i] != nullptr)
+			{
+				unact_sprite[i]->num_game_objects_use_me++;
+
+				// LOAD All Materials ----------------------------
+				if (unact_sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(unact_sprite[i]->GetUUID()).c_str(), unact_sprite[i]);
 				}
 
 			}
