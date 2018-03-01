@@ -1,86 +1,143 @@
-#version 330 core
+#version 330 core 
+
+#define MAX_LIGHTS 30
+uniform int _numLights;
+uniform struct Light {
+	vec3 position;
+	int type;
+	vec4 l_color; //a.k.a the color of the light
+	float intensity;
+	float ambientCoefficient; 
+
+} _lights[MAX_LIGHTS];
+
 in vec4 ourColor;
 in vec2 TexCoord;
 in vec3 ourNormal;
 in vec3 ourPos;
-uniform float wave_height;
-uniform float _time;
-out vec4 color;
-uniform sampler2D albedo;
-uniform sampler2D normal_map;
-uniform sampler2D texture3;
+in float wave_height;
+in vec3 FragPos;
 
-uniform  mat4 viewproj;
-uniform mat4 model;
+uniform vec4 diff_color;			
+out vec4 color;						
+uniform sampler2D albedo;			
+uniform sampler2D normal_map;		
+uniform sampler2D occlusion_map;
+uniform sampler2D specular_map;						
+									
+uniform mat4 viewproj;				
+uniform mat4 model;					
 uniform mat4 view;
 
+uniform vec3 _cameraPosition;
+uniform float _alpha;
+uniform float _time;
 
+uniform float a_LightInt;			
+uniform float a_Ka;					
+uniform float a_Kd;					
+uniform float a_Ks;					
+uniform float a_shininess;			
+							
+uniform vec4 top_col;
+uniform vec4 down_col;	
+uniform vec4 ambient_col;
+uniform float waveHeight;	                                                                     
+									                                                                     
+vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
+{																										 
+																							 
+	vec3 surfacePos = vec3(model * vec4(ourPos, 1.0));										 
+	vec3 v = normalize(_cameraPosition - surfacePos);										 
+		
+																				 
+	float lightInt = light.intensity;
+  			
+																		 
+	vec3 normal =  ourNormal ;							 
+																										 
+	if (light.type != 0) {																				 
+																										 
+																					 
+		
+        vec3 s =  normalize(light.position );
+       
+        vec3 r = reflect(-s,normal);	
 
-vec2 blinnPhongDir(vec3 lightDir, float lightInt, float Ka, float Kd, float Ks, float shininess)
-{
+        float cosTheta = clamp( dot(s, normal), 0,1 );																 
+		float cosAlpha = clamp( dot( v,r ), 0,1 );																								 
+	
+																						 
+		float diffuse = Kd * lightInt * cosTheta;
+        float spec =  Ks* lightInt* pow(cosAlpha, shininess);	
+					 
+		return vec3(diffuse,spec,1);																	 
+																										 
+	}																									 
+																										 
+	else {		
+		vec3 lightpos =  light.position;																			 
+		vec3 s =  normalize(lightpos - surfacePos);       
+        vec3 r = reflect(-s,normal);
 
- vec2 Tile = vec2(1,1);
-vec2 xy = TexCoord.xy;
-vec2 phase = fract(xy*Tile);
+        float cosTheta = clamp( dot( s,normal ), 0,1 );       
+        float cosAlpha = clamp( dot( v,r ), 0,1 );												 
+																										 
+		float distanceToLight = length((lightpos - surfacePos));									 
+		float attenuation = 1 / (1.0 + 0.1 * pow(distanceToLight,2));									 
+																										 
+		float diffuse = attenuation * Kd *lightInt * cosTheta;					 
+		float spec = attenuation * Ks *lightInt* pow(cosAlpha, shininess);
+																												 
+		return vec3(diffuse,spec,attenuation);																 
+																												 
+																												 
+	}																											 
+																												 
+																												 
+}																												 
+																												 
+																												 
+void main()																									
+{																												 
+																							 
+													 
+	vec3 color_texture = texture(albedo, TexCoord +vec2(_time/80,-_time/80)).xyz;															 
+	vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1);														 
+	vec3 occlusion_texture = texture(occlusion_map,TexCoord).xyz;												 
+    vec3 spec_texture = texture(specular_map, TexCoord).xyz;
+																		 
+																												 
+	vec3 inten = vec3(0); vec3 inten_final = vec3(0);																					 
+																		 
+	vec4 light_colors[MAX_LIGHTS];
+		
+	float final_ambient = 0;																								
+	vec3 final_color = vec3(0);	
+																		 
+	for (int i = 0; i <_numLights; ++i) {																		 
+		inten = blinnPhongDir(_lights[i], a_Kd, a_Ks, a_shininess, N);				
+		inten_final.xy += inten.xy;																			
+		light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);												
+	}																										
+																			
+	for (int i = 0; i<_numLights; ++i) {																	
+		final_color += vec3(light_colors[i]) * light_colors[i].a;											
+		final_ambient += _lights[i].ambientCoefficient;
+	}		
+																								
+	final_ambient = final_ambient/_numLights;
+	final_color = normalize(final_color);	
 
-
-vec3 s = normalize(lightDir);
-vec3 v = normalize(view * vec4(-ourPos,1)).xyz;
-vec3 n = texture( normal_map,phase ).xyz*ourNormal*2 ;//ourNormal * texture(_normal_map, TexCoord).xyz;
-vec3 h = normalize(v+s);
-float diffuse = Ka + Kd * lightInt * max(0.0, dot(n, s)+0.8);
-float spec = Ks * pow(max(0.0, dot(reflect(-lightDir,n),h)), shininess);
-return vec2(diffuse, spec);
-
-}
-
-
-void main()
-{
- // light data
- vec3 lightdir = normalize(vec3(1,1, 1));
- vec3 ambient = ourColor.xyz/15;
- vec3 diffuse = ourColor.xyz;
- vec3 specular = vec3(1, 0, 1);
-vec3 lcolor =ourColor.xyz;
-vec3 viewDirection = normalize(vec3( view *vec4(0,0,0, 1.0) - model * vec4(ourPos*2,1)));
-
-
-vec3 color_texture = texture(albedo, TexCoord/1.2 + ((sin(_time/2)+1)/20)).xyz * diffuse;
-vec3 normal_map = texture(normal_map, TexCoord).xyz;
-vec3 foam_tex = texture(texture3,TexCoord/1.2 +  ((sin(_time*3))/100)).xyz * 0.7;
-
-float y = normal_map.y;
-normal_map.x = (2*normal_map.x)-1;
-normal_map.y = (2*normal_map.z)-1;
-normal_map.z = y;
-normal_map = normalize(normal_map);
-vec3 normal =normalize(ourNormal) + normal_map.x * vec3(1,0,0) + normal_map.y* vec3(0,1,0); 
-vec3 specularReflection;
-
-float spec;
-float attenuation = 0.6;
-float temp  = dot(normal, lightdir);
-float height =wave_height - ourPos.z ;
-
-
-vec3 reflection = normalize( temp * normal - lightdir); 
-
-spec =pow(max(0, dot(reflection,viewDirection )),400);
-specularReflection = vec3(1,1,1) * spec * attenuation;
-
-vec3 final_color = max((color_texture)*temp ,ambient);
-vec2 inten = blinnPhongDir(lightdir, 1, 0.5, 1, 1, 5.0);
-
-float distortion_wave =  sin(ourPos.y)*0.3 * sin (ourPos.y/2) + sin(ourPos.y)*0.2;
-float min_height = 1.3 +distortion_wave;
-if(height > min_height)
-{
-
-color = vec4(mix(color_texture * inten.x + specularReflection,color_texture * inten.x + specularReflection + vec3(height-min_height)*foam_tex , 0.6 ) ,1);
-}
-
-color = vec4(color_texture,1);// * inten.x + specularReflection , 1);
-
+float height = wave_height - ourPos.y;
+float top_mult = (wave_height + waveHeight) / (waveHeight*2);
+float down_mult = abs(top_mult-1);
+																
+	vec3 col = final_ambient* color_texture*ambient_col.rgb 
+    + color_texture * (inten_final.x + inten_final.y * spec_texture.r)
+*(top_col.rgb * top_mult + down_col.rgb * down_mult)
+    *occlusion_texture*final_color.rgb; 
+																						
+	color = vec4(col,_alpha);
 
 }
