@@ -291,210 +291,14 @@ void ModuleLightning::OnEvent(Event & event)
 
 			if (m->resource_mesh != nullptr)
 			{
-				// Calc point lights shadow maps
-				if(!frame_used_lights.empty())
-					CalPointShadowMaps(m);
-
-				shadow_Shader->Bind();
-
-				Material* material = App->renderer3D->default_material;
-				//if (material->material_shader != nullptr)
-				if (m->GetMaterial()!= nullptr) material = m->GetMaterial()->material;
-				//shader->Bind();
-
-				CompTransform* transform = (CompTransform*)m->GetParent()->FindComponentByType(C_TRANSFORM);
-
 				if (m->resource_mesh->vertices.size() > 0 && m->resource_mesh->indices.size() > 0)
 				{
-					glEnableClientState(GL_VERTEX_ARRAY);
-					glEnableClientState(GL_NORMAL_ARRAY);
-					glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
-					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-					//Set Wireframe
-					if (App->renderer3D->wireframe)
-					{
-						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-					}
-
-					//Temporary, future delete incoming
-					//Set Color
-					if (m->GetMaterial() != nullptr)
-					{
-						glColor4f(m->GetMaterial()->GetColor().r, m->GetMaterial()->GetColor().g, m->GetMaterial()->GetColor().b, m->GetMaterial()->GetColor().a);
-					}
-					else
-					{
-						glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
-					}
-					//
-
-
-					//Future Delete
-					if (App->renderer3D->texture_2d)
-					{
-						CompMaterial* temp = m->GetParent()->GetComponentMaterial();
-						if (temp != nullptr) {
-							for (int i = 0; i < temp->material->textures.size(); i++) {
-
-
-								uint texLoc = glGetUniformLocation(temp->material->GetProgramID(), temp->material->textures[i].var_name.c_str());
-								glUniform1i(texLoc, i);
-
-
-								glActiveTexture(GL_TEXTURE0 + i);
-
-
-								if (temp->material->textures[i].value == nullptr)
-								{
-									glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-								}
-								else
-								{
-									glBindTexture(GL_TEXTURE_2D, temp->material->textures[i].value->GetTextureID());
-								}
-
-							}
-							
-
-							uint texture_2D_sampler = 0;
-							glActiveTexture(GL_TEXTURE0);
-							if (temp->GetTextureID() == 0)
-							{
-							glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-							}
-							else
-							{
-							glBindTexture(GL_TEXTURE_2D, temp->GetTextureID());
-							}
-							texture_2D_sampler = glGetUniformLocation(App->renderer3D->default_shader->programID, "_texture");
-							glUniform1i(texture_2D_sampler, 0);
-							
-
-						}
-					}
-					//
-					
-					Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
-					float4x4 temp = camFrust.ViewMatrix();
-				
-	
-					float4x4 matrixfloat = transform->GetGlobalTransform();
-					GLfloat matrix[16] =
-					{
-						matrixfloat[0][0],matrixfloat[1][0],matrixfloat[2][0],matrixfloat[3][0],
-						matrixfloat[0][1],matrixfloat[1][1],matrixfloat[2][1],matrixfloat[3][1],
-						matrixfloat[0][2],matrixfloat[1][2],matrixfloat[2][2],matrixfloat[3][2],
-						matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
-					};
-
 					const CompLight* light = event.send_3d3damm.light;
 
-					GameObject* parent = light->GetParent();
-					CompTransform* trans = parent->GetComponentTransform();
-
-
-					float3 pos_light = light->GetParent()->GetComponentTransform()->GetPos();
-					float3 rot_eu_ang = light->GetParent()->GetComponentTransform()->GetRotEuler();
-
-
-					Quat rot = light->GetParent()->GetComponentTransform()->GetRot();
-
-					float3 dir = light->GetParent()->GetComponentTransform()->GetEulerToDirection();
-
-					float4x4 MVP = camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
-
-					glm::mat4 biasMatrix(
-						0.5, 0.0, 0.0, 0,
-						0.0, 0.5, 0.0, 0,
-						0.0, 0.0, 0.5, 0,
-						0.5, 0.5, 0.5, 1.0
-					);
-
-
-					glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-					//glm::mat4 depthViewMatrix = glm::lookAt(vec3(rot_eu_ang.x, rot_eu_ang.y, rot_eu_ang.z), glm::vec3(pos_light.x, pos_light.y, pos_light.z), glm::vec3(0, 1, 0));
-					glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(dir.x, dir.y, dir.z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-					glm::mat4 depthModelMatrix = glm::mat4(1.0);
-					//	depthModelMatrix[3][0] = pos_light.x;
-					//depthModelMatrix[3][1] = pos_light.y;
-					//depthModelMatrix[3][2] = pos_light.z;
-
-
-
-					glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-					glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
-
-					//This is needed for the shadow projection in CompMesh cpp
-
-
-
-					//----------------------------
-
-					GLint modelLoc = glGetUniformLocation(shadow_Shader->programID, "model");
-					uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
-
-
-					glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
-		
-					glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
-
-
-					int total_save_buffer = 8;
-
-					if (m->resource_mesh->vertices.size()>0) {
-						glBindBuffer(GL_ARRAY_BUFFER, m->resource_mesh->id_total_buffer);
-
-						glEnableVertexAttribArray(0);
-						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
-						
-
-						glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
-						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->resource_mesh->indices_id);
-						glDrawElements(GL_TRIANGLES, m->resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);
-
-					}
-
-					if (material->name == "Shadow_World_Render") {
-					
-						material->Bind();
-
-						
-
-
-						int depthMatrixID = glGetUniformLocation(material->GetProgramID(), "depthMVP");
-						int depthBiasID = glGetUniformLocation(material->GetProgramID(), "depthBias");
-						GLuint ShadowMapID = glGetUniformLocation(material->GetProgramID(), "shadowMap");
-						GLuint light_dir_id = glGetUniformLocation(material->GetProgramID(), "_light_dir");
-						//-----------------------
-
-
-						glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
-						glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
-						glUniform3fv(light_dir_id, 1, dir.ptr());
-						material->Unbind();
-					}
-					shadow_Shader->Bind();
-
-					//-----------------
-
-					//Reset TextureColor
-					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-					glBindTexture(GL_TEXTURE_2D, 0);
-
-					glActiveTexture(GL_TEXTURE0);
-
-					//Disable Wireframe -> only this object will be wireframed
-					if (App->renderer3D->wireframe)
-					{
-						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-					}
-					glDisableClientState(GL_VERTEX_ARRAY);
-					glDisableClientState(GL_NORMAL_ARRAY);
-					glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
-					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-
+					if (light->type == Light_type::DIRECTIONAL_LIGHT)
+						CalcDirectionalShadowMap((CompLight*)light, m);
+					else if(light->type == Light_type::POINT_LIGHT)
+						CalcPointShadowMaps((CompLight*)light, m);
 				}
 
 				else
@@ -513,7 +317,7 @@ void ModuleLightning::OnEvent(Event & event)
 	shadow_Shader->Unbind();
 }
 
-void ModuleLightning::CalPointShadowMaps(CompMesh* mesh_to_render)
+void ModuleLightning::CalcPointShadowMaps(CompLight* light, CompMesh* mesh_to_render)
 {
 	if (!mesh_to_render || !mesh_to_render->resource_mesh) return;
 	if(mesh_to_render->resource_mesh->vertices.size() <= 0) return;
@@ -521,7 +325,7 @@ void ModuleLightning::CalPointShadowMaps(CompMesh* mesh_to_render)
 	// First  check if the mesh is in range of the point light
 	float3 object_pos = mesh_to_render->GetGameObjectPos();
 
-	uint depth_cube_map_index = 0;
+	/*uint depth_cube_map_index = 0;
 	for(std::vector<CompLight*>::iterator it = frame_used_lights.begin(); it != frame_used_lights.end(); ++it)
 	{
 		if((*it)->type == Light_type::POINT_LIGHT)
@@ -592,7 +396,205 @@ void ModuleLightning::CalPointShadowMaps(CompMesh* mesh_to_render)
 
 			++depth_cube_map_index;
 		}
+	}*/
+}
+
+void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
+{
+	shadow_Shader->Bind();
+
+	Material* material = App->renderer3D->default_material;
+	//if (material->material_shader != nullptr)
+	if (m->GetMaterial() != nullptr) material = m->GetMaterial()->material;
+	//shader->Bind();
+
+	CompTransform* transform = (CompTransform*)m->GetParent()->FindComponentByType(C_TRANSFORM);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	//Set Wireframe
+	if (App->renderer3D->wireframe)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
+
+	//Temporary, future delete incoming
+	//Set Color
+	if (m->GetMaterial() != nullptr)
+	{
+		glColor4f(m->GetMaterial()->GetColor().r, m->GetMaterial()->GetColor().g, m->GetMaterial()->GetColor().b, m->GetMaterial()->GetColor().a);
+	}
+	else
+	{
+		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+	}
+	//
+
+
+	//Future Delete
+	if (App->renderer3D->texture_2d)
+	{
+		CompMaterial* temp = m->GetParent()->GetComponentMaterial();
+		if (temp != nullptr) {
+			for (int i = 0; i < temp->material->textures.size(); i++) {
+
+
+				uint texLoc = glGetUniformLocation(temp->material->GetProgramID(), temp->material->textures[i].var_name.c_str());
+				glUniform1i(texLoc, i);
+
+
+				glActiveTexture(GL_TEXTURE0 + i);
+
+
+				if (temp->material->textures[i].value == nullptr)
+				{
+					glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+				}
+				else
+				{
+					glBindTexture(GL_TEXTURE_2D, temp->material->textures[i].value->GetTextureID());
+				}
+
+			}
+
+
+			uint texture_2D_sampler = 0;
+			glActiveTexture(GL_TEXTURE0);
+			if (temp->GetTextureID() == 0)
+			{
+				glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_2D, temp->GetTextureID());
+			}
+			texture_2D_sampler = glGetUniformLocation(App->renderer3D->default_shader->programID, "_texture");
+			glUniform1i(texture_2D_sampler, 0);
+
+
+		}
+	}
+	//
+
+	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
+	float4x4 temp = camFrust.ViewMatrix();
+
+
+	float4x4 matrixfloat = transform->GetGlobalTransform();
+	GLfloat matrix[16] =
+	{
+		matrixfloat[0][0],matrixfloat[1][0],matrixfloat[2][0],matrixfloat[3][0],
+		matrixfloat[0][1],matrixfloat[1][1],matrixfloat[2][1],matrixfloat[3][1],
+		matrixfloat[0][2],matrixfloat[1][2],matrixfloat[2][2],matrixfloat[3][2],
+		matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
+	};
+
+	GameObject* parent = light->GetParent();
+	CompTransform* trans = parent->GetComponentTransform();
+
+
+	float3 pos_light = light->GetParent()->GetComponentTransform()->GetPos();
+	float3 rot_eu_ang = light->GetParent()->GetComponentTransform()->GetRotEuler();
+
+
+	Quat rot = light->GetParent()->GetComponentTransform()->GetRot();
+
+	float3 dir = light->GetParent()->GetComponentTransform()->GetEulerToDirection();
+
+	float4x4 MVP = camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
+
+	glm::mat4 biasMatrix(
+		0.5, 0.0, 0.0, 0,
+		0.0, 0.5, 0.0, 0,
+		0.0, 0.0, 0.5, 0,
+		0.5, 0.5, 0.5, 1.0
+	);
+
+
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+	//glm::mat4 depthViewMatrix = glm::lookAt(vec3(rot_eu_ang.x, rot_eu_ang.y, rot_eu_ang.z), glm::vec3(pos_light.x, pos_light.y, pos_light.z), glm::vec3(0, 1, 0));
+	glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(dir.x, dir.y, dir.z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 depthModelMatrix = glm::mat4(1.0);
+	//	depthModelMatrix[3][0] = pos_light.x;
+	//depthModelMatrix[3][1] = pos_light.y;
+	//depthModelMatrix[3][2] = pos_light.z;
+
+
+
+	glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+	glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
+
+	//This is needed for the shadow projection in CompMesh cpp
+
+
+
+	//----------------------------
+
+	GLint modelLoc = glGetUniformLocation(shadow_Shader->programID, "model");
+	uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
+
+
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
+
+	glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
+
+
+	int total_save_buffer = 8;
+
+	if (m->resource_mesh->vertices.size()>0) {
+		glBindBuffer(GL_ARRAY_BUFFER, m->resource_mesh->id_total_buffer);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
+
+
+		glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->resource_mesh->indices_id);
+		glDrawElements(GL_TRIANGLES, m->resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);
+
+	}
+
+	if (material->name == "Shadow_World_Render") {
+
+		material->Bind();
+
+
+
+
+		int depthMatrixID = glGetUniformLocation(material->GetProgramID(), "depthMVP");
+		int depthBiasID = glGetUniformLocation(material->GetProgramID(), "depthBias");
+		GLuint ShadowMapID = glGetUniformLocation(material->GetProgramID(), "shadowMap");
+		GLuint light_dir_id = glGetUniformLocation(material->GetProgramID(), "_light_dir");
+		//-----------------------
+
+
+		glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
+		glUniform3fv(light_dir_id, 1, dir.ptr());
+		material->Unbind();
+	}
+	shadow_Shader->Bind();
+
+	//-----------------
+
+	//Reset TextureColor
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+
+	//Disable Wireframe -> only this object will be wireframed
+	if (App->renderer3D->wireframe)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void ModuleLightning::SetShadowCastPoints(uint points)
