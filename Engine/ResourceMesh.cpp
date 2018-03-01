@@ -100,7 +100,7 @@ void ResourceMesh::DeleteToMemory()
 
 bool ResourceMesh::LoadToMemory()
 {
-	LOG("Resources: %s, Loaded in Memory!", this->name);
+	LOG("Resources: %s, Loaded in Memory!", this->name.c_str());
 
 	//----------Starting to change to one buffer
 
