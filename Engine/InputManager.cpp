@@ -1,6 +1,7 @@
 #include "InputManager.h"
 #include "ImGui/imgui.h"
 #include "InputAction.h"
+#include"Application.h"
 #define ACTION_LIMIT 50
 
 
@@ -137,4 +138,45 @@ bool InputManager::GetActiveInput() const
 bool InputManager::GetWindowOpen() const
 {
 	return window_open;
+}
+
+InputAction* InputManager::CreateNewAction(const char * new_name, const char * new_key_binding, ActionInputType new_type)
+{
+
+	/*KeyRelation new_key_relation = KeyRelation(new_name);
+	new_key_relation.key_type= new_type*/
+
+	KeyRelation new_key_relation = App->module_key_binding->Find_key_binding(new_key_binding);
+	InputAction* temp = nullptr;
+	bool can_create_action = true;
+	switch (new_type) {
+
+	case ActionInputType::AXIS_ACTION:
+		temp = new AxisAction();
+		break;
+
+	case ActionInputType::BUTTON_ACTION:
+		temp = new ButtonAction();
+		break;
+	case ActionInputType::CONTROLLER_AXIS_ACTION:
+		temp = new ControllerAxisAction();
+		break;
+
+	case ActionInputType::KEY_ACTION:
+		temp = new KeyAction();
+		break;
+
+	case ActionInputType::MOUSE_BUTTON_ACTION:
+		temp = new MouseButtonAction();
+		break;
+	}
+
+	if (temp != nullptr)
+	{
+		temp->name = new_name;
+		temp->key_relation = new_key_relation;
+	}
+
+	return temp;
+
 }

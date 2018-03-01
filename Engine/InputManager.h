@@ -2,8 +2,11 @@
 #define INPUT_MANAGER_H
 #include "Globals.h"
 #include <vector>
+#include"InputAction.h"
+
 typedef union SDL_Event SDL_Event;
-class InputAction;
+
+
 class InputManager
 {
 public:
@@ -31,6 +34,9 @@ public:
 	bool GetBlockAction()const;
 	bool GetActiveInput()const;
 	bool GetWindowOpen()const;
+	InputAction* CreateNewAction(const char* new_name, const char* new_key_binding, ActionInputType new_type = ActionInputType::UNKNOWN_ACTION);
+
+
 private:
 public:
 private:
