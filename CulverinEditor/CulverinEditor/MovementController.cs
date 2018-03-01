@@ -12,8 +12,15 @@ public class MovementController : CulverinBehaviour
         SOUTH,
         WEST
     }
+    public enum Facing
+    {
+        UP = 0,
+        STRAIGHT,
+        DOWN
+    }
 
     public Direction curr_dir = Direction.NORTH;
+    public Facing curr_fac = Facing.STRAIGHT;
     public int start_direction = 1;
     private float movSpeed = 0.0f;
     Vector3 endPosition;
@@ -28,12 +35,19 @@ public class MovementController : CulverinBehaviour
     int map_height = 0;
     public bool blocked_camera = false;
 
+    public float up_angle = 45;
+    public float down_angle = -45;
+
     private int angle = 0;
+    private int face_angle = 0;
     private float speed_rotation = 30;
+    private float face_speed_rotation = 20;
     private float actual_angle = 0;
+    private float actual_facing_angle = 0;
 
     private bool rotating = false;
     private bool moving = false;
+    private bool face_rotating = false;
 
     private CompAudio audio;
 
@@ -95,7 +109,7 @@ public class MovementController : CulverinBehaviour
         CheckIsWalkable();
 
         // CHARACTER NOT MOVING
-        if (GetComponent<Transform>().local_position == endPosition && rotating == false)
+        if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false)
         {
             moving = false;
 
@@ -104,7 +118,10 @@ public class MovementController : CulverinBehaviour
 
             // CHECK MOVEMENT --------------------------
             CheckMovement();
-  
+
+            // CHECK FACING --------------------------
+            CheckFacingRotation();
+
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0) && array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
             {
@@ -145,6 +162,54 @@ public class MovementController : CulverinBehaviour
                 }
             }
 
+        }
+        else if(face_rotating)
+        {
+            moving = false;
+
+            GetComponent<Transform>().RotateAroundAxis(Vector3.Left, face_angle * face_speed_rotation * Time.DeltaTime());
+            float moved_angle = (float)face_angle * face_speed_rotation * Time.DeltaTime();
+
+            if (angle < 0)
+            {
+                actual_facing_angle += (moved_angle * -1);
+            }
+            else
+            {
+                actual_facing_angle += moved_angle;
+            }
+
+            if (curr_fac == Facing.UP)
+            {
+                if (actual_facing_angle >= up_angle)
+                {
+                    face_rotating = false;
+                    if (actual_facing_angle > up_angle)
+                    {
+                        float marge = actual_facing_angle - up_angle;
+                        GetComponent<Transform>().RotateAroundAxis(Vector3.Left, -marge);
+                    }
+                }
+            }
+            else if (curr_fac == Facing.STRAIGHT)
+            {
+                if (actual_facing_angle >= -1.0f && actual_facing_angle <= 1)
+                {
+                    face_rotating = false;
+                }
+            }
+            else if (curr_fac == Facing.DOWN)
+            {
+                if (actual_facing_angle <= down_angle)
+                {
+                    face_rotating = false;
+                    if (actual_facing_angle < down_angle)
+                    {
+                        float marge = actual_facing_angle - down_angle;
+                        GetComponent<Transform>().RotateAroundAxis(Vector3.Left, marge);
+                    }
+                }
+            }
         }
         else
         {
@@ -197,6 +262,46 @@ public class MovementController : CulverinBehaviour
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
             MoveBackward(out tile_mov_x, out tile_mov_y);
+        }
+    }
+
+    private void CheckFacingRotation()
+    {
+        if(Input.GetKeyDown(KeyCode.Z)) //Look Up
+        {
+            if (curr_fac != Facing.UP)
+            {
+                if (curr_fac == Facing.STRAIGHT)
+                {
+                    curr_fac = Facing.UP;
+                    actual_facing_angle = 0;
+                }
+                else if (curr_fac == Facing.DOWN)
+                {
+                    curr_fac = Facing.STRAIGHT;
+                    actual_facing_angle = down_angle;
+                }
+                face_angle = 10;
+                face_rotating = true;
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.X)) //Look Down
+        {
+            if (curr_fac != Facing.DOWN)
+            {
+                if (curr_fac == Facing.STRAIGHT)
+                {
+                    curr_fac = Facing.DOWN;
+                    actual_facing_angle = 0;
+                }
+                else if (curr_fac == Facing.UP)
+                {
+                    curr_fac = Facing.STRAIGHT;
+                    actual_facing_angle = up_angle;
+                }
+                face_angle = -10;
+                face_rotating = true;
+            }
         }
     }
 

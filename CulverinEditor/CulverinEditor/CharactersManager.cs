@@ -37,8 +37,6 @@ public class CharactersManager : CulverinBehaviour
 
                 Debug.Log(current_character.GetName());
 
-                Debug.Log(current_character.GetComponent<BasicFunctionality>().time);
-
                 if (Input.GetKeyDown(KeyCode.T))
                 {
                     state = State.CHANGING_LEFT;
