@@ -23,7 +23,9 @@ public:
 	void SetTextureID(uint set_texture_id);
 	void SetColor(const float4& set_rgba);
 	void SetColor(float set_r, float set_g, float set_b, float set_a);
+	void SetToRender(bool render);
 	void SetRaycastTarget(bool flag);
+	bool GetToRender()const;
 	uint GetTextureID()const;
 	CompRectTransform* GetRectTrasnform()const;
 	CompCanvasRender* GetCanvasRender()const;
@@ -31,6 +33,8 @@ public:
 
 private:
 public:
+private:
+	bool render = true;
 protected:
 	bool raycast_target = true;
 	CompCanvas* my_canvas = nullptr;
@@ -39,6 +43,7 @@ protected:
 	uint texture_id = 0;
 	float4 color = float4::one;
 
+	
 };
 
 #endif//COMPONENT_GRAPHIC_H

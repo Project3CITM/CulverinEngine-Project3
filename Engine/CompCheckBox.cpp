@@ -17,7 +17,6 @@ CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t,
 {
 	uid = App->random->Int();
 	name_component = "Check Box";
-	deactived = image;
 }
 
 CompCheckBox::CompCheckBox(const CompCheckBox & copy, GameObject * parent) : CompInteractive(Comp_Type::C_CHECK_BOX, parent)
@@ -134,23 +133,6 @@ void CompCheckBox::Save(JSON_Object * object, std::string name, bool saveScene, 
 		{
 			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
 		}
-
-		if (unact_sprite[i] != nullptr)
-		{
-			if (saveScene == false)
-			{
-				// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
-				std::string temp = std::to_string(countResources++);
-
-				json_object_dotset_number_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".UUID Resource", unact_sprite[i]->GetUUID());
-				json_object_dotset_string_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".Name", unact_sprite[i]->name.c_str());
-			}
-			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, unact_sprite[i]->GetUUID());
-		}
-		else
-		{
-			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
-		}
 	}
 
 }
@@ -178,19 +160,6 @@ void CompCheckBox::Load(const JSON_Object * object, std::string name)
 				}
 
 			}
-
-			unact_sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
-			if (unact_sprite[i] != nullptr)
-			{
-				unact_sprite[i]->num_game_objects_use_me++;
-
-				// LOAD All Materials ----------------------------
-				if (unact_sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
-				{
-					App->importer->iMaterial->LoadResource(std::to_string(unact_sprite[i]->GetUUID()).c_str(), unact_sprite[i]);
-				}
-
-			}
 		}
 	}
 	Enable();
@@ -198,25 +167,20 @@ void CompCheckBox::Load(const JSON_Object * object, std::string name)
 
 void CompCheckBox::OnPointDown(Event event_input)
 {
-	
 	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
 	{
 		return;
 	}
-	//if (IsPressed())
-		active = !active;
-		
+
+	OnClick();
 	point_down = true;
 
 	UpdateSelectionState(event_input);
 	PrepareHandleTransition();
-	Swap();
 }
 
-void CompCheckBox::Swap()
+void CompCheckBox::OnClick()
 {
-	if (active)
-		image->SetSourceImage(sprite[1]);
-	else
-		image->SetSourceImage((ResourceMaterial*)deactived);
-}	
+	Check->SetToRender(!Check->GetToRender());
+}
+
