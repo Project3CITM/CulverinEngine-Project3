@@ -57,6 +57,8 @@ private:
 	bool kinematic = false;
 	bool own_update = false;
 
+	uint lock_move = 0;
+
 };
 
 #endif // !COMP_RIGIDBODY_H

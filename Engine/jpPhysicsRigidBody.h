@@ -50,6 +50,7 @@ public:
 	void SetShapeScale(float3& new_scale, float& radius, JP_COLLIDER_TYPE type);
 
 	void SetMass(float &mass);
+	void SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::Enum x, bool active);
 
 	// Get Methods
 	void GetTransform(float3& pos, Quat& rotation);

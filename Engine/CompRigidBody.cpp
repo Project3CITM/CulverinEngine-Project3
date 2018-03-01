@@ -164,7 +164,55 @@ void CompRigidBody::ShowInspectorInfo()
 	{
 		body->SetAsKinematic(true);
 	}
+	ImGui::Separator();
 
+	// Lock Linear move -----------------
+	ImGui::Text("Lock Linear Move");
+	bool flags = (lock_move & (1 << 0));
+	if (ImGui::Checkbox("X", &flags))
+	{
+		(flags)? lock_move |= (1 << 0): lock_move &= ~(1 << 0);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, flags);
+	}
+	ImGui::SameLine();
+	flags = (lock_move & (1 << 1));
+	if (ImGui::Checkbox("Y", &flags))
+	{
+		(flags) ? lock_move |= (1 << 1) : lock_move &= ~(1 << 1);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, flags);
+	}
+	ImGui::SameLine();
+	flags = (lock_move & (1 << 2));
+	if (ImGui::Checkbox("Z", &flags))
+	{
+		(flags) ? lock_move |= (1 << 2) : lock_move &= ~(1 << 2);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, flags);
+	}
+	ImGui::Separator();
+
+	// Lock Angular move -----------------
+	ImGui::Text("Lock Angular Move");
+	flags = (lock_move & (1 << 3));
+	if (ImGui::Checkbox("x", &flags))
+	{
+		(flags) ? lock_move |= (1 << 3) : lock_move &= ~(1 << 3);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, flags);
+	}
+	ImGui::SameLine();
+	flags = (lock_move & (1 << 4));
+	if (ImGui::Checkbox("y", &flags))
+	{
+		(flags) ? lock_move |= (1 << 4) : lock_move &= ~(1 << 4);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, flags);
+	}
+	ImGui::SameLine();
+	flags = (lock_move & (1 << 5));
+	if (ImGui::Checkbox("z", &flags))
+	{
+		(flags) ? lock_move |= (1 << 5) : lock_move &= ~(1 << 5);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, flags);
+	}
+	
 	ImGui::TreePop();
 }
 
@@ -180,6 +228,8 @@ void CompRigidBody::Save(JSON_Object * object, std::string name, bool saveScene,
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 
 	json_object_dotset_boolean_with_std(object, name + "Kinematic", kinematic);
+
+	json_object_dotset_number_with_std(object, name + "Move Locked", lock_move);
 }
 
 void CompRigidBody::Load(const JSON_Object * object, std::string name)
@@ -187,11 +237,38 @@ void CompRigidBody::Load(const JSON_Object * object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 
 	kinematic = json_object_dotget_boolean_with_std(object, name + "Kinematic");
+
+	lock_move = json_object_dotget_number_with_std(object, name + "Move Locked");
 }
 
 void CompRigidBody::SyncComponent()
 {
 	body->SetAsKinematic(kinematic);
+
+	if ((lock_move & (1 << 0)))
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
+	}
+	if (lock_move & (1 << 1))
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+	}
+	if (lock_move & (1 << 2))
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
+	}
+	if (lock_move & (1 << 3))
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+	}
+	if (lock_move & (1 << 4))
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	}
+	if (lock_move & (1 << 5))
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+	}
 }
 
 bool CompRigidBody::IsKinematic()

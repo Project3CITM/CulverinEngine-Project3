@@ -311,6 +311,14 @@ void jpPhysicsRigidBody::SetMass(float & mass)
 	}
 }
 
+void jpPhysicsRigidBody::SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::Enum flag, bool active)
+{
+	if (body && is_dynamic)
+	{
+		static_cast<physx::PxRigidDynamic*>(body)->setRigidDynamicLockFlag(flag,active);
+	}
+}
+
 void jpPhysicsRigidBody::GetTransform(float3 & pos, Quat & rotation)
 {
 	if (is_dynamic)
