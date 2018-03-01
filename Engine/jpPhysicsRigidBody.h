@@ -67,6 +67,7 @@ public:
 
 	// Move Kinematic
 	void MoveKinematic(float3 pos, Quat rotation);
+	void ResetForces();
 
 private:
 	// main body

@@ -253,6 +253,7 @@ void Scene::LoadScene()
 bool Scene::SetEventListenrs()
 {
 	AddListener(EventType::EVENT_DELETE_GO, this);
+	AddListener(EventType::EVENT_DRAW, this);
 	AddListener(EventType::EVENT_PARTICLE_DRAW, this);
 	return true;
 }

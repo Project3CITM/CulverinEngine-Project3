@@ -135,7 +135,11 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 
 					}
 				}
-			else continue;
+			else
+			{
+				item = MultimapToIterate->erase(item);
+				continue;
+			}
 			item = MultimapToIterate->erase(item);
 			count++;
 		}
@@ -161,7 +165,11 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 		if (EListener != MEventListeners.end())
 			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
 				(*item2)->OnEvent(item._Ptr->_Myval.second);
-		else continue;
+		else
+		{
+			item = MMNormalEvent.erase(item);
+			continue;
+		}
 		item = MMNormalEvent.erase(item);
 		count++;
 	}
@@ -195,7 +203,7 @@ void ModuleEventSystem::PushEvent(Event& event)
 	switch (event.type)
 	{
 	case EventType::EVENT_PARTICLE_DRAW:
-		MM3DADrawEvent.insert(std::pair<float, Event>(((Particle*)event.particle.ToDraw)->CameraDistance, event));
+		MM3DADrawEvent.insert(std::pair<float, Event>(-((Particle*)event.particle.ToDraw)->CameraDistance, event));
 		break;
 	case EventType::EVENT_DRAW:
 	{

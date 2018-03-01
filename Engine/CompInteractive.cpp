@@ -247,7 +247,6 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 	else
 	{
 		json_object_dotset_number_with_std(object, name + "Graphic UUID", 0);
-
 	}
 
 
@@ -345,7 +344,6 @@ void CompInteractive::OnPointDown(Event event_input)
 
 	UpdateSelectionState(event_input);
 	PrepareHandleTransition();
-
 }
 
 void CompInteractive::OnPointUP(Event event_input)
@@ -353,7 +351,6 @@ void CompInteractive::OnPointUP(Event event_input)
 	point_down = false;
 	UpdateSelectionState(event_input);
 	PrepareHandleTransition();
-
 }
 
 void CompInteractive::OnPointEnter(Event event_input)
@@ -575,6 +572,7 @@ void CompInteractive::UpdateSelectionState(Event event_data)
 	}
 	current_selection_state = SelectionStates::STATE_NORMAL;
 }
+
 void CompInteractive::PrepareHandleTransition()
 {
 	SelectionStates selection_state = current_selection_state;
@@ -584,18 +582,6 @@ void CompInteractive::PrepareHandleTransition()
 	}
 	HandleTransition(selection_state);
 }
-
-void CompInteractive::CheckBoxSwap()
-{
-	SelectionStates selection_state = current_selection_state;
-	if (IsActivate())
-	{
-		selection_state = SelectionStates::STATE_PRESSED;
-	}
-	HandleTransition(selection_state);
-}
-
-
 
 void CompInteractive::HandleTransition(SelectionStates selection_state)
 {

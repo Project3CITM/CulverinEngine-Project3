@@ -159,6 +159,10 @@ jpPhysicsRigidBody * jpPhysicsWorld::CreateRigidBody(physx::PxScene * curr_scene
 
 void jpCollisionCallback::onContact(const physx::PxContactPairHeader & pairHeader, const physx::PxContactPair * pairs, physx::PxU32 nbPairs)
 {
+	if (callback_module)
+	{
+		callback_module->OnContact(pairHeader.actors[0], pairHeader.actors[1], JP_COLLISION_TYPE::CONTACT_ENTER);
+	}
 }
 
 void jpCollisionCallback::onTrigger(physx::PxTriggerPair * pairs, physx::PxU32 count)
