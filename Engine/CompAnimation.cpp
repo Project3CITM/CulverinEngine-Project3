@@ -303,6 +303,10 @@ void CompAnimation::CopyValues(const CompAnimation* component)
 		temp->state = (*it)->state;
 		temp->loop = (*it)->loop;
 		temp->total_blending_time = (*it)->total_blending_time;
+		if (animation_clips.size() == 0)
+		{
+			current_animation = temp;
+		}
 		animation_clips.push_back(temp);
 	}
 
@@ -312,6 +316,10 @@ void CompAnimation::CopyValues(const CompAnimation* component)
 		temp->name = (*it)->name;
 		temp->clip = GetClipFromName((*it)->clip->name);
 		temp->active = (*it)->active;
+		if (temp->active == true)
+		{
+			active_node = temp;
+		}
 		animation_nodes.push_back(temp);
 	}
 	int i = 0;

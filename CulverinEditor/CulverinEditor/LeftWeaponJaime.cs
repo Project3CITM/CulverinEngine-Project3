@@ -3,15 +3,10 @@ using CulverinEditor.Debug;
 
 // The concept is to have WeaponController as a base class, and override for all the weapons
 
-public class LeftWeapon : CulverinBehaviour
+public class LeftWeaponJaime : WeaponController
 {
-    public GameObject player_obj;
-    public CharacterController player;
-    public GameObject l_button_obj;
-    public CompButton button;
-    public CoolDownLeft cd;
-    public GameObject enemy_obj;
-    public EnemyController enemy;
+    GameObject jaime_obj;
+    public JaimeController character;
     public CompAnimation animation_weapon;
     public AIManager enemy_tile;
 
@@ -21,25 +16,25 @@ public class LeftWeapon : CulverinBehaviour
     // ---------------------------
 
 
-    void Start()
+    public override void Start()
     {
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
-        l_button_obj = GetLinkedObject("l_button_obj");
+        jaime_obj = GetLinkedObject("jaime_obj");
+        button_obj = GetLinkedObject("button_obj");
         enemy_obj = GetLinkedObject("enemy_obj");
-        player_obj = GetLinkedObject("player_obj");
     }
 
     void Update()
     {
     }
 
-    public void Attack() //Might be virtual
+    public override void DoAbility() //Might be virtual
     {
         Debug.Log("Attack Left");
 
         // Decrease stamina -----------
-        player = player_obj.GetComponent<CharacterController>();
-        player.DecreaseStamina(stamina_cost);
+        character = jaime_obj.GetComponent<JaimeController>();
+        character.DecreaseStamina(stamina_cost);
 
         Debug.Log("Going to hit");
 
@@ -102,16 +97,16 @@ public class LeftWeapon : CulverinBehaviour
     }
 
     // This method will be called when the associated button to this weapon is pressed
-    void OnClick()
+    public override void OnClick()
     {
-        player = player_obj.GetComponent<CharacterController>();
+        character = jaime_obj.GetComponent<JaimeController>();
         // Check if player is in Idle State
-        if (player.GetState() == 0) /*0 = IDLE*/
+        if (character.GetState() == 0) /*0 = IDLE*/
         {
             // Check if player has enough stamina to perform its attack
-            if (player.GetCurrentStamina() > stamina_cost)
+            if (character.GetCurrentStamina() > stamina_cost)
             {
-                cd = l_button_obj.GetComponent<CoolDownLeft>();
+                cd = button_obj.GetComponent<CoolDown>();
                 //Check if the ability is not in cooldown
                 if (!cd.in_cd)
                 {
@@ -121,7 +116,7 @@ public class LeftWeapon : CulverinBehaviour
                     Attack();
 
                     // Set Attacking Animation
-                    SetAttackAnim();
+                    character.SetAnimationTransition("ToAttack1", true);
 
                     // Play the Sound FX
                     PlayFx();
@@ -138,20 +133,24 @@ public class LeftWeapon : CulverinBehaviour
         }
     }
 
-    public void PrepareAttack()
+    public void Attack() //Might be virtual
     {
-        Debug.Log("Prepare Attack");
-        button = l_button_obj.GetComponent<CompButton>();
-        button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
-    }
+        Debug.Log("Attack Left");
 
-    public void SetAttackAnim()
-    {
-        animation_weapon = GetLinkedObject("lweapon_obj").GetComponent<CompAnimation>(); 
-        animation_weapon.SetTransition("ToAttack1");
+        // Decrease stamina -----------
 
-        animation_weapon = GetLinkedObject("rweapon_obj").GetComponent<CompAnimation>();
-        animation_weapon.SetTransition("ToAttack1");
+        character = player_obj.GetComponent<JaimeController>();
+        character.DecreaseStamina(stamina_cost);
+
+        Debug.Log("Going to hit");
+
+        // Attack the enemy in front of you
+        if (EnemyInFront())
+        {
+            // To change => check the specific enemy in front of you
+            enemy = enemy_obj.GetComponent<EnemyController>();
+            enemy.Hit(attack_dmg);
+        }
     }
 
     public void PlayFx()

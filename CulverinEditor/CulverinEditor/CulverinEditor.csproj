@@ -84,7 +84,7 @@
     <Compile Include="KeyCode.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Vector3.cs" />
-    <Compile Include="LeftWeapon.cs" />
+    <Compile Include="LeftWeaponJaime.cs" />
     <Compile Include="WeaponController.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -3,14 +3,17 @@ using CulverinEditor.Debug;
 
 public class CoolDown : CulverinBehaviour
 {
-    CompButton button_cd;
-    GameObject this_obj;
-    float cd_time = 2.0f;
-    float act_time = 0.0f;
+    public GameObject character;
+    public CompButton button_cd;
+    public GameObject this_obj;
+    public float cd_time = 2.0f;
+    public float act_time = 0.0f;
     public bool in_cd = false;
 
     void Start()
-    { 
+    {
+        this_obj = GetLinkedObject("this_obj");
+        character = GetLinkedObject("character");
     }
 
     void Update()
@@ -30,15 +33,17 @@ public class CoolDown : CulverinBehaviour
 
     void OnClick()
     {
-        if (in_cd == false)
+        if (character.GetComponent<CharacterController>().GetState() == 0)
         {
-            ActivateAbility();
+            if (in_cd == false)
+            {
+                ActivateAbility();
+            }
         }
     }
 
     public void ActivateAbility()
     {
-        this_obj = GetLinkedObject("this_obj");
         //this_obj.GetComponent
         button_cd = this_obj.GetComponent<CompButton>();
         button_cd.Deactivate();
