@@ -3,6 +3,7 @@ using CulverinEditor.Debug;
 
 public class CoolDownLeft : CulverinBehaviour
 {
+    GameObject this_button_left;
     CompButton button_cd;
     float cd_time = 4.0f;
     float act_time = 0.0f;
@@ -10,6 +11,8 @@ public class CoolDownLeft : CulverinBehaviour
 
     void Start()
     {
+        // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
+        this_button_left = GetLinkedObject("this_button_left");
     }
 
     void Update()
@@ -20,7 +23,7 @@ public class CoolDownLeft : CulverinBehaviour
             if (act_time >= cd_time)
             {
                 in_cd = false;
-                button_cd = GetComponent<CompButton>();
+                button_cd = this_button_left.GetComponent<CompButton>();
                 button_cd.Activate();
             }
         }
@@ -42,7 +45,7 @@ public class CoolDownLeft : CulverinBehaviour
     public void ActivateAbility()
     {
         //this_obj.GetComponent
-        button_cd = GetComponent<CompButton>(); // The script is placed in the same GameObject that contains the CompButton
+        button_cd = this_button_left.GetComponent<CompButton>(); // The script is placed in the same GameObject that contains the CompButton
         button_cd.Deactivate();
 
         Debug.Log("Clicked");

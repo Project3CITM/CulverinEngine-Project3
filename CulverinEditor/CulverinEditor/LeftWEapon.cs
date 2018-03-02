@@ -3,6 +3,7 @@ using CulverinEditor.Debug;
 
 public class LeftWeapon : CulverinBehaviour
 {
+    public GameObject player_obj;
     public CharacterController player;
     public GameObject l_button_obj;
     public CompButton button;
@@ -20,6 +21,10 @@ public class LeftWeapon : CulverinBehaviour
 
     void Start()
     {
+        // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
+        l_button_obj = GetLinkedObject("l_button_obj");
+        enemy_obj = GetLinkedObject("enemy_obj");
+        player_obj = GetLinkedObject("player_obj");
     }
 
     void Update()
@@ -31,7 +36,7 @@ public class LeftWeapon : CulverinBehaviour
         Debug.Log("Attack Left");
 
         // Decrease stamina -----------
-        player = GetLinkedObject("player_obj").GetComponent<CharacterController>();
+        player = player_obj.GetComponent<CharacterController>();
         player.DecreaseStamina(stamina_cost);
 
         Debug.Log("Going to hit");
@@ -39,7 +44,7 @@ public class LeftWeapon : CulverinBehaviour
         // Attack the enemy in front of you
         if (EnemyInFront())
         {
-            enemy_obj = GetLinkedObject("enemy_obj"); // To change => check the specific enemy in front of you
+            // To change => check the specific enemy in front of you
             enemy = enemy_obj.GetComponent<EnemyController>();
             enemy.Hit(attack_dmg);
         }
@@ -47,7 +52,7 @@ public class LeftWeapon : CulverinBehaviour
 
     bool EnemyInFront()
     {
-        MovementController move = GetLinkedObject("player_obj").GetComponent<MovementController>();
+        MovementController move = player_obj.GetComponent<MovementController>();
         int direction = (int)move.curr_dir;
         int position_front_x = move.curr_x;
         int position_front_y = move.curr_y;
@@ -85,8 +90,8 @@ public class LeftWeapon : CulverinBehaviour
 
         }
 
-        if(position_front_x == GetLinkedObject("enemy_obj").GetComponent<AIManager>().current_x && 
-            position_front_y == GetLinkedObject("enemy_obj").GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        if(position_front_x == enemy_obj.GetComponent<AIManager>().current_x && 
+            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
         {
             return true;
         }
@@ -97,14 +102,13 @@ public class LeftWeapon : CulverinBehaviour
     // This method will be called when the associated button to this weapon is pressed
     void OnClick()
     {
-        player = GetLinkedObject("player_obj").GetComponent<CharacterController>();
+        player = player_obj.GetComponent<CharacterController>();
         // Check if player is in Idle State
         if (player.GetState() == 0) /*0 = IDLE*/
         {
             // Check if player has enough stamina to perform its attack
             if (player.GetCurrentStamina() > stamina_cost)
             {
-                l_button_obj = GetLinkedObject("l_button_obj");
                 cd = l_button_obj.GetComponent<CoolDownLeft>();
                 //Check if the ability is not in cooldown
                 if (!cd.in_cd)
@@ -135,24 +139,21 @@ public class LeftWeapon : CulverinBehaviour
     public void PrepareAttack()
     {
         Debug.Log("Prepare Attack");
-        l_button_obj = GetLinkedObject("l_button_obj");
         button = l_button_obj.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
     public void SetAttackAnim()
     {
-        GameObject leftweapon = GetLinkedObject("lweapon_obj");
-        animation_weapon = leftweapon.GetComponent<CompAnimation>(); 
+        animation_weapon = GetLinkedObject("lweapon_obj").GetComponent<CompAnimation>(); 
         animation_weapon.SetTransition("ToAttack1");
 
-        GameObject rightweapon = GetLinkedObject("rweapon_obj");
-        animation_weapon = rightweapon.GetComponent<CompAnimation>();
+        animation_weapon = GetLinkedObject("rweapon_obj").GetComponent<CompAnimation>();
         animation_weapon.SetTransition("ToAttack1");
     }
 
     public void PlayFx()
     {
-        GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("SwordSlash");
+        player_obj.GetComponent<CompAudio>().PlayEvent("SwordSlash");
     }
 }

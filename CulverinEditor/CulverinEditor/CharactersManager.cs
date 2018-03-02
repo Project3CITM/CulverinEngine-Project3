@@ -20,6 +20,7 @@ public class CharactersManager : CulverinBehaviour
     bool changed = false;
     void Start()
     {
+        // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
         current_character = GetLinkedObject("current_character");
         left_character = GetLinkedObject("left_character");
         right_character = GetLinkedObject("right_character");
@@ -49,7 +50,6 @@ public class CharactersManager : CulverinBehaviour
                     state = State.CHANGING_RIGHT;
                     time = 0;
                 }
-
                 break;
 
             case State.CHANGING_LEFT:
@@ -75,9 +75,8 @@ public class CharactersManager : CulverinBehaviour
                     changed = false;
                     state = State.IDLE;
                 }
-             
-
                 break;
+
             case State.CHANGING_RIGHT:
 
                 time += Time.DeltaTime();
@@ -98,9 +97,7 @@ public class CharactersManager : CulverinBehaviour
                 {
                     changed = false;
                     state = State.IDLE;
-                }
-          
-
+                }    
                 break;
         }
     }

@@ -37,11 +37,16 @@ public class CharacterController : CulverinBehaviour
 
     void Start()
     {
-        // Start Idle animation
+        // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
+        player_obj = GetLinkedObject("player_obj");
+        health_obj = GetLinkedObject("health_obj");
+        stamina_obj = GetLinkedObject("stamina_obj");
         lweapon_obj = GetLinkedObject("lweapon_obj");
+        rweapon_obj = GetLinkedObject("rweapon_obj");
+
+        // Start Idle animation
         anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
         anim_controller_left.PlayAnimation("Idle");
-        rweapon_obj = GetLinkedObject("rweapon_obj_anim");
         anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
         anim_controller_right.PlayAnimation("Idle");
     }
@@ -64,12 +69,11 @@ public class CharacterController : CulverinBehaviour
         CheckHealth();
 
         // First check if you are alive
-        health_obj = GetLinkedObject("health_obj");
         health = health_obj.GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)
         {
             // Check if player is moving to block attacks/abilities
-            movement = GetComponent<MovementController>();
+            movement =player_obj.GetComponent<MovementController>();
             if (!movement.IsMoving())
             {
                 /* Player is alive */
@@ -84,7 +88,6 @@ public class CharacterController : CulverinBehaviour
                     case State.ATTACKING:
                         {
                             //Check for end of the Attack animation
-                            lweapon_obj = GetLinkedObject("lweapon_obj");
                             anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
                             if (anim_controller_left.IsAnimationStopped("Attack1"))
                             {
@@ -100,7 +103,6 @@ public class CharacterController : CulverinBehaviour
                     case State.COVER:
                         {
                             //Check for end of the Attack animation
-                            lweapon_obj = GetLinkedObject("lweapon_obj");
                             anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
 
                             if (anim_controller_left.IsAnimationStopped("Cover"))
@@ -117,7 +119,6 @@ public class CharacterController : CulverinBehaviour
                     case State.BLOCKING:
                         {
                             //Check for end of the Attack animation
-                            lweapon_obj = GetLinkedObject("lweapon_obj");
                             anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
                             if (anim_controller_left.IsAnimationStopped("Block"))
                             {
@@ -150,7 +151,6 @@ public class CharacterController : CulverinBehaviour
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             Debug.Log("Pressed 1");
-            lweapon_obj = GetLinkedObject("lweapon_obj");
             left_weapon = lweapon_obj.GetComponent<LeftWeapon>();
             left_weapon.PrepareAttack();
         }
@@ -159,7 +159,6 @@ public class CharacterController : CulverinBehaviour
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Pressed 2");
-            rweapon_obj = GetLinkedObject("rweapon_obj");
             right_weapon = rweapon_obj.GetComponent<RightWeapon>();
             right_weapon.PrepareAttack();
         }
@@ -177,7 +176,6 @@ public class CharacterController : CulverinBehaviour
 
     public float GetCurrentStamina()
     {
-        stamina_obj = GetLinkedObject("stamina_obj");
         stamina = stamina_obj.GetComponent<Stamina>();
         float ret = stamina.GetCurrentStamina();
         return ret;
@@ -186,7 +184,6 @@ public class CharacterController : CulverinBehaviour
     public void DecreaseStamina(float stamina_cost)
     {
         Debug.Log("Decrease Stamina");
-        stamina_obj = GetLinkedObject("stamina_obj");
         stamina = stamina_obj.GetComponent<Stamina>();
         stamina.DecreaseStamina(stamina_cost);
     }
@@ -196,13 +193,11 @@ public class CharacterController : CulverinBehaviour
         // Debug for check Health control
         if (Input.GetKeyDown(KeyCode.O))
         {
-            health_obj = GetLinkedObject("health_obj");
             health = health_obj.GetComponent<Hp>();
             health.GetDamage(10.0f);
         }
         else if (Input.GetKeyDown(KeyCode.P))
         {
-            health_obj = GetLinkedObject("health_obj");
             health = health_obj.GetComponent<Hp>();
             health.GetDamage(-10.0f);
         }
@@ -212,31 +207,25 @@ public class CharacterController : CulverinBehaviour
     {
         if (state == State.COVER)
         {
-            rweapon_obj = GetLinkedObject("rweapon_obj");
             anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
             anim_controller_right.SetTransition("ToBlock");
 
-            lweapon_obj = GetLinkedObject("lweapon_obj");
             anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
             anim_controller_left.SetTransition("ToBlock");
 
-            player_obj = GetLinkedObject("player_obj");
             player_obj.GetComponent<CompAudio>().PlayEvent("MetalHit");
 
             SetState(State.BLOCKING);
         }
         else
         {
-            health_obj = GetLinkedObject("health_obj");
             health = health_obj.GetComponent<Hp>();
             health.GetDamage(dmg);
 
             // SET HIT ANIMATION
-            rweapon_obj = GetLinkedObject("rweapon_obj");
             anim_controller_right = rweapon_obj.GetComponent<CompAnimation>();
             anim_controller_right.SetTransition("ToHit");
 
-            lweapon_obj = GetLinkedObject("lweapon_obj");
             anim_controller_left = lweapon_obj.GetComponent<CompAnimation>();
             anim_controller_left.SetTransition("ToHit");
         }

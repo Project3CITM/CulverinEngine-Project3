@@ -3,6 +3,7 @@ using CulverinEditor.Debug;
 
 public class RightWeapon : CulverinBehaviour
 {
+    public GameObject player_obj;
     public CharacterController player;
     public GameObject r_button_obj;
     public CompButton button;
@@ -18,6 +19,10 @@ public class RightWeapon : CulverinBehaviour
 
     void Start()
     {
+        // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
+        r_button_obj = GetLinkedObject("r_button_obj");
+        enemy_obj = GetLinkedObject("enemy_obj");
+        player_obj = GetLinkedObject("player_obj");
     }
 
     void Update()
@@ -29,21 +34,20 @@ public class RightWeapon : CulverinBehaviour
         Debug.Log("Block Right");
 
         // Decrease stamina -----------
-        player = GetLinkedObject("player_obj").GetComponent<CharacterController>();
+        player = player_obj.GetComponent<CharacterController>();
         player.DecreaseStamina(stamina_cost);
     }
 
     // This method will be called when the associated button to this weapon is pressed
     void OnClick()
     {
-        player = GetLinkedObject("player_obj").GetComponent<CharacterController>();
+        player = player_obj.GetComponent<CharacterController>();
         // Check if player is in Idle State
         if (player.GetState() == 0)
         {
             // Check if player has enough stamina to perform its attack
             if (player.GetCurrentStamina() > stamina_cost)
             {
-                r_button_obj = GetLinkedObject("r_button_obj");
                 cd = r_button_obj.GetComponent<CoolDownRight>();
                 //Check if the ability is not in cooldown
                 if (!cd.in_cd)
@@ -74,7 +78,6 @@ public class RightWeapon : CulverinBehaviour
     public void PrepareAttack()
     {
         Debug.Log("Prepare Block");
-        r_button_obj = GetLinkedObject("r_button_obj");
         button = r_button_obj.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
@@ -82,12 +85,10 @@ public class RightWeapon : CulverinBehaviour
 
     public void SetBlockAnim()
     {
-        GameObject leftweapon = GetLinkedObject("lweapon_obj");
-        animation_weapon = leftweapon.GetComponent<CompAnimation>();
+        animation_weapon = GetLinkedObject("lweapon_obj").GetComponent<CompAnimation>();
         animation_weapon.SetTransition("ToCover");
 
-        GameObject rightweapon = GetLinkedObject("rweapon_obj");
-        animation_weapon = rightweapon.GetComponent<CompAnimation>();
+        animation_weapon = GetLinkedObject("rweapon_obj").GetComponent<CompAnimation>();
         animation_weapon.SetTransition("ToCover");
     }
 }
