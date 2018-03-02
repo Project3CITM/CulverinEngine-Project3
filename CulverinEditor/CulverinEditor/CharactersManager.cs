@@ -36,17 +36,20 @@ public class CharactersManager : CulverinBehaviour
         {
             case State.IDLE:
 
-                Debug.Log(current_character.GetName());
+               
 
                 if (Input.GetKeyDown(KeyCode.T))
                 {
                     state = State.CHANGING_LEFT;
-                
+                    Debug.Log("Pressed T");
+                    Debug.Log("Changing Left");
                     //current character state = BEHIND
                     time = 0;
                 }
                 if (Input.GetKeyDown(KeyCode.Y))
                 {
+                    Debug.Log("Pressed Y");
+                    Debug.Log("Changing Right");
                     state = State.CHANGING_RIGHT;
                     time = 0;
                 }
@@ -56,16 +59,18 @@ public class CharactersManager : CulverinBehaviour
 
                 time += Time.DeltaTime();
 
-                Debug.Log("Changing Left");
+               
                 //if( Animation arms down finished¿? )
                 if (time >= 2)
                 {
-                    Debug.Log("Changed");
+                  
    
                     temporal_change = current_character;
                     current_character = left_character;
                     //current character state CURRENT
                     left_character = temporal_change;
+                    
+                    Debug.Log("current character = " + current_character.GetName());
                     changed = true;
                 }
                 //if( Animation arms up finished¿? )
@@ -81,15 +86,15 @@ public class CharactersManager : CulverinBehaviour
 
                 time += Time.DeltaTime();
 
-                Debug.Log("Changing Right");
+               
 
                 if (time >= 2)
                 {
-                    Debug.Log("Changed");
 
                     temporal_change = current_character;
                     current_character = right_character;
                     right_character = temporal_change;
+                    Debug.Log("current character = " + current_character.GetName());
                     changed = true;
                 }
                 //if(current_character state == CURRENT )
