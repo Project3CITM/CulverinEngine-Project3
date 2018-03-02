@@ -77,9 +77,10 @@ public:
 
 private:
 	Comp_Type type = C_UNKNOWN;
-	bool active = true;
 
 protected:
+	bool active = true;
+
 	GameObject* parent = nullptr; // Through this pointer we call some methods that modificate its data
 	uint uid = 0;
 	const char* name_component = nullptr;

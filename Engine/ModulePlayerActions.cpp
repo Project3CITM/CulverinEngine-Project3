@@ -66,7 +66,7 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 
 	uint size = interactive_vector.size();
 
-	for (uint k = 0; k < size; k++)
+	for (int k = 0; k < size; k++)
 	{
 		InputManager* input_manager = interactive_vector[k];
 
@@ -75,6 +75,8 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 			tree_flags |= ImGuiTreeNodeFlags_Selected;
 
 		std::string name = "Input "+std::to_string(k+1);
+		ImGui::AlignFirstTextHeightToWidgets();
+
 		bool active = ImGui::TreeNodeEx(name.c_str(), tree_flags);
 
 		if (ImGui::IsItemClicked())
@@ -85,7 +87,7 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 
 		if (ImGui::Button("UP##button_up"))
 		{
-			if(k-1>0)
+			if(k-1>=0)
 				std::swap(interactive_vector[k], interactive_vector[k-1]);
 		}
 		ImGui::SameLine();
@@ -109,76 +111,19 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 	return UPDATE_CONTINUE;
 }
 
-bool ModulePlayerActions::SetEventListenrs()
-{
-	
-	AddListener(EventType::EVENT_BUTTON_MOUSE, this);
-	AddListener(EventType::EVENT_MOTION_MOUSE, this);
-	AddListener(EventType::EVENT_AXIS_CONTROLLER, this);
-	AddListener(EventType::EVENT_BUTTON_CONTROLLER, this);
-	AddListener(EventType::EVENT_KEYBOARD, this);
-	
-	return true;
-}
-
-void ModulePlayerActions::OnEvent(Event & custom_event)
-{
-	
-	switch (custom_event.type)
-	{
-	case EventType::EVENT_BUTTON_MOUSE:
-		/*
-		RayCast2D
-		HandleInteractive
-		if Raycast2d don't hit Raycast3D
-
-		UpdateActions
-
-		
-		*/
-		break;
-	case EventType::EVENT_MOTION_MOUSE:
-		/*
-		RayCast2D
-		HandleInteractive
-		if Raycast2d don't hit Raycast3D	
-
-		UpdateActions
-		*/
-
-		break;
-	case EventType::EVENT_AXIS_CONTROLLER:
-		/*
-		UpdateActions
-		*/
-		break;
-	case EventType::EVENT_BUTTON_CONTROLLER:
-		/*
-		UpdateActions
-		*/
-		break;
-	case EventType::EVENT_KEYBOARD:
-		/*
-		UpdateActions
-
-		Todo: implement a GetKey without InputAction?
-		Think update:
-			-first loop press T
-			-this frame T is pressed
-			-next frame T is not pressed<---how we update this (discuss this tomorrow)		
-		*/
-		break;
-	}
-
-}
 
 bool ModulePlayerActions::SaveConfig(JSON_Object * node)
 {
+
 	return true;
 }
 
 void ModulePlayerActions::UpdateInputsManager()
 {
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		(*it)->UpdateInputActions();
+	}
 }
 
 bool ModulePlayerActions::ReceiveEvent(SDL_Event * input_event)

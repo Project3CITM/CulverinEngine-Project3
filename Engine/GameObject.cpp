@@ -1212,6 +1212,43 @@ void GameObject::GetComponentsByType(Comp_Type type, std::vector<Component*>* fi
 	}
 }
 
+Component* GameObject::GetComponentsByUID(int uid, bool iterate_hierarchy)
+{
+	if (iterate_hierarchy)
+	{
+		uint size = childs.size();
+		std::queue<GameObject*> queue;
+		queue.push(this);
+		while (!queue.empty())
+		{
+			for (uint i = 0; i < queue.front()->components.size(); i++)
+			{
+				if (queue.front()->components[i]->GetUUID() == uid)
+				{
+					return queue.front()->components[i];
+				}
+			}
+			for (uint k = 0; k < size; k++)
+			{
+				queue.push(childs[k]);
+			}
+			queue.pop();
+		}
+
+	}
+	else
+	{
+		for (uint i = 0; i < components.size(); i++)
+		{
+			if (components[i]->GetUUID() == uid)
+			{
+				return components[i];
+			}
+		}
+	}
+	return nullptr;
+}
+
 Component* GameObject::GetComponentByName(const char* name_component) const
 {
 	for (uint i = 0; i < components.size(); i++)

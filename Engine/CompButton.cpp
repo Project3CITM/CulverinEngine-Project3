@@ -125,13 +125,19 @@ void CompButton::ShowInspectorInfo()
 	default:
 		break;
 	}
-	int navigation_opt = current_navigation_mode;
+	int navigation_opt = navigation.current_navigation_mode;
 	ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
-	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0"))
+	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\Navigation Extrict\0"))
 	{
-		if (navigation_opt == NavigationMode::NAVIGATION_NONE)
-			current_navigation_mode = NavigationMode::NAVIGATION_NONE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_NONE)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_NONE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_EXTRICTE;
 
+	}
+	if (navigation.current_navigation_mode != Navigation::NavigationMode::NAVIGATION_NONE)
+	{
+		ShowNavigationInfo();
 	}
 	ImGui::Text("On Click");
 
@@ -259,7 +265,12 @@ void CompButton::Save(JSON_Object * object, std::string name, bool saveScene, ui
 
 	json_object_dotset_number_with_std(object, name + "Selection Mode", current_selection_state);
 	json_object_dotset_number_with_std(object, name + "Transition Mode", current_transition_mode);
-	json_object_dotset_number_with_std(object, name + "Navigation Mode", current_navigation_mode);
+	json_object_dotset_number_with_std(object, name + "Navigation Mode", navigation.current_navigation_mode);
+
+	json_object_dotset_number_with_std(object, name + "Interactive up", navigation.inteactive_up_uid);
+	json_object_dotset_number_with_std(object, name + "Interactive down", navigation.inteactive_down_uid);
+	json_object_dotset_number_with_std(object, name + "Interactive right", navigation.inteactive_right_uid);
+	json_object_dotset_number_with_std(object, name + "Interactive left", navigation.inteactive_left_uid);
 
 }
 
@@ -302,7 +313,13 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 
 	current_selection_state = static_cast<SelectionStates>((int)json_object_dotget_number_with_std(object, name + "Selection Mode"));
 	current_transition_mode = static_cast<Transition>((int)json_object_dotget_number_with_std(object, name + "Transition Mode"));
-	current_navigation_mode = static_cast<NavigationMode>((int)json_object_dotget_number_with_std(object, name + "Navigation Mode"));
+	navigation.current_navigation_mode = static_cast<Navigation::NavigationMode>((int)json_object_dotget_number_with_std(object, name + "Navigation Mode"));
+
+	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive up");
+	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive down");
+	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive right");
+	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive left");
+
 	if (number_script != 0)
 	{
 	uid_linked_scripts = new int[number_script];
