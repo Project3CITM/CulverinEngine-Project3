@@ -46,6 +46,8 @@
     <Compile Include="AI\Seek_Steering.cs" />
     <Compile Include="AttackTarget.cs" />
     <Compile Include="Audio.cs" />
+    <Compile Include="BarrelPuzle\BarrelManage.cs" />
+    <Compile Include="BarrelPuzle\BarrelMovement.cs" />
     <Compile Include="CharacterController.cs" />
     <Compile Include="CharactersManager.cs" />
     <Compile Include="CompAnimation.cs" />
