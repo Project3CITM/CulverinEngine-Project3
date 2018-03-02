@@ -87,6 +87,8 @@ public:
 	Component* FindComponentByUUID(uint uid)const;
 
 	void GetComponentsByType(Comp_Type type, std::vector<Component*>* fill_comp, bool iterate_hierarchy = false) const;
+	Component* GetComponentsByUID(int uid, bool iterate_hierarchy = false);
+
 	Component* GetComponentByName(const char* name_component) const;
 
 	CompTransform* GetComponentTransform() const;

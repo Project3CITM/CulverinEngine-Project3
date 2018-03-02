@@ -11,6 +11,7 @@
 #include "CompRectTransform.h"
 #include "CompButton.h"
 #include "ModuleFS.h"
+#include "Scene.h"
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
 #define PRESSED_SPRITE 1
@@ -31,8 +32,6 @@ CompInteractive::CompInteractive(Comp_Type t, GameObject * parent) :Component(t,
 
 	component_event.pass_component.type = EventType::EVENT_PASS_COMPONENT;
 	component_event.pass_component.component = this;
-	
-	iteractive_list.push_back(this);
 
 	name_component = "Interactive";
 }
@@ -44,7 +43,26 @@ CompInteractive::CompInteractive(const CompInteractive & copy, GameObject * pare
 CompInteractive::~CompInteractive()
 {
 }
+bool CompInteractive::Enable()
+{
+	if (!active)
+	{
+		active = true;
+		iteractive_list.push_back(this);
+	}
 
+	return active;
+}
+bool CompInteractive::Disable()
+{
+	if (active)
+	{
+		active = false;
+		iteractive_list.remove(this);
+
+	}
+	return active;
+}
 
 void CompInteractive::PreUpdate(float dt)
 {
@@ -297,7 +315,18 @@ void CompInteractive::SyncComponent()
 		target_graphic = (CompGraphic*)parent->FindComponentByUUID(target_graphic_uid);
 		TryConversion();
 	}
+	std::vector<Component*> script_vec;
 
+	if (navigation.inteactive_up_uid != 0)
+		navigation.interactive_up=(CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_up_uid, true);
+	if (navigation.inteactive_down_uid != 0)
+		navigation.interactive_down = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_down_uid, true);
+	if (navigation.inteactive_right_uid != 0)
+		navigation.interactive_right = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_right_uid, true);
+	if (navigation.inteactive_left_uid != 0)
+		navigation.interactive_left = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_left_uid, true);
+
+	
 	if (GetType() == Comp_Type::C_BUTTON)
 	{
 		static_cast<CompButton*>(this)->SyncScript();
@@ -435,6 +464,67 @@ void CompInteractive::TryConversion()
 		image = (CompImage*)target_graphic;
 }
 
+void CompInteractive::ShowNavigationInfo()
+{
+	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
+	{
+		//show all interactives on list x4
+	}
+}
+
+CompInteractive * CompInteractive::FindNavigationOnUp()
+{
+	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
+	{
+
+	}
+	else
+	{
+
+	}
+	return nullptr;
+}
+
+CompInteractive * CompInteractive::FindNavigationOnDown()
+{
+
+	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
+	{
+
+	}
+	else
+	{
+
+	}
+	return nullptr;
+}
+
+CompInteractive * CompInteractive::FindNavigationOnRight()
+{
+	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
+	{
+
+	}
+	else
+	{
+
+	}
+	return nullptr;
+}
+
+CompInteractive * CompInteractive::FindNavigationOnLeft()
+{
+	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
+	{
+
+	}
+	else
+	{
+
+	}
+	return nullptr;
+}
+
 void CompInteractive::SetNormalColor(const float4& set_rgba)
 {
 	normal_color = set_rgba;
@@ -530,10 +620,12 @@ ResourceMaterial * CompInteractive::GetDisabledSprite() const
 	return sprite[DISSABLED_SPRITE];
 }
 
-NavigationMode CompInteractive::GetNavigationMode() const
+Navigation::NavigationMode CompInteractive::GetNavigationMode() const
 {
-	return NavigationMode();
+	return navigation.current_navigation_mode;
 }
+
+
 
 bool CompInteractive::IsPressed()
 {
@@ -744,3 +836,4 @@ void CompInteractive::StartTransitionSprite(ResourceMaterial * sprite_to_change)
 	image->SetOverwriteImage(sprite_to_change);
 	image->UpdateSpriteId();
 }
+

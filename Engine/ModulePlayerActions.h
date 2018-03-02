@@ -14,9 +14,7 @@ public:
 	~ModulePlayerActions();
 	update_status Update(float dt);
 	update_status UpdateConfig(float dt);
-	bool SetEventListenrs();
 
-	void OnEvent(Event& event);
 
 
 	bool SaveConfig(JSON_Object* node);

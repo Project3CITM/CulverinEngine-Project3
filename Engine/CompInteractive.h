@@ -9,11 +9,28 @@
 class CompGraphic;
 class CompImage;
 class ResourceMaterial;
-enum NavigationMode
+class CompInteractive;
+struct Navigation
+{
+
+	enum NavigationMode
 {
 	NAVIGATION_NONE,
 	NAVIGATION_EXTRICTE
 };
+	NavigationMode current_navigation_mode = NavigationMode::NAVIGATION_NONE;
+	CompInteractive* interactive_up = nullptr;
+	int inteactive_up_uid = 0;
+	CompInteractive* interactive_down = nullptr;
+	int inteactive_down_uid = 0;
+	CompInteractive* interactive_right = nullptr;
+	int inteactive_right_uid = 0;
+	CompInteractive* interactive_left = nullptr;
+	int inteactive_left_uid = 0;
+
+
+};
+
 class CompInteractive:public Component
 {
 public:
@@ -21,6 +38,10 @@ public:
 	CompInteractive(const CompInteractive& copy, GameObject* parent);
 
 	~CompInteractive();
+
+	bool Enable();
+
+	bool Disable();
 
 
 	void PreUpdate(float dt);
@@ -37,6 +58,12 @@ public:
 	void Deactive();
 	virtual void ForceClear(Event event_input);
 	void TryConversion();
+	void ShowNavigationInfo();
+
+	CompInteractive* FindNavigationOnUp();
+	CompInteractive* FindNavigationOnDown();
+	CompInteractive* FindNavigationOnRight();
+	CompInteractive* FindNavigationOnLeft();
 
 	virtual void OnPointDown(Event event_input);
 	virtual void OnPointUP(Event event_input);
@@ -69,7 +96,7 @@ public:
 	ResourceMaterial* GetPressedSprite()const;
 	ResourceMaterial* GetDisabledSprite()const;
 	//OtherGetters
-	NavigationMode GetNavigationMode()const;
+	Navigation::NavigationMode GetNavigationMode()const;
 	enum SelectionStates
 	{
 		STATE_NONE = -1,
@@ -114,7 +141,7 @@ private:
 protected:
 	SelectionStates current_selection_state = STATE_NORMAL;
 	Transition current_transition_mode = TRANSITION_COLOR;
-	NavigationMode current_navigation_mode = NAVIGATION_NONE;
+	Navigation navigation;
 	//Color tint parameters
 	float4 normal_color = float4::one;
 	float4 highlighted_color = float4::one;
