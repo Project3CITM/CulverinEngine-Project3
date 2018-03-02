@@ -197,7 +197,7 @@ void CompMesh::ShowInspectorInfo()
 	if (resource_mesh != nullptr)
 	{
 		ImGui::Text("Name:"); ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resource_mesh->name);
+		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%s", resource_mesh->name.c_str());
 		ImGui::Text("Vertices:"); ImGui::SameLine();
 		ImGui::TextColored(ImVec4(0.25f, 1.00f, 0.00f, 1.00f), "%i", resource_mesh->num_vertices);
 		ImGui::Text("Indices:"); ImGui::SameLine();
