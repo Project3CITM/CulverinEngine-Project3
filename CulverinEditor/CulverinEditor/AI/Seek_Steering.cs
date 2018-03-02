@@ -4,6 +4,7 @@ using CulverinEditor.Debug;
 public class Seek_Steering : CulverinBehaviour
 {
     Movement_Action move;
+    public GameObject myself;
 
     void Start()
     {
@@ -14,9 +15,16 @@ public class Seek_Steering : CulverinBehaviour
 
     void Update()
     {
-        Vector3 acceleration = GetComponent<Movement_Action>().GetTargetPosition() - GetComponent<Transform>().position;
+        Vector3 acceleration = GetComponent<Movement_Action>().GetTargetPosition();// - GetComponent<Transform>().position;
 
-        acceleration = acceleration.Normalized * move.max_accel;
+        Debug.Log(acceleration.ToString());
+        Debug.Log(GetComponent<Transform>().GetPosition().ToString());
+        Debug.Log(GetComponent<Transform>().local_position.ToString());
+        Debug.Log(GetLinkedObject("myself").GetComponent<Transform>().GetGlobalPosition().ToString());
+        
+        acceleration = acceleration.Normalized * move.GetMaxAcceleration();
+
+        
 
         move.Accelerate(acceleration);
     }
