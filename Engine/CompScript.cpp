@@ -316,15 +316,17 @@ void CompScript::ShowVariablesInfo()
 		for (uint i = 0; i < csharp->variables.size(); i++)
 		{
 			ImGui::PushID(i);
+			if (csharp->variables[i]->access == VarAccess::Var_PUBLIC)
+			{
+				//Show variable TYPE --------------------------
+				ShowVarType(csharp->variables[i]); ImGui::SameLine();
 
-			//Show variable TYPE --------------------------
-			ShowVarType(csharp->variables[i]); ImGui::SameLine();
+				//Show variable NAME -------------------------
+				ImGui::Text(" %s", csharp->variables[i]->name); ImGui::SameLine();
 
-			//Show variable NAME -------------------------
-			ImGui::Text(" %s", csharp->variables[i]->name); ImGui::SameLine();
-
-			//Show variable VALUE -------------------------
-			ShowVarValue(csharp->variables[i], i);
+				//Show variable VALUE -------------------------
+				ShowVarValue(csharp->variables[i], i);
+			}
 
 			ImGui::PopID();
 		}

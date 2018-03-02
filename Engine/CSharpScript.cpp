@@ -527,7 +527,7 @@ void CSharpScript::GetScriptVariables()
 		VarAccess access = VarAccess::Var_PRIVATE;
 
 		//Set info about accessibility of the variable -> DOESN'T WORK!!!
-		flags = mono_field_get_flags(field);
+		flags = mono_field_get_flags(it->first);
 		if ((flags & MONO_FIELD_ATTR_PUBLIC))
 		{
 			access = VarAccess::Var_PUBLIC;
@@ -1007,21 +1007,6 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 						//int k = 0;
 						//ferran[0] = &k;
 						//mono_runtime_invoke(tem, ((CompScript*)temp[i])->csharp->GetMonoObject(), ferran, &exception);
-						////////////////classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "", comp_name);
-						////////////////MonoObject* new_object = mono_object_new(CSdomain, classT);
-						////////////////if (new_object)
-						////////////////{
-						////////////////	if (ferran == nullptr)
-						////////////////	{
-						////////////////		ferran = new_object;
-						////////////////		((CompScript*)temp[i])->csharp->SetMonoObject(ferran);
-						////////////////	}
-						////////////////	else
-						////////////////	{
-						////////////////		return ((CompScript*)temp[i])->csharp->GetMonoObject();
-						////////////////	}
-						////////////////	return new_object;
-						////////////////}
 						//classT = ((CompScript*)temp[i])->csharp->GetMonoClass();
 						//classT = GetMonoClass();
 						//return mono_object_isinst(((CompScript*)temp[i])->csharp->GetMonoObject(), ((CompScript*)temp[i])->csharp->GetMonoClass());
@@ -1423,6 +1408,7 @@ MonoObject* CSharpScript::GetPosition(MonoObject* object)
 
 MonoObject* CSharpScript::GetGlobalPosition(MonoObject * object)
 {
+	CheckMonoObject(object);
 	if (current_game_object != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");

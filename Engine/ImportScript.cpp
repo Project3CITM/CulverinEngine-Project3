@@ -543,6 +543,23 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 		MonoClass* entity = mono_class_from_name(image, "", nameClass.c_str());
 		if (entity)
 		{
+			//void* iter = NULL; 
+
+			//MonoMethod* test_method = NULL;
+			//while ((test_method = mono_class_get_methods(entity, &iter)))
+			//{
+			//	uint t, flag;
+			//	flag = mono_method_get_flags(test_method, &t);
+			//	if (flag == MONO_FIELD_ATTR_PUBLIC)
+			//	{
+			//		int j = 0;
+			//	}
+
+			//	char* test_char = mono_method_full_name(test_method, true);
+			//	LOG("Method: %s, flags 0x%x, iflags 0x%x\n",
+			//		mono_method_get_name(test_method), flag, t);
+			//	int x = 0;
+			//}
 			CSharpScript* csharp = new CSharpScript();
 			csharp->SetDomain(GetDomain());
 			csharp->SetImage(App->importer->iScript->GetCulverinImage());
