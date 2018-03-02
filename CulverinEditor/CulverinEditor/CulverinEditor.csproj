@@ -61,7 +61,9 @@
     <Compile Include="CoolDownLeft.cs" />
     <Compile Include="CulverinBehaviour.cs" />
     <Compile Include="AI\EnemyController.cs" />
+    <Compile Include="DaenerysController.cs" />
     <Compile Include="Hp.cs" />
+    <Compile Include="JaimeController.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MovementController.cs" />
     <Compile Include="Object.cs" />
@@ -71,6 +73,7 @@
     <Compile Include="RightWeapon.cs" />
     <Compile Include="Stamina.cs" />
     <Compile Include="TestMovement.cs" />
+    <Compile Include="TheonController.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Torch_sound.cs" />
     <Compile Include="Transform.cs" />

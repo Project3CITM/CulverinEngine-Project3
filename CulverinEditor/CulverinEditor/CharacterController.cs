@@ -63,7 +63,7 @@ public class CharacterController : CulverinBehaviour
         }
     }
 
-    public void ControlCharacter()
+    public void ControlCharacter() //Might be virtual
     {
         // Debug method to control Hp
         CheckHealth();

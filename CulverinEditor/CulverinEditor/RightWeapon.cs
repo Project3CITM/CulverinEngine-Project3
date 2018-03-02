@@ -1,6 +1,8 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
+// The concept is to have WeaponController as a base class, and override for all the weapons
+
 public class RightWeapon : CulverinBehaviour
 {
     public GameObject player_obj;
@@ -29,7 +31,7 @@ public class RightWeapon : CulverinBehaviour
     {
     }
 
-    public void Block()
+    public void Block() //Might be virtual (not Block())
     {
         Debug.Log("Block Right");
 

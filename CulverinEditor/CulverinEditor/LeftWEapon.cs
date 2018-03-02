@@ -1,6 +1,8 @@
 using CulverinEditor;
 using CulverinEditor.Debug;
 
+// The concept is to have WeaponController as a base class, and override for all the weapons
+
 public class LeftWeapon : CulverinBehaviour
 {
     public GameObject player_obj;
@@ -31,7 +33,7 @@ public class LeftWeapon : CulverinBehaviour
     {
     }
 
-    public void Attack()
+    public void Attack() //Might be virtual
     {
         Debug.Log("Attack Left");
 
