@@ -114,6 +114,10 @@ TYPE_FILE Project::SetType(std::string name)
 		{
 			return TYPE_FILE::SCENE;
 		}
+		else if (temp == "prefab.json")
+		{
+			return TYPE_FILE::PREFAB;
+		}
 		else if (temp == "frag" || temp == "vert")
 		{
 			return TYPE_FILE::SHADER;
@@ -375,6 +379,22 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 					directory_prebaf += "/";
 					directory_prebaf += files[i].file_name;
 					directory_prebaf += ".meta.json";
+					App->json_seria->LoadPrefab(directory_prebaf.c_str());
+					directory_prebaf.clear();
+				}
+			}
+			break;
+		}
+		case TYPE_FILE::PREFAB:
+		{
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_fbx, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
+			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+			{
+				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+				{
+					std::string directory_prebaf = GetDirectory();
+					directory_prebaf += "/";
+					directory_prebaf += files[i].file_name;
 					App->json_seria->LoadPrefab(directory_prebaf.c_str());
 					directory_prebaf.clear();
 				}

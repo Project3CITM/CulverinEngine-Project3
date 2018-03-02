@@ -16,6 +16,7 @@ enum TYPE_FILE
 	NON,
 	FOLDER,
 	FBX,
+	PREFAB,
 	OBJ,
 	PNG,
 	JPG,

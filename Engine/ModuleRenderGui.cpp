@@ -179,7 +179,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 						}
 					}
 				}
-				if (!positive_colision&&!mouse_down)
+				if (!positive_colision&&!mouse_down && selected != nullptr)
 				{
 					focus = nullptr;
 					selected->ForceClear(this_event);

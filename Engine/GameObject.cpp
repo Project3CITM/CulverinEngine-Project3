@@ -25,6 +25,7 @@
 #include "CompCanvas.h"
 #include "CompCanvasRender.h"
 #include "CompAudio.h"
+#include "JSONSerialization.h"
 #include "CompBone.h"
 #include "CompFSM.h"
 #include "CompLight.h"
@@ -659,6 +660,12 @@ void GameObject::ShowGameObjectOptions()
 	if (ImGui::MenuItem("Selected go Child this", NULL, false, modificate_parent))
 	{
 		App->scene->ModificateParent(((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected(), this);
+	}
+	if (ImGui::MenuItem("Create as Prefab", NULL, false))
+	{
+		App->json_seria->SavePrefab(*this, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), "", false);
+		((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
+		App->fs->UpdateFilesAssets();
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Rename", NULL, false, false))

@@ -222,7 +222,8 @@ void ModuleFS::GetAllFiles(std::experimental::filesystem::path path, std::vector
 	for (stdfs::directory_iterator iter{ path }; iter != end; ++iter)
 	{
 		std::string extension = GetExtension(iter->path().string());
-		if (strcmp(extension.c_str(), "json") != 0 || strcmp((GetExtension(iter->path().string()).c_str()), "scene.json") == 0)
+		if (strcmp(extension.c_str(), "json") != 0 || strcmp((GetExtension(iter->path().string()).c_str()), "scene.json") == 0
+			|| strcmp((GetExtension(iter->path().string()).c_str()), "prefab.json") == 0)
 		{
 			FilesNew files_temp;
 			files_temp.directory_name = ConverttoConstChar(iter->path().string());
@@ -1086,6 +1087,12 @@ std::string ModuleFS::GetOnlyPath(std::string file)
 std::string ModuleFS::GetExtension(std::string file)
 {
 	size_t EndName = file.find(".scene.json");
+	if (EndName != std::string::npos)
+	{
+		file = file.substr(EndName + 1);
+		return file;
+	}
+	EndName = file.find(".prefab.json");
 	if (EndName != std::string::npos)
 	{
 		file = file.substr(EndName + 1);

@@ -227,7 +227,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 }
 
 
-void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* directory, const char* fileName)
+void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* directory, const char* fileName, bool is_FBX)
 {
 	LOG("SAVING PREFAB %s -----", gameObject.GetName());
 
@@ -238,7 +238,14 @@ void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* dir
 	std::string nameJson = directory;
 	nameJson += "/";
 	nameJson +=	gameObject.GetName();
-	nameJson += ".meta.json";
+	if (is_FBX)
+	{
+		nameJson += ".meta.json";
+	}
+	else
+	{
+		nameJson += ".prefab.json";
+	}
 	config_file = json_value_init_object();
 
 	uint count = 0;
@@ -250,9 +257,12 @@ void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* dir
 		json_object_dotset_number_with_std(config, "Prefab.Info.Number of GameObjects", count);
 		json_object_dotset_string_with_std(config, "Prefab.Info.Directory Prefab", fileName);
 		json_object_dotset_number_with_std(config, "Prefab.Info.Resources.Number of Resources", countResources);
-		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
-		std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
-		json_object_dotset_number_with_std(config, "Prefab.Info.Resources.Last Write", cftime);
+		if (is_FBX)
+		{
+			std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
+			std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
+			json_object_dotset_number_with_std(config, "Prefab.Info.Resources.Last Write", cftime);
+		}
 		config_node = json_object_get_object(config, "Prefab");
 		std::string name = "GameObject" + std::to_string(count++);
 		name += ".";
