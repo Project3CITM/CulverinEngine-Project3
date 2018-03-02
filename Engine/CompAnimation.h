@@ -85,6 +85,8 @@ public:
 	bool IsAnimationRunning(const char* clip_name) const;
 
 	AnimationClip* GetCurrentClip() const;
+	AnimationClip* GetClipFromName(std::string name) const;
+	AnimationNode* GetNodeFromName(std::string name) const;
 
 	// EDITOR METHODS ---------
 	void ShowOptions();

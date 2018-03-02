@@ -156,7 +156,7 @@ Texture ImportMaterial::Load(const char* file)
 bool ImportMaterial::LoadResource(const char* file, ResourceMaterial* resourceMaterial)
 {
 	Texture texture = Load(file);
-	LOG("Resources: %s, Loaded in Memory!", resourceMaterial->name);
+	LOG("Resources: %s, Loaded in Memory!", resourceMaterial->name.c_str());
 	if (texture.id > 0)
 	{
 		resourceMaterial->Init(texture);
