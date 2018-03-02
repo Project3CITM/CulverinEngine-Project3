@@ -177,12 +177,17 @@ bool ModulePlayerActions::SaveConfig(JSON_Object * node)
 	return true;
 }
 
-void ModulePlayerActions::ReceiveEvent(SDL_Event * input_event)
+void ModulePlayerActions::UpdateInputsManager()
+{
+}
+
+bool ModulePlayerActions::ReceiveEvent(SDL_Event * input_event)
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		
+		(*it)->ProcessEvent(input_event);
 	}
+	return false;
 }
 
 InputManager * ModulePlayerActions::GetInputManager(const char * name) const

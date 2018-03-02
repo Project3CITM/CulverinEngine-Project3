@@ -21,7 +21,6 @@ public:
 	void OnClick();
 
 private:
-	void OnPointDown(Event event_input);
 private:
 	std::vector<CompScript*> linked_scripts;
 	bool active = false;

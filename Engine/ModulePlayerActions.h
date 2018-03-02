@@ -20,7 +20,9 @@ public:
 
 
 	bool SaveConfig(JSON_Object* node);
-	void ReceiveEvent(SDL_Event* input_event);
+	void UpdateInputsManager();
+
+	bool ReceiveEvent(SDL_Event* input_event);
 	InputManager* GetInputManager(const char* name) const;
 	InputManager* GetInputManager(const char* name);
 

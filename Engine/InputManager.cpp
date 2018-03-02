@@ -14,8 +14,50 @@ InputManager::~InputManager()
 {
 }
 
-void InputManager::LookEvent(SDL_Event * input_event)
+void InputManager::UpdateInputActions()
 {
+	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
+	{
+	}
+}
+
+bool InputManager::ProcessEvent(SDL_Event * input_event)
+{
+	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
+	{
+		switch (input_event->type)
+		{
+		case SDL_MOUSEWHEEL:
+		{
+			//return
+			return true;
+		}
+		case SDL_MOUSEBUTTONDOWN:
+		{
+
+			return true;
+		}
+		case SDL_KEYDOWN:
+		case SDL_KEYUP:
+		{
+			//int key = input_event->key.keysym.sym;
+
+			return true;
+		}
+		case SDL_CONTROLLERAXISMOTION:
+		{
+
+			return true;
+		}
+		case SDL_CONTROLLERBUTTONDOWN:
+		{
+
+			return true;
+		}
+		}
+	}
+	return false;
+
 }
 
 KeyAction * InputManager::GetKey(const char * name)

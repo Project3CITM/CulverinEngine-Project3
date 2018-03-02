@@ -12,8 +12,8 @@ class InputManager
 public:
 	InputManager();
 	~InputManager();
-
-	void LookEvent(SDL_Event* input_event);
+	void UpdateInputActions();
+	bool ProcessEvent(SDL_Event* input_event);
 	//AxisAction* GetAxis(const char* name);
 	//ButtonAction* GetButton(const char* name);
 	KeyAction* GetKey(const char* name);
