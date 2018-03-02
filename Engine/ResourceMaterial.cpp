@@ -31,6 +31,8 @@ void ResourceMaterial::DeleteToMemory()
 {
 	state = Resource::State::UNLOADED;
 	glDeleteTextures(1, &texture.id);
+	texture.id = 0;
+	texture.name = "";
 	LOG("UnLoaded Resource Material");
 }
 

@@ -12,6 +12,7 @@
 #include "CompButton.h"
 #include "ModuleFS.h"
 #include "Scene.h"
+#include "ModuleEventSystem.h"
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
 #define PRESSED_SPRITE 1
@@ -402,6 +403,9 @@ void CompInteractive::OnPointExit(Event event_input)
 void CompInteractive::OnInteractiveSelected(Event event_input)
 {
 	interactive_selected = true;
+	Event pass_selected;
+	pass_selected.pass_selected.component = this;
+	PushEvent(pass_selected);
 	UpdateSelectionState(event_input);
 	PrepareHandleTransition();
 

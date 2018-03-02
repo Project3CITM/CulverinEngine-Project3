@@ -112,8 +112,12 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 
 	if (focus != nullptr)
 		this_event.pointer.focus = focus->GetParent();
+
 	switch (this_event.type)
 	{
+	case EventType::EVENT_PASS_SELECTED:
+		selected = this_event.pass_selected.component;
+		break;
 	case EventType::EVENT_PASS_COMPONENT:
 		iteractive_vector.push_back((CompInteractive*)this_event.pass_component.component);
 		break;
@@ -137,10 +141,10 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 						if (this_event.type == EventType::EVENT_BUTTON_DOWN)
 						{
 							(*it)->OnPointDown(this_event);
-							//if ((*it)->GetNavigationMode() != NavigationMode::NAVIGATION_NONE)
-						//	{
-						//		(*it)->OnInteractiveSelected(this_event);
-						//	}
+							if ((*it)->GetNavigationMode() != Navigation::NavigationMode::NAVIGATION_NONE)
+							{
+								(*it)->OnInteractiveSelected(this_event);
+							}
 							focus = (*it);
 							mouse_down = true;
 
@@ -178,6 +182,8 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 				if (!positive_colision&&!mouse_down)
 				{
 					focus = nullptr;
+					selected->ForceClear(this_event);
+					selected = nullptr;
 				}
 						
 		}

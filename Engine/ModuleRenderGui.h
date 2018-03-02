@@ -43,6 +43,8 @@ private:
 	float2 last_size_dock = float2(0, 0);
 	std::vector<CompInteractive*> iteractive_vector;
 	CompInteractive* focus = nullptr;
+	CompInteractive* selected = nullptr;
+
 	//std::vector<ComponentCanvas*> world_space_canvas;
 
 };

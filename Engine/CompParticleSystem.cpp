@@ -90,6 +90,15 @@ void CompParticleSystem::Clear()
 	RELEASE(part_system);
 }
 
+void CompParticleSystem::SetTextureResource(const char * Path, int columns, int rows, int numberOfFrames, uint AnimationOrder)
+{
+	file_to_load = Path;
+	size_t bar_pos = file_to_load.rfind("\\") + 1;
+	file_to_load_name = file_to_load.substr(bar_pos);
+	ResourceMaterial* res = (ResourceMaterial*)App->resource_manager->GetResource(file_to_load_name.c_str());
+	SetTextureResource(res->GetUUID(), columns, rows, numberOfFrames, AnimationOrder);
+}
+
 void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, int numberOfFrames, uint AnimationOrder)
 {
 	if (texture_resource != nullptr && texture_resource->num_game_objects_use_me > 0)
@@ -103,27 +112,16 @@ void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, in
 		if (texture_resource->GetState() != Resource::State::LOADED)
 		{
 			texture_resource->LoadToMemory();
+			App->importer->iMaterial->LoadResource(std::to_string(texture_resource->GetUUID()).c_str(), texture_resource);
+			
 		}
 		texture_resource->num_game_objects_use_me++;
 
 		part_system->SetTextureResource(texture_resource->GetTextureID(), texture_resource->GetTextureWidth(), texture_resource->GetTextureHeight(), columns, rows, numberOfFrames, AnimationOrder);
 	}
+	else LOG("WARNING: Texture resource in particles is nullptr");
 }
 
-void CompParticleSystem::SetTextureResource(const char * Path, int columns, int rows, int numberOfFrames, uint AnimationOrder)
-{
-//	uint Texuuid = App->resources->LoadResource((*App->importer->Get_Library_material_path() + "\\" + FileToLoadName + ".dds").c_str(), FileToLoad.c_str());
-	file_to_load = Path;
-	size_t bar_pos = file_to_load.rfind("\\") + 1;
-	//size_t dot_pos = file_to_load.rfind(".");
-	file_to_load_name = file_to_load.substr(bar_pos);
-	ResourceMaterial* res = (ResourceMaterial*)App->resource_manager->GetResource(file_to_load_name.c_str());
-	SetTextureResource(res->GetUUID(), columns, rows, numberOfFrames, AnimationOrder);
-
-	/*App->resource_manager->
-	uint text_id = App->importer->iMaterial->LoadResource(Path, texture_resource);	
-	*/
-}
 
 const std::string* CompParticleSystem::GetChildParticle() const
 {

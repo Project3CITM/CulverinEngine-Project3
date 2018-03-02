@@ -127,7 +127,7 @@ void CompButton::ShowInspectorInfo()
 	}
 	int navigation_opt = navigation.current_navigation_mode;
 	ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
-	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\Navigation Extrict\0"))
+	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Navigation Extrict\0"))
 	{
 		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_NONE)
 			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_NONE;
