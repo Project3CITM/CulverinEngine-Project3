@@ -31,19 +31,22 @@ public:
 	void SetName(const char* name);
 
 	const char* GetName()const;
-	bool GetBlockAction()const;
-	bool GetActiveInput()const;
+	const bool GetBlockAction()const;
+	bool GetBlockAction();
+	const bool GetActiveInput()const;
+	bool GetActiveInput();
 	bool GetWindowOpen()const;
 	InputAction* CreateNewAction(const char* new_name, const char* new_key_binding, ActionInputType new_type = ActionInputType::UNKNOWN_ACTION);
 
 
 private:
 public:
+	bool active_input = true;
+	bool block_action = false;
 private:
 	std::vector<InputAction*> action_vector;
 	int number_of_action=0;
-	bool active_input = true;
-	bool block_action = false;
+
 	bool window_open = false;
 	std::string name;
 	std::string selected_action_name;

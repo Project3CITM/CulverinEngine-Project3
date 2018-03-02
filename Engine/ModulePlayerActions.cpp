@@ -97,7 +97,11 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 			if (k + 1<size)
 				std::swap(interactive_vector[k], interactive_vector[k + 1]);
 		}
-		
+		ImGui::SameLine();
+		ImGui::Checkbox("Active##input_active", &input_manager->active_input);
+		ImGui::SameLine();
+		ImGui::Checkbox("Block##input_block", &input_manager->block_action);
+
 		if (input_manager->GetWindowOpen())
 			input_manager->ShowInspectorInfo();
 		if (active)
@@ -130,7 +134,12 @@ bool ModulePlayerActions::ReceiveEvent(SDL_Event * input_event)
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		(*it)->ProcessEvent(input_event);
+		if (!(*it)->GetActiveInput())
+			continue;
+		bool result= (*it)->ProcessEvent(input_event);
+		if (result || (*it)->GetBlockAction())
+			return true;
+
 	}
 	return false;
 }

@@ -239,12 +239,20 @@ const char * InputManager::GetName()const
 	return name.c_str();
 }
 
-bool InputManager::GetBlockAction() const
+const bool InputManager::GetBlockAction() const
+{
+	return block_action;
+}
+bool InputManager::GetBlockAction() 
 {
 	return block_action;
 }
 
-bool InputManager::GetActiveInput() const
+const bool InputManager::GetActiveInput() const
+{
+	return active_input;
+}
+bool InputManager::GetActiveInput() 
 {
 	return active_input;
 }
