@@ -20,6 +20,7 @@
 /*--------------------------------------------------*/
 class GameObject;
 class Component;
+class CompInteractive;
 enum ShaderType;
 class Shader;
 union Event;
@@ -59,13 +60,8 @@ enum EventType
 	EVENT_BUTTON_UP,
 	EVENT_MOUSE_MOTION,
 	EVENT_PASS_COMPONENT,
+	EVENT_PASS_SELECTED,
 
-
-	EVENT_BUTTON_MOUSE,
-	EVENT_MOTION_MOUSE,
-	EVENT_AXIS_CONTROLLER,
-	EVENT_BUTTON_CONTROLLER,
-	EVENT_KEYBOARD,
 
 
 	EVENT_DELETE_GO, //Keep this event last
@@ -232,32 +228,13 @@ struct EPassComponent
 	Component* component = nullptr;
 
 };
-
-struct EButtonMouse
+struct EPassSelected
 {
 	EventType type;
+	CompInteractive* component = nullptr;
 
 };
-struct EMotionMouse
-{
-	EventType type;
 
-};
-struct EAxisController
-{
-	EventType type;
-
-};
-struct EButtonController
-{
-	EventType type;
-
-};
-struct EKeyboard
-{
-	EventType type;
-
-};
 /*
 
 EVENT_BUTTON_MOUSE,
@@ -302,12 +279,8 @@ union Event
 	/*------------------User Interface------------------*/
 	EPoint pointer;
 	EPassComponent pass_component;
+	EPassSelected pass_selected;
 
-	EButtonMouse button_mouse;
-	EMotionMouse motion_mouse;
-	EAxisController axis_controller;
-	EButtonController button_controller;
-	EKeyboard keyboard;
 };
 
 #endif //_EVENTDEF_
