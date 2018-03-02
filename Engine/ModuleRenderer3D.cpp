@@ -179,6 +179,8 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	default_shader = App->module_shaders->CreateDefaultShader("Default Shader", fragmentShaderSource, vertexShaderSource, nullptr, true);
 	lights_billboard_shader = App->module_shaders->CreateDefaultShader("Billboard Lights Shader", DefaultFrag, DefaultVert, nullptr);
 
+	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", DefaultFrag, DefaultVert, nullptr);
+
 	default_material = new Material();
 	default_material->name = "Default Material";
 	default_material->material_shader = default_shader;

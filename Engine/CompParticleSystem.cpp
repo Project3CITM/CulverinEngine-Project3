@@ -37,7 +37,7 @@ void CompParticleSystem::PreUpdate(float dt)
 	if (camera != nullptr)
 		part_system->SetCameraPosToFollow(camera->frustum.pos);
 
-	part_system->PreUpdate(dt);
+	part_system->PreUpdate(0.02);
 }
 
 void CompParticleSystem::Update(float dt)
@@ -75,11 +75,11 @@ void CompParticleSystem::Update(float dt)
 	}
 
 	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());
-	part_system->Update(dt);
+	part_system->Update(0.02);
 	if (part_system->EditorWindowOpen)
 		part_system->DrawImGuiEditorWindow();
 	
-	part_system->PostUpdate(dt);
+	part_system->PostUpdate(0.02);
 
 	//SaveParticleStates("Test", nullptr, nullptr, nullptr, nullptr);
 }
@@ -100,13 +100,11 @@ void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, in
 	texture_resource = (ResourceMaterial*)App->resource_manager->GetResource(uuid);//(texture_resource*)App->resources->Get(uuid);
 	if (texture_resource != nullptr)
 	{
-		texture_resource->num_game_objects_use_me++;
-
 		if (texture_resource->GetState() != Resource::State::LOADED)
 		{
 			texture_resource->LoadToMemory();
-			App->importer->iMaterial->LoadResource(std::to_string(texture_resource->GetUUID()).c_str(), texture_resource);
 		}
+		texture_resource->num_game_objects_use_me++;
 
 		part_system->SetTextureResource(texture_resource->GetTextureID(), texture_resource->GetTextureWidth(), texture_resource->GetTextureHeight(), columns, rows, numberOfFrames, AnimationOrder);
 	}
@@ -119,14 +117,11 @@ void CompParticleSystem::SetTextureResource(const char * Path, int columns, int 
 	size_t bar_pos = file_to_load.rfind("\\") + 1;
 	//size_t dot_pos = file_to_load.rfind(".");
 	file_to_load_name = file_to_load.substr(bar_pos);
-	Resource* res = App->resource_manager->GetResource(file_to_load_name.c_str());
-	if (res)
-	{
-		SetTextureResource(res->GetUUID(), columns, rows, numberOfFrames, AnimationOrder);
-	}
+	ResourceMaterial* res = (ResourceMaterial*)App->resource_manager->GetResource(file_to_load_name.c_str());
+	SetTextureResource(res->GetUUID(), columns, rows, numberOfFrames, AnimationOrder);
+
 	/*App->resource_manager->
-	uint text_id = App->importer->iMaterial->LoadResource(Path, texture_resource);
-	
+	uint text_id = App->importer->iMaterial->LoadResource(Path, texture_resource);	
 	*/
 }
 

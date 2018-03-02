@@ -114,7 +114,9 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 				{
 					if (item._Ptr->_Myval.second.type == EVENT_PARTICLE_DRAW)
 					{ 
-						((Particle*)item._Ptr->_Myval.second.particle.ToDraw)->DrawParticle();
+						App->renderer3D->particles_shader->Bind();
+						((Particle*)item._Ptr->_Myval.second.particle.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
+						App->renderer3D->particles_shader->Unbind();
 					}
 					else switch (item._Ptr->_Myval.second.draw.Dtype)
 					{

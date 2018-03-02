@@ -213,11 +213,9 @@ static const GLchar* DefaultFrag[] =
 
 	"void main()\n"
 	"{\n"
-	"vec3 lightDir = vec3(1);\n"
-	"float angle = dot(lightDir, ourNormal);\n"
-
+	
 	//Z-Buffer Line Shader
-	"color= vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1) *texture(albedo, TexCoord);\n"
+	"color= texture(albedo, TexCoord);\n"
 	"}\n"
 };
 

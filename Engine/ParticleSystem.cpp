@@ -4,6 +4,9 @@
 #include "GL3W\include\glew.h"
 #include "ImGui\imgui.h"
 #include "ModuleEventSystem.h"
+#include "Application.h"
+#include "CompCamera.h"
+#include "ModuleRenderer3D.h"
 
 float ParticleSystem_Lerp(float v0, float v1, float time, float Maxtime)
 {
@@ -323,33 +326,52 @@ bool Particle::isDead()
 	return ToDelete;
 }
 
-void Particle::DrawParticle()
+void Particle::DrawParticle(uint program_id)
 {
+	
+
 	const ParticleMeshData& Mesh = ParentParticleSystem->GetParticleMeshData();
 
 	glColor4f(Properties.RGBATint.x, Properties.RGBATint.y, Properties.RGBATint.z, Properties.RGBATint.w);
 
 	glDisable(GL_CULL_FACE);
-
 	glEnable(GL_NORMALIZE);
-
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_BLEND);
 	if (ParentParticleSystem->TextureData.TextureID != 0)
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		uint texLoc = glGetUniformLocation(program_id, "albedo");
+		glUniform1i(texLoc, 0);
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, ParentParticleSystem->TextureData.TextureID);
+
 	}
-	
-	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_vertices);
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
+
+	glBindBuffer(GL_ARRAY_BUFFER, ParentParticleSystem->GetTextureID(Properties.LifetimeMax, Properties.LifetimeActual));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
+
+	//glEnableClientState(GL_VERTEX_ARRAY);
+	//glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_vertices);
+	//glVertexPointer(3, GL_FLOAT, 0, NULL);
 
 	if (Mesh.normals != nullptr)
 	{
-		glEnableClientState(GL_NORMAL_ARRAY);
+
 		glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_normals);
-		glNormalPointer(GL_FLOAT, 0, NULL);
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
+
+		//glEnableClientState(GL_NORMAL_ARRAY);
+		//glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_normals);
+		//glNormalPointer(GL_FLOAT, 0, NULL);
 	}
 	/*
 	if (Mesh.texture_coords != nullptr) {
@@ -364,28 +386,15 @@ void Particle::DrawParticle()
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 	glTexCoordPointer(3, GL_FLOAT, 0, NULL);
 
-	glPushMatrix();
-	float4x4 ParticleMatrix = float4x4::FromTRS(Properties.Position, Properties.Rotation, Properties.Scale * Properties.Size).Transposed();
-	/*
-	float4x4 ParticleMatrix = float4x4::identity;
-	if (ParentParticleSystem->Emitter.EmissionType == 0)//LocalEmission
-	{
-		float4x4 gresg = float4x4::FromTRS(Properties.Position, Properties.Rotation, Properties.Scale * Properties.Size);
-		ParticleMatrix = ParentParticleSystem->Emitter.Transform.Transposed() * gresg;
-		//ParticleMatrix.Inverse();
-		ParticleMatrix.Transpose();
-		//ParticleMatrix = float4x4::FromTRS(Properties.Position, Properties.Rotation, Properties.Scale * Properties.Size) * ParentParticleSystem->Emitter.Transform;
-		//ParticleMatrix.Transpose();
-	}
-	else
-		ParticleMatrix = float4x4::FromTRS(Properties.Position, Properties.Rotation, Properties.Scale * Properties.Size).Transposed();
-	*/
-	glMultMatrixf(ParticleMatrix.ptr());
+	uint modelLoc = glGetUniformLocation(program_id, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_TRUE, float4x4::FromTRS(Properties.Position, Properties.Rotation, Properties.Scale * Properties.Size).ptr());
+	uint viewLoc = glGetUniformLocation(program_id, "viewproj");
+	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, App->renderer3D->active_camera->frustum.ViewProjMatrix().ptr());
+
+
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Mesh.id_indices);
 	glDrawElements(GL_TRIANGLES, Mesh.num_indices, GL_UNSIGNED_INT, NULL);
-
-	glPopMatrix();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
@@ -398,7 +407,6 @@ void Particle::DrawParticle()
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
 }
 
 void Particle::SetAssignedStateFromVariables(ParticleAssignedState& AState, const ParticleState& State)
@@ -418,6 +426,7 @@ void Particle::SetAssignedStateFromVariables(ParticleAssignedState& AState, cons
 
 void Particle::OrientateParticle()
 {
+	return;
 	switch (ParentParticleSystem->Emitter.ParticleFacingOptions)
 	{
 	case 0: //Null

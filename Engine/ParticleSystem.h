@@ -195,7 +195,7 @@ public:
 
 	bool isDead();												//Check if this particle is dead, we can use this to trigger a child emitter of the particle
 
-	void DrawParticle();										//Function to draw this particle
+	void DrawParticle(uint program_id);										//Function to draw this particle
 
 private:
 	void SetAssignedStateFromVariables(ParticleAssignedState& AState, const ParticleState& State);		//Set particle Assigned state from Variable state
