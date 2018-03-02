@@ -21,6 +21,11 @@ public class Movement_Action : Action
     float current_rot_acceleration = 0.0f;
     float arrive_distance = 0.0f;
 
+    public Movement_Action()
+    {
+        action_type = ACTION_TYPE.MOVE_ACTION;
+        Debug.Log("Move Act");
+    }
 
     public override bool ActionStart()
     {
@@ -31,8 +36,10 @@ public class Movement_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+        Debug.Log("MOVE_UPDATE");
+
         //Velocity calculation
-        if(current_acceleration.Length > max_accel)
+        if (current_acceleration.Length > max_accel)
         {
             current_acceleration = current_acceleration.Normalized * max_accel;
         }
@@ -63,6 +70,9 @@ public class Movement_Action : Action
             else current_rot_velocity = -max_rot_vel;
         }
 
+        /*myself.GetComponent<Transform>().local_position += current_velocity;
+        myself.GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity);
+
         current_acceleration = Vector3.Zero;
         current_rot_acceleration = 0.0f;
 
@@ -78,7 +88,8 @@ public class Movement_Action : Action
                 GetComponent<Seek_Steering>().SetEnabled(false);
                 return ACTION_RESULT.AR_SUCCESS;
             }
-        }
+        }*/
+
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 

@@ -10,6 +10,16 @@ public class Action : CulverinBehaviour
         AR_SUCCESS
 
     }
+
+    public enum ACTION_TYPE
+    {
+        NO_ACTION,
+        MOVE_ACTION,
+        ATTACK_ACTION
+    }
+
+    public ACTION_TYPE action_type = ACTION_TYPE.NO_ACTION;
+
     public virtual bool ActionStart()
     {
         Debug.Log("Action start not defined!");
