@@ -20,11 +20,12 @@ public:
 	void OnPointDown(Event event_input);
 	void OnClick();
 
+public:
+	CompImage * Tick = nullptr;
 private:
 private:
 	std::vector<CompScript*> linked_scripts;
 	bool active = false;
-	CompImage* Check = nullptr;
 };
 
 #endif//COMPONENT_CHECK_BOX_H

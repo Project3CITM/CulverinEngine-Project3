@@ -181,6 +181,6 @@ void CompCheckBox::OnPointDown(Event event_input)
 
 void CompCheckBox::OnClick()
 {
-	Check->SetToRender(!Check->GetToRender());
+	Tick->SetToRender(!Tick->GetToRender());
 }
 

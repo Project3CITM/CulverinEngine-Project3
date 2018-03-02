@@ -5,6 +5,7 @@
 #include "ModuleInput.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
+#include "CompCheckBox.h"
 
 Hierarchy::Hierarchy() : WindowManager()
 {
@@ -196,7 +197,12 @@ void Hierarchy::ShowOptions()
 				canvas = App->scene->CreateCanvas(nullptr);
 			}
 			GameObject* check_box = App->scene->CreateCheckBox(canvas);
+			GameObject* tick_image = App->scene->CreateImage(check_box);
+			CompCheckBox* check = (CompCheckBox*)check_box->FindComponentByType(Comp_Type::C_CHECK_BOX);
+			CompImage* tick = (CompImage*)tick_image->FindComponentByType(Comp_Type::C_IMAGE);
+			check->Tick = tick;
 			App->gui->SetLinkInspector(check_box);
+
 
 		}
 		if (ImGui::MenuItem("Text"))
