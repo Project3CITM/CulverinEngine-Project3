@@ -528,6 +528,7 @@ void ModuleMap::ShowCreationMap()
 		all_prefabs.clear();
 		App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "fbx");
 		App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "obj");
+		App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "prefab.json");
 		App->fs->FixNames_directories(all_prefabs);
 		if (numPrefabs > all_prefabs.size())
 			numPrefabs = all_prefabs.size();
@@ -719,7 +720,15 @@ void ModuleMap::ShowCreationMap()
 							std::string directory_prebaf = App->fs->GetMainDirectory();
 							directory_prebaf += "/";
 							directory_prebaf += prefabs[n];
-							directory_prebaf += ".meta.json";
+							size_t EndName = prefabs[n].find(".prefab.json");
+							if (EndName != std::string::npos)
+							{
+								//directory_prebaf += ".meta.json";
+							}
+							else
+							{
+								directory_prebaf += ".meta.json";
+							}
 							GameObject* temp = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
 							CompTransform* transform = temp->GetComponentTransform();
 							math::float3 pos = transform->GetPos();
