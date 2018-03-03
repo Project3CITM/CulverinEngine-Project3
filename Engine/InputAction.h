@@ -42,12 +42,12 @@ public:
 	~InputAction();
 
 	virtual bool ProcessEventAction(SDL_Event * input_event) { return false; }
-
+	virtual bool UpdateEventAction(const Uint8* array_kys) { return false; }
 public:
 
 	std::string name = "";
 	ActionInputType action_type = ActionInputType::UNKNOWN_ACTION;
-	KeyRelation *key_relation = nullptr;
+	KeyRelation* key_relation;
 
 };
 
@@ -58,7 +58,7 @@ public:
 	AxisAction() { action_type = ActionInputType::AXIS_ACTION; }
 	bool ProcessEventAction(SDL_Event * input_event)
 	{
-		if (this->key_relation->key_type == KeyBindingType::MOUSE_AXIS_DEVICE)
+		if (key_relation->key_type == KeyBindingType::MOUSE_AXIS_DEVICE)
 		{
 			if (input_event->type == SDL_MOUSEMOTION)
 			{
@@ -83,7 +83,7 @@ public:
 	ControllerAxisAction() { action_type = ActionInputType::CONTROLLER_AXIS_ACTION; }
 	bool ProcessEventAction(SDL_Event * input_event)
 	{
-		if (this->key_relation->key_type == KeyBindingType::CONTROLLER_AXIS_DEVICE)
+		if (key_relation->key_type == KeyBindingType::CONTROLLER_AXIS_DEVICE)
 		{
 			if (input_event->type == SDL_CONTROLLERAXISMOTION)
 			{
@@ -105,7 +105,7 @@ public:
 
 	bool ProcessEventAction(SDL_Event * input_event)
 	{
-		if (this->key_relation->key_type == KeyBindingType::MOUSE_BUTTON_DEVICE)
+		if (key_relation->key_type == KeyBindingType::MOUSE_BUTTON_DEVICE)
 		{
 			if (input_event->type == SDL_MOUSEBUTTONDOWN)
 			{
@@ -133,16 +133,41 @@ public:
 
 	bool ProcessEventAction(SDL_Event * input_event)
 	{
-		if (this->key_relation->key_type == KeyBindingType::KEYBOARD_DEVICE)
+		if (key_relation->key_type == KeyBindingType::KEYBOARD_DEVICE)
 		{
 			if (input_event->type == SDL_KEYDOWN)
 			{
-				state = Keystateaction::KEY_DOWN_ACTION;
-				return true;
+				if (key_relation->event_value == input_event->key.keysym.scancode)
+				{
+					state = Keystateaction::KEY_DOWN_ACTION;
+					return true;
+				}
 			}
 
 		}
 		return false;
+	}
+
+
+	bool UpdateEventAction(const Uint8* array_kys) 
+	{ 
+		int state_event = array_kys[key_relation->event_value];
+
+		if (array_kys[key_relation->event_value] == 1)
+		{
+			if (state == Keystateaction::KEY_IDLE_ACTION)
+				state = Keystateaction::KEY_DOWN_ACTION;
+			else
+				state = Keystateaction::KEY_REPEAT_ACTION;
+		}
+		else
+		{
+			if (state == Keystateaction::KEY_REPEAT_ACTION || state == Keystateaction::KEY_DOWN_ACTION)
+				state = Keystateaction::KEY_UP_ACTION;
+			else
+				state = Keystateaction::KEY_IDLE_ACTION;
+		}
+		return true;	
 	}
 
 	Keystateaction state = Keystateaction::KEY_IDLE_ACTION;
@@ -160,11 +185,14 @@ public:
 
 	bool ProcessEventAction(SDL_Event * input_event)
 	{
-		if (this->key_relation->key_type == KeyBindingType::KEYBOARD_DEVICE)
+		if (key_relation->key_type == KeyBindingType::CONTROLLER_BUTTON_DEVICE)
 		{
-			if (input_event->type == SDL_KEYDOWN)
+			if (input_event->type == SDL_CONTROLLERBUTTONDOWN)
 			{
-				state = Keystateaction::KEY_DOWN_ACTION;
+				if (key_relation->event_value == input_event->button.button)
+				{
+					state = Keystateaction::KEY_DOWN_ACTION;
+				}
 				return true;
 			}
 
@@ -174,9 +202,5 @@ public:
 
 	Keystateaction state = Keystateaction::KEY_IDLE_ACTION;
 };
-
-
-
-
 
 #endif

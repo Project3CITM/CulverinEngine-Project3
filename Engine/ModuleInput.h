@@ -6,7 +6,7 @@
 #include "parson.h"
 
 #define MAX_MOUSE_BUTTONS 5
-
+class InputManager;
 enum KEY_STATE
 {
 	KEY_IDLE = 0,
@@ -112,6 +112,8 @@ private:
 	int mouse_y_global = 0;
 	int mouse_x_motion_global = 0;
 	int mouse_y_motion_global = 0;
+
+	InputManager* Manag_inp;
 
 public:
 	std::list<const char*> dropedfiles;

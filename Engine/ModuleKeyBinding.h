@@ -19,15 +19,17 @@ enum KeyBindingType {
 
 struct KeyRelation 
 {
-	KeyRelation(std::string name) : name(name) {}
+	KeyRelation(int event, std::string name, KeyBindingType type) : event_value(event), name(name), key_type(type){}
 	std::string name = "";
 	KeyBindingType key_type = KeyBindingType::NULL_DEVICE;
+	int event_value;
 };
 
+/*
 struct KeyboardDevice: public KeyRelation
 {
-	KeyboardDevice(SDL_Scancode type_event, std::string name) :KeyRelation(name), event_scancode(type_event) { key_type = KeyBindingType::KEYBOARD_DEVICE; }
-	SDL_Scancode event_scancode;
+	KeyboardDevice(int type_event, std::string name) :KeyRelation(name), event_scancode(type_event) { key_type = KeyBindingType::KEYBOARD_DEVICE; }
+	int event_scancode;
 };
 
 struct ControllerAxisDevice : public KeyRelation
@@ -47,18 +49,18 @@ struct MouseButtonDevice : public KeyRelation
 	MouseButtonDevice(int type_event, std::string name) :KeyRelation(name), event_button_mouse(type_event) { key_type = KeyBindingType::MOUSE_BUTTON_DEVICE; }
 	int event_button_mouse=0;
 
-	/*
+
 	#define SDL_BUTTON_LEFT     1
 	#define SDL_BUTTON_MIDDLE   2
 	#define SDL_BUTTON_RIGHT    3
-	*/
+	
 };
 
 struct MouseAxisDevice : public KeyRelation
 {
 	MouseAxisDevice(SDL_EventType type_event, std::string name) :KeyRelation(name), event_axis_mouse(type_event) { key_type = KeyBindingType::MOUSE_AXIS_DEVICE; }
 	SDL_EventType event_axis_mouse;
-};
+};*/
 
 
 class ModuleKeyBinding :

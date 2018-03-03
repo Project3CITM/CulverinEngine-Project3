@@ -2,14 +2,12 @@
 
 
 
-InputAction::InputAction()
+InputAction::InputAction():key_relation(new KeyRelation(-1,"default", KeyBindingType::NULL_DEVICE))
 {
-	key_relation = new KeyRelation("default");
 }
 
-InputAction::InputAction(const char * name, KeyRelation* key_relation, ActionInputType action_type): name(name), action_type(action_type)
+InputAction::InputAction(const char * name, KeyRelation *key_relation, ActionInputType action_type): name(name), action_type(action_type), key_relation(key_relation)
 {
-	this->key_relation = key_relation;
 }
 
 InputAction::~InputAction()

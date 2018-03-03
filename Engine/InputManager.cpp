@@ -16,8 +16,12 @@ InputManager::~InputManager()
 
 void InputManager::UpdateInputActions()
 {
+
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
+
 	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
 	{
+		(*it)->UpdateEventAction(keys);
 	}
 }
 
@@ -25,36 +29,7 @@ bool InputManager::ProcessEvent(SDL_Event * input_event)
 {
 	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
 	{
-		switch (input_event->type)
-		{
-		case SDL_MOUSEWHEEL:
-		{
-			//return
-			return true;
-		}
-		case SDL_MOUSEBUTTONDOWN:
-		{
-
-			return true;
-		}
-		case SDL_KEYDOWN:
-		case SDL_KEYUP:
-		{
-			//int key = input_event->key.keysym.sym;
-
-			return true;
-		}
-		case SDL_CONTROLLERAXISMOTION:
-		{
-
-			return true;
-		}
-		case SDL_CONTROLLERBUTTONDOWN:
-		{
-
-			return true;
-		}
-		}
+		(*it)->ProcessEventAction(input_event);
 	}
 	return false;
 

@@ -9,6 +9,8 @@
 #include "SDL2_ttf/include/SDL_ttf.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
 #include "ModuleEventSystem.h"
+#include "ModulePlayerActions.h"
+#include "InputManager.h"
 #define MAX_KEYS 300
 
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
@@ -66,6 +68,7 @@ update_status ModuleInput::PreUpdate(float dt)
 	perf_timer.Start();
 
 	SDL_PumpEvents();
+	App->player_action->UpdateInputsManager();
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	
 	for(int i = 0; i < MAX_KEYS; ++i)
@@ -137,7 +140,9 @@ update_status ModuleInput::PreUpdate(float dt)
 	while(SDL_PollEvent(&e))
 	{
 		ImGui_ImplSdlGL3_ProcessEvent(&e);
-		
+		//if (App->mode_game) {
+			App->player_action->ReceiveEvent(&e);
+		//}
 		switch(e.type)
 		{
 
