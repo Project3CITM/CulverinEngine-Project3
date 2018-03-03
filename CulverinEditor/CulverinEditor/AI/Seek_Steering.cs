@@ -3,12 +3,8 @@ using CulverinEditor.Debug;
 
 public class Seek_Steering : CulverinBehaviour
 {
-    Movement_Action move;
-    public GameObject myself;
-
     void Start()
     {
-        move = GetComponent<Movement_Action>();
         Debug.Log("Seek Start");
         SetScriptEnabled(false);
     }

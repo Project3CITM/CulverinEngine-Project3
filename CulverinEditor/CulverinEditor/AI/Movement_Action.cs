@@ -147,7 +147,7 @@ public class Movement_Action : Action
 
     public Vector3 GetTargetPosition()
     {
-        Vector3 result = Vector3.Zero;
+        Vector3 result = new Vector3(Vector3.Zero);
         result.x = path[0].GetTileX() * tile_size;
         result.y = GetComponent<Transform>().local_position.y;
         result.z = path[0].GetTileY() * tile_size;
@@ -185,5 +185,21 @@ public class Movement_Action : Action
     {
         return ((GetComponent<Transform>().local_position) - (GetTargetPosition())).Length;
     }
+
+    public void SetCurrentVelocity(Vector3 vel)
+    {
+        current_velocity = vel;
+    }
+
+    public Vector3 GetCurrentAcceleration()
+    {
+        return current_acceleration;
+    }
+
+    public float GetMaxVelocity()
+    {
+        return max_vel;
+    }
+
 }
 
