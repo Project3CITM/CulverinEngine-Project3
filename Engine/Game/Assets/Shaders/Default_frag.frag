@@ -7,7 +7,8 @@ uniform struct Light {
 	int type;
 	vec4 l_color; //a.k.a the color of the light
 	float intensity;
-	float ambientCoefficient; 
+	float ambientCoefficient;
+    float radius; 
 
 } _lights[MAX_LIGHTS];
 
@@ -78,11 +79,12 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
         float cosTheta = clamp( dot( s,normal ), 0,1 );       
         float cosAlpha = clamp( dot( v,r ), 0,1 );												 
 																										 
-		float distanceToLight = length((lightpos - surfacePos));									 
-		float attenuation = 1 / (1.0 + 0.1 * pow(distanceToLight,2));									 
+		float d = length((lightpos - surfacePos)/ light.radius);
+        float attenuation = max(light.ambientCoefficient,clamp(((light.radius * light.radius)/(d * d)),0,1)* lightInt);									 
+		//attenuation = 1 / (1.0 + 0.1 * pow(d,2));									 
 																										 
-		float diffuse = attenuation * Kd *lightInt * cosTheta;					 
-		float spec = attenuation * Ks *lightInt* pow(cosAlpha, shininess);
+		float diffuse = attenuation * Kd  * cosTheta;					 
+		float spec = attenuation * Ks * pow(cosAlpha, shininess);
 																												 
 		return vec3(diffuse,spec,attenuation);																 
 																												 
@@ -101,7 +103,8 @@ void main()
 	vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1);														 
 	vec3 occlusion_texture = texture(occlusion_map,TexCoord).xyz;												 
     vec3 spec_texture = texture(specular_map, TexCoord).xyz;
-																		 
+N.g = -N.g;		
+N.r = -N.r;													 
 																												 
 	vec3 inten = vec3(0); vec3 inten_final = vec3(0);																					 
 																		 
