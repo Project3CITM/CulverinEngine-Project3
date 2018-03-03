@@ -36,7 +36,7 @@ public class JaimeWeapon_Left : WeaponController
                 //Check if the ability is not in cooldown
                 if (!cd.in_cd)
                 {
-                    Debug.Log("Going to Attack");
+                    Debug.Log("Jaime LW Going to Attack");
 
                     // First, OnClick of LeftWeapon, then, onClick of Cooldown
                     DoAbility();
@@ -61,21 +61,20 @@ public class JaimeWeapon_Left : WeaponController
 
     public override void PrepareAbility()
     {
-        Debug.Log("Prepare Ability");
+        Debug.Log("Jaime LW Prepare Ability");
         button = jaime_button_left.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
     public override void DoAbility() //Might be virtual
     {
-        Debug.Log("Attack Left");
+        Debug.Log("Jaime LW Attack Left");
 
         // Decrease stamina -----------
-
-        character = player_obj.GetComponent<JaimeController>();
+        character = jaime_obj.GetComponent<JaimeController>();
         character.DecreaseStamina(stamina_cost);
 
-        Debug.Log("Going to hit");
+        Debug.Log("Jaime LW Going to hit");
 
         // Attack the enemy in front of you
         if (EnemyInFront())
@@ -88,6 +87,6 @@ public class JaimeWeapon_Left : WeaponController
 
     public override void PlayFx()
     {
-        player_obj.GetComponent<CompAudio>().PlayEvent("SwordSlash");
+        GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("SwordSlash");
     }
 }

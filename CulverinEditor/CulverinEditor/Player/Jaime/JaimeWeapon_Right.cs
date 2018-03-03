@@ -36,7 +36,7 @@ public class JaimeWeapon_Right : WeaponController
                 //Check if the ability is not in cooldown
                 if (!cd.in_cd)
                 {
-                    Debug.Log("Going to Block");
+                    Debug.Log("Jaime RW Going to Block");
 
                     // First, OnClick of RightWeapon, then, onClick of Cooldown
                     DoAbility();
@@ -46,19 +46,19 @@ public class JaimeWeapon_Right : WeaponController
                 }
                 else
                 {
-                    Debug.Log("Ability in CD");
+                    Debug.Log("Jaime RW Ability in CD");
                 }
             }
             else
             {
-                Debug.Log("Not Enough Stamina");
+                Debug.Log("Jaime RW Not Enough Stamina");
             }
         }
     }
 
     public override void PrepareAbility()
     {
-        Debug.Log("Prepare Block");
+        Debug.Log("Jaime RW Prepare Block");
         button = jaime_button_right.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
