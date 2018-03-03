@@ -83,6 +83,7 @@ public:
 	GameObject* CreateImage(GameObject* parent = nullptr);
 	GameObject* CreateButton(GameObject* parent = nullptr);
 	GameObject* CreateCheckBox(GameObject* parent = nullptr);
+	GameObject * CreateSlider(GameObject * parent = nullptr);
 	GameObject* CreateText(GameObject* parent = nullptr);
 	GameObject* CreateEditText(GameObject* parent = nullptr);
 

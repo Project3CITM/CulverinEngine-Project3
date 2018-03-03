@@ -396,6 +396,19 @@ void CompImage::SetOverwriteImage(ResourceMaterial * set_overwrite_image)
 	overwrite_image = set_overwrite_image;
 }
 
+void CompImage::SetToFilled(bool filled)
+{
+	if (filled)
+	{
+		type = Type::FILLED;
+	}
+	else 
+	{
+		type = Type::SIMPLE;
+	}
+
+}
+
 float4 CompImage::GetColor() const
 {
 	return color;

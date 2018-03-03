@@ -130,6 +130,7 @@
     <ClInclude Include="CompRectTransform.h" />
     <ClInclude Include="CompRigidBody.h" />
     <ClInclude Include="CompScript.h" />
+    <ClInclude Include="CompSlider.h" />
     <ClInclude Include="CompText.h" />
     <ClInclude Include="CSharpScript.h" />
     <ClInclude Include="DefaultShaders.h" />
@@ -480,6 +481,7 @@
     <ClCompile Include="CompRectTransform.cpp" />
     <ClCompile Include="CompRigidBody.cpp" />
     <ClCompile Include="CompScript.cpp" />
+    <ClCompile Include="CompSlider.cpp" />
     <ClCompile Include="CompText.cpp" />
     <ClCompile Include="CSharpScript.cpp" />
     <ClCompile Include="DepthCubeMap.cpp" />

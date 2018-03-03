@@ -1308,6 +1308,45 @@ GameObject * Scene::CreateCheckBox(GameObject * parent)
 	return obj;
 }
 
+GameObject * Scene::CreateSlider(GameObject * parent)
+{
+	GameObject* obj = new GameObject(parent);
+
+
+	// SET NAME -----------------------------------
+	static uint slider_count = 0;
+
+	std::string name = "Slider ";
+	name += std::to_string(slider_count++);
+	char* name_str = new char[name.size() + 1];
+	strcpy(name_str, name.c_str());
+	obj->SetName(name_str);
+
+	// TRANSFORM COMPONENT --------------
+	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
+	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
+	transform->Enable();
+
+	// IMAGE COMPONENT -----------------
+	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
+	image->Enable();
+	image->SyncComponent();
+	image->UpdateSpriteId();
+	// SLIDER -----------------
+	CompImage* slide = (CompImage*)obj->AddComponent(Comp_Type::C_SLIDER);
+	slide->Enable();
+
+	if (parent == nullptr)
+	{
+		// Only add to GameObjects list the Root Game Objects
+		App->scene->root->AddChildGameObject(obj);
+	}
+
+	LOG("SLIDER Created.");
+
+	return obj;
+}
+
 GameObject * Scene::CreateText(GameObject * parent)
 {
 	GameObject* obj = new GameObject(parent);

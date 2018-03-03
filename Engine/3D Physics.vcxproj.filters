@@ -1187,6 +1187,9 @@
     <ClInclude Include="CompJoint.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="CompSlider.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1582,6 +1585,9 @@
       <Filter>Engine\PhysX\jpPhysX</Filter>
     </ClCompile>
     <ClCompile Include="CompJoint.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompSlider.cpp">
       <Filter>Engine\Components</Filter>
     </ClCompile>
   </ItemGroup>

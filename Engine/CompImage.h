@@ -34,6 +34,7 @@ public:
 	void SetColor(float set_r, float set_g, float set_b, float set_a);
 	void SetTextureID(uint uid);
 	void SetOverwriteImage(ResourceMaterial* overwrite_image);
+	void SetToFilled(bool filled);
 	float4 GetColor()const;
 	ResourceMaterial* GetSourceImage()const;
 	ResourceMaterial* GetCurrentTexture()const;
@@ -57,6 +58,7 @@ public:
 	};
 
 private:
+	//CompImage * slide = nullptr;
 	ResourceMaterial* source_image = nullptr;
 	ResourceMaterial* overwrite_image = nullptr;
 	Type type = SIMPLE;
