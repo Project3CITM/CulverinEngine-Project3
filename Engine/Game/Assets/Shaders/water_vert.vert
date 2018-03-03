@@ -22,9 +22,9 @@ uniform mat4 viewproj;
 uniform mat4 view;
 
 vec3 CalcNormal(in float x, in float y){
-
-float A = cos(x +y+ _time/2) +  cos(3*x +y+ _time/2);// sin(x*4.46 + cos(2.9*x + _time)+_time);// + 4.46*cos( 4.46* x);// + 4.6*cos(4.6*x);
-float B =  cos(y+x/2 + _time/2) + cos(y*4+x/2 +_time/2);
+float t = _time/8;
+float A = cos(x +y/7+t*4) +  cos(1.3*x +y/2+ t*2);// sin(x*4.46 + cos(2.9*x + _time)+_time);// + 4.46*cos( 4.46* x);// + 4.6*cos(4.6*x);
+float B =  cos(y+x/2 +t*3) + cos(y*1.5+x/2 +t);
 
 return vec3(A,B/2,0);
 }
@@ -35,9 +35,9 @@ void main()
 
 float x =  position.x * num_waves_x;
 float y = position.z * num_waves_y;
-float t = _time/2;
-float distortion_x = sin(x+y + t )+ sin(3*x +y+ t );//+ sin(2.9*x + t);// + sin(4.46*x );
-float distortion_y = sin(y +x/2 + t ) + sin(4*y + x/2 + t );
+float t = _time/8;
+float distortion_x = sin(x+y/7+ t*4)+ sin(1.3*x +y/2+ t*2 );//+ sin(2.9*x + t);// + sin(4.46*x );
+float distortion_y = sin(y +x/2 + t*3 ) + sin(1.5*y + x/2 + t );
 gl_Position =  viewproj* model * vec4(position.x,waveHeight * (position.y + distortion_x + distortion_y ), position.z, 1.0f);
 mat4 test = view;
 ourColor = _color;

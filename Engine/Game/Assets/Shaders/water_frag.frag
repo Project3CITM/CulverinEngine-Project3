@@ -7,7 +7,8 @@ uniform struct Light {
 	int type;
 	vec4 l_color; //a.k.a the color of the light
 	float intensity;
-	float ambientCoefficient; 
+	float ambientCoefficient;
+    float radius; 
 
 } _lights[MAX_LIGHTS];
 
@@ -83,11 +84,11 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
         float cosTheta = clamp( dot( s,normal ), 0,1 );       
         float cosAlpha = clamp( dot( v,r ), 0,1 );												 
 																										 
-		float distanceToLight = length((lightpos - surfacePos));									 
-		float attenuation = 1 / (1.0 + 0.1 * pow(distanceToLight,2));									 
+		float d = length((lightpos - surfacePos));									 
+		float attenuation = max(light.ambientCoefficient,clamp(((light.radius * light.radius)/(d * d)),0,1)* lightInt);									 
 																										 
-		float diffuse = attenuation * Kd *lightInt * cosTheta;					 
-		float spec = attenuation * Ks *lightInt* pow(cosAlpha, shininess);
+		float diffuse = attenuation * Kd * cosTheta;					 
+		float spec = attenuation * Ks* pow(cosAlpha, shininess);
 																												 
 		return vec3(diffuse,spec,attenuation);																 
 																												 
@@ -102,7 +103,7 @@ void main()
 {																												 
 																							 
 													 
-	vec3 color_texture = texture(albedo, TexCoord +vec2(_time/80,-_time/80)).xyz;															 
+	vec3 color_texture = 0.4*texture(albedo, TexCoord +vec2(_time/80,-_time/80)).xyz + vec3(0.5);															 
 	vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1);														 
 	vec3 occlusion_texture = texture(occlusion_map,TexCoord).xyz;												 
     vec3 spec_texture = texture(specular_map, TexCoord).xyz;
@@ -130,14 +131,13 @@ void main()
 	final_color = normalize(final_color);	
 
 float height = wave_height - ourPos.y;
-float top_mult = (wave_height + waveHeight) / (waveHeight*2);
+float top_mult = clamp((wave_height + waveHeight),0,1);// / (waveHeight*1);
 float down_mult = abs(top_mult-1);
 																
-	vec3 col = final_ambient* color_texture*ambient_col.rgb 
-    + color_texture * (inten_final.x + inten_final.y * spec_texture.r)
-*(top_col.rgb * top_mult + down_col.rgb * down_mult)
-    *occlusion_texture*final_color.rgb; 
+	vec3 col = max(final_ambient* color_texture*ambient_col.rgb, 
+    color_texture * (inten_final.x + inten_final.y * spec_texture.r)
+    *occlusion_texture*final_color.rgb) * (top_col.rgb *top_mult + down_col.rgb * down_mult); 
 																						
-	color = vec4(col,_alpha);
+	color = vec4(col,_alpha) ;
 
 }
