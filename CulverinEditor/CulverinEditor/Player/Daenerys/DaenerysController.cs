@@ -7,6 +7,8 @@ public class DaenerysController : CharacterController
 
     public GameObject rweapon_daenerys_obj;
     public GameObject lweapon_daenerys_obj;
+    public GameObject daenerys_icon_obj;
+
 
     protected override void Start()
     {
@@ -169,4 +171,17 @@ public class DaenerysController : CharacterController
         anim_controller_left.SetTransition(name, value);
     }
 
+    public override void UpdateHUD(bool active)
+    {
+        icon = daenerys_icon_obj.GetComponent<CompImage>();
+
+        if (active)
+        {
+            //icon.Enable();
+        }
+        else
+        {
+            //icon.Disable();
+        }
+    }
 }

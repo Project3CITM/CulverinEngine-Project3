@@ -7,6 +7,7 @@ public class TheonController : CharacterController
 
     public GameObject rweapon_theon_obj;
     public GameObject lweapon_theon_obj;
+    public GameObject theon_icon_obj;
 
     protected override void Start()
     {
@@ -178,4 +179,17 @@ public class TheonController : CharacterController
         anim_controller_left.SetTransition(name, value);
     }
 
+    public override void UpdateHUD(bool active)
+    {
+        icon = theon_icon_obj.GetComponent<CompImage>();
+
+        if (active)
+        {
+            //icon.Enable();
+        }
+        else
+        {
+            //icon.Disable();
+        }
+    }
 }
