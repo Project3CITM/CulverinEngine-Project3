@@ -328,7 +328,6 @@ bool Particle::isDead()
 
 void Particle::DrawParticle(uint program_id)
 {
-	
 
 	const ParticleMeshData& Mesh = ParentParticleSystem->GetParticleMeshData();
 
@@ -358,28 +357,12 @@ void Particle::DrawParticle(uint program_id)
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
 
-	//glEnableClientState(GL_VERTEX_ARRAY);
-	//glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_vertices);
-	//glVertexPointer(3, GL_FLOAT, 0, NULL);
-
 	if (Mesh.normals != nullptr)
 	{
-
 		glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_normals);
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
-
-		//glEnableClientState(GL_NORMAL_ARRAY);
-		//glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_normals);
-		//glNormalPointer(GL_FLOAT, 0, NULL);
 	}
-	/*
-	if (Mesh.texture_coords != nullptr) {
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_texture_coords);
-		glTexCoordPointer(3, GL_FLOAT, 0, NULL);
-	}
-	*/
 
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	unsigned int ID = ParentParticleSystem->GetTextureID(Properties.LifetimeMax, Properties.LifetimeActual);
@@ -387,11 +370,12 @@ void Particle::DrawParticle(uint program_id)
 	glTexCoordPointer(3, GL_FLOAT, 0, NULL);
 
 	uint modelLoc = glGetUniformLocation(program_id, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_TRUE, float4x4::FromTRS(Properties.Position, Properties.Rotation, Properties.Scale * Properties.Size).ptr());
+
+	//Properties.Rotation.x += 1;
+	float4x4 transf_matrix = float4x4::FromTRS(Properties.Position, Properties.Rotation, Properties.Scale * Properties.Size);
+	glUniformMatrix4fv(modelLoc, 1, GL_TRUE, transf_matrix.ptr());
 	uint viewLoc = glGetUniformLocation(program_id, "viewproj");
 	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, App->renderer3D->active_camera->frustum.ViewProjMatrix().ptr());
-
-
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Mesh.id_indices);
 	glDrawElements(GL_TRIANGLES, Mesh.num_indices, GL_UNSIGNED_INT, NULL);
@@ -426,7 +410,7 @@ void Particle::SetAssignedStateFromVariables(ParticleAssignedState& AState, cons
 
 void Particle::OrientateParticle()
 {
-	return;
+	
 	switch (ParentParticleSystem->Emitter.ParticleFacingOptions)
 	{
 	case 0: //Null
@@ -437,7 +421,7 @@ void Particle::OrientateParticle()
 	{
 		float3 Direction = ParentParticleSystem->CameraPosition - Properties.Position;
 		Direction.Normalize();
-		Properties.Rotation = Quat::LookAt(float3(1.0f, 0.0f, 0.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
 		break;
 	}
 	case 2: //VerticalBillboard
