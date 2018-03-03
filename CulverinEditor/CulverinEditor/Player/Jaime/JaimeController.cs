@@ -10,7 +10,7 @@ public class JaimeController : CharacterController
     public GameObject rweapon_jaime_obj;
     public GameObject lweapon_jaime_obj;
 
-    public override void Start()
+    protected override void Start()
     {
         jaime_obj = GetLinkedObject("jaime_obj");
         health_jaime_obj = GetLinkedObject("health_jaime_obj");
@@ -128,7 +128,7 @@ public class JaimeController : CharacterController
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             Debug.Log("Pressed 1");
-            left_weapon = lweapon_jaime_obj.GetComponent<LeftWeaponJaime>();
+            left_weapon = lweapon_jaime_obj.GetComponent<JaimeWeapon_Left>();
             left_weapon.PrepareAbility();
         }
 
@@ -136,9 +136,14 @@ public class JaimeController : CharacterController
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Pressed 2");
-            right_weapon = rweapon_jaime_obj.GetComponent<WeaponController>();
+            right_weapon = rweapon_jaime_obj.GetComponent<JaimeWeapon_Right>();
             right_weapon.PrepareAbility();
         }
+    }
+
+    public override void SecondaryAbility()
+    {
+        Debug.Log("Jaime Secondary Ability");
     }
 
     public override void CheckHealth()
