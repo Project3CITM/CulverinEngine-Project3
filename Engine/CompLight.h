@@ -48,6 +48,7 @@ public:
 	float4 color; //a.k.a. the color of the light
 	float intensity=0;
 	float ambientCoefficient=0.2;
+	float radius = 1.0f;
 	Light_type type;
 	Frustum frustum;
 	//UI variables------------

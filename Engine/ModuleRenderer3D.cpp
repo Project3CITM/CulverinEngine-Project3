@@ -39,6 +39,8 @@ ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled)
 // Destructor
 ModuleRenderer3D::~ModuleRenderer3D()
 {
+	RELEASE(particles_shader);
+	RELEASE(lights_billboard_shader);
 	RELEASE(default_material);
 	RELEASE(default_texture);
 }

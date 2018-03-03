@@ -5,7 +5,7 @@ public class AttackTarget : CulverinBehaviour
 {
     CompRigidBody dynamic_collider = null;
     //WeaponController weapon_controller = null;
-    LeftWeapon weapon_controller = null; // FIX THIS
+    WeaponController weapon_controller = null; // FIX THIS
 
     bool expecting_collision = false;
 

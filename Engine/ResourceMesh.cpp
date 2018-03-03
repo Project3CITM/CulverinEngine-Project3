@@ -151,13 +151,7 @@ bool ResourceMesh::LoadToMemory()
 			memcpy(cursor, &vertices[i].norm, 3 * sizeof(float));
 			cursor += 3 * sizeof(float);
 
-			memcpy(cursor, &tangents[i], 3 * sizeof(float));
-			cursor += 3 * sizeof(float);
-
-			memcpy(cursor, &bitangents[i], 3 * sizeof(float));
-			cursor += 3 * sizeof(float);
 		}
-
 		if (skeleton != nullptr)
 		{
 			//weights
@@ -195,6 +189,17 @@ bool ResourceMesh::LoadToMemory()
 				}
 			}
 		}
+
+
+		if (vertices_normals.size() > 0)
+		{
+		memcpy(cursor, &tangents[i], 3 * sizeof(float));
+		cursor += 3 * sizeof(float);
+
+		memcpy(cursor, &bitangents[i], 3 * sizeof(float));
+		cursor += 3 * sizeof(float);
+	}
+
 	}
 
 	glGenBuffers(1, &id_total_buffer);

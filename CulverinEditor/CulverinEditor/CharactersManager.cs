@@ -16,8 +16,7 @@ public class CharactersManager : CulverinBehaviour
     private GameObject temporal_change = null;
 
     State state = State.IDLE;                   // To manage player state
-    float time = 0;
-    bool changed = false;
+
     void Start()
     {
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
@@ -35,74 +34,53 @@ public class CharactersManager : CulverinBehaviour
         switch(state)
         {
             case State.IDLE:
-
-               
-
+                
                 if (Input.GetKeyDown(KeyCode.T))
                 {
                     state = State.CHANGING_LEFT;
                     Debug.Log("Pressed T");
                     Debug.Log("Changing Left");
-                    //current character state = BEHIND
-                    time = 0;
+                    current_character.GetComponent<CharacterController>().SetAnimationTransition("ToOut", true);             
                 }
                 if (Input.GetKeyDown(KeyCode.Y))
                 {
                     Debug.Log("Pressed Y");
                     Debug.Log("Changing Right");
                     state = State.CHANGING_RIGHT;
-                    time = 0;
+                    current_character.GetComponent<CharacterController>().SetAnimationTransition("ToOut", true);
                 }
                 break;
 
             case State.CHANGING_LEFT:
-
-                time += Time.DeltaTime();
-
-               
-                //if( Animation arms down finished¿? )
-                if (time >= 2)
+                if (current_character.GetComponent<CompAnimation>().IsAnimationStopped("Out"))
                 {
-                  
-   
+                    left_character.GetComponent<CharacterController>().SetAnimationTransition("ToIn", true);
+                    current_character.GetComponent<CharacterController>().SetPosition(CharacterController.Position.BEHIND);
+                    left_character.GetComponent<CharacterController>().SetPosition(CharacterController.Position.CURRENT);
+
                     temporal_change = current_character;
                     current_character = left_character;
-                    //current character state CURRENT
                     left_character = temporal_change;
-                    
-                    Debug.Log("current character = " + current_character.GetName());
-                    changed = true;
-                }
-                //if( Animation arms up finished¿? )
-                if(changed == true)
-                {
-                    
-                    changed = false;
+
                     state = State.IDLE;
+                    Debug.Log("current character = " + current_character.GetName());
                 }
                 break;
 
             case State.CHANGING_RIGHT:
-
-                time += Time.DeltaTime();
-
-               
-
-                if (time >= 2)
+                if (current_character.GetComponent<CompAnimation>().IsAnimationStopped("Out"))
                 {
+                    right_character.GetComponent<CharacterController>().SetAnimationTransition("ToIn", true);
+                    current_character.GetComponent<CharacterController>().SetPosition(CharacterController.Position.BEHIND);
+                    right_character.GetComponent<CharacterController>().SetPosition(CharacterController.Position.CURRENT);
 
                     temporal_change = current_character;
                     current_character = right_character;
                     right_character = temporal_change;
+
                     Debug.Log("current character = " + current_character.GetName());
-                    changed = true;
-                }
-                //if(current_character state == CURRENT )
-                if (changed == true)
-                {
-                    changed = false;
                     state = State.IDLE;
-                }    
+                }
                 break;
         }
     }
