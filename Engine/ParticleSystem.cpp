@@ -356,7 +356,7 @@ void Particle::DrawParticle(uint program_id)
 
 	glBindBuffer(GL_ARRAY_BUFFER, ParentParticleSystem->GetTextureID(Properties.LifetimeMax, Properties.LifetimeActual));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
 
 	//glEnableClientState(GL_VERTEX_ARRAY);
 	//glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_vertices);
