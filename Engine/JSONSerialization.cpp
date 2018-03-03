@@ -739,7 +739,7 @@ void JSONSerialization::SaveInputManager(JSON_Object * config_node, const InputM
 	{
 		for (uint i = 0; i < input_manager->GetActionVector().size(); i++)
 		{
-			json_object_dotset_string_with_std(config_node, name + "InputManagerName", input_manager->GetName.c_str());
+			json_object_dotset_string_with_std(config_node, name + "InputManagerName", input_manager->GetName());
 			json_object_dotset_boolean_with_std(config_node, name + "InputManagerActive", input_manager->GetActiveInput());
 			json_object_dotset_boolean_with_std(config_node, name + "InputManagerBlock", input_manager->GetBlockAction());
 			InputAction* item = input_manager->GetActionVector()[i];

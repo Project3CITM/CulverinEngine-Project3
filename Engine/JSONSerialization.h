@@ -12,7 +12,7 @@ class ResourceScript;
 class ResourceAnimation;
 class InputManager;
 class InputAction;
-
+class ModulePlayerActions;
 struct ReImport;
 
 struct LoadSceneSt
@@ -70,7 +70,6 @@ public:
 	void SaveInputManager(JSON_Object* config_node, const InputManager* input_manager, uint count, uint action_count);
 	void SaveInputAction(JSON_Object* config_node, const InputAction* input_action, uint count);
 
-	void SaveChildPrefab(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);
 
 	// --------------------------------------
 
