@@ -14,6 +14,8 @@ ResourceMesh::~ResourceMesh()
 	vertices.clear();
 	indices.clear();
 	vertices_normals.clear();
+	tangents.clear();
+	bitangents.clear();
 
 	delete skeleton;
 }

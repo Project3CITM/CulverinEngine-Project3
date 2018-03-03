@@ -722,6 +722,8 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 		RELEASE_ARRAY(indices);
 		RELEASE_ARRAY(vert_normals);
 		RELEASE_ARRAY(tex_coords);
+		RELEASE_ARRAY(tangents);
+		RELEASE_ARRAY(bitangents);
 		//RELEASE_ARRAY(cursor);
 		LOG("Mesh %s Loaded!", file);
 	}
