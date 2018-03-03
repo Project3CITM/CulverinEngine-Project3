@@ -68,7 +68,8 @@ public:
 	// SAVE & LOAD PLAYER ACTION --------------------------
 	void SavePlayerAction(const ModulePlayerActions* player_action, const char* directory, const char* fileName);
 	void SaveInputManager(JSON_Object* config_node, const InputManager* input_manager, uint count, uint action_count);
-	void SaveInputAction(JSON_Object* config_node, const InputAction* input_action, uint count);
+	void SaveInputAction(JSON_Object* config_node, const InputAction* input_action, uint count, uint input_count);
+	void LoadPlayerAction(ModulePlayerActions * player_action,const char* fileName);
 
 
 	// --------------------------------------
