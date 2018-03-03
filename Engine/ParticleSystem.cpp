@@ -723,10 +723,10 @@ void ParticleSystem::SetMeshResourcePlane()
 	ParticleMesh.vertices = new float[ParticleMesh.num_vertices * 3];
 	float vertices[] =
 	{
-		-0.5f,  0.5f, 0,
-		0.5f,  0.5f, 0,
-		-0.5f, -0.5f, 0,
-		0.5f, -0.5f, 0
+		-0.5f,  0.5f, 0.0f,
+		 0.5f,  0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f
 	};
 	memcpy(ParticleMesh.vertices, vertices, sizeof(float) * ParticleMesh.num_vertices * 3);
 	//Indices
@@ -957,10 +957,10 @@ void ParticleSystem::GenerateUVBuffers()
 		//float* texture_coords_ptr = new float[ParticleMesh.num_vertices * 3];
 		float texture_coords[] =
 		{
-			TexturesUV_Data[i].z, TexturesUV_Data[i].y, 0.0f,
+			TexturesUV_Data[i].x, TexturesUV_Data[i].w, 0.0f,
 			TexturesUV_Data[i].z, TexturesUV_Data[i].w, 0.0f,
 			TexturesUV_Data[i].x, TexturesUV_Data[i].y, 0.0f,
-			TexturesUV_Data[i].x, TexturesUV_Data[i].w, 0.0f
+			TexturesUV_Data[i].z, TexturesUV_Data[i].y, 0.0f
 		};
 		//memcpy(texture_coords_ptr, texture_coords, sizeof(float) * ParticleMesh.num_vertices * 3);
 		//TexturesUV_Data_ptr.push_back(texture_coords_ptr);
@@ -995,6 +995,12 @@ void ParticleSystem::GenerateTexturesUVs()
 		NewUV.y = (1.0f / (float)TextureData.rows) * ((float)TextureData.rows - ColumRow.x - 1.0f);
 		NewUV.z = (1.0f / (float)TextureData.columns) * (ColumRow.y + 1.0f);
 		NewUV.w = (1.0f / (float)TextureData.rows) * ((float)TextureData.rows - ColumRow.x);
+		/*
+		NewUV.x = (1.0f / (float)TextureData.columns) * ColumRow.y;
+		NewUV.y = (1.0f / (float)TextureData.rows) * ((float)TextureData.rows - ColumRow.x - 1.0f);
+		NewUV.z = (1.0f / (float)TextureData.columns) * (ColumRow.y + 1.0f);
+		NewUV.w = (1.0f / (float)TextureData.rows) * ((float)TextureData.rows - ColumRow.x);
+		*/
 		TexturesUV_Data.push_back(NewUV);
 	}
 	GenerateUVBuffers();
