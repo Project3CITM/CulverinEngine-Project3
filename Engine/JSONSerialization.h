@@ -10,6 +10,9 @@ class GameObject;
 class ResourceMaterial;
 class ResourceScript;
 class ResourceAnimation;
+class InputManager;
+class InputAction;
+class ModulePlayerActions;
 struct ReImport;
 
 struct LoadSceneSt
@@ -61,6 +64,13 @@ public:
 
 	// SAVE & LOAD ANIMATION --------------------------
 	void SaveAnimation(const ResourceAnimation* script, const char* directory, const char* fileName);
+	// --------------------------------------
+	// SAVE & LOAD PLAYER ACTION --------------------------
+	void SavePlayerAction(const ModulePlayerActions* player_action, const char* directory, const char* fileName);
+	void SaveInputManager(JSON_Object* config_node, const InputManager* input_manager, uint count, uint action_count);
+	void SaveInputAction(JSON_Object* config_node, const InputAction* input_action, uint count);
+
+
 	// --------------------------------------
 
 	// Get UUIDs -------------------------------

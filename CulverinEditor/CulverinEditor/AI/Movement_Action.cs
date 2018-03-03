@@ -264,6 +264,22 @@ public class Movement_Action : Action
         return ((GetComponent<Transform>().local_position) - (GetTargetPosition())).Length;
     }
 
+    public void SetCurrentVelocity(Vector3 vel)
+    {
+        current_velocity = vel;
+    }
+
+    public Vector3 GetCurrentAcceleration()
+    {
+        return current_acceleration;
+    }
+
+    public float GetMaxVelocity()
+    {
+        return max_vel;
+    }
+
+
     public float GetMaxRotAcceleration()
     {
         return max_rot_accel;

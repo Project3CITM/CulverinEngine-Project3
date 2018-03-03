@@ -3,7 +3,7 @@
 #include "InputAction.h"
 #include"Application.h"
 #define ACTION_LIMIT 50
-#define MAX_INPUT 15
+#define MAX_INPUT 25
 
 InputManager::InputManager()
 {
@@ -33,6 +33,7 @@ void InputManager::UpdateInputActions()
 		case ActionInputType::MOUSE_BUTTON_ACTION:
 			((MouseButtonAction*)(*it))->UpdateEventAction(mouse_x, mouse_y, buttons);
 			break;
+
 
 		}
 	
@@ -279,15 +280,13 @@ InputAction* InputManager::CreateNewAction(const char * new_name, const char * n
 		temp = new AxisAction();
 		break;
 
-	case ActionInputType::BUTTON_ACTION:
-		temp = new ButtonAction();
-		break;
 	case ActionInputType::CONTROLLER_AXIS_ACTION:
 		temp = new ControllerAxisAction();
 		break;
 
+	case ActionInputType::BUTTON_ACTION:
 	case ActionInputType::KEY_ACTION:
-		temp = new KeyAction();
+		temp = new KeyAction(new_type);
 		break;
 
 	case ActionInputType::MOUSE_BUTTON_ACTION:
@@ -303,4 +302,14 @@ InputAction* InputManager::CreateNewAction(const char * new_name, const char * n
 
 	return temp;
 
+}
+
+std::vector<InputAction*> InputManager::GetActionVector() const
+{
+	return action_vector;
+}
+
+std::vector<InputAction*> InputManager::GetActionVector()
+{
+	return action_vector;
 }

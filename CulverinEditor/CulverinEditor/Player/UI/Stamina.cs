@@ -3,10 +3,10 @@ using CulverinEditor.Debug;
 
 public class Stamina : CulverinBehaviour
 {
+    public GameObject this_obj_stamina;
     CompImage stamina_bar;
-    GameObject this_obj_stamina;
-    float regen = 1.0f;
-    float max_stamina = 100.0f;
+    public float regen = 1.0f;
+    public float max_stamina = 100.0f;
     float curr_stamina = 100.0f;
     float calc_stamina = 100.0f;
 

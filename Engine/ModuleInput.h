@@ -6,6 +6,7 @@
 #include "parson.h"
 
 #define MAX_MOUSE_BUTTONS 5
+#define MAX_CONTROLLER_BUTTONS 15
 class InputManager;
 enum KEY_STATE
 {
@@ -14,6 +15,14 @@ enum KEY_STATE
 	KEY_REPEAT,
 	KEY_UP
 };
+
+/*struct Controller
+{
+	KEY_STATE				controller_buttons[MAX_CONTROLLER_BUTTONS];
+	uint					right_joystick_dir[4];
+	uint					left_joystick_dir[4];
+	_SDL_GameController*	pad = nullptr;
+};*/
 
 class ModuleInput : public Module
 {
@@ -115,9 +124,11 @@ private:
 
 	InputManager* Manag_inp=nullptr;
 
+
+
 public:
 	std::list<const char*> dropedfiles;
-
+	_SDL_GameController* controller = nullptr;
 };
 
 #endif

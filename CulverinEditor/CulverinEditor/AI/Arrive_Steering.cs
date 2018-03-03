@@ -4,8 +4,8 @@ using CulverinEditor.Debug;
 
 public class Arrive_Steering : CulverinBehaviour
 {
-    public float min_distance = 0.1f;
-    public float slow_distance = 0.5f;
+    public float min_distance = 0.05f;
+    public float slow_distance = 0.9f;
     public float stopping_time = 1.0f;
     Movement_Action move;
     bool in_distance = false;
@@ -18,27 +18,42 @@ public class Arrive_Steering : CulverinBehaviour
         SetScriptEnabled(false);
     }
 
+
     public override void OnDisable()
     {
         in_distance = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        /*Vector3 acceleration = Vector3.Zero;
-
-        if(GetComponent<Movement_Action>().GetDistanceToTarget() <= slow_distance && !in_distance)
+        Vector3 acceleration = Vector3.Zero;
+        Vector3 ideal_velocity = new Vector3(Vector3.Zero);
+        Vector3 distance_to_target = new Vector3(GetComponent<Movement_Action>().GetTargetPosition() - transform.GetPosition());
+        distance_to_target.y = 0;
+        
+        //On stop zone case
+        if (distance_to_target.Length <= min_distance)
         {
-            in_distance = true;
-            Vector3 current_velocity = GetComponent<Movement_Action>().GetCurrentVelocity();
-            float acceleration_magnitude = 2 * (slow_distance / (stopping_time * stopping_time) - current_velocity.Length / stopping_time);
-            acceleration = current_velocity.Normalized * (-1) * (GetComponent<Movement_Action>().GetMaxAcceleration() + acceleration_magnitude);
+            GetComponent<Movement_Action>().SetCurrentVelocity(Vector3.Zero);
+            GetComponent<Movement_Action>().Accelerate(new Vector3(GetComponent<Movement_Action>().GetCurrentAcceleration() * -1));
+            return;
         }
 
-        if (in_distance)
+        //Out of zone case
+        else if (distance_to_target.Length > slow_distance)
         {
             GetComponent<Movement_Action>().Accelerate(acceleration);
-        }*/
+        }
+        //On slow zone case
+        else
+        {
+            ideal_velocity = ((distance_to_target.Normalized * GetComponent<Movement_Action>().GetMaxVelocity() * distance_to_target.Length)) / slow_distance;
+        }
+
+        Vector3 deceleration = new Vector3(ideal_velocity - GetComponent<Movement_Action>().GetCurrentVelocity());
+
+        GetComponent<Movement_Action>().Accelerate(deceleration);
     }
 }
+   
+

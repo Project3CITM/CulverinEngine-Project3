@@ -45,12 +45,12 @@
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\Movement_Action.cs" />
     <Compile Include="AI\Seek_Steering.cs" />
-    <Compile Include="AttackTarget.cs" />
+    <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />
     <Compile Include="BarrelPuzle\BarrelManage.cs" />
     <Compile Include="BarrelPuzle\BarrelMovement.cs" />
-    <Compile Include="CharacterController.cs" />
-    <Compile Include="CharactersManager.cs" />
+    <Compile Include="Player\BaseControllers\CharacterController.cs" />
+    <Compile Include="Player\BaseControllers\CharactersManager.cs" />
     <Compile Include="CompAnimation.cs" />
     <Compile Include="CompAudio.cs" />
     <Compile Include="CompButton.cs" />
@@ -59,24 +59,28 @@
     <Compile Include="CompImage.cs" />
     <Compile Include="CompInteractive.cs" />
     <Compile Include="CompRigidBody.cs" />
-    <Compile Include="CoolDown.cs" />
-    <Compile Include="CoolDownRight.cs" />
-    <Compile Include="CoolDownLeft.cs" />
+    <Compile Include="Player\Daenerys\DaenerysCD_Left.cs" />
+    <Compile Include="Player\Daenerys\DaenerysCD_Right.cs" />
+    <Compile Include="Player\Daenerys\DaenerysWeapon_Left.cs" />
+    <Compile Include="Player\Daenerys\DaenerysWeapon_Right.cs" />
+    <Compile Include="Player\UI\CoolDown.cs" />
+    <Compile Include="Player\Jaime\JaimeCD_Right.cs" />
+    <Compile Include="Player\Jaime\JaimeCD_Left.cs" />
     <Compile Include="CulverinBehaviour.cs" />
     <Compile Include="AI\EnemyController.cs" />
-    <Compile Include="DaenerysController.cs" />
-    <Compile Include="Hp.cs" />
-    <Compile Include="JaimeController.cs" />
+    <Compile Include="Player\Daenerys\DaenerysController.cs" />
+    <Compile Include="Player\UI\Hp.cs" />
+    <Compile Include="Player\Jaime\JaimeController.cs" />
     <Compile Include="Map.cs" />
-    <Compile Include="MovementController.cs" />
+    <Compile Include="Player\BaseControllers\MovementController.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="Pathfinder.cs" />
     <Compile Include="PathNode.cs" />
     <Compile Include="Quaternion.cs" />
-    <Compile Include="RightWeapon.cs" />
-    <Compile Include="Stamina.cs" />
-    <Compile Include="TestMovement.cs" />
-    <Compile Include="TheonController.cs" />
+    <Compile Include="Player\Jaime\JaimeWeapon_Right.cs" />
+    <Compile Include="Player\UI\Stamina.cs" />
+    <Compile Include="Player\TestMovement.cs" />
+    <Compile Include="Player\Theon\TheonController.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Torch_sound.cs" />
     <Compile Include="Transform.cs" />
@@ -87,11 +91,12 @@
     <Compile Include="KeyCode.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Vector3.cs" />
-    <Compile Include="LeftWeaponJaime.cs" />
-    <Compile Include="WeaponController.cs" />
+    <Compile Include="Player\Jaime\JaimeWeapon_Left.cs" />
+    <Compile Include="Player\BaseControllers\WeaponController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
