@@ -40,7 +40,7 @@ public:
 	bool GetWindowOpen()const;
 	InputAction* CreateNewAction(const char* new_name, const char* new_key_binding, ActionInputType new_type = ActionInputType::UNKNOWN_ACTION);
 	std::vector<InputAction*> GetActionVector() const;
-	std::vector<InputAction*> GetActionVector() const;
+	std::vector<InputAction*> GetActionVector();
 
 private:
 public:
