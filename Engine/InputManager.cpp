@@ -18,10 +18,24 @@ void InputManager::UpdateInputActions()
 {
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
-
+	int mouse_x = 0;
+	int mouse_y = 0;
+	Uint32 buttons = SDL_GetMouseState(&mouse_x, &mouse_y);
 	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
 	{
-		(*it)->UpdateEventAction(keys);
+
+		switch ((*it)->action_type) {
+
+		case ActionInputType::KEY_ACTION:
+			((KeyAction*)(*it))->UpdateEventAction(keys);
+			break;
+
+		case ActionInputType::MOUSE_BUTTON_ACTION:
+			((MouseButtonAction*)(*it))->UpdateEventAction(mouse_x, mouse_y, buttons);
+			break;
+
+		}
+	
 	}
 }
 

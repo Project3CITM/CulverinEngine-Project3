@@ -42,7 +42,7 @@ public:
 	~InputAction();
 
 	virtual bool ProcessEventAction(SDL_Event * input_event) { return false; }
-	virtual bool UpdateEventAction(const Uint8* array_kys) { return false; }
+	//virtual bool UpdateEventAction(const Uint8* array_kys) { return false; }
 public:
 
 	std::string name = "";
@@ -109,13 +109,37 @@ public:
 		{
 			if (input_event->type == SDL_MOUSEBUTTONDOWN)
 			{
-				state = Keystateaction::KEY_DOWN_ACTION;
-				number_clicks++;
+				if (key_relation->event_value == input_event->button.button) {
+					state = Keystateaction::KEY_DOWN_ACTION;
+					number_clicks=input_event->button.clicks;
+				}
 				return true;
 			}
 
 		}
 		return false;
+	}
+
+	bool UpdateEventAction(int mouse_x, int mouse_y, Uint32 buttons)
+	{ 
+		
+		if (SDL_BUTTON(key_relation->event_value))
+		{
+			if (state == Keystateaction::KEY_IDLE_ACTION)
+				state = Keystateaction::KEY_DOWN_ACTION;
+			else
+				state = Keystateaction::KEY_REPEAT_ACTION;
+		}
+		else
+		{
+			if (state == Keystateaction::KEY_REPEAT_ACTION || state == Keystateaction::KEY_DOWN_ACTION)
+				state = Keystateaction::KEY_UP_ACTION;
+			else
+				state = Keystateaction::KEY_IDLE_ACTION;
+		}
+
+		return true; 
+	
 	}
 
 	Keystateaction state = Keystateaction::KEY_IDLE_ACTION;
