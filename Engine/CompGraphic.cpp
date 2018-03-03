@@ -109,11 +109,15 @@ void CompGraphic::SetRaycastTarget(bool flag)
 
 void CompGraphic::SetInteractive(CompInteractive * set_interactive)
 {
-	interactive = set_interactive;
+	if (this != nullptr)
+	{
+		interactive = set_interactive;
+	}
 }
 
 bool CompGraphic::GetToRender() const
 {
+	if(this != nullptr)
 	return render;
 }
 
