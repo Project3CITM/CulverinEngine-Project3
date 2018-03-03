@@ -5,6 +5,7 @@
 
 class jpPhysicsRigidBody;
 class CompCollider;
+class CompJoint;
 class CompTransform;
 
 class CompRigidBody : public Component
@@ -35,6 +36,7 @@ public:
 	void SetColliderPosition();
 	void SetMomentumToZero();
 	void SetColliderComp(CompCollider* new_comp);
+	void SetJointActor(CompJoint* joint);
 
 	//Getters ----------------------
 	jpPhysicsRigidBody* GetPhysicsBody() const;
@@ -50,14 +52,15 @@ public:
 
 private:
 
-	jpPhysicsRigidBody* body = nullptr;
-	CompCollider* collider_comp = nullptr;
-	CompTransform* transform = nullptr;
+	jpPhysicsRigidBody*		body = nullptr;
+	CompCollider*			collider_comp = nullptr;
+	CompTransform*			transform = nullptr;
+	CompJoint*				joint = nullptr;
 
-	bool kinematic = false;
-	bool own_update = false;
+	bool					kinematic = false;
+	bool					own_update = false;
 
-	uint lock_move = 0;
+	uint					lock_move = 0;
 
 };
 

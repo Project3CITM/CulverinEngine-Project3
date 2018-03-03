@@ -42,6 +42,9 @@ public:
 	void OnEvent(Event& event);
 
 	// PhysX Methods ----------------
+	physx::PxPhysics* GetPhysX();
+
+	// RigidBody & Collider ---------
 	jpPhysicsRigidBody* GetNewRigidBody(Component* component, bool dynamic = false);
 	bool DeleteCollider(Component* component, jpPhysicsRigidBody* body);
 

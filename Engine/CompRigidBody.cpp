@@ -9,6 +9,7 @@
 #include "jpPhysicsRigidBody.h"
 #include "CompCollider.h"
 #include "CompTransform.h"
+#include "CompJoint.h"
 
 CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
@@ -83,6 +84,12 @@ void CompRigidBody::Update(float dt)
 
 void CompRigidBody::Clear()
 {
+	if (joint != nullptr)
+	{
+		joint->RemoveActors(this);
+		joint = nullptr;
+	}
+
 	if (collider_comp != nullptr)
 	{
 		App->physics->ChangeRigidActorToStatic(body, collider_comp);
@@ -307,6 +314,11 @@ void CompRigidBody::SetMomentumToZero()
 void CompRigidBody::SetColliderComp(CompCollider * new_comp)
 {
 	collider_comp = new_comp;
+}
+
+void CompRigidBody::SetJointActor(CompJoint * new_joint)
+{
+	joint = new_joint;
 }
 
 jpPhysicsRigidBody * CompRigidBody::GetPhysicsBody() const
