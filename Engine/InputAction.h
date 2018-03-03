@@ -89,8 +89,11 @@ public:
 		{
 			if (input_event->type == SDL_CONTROLLERAXISMOTION)
 			{
-				direction_axis = input_event->caxis.value;
-				return true;
+				if (input_event->caxis.axis == key_relation->event_value) {
+					direction_axis = input_event->caxis.value;
+					LOG("joystick %i", input_event->caxis.value);
+					return true;
+				}
 			}
 		}
 		return false;
@@ -99,28 +102,16 @@ public:
 	bool UpdateEventAction()
 	{
 
-		/*if (buttons & SDL_BUTTON(key_relation->event_value))
-		{
-			if (state == Keystateaction::KEY_IDLE_ACTION)
-				state = Keystateaction::KEY_DOWN_ACTION;
-			else
-				state = Keystateaction::KEY_REPEAT_ACTION;
-		}
-		else
-		{
-			if (state == Keystateaction::KEY_REPEAT_ACTION || state == Keystateaction::KEY_DOWN_ACTION)
-				state = Keystateaction::KEY_UP_ACTION;
-			else
-				state = Keystateaction::KEY_IDLE_ACTION;
-		}*/
+		/*
+		Maybe we don't need this funtion.
+		*/
 
 		return true;
 
 	}
 
-	float2 motion;
 	AxisDirectionController direction = AxisDirectionController::NON_DIRECTION_C;
-	int direction_axis = 0;
+	float direction_axis = 0;
 };
 
 class MouseButtonAction : public InputAction
@@ -191,7 +182,6 @@ public:
 				if (key_relation->event_value == input_event->key.keysym.scancode)
 				{
 					state = Keystateaction::KEY_DOWN_ACTION;
-					LOG("PROCESS");
 					return true;
 				}
 			}

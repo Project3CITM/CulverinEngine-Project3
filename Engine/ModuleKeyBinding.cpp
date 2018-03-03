@@ -101,10 +101,10 @@ bool ModuleKeyBinding::Init(JSON_Object * node)
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSTICK, "CButtonLeftStick", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSTICK, "CButtonRightStick", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX, "CRightX", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX, "CLeftX", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY, "CRightY", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY, "CLeftY", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX, "CRightX", KeyBindingType::CONTROLLER_AXIS_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY, "CRightY", KeyBindingType::CONTROLLER_AXIS_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX, "CLeftX", KeyBindingType::CONTROLLER_AXIS_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY, "CLeftY", KeyBindingType::CONTROLLER_AXIS_DEVICE));
 
 
 
