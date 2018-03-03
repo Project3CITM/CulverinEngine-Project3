@@ -267,3 +267,48 @@ void ModuleEventSystem::AddListener(EventType type, Module* listener)
 		if (EListener != MEventListeners.end()) EListener._Ptr->_Myval.second.push_back(listener);
 	}
 }
+
+void ModuleEventSystem::ClearEvents(EventType type)
+{
+	switch (type)
+	{
+	case EventType::EVENT_DRAW:
+		MM3DDrawEvent.clear();
+		for (std::multimap<float, Event>::const_iterator item = MM3DADrawEvent.cbegin(); item != MM3DADrawEvent.cend();)
+		{
+			if (item._Ptr->_Myval.first == type) item = MM3DADrawEvent.erase(item);
+			else item++;
+		}
+		MM2DCanvasDrawEvent.clear();
+		break;
+	case EventType::EVENT_PARTICLE_DRAW:
+		for (std::multimap<float, Event>::const_iterator item = MM3DADrawEvent.cbegin(); item != MM3DADrawEvent.cend();)
+		{
+			if (item._Ptr->_Myval.first == type) item = MM3DADrawEvent.erase(item);
+			else item++;
+		}
+		break;
+	case EventType::EVENT_SEND_3D_3DA_MM:
+		//QShadowMapEvent
+		break;
+	default:
+		for (std::multimap<EventType, Event>::const_iterator item = MMNormalEvent.cbegin(); item != MMNormalEvent.cend();)
+		{
+			if (item._Ptr->_Myval.first == type) item = MMNormalEvent.erase(item);
+			else item++;
+		}
+		break;
+	}
+	/*
+	MMNormalEvent
+	QShadowMapEvent
+		EVENT_SEND_3D_3DA_MM
+	MM3DDrawEvent
+		EVENT_DRAW
+	MM3DADrawEvent
+		EVENT_PARTICLE_DRAW
+		EVENT_DRAW
+	MM2DCanvasDrawEvent
+		EVENT_DRAW
+	*/
+}

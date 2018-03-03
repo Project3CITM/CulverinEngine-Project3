@@ -55,10 +55,7 @@ public:
 	void PushImmediateEvent(Event& event);
 	void AddListener(EventType type, Module* listener);
 
-	std::multimap<float, Event> GetMM3D()const {
-
-	};
-
+	void ClearEvents(EventType type);
 
 private:
 	std::multimap<EventType, Event> MMNormalEvent;	//All the events that are not draw type
