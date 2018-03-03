@@ -21,6 +21,9 @@ public:
 	void SyncComponent();
 	void DrawGraphic();
 
+	void ActivateRender();
+	void DeactivateRender();
+
 	void SetTextureID(uint set_texture_id);
 	void SetColor(const float4& set_rgba);
 	void SetColor(float set_r, float set_g, float set_b, float set_a);

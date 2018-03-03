@@ -19,8 +19,10 @@ public class CharacterController : CulverinBehaviour
         HIT,
         DEAD
     }
+    public GameObject player_obj; //Parent GO that manage the movement of the player
 
-    public GameObject player_obj;
+    public GameObject health_obj;
+    public GameObject stamina_obj;
 
     protected MovementController movement;             // To manage when the player is moving to block attacks/abilities
     protected Hp health;                               // To handle current hp
@@ -29,6 +31,7 @@ public class CharacterController : CulverinBehaviour
     protected CompAnimation anim_controller_right;     // Animation component to handle animations
     protected WeaponController left_weapon;            // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
     protected CompAnimation anim_controller_left;      // Animation component to handle animations
+    protected CompImage icon;
 
     protected Position position = Position.CURRENT; 
     protected State state = State.IDLE;
@@ -48,21 +51,6 @@ public class CharacterController : CulverinBehaviour
         {
             // Secondary Ability is controlled by CharactersManager
         }
-    }
-
-    public virtual void ControlCharacter() 
-    {
-        Debug.Log("Control Character");
-    }
-
-    public virtual void CheckAttack()
-    {
-        Debug.Log("Check Attack Character");
-    }
-
-    public virtual void SecondaryAbility()
-    {
-        Debug.Log("Secondary Ability Character");
     }
 
     public void SetState(State new_state)
@@ -87,17 +75,49 @@ public class CharacterController : CulverinBehaviour
 
     public virtual float GetCurrentStamina()
     {
-        return 0;
+        stamina = stamina_obj.GetComponent<Stamina>();
+        float ret = stamina.GetCurrentStamina();
+        return ret;
     }
+
 
     public virtual void DecreaseStamina(float stamina_cost)
     {
-        Debug.Log("Decrease Stamina Character");
+        Debug.Log("Decrease Stamina");
+        stamina = stamina_obj.GetComponent<Stamina>();
+        stamina.DecreaseStamina(stamina_cost);
     }
 
-    public virtual void CheckHealth()
+    public void CheckHealth()
     {
-        Debug.Log("Check Health Character");
+        Debug.Log("Check Health");
+
+        // Debug for check Health control
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            health = health_obj.GetComponent<Hp>();
+            health.GetDamage(10.0f);
+        }
+        else if (Input.GetKeyDown(KeyCode.P))
+        {
+            health = health_obj.GetComponent<Hp>();
+            health.GetDamage(-10.0f);
+        }
+    }
+
+    public virtual void ControlCharacter()
+    {
+        Debug.Log("Control Character");
+    }
+
+    public virtual void CheckAttack()
+    {
+        Debug.Log("Check Attack Character");
+    }
+
+    public virtual void SecondaryAbility()
+    {
+        Debug.Log("Secondary Ability Character");
     }
 
     public virtual void GetDamage(float dmg)
@@ -108,5 +128,10 @@ public class CharacterController : CulverinBehaviour
     public virtual void SetAnimationTransition(string name, bool value)
     {
         Debug.Log("Animation Transition Character");
+    }
+
+    public virtual void UpdateHUD(bool active)
+    {
+        Debug.Log("Change Current Character Icon");
     }
 }

@@ -153,6 +153,7 @@ public:
 	void		CreateGameObject(MonoObject* object);
 	bool		DestroyGameObject(MonoObject* object);
 
+	/* Transform */
 	MonoObject* GetForwardVector(MonoObject* object);
 	MonoObject* GetBackwardVector(MonoObject* object);
 	MonoObject* GetUpVector(MonoObject* object);
@@ -201,6 +202,7 @@ public:
 	/*UI-Graphics*/
 	void		SetRaycastTarget(MonoObject * object, mono_bool flag);
 	void		FillAmount(MonoObject * object, float value);
+
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
 	void		MoveStaticColliderTo(MonoObject* object, MonoObject* positio);

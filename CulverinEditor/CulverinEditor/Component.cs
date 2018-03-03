@@ -38,15 +38,11 @@ namespace CulverinEditor
             }
         }
 
-        public virtual void OnEnable()
-        {
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void OnEnable();
 
-        }
-
-        public virtual void OnDisable()
-        {
-
-        }
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void OnDisable();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private extern GameObject GetParentGameObject();

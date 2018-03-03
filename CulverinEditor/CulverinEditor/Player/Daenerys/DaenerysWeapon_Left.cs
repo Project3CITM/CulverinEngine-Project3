@@ -1,20 +1,20 @@
-using CulverinEditor;
+﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
 // The concept is to have WeaponController as a base class, and override for all the weapons
 
-public class JaimeWeapon_Left : WeaponController
+public class DaenerysWeapon_Left : WeaponController
 {
-    public GameObject jaime_obj;
-    public GameObject jaime_button_left;
+    public GameObject daenerys_obj;
+    public GameObject daenerys_button_left;
 
-    JaimeController character;
+    DaenerysController character;
 
     public override void Start()
     {
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
-        jaime_obj = GetLinkedObject("jaime_obj");
-        jaime_button_left = GetLinkedObject("jaime_button_left");
+        daenerys_obj = GetLinkedObject("daenerys_obj");
+        daenerys_button_left = GetLinkedObject("daenerys_button_left");
         enemy_obj = GetLinkedObject("enemy_obj");
     }
 
@@ -25,18 +25,18 @@ public class JaimeWeapon_Left : WeaponController
     // This method will be called when the associated button to this weapon is pressed
     public override void OnClick()
     {
-        character = jaime_obj.GetComponent<JaimeController>();
+        character = daenerys_obj.GetComponent<DaenerysController>();
         // Check if player is in Idle State
         if (character.GetState() == 0) /*0 = IDLE*/
         {
             // Check if player has enough stamina to perform its attack
             if (character.GetCurrentStamina() > stamina_cost)
             {
-                cd = jaime_button_left.GetComponent<CoolDown>();
+                cd = daenerys_button_left.GetComponent<CoolDown>();
                 //Check if the ability is not in cooldown
                 if (!cd.in_cd)
                 {
-                    Debug.Log("Jaime LW Going to Attack");
+                    Debug.Log("Daenerys LW Going to Attack");
 
                     // First, OnClick of LeftWeapon, then, onClick of Cooldown
                     DoAbility();
@@ -61,20 +61,20 @@ public class JaimeWeapon_Left : WeaponController
 
     public override void PrepareAbility()
     {
-        Debug.Log("Jaime LW Prepare Ability");
-        button = jaime_button_left.GetComponent<CompButton>();
+        Debug.Log("Daenerys LW Prepare Ability");
+        button = daenerys_button_left.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
     public override void DoAbility() //Might be virtual
     {
-        Debug.Log("Jaime LW Attack Left");
+        Debug.Log("Daenerys LW Attack Left");
 
         // Decrease stamina -----------
-        character = jaime_obj.GetComponent<JaimeController>();
+        character = daenerys_obj.GetComponent<DaenerysController>();
         character.DecreaseStamina(stamina_cost);
 
-        Debug.Log("Jaime LW Going to hit");
+        Debug.Log("Daenerys LW Going to hit");
 
         // Attack the enemy in front of you
         if (EnemyInFront())
