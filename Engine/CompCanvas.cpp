@@ -251,7 +251,10 @@ void CompCanvas::DrawGraphic()
 		}
 		for (int i = 0; i < graphic_vector.size(); i++)
 		{
+			
 			CompGraphic* graphic = graphic_vector[i];
+			if (!graphic->IsActive() && !graphic->GetToRender())
+				continue;
 			GLint g_AttribLocationColor = glGetUniformLocation(default_ui_shader->programID, "Color_UI_ME");
 			GLint modelLoc = glGetUniformLocation(default_ui_shader->programID, "model");
 			GLint g_AttribLocationTexture = glGetUniformLocation(default_ui_shader->programID, "Texture");

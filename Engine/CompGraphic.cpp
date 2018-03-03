@@ -82,6 +82,16 @@ void CompGraphic::DrawGraphic()
 	
 }
 
+void CompGraphic::ActivateRender()
+{
+	render = true;
+}
+
+void CompGraphic::DeactivateRender()
+{
+	render = false;
+}
+
 void CompGraphic::SetTextureID(uint set_texture_id)
 {
 	texture_id = set_texture_id;
