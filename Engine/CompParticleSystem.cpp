@@ -37,7 +37,7 @@ void CompParticleSystem::PreUpdate(float dt)
 	if (camera != nullptr)
 		part_system->SetCameraPosToFollow(camera->frustum.pos);
 
-	part_system->PreUpdate(0.02);
+	part_system->PreUpdate(dt);
 }
 
 void CompParticleSystem::Update(float dt)
@@ -75,11 +75,11 @@ void CompParticleSystem::Update(float dt)
 	}
 
 	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());
-	part_system->Update(0.02);
+	part_system->Update(dt);
 	if (part_system->EditorWindowOpen)
 		part_system->DrawImGuiEditorWindow();
 	
-	part_system->PostUpdate(0.02);
+	part_system->PostUpdate(dt);
 
 	//SaveParticleStates("Test", nullptr, nullptr, nullptr, nullptr);
 }
@@ -153,6 +153,7 @@ bool CompParticleSystem::SaveParticleStates(const char* file_name, ResourceMater
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
+	App->fs->CreateFolder("Assets/ParticleSystem");
 	App->fs->CreateFolder("Assets/ParticleSystem/Particles");
 	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Particles");
 	file_path += "\\";
@@ -178,7 +179,7 @@ bool CompParticleSystem::SaveParticleStates(const char* file_name, ResourceMater
 	{
 		json_object_set_value(file_conf, "texture", json_value_init_object());
 		conf = json_object_get_object(file_conf, "texture");
-		SetString(conf, "texture_path", TextureResource->GetTextureName());
+		SetString(conf, "texture_path", TextureResource->name.c_str());
 		SetInt(conf, "columns", TexData->columns);
 		SetInt(conf, "rows", TexData->rows);
 		SetInt(conf, "numberOfFrames", TexData->numberOfFrames);
@@ -659,19 +660,16 @@ void CompParticleSystem::ImGuiLoadTexturePopUp()
 
 void CompParticleSystem::ImGuiLoadParticlePopUp()
 {
-	/*ParticleState InitialState;
+	ParticleState InitialState;
 	ParticleState FinalState;
 
-	size_t dot_pos = file_to_load.rfind(".");
-	file_to_load_name = file_to_load.substr(0, dot_pos);
-
-	ParsonJSON* parsonjson = new ParsonJSON(file_to_loadName.c_str(), true, false, false);
-	bool Loaded = parsonjson->Init();
-	if (Loaded) parsonjson->LoadParticleStates(this, InitialState, FinalState);
-	RELEASE(parsonjson);
+	file_to_load_name = App->fs->GetOnlyName(file_to_load);
+	file_to_load_name += ".json";
+	LoadParticleStates(file_to_load_name.c_str(),this, InitialState, FinalState);
+	
 
 	part_system->SetInitialStateResource(InitialState);
-	part_system->SetFinalStateResource(FinalState);*/
+	part_system->SetFinalStateResource(FinalState);
 }
 
 void CompParticleSystem::ImGuiLoadEmitterPopUp()
@@ -697,7 +695,7 @@ void CompParticleSystem::ImGuiLoadMeshPopUp()
 
 void CompParticleSystem::ImGuiSavePopUp()
 {
-	/*ImGui::OpenPopup("Save File##1");
+	ImGui::OpenPopup("Save File##1");
 	if (ImGui::BeginPopupModal("Save File##1", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_HorizontalScrollbar))
 	{
 		const char* Str = "Wrong Type";
@@ -712,39 +710,33 @@ void CompParticleSystem::ImGuiSavePopUp()
 		{
 			if (strcmp(file_name, ""))
 			{
-				FileToSave = file_name;
+				file_to_save = file_name;
 				switch (file_type)
 				{
 				case Particle_Resource: ImGuiSaveParticlePopUp(); break;
 				case Emitter_Resource: ImGuiSaveEmitterPopUp(); break;
 				}
 			}
-			PopUpSaveOpen = false;
+			pop_up_save_open = false;
 			file_to_load.clear();
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Cancel", ImVec2(50, 20)))
 		{
-			PopUpSaveOpen = false;
+			pop_up_save_open = false;
 		}
 		ImGui::EndPopup();
-	}*/
+	}
 }
 
 void CompParticleSystem::ImGuiSaveParticlePopUp()
 {
-	/*ParticleState InitialState;
+	ParticleState InitialState;
 	part_system->GetInitialState(InitialState);
 	ParticleState FinalState;
 	part_system->GetFinalState(FinalState);
-
-	FileToSaveName = *App->importer->Get_ParticleSystem_Particles_path() + "\\" + FileToSave;
-
-	ParsonJSON* parsonjson = new ParsonJSON(FileToSaveName.c_str(), true, false, false);
-	bool Meta = parsonjson->Init();
-	if (Meta) parsonjson->SaveParticleStates(TextureResource, part_system->GetTextureResource(), &InitialState, &FinalState);
-
-	RELEASE(parsonjson);*/
+	file_to_save += ".json";
+	SaveParticleStates(file_to_save.c_str(), texture_resource, part_system->GetTextureResource(), &InitialState, &FinalState);
 }
 
 void CompParticleSystem::ImGuiSaveEmitterPopUp()
