@@ -6,6 +6,7 @@
 class CompRectTransform;
 class CompCanvasRender;
 class CompCanvas;
+class CompInteractive;
 class CompGraphic : public Component
 {
 public:
@@ -25,6 +26,7 @@ public:
 	void SetColor(float set_r, float set_g, float set_b, float set_a);
 	void SetToRender(bool render);
 	void SetRaycastTarget(bool flag);
+	void SetInteractive(CompInteractive* set_interactive);
 	bool GetToRender()const;
 	uint GetTextureID()const;
 	CompRectTransform* GetRectTrasnform()const;
@@ -40,6 +42,7 @@ protected:
 	CompCanvas* my_canvas = nullptr;
 	CompCanvasRender* my_canvas_render = nullptr;
 	CompRectTransform* transform = nullptr;
+	CompInteractive* interactive = nullptr;
 	uint texture_id = 0;
 	float4 color = float4::one;
 

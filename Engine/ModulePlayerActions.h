@@ -27,6 +27,8 @@ public:
 private:
 	int number_of_inputs = 0;
 	std::vector<InputManager*> interactive_vector;
+	std::string selected_input_name;
+
 
 };
 #endif //MODULE_PLAYER_ACTION_H

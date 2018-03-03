@@ -3,7 +3,7 @@
 #include "ModuleEventSystem.h"
 
 #define INPUT_MANAGER_LIMIT 5
-
+#define MAX_INPUT 20
 ModulePlayerActions::ModulePlayerActions(bool start_enabled)
 {
 	have_config = true;
@@ -47,6 +47,8 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 			{
 				InputManager* input_manager = new InputManager();
 				interactive_vector.push_back(input_manager);
+				std::string temp_name = "Input " + std::to_string(number_of_inputs);
+				input_manager->SetName(temp_name.c_str());
 			}
 		}
 		else
@@ -65,51 +67,69 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 	ImGui::Text("Number of Inputs");
 
 	uint size = interactive_vector.size();
+	ImGui::Columns(4, "my_input");
+	ImGui::SetColumnWidth(1, 50);
+	ImGui::SetColumnWidth(2, 50);
 
-	for (int k = 0; k < size; k++)
+	ImGui::Text("Name");
+	ImGui::NextColumn();
+	ImGui::Text("Active");
+	ImGui::NextColumn();
+	ImGui::Text("Block");
+	ImGui::NextColumn();	
+	ImGui::Text("Input name");
+	ImGui::NextColumn();
+	ImGui::Separator();
+	static int selected = 0;
+
+	for (int i = 0; i < size; i++)
 	{
-		InputManager* input_manager = interactive_vector[k];
-
-		ImGuiWindowFlags tree_flags = ImGuiTreeNodeFlags_Leaf;
-		if (input_manager->GetWindowOpen())
-			tree_flags |= ImGuiTreeNodeFlags_Selected;
-
-		std::string name = "Input "+std::to_string(k+1);
+		ImGui::PushID(i);
+		InputManager* input_manager = interactive_vector[i];
 		ImGui::AlignFirstTextHeightToWidgets();
-
-		bool active = ImGui::TreeNodeEx(name.c_str(), tree_flags);
-
-		if (ImGui::IsItemClicked())
+		if (ImGui::Selectable(input_manager->GetName(), selected == i, ImGuiSelectableFlags_AllowDoubleClick))
 		{
-			input_manager->ActiveWindowOpen();
+			selected = i;
+			if (ImGui::IsMouseDoubleClicked(0))
+				input_manager->ActiveWindowOpen();
 		}
-		ImGui::SameLine();
+		selected_input_name = input_manager->GetName();
+		ImGui::NextColumn();
+		std::string temp = "##input_active" + std::to_string(i);
+		ImGui::Checkbox(temp.c_str() , &input_manager->active_input);
+		ImGui::NextColumn();
+		temp = "##input_block" + std::to_string(i);
+		ImGui::Checkbox(temp.c_str(), &input_manager->block_action);
+		ImGui::NextColumn();
+		temp = "##name_input" + std::to_string(i);
 
-		if (ImGui::Button("UP##button_up"))
+		if (ImGui::InputText(temp.c_str(), (char*)selected_input_name.c_str(), MAX_INPUT, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			if(k-1>=0)
-				std::swap(interactive_vector[k], interactive_vector[k-1]);
+			input_manager->SetName(selected_input_name.c_str());
 		}
-		ImGui::SameLine();
+		ImGui::NextColumn();
 
-		if (ImGui::Button("DOWN##button_down"))
-		{
-			if (k + 1<size)
-				std::swap(interactive_vector[k], interactive_vector[k + 1]);
-		}
-		ImGui::SameLine();
-		ImGui::Checkbox("Active##input_active", &input_manager->active_input);
-		ImGui::SameLine();
-		ImGui::Checkbox("Block##input_block", &input_manager->block_action);
-
+		
 		if (input_manager->GetWindowOpen())
 			input_manager->ShowInspectorInfo();
-		if (active)
-		{
-			ImGui::TreePop();
-		}
-	}
+		ImGui::PopID();
 
+	}
+	ImGui::Columns(1);
+	ImGui::Separator();
+
+	if (ImGui::Button("UP##button_up"))
+	{
+		if (selected - 1 >= 0)
+			std::swap(interactive_vector[selected], interactive_vector[selected - 1]);
+	}
+	ImGui::SameLine();
+
+	if (ImGui::Button("DOWN##button_down"))
+	{
+		if (selected + 1<size)
+			std::swap(interactive_vector[selected], interactive_vector[selected + 1]);
+	}
 	
 	ImGui::PopStyleVar();
 	return UPDATE_CONTINUE;

@@ -107,6 +107,11 @@ void CompGraphic::SetRaycastTarget(bool flag)
 	raycast_target = flag;
 }
 
+void CompGraphic::SetInteractive(CompInteractive * set_interactive)
+{
+	interactive = set_interactive;
+}
+
 bool CompGraphic::GetToRender() const
 {
 	return render;
