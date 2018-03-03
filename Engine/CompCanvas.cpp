@@ -190,6 +190,8 @@ void CompCanvas::RemoveGraphic(CompGraphic * to_remove)
 }
 void CompCanvas::DrawDebugRectTransform()
 {
+	if (!IsActive())
+		return;
 	if (App->engine_state == EngineState::STOP)
 	{
 		my_transform->DrawRectTransform();
@@ -197,7 +199,8 @@ void CompCanvas::DrawDebugRectTransform()
 }
 void CompCanvas::DrawGraphic()
 {
-	
+	if (!IsActive())
+		return;
 		ImGuiIO& io = ImGui::GetIO();
 
 		if (io.DisplaySize.x == 0 || io.DisplaySize.y == 0)
@@ -253,7 +256,7 @@ void CompCanvas::DrawGraphic()
 		{
 			
 			CompGraphic* graphic = graphic_vector[i];
-			if (!graphic->IsActive() && !graphic->GetToRender())
+			if (!graphic->IsActive() || !graphic->GetToRender())
 				continue;
 			GLint g_AttribLocationColor = glGetUniformLocation(default_ui_shader->programID, "Color_UI_ME");
 			GLint modelLoc = glGetUniformLocation(default_ui_shader->programID, "model");
