@@ -89,6 +89,7 @@ CompCollider::~CompCollider()
 {
 }
 
+// -----------------------------------------------------------------
 void CompCollider::Update(float dt)
 {
 	if (transform->GetUpdated() && rigid_body_comp == nullptr && dt == 0.f)

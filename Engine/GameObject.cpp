@@ -31,6 +31,7 @@
 #include "CompLight.h"
 #include "CompCollider.h"
 #include "CompRigidBody.h"
+#include "CompJoint.h"
 #include "CompParticleSystem.h"
 #include <queue>
 
@@ -761,10 +762,15 @@ void GameObject::ShowGameObjectOptions()
 			{
 				AddComponent(Comp_Type::C_RIGIDBODY);
 			}
+			if (ImGui::MenuItem("Joint"))
+			{
+				AddComponent(Comp_Type::C_JOINT);
+			}
 			if (ImGui::MenuItem("Particle System"))
 			{
 				AddComponent(Comp_Type::C_PARTICLE_SYSTEM);
 			}
+			
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("UI"))
@@ -1087,6 +1093,11 @@ void GameObject::ShowInspectorInfo()
 		if (ImGui::MenuItem("Rigid Body"))
 		{
 			AddComponent(Comp_Type::C_RIGIDBODY);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Joint"))
+		{
+			AddComponent(Comp_Type::C_JOINT);
 			add_component = false;
 		}
 		if (ImGui::MenuItem("Particle System"))
@@ -1546,7 +1557,13 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(particlesystem);
 			return particlesystem;
 		}
-
+		case Comp_Type::C_JOINT:
+		{
+			LOG("Adding JOINT COMPONENT");
+			CompJoint* joint = new CompJoint(type, this);
+			components.push_back(joint);
+			return joint;
+		}
 		}
 	}
 
@@ -1655,6 +1672,12 @@ void GameObject::AddComponentCopy(const Component& copy)
 		components.push_back(particle_system);
 		break;
 	}
+	case Comp_Type::C_JOINT:
+	{
+		CompJoint* joint = new CompJoint((CompJoint&)copy, this); //Rigid Body contructor
+		components.push_back(joint);
+		break;
+	}
 	default:
 		break;
 	}
@@ -1742,6 +1765,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			break;
 		case Comp_Type::C_PARTICLE_SYSTEM:
 			this->AddComponent(Comp_Type::C_PARTICLE_SYSTEM);
+			break;
+		case Comp_Type::C_JOINT:
+			this->AddComponent(Comp_Type::C_JOINT);
 			break;
 		default:
 			break;

@@ -1181,6 +1181,12 @@
     <ClInclude Include="InputAction.h">
       <Filter>Engine\UI</Filter>
     </ClInclude>
+    <ClInclude Include="jpPhysicsJoint.h">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="CompJoint.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1571,6 +1577,12 @@
     </ClCompile>
     <ClCompile Include="InputAction.cpp">
       <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="jpPhysicsJoint.cpp">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="CompJoint.cpp">
+      <Filter>Engine\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

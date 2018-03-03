@@ -36,7 +36,8 @@ enum Comp_Type
 	C_BONE,
 	C_FSM,
 	C_LIGHT,
-	C_PARTICLE_SYSTEM
+	C_PARTICLE_SYSTEM,
+	C_JOINT
 };
 
 class Component

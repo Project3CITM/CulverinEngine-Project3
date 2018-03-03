@@ -122,6 +122,7 @@
     <ClInclude Include="CompGraphic.h" />
     <ClInclude Include="CompImage.h" />
     <ClInclude Include="CompInteractive.h" />
+    <ClInclude Include="CompJoint.h" />
     <ClInclude Include="CompLight.h" />
     <ClInclude Include="CompMaterial.h" />
     <ClInclude Include="Component.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="include_wwise.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="InputAction.h" />
+    <ClInclude Include="jpPhysicsJoint.h" />
     <ClInclude Include="jpPhysicsRigidBody.h" />
     <ClInclude Include="jpPhysicsWorld.h" />
     <ClInclude Include="Materials.h" />
@@ -470,6 +472,7 @@
     <ClCompile Include="CompGraphic.cpp" />
     <ClCompile Include="CompImage.cpp" />
     <ClCompile Include="CompInteractive.cpp" />
+    <ClCompile Include="CompJoint.cpp" />
     <ClCompile Include="CompLight.cpp" />
     <ClCompile Include="CompMaterial.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -492,6 +495,7 @@
     <ClCompile Include="include_wwise.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="InputAction.cpp" />
+    <ClCompile Include="jpPhysicsJoint.cpp" />
     <ClCompile Include="jpPhysicsRigidBody.cpp" />
     <ClCompile Include="jpPhysicsWorld.cpp" />
     <ClCompile Include="Materials.cpp" />
