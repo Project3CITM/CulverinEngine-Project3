@@ -113,7 +113,7 @@ private:
 	int mouse_x_motion_global = 0;
 	int mouse_y_motion_global = 0;
 
-	InputManager* Manag_inp;
+	InputManager* Manag_inp=nullptr;
 
 public:
 	std::list<const char*> dropedfiles;

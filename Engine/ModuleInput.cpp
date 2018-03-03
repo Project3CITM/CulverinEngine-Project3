@@ -167,6 +167,12 @@ update_status ModuleInput::PreUpdate(float dt)
 				PushEvent(mouse_event);
 			}
 			break;
+			case SDL_KEYDOWN:
+				if (e.key.keysym.scancode == SDL_SCANCODE_0)
+				{
+					Manag_inp = App->player_action->GetInputManager("Player");
+				}
+				break;
 			case SDL_MOUSEBUTTONUP:
 			{
 				mouse_x = e.motion.x / SCREEN_SIZE;
@@ -262,7 +268,21 @@ update_status ModuleInput::PreUpdate(float dt)
 	}
 
 	//LOG(std::to_string(mouse_x_motion).c_str());
-
+	if (Manag_inp != nullptr)
+	{
+		if (Manag_inp->GetKey("Jump")->OnClick())
+		{
+			LOG("CLICK");
+		}
+		else if (Manag_inp->GetKey("Jump")->OnRepeat())
+		{
+			LOG("REPEAT");
+		}
+		else if (Manag_inp->GetKey("Jump")->OnRelease())
+		{
+			LOG("RELEASE");
+		}
+	}
 	if(quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
 		return UPDATE_STOP;
 
