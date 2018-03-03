@@ -11,7 +11,6 @@ using CulverinEditor.Debug;
 
 public class WeaponController : CulverinBehaviour
 {
-    public GameObject player_obj;
     public GameObject enemy_obj;
 
     protected EnemyController enemy;
@@ -23,7 +22,6 @@ public class WeaponController : CulverinBehaviour
     // WEAPON STATS -------------
     public float attack_dmg = 10.0f;
     public float stamina_cost = 10.0f;
-    //public float cd_time = 3.0f;
     // ---------------------------
 
     public virtual void Start()
@@ -54,7 +52,7 @@ public class WeaponController : CulverinBehaviour
 
     protected bool EnemyInFront()
     {
-        MovementController move = player_obj.GetComponent<MovementController>();
+        MovementController move = GetLinkedObject("player_obj").GetComponent<MovementController>(); // TODO -> redo this
         int direction = (int)move.curr_dir;
         int position_front_x = move.curr_x;
         int position_front_y = move.curr_y;
