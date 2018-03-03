@@ -52,8 +52,6 @@ public:
 	MonoObject* GetMonoObject(GameObject* gameobject);
 	GameObject* GetGameObject(MonoObject* monoobject);
 
-	GameObject* GetGameObjectLink(std::string name);
-
 	bool IsNameUnique(std::string name) const;
 
 private:
@@ -79,8 +77,10 @@ private:
 	/* Time */
 	static float GetDeltaTime();
 
-	/* Link */
-	static MonoObject* GetLinkedObject(MonoObject* object, MonoString* name);
+	/* CulverinBehaciour */
+	static MonoObject*	GetLinkedObject(MonoObject* object, MonoString* name);
+	static bool			GetEnabled(MonoObject* object, MonoObject* gameobject);
+	static void			SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject);
 
 	/* GameObject */
 	static mono_bool	IsStatic(MonoObject* object);
@@ -133,8 +133,6 @@ private:
 	/* Component */
 
 	static MonoObject*	GetParentGameObject();
-	static bool			GetScriptEnabled(MonoObject* object);
-	static void			SetScriptEnabled(MonoObject* object, bool val);
 
 	/* Map */
 	static MonoString* GetMapString(MonoObject* object);

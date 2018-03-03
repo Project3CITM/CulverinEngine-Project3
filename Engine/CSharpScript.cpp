@@ -1045,33 +1045,65 @@ MonoObject* CSharpScript::GetParentGameObject()
 	return App->importer->iScript->GetMonoObject(own_game_object);
 }
 
-void CSharpScript::SetEnabled(MonoObject * object, bool val)
+mono_bool CSharpScript::GetEnabled(MonoObject* object, MonoObject* gameobject)
 {
-	if (!CheckMonoObject(object))
+	if (gameobject != nullptr)
 	{
-		LOG("[error] MonoObject invalid");
+		if (!CheckMonoObject(gameobject))
+		{
+			LOG("[error] MonoObject invalid");
+			return NULL;
+		}
 	}
 	else
 	{
-		own_component->SetActive(val);
+		current_game_object = own_game_object;
 	}
+	MonoClass* class_temp = mono_object_get_class(object);
+	std::string name_component = mono_class_get_name(class_temp);
+
+	Component* comp = current_game_object->GetComponentByName(name_component.c_str());
+	if (comp != nullptr)
+	{
+		return comp->GetEnabled();
+	}
+	LOG("[error] MonoObject invalid");
+	return NULL;
 }
 
-mono_bool CSharpScript::GetEnabled(MonoObject * object)
+void CSharpScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject)
 {
-	if (!CheckMonoObject(object))
+	if (gameobject != nullptr)
 	{
-		LOG("[error] MonoObject invalid");
+		if (!CheckMonoObject(gameobject))
+		{
+			LOG("[error] MonoObject invalid");
+			return;
+		}
 	}
 	else
 	{
-		return own_component->IsActive();
+		current_game_object = own_game_object;
 	}
-}
+	MonoClass* class_temp = mono_object_get_class(object);
+	std::string name_component = mono_class_get_name(class_temp);
 
-void CSharpScript::SetOwnComponent(CompScript * own_component)
-{
-	this->own_component = own_component;
+	Component* comp = current_game_object->GetComponentByName(name_component.c_str());
+	if (comp != nullptr)
+	{
+		if (active == true)
+		{
+			comp->Enable();
+		}
+		else
+		{
+			comp->Disable();
+		}
+	}
+	else
+	{
+		LOG("[error] %s has not %s", current_game_object->GetName(), name_component.c_str());
+	}
 }
 
 MonoObject* CSharpScript::Find(MonoObject * object, MonoString * name)

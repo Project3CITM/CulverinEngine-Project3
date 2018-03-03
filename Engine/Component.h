@@ -49,6 +49,7 @@ public:
 
 	virtual bool Enable();
 	virtual bool Disable();
+	virtual bool GetEnabled();
 	virtual void Init();
 	virtual void PreUpdate(float dt);
 	virtual void Update(float dt);

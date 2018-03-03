@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace CulverinEditor
 {
-    public class CompAudio : Component
+    public class CompAudio : CulverinBehaviour
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void PlayEvent(string name);

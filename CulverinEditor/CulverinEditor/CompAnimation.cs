@@ -7,8 +7,14 @@ using System.Runtime.CompilerServices;
 
 namespace CulverinEditor
 {
-    public class CompAnimation : Component
+    public class CompAnimation : CulverinBehaviour
     {
+
+        public CompAnimation()
+        {
+
+        }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void PlayAnimation(string name, bool blending = true);
 

@@ -634,6 +634,8 @@ void ImportScript::LinkFunctions()
 {
 	//GetLinkedObject
 	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetLinkedObject", (const void*)GetLinkedObject);
+	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetEnabled", (const void*)GetEnabled);
+	mono_add_internal_call("CulverinEditor.CulverinBehaviour::SetEnabled", (const void*)SetEnabled);
 	//GAMEOBJECT FUNCTIONS ---------------
 	mono_add_internal_call("CulverinEditor.GameObject::GetTag", (const void*)GetTag);
 	mono_add_internal_call("CulverinEditor.GameObject::SetTag", (const void*)SetTag);
@@ -686,14 +688,6 @@ void ImportScript::LinkFunctions()
 
 	// Component ---------------------------
 	mono_add_internal_call("CulverinEditor.Component::GetParentGameObject", (const void*)GetParentGameObject);
-	mono_add_internal_call("CulverinEditor.Component::SetScriptEnabled", (const void*)SetScriptEnabled);
-	mono_add_internal_call("CulverinEditor.Component::GetEnabled", (const void*)GetScriptEnabled);
-	mono_add_internal_call("CulverinEditor.Movement_Action::SetScriptEnabled", (const void*)SetScriptEnabled);
-	mono_add_internal_call("CulverinEditor.Movement_Action::GetEnabled", (const void*)GetScriptEnabled);
-	mono_add_internal_call("CulverinEditor.Seek_Steering::SetScriptEnabled", (const void*)SetScriptEnabled);
-	mono_add_internal_call("CulverinEditor.Seek_Steering::GetEnabled", (const void*)GetScriptEnabled);
-	mono_add_internal_call("CulverinEditor.Arrive_Steering::SetScriptEnabled", (const void*)SetScriptEnabled);
-	mono_add_internal_call("CulverinEditor.Arrive_Steering::GetEnabled", (const void*)GetScriptEnabled);
 
 	//CONSOLE FUNCTIONS ------------------
 	mono_add_internal_call("CulverinEditor.Debug.Debug::Log", (const void*)ConsoleLog);
@@ -871,6 +865,16 @@ int ImportScript::GetMouseMoutionY()
 float ImportScript::GetDeltaTime()
 {
 	return App->game_time.time_scale * App->real_time.dt;
+}
+
+bool ImportScript::GetEnabled(MonoObject* object, MonoObject* gameobject)
+{
+	return current->GetEnabled(object, gameobject);
+}
+
+void ImportScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject)
+{
+	current->SetEnabled(object, active, gameobject);
 }
 
 MonoObject* ImportScript::GetLinkedObject(MonoObject* object, MonoString* name)
@@ -1108,50 +1112,6 @@ void ImportScript::LookAtTrans(MonoObject * object, MonoObject * trans)
 MonoObject* ImportScript::GetParentGameObject()
 {
 	return current->GetParentGameObject();
-}
-
-bool ImportScript::GetScriptEnabled(MonoObject * object)
-{
-	MonoClass* cl = mono_object_get_class(object);
-	const char* tmp = mono_class_get_name(cl);
-	GameObject* go = current->GetGameObject();
-
-	for (int i = 0; i < go->GetNumComponents(); i++)
-	{
-		Component* comp = go->GetComponentbyIndex(i);
-		if (comp->GetType() == Comp_Type::C_SCRIPT)
-		{
-			CompScript* script = (CompScript*)comp;
-			if (strcmp(script->GetScriptName(), tmp) == 0)
-			{
-				return comp->IsActive();
-			}
-		}
-	}
-	
-	LOG("Script not found");
-	return false;
-}
-
-void ImportScript::SetScriptEnabled(MonoObject * object, bool val)
-{
-	MonoClass* cl = mono_object_get_class(object);
-	const char* tmp = mono_class_get_name(cl);
-	GameObject* go = current->GetGameObject();
-
-	for (int i = 0; i < go->GetNumComponents(); i++)
-	{
-		Component* comp = go->GetComponentbyIndex(i);
-		if (comp->GetType() == Comp_Type::C_SCRIPT)
-		{
-			CompScript* script = (CompScript*)comp;
-			if (strcmp(script->GetScriptName(), tmp) == 0)
-			{
-				comp->SetActive(val);
-				break;
-			}
-		}
-	}
 }
 
 // Map Functions -------------
