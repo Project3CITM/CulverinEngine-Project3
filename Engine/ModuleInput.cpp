@@ -48,6 +48,9 @@ bool ModuleInput::Init(JSON_Object* node)
 		ret = false;
 	}
 
+	if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0)
+		LOG("Error on SDL_Init: GameController");
+
 	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 	//SDL_SetWindowGrab(App->window->window, SDL_TRUE); // "Get relative moution"
 	//SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -57,6 +60,18 @@ bool ModuleInput::Init(JSON_Object* node)
 	//cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 	//SDL_SetCursor(cursor);
 	//SDL_ShowCursor(SDL_ENABLE);
+
+	for (int i = 0; i < SDL_NumJoysticks(); ++i)
+	{
+		if (SDL_IsGameController(i))
+		{
+			controller = SDL_GameControllerOpen(i);
+			if (controller == nullptr)
+				LOG("Gamepad not opened %s", SDL_GetError());
+
+		}
+
+	}
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;

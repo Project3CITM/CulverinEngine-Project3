@@ -3,6 +3,8 @@
 #include<string>
 #include"Math\float2.h"
 #include"ModuleKeyBinding.h"
+#include"Application.h"
+#include"ModuleInput.h"
 
 enum Keystateaction
 {
@@ -93,6 +95,29 @@ public:
 		}
 		return false;
 	}
+
+	bool UpdateEventAction()
+	{
+
+		/*if (buttons & SDL_BUTTON(key_relation->event_value))
+		{
+			if (state == Keystateaction::KEY_IDLE_ACTION)
+				state = Keystateaction::KEY_DOWN_ACTION;
+			else
+				state = Keystateaction::KEY_REPEAT_ACTION;
+		}
+		else
+		{
+			if (state == Keystateaction::KEY_REPEAT_ACTION || state == Keystateaction::KEY_DOWN_ACTION)
+				state = Keystateaction::KEY_UP_ACTION;
+			else
+				state = Keystateaction::KEY_IDLE_ACTION;
+		}*/
+
+		return true;
+
+	}
+
 	float2 motion;
 	AxisDirectionController direction = AxisDirectionController::NON_DIRECTION_C;
 	int direction_axis = 0;
@@ -166,6 +191,7 @@ public:
 				if (key_relation->event_value == input_event->key.keysym.scancode)
 				{
 					state = Keystateaction::KEY_DOWN_ACTION;
+					LOG("PROCESS");
 					return true;
 				}
 			}
@@ -215,7 +241,7 @@ public:
 		{
 			if (input_event->type == SDL_CONTROLLERBUTTONDOWN)
 			{
-				if (key_relation->event_value == input_event->button.button)
+				if (key_relation->event_value == input_event->cbutton.button)
 				{
 					state = Keystateaction::KEY_DOWN_ACTION;
 				}
@@ -224,6 +250,30 @@ public:
 
 		}
 		return false;
+	}
+
+	bool UpdateEventAction()
+	{
+		
+		int state_event = SDL_GameControllerGetButton(App->input->controller, (SDL_GameControllerButton)key_relation->event_value);
+
+		if (state_event == 1)
+		{
+			if (state == Keystateaction::KEY_IDLE_ACTION) {
+				state = Keystateaction::KEY_DOWN_ACTION;
+			}
+			else
+				state = Keystateaction::KEY_REPEAT_ACTION;
+		}
+		else
+		{
+			if (state == Keystateaction::KEY_REPEAT_ACTION || state == Keystateaction::KEY_DOWN_ACTION) {
+				state = Keystateaction::KEY_UP_ACTION;
+			}
+			else
+				state = Keystateaction::KEY_IDLE_ACTION;
+		}
+		return true;
 	}
 
 	Keystateaction state = Keystateaction::KEY_IDLE_ACTION;

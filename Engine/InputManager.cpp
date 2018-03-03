@@ -3,7 +3,7 @@
 #include "InputAction.h"
 #include"Application.h"
 #define ACTION_LIMIT 50
-#define MAX_INPUT 15
+#define MAX_INPUT 25
 
 InputManager::InputManager()
 {
@@ -33,6 +33,12 @@ void InputManager::UpdateInputActions()
 		case ActionInputType::MOUSE_BUTTON_ACTION:
 			((MouseButtonAction*)(*it))->UpdateEventAction(mouse_x, mouse_y, buttons);
 			break;
+
+
+		case ActionInputType::BUTTON_ACTION:
+			((ButtonAction*)(*it))->UpdateEventAction();
+			break;
+
 
 		}
 	
