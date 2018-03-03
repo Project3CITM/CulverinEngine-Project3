@@ -316,6 +316,16 @@ void GameObject::PreUpdate(float dt)
 				{
 					components[i]->PreUpdate(dt);
 				}
+				else
+				{
+					if (components[i]->GetType() == Comp_Type::C_SCRIPT)
+					{
+						if (((CompScript*)components[i])->p_active)
+						{
+							components[i]->PreUpdate(dt);
+						}
+					}
+				}
 			}
 		}
 
@@ -373,9 +383,9 @@ void GameObject::Update(float dt)
 	}
 }
 
-void GameObject::postUpdate()
-{
-}
+//void GameObject::postUpdate()
+//{
+//}
 
 bool GameObject::CleanUp()
 {

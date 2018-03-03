@@ -57,7 +57,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 Scene::~Scene()
 {
 	//DeleteAllGameObjects(root); //TODO-> Elliot
-	//App->importer->iScript->ClearMonoMap();
+	//App->importer->iScript->ClearMonoMap()
 
 	RELEASE(scene_buff);
 	RELEASE(skybox);
@@ -189,9 +189,11 @@ update_status Scene::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-//update_status Scene::PostUpdate(float dt)
+//update_status Scene::PostUpdate()
 //{
 //	perf_timer.Start();
+//
+//	root->postUpdate();
 //
 //	postUpdate_t = perf_timer.ReadMs();
 //	return UPDATE_CONTINUE;
@@ -260,6 +262,7 @@ bool Scene::SetEventListenrs()
 	AddListener(EventType::EVENT_DELETE_GO, this);
 	AddListener(EventType::EVENT_DRAW, this);
 	AddListener(EventType::EVENT_PARTICLE_DRAW, this);
+	AddListener(EventType::EVENT_SCRIPT_DISABLED, this);
 	return true;
 }
 
@@ -268,9 +271,16 @@ void Scene::OnEvent(Event & event)
 	switch (event.type)
 	{
 	case EventType::EVENT_DELETE_GO:
+	{
 		LOG("Delete Component");
 		DeleteGameObject(event.delete_go.Todelte);
 		break;
+	}
+	case EventType::EVENT_SCRIPT_DISABLED:
+	{
+		event.script.script->postUpdate();
+		break;
+	}
 	}
 }
 

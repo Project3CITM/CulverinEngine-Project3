@@ -19,6 +19,7 @@
 #include "CompRigidBody.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
+#include "ModuleEventSystem.h"
 
 //SCRIPT VARIABLE UTILITY METHODS ------
 ScriptVariable::ScriptVariable(const char* name, VarType type, VarAccess access, CSharpScript* script) : name(name), type(type), access(access), script(script)
@@ -1089,15 +1090,20 @@ void CSharpScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* 
 	std::string name_component = mono_class_get_name(class_temp);
 
 	Component* comp = current_game_object->GetComponentByName(name_component.c_str());
-	if (comp != nullptr)
+	if (comp != nullptr && comp->GetEnabled() != active)
 	{
 		if (active == true)
 		{
 			comp->Enable();
+			((CompScript*)comp)->p_active = true;
 		}
 		else
 		{
 			comp->Disable();
+			Event script;
+			script.script.type = EventType::EVENT_SCRIPT_DISABLED;
+			script.script.script = (CompScript*)comp;
+			PushEvent(script);
 		}
 	}
 	else

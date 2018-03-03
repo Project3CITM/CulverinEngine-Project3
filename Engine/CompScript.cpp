@@ -48,6 +48,17 @@ void CompScript::PreUpdate(float dt)
 	//std::string allscript = editor->editor.GetText();
 	//size_t firstPublic = allscript.find_first_of("public");
 	// Before delete Resource, Set this pointer to nullptr
+	if (p_active)
+	{
+		if (csharp != nullptr)
+		{
+			if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
+			{
+				csharp->DoMainFunction(FunctionBase::CS_OnEnable);
+			}
+		}
+		p_active = false;
+	}
 	if (resource_script != nullptr)
 	{
 		if (resource_script->GetState() == Resource::State::WANTDELETE)
@@ -104,20 +115,34 @@ void CompScript::Start()
 
 void CompScript::Update(float dt)
 {
-	// Link GameObject* variables of the script
+	if (p_active == false)
+	{
+		// Link GameObject* variables of the script
+		if (csharp != nullptr)
+		{
+			LoadValuesGameObjectScript();
+		}
+		if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
+		{
+			SetOwnGameObject(parent);
+		}
+		if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
+		{
+			App->importer->iScript->SetCurrentScript(csharp);
+			//SetCurrentGameObject(parent);
+			UpdateScript(dt);
+		}
+	}
+}
+
+void CompScript::postUpdate()
+{
 	if (csharp != nullptr)
 	{
-		LoadValuesGameObjectScript();
-	}
-	if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
-	{
-		SetOwnGameObject(parent);
-	}
-	if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
-	{
-		App->importer->iScript->SetCurrentScript(csharp);
-		SetCurrentGameObject(parent);
-		UpdateScript(dt);
+		if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
+		{
+			csharp->DoMainFunction(FunctionBase::CS_OnDisable);
+		}
 	}
 }
 

@@ -20,6 +20,7 @@ public:
 
 	void Start();
 	void Update(float dt);
+	void postUpdate();
 	void ClearVariables();
 
 	bool StartScript();
@@ -66,6 +67,7 @@ public:
 	//Script_editor* editor = nullptr;
 	CSharpScript* csharp = nullptr;
 	ResourceScript* resource_script = nullptr;
+	bool p_active = false; // Use only with enable and disable 
 
 private:
 

@@ -21,6 +21,7 @@
 class GameObject;
 class Component;
 class CompInteractive;
+class CompScript;
 enum ShaderType;
 class Shader;
 union Event;
@@ -42,6 +43,7 @@ enum EventType
 	/*-------------------Audio Engine-------------------*/
 
 	/*------------------Gameplay System-----------------*/
+	EVENT_SCRIPT_DISABLED,
 
 	/*------------------Particle System-----------------*/
 	EVENT_PARTICLE_DRAW,
@@ -140,6 +142,11 @@ struct EWindowResize
 /*--------------------------------------------------*/
 /*------------------Gameplay System-----------------*/
 /*--------------------------------------------------*/
+struct EScriptDisabled
+{
+	EventType type;
+	CompScript* script = nullptr;
+};
 
 
 /*--------------------------------------------------*/
@@ -263,7 +270,7 @@ union Event
 	/*-------------------Audio Engine-------------------*/
 
 	/*------------------Gameplay System-----------------*/
-
+	EScriptDisabled script;
 	/*------------------Particle System-----------------*/
 	EParticleDraw particle;
 	/*----------------------Physics---------------------*/

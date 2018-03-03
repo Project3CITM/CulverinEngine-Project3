@@ -45,7 +45,7 @@ public:
 	void Init();
 	void PreUpdate(float dt);
 	void Update(float dt);
-	void postUpdate();
+	//void postUpdate();
 	bool CleanUp();
 	bool Enable();
 	bool Disable();
