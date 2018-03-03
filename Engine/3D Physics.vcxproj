@@ -482,6 +482,9 @@
     <ClCompile Include="CompScript.cpp" />
     <ClCompile Include="CompText.cpp" />
     <ClCompile Include="CSharpScript.cpp" />
+    <ClCompile Include="CSharpComponents.cpp" />
+    <ClCompile Include="CSharpTransform.cpp" />
+    <ClCompile Include="CSharpUI.cpp" />
     <ClCompile Include="DepthCubeMap.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ImGui\ImGuizmo.cpp" />
