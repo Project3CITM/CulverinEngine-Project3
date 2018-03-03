@@ -270,15 +270,15 @@ update_status ModuleInput::PreUpdate(float dt)
 	//LOG(std::to_string(mouse_x_motion).c_str());
 	if (Manag_inp != nullptr)
 	{
-		if (Manag_inp->GetKey("Jump")->OnClick())
+		if (Manag_inp->GetMouseButton("Jump")->OnClick())
 		{
 			LOG("CLICK");
 		}
-		else if (Manag_inp->GetKey("Jump")->OnRepeat())
+		else if (Manag_inp->GetMouseButton("Jump")->OnRepeat())
 		{
 			LOG("REPEAT");
 		}
-		else if (Manag_inp->GetKey("Jump")->OnRelease())
+		else if (Manag_inp->GetMouseButton("Jump")->OnRelease())
 		{
 			LOG("RELEASE");
 		}

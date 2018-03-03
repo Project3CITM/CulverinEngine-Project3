@@ -3,7 +3,7 @@
 #include "InputAction.h"
 #include"Application.h"
 #define ACTION_LIMIT 50
-#define MAX_INPUT 10
+#define MAX_INPUT 15
 
 InputManager::InputManager()
 {
@@ -57,6 +57,19 @@ KeyAction * InputManager::GetKey(const char * name)
 		if (action_vector[i]->name == name && action_vector[i]->action_type == ActionInputType::KEY_ACTION)
 		{
 			return (KeyAction*)action_vector[i];
+		}
+	}
+
+	return nullptr;
+}
+
+MouseButtonAction * InputManager::GetMouseButton(const char * name)
+{
+	for (int i = 0; i < action_vector.size(); i++)
+	{
+		if (action_vector[i]->name == name && action_vector[i]->action_type == ActionInputType::MOUSE_BUTTON_ACTION)
+		{
+			return (MouseButtonAction*)action_vector[i];
 		}
 	}
 

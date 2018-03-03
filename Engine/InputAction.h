@@ -102,7 +102,9 @@ class MouseButtonAction : public InputAction
 {
 public:
 	MouseButtonAction() { action_type = ActionInputType::MOUSE_BUTTON_ACTION; }
-
+	bool OnClick() { return state == Keystateaction::KEY_DOWN_ACTION; };
+	bool OnRelease() { return state == Keystateaction::KEY_UP_ACTION; };
+	bool OnRepeat() { return state == Keystateaction::KEY_REPEAT_ACTION; };
 	bool ProcessEventAction(SDL_Event * input_event)
 	{
 		if (key_relation->key_type == KeyBindingType::MOUSE_BUTTON_DEVICE)
@@ -123,7 +125,7 @@ public:
 	bool UpdateEventAction(int mouse_x, int mouse_y, Uint32 buttons)
 	{ 
 		
-		if (SDL_BUTTON(key_relation->event_value))
+		if (buttons & SDL_BUTTON(key_relation->event_value))
 		{
 			if (state == Keystateaction::KEY_IDLE_ACTION)
 				state = Keystateaction::KEY_DOWN_ACTION;
