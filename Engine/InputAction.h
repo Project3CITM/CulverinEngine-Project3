@@ -22,9 +22,14 @@ enum ActionInputType
 	KEY_ACTION,
 	MOUSE_BUTTON_ACTION,
 	BUTTON_ACTION
-
-
 };
+
+/*enum KeyButtonType
+{
+	UNKNOWN_TYPE = -1,
+	KEY_TYPE,
+	BUTTON_TYPE
+};*/
 
 enum AxisDirectionController
 {
@@ -167,7 +172,21 @@ public:
 class KeyAction : public InputAction
 {
 public:
-	KeyAction() { action_type = ActionInputType::KEY_ACTION; }
+	KeyAction() 
+	{
+		/*if (key_relation->key_type == KeyBindingType::KEYBOARD_DEVICE) {
+			action_type = ActionInputType::KEY_ACTION;
+		}
+		else if (key_relation->key_type == KeyBindingType::CONTROLLER_BUTTON_DEVICE) {
+			action_type = ActionInputType::BUTTON_ACTION;
+			LOG("CONTROLLER");
+		}*/
+	}
+
+	KeyAction(ActionInputType type)
+	{
+		action_type = type;
+	}
 
 	bool OnClick() { return state == Keystateaction::KEY_DOWN_ACTION; };
 	bool OnRelease() { return state == Keystateaction::KEY_UP_ACTION; };
@@ -175,47 +194,78 @@ public:
 
 	bool ProcessEventAction(SDL_Event * input_event)
 	{
-		if (key_relation->key_type == KeyBindingType::KEYBOARD_DEVICE)
+		switch (key_relation->key_type)
 		{
+		case KeyBindingType::KEYBOARD_DEVICE:
+
 			if (input_event->type == SDL_KEYDOWN)
 			{
 				if (key_relation->event_value == input_event->key.keysym.scancode)
 				{
-					state = Keystateaction::KEY_DOWN_ACTION;
-					return true;
+						state = Keystateaction::KEY_DOWN_ACTION;
+						return true;
 				}
 			}
+			return false;
+		break;
 
+		case KeyBindingType::CONTROLLER_BUTTON_DEVICE:
+
+				if (input_event->type == SDL_CONTROLLERBUTTONDOWN)
+				{
+					if (key_relation->event_value == input_event->cbutton.button)
+					{
+						state = Keystateaction::KEY_DOWN_ACTION;
+						return true;
+					}
+					
+				}
+			return false;
+			break;
 		}
-		return false;
 	}
 
 
 	bool UpdateEventAction(const Uint8* array_kys) 
 	{ 
-		int state_event = array_kys[key_relation->event_value];
 
-		if (array_kys[key_relation->event_value] == 1)
+		int state_event = -1;
+
+		switch (key_relation->key_type)
 		{
-			if (state == Keystateaction::KEY_IDLE_ACTION)
+		case KeyBindingType::KEYBOARD_DEVICE:
+			state_event = array_kys[key_relation->event_value];			
+			break;
+
+		case KeyBindingType::CONTROLLER_BUTTON_DEVICE:
+			state_event = SDL_GameControllerGetButton(App->input->controller, (SDL_GameControllerButton)key_relation->event_value);
+			break;
+		}
+
+		if (state_event == 1)
+		{
+			if (state == Keystateaction::KEY_IDLE_ACTION) {
 				state = Keystateaction::KEY_DOWN_ACTION;
+			}
 			else
 				state = Keystateaction::KEY_REPEAT_ACTION;
 		}
 		else
 		{
-			if (state == Keystateaction::KEY_REPEAT_ACTION || state == Keystateaction::KEY_DOWN_ACTION)
+			if (state == Keystateaction::KEY_REPEAT_ACTION || state == Keystateaction::KEY_DOWN_ACTION) {
 				state = Keystateaction::KEY_UP_ACTION;
+			}
 			else
 				state = Keystateaction::KEY_IDLE_ACTION;
 		}
-		return true;	
+
+		return true;
 	}
 
 	Keystateaction state = Keystateaction::KEY_IDLE_ACTION;
-
 };
 
+/*
 class ButtonAction : public InputAction
 {
 public:
@@ -267,6 +317,6 @@ public:
 	}
 
 	Keystateaction state = Keystateaction::KEY_IDLE_ACTION;
-};
+};*/
 
 #endif

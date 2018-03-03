@@ -35,11 +35,6 @@ void InputManager::UpdateInputActions()
 			break;
 
 
-		case ActionInputType::BUTTON_ACTION:
-			((ButtonAction*)(*it))->UpdateEventAction();
-			break;
-
-
 		}
 	
 	}
@@ -285,15 +280,13 @@ InputAction* InputManager::CreateNewAction(const char * new_name, const char * n
 		temp = new AxisAction();
 		break;
 
-	case ActionInputType::BUTTON_ACTION:
-		temp = new ButtonAction();
-		break;
 	case ActionInputType::CONTROLLER_AXIS_ACTION:
 		temp = new ControllerAxisAction();
 		break;
 
+	case ActionInputType::BUTTON_ACTION:
 	case ActionInputType::KEY_ACTION:
-		temp = new KeyAction();
+		temp = new KeyAction(new_type);
 		break;
 
 	case ActionInputType::MOUSE_BUTTON_ACTION:
