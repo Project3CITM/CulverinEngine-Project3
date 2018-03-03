@@ -655,7 +655,7 @@ void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const cha
 
 void JSONSerialization::SaveScript(const ResourceScript* script, const char* directory, const char* fileName)
 {
-	LOG("SAVING Script %s -----", script->name);
+	LOG("SAVING Script %s -----", script->name.c_str());
 
 	JSON_Value* config_file;
 	JSON_Object* config;
