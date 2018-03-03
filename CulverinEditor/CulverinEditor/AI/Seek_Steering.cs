@@ -15,7 +15,7 @@ public class Seek_Steering : CulverinBehaviour
 
     void Update()
     {
-        Vector3 acceleration = Vector3.Zero;
+        Vector3 acceleration = new Vector3(Vector3.Zero);
         Vector3 target_pos = GetComponent<Movement_Action>().GetTargetPosition();
         Vector3 local_pos = GetComponent<Transform>().local_position;
 
