@@ -58,6 +58,10 @@
     <Compile Include="CompImage.cs" />
     <Compile Include="CompInteractive.cs" />
     <Compile Include="CompRigidBody.cs" />
+    <Compile Include="Player\Daenerys\DaenerysCD_Left.cs" />
+    <Compile Include="Player\Daenerys\DaenerysCD_Right.cs" />
+    <Compile Include="Player\Daenerys\DaenerysWeapon_Left.cs" />
+    <Compile Include="Player\Daenerys\DaenerysWeapon_Right.cs" />
     <Compile Include="Player\UI\CoolDown.cs" />
     <Compile Include="Player\Jaime\JaimeCD_Right.cs" />
     <Compile Include="Player\Jaime\JaimeCD_Left.cs" />

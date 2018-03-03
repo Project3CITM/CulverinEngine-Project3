@@ -43,7 +43,7 @@ public class DaenerysController : CharacterController
                 {
                     case State.IDLE:
                         {
-                            //Check For Input + It has to check if he's moving to block attack (¿?)
+                            //Check For Input + It has to check if she's moving to block attack (¿?)
                             CheckAttack();
                             break;
                         }
@@ -57,7 +57,7 @@ public class DaenerysController : CharacterController
                             }
                             else
                             {
-                                // Keep playing specific attack animation  until it ends
+                                // Keep playing specific attack animation until it ends
                                 Debug.Log("Daenerys Attacking");
                             }
                             break;
