@@ -138,6 +138,7 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 
 bool ModulePlayerActions::SaveConfig(JSON_Object * node)
 {
+	JSON_Value* new_array = json_value_init_array();
 
 	return true;
 }
@@ -183,4 +184,14 @@ InputManager * ModulePlayerActions::GetInputManager(const char * name)
 			return (*it);
 	}
 	return nullptr;
+}
+
+std::vector<InputManager*> ModulePlayerActions::GetInteractiveVector() const
+{
+	return interactive_vector;
+}
+
+std::vector<InputManager*> ModulePlayerActions::GetInteractiveVector()
+{
+	return interactive_vector;
 }

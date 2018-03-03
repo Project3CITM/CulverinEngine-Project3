@@ -8,7 +8,9 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "ModuleAudio.h"
-
+#include "InputManager.h"
+#include "InputAction.h"
+#include "ModulePlayerActions.h"
 static int malloc_count;
 static void *counted_malloc(size_t size);
 static void counted_free(void *ptr);
@@ -701,6 +703,63 @@ void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const
 	}
 	json_value_free(config_file);
 }
+
+void JSONSerialization::SavePlayerAction(const ModulePlayerActions * player_action, const char * directory, const char * fileName)
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = directory;
+	nameJson += ".meta.json";
+	config_file = json_value_init_object();
+
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		json_object_clear(config);
+		if (!player_action->GetInteractiveVector().empty())
+		{
+			for (uint i = 0; i < player_action->GetInteractiveVector().size(); i++)
+			{
+				InputManager* item = player_action->GetInteractiveVector()[i];
+				SaveInputManager(config, item, i, item->GetActionVector().size());
+			}
+		}
+		json_serialize_to_file(config_file, nameJson.c_str());
+
+	}
+	json_value_free(config_file);
+}
+
+void JSONSerialization::SaveInputManager(JSON_Object * config_node, const InputManager* input_manager, uint count, uint action_count)
+{
+	std::string name = "InputManager" + std::to_string(count);
+	name += ".";
+	if (!input_manager->GetActionVector().empty())
+	{
+		for (uint i = 0; i < input_manager->GetActionVector().size(); i++)
+		{
+			json_object_dotset_string_with_std(config_node, name + "InputManagerName", input_manager->GetName.c_str());
+			json_object_dotset_boolean_with_std(config_node, name + "InputManagerActive", input_manager->GetActiveInput());
+			json_object_dotset_boolean_with_std(config_node, name + "InputManagerBlock", input_manager->GetBlockAction());
+			InputAction* item = input_manager->GetActionVector()[i];
+			SaveInputAction(config_node, item, i);
+		}
+	}
+
+}
+
+void JSONSerialization::SaveInputAction(JSON_Object * config_node, const InputAction * input_action, uint count)
+{
+	std::string name = "InputAction" + std::to_string(count);
+	name += ".";
+	json_object_dotset_string_with_std(config_node, name+"InputActionName", input_action->name.c_str());
+	json_object_dotset_string_with_std(config_node, name + "KeyRelationName", input_action->key_relation->name.c_str());
+	json_object_dotset_number_with_std(config_node, name + "ActionType", input_action->action_type);
+
+}
+
+
 
 ReImport JSONSerialization::GetUUIDPrefab(const char* file, uint id)
 {

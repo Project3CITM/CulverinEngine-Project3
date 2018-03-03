@@ -310,3 +310,13 @@ InputAction* InputManager::CreateNewAction(const char * new_name, const char * n
 	return temp;
 
 }
+
+std::vector<InputAction*> InputManager::GetActionVector() const
+{
+	return action_vector;
+}
+
+std::vector<InputAction*> InputManager::GetActionVector()
+{
+	return action_vector;
+}
