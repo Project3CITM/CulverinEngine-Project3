@@ -220,7 +220,6 @@ public:
 	/*Childs*/
 	MonoObject* Find(MonoObject* object, MonoString* name);
 
-
 	// Map --------------------
 	MonoString* GetMapString(MonoObject* object);
 
@@ -228,6 +227,8 @@ public:
 	void Save(JSON_Object* object, std::string name) const;
 	void Load(const JSON_Object* object, std::string name);
 	void LoadValuesGO();
+
+	GameObject* GetGameObject() const;
 
 public:
 	//Variables/Info containers (public to have access through other modules)

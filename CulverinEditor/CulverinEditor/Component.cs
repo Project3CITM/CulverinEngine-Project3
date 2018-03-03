@@ -38,20 +38,6 @@ namespace CulverinEditor
             }
         }
 
-        public bool enabled
-        {
-            get
-            {
-                return GetEnabled();
-            }
-            set
-            {
-                SetEnabled(value);
-                if (value == true) OnEnable();
-                else OnDisable();
-            }
-        }
-
         public virtual void OnEnable()
         {
 
@@ -66,10 +52,10 @@ namespace CulverinEditor
         private extern GameObject GetParentGameObject();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern bool GetEnabled();
+        public extern bool GetScriptEnabled();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern void SetEnabled(bool val);
+        public extern void SetScriptEnabled(bool val);
 
         public bool CompareTag(string tag)
         {

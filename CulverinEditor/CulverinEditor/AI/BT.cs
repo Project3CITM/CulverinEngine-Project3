@@ -40,17 +40,13 @@ public class BT : CulverinBehaviour
 
     public virtual Action MakeDecision()
     {
-        Debug.Log("BT decision not defined!");
-        
-        Movement_Action move = GetComponent<Movement_Action>();
-        Debug.Log("BT decision move defined!");
-        int x, y;
-        GetComponent<Movement_Action>().GetCurrentTile(out x, out y);
-        Debug.Log("BT decision move defined!" + x.ToString() + "||" + y.ToString());
+        int x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int y = GetComponent<Movement_Action>().GetCurrentTileY();
         GetComponent<Movement_Action>().GoTo(x, y, 10, 10);
-        Debug.Log("BT decision move defined!");
         current_action = GetComponent<Movement_Action>();
-        Debug.Log("defined!");
+        current_action.ActionStart();
+
+        Debug.Log("BT decision move defined!");
 
         return GetComponent<Movement_Action>();
     }

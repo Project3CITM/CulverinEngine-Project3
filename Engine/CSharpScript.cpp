@@ -580,8 +580,6 @@ bool CSharpScript::NeedToLinkGO() const
 	return re_load_values.size() > 0;
 }
 
-
-
 VarType CSharpScript::GetTypeFromMono(MonoType* mtype)
 {
 	if (mtype != nullptr)
@@ -996,7 +994,8 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 				actual_temp->GetComponentsByType(Comp_Type::C_SCRIPT, &temp);
 				for (int i = 0; i < temp.size(); i++)
 				{
-					if (strcmp(((CompScript*)temp[i])->resource_script->name.c_str(), name.c_str()) == 0)
+					CompScript* script = ((CompScript*)temp[i]);
+					if (strcmp(script->resource_script->name.c_str(), name.c_str()) == 0)
 					{
 						comp_name = name.c_str();
 						//classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "", comp_name);
@@ -1011,8 +1010,7 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 						//classT = GetMonoClass();
 						//return mono_object_isinst(((CompScript*)temp[i])->csharp->GetMonoObject(), ((CompScript*)temp[i])->csharp->GetMonoClass());
 
-
-						return ((CompScript*)temp[i])->csharp->GetMonoObject();
+						return script->csharp->GetMonoObject();
 					}
 				}
 			}
@@ -2068,5 +2066,10 @@ void CSharpScript::LoadValuesGO()
 		}
 	}
 	re_load_values.clear();
+}
+
+GameObject * CSharpScript::GetGameObject() const
+{
+	return own_game_object;
 }
 

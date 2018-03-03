@@ -941,6 +941,9 @@ void GameObject::ShowInspectorInfo()
 	{
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.25f, 1.00f, 0.00f, 1.00f));
 		bool open = false;
+		char tmp [255];
+		sprintf(tmp, "%i", components[i]->GetUUID());
+		ImGui::PushID(tmp);
 		if (ImGui::TreeNodeEx(components[i]->GetName(), ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			open = true;
@@ -958,6 +961,7 @@ void GameObject::ShowInspectorInfo()
 			components[i]->ShowInspectorInfo();
 			ImGui::Separator();
 		}
+		ImGui::PopID();
 	}
 
 	ImGui::Spacing();

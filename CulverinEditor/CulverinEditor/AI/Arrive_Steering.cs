@@ -5,9 +5,8 @@ using CulverinEditor.Debug;
 public class Arrive_Steering : CulverinBehaviour
 {
     public float min_distance = 0.1f;
-    public float slow_distance = 5.0f;
+    public float slow_distance = 0.5f;
     public float stopping_time = 1.0f;
-    Vector3 acceleration;
     Movement_Action move;
     bool in_distance = false;
 
@@ -16,7 +15,7 @@ public class Arrive_Steering : CulverinBehaviour
     {
         move = GetComponent<Movement_Action>();
         Debug.Log("Arrive Start");
-        SetEnabled(false);
+        SetScriptEnabled(false);
     }
 
     public override void OnDisable()
@@ -27,16 +26,19 @@ public class Arrive_Steering : CulverinBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(GetComponent<Movement_Action>().GetDistanceToTarget() <= slow_distance)
+        /*Vector3 acceleration = Vector3.Zero;
+
+        if(GetComponent<Movement_Action>().GetDistanceToTarget() <= slow_distance && !in_distance)
         {
             in_distance = true;
-            float acceleration_magnitude = 2 * (slow_distance / (stopping_time * stopping_time) - GetComponent<Movement_Action>().GetCurrentVelocity().Length / stopping_time);
-            acceleration = GetComponent<Movement_Action>().GetCurrentVelocity().Normalized * -(GetComponent<Movement_Action>().GetMaxAcceleration() + acceleration_magnitude);
+            Vector3 current_velocity = GetComponent<Movement_Action>().GetCurrentVelocity();
+            float acceleration_magnitude = 2 * (slow_distance / (stopping_time * stopping_time) - current_velocity.Length / stopping_time);
+            acceleration = current_velocity.Normalized * (-1) * (GetComponent<Movement_Action>().GetMaxAcceleration() + acceleration_magnitude);
         }
 
         if (in_distance)
         {
             GetComponent<Movement_Action>().Accelerate(acceleration);
-        }
+        }*/
     }
 }

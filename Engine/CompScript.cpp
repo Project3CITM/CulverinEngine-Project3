@@ -376,8 +376,7 @@ void CompScript::ShowFSMInspectorInfo()
 
 	if (resource_script != nullptr)
 	{
-		static bool active = IsActive();
-		if (ImGui::Checkbox("Active", &active))
+		if (ImGui::Checkbox("Active", &this->active))
 		{
 			SetActive(active);
 		}
