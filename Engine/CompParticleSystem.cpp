@@ -10,6 +10,7 @@
 #include "ModuleResourceManager.h"
 #include "ImportMaterial.h"
 #include "CompTransform.h"
+#include "ModuleEventSystem.h"
 
 CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
@@ -37,7 +38,9 @@ void CompParticleSystem::PreUpdate(float dt)
 	if (camera != nullptr)
 		part_system->SetCameraPosToFollow(camera->frustum.pos);
 
-	part_system->PreUpdate(dt);
+	if(App->engine_state == EngineState::STOP)
+		part_system->PreUpdate(0.02);
+	else part_system->PreUpdate(dt);
 }
 
 void CompParticleSystem::Update(float dt)
@@ -75,17 +78,22 @@ void CompParticleSystem::Update(float dt)
 	}
 
 	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());
-	part_system->Update(dt);
+	
+	if (App->engine_state == EngineState::STOP)
+		part_system->Update(0.02);
+	else part_system->Update(dt);
+
 	if (part_system->EditorWindowOpen)
 		part_system->DrawImGuiEditorWindow();
 	
-	part_system->PostUpdate(dt);
-
-	//SaveParticleStates("Test", nullptr, nullptr, nullptr, nullptr);
+	if (App->engine_state == EngineState::STOP)
+		part_system->PostUpdate(0.02);
+	else part_system->PostUpdate(dt);
 }
 
 void CompParticleSystem::Clear()
 {
+	App->event_system->ClearEvents(EventType::EVENT_PARTICLE_DRAW);
 	part_system->CleanUp();
 	RELEASE(part_system);
 }
@@ -288,6 +296,7 @@ bool CompParticleSystem::SaveParticleEmitter(const char* file_name, CompParticle
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
+	App->fs->CreateFolder("Assets/ParticleSystem");
 	App->fs->CreateFolder("Assets/ParticleSystem/Emitters");
 	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters");
 	file_path += "\\";
@@ -351,7 +360,7 @@ bool CompParticleSystem::SaveParticleEmitter(const char* file_name, CompParticle
 		break;
 	}
 
-	json_serialize_to_file(root_value, file_name);
+	json_serialize_to_file(root_value, file_path.c_str());
 	json_value_free(root_value);
 	return true;
 }
@@ -360,7 +369,7 @@ bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticle
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
-	std::string file_path = App->fs->GetFullPath("ParticleSystem\\Emitters");
+	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters");
 	file_path += "\\";
 	file_path += file_name;
 
@@ -674,17 +683,12 @@ void CompParticleSystem::ImGuiLoadParticlePopUp()
 
 void CompParticleSystem::ImGuiLoadEmitterPopUp()
 {
-	/*ParticleEmitter Emitter;
+	ParticleEmitter Emitter;
+	file_to_load_name = App->fs->GetOnlyName(file_to_load);
+	file_to_load_name += ".json";
+	LoadParticleEmitter(file_to_load_name.c_str(), this, Emitter);
 
-	size_t dot_pos = file_to_load.rfind(".");
-	file_to_loadName = file_to_load.substr(0, dot_pos);
-
-	ParsonJSON* parsonjson = new ParsonJSON(file_to_loadName.c_str(), true, false, false);
-	bool Meta = parsonjson->Init();
-	if (Meta) parsonjson->LoadParticleEmitter(this, Emitter);
-	RELEASE(parsonjson);
-
-	part_system->SetEmitterResource(Emitter);*/
+	part_system->SetEmitterResource(Emitter);
 }
 
 void CompParticleSystem::ImGuiLoadMeshPopUp()
@@ -741,15 +745,11 @@ void CompParticleSystem::ImGuiSaveParticlePopUp()
 
 void CompParticleSystem::ImGuiSaveEmitterPopUp()
 {
-	/*ParticleEmitter Emitter;
+	ParticleEmitter Emitter;
 	part_system->GetEmitter(Emitter);
 
-	FileToSaveName = *App->importer->Get_ParticleSystem_Emitter_path() + "\\" + FileToSave;
-
-	ParsonJSON* parsonjson = new ParsonJSON(FileToSaveName.c_str(), true, false, false);
-	bool Meta = parsonjson->Init();
-	if (Meta) parsonjson->SaveParticleEmitter(this, &Emitter);
-	RELEASE(parsonjson);*/
+	file_to_save_name = file_to_save += ".json";
+	SaveParticleEmitter(file_to_save_name.c_str(), this, &Emitter);
 }
 
 

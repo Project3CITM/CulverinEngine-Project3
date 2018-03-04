@@ -292,11 +292,11 @@ Particle::~Particle()
 
 bool Particle::PreUpdate(float dt)
 {
-	if (dt > 0.001f)
-	{
+//	if (dt > 0.001f)
+//	{
 		Properties.LifetimeActual += dt;
 		CalculateStatesInterpolation();
-	}
+//	}
 	return true;
 }
 
