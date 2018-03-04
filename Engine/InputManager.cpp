@@ -149,8 +149,10 @@ void InputManager::ShowInspectorInfo()
 		if (ImGui::Selectable(tree_action_name.c_str(), selected == i, ImGuiSelectableFlags_SpanAllColumns))
 		{
 			selected = i;
+			selected_action_name.clear();
 			selected_action_name = action->name;
-			selected_action_key = action->key_relation->name.c_str();
+			selected_action_key.clear();
+			selected_action_key = action->key_relation->name;
 			action_type = action_vector[selected]->action_type;
 
 		}

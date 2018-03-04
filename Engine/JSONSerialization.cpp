@@ -798,12 +798,12 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 				std::string name = "Input.InputManager" + std::to_string(i) + ".InputAction" + std::to_string(j);
 				name += ".";
 				InputAction* input_action = nullptr;
-				input_manager->action_vector.push_back(input_action);
 				std::string action_name = json_object_dotget_string_with_std(config, name + "InputActionName");
 				std::string key_relation = json_object_dotget_string_with_std(config, name + "KeyRelationName");
 				int action_type = json_object_dotget_number_with_std(config, name + "ActionType");
 				input_action = input_manager->CreateNewAction(action_name.c_str(), key_relation.c_str(), static_cast<ActionInputType>(action_type));
-				
+				input_manager->action_vector.push_back(input_action);
+
 			}
 		}
 	}

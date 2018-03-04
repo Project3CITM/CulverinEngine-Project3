@@ -40,6 +40,7 @@ bool ModuleFS::Init(JSON_Object * node)
 	CreateFolder("Library/Materials");
 	CreateFolder("Library/Scripts");
 	CreateFolder("Library/Animations");
+	CreateFolder("Library/JSON");
 	CreateFolder("Assets");
 	CreateFolder("Assets/Maps");
 	CreateFolder("Assets/Shaders/Materials");

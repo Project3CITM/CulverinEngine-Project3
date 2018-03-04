@@ -69,8 +69,8 @@ Application::Application()
 	AddModule(camera);
 	AddModule(resource_manager);
 	AddModule(physics);
-	AddModule(input);
 	AddModule(module_key_binding);
+	AddModule(input);
 	AddModule(console);
 	AddModule(scene);
 	AddModule(module_lightning); // Ask this module creators before changing the order, possible dependencies with scene and shaders module.
