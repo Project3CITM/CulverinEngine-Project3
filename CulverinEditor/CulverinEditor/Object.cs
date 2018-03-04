@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security;
+using System.Runtime.CompilerServices;
 
 namespace CulverinEditor
 {
@@ -45,6 +46,9 @@ namespace CulverinEditor
             }
             return ret;
         }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern GameObject Instantiate(string prefab);
 
         public override int GetHashCode()
         {

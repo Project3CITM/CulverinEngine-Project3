@@ -154,6 +154,7 @@ public:
 	void		SetOwnGameObject(GameObject* gameobject);
 	void		CreateGameObject(MonoObject* object);
 	bool		DestroyGameObject(MonoObject* object);
+	MonoObject*	Instantiate(MonoObject* object, MonoString* prefab);
 
 	/* Transform */
 	MonoObject* GetForwardVector(MonoObject* object);

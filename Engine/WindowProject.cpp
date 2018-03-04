@@ -392,7 +392,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 			{
 				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
 				{
-					std::string directory_prebaf = GetDirectory();
+					std::string directory_prebaf = App->fs->GetMainDirectory();
 					directory_prebaf += "/";
 					directory_prebaf += files[i].file_name;
 					App->json_seria->LoadPrefab(directory_prebaf.c_str());

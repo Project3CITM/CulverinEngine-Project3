@@ -10,6 +10,7 @@
 #include "CompInteractive.h"
 #include "ResourceScript.h"
 #include "ModuleResourceManager.h"
+#include "JSONSerialization.h"
 #include "GameObject.h"
 #include "Scene.h"
 #include "CompAudio.h"
@@ -934,6 +935,24 @@ MonoObject * CSharpScript::GetChildByName(MonoObject * object, MonoString * name
 {
 	GameObject* target = current_game_object->GetChildbyName(mono_string_to_utf8(name));
 	return App->importer->iScript->GetMonoObject(target);
+}
+
+MonoObject*	CSharpScript::Instantiate(MonoObject* object, MonoString* prefab_)
+{
+	const char* prefab = mono_string_to_utf8(prefab_);
+	std::string directory_prebaf = App->fs->GetMainDirectory();
+	directory_prebaf += "/";
+	directory_prebaf += prefab;
+	directory_prebaf += ".prefab.json";
+	GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
+	if (gameobject != nullptr)
+	{
+		App->scene->root->AddChildGameObject(gameobject);
+		App->importer->iScript->UpdateMonoMap(gameobject);
+		return App->importer->iScript->GetMonoObject(gameobject);
+	}
+	LOG("[error] with load prefab");
+	return nullptr;
 }
 
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)

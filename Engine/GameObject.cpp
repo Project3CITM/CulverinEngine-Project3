@@ -675,7 +675,7 @@ void GameObject::ShowGameObjectOptions()
 	}
 	if (ImGui::MenuItem("Create as Prefab", NULL, false))
 	{
-		App->json_seria->SavePrefab(*this, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), "", false);
+		App->json_seria->SavePrefab(*this, App->fs->GetMainDirectory().c_str(), "", false);
 		((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
 		App->fs->UpdateFilesAssets();
 	}
