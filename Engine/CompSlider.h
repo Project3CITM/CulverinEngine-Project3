@@ -15,13 +15,17 @@ public:
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
 
+	void OnPointDown(Event event_input);
+	void OnClick();
+
 
 private:
 public:
-	CompImage * slide = nullptr;
+	CompImage * slide_bar = nullptr;
 private:
 	std::vector<CompScript*> linked_scripts;
-
+	float min_pos = 0;
+	float max_pos = 0;
 
 };
 

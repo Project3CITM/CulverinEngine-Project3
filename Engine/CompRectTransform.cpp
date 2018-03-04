@@ -436,7 +436,7 @@ std::vector<float3> CompRectTransform::GenerateQuadVertices()
 
 int CompRectTransform::GetWidth()const
 {
-	return height;
+	return width;
 }
 
 int CompRectTransform::GetHeight()const

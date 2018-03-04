@@ -212,11 +212,11 @@ void Hierarchy::ShowOptions()
 			{
 				canvas = App->scene->CreateCanvas(nullptr);
 			}
-			GameObject* slider = App->scene->CreateSlider(canvas);
-			GameObject* to_slide = App->scene->CreateImage(slider);
-			CompSlider* slide = (CompSlider*)slider->FindComponentByType(Comp_Type::C_SLIDER);
-			CompImage* to_move = (CompImage*)to_slide->FindComponentByType(Comp_Type::C_IMAGE);
-			slide->slide = to_move;
+			GameObject* to_slide = App->scene->CreateImage(canvas);
+			GameObject* slider = App->scene->CreateSlider(to_slide);
+			CompSlider* to_move = (CompSlider*)slider->FindComponentByType(Comp_Type::C_SLIDER);
+			CompImage* bar = (CompImage*)to_slide->FindComponentByType(Comp_Type::C_IMAGE);
+			to_move->slide_bar = bar;
 
 			App->gui->SetLinkInspector(slider);
 		}
