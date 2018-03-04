@@ -17,10 +17,10 @@ public class PerceptionSightEnemy : CulverinBehaviour
     void Update()
     {
         //TODO: Optimization --> Check if player is out of range
-        if(true)
+        if (true)
         {
-           // Debug.Log("Player X: " + player.GetComponent<MovementController>().curr_x);
-           // Debug.Log("Player Y: " + player.GetComponent<MovementController>().curr_y);
+            // Debug.Log("Player X: " + player.GetComponent<MovementController>().curr_x);
+            // Debug.Log("Player Y: " + player.GetComponent<MovementController>().curr_y);
             Debug.Log("Current Tile X: " + GetCurrentTileX());
             Debug.Log("Current Tile Y: " + GetCurrentTileY());
             Debug.Log("Frustum size: " + frustum_size);
@@ -30,26 +30,24 @@ public class PerceptionSightEnemy : CulverinBehaviour
             //NORTH:
             for (int j = 0; j < frustum_lenght; j++)
             {
-                for (int i = 0; i < (frustum_size + 2 * j); i++)
+                Debug.Log("j: " + j);
+                Debug.Log("Checking Tile Y: " + (GetCurrentTileY() - j));
+                if (2 == (GetCurrentTileY() - j))//player.GetComponent<MovementController>().curr_y
                 {
-                    Debug.Log("j: " + j);
-                    Debug.Log("i: " + i);
-                    Debug.Log("Checking Tile Y: " + (GetCurrentTileY() - j));
-                    if (2 == (GetCurrentTileY() - j))//player.GetComponent<MovementController>().curr_y
+                    for (int i = -j; i <= j + (frustum_size - 1); i++)
                     {
-                        for (int k = -j; k <= j; k++)
+                        Debug.Log("i: " + i);
+                        Debug.Log("Checking Tile X: " + (GetCurrentTileX() + i - ((frustum_size - 1) / 2)));
+                        if (2 == (GetCurrentTileX() + i - ((frustum_size - 1) / 2)))//player.GetComponent<MovementController>().curr_x
                         {
-                            Debug.Log("k: " + k);
-                            Debug.Log("Checking Tile X: " + (GetCurrentTileX() + k));
-                            if (2 == (GetCurrentTileX() + k))//player.GetComponent<MovementController>().curr_x
-                            {
-                                Debug.Log("Player Is INSIDE Vision");
-                                player_seen = true;
-                                break;
-                            }
+                            Debug.Log("Player Is INSIDE Vision");
+                            player_seen = true;
+                            break;
                         }
                     }
                 }
+                if (player_seen == true)
+                    break;
             }
 
             if (player_seen == false)
