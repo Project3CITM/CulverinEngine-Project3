@@ -12,6 +12,7 @@
 #include "ModuleFS.h"
 #include <vector>
 #include "CompSlider.h"
+#include "ModuleInput.h"
 
 CompSlider::CompSlider(Comp_Type t, GameObject * parent) : CompInteractive (t, parent)
 {
@@ -86,7 +87,15 @@ void CompSlider::ShowInspectorInfo()
 		ImGui::OpenPopup("Options Slider");
 	}
 	ImGui::PopStyleVar();
-
+	if (ImGui::Button("Sync Min/Max", ImVec2(120, 0)))
+	{
+		
+		min_pos = -slide_bar->GetRectTrasnform()->GetWidth()/2;
+		max_pos = slide_bar->GetRectTrasnform()->GetWidth()/2;
+		slide_bar->SetToFilled(true);
+	}
+	ImGui::Text("Min pos: %f", min_pos);
+	ImGui::Text("Max pos: %f", max_pos);
 
 	ImGui::TreePop();
 }
@@ -149,3 +158,32 @@ void CompSlider::Load(const JSON_Object * object, std::string name)
 	Enable();
 }
 
+void CompSlider::OnPointDown(Event event_input)
+{
+	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
+	{
+		return;
+	}
+
+	OnClick();
+	point_down = true;
+
+	//UpdateSelectionState(event_input);
+	//PrepareHandleTransition();
+}
+
+void CompSlider::OnClick()
+{
+	//float3 new_pos =()
+	int x_pos = App->input->GetMouseX();
+	if (x_pos > max_pos)
+	{
+		x_pos = max_pos;
+	}
+	if (x_pos < min_pos)
+	{
+		x_pos = min_pos;
+	}
+	image->GetRectTrasnform()->SetPos(float3(x_pos, slide_bar->GetGameObjectPos().y, 0));
+
+}

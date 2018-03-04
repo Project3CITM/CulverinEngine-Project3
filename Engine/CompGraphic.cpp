@@ -139,6 +139,7 @@ uint CompGraphic::GetTextureID() const
 
 CompRectTransform * CompGraphic::GetRectTrasnform() const
 {
+	if(this!=nullptr)
 	return transform;
 }
 

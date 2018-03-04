@@ -177,11 +177,11 @@ public class DaenerysController : CharacterController
 
         if (active)
         {
-            //icon.Enable();
+            icon.SetEnabled(true, daenerys_icon_obj);
         }
         else
         {
-            //icon.Disable();
+            icon.SetEnabled(false, daenerys_icon_obj);
         }
     }
 }

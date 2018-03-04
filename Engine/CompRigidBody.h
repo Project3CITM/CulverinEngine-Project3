@@ -40,6 +40,7 @@ public:
 
 	//Getters ----------------------
 	jpPhysicsRigidBody* GetPhysicsBody() const;
+	void RemoveJoint();
 
 	void UpdateParentPosition();
 

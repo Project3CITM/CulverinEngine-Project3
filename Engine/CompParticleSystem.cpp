@@ -15,6 +15,15 @@
 CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
 	name_component = "Particle_System";
+
+	emitter_resource_name.reserve(100);
+	particle_resource_name.reserve(100);
+
+	emitter_resource_name = parent->GetName();
+	emitter_resource_name += "_emitter";
+	particle_resource_name = parent->GetName();
+	particle_resource_name += "_particle";
+
 	part_system = new ParticleSystem();
 	uid = App->random->Int();
 }
@@ -104,7 +113,8 @@ void CompParticleSystem::SetTextureResource(const char * Path, int columns, int 
 	size_t bar_pos = file_to_load.rfind("\\") + 1;
 	file_to_load_name = file_to_load.substr(bar_pos);
 	ResourceMaterial* res = (ResourceMaterial*)App->resource_manager->GetResource(file_to_load_name.c_str());
-	SetTextureResource(res->GetUUID(), columns, rows, numberOfFrames, AnimationOrder);
+	if(res)
+		SetTextureResource(res->GetUUID(), columns, rows, numberOfFrames, AnimationOrder);
 }
 
 void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, int numberOfFrames, uint AnimationOrder)
@@ -150,14 +160,32 @@ void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveSc
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
+
+	json_object_dotset_string_with_std(object, name + "ParticleResource:", particle_resource_name.c_str());
+	json_object_dotset_string_with_std(object, name + "EmitterResource:", emitter_resource_name.c_str());
+
+	ImGuiSaveParticlePopUp();
+	ImGuiSaveEmitterPopUp();
+
+	
 }
 
 void CompParticleSystem::Load(const JSON_Object* object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	particle_resource_name = json_object_dotget_string_with_std(object, name + "ParticleResource:");
+	emitter_resource_name = json_object_dotget_string_with_std(object, name + "EmitterResource:");
+
+	file_to_load = particle_resource_name;
+	ImGuiLoadParticlePopUp();
+
+	file_to_load = emitter_resource_name;
+	ImGuiLoadEmitterPopUp();
 }
 
-bool CompParticleSystem::SaveParticleStates(const char* file_name, ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const
+
+
+bool CompParticleSystem::SaveParticleStates(ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
@@ -165,7 +193,8 @@ bool CompParticleSystem::SaveParticleStates(const char* file_name, ResourceMater
 	App->fs->CreateFolder("Assets/ParticleSystem/Particles");
 	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Particles");
 	file_path += "\\";
-	file_path += file_name;
+	file_path += particle_resource_name;
+	file_path += ".json";
 
 	root_value = json_parse_file(file_path.c_str());
 	if (root_value == NULL)
@@ -230,20 +259,25 @@ bool CompParticleSystem::SaveParticleStates(const char* file_name, ResourceMater
 	return true;
 }
 
-bool CompParticleSystem::LoadParticleStates(const char* file_name, CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF) const
+bool CompParticleSystem::LoadParticleStates(const char* file_name, CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF)
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
 	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Particles");
 	file_path += "\\";
 	file_path += file_name;
+	particle_resource_name = file_name;
+	file_path += ".json";
 	root_value = json_parse_file(file_path.c_str());
+
+
 	if (root_value == NULL)
 		root_value = json_value_init_object();
 	root_object = json_value_get_object(root_value);
 
 	JSON_Object* file_conf = nullptr;
 	file_conf = json_object_get_object(root_object, "particlestate");
+
 
 	ParticleState* State = nullptr;
 	JSON_Object* conf = nullptr;
@@ -287,12 +321,14 @@ bool CompParticleSystem::LoadParticleStates(const char* file_name, CompParticleS
 		State->inputs_mode = GetUInt(conf, "inputs_mode");
 		State->picker_mode = GetUInt(conf, "picker_mode");
 	}
-
+	
 	json_value_free(root_value);
 	return true;
 }
 
-bool CompParticleSystem::SaveParticleEmitter(const char* file_name, CompParticleSystem* system, const ParticleEmitter* emitter) const
+
+
+bool CompParticleSystem::SaveParticleEmitter(const CompParticleSystem* system, const ParticleEmitter* emitter) const
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
@@ -300,7 +336,8 @@ bool CompParticleSystem::SaveParticleEmitter(const char* file_name, CompParticle
 	App->fs->CreateFolder("Assets/ParticleSystem/Emitters");
 	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters");
 	file_path += "\\";
-	file_path += file_name;
+	file_path += emitter_resource_name;
+	file_path += ".json";
 
 	root_value = json_parse_file(file_path.c_str());
 	if (root_value == NULL)
@@ -321,9 +358,9 @@ bool CompParticleSystem::SaveParticleEmitter(const char* file_name, CompParticle
 	SetBool(conf, "ShowEmitter", ShowEmitter);
 
 	if (system->GetChildParticle() != nullptr)
-		SetString(conf, "ChildParticle", system->GetChildParticle()->c_str());
+		SetString(conf, "ChildParticle", GetChildParticle()->c_str());
 	if (system->GetChildEmitter() != nullptr)
-		SetString(conf, "ChildEmitter", system->GetChildEmitter()->c_str());
+		SetString(conf, "ChildEmitter", GetChildEmitter()->c_str());
 
 	SetFloat(conf, "EmitterLifeMax", emitter->EmitterLifeMax);
 	SetFloat4x4(conf, "Transform", emitter->Transform);
@@ -365,13 +402,15 @@ bool CompParticleSystem::SaveParticleEmitter(const char* file_name, CompParticle
 	return true;
 }
 
-bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticleSystem* system, ParticleEmitter& emitter) const
+bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticleSystem* system, ParticleEmitter& emitter) 
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
 	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters");
 	file_path += "\\";
 	file_path += file_name;
+	emitter_resource_name = file_name;
+	file_path += ".json";
 
 	root_value = json_parse_file(file_path.c_str());
 	if (root_value == NULL)
@@ -425,9 +464,12 @@ bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticle
 		break;
 	}
 
+
 	json_value_free(root_value);
 	return true;
 }
+
+
 
 void CompParticleSystem::SetChild(const char* Particle, const char* Emitter)
 {
@@ -467,52 +509,82 @@ void CompParticleSystem::ShowInspectorInfo()
 	ImGui::PopStyleVar();
 
 	ImGui::Checkbox("Show Particle Editor", &part_system->EditorWindowOpen);
-	if (ImGui::Button("Save Particles Resource", ImVec2(170, 30)))
+	
+	//Emitter options
+	if (ImGui::TreeNodeEx("Emitter"))
 	{
-		file_type = Particle_Resource;
-		pop_up_save_open = true;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Load Particles Resource", ImVec2(170, 30)))
+		static char emitter_name[100];
+		memcpy_s(emitter_name, 99, emitter_resource_name.c_str(), 99);
+		ImGui::InputText("- Emitter Name", emitter_name, 99);
+		emitter_resource_name = emitter_name;
+
+		if (ImGui::SmallButton("Save Emitter Conf"))
+		{
+			file_type = Emitter_Resource;
+			pop_up_save_open = true;
+		}
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Load Emitter Conf"))
+		{
+			file_type = Emitter_Resource;
+			pop_up_load_open = true;
+		}
+		ImGui::TreePop();
+	}	
+	
+
+	//Particle options
+	if (ImGui::TreeNodeEx("Particle"))
 	{
-		file_type = Particle_Resource;
-		pop_up_load_open = true;
+		static char particle_name[100];
+		memcpy_s(particle_name, 99, particle_resource_name.c_str(), 99);
+		ImGui::InputText("- Particle Name", particle_name, 99);
+		particle_resource_name = particle_name;
+
+		if (ImGui::SmallButton("Save Particles Conf"))
+		{
+			file_type = Particle_Resource;
+			pop_up_save_open = true;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Load Particles Conf"))
+		{
+			file_type = Particle_Resource;
+			pop_up_load_open = true;
+		}
+		ImGui::TreePop();
 	}
-	if (ImGui::Button("Save Emitter Resource", ImVec2(170, 30)))
+
+	//Child options
+	if (ImGui::TreeNodeEx("Child"))
 	{
-		file_type = Emitter_Resource;
-		pop_up_save_open = true;
+		if (ImGui::Button("Load Child Particles Res", ImVec2(170, 30)))
+		{
+			file_type = Child_Particle_Resource;
+			pop_up_load_open = true;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Load Child Emitter Res", ImVec2(170, 30)))
+		{
+			file_type = Child_Emitter_Resource;
+			pop_up_load_open = true;
+		}
+		if (ImGui::Button("Unload children", ImVec2(120, 30)))
+			child_particle = child_emitter = "";
+		char title[1000] = "";
+		if (child_particle.length() <= 950)
+		{
+			sprintf_s(title, 1000, "Loaded Child Particle: %s", child_particle.c_str());
+			ImGui::Text(title);
+		}
+		if (child_emitter.length() <= 950)
+		{
+			sprintf_s(title, 1000, "Loaded Child Emitter: %s", child_emitter.c_str());
+			ImGui::Text(title);
+		}
+		ImGui::TreePop();
 	}
-	ImGui::SameLine();
-	if (ImGui::Button("Load Emitter Resource", ImVec2(170, 30)))
-	{
-		file_type = Emitter_Resource;
-		pop_up_load_open = true;
-	}
-	if (ImGui::Button("Load Child Particles Res", ImVec2(170, 30)))
-	{
-		file_type = Child_Particle_Resource;
-		pop_up_load_open = true;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Load Child Emitter Res", ImVec2(170, 30)))
-	{
-		file_type = Child_Emitter_Resource;
-		pop_up_load_open = true;
-	}
-	if (ImGui::Button("Unload children", ImVec2(120, 30)))
-		child_particle = child_emitter = "";
-	char title[1000] = "";
-	if (child_particle.length() <= 950)
-	{
-		sprintf_s(title, 1000, "Loaded Child Particle: %s", child_particle.c_str());
-		ImGui::Text(title);
-	}
-	if (child_emitter.length() <= 950)
-	{
-		sprintf_s(title, 1000, "Loaded Child Emitter: %s", child_emitter.c_str());
-		ImGui::Text(title);
-	}
+	
 	/*
 	if (ImGui::Button("Load Mesh", ImVec2(120, 30)))
 	{
@@ -525,10 +597,7 @@ void CompParticleSystem::ShowInspectorInfo()
 		file_type = Texture_Resource;
 		pop_up_load_open = true;
 	}
-
-
-
-
+	
 	// Button Options --------------------------------------
 	if (ImGui::BeginPopup("OptionsParticleSystem"))
 	{
@@ -673,7 +742,6 @@ void CompParticleSystem::ImGuiLoadParticlePopUp()
 	ParticleState FinalState;
 
 	file_to_load_name = App->fs->GetOnlyName(file_to_load);
-	file_to_load_name += ".json";
 	LoadParticleStates(file_to_load_name.c_str(),this, InitialState, FinalState);
 	
 
@@ -685,7 +753,6 @@ void CompParticleSystem::ImGuiLoadEmitterPopUp()
 {
 	ParticleEmitter Emitter;
 	file_to_load_name = App->fs->GetOnlyName(file_to_load);
-	file_to_load_name += ".json";
 	LoadParticleEmitter(file_to_load_name.c_str(), this, Emitter);
 
 	part_system->SetEmitterResource(Emitter);
@@ -699,7 +766,7 @@ void CompParticleSystem::ImGuiLoadMeshPopUp()
 
 void CompParticleSystem::ImGuiSavePopUp()
 {
-	ImGui::OpenPopup("Save File##1");
+	/*ImGui::OpenPopup("Save File##1");
 	if (ImGui::BeginPopupModal("Save File##1", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_HorizontalScrollbar))
 	{
 		const char* Str = "Wrong Type";
@@ -731,25 +798,29 @@ void CompParticleSystem::ImGuiSavePopUp()
 		}
 		ImGui::EndPopup();
 	}
+	*/
+
+	switch (file_type)
+	{
+	case Particle_Resource: ImGuiSaveParticlePopUp(); break;
+	case Emitter_Resource: ImGuiSaveEmitterPopUp(); break;
+	}
 }
 
-void CompParticleSystem::ImGuiSaveParticlePopUp()
+void CompParticleSystem::ImGuiSaveParticlePopUp()const
 {
 	ParticleState InitialState;
 	part_system->GetInitialState(InitialState);
 	ParticleState FinalState;
 	part_system->GetFinalState(FinalState);
-	file_to_save += ".json";
-	SaveParticleStates(file_to_save.c_str(), texture_resource, part_system->GetTextureResource(), &InitialState, &FinalState);
+	SaveParticleStates(texture_resource, part_system->GetTextureResource(), &InitialState, &FinalState);
 }
 
-void CompParticleSystem::ImGuiSaveEmitterPopUp()
+void CompParticleSystem::ImGuiSaveEmitterPopUp()const
 {
 	ParticleEmitter Emitter;
 	part_system->GetEmitter(Emitter);
-
-	file_to_save_name = file_to_save += ".json";
-	SaveParticleEmitter(file_to_save_name.c_str(), this, &Emitter);
+	SaveParticleEmitter(this, &Emitter);
 }
 
 
@@ -761,7 +832,7 @@ void CompParticleSystem::SetDebugOptions(bool ShowEmitterBoundBox, bool ShowEmit
 	part_system->ShowEmitter = ShowEmitter;
 }
 
-void CompParticleSystem::GetDebugOptions(bool& ShowEmitterBoundBox, bool& ShowEmitter)
+void CompParticleSystem::GetDebugOptions(bool& ShowEmitterBoundBox, bool& ShowEmitter) const
 {
 	ShowEmitterBoundBox = part_system->ShowEmitterBoundBox;
 	ShowEmitter = part_system->ShowEmitter;

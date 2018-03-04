@@ -17,6 +17,7 @@
 #include "CompButton.h"
 #include "CompCollider.h"
 #include "CompRigidBody.h"
+#include "CompJoint.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
 

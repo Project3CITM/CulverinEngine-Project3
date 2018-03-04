@@ -1024,6 +1024,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompRigidBody";
 	}
+	else if (name == "CulverinEditor.CompJoint")
+	{
+		comp_name = "CompJoint";
+	}
 	else if (name == "CulverinEditor.CompAnimation")
 	{
 		comp_name = "CompAnimation";
@@ -1137,18 +1141,32 @@ void CSharpScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* 
 	Component* comp = current_game_object->GetComponentByName(name_component.c_str());
 	if (comp != nullptr && comp->GetEnabled() != active)
 	{
-		if (active == true)
+		if (comp->GetType() != Comp_Type::C_SCRIPT)
 		{
-			comp->Enable();
-			((CompScript*)comp)->p_active = true;
+			if (active == true)
+			{
+				comp->Enable();
+			}
+			else
+			{
+				comp->Disable();
+			}
 		}
 		else
 		{
-			comp->Disable();
-			Event script;
-			script.script.type = EventType::EVENT_SCRIPT_DISABLED;
-			script.script.script = (CompScript*)comp;
-			PushEvent(script);
+			if (active == true)
+			{
+				comp->Enable();
+				((CompScript*)comp)->p_active = true;
+			}
+			else
+			{
+				comp->Disable();
+				Event script;
+				script.script.type = EventType::EVENT_SCRIPT_DISABLED;
+				script.script.script = (CompScript*)comp;
+				PushEvent(script);
+			}
 		}
 	}
 	else

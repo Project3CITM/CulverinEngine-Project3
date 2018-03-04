@@ -92,6 +92,12 @@ bool Scene::Start()
 	defined_tags.push_back("camera");
 	defined_tags.push_back("player");
 
+	tagged_objects.reserve(defined_tags.size());
+	for (uint i = 0; i < defined_tags.size(); i++)
+	{
+		tagged_objects.push_back(new std::vector<GameObject*>());
+	}
+
 	Start_t = perf_timer.ReadMs();
 	return true;
 }

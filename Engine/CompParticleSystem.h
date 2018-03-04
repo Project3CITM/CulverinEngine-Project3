@@ -37,8 +37,8 @@ public:
 	void ImGuiLoadEmitterPopUp();
 	void ImGuiLoadMeshPopUp();
 	void ImGuiSavePopUp();
-	void ImGuiSaveParticlePopUp();
-	void ImGuiSaveEmitterPopUp();
+	void ImGuiSaveParticlePopUp()const;
+	void ImGuiSaveEmitterPopUp()const;
 
 private:
 
@@ -54,14 +54,14 @@ private:
 
 	/*DEBUG FUNCS*/
 	void SetDebugOptions(bool ShowEmitterBoundBox, bool ShowEmitter);
-	void GetDebugOptions(bool& ShowEmitterBoundBox, bool& ShowEmitter);
+	void GetDebugOptions(bool& ShowEmitterBoundBox, bool& ShowEmitter) const;
 
 
-	bool SaveParticleStates(const char* file_name,  ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const;
-	bool LoadParticleStates(const char* file_name, CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF) const;
+	bool SaveParticleStates(ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const;
+	bool LoadParticleStates(const char* file_name, CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF);
 
-	bool SaveParticleEmitter(const char* file_name, CompParticleSystem* system, const ParticleEmitter* emitter) const;
-	bool LoadParticleEmitter(const char* file_name, CompParticleSystem* system, ParticleEmitter& emitter) const;
+	bool SaveParticleEmitter(const CompParticleSystem* system, const ParticleEmitter* emitter) const;
+	bool LoadParticleEmitter(const char* file_name, CompParticleSystem* system, ParticleEmitter& emitter);
 
 	/*JSON FUNCS*/
 	bool SetInt(JSON_Object* conf, const char* field, int value) const;
@@ -101,6 +101,9 @@ private:
 	std::string file_to_save;
 	std::string file_to_save_name;
 	std::string directory_temporal_str;
+
+	std::string particle_resource_name;
+	std::string emitter_resource_name;
 
 	std::string child_particle;
 	std::string child_particle_name;

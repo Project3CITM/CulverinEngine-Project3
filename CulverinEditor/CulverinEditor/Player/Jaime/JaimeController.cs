@@ -185,11 +185,11 @@ public class JaimeController : CharacterController
 
         if (active)
         {
-            //icon.Enable();
+            icon.SetEnabled(true, jaime_icon_obj);
         }
         else
         {
-            //icon.Disable();
+            icon.SetEnabled(false, jaime_icon_obj);
         }
     }
 }

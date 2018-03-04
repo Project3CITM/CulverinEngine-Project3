@@ -19,6 +19,8 @@ public class MovementController : CulverinBehaviour
         DOWN
     }
 
+    public GameObject enemy_obj;
+
     public Direction curr_dir = Direction.NORTH;
     public Facing curr_fac = Facing.STRAIGHT;
     public int start_direction = 1;
@@ -55,6 +57,8 @@ public class MovementController : CulverinBehaviour
 
     void Start()
     {
+        enemy_obj = GetLinkedObject("enemy_obj"); //Change this to accept more than one enemy
+
         audio = GetComponent<CompAudio>();
         audio.PlayEvent("PlayMusic");
 
@@ -239,25 +243,25 @@ public class MovementController : CulverinBehaviour
 
     private void CheckMovement()
     {
-        if (Input.GetKeyDown(KeyCode.A)) //Left
+        if (Input.GetKeyDown(KeyCode.A) && !EnemyInLeft()) //Left
         {
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
             MoveLeft(out tile_mov_x, out tile_mov_y);
         }
-        else if (Input.GetKeyDown(KeyCode.D)) //Right
+        else if (Input.GetKeyDown(KeyCode.D) && !EnemyInRight()) //Right
         {
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
             MoveRight(out tile_mov_x, out tile_mov_y);
         }
-        else if (Input.GetKeyDown(KeyCode.W)) //Up
+        else if (Input.GetKeyDown(KeyCode.W) && !EnemyInFront()) //Up
         {
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
             MoveForward(out tile_mov_x, out tile_mov_y);
         }
-        else if (Input.GetKeyDown(KeyCode.S)) //Down
+        else if (Input.GetKeyDown(KeyCode.S) && !EnemyBehind()) //Down
         {
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
@@ -493,5 +497,197 @@ public class MovementController : CulverinBehaviour
         {
             return false;
         }
+    }
+
+    public bool EnemyInFront()
+    {
+        int direction = (int)curr_dir;
+        int position_front_x = curr_x;
+        int position_front_y = curr_y;
+
+        switch (direction)
+        {
+            case (int)MovementController.Direction.NORTH:
+                {
+                    position_front_y -= 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.SOUTH:
+                {
+                    position_front_y += 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.EAST:
+                {
+                    position_front_x += 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.WEST:
+                {
+                    position_front_x -= 1;
+                    break;
+                }
+
+            default:
+                {
+                    break;
+                }
+
+        }
+
+        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
+            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool EnemyBehind()
+    {
+        int direction = (int)curr_dir;
+        int position_front_x = curr_x;
+        int position_front_y = curr_y;
+
+        switch (direction)
+        {
+            case (int)MovementController.Direction.NORTH:
+                {
+                    position_front_y += 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.SOUTH:
+                {
+                    position_front_y -= 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.EAST:
+                {
+                    position_front_x -= 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.WEST:
+                {
+                    position_front_x += 1;
+                    break;
+                }
+
+            default:
+                {
+                    break;
+                }
+
+        }
+
+        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
+            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool EnemyInLeft()
+    {
+        int direction = (int)curr_dir;
+        int position_front_x = curr_x;
+        int position_front_y = curr_y;
+
+        switch (direction)
+        {
+            case (int)MovementController.Direction.NORTH:
+                {
+                    position_front_x -= 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.SOUTH:
+                {
+                    position_front_x += 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.EAST:
+                {
+                    position_front_y -= 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.WEST:
+                {
+                    position_front_y += 1;
+                    break;
+                }
+
+            default:
+                {
+                    break;
+                }
+
+        }
+
+        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
+            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool EnemyInRight()
+    {
+        int direction = (int)curr_dir;
+        int position_front_x = curr_x;
+        int position_front_y = curr_y;
+
+        switch (direction)
+        {
+            case (int)MovementController.Direction.NORTH:
+                {
+                    position_front_x += 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.SOUTH:
+                {
+                    position_front_x -= 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.EAST:
+                {
+                    position_front_y += 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.WEST:
+                {
+                    position_front_y -= 1;
+                    break;
+                }
+
+            default:
+                {
+                    break;
+                }
+
+        }
+
+        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
+            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        {
+            return true;
+        }
+
+        return false;
     }
 }

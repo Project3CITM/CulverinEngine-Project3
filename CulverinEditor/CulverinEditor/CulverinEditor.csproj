@@ -45,10 +45,12 @@
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\Movement_Action.cs" />
     <Compile Include="AI\Seek_Steering.cs" />
+    <Compile Include="CompJoint.cs" />
     <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />
     <Compile Include="BarrelPuzle\BarrelManage.cs" />
     <Compile Include="BarrelPuzle\BarrelMovement.cs" />
+    <Compile Include="Player\BarrelFall.cs" />
     <Compile Include="Player\BaseControllers\CharacterController.cs" />
     <Compile Include="Player\BaseControllers\CharactersManager.cs" />
     <Compile Include="CompAnimation.cs" />

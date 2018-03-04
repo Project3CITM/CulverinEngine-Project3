@@ -492,6 +492,7 @@ void CompCamera::SetFov(float vertical)
 		float w = GetSizeDock("Scene").x;
 		float h = GetSizeDock("Scene").y;
 		float div = (w/h);
+		frustum.verticalFov = vertical * DEGTORAD;
 		frustum.horizontalFov = (2.0f * math::Atan(math::Tan(frustum.verticalFov / 2.0f) *div));
 	}
 	else
@@ -499,6 +500,7 @@ void CompCamera::SetFov(float vertical)
 		int w=App->window->GetWidth();
 		int h = App->window->GetHeight();
 		float div = ((float)w / (float)h);
+		frustum.verticalFov = vertical * DEGTORAD;
 		App->renderer3D->active_camera->frustum.horizontalFov = (2.0f * math::Atan(math::Tan(App->renderer3D->active_camera->frustum.verticalFov / 2.0f) *div));
 	}
 }
@@ -586,7 +588,8 @@ void CompCamera::Load(const JSON_Object * object, std::string name)
 	near_plane = frustum.nearPlaneDistance;
 	far_plane = frustum.farPlaneDistance;
 	vertical_fov = frustum.verticalFov * RADTODEG; /* output variable in Degrees */
-	
+	SetFov(vertical_fov);
+
 	is_main = json_object_dotget_boolean_with_std(object, name + "Main Camera");
 	SetMain(is_main);
 

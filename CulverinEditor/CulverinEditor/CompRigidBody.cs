@@ -11,6 +11,9 @@ namespace CulverinEditor
         public extern Quaternion GetColliderQuaternion();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void RemoveJoint();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void MoveKinematic(Vector3 pos, Quaternion rotation);
     }
 }

@@ -189,7 +189,11 @@ private:
 	/*Component RigidBody*/
 	static MonoObject* GetColliderPosition(MonoObject* object);
 	static MonoObject* GetColliderQuaternion(MonoObject* object);
+	static void		   RemoveJoint(MonoObject* object);
 	static void		   MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation);
+
+	/*Component Joint*/
+	static void		   DeleteJoint(MonoObject* object);
 
 	/*Component Animation*/
 	static void PlayAnimation(MonoObject* object, MonoString* string, mono_bool blending);
