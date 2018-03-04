@@ -24,9 +24,9 @@ public class CharacterController : CulverinBehaviour
     protected Hp health;                               // To handle current hp
     protected Stamina stamina;                         // To handle current stamina
     protected WeaponController right_weapon;           // Script that will handle right weapon the player is carrying (with its own progression system, stats...)
-    //protected CompAnimation anim_controller_right;     // Animation component to handle animations
+    protected CompAnimation anim_controller_right;     // Animation component to handle animations
     protected WeaponController left_weapon;            // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
-    //protected CompAnimation anim_controller_left;      // Animation component to handle animations
+    protected CompAnimation anim_controller_left;      // Animation component to handle animations
     protected CompImage icon;
 
     protected Position position = Position.CURRENT; 
@@ -127,6 +127,11 @@ public class CharacterController : CulverinBehaviour
         Debug.Log("Animation Transition Character");
     }
 
+    public virtual bool IsAnimationStopped(string name)
+    {
+        return true;
+    }
+
     public virtual void UpdateHUD(bool active)
     {
         Debug.Log("Change Current Character HUD");
@@ -141,5 +146,9 @@ public class CharacterController : CulverinBehaviour
         //    stamina = stamina_obj.GetComponent<Stamina>();
         //    stamina.SetStamina(curr_stamina, max_stamina);
         //}
+    }
+
+    public virtual void ToggleMesh(bool active)
+    {
     }
 }

@@ -30,10 +30,10 @@ public class DaenerysController : CharacterController
         Debug.Log(gameObject.GetName());
 
         // Start Idle animation
-        //anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
-        //anim_controller_left.PlayAnimation("Idle");
-        //anim_controller_right = rweapon_daenerys_obj.GetComponent<CompAnimation>();
-        //anim_controller_right.PlayAnimation("Idle");
+        anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
+        anim_controller_left.PlayAnimation("Idle");
+        anim_controller_right = rweapon_daenerys_obj.GetComponent<CompAnimation>();
+        anim_controller_right.PlayAnimation("Idle");
     }
 
     public override void ControlCharacter()
@@ -47,88 +47,89 @@ public class DaenerysController : CharacterController
         {
             // Check if player is moving to block attacks/abilities
             movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
-            if (!movement.IsMoving())
+            //if (!movement.IsMoving())
+            if(1 == 1)
             {
                 /* Player is alive */
-                //switch (state)
-                //{
-                //    case State.IDLE:
-                //        {
-                //            //Check For Input + It has to check if she's moving to block attack (¿?)
-                //            CheckAttack();
-                //            break;
-                //        }
-                //    case State.ATTACKING:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
-                //            if (anim_controller_left.IsAnimationStopped("Attack1"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation until it ends
-                //                Debug.Log("Daenerys Attacking");
-                //            }
-                //            break;
-                //        }
-                //    case State.COVER:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
+                switch (state)
+                {
+                    case State.IDLE:
+                        {
+                            //Check For Input + It has to check if she's moving to block attack (¿?)
+                            CheckAttack();
+                            break;
+                        }
+                    case State.ATTACKING:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Attack1"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation until it ends
+                                Debug.Log("Daenerys Attacking");
+                            }
+                            break;
+                        }
+                    case State.COVER:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
 
-                //            if (anim_controller_left.IsAnimationStopped("Cover"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Daenerys Covering");
-                //            }
-                //            break;
-                //        }
-                //    case State.BLOCKING:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
-                //            if (anim_controller_left.IsAnimationStopped("Block"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Daenerys Blocking");
-                //            }
-                //            break;
-                //        }
-                //    case State.HIT:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
-                //            if (anim_controller_left.IsAnimationStopped("Hit"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Daenerys Hit");
-                //            }
-                //            break;
-                //        }
-                //    case State.DEAD:
-                //        {
-                //            Debug.Log("We are going doown");
-                //            break;
-                //        }
-                //    default:
-                //        {
-                //            break;
-                //        }
-                //}
+                            if (anim_controller_left.IsAnimationStopped("Cover"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Daenerys Covering");
+                            }
+                            break;
+                        }
+                    case State.BLOCKING:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Block"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Daenerys Blocking");
+                            }
+                            break;
+                        }
+                    case State.HIT:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Hit"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Daenerys Hit");
+                            }
+                            break;
+                        }
+                    case State.DEAD:
+                        {
+                            Debug.Log("We are going doown");
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
             }
         }
     }
@@ -139,16 +140,14 @@ public class DaenerysController : CharacterController
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             Debug.Log("Daenerys Pressed 1");
-            left_weapon = lweapon_daenerys_obj.GetComponent<JaimeWeapon_Left>();
-            left_weapon.PrepareAbility();
+            lweapon_daenerys_obj.GetComponent<JaimeWeapon_Left>().PrepareAbility();
         }
 
         //Right Attack
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Daenerys Pressed 2");
-            right_weapon = rweapon_daenerys_obj.GetComponent<JaimeWeapon_Right>();
-            right_weapon.PrepareAbility();
+            rweapon_daenerys_obj.GetComponent<JaimeWeapon_Right>().PrepareAbility();
         }
     }
 
@@ -173,11 +172,11 @@ public class DaenerysController : CharacterController
 
     public override void SetAnimationTransition(string name, bool value)
     {
-        //anim_controller_right = rweapon_daenerys_obj.GetComponent<CompAnimation>();
-        //anim_controller_right.SetTransition(name, value);
+        anim_controller_right = rweapon_daenerys_obj.GetComponent<CompAnimation>();
+        anim_controller_right.SetTransition(name, value);
 
-        //anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
-        //anim_controller_left.SetTransition(name, value);
+        anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
+        anim_controller_left.SetTransition(name, value);
     }
 
     public override void UpdateHUD(bool active)
@@ -185,10 +184,12 @@ public class DaenerysController : CharacterController
         //Update Hp bar
         if (active)
         {
+            Debug.Log("Update HP Daenerys");
             //Update HP
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
 
+            Debug.Log("Update Stamina Daenerys");
             //Update Stamina
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             stamina.SetStamina(curr_stamina, max_stamina);
@@ -199,5 +200,17 @@ public class DaenerysController : CharacterController
         //Change current character icon
         icon = daenerys_icon_obj.GetComponent<CompImage>();
         icon.SetEnabled(active, daenerys_icon_obj);
+    }
+
+    public override bool IsAnimationStopped(string name)
+    {
+        anim_controller_right = rweapon_daenerys_obj.GetComponent<CompAnimation>();
+        return anim_controller_right.IsAnimationStopped(name);
+    }
+
+    public override void ToggleMesh(bool active)
+    {
+        lweapon_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active, lweapon_daenerys_obj);
+        rweapon_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active, rweapon_daenerys_obj);
     }
 }

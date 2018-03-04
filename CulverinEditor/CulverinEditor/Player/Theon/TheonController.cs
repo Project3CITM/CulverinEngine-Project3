@@ -30,10 +30,10 @@ public class TheonController : CharacterController
         Debug.Log(gameObject.GetName());
 
         // Start Idle animation
-        //anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
-        //anim_controller_left.PlayAnimation("Idle");
-        //anim_controller_right = rweapon_theon_obj.GetComponent<CompAnimation>();
-        //anim_controller_right.PlayAnimation("Idle");
+        anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
+        anim_controller_left.PlayAnimation("Idle");
+        anim_controller_right = rweapon_theon_obj.GetComponent<CompAnimation>();
+        anim_controller_right.PlayAnimation("Idle");
     }
 
     public override void ControlCharacter()
@@ -47,88 +47,89 @@ public class TheonController : CharacterController
         {
             // Check if player is moving to block attacks/abilities
             movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
-            if (!movement.IsMoving())
+            //if (!movement.IsMoving())
+            if(1 == 1)
             {
                 /* Player is alive */
-                //switch (state)
-                //{
-                //    case State.IDLE:
-                //        {
-                //            //Check For Input + It has to check if he's moving to block attack (¿?)
-                //            CheckAttack();
-                //            break;
-                //        }
-                //    case State.ATTACKING:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
-                //            if (anim_controller_left.IsAnimationStopped("Attack1"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Theon Attacking");
-                //            }
-                //            break;
-                //        }
-                //    case State.COVER:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
+                switch (state)
+                {
+                    case State.IDLE:
+                        {
+                            //Check For Input + It has to check if he's moving to block attack (¿?)
+                            CheckAttack();
+                            break;
+                        }
+                    case State.ATTACKING:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Attack1"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Theon Attacking");
+                            }
+                            break;
+                        }
+                    case State.COVER:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
 
-                //            if (anim_controller_left.IsAnimationStopped("Cover"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Jaime Covering");
-                //            }
-                //            break;
-                //        }
-                //    case State.BLOCKING:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
-                //            if (anim_controller_left.IsAnimationStopped("Block"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Theon Blocking");
-                //            }
-                //            break;
-                //        }
-                //    case State.HIT:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
-                //            if (anim_controller_left.IsAnimationStopped("Hit"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Theon Hit");
-                //            }
-                //            break;
-                //        }
-                //    case State.DEAD:
-                //        {
-                //            Debug.Log("We are going doown");
-                //            break;
-                //        }
-                //    default:
-                //        {
-                //            break;
-                //        }
-                //}
+                            if (anim_controller_left.IsAnimationStopped("Cover"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Jaime Covering");
+                            }
+                            break;
+                        }
+                    case State.BLOCKING:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Block"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Theon Blocking");
+                            }
+                            break;
+                        }
+                    case State.HIT:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Hit"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Theon Hit");
+                            }
+                            break;
+                        }
+                    case State.DEAD:
+                        {
+                            Debug.Log("We are going doown");
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
             }
         }
     }
@@ -139,16 +140,14 @@ public class TheonController : CharacterController
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             Debug.Log("Theon Pressed 1");
-            left_weapon = lweapon_theon_obj.GetComponent<JaimeWeapon_Left>();
-            left_weapon.PrepareAbility();
+            lweapon_theon_obj.GetComponent<JaimeWeapon_Left>().PrepareAbility();
         }
 
         //Right Attack
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Theon Pressed 2");
-            right_weapon = rweapon_theon_obj.GetComponent<JaimeWeapon_Right>();
-            right_weapon.PrepareAbility();
+            rweapon_theon_obj.GetComponent<JaimeWeapon_Right>().PrepareAbility();
         }
     }
 
@@ -182,11 +181,11 @@ public class TheonController : CharacterController
 
     public override void SetAnimationTransition(string name, bool value)
     {
-        //anim_controller_right = rweapon_theon_obj.GetComponent<CompAnimation>();
-        //anim_controller_right.SetTransition(name, value);
+        anim_controller_right = rweapon_theon_obj.GetComponent<CompAnimation>();
+        anim_controller_right.SetTransition(name, value);
 
-        //anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
-        //anim_controller_left.SetTransition(name, value);
+        anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
+        anim_controller_left.SetTransition(name, value);
     }
 
     public override void UpdateHUD(bool active)
@@ -211,5 +210,17 @@ public class TheonController : CharacterController
         //Change current character icon
         icon = theon_icon_obj.GetComponent<CompImage>();
         icon.SetEnabled(active, theon_icon_obj);
+    }
+
+    public override bool IsAnimationStopped(string name)
+    {
+        anim_controller_right = rweapon_theon_obj.GetComponent<CompAnimation>();
+        return anim_controller_right.IsAnimationStopped(name);
+    }
+
+    public override void ToggleMesh(bool active)
+    {
+        lweapon_theon_obj.GetComponent<CompMesh>().SetEnabled(active, lweapon_theon_obj);
+        rweapon_theon_obj.GetComponent<CompMesh>().SetEnabled(active, rweapon_theon_obj);
     }
 }

@@ -28,14 +28,13 @@ public class JaimeController : CharacterController
         icon.SetEnabled(false, jaime_icon_obj);
         icon.SetEnabled(true, jaime_icon_obj);
 
-
         Debug.Log(gameObject.GetName());
 
         // Start Idle animation
-        //anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
-        //anim_controller_left.PlayAnimation("Idle");
-        //anim_controller_right = rweapon_jaime_obj.GetComponent<CompAnimation>();
-        //anim_controller_right.PlayAnimation("Idle");
+        anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
+        anim_controller_left.PlayAnimation("Idle");
+        anim_controller_right = rweapon_jaime_obj.GetComponent<CompAnimation>();
+        anim_controller_right.PlayAnimation("Idle");
     }
 
     public override void ControlCharacter()
@@ -48,89 +47,90 @@ public class JaimeController : CharacterController
         if (health.GetCurrentHealth() > 0)
         {
             // Check if player is moving to block attacks/abilities
-            movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
-            if (!movement.IsMoving())
+            //movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
+            //if (!movement.IsMoving())
+            if(1 == 1)
             {
                 /* Player is alive */
-                //switch (state)
-                //{
-                //    case State.IDLE:
-                //        {
-                //            //Check For Input + It has to check if he's moving to block attack (¿?)
-                //            CheckAttack();
-                //            break;
-                //        }
-                //    case State.ATTACKING:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
-                //            if (anim_controller_left.IsAnimationStopped("Attack1"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Jaime Attacking");
-                //            }
-                //            break;
-                //        }
-                //    case State.COVER:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
+                switch (state)
+                {
+                    case State.IDLE:
+                        {
+                            //Check For Input + It has to check if he's moving to block attack (¿?)
+                            CheckAttack();
+                            break;
+                        }
+                    case State.ATTACKING:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Attack1"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Jaime Attacking");
+                            }
+                            break;
+                        }
+                    case State.COVER:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
 
-                //            if (anim_controller_left.IsAnimationStopped("Cover"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Jaime Covering");
-                //            }
-                //            break;
-                //        }
-                //    case State.BLOCKING:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
-                //            if (anim_controller_left.IsAnimationStopped("Block"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Jaime Blocking");
-                //            }
-                //            break;
-                //        }
-                //    case State.HIT:
-                //        {
-                //            //Check for end of the Attack animation
-                //            anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
-                //            if (anim_controller_left.IsAnimationStopped("Hit"))
-                //            {
-                //                state = State.IDLE;
-                //            }
-                //            else
-                //            {
-                //                // Keep playing specific attack animation  until it ends
-                //                Debug.Log("Jaime Hit");
-                //            }
-                //            break;
-                //        }
-                //    case State.DEAD:
-                //        {
-                //            Debug.Log("We are going doown");
-                //            break;
-                //        }
-                //    default:
-                //        {
-                //            break;
-                //        }
-                //}
+                            if (anim_controller_left.IsAnimationStopped("Cover"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Jaime Covering");
+                            }
+                            break;
+                        }
+                    case State.BLOCKING:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Block"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Jaime Blocking");
+                            }
+                            break;
+                        }
+                    case State.HIT:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
+                            if (anim_controller_left.IsAnimationStopped("Hit"))
+                            {
+                                state = State.IDLE;
+                            }
+                            else
+                            {
+                                // Keep playing specific attack animation  until it ends
+                                Debug.Log("Jaime Hit");
+                            }
+                            break;
+                        }
+                    case State.DEAD:
+                        {
+                            Debug.Log("We are going doown");
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
             }
         }
     }
@@ -141,16 +141,14 @@ public class JaimeController : CharacterController
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             Debug.Log("Jaime Pressed 1");
-            left_weapon = lweapon_jaime_obj.GetComponent<JaimeWeapon_Left>();
-            left_weapon.PrepareAbility();
+            lweapon_jaime_obj.GetComponent<JaimeWeapon_Left>().PrepareAbility();
         }
 
         //Right Attack
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Jaime Pressed 2");
-            right_weapon = rweapon_jaime_obj.GetComponent<JaimeWeapon_Right>();
-            right_weapon.PrepareAbility();
+            rweapon_jaime_obj.GetComponent<JaimeWeapon_Right>().PrepareAbility();
         }
     }
 
@@ -184,11 +182,13 @@ public class JaimeController : CharacterController
 
     public override void SetAnimationTransition(string name, bool value)
     {
-        //anim_controller_right = rweapon_jaime_obj.GetComponent<CompAnimation>();
-        //anim_controller_right.SetTransition(name, value);
-
-        //anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
-        //anim_controller_left.SetTransition(name, value);
+        Debug.Log("Jaime Transitioning between animations");
+        anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
+        anim_controller_left.SetTransition(name, value);
+     
+        Debug.Log("Right hand transition");
+        anim_controller_right = rweapon_jaime_obj.GetComponent<CompAnimation>();
+        anim_controller_right.SetTransition(name, value);
     }
 
     public override void UpdateHUD(bool active)
@@ -196,10 +196,12 @@ public class JaimeController : CharacterController
         //Update Hp bar
         if (active)
         {
+            Debug.Log("Update HP Jaime");
             //Update HP
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
 
+            Debug.Log("Update Stamina Jaime");
             //Update Stamina
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             stamina.SetStamina(curr_stamina, max_stamina);
@@ -209,5 +211,17 @@ public class JaimeController : CharacterController
         //Change current character icon
         icon = jaime_icon_obj.GetComponent<CompImage>();
         icon.SetEnabled(active, jaime_icon_obj); 
+    }
+
+    public override void ToggleMesh(bool active)
+    {
+        lweapon_jaime_obj.GetComponent<CompMesh>().SetEnabled(active, lweapon_jaime_obj);
+        rweapon_jaime_obj.GetComponent<CompMesh>().SetEnabled(active, rweapon_jaime_obj);
+    }
+
+    public override bool IsAnimationStopped(string name)
+    {
+        anim_controller_right = rweapon_jaime_obj.GetComponent<CompAnimation>();
+        return anim_controller_right.IsAnimationStopped(name);
     }
 }
