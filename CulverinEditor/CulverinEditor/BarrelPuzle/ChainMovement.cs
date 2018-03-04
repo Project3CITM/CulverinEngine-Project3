@@ -1,39 +1,37 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
-public class BarrelMovement : CulverinBehaviour
+public class ChainMovement : CulverinBehaviour
 {
 
-    public GameObject instance;
-    BarrelManage manage;
+    public GameObject c_instance;
+    ChainManage manage;
     public GameObject barrel = null;
 
     float length;
-    Transform trans;
+ 
     bool test = false;
 
 
     void Start()
     {
-        instance = GetLinkedObject("instance");
-        manage = instance.GetComponent<BarrelManage>();
-        trans = gameObject.GetComponent<Transform>();
+        c_instance = GetLinkedObject("c_instance");
+        manage = c_instance.GetComponent<ChainManage>();
+        //trans = gameObject.GetComponent<Transform>();
         barrel = null;
 
     }
     void Update()
     {
-        instance = GetLinkedObject("instance");
+        c_instance = GetLinkedObject("c_instance");
+        manage = c_instance.GetComponent<ChainManage>();
         
-        manage = instance.GetComponent<BarrelManage>();
-       // trans = gameObject.GetComponent<Transform>();
 
-       
-        Vector3 diff = gameObject.GetComponent<Transform>().GetPosition() - new Vector3(0,-4,0);
+        Vector3 diff = gameObject.GetComponent<Transform>().GetPosition() - new Vector3(0, 0, 0);
         if (diff.Length >= manage.length)
         {
-            gameObject.GetComponent<Transform>().SetPosition( new Vector3(0, -4, 0));
-         
+            gameObject.GetComponent<Transform>().SetPosition(new Vector3(0, 0, 0));
+
 
         }
         if (!manage.stop)
@@ -48,7 +46,6 @@ public class BarrelMovement : CulverinBehaviour
 
         }
 
-    
     }
 
     uint lfsr = 0xACE1u;

@@ -45,6 +45,9 @@
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\Movement_Action.cs" />
     <Compile Include="AI\Seek_Steering.cs" />
+    <Compile Include="BarrelPuzle\BarrelScript.cs" />
+    <Compile Include="BarrelPuzle\ChainManage.cs" />
+    <Compile Include="BarrelPuzle\ChainMovement.cs" />
     <Compile Include="CompJoint.cs" />
     <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />
