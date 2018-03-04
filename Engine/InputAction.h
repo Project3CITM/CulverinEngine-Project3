@@ -6,6 +6,8 @@
 #include"Application.h"
 #include"ModuleInput.h"
 
+#define MAXIMUM_AXIS_C 32768
+
 enum Keystateaction
 {
 	KEY_IDLE_ACTION = 0,
@@ -95,8 +97,9 @@ public:
 			if (input_event->type == SDL_CONTROLLERAXISMOTION)
 			{
 				if (input_event->caxis.axis == key_relation->event_value) {
-					direction_axis = input_event->caxis.value;
-					LOG("joystick %i", input_event->caxis.value);
+					//direction_axis = input_event->caxis.value;
+					direction_axis = (float)input_event->caxis.value/ (float)MAXIMUM_AXIS_C;
+					LOG("joystick %f", direction_axis);
 					return true;
 				}
 			}
