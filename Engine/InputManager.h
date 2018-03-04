@@ -45,11 +45,12 @@ public:
 
 private:
 public:
+	int number_of_action = 0;
+	std::vector<InputAction*> action_vector;
+
 	bool active_input = true;
 	bool block_action = false;
 private:
-	std::vector<InputAction*> action_vector;
-	int number_of_action=0;
 
 	bool window_open = false;
 	std::string name;

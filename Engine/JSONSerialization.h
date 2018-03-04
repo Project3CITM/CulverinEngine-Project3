@@ -70,7 +70,7 @@ public:
 	void SavePlayerAction(const PlayerActions* player_action, const char* directory, const char* fileName);
 	void SaveInputManager(JSON_Object* config_node, const InputManager* input_manager, uint count, uint action_count);
 	void SaveInputAction(JSON_Object* config_node, const InputAction* input_action, uint count, uint input_count);
-	void LoadPlayerAction(PlayerActions * player_action,const char* fileName);
+	void LoadPlayerAction(PlayerActions** player_action,const char* fileName);
 
 
 	// --------------------------------------

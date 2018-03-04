@@ -43,7 +43,7 @@ bool ModuleInput::Init(JSON_Object* node)
 	SDL_Init(0);
 	TTF_Init();
 
-	if(SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
+	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
 		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
@@ -74,8 +74,18 @@ bool ModuleInput::Init(JSON_Object* node)
 
 	}
 	player_action = new PlayerActions(this);
-	if(App->fs->CheckIsFileExist("player_action.json"))
-		App->json_seria->LoadPlayerAction(player_action, "player_action.json");
+	std::string name = App->fs->GetMainDirectory();
+	name += "/";
+	name += "player_action.json";
+	if (App->fs->CheckIsFileExist(name.c_str()))
+		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
+	else
+	{
+		std::string name = App->fs->GetMainDirectory();
+		name += "/";
+		name += "player_action_default.json";
+		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
+	}
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;
@@ -397,7 +407,7 @@ update_status ModuleInput::UpdateConfig(float dt)
 bool ModuleInput::CleanUp()
 {
 	LOG("Quitting SDL input event subsystem");
-	App->json_seria->SavePlayerAction(player_action, "", "player_action");
+	App->json_seria->SavePlayerAction(player_action, App->fs->GetMainDirectory().c_str() , "player_action");
 	player_action->Clear();
 	RELEASE(player_action);
 	player_action = nullptr;
