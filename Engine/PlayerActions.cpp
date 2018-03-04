@@ -1,32 +1,22 @@
-#include "ModulePlayerActions.h"
+#include "PlayerActions.h"
 #include "InputManager.h"
-#include "ModuleEventSystem.h"
-
+#include "ModuleInput.h"
 #define INPUT_MANAGER_LIMIT 5
 #define MAX_INPUT 20
-ModulePlayerActions::ModulePlayerActions(bool start_enabled)
-{
-	have_config = true;
-	name = "Player Action";
 
-}
 
-ModulePlayerActions::~ModulePlayerActions()
+PlayerActions::PlayerActions(ModuleInput * my_module):my_module(my_module)
 {
 }
 
-update_status ModulePlayerActions::Update(float dt)
+PlayerActions::~PlayerActions()
 {
-
-	/*for (int i = 0; i < interactive_vector.size(); i++)
-	{
-		interactive_vector[i]->GetKey("Jump");
-	}*/
-
-	return update_status::UPDATE_CONTINUE;
 }
 
-update_status ModulePlayerActions::UpdateConfig(float dt)
+
+
+
+void PlayerActions::UpdateConfig(float dt)
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 3));
 	
@@ -64,7 +54,7 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 		}
 	}
 
-	ImGui::Text("Number of Inputs");
+	ImGui::Text("Inputs:");
 
 	uint size = interactive_vector.size();
 	ImGui::Columns(4, "my_input");
@@ -132,18 +122,26 @@ update_status ModulePlayerActions::UpdateConfig(float dt)
 	}
 	
 	ImGui::PopStyleVar();
-	return UPDATE_CONTINUE;
 }
 
-
-bool ModulePlayerActions::SaveConfig(JSON_Object * node)
+void PlayerActions::Clear()
 {
-	JSON_Value* new_array = json_value_init_array();
+	if (interactive_vector.empty())
+		return;
+	number_of_inputs = 0;
+	std::vector<InputManager*>::iterator it = interactive_vector.begin();
 
-	return true;
+	while (it != interactive_vector.end())
+	{
+		InputManager* item = (*it);
+		item->Clear();
+		it++;
+		RELEASE(item);
+	}
+	interactive_vector.clear();
 }
 
-void ModulePlayerActions::UpdateInputsManager()
+void PlayerActions::UpdateInputsManager()
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
@@ -151,7 +149,7 @@ void ModulePlayerActions::UpdateInputsManager()
 	}
 }
 
-bool ModulePlayerActions::ReceiveEvent(SDL_Event * input_event)
+bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
@@ -165,7 +163,7 @@ bool ModulePlayerActions::ReceiveEvent(SDL_Event * input_event)
 	return false;
 }
 
-InputManager * ModulePlayerActions::GetInputManager(const char * name) const
+InputManager * PlayerActions::GetInputManager(const char * name) const
 {
 	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
@@ -176,7 +174,7 @@ InputManager * ModulePlayerActions::GetInputManager(const char * name) const
 
 }
 
-InputManager * ModulePlayerActions::GetInputManager(const char * name)
+InputManager * PlayerActions::GetInputManager(const char * name)
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
@@ -186,12 +184,12 @@ InputManager * ModulePlayerActions::GetInputManager(const char * name)
 	return nullptr;
 }
 
-std::vector<InputManager*> ModulePlayerActions::GetInteractiveVector() const
+std::vector<InputManager*> PlayerActions::GetInteractiveVector() const
 {
 	return interactive_vector;
 }
 
-std::vector<InputManager*> ModulePlayerActions::GetInteractiveVector()
+std::vector<InputManager*> PlayerActions::GetInteractiveVector()
 {
 	return interactive_vector;
 }

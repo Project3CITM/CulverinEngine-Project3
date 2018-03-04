@@ -28,7 +28,6 @@
 #include "mmgr/mmgr.h"
 #include "ModuleEventSystem.h"
 #include "ModuleKeyBinding.h"
-#include "ModulePlayerActions.h"
 static int malloc_count;
 static void *counted_malloc(size_t size);
 static void counted_free(void *ptr);
@@ -37,7 +36,6 @@ Application::Application()
 {
 	window = new ModuleWindow();
 	input = new ModuleInput();
-	player_action = new ModulePlayerActions();
 	module_key_binding= new ModuleKeyBinding();
 	audio = new ModuleAudio(true);
 	renderer3D = new ModuleRenderer3D();
@@ -72,7 +70,6 @@ Application::Application()
 	AddModule(resource_manager);
 	AddModule(physics);
 	AddModule(input);
-	AddModule(player_action);
 	AddModule(module_key_binding);
 	AddModule(console);
 	AddModule(scene);

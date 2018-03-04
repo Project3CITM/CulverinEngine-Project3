@@ -161,7 +161,7 @@
     <ClInclude Include="ModuleLightning.h" />
     <ClInclude Include="ModuleMap.h" />
     <ClInclude Include="ModulePhysics.h" />
-    <ClInclude Include="ModulePlayerActions.h" />
+    <ClInclude Include="PlayerActions.h" />
     <ClInclude Include="ModuleRenderGui.h" />
     <ClInclude Include="ModuleResourceManager.h" />
     <ClInclude Include="ModuleShaders.h" />
@@ -512,7 +512,7 @@
     <ClCompile Include="ModuleLightning.cpp" />
     <ClCompile Include="ModuleMap.cpp" />
     <ClCompile Include="ModulePhysics.cpp" />
-    <ClCompile Include="ModulePlayerActions.cpp" />
+    <ClCompile Include="PlayerActions.cpp" />
     <ClCompile Include="ModuleRenderGui.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleShaders.cpp" />

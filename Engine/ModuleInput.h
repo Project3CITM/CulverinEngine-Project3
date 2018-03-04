@@ -8,6 +8,7 @@
 #define MAX_MOUSE_BUTTONS 5
 #define MAX_CONTROLLER_BUTTONS 15
 class InputManager;
+class PlayerActions;
 enum KEY_STATE
 {
 	KEY_IDLE = 0,
@@ -123,7 +124,7 @@ private:
 	int mouse_y_motion_global = 0;
 
 	InputManager* Manag_inp=nullptr;
-
+	PlayerActions* player_action = nullptr;
 
 
 public:

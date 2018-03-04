@@ -14,6 +14,7 @@ public:
 	~InputManager();
 	void UpdateInputActions();
 	bool ProcessEvent(SDL_Event* input_event);
+	void Clear();
 	//AxisAction* GetAxis(const char* name);
 	//ButtonAction* GetButton(const char* name);
 	KeyAction* GetKey(const char* name);

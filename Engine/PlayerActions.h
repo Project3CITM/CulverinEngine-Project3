@@ -1,23 +1,20 @@
 
 #ifndef MODULE_PLAYER_ACTION_H
 #define MODULE_PLAYER_ACTION_H
-#include "Module.h"
 #include "Globals.h"
-
+#include <vector>
 typedef union SDL_Event SDL_Event;
-
+class ModuleInput;
 class InputManager;
-class ModulePlayerActions : public Module
+class PlayerActions
 {
 public:
-	ModulePlayerActions(bool start_enabled = true);
-	~ModulePlayerActions();
-	update_status Update(float dt);
-	update_status UpdateConfig(float dt);
+	PlayerActions(ModuleInput* my_module);
+	~PlayerActions();
+	void UpdateConfig(float dt);
+	void Clear();
 
 
-
-	bool SaveConfig(JSON_Object* node);
 	void UpdateInputsManager();
 
 	bool ReceiveEvent(SDL_Event* input_event);
@@ -30,7 +27,7 @@ private:
 	int number_of_inputs = 0;
 	std::string selected_input_name;
 	std::vector<InputManager*> interactive_vector;
-
+	ModuleInput* my_module = nullptr;
 
 };
 #endif //MODULE_PLAYER_ACTION_H

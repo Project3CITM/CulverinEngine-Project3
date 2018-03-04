@@ -50,6 +50,22 @@ bool InputManager::ProcessEvent(SDL_Event * input_event)
 
 }
 
+void InputManager::Clear()
+{
+	if (action_vector.empty())
+		return;
+	number_of_action = 0;
+	std::vector<InputAction*>::iterator it = action_vector.begin();
+
+	while (it != action_vector.end())
+	{
+		InputAction* item = (*it);
+		it++;
+		RELEASE(item);
+	}
+	action_vector.clear();
+}
+
 KeyAction * InputManager::GetKey(const char * name)
 {
 

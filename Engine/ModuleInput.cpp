@@ -9,8 +9,9 @@
 #include "SDL2_ttf/include/SDL_ttf.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
 #include "ModuleEventSystem.h"
-#include "ModulePlayerActions.h"
+#include "PlayerActions.h"
 #include "InputManager.h"
+#include "JSONSerialization.h"
 #define MAX_KEYS 300
 
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
@@ -72,6 +73,9 @@ bool ModuleInput::Init(JSON_Object* node)
 		}
 
 	}
+	player_action = new PlayerActions(this);
+	if(App->fs->CheckIsFileExist("player_action.json"))
+		App->json_seria->LoadPlayerAction(player_action, "player_action.json");
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;
@@ -83,7 +87,8 @@ update_status ModuleInput::PreUpdate(float dt)
 	perf_timer.Start();
 
 	SDL_PumpEvents();
-	App->player_action->UpdateInputsManager();
+	player_action->UpdateInputsManager();
+
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	
 	for(int i = 0; i < MAX_KEYS; ++i)
@@ -156,7 +161,7 @@ update_status ModuleInput::PreUpdate(float dt)
 	{
 		ImGui_ImplSdlGL3_ProcessEvent(&e);
 		//if (App->mode_game) {
-			App->player_action->ReceiveEvent(&e);
+			player_action->ReceiveEvent(&e);
 		//}
 		switch(e.type)
 		{
@@ -185,7 +190,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			case SDL_KEYDOWN:
 				if (e.key.keysym.scancode == SDL_SCANCODE_0)
 				{
-					Manag_inp = App->player_action->GetInputManager("Player");
+					Manag_inp = player_action->GetInputManager("Player");
 				}
 				break;
 			case SDL_MOUSEBUTTONUP:
@@ -379,7 +384,10 @@ update_status ModuleInput::UpdateConfig(float dt)
 		ImGui::TextColored(ImVec4(0.0f, 0.58f, 1.0f, 1.0f), "NoN");
 		break;
 	}
-
+	ImGui::Separator();
+	ImGui::Text("Player Actions");
+	ImGui::Separator();
+	player_action->UpdateConfig(dt);
 	//ImGui::Text("Keyboard Click");
 	//ImGui::TextColored(ImVec4(0.0f, 0.58f, 1.0f, 1.0f), "%i", SDL_GetKeyboardState(NULL));
 	return UPDATE_CONTINUE;
@@ -389,6 +397,10 @@ update_status ModuleInput::UpdateConfig(float dt)
 bool ModuleInput::CleanUp()
 {
 	LOG("Quitting SDL input event subsystem");
+	App->json_seria->SavePlayerAction(player_action, "", "player_action");
+	player_action->Clear();
+	RELEASE(player_action);
+	player_action = nullptr;
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	TTF_Quit();
 	return true;

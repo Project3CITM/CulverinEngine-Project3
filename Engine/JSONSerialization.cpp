@@ -10,7 +10,7 @@
 #include "ModuleAudio.h"
 #include "InputManager.h"
 #include "InputAction.h"
-#include "ModulePlayerActions.h"
+#include "PlayerActions.h"
 static int malloc_count;
 static void *counted_malloc(size_t size);
 static void counted_free(void *ptr);
@@ -704,7 +704,7 @@ void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const
 	json_value_free(config_file);
 }
 
-void JSONSerialization::SavePlayerAction(const ModulePlayerActions * player_action, const char * directory, const char * fileName)
+void JSONSerialization::SavePlayerAction(const PlayerActions * player_action, const char * directory, const char * fileName)
 {
 	JSON_Value* config_file;
 	JSON_Object* config;
@@ -712,7 +712,7 @@ void JSONSerialization::SavePlayerAction(const ModulePlayerActions * player_acti
 	std::string nameJson = directory;
 	nameJson += "/";
 	nameJson += fileName;
-	nameJson += ".meta.json";
+	nameJson += ".json";
 	config_file = json_value_init_object();
 
 	if (config_file != nullptr)
@@ -767,7 +767,7 @@ void JSONSerialization::SaveInputAction(JSON_Object * config_node, const InputAc
 
 }
 
-void JSONSerialization::LoadPlayerAction(ModulePlayerActions * player_action,const char * fileName)
+void JSONSerialization::LoadPlayerAction(PlayerActions * player_action,const char * fileName)
 {
 
 	JSON_Value* config_file;
