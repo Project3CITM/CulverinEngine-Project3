@@ -8,6 +8,4 @@ namespace CulverinEditor
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void FillAmount(float value);
     }
-
-
 }

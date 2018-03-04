@@ -45,7 +45,6 @@
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\Movement_Action.cs" />
     <Compile Include="AI\NormalGuardListener.cs" />
-    <Compile Include="AI\Patrol_Action.cs" />
     <Compile Include="AI\PerceptionEmitter.cs" />
     <Compile Include="AI\PerceptionEvent.cs" />
     <Compile Include="AI\PerceptionListener.cs" />
@@ -55,6 +54,7 @@
     <Compile Include="BarrelPuzle\ChainManage.cs" />
     <Compile Include="BarrelPuzle\ChainMovement.cs" />
     <Compile Include="CompJoint.cs" />
+    <Compile Include="CompMesh.cs" />
     <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />
     <Compile Include="BarrelPuzle\BarrelManage.cs" />

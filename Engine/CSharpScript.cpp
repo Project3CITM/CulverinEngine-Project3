@@ -1032,6 +1032,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompAnimation";
 	}
+	else if (name == "CulverinEditor.CompMesh")
+	{
+		comp_name = "CompMesh";
+	}
 	/* Scripts */
 	if (comp_name == "")
 	{

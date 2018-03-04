@@ -27,7 +27,7 @@
 CompMesh::CompMesh(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Mesh";
+	name_component = "CompMesh";
 }
 
 CompMesh::CompMesh(const CompMesh& copy, GameObject* parent) :Component(Comp_Type::C_MESH, parent)
@@ -42,7 +42,7 @@ CompMesh::CompMesh(const CompMesh& copy, GameObject* parent) :Component(Comp_Typ
 
 	render = copy.render;
 
-	name_component = "Mesh";
+	name_component = "CompMesh";
 }
 
 CompMesh::~CompMesh()
