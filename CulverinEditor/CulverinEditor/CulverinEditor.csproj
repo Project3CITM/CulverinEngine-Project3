@@ -44,6 +44,12 @@
     <Compile Include="AI\Arrive_Steering.cs" />
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\Movement_Action.cs" />
+    <Compile Include="AI\NormalGuardListener.cs" />
+    <Compile Include="AI\Patrol_Action.cs" />
+    <Compile Include="AI\PerceptionEmitter.cs" />
+    <Compile Include="AI\PerceptionEvent.cs" />
+    <Compile Include="AI\PerceptionListener.cs" />
+    <Compile Include="AI\PerceptionManager.cs" />
     <Compile Include="AI\Seek_Steering.cs" />
     <Compile Include="BarrelPuzle\BarrelScript.cs" />
     <Compile Include="BarrelPuzle\ChainManage.cs" />
