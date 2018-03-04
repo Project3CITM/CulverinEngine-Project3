@@ -34,6 +34,9 @@ public class TheonController : CharacterController
         anim_controller_left.PlayAnimation("Idle");
         anim_controller_right = rweapon_theon_obj.GetComponent<CompAnimation>();
         anim_controller_right.PlayAnimation("Idle");
+
+        ToggleMesh(false);
+
     }
 
     public override void ControlCharacter()
