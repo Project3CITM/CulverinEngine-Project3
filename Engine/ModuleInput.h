@@ -123,13 +123,15 @@ private:
 	int mouse_x_motion_global = 0;
 	int mouse_y_motion_global = 0;
 
-	InputManager* Manag_inp=nullptr;
-	PlayerActions* player_action = nullptr;
+
+	
 
 
 public:
 	std::list<const char*> dropedfiles;
 	_SDL_GameController* controller = nullptr;
+	InputManager* Manag_inp = nullptr;
+	PlayerActions* player_action = nullptr;
 };
 
 #endif

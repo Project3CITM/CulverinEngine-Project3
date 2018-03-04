@@ -1,5 +1,6 @@
 #include "ModuleKeyBinding.h"
-
+#include "Application.h"
+#include "InputManager.h"
 
 ModuleKeyBinding::ModuleKeyBinding()
 {
@@ -126,6 +127,8 @@ update_status ModuleKeyBinding::PreUpdate(float dt)
 
 update_status ModuleKeyBinding::Update(float dt)
 {
+	
+
 	return update_status::UPDATE_CONTINUE;
 }
 

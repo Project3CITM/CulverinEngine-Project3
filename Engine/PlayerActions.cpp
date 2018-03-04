@@ -247,3 +247,140 @@ std::vector<InputManager*> PlayerActions::GetInteractiveVector()
 {
 	return interactive_vector;
 }
+
+bool PlayerActions::GetInput_KeyDown(const char * key, const char * input)
+{
+
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		if (strcmp((*it)->GetName(), input) == 0) 
+		{
+			KeyAction* key_t= (*it)->GetKey(key);
+			if (key_t->state == Keystateaction::KEY_DOWN_ACTION) 
+			{
+				return true;
+			}
+			else 
+			{
+				return false;
+			}
+		}
+
+	}
+
+	return false;
+}
+
+bool PlayerActions::GetInput_KeyUp(const char * key, const char * input)
+{
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		if (strcmp((*it)->GetName(), input) == 0)
+		{
+
+			KeyAction* key_t = (*it)->GetKey(key);
+			if (key_t->state == Keystateaction::KEY_UP_ACTION)
+			{
+				return true;
+			}
+			else 
+			{
+				return false;
+			}
+
+		}
+
+	}
+
+	return false;
+}
+
+bool PlayerActions::GetInput_KeyRepeat(const char * key, const char * input)
+{
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		if (strcmp((*it)->GetName(), input) == 0)
+		{
+
+			KeyAction* key_t = (*it)->GetKey(key);
+			if (key_t->state == Keystateaction::KEY_REPEAT_ACTION)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+
+		}
+
+	}
+
+	return false;
+}
+
+bool PlayerActions::GetInput_MouseButtonDown(const char* name, const char * input)
+{
+
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		if (strcmp((*it)->GetName(), input) == 0)
+		{
+
+			MouseButtonAction* mouse_t = (*it)->GetMouseButton(name);
+			if (mouse_t->state == Keystateaction::KEY_DOWN_ACTION)
+			{
+				return true;
+			}
+			else 
+			{
+				return false;
+			}
+
+		}
+
+	}
+
+	return false;
+}
+
+bool PlayerActions::GetInput_MouseButtonUp(const char * name, const char * input)
+{
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		if (strcmp((*it)->GetName(), input) == 0)
+		{
+
+			MouseButtonAction* mouse_t = (*it)->GetMouseButton(name);
+			if (mouse_t->state == Keystateaction::KEY_UP_ACTION)
+			{
+				return true;
+			}
+			else {
+				return false;
+			}
+
+		}
+
+	}
+
+	return false;
+}
+
+float PlayerActions::GetInput_ControllerAxis(const char * name, const char * input)
+{
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		if (strcmp((*it)->GetName(), input) == 0)
+		{
+
+			ControllerAxisAction* axis_t = (*it)->GetAxis(name);
+			if (axis_t!=nullptr)
+			{
+				return axis_t->direction_axis;
+			}
+		}
+
+	}
+	return 0;
+}

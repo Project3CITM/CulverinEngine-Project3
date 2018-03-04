@@ -31,6 +31,16 @@ public:
 	InputManager* GetInputManager(const char* name);
 	std::vector<InputManager*> GetInteractiveVector() const;
 	std::vector<InputManager*> GetInteractiveVector();
+
+	bool GetInput_KeyDown(const char* key, const char* input);
+	bool GetInput_KeyUp(const char* key, const char* input);
+	bool GetInput_KeyRepeat(const char* key, const char* input);
+	bool GetInput_MouseButtonDown(const char* name, const char* input);
+	bool GetInput_MouseButtonUp(const char* name, const char* input);
+	float GetInput_ControllerAxis(const char* name, const char* input);
+
+
+
 public:
 	int number_of_inputs = 0;
 	std::vector<InputManager*> interactive_vector;

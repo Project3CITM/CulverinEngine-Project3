@@ -76,6 +76,15 @@ private:
 	static int			GetMouseYAxis();
 	static int			GetMouseMoutionX();
 	static int			GetMouseMoutionY();
+	static void			SetInputManagerActive(MonoString* str, mono_bool active);
+	static void			SetInputManagerBlock(MonoString* str, mono_bool active);
+	static mono_bool	GetInput_KeyDown(MonoString* name, MonoString* input);
+	static mono_bool	GetInput_KeyUp(MonoString* name, MonoString* input);
+	static mono_bool	GetInput_KeyRepeat(MonoString* name, MonoString* input);
+	static mono_bool	GetInput_MouseButtonDown(MonoString* name, MonoString* input);
+	static mono_bool	GetInput_MouseButtonUp(MonoString* name, MonoString* input);
+	static float		GetInput_ControllerAxis(MonoString* name, MonoString* input);
+	
 
 	/* Time */
 	static float GetDeltaTime();

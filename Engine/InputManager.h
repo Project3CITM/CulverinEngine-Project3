@@ -15,7 +15,7 @@ public:
 	void UpdateInputActions();
 	bool ProcessEvent(SDL_Event* input_event);
 	void Clear();
-	//AxisAction* GetAxis(const char* name);
+	ControllerAxisAction* GetAxis(const char* name);
 	//ButtonAction* GetButton(const char* name);
 	KeyAction* GetKey(const char* name);
 	MouseButtonAction* GetMouseButton(const char* name);

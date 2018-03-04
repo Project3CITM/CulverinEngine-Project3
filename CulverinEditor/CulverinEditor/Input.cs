@@ -42,5 +42,29 @@ namespace CulverinEditor
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern int GetMouseMoutionY();
 
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetInputManagerActive(string name,bool set);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetInputManagerBlock(string name, bool set);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetInput_KeyDown(string name, bool set);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetInput_KeyUp(string name, bool set);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetInput_KeyRepeat(string name, bool set);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetInput_MouseButtonDown(string name, bool set);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetInput_MouseButtonUp(string name, bool set);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void GetInput_ControllerAxis(string name, bool set);
+
     }
 }

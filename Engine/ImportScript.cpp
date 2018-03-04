@@ -12,6 +12,7 @@
 #include "CSharpScript.h"
 #include "Timer.h"
 #include "ModuleAudio.h"
+#include "PlayerActions.h"
 #include "CompScript.h"
 #include <direct.h>
 #pragma comment(lib, "mono-2.0-sgen.lib")
@@ -711,6 +712,14 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::GetMouseYAxis", (const void*)GetMouseYAxis);
 	mono_add_internal_call("CulverinEditor.Input::GetMouseMoutionX", (const void*)GetMouseMoutionX);
 	mono_add_internal_call("CulverinEditor.Input::GetMouseMoutionY", (const void*)GetMouseMoutionY);
+	mono_add_internal_call("CulverinEditor.Input::SetInputManagerActive", (const void*)SetInputManagerActive);
+	mono_add_internal_call("CulverinEditor.Input::SetInputManagerBlock", (const void*)SetInputManagerBlock);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_KeyDown", (const void*)GetInput_KeyDown);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_KeyUp", (const void*)GetInput_KeyUp);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_KeyRepeat", (const void*)GetInput_KeyRepeat);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_MouseButtonDown", (const void*)GetInput_MouseButtonDown);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_MouseButtonUp", (const void*)GetInput_MouseButtonUp);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerAxis);
 
 	//TIME FUNCTIONS -------------------
 	mono_add_internal_call("CulverinEditor.Time::DeltaTime", (const void*)GetDeltaTime);
@@ -884,6 +893,46 @@ int ImportScript::GetMouseMoutionX()
 int ImportScript::GetMouseMoutionY()
 {
 	return App->input->GetMouseYMotionGlobal();
+}
+
+void ImportScript::SetInputManagerActive(MonoString* str, mono_bool active)
+{
+	App->input->player_action->SetInputManagerActive(mono_string_to_utf8(str),active);
+}
+
+void ImportScript::SetInputManagerBlock(MonoString* str, mono_bool active)
+{
+	App->input->player_action->SetInputManagerBlock(mono_string_to_utf8(str), active);
+}
+
+mono_bool ImportScript::GetInput_KeyDown(MonoString* name, MonoString* input) 
+{
+	return App->input->player_action->GetInput_KeyDown(mono_string_to_utf8(name), mono_string_to_utf8(input));
+}
+
+mono_bool ImportScript::GetInput_KeyUp(MonoString* name, MonoString* input)
+{
+	return App->input->player_action->GetInput_KeyUp(mono_string_to_utf8(name), mono_string_to_utf8(input));
+}
+
+mono_bool ImportScript::GetInput_KeyRepeat(MonoString* name, MonoString* input)
+{
+	return App->input->player_action->GetInput_KeyRepeat(mono_string_to_utf8(name), mono_string_to_utf8(input));
+}
+
+mono_bool ImportScript::GetInput_MouseButtonDown(MonoString* name, MonoString* input)
+{
+	return App->input->player_action->GetInput_MouseButtonDown(mono_string_to_utf8(name), mono_string_to_utf8(input));
+}
+
+mono_bool ImportScript::GetInput_MouseButtonUp(MonoString* name, MonoString* input)
+{
+	return App->input->player_action->GetInput_MouseButtonUp(mono_string_to_utf8(name), mono_string_to_utf8(input));
+}
+
+float ImportScript::GetInput_ControllerAxis(MonoString* name, MonoString* input)
+{
+	return App->input->player_action->GetInput_ControllerAxis(mono_string_to_utf8(name), mono_string_to_utf8(input));
 }
 
 float ImportScript::GetDeltaTime()
