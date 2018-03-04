@@ -47,6 +47,8 @@ public:
 	void OnTriggerEnter(Component* trigger);
 	void OnTriggerLost(Component* trigger);
 
+	void OnContact(Component* actor);
+
 	//PhysX Methods
 	void MoveKinematic(float3 pos, Quat rot);
 

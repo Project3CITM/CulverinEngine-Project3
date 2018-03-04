@@ -54,8 +54,7 @@ public:
 	bool ShowColliderFilterOptions(uint& flags);
 
 	// Collision Callback -----------
-	void OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor, JP_COLLISION_TYPE type);
-	void OnContact(physx::PxRigidActor* first, physx::PxRigidActor* second, JP_COLLISION_TYPE type);
+	void OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor* actor1, JP_COLLISION_TYPE type);
 
 	// Debug Methods ----------------
 	void DrawPhysics();

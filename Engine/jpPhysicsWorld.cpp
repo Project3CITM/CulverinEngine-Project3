@@ -161,7 +161,7 @@ void jpCollisionCallback::onContact(const physx::PxContactPairHeader & pairHeade
 {
 	if (callback_module)
 	{
-		callback_module->OnContact(pairHeader.actors[0], pairHeader.actors[1], JP_COLLISION_TYPE::CONTACT_ENTER);
+		callback_module->OnCollision(pairHeader.actors[0], pairHeader.actors[1], JP_COLLISION_TYPE::CONTACT_ENTER);
 	}
 }
 
@@ -174,13 +174,13 @@ void jpCollisionCallback::onTrigger(physx::PxTriggerPair * pairs, physx::PxU32 c
 			// Notify first contact -----------
 			if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND)
 			{
-				callback_module->OnTrigger(pairs[i].triggerActor, pairs[i].otherActor, JP_COLLISION_TYPE::TRIGGER_ENTER);
+				callback_module->OnCollision(pairs[i].triggerActor, pairs[i].otherActor, JP_COLLISION_TYPE::TRIGGER_ENTER);
 			}
 
 			// Notify lost contact ------------
 			if (pairs[i].status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST)
 			{
-				callback_module->OnTrigger(pairs[i].triggerActor, pairs[i].otherActor, JP_COLLISION_TYPE::TRIGGER_LOST);
+				callback_module->OnCollision(pairs[i].triggerActor, pairs[i].otherActor, JP_COLLISION_TYPE::TRIGGER_LOST);
 			}
 		}
 	}

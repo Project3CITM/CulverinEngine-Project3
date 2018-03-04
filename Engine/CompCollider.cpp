@@ -425,6 +425,15 @@ void CompCollider::OnTriggerLost(Component * actor)
 	}
 }
 
+void CompCollider::OnContact(Component * actor)
+{
+	if (listener != nullptr)
+	{
+		collided_object = actor->GetParent();
+		listener->csharp->DoMainFunction(FunctionBase::CS_OnContact);
+	}
+}
+
 void CompCollider::ChangeCollider()
 {
 	if (body != nullptr)

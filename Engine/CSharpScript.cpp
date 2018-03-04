@@ -244,6 +244,7 @@ void CSharpScript::LoadScript()
 		OnDisable = CreateMainFunction("OnDisable", DefaultParam, FunctionBase::CS_OnDisable);
 		OnTriggerEnter = CreateMainFunction("OnTriggerEnter", DefaultParam, FunctionBase::CS_OnTriggerEnter);
 		OnTriggerLost = CreateMainFunction("OnTriggerLost", DefaultParam, FunctionBase::CS_OnTriggerLost);
+		OnContact = CreateMainFunction("OnContact", DefaultParam, FunctionBase::CS_OnContact);
 		OnClick = CreateMainFunction("OnClick", DefaultParam, FunctionBase::CS_OnClick);
 
 		//Get Script Variables info (from c# to c++)
@@ -289,6 +290,14 @@ void CSharpScript::DoMainFunction(FunctionBase function, void** parameters)
 		if (OnTriggerLost.method != nullptr)
 		{
 			DoFunction(OnTriggerLost.method, parameters);
+		}
+		break;
+	}
+	case FunctionBase::CS_OnContact:
+	{
+		if (OnContact.method != nullptr)
+		{
+			DoFunction(OnContact.method, parameters);
 		}
 		break;
 	}

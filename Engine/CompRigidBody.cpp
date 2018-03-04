@@ -370,6 +370,14 @@ void CompRigidBody::OnTriggerLost(Component * trigger)
 	}
 }
 
+void CompRigidBody::OnContact(Component * actor)
+{
+	if (collider_comp)
+	{
+		collider_comp->OnContact(actor);
+	}
+}
+
 void CompRigidBody::MoveKinematic(float3 pos, Quat rot)
 {
 	if (body && kinematic)

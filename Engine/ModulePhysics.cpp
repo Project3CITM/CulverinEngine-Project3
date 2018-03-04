@@ -181,10 +181,23 @@ void ModulePhysics::OnEvent(Event & event)
 		}
 		case JP_COLLISION_TYPE::CONTACT_ENTER:
 		{
-			break;
-		}
-		case JP_COLLISION_TYPE::CONTACT_LOST:
-		{
+			if (event.physics_collision.trigger->GetType() == C_COLLIDER)
+			{
+				static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerLost(event.physics_collision.actor);
+			}
+			else
+			{
+				static_cast<CompRigidBody*>(event.physics_collision.trigger)->OnTriggerLost(event.physics_collision.actor);
+			}
+
+			if (event.physics_collision.actor->GetType() == C_COLLIDER)
+			{
+				static_cast<CompCollider*>(event.physics_collision.actor)->OnTriggerLost(event.physics_collision.actor);
+			}
+			else
+			{
+				static_cast<CompRigidBody*>(event.physics_collision.actor)->OnTriggerLost(event.physics_collision.actor);
+			}
 			break;
 		}
 		}
@@ -210,7 +223,6 @@ void ModulePhysics::OnEvent(Event & event)
 				}
 		
 			}
-		
 			break;
 		default:
 			break;
@@ -316,22 +328,19 @@ bool ModulePhysics::ShowColliderFilterOptions(uint& flags)
 	return false;
 }
 
-void ModulePhysics::OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor* actor, JP_COLLISION_TYPE type)
+void ModulePhysics::OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor* actor1, JP_COLLISION_TYPE type)
 {
-
-	// Send Trigger event to execute on postupdate 
-	std::map<physx::PxRigidActor*, Component*>::const_iterator npair;
-
 	Event collision;
 	collision.physics_collision.type = EventType::EVENT_TRIGGER_COLLISION;
 	collision.physics_collision.collision_type = type;
 
-	npair = colliders.find(trigger);
+	std::map<physx::PxRigidActor*, Component*>::const_iterator npair;
+	npair = colliders.find(actor0);
 	if (npair != colliders.end())
 	{
 		collision.physics_collision.trigger = npair._Ptr->_Myval.second;
 
-		npair = colliders.find(actor);
+		npair = colliders.find(actor1);
 		if (npair != colliders.end())
 		{
 			collision.physics_collision.actor = npair._Ptr->_Myval.second;
@@ -347,11 +356,6 @@ void ModulePhysics::OnTrigger(physx::PxRigidActor* trigger, physx::PxRigidActor*
 	}
 
 	PushEvent(collision);
-}
-
-void ModulePhysics::OnContact(physx::PxRigidActor * first, physx::PxRigidActor * second, JP_COLLISION_TYPE type)
-{
-	LOG("OnContact Succed");
 }
 
 // -----------------------------------------------------------------

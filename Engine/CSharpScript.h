@@ -38,7 +38,16 @@ typedef struct json_object_t JSON_Object;
 
 enum FunctionBase
 {
-	CS_Start, CS_Update, CS_FixedUpdate, CS_OnGUI, CS_OnEnable, CS_OnDisable, CS_OnTriggerEnter, CS_OnTriggerLost, CS_OnClick
+	CS_Start, 
+	CS_Update, 
+	CS_FixedUpdate, 
+	CS_OnGUI, 
+	CS_OnEnable, 
+	CS_OnDisable, 
+	CS_OnTriggerEnter, 
+	CS_OnTriggerLost, 
+	CS_OnContact,
+	CS_OnClick
 };
 
 enum VarType
@@ -276,6 +285,7 @@ private:
 	MainMonoMethod OnDisable;
 	MainMonoMethod OnTriggerEnter;
 	MainMonoMethod OnTriggerLost;
+	MainMonoMethod OnContact;
 	MainMonoMethod OnClick;
 
 	GameObject* current_game_object = nullptr;

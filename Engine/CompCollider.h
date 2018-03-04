@@ -34,6 +34,8 @@ public:
 	// Collision Events ------------
 	void OnTriggerEnter(Component* actor);
 	void OnTriggerLost(Component* actor);
+
+	void OnContact(Component* actor);
 	
 	void ChangeCollider();
 	void UpdateCollider();
