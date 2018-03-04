@@ -1123,6 +1123,7 @@ mono_bool CSharpScript::GetEnabled(MonoObject* object, MonoObject* gameobject)
 
 void CSharpScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject)
 {
+	std::string name = mono_class_get_name(mono_object_get_class(object));
 	if (gameobject != nullptr)
 	{
 		if (!CheckMonoObject(gameobject))

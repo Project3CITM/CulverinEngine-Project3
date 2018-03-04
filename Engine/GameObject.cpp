@@ -373,11 +373,14 @@ void GameObject::Update(float dt)
 		if (bounding_box != nullptr)
 		{
 			CompTransform* transform = (CompTransform*)(FindComponentByType(C_TRANSFORM));
-			if (transform != nullptr && transform->GetUpdated());
+			if (transform != nullptr)
 			{
-				//Resize the Bounding Box
-				box_fixed = *bounding_box;
-				box_fixed.TransformAsAABB(transform->GetGlobalTransform());
+				if (transform->GetUpdated())
+				{
+					//Resize the Bounding Box
+					box_fixed = *bounding_box;
+					box_fixed.TransformAsAABB(transform->GetGlobalTransform());
+				}
 			}
 		}
 	}

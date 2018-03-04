@@ -25,6 +25,4 @@ namespace CulverinEditor
         public extern void SetEnabled(bool active, GameObject parent = null);
 
     }
-
-
 }

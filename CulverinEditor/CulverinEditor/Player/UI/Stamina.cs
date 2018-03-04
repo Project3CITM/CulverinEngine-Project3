@@ -12,6 +12,7 @@ public class Stamina : CulverinBehaviour
 
     void Start()
     {
+        this_obj_stamina = GetLinkedObject("this_obj_stamina");
     }
 
     void Update()
@@ -24,7 +25,6 @@ public class Stamina : CulverinBehaviour
                 curr_stamina = max_stamina;
             }
             calc_stamina = curr_stamina / max_stamina;
-            this_obj_stamina = GetLinkedObject("this_obj_stamina");
             stamina_bar = this_obj_stamina.GetComponent<CompImage>();
             stamina_bar.FillAmount(calc_stamina);
         }
@@ -37,7 +37,6 @@ public class Stamina : CulverinBehaviour
             curr_stamina -= cost;
         }
         calc_stamina = curr_stamina / max_stamina;
-        this_obj_stamina = GetLinkedObject("this_obj_stamina");
         stamina_bar = this_obj_stamina.GetComponent<CompImage>();
         stamina_bar.FillAmount(calc_stamina);
 
@@ -47,5 +46,17 @@ public class Stamina : CulverinBehaviour
     public float GetCurrentStamina()
     {
         return curr_stamina;
+    }
+
+    public void SetStamina(float curr_stam, float max_stam)
+    {
+        curr_stamina = curr_stam;
+        max_stamina = max_stam;
+
+        calc_stamina = curr_stamina / max_stamina;
+        stamina_bar = this_obj_stamina.GetComponent<CompImage>();
+        stamina_bar.FillAmount(calc_stamina);
+
+        Debug.Log("Current Stamina: " + curr_stamina.ToString());
     }
 }
