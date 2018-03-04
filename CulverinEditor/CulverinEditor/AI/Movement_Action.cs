@@ -86,10 +86,12 @@ public class Movement_Action : Action
                     local_pos.x = path[0].GetTileX() * tile_size;
                     local_pos.z = path[0].GetTileY() * tile_size;
                     GetComponent<Transform>().local_position = local_pos;
-                    path.Remove(path[0]);
 
-                    GetComponent<Arrive_Steering>().SetScriptEnabled(false);
-                    GetComponent<Seek_Steering>().SetScriptEnabled(false);
+                    if(path.Count > 0)
+                        path.Remove(path[0]);
+
+                    GetComponent<Arrive_Steering>().SetEnabled(false);
+                    GetComponent<Seek_Steering>().SetEnabled(false);
                     SetState();
                 }
                 break;
@@ -124,7 +126,7 @@ public class Movement_Action : Action
 
                 if(FinishedRotation())
                 {
-                    GetComponent<Align_Steering>().SetScriptEnabled(false);
+                    GetComponent<Align_Steering>().SetEnabled(false);
 
                     Vector3 obj_vec = GetTargetPosition() - GetComponent<Transform>().position;
                     GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
@@ -132,10 +134,11 @@ public class Movement_Action : Action
                 }
 
                 break;
-        }
 
-        if(state == Motion_State.MS_NO_STATE)
-            return ACTION_RESULT.AR_SUCCESS;
+            case Motion_State.MS_NO_STATE:
+                return ACTION_RESULT.AR_SUCCESS;
+                
+        }
 
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
@@ -151,7 +154,7 @@ public class Movement_Action : Action
         SetState();
     }
 
-    public void Accelerate(Vector3 acceleration)
+    public void Accelerate(Vector3 acceleration)    
     {
         current_acceleration.x = current_acceleration.x + acceleration.x;
         current_acceleration.z = current_acceleration.z + acceleration.z;
@@ -164,6 +167,12 @@ public class Movement_Action : Action
 
     public bool ReachedTile()
     {
+        if(path.Count == 0)
+        {
+            state = Motion_State.MS_NO_STATE;
+            return true;
+        }
+
         Vector3 my_pos = GetComponent<Transform>().local_position;
         Vector3 tile_pos = GetTargetPosition();
 
@@ -190,15 +199,15 @@ public class Movement_Action : Action
         if (!FinishedRotation())
         {
             state = Motion_State.MS_ROTATE;
-            GetComponent<Align_Steering>().SetScriptEnabled(true);
+            GetComponent<Align_Steering>().SetEnabled(true);
             Debug.Log("State: ROTATE");
             return;
         }
         if (!ReachedTile())
         {
             state = Motion_State.MS_MOVE;
-            GetComponent<Arrive_Steering>().SetScriptEnabled(true);
-            GetComponent<Seek_Steering>().SetScriptEnabled(true);
+            GetComponent<Arrive_Steering>().SetEnabled(true);
+            GetComponent<Seek_Steering>().SetEnabled(true);
             Debug.Log("State: MOVE");
             return;
         }

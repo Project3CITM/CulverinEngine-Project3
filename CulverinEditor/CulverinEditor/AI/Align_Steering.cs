@@ -2,7 +2,7 @@
 using CulverinEditor.Debug;
 
 
-class Align_Steering : CulverinBehaviour
+public class Align_Steering : CulverinBehaviour
 {
     Movement_Action move;
     public GameObject myself;
@@ -16,7 +16,7 @@ class Align_Steering : CulverinBehaviour
         move = GetComponent<Movement_Action>();
         myself = GetLinkedObject("myself");
         Debug.Log("Align Start");
-        SetScriptEnabled(false);
+        SetEnabled(false);
     }
 
     void Update()
