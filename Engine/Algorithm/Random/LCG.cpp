@@ -144,7 +144,7 @@ float LCG::FloatNeg1_1()
 
 float LCG::Float(float a, float b)
 {
-	assume(a <= b && "LCG::Float(a,b): Error in range: b < a!");
+	//assume(a <= b && "LCG::Float(a,b): Error in range: b < a!");
 
 	return Float()*(b-a)+a;
 }

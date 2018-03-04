@@ -837,13 +837,13 @@ void ParticleSystem::DebugDrawEmitterAABB()
 
 void ParticleSystem::DrawImGuiEditorWindow()
 {
-	if (EditorWindowOpen)
+	if (ParticleEditorOpen)
 	{
-		ImGui::Begin("Particle Editor", &EditorWindowOpen, ImVec2(1200, 800));
+		ImGui::Begin("Particle Editor", &ParticleEditorOpen, ImVec2(1200, 800));
 
 		ImVec2 WindowSize = ImGui::GetWindowSize();
 		float ChildsWidth = (WindowSize.x - 28.0f) * 0.33f;
-		float ChildsHeight = (WindowSize.y - 52.0f) * 0.5f;
+		float ChildsHeight = (WindowSize.y - 52.0f);
 
 		ImGui::BeginChild("Preview", ImVec2(ChildsWidth, ChildsHeight), true, ImGuiWindowFlags_AlwaysVerticalScrollbar);
 		DrawTexturePreview();
@@ -862,11 +862,17 @@ void ParticleSystem::DrawImGuiEditorWindow()
 		ParticleStateEnum = FinalState_Enum;
 		DrawColorSelector();
 		ImGui::EndChild();
+		
 
-		ImGui::BeginChild("EmitterGeneralOptions", ImVec2(0, ChildsHeight), true);
+		ImGui::End();
+	}
+
+	if (EmitterEditorOpen)
+	{
+		ImGui::Begin("Emitter Editor", &EmitterEditorOpen, ImVec2(1200, 800));
+
+		ImVec2 WindowSize = ImGui::GetWindowSize();
 		DrawEmitterOptions();
-		ImGui::EndChild();
-
 		ImGui::End();
 	}
 }

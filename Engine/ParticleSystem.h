@@ -324,7 +324,8 @@ private:
 	bool CreateParticle();										//Function to create a new particle with the stored data
 
 public:
-	bool EditorWindowOpen = false;								//Open and clase particle editor window
+	bool ParticleEditorOpen = false;								//Open and clase particle editor window
+	bool EmitterEditorOpen = false;
 	KeyInput MouseLeftClick;									//Store mouse left click state. But now it's not used, we use this in previous UI iterations, but left it here if we need it in the future
 	float3 CameraPosition = float3::zero;						//Camera position to orientate particles
 	bool ShowEmitterBoundBox = false;							//Draw emitter AABB

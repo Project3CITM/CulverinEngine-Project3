@@ -63,24 +63,16 @@ void CompParticleSystem::Update(float dt)
 		ParticleState InitialState;
 		ParticleState FinalState;
 
-		size_t dot_pos = child_particle.rfind(".");
-		child_particle_name = child_particle.substr(0, dot_pos);
-
+		child_particle_name = App->fs->GetOnlyName(child_particle);
 		LoadParticleStates(child_particle_name.c_str(),this, InitialState, FinalState);
 	
-
 		part_system->SetInitialStateResource(InitialState);
 		part_system->SetFinalStateResource(FinalState);
 
 		//Load Child Emitter
 		ParticleEmitter Emitter;
-
-		dot_pos = child_emitter.rfind(".");
-		child_emitter_name = child_emitter.substr(0, dot_pos);
-
+		child_emitter_name = App->fs->GetOnlyName(child_emitter);
 		LoadParticleEmitter(child_emitter_name.c_str(), this, Emitter);
-	
-
 		part_system->SetEmitterResource(Emitter);
 
 		child_loaded = false;
@@ -92,8 +84,7 @@ void CompParticleSystem::Update(float dt)
 		part_system->Update(0.02);
 	else part_system->Update(dt);
 
-	if (part_system->EditorWindowOpen)
-		part_system->DrawImGuiEditorWindow();
+	part_system->DrawImGuiEditorWindow();
 	
 	if (App->engine_state == EngineState::STOP)
 		part_system->PostUpdate(0.02);
@@ -508,11 +499,13 @@ void CompParticleSystem::ShowInspectorInfo()
 	}
 	ImGui::PopStyleVar();
 
-	ImGui::Checkbox("Show Particle Editor", &part_system->EditorWindowOpen);
+	
 	
 	//Emitter options
 	if (ImGui::TreeNodeEx("Emitter"))
 	{
+		ImGui::Checkbox("Show Emitter Editor", &part_system->EmitterEditorOpen);
+
 		static char emitter_name[100];
 		memcpy_s(emitter_name, 99, emitter_resource_name.c_str(), 99);
 		ImGui::InputText("- Emitter Name", emitter_name, 99);
@@ -536,6 +529,8 @@ void CompParticleSystem::ShowInspectorInfo()
 	//Particle options
 	if (ImGui::TreeNodeEx("Particle"))
 	{
+		ImGui::Checkbox("Show Particle Editor", &part_system->ParticleEditorOpen);
+
 		static char particle_name[100];
 		memcpy_s(particle_name, 99, particle_resource_name.c_str(), 99);
 		ImGui::InputText("- Particle Name", particle_name, 99);
@@ -552,11 +547,17 @@ void CompParticleSystem::ShowInspectorInfo()
 			file_type = Particle_Resource;
 			pop_up_load_open = true;
 		}
+
+		if (ImGui::Button("Load Texture", ImVec2(120, 30)))
+		{
+			file_type = Texture_Resource;
+			pop_up_load_open = true;
+		}
 		ImGui::TreePop();
 	}
 
 	//Child options
-	if (ImGui::TreeNodeEx("Child"))
+	/*if (ImGui::TreeNodeEx("Child"))
 	{
 		if (ImGui::Button("Load Child Particles Res", ImVec2(170, 30)))
 		{
@@ -583,7 +584,7 @@ void CompParticleSystem::ShowInspectorInfo()
 			ImGui::Text(title);
 		}
 		ImGui::TreePop();
-	}
+	}*/
 	
 	/*
 	if (ImGui::Button("Load Mesh", ImVec2(120, 30)))
@@ -592,11 +593,7 @@ void CompParticleSystem::ShowInspectorInfo()
 	PopUpLoadOpen = true;
 	}
 	*/
-	if (ImGui::Button("Load Texture", ImVec2(120, 30)))
-	{
-		file_type = Texture_Resource;
-		pop_up_load_open = true;
-	}
+
 	
 	// Button Options --------------------------------------
 	if (ImGui::BeginPopup("OptionsParticleSystem"))
