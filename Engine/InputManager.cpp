@@ -25,7 +25,7 @@ void InputManager::UpdateInputActions()
 	{
 
 		switch ((*it)->action_type) {
-
+		case ActionInputType::BUTTON_ACTION:
 		case ActionInputType::KEY_ACTION:
 			((KeyAction*)(*it))->UpdateEventAction(keys);
 			break;
@@ -82,7 +82,7 @@ KeyAction * InputManager::GetKey(const char * name)
 
 	for (int i = 0; i < action_vector.size(); i++) 
 	{
-		if (action_vector[i]->name == name && action_vector[i]->action_type == ActionInputType::KEY_ACTION)
+		if (action_vector[i]->name == name && (action_vector[i]->action_type == ActionInputType::KEY_ACTION || action_vector[i]->action_type == ActionInputType::BUTTON_ACTION))
 		{
 			return (KeyAction*)action_vector[i];
 		}

@@ -279,15 +279,16 @@ bool PlayerActions::GetInput_KeyUp(const char * key, const char * input)
 		{
 
 			KeyAction* key_t = (*it)->GetKey(key);
-			if (key_t->state == Keystateaction::KEY_UP_ACTION)
-			{
-				return true;
+			if (key_t != nullptr) {
+				if (key_t->state == Keystateaction::KEY_UP_ACTION)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
-			else 
-			{
-				return false;
-			}
-
 		}
 
 	}

@@ -99,7 +99,7 @@ public:
 				if (input_event->caxis.axis == key_relation->event_value) {
 					//direction_axis = input_event->caxis.value;
 					direction_axis = (float)input_event->caxis.value/ (float)maximum_axis_c;
-					LOG("joystick %f", direction_axis);
+					//LOG("joystick %f", direction_axis);
 
 					return true;
 				}
