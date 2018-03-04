@@ -299,7 +299,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if ((*item) == camera)
+			if (((*item) == camera) || ((*item) == event_system))
 			{
 				ret = (*item)->PreUpdate(real_time.dt); // Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 			}
@@ -328,7 +328,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if ((*item) == camera)
+			if (((*item) == camera) || ((*item) == event_system))
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 				ret = (*item)->Update(real_time.dt);
@@ -381,7 +381,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if ((*item) == camera)
+			if (((*item) == camera) || ((*item) == event_system))
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 				ret = (*item)->PostUpdate(real_time.dt);

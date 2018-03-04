@@ -154,6 +154,7 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 	//iterate and send MMNormalEvent
 	size = MMNormalEvent.size();
 	count = 0;
+	bool Delayed = false;
 	for (std::multimap<EventType, Event>::const_iterator item = MMNormalEvent.cbegin(); item != MMNormalEvent.cend();)
 	{
 		if ((item._Ptr->_Myval.first < 0) || (item._Ptr->_Myval.first > EventType::MAXEVENTS))
@@ -162,17 +163,46 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 			continue;
 		}
 		if (count >= size) break;
-		if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
-			EListener = MEventListeners.find(item._Ptr->_Myval.first);
-		if (EListener != MEventListeners.end())
-			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-				(*item2)->OnEvent(item._Ptr->_Myval.second);
+		if (item._Ptr->_Myval.first != EventType::EVENT_DELETE_GO)
+		{
+			if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
+				EListener = MEventListeners.find(item._Ptr->_Myval.first);
+			if (EListener != MEventListeners.end())
+			{
+				for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+					(*item2)->OnEvent(item._Ptr->_Myval.second);
+			}
+			else
+			{
+				item = MMNormalEvent.erase(item);
+				continue;
+			}
+		}
 		else
 		{
-			item = MMNormalEvent.erase(item);
-			continue;
+			if (item._Ptr->_Myval.second.delete_go.delay <= 0.0001f)
+			{
+				if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
+					EListener = MEventListeners.find(item._Ptr->_Myval.first);
+				if (EListener != MEventListeners.end())
+				{
+					for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+						(*item2)->OnEvent(item._Ptr->_Myval.second);
+				}
+				else
+				{
+					item = MMNormalEvent.erase(item);
+					continue;
+				}
+			}
+			else
+			{
+				item._Ptr->_Myval.second.delete_go.delay -= dt;
+				Delayed = true;
+			}
 		}
-		item = MMNormalEvent.erase(item);
+		if (Delayed) item++;
+		else item = MMNormalEvent.erase(item);
 		count++;
 	}
 

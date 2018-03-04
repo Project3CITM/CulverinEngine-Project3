@@ -75,8 +75,9 @@ enum EventType
 /*--------------------------------------------------*/
 struct EDeleteGO
 {
-	EventType type;
-	GameObject* Todelte;
+	EventType type = EventType::EVENT_DELETE_GO;
+	float delay = 0.0f; //Seconds from event creation to activate it
+	GameObject* Todelte = nullptr;
 };
 
 struct EDockingModif
