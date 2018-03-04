@@ -328,6 +328,7 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 	json_object_dotset_boolean_with_std(object, name + "Trigger", trigger);
 
 	//Scritp uid
+	json_object_dotset_string_with_std(object, name + "ScriptName", script_name.c_str());
 	json_object_dotset_number_with_std(object, name + "Script UID", uid_script_asigned);
 
 	//Collision Flags
@@ -369,6 +370,7 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 	trigger = json_object_dotget_boolean_with_std(object, name + "Trigger");
 
 	//Script
+	script_name = json_object_dotget_string_with_std(object, name + "ScriptName");
 	uid_script_asigned = json_object_dotget_number_with_std(object, name + "Script UID");
 
 	//Collision Mask

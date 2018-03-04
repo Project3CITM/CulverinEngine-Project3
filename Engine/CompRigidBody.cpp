@@ -86,7 +86,7 @@ void CompRigidBody::Clear()
 {
 	if (joint != nullptr)
 	{
-		joint->RemoveActors();
+		joint->RemoveActors(this);
 		joint = nullptr;
 	}
 

@@ -31,6 +31,7 @@ public:
 	// Setters ---------------------
 	void SetMinMaxDistance();
 
+	void RemoveActors(CompRigidBody* body);
 	void RemoveActors();
 
 private:

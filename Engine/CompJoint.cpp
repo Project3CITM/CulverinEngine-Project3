@@ -48,8 +48,6 @@ void CompJoint::Clear()
 				second = nullptr;
 				second_uid = 0;
 			}
-
-			joint->Release();
 		}
 
 		delete joint;
@@ -149,6 +147,7 @@ void CompJoint::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 
 	json_object_dotset_number_with_std(object, name + "Second UUID", second_uid);
+	json_object_dotset_string_with_std(object, name + "Second Name", second_name.c_str());
 
 	json_object_dotset_number_with_std(object, name + "Min Distance", min_dist);
 	json_object_dotset_number_with_std(object, name + "Max Distance", max_dist);
@@ -159,6 +158,7 @@ void CompJoint::Load(const JSON_Object * object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 
 	second_uid = json_object_dotget_number_with_std(object, name + "Second UUID");
+	second_name = json_object_dotget_string_with_std(object, name + "Second Name");
 
 	min_dist = json_object_dotget_number_with_std(object, name + "Min Distance");
 	max_dist = json_object_dotget_number_with_std(object, name + "Max Distance");
@@ -176,7 +176,6 @@ void CompJoint::SyncComponent()
 			if (rigidbody_vec[i]->GetUUID() == second_uid)
 			{
 				second = (CompRigidBody*)rigidbody_vec[i];
-				second_name = second->GetName();
 				CreateJoint();
 			}
 		}
@@ -215,6 +214,30 @@ void CompJoint::SetMinMaxDistance()
 		}
 
 		joint->SetLimitDistance(min_dist, max_dist);
+	}
+}
+
+void CompJoint::RemoveActors(CompRigidBody * body)
+{
+	if (joint && joint->ToRelease())
+	{
+		if (second != nullptr)
+		{
+			if (second == body)
+			{
+				CompRigidBody* first = (CompRigidBody*)parent->FindComponentByType(C_RIGIDBODY);
+				if (first != nullptr)
+				{
+					first->SetJointActor(nullptr);
+				}
+			}
+
+			second->SetJointActor(nullptr);
+			second = nullptr;
+			second_uid = 0;
+		}
+
+		joint->Release();
 	}
 }
 
