@@ -163,7 +163,7 @@ bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 	return false;
 }
 
-void PlayerActions::InputManagerActive(const char * name, bool set)
+void PlayerActions::InputManagerActive(const char * name)
 {
 	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
@@ -172,7 +172,7 @@ void PlayerActions::InputManagerActive(const char * name, bool set)
 	}
 }
 
-void PlayerActions::InputManagerDeactive(const char * name, bool set)
+void PlayerActions::InputManagerDeactive(const char * name)
 {
 	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
@@ -181,7 +181,7 @@ void PlayerActions::InputManagerDeactive(const char * name, bool set)
 	}
 }
 
-void PlayerActions::InputManagerBlock(const char * name, bool set)
+void PlayerActions::InputManagerBlock(const char * name)
 {
 	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
@@ -190,7 +190,7 @@ void PlayerActions::InputManagerBlock(const char * name, bool set)
 	}
 }
 
-void PlayerActions::InputManagerUnblock(const char * name, bool set)
+void PlayerActions::InputManagerUnblock(const char * name)
 {
 	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
