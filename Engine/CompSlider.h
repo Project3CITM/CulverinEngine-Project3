@@ -18,7 +18,6 @@ public:
 
 private:
 public:
-	CompImage * bar;
 	CompImage * slide = nullptr;
 private:
 	std::vector<CompScript*> linked_scripts;

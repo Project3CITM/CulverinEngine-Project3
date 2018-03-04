@@ -18,6 +18,7 @@
 #include "CompMesh.h"
 #include "CompScript.h"
 #include "ResourceMesh.h"
+#include "CompSlider.h"
 #include "ImportMesh.h"
 #include "ImportScript.h"
 #include "CompMaterial.h"
@@ -1343,7 +1344,7 @@ GameObject * Scene::CreateSlider(GameObject * parent)
 	image->SyncComponent();
 	image->UpdateSpriteId();
 	// SLIDER -----------------
-	CompImage* slide = (CompImage*)obj->AddComponent(Comp_Type::C_SLIDER);
+	CompSlider* slide = (CompSlider*)obj->AddComponent(Comp_Type::C_SLIDER);
 	slide->Enable();
 
 	if (parent == nullptr)
