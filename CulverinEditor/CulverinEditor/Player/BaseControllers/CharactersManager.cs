@@ -38,13 +38,26 @@ public class CharactersManager : CulverinBehaviour
                         Debug.Log("Changing Left");
                         current_character.GetComponent<CharacterController>().SetAnimationTransition("ToOut", true);
                     }
-                    if (Input.GetKeyDown(KeyCode.Y))
+                    else if (Input.GetKeyDown(KeyCode.Y))
                     {
+                        state = State.CHANGING_RIGHT;
                         Debug.Log("Pressed Y");
                         Debug.Log("Changing Right");
-                        state = State.CHANGING_RIGHT;
                         current_character.GetComponent<CharacterController>().SetAnimationTransition("ToOut", true);
                     }
+
+                    //MANAGE SECONDARY ABILITIES -------------------------------------
+                    else if(Input.GetKeyDown(KeyCode.K))
+                    {
+                        Debug.Log("Left Secondary Ability");
+                        left_character.GetComponent<CharacterController>().SecondaryAbility();
+                    }
+                    else if (Input.GetKeyDown(KeyCode.L))
+                    {
+                        Debug.Log("Right Secondary Ability");
+                        right_character.GetComponent<CharacterController>().SecondaryAbility();
+                    }
+                    // ---------------------------------------------------------------
                     break;
                 }
 
@@ -60,8 +73,13 @@ public class CharactersManager : CulverinBehaviour
                         current_character = left_character;
                         left_character = temporal_change;
 
-                        state = State.IDLE;
+                        //Deactivate previous current character HUD
+                        left_character.GetComponent<CharacterController>().UpdateHUD(false);
+                        //Activate current character HUD
+                        current_character.GetComponent<CharacterController>().UpdateHUD(true);
+
                         Debug.Log("current character = " + current_character.GetName());
+                        state = State.IDLE;
                     }
                     break;
                 }
@@ -77,6 +95,11 @@ public class CharactersManager : CulverinBehaviour
                         temporal_change = current_character;
                         current_character = right_character;
                         right_character = temporal_change;
+
+                        //Deactivate previous current character HUD
+                        right_character.GetComponent<CharacterController>().UpdateHUD(false);
+                        //Activate current character HUD
+                        current_character.GetComponent<CharacterController>().UpdateHUD(true);
 
                         Debug.Log("current character = " + current_character.GetName());
                         state = State.IDLE;

@@ -185,11 +185,11 @@ public class TheonController : CharacterController
 
         if (active)
         {
-            //icon.Enable();
+            icon.SetEnabled(true, theon_icon_obj);
         }
         else
         {
-            //icon.Disable();
+            icon.SetEnabled(false, theon_icon_obj);
         }
     }
 }

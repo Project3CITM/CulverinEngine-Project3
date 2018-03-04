@@ -77,7 +77,7 @@ public class DaenerysWeapon_Left : WeaponController
         Debug.Log("Daenerys LW Going to hit");
 
         // Attack the enemy in front of you
-        if (EnemyInFront())
+        if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
         {
             // To change => check the specific enemy in front of you
             enemy = enemy_obj.GetComponent<EnemyController>();
