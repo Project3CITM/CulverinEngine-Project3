@@ -218,18 +218,24 @@ void CompJoint::SetMinMaxDistance()
 	}
 }
 
-void CompJoint::RemoveActors(CompRigidBody* actor)
+void CompJoint::RemoveActors()
 {
-	if (second)
+	if (joint && joint->ToRelease())
 	{
-		second->SetJointActor(nullptr);
-		second = nullptr;
-		second_uid = 0;
-		second_name.clear();
-	}
+		CompRigidBody* first = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
+		if (first != nullptr)
+		{
+			first->SetJointActor(nullptr);
+		}
 
-	if (joint)
-	{
+		if (second != nullptr)
+		{
+			second->SetJointActor(nullptr);
+			second = nullptr;
+			second_uid = 0;
+		}
+
 		joint->Release();
 	}
+	
 }

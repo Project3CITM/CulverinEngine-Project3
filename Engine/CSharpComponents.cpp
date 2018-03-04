@@ -17,6 +17,7 @@
 #include "CompButton.h"
 #include "CompCollider.h"
 #include "CompRigidBody.h"
+#include "CompJoint.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
 
@@ -209,6 +210,18 @@ MonoObject * CSharpScript::GetColliderQuaternion(MonoObject * object)
 	return nullptr;
 }
 
+void CSharpScript::RemoveJoint(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		CompRigidBody* body = (CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY);
+		if (body != nullptr)
+		{
+			body->RemoveJoint();
+		}
+	}
+}
+
 
 
 void CSharpScript::MoveKinematic(MonoObject * object, MonoObject * position, MonoObject * rotation)
@@ -240,5 +253,13 @@ void CSharpScript::MoveKinematic(MonoObject * object, MonoObject * position, Mon
 		if (w_field) mono_field_get_value(rotation, w_field, &new_rot.w);
 
 		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->MoveKinematic(new_pos, new_rot);
+	}
+}
+
+void CSharpScript::DestroyJoint(MonoObject* object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompJoint*)current_game_object->FindComponentByType(C_JOINT))->RemoveActors();
 	}
 }

@@ -751,12 +751,14 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 	mono_add_internal_call("CulverinEditor.CompCollider::MoveKinematic", (const void*)MoveStaticColliderTo);
 
-
 	//COMPONENT RIGID BODY FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompRigidBody::GetColliderPosition", (const void*)GetColliderPosition);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::GetColliderQuaternion", (const void*)GetColliderQuaternion);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::RemoveJoint", (const void*)RemoveJoint);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::MoveKinematic", (const void*)MoveKinematic);
 
+	//COMPONENT JOINT FUNCTIONS ----------------------------
+	mono_add_internal_call("CulverinEditor.CompJoint::DeleteJoint", (const void*)DeleteJoint);
 
 	//COMPONENT ANIMATION FUNCTIONS -------------------------
 	mono_add_internal_call("CulverinEditor.CompAnimation::PlayAnimation", (const void*)PlayAnimation);
@@ -1264,10 +1266,21 @@ MonoObject* ImportScript::GetColliderQuaternion(MonoObject* object)
 	return current->GetColliderQuaternion(object);
 }
 
+void ImportScript::RemoveJoint(MonoObject * object)
+{
+	current->RemoveJoint(object);
+}
+
 void ImportScript::MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation)
 {
 	current->MoveKinematic(object, position, rotation);
 }
+
+void ImportScript::DeleteJoint(MonoObject * object)
+{
+	current->DestroyJoint(object);
+}
+
 void ImportScript::PlayAnimation(MonoObject * object, MonoString * string, mono_bool blending)
 {
 	current->PlayAnimation(object, string, blending);

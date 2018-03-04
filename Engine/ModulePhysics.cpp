@@ -183,20 +183,20 @@ void ModulePhysics::OnEvent(Event & event)
 		{
 			if (event.physics_collision.trigger->GetType() == C_COLLIDER)
 			{
-				static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerLost(event.physics_collision.actor);
+				static_cast<CompCollider*>(event.physics_collision.trigger)->OnContact(event.physics_collision.actor);
 			}
 			else
 			{
-				static_cast<CompRigidBody*>(event.physics_collision.trigger)->OnTriggerLost(event.physics_collision.actor);
+				static_cast<CompRigidBody*>(event.physics_collision.trigger)->OnContact(event.physics_collision.actor);
 			}
 
 			if (event.physics_collision.actor->GetType() == C_COLLIDER)
 			{
-				static_cast<CompCollider*>(event.physics_collision.actor)->OnTriggerLost(event.physics_collision.actor);
+				static_cast<CompCollider*>(event.physics_collision.actor)->OnContact(event.physics_collision.actor);
 			}
 			else
 			{
-				static_cast<CompRigidBody*>(event.physics_collision.actor)->OnTriggerLost(event.physics_collision.actor);
+				static_cast<CompRigidBody*>(event.physics_collision.actor)->OnContact(event.physics_collision.actor);
 			}
 			break;
 		}

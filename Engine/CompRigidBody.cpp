@@ -63,7 +63,7 @@ CompRigidBody::~CompRigidBody()
 
 void CompRigidBody::PreUpdate(float dt)
 {
-	if (dt > 0 && body && !kinematic)
+	if (dt > 0 && body)
 	{
 		own_update = true;
 		UpdateParentPosition();
@@ -86,7 +86,7 @@ void CompRigidBody::Clear()
 {
 	if (joint != nullptr)
 	{
-		joint->RemoveActors(this);
+		joint->RemoveActors();
 		joint = nullptr;
 	}
 
@@ -324,6 +324,14 @@ void CompRigidBody::SetJointActor(CompJoint * new_joint)
 jpPhysicsRigidBody * CompRigidBody::GetPhysicsBody() const
 {
 	return body;
+}
+
+void CompRigidBody::RemoveJoint()
+{
+	if (joint != nullptr)
+	{
+		joint->RemoveActors();
+	}
 }
 
 void CompRigidBody::UpdateParentPosition()

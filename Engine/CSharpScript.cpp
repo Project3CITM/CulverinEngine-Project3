@@ -1024,6 +1024,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompRigidBody";
 	}
+	else if (name == "CulverinEditor.CompJoint")
+	{
+		comp_name = "CompJoint";
+	}
 	else if (name == "CulverinEditor.CompAnimation")
 	{
 		comp_name = "CompAnimation";

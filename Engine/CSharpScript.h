@@ -239,7 +239,11 @@ public:
 	/*RigidBody*/
 	MonoObject* GetColliderPosition(MonoObject* object);
 	MonoObject* GetColliderQuaternion(MonoObject* object);
+	void		RemoveJoint(MonoObject* object);
 	void		MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation);
+
+	/*Joint*/
+	void		DestroyJoint(MonoObject* object);
 
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
