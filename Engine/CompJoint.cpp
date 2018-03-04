@@ -7,11 +7,16 @@
 #include "Scene.h"
 #include "ModulePhysics.h"
 
+#include "CompRigidBody.h"
+#include "jpPhysicsJoint.h"
+
 // COMPONENT JOINT -------------------------------------------------
 CompJoint::CompJoint(Comp_Type t, GameObject* parent) : Component(t,parent)
 {
 	uid = App->random->Int();
 	name_component = "CompJoint";
+
+	joint = new jpJoint();
 }
 
 CompJoint::CompJoint(const CompJoint & copy, GameObject * parent) : Component(Comp_Type::C_JOINT, parent)
@@ -27,7 +32,29 @@ CompJoint::~CompJoint()
 // -----------------------------------------------------------------
 void CompJoint::Clear()
 {
-	
+	if (joint)
+	{
+		if (joint->ToRelease())
+		{
+			CompRigidBody* first = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
+			if (first != nullptr)
+			{
+				first->SetJointActor(nullptr);
+			}
+
+			if (second)
+			{
+				second->SetJointActor(nullptr);
+				second = nullptr;
+				second_uid = 0;
+			}
+
+			joint->Release();
+		}
+
+		delete joint;
+		joint = nullptr;
+	}
 }
 
 // -----------------------------------------------------------------
@@ -91,6 +118,27 @@ void CompJoint::ShowInspectorInfo()
 		ImGui::EndPopup();
 	}
 
+	CompRigidBody* rbody = (CompRigidBody*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_RIGIDBODY, second_name);
+	if (rbody != nullptr)
+	{
+		second = rbody;
+		second_uid = second->GetUUID();
+	}
+
+	ImGui::Text("Distance");
+	if (ImGui::InputFloat("Min", &min_dist, 0.1f, 1.f, 2, ImGuiInputTextFlags_EnterReturnsTrue) ||
+		ImGui::InputFloat("Max", &max_dist, 0.1f, 1.f, 2, ImGuiInputTextFlags_EnterReturnsTrue))
+	{
+		SetMinMaxDistance();
+		// Maybe Should Set Second Position in min/max range;
+	}
+	ImGui::Separator();
+
+	if(ImGui::Button("Create Joint"))
+	{
+		CreateJoint();
+	}
+
 	ImGui::TreePop();
 }
 
@@ -99,13 +147,89 @@ void CompJoint::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+	json_object_dotset_number_with_std(object, name + "Second UUID", second_uid);
+
+	json_object_dotset_number_with_std(object, name + "Min Distance", min_dist);
+	json_object_dotset_number_with_std(object, name + "Max Distance", max_dist);
 }
 
 void CompJoint::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+
+	second_uid = json_object_dotget_number_with_std(object, name + "Second UUID");
+
+	min_dist = json_object_dotget_number_with_std(object, name + "Min Distance");
+	max_dist = json_object_dotget_number_with_std(object, name + "Max Distance");
 }
 
 void CompJoint::SyncComponent()
 {
+	if (second_uid != 0)
+	{
+		std::vector<Component*> rigidbody_vec;
+		App->scene->root->GetComponentsByType(Comp_Type::C_RIGIDBODY, &rigidbody_vec, true);
+
+		for (uint i = 0; i < rigidbody_vec.size(); i++)
+		{
+			if (rigidbody_vec[i]->GetUUID() == second_uid)
+			{
+				second = (CompRigidBody*)rigidbody_vec[i];
+				second_name = second->GetName();
+				CreateJoint();
+			}
+		}
+	}
+}
+
+void CompJoint::CreateJoint()
+{
+	if (second != nullptr)
+	{
+		CompRigidBody* first = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
+		if (first != nullptr)
+		{
+			first->SetJointActor(this);
+			second->SetJointActor(this);
+			second_uid = second->GetUUID();
+
+			joint->CreateDistanceJoint(App->physics->GetPhysX(), first->GetPhysicsBody(), second->GetPhysicsBody(), float3(0,0,0), float3(0, 0, 0));
+			joint->SetLimitDistance(min_dist, max_dist);
+		}
+	}
+}
+
+void CompJoint::SetMinMaxDistance()
+{
+	if (joint)
+	{
+		if (min_dist < 0)
+		{
+			min_dist = 1.f;
+		}
+
+		if (max_dist < 0)
+		{
+			max_dist = 1.f;
+		}
+
+		joint->SetLimitDistance(min_dist, max_dist);
+	}
+}
+
+void CompJoint::RemoveActors(CompRigidBody* actor)
+{
+	if (second)
+	{
+		second->SetJointActor(nullptr);
+		second = nullptr;
+		second_uid = 0;
+		second_name.clear();
+	}
+
+	if (joint)
+	{
+		joint->Release();
+	}
 }

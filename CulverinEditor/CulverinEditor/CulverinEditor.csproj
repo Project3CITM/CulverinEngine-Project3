@@ -63,6 +63,10 @@
     <Compile Include="Player\Daenerys\DaenerysCD_Right.cs" />
     <Compile Include="Player\Daenerys\DaenerysWeapon_Left.cs" />
     <Compile Include="Player\Daenerys\DaenerysWeapon_Right.cs" />
+    <Compile Include="Player\Theon\TheonCD_Left.cs" />
+    <Compile Include="Player\Theon\TheonCD_Right.cs" />
+    <Compile Include="Player\Theon\TheonWeapon_Left.cs" />
+    <Compile Include="Player\Theon\TheonWeapon_Right.cs" />
     <Compile Include="Player\UI\CoolDown.cs" />
     <Compile Include="Player\Jaime\JaimeCD_Right.cs" />
     <Compile Include="Player\Jaime\JaimeCD_Left.cs" />

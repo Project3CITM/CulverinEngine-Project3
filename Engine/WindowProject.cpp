@@ -11,8 +11,7 @@ Project::Project()
 {
 	active.push_back(Active());
 	name = "Project";
-	temp = App->fs->GetMainDirectory();
-	directory_see = temp.c_str();
+	directory_see = App->fs->GetMainDirectory();
 }
 
 
@@ -523,7 +522,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 
 const char* Project::GetDirectory() const
 {
-	return directory_see;
+	return directory_see.c_str();
 }
 
 void Project::SetDirectory(const char* newDirectory)

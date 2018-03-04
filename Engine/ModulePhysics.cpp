@@ -221,6 +221,11 @@ void ModulePhysics::OnEvent(Event & event)
 	}
 }
 
+physx::PxPhysics * ModulePhysics::GetPhysX()
+{
+	return mPhysics;
+}
+
 // -----------------------------------------------------------------
 jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(Component * component, bool dynamic)
 {

@@ -31,6 +31,7 @@ public class CharacterController : CulverinBehaviour
     protected CompAnimation anim_controller_right;     // Animation component to handle animations
     protected WeaponController left_weapon;            // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
     protected CompAnimation anim_controller_left;      // Animation component to handle animations
+    protected CompImage icon;
 
     protected Position position = Position.CURRENT; 
     protected State state = State.IDLE;
@@ -127,5 +128,10 @@ public class CharacterController : CulverinBehaviour
     public virtual void SetAnimationTransition(string name, bool value)
     {
         Debug.Log("Animation Transition Character");
+    }
+
+    public virtual void UpdateHUD(bool active)
+    {
+        Debug.Log("Change Current Character Icon");
     }
 }

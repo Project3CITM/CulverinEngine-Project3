@@ -20,6 +20,7 @@
 #include "CompButton.h"
 #include "CompCheckBox.h"
 #include "CompImage.h"
+#include "CompSlider.h"
 #include "CompText.h"
 #include "CompEditText.h"
 #include "CompCanvas.h"
@@ -315,6 +316,16 @@ void GameObject::PreUpdate(float dt)
 				{
 					components[i]->PreUpdate(dt);
 				}
+				else
+				{
+					if (components[i]->GetType() == Comp_Type::C_SCRIPT)
+					{
+						if (((CompScript*)components[i])->p_active)
+						{
+							components[i]->PreUpdate(dt);
+						}
+					}
+				}
 			}
 		}
 
@@ -372,9 +383,9 @@ void GameObject::Update(float dt)
 	}
 }
 
-void GameObject::postUpdate()
-{
-}
+//void GameObject::postUpdate()
+//{
+//}
 
 bool GameObject::CleanUp()
 {
@@ -816,6 +827,18 @@ void GameObject::ShowGameObjectOptions()
 				}
 				GameObject* check_box = App->scene->CreateCheckBox(parent);
 				App->gui->SetLinkInspector(check_box);
+
+			}
+			if (ImGui::MenuItem("Slider"))
+			{
+				CompCanvas* comp_canvas = (CompCanvas*)FindParentComponentByType(Comp_Type::C_CANVAS);
+				GameObject* parent = this;
+				if (comp_canvas == nullptr)
+				{
+					parent = App->scene->CreateCanvas(this);
+				}
+				GameObject* slider = App->scene->CreateSlider(parent);
+				App->gui->SetLinkInspector(slider);
 
 			}
 			if (ImGui::MenuItem("Text"))
@@ -1485,6 +1508,21 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			}
 			else LOG("IMAGE not linked to any CheckBox");
 			return check_box;
+		}
+		case Comp_Type::C_SLIDER:
+		{
+			//If is not RectTransform
+			//TODO change transform
+			LOG("Adding SLIDER COMPONENT.");
+			CompSlider* slider = new CompSlider(type, this);
+			components.push_back(slider);
+			CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
+			if (image_to_link != nullptr)
+			{
+
+			}
+			else LOG("IMAGE not linked to any slider");
+			return slider;
 		}
 		case Comp_Type::C_CAMERA:
 		{

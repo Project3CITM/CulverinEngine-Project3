@@ -111,9 +111,6 @@ public:
 	void SetClassName(std::string _name);
 	void SetNameSpace(std::string _name_space);
 
-	//Special
-	MonoObject* GetMonoObjectLink(std::string name);
-
 	//Variables METHODS -------------------------------------------------
 	void ResetScriptVariables();
 	void CreateOwnGameObject();
@@ -131,6 +128,11 @@ public:
 
 	/*Input*/
 	MonoObject* GetMousePosition();
+
+	/* CulverinBehaviour */
+	MonoObject* GetMonoObjectLink(std::string name);
+	mono_bool	GetEnabled(MonoObject* object, MonoObject* gameobect);
+	void		SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject);
 
 	/*Game Object*/
 	bool		IsStatic(MonoObject* object);
@@ -153,6 +155,7 @@ public:
 	void		CreateGameObject(MonoObject* object);
 	bool		DestroyGameObject(MonoObject* object);
 
+	/* Transform */
 	MonoObject* GetForwardVector(MonoObject* object);
 	MonoObject* GetBackwardVector(MonoObject* object);
 	MonoObject* GetUpVector(MonoObject* object);
@@ -201,6 +204,7 @@ public:
 	/*UI-Graphics*/
 	void		SetRaycastTarget(MonoObject * object, mono_bool flag);
 	void		FillAmount(MonoObject * object, float value);
+
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
 	void		MoveStaticColliderTo(MonoObject* object, MonoObject* positio);
@@ -213,9 +217,6 @@ public:
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
 	MonoObject* GetParentGameObject();
-	void		SetEnabled(MonoObject* object, bool val);
-	mono_bool	GetEnabled(MonoObject* object);
-	void		SetOwnComponent(CompScript* own_component);
 
 	/*Childs*/
 	MonoObject* Find(MonoObject* object, MonoString* name);
@@ -260,7 +261,6 @@ private:
 	MainMonoMethod OnClick;
 
 	GameObject* current_game_object = nullptr;
-	CompScript* own_component = nullptr;
 	std::vector<uint> re_load_values;
 
 	/* Components */

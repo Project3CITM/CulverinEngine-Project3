@@ -23,7 +23,7 @@ public:
 	bool Start();
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
-	//update_status PostUpdate(float dt);
+	//update_status PostUpdate();
 	update_status UpdateConfig(float dt);
 	bool CleanUp();
 
@@ -83,6 +83,7 @@ public:
 	GameObject* CreateImage(GameObject* parent = nullptr);
 	GameObject* CreateButton(GameObject* parent = nullptr);
 	GameObject* CreateCheckBox(GameObject* parent = nullptr);
+	GameObject * CreateSlider(GameObject * parent = nullptr);
 	GameObject* CreateText(GameObject* parent = nullptr);
 	GameObject* CreateEditText(GameObject* parent = nullptr);
 

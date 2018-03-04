@@ -655,7 +655,7 @@ void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const cha
 
 void JSONSerialization::SaveScript(const ResourceScript* script, const char* directory, const char* fileName)
 {
-	LOG("SAVING Script %s -----", script->name);
+	LOG("SAVING Script %s -----", script->name.c_str());
 
 	JSON_Value* config_file;
 	JSON_Object* config;
@@ -710,6 +710,8 @@ void JSONSerialization::SavePlayerAction(const ModulePlayerActions * player_acti
 	JSON_Object* config;
 
 	std::string nameJson = directory;
+	nameJson += "/";
+	nameJson += fileName;
 	nameJson += ".meta.json";
 	config_file = json_value_init_object();
 
@@ -717,8 +719,12 @@ void JSONSerialization::SavePlayerAction(const ModulePlayerActions * player_acti
 	{
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
+		json_object_dotset_string_with_std(config, "Input.Directory", fileName);
+		json_object_dotset_number_with_std(config, "Input.InputManager.Size", player_action->GetInteractiveVector().size());
+
 		if (!player_action->GetInteractiveVector().empty())
 		{
+
 			for (uint i = 0; i < player_action->GetInteractiveVector().size(); i++)
 			{
 				InputManager* item = player_action->GetInteractiveVector()[i];
@@ -733,30 +739,69 @@ void JSONSerialization::SavePlayerAction(const ModulePlayerActions * player_acti
 
 void JSONSerialization::SaveInputManager(JSON_Object * config_node, const InputManager* input_manager, uint count, uint action_count)
 {
-	std::string name = "InputManager" + std::to_string(count);
+	std::string name = "Input.InputManager" + std::to_string(count);
 	name += ".";
 	if (!input_manager->GetActionVector().empty())
 	{
+		json_object_dotset_number_with_std(config_node, name + "InputManagerActionSize", input_manager->GetActionVector().size());
+
 		for (uint i = 0; i < input_manager->GetActionVector().size(); i++)
 		{
 			json_object_dotset_string_with_std(config_node, name + "InputManagerName", input_manager->GetName());
 			json_object_dotset_boolean_with_std(config_node, name + "InputManagerActive", input_manager->GetActiveInput());
 			json_object_dotset_boolean_with_std(config_node, name + "InputManagerBlock", input_manager->GetBlockAction());
 			InputAction* item = input_manager->GetActionVector()[i];
-			SaveInputAction(config_node, item, i);
+			SaveInputAction(config_node, item, i, count);
 		}
 	}
 
 }
 
-void JSONSerialization::SaveInputAction(JSON_Object * config_node, const InputAction * input_action, uint count)
+void JSONSerialization::SaveInputAction(JSON_Object * config_node, const InputAction * input_action, uint count,uint input_count)
 {
-	std::string name = "InputAction" + std::to_string(count);
+	std::string name = "Input.InputManager" + std::to_string(input_count)+".InputAction" + std::to_string(count);
 	name += ".";
 	json_object_dotset_string_with_std(config_node, name+"InputActionName", input_action->name.c_str());
 	json_object_dotset_string_with_std(config_node, name + "KeyRelationName", input_action->key_relation->name.c_str());
 	json_object_dotset_number_with_std(config_node, name + "ActionType", input_action->action_type);
 
+}
+
+void JSONSerialization::LoadPlayerAction(ModulePlayerActions * player_action,const char * fileName)
+{
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+	JSON_Object* config_node;
+
+	config_file = json_parse_file(fileName);
+	if (config_file != nullptr)
+	{
+		int input_manager_size = json_object_dotget_number_with_std(config, "Input.InputManager.Size");
+		for (uint i = 0; i < input_manager_size; i++)
+		{
+			std::string name = "Input.InputManager" + std::to_string(i);
+			name += ".";
+			InputManager* input_manager = new InputManager();
+			player_action->GetInteractiveVector().push_back(input_manager);
+			input_manager->SetName(json_object_dotget_string_with_std(config_node, name + "InputManagerName"));
+			input_manager->SetActiveInput(json_object_dotget_boolean_with_std(config_node, name + "InputManagerActive"));
+			input_manager->SetBlockAction(json_object_dotget_boolean_with_std(config_node, name + "InputManagerBlock"));
+			int input_action_size = json_object_dotget_number_with_std(config_node, name + "InputManagerActionSize");
+			for (uint j = 0; j < input_action_size; j++)
+			{
+				std::string name = "Input.InputManager" + std::to_string(i) + ".InputAction" + std::to_string(j);
+				name += ".";
+				InputAction* input_action = nullptr;
+				input_manager->GetActionVector().push_back(input_action);
+				std::string action_name = json_object_dotget_string_with_std(config_node, name + "InputActionName");
+				std::string key_relation = json_object_dotget_string_with_std(config_node, name + "KeyRelationName");
+				int action_type = json_object_dotget_number_with_std(config_node, name + "ActionType");
+				input_action = input_manager->CreateNewAction(action_name.c_str(), key_relation.c_str(), static_cast<ActionInputType>(action_type));
+				
+			}
+		}
+	}
 }
 
 

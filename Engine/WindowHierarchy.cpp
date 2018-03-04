@@ -6,6 +6,8 @@
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 #include "CompCheckBox.h"
+#include "CompImage.h"
+#include "CompSlider.h"
 
 Hierarchy::Hierarchy() : WindowManager()
 {
@@ -202,8 +204,20 @@ void Hierarchy::ShowOptions()
 			CompImage* tick = (CompImage*)tick_image->FindComponentByType(Comp_Type::C_IMAGE);
 			check->Tick = tick;
 			App->gui->SetLinkInspector(check_box);
-
-
+		}
+		if (ImGui::MenuItem("Slider"))
+		{
+			GameObject* canvas = App->scene->FindCanvas();
+			if (canvas == nullptr)
+			{
+				canvas = App->scene->CreateCanvas(nullptr);
+			}
+			GameObject* bar = App->scene->CreateImage(canvas);
+			GameObject* slide = App->scene->CreateImage(canvas);
+			CompSlider* slider = (CompSlider*)bar;
+			CompImage* to_slide = (CompImage*)slide->FindComponentByType(Comp_Type::C_IMAGE);
+			slider->slide = to_slide;
+			App->gui->SetLinkInspector(bar);
 		}
 		if (ImGui::MenuItem("Text"))
 		{
@@ -214,9 +228,8 @@ void Hierarchy::ShowOptions()
 			}
 			GameObject* text = App->scene->CreateText(canvas);
 			App->gui->SetLinkInspector(text);
-
 		}
-		if (ImGui::MenuItem("Check Box"))
+		if (ImGui::MenuItem("Edit Text"))
 		{
 			GameObject* canvas = App->scene->FindCanvas();
 			if (canvas == nullptr)

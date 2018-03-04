@@ -37,7 +37,8 @@ enum Comp_Type
 	C_FSM,
 	C_LIGHT,
 	C_PARTICLE_SYSTEM,
-	C_JOINT
+	C_JOINT,
+	C_SLIDER
 };
 
 class Component
@@ -48,6 +49,7 @@ public:
 
 	virtual bool Enable();
 	virtual bool Disable();
+	virtual bool GetEnabled();
 	virtual void Init();
 	virtual void PreUpdate(float dt);
 	virtual void Update(float dt);

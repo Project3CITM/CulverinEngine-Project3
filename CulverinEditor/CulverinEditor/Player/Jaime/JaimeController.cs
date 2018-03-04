@@ -7,6 +7,7 @@ public class JaimeController : CharacterController
 
     public GameObject rweapon_jaime_obj;
     public GameObject lweapon_jaime_obj;
+    public GameObject jaime_icon_obj;
 
     protected override void Start()
     {
@@ -178,4 +179,17 @@ public class JaimeController : CharacterController
         anim_controller_left.SetTransition(name, value);
     }
 
+    public override void UpdateHUD(bool active)
+    {
+        icon = jaime_icon_obj.GetComponent<CompImage>();
+
+        if (active)
+        {
+            //icon.Enable();
+        }
+        else
+        {
+            //icon.Disable();
+        }
+    }
 }

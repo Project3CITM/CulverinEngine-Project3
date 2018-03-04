@@ -5,48 +5,50 @@ public class BarrelMovement : CulverinBehaviour
 {
 
     public GameObject instance;
+    BarrelManage manage;
 
-    public float movSpeed;
-    public float length;
-    public float stop_time;
-    public float stop_length;
+
+    float length;
     Transform trans;
-    float time = 0;
- 
-    float advanced_distance;
-    int rand = 3;
+    bool test = false;
+
+
     void Start()
     {
+        instance = GetLinkedObject("instance");
+        manage = instance.GetComponent<BarrelManage>();
         trans = gameObject.GetComponent<Transform>();
+     
 
     }
     void Update()
-    {      
-       
-        time += Time.DeltaTime();
-        if (time > stop_time)
-        {
-            Vector3 new_pos = new Vector3(trans.local_position.x + 1, trans.local_position.y, trans.local_position.z);
-            trans.local_position = Vector3.MoveTowards(trans.local_position, new_pos, movSpeed * Time.DeltaTime());
-            advanced_distance += movSpeed * Time.DeltaTime();
-            //if(time >= 2.0f)
+    {
+        instance = GetLinkedObject("instance");
+        manage = instance.GetComponent<BarrelManage>();
+        trans = gameObject.GetComponent<Transform>();
+        length = manage.length;
 
-        }
-       
       
-        if (advanced_distance >= stop_length )
+             
+       
+         Vector3 diff = trans.local_position - new Vector3(0, 0, 0);
+        if(diff.Length >= manage.length)
+        {              
+               trans.local_position = new Vector3(0, 0, 0);
+             
+        }
+        if (!manage.stop)
         {
-            advanced_distance = 0;
-            time = 0;
+            trans.local_position = new Vector3(trans.local_position.x + manage.movSpeed*manage.p_dt, trans.local_position.y, trans.local_position.z);
+           
+        }
+        
+        else
+        {
+            trans.local_position = new Vector3(Mathf.Round(trans.local_position.x), trans.local_position.y, trans.local_position.z);
             
         }
-         Vector3 diff = trans.local_position - new Vector3(0, 0, 0);
-           if(diff.Length > length)
-           {
-           
-               trans.local_position = new Vector3(0, 0, 0);
-           }
-
+       
     
     }
 }

@@ -29,6 +29,11 @@ bool Component::Disable()
 	return active;
 }
 
+bool Component::GetEnabled()
+{
+	return active;
+}
+
 void Component::Init()
 {
 }
