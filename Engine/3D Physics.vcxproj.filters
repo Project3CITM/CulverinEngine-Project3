@@ -1589,10 +1589,16 @@
     <ClCompile Include="CompSlider.cpp">
       <Filter>Engine\Components</Filter>
     </ClCompile>
-    <ClCompile Include="CSharpComponents.cpp" />
-    <ClCompile Include="CSharpTransform.cpp" />
-    <ClCompile Include="CSharpUI.cpp" />
     <ClCompile Include="PlayerActions.cpp" />
+    <ClCompile Include="CSharpComponents.cpp">
+      <Filter>Engine\Resources\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="CSharpTransform.cpp">
+      <Filter>Engine\Resources\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="CSharpUI.cpp">
+      <Filter>Engine\Resources\Script</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">

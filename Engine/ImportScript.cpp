@@ -659,6 +659,7 @@ void ImportScript::LinkFunctions()
 
 	/* Object */
 	mono_add_internal_call("CulverinEditor.Object::Instantiate", (const void*)Instantiate);
+	mono_add_internal_call("CulverinEditor.Object::Destroy", (const void*)Destroy);
 	
 	// Transform ---------------------------
 	mono_add_internal_call("CulverinEditor.Transform::GetForwardVector", (const void*)GetForwardVector);
@@ -999,6 +1000,11 @@ MonoObject* ImportScript::GetComponent(MonoObject* object, MonoReflectionType* t
 MonoObject* ImportScript::Instantiate(MonoObject* object, MonoString* prefab)
 {
 	return current->Instantiate(object, prefab);
+}
+
+void ImportScript::Destroy(MonoObject* object, MonoObject* gameobject, float time)
+{
+	current->Destroy(gameobject, time);
 }
 
 MonoObject* ImportScript::GetForwardVector(MonoObject* object)

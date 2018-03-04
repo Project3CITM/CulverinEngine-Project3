@@ -47,6 +47,13 @@ namespace CulverinEditor
             return ret;
         }
 
+        //
+        //At the moment only use for GameObjects
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void Destroy(GameObject ganeobject, float time = 0.0f);
+
+        //
+        //At the moment only use for GameObjects
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern GameObject Instantiate(string prefab);
 

@@ -955,6 +955,23 @@ MonoObject*	CSharpScript::Instantiate(MonoObject* object, MonoString* prefab_)
 	return nullptr;
 }
 
+void CSharpScript::Destroy(MonoObject* object, float time)
+{
+	GameObject* gameobject = App->importer->iScript->GetGameObject(object);
+	if (gameobject != nullptr)
+	{
+		Event e;
+		e.delete_go.type = EventType::EVENT_DELETE_GO;
+		e.delete_go.delay = time;
+		e.delete_go.Todelte = gameobject;
+		PushEvent(e);
+	}
+	else
+	{
+		LOG("[error] GameObject = null");
+	}
+}
+
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)
 {
 	if (!CheckMonoObject(object))
