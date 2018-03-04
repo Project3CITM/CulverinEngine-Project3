@@ -331,7 +331,7 @@ void Particle::DrawParticle(uint program_id)
 
 	const ParticleMeshData& Mesh = ParentParticleSystem->GetParticleMeshData();
 
-	glColor4f(Properties.RGBATint.x, Properties.RGBATint.y, Properties.RGBATint.z, Properties.RGBATint.w);
+	//glColor4f(Properties.RGBATint.x, Properties.RGBATint.y, Properties.RGBATint.z, Properties.RGBATint.w);
 
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_NORMALIZE);
@@ -349,6 +349,11 @@ void Particle::DrawParticle(uint program_id)
 		glBindTexture(GL_TEXTURE_2D, ParentParticleSystem->TextureData.TextureID);
 
 	}
+
+
+	uint color_id = glGetUniformLocation(program_id, "_my_color");
+	glUniform4fv(color_id, 1, Properties.RGBATint.ptr());
+
 	glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_vertices);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (char *)NULL + (0 * sizeof(float)));

@@ -211,12 +211,12 @@ static const GLchar* DefaultFrag[] =
 	"in vec4 gl_FragCoord;\n"
 	"out vec4 color;\n"
 	"uniform sampler2D albedo;\n"
-
+	"uniform vec4 _my_color;\n"
 	"void main()\n"
 	"{\n"
 	
 	//Z-Buffer Line Shader
-	"color= texture(albedo, TexCoord);\n"
+	"color= _my_color * texture(albedo, TexCoord);\n"
 	"}\n"
 };
 
