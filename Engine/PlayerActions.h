@@ -18,6 +18,15 @@ public:
 	void UpdateInputsManager();
 
 	bool ReceiveEvent(SDL_Event* input_event);
+	void InputManagerActive(const char* name);
+	void InputManagerDeactive(const char* name);
+
+	void InputManagerBlock(const char* name);
+	void InputManagerUnblock(const char* name);
+
+	void SetInputManagerActive(const char* name,bool set);
+	void SetInputManagerBlock(const char* name, bool set);
+
 	InputManager* GetInputManager(const char* name) const;
 	InputManager* GetInputManager(const char* name);
 	std::vector<InputManager*> GetInteractiveVector() const;
