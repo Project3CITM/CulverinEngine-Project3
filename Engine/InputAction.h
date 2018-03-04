@@ -6,7 +6,7 @@
 #include"Application.h"
 #include"ModuleInput.h"
 
-#define MAXIMUM_AXIS_C 32768
+
 
 enum Keystateaction
 {
@@ -98,8 +98,9 @@ public:
 			{
 				if (input_event->caxis.axis == key_relation->event_value) {
 					//direction_axis = input_event->caxis.value;
-					direction_axis = (float)input_event->caxis.value/ (float)MAXIMUM_AXIS_C;
+					direction_axis = (float)input_event->caxis.value/ (float)maximum_axis_c;
 					LOG("joystick %f", direction_axis);
+
 					return true;
 				}
 			}
@@ -120,6 +121,11 @@ public:
 
 	AxisDirectionController direction = AxisDirectionController::NON_DIRECTION_C;
 	float direction_axis = 0;
+
+private:
+	float dead_zone = 8000;
+	float maximum_axis_c = 32768;
+
 };
 
 class MouseButtonAction : public InputAction
