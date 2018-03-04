@@ -22,7 +22,7 @@ namespace CulverinEditor
         public extern bool GetEnabled(GameObject parent = null);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern bool SetEnabled(bool active, GameObject parent = null);
+        public extern void SetEnabled(bool active, GameObject parent = null);
 
     }
 

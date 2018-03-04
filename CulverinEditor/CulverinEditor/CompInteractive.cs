@@ -2,7 +2,7 @@
 
 namespace CulverinEditor
 {
-    public class CompInteractive : Component
+    public class CompInteractive : CulverinBehaviour
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void Activate();

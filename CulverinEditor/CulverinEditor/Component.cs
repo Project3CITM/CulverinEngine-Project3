@@ -41,10 +41,10 @@ namespace CulverinEditor
         [MethodImpl(MethodImplOptions.InternalCall)]
         private extern GameObject GetParentGameObject();
 
-        [MethodImpl(MethodImplOptions.InternalCall)]
+        [Obsolete("Now use CulverinBehaviour::GetEnabled(GameObject parent)", false)]
         public extern bool GetScriptEnabled();
 
-        [MethodImpl(MethodImplOptions.InternalCall)]
+        [Obsolete("Now use CulverinBehaviour::SetEnable(bool active, GameObject parent)", false)]
         public extern void SetScriptEnabled(bool val);
 
         public bool CompareTag(string tag)
