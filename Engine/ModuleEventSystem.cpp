@@ -306,7 +306,8 @@ void ModuleEventSystem::ClearEvents(EventType type)
 		MM3DDrawEvent.clear();
 		for (std::multimap<float, Event>::const_iterator item = MM3DADrawEvent.cbegin(); item != MM3DADrawEvent.cend();)
 		{
-			if (item._Ptr->_Myval.first == type) item = MM3DADrawEvent.erase(item);
+			if (item._Ptr->_Myval.second.type == type)
+				item = MM3DADrawEvent.erase(item);
 			else item++;
 		}
 		MM2DCanvasDrawEvent.clear();
@@ -314,7 +315,8 @@ void ModuleEventSystem::ClearEvents(EventType type)
 	case EventType::EVENT_PARTICLE_DRAW:
 		for (std::multimap<float, Event>::const_iterator item = MM3DADrawEvent.cbegin(); item != MM3DADrawEvent.cend();)
 		{
-			if (item._Ptr->_Myval.first == type) item = MM3DADrawEvent.erase(item);
+			if (item._Ptr->_Myval.second.type == type)
+				item = MM3DADrawEvent.erase(item);
 			else item++;
 		}
 		break;

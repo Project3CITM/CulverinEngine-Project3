@@ -160,11 +160,23 @@ void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveSc
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
+
+	json_object_dotset_string_with_std(object, name + "ParticleResource:", particle_resource_name.c_str());
+	json_object_dotset_string_with_std(object, name + "EmitterResource:", emitter_resource_name.c_str());
+
 }
 
 void CompParticleSystem::Load(const JSON_Object* object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	particle_resource_name = json_object_dotget_string_with_std(object, name + "ParticleResource:");
+	emitter_resource_name = json_object_dotget_string_with_std(object, name + "EmitterResource:");
+
+	file_to_load = particle_resource_name;
+	ImGuiLoadParticlePopUp();
+
+	file_to_load = emitter_resource_name;
+	ImGuiLoadEmitterPopUp();
 }
 
 
@@ -581,10 +593,7 @@ void CompParticleSystem::ShowInspectorInfo()
 		file_type = Texture_Resource;
 		pop_up_load_open = true;
 	}
-
-
-
-
+	
 	// Button Options --------------------------------------
 	if (ImGui::BeginPopup("OptionsParticleSystem"))
 	{
