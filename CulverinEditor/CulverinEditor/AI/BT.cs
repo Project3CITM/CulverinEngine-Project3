@@ -42,7 +42,7 @@ public class BT : CulverinBehaviour
     {
         int x = GetComponent<Movement_Action>().GetCurrentTileX();
         int y = GetComponent<Movement_Action>().GetCurrentTileY();
-        GetComponent<Movement_Action>().GoTo(x, y, 2, 3);
+        GetComponent<Movement_Action>().GoTo(x, y, 10, 10);
         current_action = GetComponent<Movement_Action>();
         current_action.ActionStart();
 

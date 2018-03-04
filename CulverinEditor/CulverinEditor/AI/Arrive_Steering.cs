@@ -6,9 +6,8 @@ public class Arrive_Steering : CulverinBehaviour
 {
     public float min_distance = 0.05f;
     public float slow_distance = 0.9f;
-    public float stopping_time = 1.0f;
+    public float stopping_time = 0.3f;
     Movement_Action move;
-    bool in_distance = false;
 
     // Use this for initialization
     void Start()
@@ -16,12 +15,6 @@ public class Arrive_Steering : CulverinBehaviour
         move = GetComponent<Movement_Action>();
         Debug.Log("Arrive Start");
         SetScriptEnabled(false);
-    }
-
-
-    public override void OnDisable()
-    {
-        in_distance = false;
     }
 
     void Update()
