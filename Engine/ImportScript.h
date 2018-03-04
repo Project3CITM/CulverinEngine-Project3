@@ -61,6 +61,9 @@ private:
 	/* Debug - Console */
 	static void ConsoleLog(MonoObject* string);
 
+	/* Scene Management */
+	static void LoadScene(MonoObject* scene_name);
+
 	/* Input */
 	static mono_bool	GetKeyDown(int key);
 	static mono_bool	GetKeyUp(int key);

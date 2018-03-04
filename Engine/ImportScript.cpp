@@ -694,6 +694,10 @@ void ImportScript::LinkFunctions()
 
 	//CONSOLE FUNCTIONS ------------------
 	mono_add_internal_call("CulverinEditor.Debug.Debug::Log", (const void*)ConsoleLog);
+
+	//SCENE MANAGEMENT FUNCTIONS ---------
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadScene",(const void*)LoadScene);
+
 	//INPUT FUNCTIONS -------------------
 	mono_add_internal_call("CulverinEditor.Input::GetKeyDown", (const void*)GetKeyDown);
 	mono_add_internal_call("CulverinEditor.Input::GetKeyUp", (const void*)GetKeyUp);
@@ -771,6 +775,22 @@ void ImportScript::ConsoleLog(MonoObject* string)
 		const char* message = mono_string_to_utf8(strings);
 
 		LOG(message);
+	}
+}
+
+void ImportScript::LoadScene(MonoObject * scene_name)
+{
+	if (scene_name != nullptr)
+	{
+		MonoString* strings = mono_object_to_string(scene_name, NULL);
+		const char* scene = mono_string_to_utf8(strings);
+
+		std::string directory_scene = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+		directory_scene += "/";
+		directory_scene += scene;
+		directory_scene += ".scene.json";
+		App->SetActualScene(directory_scene.c_str());
+		App->WantToLoad();
 	}
 }
 
