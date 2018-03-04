@@ -225,6 +225,10 @@ void Application::FinishUpdate()
 		App->scene->DeleteAllGameObjects(App->scene->root);
 		json_seria->LoadScene(actual_scene.c_str());
 		//App->resource_manager->ReImportAllScripts();
+		if (engine_state != EngineState::STOP)
+		{
+			change_to_game = true;
+		}
 		want_to_load = false;
 	}
 	// ---------------------------------------------
