@@ -292,11 +292,11 @@ Particle::~Particle()
 
 bool Particle::PreUpdate(float dt)
 {
-//	if (dt > 0.001f)
-//	{
+	if (dt > 0.001f)
+	{
 		Properties.LifetimeActual += dt;
 		CalculateStatesInterpolation();
-//	}
+	}
 	return true;
 }
 
@@ -1254,6 +1254,7 @@ bool ParticleSystem::CreateParticle()
 		float SizeZ = abs(Emitter.EmitterShape.Box_Shape.maxPoint.z - Emitter.EmitterShape.Box_Shape.minPoint.z);
 		offset.x = RandGen.Float(SizeX / 2.0f, -SizeX / 2.0f);
 		offset.z = RandGen.Float(SizeZ / 2.0f, -SizeZ / 2.0f);
+		offset.y = RandGen.Float(SizeY / 2.0f, -SizeY / 2.0f);
 		Direction = float3(0.0f, SizeY, 0.0f);
 		break;
 	}
