@@ -37,8 +37,8 @@ public:
 	void ImGuiLoadEmitterPopUp();
 	void ImGuiLoadMeshPopUp();
 	void ImGuiSavePopUp();
-	void ImGuiSaveParticlePopUp();
-	void ImGuiSaveEmitterPopUp();
+	void ImGuiSaveParticlePopUp()const;
+	void ImGuiSaveEmitterPopUp()const;
 
 private:
 
@@ -54,13 +54,13 @@ private:
 
 	/*DEBUG FUNCS*/
 	void SetDebugOptions(bool ShowEmitterBoundBox, bool ShowEmitter);
-	void GetDebugOptions(bool& ShowEmitterBoundBox, bool& ShowEmitter);
+	void GetDebugOptions(bool& ShowEmitterBoundBox, bool& ShowEmitter) const;
 
 
 	bool SaveParticleStates(ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const;
 	bool LoadParticleStates(const char* file_name, CompParticleSystem* system, ParticleState& stateI, ParticleState& stateF);
 
-	bool SaveParticleEmitter(CompParticleSystem* system, const ParticleEmitter* emitter) const;
+	bool SaveParticleEmitter(const CompParticleSystem* system, const ParticleEmitter* emitter) const;
 	bool LoadParticleEmitter(const char* file_name, CompParticleSystem* system, ParticleEmitter& emitter);
 
 	/*JSON FUNCS*/

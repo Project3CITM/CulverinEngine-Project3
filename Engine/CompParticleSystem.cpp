@@ -164,6 +164,10 @@ void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveSc
 	json_object_dotset_string_with_std(object, name + "ParticleResource:", particle_resource_name.c_str());
 	json_object_dotset_string_with_std(object, name + "EmitterResource:", emitter_resource_name.c_str());
 
+	ImGuiSaveParticlePopUp();
+	ImGuiSaveEmitterPopUp();
+
+	
 }
 
 void CompParticleSystem::Load(const JSON_Object* object, std::string name)
@@ -324,7 +328,7 @@ bool CompParticleSystem::LoadParticleStates(const char* file_name, CompParticleS
 
 
 
-bool CompParticleSystem::SaveParticleEmitter(CompParticleSystem* system, const ParticleEmitter* emitter) const
+bool CompParticleSystem::SaveParticleEmitter(const CompParticleSystem* system, const ParticleEmitter* emitter) const
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
@@ -354,9 +358,9 @@ bool CompParticleSystem::SaveParticleEmitter(CompParticleSystem* system, const P
 	SetBool(conf, "ShowEmitter", ShowEmitter);
 
 	if (system->GetChildParticle() != nullptr)
-		SetString(conf, "ChildParticle", system->GetChildParticle()->c_str());
+		SetString(conf, "ChildParticle", GetChildParticle()->c_str());
 	if (system->GetChildEmitter() != nullptr)
-		SetString(conf, "ChildEmitter", system->GetChildEmitter()->c_str());
+		SetString(conf, "ChildEmitter", GetChildEmitter()->c_str());
 
 	SetFloat(conf, "EmitterLifeMax", emitter->EmitterLifeMax);
 	SetFloat4x4(conf, "Transform", emitter->Transform);
@@ -803,7 +807,7 @@ void CompParticleSystem::ImGuiSavePopUp()
 	}
 }
 
-void CompParticleSystem::ImGuiSaveParticlePopUp()
+void CompParticleSystem::ImGuiSaveParticlePopUp()const
 {
 	ParticleState InitialState;
 	part_system->GetInitialState(InitialState);
@@ -812,7 +816,7 @@ void CompParticleSystem::ImGuiSaveParticlePopUp()
 	SaveParticleStates(texture_resource, part_system->GetTextureResource(), &InitialState, &FinalState);
 }
 
-void CompParticleSystem::ImGuiSaveEmitterPopUp()
+void CompParticleSystem::ImGuiSaveEmitterPopUp()const
 {
 	ParticleEmitter Emitter;
 	part_system->GetEmitter(Emitter);
@@ -828,7 +832,7 @@ void CompParticleSystem::SetDebugOptions(bool ShowEmitterBoundBox, bool ShowEmit
 	part_system->ShowEmitter = ShowEmitter;
 }
 
-void CompParticleSystem::GetDebugOptions(bool& ShowEmitterBoundBox, bool& ShowEmitter)
+void CompParticleSystem::GetDebugOptions(bool& ShowEmitterBoundBox, bool& ShowEmitter) const
 {
 	ShowEmitterBoundBox = part_system->ShowEmitterBoundBox;
 	ShowEmitter = part_system->ShowEmitter;
