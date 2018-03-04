@@ -454,7 +454,9 @@ void CompTransform::UpdateMatrix(ImGuizmo::MODE mode)
 
 float3 CompTransform::GetForwardVector() const
 {
-	return float3(local_transform[0][2], local_transform[1][2], local_transform[2][2]);
+	float4 result(0.0f, 0.0f, 1.0, 0.0);
+	result = global_transform * result;
+	return float3(result.x, result.y, result.z);
 }
 
 float3 CompTransform::GetBackwardVector() const
@@ -464,7 +466,9 @@ float3 CompTransform::GetBackwardVector() const
 
 float3 CompTransform::GetUpVector() const
 {
-	return float3(local_transform[0][1], local_transform[1][1], local_transform[2][1]);
+	float4 result(0.0f, 1.0f, 0.0, 0.0);
+	result = global_transform * result;
+	return float3(result.x, result.y, result.z);
 }
 
 float3 CompTransform::GetDownVector() const
@@ -474,7 +478,9 @@ float3 CompTransform::GetDownVector() const
 
 float3 CompTransform::GetRightVector() const
 {
-	return float3(local_transform[0][0], local_transform[1][0], local_transform[2][0]);
+	float4 result(1.0f, 0.0f, 0.0, 0.0);
+	result = global_transform * result;
+	return float3(result.x, result.y, result.z);
 }
 
 float3 CompTransform::GetLeftVector() const

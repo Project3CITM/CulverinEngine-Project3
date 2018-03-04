@@ -21,12 +21,6 @@
 #include "CompImage.h"
 
 
-
-
-
-
-
-
 void CSharpScript::PlayAudioEvent(MonoObject* object, MonoString* event_name)
 {
 	if (current_game_object != nullptr)

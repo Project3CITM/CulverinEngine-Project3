@@ -656,6 +656,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::GetName",(const void*)GetName);
 	//mono_add_internal_call("CulverinEditor.GameObject::AddComponent",(const void*)AddComponent);
 	mono_add_internal_call("CulverinEditor.GameObject::GetComponent",(const void*)GetComponent);
+
+	/* Object */
+	mono_add_internal_call("CulverinEditor.Object::Instantiate", (const void*)Instantiate);
 	
 	// Transform ---------------------------
 	mono_add_internal_call("CulverinEditor.Transform::GetForwardVector", (const void*)GetForwardVector);
@@ -947,12 +950,12 @@ void ImportScript::SetTag(MonoObject* object, MonoString* name)
 	current->SetTag(object, name);
 }
 
-mono_bool ImportScript::CompareTag(MonoObject * object, MonoString * tag)
+mono_bool ImportScript::CompareTag(MonoObject* object, MonoString* tag)
 {
 	return current->CompareTag(object, tag);
 }
 
-MonoObject * ImportScript::FindGameObjectWithTag(MonoObject * object, MonoString * tag)
+MonoObject* ImportScript::FindGameObjectWithTag(MonoObject* object, MonoString* tag)
 {
 	return current->FindGameObjectWithTag(object, tag);
 }
@@ -973,52 +976,57 @@ MonoObject* ImportScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	return m_obj;
 }
 
-MonoObject * ImportScript::GetForwardVector(MonoObject * object)
+MonoObject* ImportScript::Instantiate(MonoObject* object, MonoString* prefab)
+{
+	return current->Instantiate(object, prefab);
+}
+
+MonoObject* ImportScript::GetForwardVector(MonoObject* object)
 {
 	return current->GetForwardVector(object);
 }
 
-MonoObject * ImportScript::GetBackwardVector(MonoObject * object)
+MonoObject* ImportScript::GetBackwardVector(MonoObject* object)
 {
 	return current->GetBackwardVector(object);
 }
 
-MonoObject * ImportScript::GetUpVector(MonoObject * object)
+MonoObject* ImportScript::GetUpVector(MonoObject* object)
 {
 	return current->GetUpVector(object);
 }
 
-MonoObject * ImportScript::GetDownVector(MonoObject * object)
+MonoObject* ImportScript::GetDownVector(MonoObject* object)
 {
 	return current->GetDownVector(object);
 }
 
-MonoObject * ImportScript::GetRightVector(MonoObject * object)
+MonoObject* ImportScript::GetRightVector(MonoObject* object)
 {
 	return current->GetRightVector(object);
 }
 
-MonoObject * ImportScript::GetLeftVector(MonoObject * object)
+MonoObject* ImportScript::GetLeftVector(MonoObject* object)
 {
 	return current->GetLeftVector(object);
 }
 
-void ImportScript::SetForwardVector(MonoObject * object, MonoObject * vector3)
+void ImportScript::SetForwardVector(MonoObject* object, MonoObject* vector3)
 {
 	current->SetForwardVector(object, vector3);
 }
 
-void ImportScript::SetBackwardVector(MonoObject * object, MonoObject * vector3)
+void ImportScript::SetBackwardVector(MonoObject* object, MonoObject* vector3)
 {
 	current->SetBackwardVector(object, vector3);
 }
 
-void ImportScript::SetUpVector(MonoObject * object, MonoObject * vector3)
+void ImportScript::SetUpVector(MonoObject* object, MonoObject* vector3)
 {
 	current->SetUpVector(object, vector3);
 }
 
-void ImportScript::SetDownVector(MonoObject * object, MonoObject * vector3)
+void ImportScript::SetDownVector(MonoObject* object, MonoObject* vector3)
 {
 	current->SetDownVector(object, vector3);
 }

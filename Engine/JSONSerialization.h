@@ -37,7 +37,8 @@ public:
 	void SavePrefab(const GameObject& gameObject, const char* directory, const char* fileName, bool is_FBX = true);
 	void SaveChildPrefab(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);
 	void LoadPrefab(const char* prefab);
-	GameObject * GetLoadPrefab(const char * prefab);
+	GameObject* GetLoadPrefab(const char* prefab);
+	//GameObject* GetLoadPrefab(std::string prefab, float3 position = float3(0, 0, 0), Quat rotation = Quat(0, 0, 0, 0)); Need...
 
 	void LoadChildLoadPrefab(GameObject& parent, GameObject& child, int uuidParent);
 	// --------------------------------------

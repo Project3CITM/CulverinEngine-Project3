@@ -78,7 +78,7 @@
     <Compile Include="Map.cs" />
     <Compile Include="Player\BaseControllers\MovementController.cs" />
     <Compile Include="Object.cs" />
-    <Compile Include="Pathfinder.cs" />
+    <Compile Include="AI\Pathfinder.cs" />
     <Compile Include="PathNode.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="Player\Jaime\JaimeWeapon_Right.cs" />

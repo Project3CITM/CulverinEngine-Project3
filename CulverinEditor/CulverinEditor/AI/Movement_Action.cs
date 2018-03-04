@@ -19,20 +19,23 @@ public class Movement_Action : Action
 
     Motion_State state = Motion_State.MS_NO_STATE;
 
-    public float max_vel = 3.0f;
-    public float max_accel = 1.0f;
-    public float max_rot_vel = 1.0f;
-    public float max_rot_accel = 1.0f;
+    public float max_vel = 5.0f;
+    public float max_accel = 2.0f;
+    public float max_rot_vel = 2.0f;
+    public float max_rot_accel = 0.7f;
     Vector3 current_velocity = new Vector3(Vector3.Zero);
     Vector3 current_acceleration = new Vector3(Vector3.Zero);
     float current_rot_velocity = 0.0f;
     float current_rot_acceleration = 0.0f;
-    float arrive_distance = 0.1f;
-    float rot_margin = 0.5f;
+    float arrive_distance = 0.05f;
+    float rot_margin = 0.05f;
 
     void Start()
     {
         map = GetLinkedObject("map");
+        myself = GetLinkedObject("myself");
+        Vector3 fw = myself.GetComponent<Transform>().GetForwardVector();
+        Debug.Log("Forward (start): " + fw.ToString());
         path = new List<PathNode>();
     }
 
@@ -85,12 +88,9 @@ public class Movement_Action : Action
                     GetComponent<Transform>().local_position = local_pos;
                     path.Remove(path[0]);
 
-                    if (path.Count == 0)
-                    {
-                        GetComponent<Arrive_Steering>().SetScriptEnabled(false);
-                        GetComponent<Seek_Steering>().SetScriptEnabled(false);
-                        SetState();
-                    }
+                    GetComponent<Arrive_Steering>().SetScriptEnabled(false);
+                    GetComponent<Seek_Steering>().SetScriptEnabled(false);
+                    SetState();
                 }
                 break;
 
@@ -99,12 +99,15 @@ public class Movement_Action : Action
                 if (Mathf.Abs(current_rot_acceleration) > max_rot_accel)
                 {
                     if (current_rot_acceleration > 0)
-                    {
                         current_rot_acceleration = max_rot_accel;
-                    }
-                    else current_rot_acceleration = -max_rot_accel;
+                    else
+                        current_rot_acceleration = -max_rot_accel;
                 }
                 current_rot_velocity += current_rot_acceleration;
+
+                Debug.Log("Max rot acceleration: " + max_rot_accel.ToString());
+                Debug.Log("Current rot acceleration: " + current_rot_acceleration.ToString());
+                Debug.Log("Current rot velocity: " + current_rot_velocity.ToString());
 
                 if (Mathf.Abs(current_rot_velocity) > max_rot_vel)
                 {
@@ -123,8 +126,8 @@ public class Movement_Action : Action
                 {
                     GetComponent<Align_Steering>().SetScriptEnabled(false);
 
-                    Vector3 obj_vec = GetComponent<Transform>().position - GetTargetPosition();
-                    GetComponent<Transform>().forward = (obj_vec / obj_vec.Length) * GetComponent<Transform>().forward.Length;
+                    Vector3 obj_vec = GetTargetPosition() - GetComponent<Transform>().position;
+                    GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
                     SetState();
                 }
 
@@ -205,33 +208,27 @@ public class Movement_Action : Action
 
     public float GetDeltaAngle()
     {
-        Vector3 forward = GetComponent<Transform>().forward;
-        Vector3 obj_vec = GetComponent<Transform>().position - GetTargetPosition();
+        Vector3 forward = new Vector3(myself.GetComponent<Transform>().GetForwardVector());
+        Vector3 pos = new Vector3(myself.GetComponent<Transform>().GetPosition());
+        Vector3 obj_vec = new Vector3(GetTargetPosition() - pos).Normalized;
 
         float own_angle = Mathf.Atan2(forward.x, forward.z);
         float obj_angle = Mathf.Atan2(obj_vec.x, obj_vec.z);
 
+        float dot_product = Vector3.Dot(forward, obj_vec);
+
         float delta = obj_angle - own_angle;
 
         if (delta > Mathf.PI)
-            delta -= 2 * Mathf.PI;
-
-        Debug.Log("Delta Angle: " + delta.ToString());
+            delta = delta - 2 * Mathf.PI;
 
         return delta;
     }
 
-    bool FinishedRotation()
+    public bool FinishedRotation()
     {
         float delta_angle = GetDeltaAngle();
-        return delta_angle < rot_margin;
-    }
-
-    public void GetCurrentTile(out int x, out int y)
-    {
-        Debug.Log("Local pos X: " + GetComponent<Transform>().local_position.x.ToString() + " Y: " + GetComponent<Transform>().local_position.y.ToString());
-        x = (int)((float)GetComponent<Transform>().local_position.x / tile_size);
-        y = (int)((float)GetComponent<Transform>().local_position.z / tile_size);
+        return Mathf.Abs(delta_angle) < rot_margin;
     }
 
     public int GetCurrentTileX()
@@ -248,7 +245,7 @@ public class Movement_Action : Action
     {
         return current_velocity;
     }
-
+    
     public float GetCurrentRotVelocity()
     {
         return current_rot_velocity;
@@ -258,7 +255,7 @@ public class Movement_Action : Action
     {
         return max_accel;
     }
-
+    
     public float GetDistanceToTarget()
     {
         return ((GetComponent<Transform>().local_position) - (GetTargetPosition())).Length;
@@ -279,7 +276,6 @@ public class Movement_Action : Action
         return max_vel;
     }
 
-
     public float GetMaxRotAcceleration()
     {
         return max_rot_accel;
@@ -290,4 +286,3 @@ public class Movement_Action : Action
         return rot_margin;
     }
 }
-

@@ -100,6 +100,7 @@ private:
 	static void			CreateGameObject(MonoObject* object);
 	static void			DeleteGameObject(MonoObject* object);
 	static MonoObject*	GetComponent(MonoObject* object, MonoReflectionType* type);
+	static MonoObject* Instantiate(MonoObject* object, MonoString* prefab);
 	
 	/*Transform*/
 	static MonoObject*	GetForwardVector(MonoObject* object);
