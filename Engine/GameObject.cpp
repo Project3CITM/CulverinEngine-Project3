@@ -1363,7 +1363,7 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		if (components[i]->GetType() == type && type != Comp_Type::C_SCRIPT) 
 		{
 			dupe = true;
-			LOG("There's already one component of this type in '%s'.", name);
+			LOG("There's already one component of this type in '%s'.", name.c_str());
 			break;
 		}
 	}

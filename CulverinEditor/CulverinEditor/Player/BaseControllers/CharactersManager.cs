@@ -45,14 +45,14 @@ public class CharactersManager : CulverinBehaviour
                         state = State.CHANGING_LEFT;
                         Debug.Log("Pressed T");
                         Debug.Log("Changing Left");
-                        //current_character.GetComponent<CharacterController>().SetAnimationTransition("ToOut", true);
+                        current_character.GetComponent<CharacterController>().SetAnimationTransition("ToOut", true);
                     }
                     else if (Input.GetKeyDown(KeyCode.Y))
                     {
                         state = State.CHANGING_RIGHT;
                         Debug.Log("Pressed Y");
                         Debug.Log("Changing Right");
-                        //current_character.GetComponent<CharacterController>().SetAnimationTransition("ToOut", true);
+                        current_character.GetComponent<CharacterController>().SetAnimationTransition("ToOut", true);
                     }
 
                     //MANAGE SECONDARY ABILITIES -------------------------------------
@@ -72,75 +72,45 @@ public class CharactersManager : CulverinBehaviour
 
             case State.CHANGING_LEFT:
                 {
-                    //if (current_character.GetComponent<CompAnimation>().IsAnimationStopped("Out"))
-                    //{
-                    //    left_character.GetComponent<CharacterController>().SetAnimationTransition("ToIn", true);
-                    //    current_character.GetComponent<CharacterController>().SetPosition(CharacterController.Position.BEHIND);
-                    //    left_character.GetComponent<CharacterController>().SetPosition(CharacterController.Position.CURRENT);
+                    if (current_character.GetComponent<CompAnimation>().IsAnimationStopped("Out"))
+                    {
+                        left_character.GetComponent<CharacterController>().SetAnimationTransition("ToIn", true);
+                        Debug.Log("Changing Left");
 
-                    //    temporal_change = current_character;
-                    //    current_character = left_character;
-                    //    left_character = temporal_change;
+                        ChangeLeft();
 
-                    //    //Deactivate previous current character HUD
-                    //    left_character.GetComponent<CharacterController>().UpdateHUD(false);
-                    //    //Activate current character HUD
-                    //    current_character.GetComponent<CharacterController>().UpdateHUD(true);
+                        Debug.Log("Changed Positions");
 
-                    //    Debug.Log("current character = " + current_character.GetName());
-                    //    state = State.IDLE;
-                    //}
-                    Debug.Log("Changing Left");
+                        //Change GameObjects --------------------
+                        temporal_change = current_character;
+                        current_character = left_character;
+                        left_character = temporal_change;
 
-                    ChangeLeft();               
-
-                    Debug.Log("Changed Positions");
-
-                    //Change GameObjects --------------------
-                    temporal_change = current_character;
-                    current_character = left_character;
-                    left_character = temporal_change;
-
-                    Debug.Log("current character = " + current_character.GetName());
-                    state = State.IDLE;
+                        Debug.Log("current character = " + current_character.GetName());
+                        state = State.IDLE;
+                    }
 
                     break;
                 }
 
             case State.CHANGING_RIGHT:
                 {
-                    //if (current_character.GetComponent<CompAnimation>().IsAnimationStopped("Out"))
-                    //{
-                    //    right_character.GetComponent<CharacterController>().SetAnimationTransition("ToIn", true);
-                    //    current_character.GetComponent<CharacterController>().SetPosition(CharacterController.Position.BEHIND);
-                    //    right_character.GetComponent<CharacterController>().SetPosition(CharacterController.Position.CURRENT);
+                    if (current_character.GetComponent<CompAnimation>().IsAnimationStopped("Out"))
+                    {
+                        right_character.GetComponent<CharacterController>().SetAnimationTransition("ToIn", true);
+                        Debug.Log("Changing Right");
 
-                    //    temporal_change = current_character;
-                    //    current_character = right_character;
-                    //    right_character = temporal_change;
+                        ChangeRight();
 
-                    //    //Deactivate previous current character HUD
-                    //    right_character.GetComponent<CharacterController>().UpdateHUD(false);
-                    //    //Activate current character HUD
-                    //    current_character.GetComponent<CharacterController>().UpdateHUD(true);
+                        Debug.Log("Changed Positions");
 
-                    //    Debug.Log("current character = " + current_character.GetName());
-                    //    state = State.IDLE;
-                    //}
+                        temporal_change = current_character;
+                        current_character = right_character;
+                        right_character = temporal_change;
 
-                    Debug.Log("Changing Right");
-
-                    ChangeRight();
-
-                    Debug.Log("Changed Positions");
-
-                    temporal_change = current_character;
-                    current_character = right_character;
-                    right_character = temporal_change;
-
-                    Debug.Log("current character = " + current_character.GetName());
-                    state = State.IDLE;
-
+                        Debug.Log("current character = " + current_character.GetName());
+                        state = State.IDLE;
+                    }
                     break;
                 }
         }
