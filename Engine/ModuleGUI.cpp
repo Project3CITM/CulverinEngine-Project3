@@ -678,6 +678,17 @@ update_status ModuleGUI::Update(float dt)
 				ShellExecuteA(NULL, "open", "http://www.mono-project.com/", NULL, NULL, SW_SHOWNORMAL);
 			}
 		}
+		ImGui::Bullet(); ImGui::SameLine();
+		if (ImGui::MenuItem("PhysX - v3.4.1"))
+		{
+			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
+			{
+				ShellExecuteA(NULL, "open", "https://developer.nvidia.com/physx-sdk", NULL, NULL, SW_SHOWNORMAL);
+			}
+		}
+		static GLuint icon_physics = App->textures->LoadTexture("Images/UI/nvidia_physX_logo.png");
+		ImGui::Image((ImTextureID)icon_physics, ImVec2(256.f, 128.f), ImVec2(0,1),ImVec2(1,0));
+
 
 		ImGui::Spacing();
 		ImGui::Separator();
