@@ -168,7 +168,7 @@ void PlayerActions::InputManagerActive(const char * name)
 	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		if (strcmp((*it)->GetName(), name) == 0)
-			(*it)->
+			(*it)->ActiveInput();
 	}
 }
 
