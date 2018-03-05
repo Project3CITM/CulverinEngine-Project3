@@ -14,21 +14,8 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/attrdefs.h>
 
-/*
-// ----------------------------------------------------------------------
-Functions: Destroy(GameObject gameObject, float time)
-In C++: Destroy(MonoObject* ..., MonoObject* ..., float time)
-- Frist:  MonoObject* object = gameObject
-- second: MonoObject* class = Code or TestMovement (name class script)
 
-void ImportScript::Destroy(MonoObject* object, MonoObject* gameObject, float time)
-{
-//std::string name = mono_class_get_name(mono_object_get_class(object)); Gamobejct
 //std::string names = mono_class_get_name(mono_object_get_class(gameObject)); Name Class
-current->Destroy(object, time);
-}
-// ----------------------------------------------------------------------
-*/
 
 class CSharpScript;
 class GameObject;
