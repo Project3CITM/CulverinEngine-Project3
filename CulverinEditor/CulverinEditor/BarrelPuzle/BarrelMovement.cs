@@ -32,13 +32,18 @@ public class BarrelMovement : CulverinBehaviour
         Vector3 diff = gameObject.GetComponent<Transform>().GetPosition() - new Vector3(0,-4,0);
         if (diff.Length >= manage.length)
         {
-            gameObject.GetComponent<Transform>().SetPosition( new Vector3(0, -4, 0));
+            Quaternion quat = gameObject.GetComponent<CompRigidBody>().GetColliderQuaternion();
+            gameObject.GetComponent<CompRigidBody>().MoveKinematic(new Vector3(0, -4, 0), quat);
+          //  gameObject.GetComponent<Transform>().SetPosition( new Vector3(0, -4, 0));
          
 
         }
         if (!manage.stop)
         {
-            gameObject.GetComponent<Transform>().SetPosition(new Vector3(gameObject.GetComponent<Transform>().local_position.x + manage.movSpeed * manage.p_dt, gameObject.GetComponent<Transform>().local_position.y, gameObject.GetComponent<Transform>().local_position.z));
+            Vector3 position = new Vector3(gameObject.GetComponent<Transform>().local_position.x + manage.movSpeed * manage.p_dt, gameObject.GetComponent<Transform>().local_position.y, gameObject.GetComponent<Transform>().local_position.z);
+            Quaternion quat = gameObject.GetComponent<CompRigidBody>().GetColliderQuaternion();
+            gameObject.GetComponent<CompRigidBody>().MoveKinematic(position,quat);
+           // gameObject.GetComponent<Transform>().SetPosition(new Vector3(gameObject.GetComponent<Transform>().local_position.x + manage.movSpeed * manage.p_dt, gameObject.GetComponent<Transform>().local_position.y, gameObject.GetComponent<Transform>().local_position.z));
 
         }
 
