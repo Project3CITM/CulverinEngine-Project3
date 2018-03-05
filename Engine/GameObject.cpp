@@ -906,8 +906,9 @@ void GameObject::ShowInspectorInfo()
 		ImGui::PopStyleVar();
 
 		/*TAG*/
-		ImGui::Text("Tag: "); ImGui::SameLine(); ImGui::Text(tag.c_str());
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 3));
 		App->scene->TagWindow();
+		ImGui::PopStyleVar();
 
 		/* STATIC CHECKBOX */
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 8));

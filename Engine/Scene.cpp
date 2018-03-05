@@ -474,13 +474,16 @@ void Scene::FindGameObjectsWithTag(const char * tag, std::vector<GameObject*>* v
 
 void Scene::TagWindow()
 {
-	if (ImGui::BeginCombo("##Select", "Tags"))
+	char buffer[100];
+	GameObject* target = ((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected();
+	sprintf(buffer, "Tag:  %s", target->GetTag());
+	
+	if (ImGui::BeginCombo("##Select", buffer))
 	{
 		for (int i = 0; i < defined_tags.size(); i++)
 		{
 			if (ImGui::Selectable(defined_tags[i].c_str()))
 			{
-				GameObject* target = ((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected();
 				target->SetTag((char*)defined_tags[i].c_str());
 			}
 		}
