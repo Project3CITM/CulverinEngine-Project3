@@ -100,7 +100,7 @@ void CompAnimation::PlayAnimation(AnimationNode * node)
 
 	if (node->clip->state == A_STOP)
 	{	
-		if (current_animation != nullptr)
+		if (current_animation != nullptr && current_animation->state != AnimationState::A_STOP && node->clip->total_blending_time > 0.001f)
 		{
 			current_animation->state = AnimationState::A_PLAY;
 			node->clip->state = AnimationState::A_BLENDING;
@@ -112,6 +112,7 @@ void CompAnimation::PlayAnimation(AnimationNode * node)
 			node->clip->state = AnimationState::A_PLAY;
 			current_animation = node->clip;
 			node->clip->RestartAnimationClip();
+			Update(0);
 		}
 	}
 }
@@ -789,7 +790,7 @@ void CompAnimation::CreateAnimationClip()
 
 void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt)
 {
-	if(animation_clip != nullptr)
+	if(animation_clip != nullptr && animation_clip->state != AnimationState::A_STOP)
 	{
 		animation_clip->time += dt * animation_clip->speed_factor;
 		//animation_clip->time += animation_resource->ticks_per_sec / (1.0f/dt);
