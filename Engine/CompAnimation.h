@@ -109,6 +109,8 @@ public:
 	void CreateAnimationNode();
 	void CheckNodesConditions(AnimationNode* node);
 
+	void SetClipsSpeed(float speed_value);
+
 public:
 
 	ResourceAnimation* animation_resource = nullptr;

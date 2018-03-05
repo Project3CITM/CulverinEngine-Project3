@@ -201,6 +201,7 @@ private:
 	static mono_bool IsAnimationStopped(MonoObject* object, MonoString* string);
 	static mono_bool IsAnimationRunning(MonoObject* object, MonoString* string);
 	static mono_bool IsAnimOverXTime(MonoObject* object, float num_between_0_1);
+	static void SetClipsSpeed(MonoObject* object, float speed_value);
 
 public: 
 	std::map<std::string, GameObject*> map_link_variables;

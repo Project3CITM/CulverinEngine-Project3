@@ -775,6 +775,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationStopped", (const void*)IsAnimationStopped);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationRunning", (const void*)IsAnimationRunning);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimOverXTime", (const void*)IsAnimOverXTime);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipsSpeed", (const void*)SetClipsSpeed);
 }
 
 //Log messages into Engine Console
@@ -1353,4 +1354,9 @@ mono_bool ImportScript::IsAnimationRunning(MonoObject * object, MonoString * str
 mono_bool ImportScript::IsAnimOverXTime(MonoObject * object, float num_between_0_1)
 {
 	return current->IsAnimOverXTime(object, num_between_0_1);
+}
+
+void ImportScript::SetClipsSpeed(MonoObject * object, float speed_value)
+{
+	current->SetClipsSpeed(object, speed_value);
 }

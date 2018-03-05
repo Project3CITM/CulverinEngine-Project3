@@ -118,6 +118,18 @@ mono_bool CSharpScript::IsAnimOverXTime(MonoObject * object, float number_betwee
 	}
 }
 
+void CSharpScript::SetClipsSpeed(MonoObject * object, float speed_value)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			animation->SetClipsSpeed(speed_value);
+		}
+	}
+}
+
 // CompCollider -----------------------------------------------------------
 MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 {
