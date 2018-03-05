@@ -107,8 +107,6 @@ private:
 	std::string file_to_save_name;
 	std::string directory_temporal_str;
 
-	std::string current_emitter;
-	std::string current_particle;
 
 	std::string particle_resource_name;
 	std::string emitter_resource_name;

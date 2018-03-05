@@ -75,6 +75,9 @@ public:
 
 	void DebugDrawEmitter();						//Draw emitter shape
 	void DebugDrawEmitterAABB();					//Draw emitter AABB
+	void Activate();
+	void Deactivate();
+	bool IsEmitterActive() const;
 	void ResetEmitterValues();						//Reset emitter values
 
 	void SetTransform(const float4x4& transform);	//Set this emitter transform
@@ -103,7 +106,7 @@ public:
 	float Speed = 5.0f;								//Speed of emitted particles
 	float SpeedVariation = 0.0f;					//Speed variation of emitted particles
 	AABB BoundingBox;								//User can set AABB for camera culling purpose (we can add physics...)
-
+	
 	/*
 	//Not working properly, transformations errors, so to avoid malfunctionality and a
 	//possible crash, all emission type is commented, all emissions are world space
@@ -136,6 +139,11 @@ public:
 		ConeTrunk ConeTrunk_Shape;
 		Circle Circle_Shape;
 	} EmitterShape;									//Emitter shape
+
+
+
+private:
+	bool active;
 };
 
 struct ParticleState
@@ -300,6 +308,9 @@ public:
 	const ParticleEmitter* GetEmitter() const;					//Get Particle Emitter if you want to save it as a resource
 
 	void SetEmitterTransform(const float4x4& transform);		//Set emitter transformation
+	void ActivateEmitter();
+	void DeactivateEmitter();
+	bool IsEmitterActive() const;
 
 	void DebugDrawEmitter();									//Draw emitter shape
 	void DebugDrawEmitterAABB();								//Draw emitter AABB

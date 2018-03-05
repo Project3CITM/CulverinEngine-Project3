@@ -31,6 +31,7 @@ ParticleEmitter::ParticleEmitter()
 	BoundingBox.minPoint = float3(-0.5f, -0.5f, -0.5f);
 	BoundingBox.maxPoint = float3( 0.5f,  0.5f,  0.5f);
 	ResetEmitterValues();
+	active = true;
 }
 
 ParticleEmitter::~ParticleEmitter()
@@ -59,6 +60,22 @@ void ParticleEmitter::DebugDrawEmitterAABB()
 	glMultMatrixf(Transform.ptr());
 	DrawBox(BoundingBox);
 	glPopMatrix();
+}
+
+void ParticleEmitter::Activate()
+{
+	active = true;
+	EmitterLife = 0;
+}
+
+void ParticleEmitter::Deactivate()
+{
+	active = false;
+}
+
+bool ParticleEmitter::IsEmitterActive() const
+{
+	return active;
 }
 
 void ParticleEmitter::ResetEmitterValues()
@@ -611,10 +628,13 @@ bool ParticleSystem::PreUpdate(float dt)
 }
 
 bool ParticleSystem::Update(float dt, bool emit)
-{
+{	
 
 	if(emit)
 	{ 
+		if (App->engine_state != EngineState::STOP && !Emitter.IsEmitterActive())
+			return true;
+
 	/* Emission */
 	Emitter.EmissionDuration += dt;	
 
@@ -830,6 +850,21 @@ const ParticleEmitter * ParticleSystem::GetEmitter() const
 void ParticleSystem::SetEmitterTransform(const float4x4 & transform)
 {
 	Emitter.SetTransform(transform);
+}
+
+void ParticleSystem::ActivateEmitter()
+{
+	Emitter.Activate();
+}
+
+void ParticleSystem::DeactivateEmitter()
+{
+	Emitter.Deactivate();
+}
+
+bool ParticleSystem::IsEmitterActive() const
+{
+	return Emitter.IsEmitterActive();
 }
 
 void ParticleSystem::DebugDrawEmitter()

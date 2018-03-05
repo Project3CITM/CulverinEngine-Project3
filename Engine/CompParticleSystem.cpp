@@ -161,6 +161,7 @@ void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveSc
 	json_object_dotset_string_with_std(object, name + "ParticleResource:", particle_resource_name.c_str());
 	json_object_dotset_string_with_std(object, name + "EmitterResource:", emitter_resource_name.c_str());
 	json_object_dotset_boolean_with_std(object, name + "Preview:", preview);
+	json_object_dotset_boolean_with_std(object, name + "Active:", part_system->IsEmitterActive());
 
 
 	ImGuiSaveParticlePopUp();
@@ -174,15 +175,21 @@ void CompParticleSystem::Load(const JSON_Object* object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	particle_resource_name = json_object_dotget_string_with_std(object, name + "ParticleResource:");
 	emitter_resource_name = json_object_dotget_string_with_std(object, name + "EmitterResource:");
-
-	preview = json_object_dotget_boolean_with_std(object, name + "Preview:");
-
-
+	
 	file_to_load = particle_resource_name;
 	ImGuiLoadParticlePopUp();
 
 	file_to_load = emitter_resource_name;
 	ImGuiLoadEmitterPopUp();
+
+	preview = json_object_dotget_boolean_with_std(object, name + "Preview:");
+	bool active = json_object_dotget_boolean_with_std(object, name + "Active:");
+	if (active)
+		part_system->ActivateEmitter();
+	else
+		part_system->DeactivateEmitter();
+
+	
 }
 
 
@@ -510,6 +517,14 @@ void CompParticleSystem::ShowInspectorInfo()
 	}
 	ImGui::PopStyleVar();
 
+	bool emitter_active = part_system->IsEmitterActive();
+	if (ImGui::Checkbox("Active", &emitter_active))
+	{
+		if (emitter_active)
+			part_system->ActivateEmitter();
+		else 
+			part_system->DeactivateEmitter();
+	}
 	ImGui::Checkbox("Preview", &preview);
 	
 	//Emitter options
