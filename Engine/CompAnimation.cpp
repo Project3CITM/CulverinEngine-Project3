@@ -58,16 +58,23 @@ void CompAnimation::PreUpdate(float dt)
 {
 	if (bones_placed == false)
 	{
+
 		if (animation_resource != nullptr)
 		{
 			for (int i = 0; i < animation_resource->bones.size(); i++)
 			{
-				GameObject* bone = parent->GetChildDeepSearch(animation_resource->bones[i]->name.c_str());
-				bone_update_vector.push_back(std::make_pair(bone, animation_resource->bones[i]));
+				std::vector<GameObject*> bone_vector;
+				parent->GetChildDeepSearch(animation_resource->bones[i]->name.c_str(), bone_vector);
+				for (std::vector<GameObject*>::iterator it = bone_vector.begin(); it != bone_vector.end(); ++it)
+				{
+					bone_update_vector.push_back(std::make_pair((*it), animation_resource->bones[i]));
+				}
+				bone_vector.clear();
 			}
 			bones_placed = true;
 		}
 	}
+
 }
 
 void CompAnimation::Update(float dt)

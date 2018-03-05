@@ -114,7 +114,7 @@ public:
 	GameObject* GetChildbyIndex(uint pos_inVec) const;
 	GameObject* GetChildbyName(const char* name) const;
 	GameObject* GetChildByRealName(std::string name) const;
-	GameObject* GetChildDeepSearch(const char* name) const;
+	void GetChildDeepSearch(const char * name, std::vector<GameObject*>& GOVector) const;
 	uint GetIndexChildbyName(const char* name) const;
 	void RemoveChildbyIndex(uint index);
 	std::vector<GameObject*> GetChildsVec() const;

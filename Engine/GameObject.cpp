@@ -1986,27 +1986,23 @@ GameObject * GameObject::GetChildByRealName(std::string name) const
 	return nullptr;
 }
 
-GameObject * GameObject::GetChildDeepSearch(const char * name) const
+void GameObject::GetChildDeepSearch(const char * name, std::vector<GameObject*>& GOVector) const
 {
 	GameObject* found = GetChildByRealName(name);
 
-	if (found == nullptr)
+	if (found != nullptr)
 	{
-		if (childs.size() > 0)
+		GOVector.push_back(found);
+	}
+	if (childs.size() > 0)
+	{
+		for (int i = 0; i < childs.size(); i++)
 		{
-			for (int i = 0; i < childs.size(); i++)
-			{
-
-				found = childs[i]->GetChildDeepSearch(name);
-				if (found != nullptr)
-				{
-					break;
-				}
-			}
+			childs[i]->GetChildDeepSearch(name, GOVector);
 		}
 	}
-	return found;
 }
+
 
 uint GameObject::GetIndexChildbyName(const char * name) const
 {
