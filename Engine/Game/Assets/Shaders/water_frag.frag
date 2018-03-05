@@ -81,8 +81,8 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
 		vec3 s =  normalize(lightpos - surfacePos);       
         vec3 r = reflect(-s,normal);
 
-        float cosTheta = clamp( dot( s,normal ), 0,1 );       
-        float cosAlpha = clamp( dot( v,r ), 0,1 );												 
+        float cosTheta = clamp( dot( s,normal ), 0.3,1 );       
+        float cosAlpha = clamp( dot( v,r ), 0.3,1 ) ;												 
 																										 
 		float d = length((lightpos - surfacePos));									 
 		float attenuation = max(light.ambientCoefficient,clamp(((light.radius * light.radius)/(d * d)),0,1)* lightInt);									 
