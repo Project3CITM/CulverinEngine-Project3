@@ -472,6 +472,10 @@ float4 CompRectTransform::GetGlobalRect()const
 {
 	return float4(global_transform.TranslatePart().x-( abs(width)*left_pivot.x), global_transform.TranslatePart().y + (abs(height)*left_pivot.y), (float)abs(width), (float)abs(height));
 }
+float3 CompRectTransform::GetGlobalPosition()const
+{
+	return float3(global_transform.TranslatePart().x - (abs(width)*left_pivot.x), global_transform.TranslatePart().y + (abs(height)*left_pivot.y), global_transform.TranslatePart().z);
+}
 float3 CompRectTransform::GetNorthEastPosition()const
 {
 	return float3(width*right_pivot.x, height * left_pivot.y, GetPos().z);
