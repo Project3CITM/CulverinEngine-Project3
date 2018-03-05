@@ -6,6 +6,7 @@
 #include "Component.h"
 #include "CompCollider.h"
 #include "CompRigidBody.h"
+#include "GameObject.h"
 
 #include "PhysX/Include/PxPhysicsAPI.h"
 #include "jpPhysicsWorld.h"
@@ -356,6 +357,28 @@ void ModulePhysics::OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor
 	}
 
 	PushEvent(collision);
+}
+
+GameObject * ModulePhysics::RayCast(float3 origin, float3 direction, float distance)
+{
+	GameObject* ret = nullptr;
+
+	if (origin.IsFinite() && direction.IsFinite() && distance > 0)
+	{
+		direction.Normalize();
+		physx::PxRaycastBuffer hit;
+		mScene->raycast(physx::PxVec3(origin.x, origin.y, origin.z), physx::PxVec3(direction.x, direction.y, direction.z), distance, hit);
+		if (hit.hasBlock)
+		{
+			std::map<physx::PxRigidActor*, Component*>::const_iterator pair = colliders.find(hit.block.actor);
+			ret = pair._Ptr->_Myval.second->GetParent();
+		}
+	}
+	else
+	{
+		LOG("RayCast Parameters Not Valids");
+	}
+	return ret;
 }
 
 // -----------------------------------------------------------------

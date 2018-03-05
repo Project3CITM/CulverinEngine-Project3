@@ -56,6 +56,9 @@ public:
 	// Collision Callback -----------
 	void OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor* actor1, JP_COLLISION_TYPE type);
 
+	// Collision Test with Ray ------
+	GameObject* RayCast(float3 origin, float3 direction, float distance);
+
 	// Debug Methods ----------------
 	void DrawPhysics();
 	void DebugDrawUpdate();
