@@ -101,6 +101,9 @@ void SkyBox::DrawSkybox(float size, float3 pos, uint i)
 	glTexCoord2f(0, 0); glVertex3f(-size / 2 + pos.x, -size / 2 + pos.y, -size / 2 + pos.z);
 	glTexCoord2f(0, 1); glVertex3f(-size / 2 + pos.x, -size / 2 + pos.y, size / 2 + pos.z);
 
+
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnd();
 
 	if (App->renderer3D->lighting)

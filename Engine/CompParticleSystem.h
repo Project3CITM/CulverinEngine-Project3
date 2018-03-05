@@ -22,6 +22,7 @@ public:
 	void PreUpdate(float dt);
 	void Update(float dt);
 	void Clear();
+	void Draw();
 
 	// LOAD - SAVE METHODS ------------------
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;

@@ -54,10 +54,10 @@
 #define CLAMP(n,min,max) ((n <= min) ? n=min : (n >= max) ? n=max : n=n)
 
 //Debug draw defines
-#define DEBUG_THICKNESS 4.0f
-#define DEBUG_COLOR_R 1.0f
-#define DEBUG_COLOR_G 1.0f
-#define DEBUG_COLOR_B 0.0f
+#define DEBUG_THICKNESS 3.0f
+#define DEBUG_COLOR_R 255.0f
+#define DEBUG_COLOR_G 0.0f
+#define DEBUG_COLOR_B 255.0f
 #define CIRCLES_SEGMENTS 10.0f
 
 struct ConeTrunk			//Definition of a cone trunk for the cone emitter type

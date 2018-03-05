@@ -98,6 +98,12 @@ void CompParticleSystem::Clear()
 	RELEASE(part_system);
 }
 
+void CompParticleSystem::Draw()
+{
+	if (part_system->ShowEmitter) part_system->DebugDrawEmitter();
+	if (part_system->ShowEmitterBoundBox) part_system->DebugDrawEmitterAABB();
+}
+
 void CompParticleSystem::SetTextureResource(const char * Path, int columns, int rows, int numberOfFrames, uint AnimationOrder)
 {
 	file_to_load = Path;
@@ -154,6 +160,8 @@ void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveSc
 
 	json_object_dotset_string_with_std(object, name + "ParticleResource:", particle_resource_name.c_str());
 	json_object_dotset_string_with_std(object, name + "EmitterResource:", emitter_resource_name.c_str());
+	json_object_dotset_boolean_with_std(object, name + "Preview:", preview);
+
 
 	ImGuiSaveParticlePopUp();
 	ImGuiSaveEmitterPopUp();
@@ -166,6 +174,9 @@ void CompParticleSystem::Load(const JSON_Object* object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	particle_resource_name = json_object_dotget_string_with_std(object, name + "ParticleResource:");
 	emitter_resource_name = json_object_dotget_string_with_std(object, name + "EmitterResource:");
+
+	preview = json_object_dotget_boolean_with_std(object, name + "Preview:");
+
 
 	file_to_load = particle_resource_name;
 	ImGuiLoadParticlePopUp();

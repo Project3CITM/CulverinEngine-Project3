@@ -207,9 +207,10 @@ void ParticleEmitter::DrawBox(const AABB& shape)
 	float3 p6 = shape.CornerPoint(6);
 	float3 p7 = shape.CornerPoint(7);
 
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glEnable(GL_COLOR);
+	glColor3f(1.0f, 0.0f, 1.0f);
 	glLineWidth(DEBUG_THICKNESS);
-	glColor3f(DEBUG_COLOR_R, DEBUG_COLOR_G, DEBUG_COLOR_B);
-
 	glBegin(GL_LINES);
 
 	glVertex3f(p0.x, p0.y, p0.z);
@@ -252,6 +253,9 @@ void ParticleEmitter::DrawBox(const AABB& shape)
 
 	glLineWidth(1.0f);
 	glColor3f(1.0f, 1.0f, 1.0f);
+	glDisable(GL_TEXTURE_2D);
+
+
 }
 
 void ParticleEmitter::DrawCircle(const Circle& shape)
@@ -608,8 +612,6 @@ bool ParticleSystem::PreUpdate(float dt)
 
 bool ParticleSystem::Update(float dt, bool emit)
 {
-	if (ShowEmitter) DebugDrawEmitter();
-	if (ShowEmitterBoundBox) DebugDrawEmitterAABB();
 
 	if(emit)
 	{ 

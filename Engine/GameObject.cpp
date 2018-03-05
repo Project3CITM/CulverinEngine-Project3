@@ -440,6 +440,10 @@ void GameObject::Draw()
 			{
 				components[i]->Draw();
 			}
+			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_PARTICLE_SYSTEM)
+			{
+				components[i]->Draw();
+			}
 			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_ANIMATION)
 			{
 				components[i]->Draw();
