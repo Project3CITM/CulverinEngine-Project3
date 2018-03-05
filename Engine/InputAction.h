@@ -103,6 +103,13 @@ public:
 
 					return true;
 				}
+				else if (input_event->cbutton.button == key_relation->event_value) {
+					//direction_axis = input_event->caxis.value;
+					direction_axis = (float)input_event->caxis.value / (float)maximum_axis_c;
+					//LOG("joystick %f", direction_axis);
+
+					return true;
+				}
 			}
 		}
 		return false;
@@ -219,6 +226,7 @@ public:
 		break;
 
 		case KeyBindingType::CONTROLLER_BUTTON_DEVICE:
+		
 
 				if (input_event->type == SDL_CONTROLLERBUTTONDOWN)
 				{

@@ -75,6 +75,8 @@ ControllerAxisAction* InputManager::GetAxis(const char * name)
 			return (ControllerAxisAction*)action_vector[i];
 		}
 	}
+
+	return nullptr;
 }
 
 KeyAction * InputManager::GetKey(const char * name)

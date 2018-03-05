@@ -481,6 +481,7 @@ CompInteractive * CompInteractive::FindNavigationOnUp()
 {
 	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
 	{
+		return navigation.interactive_up;
 
 	}
 	else
@@ -495,6 +496,7 @@ CompInteractive * CompInteractive::FindNavigationOnDown()
 
 	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
 	{
+		return navigation.interactive_down;
 
 	}
 	else
@@ -508,6 +510,7 @@ CompInteractive * CompInteractive::FindNavigationOnRight()
 {
 	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
 	{
+		return navigation.interactive_right;
 
 	}
 	else
@@ -521,7 +524,7 @@ CompInteractive * CompInteractive::FindNavigationOnLeft()
 {
 	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
 	{
-
+		return navigation.interactive_left;
 	}
 	else
 	{
