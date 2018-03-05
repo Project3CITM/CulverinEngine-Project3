@@ -268,6 +268,18 @@ AnimationNode * CompAnimation::GetNodeFromName(std::string name) const
 	return nullptr;
 }
 
+AnimationTransition * CompAnimation::GetTransitionFromName(std::string name, AnimationNode * node) const
+{
+	for (std::vector<AnimationTransition*>::const_iterator temp = node->transitions.begin(); temp != node->transitions.end(); temp++)
+	{
+		if ((*temp)->name == name)
+		{
+			return (*temp);
+		}
+	}
+	return nullptr;
+}
+
 void CompAnimation::SetResource(ResourceAnimation * resource_animation, bool isImport)
 {
 	if (animation_resource != resource_animation)
@@ -296,32 +308,58 @@ void CompAnimation::CopyValues(const CompAnimation* component)
 {
 	for (std::vector<AnimationClip*>::const_iterator it = component->animation_clips.begin(); it != component->animation_clips.end(); it++)
 	{
-		AnimationClip* temp = new AnimationClip();
-		temp->name = (*it)->name;
-		temp->start_frame_time = (*it)->start_frame_time;
-		temp->end_frame_time = (*it)->end_frame_time;
-		temp->speed_factor = (*it)->speed_factor;
-		temp->state = (*it)->state;
-		temp->loop = (*it)->loop;
-		temp->total_blending_time = (*it)->total_blending_time;
-		if (animation_clips.size() == 0)
+		AnimationClip* temp = GetClipFromName((*it)->name);
+		if(temp == nullptr)
 		{
-			current_animation = temp;
+			AnimationClip* temp = new AnimationClip();
+			temp->name = (*it)->name;
+			temp->start_frame_time = (*it)->start_frame_time;
+			temp->end_frame_time = (*it)->end_frame_time;
+			temp->speed_factor = (*it)->speed_factor;
+			temp->state = (*it)->state;
+			temp->loop = (*it)->loop;
+			temp->total_blending_time = (*it)->total_blending_time;
+			if (animation_clips.size() == 0)
+			{
+				current_animation = temp;
+			}
+			animation_clips.push_back(temp);
 		}
-		animation_clips.push_back(temp);
+		else
+		{
+			temp->start_frame_time = (*it)->start_frame_time;
+			temp->end_frame_time = (*it)->end_frame_time;
+			temp->speed_factor = (*it)->speed_factor;
+			temp->state = (*it)->state;
+			temp->loop = (*it)->loop;
+			temp->total_blending_time = (*it)->total_blending_time;
+		}
 	}
 
 	for (std::vector<AnimationNode*>::const_iterator it = component->animation_nodes.begin(); it != component->animation_nodes.end(); it++)
 	{
-		AnimationNode* temp = new AnimationNode();
-		temp->name = (*it)->name;
-		temp->clip = GetClipFromName((*it)->clip->name);
-		temp->active = (*it)->active;
-		if (temp->active == true)
+		AnimationNode* temp = GetNodeFromName((*it)->name);
+		if (temp == nullptr)
 		{
-			active_node = temp;
+			temp = new AnimationNode();
+			temp->name = (*it)->name;
+			temp->clip = GetClipFromName((*it)->clip->name);
+			temp->active = (*it)->active;
+			if (temp->active == true)
+			{
+				active_node = temp;
+			}
+			animation_nodes.push_back(temp);
 		}
-		animation_nodes.push_back(temp);
+		else
+		{
+			temp->clip = GetClipFromName((*it)->clip->name);
+			temp->active = (*it)->active;
+			if (temp->active == true)
+			{
+				active_node = temp;
+			}
+		}
 	}
 	int i = 0;
 	for (std::vector<AnimationNode*>::const_iterator it = component->animation_nodes.begin(); it != component->animation_nodes.end(); it++)
@@ -329,13 +367,24 @@ void CompAnimation::CopyValues(const CompAnimation* component)
 		AnimationNode* tempNode = animation_nodes.at(i);
 		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); trans_it++)
 		{
-			AnimationTransition* temp = new AnimationTransition();
-			temp->condition = (*trans_it)->condition;
-			temp->name = (*trans_it)->name;
-			temp->has_exit_time = (*trans_it)->has_exit_time;
-			temp->exit_time = (*trans_it)->exit_time;
-			temp->destination = GetNodeFromName((*trans_it)->destination->name);
-			tempNode->transitions.push_back(temp);
+			AnimationTransition* temp = GetTransitionFromName((*trans_it)->name, tempNode);
+			if (temp == nullptr)
+			{
+				temp = new AnimationTransition();
+				temp->condition = (*trans_it)->condition;
+				temp->name = (*trans_it)->name;
+				temp->has_exit_time = (*trans_it)->has_exit_time;
+				temp->exit_time = (*trans_it)->exit_time;
+				temp->destination = GetNodeFromName((*trans_it)->destination->name);
+				tempNode->transitions.push_back(temp);
+			}
+			else
+			{
+				temp->condition = (*trans_it)->condition;
+				temp->has_exit_time = (*trans_it)->has_exit_time;
+				temp->exit_time = (*trans_it)->exit_time;
+				temp->destination = GetNodeFromName((*trans_it)->destination->name);
+			}
 		}
 		i++;
 	}

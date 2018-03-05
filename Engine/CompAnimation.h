@@ -87,6 +87,7 @@ public:
 	AnimationClip* GetCurrentClip() const;
 	AnimationClip* GetClipFromName(std::string name) const;
 	AnimationNode* GetNodeFromName(std::string name) const;
+	AnimationTransition* GetTransitionFromName(std::string name, AnimationNode* node) const;
 
 	// EDITOR METHODS ---------
 	void ShowOptions();
