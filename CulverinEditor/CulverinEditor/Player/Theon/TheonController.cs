@@ -208,6 +208,16 @@ public class TheonController : CharacterController
             stamina.SetStamina(curr_stamina, max_stamina);
         }
 
+        //Get values from var and store them
+        else
+        {
+            health = GetLinkedObject("health_obj").GetComponent<Hp>();
+            curr_hp = health.GetCurrentHealth();
+
+            stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
+            curr_stamina = stamina.GetCurrentStamina();
+        }
+
         Debug.Log("Update Child Theon");
 
         //Change current character icon

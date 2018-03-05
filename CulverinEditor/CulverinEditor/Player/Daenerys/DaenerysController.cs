@@ -198,6 +198,16 @@ public class DaenerysController : CharacterController
             stamina.SetStamina(curr_stamina, max_stamina);
         }
 
+        //Get values from var and store them
+        else
+        {
+            health = GetLinkedObject("health_obj").GetComponent<Hp>();
+            curr_hp = health.GetCurrentHealth();
+
+            stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
+            curr_stamina = stamina.GetCurrentStamina();
+        }
+
         Debug.Log("Update Child Daenerys");
 
         //Change current character icon
