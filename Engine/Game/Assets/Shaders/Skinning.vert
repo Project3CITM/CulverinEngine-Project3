@@ -9,7 +9,7 @@ out float ourTime;
 out vec4 ourColor;
 out vec3 ourNormal;
 out vec2 TexCoord;
-
+out vec3 ourPos;
 uniform float _time;
 uniform vec4 _color;
 uniform mat4 model;
@@ -77,5 +77,6 @@ bool test = false;
 	ourColor = _color;
 	TexCoord = texCoord;
 	ourTime = _time;
-	ourNormal = mat3(model) * normalize(skinned_normal);
+	ourNormal = mat3(model) * normalize(skinned_normal);
+    ourPos = position;
 }
