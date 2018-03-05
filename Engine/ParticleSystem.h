@@ -280,7 +280,7 @@ public:
 	ParticleSystem();
 	~ParticleSystem();
 	bool PreUpdate(float dt);
-	bool Update(float dt);
+	bool Update(float dt, bool emit = true);
 	bool PostUpdate(float dt);
 	bool CleanUp();
 

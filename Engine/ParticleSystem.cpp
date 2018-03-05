@@ -606,21 +606,15 @@ bool ParticleSystem::PreUpdate(float dt)
 	return ret;
 }
 
-bool ParticleSystem::Update(float dt)
+bool ParticleSystem::Update(float dt, bool emit)
 {
 	if (ShowEmitter) DebugDrawEmitter();
 	if (ShowEmitterBoundBox) DebugDrawEmitterAABB();
 
-	Emitter.EmissionDuration += dt;
-
-	/*
-	float OneParticleEach = 1.0f / (float)Emitter.SpawnRate;
-	if (Emitter.EmissionDuration >= (Emitter.ParticleNumber * OneParticleEach))
-	{
-		CreateParticle();
-		Emitter.ParticleNumber++;
-	}
-	*/
+	if(emit)
+	{ 
+	/* Emission */
+	Emitter.EmissionDuration += dt;	
 
 	float SpawnRate = 1.0f / (float)Emitter.SpawnRate;
 
@@ -661,6 +655,12 @@ bool ParticleSystem::Update(float dt)
 			Emitter.EmitterLife += dt;
 		}
 	}
+
+	}
+
+
+	/*Particle update*/
+
 
 	//First time using Lambda operator, so i left a short explanation to don't forget what exactly is.
 	//[]->Lambda -> Shortcut to a function (or object that ca be called as a function, defined by operator ())

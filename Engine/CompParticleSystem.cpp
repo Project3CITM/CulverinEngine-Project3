@@ -81,7 +81,7 @@ void CompParticleSystem::Update(float dt)
 	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());
 	
 	if (App->engine_state == EngineState::STOP)
-		part_system->Update(0.02);
+		part_system->Update(0.02, preview);
 	else part_system->Update(dt);
 
 	part_system->DrawImGuiEditorWindow();
@@ -499,7 +499,7 @@ void CompParticleSystem::ShowInspectorInfo()
 	}
 	ImGui::PopStyleVar();
 
-	
+	ImGui::Checkbox("Preview", &preview);
 	
 	//Emitter options
 	if (ImGui::TreeNodeEx("Emitter"))

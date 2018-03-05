@@ -92,6 +92,10 @@ private:
 
 private:
 
+
+	bool active = true;
+	bool preview = true;
+
 	ParticleSystem* part_system = nullptr;
 	ResourceMaterial* texture_resource = nullptr;
 	bool pop_up_load_open = false;
