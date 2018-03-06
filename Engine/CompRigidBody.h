@@ -64,6 +64,7 @@ private:
 	bool					own_update = false;
 
 	uint					lock_move = 0;
+	float					sleep_time = 0.4f;
 
 };
 

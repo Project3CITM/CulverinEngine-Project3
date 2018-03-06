@@ -119,6 +119,14 @@ void jpPhysicsRigidBody::SetAsTrigger(bool trigger)
 	}
 }
 
+void jpPhysicsRigidBody::SetSleepTime(float time)
+{
+	if (body && is_dynamic && time > 0)
+	{
+		static_cast<physx::PxRigidDynamic*> (body)->setWakeCounter(time);
+	}
+}
+
 void jpPhysicsRigidBody::SetFilterFlags(unsigned int own_flag, unsigned int collision_flags)
 {
 	if (body_shape)
