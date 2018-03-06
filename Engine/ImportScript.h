@@ -12,10 +12,12 @@
 #include <mono/metadata/mono-gc.h>
 #include <list>
 #include <map>
+#include "MathGeoLib.h"
 
 class CSharpScript;
 class ResourceScript;
 class GameObject;
+class Component;
 
 class ImportScript
 {
@@ -51,6 +53,14 @@ public:
 	void UpdateMonoMap(GameObject* modificate, MonoObject* object);
 	MonoObject* GetMonoObject(GameObject* gameobject);
 	GameObject* GetGameObject(MonoObject* monoobject);
+
+	void UpdateMonoComp(Component* modificate, MonoObject* object);
+	MonoObject* GetMonoObject(Component* component);
+	Component* GetComponentMono(MonoObject* monoobject);
+
+	void UpdateMonoPos(float3* pos, MonoObject* object);
+	MonoObject* GetMonoObject(float3* pos);
+	float3& GetPosMono(MonoObject* monoobject);
 
 	bool IsNameUnique(std::string name) const;
 
@@ -216,6 +226,9 @@ private:
 	static CSharpScript* current;
 
 	std::map<MonoObject*, GameObject*> mono_map;
+	std::map<MonoObject*, Component*> mono_comp;
+	std::map<MonoObject*, float3*> mono_pos;
+	std::map<MonoObject*, Quat*> mono_quat;
 
 };
 

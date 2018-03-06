@@ -1075,20 +1075,25 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 		GameObject* actual_temp = App->importer->iScript->GetGameObject(object);
 		if (actual_temp)
 		{
-			if (actual_temp->GetComponentByName(comp_name) != nullptr) // if has component
+			Component* comp = actual_temp->GetComponentByName(comp_name);
+			if (comp != nullptr) // if has component
 			{
-				classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", comp_name);
+				MonoObject* obj = App->importer->iScript->GetMonoObject(comp);
+				if (obj != nullptr)
+				{
+					return obj;
+				}
+				else
+				{
+					classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", comp_name);
+					MonoObject* new_object = mono_object_new(CSdomain, classT);
+					if (new_object)
+					{
+						App->importer->iScript->UpdateMonoComp(comp, new_object);
+						return new_object;
+					}
+				}
 			}
-		}
-	}
-
-	if (classT)
-	{
-
-		MonoObject* new_object = mono_object_new(CSdomain, classT);
-		if (new_object)
-		{
-			return new_object;
 		}
 	}
 	return nullptr;

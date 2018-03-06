@@ -460,6 +460,65 @@ GameObject* ImportScript::GetGameObject(MonoObject* monoobject)
 	}
 }
 
+void ImportScript::UpdateMonoComp(Component* modificate, MonoObject* object)
+{
+	mono_comp[object] = modificate;
+}
+
+MonoObject* ImportScript::GetMonoObject(Component* component)
+{
+	if (component != nullptr/* && gameobject->IsDeleteFixed()*/)
+	{
+		std::map<MonoObject*, Component*>::iterator it = mono_comp.begin();
+		while (it != mono_comp.end())
+		{
+			if (it->second == component)
+			{
+				return it->first;
+			}
+			it++;
+		}
+	}
+}
+
+Component* ImportScript::GetComponentMono(MonoObject* monoobject)
+{
+	if (monoobject != nullptr)
+	{
+		std::map<MonoObject*, Component*>::iterator it = mono_comp.find(monoobject);
+		if (it != mono_comp.end())
+			return it->second;
+	}
+}
+
+void ImportScript::UpdateMonoPos(float3* pos, MonoObject* object)
+{
+	mono_pos[object] = pos;
+}
+
+MonoObject* ImportScript::GetMonoObject(float3* pos)
+{
+	std::map<MonoObject*, float3*>::iterator it = mono_pos.begin();
+	while (it != mono_pos.end())
+	{
+		if (it->second == pos)
+		{
+			return it->first;
+		}
+		it++;
+	}
+}
+
+float3& ImportScript::GetPosMono(MonoObject* monoobject)
+{
+	if (monoobject != nullptr)
+	{
+		std::map<MonoObject*, float3*>::iterator it = mono_pos.find(monoobject);
+		if (it != mono_pos.end())
+			return *it->second;
+	}
+}
+
 
 bool ImportScript::IsNameUnique(std::string name) const
 {
@@ -1045,8 +1104,7 @@ void ImportScript::DeleteGameObject(MonoObject* object)
 
 MonoObject* ImportScript::GetComponent(MonoObject* object, MonoReflectionType* type)
 {
-	MonoObject* m_obj = current->GetComponent(object, type);
-	return m_obj;
+	return current->GetComponent(object, type);
 }
 
 MonoObject* ImportScript::Instantiate(MonoObject* object, MonoString* prefab)

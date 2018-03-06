@@ -318,30 +318,41 @@ void CSharpScript::SetLeftVector(MonoObject * object, MonoObject * vector3)
 
 MonoObject* CSharpScript::GetPosition(MonoObject* object)
 {
+	std::string names = mono_class_get_name(mono_object_get_class(object));
+	Component* obj = App->importer->iScript->GetComponentMono(object);
 	if (current_game_object != nullptr)
 	{
-		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
-		if (classT)
+		MonoObject* new_obj = App->importer->iScript->GetMonoObject(&((CompTransform*)obj)->GetPos());
+		if (new_obj != nullptr)
 		{
-			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
-			if (new_object)
-			{
-				MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
-				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
-				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
-
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
-				float3 new_pos;
-				new_pos = transform->GetPos();
-
-				if (x_field) mono_field_set_value(new_object, x_field, &new_pos.x);
-				if (y_field) mono_field_set_value(new_object, y_field, &new_pos.y);
-				if (z_field) mono_field_set_value(new_object, z_field, &new_pos.z);
-
-				return new_object;
-			}
+			return new_obj;
 		}
-		return nullptr;
+		else
+		{
+			MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
+			if (classT)
+			{
+				MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+				if (new_object)
+				{
+					MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+					MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+					MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+					CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+					float3* new_pos;
+					new_pos = &transform->GetPos();
+
+					if (x_field) mono_field_set_value(new_object, x_field, &new_pos->x);
+					if (y_field) mono_field_set_value(new_object, y_field, &new_pos->y);
+					if (z_field) mono_field_set_value(new_object, z_field, &new_pos->z);
+
+					App->importer->iScript->UpdateMonoPos(new_pos, new_object);
+					return new_object;
+				}
+			}
+			return nullptr;
+		}
 	}
 }
 
