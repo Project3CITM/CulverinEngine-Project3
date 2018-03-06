@@ -12,8 +12,8 @@ public class DaenerysController : CharacterController
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
     public float curr_hp = 100.0f;
-    public float max_stamina = 100.0f;
-    public float curr_stamina = 100.0f;
+    public float max_mana = 100.0f;
+    public float curr_mana = 100.0f;
 
     protected override void Start()
     {
@@ -26,6 +26,10 @@ public class DaenerysController : CharacterController
         //Disable icon
         icon = daenerys_icon_obj.GetComponent<CompImage>();
         icon.SetEnabled(false, daenerys_icon_obj);
+
+        //Disable Mana bar
+        icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
+        icon.SetEnabled(false, GetLinkedObject("mana_obj"));
 
         Debug.Log(gameObject.GetName());
 
@@ -188,14 +192,28 @@ public class DaenerysController : CharacterController
         if (active)
         {
             Debug.Log("Update HP Daenerys");
+            
             //Update HP
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
 
-            Debug.Log("Update Stamina Daenerys");
-            //Update Stamina
-            stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
-            stamina.SetStamina(curr_stamina, max_stamina);
+            //Disable Stamina Bar
+            icon = GetLinkedObject("stamina_obj").GetComponent<CompImage>();
+            icon.SetEnabled(false, GetLinkedObject("stamina_obj"));
+
+            Debug.Log("Disabled Stamina Daenerys");
+
+            //Enable Mana Bar
+            icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
+            icon.SetEnabled(true, GetLinkedObject("mana_obj"));
+
+            Debug.Log("Enabled Mana Daenerys");
+
+            //Update Mana 
+            mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
+            mana.SetMana(curr_mana, max_mana);
+
+            Debug.Log("Set Mana Daenerys");
         }
 
         //Get values from var and store them
@@ -204,8 +222,16 @@ public class DaenerysController : CharacterController
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             curr_hp = health.GetCurrentHealth();
 
-            stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
-            curr_stamina = stamina.GetCurrentStamina();
+            mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
+            curr_mana = mana.GetCurrentMana();
+
+            //Disable Mana Bar
+            icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
+            icon.SetEnabled(false, GetLinkedObject("mana_obj"));
+
+            //Enable Stamina Bar
+            icon = GetLinkedObject("stamina_obj").GetComponent<CompImage>();
+            icon.SetEnabled(true, GetLinkedObject("stamina_obj"));
         }
 
         Debug.Log("Update Child Daenerys");

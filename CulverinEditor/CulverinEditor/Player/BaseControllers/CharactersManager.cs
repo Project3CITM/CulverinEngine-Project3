@@ -18,6 +18,7 @@ public class CharactersManager : CulverinBehaviour
     public GameObject player_obj; 
     public GameObject health_obj;
     public GameObject stamina_obj;
+    public GameObject mana_obj;
 
     State state = State.IDLE;   // To manage player state
 
@@ -28,10 +29,11 @@ public class CharactersManager : CulverinBehaviour
         left_character = GetLinkedObject("left_character");
         right_character = GetLinkedObject("right_character");
 
-        Debug.Log("Linking objects");
         player_obj = GetLinkedObject("player_obj");
         health_obj = GetLinkedObject("health_obj");
         stamina_obj = GetLinkedObject("stamina_obj");
+        mana_obj = GetLinkedObject("mana_obj");
+
     }
 
     void Update()
@@ -45,15 +47,11 @@ public class CharactersManager : CulverinBehaviour
                     if (Input.GetKeyDown(KeyCode.T))
                     {
                         state = State.CHANGING_LEFT;
-                        Debug.Log("Pressed T");
-                        Debug.Log("Changing Left");
                         CurrentToOut();
                     }
                     else if (Input.GetKeyDown(KeyCode.Y))
                     {
                         state = State.CHANGING_RIGHT;
-                        Debug.Log("Pressed Y");
-                        Debug.Log("Changing Right");
                         CurrentToOut();
                     }
 
@@ -76,18 +74,14 @@ public class CharactersManager : CulverinBehaviour
                 {
                     if (IsCharacterAnimationStopped(current_character, "Out"))
                     {
-                        Debug.Log("Changing Left");
 
                         ChangeLeft();
-
-                        Debug.Log("Changed Positions");
 
                         //Change GameObjects --------------------
                         temporal_change = current_character;
                         current_character = left_character;
                         left_character = temporal_change;
 
-                        Debug.Log("current character = " + current_character.GetName());
                         state = State.IDLE;
                     }
 
@@ -98,17 +92,13 @@ public class CharactersManager : CulverinBehaviour
                 {
                     if (IsCharacterAnimationStopped(current_character, "Out"))
                     {
-                        Debug.Log("Changing Right");
-
                         ChangeRight();
 
-                        Debug.Log("Changed Positions");
-
+                        //Change GameObjects --------------------
                         temporal_change = current_character;
                         current_character = right_character;
                         right_character = temporal_change;
 
-                        Debug.Log("current character = " + current_character.GetName());
                         state = State.IDLE;
                     }
                     break;
@@ -121,21 +111,18 @@ public class CharactersManager : CulverinBehaviour
         // CURRENT CHARACTER -------------------------------
         if (current_character.GetName() == "Jaime")
         {
-            Debug.Log("BEHIND JAIME");
             current_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.BEHIND);
             current_character.GetComponent<JaimeController>().UpdateHUD(false);
             current_character.GetComponent<JaimeController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Daenerys")
         {
-            Debug.Log("BEHIND DAENERYS");
             current_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.BEHIND);
             current_character.GetComponent<DaenerysController>().UpdateHUD(false);
             current_character.GetComponent<DaenerysController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Theon")
         {
-            Debug.Log("BEHIND THEON");
             current_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.BEHIND);
             current_character.GetComponent<TheonController>().UpdateHUD(false);
             current_character.GetComponent<TheonController>().ToggleMesh(false);
@@ -144,7 +131,6 @@ public class CharactersManager : CulverinBehaviour
         // LEFT CHARACTER -------------------------------
         if (left_character.GetName() == "Jaime")
         {
-            Debug.Log("CURRENT JAIME");
             left_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.CURRENT);
             left_character.GetComponent<JaimeController>().UpdateHUD(true);
             left_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
@@ -152,7 +138,6 @@ public class CharactersManager : CulverinBehaviour
         }
         else if (left_character.GetName() == "Daenerys")
         {
-            Debug.Log("CURRENT DAENERYS");
             left_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.CURRENT);
             left_character.GetComponent<DaenerysController>().UpdateHUD(true);
             left_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
@@ -160,7 +145,6 @@ public class CharactersManager : CulverinBehaviour
         }
         else if (left_character.GetName() == "Theon")
         {
-            Debug.Log("CURRENT THEON");
             left_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.CURRENT);
             left_character.GetComponent<TheonController>().UpdateHUD(true);
             left_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
@@ -216,7 +200,6 @@ public class CharactersManager : CulverinBehaviour
 
     void CurrentToOut()
     {
-        Debug.Log("Changing animation to Out");
         if (current_character.GetName() == "Jaime")
         {
             current_character.GetComponent<JaimeController>().SetAnimationTransition("ToOut", true);

@@ -96,6 +96,7 @@
     <Compile Include="Object.cs" />
     <Compile Include="AI\Pathfinder.cs" />
     <Compile Include="PathNode.cs" />
+    <Compile Include="Player\UI\Mana.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="Player\Jaime\JaimeWeapon_Right.cs" />
     <Compile Include="Player\UI\Stamina.cs" />

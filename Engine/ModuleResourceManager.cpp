@@ -62,9 +62,22 @@ bool ModuleResourceManager::Start()
 		std::string path_resources_library;
 		uint uid_temp = App->json_seria->ResourcesInLibrary(i, path_resources_library);
 		path_resources_library += std::to_string(uid_temp);
-		if (uid_temp != 0 && App->fs->CheckIsFileExist(path_resources_library) == false)
+		if (uid_temp != 0)
 		{
 			Resource* to_reimport = GetResource(uid_temp);
+			if (to_reimport->GetType() == Resource::Type::SCRIPT)
+			{
+				path_resources_library += ".dll";
+			}
+			if (to_reimport->GetType() == Resource::Type::MATERIAL)
+			{
+				path_resources_library += ".dds";
+			}
+			if (App->fs->CheckIsFileExist(path_resources_library))
+			{
+				continue;
+			}
+
 			if (to_reimport != nullptr)
 			{
 				ReImport temp;
@@ -380,7 +393,7 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 		}
 		else
 		{
-			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(file[i]).c_str(), App->fs->GetExtension(file[i]));
+			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(file[i]).c_str(), App->fs->GetExtension(file[i]).c_str());
 		}
 	}
 	if (App->mode_game == false)
