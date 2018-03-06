@@ -197,6 +197,8 @@ public:
 	MonoObject* GetScale(MonoObject* object);
 	void		LookAt(MonoObject* object, MonoObject* vector3);
 	void		LookAtTrans(MonoObject * object, MonoObject * transform);
+	MonoObject* GetLocalTransform(MonoObject * object);
+	MonoObject* GetGlobalTransform(MonoObject * object);
 
 	/*Particles*/
 

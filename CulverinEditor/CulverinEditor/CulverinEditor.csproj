@@ -60,6 +60,7 @@
     <Compile Include="CompParticleSystem.cs" />
     <Compile Include="CompJoint.cs" />
     <Compile Include="CompMesh.cs" />
+    <Compile Include="float4x4.cs" />
     <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />
     <Compile Include="BarrelPuzle\BarrelManage.cs" />

@@ -83,16 +83,23 @@ public class Movement_Action : Action
 
                 if (ReachedTile())
                 {
+                    Debug.Log("Current tile:" + path[0].GetTileX().ToString() + "," + path[0].GetTileY());
                     local_pos.x = path[0].GetTileX() * tile_size;
                     local_pos.z = path[0].GetTileY() * tile_size;
                     GetComponent<Transform>().local_position = local_pos;
 
-                    if(path.Count > 0)
+                    if (path.Count > 0)
                         path.Remove(path[0]);
+
+                    Debug.Log("Path Count: " + path.Count.ToString());
 
                     GetComponent<Arrive_Steering>().SetEnabled(false);
                     GetComponent<Seek_Steering>().SetEnabled(false);
+
                     SetState();
+
+                    if (interupt == true)
+                        return ACTION_RESULT.AR_FAIL;
                 }
                 break;
 
@@ -106,10 +113,6 @@ public class Movement_Action : Action
                         current_rot_acceleration = -max_rot_accel;
                 }
                 current_rot_velocity += current_rot_acceleration;
-
-                Debug.Log("Max rot acceleration: " + max_rot_accel.ToString());
-                Debug.Log("Current rot acceleration: " + current_rot_acceleration.ToString());
-                Debug.Log("Current rot velocity: " + current_rot_velocity.ToString());
 
                 if (Mathf.Abs(current_rot_velocity) > max_rot_vel)
                 {
@@ -130,7 +133,11 @@ public class Movement_Action : Action
 
                     Vector3 obj_vec = GetTargetPosition() - GetComponent<Transform>().position;
                     GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
+
                     SetState();
+
+                    if (interupt == true)
+                        return ACTION_RESULT.AR_FAIL;
                 }
 
                 break;
@@ -150,7 +157,12 @@ public class Movement_Action : Action
 
     public void GoTo(int cur_x, int cur_y, int obj_x, int obj_y)
     {
+        path.Clear();
         path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(cur_x, cur_y), new PathNode(obj_x, obj_y));
+
+        foreach (PathNode pn in path)
+            Debug.Log("Tile:\nX:" + pn.GetTileX().ToString() + " Y:" + pn.GetTileY().ToString());
+
         SetState();
     }
 
@@ -167,12 +179,6 @@ public class Movement_Action : Action
 
     public bool ReachedTile()
     {
-        if(path.Count == 0)
-        {
-            state = Motion_State.MS_NO_STATE;
-            return true;
-        }
-
         Vector3 my_pos = GetComponent<Transform>().local_position;
         Vector3 tile_pos = GetTargetPosition();
 
@@ -196,20 +202,23 @@ public class Movement_Action : Action
 
     void SetState()
     {
-        if (!FinishedRotation())
+        if (path.Count > 0)
         {
-            state = Motion_State.MS_ROTATE;
-            GetComponent<Align_Steering>().SetEnabled(true);
-            Debug.Log("State: ROTATE");
-            return;
-        }
-        if (!ReachedTile())
-        {
-            state = Motion_State.MS_MOVE;
-            GetComponent<Arrive_Steering>().SetEnabled(true);
-            GetComponent<Seek_Steering>().SetEnabled(true);
-            Debug.Log("State: MOVE");
-            return;
+            if (!FinishedRotation())
+            {
+                state = Motion_State.MS_ROTATE;
+                GetComponent<Align_Steering>().SetEnabled(true);
+                Debug.Log("State: ROTATE");
+                return;
+            }        
+            if (!ReachedTile())
+            {
+                state = Motion_State.MS_MOVE;
+                GetComponent<Arrive_Steering>().SetEnabled(true);
+                GetComponent<Seek_Steering>().SetEnabled(true);
+                Debug.Log("State: MOVE");
+                return;
+            }
         }
         Debug.Log("State: NO_STATE");
         state = Motion_State.MS_NO_STATE;
@@ -219,17 +228,18 @@ public class Movement_Action : Action
     {
         Vector3 forward = new Vector3(myself.GetComponent<Transform>().GetForwardVector());
         Vector3 pos = new Vector3(myself.GetComponent<Transform>().GetPosition());
-        Vector3 obj_vec = new Vector3(GetTargetPosition() - pos).Normalized;
+        Vector3 obj_vec = new Vector3(GetTargetPosition() - pos);
 
-        float own_angle = Mathf.Atan2(forward.x, forward.z);
-        float obj_angle = Mathf.Atan2(obj_vec.x, obj_vec.z);
-
-        float dot_product = Vector3.Dot(forward, obj_vec);
-
-        float delta = obj_angle - own_angle;
+        float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
 
         if (delta > Mathf.PI)
             delta = delta - 2 * Mathf.PI;
+        if (delta < (-Mathf.PI))
+            delta = delta + 2 * Mathf.PI;
+
+        /*Debug.Log("Forward: " + forward.ToString());
+        Debug.Log("Obj Vec: " + obj_vec.ToString());
+        Debug.Log("Delta: " + delta.ToString());*/
 
         return delta;
     }

@@ -669,3 +669,123 @@ void CSharpScript::LookAtTrans(MonoObject * object, MonoObject * transform)
 		transform->LookAt(target_pos);
 	}
 }
+
+MonoObject* CSharpScript::GetLocalTransform(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "float4x4");
+		if (classT)
+		{
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* a0_field = mono_class_get_field_from_name(classT, "a0");
+				MonoClassField* a1_field = mono_class_get_field_from_name(classT, "a1");
+				MonoClassField* a2_field = mono_class_get_field_from_name(classT, "a2");
+				MonoClassField* a3_field = mono_class_get_field_from_name(classT, "a3");
+
+				MonoClassField* b0_field = mono_class_get_field_from_name(classT, "b0");
+				MonoClassField* b1_field = mono_class_get_field_from_name(classT, "b1");
+				MonoClassField* b2_field = mono_class_get_field_from_name(classT, "b2");
+				MonoClassField* b3_field = mono_class_get_field_from_name(classT, "b3");
+
+				MonoClassField* c0_field = mono_class_get_field_from_name(classT, "c0");
+				MonoClassField* c1_field = mono_class_get_field_from_name(classT, "c1");
+				MonoClassField* c2_field = mono_class_get_field_from_name(classT, "c2");
+				MonoClassField* c3_field = mono_class_get_field_from_name(classT, "c3");
+
+				MonoClassField* d0_field = mono_class_get_field_from_name(classT, "d0");
+				MonoClassField* d1_field = mono_class_get_field_from_name(classT, "d1");
+				MonoClassField* d2_field = mono_class_get_field_from_name(classT, "d2");
+				MonoClassField* d3_field = mono_class_get_field_from_name(classT, "d3");
+
+				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				float4x4 local_transform = transform->GetLocalTransform();
+
+				if (a0_field) mono_field_set_value(new_object, a0_field, &local_transform.At(0, 0));
+				if (a1_field) mono_field_set_value(new_object, a1_field, &local_transform.At(0, 1));
+				if (a2_field) mono_field_set_value(new_object, a2_field, &local_transform.At(0, 2));
+				if (a3_field) mono_field_set_value(new_object, a3_field, &local_transform.At(0, 3));
+
+				if (b0_field) mono_field_set_value(new_object, b0_field, &local_transform.At(1, 0));
+				if (b1_field) mono_field_set_value(new_object, b1_field, &local_transform.At(1, 1));
+				if (b2_field) mono_field_set_value(new_object, b2_field, &local_transform.At(1, 2));
+				if (b3_field) mono_field_set_value(new_object, b3_field, &local_transform.At(1, 3));
+
+				if (c0_field) mono_field_set_value(new_object, c0_field, &local_transform.At(2, 0));
+				if (c1_field) mono_field_set_value(new_object, c1_field, &local_transform.At(2, 1));
+				if (c2_field) mono_field_set_value(new_object, c2_field, &local_transform.At(2, 2));
+				if (c3_field) mono_field_set_value(new_object, c3_field, &local_transform.At(2, 3));
+
+				if (d0_field) mono_field_set_value(new_object, d0_field, &local_transform.At(3, 0));
+				if (d1_field) mono_field_set_value(new_object, d1_field, &local_transform.At(3, 1));
+				if (d2_field) mono_field_set_value(new_object, d2_field, &local_transform.At(3, 2));
+				if (d3_field) mono_field_set_value(new_object, d3_field, &local_transform.At(3, 3));
+
+				return new_object;
+			}
+		}
+		return nullptr;
+	}
+}
+
+MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "float4x4");
+		if (classT)
+		{
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* a0_field = mono_class_get_field_from_name(classT, "a0");
+				MonoClassField* a1_field = mono_class_get_field_from_name(classT, "a1");
+				MonoClassField* a2_field = mono_class_get_field_from_name(classT, "a2");
+				MonoClassField* a3_field = mono_class_get_field_from_name(classT, "a3");
+
+				MonoClassField* b0_field = mono_class_get_field_from_name(classT, "b0");
+				MonoClassField* b1_field = mono_class_get_field_from_name(classT, "b1");
+				MonoClassField* b2_field = mono_class_get_field_from_name(classT, "b2");
+				MonoClassField* b3_field = mono_class_get_field_from_name(classT, "b3");
+
+				MonoClassField* c0_field = mono_class_get_field_from_name(classT, "c0");
+				MonoClassField* c1_field = mono_class_get_field_from_name(classT, "c1");
+				MonoClassField* c2_field = mono_class_get_field_from_name(classT, "c2");
+				MonoClassField* c3_field = mono_class_get_field_from_name(classT, "c3");
+
+				MonoClassField* d0_field = mono_class_get_field_from_name(classT, "d0");
+				MonoClassField* d1_field = mono_class_get_field_from_name(classT, "d1");
+				MonoClassField* d2_field = mono_class_get_field_from_name(classT, "d2");
+				MonoClassField* d3_field = mono_class_get_field_from_name(classT, "d3");
+
+				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				float4x4 global_transform = transform->GetGlobalTransform();
+
+				if (a0_field) mono_field_set_value(new_object, a0_field, &global_transform.At(0, 0));
+				if (a1_field) mono_field_set_value(new_object, a1_field, &global_transform.At(0, 1));
+				if (a2_field) mono_field_set_value(new_object, a2_field, &global_transform.At(0, 2));
+				if (a3_field) mono_field_set_value(new_object, a3_field, &global_transform.At(0, 3));
+
+				if (b0_field) mono_field_set_value(new_object, b0_field, &global_transform.At(1, 0));
+				if (b1_field) mono_field_set_value(new_object, b1_field, &global_transform.At(1, 1));
+				if (b2_field) mono_field_set_value(new_object, b2_field, &global_transform.At(1, 2));
+				if (b3_field) mono_field_set_value(new_object, b3_field, &global_transform.At(1, 3));
+				
+				if (c0_field) mono_field_set_value(new_object, c0_field, &global_transform.At(2, 0));
+				if (c1_field) mono_field_set_value(new_object, c1_field, &global_transform.At(2, 1));
+				if (c2_field) mono_field_set_value(new_object, c2_field, &global_transform.At(2, 2));
+				if (c3_field) mono_field_set_value(new_object, c3_field, &global_transform.At(2, 3));
+				
+				if (d0_field) mono_field_set_value(new_object, d0_field, &global_transform.At(3, 0));
+				if (d1_field) mono_field_set_value(new_object, d1_field, &global_transform.At(3, 1));
+				if (d2_field) mono_field_set_value(new_object, d2_field, &global_transform.At(3, 2));
+				if (d3_field) mono_field_set_value(new_object, d3_field, &global_transform.At(3, 3));
+
+				return new_object;
+			}
+		}
+		return nullptr;
+	}
+}

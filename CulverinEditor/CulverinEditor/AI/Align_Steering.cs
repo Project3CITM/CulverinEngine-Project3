@@ -25,20 +25,13 @@ public class Align_Steering : CulverinBehaviour
 
         float acceleration = 0;
 
-        Debug.Log("Angle: " + delta);
-
         if (delta > 0)
             acceleration = move.GetMaxRotAcceleration();
         else
             acceleration = -move.GetMaxRotAcceleration();
 
-        Debug.Log("Max Rot Accel: " + move.GetMaxRotAcceleration());
-        Debug.Log("Rot Acceleration: " + acceleration.ToString());
-        Debug.Log("Margin: " + rot_margin.ToString());
-
         if (!in_rot_margin && Mathf.Abs(delta) <= rot_margin)
         {
-            Debug.Log("Under Margin");
             in_rot_margin = true;
             float current_rot_velocity = move.GetCurrentRotVelocity();
             break_acceleration = -current_rot_velocity / stopping_time;

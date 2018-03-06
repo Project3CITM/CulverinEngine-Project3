@@ -155,6 +155,8 @@ private:
 	static MonoObject*	GetScale(MonoObject* object);
 	static void			LookAt(MonoObject* object, MonoObject* vector3);
 	static void			LookAtTrans(MonoObject* object, MonoObject* trans);
+	static MonoObject*	GetLocalTransform(MonoObject* object);
+	static MonoObject*	GetGlobalTransform(MonoObject* object);
 
 	/* Component */
 

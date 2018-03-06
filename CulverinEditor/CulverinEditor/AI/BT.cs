@@ -63,9 +63,8 @@ public class BT : CulverinBehaviour
     {
         Debug.Log("BT decision move defined!");
 
-
         //Behaviour tree structure
-        if(player_detected)
+        if (player_detected)
         {
             //Chase and attack
         }
@@ -79,7 +78,11 @@ public class BT : CulverinBehaviour
         int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        if(my_tile_x != origin_path_x && my_tile_y != origin_path_y)
+        Debug.Log("Origin X:" + origin_path_x.ToString() + "Y:" + origin_path_y.ToString());
+        Debug.Log("My tile X:" + my_tile_x.ToString() + "Y:" + my_tile_y.ToString());
+        Debug.Log("End Path X:" + end_path_x.ToString() + "Y:" + end_path_y.ToString());
+
+        if (my_tile_x != origin_path_x && my_tile_y != origin_path_y)
         {
             GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, origin_path_x, origin_path_y);
             GetComponent<Movement_Action>().ActionStart();

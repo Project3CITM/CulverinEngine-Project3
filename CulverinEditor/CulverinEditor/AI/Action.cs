@@ -2,7 +2,9 @@
 using CulverinEditor.Debug;
 
 public class Action : CulverinBehaviour
-{    
+{
+    protected bool interupt = false;
+
     public enum ACTION_RESULT
     {
         AR_IN_PROGRESS,

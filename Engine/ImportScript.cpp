@@ -753,6 +753,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Transform::LookAt", (const void*)LookAt);
 	mono_add_internal_call("CulverinEditor.Transform::LookAtTrans", (const void*)LookAtTrans);
 	mono_add_internal_call("CulverinEditor.Transform::RotateAroundAxis", (const void*)RotateAroundAxis);
+	mono_add_internal_call("CulverinEditor.Transform::GetLocalTransform", (const void*)GetLocalTransform);
+	mono_add_internal_call("CulverinEditor.Transform::GetGlobalTransform", (const void*)GetGlobalTransform);
 
 	// Component ---------------------------
 	mono_add_internal_call("CulverinEditor.Component::GetParentGameObject", (const void*)GetParentGameObject);
@@ -1259,6 +1261,16 @@ void ImportScript::LookAt(MonoObject * object, MonoObject * vector3)
 void ImportScript::LookAtTrans(MonoObject * object, MonoObject * trans)
 {
 	current->LookAtTrans(object, trans);
+}
+
+MonoObject* ImportScript::GetLocalTransform(MonoObject* object)
+{
+	return current->GetLocalTransform(object);
+}
+
+MonoObject*	ImportScript::GetGlobalTransform(MonoObject* object)
+{
+	return current->GetGlobalTransform(object);
 }
 
 // Component ---------------------

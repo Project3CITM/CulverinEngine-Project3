@@ -213,5 +213,11 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void LookAtTrans(Transform value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern float4x4 GetLocalTransform();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern float4x4 GetGlobalTransform();
     }
 }

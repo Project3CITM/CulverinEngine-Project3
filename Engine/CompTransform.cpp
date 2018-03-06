@@ -450,8 +450,6 @@ void CompTransform::UpdateMatrix(ImGuizmo::MODE mode)
 	default:
 		break;
 	}
-
-
 }
 
 float3 CompTransform::GetForwardVector() const

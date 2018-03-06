@@ -1,5 +1,4 @@
-﻿
-namespace CulverinEditor
+﻿namespace CulverinEditor
 {
     public class Vector3
     {
@@ -106,7 +105,6 @@ namespace CulverinEditor
                 return Magnitude(this);
             }
         }
-
 
         //Math operations ---------------------------------
         public static float Angle(Vector3 from, Vector3 to)
@@ -317,6 +315,11 @@ namespace CulverinEditor
                 ret = (x == vector.x && y == vector.y && z == vector.z);
             }
             return ret;
+        }
+
+        public static float AngleBetweenXZ(Vector3 a, Vector3 b)
+        {
+            return Mathf.Atan2(b.x, b.z) - Mathf.Atan2(a.x, a.z);
         }
     }
 }
