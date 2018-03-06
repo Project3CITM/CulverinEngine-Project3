@@ -459,7 +459,8 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	float ratio = (float)width / (float)height;
 	App->window->SetWindowSize(width, height);
 
-	active_camera->SetFov(height);
+	//Reset the FOV
+	active_camera->SetFov(active_camera->GetFOV());
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

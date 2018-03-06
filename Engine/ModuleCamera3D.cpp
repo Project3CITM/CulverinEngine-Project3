@@ -41,6 +41,7 @@ bool ModuleCamera3D::Init(JSON_Object * node)
 	// Create Component camera to work with a frustum ---
 	cam = new CompCamera(C_CAMERA, nullptr);
 	cam->frustum.Translate(float3(10, 10, -10));
+	cam->SetFov(50);
 	LookAt(float3::zero);
 
 	//Load render config info -------
