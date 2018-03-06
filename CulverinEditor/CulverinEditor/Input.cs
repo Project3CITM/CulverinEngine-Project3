@@ -64,7 +64,7 @@ namespace CulverinEditor
         public static extern bool GetInput_MouseButtonUp(string name, string input);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern bool GetInput_ControllerAxis(string name, string input);
+        public static extern float GetInput_ControllerAxis(string name, string input);
 
     }
 }
