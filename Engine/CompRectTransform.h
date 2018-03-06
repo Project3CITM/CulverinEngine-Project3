@@ -2,6 +2,7 @@
 #define COMPONENT_RECT_TRANSFORM_H
 #include "CompTransform.h"
 #include "Math\float2.h"
+
 class CompRectTransform:public CompTransform
 {
 public:

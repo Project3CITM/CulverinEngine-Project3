@@ -53,6 +53,7 @@ public:
 	void Load(const JSON_Object * object, std::string name);
 	void SyncComponent(GameObject* sync_parent);
 	bool IsActivate()const;
+	bool IsSelective() const;
 	void Activate();
 
 	void Deactive();
@@ -61,6 +62,7 @@ public:
 	void ShowNavigationInfo();
 
 	CompInteractive* FindNavigationOnUp();
+
 	CompInteractive* FindNavigationOnDown();
 	CompInteractive* FindNavigationOnRight();
 	CompInteractive* FindNavigationOnLeft();
@@ -71,6 +73,7 @@ public:
 	virtual void OnPointExit(Event event_input);
 	virtual void OnInteractiveSelected(Event event_input);
 	virtual void OnInteractiveUnSelected(Event event_input);
+	virtual void OnDrag(Event event_input);
 	bool PointerInside(float2 position);
 	void SetTargetGraphic(CompGraphic* target_graphic);
 	//Setters Color tint parameters
@@ -168,6 +171,7 @@ protected:
 	bool point_down = false;
 	bool point_inside = false;
 	bool interactive_selected = false;
+	bool selective = false;
 
 private:
 	

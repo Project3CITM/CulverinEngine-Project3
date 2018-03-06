@@ -352,6 +352,11 @@ bool CompInteractive::IsActivate()const
 	return disabled;
 }
 
+bool CompInteractive::IsSelective() const
+{
+	return selective;
+}
+
 void CompInteractive::Activate()
 {
 	disabled = false;
@@ -502,6 +507,11 @@ CompInteractive * CompInteractive::FindNavigationOnUp()
 
 	}
 	return nullptr;
+}
+
+void CompInteractive::OnDrag(Event event_input)
+{
+	image->GetRectTrasnform()->SetPos(float3(event_input.pointer.position.x, event_input.pointer.position.y, 0));
 }
 
 CompInteractive * CompInteractive::FindNavigationOnDown()
