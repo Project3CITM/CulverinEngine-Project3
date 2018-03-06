@@ -1033,6 +1033,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompAnimation";
 	}
+	else if (name_class == "CompParticleSystem")
+	{
+		comp_name = "CompParticleSystem";
+	}
 	else if (name_class == "CompMesh")
 	{
 		comp_name = "CompMesh";

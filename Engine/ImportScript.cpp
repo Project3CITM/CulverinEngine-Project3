@@ -801,6 +801,11 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Audio::ChangeVolume", (const void*)ChangeVolume);
 	mono_add_internal_call("CulverinEditor.Audio::Mute", (const void*)Mute);
 	
+	//COMPONENT PARTICLE FUNCTION ----------------
+	mono_add_internal_call("CulverinEditor.CompParticleSystem::ActivateEmission", (const void*)ActivateEmission);
+	mono_add_internal_call("CulverinEditor.CompParticleSystem::IsEmitterActive", (const void*)IsEmitterActive);
+
+
 	//COMPONENT AUDIO FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
@@ -1314,6 +1319,18 @@ void ImportScript::ChangeVolume(float volume)
 void ImportScript::Mute(bool m)
 {
 	App->audio->Mute(m);
+}
+
+//Component Particle Functions ------------
+
+void ImportScript::ActivateEmission(MonoObject* object, bool a)
+{
+	current->ActivateEmission(object, a);
+}
+
+bool ImportScript::IsEmitterActive(MonoObject* object)
+{
+	return current->IsEmitterActive(object);
 }
 
 // Component Audio Functions ------------

@@ -20,6 +20,34 @@
 #include "CompJoint.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
+#include "CompParticleSystem.h"
+
+
+void CSharpScript::ActivateEmission(MonoObject* obj, bool a)
+{
+	if (current_game_object != nullptr)
+	{
+		CompParticleSystem* part = (CompParticleSystem*)current_game_object->FindComponentByType(Comp_Type::C_PARTICLE_SYSTEM);
+		if (part)
+		{
+			part->ActivateEmitter(a);
+		}
+	}
+}
+
+bool CSharpScript::IsEmitterActive(MonoObject* obj)
+{
+	if (current_game_object != nullptr)
+	{
+		CompParticleSystem* part = (CompParticleSystem*)current_game_object->FindComponentByType(Comp_Type::C_PARTICLE_SYSTEM);
+		if (part)
+		{
+			return part->IsActive();
+		}
+	}
+
+	return false;
+}
 
 
 void CSharpScript::PlayAudioEvent(MonoObject* object, MonoString* event_name)

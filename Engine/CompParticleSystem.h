@@ -41,6 +41,9 @@ public:
 	void ImGuiSaveParticlePopUp()const;
 	void ImGuiSaveEmitterPopUp()const;
 
+
+	void ActivateEmitter(bool);
+
 private:
 
 	void SetChild(const char* Particle, const char* Emitter);

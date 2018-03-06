@@ -175,6 +175,10 @@ private:
 	static void ChangeVolume(float volume);
 	static void Mute(bool m);
 
+	/*Component Particle*/
+	static void ActivateEmission(MonoObject* obj, bool active);
+	static bool IsEmitterActive(MonoObject* obj);
+
 	/*Component Audio*/
 	static void PlayAudioEvent(MonoObject* object, MonoString* name);
 	static void StopAudioEvent(MonoObject* object, MonoString* name);

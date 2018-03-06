@@ -14,7 +14,7 @@
 
 CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
-	name_component = "Particle_System";
+	name_component = "CompParticleSystem";
 
 	emitter_resource_name.reserve(100);
 	particle_resource_name.reserve(100);
@@ -148,6 +148,13 @@ const std::string* CompParticleSystem::GetChildEmitter() const
 {
 	if (!child_emitter.empty()) return &child_emitter;
 	return nullptr;
+}
+
+void CompParticleSystem::ActivateEmitter(bool a)
+{
+	if (a)
+		part_system->ActivateEmitter();
+	else part_system->DeactivateEmitter();
 }
 
 

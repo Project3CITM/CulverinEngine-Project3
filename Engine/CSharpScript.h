@@ -198,6 +198,11 @@ public:
 	void		LookAt(MonoObject* object, MonoObject* vector3);
 	void		LookAtTrans(MonoObject * object, MonoObject * transform);
 
+	/*Particles*/
+
+	void		ActivateEmission(MonoObject* obj, bool a);
+	bool		IsEmitterActive(MonoObject* obj);
+
 	/*Audio*/
 	void		PlayAudioEvent(MonoObject* object, MonoString* event_name);
 	void		StopAudioEvent(MonoObject* object, MonoString* event_name);

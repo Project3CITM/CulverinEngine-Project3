@@ -635,29 +635,11 @@ bool ParticleSystem::Update(float dt, bool emit)
 		if (App->engine_state != EngineState::STOP && !Emitter.IsEmitterActive())
 			return true;
 
-	/* Emission */
-	Emitter.EmissionDuration += dt;	
+		/* Emission */
+		Emitter.EmissionDuration += dt;
+		float SpawnRate = 1.0f / (float)Emitter.SpawnRate;
 
-	float SpawnRate = 1.0f / (float)Emitter.SpawnRate;
-
-	if ((Emitter.EmitterLifeMax <= 0.0f) || Emitter.Loop)
-	{
-		if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
-		{
-			if (SpawnRate < dt)
-			{
-				unsigned int ParticlesToSpawn = dt / SpawnRate;
-				for (unsigned int i = 0; i < ParticlesToSpawn; i++)
-					CreateParticle();
-			}
-			else
-				CreateParticle();
-			NextParticleTime = Emitter.EmissionDuration + SpawnRate;
-		}
-	}
-	else
-	{
-		if (Emitter.EmitterLifeMax > Emitter.EmitterLife)
+		if (App->engine_state == EngineState::STOP)
 		{
 			if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
 			{
@@ -670,14 +652,49 @@ bool ParticleSystem::Update(float dt, bool emit)
 				else
 					CreateParticle();
 				NextParticleTime = Emitter.EmissionDuration + SpawnRate;
-
-				//CreateParticle();
-				//NextParticleTime = Emitter.EmissionDuration + (1.0f / (float)Emitter.SpawnRate);
 			}
-			Emitter.EmitterLife += dt;
-		}
-	}
+	     }
+		else
+		{
+			if ((Emitter.EmitterLifeMax <= 0.0f || Emitter.Loop) || (!Emitter.IsEmitterActive()))
+			{
+				if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
+				{
+					if (SpawnRate < dt)
+					{
+						unsigned int ParticlesToSpawn = dt / SpawnRate;
+						for (unsigned int i = 0; i < ParticlesToSpawn; i++)
+							CreateParticle();
+					}
+					else
+						CreateParticle();
+					NextParticleTime = Emitter.EmissionDuration + SpawnRate;
+				}
+			}
+			else
+			{
+				if (Emitter.EmitterLifeMax > Emitter.EmitterLife)
+				{
+					if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
+					{
+						if (SpawnRate < dt)
+						{
+							unsigned int ParticlesToSpawn = dt / SpawnRate;
+							for (unsigned int i = 0; i < ParticlesToSpawn; i++)
+								CreateParticle();
+						}
+						else
+							CreateParticle();
+						NextParticleTime = Emitter.EmissionDuration + SpawnRate;
 
+						//CreateParticle();
+						//NextParticleTime = Emitter.EmissionDuration + (1.0f / (float)Emitter.SpawnRate);
+					}
+					Emitter.EmitterLife += dt;
+				}
+				else DeactivateEmitter();
+			}
+		}
 	}
 
 

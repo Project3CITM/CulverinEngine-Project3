@@ -57,6 +57,7 @@
     <Compile Include="BarrelPuzle\BarrelScript.cs" />
     <Compile Include="BarrelPuzle\ChainManage.cs" />
     <Compile Include="BarrelPuzle\ChainMovement.cs" />
+    <Compile Include="CompParticleSystem.cs" />
     <Compile Include="CompJoint.cs" />
     <Compile Include="CompMesh.cs" />
     <Compile Include="Player\AttackTarget.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Player\Theon\TheonController.cs" />
     <Compile Include="SceneManager.cs" />
     <Compile Include="TestLoad.cs" />
+    <Compile Include="TestParticle.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Torch_sound.cs" />
     <Compile Include="Transform.cs" />
