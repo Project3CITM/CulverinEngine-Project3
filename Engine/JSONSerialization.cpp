@@ -1007,16 +1007,20 @@ uint JSONSerialization::ResourcesInLibrary(uint id)
 	JSON_Object* config;
 
 	config_file = json_parse_file("Resources.json");
-
+	uint uuid = 0;
 	if (config_file != nullptr)
 	{
 		config = json_value_get_object(config_file);
 		config = json_object_get_object(config, "Resources");
 		std::string name = "Resource " + std::to_string(id);
-		uint t = json_object_dotget_number_with_std(config, name + "");
+		Resource::Type type = (Resource::Type)(int)json_object_dotget_number_with_std(config, name + "Type");
+		if (type != (Resource::Type::ANIMATION && Resource::Type::FOLDER && Resource::Type::FONT && Resource::Type::SKELETON))
+		{
+			uuid = json_object_dotget_number_with_std(config, name + "UUID & UUID Directory");
+		}
 	}
 	json_value_free(config_file);
-	return 0;
+	return uuid;
 }
 
 void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile)
