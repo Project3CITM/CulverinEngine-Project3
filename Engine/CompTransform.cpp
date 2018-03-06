@@ -35,6 +35,7 @@ CompTransform::CompTransform(const CompTransform& copy, GameObject* parent) : Co
 
 CompTransform::~CompTransform()
 {
+	position_pointer = nullptr;
 }
 
 // Init from Rotation Quaternion

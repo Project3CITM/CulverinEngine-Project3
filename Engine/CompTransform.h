@@ -101,15 +101,18 @@ protected:
 	bool editing_transform = false;
 
 	// Output Values ----------------------
-	float3 position = { 0, 0, 0 };
-	float3* position_pointer = nullptr;
+	float3 position = { 0, 0, 0 }; 			
 	float3 rotation_euler = { 0, 0, 0 };
 	
-	float3 scale = { 0, 0, 0 };
+	float3 scale = { 0, 0, 0 };				
 	float3 scale_global = { 0, 0, 0 };
 
 	float3 position_global = { 0, 0, 0 };
 	float3 rotation_euler_global = { 0, 0, 0 };
+
+
+	float3* position_pointer = nullptr;
+	float3* scale_pointer = nullptr;
 	// ------------------------------------
 
 	Quat rotation = math::Quat::identity;
