@@ -67,6 +67,7 @@ public:
 	// --------------------------------
 
 	void SetActive(bool active);
+	void SetUUIDRandom();
 
 	uint GetUUID() const;
 	Comp_Type GetType() const;

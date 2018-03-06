@@ -410,15 +410,15 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 			//Sync components
 			for (int i = 0; i < templist.size(); i++)
 			{
-				//templist[i].go->SyncComponents(mainParent);
+				templist[i].go->SyncComponents(mainParent);
 			}
 
 			// Now Iterate All GameObjects and Components and create a new UUID!
-			mainParent->SetUUIDRandom();
-			if (mainParent->GetNumChilds() > 0)
+			if (mainParent != nullptr)
 			{
 				ChangeUUIDs(*mainParent);
 			}
+
 			//// Finaly, add gameObject in Scene.
 			App->scene->root->AddChildGameObject(mainParent);
 			templist.clear();
@@ -1044,15 +1044,18 @@ void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Obje
 
 void JSONSerialization::ChangeUUIDs(GameObject& gameObject)
 {
+	gameObject.SetUUIDRandom();
+
+	for (uint i = 0; i < gameObject.GetNumComponents(); i++)
+	{
+		gameObject.GetComponentbyIndex(i)->SetUUIDRandom();
+	}
+
 	for (int i = 0; i < gameObject.GetNumChilds(); i++)
 	{
-		gameObject.GetChildbyIndex(i)->SetUUIDRandom();
-
-		if (gameObject.GetChildbyIndex(i)->GetNumChilds() > 0)
-		{
-			ChangeUUIDs(*gameObject.GetChildbyIndex(i));
-		}
+		ChangeUUIDs(*gameObject.GetChildbyIndex(i));
 	}
+
 }
 
 void JSONSerialization::CheckChangeName(GameObject& gameObject)

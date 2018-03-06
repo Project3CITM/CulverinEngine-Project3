@@ -99,6 +99,11 @@ void Component::SetActive(bool active)
 	this->active = active;
 }
 
+void Component::SetUUIDRandom()
+{
+	uid = App->random->Int();
+}
+
 uint Component::GetUUID() const
 {
 	return uid;

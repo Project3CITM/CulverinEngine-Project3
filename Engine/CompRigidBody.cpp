@@ -409,3 +409,43 @@ void CompRigidBody::MoveKinematic(float3 pos, Quat rot)
 		own_update = true;
 	}
 }
+
+void CompRigidBody::ApplyForce(float3 force)
+{
+	if (body)
+	{
+		body->ApplyForce(force);
+	}
+}
+
+void CompRigidBody::ApplyImpulse(float3 impulse)
+{
+	if (body && !kinematic)
+	{
+		body->ApplyImpulse(impulse);
+	}
+}
+
+void CompRigidBody::ApplyTorqueForce(float3 force)
+{
+	if (body && !kinematic)
+	{
+		body->ApplyTorqueForce(force);
+	}
+}
+
+void CompRigidBody::ApplyTorqueImpulse(float3 impulse)
+{
+	if (body && !kinematic)
+	{
+		body->ApplyTorqueImpulse(impulse);
+	}
+}
+
+void CompRigidBody::FreezeTransform()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLock();
+	}
+}

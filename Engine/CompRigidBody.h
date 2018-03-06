@@ -40,6 +40,7 @@ public:
 
 	//Getters ----------------------
 	jpPhysicsRigidBody* GetPhysicsBody() const;
+
 	void RemoveJoint();
 
 	void UpdateParentPosition();
@@ -51,7 +52,16 @@ public:
 	void OnContact(Component* actor);
 
 	//PhysX Methods
+	// Dynamic and kinematic -------
 	void MoveKinematic(float3 pos, Quat rot);
+
+	// Dynamic not kinematic -------	
+	void ApplyForce(float3 force);
+	void ApplyImpulse(float3 impulse);
+	void ApplyTorqueForce(float3 force);
+	void ApplyTorqueImpulse(float3 impulse);
+
+	void FreezeTransform();
 
 private:
 

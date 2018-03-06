@@ -327,6 +327,17 @@ void jpPhysicsRigidBody::SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::Enum
 	}
 }
 
+void jpPhysicsRigidBody::SetDynamicLock()
+{
+	if (body && is_dynamic)
+	{
+		physx::PxRigidDynamic* rbody = (physx::PxRigidDynamic*) body;
+		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_X, true);
+		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Y, true);
+		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Z, true);
+	}
+}
+
 void jpPhysicsRigidBody::GetTransform(float3 & pos, Quat & rotation)
 {
 	if (is_dynamic)
