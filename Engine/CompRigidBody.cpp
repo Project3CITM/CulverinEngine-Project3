@@ -442,10 +442,18 @@ void CompRigidBody::ApplyTorqueImpulse(float3 impulse)
 	}
 }
 
-void CompRigidBody::FreezeTransform()
+void CompRigidBody::LockTransform()
 {
 	if (body && !kinematic)
 	{
-		body->SetDynamicLock();
+		body->SetDynamicLock(true);
+	}
+}
+
+void CompRigidBody::UnLockTransform()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLock(false);
 	}
 }

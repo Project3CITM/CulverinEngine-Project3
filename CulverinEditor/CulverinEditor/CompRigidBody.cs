@@ -15,5 +15,23 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void MoveKinematic(Vector3 pos, Quaternion rotation);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void ApplyForce(Vector3 force);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void ApplyImpulse(Vector3 impulse);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void ApplyTorqueForce(Vector3 force);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void ApplyTorqueImpulse(Vector3 impulse);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void LockTransform();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void UnLockTransform();
     }
 }

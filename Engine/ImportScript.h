@@ -201,10 +201,16 @@ private:
 	static void		   MoveStaticColliderTo(MonoObject* object, MonoObject* position);
 
 	/*Component RigidBody*/
-	static MonoObject* GetColliderPosition(MonoObject* object);
-	static MonoObject* GetColliderQuaternion(MonoObject* object);
-	static void		   RemoveJoint(MonoObject* object);
-	static void		   MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation);
+	static MonoObject*	GetColliderPosition(MonoObject* object);
+	static MonoObject*	GetColliderQuaternion(MonoObject* object);
+	static void			RemoveJoint(MonoObject* object);
+	static void			MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation);
+	static void			ApplyForce(MonoObject* object, MonoObject* force);
+	static void			ApplyImpulse(MonoObject* object, MonoObject* impulse);
+	static void			ApplyTorqueForce(MonoObject* object, MonoObject* force);
+	static void			ApplyTorqueImpulse(MonoObject* object, MonoObject* impulse);
+	static void			LockTransform(MonoObject* object);
+	static void			UnLockTransform(MonoObject* object);
 
 	/*Component Joint*/
 	static void		   DeleteJoint(MonoObject* object);

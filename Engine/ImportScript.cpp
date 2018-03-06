@@ -833,6 +833,12 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompRigidBody::GetColliderQuaternion", (const void*)GetColliderQuaternion);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::RemoveJoint", (const void*)RemoveJoint);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::MoveKinematic", (const void*)MoveKinematic);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyForce", (const void*)ApplyForce);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyImpulse", (const void*)ApplyImpulse);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyTorqueForce", (const void*)ApplyTorqueForce);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyTorqueImpulse", (const void*)ApplyTorqueImpulse);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::LockTransform", (const void*)LockTransform);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::UnLockTransform", (const void*)UnLockTransform);
 
 	//COMPONENT JOINT FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.CompJoint::DeleteJoint", (const void*)DeleteJoint);
@@ -1403,6 +1409,36 @@ void ImportScript::RemoveJoint(MonoObject * object)
 void ImportScript::MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation)
 {
 	current->MoveKinematic(object, position, rotation);
+}
+
+void ImportScript::ApplyForce(MonoObject * object, MonoObject * force)
+{
+	current->ApplyForce(object, force);
+}
+
+void ImportScript::ApplyImpulse(MonoObject * object, MonoObject * impulse)
+{
+	current->ApplyImpulse(object, impulse);
+}
+
+void ImportScript::ApplyTorqueForce(MonoObject * object, MonoObject * force)
+{
+	current->ApplyTorqueForce(object, force);
+}
+
+void ImportScript::ApplyTorqueImpulse(MonoObject * object, MonoObject * impulse)
+{
+	current->ApplyTorqueImpulse(object, impulse);
+}
+
+void ImportScript::LockTransform(MonoObject * object)
+{
+	current->LockTransform(object);
+}
+
+void ImportScript::UnLockTransform(MonoObject * object)
+{
+	current->UnLockTransform(object);
 }
 
 void ImportScript::DeleteJoint(MonoObject * object)
