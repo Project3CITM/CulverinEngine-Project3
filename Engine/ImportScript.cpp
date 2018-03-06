@@ -189,7 +189,7 @@ bool ImportScript::LoadResource(const char* file, ResourceScript* resourceScript
 	return true;
 }
 
-bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script, ResourceScript* resourceScript)
+bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script, ResourceScript* resourceScript, bool auto_reimport)
 {
 	// UnloadDomain
 	Unload_domain();
@@ -218,17 +218,21 @@ bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script
 	{
 		culverin_mono_image = mono_assembly_get_image(culverin_assembly);
 	}
-	if (App->resource_manager->ReImportAllScripts() == false)
+	if (auto_reimport == false)
 	{
-		LOG("[error] Error With ReImport Script");
-	}
-	//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
-	//resourceScript->SetCSharp(newCSharp);
+		if (App->resource_manager->ReImportAllScripts() == false)
+		{
+			LOG("[error] Error With ReImport Script");
+		}
+		//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
+		//resourceScript->SetCSharp(newCSharp);
 
-	// Then Create Meta
-	std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-	Newdirectory += "/" + App->fs->FixName_directory(fileAssets);
-	App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+		// Then Create Meta
+		std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+		Newdirectory += "/" + App->fs->FixName_directory(fileAssets);
+		App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+	}
+
 	return true;
 }
 
@@ -835,6 +839,12 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompRigidBody::GetColliderQuaternion", (const void*)GetColliderQuaternion);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::RemoveJoint", (const void*)RemoveJoint);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::MoveKinematic", (const void*)MoveKinematic);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyForce", (const void*)ApplyForce);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyImpulse", (const void*)ApplyImpulse);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyTorqueForce", (const void*)ApplyTorqueForce);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyTorqueImpulse", (const void*)ApplyTorqueImpulse);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::LockTransform", (const void*)LockTransform);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::UnLockTransform", (const void*)UnLockTransform);
 
 	//COMPONENT JOINT FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.CompJoint::DeleteJoint", (const void*)DeleteJoint);
@@ -1415,6 +1425,36 @@ void ImportScript::RemoveJoint(MonoObject * object)
 void ImportScript::MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation)
 {
 	current->MoveKinematic(object, position, rotation);
+}
+
+void ImportScript::ApplyForce(MonoObject * object, MonoObject * force)
+{
+	current->ApplyForce(object, force);
+}
+
+void ImportScript::ApplyImpulse(MonoObject * object, MonoObject * impulse)
+{
+	current->ApplyImpulse(object, impulse);
+}
+
+void ImportScript::ApplyTorqueForce(MonoObject * object, MonoObject * force)
+{
+	current->ApplyTorqueForce(object, force);
+}
+
+void ImportScript::ApplyTorqueImpulse(MonoObject * object, MonoObject * impulse)
+{
+	current->ApplyTorqueImpulse(object, impulse);
+}
+
+void ImportScript::LockTransform(MonoObject * object)
+{
+	current->LockTransform(object);
+}
+
+void ImportScript::UnLockTransform(MonoObject * object)
+{
+	current->UnLockTransform(object);
 }
 
 void ImportScript::DeleteJoint(MonoObject * object)

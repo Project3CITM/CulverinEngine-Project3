@@ -236,6 +236,12 @@ public:
 	MonoObject* GetColliderQuaternion(MonoObject* object);
 	void		RemoveJoint(MonoObject* object);
 	void		MoveKinematic(MonoObject* object, MonoObject* position, MonoObject* rotation);
+	void		ApplyForce(MonoObject* object, MonoObject* force);
+	void		ApplyImpulse(MonoObject* object, MonoObject* impulse);
+	void		ApplyTorqueForce(MonoObject* object, MonoObject* force);
+	void		ApplyTorqueImpulse(MonoObject* object, MonoObject* impulse);
+	void		LockTransform(MonoObject* object);
+	void		UnLockTransform(MonoObject* object);
 
 	/*Joint*/
 	void		DestroyJoint(MonoObject* object);

@@ -23,6 +23,7 @@ public class CharacterController : CulverinBehaviour
     protected MovementController movement;             // To manage when the player is moving to block attacks/abilities
     protected Hp health;                               // To handle current hp
     protected Stamina stamina;                         // To handle current stamina
+    protected Mana mana;                          // To handle current mana
     protected WeaponController right_weapon;           // Script that will handle right weapon the player is carrying (with its own progression system, stats...)
     protected CompAnimation anim_controller_right;     // Animation component to handle animations
     protected WeaponController left_weapon;            // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
@@ -87,8 +88,6 @@ public class CharacterController : CulverinBehaviour
 
     public void CheckHealth()
     {
-        Debug.Log("Check Health");
-
         // Debug for check Health control
         if (Input.GetKeyDown(KeyCode.O))
         {

@@ -34,7 +34,7 @@ public:
 	bool CleanUp();
 
 	void ImportFile(std::list<const char*>& file);
-	void ImportFile(std::vector<const char*>& file, std::vector<ReImport>& resourcesToReimport);
+	void ImportFile(std::vector<const char*>& file, std::vector<ReImport>& resourcesToReimport, bool auto_reimport = false);
 	
 	Resource* CreateNewResource(Resource::Type type, uint uuid = 0);
 	Resource* GetResource(uint id);

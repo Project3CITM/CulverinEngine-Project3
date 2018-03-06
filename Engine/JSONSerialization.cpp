@@ -1001,7 +1001,7 @@ std::time_t JSONSerialization::GetLastWriteScript(const char* file)
 	return last_write;
 }
 
-uint JSONSerialization::ResourcesInLibrary(uint id)
+uint JSONSerialization::ResourcesInLibrary(uint id, std::string& path)
 {
 	JSON_Value* config_file;
 	JSON_Object* config;
@@ -1013,10 +1013,28 @@ uint JSONSerialization::ResourcesInLibrary(uint id)
 		config = json_value_get_object(config_file);
 		config = json_object_get_object(config, "Resources");
 		std::string name = "Resource " + std::to_string(id);
-		Resource::Type type = (Resource::Type)(int)json_object_dotget_number_with_std(config, name + "Type");
+		Resource::Type type = (Resource::Type)(int)json_object_dotget_number_with_std(config, name + ".Type");
 		if (type != (Resource::Type::ANIMATION && Resource::Type::FOLDER && Resource::Type::FONT && Resource::Type::SKELETON))
 		{
-			uuid = json_object_dotget_number_with_std(config, name + "UUID & UUID Directory");
+			switch (type)
+			{
+			case Resource::Type::MATERIAL:
+			{
+				path = DIRECTORY_LIBRARY_MATERIALS;
+				break;
+			}
+			case Resource::Type::SCRIPT:
+			{
+				path = DIRECTORY_LIBRARY_SCRIPTS;
+				break;
+			}
+			case Resource::Type::MESH:
+			{
+				path = DIRECTORY_LIBRARY_MESHES;
+				break;
+			}
+			}
+			uuid = json_object_dotget_number_with_std(config, name + ".UUID & UUID Directory");
 		}
 	}
 	json_value_free(config_file);

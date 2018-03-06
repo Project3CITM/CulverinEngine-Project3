@@ -311,7 +311,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			}
 		}
 	}
-
+	UIInputManagerUpdate();
 	//LOG(std::to_string(mouse_x_motion).c_str());
 	
 	if(quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
@@ -440,6 +440,8 @@ void ModuleInput::UIInputManagerUpdate()
 {
 	if (!ui_conected|| ui_manager==nullptr)
 		return;
+	if (!ui_manager->GetActiveInput())
+		return;
 	if (ui_manager->GetKey(submit.c_str())->OnClick())
 	{
 		Event mouse_event;
@@ -457,20 +459,40 @@ void ModuleInput::UIInputManagerUpdate()
 
 
 	}
-	if (abs(ui_manager->GetAxis(vertical.c_str())->direction_axis) > 0.8f)
+	if (ui_manager->GetAxis(vertical.c_str())->direction_axis > 0.8f)
 	{
 		Event mouse_event;
-		mouse_event.gui_vertical.type = EventType::EVENT_VERTICAL;
-		mouse_event.gui_vertical.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
+		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.gui_axis.value = ui_manager->GetAxis(vertical.c_str())->direction_axis;
+		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_DOWN;
 		PushEvent(mouse_event);
 
 	}
-	if (abs(ui_manager->GetAxis(horizontal.c_str())->direction_axis) > 0.8f)
+	else if (ui_manager->GetAxis(vertical.c_str())->direction_axis < -0.8f)
 	{
 		Event mouse_event;
-		mouse_event.gui_horizontal.type = EventType::EVENT_HORIZONTAL;
-		mouse_event.gui_horizontal.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
+		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.gui_axis.value = ui_manager->GetAxis(vertical.c_str())->direction_axis;
+		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_UP;
 		PushEvent(mouse_event);
+
+	}
+	if (ui_manager->GetAxis(horizontal.c_str())->direction_axis > 0.8f)
+	{
+		Event mouse_event;
+		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.gui_axis.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
+		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_RIGHT;
+		PushEvent(mouse_event);
+	}
+	else if (ui_manager->GetAxis(horizontal.c_str())->direction_axis < -0.8f)
+	{
+		Event mouse_event;
+		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.gui_axis.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
+		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_LEFT;
+		PushEvent(mouse_event);
+
 	}
 }
 

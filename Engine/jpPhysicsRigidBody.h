@@ -52,7 +52,7 @@ public:
 
 	void SetMass(float &mass);
 	void SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::Enum x, bool active);
-	void SetDynamicLock();
+	void SetDynamicLock(bool lock);
 
 	// Get Methods
 	void GetTransform(float3& pos, Quat& rotation);

@@ -300,7 +300,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 	return true;
 }
 
-bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<ReImport>& resourcesToReimport)
+bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<ReImport>& resourcesToReimport, bool auto_reimport)
 {
 	bool ret = true;
 
@@ -377,7 +377,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 		{
 			if (strcmp(file, resourcesToReimport[i].directory_obj) == 0)
 			{
-				iScript->ReImportScript(file, std::to_string(resourcesToReimport[i].uuid), nullptr);
+				iScript->ReImportScript(file, std::to_string(resourcesToReimport[i].uuid), nullptr, auto_reimport);
 				isReImport = true;
 				break;
 			}

@@ -57,6 +57,88 @@ bool ModuleResourceManager::Start()
 	//CreateResourcePlane();
 	//Load();
 
+	for (int i = 0; i < resources.size(); i++)
+	{
+		std::string path_resources_library;
+		uint uid_temp = App->json_seria->ResourcesInLibrary(i, path_resources_library);
+		path_resources_library += std::to_string(uid_temp);
+		if (uid_temp != 0)
+		{
+			Resource* to_reimport = GetResource(uid_temp);
+			if (to_reimport->GetType() == Resource::Type::SCRIPT)
+			{
+				path_resources_library += ".dll";
+			}
+			if (to_reimport->GetType() == Resource::Type::MATERIAL)
+			{
+				path_resources_library += ".dds";
+			}
+			if (App->fs->CheckIsFileExist(path_resources_library))
+			{
+				continue;
+			}
+
+			if (to_reimport != nullptr)
+			{
+				ReImport temp;
+				if (to_reimport->GetType() == Resource::Type::MATERIAL)
+				{
+					std::string temp_mat = "Assets/";
+					temp_mat += to_reimport->name;
+					temp.directory_obj = App->fs->ConverttoConstChar(temp_mat);
+				}
+				else
+					temp.directory_obj = App->fs->ConverttoConstChar(to_reimport->path_assets);
+				temp.name_mesh = App->fs->ConverttoConstChar(to_reimport->name);
+				if (to_reimport->GetType() == Resource::Type::SCRIPT)
+				{
+					temp.path_dll = App->fs->ConverttoConstChar(((ResourceScript*)to_reimport)->GetPathdll());
+				}
+				temp.uuid = uid_temp;
+				resources_to_reimport.push_back(temp);
+			}
+		}
+	}
+	if (resources_to_reimport.size() > 0)
+	{
+		files_reimport.push_back(resources_to_reimport[0].directory_obj);
+		for (int i = 1; i < resources_to_reimport.size(); i++)
+		{
+			if (strcmp(files_reimport[files_reimport.size() - 1], resources_to_reimport[i].directory_obj) != 0)
+			{
+				files_reimport.push_back(resources_to_reimport[i].directory_obj);
+			}
+		}
+		// if a Resource state == Resource::State::REIMPORT delete it.
+		std::map<uint, Resource*>::iterator it;
+		for (int i = 0; i < resources_to_reimport.size(); i++) // i = 1 -> ResourcePrimitive
+		{
+			it = resources.find(resources_to_reimport[i].uuid);
+			delete it->second;
+			resources.erase(it);
+		}
+
+		// Now ReImport
+		LOG("ReImporting...");
+		ImportFile(files_reimport, resources_to_reimport, true);
+		LOG("Finished ReImport.");
+		if (App->mode_game == false)
+		{
+			Save();
+		}
+		// After reimport, update time of vector of files in filesystem.
+		App->fs->UpdateFilesAssets();
+		files_reimport.clear();
+		for (int i = 0; i < resources_to_reimport.size(); i++)
+		{
+			RELEASE_ARRAY(resources_to_reimport[i].directory_obj);
+			RELEASE_ARRAY(resources_to_reimport[i].name_mesh);
+			RELEASE_ARRAY(resources_to_reimport[i].path_dll);
+		}
+		resources_to_reimport.clear();
+		reimport_now = false;
+	}
+
 
 	Start_t = perf_timer.ReadMs();
 	return true;
@@ -339,7 +421,7 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 	App->fs->UpdateFilesAssets();
 }
 
-void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vector<ReImport>& resourcesToReimport)
+void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vector<ReImport>& resourcesToReimport, bool auto_reimport)
 {
 	for (int i = 0; i < file.size(); i++)
 	{
@@ -349,7 +431,7 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 
 		if (dropped_File_type != Resource::Type::UNKNOWN)
 		{
-			if (App->importer->Import(file[i], dropped_File_type, resourcesToReimport))
+			if (App->importer->Import(file[i], dropped_File_type, resourcesToReimport, auto_reimport))
 			{
 				// Copy file to Specify folder in Assets (This folder is the folder active)
 				//App->fs->CopyFileToAssets(it._Ptr->_Myval, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory());
@@ -357,12 +439,15 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 		}
 		else
 		{
-			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(file[i]).c_str(), App->fs->GetExtension(file[i]));
+			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(file[i]).c_str(), App->fs->GetExtension(file[i]).c_str());
 		}
 	}
 	if (App->mode_game == false)
 	{
-		((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
+		if (auto_reimport == false)
+		{
+			((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
+		}
 	}
 	App->fs->UpdateFilesAssets();
 }
@@ -725,7 +810,7 @@ void ModuleResourceManager::Save()
 			json_object_dotset_number_with_std(config_node, name + "UUID & UUID Directory", it->second->GetUUID());
 			json_object_dotset_number_with_std(config_node, name + "Type", (int)it->second->GetType());
 			json_object_dotset_string_with_std(config_node, name + "Name", it->second->name.c_str());
-			json_object_dotset_string_with_std(config_node, name + "PathAssets", it->second->path_assets.c_str());
+			json_object_dotset_string_with_std(config_node, name + "PathAssets", App->fs->GetToAsstes(it->second->path_assets).c_str());
 			if (it->second->GetType() == Resource::Type::SCRIPT)
 			{
 				json_object_dotset_string_with_std(config_node, name + "PathDll", ((ResourceScript*)it->second)->GetPathdll().c_str());
@@ -770,6 +855,7 @@ void ModuleResourceManager::Load()
 						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
 						ResourceMesh* mesh = (ResourceMesh*)CreateNewResource(type, uid);
 						mesh->name = json_object_dotget_string_with_std(config_node, name + "Name");
+						mesh->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
 						break;
 					}
 					case Resource::Type::MATERIAL:
@@ -805,6 +891,9 @@ void ModuleResourceManager::Load()
 				}
 			}
 		}
+
+		//Duplicate Particle folder to library
+		App->fs->CopyFolderToLibrary("ParticleSystem");
 	}
 	json_value_free(config_file);
 }

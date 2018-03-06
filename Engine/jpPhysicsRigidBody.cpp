@@ -327,14 +327,14 @@ void jpPhysicsRigidBody::SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::Enum
 	}
 }
 
-void jpPhysicsRigidBody::SetDynamicLock()
+void jpPhysicsRigidBody::SetDynamicLock(bool lock)
 {
 	if (body && is_dynamic)
 	{
 		physx::PxRigidDynamic* rbody = (physx::PxRigidDynamic*) body;
-		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_X, true);
-		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Y, true);
-		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Z, true);
+		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_X, lock);
+		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Y, lock);
+		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Z, lock);
 	}
 }
 

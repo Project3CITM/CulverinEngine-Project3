@@ -46,7 +46,7 @@ public:
 
 
 	bool Import(const char* file, Resource::Type type, bool isAutoImport = false);
-	bool Import(const char* file, Resource::Type type, std::vector<ReImport>& resourcesToReimport);
+	bool Import(const char* file, Resource::Type type, std::vector<ReImport>& resourcesToReimport, bool auto_reimport = false);
 	//FileTypeImport CheckFileType(char* filedir);
 	//bool Import();
 

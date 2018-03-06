@@ -296,6 +296,98 @@ void CSharpScript::MoveKinematic(MonoObject * object, MonoObject * position, Mon
 	}
 }
 
+void CSharpScript::ApplyForce(MonoObject * object, MonoObject * force)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classP = mono_object_get_class(force);
+		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classP, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classP, "z");
+
+		float3 new_force;
+
+		if (x_field) mono_field_get_value(force, x_field, &new_force.x);
+		if (y_field) mono_field_get_value(force, y_field, &new_force.y);
+		if (z_field) mono_field_get_value(force, z_field, &new_force.z);
+
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->ApplyForce(new_force);
+	}
+}
+
+void CSharpScript::ApplyImpulse(MonoObject * object, MonoObject * impulse)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classP = mono_object_get_class(impulse);
+		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classP, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classP, "z");
+
+		float3 new_impuse;
+
+		if (x_field) mono_field_get_value(impulse, x_field, &new_impuse.x);
+		if (y_field) mono_field_get_value(impulse, y_field, &new_impuse.y);
+		if (z_field) mono_field_get_value(impulse, z_field, &new_impuse.z);
+
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->ApplyImpulse(new_impuse);
+	}
+}
+
+void CSharpScript::ApplyTorqueForce(MonoObject * object, MonoObject * force)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classP = mono_object_get_class(force);
+		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classP, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classP, "z");
+
+		float3 new_force;
+
+		if (x_field) mono_field_get_value(force, x_field, &new_force.x);
+		if (y_field) mono_field_get_value(force, y_field, &new_force.y);
+		if (z_field) mono_field_get_value(force, z_field, &new_force.z);
+
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->ApplyTorqueForce(new_force);
+	}
+}
+
+void CSharpScript::ApplyTorqueImpulse(MonoObject * object, MonoObject * impulse)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classP = mono_object_get_class(impulse);
+		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classP, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classP, "z");
+
+		float3 new_impuse;
+
+		if (x_field) mono_field_get_value(impulse, x_field, &new_impuse.x);
+		if (y_field) mono_field_get_value(impulse, y_field, &new_impuse.y);
+		if (z_field) mono_field_get_value(impulse, z_field, &new_impuse.z);
+
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->ApplyTorqueImpulse(new_impuse);
+	}
+}
+
+void CSharpScript::LockTransform(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockTransform();
+	}
+}
+
+void CSharpScript::UnLockTransform(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->UnLockTransform();
+	}
+}
+
 void CSharpScript::DestroyJoint(MonoObject* object)
 {
 	if (current_game_object != nullptr)

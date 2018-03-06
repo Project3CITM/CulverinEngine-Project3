@@ -68,6 +68,7 @@ void InputManager::Clear()
 
 ControllerAxisAction* InputManager::GetAxis(const char * name)
 {
+	
 	for (int i = 0; i < action_vector.size(); i++)
 	{
 		if (action_vector[i]->name == name && action_vector[i]->action_type == ActionInputType::CONTROLLER_AXIS_ACTION)
@@ -82,7 +83,7 @@ ControllerAxisAction* InputManager::GetAxis(const char * name)
 KeyAction * InputManager::GetKey(const char * name)
 {
 
-	for (int i = 0; i < action_vector.size(); i++) 
+	for (int i = 0; i < action_vector.size(); i++)
 	{
 		if (action_vector[i]->name == name && (action_vector[i]->action_type == ActionInputType::KEY_ACTION || action_vector[i]->action_type == ActionInputType::BUTTON_ACTION))
 		{
@@ -95,6 +96,7 @@ KeyAction * InputManager::GetKey(const char * name)
 
 MouseButtonAction * InputManager::GetMouseButton(const char * name)
 {
+
 	for (int i = 0; i < action_vector.size(); i++)
 	{
 		if (action_vector[i]->name == name && action_vector[i]->action_type == ActionInputType::MOUSE_BUTTON_ACTION)

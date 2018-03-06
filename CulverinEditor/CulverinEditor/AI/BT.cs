@@ -12,9 +12,9 @@ public class BT : CulverinBehaviour
         AI_DEAD
     }
 
-    protected Action      current_action = new Action();
-    protected AI_STATE    state = AI_STATE.AI_IDLE;
-    
+    protected Action current_action = new Action();
+    protected AI_STATE state = AI_STATE.AI_IDLE;
+
     //Blackboard
     public bool player_detected = false;
     public bool heard_something = false;
@@ -26,15 +26,13 @@ public class BT : CulverinBehaviour
     public int end_path_x;
     public int end_path_y;
 
-    void Start()
+    virtual public void Start()
     {
         current_action = MakeDecision();
     }
 
-    void Update()
+    public virtual void Update()
     {
-        //Debug.Log(current_action.action_type.ToString());
-
         if (current_action.action_type != Action.ACTION_TYPE.NO_ACTION)
         {
             switch (current_action.ActionUpdate())
@@ -55,7 +53,7 @@ public class BT : CulverinBehaviour
                 default:
                     Debug.Log("Error on action state!");
                     break;
-            }             
+            }
         }
     }
 
@@ -69,7 +67,7 @@ public class BT : CulverinBehaviour
             //Chase and attack
         }
 
-        if(heard_something)
+        if (heard_something)
         {
             //Investigate
         }
@@ -77,10 +75,6 @@ public class BT : CulverinBehaviour
         //If none of them -> patrol
         int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
-
-        Debug.Log("Origin X:" + origin_path_x.ToString() + "Y:" + origin_path_y.ToString());
-        Debug.Log("My tile X:" + my_tile_x.ToString() + "Y:" + my_tile_y.ToString());
-        Debug.Log("End Path X:" + end_path_x.ToString() + "Y:" + end_path_y.ToString());
 
         if (my_tile_x != origin_path_x && my_tile_y != origin_path_y)
         {
@@ -101,4 +95,3 @@ public class BT : CulverinBehaviour
         return state;
     }
 }
-

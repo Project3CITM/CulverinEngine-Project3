@@ -713,7 +713,7 @@ void Application::SetState(EngineState state)
 			ChangeCamera("Scene"); // To notice renderer3D to change to Scene Camera
 
 			// Clear static objects vector
-			scene->FillStaticObjectsVector(false); 
+			//scene->FillStaticObjectsVector(false); 
 
 			//To Load all elements saved before entering Game Mode
 			WantToLoad();
@@ -729,7 +729,7 @@ void Application::SetState(EngineState state)
 				ChangeCamera("Game"); // To notice renderer3D to change to Gcene Camera
 
 				// Fill static objects vector when play
-				scene->FillStaticObjectsVector(true); 
+				//scene->FillStaticObjectsVector(true); 
 
 				if (mode_game == false)
 				{
