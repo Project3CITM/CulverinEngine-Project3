@@ -57,6 +57,29 @@ bool ModuleResourceManager::Start()
 	//CreateResourcePlane();
 	//Load();
 
+	for (int i = 0; i < resources.size(); i++)
+	{
+		std::string path_resources_library;
+		uint uid_temp = App->json_seria->ResourcesInLibrary(i, path_resources_library);
+		path_resources_library += std::to_string(uid_temp);
+		if (uid_temp != 0 && App->fs->CheckIsFileExist(path_resources_library) == false)
+		{
+			Resource* to_reimport = GetResource(uid_temp);
+			if (to_reimport != nullptr)
+			{
+				ReImport temp;
+				temp.directory_obj = App->fs->ConverttoConstChar(to_reimport->path_assets);
+				temp.name_mesh = App->fs->ConverttoConstChar(to_reimport->name);
+				if (to_reimport->GetType() == Resource::Type::SCRIPT)
+				{
+					temp.path_dll = App->fs->ConverttoConstChar(((ResourceScript*)to_reimport)->GetPathdll());
+				}
+				temp.uuid = uid_temp;
+				resources_to_reimport.push_back(temp);
+			}
+		}
+	}
+
 
 	Start_t = perf_timer.ReadMs();
 	return true;
@@ -725,7 +748,7 @@ void ModuleResourceManager::Save()
 			json_object_dotset_number_with_std(config_node, name + "UUID & UUID Directory", it->second->GetUUID());
 			json_object_dotset_number_with_std(config_node, name + "Type", (int)it->second->GetType());
 			json_object_dotset_string_with_std(config_node, name + "Name", it->second->name.c_str());
-			json_object_dotset_string_with_std(config_node, name + "PathAssets", it->second->path_assets.c_str());
+			json_object_dotset_string_with_std(config_node, name + "PathAssets", App->fs->GetToAsstes(it->second->path_assets).c_str());
 			if (it->second->GetType() == Resource::Type::SCRIPT)
 			{
 				json_object_dotset_string_with_std(config_node, name + "PathDll", ((ResourceScript*)it->second)->GetPathdll().c_str());
@@ -770,6 +793,7 @@ void ModuleResourceManager::Load()
 						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
 						ResourceMesh* mesh = (ResourceMesh*)CreateNewResource(type, uid);
 						mesh->name = json_object_dotget_string_with_std(config_node, name + "Name");
+						mesh->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
 						break;
 					}
 					case Resource::Type::MATERIAL:

@@ -106,8 +106,7 @@ std::string ModuleFS::CopyFileToAssets(const char* fileNameFrom, const char* fil
 	if (fs::exists(exits) == false)
 	{
 		fs::copy(fileNameFrom, exits);
-		exits.clear();
-		return "";
+		return exits;
 	}
 	else
 	{
