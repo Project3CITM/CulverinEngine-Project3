@@ -52,6 +52,8 @@ public:
 	// Same to CopyFileToAssets but this return path of file to save
 	std::string CopyFileToAssetsS(const char* fileNameFrom, const char* fileNameTo = "");
 
+	void CopyFolderToLibrary(const char* folder);
+
 	//update_status UpdateConfig(float dt);
 
 	// Imort all files with havent ".meta".
@@ -136,6 +138,7 @@ private:
 	char ownPth[MAX_PATH];
 	std::string directory_assets;
 	std::string directory_game;
+
 };
 
 #endif

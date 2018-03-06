@@ -125,6 +125,29 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	case EventType::EVENT_PASS_COMPONENT:
 		iteractive_vector.push_back((CompInteractive*)this_event.pass_component.component);
 		break;
+	case EventType::EVENT_AXIS:
+		if (selected != nullptr)
+		{
+			selected->OnMove(this_event);
+		}
+		else
+		{
+		//Find 
+
+		}
+		break;
+	case EventType::EVENT_SUBMIT:
+		if (selected != nullptr)
+		{
+			selected->OnSubmit(this_event);
+		}
+		break;
+	case EventType::EVENT_CANCEL:
+		if (selected != nullptr)
+		{
+			selected->OnCancel(this_event);
+		}
+		break;
 	case EventType::EVENT_BUTTON_DOWN:
 	case EventType::EVENT_BUTTON_UP:
 	case EventType::EVENT_MOUSE_MOTION:
@@ -147,6 +170,10 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 							(*it)->OnPointDown(this_event);
 							if ((*it)->GetNavigationMode() != Navigation::NavigationMode::NAVIGATION_NONE)
 							{
+								Event pass_selected;
+								pass_selected.pass_selected.type = EventType::EVENT_PASS_SELECTED;
+								pass_selected.pass_selected.component = (*it);
+								PushEvent(pass_selected);
 								(*it)->OnInteractiveSelected(this_event);
 							}
 							focus = (*it);

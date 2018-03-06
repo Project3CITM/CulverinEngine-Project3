@@ -43,6 +43,7 @@ bool ModuleFS::Init(JSON_Object * node)
 	CreateFolder("Library/JSON");
 	CreateFolder("Assets");
 	CreateFolder("Assets/Maps");
+	CreateFolder("Assets/Shaders");
 	CreateFolder("Assets/Shaders/Materials");
 	return true;
 }
@@ -153,6 +154,23 @@ std::string ModuleFS::CopyFileToAssetsS(const char* fileNameFrom, const char* fi
 		fs::copy(fileNameFrom, exits);
 	}
 	return exits;
+}
+
+void ModuleFS::CopyFolderToLibrary(const char * folder)
+{
+	namespace fs = std::experimental::filesystem;
+	std::string path = "Assets/";
+	path += folder;
+	std::string from = GetFullPath(path);
+
+	if (!fs::exists(from))
+		return;
+	
+	std::string to = GetFullPath("Library/ParticleSystem");
+	fs::remove_all(to);
+	CreateFolder("Library");
+	CreateFolder("Library/ParticleSystem");
+	fs::copy(from, to, fs::copy_options::recursive);
 }
 
 bool ModuleFS::CheckAssetsIsModify()
