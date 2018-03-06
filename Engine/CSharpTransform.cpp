@@ -322,9 +322,22 @@ MonoObject* CSharpScript::GetPosition(MonoObject* object)
 	Component* obj = App->importer->iScript->GetComponentMono(object);
 	if (current_game_object != nullptr)
 	{
-		MonoObject* new_obj = App->importer->iScript->GetMonoObject(&((CompTransform*)obj)->GetPos());
+		MonoObject* new_obj = App->importer->iScript->GetMonoObject(((CompTransform*)obj)->GetPosPointer());
 		if (new_obj != nullptr)
 		{
+			MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
+			MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+			MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+			MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+			CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+			float3* new_pos;
+			new_pos = transform->GetPosPointer();
+
+			if (x_field) mono_field_set_value(new_obj, x_field, &new_pos->x);
+			if (y_field) mono_field_set_value(new_obj, y_field, &new_pos->y);
+			if (z_field) mono_field_set_value(new_obj, z_field, &new_pos->z);
+
 			return new_obj;
 		}
 		else
@@ -341,7 +354,7 @@ MonoObject* CSharpScript::GetPosition(MonoObject* object)
 
 					CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
 					float3* new_pos;
-					new_pos = &transform->GetPos();
+					new_pos = transform->GetPosPointer();
 
 					if (x_field) mono_field_set_value(new_object, x_field, &new_pos->x);
 					if (y_field) mono_field_set_value(new_object, y_field, &new_pos->y);

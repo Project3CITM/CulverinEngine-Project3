@@ -257,7 +257,7 @@ public:
 private:
 	//Auxiliar map to fill variables vector with info
 	std::map<MonoClassField*, MonoType*> field_type;
-	std::string name;
+	std::string nameCSharp;
 	std::string name_space;
 
 	MonoDomain* CSdomain = nullptr;

@@ -82,6 +82,8 @@ public:
 	bool GetToUpdate() const;
 	bool GetUpdated() const;
 
+	float3* GetPosPointer();
+
 	void Freeze(bool freeze);
 
 	const float* GetMultMatrixForOpenGL() const;
@@ -100,6 +102,7 @@ protected:
 
 	// Output Values ----------------------
 	float3 position = { 0, 0, 0 };
+	float3* position_pointer = nullptr;
 	float3 rotation_euler = { 0, 0, 0 };
 	
 	float3 scale = { 0, 0, 0 };

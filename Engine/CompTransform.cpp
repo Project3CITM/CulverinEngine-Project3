@@ -20,6 +20,7 @@
 CompTransform::CompTransform(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
 	name_component = "Transform";
+	position_pointer = &position;
 }
 
 CompTransform::CompTransform(const CompTransform& copy, GameObject* parent) : Component(copy.GetType(), parent)
@@ -652,6 +653,11 @@ bool CompTransform::GetToUpdate() const
 bool CompTransform::GetUpdated() const
 {
 	return updated;
+}
+
+float3* CompTransform::GetPosPointer()
+{
+	return position_pointer;
 }
 
 void CompTransform::Freeze(bool freeze)
