@@ -66,6 +66,7 @@ public:
 	CompInteractive* FindNavigationOnDown();
 	CompInteractive* FindNavigationOnRight();
 	CompInteractive* FindNavigationOnLeft();
+	CompInteractive* FindInteractive(float3 direction);
 
 	virtual void OnPointDown(Event event_input);
 	virtual void OnPointUP(Event event_input);
@@ -74,6 +75,8 @@ public:
 	virtual void OnInteractiveSelected(Event event_input);
 	virtual void OnInteractiveUnSelected(Event event_input);
 	virtual void OnDrag(Event event_input);
+	virtual void OnMove(Event event_data);
+
 	bool PointerInside(float2 position);
 	void SetTargetGraphic(CompGraphic* target_graphic);
 	//Setters Color tint parameters
@@ -128,8 +131,7 @@ protected:
 
 private:
 
-
-	
+	void Navigate(Event event_data, CompInteractive* interactive);
 	void StartTransitionColor(float4 color_to_change, bool no_fade);
 	void UpdateTransitionColor(float dt);
 	void StartTransitionSprite(ResourceMaterial* sprite_to_change);

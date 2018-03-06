@@ -38,6 +38,9 @@ public:
 	//update_status PostUpdate(float dt);
 	update_status UpdateConfig(float dt);
 	bool CleanUp();
+
+	void UIInputManagerUpdate();
+
 	int GetMouseXMotionNormalized();
 	int GetMouseYMotionNormalized();
 
@@ -123,14 +126,18 @@ private:
 	int mouse_x_motion_global = 0;
 	int mouse_y_motion_global = 0;
 
-
-	
-
+	std::string ui_input_manager;
+	std::string submit;
+	std::string cancel;
+	std::string vertical;
+	std::string horizontal;
+	bool ui_conected = false;
 
 public:
 	std::list<const char*> dropedfiles;
 	_SDL_GameController* controller = nullptr;
 	PlayerActions* player_action = nullptr;
+	InputManager* ui_manager = nullptr;
 };
 
 #endif

@@ -117,7 +117,10 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	switch (this_event.type)
 	{
 	case EventType::EVENT_PASS_SELECTED:
+		if (selected != nullptr)
+			selected->ForceClear(this_event);
 		selected = this_event.pass_selected.component;
+		
 		break;
 	case EventType::EVENT_PASS_COMPONENT:
 		iteractive_vector.push_back((CompInteractive*)this_event.pass_component.component);

@@ -253,6 +253,19 @@ void InputManager::DeactiveWIndowOpen()
 	window_open = false;
 }
 
+bool InputManager::ActionExist(const char * name)
+{
+	for (int i = 0; i < action_vector.size(); i++)
+	{
+		if (action_vector[i]->name == name )
+		{
+			return true;
+		}
+	}
+	return false;
+
+}
+
 void InputManager::SetActiveInput(bool set)
 {
 	active_input = set;

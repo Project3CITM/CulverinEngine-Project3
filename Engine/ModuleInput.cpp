@@ -73,6 +73,12 @@ bool ModuleInput::Init(JSON_Object* node)
 		}
 
 	}
+	ui_input_manager = json_object_get_string(node, "UI InputManager");
+	submit = json_object_get_string(node, "Submit");
+	cancel = json_object_get_string(node, "Cancel");
+	vertical = json_object_get_string(node, "Vertical");
+	horizontal = json_object_get_string(node, "Horizontal");
+
 	player_action = new PlayerActions(this);
 	std::string name = App->fs->GetMainDirectory();
 	name += "/";
@@ -87,6 +93,21 @@ bool ModuleInput::Init(JSON_Object* node)
 		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
 	}
 
+	ui_manager = player_action->GetInputManager(ui_input_manager.c_str());
+	if (ui_manager != nullptr)
+	{
+		//ui_conected = t;
+			ui_conected=ui_manager->ActionExist(submit.c_str());
+		if (ui_conected == true)
+			ui_conected = ui_manager->ActionExist(cancel.c_str());
+		if (ui_conected == true)
+			ui_conected = ui_manager->ActionExist(vertical.c_str());
+		if (ui_conected == true)
+			ui_conected = ui_manager->ActionExist(horizontal.c_str());
+
+	}
+
+	
 	Awake_t = perf_timer.ReadMs();
 	return ret;
 }
@@ -378,6 +399,25 @@ update_status ModuleInput::UpdateConfig(float dt)
 	ImGui::Text("Player Actions");
 	ImGui::Separator();
 	player_action->UpdateConfig(dt);
+	ImGui::Separator();
+	ImVec4 color;
+	if (ui_conected)
+	{
+		color = ImVec4(0.4f, 1.0f, 0.4f, 1.00f);
+		ImGui::TextColored(color, "Conection Success");
+
+	}
+	else
+	{
+		color = ImVec4(1.0f, 0.0f, 0.0f, 1.00f);
+		ImGui::TextColored(color, "Conection Fail");
+
+	}
+	ImGui::TextColored(color,"UI InputManager: %s", ui_input_manager.c_str());
+	ImGui::TextColored(color,"UI Vertical: %s", vertical.c_str());
+	ImGui::TextColored(color,"UI Horizontal: %s", horizontal.c_str());
+	ImGui::TextColored(color,"UI Submit: %s", submit.c_str());
+	ImGui::TextColored(color,"UI Cancel: %s", cancel.c_str());
 	//ImGui::Text("Keyboard Click");
 	//ImGui::TextColored(ImVec4(0.0f, 0.58f, 1.0f, 1.0f), "%i", SDL_GetKeyboardState(NULL));
 	return UPDATE_CONTINUE;
@@ -394,6 +434,44 @@ bool ModuleInput::CleanUp()
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	TTF_Quit();
 	return true;
+}
+
+void ModuleInput::UIInputManagerUpdate()
+{
+	if (!ui_conected|| ui_manager==nullptr)
+		return;
+	if (ui_manager->GetKey(submit.c_str())->OnClick())
+	{
+		Event mouse_event;
+		mouse_event.gui_submit.type = EventType::EVENT_SUBMIT;
+		mouse_event.gui_submit.active = true;
+		PushEvent(mouse_event);
+
+	}
+	if (ui_manager->GetKey(cancel.c_str())->OnClick())
+	{
+		Event mouse_event;
+		mouse_event.gui_cancel.type = EventType::EVENT_CANCEL;
+		mouse_event.gui_cancel.active = true;
+		PushEvent(mouse_event);
+
+
+	}
+	if (abs(ui_manager->GetAxis(vertical.c_str())->direction_axis) > 0.8f)
+	{
+		Event mouse_event;
+		mouse_event.gui_vertical.type = EventType::EVENT_VERTICAL;
+		mouse_event.gui_vertical.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
+		PushEvent(mouse_event);
+
+	}
+	if (abs(ui_manager->GetAxis(horizontal.c_str())->direction_axis) > 0.8f)
+	{
+		Event mouse_event;
+		mouse_event.gui_horizontal.type = EventType::EVENT_HORIZONTAL;
+		mouse_event.gui_horizontal.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
+		PushEvent(mouse_event);
+	}
 }
 
 SDL_Scancode ModuleInput::GetKeyFromName(const char* name)

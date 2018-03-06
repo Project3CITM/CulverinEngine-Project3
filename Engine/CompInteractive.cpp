@@ -369,6 +369,7 @@ void CompInteractive::Deactive()
 	PrepareHandleTransition();
 }
 
+
 void CompInteractive::ForceClear(Event event_input)
 {
 	point_down = false;
@@ -422,6 +423,7 @@ void CompInteractive::OnInteractiveSelected(Event event_input)
 {
 	interactive_selected = true;
 	Event pass_selected;
+	pass_selected.pass_selected.type = EventType::EVENT_PASS_SELECTED;
 	pass_selected.pass_selected.component = this;
 	PushEvent(pass_selected);
 	UpdateSelectionState(event_input);
@@ -504,7 +506,6 @@ CompInteractive * CompInteractive::FindNavigationOnUp()
 	}
 	else
 	{
-
 	}
 	return nullptr;
 }
@@ -553,6 +554,11 @@ CompInteractive * CompInteractive::FindNavigationOnLeft()
 	{
 
 	}
+	return nullptr;
+}
+
+CompInteractive * CompInteractive::FindInteractive(float3 direction)
+{
 	return nullptr;
 }
 
@@ -694,6 +700,11 @@ void CompInteractive::UpdateSelectionState(Event event_data)
 		return;
 	}
 	current_selection_state = SelectionStates::STATE_NORMAL;
+}
+
+void CompInteractive::OnMove(Event event_data)
+{
+	Navigate(event_data, FindNavigationOnUp());
 }
 
 void CompInteractive::PrepareHandleTransition()
@@ -841,6 +852,10 @@ void CompInteractive::ShowInspectorSpriteTransition()
 	}
 }
 
+
+void CompInteractive::Navigate(Event event_data, CompInteractive * interactive)
+{
+}
 
 void CompInteractive::StartTransitionColor(float4 color_to_change, bool no_fade)
 {

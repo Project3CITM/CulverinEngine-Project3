@@ -16,13 +16,13 @@ public:
 
 
 	void UpdateInputsManager();
-
 	bool ReceiveEvent(SDL_Event* input_event);
 	void InputManagerActive(const char* name);
 	void InputManagerDeactive(const char* name);
 
 	void InputManagerBlock(const char* name);
 	void InputManagerUnblock(const char* name);
+	bool InputManagerExist(const char* name);
 
 	void SetInputManagerActive(const char* name,bool set);
 	void SetInputManagerBlock(const char* name, bool set);

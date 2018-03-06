@@ -28,7 +28,7 @@ public:
 	void DeactiveBlockActive();
 	void ActiveWindowOpen();
 	void DeactiveWIndowOpen();
-
+	bool ActionExist(const char* name);
 	void SetActiveInput(bool set);
 	void SetBlockAction(bool set);
 	void SetName(const char* name);
