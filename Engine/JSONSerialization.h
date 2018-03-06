@@ -87,6 +87,9 @@ public:
 	std::time_t GetLastWriteScript(const char* file);
 	// -----------------------------------------------
 
+	// Geu UID if Resources has not imported in Library
+	uint ResourcesInLibrary(uint id);
+
 	// This function will recive a path and will return a json_obj and json_value pointing to the file, to read and write
 	void Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile);
 	//----------------------------------------------------------------

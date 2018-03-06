@@ -173,6 +173,15 @@ void CompRigidBody::ShowInspectorInfo()
 	}
 	ImGui::Separator();
 
+	if (ImGui::InputFloat("Sleep Time", &sleep_time, 0.1, ImGuiInputTextFlags_EnterReturnsTrue) && body)
+	{
+		if (sleep_time < 0)
+		{
+			sleep_time = -sleep_time;
+		}
+		body->SetSleepTime(sleep_time);
+	}
+
 	// Lock Linear move -----------------
 	ImGui::Text("Lock Linear Move");
 	bool flags = (lock_move & (1 << 0));
@@ -237,6 +246,8 @@ void CompRigidBody::Save(JSON_Object * object, std::string name, bool saveScene,
 	json_object_dotset_boolean_with_std(object, name + "Kinematic", kinematic);
 
 	json_object_dotset_number_with_std(object, name + "Move Locked", lock_move);
+
+	json_object_dotset_number_with_std(object, name + "Sleep Time", sleep_time);
 }
 
 void CompRigidBody::Load(const JSON_Object * object, std::string name)
@@ -246,6 +257,8 @@ void CompRigidBody::Load(const JSON_Object * object, std::string name)
 	kinematic = json_object_dotget_boolean_with_std(object, name + "Kinematic");
 
 	lock_move = json_object_dotget_number_with_std(object, name + "Move Locked");
+
+	sleep_time = json_object_dotget_number_with_std(object, name + "Sleep Time");
 }
 
 void CompRigidBody::SyncComponent(GameObject* sync_parent)
@@ -276,6 +289,8 @@ void CompRigidBody::SyncComponent(GameObject* sync_parent)
 	{
 		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 	}
+	
+	body->SetSleepTime(sleep_time);
 }
 
 bool CompRigidBody::IsKinematic()
@@ -392,5 +407,45 @@ void CompRigidBody::MoveKinematic(float3 pos, Quat rot)
 	{
 		body->MoveKinematic(pos, rot);
 		own_update = true;
+	}
+}
+
+void CompRigidBody::ApplyForce(float3 force)
+{
+	if (body)
+	{
+		body->ApplyForce(force);
+	}
+}
+
+void CompRigidBody::ApplyImpulse(float3 impulse)
+{
+	if (body && !kinematic)
+	{
+		body->ApplyImpulse(impulse);
+	}
+}
+
+void CompRigidBody::ApplyTorqueForce(float3 force)
+{
+	if (body && !kinematic)
+	{
+		body->ApplyTorqueForce(force);
+	}
+}
+
+void CompRigidBody::ApplyTorqueImpulse(float3 impulse)
+{
+	if (body && !kinematic)
+	{
+		body->ApplyTorqueImpulse(impulse);
+	}
+}
+
+void CompRigidBody::FreezeTransform()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLock();
 	}
 }

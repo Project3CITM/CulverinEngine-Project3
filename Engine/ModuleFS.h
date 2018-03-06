@@ -48,7 +48,7 @@ public:
 	bool Start();
 	update_status PreUpdate(float dt);
 
-	void CopyFileToAssets(const char* fileNameFrom, const char* fileNameTo = "");
+	std::string CopyFileToAssets(const char* fileNameFrom, const char* fileNameTo = "");
 	// Same to CopyFileToAssets but this return path of file to save
 	std::string CopyFileToAssetsS(const char* fileNameFrom, const char* fileNameTo = "");
 
@@ -101,6 +101,7 @@ public:
 	std::string FixExtension(std::string file, const char* newExtension = nullptr);
 	std::string GetFullPath(std::string path);
 	std::string GetOnlyPath(std::string file);
+	std::string GetPathWithoutExtension(std::string file);
 	std::string GetExtension(std::string file);
 	char* ConverttoChar(std::string name);
 	void NormalitzatePath(std::string& path) const;

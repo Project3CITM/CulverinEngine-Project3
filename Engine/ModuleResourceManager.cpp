@@ -57,6 +57,7 @@ bool ModuleResourceManager::Start()
 	//CreateResourcePlane();
 	//Load();
 
+
 	Start_t = perf_timer.ReadMs();
 	return true;
 }
@@ -311,8 +312,17 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 			}
 			else
 			{
-				App->fs->CopyFileToAssets(it._Ptr->_Myval, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory());
-				if (App->importer->Import(it._Ptr->_Myval, dropped_File_type))
+				std::string new_file = App->fs->CopyFileToAssets(it._Ptr->_Myval, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory());
+				if (new_file != "")
+				{
+					if (App->importer->Import(new_file.c_str(), dropped_File_type))
+					{
+						// Copy file to Specify folder in Assets (This folder is the folder active)
+
+						it++;
+					}
+				}
+				else if (App->importer->Import(it._Ptr->_Myval, dropped_File_type))
 				{
 					// Copy file to Specify folder in Assets (This folder is the folder active)
 
@@ -671,6 +681,11 @@ bool ModuleResourceManager::ReImportAllScripts()
 		it++;
 	}
 	return ret;
+}
+
+void ModuleResourceManager::CheckLibrary()
+{
+
 }
 
 void ModuleResourceManager::Save()

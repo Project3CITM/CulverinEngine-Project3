@@ -119,6 +119,14 @@ void jpPhysicsRigidBody::SetAsTrigger(bool trigger)
 	}
 }
 
+void jpPhysicsRigidBody::SetSleepTime(float time)
+{
+	if (body && is_dynamic && time > 0)
+	{
+		static_cast<physx::PxRigidDynamic*> (body)->setWakeCounter(time);
+	}
+}
+
 void jpPhysicsRigidBody::SetFilterFlags(unsigned int own_flag, unsigned int collision_flags)
 {
 	if (body_shape)
@@ -316,6 +324,17 @@ void jpPhysicsRigidBody::SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::Enum
 	if (body && is_dynamic)
 	{
 		static_cast<physx::PxRigidDynamic*>(body)->setRigidDynamicLockFlag(flag,active);
+	}
+}
+
+void jpPhysicsRigidBody::SetDynamicLock()
+{
+	if (body && is_dynamic)
+	{
+		physx::PxRigidDynamic* rbody = (physx::PxRigidDynamic*) body;
+		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_X, true);
+		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Y, true);
+		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Z, true);
 	}
 }
 

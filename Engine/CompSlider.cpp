@@ -18,6 +18,7 @@ CompSlider::CompSlider(Comp_Type t, GameObject * parent) : CompInteractive (t, p
 {
 	uid = App->random->Int();
 	name_component = "CompSlider";
+	selective = true;
 }
 
 CompSlider::CompSlider(const CompImage & copy, GameObject * parent) : CompInteractive(Comp_Type::C_SLIDER, parent)
@@ -89,9 +90,9 @@ void CompSlider::ShowInspectorInfo()
 	ImGui::PopStyleVar();
 	if (ImGui::Button("Sync Min/Max", ImVec2(120, 0)))
 	{
-		
-		min_pos = -slide_bar->GetRectTrasnform()->GetWidth()/2;
-		max_pos = slide_bar->GetRectTrasnform()->GetWidth()/2;
+		int bar_x = slide_bar->GetRectTrasnform()->GetPosGlobal().x;
+		min_pos = bar_x - slide_bar->GetRectTrasnform()->GetWidth()/2;
+		max_pos = bar_x + slide_bar->GetRectTrasnform()->GetWidth()/2;
 		slide_bar->SetToFilled(true);
 	}
 	ImGui::Text("Min pos: %f", min_pos);
@@ -158,32 +159,33 @@ void CompSlider::Load(const JSON_Object * object, std::string name)
 	Enable();
 }
 
-void CompSlider::OnPointDown(Event event_input)
+/*
+bool CompSlider::PointerInside(float2 position)
 {
-	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
-	{
-		return;
-	}
 
-	OnClick();
-	point_down = true;
 
-	//UpdateSelectionState(event_input);
-	//PrepareHandleTransition();
-}
 
-void CompSlider::OnClick()
+
+}*/
+
+void CompSlider::OnDrag(Event event_input)
 {
-	//float3 new_pos =()
-	int x_pos = App->input->GetMouseX();
-	if (x_pos > max_pos)
+	float2 mous_pos = event_input.pointer.position;
+	int new_x = 0;
+	if (mous_pos.x > min_pos && mous_pos.x < max_pos)
 	{
-		x_pos = max_pos;
+		image->GetRectTrasnform()->SetPos(float3(mous_pos, 0));
 	}
-	if (x_pos < min_pos)
+	else
 	{
-		x_pos = min_pos;
+		if (mous_pos.x > max_pos)
+		{
+			new_x = max_pos;
+		}
+		if (mous_pos.x < min_pos)
+		{
+			new_x = min_pos;
+		}
+		image->GetRectTrasnform()->SetPos(float3(new_x,mous_pos.y, 0));
 	}
-	image->GetRectTrasnform()->SetPos(float3(x_pos, slide_bar->GetGameObjectPos().y, 0));
-
 }

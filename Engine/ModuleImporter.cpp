@@ -242,7 +242,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 					scene->mAnimations[i]->mName.Append("Animation");
 					scene->mAnimations[i]->mName.Append(std::to_string(i).c_str());
 					LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[i]->mName.C_Str());
-					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str(), 0, isAutoImport);
+					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str());
 				}
 			}
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, file);
@@ -315,6 +315,18 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 		const aiScene* scene = aiImportFile(file, aiProcessPreset_TargetRealtime_MaxQuality);
 		if (scene != nullptr)
 		{
+			if (scene->HasAnimations())
+			{
+				std::string fbx_name = App->fs->GetOnlyName(file);
+				for (int i = 0; i < scene->mNumAnimations; i++)
+				{
+					scene->mAnimations[i]->mName = fbx_name;
+					scene->mAnimations[i]->mName.Append("Animation");
+					scene->mAnimations[i]->mName.Append(std::to_string(i).c_str());
+					LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[i]->mName.C_Str());
+					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str());
+				}
+			}
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, resourcesToReimport);
 			obj->SetName(App->fs->FixName_directory(file).c_str());
 

@@ -16,6 +16,7 @@
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
 #include "DefaultShaders.h"
+
 ModuleRenderGui::ModuleRenderGui(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
@@ -159,6 +160,10 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 						}
 						if (this_event.type == EventType::EVENT_MOUSE_MOTION)
 						{
+							if ((*it)->IsSelective())
+							{
+								(*it)->OnDrag(this_event);
+							}
 							(*it)->OnPointEnter(this_event);
 						}
 

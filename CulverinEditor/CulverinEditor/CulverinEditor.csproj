@@ -103,6 +103,7 @@
     <Compile Include="Player\Theon\TheonController.cs" />
     <Compile Include="SceneManager.cs" />
     <Compile Include="TestLoad.cs" />
+    <Compile Include="Test_Input_Gamepad.cs" />
     <Compile Include="TestParticle.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Torch_sound.cs" />

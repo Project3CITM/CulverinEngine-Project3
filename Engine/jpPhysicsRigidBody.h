@@ -38,6 +38,7 @@ public:
 	// Set Methods
 	void SetAsKinematic(bool kinematic);
 	void SetAsTrigger(bool trigger);
+	void SetSleepTime(float time);
 	void SetFilterFlags(unsigned int own_flag, unsigned int collision_flags);
 	void SetTransform(float* trans_mat);
 	void SetTransform(float3 pos, Quat rotation, bool autoawake = true);
@@ -51,6 +52,7 @@ public:
 
 	void SetMass(float &mass);
 	void SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::Enum x, bool active);
+	void SetDynamicLock();
 
 	// Get Methods
 	void GetTransform(float3& pos, Quat& rotation);
