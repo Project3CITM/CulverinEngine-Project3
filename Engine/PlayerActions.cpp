@@ -155,7 +155,7 @@ bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 	{
 		if (!(*it)->GetActiveInput())
 			continue;
-		bool result= (*it)->ProcessEvent(input_event);
+		bool result = (*it)->ProcessEvent(input_event);
 		if (result || (*it)->GetBlockAction())
 			return true;
 

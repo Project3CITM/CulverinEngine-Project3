@@ -130,7 +130,6 @@ private:
 public:
 	std::list<const char*> dropedfiles;
 	_SDL_GameController* controller = nullptr;
-	InputManager* Manag_inp = nullptr;
 	PlayerActions* player_action = nullptr;
 };
 

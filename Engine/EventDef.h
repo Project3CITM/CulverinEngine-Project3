@@ -64,6 +64,11 @@ enum EventType
 	EVENT_PASS_COMPONENT,
 	EVENT_PASS_SELECTED,
 
+	EVENT_SUBMIT,
+	EVENT_CANCEL,
+	EVENT_VERTICAL,
+	EVENT_HORIZONTAL,
+
 
 
 	EVENT_DELETE_GO, //Keep this event last
@@ -242,7 +247,28 @@ struct EPassSelected
 	CompInteractive* component = nullptr;
 
 };
+struct EGUISubmit
+{
+	EventType type;
+	bool active = false;
+};
+struct EGUICancel
+{
+	EventType type;
+	bool active = false;
 
+};
+struct EGUIVertical
+{
+	EventType type;
+	float value = 0.0f;
+};
+struct EGUIHorizontal
+{
+	EventType type;
+	float value = 0.0f;
+
+};
 /*
 
 EVENT_BUTTON_MOUSE,
@@ -287,7 +313,13 @@ union Event
 	/*------------------User Interface------------------*/
 	EPoint pointer;
 	EPassComponent pass_component;
+
 	EPassSelected pass_selected;
+	EGUISubmit gui_submit;
+	EGUICancel gui_cancel;
+	EGUIVertical gui_vertical;
+	EGUIHorizontal gui_horizontal;
+
 
 };
 
