@@ -13,7 +13,7 @@ ImportAnimation::~ImportAnimation()
 {
 }
 
-bool ImportAnimation::Import(const aiAnimation * animation, const char * name, const char * file, uint uuid, bool isAutoImport)
+bool ImportAnimation::Import(const aiAnimation * animation, const char * name, const char * file)
 {
 	LOG("IMPORTING Animation %s -----", file);
 

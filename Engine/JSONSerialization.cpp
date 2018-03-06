@@ -1001,7 +1001,25 @@ std::time_t JSONSerialization::GetLastWriteScript(const char* file)
 	return last_write;
 }
 
-void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile) 
+uint JSONSerialization::ResourcesInLibrary(uint id)
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	config_file = json_parse_file("Resources.json");
+
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		config = json_object_get_object(config, "Resources");
+		std::string name = "Resource " + std::to_string(id);
+		uint t = json_object_dotget_number_with_std(config, name + "");
+	}
+	json_value_free(config_file);
+	return 0;
+}
+
+void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile)
 {
 	json_set_allocation_functions(counted_malloc, counted_free);
 

@@ -87,7 +87,7 @@ update_status ModuleFS::PreUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
-void ModuleFS::CopyFileToAssets(const char* fileNameFrom, const char* fileNameTo)
+std::string ModuleFS::CopyFileToAssets(const char* fileNameFrom, const char* fileNameTo)
 {
 	//assert(fileExists(fileNameFrom));
 	namespace fs = std::experimental::filesystem;
@@ -106,8 +106,29 @@ void ModuleFS::CopyFileToAssets(const char* fileNameFrom, const char* fileNameTo
 	if (fs::exists(exits) == false)
 	{
 		fs::copy(fileNameFrom, exits);
+		exits.clear();
+		return "";
 	}
-	exits.clear();
+	else
+	{
+		std::string file = exits;
+		std::string extension = GetExtension(file);
+
+		for (int i = 0; i < 100; i++)
+		{
+			file = exits;
+			file = GetPathWithoutExtension(file);
+			file += " " + std::to_string(i);
+			file += "." + extension;
+			if (fs::exists(file) == false)
+			{
+				fs::copy(fileNameFrom, file);
+				exits.clear();
+				return file;
+			}
+		}
+	}
+
 	// Copy Folders
 	//std::filesystem::copy("/dir1", "/dir3", std::filesystem::copy_options::recursive);
 }
@@ -1081,6 +1102,14 @@ std::string ModuleFS::GetOnlyPath(std::string file)
 {
 	NormalitzatePath(file);
 	size_t EndName = file.find_last_of("/");
+	file = file.substr(0, EndName);
+	return file;
+}
+
+std::string ModuleFS::GetPathWithoutExtension(std::string file)
+{
+	NormalitzatePath(file);
+	size_t EndName = file.find_last_of(".");
 	file = file.substr(0, EndName);
 	return file;
 }
