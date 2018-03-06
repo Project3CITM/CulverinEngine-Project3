@@ -519,16 +519,38 @@ void CSharpScript::GetScriptVariables()
 	MonoType* type = nullptr;
 	void* iter = nullptr;
 
-	int num_fields = mono_class_num_fields(CSClass);
+	int num_fields = 0;
+	MonoClass* parent = mono_class_get_parent(CSClass);
+	while (parent != nullptr)
+	{
+		num_fields = mono_class_num_fields(parent);
+		for (uint i = 0; i < num_fields; i++)
+		{
+			field = mono_class_get_fields(parent, &iter);
+			if (field != NULL)
+			{
+				type = mono_field_get_type(field);
 
+				//Insert this info pair into the map
+				field_type.insert(std::pair<MonoClassField*, MonoType*>(field, type));
+			}
+		}
+		parent = mono_class_get_parent(parent);
+	}
+	iter = nullptr;
+
+	num_fields = mono_class_num_fields(CSClass);
 	//Fill field-type map from the script to after get its respective info
 	for (uint i = 0; i < num_fields; i++)
 	{
 		field = mono_class_get_fields(CSClass, &iter);
-		type = mono_field_get_type(field);
+		if (field != NULL)
+		{
+			type = mono_field_get_type(field);
 
-		//Insert this info pair into the map
-		field_type.insert(std::pair<MonoClassField*, MonoType*>(field, type));
+			//Insert this info pair into the map
+			field_type.insert(std::pair<MonoClassField*, MonoType*>(field, type));
+		}
 	}
 
 	// From the previous map, fill VariablesScript vector that will contain info (name, type, value) of each variable
