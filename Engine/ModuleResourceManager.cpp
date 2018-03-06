@@ -842,6 +842,9 @@ void ModuleResourceManager::Load()
 				}
 			}
 		}
+
+		//Duplicate Particle folder to library
+		App->fs->CopyFolderToLibrary("ParticleSystem");
 	}
 	json_value_free(config_file);
 }
