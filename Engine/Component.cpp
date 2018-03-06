@@ -112,6 +112,6 @@ void Component::Load(const JSON_Object* object, std::string name)
 {
 }
 
-void Component::SyncComponent()
+void Component::SyncComponent(GameObject* sync_parent)
 {
 }

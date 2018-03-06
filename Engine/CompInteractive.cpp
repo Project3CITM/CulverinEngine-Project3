@@ -310,7 +310,7 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 
 	Enable();
 }
-void CompInteractive::SyncComponent()
+void CompInteractive::SyncComponent(GameObject* sync_parent)
 {
 	if (target_graphic_uid != 0)
 	{
@@ -318,15 +318,28 @@ void CompInteractive::SyncComponent()
 	}
 	std::vector<Component*> script_vec;
 
-	if (navigation.inteactive_up_uid != 0)
-		navigation.interactive_up=(CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_up_uid, true);
-	if (navigation.inteactive_down_uid != 0)
-		navigation.interactive_down = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_down_uid, true);
-	if (navigation.inteactive_right_uid != 0)
-		navigation.interactive_right = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_right_uid, true);
-	if (navigation.inteactive_left_uid != 0)
-		navigation.interactive_left = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_left_uid, true);
-
+	if (sync_parent != nullptr)
+	{
+		if (navigation.inteactive_up_uid != 0)
+			navigation.interactive_up = (CompInteractive*)sync_parent->GetComponentsByUID(navigation.inteactive_up_uid, true);
+		if (navigation.inteactive_down_uid != 0)
+			navigation.interactive_down = (CompInteractive*)sync_parent->GetComponentsByUID(navigation.inteactive_down_uid, true);
+		if (navigation.inteactive_right_uid != 0)
+			navigation.interactive_right = (CompInteractive*)sync_parent->GetComponentsByUID(navigation.inteactive_right_uid, true);
+		if (navigation.inteactive_left_uid != 0)
+			navigation.interactive_left = (CompInteractive*)sync_parent->GetComponentsByUID(navigation.inteactive_left_uid, true);
+	}
+	else
+	{
+		if (navigation.inteactive_up_uid != 0)
+			navigation.interactive_up = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_up_uid, true);
+		if (navigation.inteactive_down_uid != 0)
+			navigation.interactive_down = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_down_uid, true);
+		if (navigation.inteactive_right_uid != 0)
+			navigation.interactive_right = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_right_uid, true);
+		if (navigation.inteactive_left_uid != 0)
+			navigation.interactive_left = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_left_uid, true);
+	}
 	
 	if (GetType() == Comp_Type::C_BUTTON)
 	{

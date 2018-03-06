@@ -155,7 +155,7 @@ void CompCanvas::Load(const JSON_Object* object, std::string name)
 
 
 
-void CompCanvas::SyncComponent()
+void CompCanvas::SyncComponent(GameObject* sync_parent)
 {
 	my_transform = (CompRectTransform*)parent->FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
 

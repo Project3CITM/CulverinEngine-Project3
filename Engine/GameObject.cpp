@@ -1831,13 +1831,13 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			((CompMesh*)components[i])->GenSkeleton();*/
 	}
 }
-void GameObject::SyncComponents()
+void GameObject::SyncComponents(GameObject* parent)
 {
 	
 	// Now Iterate All components and Load variables
 	for (int i = 0; i < components.size(); i++)
 	{
-		components[i]->SyncComponent();
+		components[i]->SyncComponent(parent);
 	}
 }
 

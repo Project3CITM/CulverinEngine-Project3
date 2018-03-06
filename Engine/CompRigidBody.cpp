@@ -248,7 +248,7 @@ void CompRigidBody::Load(const JSON_Object * object, std::string name)
 	lock_move = json_object_dotget_number_with_std(object, name + "Move Locked");
 }
 
-void CompRigidBody::SyncComponent()
+void CompRigidBody::SyncComponent(GameObject* sync_parent)
 {
 	body->SetAsKinematic(kinematic);
 

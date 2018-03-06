@@ -211,7 +211,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		//Sync components
 		for (int i = 0; i < templist.size(); i++)
 		{
-			templist[i].go->SyncComponents();
+			templist[i].go->SyncComponents(nullptr);
 		}
 		templist.clear();
 

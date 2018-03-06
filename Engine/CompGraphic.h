@@ -18,7 +18,7 @@ public:
 	void AddCanvas();
 	void AddCanvasRender();
 	void AddRectTransform();
-	void SyncComponent();
+	void SyncComponent(GameObject* sync_parent);
 	void DrawGraphic();
 
 	void ActivateRender();

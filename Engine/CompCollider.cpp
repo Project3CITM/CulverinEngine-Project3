@@ -329,7 +329,11 @@ void CompCollider::Save(JSON_Object * object, std::string name, bool saveScene, 
 
 	//Scritp uid
 	json_object_dotset_string_with_std(object, name + "ScriptName", script_name.c_str());
-	json_object_dotset_number_with_std(object, name + "Script UID", uid_script_asigned);
+
+	if (listener)
+	{
+		json_object_dotset_number_with_std(object, name + "Script UID", listener->GetUUID());
+	}
 
 	//Collision Flags
 	json_object_dotset_number_with_std(object, name + "Collision Flags", collision_flags);
@@ -377,7 +381,7 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 	collision_flags = json_object_dotget_number_with_std(object, name + "Collision Flags");
 }
 
-void CompCollider::SyncComponent()
+void CompCollider::SyncComponent(GameObject* sync_parent)
 {
 	ChangeCollider();
 	SetColliderPosition();
@@ -388,7 +392,14 @@ void CompCollider::SyncComponent()
 	if (uid_script_asigned != 0)
 	{
 		std::vector<Component*> script_vec;
-		App->scene->root->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec, true);
+		if (sync_parent != nullptr)
+		{
+			sync_parent->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec, true);
+		}
+		else
+		{
+			App->scene->root->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec, true);
+		}
 
 		for (uint i = 0; i < script_vec.size(); i++)
 		{

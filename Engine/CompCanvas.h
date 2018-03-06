@@ -25,7 +25,7 @@ public:
 	void Load(const JSON_Object * object, std::string name);
 
 
-	void SyncComponent();
+	void SyncComponent(GameObject* sync_parent);
 
 	void UpdateCanvasScale();
 

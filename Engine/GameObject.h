@@ -107,7 +107,7 @@ public:
 	void SaveComponents(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void LoadComponents(const JSON_Object * object, std::string name, uint numComponents);
 
-	void SyncComponents();
+	void SyncComponents(GameObject* parent);
 
 	// Childs ---------------------------------
 	uint GetNumChilds() const;

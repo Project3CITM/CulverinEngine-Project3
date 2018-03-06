@@ -31,7 +31,7 @@ public:
 	void CopyValues(const CompCanvasRender * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
-	void SyncComponent();
+	void SyncComponent(GameObject* sync_parent);
 
 	void ProcessImage(CompImage* image);
 	void ProcessQuad(const std::vector<float3>&ver_quad);

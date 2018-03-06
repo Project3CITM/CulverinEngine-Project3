@@ -213,6 +213,7 @@ void CompButton::Save(JSON_Object * object, std::string name, bool saveScene, ui
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	
 	for (int i = 0; i < 3; i++)
 	{
 		std::string resource_count = std::to_string(i);
@@ -234,6 +235,7 @@ void CompButton::Save(JSON_Object * object, std::string name, bool saveScene, ui
 			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
 		}
 	}
+	
 	App->fs->json_array_dotset_float4(object, name + "Normal Color", normal_color);
 	App->fs->json_array_dotset_float4(object, name + "Highlighted Color", highlighted_color);
 	App->fs->json_array_dotset_float4(object, name + "Pressed Color", pressed_color);
@@ -267,10 +269,22 @@ void CompButton::Save(JSON_Object * object, std::string name, bool saveScene, ui
 	json_object_dotset_number_with_std(object, name + "Transition Mode", current_transition_mode);
 	json_object_dotset_number_with_std(object, name + "Navigation Mode", navigation.current_navigation_mode);
 
-	json_object_dotset_number_with_std(object, name + "Interactive up", navigation.inteactive_up_uid);
-	json_object_dotset_number_with_std(object, name + "Interactive down", navigation.inteactive_down_uid);
-	json_object_dotset_number_with_std(object, name + "Interactive right", navigation.inteactive_right_uid);
-	json_object_dotset_number_with_std(object, name + "Interactive left", navigation.inteactive_left_uid);
+	if (navigation.interactive_up != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive up", navigation.interactive_up->GetUUID());
+	}
+	if (navigation.interactive_down != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive down", navigation.interactive_down->GetUUID());
+	}
+	if (navigation.interactive_right != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive right", navigation.interactive_right->GetUUID());
+	}
+	if (navigation.interactive_left != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive left", navigation.interactive_left->GetUUID());
+	}
 
 }
 

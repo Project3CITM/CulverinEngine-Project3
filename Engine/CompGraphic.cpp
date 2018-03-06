@@ -64,7 +64,7 @@ void CompGraphic::AddRectTransform()
 	
 
 }
-void CompGraphic::SyncComponent()
+void CompGraphic::SyncComponent(GameObject* sync_parent)
 {
 	AddRectTransform();
 	AddCanvasRender();

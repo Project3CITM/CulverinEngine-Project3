@@ -23,7 +23,7 @@ public:
 
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
-	void SyncComponent();
+	void SyncComponent(GameObject* sync_parent);
 
 	// Joint Methods ---------------
 	void CreateJoint();

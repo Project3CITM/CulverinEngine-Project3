@@ -59,7 +59,7 @@ public:
 	// LOAD - SAVE METHODS ------------------
 	virtual void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	virtual void Load(const JSON_Object* object, std::string name);
-	virtual void SyncComponent();
+	virtual void SyncComponent(GameObject* sync_parent);
 
 	// EDITOR METHODS -----------------
 	virtual void ShowOptions();

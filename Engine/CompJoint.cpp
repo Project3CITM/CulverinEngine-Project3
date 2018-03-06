@@ -145,10 +145,13 @@ void CompJoint::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
-
-	json_object_dotset_number_with_std(object, name + "Second UUID", second_uid);
-	json_object_dotset_string_with_std(object, name + "Second Name", second_name.c_str());
-
+	
+	if (second != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Second UUID", second->GetUUID());
+		json_object_dotset_string_with_std(object, name + "Second Name", second_name.c_str());
+	}
+	
 	json_object_dotset_number_with_std(object, name + "Min Distance", min_dist);
 	json_object_dotset_number_with_std(object, name + "Max Distance", max_dist);
 }
@@ -164,12 +167,19 @@ void CompJoint::Load(const JSON_Object * object, std::string name)
 	max_dist = json_object_dotget_number_with_std(object, name + "Max Distance");
 }
 
-void CompJoint::SyncComponent()
+void CompJoint::SyncComponent(GameObject* sync_parent)
 {
 	if (second_uid != 0)
 	{
 		std::vector<Component*> rigidbody_vec;
-		App->scene->root->GetComponentsByType(Comp_Type::C_RIGIDBODY, &rigidbody_vec, true);
+		if (sync_parent != nullptr)
+		{
+			sync_parent->GetComponentsByType(Comp_Type::C_RIGIDBODY, &rigidbody_vec, true);
+		}
+		else
+		{
+			App->scene->root->GetComponentsByType(Comp_Type::C_RIGIDBODY, &rigidbody_vec, true);
+		}
 
 		for (uint i = 0; i < rigidbody_vec.size(); i++)
 		{

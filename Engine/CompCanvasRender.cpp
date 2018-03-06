@@ -145,7 +145,7 @@ void CompCanvasRender::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
-void CompCanvasRender::SyncComponent()
+void CompCanvasRender::SyncComponent(GameObject* sync_parent)
 {
 	
 }
