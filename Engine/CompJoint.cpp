@@ -151,7 +151,11 @@ void CompJoint::Save(JSON_Object * object, std::string name, bool saveScene, uin
 		json_object_dotset_number_with_std(object, name + "Second UUID", second->GetUUID());
 		json_object_dotset_string_with_std(object, name + "Second Name", second_name.c_str());
 	}
-	
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Second UUID", 0);
+		json_object_dotset_string_with_std(object, name + "Second Name", "");
+	}
 	json_object_dotset_number_with_std(object, name + "Min Distance", min_dist);
 	json_object_dotset_number_with_std(object, name + "Max Distance", max_dist);
 }
