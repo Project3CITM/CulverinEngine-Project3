@@ -448,6 +448,7 @@ MonoObject* ImportScript::GetMonoObject(GameObject* gameobject)
 			it++;
 		}
 	}
+	return nullptr;
 }
 
 GameObject* ImportScript::GetGameObject(MonoObject* monoobject)
@@ -458,6 +459,7 @@ GameObject* ImportScript::GetGameObject(MonoObject* monoobject)
 		if (it != mono_map.end())
 			return it->second;
 	}
+	return nullptr;
 }
 
 void ImportScript::UpdateMonoComp(Component* modificate, MonoObject* object)
@@ -479,6 +481,7 @@ MonoObject* ImportScript::GetMonoObject(Component* component)
 			it++;
 		}
 	}
+	return nullptr;
 }
 
 Component* ImportScript::GetComponentMono(MonoObject* monoobject)
@@ -507,6 +510,7 @@ MonoObject* ImportScript::GetMonoObject(float3* pos)
 		}
 		it++;
 	}
+	return nullptr;
 }
 
 float3& ImportScript::GetPosMono(MonoObject* monoobject)
