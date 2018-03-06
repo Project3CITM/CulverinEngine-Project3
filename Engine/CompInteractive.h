@@ -76,6 +76,8 @@ public:
 	virtual void OnInteractiveUnSelected(Event event_input);
 	virtual void OnDrag(Event event_input);
 	virtual void OnMove(Event event_data);
+	virtual void OnSubmit(Event event_data);
+	virtual void OnCancel(Event event_data);
 
 	bool PointerInside(float2 position);
 	void SetTargetGraphic(CompGraphic* target_graphic);

@@ -422,10 +422,7 @@ void CompInteractive::OnPointExit(Event event_input)
 void CompInteractive::OnInteractiveSelected(Event event_input)
 {
 	interactive_selected = true;
-	Event pass_selected;
-	pass_selected.pass_selected.type = EventType::EVENT_PASS_SELECTED;
-	pass_selected.pass_selected.component = this;
-	PushEvent(pass_selected);
+	
 	UpdateSelectionState(event_input);
 	PrepareHandleTransition();
 
@@ -704,7 +701,35 @@ void CompInteractive::UpdateSelectionState(Event event_data)
 
 void CompInteractive::OnMove(Event event_data)
 {
-	Navigate(event_data, FindNavigationOnUp());
+	switch (event_data.gui_axis.direction)
+	{
+	case EGUIAxis::Direction::DIRECTION_UP:
+		Navigate(event_data, FindNavigationOnUp());
+
+		break;
+	case EGUIAxis::Direction::DIRECTION_DOWN:
+		Navigate(event_data, FindNavigationOnDown());
+
+		break;
+	case EGUIAxis::Direction::DIRECTION_RIGHT:
+		Navigate(event_data, FindNavigationOnRight());
+
+		break;
+	case EGUIAxis::Direction::DIRECTION_LEFT:
+		Navigate(event_data, FindNavigationOnLeft());
+
+		break;
+	default:
+		break;
+	}
+}
+
+void CompInteractive::OnSubmit(Event event_data)
+{
+}
+
+void CompInteractive::OnCancel(Event event_data)
+{
 }
 
 void CompInteractive::PrepareHandleTransition()
@@ -855,6 +880,13 @@ void CompInteractive::ShowInspectorSpriteTransition()
 
 void CompInteractive::Navigate(Event event_data, CompInteractive * interactive)
 {
+	if (interactive != nullptr && interactive->IsActive())
+	{
+		Event pass_selected;
+		pass_selected.pass_selected.type = EventType::EVENT_PASS_SELECTED;
+		pass_selected.pass_selected.component = interactive;
+		PushEvent(pass_selected);
+	}
 }
 
 void CompInteractive::StartTransitionColor(float4 color_to_change, bool no_fade)

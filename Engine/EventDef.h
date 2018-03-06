@@ -66,8 +66,7 @@ enum EventType
 
 	EVENT_SUBMIT,
 	EVENT_CANCEL,
-	EVENT_VERTICAL,
-	EVENT_HORIZONTAL,
+	EVENT_AXIS,
 
 
 
@@ -258,9 +257,19 @@ struct EGUICancel
 	bool active = false;
 
 };
-struct EGUIVertical
+struct EGUIAxis
 {
 	EventType type;
+	enum Direction
+	{
+		DIRECTION_NONE,
+
+		DIRECTION_UP,
+		DIRECTION_DOWN,
+		DIRECTION_RIGHT,
+		DIRECTION_LEFT,
+	};
+	Direction direction = Direction::DIRECTION_NONE;
 	float value = 0.0f;
 };
 struct EGUIHorizontal
@@ -317,8 +326,7 @@ union Event
 	EPassSelected pass_selected;
 	EGUISubmit gui_submit;
 	EGUICancel gui_cancel;
-	EGUIVertical gui_vertical;
-	EGUIHorizontal gui_horizontal;
+	EGUIAxis gui_axis;
 
 
 };
