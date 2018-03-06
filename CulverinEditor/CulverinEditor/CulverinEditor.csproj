@@ -43,6 +43,8 @@
     <Compile Include="AI\Align_Steering.cs" />
     <Compile Include="AI\Arrive_Steering.cs" />
     <Compile Include="AI\BT.cs" />
+    <Compile Include="AI\EnemySword_BT.cs" />
+    <Compile Include="AI\Enemy_BT.cs" />
     <Compile Include="AI\Movement_Action.cs" />
     <Compile Include="AI\NormalGuardListener.cs" />
     <Compile Include="AI\PerceptionEmitter.cs" />

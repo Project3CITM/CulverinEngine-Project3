@@ -3,8 +3,18 @@ using CulverinEditor.Debug;
 
 public class BT : CulverinBehaviour
 {
-    Action current_action = new Action();
+    public enum AI_STATE
+    {
+        AI_IDLE,
+        AI_STUNNED,
+        AI_MOVING,
+        AI_ATTACKING,
+        AI_DEAD
+    }
 
+    protected Action      current_action = new Action();
+    protected AI_STATE    state = AI_STATE.AI_IDLE;
+    
     //Blackboard
     public bool player_detected = false;
     public bool heard_something = false;
@@ -81,6 +91,11 @@ public class BT : CulverinBehaviour
             GetComponent<Movement_Action>().ActionStart();
             return GetComponent<Movement_Action>();
         }
+    }
+
+    public AI_STATE GetState()
+    {
+        return state;
     }
 }
 
