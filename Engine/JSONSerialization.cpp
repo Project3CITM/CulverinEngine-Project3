@@ -345,6 +345,7 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 		config = json_value_get_object(config_file);
 		config_node = json_object_get_object(config, "Prefab");
 		int NUmberGameObjects = json_object_dotget_number(config_node, "Info.Number of GameObjects");
+		std::vector<LoadSceneSt> templist;
 		if (NUmberGameObjects > 0)
 		{
 			// First, check name is not repete.
@@ -375,25 +376,52 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 				}
 				int uuid_parent = json_object_dotget_number_with_std(config_node, name + "Parent");
 
-				//Add GameObject
+
+				LoadSceneSt temp;
+				temp.go = obj;
+				temp.uid_parent = uuid_parent;
+				templist.push_back(temp);
+				////Add GameObject
 				if (uuid_parent == -1)
 				{
 					//App->scene->gameobjects.push_back(obj);
 					mainParent = obj;
 				}
-				else
+				//else
+				//{
+				//	LoadChildLoadPrefab(*mainParent, *obj, uuid_parent);
+				//}
+			}
+			// Now with uid parent add childs.
+			for (int i = 0; i < templist.size(); i++)
+			{
+				if (templist[i].uid_parent != -1)
 				{
-					LoadChildLoadPrefab(*mainParent, *obj, uuid_parent);
+					for (int j = 0; j < templist.size(); j++)
+					{
+						if (templist[i].uid_parent == templist[j].go->GetUUID())
+						{
+							templist[j].go->AddChildGameObject(templist[i].go);
+						}
+					}
 				}
 			}
+
+			//Sync components
+			for (int i = 0; i < templist.size(); i++)
+			{
+				//templist[i].go->SyncComponents(mainParent);
+			}
+
 			// Now Iterate All GameObjects and Components and create a new UUID!
 			mainParent->SetUUIDRandom();
 			if (mainParent->GetNumChilds() > 0)
 			{
 				ChangeUUIDs(*mainParent);
 			}
-			// Finaly, add gameObject in Scene.
+			//// Finaly, add gameObject in Scene.
 			App->scene->root->AddChildGameObject(mainParent);
+			templist.clear();
 		}
 	}
 	json_value_free(config_file);
@@ -668,7 +696,7 @@ void JSONSerialization::SaveScript(const ResourceScript* script, const char* dir
 	{
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
-		json_object_dotset_string_with_std(config, "Script.Directory Script", fileName);
+		json_object_dotset_string_with_std(config, "Script.Directory Script", App->fs->GetToAsstes(fileName).c_str());
 		json_object_dotset_number_with_std(config, "Script.UUID Resource", script->GetUUID());
 		json_object_dotset_string_with_std(config, "Script.Name", script->name.c_str());
 		json_object_dotset_string_with_std(config, "Script.PathDLL", script->GetPathdll().c_str());
