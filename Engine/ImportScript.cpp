@@ -189,7 +189,7 @@ bool ImportScript::LoadResource(const char* file, ResourceScript* resourceScript
 	return true;
 }
 
-bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script, ResourceScript* resourceScript)
+bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script, ResourceScript* resourceScript, bool auto_reimport)
 {
 	// UnloadDomain
 	Unload_domain();
@@ -218,17 +218,21 @@ bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script
 	{
 		culverin_mono_image = mono_assembly_get_image(culverin_assembly);
 	}
-	if (App->resource_manager->ReImportAllScripts() == false)
+	if (auto_reimport == false)
 	{
-		LOG("[error] Error With ReImport Script");
-	}
-	//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
-	//resourceScript->SetCSharp(newCSharp);
+		if (App->resource_manager->ReImportAllScripts() == false)
+		{
+			LOG("[error] Error With ReImport Script");
+		}
+		//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
+		//resourceScript->SetCSharp(newCSharp);
 
-	// Then Create Meta
-	std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-	Newdirectory += "/" + App->fs->FixName_directory(fileAssets);
-	App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+		// Then Create Meta
+		std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+		Newdirectory += "/" + App->fs->FixName_directory(fileAssets);
+		App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+	}
+
 	return true;
 }
 

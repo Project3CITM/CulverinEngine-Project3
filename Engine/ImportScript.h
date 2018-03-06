@@ -30,7 +30,7 @@ public:
 
 	bool Import(const char* file, uint uuid = 0, bool isAutoImport = false);
 	bool LoadResource(const char* file, ResourceScript* resourceScript);
-	bool ReImportScript(std::string fileAssets, std::string uid_script, ResourceScript * resourceScript);
+	bool ReImportScript(std::string fileAssets, std::string uid_script, ResourceScript * resourceScript, bool auto_reimport = false);
 	MonoDomain* Load_domain();
 	void Unload_domain();
 	bool CreateNewScript(bool & active);

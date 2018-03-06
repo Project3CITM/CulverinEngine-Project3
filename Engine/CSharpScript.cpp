@@ -1223,7 +1223,8 @@ void CSharpScript::Save(JSON_Object* object, std::string name) const
 
 void CSharpScript::Load(const JSON_Object* object, std::string name)
 {
-	re_load_values.clear();
+	if(re_load_values.size() > 0)
+		re_load_values.clear();
 	std::string temp_var = name;
 
 	//Once set the default values for the variables, update them to the inspector values saved previously

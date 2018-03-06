@@ -81,7 +81,14 @@ bool ModuleResourceManager::Start()
 			if (to_reimport != nullptr)
 			{
 				ReImport temp;
-				temp.directory_obj = App->fs->ConverttoConstChar(to_reimport->path_assets);
+				if (to_reimport->GetType() == Resource::Type::MATERIAL)
+				{
+					std::string temp_mat = "Assets/";
+					temp_mat += to_reimport->name;
+					temp.directory_obj = App->fs->ConverttoConstChar(temp_mat);
+				}
+				else
+					temp.directory_obj = App->fs->ConverttoConstChar(to_reimport->path_assets);
 				temp.name_mesh = App->fs->ConverttoConstChar(to_reimport->name);
 				if (to_reimport->GetType() == Resource::Type::SCRIPT)
 				{
@@ -91,6 +98,45 @@ bool ModuleResourceManager::Start()
 				resources_to_reimport.push_back(temp);
 			}
 		}
+	}
+	if (resources_to_reimport.size() > 0)
+	{
+		files_reimport.push_back(resources_to_reimport[0].directory_obj);
+		for (int i = 1; i < resources_to_reimport.size(); i++)
+		{
+			if (strcmp(files_reimport[files_reimport.size() - 1], resources_to_reimport[i].directory_obj) != 0)
+			{
+				files_reimport.push_back(resources_to_reimport[i].directory_obj);
+			}
+		}
+		// if a Resource state == Resource::State::REIMPORT delete it.
+		std::map<uint, Resource*>::iterator it;
+		for (int i = 0; i < resources_to_reimport.size(); i++) // i = 1 -> ResourcePrimitive
+		{
+			it = resources.find(resources_to_reimport[i].uuid);
+			delete it->second;
+			resources.erase(it);
+		}
+
+		// Now ReImport
+		LOG("ReImporting...");
+		ImportFile(files_reimport, resources_to_reimport, true);
+		LOG("Finished ReImport.");
+		if (App->mode_game == false)
+		{
+			Save();
+		}
+		// After reimport, update time of vector of files in filesystem.
+		App->fs->UpdateFilesAssets();
+		files_reimport.clear();
+		for (int i = 0; i < resources_to_reimport.size(); i++)
+		{
+			RELEASE_ARRAY(resources_to_reimport[i].directory_obj);
+			RELEASE_ARRAY(resources_to_reimport[i].name_mesh);
+			RELEASE_ARRAY(resources_to_reimport[i].path_dll);
+		}
+		resources_to_reimport.clear();
+		reimport_now = false;
 	}
 
 
@@ -375,7 +421,7 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 	App->fs->UpdateFilesAssets();
 }
 
-void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vector<ReImport>& resourcesToReimport)
+void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vector<ReImport>& resourcesToReimport, bool auto_reimport)
 {
 	for (int i = 0; i < file.size(); i++)
 	{
@@ -385,7 +431,7 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 
 		if (dropped_File_type != Resource::Type::UNKNOWN)
 		{
-			if (App->importer->Import(file[i], dropped_File_type, resourcesToReimport))
+			if (App->importer->Import(file[i], dropped_File_type, resourcesToReimport, auto_reimport))
 			{
 				// Copy file to Specify folder in Assets (This folder is the folder active)
 				//App->fs->CopyFileToAssets(it._Ptr->_Myval, ((Project*)App->gui->winManager[WindowName::PROJECT])->GetDirectory());
@@ -398,7 +444,10 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 	}
 	if (App->mode_game == false)
 	{
-		((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
+		if (auto_reimport == false)
+		{
+			((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
+		}
 	}
 	App->fs->UpdateFilesAssets();
 }

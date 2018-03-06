@@ -47,6 +47,23 @@ ModuleGUI::~ModuleGUI()
 }
 
 
+bool ModuleGUI::Init(JSON_Object* node)
+{
+	win_manager.push_back(new Hardware());		//0---- HARDWARE
+	win_manager.push_back(new Inspector());		//1---- INSPECTOR
+	win_manager.push_back(new Hierarchy());		//2---- Hierarchy
+	win_manager.push_back(new SceneWorld());		//3---- SceneWorld
+	win_manager.push_back(new Project());		//4---- Project
+
+												//TODO ELLIOT NEED ACTIVE bye JSON, Also Console
+	win_manager[INSPECTOR]->active[0].active = true;
+	win_manager[HIERARCHY]->active[0].active = true;
+	win_manager[SCENEWORLD]->active[0].active = true;
+	win_manager[PROJECT]->active[0].active = true;
+
+	return true;
+}
+
 bool ModuleGUI::Start()
 {
 	perf_timer.Start();
@@ -60,18 +77,6 @@ bool ModuleGUI::Start()
 
 	App->scene->scene_buff = new FrameBuffer();
 	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
-
-	win_manager.push_back(new Hardware());		//0---- HARDWARE
-	win_manager.push_back(new Inspector());		//1---- INSPECTOR
-	win_manager.push_back(new Hierarchy());		//2---- Hierarchy
-	win_manager.push_back(new SceneWorld());		//3---- SceneWorld
-	win_manager.push_back(new Project());		//4---- Project
-	
-	//TODO ELLIOT NEED ACTIVE bye JSON, Also Console
-	win_manager[INSPECTOR]->active[0].active = true;
-	win_manager[HIERARCHY]->active[0].active = true;
-	win_manager[SCENEWORLD]->active[0].active = true;
-	win_manager[PROJECT]->active[0].active = true;
 
 	std::vector<WindowManager*>::iterator window = win_manager.begin();
 	for (int i = 0; i < win_manager.size(); i++)
