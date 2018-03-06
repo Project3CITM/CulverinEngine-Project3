@@ -78,12 +78,33 @@ public class CharacterController : CulverinBehaviour
         return ret;
     }
 
+    public virtual float GetCurrentMana()
+    {
+        mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
+        float ret = mana.GetCurrentMana();
+        return ret;
+    }
+
 
     public virtual void DecreaseStamina(float stamina_cost)
     {
         Debug.Log("Decrease Stamina");
         stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
         stamina.DecreaseStamina(stamina_cost);
+    }
+
+    public virtual void DecreaseMana(float mana_cost)
+    {
+        Debug.Log("Decrease Stamina");
+        mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
+        mana.DecreaseMana(mana_cost);
+    }
+
+    public virtual void DecreaseManaPercentage(float mana_cost)
+    {
+        Debug.Log("Decrease Stamina");
+        mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
+        mana.DecreaseManaPercentage(mana_cost);
     }
 
     public void CheckHealth()

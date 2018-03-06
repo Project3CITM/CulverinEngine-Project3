@@ -147,14 +147,14 @@ public class DaenerysController : CharacterController
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             Debug.Log("Daenerys Pressed 1");
-            lweapon_daenerys_obj.GetComponent<JaimeWeapon_Left>().PrepareAbility();
+            lweapon_daenerys_obj.GetComponent<DaenerysWeapon_Left>().PrepareAbility();
         }
 
         //Right Attack
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Daenerys Pressed 2");
-            rweapon_daenerys_obj.GetComponent<JaimeWeapon_Right>().PrepareAbility();
+            rweapon_daenerys_obj.GetComponent<DaenerysWeapon_Right>().PrepareAbility();
         }
     }
 

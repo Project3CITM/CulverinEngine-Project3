@@ -8,7 +8,11 @@ public class DaenerysWeapon_Left : WeaponController
     public GameObject daenerys_obj;
     public GameObject daenerys_button_left;
 
+    public float mana_cost_percentage = 20f;
+    public float damage_percentage = 10f;
+
     DaenerysController character;
+    DaenerysCD_Left cd_left;
 
     public override void Start()
     {
@@ -30,12 +34,12 @@ public class DaenerysWeapon_Left : WeaponController
         if (character.GetState() == 0) /*0 = IDLE*/
         {
             // Check if player has enough stamina to perform its attack
-            if (character.GetCurrentStamina() > stamina_cost)
+            float mana_cost = mana_cost_percentage * character.max_mana / 100.0f;
+            if (character.GetCurrentMana() > mana_cost)
             {
-                //cd = daenerys_button_left.GetComponent<CoolDown>();
-                //Check if the ability is not in cooldown
-                //if (!cd.in_cd)
-                if(1 == 1)
+                cd_left = daenerys_button_left.GetComponent<DaenerysCD_Left>();
+                //Check if the ability has enough charges
+                if(cd_left.GetCurrentCharges() > 0)
                 {
                     Debug.Log("Daenerys LW Going to Attack");
 
@@ -50,12 +54,12 @@ public class DaenerysWeapon_Left : WeaponController
                 }
                 else
                 {
-                    Debug.Log("Ability in CD");
+                    Debug.Log("Ability doesn't have enough charges");
                 }
             }
             else
             {
-                Debug.Log("Not Enough Stamina");
+                Debug.Log("Not Enough Mana");
             }
         }
     }
@@ -72,23 +76,23 @@ public class DaenerysWeapon_Left : WeaponController
     {
         Debug.Log("Daenerys LW Attack Left");
 
-        // Decrease stamina -----------
+        // Decrease mana -----------
         character = daenerys_obj.GetComponent<DaenerysController>();
-        character.DecreaseStamina(stamina_cost);
+        character.DecreaseManaPercentage(mana_cost_percentage);
 
         Debug.Log("Daenerys LW Going to hit");
 
-        // Attack the enemy in front of you
+        // Attack all enemies in 3 rows in front of you
         //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
         //{
         //    // To change => check the specific enemy in front of you
         //    enemy = enemy_obj.GetComponent<EnemyController>();
-        //    enemy.Hit(attack_dmg);
+        //    enemy.HitPercentage(damage_percentage);
         //}
     }
 
     public override void PlayFx()
     {
-        //GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("SwordSlash");
+        //GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("Dracarys");
     }
 }
