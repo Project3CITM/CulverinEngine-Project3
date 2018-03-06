@@ -318,9 +318,8 @@ void CSharpScript::SetLeftVector(MonoObject * object, MonoObject * vector3)
 
 MonoObject* CSharpScript::GetPosition(MonoObject* object)
 {
-	std::string names = mono_class_get_name(mono_object_get_class(object));
 	Component* obj = App->importer->iScript->GetComponentMono(object);
-	if (current_game_object != nullptr)
+	if (current_game_object != nullptr && obj != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
