@@ -1242,7 +1242,7 @@ void ParticleSystem::DrawEmitterOptions()
 	ImGui::NextColumn();
 	ImGui::PushItemWidth(80);
 	ImGui::DragFloat("Emitter Life", &Emitter.EmitterLifeMax, 0.1f, -1.0f, 120.0f);
-	ImGui::SliderInt("Particles emitted per second", (int*)&Emitter.SpawnRate, 0, 1000);
+	ImGui::DragInt("Particles emitted per second", (int*)&Emitter.SpawnRate, 1, 0, 1000);
 	ImGui::DragFloat("+-##Lifetime", &Emitter.Lifetime, 0.01f, 0.0f, 100.0f);
 	ImGui::SameLine();
 	ImGui::DragFloat("Lifetime +- Var##LifetimeVariation", &Emitter.LifetimeVariation, 0.01f, 0.0f, 100.0f);
