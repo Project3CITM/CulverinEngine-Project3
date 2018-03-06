@@ -118,6 +118,7 @@ update_status ModuleGUI::Update(float dt)
 				{
 					App->scene->ClearAllVariablesScript();
 					App->scene->DeleteAllGameObjects(App->scene->root);
+					App->event_system->ClearEvents(EventType::EVENT_DRAW);
 					App->scene->root->SetName("NewScene");
 					App->scene->CreateMainCamera(nullptr);
 					App->resource_manager->ReImportAllScripts();

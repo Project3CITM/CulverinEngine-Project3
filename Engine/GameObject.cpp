@@ -935,6 +935,8 @@ void GameObject::ShowInspectorInfo()
 				static_obj = !static_obj;
 				LOG("You can't change 'Static' variable when Game Mode is ON.");
 			}
+			App->scene->quadtree.Bake(App->scene->root);
+			App->scene->FillStaticObjectsVector(true);
 		}
 
 		if (window_active)
