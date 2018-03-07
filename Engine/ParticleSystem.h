@@ -60,6 +60,8 @@
 #define DEBUG_COLOR_B 255.0f
 #define CIRCLES_SEGMENTS 10.0f
 
+#define MAX_PARTICLES_PER_EMITTER 1000
+
 struct ConeTrunk			//Definition of a cone trunk for the cone emitter type
 {
 	Circle Upper_Circle;
@@ -344,7 +346,7 @@ public:
 
 private:
 	ParticleMeshData ParticleMesh;								//Particle mesh to use
-	std::list<Particle*> Particles;								//Particles created
+	std::vector<Particle> Particles;								//Particles created
 	ParticleState InitialState;									//Particle initial state with variable values
 	ParticleState FinalState;									//Particle final state with variable values
 	ParticleEmitter Emitter;									//Emitter data
@@ -353,6 +355,8 @@ private:
 	//std::vector<float*> TexturesUV_Data_ptr;
 	std::vector<unsigned int> TexturesUV_ID;					//Particle animation UVs IDs
 	float NextParticleTime = 0.0f;								//Store next time when the next particle will be spawned
+
+	uint last_particle_alive = 0;
 
 	enum
 	{

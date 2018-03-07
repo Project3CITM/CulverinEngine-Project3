@@ -589,6 +589,7 @@ void ParticleTextureData::Set(unsigned int ID, unsigned int width, unsigned int 
 
 ParticleSystem::ParticleSystem()
 {
+	Particles.reserve(MAX_PARTICLES_PER_EMITTER);
 	SetMeshResourcePlane();
 }
 
@@ -606,21 +607,21 @@ bool ParticleSystem::PreUpdate(float dt)
 	}
 	
 	bool ret = true;
-	for (std::list<Particle*>::iterator item = Particles.begin(); item != Particles.cend() && ret == true;)
+	uint i = 0;
+	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend() && ret == true;)
 	{
 		bool to_delete = false;
 	
 		//Check if particle is alive
-	  if ((*item)->isDead())
+	  if ((*item).isDead())
 		{
 			Emitter.ParticleNumber--;
-			RELEASE(*item);
 			item = Particles.erase(item);
 			continue;
 		}
 		
-		(*item)->CameraDistance = (long double)((CameraPosition - (*item)->Properties.Position).Length());
-		ret = (*item)->PreUpdate(dt);
+		(*item).CameraDistance = (long double)((CameraPosition - (*item).Properties.Position).Length());
+		ret = (*item).PreUpdate(dt);
 		++item;		
 	}
 
@@ -707,28 +708,26 @@ bool ParticleSystem::Update(float dt, bool emit)
 	//So we use lambda operator here to send to the algorithm sort of std::list, the max and min values to search,
 	//and the function used to compare values in the algorithm.
 	//This sort can be modified using > operator override, and changing the sort function used
-	Particles.sort([](const Particle* a, const Particle* b) { return a->CameraDistance > b->CameraDistance; });
+	//Particles.sort([](const Particle* a, const Particle* b) { return a->CameraDistance > b->CameraDistance; });
 
 	bool ret = true;
-	for (std::list<Particle*>::iterator item = Particles.begin(); item != Particles.cend() && ret == true; ++item)
-		ret = (*item)->Update(dt);
+	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend() && ret == true; ++item)
+		ret = (*item).Update(dt);
 	return ret;
 }
 
 bool ParticleSystem::PostUpdate(float dt)
 {
 	bool ret = true;
-	for (std::list<Particle*>::iterator item = Particles.begin(); item != Particles.cend() && ret == true; item++)
+	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend() && ret == true; item++)
 	{
-		ret = (*item)->PostUpdate(dt);
+		ret = (*item).PostUpdate(dt);
 	}
 	return ret;
 }
 
 bool ParticleSystem::CleanUp()
 {
-	for (std::list<Particle*>::iterator item = Particles.begin(); item != Particles.cend(); ++item)
-		RELEASE(*item);
 	Particles.clear();
 	return true;
 }
@@ -789,7 +788,8 @@ void ParticleSystem::SetMeshResourcePlane()
 	memcpy(ParticleMesh.texture_coords, texture_coords, sizeof(float) * ParticleMesh.num_vertices * 3);
 	*/
 	GenerateBuffers = true;
-	for (std::list<Particle*>::iterator item = Particles.begin(); item != Particles.cend(); ++item) (*item)->MeshChanged = true;
+	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend(); ++item)
+		(*item).MeshChanged = true;
 }
 
 const ParticleTextureData * ParticleSystem::GetTextureResource() const
@@ -986,7 +986,8 @@ void ParticleSystem::GenerateMeshResourceBuffers()
 	glBindBuffer(GL_ARRAY_BUFFER, ParticleMesh.id_texture_coords);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ParticleMesh.num_indices * 3, ParticleMesh.texture_coords, GL_STATIC_DRAW);
 	*/
-	for (std::list<Particle*>::iterator item = Particles.begin(); item != Particles.cend(); ++item) (*item)->MeshChanged = false;
+	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend(); ++item) 
+		(*item).MeshChanged = false;
 	GenerateBuffers = false;
 }
 
@@ -1325,8 +1326,7 @@ bool ParticleSystem::CreateParticle()
 	Rot.Normalize();
 	Direction = float3(Rot.x, Rot.y, Rot.z);
 
-	Particle* NewParticle = new Particle(this, InitialState, FinalState, Direction * (Emitter.Speed + RandGen.Float(-Emitter.SpeedVariation, Emitter.SpeedVariation)), offset, Emitter.Lifetime + RandGen.Float(-Emitter.LifetimeVariation, Emitter.LifetimeVariation));
-	//Particle* NewParticle = new Particle(this, InitialState, FinalState, Direction.Normalized() * (Emitter.Speed + RandGen.Float(-Emitter.SpeedVariation, Emitter.SpeedVariation)), Emitter.Lifetime + RandGen.Float(-Emitter.LifetimeVariation, Emitter.LifetimeVariation));
-	Particles.push_back(NewParticle);
+	Particles.push_back(Particle(this, InitialState, FinalState, Direction * (Emitter.Speed + RandGen.Float(-Emitter.SpeedVariation, Emitter.SpeedVariation)), offset, Emitter.Lifetime + RandGen.Float(-Emitter.LifetimeVariation, Emitter.LifetimeVariation)));
+	
 	return true;
 }
