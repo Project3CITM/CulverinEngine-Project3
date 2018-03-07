@@ -39,5 +39,10 @@ public class Action : CulverinBehaviour
         Debug.Log("Action end not defined!");
         return false;
     }
+
+    public void Interupt()
+    {
+        interupt = true;
+    }
 }
 
