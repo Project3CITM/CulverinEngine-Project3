@@ -36,6 +36,7 @@ public class Action : CulverinBehaviour
     public virtual bool ActionEnd()
     {
         Debug.Log("Action end not defined!");
+        interupt = false;
         return false;
     }
 

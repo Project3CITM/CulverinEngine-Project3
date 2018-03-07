@@ -5,10 +5,10 @@ public enum PERCEPTION_EVENT_TYPE
 {
     //Hear events
     HEAR_EXPLORER_EVENT = 0,
-    HEAR_ALERT_EVENT,
+    HEAR_WALKING_PLAYER,
 
     //Visual events
-    VISUAL_EVENT,
+    PLAYER_SEEN,
 
     //Other events
     PLAYER_DETECTED_EVENT
@@ -21,6 +21,7 @@ public class PerceptionEvent : CulverinBehaviour
     public PERCEPTION_EVENT_TYPE    type;
     public float                    time_in_memory;
     public float                    counter_in_memory;
+    public bool                     start_counting;
 
     //Origin of the event
     public int                      origin_tile_x;
@@ -35,6 +36,7 @@ public class PerceptionEvent : CulverinBehaviour
         type = _type;
         time_in_memory = _time_in_memory;
         counter_in_memory = 0.0f;
+        start_counting = true;
     }
 
     public void SetOrigin(int x, int y) { origin_tile_x = x; origin_tile_y = y; }
@@ -45,7 +47,7 @@ public class PerceptionEvent : CulverinBehaviour
 
 public class PerceptionHearEvent : PerceptionEvent
 {
-    public int radius_in_tiles;
+   public int radius_in_tiles;
 
    public PerceptionHearEvent(PERCEPTION_EVENT_TYPE _type, float _time_in_memory, int _radius) : base(_type, _time_in_memory)
     {

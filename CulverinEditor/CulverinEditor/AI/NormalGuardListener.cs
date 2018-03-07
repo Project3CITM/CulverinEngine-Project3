@@ -1,54 +1,145 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using System.Collections.Generic;
 
 public class NormalGuardListener : PerceptionListener
 {
-    
+    public int hear_range = 2;
+    public GameObject my_self;
+
     void Start()
     {
-
+        GetLinkedObject("event_manager").GetComponent<PerceptionManager>().AddListener(this);
+        events_in_memory = new List<PerceptionEvent>();
     }
 
     void Update()
     {
-        
+        UpdateMemory();
     }
 
     public override void OnEventRecieved(PerceptionEvent event_recieved)
     {
-       switch(event_recieved.type)
+
+        if (IsPriotitaryEvent(event_recieved))
+        {
+            events_in_memory.Clear();
+            events_in_memory.Add(event_recieved);
+        }
+        else return;
+
+        switch (event_recieved.type)
         {
             case PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT:
+            case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
 
-                if(OnPerceptionRange(event_recieved))
+                if(event_recieved.type == PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER)
                 {
-                        //do something
+                    //Check if i have seen the player before
+                    //If i do, i will detect this 
                 }
 
+                if (OnHearRange(event_recieved))
+                {
+                    GetLinkedObject("my_self").GetComponent<BT>().heard_something = true;
+                    GetLinkedObject("my_self").GetComponent<BT>().InterruptAction();
+
+                    Debug.Log("I Heard Somethin");
+
+                    event_recieved.start_counting = false;
+                }
+
+                break;    
+
+            case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
+
                 break;
 
-            case PERCEPTION_EVENT_TYPE.HEAR_ALERT_EVENT:
-
-                break;
-
-            case PERCEPTION_EVENT_TYPE.VISUAL_EVENT:
-
-                break;
-
-            case PERCEPTION_EVENT_TYPE.PLAYER_DETECTED_EVENT:
-
-                break;
+           
         }
     }
 
-    bool OnPerceptionRange(PerceptionEvent event_heard)
+    public override void OnEventGone(PerceptionEvent event_recieved)
+    {
+        switch (event_recieved.type)
+        {
+            case PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT:
+            case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
+
+                GetLinkedObject("my_self").GetComponent<BT>().heard_something = false;
+                GetLinkedObject("my_self").GetComponent<Investigate_Action>().forgot_event = true;
+
+
+                Debug.Log("I lost Somethin");
+                break;
+
+            case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
+
+                GetLinkedObject("my_self").GetComponent<BT>().player_detected = false;
+
+                break;
+
+            
+        }
+
+        events_in_memory.Remove(event_recieved);
+    }
+
+    bool OnHearRange(PerceptionEvent event_heard)
     {
         PerceptionHearEvent tmp = (PerceptionHearEvent)event_heard;
 
-        int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
-        int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+        int my_tile_x = GetLinkedObject("my_self").GetComponent<Movement_Action>().GetCurrentTileX();
+        int my_tile_y = GetLinkedObject("my_self").GetComponent<Movement_Action>().GetCurrentTileY();
 
-        if ((my_tile_x >= (tmp.objective_tile_x - tmp.radius_in_tiles)) && (my_tile_y >= (tmp.objective_tile_y - tmp.radius_in_tiles)) && (my_tile_x <= (tmp.objective_tile_x + tmp.radius_in_tiles)) && (my_tile_y <= (tmp.objective_tile_y + tmp.radius_in_tiles)))
+        Debug.Log(my_tile_x.ToString());
+        Debug.Log(my_tile_y.ToString());
+
+        if (hear_range < tmp.radius_in_tiles)
+        {
+            Debug.Log("Hear < radius");
+
+            if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles))
+                return true;
+
+            return false;
+        }
+        else
+        {
+            Debug.Log("Hear > radius");
+
+            if (RadiusOverlap(tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles, my_tile_x, my_tile_y, hear_range))
+                return true;
+
+            return false;
+        }
+    }
+
+    bool RadiusOverlap(int little_tile_x, int little_tile_y, int little_radius, int big_tile_x, int big_tile_y, int big_radius)
+    {
+        //Check if one of the four boundaries is inside the bigger radius
+
+        Debug.Log("little_tile_x: " + little_tile_x.ToString());
+        Debug.Log("little_tile_y: " + little_tile_y.ToString());
+        Debug.Log("big_tile_x: " + big_tile_x.ToString());
+        Debug.Log("big_tile_y: " + big_tile_y.ToString());
+        Debug.Log("little_radius: " + little_radius.ToString());
+        Debug.Log("big_radius: " + big_radius.ToString());
+
+        //x - radius, y - radius
+        if (((little_tile_x - little_radius) >= (big_tile_x - big_radius)) && ((little_tile_y - little_radius) >= (big_tile_y - big_radius)) && ((little_tile_x - little_radius) <= (big_tile_x + big_radius)) && ((little_tile_y - little_radius) <= (big_tile_y + big_radius)))
+            return true;
+
+        //x - radius, y + radius
+        if (((little_tile_x - little_radius) >= (big_tile_x - big_radius)) && ((little_tile_y + little_radius) >= (big_tile_y - big_radius)) && ((little_tile_x - little_radius) <= (big_tile_x + big_radius)) && ((little_tile_y + little_radius) <= (big_tile_y + big_radius)))
+            return true;
+
+        //x + radius, y - radius
+        if (((little_tile_x + little_radius) >= (big_tile_x - big_radius)) && ((little_tile_y - little_radius) >= (big_tile_y - big_radius)) && ((little_tile_x + little_radius) <= (big_tile_x + big_radius)) && ((little_tile_y - little_radius) <= (big_tile_y + big_radius)))
+            return true;
+
+        //x + radius, y + radius
+        if (((little_tile_x + little_radius) >= (big_tile_x - big_radius)) && ((little_tile_y + little_radius) >= (big_tile_y - big_radius)) && ((little_tile_x + little_radius) <= (big_tile_x + big_radius)) && ((little_tile_y + little_radius) <= (big_tile_y + big_radius)))
             return true;
 
         return false;

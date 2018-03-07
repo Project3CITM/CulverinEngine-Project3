@@ -150,11 +150,6 @@ public class Movement_Action : Action
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
-    public override bool ActionEnd()
-    {  
-        return false;
-    }
-
     public void GoTo(int cur_x, int cur_y, int obj_x, int obj_y)
     {
         path.Clear();

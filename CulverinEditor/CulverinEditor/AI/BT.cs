@@ -33,6 +33,15 @@ public class BT : CulverinBehaviour
 
     public virtual void Update()
     {
+        if(Input.GetKeyDown(KeyCode.W))
+        {
+            Debug.Log("uvedoble");
+            int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+            int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+
+            GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT, 10, 2, my_tile_x, my_tile_y);
+        }
+
         if (current_action.action_type != Action.ACTION_TYPE.NO_ACTION)
         {
             switch (current_action.ActionUpdate())
@@ -70,6 +79,8 @@ public class BT : CulverinBehaviour
         if (heard_something)
         {
             //Investigate
+            GetComponent<Investigate_Action>().ActionStart();
+            return GetComponent<Investigate_Action>();
         }
 
         //If none of them -> patrol
@@ -93,5 +104,10 @@ public class BT : CulverinBehaviour
     public AI_STATE GetState()
     {
         return state;
+    }
+
+    public void InterruptAction()
+    {
+        current_action.Interupt();
     }
 }

@@ -1,7 +1,5 @@
 using CulverinEditor;
 using CulverinEditor.Debug;
-using CulverinEditor.Pathfinding;
-using CulverinEditor.Map;
 using System.Collections.Generic;
 using System.Collections;
 
@@ -9,8 +7,11 @@ public class PerceptionManager : CulverinBehaviour
 {
 
     //Listeners
-    List<PerceptionListener>    listeners_list = null;
-    Queue<PerceptionEvent>      perception_events_queue;
+    List<PerceptionListener>    listeners_list;
+    List<PerceptionEvent>       perception_events_queue;
+   // Queue<PerceptionEvent>      perception_events_queue;
+
+    PerceptionManager() {}
 
     // Use this for initialization
     void Start()
@@ -18,20 +19,22 @@ public class PerceptionManager : CulverinBehaviour
         if(listeners_list == null)
             listeners_list = new List<PerceptionListener>();
 
-        perception_events_queue = new Queue<PerceptionEvent>();
+        perception_events_queue = new List<PerceptionEvent>();
     }
 
     void Update()
     {
-        if (AnyEvent())
+        if (!AnyEvent())
             return;
 
 
         foreach(PerceptionEvent perception_event in perception_events_queue)
         {
             SendEventtoListeners(perception_event);
-            perception_events_queue.Dequeue();
+            perception_events_queue.Remove(perception_event);
         }
+
+        
     }
 
     public void AddListener(PerceptionListener new_listener)
@@ -47,7 +50,7 @@ public class PerceptionManager : CulverinBehaviour
 
     public void GenEvent(PerceptionEvent new_event)
     {
-        perception_events_queue.Enqueue(new_event);
+        perception_events_queue.Add(new_event);
     }
 
     bool AnyEvent()
@@ -59,6 +62,7 @@ public class PerceptionManager : CulverinBehaviour
     {
         foreach(PerceptionListener listener in listeners_list)
         {
+            Debug.Log(perception_events_queue.Count.ToString());
             listener.OnEventRecieved(event_send);
         }
     }
