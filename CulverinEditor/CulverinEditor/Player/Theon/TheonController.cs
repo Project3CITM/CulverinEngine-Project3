@@ -14,9 +14,11 @@ public class TheonController : CharacterController
     public float curr_hp = 100.0f;
     public float max_stamina = 100.0f;
     public float curr_stamina = 100.0f;
-
+    public float sec_ability_cd = 10.0f;
+    private float sec_ability_current_cd = 10.0f;
     protected override void Start()
     {
+     
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         theon_obj = GetLinkedObject("theon_obj");
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
@@ -42,7 +44,9 @@ public class TheonController : CharacterController
     public override void ControlCharacter()
     {
         // Debug method to control Hp
+        sec_ability_cd = ReduceCoolDown(sec_ability_cd);
         CheckHealth();
+    
 
         // First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
@@ -235,5 +239,26 @@ public class TheonController : CharacterController
     {
         lweapon_theon_obj.GetComponent<CompMesh>().SetEnabled(active, lweapon_theon_obj);
         rweapon_theon_obj.GetComponent<CompMesh>().SetEnabled(active, rweapon_theon_obj);
+    }
+
+    public bool IsSecondaryAbilityReady()
+    {
+        Debug.Log(sec_ability_current_cd);
+        if (sec_ability_current_cd <= 0.0f)
+            return true;
+        else
+            return false;
+    }
+
+    public override float GetSecondaryAbilityCoolDown()
+    {
+        return sec_ability_cd;
+    }
+
+    public override void ResetCoolDown()
+    {
+        sec_ability_current_cd = sec_ability_cd;
+        Debug.Log("new CD");
+        Debug.Log(sec_ability_current_cd);
     }
 }

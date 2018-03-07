@@ -14,9 +14,12 @@ public class JaimeController : CharacterController
     public float curr_hp = 100.0f;
     public float max_stamina = 100.0f;
     public float curr_stamina = 100.0f;
+    public float sec_ability_cd = 10.0f;
+    private float sec_ability_current_cd = 10.0f;
 
     protected override void Start()
     {
+
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         jaime_obj = GetLinkedObject("jaime_obj");
         jaime_icon_obj = GetLinkedObject("jaime_icon_obj");
@@ -40,7 +43,9 @@ public class JaimeController : CharacterController
     public override void ControlCharacter()
     {
         // Debug method to control Hp
+        sec_ability_cd = ReduceCoolDown(sec_ability_cd);
         CheckHealth();
+      
 
         // First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
@@ -234,5 +239,23 @@ public class JaimeController : CharacterController
     {
         anim_controller_right = rweapon_jaime_obj.GetComponent<CompAnimation>();
         return anim_controller_right.IsAnimationStopped(name);
+    }
+
+    public bool IsSecondaryAbilityReady()
+    {
+        if (sec_ability_current_cd <= 0.0f)
+            return true;
+        else
+            return false;
+    }
+
+    public override float GetSecondaryAbilityCoolDown()
+    {
+        return sec_ability_cd;
+    }
+
+    public override void ResetCoolDown()
+    {
+        sec_ability_current_cd = sec_ability_cd;
     }
 }

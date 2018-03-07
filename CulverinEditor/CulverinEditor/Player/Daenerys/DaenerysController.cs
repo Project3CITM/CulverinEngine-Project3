@@ -14,9 +14,13 @@ public class DaenerysController : CharacterController
     public float curr_hp = 100.0f;
     public float max_mana = 100.0f;
     public float curr_mana = 100.0f;
+    public float sec_ability_cd = 10.0f;
+    private float sec_ability_current_cd = 10.0f;
 
     protected override void Start()
     {
+        
+
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         daenerys_obj = GetLinkedObject("daenerys_obj");
         daenerys_icon_obj = GetLinkedObject("daenerys_icon_obj");
@@ -46,7 +50,9 @@ public class DaenerysController : CharacterController
     public override void ControlCharacter()
     {
         // Debug method to control Hp
+        sec_ability_current_cd = ReduceCoolDown(sec_ability_current_cd);
         CheckHealth();
+
 
         // First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
@@ -251,5 +257,23 @@ public class DaenerysController : CharacterController
     {
         lweapon_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active, lweapon_daenerys_obj);
         rweapon_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active, rweapon_daenerys_obj);
+    }
+
+    public bool IsSecondaryAbilityReady()
+    {
+        if (sec_ability_current_cd <= 0.0f)
+            return true;
+        else
+            return false;
+    }
+
+    public override float GetSecondaryAbilityCoolDown()
+    {
+        return sec_ability_cd;
+    }
+
+    public override void ResetCoolDown()
+    {
+        sec_ability_current_cd = sec_ability_cd;
     }
 }

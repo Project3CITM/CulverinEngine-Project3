@@ -10,6 +10,12 @@ public class CharactersManager : CulverinBehaviour
         CHANGING_RIGHT
     }
 
+    public enum Side
+    {
+        LEFT = 0,
+        RIGHT
+    }
+
     public GameObject current_character;
     public GameObject left_character;
     public GameObject right_character;
@@ -58,13 +64,11 @@ public class CharactersManager : CulverinBehaviour
                     //MANAGE SECONDARY ABILITIES -------------------------------------
                     else if(Input.GetKeyDown(KeyCode.K))
                     {
-                        Debug.Log("Left Secondary Ability");
-                        //left_character.GetComponent<CharacterController>().SecondaryAbility();
+                        SecondaryAbility(Side.LEFT);
                     }
                     else if (Input.GetKeyDown(KeyCode.L))
                     {
-                        Debug.Log("Right Secondary Ability");
-                        //right_character.GetComponent<CharacterController>().SecondaryAbility();
+                        SecondaryAbility(Side.RIGHT);
                     }
                     // ---------------------------------------------------------------
                     break;
@@ -247,6 +251,67 @@ public class CharactersManager : CulverinBehaviour
         else if (current_character.GetName() == "Theon")
         {
             current_character.GetComponent<TheonController>().ControlCharacter();
+        }
+    }
+
+    void SecondaryAbility(Side side)
+    {
+
+        if (side == Side.LEFT)
+        {
+            Debug.Log("Checking if left secondary ability is ready");
+            if (left_character.GetName() == "Jaime")
+            {
+                if (left_character.GetComponent<JaimeController>().IsSecondaryAbilityReady())
+                {
+                    Debug.Log("Jaime Secondary ability Left");
+                    left_character.GetComponent<JaimeController>().ResetCoolDown();
+                }
+            }
+            else if (left_character.GetName() == "Daenerys")
+            {
+                if (left_character.GetComponent<DaenerysController>().IsSecondaryAbilityReady())
+                {
+                    Debug.Log("Daenerys Secondary ability Left");
+                    left_character.GetComponent<DaenerysController>().ResetCoolDown();
+                }
+            }
+            else if (left_character.GetName() == "Theon")
+            {
+                if (left_character.GetComponent<TheonController>().IsSecondaryAbilityReady())
+                {
+                    Debug.Log("Theon Secondary ability Left");
+                    left_character.GetComponent<TheonController>().ResetCoolDown();
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Checking if left secondary ability is ready");
+            if (right_character.GetName() == "Jaime")
+            {
+                if (left_character.GetComponent<JaimeController>().IsSecondaryAbilityReady())
+                {
+                    Debug.Log("Jaime Secondary ability Left");
+                    left_character.GetComponent<JaimeController>().ResetCoolDown();
+                }
+            }
+            else if (right_character.GetName() == "Daenerys")
+            {
+                if (left_character.GetComponent<DaenerysController>().IsSecondaryAbilityReady())
+                {
+                    Debug.Log("Daenerys Secondary ability Left");
+                    left_character.GetComponent<DaenerysController>().ResetCoolDown();
+                }
+            }
+            else if (right_character.GetName() == "Theon")
+            {
+                if (left_character.GetComponent<TheonController>().IsSecondaryAbilityReady())
+                {
+                    Debug.Log("Theon Secondary ability Left");
+                    left_character.GetComponent<TheonController>().ResetCoolDown();
+                }
+            }
         }
     }
 }

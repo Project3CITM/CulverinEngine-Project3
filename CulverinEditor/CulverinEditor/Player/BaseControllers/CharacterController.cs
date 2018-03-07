@@ -171,4 +171,20 @@ public class CharacterController : CulverinBehaviour
     public virtual void ToggleMesh(bool active)
     {
     }
+
+    public virtual float GetSecondaryAbilityCoolDown()
+    {
+        return 0.0f;
+    }
+    public virtual float ReduceCoolDown(float variable)
+    {
+        if (variable > 0.0f)
+            return (variable - Time.DeltaTime());
+        else
+            return 0.0f;
+    }
+
+    public virtual void ResetCoolDown()
+    {
+    }
 }
