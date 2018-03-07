@@ -710,7 +710,7 @@ void JSONSerialization::SaveScript(const ResourceScript* script, const char* dir
 
 void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const char * directory, const char * fileName)
 {
-	LOG("SAVING Animation %s -----", animation->name);
+	LOG("SAVING Animation %s -----", animation->name.c_str());
 
 	JSON_Value* config_file;
 	JSON_Object* config;
