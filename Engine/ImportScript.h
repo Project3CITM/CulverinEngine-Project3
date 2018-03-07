@@ -225,6 +225,9 @@ private:
 	static mono_bool IsAnimOverXTime(MonoObject* object, float num_between_0_1);
 	static void SetClipsSpeed(MonoObject* object, float speed_value);
 
+	/*Module Physics*/
+	static MonoObject*	RayCast(MonoObject* object, MonoObject* origin, MonoObject* direction, float distance);
+
 public: 
 	std::map<std::string, GameObject*> map_link_variables;
 

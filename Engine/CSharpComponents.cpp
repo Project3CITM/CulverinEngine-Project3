@@ -3,6 +3,7 @@
 #include "ModuleFS.h"
 #include "ModuleInput.h"
 #include "ModuleImporter.h"
+#include "ModulePhysics.h"
 #include "ImportScript.h"
 #include "ModuleMap.h"
 #include "CompTransform.h"
@@ -394,4 +395,40 @@ void CSharpScript::DestroyJoint(MonoObject* object)
 	{
 		((CompJoint*)current_game_object->FindComponentByType(C_JOINT))->RemoveActors();
 	}
+}
+
+MonoObject * CSharpScript::RayCast(MonoObject * object, MonoObject * origin, MonoObject * direction, float distance)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classP = mono_object_get_class(origin);
+		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classP, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classP, "z");
+
+		float3 ray_origin;
+
+		if (x_field) mono_field_get_value(origin, x_field, &ray_origin.x);
+		if (y_field) mono_field_get_value(origin, y_field, &ray_origin.y);
+		if (z_field) mono_field_get_value(origin, z_field, &ray_origin.z);
+
+		MonoClass* classR = mono_object_get_class(direction);
+
+		x_field = mono_class_get_field_from_name(classR, "x");
+		y_field = mono_class_get_field_from_name(classR, "y");
+		z_field = mono_class_get_field_from_name(classR, "z");
+
+		float3 ray_direction;
+
+		if (x_field) mono_field_get_value(direction, x_field, &ray_direction.x);
+		if (y_field) mono_field_get_value(direction, y_field, &ray_direction.y);
+		if (z_field) mono_field_get_value(direction, z_field, &ray_direction.z);
+
+		GameObject* target = App->physics->RayCast(ray_origin, ray_direction, distance);
+		
+		if (target == nullptr)return nullptr;
+
+		return App->importer->iScript->GetMonoObject(target);
+	}
+	return nullptr;
 }

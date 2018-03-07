@@ -856,6 +856,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationRunning", (const void*)IsAnimationRunning);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimOverXTime", (const void*)IsAnimOverXTime);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipsSpeed", (const void*)SetClipsSpeed);
+
+	//MODULE PHYSICS FUNCTIONS ----------------------------
+	mono_add_internal_call("CulverinEditor.PhysX::RayCast", (const void*)RayCast);
 }
 
 //Log messages into Engine Console
@@ -1490,4 +1493,9 @@ mono_bool ImportScript::IsAnimOverXTime(MonoObject * object, float num_between_0
 void ImportScript::SetClipsSpeed(MonoObject * object, float speed_value)
 {
 	current->SetClipsSpeed(object, speed_value);
+}
+
+MonoObject * ImportScript::RayCast(MonoObject * object, MonoObject * origin, MonoObject * direction, float distance)
+{
+	return current->RayCast(object, origin, direction, distance);
 }

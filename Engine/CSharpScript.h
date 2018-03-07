@@ -246,6 +246,9 @@ public:
 	/*Joint*/
 	void		DestroyJoint(MonoObject* object);
 
+	/*Physics*/
+	MonoObject*	RayCast(MonoObject* object, MonoObject* origin, MonoObject* direction, float distance);
+
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
 	MonoObject* GetParentGameObject();

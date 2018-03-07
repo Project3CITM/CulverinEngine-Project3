@@ -62,6 +62,7 @@
     <Compile Include="CompMesh.cs" />
     <Compile Include="float4x4.cs" />
     <Compile Include="Investigate_Action.cs" />
+    <Compile Include="PhysX.cs" />
     <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />
     <Compile Include="BarrelPuzle\BarrelManage.cs" />
