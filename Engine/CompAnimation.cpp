@@ -107,7 +107,7 @@ void CompAnimation::PlayAnimation(AnimationNode * node)
 
 	if (node->clip->state == A_STOP)
 	{	
-		if (current_animation != nullptr && current_animation->state != AnimationState::A_STOP && node->clip->total_blending_time > 0.001f)
+		if (current_animation != nullptr && node->clip->total_blending_time > 0.001f)
 		{
 			current_animation->state = AnimationState::A_PLAY;
 			node->clip->state = AnimationState::A_BLENDING;
