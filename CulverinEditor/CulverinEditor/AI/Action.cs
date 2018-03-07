@@ -10,7 +10,6 @@ public class Action : CulverinBehaviour
         AR_IN_PROGRESS,
         AR_FAIL,
         AR_SUCCESS
-
     }
 
     public enum ACTION_TYPE

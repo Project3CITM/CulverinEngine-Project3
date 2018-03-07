@@ -237,10 +237,6 @@ public class Movement_Action : Action
         if (delta < (-Mathf.PI))
             delta = delta + 2 * Mathf.PI;
 
-        /*Debug.Log("Forward: " + forward.ToString());
-        Debug.Log("Obj Vec: " + obj_vec.ToString());
-        Debug.Log("Delta: " + delta.ToString());*/
-
         return delta;
     }
 

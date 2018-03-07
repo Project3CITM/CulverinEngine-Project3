@@ -491,55 +491,88 @@ float3 CompTransform::GetLeftVector() const
 void CompTransform::SetForwardVector(float3 vec)
 {
 	vec = vec.Normalized();
+
+	float3 up = GetUpVector();
+
+	float3 right = math::Cross(vec,up);
+	up = math::Cross(vec, right);
+
+	local_transform[0][0] = right.x;
+	local_transform[1][0] = right.y;
+	local_transform[2][0] = right.z;
+
+	local_transform[0][1] = up.x;
+	local_transform[1][1] = up.y;
+	local_transform[2][1] = up.z;
+
 	local_transform[0][2] = vec.x;
 	local_transform[1][2] = vec.y;
 	local_transform[2][2] = vec.z;
+
 	toUpdate = true;
 }
 
 void CompTransform::SetBackwardVector(float3 vec)
 {
-	vec = vec.Normalized();
-	local_transform[0][2] = -vec.x;
-	local_transform[1][2] = -vec.y;
-	local_transform[2][2] = -vec.z;
-	toUpdate = true;
+	SetForwardVector(-vec);
 }
 
 void CompTransform::SetUpVector(float3 vec)
 {
 	vec = vec.Normalized();
+
+	float3 frw = GetForwardVector();
+
+	float3 right = math::Cross(vec, frw);
+	frw = math::Cross(vec, right);
+
+	local_transform[0][0] = right.x;
+	local_transform[1][0] = right.y;
+	local_transform[2][0] = right.z;
+
 	local_transform[0][1] = vec.x;
 	local_transform[1][1] = vec.y;
 	local_transform[2][1] = vec.z;
+
+	local_transform[0][2] = frw.x;
+	local_transform[1][2] = frw.y;
+	local_transform[2][2] = frw.z;
+
 	toUpdate = true;
 }
 
 void CompTransform::SetDownVector(float3 vec)
 {
-	vec = vec.Normalized();
-	local_transform[0][1] = -vec.x;
-	local_transform[1][1] = -vec.y;
-	local_transform[2][1] = -vec.z;
-	toUpdate = true;
+	SetUpVector(-vec);
 }
 
 void CompTransform::SetRightVector(float3 vec)
 {
 	vec = vec.Normalized();
+
+	float3 frw = GetForwardVector();
+
+	float3 up = math::Cross(vec, frw);
+	frw = math::Cross(vec, up);
+
 	local_transform[0][0] = vec.x;
 	local_transform[1][0] = vec.y;
 	local_transform[2][0] = vec.z;
+
+	local_transform[0][1] = up.x;
+	local_transform[1][1] = up.y;
+	local_transform[2][1] = up.z;
+
+	local_transform[0][2] = frw.x;
+	local_transform[1][2] = frw.y;
+	local_transform[2][2] = frw.z;
+
 	toUpdate = true;
 }
 
 void CompTransform::SetLeftVector(float3 vec)
 {
-	vec = vec.Normalized();
-	local_transform[0][0] = -vec.x;
-	local_transform[1][0] = -vec.y;
-	local_transform[2][0] = -vec.z;
-	toUpdate = true;
+	SetRightVector(-vec);
 }
 
 float3 CompTransform::GetPos() const
