@@ -20,14 +20,11 @@ public class CharacterController : CulverinBehaviour
         DEAD
     }
 
-    protected MovementController movement;             // To manage when the player is moving to block attacks/abilities
-    protected Hp health;                               // To handle current hp
-    protected Stamina stamina;                         // To handle current stamina
-    protected Mana mana;                          // To handle current mana
-    protected WeaponController right_weapon;           // Script that will handle right weapon the player is carrying (with its own progression system, stats...)
-    protected CompAnimation anim_controller_right;     // Animation component to handle animations
-    protected WeaponController left_weapon;            // Script that will handle left weapon the player is carrying (with its own progression system, stats...)
-    protected CompAnimation anim_controller_left;      // Animation component to handle animations
+    protected MovementController movement;              // To manage when the player is moving to block attacks/abilities
+    protected Hp health;                                // To handle current hp
+    protected Stamina stamina;                          // To handle current stamina
+    protected Mana mana;                                // To handle current mana
+    protected CompAnimation anim_controller;            // Animation component to handle animations
     protected CompImage icon;
 
     protected Position position = Position.CURRENT; 
@@ -84,7 +81,6 @@ public class CharacterController : CulverinBehaviour
         float ret = mana.GetCurrentMana();
         return ret;
     }
-
 
     public virtual void DecreaseStamina(float stamina_cost)
     {
@@ -155,17 +151,6 @@ public class CharacterController : CulverinBehaviour
     public virtual void UpdateHUD(bool active)
     {
         Debug.Log("Change Current Character HUD");
-
-        //if (active)
-        //{
-        //    //Update HP
-        //    health = health_obj.GetComponent<Hp>();
-        //    health.SetHP(curr_hp, max_hp);
-
-        //    //Update Stamina
-        //    stamina = stamina_obj.GetComponent<Stamina>();
-        //    stamina.SetStamina(curr_stamina, max_stamina);
-        //}
     }
 
     public virtual void ToggleMesh(bool active)
@@ -176,9 +161,9 @@ public class CharacterController : CulverinBehaviour
     {
         return 0.0f;
     }
+
     public virtual void ReduceSecondaryAbilityCoolDown()
     {
-
     }
 
     public virtual void ResetCoolDown()
