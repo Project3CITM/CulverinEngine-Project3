@@ -38,7 +38,7 @@ public class CharacterController : CulverinBehaviour
         Debug.Log("Start Character");
     }
 
-    void Update()
+    public virtual void Update()
     {
         if (position == Position.CURRENT)
         {
@@ -46,7 +46,7 @@ public class CharacterController : CulverinBehaviour
         }
         else if(position == Position.BEHIND)
         {
-            // Secondary Ability is controlled by CharactersManager
+            ReduceSecondaryAbilityCoolDown();
         }
     }
 
@@ -176,12 +176,9 @@ public class CharacterController : CulverinBehaviour
     {
         return 0.0f;
     }
-    public virtual float ReduceCoolDown(float variable)
+    public virtual void ReduceSecondaryAbilityCoolDown()
     {
-        if (variable > 0.0f)
-            return (variable - Time.DeltaTime());
-        else
-            return 0.0f;
+
     }
 
     public virtual void ResetCoolDown()

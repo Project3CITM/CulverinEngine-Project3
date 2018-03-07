@@ -19,31 +19,33 @@ public class JaimeController : CharacterController
 
     protected override void Start()
     {
-
+        sec_ability_current_cd = sec_ability_cd;
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         jaime_obj = GetLinkedObject("jaime_obj");
-        jaime_icon_obj = GetLinkedObject("jaime_icon_obj");
-        lweapon_jaime_obj = GetLinkedObject("lweapon_jaime_obj");
-        rweapon_jaime_obj = GetLinkedObject("rweapon_jaime_obj");
+       jaime_icon_obj = GetLinkedObject("jaime_icon_obj");
+       lweapon_jaime_obj = GetLinkedObject("lweapon_jaime_obj");
+       rweapon_jaime_obj = GetLinkedObject("rweapon_jaime_obj");
 
-        //Disable icon
-        icon = jaime_icon_obj.GetComponent<CompImage>();
-        icon.SetEnabled(false, jaime_icon_obj);
-        icon.SetEnabled(true, jaime_icon_obj);
+       //Disable icon
+       icon = jaime_icon_obj.GetComponent<CompImage>();
+       icon.SetEnabled(false, jaime_icon_obj);
+       icon.SetEnabled(true, jaime_icon_obj);
 
-        Debug.Log(gameObject.GetName());
+       Debug.Log(gameObject.GetName());
 
-        // Start Idle animation
-        anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
-        anim_controller_left.PlayAnimation("Idle");
-        anim_controller_right = rweapon_jaime_obj.GetComponent<CompAnimation>();
-        anim_controller_right.PlayAnimation("Idle");
+       // Start Idle animation
+       anim_controller_left = lweapon_jaime_obj.GetComponent<CompAnimation>();
+       anim_controller_left.PlayAnimation("Idle");
+       anim_controller_right = rweapon_jaime_obj.GetComponent<CompAnimation>();
+       anim_controller_right.PlayAnimation("Idle");
     }
-
+    public override void Update()
+    {
+        base.Update();
+    }
     public override void ControlCharacter()
     {
         // Debug method to control Hp
-        sec_ability_cd = ReduceCoolDown(sec_ability_cd);
         CheckHealth();
       
 
@@ -257,5 +259,11 @@ public class JaimeController : CharacterController
     public override void ResetCoolDown()
     {
         sec_ability_current_cd = sec_ability_cd;
+    }
+
+    public override void ReduceSecondaryAbilityCoolDown()
+    {
+        sec_ability_current_cd -= Time.DeltaTime();
+        Debug.Log(sec_ability_current_cd);
     }
 }

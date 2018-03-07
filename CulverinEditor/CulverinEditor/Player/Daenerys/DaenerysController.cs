@@ -19,42 +19,46 @@ public class DaenerysController : CharacterController
 
     protected override void Start()
     {
-        
-
+        SetPosition(Position.BEHIND);
+        sec_ability_current_cd = sec_ability_cd;
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         daenerys_obj = GetLinkedObject("daenerys_obj");
-        daenerys_icon_obj = GetLinkedObject("daenerys_icon_obj");
-        lweapon_daenerys_obj = GetLinkedObject("lweapon_daenerys_obj");
-        rweapon_daenerys_obj = GetLinkedObject("rweapon_daenerys_obj");
+       daenerys_icon_obj = GetLinkedObject("daenerys_icon_obj");
+       lweapon_daenerys_obj = GetLinkedObject("lweapon_daenerys_obj");
+       rweapon_daenerys_obj = GetLinkedObject("rweapon_daenerys_obj");
 
-        //Disable icon
-        icon = daenerys_icon_obj.GetComponent<CompImage>();
-        icon.SetEnabled(false, daenerys_icon_obj);
+       //Disable icon
+       icon = daenerys_icon_obj.GetComponent<CompImage>();
+       icon.SetEnabled(false, daenerys_icon_obj);
 
-        //Disable Mana bar
-        icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
-        icon.SetEnabled(false, GetLinkedObject("mana_obj"));
+       //Disable Mana bar
+       icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
+       icon.SetEnabled(false, GetLinkedObject("mana_obj"));
 
-        Debug.Log(gameObject.GetName());
+       Debug.Log(gameObject.GetName());
 
-        // Start Idle animation
-        anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
-        anim_controller_left.PlayAnimation("Idle");
-        anim_controller_right = rweapon_daenerys_obj.GetComponent<CompAnimation>();
-        anim_controller_right.PlayAnimation("Idle");
+       // Start Idle animation
+       anim_controller_left = lweapon_daenerys_obj.GetComponent<CompAnimation>();
+       anim_controller_left.PlayAnimation("Idle");
+       anim_controller_right = rweapon_daenerys_obj.GetComponent<CompAnimation>();
+       anim_controller_right.PlayAnimation("Idle");
 
-        ToggleMesh(false);
+       ToggleMesh(false);
 
+    }
+
+    public override void Update()
+    {
+        base.Update();
     }
 
     public override void ControlCharacter()
     {
         // Debug method to control Hp
-        sec_ability_current_cd = ReduceCoolDown(sec_ability_current_cd);
         CheckHealth();
+          
 
-
-        // First check if you are alive
+        //// First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)
         {
@@ -275,5 +279,11 @@ public class DaenerysController : CharacterController
     public override void ResetCoolDown()
     {
         sec_ability_current_cd = sec_ability_cd;
+    }
+
+    public override void ReduceSecondaryAbilityCoolDown()
+    {
+        sec_ability_current_cd -= Time.DeltaTime();
+        Debug.Log(sec_ability_current_cd);
     }
 }

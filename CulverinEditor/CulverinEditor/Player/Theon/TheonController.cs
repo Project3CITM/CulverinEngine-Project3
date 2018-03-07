@@ -18,7 +18,8 @@ public class TheonController : CharacterController
     private float sec_ability_current_cd = 10.0f;
     protected override void Start()
     {
-     
+        SetPosition(Position.BEHIND);
+        sec_ability_current_cd = sec_ability_cd;
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         theon_obj = GetLinkedObject("theon_obj");
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
@@ -41,10 +42,14 @@ public class TheonController : CharacterController
 
     }
 
+    public override void Update()
+    {
+        base.Update();
+    }
+
     public override void ControlCharacter()
     {
         // Debug method to control Hp
-        sec_ability_cd = ReduceCoolDown(sec_ability_cd);
         CheckHealth();
     
 
@@ -253,6 +258,12 @@ public class TheonController : CharacterController
     public override float GetSecondaryAbilityCoolDown()
     {
         return sec_ability_cd;
+    }
+
+    public override void ReduceSecondaryAbilityCoolDown()
+    {
+        sec_ability_current_cd -= Time.DeltaTime();
+        Debug.Log(sec_ability_current_cd);
     }
 
     public override void ResetCoolDown()
