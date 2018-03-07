@@ -26,6 +26,7 @@ public class CharacterController : CulverinBehaviour
     protected Mana mana;                                // To handle current mana
     protected CompAnimation anim_controller;            // Animation component to handle animations
     protected CompImage icon;
+    protected CompButton button;
 
     protected Position position = Position.CURRENT; 
     protected State state = State.IDLE;
@@ -116,6 +117,11 @@ public class CharacterController : CulverinBehaviour
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.GetDamage(-10.0f);
         }
+    }
+
+    public void PlayFx(string name)
+    {
+        GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent(name);
     }
 
     public virtual void ControlCharacter()
