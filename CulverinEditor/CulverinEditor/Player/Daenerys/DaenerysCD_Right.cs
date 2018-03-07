@@ -9,7 +9,7 @@ public class DaenerysCD_Right : CoolDown
         {
             if (in_cd == false)
             {               
-                if(GetLinkedObject("daenerys_obj").GetComponent<DaenerysCont    roller>().OnRightClick() == true)
+                if(GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().OnRightClick() == true)
                 {
                     ActivateAbility();
                 }

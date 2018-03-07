@@ -13,6 +13,8 @@ public class DaenerysController : CharacterController
     public GameObject rarm_daenerys_obj;
     public GameObject larm_daenerys_obj;
 
+    public GameObject particle_firebreath_obj;
+
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
     public float curr_hp = 100.0f;
@@ -21,9 +23,12 @@ public class DaenerysController : CharacterController
     public float sec_ability_cd = 10.0f;
     private float sec_ability_current_cd = 10.0f;
 
+    private CompParticleSystem particle_system;
+
     //Left Ability Stats
     public float mana_cost_percentage_left = 20f;
     public float damage_percentage_left = 10f;
+    public int distance_left_attack = 3;
     private DaenerysCD_Left cd_left;
 
     //Right Ability Stats
@@ -42,9 +47,10 @@ public class DaenerysController : CharacterController
        daenerys_button_right_obj = GetLinkedObject("daenerys_button_right_obj");
        rarm_daenerys_obj = GetLinkedObject("rarm_daenerys_obj");
        larm_daenerys_obj = GetLinkedObject("larm_daenerys_obj");
+       particle_firebreath_obj = GetLinkedObject("particle_firebreath_obj");
 
         //Disable icon
-        icon = daenerys_icon_obj.GetComponent<CompImage>();
+       icon = daenerys_icon_obj.GetComponent<CompImage>();
        icon.SetEnabled(false, daenerys_icon_obj);
 
        //Disable Mana bar
@@ -95,6 +101,8 @@ public class DaenerysController : CharacterController
                             if (anim_controller.IsAnimationStopped("Attack1"))
                             {
                                 state = State.IDLE;
+                                particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
+                                particle_system.ActivateEmission(false);
                             }
                             else
                             {
@@ -322,6 +330,10 @@ public class DaenerysController : CharacterController
                     // Set Attacking Animation
                     SetAnimationTransition("ToAttack1", true);
 
+                    //Play Particle
+                    particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
+                    particle_system.ActivateEmission(true);
+
                     // Play the Sound FX
                     PlayFx("Dracarys");
 
@@ -359,12 +371,12 @@ public class DaenerysController : CharacterController
         Debug.Log("Daenerys LW Going to hit");
 
         // Attack all enemies in 3 rows in front of you
-        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
-        //{
-        //    // To change => check the specific enemy in front of you
-        //    enemy = enemy_obj.GetComponent<EnemyController>();
-        //    enemy.HitPercentage(damage_percentage);
-        //}
+        if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInRow(distance_left_attack))
+        {
+            // To change => check the specific enemy in front of you
+            //enemy = enemy_obj.GetComponent<EnemyController>();
+            //enemy.HitPercentage(damage_percentage);
+        }
     }
 
     //------------------------------
