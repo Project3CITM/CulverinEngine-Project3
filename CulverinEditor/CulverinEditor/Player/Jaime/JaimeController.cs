@@ -271,7 +271,6 @@ public class JaimeController : CharacterController
     public override void ReduceSecondaryAbilityCoolDown()
     {
         sec_ability_current_cd -= Time.DeltaTime();
-        Debug.Log(sec_ability_current_cd);
     }
 
     public void PrepareLeftAbility()
