@@ -288,7 +288,7 @@ bool CompParticleSystem::SaveParticleStates(ResourceMaterial* TextureResource, c
 		SetUInt(conf, "picker_mode", state->picker_mode);
 	}
 
-	if(App->mode_game)
+	if(!App->mode_game)
 		json_serialize_to_file(root_value, assets_file_path.c_str());
 	json_serialize_to_file(root_value, library_file_path.c_str());
 	json_value_free(root_value);
@@ -385,7 +385,7 @@ bool CompParticleSystem::SaveParticleEmitter(const CompParticleSystem* system, c
 	}
 
 	library_file_path += "\\";
-	library_file_path += particle_resource_name;
+	library_file_path += emitter_resource_name;
 	library_file_path += ".json";
 
 	root_value = json_parse_file(library_file_path.c_str());
