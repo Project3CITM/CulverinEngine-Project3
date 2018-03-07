@@ -24,7 +24,7 @@ public class MovementController : CulverinBehaviour
     public Direction curr_dir = Direction.NORTH;
     public Facing curr_fac = Facing.STRAIGHT;
     public int start_direction = 1;
-    private float movSpeed = 0.0f;
+    public float movSpeed = 1.0f;
     Vector3 endPosition;
     Vector3 endRotation;
     public float distanceToMove = 10.0f;
@@ -99,8 +99,9 @@ public class MovementController : CulverinBehaviour
                 {
                     curr_x = x;
                     curr_y = y;
+                    Debug.Log(curr_x + " " + curr_y);
                     array2Da[x, y] = 0;
-                    MovePositionInitial(new Vector3((float)curr_x * distanceToMove, GetComponent<Transform>().position.y, (float)curr_y * distanceToMove));
+                    MovePositionInitial(new Vector3((float)curr_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)curr_y * distanceToMove));
                 }
             }
         }
@@ -115,6 +116,8 @@ public class MovementController : CulverinBehaviour
         // CHARACTER NOT MOVING
         if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false)
         {
+            tile_mov_x = 0;
+            tile_mov_y = 0;
             moving = false;
 
             // CHECK ROTATION --------------------------
@@ -129,15 +132,20 @@ public class MovementController : CulverinBehaviour
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0) && array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
             {
+                Debug.Log("CALC END POS:");
+                Debug.Log("local-> x: "+ GetComponent<Transform>().local_position.x.ToString() + " y: " + GetComponent<Transform>().local_position.y.ToString() + " z: " + GetComponent<Transform>().local_position.z.ToString());
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
+                Debug.Log("end-> x: " + endPosition.x.ToString() + " y: " + endPosition.y.ToString() + " z: " + endPosition.z.ToString());
                 curr_x += tile_mov_x;
                 curr_y += tile_mov_y;
+                moving = true;
             }
         }
         else if (rotating)
         {
-            moving = false;
+            Debug.Log("ROTATING");
 
+            moving = false;
             GetComponent<Transform>().RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.DeltaTime());
             float moved_angle = (float)angle * speed_rotation * Time.DeltaTime();
             if (angle < 0)
@@ -167,10 +175,11 @@ public class MovementController : CulverinBehaviour
             }
 
         }
-        else if(face_rotating)
+        else if (face_rotating)
         {
-            moving = false;
+            Debug.Log("FACE ROTATING");
 
+            moving = false;
             GetComponent<Transform>().RotateAroundAxis(Vector3.Left, face_angle * face_speed_rotation * Time.DeltaTime());
             float moved_angle = (float)face_angle * face_speed_rotation * Time.DeltaTime();
 
@@ -215,10 +224,12 @@ public class MovementController : CulverinBehaviour
                 }
             }
         }
-        else
+        else if (moving)
         {
-            moving = true;
+            Debug.Log("MOVING");
             GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.DeltaTime());
+            Debug.Log("local-> x: " + GetComponent<Transform>().local_position.x.ToString() + " y: " + GetComponent<Transform>().local_position.y.ToString() + " z: " + GetComponent<Transform>().local_position.z.ToString());
+            Debug.Log("end-> x: " + endPosition.x.ToString() + " y: " + endPosition.y.ToString() + " z: " + endPosition.z.ToString());
         }
     }
 
@@ -243,25 +254,25 @@ public class MovementController : CulverinBehaviour
 
     private void CheckMovement()
     {
-        if (Input.GetKeyDown(KeyCode.A) && !EnemyInLeft()) //Left
+        if (Input.GetKeyDown(KeyCode.A) /*&& !EnemyInLeft()*/) //Left
         {
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
             MoveLeft(out tile_mov_x, out tile_mov_y);
         }
-        else if (Input.GetKeyDown(KeyCode.D) && !EnemyInRight()) //Right
+        else if (Input.GetKeyDown(KeyCode.D) /*&& !EnemyInRight()*/) //Right
         {
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
             MoveRight(out tile_mov_x, out tile_mov_y);
         }
-        else if (Input.GetKeyDown(KeyCode.W) && !EnemyInFront()) //Up
+        else if (Input.GetKeyDown(KeyCode.W) /*&& !EnemyInFront()*/) //Up
         {
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
             MoveForward(out tile_mov_x, out tile_mov_y);
         }
-        else if (Input.GetKeyDown(KeyCode.S) && !EnemyBehind()) //Down
+        else if (Input.GetKeyDown(KeyCode.S) /*&& !EnemyBehind()*/) //Down
         {
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
