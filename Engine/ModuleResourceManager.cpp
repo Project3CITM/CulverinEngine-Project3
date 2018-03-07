@@ -73,7 +73,7 @@ bool ModuleResourceManager::Start()
 			{
 				path_resources_library += ".dds";
 			}
-			if (App->fs->CheckIsFileExist(path_resources_library))
+			if (App->fs->CheckIsFileExist(path_resources_library) || to_reimport->GetType() == Resource::Type::ANIMATION)
 			{
 				continue;
 			}
@@ -810,7 +810,15 @@ void ModuleResourceManager::Save()
 			json_object_dotset_number_with_std(config_node, name + "UUID & UUID Directory", it->second->GetUUID());
 			json_object_dotset_number_with_std(config_node, name + "Type", (int)it->second->GetType());
 			json_object_dotset_string_with_std(config_node, name + "Name", it->second->name.c_str());
-			json_object_dotset_string_with_std(config_node, name + "PathAssets", App->fs->GetToAsstes(it->second->path_assets).c_str());
+			if (it->second->GetType() == Resource::Type::ANIMATION)
+			{
+				json_object_dotset_string_with_std(config_node, name + "PathAssets", it->second->path_assets.c_str());
+			}
+			else
+			{
+				json_object_dotset_string_with_std(config_node, name + "PathAssets", App->fs->GetToAsstes(it->second->path_assets).c_str());
+			}
+
 			if (it->second->GetType() == Resource::Type::SCRIPT)
 			{
 				json_object_dotset_string_with_std(config_node, name + "PathDll", ((ResourceScript*)it->second)->GetPathdll().c_str());

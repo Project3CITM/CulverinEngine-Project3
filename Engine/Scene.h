@@ -87,8 +87,8 @@ public:
 	GameObject* CreateText(GameObject* parent = nullptr);
 	GameObject* CreateEditText(GameObject* parent = nullptr);
 
-	void DeleteAllGameObjects(GameObject* gameobject, bool isMain = true);
-	void DeleteGameObject(GameObject* gameobject, bool isImport = false);
+	void DeleteAllGameObjects(GameObject* gameobject, bool isMain = true, bool is_reimport = false);
+	void DeleteGameObject(GameObject* gameobject, bool isImport = false, bool is_reimport = false);
 	// -------------------------------------
 
 	// UI ----------------------------------

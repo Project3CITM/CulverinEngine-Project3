@@ -842,16 +842,19 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 }
 
 // -----------------------------------------------------------------------------
-void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
+void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain, bool is_reimport)
 {
 	for (int i = 0; i < gameobject->GetNumChilds(); i++)
 	{
 		if (gameobject->GetChildbyIndex(i)->GetNumChilds() > 0)
 		{
-			DeleteAllGameObjects(gameobject->GetChildbyIndex(i), false);
+			DeleteAllGameObjects(gameobject->GetChildbyIndex(i), false, is_reimport);
 		}
 
-		SetScriptVariablesToNull(gameobject->GetChildbyIndex(i));
+		if (is_reimport == false)
+		{
+			SetScriptVariablesToNull(gameobject->GetChildbyIndex(i));
+		}
 
 		// First of all, Set nullptr all pointer to this GameObject
 		if (App->camera->GetFocus() == gameobject->GetChildbyIndex(i))
@@ -896,7 +899,7 @@ void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain)
 	}
 }
 
-void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
+void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reimport)
 {
 	if (gameobject != nullptr)
 	{
@@ -906,7 +909,8 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 			App->camera->SetFocusNull();
 		}
 
-		SetScriptVariablesToNull(gameobject);
+		if(is_reimport == false)
+			SetScriptVariablesToNull(gameobject);
 
 		if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == gameobject)
 		{
@@ -916,7 +920,7 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 		// First Delete All Childs and their components
 		if (gameobject->GetNumChilds() > 0)
 		{
-			DeleteAllGameObjects(gameobject, false);
+			DeleteAllGameObjects(gameobject, false, is_reimport);
 		}
 
 		// Then Delete Components
@@ -932,7 +936,7 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport)
 			gameobject->GetParent()->RemoveChildbyIndex(index);
 		}
 
-		else if (isImport == false)
+		else if (isImport == false && is_reimport == false)
 		{
 			int index = 0;
 			for (int i = 0; i < root->GetNumChilds(); i++)

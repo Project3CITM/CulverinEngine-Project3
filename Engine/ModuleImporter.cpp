@@ -336,8 +336,16 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 			App->json_seria->SavePrefab(*obj, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
 
 			//TODO-> Elliot -------------------------------------------
-			App->scene->root->AddChildGameObject(obj); // Temp obj needs to be erased
-			App->scene->DeleteGameObject(obj);
+			if (auto_reimport == false)
+			{
+				App->scene->root->AddChildGameObject(obj); // Temp obj needs to be erased
+				App->scene->DeleteGameObject(obj);
+			}
+			else
+			{
+				App->scene->DeleteGameObject(obj, false, true);
+			}
+
 			//---------------------------------------------------------
 		}
 		else
