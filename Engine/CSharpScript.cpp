@@ -536,6 +536,7 @@ void CSharpScript::GetScriptVariables()
 			}
 		}
 		parent = mono_class_get_parent(parent);
+		iter = nullptr;
 	}
 	iter = nullptr;
 
