@@ -19,7 +19,6 @@ public class DaenerysWeapon_Left : WeaponController
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
         daenerys_obj = GetLinkedObject("daenerys_obj");
         daenerys_button_left = GetLinkedObject("daenerys_button_left");
-        enemy_obj = GetLinkedObject("enemy_obj");
     }
 
     void Update()

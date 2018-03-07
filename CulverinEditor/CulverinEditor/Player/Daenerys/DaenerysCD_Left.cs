@@ -31,10 +31,11 @@ public class DaenerysCD_Left : CoolDown
         {
             if (in_cd == false)
             {
-                ActivateAbility();
-
-                // Set Attacking State
-                GetLinkedObject("daenerys_obj").GetComponent<CharacterController>().SetState(CharacterController.State.ATTACKING);
+                if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().OnLeftClick() == true)
+                {
+                    ActivateAbility();
+                }
+                
             }
         }
     }

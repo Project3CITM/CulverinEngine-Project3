@@ -8,11 +8,11 @@ public class DaenerysCD_Right : CoolDown
         if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().GetState() == 0)
         {
             if (in_cd == false)
-            {
-                ActivateAbility();
-
-                // Set State
-                GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().SetState(CharacterController.State.COVER);
+            {               
+                if(GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().OnRightClick() == true)
+                {
+                    ActivateAbility();
+                }
             }
         }
     }
