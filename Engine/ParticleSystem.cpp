@@ -1209,19 +1209,19 @@ void ParticleSystem::DrawEmitterOptions()
 	case 3: //EmitterType_Box
 	{
 		ImGui::PushItemWidth(200);
-		static float SizeX = 1.0f;
+		float SizeX = Emitter.EmitterShape.Box_Shape.maxPoint.x * 2;
 		if (ImGui::DragFloat("Size X", &SizeX, 0.1f, 0.0f, 100.0f))
 		{
 			Emitter.EmitterShape.Box_Shape.maxPoint.x = SizeX / 2.0f;
 			Emitter.EmitterShape.Box_Shape.minPoint.x = -SizeX / 2.0f;
 		}
-		static float SizeY = 1.0f;
+		float SizeY = Emitter.EmitterShape.Box_Shape.maxPoint.y * 2;
 		if (ImGui::DragFloat("Size Y", &SizeY, 0.1f, 0.0f, 100.0f))
 		{
 			Emitter.EmitterShape.Box_Shape.maxPoint.y = SizeY / 2.0f;
 			Emitter.EmitterShape.Box_Shape.minPoint.y = -SizeY / 2.0f;
 		}
-		static float SizeZ = 1.0f;
+		float SizeZ = Emitter.EmitterShape.Box_Shape.maxPoint.z * 2;
 		if (ImGui::DragFloat("Size Z", &SizeZ, 0.1f, 0.0f, 100.0f))
 		{
 			Emitter.EmitterShape.Box_Shape.maxPoint.z = SizeZ / 2.0f;
