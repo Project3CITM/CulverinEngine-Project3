@@ -9,10 +9,12 @@ public class TheonCD_Left : CoolDown
         {
             if (in_cd == false)
             {
-                ActivateAbility();
+                if (GetLinkedObject("theon_obj").GetComponent<TheonController>().OnLeftClick() == true)
+                {
+                    ActivateAbility();
 
-                // Set Attacking State
-                GetLinkedObject("theon_obj").GetComponent<CharacterController>().SetState(CharacterController.State.ATTACKING);
+                    // Set Attacking State
+                }
             }
         }
     }

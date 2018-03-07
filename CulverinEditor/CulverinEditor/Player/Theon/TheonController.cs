@@ -4,10 +4,14 @@ using CulverinEditor.Debug;
 public class TheonController : CharacterController
 {
     public GameObject theon_obj; //Maybe this should be in charactercontroller since we're only having 1 camera which will be the movementcontroller/charactermanager?
+    public GameObject L_Arm_Theon;
+    public GameObject R_Arm_Theon;
 
-    public GameObject rweapon_theon_obj;
-    public GameObject lweapon_theon_obj;
     public GameObject theon_icon_obj;
+
+    public GameObject theon_button_left;
+    public GameObject theon_button_right;
+
 
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
@@ -16,6 +20,18 @@ public class TheonController : CharacterController
     public float curr_stamina = 100.0f;
     public float sec_ability_cd = 10.0f;
     private float sec_ability_current_cd = 10.0f;
+
+    //LEFT ABILITY STATS-------------------
+    public float left_ability_dmg = 10;
+    public float left_ability_cost = 10.0f;
+    private TheonCD_Left cd_left;
+    //----------------------------------------
+    //RIGHT ABILITY STATS-------------------
+    public float right_ability_dmg = 10;
+    public float right_ability_cost = 10.0f;
+    private TheonCD_Right cd_right;
+    //----------------------------------------
+
     protected override void Start()
     {
         SetPosition(Position.BEHIND);
@@ -23,9 +39,10 @@ public class TheonController : CharacterController
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         theon_obj = GetLinkedObject("theon_obj");
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
-        lweapon_theon_obj = GetLinkedObject("lweapon_theon_obj");
-        rweapon_theon_obj = GetLinkedObject("rweapon_theon_obj");
-
+        theon_button_right = GetLinkedObject("theon_button_right");
+        theon_button_left = GetLinkedObject("theon_button_left");
+        L_Arm_Theon = GetLinkedObject("L_Arm_Theon");
+        R_Arm_Theon = GetLinkedObject("R_Arm_Theon");
         //Disable icon
         icon = theon_icon_obj.GetComponent<CompImage>();
         icon.SetEnabled(false, theon_icon_obj);
@@ -33,10 +50,8 @@ public class TheonController : CharacterController
         Debug.Log(gameObject.GetName());
 
         // Start Idle animation
-        anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
-        anim_controller_left.PlayAnimation("Idle");
-        anim_controller_right = rweapon_theon_obj.GetComponent<CompAnimation>();
-        anim_controller_right.PlayAnimation("Idle");
+        anim_controller = theon_obj.GetComponent<CompAnimation>();
+        
 
         ToggleMesh(false);
 
@@ -74,8 +89,8 @@ public class TheonController : CharacterController
                     case State.ATTACKING:
                         {
                             //Check for end of the Attack animation
-                            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
-                            if (anim_controller_left.IsAnimationStopped("Attack1"))
+                            anim_controller = theon_obj.GetComponent<CompAnimation>();
+                            if (anim_controller.IsAnimationStopped("Attack1"))
                             {
                                 state = State.IDLE;
                             }
@@ -89,9 +104,9 @@ public class TheonController : CharacterController
                     case State.COVER:
                         {
                             //Check for end of the Attack animation
-                            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
+                            anim_controller = theon_obj.GetComponent<CompAnimation>();
 
-                            if (anim_controller_left.IsAnimationStopped("Cover"))
+                            if (anim_controller.IsAnimationStopped("Cover"))
                             {
                                 state = State.IDLE;
                             }
@@ -105,8 +120,8 @@ public class TheonController : CharacterController
                     case State.BLOCKING:
                         {
                             //Check for end of the Attack animation
-                            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
-                            if (anim_controller_left.IsAnimationStopped("Block"))
+                            anim_controller = theon_obj.GetComponent<CompAnimation>();
+                            if (anim_controller.IsAnimationStopped("Block"))
                             {
                                 state = State.IDLE;
                             }
@@ -120,8 +135,8 @@ public class TheonController : CharacterController
                     case State.HIT:
                         {
                             //Check for end of the Attack animation
-                            anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
-                            if (anim_controller_left.IsAnimationStopped("Hit"))
+                            anim_controller = theon_obj.GetComponent<CompAnimation>();
+                            if (anim_controller.IsAnimationStopped("Hit"))
                             {
                                 state = State.IDLE;
                             }
@@ -152,14 +167,14 @@ public class TheonController : CharacterController
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             Debug.Log("Theon Pressed 1");
-            lweapon_theon_obj.GetComponent<JaimeWeapon_Left>().PrepareAbility();
+            PrepareLeftAbility();
         }
 
         //Right Attack
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Theon Pressed 2");
-            rweapon_theon_obj.GetComponent<JaimeWeapon_Right>().PrepareAbility();
+            //PrepareAbility();
         }
     }
 
@@ -193,11 +208,7 @@ public class TheonController : CharacterController
 
     public override void SetAnimationTransition(string name, bool value)
     {
-        anim_controller_right = rweapon_theon_obj.GetComponent<CompAnimation>();
-        anim_controller_right.SetTransition(name, value);
-
-        anim_controller_left = lweapon_theon_obj.GetComponent<CompAnimation>();
-        anim_controller_left.SetTransition(name, value);
+        anim_controller.SetTransition(name, value);
     }
 
     public override void UpdateHUD(bool active)
@@ -236,14 +247,13 @@ public class TheonController : CharacterController
 
     public override bool IsAnimationStopped(string name)
     {
-        anim_controller_right = rweapon_theon_obj.GetComponent<CompAnimation>();
-        return anim_controller_right.IsAnimationStopped(name);
+        return anim_controller.IsAnimationStopped(name);
     }
 
     public override void ToggleMesh(bool active)
     {
-        lweapon_theon_obj.GetComponent<CompMesh>().SetEnabled(active, lweapon_theon_obj);
-        rweapon_theon_obj.GetComponent<CompMesh>().SetEnabled(active, rweapon_theon_obj);
+        L_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, L_Arm_Theon);
+        R_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, R_Arm_Theon);
     }
 
     public bool IsSecondaryAbilityReady()
@@ -271,5 +281,141 @@ public class TheonController : CharacterController
         sec_ability_current_cd = sec_ability_cd;
         Debug.Log("new CD");
         Debug.Log(sec_ability_current_cd);
+    }
+
+    public bool OnLeftClick()
+    {
+        
+        // Check if player is in Idle State
+        if (state == State.IDLE) /*0 = IDLE*/
+        {
+            // Check if player has enough stamina to perform its attack
+            if (GetCurrentStamina() > left_ability_cost)
+            {
+                cd_left = theon_button_left.GetComponent<TheonCD_Left>();
+                //Check if the ability is not in cooldown
+                if (!cd_left.in_cd)
+                                {
+                    Debug.Log("Theon LW Going to Attack");
+
+                    // First, OnClick of LeftWeapon, then, onClick of Cooldown
+                    DoLeftAbility();
+                    SetState(State.ATTACKING);
+                    // Set Attacking Animation
+                    SetAnimationTransition("ToAttack1", true);
+
+                    // Play the Sound FX
+                    PlayFx();
+
+                    return true;
+                }
+                else
+                {
+                    Debug.Log("Ability in CD");
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.Log("Not Enough Stamina");
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public void PrepareLeftAbility()
+    {
+        Debug.Log("Theon LW Prepare Ability");
+        OnLeftClick();
+        button = theon_button_left.GetComponent<CompButton>();
+        button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
+    }
+
+    public void DoLeftAbility() //Might be virtual
+    {
+        Debug.Log("Theon LW Attack Left");
+
+        // Decrease stamina -----------
+        DecreaseStamina(left_ability_cost);
+
+        Debug.Log("Theon LW Going to hit");
+
+        // Attack the enemy in front of you
+        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
+        //{
+        //    // To change => check the specific enemy in front of you
+        //    enemy = enemy_obj.GetComponent<EnemyController>();
+        //    enemy.Hit(attack_dmg);
+        //}
+    }
+
+    public void PlayFx()
+    {
+        //GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("SwordSlash");
+    }
+
+    public bool OnRightClick()
+    {
+       
+        // Check if player is in Idle State
+        if (state == State.IDLE)
+        {
+            // Check if player has enough stamina to perform its attack
+            if (GetCurrentStamina() > right_ability_cost)
+            {
+                cd_right = theon_button_left.GetComponent<TheonCD_Right>();
+                //Check if the ability is not in cooldown
+                if (!cd_right.in_cd)
+                {
+                    Debug.Log("Theon RW Going to Block");
+
+                    // First, OnClick of RightWeapon, then, onClick of Cooldown
+                    DoRightAbility();
+                    SetState(State.ATTACKING);
+                    // Set Animation
+                    SetAnimationTransition("ToCover", true);
+
+                    return true;
+
+                }
+                else
+                {
+                    Debug.Log("Theon RW Ability in CD");
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.Log("Theon RW Not Enough Stamina");
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public void PrepareAbility()
+    {
+        Debug.Log("Theon RW Prepare Block");
+        button = theon_button_right.GetComponent<CompButton>();
+        button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
+    }
+
+    public void DoRightAbility() //Might be virtual
+    {
+        Debug.Log("Theon LW Attack Left");
+
+        // Decrease stamina -----------
+        DecreaseStamina(right_ability_cost);
+
+        Debug.Log("Theon LW Going to hit");
+
+        // Attack the enemy in front of you
+        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
+        //{
+        //    // To change => check the specific enemy in front of you
+        //    enemy = enemy_obj.GetComponent<EnemyController>();
+        //    enemy.Hit(attack_dmg);
+        //}
     }
 }
