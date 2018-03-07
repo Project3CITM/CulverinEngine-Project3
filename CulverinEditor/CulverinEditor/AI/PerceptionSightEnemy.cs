@@ -56,21 +56,15 @@ public class PerceptionSightEnemy : CulverinBehaviour
                 string_pos += 1;
             }
         }
+
+        player_seen = false;
     }
 
     void Update()
     {
-        //TODO: Remove all logs in the update!
         //TODO: Optimization --> Check if player is out of range
         if (true)
         {
-            //  Debug.Log("Player X: " + player_obj.GetComponent<MovementController>().curr_x);
-            //  Debug.Log("Player Y: " + player_obj.GetComponent<MovementController>().curr_y);
-            //  Debug.Log("Player X: " + player_x);
-            //  Debug.Log("Player Y: " + player_y);
-            //  Debug.Log("Current Tile: (" + GetCurrentTileX() + ", " + GetCurrentTileY() + ")");
-            //  Debug.Log("Frustum size: " + frustum_size);
-            //  Debug.Log("Frustum lenght: " + frustum_lenght);
             bool search_finished = false;
             List<int> blocked_tiles_x = new List<int>();
             List<int> blocked_tiles_y = new List<int>();
@@ -141,7 +135,7 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
                                         if (player_seen == false)
                                         {
-                                            //TODO: GetComponent<Movement_Action>().GoTo()
+                                            GetComponent<Movement_Action>().GoTo(GetCurrentTileX(), GetCurrentTileY(), tile_x, tile_y);
                                             player_seen = true;
                                         }
                                         break;
@@ -229,7 +223,7 @@ public class PerceptionSightEnemy : CulverinBehaviour
                         if (search_finished == true)
                             break;
                         else if (j == (frustum_lenght - 1))    // If player is out of range
-                            player_seen = false;                        
+                            player_seen = false;
                     }
                     break;
                 case DIRECTION.E_DIR_EAST:
