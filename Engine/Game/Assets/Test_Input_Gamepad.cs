@@ -77,6 +77,21 @@ public class Test_Input_Gamepad : CulverinBehaviour
             //go_trans.local_position += (go_trans.local_position * variation * additive);
             Debug.Log("Right Joystick Vertical Down");
         }
+
+
+        if (Input.GetInput_KeyDown("Interact","Player"))
+        {
+            Debug.Log("Key Down interact");
+        }
+        else if(Input.GetInput_KeyUp("Interact", "Player"))
+        {
+            Debug.Log("Key Up interact");
+        }
+        else if (Input.GetInput_KeyRepeat("Interact", "Player"))
+        {
+            Debug.Log("Key Repeat interact");
+        }
+
     }
 
 }

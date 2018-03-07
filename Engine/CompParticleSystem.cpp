@@ -55,7 +55,11 @@ void CompParticleSystem::PreUpdate(float dt)
 void CompParticleSystem::Update(float dt)
 {
 	if (pop_up_load_open) ImGuiLoadPopUp();
-	if (pop_up_save_open) ImGuiSavePopUp();
+	if (pop_up_save_open) 
+	{ 
+		ImGuiSavePopUp();
+		pop_up_save_open = false;
+	}
 
 	if (!child_loaded && part_system->IsEmitterDead() && !child_particle.empty() && !child_emitter.empty())
 	{
@@ -205,22 +209,28 @@ bool CompParticleSystem::SaveParticleStates(ResourceMaterial* TextureResource, c
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
-	App->fs->CreateFolder("Assets/ParticleSystem");
-	App->fs->CreateFolder("Assets/ParticleSystem/Particles");
+
+
+	std::string assets_file_path;
+	if (!App->mode_game)
+	{
+		App->fs->CreateFolder("Assets/ParticleSystem");
+		App->fs->CreateFolder("Assets/ParticleSystem/Particles");
+		assets_file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Particles");
+		assets_file_path += "\\";
+		assets_file_path += particle_resource_name;
+		assets_file_path += ".json";
+
+	}
 	App->fs->CreateFolder("Library/ParticleSystem");
 	App->fs->CreateFolder("Library/ParticleSystem/Particles");
-	std::string assets_file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Particles");
 	std::string library_file_path = App->fs->GetFullPath("Library\\ParticleSystem\\Particles");
 	
-	assets_file_path += "\\";
-	assets_file_path += particle_resource_name;
-	assets_file_path += ".json";
-
 	library_file_path += "\\";
 	library_file_path += particle_resource_name;
 	library_file_path += ".json";
 
-	root_value = json_parse_file(assets_file_path.c_str());
+	root_value = json_parse_file(library_file_path.c_str());
 	if (root_value == NULL)
 		root_value = json_value_init_object();
 	root_object = json_value_get_object(root_value);
@@ -278,7 +288,8 @@ bool CompParticleSystem::SaveParticleStates(ResourceMaterial* TextureResource, c
 		SetUInt(conf, "picker_mode", state->picker_mode);
 	}
 
-	json_serialize_to_file(root_value, assets_file_path.c_str());
+	if(App->mode_game)
+		json_serialize_to_file(root_value, assets_file_path.c_str());
 	json_serialize_to_file(root_value, library_file_path.c_str());
 	json_value_free(root_value);
 	return true;
@@ -357,22 +368,27 @@ bool CompParticleSystem::SaveParticleEmitter(const CompParticleSystem* system, c
 {
 	JSON_Value* root_value = nullptr;
 	JSON_Object* root_object = nullptr;
-	App->fs->CreateFolder("Assets/ParticleSystem");
-	App->fs->CreateFolder("Assets/ParticleSystem/Emitters");
+
 	App->fs->CreateFolder("Library/ParticleSystem");
 	App->fs->CreateFolder("Library/ParticleSystem/Emitters");
-	std::string file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters");
+	std::string assets_file_path;
 	std::string library_file_path = App->fs->GetFullPath("Library\\ParticleSystem\\Emitters");
 
-	file_path += "\\";
-	file_path += emitter_resource_name;
-	file_path += ".json";
+	if (!App->mode_game)
+	{
+		App->fs->CreateFolder("Assets/ParticleSystem");
+		App->fs->CreateFolder("Assets/ParticleSystem/Emitters");
+		assets_file_path = App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters");
+		assets_file_path += "\\";
+		assets_file_path += emitter_resource_name;
+		assets_file_path += ".json";
+	}
 
 	library_file_path += "\\";
 	library_file_path += particle_resource_name;
 	library_file_path += ".json";
 
-	root_value = json_parse_file(file_path.c_str());
+	root_value = json_parse_file(library_file_path.c_str());
 	if (root_value == NULL)
 		root_value = json_value_init_object();
 	root_object = json_value_get_object(root_value);
@@ -430,7 +446,9 @@ bool CompParticleSystem::SaveParticleEmitter(const CompParticleSystem* system, c
 		break;
 	}
 
-	json_serialize_to_file(root_value, file_path.c_str());
+	if(!App->mode_game)
+		json_serialize_to_file(root_value, assets_file_path.c_str());
+
 	json_serialize_to_file(root_value, library_file_path.c_str());
 	json_value_free(root_value);
 	return true;

@@ -561,11 +561,15 @@ void CSharpScript::GetScriptVariables()
 
 		//Set info about accessibility of the variable -> DOESN'T WORK!!!
 		flags = mono_field_get_flags(it->first);
-		if ((flags & MONO_FIELD_ATTR_PUBLIC))
+		if (flags == MONO_FIELD_ATTR_FAMILY)
+		{
+			access = VarAccess::Var_PRIVATE;
+		}
+		if (flags == MONO_FIELD_ATTR_PUBLIC)
 		{
 			access = VarAccess::Var_PUBLIC;
 		}
-		else if ((flags & MONO_FIELD_ATTR_PRIVATE))
+		if (flags == MONO_FIELD_ATTR_PRIVATE)
 		{
 			access = VarAccess::Var_PRIVATE;
 		}

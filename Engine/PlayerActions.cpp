@@ -264,20 +264,19 @@ bool PlayerActions::GetInput_KeyDown(const char * key, const char * input)
 
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
 			continue;
 		else if ((*it)->GetBlockAction())
-			return false;
+			return false;*/
 		if (strcmp((*it)->GetName(), input) == 0) 
 		{
-			KeyAction* key_t= (*it)->GetKey(key);
-			if (key_t->state == Keystateaction::KEY_DOWN_ACTION) 
+			std::vector<KeyAction*> key_t= (*it)->GetKey(key);
+			for (int i = 0; i < key_t.size(); i++)
 			{
-				return true;
-			}
-			else 
-			{
-				return false;
+				if (key_t[i]->OnClick())
+				{
+					return true;
+				}
 			}
 		}
 
@@ -290,22 +289,19 @@ bool PlayerActions::GetInput_KeyUp(const char * key, const char * input)
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
 			continue;
 		else if ((*it)->GetBlockAction())
-			return false;
+			return false;*/
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 
-			KeyAction* key_t = (*it)->GetKey(key);
-			if (key_t != nullptr) {
-				if (key_t->state == Keystateaction::KEY_UP_ACTION)
+			std::vector<KeyAction*> key_t = (*it)->GetKey(key);
+			for (int i = 0; i < key_t.size(); i++)
+			{
+				if (key_t[i]->OnRelease())
 				{
 					return true;
-				}
-				else
-				{
-					return false;
 				}
 			}
 		}
@@ -319,21 +315,20 @@ bool PlayerActions::GetInput_KeyRepeat(const char * key, const char * input)
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
 			continue;
 		else if ((*it)->GetBlockAction())
-			return false;
+			return false;*/
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 
-			KeyAction* key_t = (*it)->GetKey(key);
-			if (key_t->state == Keystateaction::KEY_REPEAT_ACTION)
+			std::vector<KeyAction*> key_t = (*it)->GetKey(key);
+			for (int i = 0; i < key_t.size(); i++)
 			{
-				return true;
-			}
-			else
-			{
-				return false;
+				if (key_t[i]->OnRepeat())
+				{
+					return true;
+				}
 			}
 
 		}
@@ -348,10 +343,10 @@ bool PlayerActions::GetInput_MouseButtonDown(const char* name, const char * inpu
 
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
 			continue;
 		else if ((*it)->GetBlockAction())
-			return false;
+			return false;*/
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 
@@ -376,10 +371,10 @@ bool PlayerActions::GetInput_MouseButtonUp(const char * name, const char * input
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
 			continue;
 		else if ((*it)->GetBlockAction())
-			return false;
+			return false;*/
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 
@@ -403,10 +398,10 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
 			continue;
 		else if ((*it)->GetBlockAction())
-			return 0;
+			return 0;*/
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 

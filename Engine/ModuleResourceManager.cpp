@@ -306,7 +306,7 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 				// Delete to memory
 				it->second->DeleteToMemory();
 				// First Delete file save in Library
-				LOG("Delete %s", it->second->name);
+				LOG("Delete %s", it->second->name.c_str());
 				if (it->second->GetType() == Resource::Type::MATERIAL)
 				{
 					App->fs->DeleteFileLibrary(std::to_string(it->second->GetUUID()).c_str(), DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_MATERIALS);

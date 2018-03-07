@@ -4,6 +4,7 @@ using CulverinEditor.Debug;
 public class EnemyController : CulverinBehaviour
 {
     // STATS ---------
+    public float max_hp = 0.0f;
     public float hp = 0.0f;
     public float attack_dmg = 0.0f;
     public float mov_speed = 1.0f; // Seconds to pass between movement
@@ -11,7 +12,7 @@ public class EnemyController : CulverinBehaviour
 
     void Start()
     {
-
+        hp = max_hp;
     }
 
     void Update()
@@ -23,6 +24,12 @@ public class EnemyController : CulverinBehaviour
         hp -= damage;
         GetComponent<CompAudio>().PlayEvent("FleshCut");
         Debug.Log("Hit. Curr HP -> " + hp.ToString());
+    }
+
+    public void HitPercentage (float damage_percentage)
+    {
+        float damage = damage_percentage * max_hp / 100.0f;
+        Hit(damage);
     }
 }
 

@@ -13,7 +13,7 @@ public class CoolDown : CulverinBehaviour
     {
     }
 
-    void Update()
+    public virtual void Update()
     {
         if (in_cd)
         {

@@ -6,7 +6,7 @@ using CulverinEditor.Debug;
 public class TheonWeapon_Left : WeaponController
 {
     public GameObject theon_obj;
-    public GameObject theon_button_left;
+    
 
     TheonController character;
 
@@ -14,7 +14,7 @@ public class TheonWeapon_Left : WeaponController
     {
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
         theon_obj = GetLinkedObject("theon_obj");
-        theon_button_left = GetLinkedObject("theon_button_left");
+        
         enemy_obj = GetLinkedObject("enemy_obj");
     }
 

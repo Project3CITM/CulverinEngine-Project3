@@ -8,6 +8,9 @@ public class DaenerysWeapon_Right : WeaponController
     public GameObject daenerys_obj;
     public GameObject daenerys_button_right;
 
+    public float mana_cost_percentage = 20f;
+    public float damage_percentage = 10f;
+
     DaenerysController character;
 
     public override void Start()
@@ -29,21 +32,22 @@ public class DaenerysWeapon_Right : WeaponController
         // Check if player is in Idle State
         if (character.GetState() == 0)
         {
-            // Check if player has enough stamina to perform its attack
-            if (character.GetCurrentStamina() > stamina_cost)
+            // Check if player has enough mana to perform its attack
+            float mana_cost = mana_cost_percentage * character.max_mana / 100.0f;
+            if (character.GetCurrentMana() > mana_cost)
             {
                 //cd = daenerys_button_right.GetComponent<CoolDown>();
                 //Check if the ability is not in cooldown
                 //if (!cd.in_cd)
                 if(1 == 1)
                 {
-                    Debug.Log("Daenerys RW Going to Block");
+                    Debug.Log("Daenerys RW Going to Set Fire Wall");
 
                     // First, OnClick of RightWeapon, then, onClick of Cooldown
                     DoAbility();
 
                     // Set Animation
-                    character.SetAnimationTransition("ToCover", true);
+                    character.SetAnimationTransition("ToFireWall", true);
                 }
                 else
                 {
@@ -52,7 +56,7 @@ public class DaenerysWeapon_Right : WeaponController
             }
             else
             {
-                Debug.Log("Daenerys RW Not Enough Stamina");
+                Debug.Log("Daenerys RW Not Enough Mana");
             }
         }
     }
@@ -63,5 +67,24 @@ public class DaenerysWeapon_Right : WeaponController
         OnClick();
         //button = daenerys_button_right.GetComponent<CompButton>();
         //button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
+    }
+
+    public override void DoAbility() //Might be virtual
+    {
+        Debug.Log("Daenerys RW Attack Right");
+
+        // Decrease mana -----------
+        character = daenerys_obj.GetComponent<DaenerysController>();
+        character.DecreaseManaPercentage(mana_cost_percentage);
+
+        Debug.Log("Daenerys RW Going to hit");
+
+        // Set a fire wall in north tile
+        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
+        //{
+        //    // To change => check the specific enemy in front of you
+        //    enemy = enemy_obj.GetComponent<EnemyController>();
+        //    enemy.HitPercentage(damage_percentage);
+        //}
     }
 }

@@ -17,7 +17,7 @@ public:
 	void Clear();
 	ControllerAxisAction* GetAxis(const char* name);
 	//ButtonAction* GetButton(const char* name);
-	KeyAction* GetKey(const char* name);
+	std::vector<KeyAction*> GetKey(const char* name);
 	MouseButtonAction* GetMouseButton(const char* name);
 
 	void ShowInspectorInfo();

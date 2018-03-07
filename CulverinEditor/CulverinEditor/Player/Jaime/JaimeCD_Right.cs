@@ -9,10 +9,10 @@ public class JaimeCD_Right : CoolDown
         {
             if (in_cd == false)
             {
-                ActivateAbility();
-
-                // Set Attacking State
-                GetLinkedObject("jaime_obj").GetComponent<CharacterController>().SetState(CharacterController.State.COVER);
+                if (GetLinkedObject("jaime_obj").GetComponent<JaimeController>().OnRightClick())
+                {
+                    ActivateAbility();
+                }
             }
         }
     }
