@@ -173,7 +173,6 @@ public class MovementController : CulverinBehaviour
                     }
                 }
             }
-
         }
         else if (face_rotating)
         {
