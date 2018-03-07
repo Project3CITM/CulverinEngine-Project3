@@ -442,23 +442,34 @@ void ModuleInput::UIInputManagerUpdate()
 		return;
 	if (!ui_manager->GetActiveInput())
 		return;
-	if (ui_manager->GetKey(submit.c_str())->OnClick())
+
+	std::vector<KeyAction*> vect_temp = ui_manager->GetKey(submit.c_str());
+	for (int i = 0; i < vect_temp.size(); i++)
 	{
-		Event mouse_event;
-		mouse_event.gui_submit.type = EventType::EVENT_SUBMIT;
-		mouse_event.gui_submit.active = true;
-		PushEvent(mouse_event);
+		if (vect_temp[i]->OnClick())
+		{
+			Event mouse_event;
+			mouse_event.gui_submit.type = EventType::EVENT_SUBMIT;
+			mouse_event.gui_submit.active = true;
+			PushEvent(mouse_event);
 
+		}
 	}
-	if (ui_manager->GetKey(cancel.c_str())->OnClick())
+	vect_temp.clear();
+	vect_temp = ui_manager->GetKey(cancel.c_str());
+	for (int i = 0; i < vect_temp.size(); i++)
 	{
-		Event mouse_event;
-		mouse_event.gui_cancel.type = EventType::EVENT_CANCEL;
-		mouse_event.gui_cancel.active = true;
-		PushEvent(mouse_event);
+		if (vect_temp[i]->OnClick())
+		{
 
-
+				Event mouse_event;
+				mouse_event.gui_cancel.type = EventType::EVENT_CANCEL;
+				mouse_event.gui_cancel.active = true;
+				PushEvent(mouse_event);
+		}
 	}
+	vect_temp.clear();
+
 	if (ui_manager->GetAxis(vertical.c_str())->direction_axis > 0.8f)
 	{
 		Event mouse_event;
