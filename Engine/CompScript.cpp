@@ -655,7 +655,8 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 			// LOAD SCRIPT -------------------------
 			if (resource_script->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
-				App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script);
+				resource_script->SetState(Resource::State::LOADED);
+				//App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script);
 			}
 
 			if (resource_script->GetState() != Resource::State::FAILED)

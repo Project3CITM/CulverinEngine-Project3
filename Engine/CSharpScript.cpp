@@ -1260,7 +1260,15 @@ void CSharpScript::Load(const JSON_Object* object, std::string name)
 		temp_var = name + "Variables.Variable " + std::to_string(i);
 		temp_var += ".";
 
-		variables[i]->Load(object, temp_var, re_load_values);
+		
+		std::string name_variable_temp = json_object_dotget_string_with_std(object, temp_var + "Name: ");
+		for (int j = 0; j < variables.size(); j++)
+		{
+			if (strcmp(variables[j]->name, name_variable_temp.c_str()) == 0)
+			{
+				variables[j]->Load(object, temp_var, re_load_values);
+			}
+		}
 	}
 }
 
