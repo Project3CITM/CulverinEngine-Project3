@@ -27,7 +27,7 @@ public class BarrelMovement : CulverinBehaviour
     {
 
         restart = false;
-        Vector3 diff = trans.GetPosition() - new Vector3(manage.restart_pos_x, manage.restart_pos_y, manage.restart_pos_z);
+        Vector3 diff = trans.local_position - new Vector3(manage.restart_pos_x, manage.restart_pos_y, manage.restart_pos_z);
         if (diff.Length >= manage.length)
         {
            Quaternion quat = rigid.GetColliderQuaternion();
