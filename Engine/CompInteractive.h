@@ -27,7 +27,7 @@ struct Navigation
 	int inteactive_right_uid = 0;
 	CompInteractive* interactive_left = nullptr;
 	int inteactive_left_uid = 0;
-
+	std::vector<CompInteractive*> assigned_to_me;
 
 };
 
@@ -57,10 +57,11 @@ public:
 	void Activate();
 
 	void Deactive();
+	void NavigationRemove(CompInteractive* to_remove);
 	virtual void ForceClear(Event event_input);
 	void TryConversion();
 	void ShowNavigationInfo();
-
+	Component* ShowInteractiveWindow();
 	CompInteractive* FindNavigationOnUp();
 
 	CompInteractive* FindNavigationOnDown();
@@ -143,7 +144,8 @@ public:
 
 private:
 	static std::list<CompInteractive*> iteractive_list;
-	
+	uint nav_selected;
+	bool select_interactive = false;
 
 protected:
 	SelectionStates current_selection_state = STATE_NORMAL;

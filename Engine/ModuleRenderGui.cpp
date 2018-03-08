@@ -26,6 +26,7 @@ ModuleRenderGui::ModuleRenderGui(bool start_enabled) : Module(start_enabled)
 	postUpdate_enabled = true;
 	have_config = true;
 	name = "Render Gui";
+	selected = nullptr;
 
 }
 
@@ -104,6 +105,10 @@ bool ModuleRenderGui::SetEventListenrs()
 	AddListener(EventType::EVENT_MOUSE_MOTION, this);
 	AddListener(EventType::EVENT_BUTTON_UP, this);
 	AddListener(EventType::EVENT_PASS_COMPONENT, this);
+	AddListener(EventType::EVENT_PASS_SELECTED, this);
+	AddListener(EventType::EVENT_AXIS, this);
+	AddListener(EventType::EVENT_SUBMIT, this);
+	AddListener(EventType::EVENT_CANCEL, this);
 
 	return true;
 }
@@ -120,8 +125,8 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 		if (selected != nullptr)
 			selected->ForceClear(this_event);
 		selected = this_event.pass_selected.component;
-		
-		break;
+		selected->OnInteractiveSelected(this_event);
+			break;
 	case EventType::EVENT_PASS_COMPONENT:
 		iteractive_vector.push_back((CompInteractive*)this_event.pass_component.component);
 		break;
@@ -217,8 +222,11 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 				if (!positive_colision&&!mouse_down && selected != nullptr)
 				{
 					focus = nullptr;
-					selected->ForceClear(this_event);
-					selected = nullptr;
+					if (this_event.type == EventType::EVENT_BUTTON_DOWN)
+					{
+						selected->ForceClear(this_event);
+						selected = nullptr;
+					}
 				}
 						
 		}
@@ -243,7 +251,7 @@ void ModuleRenderGui::ScreenSpaceDraw(bool debug)
 	}	
 	for (int i = 0; i < screen_space_canvas.size(); i++)
 	{
-		screen_space_canvas[i]->DrawGraphic();
+		screen_space_canvas[i]->DrawGraphic(debug_draw);
 	}	
 	screen_space_canvas.clear();
 }

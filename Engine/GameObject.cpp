@@ -1272,7 +1272,6 @@ Component* GameObject::GetComponentsByUID(int uid, bool iterate_hierarchy)
 {
 	if (iterate_hierarchy)
 	{
-		uint size = childs.size();
 		std::queue<GameObject*> queue;
 		queue.push(this);
 		while (!queue.empty())
@@ -1284,9 +1283,9 @@ Component* GameObject::GetComponentsByUID(int uid, bool iterate_hierarchy)
 					return queue.front()->components[i];
 				}
 			}
-			for (uint k = 0; k < size; k++)
+			for (uint k = 0; k <  queue.front()->childs.size(); k++)
 			{
-				queue.push(childs[k]);
+				queue.push(queue.front()->childs[k]);
 			}
 			queue.pop();
 		}
@@ -1303,6 +1302,40 @@ Component* GameObject::GetComponentsByUID(int uid, bool iterate_hierarchy)
 		}
 	}
 	return nullptr;
+}
+void GameObject::GetComponentsByRangeOfType(Comp_Type start, Comp_Type end, std::vector<Component*>* fill_comp, bool iterate_hierarchy)
+{
+	if (iterate_hierarchy)
+	{
+		std::queue<GameObject*> queue;
+		queue.push(this);
+		while (!queue.empty())
+		{
+			for (uint i = 0; i < queue.front()->components.size(); i++)
+			{
+				if (queue.front()->components[i]->GetType() >= start&&queue.front()->components[i]->GetType() <= end)
+				{
+					fill_comp->push_back( queue.front()->components[i]);
+				}
+			}
+			for (uint k = 0; k < queue.front()->childs.size(); k++)
+			{
+				queue.push(queue.front()->childs[k]);
+			}
+			queue.pop();
+		}
+
+	}
+	else
+	{
+		for (uint i = 0; i < components.size(); i++)
+		{
+			if (components[i]->GetType() >= start && components[i]->GetType() <= end)
+			{
+				fill_comp->push_back(components[i]);
+			}
+		}
+	}
 }
 
 Component* GameObject::GetComponentByName(const char* name_component) const

@@ -32,7 +32,7 @@ public:
 	void AddGraphic(CompGraphic* to_add);
 	void RemoveGraphic(CompGraphic* to_remove);
 	void DrawDebugRectTransform();
-	void DrawGraphic();
+	void DrawGraphic(bool debug = false);
 
 	void SetDefaultUIShader(ShaderProgram* shader);
 	void SetDefaultTexture(int texture);

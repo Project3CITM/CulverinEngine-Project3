@@ -197,7 +197,7 @@ void CompCanvas::DrawDebugRectTransform()
 		my_transform->DrawRectTransform();
 	}
 }
-void CompCanvas::DrawGraphic()
+void CompCanvas::DrawGraphic(bool debug)
 {
 	if (!IsActive())
 		return;
@@ -241,7 +241,7 @@ void CompCanvas::DrawGraphic()
 		};
 		default_ui_shader->Bind();
 		GLint g_AttribLocationProjMtx = glGetUniformLocation(default_ui_shader->programID, "ProjMtx");
-		if (App->engine_state != EngineState::STOP)
+		if (App->engine_state != EngineState::STOP||debug)
 		{
 			glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 

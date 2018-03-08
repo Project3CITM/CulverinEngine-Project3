@@ -126,6 +126,13 @@ void CompInteractive::Clear()
 	image = nullptr;
 	if (!iteractive_list.empty())
 		iteractive_list.remove(this);
+	if (!navigation.assigned_to_me.empty())
+	{
+		for (int i = 0; i < navigation.assigned_to_me.size(); i++)
+		{
+			navigation.assigned_to_me[i]->NavigationRemove(this);
+		}
+	}
 }
 
 void CompInteractive::ShowOptions()
@@ -321,24 +328,69 @@ void CompInteractive::SyncComponent(GameObject* sync_parent)
 	if (sync_parent != nullptr)
 	{
 		if (navigation.inteactive_up_uid != 0)
+		{
 			navigation.interactive_up = (CompInteractive*)sync_parent->GetComponentsByUID(navigation.inteactive_up_uid, true);
+			navigation.inteactive_up_uid = navigation.interactive_up->GetUUID();
+			navigation.interactive_up->navigation.assigned_to_me.push_back(this);
+		}
+
 		if (navigation.inteactive_down_uid != 0)
+		{
 			navigation.interactive_down = (CompInteractive*)sync_parent->GetComponentsByUID(navigation.inteactive_down_uid, true);
+			navigation.inteactive_down_uid = navigation.interactive_down->GetUUID();
+
+			navigation.interactive_down->navigation.assigned_to_me.push_back(this);
+
+		}
 		if (navigation.inteactive_right_uid != 0)
+		{
 			navigation.interactive_right = (CompInteractive*)sync_parent->GetComponentsByUID(navigation.inteactive_right_uid, true);
+			navigation.inteactive_right_uid = navigation.interactive_right->GetUUID();
+
+			navigation.interactive_right->navigation.assigned_to_me.push_back(this);
+
+		}
 		if (navigation.inteactive_left_uid != 0)
+		{
 			navigation.interactive_left = (CompInteractive*)sync_parent->GetComponentsByUID(navigation.inteactive_left_uid, true);
+			navigation.inteactive_left_uid = navigation.interactive_left->GetUUID();
+
+			navigation.interactive_left->navigation.assigned_to_me.push_back(this);
+		}
 	}
 	else
 	{
 		if (navigation.inteactive_up_uid != 0)
+		{
 			navigation.interactive_up = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_up_uid, true);
+			navigation.inteactive_up_uid = navigation.interactive_up->GetUUID();
+			navigation.interactive_up->navigation.assigned_to_me.push_back(this);
+
+		}
 		if (navigation.inteactive_down_uid != 0)
+		{
 			navigation.interactive_down = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_down_uid, true);
+			navigation.inteactive_down_uid = navigation.interactive_down->GetUUID();
+
+			navigation.interactive_down->navigation.assigned_to_me.push_back(this);
+
+		}
 		if (navigation.inteactive_right_uid != 0)
+		{
 			navigation.interactive_right = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_right_uid, true);
+			navigation.inteactive_right_uid = navigation.interactive_right->GetUUID();
+
+			navigation.interactive_right->navigation.assigned_to_me.push_back(this);
+
+		}
 		if (navigation.inteactive_left_uid != 0)
+		{
 			navigation.interactive_left = (CompInteractive*)App->scene->root->GetComponentsByUID(navigation.inteactive_left_uid, true);
+			navigation.inteactive_left_uid = navigation.interactive_left->GetUUID();
+
+			navigation.interactive_left->navigation.assigned_to_me.push_back(this);
+
+		}
 	}
 	
 	if (GetType() == Comp_Type::C_BUTTON)
@@ -367,6 +419,18 @@ void CompInteractive::Deactive()
 {
 	disabled = true;
 	PrepareHandleTransition();
+}
+
+void CompInteractive::NavigationRemove(CompInteractive * to_remove)
+{
+	if (navigation.interactive_up == to_remove)
+		navigation.interactive_up = nullptr;
+	if (navigation.interactive_down == to_remove)
+		navigation.interactive_down = nullptr;
+	if (navigation.interactive_right == to_remove)
+		navigation.interactive_right = nullptr;
+	if (navigation.interactive_left == to_remove)
+		navigation.interactive_left = nullptr;
 }
 
 
@@ -490,8 +554,141 @@ void CompInteractive::ShowNavigationInfo()
 {
 	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
 	{
+		ImGui::Text("Navigation Up:");
+		if (navigation.interactive_up != nullptr)
+		{
+			ImGui::Text(navigation.interactive_up->GetParent()->GetName());
+			ImGui::SameLine();
+		}
+
+		if (ImGui::Button("Select Interactive##up"))
+		{
+			nav_selected = 0;
+			select_interactive = true;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear##up"))
+		{
+			navigation.interactive_up = nullptr;
+		}
+		ImGui::Text("Navigation Down:");
+		if (navigation.interactive_down != nullptr)
+		{
+			ImGui::Text(navigation.interactive_down->GetParent()->GetName());
+			ImGui::SameLine();
+		}
+		if (ImGui::Button("Select Interactive##down"))
+		{
+			nav_selected = 1;
+			select_interactive = true;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear##down"))
+		{
+			navigation.interactive_down = nullptr;
+		}
+		ImGui::Text("Navigation Right:");
+		if (navigation.interactive_right != nullptr)
+		{
+			ImGui::Text(navigation.interactive_right->GetParent()->GetName());
+			ImGui::SameLine();
+		}
+		if (ImGui::Button("Select Interactive##right"))
+		{
+			nav_selected = 2;
+			select_interactive = true;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear##right"))
+		{
+			navigation.interactive_right = nullptr;
+		}
+		ImGui::Text("Navigation Left:");
+		if (navigation.interactive_left != nullptr)
+		{
+			ImGui::Text(navigation.interactive_left->GetParent()->GetName());
+			ImGui::SameLine();
+
+		}
+		if (ImGui::Button("Select Interactive##left"))
+		{
+			nav_selected = 3;
+			select_interactive = true;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear##left"))
+		{
+			navigation.interactive_left = nullptr;
+		}
+		
+		if(select_interactive)
+		{ 
+			CompInteractive* temp_interactive = (CompInteractive*)ShowInteractiveWindow();
+			if (temp_interactive != nullptr)
+			{
+				switch (nav_selected)
+				{
+				case 0:
+					navigation.interactive_up = temp_interactive;
+					navigation.interactive_up->navigation.assigned_to_me.push_back(this);
+					break;
+				case 1:
+					navigation.interactive_down = temp_interactive;
+					navigation.interactive_down->navigation.assigned_to_me.push_back(this);
+					break;
+				case 2:
+					navigation.interactive_right = temp_interactive;
+					navigation.interactive_right->navigation.assigned_to_me.push_back(this);
+					break;
+				case 3:
+					navigation.interactive_left = temp_interactive;
+					navigation.interactive_left->navigation.assigned_to_me.push_back(this);
+					break;
+				default:
+					break;
+				}
+			}
+		}
 		//show all interactives on list x4
 	}
+}
+
+Component* CompInteractive::ShowInteractiveWindow()
+{
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoCollapse;
+	Component* ret = nullptr;
+	std::vector<Component*> temp_list;
+	App->scene->root->GetComponentsByRangeOfType(Comp_Type::C_EDIT_TEXT, Comp_Type::C_SLIDER, &temp_list, true);
+	ImGui::Begin("Interactive", &select_interactive, window_flags);
+
+	ImVec2 WindowSize = ImGui::GetWindowSize();
+	float ChildsWidth = WindowSize.x ;
+	float ChildsHeight = (WindowSize.y - 50.0f);
+	
+		static int selected = 0;
+		ImGui::BeginChild(1, ImVec2(ChildsWidth, ChildsHeight));
+		for (int i = 0; i < temp_list.size(); i++)
+		{
+			if (ImGui::Selectable(temp_list[i]->GetParent()->GetName(), selected == i))
+			{
+				selected = i;
+			}
+		}
+		ImGui::EndChild();
+
+		if (ImGui::Button("Select##selected_interactive"))
+		{
+			if (selected >= 0 && selected < temp_list.size()) 
+			{
+				ret= temp_list[selected];
+				select_interactive = false;
+
+			}
+		}
+		temp_list.clear();
+		ImGui::End();
+		return ret;
 }
 
 CompInteractive * CompInteractive::FindNavigationOnUp()

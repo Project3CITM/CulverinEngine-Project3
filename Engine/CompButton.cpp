@@ -273,19 +273,38 @@ void CompButton::Save(JSON_Object * object, std::string name, bool saveScene, ui
 	{
 		json_object_dotset_number_with_std(object, name + "Interactive up", navigation.interactive_up->GetUUID());
 	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive up", 0);
+
+	}
 	if (navigation.interactive_down != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Interactive down", navigation.interactive_down->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive down", 0);
+
 	}
 	if (navigation.interactive_right != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Interactive right", navigation.interactive_right->GetUUID());
 	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive right", 0);
+
+	}
 	if (navigation.interactive_left != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Interactive left", navigation.interactive_left->GetUUID());
 	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive left", 0);
 
+	}
 }
 
 void CompButton::Load(const JSON_Object * object, std::string name)
@@ -329,9 +348,9 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 	current_transition_mode = static_cast<Transition>((int)json_object_dotget_number_with_std(object, name + "Transition Mode"));
 	navigation.current_navigation_mode = static_cast<Navigation::NavigationMode>((int)json_object_dotget_number_with_std(object, name + "Navigation Mode"));
 
-	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive up");
-	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive down");
-	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive right");
+	navigation.inteactive_up_uid = json_object_dotget_number_with_std(object, name + "Interactive up");
+	navigation.inteactive_down_uid = json_object_dotget_number_with_std(object, name + "Interactive down");
+	navigation.inteactive_right_uid = json_object_dotget_number_with_std(object, name + "Interactive right");
 	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive left");
 
 	if (number_script != 0)

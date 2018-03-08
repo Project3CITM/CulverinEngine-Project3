@@ -272,12 +272,7 @@ struct EGUIAxis
 	Direction direction = Direction::DIRECTION_NONE;
 	float value = 0.0f;
 };
-struct EGUIHorizontal
-{
-	EventType type;
-	float value = 0.0f;
 
-};
 /*
 
 EVENT_BUTTON_MOUSE,

@@ -25,12 +25,9 @@ enum Comp_Type
 	C_UNIQUE_SEPARATOR,   //Components above this will be unique
 	C_SCRIPT,
 	C_ANIMATION,
-	C_BUTTON,
-	C_CHECK_BOX,
 	C_CANVAS,
 	C_CANVAS_RENDER,
 	C_TEXT,
-	C_EDIT_TEXT,
 	C_IMAGE,
 	C_AUDIO,
 	C_BONE,
@@ -38,6 +35,10 @@ enum Comp_Type
 	C_LIGHT,
 	C_PARTICLE_SYSTEM,
 	C_JOINT,
+
+	C_EDIT_TEXT,
+	C_CHECK_BOX,
+	C_BUTTON,
 	C_SLIDER
 };
 
