@@ -14,7 +14,7 @@
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
     <ProjectName>CulverinEngine</ProjectName>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -136,6 +136,7 @@
     <ClInclude Include="DefaultShaders.h" />
     <ClInclude Include="DepthCubeMap.h" />
     <ClInclude Include="EventDef.h" />
+    <ClInclude Include="EventDefV2.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ImGui\ImGuizmo.h" />
     <ClInclude Include="ImGui\imgui_dock_v2.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="mmgr\mmgr.h" />
     <ClInclude Include="mmgr\nommgr.h" />
     <ClInclude Include="ModuleEventSystem.h" />
+    <ClInclude Include="ModuleEventSystemV2.h" />
     <ClInclude Include="ModuleFS.h" />
     <ClInclude Include="ModuleFramebuffers.h" />
     <ClInclude Include="ModuleKeyBinding.h" />
@@ -507,6 +509,7 @@
     <ClCompile Include="Materials.cpp" />
     <ClCompile Include="mmgr\mmgr.cpp" />
     <ClCompile Include="ModuleEventSystem.cpp" />
+    <ClCompile Include="ModuleEventSystemV2.cpp" />
     <ClCompile Include="ModuleFS.cpp" />
     <ClCompile Include="ModuleFramebuffers.cpp" />
     <ClCompile Include="ModuleKeyBinding.cpp" />

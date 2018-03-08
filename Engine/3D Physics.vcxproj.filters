@@ -1193,6 +1193,12 @@
     <ClInclude Include="Octree.h">
       <Filter>Engine\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="EventDefV2.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleEventSystemV2.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1604,6 +1610,9 @@
     </ClCompile>
     <ClCompile Include="Octree.cpp">
       <Filter>Engine\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleEventSystemV2.cpp">
+      <Filter>Engine\Events</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
