@@ -8,7 +8,6 @@ public class FireWall : CulverinBehaviour
     public float duration = 5;
 
     private float timer = 0;
-    EnemyController enemy_on_fire;
     // Use this for initialization
     void Start()
     {
@@ -17,7 +16,7 @@ public class FireWall : CulverinBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {      
         timer += Time.DeltaTime();
         if(timer >= duration)
         {

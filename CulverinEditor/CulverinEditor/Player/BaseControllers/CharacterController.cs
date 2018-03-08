@@ -17,6 +17,7 @@ public class CharacterController : CulverinBehaviour
         BLOCKING,
         COVER,
         HIT,
+        FIRE_WALL,
         DEAD
     }
 

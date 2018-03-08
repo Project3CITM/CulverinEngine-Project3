@@ -35,6 +35,7 @@ public class DaenerysController : CharacterController
     public float mana_cost_percentage = 20f;
     public float damage_percentage = 10f;
     private DaenerysCD_Right cd_right;
+    private bool set_fire_wall = false;
 
     protected override void Start()
     {
@@ -119,34 +120,25 @@ public class DaenerysController : CharacterController
                             }
                             break;
                         }
-                    case State.COVER:
+                    case State.FIRE_WALL:
                         {
                             //Check for end of the Attack animation
                             anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-
-                            if (anim_controller.IsAnimationStopped("Cover"))
+                            if (set_fire_wall == false && anim_controller.IsAnimOverXTime(0.3f))
+                            {
+                                GameObject fire_wall = Instantiate("FireWall");
+                                fire_wall.transform.SetPosition(new Vector3(10, -5, 35));
+                                set_fire_wall = true;
+                            }
+                            anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+                            if (anim_controller.IsAnimationStopped("AttackRight"))
                             {
                                 state = State.IDLE;
                             }
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Daenerys Covering");
-                            }
-                            break;
-                        }
-                    case State.BLOCKING:
-                        {
-                            //Check for end of the Attack animation
-                            anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("Block"))
-                            {
-                                state = State.IDLE;
-                            }
-                            else
-                            {
-                                // Keep playing specific attack animation  until it ends
-                                Debug.Log("Daenerys Blocking");
+                                Debug.Log("Daenerys Firewalling");
                             }
                             break;
                         }
@@ -197,7 +189,12 @@ public class DaenerysController : CharacterController
         else if (Input.GetKeyDown(KeyCode.Num2))
         {
             Debug.Log("Daenerys Pressed 2");
-            PrepareRightAbility();
+            // TAKE THIS OUT AFTER TESTS! ----
+            SetAnimationTransition("ToAttackRight", true);
+            SetState(State.FIRE_WALL);
+            DoRightAbility();
+            //-----------------
+            //PrepareRightAbility();
         }
     }
 
@@ -464,7 +461,10 @@ public class DaenerysController : CharacterController
         Vector3 firewall_pos;
         GetLinkedObject("player_obj").GetComponent<MovementController>().GetForwardTilePos(out firewall_pos);
 
+        set_fire_wall = false;
         // Set a fire wall in north tile
+        //GameObject fire_wall = Instantiate("FireWall");
+        //fire_wall.transform.SetPosition(new Vector3(10,-5, 35));
         //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
         //{
         //    // To change => check the specific enemy in front of you
