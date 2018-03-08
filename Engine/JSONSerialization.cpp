@@ -683,7 +683,7 @@ void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const cha
 	{
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
-		json_object_dotset_string_with_std(config, "Material.Directory Material", fileName);
+		json_object_dotset_string_with_std(config, "Material.Directory Material", App->fs->GetToAsstes(fileName).c_str());
 		json_object_dotset_number_with_std(config, "Material.UUID Resource", material->GetUUID());
 		json_object_dotset_string_with_std(config, "Material.Name", material->name.c_str());
 		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);

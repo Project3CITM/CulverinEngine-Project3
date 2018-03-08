@@ -9,7 +9,6 @@ public class Arrow : CulverinBehaviour
     Vector3 gravity;
     bool collision;
     CompRigidBody rb;
-    CompCollider collider;
 
     void Start()
     {
@@ -19,18 +18,16 @@ public class Arrow : CulverinBehaviour
 
     public void Shoot()
     {
-        rb.WakeUp();
-        rb = GetComponent<CompRigidBody>();
         rb.UnLockTransform();
-        rb.ApplyImpulse(new Vector3(0,0,10)); // Forward impulse
-        rb.ApplyTorqueForce(new Vector3(0, 0, 10)); // Fall force
+        rb.ApplyImpulse(new Vector3(0,10,10)); // Forward impulse
+        rb.ApplyTorqueForce(new Vector3(0, 0, 0)); // Fall force
     }
 
     void Update()
     {
-        if(GetComponent<Transform>().local_position.y<0)
+        if (GetComponent<Transform>().local_position.y < -5)
         {
-            //Destroy();
+            Destroy(gameObject);
         }
 
         //if(rb.LockedTransform())
@@ -41,9 +38,7 @@ public class Arrow : CulverinBehaviour
 
     void OnTriggerEnter()
     {
-        collider = GetComponent<CompCollider>();
-        GameObject collided;
-        collided = collider.GetCollidedObject();
+       
         
         // DAMAGE ---
 
@@ -56,7 +51,7 @@ public class Arrow : CulverinBehaviour
 
     void OnContact()
     {
-        rb.LockTransform();
+        //rb.LockTransform();
     }
 }
 
