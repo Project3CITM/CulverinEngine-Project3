@@ -9,6 +9,5 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void Deactivate();
-
     }
 }

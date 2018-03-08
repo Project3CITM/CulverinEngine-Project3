@@ -98,3 +98,27 @@ void CSharpScript::FillAmount(MonoObject * object, float value)
 		}
 	}
 }
+
+void CSharpScript::ActivateRender(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		CompImage* image = (CompImage*)current_game_object->FindComponentByType(Comp_Type::C_IMAGE);
+		if (image != nullptr)
+		{
+			image->ActivateRender();
+		}
+	}
+}
+
+void CSharpScript::DeactivateRender(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		CompImage* image = (CompImage*)current_game_object->FindComponentByType(Comp_Type::C_IMAGE);
+		if (image != nullptr)
+		{
+			image->DeactivateRender();
+		}
+	}
+}

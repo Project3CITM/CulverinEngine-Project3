@@ -226,6 +226,8 @@ public:
 	/*UI-Graphics*/
 	void		SetRaycastTarget(MonoObject * object, mono_bool flag);
 	void		FillAmount(MonoObject * object, float value);
+	void		ActivateRender(MonoObject * object);
+	void		DeactivateRender(MonoObject * object);
 
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
