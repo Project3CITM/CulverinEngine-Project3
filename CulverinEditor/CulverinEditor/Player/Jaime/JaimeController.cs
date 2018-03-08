@@ -25,6 +25,11 @@ public class JaimeController : CharacterController
     public float left_ability_dmg = 10.0f;
     public float left_ability_cost = 10.0f;
     JaimeCD_Left left_ability_cd;
+
+    /* To perform different animations depending on the hit streak */
+    int hit_streak = 0; 
+    string[] anim_name = { "Attack1", "Attack2", "Attack3" };
+    string current_anim = "Attack1";
     // ---------------------
 
     //Right Ability Stats ---
@@ -60,17 +65,15 @@ public class JaimeController : CharacterController
     {
         // Debug method to control Hp
         CheckHealth();
-      
 
         // First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)
         {
             // Check if player is moving to block attacks/abilities
-            //movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
-            //if (!movement.IsMoving())
-            if(1 == 1)
-            {
+            movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
+            if (!movement.IsMoving())
+            { 
                 /* Player is alive */
                 switch (state)
                 {
@@ -84,14 +87,14 @@ public class JaimeController : CharacterController
                         {
                             //Check for end of the Attack animation
                             anim_controller = jaime_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("Attack1"))
+                            if (anim_controller.IsAnimationStopped(current_anim))
                             {
                                 state = State.IDLE;
                             }
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Jaime Attacking");
+                                Debug.Log("Jaime Attacking " + hit_streak);
                             }
                             break;
                         }
@@ -182,7 +185,7 @@ public class JaimeController : CharacterController
         {
             SetAnimationTransition("ToBlock", true);
 
-            jaime_obj.GetComponent<CompAudio>().PlayEvent("MetalHit");
+            GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
 
             SetState(State.BLOCKING);
         }
@@ -191,8 +194,12 @@ public class JaimeController : CharacterController
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.GetDamage(dmg);
 
-            // SET HIT ANIMATION
             SetAnimationTransition("ToHit", true);
+
+            //GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("Hit");
+
+            //Reset hit count
+            hit_streak = 0;
 
             SetState(State.HIT);
         }
@@ -284,15 +291,18 @@ public class JaimeController : CharacterController
         // Check if player is in Idle State
         if (GetState() == 0) /*0 = IDLE*/
         {
+            //Calculate ability cost depending on the hit streak
+            float calc_cost = left_ability_cost / Mathf.Pow(2, hit_streak);
+
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > left_ability_cost)
+            if (GetCurrentStamina() > calc_cost)
             {
                 left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
                 //Check if the ability is not in cooldown
                 if (!left_ability_cd.in_cd)
                 { 
                     Debug.Log("Jaime LW Going to Attack");
-                    DoLeftAbility();              
+                    DoLeftAbility(calc_cost);              
                     return true;
                 }
                 else
@@ -310,25 +320,39 @@ public class JaimeController : CharacterController
         return false;
     }
 
-    public void DoLeftAbility()
+    public void DoLeftAbility(float cost)
     {
         Debug.Log("Jaime LW Attack Left");
 
         // Decrease stamina -----------
-        DecreaseStamina(left_ability_cost);
+        DecreaseStamina(cost);
 
         Debug.Log("Jaime LW Going to hit");
 
-        // Attack the enemy in front of you
-        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
-        //{
-        //    // To change => check the specific enemy in front of you
-        //    enemy = enemy_obj.GetComponent<EnemyController>();
-        //    enemy.Hit(attack_dmg);
-        //}
+        // Set Attacking Animation depending on the hit_streak
+        current_anim = anim_name[hit_streak];
+        SetAnimationTransition(current_anim, true);
 
-        // Set Attacking Animation
-        SetAnimationTransition("ToAttack1", true);
+        // Attack the enemy in front of you
+        if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
+        {
+            // To change => check the specific enemy in front of you
+            //enemy = enemy_obj.GetComponent<EnemyController>();
+            //enemy.Hit(attack_dmg);
+
+            if (hit_streak < 3)
+            {
+                hit_streak++; //Increase hit count
+            }
+            else
+            {
+                hit_streak = 0; //Reset hit count
+            }
+        }
+        else
+        {
+            hit_streak = 0; //Reset hit count
+        }
 
         // Play the Sound FX
         PlayFx("SwordSlash");

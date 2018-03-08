@@ -83,14 +83,10 @@
     <Compile Include="CompRigidBody.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Left.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Right.cs" />
-    <Compile Include="Player\Daenerys\DaenerysWeapon_Left.cs" />
-    <Compile Include="Player\Daenerys\DaenerysWeapon_Right.cs" />
     <Compile Include="Player\Daenerys\FireWall.cs" />
     <Compile Include="Player\Theon\Arrow.cs" />
     <Compile Include="Player\Theon\TheonCD_Left.cs" />
     <Compile Include="Player\Theon\TheonCD_Right.cs" />
-    <Compile Include="Player\Theon\TheonWeapon_Left.cs" />
-    <Compile Include="Player\Theon\TheonWeapon_Right.cs" />
     <Compile Include="Player\UI\CoolDown.cs" />
     <Compile Include="Player\Jaime\JaimeCD_Right.cs" />
     <Compile Include="Player\Jaime\JaimeCD_Left.cs" />
@@ -106,7 +102,6 @@
     <Compile Include="PathNode.cs" />
     <Compile Include="Player\UI\Mana.cs" />
     <Compile Include="Quaternion.cs" />
-    <Compile Include="Player\Jaime\JaimeWeapon_Right.cs" />
     <Compile Include="Player\UI\Stamina.cs" />
     <Compile Include="Player\TestMovement.cs" />
     <Compile Include="Player\Theon\TheonController.cs" />
@@ -124,8 +119,6 @@
     <Compile Include="KeyCode.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Vector3.cs" />
-    <Compile Include="Player\Jaime\JaimeWeapon_Left.cs" />
-    <Compile Include="Player\BaseControllers\WeaponController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

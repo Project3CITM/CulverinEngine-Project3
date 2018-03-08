@@ -559,57 +559,6 @@ public class MovementController : CulverinBehaviour
         return false;
     }
 
-    public bool EnemyInRow(int num_tiles)
-    {
-        int direction = (int)curr_dir;
-        int position_front_x = curr_x;
-        int position_front_y = curr_y;
-
-        for (int i = 0; i < num_tiles; i++)
-        {
-            switch (direction)
-            {
-                case (int)MovementController.Direction.NORTH:
-                    {
-                        position_front_y -= 1;
-                        break;
-                    }
-
-                case (int)MovementController.Direction.SOUTH:
-                    {
-                        position_front_y += 1;
-                        break;
-                    }
-
-                case (int)MovementController.Direction.EAST:
-                    {
-                        position_front_x += 1;
-                        break;
-                    }
-
-                case (int)MovementController.Direction.WEST:
-                    {
-                        position_front_x -= 1;
-                        break;
-                    }
-
-                default:
-                    {
-                        break;
-                    }
-
-            }
-
-            if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-                position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public bool EnemyBehind()
     {
         int direction = (int)curr_dir;
@@ -753,6 +702,95 @@ public class MovementController : CulverinBehaviour
 
         return false;
     }
+
+    public bool EnemyInRow(int num_tiles)
+    {
+        int direction = (int)curr_dir;
+        int position_front_x = curr_x;
+        int position_front_y = curr_y;
+
+        for (int i = 0; i < num_tiles; i++)
+        {
+            switch (direction)
+            {
+                case (int)MovementController.Direction.NORTH:
+                    {
+                        position_front_y -= 1;
+                        break;
+                    }
+
+                case (int)MovementController.Direction.SOUTH:
+                    {
+                        position_front_y += 1;
+                        break;
+                    }
+
+                case (int)MovementController.Direction.EAST:
+                    {
+                        position_front_x += 1;
+                        break;
+                    }
+
+                case (int)MovementController.Direction.WEST:
+                    {
+                        position_front_x -= 1;
+                        break;
+                    }
+
+                default:
+                    {
+                        break;
+                    }
+            }
+
+            if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
+                position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool EnemyAround()
+    {
+        int direction = (int)curr_dir;
+        int[] tile_x = { 0, 0, 0, 0, 0, 0, 0, 0 };
+        int[] tile_y = { 0, 0, 0, 0, 0, 0, 0, 0 };
+        int i = 0;
+        int j = 0;
+        int count = 0;
+
+        //Collect all tiles around player ---
+        for (i = -1; i < 1; i++)
+        {
+            for (j = -1; j < 1; j++)
+            {
+                if (i == 0 && j == 0)
+                {
+                    continue;
+                }
+
+                tile_x[count] = curr_x + j;
+                tile_y[count] = curr_x + i;
+                count++;
+
+            }
+        }
+
+        //for (count = 0; count < 8; count++) 
+        //{
+        //    if(AiManager.GetEnemyAtPos(tile_x[count],tile_y[count])!= null)
+        //    {
+        //           enemy_obj.GetDamage(dmg);
+        //    }
+        //}
+
+        return false;
+    }
+
+
 
     //Pass the x,y vars as arguments to fill them with player coords
     public void GetPlayerPos(out int x, out int y)
