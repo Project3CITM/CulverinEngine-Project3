@@ -35,7 +35,7 @@ namespace CulverinEditor
         public extern void UnLockTransform();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern void ResetForces();
+        public extern void ResetForce();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void WakeUp();

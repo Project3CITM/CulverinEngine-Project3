@@ -373,7 +373,7 @@ void CompRigidBody::SetMaxJointPose()
 {
 	if (joint)
 	{
-		joint->SetSecondActorPose();
+		//joint->SetSecondActorPose();
 	}
 }
 
@@ -424,7 +424,7 @@ void CompRigidBody::MoveKinematic(float3 pos, Quat rot)
 
 void CompRigidBody::ApplyForce(float3 force)
 {
-	if (body)
+	if (body && !kinematic)
 	{
 		body->ApplyForce(force);
 	}

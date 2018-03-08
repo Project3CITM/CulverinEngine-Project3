@@ -847,6 +847,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyTorqueImpulse", (const void*)ApplyTorqueImpulse);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::LockTransform", (const void*)LockTransform);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::UnLockTransform", (const void*)UnLockTransform);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::ResetForce", (const void*)ResetForce);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::WakeUp", (const void*)WakeUp);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::SetAtMaxJointPose", (const void*)SetAtMaxJointPose);
 
