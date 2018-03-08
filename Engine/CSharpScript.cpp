@@ -1255,7 +1255,8 @@ void CSharpScript::Load(const JSON_Object* object, std::string name)
 	std::string temp_var = name;
 
 	//Once set the default values for the variables, update them to the inspector values saved previously
-	for (int i = 0; i < variables.size(); i++)
+	int num_variables = json_object_dotget_number_with_std(object, name + "Number of Variables: ");
+	for (int i = 0; i < num_variables; i++)
 	{
 		temp_var = name + "Variables.Variable " + std::to_string(i);
 		temp_var += ".";
