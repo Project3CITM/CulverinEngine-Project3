@@ -10,19 +10,20 @@ public class BarrelFall : CulverinBehaviour
 
     void Start()
     {
+        barrel_mov_go = GetLinkedObject("barrel_mov_go");
         barrel_mov = barrel_mov_go.GetComponent<BarrelMovement>();
-        rigid_body = GetComponent<CompRigidBody>();
+        rigid_body = gameObject.GetComponent<CompRigidBody>();
     }
 
     void Update()
     {
+        barrel_mov = barrel_mov_go.GetComponent<BarrelMovement>();
         if (barrel_mov.restart)
         {
             //CAL FUNCTION
-
-
-            rigid_body.ResetForces();
-
+            gameObject.GetComponent<CompRigidBody>().SetAtMaxJointPose();
+            gameObject.GetComponent<CompRigidBody>().ResetForce();
+            Debug.Log("Test");
         }
 
     }

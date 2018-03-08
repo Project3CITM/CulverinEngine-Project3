@@ -239,6 +239,14 @@ void CompJoint::SetSecondActorPose()
 	}
 }
 
+float3 CompJoint::GetSecondActorPose()
+{
+	if (joint)
+	{
+		return joint->GetSecondActorPose();
+	}
+}
+
 void CompJoint::RemoveActors(CompRigidBody * body)
 {
 	if (joint && joint->ToRelease())

@@ -42,5 +42,8 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetAtMaxJointPose();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 GetMaxJointPose();
     }
 }
