@@ -482,12 +482,16 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab)
 					LoadChildLoadPrefab(*mainParent, *obj, uuid_parent);
 				}
 			}
-			// Now Iterate All GameObjects and Components and create a new UUID!
-			mainParent->SetUUIDRandom();
-			if (mainParent->GetNumChilds() > 0)
+
+			//Sync components Recursive
+			if (mainParent!= nullptr)
 			{
-				ChangeUUIDs(*mainParent);
+				mainParent->SyncComponents(mainParent);
 			}
+
+			// Now Iterate All GameObjects and Components and create a new UUID!
+			ChangeUUIDs(*mainParent);
+			
 		}
 	}
 	json_value_free(config_file);

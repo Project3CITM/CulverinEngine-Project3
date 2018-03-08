@@ -55,6 +55,7 @@
     <Compile Include="AI\PerceptionSightEnemy.cs" />
     <Compile Include="AI\Seek_Steering.cs" />
     <Compile Include="AI\SwordAttack_Action.cs" />
+    <Compile Include="BarrelPuzle\BarrelPuzzleGenerator.cs" />
     <Compile Include="BarrelPuzle\BarrelScript.cs" />
     <Compile Include="BarrelPuzle\ChainManage.cs" />
     <Compile Include="BarrelPuzle\ChainMovement.cs" />
