@@ -1404,6 +1404,11 @@ void ImportScript::ActivateRender(MonoObject * object)
 	current->ActivateRender(object);
 }
 
+void ImportScript::DeactivateRender(MonoObject * object)
+{
+	current->DeactivateRender(object);
+}
+
 void ImportScript::FillAmount(MonoObject * object, float value)
 {
 	current->FillAmount(object, value);
