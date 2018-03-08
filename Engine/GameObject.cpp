@@ -899,9 +899,9 @@ void GameObject::ShowInspectorInfo()
 		/* NAME OF THE GAMEOBJECT */
 		ImGui::SameLine();
 		ImGui::PopStyleVar();
-		char namedit[50];
-		strcpy_s(namedit, 50, name.c_str());
-		if (ImGui::InputText("##nameModel", namedit, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+		char namedit[150];
+		strcpy_s(namedit, 150, name.c_str());
+		if (ImGui::InputText("##nameModel", namedit, 150, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			name = App->fs->ConverttoChar(std::string(namedit).c_str());
 		}
