@@ -9,7 +9,7 @@ public class PerceptionManager : CulverinBehaviour
     //Listeners
     List<PerceptionListener>    listeners_list;
     List<PerceptionEvent>       perception_events_queue;
-   // Queue<PerceptionEvent>      perception_events_queue;
+
 
     PerceptionManager() {}
 
@@ -31,8 +31,10 @@ public class PerceptionManager : CulverinBehaviour
         foreach(PerceptionEvent perception_event in perception_events_queue)
         {
             SendEventtoListeners(perception_event);
-            perception_events_queue.Remove(perception_event);
         }
+
+        //Clean frame events
+        perception_events_queue.Clear();
 
         
     }
@@ -62,7 +64,6 @@ public class PerceptionManager : CulverinBehaviour
     {
         foreach(PerceptionListener listener in listeners_list)
         {
-            Debug.Log(perception_events_queue.Count.ToString());
             listener.OnEventRecieved(event_send);
         }
     }

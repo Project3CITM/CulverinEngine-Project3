@@ -6,6 +6,7 @@ public class PerceptionListener : CulverinBehaviour
 {
 
     public GameObject event_manager;
+    public GameObject my_self;
     public List<PerceptionEvent> events_in_memory;
 
    void Start()
@@ -31,6 +32,16 @@ public class PerceptionListener : CulverinBehaviour
         }
     }
 
+    public void ClearEvents()
+    {
+        foreach (PerceptionEvent memory_event in events_in_memory)
+        {
+            OnEventGone(memory_event);
+        }
+
+        events_in_memory.Clear();
+    }
+
     public PerceptionEvent GetEvent(PERCEPTION_EVENT_TYPE type)
     {
         foreach (PerceptionEvent memory_event in events_in_memory)
@@ -44,7 +55,11 @@ public class PerceptionListener : CulverinBehaviour
 
     public PerceptionEvent GetEvent()
     {
-        return events_in_memory[0];
+        Debug.Log("Getting event");
+
+        if (events_in_memory.Count > 0)
+            return events_in_memory[0];
+        else return null;
     }
 
     void UpdateEvent(PerceptionEvent event_to_update)
