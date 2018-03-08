@@ -12,6 +12,7 @@ public class BarrelMovement : CulverinBehaviour
     Transform trans;
     bool test = false;
     CompRigidBody rigid;
+    public bool restart = false;
 
     void Start()
     {
@@ -20,16 +21,17 @@ public class BarrelMovement : CulverinBehaviour
         trans = gameObject.GetComponent<Transform>();
         barrel = null;
         rigid = gameObject.GetComponent<CompRigidBody>();
+        restart = false;
     }
     void Update()
     {
    
       
-        Vector3 diff = trans.GetPosition() - new Vector3(0,-4,0);
+        Vector3 diff = trans.GetPosition() - new Vector3(manage.restart_pos_x, manage.restart_pos_y, manage.restart_pos_z);
         if (diff.Length >= manage.length)
         {
            Quaternion quat = rigid.GetColliderQuaternion();
-            rigid.MoveKinematic(new Vector3(0, -4, 0), quat);
+            rigid.MoveKinematic(new Vector3(manage.restart_pos_x, manage.restart_pos_y, manage.restart_pos_z),quat);
         
          
 

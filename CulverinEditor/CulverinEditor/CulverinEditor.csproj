@@ -68,7 +68,7 @@
     <Compile Include="Audio.cs" />
     <Compile Include="BarrelPuzle\BarrelManage.cs" />
     <Compile Include="BarrelPuzle\BarrelMovement.cs" />
-    <Compile Include="Player\BarrelFall.cs" />
+    <Compile Include="BarrelPuzle\BarrelFall.cs" />
     <Compile Include="Player\BaseControllers\CharacterController.cs" />
     <Compile Include="Player\BaseControllers\CharactersManager.cs" />
     <Compile Include="CompAnimation.cs" />

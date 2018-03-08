@@ -7,6 +7,10 @@ public class BarrelManage : CulverinBehaviour
 
     GameObject parent_obj;
 
+    public float restart_pos_x;
+    public float restart_pos_y;
+    public float restart_pos_z;
+
     public float movSpeed;
     public float length;
     public float stop_time;
