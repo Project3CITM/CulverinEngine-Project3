@@ -31,7 +31,7 @@ public:
 	// Setters ---------------------
 	void SetMinMaxDistance();
 	void SetSecondActorPose();
-	float3 GetSecondActorPose();
+
 
 	void RemoveActors(CompRigidBody* body);
 	void RemoveActors();
