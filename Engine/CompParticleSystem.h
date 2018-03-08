@@ -120,6 +120,10 @@ private:
 	std::string child_emitter_name;
 	bool child_loaded = false;
 
+
+	float discard_distance = 100.0;
+	float distance_to_camera = 0.0;
+
 	enum
 	{
 		Texture_Resource,

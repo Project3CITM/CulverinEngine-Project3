@@ -199,7 +199,7 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 			if (it->second->IsLoadedToMemory() == Resource::State::LOADED)
 			{
 				it->second->DeleteToMemory();
-				LOG("Resources: %s, unloaded from memory", it->second->name);
+				//LOG("Resources: %s, unloaded from memory", it->second->name);
 			}
 		}
 		it++;
