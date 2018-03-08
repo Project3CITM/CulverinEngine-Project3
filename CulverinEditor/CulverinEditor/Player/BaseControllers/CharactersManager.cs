@@ -16,6 +16,27 @@ public class CharactersManager : CulverinBehaviour
         RIGHT
     }
 
+    public struct Score
+    {
+        uint enem_killed;
+        float game_start;
+        bool puzzle;
+        
+        void EnemyKilled(uint number = 1)
+        {
+            enem_killed += number;
+        }
+        float GameTime ()
+        {
+            float actual_time = Time.DeltaTime();
+            return (game_start - actual_time);
+        }
+        bool IsPuzzle()
+        {
+            return puzzle;
+        }
+    }
+
     public GameObject current_character;
     public GameObject left_character;
     public GameObject right_character;
@@ -25,6 +46,8 @@ public class CharactersManager : CulverinBehaviour
     public GameObject health_obj;
     public GameObject stamina_obj;
     public GameObject mana_obj;
+
+    public Score player_score;
 
     State state = State.IDLE;   // To manage player state
 
