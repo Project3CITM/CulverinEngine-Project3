@@ -410,13 +410,13 @@ public class PerceptionSightEnemy : CulverinBehaviour
         own_angle *= Mathf.RadToDeg;
 
         if (own_angle <= 45 && own_angle >= -45)
-            ret = DIRECTION.E_DIR_NORTH;
-        else if (own_angle >= 45 && own_angle <= 135)
-            ret = DIRECTION.E_DIR_EAST;
-        else if (own_angle >= 135 || own_angle <= -135)
             ret = DIRECTION.E_DIR_SOUTH;
-        else if (own_angle <= -45 && own_angle >= -135)
+        else if (own_angle >= 45 && own_angle <= 135)
             ret = DIRECTION.E_DIR_WEST;
+        else if (own_angle >= 135 || own_angle <= -135)
+            ret = DIRECTION.E_DIR_NORTH;
+        else if (own_angle <= -45 && own_angle >= -135)
+            ret = DIRECTION.E_DIR_EAST;
 
         return ret;
     }
