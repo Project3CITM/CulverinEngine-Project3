@@ -1,6 +1,6 @@
 /*
-#ifndef EVENTSYSTEM
-#define EVENTSYSTEM
+#ifndef EVENTSYSTEM_V2
+#define EVENTSYSTEM_V2
 
 #include <map>
 #include <vector>
@@ -38,5 +38,5 @@ private:
 	uint MapSetToIterate = 0;
 };
 
-#endif //EVENTSYSTEM
+#endif //EVENTSYSTEM_V2
 */

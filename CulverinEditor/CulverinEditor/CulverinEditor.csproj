@@ -55,6 +55,7 @@
     <Compile Include="AI\PerceptionSightEnemy.cs" />
     <Compile Include="AI\Seek_Steering.cs" />
     <Compile Include="AI\SwordAttack_Action.cs" />
+    <Compile Include="BarrelPuzle\BarrelPuzzleGenerator.cs" />
     <Compile Include="BarrelPuzle\BarrelScript.cs" />
     <Compile Include="BarrelPuzle\ChainManage.cs" />
     <Compile Include="BarrelPuzle\ChainMovement.cs" />
@@ -68,7 +69,7 @@
     <Compile Include="Audio.cs" />
     <Compile Include="BarrelPuzle\BarrelManage.cs" />
     <Compile Include="BarrelPuzle\BarrelMovement.cs" />
-    <Compile Include="Player\BarrelFall.cs" />
+    <Compile Include="BarrelPuzle\BarrelFall.cs" />
     <Compile Include="Player\BaseControllers\CharacterController.cs" />
     <Compile Include="Player\BaseControllers\CharactersManager.cs" />
     <Compile Include="CompAnimation.cs" />
