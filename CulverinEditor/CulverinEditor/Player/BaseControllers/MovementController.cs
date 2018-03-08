@@ -761,4 +761,12 @@ public class MovementController : CulverinBehaviour
         y = curr_y;
     }
 
+    public void GetForwardTilePos(out Vector3 pos)
+    {
+        int temp_mov_x;
+        int temp_mov_y;
+        MoveForward(out temp_mov_x, out temp_mov_y);
+        pos = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)temp_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)temp_mov_y);
+    }
+
 }

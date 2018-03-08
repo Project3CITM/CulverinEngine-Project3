@@ -390,33 +390,42 @@ public class DaenerysController : CharacterController
         {
             // Check if player has enough mana to perform its attack
             float mana_cost = mana_cost_percentage * max_mana / 100.0f;
-            if (GetCurrentMana() > mana_cost)
+            int firewall_x, firewall_y;
+            GetLinkedObject("player_obj").GetComponent<MovementController>().MoveForward(out firewall_x, out firewall_y);
+            if (GetLinkedObject("player_obj").GetComponent<MovementController>().CheckIsWalkable(firewall_x, firewall_y))
             {
-                cd_right = daenerys_button_right_obj.GetComponent<DaenerysCD_Right>();
-                //Check if the ability is not in cooldown
-                if (!cd_right.in_cd)
+                if (GetCurrentMana() > mana_cost)
                 {
-                    SetState(State.COVER);
-                    Debug.Log("Daenerys RW Going to Set Fire Wall");
+                    cd_right = daenerys_button_right_obj.GetComponent<DaenerysCD_Right>();
+                    //Check if the ability is not in cooldown
+                    if (!cd_right.in_cd)
+                    {
+                        SetState(State.COVER);
+                        Debug.Log("Daenerys RW Going to Set Fire Wall");
 
-                    // First, OnClick of RightWeapon, then, onClick of Cooldown
-                    DoRightAbility();
+                        // First, OnClick of RightWeapon, then, onClick of Cooldown
+                        DoRightAbility();
 
-                    // Set Animation
-                    SetAnimationTransition("ToFireWall", true);
+                        // Set Animation
+                        SetAnimationTransition("ToFireWall", true);
 
-                    return true;
+                        return true;
+                    }
+                    else
+                    {
+                        Debug.Log("Daenerys RW Ability in CD");
+                        return false;
+                    }
                 }
                 else
                 {
-                    Debug.Log("Daenerys RW Ability in CD");
+                    Debug.Log("Daenerys RW Not Enough Mana");
                     return false;
                 }
             }
             else
             {
-                Debug.Log("Daenerys RW Not Enough Mana");
-                return false;
+                Debug.Log("Can't set the firewall there!");
             }
         }
         return false;
@@ -438,6 +447,9 @@ public class DaenerysController : CharacterController
         DecreaseManaPercentage(mana_cost_percentage);
 
         Debug.Log("Daenerys RW Going to hit");
+
+        Vector3 firewall_pos;
+        GetLinkedObject("player_obj").GetComponent<MovementController>().GetForwardTilePos(out firewall_pos);
 
         // Set a fire wall in north tile
         //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
