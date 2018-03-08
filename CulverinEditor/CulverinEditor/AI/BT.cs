@@ -42,7 +42,7 @@ public class BT : CulverinBehaviour
             int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
             int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-            GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT, 10, 2, my_tile_x, my_tile_y);
+            GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT, 10, 2, my_tile_x, my_tile_y, 8, 4);
         }
 
         if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION)
@@ -94,6 +94,7 @@ public class BT : CulverinBehaviour
             //Investigate
             GetComponent<Investigate_Action>().ActionStart();
             current_action = GetComponent<Investigate_Action>();
+            return;
         }
 
         //If none of them -> patrol

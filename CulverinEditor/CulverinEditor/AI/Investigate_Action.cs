@@ -20,20 +20,20 @@ public class Investigate_Action : Action
 
     public bool forgot_event = false;
 
+    public Investigate_Action() { action_type = ACTION_TYPE.INVESTIGATE_ACTION; }
+
     public override bool ActionStart()
     {
         int current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        event_to_react = GetComponent<PerceptionListener>().GetEvent();
+        event_to_react = GetComponent<NormalGuardListener>().GetEvent();
 
         GetComponent<Movement_Action>().GoTo(current_tile_x, current_tile_y, event_to_react.objective_tile_x, event_to_react.objective_tile_y);
 
         init_tile_x = current_tile_x;
         init_tile_y = current_tile_y;
         my_state = INVESTIGATESTATE.GOING_TO_INVESTIGATE;
-
-        Debug.Log("Going to investigate");
 
         return GetComponent<Movement_Action>().ActionStart();
     }
@@ -85,7 +85,6 @@ public class Investigate_Action : Action
                         return ACTION_RESULT.AR_FAIL;
 
                     my_state = INVESTIGATESTATE.RETURNING_TO_START;
-                    Debug.Log("Going to home");
                 }
 
                 if (interupt)
