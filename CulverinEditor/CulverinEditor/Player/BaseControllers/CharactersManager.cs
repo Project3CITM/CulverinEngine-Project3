@@ -342,4 +342,22 @@ public class CharactersManager : CulverinBehaviour
             }
         }
     }
+
+    //Call thius function to deal damage to the current character
+    public void GetDamage(float dmg)
+    {
+        // CURRENT CHARACTER -------------------------------
+        if (current_character.GetName() == "Jaime")
+        {
+            current_character.GetComponent<JaimeController>().GetDamage(dmg);
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+            current_character.GetComponent<DaenerysController>().GetDamage(dmg);
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            current_character.GetComponent<TheonController>().GetDamage(dmg);
+        }
+    }
 }

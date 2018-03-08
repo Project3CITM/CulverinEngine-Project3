@@ -132,10 +132,7 @@ public class MovementController : CulverinBehaviour
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0) && array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
             {
-                Debug.Log("CALC END POS:");
-                Debug.Log("local-> x: "+ GetComponent<Transform>().local_position.x.ToString() + " y: " + GetComponent<Transform>().local_position.y.ToString() + " z: " + GetComponent<Transform>().local_position.z.ToString());
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
-                Debug.Log("end-> x: " + endPosition.x.ToString() + " y: " + endPosition.y.ToString() + " z: " + endPosition.z.ToString());
                 curr_x += tile_mov_x;
                 curr_y += tile_mov_y;
                 moving = true;
@@ -143,8 +140,6 @@ public class MovementController : CulverinBehaviour
         }
         else if (rotating)
         {
-            Debug.Log("ROTATING");
-
             moving = false;
             GetComponent<Transform>().RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.DeltaTime());
             float moved_angle = (float)angle * speed_rotation * Time.DeltaTime();
@@ -176,8 +171,6 @@ public class MovementController : CulverinBehaviour
         }
         else if (face_rotating)
         {
-            Debug.Log("FACE ROTATING");
-
             moving = false;
             GetComponent<Transform>().RotateAroundAxis(Vector3.Left, face_angle * face_speed_rotation * Time.DeltaTime());
             float moved_angle = (float)face_angle * face_speed_rotation * Time.DeltaTime();
@@ -225,10 +218,7 @@ public class MovementController : CulverinBehaviour
         }
         else if (moving)
         {
-            Debug.Log("MOVING");
             GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.DeltaTime());
-            Debug.Log("local-> x: " + GetComponent<Transform>().local_position.x.ToString() + " y: " + GetComponent<Transform>().local_position.y.ToString() + " z: " + GetComponent<Transform>().local_position.z.ToString());
-            Debug.Log("end-> x: " + endPosition.x.ToString() + " y: " + endPosition.y.ToString() + " z: " + endPosition.z.ToString());
         }
     }
 
@@ -763,4 +753,12 @@ public class MovementController : CulverinBehaviour
 
         return false;
     }
+
+    //Pass the x,y vars as arguments to fill them with player coords
+    public void GetPlayerPos(out int x, out int y)
+    {
+        x = curr_x;
+        y = curr_y;
+    }
+
 }
