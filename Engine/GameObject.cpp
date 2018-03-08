@@ -320,7 +320,7 @@ void GameObject::PreUpdate(float dt)
 				{
 					if (components[i]->GetType() == Comp_Type::C_SCRIPT)
 					{
-						if (((CompScript*)components[i])->p_active)
+						if (((CompScript*)components[i])->p_active || ((CompScript*)components[i])->do_start)
 						{
 							components[i]->PreUpdate(dt);
 						}

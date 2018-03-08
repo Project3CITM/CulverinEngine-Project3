@@ -59,6 +59,17 @@ void CompScript::PreUpdate(float dt)
 		}
 		p_active = false;
 	}
+	if (do_start)
+	{
+		if (csharp != nullptr)
+		{
+			if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
+			{
+				csharp->DoMainFunction(FunctionBase::CS_Start);
+			}
+		}
+		do_start = false;
+	}
 	if (resource_script != nullptr)
 	{
 		if (resource_script->GetState() == Resource::State::WANTDELETE)

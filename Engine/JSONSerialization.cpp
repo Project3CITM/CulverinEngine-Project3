@@ -3,6 +3,7 @@
 #include "ResourceMaterial.h"
 #include "ResourceScript.h"
 #include "ResourceAnimation.h"
+#include "CompScript.h"
 #include "ModuleFS.h"
 #include "ModuleResourceManager.h"
 #include "Scene.h"
@@ -427,7 +428,7 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 	json_value_free(config_file);
 }
 
-GameObject* JSONSerialization::GetLoadPrefab(const char* prefab)
+GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instantiate)
 {
 	LOG("LOADING PREFAB %s -----", prefab);
 
@@ -468,6 +469,18 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab)
 				if (NumberofComponents > 0)
 				{
 					obj->LoadComponents(config_node, name + "Components.", NumberofComponents);
+				}
+				if (is_instantiate)
+				{
+					//do_start
+					for (int i = 0; i < obj->GetNumComponents(); i++)
+					{
+						Component* temp = obj->GetComponentbyIndex(i);
+						if (temp->GetType() == Comp_Type::C_SCRIPT)
+						{
+							((CompScript*)temp)->do_start = true;
+						}
+					}
 				}
 				int uuid_parent = json_object_dotget_number_with_std(config_node, name + "Parent");
 

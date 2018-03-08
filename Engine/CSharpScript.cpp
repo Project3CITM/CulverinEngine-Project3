@@ -980,7 +980,7 @@ MonoObject*	CSharpScript::Instantiate(MonoObject* object, MonoString* prefab_)
 	directory_prebaf += "/";
 	directory_prebaf += prefab;
 	directory_prebaf += ".prefab.json";
-	GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
+	GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str(), true);
 	if (gameobject != nullptr)
 	{
 		App->scene->root->AddChildGameObject(gameobject);
