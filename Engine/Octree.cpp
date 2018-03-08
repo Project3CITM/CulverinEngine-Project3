@@ -168,8 +168,14 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 		ret++;
 		AABB Box;
 		Box = item._Ptr->_Myval->box_fixed;
-		if (frustum.Contains(Box))
-			nodes.push_back(*item);
+		for (int i = 0; i < 8; ++i)
+		{
+			if (frustum.Contains(Box.CornerPoint(i)))
+			{
+				nodes.push_back(*item);
+				break;
+			}
+		}
 	}
 
 	// If there is no children, end
