@@ -18,8 +18,12 @@ public class JaimeController : CharacterController
     public float curr_hp = 100.0f;
     public float max_stamina = 100.0f;
     public float curr_stamina = 100.0f;
+
+    //Secondary Ability Stats ---
+    public float duration = 4.0f;
     public float sec_ability_cd = 10.0f;
     private float sec_ability_current_cd = 10.0f;
+    // ---------------------
 
     //Left Ability Stats ---
     public float left_ability_dmg = 10.0f;
@@ -65,6 +69,11 @@ public class JaimeController : CharacterController
     {
         // Debug method to control Hp
         CheckHealth();
+
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            SecondaryAbility();
+        }
 
         // First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
@@ -177,6 +186,10 @@ public class JaimeController : CharacterController
     public override void SecondaryAbility()
     {
         Debug.Log("Jaime Secondary Ability");
+        GetLinkedObject("player_obj").GetComponent<CharactersManager>().shield_activated = true;
+
+        //Enable Shield icon
+        GetLinkedObject("shield_obj").GetComponent<CompImage>().SetEnabled(true, GetLinkedObject("shield_obj"));
     }
 
     public override void GetDamage(float dmg)
@@ -282,8 +295,9 @@ public class JaimeController : CharacterController
 
     public void PrepareLeftAbility()
     {
-        button = jaime_button_left.GetComponent<CompButton>();
-        button.Clicked(); // This will execute LeftCooldown    
+        //button = jaime_button_left.GetComponent<CompButton>();
+        //button.Clicked(); // This will execute LeftCooldown  
+        OnLeftClick();
     }
 
     public bool OnLeftClick()
@@ -297,9 +311,11 @@ public class JaimeController : CharacterController
             // Check if player has enough stamina to perform its attack
             if (GetCurrentStamina() > calc_cost)
             {
-                left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
+                //left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
                 //Check if the ability is not in cooldown
-                if (!left_ability_cd.in_cd)
+                //if (!left_ability_cd.in_cd)
+                //{ 
+                if (1 == 1) 
                 { 
                     Debug.Log("Jaime LW Going to Attack");
                     DoLeftAbility(calc_cost);              
@@ -331,22 +347,25 @@ public class JaimeController : CharacterController
 
         // Set Attacking Animation depending on the hit_streak
         current_anim = anim_name[hit_streak];
-        SetAnimationTransition(current_anim, true);
+        SetAnimationTransition("To"+current_anim, true);
 
         // Attack the enemy in front of you
-        if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
-        {
+        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
+        //{
+        if (1 == 1) 
+        { 
             // To change => check the specific enemy in front of you
             //enemy = enemy_obj.GetComponent<EnemyController>();
             //enemy.Hit(attack_dmg);
 
-            if (hit_streak < 3)
+            if (hit_streak < 2)
             {
                 hit_streak++; //Increase hit count
             }
             else
             {
                 hit_streak = 0; //Reset hit count
+                Debug.Log(hit_streak);
             }
         }
         else
@@ -362,8 +381,9 @@ public class JaimeController : CharacterController
 
     public void PrepareRightAbility()
     {
-        button = jaime_button_right.GetComponent<CompButton>();
-        button.Clicked(); // This will execute RightCooldown    
+        //button = jaime_button_right.GetComponent<CompButton>();
+        //button.Clicked(); // This will execute RightCooldown    
+        OnRightClick();
     }
 
     public bool OnRightClick()

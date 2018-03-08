@@ -46,10 +46,16 @@ public class CharactersManager : CulverinBehaviour
     public GameObject health_obj;
     public GameObject stamina_obj;
     public GameObject mana_obj;
+    public GameObject shield_obj;
+    public GameObject broken_shield_obj;
 
     public Score player_score;
 
-    State state = State.IDLE;   // To manage player state
+    //To manage player state
+    State state = State.IDLE;   
+
+    //To manage Jaime Secondary Ability
+    public bool shield_activated = false;
 
     void Start()
     {
@@ -62,6 +68,11 @@ public class CharactersManager : CulverinBehaviour
         health_obj = GetLinkedObject("health_obj");
         stamina_obj = GetLinkedObject("stamina_obj");
         mana_obj = GetLinkedObject("mana_obj");
+        shield_obj = GetLinkedObject("shield_obj");
+        broken_shield_obj = GetLinkedObject("broken_shield_obj");
+
+        shield_obj.GetComponent<CompImage>().SetEnabled(false, shield_obj);
+        broken_shield_obj.GetComponent<CompImage>().SetEnabled(false, broken_shield_obj);
 
     }
 
@@ -71,7 +82,12 @@ public class CharactersManager : CulverinBehaviour
         {
             case State.IDLE:
                 {
-                   
+                    //Test Jaime Ability
+                    if (Input.GetKeyDown(KeyCode.Num0))
+                    {
+                        GetDamage(10);
+                    }
+
                     if (Input.GetKeyDown(KeyCode.T))
                     {
                         state = State.CHANGING_LEFT;
@@ -83,7 +99,7 @@ public class CharactersManager : CulverinBehaviour
                         CurrentToOut();
                     }
 
-                    //MANAGE SECONDARY ABILITIES -------------------------------------
+                    //MANAGE SECONDARY ABILITIES ------------
                     else if(Input.GetKeyDown(KeyCode.K))
                     {
                         SecondaryAbility(Side.LEFT);
@@ -92,15 +108,15 @@ public class CharactersManager : CulverinBehaviour
                     {
                         SecondaryAbility(Side.RIGHT);
                     }
-                    // ---------------------------------------------------------------
                     break;
+                    // --------------------------------------
+
                 }
 
             case State.CHANGING_LEFT:
                 {
                     if (IsCharacterAnimationStopped(current_character, "Out"))
                     {
-
                         ChangeLeft();
 
                         //Change GameObjects --------------------
@@ -307,7 +323,6 @@ public class CharactersManager : CulverinBehaviour
 
     void SecondaryAbility(Side side)
     {
-
         if (side == Side.LEFT)
         {
             Debug.Log("Checking if left secondary ability is ready");
@@ -316,6 +331,7 @@ public class CharactersManager : CulverinBehaviour
                 if (left_character.GetComponent<JaimeController>().IsSecondaryAbilityReady())
                 {
                     Debug.Log("Jaime Secondary ability Left");
+                    left_character.GetComponent<JaimeController>().SecondaryAbility();
                     left_character.GetComponent<JaimeController>().ResetCoolDown();
                 }
             }
@@ -369,18 +385,29 @@ public class CharactersManager : CulverinBehaviour
     //Call thius function to deal damage to the current character
     public void GetDamage(float dmg)
     {
-        // CURRENT CHARACTER -------------------------------
-        if (current_character.GetName() == "Jaime")
+        // Shield Ability Consumable
+        if (shield_activated)
         {
-            current_character.GetComponent<JaimeController>().GetDamage(dmg);
+            shield_activated = false;
+            GetLinkedObject("shield_obj").GetComponent<CompImage>().SetEnabled(false, GetLinkedObject("shield_obj"));
+            GetLinkedObject("broken_shield_obj").GetComponent<CompImage>().SetEnabled(true, GetLinkedObject("broken_shield_obj"));         
         }
-        else if (current_character.GetName() == "Daenerys")
+
+        else
         {
-            current_character.GetComponent<DaenerysController>().GetDamage(dmg);
-        }
-        else if (current_character.GetName() == "Theon")
-        {
-            current_character.GetComponent<TheonController>().GetDamage(dmg);
+            // CURRENT CHARACTER -------------------------------
+            if (current_character.GetName() == "Jaime")
+            {
+                current_character.GetComponent<JaimeController>().GetDamage(dmg);
+            }
+            else if (current_character.GetName() == "Daenerys")
+            {
+                current_character.GetComponent<DaenerysController>().GetDamage(dmg);
+            }
+            else if (current_character.GetName() == "Theon")
+            {
+                current_character.GetComponent<TheonController>().GetDamage(dmg);
+            }
         }
     }
 }

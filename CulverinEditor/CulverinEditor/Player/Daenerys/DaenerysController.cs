@@ -40,30 +40,30 @@ public class DaenerysController : CharacterController
     {
         SetPosition(Position.BEHIND);
         sec_ability_current_cd = sec_ability_cd;
+
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
-       daenerys_obj = GetLinkedObject("daenerys_obj");
-       daenerys_icon_obj = GetLinkedObject("daenerys_icon_obj");
-       daenerys_button_left_obj = GetLinkedObject("daenerys_button_left_obj");
-       daenerys_button_right_obj = GetLinkedObject("daenerys_button_right_obj");
-       rarm_daenerys_obj = GetLinkedObject("rarm_daenerys_obj");
-       larm_daenerys_obj = GetLinkedObject("larm_daenerys_obj");
-       particle_firebreath_obj = GetLinkedObject("particle_firebreath_obj");
+        daenerys_obj = GetLinkedObject("daenerys_obj");
+        daenerys_icon_obj = GetLinkedObject("daenerys_icon_obj");
+        daenerys_button_left_obj = GetLinkedObject("daenerys_button_left_obj");
+        daenerys_button_right_obj = GetLinkedObject("daenerys_button_right_obj");
+        rarm_daenerys_obj = GetLinkedObject("rarm_daenerys_obj");
+        larm_daenerys_obj = GetLinkedObject("larm_daenerys_obj");
+        particle_firebreath_obj = GetLinkedObject("particle_firebreath_obj");
 
         //Disable icon
-       icon = daenerys_icon_obj.GetComponent<CompImage>();
-       icon.SetEnabled(false, daenerys_icon_obj);
+        icon = daenerys_icon_obj.GetComponent<CompImage>();
+        icon.SetEnabled(false, daenerys_icon_obj);
 
-       //Disable Mana bar
-       icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
-       icon.SetEnabled(false, GetLinkedObject("mana_obj"));
+        //Disable Mana bar
+        icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
+        icon.SetEnabled(false, GetLinkedObject("mana_obj"));
 
-       Debug.Log(gameObject.GetName());
+        Debug.Log(gameObject.GetName());
 
-       // Start Idle animation
-       anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-       anim_controller.PlayAnimation("Idle");
-
-       ToggleMesh(false);
+        // Start Idle animation
+        //anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+        //anim_controller.PlayAnimation("Idle");   
+        //ToggleMesh(false);
     }
 
     public override void Update()

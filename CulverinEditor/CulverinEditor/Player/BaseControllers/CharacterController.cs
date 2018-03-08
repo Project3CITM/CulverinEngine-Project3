@@ -86,7 +86,7 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void DecreaseStamina(float stamina_cost)
     {
-        Debug.Log("Decrease Stamina");
+        Debug.Log("Decrease Stamina " + stamina_cost);
         stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
         stamina.DecreaseStamina(stamina_cost);
     }

@@ -36,6 +36,7 @@ public class TheonController : CharacterController
     {
         SetPosition(Position.BEHIND);
         sec_ability_current_cd = sec_ability_cd;
+
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         theon_obj = GetLinkedObject("theon_obj");
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
@@ -43,18 +44,16 @@ public class TheonController : CharacterController
         theon_button_left = GetLinkedObject("theon_button_left");
         L_Arm_Theon = GetLinkedObject("L_Arm_Theon");
         R_Arm_Theon = GetLinkedObject("R_Arm_Theon");
+
         //Disable icon
         icon = theon_icon_obj.GetComponent<CompImage>();
         icon.SetEnabled(false, theon_icon_obj);
 
         Debug.Log(gameObject.GetName());
 
-        // Start Idle animation
-        anim_controller = theon_obj.GetComponent<CompAnimation>();
-        
-
-        ToggleMesh(false);
-
+        //Start Idle animation
+        //anim_controller = theon_obj.GetComponent<CompAnimation>();    
+        //ToggleMesh(false);
     }
 
     public override void Update()
@@ -67,7 +66,6 @@ public class TheonController : CharacterController
         // Debug method to control Hp
         CheckHealth();
     
-
         // First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)
