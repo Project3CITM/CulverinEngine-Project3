@@ -41,7 +41,7 @@ public class CharacterController : CulverinBehaviour
     {
         if (position == Position.CURRENT)
         {
-            //ControlCharacter();
+            ControlCharacter();
         }
         else if(position == Position.BEHIND)
         {
