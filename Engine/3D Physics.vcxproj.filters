@@ -1190,6 +1190,9 @@
       <Filter>Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="PlayerActions.h" />
+    <ClInclude Include="Octree.h">
+      <Filter>Engine\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1598,6 +1601,9 @@
     </ClCompile>
     <ClCompile Include="CSharpUI.cpp">
       <Filter>Engine\Resources\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="Octree.cpp">
+      <Filter>Engine\Containers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
