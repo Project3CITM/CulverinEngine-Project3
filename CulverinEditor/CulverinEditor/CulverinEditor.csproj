@@ -43,9 +43,11 @@
     <Compile Include="AI\Align_Steering.cs" />
     <Compile Include="AI\Arrive_Steering.cs" />
     <Compile Include="AI\BT.cs" />
+    <Compile Include="AI\ChasePlayer_Action.cs" />
     <Compile Include="AI\EnemySword_BT.cs" />
     <Compile Include="AI\Enemy_BT.cs" />
     <Compile Include="AI\Idle_Action.cs" />
+    <Compile Include="AI\Investigate_Action.cs" />
     <Compile Include="AI\Movement_Action.cs" />
     <Compile Include="AI\NormalGuardListener.cs" />
     <Compile Include="AI\PerceptionEmitter.cs" />
@@ -63,7 +65,6 @@
     <Compile Include="CompJoint.cs" />
     <Compile Include="CompMesh.cs" />
     <Compile Include="float4x4.cs" />
-    <Compile Include="Investigate_Action.cs" />
     <Compile Include="PhysX.cs" />
     <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />

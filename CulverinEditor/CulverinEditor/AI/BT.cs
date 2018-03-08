@@ -80,7 +80,13 @@ public class BT : CulverinBehaviour
         //Behaviour tree structure
         if (player_detected)
         {
-            //Chase and attack
+            // TODO: Check for attack
+
+            // Chase
+            Debug.Log("Chase Player Action");
+            GetComponent<ChasePlayer_Action>().ActionStart();
+            current_action = GetComponent<ChasePlayer_Action>();
+            return;
         }
 
         if (heard_something)

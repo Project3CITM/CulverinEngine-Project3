@@ -52,7 +52,8 @@ public class NormalGuardListener : PerceptionListener
                 break;    
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-
+                GetLinkedObject("my_self").GetComponent<BT>().InterruptAction();
+                GetLinkedObject("my_self").GetComponent<BT>().player_detected = true;
                 break;
 
            
@@ -74,8 +75,8 @@ public class NormalGuardListener : PerceptionListener
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-
                 GetLinkedObject("my_self").GetComponent<BT>().player_detected = false;
+                GetLinkedObject("my_self").GetComponent<ChasePlayer_Action>().forgot_event = true;
 
                 break;
 

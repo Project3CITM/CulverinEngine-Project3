@@ -133,10 +133,11 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                             break;
                                         }
 
-                                        if (player_seen == false)
+                                        if (player_seen == false) 
                                         {
                                             player_seen = true;
-                                            GetComponent<Movement_Action>().GoToPrevious(GetCurrentTileX(), GetCurrentTileY(), tile_x, tile_y);
+                                            GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
+                                            Debug.Log("Player Seen");
                                         }
                                         break;
                                     }
@@ -212,7 +213,8 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                         if (player_seen == false)
                                         {
                                             player_seen = true;
-                                            GetComponent<Movement_Action>().GoToPrevious(GetCurrentTileX(), GetCurrentTileY(), tile_x, tile_y);
+                                            Debug.Log("Player Seen");
+                                            GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
                                         }
                                         break;
                                     }
@@ -287,8 +289,9 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
                                         if (player_seen == false)
                                         {
+                                            Debug.Log("Player Seen");
                                             player_seen = true;
-                                            GetComponent<Movement_Action>().GoToPrevious(GetCurrentTileX(), GetCurrentTileY(), tile_x, tile_y);
+                                            GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
                                         }
                                         break;
                                     }
@@ -364,8 +367,9 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
                                         if (player_seen == false)
                                         {
-                                            GetComponent<Movement_Action>().GoToPrevious(GetCurrentTileX(), GetCurrentTileY(), tile_x, tile_y);
+                                            Debug.Log("Player Seen");
                                             player_seen = true;
+                                            GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
                                         }
                                         break;
                                     }
