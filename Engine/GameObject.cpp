@@ -1843,6 +1843,21 @@ void GameObject::SyncComponents(GameObject* parent)
 	}
 }
 
+void GameObject::SyncComponentsRecursive(GameObject * sync_parent)
+{
+	// Now Iterate All components and Load variables
+	for (int i = 0; i < components.size(); i++)
+	{
+		components[i]->SyncComponent(parent);
+	}
+
+	// Now Iterate All Childs to Sync Components
+	for (uint i = 0; i < childs.size(); i++)
+	{
+		childs[i]->SyncComponentsRecursive(sync_parent);
+	}
+}
+
 int GameObject::GetNumComponents() const
 {
 	return components.size();
