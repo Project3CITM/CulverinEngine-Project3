@@ -72,9 +72,13 @@ void jpJoint::SetSecondActorPose()
 {
 	if (joint)
 	{
-		physx::PxTransform transf = joint->getLocalPose(physx::PxJointActorIndex::eACTOR0);
-		transf.p.y -= joint->getMaxDistance();
+		physx::PxRigidActor* first = nullptr;
+		physx::PxRigidActor* second = nullptr;
+
+		joint->getActors(first, second);
+		physx::PxTransform transf = first->getGlobalPose();
+		transf.p.x -= joint->getMaxDistance();
 		
-		joint->setLocalPose(physx::PxJointActorIndex::eACTOR1, transf);
+		second->setGlobalPose(transf);
 	}
 }
