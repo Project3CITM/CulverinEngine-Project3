@@ -287,6 +287,11 @@ AnimationTransition * CompAnimation::GetTransitionFromName(std::string name, Ani
 	return nullptr;
 }
 
+AnimationClip * CompAnimation::GetBlendingClip() const
+{
+	return blending_animation;
+}
+
 void CompAnimation::SetResource(ResourceAnimation * resource_animation, bool isImport)
 {
 	if (animation_resource != resource_animation)
