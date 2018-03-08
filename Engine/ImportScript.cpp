@@ -845,6 +845,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyTorqueImpulse", (const void*)ApplyTorqueImpulse);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::LockTransform", (const void*)LockTransform);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::UnLockTransform", (const void*)UnLockTransform);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::WakeUp", (const void*)WakeUp);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::SetAtMaxJointPose", (const void*)SetAtMaxJointPose);
 
 	//COMPONENT JOINT FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.CompJoint::DeleteJoint", (const void*)DeleteJoint);
@@ -1463,6 +1465,16 @@ void ImportScript::UnLockTransform(MonoObject * object)
 void ImportScript::ResetForce(MonoObject * object)
 {
 	current->ResetForce(object);
+}
+
+void ImportScript::WakeUp(MonoObject * object)
+{
+	current->WakeUp(object);
+}
+
+void ImportScript::SetAtMaxJointPose(MonoObject * object)
+{
+	current->SetAtMaxJointPose(object);
 }
 
 void ImportScript::DeleteJoint(MonoObject * object)

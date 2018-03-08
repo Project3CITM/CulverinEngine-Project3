@@ -61,6 +61,7 @@ public:
 	// Dynamic Body Methods ---------
 	// Check Methods
 	bool Sleeping();
+	void WakeUp();
 
 	// Simulation Methods
 	void ApplyForce(float3 force);

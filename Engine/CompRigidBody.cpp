@@ -341,14 +341,6 @@ jpPhysicsRigidBody * CompRigidBody::GetPhysicsBody() const
 	return body;
 }
 
-void CompRigidBody::RemoveJoint()
-{
-	if (joint != nullptr)
-	{
-		joint->RemoveActors();
-	}
-}
-
 void CompRigidBody::UpdateParentPosition()
 {
 	// Change variables to mathgeolib
@@ -375,6 +367,22 @@ void CompRigidBody::UpdateParentPosition()
 	// GameObject local transform and position
 	transform->SetPos(fpos);
 	transform->SetRot(quat);
+}
+
+void CompRigidBody::SetMaxJointPose()
+{
+	if (joint)
+	{
+		joint->SetSecondActorPose();
+	}
+}
+
+void CompRigidBody::RemoveJoint()
+{
+	if (joint != nullptr)
+	{
+		joint->RemoveActors();
+	}
 }
 
 void CompRigidBody::OnTriggerEnter(Component * trigger)
@@ -459,5 +467,13 @@ void CompRigidBody::UnLockTransform()
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(false);
+	}
+}
+
+void CompRigidBody::WakeUp()
+{
+	if (body)
+	{
+		body->WakeUp();
 	}
 }

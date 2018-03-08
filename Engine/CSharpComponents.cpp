@@ -397,6 +397,22 @@ void CSharpScript::ResetForce(MonoObject * object)
 	}
 }
 
+void CSharpScript::WakeUp(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->WakeUp();
+	}
+}
+
+void CSharpScript::SetAtMaxJointPose(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->SetMaxJointPose();
+	}
+}
+
 void CSharpScript::DestroyJoint(MonoObject* object)
 {
 	if (current_game_object != nullptr)

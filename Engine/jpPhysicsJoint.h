@@ -21,6 +21,7 @@ public:
 
 	// Set Methods
 	void SetLimitDistance(float min_dist, float max_dist);
+	void SetSecondActorPose();
 
 private:
 	physx::PxDistanceJoint* joint = nullptr;

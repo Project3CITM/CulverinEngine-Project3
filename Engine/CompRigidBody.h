@@ -40,10 +40,13 @@ public:
 
 	//Getters ----------------------
 	jpPhysicsRigidBody* GetPhysicsBody() const;
-
-	void RemoveJoint();
-
+	
+	//Parent Methods ---------------
 	void UpdateParentPosition();
+
+	//Joint Methods ----------------
+	void SetMaxJointPose();
+	void RemoveJoint();
 
 	// Collision Events ------------
 	void OnTriggerEnter(Component* trigger);
@@ -63,6 +66,8 @@ public:
 
 	void LockTransform();
 	void UnLockTransform();
+
+	void WakeUp();
 
 private:
 

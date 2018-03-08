@@ -67,3 +67,14 @@ void jpJoint::SetLimitDistance(float min_dist, float max_dist)
 		joint->setDistanceJointFlag(physx::PxDistanceJointFlag::eMIN_DISTANCE_ENABLED, true);
 	}
 }
+
+void jpJoint::SetSecondActorPose()
+{
+	if (joint)
+	{
+		physx::PxTransform transf = joint->getLocalPose(physx::PxJointActorIndex::eACTOR0);
+		transf.p.y -= joint->getMaxDistance();
+		
+		joint->setLocalPose(physx::PxJointActorIndex::eACTOR1, transf);
+	}
+}

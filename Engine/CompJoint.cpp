@@ -231,6 +231,14 @@ void CompJoint::SetMinMaxDistance()
 	}
 }
 
+void CompJoint::SetSecondActorPose()
+{
+	if (joint)
+	{
+		joint->SetSecondActorPose();
+	}
+}
+
 void CompJoint::RemoveActors(CompRigidBody * body)
 {
 	if (joint && joint->ToRelease())

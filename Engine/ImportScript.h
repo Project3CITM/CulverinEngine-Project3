@@ -214,6 +214,8 @@ private:
 	static void			LockTransform(MonoObject* object);
 	static void			UnLockTransform(MonoObject* object);
 	static void			ResetForce(MonoObject* object);
+	static void			WakeUp(MonoObject* object);
+	static void			SetAtMaxJointPose(MonoObject* object);
 
 	/*Component Joint*/
 	static void		   DeleteJoint(MonoObject* object);

@@ -36,5 +36,11 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void ResetForces();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void WakeUp();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetAtMaxJointPose();
     }
 }

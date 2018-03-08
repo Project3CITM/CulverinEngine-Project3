@@ -374,6 +374,14 @@ bool jpPhysicsRigidBody::Sleeping()
 	}
 }
 
+void jpPhysicsRigidBody::WakeUp()
+{
+	if (body && is_dynamic)
+	{
+		static_cast<physx::PxRigidDynamic*>(body)->wakeUp();
+	}
+}
+
 void jpPhysicsRigidBody::ApplyForce(float3 force)
 {
 	if (is_dynamic && force.IsFinite())

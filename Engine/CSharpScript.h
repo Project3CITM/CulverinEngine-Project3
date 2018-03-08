@@ -243,6 +243,8 @@ public:
 	void		LockTransform(MonoObject* object);
 	void		UnLockTransform(MonoObject* object);
 	void		ResetForce(MonoObject* object);
+	void		WakeUp(MonoObject* object);
+	void		SetAtMaxJointPose(MonoObject* object);
 
 	/*Joint*/
 	void		DestroyJoint(MonoObject* object);
