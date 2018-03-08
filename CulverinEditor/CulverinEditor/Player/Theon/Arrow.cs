@@ -13,15 +13,17 @@ public class Arrow : CulverinBehaviour
 
     void Start()
     {
-
+        rb = GetComponent<CompRigidBody>();
+        Shoot();
     }
 
     public void Shoot()
     {
+        rb.WakeUp();
         rb = GetComponent<CompRigidBody>();
         rb.UnLockTransform();
-        rb.ApplyImpulse(speed); // Forward impulse
-        rb.ApplyTorqueForce(gravity); // Fall force
+        rb.ApplyImpulse(new Vector3(0,0,10)); // Forward impulse
+        rb.ApplyTorqueForce(new Vector3(0, 0, 10)); // Fall force
     }
 
     void Update()
