@@ -417,6 +417,26 @@ void CompButton::OnClick()
 	}
 }
 
+void CompButton::OnSubmit(Event event_input)
+{
+	if (IsActivate() || !IsActive())
+		return;
+	if (linked_scripts.empty())
+	{
+		return;
+	}
+
+	uint size = linked_scripts.size();
+	for (uint k = 0; k < size; k++)
+	{
+		CompScript* comp_script = linked_scripts[k];
+
+		if (comp_script == nullptr)
+			continue;
+		linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
+	}
+}
+
 void CompButton::OnPointDown(Event event_input)
 {
 	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
