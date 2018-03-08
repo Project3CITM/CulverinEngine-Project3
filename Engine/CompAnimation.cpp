@@ -925,7 +925,7 @@ void CompAnimation::SetClipsSpeed(float speed_value)
 
 bool AnimationClip::IsAnimOverXTime(float num_between_0_and_1)
 {
-	if ((time / end_frame_time) >= num_between_0_and_1)
+	if (((time - start_frame_time) / (end_frame_time - start_frame_time)) >= num_between_0_and_1)
 	{
 		return true;
 	}

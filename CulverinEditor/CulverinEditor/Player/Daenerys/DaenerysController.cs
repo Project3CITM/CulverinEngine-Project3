@@ -50,6 +50,11 @@ public class DaenerysController : CharacterController
         larm_daenerys_obj = GetLinkedObject("larm_daenerys_obj");
         particle_firebreath_obj = GetLinkedObject("particle_firebreath_obj");
 
+        // Start Idle animation
+        anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+        anim_controller.PlayAnimation("Idle");
+        ToggleMesh(false);
+
         //Disable icon
         icon = daenerys_icon_obj.GetComponent<CompImage>();
         icon.SetEnabled(false, daenerys_icon_obj);
@@ -59,11 +64,6 @@ public class DaenerysController : CharacterController
         icon.SetEnabled(false, GetLinkedObject("mana_obj"));
 
         Debug.Log(gameObject.GetName());
-
-        // Start Idle animation
-        //anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-        //anim_controller.PlayAnimation("Idle");   
-        //ToggleMesh(false);
     }
 
     public override void Update()
@@ -98,8 +98,16 @@ public class DaenerysController : CharacterController
                         {
                             //Check for end of the Attack animation
                             anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("Attack1"))
+                            if (anim_controller.IsAnimOverXTime(0.4f))
                             {
+                                Debug.Log("Starting particles");
+                                particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
+                                particle_system.ActivateEmission(true);
+                            }
+                            anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+                            if (anim_controller.IsAnimationStopped("AttackLeft"))
+                            {
+                                Debug.Log("Daenerys back to Idle");
                                 state = State.IDLE;
                                 particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
                                 particle_system.ActivateEmission(false);
@@ -177,7 +185,12 @@ public class DaenerysController : CharacterController
         if (Input.GetKeyDown(KeyCode.Num1))
         {
             Debug.Log("Daenerys Pressed 1");
-            PrepareLeftAbility();
+            // TAKE THIS OUT AFTER TESTS! ----
+            SetAnimationTransition("ToAttackLeft", true);
+            SetState(State.ATTACKING);
+            DecreaseManaPercentage(mana_cost_percentage_left);
+            //-----------------
+            //PrepareLeftAbility();
         }
 
         //Right Attack
@@ -328,7 +341,7 @@ public class DaenerysController : CharacterController
                     DoLeftAbility();
 
                     // Set Attacking Animation
-                    SetAnimationTransition("ToAttack1", true);
+                    SetAnimationTransition("ToAttackLeft", true);
 
                     //Play Particle
                     particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();

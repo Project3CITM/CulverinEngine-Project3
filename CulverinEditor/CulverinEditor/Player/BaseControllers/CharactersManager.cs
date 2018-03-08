@@ -41,7 +41,7 @@ public class CharactersManager : CulverinBehaviour
     public GameObject left_character;
     public GameObject right_character;
     private GameObject temporal_change = null;
-    GameObject arrow;
+    //GameObject arrow;
     public GameObject player_obj; 
     public GameObject health_obj;
     public GameObject stamina_obj;
@@ -348,8 +348,8 @@ public class CharactersManager : CulverinBehaviour
                 if (left_character.GetComponent<TheonController>().IsSecondaryAbilityReady())
                 {
                     Debug.Log("Theon Secondary ability Left");
-                    arrow = Instantiate("ArrowTheon");
-                    arrow.transform.SetPosition(new Vector3(10, 0, 20));
+                    //arrow = Instantiate("ArrowTheon");
+                    //arrow.transform.SetPosition(new Vector3(10, 0, 20));
                     left_character.GetComponent<TheonController>().ResetCoolDown();
                 }
             }
