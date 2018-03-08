@@ -6,6 +6,7 @@
 #include "ModuleFramebuffers.h"
 #include "CompMesh.h"
 #include "Quadtree.h"
+#include "Octree.h"
 #include <vector>
 
 class GameObject;
@@ -70,7 +71,8 @@ public:
 	void DrawCube(float size);
 
 	// CULLING HELPER FUNCTION -----------
-	void FillStaticObjectsVector(bool fill);
+	//void FillStaticObjectsVector(bool fill);
+	void RecalculateStaticObjects();
 
 	//OBJECTS CREATION / DELETION ---------------------
 	GameObject* FindCanvas();
@@ -102,13 +104,14 @@ public:
 	GameObject* root = nullptr;
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
-	std::vector<GameObject*> static_objects;
+	std::list<GameObject*> static_objects;
 
 	// Scene Saved
 	bool scene_saved = true; // TODO XAVI - need implementation with Event System
 
 	// Quadtree ----------------
-	Quadtree quadtree;
+	//Quadtree quadtree;
+	Octree octree;
 	bool quadtree_draw = false;
 	// -------------------------
 

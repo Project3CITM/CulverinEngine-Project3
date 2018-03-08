@@ -73,7 +73,10 @@ bool Scene::Start()
 
 	/* Init Quadtree */
 	size_quadtree = 50.0f;
-	quadtree.Init(size_quadtree);
+//	quadtree.Init(size_quadtree);
+	octree.limits.octreeMinSize = size_quadtree;
+	octree.Boundaries(AABB(float3(-size_quadtree, -size_quadtree, -size_quadtree), float3(size_quadtree, size_quadtree, size_quadtree)));
+
 
 	/* Set size of the plane of the scene */
 	size_plane = 50;
@@ -167,7 +170,7 @@ update_status Scene::Update(float dt)
 	// Draw GameObjects
 	root->Draw();
 	// Draw Quadtree
-	if (App->scene->quadtree_draw) App->scene->quadtree.DebugDraw();
+	if (quadtree_draw) App->scene->octree.DebugDraw();
 	// Draw GUI
 	//App->render_gui->ScreenSpaceDraw();
 	static int nico = 0;
@@ -299,13 +302,15 @@ void Scene::EditorQuadtree()
 	{
 		ImGui::PopStyleColor();
 
+		//TODO: Joan->Redo quadtree config options
+
 		/* Enable Debug Draw */
 		ImGui::Checkbox("##quadtreedraw", &quadtree_draw); ImGui::SameLine();
 		ImGui::Text("Draw Quadtree");
 		ImGui::SliderFloat("Size", &size_quadtree, 50, 300);
 
 		/* Remake Quadtree with actual static objects*/
-		if (ImGui::Button("UPDATE QUADTREE"))
+		/*if (ImGui::Button("UPDATE QUADTREE"))
 		{
 			if (App->engine_state == EngineState::STOP)
 			{
@@ -323,7 +328,7 @@ void Scene::EditorQuadtree()
 			{
 				LOG("Update Quadtree not possible while GAME MODE is ON");
 			}
-		}
+		}*/
 		ImGui::TreePop();
 	}
 	else
@@ -783,14 +788,20 @@ void Scene::DrawCube(float size)
 // Before Rendering with the game camera (in Game Mode), fill a vector with all the static objects 
 // of the quadtree to iterate them to apply Culling (if activated)
 // When exiting Game Mode, this function is called again only for clearing this vector
-void Scene::FillStaticObjectsVector(bool fill)
+//void Scene::FillStaticObjectsVector(bool fill)
+//{
+//	static_objects.clear();
+//
+//	if (fill)
+//	{
+//		quadtree.CollectObjects(static_objects);
+//	}
+//}
+
+void Scene::RecalculateStaticObjects()
 {
 	static_objects.clear();
-
-	if (fill)
-	{
-		quadtree.CollectObjects(static_objects);
-	}
+	octree.CollectAllObjects(static_objects);
 }
 
 GameObject * Scene::FindCanvas()
