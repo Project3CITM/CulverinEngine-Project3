@@ -44,7 +44,10 @@ bool InputManager::ProcessEvent(SDL_Event * input_event)
 {
 	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
 	{
-		(*it)->ProcessEventAction(input_event);
+		if ((*it)->ProcessEventAction(input_event))
+		{
+			return true;
+		}
 	}
 	return false;
 

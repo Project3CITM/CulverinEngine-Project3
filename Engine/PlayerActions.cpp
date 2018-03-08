@@ -264,12 +264,11 @@ bool PlayerActions::GetInput_KeyDown(const char * key, const char * input)
 
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+		if (!(*it)->GetActiveInput())
 			continue;
-		else if ((*it)->GetBlockAction())
-			return false;*/
 		if (strcmp((*it)->GetName(), input) == 0) 
 		{
+
 			std::vector<KeyAction*> key_t= (*it)->GetKey(key);
 			for (int i = 0; i < key_t.size(); i++)
 			{
@@ -278,6 +277,10 @@ bool PlayerActions::GetInput_KeyDown(const char * key, const char * input)
 					return true;
 				}
 			}
+
+			if ((*it)->GetBlockAction())
+				return false;
+
 		}
 
 	}
@@ -289,10 +292,8 @@ bool PlayerActions::GetInput_KeyUp(const char * key, const char * input)
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+		if (!(*it)->GetActiveInput())
 			continue;
-		else if ((*it)->GetBlockAction())
-			return false;*/
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 
@@ -304,6 +305,10 @@ bool PlayerActions::GetInput_KeyUp(const char * key, const char * input)
 					return true;
 				}
 			}
+
+			if ((*it)->GetBlockAction())
+				return false;
+
 		}
 
 	}
@@ -315,10 +320,10 @@ bool PlayerActions::GetInput_KeyRepeat(const char * key, const char * input)
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+
+		if (!(*it)->GetActiveInput())
 			continue;
-		else if ((*it)->GetBlockAction())
-			return false;*/
+
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 
@@ -330,6 +335,9 @@ bool PlayerActions::GetInput_KeyRepeat(const char * key, const char * input)
 					return true;
 				}
 			}
+
+			if ((*it)->GetBlockAction())
+				return false;
 
 		}
 
@@ -343,10 +351,10 @@ bool PlayerActions::GetInput_MouseButtonDown(const char* name, const char * inpu
 
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+
+		if (!(*it)->GetActiveInput())
 			continue;
-		else if ((*it)->GetBlockAction())
-			return false;*/
+
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 
@@ -360,6 +368,9 @@ bool PlayerActions::GetInput_MouseButtonDown(const char* name, const char * inpu
 				return false;
 			}
 
+			if ((*it)->GetBlockAction())
+				return false;
+
 		}
 
 	}
@@ -371,10 +382,10 @@ bool PlayerActions::GetInput_MouseButtonUp(const char * name, const char * input
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
-			continue;
-		else if ((*it)->GetBlockAction())
-			return false;*/
+
+		if (!(*it)->GetActiveInput())
+			continue; 
+
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 
@@ -389,6 +400,9 @@ bool PlayerActions::GetInput_MouseButtonUp(const char * name, const char * input
 
 		}
 
+		if ((*it)->GetBlockAction())
+			return false;
+
 	}
 
 	return false;
@@ -398,10 +412,10 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
-		/*if ((*it)->GetActiveInput() && !(*it)->GetBlockAction())
+
+		if (!(*it)->GetActiveInput())
 			continue;
-		else if ((*it)->GetBlockAction())
-			return 0;*/
+
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 
@@ -411,6 +425,9 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 				return axis_t->direction_axis;
 			}
 		}
+		if ((*it)->GetBlockAction())
+			return false;
+
 
 	}
 	return 0;

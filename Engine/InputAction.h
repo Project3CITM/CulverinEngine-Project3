@@ -247,6 +247,10 @@ public:
 	{ 
 
 		int state_event = -1;
+		if (state == Keystateaction::KEY_IDLE_ACTION)
+		{
+			return true;
+		}
 
 		switch (key_relation->key_type)
 		{
