@@ -11,6 +11,8 @@
 #include "ImportMaterial.h"
 #include "CompTransform.h"
 #include "ModuleEventSystem.h"
+#include "ModuleGUI.h"
+#include "WindowInspector.h"
 
 CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
@@ -30,6 +32,29 @@ CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Compon
 
 CompParticleSystem::CompParticleSystem(const CompParticleSystem& copy, GameObject* parent) : Component(copy.GetType(), parent)
 {
+	uid = App->random->Int();
+	name_component = "CompParticleSystem";
+	emitter_resource_name.reserve(100);
+	particle_resource_name.reserve(100);
+
+	emitter_resource_name = copy.emitter_resource_name;
+	particle_resource_name = copy.particle_resource_name;
+
+	part_system = new ParticleSystem();
+
+	discard_distance = copy.discard_distance;
+
+
+	file_to_load = particle_resource_name;
+	ImGuiLoadParticlePopUp();
+
+	file_to_load = emitter_resource_name;
+	ImGuiLoadEmitterPopUp();
+
+	if (copy.active)
+		part_system->ActivateEmitter();
+	else
+		part_system->DeactivateEmitter();
 }
 
 CompParticleSystem::~CompParticleSystem()
@@ -551,6 +576,18 @@ void CompParticleSystem::ShowOptions()
 	{
 		ImGui::CloseCurrentPopup();
 	}
+	if (ImGui::MenuItem("Copy Component", NULL, false))
+	{
+		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetComponentCopy(this);
+	}
+	if (ImGui::MenuItem("Paste Component As New", NULL, false, ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->AnyComponentCopied()))
+	{
+		if (parent->FindComponentByType(((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType()) == nullptr
+			|| ((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()->GetType() > Comp_Type::C_CAMERA)
+		{
+			parent->AddComponentCopy(*((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied());
+		}
+	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Move to Front", NULL, false, false))
 	{
@@ -686,6 +723,10 @@ void CompParticleSystem::ShowInspectorInfo()
 	}
 
 	ImGui::TreePop();
+}
+
+void CompParticleSystem::CopyComponent()
+{
 }
 
 void CompParticleSystem::DrawDirectory(const char * directory)

@@ -32,6 +32,8 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 
+	void CopyComponent();
+
 	void ImGuiLoadPopUp();
 	void ImGuiLoadTexturePopUp();
 	void ImGuiLoadParticlePopUp();
