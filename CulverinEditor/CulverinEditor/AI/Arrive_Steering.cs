@@ -14,7 +14,7 @@ public class Arrive_Steering : CulverinBehaviour
     {
         move = GetComponent<Movement_Action>();
         Debug.Log("Arrive Start");
-        SetScriptEnabled(false);
+        SetEnabled(false);
     }
 
     void Update()

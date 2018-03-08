@@ -135,8 +135,8 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
                                         if (player_seen == false)
                                         {
-                                            GetComponent<Movement_Action>().GoTo(GetCurrentTileX(), GetCurrentTileY(), tile_x, tile_y);
                                             player_seen = true;
+                                            GetComponent<Movement_Action>().GoToPrevious(GetCurrentTileX(), GetCurrentTileY(), tile_x, tile_y);
                                         }
                                         break;
                                     }
@@ -211,8 +211,8 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
                                         if (player_seen == false)
                                         {
-                                            //TODO: GetComponent<Movement_Action>().GoTo()
                                             player_seen = true;
+                                            GetComponent<Movement_Action>().GoToPrevious(GetCurrentTileX(), GetCurrentTileY(), tile_x, tile_y);
                                         }
                                         break;
                                     }
@@ -287,8 +287,8 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
                                         if (player_seen == false)
                                         {
-                                            //TODO: GetComponent<Movement_Action>().GoTo()
                                             player_seen = true;
+                                            GetComponent<Movement_Action>().GoToPrevious(GetCurrentTileX(), GetCurrentTileY(), tile_x, tile_y);
                                         }
                                         break;
                                     }
@@ -306,7 +306,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
                 case DIRECTION.E_DIR_WEST:
                     for (int j = 0; j < frustum_lenght; j++)
                     {
-                        Debug.Log("j: " + j);
                         int tile_x = (GetCurrentTileX() - j);
                         if (tile_x >= 0 && tile_x < map_width)
                         {
@@ -315,13 +314,9 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                 int tile_y = (GetCurrentTileY() + i - ((frustum_size - 1) / 2));
                                 if (tile_y >= 0 && tile_y < map_height)
                                 {
-                                    Debug.Log("i: " + i);
-                                    Debug.Log("Checking Tile: (" + tile_x + ", " + tile_y + ")");
                                     bool cant_see = false;
-                                    Debug.Log("Num blocked tiles: " + blocked_tiles_x.Count);
                                     for (int k = 0; k < blocked_tiles_x.Count; k++)
                                     {
-                                        Debug.Log("Blocked Tile: (" + blocked_tiles_x[k] + ", " + blocked_tiles_y[k] + ")");
                                         if (tile_x < blocked_tiles_x[k])
                                         {
                                             if (i > 0)
@@ -329,7 +324,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                                 if (tile_y >= blocked_tiles_y[k])
                                                 {
                                                     cant_see = true;
-                                                    Debug.Log("Can't See Tile");
                                                     break;
                                                 }
                                             }
@@ -338,7 +332,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                                 if (tile_y == blocked_tiles_y[k])
                                                 {
                                                     cant_see = true;
-                                                    Debug.Log("Can't See Tile");
                                                     break;
                                                 }
                                             }
@@ -347,7 +340,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                                 if (tile_y <= blocked_tiles_y[k])
                                                 {
                                                     cant_see = true;
-                                                    Debug.Log("Can't See Tile");
                                                     break;
                                                 }
                                             }
@@ -356,7 +348,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
                                     if (tile_map[tile_x, tile_y] == 1)
                                     {
-                                        Debug.Log("Non Walkable Tile: " + tile_x + ", " + tile_y);
                                         blocked_tiles_x.Add(tile_x);
                                         blocked_tiles_y.Add(tile_y);
                                     }
@@ -368,16 +359,14 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                         if (cant_see == true)
                                         {
                                             player_seen = false;
-                                            Debug.Log("Player Is OUTSIDE Vision");
                                             break;
                                         }
 
                                         if (player_seen == false)
                                         {
-                                            //TODO: GetComponent<Movement_Action>().GoTo()
+                                            GetComponent<Movement_Action>().GoToPrevious(GetCurrentTileX(), GetCurrentTileY(), tile_x, tile_y);
                                             player_seen = true;
                                         }
-                                        Debug.Log("Player Is INSIDE Vision");
                                         break;
                                     }
                                 }
@@ -389,8 +378,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
                         else if (j == (frustum_lenght - 1))    // If player is out of range
                             player_seen = false;
                     }
-                    Debug.Log("WEST");
-                    Debug.Log("Player Is being seen? " + player_seen);
                     break;
                 case DIRECTION.E_DIR_MAX:
                 default:

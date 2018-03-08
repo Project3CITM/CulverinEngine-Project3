@@ -6,7 +6,7 @@ public class Seek_Steering : CulverinBehaviour
     void Start()
     {
         Debug.Log("Seek Start");
-        SetScriptEnabled(false);
+        SetEnabled(false);
     }
 
     void Update()

@@ -161,6 +161,18 @@ public class Movement_Action : Action
         SetState();
     }
 
+    public void GoToPrevious(int cur_x, int cur_y, int obj_x, int obj_y)    // Sets a path to the previous tile of your objective // Useful for chasing the player
+    {
+        path.Clear();
+        path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(cur_x, cur_y), new PathNode(obj_x, obj_y));
+        path.Remove(path[(path.Count - 1)]);
+
+        foreach (PathNode pn in path)
+            Debug.Log("Tile:\nX:" + pn.GetTileX().ToString() + " Y:" + pn.GetTileY().ToString());
+
+        SetState();
+    }
+
     public void Accelerate(Vector3 acceleration)    
     {
         current_acceleration.x = current_acceleration.x + acceleration.x;
@@ -189,9 +201,18 @@ public class Movement_Action : Action
     public Vector3 GetTargetPosition()
     {
         Vector3 result = new Vector3(Vector3.Zero);
-        result.x = path[0].GetTileX() * tile_size;
-        result.y = GetComponent<Transform>().local_position.y;
-        result.z = path[0].GetTileY() * tile_size;
+        if (path.Count > 0)
+        {
+            result.x = path[0].GetTileX() * tile_size;
+            result.y = GetComponent<Transform>().local_position.y;
+            result.z = path[0].GetTileY() * tile_size;
+        }
+        else
+        {
+            result = GetComponent<Transform>().local_position;
+            Debug.Log("GetTargetPosition: Path has no values");
+        }
+
         return result;
     }
 
