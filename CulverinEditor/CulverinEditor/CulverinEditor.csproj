@@ -45,6 +45,7 @@
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\EnemySword_BT.cs" />
     <Compile Include="AI\Enemy_BT.cs" />
+    <Compile Include="AI\Idle_Action.cs" />
     <Compile Include="AI\Movement_Action.cs" />
     <Compile Include="AI\NormalGuardListener.cs" />
     <Compile Include="AI\PerceptionEmitter.cs" />

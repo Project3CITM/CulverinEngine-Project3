@@ -14,6 +14,7 @@ public class BT : CulverinBehaviour
 
     protected Action current_action = new Action();
     protected AI_STATE state = AI_STATE.AI_IDLE;
+    protected Action idle_action = new Idle_Action();
 
     //Blackboard
     public bool player_detected = false;
@@ -28,6 +29,7 @@ public class BT : CulverinBehaviour
 
     virtual public void Start()
     {
+        current_action = idle_action;
         current_action = MakeDecision();
     }
 
@@ -63,6 +65,10 @@ public class BT : CulverinBehaviour
                     Debug.Log("Error on action state!");
                     break;
             }
+        }
+        else
+        {
+            current_action = MakeDecision();
         }
     }
 

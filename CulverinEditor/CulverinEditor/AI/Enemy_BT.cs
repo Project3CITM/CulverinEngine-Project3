@@ -20,7 +20,7 @@ public class Enemy_BT : BT
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
 
-    public virtual void Start()
+    public override void Start()
     {
         current_life = life;
         //Enemy starts with the attack loaded!
@@ -29,14 +29,15 @@ public class Enemy_BT : BT
         current_action = MakeDecision();
     }
 
-    public virtual void Update()
+    public override void Update()
     {
         //Update attack cooldown
         attack_timer += Time.DeltaTime();
 
         base.Update();
     }
-    public virtual Action MakeDecision()
+
+    public override Action MakeDecision()
     {
         Debug.Log("Enemy_BT not decision defined!");
         return null;
