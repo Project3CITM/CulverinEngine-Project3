@@ -26,7 +26,7 @@ public class Enemy_BT : BT
         //Enemy starts with the attack loaded!
         attack_timer = attack_cooldown * attack_speed;
 
-        current_action = MakeDecision();
+        base.Start();
     }
 
     public override void Update()
@@ -37,10 +37,9 @@ public class Enemy_BT : BT
         base.Update();
     }
 
-    public override Action MakeDecision()
+    public override void MakeDecision()
     {
         Debug.Log("Enemy_BT not decision defined!");
-        return null;
     }
 
     public void ApplyDamage(float damage)

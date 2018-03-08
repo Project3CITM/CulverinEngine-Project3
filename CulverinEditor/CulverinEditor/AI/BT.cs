@@ -30,7 +30,8 @@ public class BT : CulverinBehaviour
     virtual public void Start()
     {
         current_action = idle_action;
-        current_action = MakeDecision();
+        current_action.ActionStart();
+        MakeDecision();
     }
 
     public virtual void Update()
@@ -44,13 +45,13 @@ public class BT : CulverinBehaviour
             GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT, 10, 2, my_tile_x, my_tile_y);
         }
 
-        if (current_action.action_type != Action.ACTION_TYPE.NO_ACTION)
+        if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION)
         {
             switch (current_action.ActionUpdate())
             {
                 case Action.ACTION_RESULT.AR_FAIL:
                     current_action.ActionEnd();
-                    current_action = MakeDecision();
+                    MakeDecision();
                     break;
 
                 case Action.ACTION_RESULT.AR_IN_PROGRESS:
@@ -58,7 +59,7 @@ public class BT : CulverinBehaviour
 
                 case Action.ACTION_RESULT.AR_SUCCESS:
                     current_action.ActionEnd();
-                    current_action = MakeDecision();
+                    MakeDecision();
                     break;
 
                 default:
@@ -68,11 +69,11 @@ public class BT : CulverinBehaviour
         }
         else
         {
-            current_action = MakeDecision();
+            MakeDecision();
         }
     }
 
-    public virtual Action MakeDecision()
+    public virtual void MakeDecision()
     {
         Debug.Log("BT decision move defined!");
 
@@ -86,7 +87,7 @@ public class BT : CulverinBehaviour
         {
             //Investigate
             GetComponent<Investigate_Action>().ActionStart();
-            return GetComponent<Investigate_Action>();
+            current_action = GetComponent<Investigate_Action>();
         }
 
         //If none of them -> patrol
@@ -97,13 +98,13 @@ public class BT : CulverinBehaviour
         {
             GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, origin_path_x, origin_path_y);
             GetComponent<Movement_Action>().ActionStart();
-            return GetComponent<Movement_Action>();
+            current_action = GetComponent<Movement_Action>();
         }
         else
         {
             GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, end_path_x, end_path_y);
             GetComponent<Movement_Action>().ActionStart();
-            return GetComponent<Movement_Action>();
+            current_action = GetComponent<Movement_Action>();
         }
     }
 

@@ -37,12 +37,18 @@ public class SwordAttack_Action : Action
         animator = GetComponent<CompAnimation>();
         animator.PlayAnimation("Cover"); //This will be attack
         animator.SetClipsSpeed(speed);
+        //Interrupt player action
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        Debug.Log("Doing Attack");
+        Debug.Log("Attacking!");
+
+        if (interupt == true)
+        {
+            return ACTION_RESULT.AR_FAIL;
+        }
 
         //Doing attack
         if (state == SWA_STATE.PRE_APPLY && animator.IsAnimOverXTime(apply_damage_point))
@@ -64,6 +70,7 @@ public class SwordAttack_Action : Action
 
     public override bool ActionEnd()
     {
+        interupt = false;
         return true;
     }
 }

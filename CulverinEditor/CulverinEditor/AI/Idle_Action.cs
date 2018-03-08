@@ -1,8 +1,13 @@
 ﻿using CulverinEditor.Debug;
 using CulverinEditor;
 
-class Idle_Action : Action
+public class Idle_Action : Action
 {
+    public Idle_Action()
+    {
+        action_type = ACTION_TYPE.IDLE_ACTION;
+    }
+
     public override bool ActionStart()
     {
         Debug.Log("IM IDLE!");
@@ -12,12 +17,16 @@ class Idle_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (interupt == true) return ACTION_RESULT.AR_SUCCESS;
+        if (interupt == true)
+        {
+            return ACTION_RESULT.AR_FAIL;
+        }
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
     public override bool ActionEnd()
     {
+        interupt = false;
         return true;
     }
 }
