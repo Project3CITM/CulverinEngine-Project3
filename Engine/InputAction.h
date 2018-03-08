@@ -54,7 +54,7 @@ public:
 	//virtual bool UpdateEventAction(const Uint8* array_kys) { return false; }
 public:
 
-	std::string name = "";
+	std::string name = "default";
 	ActionInputType action_type = ActionInputType::UNKNOWN_ACTION;
 	KeyRelation* key_relation;
 

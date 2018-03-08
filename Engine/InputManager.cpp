@@ -190,21 +190,32 @@ void InputManager::ShowInspectorInfo()
 	}
 	ImGui::Separator();
 
-	ImGui::InputText("Action Name##name_input", (char*)selected_action_name.c_str(), MAX_INPUT);
-	ImGui::InputText("Key Name##key_input", (char*)selected_action_key.c_str(), MAX_INPUT);
-	std::string action_type_names;
-	action_type_names += "Axis";
-	action_type_names += '\0';
-	action_type_names += "Controller Axis";
-	action_type_names += '\0';
-	action_type_names += "Keyboard";
-	action_type_names += '\0';
-	action_type_names += "Mouse Button";
-	action_type_names += '\0';
-	action_type_names += "Controller Button";
-	action_type_names += '\0';
+	
+
+	if (strcmp(selected_action_key.c_str(), "")!=0 && strcmp(selected_action_key.c_str(), "") != 0 && selected!=-1)
+	{
+		ImGui::InputText("Action Name##name_input", (char*)selected_action_name.c_str(), MAX_INPUT);
+		ImGui::InputText("Key Name##key_input", (char*)selected_action_key.c_str(), MAX_INPUT);
+		std::string action_type_names;
+		action_type_names += "Axis";
+		action_type_names += '\0';
+		action_type_names += "Controller Axis";
+		action_type_names += '\0';
+		action_type_names += "Keyboard";
+		action_type_names += '\0';
+		action_type_names += "Mouse Button";
+		action_type_names += '\0';
+		action_type_names += "Controller Button";
+		action_type_names += '\0';
+	
 	
 		ImGui::Combo("Type##type_action", &action_type, action_type_names.c_str());
+	}
+	else {
+		int i = 34242;
+		selected_action_key;
+		selected_action_name;
+	}
 		if (ImGui::Button("Apply##apply_action"))
 		{
 			InputAction* new_action = CreateNewAction(selected_action_name.c_str(), selected_action_key.c_str(), static_cast<ActionInputType>(action_type));
@@ -226,6 +237,7 @@ void InputManager::ShowInspectorInfo()
 		}
 	
 	ImGui::End();
+	
 
 }
 
