@@ -8,12 +8,11 @@ public class FireWall : CulverinBehaviour
     public float duration = 5;
 
     private float timer = 0;
-    CompParticleSystem particle_fire_wall;
     EnemyController enemy_on_fire;
     // Use this for initialization
     void Start()
     {
-        
+        GetComponent<CompParticleSystem>().ActivateEmission(true);
     }
 
     // Update is called once per frame
@@ -22,14 +21,13 @@ public class FireWall : CulverinBehaviour
         timer += Time.DeltaTime();
         if(timer >= duration)
         {
-            particle_fire_wall.ActivateEmission(false);
-            //Destroy();
+            GetComponent<CompParticleSystem>().ActivateEmission(false);
+            Destroy(gameObject);
         }
     }
 
     void SetFireWall(int x, int y)
     {
-        particle_fire_wall.ActivateEmission(true);
-        Vector3 pos;
+
     }
 }
