@@ -242,12 +242,13 @@ public:
 	void		ApplyTorqueImpulse(MonoObject* object, MonoObject* impulse);
 	void		LockTransform(MonoObject* object);
 	void		UnLockTransform(MonoObject* object);
+	void		ResetForce(MonoObject* object);
 
 	/*Joint*/
 	void		DestroyJoint(MonoObject* object);
 
 	/*Physics*/
-	MonoObject*	RayCast(MonoObject* object, MonoObject* origin, MonoObject* direction, float distance);
+	MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);
 
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);

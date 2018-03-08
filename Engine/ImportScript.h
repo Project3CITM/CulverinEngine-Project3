@@ -213,6 +213,7 @@ private:
 	static void			ApplyTorqueImpulse(MonoObject* object, MonoObject* impulse);
 	static void			LockTransform(MonoObject* object);
 	static void			UnLockTransform(MonoObject* object);
+	static void			ResetForce(MonoObject* object);
 
 	/*Component Joint*/
 	static void		   DeleteJoint(MonoObject* object);
@@ -226,7 +227,7 @@ private:
 	static void SetClipsSpeed(MonoObject* object, float speed_value);
 
 	/*Module Physics*/
-	static MonoObject*	RayCast(MonoObject* object, MonoObject* origin, MonoObject* direction, float distance);
+	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);
 
 public: 
 	std::map<std::string, GameObject*> map_link_variables;

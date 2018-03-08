@@ -408,6 +408,10 @@ void CompRigidBody::MoveKinematic(float3 pos, Quat rot)
 		body->MoveKinematic(pos, rot);
 		own_update = true;
 	}
+	else if (body)
+	{
+		body->SetTransform(pos, rot);
+	}
 }
 
 void CompRigidBody::ApplyForce(float3 force)

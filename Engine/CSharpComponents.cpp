@@ -389,6 +389,14 @@ void CSharpScript::UnLockTransform(MonoObject * object)
 	}
 }
 
+void CSharpScript::ResetForce(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->SetMomentumToZero();
+	}
+}
+
 void CSharpScript::DestroyJoint(MonoObject* object)
 {
 	if (current_game_object != nullptr)
@@ -397,7 +405,7 @@ void CSharpScript::DestroyJoint(MonoObject* object)
 	}
 }
 
-MonoObject * CSharpScript::RayCast(MonoObject * object, MonoObject * origin, MonoObject * direction, float distance)
+MonoObject * CSharpScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)
 {
 	if (current_game_object != nullptr)
 	{

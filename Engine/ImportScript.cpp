@@ -1460,6 +1460,11 @@ void ImportScript::UnLockTransform(MonoObject * object)
 	current->UnLockTransform(object);
 }
 
+void ImportScript::ResetForce(MonoObject * object)
+{
+	current->ResetForce(object);
+}
+
 void ImportScript::DeleteJoint(MonoObject * object)
 {
 	current->DestroyJoint(object);
@@ -1495,7 +1500,7 @@ void ImportScript::SetClipsSpeed(MonoObject * object, float speed_value)
 	current->SetClipsSpeed(object, speed_value);
 }
 
-MonoObject * ImportScript::RayCast(MonoObject * object, MonoObject * origin, MonoObject * direction, float distance)
+MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)
 {
-	return current->RayCast(object, origin, direction, distance);
+	return current->RayCast(origin, direction, distance);
 }
