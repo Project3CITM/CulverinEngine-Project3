@@ -406,16 +406,21 @@ void ImportScript::ClearMonoMap()
 	mono_map.clear();
 }
 
-void ImportScript::UpdateMonoMap(GameObject* modificate)
+void ImportScript::UpdateMonoMap(GameObject* modificate, bool do_delete)
 {
-	if (modificate->IsDeleteFixed())
+	if (do_delete)
 	{
-		// Delete from map
-		//MonoClassField* mono_field = nullptr;
-		//mono_field_set_value(GetMonoObject(), mono_field, newVal);
-		//MonoObject* object = mono_field_get_value_object(App->importer->iScript->GetDomain(), mono_field, script->GetMonoObject());
-		//get_mono_object
-
+		std::map<MonoObject*, GameObject*>::iterator it = mono_map.begin();
+		while (it != mono_map.end())
+		{
+			if (it->second == modificate)
+			{
+				it->second = nullptr;
+				mono_map.erase(it->first);
+				return;
+			}
+			it++;
+		}
 	}
 	else
 	{
