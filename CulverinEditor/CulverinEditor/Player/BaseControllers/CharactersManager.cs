@@ -46,9 +46,9 @@ public class CharactersManager : CulverinBehaviour
     public GameObject health_obj;
     public GameObject stamina_obj;
     public GameObject mana_obj;
-    public GameObject shield_obj;
-    public GameObject broken_shield_obj;
     public GameObject enemies_obj;
+
+    Shield shield;
 
     public Score player_score;
 
@@ -69,13 +69,7 @@ public class CharactersManager : CulverinBehaviour
         health_obj = GetLinkedObject("health_obj");
         stamina_obj = GetLinkedObject("stamina_obj");
         mana_obj = GetLinkedObject("mana_obj");
-        shield_obj = GetLinkedObject("shield_obj");
-        broken_shield_obj = GetLinkedObject("broken_shield_obj");
         enemies_obj = GetLinkedObject("enemies_obj");
-
-        shield_obj.GetComponent<CompImage>().SetEnabled(false, shield_obj);
-        broken_shield_obj.GetComponent<CompImage>().SetEnabled(false, broken_shield_obj);
-
     }
 
     void Update()
@@ -84,7 +78,7 @@ public class CharactersManager : CulverinBehaviour
         {
             case State.IDLE:
                 {
-                    //Test Jaime Ability
+                    //Test Jaime Secondary Ability
                     if (Input.GetKeyDown(KeyCode.Num0))
                     {
                         GetDamage(10);
@@ -425,11 +419,9 @@ public class CharactersManager : CulverinBehaviour
     public void GetDamage(float dmg)
     {
         // Shield Ability Consumable
-        if (shield_activated)
+        if (player_obj.GetComponent<Shield>().IsActive())
         {
-            shield_activated = false;
-            GetLinkedObject("shield_obj").GetComponent<CompImage>().SetEnabled(false, GetLinkedObject("shield_obj"));
-            GetLinkedObject("broken_shield_obj").GetComponent<CompImage>().SetEnabled(true, GetLinkedObject("broken_shield_obj"));         
+            player_obj.GetComponent<Shield>().Break();
         }
 
         else
