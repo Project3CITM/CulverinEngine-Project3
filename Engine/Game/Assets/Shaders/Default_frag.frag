@@ -127,9 +127,10 @@ N.r = -N.r;
 	final_ambient = final_ambient/_numLights;
 	final_color = normalize(final_color);	
 																
-	vec3 col = final_ambient* color_texture 
-    + color_texture * (inten_final.x + inten_final.y * spec_texture.r)*occlusion_texture*final_color.rgb; 
+vec3 col = max(final_ambient* color_texture, 
+     color_texture * (inten_final.x + inten_final.y * spec_texture.r)*occlusion_texture*final_color.rgb);
 																						
 	color = vec4(col,_alpha);
+
 
 }
