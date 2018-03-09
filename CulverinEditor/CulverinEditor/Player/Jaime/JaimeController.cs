@@ -371,6 +371,15 @@ public class JaimeController : CharacterController
             if (enemybt != null)
             {
                 enemybt.ApplyDamage(left_ability_dmg);
+
+                if (hit_streak < 2)
+                {
+                    hit_streak++; //Increase hit count
+                }
+                else
+                {
+                    hit_streak = 0; //Reset hit count
+                }
             }
             else
             {
@@ -380,17 +389,11 @@ public class JaimeController : CharacterController
                 {
                     obj_collider.CallOnContact();
                 }
-            }
-
-            if (hit_streak < 2)
-            {
-                hit_streak++; //Increase hit count
-            }
-            else
-            {
-                hit_streak = 0; //Reset hit count
-                Debug.Log(hit_streak);
-            }
+                else
+                {
+                    hit_streak = 0; //Reset hit count
+                }
+            }      
         }
         else
         {
