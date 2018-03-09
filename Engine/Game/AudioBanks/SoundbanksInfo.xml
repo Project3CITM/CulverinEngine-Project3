@@ -117,6 +117,10 @@
 					<ShortName>Characters\Theon\crossbow_shot.wav</ShortName>
 					<Path>SFX\Characters\Theon\crossbow_shot_D3DCFB9A.wem</Path>
 				</File>
+				<File Id="563390078" Language="SFX">
+					<ShortName>Enemy\Enemy_2\WhatsApp_Ptt_2018-03-09_at_18_44_39.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_2\WhatsApp_Ptt_2018-03-09_at_18_44_39_49937561.wem</Path>
+				</File>
 				<File Id="582654528" Language="SFX">
 					<ShortName>Characters\Theon\Theon_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Theon\Theon_Dead_1_715F20C0.wem</Path>
