@@ -163,7 +163,7 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 			continue;
 		}
 		if (count >= size) break;
-		if ((item._Ptr->_Myval.first != EventType::EVENT_DELETE_GO) || (item._Ptr->_Myval.first != EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN))
+		if ((item._Ptr->_Myval.first != EventType::EVENT_DELETE_GO) && (item._Ptr->_Myval.first != EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN))
 		{
 			if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
 				EListener = MEventListeners.find(item._Ptr->_Myval.first);

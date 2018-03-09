@@ -273,6 +273,7 @@ bool Scene::SetEventListenrs()
 	AddListener(EventType::EVENT_DRAW, this);
 	AddListener(EventType::EVENT_PARTICLE_DRAW, this);
 	AddListener(EventType::EVENT_SCRIPT_DISABLED, this);
+	AddListener(EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN, this);
 	return true;
 }
 
@@ -282,8 +283,13 @@ void Scene::OnEvent(Event & event)
 	{
 	case EventType::EVENT_DELETE_GO:
 	{
-		LOG("Delete Component");
+		LOG("Delete GameObject");
 		DeleteGameObject(event.delete_go.Todelte);
+		break;
+	}
+	case EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN:
+	{
+		root->AddChildGameObject(event.delayed_go_spawn.Tospawn);
 		break;
 	}
 	case EventType::EVENT_SCRIPT_DISABLED:

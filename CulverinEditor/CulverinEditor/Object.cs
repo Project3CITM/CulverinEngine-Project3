@@ -57,6 +57,11 @@ namespace CulverinEditor
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern GameObject Instantiate(string prefab);
 
+        //
+        //At the moment only use for GameObjects
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern GameObject Instantiate(string prefab, float time);
+
         public override int GetHashCode()
         {
             return name.GetHashCode();
