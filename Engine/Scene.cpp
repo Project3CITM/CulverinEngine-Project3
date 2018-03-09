@@ -72,9 +72,9 @@ bool Scene::Start()
 	root = new GameObject("NewScene", 1);
 
 	/* Init Quadtree */
-	size_quadtree = 50.0f;
+	size_quadtree = 5000.0f;
 //	quadtree.Init(size_quadtree);
-	octree.limits.octreeMinSize = size_quadtree;
+	octree.limits.octreeMinSize = 50;
 	octree.Boundaries(AABB(float3(-size_quadtree, -size_quadtree, -size_quadtree), float3(size_quadtree, size_quadtree, size_quadtree)));
 
 
