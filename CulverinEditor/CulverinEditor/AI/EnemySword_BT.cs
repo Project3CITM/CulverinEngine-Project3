@@ -17,7 +17,6 @@ public class EnemySword_BT : Enemy_BT
 
     public override void MakeDecision()
     {        
-        Debug.Log("MAKING ACTION!");
         bool attack_ready = attack_timer >= (attack_cooldown * attack_speed);
         
         //Attack action
@@ -25,7 +24,7 @@ public class EnemySword_BT : Enemy_BT
         { 
             attack_timer = 0.0f;
             state = AI_STATE.AI_ATTACKING;
-            current_action = new Attack_Action(attack_speed);
+            current_action = new Attack_Action(attack_speed, attack_damage);
             current_action.ActionStart();
         }
         //Idle action

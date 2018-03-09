@@ -9,10 +9,11 @@ public class Attack_Action : Action
         action_type = ACTION_TYPE.ATTACK_ACTION;
     }
 
-    public Attack_Action(float attack_speed)
+    public Attack_Action(float attack_speed,float dmg)
     {
         action_type = ACTION_TYPE.ATTACK_ACTION;
         speed = attack_speed;
+        damage = dmg;
     }
 
     public enum SWA_STATE
@@ -24,11 +25,13 @@ public class Attack_Action : Action
 
     SWA_STATE state = SWA_STATE.WAITING;
     float speed = 1.0f;
+    float damage = 1.0f;
     public float apply_damage_point = 0.5f;
 
     public GameObject target = null;
     public GameObject my_object = null;
     CompAnimation animator = null;
+    CharactersManager player = null;
 
     public override bool ActionStart()
     {
@@ -37,6 +40,7 @@ public class Attack_Action : Action
         animator = GetComponent<CompAnimation>();
         animator.PlayAnimation("Cover"); //This will be attack
         animator.SetClipsSpeed(speed);
+        player = GetLinkedObject("target").GetComponent<CharactersManager>();
         //Interrupt player action
         return true;
     }
@@ -54,6 +58,7 @@ public class Attack_Action : Action
         if (state == SWA_STATE.PRE_APPLY && animator.IsAnimOverXTime(apply_damage_point))
         {
             state = SWA_STATE.POST_APPLY;
+            player.GetDamage(damage);
             //Apply damage to the target
             //Play audio fx
         }
