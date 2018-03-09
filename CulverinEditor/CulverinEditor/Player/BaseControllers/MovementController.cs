@@ -599,8 +599,7 @@ public class MovementController : CulverinBehaviour
         {
             return false;
         }
-        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x,position_front_y) != null) 
         {
             return true;
         }
@@ -647,8 +646,7 @@ public class MovementController : CulverinBehaviour
 
         }
 
-        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null)
         {
             return true;
         }
@@ -695,8 +693,7 @@ public class MovementController : CulverinBehaviour
 
         }
 
-        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null) 
         {
             return true;
         }
@@ -743,8 +740,7 @@ public class MovementController : CulverinBehaviour
 
         }
 
-        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null) 
         {
             return true;
         }
@@ -798,48 +794,8 @@ public class MovementController : CulverinBehaviour
                 return true;
             }
         }
-
         return false;
     }
-
-    public bool EnemyAround()
-    {
-        int direction = (int)curr_dir;
-        int[] tile_x = { 0, 0, 0, 0, 0, 0, 0, 0 };
-        int[] tile_y = { 0, 0, 0, 0, 0, 0, 0, 0 };
-        int i = 0;
-        int j = 0;
-        int count = 0;
-
-        //Collect all tiles around player ---
-        for (i = -1; i < 1; i++)
-        {
-            for (j = -1; j < 1; j++)
-            {
-                if (i == 0 && j == 0)
-                {
-                    continue;
-                }
-
-                tile_x[count] = curr_x + j;
-                tile_y[count] = curr_x + i;
-                count++;
-
-            }
-        }
-
-        //for (count = 0; count < 8; count++) 
-        //{
-        //    if(AiManager.GetEnemyAtPos(tile_x[count],tile_y[count])!= null)
-        //    {
-        //           enemy_obj.GetDamage(dmg);
-        //    }
-        //}
-
-        return false;
-    }
-
-
 
     //Pass the x,y vars as arguments to fill them with player coords
     public void GetPlayerPos(out int x, out int y)
@@ -855,7 +811,6 @@ public class MovementController : CulverinBehaviour
         MoveForward(out temp_mov_x, out temp_mov_y);
         pos = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)temp_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)temp_mov_y);
     }
-
 
     // Two simple methods to modify the walkability map
     public void SetTileWalkability(int x, int y, int value)

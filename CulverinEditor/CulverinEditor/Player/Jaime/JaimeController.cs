@@ -21,6 +21,7 @@ public class JaimeController : CharacterController
 
     //Secondary Ability Stats ---
     public float duration = 4.0f;
+    public float sec_abuility_damage = 10.0f;
     public float sec_ability_cd = 10.0f;
     private float sec_ability_current_cd = 10.0f;
     // ---------------------
@@ -197,11 +198,37 @@ public class JaimeController : CharacterController
 
     public override void SecondaryAbility()
     {
+        int curr_x = 0;
+        int curr_y = 0;
+        int enemy_x = 0;
+        int enemy_y = 0;
+
         Debug.Log("Jaime Secondary Ability");
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().shield_activated = true;
 
         //Enable Shield icon
         GetLinkedObject("shield_obj").GetComponent<CompImage>().SetEnabled(true, GetLinkedObject("shield_obj"));
+
+        //Do Damage Around
+        movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
+        movement.GetPlayerPos(out curr_x, out curr_y);
+
+        //Check enemy in the tiles around the player
+        for (int i = -1; i < 1; i++)
+        {
+            for (int j = -1; j < 1; j++)
+            {
+                if (i == 0 && j == 0)
+                {
+                    continue;
+                }
+                enemy_x = curr_x + j;
+                enemy_y = curr_x + i;
+
+                //Apply damage on the enemy in the specified tile
+                GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_abuility_damage);
+            }
+        }
     }
 
     public override void GetDamage(float dmg)
