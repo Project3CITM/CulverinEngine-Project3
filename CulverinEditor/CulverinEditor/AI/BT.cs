@@ -75,8 +75,6 @@ public class BT : CulverinBehaviour
 
     public virtual void MakeDecision()
     {
-        Debug.Log("BT decision move defined!");
-
         //Behaviour tree structure
         if (player_detected)
         {
@@ -96,12 +94,14 @@ public class BT : CulverinBehaviour
 
         if (my_tile_x != origin_path_x && my_tile_y != origin_path_y)
         {
+            Debug.Log("BT decision move defined!");
             GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, origin_path_x, origin_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();
         }
         else
         {
+            Debug.Log("BT decision move defined!");
             GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, end_path_x, end_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();

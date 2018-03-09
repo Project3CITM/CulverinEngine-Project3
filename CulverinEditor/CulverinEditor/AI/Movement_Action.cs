@@ -7,8 +7,10 @@ public class Movement_Action : Action
 {
     public GameObject   map;
     public GameObject   myself;
+    CompAnimation       anim;
     public float        tile_size = 0.0f;
     List<PathNode>      path = null;
+    bool                rotate = true;
 
     enum Motion_State
     {
@@ -34,6 +36,7 @@ public class Movement_Action : Action
     {
         map = GetLinkedObject("map");
         myself = GetLinkedObject("myself");
+        anim = GetComponent<CompAnimation>();
         Vector3 fw = myself.GetComponent<Transform>().GetForwardVector();
         Debug.Log("Forward (start): " + fw.ToString());
         path = new List<PathNode>();
@@ -150,10 +153,12 @@ public class Movement_Action : Action
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
-    public void GoTo(int cur_x, int cur_y, int obj_x, int obj_y)
+    public void GoTo(int cur_x, int cur_y, int obj_x, int obj_y, bool rot = true)
     {
         path.Clear();
         path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(cur_x, cur_y), new PathNode(obj_x, obj_y));
+
+        rotate = rot;
 
         foreach (PathNode pn in path)
             Debug.Log("Tile:\nX:" + pn.GetTileX().ToString() + " Y:" + pn.GetTileY().ToString());
@@ -220,8 +225,13 @@ public class Movement_Action : Action
     {
         if (path.Count > 0)
         {
-            if (!FinishedRotation())
+            if (!FinishedRotation() && rotate)
             {
+                if(GetDeltaAngle() < 0)
+                    anim.PlayAnimation("Left");
+                else
+                    anim.PlayAnimation("Right");
+
                 state = Motion_State.MS_ROTATE;
                 GetComponent<Align_Steering>().SetEnabled(true);
                 Debug.Log("State: ROTATE");
@@ -229,6 +239,7 @@ public class Movement_Action : Action
             }        
             if (!ReachedTile())
             {
+                anim.PlayAnimation("Patrol");
                 state = Motion_State.MS_MOVE;
                 GetComponent<Arrive_Steering>().SetEnabled(true);
                 GetComponent<Seek_Steering>().SetEnabled(true);
