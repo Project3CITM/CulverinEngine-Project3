@@ -49,8 +49,8 @@ bool CompInteractive::Enable()
 	if (!active)
 	{
 		active = true;
-		iteractive_list.push_back(this);
 	}
+	iteractive_list.push_back(this);
 
 	return active;
 }
@@ -763,7 +763,7 @@ CompInteractive * CompInteractive::FindInteractive(float3 direction)
 	float best_score = -1 * INFINITY;
 	for (std::list<CompInteractive*>::iterator it = iteractive_list.begin(); it != iteractive_list.end(); it++)
 	{
-		if ((*it)->IsActive())
+		if (!(*it)->IsActive())
 			continue;
 		if ((*it) == this || (*it) == nullptr)
 			continue;
