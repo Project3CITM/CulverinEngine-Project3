@@ -6,6 +6,8 @@ public class BarrelFall : CulverinBehaviour
     BarrelMovement barrel_mov;
 
     public GameObject barrel_mov_go;
+    public GameObject puzzle_generator_go;
+    private BarrelPuzzleGenerator puzzle_generator;
     CompRigidBody rigid_body;
     Vector3 start_pos;
     bool falling = false;
@@ -20,6 +22,7 @@ public class BarrelFall : CulverinBehaviour
         start_pos = gameObject.GetComponent<Transform>().local_position;
         Debug.Log(start_pos.ToString());
         falling = false;
+        puzzle_generator = puzzle_generator_go.GetComponent<BarrelPuzzleGenerator>();
     }
 
     void Update()
@@ -99,7 +102,7 @@ public class BarrelFall : CulverinBehaviour
         if (rbody != null)
         {
             rbody.RemoveJoint();
-
+            puzzle_generator.OnBarrelFall(gameObject);
         }
     }
 }
