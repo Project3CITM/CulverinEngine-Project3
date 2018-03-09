@@ -113,6 +113,23 @@ bool ModuleRenderGui::SetEventListenrs()
 	return true;
 }
 
+void ModuleRenderGui::PassSelected(CompInteractive * to_pass)
+{
+	Event pass_selected;
+	pass_selected.pass_selected.type = EventType::EVENT_PASS_SELECTED;
+	pass_selected.pass_selected.component = to_pass;
+	ChangeSelected(pass_selected);
+}
+
+void ModuleRenderGui::ChangeSelected(Event & this_event)
+{
+	if (selected != nullptr)
+		selected->ForceClear(this_event);
+	selected = this_event.pass_selected.component;
+	selected->OnInteractiveSelected(this_event);
+}
+
+
 void ModuleRenderGui::OnEvent(Event & this_event)
 {
 
@@ -122,11 +139,8 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	switch (this_event.type)
 	{
 	case EventType::EVENT_PASS_SELECTED:
-		if (selected != nullptr)
-			selected->ForceClear(this_event);
-		selected = this_event.pass_selected.component;
-		selected->OnInteractiveSelected(this_event);
-			break;
+		ChangeSelected(this_event);
+		break;
 	case EventType::EVENT_PASS_COMPONENT:
 		iteractive_vector.push_back((CompInteractive*)this_event.pass_component.component);
 		break;
@@ -138,6 +152,18 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 		else
 		{
 		//Find 
+			std::vector<CompInteractive*>::reverse_iterator it = iteractive_vector.rbegin();
+
+			for (; it != iteractive_vector.rend(); it++)
+			{
+				CompInteractive* find=(*it)->FindInteractive(float3(0, 0, 0));
+				if (find != nullptr)
+				{
+					PassSelected(find);
+					find->OnInteractiveSelected(this_event);
+					break;
+				}
+			}
 
 		}
 		break;
@@ -175,10 +201,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 							(*it)->OnPointDown(this_event);
 							if ((*it)->GetNavigationMode() != Navigation::NavigationMode::NAVIGATION_NONE)
 							{
-								Event pass_selected;
-								pass_selected.pass_selected.type = EventType::EVENT_PASS_SELECTED;
-								pass_selected.pass_selected.component = (*it);
-								PushEvent(pass_selected);
+								PassSelected((*it));
 								(*it)->OnInteractiveSelected(this_event);
 							}
 							focus = (*it);

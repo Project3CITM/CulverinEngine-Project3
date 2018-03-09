@@ -133,7 +133,6 @@ protected:
 	void HandleTransition(SelectionStates selection_state);
 
 private:
-
 	void Navigate(Event event_data, CompInteractive* interactive);
 	void StartTransitionColor(float4 color_to_change, bool no_fade);
 	void UpdateTransitionColor(float dt);
