@@ -178,7 +178,26 @@ public class TheonController : CharacterController
         {
             Debug.Log("Theon Pressed 2");
             //PrepareAbility();
+
         }
+
+
+        if (Input.GetInput_KeyDown("LAttack", "Player"))
+        {
+
+            Debug.Log("Theon Pressed 1");
+            PrepareLeftAbility();
+
+        }
+
+        if (Input.GetInput_KeyDown("RAttack", "Player"))
+        {
+
+            Debug.Log("Theon Pressed 2");
+            //PrepareAbility();
+
+        }
+
     }
 
     public override void SecondaryAbility()

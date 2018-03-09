@@ -99,8 +99,20 @@ public class CharactersManager : CulverinBehaviour
                         CurrentToOut();
                     }
 
+                    if (Input.GetInput_KeyDown("TriangleR", "Player"))
+                    {
+                        state = State.CHANGING_RIGHT;
+                        CurrentToOut();
+                    }
+
+                    if (Input.GetInput_KeyDown("TriangleL", "Player"))
+                    {
+                        state = State.CHANGING_LEFT;
+                        CurrentToOut();
+                    }
+
                     //MANAGE SECONDARY ABILITIES ------------
-                    else if(Input.GetKeyDown(KeyCode.K))
+                    else if (Input.GetKeyDown(KeyCode.K))
                     {
                         SecondaryAbility(Side.LEFT);
                     }
@@ -108,6 +120,25 @@ public class CharactersManager : CulverinBehaviour
                     {
                         SecondaryAbility(Side.RIGHT);
                     }
+
+                    float vari = Input.GetInput_ControllerAxis("LAllyAttack", "Player");
+
+                    if (vari>0.8)
+                    {
+                        Debug.Log("Left ally");
+                        SecondaryAbility(Side.LEFT);
+                        
+                    }
+
+                    vari = Input.GetInput_ControllerAxis("RAllyAttack", "Player");
+
+                    if (vari>0.8)
+                    {
+                        Debug.Log("Right ally");
+                        SecondaryAbility(Side.RIGHT);
+                    }
+
+
                     break;
                     // --------------------------------------
 

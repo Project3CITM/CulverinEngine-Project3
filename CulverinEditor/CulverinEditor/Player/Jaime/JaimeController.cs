@@ -181,6 +181,18 @@ public class JaimeController : CharacterController
             Debug.Log("Jaime Pressed 2");
             PrepareRightAbility();
         }
+
+        if (Input.GetInput_KeyDown("LAttack", "Player"))
+        {
+            Debug.Log("Jaime Pressed 1");
+            PrepareLeftAbility();
+        }
+
+        if (Input.GetInput_KeyDown("RAttack", "Player"))
+        {
+            Debug.Log("Jaime Pressed 2");
+            PrepareRightAbility();
+        }
     }
 
     public override void SecondaryAbility()
