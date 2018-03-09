@@ -44,6 +44,9 @@
     <Compile Include="AI\Arrive_Steering.cs" />
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\ChasePlayer_Action.cs" />
+    <Compile Include="AI\EnemiesManager.cs" />
+    <Compile Include="AI\EnemyLance_BT.cs" />
+    <Compile Include="AI\EnemyShield_BT.cs" />
     <Compile Include="AI\EnemySword_BT.cs" />
     <Compile Include="AI\Enemy_BT.cs" />
     <Compile Include="AI\Idle_Action.cs" />
@@ -56,7 +59,7 @@
     <Compile Include="AI\PerceptionManager.cs" />
     <Compile Include="AI\PerceptionSightEnemy.cs" />
     <Compile Include="AI\Seek_Steering.cs" />
-    <Compile Include="AI\SwordAttack_Action.cs" />
+    <Compile Include="AI\Attack_Action.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleGenerator.cs" />
     <Compile Include="BarrelPuzle\BarrelScript.cs" />
     <Compile Include="BarrelPuzle\ChainManage.cs" />

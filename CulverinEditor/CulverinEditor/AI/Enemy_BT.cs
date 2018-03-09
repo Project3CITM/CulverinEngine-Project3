@@ -10,6 +10,8 @@ public class Enemy_BT : BT
         ENEMY_DEAD
     }
 
+    public GameObject enemies_manager = null;
+
     public float life = 100;
     float current_life;
     public ENEMY_STATE life_state = ENEMY_STATE.ENEMY_ALIVE;

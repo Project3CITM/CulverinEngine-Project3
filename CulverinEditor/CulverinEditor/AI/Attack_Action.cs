@@ -1,15 +1,15 @@
 ﻿using CulverinEditor.Debug;
 using CulverinEditor;
 
-public class SwordAttack_Action : Action
+public class Attack_Action : Action
 {
 
-    public SwordAttack_Action()
+    public Attack_Action()
     {
         action_type = ACTION_TYPE.ATTACK_ACTION;
     }
 
-    public SwordAttack_Action(float attack_speed)
+    public Attack_Action(float attack_speed)
     {
         action_type = ACTION_TYPE.ATTACK_ACTION;
         speed = attack_speed;
