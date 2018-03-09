@@ -6,15 +6,11 @@ using System.Text;
 
 public class PerceptionSightEnemy : CulverinBehaviour
 {
-    //public GameObject player_obj;
+    GameObject player_obj;
 
     public int frustum_lenght = 3;
     public int frustum_size = 1;
     public int tile_size = 2;
-
-    //Player debuging options until I can get the player position from the other script, which brokes atm
-    public int player_x = 1;
-    public int player_y = 2;
 
     bool player_seen = false;
 
@@ -35,7 +31,7 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
     void Start()
     {
-        // player_obj = GetLinkedObject("player_obj");
+        player_obj = GetLinkedObject("player_obj");
 
         //Map Settings
         map_width = Map.GetWidthMap();
@@ -62,8 +58,14 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
     void Update()
     {
-        //TODO: Optimization --> Check if player is out of range
-        if (true)
+        int player_x, player_y;
+        GetPlayerTilePos(out player_x, out player_y);
+
+        //Optimization --> Check if player is out of range
+        int distance_x = Mathf.Abs(GetCurrentTileX() - player_x);
+        int distance_y = Mathf.Abs(GetCurrentTileY() - player_y);
+
+        if (distance_x <= frustum_lenght && distance_y <= frustum_lenght)
         {
             bool search_finished = false;
             List<int> blocked_tiles_x = new List<int>();
@@ -123,7 +125,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                         blocked_tiles_y.Add(tile_y);
                                     }
 
-                                    //if (player_obj.GetComponent<MovementController>().curr_x == tile_x && player_obj.GetComponent<MovementController>().curr_y == tile_y)
                                     if (player_x == tile_x && player_y == tile_y)
                                     {
                                         search_finished = true;
@@ -200,7 +201,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                         blocked_tiles_y.Add(tile_y);
                                     }
 
-                                    //if (player_obj.GetComponent<MovementController>().curr_x == tile_x && player_obj.GetComponent<MovementController>().curr_y == tile_y)
                                     if (player_x == tile_x && player_y == tile_y)
                                     {
                                         search_finished = true;
@@ -277,7 +277,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                         blocked_tiles_y.Add(tile_y);
                                     }
 
-                                    //if (player_obj.GetComponent<MovementController>().curr_x == tile_x && player_obj.GetComponent<MovementController>().curr_y == tile_y)
                                     if (player_x == tile_x && player_y == tile_y)
                                     {
                                         search_finished = true;
@@ -355,7 +354,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
                                         blocked_tiles_y.Add(tile_y);
                                     }
 
-                                    //if (player_obj.GetComponent<MovementController>().curr_x == tile_x && player_obj.GetComponent<MovementController>().curr_y == tile_y)
                                     if (player_x == tile_x && player_y == tile_y)
                                     {
                                         search_finished = true;
@@ -419,5 +417,10 @@ public class PerceptionSightEnemy : CulverinBehaviour
             ret = DIRECTION.E_DIR_EAST;
 
         return ret;
+    }
+
+    public void GetPlayerTilePos(out int player_x, out int player_y)
+    {
+        player_obj.GetComponent<MovementController>().GetPlayerPos(out player_x, out player_y);
     }
 }

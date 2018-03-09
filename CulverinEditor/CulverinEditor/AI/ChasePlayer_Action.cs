@@ -3,13 +3,15 @@ using CulverinEditor.Debug;
 
 public class ChasePlayer_Action : Action
 {
-    int init_tile_x;
-    int init_tile_y;
+    int current_tile_x;
+    int current_tile_y;
 
     PerceptionEvent event_to_react;
     ACTION_RESULT move_return;
 
     public bool forgot_event = false;
+    public float check_player_timer = 1.0f;
+    float timer = 0.0f;
 
     ChasePlayer_Action()
     {
@@ -19,21 +21,33 @@ public class ChasePlayer_Action : Action
     public override bool ActionStart()
     {
         Debug.Log("Chasing Player");
-        init_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
-        init_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+        current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
         event_to_react = GetComponent<NormalGuardListener>().GetEvent();
 
-        GetComponent<Movement_Action>().GoTo(init_tile_x, init_tile_y, event_to_react.objective_tile_x, event_to_react.objective_tile_y);
+        GetComponent<Movement_Action>().GoToPrevious(current_tile_x, current_tile_y, event_to_react.objective_tile_x, event_to_react.objective_tile_y);
 
         return GetComponent<Movement_Action>().ActionStart();
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (interupt)
+        if (interupt || forgot_event)
         {
             GetComponent<Movement_Action>().Interupt();
+        }
+
+        timer += Time.DeltaTime();
+
+        if (timer >= check_player_timer)
+        {
+            current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+            current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+
+            int player_x, player_y;
+            GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out player_x, out player_y);
+            GetComponent<Movement_Action>().GoToPrevious(current_tile_x, current_tile_y, player_x, player_y);
         }
 
         ///Make Move update
