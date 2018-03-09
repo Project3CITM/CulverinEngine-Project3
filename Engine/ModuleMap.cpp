@@ -1109,7 +1109,7 @@ void ModuleMap::ImportMap()
 			{
 				for (int x = 0; x < width_map; x++)
 				{
-					if (map[x][y] > 2)
+					if (map[x][y] > 3)
 					{
 						map[x][y] = 1;
 					}
