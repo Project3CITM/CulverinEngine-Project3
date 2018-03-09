@@ -350,7 +350,9 @@ public class CharactersManager : CulverinBehaviour
                 {
                     Debug.Log("Theon Secondary ability Left");
                     GameObject arrow = Instantiate("ArrowTheon");
-                    arrow.transform.SetPosition(new Vector3(10, 0, 20));
+                    Vector3 pos = new Vector3(transform.GetPosition());
+                    
+                    arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
                     left_character.GetComponent<TheonController>().ResetCoolDown();
                 }
             }
