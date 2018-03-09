@@ -93,6 +93,7 @@
     <Compile Include="Player\Daenerys\DaenerysCD_Left.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Right.cs" />
     <Compile Include="Player\Daenerys\FireWall.cs" />
+    <Compile Include="Player\Jaime\Shield.cs" />
     <Compile Include="Player\Theon\Arrow.cs" />
     <Compile Include="Player\Theon\TheonCD_Left.cs" />
     <Compile Include="Player\Theon\TheonCD_Right.cs" />

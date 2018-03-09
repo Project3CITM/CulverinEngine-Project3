@@ -726,7 +726,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::GetComponent",(const void*)GetComponent);
 
 	/* Object */
-	mono_add_internal_call("CulverinEditor.Object::Instantiate", (const void*)Instantiate);
+	mono_add_internal_call("CulverinEditor.Object::Instantiate(string)", (const void*)Instantiate);
+	mono_add_internal_call("CulverinEditor.Object::Instantiate(string,single)", (const void*)Instantiate_respawn);
 	mono_add_internal_call("CulverinEditor.Object::Destroy", (const void*)Destroy);
 	
 	// Transform ---------------------------
@@ -797,6 +798,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Map.Map::GetMapString", (const void*)GetMapString);
 	mono_add_internal_call("CulverinEditor.Map.Map::GetHeightMap", (const void*)GetHeightMap);
 	mono_add_internal_call("CulverinEditor.Map.Map::GetWidthMap", (const void*)GetWidthMap);
+	mono_add_internal_call("CulverinEditor.Map.Map::GetSeparation", (const void*)GetSeparation);
 
 	//AUDIO FUNCTIONS --------------------
 	mono_add_internal_call("CulverinEditor.Audio::StopAllSounds", (const void*)StopAllSounds);
@@ -1143,6 +1145,11 @@ MonoObject* ImportScript::Instantiate(MonoObject* object, MonoString* prefab)
 	return current->Instantiate(object, prefab);
 }
 
+MonoObject*	ImportScript::Instantiate_respawn(MonoObject* object, MonoString* prefab, float time)
+{
+	return current->Instantiate_respawn(object, prefab, time);
+}
+
 void ImportScript::Destroy(MonoObject* object, MonoObject* gameobject, float time)
 {
 	current->Destroy(gameobject, time);
@@ -1313,6 +1320,11 @@ int ImportScript::GetHeightMap()
 int ImportScript::GetWidthMap()
 {
 	return App->map->GetWidthMap();
+}
+
+float ImportScript::GetSeparation()
+{
+	return App->map->GetSeparation();
 }
 
 

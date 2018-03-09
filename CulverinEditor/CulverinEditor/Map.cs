@@ -17,5 +17,9 @@ namespace CulverinEditor.Map
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern int GetWidthMap();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern float GetSeparation();
+
     }
 }

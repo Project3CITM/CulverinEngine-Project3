@@ -224,5 +224,16 @@ using CulverinEditor.Pathfinding;
 
         }
 
+        public bool IsWalkableTile(uint tile_to_check_x, uint tile_to_check_y)
+        {
+            //Check if the tiles are inside the map
+            if (tile_to_check_x < map_width && tile_to_check_y < map_height)
+            {
+                if (tile_map[tile_to_check_x, tile_to_check_y] == 0)
+                    return true;
+            }
+            return false;
+        }
+
     }
 

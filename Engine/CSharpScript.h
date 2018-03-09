@@ -167,6 +167,7 @@ public:
 	void		CreateGameObject(MonoObject* object);
 	bool		DestroyGameObject(MonoObject* object);
 	MonoObject*	Instantiate(MonoObject* object, MonoString* prefab);
+	MonoObject*	Instantiate_respawn(MonoObject* object, MonoString* prefab, float time);
 	void		Destroy(MonoObject* object, float time);
 
 	/* Transform */

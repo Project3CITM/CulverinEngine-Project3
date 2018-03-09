@@ -163,7 +163,7 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 			continue;
 		}
 		if (count >= size) break;
-		if (item._Ptr->_Myval.first != EventType::EVENT_DELETE_GO)
+		if ((item._Ptr->_Myval.first != EventType::EVENT_DELETE_GO) && (item._Ptr->_Myval.first != EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN))
 		{
 			if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
 				EListener = MEventListeners.find(item._Ptr->_Myval.first);
@@ -180,25 +180,52 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 		}
 		else
 		{
-			if (item._Ptr->_Myval.second.delete_go.delay <= 0.0001f)
+			switch (item._Ptr->_Myval.first)
 			{
-				if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
-					EListener = MEventListeners.find(item._Ptr->_Myval.first);
-				if (EListener != MEventListeners.end())
+			case EventType::EVENT_DELETE_GO:
+				if (item._Ptr->_Myval.second.delete_go.delay <= 0.0001f)
 				{
-					for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-						(*item2)->OnEvent(item._Ptr->_Myval.second);
+					if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
+						EListener = MEventListeners.find(item._Ptr->_Myval.first);
+					if (EListener != MEventListeners.end())
+					{
+						for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+							(*item2)->OnEvent(item._Ptr->_Myval.second);
+					}
+					else
+					{
+						item = MMNormalEvent.erase(item);
+						continue;
+					}
 				}
 				else
 				{
-					item = MMNormalEvent.erase(item);
-					continue;
+					item._Ptr->_Myval.second.delete_go.delay -= dt;
+					Delayed = true;
 				}
-			}
-			else
-			{
-				item._Ptr->_Myval.second.delete_go.delay -= dt;
-				Delayed = true;
+				break;
+			case EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN:
+				if (item._Ptr->_Myval.second.delayed_go_spawn.delay <= 0.0001f)
+				{
+					if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
+						EListener = MEventListeners.find(item._Ptr->_Myval.first);
+					if (EListener != MEventListeners.end())
+					{
+						for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+							(*item2)->OnEvent(item._Ptr->_Myval.second);
+					}
+					else
+					{
+						item = MMNormalEvent.erase(item);
+						continue;
+					}
+				}
+				else
+				{
+					item._Ptr->_Myval.second.delayed_go_spawn.delay -= dt;
+					Delayed = true;
+				}
+				break;
 			}
 		}
 		if (Delayed) item++;

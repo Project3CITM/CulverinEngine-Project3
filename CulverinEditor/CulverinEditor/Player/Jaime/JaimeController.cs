@@ -71,6 +71,7 @@ public class JaimeController : CharacterController
         // Debug method to control Hp
         CheckHealth();
 
+        //Test Secondary Ability
         if(Input.GetKeyDown(KeyCode.M))
         {
             SecondaryAbility();
@@ -229,6 +230,9 @@ public class JaimeController : CharacterController
                 GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_abuility_damage);
             }
         }
+
+        // Activate the shield that protects from damage once
+        GetLinkedObject("player_obj").GetComponent<Shield>().ActivateShield();
     }
 
     public override void GetDamage(float dmg)

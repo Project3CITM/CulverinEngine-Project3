@@ -46,6 +46,7 @@ public:
 
 	int GetHeightMap();
 	int GetWidthMap();
+	float GetSeparation();
 
 	bool SaveConfig(JSON_Object* node);
 

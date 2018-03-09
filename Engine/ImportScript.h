@@ -125,6 +125,7 @@ private:
 
 	/* Object */
 	static MonoObject*	Instantiate(MonoObject* object, MonoString* prefab);
+	static MonoObject*	Instantiate_respawn(MonoObject* object, MonoString* prefab, float time);
 	static void			Destroy(MonoObject* object, MonoObject* gameobject, float time);
 	
 	/*Transform*/
@@ -166,6 +167,7 @@ private:
 	static MonoString* GetMapString(MonoObject* object);
 	static int GetHeightMap();
 	static int GetWidthMap();
+	static float GetSeparation();
 
 	/*Audio*/
 

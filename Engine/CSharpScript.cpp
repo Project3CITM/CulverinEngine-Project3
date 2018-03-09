@@ -991,6 +991,29 @@ MonoObject*	CSharpScript::Instantiate(MonoObject* object, MonoString* prefab_)
 	return nullptr;
 }
 
+MonoObject*	CSharpScript::Instantiate_respawn(MonoObject* object, MonoString* prefab_, float time)
+{
+	const char* prefab = mono_string_to_utf8(prefab_);
+	std::string directory_prebaf = App->fs->GetMainDirectory();
+	directory_prebaf += "/";
+	directory_prebaf += prefab;
+	directory_prebaf += ".prefab.json";
+	GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str(), true);
+	if (gameobject != nullptr)
+	{
+		//Event system
+		Event e;
+		e.delayed_go_spawn.type = EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN;
+		e.delayed_go_spawn.delay = time;
+		e.delayed_go_spawn.Tospawn = gameobject;
+		PushEvent(e);
+		App->importer->iScript->UpdateMonoMap(gameobject);
+		return App->importer->iScript->GetMonoObject(gameobject);
+	}
+	LOG("[error] with load prefab");
+	return nullptr;
+}
+
 void CSharpScript::Destroy(MonoObject* object, float time)
 {
 	GameObject* gameobject = App->importer->iScript->GetGameObject(object);

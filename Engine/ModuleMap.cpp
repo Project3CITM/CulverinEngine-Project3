@@ -1178,6 +1178,11 @@ int ModuleMap::GetWidthMap()
 	return width_map;
 }
 
+float ModuleMap::GetSeparation()
+{
+	return size_separation;
+}
+
 bool ModuleMap::SaveConfig(JSON_Object* node)
 {
 	//Save --------------------------------
