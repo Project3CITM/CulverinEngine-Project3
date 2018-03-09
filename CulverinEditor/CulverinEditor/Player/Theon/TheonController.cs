@@ -6,12 +6,15 @@ public class TheonController : CharacterController
     public GameObject theon_obj; //Maybe this should be in charactercontroller since we're only having 1 camera which will be the movementcontroller/charactermanager?
     public GameObject L_Arm_Theon;
     public GameObject R_Arm_Theon;
+    public GameObject L_SubArm_Theon;
+    public GameObject R_SubArm_Theon;
 
     public GameObject theon_icon_obj;
 
     public GameObject theon_button_left;
     public GameObject theon_button_right;
-
+    
+   
 
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
@@ -40,11 +43,13 @@ public class TheonController : CharacterController
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         theon_obj = GetLinkedObject("theon_obj");
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
+
         theon_button_right = GetLinkedObject("theon_button_right");
         theon_button_left = GetLinkedObject("theon_button_left");
         L_Arm_Theon = GetLinkedObject("L_Arm_Theon");
         R_Arm_Theon = GetLinkedObject("R_Arm_Theon");
-
+        L_SubArm_Theon = GetLinkedObject("L_SubArm_Theon");
+        R_SubArm_Theon = GetLinkedObject("R_SubArm_Theon");
         //Disable icon
         icon = theon_icon_obj.GetComponent<CompImage>();
         icon.SetEnabled(false, theon_icon_obj);
@@ -53,7 +58,7 @@ public class TheonController : CharacterController
 
         //Start Idle animation
         //anim_controller = theon_obj.GetComponent<CompAnimation>();    
-        //ToggleMesh(false);
+        ToggleMesh(false);
     }
 
     public override void Update()
@@ -63,100 +68,100 @@ public class TheonController : CharacterController
 
     public override void ControlCharacter()
     {
-        // Debug method to control Hp
-        CheckHealth();
+        //// Debug method to control Hp
+        //CheckHealth();
     
-        // First check if you are alive
-        health = GetLinkedObject("health_obj").GetComponent<Hp>();
-        if (health.GetCurrentHealth() > 0)
-        {
-            // Check if player is moving to block attacks/abilities
-            movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
-            //if (!movement.IsMoving())
-            if(1 == 1)
-            {
-                /* Player is alive */
-                switch (state)
-                {
-                    case State.IDLE:
-                        {
-                            //Check For Input + It has to check if he's moving to block attack (¿?)
-                            CheckAttack();
-                            break;
-                        }
-                    case State.ATTACKING:
-                        {
-                            //Check for end of the Attack animation
-                            anim_controller = theon_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("Attack1"))
-                            {
-                                state = State.IDLE;
-                            }
-                            else
-                            {
-                                // Keep playing specific attack animation  until it ends
-                                Debug.Log("Theon Attacking");
-                            }
-                            break;
-                        }
-                    case State.COVER:
-                        {
-                            //Check for end of the Attack animation
-                            anim_controller = theon_obj.GetComponent<CompAnimation>();
+        //// First check if you are alive
+        //health = GetLinkedObject("health_obj").GetComponent<Hp>();
+        //if (health.GetCurrentHealth() > 0)
+        //{
+        //    // Check if player is moving to block attacks/abilities
+        //    movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
+        //    //if (!movement.IsMoving())
+        //    if(1 == 1)
+        //    {
+        //        /* Player is alive */
+        //        switch (state)
+        //        {
+        //            case State.IDLE:
+        //                {
+        //                    //Check For Input + It has to check if he's moving to block attack (¿?)
+        //                    CheckAttack();
+        //                    break;
+        //                }
+        //            case State.ATTACKING:
+        //                {
+        //                    //Check for end of the Attack animation
+        //                    anim_controller = theon_obj.GetComponent<CompAnimation>();
+        //                    if (anim_controller.IsAnimationStopped("Attack1"))
+        //                    {
+        //                        state = State.IDLE;
+        //                    }
+        //                    else
+        //                    {
+        //                        // Keep playing specific attack animation  until it ends
+        //                        Debug.Log("Theon Attacking");
+        //                    }
+        //                    break;
+        //                }
+        //            case State.COVER:
+        //                {
+        //                    //Check for end of the Attack animation
+        //                    anim_controller = theon_obj.GetComponent<CompAnimation>();
 
-                            if (anim_controller.IsAnimationStopped("Cover"))
-                            {
-                                state = State.IDLE;
-                            }
-                            else
-                            {
-                                // Keep playing specific attack animation  until it ends
-                                Debug.Log("Jaime Covering");
-                            }
-                            break;
-                        }
-                    case State.BLOCKING:
-                        {
-                            //Check for end of the Attack animation
-                            anim_controller = theon_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("Block"))
-                            {
-                                state = State.IDLE;
-                            }
-                            else
-                            {
-                                // Keep playing specific attack animation  until it ends
-                                Debug.Log("Theon Blocking");
-                            }
-                            break;
-                        }
-                    case State.HIT:
-                        {
-                            //Check for end of the Attack animation
-                            anim_controller = theon_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("Hit"))
-                            {
-                                state = State.IDLE;
-                            }
-                            else
-                            {
-                                // Keep playing specific attack animation  until it ends
-                                Debug.Log("Theon Hit");
-                            }
-                            break;
-                        }
-                    case State.DEAD:
-                        {
-                            Debug.Log("We are going doown");
-                            break;
-                        }
-                    default:
-                        {
-                            break;
-                        }
-                }
-            }
-        }
+        //                    if (anim_controller.IsAnimationStopped("Cover"))
+        //                    {
+        //                        state = State.IDLE;
+        //                    }
+        //                    else
+        //                    {
+        //                        // Keep playing specific attack animation  until it ends
+        //                        Debug.Log("Jaime Covering");
+        //                    }
+        //                    break;
+        //                }
+        //            case State.BLOCKING:
+        //                {
+        //                    //Check for end of the Attack animation
+        //                    anim_controller = theon_obj.GetComponent<CompAnimation>();
+        //                    if (anim_controller.IsAnimationStopped("Block"))
+        //                    {
+        //                        state = State.IDLE;
+        //                    }
+        //                    else
+        //                    {
+        //                        // Keep playing specific attack animation  until it ends
+        //                        Debug.Log("Theon Blocking");
+        //                    }
+        //                    break;
+        //                }
+        //            case State.HIT:
+        //                {
+        //                    //Check for end of the Attack animation
+        //                    anim_controller = theon_obj.GetComponent<CompAnimation>();
+        //                    if (anim_controller.IsAnimationStopped("Hit"))
+        //                    {
+        //                        state = State.IDLE;
+        //                    }
+        //                    else
+        //                    {
+        //                        // Keep playing specific attack animation  until it ends
+        //                        Debug.Log("Theon Hit");
+        //                    }
+        //                    break;
+        //                }
+        //            case State.DEAD:
+        //                {
+        //                    Debug.Log("We are going doown");
+        //                    break;
+        //                }
+        //            default:
+        //                {
+        //                    break;
+        //                }
+        //        }
+        //    }
+        //}
     }
 
     public override void CheckAttack()
@@ -225,6 +230,7 @@ public class TheonController : CharacterController
 
     public override void SetAnimationTransition(string name, bool value)
     {
+        anim_controller = theon_obj.GetComponent<CompAnimation>();
         anim_controller.SetTransition(name, value);
     }
 
@@ -271,6 +277,8 @@ public class TheonController : CharacterController
     {
         L_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, L_Arm_Theon);
         R_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, R_Arm_Theon);
+        R_SubArm_Theon.GetComponent<CompMesh>().SetEnabled(active, R_SubArm_Theon);
+        L_SubArm_Theon.GetComponent<CompMesh>().SetEnabled(active, L_SubArm_Theon);
     }
 
     public bool IsSecondaryAbilityReady()

@@ -1278,7 +1278,7 @@ void CSharpScript::LoadValuesGO()
 {
 	for (int i = 0, j = 0; i < variables.size(); i++)
 	{
-		if (variables[i]->type == VarType::Var_GAMEOBJECT && re_load_values.size() > 0)
+		if (variables[i]->type == VarType::Var_GAMEOBJECT && re_load_values.size() > 0 && re_load_values.size() > j)
 		{
 			variables[i]->game_object = App->scene->GetGameObjectbyuid(re_load_values[j++]);
 			variables[i]->SetMonoValue(variables[i]->game_object);

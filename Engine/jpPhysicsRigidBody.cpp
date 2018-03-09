@@ -91,14 +91,7 @@ void jpPhysicsRigidBody::SetAsKinematic(bool kinematic)
 {
 	if (is_dynamic)
 	{
-		if (kinematic)
-		{
-			static_cast<physx::PxRigidDynamic*> (body)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-		}
-		else
-		{
-			static_cast<physx::PxRigidDynamic*> (body)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-		}
+		static_cast<physx::PxRigidDynamic*> (body)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, kinematic);	
 	}
 }
 
@@ -106,16 +99,8 @@ void jpPhysicsRigidBody::SetAsTrigger(bool trigger)
 {
 	if (body_shape)
 	{
-		if (trigger)
-		{
-			body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-			body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
-		}
-		else
-		{
-			body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
-			body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
-		}
+		body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !trigger);
+		body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, trigger);
 	}
 }
 
@@ -335,6 +320,7 @@ void jpPhysicsRigidBody::SetDynamicLock(bool lock)
 		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_X, lock);
 		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Y, lock);
 		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Z, lock);
+		(lock) ? rbody->putToSleep() : rbody->wakeUp();
 	}
 }
 
@@ -364,14 +350,7 @@ physx::PxRigidActor * jpPhysicsRigidBody::GetActor()
 
 bool jpPhysicsRigidBody::Sleeping()
 {
-	if (is_dynamic && ((physx::PxRigidDynamic*)body)->isSleeping())
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return (is_dynamic && ((physx::PxRigidDynamic*)body)->isSleeping());
 }
 
 void jpPhysicsRigidBody::WakeUp()
