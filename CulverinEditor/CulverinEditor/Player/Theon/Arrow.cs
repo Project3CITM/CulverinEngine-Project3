@@ -19,7 +19,7 @@ public class Arrow : CulverinBehaviour
     public void Shoot()
     {
         rb.UnLockTransform();
-        rb.ApplyImpulse(new Vector3(0,10,10)); // Forward impulse
+        rb.ApplyImpulse(new Vector3(0,10,50)); // Forward impulse
         rb.ApplyTorqueForce(new Vector3(0, 0, 0)); // Fall force
     }
 

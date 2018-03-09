@@ -60,13 +60,9 @@ bool jpPhysicsWorld::CreateNewPhysicsWorld()
 			jpWorld = PxCreatePhysics(PX_PHYSICS_VERSION, *jpFoundation, physx::PxTolerancesScale(), true, nullptr);
 		}
 
-		if (jpWorld) {
-			//jpCooking = PxCreateCooking(PX_PHYSICS_VERSION, *jpFoundation, jpWorld->getTolerancesScale());
-			return true;
-		}
-		else return false;
 	}
-	else return false;
+
+	return (jpWorld != nullptr);
 }
 
 bool jpPhysicsWorld::Simulate(float dt)

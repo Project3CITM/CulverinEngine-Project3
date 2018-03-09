@@ -25,6 +25,7 @@ public class ChasePlayer_Action : Action
         current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
         event_to_react = GetComponent<NormalGuardListener>().GetEvent();
+        event_to_react.start_counting = false;
 
         GetComponent<Movement_Action>().GoToPrevious(current_tile_x, current_tile_y, event_to_react.objective_tile_x, event_to_react.objective_tile_y);
 
@@ -42,6 +43,8 @@ public class ChasePlayer_Action : Action
 
         if (timer >= check_player_timer)
         {
+            timer = 0.0f;
+
             current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
             current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
@@ -49,6 +52,11 @@ public class ChasePlayer_Action : Action
             GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out player_x, out player_y);
             GetComponent<Movement_Action>().GoToPrevious(current_tile_x, current_tile_y, player_x, player_y);
         }
+
+        if (GetComponent<PerceptionSightEnemy>().player_seen == false)
+            event_to_react.start_counting = true;
+        else
+            event_to_react.start_counting = false;
 
         ///Make Move update
         move_return = GetComponent<Movement_Action>().ActionUpdate();

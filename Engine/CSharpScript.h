@@ -232,6 +232,8 @@ public:
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
 	void		MoveStaticColliderTo(MonoObject* object, MonoObject* positio);
+	void		CallOnContact(MonoObject* object);
+	void		CallOnTriggerEnter(MonoObject* object);
 
 	/*RigidBody*/
 	MonoObject* GetColliderPosition(MonoObject* object);
