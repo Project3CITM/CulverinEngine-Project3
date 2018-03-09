@@ -114,9 +114,10 @@ public class BarrelFall : CulverinBehaviour
     {
 
         CompRigidBody rbody = GetComponent<CompRigidBody>();
-
+        Debug.Log("Enter Before");
         if (rbody != null)
         {
+            Debug.Log("Enter");
             rbody.RemoveJoint();
             puzzle_generator.OnBarrelFall(gameObject);
         }

@@ -444,16 +444,22 @@ public class DaenerysController : CharacterController
         DecreaseManaPercentage(mana_cost_percentage_left);
         set_fire_breath = false;
 
-        //GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25 * distance_left_attack);
-        //if (coll_object != null)
-        //{
-        //    CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
 
-        //    if (obj_collider != null)
-        //    {
-        //        obj_collider.CallOnContact();
-        //    }
-        //}
+        GameObject coll_object = PhysX.RayCast(GetComponent<Transform>().position, transform.forward, 25 * distance_left_attack);
+        Debug.Log(GetComponent<Transform>().GetGlobalPosition().ToString());
+
+        if (coll_object != null)
+        {
+            Debug.Log("Danerys Raycast");
+            CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+
+            if (obj_collider != null)
+            {
+                obj_collider.CallOnContact();
+                Debug.Log("Danerys Enter");
+            }
+        }
+     
 
         Debug.Log("Daenerys LW Going to hit");
     }
