@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Linq;
 using CulverinEditor;
 using CulverinEditor.Debug;
+using System.Collections.Generic;
 
 public class BarrelPuzzleGenerator : CulverinBehaviour
 {
-    public string[] paths_names;
+    public string path_name = "PuzzlePath"; // "PuzzlePath#.prefab.json";
+    public int possible_paths = 6;
+    // Its a really bad way to do this but scritps system can handel arrays so....
 
-    private Random rnd;
+    private Random rnd = null;
+    private GameObject generated_path = null;
 
     // ---------------------------------------
 
@@ -18,14 +23,33 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
     void Update()
     {
-        
+        //Just testing purposes.
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            ResetPath();
+        }
     }
 
     // ---------------------------------------
 
     void GeneratePath()
     {
-        string selected_path_name = paths_names[rnd.Next(0, paths_names.Length)];
-        GameObject path_prefab = Instantiate(selected_path_name);
+        string selected_path_name = path_name + rnd.Next(1, possible_paths + 1).ToString();
+        generated_path = Instantiate(selected_path_name);
+    }
+
+    public void RemovePath()
+    {
+        if (generated_path != null)
+        {
+            generated_path.Destroy(generated_path);
+            generated_path = null;
+        }
+    }
+
+    public void ResetPath()
+    {
+        RemovePath();
+        GeneratePath();
     }
 }
