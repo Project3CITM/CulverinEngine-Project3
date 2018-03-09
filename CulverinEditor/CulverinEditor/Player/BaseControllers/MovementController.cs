@@ -230,7 +230,6 @@ public class MovementController : CulverinBehaviour
             angle = -10;
             rotating = true;
             ModificateCurrentDirection(true);
-
         }
         if (Input.GetKeyDown(KeyCode.E)) //Right
         {
@@ -238,6 +237,24 @@ public class MovementController : CulverinBehaviour
             angle = 10;
             rotating = true;
             ModificateCurrentDirection(false);
+        }
+
+        float variation = Input.GetInput_ControllerAxis("RHorizontal", "Player");
+        if (variation > 0.8)
+        {
+            actual_angle = 0;
+            angle = -10;
+            rotating = true;
+            ModificateCurrentDirection(true);
+            //Debug.Log("AXIS");
+        }
+        else if (variation < -0.8)
+        {
+            actual_angle = 0;
+            angle = 10;
+            rotating = true;
+            ModificateCurrentDirection(false);
+            //Debug.Log("AXIS");
         }
     }
 
@@ -266,6 +283,38 @@ public class MovementController : CulverinBehaviour
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
             MoveBackward(out tile_mov_x, out tile_mov_y);
+        }
+
+       float variation = Input.GetInput_ControllerAxis("LHorizontal", "Player");
+        if (variation > 0.8)
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveRight(out tile_mov_x, out tile_mov_y);
+            Debug.Log("Right");
+        }
+        else if (variation < -0.8)
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveLeft(out tile_mov_x, out tile_mov_y);
+            Debug.Log("Left");
+        }
+
+        float variation2 = Input.GetInput_ControllerAxis("LVertical", "Player");
+        if (variation2 > 0.8)
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveBackward(out tile_mov_x, out tile_mov_y);
+            Debug.Log("Back");
+        }
+        else if (variation2 < -0.8)
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveForward(out tile_mov_x, out tile_mov_y);
+            Debug.Log("Forw");
         }
     }
 

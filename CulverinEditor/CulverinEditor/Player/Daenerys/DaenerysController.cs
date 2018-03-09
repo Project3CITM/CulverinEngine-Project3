@@ -174,7 +174,18 @@ public class DaenerysController : CharacterController
     public override void CheckAttack()
     {
         //Left Attack
-        if (Input.GetKeyDown(KeyCode.Num1))
+        /*if (Input.GetKeyDown(KeyCode.Num1))
+        {
+            Debug.Log("Daenerys Pressed 1");
+            // TAKE THIS OUT AFTER TESTS! ----
+            SetAnimationTransition("ToAttackLeft", true);
+            SetState(State.ATTACKING);
+            DecreaseManaPercentage(mana_cost_percentage_left);
+            //-----------------
+            //PrepareLeftAbility();
+        }*/
+
+        if (Input.GetInput_KeyDown("LAttack", "Player"))
         {
             Debug.Log("Daenerys Pressed 1");
             // TAKE THIS OUT AFTER TESTS! ----
@@ -185,8 +196,7 @@ public class DaenerysController : CharacterController
             //PrepareLeftAbility();
         }
 
-        //Right Attack
-        else if (Input.GetKeyDown(KeyCode.Num2))
+        if (Input.GetInput_KeyDown("RAttack", "Player"))
         {
             Debug.Log("Daenerys Pressed 2");
             // TAKE THIS OUT AFTER TESTS! ----
@@ -196,6 +206,18 @@ public class DaenerysController : CharacterController
             //-----------------
             //PrepareRightAbility();
         }
+
+        //Right Attack
+       /* else if (Input.GetKeyDown(KeyCode.Num2))
+        {
+            Debug.Log("Daenerys Pressed 2");
+            // TAKE THIS OUT AFTER TESTS! ----
+            SetAnimationTransition("ToAttackRight", true);
+            SetState(State.FIRE_WALL);
+            DoRightAbility();
+            //-----------------
+            //PrepareRightAbility();
+        }*/
     }
 
     public override void SecondaryAbility()
