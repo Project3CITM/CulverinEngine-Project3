@@ -27,7 +27,7 @@ public class DaenerysCD_Left : CoolDown
     }
     public override void OnClick()
     {
-        if (GetLinkedObject("daenerys_obj").GetComponent<CharacterController>().GetState() == 0)
+        if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().GetState() == 0)
         {
             if (in_cd == false)
             {

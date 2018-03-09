@@ -146,7 +146,7 @@ public class DaenerysController : CharacterController
                                     {
                                         break;
                                     }
-                                    GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
+                                    //GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
                                 }
                             }
                             anim_controller = daenerys_obj.GetComponent<CompAnimation>();
