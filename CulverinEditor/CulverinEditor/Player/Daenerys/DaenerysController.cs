@@ -171,34 +171,34 @@ public class DaenerysController : CharacterController
                             if (set_fire_wall == false && anim_controller.IsAnimOverXTime(0.3f))
                             {
                                 int tile_x, tile_y;
-                                int tile_mov_x = 0;
-                                int tile_mov_y = 0;
                                 GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out tile_x, out tile_y);
+                                Vector3 player_pos = GetLinkedObject("player_obj").GetComponent<Transform>().GetPosition();
+                                player_pos.y -= 12.7f;
                                 MovementController.Direction direction = GetLinkedObject("player_obj").GetComponent<MovementController>().curr_dir;
                                 switch (direction)
                                 {
                                     case MovementController.Direction.NORTH:
                                         {
-                                            tile_mov_y -= 1;
                                             tile_y -= 1;
+                                            player_pos.z -= 25.4f;
                                             break;
                                         }
                                     case MovementController.Direction.SOUTH:
                                         {
-                                            tile_mov_y += 1;
                                             tile_y += 1;
+                                            player_pos.z += 25.4f;
                                             break;
                                         }
                                     case MovementController.Direction.EAST:
                                         {
-                                            tile_mov_x += 1;
                                             tile_x += 1;
+                                            player_pos.x += 25.4f;
                                             break;
                                         }
                                     case MovementController.Direction.WEST:
                                         {
-                                            tile_mov_x -= 1;
                                             tile_x -= 1;
+                                            player_pos.x -= 25.4f;
                                             break;
                                         }
                                     default:
@@ -207,10 +207,8 @@ public class DaenerysController : CharacterController
                                         }
                                 }
                                 //GET TILE POS!
-                                Vector3 firewall_pos;
-                                GetLinkedObject("player_obj").GetComponent<MovementController>().GetPosFromTile(out firewall_pos, tile_mov_x, tile_mov_y);
-                                GameObject fire_wall = Instantiate("FireWall");                 
-                                fire_wall.transform.SetPosition(firewall_pos);
+                                GameObject fire_wall = Instantiate("FireWall");
+                                fire_wall.transform.SetPosition(player_pos);
                                 fire_wall.GetComponent<FireWall>().SetTiles(tile_x, tile_y);
                                 set_fire_wall = true;
                             }
@@ -223,7 +221,6 @@ public class DaenerysController : CharacterController
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Daenerys Firewalling");
                             }
                             break;
                         }
@@ -520,7 +517,7 @@ public class DaenerysController : CharacterController
                         DoRightAbility();
 
                         // Set Animation
-                        SetAnimationTransition("ToFireWall", true);
+                        SetAnimationTransition("ToAttackRight", true);
 
                         return true;
                     }

@@ -21,7 +21,10 @@ public class DaenerysCD_Left : CoolDown
                     button_cd.Activate();
                 }
                 current_charges++;
-                act_time = 0.0f;
+                if (current_charges < max_charges)
+                {
+                    act_time = 0.0f;
+                }
             }
         }
     }
@@ -43,13 +46,15 @@ public class DaenerysCD_Left : CoolDown
     public override void ActivateAbility()
     {
         //this_obj.GetComponent
-        
         Debug.Log("Daenerys Left CD Clicked");
         current_charges--;
-        act_time = 0.0f;
+        if(current_charges == max_charges)
+        {
+            act_time = 0.0f;
+        }
         if (current_charges == 0)
         {
-            button_cd = GetComponent<CompButton>();
+            button_cd = GetLinkedObject("daenerys_button_left_obj").GetComponent<CompButton>();
             button_cd.Deactivate();
             in_cd = true;
         }

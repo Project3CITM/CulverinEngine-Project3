@@ -3,6 +3,10 @@ using CulverinEditor.Debug;
 
 public class DaenerysCD_Right : CoolDown
 {
+    void Update()
+    {
+        base.Update();
+    }
     public override void OnClick()
     {
         if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().GetState() == 0)
@@ -20,7 +24,7 @@ public class DaenerysCD_Right : CoolDown
     public override void ActivateAbility()
     {
         //this_obj.GetComponent
-        button_cd = GetComponent<CompButton>();
+        button_cd = GetLinkedObject("daenerys_button_right_obj").GetComponent<CompButton>();
         button_cd.Deactivate();
 
         Debug.Log("Daenerys Right CD Clicked");
