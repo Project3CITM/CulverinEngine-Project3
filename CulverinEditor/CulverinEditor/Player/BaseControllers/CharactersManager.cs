@@ -48,6 +48,7 @@ public class CharactersManager : CulverinBehaviour
     public GameObject mana_obj;
     public GameObject shield_obj;
     public GameObject broken_shield_obj;
+    public GameObject enemies_obj;
 
     public Score player_score;
 
@@ -70,6 +71,7 @@ public class CharactersManager : CulverinBehaviour
         mana_obj = GetLinkedObject("mana_obj");
         shield_obj = GetLinkedObject("shield_obj");
         broken_shield_obj = GetLinkedObject("broken_shield_obj");
+        enemies_obj = GetLinkedObject("enemies_obj");
 
         shield_obj.GetComponent<CompImage>().SetEnabled(false, shield_obj);
         broken_shield_obj.GetComponent<CompImage>().SetEnabled(false, broken_shield_obj);

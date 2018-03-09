@@ -748,55 +748,6 @@ public class MovementController : CulverinBehaviour
         return false;
     }
 
-    public bool EnemyInRow(int num_tiles)
-    {
-        int direction = (int)curr_dir;
-        int position_front_x = curr_x;
-        int position_front_y = curr_y;
-
-        for (int i = 0; i < num_tiles; i++)
-        {
-            switch (direction)
-            {
-                case (int)MovementController.Direction.NORTH:
-                    {
-                        position_front_y -= 1;
-                        break;
-                    }
-
-                case (int)MovementController.Direction.SOUTH:
-                    {
-                        position_front_y += 1;
-                        break;
-                    }
-
-                case (int)MovementController.Direction.EAST:
-                    {
-                        position_front_x += 1;
-                        break;
-                    }
-
-                case (int)MovementController.Direction.WEST:
-                    {
-                        position_front_x -= 1;
-                        break;
-                    }
-
-                default:
-                    {
-                        break;
-                    }
-            }
-
-            if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-                position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     //Pass the x,y vars as arguments to fill them with player coords
     public void GetPlayerPos(out int x, out int y)
     {

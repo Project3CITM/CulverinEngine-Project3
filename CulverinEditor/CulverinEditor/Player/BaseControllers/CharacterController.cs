@@ -28,6 +28,7 @@ public class CharacterController : CulverinBehaviour
     protected CompAnimation anim_controller;            // Animation component to handle animations
     protected CompImage icon;
     protected CompButton button;
+    protected CompAudio audio;
     protected EnemyController enemy;
 
     protected Position position = Position.CURRENT; 
