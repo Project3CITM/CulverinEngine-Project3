@@ -69,7 +69,7 @@ enum EventType
 	EVENT_AXIS,
 
 
-
+	EVENT_DELAYED_GAMEOBJECT_SPAWN,
 	EVENT_DELETE_GO, //Keep this event last
 	MAXEVENTS//Keep this at the bottom, needed to know how many events se have
 };
@@ -82,6 +82,13 @@ struct EDeleteGO
 	EventType type = EventType::EVENT_DELETE_GO;
 	float delay = 0.0f; //Seconds from event creation to activate it
 	GameObject* Todelte = nullptr;
+};
+
+struct EDelayedGOSpawn
+{
+	EventType type = EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN;
+	float delay = 0.0f; //Seconds from event creation to activate it
+	GameObject* Tospawn = nullptr;
 };
 
 struct EDockingModif
@@ -293,6 +300,7 @@ union Event
 	EventType type;
 	/*----------------------Engine----------------------*/
 	EDeleteGO delete_go;
+	EDelayedGOSpawn delayed_go_spawn;
 	EDockingModif dock_modif;
 	EDraw draw;
 	EDroppedFile file_drop;
