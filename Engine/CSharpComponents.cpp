@@ -202,7 +202,7 @@ void CSharpScript::CallOnContact(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
-		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnTriggerEnter(nullptr);
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnContact(nullptr);
 	}
 }
 

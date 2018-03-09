@@ -362,13 +362,25 @@ public class JaimeController : CharacterController
         SetAnimationTransition("To"+current_anim, true);
 
         // Attack the enemy in front of you
-        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
-        //{
-        if (1 == 1) 
-        { 
-            // To change => check the specific enemy in front of you
-            //enemy = enemy_obj.GetComponent<EnemyController>();
-            //enemy.Hit(attack_dmg);
+        GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25.0f);
+
+        if (coll_object != null)
+        {
+            // Check the specific enemy in front of you and apply dmg or call object OnContact
+            Enemy_BT enemybt = coll_object.GetComponent<Enemy_BT>();
+            if (enemybt != null)
+            {
+                enemybt.ApplyDamage(left_ability_dmg);
+            }
+            else
+            {
+                // Call Collider OnContact to notify raycast
+                CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+                if (obj_collider != null)
+                {
+                    obj_collider.CallOnContact();
+                }
+            }
 
             if (hit_streak < 2)
             {

@@ -409,6 +409,19 @@ public class DaenerysController : CharacterController
             //enemy = enemy_obj.GetComponent<EnemyController>();
             //enemy.HitPercentage(damage_percentage);
         }
+        else
+        {
+            // Check if attack collided with any collider and coll Collided Object OnContact
+            GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25 * distance_left_attack);
+            if (coll_object != null)
+            {
+                CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+                if (obj_collider != null)
+                {
+                    obj_collider.CallOnContact();
+                }
+            }
+        }
     }
 
     //------------------------------
@@ -487,12 +500,28 @@ public class DaenerysController : CharacterController
         // Set a fire wall in north tile
         //GameObject fire_wall = Instantiate("FireWall");
         //fire_wall.transform.SetPosition(new Vector3(10,-5, 35));
-        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
-        //{
-        //    // To change => check the specific enemy in front of you
-        //    enemy = enemy_obj.GetComponent<EnemyController>();
-        //    enemy.HitPercentage(damage_percentage);
-        //}
+
+        // Physics RayCast To Find Enemy;
+        GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25.0f);
+
+        if (coll_object != null)
+        {
+            // Check the specific enemy in front of you and apply dmg or call object OnContact
+            Enemy_BT enemybt = coll_object.GetComponent<Enemy_BT>();
+            if (enemybt != null)
+            {
+                enemybt.ApplyDamage(damage_percentage);
+            }
+            else
+            {
+                // Call Collider OnContact to notify raycast
+                CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+                if (obj_collider != null)
+                {
+                    obj_collider.CallOnContact();
+                }
+            }
+        }
     }
 
     //---------------------------   
