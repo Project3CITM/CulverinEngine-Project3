@@ -189,8 +189,9 @@ public class CharactersManager : CulverinBehaviour
         {
             left_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.CURRENT);
             left_character.GetComponent<TheonController>().UpdateHUD(true);
-            left_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
             left_character.GetComponent<TheonController>().ToggleMesh(true);
+            left_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
+            
         }
     }
 
@@ -348,8 +349,8 @@ public class CharactersManager : CulverinBehaviour
                 if (left_character.GetComponent<TheonController>().IsSecondaryAbilityReady())
                 {
                     Debug.Log("Theon Secondary ability Left");
-                    //arrow = Instantiate("ArrowTheon");
-                    //arrow.transform.SetPosition(new Vector3(10, 0, 20));
+                    GameObject arrow = Instantiate("ArrowTheon");
+                    arrow.transform.SetPosition(new Vector3(10, 0, 20));
                     left_character.GetComponent<TheonController>().ResetCoolDown();
                 }
             }
