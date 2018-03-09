@@ -240,7 +240,7 @@ public class MovementController : CulverinBehaviour
         }
 
         float variation = Input.GetInput_ControllerAxis("RHorizontal", "Player");
-        if (variation > 0.8)
+        if (variation < -0.8)
         {
             actual_angle = 0;
             angle = -10;
@@ -248,7 +248,7 @@ public class MovementController : CulverinBehaviour
             ModificateCurrentDirection(true);
             //Debug.Log("AXIS");
         }
-        else if (variation < -0.8)
+        else if (variation > 0.8)
         {
             actual_angle = 0;
             angle = 10;
