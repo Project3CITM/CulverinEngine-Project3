@@ -201,8 +201,10 @@ private:
 	static void FillAmount(MonoObject * object, float value);
 
 	/*Component Collier*/
-	static MonoObject* GetCollidedObject(MonoObject * object);
-	static void		   MoveStaticColliderTo(MonoObject* object, MonoObject* position);
+	static MonoObject*	GetCollidedObject(MonoObject * object);
+	static void			MoveStaticColliderTo(MonoObject* object, MonoObject* position);
+	static void			CallOnContact(MonoObject* object);
+	static void			CallOnTriggerEnter(MonoObject* object);
 
 	/*Component RigidBody*/
 	static MonoObject*	GetColliderPosition(MonoObject* object);

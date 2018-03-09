@@ -10,9 +10,13 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
     public int frustum_lenght = 3;
     public int frustum_size = 1;
-    public int tile_size = 2;
+    public float time_to_forget = 10.0f;
+    float tile_size;
 
-    bool player_seen = false;
+    public float check_player_timer = 0.5f;
+    float timer = 0.0f;
+
+    public bool player_seen = false;
 
     public enum DIRECTION
     {
@@ -53,350 +57,360 @@ public class PerceptionSightEnemy : CulverinBehaviour
             }
         }
 
+        tile_size = GetComponent<Movement_Action>().tile_size;
         player_seen = false;
     }
 
     void Update()
     {
-        int player_x, player_y;
-        GetPlayerTilePos(out player_x, out player_y);
+        timer += Time.DeltaTime();
 
-        //Optimization --> Check if player is out of range
-        int distance_x = Mathf.Abs(GetCurrentTileX() - player_x);
-        int distance_y = Mathf.Abs(GetCurrentTileY() - player_y);
-
-        if (distance_x <= frustum_lenght && distance_y <= frustum_lenght)
+        if (timer >= check_player_timer)
         {
-            bool search_finished = false;
-            List<int> blocked_tiles_x = new List<int>();
-            List<int> blocked_tiles_y = new List<int>();
+            timer = 0.0f;
 
-            switch (GetDirection())
+            int player_x, player_y;
+            GetPlayerTilePos(out player_x, out player_y);
+
+            //Optimization --> Check if player is out of range
+            int distance_x = Mathf.Abs(GetCurrentTileX() - player_x);
+            int distance_y = Mathf.Abs(GetCurrentTileY() - player_y);
+
+            if (distance_x <= frustum_lenght && distance_y <= frustum_lenght)
             {
-                case DIRECTION.E_DIR_NONE:
-                    Debug.Log("Direction Error: AI Can't see anything!");
-                    break;
-                case DIRECTION.E_DIR_NORTH:
-                    for (int j = 0; j < frustum_lenght; j++)
-                    {
-                        int tile_y = (GetCurrentTileY() - j);
-                        if (tile_y >= 0 && tile_y < map_height)
+                bool search_finished = false;
+                List<int> blocked_tiles_x = new List<int>();
+                List<int> blocked_tiles_y = new List<int>();
+
+                switch (GetDirection())
+                {
+                    case DIRECTION.E_DIR_NONE:
+                        Debug.Log("Direction Error: AI Can't see anything!");
+                        break;
+                    case DIRECTION.E_DIR_NORTH:
+                        for (int j = 0; j < frustum_lenght; j++)
                         {
-                            for (int i = -j; i <= j + (frustum_size - 1); i++)
+                            int tile_y = (GetCurrentTileY() - j);
+                            if (tile_y >= 0 && tile_y < map_height)
                             {
-                                int tile_x = (GetCurrentTileX() + i - ((frustum_size - 1) / 2));
-                                if (tile_x >= 0 && tile_x < map_width)
+                                for (int i = -j; i <= j + (frustum_size - 1); i++)
                                 {
-                                    bool cant_see = false;
-                                    for (int k = 0; k < blocked_tiles_x.Count; k++)
+                                    int tile_x = (GetCurrentTileX() + i - ((frustum_size - 1) / 2));
+                                    if (tile_x >= 0 && tile_x < map_width)
                                     {
-                                        if (tile_y < blocked_tiles_y[k])
+                                        bool cant_see = false;
+                                        for (int k = 0; k < blocked_tiles_x.Count; k++)
                                         {
-                                            if (i > 0)
+                                            if (tile_y < blocked_tiles_y[k])
                                             {
-                                                if (tile_x >= blocked_tiles_x[k])
+                                                if (i > 0)
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_x >= blocked_tiles_x[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            else if (i == 0)
-                                            {
-                                                if (tile_x == blocked_tiles_x[k])
+                                                else if (i == 0)
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_x == blocked_tiles_x[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            else
-                                            {
-                                                if (tile_x <= blocked_tiles_x[k])
+                                                else
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_x <= blocked_tiles_x[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    if (tile_map[tile_x, tile_y] == 1)
-                                    {
-                                        blocked_tiles_x.Add(tile_x);
-                                        blocked_tiles_y.Add(tile_y);
-                                    }
-
-                                    if (player_x == tile_x && player_y == tile_y)
-                                    {
-                                        search_finished = true;
-                                        if (cant_see == true)
+                                        if (tile_map[tile_x, tile_y] == 1)
                                         {
-                                            player_seen = false;
+                                            blocked_tiles_x.Add(tile_x);
+                                            blocked_tiles_y.Add(tile_y);
+                                        }
+
+                                        if (player_x == tile_x && player_y == tile_y)
+                                        {
+                                            search_finished = true;
+                                            if (cant_see == true)
+                                            {
+                                                player_seen = false;
+                                                break;
+                                            }
+
+                                            if (player_seen == false)
+                                            {
+                                                player_seen = true;
+                                                GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(time_to_forget, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
+                                                Debug.Log("Player Seen");
+                                            }
                                             break;
                                         }
-
-                                        if (player_seen == false) 
-                                        {
-                                            player_seen = true;
-                                            GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
-                                            Debug.Log("Player Seen");
-                                        }
-                                        break;
                                     }
                                 }
                             }
-                        }
 
-                        if (search_finished == true)
-                            break;
-                        else if (j == (frustum_lenght - 1))    // If player is out of range
-                            player_seen = false;
-                    }
-                    break;
-                case DIRECTION.E_DIR_SOUTH:
-                    for (int j = 0; j < frustum_lenght; j++)
-                    {
-                        int tile_y = (GetCurrentTileY() + j);
-                        if (tile_y >= 0 && tile_y < map_height)
+                            if (search_finished == true)
+                                break;
+                            else if (j == (frustum_lenght - 1))    // If player is out of range
+                                player_seen = false;
+                        }
+                        break;
+                    case DIRECTION.E_DIR_SOUTH:
+                        for (int j = 0; j < frustum_lenght; j++)
                         {
-                            for (int i = -j; i <= j + (frustum_size - 1); i++)
+                            int tile_y = (GetCurrentTileY() + j);
+                            if (tile_y >= 0 && tile_y < map_height)
                             {
-                                int tile_x = (GetCurrentTileX() + i - ((frustum_size - 1) / 2));
-                                if (tile_x >= 0 && tile_x < map_width)
+                                for (int i = -j; i <= j + (frustum_size - 1); i++)
                                 {
-                                    bool cant_see = false;
-                                    for (int k = 0; k < blocked_tiles_x.Count; k++)
+                                    int tile_x = (GetCurrentTileX() + i - ((frustum_size - 1) / 2));
+                                    if (tile_x >= 0 && tile_x < map_width)
                                     {
-                                        if (tile_y > blocked_tiles_y[k])
+                                        bool cant_see = false;
+                                        for (int k = 0; k < blocked_tiles_x.Count; k++)
                                         {
-                                            if (i > 0)
+                                            if (tile_y > blocked_tiles_y[k])
                                             {
-                                                if (tile_x >= blocked_tiles_x[k])
+                                                if (i > 0)
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_x >= blocked_tiles_x[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            else if (i == 0)
-                                            {
-                                                if (tile_x == blocked_tiles_x[k])
+                                                else if (i == 0)
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_x == blocked_tiles_x[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            else
-                                            {
-                                                if (tile_x <= blocked_tiles_x[k])
+                                                else
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_x <= blocked_tiles_x[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    if (tile_map[tile_x, tile_y] == 1)
-                                    {
-                                        blocked_tiles_x.Add(tile_x);
-                                        blocked_tiles_y.Add(tile_y);
-                                    }
-
-                                    if (player_x == tile_x && player_y == tile_y)
-                                    {
-                                        search_finished = true;
-                                        if (cant_see == true)
+                                        if (tile_map[tile_x, tile_y] == 1)
                                         {
-                                            player_seen = false;
+                                            blocked_tiles_x.Add(tile_x);
+                                            blocked_tiles_y.Add(tile_y);
+                                        }
+
+                                        if (player_x == tile_x && player_y == tile_y)
+                                        {
+                                            search_finished = true;
+                                            if (cant_see == true)
+                                            {
+                                                player_seen = false;
+                                                break;
+                                            }
+
+                                            if (player_seen == false)
+                                            {
+                                                player_seen = true;
+                                                Debug.Log("Player Seen");
+                                                GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(time_to_forget, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
+                                            }
                                             break;
                                         }
-
-                                        if (player_seen == false)
-                                        {
-                                            player_seen = true;
-                                            Debug.Log("Player Seen");
-                                            GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
-                                        }
-                                        break;
                                     }
                                 }
                             }
-                        }
 
-                        if (search_finished == true)
-                            break;
-                        else if (j == (frustum_lenght - 1))    // If player is out of range
-                            player_seen = false;
-                    }
-                    break;
-                case DIRECTION.E_DIR_EAST:
-                    for (int j = 0; j < frustum_lenght; j++)
-                    {
-                        int tile_x = (GetCurrentTileX() + j);
-                        if (tile_x >= 0 && tile_x < map_width)
+                            if (search_finished == true)
+                                break;
+                            else if (j == (frustum_lenght - 1))    // If player is out of range
+                                player_seen = false;
+                        }
+                        break;
+                    case DIRECTION.E_DIR_EAST:
+                        for (int j = 0; j < frustum_lenght; j++)
                         {
-                            for (int i = -j; i <= j + (frustum_size - 1); i++)
+                            int tile_x = (GetCurrentTileX() + j);
+                            if (tile_x >= 0 && tile_x < map_width)
                             {
-                                int tile_y = (GetCurrentTileY() + i - ((frustum_size - 1) / 2));
-                                if (tile_y >= 0 && tile_y < map_height)
+                                for (int i = -j; i <= j + (frustum_size - 1); i++)
                                 {
-                                    bool cant_see = false;
-                                    for (int k = 0; k < blocked_tiles_x.Count; k++)
+                                    int tile_y = (GetCurrentTileY() + i - ((frustum_size - 1) / 2));
+                                    if (tile_y >= 0 && tile_y < map_height)
                                     {
-                                        if (tile_x > blocked_tiles_x[k])
+                                        bool cant_see = false;
+                                        for (int k = 0; k < blocked_tiles_x.Count; k++)
                                         {
-                                            if (i > 0)
+                                            if (tile_x > blocked_tiles_x[k])
                                             {
-                                                if (tile_y >= blocked_tiles_y[k])
+                                                if (i > 0)
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_y >= blocked_tiles_y[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            else if (i == 0)
-                                            {
-                                                if (tile_y == blocked_tiles_y[k])
+                                                else if (i == 0)
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_y == blocked_tiles_y[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            else
-                                            {
-                                                if (tile_y <= blocked_tiles_y[k])
+                                                else
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_y <= blocked_tiles_y[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    if (tile_map[tile_x, tile_y] == 1)
-                                    {
-                                        blocked_tiles_x.Add(tile_x);
-                                        blocked_tiles_y.Add(tile_y);
-                                    }
-
-                                    if (player_x == tile_x && player_y == tile_y)
-                                    {
-                                        search_finished = true;
-                                        if (cant_see == true)
+                                        if (tile_map[tile_x, tile_y] == 1)
                                         {
-                                            player_seen = false;
+                                            blocked_tiles_x.Add(tile_x);
+                                            blocked_tiles_y.Add(tile_y);
+                                        }
+
+                                        if (player_x == tile_x && player_y == tile_y)
+                                        {
+                                            search_finished = true;
+                                            if (cant_see == true)
+                                            {
+                                                player_seen = false;
+                                                break;
+                                            }
+
+                                            if (player_seen == false)
+                                            {
+                                                Debug.Log("Player Seen");
+                                                player_seen = true;
+                                                GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(time_to_forget, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
+                                            }
                                             break;
                                         }
-
-                                        if (player_seen == false)
-                                        {
-                                            Debug.Log("Player Seen");
-                                            player_seen = true;
-                                            GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
-                                        }
-                                        break;
                                     }
                                 }
                             }
+
+                            if (search_finished == true)
+                                break;
+                            else if (j == (frustum_lenght - 1))    // If player is out of range
+                                player_seen = false;
                         }
+                        break;
 
-                        if (search_finished == true)
-                            break;
-                        else if (j == (frustum_lenght - 1))    // If player is out of range
-                            player_seen = false;
-                    }
-                    break;
-
-                case DIRECTION.E_DIR_WEST:
-                    for (int j = 0; j < frustum_lenght; j++)
-                    {
-                        int tile_x = (GetCurrentTileX() - j);
-                        if (tile_x >= 0 && tile_x < map_width)
+                    case DIRECTION.E_DIR_WEST:
+                        for (int j = 0; j < frustum_lenght; j++)
                         {
-                            for (int i = -j; i <= j + (frustum_size - 1); i++)
+                            int tile_x = (GetCurrentTileX() - j);
+                            if (tile_x >= 0 && tile_x < map_width)
                             {
-                                int tile_y = (GetCurrentTileY() + i - ((frustum_size - 1) / 2));
-                                if (tile_y >= 0 && tile_y < map_height)
+                                for (int i = -j; i <= j + (frustum_size - 1); i++)
                                 {
-                                    bool cant_see = false;
-                                    for (int k = 0; k < blocked_tiles_x.Count; k++)
+                                    int tile_y = (GetCurrentTileY() + i - ((frustum_size - 1) / 2));
+                                    if (tile_y >= 0 && tile_y < map_height)
                                     {
-                                        if (tile_x < blocked_tiles_x[k])
+                                        bool cant_see = false;
+                                        for (int k = 0; k < blocked_tiles_x.Count; k++)
                                         {
-                                            if (i > 0)
+                                            if (tile_x < blocked_tiles_x[k])
                                             {
-                                                if (tile_y >= blocked_tiles_y[k])
+                                                if (i > 0)
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_y >= blocked_tiles_y[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            else if (i == 0)
-                                            {
-                                                if (tile_y == blocked_tiles_y[k])
+                                                else if (i == 0)
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_y == blocked_tiles_y[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            else
-                                            {
-                                                if (tile_y <= blocked_tiles_y[k])
+                                                else
                                                 {
-                                                    cant_see = true;
-                                                    break;
+                                                    if (tile_y <= blocked_tiles_y[k])
+                                                    {
+                                                        cant_see = true;
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    if (tile_map[tile_x, tile_y] == 1)
-                                    {
-                                        blocked_tiles_x.Add(tile_x);
-                                        blocked_tiles_y.Add(tile_y);
-                                    }
-
-                                    if (player_x == tile_x && player_y == tile_y)
-                                    {
-                                        search_finished = true;
-                                        if (cant_see == true)
+                                        if (tile_map[tile_x, tile_y] == 1)
                                         {
-                                            player_seen = false;
+                                            blocked_tiles_x.Add(tile_x);
+                                            blocked_tiles_y.Add(tile_y);
+                                        }
+
+                                        if (player_x == tile_x && player_y == tile_y)
+                                        {
+                                            search_finished = true;
+                                            if (cant_see == true)
+                                            {
+                                                player_seen = false;
+                                                break;
+                                            }
+
+                                            if (player_seen == false)
+                                            {
+                                                Debug.Log("Player Seen");
+                                                player_seen = true;
+                                                GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(time_to_forget, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
+                                            }
                                             break;
                                         }
-
-                                        if (player_seen == false)
-                                        {
-                                            Debug.Log("Player Seen");
-                                            player_seen = true;
-                                            GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10, tile_x, tile_y, gameObject, GetCurrentTileX(), GetCurrentTileY());
-                                        }
-                                        break;
                                     }
                                 }
                             }
-                        }
 
-                        if (search_finished == true)
-                            break;
-                        else if (j == (frustum_lenght - 1))    // If player is out of range
-                            player_seen = false;
-                    }
-                    break;
-                case DIRECTION.E_DIR_MAX:
-                default:
-                    Debug.Log("Direction Error: AI Can't see anything!");
-                    break;
+                            if (search_finished == true)
+                                break;
+                            else if (j == (frustum_lenght - 1))    // If player is out of range
+                                player_seen = false;
+                        }
+                        break;
+                    case DIRECTION.E_DIR_MAX:
+                    default:
+                        Debug.Log("Direction Error: AI Can't see anything!");
+                        break;
+                }
             }
+            else
+                player_seen = false;
         }
     }
 
     public int GetCurrentTileX()
     {
-        return (int)((float)GetComponent<Transform>().local_position.x / tile_size);
+        return (int)(GetComponent<Transform>().local_position.x / tile_size);
     }
 
     public int GetCurrentTileY()
     {
-        return (int)((float)GetComponent<Transform>().local_position.z / tile_size);
+        return (int)(GetComponent<Transform>().local_position.z / tile_size);
     }
 
     public DIRECTION GetDirection()

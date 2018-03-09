@@ -198,6 +198,22 @@ void CSharpScript::MoveStaticColliderTo(MonoObject * object, MonoObject * positi
 	}
 }
 
+void CSharpScript::CallOnContact(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnTriggerEnter(nullptr);
+	}
+}
+
+void CSharpScript::CallOnTriggerEnter(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnTriggerEnter(nullptr);
+	}
+}
+
 // CompRigidBody ----------------------------------------------------------
 MonoObject * CSharpScript::GetColliderPosition(MonoObject * object)
 {
