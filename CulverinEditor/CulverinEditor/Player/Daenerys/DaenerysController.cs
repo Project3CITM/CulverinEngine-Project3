@@ -171,27 +171,33 @@ public class DaenerysController : CharacterController
                             if (set_fire_wall == false && anim_controller.IsAnimOverXTime(0.3f))
                             {
                                 int tile_x, tile_y;
+                                int tile_mov_x = 0;
+                                int tile_mov_y = 0;
                                 GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out tile_x, out tile_y);
                                 MovementController.Direction direction = GetLinkedObject("player_obj").GetComponent<MovementController>().curr_dir;
                                 switch (direction)
                                 {
                                     case MovementController.Direction.NORTH:
                                         {
+                                            tile_mov_y -= 1;
                                             tile_y -= 1;
                                             break;
                                         }
                                     case MovementController.Direction.SOUTH:
                                         {
+                                            tile_mov_y += 1;
                                             tile_y += 1;
                                             break;
                                         }
                                     case MovementController.Direction.EAST:
                                         {
+                                            tile_mov_x += 1;
                                             tile_x += 1;
                                             break;
                                         }
                                     case MovementController.Direction.WEST:
                                         {
+                                            tile_mov_x -= 1;
                                             tile_x -= 1;
                                             break;
                                         }
@@ -201,10 +207,14 @@ public class DaenerysController : CharacterController
                                         }
                                 }
                                 //GET TILE POS!
+                                Vector3 firewall_pos;
+                                GetLinkedObject("player_obj").GetComponent<MovementController>().GetPosFromTile(out firewall_pos, tile_mov_x, tile_mov_y);
                                 GameObject fire_wall = Instantiate("FireWall");                 
-                                fire_wall.transform.SetPosition(new Vector3(10, -5, 35));                        
+                                fire_wall.transform.SetPosition(firewall_pos);
+                                fire_wall.GetComponent<FireWall>().SetTiles(tile_x, tile_y);
                                 set_fire_wall = true;
                             }
+
                             anim_controller = daenerys_obj.GetComponent<CompAnimation>();
                             if (anim_controller.IsAnimationStopped("AttackRight"))
                             {
@@ -248,41 +258,16 @@ public class DaenerysController : CharacterController
 
     public override void CheckAttack()
     {
-        //Left Attack
-        /*if (Input.GetKeyDown(KeyCode.Num1))
-        {
-            Debug.Log("Daenerys Pressed 1");
-            // TAKE THIS OUT AFTER TESTS! ----
-            SetAnimationTransition("ToAttackLeft", true);
-            SetState(State.ATTACKING);
-            DecreaseManaPercentage(mana_cost_percentage_left);
-            //-----------------
-            //PrepareLeftAbility();
-        }*/
-
         if (Input.GetInput_KeyDown("LAttack", "Player"))
         {
             Debug.Log("Daenerys Pressed 1");
             PrepareLeftAbility();
         }
-
         if (Input.GetInput_KeyDown("RAttack", "Player"))
         {
             Debug.Log("Daenerys Pressed 2");
             PrepareRightAbility();
         }
-
-        //Right Attack
-       /* else if (Input.GetKeyDown(KeyCode.Num2))
-        {
-            Debug.Log("Daenerys Pressed 2");
-            // TAKE THIS OUT AFTER TESTS! ----
-            SetAnimationTransition("ToAttackRight", true);
-            SetState(State.FIRE_WALL);
-            DoRightAbility();
-            //-----------------
-            //PrepareRightAbility();
-        }*/
     }
 
     public override void SecondaryAbility()
@@ -459,6 +444,17 @@ public class DaenerysController : CharacterController
         DecreaseManaPercentage(mana_cost_percentage_left);
         set_fire_breath = false;
 
+        //GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25 * distance_left_attack);
+        //if (coll_object != null)
+        //{
+        //    CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+
+        //    if (obj_collider != null)
+        //    {
+        //        obj_collider.CallOnContact();
+        //    }
+        //}
+
         Debug.Log("Daenerys LW Going to hit");
     }
 
@@ -560,6 +556,18 @@ public class DaenerysController : CharacterController
         Debug.Log("Daenerys RW Going to hit");
 
         set_fire_wall = false;
+
+        //GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25 * distance_left_attack);
+
+        //if (coll_object != null)
+        //{
+        //    CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+        //    if (obj_collider != null)
+        //    {
+        //        obj_collider.CallOnContact();
+        //    }
+
+        //}
     }
 
     //---------------------------   

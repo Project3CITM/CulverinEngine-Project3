@@ -3,7 +3,6 @@ using CulverinEditor.Debug;
 
 public class FireWall : CulverinBehaviour
 {
-
     public float damage_per_second_percentage = 10.0f;
     public float duration = 5f;
     public float damage_tick = 1f;
@@ -37,7 +36,7 @@ public class FireWall : CulverinBehaviour
         }        
     }
 
-    void SetTiles (int x, int y)
+    public void SetTiles (int x, int y)
     {
         tile_x = x;
         tile_y = y;
