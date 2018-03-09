@@ -309,7 +309,7 @@ void ModuleMap::ShowEditorMap(bool &active)
 void ModuleMap::ShowWalkableMap()
 {
 	// General BeginCombo() API, you have full control over your selection data and display type
-	static std::string type_Name[] = { "Walkable", "No-Walkable", "Initial Position" };
+	static std::string type_Name[] = { "Walkable", "No-Walkable", "Initial Position", "Puzzle Initial Position" };
 	static int paint = 0;
 	static const char* current_item_2 = "Walkable";
 	ImGui::PushItemWidth(150);
@@ -419,7 +419,7 @@ void ModuleMap::ShowWalkableMap()
 		{
 			for (int x = 0; x < width_map; x++)
 			{
-				if (map[x][y] > 2)
+				if (map[x][y] > 3)
 				{
 					map[x][y] = 1;
 				}
@@ -454,7 +454,7 @@ void ModuleMap::ShowWalkableMap()
 			std::string line = "";
 			for (int x = 0; x < width_map; x++)
 			{
-				if (map[x][y] > 2)
+				if (map[x][y] > 3)
 				{
 					map[x][y] = 1;
 				}
