@@ -755,6 +755,16 @@ public class MovementController : CulverinBehaviour
         y = curr_y;
     }
 
+    //To check if the player is in the specified tile
+    public bool IsPlayerInTile(int x, int y)
+    {
+        if (x == curr_x && y == curr_y)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public void GetPosFromTile(out Vector3 pos, int tile_x, int tile_y)
     {
         pos = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_y);
