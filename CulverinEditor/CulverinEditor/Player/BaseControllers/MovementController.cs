@@ -856,4 +856,23 @@ public class MovementController : CulverinBehaviour
         pos = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)temp_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)temp_mov_y);
     }
 
+
+    // Two simple methods to modify the walkability map
+    public void SetTileWalkability(int x, int y, int value)
+    {
+        if (x >= 0 && x < map_width && y >= 0 && y < map_height)
+        {
+            array2Da[x, y] = value;
+        }
+    }
+
+    public int GetTileWalkability(int x, int y)
+    {
+        if (x >= 0 && x < map_width && y >= 0 && y < map_height)
+        {
+            return array2Da[x, y];
+        }
+
+        return -1;
+    }
 }
