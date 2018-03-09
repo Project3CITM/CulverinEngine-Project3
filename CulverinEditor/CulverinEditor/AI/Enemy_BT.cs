@@ -11,23 +11,28 @@ public class Enemy_BT : BT
     }
 
     public GameObject enemies_manager = null;
+    public GameObject player = null;
 
-    public float life = 100;
-    float current_life;
+    public float total_hp = 100;
+    float current_hp;
     public ENEMY_STATE life_state = ENEMY_STATE.ENEMY_ALIVE;
 
+    public float max_anim_speed = 1.5f;
+    public float min_anim_speed = 0.5f;
+
     public float attack_cooldown = 1.0f;
-    public float attack_speed = 1.0f;
+    public float anim_speed = 1.0f;
     public float attack_damage = 1.0f;
-    public float damaged_attack_speed = 0.6f;
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
 
+    public uint range = 1;
+
     public override void Start()
     {
-        current_life = life;
+        current_hp = total_hp;
         //Enemy starts with the attack loaded!
-        attack_timer = attack_cooldown * attack_speed;
+        attack_timer = attack_cooldown * anim_speed;
 
         base.Start();
     }
@@ -47,19 +52,28 @@ public class Enemy_BT : BT
 
     public void ApplyDamage(float damage)
     {
-        current_life -= damage;
+        current_hp -= damage;
 
-        if (current_life <= 0)
+        if (current_hp <= 0)
         {
             //Trigger die animation
             state = AI_STATE.AI_DEAD;
             life_state = ENEMY_STATE.ENEMY_DEAD;
         }
-        else if (current_life < life * damaged_limit)
+        else if (current_hp < total_hp * damaged_limit)
         {
             life_state = ENEMY_STATE.ENEMY_DAMAGED;
-            attack_speed = damaged_attack_speed;
+
+            float current_interpolation = current_hp / total_hp;
+            anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;
         }
+    }
+
+    public bool InRange()
+    {
+        //get player tile & calc if in range
+        //GetLinkedObject("player").GetComponent<CharactersManager>();
+        return true;
     }
 
 }

@@ -4,6 +4,7 @@ using CulverinEditor.Debug;
 public class Action : CulverinBehaviour
 {
     protected bool interupt = false;
+    protected float anim_speed = 1.0f;
 
     public enum ACTION_RESULT
     {
@@ -23,6 +24,14 @@ public class Action : CulverinBehaviour
     }
 
     public ACTION_TYPE action_type = ACTION_TYPE.NO_ACTION;
+
+    public Action()
+    {}
+
+    public Action(float speed)
+    {
+        anim_speed = speed;
+    }
 
     public virtual bool ActionStart()
     {
@@ -51,6 +60,11 @@ public class Action : CulverinBehaviour
     public bool IsInterrupted()
     {
         return interupt == true;
+    }
+
+    public void SetAnimSpeed(float speed)
+    {
+        anim_speed = speed;
     }
 }
 

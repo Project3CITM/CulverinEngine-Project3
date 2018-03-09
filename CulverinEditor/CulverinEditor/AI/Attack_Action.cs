@@ -3,16 +3,14 @@ using CulverinEditor;
 
 public class Attack_Action : Action
 {
-
     public Attack_Action()
     {
         action_type = ACTION_TYPE.ATTACK_ACTION;
     }
 
-    public Attack_Action(float attack_speed,float dmg)
+    public Attack_Action(float attack_speed, float dmg): base(attack_speed)
     {
         action_type = ACTION_TYPE.ATTACK_ACTION;
-        speed = attack_speed;
         damage = dmg;
     }
 
@@ -24,7 +22,6 @@ public class Attack_Action : Action
     }
 
     SWA_STATE state = SWA_STATE.WAITING;
-    float speed = 1.0f;
     float damage = 1.0f;
     public float apply_damage_point = 0.5f;
 
@@ -38,8 +35,8 @@ public class Attack_Action : Action
         Debug.Log("Start Called!");
         state = SWA_STATE.PRE_APPLY;
         animator = GetComponent<CompAnimation>();
-        animator.PlayAnimation("Cover"); //This will be attack
-        animator.SetClipsSpeed(speed);
+        animator.SetTransition("ToAttack"); //This will be attack
+        animator.SetClipsSpeed(anim_speed);
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
         //Interrupt player action
         return true;

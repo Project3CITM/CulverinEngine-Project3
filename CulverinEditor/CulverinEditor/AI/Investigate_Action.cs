@@ -20,7 +20,15 @@ public class Investigate_Action : Action
 
     public bool forgot_event = false;
 
-    public Investigate_Action() { action_type = ACTION_TYPE.INVESTIGATE_ACTION; }
+    public Investigate_Action()
+    {
+        action_type = ACTION_TYPE.INVESTIGATE_ACTION;
+    }
+
+    public Investigate_Action(float speed): base(speed)
+    {
+        action_type = ACTION_TYPE.INVESTIGATE_ACTION;
+    }
 
     public override bool ActionStart()
     {

@@ -32,6 +32,16 @@ public class Movement_Action : Action
     float arrive_distance = 0.05f;
     float rot_margin = 0.05f;
 
+    public Movement_Action()
+    {
+        action_type = ACTION_TYPE.MOVE_ACTION;
+    }
+
+    public Movement_Action(float speed): base(speed)
+    {
+        action_type = ACTION_TYPE.MOVE_ACTION;
+    }
+
     void Start()
     {
         map = GetLinkedObject("map");
@@ -40,11 +50,6 @@ public class Movement_Action : Action
         Vector3 fw = myself.GetComponent<Transform>().GetForwardVector();
         Debug.Log("Forward (start): " + fw.ToString());
         path = new List<PathNode>();
-    }
-
-    public Movement_Action()
-    {
-        action_type = ACTION_TYPE.MOVE_ACTION;
     }
 
     public override bool ActionStart()
@@ -227,10 +232,10 @@ public class Movement_Action : Action
         {
             if (!FinishedRotation() && rotate)
             {
-                if(GetDeltaAngle() < 0)
+                /*if(GetDeltaAngle() < 0)
                     anim.PlayAnimation("Left");
                 else
-                    anim.PlayAnimation("Right");
+                    anim.PlayAnimation("Right");*/
 
                 state = Motion_State.MS_ROTATE;
                 GetComponent<Align_Steering>().SetEnabled(true);
@@ -239,7 +244,7 @@ public class Movement_Action : Action
             }        
             if (!ReachedTile())
             {
-                anim.PlayAnimation("Patrol");
+                //anim.PlayAnimation("Patrol");
                 state = Motion_State.MS_MOVE;
                 GetComponent<Arrive_Steering>().SetEnabled(true);
                 GetComponent<Seek_Steering>().SetEnabled(true);

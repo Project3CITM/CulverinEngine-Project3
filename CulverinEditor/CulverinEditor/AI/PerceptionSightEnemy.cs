@@ -2,6 +2,7 @@
 using CulverinEditor.Debug;
 using System.Collections.Generic;
 using CulverinEditor.Map;
+using CulverinEditor.Pathfinding;
 using System.Text;
 
 public class PerceptionSightEnemy : CulverinBehaviour
@@ -63,6 +64,30 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
     void Update()
     {
+        Debug.Log("Noth");
+
+        List<PathNode> north = GetSeenTiles(DIRECTION.E_DIR_NORTH);
+        foreach(PathNode n in north)
+            Debug.Log("Node: " + n.GetTileX().ToString() + "," + n.GetTileY().ToString());
+
+        Debug.Log("East");
+
+        List<PathNode> east = GetSeenTiles(DIRECTION.E_DIR_EAST);
+        foreach (PathNode n in east)
+            Debug.Log("Node: " + n.GetTileX().ToString() + "," + n.GetTileY().ToString());
+
+        Debug.Log("West");
+
+        List<PathNode> west = GetSeenTiles(DIRECTION.E_DIR_WEST);
+        foreach (PathNode n in west)
+            Debug.Log("Node: " + n.GetTileX().ToString() + "," + n.GetTileY().ToString());
+
+        Debug.Log("South");
+
+        List<PathNode> south = GetSeenTiles(DIRECTION.E_DIR_SOUTH);
+        foreach (PathNode n in south)
+            Debug.Log("Node: " + n.GetTileX().ToString() + "," + n.GetTileY().ToString());
+
         timer += Time.DeltaTime();
 
         if (timer >= check_player_timer)
@@ -436,5 +461,62 @@ public class PerceptionSightEnemy : CulverinBehaviour
     public void GetPlayerTilePos(out int player_x, out int player_y)
     {
         player_obj.GetComponent<MovementController>().GetPlayerPos(out player_x, out player_y);
+    }
+
+    private List<PathNode> GetSeenTiles(DIRECTION dir)
+    {
+        List<PathNode> tiles = new List<PathNode>();
+        int current_x = GetCurrentTileX();
+        int current_y = GetCurrentTileY();
+
+        switch (dir)
+        {
+            case DIRECTION.E_DIR_NORTH:
+                for (int i = 0; i < frustum_lenght; i++)
+                {
+                    int pos_y = current_y - i;
+                    for (int j = -i; j <= i; j++)
+                    {
+                        int pos_x = current_x + j;
+                        tiles.Add(new PathNode(pos_x, pos_y));
+                    }
+                }
+                break;
+            case DIRECTION.E_DIR_SOUTH:
+                for (int i = 0; i < frustum_lenght; i++)
+                {
+                    int pos_y = current_y + i;
+                    for (int j = -i; j <= i; j++)
+                    {
+                        int pos_x = current_x + j;
+                        tiles.Add(new PathNode(pos_x, pos_y));
+                    }
+                }
+                break;
+            case DIRECTION.E_DIR_EAST:
+                for (int i = 0; i < frustum_lenght; i++)
+                {
+                    int pos_x = current_x + i;
+                    for (int j = -i; j <= i; j++)
+                    {
+                        int pos_y = current_y + j;
+                        tiles.Add(new PathNode(pos_x, pos_y));
+                    }
+                }
+                break;
+            case DIRECTION.E_DIR_WEST:
+                for (int i = 0; i < frustum_lenght; i++)
+                {
+                    int pos_x = current_x - i;
+                    for (int j = -i; j <= i; j++)
+                    {
+                        int pos_y = current_y + j;
+                        tiles.Add(new PathNode(pos_x, pos_y));
+                    }
+                }
+                break;
+        }
+
+        return tiles;
     }
 }

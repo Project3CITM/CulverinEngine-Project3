@@ -43,9 +43,9 @@ public class NormalGuardListener : PerceptionListener
 
                 if (OnHearRange(event_recieved))
                 {
-                    GetLinkedObject("my_self").GetComponent<BT>().heard_something = true;
+                    GetLinkedObject("my_self").GetComponent<EnemySword_BT>().heard_something = true;
                     GetLinkedObject("my_self").GetComponent<Investigate_Action>().forgot_event = false;
-                    GetLinkedObject("my_self").GetComponent<BT>().InterruptAction();
+                    GetLinkedObject("my_self").GetComponent<EnemySword_BT>().InterruptAction();
 
                     Debug.Log("I Heard Somethin");
 
@@ -55,8 +55,8 @@ public class NormalGuardListener : PerceptionListener
                 break;    
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-                GetLinkedObject("my_self").GetComponent<BT>().InterruptAction();
-                GetLinkedObject("my_self").GetComponent<BT>().player_detected = true;
+                GetLinkedObject("my_self").GetComponent<EnemySword_BT>().InterruptAction();
+                GetLinkedObject("my_self").GetComponent<EnemySword_BT>().player_detected = true;
                 break;
 
            
@@ -70,7 +70,7 @@ public class NormalGuardListener : PerceptionListener
             case PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT:
             case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
 
-                GetLinkedObject("my_self").GetComponent<BT>().heard_something = false;
+                GetLinkedObject("my_self").GetComponent<EnemySword_BT>().heard_something = false;
                 GetLinkedObject("my_self").GetComponent<Investigate_Action>().forgot_event = true;
 
 
@@ -78,7 +78,7 @@ public class NormalGuardListener : PerceptionListener
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-                GetLinkedObject("my_self").GetComponent<BT>().player_detected = false;
+                GetLinkedObject("my_self").GetComponent<EnemySword_BT>().player_detected = false;
                 GetLinkedObject("my_self").GetComponent<ChasePlayer_Action>().forgot_event = true;
 
                 break;

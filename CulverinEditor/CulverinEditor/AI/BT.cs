@@ -74,46 +74,7 @@ public class BT : CulverinBehaviour
     }
 
     public virtual void MakeDecision()
-    {
-        //Behaviour tree structure
-        if (player_detected)
-        {
-            // TODO: Check for attack
-
-            // Chase
-            Debug.Log("Chase Player Action");
-            GetComponent<ChasePlayer_Action>().ActionStart();
-            current_action = GetComponent<ChasePlayer_Action>();
-            return;
-        }
-
-        if (heard_something)
-        {
-            //Investigate
-            GetComponent<Investigate_Action>().ActionStart();
-            current_action = GetComponent<Investigate_Action>();
-            return;
-        }
-
-        //If none of them -> patrol
-        int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
-        int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
-
-        if (my_tile_x != origin_path_x && my_tile_y != origin_path_y)
-        {
-            Debug.Log("BT decision move defined!");
-            GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, origin_path_x, origin_path_y);
-            GetComponent<Movement_Action>().ActionStart();
-            current_action = GetComponent<Movement_Action>();
-        }
-        else
-        {
-            Debug.Log("BT decision move defined!");
-            GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, end_path_x, end_path_y);
-            GetComponent<Movement_Action>().ActionStart();
-            current_action = GetComponent<Movement_Action>();
-        }
-    }
+    {}
 
     public AI_STATE GetState()
     {

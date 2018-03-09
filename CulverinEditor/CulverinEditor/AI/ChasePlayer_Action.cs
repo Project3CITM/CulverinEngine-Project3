@@ -13,7 +13,12 @@ public class ChasePlayer_Action : Action
     public float check_player_timer = 1.0f;
     float timer = 0.0f;
 
-    ChasePlayer_Action()
+    public ChasePlayer_Action()
+    {
+        action_type = ACTION_TYPE.CHASE_ACTION;
+    }
+
+    public ChasePlayer_Action(float speed):base(speed)
     {
         action_type = ACTION_TYPE.CHASE_ACTION;
     }

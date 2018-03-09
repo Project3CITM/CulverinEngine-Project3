@@ -8,6 +8,11 @@ public class Idle_Action : Action
         action_type = ACTION_TYPE.IDLE_ACTION;
     }
 
+    public Idle_Action(float speed): base (speed)
+    {
+        action_type = ACTION_TYPE.IDLE_ACTION;
+    }
+
     public override bool ActionStart()
     {
         Debug.Log("IM IDLE!");
