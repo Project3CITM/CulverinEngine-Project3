@@ -20,7 +20,8 @@ public class Action : CulverinBehaviour
         ATTACK_ACTION,
         IDLE_ACTION,
         INVESTIGATE_ACTION,
-        CHASE_ACTION
+        CHASE_ACTION,
+        PUSHBACK_ACTION
     }
 
     public ACTION_TYPE action_type = ACTION_TYPE.NO_ACTION;
