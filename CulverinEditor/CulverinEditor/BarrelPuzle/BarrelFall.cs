@@ -14,6 +14,9 @@ public class BarrelFall : CulverinBehaviour
     
     float fall_x_pos = 0;
     float start_x_pos = 0;
+    bool move_done = false;
+
+
     void Start()
     {
         barrel_mov_go = GetLinkedObject("barrel_mov_go");
@@ -22,12 +25,12 @@ public class BarrelFall : CulverinBehaviour
         start_pos = gameObject.GetComponent<Transform>().local_position;
         Debug.Log(start_pos.ToString());
         falling = false;
-        puzzle_generator = puzzle_generator_go.GetComponent<BarrelPuzzleGenerator>();
     }
 
     void Update()
     {
-        if (!falling)
+
+        if (!move_done && !falling)
         {
             barrel_mov = barrel_mov_go.GetComponent<BarrelMovement>();
             if (barrel_mov.restart)
@@ -39,15 +42,18 @@ public class BarrelFall : CulverinBehaviour
                 BarrelManage manage = barrel_mov.instance.GetComponent<BarrelManage>();
                 Vector3 parent_pos = new Vector3(manage.restart_pos_x, manage.restart_pos_y, manage.restart_pos_z);
 
-                gameObject.GetComponent<CompRigidBody>().MoveKinematic(start_pos * 10 + parent_pos, quat);
+                CompRigidBody rigid = gameObject.GetComponent<CompRigidBody>();
+                rigid.MoveKinematic(start_pos * 10 + parent_pos, quat);
 
-                gameObject.GetComponent<CompRigidBody>().ResetForce();
-                gameObject.GetComponent<CompRigidBody>().ApplyImpulse(new Vector3(1, 0, 0));
+                rigid.ResetForce();
+                rigid.ApplyImpulse(new Vector3(1, 0, 0));
 
                 Debug.Log(start_pos.ToString());
             }
 
             //TESTING BARRELS FALL
+
+
             if (Input.GetInput_KeyDown("RAttack", "Player"))
             {
 
@@ -60,40 +66,46 @@ public class BarrelFall : CulverinBehaviour
 
                 start_x_pos = gameObject.GetComponent<Transform>().local_position.x + parent_pos.x;
                 fall_x_pos = Mathf.Round(start_x_pos) - start_x_pos;
-               
+
                 falling = true;
             }
 
         }
-        else
+        else if (!move_done)
         {
             //ONE WAY TO CONTROL WHERE THE BARRELS FALL
             BarrelManage manage = barrel_mov.instance.GetComponent<BarrelManage>();
             Vector3 parent_pos = new Vector3(manage.restart_pos_x, manage.restart_pos_y, manage.restart_pos_z);
             Vector3 actual_pos = gameObject.GetComponent<Transform>().local_position + parent_pos;
-
+            CompRigidBody rigid = gameObject.GetComponent<CompRigidBody>();
             //ADD THIS X POSITION
-            Vector3 pos = new Vector3(actual_pos.x + fall_x_pos / 100, actual_pos.y, actual_pos.z);
-         
-            Quaternion quat = gameObject.GetComponent<CompRigidBody>().GetColliderQuaternion();
-            if ((actual_pos.x - Mathf.Round(actual_pos.x)) > 0.01f)              
+            Vector3 pos;
+            if (actual_pos.x - Mathf.Round(actual_pos.x) > 0.1f || actual_pos.x - Mathf.Round(actual_pos.x) < -0.1f)
             {
-                gameObject.GetComponent<CompRigidBody>().ApplyForce(new Vector3(-1, 0, 0));
-              
+                pos = new Vector3(actual_pos.x + fall_x_pos / 10, actual_pos.y - 0.1f, actual_pos.z);
             }
-            else if (actual_pos.x - Mathf.Round(actual_pos.x) < -0.01f){
-                gameObject.GetComponent<CompRigidBody>().ApplyForce(new Vector3(1, 0, 0));
-            }
-               
             else
-                gameObject.GetComponent<CompRigidBody>().MoveKinematic(actual_pos, quat);
+            {
+                pos = new Vector3(actual_pos.x, actual_pos.y - 0.1f, actual_pos.z);
+            }
 
+            Quaternion quat = gameObject.GetComponent<CompRigidBody>().GetColliderQuaternion();
+
+            if (actual_pos.y > -10.0f)
+            {
+                rigid.MoveKinematic(pos, quat);
+            }
+            else
+            {
+                rigid.MoveKinematic(actual_pos, quat);
+                rigid.LockTransform();
+                move_done = true;
+            }
         }
-      
-      
-        
-    }
 
+
+
+    }
     void OnContact()
     {
 
