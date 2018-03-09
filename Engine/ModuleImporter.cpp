@@ -132,7 +132,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 	return objChild;
 }
 
-GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, std::vector<ReImport>& resourcesToReimport)
+GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, std::vector<ReImport>& resourcesToReimport, std::string path)
 {
 	static int count = 0;
 	GameObject* objChild = new GameObject(obj);
@@ -154,7 +154,6 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 			CompTransform* newTrans = (CompTransform*)newObj->AddComponent(C_TRANSFORM);
 			ProcessTransform(node, newTrans);
 		}
-
 		else
 		{
 			newObj = objChild;
@@ -164,7 +163,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 		bool isReimported = false;
 		for (int i = 0; i < resourcesToReimport.size(); i++)
 		{
-			if (strcmp(node->mName.C_Str(), resourcesToReimport[i].name_mesh) == 0)
+			if (strcmp(node->mName.C_Str(), resourcesToReimport[i].name_mesh) == 0 && strcmp(path.c_str(), resourcesToReimport[i].directory_obj) == 0)
 			{
 				iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), resourcesToReimport[i].directory_obj, resourcesToReimport[i].uuid);
 				isReimported = true;
@@ -179,7 +178,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 	// Process children
 	for (uint i = 0; i < node->mNumChildren; i++)
 	{
-		ProcessNode(node->mChildren[i], scene, objChild, resourcesToReimport);
+		ProcessNode(node->mChildren[i], scene, objChild, resourcesToReimport, path);
 	}
 
 	return objChild;
@@ -327,7 +326,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str());
 				}
 			}
-			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, resourcesToReimport);
+			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, resourcesToReimport, file);
 			obj->SetName(App->fs->FixName_directory(file).c_str());
 
 			//Now Save Serialitzate OBJ -> Prefab
