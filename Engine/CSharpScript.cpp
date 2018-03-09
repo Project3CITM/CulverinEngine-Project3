@@ -980,7 +980,7 @@ MonoObject*	CSharpScript::Instantiate(MonoObject* object, MonoString* prefab_)
 	directory_prebaf += "/";
 	directory_prebaf += prefab;
 	directory_prebaf += ".prefab.json";
-	GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str());
+	GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str(), true);
 	if (gameobject != nullptr)
 	{
 		App->scene->root->AddChildGameObject(gameobject);
@@ -1255,7 +1255,8 @@ void CSharpScript::Load(const JSON_Object* object, std::string name)
 	std::string temp_var = name;
 
 	//Once set the default values for the variables, update them to the inspector values saved previously
-	for (int i = 0; i < variables.size(); i++)
+	int num_variables = json_object_dotget_number_with_std(object, name + "Number of Variables: ");
+	for (int i = 0; i < num_variables; i++)
 	{
 		temp_var = name + "Variables.Variable " + std::to_string(i);
 		temp_var += ".";
@@ -1277,7 +1278,7 @@ void CSharpScript::LoadValuesGO()
 {
 	for (int i = 0, j = 0; i < variables.size(); i++)
 	{
-		if (variables[i]->type == VarType::Var_GAMEOBJECT && re_load_values.size() > 0)
+		if (variables[i]->type == VarType::Var_GAMEOBJECT && re_load_values.size() > 0 && re_load_values.size() > j)
 		{
 			variables[i]->game_object = App->scene->GetGameObjectbyuid(re_load_values[j++]);
 			variables[i]->SetMonoValue(variables[i]->game_object);

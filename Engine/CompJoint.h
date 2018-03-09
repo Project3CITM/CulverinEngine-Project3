@@ -32,6 +32,7 @@ public:
 	void SetMinMaxDistance();
 	void SetSecondActorPose();
 
+
 	void RemoveActors(CompRigidBody* body);
 	void RemoveActors();
 

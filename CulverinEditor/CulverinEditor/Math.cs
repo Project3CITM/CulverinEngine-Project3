@@ -16,6 +16,11 @@ namespace CulverinEditor
             return Math.Abs(s);
         }
 
+        public static int Abs(int s)
+        {
+            return Math.Abs(s);
+        }
+
         public static float Acos(float s)
         {
             return (float)Math.Acos(s);

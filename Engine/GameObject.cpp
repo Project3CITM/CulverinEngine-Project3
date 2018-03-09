@@ -320,7 +320,7 @@ void GameObject::PreUpdate(float dt)
 				{
 					if (components[i]->GetType() == Comp_Type::C_SCRIPT)
 					{
-						if (((CompScript*)components[i])->p_active)
+						if (((CompScript*)components[i])->p_active || ((CompScript*)components[i])->do_start)
 						{
 							components[i]->PreUpdate(dt);
 						}
@@ -935,8 +935,6 @@ void GameObject::ShowInspectorInfo()
 				static_obj = !static_obj;
 				LOG("You can't change 'Static' variable when Game Mode is ON.");
 			}
-			App->scene->quadtree.Bake(App->scene->root);
-			App->scene->FillStaticObjectsVector(true);
 		}
 
 		if (window_active)
@@ -1167,6 +1165,10 @@ void GameObject::FreezeTransforms(bool freeze, bool change_childs)
 			}
 		}
 	}
+	if (static_obj)
+		App->scene->octree.Insert(this);
+	else
+		App->scene->octree.Remove(this);
 }
 
 void GameObject::ShowFreezeChildsWindow(bool freeze, bool& active)

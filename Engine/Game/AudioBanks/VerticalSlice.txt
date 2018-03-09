@@ -1,21 +1,58 @@
 Event	ID	Name			Wwise Object Path	Notes
-	27719897	MetalHit			\Scene1\MetalHit	
+	202441241	Enemy2_Hurt			\Scene1\Enemies\Enemy2_Hurt	
 	417627684	PlayMusic			\Scene1\PlayMusic	
+	837900871	TheonDead			\Scene1\Characters\TheonDead	
+	916833145	Enemy1_Dead			\Scene1\Enemies\Enemy1_Dead	
+	1287847765	MetalClash			\Scene1\MetalClash	
+	1296876930	DaenerysDead			\Scene1\Characters\DaenerysDead	
+	1489596707	DaenerysHurt			\Scene1\Characters\DaenerysHurt	
+	1566564139	SwordHit			\Scene1\SwordHit	
+	1644787663	BehindMe			\Scene1\Characters\BehindMe	
 	2385628198	Footsteps			\Scene1\Footsteps	
-	2862913083	FleshCut			\Scene1\FleshCut	
+	2665825462	CrossbowRecharge			\Scene1\Characters\CrossbowRecharge	
+	2682992486	JaimeHurt			\Scene1\Characters\JaimeHurt	
 	3035439363	PlayTorch			\Scene1\PlayTorch	
 	3113731383	SwordSlash			\Scene1\SwordSlash	
+	3461881315	Enemy3_Dead			\Scene1\Enemies\Enemy3_Dead	
+	3519619633	CrossbowShot			\Scene1\Characters\CrossbowShot	
+	3525158975	JaimeDead			\Scene1\Characters\JaimeDead	
+	3712468846	Dracarys			\Scene1\Characters\Dracarys	
+	3974846078	TheonHurt			\Scene1\Characters\TheonHurt	
+	4028347596	Enemy1_Hurt			\Scene1\Enemies\Enemy1_Hurt	
+	4111352050	Enemy3_Hurt			\Scene1\Enemies\Enemy3_Hurt	
+	4117129356	Enemy2_Dead			\Scene1\Enemies\Enemy2_Dead	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	154437360	Slash_Cover_Fx	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_Cover_Fx_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Slash_Cover_Fx		229384
-	363816187	Slash_metal_FX_02	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_15B9CD21.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX_02		118140
-	366644699	Slash_flesh_FX	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_flesh_FX_D0D703D6.wem		\Actor-Mixer Hierarchy\Default Work Unit\Slash_flesh_FX		82672
-	418306352	Slash_metal_FX_01	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_7B26E054.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX_01		123720
-	455601767	Torch_FX_04	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Torch_FX_1_36D2EB39.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch\Torch_FX_04		228432
-	501715201	Step_gravel_FX	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Step_gravel_FX_E53EA02B.wem		\Actor-Mixer Hierarchy\Default Work Unit\FootSepts_Grave\Step_gravel_FX		88840
-	545175549	Torch_FX_01	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Torch_FX_1_FF5F5112.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch\Torch_FX_01		228432
-	904842615	Rains_of_Castemere_Little	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Rains_of_Castemere_Little_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\New Music Playlist Container\Rains_of_Castemere_Little\Rains_of_Castemere_Little		12058432
-	914320357	Slash_metal_FX_03	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_DBA93091.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX_03		125432
-	916330453	Slash_metal_FX	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Slash_metal_FX_7CFB7881.wem		\Actor-Mixer Hierarchy\Default Work Unit\SwordSlash\Slash_metal_FX		140308
-	1031725299	Torch_Fx_03	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Torch_Fx2_3CEE9FD5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch\Torch_Fx_03		228700
+	60949840	Jaime_Dead_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Jaime_Dead_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Jaime\Jaime_Dead\Jaime_Dead_1		39761
+	65912873	Dracarys	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Daenerys\Daenerys_Dracarys_2_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Daenerys\Dracarys		22244
+	100153174	Theon_Dead_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Theon\Theon_Dead_2_38EF0475.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Theon\Theon_Dead\Theon_Dead_2		20808
+	132180465	E2_Hurt_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Hurt_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy2\Enemy2_Hurt\E2_Hurt_1		10012
+	283710021	E2_Dead_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Dead_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy2\Enemy2_Dead\E2_Dead_1		7744
+	307538444	Jaime_Hurt_3	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Jaime_Hurt_3_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Jaime\Jaime_Hurt\Jaime_Hurt_3		22110
+	337181357	footstep_stone	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Ambient\footstep_stone_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\FootSepts_Stone\footstep_stone		4297
+	347745547	E3_Dead_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Dead_2_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy3\Enemy3_Dead\E3_Dead_2		18802
+	402319163	Flesh_Cut	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Misc_Combat\sword_hit_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Miscellaneous_Combat\Flesh_Cut		5065
+	473597307	Rains_of_Castemere_Little	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Rains_of_Castemere_Little_AD29F36A.wem		\Interactive Music Hierarchy\Default Work Unit\New Music Playlist Container\Rains_of_Castemere_Little\Rains_of_Castemere_Little		726213
+	474583835	Jaime_Hurt_4	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Jaime_Hurt_4_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Jaime\Jaime_Hurt\Jaime_Hurt_4		20345
+	500858504	E1_Dead_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Dead_1_380611F7.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy1_Dead\E1_Dead_1		17721
+	502356219	Metal_Clash	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Misc_Combat\metal_clash_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Miscellaneous_Combat\Metal_Clash		11909
+	525252151	E3_Dead_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Dead_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy3\Enemy3_Dead\E3_Dead_1		20220
+	525306686	E1_Hurt_5	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Hurt_5_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy1_Hurt\E1_Hurt_5		11264
+	527640297	Daenerys_Hurt_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Daenerys\Daenerys_Hurt_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Daenerys\Daenerys_Hurt\Daenerys_Hurt_1		11789
+	530850552	sword_slash	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Misc_Combat\sword_slash_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Miscellaneous_Combat\SwordSlash\sword_slash		6490
+	552612301	Crossbow_Shot	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Theon\crossbow_shot_28F2FFE8.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Theon\Crossbow_Shot		3845
+	582654528	Theon_Dead_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Theon\Theon_Dead_1_7E674152.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Theon\Theon_Dead\Theon_Dead_1		54632
+	719922881	E2_Hurt_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Hurt_2_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy2\Enemy2_Hurt\E2_Hurt_2		10509
+	732253576	Behind_Me	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Behind Me_3_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Jaime\Behind_Me		14841
+	737435909	E3_Hurt_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Hurt_2_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy3\Enemy3_Hurt\E3_Hurt_2		17524
+	764335624	Daenerys_Dead_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Daenerys\Daenerys_Dead_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Daenerys\Daenerys_Dead\Daenerys_Dead_1		52332
+	774964111	Theon_Hurt_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Theon\Theon_Hurt_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Theon\Theon_Hurt\Theon_Hurt_1		30150
+	842002003	Torch	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Ambient\torch_2B7183BF.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch		543221
+	845273263	Daenerys_Dead_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Daenerys\Daenerys_Dead_2_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Daenerys\Daenerys_Dead\Daenerys_Dead_2		30557
+	891353326	crossbow_recharge	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Theon\crossbow_recharge_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Theon\crossbow_recharge		17331
+	905197211	E1_Dead_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Dead_2_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy1_Dead\E1_Dead_2		25560
+	975369001	E1_Hurt_4	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Hurt_4_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy1_Hurt\E1_Hurt_4		12499
+	989877584	Daenerys_Hurt_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Daenerys\Daenerys_Hurt_5_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Daenerys\Daenerys_Hurt\Daenerys_Hurt_2		8670
+	1039896243	Theon_Hurt_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Theon\Theon_Hurt_2_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Theon\Theon_Hurt\Theon_Hurt_2		23283
+	1045037916	E3_Hurt_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Hurt_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy3\Enemy3_Hurt\E3_Hurt_1		13402
 

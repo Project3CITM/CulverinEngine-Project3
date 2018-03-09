@@ -142,7 +142,14 @@ mono_bool CSharpScript::IsAnimOverXTime(MonoObject * object, float number_betwee
 		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
-			return animation->GetCurrentClip()->IsAnimOverXTime(number_between_0_1);
+			if (animation->GetBlendingClip() == nullptr)
+			{
+				return animation->GetCurrentClip()->IsAnimOverXTime(number_between_0_1);
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 }
@@ -188,6 +195,22 @@ void CSharpScript::MoveStaticColliderTo(MonoObject * object, MonoObject * positi
 		if (z_field) mono_field_get_value(position, z_field, &new_pos.z);
 
 		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->MoveStaticTo(new_pos);
+	}
+}
+
+void CSharpScript::CallOnContact(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnContact(nullptr);
+	}
+}
+
+void CSharpScript::CallOnTriggerEnter(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnTriggerEnter(nullptr);
 	}
 }
 

@@ -49,8 +49,8 @@ bool CompInteractive::Enable()
 	if (!active)
 	{
 		active = true;
-		iteractive_list.push_back(this);
 	}
+	iteractive_list.push_back(this);
 
 	return active;
 }
@@ -700,6 +700,7 @@ CompInteractive * CompInteractive::FindNavigationOnUp()
 	}
 	else
 	{
+		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(0, 1, 0));
 	}
 	return nullptr;
 }
@@ -719,6 +720,7 @@ CompInteractive * CompInteractive::FindNavigationOnDown()
 	}
 	else
 	{
+		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(0, -1, 0));
 
 	}
 	return nullptr;
@@ -733,6 +735,7 @@ CompInteractive * CompInteractive::FindNavigationOnRight()
 	}
 	else
 	{
+		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(1, 0, 0));
 
 	}
 	return nullptr;
@@ -746,14 +749,43 @@ CompInteractive * CompInteractive::FindNavigationOnLeft()
 	}
 	else
 	{
-
+		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(-1, 0, 0));
 	}
 	return nullptr;
 }
 
 CompInteractive * CompInteractive::FindInteractive(float3 direction)
 {
-	return nullptr;
+	float3 norm_direction = direction.Normalized();
+	//float3 local_direction = parent->GetComponentRectTransform()->GetRot().Inverted() * norm_direction;
+	float3 position = parent->GetComponentRectTransform()->GetGlobalPosition();
+	CompInteractive* ret = nullptr;
+	float best_score = -1 * INFINITY;
+	for (std::list<CompInteractive*>::iterator it = iteractive_list.begin(); it != iteractive_list.end(); it++)
+	{
+		if (!(*it)->IsActive())
+			continue;
+		if ((*it) == this || (*it) == nullptr)
+			continue;
+		if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_NONE)
+			continue;
+		float3 position_it = (*it)->parent->GetComponentRectTransform()->GetGlobalPosition();
+		float3 vector = position_it - position;
+
+		float dot_value = vector.Dot(norm_direction);
+
+		if (dot_value <= 0)
+			continue;
+
+		float score = dot_value / vector.Length();
+
+		if (score > best_score)
+		{
+			best_score = score;
+			ret = (*it);
+		}		
+	}
+	return ret;
 }
 
 void CompInteractive::SetNormalColor(const float4& set_rgba)

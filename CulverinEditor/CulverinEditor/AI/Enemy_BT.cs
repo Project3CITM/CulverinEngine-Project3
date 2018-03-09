@@ -10,12 +10,15 @@ public class Enemy_BT : BT
         ENEMY_DEAD
     }
 
+    public GameObject enemies_manager = null;
+
     public float life = 100;
     float current_life;
     public ENEMY_STATE life_state = ENEMY_STATE.ENEMY_ALIVE;
 
     public float attack_cooldown = 1.0f;
     public float attack_speed = 1.0f;
+    public float attack_damage = 1.0f;
     public float damaged_attack_speed = 0.6f;
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;

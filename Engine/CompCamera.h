@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "Geometry/Frustum.h"
 #include <queue>
+#include <list>
 
 class GameObject;
 
@@ -79,7 +80,7 @@ private:
 	float vertical_fov = 0.0f;
 	// -------------------------------
 
-	std::queue<GameObject*> candidates_to_cull;
+	std::list<GameObject*> candidates_to_cull;
 };
 
 #endif

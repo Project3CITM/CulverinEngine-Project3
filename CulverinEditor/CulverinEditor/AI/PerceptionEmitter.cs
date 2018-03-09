@@ -30,5 +30,15 @@ public class PerceptionEmitter : CulverinBehaviour
         event_manager.GetComponent<PerceptionManager>().GenEvent(new_event);
     }
 
+    public void TriggerPlayerSeenEvent(float time_in_memory, int player_x, int player_y, GameObject enemy_who_saw, int enemy_x, int enemy_y)
+    {
+        PerceptionPlayerSeenEvent new_event = new PerceptionPlayerSeenEvent(time_in_memory, player_x, player_y, enemy_who_saw);
+
+        new_event.SetOrigin(enemy_x, enemy_y);
+        new_event.SetDestiny(player_x, player_y);
+
+        event_manager.GetComponent<PerceptionManager>().GenEvent(new_event);
+    }
+
 }
 

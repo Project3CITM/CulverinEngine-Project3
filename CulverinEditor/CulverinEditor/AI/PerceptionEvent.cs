@@ -47,10 +47,24 @@ public class PerceptionEvent : CulverinBehaviour
 
 public class PerceptionHearEvent : PerceptionEvent
 {
-   public int radius_in_tiles;
+    public int radius_in_tiles;
 
-   public PerceptionHearEvent(PERCEPTION_EVENT_TYPE _type, float _time_in_memory, int _radius) : base(_type, _time_in_memory)
+    public PerceptionHearEvent(PERCEPTION_EVENT_TYPE _type, float _time_in_memory, int _radius) : base(_type, _time_in_memory)
     {
         radius_in_tiles = _radius;
+    }
+}
+
+public class PerceptionPlayerSeenEvent : PerceptionEvent
+{
+    public int player_seen_in_x;
+    public int player_seen_in_y;
+    public GameObject enemy_who_saw;
+
+    public PerceptionPlayerSeenEvent(float _time_in_memory, int player_x, int player_y, GameObject enemy_who_saw_) : base(PERCEPTION_EVENT_TYPE.PLAYER_SEEN, _time_in_memory)
+    {
+        player_seen_in_x = player_x;
+        player_seen_in_y = player_y;
+        enemy_who_saw = enemy_who_saw_;
     }
 }

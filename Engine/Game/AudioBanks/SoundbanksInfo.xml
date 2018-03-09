@@ -21,57 +21,157 @@
 			<ShortName>VerticalSlice</ShortName>
 			<Path>VerticalSlice.bnk</Path>
 			<IncludedEvents>
-				<Event Id="2862913083" Name="FleshCut" ObjectPath="\Events\Scene1\FleshCut"/>
+				<Event Id="1644787663" Name="BehindMe" ObjectPath="\Events\Scene1\Characters\BehindMe"/>
+				<Event Id="2665825462" Name="CrossbowRecharge" ObjectPath="\Events\Scene1\Characters\CrossbowRecharge"/>
+				<Event Id="3519619633" Name="CrossbowShot" ObjectPath="\Events\Scene1\Characters\CrossbowShot"/>
+				<Event Id="1296876930" Name="DaenerysDead" ObjectPath="\Events\Scene1\Characters\DaenerysDead"/>
+				<Event Id="1489596707" Name="DaenerysHurt" ObjectPath="\Events\Scene1\Characters\DaenerysHurt"/>
+				<Event Id="3712468846" Name="Dracarys" ObjectPath="\Events\Scene1\Characters\Dracarys"/>
+				<Event Id="916833145" Name="Enemy1_Dead" ObjectPath="\Events\Scene1\Enemies\Enemy1_Dead"/>
+				<Event Id="4028347596" Name="Enemy1_Hurt" ObjectPath="\Events\Scene1\Enemies\Enemy1_Hurt"/>
+				<Event Id="4117129356" Name="Enemy2_Dead" ObjectPath="\Events\Scene1\Enemies\Enemy2_Dead"/>
+				<Event Id="202441241" Name="Enemy2_Hurt" ObjectPath="\Events\Scene1\Enemies\Enemy2_Hurt"/>
+				<Event Id="3461881315" Name="Enemy3_Dead" ObjectPath="\Events\Scene1\Enemies\Enemy3_Dead"/>
+				<Event Id="4111352050" Name="Enemy3_Hurt" ObjectPath="\Events\Scene1\Enemies\Enemy3_Hurt"/>
 				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene1\Footsteps"/>
-				<Event Id="27719897" Name="MetalHit" ObjectPath="\Events\Scene1\MetalHit"/>
+				<Event Id="3525158975" Name="JaimeDead" ObjectPath="\Events\Scene1\Characters\JaimeDead"/>
+				<Event Id="2682992486" Name="JaimeHurt" ObjectPath="\Events\Scene1\Characters\JaimeHurt"/>
+				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Scene1\MetalClash"/>
 				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene1\PlayMusic"/>
 				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene1\PlayTorch"/>
+				<Event Id="1566564139" Name="SwordHit" ObjectPath="\Events\Scene1\SwordHit"/>
 				<Event Id="3113731383" Name="SwordSlash" ObjectPath="\Events\Scene1\SwordSlash"/>
+				<Event Id="837900871" Name="TheonDead" ObjectPath="\Events\Scene1\Characters\TheonDead"/>
+				<Event Id="3974846078" Name="TheonHurt" ObjectPath="\Events\Scene1\Characters\TheonHurt"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
-				<File Id="154437360" Language="SFX">
-					<ShortName>Slash_Cover_Fx.wav</ShortName>
-					<Path>SFX\Slash_Cover_Fx_1C9C67B2.wem</Path>
+				<File Id="60949840" Language="SFX">
+					<ShortName>Characters\Jaime\Jaime_Dead_1.wav</ShortName>
+					<Path>SFX\Characters\Jaime\Jaime_Dead_1_F7D0E330.wem</Path>
 				</File>
-				<File Id="363816187" Language="SFX">
-					<ShortName>Slash_metal_FX.wav</ShortName>
-					<Path>SFX\Slash_metal_FX_15B9CD21.wem</Path>
+				<File Id="65912873" Language="SFX">
+					<ShortName>Characters\Daenerys\Daenerys_Dracarys_2.wav</ShortName>
+					<Path>SFX\Characters\Daenerys\Daenerys_Dracarys_2_F7D0E330.wem</Path>
 				</File>
-				<File Id="366644699" Language="SFX">
-					<ShortName>Slash_flesh_FX.wav</ShortName>
-					<Path>SFX\Slash_flesh_FX_D0D703D6.wem</Path>
+				<File Id="100153174" Language="SFX">
+					<ShortName>Characters\Theon\Theon_Dead_2.wav</ShortName>
+					<Path>SFX\Characters\Theon\Theon_Dead_2_38EF0475.wem</Path>
 				</File>
-				<File Id="418306352" Language="SFX">
-					<ShortName>Slash_metal_FX.wav</ShortName>
-					<Path>SFX\Slash_metal_FX_7B26E054.wem</Path>
+				<File Id="132180465" Language="SFX">
+					<ShortName>Enemy\Enemy_2\E2_Hurt_1.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_2\E2_Hurt_1_F7D0E330.wem</Path>
 				</File>
-				<File Id="455601767" Language="SFX">
-					<ShortName>Torch_FX_1.wav</ShortName>
-					<Path>SFX\Torch_FX_1_36D2EB39.wem</Path>
+				<File Id="283710021" Language="SFX">
+					<ShortName>Enemy\Enemy_2\E2_Dead_1.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_2\E2_Dead_1_F7D0E330.wem</Path>
 				</File>
-				<File Id="501715201" Language="SFX">
-					<ShortName>Step_gravel_FX.wav</ShortName>
-					<Path>SFX\Step_gravel_FX_E53EA02B.wem</Path>
+				<File Id="307538444" Language="SFX">
+					<ShortName>Characters\Jaime\Jaime_Hurt_3.wav</ShortName>
+					<Path>SFX\Characters\Jaime\Jaime_Hurt_3_F7D0E330.wem</Path>
 				</File>
-				<File Id="545175549" Language="SFX">
-					<ShortName>Torch_FX_1.wav</ShortName>
-					<Path>SFX\Torch_FX_1_FF5F5112.wem</Path>
+				<File Id="337181357" Language="SFX">
+					<ShortName>Ambient\footstep_stone.wav</ShortName>
+					<Path>SFX\Ambient\footstep_stone_F7D0E330.wem</Path>
 				</File>
-				<File Id="904842615" Language="SFX">
+				<File Id="347745547" Language="SFX">
+					<ShortName>Enemy\Enemy_3\E3_Dead_2.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_3\E3_Dead_2_F7D0E330.wem</Path>
+				</File>
+				<File Id="402319163" Language="SFX">
+					<ShortName>Misc_Combat\sword_hit.wav</ShortName>
+					<Path>SFX\Misc_Combat\sword_hit_F7D0E330.wem</Path>
+				</File>
+				<File Id="473597307" Language="SFX">
 					<ShortName>Rains_of_Castemere_Little.wav</ShortName>
-					<Path>SFX\Rains_of_Castemere_Little_F17FB28C.wem</Path>
+					<Path>SFX\Rains_of_Castemere_Little_AD29F36A.wem</Path>
 				</File>
-				<File Id="914320357" Language="SFX">
-					<ShortName>Slash_metal_FX.wav</ShortName>
-					<Path>SFX\Slash_metal_FX_DBA93091.wem</Path>
+				<File Id="474583835" Language="SFX">
+					<ShortName>Characters\Jaime\Jaime_Hurt_4.wav</ShortName>
+					<Path>SFX\Characters\Jaime\Jaime_Hurt_4_F7D0E330.wem</Path>
 				</File>
-				<File Id="916330453" Language="SFX">
-					<ShortName>Slash_metal_FX.wav</ShortName>
-					<Path>SFX\Slash_metal_FX_7CFB7881.wem</Path>
+				<File Id="500858504" Language="SFX">
+					<ShortName>Enemy\Enemy_1\E1_Dead_1.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_1\E1_Dead_1_380611F7.wem</Path>
 				</File>
-				<File Id="1031725299" Language="SFX">
-					<ShortName>Torch_Fx2.wav</ShortName>
-					<Path>SFX\Torch_Fx2_3CEE9FD5.wem</Path>
+				<File Id="502356219" Language="SFX">
+					<ShortName>Misc_Combat\metal_clash.wav</ShortName>
+					<Path>SFX\Misc_Combat\metal_clash_F7D0E330.wem</Path>
+				</File>
+				<File Id="525252151" Language="SFX">
+					<ShortName>Enemy\Enemy_3\E3_Dead_1.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_3\E3_Dead_1_F7D0E330.wem</Path>
+				</File>
+				<File Id="525306686" Language="SFX">
+					<ShortName>Enemy\Enemy_1\E1_Hurt_5.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_1\E1_Hurt_5_F7D0E330.wem</Path>
+				</File>
+				<File Id="527640297" Language="SFX">
+					<ShortName>Characters\Daenerys\Daenerys_Hurt_1.wav</ShortName>
+					<Path>SFX\Characters\Daenerys\Daenerys_Hurt_1_F7D0E330.wem</Path>
+				</File>
+				<File Id="530850552" Language="SFX">
+					<ShortName>Misc_Combat\sword_slash.wav</ShortName>
+					<Path>SFX\Misc_Combat\sword_slash_F7D0E330.wem</Path>
+				</File>
+				<File Id="552612301" Language="SFX">
+					<ShortName>Characters\Theon\crossbow_shot.wav</ShortName>
+					<Path>SFX\Characters\Theon\crossbow_shot_28F2FFE8.wem</Path>
+				</File>
+				<File Id="582654528" Language="SFX">
+					<ShortName>Characters\Theon\Theon_Dead_1.wav</ShortName>
+					<Path>SFX\Characters\Theon\Theon_Dead_1_7E674152.wem</Path>
+				</File>
+				<File Id="719922881" Language="SFX">
+					<ShortName>Enemy\Enemy_2\E2_Hurt_2.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_2\E2_Hurt_2_F7D0E330.wem</Path>
+				</File>
+				<File Id="732253576" Language="SFX">
+					<ShortName>Characters\Jaime\Behind Me_3.wav</ShortName>
+					<Path>SFX\Characters\Jaime\Behind Me_3_F7D0E330.wem</Path>
+				</File>
+				<File Id="737435909" Language="SFX">
+					<ShortName>Enemy\Enemy_3\E3_Hurt_2.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_3\E3_Hurt_2_F7D0E330.wem</Path>
+				</File>
+				<File Id="764335624" Language="SFX">
+					<ShortName>Characters\Daenerys\Daenerys_Dead_1.wav</ShortName>
+					<Path>SFX\Characters\Daenerys\Daenerys_Dead_1_F7D0E330.wem</Path>
+				</File>
+				<File Id="774964111" Language="SFX">
+					<ShortName>Characters\Theon\Theon_Hurt_1.wav</ShortName>
+					<Path>SFX\Characters\Theon\Theon_Hurt_1_F7D0E330.wem</Path>
+				</File>
+				<File Id="842002003" Language="SFX">
+					<ShortName>Ambient\torch.wav</ShortName>
+					<Path>SFX\Ambient\torch_2B7183BF.wem</Path>
+				</File>
+				<File Id="845273263" Language="SFX">
+					<ShortName>Characters\Daenerys\Daenerys_Dead_2.wav</ShortName>
+					<Path>SFX\Characters\Daenerys\Daenerys_Dead_2_F7D0E330.wem</Path>
+				</File>
+				<File Id="891353326" Language="SFX">
+					<ShortName>Characters\Theon\crossbow_recharge.wav</ShortName>
+					<Path>SFX\Characters\Theon\crossbow_recharge_F7D0E330.wem</Path>
+				</File>
+				<File Id="905197211" Language="SFX">
+					<ShortName>Enemy\Enemy_1\E1_Dead_2.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_1\E1_Dead_2_F7D0E330.wem</Path>
+				</File>
+				<File Id="975369001" Language="SFX">
+					<ShortName>Enemy\Enemy_1\E1_Hurt_4.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_1\E1_Hurt_4_F7D0E330.wem</Path>
+				</File>
+				<File Id="989877584" Language="SFX">
+					<ShortName>Characters\Daenerys\Daenerys_Hurt_5.wav</ShortName>
+					<Path>SFX\Characters\Daenerys\Daenerys_Hurt_5_F7D0E330.wem</Path>
+				</File>
+				<File Id="1039896243" Language="SFX">
+					<ShortName>Characters\Theon\Theon_Hurt_2.wav</ShortName>
+					<Path>SFX\Characters\Theon\Theon_Hurt_2_F7D0E330.wem</Path>
+				</File>
+				<File Id="1045037916" Language="SFX">
+					<ShortName>Enemy\Enemy_3\E3_Hurt_1.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_3\E3_Hurt_1_F7D0E330.wem</Path>
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>

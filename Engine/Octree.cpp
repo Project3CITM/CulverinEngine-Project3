@@ -167,9 +167,15 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 				continue;
 		ret++;
 		AABB Box;
-		item._Ptr->_Myval->box_fixed;
-		if (frustum.Contains(Box))
-			nodes.push_back(*item);
+		Box = item._Ptr->_Myval->box_fixed;
+		for (int i = 0; i < 8; ++i)
+		{
+			if (frustum.Contains(Box.CornerPoint(i)))
+			{
+				nodes.push_back(*item);
+				break;
+			}
+		}
 	}
 
 	// If there is no children, end
@@ -181,6 +187,26 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 		ret += childs[i]->CollectIntersections(nodes, frustum);
 
 	return ret;
+}
+
+void OctreeNode::CollectAllObjects(std::list<GameObject*>& all_obj) const
+{
+	for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
+	{
+		std::list<GameObject*>::iterator it = std::find(all_obj.begin(), all_obj.end(), item._Ptr->_Myval);
+		if (it != all_obj.end())
+			continue;
+		else
+			all_obj.push_back(*item);
+	}
+
+	// If there is no children, end
+	if (isLeaf())
+		return;
+
+	// Otherwise, add the points from the children
+	for (uint i = 0; i < 8; i++)
+		childs[i]->CollectAllObjects(all_obj);
 }
 
 // Octree ------------------------------
@@ -254,6 +280,12 @@ int Octree::CollectIntersections(std::list<GameObject*>& nodes, const Frustum& f
 	if (root_node != nullptr)
 		tests = root_node->CollectIntersections(nodes, frustum);
 	return tests;
+}
+
+void Octree::CollectAllObjects(std::list<GameObject*>& all_obj) const
+{
+	if (root_node != nullptr)
+		root_node->CollectAllObjects(all_obj);
 }
 
 // --------------------------------------

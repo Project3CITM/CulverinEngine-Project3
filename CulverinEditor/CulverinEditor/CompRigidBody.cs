@@ -35,12 +35,15 @@ namespace CulverinEditor
         public extern void UnLockTransform();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern void ResetForces();
+        public extern void ResetForce();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void WakeUp();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetAtMaxJointPose();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 GetMaxJointPose();
     }
 }

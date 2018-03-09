@@ -18,13 +18,23 @@ public class JaimeController : CharacterController
     public float curr_hp = 100.0f;
     public float max_stamina = 100.0f;
     public float curr_stamina = 100.0f;
+
+    //Secondary Ability Stats ---
+    public float duration = 4.0f;
+    public float sec_abuility_damage = 10.0f;
     public float sec_ability_cd = 10.0f;
     private float sec_ability_current_cd = 10.0f;
+    // ---------------------
 
     //Left Ability Stats ---
     public float left_ability_dmg = 10.0f;
     public float left_ability_cost = 10.0f;
     JaimeCD_Left left_ability_cd;
+
+    /* To perform different animations depending on the hit streak */
+    int hit_streak = 0; 
+    string[] anim_name = { "Attack1", "Attack2", "Attack3" };
+    string current_anim = "Attack1";
     // ---------------------
 
     //Right Ability Stats ---
@@ -60,17 +70,20 @@ public class JaimeController : CharacterController
     {
         // Debug method to control Hp
         CheckHealth();
-      
+
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            SecondaryAbility();
+        }
 
         // First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)
         {
             // Check if player is moving to block attacks/abilities
-            //movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
-            //if (!movement.IsMoving())
-            if(1 == 1)
-            {
+            movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
+            if (!movement.IsMoving())
+            { 
                 /* Player is alive */
                 switch (state)
                 {
@@ -84,14 +97,14 @@ public class JaimeController : CharacterController
                         {
                             //Check for end of the Attack animation
                             anim_controller = jaime_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("Attack1"))
+                            if (anim_controller.IsAnimationStopped(current_anim))
                             {
                                 state = State.IDLE;
                             }
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Jaime Attacking");
+                                Debug.Log("Jaime Attacking " + hit_streak);
                             }
                             break;
                         }
@@ -169,11 +182,53 @@ public class JaimeController : CharacterController
             Debug.Log("Jaime Pressed 2");
             PrepareRightAbility();
         }
+
+        if (Input.GetInput_KeyDown("LAttack", "Player"))
+        {
+            Debug.Log("Jaime Pressed 1");
+            PrepareLeftAbility();
+        }
+
+        if (Input.GetInput_KeyDown("RAttack", "Player"))
+        {
+            Debug.Log("Jaime Pressed 2");
+            PrepareRightAbility();
+        }
     }
 
     public override void SecondaryAbility()
     {
+        int curr_x = 0;
+        int curr_y = 0;
+        int enemy_x = 0;
+        int enemy_y = 0;
+
         Debug.Log("Jaime Secondary Ability");
+        GetLinkedObject("player_obj").GetComponent<CharactersManager>().shield_activated = true;
+
+        //Enable Shield icon
+        GetLinkedObject("shield_obj").GetComponent<CompImage>().SetEnabled(true, GetLinkedObject("shield_obj"));
+
+        //Do Damage Around
+        movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
+        movement.GetPlayerPos(out curr_x, out curr_y);
+
+        //Check enemy in the tiles around the player
+        for (int i = -1; i < 1; i++)
+        {
+            for (int j = -1; j < 1; j++)
+            {
+                if (i == 0 && j == 0)
+                {
+                    continue;
+                }
+                enemy_x = curr_x + j;
+                enemy_y = curr_x + i;
+
+                //Apply damage on the enemy in the specified tile
+                GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_abuility_damage);
+            }
+        }
     }
 
     public override void GetDamage(float dmg)
@@ -182,7 +237,7 @@ public class JaimeController : CharacterController
         {
             SetAnimationTransition("ToBlock", true);
 
-            jaime_obj.GetComponent<CompAudio>().PlayEvent("MetalHit");
+            GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
 
             SetState(State.BLOCKING);
         }
@@ -191,8 +246,12 @@ public class JaimeController : CharacterController
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.GetDamage(dmg);
 
-            // SET HIT ANIMATION
             SetAnimationTransition("ToHit", true);
+
+            //GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("Hit");
+
+            //Reset hit count
+            hit_streak = 0;
 
             SetState(State.HIT);
         }
@@ -275,8 +334,9 @@ public class JaimeController : CharacterController
 
     public void PrepareLeftAbility()
     {
-        button = jaime_button_left.GetComponent<CompButton>();
-        button.Clicked(); // This will execute LeftCooldown    
+        //button = jaime_button_left.GetComponent<CompButton>();
+        //button.Clicked(); // This will execute LeftCooldown  
+        OnLeftClick();
     }
 
     public bool OnLeftClick()
@@ -284,15 +344,20 @@ public class JaimeController : CharacterController
         // Check if player is in Idle State
         if (GetState() == 0) /*0 = IDLE*/
         {
+            //Calculate ability cost depending on the hit streak
+            float calc_cost = left_ability_cost / Mathf.Pow(2, hit_streak);
+
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > left_ability_cost)
+            if (GetCurrentStamina() > calc_cost)
             {
-                left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
+                //left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
                 //Check if the ability is not in cooldown
-                if (!left_ability_cd.in_cd)
+                //if (!left_ability_cd.in_cd)
+                //{ 
+                if (1 == 1) 
                 { 
                     Debug.Log("Jaime LW Going to Attack");
-                    DoLeftAbility();              
+                    DoLeftAbility(calc_cost);              
                     return true;
                 }
                 else
@@ -310,25 +375,57 @@ public class JaimeController : CharacterController
         return false;
     }
 
-    public void DoLeftAbility()
+    public void DoLeftAbility(float cost)
     {
         Debug.Log("Jaime LW Attack Left");
 
         // Decrease stamina -----------
-        DecreaseStamina(left_ability_cost);
+        DecreaseStamina(cost);
 
         Debug.Log("Jaime LW Going to hit");
 
-        // Attack the enemy in front of you
-        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
-        //{
-        //    // To change => check the specific enemy in front of you
-        //    enemy = enemy_obj.GetComponent<EnemyController>();
-        //    enemy.Hit(attack_dmg);
-        //}
+        // Set Attacking Animation depending on the hit_streak
+        current_anim = anim_name[hit_streak];
+        SetAnimationTransition("To"+current_anim, true);
 
-        // Set Attacking Animation
-        SetAnimationTransition("ToAttack1", true);
+        // Attack the enemy in front of you
+        GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25.0f);
+
+        if (coll_object != null)
+        {
+            // Check the specific enemy in front of you and apply dmg or call object OnContact
+            Enemy_BT enemybt = coll_object.GetComponent<Enemy_BT>();
+            if (enemybt != null)
+            {
+                enemybt.ApplyDamage(left_ability_dmg);
+
+                if (hit_streak < 2)
+                {
+                    hit_streak++; //Increase hit count
+                }
+                else
+                {
+                    hit_streak = 0; //Reset hit count
+                }
+            }
+            else
+            {
+                // Call Collider OnContact to notify raycast
+                CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+                if (obj_collider != null)
+                {
+                    obj_collider.CallOnContact();
+                }
+                else
+                {
+                    hit_streak = 0; //Reset hit count
+                }
+            }      
+        }
+        else
+        {
+            hit_streak = 0; //Reset hit count
+        }
 
         // Play the Sound FX
         PlayFx("SwordSlash");
@@ -338,8 +435,9 @@ public class JaimeController : CharacterController
 
     public void PrepareRightAbility()
     {
-        button = jaime_button_right.GetComponent<CompButton>();
-        button.Clicked(); // This will execute RightCooldown    
+        //button = jaime_button_right.GetComponent<CompButton>();
+        //button.Clicked(); // This will execute RightCooldown    
+        OnRightClick();
     }
 
     public bool OnRightClick()

@@ -282,19 +282,20 @@ void CompCamera::DoCulling()
 void CompCamera::CullStaticObjects()
 {
 	// First, set all static objects invisible
-	for (uint i = 0; i < App->scene->static_objects.size(); i++)
+	App->scene->RecalculateStaticObjects();
+	for (std::list<GameObject*>::const_iterator item = App->scene->static_objects.cbegin(); item != App->scene->static_objects.cend(); ++item)
 	{
-		App->scene->static_objects[i]->SetVisible(false);
+		item._Ptr->_Myval->SetVisible(false);
 	}
 
 	// Get all static objects that are inside the frustum (accelerated with quadtree)
-	App->scene->quadtree.CollectCandidates(candidates_to_cull, frustum);
+	App->scene->octree.CollectIntersections(candidates_to_cull, frustum);
 
 	// Set visible only these static objects
 	while (!candidates_to_cull.empty())
 	{
 		candidates_to_cull.front()->SetVisible(true); // INSIDE CAMERA VISION
-		candidates_to_cull.pop();
+		candidates_to_cull.pop_front();
 	}
 }
 
@@ -307,7 +308,7 @@ void CompCamera::CullDynamicObjects()
 	{
 		if (App->scene->root->GetChildbyIndex(i)->IsActive())
 		{
-			candidates_to_cull.push(App->scene->root->GetChildbyIndex(i));
+			candidates_to_cull.push_back(App->scene->root->GetChildbyIndex(i));
 		}
 	}
 
@@ -336,12 +337,12 @@ void CompCamera::CullDynamicObjects()
 		{
 			if ((*it)->IsActive())
 			{
-				candidates_to_cull.push((*it));
+				candidates_to_cull.push_back((*it));
 			}
 		}
 
 		// Delete from vector the object already checked
-		candidates_to_cull.pop();
+		candidates_to_cull.pop_front();
 	}
 }
 
@@ -352,7 +353,7 @@ void CompCamera::UnCull()
 	{
 		if (App->scene->root->GetChildbyIndex(i)->IsActive())
 		{
-			candidates_to_cull.push(App->scene->root->GetChildbyIndex(i));
+			candidates_to_cull.push_back(App->scene->root->GetChildbyIndex(i));
 		}
 	}
 
@@ -366,12 +367,12 @@ void CompCamera::UnCull()
 		{
 			if ((*it)->IsActive())
 			{
-				candidates_to_cull.push((*it));
+				candidates_to_cull.push_back((*it));
 			}
 		}
 
 		// Delete from vector the object already checked
-		candidates_to_cull.pop();
+		candidates_to_cull.pop_front();
 	}
 }
  

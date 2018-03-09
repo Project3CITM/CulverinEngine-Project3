@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class NormalGuardListener : PerceptionListener
 {
     public int hear_range = 2;
-    public GameObject my_self;
 
     void Start()
     {
@@ -20,10 +19,13 @@ public class NormalGuardListener : PerceptionListener
 
     public override void OnEventRecieved(PerceptionEvent event_recieved)
     {
+        Debug.Log("number of events: " + events_in_memory.Count.ToString());
+        Debug.Log("event memory time = " + event_recieved.time_in_memory.ToString());
 
         if (IsPriotitaryEvent(event_recieved))
         {
-            events_in_memory.Clear();
+            ClearEvents();
+            Debug.Log("Cleared other events");
             events_in_memory.Add(event_recieved);
         }
         else return;
@@ -42,6 +44,7 @@ public class NormalGuardListener : PerceptionListener
                 if (OnHearRange(event_recieved))
                 {
                     GetLinkedObject("my_self").GetComponent<BT>().heard_something = true;
+                    GetLinkedObject("my_self").GetComponent<Investigate_Action>().forgot_event = false;
                     GetLinkedObject("my_self").GetComponent<BT>().InterruptAction();
 
                     Debug.Log("I Heard Somethin");
@@ -52,7 +55,8 @@ public class NormalGuardListener : PerceptionListener
                 break;    
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-
+                GetLinkedObject("my_self").GetComponent<BT>().InterruptAction();
+                GetLinkedObject("my_self").GetComponent<BT>().player_detected = true;
                 break;
 
            
@@ -74,8 +78,8 @@ public class NormalGuardListener : PerceptionListener
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-
                 GetLinkedObject("my_self").GetComponent<BT>().player_detected = false;
+                GetLinkedObject("my_self").GetComponent<ChasePlayer_Action>().forgot_event = true;
 
                 break;
 
@@ -118,14 +122,6 @@ public class NormalGuardListener : PerceptionListener
     bool RadiusOverlap(int little_tile_x, int little_tile_y, int little_radius, int big_tile_x, int big_tile_y, int big_radius)
     {
         //Check if one of the four boundaries is inside the bigger radius
-
-        Debug.Log("little_tile_x: " + little_tile_x.ToString());
-        Debug.Log("little_tile_y: " + little_tile_y.ToString());
-        Debug.Log("big_tile_x: " + big_tile_x.ToString());
-        Debug.Log("big_tile_y: " + big_tile_y.ToString());
-        Debug.Log("little_radius: " + little_radius.ToString());
-        Debug.Log("big_radius: " + big_radius.ToString());
-
         //x - radius, y - radius
         if (((little_tile_x - little_radius) >= (big_tile_x - big_radius)) && ((little_tile_y - little_radius) >= (big_tile_y - big_radius)) && ((little_tile_x - little_radius) <= (big_tile_x + big_radius)) && ((little_tile_y - little_radius) <= (big_tile_y + big_radius)))
             return true;

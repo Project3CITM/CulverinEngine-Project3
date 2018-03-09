@@ -9,5 +9,11 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void MoveKinematic(Vector3 pos);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void CallOnContact();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void CallOnTriggerEnter();
     }
 }

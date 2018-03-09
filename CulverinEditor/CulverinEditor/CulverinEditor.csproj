@@ -43,9 +43,14 @@
     <Compile Include="AI\Align_Steering.cs" />
     <Compile Include="AI\Arrive_Steering.cs" />
     <Compile Include="AI\BT.cs" />
+    <Compile Include="AI\ChasePlayer_Action.cs" />
+    <Compile Include="AI\EnemiesManager.cs" />
+    <Compile Include="AI\EnemyLance_BT.cs" />
+    <Compile Include="AI\EnemyShield_BT.cs" />
     <Compile Include="AI\EnemySword_BT.cs" />
     <Compile Include="AI\Enemy_BT.cs" />
     <Compile Include="AI\Idle_Action.cs" />
+    <Compile Include="AI\Investigate_Action.cs" />
     <Compile Include="AI\Movement_Action.cs" />
     <Compile Include="AI\NormalGuardListener.cs" />
     <Compile Include="AI\PerceptionEmitter.cs" />
@@ -54,16 +59,21 @@
     <Compile Include="AI\PerceptionManager.cs" />
     <Compile Include="AI\PerceptionSightEnemy.cs" />
     <Compile Include="AI\Seek_Steering.cs" />
-    <Compile Include="AI\SwordAttack_Action.cs" />
+    <Compile Include="AI\Attack_Action.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleGenerator.cs" />
     <Compile Include="BarrelPuzle\BarrelScript.cs" />
     <Compile Include="BarrelPuzle\ChainManage.cs" />
     <Compile Include="BarrelPuzle\ChainMovement.cs" />
+    <Compile Include="BarrelPuzle\Paths\PuzzlePath1.cs" />
+    <Compile Include="BarrelPuzle\Paths\PuzzlePath2.cs" />
+    <Compile Include="BarrelPuzle\Paths\PuzzlePath3.cs" />
+    <Compile Include="BarrelPuzle\Paths\PuzzlePath4.cs" />
+    <Compile Include="BarrelPuzle\Paths\PuzzlePath5.cs" />
+    <Compile Include="BarrelPuzle\Paths\PuzzlePath6.cs" />
     <Compile Include="CompParticleSystem.cs" />
     <Compile Include="CompJoint.cs" />
     <Compile Include="CompMesh.cs" />
     <Compile Include="float4x4.cs" />
-    <Compile Include="Investigate_Action.cs" />
     <Compile Include="PhysX.cs" />
     <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />
@@ -82,14 +92,10 @@
     <Compile Include="CompRigidBody.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Left.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Right.cs" />
-    <Compile Include="Player\Daenerys\DaenerysWeapon_Left.cs" />
-    <Compile Include="Player\Daenerys\DaenerysWeapon_Right.cs" />
     <Compile Include="Player\Daenerys\FireWall.cs" />
     <Compile Include="Player\Theon\Arrow.cs" />
     <Compile Include="Player\Theon\TheonCD_Left.cs" />
     <Compile Include="Player\Theon\TheonCD_Right.cs" />
-    <Compile Include="Player\Theon\TheonWeapon_Left.cs" />
-    <Compile Include="Player\Theon\TheonWeapon_Right.cs" />
     <Compile Include="Player\UI\CoolDown.cs" />
     <Compile Include="Player\Jaime\JaimeCD_Right.cs" />
     <Compile Include="Player\Jaime\JaimeCD_Left.cs" />
@@ -105,7 +111,6 @@
     <Compile Include="PathNode.cs" />
     <Compile Include="Player\UI\Mana.cs" />
     <Compile Include="Quaternion.cs" />
-    <Compile Include="Player\Jaime\JaimeWeapon_Right.cs" />
     <Compile Include="Player\UI\Stamina.cs" />
     <Compile Include="Player\TestMovement.cs" />
     <Compile Include="Player\Theon\TheonController.cs" />
@@ -123,8 +128,6 @@
     <Compile Include="KeyCode.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Vector3.cs" />
-    <Compile Include="Player\Jaime\JaimeWeapon_Left.cs" />
-    <Compile Include="Player\BaseControllers\WeaponController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

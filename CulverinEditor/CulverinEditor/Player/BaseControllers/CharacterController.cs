@@ -17,6 +17,7 @@ public class CharacterController : CulverinBehaviour
         BLOCKING,
         COVER,
         HIT,
+        FIRE_WALL,
         DEAD
     }
 
@@ -27,6 +28,8 @@ public class CharacterController : CulverinBehaviour
     protected CompAnimation anim_controller;            // Animation component to handle animations
     protected CompImage icon;
     protected CompButton button;
+    protected CompAudio audio;
+    protected EnemyController enemy;
 
     protected Position position = Position.CURRENT; 
     protected State state = State.IDLE;
@@ -85,7 +88,7 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void DecreaseStamina(float stamina_cost)
     {
-        Debug.Log("Decrease Stamina");
+        Debug.Log("Decrease Stamina " + stamina_cost);
         stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
         stamina.DecreaseStamina(stamina_cost);
     }

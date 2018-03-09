@@ -835,6 +835,8 @@ void ImportScript::LinkFunctions()
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 	mono_add_internal_call("CulverinEditor.CompCollider::MoveKinematic", (const void*)MoveStaticColliderTo);
+	mono_add_internal_call("CulverinEditor.CompCollider::CallOnContact", (const void*)CallOnContact);
+	mono_add_internal_call("CulverinEditor.CompCollider::CallOnTriggerEnter", (const void*)CallOnTriggerEnter);
 
 	//COMPONENT RIGID BODY FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompRigidBody::GetColliderPosition", (const void*)GetColliderPosition);
@@ -847,6 +849,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyTorqueImpulse", (const void*)ApplyTorqueImpulse);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::LockTransform", (const void*)LockTransform);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::UnLockTransform", (const void*)UnLockTransform);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::ResetForce", (const void*)ResetForce);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::WakeUp", (const void*)WakeUp);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::SetAtMaxJointPose", (const void*)SetAtMaxJointPose);
 
@@ -1422,6 +1425,16 @@ MonoObject * ImportScript::GetCollidedObject(MonoObject* object)
 void ImportScript::MoveStaticColliderTo(MonoObject * object, MonoObject * position)
 {
 	current->MoveStaticColliderTo(object, position);
+}
+
+void ImportScript::CallOnContact(MonoObject * object)
+{
+	current->CallOnContact(object);
+}
+
+void ImportScript::CallOnTriggerEnter(MonoObject * object)
+{
+	current->CallOnTriggerEnter(object);
 }
 
 MonoObject* ImportScript::GetColliderPosition(MonoObject* object)

@@ -230,7 +230,6 @@ public class MovementController : CulverinBehaviour
             angle = -10;
             rotating = true;
             ModificateCurrentDirection(true);
-
         }
         if (Input.GetKeyDown(KeyCode.E)) //Right
         {
@@ -238,6 +237,24 @@ public class MovementController : CulverinBehaviour
             angle = 10;
             rotating = true;
             ModificateCurrentDirection(false);
+        }
+
+        float variation = Input.GetInput_ControllerAxis("RHorizontal", "Player");
+        if (variation > 0.8)
+        {
+            actual_angle = 0;
+            angle = -10;
+            rotating = true;
+            ModificateCurrentDirection(true);
+            //Debug.Log("AXIS");
+        }
+        else if (variation < -0.8)
+        {
+            actual_angle = 0;
+            angle = 10;
+            rotating = true;
+            ModificateCurrentDirection(false);
+            //Debug.Log("AXIS");
         }
     }
 
@@ -266,6 +283,38 @@ public class MovementController : CulverinBehaviour
             audio = GetComponent<CompAudio>();
             audio.PlayEvent("Footsteps");
             MoveBackward(out tile_mov_x, out tile_mov_y);
+        }
+
+       float variation = Input.GetInput_ControllerAxis("LHorizontal", "Player");
+        if (variation > 0.8)
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveRight(out tile_mov_x, out tile_mov_y);
+            Debug.Log("Right");
+        }
+        else if (variation < -0.8)
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveLeft(out tile_mov_x, out tile_mov_y);
+            Debug.Log("Left");
+        }
+
+        float variation2 = Input.GetInput_ControllerAxis("LVertical", "Player");
+        if (variation2 > 0.8)
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveBackward(out tile_mov_x, out tile_mov_y);
+            Debug.Log("Back");
+        }
+        else if (variation2 < -0.8)
+        {
+            audio = GetComponent<CompAudio>();
+            audio.PlayEvent("Footsteps");
+            MoveForward(out tile_mov_x, out tile_mov_y);
+            Debug.Log("Forw");
         }
     }
 
@@ -550,61 +599,9 @@ public class MovementController : CulverinBehaviour
         {
             return false;
         }
-        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x,position_front_y) != null) 
         {
             return true;
-        }
-
-        return false;
-    }
-
-    public bool EnemyInRow(int num_tiles)
-    {
-        int direction = (int)curr_dir;
-        int position_front_x = curr_x;
-        int position_front_y = curr_y;
-
-        for (int i = 0; i < num_tiles; i++)
-        {
-            switch (direction)
-            {
-                case (int)MovementController.Direction.NORTH:
-                    {
-                        position_front_y -= 1;
-                        break;
-                    }
-
-                case (int)MovementController.Direction.SOUTH:
-                    {
-                        position_front_y += 1;
-                        break;
-                    }
-
-                case (int)MovementController.Direction.EAST:
-                    {
-                        position_front_x += 1;
-                        break;
-                    }
-
-                case (int)MovementController.Direction.WEST:
-                    {
-                        position_front_x -= 1;
-                        break;
-                    }
-
-                default:
-                    {
-                        break;
-                    }
-
-            }
-
-            if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-                position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
-            {
-                return true;
-            }
         }
 
         return false;
@@ -649,8 +646,7 @@ public class MovementController : CulverinBehaviour
 
         }
 
-        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null)
         {
             return true;
         }
@@ -697,8 +693,7 @@ public class MovementController : CulverinBehaviour
 
         }
 
-        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null) 
         {
             return true;
         }
@@ -745,8 +740,7 @@ public class MovementController : CulverinBehaviour
 
         }
 
-        if (position_front_x == enemy_obj.GetComponent<AIManager>().current_x &&
-            position_front_y == enemy_obj.GetComponent<AIManager>().current_y) // To change => we have more than one only enemy
+        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null) 
         {
             return true;
         }
@@ -761,12 +755,27 @@ public class MovementController : CulverinBehaviour
         y = curr_y;
     }
 
-    public void GetForwardTilePos(out Vector3 pos)
+    public void GetPosFromTile(out Vector3 pos, int tile_x, int tile_y)
     {
-        int temp_mov_x;
-        int temp_mov_y;
-        MoveForward(out temp_mov_x, out temp_mov_y);
-        pos = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)temp_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)temp_mov_y);
+        pos = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_y);
     }
 
+    // Two simple methods to modify the walkability map
+    public void SetTileWalkability(int x, int y, int value)
+    {
+        if (x >= 0 && x < map_width && y >= 0 && y < map_height)
+        {
+            array2Da[x, y] = value;
+        }
+    }
+
+    public int GetTileWalkability(int x, int y)
+    {
+        if (x >= 0 && x < map_width && y >= 0 && y < map_height)
+        {
+            return array2Da[x, y];
+        }
+
+        return -1;
+    }
 }

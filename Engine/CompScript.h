@@ -68,6 +68,7 @@ public:
 	CSharpScript* csharp = nullptr;
 	ResourceScript* resource_script = nullptr;
 	bool p_active = false; // Use only with enable and disable 
+	bool do_start = false; // Use only with Instantiate 
 
 private:
 

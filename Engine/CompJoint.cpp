@@ -239,6 +239,8 @@ void CompJoint::SetSecondActorPose()
 	}
 }
 
+
+
 void CompJoint::RemoveActors(CompRigidBody * body)
 {
 	if (joint && joint->ToRelease())

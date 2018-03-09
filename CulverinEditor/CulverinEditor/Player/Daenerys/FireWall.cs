@@ -3,12 +3,14 @@ using CulverinEditor.Debug;
 
 public class FireWall : CulverinBehaviour
 {
-
     public float damage_per_second_percentage = 10.0f;
-    public float duration = 5;
+    public float duration = 5f;
+    public float damage_tick = 1f;
 
     private float timer = 0;
-    EnemyController enemy_on_fire;
+    private float damage_timer = 0;
+    private int tile_x = 0;
+    private int tile_y = 0;
     // Use this for initialization
     void Start()
     {
@@ -17,17 +19,26 @@ public class FireWall : CulverinBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {      
         timer += Time.DeltaTime();
-        if(timer >= duration)
+        damage_timer -= Time.DeltaTime();
+        if (timer >= duration)
         {
             GetComponent<CompParticleSystem>().ActivateEmission(false);
             Destroy(gameObject);
         }
+        
+        Enemy_BT enemy_in_tile = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().FindEnemyByTile(tile_x, tile_y);
+        if(enemy_in_tile != null && damage_timer <= 0f)
+        {
+            enemy_in_tile.ApplyDamage(damage_per_second_percentage);
+            damage_timer = damage_tick;
+        }        
     }
 
-    void SetFireWall(int x, int y)
+    public void SetTiles (int x, int y)
     {
-
+        tile_x = x;
+        tile_y = y;
     }
 }
