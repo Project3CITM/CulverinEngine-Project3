@@ -9,8 +9,14 @@ public class TheonController : CharacterController
     public GameObject L_SubArm_Theon;
     public GameObject R_SubArm_Theon;
 
+    //UI
     public GameObject theon_icon_obj;
+    public GameObject theon_icon_obj_hp;
+    public GameObject theon_icon_obj_stamina;
 
+    public GameObject theon_icon_hp;
+    public GameObject theon_icon_stamina;
+    //
     public GameObject theon_button_left;
     public GameObject theon_button_right;
     
@@ -43,6 +49,8 @@ public class TheonController : CharacterController
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         theon_obj = GetLinkedObject("theon_obj");
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
+        theon_icon_obj_hp = GetLinkedObject("theon_icon_obj_hp");
+        theon_icon_obj_stamina = GetLinkedObject("theon_icon_obj_stamina");
 
         theon_button_right = GetLinkedObject("theon_button_right");
         theon_button_left = GetLinkedObject("theon_button_left");
@@ -59,6 +67,12 @@ public class TheonController : CharacterController
         //Start Idle animation
         //anim_controller = theon_obj.GetComponent<CompAnimation>();    
         ToggleMesh(false);
+
+        //UI ICO
+        theon_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, theon_icon_obj_hp);
+        theon_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, theon_icon_obj_stamina);
+
+     //   left = true;
     }
 
     public override void Update()
@@ -244,11 +258,18 @@ public class TheonController : CharacterController
             //Update HP
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
+            health.SetEnabled(false);
 
+            //
+            theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
+            theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
+            theon_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, theon_icon_obj_hp);
+            theon_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, theon_icon_obj_stamina);
             Debug.Log("Update Stamina Theon");
             //Update Stamina
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             stamina.SetStamina(curr_stamina, max_stamina);
+            health.SetEnabled(false);
         }
 
         //Get values from var and store them
@@ -259,7 +280,20 @@ public class TheonController : CharacterController
 
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             curr_stamina = stamina.GetCurrentStamina();
+
+           /* if (left)
+            {
+                jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+                jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+            }
+            else
+            {
+                jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+                jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+            }*/
         }
+        GetLinkedObject("theon_icon_obj_hp").GetComponent<CompImage>().FillAmount(curr_hp/max_hp);
+        GetLinkedObject("theon_icon_obj_stamina").GetComponent<CompImage>().FillAmount(curr_stamina / max_stamina);
 
         Debug.Log("Update Child Theon");
 
