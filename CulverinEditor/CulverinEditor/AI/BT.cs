@@ -9,6 +9,7 @@ public class BT : CulverinBehaviour
         AI_STUNNED,
         AI_MOVING,
         AI_ATTACKING,
+        AI_BLOCKING,
         AI_DEAD
     }
 

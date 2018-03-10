@@ -721,7 +721,8 @@ bool ParticleSystem::PostUpdate(float dt)
 	bool ret = true;
 	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend() && ret == true; item++)
 	{
-		ret = (*item).PostUpdate(dt);
+		if (!GenerateBuffers)
+			ret = (*item).PostUpdate(dt);
 	}
 	return ret;
 }

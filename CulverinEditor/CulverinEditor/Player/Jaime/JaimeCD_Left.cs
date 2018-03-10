@@ -3,13 +3,18 @@ using CulverinEditor.Debug;
 
 public class JaimeCD_Left : CoolDown
 {
+    public override void Update()
+    {
+        base.Update();
+    }
+
     public override void OnClick()
     {
-        if (GetLinkedObject("jaime_obj").GetComponent<CharacterController>().GetState() == 0)
+        if (GetLinkedObject("jaime_obj").GetComponent<JaimeController>().GetState() == 0)
         {
             if (in_cd == false)
             {
-                if(GetLinkedObject("jaime_obj").GetComponent<JaimeController>().OnLeftClick())
+                if (GetLinkedObject("jaime_obj").GetComponent<JaimeController>().OnLeftClick()) 
                 {
                     ActivateAbility();
                 }            
@@ -20,7 +25,7 @@ public class JaimeCD_Left : CoolDown
     public override void ActivateAbility()
     {
         //this_obj.GetComponent
-        button_cd = GetComponent<CompButton>(); 
+        button_cd = GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>();
         button_cd.Deactivate();
 
         Debug.Log("Jaime Left CD Clicked");

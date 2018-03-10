@@ -46,7 +46,7 @@ public class Enemy_BT : BT
     public override void Update()
     {
         //Update attack cooldown
-        attack_timer += Time.DeltaTime();
+        attack_timer += Time.deltaTime;
 
         base.Update();
     }
@@ -58,6 +58,8 @@ public class Enemy_BT : BT
 
     public void ApplyDamage(float damage)
     {
+        if (current_action.action_type == Action.ACTION_TYPE.SHIELD_BLOCK_ACTION) return;
+
         InterruptAction();
 
         hit = true;

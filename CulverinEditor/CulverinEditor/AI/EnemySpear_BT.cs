@@ -2,7 +2,7 @@
 using CulverinEditor;
 using CulverinEditor.Debug;
 
-class EnemySpear_BT : Enemy_BT
+public class EnemySpear_BT : Enemy_BT
 {
     public override void Start()
     {

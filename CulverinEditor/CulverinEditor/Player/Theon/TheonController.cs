@@ -7,9 +7,8 @@ public class TheonController : CharacterController
     public GameObject theon_obj; 
     public GameObject L_Arm_Theon;
     public GameObject R_Arm_Theon;
-    public GameObject L_SubArm_Theon;
-    public GameObject R_SubArm_Theon;
-
+    public GameObject CrossBow;
+    public GameObject Arrow;
     //UI ELEMENTS
     public GameObject theon_icon_obj;
     public GameObject theon_icon_obj_hp;
@@ -37,6 +36,12 @@ public class TheonController : CharacterController
     public float right_ability_dmg = 10;
     public float right_ability_cost = 10.0f;
     private TheonCD_Right cd_right;
+
+    public bool secondary_ability = false;
+    bool arrow1 = false;
+    bool arrow2 = false;
+    bool arrow3 = false;
+    float arrowtimers = 0.0f;
     //----------------------------------------
 
     protected override void Start()
@@ -48,8 +53,8 @@ public class TheonController : CharacterController
         theon_obj = GetLinkedObject("theon_obj");
         L_Arm_Theon = GetLinkedObject("L_Arm_Theon");
         R_Arm_Theon = GetLinkedObject("R_Arm_Theon");
-        L_SubArm_Theon = GetLinkedObject("L_SubArm_Theon");
-        R_SubArm_Theon = GetLinkedObject("R_SubArm_Theon");
+        CrossBow = GetLinkedObject("CrossBow");
+        Arrow = GetLinkedObject("Arrow");
 
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
         theon_button_right = GetLinkedObject("theon_button_right");
@@ -62,7 +67,7 @@ public class TheonController : CharacterController
 
         //Start Idle animation
         //anim_controller = theon_obj.GetComponent<CompAnimation>();    
-        //ToggleMesh(false);
+        ToggleMesh(false);
 
         //Move icon to the left
         theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
@@ -73,6 +78,11 @@ public class TheonController : CharacterController
         EnableAbilities(false);
 
         Debug.Log(gameObject.GetName());
+
+        arrow1 = false;
+        arrow2 = false;
+        arrow3 = false;
+        arrowtimers = 0.0f;
     }
 
     public override void Update()
@@ -324,8 +334,8 @@ public class TheonController : CharacterController
     {
         L_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, L_Arm_Theon);
         R_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, R_Arm_Theon);
-        R_SubArm_Theon.GetComponent<CompMesh>().SetEnabled(active, R_SubArm_Theon);
-        L_SubArm_Theon.GetComponent<CompMesh>().SetEnabled(active, L_SubArm_Theon);
+        CrossBow.GetComponent<CompMesh>().SetEnabled(active, CrossBow);
+        Arrow.GetComponent<CompMesh>().SetEnabled(active, Arrow);
     }
 
     public bool IsSecondaryAbilityReady()
@@ -496,5 +506,53 @@ public class TheonController : CharacterController
         theon_button_right.SetActive(active);
         theon_left_flag.SetActive(active);
         theon_right_flag.SetActive(active);
+    }
+
+    public void TheonSecondaryAbility()
+    {
+        if(secondary_ability == true)
+        {
+            arrowtimers += Time.deltaTime;
+            if(arrowtimers >= 0.5f && arrow1 == false)
+            {
+                GameObject arrow = Instantiate("ArrowTheon");
+                GameObject player = GetLinkedObject("player_obj");
+                Vector3 pos = new Vector3(player.transform.GetPosition());
+                Vector3 rot = new Vector3(player.transform.GetRotation());
+                arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
+                arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
+                arrow1 = true;
+            }
+
+            if (arrowtimers >= 1.0f && arrow2 == false)
+            {
+                GameObject arrow = Instantiate("ArrowTheon");
+                GameObject player = GetLinkedObject("player_obj");
+                Vector3 pos = new Vector3(player.transform.GetPosition());
+                Vector3 rot = new Vector3(player.transform.GetRotation());
+                arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
+                arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
+                arrow2 = true;
+            }
+
+            if (arrowtimers >= 1.5f && arrow3 == false)
+            {
+                GameObject arrow = Instantiate("ArrowTheon");
+                GameObject player = GetLinkedObject("player_obj");
+                Vector3 pos = new Vector3(player.transform.GetPosition());
+                Vector3 rot = new Vector3(player.transform.GetRotation());
+                arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
+                arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
+                arrow1 = false;
+                arrow2 = false;
+                secondary_ability = false;
+                arrowtimers = 0.0f;
+            }
+        }
+    }
+
+    public void ActivateSecondaryAbility()
+    {
+        secondary_ability = true;
     }
 }

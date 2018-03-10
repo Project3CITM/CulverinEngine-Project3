@@ -65,7 +65,7 @@ public class SpearGuard_Listener : PerceptionListener
                 my_self.GetComponent<EnemySpear_BT>().InterruptAction();
                 my_self.GetComponent<EnemySpear_BT>().player_detected = true;
                 player_seen = true;
-                my_self.GetComponent<Movement_Action>().rotate = false;
+                my_self.GetComponent<Movement_Action>().look_at_player = false;
                 my_self.GetComponent<ChasePlayer_Action>().SetEvent(event_recieved);
                 Debug.Log("Player in sight");
                 break;
@@ -86,7 +86,7 @@ public class SpearGuard_Listener : PerceptionListener
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 my_self.GetComponent<EnemySpear_BT>().player_detected = false;
                 my_self.GetComponent<ChasePlayer_Action>().forgot_event = true;
-                my_self.GetComponent<Movement_Action>().rotate = true;
+                my_self.GetComponent<Movement_Action>().look_at_player = true;
                 Debug.Log("Player out of sight");
                 break;
         }

@@ -53,6 +53,7 @@
     <Compile Include="AI\Idle_Action.cs" />
     <Compile Include="AI\Investigate_Action.cs" />
     <Compile Include="AI\Movement_Action.cs" />
+    <Compile Include="AI\ShieldBlock_Action.cs" />
     <Compile Include="AI\SpearGuard_Listener.cs" />
     <Compile Include="AI\SwordGuard_Listener.cs" />
     <Compile Include="AI\PerceptionEmitter.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="CompJoint.cs" />
     <Compile Include="CompMesh.cs" />
     <Compile Include="CompRectTransform.cs" />
+    <Compile Include="Player\Daenerys\Fireball.cs" />
     <Compile Include="float4x4.cs" />
     <Compile Include="PhysX.cs" />
     <Compile Include="Player\AttackTarget.cs" />
@@ -99,6 +101,7 @@
     <Compile Include="Player\Daenerys\DaenerysCD_Left.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Right.cs" />
     <Compile Include="Player\Daenerys\FireWall.cs" />
+    <Compile Include="Player\Jaime\JaimeCD_Secondary.cs" />
     <Compile Include="Player\Jaime\Shield.cs" />
     <Compile Include="Player\Theon\Arrow.cs" />
     <Compile Include="Player\Theon\TheonCD_Left.cs" />

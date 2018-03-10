@@ -48,6 +48,11 @@ public class CharacterController : CulverinBehaviour
         else if(position == Position.BEHIND)
         {
             ReduceSecondaryAbilityCoolDown();
+
+            if(gameObject.GetName() == "Theon")
+            {
+                gameObject.GetComponent<TheonController>().TheonSecondaryAbility();
+            }
         }
     }
 

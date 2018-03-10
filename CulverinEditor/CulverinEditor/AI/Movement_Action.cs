@@ -11,7 +11,7 @@ public class Movement_Action : Action
     CompAnimation       anim;
     public float        tile_size = 0.0f;
     List<PathNode>      path = null;
-    public bool         rotate = true;
+    public bool         look_at_player = true;
 
     enum Motion_State
     {
@@ -20,6 +20,16 @@ public class Movement_Action : Action
         MS_ROTATE
     }
 
+    enum Direction
+    {
+        DIR_NO_DIR,
+        DIR_NORTH,
+        DIR_EAST,
+        DIR_SOUTH,
+        DIR_WEST
+    }
+
+    Direction dir = Direction.DIR_NO_DIR;
     Motion_State state = Motion_State.MS_NO_STATE;
 
     public float max_vel = 5.0f;
@@ -181,6 +191,7 @@ public class Movement_Action : Action
                     Vector3 obj_vec = GetTargetPosition() - GetComponent<Transform>().position;
                     GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
 
+                    SetDirection();
                     SetState();
 
                     if (interupt == true)
@@ -198,7 +209,7 @@ public class Movement_Action : Action
     {
         path.Clear();
         path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(cur_x, cur_y), new PathNode(obj_x, obj_y));
-        rotate = rot;
+        look_at_player = rot;
         SetState();
     }
 
@@ -297,7 +308,7 @@ public class Movement_Action : Action
         {
             if (path.Count > 0)
             {
-                if (!FinishedRotation() && rotate)
+                if (!FinishedRotation())
                 {
                     if(GetDeltaAngle() < 0)
                         anim.SetTransition("ToDcha");
@@ -331,18 +342,111 @@ public class Movement_Action : Action
 
     public float GetDeltaAngle()
     {
-        Vector3 forward = new Vector3(myself.GetComponent<Transform>().GetForwardVector());
-        Vector3 pos = new Vector3(myself.GetComponent<Transform>().GetPosition());
-        Vector3 obj_vec = new Vector3(GetTargetPosition() - pos);
+        if (look_at_player == false)
+        {
+            Vector3 forward = new Vector3(myself.GetComponent<Transform>().GetForwardVector());
+            Vector3 pos = new Vector3(myself.GetComponent<Transform>().GetPosition());
+            Vector3 obj_vec = new Vector3(GetTargetPosition() - pos);
 
-        float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
+            float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
+
+            if (delta > Mathf.PI)
+                delta = delta - 2 * Mathf.PI;
+            if (delta < (-Mathf.PI))
+                delta = delta + 2 * Mathf.PI;
+
+            return delta;
+        }
+        else
+        {
+            Vector3 forward = new Vector3(myself.GetComponent<Transform>().GetForwardVector());
+            Vector3 pos = new Vector3(myself.GetComponent<Transform>().GetPosition());
+            Vector3 player_pos = new Vector3(player.GetComponent<Transform>().GetGlobalPosition());
+            Vector3 obj_vec = new Vector3(player_pos.x - pos.x, pos.y, player_pos.z - pos.z);
+
+            float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
+
+            if (delta > Mathf.PI)
+                delta = delta - 2 * Mathf.PI;
+            if (delta < (-Mathf.PI))
+                delta = delta + 2 * Mathf.PI;
+
+            Direction obj_dir = Direction.DIR_NO_DIR;
+
+            if (delta <= (Mathf.PI / 4) && delta >= -(Mathf.PI / 4))
+                obj_dir = Direction.DIR_SOUTH;
+            else if (delta >= (Mathf.PI / 4) && delta <= 3 * (Mathf.PI / 4))
+                obj_dir = Direction.DIR_EAST;
+            else if (delta >= (3 * (Mathf.PI / 4)) || delta <= -(3 * (Mathf.PI / 4)))
+                obj_dir = Direction.DIR_NORTH;
+            else if (delta <= -(Mathf.PI / 4) && delta >= -(3 * (Mathf.PI / 4)))
+                obj_dir = Direction.DIR_WEST;
+
+
+            float obj_angle = 0.0f;
+
+            if(obj_dir != dir)
+            {
+                switch (dir)
+                {
+                    case Direction.DIR_NORTH:
+                        switch (obj_dir)
+                        {
+                            case Direction.DIR_EAST: obj_angle = -(Mathf.PI / 2); break;
+                            case Direction.DIR_WEST: obj_angle = (Mathf.PI / 2); break;
+                            case Direction.DIR_SOUTH: obj_angle = Mathf.PI; break;
+                        }
+                    break;
+                    case Direction.DIR_EAST:
+                        switch (obj_dir)
+                        {
+                            case Direction.DIR_NORTH: obj_angle = (Mathf.PI / 2); break;
+                            case Direction.DIR_WEST: obj_angle = Mathf.PI; break;
+                            case Direction.DIR_SOUTH: obj_angle = -(Mathf.PI / 2); break;
+                        }
+                        break;
+                    case Direction.DIR_SOUTH:
+                        switch (obj_dir)
+                        {
+                            case Direction.DIR_EAST: obj_angle = (Mathf.PI / 2); break;
+                            case Direction.DIR_WEST: obj_angle = -(Mathf.PI / 2); break;
+                            case Direction.DIR_NORTH: obj_angle = Mathf.PI; break;
+                        }
+                        break;
+                    case Direction.DIR_WEST:
+                        switch (obj_dir)
+                        {
+                            case Direction.DIR_EAST: obj_angle = Mathf.PI; break;
+                            case Direction.DIR_NORTH: obj_angle = -(Mathf.PI / 2); break;
+                            case Direction.DIR_SOUTH: obj_angle = (Mathf.PI / 2); break;
+                        }
+                        break;
+                }
+                return obj_angle - delta;
+            }
+
+            return 0.0f;
+        }
+    }
+
+    public void SetDirection()
+    {
+        Vector3 forward = new Vector3(myself.GetComponent<Transform>().GetForwardVector());
+        float delta = Mathf.Atan2(forward.x, forward.y);
 
         if (delta > Mathf.PI)
             delta = delta - 2 * Mathf.PI;
         if (delta < (-Mathf.PI))
             delta = delta + 2 * Mathf.PI;
 
-        return delta;
+        if (delta <= (Mathf.PI / 4) && delta >= -(Mathf.PI / 4))
+            dir = Direction.DIR_SOUTH;
+        else if (delta >= (Mathf.PI / 4) && delta <= 3 * (Mathf.PI / 4))
+            dir = Direction.DIR_EAST;
+        else if (delta >= (3 * (Mathf.PI / 4)) || delta <= -(3 * (Mathf.PI / 4)))
+            dir = Direction.DIR_NORTH;
+        else if (delta <= -(Mathf.PI / 4) && delta >= -(3 * (Mathf.PI / 4)))
+            dir = Direction.DIR_WEST;
     }
 
     public bool FinishedRotation()
