@@ -1105,6 +1105,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompRectTransform";
 	}
+	else if (name_class == "CompMaterial")
+	{
+		comp_name = "CompMaterial";
+	}
 	/* Scripts */
 	if (comp_name == "")
 	{

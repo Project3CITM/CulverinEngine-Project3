@@ -1,16 +1,9 @@
-﻿using CulverinEditor;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace CulverinEditor
 {
-    class CompMaterial : CulverinBehaviour
+    public class CompMaterial : CulverinBehaviour
     {
-
-        public CompMaterial()
-        {
-
-        }
-
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetAlbedo(string name);
 

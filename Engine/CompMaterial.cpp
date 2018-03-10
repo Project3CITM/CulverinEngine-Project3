@@ -16,7 +16,7 @@ CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent
 {
 	uid = App->random->Int();
 	color = White;
-	name_component = "Material";
+	name_component = "CompMaterial";
 	material = App->renderer3D->default_material;
 
 }
@@ -33,7 +33,7 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 			material->textures[i].value->num_game_objects_use_me++;
 		}
 	}
-	name_component = "Material";
+	name_component = "CompMaterial";
 	if(material == nullptr)
 	material = App->renderer3D->default_material;
 }

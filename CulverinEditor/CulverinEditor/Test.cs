@@ -1,20 +1,28 @@
 ﻿using CulverinEditor;
+using CulverinEditor.Debug;
 
-class Test : CulverinBehaviour
-{
-    CompMaterial material = null;
 
-    void Start()
+    public class Test : CulverinBehaviour
     {
-        material = GetComponent<CompMaterial>();
-    }
+        public CompMaterial material = null;
 
-    void Update()
-    {
+        void Start()
+        {
+            material = GetComponent<CompMaterial>();
+        }
+
+        void Update()
+        {
+
+        Debug.Log("Hddddoli");
+
         if(Input.GetInput_KeyDown("FinalSkill","Player"))
         {
             material.SetAlbedo("Shield.png");
+            material.SetAmbientOcclusion("Shield.png");
+            material.SetNormals("Shield.png");
         }
     }
 }
+
 
