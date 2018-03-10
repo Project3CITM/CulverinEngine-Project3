@@ -22,6 +22,7 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
     private Random rnd = null;
     private GameObject generated_path = null;
+    private int generated_path_index = 0;
 
     // List to handle all fallen barrels and clear them when puzzle needs to be restart. TODO: Might be a better place to handle this...
     private List<GameObject> fallen_barrels;
@@ -57,10 +58,24 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
     void Update()
     {
+        if(used_logic_map == null) UpdateLogicMap();
+
+
         //Just testing purposes.
         if (Input.GetKeyDown(KeyCode.M))
         {
-            ResetPath();
+            //ResetPath();
+            DebugNewLogicMap();
+        }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            //Debug.Log("x: " + map_first_tile_pos_x + " y: " + map_first_tile_pos_z);
+            //Vector3 tile_pos = new Vector3(((120.0f - map_first_tile_pos_x) / tile_size),
+            //    ((300.0f - map_first_tile_pos_z) / tile_size), 0.0f);
+            //Debug.Log("GO tile pos: " + tile_pos.x + ", " + tile_pos.y);
+            //CheckLogicMap((int)tile_pos.x, (int)tile_pos.y);
+            //
+            //ResetPath();
         }
     }
 
@@ -68,8 +83,8 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
     void GeneratePath()
     {
-        int i = rnd.Next(1, possible_paths + 1);
-        string selected_path_name = path_name + i.ToString();
+        generated_path_index = rnd.Next(1, possible_paths + 1);
+        string selected_path_name = path_name + generated_path_index.ToString();
         generated_path = Instantiate(selected_path_name);
         if (generated_path == null)
         {
@@ -80,27 +95,7 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
         generated_path.transform.SetPosition(new Vector3(puzzle_start_pos_x, 0.0f, puzzle_start_pos_z));
 
-        switch (i)
-        {
-            case 1:
-                used_logic_map = generated_path.GetComponent<PuzzlePath1>().logic_map;
-                break;
-            case 2:
-                used_logic_map = generated_path.GetComponent<PuzzlePath2>().logic_map;
-                break;
-            case 3:
-                used_logic_map = generated_path.GetComponent<PuzzlePath3>().logic_map;
-                break;
-            case 4:
-                used_logic_map = generated_path.GetComponent<PuzzlePath4>().logic_map;
-                break;
-            case 5:
-                used_logic_map = generated_path.GetComponent<PuzzlePath5>().logic_map;
-                break;
-            case 6:
-                used_logic_map = generated_path.GetComponent<PuzzlePath6>().logic_map;
-                break;
-        }
+        UpdateLogicMap();
     }
 
     public void RemovePath()
@@ -159,16 +154,21 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
     void CheckLogicMap(int x_pos, int y_pos)
     {
+        if (used_logic_map == null) UpdateLogicMap();
+
         if (used_logic_map != null)
         {
+            Debug.Log("Checking tile walkability. Map tile: " + x_pos + ", " + y_pos);
             // Given tile pos is in map system, must convert to local puzzle coords.
-            int x_local_pos = puzzle_start_tile_x - x_pos;
-            int y_local_pos = puzzle_start_tile_z - y_pos;
+            int x_local_pos = puzzle_start_tile_x - x_pos - 1;
+            int y_local_pos = puzzle_start_tile_z - y_pos - 1;
 
+            Debug.Log("Tile local: " + x_local_pos + ", " + y_local_pos);
             // Just make sure local coords are mapped properly
             if ((x_local_pos >= 0 && x_local_pos < used_logic_map.width)
                 && (y_local_pos >= 0 && y_local_pos < used_logic_map.height))
             {
+                Debug.Log("Tile is inside path boundaries. Local walkability is: " + used_logic_map.walkability[x_local_pos, y_local_pos]);
                 if (used_logic_map.walkability[x_local_pos, y_local_pos] == 0)
                 {
                     // Acces to walkability map on movement controller and modify the value with the world map tile coord.
@@ -207,5 +207,52 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
             }
         }
         Debug.Log("Could not found puzzle start point");
+    }
+
+    void UpdateLogicMap()
+    {
+        switch (generated_path_index)
+        {
+            case 1:
+                used_logic_map = generated_path.GetComponent<PuzzlePath1>().logic_map;
+                break;
+            case 2:
+                used_logic_map = generated_path.GetComponent<PuzzlePath2>().logic_map;
+                break;
+            case 3:
+                used_logic_map = generated_path.GetComponent<PuzzlePath3>().logic_map;
+                break;
+            case 4:
+                used_logic_map = generated_path.GetComponent<PuzzlePath4>().logic_map;
+                break;
+            case 5:
+                used_logic_map = generated_path.GetComponent<PuzzlePath5>().logic_map;
+                break;
+            case 6:
+                used_logic_map = generated_path.GetComponent<PuzzlePath6>().logic_map;
+                break;
+        }
+
+        //DebugNewLogicMap();
+    }
+
+    void DebugNewLogicMap()
+    {
+        if (used_logic_map != null)
+        {
+            for (int y = 0; y < used_logic_map.height; ++y)
+            {
+                string t = "";
+                for (int x = 0; x < used_logic_map.width; ++x)
+                {
+                    t += (used_logic_map.walkability[x, y] + " - ");
+                }
+                Debug.Log(t);
+            }
+        }
+        else
+        {
+            Debug.Log("Used logic map not assigned.");
+        }
     }
 }
