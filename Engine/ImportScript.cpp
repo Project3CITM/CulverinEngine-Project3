@@ -395,7 +395,8 @@ void ImportScript::SetMonoMap(GameObject* gameobject, bool is_root)
 			if (new_object)
 			{
 				//CSSelfObject = new_object;
-				mono_map[new_object] = gameobject;
+				//mono_map.insert(new_object, gameobject);
+				mono_map.insert(std::pair<MonoObject*, GameObject*>(new_object, gameobject));
 			}
 		}
 	}
@@ -410,7 +411,7 @@ void ImportScript::UpdateMonoMap(GameObject* modificate, bool do_delete)
 {
 	if (do_delete)
 	{
-		std::map<MonoObject*, GameObject*>::iterator it = mono_map.begin();
+		std::multimap<MonoObject*, GameObject*>::iterator it = mono_map.begin();
 		while (it != mono_map.end())
 		{
 			if (it->second == modificate)
@@ -432,7 +433,8 @@ void ImportScript::UpdateMonoMap(GameObject* modificate, bool do_delete)
 			if (new_object)
 			{
 				//CSSelfObject = new_object;
-				mono_map[new_object] = modificate;
+				//mono_map[new_object] = modificate;
+				mono_map.insert(std::pair<MonoObject*, GameObject*>(new_object, modificate));
 			}
 		}
 	}
@@ -440,14 +442,14 @@ void ImportScript::UpdateMonoMap(GameObject* modificate, bool do_delete)
 
 void ImportScript::UpdateMonoMap(GameObject* modificate, MonoObject* object)
 {
-	mono_map[object] = modificate;
+	mono_map.insert(std::pair<MonoObject*, GameObject*>(object, modificate));
 }
 
 MonoObject* ImportScript::GetMonoObject(GameObject* gameobject)
 {
 	if (gameobject != nullptr/* && gameobject->IsDeleteFixed()*/)
 	{
-		std::map<MonoObject*, GameObject*>::iterator it = mono_map.begin();
+		std::multimap<MonoObject*, GameObject*>::iterator it = mono_map.begin();
 		while (it != mono_map.end())
 		{
 			if (it->second == gameobject)
@@ -464,7 +466,7 @@ GameObject* ImportScript::GetGameObject(MonoObject* monoobject)
 {
 	if (monoobject != nullptr)
 	{
-		std::map<MonoObject*, GameObject*>::iterator it = mono_map.find(monoobject);
+		std::multimap<MonoObject*, GameObject*>::iterator it = mono_map.find(monoobject);
 		if (it != mono_map.end())
 			return it->second;
 	}
@@ -473,14 +475,14 @@ GameObject* ImportScript::GetGameObject(MonoObject* monoobject)
 
 void ImportScript::UpdateMonoComp(Component* modificate, MonoObject* object)
 {
-	mono_comp[object] = modificate;
+	mono_comp.insert(std::pair<MonoObject*, Component*>(object, modificate));
 }
 
 MonoObject* ImportScript::GetMonoObject(Component* component)
 {
 	if (component != nullptr/* && gameobject->IsDeleteFixed()*/)
 	{
-		std::map<MonoObject*, Component*>::iterator it = mono_comp.begin();
+		std::multimap<MonoObject*, Component*>::iterator it = mono_comp.begin();
 		while (it != mono_comp.end())
 		{
 			if (it->second == component)
@@ -497,7 +499,7 @@ Component* ImportScript::GetComponentMono(MonoObject* monoobject)
 {
 	if (monoobject != nullptr)
 	{
-		std::map<MonoObject*, Component*>::iterator it = mono_comp.find(monoobject);
+		std::multimap<MonoObject*, Component*>::iterator it = mono_comp.find(monoobject);
 		if (it != mono_comp.end())
 			return it->second;
 	}
@@ -505,12 +507,12 @@ Component* ImportScript::GetComponentMono(MonoObject* monoobject)
 
 void ImportScript::UpdateMonoPos(float3* pos, MonoObject* object)
 {
-	mono_pos[object] = pos;
+	mono_pos.insert(std::pair<MonoObject*, float3*>(object, pos));
 }
 
 MonoObject* ImportScript::GetMonoObject(float3* pos)
 {
-	std::map<MonoObject*, float3*>::iterator it = mono_pos.begin();
+	std::multimap<MonoObject*, float3*>::iterator it = mono_pos.begin();
 	while (it != mono_pos.end())
 	{
 		if (it->second == pos)
@@ -526,7 +528,7 @@ float3& ImportScript::GetPosMono(MonoObject* monoobject)
 {
 	if (monoobject != nullptr)
 	{
-		std::map<MonoObject*, float3*>::iterator it = mono_pos.find(monoobject);
+		std::multimap<MonoObject*, float3*>::iterator it = mono_pos.find(monoobject);
 		if (it != mono_pos.end())
 			return *it->second;
 	}

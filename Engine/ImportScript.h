@@ -259,9 +259,9 @@ private:
 	std::list<std::string> nameScripts;
 	static CSharpScript* current;
 
-	std::map<MonoObject*, GameObject*> mono_map;
-	std::map<MonoObject*, Component*> mono_comp;
-	std::map<MonoObject*, float3*> mono_pos;
+	std::multimap<MonoObject*, GameObject*> mono_map;
+	std::multimap<MonoObject*, Component*> mono_comp;
+	std::multimap<MonoObject*, float3*> mono_pos;
 	std::map<MonoObject*, Quat*> mono_quat;
 
 };
