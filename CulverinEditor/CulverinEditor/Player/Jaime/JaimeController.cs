@@ -46,6 +46,8 @@ public class JaimeController : CharacterController
     public float right_ability_dmg = 0.0f;
     public float right_ability_cost = 50.0f;
     JaimeCD_Right right_ability_cd;
+
+    public GameObject jaime_sword_obj;
     // ---------------------
 
     protected override void Start()
@@ -54,6 +56,7 @@ public class JaimeController : CharacterController
         jaime_obj = GetLinkedObject("jaime_obj");
         larm_jaime_obj = GetLinkedObject("larm_jaime_obj");
         rarm_jaime_obj = GetLinkedObject("rarm_jaime_obj");
+        jaime_sword_obj = GetLinkedObject("jaime_sword_obj");
 
         jaime_icon_obj = GetLinkedObject("jaime_icon_obj");
         jaime_button_left = GetLinkedObject("jaime_button_left");
@@ -64,16 +67,19 @@ public class JaimeController : CharacterController
         jaime_icon_obj_hp = GetLinkedObject("jaime_icon_obj_hp");
         jaime_icon_obj_stamina = GetLinkedObject("jaime_icon_obj_stamina");
 
-        //Disable hp/stamina from icon
-        jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_hp);
-        jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_stamina);   
-
         //Start Idle animation
         anim_controller = jaime_obj.GetComponent<CompAnimation>();
         anim_controller.PlayAnimation("Idle");
 
         //Disable Jaime secondary ability button
         GetLinkedObject("jaime_s_button_obj").SetActive(false);
+
+        //Set Icon in the center
+        jaime_icon_obj.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj);
+        jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
+        jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
+        jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_hp);
+        jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_stamina);
     }
 
     public override void Update()
@@ -337,6 +343,7 @@ public class JaimeController : CharacterController
     {
         larm_jaime_obj.GetComponent<CompMesh>().SetEnabled(active, larm_jaime_obj);
         rarm_jaime_obj.GetComponent<CompMesh>().SetEnabled(active, rarm_jaime_obj);
+        jaime_sword_obj.GetComponent<CompMesh>().SetEnabled(active, jaime_sword_obj);
     }
 
     public override bool IsAnimationStopped(string name)
