@@ -257,6 +257,11 @@ public:
 	/*Physics*/
 	MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);
 
+	/*Material*/
+	void		SetAlbedo(MonoObject* object, MonoString* string);
+	void		SetNormals(MonoObject* object, MonoString* string);
+	void		SetAmbientOcclusion(MonoObject* object, MonoString* string);
+
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
 	MonoObject* GetParentGameObject();

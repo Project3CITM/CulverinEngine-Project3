@@ -1554,6 +1554,21 @@ void ImportScript::SetClipsSpeed(MonoObject * object, float speed_value)
 	current->SetClipsSpeed(object, speed_value);
 }
 
+void ImportScript::SetAlbedo(MonoObject * object, MonoString * string)
+{
+	current->SetAlbedo(object, string);
+}
+
+void ImportScript::SetNormals(MonoObject * object, MonoString * string)
+{
+	current->SetNormals(object, string);
+}
+
+void ImportScript::SetAmbientOcclusion(MonoObject * object, MonoString * string)
+{
+	current->SetAmbientOcclusion(object, string);
+}
+
 MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)
 {
 	return current->RayCast(origin, direction, distance);

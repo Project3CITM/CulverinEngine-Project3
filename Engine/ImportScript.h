@@ -234,6 +234,11 @@ private:
 	static mono_bool IsAnimOverXTime(MonoObject* object, float num_between_0_1);
 	static void SetClipsSpeed(MonoObject* object, float speed_value);
 
+	/*Component Material*/
+	static void SetAlbedo(MonoObject* object, MonoString* string);
+	static void SetNormals(MonoObject* object, MonoString* string);
+	static void SetAmbientOcclusion(MonoObject* object, MonoString* string);
+
 	/*Module Physics*/
 	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);
 

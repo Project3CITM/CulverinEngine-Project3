@@ -71,6 +71,7 @@
     <Compile Include="BarrelPuzle\Paths\PuzzlePath4.cs" />
     <Compile Include="BarrelPuzle\Paths\PuzzlePath5.cs" />
     <Compile Include="BarrelPuzle\Paths\PuzzlePath6.cs" />
+    <Compile Include="CompMaterial.cs" />
     <Compile Include="CompParticleSystem.cs" />
     <Compile Include="CompJoint.cs" />
     <Compile Include="CompMesh.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="Player\TestMovement.cs" />
     <Compile Include="Player\Theon\TheonController.cs" />
     <Compile Include="SceneManager.cs" />
+    <Compile Include="Test.cs" />
     <Compile Include="TestLoad.cs" />
     <Compile Include="Test_Input_Gamepad.cs" />
     <Compile Include="TestParticle.cs" />
