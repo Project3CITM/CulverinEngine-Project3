@@ -58,7 +58,7 @@ public class SwordGuard_Listener : PerceptionListener
                         event_recieved.start_counting = false;
                     }
                 }
-                break;    
+                break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 if (my_self == ((PerceptionPlayerSeenEvent)event_recieved).enemy_who_saw)

@@ -23,9 +23,21 @@ public class Movement_Action : Action
     Motion_State state = Motion_State.MS_NO_STATE;
 
     public float max_vel = 5.0f;
+    public float hurt_max_vel = 2.5f;
+    float current_max_vel;
+
     public float max_accel = 2.0f;
+    public float hurt_accel = 1.0f;
+    float current_max_accel;
+
     public float max_rot_vel = 2.0f;
+    public float hurt_max_rot_vel = 1.0f;
+    float current_max_rot_vel;
+
     public float max_rot_accel = 0.7f;
+    public float hurt_max_rot_accel = 0.3f;
+    float current_max_rot_accel;
+
     Vector3 current_velocity = new Vector3(Vector3.Zero);
     Vector3 current_acceleration = new Vector3(Vector3.Zero);
     float current_rot_velocity = 0.0f;
@@ -49,6 +61,21 @@ public class Movement_Action : Action
         myself = GetLinkedObject("myself");
         player = GetLinkedObject("player");
         anim = GetComponent<CompAnimation>();
+
+        Enemy_BT bt = GetComponent<EnemySword_BT>();
+        if(bt == null)
+            bt = GetComponent<EnemyShield_BT>();
+        if (bt == null)
+            bt = GetComponent<EnemySpear_BT>();
+
+        float interpolation = bt.GetCurrentInterpolation();
+        current_max_vel = hurt_max_vel + (max_vel - hurt_max_vel) * interpolation;
+        current_max_accel = hurt_accel + (max_accel - hurt_accel) * interpolation;
+        current_max_rot_vel = hurt_max_rot_vel + (max_rot_vel - hurt_max_rot_vel) * interpolation;
+        current_max_rot_accel = hurt_max_rot_accel + (max_rot_accel - hurt_max_rot_accel) * interpolation;
+
+        //GetComponent<CompAnimation>().SetClipsSpeed(bt.anim_speed);
+
         Vector3 fw = myself.GetComponent<Transform>().GetForwardVector();
         path = new List<PathNode>();
     }
@@ -69,16 +96,16 @@ public class Movement_Action : Action
         {
             case Motion_State.MS_MOVE:
                 //Velocity calculation
-                if (current_acceleration.Length > max_accel)
+                if (current_acceleration.Length > current_max_accel)
                 {
-                    current_acceleration = current_acceleration.Normalized * max_accel;
+                    current_acceleration = current_acceleration.Normalized * current_max_accel;
                 }
                 current_velocity.x = current_velocity.x + current_acceleration.x;
                 current_velocity.z = current_velocity.z + current_acceleration.z;
 
-                if (current_velocity.Length > max_vel)
+                if (current_velocity.Length > current_max_vel)
                 {
-                    current_velocity = current_velocity.Normalized * max_vel;
+                    current_velocity = current_velocity.Normalized * current_max_vel;
                 }
 
                 Vector3 local_pos = GetComponent<Transform>().local_position;
@@ -88,7 +115,6 @@ public class Movement_Action : Action
                 GetComponent<Transform>().local_position = local_pos;
 
                 current_acceleration = new Vector3(Vector3.Zero);
-                current_rot_acceleration = 0.0f;
 
                 if (ReachedTile())
                 {
@@ -120,22 +146,22 @@ public class Movement_Action : Action
 
             case Motion_State.MS_ROTATE:
                 //Acceleration calculation
-                if (Mathf.Abs(current_rot_acceleration) > max_rot_accel)
+                if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
                 {
                     if (current_rot_acceleration > 0)
-                        current_rot_acceleration = max_rot_accel;
+                        current_rot_acceleration = current_max_rot_accel;
                     else
-                        current_rot_acceleration = -max_rot_accel;
+                        current_rot_acceleration = -current_max_rot_accel;
                 }
                 current_rot_velocity += current_rot_acceleration;
 
-                if (Mathf.Abs(current_rot_velocity) > max_rot_vel)
+                if (Mathf.Abs(current_rot_velocity) > current_max_rot_vel)
                 {
                     if (current_rot_velocity > 0)
                     {
-                        current_rot_velocity = max_rot_vel;
+                        current_rot_velocity = current_max_rot_vel;
                     }
-                    else current_rot_velocity = -max_rot_vel;
+                    else current_rot_velocity = -current_max_rot_vel;
                 }
 
                 GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity);

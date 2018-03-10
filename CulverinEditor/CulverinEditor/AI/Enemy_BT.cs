@@ -25,6 +25,7 @@ public class Enemy_BT : BT
     public float attack_damage = 1.0f;
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
+    protected float current_interpolation = 1.0f;
 
     protected bool hit = false;
 
@@ -71,7 +72,11 @@ public class Enemy_BT : BT
         {
             life_state = ENEMY_STATE.ENEMY_DAMAGED;
 
-            float current_interpolation = current_hp / total_hp;
+            /*GetComponent<CompMaterial>().SetAlbedo();
+            GetComponent<CompMaterial>().SetNormals();
+            GetComponent<CompMaterial>().SetAmbientOclusion();*/
+
+            current_interpolation = current_hp / total_hp;
             anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;
         }
     }
@@ -84,6 +89,11 @@ public class Enemy_BT : BT
         if (distance <= range)
             return true;
         return false;
+    }
+
+    public float GetCurrentInterpolation()
+    {
+        return current_interpolation;
     }
 
 }
