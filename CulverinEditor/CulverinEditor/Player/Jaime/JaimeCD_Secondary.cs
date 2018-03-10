@@ -1,7 +1,7 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
-public class JaimeCD_Left : CoolDown
+public class JaimeCD_Secondary : CoolDown
 {
     public override void Update()
     {
@@ -14,10 +14,10 @@ public class JaimeCD_Left : CoolDown
         {
             if (in_cd == false)
             {
-                if (GetLinkedObject("jaime_obj").GetComponent<JaimeController>().OnLeftClick()) 
+                if (GetLinkedObject("jaime_obj").GetComponent<JaimeController>().OnSecondaryClick())
                 {
                     ActivateAbility();
-                }            
+                }
             }
         }
     }
@@ -28,7 +28,7 @@ public class JaimeCD_Left : CoolDown
         button_cd = GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>();
         button_cd.Deactivate();
 
-        Debug.Log("Jaime Left CD Clicked");
+        Debug.Log("Jaime Secondary CD Clicked");
         act_time = 0.0f;
         in_cd = true;
     }

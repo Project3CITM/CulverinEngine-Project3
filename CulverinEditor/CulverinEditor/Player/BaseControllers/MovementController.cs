@@ -224,136 +224,145 @@ public class MovementController : CulverinBehaviour
 
     private void CheckRotation()
     {
-        if (Input.GetKeyDown(KeyCode.Q)) //Left
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
         {
-            actual_angle = 0;
-            angle = -10;
-            rotating = true;
-            ModificateCurrentDirection(true);
-        }
-        if (Input.GetKeyDown(KeyCode.E)) //Right
-        {
-            actual_angle = 0;
-            angle = 10;
-            rotating = true;
-            ModificateCurrentDirection(false);
-        }
+            if (Input.GetKeyDown(KeyCode.Q)) //Left
+            {
+                actual_angle = 0;
+                angle = -10;
+                rotating = true;
+                ModificateCurrentDirection(true);
+            }
+            if (Input.GetKeyDown(KeyCode.E)) //Right
+            {
+                actual_angle = 0;
+                angle = 10;
+                rotating = true;
+                ModificateCurrentDirection(false);
+            }
 
-        float variation = Input.GetInput_ControllerAxis("RHorizontal", "Player");
-        if (variation < -0.8)
-        {
-            actual_angle = 0;
-            angle = -10;
-            rotating = true;
-            ModificateCurrentDirection(true);
-            //Debug.Log("AXIS");
-        }
-        else if (variation > 0.8)
-        {
-            actual_angle = 0;
-            angle = 10;
-            rotating = true;
-            ModificateCurrentDirection(false);
-            //Debug.Log("AXIS");
+            float variation = Input.GetInput_ControllerAxis("RHorizontal", "Player");
+            if (variation < -0.8)
+            {
+                actual_angle = 0;
+                angle = -10;
+                rotating = true;
+                ModificateCurrentDirection(true);
+                //Debug.Log("AXIS");
+            }
+            else if (variation > 0.8)
+            {
+                actual_angle = 0;
+                angle = 10;
+                rotating = true;
+                ModificateCurrentDirection(false);
+                //Debug.Log("AXIS");
+            }
         }
     }
 
     private void CheckMovement()
     {
-        if (Input.GetKeyDown(KeyCode.A) /*&& !EnemyInLeft()*/) //Left
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
         {
-            audio = GetComponent<CompAudio>();
-            audio.PlayEvent("Footsteps");
-            MoveLeft(out tile_mov_x, out tile_mov_y);
-        }
-        else if (Input.GetKeyDown(KeyCode.D) /*&& !EnemyInRight()*/) //Right
-        {
-            audio = GetComponent<CompAudio>();
-            audio.PlayEvent("Footsteps");
-            MoveRight(out tile_mov_x, out tile_mov_y);
-        }
-        else if (Input.GetKeyDown(KeyCode.W) /*&& !EnemyInFront()*/) //Up
-        {
-            audio = GetComponent<CompAudio>();
-            audio.PlayEvent("Footsteps");
-            MoveForward(out tile_mov_x, out tile_mov_y);
-        }
-        else if (Input.GetKeyDown(KeyCode.S) /*&& !EnemyBehind()*/) //Down
-        {
-            audio = GetComponent<CompAudio>();
-            audio.PlayEvent("Footsteps");
-            MoveBackward(out tile_mov_x, out tile_mov_y);
-        }
+            if (Input.GetKeyDown(KeyCode.A) /*&& !EnemyInLeft()*/) //Left
+            {
+                audio = GetComponent<CompAudio>();
+                audio.PlayEvent("Footsteps");
+                MoveLeft(out tile_mov_x, out tile_mov_y);
+            }
+            else if (Input.GetKeyDown(KeyCode.D) /*&& !EnemyInRight()*/) //Right
+            {
+                audio = GetComponent<CompAudio>();
+                audio.PlayEvent("Footsteps");
+                MoveRight(out tile_mov_x, out tile_mov_y);
+            }
+            else if (Input.GetKeyDown(KeyCode.W) /*&& !EnemyInFront()*/) //Up
+            {
+                audio = GetComponent<CompAudio>();
+                audio.PlayEvent("Footsteps");
+                MoveForward(out tile_mov_x, out tile_mov_y);
+            }
+            else if (Input.GetKeyDown(KeyCode.S) /*&& !EnemyBehind()*/) //Down
+            {
+                audio = GetComponent<CompAudio>();
+                audio.PlayEvent("Footsteps");
+                MoveBackward(out tile_mov_x, out tile_mov_y);
+            }
 
-       float variation = Input.GetInput_ControllerAxis("LHorizontal", "Player");
-        if (variation > 0.8)
-        {
-            audio = GetComponent<CompAudio>();
-            audio.PlayEvent("Footsteps");
-            MoveRight(out tile_mov_x, out tile_mov_y);
-            Debug.Log("Right");
-        }
-        else if (variation < -0.8)
-        {
-            audio = GetComponent<CompAudio>();
-            audio.PlayEvent("Footsteps");
-            MoveLeft(out tile_mov_x, out tile_mov_y);
-            Debug.Log("Left");
-        }
+            float variation = Input.GetInput_ControllerAxis("LHorizontal", "Player");
+            if (variation > 0.8)
+            {
+                audio = GetComponent<CompAudio>();
+                audio.PlayEvent("Footsteps");
+                MoveRight(out tile_mov_x, out tile_mov_y);
+                Debug.Log("Right");
+            }
+            else if (variation < -0.8)
+            {
+                audio = GetComponent<CompAudio>();
+                audio.PlayEvent("Footsteps");
+                MoveLeft(out tile_mov_x, out tile_mov_y);
+                Debug.Log("Left");
+            }
 
-        float variation2 = Input.GetInput_ControllerAxis("LVertical", "Player");
-        if (variation2 > 0.8)
-        {
-            audio = GetComponent<CompAudio>();
-            audio.PlayEvent("Footsteps");
-            MoveBackward(out tile_mov_x, out tile_mov_y);
-            Debug.Log("Back");
-        }
-        else if (variation2 < -0.8)
-        {
-            audio = GetComponent<CompAudio>();
-            audio.PlayEvent("Footsteps");
-            MoveForward(out tile_mov_x, out tile_mov_y);
-            Debug.Log("Forw");
+            float variation2 = Input.GetInput_ControllerAxis("LVertical", "Player");
+            if (variation2 > 0.8)
+            {
+                audio = GetComponent<CompAudio>();
+                audio.PlayEvent("Footsteps");
+                MoveBackward(out tile_mov_x, out tile_mov_y);
+                Debug.Log("Back");
+            }
+            else if (variation2 < -0.8)
+            {
+                audio = GetComponent<CompAudio>();
+                audio.PlayEvent("Footsteps");
+                MoveForward(out tile_mov_x, out tile_mov_y);
+                Debug.Log("Forw");
+            }
         }
     }
 
     private void CheckFacingRotation()
     {
-        if(Input.GetKeyDown(KeyCode.Z)) //Look Up
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
         {
-            if (curr_fac != Facing.UP)
+            if (Input.GetKeyDown(KeyCode.Z)) //Look Up
             {
-                if (curr_fac == Facing.STRAIGHT)
+                if (curr_fac != Facing.UP)
                 {
-                    curr_fac = Facing.UP;
-                    actual_facing_angle = 0;
+                    if (curr_fac == Facing.STRAIGHT)
+                    {
+                        curr_fac = Facing.UP;
+                        actual_facing_angle = 0;
+                    }
+                    else if (curr_fac == Facing.DOWN)
+                    {
+                        curr_fac = Facing.STRAIGHT;
+                        actual_facing_angle = down_angle;
+                    }
+                    face_angle = 10;
+                    face_rotating = true;
                 }
-                else if (curr_fac == Facing.DOWN)
-                {
-                    curr_fac = Facing.STRAIGHT;
-                    actual_facing_angle = down_angle;
-                }
-                face_angle = 10;
-                face_rotating = true;
             }
-        }
-        else if (Input.GetKeyDown(KeyCode.X)) //Look Down
-        {
-            if (curr_fac != Facing.DOWN)
+            else if (Input.GetKeyDown(KeyCode.X)) //Look Down
             {
-                if (curr_fac == Facing.STRAIGHT)
+                if (curr_fac != Facing.DOWN)
                 {
-                    curr_fac = Facing.DOWN;
-                    actual_facing_angle = 0;
+                    if (curr_fac == Facing.STRAIGHT)
+                    {
+                        curr_fac = Facing.DOWN;
+                        actual_facing_angle = 0;
+                    }
+                    else if (curr_fac == Facing.UP)
+                    {
+                        curr_fac = Facing.STRAIGHT;
+                        actual_facing_angle = up_angle;
+                    }
+                    face_angle = -10;
+                    face_rotating = true;
                 }
-                else if (curr_fac == Facing.UP)
-                {
-                    curr_fac = Facing.STRAIGHT;
-                    actual_facing_angle = up_angle;
-                }
-                face_angle = -10;
-                face_rotating = true;
             }
         }
     }

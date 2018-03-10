@@ -334,35 +334,6 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
-    void ControlBehindCharacters()
-    {
-        if (left_character.GetName() == "Jaime")
-        {
-            left_character.GetComponent<JaimeController>().ReduceSecondaryAbilityCoolDown();
-        }
-        else if (current_character.GetName() == "Daenerys")
-        {
-            left_character.GetComponent<DaenerysController>().ReduceSecondaryAbilityCoolDown();
-        }
-        else if (left_character.GetName() == "Theon")
-        {
-            left_character.GetComponent<TheonController>().ReduceSecondaryAbilityCoolDown();
-        }
-
-        if (right_character.GetName() == "Jaime")
-        {
-            right_character.GetComponent<JaimeController>().ReduceSecondaryAbilityCoolDown();
-        }
-        else if (right_character.GetName() == "Daenerys")
-        {
-            right_character.GetComponent<DaenerysController>().ReduceSecondaryAbilityCoolDown();
-        }
-        else if (right_character.GetName() == "Theon")
-        {
-            right_character.GetComponent<TheonController>().ReduceSecondaryAbilityCoolDown();
-        }
-    }
-
     void SecondaryAbility(Side side)
     {
         if (side == Side.LEFT)
@@ -370,72 +341,33 @@ public class CharactersManager : CulverinBehaviour
             Debug.Log("Checking if left secondary ability is ready");
             if (left_character.GetName() == "Jaime")
             {
-                if (left_character.GetComponent<JaimeController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Jaime Secondary ability Left");
-                    left_character.GetComponent<JaimeController>().SecondaryAbility();
-                    left_character.GetComponent<JaimeController>().ResetCoolDown();
-                }
+                GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().Clicked();
             }
             else if (left_character.GetName() == "Daenerys")
             {
-                if (left_character.GetComponent<DaenerysController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Daenerys Secondary ability Left");
-
-                    GameObject arrow = Instantiate("DaenerysFireball");
-                    Vector3 pos = new Vector3(transform.GetPosition());
-                    Vector3 rot = new Vector3(transform.GetRotation());
-
-                    arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
-                    arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
-
-                    left_character.GetComponent<DaenerysController>().ResetCoolDown();
-                }
+                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompButton>().Clicked();
             }
             else if (left_character.GetName() == "Theon")
             {
-                if (left_character.GetComponent<TheonController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Theon Secondary ability Left");
+                GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>().Clicked();
 
-                    left_character.GetComponent<TheonController>().ActivateSecondaryAbility();
-
-                    left_character.GetComponent<TheonController>().ResetCoolDown();
-                }
             }
         }
-        else if(side == Side.RIGHT)
+        else if (side == Side.RIGHT)
         {
-            Debug.Log("Checking if left secondary ability is ready");
+            Debug.Log("Checking if right secondary ability is ready");
             if (right_character.GetName() == "Jaime")
             {
-                if (right_character.GetComponent<JaimeController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Jaime Secondary ability Left");
-                    right_character.GetComponent<JaimeController>().ResetCoolDown();
-                }
+                GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().Clicked();
             }
             else if (right_character.GetName() == "Daenerys")
             {
-                if (right_character.GetComponent<DaenerysController>().IsSecondaryAbilityReady())
-                {
-                    GameObject arrow = Instantiate("DaenerysFireball");
-                    Vector3 pos = new Vector3(transform.GetPosition());
-                    Vector3 rot = new Vector3(transform.GetRotation());
-
-                    arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
-                    arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
-                    right_character.GetComponent<DaenerysController>().ResetCoolDown();
-                }
+                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompButton>().Clicked();
             }
             else if (right_character.GetName() == "Theon")
             {
-                if (right_character.GetComponent<TheonController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Theon Secondary ability Left");
-                    right_character.GetComponent<TheonController>().ResetCoolDown();
-                }
+                GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>().Clicked();
+
             }
         }
     }
@@ -464,6 +396,48 @@ public class CharactersManager : CulverinBehaviour
             {
                 current_character.GetComponent<TheonController>().GetDamage(dmg);
             }
+        }
+    }
+
+    public bool IsIdle()
+    {
+        // CURRENT CHARACTER -------------------------------
+        if (current_character.GetName() == "Jaime")
+        {
+            if(current_character.GetComponent<JaimeController>().GetState() == (int)CharacterController.State.IDLE)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+            if (current_character.GetComponent<DaenerysController>().GetState() == (int)CharacterController.State.IDLE)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            if (current_character.GetComponent<TheonController>().GetState() == (int)CharacterController.State.IDLE)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
         }
     }
 
