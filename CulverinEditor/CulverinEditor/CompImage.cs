@@ -7,5 +7,8 @@ namespace CulverinEditor
         //functions like fillamount
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void FillAmount(float value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern CompRectTransform GetRectTransform();
     }
 }

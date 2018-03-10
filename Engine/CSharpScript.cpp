@@ -39,8 +39,9 @@ void ScriptVariable::SetMonoValue(void* newVal)
 		if (type == VarType::Var_GAMEOBJECT)
 		{
 			/*MonoObject* object = mono_field_get_value_object(App->importer->iScript->GetDomain(), mono_field, script->GetMonoObject());
-			App->importer->iScript->UpdateMonoMap(game_object);
+
 			//script->game_objects[object] = game_object;*/
+			//App->importer->iScript->UpdateMonoMap(game_object);
 			std::string temp = mono_field_get_name(mono_field);
 			App->importer->iScript->map_link_variables[temp] = game_object;
 		}
@@ -55,13 +56,22 @@ void ScriptVariable::EreaseMonoValue(void* newVal)
 {
 	if (newVal != nullptr)
 	{
-		MonoObject* object = mono_field_get_value_object(App->importer->iScript->GetDomain(), mono_field, script->GetMonoObject());
-		if (object)
+		//MonoObject* object = App->importer->iScript->GetMonoObject((GameObject*)newVal);
+		//MonoObject* object = mono_field_get_value_object(App->importer->iScript->GetDomain(), mono_field, script->GetMonoObject());
+		if (1)
 		{
-			GameObject* temp = App->importer->iScript->GetGameObject(object);
-			temp->SettoDelete();
-			App->importer->iScript->UpdateMonoMap(temp);
-			//script->game_objects.erase(script->game_objects.find(object));
+			//GameObject* temp = App->importer->iScript->GetGameObject(object);
+			//App->importer->iScript->UpdateMonoMap(temp, true);
+			std::map<std::string, GameObject*>::iterator it = App->importer->iScript->map_link_variables.begin();
+			while (it != App->importer->iScript->map_link_variables.end())
+			{
+				if (it->second == game_object)
+				{
+					App->importer->iScript->map_link_variables.erase(it);
+					break;
+				}
+				it++;
+			}
 			game_object = nullptr;
 		}
 	}
@@ -1090,6 +1100,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	else if (name_class == "CompMesh")
 	{
 		comp_name = "CompMesh";
+	}
+	else if (name_class == "CompRectTransform")
+	{
+		comp_name = "CompRectTransform";
 	}
 	/* Scripts */
 	if (comp_name == "")

@@ -49,7 +49,7 @@ public:
 	// Map <MonoObject, GameObject>
 	void SetMonoMap(GameObject* root, bool is_root = false); // Only used in "Play"
 	void ClearMonoMap();
-	void UpdateMonoMap(GameObject* modificate);
+	void UpdateMonoMap(GameObject* modificate, bool do_delete = false);
 	void UpdateMonoMap(GameObject* modificate, MonoObject* object);
 	MonoObject* GetMonoObject(GameObject* gameobject);
 	GameObject* GetGameObject(MonoObject* monoobject);

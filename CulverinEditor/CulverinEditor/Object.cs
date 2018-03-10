@@ -26,11 +26,13 @@ namespace CulverinEditor
         
         public static bool operator ==(Object x, Object y)
         {
-            return x.Equals(y);
+            return Equals(x, y);
+           //return x.Equals(y);
         }
         public static bool operator !=(Object x, Object y)
         {
-            return !(x.Equals(y));
+            return !Equals(x, y);
+          // return !(x.Equals(y));
         }
 
         public override bool Equals(object other)

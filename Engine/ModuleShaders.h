@@ -48,8 +48,9 @@ public:
 	void ImportShaderObjects();
 
 	void ImportShaderMaterials();
+	void LoadShaderMaterials();
 
-	Material* LoadMaterial(std::string path);
+	Material* LoadMaterial(std::string path, bool load_vars = true);
 
 	Shader* GetShaderByName(const char* name, ShaderType type);
 

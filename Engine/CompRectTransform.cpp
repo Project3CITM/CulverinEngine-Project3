@@ -18,7 +18,7 @@
 CompRectTransform::CompRectTransform(Comp_Type t, GameObject * parent) :CompTransform(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Rect Transform";
+	name_component = "CompRectTransform";
 	max_anchor = float2(0.5f, 0.5f);
 	min_anchor = float2(0.5f, 0.5f);
 	pivot = float2(0.5f, 0.5f);

@@ -252,6 +252,9 @@ public class JaimeController : CharacterController
 
             SetAnimationTransition("ToHit", true);
 
+            audio = jaime_obj.GetComponent<CompAudio>();
+            audio.PlayEvent("JaimeHurt");
+
             //GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("Hit");
 
             //Reset hit count

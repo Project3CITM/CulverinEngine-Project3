@@ -253,23 +253,39 @@ GameObject* GameObject::GetGameObjectfromScene(int id)
 {
 	if (active)
 	{
-		ImGui::Selectable(GetName());
+		bool show_childs = false;
+		ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow;
+		if (childs.size() == 0)
+		{
+			node_flags |= ImGuiTreeNodeFlags_Leaf;
+		}
+		if (ImGui::TreeNodeEx(GetName(), node_flags))
+		{
+			show_childs = true;
+		}
 		if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 		{
 			//LOG("%.2f - %.2f  / /  %.2f - %.2f", ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y, ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y);
 			if (ImGui::IsMouseDoubleClicked(0))
 			{
+				if (show_childs)
+					ImGui::TreePop();
 				return this;
 			}
 		}
-		//Check child Game Objects -------------------
-		for (uint i = 0; i < childs.size(); i++)
+		if (show_childs)
 		{
-			GameObject* temp = childs[i]->GetGameObjectfromScene(id);
-			if (temp != nullptr)
+			//Check child Game Objects -------------------
+			for (uint i = 0; i < childs.size(); i++)
 			{
-				return temp;
+				GameObject* temp = childs[i]->GetGameObjectfromScene(id);
+				if (temp != nullptr)
+				{
+					ImGui::TreePop();
+					return temp;
+				}
 			}
+			ImGui::TreePop();
 		}
 	}
 	return nullptr;

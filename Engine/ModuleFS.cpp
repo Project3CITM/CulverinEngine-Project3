@@ -66,11 +66,15 @@ update_status ModuleFS::PreUpdate(float dt)
 	static bool ImportAutoFiles = true;
 	if (ImportAutoFiles)
 	{
+		App->module_shaders->LoadShaderMaterials();
 		if (App->mode_game == false)
 		{
 			ImportAllFilesNoMeta(allfilesAsstes);
 		}
-		App->module_shaders->ImportShaderMaterials();//First material!! and next meshes... TODO ELLIOT
+		App->module_shaders->ImportShaderMaterials();
+	
+
+		//First material!! and next meshes... TODO ELLIOT
 		ImportAutoFiles = false;
 	}
 

@@ -152,3 +152,8 @@ float4 CompGraphic::GetColor() const
 {
 	return color;
 }
+
+bool CompGraphic::GetParentActive()
+{
+	return parent->IsActive();
+}

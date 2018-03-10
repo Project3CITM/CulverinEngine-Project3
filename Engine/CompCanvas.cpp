@@ -256,7 +256,7 @@ void CompCanvas::DrawGraphic(bool debug)
 		{
 			
 			CompGraphic* graphic = graphic_vector[i];
-			if (!graphic->IsActive() || !graphic->GetToRender())
+			if (!graphic->IsActive() || !graphic->GetToRender() || !graphic->GetParentActive())
 				continue;
 			GLint g_AttribLocationColor = glGetUniformLocation(default_ui_shader->programID, "Color_UI_ME");
 			GLint modelLoc = glGetUniformLocation(default_ui_shader->programID, "model");

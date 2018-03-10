@@ -14,7 +14,6 @@ public:
 	CompGraphic(const CompGraphic& copy, GameObject* parent);
 	~CompGraphic();
 	void Clear();
-
 	void AddCanvas();
 	void AddCanvasRender();
 	void AddRectTransform();
@@ -35,6 +34,7 @@ public:
 	CompRectTransform* GetRectTrasnform()const;
 	CompCanvasRender* GetCanvasRender()const;
 	float4 GetColor()const;
+	bool GetParentActive();
 
 private:
 public:

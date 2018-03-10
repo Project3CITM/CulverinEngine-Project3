@@ -265,20 +265,20 @@ bool ModuleLightning::CleanUp()
 
 void ModuleLightning::OnEvent(Event & event)
 {
-	//This is only for shadows 
-	
-	test_fix.Bind("peter");
+	if (App->scene->scene_buff != nullptr)
+	{
+		//This is only for shadows 
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
-	 // Cull back-facing triangles -> draw only front-facing triangles
-	
-						 // Clear the screen
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		test_fix.Bind("peter");
 
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		// Cull back-facing triangles -> draw only front-facing triangles
 
+		// Clear the screen
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 
-	
 	switch (event.type)
 	{
 	case EventType::EVENT_SEND_3D_3DA_MM:
@@ -310,11 +310,13 @@ void ModuleLightning::OnEvent(Event & event)
 		}
 		break;
 	}
-	
-	ImGui::Image((ImTextureID*)test_fix.depthTex, ImVec2(500, 500));
-	App->scene->scene_buff->Bind("Scene");
-	glCullFace(GL_BACK);
-	shadow_Shader->Unbind();
+	if (App->scene->scene_buff != nullptr)
+	{
+		ImGui::Image((ImTextureID*)test_fix.depthTex, ImVec2(500, 500));
+		App->scene->scene_buff->Bind("Scene");
+		glCullFace(GL_BACK);
+		shadow_Shader->Unbind();
+	}
 }
 
 void ModuleLightning::CalcPointShadowMaps(CompLight* light, CompMesh* mesh_to_render)
