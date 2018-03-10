@@ -50,7 +50,6 @@ public class JaimeController : CharacterController
 
     protected override void Start()
     {
-
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         jaime_obj = GetLinkedObject("jaime_obj");
         larm_jaime_obj = GetLinkedObject("larm_jaime_obj");
@@ -86,12 +85,6 @@ public class JaimeController : CharacterController
     {
         // Debug method to control Hp
         CheckHealth();
-
-        //Test Secondary Ability
-        if(Input.GetKeyDown(KeyCode.M))
-        {
-            SecondaryAbility();
-        }
 
         // First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();

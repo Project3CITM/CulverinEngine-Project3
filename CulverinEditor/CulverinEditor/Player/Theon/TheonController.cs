@@ -377,9 +377,9 @@ public class TheonController : CharacterController
     public void PrepareLeftAbility()
     {
         Debug.Log("Theon LW Prepare Ability");
-        OnLeftClick();
-        //button = theon_button_left.GetComponent<CompButton>();
-        //button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
+        //OnLeftClick();
+        button = theon_button_left.GetComponent<CompButton>();
+        button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
     public void DoLeftAbility() //Might be virtual
@@ -459,9 +459,9 @@ public class TheonController : CharacterController
     public void PrepareRightAbility()
     {
         Debug.Log("Theon RW Prepare Block");
-        //button = theon_button_right.GetComponent<CompButton>();
-        //button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
-        OnRightClick();
+        button = theon_button_right.GetComponent<CompButton>();
+        button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
+        //OnRightClick();
     }
 
     public void DoRightAbility() //Might be virtual

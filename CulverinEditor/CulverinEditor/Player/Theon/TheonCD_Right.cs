@@ -5,7 +5,7 @@ public class TheonCD_Right : CoolDown
 {
     public override void OnClick()
     {
-        if (GetLinkedObject("theon_obj").GetComponent<CharacterController>().GetState() == 0)
+        if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0)
         {
             if (in_cd == false)
             {

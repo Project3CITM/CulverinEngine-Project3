@@ -25,7 +25,7 @@ public class JaimeCD_Right : CoolDown
     public override void ActivateAbility()
     {
         //this_obj.GetComponent
-        button_cd = GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>();
+        button_cd = GetLinkedObject("jaime_button_right").GetComponent<CompButton>();
         button_cd.Deactivate();
 
         Debug.Log("Jaime Right CD Clicked");

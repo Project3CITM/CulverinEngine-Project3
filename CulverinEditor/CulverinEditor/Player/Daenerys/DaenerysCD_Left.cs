@@ -16,7 +16,7 @@ public class DaenerysCD_Left : CoolDown
                 if (in_cd == true)
                 {
                     in_cd = false;
-                    button_cd = GetComponent<CompButton>();
+                    button_cd = GetLinkedObject("daenerys_button_left_obj").GetComponent<CompButton>();
                     button_cd.Activate();
                 }
                 current_charges++;
