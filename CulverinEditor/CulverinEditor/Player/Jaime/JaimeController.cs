@@ -228,6 +228,8 @@ public class JaimeController : CharacterController
             }
         }
 
+        PlayFx("BehindMe");
+
         // Activate the shield that protects from damage once
         GetLinkedObject("player_obj").GetComponent<Shield>().ActivateShield();
     }
@@ -239,7 +241,7 @@ public class JaimeController : CharacterController
             SetAnimationTransition("ToBlock", true);
 
             GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
-
+            PlayFx("MetalClash");
             SetState(State.BLOCKING);
         }
         else

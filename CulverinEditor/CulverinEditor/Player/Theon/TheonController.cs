@@ -139,6 +139,7 @@ public class TheonController : CharacterController
                                 //Activate arrow Placement
                                 Arrow.GetComponent<CompMesh>().SetEnabled(true, Arrow);
                                 state = State.IDLE;
+                                GetComponent<CompAudio>().PlayEvent("CrossbowRecharge");
                             }
                             else
                             {
@@ -400,7 +401,7 @@ public class TheonController : CharacterController
 
         //Set Attack Animation
         SetAnimationTransition("ToAttack1", true);
-
+        GetComponent<CompAudio>().PlayEvent("CrossbowShot");
         SetState(CharacterController.State.ATTACKING);
     }
 
