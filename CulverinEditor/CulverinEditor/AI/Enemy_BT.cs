@@ -13,6 +13,8 @@ public class Enemy_BT : BT
     public GameObject enemies_manager = null;
     public GameObject player = null;
 
+    CompAnimation anim = null;
+
     public float total_hp = 100;
     float current_hp;
     public ENEMY_STATE life_state = ENEMY_STATE.ENEMY_ALIVE;
@@ -21,7 +23,6 @@ public class Enemy_BT : BT
     public float min_anim_speed = 0.5f;
 
     public float attack_cooldown = 1.0f;
-    public float anim_speed = 1.0f;
     public float attack_damage = 1.0f;
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
@@ -34,6 +35,7 @@ public class Enemy_BT : BT
     public override void Start()
     {
         player = GetLinkedObject("player");
+        anim = GetComponent<CompAnimation>();
         current_hp = total_hp;
         //Enemy starts with the attack loaded!
         attack_timer = attack_cooldown * anim_speed;
@@ -64,6 +66,13 @@ public class Enemy_BT : BT
 
         if (current_hp <= 0)
         {
+            anim.SetClipsSpeed(anim_speed);
+
+            if (state == AI_STATE.AI_ATTACKING)
+                anim.SetTransition("ToDie");
+            else
+                anim.SetTransition("ToHitAndDie");
+
             //Trigger die animation
             state = AI_STATE.AI_DEAD;
             life_state = ENEMY_STATE.ENEMY_DEAD;
@@ -78,6 +87,7 @@ public class Enemy_BT : BT
 
             current_interpolation = current_hp / total_hp;
             anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;
+            anim.SetClipsSpeed(anim_speed);
         }
     }
 

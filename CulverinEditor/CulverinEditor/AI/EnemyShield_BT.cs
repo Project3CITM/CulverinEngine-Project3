@@ -45,6 +45,7 @@ class EnemyShield_BT : Enemy_BT
                 else
                 {
                     state = AI_STATE.AI_IDLE;
+                    idle_action.SetAnimSpeed(anim_speed);
                     current_action = idle_action;
                     current_action.ActionStart();
                     return;

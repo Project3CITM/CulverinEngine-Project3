@@ -45,13 +45,16 @@ public class Movement_Action : Action
     float arrive_distance = 0.05f;
     float rot_margin = 0.05f;
 
+    public bool chase = false;
+
     public Movement_Action()
     {
         action_type = ACTION_TYPE.MOVE_ACTION;
     }
 
-    public Movement_Action(float speed): base(speed)
+    public Movement_Action(float speed, bool chase_ = false): base(speed)
     {
+        chase = chase_;
         action_type = ACTION_TYPE.MOVE_ACTION;
     }
 
@@ -82,6 +85,9 @@ public class Movement_Action : Action
 
     public override bool ActionStart()
     {
+        anim.SetClipsSpeed(anim_speed);
+        anim.SetTransition("ToPatrol");
+
         if (path == null)
         {
             Debug.Log("Move: Path == null");
@@ -109,7 +115,7 @@ public class Movement_Action : Action
                 }
 
                 Vector3 local_pos = GetComponent<Transform>().local_position;
-                float dt = Time.DeltaTime();
+                float dt = Time.deltaTime;
                 local_pos.x = local_pos.x + (current_velocity.x * dt);
                 local_pos.z = local_pos.z + (current_velocity.z * dt);
                 GetComponent<Transform>().local_position = local_pos;
@@ -293,10 +299,10 @@ public class Movement_Action : Action
             {
                 if (!FinishedRotation() && rotate)
                 {
-                    /*if(GetDeltaAngle() < 0)
-                        anim.PlayAnimation("Left");
+                    if(GetDeltaAngle() < 0)
+                        anim.SetTransition("ToDcha");
                     else
-                        anim.PlayAnimation("Right");*/
+                        anim.SetTransition("ToIzq");
 
                     state = Motion_State.MS_ROTATE;
                     GetComponent<Align_Steering>().SetEnabled(true);
@@ -305,7 +311,11 @@ public class Movement_Action : Action
                 }
                 if (!ReachedTile())
                 {
-                    //anim.PlayAnimation("Patrol");
+                    if (chase)
+                       anim.SetTransition("ToChase");
+                    else
+                        anim.SetTransition("ToPatrol");
+
                     state = Motion_State.MS_MOVE;
                     GetComponent<Arrive_Steering>().SetEnabled(true);
                     GetComponent<Seek_Steering>().SetEnabled(true);

@@ -16,9 +16,15 @@ public class Investigate_Action : Action
 
     INVESTIGATESTATE my_state;
     PerceptionEvent event_to_react;
+    CompAnimation anim;
     ACTION_RESULT move_return;
 
     public bool forgot_event = false;
+
+    void Start()
+    {
+        anim = GetComponent<CompAnimation>();
+    }
 
     public Investigate_Action()
     {
@@ -32,6 +38,11 @@ public class Investigate_Action : Action
 
     public override bool ActionStart()
     {
+        bool ret = GetComponent<Movement_Action>().ActionStart();
+
+        anim.SetClipsSpeed(anim_speed);
+        anim.SetTransition("ToPatrol");
+
         int current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
@@ -41,7 +52,7 @@ public class Investigate_Action : Action
         init_tile_y = current_tile_y;
         my_state = INVESTIGATESTATE.GOING_TO_INVESTIGATE;
 
-        return GetComponent<Movement_Action>().ActionStart();
+        return ret;
     }
 
     public override ACTION_RESULT ActionUpdate()

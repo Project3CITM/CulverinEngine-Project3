@@ -27,16 +27,16 @@ public class Attack_Action : Action
 
     public GameObject target = null;
     public GameObject my_object = null;
-    CompAnimation animator = null;
+    CompAnimation anim = null;
     CharactersManager player = null;
 
     public override bool ActionStart()
     {
         Debug.Log("Start Called!");
         state = SWA_STATE.PRE_APPLY;
-        //animator = GetComponent<CompAnimation>();
-        //animator.SetTransition("ToAttack"); //This will be attack
-        //animator.SetClipsSpeed(anim_speed);
+        anim = GetComponent<CompAnimation>();
+        anim.SetTransition("ToAt"); //This will be attack
+        anim.SetClipsSpeed(anim_speed);
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
         //Interrupt player action
         return true;
@@ -52,7 +52,7 @@ public class Attack_Action : Action
         }
 
         //Doing attack
-        if (state == SWA_STATE.PRE_APPLY)// && animator.IsAnimOverXTime(apply_damage_point))
+        if (state == SWA_STATE.PRE_APPLY && anim.IsAnimOverXTime(apply_damage_point))
         {
             state = SWA_STATE.POST_APPLY;
             player.GetDamage(damage);
@@ -60,7 +60,7 @@ public class Attack_Action : Action
             //Play audio fx
         }
 
-        else if (state == SWA_STATE.POST_APPLY)// && animator.IsAnimationStopped("Cover"))
+        else if (state == SWA_STATE.POST_APPLY && anim.IsAnimationStopped("Attack"))
         {
             Debug.Log("ATTACK_EEEEND!");
             state = SWA_STATE.WAITING;
