@@ -382,6 +382,14 @@ public class CharactersManager : CulverinBehaviour
                 if (left_character.GetComponent<DaenerysController>().IsSecondaryAbilityReady())
                 {
                     Debug.Log("Daenerys Secondary ability Left");
+
+                    GameObject arrow = Instantiate("DaenerysFireball");
+                    Vector3 pos = new Vector3(transform.GetPosition());
+                    Vector3 rot = new Vector3(transform.GetRotation());
+
+                    arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
+                    arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
+
                     left_character.GetComponent<DaenerysController>().ResetCoolDown();
                 }
             }
@@ -390,11 +398,9 @@ public class CharactersManager : CulverinBehaviour
                 if (left_character.GetComponent<TheonController>().IsSecondaryAbilityReady())
                 {
                     Debug.Log("Theon Secondary ability Left");
-                    GameObject arrow = Instantiate("ArrowTheon");
-                    Vector3 pos = new Vector3(transform.GetPosition());
-                    Vector3 rot = new Vector3(transform.GetRotation());
-                    arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
-                    arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
+
+                    left_character.GetComponent<TheonController>().ActivateSecondaryAbility();
+
                     left_character.GetComponent<TheonController>().ResetCoolDown();
                 }
             }
@@ -414,7 +420,12 @@ public class CharactersManager : CulverinBehaviour
             {
                 if (right_character.GetComponent<DaenerysController>().IsSecondaryAbilityReady())
                 {
-                    Debug.Log("Daenerys Secondary ability Left");
+                    GameObject arrow = Instantiate("DaenerysFireball");
+                    Vector3 pos = new Vector3(transform.GetPosition());
+                    Vector3 rot = new Vector3(transform.GetRotation());
+
+                    arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
+                    arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
                     right_character.GetComponent<DaenerysController>().ResetCoolDown();
                 }
             }
