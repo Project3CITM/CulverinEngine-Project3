@@ -16,27 +16,16 @@ public class CharactersManager : CulverinBehaviour
         RIGHT
     }
 
-    public struct Score
-    {
-        uint enem_killed;
-        float game_start;
-        bool puzzle;
-        
-        void EnemyKilled(uint number = 1)
-        {
-            enem_killed += number;
-        }
-        float GameTime ()
-        {
-            float actual_time = Time.DeltaTime();
-            return (game_start - actual_time);
-        }
-        bool IsPuzzle()
-        {
-            return puzzle;
-        }
-    }
+    //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+    uint enem_killed;
+    public float puzzle_start;
+    public bool in_puzzle;
+    GameObject bg;
+    GameObject coin1;
+    GameObject coin2;
+    GameObject coin3;
 
+    //SCORE SCREEN END
     public GameObject current_character;
     public GameObject left_character;
     public GameObject right_character;
@@ -53,11 +42,12 @@ public class CharactersManager : CulverinBehaviour
     public GameObject daenerys_s_button_obj;
     public GameObject theon_s_button_obj;
 
-
     Shield shield;
 
-    public Score player_score;
 
+    
+
+    public float puz_max_time;
     //To manage player state
     State state = State.IDLE;   
 
@@ -66,6 +56,10 @@ public class CharactersManager : CulverinBehaviour
 
     void Start()
     {
+        coin1.SetActive(false);
+        coin2.SetActive(false);
+        coin3.SetActive(false);
+        bg.SetActive(false);
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
         current_character = GetLinkedObject("current_character");
         left_character = GetLinkedObject("left_character");
@@ -80,11 +74,21 @@ public class CharactersManager : CulverinBehaviour
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
+        //core menu
+        bg = GetLinkedObject("bg");
+        coin1 = GetLinkedObject("coin1");
+        coin2= GetLinkedObject("coin2");
+        coin3= GetLinkedObject("coin3");
     }
 
     void Update()
     {
-        switch(state)
+        if (in_puzzle)
+        {
+            puzzle_start += Time.deltaTime;
+        }
+
+        switch (state)
         {
             case State.IDLE:
                 {
@@ -330,35 +334,6 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
-    void ControlBehindCharacters()
-    {
-        if (left_character.GetName() == "Jaime")
-        {
-            left_character.GetComponent<JaimeController>().ReduceSecondaryAbilityCoolDown();
-        }
-        else if (current_character.GetName() == "Daenerys")
-        {
-            left_character.GetComponent<DaenerysController>().ReduceSecondaryAbilityCoolDown();
-        }
-        else if (left_character.GetName() == "Theon")
-        {
-            left_character.GetComponent<TheonController>().ReduceSecondaryAbilityCoolDown();
-        }
-
-        if (right_character.GetName() == "Jaime")
-        {
-            right_character.GetComponent<JaimeController>().ReduceSecondaryAbilityCoolDown();
-        }
-        else if (right_character.GetName() == "Daenerys")
-        {
-            right_character.GetComponent<DaenerysController>().ReduceSecondaryAbilityCoolDown();
-        }
-        else if (right_character.GetName() == "Theon")
-        {
-            right_character.GetComponent<TheonController>().ReduceSecondaryAbilityCoolDown();
-        }
-    }
-
     void SecondaryAbility(Side side)
     {
         if (side == Side.LEFT)
@@ -366,61 +341,33 @@ public class CharactersManager : CulverinBehaviour
             Debug.Log("Checking if left secondary ability is ready");
             if (left_character.GetName() == "Jaime")
             {
-                if (left_character.GetComponent<JaimeController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Jaime Secondary ability Left");
-                    left_character.GetComponent<JaimeController>().SecondaryAbility();
-                    left_character.GetComponent<JaimeController>().ResetCoolDown();
-                }
+                GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().Clicked();
             }
             else if (left_character.GetName() == "Daenerys")
             {
-                if (left_character.GetComponent<DaenerysController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Daenerys Secondary ability Left");
-                    left_character.GetComponent<DaenerysController>().ResetCoolDown();
-                }
+                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompButton>().Clicked();
             }
             else if (left_character.GetName() == "Theon")
             {
-                if (left_character.GetComponent<TheonController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Theon Secondary ability Left");
-                    GameObject arrow = Instantiate("ArrowTheon");
-                    Vector3 pos = new Vector3(transform.GetPosition());
-                    Vector3 rot = new Vector3(transform.GetRotation());
-                    arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
-                    arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
-                    left_character.GetComponent<TheonController>().ResetCoolDown();
-                }
+                GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>().Clicked();
+
             }
         }
-        else if(side == Side.RIGHT)
+        else if (side == Side.RIGHT)
         {
-            Debug.Log("Checking if left secondary ability is ready");
+            Debug.Log("Checking if right secondary ability is ready");
             if (right_character.GetName() == "Jaime")
             {
-                if (right_character.GetComponent<JaimeController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Jaime Secondary ability Left");
-                    right_character.GetComponent<JaimeController>().ResetCoolDown();
-                }
+                GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().Clicked();
             }
             else if (right_character.GetName() == "Daenerys")
             {
-                if (right_character.GetComponent<DaenerysController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Daenerys Secondary ability Left");
-                    right_character.GetComponent<DaenerysController>().ResetCoolDown();
-                }
+                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompButton>().Clicked();
             }
             else if (right_character.GetName() == "Theon")
             {
-                if (right_character.GetComponent<TheonController>().IsSecondaryAbilityReady())
-                {
-                    Debug.Log("Theon Secondary ability Left");
-                    right_character.GetComponent<TheonController>().ResetCoolDown();
-                }
+                GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>().Clicked();
+
             }
         }
     }
@@ -451,4 +398,118 @@ public class CharactersManager : CulverinBehaviour
             }
         }
     }
+
+    public bool IsIdle()
+    {
+        // CURRENT CHARACTER -------------------------------
+        if (current_character.GetName() == "Jaime")
+        {
+            if(current_character.GetComponent<JaimeController>().GetState() == (int)CharacterController.State.IDLE)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+            if (current_character.GetComponent<DaenerysController>().GetState() == (int)CharacterController.State.IDLE)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            if (current_character.GetComponent<TheonController>().GetState() == (int)CharacterController.State.IDLE)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+        //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+    void EnemyKilled(uint number = 1)
+    {
+        enem_killed += number;
+    }
+
+    float PuzzleTime()
+    {
+        return Time.timePlay;
+    }
+
+    public void StartPuzzle()
+    {
+        puzzle_start = 0;
+        in_puzzle = true;
+    }
+
+    int GetStars()
+    {
+        int stars = 0;
+        if (Time.timePlay <= 300)
+        {
+            stars++;
+        }
+        if (enem_killed == 3)
+        {
+            stars++;
+        }
+        if (PuzzleTime() < puz_max_time)
+        {
+            stars++;
+        }
+        return stars;
+    }
+
+    void CloseScoreMenu()
+    {
+        Time.timePlay = 0;
+        enem_killed = 0;
+        puzzle_start = 0;
+        in_puzzle = false;
+        bg.SetActive(false);
+        coin1.SetActive(false);
+        coin2.SetActive(false);
+        coin3.SetActive(false);
+    }
+
+    void ShowVictoryMenu()
+    {
+        int a = GetStars();
+        bg.SetActive(true);
+        switch (a)
+        {
+            case 1:
+                coin1.SetActive(true);
+                break;
+            case 2:
+                coin1.SetActive(true);
+                coin2.SetActive(true);
+                break;
+            case 3:
+                coin1.SetActive(true);
+                coin2.SetActive(true);
+                coin3.SetActive(true);
+                break;
+        }
+    }
+    //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+
 }
+

@@ -4,7 +4,7 @@ using CulverinEditor.Debug;
 
 public class Arrow : CulverinBehaviour
 {
-    float damage = 10;
+    public float damage = 20;
     Vector3 speed;
     Vector3 gravity;
     bool collision;
@@ -20,8 +20,8 @@ public class Arrow : CulverinBehaviour
     public void Shoot()
     {
         rb.UnLockTransform();
-        Vector3 force = new Vector3(0, 10, 0);
-        rb.ApplyImpulse(force + transform.forward*50); // Forward impulse
+        Vector3 force = new Vector3(0, 5, 0);
+        rb.ApplyImpulse(force + transform.forward*1000); // Forward impulse
         rb.ApplyTorqueForce(new Vector3(0, 0, 40)); // Fall force
     }
 

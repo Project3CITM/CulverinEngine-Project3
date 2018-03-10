@@ -214,6 +214,16 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		{
 			templist[i].go->SyncComponents(nullptr);
 		}
+
+		//Add static objects to scene
+		for (int i = 0; i < templist.size(); i++)
+		{
+			if (templist[i].go->IsStatic())
+			{
+				App->scene->octree.Insert(templist[i].go);
+			}
+		}
+		App->scene->RecalculateStaticObjects();
 		templist.clear();
 
 		//Link Skeletons

@@ -17,7 +17,7 @@ public class CoolDown : CulverinBehaviour
     {
         if (in_cd)
         {
-            act_time += Time.DeltaTime();
+            act_time += Time.deltaTime;
             if (act_time >= cd_time)
             {
                 in_cd = false;

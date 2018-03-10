@@ -28,8 +28,12 @@ public class BT : CulverinBehaviour
     public int end_path_x;
     public int end_path_y;
 
+    public float anim_speed = 1.0f;
+
+
     virtual public void Start()
     {
+        idle_action.SetAnimSpeed(anim_speed);
         current_action = idle_action;
         current_action.ActionStart();
         MakeDecision();

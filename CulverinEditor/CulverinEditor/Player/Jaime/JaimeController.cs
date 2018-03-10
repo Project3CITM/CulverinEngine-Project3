@@ -26,9 +26,9 @@ public class JaimeController : CharacterController
 
     //Secondary Ability Stats ---
     public float duration = 4.0f;
-    public float sec_abuility_damage = 10.0f;
-    public float sec_ability_cd = 10.0f;
-    private float sec_ability_current_cd = 10.0f;
+    public float sec_ability_damage = 10.0f;
+    public float sec_ability_cost = 30;
+    JaimeCD_Secondary sec_ability_cd;
     // ---------------------
 
     //Left Ability Stats ---
@@ -50,7 +50,6 @@ public class JaimeController : CharacterController
 
     protected override void Start()
     {
-        sec_ability_current_cd = sec_ability_cd;
 
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         jaime_obj = GetLinkedObject("jaime_obj");
@@ -187,20 +186,6 @@ public class JaimeController : CharacterController
 
     public override void CheckAttack()
     {
-        //Left Attack
-        if (Input.GetKeyDown(KeyCode.Num1))
-        {
-            Debug.Log("Jaime Pressed 1");
-            PrepareLeftAbility();
-        }
-
-        //Right Attack
-        else if (Input.GetKeyDown(KeyCode.Num2))
-        {
-            Debug.Log("Jaime Pressed 2");
-            PrepareRightAbility();
-        }
-
         if (Input.GetInput_KeyDown("LAttack", "Player"))
         {
             Debug.Log("Jaime Pressed 1");
@@ -222,31 +207,27 @@ public class JaimeController : CharacterController
         int enemy_y = 0;
 
         Debug.Log("Jaime Secondary Ability");
-        GetLinkedObject("player_obj").GetComponent<CharactersManager>().shield_activated = true;
 
-        //Enable Shield icon
-        GetLinkedObject("shield_obj").GetComponent<CompImage>().SetEnabled(true, GetLinkedObject("shield_obj"));
+        ////Do Damage Around
+        //movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
+        //movement.GetPlayerPos(out curr_x, out curr_y);
 
-        //Do Damage Around
-        movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
-        movement.GetPlayerPos(out curr_x, out curr_y);
+        ////Check enemy in the tiles around the player
+        //for (int i = -1; i < 1; i++)
+        //{
+        //    for (int j = -1; j < 1; j++)
+        //    {
+        //        if (i == 0 && j == 0)
+        //        {
+        //            continue;
+        //        }
+        //        enemy_x = curr_x + j;
+        //        enemy_y = curr_x + i;
 
-        //Check enemy in the tiles around the player
-        for (int i = -1; i < 1; i++)
-        {
-            for (int j = -1; j < 1; j++)
-            {
-                if (i == 0 && j == 0)
-                {
-                    continue;
-                }
-                enemy_x = curr_x + j;
-                enemy_y = curr_x + i;
-
-                //Apply damage on the enemy in the specified tile
-                GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_abuility_damage);
-            }
-        }
+        //        //Apply damage on the enemy in the specified tile
+        //        GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
+        //    }
+        //}
 
         // Activate the shield that protects from damage once
         GetLinkedObject("player_obj").GetComponent<Shield>().ActivateShield();
@@ -371,34 +352,10 @@ public class JaimeController : CharacterController
         return anim_controller.IsAnimationStopped(name);
     }
 
-    public bool IsSecondaryAbilityReady()
-    {
-        if (sec_ability_current_cd <= 0.0f)
-            return true;
-        else
-            return false;
-    }
-
-    public override float GetSecondaryAbilityCoolDown()
-    {
-        return sec_ability_cd;
-    }
-
-    public override void ResetCoolDown()
-    {
-        sec_ability_current_cd = sec_ability_cd;
-    }
-
-    public override void ReduceSecondaryAbilityCoolDown()
-    {
-        sec_ability_current_cd -= Time.DeltaTime();
-    }
-
     public void PrepareLeftAbility()
     {
-        //button = jaime_button_left.GetComponent<CompButton>();
-        //button.Clicked(); // This will execute LeftCooldown  
-        OnLeftClick();
+        button = jaime_button_left.GetComponent<CompButton>();
+        button.Clicked(); // This will execute LeftCooldown  
     }
 
     public bool OnLeftClick()
@@ -414,9 +371,7 @@ public class JaimeController : CharacterController
             {
                 //left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
                 //Check if the ability is not in cooldown
-                //if (!left_ability_cd.in_cd)
-                //{ 
-                if (1 == 1) 
+                if (!left_ability_cd.in_cd)
                 { 
                     Debug.Log("Jaime LW Going to Attack");
                     DoLeftAbility(calc_cost);              
@@ -451,15 +406,19 @@ public class JaimeController : CharacterController
         SetAnimationTransition("To"+current_anim, true);
 
         // Attack the enemy in front of you
-        GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25.0f);
+        //GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25.0f);
 
-        if (coll_object != null)
+        //if (coll_object != null)
+        //{
+        if (1 == 1) 
         {
             // Check the specific enemy in front of you and apply dmg or call object OnContact
-            Enemy_BT enemybt = coll_object.GetComponent<Enemy_BT>();
-            if (enemybt != null)
-            {
-                enemybt.ApplyDamage(left_ability_dmg);
+            //Enemy_BT enemybt = coll_object.GetComponent<Enemy_BT>();
+            //if (enemybt != null)
+            //{
+            if (1 == 1)
+            { 
+                //enemybt.ApplyDamage(left_ability_dmg);
 
                 if (hit_streak < 2)
                 {
@@ -470,19 +429,19 @@ public class JaimeController : CharacterController
                     hit_streak = 0; //Reset hit count
                 }
             }
-            else
-            {
-                // Call Collider OnContact to notify raycast
-                CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
-                if (obj_collider != null)
-                {
-                    obj_collider.CallOnContact();
-                }
-                else
-                {
-                    hit_streak = 0; //Reset hit count
-                }
-            }      
+            //else
+            //{
+            //    // Call Collider OnContact to notify raycast
+            //    //CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+            //    if (obj_collider != null)
+            //    {
+            //        obj_collider.CallOnContact();
+            //    }
+            //    else
+            //    {
+            //        hit_streak = 0; //Reset hit count
+            //    }
+            //}      
         }
         else
         {
@@ -497,9 +456,8 @@ public class JaimeController : CharacterController
 
     public void PrepareRightAbility()
     {
-        //button = jaime_button_right.GetComponent<CompButton>();
-        //button.Clicked(); // This will execute RightCooldown    
-        OnRightClick();
+        button = jaime_button_right.GetComponent<CompButton>();
+        button.Clicked(); // This will execute RightCooldown    
     }
 
     public bool OnRightClick()
@@ -537,11 +495,45 @@ public class JaimeController : CharacterController
     {
         Debug.Log("Jaime LW Attack Right");
 
-        // Decrease stamina -----------
+        //Decrease stamina -----------
         DecreaseStamina(right_ability_cost);
+
+        //Set Animation
+        SetAnimationTransition("ToCover", true);
 
         // Set Covering State
         SetState(CharacterController.State.COVER);
+    }
+
+    public bool OnSecondaryClick()
+    {
+        // Check if player is in Idle State
+        if (GetState() == 0)
+        {
+            // Check if player has enough stamina to perform its attack
+            if (GetCurrentStamina() > sec_ability_cost)
+            {
+                sec_ability_cd = GetLinkedObject("jaime_s_button_obj").GetComponent<JaimeCD_Secondary>();
+                //Check if the ability is not in cooldown
+                if (!sec_ability_cd.in_cd)
+                {
+                    Debug.Log("Jaime S");
+                    SecondaryAbility();
+                    return true;
+                }
+                else
+                {
+                    Debug.Log("Jaime S Ability in CD");
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.Log("Jaime S Ability Not Enough Stamina");
+                return false;
+            }
+        }
+        return false;
     }
 
     public override void EnableAbilities(bool active)
