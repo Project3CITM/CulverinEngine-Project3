@@ -60,7 +60,7 @@ public class PerceptionManager : CulverinBehaviour
     {
         foreach(PerceptionListener listener in listeners_list)
         {
-            listener.OnEventRecieved(new PerceptionEvent(event_send));
+            listener.OnEventRecieved(event_send);
         }
     }
 }

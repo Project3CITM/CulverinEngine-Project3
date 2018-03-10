@@ -33,41 +33,57 @@ public class SwordGuard_Listener : PerceptionListener
             case PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT:
             case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
 
-                if (OnHearRange(event_recieved))
+                PerceptionHearEvent tmp = (PerceptionHearEvent)event_recieved;
+
+                if (OnHearRange(tmp))
                 {
+                    PerceptionHearEvent event_to_memory = new PerceptionHearEvent(tmp);
+
                     if (event_recieved.type == PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER && player_seen)
                     {
                         my_self.GetComponent<EnemySword_BT>().heard_something = true;
                         my_self.GetComponent<Investigate_Action>().forgot_event = false;
-                        my_self.GetComponent<Investigate_Action>().SetEvent(event_recieved);
+                        my_self.GetComponent<Investigate_Action>().SetEvent(event_to_memory);
                         my_self.GetComponent<EnemySword_BT>().InterruptAction();
-                        events_in_memory.Add(event_recieved);
+
+
+                        events_in_memory.Add(event_to_memory);
+
                         Debug.Log("I Heard The Player");
 
-                        event_recieved.start_counting = false;
+                        event_to_memory.start_counting = false;
                     }
                     else
                     {
                         my_self.GetComponent<EnemySword_BT>().heard_something = true;
                         my_self.GetComponent<Investigate_Action>().forgot_event = false;
-                        my_self.GetComponent<Investigate_Action>().SetEvent(event_recieved);
+                        my_self.GetComponent<Investigate_Action>().SetEvent(event_to_memory);
                         my_self.GetComponent<EnemySword_BT>().InterruptAction();
-                        events_in_memory.Add(event_recieved);
+
+                        events_in_memory.Add(event_to_memory);
+
                         Debug.Log("I Heard Somethin");
 
-                        event_recieved.start_counting = false;
+                        event_to_memory.start_counting = false;
                     }
                 }
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-                if (my_self == ((PerceptionPlayerSeenEvent)event_recieved).enemy_who_saw)
+
+                PerceptionPlayerSeenEvent seen_event_tmp = (PerceptionPlayerSeenEvent)event_recieved;
+
+                if (my_self == seen_event_tmp.enemy_who_saw)
                 {
+
+                    PerceptionPlayerSeenEvent new_event_to_memory = new PerceptionPlayerSeenEvent(seen_event_tmp);
+                    events_in_memory.Add(new_event_to_memory);
+
                     my_self.GetComponent<EnemySword_BT>().InterruptAction();
                     my_self.GetComponent<EnemySword_BT>().player_detected = true;
-                    my_self.GetComponent<ChasePlayer_Action>().SetEvent(event_recieved);
+                    my_self.GetComponent<ChasePlayer_Action>().SetEvent(new_event_to_memory);
                     player_seen = true;
-                    events_in_memory.Add(event_recieved);
+
                     Debug.Log("Player in sight");
                 }
                 break;
@@ -95,24 +111,22 @@ public class SwordGuard_Listener : PerceptionListener
 
     bool OnHearRange(PerceptionEvent event_heard)
     {
+
         PerceptionHearEvent tmp = (PerceptionHearEvent)event_heard;
 
         int my_tile_x = my_self.GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = my_self.GetComponent<Movement_Action>().GetCurrentTileY();
 
-        Debug.Log(my_tile_x.ToString());
-        Debug.Log(my_tile_y.ToString());
-
         if (hear_range < tmp.radius_in_tiles)
         {
-            if (RadiusOverlap((int)my_tile_x, (int)my_tile_y, hear_range, (int)tmp.objective_tile_x, (int)tmp.objective_tile_y, (int)tmp.radius_in_tiles))
+            if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles))
                 return true;
 
             return false;
         }
         else
         {
-            if (RadiusOverlap((int)tmp.objective_tile_x, (int)tmp.objective_tile_y, (int)tmp.radius_in_tiles, (int)my_tile_x, (int)my_tile_y, hear_range))
+            if (RadiusOverlap(tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles, my_tile_x, my_tile_y, hear_range))
                 return true;
 
             return false;
@@ -130,23 +144,23 @@ public class SwordGuard_Listener : PerceptionListener
             return true;
 
         //x - radius, y + radius
-        if (((little_tile_x - little_radius) >= (big_tile_x - big_radius)) 
-            && ((little_tile_y + little_radius) >= (big_tile_y - big_radius)) 
-            && ((little_tile_x - little_radius) <= (big_tile_x + big_radius)) 
+        if (((little_tile_x - little_radius) >= (big_tile_x - big_radius))
+            && ((little_tile_y + little_radius) >= (big_tile_y - big_radius))
+            && ((little_tile_x - little_radius) <= (big_tile_x + big_radius))
             && ((little_tile_y + little_radius) <= (big_tile_y + big_radius)))
             return true;
 
         //x + radius, y - radius
-        if (((little_tile_x + little_radius) >= (big_tile_x - big_radius)) 
-            && ((little_tile_y - little_radius) >= (big_tile_y - big_radius)) 
-            && ((little_tile_x + little_radius) <= (big_tile_x + big_radius)) 
+        if (((little_tile_x + little_radius) >= (big_tile_x - big_radius))
+            && ((little_tile_y - little_radius) >= (big_tile_y - big_radius))
+            && ((little_tile_x + little_radius) <= (big_tile_x + big_radius))
             && ((little_tile_y - little_radius) <= (big_tile_y + big_radius)))
             return true;
 
         //x + radius, y + radius
-        if (((little_tile_x + little_radius) >= (big_tile_x - big_radius)) 
-            && ((little_tile_y + little_radius) >= (big_tile_y - big_radius)) 
-            && ((little_tile_x + little_radius) <= (big_tile_x + big_radius)) 
+        if (((little_tile_x + little_radius) >= (big_tile_x - big_radius))
+            && ((little_tile_y + little_radius) >= (big_tile_y - big_radius))
+            && ((little_tile_x + little_radius) <= (big_tile_x + big_radius))
             && ((little_tile_y + little_radius) <= (big_tile_y + big_radius)))
             return true;
 

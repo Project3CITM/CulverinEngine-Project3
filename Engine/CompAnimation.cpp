@@ -603,6 +603,10 @@ void CompAnimation::ShowAnimationInfo()
 					{
 						(*it)->name = std::string(name_node);
 					}
+					if ((*it)->active == true)
+					{
+						ImGui::Text("I'm active!!!");
+					}
 					std::string clip_names;
 					int combo_pos = 0;
 					int i = 0;

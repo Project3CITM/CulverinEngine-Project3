@@ -50,7 +50,6 @@ public class JaimeController : CharacterController
 
     protected override void Start()
     {
-
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         jaime_obj = GetLinkedObject("jaime_obj");
         larm_jaime_obj = GetLinkedObject("larm_jaime_obj");
@@ -86,12 +85,6 @@ public class JaimeController : CharacterController
     {
         // Debug method to control Hp
         CheckHealth();
-
-        //Test Secondary Ability
-        if(Input.GetKeyDown(KeyCode.M))
-        {
-            SecondaryAbility();
-        }
 
         // First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
@@ -369,7 +362,7 @@ public class JaimeController : CharacterController
             // Check if player has enough stamina to perform its attack
             if (GetCurrentStamina() > calc_cost)
             {
-                //left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
+                left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
                 //Check if the ability is not in cooldown
                 if (!left_ability_cd.in_cd)
                 { 

@@ -24,8 +24,9 @@ public class DaenerysController : CharacterController
     public float curr_hp = 100.0f;
     public float max_mana = 100.0f;
     public float curr_mana = 100.0f;
-    public float sec_ability_cd = 10.0f;
-    private float sec_ability_current_cd = 10.0f;
+
+    public float sec_ability_cost = 30.0f;
+    DaenerysCD_Secondary sec_ability_cd;
 
     private CompParticleSystem particle_system;
 
@@ -45,7 +46,6 @@ public class DaenerysController : CharacterController
     protected override void Start()
     {
         SetPosition(Position.BEHIND);
-        sec_ability_current_cd = sec_ability_cd;
 
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         daenerys_obj = GetLinkedObject("daenerys_obj");
@@ -115,41 +115,107 @@ public class DaenerysController : CharacterController
                         {
                             //Check for end of the Attack animation
                             anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                            if (set_fire_breath == false && anim_controller.IsAnimOverXTime(0.4f))
+                            if (anim_controller.IsAnimationStopped("Idle"))
                             {
-                                set_fire_breath = true;
-                                Debug.Log("Starting particles");
-                                particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
-                                particle_system.ActivateEmission(true);
-                                audio = daenerys_obj.GetComponent<CompAudio>();
-                                audio.PlayEvent("Dracarys");
-
-                                // Attack all enemies in 3 rows in front of you
-                                int tile_x, tile_y;
-                                GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out tile_x, out tile_y);
-                                MovementController.Direction direction = GetLinkedObject("player_obj").GetComponent<MovementController>().curr_dir;
-                                for (int i = 0; i < distance_left_attack; i++)
+                                anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+                                if (set_fire_breath == false && anim_controller.IsAnimOverXTime(0.4f))
                                 {
+                                    set_fire_breath = true;
+                                    Debug.Log("Starting particles");
+                                    particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
+                                    particle_system.ActivateEmission(true);
+                                    audio = daenerys_obj.GetComponent<CompAudio>();
+                                    audio.PlayEvent("Dracarys");
+
+                                    // Attack all enemies in 3 rows in front of you
+                                    int tile_x, tile_y;
+                                    GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out tile_x, out tile_y);
+                                    MovementController.Direction direction = GetLinkedObject("player_obj").GetComponent<MovementController>().curr_dir;
+                                    for (int i = 0; i < distance_left_attack; i++)
+                                    {
+                                        switch (direction)
+                                        {
+                                            case MovementController.Direction.NORTH:
+                                                {
+                                                    tile_y -= 1;
+                                                    break;
+                                                }
+                                            case MovementController.Direction.SOUTH:
+                                                {
+                                                    tile_y += 1;
+                                                    break;
+                                                }
+                                            case MovementController.Direction.EAST:
+                                                {
+                                                    tile_x += 1;
+                                                    break;
+                                                }
+                                            case MovementController.Direction.WEST:
+                                                {
+                                                    tile_x -= 1;
+                                                    break;
+                                                }
+                                            default:
+                                                {
+                                                    break;
+                                                }
+                                        }
+                                        if (GetLinkedObject("player_obj").GetComponent<MovementController>().CheckIsWalkable(tile_x, tile_y) == false)
+                                        {
+                                            break;
+                                        }
+                                        //GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
+                                    }
+                                }
+                                anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+                                if (anim_controller.IsAnimOverXTime(0.9f))
+                                {
+                                    Debug.Log("Daenerys back to Idle");
+                                    state = State.IDLE;
+                                    particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
+                                    particle_system.ActivateEmission(false);
+                                }
+                            }                          
+                            break;
+                        }
+                    case State.FIRE_WALL:
+                        {
+                            //Check for end of the Attack animation
+                            anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+                            if (anim_controller.IsAnimationStopped("Idle"))
+                            {
+                                anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+                                if (set_fire_wall == false && anim_controller.IsAnimOverXTime(0.3f))
+                                {
+                                    int tile_x, tile_y;
+                                    GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out tile_x, out tile_y);
+                                    Vector3 player_pos = GetLinkedObject("player_obj").GetComponent<Transform>().GetPosition();
+                                    player_pos.y -= 8.7f;
+                                    MovementController.Direction direction = GetLinkedObject("player_obj").GetComponent<MovementController>().curr_dir;
                                     switch (direction)
                                     {
                                         case MovementController.Direction.NORTH:
                                             {
                                                 tile_y -= 1;
+                                                player_pos.z -= 25.4f;
                                                 break;
                                             }
                                         case MovementController.Direction.SOUTH:
                                             {
                                                 tile_y += 1;
+                                                player_pos.z += 25.4f;
                                                 break;
                                             }
                                         case MovementController.Direction.EAST:
                                             {
                                                 tile_x += 1;
+                                                player_pos.x += 25.4f;
                                                 break;
                                             }
                                         case MovementController.Direction.WEST:
                                             {
                                                 tile_x -= 1;
+                                                player_pos.x -= 25.4f;
                                                 break;
                                             }
                                         default:
@@ -157,85 +223,22 @@ public class DaenerysController : CharacterController
                                                 break;
                                             }
                                     }
-                                    if (GetLinkedObject("player_obj").GetComponent<MovementController>().CheckIsWalkable(tile_x, tile_y) == false)
-                                    {
-                                        break;
-                                    }
-                                    //GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
+                                    //GET TILE POS!
+                                    GameObject fire_wall = Instantiate("FireWall");
+                                    fire_wall.transform.SetPosition(player_pos);
+                                    fire_wall.GetComponent<FireWall>().SetTiles(tile_x, tile_y);
+                                    set_fire_wall = true;
                                 }
-                            }
-                            anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("AttackLeft"))
-                            {
-                                Debug.Log("Daenerys back to Idle");
-                                state = State.IDLE;
-                                particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
-                                particle_system.ActivateEmission(false);
-                            }
-                            else
-                            {
-                                // Keep playing specific attack animation until it ends
-                                Debug.Log("Daenerys Attacking");
-                            }
-                            break;
-                        }
-                    case State.FIRE_WALL:
-                        {
-                            //Check for end of the Attack animation
-                            anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                            if (set_fire_wall == false && anim_controller.IsAnimOverXTime(0.3f))
-                            {
-                                int tile_x, tile_y;
-                                GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out tile_x, out tile_y);
-                                Vector3 player_pos = GetLinkedObject("player_obj").GetComponent<Transform>().GetPosition();
-                                player_pos.y -= 8.7f;
-                                MovementController.Direction direction = GetLinkedObject("player_obj").GetComponent<MovementController>().curr_dir;
-                                switch (direction)
-                                {
-                                    case MovementController.Direction.NORTH:
-                                        {
-                                            tile_y -= 1;
-                                            player_pos.z -= 25.4f;
-                                            break;
-                                        }
-                                    case MovementController.Direction.SOUTH:
-                                        {
-                                            tile_y += 1;
-                                            player_pos.z += 25.4f;
-                                            break;
-                                        }
-                                    case MovementController.Direction.EAST:
-                                        {
-                                            tile_x += 1;
-                                            player_pos.x += 25.4f;
-                                            break;
-                                        }
-                                    case MovementController.Direction.WEST:
-                                        {
-                                            tile_x -= 1;
-                                            player_pos.x -= 25.4f;
-                                            break;
-                                        }
-                                    default:
-                                        {
-                                            break;
-                                        }
-                                }
-                                //GET TILE POS!
-                                GameObject fire_wall = Instantiate("FireWall");
-                                fire_wall.transform.SetPosition(player_pos);
-                                fire_wall.GetComponent<FireWall>().SetTiles(tile_x, tile_y);
-                                set_fire_wall = true;
-                            }
 
-                            anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("AttackRight"))
-                            {
-                                state = State.IDLE;
-                            }
-                            else
-                            {
-                                // Keep playing specific attack animation  until it ends
+                                anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+                                if (anim_controller.IsAnimOverXTime(0.9f))
+                                {
+                                    state = State.IDLE;
+                                }
+                                else
+                                {
+                                    // Keep playing specific attack animation  until it ends
+                                }
                             }
                             break;
                         }
@@ -281,12 +284,6 @@ public class DaenerysController : CharacterController
             PrepareRightAbility();
         }
     }
-
-    public override void SecondaryAbility()
-    {
-        Debug.Log("Daenerys Secondary Ability");
-    }
-
 
     public override void GetDamage(float dmg)
     {
@@ -411,32 +408,7 @@ public class DaenerysController : CharacterController
         larm_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active, larm_daenerys_obj);
     }
 
-    public bool IsSecondaryAbilityReady()
-    {
-        if (sec_ability_current_cd <= 0.0f)
-            return true;
-        else
-            return false;
-    }
-
-    public override float GetSecondaryAbilityCoolDown()
-    {
-        return sec_ability_cd;
-    }
-
-    public override void ResetCoolDown()
-    {
-        sec_ability_current_cd = sec_ability_cd;
-    }
-
-    public override void ReduceSecondaryAbilityCoolDown()
-    {
-        sec_ability_current_cd -= Time.DeltaTime();
-
-    }
-
     //LEFT ARM ------------------------------
-
     public bool OnLeftClick()
     {
         // Check if player is in Idle State
@@ -623,6 +595,47 @@ public class DaenerysController : CharacterController
         //    }
 
         //}
+    }
+
+    public bool OnSecondaryClick()
+    {
+        // Check if player is in Idle State
+        if (GetState() == 0)
+        {
+            // Check if player has enough stamina to perform its attack
+            if (GetCurrentStamina() > sec_ability_cost)
+            {
+                sec_ability_cd = GetLinkedObject("daenerys_s_button_obj").GetComponent<DaenerysCD_Secondary>();
+                //Check if the ability is not in cooldown
+                if (!sec_ability_cd.in_cd)
+                {
+                    Debug.Log("Daenerys S");
+                    SecondaryAbility();
+                    return true;
+                }
+                else
+                {
+                    Debug.Log("Daenerys S Ability in CD");
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.Log("Daenerys S Ability Not Enough Stamina");
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public override void SecondaryAbility()
+    {
+        GameObject arrow = Instantiate("DaenerysFireball");
+        Vector3 pos = new Vector3(transform.GetPosition());
+        Vector3 rot = new Vector3(transform.GetRotation());
+
+        arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
+        arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
     }
 
     public override void EnableAbilities(bool active)

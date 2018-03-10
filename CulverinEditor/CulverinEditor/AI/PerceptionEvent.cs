@@ -22,6 +22,7 @@ public class PerceptionEvent : CulverinBehaviour
     public float                    time_in_memory;
     public float                    counter_in_memory;
     public bool                     start_counting;
+    public bool                     is_finished;
 
     //Origin of the event
     public int                      origin_tile_x;
@@ -36,6 +37,7 @@ public class PerceptionEvent : CulverinBehaviour
         type = _type;
         time_in_memory = _time_in_memory;
         counter_in_memory = 0.0f;
+        is_finished = false;
         start_counting = true;
     }
 
@@ -49,6 +51,7 @@ public class PerceptionEvent : CulverinBehaviour
         origin_tile_x = e.origin_tile_x;
         counter_in_memory = 0.0f;
         start_counting = true;
+        is_finished = false;
     }
 
     public void SetOrigin(int x, int y) { origin_tile_x = x; origin_tile_y = y; }
