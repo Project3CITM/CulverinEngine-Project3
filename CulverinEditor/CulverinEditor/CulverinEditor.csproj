@@ -53,6 +53,7 @@
     <Compile Include="AI\Idle_Action.cs" />
     <Compile Include="AI\Investigate_Action.cs" />
     <Compile Include="AI\Movement_Action.cs" />
+    <Compile Include="AI\ShieldBlock_Action.cs" />
     <Compile Include="AI\SpearGuard_Listener.cs" />
     <Compile Include="AI\SwordGuard_Listener.cs" />
     <Compile Include="AI\PerceptionEmitter.cs" />

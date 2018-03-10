@@ -1,8 +1,12 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
-class EnemyShield_BT : Enemy_BT
+public class EnemyShield_BT : Enemy_BT
 {
+
+    public float shield_block_cooldown = 2.5f;
+    float shield_block_timer = 0.0f;
+
     public override void Start()
     {
         GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddShieldEnemy(gameObject);
@@ -11,6 +15,8 @@ class EnemyShield_BT : Enemy_BT
 
     public override void Update()
     {
+        shield_block_timer += Time.deltaTime;
+
         base.Update();
     }
 
@@ -31,6 +37,7 @@ class EnemyShield_BT : Enemy_BT
             {
                 Debug.Log("In Range");
                 bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
+                bool block_ready = shield_block_timer >= shield_block_cooldown;
 
                 //Attack action
                 if (attack_ready && current_action.action_type == Action.ACTION_TYPE.IDLE_ACTION)
@@ -39,6 +46,14 @@ class EnemyShield_BT : Enemy_BT
                     attack_timer = 0.0f;
                     state = AI_STATE.AI_ATTACKING;
                     current_action = new Attack_Action(anim_speed, attack_damage);
+                    current_action.ActionStart();
+                    return;
+                }
+                else if(block_ready)
+                {
+                    shield_block_timer = 0.0f;
+                    state = AI_STATE.AI_BLOCKING;
+                    current_action = new ShieldBlock_Action(anim_speed);
                     current_action.ActionStart();
                     return;
                 }

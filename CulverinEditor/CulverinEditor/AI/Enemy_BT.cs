@@ -56,6 +56,8 @@ public class Enemy_BT : BT
 
     public void ApplyDamage(float damage)
     {
+        if (current_action.action_type == Action.ACTION_TYPE.SHIELD_BLOCK_ACTION) return;
+
         InterruptAction();
 
         hit = true;
