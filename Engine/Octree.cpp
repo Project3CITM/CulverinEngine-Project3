@@ -36,7 +36,7 @@ bool OctreeNode::isLeaf() const
 void OctreeNode::Insert(GameObject* obj, OctreeLimits& limits)
 {
 	AABB otherBox;
-	otherBox = obj->box_fixed;
+	otherBox = *obj->bounding_box;
 	if (!box.Intersects(otherBox))
 		return;
 
