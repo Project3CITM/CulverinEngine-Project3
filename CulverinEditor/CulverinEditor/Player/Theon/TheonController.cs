@@ -7,9 +7,8 @@ public class TheonController : CharacterController
     public GameObject theon_obj; 
     public GameObject L_Arm_Theon;
     public GameObject R_Arm_Theon;
-    public GameObject L_SubArm_Theon;
-    public GameObject R_SubArm_Theon;
-
+    public GameObject CrossBow;
+    public GameObject Arrow;
     //UI ELEMENTS
     public GameObject theon_icon_obj;
     public GameObject theon_icon_obj_hp;
@@ -48,8 +47,8 @@ public class TheonController : CharacterController
         theon_obj = GetLinkedObject("theon_obj");
         L_Arm_Theon = GetLinkedObject("L_Arm_Theon");
         R_Arm_Theon = GetLinkedObject("R_Arm_Theon");
-        L_SubArm_Theon = GetLinkedObject("L_SubArm_Theon");
-        R_SubArm_Theon = GetLinkedObject("R_SubArm_Theon");
+        CrossBow = GetLinkedObject("CrossBow");
+        Arrow = GetLinkedObject("Arrow");
 
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
         theon_button_right = GetLinkedObject("theon_button_right");
@@ -62,7 +61,7 @@ public class TheonController : CharacterController
 
         //Start Idle animation
         //anim_controller = theon_obj.GetComponent<CompAnimation>();    
-        //ToggleMesh(false);
+        ToggleMesh(false);
 
         //Move icon to the left
         theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
@@ -324,8 +323,8 @@ public class TheonController : CharacterController
     {
         L_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, L_Arm_Theon);
         R_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, R_Arm_Theon);
-        R_SubArm_Theon.GetComponent<CompMesh>().SetEnabled(active, R_SubArm_Theon);
-        L_SubArm_Theon.GetComponent<CompMesh>().SetEnabled(active, L_SubArm_Theon);
+        CrossBow.GetComponent<CompMesh>().SetEnabled(active, CrossBow);
+        Arrow.GetComponent<CompMesh>().SetEnabled(active, Arrow);
     }
 
     public bool IsSecondaryAbilityReady()
