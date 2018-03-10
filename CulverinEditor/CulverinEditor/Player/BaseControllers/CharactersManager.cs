@@ -16,27 +16,16 @@ public class CharactersManager : CulverinBehaviour
         RIGHT
     }
 
-    public struct Score
-    {
-        uint enem_killed;
-        float game_start;
-        bool puzzle;
-        
-        void EnemyKilled(uint number = 1)
-        {
-            enem_killed += number;
-        }
-        float GameTime ()
-        {
-            float actual_time = Time.DeltaTime();
-            return (game_start - actual_time);
-        }
-        bool IsPuzzle()
-        {
-            return puzzle;
-        }
-    }
+    //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+    uint enem_killed;
+    public float puzzle_start;
+    public bool in_puzzle;
+    GameObject bg;
+    GameObject coin1;
+    GameObject coin2;
+    GameObject coin3;
 
+    //SCORE SCREEN END
     public GameObject current_character;
     public GameObject left_character;
     public GameObject right_character;
@@ -53,11 +42,12 @@ public class CharactersManager : CulverinBehaviour
     public GameObject daenerys_s_button_obj;
     public GameObject theon_s_button_obj;
 
-
     Shield shield;
 
-    public Score player_score;
 
+    
+
+    public float puz_max_time;
     //To manage player state
     State state = State.IDLE;   
 
@@ -66,6 +56,10 @@ public class CharactersManager : CulverinBehaviour
 
     void Start()
     {
+        coin1.SetActive(false);
+        coin2.SetActive(false);
+        coin3.SetActive(false);
+        bg.SetActive(false);
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
         current_character = GetLinkedObject("current_character");
         left_character = GetLinkedObject("left_character");
@@ -80,11 +74,21 @@ public class CharactersManager : CulverinBehaviour
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
+        //core menu
+        bg = GetLinkedObject("bg");
+        coin1 = GetLinkedObject("coin1");
+        coin2= GetLinkedObject("coin2");
+        coin3= GetLinkedObject("coin3");
     }
 
     void Update()
     {
-        switch(state)
+        if (in_puzzle)
+        {
+            puzzle_start += Time.deltaTime;
+        }
+
+        switch (state)
         {
             case State.IDLE:
                 {
@@ -451,4 +455,76 @@ public class CharactersManager : CulverinBehaviour
             }
         }
     }
+
+
+        //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+    void EnemyKilled(uint number = 1)
+    {
+        enem_killed += number;
+    }
+
+    float PuzzleTime()
+    {
+        return Time.timePlay;
+    }
+
+    public void StartPuzzle()
+    {
+        puzzle_start = 0;
+        in_puzzle = true;
+    }
+
+    int GetStars()
+    {
+        int stars = 0;
+        if (Time.timePlay <= 300)
+        {
+            stars++;
+        }
+        if (enem_killed == 3)
+        {
+            stars++;
+        }
+        if (PuzzleTime() < puz_max_time)
+        {
+            stars++;
+        }
+        return stars;
+    }
+
+    void CloseScoreMenu()
+    {
+        Time.timePlay = 0;
+        enem_killed = 0;
+        puzzle_start = 0;
+        in_puzzle = false;
+        bg.SetActive(false);
+        coin1.SetActive(false);
+        coin2.SetActive(false);
+        coin3.SetActive(false);
+    }
+
+    void ShowVictoryMenu()
+    {
+        int a = GetStars();
+        bg.SetActive(true);
+        switch (a)
+        {
+            case 1:
+                coin1.SetActive(true);
+                break;
+            case 2:
+                coin1.SetActive(true);
+                coin2.SetActive(true);
+                break;
+            case 3:
+                coin1.SetActive(true);
+                coin2.SetActive(true);
+                coin3.SetActive(true);
+                break;
+        }
+    }
+    //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+
 }
+
