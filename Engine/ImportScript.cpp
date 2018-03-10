@@ -797,7 +797,12 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerAxis);
 
 	//TIME FUNCTIONS -------------------
-	mono_add_internal_call("CulverinEditor.Time::DeltaTime", (const void*)GetDeltaTime);
+	mono_add_internal_call("CulverinEditor.Time::DeltaTime()", (const void*)GetDeltaTime);
+	mono_add_internal_call("CulverinEditor.Time::RealtimeSinceStartup()", (const void*)RealtimeSinceStartup);
+	mono_add_internal_call("CulverinEditor.Time::TimeScale()", (const void*)TimeScale);
+	mono_add_internal_call("CulverinEditor.Time::TimeScale(single)", (const void*)TimeScaleSet);
+	mono_add_internal_call("CulverinEditor.Time::StartTimePlay(single)", (const void*)StartTimePlay);
+	mono_add_internal_call("CulverinEditor.Time::TimePlay()", (const void*)TimePlay);
 
 	//MAP FUNCTIONS ----------------------
 	mono_add_internal_call("CulverinEditor.Map.Map::GetMapString", (const void*)GetMapString);
@@ -1040,10 +1045,37 @@ float ImportScript::GetInput_ControllerAxis(MonoString* name, MonoString* input)
 	return App->input->player_action->GetInput_ControllerAxis(mono_string_to_utf8(name), mono_string_to_utf8(input));
 }
 
+// TIME -----------------------------------------------
 float ImportScript::GetDeltaTime()
 {
 	return App->game_time.time_scale * App->real_time.dt;
 }
+
+float ImportScript::RealtimeSinceStartup()
+{
+	return App->game_time.game_start_time;
+}
+
+float ImportScript::TimeScale()
+{
+	return App->game_time.time_scale;
+}
+
+void ImportScript::TimeScaleSet(float time)
+{
+	App->game_time.time_scale = time;
+}
+
+void ImportScript::StartTimePlay(float time)
+{
+	App->game_time.timePlay = time;
+}
+
+float ImportScript::TimePlay()
+{
+	return App->game_time.timePlay;
+}
+
 
 bool ImportScript::GetEnabled(MonoObject* object, MonoObject* gameobject)
 {

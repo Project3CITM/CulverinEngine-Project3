@@ -190,6 +190,10 @@ void Application::PrepareUpdate()
 	{
 		game_time.game_start_time += real_time.dt * game_time.time_scale;
 		game_time.frame_count++;
+		if (game_time.timePlay != -1.0f)
+		{
+			game_time.timePlay += real_time.dt * game_time.time_scale;
+		}
 	}
 
 	if (change_to_game)
@@ -709,6 +713,7 @@ void Application::SetState(EngineState state)
 
 			engine_state = EngineState::STOP;
 			game_time.game_start_time = 0.0f;
+			game_time.timePlay = -1.0f;
 			game_time.frame_count = 0.0f;
 			ChangeCamera("Scene"); // To notice renderer3D to change to Scene Camera
 

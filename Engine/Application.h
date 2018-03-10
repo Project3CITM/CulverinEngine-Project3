@@ -50,6 +50,7 @@ enum EngineState
 struct GameClock
 {
 	float game_start_time = 0.0f; // To count the time in 
+	float timePlay = -1.0f; // To count the time in 
 	float time_scale = 1.0f; // Time multiplier
 	uint64 frame_count = 0;  // Total Updates since Game Mode started
 

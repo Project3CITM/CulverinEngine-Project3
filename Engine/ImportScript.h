@@ -98,6 +98,11 @@ private:
 
 	/* Time */
 	static float GetDeltaTime();
+	static float RealtimeSinceStartup();
+	static float TimeScale();
+	static void TimeScaleSet(float time);
+	static void StartTimePlay(float time);
+	static float TimePlay();
 
 	/* CulverinBehaciour */
 	static MonoObject*	GetLinkedObject(MonoObject* object, MonoString* name);
