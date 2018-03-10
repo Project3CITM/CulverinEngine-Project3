@@ -22,10 +22,16 @@ public class PerceptionListener : CulverinBehaviour
 
     public void UpdateMemory()
     {
+        int i = 0;
         foreach (PerceptionEvent memory_event in events_in_memory)
         {
             if (memory_event.start_counting)
                 UpdateEvent(memory_event);
+
+            if(memory_event.is_finished)
+                events_in_memory.RemoveAt(i);
+
+            i++;
         }
     }
 
@@ -66,10 +72,11 @@ public class PerceptionListener : CulverinBehaviour
         if (event_to_update.counter_in_memory >= event_to_update.time_in_memory)
         {
             OnEventGone(event_to_update);
+            event_to_update.is_finished = true;
         }
         else
         {
-            event_to_update.counter_in_memory = event_to_update.counter_in_memory + Time.DeltaTime();
+            event_to_update.counter_in_memory = event_to_update.counter_in_memory + Time.deltaTime;
         }
     }
 

@@ -100,6 +100,6 @@ public class ChasePlayer_Action : Action
 
     public void SetEvent(PerceptionEvent e)
     {
-        event_to_react = new PerceptionEvent(e);
+        event_to_react = e;
     }
 }

@@ -457,12 +457,12 @@ public class Movement_Action : Action
 
     public int GetCurrentTileX()
     {
-        return (int)(myself.GetComponent<Transform>().local_position.x / tile_size);
+        return ((int)myself.GetComponent<Transform>().local_position.x / (int)tile_size);
     }
 
     public int GetCurrentTileY()
     {
-        return (int)(myself.GetComponent<Transform>().local_position.z / tile_size);
+        return ((int)myself.GetComponent<Transform>().local_position.z / (int)tile_size);
     }
 
     public Vector3 GetCurrentVelocity()
