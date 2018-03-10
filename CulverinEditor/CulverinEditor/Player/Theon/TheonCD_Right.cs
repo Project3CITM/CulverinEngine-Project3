@@ -22,7 +22,7 @@ public class TheonCD_Right : CoolDown
     public override void ActivateAbility()
     {
         //this_obj.GetComponent
-        button_cd = GetComponent<CompButton>();
+        button_cd = GetLinkedObject("theon_button_right").GetComponent<CompButton>();
         button_cd.Deactivate();
 
         Debug.Log("Theon Right CD Clicked");

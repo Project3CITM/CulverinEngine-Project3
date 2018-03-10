@@ -4,14 +4,13 @@ using CulverinEditor.Debug;
 public class DaenerysCD_Left : CoolDown
 {
     public int max_charges = 3;
-
     private int current_charges = 3;
 
     public override void Update()
     {
         if (current_charges < max_charges)
         {
-            act_time += Time.DeltaTime();
+            act_time += Time.deltaTime;
             if (act_time >= cd_time)
             {
                 if (in_cd == true)
@@ -28,6 +27,7 @@ public class DaenerysCD_Left : CoolDown
             }
         }
     }
+
     public override void OnClick()
     {
         if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().GetState() == 0)
@@ -37,8 +37,7 @@ public class DaenerysCD_Left : CoolDown
                 if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().OnLeftClick() == true)
                 {
                     ActivateAbility();
-                }
-                
+                }                
             }
         }
     }

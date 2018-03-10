@@ -369,7 +369,7 @@ public class JaimeController : CharacterController
             // Check if player has enough stamina to perform its attack
             if (GetCurrentStamina() > calc_cost)
             {
-                //left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
+                left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
                 //Check if the ability is not in cooldown
                 if (!left_ability_cd.in_cd)
                 { 

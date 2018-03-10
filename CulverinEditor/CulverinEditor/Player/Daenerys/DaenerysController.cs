@@ -24,8 +24,9 @@ public class DaenerysController : CharacterController
     public float curr_hp = 100.0f;
     public float max_mana = 100.0f;
     public float curr_mana = 100.0f;
-    public float sec_ability_cd = 10.0f;
-    private float sec_ability_current_cd = 10.0f;
+
+    public float sec_ability_cost = 30.0f;
+    DaenerysCD_Secondary sec_ability_cd;
 
     private CompParticleSystem particle_system;
 
@@ -45,7 +46,6 @@ public class DaenerysController : CharacterController
     protected override void Start()
     {
         SetPosition(Position.BEHIND);
-        sec_ability_current_cd = sec_ability_cd;
 
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         daenerys_obj = GetLinkedObject("daenerys_obj");
@@ -282,12 +282,6 @@ public class DaenerysController : CharacterController
         }
     }
 
-    public override void SecondaryAbility()
-    {
-        Debug.Log("Daenerys Secondary Ability");
-    }
-
-
     public override void GetDamage(float dmg)
     {
         Debug.Log("Daenerys Get Damage");
@@ -411,32 +405,7 @@ public class DaenerysController : CharacterController
         larm_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active, larm_daenerys_obj);
     }
 
-    public bool IsSecondaryAbilityReady()
-    {
-        if (sec_ability_current_cd <= 0.0f)
-            return true;
-        else
-            return false;
-    }
-
-    public override float GetSecondaryAbilityCoolDown()
-    {
-        return sec_ability_cd;
-    }
-
-    public override void ResetCoolDown()
-    {
-        sec_ability_current_cd = sec_ability_cd;
-    }
-
-    public override void ReduceSecondaryAbilityCoolDown()
-    {
-        sec_ability_current_cd -= Time.DeltaTime();
-
-    }
-
     //LEFT ARM ------------------------------
-
     public bool OnLeftClick()
     {
         // Check if player is in Idle State
@@ -623,6 +592,47 @@ public class DaenerysController : CharacterController
         //    }
 
         //}
+    }
+
+    public bool OnSecondaryClick()
+    {
+        // Check if player is in Idle State
+        if (GetState() == 0)
+        {
+            // Check if player has enough stamina to perform its attack
+            if (GetCurrentStamina() > sec_ability_cost)
+            {
+                sec_ability_cd = GetLinkedObject("daenerys_s_button_obj").GetComponent<DaenerysCD_Secondary>();
+                //Check if the ability is not in cooldown
+                if (!sec_ability_cd.in_cd)
+                {
+                    Debug.Log("Daenerys S");
+                    SecondaryAbility();
+                    return true;
+                }
+                else
+                {
+                    Debug.Log("Daenerys S Ability in CD");
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.Log("Daenerys S Ability Not Enough Stamina");
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public override void SecondaryAbility()
+    {
+        GameObject arrow = Instantiate("DaenerysFireball");
+        Vector3 pos = new Vector3(transform.GetPosition());
+        Vector3 rot = new Vector3(transform.GetRotation());
+
+        arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
+        arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
     }
 
     public override void EnableAbilities(bool active)

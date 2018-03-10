@@ -80,6 +80,7 @@
     <Compile Include="CompJoint.cs" />
     <Compile Include="CompMesh.cs" />
     <Compile Include="CompRectTransform.cs" />
+    <Compile Include="Player\Daenerys\DaenerysCD_Secondary.cs" />
     <Compile Include="Player\Daenerys\Fireball.cs" />
     <Compile Include="float4x4.cs" />
     <Compile Include="PhysX.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Player\Theon\Arrow.cs" />
     <Compile Include="Player\Theon\TheonCD_Left.cs" />
     <Compile Include="Player\Theon\TheonCD_Right.cs" />
+    <Compile Include="Player\Theon\TheonCD_Secondary.cs" />
     <Compile Include="Player\UI\CoolDown.cs" />
     <Compile Include="Player\Jaime\JaimeCD_Right.cs" />
     <Compile Include="Player\Jaime\JaimeCD_Left.cs" />

@@ -3,10 +3,11 @@ using CulverinEditor.Debug;
 
 public class DaenerysCD_Right : CoolDown
 {
-    void Update()
+    public override void Update()
     {
         base.Update();
     }
+
     public override void OnClick()
     {
         if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().GetState() == 0)

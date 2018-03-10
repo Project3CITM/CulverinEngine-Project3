@@ -56,10 +56,7 @@ public class CharactersManager : CulverinBehaviour
 
     void Start()
     {
-        coin1.SetActive(false);
-        coin2.SetActive(false);
-        coin3.SetActive(false);
-        bg.SetActive(false);
+       
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
         current_character = GetLinkedObject("current_character");
         left_character = GetLinkedObject("left_character");
@@ -74,11 +71,17 @@ public class CharactersManager : CulverinBehaviour
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
+        
         //core menu
-        bg = GetLinkedObject("bg");
-        coin1 = GetLinkedObject("coin1");
-        coin2= GetLinkedObject("coin2");
-        coin3= GetLinkedObject("coin3");
+        //bg = GetLinkedObject("bg");
+        //coin1 = GetLinkedObject("coin1");
+        //coin2= GetLinkedObject("coin2");
+        //coin3= GetLinkedObject("coin3");
+
+        //coin1.SetActive(false);
+        //coin2.SetActive(false);
+        //coin3.SetActive(false);
+        //bg.SetActive(false);
     }
 
     void Update()
@@ -346,6 +349,7 @@ public class CharactersManager : CulverinBehaviour
             else if (left_character.GetName() == "Daenerys")
             {
                 GetLinkedObject("daenerys_s_button_obj").GetComponent<CompButton>().Clicked();
+
             }
             else if (left_character.GetName() == "Theon")
             {

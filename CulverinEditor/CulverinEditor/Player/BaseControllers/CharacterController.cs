@@ -18,6 +18,8 @@ public class CharacterController : CulverinBehaviour
         COVER,
         HIT,
         FIRE_WALL,
+        RELOADING,
+        STUN,
         DEAD
     }
 
@@ -47,8 +49,6 @@ public class CharacterController : CulverinBehaviour
         }
         else if(position == Position.BEHIND)
         {
-            ReduceSecondaryAbilityCoolDown();
-
             if(gameObject.GetName() == "Theon")
             {
                 gameObject.GetComponent<TheonController>().TheonSecondaryAbility();
