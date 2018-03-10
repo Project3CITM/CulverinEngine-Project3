@@ -461,7 +461,7 @@ void AABB::TransformAsAABB(const float3x4 &transform)
 void AABB::TransformAsAABB(const float4x4 &transform)
 {
 	assume(transform.IsColOrthogonal3());
-	assume(transform.HasUniformScale());
+	//assume(transform.HasUniformScale());
 	assume(transform.Row(3).Equals(0,0,0,1));
 
 	AABBTransformAsAABB(*this, transform);
@@ -977,12 +977,12 @@ void AABB::Enclose(const float3 *pointArray, int numPoints)
 
 void AABB::Enclose(const std::vector<Vertex>& vertices, int numPoints)
 {
-	assume(numPoints == 0);
-	for (uint i = 0; i < vertices.size(); i++)
-	{
-		Enclose(vertices[i].pos);
+	if (numPoints > 0) {
+		for (uint i = 0; i < vertices.size(); i++)
+		{
+			Enclose(vertices[i].pos);
+		}
 	}
-
 }
 
 void AABB::Triangulate(int numFacesX, int numFacesY, int numFacesZ,
