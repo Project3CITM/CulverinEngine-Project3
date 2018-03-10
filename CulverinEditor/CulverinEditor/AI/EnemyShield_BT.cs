@@ -1,7 +1,7 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
-class EnemyShield_BT : Enemy_BT
+public class EnemyShield_BT : Enemy_BT
 {
 
     public float shield_block_cooldown = 2.5f;

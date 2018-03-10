@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using CulverinEditor;
-using CulverinEditor.Debug;
-
+﻿using CulverinEditor;
+using System.Collections.Generic;
 
 public class EnemiesManager : CulverinBehaviour
 {
@@ -56,7 +54,7 @@ public class EnemiesManager : CulverinBehaviour
             int tile_y = sword_enemies[k].GetComponent<Movement_Action>().GetCurrentTileY();
             if (x == tile_x && y == tile_y)
             {
-                return (Enemy_BT)sword_enemies[k].GetComponent<EnemySword_BT>();
+                return sword_enemies[k].GetComponent<EnemySword_BT>();
             }
         }
 
@@ -68,7 +66,7 @@ public class EnemiesManager : CulverinBehaviour
             int tile_y = lance_enemies[k].GetComponent<Movement_Action>().GetCurrentTileY();
             if (x == tile_x && y == tile_y)
             {
-                return (Enemy_BT)sword_enemies[k].GetComponent<EnemySword_BT>();
+                return sword_enemies[k].GetComponent<EnemySpear_BT>();
             }
         }
 
@@ -80,7 +78,7 @@ public class EnemiesManager : CulverinBehaviour
             int tile_y = shield_enemies[k].GetComponent<Movement_Action>().GetCurrentTileY();
             if (x == tile_x && y == tile_y)
             {
-                return (Enemy_BT)sword_enemies[k].GetComponent<EnemySword_BT>();
+                return sword_enemies[k].GetComponent<EnemyShield_BT>();
             }
         }
         return null;
