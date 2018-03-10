@@ -72,6 +72,10 @@ public class DaenerysController : CharacterController
         daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
         daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
 
+        //Disable Jaime Abilities buttons
+        daenerys_button_left_obj.SetActive(false);
+        daenerys_button_right_obj.SetActive(false);
+
         Debug.Log(gameObject.GetName());
     }
 
@@ -302,7 +306,7 @@ public class DaenerysController : CharacterController
         anim_controller.SetTransition(name, value);
     }
 
-    public override void UpdateHUD(bool active/*, bool left*/)
+    public override void UpdateHUD(bool active, bool left)
     {
         //Update Hp bar
         if (active)
@@ -335,6 +339,10 @@ public class DaenerysController : CharacterController
             mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
             mana.SetMana(curr_mana, max_mana);
 
+            //Enable Daenerys Abilities buttons
+            daenerys_button_left_obj.SetActive(true);
+            daenerys_button_right_obj.SetActive(true);
+
             Debug.Log("Set Mana Daenerys");
         }
 
@@ -348,10 +356,10 @@ public class DaenerysController : CharacterController
             curr_mana = mana.GetCurrentMana();
 
             //Set icon at the left
-            if (1==1/*left*/)
+            if (left)
             {
                 daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
-                daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+                daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
             }
             //Set the icon at the right
             else
@@ -360,8 +368,11 @@ public class DaenerysController : CharacterController
                 daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
             }
 
+            //Enable Secondary Bars & Update them
             daenerys_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
             daenerys_icon_obj_mana.GetComponent<CompImage>().FillAmount(curr_mana / max_mana);
+            daenerys_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true, daenerys_icon_obj_hp);
+            daenerys_icon_obj_mana.GetComponent<CompImage>().SetEnabled(true, daenerys_icon_obj_mana);
 
             //Disable Mana Bar
             icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
@@ -370,13 +381,13 @@ public class DaenerysController : CharacterController
             //Enable Stamina Bar
             icon = GetLinkedObject("stamina_obj").GetComponent<CompImage>();
             icon.SetEnabled(true, GetLinkedObject("stamina_obj"));
+
+            //Disable Daenerys Abilities buttons
+            daenerys_button_left_obj.SetActive(false);
+            daenerys_button_right_obj.SetActive(false);
         }
 
         Debug.Log("Update Child Daenerys");
-
-        //Change current character icon
-        icon = daenerys_icon_obj.GetComponent<CompImage>();
-        icon.SetEnabled(active, daenerys_icon_obj);
     }
 
     public override bool IsAnimationStopped(string name)

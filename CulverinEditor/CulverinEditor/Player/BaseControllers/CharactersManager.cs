@@ -191,19 +191,19 @@ public class CharactersManager : CulverinBehaviour
         if (current_character.GetName() == "Jaime")
         {
             current_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.BEHIND);
-            current_character.GetComponent<JaimeController>().UpdateHUD(false/*,true*/);
+            current_character.GetComponent<JaimeController>().UpdateHUD(false,true);
             current_character.GetComponent<JaimeController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Daenerys")
         {
             current_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.BEHIND);
-            current_character.GetComponent<DaenerysController>().UpdateHUD(false/*, true*/);
+            current_character.GetComponent<DaenerysController>().UpdateHUD(false, true);
             current_character.GetComponent<DaenerysController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Theon")
         {
             current_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.BEHIND);
-            current_character.GetComponent<TheonController>().UpdateHUD(false/*, true*/);
+            current_character.GetComponent<TheonController>().UpdateHUD(false, true);
             current_character.GetComponent<TheonController>().ToggleMesh(false);
         }
 
@@ -211,21 +211,21 @@ public class CharactersManager : CulverinBehaviour
         if (left_character.GetName() == "Jaime")
         {
             left_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.CURRENT);
-            left_character.GetComponent<JaimeController>().UpdateHUD(true/*, true*/);
+            left_character.GetComponent<JaimeController>().UpdateHUD(true, true);
             left_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
             left_character.GetComponent<JaimeController>().ToggleMesh(true);
         }
         else if (left_character.GetName() == "Daenerys")
         {
             left_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.CURRENT);
-            left_character.GetComponent<DaenerysController>().UpdateHUD(true/*, true*/);
+            left_character.GetComponent<DaenerysController>().UpdateHUD(true, true);
             left_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
             left_character.GetComponent<DaenerysController>().ToggleMesh(true);
         }
         else if (left_character.GetName() == "Theon")
         {
             left_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.CURRENT);
-            left_character.GetComponent<TheonController>().UpdateHUD(true/*, true*/);
+            left_character.GetComponent<TheonController>().UpdateHUD(true, true);
             left_character.GetComponent<TheonController>().ToggleMesh(true);
             left_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
             
@@ -238,19 +238,19 @@ public class CharactersManager : CulverinBehaviour
         if (current_character.GetName() == "Jaime")
         {
             current_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.BEHIND);
-            current_character.GetComponent<JaimeController>().UpdateHUD(false/*, false*/);
+            current_character.GetComponent<JaimeController>().UpdateHUD(false, false);
             current_character.GetComponent<JaimeController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Daenerys")
         {
             current_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.BEHIND);
-            current_character.GetComponent<DaenerysController>().UpdateHUD(false/*, false*/);
+            current_character.GetComponent<DaenerysController>().UpdateHUD(false, false);
             current_character.GetComponent<DaenerysController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Theon")
         {
             current_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.BEHIND);
-            current_character.GetComponent<TheonController>().UpdateHUD(false/*, false*/);
+            current_character.GetComponent<TheonController>().UpdateHUD(false, false);
             current_character.GetComponent<TheonController>().ToggleMesh(false);
         }
 
@@ -258,21 +258,21 @@ public class CharactersManager : CulverinBehaviour
         if (right_character.GetName() == "Jaime")
         {
             right_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.CURRENT);
-            right_character.GetComponent<JaimeController>().UpdateHUD(true/*, false*/);
+            right_character.GetComponent<JaimeController>().UpdateHUD(true, false);
             right_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
             right_character.GetComponent<JaimeController>().ToggleMesh(true);
         }
         else if (right_character.GetName() == "Daenerys")
         {
             right_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.CURRENT);
-            right_character.GetComponent<DaenerysController>().UpdateHUD(true/*, false*/);
+            right_character.GetComponent<DaenerysController>().UpdateHUD(true, false);
             right_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
             right_character.GetComponent<DaenerysController>().ToggleMesh(true);
         }
         else if (right_character.GetName() == "Theon")
         {
             right_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.CURRENT);
-            right_character.GetComponent<TheonController>().UpdateHUD(true/*, false*/);
+            right_character.GetComponent<TheonController>().UpdateHUD(true, false);
             right_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
             right_character.GetComponent<TheonController>().ToggleMesh(true);
         }

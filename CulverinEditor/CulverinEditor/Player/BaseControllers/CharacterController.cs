@@ -157,7 +157,7 @@ public class CharacterController : CulverinBehaviour
         return true;
     }
 
-    public virtual void UpdateHUD(bool active/*, bool left*/)
+    public virtual void UpdateHUD(bool active, bool left)
     {
         Debug.Log("Change Current Character HUD");
     }

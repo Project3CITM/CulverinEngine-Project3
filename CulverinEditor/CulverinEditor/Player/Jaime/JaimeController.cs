@@ -63,7 +63,7 @@ public class JaimeController : CharacterController
 
         //Disable hp/stamina from icon
         jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_hp);
-        jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_hp);   
+        jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_stamina);   
 
         //Start Idle animation
         anim_controller = jaime_obj.GetComponent<CompAnimation>();
@@ -280,7 +280,7 @@ public class JaimeController : CharacterController
         anim_controller.SetTransition(name, value);
     }
 
-    public override void UpdateHUD(bool active/*, bool left*/)
+    public override void UpdateHUD(bool active, bool left)
     {
         //Update Hp bar
         if (active)
@@ -297,11 +297,17 @@ public class JaimeController : CharacterController
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
 
-            Debug.Log("Update Stamina Jaime");
+            Debug.Log("Update HP Jaime");
 
             //Update Stamina
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             stamina.SetStamina(curr_stamina, max_stamina);
+
+            //Enable Jaime Abilities buttons
+            jaime_button_left.SetActive(true);
+            jaime_button_right.SetActive(true);
+
+            Debug.Log("Update Stamina Jaime");
         }
 
         //Get values from var and store them
@@ -314,10 +320,10 @@ public class JaimeController : CharacterController
             curr_stamina = stamina.GetCurrentStamina();
 
             //Set icon at the left
-            if (1==1/*left*/) 
+            if (left) 
             {
                 jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
-                jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+                jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
             }
             //Set the icon at the right
             else
@@ -326,15 +332,18 @@ public class JaimeController : CharacterController
                 jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
             }
 
+            //Enable Secondary Bars And Update them
             jaime_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
             jaime_icon_obj_stamina.GetComponent<CompImage>().FillAmount(curr_stamina / max_stamina);
+            jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj_hp);
+            jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj_stamina);
+
+            //Disable Jaime Abilities buttons
+            jaime_button_left.SetActive(false);
+            jaime_button_right.SetActive(false);
         }
 
-        Debug.Log("Update Child Jaime");
-
-        //Change current character icon
-        icon = jaime_icon_obj.GetComponent<CompImage>();
-        icon.SetEnabled(active, jaime_icon_obj); 
+        Debug.Log("Update Child Jaime"); 
     }
 
     public override void ToggleMesh(bool active)
