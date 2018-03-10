@@ -522,6 +522,7 @@ public class TheonController : CharacterController
             arrowtimers += Time.deltaTime;
             if(arrowtimers >= 0.5f && arrow1 == false)
             {
+                PlayFx("CrossbowShot");
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
                 Vector3 pos = new Vector3(player.transform.GetPosition());
@@ -533,6 +534,7 @@ public class TheonController : CharacterController
 
             if (arrowtimers >= 1.0f && arrow2 == false)
             {
+                PlayFx("CrossbowShot");
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
                 Vector3 pos = new Vector3(player.transform.GetPosition());
@@ -544,6 +546,7 @@ public class TheonController : CharacterController
 
             if (arrowtimers >= 1.5f && arrow3 == false)
             {
+                PlayFx("CrossbowShot");
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
                 Vector3 pos = new Vector3(player.transform.GetPosition());

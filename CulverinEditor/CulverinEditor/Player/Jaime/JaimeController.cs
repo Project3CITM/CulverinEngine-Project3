@@ -224,7 +224,7 @@ public class JaimeController : CharacterController
                 enemy_y = curr_x + i;
 
                 //Apply damage on the enemy in the specified tile
-                GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
+                //GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
             }
         }
 
