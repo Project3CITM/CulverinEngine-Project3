@@ -382,7 +382,6 @@ public class Movement_Action : Action
             else if (delta <= -(Mathf.PI / 4) && delta >= -(3 * (Mathf.PI / 4)))
                 obj_dir = Direction.DIR_WEST;
 
-
             float obj_angle = 0.0f;
 
             if(obj_dir != dir)
@@ -422,7 +421,18 @@ public class Movement_Action : Action
                         }
                         break;
                 }
-                return obj_angle - delta;
+
+                Debug.Log("Direction:");
+                switch (dir)
+                {
+                    case Direction.DIR_WEST: Debug.Log("West"); break;
+                    case Direction.DIR_EAST: Debug.Log("East"); break;
+                    case Direction.DIR_NORTH: Debug.Log("North"); break;
+                    case Direction.DIR_SOUTH: Debug.Log("South"); break;
+                }
+                float test = obj_angle - delta;
+                Debug.Log(test);
+                return test;
             }
 
             return 0.0f;

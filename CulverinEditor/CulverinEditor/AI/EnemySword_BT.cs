@@ -100,9 +100,10 @@ public class EnemySword_BT : Enemy_BT
 
         if(life_state == ENEMY_STATE.ENEMY_DAMAGED)
         {
-            GetComponent<CompMaterial>().SetAlbedo("text");
-            GetComponent<CompMaterial>().SetNormals("text");
-            GetComponent<CompMaterial>().SetAmbientOcclusion("text");
+            //enemy1_Specular_Hit
+            GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
+            GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
+            GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");
         }
     }
 }

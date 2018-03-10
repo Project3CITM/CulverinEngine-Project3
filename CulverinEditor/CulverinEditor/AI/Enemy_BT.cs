@@ -37,9 +37,12 @@ public class Enemy_BT : BT
         player = GetLinkedObject("player");
         anim = GetComponent<CompAnimation>();
         current_hp = total_hp;
+        Debug.Log("Current HP (Start): " + current_hp);
+        Debug.Log("Total HP (Start): " + total_hp);
         //Enemy starts with the attack loaded!
         attack_timer = attack_cooldown * anim_speed;
 
+        Debug.Log("Enemy");
         base.Start();
     }
 
@@ -65,6 +68,8 @@ public class Enemy_BT : BT
         hit = true;
 
         current_hp -= damage;
+
+        Debug.Log("Current HP: " + current_hp);
 
         if (current_hp <= 0)
         {

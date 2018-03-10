@@ -104,9 +104,10 @@ public class EnemyShield_BT : Enemy_BT
 
         if (life_state == ENEMY_STATE.ENEMY_DAMAGED)
         {
-            GetComponent<CompMaterial>().SetAlbedo("text");
-            GetComponent<CompMaterial>().SetNormals("text");
-            GetComponent<CompMaterial>().SetAmbientOcclusion("text");
+            //enemy3_Specular_Hit
+            GetComponent<CompMaterial>().SetAlbedo("enemy3_Color_Hit.png");
+            GetComponent<CompMaterial>().SetNormals("enemy3_Normal_Hit.png");
+            GetComponent<CompMaterial>().SetAmbientOcclusion("enemy3_AO_Hit.png");
         }
     }
 }
