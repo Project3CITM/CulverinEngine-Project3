@@ -44,9 +44,6 @@ public class CharactersManager : CulverinBehaviour
 
     Shield shield;
 
-
-    
-
     public float puz_max_time;
     //To manage player state
     State state = State.IDLE;   
@@ -289,15 +286,33 @@ public class CharactersManager : CulverinBehaviour
     {
         if (current_character.GetName() == "Jaime")
         {
-            current_character.GetComponent<JaimeController>().SetAnimationTransition("ToOut", true);
+            JaimeController jcontroler = current_character.GetComponent<JaimeController>();
+            jcontroler.SetAnimationTransition("ToOut", true);
+            jcontroler.curr_position = transform.local_position;
+            jcontroler.curr_forward = transform.forward;
+            Mathf.Round(jcontroler.curr_forward.x);
+            Mathf.Round(jcontroler.curr_forward.y);
+            Mathf.Round(jcontroler.curr_forward.z);
         }
         else if (current_character.GetName() == "Daenerys")
         {
-            current_character.GetComponent<DaenerysController>().SetAnimationTransition("ToOut", true);
+            DaenerysController dcontroler = current_character.GetComponent<DaenerysController>();
+            dcontroler.SetAnimationTransition("ToOut", true);
+            dcontroler.curr_position = transform.local_position;
+            dcontroler.curr_forward = transform.forward;
+            Mathf.Round(dcontroler.curr_forward.x);
+            Mathf.Round(dcontroler.curr_forward.y);
+            Mathf.Round(dcontroler.curr_forward.z);
         }
         else if (current_character.GetName() == "Theon")
         {
-            current_character.GetComponent<TheonController>().SetAnimationTransition("ToOut", true);
+            TheonController tcontroller = current_character.GetComponent<TheonController>();
+            tcontroller.SetAnimationTransition("ToOut", true);
+            tcontroller.curr_position = transform.local_position;
+            tcontroller.curr_forward = transform.forward;
+            Mathf.Round(tcontroller.curr_forward.x);
+            Mathf.Round(tcontroller.curr_forward.y);
+            Mathf.Round(tcontroller.curr_forward.z);
         }
     }
 
@@ -515,5 +530,36 @@ public class CharactersManager : CulverinBehaviour
     }
     //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
 
+    public void SetCurrentPosition()
+    {
+        if (current_character.GetName() == "Jaime")
+        {
+            JaimeController jcontroler = current_character.GetComponent<JaimeController>();
+            jcontroler.curr_position = transform.local_position;
+            jcontroler.curr_forward = transform.forward;
+            Mathf.Round(jcontroler.curr_forward.x);
+            Mathf.Round(jcontroler.curr_forward.y);
+            Mathf.Round(jcontroler.curr_forward.z);
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+            DaenerysController dcontroler = current_character.GetComponent<DaenerysController>();
+            dcontroler.curr_position = transform.local_position;
+            dcontroler.curr_forward = transform.forward;
+            Mathf.Round(dcontroler.curr_forward.x);
+            Mathf.Round(dcontroler.curr_forward.y);
+            Mathf.Round(dcontroler.curr_forward.z);
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            TheonController tcontroller = current_character.GetComponent<TheonController>();
+            tcontroller.curr_position = transform.local_position;
+            tcontroller.curr_forward = transform.forward;
+            Mathf.Round(tcontroller.curr_forward.x);
+            Mathf.Round(tcontroller.curr_forward.y);
+            Mathf.Round(tcontroller.curr_forward.z);
+
+        }
+    }
 }
 

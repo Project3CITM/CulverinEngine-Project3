@@ -53,11 +53,15 @@ public class MovementController : CulverinBehaviour
 
     private CompAudio audio;
 
+    private CharactersManager char_manager;
+
     //2D coordinates, y=z in 3D coordinates
 
     void Start()
     {
         enemy_obj = GetLinkedObject("enemy_obj"); //Change this to accept more than one enemy
+
+        char_manager = GetComponent<CharactersManager>();
 
         audio = GetComponent<CompAudio>();
         audio.PlayEvent("PlayMusic");
@@ -135,14 +139,15 @@ public class MovementController : CulverinBehaviour
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
                 curr_x += tile_mov_x;
                 curr_y += tile_mov_y;
+                char_manager.SetCurrentPosition();
                 moving = true;
             }
         }
         else if (rotating)
         {
             moving = false;
-            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.DeltaTime());
-            float moved_angle = (float)angle * speed_rotation * Time.DeltaTime();
+            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.deltaTime);
+            float moved_angle = (float)angle * speed_rotation * Time.deltaTime;
             if (angle < 0)
             {
                 actual_angle += (moved_angle * -1);
@@ -166,6 +171,7 @@ public class MovementController : CulverinBehaviour
                     {
                         GetComponent<Transform>().RotateAroundAxis(Vector3.Up, -marge);
                     }
+                    char_manager.SetCurrentPosition();
                 }
             }
         }

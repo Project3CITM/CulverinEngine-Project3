@@ -20,20 +20,20 @@ public class FireWall : CulverinBehaviour
     // Update is called once per frame
     void Update()
     {      
-        timer += Time.DeltaTime();
-        damage_timer -= Time.DeltaTime();
+        timer += Time.deltaTime;
+        damage_timer -= Time.deltaTime;
         if (timer >= duration)
         {
             GetComponent<CompParticleSystem>().ActivateEmission(false);
             Destroy(gameObject);
         }
-        
-        //Enemy_BT enemy_in_tile = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().FindEnemyByTile(tile_x, tile_y);
-        //if(enemy_in_tile != null && damage_timer <= 0f)
-        //{
-        //    enemy_in_tile.ApplyDamage(damage_per_second_percentage);
-        //    damage_timer = damage_tick;
-        //}        
+
+        Enemy_BT enemy_in_tile = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().FindEnemyByTile(tile_x, tile_y);
+        if (enemy_in_tile != null && damage_timer <= 0f)
+        {
+            GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_per_second_percentage);
+            damage_timer = damage_tick;
+        }
     }
 
     public void SetTiles (int x, int y)

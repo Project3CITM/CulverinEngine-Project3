@@ -164,7 +164,7 @@ public class DaenerysController : CharacterController
                                         {
                                             break;
                                         }
-                                        //GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
+                                        GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
                                     }
                                 }
                                 anim_controller = daenerys_obj.GetComponent<CompAnimation>();
@@ -465,7 +465,6 @@ public class DaenerysController : CharacterController
         DecreaseManaPercentage(mana_cost_percentage_left);
         set_fire_breath = false;
 
-
         GameObject coll_object = PhysX.RayCast(GetComponent<Transform>().position, transform.forward, 25 * distance_left_attack);
         Debug.Log(GetComponent<Transform>().GetGlobalPosition().ToString());
 
@@ -584,17 +583,16 @@ public class DaenerysController : CharacterController
 
         set_fire_wall = false;
 
-        //GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25 * distance_left_attack);
+        GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 30 * distance_left_attack);
+        if (coll_object != null)
+        {
+            CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+            if (obj_collider != null)
+            {
+                obj_collider.CallOnContact();
+            }
 
-        //if (coll_object != null)
-        //{
-        //    CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
-        //    if (obj_collider != null)
-        //    {
-        //        obj_collider.CallOnContact();
-        //    }
-
-        //}
+        }
     }
 
     public bool OnSecondaryClick()

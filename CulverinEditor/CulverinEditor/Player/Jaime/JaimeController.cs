@@ -207,26 +207,26 @@ public class JaimeController : CharacterController
 
         Debug.Log("Jaime Secondary Ability");
 
-        ////Do Damage Around
-        //movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
-        //movement.GetPlayerPos(out curr_x, out curr_y);
+        //Do Damage Around
+        movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
+        movement.GetPlayerPos(out curr_x, out curr_y);
 
-        ////Check enemy in the tiles around the player
-        //for (int i = -1; i < 1; i++)
-        //{
-        //    for (int j = -1; j < 1; j++)
-        //    {
-        //        if (i == 0 && j == 0)
-        //        {
-        //            continue;
-        //        }
-        //        enemy_x = curr_x + j;
-        //        enemy_y = curr_x + i;
+        //Check enemy in the tiles around the player
+        for (int i = -1; i < 1; i++)
+        {
+            for (int j = -1; j < 1; j++)
+            {
+                if (i == 0 && j == 0)
+                {
+                    continue;
+                }
+                enemy_x = curr_x + j;
+                enemy_y = curr_x + i;
 
-        //        //Apply damage on the enemy in the specified tile
-        //        GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
-        //    }
-        //}
+                //Apply damage on the enemy in the specified tile
+                GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
+            }
+        }
 
         // Activate the shield that protects from damage once
         GetLinkedObject("player_obj").GetComponent<Shield>().ActivateShield();
@@ -406,19 +406,14 @@ public class JaimeController : CharacterController
         SetAnimationTransition("To"+current_anim, true);
 
         // Attack the enemy in front of you
-        //GameObject coll_object = PhysX.RayCast(transform.position, transform.forward, 25.0f);
-
-        //if (coll_object != null)
-        //{
-        if (1 == 1) 
+        GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
+        if (coll_object != null)
         {
-            // Check the specific enemy in front of you and apply dmg or call object OnContact
-            //Enemy_BT enemybt = coll_object.GetComponent<Enemy_BT>();
-            //if (enemybt != null)
-            //{
-            if (1 == 1)
-            { 
-                //enemybt.ApplyDamage(left_ability_dmg);
+            if (coll_object.CompareTag("Enemy"))
+            {
+                // Check the specific enemy in front of you and apply dmg or call object OnContact
+                EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
+                enemy_manager.ApplyDamage(coll_object, left_ability_dmg);
 
                 if (hit_streak < 2)
                 {
@@ -429,19 +424,19 @@ public class JaimeController : CharacterController
                     hit_streak = 0; //Reset hit count
                 }
             }
-            //else
-            //{
-            //    // Call Collider OnContact to notify raycast
-            //    //CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
-            //    if (obj_collider != null)
-            //    {
-            //        obj_collider.CallOnContact();
-            //    }
-            //    else
-            //    {
-            //        hit_streak = 0; //Reset hit count
-            //    }
-            //}      
+            else
+            {
+                // Call Collider OnContact to notify raycast
+                CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+                if (obj_collider != null)
+                {
+                    obj_collider.CallOnContact();
+                }
+                else
+                {
+                    hit_streak = 0; //Reset hit count
+                }
+            }
         }
         else
         {

@@ -343,12 +343,10 @@ public class TheonController : CharacterController
             // Check if player has enough stamina to perform its attack
             if (GetCurrentStamina() > left_ability_cost)
             {
-                //cd_left = theon_button_left.GetComponent<TheonCD_Left>();
+                cd_left = theon_button_left.GetComponent<TheonCD_Left>();
                 //Check if the ability is not in cooldown
-                if(1==1)
+                if (!cd_left.in_cd)
                 { 
-                //if (!cd_left.in_cd)
-                //{ 
                     Debug.Log("Theon LW Going to Attack");
 
                     // First, OnClick of LeftWeapon, then, onClick of Cooldown
@@ -403,14 +401,6 @@ public class TheonController : CharacterController
         //Set Attack Animation
         SetAnimationTransition("ToAttack1", true);
 
-        // Attack the enemy in front of you
-        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
-        //{
-        //    // To change => check the specific enemy in front of you
-        //    enemy = enemy_obj.GetComponent<EnemyController>();
-        //    enemy.Hit(attack_dmg);
-        //}
-
         SetState(CharacterController.State.ATTACKING);
     }
 
@@ -427,19 +417,16 @@ public class TheonController : CharacterController
             // Check if player has enough stamina to perform its attack
             if (GetCurrentStamina() > right_ability_cost)
             {
-                //cd_right = theon_button_right.GetComponent<TheonCD_Right>();
+                cd_right = theon_button_right.GetComponent<TheonCD_Right>();
                 //Check if the ability is not in cooldown
-                //if (!cd_right.in_cd)
-                //{
-                if(1==1)
-                { 
+                if (!cd_right.in_cd)
+                {
                     Debug.Log("Theon RW Going to Block");
 
                     // First, OnClick of RightWeapon, then, onClick of Cooldown
                     DoRightAbility();
 
                     return true;
-
                 }
                 else
                 {
@@ -461,7 +448,6 @@ public class TheonController : CharacterController
         Debug.Log("Theon RW Prepare Block");
         button = theon_button_right.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
-        //OnRightClick();
     }
 
     public void DoRightAbility() //Might be virtual
@@ -475,13 +461,16 @@ public class TheonController : CharacterController
 
         SetAnimationTransition("ToAttack2", true);
 
-        // STUN (TALK TO FERRAN)
-        //if (GetLinkedObject("player_obj").GetComponent<MovementController>().EnemyInFront())
-        //{
-        //    // To change => check the specific enemy in front of you
-        //    enemy = enemy_obj.GetComponent<EnemyController>();
-        //    enemy.Hit(attack_dmg);
-        //}
+        GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
+        if (coll_object != null)
+        {
+            if (coll_object.CompareTag("Enemy"))
+            {
+                // Check the specific enemy in front of you and apply dmg or call object OnContact
+                EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
+                enemy_manager.Push(coll_object, curr_forward);
+            }
+        }
 
         SetState(CharacterController.State.STUN);
     }

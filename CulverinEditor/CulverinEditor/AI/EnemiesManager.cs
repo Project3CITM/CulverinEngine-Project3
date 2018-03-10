@@ -125,5 +125,30 @@ public class EnemiesManager : CulverinBehaviour
             }
         }
     }
+
+    public void ApplyDamage(GameObject target, float damage)
+    {
+
+    }
+
+    public bool IsEnemy(GameObject target)
+    {
+        if(target.GetComponent<EnemySword_BT>() != null ||
+            target.GetComponent<EnemyShield_BT>() != null ||
+            target.GetComponent<EnemySpear_BT>() != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void Push(GameObject target, Vector3 dir)
+    {
+
+    }
+
 }
 

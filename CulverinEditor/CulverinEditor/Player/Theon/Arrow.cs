@@ -43,22 +43,26 @@ public class Arrow : CulverinBehaviour
 
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
         // DAMAGE ---
-        Enemy_BT obj = collided_obj.GetComponent<Enemy_BT>();
-        if(obj != null)
+        if (collided_obj != null)
         {
-            obj.ApplyDamage(damage);
-        }
-        else
-        {
-            CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
-            if(obj_col != null)
+            // Check the specific enemy in front of you and apply dmg or call object OnContact
+            EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
+            if (enemy_manager.IsEnemy(collided_obj))
             {
-                obj_col.CallOnContact();
+                enemy_manager.ApplyDamage(collided_obj, damage);
+            }
+            else
+            {
+                CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
+                if (obj_col != null)
+                {
+                    obj_col.CallOnContact();
+                }
             }
         }
 
         // DESTROY ---
-        if(collision)
+        if (collision)
         {
             Destroy(gameObject);
         }

@@ -3,6 +3,11 @@ using CulverinEditor.Debug;
 
 public class TheonCD_Right : CoolDown
 {
+    public override void Update()
+    {
+        base.Update();
+    }
+
     public override void OnClick()
     {
         if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0)
@@ -12,7 +17,6 @@ public class TheonCD_Right : CoolDown
                 if (GetLinkedObject("theon_obj").GetComponent<TheonController>().OnRightClick() == true)
                 {
                     ActivateAbility();
-
                     // Set Attacking State
                 }
             }

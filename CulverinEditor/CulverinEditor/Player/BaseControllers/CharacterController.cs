@@ -36,6 +36,9 @@ public class CharacterController : CulverinBehaviour
     protected Position position = Position.CURRENT; 
     protected State state = State.IDLE;
 
+    public Vector3 curr_position = Vector3.Zero;
+    public Vector3 curr_forward = Vector3.Zero;
+
     protected virtual void Start()
     {
         Debug.Log("Start Character");
