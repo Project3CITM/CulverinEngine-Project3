@@ -267,7 +267,7 @@ void CompCanvas::DrawGraphic(bool debug)
 			glUniform4f(g_AttribLocationColor, graphic->GetColor().x, graphic->GetColor().y, graphic->GetColor().z, graphic->GetColor().w);
 			glGetError();
 			graphic->DrawGraphic();
-
+			graphic->SetToRender(false);
 		}
 		//End Draw
 		// Restore modified state
