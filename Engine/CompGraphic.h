@@ -38,7 +38,7 @@ public:
 
 private:
 public:
-private:
+protected:
 	bool render = true;
 protected:
 	bool raycast_target = true;
