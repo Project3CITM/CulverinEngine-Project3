@@ -94,6 +94,12 @@ public class Enemy_BT : BT
         }
     }
 
+    public void Push(Vector3 dir)
+    {
+        current_action.Interupt();
+        next_action = new PushBack_Action(anim_speed);
+    }
+
     public bool InRange()
     {
         int x, y;

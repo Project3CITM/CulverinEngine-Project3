@@ -22,6 +22,12 @@ public class EnemyShield_BT : Enemy_BT
 
     public override void MakeDecision()
     {
+        if (next_action.action_type != Action.ACTION_TYPE.NO_ACTION)
+        {
+            current_action = next_action;
+            next_action = new Action();
+        }
+
         Debug.Log("MAKING SHIELD ACTION!");
         if (hit == true)
         {

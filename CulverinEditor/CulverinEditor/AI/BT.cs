@@ -14,6 +14,7 @@ public class BT : CulverinBehaviour
     }
 
     protected Action current_action = new Action();
+    protected Action next_action = new Action();
     protected AI_STATE state = AI_STATE.AI_IDLE;
     protected Action idle_action = new Idle_Action();
 
@@ -80,7 +81,13 @@ public class BT : CulverinBehaviour
     }
 
     public virtual void MakeDecision()
-    {}
+    {
+        if(next_action.action_type != Action.ACTION_TYPE.NO_ACTION)
+        {
+            current_action = next_action;
+            next_action = new Action();
+        }
+    }
 
     public AI_STATE GetState()
     {

@@ -16,7 +16,13 @@ public class EnemySword_BT : Enemy_BT
 
     public override void MakeDecision()
     {
-        if(hit == true)
+        if (next_action.action_type != Action.ACTION_TYPE.NO_ACTION)
+        {
+            current_action = next_action;
+            next_action = new Action();
+        }
+
+        if (hit == true)
         {
             hit = false;
             current_action = new GetHit_Action(anim_speed);

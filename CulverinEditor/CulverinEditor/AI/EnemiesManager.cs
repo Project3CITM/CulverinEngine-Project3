@@ -128,7 +128,18 @@ public class EnemiesManager : CulverinBehaviour
 
     public void ApplyDamage(GameObject target, float damage)
     {
-
+        if (target.GetComponent<EnemySword_BT>() != null)
+        {
+            target.GetComponent<EnemySword_BT>().ApplyDamage(damage);
+        }
+        else if(target.GetComponent<EnemySpear_BT>() != null)
+        {
+            target.GetComponent<EnemySpear_BT>().ApplyDamage(damage);
+        }
+        else if(target.GetComponent<EnemyShield_BT>() != null)
+        {
+            target.GetComponent<EnemyShield_BT>().ApplyDamage(damage);
+        }           
     }
 
     public bool IsEnemy(GameObject target)
@@ -147,7 +158,18 @@ public class EnemiesManager : CulverinBehaviour
 
     public void Push(GameObject target, Vector3 dir)
     {
-
+        if (target.GetComponent<EnemySword_BT>() != null)
+        {
+            target.GetComponent<EnemySword_BT>().Push(dir);
+        }
+        else if (target.GetComponent<EnemySpear_BT>() != null)
+        {
+            target.GetComponent<EnemySpear_BT>().Push(dir);
+        }
+        else if (target.GetComponent<EnemyShield_BT>() != null)
+        {
+            target.GetComponent<EnemyShield_BT>().Push(dir);
+        }
     }
 
 }
