@@ -109,7 +109,7 @@ public class EnemiesManager : CulverinBehaviour
             int tile_y = lance_enemies[k].GetComponent<Movement_Action>().GetCurrentTileY();
             if (x == tile_x && y == tile_y)
             {
-                lance_enemies[k].GetComponent<EnemyLance_BT>().ApplyDamage(damage);
+                lance_enemies[k].GetComponent<EnemySpear_BT>().ApplyDamage(damage);
                 return;
             }
         }

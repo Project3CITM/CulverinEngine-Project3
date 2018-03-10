@@ -35,8 +35,6 @@ public class Investigate_Action : Action
         int current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        event_to_react = GetComponent<NormalGuardListener>().GetEvent();
-
         GetComponent<Movement_Action>().GoTo(current_tile_x, current_tile_y, event_to_react.objective_tile_x, event_to_react.objective_tile_y);
 
         init_tile_x = current_tile_x;
@@ -127,5 +125,9 @@ public class Investigate_Action : Action
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
+    public void SetEvent(PerceptionEvent e)
+    {
+        event_to_react = new PerceptionEvent(e);
+    }
 }
 

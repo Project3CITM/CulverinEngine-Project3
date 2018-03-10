@@ -7,10 +7,11 @@ public class Movement_Action : Action
 {
     public GameObject   map;
     public GameObject   myself;
+    public GameObject   player;
     CompAnimation       anim;
     public float        tile_size = 0.0f;
     List<PathNode>      path = null;
-    bool                rotate = true;
+    public bool         rotate = true;
 
     enum Motion_State
     {
@@ -46,6 +47,7 @@ public class Movement_Action : Action
     {
         map = GetLinkedObject("map");
         myself = GetLinkedObject("myself");
+        player = GetLinkedObject("player");
         anim = GetComponent<CompAnimation>();
         Vector3 fw = myself.GetComponent<Transform>().GetForwardVector();
         path = new List<PathNode>();
@@ -90,20 +92,29 @@ public class Movement_Action : Action
 
                 if (ReachedTile())
                 {
-                    local_pos.x = path[0].GetTileX() * tile_size;
-                    local_pos.z = path[0].GetTileY() * tile_size;
-                    GetComponent<Transform>().local_position = local_pos;
+                    if (NextToPlayer())
+                    {
+                        GetComponent<Arrive_Steering>().SetEnabled(false);
+                        GetComponent<Seek_Steering>().SetEnabled(false);
+                        return ACTION_RESULT.AR_SUCCESS;
+                    }
+                    else
+                    {
+                        local_pos.x = path[0].GetTileX() * tile_size;
+                        local_pos.z = path[0].GetTileY() * tile_size;
+                        GetComponent<Transform>().local_position = local_pos;
 
-                    if (path.Count > 0)
-                        path.Remove(path[0]);
+                        if (path.Count > 0)
+                            path.Remove(path[0]);
 
-                    GetComponent<Arrive_Steering>().SetEnabled(false);
-                    GetComponent<Seek_Steering>().SetEnabled(false);
+                        GetComponent<Arrive_Steering>().SetEnabled(false);
+                        GetComponent<Seek_Steering>().SetEnabled(false);
 
-                    SetState();
+                        SetState();
 
-                    if (interupt == true)
-                        return ACTION_RESULT.AR_FAIL;
+                        if (interupt == true)
+                            return ACTION_RESULT.AR_FAIL;
+                    }
                 }
                 break;
 
@@ -143,14 +154,11 @@ public class Movement_Action : Action
                     if (interupt == true)
                         return ACTION_RESULT.AR_FAIL;
                 }
-
                 break;
 
             case Motion_State.MS_NO_STATE:
-                return ACTION_RESULT.AR_SUCCESS;
-                
+                return ACTION_RESULT.AR_SUCCESS;               
         }
-
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
@@ -253,28 +261,31 @@ public class Movement_Action : Action
 
     void SetState()
     {
-        if (path.Count > 0)
+        if (!NextToPlayer())
         {
-            if (!FinishedRotation() && rotate)
+            if (path.Count > 0)
             {
-                /*if(GetDeltaAngle() < 0)
-                    anim.PlayAnimation("Left");
-                else
-                    anim.PlayAnimation("Right");*/
+                if (!FinishedRotation() && rotate)
+                {
+                    /*if(GetDeltaAngle() < 0)
+                        anim.PlayAnimation("Left");
+                    else
+                        anim.PlayAnimation("Right");*/
 
-                state = Motion_State.MS_ROTATE;
-                GetComponent<Align_Steering>().SetEnabled(true);
-                Debug.Log("State: ROTATE");
-                return;
-            }        
-            if (!ReachedTile())
-            {
-                //anim.PlayAnimation("Patrol");
-                state = Motion_State.MS_MOVE;
-                GetComponent<Arrive_Steering>().SetEnabled(true);
-                GetComponent<Seek_Steering>().SetEnabled(true);
-                Debug.Log("State: MOVE");
-                return;
+                    state = Motion_State.MS_ROTATE;
+                    GetComponent<Align_Steering>().SetEnabled(true);
+                    Debug.Log("State: ROTATE");
+                    return;
+                }
+                if (!ReachedTile())
+                {
+                    //anim.PlayAnimation("Patrol");
+                    state = Motion_State.MS_MOVE;
+                    GetComponent<Arrive_Steering>().SetEnabled(true);
+                    GetComponent<Seek_Steering>().SetEnabled(true);
+                    Debug.Log("State: MOVE");
+                    return;
+                }
             }
         }
         Debug.Log("Path count:" + path.Count);
@@ -357,5 +368,15 @@ public class Movement_Action : Action
     public float GetRotMargin()
     {
         return rot_margin;
+    }
+
+    public bool NextToPlayer()
+    {
+        int x, y;
+        player.GetComponent<MovementController>().GetPlayerPos(out x, out y);
+        int distance = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX()) + Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+        if (distance <= 1)
+            return true;
+        return false;
     }
 }

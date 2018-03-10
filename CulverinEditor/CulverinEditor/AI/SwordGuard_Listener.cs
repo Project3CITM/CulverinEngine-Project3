@@ -2,9 +2,10 @@
 using CulverinEditor.Debug;
 using System.Collections.Generic;
 
-public class NormalGuardListener : PerceptionListener
+public class SwordGuard_Listener : PerceptionListener
 {
     public int hear_range = 2;
+    bool player_seen = false;
 
     void Start()
     {
@@ -24,7 +25,6 @@ public class NormalGuardListener : PerceptionListener
         if (IsPriotitaryEvent(event_recieved))
         {
             ClearEvents();
-            events_in_memory.Add(event_recieved);
         }
         else return;
 
@@ -33,29 +33,43 @@ public class NormalGuardListener : PerceptionListener
             case PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT:
             case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
 
-                if(event_recieved.type == PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER)
-                {
-                    //Check if i have seen the player before
-                    //If i do, i will detect this 
-                }
-
                 if (OnHearRange(event_recieved))
                 {
-                    my_self.GetComponent<EnemySword_BT>().heard_something = true;
-                    my_self.GetComponent<Investigate_Action>().forgot_event = false;
-                    my_self.GetComponent<EnemySword_BT>().InterruptAction();
+                    if (event_recieved.type == PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER && player_seen)
+                    {
+                        my_self.GetComponent<EnemySword_BT>().heard_something = true;
+                        my_self.GetComponent<Investigate_Action>().forgot_event = false;
+                        my_self.GetComponent<Investigate_Action>().SetEvent(event_recieved);
+                        my_self.GetComponent<EnemySword_BT>().InterruptAction();
+                        events_in_memory.Add(event_recieved);
+                        Debug.Log("I Heard The Player");
 
-                    Debug.Log("I Heard Somethin");
+                        event_recieved.start_counting = false;
+                    }
+                    else
+                    {
+                        my_self.GetComponent<EnemySword_BT>().heard_something = true;
+                        my_self.GetComponent<Investigate_Action>().forgot_event = false;
+                        my_self.GetComponent<Investigate_Action>().SetEvent(event_recieved);
+                        my_self.GetComponent<EnemySword_BT>().InterruptAction();
+                        events_in_memory.Add(event_recieved);
+                        Debug.Log("I Heard Somethin");
 
-                    event_recieved.start_counting = false;
+                        event_recieved.start_counting = false;
+                    }
                 }
-
                 break;    
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-                my_self.GetComponent<EnemySword_BT>().InterruptAction();
-                my_self.GetComponent<EnemySword_BT>().player_detected = true;
-                Debug.Log("Player in sight");
+                if (my_self == ((PerceptionPlayerSeenEvent)event_recieved).enemy_who_saw)
+                {
+                    my_self.GetComponent<EnemySword_BT>().InterruptAction();
+                    my_self.GetComponent<EnemySword_BT>().player_detected = true;
+                    my_self.GetComponent<ChasePlayer_Action>().SetEvent(event_recieved);
+                    player_seen = true;
+                    events_in_memory.Add(event_recieved);
+                    Debug.Log("Player in sight");
+                }
                 break;
         }
     }
@@ -77,8 +91,6 @@ public class NormalGuardListener : PerceptionListener
                 Debug.Log("Player out of sight");
                 break;
         }
-
-        //events_in_memory.Remove(event_recieved);
     }
 
     bool OnHearRange(PerceptionEvent event_heard)
@@ -140,6 +152,5 @@ public class NormalGuardListener : PerceptionListener
 
         return false;
     }
-
 }
 

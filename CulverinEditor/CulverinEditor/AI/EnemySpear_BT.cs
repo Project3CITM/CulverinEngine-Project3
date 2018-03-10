@@ -1,11 +1,13 @@
-﻿using CulverinEditor;
+﻿
+using CulverinEditor;
 using CulverinEditor.Debug;
 
-class EnemyShield_BT : Enemy_BT
+class EnemySpear_BT : Enemy_BT
 {
     public override void Start()
     {
-        GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddShieldEnemy(gameObject);
+        GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddLanceEnemy(gameObject);
+        range = 2;
         base.Start();
     }
 
@@ -16,7 +18,8 @@ class EnemyShield_BT : Enemy_BT
 
     public override void MakeDecision()
     {
-        Debug.Log("MAKING SHIELD ACTION!");
+        Debug.Log("MAKING LANCE ACTION!");
+
         if (hit == true)
         {
             hit = false;
@@ -71,12 +74,25 @@ class EnemyShield_BT : Enemy_BT
                 return;
             }
 
-            //Idle
-            if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION)
+            //If none of them -> patrol
+            int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+            int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+
+            //Patrol
+            if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
             {
-                state = AI_STATE.AI_IDLE;
-                current_action = idle_action;
-                current_action.ActionStart();
+                Debug.Log("BT decision move defined!");
+                GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, origin_path_x, origin_path_y);
+                GetComponent<Movement_Action>().ActionStart();
+                current_action = GetComponent<Movement_Action>();
+                return;
+            }
+            else
+            {
+                Debug.Log("BT decision move defined!");
+                GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, end_path_x, end_path_y);
+                GetComponent<Movement_Action>().ActionStart();
+                current_action = GetComponent<Movement_Action>();
                 return;
             }
         }

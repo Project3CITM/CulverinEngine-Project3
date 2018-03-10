@@ -16,6 +16,13 @@ public class EnemySword_BT : Enemy_BT
 
     public override void MakeDecision()
     {
+        if(hit == true)
+        {
+            hit = false;
+            current_action = new GetHit_Action(anim_speed);
+            current_action.ActionStart();
+            return;
+        }
         //Behaviour tree structure
         if (player_detected)
         {
@@ -52,45 +59,38 @@ public class EnemySword_BT : Enemy_BT
                 return;
             }
         }
-
-        //Investigate
-        if (heard_something)
-        {
-            //Investigate
-            GetComponent<Investigate_Action>().ActionStart();
-            current_action = GetComponent<Investigate_Action>();
-            return;
-        }
-
-        //If none of them -> patrol
-        int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
-        int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
-
-        //Patrol
-        if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
-        {
-            Debug.Log("BT decision move defined!");
-            GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, origin_path_x, origin_path_y);
-            GetComponent<Movement_Action>().ActionStart();
-            current_action = GetComponent<Movement_Action>();
-            return;
-        }
         else
         {
-            Debug.Log("BT decision move defined!");
-            GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, end_path_x, end_path_y);
-            GetComponent<Movement_Action>().ActionStart();
-            current_action = GetComponent<Movement_Action>();
-            return;
-        }
+            //Investigate
+            if (heard_something)
+            {
+                //Investigate
+                GetComponent<Investigate_Action>().ActionStart();
+                current_action = GetComponent<Investigate_Action>();
+                return;
+            }
 
-        //Idle
-        if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION)
-        {
-            state = AI_STATE.AI_IDLE;
-            current_action = idle_action;
-            current_action.ActionStart();
-            return;
+            //If none of them -> patrol
+            int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+            int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+
+            //Patrol
+            if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
+            {
+                Debug.Log("BT decision move defined!");
+                GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, origin_path_x, origin_path_y);
+                GetComponent<Movement_Action>().ActionStart();
+                current_action = GetComponent<Movement_Action>();
+                return;
+            }
+            else
+            {
+                Debug.Log("BT decision move defined!");
+                GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, end_path_x, end_path_y);
+                GetComponent<Movement_Action>().ActionStart();
+                current_action = GetComponent<Movement_Action>();
+                return;
+            }
         }
     }
 }

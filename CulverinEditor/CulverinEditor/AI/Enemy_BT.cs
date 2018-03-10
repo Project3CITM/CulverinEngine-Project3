@@ -26,6 +26,8 @@ public class Enemy_BT : BT
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
 
+    protected bool hit = false;
+
     public uint range = 1;
 
     public override void Start()
@@ -53,6 +55,10 @@ public class Enemy_BT : BT
 
     public void ApplyDamage(float damage)
     {
+        InterruptAction();
+
+        hit = true;
+
         current_hp -= damage;
 
         if (current_hp <= 0)
