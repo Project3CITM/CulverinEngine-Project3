@@ -176,36 +176,37 @@ void CompBone::Save(JSON_Object * object, std::string name, bool saveScene, uint
 			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", resource_mesh->name.c_str());
 		}
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", resource_mesh->GetUUID());
+		App->fs->json_array_dotset_float4(object, name + "Offset.Col0", offset.Col(0));
+		App->fs->json_array_dotset_float4(object, name + "Offset.Col1", offset.Col(1));
+		App->fs->json_array_dotset_float4(object, name + "Offset.Col2", offset.Col(2));
+		App->fs->json_array_dotset_float4(object, name + "Offset.Col3", offset.Col(3));
+
+		json_object_dotset_number_with_std(object, name + "Weights Size", weights.size());
+
+		for (int i = 0; i < weights.size(); i++)
+		{
+			char str[255];
+			sprintf(str, "Weight %i", i);
+			std::string tmp(str);
+			json_object_dotset_number_with_std(object, name + tmp + ".VertexID", weights[i].vertex_id);
+			json_object_dotset_number_with_std(object, name + tmp + ".Weight", weights[i].weight);
+		}
+
+		json_object_dotset_number_with_std(object, name + "Childs Size", child_bones.size());
+
+		for (int i = 0; i < child_bones.size(); i++)
+		{
+			char str[255];
+			sprintf(str, "Child %i", i);
+			json_object_dotset_number_with_std(object, name + std::string(str) + ".UUID", child_bones[i]->GetParent()->GetUUID());
+		}
 	}
 	else
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", 0);
 	}
 
-	App->fs->json_array_dotset_float4(object, name + "Offset.Col0", offset.Col(0));
-	App->fs->json_array_dotset_float4(object, name + "Offset.Col1", offset.Col(1));
-	App->fs->json_array_dotset_float4(object, name + "Offset.Col2", offset.Col(2));
-	App->fs->json_array_dotset_float4(object, name + "Offset.Col3", offset.Col(3));
-
-	json_object_dotset_number_with_std(object, name + "Weights Size", weights.size());
-
-	for (int i = 0; i < weights.size(); i++)
-	{
-		char str[255];
-		sprintf(str, "Weight %i", i);
-		std::string tmp(str);
-		json_object_dotset_number_with_std(object, name + tmp + ".VertexID", weights[i].vertex_id);
-		json_object_dotset_number_with_std(object, name + tmp + ".Weight", weights[i].weight);
-	}
-
-	json_object_dotset_number_with_std(object, name + "Childs Size", child_bones.size());
-
-	for (int i = 0; i < child_bones.size(); i++)
-	{
-		char str[255];
-		sprintf(str, "Child %i", i);
-		json_object_dotset_number_with_std(object, name + std::string(str) + ".UUID", child_bones[i]->GetParent()->GetUUID());
-	}
+	
 }
 
 void CompBone::Load(const JSON_Object * object, std::string name)
@@ -227,37 +228,40 @@ void CompBone::Load(const JSON_Object * object, std::string name)
 			}
 			// Add bounding box ------
 			parent->AddBoundingBox(resource_mesh);
+
+			offset.SetCol(0, App->fs->json_array_dotget_float4_string(object, name + "Offset.Col0"));
+			offset.SetCol(1, App->fs->json_array_dotget_float4_string(object, name + "Offset.Col1"));
+			offset.SetCol(2, App->fs->json_array_dotget_float4_string(object, name + "Offset.Col2"));
+			offset.SetCol(3, App->fs->json_array_dotget_float4_string(object, name + "Offset.Col3"));
+
+			uint weights_size = json_object_dotget_number_with_std(object, name + "Weights Size");
+			weights.resize(weights_size);
+
+			for (int i = 0; i < weights.size(); i++)
+			{
+				char str[255];
+				sprintf(str, "Weight %i", i);
+				std::string tmp(str);
+				weights[i].vertex_id = json_object_dotget_number_with_std(object, name + tmp + ".VertexID");
+				weights[i].weight = json_object_dotget_number_with_std(object, name + tmp + ".Weight");
+			}
+
+			uint childs_size = json_object_dotget_number_with_std(object, name + "Childs Size");
+			child_bones.resize(childs_size);
+			child_uids.resize(childs_size);
+
+			for (int i = 0; i < child_bones.size(); i++)
+			{
+				char str[255];
+				sprintf(str, "Child %i", i);
+				child_uids[i] = json_object_dotget_number_with_std(object, name + std::string(str) + ".UUID");
+			}
+
+
 		}
 	}
 
-	offset.SetCol(0,App->fs->json_array_dotget_float4_string(object, name + "Offset.Col0"));
-	offset.SetCol(1,App->fs->json_array_dotget_float4_string(object, name + "Offset.Col1"));
-	offset.SetCol(2,App->fs->json_array_dotget_float4_string(object, name + "Offset.Col2"));
-	offset.SetCol(3,App->fs->json_array_dotget_float4_string(object, name + "Offset.Col3"));
-
-	uint weights_size = json_object_dotget_number_with_std(object, name + "Weights Size");
-	weights.resize(weights_size);
-
-	for (int i = 0; i < weights.size(); i++)
-	{
-		char str[255];
-		sprintf(str, "Weight %i", i);
-		std::string tmp(str);
-		weights[i].vertex_id = json_object_dotget_number_with_std(object, name + tmp + ".VertexID");
-		weights[i].weight = json_object_dotget_number_with_std(object, name + tmp + ".Weight");
-	}
-
-	uint childs_size = json_object_dotget_number_with_std(object, name + "Childs Size");
-	child_bones.resize(childs_size);
-	child_uids.resize(childs_size);
-
-	for (int i = 0; i < child_bones.size(); i++)
-	{
-		char str[255];
-		sprintf(str, "Child %i", i);
-		child_uids[i] = json_object_dotget_number_with_std(object, name + std::string (str) + ".UUID");
-	}
-
+	
 	Enable();
 }
 
