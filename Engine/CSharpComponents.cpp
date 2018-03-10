@@ -486,12 +486,12 @@ MonoObject * CSharpScript::RayCast(MonoObject * origin, MonoObject * direction, 
 void CSharpScript::SetAlbedo(MonoObject * object, MonoString * string)
 {
 	const char* c_string = mono_string_to_utf8(string);
-
+	
 	CompMaterial* c_material = current_game_object->GetComponentMaterial();
-	if (c_material == nullptr)return;
+	if (c_material == nullptr)LOG("ERROR %s", c_string); return;
 
 	Resource* texture_resource = App->resource_manager->GetResource((char*)c_string);
-	if (texture_resource == nullptr)return;
+	if (texture_resource == nullptr)LOG("ERROR %s", c_string); return;
 
 	c_material->material->textures[0].value = (ResourceMaterial*)texture_resource;
 }

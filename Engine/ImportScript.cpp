@@ -860,6 +860,11 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompRigidBody::WakeUp", (const void*)WakeUp);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::SetAtMaxJointPose", (const void*)SetAtMaxJointPose);
 
+	//COMPONENT MATERIAL FUNCTIONS ---------------------------
+	mono_add_internal_call("CulverinEditor.CompMaterial::SetAlbedo", (const void*)SetAlbedo);
+	mono_add_internal_call("CulverinEditor.CompMaterial::SetNormals", (const void*)SetNormals);
+	mono_add_internal_call("CulverinEditor.CompMaterial::SetAmbientOcclusion", (const void*)SetAmbientOcclusion);
+
 	//COMPONENT JOINT FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.CompJoint::DeleteJoint", (const void*)DeleteJoint);
 
