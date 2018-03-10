@@ -860,6 +860,11 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompRigidBody::WakeUp", (const void*)WakeUp);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::SetAtMaxJointPose", (const void*)SetAtMaxJointPose);
 
+	//COMPONENT MATERIAL FUNCTIONS ---------------------------
+	mono_add_internal_call("CulverinEditor.CompMaterial::SetAlbedo", (const void*)SetAlbedo);
+	mono_add_internal_call("CulverinEditor.CompMaterial::SetNormals", (const void*)SetNormals);
+	mono_add_internal_call("CulverinEditor.CompMaterial::SetAmbientOcclusion", (const void*)SetAmbientOcclusion);
+
 	//COMPONENT JOINT FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.CompJoint::DeleteJoint", (const void*)DeleteJoint);
 
@@ -1552,6 +1557,21 @@ mono_bool ImportScript::IsAnimOverXTime(MonoObject * object, float num_between_0
 void ImportScript::SetClipsSpeed(MonoObject * object, float speed_value)
 {
 	current->SetClipsSpeed(object, speed_value);
+}
+
+void ImportScript::SetAlbedo(MonoObject * object, MonoString * string)
+{
+	current->SetAlbedo(object, string);
+}
+
+void ImportScript::SetNormals(MonoObject * object, MonoString * string)
+{
+	current->SetNormals(object, string);
+}
+
+void ImportScript::SetAmbientOcclusion(MonoObject * object, MonoString * string)
+{
+	current->SetAmbientOcclusion(object, string);
 }
 
 MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)

@@ -3,15 +3,17 @@ using CulverinEditor.Debug;
 
 public class DaenerysController : CharacterController
 {
-    public GameObject daenerys_obj; //Maybe this should be in charactercontroller since we're only having 1 camera which will be the movementcontroller/charactermanager?
-
-    public GameObject daenerys_icon_obj;
-
-    public GameObject daenerys_button_left_obj;
-    public GameObject daenerys_button_right_obj;
-
+    //MESH ELEMENTS
+    public GameObject daenerys_obj;
     public GameObject rarm_daenerys_obj;
     public GameObject larm_daenerys_obj;
+
+    //UI ELEMENTS
+    public GameObject daenerys_icon_obj;
+    public GameObject daenerys_icon_obj_hp;
+    public GameObject daenerys_icon_obj_mana;
+    public GameObject daenerys_button_left_obj;
+    public GameObject daenerys_button_right_obj;
 
     public GameObject particle_firebreath_obj;
 
@@ -45,11 +47,16 @@ public class DaenerysController : CharacterController
 
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         daenerys_obj = GetLinkedObject("daenerys_obj");
+        rarm_daenerys_obj = GetLinkedObject("rarm_daenerys_obj");
+        larm_daenerys_obj = GetLinkedObject("larm_daenerys_obj");
+
         daenerys_icon_obj = GetLinkedObject("daenerys_icon_obj");
         daenerys_button_left_obj = GetLinkedObject("daenerys_button_left_obj");
         daenerys_button_right_obj = GetLinkedObject("daenerys_button_right_obj");
-        rarm_daenerys_obj = GetLinkedObject("rarm_daenerys_obj");
-        larm_daenerys_obj = GetLinkedObject("larm_daenerys_obj");
+
+        daenerys_icon_obj_hp = GetLinkedObject("daenerys_icon_obj_hp");
+        daenerys_icon_obj_mana = GetLinkedObject("daenerys_icon_obj_mana");
+
         particle_firebreath_obj = GetLinkedObject("particle_firebreath_obj");
 
         // Start Idle animation
@@ -57,13 +64,17 @@ public class DaenerysController : CharacterController
         anim_controller.PlayAnimation("Idle");
         ToggleMesh(false);
 
-        //Disable icon
-        icon = daenerys_icon_obj.GetComponent<CompImage>();
-        icon.SetEnabled(false, daenerys_icon_obj);
-
         //Disable Mana bar
         icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
         icon.SetEnabled(false, GetLinkedObject("mana_obj"));
+
+        //Move icon to the right
+        daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+        daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+
+        //Disable Jaime Abilities buttons
+        daenerys_button_left_obj.SetActive(false);
+        daenerys_button_right_obj.SetActive(false);
 
         Debug.Log(gameObject.GetName());
     }
@@ -295,13 +306,19 @@ public class DaenerysController : CharacterController
         anim_controller.SetTransition(name, value);
     }
 
-    public override void UpdateHUD(bool active)
+    public override void UpdateHUD(bool active, bool left)
     {
         //Update Hp bar
         if (active)
         {
             Debug.Log("Update HP Daenerys");
-            
+
+            //Set Icon in the center
+            daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
+            daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
+            daenerys_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, daenerys_icon_obj_hp);
+            daenerys_icon_obj_mana.GetComponent<CompImage>().SetEnabled(false, daenerys_icon_obj_mana);
+
             //Update HP
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
@@ -322,6 +339,10 @@ public class DaenerysController : CharacterController
             mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
             mana.SetMana(curr_mana, max_mana);
 
+            //Enable Daenerys Abilities buttons
+            daenerys_button_left_obj.SetActive(true);
+            daenerys_button_right_obj.SetActive(true);
+
             Debug.Log("Set Mana Daenerys");
         }
 
@@ -334,6 +355,25 @@ public class DaenerysController : CharacterController
             mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
             curr_mana = mana.GetCurrentMana();
 
+            //Set icon at the left
+            if (left)
+            {
+                daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+                daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
+            }
+            //Set the icon at the right
+            else
+            {
+                daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+                daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+            }
+
+            //Enable Secondary Bars & Update them
+            daenerys_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
+            daenerys_icon_obj_mana.GetComponent<CompImage>().FillAmount(curr_mana / max_mana);
+            daenerys_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true, daenerys_icon_obj_hp);
+            daenerys_icon_obj_mana.GetComponent<CompImage>().SetEnabled(true, daenerys_icon_obj_mana);
+
             //Disable Mana Bar
             icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
             icon.SetEnabled(false, GetLinkedObject("mana_obj"));
@@ -341,13 +381,13 @@ public class DaenerysController : CharacterController
             //Enable Stamina Bar
             icon = GetLinkedObject("stamina_obj").GetComponent<CompImage>();
             icon.SetEnabled(true, GetLinkedObject("stamina_obj"));
+
+            //Disable Daenerys Abilities buttons
+            daenerys_button_left_obj.SetActive(false);
+            daenerys_button_right_obj.SetActive(false);
         }
 
         Debug.Log("Update Child Daenerys");
-
-        //Change current character icon
-        icon = daenerys_icon_obj.GetComponent<CompImage>();
-        icon.SetEnabled(active, daenerys_icon_obj);
     }
 
     public override bool IsAnimationStopped(string name)

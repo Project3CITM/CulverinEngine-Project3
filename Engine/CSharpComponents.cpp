@@ -22,6 +22,9 @@
 #include "CompGraphic.h"
 #include "CompImage.h"
 #include "CompParticleSystem.h"
+#include "CompMaterial.h"
+#include "Materials.h"
+#include "ShadersLib.h"
 
 
 void CSharpScript::ActivateEmission(MonoObject* obj, bool a)
@@ -478,4 +481,43 @@ MonoObject * CSharpScript::RayCast(MonoObject * origin, MonoObject * direction, 
 		return App->importer->iScript->GetMonoObject(target);
 	}
 	return nullptr;
+}
+
+void CSharpScript::SetAlbedo(MonoObject * object, MonoString * string)
+{
+	const char* c_string = mono_string_to_utf8(string);
+	
+	CompMaterial* c_material = current_game_object->GetComponentMaterial();
+	if (c_material == nullptr)LOG("ERROR %s", c_string); return;
+
+	Resource* texture_resource = App->resource_manager->GetResource((char*)c_string);
+	if (texture_resource == nullptr)LOG("ERROR %s", c_string); return;
+
+	c_material->material->textures[0].value = (ResourceMaterial*)texture_resource;
+}
+
+void CSharpScript::SetNormals(MonoObject * object, MonoString * string)
+{
+	const char* c_string = mono_string_to_utf8(string);
+
+	CompMaterial* c_material = current_game_object->GetComponentMaterial();
+	if (c_material == nullptr)return;
+
+	Resource* texture_resource = App->resource_manager->GetResource((char*)c_string);
+	if (texture_resource == nullptr)return;
+
+	c_material->material->textures[1].value = (ResourceMaterial*)texture_resource;
+}
+
+void CSharpScript::SetAmbientOcclusion(MonoObject * object, MonoString * string)
+{
+	const char* c_string = mono_string_to_utf8(string);
+
+	CompMaterial* c_material = current_game_object->GetComponentMaterial();
+	if (c_material == nullptr)return;
+
+	Resource* texture_resource = App->resource_manager->GetResource((char*)c_string);
+	if (texture_resource == nullptr)return;
+
+	c_material->material->textures[2].value = (ResourceMaterial*)texture_resource;
 }

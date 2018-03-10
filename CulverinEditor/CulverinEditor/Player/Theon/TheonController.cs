@@ -3,19 +3,22 @@ using CulverinEditor.Debug;
 
 public class TheonController : CharacterController
 {
-    public GameObject theon_obj; //Maybe this should be in charactercontroller since we're only having 1 camera which will be the movementcontroller/charactermanager?
+    //MESH ELEMENTS
+    public GameObject theon_obj; 
     public GameObject L_Arm_Theon;
     public GameObject R_Arm_Theon;
     public GameObject L_SubArm_Theon;
     public GameObject R_SubArm_Theon;
 
+    //UI ELEMENTS
     public GameObject theon_icon_obj;
+    public GameObject theon_icon_obj_hp;
+    public GameObject theon_icon_obj_stamina;
 
     public GameObject theon_button_left;
     public GameObject theon_button_right;
     
    
-
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
     public float curr_hp = 100.0f;
@@ -42,23 +45,31 @@ public class TheonController : CharacterController
 
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         theon_obj = GetLinkedObject("theon_obj");
-        theon_icon_obj = GetLinkedObject("theon_icon_obj");
-
-        theon_button_right = GetLinkedObject("theon_button_right");
-        theon_button_left = GetLinkedObject("theon_button_left");
         L_Arm_Theon = GetLinkedObject("L_Arm_Theon");
         R_Arm_Theon = GetLinkedObject("R_Arm_Theon");
         L_SubArm_Theon = GetLinkedObject("L_SubArm_Theon");
         R_SubArm_Theon = GetLinkedObject("R_SubArm_Theon");
-        //Disable icon
-        icon = theon_icon_obj.GetComponent<CompImage>();
-        icon.SetEnabled(false, theon_icon_obj);
 
-        Debug.Log(gameObject.GetName());
+        theon_icon_obj = GetLinkedObject("theon_icon_obj");
+        theon_button_right = GetLinkedObject("theon_button_right");
+        theon_button_left = GetLinkedObject("theon_button_left");
+
+        theon_icon_obj_hp = GetLinkedObject("theon_icon_obj_hp");
+        theon_icon_obj_stamina = GetLinkedObject("theon_icon_obj_stamina");   
 
         //Start Idle animation
         //anim_controller = theon_obj.GetComponent<CompAnimation>();    
-        ToggleMesh(false);
+        //ToggleMesh(false);
+
+        //Move icon to the left
+        theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+        theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
+
+        //Disable Jaime Abilities buttons
+        theon_button_left.SetActive(false);
+        theon_button_right.SetActive(false);
+
+        Debug.Log(gameObject.GetName());
     }
 
     public override void Update()
@@ -178,7 +189,6 @@ public class TheonController : CharacterController
         {
             Debug.Log("Theon Pressed 2");
             //PrepareAbility();
-
         }
 
 
@@ -187,15 +197,12 @@ public class TheonController : CharacterController
 
             Debug.Log("Theon Pressed 1");
             PrepareLeftAbility();
-
         }
 
         if (Input.GetInput_KeyDown("RAttack", "Player"))
         {
-
             Debug.Log("Theon Pressed 2");
             //PrepareAbility();
-
         }
 
     }
@@ -234,21 +241,34 @@ public class TheonController : CharacterController
         anim_controller.SetTransition(name, value);
     }
 
-    public override void UpdateHUD(bool active)
+    public override void UpdateHUD(bool active, bool left)
     {
- 
         //Update Hp bar
         if (active)
         {
-            Debug.Log("Update HP Theon");
+            Debug.Log("Update HP Theon");          
+
+            //Set Icon in the center
+            theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
+            theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
+            theon_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, theon_icon_obj_hp);
+            theon_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, theon_icon_obj_stamina);
+            
             //Update HP
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
 
-            Debug.Log("Update Stamina Theon");
+            Debug.Log("Update HP Theon");
+
             //Update Stamina
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             stamina.SetStamina(curr_stamina, max_stamina);
+
+            //Enable Theon Abilities buttons
+            theon_button_left.SetActive(true);
+            theon_button_right.SetActive(true);
+
+            Debug.Log("Update Stamina Theon");
         }
 
         //Get values from var and store them
@@ -259,13 +279,33 @@ public class TheonController : CharacterController
 
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             curr_stamina = stamina.GetCurrentStamina();
+
+            //Set icon at the left
+            if (left)
+            {
+                theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+                theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
+            }
+            //Set the icon at the right
+            else
+            {
+                theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+                theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+            }
+
+            //Enable Secondary Bars & Update them
+            theon_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
+            theon_icon_obj_stamina.GetComponent<CompImage>().FillAmount(curr_stamina / max_stamina);
+            theon_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true, theon_icon_obj_hp);
+            theon_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(true, theon_icon_obj_stamina);
+
+            //Disable Theon Abilities buttons
+            theon_button_left.SetActive(false);
+            theon_button_right.SetActive(false);
         }
 
-        Debug.Log("Update Child Theon");
 
-        //Change current character icon
-        icon = theon_icon_obj.GetComponent<CompImage>();
-        icon.SetEnabled(active, theon_icon_obj);
+        Debug.Log("Update Child Theon");
     }
 
     public override bool IsAnimationStopped(string name)

@@ -10,6 +10,8 @@ public class JaimeController : CharacterController
 
     //UI ELEMENTS
     public GameObject jaime_icon_obj;
+    public GameObject jaime_icon_obj_hp;
+    public GameObject jaime_icon_obj_stamina;
     public GameObject jaime_button_left;
     public GameObject jaime_button_right;
 
@@ -56,7 +58,14 @@ public class JaimeController : CharacterController
         jaime_button_left = GetLinkedObject("jaime_button_left");
         jaime_button_right = GetLinkedObject("jaime_button_right");
 
-        // Start Idle animation
+        jaime_icon_obj_hp = GetLinkedObject("jaime_icon_obj_hp");
+        jaime_icon_obj_stamina = GetLinkedObject("jaime_icon_obj_stamina");
+
+        //Disable hp/stamina from icon
+        jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_hp);
+        jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_stamina);   
+
+        //Start Idle animation
         anim_controller = jaime_obj.GetComponent<CompAnimation>();
         anim_controller.PlayAnimation("Idle");
     }
@@ -271,20 +280,34 @@ public class JaimeController : CharacterController
         anim_controller.SetTransition(name, value);
     }
 
-    public override void UpdateHUD(bool active)
+    public override void UpdateHUD(bool active, bool left)
     {
         //Update Hp bar
         if (active)
         {
             Debug.Log("Update HP Jaime");
+
+            //Set Icon in the center
+            jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
+            jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
+            jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_hp);
+            jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_stamina);
+
             //Update HP
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
 
-            Debug.Log("Update Stamina Jaime");
+            Debug.Log("Update HP Jaime");
+
             //Update Stamina
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             stamina.SetStamina(curr_stamina, max_stamina);
+
+            //Enable Jaime Abilities buttons
+            jaime_button_left.SetActive(true);
+            jaime_button_right.SetActive(true);
+
+            Debug.Log("Update Stamina Jaime");
         }
 
         //Get values from var and store them
@@ -295,13 +318,32 @@ public class JaimeController : CharacterController
 
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             curr_stamina = stamina.GetCurrentStamina();
+
+            //Set icon at the left
+            if (left) 
+            {
+                jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+                jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
+            }
+            //Set the icon at the right
+            else
+            {
+                jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+                jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+            }
+
+            //Enable Secondary Bars And Update them
+            jaime_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
+            jaime_icon_obj_stamina.GetComponent<CompImage>().FillAmount(curr_stamina / max_stamina);
+            jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj_hp);
+            jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj_stamina);
+
+            //Disable Jaime Abilities buttons
+            jaime_button_left.SetActive(false);
+            jaime_button_right.SetActive(false);
         }
 
-        Debug.Log("Update Child Jaime");
-
-        //Change current character icon
-        icon = jaime_icon_obj.GetComponent<CompImage>();
-        icon.SetEnabled(active, jaime_icon_obj); 
+        Debug.Log("Update Child Jaime"); 
     }
 
     public override void ToggleMesh(bool active)
