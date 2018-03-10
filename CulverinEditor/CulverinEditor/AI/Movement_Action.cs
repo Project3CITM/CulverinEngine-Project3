@@ -228,6 +228,8 @@ public class Movement_Action : Action
 
         float distance_to_target = result.Length;
 
+        bool test = (distance_to_target < arrive_distance);
+
         return (distance_to_target < arrive_distance);
     }
 
@@ -275,6 +277,7 @@ public class Movement_Action : Action
                 return;
             }
         }
+        Debug.Log("Path count:" + path.Count);
         Debug.Log("State: NO_STATE");
         state = Motion_State.MS_NO_STATE;
     }

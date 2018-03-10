@@ -36,13 +36,13 @@ public class BT : CulverinBehaviour
 
     public virtual void Update()
     {
-        if(Input.GetKeyDown(KeyCode.W))
+        if(Input.GetKeyDown(KeyCode.Z))
         {
-            Debug.Log("uvedoble");
+            Debug.Log("seta");
             int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
             int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-            GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT, 10, 2, my_tile_x, my_tile_y, 8, 4);
+            GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT, 5, 5, my_tile_x, my_tile_y, 2, 23);
         }
 
         if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION)

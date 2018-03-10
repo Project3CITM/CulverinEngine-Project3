@@ -5,8 +5,7 @@ public class EnemySword_BT : Enemy_BT
 {
     public override void Start()
     {
-        //GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddSwordEnemy(gameObject);
-
+        GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddSwordEnemy(gameObject);
         base.Start();
     }
 
@@ -22,6 +21,7 @@ public class EnemySword_BT : Enemy_BT
         {
             if (InRange())
             {
+                Debug.Log("In Range");
                 bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
 
                 //Attack action
@@ -44,6 +44,7 @@ public class EnemySword_BT : Enemy_BT
             }
             else
             {
+                Debug.Log("Not In Range");
                 // Chase
                 Debug.Log("Chase Player Action");
                 GetComponent<ChasePlayer_Action>().ActionStart();

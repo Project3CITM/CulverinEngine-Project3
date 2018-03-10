@@ -57,8 +57,6 @@ public class NormalGuardListener : PerceptionListener
                 my_self.GetComponent<EnemySword_BT>().player_detected = true;
                 Debug.Log("Player in sight");
                 break;
-
-           
         }
     }
 
@@ -80,7 +78,7 @@ public class NormalGuardListener : PerceptionListener
                 break;
         }
 
-        events_in_memory.Remove(event_recieved);
+        //events_in_memory.Remove(event_recieved);
     }
 
     bool OnHearRange(PerceptionEvent event_heard)

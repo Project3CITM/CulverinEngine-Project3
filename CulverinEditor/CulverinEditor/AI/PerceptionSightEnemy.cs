@@ -166,7 +166,8 @@ public class PerceptionSightEnemy : CulverinBehaviour
                             if (tile.IsEqual(n))
                                 is_unseen = true;
                         if(is_unseen == false)
-                            tiles.Add(new PathNode(pos_x, pos_y));
+                            if(pos_x > 0 && pos_y > 0)
+                                tiles.Add(new PathNode(pos_x, pos_y));
                     }
                 }
                 break;
