@@ -54,7 +54,7 @@ public class Enemy_BT : BT
         Debug.Log("Enemy_BT not decision defined!");
     }
 
-    public void ApplyDamage(float damage)
+    public virtual void ApplyDamage(float damage)
     {
         if (current_action.action_type == Action.ACTION_TYPE.SHIELD_BLOCK_ACTION) return;
 
@@ -73,10 +73,6 @@ public class Enemy_BT : BT
         else if (current_hp < total_hp * damaged_limit)
         {
             life_state = ENEMY_STATE.ENEMY_DAMAGED;
-
-            /*GetComponent<CompMaterial>().SetAlbedo();
-            GetComponent<CompMaterial>().SetNormals();
-            GetComponent<CompMaterial>().SetAmbientOclusion();*/
 
             current_interpolation = current_hp / total_hp;
             anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;

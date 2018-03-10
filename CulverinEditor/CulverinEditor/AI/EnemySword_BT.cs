@@ -93,4 +93,16 @@ public class EnemySword_BT : Enemy_BT
             }
         }
     }
+
+    public override void ApplyDamage(float damage)
+    {
+        base.ApplyDamage(damage);
+
+        if(life_state == ENEMY_STATE.ENEMY_DAMAGED)
+        {
+            GetComponent<CompMaterial>().SetAlbedo("text");
+            GetComponent<CompMaterial>().SetNormals("text");
+            GetComponent<CompMaterial>().SetAmbientOcclusion("text");
+        }
+    }
 }
