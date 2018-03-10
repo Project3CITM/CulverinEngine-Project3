@@ -7,7 +7,7 @@ using System.Collections;
 
 public class AIManager : CulverinBehaviour
 {
-    public enum MYDIRECTION
+   /* public enum MYDIRECTION
     {
         NO_DIR = -1,
         NORTH = 0,
@@ -34,8 +34,8 @@ public class AIManager : CulverinBehaviour
     bool path_reached;
     float pathfinder_timer;
 
-    public int current_x, current_y;
-    int init_tile_x, init_tile_y;
+    public uint current_x, current_y;
+    uint init_tile_x, init_tile_y;
 
     //Movement
     int my_dir;
@@ -428,10 +428,10 @@ public class AIManager : CulverinBehaviour
         GetComponent<Transform>().RotateAroundAxis(new Vector3(0, 1, 0), angle_in_deg);
     }
 
-    public MYDIRECTION CheckRotation(int tile_to_go_x, int tile_to_go_y)
+    public MYDIRECTION CheckRotation(uint tile_to_go_x, uint tile_to_go_y)
     {
-        int west_east = current_x - tile_to_go_x;
-        int north_south = current_y - tile_to_go_y;
+        int west_east = current_x - (int)tile_to_go_x;
+        int north_south = current_y - (int)tile_to_go_y;
 
         if (west_east > 0)
             return MYDIRECTION.WEST;
@@ -557,5 +557,5 @@ public class AIManager : CulverinBehaviour
     {
         if (GetComponent<EnemyController>().hp <= 0)
             state = MYSTATE.DEAD;
-    }
+    }*/
 }

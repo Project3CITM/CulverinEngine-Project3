@@ -8,7 +8,9 @@ public class NormalGuardListener : PerceptionListener
 
     void Start()
     {
-        GetLinkedObject("event_manager").GetComponent<PerceptionManager>().AddListener(this);
+        event_manager = GetLinkedObject("event_manager");
+        event_manager.GetComponent<PerceptionManager>().AddListener(this);
+        my_self = GetLinkedObject("my_self");
         events_in_memory = new List<PerceptionEvent>();
     }
 
@@ -19,13 +21,9 @@ public class NormalGuardListener : PerceptionListener
 
     public override void OnEventRecieved(PerceptionEvent event_recieved)
     {
-        Debug.Log("number of events: " + events_in_memory.Count.ToString());
-        Debug.Log("event memory time = " + event_recieved.time_in_memory.ToString());
-
         if (IsPriotitaryEvent(event_recieved))
         {
             ClearEvents();
-            Debug.Log("Cleared other events");
             events_in_memory.Add(event_recieved);
         }
         else return;
@@ -43,9 +41,9 @@ public class NormalGuardListener : PerceptionListener
 
                 if (OnHearRange(event_recieved))
                 {
-                    GetLinkedObject("my_self").GetComponent<EnemySword_BT>().heard_something = true;
-                    GetLinkedObject("my_self").GetComponent<Investigate_Action>().forgot_event = false;
-                    GetLinkedObject("my_self").GetComponent<EnemySword_BT>().InterruptAction();
+                    my_self.GetComponent<EnemySword_BT>().heard_something = true;
+                    my_self.GetComponent<Investigate_Action>().forgot_event = false;
+                    my_self.GetComponent<EnemySword_BT>().InterruptAction();
 
                     Debug.Log("I Heard Somethin");
 
@@ -55,8 +53,9 @@ public class NormalGuardListener : PerceptionListener
                 break;    
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-                GetLinkedObject("my_self").GetComponent<EnemySword_BT>().InterruptAction();
-                GetLinkedObject("my_self").GetComponent<EnemySword_BT>().player_detected = true;
+                my_self.GetComponent<EnemySword_BT>().InterruptAction();
+                my_self.GetComponent<EnemySword_BT>().player_detected = true;
+                Debug.Log("Player in sight");
                 break;
 
            
@@ -69,21 +68,16 @@ public class NormalGuardListener : PerceptionListener
         {
             case PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT:
             case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
-
-                GetLinkedObject("my_self").GetComponent<EnemySword_BT>().heard_something = false;
-                GetLinkedObject("my_self").GetComponent<Investigate_Action>().forgot_event = true;
-
-
+                my_self.GetComponent<EnemySword_BT>().heard_something = false;
+                my_self.GetComponent<Investigate_Action>().forgot_event = true;
                 Debug.Log("I lost Somethin");
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-                GetLinkedObject("my_self").GetComponent<EnemySword_BT>().player_detected = false;
-                GetLinkedObject("my_self").GetComponent<ChasePlayer_Action>().forgot_event = true;
-
+                my_self.GetComponent<EnemySword_BT>().player_detected = false;
+                my_self.GetComponent<ChasePlayer_Action>().forgot_event = true;
+                Debug.Log("Player out of sight");
                 break;
-
-            
         }
 
         events_in_memory.Remove(event_recieved);
@@ -93,26 +87,22 @@ public class NormalGuardListener : PerceptionListener
     {
         PerceptionHearEvent tmp = (PerceptionHearEvent)event_heard;
 
-        int my_tile_x = GetLinkedObject("my_self").GetComponent<Movement_Action>().GetCurrentTileX();
-        int my_tile_y = GetLinkedObject("my_self").GetComponent<Movement_Action>().GetCurrentTileY();
+        int my_tile_x = my_self.GetComponent<Movement_Action>().GetCurrentTileX();
+        int my_tile_y = my_self.GetComponent<Movement_Action>().GetCurrentTileY();
 
         Debug.Log(my_tile_x.ToString());
         Debug.Log(my_tile_y.ToString());
 
         if (hear_range < tmp.radius_in_tiles)
         {
-            Debug.Log("Hear < radius");
-
-            if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles))
+            if (RadiusOverlap((int)my_tile_x, (int)my_tile_y, hear_range, (int)tmp.objective_tile_x, (int)tmp.objective_tile_y, (int)tmp.radius_in_tiles))
                 return true;
 
             return false;
         }
         else
         {
-            Debug.Log("Hear > radius");
-
-            if (RadiusOverlap(tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles, my_tile_x, my_tile_y, hear_range))
+            if (RadiusOverlap((int)tmp.objective_tile_x, (int)tmp.objective_tile_y, (int)tmp.radius_in_tiles, (int)my_tile_x, (int)my_tile_y, hear_range))
                 return true;
 
             return false;
@@ -123,19 +113,31 @@ public class NormalGuardListener : PerceptionListener
     {
         //Check if one of the four boundaries is inside the bigger radius
         //x - radius, y - radius
-        if (((little_tile_x - little_radius) >= (big_tile_x - big_radius)) && ((little_tile_y - little_radius) >= (big_tile_y - big_radius)) && ((little_tile_x - little_radius) <= (big_tile_x + big_radius)) && ((little_tile_y - little_radius) <= (big_tile_y + big_radius)))
+        if (((little_tile_x - little_radius) >= (big_tile_x - big_radius))
+            && ((little_tile_y - little_radius) >= (big_tile_y - big_radius))
+            && ((little_tile_x - little_radius) <= (big_tile_x + big_radius))
+            && ((little_tile_y - little_radius) <= (big_tile_y + big_radius)))
             return true;
 
         //x - radius, y + radius
-        if (((little_tile_x - little_radius) >= (big_tile_x - big_radius)) && ((little_tile_y + little_radius) >= (big_tile_y - big_radius)) && ((little_tile_x - little_radius) <= (big_tile_x + big_radius)) && ((little_tile_y + little_radius) <= (big_tile_y + big_radius)))
+        if (((little_tile_x - little_radius) >= (big_tile_x - big_radius)) 
+            && ((little_tile_y + little_radius) >= (big_tile_y - big_radius)) 
+            && ((little_tile_x - little_radius) <= (big_tile_x + big_radius)) 
+            && ((little_tile_y + little_radius) <= (big_tile_y + big_radius)))
             return true;
 
         //x + radius, y - radius
-        if (((little_tile_x + little_radius) >= (big_tile_x - big_radius)) && ((little_tile_y - little_radius) >= (big_tile_y - big_radius)) && ((little_tile_x + little_radius) <= (big_tile_x + big_radius)) && ((little_tile_y - little_radius) <= (big_tile_y + big_radius)))
+        if (((little_tile_x + little_radius) >= (big_tile_x - big_radius)) 
+            && ((little_tile_y - little_radius) >= (big_tile_y - big_radius)) 
+            && ((little_tile_x + little_radius) <= (big_tile_x + big_radius)) 
+            && ((little_tile_y - little_radius) <= (big_tile_y + big_radius)))
             return true;
 
         //x + radius, y + radius
-        if (((little_tile_x + little_radius) >= (big_tile_x - big_radius)) && ((little_tile_y + little_radius) >= (big_tile_y - big_radius)) && ((little_tile_x + little_radius) <= (big_tile_x + big_radius)) && ((little_tile_y + little_radius) <= (big_tile_y + big_radius)))
+        if (((little_tile_x + little_radius) >= (big_tile_x - big_radius)) 
+            && ((little_tile_y + little_radius) >= (big_tile_y - big_radius)) 
+            && ((little_tile_x + little_radius) <= (big_tile_x + big_radius)) 
+            && ((little_tile_y + little_radius) <= (big_tile_y + big_radius)))
             return true;
 
         return false;

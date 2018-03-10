@@ -48,7 +48,6 @@ public class Movement_Action : Action
         myself = GetLinkedObject("myself");
         anim = GetComponent<CompAnimation>();
         Vector3 fw = myself.GetComponent<Transform>().GetForwardVector();
-        Debug.Log("Forward (start): " + fw.ToString());
         path = new List<PathNode>();
     }
 
@@ -91,15 +90,12 @@ public class Movement_Action : Action
 
                 if (ReachedTile())
                 {
-                    Debug.Log("Current tile:" + path[0].GetTileX().ToString() + "," + path[0].GetTileY());
                     local_pos.x = path[0].GetTileX() * tile_size;
                     local_pos.z = path[0].GetTileY() * tile_size;
                     GetComponent<Transform>().local_position = local_pos;
 
                     if (path.Count > 0)
                         path.Remove(path[0]);
-
-                    Debug.Log("Path Count: " + path.Count.ToString());
 
                     GetComponent<Arrive_Steering>().SetEnabled(false);
                     GetComponent<Seek_Steering>().SetEnabled(false);
@@ -162,25 +158,52 @@ public class Movement_Action : Action
     {
         path.Clear();
         path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(cur_x, cur_y), new PathNode(obj_x, obj_y));
-
         rotate = rot;
-
-        foreach (PathNode pn in path)
-            Debug.Log("Tile:\nX:" + pn.GetTileX().ToString() + " Y:" + pn.GetTileY().ToString());
-
         SetState();
     }
 
     public void GoToPrevious(int cur_x, int cur_y, int obj_x, int obj_y)    // Sets a path to the previous tile of your objective // Useful for chasing the player
     {
+        Pathfinder pf = map.GetComponent<Pathfinder>();
         path.Clear();
-        path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(cur_x, cur_y), new PathNode(obj_x, obj_y));
-        path.Remove(path[(path.Count - 1)]);
+        Debug.Log("Objective:" + obj_x.ToString() + "," + obj_y.ToString());
+        List<PathNode> adjacent_walkable_tiles = pf.GetWalkableAdjacents(new PathNode(obj_x, obj_y));
+        foreach (PathNode n in adjacent_walkable_tiles)
+            Debug.Log("X:" + n.GetTileX().ToString() + "Y:" + n.GetTileY().ToString());
 
-        foreach (PathNode pn in path)
-            Debug.Log("Tile:\nX:" + pn.GetTileX().ToString() + " Y:" + pn.GetTileY().ToString());
+        int current_x = GetCurrentTileX();
+        int current_y = GetCurrentTileY();
 
-        SetState();
+        Debug.Log("Adjacent: " + adjacent_walkable_tiles.Count);
+
+        if (adjacent_walkable_tiles.Count >= 0)
+        {
+            PathNode closest = adjacent_walkable_tiles[0];
+            int closest_distance = (closest.GetTileX() - current_x) + (closest.GetTileY() - current_y);
+
+            if (adjacent_walkable_tiles.Count >= 1)
+            {
+                for (int i = 1; i < adjacent_walkable_tiles.Count; i++)
+                {
+                    int x_distance = (closest.GetTileX() - current_x);
+                    int y_distance = (closest.GetTileY() - current_y);
+
+                    int distance = x_distance + y_distance;
+
+                    if (distance < closest_distance)
+                        closest = adjacent_walkable_tiles[i];
+                }
+            }
+
+            Debug.Log("Closest adjacent: " + closest.GetTileX() + "," + closest.GetTileY());
+
+            path = pf.CalculatePath(new PathNode(cur_x, cur_y), closest);
+
+            foreach (PathNode n in path)
+                Debug.Log("X:" + n.GetTileX().ToString() + "Y:" + n.GetTileY().ToString());
+
+            SetState();
+        }
     }
 
     public void Accelerate(Vector3 acceleration)    

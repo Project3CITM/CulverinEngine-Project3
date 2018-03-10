@@ -27,19 +27,29 @@ public class EnemySword_BT : Enemy_BT
                 //Attack action
                 if (attack_ready && current_action.action_type == Action.ACTION_TYPE.IDLE_ACTION)
                 {
+                    Debug.Log("Attack");
                     attack_timer = 0.0f;
                     state = AI_STATE.AI_ATTACKING;
                     current_action = new Attack_Action(anim_speed, attack_damage);
                     current_action.ActionStart();
                     return;
                 }
+                else
+                {
+                    state = AI_STATE.AI_IDLE;
+                    current_action = idle_action;
+                    current_action.ActionStart();
+                    return;
+                }
             }
-
-            // Chase
-            Debug.Log("Chase Player Action");
-            GetComponent<ChasePlayer_Action>().ActionStart();
-            current_action = GetComponent<ChasePlayer_Action>();
-            return;
+            else
+            {
+                // Chase
+                Debug.Log("Chase Player Action");
+                GetComponent<ChasePlayer_Action>().ActionStart();
+                current_action = GetComponent<ChasePlayer_Action>();
+                return;
+            }
         }
 
         //Investigate

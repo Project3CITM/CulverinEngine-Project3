@@ -55,9 +55,7 @@ public class Investigate_Action : Action
                 if(interupt)
                 {
                     GetComponent<Movement_Action>().Interupt();
-                }
-
-               
+                }               
 
                 ///Make Move update
                 move_return = GetComponent<Movement_Action>().ActionUpdate();

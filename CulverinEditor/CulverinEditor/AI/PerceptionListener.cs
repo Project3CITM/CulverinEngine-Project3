@@ -4,24 +4,21 @@ using System.Collections.Generic;
 
 public class PerceptionListener : CulverinBehaviour
 {
-
     public GameObject event_manager;
     public GameObject my_self;
     public List<PerceptionEvent> events_in_memory;
 
    void Start()
-    {
-       
-    }
+    { }
 
     void Update()
-    {
-        
-    }
+    { }
 
-    public virtual void OnEventRecieved(PerceptionEvent event_recieved) { }
+    public virtual void OnEventRecieved(PerceptionEvent event_recieved)
+    { }
 
-    public virtual void OnEventGone(PerceptionEvent event_recieved) { }
+    public virtual void OnEventGone(PerceptionEvent event_recieved)
+    { }
 
     public void UpdateMemory()
     {
@@ -55,6 +52,8 @@ public class PerceptionListener : CulverinBehaviour
 
     public PerceptionEvent GetEvent()
     {
+        foreach (PerceptionEvent pe in events_in_memory)
+            Debug.Log("Event" + pe.objective_tile_x + "," + pe.objective_tile_y);
         Debug.Log("Getting event");
 
         if (events_in_memory.Count > 0)

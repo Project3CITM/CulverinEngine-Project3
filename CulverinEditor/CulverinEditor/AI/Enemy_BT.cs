@@ -30,6 +30,7 @@ public class Enemy_BT : BT
 
     public override void Start()
     {
+        player = GetLinkedObject("player");
         current_hp = total_hp;
         //Enemy starts with the attack loaded!
         attack_timer = attack_cooldown * anim_speed;
@@ -71,9 +72,12 @@ public class Enemy_BT : BT
 
     public bool InRange()
     {
-        //get player tile & calc if in range
-        //GetLinkedObject("player").GetComponent<CharactersManager>();
-        return true;
+        int x, y;
+        player.GetComponent<MovementController>().GetPlayerPos(out x, out y);
+
+        if((x - GetComponent<Movement_Action>().GetCurrentTileX() <= range) && (y - GetComponent<Movement_Action>().GetCurrentTileY() <= range))
+            return true;
+        return false;
     }
 
 }

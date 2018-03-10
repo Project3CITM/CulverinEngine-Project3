@@ -5,13 +5,12 @@ using System.Collections;
 
 public class PerceptionManager : CulverinBehaviour
 {
-
     //Listeners
     List<PerceptionListener>    listeners_list;
     List<PerceptionEvent>       perception_events_queue;
 
-
-    PerceptionManager() {}
+    PerceptionManager()
+    { }
 
     // Use this for initialization
     void Start()
@@ -27,16 +26,13 @@ public class PerceptionManager : CulverinBehaviour
         if (!AnyEvent())
             return;
 
-
         foreach(PerceptionEvent perception_event in perception_events_queue)
         {
             SendEventtoListeners(perception_event);
         }
 
         //Clean frame events
-        perception_events_queue.Clear();
-
-        
+        perception_events_queue.Clear();        
     }
 
     public void AddListener(PerceptionListener new_listener)
@@ -64,7 +60,7 @@ public class PerceptionManager : CulverinBehaviour
     {
         foreach(PerceptionListener listener in listeners_list)
         {
-            listener.OnEventRecieved(event_send);
+            listener.OnEventRecieved(new PerceptionEvent(event_send));
         }
     }
 }

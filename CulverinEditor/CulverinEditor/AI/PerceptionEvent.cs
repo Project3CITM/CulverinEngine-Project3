@@ -39,6 +39,18 @@ public class PerceptionEvent : CulverinBehaviour
         start_counting = true;
     }
 
+    public PerceptionEvent(PerceptionEvent e)
+    {
+        type = e.type;
+        time_in_memory = e.time_in_memory;
+        objective_tile_x = e.objective_tile_x;
+        objective_tile_y = e.objective_tile_y;
+        origin_tile_y = e.origin_tile_y;
+        origin_tile_x = e.origin_tile_x;
+        counter_in_memory = 0.0f;
+        start_counting = true;
+    }
+
     public void SetOrigin(int x, int y) { origin_tile_x = x; origin_tile_y = y; }
 
     public void SetDestiny(int x, int y) { objective_tile_x = x; objective_tile_y = y; }
@@ -53,6 +65,11 @@ public class PerceptionHearEvent : PerceptionEvent
     {
         radius_in_tiles = _radius;
     }
+
+    public PerceptionHearEvent(PerceptionHearEvent e) : base(e)
+    {
+        radius_in_tiles = e.radius_in_tiles;
+    }
 }
 
 public class PerceptionPlayerSeenEvent : PerceptionEvent
@@ -66,5 +83,12 @@ public class PerceptionPlayerSeenEvent : PerceptionEvent
         player_seen_in_x = player_x;
         player_seen_in_y = player_y;
         enemy_who_saw = enemy_who_saw_;
+    }
+
+    public PerceptionPlayerSeenEvent(PerceptionPlayerSeenEvent e) : base(e)
+    {
+        player_seen_in_x = e.player_seen_in_x;
+        player_seen_in_y = e.player_seen_in_y;
+        enemy_who_saw = e.enemy_who_saw;
     }
 }
