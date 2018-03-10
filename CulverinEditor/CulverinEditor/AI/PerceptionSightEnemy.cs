@@ -40,7 +40,7 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
     void Update()
     {
-        timer += Time.DeltaTime();
+        timer += Time.deltaTime;
 
         if (timer >= check_player_timer)
         {

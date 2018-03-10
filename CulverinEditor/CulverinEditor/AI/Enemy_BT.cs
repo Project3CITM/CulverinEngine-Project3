@@ -44,7 +44,7 @@ public class Enemy_BT : BT
     public override void Update()
     {
         //Update attack cooldown
-        attack_timer += Time.DeltaTime();
+        attack_timer += Time.deltaTime;
 
         base.Update();
     }
