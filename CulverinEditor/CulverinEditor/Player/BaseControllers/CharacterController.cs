@@ -178,4 +178,8 @@ public class CharacterController : CulverinBehaviour
     public virtual void ResetCoolDown()
     {
     }
+
+    public virtual void EnableAbilities(bool active)
+    {
+    }
 }

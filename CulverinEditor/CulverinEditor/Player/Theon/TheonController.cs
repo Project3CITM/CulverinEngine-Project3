@@ -14,11 +14,12 @@ public class TheonController : CharacterController
     public GameObject theon_icon_obj;
     public GameObject theon_icon_obj_hp;
     public GameObject theon_icon_obj_stamina;
-
     public GameObject theon_button_left;
     public GameObject theon_button_right;
-    
-   
+    public GameObject theon_left_flag;
+    public GameObject theon_right_flag;
+
+
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
     public float curr_hp = 100.0f;
@@ -53,6 +54,8 @@ public class TheonController : CharacterController
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
         theon_button_right = GetLinkedObject("theon_button_right");
         theon_button_left = GetLinkedObject("theon_button_left");
+        theon_left_flag = GetLinkedObject("theon_left_flag");
+        theon_right_flag = GetLinkedObject("theon_right_flag");
 
         theon_icon_obj_hp = GetLinkedObject("theon_icon_obj_hp");
         theon_icon_obj_stamina = GetLinkedObject("theon_icon_obj_stamina");   
@@ -64,10 +67,10 @@ public class TheonController : CharacterController
         //Move icon to the left
         theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
         theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
+        GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
 
-        //Disable Jaime Abilities buttons
-        theon_button_left.SetActive(false);
-        theon_button_right.SetActive(false);
+        //Disable Theon Abilities buttons
+        EnableAbilities(false);
 
         Debug.Log(gameObject.GetName());
     }
@@ -265,8 +268,10 @@ public class TheonController : CharacterController
             stamina.SetStamina(curr_stamina, max_stamina);
 
             //Enable Theon Abilities buttons
-            theon_button_left.SetActive(true);
-            theon_button_right.SetActive(true);
+            EnableAbilities(true);
+
+            //Disable Secondary button
+            GetLinkedObject("theon_s_button_obj").SetActive(false);
 
             Debug.Log("Update Stamina Theon");
         }
@@ -285,12 +290,17 @@ public class TheonController : CharacterController
             {
                 theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
                 theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
+                GetLinkedObject("theon_s_button_obj").SetActive(true);
+                GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
             }
+
             //Set the icon at the right
             else
             {
                 theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
                 theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+                GetLinkedObject("theon_s_button_obj").SetActive(true);
+                GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, 31.5f, 0.0f));
             }
 
             //Enable Secondary Bars & Update them
@@ -300,11 +310,8 @@ public class TheonController : CharacterController
             theon_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(true, theon_icon_obj_stamina);
 
             //Disable Theon Abilities buttons
-            theon_button_left.SetActive(false);
-            theon_button_right.SetActive(false);
+            EnableAbilities(false);
         }
-
-
         Debug.Log("Update Child Theon");
     }
 
@@ -481,5 +488,13 @@ public class TheonController : CharacterController
         //    enemy = enemy_obj.GetComponent<EnemyController>();
         //    enemy.Hit(attack_dmg);
         //}
+    }
+
+    public override void EnableAbilities(bool active)
+    {
+        theon_button_left.SetActive(active);
+        theon_button_right.SetActive(active);
+        theon_left_flag.SetActive(active);
+        theon_right_flag.SetActive(active);
     }
 }

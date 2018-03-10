@@ -14,6 +14,8 @@ public class DaenerysController : CharacterController
     public GameObject daenerys_icon_obj_mana;
     public GameObject daenerys_button_left_obj;
     public GameObject daenerys_button_right_obj;
+    public GameObject daenerys_left_flag;
+    public GameObject daenerys_right_flag;
 
     public GameObject particle_firebreath_obj;
 
@@ -53,6 +55,8 @@ public class DaenerysController : CharacterController
         daenerys_icon_obj = GetLinkedObject("daenerys_icon_obj");
         daenerys_button_left_obj = GetLinkedObject("daenerys_button_left_obj");
         daenerys_button_right_obj = GetLinkedObject("daenerys_button_right_obj");
+        daenerys_left_flag = GetLinkedObject("daenerys_left_flag");
+        daenerys_right_flag = GetLinkedObject("daenerys_right_flag");
 
         daenerys_icon_obj_hp = GetLinkedObject("daenerys_icon_obj_hp");
         daenerys_icon_obj_mana = GetLinkedObject("daenerys_icon_obj_mana");
@@ -71,10 +75,10 @@ public class DaenerysController : CharacterController
         //Move icon to the right
         daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
         daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+        GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, -31.5f, 0.0f));
 
-        //Disable Jaime Abilities buttons
-        daenerys_button_left_obj.SetActive(false);
-        daenerys_button_right_obj.SetActive(false);
+        //Disable Daenerys Abilities buttons
+        EnableAbilities(false);
 
         Debug.Log(gameObject.GetName());
     }
@@ -340,8 +344,10 @@ public class DaenerysController : CharacterController
             mana.SetMana(curr_mana, max_mana);
 
             //Enable Daenerys Abilities buttons
-            daenerys_button_left_obj.SetActive(true);
-            daenerys_button_right_obj.SetActive(true);
+            EnableAbilities(true);
+
+            //Disable Secondary button
+            GetLinkedObject("daenerys_s_button_obj").SetActive(false);
 
             Debug.Log("Set Mana Daenerys");
         }
@@ -360,12 +366,16 @@ public class DaenerysController : CharacterController
             {
                 daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
                 daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
+                GetLinkedObject("daenerys_s_button_obj").SetActive(true);
+                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
             }
             //Set the icon at the right
             else
             {
                 daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
                 daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+                GetLinkedObject("daenerys_s_button_obj").SetActive(true);
+                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, -31.5f, 0.0f));
             }
 
             //Enable Secondary Bars & Update them
@@ -383,8 +393,7 @@ public class DaenerysController : CharacterController
             icon.SetEnabled(true, GetLinkedObject("stamina_obj"));
 
             //Disable Daenerys Abilities buttons
-            daenerys_button_left_obj.SetActive(false);
-            daenerys_button_right_obj.SetActive(false);
+            EnableAbilities(false);
         }
 
         Debug.Log("Update Child Daenerys");
@@ -614,6 +623,14 @@ public class DaenerysController : CharacterController
         //    }
 
         //}
+    }
+
+    public override void EnableAbilities(bool active)
+    {
+        daenerys_button_left_obj.SetActive(active);
+        daenerys_button_right_obj.SetActive(active);
+        daenerys_left_flag.SetActive(active);
+        daenerys_right_flag.SetActive(active);
     }
 
     //---------------------------   
