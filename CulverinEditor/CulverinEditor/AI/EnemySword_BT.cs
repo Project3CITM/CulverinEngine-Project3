@@ -3,9 +3,14 @@ using CulverinEditor.Debug;
 
 public class EnemySword_BT : Enemy_BT
 {
+    public GameObject mesh;
+
     public override void Start()
     {
-        GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddSwordEnemy(gameObject);
+        mesh = GetLinkedObject("mesh");
+        mesh.GetComponent<CompAnimation>().PlayAnimation("Patrol");
+        mesh.GetComponent<CompAnimation>().SetTransition("ToUnshade");
+        //GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddSwordEnemy(gameObject);
         base.Start();
     }
 
@@ -19,16 +24,11 @@ public class EnemySword_BT : Enemy_BT
         if (next_action.action_type != Action.ACTION_TYPE.NO_ACTION)
         {
             current_action = next_action;
-            next_action = new Action();
-        }
-
-        if (hit == true)
-        {
-            hit = false;
-            current_action = new GetHit_Action(anim_speed);
             current_action.ActionStart();
+            next_action = new Action();
             return;
         }
+
         //Behaviour tree structure
         if (player_detected)
         {
@@ -57,9 +57,6 @@ public class EnemySword_BT : Enemy_BT
             }
             else
             {
-                Debug.Log("Not In Range");
-                // Chase
-                Debug.Log("Chase Player Action");
                 GetComponent<ChasePlayer_Action>().ActionStart();
                 current_action = GetComponent<ChasePlayer_Action>();
                 return;

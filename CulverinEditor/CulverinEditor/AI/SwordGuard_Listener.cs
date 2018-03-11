@@ -75,7 +75,7 @@ public class SwordGuard_Listener : PerceptionListener
 
                 if (my_self == seen_event_tmp.enemy_who_saw)
                 {
-
+                    Debug.Log("Player Seen");
                     PerceptionPlayerSeenEvent new_event_to_memory = new PerceptionPlayerSeenEvent(seen_event_tmp);
                     events_in_memory.Add(new_event_to_memory);
 

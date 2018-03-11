@@ -25,17 +25,11 @@ public class EnemyShield_BT : Enemy_BT
         if (next_action.action_type != Action.ACTION_TYPE.NO_ACTION)
         {
             current_action = next_action;
-            next_action = new Action();
-        }
-
-        Debug.Log("MAKING SHIELD ACTION!");
-        if (hit == true)
-        {
-            hit = false;
-            current_action = new GetHit_Action(anim_speed);
             current_action.ActionStart();
+            next_action = new Action();
             return;
         }
+
         //Behaviour tree structure
         if (player_detected)
         {

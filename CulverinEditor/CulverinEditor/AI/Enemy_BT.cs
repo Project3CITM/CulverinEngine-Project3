@@ -27,9 +27,6 @@ public class Enemy_BT : BT
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
     protected float current_interpolation = 1.0f;
-
-    protected bool hit = false;
-
     public uint range = 1;
 
     public override void Start()
@@ -65,7 +62,7 @@ public class Enemy_BT : BT
 
         InterruptAction();
 
-        hit = true;
+        next_action = new GetHit_Action(anim_speed);
 
         current_hp -= damage;
 

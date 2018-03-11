@@ -5,13 +5,14 @@ using System.Collections.Generic;
 
 public class Movement_Action : Action
 {
+    public bool         look_at_player = false;
     public GameObject   map;
     public GameObject   myself;
+    public GameObject   mesh;
     public GameObject   player;
     CompAnimation       anim;
     public float        tile_size = 0.0f;
     List<PathNode>      path = null;
-    public bool         look_at_player = true;
 
     enum Motion_State
     {
@@ -62,18 +63,18 @@ public class Movement_Action : Action
         action_type = ACTION_TYPE.MOVE_ACTION;
     }
 
-    public Movement_Action(float speed, bool chase_ = false): base(speed)
+    public Movement_Action(float speed): base(speed)
     {
-        chase = chase_;
         action_type = ACTION_TYPE.MOVE_ACTION;
     }
 
     void Start()
     {
+        look_at_player = false;
         map = GetLinkedObject("map");
         myself = GetLinkedObject("myself");
         player = GetLinkedObject("player");
-        anim = GetComponent<CompAnimation>();
+        anim = GetLinkedObject("mesh").GetComponent<CompAnimation>();
 
         Enemy_BT bt = GetComponent<EnemySword_BT>();
         if(bt == null)
@@ -123,7 +124,6 @@ public class Movement_Action : Action
                 {
                     current_velocity = current_velocity.Normalized * current_max_vel;
                 }
-
                 Vector3 local_pos = GetComponent<Transform>().local_position;
                 float dt = Time.deltaTime;
                 local_pos.x = local_pos.x + (current_velocity.x * dt);
@@ -145,6 +145,9 @@ public class Movement_Action : Action
                         local_pos.x = path[0].GetTileX() * tile_size;
                         local_pos.z = path[0].GetTileY() * tile_size;
                         GetComponent<Transform>().local_position = local_pos;
+
+                        //Update Collider -> 
+                        GetComponent<CompCollider>().MoveKinematic(local_pos);
 
                         if (path.Count > 0)
                             path.Remove(path[0]);
@@ -205,16 +208,19 @@ public class Movement_Action : Action
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
-    public void GoTo(int cur_x, int cur_y, int obj_x, int obj_y, bool rot = true)
+    public void GoTo(int cur_x, int cur_y, int obj_x, int obj_y, bool rot = false)
     {
         path.Clear();
         path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(cur_x, cur_y), new PathNode(obj_x, obj_y));
+        foreach(PathNode n in path)
+            Debug.Log("SuperNode: " + n.GetTileX() + "," + n.GetTileY());
         look_at_player = rot;
         SetState();
     }
 
-    public void GoToPrevious(int cur_x, int cur_y, int obj_x, int obj_y)    // Sets a path to the previous tile of your objective // Useful for chasing the player
+    public void GoToPrevious(int cur_x, int cur_y, int obj_x, int obj_y, bool chase = false)    // Sets a path to the previous tile of your objective // Useful for chasing the player
     {
+        this.chase = chase;
         Pathfinder pf = map.GetComponent<Pathfinder>();
         path.Clear();
         Debug.Log("Objective:" + obj_x.ToString() + "," + obj_y.ToString());
@@ -310,10 +316,40 @@ public class Movement_Action : Action
             {
                 if (!FinishedRotation())
                 {
-                    if(GetDeltaAngle() < 0)
-                        anim.SetTransition("ToDcha");
+                    if (GetDeltaAngle() < 0)
+                    {
+                        anim = GetLinkedObject("mesh").GetComponent<CompAnimation>();
+
+                        if (chase)
+                        {
+                            Debug.Log("Right Turn Chase mudafukas");
+                            anim.SetTransition("ToRightChase");
+                        }                            
+                        else
+                        {
+                            Debug.Log("Right Turn mudafukas");
+                            anim.SetTransition("ToRight");
+                        }
+
+                        anim.SetClipsSpeed(anim_speed);
+                    }
                     else
-                        anim.SetTransition("ToIzq");
+                    {
+                        anim = GetLinkedObject("mesh").GetComponent<CompAnimation>();
+
+                        if (chase)
+                        {
+                            Debug.Log("Left Turn Chase mudafukas");
+                            anim.SetTransition("ToLeftChase");
+                        }
+                        else
+                        {
+                            Debug.Log("Left Turn mudafukas");
+                            anim.SetTransition("ToLeft");
+                        }
+
+                        anim.SetClipsSpeed(anim_speed);
+                    }
 
                     state = Motion_State.MS_ROTATE;
                     GetComponent<Align_Steering>().SetEnabled(true);
@@ -322,10 +358,14 @@ public class Movement_Action : Action
                 }
                 if (!ReachedTile())
                 {
-                    if (chase)
-                       anim.SetTransition("ToChase");
+                    anim = GetLinkedObject("mesh").GetComponent<CompAnimation>();
+
+                    if (chase == true)
+                        anim.SetTransition("ToChase");
                     else
                         anim.SetTransition("ToPatrol");
+
+                    anim.SetClipsSpeed(anim_speed);
 
                     state = Motion_State.MS_MOVE;
                     GetComponent<Arrive_Steering>().SetEnabled(true);
@@ -335,7 +375,6 @@ public class Movement_Action : Action
                 }
             }
         }
-        Debug.Log("Path count:" + path.Count);
         Debug.Log("State: NO_STATE");
         state = Motion_State.MS_NO_STATE;
     }
@@ -434,7 +473,7 @@ public class Movement_Action : Action
                 Debug.Log(test);
                 return test;
             }
-
+            Debug.Log("Retards 4 the win");
             return 0.0f;
         }
     }
@@ -524,9 +563,24 @@ public class Movement_Action : Action
     {
         int x, y;
         player.GetComponent<MovementController>().GetPlayerPos(out x, out y);
-        int distance = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX()) + Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
-        if (distance <= 1)
-            return true;
+
+        switch (dir)
+        {
+            case Direction.DIR_WEST: return (y == GetCurrentTileY() && x == GetCurrentTileX() - 1);
+            case Direction.DIR_EAST: return (y == GetCurrentTileY() && x == GetCurrentTileX() + 1);
+            case Direction.DIR_NORTH: return (y == GetCurrentTileY() - 1 && x == GetCurrentTileX());
+            case Direction.DIR_SOUTH: return (y == GetCurrentTileY() + 1 && x == GetCurrentTileX());
+        }
         return false;
+    }
+
+    public void Chase()
+    {
+        chase = true;
+    }
+
+    public void NotChase()
+    {
+        chase = false;
     }
 }

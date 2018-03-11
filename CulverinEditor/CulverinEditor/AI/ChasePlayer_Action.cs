@@ -3,6 +3,7 @@ using CulverinEditor.Debug;
 
 public class ChasePlayer_Action : Action
 {
+    public GameObject mesh;
     int current_tile_x;
     int current_tile_y;
 
@@ -18,7 +19,8 @@ public class ChasePlayer_Action : Action
     void Start()
     {
         move = GetComponent<Movement_Action>();
-        anim = GetComponent<CompAnimation>();
+        mesh = GetLinkedObject("mesh");
+        anim = mesh.GetComponent<CompAnimation>();
     }
 
     public ChasePlayer_Action()
@@ -36,25 +38,39 @@ public class ChasePlayer_Action : Action
         bool ret = move.ActionStart();
         Debug.Log("Chasing Player");
 
-        anim.SetClipsSpeed(anim_speed);
-        anim.SetTransition("ToPrepToDesenv");
-
         current_tile_x = move.GetCurrentTileX();
         current_tile_y = move.GetCurrentTileY();
 
+        anim = mesh.GetComponent<CompAnimation>();
+        anim.SetTransition("Unshade");
+
+        //event_to_react.start_counting = false;
+
+        /*event_to_react = new PerceptionPlayerSeenEvent(5, 2, 24, gameObject);
+
+        event_to_react.SetOrigin(current_tile_x, current_tile_y);
+        event_to_react.SetDestiny(2, 24);*/
+
         event_to_react.start_counting = false;
 
-        move.GoToPrevious(current_tile_x, current_tile_y, event_to_react.objective_tile_x, event_to_react.objective_tile_y);
+        move.GoToPrevious(current_tile_x, current_tile_y, event_to_react.objective_tile_x, event_to_react.objective_tile_y, true);
 
         return ret;
     }
 
+    public override bool ActionEnd()
+    {
+        move.NotChase();
+        base.ActionEnd();
+        return true;
+    }
+
     public override ACTION_RESULT ActionUpdate()
     {
-        if (anim.IsAnimationStopped("Prep desenvainar"))
+        /*if (anim.IsAnimationStopped("Prep desenvainar"))
             anim.SetTransition("Desenv");
         else if (anim.IsAnimationStopped("Desenv"))
-            anim.SetTransition("Chase");
+            anim.SetTransition("Chase");*/
 
         if (interupt || forgot_event)
         {
