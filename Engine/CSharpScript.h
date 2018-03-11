@@ -284,6 +284,8 @@ public:
 	std::vector<ScriptVariable*> variables;
 
 private:
+	bool test = false;
+
 	//Auxiliar map to fill variables vector with info
 	std::map<MonoClassField*, MonoType*> field_type;
 	std::string nameCSharp;

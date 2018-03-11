@@ -276,6 +276,12 @@ MainMonoMethod CSharpScript::CreateMainFunction(std::string function, int parame
 //Depending on the function passed, script will perform its actions
 void CSharpScript::DoMainFunction(FunctionBase function, void** parameters)
 {
+	if (!test)
+	{
+		App->importer->iScript->UpdateMonoScript(this, GetMonoObject());
+		test = true;
+	}
+
 	switch (function)
 	{
 	case FunctionBase::CS_Start:
@@ -283,7 +289,6 @@ void CSharpScript::DoMainFunction(FunctionBase function, void** parameters)
 		if (Start.method != nullptr)
 		{
 			DoFunction(Start.method, nullptr);
-			App->importer->iScript->UpdateMonoScript(this, GetMonoObject());
 			UpdateScriptVariables();
 		}
 		break;

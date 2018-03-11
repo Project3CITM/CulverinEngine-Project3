@@ -638,12 +638,12 @@ public class DaenerysController : CharacterController
 
     public override void SecondaryAbility()
     {
-        GameObject arrow = Instantiate("DaenerysFireball");
-        Vector3 pos = new Vector3(transform.GetPosition());
-        Vector3 rot = new Vector3(transform.GetRotation());
+        GameObject fball = Instantiate("DaenerysFireball");
+        Vector3 pos = new Vector3(GetLinkedObject("player_obj").transform.GetPosition());
+        Vector3 rot = new Vector3(GetLinkedObject("player_obj").transform.GetRotation());
 
-        arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
-        arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
+        fball.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
+        fball.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
     }
 
     public override void EnableAbilities(bool active)
