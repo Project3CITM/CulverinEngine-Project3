@@ -5,16 +5,20 @@ using CulverinEditor.Debug;
 public class Fireball : CulverinBehaviour
 {
     public float damage = 50;
-    Vector3 speed;
-    Vector3 gravity;
-    bool collision;
-    CompRigidBody rb;
+    public float life = 5.0f;
+    private Vector3 speed;
+    private Vector3 gravity;
+    private bool collision;
+    private CompRigidBody rb;
+    private float timer = 0.0f;
 
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
         Shoot();
         damage = 10.0f;
+        timer = 0.0f;
+        life = 5.0f;
     }
 
     public void Shoot()
@@ -26,15 +30,12 @@ public class Fireball : CulverinBehaviour
 
     void Update()
     {
-        if (GetComponent<Transform>().local_position.y < -5)
+        timer += Time.deltaTime;
+
+        if(timer >= life)
         {
             Destroy(gameObject);
         }
-
-        //if(rb.LockedTransform())
-        //{
-        //    Destroy(float delay)
-        //}
     }
 
     void OnTriggerEnter()

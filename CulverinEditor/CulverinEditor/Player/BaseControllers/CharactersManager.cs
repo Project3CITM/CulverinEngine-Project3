@@ -116,38 +116,26 @@ public class CharactersManager : CulverinBehaviour
                         }
                     }
 
-                    if (Input.GetKeyDown(KeyCode.T))
-                    {
-                        if (IsDead(left_character) == false)
-                        {
-                            state = State.CHANGING_LEFT;
-                            CurrentToOut();
-                        }
-                    }
-                    else if (Input.GetKeyDown(KeyCode.Y))
-                    {
-                        if (IsDead(right_character) == false)
-                        {
-                            state = State.CHANGING_RIGHT;
-                            CurrentToOut();
-                        }
-                    }
-
                     if (Input.GetInput_KeyDown("TriangleR", "Player"))
                     {
-                        if (IsDead(right_character) == false)
+                        if (IsIdle() == true)
                         {
-                            state = State.CHANGING_RIGHT;
-                            CurrentToOut();
+                            if (IsDead(right_character) == false)
+                            {
+                                state = State.CHANGING_RIGHT;
+                                CurrentToOut();
+                            }
                         }
                     }
-
                     if (Input.GetInput_KeyDown("TriangleL", "Player"))
                     {
-                        if (IsDead(left_character) == false)
+                        if (IsIdle() == true)
                         {
-                            state = State.CHANGING_LEFT;
-                            CurrentToOut();
+                            if (IsDead(left_character) == false)
+                            {
+                                state = State.CHANGING_LEFT;
+                                CurrentToOut();
+                            }
                         }
                     }
 
