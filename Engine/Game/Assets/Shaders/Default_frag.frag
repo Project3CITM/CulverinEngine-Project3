@@ -25,7 +25,12 @@ uniform sampler2D albedo;
 uniform sampler2D normal_map;      
 uniform sampler2D occlusion_map;
 uniform sampler2D specular_map;                    
-                                   
+                               
+uniform float a;
+uniform float b;
+uniform float c;
+uniform float e;
+    
 uniform mat4 viewproj;             
 uniform mat4 model;                
 uniform mat4 view;
@@ -79,9 +84,11 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
         float cosTheta = clamp( dot( s,normal ), 0,1 );      
         float cosAlpha = clamp( dot( v,r ), 0,1 );                                               
                                                                                                          
-        float d = length((lightpos - surfacePos)/ light.radius);
-        float attenuation = max(light.ambientCoefficient,clamp(((light.radius * light.radius)/(d * d)),0,1)* lightInt);                                  
-        //attenuation = 1 / (1.0 + 0.1 * pow(d,2));                                  
+        float d = length((lightpos - surfacePos));
+        float attenuation = clamp(((light.radius * light.radius )/(1 + 0.1 *(d* d ))),0,1);  
+               attenuation =  e*lightInt / (a+  b* d + c * (d * d));                    
+       //d = length(lightpos - surfacePos);
+       //attenuation = lightInt / (1.0 + 0.1 * pow(d,2));                                  
                                                                                                          
         float diffuse = attenuation * Kd  * cosTheta;                    
         float spec = attenuation * Ks * pow(cosAlpha, shininess);

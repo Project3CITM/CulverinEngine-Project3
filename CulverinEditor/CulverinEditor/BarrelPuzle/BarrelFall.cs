@@ -16,13 +16,17 @@ public class BarrelFall : CulverinBehaviour
     float final_x_pos = 0;
     float start_x_pos = 0;
     bool move_done = false;
-
+    bool calc_final_pos = false;
     void Start()
     {
         barrel_mov_go = GetLinkedObject("barrel_mov_go");
         barrel_mov = barrel_mov_go.GetComponent<BarrelMovement>();
         rigid_body = gameObject.GetComponent<CompRigidBody>();
         start_pos = gameObject.GetComponent<Transform>().local_position;
+
+        puzzle_generator_go = GetLinkedObject("puzzle_generator_go");
+        puzzle_generator = puzzle_generator_go.GetComponent<BarrelPuzzleGenerator>();
+
         Debug.Log(start_pos.ToString());
         falling = false;
         move_done = false;
@@ -48,7 +52,6 @@ public class BarrelFall : CulverinBehaviour
                 rigid.ResetForce();
                 rigid.ApplyImpulse(new Vector3(1, 0, 0));
 
-                Debug.Log(start_pos.ToString());
             }
         }
 
@@ -61,9 +64,10 @@ public class BarrelFall : CulverinBehaviour
             CompRigidBody rigid = gameObject.GetComponent<CompRigidBody>();
             //ADD THIS X POSITION
             Vector3 pos;
-            if ((actual_pos.x) - final_x_pos > 2.0f || (actual_pos.x) - final_x_pos < -2.0f)
+            Debug.Log("Enter");
+            if ((actual_pos.x) - final_x_pos > 0.1f || (actual_pos.x) - final_x_pos < 0.1f)
             {
-                pos = new Vector3(actual_pos.x + (final_x_pos - actual_pos.x)/10.0f, actual_pos.y - 2f, actual_pos.z);
+                pos = new Vector3(actual_pos.x + (final_x_pos - actual_pos.x)/10.0f, actual_pos.y - 2.0f, actual_pos.z);
             }
             else
             {
@@ -82,8 +86,27 @@ public class BarrelFall : CulverinBehaviour
                 rigid.LockTransform();
                 falling = false;
                 move_done = true;
+                Debug.Log("Before Barrel Fall");
+                puzzle_generator.OnBarrelFall(gameObject);
                 Debug.Log("Locked");
+      
+
             }
+        }
+        if (calc_final_pos)
+        {
+            Quaternion quat = rigid_body.GetColliderQuaternion();
+            BarrelManage nmana = barrel_mov.instance.GetComponent<BarrelManage>();
+            Vector3 parent_pos = new Vector3(nmana.restart_pos_x, nmana.restart_pos_y, nmana.restart_pos_z);
+
+            Debug.Log("parent pos : " + parent_pos);
+            start_x_pos = transform.local_position.x * 13 + parent_pos.x;
+            Debug.Log(transform.local_position.ToString());
+            Debug.Log("Start x pos : " + start_x_pos);
+            final_x_pos = Mathf.Round((Mathf.Round(transform.local_position.x / 2) * 2 + 1) * 13 + parent_pos.x);
+            Debug.Log("Final tile pos : " + final_x_pos.ToString());
+            calc_final_pos = false;
+            falling = true;
         }
     }
 
@@ -92,15 +115,18 @@ public class BarrelFall : CulverinBehaviour
         if (rigid_body != null)
         {
             rigid_body.RemoveJoint();
-            falling = true;
-
-            Quaternion quat = rigid_body.GetColliderQuaternion();
+            
+            calc_final_pos = true;
+           /* Quaternion quat = rigid_body.GetColliderQuaternion();
             BarrelManage nmana = barrel_mov.instance.GetComponent<BarrelManage>();
             Vector3 parent_pos = new Vector3(nmana.restart_pos_x, nmana.restart_pos_y, nmana.restart_pos_z);
-    
 
+            Debug.Log("parent pos : " + parent_pos);
             start_x_pos = transform.local_position.x * 13 + parent_pos.x;
-            final_x_pos = Mathf.Round((Mathf.Round(transform.local_position.x/2)*2)+1 * 13 + parent_pos.x);
+            Debug.Log(transform.local_position.ToString());
+            Debug.Log("Start x pos : " + start_x_pos);
+            final_x_pos = Mathf.Round((Mathf.Round(transform.local_position.x / 2)*2+1) * 13 + parent_pos.x);
+            Debug.Log("Final tile pos : " + final_x_pos.ToString());*/
         }
     }
 }

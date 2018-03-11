@@ -118,12 +118,13 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
     // Call this whenever a barrel is hit to fall.
     public void OnBarrelFall(GameObject barrel)
     {
+        Debug.Log("On Barrel Fall");
         // Add the barrel to fallen tracked list
         fallen_barrels.Add(barrel);
         // Calc the tile pos
         Vector3 tile_pos = GetTilePosFromBarrel(barrel);
         // Update logic map if needed
-        CheckLogicMap((int)tile_pos.x, (int)tile_pos.y);
+        CheckLogicMap((int)Mathf.Round(tile_pos.x), (int)Mathf.Round(tile_pos.y));
     }
 
     void RemoveBarrels()
@@ -144,11 +145,13 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
         // Calc tile pos: Each tile 25.4 * 25.4  must check barrel position and parent position
         // Tile size hardcoded for now: 25.4 x 25.4
-        
+
         // Maybe need to add some kind of offset or take into account the half of the tile size
-        ret.x = (barrel.transform.position.x - map_first_tile_pos_x) / tile_size;
-        ret.y = (barrel.transform.position.z - map_first_tile_pos_z) / tile_size;
-        
+        Vector3 temp = (barrel.transform.local_position);
+
+        ret.x = Mathf.Round((temp.x * 13.0f - 270.0f) / 25.4f);
+        ret.y = Mathf.Round((temp.z * 13.0f + 227.0f) / 25.4f);
+
         return ret;
     }
 
@@ -160,8 +163,8 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         {
             Debug.Log("Checking tile walkability. Map tile: " + x_pos + ", " + y_pos);
             // Given tile pos is in map system, must convert to local puzzle coords.
-            int x_local_pos = puzzle_start_tile_x - x_pos - 1;
-            int y_local_pos = puzzle_start_tile_z - y_pos - 1;
+            int x_local_pos = x_pos - 1;
+            int y_local_pos = y_pos - 9;
 
             Debug.Log("Tile local: " + x_local_pos + ", " + y_local_pos);
             // Just make sure local coords are mapped properly
@@ -169,6 +172,14 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
                 && (y_local_pos >= 0 && y_local_pos < used_logic_map.height))
             {
                 Debug.Log("Tile is inside path boundaries. Local walkability is: " + used_logic_map.walkability[x_local_pos, y_local_pos]);
+                for(int i =0; i<6; i++)
+                {
+                    for (int n = 0; n < 6; n++)
+                    {
+                        Debug.Log(used_logic_map.walkability[n,i].ToString());
+                    }
+                }
+                Debug.Log(used_logic_map.walkability.ToString());
                 if (used_logic_map.walkability[x_local_pos, y_local_pos] == 0)
                 {
                     // Acces to walkability map on movement controller and modify the value with the world map tile coord.
