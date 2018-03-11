@@ -122,7 +122,7 @@ public class MovementController : CulverinBehaviour
     {
         if (intro.IsActive() || lore_screen.IsActive())
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space)|| Input.GetInput_KeyDown("Interact", "Player"))
             {
                 if (intro.IsActive())
                 {
