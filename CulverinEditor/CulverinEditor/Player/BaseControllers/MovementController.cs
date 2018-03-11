@@ -55,6 +55,8 @@ public class MovementController : CulverinBehaviour
 
     private CharactersManager char_manager;
 
+    //hardcoded
+    public GameObject intro;
     //2D coordinates, y=z in 3D coordinates
 
     void Start()
@@ -108,15 +110,25 @@ public class MovementController : CulverinBehaviour
                 }
             }
         }
+        intro = GetLinkedObject("intro");
+        intro.SetActive(true);
+        Time.timeScale = 0;
     }
 
     void Update()
     {
+        if (intro.IsActive())
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                intro.SetActive(false);
+                Time.timeScale = 1;
+            }
+        }
         start_direction = (int)curr_dir;
 
         CheckIsWalkable();
 
-        // CHARACTER NOT MOVING
         if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false)
         {
             tile_mov_x = 0;
