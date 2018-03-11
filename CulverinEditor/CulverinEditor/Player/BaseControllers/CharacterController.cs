@@ -41,7 +41,6 @@ public class CharacterController : CulverinBehaviour
 
     protected virtual void Start()
     {
-        Debug.Log("Start Character");
     }
 
     public virtual void Update()
@@ -71,7 +70,6 @@ public class CharacterController : CulverinBehaviour
     
     public void SetPosition(Position new_position)
     {
-        Debug.Log("Changing position");
         position = new_position;
     }
 
@@ -96,21 +94,18 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void DecreaseStamina(float stamina_cost)
     {
-        Debug.Log("Decrease Stamina " + stamina_cost);
         stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
         stamina.DecreaseStamina(stamina_cost);
     }
 
     public virtual void DecreaseMana(float mana_cost)
     {
-        Debug.Log("Decrease Stamina");
         mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
         mana.DecreaseMana(mana_cost);
     }
 
     public virtual void DecreaseManaPercentage(float mana_cost)
     {
-        Debug.Log("Decrease Stamina");
         mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
         mana.DecreaseManaPercentage(mana_cost);
     }
@@ -137,27 +132,22 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void ControlCharacter()
     {
-        Debug.Log("Control Character");
     }
 
     public virtual void CheckAttack()
     {
-        Debug.Log("Check Attack Character");
     }
 
     public virtual void SecondaryAbility()
     {
-        Debug.Log("Secondary Ability Character");
     }
 
     public virtual void GetDamage(float dmg)
     {
-        Debug.Log("Get Damage Character");
     }
 
     public virtual void SetAnimationTransition(string name, bool value)
     {
-        Debug.Log("Animation Transition Character");
     }
 
     public virtual bool IsAnimationStopped(string name)
@@ -167,7 +157,6 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void UpdateHUD(bool active, bool left)
     {
-        Debug.Log("Change Current Character HUD");
     }
 
     public virtual void ToggleMesh(bool active)

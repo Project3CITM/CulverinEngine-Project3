@@ -78,8 +78,6 @@ public class TheonController : CharacterController
         //Disable Theon Abilities buttons
         EnableAbilities(false);
 
-        Debug.Log(gameObject.GetName());
-
         arrow1 = false;
         arrow2 = false;
         arrow3 = false;
@@ -126,7 +124,6 @@ public class TheonController : CharacterController
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Theon Attacking");
                             }
                             break;
                         }
@@ -144,7 +141,6 @@ public class TheonController : CharacterController
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Theon Attacking");
                             }
                             break;
                         }
@@ -169,7 +165,6 @@ public class TheonController : CharacterController
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Theon Blocking");
                             }
                             break;
                         }
@@ -184,13 +179,11 @@ public class TheonController : CharacterController
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Theon Hit");
                             }
                             break;
                         }
                     case State.DEAD:
                         {
-                            Debug.Log("We are going doown");
                             break;
                         }
                     default:
@@ -206,16 +199,13 @@ public class TheonController : CharacterController
     {
         if (Input.GetInput_KeyDown("LAttack", "Player"))
         {
-            Debug.Log("Theon Pressed 1");
             PrepareLeftAbility();
         }
 
         if (Input.GetInput_KeyDown("RAttack", "Player"))
         {
-            Debug.Log("Theon Pressed 2");
             PrepareRightAbility();
         }
-
     }
 
     public override void SecondaryAbility()
@@ -261,8 +251,6 @@ public class TheonController : CharacterController
         //Update Hp bar
         if (active)
         {
-            Debug.Log("Update HP Theon");          
-
             //Set Icon in the center
             theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
             theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
@@ -273,8 +261,6 @@ public class TheonController : CharacterController
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
 
-            Debug.Log("Update HP Theon");
-
             //Update Stamina
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             stamina.SetStamina(curr_stamina, max_stamina);
@@ -284,8 +270,6 @@ public class TheonController : CharacterController
 
             //Disable Secondary button
             GetLinkedObject("theon_s_button_obj").SetActive(false);
-
-            Debug.Log("Update Stamina Theon");
         }
 
         //Get values from var and store them
@@ -324,7 +308,6 @@ public class TheonController : CharacterController
             //Disable Theon Abilities buttons
             EnableAbilities(false);
         }
-        Debug.Log("Update Child Theon");
     }
 
     public override bool IsAnimationStopped(string name)
@@ -352,8 +335,6 @@ public class TheonController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!cd_left.in_cd)
                 { 
-                    Debug.Log("Theon LW Going to Attack");
-
                     // First, OnClick of LeftWeapon, then, onClick of Cooldown
                     DoLeftAbility();
 
@@ -364,13 +345,11 @@ public class TheonController : CharacterController
                 }
                 else
                 {
-                    Debug.Log("Ability in CD");
                     return false;
                 }
             }
             else
             {
-                Debug.Log("Not Enough Stamina");
                 return false;
             }
         }
@@ -379,20 +358,14 @@ public class TheonController : CharacterController
 
     public void PrepareLeftAbility()
     {
-        Debug.Log("Theon LW Prepare Ability");
-        //OnLeftClick();
         button = theon_button_left.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
     public void DoLeftAbility() //Might be virtual
     {
-        Debug.Log("Theon LW Attack Left");
-
         // Decrease stamina -----------
         DecreaseStamina(left_ability_cost);
-
-        Debug.Log("Theon LW Going to hit");
 
         GameObject arrow = Instantiate("ArrowTheon");
         GameObject player = GetLinkedObject("player_obj");
@@ -426,22 +399,17 @@ public class TheonController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!cd_right.in_cd)
                 {
-                    Debug.Log("Theon RW Going to Block");
-
                     // First, OnClick of RightWeapon, then, onClick of Cooldown
                     DoRightAbility();
-
                     return true;
                 }
                 else
                 {
-                    Debug.Log("Theon RW Ability in CD");
                     return false;
                 }
             }
             else
             {
-                Debug.Log("Theon RW Not Enough Stamina");
                 return false;
             }
         }
@@ -450,19 +418,14 @@ public class TheonController : CharacterController
 
     public void PrepareRightAbility()
     {
-        Debug.Log("Theon RW Prepare Block");
         button = theon_button_right.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
     public void DoRightAbility() //Might be virtual
     {
-        Debug.Log("Theon LW Attack Left");
-
         // Decrease stamina -----------
         DecreaseStamina(right_ability_cost);
-
-        Debug.Log("Theon LW Going to hit");
 
         SetAnimationTransition("ToAttack2", true);
 
@@ -492,19 +455,16 @@ public class TheonController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!sec_ability_cd.in_cd)
                 {
-                    Debug.Log("Theon S");
                     SecondaryAbility();
                     return true;
                 }
                 else
                 {
-                    Debug.Log("Theon S Ability in CD");
                     return false;
                 }
             }
             else
             {
-                Debug.Log("Theon S Ability Not Enough Stamina");
                 return false;
             }
         }

@@ -28,8 +28,6 @@ public class TheonCD_Right : CoolDown
         //this_obj.GetComponent
         button_cd = GetLinkedObject("theon_button_right").GetComponent<CompButton>();
         button_cd.Deactivate();
-
-        Debug.Log("Theon Right CD Clicked");
         act_time = 0.0f;
         in_cd = true;
     }

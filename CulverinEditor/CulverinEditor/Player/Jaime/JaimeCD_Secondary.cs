@@ -27,8 +27,6 @@ public class JaimeCD_Secondary : CoolDown
         //this_obj.GetComponent
         button_cd = GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>();
         button_cd.Deactivate();
-
-        Debug.Log("Jaime Secondary CD Clicked");
         act_time = 0.0f;
         in_cd = true;
     }

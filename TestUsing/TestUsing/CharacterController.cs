@@ -54,7 +54,6 @@ public class CharacterController : CulverinBehaviour
                     {
                         //Check For Input + It has to check if he's moving to block attack (¿?)
                         CheckAttack();
-                        //Debug.Log("IDLE");
                         anim_time = 0.0f;
                         break;
                     }
@@ -88,7 +87,6 @@ public class CharacterController : CulverinBehaviour
         }
         else
         {
-            Debug.Log("WE ARE GOING DOOOWN");
         }
     }
 

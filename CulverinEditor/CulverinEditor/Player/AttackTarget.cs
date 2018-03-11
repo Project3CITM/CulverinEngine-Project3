@@ -36,7 +36,6 @@ public class AttackTarget : CulverinBehaviour
 
     public void CheckAttackTarget()
     {
-        Debug.Log("CheckAttackTarget");
         dynamic_collider = GetComponent<CompRigidBody>();
 
         Vector3 position = dynamic_collider.GetColliderPosition();

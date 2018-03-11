@@ -100,7 +100,6 @@ public class CharactersManager : CulverinBehaviour
 
                     if(health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
                     {
-                        Debug.Log("MainCharacter Dead");
                         if (IsDead(left_character) == false)
                         {
                             state = State.CHANGING_LEFT;
@@ -172,7 +171,6 @@ public class CharactersManager : CulverinBehaviour
 
                     if (vari>0.8)
                     {
-                        Debug.Log("Left ally");
                         SecondaryAbility(Side.LEFT);
                         
                     }
@@ -181,7 +179,6 @@ public class CharactersManager : CulverinBehaviour
 
                     if (vari>0.8)
                     {
-                        Debug.Log("Right ally");
                         SecondaryAbility(Side.RIGHT);
                     }
 
@@ -393,7 +390,6 @@ public class CharactersManager : CulverinBehaviour
     {
         if (side == Side.LEFT)
         {
-            Debug.Log("Checking if left secondary ability is ready");
             if (left_character.GetName() == "Jaime")
             {
                 GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().Clicked();
@@ -411,7 +407,6 @@ public class CharactersManager : CulverinBehaviour
         }
         else if (side == Side.RIGHT)
         {
-            Debug.Log("Checking if right secondary ability is ready");
             if (right_character.GetName() == "Jaime")
             {
                 GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().Clicked();

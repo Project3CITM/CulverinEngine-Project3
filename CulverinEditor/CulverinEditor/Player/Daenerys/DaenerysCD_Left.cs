@@ -45,7 +45,6 @@ public class DaenerysCD_Left : CoolDown
     public override void ActivateAbility()
     {
         //this_obj.GetComponent
-        Debug.Log("Daenerys Left CD Clicked");
         current_charges--;
         if(current_charges == max_charges)
         {

@@ -103,7 +103,6 @@ public class MovementController : CulverinBehaviour
                 {
                     curr_x = x;
                     curr_y = y;
-                    Debug.Log(curr_x + " " + curr_y);
                     array2Da[x, y] = 0;
                     MovePositionInitial(new Vector3((float)curr_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)curr_y * distanceToMove));
                 }
@@ -254,7 +253,6 @@ public class MovementController : CulverinBehaviour
                 angle = -10;
                 rotating = true;
                 ModificateCurrentDirection(true);
-                //Debug.Log("AXIS");
             }
             else if (variation > 0.8)
             {
@@ -262,7 +260,6 @@ public class MovementController : CulverinBehaviour
                 angle = 10;
                 rotating = true;
                 ModificateCurrentDirection(false);
-                //Debug.Log("AXIS");
             }
         }
     }
@@ -302,14 +299,12 @@ public class MovementController : CulverinBehaviour
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveRight(out tile_mov_x, out tile_mov_y);
-                Debug.Log("Right");
             }
             else if (variation < -0.8)
             {
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveLeft(out tile_mov_x, out tile_mov_y);
-                Debug.Log("Left");
             }
 
             float variation2 = Input.GetInput_ControllerAxis("LVertical", "Player");
@@ -318,14 +313,12 @@ public class MovementController : CulverinBehaviour
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveBackward(out tile_mov_x, out tile_mov_y);
-                Debug.Log("Back");
             }
             else if (variation2 < -0.8)
             {
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveForward(out tile_mov_x, out tile_mov_y);
-                Debug.Log("Forw");
             }
         }
     }

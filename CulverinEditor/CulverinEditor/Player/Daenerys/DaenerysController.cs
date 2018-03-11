@@ -79,8 +79,6 @@ public class DaenerysController : CharacterController
 
         //Disable Daenerys Abilities buttons
         EnableAbilities(false);
-
-        Debug.Log(gameObject.GetName());
     }
 
     public override void Update()
@@ -121,7 +119,6 @@ public class DaenerysController : CharacterController
                                 if (set_fire_breath == false && anim_controller.IsAnimOverXTime(0.4f))
                                 {
                                     set_fire_breath = true;
-                                    Debug.Log("Starting particles");
                                     particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
                                     particle_system.ActivateEmission(true);
                                     audio = daenerys_obj.GetComponent<CompAudio>();
@@ -170,7 +167,6 @@ public class DaenerysController : CharacterController
                                 anim_controller = daenerys_obj.GetComponent<CompAnimation>();
                                 if (anim_controller.IsAnimOverXTime(0.9f))
                                 {
-                                    Debug.Log("Daenerys back to Idle");
                                     state = State.IDLE;
                                     particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
                                     particle_system.ActivateEmission(false);
@@ -253,13 +249,11 @@ public class DaenerysController : CharacterController
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Daenerys Hit");
                             }
                             break;
                         }
                     case State.DEAD:
                         {
-                            Debug.Log("We are going doown");
                             break;
                         }
                     default:
@@ -275,20 +269,16 @@ public class DaenerysController : CharacterController
     {
         if (Input.GetInput_KeyDown("LAttack", "Player"))
         {
-            Debug.Log("Daenerys Pressed 1");
             PrepareLeftAbility();
         }
         if (Input.GetInput_KeyDown("RAttack", "Player"))
         {
-            Debug.Log("Daenerys Pressed 2");
             PrepareRightAbility();
         }
     }
 
     public override void GetDamage(float dmg)
     {
-        Debug.Log("Daenerys Get Damage");
-
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         health.GetDamage(dmg);
 
@@ -322,8 +312,6 @@ public class DaenerysController : CharacterController
         //Update Hp bar
         if (active)
         {
-            Debug.Log("Update HP Daenerys");
-
             //Set Icon in the center
             daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
             daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
@@ -338,13 +326,9 @@ public class DaenerysController : CharacterController
             icon = GetLinkedObject("stamina_obj").GetComponent<CompImage>();
             icon.SetEnabled(false, GetLinkedObject("stamina_obj"));
 
-            Debug.Log("Disabled Stamina Daenerys");
-
             //Enable Mana Bar
             icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
             icon.SetEnabled(true, GetLinkedObject("mana_obj"));
-
-            Debug.Log("Enabled Mana Daenerys");
 
             //Update Mana 
             mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
@@ -355,8 +339,6 @@ public class DaenerysController : CharacterController
 
             //Disable Secondary button
             GetLinkedObject("daenerys_s_button_obj").SetActive(false);
-
-            Debug.Log("Set Mana Daenerys");
         }
 
         //Get values from var and store them
@@ -402,8 +384,6 @@ public class DaenerysController : CharacterController
             //Disable Daenerys Abilities buttons
             EnableAbilities(false);
         }
-
-        Debug.Log("Update Child Daenerys");
     }
 
     public override bool IsAnimationStopped(string name)
@@ -432,8 +412,6 @@ public class DaenerysController : CharacterController
                 //Check if the ability has enough charges
                 if (cd_left.GetCurrentCharges() > 0)
                 {
-                    Debug.Log("Daenerys LW Going to Attack");
-
                     //Set Attacking State
                     SetState(State.ATTACKING);
 
@@ -447,13 +425,11 @@ public class DaenerysController : CharacterController
                 }
                 else
                 {
-                    Debug.Log("Ability doesn't have enough charges");
                     return false;
                 }
             }
             else
             {
-                Debug.Log("Not Enough Mana");
                 return false;
             }
         }
@@ -462,36 +438,27 @@ public class DaenerysController : CharacterController
 
     public void PrepareLeftAbility()
     {
-        Debug.Log("Daenerys LW Prepare Ability");
         button = daenerys_button_left_obj.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
     public void DoLeftAbility() //Might be virtual
     {
-        Debug.Log("Daenerys LW Attack Left");
-
         // Decrease mana -----------
         DecreaseManaPercentage(mana_cost_percentage_left);
         set_fire_breath = false;
 
         GameObject coll_object = PhysX.RayCast(GetComponent<Transform>().position, transform.forward, 25 * distance_left_attack);
-        Debug.Log(GetComponent<Transform>().GetGlobalPosition().ToString());
 
         if (coll_object != null)
         {
-            Debug.Log("Danerys Raycast");
             CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
 
             if (obj_collider != null)
             {
                 obj_collider.CallOnContact();
-                Debug.Log("Danerys Enter");
             }
         }
-     
-
-        Debug.Log("Daenerys LW Going to hit");
     }
 
     //------------------------------
@@ -544,7 +511,6 @@ public class DaenerysController : CharacterController
                     if (!cd_right.in_cd)
                     {
                         SetState(State.FIRE_WALL);
-                        Debug.Log("Daenerys RW Going to Set Fire Wall");
 
                         // First, OnClick of RightWeapon, then, onClick of Cooldown
                         DoRightAbility();
@@ -556,19 +522,17 @@ public class DaenerysController : CharacterController
                     }
                     else
                     {
-                        Debug.Log("Daenerys RW Ability in CD");
                         return false;
                     }
                 }
                 else
                 {
-                    Debug.Log("Daenerys RW Not Enough Mana");
                     return false;
                 }
             }
             else
             {
-                Debug.Log("Can't set the firewall there!");
+                return false;
             }
         }
         return false;
@@ -576,20 +540,15 @@ public class DaenerysController : CharacterController
 
     public void PrepareRightAbility()
     {
-        Debug.Log("Daenerys RW Prepare Fire Wall");
         button = daenerys_button_right_obj.GetComponent<CompButton>();
         button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
     public void DoRightAbility()
     {
-        Debug.Log("Daenerys RW Attack Right");
-
         // Decrease mana -----------
         daenerys_obj.GetComponent<DaenerysController>();
         DecreaseManaPercentage(mana_cost_percentage_right);
-
-        Debug.Log("Daenerys RW Going to hit");
 
         set_fire_wall = false;
 
@@ -617,19 +576,16 @@ public class DaenerysController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!sec_ability_cd.in_cd)
                 {
-                    Debug.Log("Daenerys S");
                     SecondaryAbility();
                     return true;
                 }
                 else
                 {
-                    Debug.Log("Daenerys S Ability in CD");
                     return false;
                 }
             }
             else
             {
-                Debug.Log("Daenerys S Ability Not Enough Stamina");
                 return false;
             }
         }

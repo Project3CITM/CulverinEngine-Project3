@@ -11,12 +11,10 @@ using CulverinEditor.Debug;
             material = GetComponent<CompMaterial>();
         }
 
-        void Update()
-        {
+    void Update()
+    {
 
-        Debug.Log("Hddddoli");
-
-        if(Input.GetInput_KeyDown("FinalSkill","Player"))
+        if (Input.GetInput_KeyDown("FinalSkill", "Player"))
         {
             material.SetAlbedo("Shield.png");
             material.SetAmbientOcclusion("Shield.png");

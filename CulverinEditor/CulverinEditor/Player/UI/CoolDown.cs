@@ -29,11 +29,9 @@ public class CoolDown : CulverinBehaviour
 
     public virtual void OnClick()
     {
-        Debug.Log("On Click CD");
     }
 
     public virtual void ActivateAbility()
     {
-        Debug.Log("Activate Ability CD");
     }
 }

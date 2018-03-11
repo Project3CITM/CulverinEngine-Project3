@@ -39,8 +39,6 @@ public class Mana : CulverinBehaviour
         calc_mana = curr_mana / max_mana;
         mana_bar = this_obj_mana.GetComponent<CompImage>();
         mana_bar.FillAmount(calc_mana);
-
-        Debug.Log("Decrease Mana -> Current Mana: " + curr_mana.ToString());
     }
 
     public void DecreaseManaPercentage(float cost_percentage)
@@ -54,8 +52,6 @@ public class Mana : CulverinBehaviour
         calc_mana = curr_mana / max_mana;
         mana_bar = this_obj_mana.GetComponent<CompImage>();
         mana_bar.FillAmount(calc_mana);
-
-        Debug.Log("Decrease Mana by Percentage -> Current Mana: " + curr_mana.ToString());
     }
 
     public float GetCurrentMana()
@@ -71,7 +67,5 @@ public class Mana : CulverinBehaviour
         calc_mana = curr_mana / max_mana;
         mana_bar = this_obj_mana.GetComponent<CompImage>();
         mana_bar.FillAmount(calc_mana);
-
-        Debug.Log("Current Mana: " + curr_mana.ToString());
     }
 }

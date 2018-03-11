@@ -58,7 +58,6 @@ public class TestMovement : CulverinBehaviour
         endRotation = GetComponent<Transform>().local_rotation;
 
         string map = Map.GetMapString();
-        Debug.Log(map);
         int t = 0;
         for (int y = 0; y < map_height; y++)
         {

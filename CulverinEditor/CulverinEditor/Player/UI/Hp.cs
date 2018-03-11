@@ -29,8 +29,6 @@ public class Hp : CulverinBehaviour
         calc_hp = current_hp / max_hp;
         hp_bar = this_obj_hp.GetComponent<CompImage>();
         hp_bar.FillAmount(calc_hp);
-
-        Debug.Log("Get Damage -> Current HP: " + current_hp.ToString());
     }
 
     public float GetCurrentHealth()
@@ -46,7 +44,5 @@ public class Hp : CulverinBehaviour
         calc_hp = current_hp / max_hp;
         hp_bar = this_obj_hp.GetComponent<CompImage>();
         hp_bar.FillAmount(calc_hp);
-
-        Debug.Log("Current HP: " + current_hp.ToString());
     }
 }

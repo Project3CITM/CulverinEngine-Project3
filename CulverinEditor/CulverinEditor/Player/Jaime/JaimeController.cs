@@ -48,6 +48,11 @@ public class JaimeController : CharacterController
     JaimeCD_Right right_ability_cd;
 
     public GameObject jaime_sword_obj;
+
+    public float left_ability_dmg2 = 1.0f;
+    public float left_ability_dmg3 = 15.0f;
+    public float reset_hit_time = 1.0f;
+    public float curr_hit_time = 0.0f;
     // ---------------------
 
     protected override void Start()
@@ -105,6 +110,12 @@ public class JaimeController : CharacterController
                 {
                     case State.IDLE:
                         {
+                            curr_hit_time += Time.deltaTime;
+                            if (curr_hit_time > reset_hit_time) 
+                            {
+                                hit_streak = 0;
+                            }
+
                             //Check For Input + It has to check if he's moving to block attack (¿?)
                             CheckAttack();
                             break;
@@ -120,7 +131,6 @@ public class JaimeController : CharacterController
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Jaime Attacking " + hit_streak);
                             }
                             break;
                         }
@@ -135,7 +145,6 @@ public class JaimeController : CharacterController
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Jaime Covering");
                             }
                             break;
                         }
@@ -150,7 +159,6 @@ public class JaimeController : CharacterController
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Jaime Blocking");
                             }
                             break;
                         }
@@ -165,13 +173,11 @@ public class JaimeController : CharacterController
                             else
                             {
                                 // Keep playing specific attack animation  until it ends
-                                Debug.Log("Jaime Hit");
                             }
                             break;
                         }
                     case State.DEAD:
                         {
-                            Debug.Log("We are going doown");
                             break;
                         }
                     default:
@@ -187,13 +193,11 @@ public class JaimeController : CharacterController
     {
         if (Input.GetInput_KeyDown("LAttack", "Player"))
         {
-            Debug.Log("Jaime Pressed 1");
             PrepareLeftAbility();
         }
 
         if (Input.GetInput_KeyDown("RAttack", "Player"))
         {
-            Debug.Log("Jaime Pressed 2");
             PrepareRightAbility();
         }
     }
@@ -204,8 +208,6 @@ public class JaimeController : CharacterController
         int curr_y = 0;
         int enemy_x = 0;
         int enemy_y = 0;
-
-        Debug.Log("Jaime Secondary Ability");
 
         //Do Damage Around
         movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
@@ -274,7 +276,6 @@ public class JaimeController : CharacterController
 
     public override void SetAnimationTransition(string name, bool value)
     {
-        Debug.Log("Jaime Transitioning between animations");
         anim_controller = jaime_obj.GetComponent<CompAnimation>();
         anim_controller.SetTransition(name, value);
     }
@@ -284,8 +285,6 @@ public class JaimeController : CharacterController
         //Update Hp bar
         if (active)
         {
-            Debug.Log("Update HP Jaime");
-
             //Set Icon in the center
             jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
             jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
@@ -296,8 +295,6 @@ public class JaimeController : CharacterController
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
 
-            Debug.Log("Update HP Jaime");
-
             //Update Stamina
             stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             stamina.SetStamina(curr_stamina, max_stamina);
@@ -307,8 +304,6 @@ public class JaimeController : CharacterController
 
             //Disable Secondary button
             GetLinkedObject("jaime_s_button_obj").SetActive(false);
-
-            Debug.Log("Update Stamina Jaime");
         }
 
         //Get values from var and store them
@@ -346,8 +341,6 @@ public class JaimeController : CharacterController
             //Disable Jaime Abilities buttons
             EnableAbilities(false);
         }
-
-        Debug.Log("Update Child Jaime"); 
     }
 
     public override void ToggleMesh(bool active)
@@ -374,29 +367,23 @@ public class JaimeController : CharacterController
         // Check if player is in Idle State
         if (GetState() == 0) /*0 = IDLE*/
         {
-            //Calculate ability cost depending on the hit streak
-            float calc_cost = left_ability_cost / Mathf.Pow(2, hit_streak);
-
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > calc_cost)
+            if (GetCurrentStamina() > left_ability_cost)
             {
                 left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
                 //Check if the ability is not in cooldown
                 if (!left_ability_cd.in_cd)
                 { 
-                    Debug.Log("Jaime LW Going to Attack");
-                    DoLeftAbility(calc_cost);              
+                    DoLeftAbility(left_ability_cost);              
                     return true;
                 }
                 else
                 {
-                    Debug.Log("Ability in CD");
                     return false;
                 }
             }
             else
             {
-                Debug.Log("Not Enough Stamina");
                 return false;
             }
         }
@@ -405,12 +392,8 @@ public class JaimeController : CharacterController
 
     public void DoLeftAbility(float cost)
     {
-        Debug.Log("Jaime LW Attack Left");
-
         // Decrease stamina -----------
         DecreaseStamina(cost);
-
-        Debug.Log("Jaime LW Going to hit");
 
         // Set Attacking Animation depending on the hit_streak
         current_anim = anim_name[hit_streak];
@@ -422,9 +405,26 @@ public class JaimeController : CharacterController
         {
             if (coll_object.CompareTag("Enemy"))
             {
+                curr_hit_time = 0.0f;
+
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
                 EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
-                enemy_manager.ApplyDamage(coll_object, left_ability_dmg);
+                float damage = 1.0f;
+
+                if (hit_streak == 0) 
+                {
+                    damage = left_ability_dmg;
+                }
+                else if (hit_streak == 1)
+                {
+                    damage = left_ability_dmg2;
+                }
+                else if (hit_streak == 2)
+                {
+                    damage = left_ability_dmg3;
+                }
+
+                enemy_manager.ApplyDamage(coll_object, damage);
 
                 if (hit_streak < 2)
                 {
@@ -478,13 +478,11 @@ public class JaimeController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!right_ability_cd.in_cd)
                 {
-                    Debug.Log("Jaime RW Going to Block");
                     DoRightAbility();
                     return true;
                 }
                 else
                 {
-                    Debug.Log("Jaime RW Ability in CD");
                     return false;
                 }
             }
@@ -499,8 +497,6 @@ public class JaimeController : CharacterController
 
     public void DoRightAbility()
     {
-        Debug.Log("Jaime LW Attack Right");
-
         //Decrease stamina -----------
         DecreaseStamina(right_ability_cost);
 
@@ -523,19 +519,16 @@ public class JaimeController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!sec_ability_cd.in_cd)
                 {
-                    Debug.Log("Jaime S");
                     SecondaryAbility();
                     return true;
                 }
                 else
                 {
-                    Debug.Log("Jaime S Ability in CD");
                     return false;
                 }
             }
             else
             {
-                Debug.Log("Jaime S Ability Not Enough Stamina");
                 return false;
             }
         }

@@ -27,8 +27,6 @@ public class DaenerysCD_Right : CoolDown
         //this_obj.GetComponent
         button_cd = GetLinkedObject("daenerys_button_right_obj").GetComponent<CompButton>();
         button_cd.Deactivate();
-
-        Debug.Log("Daenerys Right CD Clicked");
         act_time = 0.0f;
         in_cd = true;
     }

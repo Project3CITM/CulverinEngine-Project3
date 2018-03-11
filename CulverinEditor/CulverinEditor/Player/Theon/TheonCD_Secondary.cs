@@ -27,8 +27,6 @@ public class TheonCD_Secondary : CoolDown
         //this_obj.GetComponent
         button_cd = GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>();
         button_cd.Deactivate();
-
-        Debug.Log("Theon Secondary CD Clicked");
         act_time = 0.0f;
         in_cd = true;
     }
