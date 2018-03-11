@@ -285,6 +285,8 @@ void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* dir
 		json_object_dotset_number_with_std(config_node, name + "Parent", -1);
 		// Name- --------
 		json_object_dotset_string_with_std(config_node, name + "Name", gameObject.GetName());
+		// Tag ----------
+		json_object_dotset_string_with_std(config_node, name + "Tag", gameObject.GetTag());
 
 		// Components  ------------
 		std::string components = name;
@@ -375,8 +377,12 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 				std::string name = "GameObject" + std::to_string(i);
 				name += ".";
 				const char* nameGameObject = json_object_dotget_string_with_std(config_node, name + "Name");
+				const char* tagGameObject = nullptr;
+				tagGameObject = json_object_dotget_string_with_std(config_node, name + "Tag");
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
+				if(tagGameObject != nullptr)obj->SetTag(tagGameObject);
+
 				// Now Check that the name is not repet
 				CheckChangeName(*obj);
 				//Load Components
