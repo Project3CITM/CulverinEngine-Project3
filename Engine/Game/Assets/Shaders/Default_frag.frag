@@ -31,6 +31,8 @@ uniform float b;
 uniform float c;
 uniform float e;
     
+uniform bool invert_norms;
+
 uniform mat4 viewproj;             
 uniform mat4 model;                
 uniform mat4 view;
@@ -86,7 +88,7 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
                                                                                                          
         float d = length((lightpos - surfacePos));
         float attenuation = clamp(((light.radius * light.radius )/(1 + 0.1 *(d* d ))),0,1);  
-               attenuation =  e*lightInt / (a+  b* d + c * (d * d));                    
+               attenuation =  300*lightInt / (300+  300* d + 0.6 * (d * d));                    
        //d = length(lightpos - surfacePos);
        //attenuation = lightInt / (1.0 + 0.1 * pow(d,2));                                  
                                                                                                          
@@ -110,8 +112,10 @@ void main()
     vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1);                                                        
     vec3 occlusion_texture = texture(occlusion_map,TexCoord).xyz;                                                
     vec3 spec_texture = texture(specular_map, TexCoord).xyz;
-N.g = -N.g;    
-N.r = -N.r;                                                  
+
+    if(invert_norms)
+    N.g = -N.g;    
+    N.r = -N.r;                                                  
                                                                                                                  
     vec3 inten = vec3(0); vec3 inten_final = vec3(0);                                                                                    
                                                                          

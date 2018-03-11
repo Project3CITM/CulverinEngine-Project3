@@ -103,7 +103,7 @@ void main()
 {																												 
 																							 
 													 
-	vec3 color_texture = 0.4*texture(albedo, TexCoord +vec2(_time/80,-_time/80)).xyz + vec3(0.5);															 
+	vec3 color_texture = 0.4 * texture(albedo, TexCoord +vec2(_time/80,-_time/80)).xyz + vec3(0.5);															 
 	vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1);														 
 	vec3 occlusion_texture = texture(occlusion_map,TexCoord).xyz;												 
     vec3 spec_texture = texture(specular_map, TexCoord).xyz;
