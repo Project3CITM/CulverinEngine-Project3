@@ -217,7 +217,7 @@ void CompCollider::ShowInspectorInfo()
 		uint own_id = (1 << App->scene->GetTagID(parent->GetTag()));
 		if (body)
 		{
-			body->SetFilterFlags(1, 1);
+			body->SetFilterFlags(own_id, collision_flags);
 		}
 		select_flags = false;
 	}
@@ -414,7 +414,7 @@ void CompCollider::SyncComponent(GameObject* sync_parent)
 	uint own_id = (1 << App->scene->GetTagID(parent->GetTag()));
 	if (body)
 	{
-		body->SetFilterFlags(1, 1);
+		body->SetFilterFlags(own_id, collision_flags);
 	}
 
 }
