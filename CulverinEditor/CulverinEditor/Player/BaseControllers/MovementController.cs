@@ -124,11 +124,12 @@ public class MovementController : CulverinBehaviour
             moving = false;
 
             // CHECK ROTATION --------------------------
-            CheckRotation();
+            if (!CheckRotation())
+            {
+                // CHECK MOVEMENT --------------------------
+                CheckMovement();
 
-            // CHECK MOVEMENT --------------------------
-            CheckMovement();
-
+            }
             // CHECK FACING --------------------------
             //CheckFacingRotation();
 
@@ -227,7 +228,7 @@ public class MovementController : CulverinBehaviour
         }
     }
 
-    private void CheckRotation()
+    private bool CheckRotation()
     {
         if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
         {
@@ -237,6 +238,7 @@ public class MovementController : CulverinBehaviour
                 angle = -10;
                 rotating = true;
                 ModificateCurrentDirection(true);
+                return true;
             }
             if (Input.GetKeyDown(KeyCode.E)) //Right
             {
@@ -244,6 +246,8 @@ public class MovementController : CulverinBehaviour
                 angle = 10;
                 rotating = true;
                 ModificateCurrentDirection(false);
+                return true;
+
             }
 
             float variation = Input.GetInput_ControllerAxis("RHorizontal", "Player");
@@ -253,6 +257,8 @@ public class MovementController : CulverinBehaviour
                 angle = -10;
                 rotating = true;
                 ModificateCurrentDirection(true);
+                return true;
+
             }
             else if (variation > 0.8)
             {
@@ -260,11 +266,15 @@ public class MovementController : CulverinBehaviour
                 angle = 10;
                 rotating = true;
                 ModificateCurrentDirection(false);
+                return true;
+
             }
         }
+        return false;
+
     }
 
-    private void CheckMovement()
+    private bool CheckMovement()
     {
         if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
         {
@@ -273,24 +283,31 @@ public class MovementController : CulverinBehaviour
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveLeft(out tile_mov_x, out tile_mov_y);
+                return true;
             }
             else if (Input.GetKeyDown(KeyCode.D) /*&& !EnemyInRight()*/) //Right
             {
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveRight(out tile_mov_x, out tile_mov_y);
+                return true;
+
             }
             else if (Input.GetKeyDown(KeyCode.W) /*&& !EnemyInFront()*/) //Up
             {
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveForward(out tile_mov_x, out tile_mov_y);
+                return true;
+
             }
             else if (Input.GetKeyDown(KeyCode.S) /*&& !EnemyBehind()*/) //Down
             {
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveBackward(out tile_mov_x, out tile_mov_y);
+                return true;
+
             }
 
             float variation = Input.GetInput_ControllerAxis("LHorizontal", "Player");
@@ -299,12 +316,16 @@ public class MovementController : CulverinBehaviour
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveRight(out tile_mov_x, out tile_mov_y);
+                return true;
+
             }
             else if (variation < -0.8)
             {
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveLeft(out tile_mov_x, out tile_mov_y);
+                return true;
+
             }
 
             float variation2 = Input.GetInput_ControllerAxis("LVertical", "Player");
@@ -313,14 +334,20 @@ public class MovementController : CulverinBehaviour
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveBackward(out tile_mov_x, out tile_mov_y);
+                return true;
+
             }
             else if (variation2 < -0.8)
             {
                 audio = GetComponent<CompAudio>();
                 audio.PlayEvent("Footsteps");
                 MoveForward(out tile_mov_x, out tile_mov_y);
+                return true;
+
             }
         }
+        return false;
+
     }
 
     private void CheckFacingRotation()
