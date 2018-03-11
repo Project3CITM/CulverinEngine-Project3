@@ -40,6 +40,40 @@ public class Arrow : CulverinBehaviour
 
     void OnTriggerEnter()
     {
+        //Debug.Log("Trigger Start");
+        //GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
+        //// DAMAGE ---
+        //Debug.Log("Collided");
+
+        //if (collided_obj != null)
+        //{
+        //    Debug.Log("OnTriggerEnter");
+        //    Debug.Log(collided_obj.GetName());
+        //    // Check the specific enemy in front of you and apply dmg or call object OnContact
+        //    EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
+        //    if (enemy_manager.IsEnemy(collided_obj))
+        //    {
+        //        enemy_manager.ApplyDamage(collided_obj, damage);
+        //    }
+        //    else
+        //    {
+        //        CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
+        //        if (obj_col != null)
+        //        {
+        //            obj_col.CallOnContact();
+        //        }
+        //    }
+        //}
+
+        //// DESTROY ---
+        //if (collision)
+        //{
+        //    Destroy(gameObject);
+        //}
+    }
+
+    void OnContact()
+    {
         Debug.Log("Trigger Start");
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
         // DAMAGE ---
@@ -54,6 +88,7 @@ public class Arrow : CulverinBehaviour
             if (enemy_manager.IsEnemy(collided_obj))
             {
                 enemy_manager.ApplyDamage(collided_obj, damage);
+                Destroy(gameObject);
             }
             else
             {
@@ -62,28 +97,15 @@ public class Arrow : CulverinBehaviour
                 {
                     obj_col.CallOnContact();
                 }
+                Destroy(gameObject);
             }
         }
-
-        // DESTROY ---
-        if (collision)
+        else
         {
+            Debug.Log("destroy 1");
             Destroy(gameObject);
+            Debug.Log("destroy 2");
         }
-    }
-
-    void OnContact()
-    {
-        GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
-        // DAMAGE ---
-        
-        CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
-        if (obj_col != null)
-        {
-            obj_col.CallOnContact();
-        }
-
-        Destroy(gameObject);
     }
 }
 
