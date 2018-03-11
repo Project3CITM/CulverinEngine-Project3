@@ -97,9 +97,8 @@ public class DaenerysController : CharacterController
         {
             // Check if player is moving to block attacks/abilities
             movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
-            //if (!movement.IsMoving())
-            if(1 == 1)
-            {
+            if (!movement.IsMoving())
+            { 
                 /* Player is alive */
                 switch (state)
                 {

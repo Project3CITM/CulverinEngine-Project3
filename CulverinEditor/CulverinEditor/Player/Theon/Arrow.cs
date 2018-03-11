@@ -40,9 +40,11 @@ public class Arrow : CulverinBehaviour
 
     void OnTriggerEnter()
     {
-
+        Debug.Log("Trigger Start");
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
         // DAMAGE ---
+        Debug.Log("Collided");
+
         if (collided_obj != null)
         {
             Debug.Log("OnTriggerEnter");
@@ -81,7 +83,6 @@ public class Arrow : CulverinBehaviour
             obj_col.CallOnContact();
         }
 
-        rb.LockTransform();
         Destroy(gameObject);
     }
 }

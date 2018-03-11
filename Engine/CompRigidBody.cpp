@@ -459,6 +459,7 @@ void CompRigidBody::LockTransform()
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(true);
+		body->SetAsKinematic(true);
 	}
 }
 
@@ -467,6 +468,7 @@ void CompRigidBody::UnLockTransform()
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(false);
+		body->SetAsKinematic(kinematic);
 	}
 }
 

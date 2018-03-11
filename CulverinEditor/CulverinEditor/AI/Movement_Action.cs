@@ -147,7 +147,7 @@ public class Movement_Action : Action
                         GetComponent<Transform>().local_position = local_pos;
 
                         //Update Collider -> 
-                        GetComponent<CompCollider>().MoveKinematic(local_pos);
+                        GetComponent<CompCollider>().MoveKinematic(new Vector3(local_pos.x, local_pos.y + 10, local_pos.z));
 
                         if (path.Count > 0)
                             path.Remove(path[0]);

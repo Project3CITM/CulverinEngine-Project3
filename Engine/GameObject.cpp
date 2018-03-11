@@ -1258,8 +1258,9 @@ Component* GameObject::FindComponentByType(Comp_Type type) const
 
 	for (uint i = 0; i < components.size(); i++)
 	{
-		if (components[i]->GetType() == type) // We need to check if the component is ACTIVE first?¿
+		if (components[i] != nullptr && components[i]->GetType() == type) // We need to check if the component is ACTIVE first?¿
 		{
+
 			return components[i];		
 		}
 	}
@@ -1989,6 +1990,7 @@ void GameObject::DeleteAllComponents()
 		}
 		components[i]->Clear();
 		RELEASE(components[i]);
+		components[i] = nullptr;
 	}
 	components.clear();
 }

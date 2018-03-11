@@ -1,4 +1,5 @@
 ﻿using CulverinEditor;
+using CulverinEditor.Debug;
 using System.Collections.Generic;
 
 public class EnemiesManager : CulverinBehaviour
@@ -128,16 +129,20 @@ public class EnemiesManager : CulverinBehaviour
 
     public void ApplyDamage(GameObject target, float damage)
     {
+        Debug.Log("Apply Damage");
         if (target.GetComponent<EnemySword_BT>() != null)
         {
+            Debug.Log("Sword");
             target.GetComponent<EnemySword_BT>().ApplyDamage(damage);
         }
         else if(target.GetComponent<EnemySpear_BT>() != null)
         {
+            Debug.Log("Spear");
             target.GetComponent<EnemySpear_BT>().ApplyDamage(damage);
         }
         else if(target.GetComponent<EnemyShield_BT>() != null)
         {
+            Debug.Log("Shield");
             target.GetComponent<EnemyShield_BT>().ApplyDamage(damage);
         }           
     }

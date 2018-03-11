@@ -37,14 +37,15 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
     private int map_width = 0;
     private int map_height = 0;
 
-    const float tile_size = 25.4f;
+    float tile_size = 25.4f;
 
     // ---------------------------------------
 
     void Start()
     {
-        movement_controller_go = GetLinkedObject("movement_controller_go");
-        
+        tile_size = 25.4f;
+
+        movement_controller_go = GetLinkedObject("movement_controller_go");   
         movement_controller = movement_controller_go.GetComponent<MovementController>();
 
         map_width = Map.GetWidthMap();

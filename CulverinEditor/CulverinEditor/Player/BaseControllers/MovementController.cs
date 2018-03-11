@@ -19,7 +19,7 @@ public class MovementController : CulverinBehaviour
         DOWN
     }
 
-    public GameObject enemy_obj;
+    GameObject enemy_obj = null;
 
     public Direction curr_dir = Direction.NORTH;
     public Facing curr_fac = Facing.STRAIGHT;
@@ -62,8 +62,6 @@ public class MovementController : CulverinBehaviour
 
     void Start()
     {
-        enemy_obj = GetLinkedObject("enemy_obj"); //Change this to accept more than one enemy
-
         char_manager = GetComponent<CharactersManager>();
 
         audio = GetComponent<CompAudio>();
@@ -305,64 +303,56 @@ public class MovementController : CulverinBehaviour
     {
         if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
         {
-            if (Input.GetKeyDown(KeyCode.A) /*&& !EnemyInLeft()*/) //Left
+            if (Input.GetKeyDown(KeyCode.A)/*!EnemyInLeft()*/) //Left
             {
-         
                 MoveLeft(out tile_mov_x, out tile_mov_y);
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.D) /*&& !EnemyInRight()*/) //Right
             {
-         
                 MoveRight(out tile_mov_x, out tile_mov_y);
                 return true;
-
             }
             else if (Input.GetKeyDown(KeyCode.W) /*&& !EnemyInFront()*/) //Up
             {
-        
                 MoveForward(out tile_mov_x, out tile_mov_y);
                 return true;
-
             }
             else if (Input.GetKeyDown(KeyCode.S) /*&& !EnemyBehind()*/) //Down
             {
-       
                 MoveBackward(out tile_mov_x, out tile_mov_y);
                 return true;
-
             }
 
             float variation = Input.GetInput_ControllerAxis("LHorizontal", "Player");
             if (variation > 0.8)
             {
-     
                 MoveRight(out tile_mov_x, out tile_mov_y);
                 return true;
-
             }
             else if (variation < -0.8)
             {
-          
                 MoveLeft(out tile_mov_x, out tile_mov_y);
                 return true;
-
             }
 
             float variation2 = Input.GetInput_ControllerAxis("LVertical", "Player");
             if (variation2 > 0.8)
             {
-        
-                MoveBackward(out tile_mov_x, out tile_mov_y);
-                return true;
+                if (!EnemyBehind())
+                {
+                    MoveBackward(out tile_mov_x, out tile_mov_y);
+                    return true;
+                }
 
             }
             else if (variation2 < -0.8)
             {
-          
-                MoveForward(out tile_mov_x, out tile_mov_y);
-                return true;
-
+                if (!EnemyInFront())
+                {
+                    MoveForward(out tile_mov_x, out tile_mov_y);
+                    return true;
+                }
             }
         }
         return false;
