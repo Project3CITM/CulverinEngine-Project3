@@ -74,7 +74,7 @@ public class Movement_Action : Action
         map = GetLinkedObject("map");
         myself = GetLinkedObject("myself");
         player = GetLinkedObject("player");
-        anim = GetLinkedObject("mesh").GetComponent<CompAnimation>();
+        anim = GetComponent<CompAnimation>();
 
         Enemy_BT bt = GetComponent<EnemySword_BT>();
         if(bt == null)
@@ -212,8 +212,6 @@ public class Movement_Action : Action
     {
         path.Clear();
         path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(cur_x, cur_y), new PathNode(obj_x, obj_y));
-        foreach(PathNode n in path)
-            Debug.Log("SuperNode: " + n.GetTileX() + "," + n.GetTileY());
         look_at_player = rot;
         SetState();
     }
@@ -223,15 +221,9 @@ public class Movement_Action : Action
         this.chase = chase;
         Pathfinder pf = map.GetComponent<Pathfinder>();
         path.Clear();
-        Debug.Log("Objective:" + obj_x.ToString() + "," + obj_y.ToString());
         List<PathNode> adjacent_walkable_tiles = pf.GetWalkableAdjacents(new PathNode(obj_x, obj_y));
-        foreach (PathNode n in adjacent_walkable_tiles)
-            Debug.Log("X:" + n.GetTileX().ToString() + "Y:" + n.GetTileY().ToString());
-
         int current_x = GetCurrentTileX();
         int current_y = GetCurrentTileY();
-
-        Debug.Log("Adjacent: " + adjacent_walkable_tiles.Count);
 
         if (adjacent_walkable_tiles.Count >= 0)
         {
@@ -252,12 +244,7 @@ public class Movement_Action : Action
                 }
             }
 
-            Debug.Log("Closest adjacent: " + closest.GetTileX() + "," + closest.GetTileY());
-
             path = pf.CalculatePath(new PathNode(cur_x, cur_y), closest);
-
-            foreach (PathNode n in path)
-                Debug.Log("X:" + n.GetTileX().ToString() + "Y:" + n.GetTileY().ToString());
 
             SetState();
         }
@@ -318,7 +305,7 @@ public class Movement_Action : Action
                 {
                     if (GetDeltaAngle() < 0)
                     {
-                        anim = GetLinkedObject("mesh").GetComponent<CompAnimation>();
+                        anim = GetComponent<CompAnimation>();
 
                         if (chase)
                         {
@@ -335,7 +322,7 @@ public class Movement_Action : Action
                     }
                     else
                     {
-                        anim = GetLinkedObject("mesh").GetComponent<CompAnimation>();
+                        anim = GetComponent<CompAnimation>();
 
                         if (chase)
                         {
@@ -358,7 +345,7 @@ public class Movement_Action : Action
                 }
                 if (!ReachedTile())
                 {
-                    anim = GetLinkedObject("mesh").GetComponent<CompAnimation>();
+                    anim = GetComponent<CompAnimation>();
 
                     if (chase == true)
                         anim.SetTransition("ToChase");

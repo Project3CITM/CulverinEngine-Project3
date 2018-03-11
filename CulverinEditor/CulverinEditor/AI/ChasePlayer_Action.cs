@@ -3,7 +3,6 @@ using CulverinEditor.Debug;
 
 public class ChasePlayer_Action : Action
 {
-    public GameObject mesh;
     int current_tile_x;
     int current_tile_y;
 
@@ -19,8 +18,7 @@ public class ChasePlayer_Action : Action
     void Start()
     {
         move = GetComponent<Movement_Action>();
-        mesh = GetLinkedObject("mesh");
-        anim = mesh.GetComponent<CompAnimation>();
+        anim = GetComponent<CompAnimation>();
     }
 
     public ChasePlayer_Action()
@@ -41,7 +39,7 @@ public class ChasePlayer_Action : Action
         current_tile_x = move.GetCurrentTileX();
         current_tile_y = move.GetCurrentTileY();
 
-        anim = mesh.GetComponent<CompAnimation>();
+        anim = GetComponent<CompAnimation>();
         anim.SetTransition("Unshade");
 
         //event_to_react.start_counting = false;

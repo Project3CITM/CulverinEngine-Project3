@@ -26,7 +26,6 @@ public class Attack_Action : Action
     public float apply_damage_point = 0.5f;
 
     public GameObject target = null;
-    public GameObject mesh = null;
     public GameObject my_object = null;
     CompAnimation anim = null;
     CharactersManager player = null;
@@ -34,8 +33,7 @@ public class Attack_Action : Action
     public override bool ActionStart()
     {
         state = SWA_STATE.PRE_APPLY;
-        mesh = GetLinkedObject("mesh");
-        anim = mesh.GetComponent<CompAnimation>();
+        anim = GetComponent<CompAnimation>();
         anim.SetTransition("ToAttack"); //This will be attack
         anim.SetClipsSpeed(anim_speed);
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
