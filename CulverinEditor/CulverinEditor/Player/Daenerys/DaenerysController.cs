@@ -163,6 +163,18 @@ public class DaenerysController : CharacterController
                                         }
                                         GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
                                     }
+
+                                    GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
+
+                                    if (coll_object != null)
+                                    {
+                                        CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+
+                                        if (obj_collider != null)
+                                        {
+                                            obj_collider.CallOnContact();
+                                        }
+                                    }
                                 }
                                 anim_controller = daenerys_obj.GetComponent<CompAnimation>();
                                 if (anim_controller.IsAnimOverXTime(0.9f))
@@ -447,18 +459,6 @@ public class DaenerysController : CharacterController
         // Decrease mana -----------
         DecreaseManaPercentage(mana_cost_percentage_left);
         set_fire_breath = false;
-
-        GameObject coll_object = PhysX.RayCast(GetComponent<Transform>().position, transform.forward, 25 * distance_left_attack);
-
-        if (coll_object != null)
-        {
-            CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
-
-            if (obj_collider != null)
-            {
-                obj_collider.CallOnContact();
-            }
-        }
     }
 
     //------------------------------
