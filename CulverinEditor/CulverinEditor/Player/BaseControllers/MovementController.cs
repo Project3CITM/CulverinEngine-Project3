@@ -57,6 +57,7 @@ public class MovementController : CulverinBehaviour
 
     //hardcoded
     public GameObject intro;
+    public GameObject lore_screen;
     //2D coordinates, y=z in 3D coordinates
 
     void Start()
@@ -112,17 +113,29 @@ public class MovementController : CulverinBehaviour
         }
         intro = GetLinkedObject("intro");
         intro.SetActive(true);
+        lore_screen = GetLinkedObject("lore_screen");
+        lore_screen.SetActive(false);
         Time.timeScale = 0;
     }
 
     void Update()
     {
-        if (intro.IsActive())
+        if (intro.IsActive() || lore_screen.IsActive())
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                intro.SetActive(false);
-                Time.timeScale = 1;
+                if (intro.IsActive())
+                {
+                    Debug.Log("From intro to lore");
+                    intro.SetActive(false);
+                    lore_screen.SetActive(true);
+                }
+                else if (lore_screen.IsActive())
+                {
+                    Debug.Log("From lore to game");
+                    lore_screen.SetActive(false);
+                    Time.timeScale = 1;
+                }
             }
         }
         start_direction = (int)curr_dir;
