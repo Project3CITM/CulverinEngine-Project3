@@ -264,7 +264,7 @@ public:
 
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
-	MonoObject* GetParentGameObject();
+	MonoObject* GetParentGameObject(MonoObject* object);
 
 	/*Childs*/
 	MonoObject* Find(MonoObject* object, MonoString* name);

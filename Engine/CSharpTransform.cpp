@@ -327,7 +327,7 @@ MonoObject* CSharpScript::GetPosition(MonoObject* object)
 		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
 		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
-		float3* new_pos = transform->GetPosPointer();
+		float3* new_pos = ((CompTransform*)obj)->GetPosPointer();
 		MonoObject* new_obj = App->importer->iScript->GetMonoObject(((CompTransform*)obj)->GetPosPointer());
 		if (new_obj != nullptr)
 		{

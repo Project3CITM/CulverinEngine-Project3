@@ -283,6 +283,7 @@ void CSharpScript::DoMainFunction(FunctionBase function, void** parameters)
 		if (Start.method != nullptr)
 		{
 			DoFunction(Start.method, nullptr);
+			App->importer->iScript->UpdateMonoScript(this, GetMonoObject());
 			UpdateScriptVariables();
 		}
 		break;
@@ -1124,19 +1125,6 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 					CompScript* script = ((CompScript*)temp[i]);
 					if (strcmp(script->resource_script->name.c_str(), name_class.c_str()) == 0)
 					{
-						//comp_name = name_class.c_str();
-						//classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "", comp_name);
-						////OnDisable", DefaultParam
-						//MonoMethod* tem = mono_class_get_method_from_name(((CompScript*)temp[i])->csharp->GetMonoClass(), "Test", 1);
-						//MonoObject* exception = nullptr;
-						//void* ferran[1];
-						//int k = 0;
-						//ferran[0] = &k;
-						//mono_runtime_invoke(tem, ((CompScript*)temp[i])->csharp->GetMonoObject(), ferran, &exception);
-						//classT = ((CompScript*)temp[i])->csharp->GetMonoClass();
-						//classT = GetMonoClass();
-						//return mono_object_isinst(((CompScript*)temp[i])->csharp->GetMonoObject(), ((CompScript*)temp[i])->csharp->GetMonoClass());
-
 						return script->csharp->GetMonoObject();
 					}
 				}
@@ -1172,9 +1160,20 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	return nullptr;
 }
 
-MonoObject* CSharpScript::GetParentGameObject()
+MonoObject* CSharpScript::GetParentGameObject(MonoObject* object)
 {
-	return App->importer->iScript->GetMonoObject(own_game_object);
+	if (object != nullptr)
+	{
+		CSharpScript* temp = App->importer->iScript->GetScriptMono(object);
+		if (temp != nullptr)
+		{
+			return App->importer->iScript->GetMonoObject(temp->own_game_object);
+		}
+		else
+		{
+			return App->importer->iScript->GetMonoObject(own_game_object);
+		}
+	}
 }
 
 mono_bool CSharpScript::GetEnabled(MonoObject* object, MonoObject* gameobject)

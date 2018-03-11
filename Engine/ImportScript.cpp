@@ -503,6 +503,7 @@ Component* ImportScript::GetComponentMono(MonoObject* monoobject)
 		if (it != mono_comp.end())
 			return it->second;
 	}
+	return nullptr;
 }
 
 void ImportScript::UpdateMonoPos(float3* pos, MonoObject* object)
@@ -531,6 +532,36 @@ float3& ImportScript::GetPosMono(MonoObject* monoobject)
 		std::multimap<MonoObject*, float3*>::iterator it = mono_pos.find(monoobject);
 		if (it != mono_pos.end())
 			return *it->second;
+	}
+	return float3(0,0,0);
+}
+
+void ImportScript::UpdateMonoScript(CSharpScript* script, MonoObject* object)
+{
+	mono_script.insert(std::pair<MonoObject*, CSharpScript*>(object, script));
+}
+
+MonoObject* ImportScript::GetMonoObject(CSharpScript* script)
+{
+	std::multimap<MonoObject*, CSharpScript*>::iterator it = mono_script.begin();
+	while (it != mono_script.end())
+	{
+		if (it->second == script)
+		{
+			return it->first;
+		}
+		it++;
+	}
+	return nullptr;
+}
+
+CSharpScript* ImportScript::GetScriptMono(MonoObject* monoobject)
+{
+	if (monoobject != nullptr)
+	{
+		std::multimap<MonoObject*, CSharpScript*>::iterator it = mono_script.find(monoobject);
+		if (it != mono_script.end())
+			return it->second;
 	}
 }
 
@@ -1345,9 +1376,9 @@ MonoObject*	ImportScript::GetGlobalTransform(MonoObject* object)
 }
 
 // Component ---------------------
-MonoObject* ImportScript::GetParentGameObject()
+MonoObject* ImportScript::GetParentGameObject(MonoObject* object)
 {
-	return current->GetParentGameObject();
+	return current->GetParentGameObject(object);
 }
 
 // Map Functions -------------

@@ -62,6 +62,10 @@ public:
 	MonoObject* GetMonoObject(float3* pos);
 	float3& GetPosMono(MonoObject* monoobject);
 
+	void UpdateMonoScript(CSharpScript* script, MonoObject* object);
+	MonoObject* GetMonoObject(CSharpScript* script);
+	CSharpScript* GetScriptMono(MonoObject* monoobject);
+
 	bool IsNameUnique(std::string name) const;
 
 private:
@@ -166,7 +170,7 @@ private:
 
 	/* Component */
 
-	static MonoObject*	GetParentGameObject();
+	static MonoObject*	GetParentGameObject(MonoObject* object);
 
 	/* Map */
 	static MonoString* GetMapString(MonoObject* object);
@@ -262,6 +266,7 @@ private:
 	std::multimap<MonoObject*, GameObject*> mono_map;
 	std::multimap<MonoObject*, Component*> mono_comp;
 	std::multimap<MonoObject*, float3*> mono_pos;
+	std::multimap<MonoObject*, CSharpScript*> mono_script;
 	std::map<MonoObject*, Quat*> mono_quat;
 
 };
