@@ -136,6 +136,8 @@ public class MovementController : CulverinBehaviour
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0) && array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
             {
+                audio = GetComponent<CompAudio>();
+                audio.PlayEvent("Footsteps");
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
                 curr_x += tile_mov_x;
                 curr_y += tile_mov_y;
@@ -280,31 +282,27 @@ public class MovementController : CulverinBehaviour
         {
             if (Input.GetKeyDown(KeyCode.A) /*&& !EnemyInLeft()*/) //Left
             {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
+         
                 MoveLeft(out tile_mov_x, out tile_mov_y);
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.D) /*&& !EnemyInRight()*/) //Right
             {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
+         
                 MoveRight(out tile_mov_x, out tile_mov_y);
                 return true;
 
             }
             else if (Input.GetKeyDown(KeyCode.W) /*&& !EnemyInFront()*/) //Up
             {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
+        
                 MoveForward(out tile_mov_x, out tile_mov_y);
                 return true;
 
             }
             else if (Input.GetKeyDown(KeyCode.S) /*&& !EnemyBehind()*/) //Down
             {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
+       
                 MoveBackward(out tile_mov_x, out tile_mov_y);
                 return true;
 
@@ -313,16 +311,14 @@ public class MovementController : CulverinBehaviour
             float variation = Input.GetInput_ControllerAxis("LHorizontal", "Player");
             if (variation > 0.8)
             {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
+     
                 MoveRight(out tile_mov_x, out tile_mov_y);
                 return true;
 
             }
             else if (variation < -0.8)
             {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
+          
                 MoveLeft(out tile_mov_x, out tile_mov_y);
                 return true;
 
@@ -331,16 +327,14 @@ public class MovementController : CulverinBehaviour
             float variation2 = Input.GetInput_ControllerAxis("LVertical", "Player");
             if (variation2 > 0.8)
             {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
+        
                 MoveBackward(out tile_mov_x, out tile_mov_y);
                 return true;
 
             }
             else if (variation2 < -0.8)
             {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
+          
                 MoveForward(out tile_mov_x, out tile_mov_y);
                 return true;
 
