@@ -126,7 +126,7 @@ void CompScript::Start()
 
 void CompScript::Update(float dt)
 {
-	if (p_active == false)
+	if (p_active == false && do_start == false)
 	{
 		// Link GameObject* variables of the script
 		if (csharp != nullptr)
