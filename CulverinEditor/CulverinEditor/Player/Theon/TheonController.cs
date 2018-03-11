@@ -226,24 +226,28 @@ public class TheonController : CharacterController
 
     public override void GetDamage(float dmg)
     {
-        if (state == State.COVER)
+        health = GetLinkedObject("health_obj").GetComponent<Hp>();
+        health.GetDamage(dmg);
+
+        // SET HIT ANIMATION
+        if (health.GetCurrentHealth() > 0)
         {
-            SetAnimationTransition("ToBlock", true);
-
-            GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
-
-            SetState(State.BLOCKING);
+            if (GetState() == 0)
+            {
+                SetAnimationTransition("ToHit", true);
+                SetState(State.HIT);
+            }
+            audio = theon_obj.GetComponent<CompAudio>();
+            audio.PlayEvent("TheonHurt");
         }
+
         else
         {
-            health = GetLinkedObject("health_obj").GetComponent<Hp>();
-            health.GetDamage(dmg);
-
-            // SET HIT ANIMATION
-            SetAnimationTransition("ToHit", true);
-
-            SetState(State.HIT);
+            SetState(State.DEAD);
+            PlayFx("TheonDead");
         }
+
+        SetState(State.HIT);
     }
 
     public override void SetAnimationTransition(string name, bool value)

@@ -249,17 +249,26 @@ public class JaimeController : CharacterController
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.GetDamage(dmg);
 
-            SetAnimationTransition("ToHit", true);
+            if (health.GetCurrentHealth() > 0)
+            {
+                if (GetState() == 0)
+                {
+                    SetAnimationTransition("ToHit", true);
+                    SetState(State.HIT);
+                }
+                audio = jaime_obj.GetComponent<CompAudio>();
+                audio.PlayEvent("JaimeHurt");
+            }
 
-            audio = jaime_obj.GetComponent<CompAudio>();
-            audio.PlayEvent("JaimeHurt");
-
-            //GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("Hit");
+            else
+            {
+                SetState(State.DEAD);
+                PlayFx("JaimeDead");
+            }
+            
 
             //Reset hit count
             hit_streak = 0;
-
-            SetState(State.HIT);
         }
     }
 

@@ -293,12 +293,22 @@ public class DaenerysController : CharacterController
         health.GetDamage(dmg);
 
         // SET HIT ANIMATION
-        SetAnimationTransition("ToHit", true);
+        if (health.GetCurrentHealth() > 0)
+        {
+            if (GetState() == 0)
+            {
+                SetAnimationTransition("ToHit", true);
+                SetState(State.HIT);
+            }
+            audio = daenerys_obj.GetComponent<CompAudio>();
+            audio.PlayEvent("DaenerysHurt");
+        }
 
-        audio = daenerys_obj.GetComponent<CompAudio>();
-        audio.PlayEvent("DaenerysHurt");
-
-        SetState(State.HIT);
+        else
+        {
+            SetState(State.DEAD);
+            PlayFx("DaenerysDead");
+        }
     }
 
     public override void SetAnimationTransition(string name, bool value)

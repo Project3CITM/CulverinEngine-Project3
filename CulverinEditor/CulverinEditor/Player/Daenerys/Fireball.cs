@@ -19,7 +19,6 @@ public class Fireball : CulverinBehaviour
 
     public void Shoot()
     {
-        rb.UnLockTransform();
         Vector3 force = new Vector3(0, 5, 0);
         rb.ApplyImpulse(force + transform.forward * 50); // Forward impulse
         rb.ApplyTorqueForce(new Vector3(0, 0, 40)); // Fall force

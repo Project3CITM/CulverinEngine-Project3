@@ -98,37 +98,74 @@ public class CharactersManager : CulverinBehaviour
                         GetDamage(10);
                     }
 
+                    if(health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                    {
+                        Debug.Log("MainCharacter Dead");
+                        if (IsDead(left_character) == false)
+                        {
+                            state = State.CHANGING_LEFT;
+                            CurrentToOut();
+                        }
+                        else if(IsDead(right_character) == false)
+                        {
+                            state = State.CHANGING_RIGHT;
+                            CurrentToOut();
+                        }
+                        else
+                        {
+                            //DEFEAT
+                        }
+                    }
+
                     if (Input.GetKeyDown(KeyCode.T))
                     {
-                        state = State.CHANGING_LEFT;
-                        CurrentToOut();
+                        if (IsDead(left_character) == false)
+                        {
+                            state = State.CHANGING_LEFT;
+                            CurrentToOut();
+                        }
                     }
                     else if (Input.GetKeyDown(KeyCode.Y))
                     {
-                        state = State.CHANGING_RIGHT;
-                        CurrentToOut();
+                        if (IsDead(right_character) == false)
+                        {
+                            state = State.CHANGING_RIGHT;
+                            CurrentToOut();
+                        }
                     }
 
                     if (Input.GetInput_KeyDown("TriangleR", "Player"))
                     {
-                        state = State.CHANGING_RIGHT;
-                        CurrentToOut();
+                        if (IsDead(right_character) == false)
+                        {
+                            state = State.CHANGING_RIGHT;
+                            CurrentToOut();
+                        }
                     }
 
                     if (Input.GetInput_KeyDown("TriangleL", "Player"))
                     {
-                        state = State.CHANGING_LEFT;
-                        CurrentToOut();
+                        if (IsDead(left_character) == false)
+                        {
+                            state = State.CHANGING_LEFT;
+                            CurrentToOut();
+                        }
                     }
 
                     //MANAGE SECONDARY ABILITIES ------------
                     else if (Input.GetKeyDown(KeyCode.K))
                     {
-                        SecondaryAbility(Side.LEFT);
+                        if (IsDead(left_character) == false)
+                        {
+                            SecondaryAbility(Side.LEFT);
+                        }
                     }
                     else if (Input.GetKeyDown(KeyCode.L))
                     {
-                        SecondaryAbility(Side.RIGHT);
+                        if (IsDead(left_character) == false)
+                        {
+                            SecondaryAbility(Side.RIGHT);
+                        }
                     }
 
                     float vari = Input.GetInput_ControllerAxis("LAllyAttack", "Player");
@@ -406,6 +443,11 @@ public class CharactersManager : CulverinBehaviour
             if (current_character.GetName() == "Jaime")
             {
                 current_character.GetComponent<JaimeController>().GetDamage(dmg);
+                if(health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                {
+                    current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
+                    current_character.GetComponent<JaimeController>().PlayFx("JaimeDead");
+                }
             }
             else if (current_character.GetName() == "Daenerys")
             {
@@ -414,6 +456,11 @@ public class CharactersManager : CulverinBehaviour
             else if (current_character.GetName() == "Theon")
             {
                 current_character.GetComponent<TheonController>().GetDamage(dmg);
+                if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                {
+                    current_character.GetComponent<TheonController>().SetState(CharacterController.State.DEAD);
+                    current_character.GetComponent<TheonController>().PlayFx("TheonDead");
+                }
             }
         }
     }
@@ -446,6 +493,47 @@ public class CharactersManager : CulverinBehaviour
         else if (current_character.GetName() == "Theon")
         {
             if (current_character.GetComponent<TheonController>().GetState() == (int)CharacterController.State.IDLE)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool IsDead(GameObject character)
+    {
+        if (character.GetName() == "Jaime")
+        {
+            if (character.GetComponent<JaimeController>().GetState() == (int)CharacterController.State.DEAD)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (character.GetName() == "Daenerys")
+        {
+            if (character.GetComponent<DaenerysController>().GetState() == (int)CharacterController.State.DEAD)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (character.GetName() == "Theon")
+        {
+            if (character.GetComponent<TheonController>().GetState() == (int)CharacterController.State.DEAD)
             {
                 return true;
             }
