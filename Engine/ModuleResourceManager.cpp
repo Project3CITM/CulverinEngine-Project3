@@ -56,89 +56,93 @@ bool ModuleResourceManager::Start()
 	//CreateResourceCube();
 	//CreateResourcePlane();
 	//Load();
-
-	for (int i = 0; i < resources.size(); i++)
+	if (App->mode_game == false)
 	{
-		std::string path_resources_library;
-		uint uid_temp = App->json_seria->ResourcesInLibrary(i, path_resources_library);
-		path_resources_library += std::to_string(uid_temp);
-		if (uid_temp != 0)
-		{
-			Resource* to_reimport = GetResource(uid_temp);
-			if (to_reimport->GetType() == Resource::Type::SCRIPT)
-			{
-				path_resources_library += ".dll";
-			}
-			if (to_reimport->GetType() == Resource::Type::MATERIAL)
-			{
-				path_resources_library += ".dds";
-			}
-			if (App->fs->CheckIsFileExist(path_resources_library) || to_reimport->GetType() == Resource::Type::ANIMATION)
-			{
-				continue;
-			}
 
-			if (to_reimport != nullptr)
+
+
+		for (int i = 0; i < resources.size(); i++)
+		{
+			std::string path_resources_library;
+			uint uid_temp = App->json_seria->ResourcesInLibrary(i, path_resources_library);
+			path_resources_library += std::to_string(uid_temp);
+			if (uid_temp != 0)
 			{
-				ReImport temp;
-				if (to_reimport->GetType() == Resource::Type::MATERIAL)
-				{
-					std::string temp_mat = "Assets/";
-					temp_mat += to_reimport->name;
-					temp.directory_obj = App->fs->ConverttoConstChar(temp_mat);
-				}
-				else
-					temp.directory_obj = App->fs->ConverttoConstChar(to_reimport->path_assets);
-				temp.name_mesh = App->fs->ConverttoConstChar(to_reimport->name);
+				Resource* to_reimport = GetResource(uid_temp);
 				if (to_reimport->GetType() == Resource::Type::SCRIPT)
 				{
-					temp.path_dll = App->fs->ConverttoConstChar(((ResourceScript*)to_reimport)->GetPathdll());
+					path_resources_library += ".dll";
 				}
-				temp.uuid = uid_temp;
-				resources_to_reimport.push_back(temp);
+				if (to_reimport->GetType() == Resource::Type::MATERIAL)
+				{
+					path_resources_library += ".dds";
+				}
+				if (App->fs->CheckIsFileExist(path_resources_library) || to_reimport->GetType() == Resource::Type::ANIMATION)
+				{
+					continue;
+				}
+
+				if (to_reimport != nullptr)
+				{
+					ReImport temp;
+					if (to_reimport->GetType() == Resource::Type::MATERIAL)
+					{
+						std::string temp_mat = "Assets/";
+						temp_mat += to_reimport->name;
+						temp.directory_obj = App->fs->ConverttoConstChar(temp_mat);
+					}
+					else
+						temp.directory_obj = App->fs->ConverttoConstChar(to_reimport->path_assets);
+					temp.name_mesh = App->fs->ConverttoConstChar(to_reimport->name);
+					if (to_reimport->GetType() == Resource::Type::SCRIPT)
+					{
+						temp.path_dll = App->fs->ConverttoConstChar(((ResourceScript*)to_reimport)->GetPathdll());
+					}
+					temp.uuid = uid_temp;
+					resources_to_reimport.push_back(temp);
+				}
 			}
 		}
-	}
-	if (resources_to_reimport.size() > 0)
-	{
-		files_reimport.push_back(resources_to_reimport[0].directory_obj);
-		for (int i = 1; i < resources_to_reimport.size(); i++)
+		if (resources_to_reimport.size() > 0)
 		{
-			if (strcmp(files_reimport[files_reimport.size() - 1], resources_to_reimport[i].directory_obj) != 0)
+			files_reimport.push_back(resources_to_reimport[0].directory_obj);
+			for (int i = 1; i < resources_to_reimport.size(); i++)
 			{
-				files_reimport.push_back(resources_to_reimport[i].directory_obj);
+				if (strcmp(files_reimport[files_reimport.size() - 1], resources_to_reimport[i].directory_obj) != 0)
+				{
+					files_reimport.push_back(resources_to_reimport[i].directory_obj);
+				}
 			}
-		}
-		// if a Resource state == Resource::State::REIMPORT delete it.
-		std::map<uint, Resource*>::iterator it;
-		for (int i = 0; i < resources_to_reimport.size(); i++) // i = 1 -> ResourcePrimitive
-		{
-			it = resources.find(resources_to_reimport[i].uuid);
-			delete it->second;
-			resources.erase(it);
-		}
+			// if a Resource state == Resource::State::REIMPORT delete it.
+			std::map<uint, Resource*>::iterator it;
+			for (int i = 0; i < resources_to_reimport.size(); i++) // i = 1 -> ResourcePrimitive
+			{
+				it = resources.find(resources_to_reimport[i].uuid);
+				delete it->second;
+				resources.erase(it);
+			}
 
-		// Now ReImport
-		LOG("ReImporting...");
-		ImportFile(files_reimport, resources_to_reimport, true);
-		LOG("Finished ReImport.");
-		if (App->mode_game == false)
-		{
-			Save();
+			// Now ReImport
+			LOG("ReImporting...");
+			ImportFile(files_reimport, resources_to_reimport, true);
+			LOG("Finished ReImport.");
+			if (App->mode_game == false)
+			{
+				Save();
+			}
+			// After reimport, update time of vector of files in filesystem.
+			App->fs->UpdateFilesAssets();
+			files_reimport.clear();
+			for (int i = 0; i < resources_to_reimport.size(); i++)
+			{
+				RELEASE_ARRAY(resources_to_reimport[i].directory_obj);
+				RELEASE_ARRAY(resources_to_reimport[i].name_mesh);
+				RELEASE_ARRAY(resources_to_reimport[i].path_dll);
+			}
+			resources_to_reimport.clear();
+			reimport_now = false;
 		}
-		// After reimport, update time of vector of files in filesystem.
-		App->fs->UpdateFilesAssets();
-		files_reimport.clear();
-		for (int i = 0; i < resources_to_reimport.size(); i++)
-		{
-			RELEASE_ARRAY(resources_to_reimport[i].directory_obj);
-			RELEASE_ARRAY(resources_to_reimport[i].name_mesh);
-			RELEASE_ARRAY(resources_to_reimport[i].path_dll);
-		}
-		resources_to_reimport.clear();
-		reimport_now = false;
 	}
-
 
 	Start_t = perf_timer.ReadMs();
 	return true;

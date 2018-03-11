@@ -82,6 +82,10 @@ As a player you can execute the following controls:
 * Press A to move one tile to your Left.
 * Press 1 to perform your attack, or click the UI button.
 * Press 2 to block an incoming attack, or click the UI button.
+* Press Tab to switch to the left character
+* Press R to switch to the right character
+* Press K to use the right secondary ability
+* Press L to use the left secondary ability
 
 ![Controls](https://gyazo.com/c1760fade1baf6bf3b9edc391442ffc2.jpg)
 
@@ -94,6 +98,12 @@ https://github.com/Project3CITM/CulverinEngine-Project3/issues
 Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
 ## 8) CHANGELOG
+
+###Vertical Slice 2 v0.8.2:
+	* 2 more characters added (Theon and Daenerys)
+	* Simple puzzle
+	* Simple PBR material tests
+	* New UI art
 
 ### Vertical Slice 1 v0.8: 
 	* Character can Move between tiles and rotate.
