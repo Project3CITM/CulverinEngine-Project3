@@ -83,7 +83,8 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
     void GeneratePath()
     {
-        generated_path_index = rnd.Next(1, possible_paths + 1);
+        generated_path_index = rnd.Next(1, 6);
+        Debug.Log(generated_path_index);
         string selected_path_name = path_name + generated_path_index.ToString();
         generated_path = Instantiate(selected_path_name);
         if (generated_path == null)
@@ -241,6 +242,8 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
                 break;
             case 6:
                 used_logic_map = generated_path.GetComponent<PuzzlePath6>().logic_map;
+                break;
+            default:
                 break;
         }
 
