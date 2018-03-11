@@ -11,6 +11,7 @@ public class Hp : CulverinBehaviour
 
     void Start()
     {
+        current_hp = 100.0f;
         this_obj_hp = GetLinkedObject("this_obj_hp");
     }
 
