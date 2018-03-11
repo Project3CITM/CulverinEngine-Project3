@@ -929,9 +929,12 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 		if(is_reimport == false)
 			SetScriptVariablesToNull(gameobject);
 
-		if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == gameobject)
+		if (App->mode_game == false)
 		{
-			((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
+			if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == gameobject)
+			{
+				((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
+			}
 		}
 
 		// First Delete All Childs and their components

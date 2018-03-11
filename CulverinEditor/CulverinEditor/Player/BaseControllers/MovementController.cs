@@ -130,7 +130,7 @@ public class MovementController : CulverinBehaviour
             CheckMovement();
 
             // CHECK FACING --------------------------
-            CheckFacingRotation();
+            //CheckFacingRotation();
 
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0) && array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
