@@ -596,9 +596,9 @@ public class DaenerysController : CharacterController
     {
         GameObject fball = Instantiate("DaenerysFireball");
         GameObject pla_obj = GetLinkedObject("player_obj");
-
-        fball.transform.SetRotation(pla_obj.transform.GetRotation());
         fball.transform.SetPosition(pla_obj.transform.GetPosition());
+        fball.transform.SetRotation(pla_obj.transform.GetRotation());
+        fball.GetComponent<Fireball>().vfront = curr_forward;
     }
 
     public override void EnableAbilities(bool active)

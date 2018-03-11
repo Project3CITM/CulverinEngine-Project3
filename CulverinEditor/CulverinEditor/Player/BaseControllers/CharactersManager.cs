@@ -68,7 +68,8 @@ public class CharactersManager : CulverinBehaviour
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
-        
+
+        SetCurrentPosition();
         //core menu
         //bg = GetLinkedObject("bg");
         //coin1 = GetLinkedObject("coin1");
@@ -306,35 +307,83 @@ public class CharactersManager : CulverinBehaviour
 
     void CurrentToOut()
     {
+        Vector3 pos = transform.local_position;
+        Vector3 vfront = transform.forward;
+        Mathf.Round(vfront.x);
+        Mathf.Round(vfront.y);
+        Mathf.Round(vfront.z);
+
+        JaimeController jcontroller;
+        DaenerysController dcontroller;
+        TheonController tcontroller;
+
         if (current_character.GetName() == "Jaime")
         {
-            JaimeController jcontroler = current_character.GetComponent<JaimeController>();
-            jcontroler.SetAnimationTransition("ToOut", true);
-            jcontroler.curr_position = transform.local_position;
-            jcontroler.curr_forward = transform.forward;
-            Mathf.Round(jcontroler.curr_forward.x);
-            Mathf.Round(jcontroler.curr_forward.y);
-            Mathf.Round(jcontroler.curr_forward.z);
+            jcontroller = current_character.GetComponent<JaimeController>();
+            jcontroller.SetAnimationTransition("ToOut", true);
+
+            if (right_character.GetName() == "Daenerys")
+            {
+                dcontroller = right_character.GetComponent<DaenerysController>();
+                tcontroller = left_character.GetComponent<TheonController>();
+
+            }
+            else
+            {
+                dcontroller = left_character.GetComponent<DaenerysController>();
+                tcontroller = right_character.GetComponent<TheonController>();
+            }
+            jcontroller.curr_position = pos;
+            jcontroller.curr_forward = vfront;
+            dcontroller.curr_position = pos;
+            dcontroller.curr_forward = vfront;
+            tcontroller.curr_position = pos;
+            tcontroller.curr_forward = vfront;
         }
         else if (current_character.GetName() == "Daenerys")
         {
-            DaenerysController dcontroler = current_character.GetComponent<DaenerysController>();
-            dcontroler.SetAnimationTransition("ToOut", true);
-            dcontroler.curr_position = transform.local_position;
-            dcontroler.curr_forward = transform.forward;
-            Mathf.Round(dcontroler.curr_forward.x);
-            Mathf.Round(dcontroler.curr_forward.y);
-            Mathf.Round(dcontroler.curr_forward.z);
+            dcontroller = current_character.GetComponent<DaenerysController>();
+            dcontroller.SetAnimationTransition("ToOut", true);
+      
+            if (right_character.GetName() == "Jaime")
+            {
+                jcontroller = right_character.GetComponent<JaimeController>();
+                tcontroller = left_character.GetComponent<TheonController>();
+            }
+            else
+            {
+                jcontroller = left_character.GetComponent<JaimeController>();
+                tcontroller = right_character.GetComponent<TheonController>();
+            }
+            jcontroller.curr_position = pos;
+            jcontroller.curr_forward = vfront;
+            dcontroller.curr_position = pos;
+            dcontroller.curr_forward = vfront;
+            tcontroller.curr_position = pos;
+            tcontroller.curr_forward = vfront;
         }
         else if (current_character.GetName() == "Theon")
         {
-            TheonController tcontroller = current_character.GetComponent<TheonController>();
+            tcontroller = current_character.GetComponent<TheonController>();
             tcontroller.SetAnimationTransition("ToOut", true);
-            tcontroller.curr_position = transform.local_position;
-            tcontroller.curr_forward = transform.forward;
-            Mathf.Round(tcontroller.curr_forward.x);
-            Mathf.Round(tcontroller.curr_forward.y);
-            Mathf.Round(tcontroller.curr_forward.z);
+
+            if (right_character.GetName() == "Jaime")
+            {
+                jcontroller = right_character.GetComponent<JaimeController>();
+                dcontroller = left_character.GetComponent<DaenerysController>();
+            }
+            else
+            {
+                jcontroller = left_character.GetComponent<JaimeController>();
+                dcontroller = right_character.GetComponent<DaenerysController>();
+
+            }
+            jcontroller.curr_position = pos;
+            jcontroller.curr_forward = vfront;
+            dcontroller.curr_position = pos;
+            dcontroller.curr_forward = vfront;
+            tcontroller.curr_position = pos;
+            tcontroller.curr_forward = vfront;
         }
     }
 
@@ -603,33 +652,80 @@ public class CharactersManager : CulverinBehaviour
 
     public void SetCurrentPosition()
     {
+        Vector3 pos = transform.local_position;
+        Vector3 vfront = transform.forward;
+        Mathf.Round(vfront.x);
+        Mathf.Round(vfront.y);
+        Mathf.Round(vfront.z);
+
+        JaimeController jcontroller;
+        DaenerysController dcontroller;
+        TheonController tcontroller;
+
         if (current_character.GetName() == "Jaime")
         {
-            JaimeController jcontroler = current_character.GetComponent<JaimeController>();
-            jcontroler.curr_position = transform.local_position;
-            jcontroler.curr_forward = transform.forward;
-            Mathf.Round(jcontroler.curr_forward.x);
-            Mathf.Round(jcontroler.curr_forward.y);
-            Mathf.Round(jcontroler.curr_forward.z);
+            jcontroller = current_character.GetComponent<JaimeController>();
+
+            if (right_character.GetName() == "Daenerys")
+            {
+                dcontroller = right_character.GetComponent<DaenerysController>();
+                tcontroller = left_character.GetComponent<TheonController>();
+
+            }
+            else
+            {
+                dcontroller = left_character.GetComponent<DaenerysController>();
+                tcontroller = right_character.GetComponent<TheonController>();
+            }
+            jcontroller.curr_position = pos;
+            jcontroller.curr_forward = vfront;
+            dcontroller.curr_position = pos;
+            dcontroller.curr_forward = vfront;
+            tcontroller.curr_position = pos;
+            tcontroller.curr_forward = vfront;
         }
         else if (current_character.GetName() == "Daenerys")
         {
-            DaenerysController dcontroler = current_character.GetComponent<DaenerysController>();
-            dcontroler.curr_position = transform.local_position;
-            dcontroler.curr_forward = transform.forward;
-            Mathf.Round(dcontroler.curr_forward.x);
-            Mathf.Round(dcontroler.curr_forward.y);
-            Mathf.Round(dcontroler.curr_forward.z);
+            dcontroller = current_character.GetComponent<DaenerysController>();
+
+            if (right_character.GetName() == "Jaime")
+            {
+                jcontroller = right_character.GetComponent<JaimeController>();
+                tcontroller = left_character.GetComponent<TheonController>();
+            }
+            else
+            {
+                jcontroller = left_character.GetComponent<JaimeController>();
+                tcontroller = right_character.GetComponent<TheonController>();
+            }
+            jcontroller.curr_position = pos;
+            jcontroller.curr_forward = vfront;
+            dcontroller.curr_position = pos;
+            dcontroller.curr_forward = vfront;
+            tcontroller.curr_position = pos;
+            tcontroller.curr_forward = vfront;
         }
         else if (current_character.GetName() == "Theon")
         {
-            TheonController tcontroller = current_character.GetComponent<TheonController>();
-            tcontroller.curr_position = transform.local_position;
-            tcontroller.curr_forward = transform.forward;
-            Mathf.Round(tcontroller.curr_forward.x);
-            Mathf.Round(tcontroller.curr_forward.y);
-            Mathf.Round(tcontroller.curr_forward.z);
+            tcontroller = current_character.GetComponent<TheonController>();
 
+            if (right_character.GetName() == "Jaime")
+            {
+                jcontroller = right_character.GetComponent<JaimeController>();
+                dcontroller = left_character.GetComponent<DaenerysController>();
+            }
+            else
+            {
+                jcontroller = left_character.GetComponent<JaimeController>();
+                dcontroller = right_character.GetComponent<DaenerysController>();
+
+            }
+            jcontroller.curr_position = pos;
+            jcontroller.curr_forward = vfront;
+            dcontroller.curr_position = pos;
+            dcontroller.curr_forward = vfront;
+            tcontroller.curr_position = pos;
+            tcontroller.curr_forward = vfront;
         }
     }
 }

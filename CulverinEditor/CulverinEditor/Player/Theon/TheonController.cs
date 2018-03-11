@@ -369,10 +369,12 @@ public class TheonController : CharacterController
 
         GameObject arrow = Instantiate("ArrowTheon");
         GameObject player = GetLinkedObject("player_obj");
-        Vector3 pos = new Vector3(player.transform.GetPosition());
-        Vector3 rot = new Vector3(player.transform.GetRotation());
-        arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
-        arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
+       
+        arrow.transform.SetPosition(curr_position);
+        arrow.transform.SetRotation(player.transform.GetRotation());
+        //arrow.transform.ForceTransformUpdate();
+        Arrow arrow_script = arrow.GetComponent<Arrow>();
+        arrow_script.speed = curr_forward;
 
         Arrow.GetComponent<CompMesh>().SetEnabled(false, Arrow);
 
@@ -486,41 +488,47 @@ public class TheonController : CharacterController
             arrowtimers += Time.deltaTime;
             if(arrowtimers >= 0.5f && arrow1 == false)
             {
+                arrow1 = true;
                 PlayFx("CrossbowShot");
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
-                Vector3 pos = new Vector3(player.transform.GetPosition());
-                Vector3 rot = new Vector3(player.transform.GetRotation());
-                arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
-                arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
-                arrow1 = true;
+
+                arrow.transform.SetPosition(curr_position);
+                arrow.transform.SetRotation(player.transform.GetRotation());
+                arrow.GetComponent<Arrow>().speed = curr_forward;
+                //sarrow.transform.ForceTransformUpdate();
             }
 
             if (arrowtimers >= 1.0f && arrow2 == false)
             {
+                arrow2 = true;
                 PlayFx("CrossbowShot");
+
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
-                Vector3 pos = new Vector3(player.transform.GetPosition());
-                Vector3 rot = new Vector3(player.transform.GetRotation());
-                arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
-                arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
-                arrow2 = true;
+
+                arrow.transform.SetPosition(curr_position);
+                arrow.transform.SetRotation(player.transform.GetRotation());
+                arrow.GetComponent<Arrow>().speed = curr_forward;
+                //arrow.transform.ForceTransformUpdate();
             }
 
             if (arrowtimers >= 1.5f && arrow3 == false)
             {
-                PlayFx("CrossbowShot");
-                GameObject arrow = Instantiate("ArrowTheon");
-                GameObject player = GetLinkedObject("player_obj");
-                Vector3 pos = new Vector3(player.transform.GetPosition());
-                Vector3 rot = new Vector3(player.transform.GetRotation());
-                arrow.transform.SetRotation(new Vector3(rot.x, rot.y, rot.z));
-                arrow.transform.SetPosition(new Vector3(pos.x, pos.y, pos.z));
+                arrowtimers = 0.0f;
                 arrow1 = false;
                 arrow2 = false;
                 secondary_ability = false;
-                arrowtimers = 0.0f;
+
+                PlayFx("CrossbowShot");
+
+                GameObject arrow = Instantiate("ArrowTheon");
+                GameObject player = GetLinkedObject("player_obj");
+                arrow.transform.SetPosition(curr_position);
+                arrow.transform.SetRotation(player.transform.GetRotation());
+                arrow.GetComponent<Arrow>().speed = curr_forward;
+                //arrow.transform.ForceTransformUpdate();
+
             }
         }
     }

@@ -5,15 +5,15 @@ using CulverinEditor.Debug;
 public class Arrow : CulverinBehaviour
 {
     public float damage = 20;
-    Vector3 speed;
-    Vector3 gravity;
-    bool collision;
+    public Vector3 speed = Vector3.Zero;
+    public bool collision;
     CompRigidBody rb;
 
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
         Shoot();
+        collision = true;
         damage = 10.0f;
     }
 
@@ -21,8 +21,8 @@ public class Arrow : CulverinBehaviour
     {
         rb.UnLockTransform();
         Vector3 force = new Vector3(0, 5, 0);
-        rb.ApplyImpulse(force + transform.forward*1000); // Forward impulse
-        rb.ApplyTorqueForce(new Vector3(0, 0, 40)); // Fall force
+        rb.ApplyImpulse(force + speed*100); // Forward impulse
+        rb.ApplyTorqueForce(speed*40); // Fall force
     }
 
     void Update()
@@ -45,6 +45,8 @@ public class Arrow : CulverinBehaviour
         // DAMAGE ---
         if (collided_obj != null)
         {
+            Debug.Log("OnTriggerEnter");
+            Debug.Log(collided_obj.GetName());
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))

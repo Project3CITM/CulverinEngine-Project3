@@ -6,9 +6,7 @@ public class Fireball : CulverinBehaviour
 {
     public float damage = 50;
     public float life = 5.0f;
-    private Vector3 speed;
-    private Vector3 gravity;
-    private bool collision;
+    public Vector3 vfront = Vector3.Zero;
     private CompRigidBody rb;
     private float timer = 0.0f;
 
@@ -23,8 +21,7 @@ public class Fireball : CulverinBehaviour
 
     public void Shoot()
     {
-        Vector3 force = new Vector3(0, 5, 0);
-        rb.ApplyImpulse(force + transform.forward * 50); // Forward impulse
+        rb.ApplyImpulse(vfront * 50); // Forward impulse
         rb.ApplyTorqueForce(new Vector3(0, 0, 40)); // Fall force
     }
 

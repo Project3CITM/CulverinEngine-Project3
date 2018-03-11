@@ -170,8 +170,8 @@ public class MovementController : CulverinBehaviour
                     {
                         GetComponent<Transform>().RotateAroundAxis(Vector3.Up, -marge);
                     }
-                    char_manager.SetCurrentPosition();
                 }
+                char_manager.SetCurrentPosition();
             }
         }
         else if (face_rotating)
