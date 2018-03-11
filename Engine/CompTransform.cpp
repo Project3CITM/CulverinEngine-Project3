@@ -334,6 +334,7 @@ void CompTransform::RotateAroundAxis(float3 rot, float angle)
 	rotation_euler += euler_ang;
 	SetRot(rotation_euler);
 	toUpdate = true;
+	Update(0.f);
 }
 
 void CompTransform::SetRot(Quat rot)

@@ -115,18 +115,18 @@ public class BarrelFall : CulverinBehaviour
         if (rigid_body != null)
         {
             rigid_body.RemoveJoint();
-            
             calc_final_pos = true;
-           /* Quaternion quat = rigid_body.GetColliderQuaternion();
-            BarrelManage nmana = barrel_mov.instance.GetComponent<BarrelManage>();
-            Vector3 parent_pos = new Vector3(nmana.restart_pos_x, nmana.restart_pos_y, nmana.restart_pos_z);
+            rigid_body.ResetForce();
+            /* Quaternion quat = rigid_body.GetColliderQuaternion();
+             BarrelManage nmana = barrel_mov.instance.GetComponent<BarrelManage>();
+             Vector3 parent_pos = new Vector3(nmana.restart_pos_x, nmana.restart_pos_y, nmana.restart_pos_z);
 
-            Debug.Log("parent pos : " + parent_pos);
-            start_x_pos = transform.local_position.x * 13 + parent_pos.x;
-            Debug.Log(transform.local_position.ToString());
-            Debug.Log("Start x pos : " + start_x_pos);
-            final_x_pos = Mathf.Round((Mathf.Round(transform.local_position.x / 2)*2+1) * 13 + parent_pos.x);
-            Debug.Log("Final tile pos : " + final_x_pos.ToString());*/
+             Debug.Log("parent pos : " + parent_pos);
+             start_x_pos = transform.local_position.x * 13 + parent_pos.x;
+             Debug.Log(transform.local_position.ToString());
+             Debug.Log("Start x pos : " + start_x_pos);
+             final_x_pos = Mathf.Round((Mathf.Round(transform.local_position.x / 2)*2+1) * 13 + parent_pos.x);
+             Debug.Log("Final tile pos : " + final_x_pos.ToString());*/
         }
     }
 }
