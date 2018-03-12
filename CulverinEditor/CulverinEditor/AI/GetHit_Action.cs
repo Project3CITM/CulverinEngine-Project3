@@ -22,25 +22,25 @@ class GetHit_Action: Action
 
     public override bool ActionStart()
     {
-        interupt = false;
-        anim.SetTransition("ToHit");
-        anim.SetClipsSpeed(hit_speed);
+        //interupt = false;
+        //anim.SetTransition("ToHit");
+        //anim.SetClipsSpeed(hit_speed);
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (anim.IsAnimationStopped("Hit"))
-        {
+        //if (anim.IsAnimationStopped("Hit"))
+        //{
             return ACTION_RESULT.AR_SUCCESS;
-        }
-        return ACTION_RESULT.AR_IN_PROGRESS;
+        //}
+        //return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
     public override bool ActionEnd()
     {
         interupt = false;
-        anim.SetClipsSpeed(anim_speed);
+        //anim.SetClipsSpeed(anim_speed);
         return true;
     }
 }
