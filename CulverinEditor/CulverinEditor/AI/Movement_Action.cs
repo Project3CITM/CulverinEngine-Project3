@@ -160,7 +160,7 @@ public class Movement_Action : Action
 
                         if (interupt == true)
                         {
-                            GetComponent<CompAnimation>().SetTransition("ToIdle");
+                            //GetComponent<CompAnimation>().SetTransition("ToIdle");
                             return ACTION_RESULT.AR_FAIL;
                         }
                     }
@@ -203,7 +203,7 @@ public class Movement_Action : Action
 
                     if (interupt == true)
                     {
-                        GetComponent<CompAnimation>().SetTransition("ToIdle");
+                        //GetComponent<CompAnimation>().SetTransition("ToIdle");
                         return ACTION_RESULT.AR_FAIL;
                     }
                 }
@@ -568,8 +568,7 @@ public class Movement_Action : Action
 
     public bool NextToPlayer()
     {
-        int x, y;
-        player.GetComponent<MovementController>().GetPlayerPos(out x, out y);
+        player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
 
         switch (dir)
         {

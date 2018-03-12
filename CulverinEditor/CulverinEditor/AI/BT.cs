@@ -32,7 +32,6 @@ public class BT : CulverinBehaviour
 
     virtual public void Start()
     {
-        Debug.Log("Base BT");
         current_action = GetComponent<Idle_Action>();
         current_action.SetAnimSpeed(anim_speed);
         current_action.ActionStart();
