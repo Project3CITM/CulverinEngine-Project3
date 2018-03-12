@@ -75,6 +75,7 @@ public class Movement_Action : Action
         myself = GetLinkedObject("myself");
         player = GetLinkedObject("player");
         anim = GetComponent<CompAnimation>();
+        anim.SetTransition("ToPatrol");
 
         Enemy_BT bt = GetComponent<EnemySword_BT>();
         if(bt == null)
@@ -158,7 +159,10 @@ public class Movement_Action : Action
                         SetState();
 
                         if (interupt == true)
+                        {
+                            GetComponent<CompAnimation>().SetTransition("ToIdle");
                             return ACTION_RESULT.AR_FAIL;
+                        }
                     }
                 }
                 break;
@@ -198,7 +202,10 @@ public class Movement_Action : Action
                     SetState();
 
                     if (interupt == true)
+                    {
+                        GetComponent<CompAnimation>().SetTransition("ToIdle");
                         return ACTION_RESULT.AR_FAIL;
+                    }
                 }
                 break;
 
@@ -228,23 +235,36 @@ public class Movement_Action : Action
         if (adjacent_walkable_tiles.Count >= 0)
         {
             PathNode closest = adjacent_walkable_tiles[0];
-            int closest_distance = (closest.GetTileX() - current_x) + (closest.GetTileY() - current_y);
+            int closest_distance = Mathf.Abs(closest.GetTileX() - current_x) + Mathf.Abs(closest.GetTileY() - current_y);
+
+            Debug.Log("Current enemy pos:" + current_x + "," + current_y);
+            Debug.Log("Closest:" + closest_distance);
+            Debug.Log("Adjacent Tiles");
+            foreach (PathNode n in adjacent_walkable_tiles)
+                Debug.Log("Tile: " + n.GetTileX() + "," + n.GetTileY());
 
             if (adjacent_walkable_tiles.Count >= 1)
             {
                 for (int i = 1; i < adjacent_walkable_tiles.Count; i++)
                 {
-                    int x_distance = (closest.GetTileX() - current_x);
-                    int y_distance = (closest.GetTileY() - current_y);
+                    int x_distance = Mathf.Abs(adjacent_walkable_tiles[i].GetTileX() - current_x);
+                    int y_distance = Mathf.Abs(adjacent_walkable_tiles[i].GetTileY() - current_y);
 
                     int distance = x_distance + y_distance;
+                    Debug.Log("Distance:" + distance);
 
                     if (distance < closest_distance)
+                    {
                         closest = adjacent_walkable_tiles[i];
+                        closest_distance = distance;
+                    }
                 }
             }
 
             path = pf.CalculatePath(new PathNode(cur_x, cur_y), closest);
+
+            foreach (PathNode n in path)
+                Debug.Log("Tile: " + n.GetTileX() + "," + n.GetTileY());
 
             SetState();
         }

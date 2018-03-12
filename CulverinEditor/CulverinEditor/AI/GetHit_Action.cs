@@ -23,6 +23,7 @@ class GetHit_Action: Action
     public override bool ActionStart()
     {
         interupt = false;
+        anim = GetComponent<CompAnimation>();
         anim.SetTransition("ToHit");
         anim.SetClipsSpeed(hit_speed);
         return true;
@@ -30,6 +31,8 @@ class GetHit_Action: Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+        anim = GetComponent<CompAnimation>();
+
         if (anim.IsAnimationStopped("Hit"))
         {
             return ACTION_RESULT.AR_SUCCESS;
@@ -40,6 +43,7 @@ class GetHit_Action: Action
     public override bool ActionEnd()
     {
         interupt = false;
+        anim = GetComponent<CompAnimation>();
         anim.SetClipsSpeed(anim_speed);
         return true;
     }

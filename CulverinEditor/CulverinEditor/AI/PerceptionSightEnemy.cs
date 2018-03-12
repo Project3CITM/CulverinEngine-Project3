@@ -48,9 +48,7 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
             List<PathNode> seen_tiles = GetSeenTiles(GetDirection());
 
-            int player_x, player_y;
-
-            GetPlayerTilePos(out player_x, out player_y);
+            GetPlayerTilePos(out int player_x, out int player_y);
 
             PathNode player_tile = new PathNode(player_x, player_y);
 
@@ -72,7 +70,7 @@ public class PerceptionSightEnemy : CulverinBehaviour
                 player_seen = true;
                 int current_x = GetComponent<Movement_Action>().GetCurrentTileX();
                 int current_y = GetComponent<Movement_Action>().GetCurrentTileY();
-                Debug.Log("Player pos:" + player_x + "," + player_y);
+                Debug.Log("Player Seen At Position:" + player_x + "," + player_y);
                 GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(time_to_forget, player_x, player_y, gameObject, current_x, current_y);
             }
         }
@@ -104,8 +102,7 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
     public void GetPlayerTilePos(out int player_x, out int player_y)
     {
-        int x, y;
-        player_obj.GetComponent<MovementController>().GetPlayerPos(out x, out y);
+        player_obj.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
         player_x = x;
         player_y = y;
     }

@@ -33,9 +33,13 @@ public class Attack_Action : Action
     public override bool ActionStart()
     {
         state = SWA_STATE.PRE_APPLY;
-        anim = GetComponent<CompAnimation>();
-        anim.SetTransition("ToAttack"); //This will be attack
+        Debug.Log("1");
+        anim = gameObject.GetComponent<CompAnimation>();
+        Debug.Log("2");
+        anim.SetTransition("ToAttack");
+        Debug.Log("3");
         anim.SetClipsSpeed(anim_speed);
+        Debug.Log("Got Here");
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
         //Interrupt player action
         return true;
@@ -49,6 +53,7 @@ public class Attack_Action : Action
         }
 
         //Doing attack
+        anim = GetComponent<CompAnimation>();
         if (state == SWA_STATE.PRE_APPLY && anim.IsAnimOverXTime(apply_damage_point))
         {
             state = SWA_STATE.POST_APPLY;
@@ -56,7 +61,6 @@ public class Attack_Action : Action
             //Apply damage to the target
             //Play audio fx
         }
-
         else if (state == SWA_STATE.POST_APPLY && anim.IsAnimationStopped("Attack"))
         {
             Debug.Log("ATTACK_EEEEND!");
@@ -71,5 +75,10 @@ public class Attack_Action : Action
     {
         interupt = false;
         return true;
+    }
+
+    public void SetDamage(float attack_damage)
+    {
+        damage = attack_damage;
     }
 }

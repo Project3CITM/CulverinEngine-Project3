@@ -16,7 +16,7 @@ public class Enemy_BT : BT
     CompAnimation anim = null;
 
     public float total_hp = 100;
-    float current_hp;
+    protected float current_hp;
     public ENEMY_STATE life_state = ENEMY_STATE.ENEMY_ALIVE;
 
     public float max_anim_speed = 1.5f;
@@ -29,8 +29,14 @@ public class Enemy_BT : BT
     protected float current_interpolation = 1.0f;
     public uint range = 1;
 
+    public bool engage_combat = false;
+    public bool disengage_combat = false;
+    protected bool in_combat = false;
+    protected bool alive = true;
+
     public override void Start()
     {
+        in_combat = false;
         player = GetLinkedObject("player");
         anim = GetComponent<CompAnimation>();
         current_hp = total_hp;
@@ -52,8 +58,29 @@ public class Enemy_BT : BT
     }
 
     public override void MakeDecision()
+    {}
+
+    protected bool ChangeCombatState()
     {
-        Debug.Log("Enemy_BT not decision defined!");
+        if (engage_combat == true && in_combat == false)
+        {
+            Debug.Log("Engage");
+            engage_combat = false;
+            in_combat = true;
+            current_action = GetComponent<Engage_Action>();
+            current_action.ActionStart();
+            return true;
+        }
+        else if (disengage_combat == true && in_combat == true)
+        {
+            Debug.Log("Disengage");
+            disengage_combat = false;
+            in_combat = false;
+            current_action = GetComponent<Disengage_Action>();
+            current_action.ActionStart();
+            return true;
+        }
+        return false;
     }
 
     public virtual void ApplyDamage(float damage)
@@ -71,13 +98,7 @@ public class Enemy_BT : BT
         if (current_hp <= 0)
         {
             anim.SetClipsSpeed(anim_speed);
-
-            if (state == AI_STATE.AI_ATTACKING)
-                anim.SetTransition("ToDie");
-            else
-                anim.SetTransition("ToHitAndDie");
-
-            //Trigger die animation
+            alive = false;
             state = AI_STATE.AI_DEAD;
             life_state = ENEMY_STATE.ENEMY_DEAD;
         }
@@ -99,8 +120,7 @@ public class Enemy_BT : BT
 
     public bool InRange()
     {
-        int x, y;
-        player.GetComponent<MovementController>().GetPlayerPos(out x, out y);
+        player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
         int distance = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX()) + Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
         if (distance <= range)
             return true;

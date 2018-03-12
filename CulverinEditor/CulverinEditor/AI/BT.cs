@@ -16,7 +16,6 @@ public class BT : CulverinBehaviour
     protected Action current_action = new Action();
     protected Action next_action = new Action();
     protected AI_STATE state = AI_STATE.AI_IDLE;
-    protected Action idle_action = new Idle_Action();
 
     //Blackboard
     public bool player_detected = false;
@@ -31,12 +30,11 @@ public class BT : CulverinBehaviour
 
     public float anim_speed = 1.0f;
 
-
     virtual public void Start()
     {
         Debug.Log("Base BT");
-        idle_action.SetAnimSpeed(anim_speed);
-        current_action = idle_action;
+        current_action = GetComponent<Idle_Action>();
+        current_action.SetAnimSpeed(anim_speed);
         current_action.ActionStart();
         MakeDecision();
     }

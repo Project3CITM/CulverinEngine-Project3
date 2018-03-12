@@ -40,14 +40,7 @@ public class ChasePlayer_Action : Action
         current_tile_y = move.GetCurrentTileY();
 
         anim = GetComponent<CompAnimation>();
-        anim.SetTransition("Unshade");
-
-        //event_to_react.start_counting = false;
-
-        /*event_to_react = new PerceptionPlayerSeenEvent(5, 2, 24, gameObject);
-
-        event_to_react.SetOrigin(current_tile_x, current_tile_y);
-        event_to_react.SetDestiny(2, 24);*/
+        anim.SetTransition("ToChase");
 
         event_to_react.start_counting = false;
 
@@ -65,11 +58,6 @@ public class ChasePlayer_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        /*if (anim.IsAnimationStopped("Prep desenvainar"))
-            anim.SetTransition("Desenv");
-        else if (anim.IsAnimationStopped("Desenv"))
-            anim.SetTransition("Chase");*/
-
         if (interupt || forgot_event)
         {
             move.Interupt();
@@ -100,12 +88,14 @@ public class ChasePlayer_Action : Action
 
         if (move_return == ACTION_RESULT.AR_SUCCESS)
         {
-            Debug.Log("Chased");
+            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            move.ActionEnd();
         }
 
         if (move_return == ACTION_RESULT.AR_FAIL)
         {
             move.ActionEnd();
+            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_FAIL;
         }        
 

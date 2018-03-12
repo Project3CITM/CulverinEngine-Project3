@@ -44,11 +44,14 @@
     <Compile Include="AI\Arrive_Steering.cs" />
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\ChasePlayer_Action.cs" />
+    <Compile Include="AI\Die_Action.cs" />
+    <Compile Include="AI\Disengage_Action.cs" />
     <Compile Include="AI\EnemiesManager.cs" />
     <Compile Include="AI\EnemySpear_BT.cs" />
     <Compile Include="AI\EnemyShield_BT.cs" />
     <Compile Include="AI\EnemySword_BT.cs" />
     <Compile Include="AI\Enemy_BT.cs" />
+    <Compile Include="AI\Engage_Action.cs" />
     <Compile Include="AI\GetHit_Action.cs" />
     <Compile Include="AI\Idle_Action.cs" />
     <Compile Include="AI\Investigate_Action.cs" />

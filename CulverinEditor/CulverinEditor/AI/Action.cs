@@ -23,7 +23,10 @@ public class Action : CulverinBehaviour
         CHASE_ACTION,
         PUSHBACK_ACTION,
         GET_HIT_ACTION,
-        SHIELD_BLOCK_ACTION
+        SHIELD_BLOCK_ACTION,
+        ENGAGE_ACTION,
+        DISENGAGE_ACTION,
+        DIE_ACTION
     }
 
     public ACTION_TYPE action_type = ACTION_TYPE.NO_ACTION;
@@ -66,6 +69,11 @@ public class Action : CulverinBehaviour
     }
 
     public void SetAnimSpeed(float speed)
+    {
+        anim_speed = speed;
+    }
+
+    public void Init(float speed)
     {
         anim_speed = speed;
     }

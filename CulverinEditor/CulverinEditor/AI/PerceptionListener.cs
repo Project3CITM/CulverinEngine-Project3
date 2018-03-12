@@ -9,7 +9,9 @@ public class PerceptionListener : CulverinBehaviour
     public List<PerceptionEvent> events_in_memory;
 
    void Start()
-    { }
+    {
+        events_in_memory = new List<PerceptionEvent>();
+    }
 
     void Update()
     { }
@@ -22,16 +24,20 @@ public class PerceptionListener : CulverinBehaviour
 
     public void UpdateMemory()
     {
-        int i = 0;
-        foreach (PerceptionEvent memory_event in events_in_memory)
+        if (events_in_memory.Count > 0)
         {
-            if (memory_event.start_counting)
-                UpdateEvent(memory_event);
+            List<PerceptionEvent> to_remove = new List<PerceptionEvent>();
+            foreach (PerceptionEvent e in events_in_memory)
+            {
+                if (e.start_counting)
+                    UpdateEvent(e);
 
-            if(memory_event.is_finished)
-                events_in_memory.RemoveAt(i);
+                if (e.is_finished)
+                    to_remove.Add(e);
+            }
 
-            i++;
+            foreach (PerceptionEvent e in to_remove)
+                events_in_memory.Remove(e);
         }
     }
 

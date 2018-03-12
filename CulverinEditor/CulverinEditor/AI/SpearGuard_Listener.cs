@@ -11,7 +11,6 @@ public class SpearGuard_Listener : PerceptionListener
     {
         event_manager = GetLinkedObject("event_manager");
         event_manager.GetComponent<PerceptionManager>().AddListener(this);
-        my_self = GetLinkedObject("my_self");
         events_in_memory = new List<PerceptionEvent>();
     }
 
@@ -38,10 +37,10 @@ public class SpearGuard_Listener : PerceptionListener
                 {
                     if (event_recieved.type == PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER && player_seen)
                     {
-                        my_self.GetComponent<EnemySpear_BT>().heard_something = true;
-                        my_self.GetComponent<Investigate_Action>().forgot_event = false;
-                        my_self.GetComponent<Investigate_Action>().SetEvent(event_recieved);
-                        my_self.GetComponent<EnemySpear_BT>().InterruptAction();
+                        GetComponent<EnemySpear_BT>().heard_something = true;
+                        GetComponent<Investigate_Action>().forgot_event = false;
+                        GetComponent<Investigate_Action>().SetEvent(event_recieved);
+                        GetComponent<EnemySpear_BT>().InterruptAction();
 
                         Debug.Log("I Heard The Player");
 
@@ -49,10 +48,10 @@ public class SpearGuard_Listener : PerceptionListener
                     }
                     else
                     {
-                        my_self.GetComponent<EnemySpear_BT>().heard_something = true;
-                        my_self.GetComponent<Investigate_Action>().forgot_event = false;
-                        my_self.GetComponent<Investigate_Action>().SetEvent(event_recieved);
-                        my_self.GetComponent<EnemySpear_BT>().InterruptAction();
+                        GetComponent<EnemySpear_BT>().heard_something = true;
+                        GetComponent<Investigate_Action>().forgot_event = false;
+                        GetComponent<Investigate_Action>().SetEvent(event_recieved);
+                        GetComponent<EnemySpear_BT>().InterruptAction();
 
                         Debug.Log("I Heard Somethin");
 
@@ -62,11 +61,12 @@ public class SpearGuard_Listener : PerceptionListener
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-                my_self.GetComponent<EnemySpear_BT>().InterruptAction();
-                my_self.GetComponent<EnemySpear_BT>().player_detected = true;
+                GetComponent<EnemySpear_BT>().InterruptAction();
+                GetComponent<EnemySpear_BT>().player_detected = true;
+                GetComponent<EnemySpear_BT>().engage_combat = true;
                 player_seen = true;
-                my_self.GetComponent<Movement_Action>().look_at_player = false;
-                my_self.GetComponent<ChasePlayer_Action>().SetEvent(event_recieved);
+                GetComponent<Movement_Action>().look_at_player = false;
+                GetComponent<ChasePlayer_Action>().SetEvent(event_recieved);
                 Debug.Log("Player in sight");
                 break;
         }
@@ -78,15 +78,16 @@ public class SpearGuard_Listener : PerceptionListener
         {
             case PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT:
             case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
-                my_self.GetComponent<EnemySpear_BT>().heard_something = false;
-                my_self.GetComponent<Investigate_Action>().forgot_event = true;
+                GetComponent<EnemySpear_BT>().heard_something = false;
+                GetComponent<Investigate_Action>().forgot_event = true;
                 Debug.Log("I lost Somethin");
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-                my_self.GetComponent<EnemySpear_BT>().player_detected = false;
-                my_self.GetComponent<ChasePlayer_Action>().forgot_event = true;
-                my_self.GetComponent<Movement_Action>().look_at_player = true;
+                GetComponent<EnemySpear_BT>().player_detected = false;
+                GetComponent<EnemySpear_BT>().disengage_combat = true;
+                GetComponent<ChasePlayer_Action>().forgot_event = true;
+                GetComponent<Movement_Action>().look_at_player = true;
                 Debug.Log("Player out of sight");
                 break;
         }
