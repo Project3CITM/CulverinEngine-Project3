@@ -98,6 +98,10 @@ https://github.com/Project3CITM/CulverinEngine-Project3/issues
 Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
 ## 8) CHANGELOG
+###Vertical Slice 2 v0.9:
+	* Enemy added	
+	* Puzzle completed
+	* Lights added
 
 ###Vertical Slice 2 v0.8.2:
 	* 2 more characters added (Theon and Daenerys)

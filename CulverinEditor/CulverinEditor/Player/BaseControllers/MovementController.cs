@@ -339,7 +339,7 @@ public class MovementController : CulverinBehaviour
             float variation2 = Input.GetInput_ControllerAxis("LVertical", "Player");
             if (variation2 > 0.8)
             {
-                if (!EnemyBehind())
+                if (/*!EnemyBehind()*/1==1)
                 {
                     MoveBackward(out tile_mov_x, out tile_mov_y);
                     return true;
@@ -348,7 +348,7 @@ public class MovementController : CulverinBehaviour
             }
             else if (variation2 < -0.8)
             {
-                if (!EnemyInFront())
+                if (/*!EnemyInFront()*/1==1)
                 {
                     MoveForward(out tile_mov_x, out tile_mov_y);
                     return true;

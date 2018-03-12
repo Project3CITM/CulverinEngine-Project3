@@ -37,6 +37,30 @@ public class Fireball : CulverinBehaviour
 
     void OnTriggerEnter()
     {
+        //GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
+        //// DAMAGE ---
+        //if (collided_obj != null)
+        //{
+        //    // Check the specific enemy in front of you and apply dmg or call object OnContact
+        //    EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
+        //    if (enemy_manager.IsEnemy(collided_obj))
+        //    {
+        //        enemy_manager.ApplyDamage(collided_obj, damage);
+        //    }
+        //    else
+        //    {
+        //        CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
+        //        if (obj_col != null)
+        //        {
+        //            obj_col.CallOnContact();
+        //        }
+        //    }
+        //}
+        //Destroy(gameObject);
+    }
+
+    void OnContact()
+    {
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
         // DAMAGE ---
         if (collided_obj != null)
@@ -46,6 +70,8 @@ public class Fireball : CulverinBehaviour
             if (enemy_manager.IsEnemy(collided_obj))
             {
                 enemy_manager.ApplyDamage(collided_obj, damage);
+                Destroy(gameObject);
+
             }
             else
             {
@@ -54,23 +80,14 @@ public class Fireball : CulverinBehaviour
                 {
                     obj_col.CallOnContact();
                 }
+                Destroy(gameObject);
             }
         }
-        Destroy(gameObject);
-    }
-
-    void OnContact()
-    {
-        GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
-        // DAMAGE ---
-
-        CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
-        if (obj_col != null)
+        else
         {
-            obj_col.CallOnContact();
+            Debug.Log("destroy 1");
+            Destroy(gameObject);
+            Debug.Log("destroy 2");
         }
-
-        rb.LockTransform();
-        Destroy(gameObject);
     }
 }
