@@ -66,10 +66,10 @@ public class Arrow : CulverinBehaviour
         //}
 
         //// DESTROY ---
-        //if (collision)
-        //{
-        //    Destroy(gameObject);
-        //}
+        if (collision)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void OnContact()
@@ -87,7 +87,7 @@ public class Arrow : CulverinBehaviour
             EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
             {
-                enemy_manager.ApplyDamage(collided_obj, damage);
+                //enemy_manager.ApplyDamage(collided_obj, damage);
                 Destroy(gameObject);
             }
             else

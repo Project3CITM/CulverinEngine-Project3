@@ -56,7 +56,7 @@ public class Fireball : CulverinBehaviour
         //        }
         //    }
         //}
-        //Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     void OnContact()
@@ -69,7 +69,7 @@ public class Fireball : CulverinBehaviour
             EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
             {
-                enemy_manager.ApplyDamage(collided_obj, damage);
+                //enemy_manager.ApplyDamage(collided_obj, damage);
                 Destroy(gameObject);
 
             }

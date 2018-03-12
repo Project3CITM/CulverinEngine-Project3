@@ -429,7 +429,7 @@ public class JaimeController : CharacterController
                     damage = left_ability_dmg3;
                 }
 
-                enemy_manager.ApplyDamage(coll_object, damage);
+                //enemy_manager.ApplyDamage(coll_object, damage);
                 Debug.Log("Apply Damage");
 
                 if (hit_streak < 2)
