@@ -320,7 +320,7 @@ void jpPhysicsRigidBody::SetDynamicLock(bool lock)
 		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_X, lock);
 		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Y, lock);
 		rbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Z, lock);
-		(lock) ? rbody->putToSleep() : rbody->wakeUp();
+		(lock && !(((physx::PxRigidDynamic*)body)->getRigidBodyFlags() & physx::PxRigidBodyFlag::eKINEMATIC)) ? rbody->putToSleep() : rbody->wakeUp();
 	}
 }
 
@@ -357,7 +357,11 @@ void jpPhysicsRigidBody::WakeUp()
 {
 	if (body && is_dynamic)
 	{
-		static_cast<physx::PxRigidDynamic*>(body)->wakeUp();
+		physx::PxRigidDynamic* dynbody = (physx::PxRigidDynamic*)body;
+		if (!dynbody->getRigidBodyFlags() & physx::PxRigidBodyFlag::eKINEMATIC)
+		{
+			dynbody->wakeUp();
+		}
 	}
 }
 

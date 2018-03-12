@@ -25,6 +25,7 @@ public:
 
 private:
 	physx::PxDistanceJoint* joint = nullptr;
+	bool					toRelease = false;
 };
 
 #endif // !JP_PHYSICS_JOINT__

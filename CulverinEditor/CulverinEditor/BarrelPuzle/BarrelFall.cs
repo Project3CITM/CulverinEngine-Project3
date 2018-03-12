@@ -8,8 +8,9 @@ public class BarrelFall : CulverinBehaviour
     public GameObject barrel_mov_go;
     public GameObject puzzle_generator_go;
     private BarrelPuzzleGenerator puzzle_generator;
-    CompRigidBody rigid_body;
-    Vector3 start_pos;
+    CompRigidBody rigid_body = null;
+    Vector3 start_pos = Vector3.Zero;
+    Vector3 parent_pos = Vector3.Zero;
     bool falling = false;
     
     float fall_x_pos = 0;
@@ -17,12 +18,17 @@ public class BarrelFall : CulverinBehaviour
     float start_x_pos = 0;
     bool move_done = false;
     bool calc_final_pos = false;
+
     void Start()
     {
         barrel_mov_go = GetLinkedObject("barrel_mov_go");
         barrel_mov = barrel_mov_go.GetComponent<BarrelMovement>();
         rigid_body = gameObject.GetComponent<CompRigidBody>();
         start_pos = gameObject.GetComponent<Transform>().local_position;
+
+        BarrelManage manage = barrel_mov.instance.GetComponent<BarrelManage>();
+        parent_pos = new Vector3(manage.restart_pos_x, manage.restart_pos_y, manage.restart_pos_z);
+        manage = null;
 
         puzzle_generator_go = GetLinkedObject("puzzle_generator_go");
         puzzle_generator = puzzle_generator_go.GetComponent<BarrelPuzzleGenerator>();
@@ -41,16 +47,11 @@ public class BarrelFall : CulverinBehaviour
             if (barrel_mov.restart)
             {
                 //CAL FUNCTION
-                Quaternion quat = gameObject.GetComponent<CompRigidBody>().GetColliderQuaternion();
+                Quaternion quat = rigid_body.GetColliderQuaternion();
+                rigid_body.MoveKinematic(start_pos * 13 + parent_pos, quat);
 
-                BarrelManage manage = barrel_mov.instance.GetComponent<BarrelManage>();
-                Vector3 parent_pos = new Vector3(manage.restart_pos_x, manage.restart_pos_y, manage.restart_pos_z);
-
-                CompRigidBody rigid = gameObject.GetComponent<CompRigidBody>();
-                rigid.MoveKinematic(start_pos * 13 + parent_pos, quat);
-
-                rigid.ResetForce();
-                rigid.ApplyImpulse(new Vector3(1, 0, 0));
+                rigid_body.ResetForce();
+                rigid_body.ApplyImpulse(Vector3.Right);
 
             }
         }
@@ -58,10 +59,8 @@ public class BarrelFall : CulverinBehaviour
         if (falling)
         {
             //ONE WAY TO CONTROL WHERE THE BARRELS FALL
-            BarrelManage manage = barrel_mov.instance.GetComponent<BarrelManage>();
-            Vector3 parent_pos = new Vector3(manage.restart_pos_x, manage.restart_pos_y, manage.restart_pos_z);
-            Vector3 actual_pos = gameObject.GetComponent<Transform>().local_position*13 + parent_pos;
-            CompRigidBody rigid = gameObject.GetComponent<CompRigidBody>();
+            Vector3 actual_pos = transform.local_position*13 + parent_pos;
+            
             //ADD THIS X POSITION
             Vector3 pos;
             Debug.Log("Enter");
@@ -74,16 +73,16 @@ public class BarrelFall : CulverinBehaviour
                 pos = new Vector3(actual_pos.x, actual_pos.y - 0.1f, actual_pos.z);
             }
 
-            Quaternion quat = gameObject.GetComponent<CompRigidBody>().GetColliderQuaternion();
+            Quaternion quat = rigid_body.GetColliderQuaternion();
             if (actual_pos.y > -15.0f)
             {
-                rigid.MoveKinematic(pos, quat);
+                rigid_body.MoveKinematic(pos, quat);
             }
             else
             {
                 actual_pos.x = final_x_pos;
-                rigid.MoveKinematic(actual_pos, quat);
-                rigid.LockTransform();
+                rigid_body.MoveKinematic(actual_pos, quat);
+                rigid_body.LockTransform();
                 falling = false;
                 move_done = true;
                 Debug.Log("Before Barrel Fall");
@@ -96,8 +95,6 @@ public class BarrelFall : CulverinBehaviour
         if (calc_final_pos)
         {
             Quaternion quat = rigid_body.GetColliderQuaternion();
-            BarrelManage nmana = barrel_mov.instance.GetComponent<BarrelManage>();
-            Vector3 parent_pos = new Vector3(nmana.restart_pos_x, nmana.restart_pos_y, nmana.restart_pos_z);
 
             Debug.Log("parent pos : " + parent_pos);
             start_x_pos = transform.local_position.x * 13 + parent_pos.x;

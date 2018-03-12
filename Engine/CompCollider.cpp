@@ -428,7 +428,9 @@ void CompCollider::OnTriggerEnter(Component * actor)
 		{
 			collided_object = actor->GetParent();
 		}
+		else  collided_object = nullptr;
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
+		collided_object = nullptr;
 	}
 }
 
@@ -440,7 +442,9 @@ void CompCollider::OnTriggerLost(Component * actor)
 		{
 			collided_object = actor->GetParent();
 		}
+		else  collided_object = nullptr;
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
+		collided_object = nullptr;
 	}
 }
 
@@ -452,7 +456,9 @@ void CompCollider::OnContact(Component * actor)
 		{
 			collided_object = actor->GetParent();
 		}
+		else  collided_object = nullptr;
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnContact);
+		collided_object = nullptr;
 	}
 }
 

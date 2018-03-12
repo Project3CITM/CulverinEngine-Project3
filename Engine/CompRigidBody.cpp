@@ -382,6 +382,7 @@ void CompRigidBody::RemoveJoint()
 	if (joint != nullptr)
 	{
 		joint->RemoveActors();
+		joint = nullptr;
 	}
 }
 
