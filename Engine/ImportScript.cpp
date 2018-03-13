@@ -650,16 +650,43 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 		MonoClass* entity = mono_class_from_name(image, "", nameClass.c_str());
 		if (entity)
 		{
-			//void* iter = NULL; 
+			CSharpScript* csharp = new CSharpScript();
+			csharp->SetDomain(GetDomain());
+			csharp->SetImage(App->importer->iScript->GetCulverinImage());
+			csharp->SetClass(entity);
+			csharp->SetClassName(classname);
+			csharp->SetNameSpace(name_space);
+
+			//void* iter = NULL;
 
 			//MonoMethod* test_method = NULL;
 			//while ((test_method = mono_class_get_methods(entity, &iter)))
 			//{
 			//	uint t, flag;
 			//	flag = mono_method_get_flags(test_method, &t);
-			//	if (flag == MONO_FIELD_ATTR_PUBLIC)
+			//	std::string nadme = mono_method_get_name(test_method);
+			//	if (flag == 134)
 			//	{
-			//		int j = 0;
+			//		MonoClassField* field = nullptr;
+			//		MonoType* type = nullptr;
+			//		void* iter = nullptr;
+
+			//		int num_fields = 0;
+			//		num_fields = mono_class_num_fields(entity);
+			//		for (uint i = 0; i < num_fields; i++)
+			//		{
+			//			field = mono_class_get_fields(entity, &iter);
+			//			if (field != NULL)
+			//			{
+			//				type = mono_field_get_type(field);
+			//				std::string name = mono_type_get_name(type);
+			//				bool tes = mono_method_can_access_field(test_method, field);
+			//				if (tes)
+			//				{
+			//					int c = 0;
+			//				}
+			//			}
+			//		}
 			//	}
 
 			//	char* test_char = mono_method_full_name(test_method, true);
@@ -667,12 +694,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 			//		mono_method_get_name(test_method), flag, t);
 			//	int x = 0;
 			//}
-			CSharpScript* csharp = new CSharpScript();
-			csharp->SetDomain(GetDomain());
-			csharp->SetImage(App->importer->iScript->GetCulverinImage());
-			csharp->SetClass(entity);
-			csharp->SetClassName(classname);
-			csharp->SetNameSpace(name_space);
+
 			return csharp;
 		}
 		else
