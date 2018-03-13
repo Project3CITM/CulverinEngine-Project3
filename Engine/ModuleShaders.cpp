@@ -86,6 +86,7 @@ update_status ModuleShaders::Update(float dt)
 		GLint lightsizeLoc = glGetUniformLocation((*item)->GetProgramID(), "_numLights");
 		std::vector<CompLight*> lights = App->module_lightning->GetSceneLights();
 		glUniform1i(lightsizeLoc, lights.size());
+		
 		for (size_t i = 0; i < lights.size(); ++i) {
 
 			if(lights[i]->type == Light_type::DIRECTIONAL_LIGHT)
@@ -93,10 +94,10 @@ update_status ModuleShaders::Update(float dt)
 			if (lights[i]->type == Light_type::POINT_LIGHT)
 				SetLightUniform((*item)->GetProgramID(), "position", i, lights[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
 			SetLightUniform((*item)->GetProgramID(), "type", i, (int)lights[i]->type);
-			SetLightUniform((*item)->GetProgramID(), "l_color", i, lights[i]->color);
-			SetLightUniform((*item)->GetProgramID(), "intensity", i, lights[i]->intensity);
+			SetLightUniform((*item)->GetProgramID(), "l_color", i, lights[i]->color);			
 			SetLightUniform((*item)->GetProgramID(), "ambientCoefficient", i, lights[i]->ambientCoefficient);
-			SetLightUniform((*item)->GetProgramID(), "radius", i, lights[i]->radius);
+
+			SetLightUniform((*item)->GetProgramID(), "properties", i, lights[i]->properties);
 
 		}
 		(*item)->Unbind();

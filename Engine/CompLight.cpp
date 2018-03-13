@@ -19,9 +19,15 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	color = float4(255, 255, 255, 255);
 	type = NO_LIGHT_TYPE;
-	intensity = 10;
+
 	ambientCoefficient = 0.2;
-	radius = 1.0f;
+
+	
+
+	properties[0] = 10;
+	properties[1] = 1.0f;
+	properties[2] = 1.0f;
+	properties[3] = 1.0f;
 	name_component = "Light component";
 
 
@@ -78,14 +84,15 @@ CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Co
 {
 	//App->module_lightning->OnLightDestroyed(this); //TODO/CHECK: Why delete the light?? Should add it to the list. Why create another method, already one to erase a light from the list on module lighting.
 	this->ambientCoefficient = copy.ambientCoefficient;
-	this->radius = copy.radius;
-	this->intensity = copy.intensity;
+
 	this->color = copy.color;
 	this->type = copy.type;
 	this->types_lights = copy.types_lights;
 	this->ui_light_type = copy.ui_light_type;
+
 	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png", &texture_bulb);
 
+	this->properties = copy.properties;
 	plane = App->module_lightning->light_UI_plane;
 
 
@@ -286,9 +293,12 @@ void CompLight::ShowInspectorInfo()
 	color.z = color_temp[2];
 	color.w = color_temp[3];
 
-	ImGui::DragFloat("Intensity", &intensity);
+	ImGui::DragFloat("Intensity", &properties[0]);
 	ImGui::DragFloat("Ambient Coefficient", &ambientCoefficient);
-	ImGui::DragFloat("Radius", &radius);
+	ImGui::DragFloat("Constant", &properties[1]);
+	ImGui::DragFloat("Linear", &properties[2]);
+	ImGui::DragFloat("Quadratic", &properties[3]);
+
 	ImGui::Combo("Light Type", &ui_light_type, types_lights.c_str());
 	type = (Light_type)ui_light_type;
 
@@ -304,9 +314,12 @@ void CompLight::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	App->fs->json_array_dotset_float4(object, name + "Color", color);
 
 	json_object_dotset_number_with_std(object, name + "Light Type", (int)type);
-	json_object_dotset_number_with_std(object, name + "Attenuation", intensity);
+	json_object_dotset_number_with_std(object, name + "Intensity", properties[0]);
 	json_object_dotset_number_with_std(object, name + "Ambient Coefficient", ambientCoefficient);
-	json_object_dotset_number_with_std(object, name + "Radius", radius);
+	json_object_dotset_number_with_std(object, name + "Constant", properties[1]);
+	json_object_dotset_number_with_std(object, name + "Linear", properties[2]);
+	json_object_dotset_number_with_std(object, name + "Quadratic", properties[3]);
+
 
 }
 
@@ -317,8 +330,11 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	ui_light_type =json_object_dotget_number_with_std(object, name + "Light Type");
 	type = (Light_type)ui_light_type;
 	ambientCoefficient = json_object_dotget_number_with_std(object, name + "Ambient Coefficient");
-	radius = json_object_dotget_number_with_std(object, name + "Radius");
-	intensity = json_object_dotget_number_with_std(object, name + "Attenuation");
+	
+	properties[0] = json_object_dotget_number_with_std(object, name + "Intensity");
+	properties[1] = json_object_dotget_number_with_std(object, name + "Constant");
+	properties[2] = json_object_dotget_number_with_std(object, name + "Linear");
+	properties[3] = json_object_dotget_number_with_std(object, name + "Quadratic");
 	color=App->fs->json_array_dotget_float4_string(object, name + "Color");
 	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
 

@@ -6,9 +6,10 @@ uniform struct Light {
     vec3 position;
     int type;
     vec4 l_color; //a.k.a the color of the light
-    float intensity;
+    vec4 properties;
     float ambientCoefficient;
     float radius;
+   
  
 } _lights[MAX_LIGHTS];
  
@@ -54,7 +55,7 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
     vec3 v = normalize(TBN * _cameraPosition - surfacePos);                                      
        
                                                                                  
-    float lightInt = light.intensity;
+    float lightInt = light.properties[0];
            
                                                                          
     vec3 normal =  N ;                           
@@ -87,11 +88,8 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
         float cosAlpha = clamp( dot( v,r ), 0,1 );                                               
                                                                                                          
         float d = length((lightpos - surfacePos));
-        float attenuation = clamp(((light.radius * light.radius )/(1 + 0.1 *(d* d ))),0,1);  
-               attenuation =  300*lightInt / (300+  300* d + 0.6 * (d * d));                    
-       //d = length(lightpos - surfacePos);
-       //attenuation = lightInt / (1.0 + 0.1 * pow(d,2));                                  
-                                                                                                         
+        float attenuation =1/(light.properties[1] + light.properties[2]* d + light.properties[3] * d*d);
+        attenuation *= lightInt;                                   
         float diffuse = attenuation * Kd  * cosTheta;                    
         float spec = attenuation * Ks * pow(cosAlpha, shininess);
                                                                                                                  
