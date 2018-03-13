@@ -9,8 +9,8 @@
 #---------------------------------#
 
 # version format
-version: Project3-0.9.{build}
-
+version: Project3-{branch}.{build}
+  
 #---------------------------------#
 #    environment configuration    #
 #---------------------------------#
@@ -90,6 +90,23 @@ for:
   branches:
     only:
       - master
+      
+  # Deploy to GitHub Releases
+  deploy:
+  - provider: GitHub
+    description: Release
+    auth_token:
+      secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
+    artifact: Culverine_Engine
+    draft: false
+    prerelease: false
+    force_update: true
+    on:
+      CONFIGURATION: Release
+      
+-
+  branches:
+    only:
       - Develop
 
   # Deploy to GitHub Releases
@@ -98,9 +115,9 @@ for:
     description: Release
     auth_token:
       secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
-    artifact: game_files
+    artifact: Culverine_Engine
     draft: false
     prerelease: true
     force_update: true
     on:
-      CONFIGURATION: Release
+      CONFIGURATION: Debug
