@@ -148,10 +148,27 @@ public:
 	void SettoDelete();
 	void RemoveScriptReference(GameObject* go);
 
+	//ANIMATION PURPOSES-------------
+	bool AreTranslationsActivateds() const;
+	bool AreRotationsActivateds() const;
+	bool AreScalesActivateds() const;
+
+	void ToggleAnimationTranslations(bool activate);
+	void ToggleAnimationRotation(bool activate);
+	void ToggleAnimationScale(bool activate);
+	//-------------------------------
+
 public:
 	AABB * bounding_box = nullptr;
 	AABB  box_fixed;
 	bool beingUsedByScript = false;
+
+
+	//ANIMATION PURPOSES------
+	bool animation_translations = false;
+	bool animation_rotations = true;
+	bool animation_scales = false;
+	//------------------------
 
 private:
 	uint uid = 0;
@@ -163,6 +180,8 @@ private:
 	bool to_delete = false; 
 	bool fixed_delete = false;
 	bool bb_active = false;
+
+
 
 	GameObject* parent = nullptr;
 	std::vector<Component*> components;

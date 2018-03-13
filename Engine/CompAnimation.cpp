@@ -515,6 +515,15 @@ void CompAnimation::ShowAnimationInfo()
 	{
 		CreateAnimationClip();
 	}
+	if (ImGui::Button("Show ASM"))
+	{
+		show_asm_window = true;
+	}
+	ImGui::SameLine(100);
+	if (ImGui::Button("Bone Transformations"))
+	{
+		show_bone_transformations = true;
+	}
 	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
 	{
 		if (ImGui::TreeNodeEx((*it)->name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
@@ -579,9 +588,23 @@ void CompAnimation::ShowAnimationInfo()
 			ImGui::TreePop();
 		}
 	}
-	if (ImGui::Button("Show ASM"))
+	
+	if (show_bone_transformations)
 	{
-		show_asm_window = true;
+		if (ImGui::Begin("Bones", &show_bone_transformations))
+		{
+			for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
+			{
+				if (ImGui::TreeNodeEx(it->first->GetName(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					ImGui::Checkbox("Translations", &it->first->animation_translations);
+					ImGui::Checkbox("Rotations", &it->first->animation_rotations);
+					ImGui::Checkbox("Scales", &it->first->animation_scales);
+					ImGui::TreePop();
+				}
+			}
+		}
+		ImGui::End();
 	}
 	if (show_asm_window)
 	{

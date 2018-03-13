@@ -60,9 +60,9 @@ void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, Animati
 
 		CompTransform* transform = bone->GetComponentTransform();
 
-		pos = GetPosition(playing_clip);
-		rot = GetRotation(playing_clip);
-		scale = GetScale(playing_clip);
+		pos = GetPosition(playing_clip, bone->AreTranslationsActivateds());
+		rot = GetRotation(playing_clip, bone->AreRotationsActivateds());
+		scale = GetScale(playing_clip, bone->AreScalesActivateds());
 
 		if (blending_clip == nullptr)
 		{
@@ -72,9 +72,9 @@ void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, Animati
 		}
 		else
 		{
-			blending_pos = GetPosition(blending_clip);
-			blending_rot = GetRotation(blending_clip);
-			blending_scale = GetScale(blending_clip);
+			blending_pos = GetPosition(blending_clip, bone->AreTranslationsActivateds());
+			blending_rot = GetRotation(blending_clip, bone->AreRotationsActivateds());
+			blending_scale = GetScale(blending_clip, bone->AreScalesActivateds());
 
 			float weight = (blending_clip->total_blending_time - blending_clip->current_blending_time) / blending_clip->total_blending_time;
 
@@ -90,8 +90,10 @@ void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, Animati
 }
 
 
-float3 AnimBone::GetPosition(AnimationClip* clip_vec) const
+float3 AnimBone::GetPosition(AnimationClip* clip_vec, bool activated) const
 {
+	if(activated == false)
+		return position_keys[0]->position;
 	if (position_keys.size() > 1)
 	{
 		float3 actual_pos;
@@ -127,8 +129,11 @@ float3 AnimBone::GetPosition(AnimationClip* clip_vec) const
 	return position_keys[0]->position;
 }
 
-Quat AnimBone::GetRotation(AnimationClip* clip_vec) const
+Quat AnimBone::GetRotation(AnimationClip* clip_vec, bool activated) const
 {
+	if (activated == false)
+		return rotation_keys[0]->rotation;
+
 	if (rotation_keys.size() > 1)
 	{
 		Quat actual_pos;
@@ -168,8 +173,11 @@ Quat AnimBone::GetRotation(AnimationClip* clip_vec) const
 	}
 }
 
-float3 AnimBone::GetScale(AnimationClip* clip_vec) const
+float3 AnimBone::GetScale(AnimationClip* clip_vec, bool activated) const
 {
+	if (activated == false)
+		return scale_keys[0]->scale;
+
 	if (scale_keys.size() > 1)
 	{
 		float3 actual_pos;

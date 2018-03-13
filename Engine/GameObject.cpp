@@ -2238,4 +2238,34 @@ void GameObject::RemoveScriptReference(GameObject* go)
 	{
 		script->RemoveReferences(go);
 	}
+
 }
+	//ANIMATION PURPOSES---------------------------
+
+bool GameObject::AreTranslationsActivateds() const
+{
+	return animation_translations;
+}
+
+bool GameObject::AreRotationsActivateds() const
+{
+	return animation_rotations;
+}
+
+bool GameObject::AreScalesActivateds() const
+{
+	return animation_scales;
+}
+void GameObject::ToggleAnimationTranslations(bool activate)
+{
+	animation_translations = activate;
+}
+void GameObject::ToggleAnimationRotation(bool activate)
+{
+	animation_rotations = activate;
+}
+void GameObject::ToggleAnimationScale(bool activate)
+{
+	animation_scales = activate;
+}
+//--------------------------------------------

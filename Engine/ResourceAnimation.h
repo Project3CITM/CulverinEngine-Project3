@@ -35,9 +35,9 @@ public:
 
 	void UpdateBone(GameObject * bone, AnimationClip * playing_clip = nullptr, AnimationClip * blending_clip = nullptr) const;
 
-	float3 GetPosition(AnimationClip* clip_vec) const;
-	Quat GetRotation(AnimationClip* clip_vec) const;
-	float3 GetScale(AnimationClip* clip_vec) const;
+	float3 GetPosition(AnimationClip* clip_vec, bool activated) const;
+	Quat GetRotation(AnimationClip* clip_vec, bool activated) const;
+	float3 GetScale(AnimationClip* clip_vec, bool activated) const;
 
 	void DrawDebug(GameObject* bone) const;
 

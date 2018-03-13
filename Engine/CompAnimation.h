@@ -132,6 +132,8 @@ private:
 	bool bones_placed = false;
 
 	bool show_asm_window = false;
+
+	bool show_bone_transformations = false;
 };
 
 #endif
