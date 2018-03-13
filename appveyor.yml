@@ -85,7 +85,7 @@ notifications:
 # providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
 # provider names are case-sensitive!
 
-for:
+-
   branches:
     only:
       - master
