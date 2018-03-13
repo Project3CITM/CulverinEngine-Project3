@@ -131,6 +131,7 @@ std::string ModuleFS::CopyFileToAssets(const char* fileNameFrom, const char* fil
 				return file;
 			}
 		}
+		return file;
 	}
 
 	// Copy Folders
@@ -1242,7 +1243,9 @@ std::string ModuleFS::CreateFolder(const char* file_name, bool forceCreate)
 				}
 				i++;
 			}
+			return force;
 		}
+		return "";
 	}
 }
 

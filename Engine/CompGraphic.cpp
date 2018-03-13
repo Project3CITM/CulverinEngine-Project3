@@ -127,8 +127,11 @@ void CompGraphic::SetInteractive(CompInteractive * set_interactive)
 
 bool CompGraphic::GetToRender() const
 {
-	if(this != nullptr)
-	return render;
+	if (this != nullptr)
+	{
+		return render;
+	}
+	return nullptr;
 }
 
 
@@ -139,8 +142,11 @@ uint CompGraphic::GetTextureID() const
 
 CompRectTransform * CompGraphic::GetRectTrasnform() const
 {
-	if(this!=nullptr)
-	return transform;
+	if (this != nullptr)
+	{
+		return transform;
+	}
+	else return nullptr;
 }
 
 CompCanvasRender * CompGraphic::GetCanvasRender() const

@@ -822,6 +822,7 @@ bool CSharpScript::IsStatic(MonoObject * object)
 	{
 		LOG("[error] GameObject was null.");
 	}
+	return false;
 }
 
 mono_bool CSharpScript::IsActive(MonoObject* object)
@@ -839,6 +840,7 @@ mono_bool CSharpScript::IsActive(MonoObject* object)
 	{ 
 		LOG("[error] GameObject was null.");
 	}
+	return false;
 }
 
 void CSharpScript::SetActive(MonoObject* object, mono_bool active)
@@ -894,11 +896,12 @@ bool CSharpScript::DestroyGameObject(MonoObject* object)
 	{
 		return false;
 	}
-
 	else
 	{
 		App->scene->DeleteGameObject(current_game_object);
+		return true;
 	}
+	return false;
 }
 
 void CSharpScript::SetName(MonoObject * object, MonoString * name)
@@ -1179,6 +1182,7 @@ MonoObject* CSharpScript::GetParentGameObject(MonoObject* object)
 			return App->importer->iScript->GetMonoObject(own_game_object);
 		}
 	}
+	return nullptr;
 }
 
 mono_bool CSharpScript::GetEnabled(MonoObject* object, MonoObject* gameobject)

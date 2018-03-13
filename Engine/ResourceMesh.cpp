@@ -23,45 +23,59 @@ ResourceMesh::~ResourceMesh()
 void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_normals, const float2* texCoord, const float3* tangs, const float3* bitangs)
 {
 	// SET VERTEX DATA -------------------------------
-	for (uint i = 0; i < num_vertices; i++)
+	if (num_vertices > 0)
 	{
-		Vertex ver;
-		// Vertex Positions ------------------
-		ver.pos = vert[i];
-
-		// Vertex Normals --------------------
-		if (has_normals)
+		vertices.reserve(num_vertices);
+		for (uint i = 0; i < num_vertices; i++)
 		{
-			ver.norm = vert_normals[i];
-		}
-		else
-		{
-			ver.norm.Set(0, 0, 0);
-		}
+			Vertex ver;
+			// Vertex Positions ------------------
+			ver.pos = vert[i];
 
-		// Vertex Tex Coords ------------------
-		ver.texCoords = texCoord[i];
+			// Vertex Normals --------------------
+			if (has_normals)
+			{
+				ver.norm = vert_normals[i];
+			}
+			else
+			{
+				ver.norm.Set(0, 0, 0);
+			}
 
-		vertices.push_back(ver);
+			// Vertex Tex Coords ------------------
+			ver.texCoords = texCoord[i];
+
+			vertices.push_back(ver);
+		}
 	}
 
 	// SET INDEX DATA -----------------------------------------
-	for (uint i = 0; i < num_indices; i++)
+	if (num_indices > 0)
 	{
-		indices.push_back(ind[i]);
+		indices.reserve(num_indices);
+		for (uint i = 0; i < num_indices; i++)
+		{
+			indices.push_back(ind[i]);
+		}
 	}
-
 	//NORMALS ARRAY ---------
-	for (int i = 0; i < num_vertices; i++)
+	if (num_vertices > 0)
 	{
-		vertices_normals.push_back(float3(vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z));
-		vertices_normals.push_back(float3(vertices[i].pos.x + vertices[i].norm.x, vertices[i].pos.y + vertices[i].norm.y, vertices[i].pos.z + vertices[i].norm.z));
-	}
-	//TANGENTS / BITANGENTS ARRAY -----------------
-	for (int i = 0; i < num_vertices; i++)
-	{
-		tangents.push_back(tangs[i]);
-		bitangents.push_back(bitangs[i]);
+		vertices_normals.reserve(num_vertices * 2);
+		for (int i = 0; i < num_vertices; i++)
+		{
+			vertices_normals.push_back(float3(vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z));
+			vertices_normals.push_back(float3(vertices[i].pos.x + vertices[i].norm.x, vertices[i].pos.y + vertices[i].norm.y, vertices[i].pos.z + vertices[i].norm.z));
+		}
+
+		//TANGENTS / BITANGENTS ARRAY -----------------
+		tangents.reserve(num_vertices);
+		bitangents.reserve(num_vertices);
+		for (int i = 0; i < num_vertices; i++)
+		{
+			tangents.push_back(tangs[i]);
+			bitangents.push_back(bitangs[i]);
+		}
 	}
 }
 

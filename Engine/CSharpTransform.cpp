@@ -48,8 +48,8 @@ MonoObject* CSharpScript::GetForwardVector(MonoObject * object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 MonoObject* CSharpScript::GetBackwardVector(MonoObject * object)
@@ -77,8 +77,8 @@ MonoObject* CSharpScript::GetBackwardVector(MonoObject * object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 MonoObject* CSharpScript::GetUpVector(MonoObject* object)
@@ -106,8 +106,8 @@ MonoObject* CSharpScript::GetUpVector(MonoObject* object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 MonoObject * CSharpScript::GetDownVector(MonoObject* object)
@@ -135,8 +135,8 @@ MonoObject * CSharpScript::GetDownVector(MonoObject* object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 MonoObject* CSharpScript::GetRightVector(MonoObject* object)
@@ -164,8 +164,8 @@ MonoObject* CSharpScript::GetRightVector(MonoObject* object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 MonoObject* CSharpScript::GetLeftVector(MonoObject* object)
@@ -193,8 +193,8 @@ MonoObject* CSharpScript::GetLeftVector(MonoObject* object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 void CSharpScript::SetForwardVector(MonoObject* object, MonoObject* vector3)
@@ -383,8 +383,8 @@ MonoObject* CSharpScript::GetGlobalPosition(MonoObject * object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 // We need to pass the MonoObject* to get a reference on act
@@ -476,8 +476,8 @@ MonoObject* CSharpScript::GetRotation(MonoObject* object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 MonoObject * CSharpScript::GetGlobalRotation(MonoObject * object)
@@ -505,8 +505,8 @@ MonoObject * CSharpScript::GetGlobalRotation(MonoObject * object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 void CSharpScript::SetRotation(MonoObject* object, MonoObject* vector3)
@@ -635,8 +635,8 @@ MonoObject * CSharpScript::GetScale(MonoObject * object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 void CSharpScript::LookAt(MonoObject * object, MonoObject * vector3)
@@ -731,8 +731,8 @@ MonoObject* CSharpScript::GetLocalTransform(MonoObject * object)
 				return new_object;
 			}
 		}
-		return nullptr;
 	}
+	return nullptr;
 }
 
 MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
@@ -791,6 +791,9 @@ MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
 				return new_object;
 			}
 		}
+	}
+	else 
+	{
 		return nullptr;
 	}
 }

@@ -49,6 +49,7 @@ uint ResourceMaterial::GetTextureID()
 	{
 		return texture.id;
 	}
+	return 0;
 }
 
 

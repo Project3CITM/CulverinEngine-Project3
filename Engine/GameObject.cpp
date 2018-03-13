@@ -548,7 +548,7 @@ bool GameObject::CompareTag(const char * str) const
 void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* parent_)
 {
 	bool stop = false;
-	int i = 0;
+	uint i = 0;
 	std::string nameRepeat = name;
 
 	if (haveParent == false)
@@ -562,7 +562,7 @@ void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* p
 		if (i < parent_->GetNumChilds())
 		{
 			bool stop_research = false;
-			int j = 0;
+			uint j = 0;
 			bool haveRepeat = false;
 			while (stop_research == false)
 			{
@@ -1786,7 +1786,7 @@ void GameObject::AddComponentCopy(const Component& copy)
 
 void GameObject::SaveComponents(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
-	for (int i = 0; i < components.size(); i++)
+	for (uint i = 0; i < components.size(); i++)
 	{
 		std::string temp = name + "Component " + std::to_string(i) + ".";
 		components[i]->Save(object, temp, saveScene, countResources);
@@ -1796,7 +1796,7 @@ void GameObject::SaveComponents(JSON_Object* object, std::string name, bool save
 void GameObject::LoadComponents(const JSON_Object* object, std::string name, uint numComponents)
 {
 	// First Add All components by type
-	for (int i = 0; i < numComponents; i++)
+	for (uint i = 0; i < numComponents; i++)
 	{
 		std::string temp = name + "Component " + std::to_string(i) + ".";
 		Comp_Type type = (Comp_Type)(int)json_object_dotget_number_with_std(object, temp + "Type");
@@ -1889,7 +1889,7 @@ void GameObject::SyncComponents(GameObject* parent)
 {
 	
 	// Now Iterate All components and Load variables
-	for (int i = 0; i < components.size(); i++)
+	for (uint i = 0; i < components.size(); i++)
 	{
 		components[i]->SyncComponent(parent);
 	}
@@ -1898,7 +1898,7 @@ void GameObject::SyncComponents(GameObject* parent)
 void GameObject::SyncComponentsRecursive(GameObject * sync_parent)
 {
 	// Now Iterate All components and Load variables
-	for (int i = 0; i < components.size(); i++)
+	for (uint i = 0; i < components.size(); i++)
 	{
 		components[i]->SyncComponent(parent);
 	}
@@ -1979,7 +1979,7 @@ Component* GameObject::GetComponentbyIndex(uint i) const
 
 void GameObject::DeleteAllComponents()
 {
-	for (int i = 0; i < components.size(); i++)
+	for (uint i = 0; i < components.size(); i++)
 	{
 		if (!App->mode_game)
 		{
@@ -2000,7 +2000,7 @@ void GameObject::DeleteComponent(Component* component)
 	if (component != nullptr && components.size() > 0)
 	{
 		std::vector<Component*>::iterator item = components.begin();
-		for (int i = 0; i < components.size(); i++)
+		for (uint i = 0; i < components.size(); i++)
 		{
 			if (component == components[i])
 			{
@@ -2032,7 +2032,7 @@ GameObject* GameObject::GetChildbyName(const char* name) const
 {
 	if (childs.size() > 0)
 	{
-		for (int i = 0; i < childs.size(); i++)
+		for (uint i = 0; i < childs.size(); i++)
 		{
 			if (strcmp(childs[i]->GetName(), name) == 0)
 			{
@@ -2047,7 +2047,7 @@ GameObject * GameObject::GetChildByRealName(std::string name) const
 {
 	if (childs.size() > 0)
 	{
-		for (int i = 0; i < childs.size(); i++)
+		for (uint i = 0; i < childs.size(); i++)
 		{
 			std::string child_name = childs[i]->GetName();
 			std::size_t found = child_name.find(name);
@@ -2070,7 +2070,7 @@ void GameObject::GetChildDeepSearch(const char * name, std::vector<GameObject*>&
 	}
 	if (childs.size() > 0)
 	{
-		for (int i = 0; i < childs.size(); i++)
+		for (uint i = 0; i < childs.size(); i++)
 		{
 			childs[i]->GetChildDeepSearch(name, GOVector);
 		}
@@ -2082,7 +2082,7 @@ uint GameObject::GetIndexChildbyName(const char * name) const
 {
 	if (childs.size() > 0)
 	{
-		for (int i = 0; i < childs.size(); i++)
+		for (uint i = 0; i < childs.size(); i++)
 		{
 			if (strcmp(childs[i]->GetName(), name) == 0)
 			{
@@ -2098,7 +2098,7 @@ void GameObject::RemoveChildbyIndex(uint index)
 	if (childs.size() > 0)
 	{
 		std::vector<GameObject*>::iterator item = childs.begin();
-		for (int i = 0; i < childs.size(); i++)
+		for (uint i = 0; i < childs.size(); i++)
 		{
 			if (i == index)
 			{

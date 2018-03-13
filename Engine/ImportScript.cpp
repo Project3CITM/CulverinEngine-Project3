@@ -563,6 +563,7 @@ CSharpScript* ImportScript::GetScriptMono(MonoObject* monoobject)
 		if (it != mono_script.end())
 			return it->second;
 	}
+	return nullptr;
 }
 
 
@@ -640,6 +641,7 @@ CSharpScript* ImportScript::LoadScript_CSharp(std::string file, std::string name
 			LOG("[error] Can not Open Assembly, file: %s ", file.c_str());
 		}
 	}
+	return nullptr;
 }
 
 CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass)

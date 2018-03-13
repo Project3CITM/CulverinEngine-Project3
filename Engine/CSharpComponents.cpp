@@ -125,6 +125,7 @@ mono_bool CSharpScript::IsAnimationStopped(MonoObject * object, MonoString * nam
 			return animation->IsAnimationStopped(mono_string_to_utf8(name));
 		}
 	}
+	return false;
 }
 
 mono_bool CSharpScript::IsAnimationRunning(MonoObject * object, MonoString * name)
@@ -137,6 +138,7 @@ mono_bool CSharpScript::IsAnimationRunning(MonoObject * object, MonoString * nam
 			return animation->IsAnimationRunning(mono_string_to_utf8(name));
 		}
 	}
+	return false;
 }
 
 mono_bool CSharpScript::IsAnimOverXTime(MonoObject * object, float number_between_0_1)
@@ -156,6 +158,7 @@ mono_bool CSharpScript::IsAnimOverXTime(MonoObject * object, float number_betwee
 			}
 		}
 	}
+	return false;
 }
 
 void CSharpScript::SetClipsSpeed(MonoObject * object, float speed_value)

@@ -977,7 +977,8 @@ ReImport JSONSerialization::GetUUIDScript(const char* file)
 			info.directory_obj = nullptr;
 		}
 	}
-	json_value_free(config_file);
+	return info;
+	//json_value_free(config_file);
 }
 
 std::time_t JSONSerialization::GetLastWritePrefab(const char* file)

@@ -52,6 +52,7 @@ public:
 		{
 			return keyboard[id];
 		}
+		return KEY_STATE::KEY_IDLE;
 	}
 
 	KEY_STATE GetMouseButton(int id) const
