@@ -85,6 +85,11 @@ notifications:
 # providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
 # provider names are case-sensitive!
 
+branches:
+  only:
+    - master
+    - Develop
+
 # Deploy to GitHub Releases
 deploy:
 - provider: GitHub
