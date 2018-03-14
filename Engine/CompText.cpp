@@ -6,8 +6,8 @@
 #include "Scene.h"
 #include "ResourceFont.h"
 #include "SDL2_ttf/include/SDL_ttf.h"
-
-
+#include "ModuleImporter.h"
+#include "ImportFont.h"
 CompText::CompText(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
 	uid = App->random->Int();
@@ -42,22 +42,22 @@ void CompText::PreUpdate(float dt)
 	}
 	else
 	{
-		/*
-		if (uuid_resource_reimported != 0)
+		
+		if (uuid_source_font != 0)
 		{
-			resource_font = (ResourceMesh*)App->resource_manager->GetResource(uuid_resource_reimported);
-			if (resource_font != nullptr)
+			text = (ResourceFont*)App->resource_manager->GetResource(uuid_source_font);
+			if (text != nullptr)
 			{
-				resource_font->num_game_objects_use_me++;
+				text->num_game_objects_use_me++;
 				// Check if loaded!
-				if (resource_font->IsLoadedToMemory() == Resource::State::UNLOADED)
+				if (text->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
-					App->importer->iMesh->LoadResource(std::to_string(resource_font->GetUUID()).c_str(), resource_font);
+					App->importer->iFont->LoadResource(std::to_string(text->GetUUID()).c_str(), text_size, text);
 				}
-				uuid_resource_reimported = 0;
+				uuid_source_font = 0;
 			}
 		}
-		*/
+		
 	}
 	// -------------------------------------------------------------------
 }
@@ -146,7 +146,7 @@ void CompText::SetString(std::string input)
 
 void CompText::UpdateText()
 {
-	if (!text->font || text_str.empty())
+	if (!text->font.font || text_str.empty())
 		return;
 	else if (s_font != NULL && text_str.empty())
 	{
@@ -159,7 +159,7 @@ void CompText::UpdateText()
 	}
 	update_text = true;
 
-	s_font = TTF_RenderText_Blended(text->font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) });
+	s_font = TTF_RenderText_Blended(text->font.font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) });
 
 	GLuint texture;
 	glGenTextures(1, &uid);
