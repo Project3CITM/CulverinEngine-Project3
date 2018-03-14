@@ -9,7 +9,7 @@
 #---------------------------------#
 
 # version format
-version: Project3-{branch}.{build}
+version: Project3.{build}-{branch}
   
 #---------------------------------#
 #    environment configuration    #
