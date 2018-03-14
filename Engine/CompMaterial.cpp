@@ -18,6 +18,7 @@ CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent
 	color = White;
 	name_component = "CompMaterial";
 	material = App->renderer3D->default_material;
+	material->active_num++;
 
 }
 
@@ -25,7 +26,7 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 {
 	uid = App->random->Int();
 	color = copy.color;
-	material = copy.material;
+	material = copy.material;	
 	//resource_material = copy.resource_material;
 	for (int i = 0; i < material->textures.size(); i++) {
 		if (material->textures[i].value != nullptr)
@@ -36,6 +37,7 @@ CompMaterial::CompMaterial(const CompMaterial& copy, GameObject* parent) : Compo
 	name_component = "CompMaterial";
 	if(material == nullptr)
 	material = App->renderer3D->default_material;
+	material->active_num++;
 }
 
 CompMaterial::~CompMaterial()
@@ -249,7 +251,9 @@ void CompMaterial::ShowInspectorInfo()
 				App->importer->iMaterial->LoadResource(temp.c_str(), resource_mat);
 			}
 		}
+		material->active_num--;
 		material = App->module_shaders->materials[shader_pos];
+		material->active_num++;
 	}
 
 	if (ImGui::Combo("Programs", &program_pos, program_names.c_str())) {
@@ -395,7 +399,9 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 	{
 		if (strcmp(App->module_shaders->materials[i]->name.c_str(), material_name.c_str() )==0)
 		{
+			
 			material = App->module_shaders->materials[i];
+			material->active_num++;
 			break;
 		}
 
@@ -403,6 +409,7 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 	if (material == nullptr)
 	{
 		material = App->renderer3D->default_material;
+		material->active_num++;
 
 	}
 	else {

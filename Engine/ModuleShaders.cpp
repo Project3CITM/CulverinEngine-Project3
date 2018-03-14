@@ -66,6 +66,11 @@ update_status ModuleShaders::Update(float dt)
 	time_dt += dt * App->game_time.time_scale;
 	while (item != materials.end())
 	{
+		if ((*item)->active_num == 0) {
+			item++;
+			continue;
+		}
+
 		(*item)->Bind();
 
 		//TIME		
@@ -87,19 +92,21 @@ update_status ModuleShaders::Update(float dt)
 		std::vector<CompLight*> lights = App->module_lightning->GetSceneLights();
 		glUniform1i(lightsizeLoc, lights.size());
 		
-		for (size_t i = 0; i < lights.size(); ++i) {
+		if(lightsizeLoc >= 0)
+			for (size_t i = 0; i < lights.size(); ++i) {
 
-			if(lights[i]->type == Light_type::DIRECTIONAL_LIGHT)
-			SetLightUniform((*item)->GetProgramID(), "position", i,lights[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
-			if (lights[i]->type == Light_type::POINT_LIGHT)
-				SetLightUniform((*item)->GetProgramID(), "position", i, lights[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
-			SetLightUniform((*item)->GetProgramID(), "type", i, (int)lights[i]->type);
-			SetLightUniform((*item)->GetProgramID(), "l_color", i, lights[i]->color);			
-			SetLightUniform((*item)->GetProgramID(), "ambientCoefficient", i, lights[i]->ambientCoefficient);
+				if(lights[i]->type == Light_type::DIRECTIONAL_LIGHT)
+					SetLightUniform((*item)->GetProgramID(), "position", i,lights[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
+				if (lights[i]->type == Light_type::POINT_LIGHT)
+					SetLightUniform((*item)->GetProgramID(), "position", i, lights[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
 
-			SetLightUniform((*item)->GetProgramID(), "properties", i, lights[i]->properties);
+				SetLightUniform((*item)->GetProgramID(), "type", i, (int)lights[i]->type);
+				SetLightUniform((*item)->GetProgramID(), "l_color", i, lights[i]->color);			
+				SetLightUniform((*item)->GetProgramID(), "ambientCoefficient", i, lights[i]->ambientCoefficient);
 
-		}
+				SetLightUniform((*item)->GetProgramID(), "properties", i, lights[i]->properties);
+
+			}
 		(*item)->Unbind();
 		item++;
 	}
@@ -603,8 +610,8 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 	std::string program_name = json_object_dotget_string_with_std(object, name + "ShaderName:");
 	Material* material = nullptr;
 	ShaderProgram* program = nullptr;
-	for (int i = 0; i < App->module_shaders->programs.size(); i++)
-	{
+	for (int i = 0; i < App->module_shaders->programs.size(); i++)	{
+
 		if (strcmp(App->module_shaders->programs[i]->name.c_str(), program_name.c_str()) == 0)
 		{
 			program = App->module_shaders->programs[i];
