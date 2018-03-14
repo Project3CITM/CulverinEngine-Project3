@@ -227,13 +227,14 @@ void Application::FinishUpdate()
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		App->scene->ClearAllVariablesScript();
 		App->scene->DeleteAllGameObjects(App->scene->root);
-		json_seria->LoadScene(actual_scene.c_str());
+		json_seria->LoadScene(actual_scene.c_str(), start_scripts);
 		//App->resource_manager->ReImportAllScripts();
 		if (engine_state != EngineState::STOP)
 		{
 			change_to_game = true;
 		}
 		want_to_load = false;
+		start_scripts = false;
 	}
 	// ---------------------------------------------
 
@@ -768,9 +769,10 @@ void Application::WantToSave()
 	want_to_save = true;
 }
 
-void Application::WantToLoad()
+void Application::WantToLoad(bool script_start)
 {
 	want_to_load = true;
+	start_scripts = true;
 }
 
 void Application::ChangeCamera(const char* window)

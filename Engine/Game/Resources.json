@@ -1,1 +1,1 @@
-{"Resources":{"Info":{"Number of Resources":0,"Load Resources":true}}}
+{"Resources":{"Info":{"Number of Resources":2,"Load Resources":true},"Resource 0":{"UUID & UUID Directory":1799300280,"Type":4,"Name":"TestLoad","PathAssets":"Assets\/TestLoad.cs","PathDll":"Library\/Scripts\/1799300280.dll"},"Resource 1":{"UUID & UUID Directory":2068697076,"Type":4,"Name":"TestScript","PathAssets":"Assets\/TestScript.cs","PathDll":"Library\/Scripts\/2068697076.dll"}}}

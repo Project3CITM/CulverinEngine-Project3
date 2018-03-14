@@ -96,7 +96,7 @@ public:
 	void SetState(EngineState state);
 
 	void WantToSave();
-	void WantToLoad();
+	void WantToLoad(bool script_start = false);
 
 	void ChangeCamera(const char* window);
 
@@ -177,6 +177,7 @@ private:
 
 	bool want_to_save = false;
 	bool want_to_load = false;
+	bool start_scripts = false;
 
 	bool change_to_scene = false;
 	bool change_to_game = false;
