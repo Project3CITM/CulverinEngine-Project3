@@ -31,7 +31,7 @@ public class BarrelPuzzleManager : CulverinBehaviour
     void Update()
     {
         // TMP: Debugging purposes.
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.N))
         {
             must_move = !must_move;
             Debug.Log("Space pressed " + ((must_move) ? "started" : "stopped") + " moving.");
