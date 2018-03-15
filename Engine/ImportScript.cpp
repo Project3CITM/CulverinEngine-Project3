@@ -939,6 +939,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipsSpeed", (const void*)SetClipsSpeed);
 	mono_add_internal_call("CulverinEditor.CompAnimation::GetClipDuration", (const void*)GetClipDuration);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipDuration", (const void*)SetClipDuration);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetActiveBlendingClip", (const void*)SetActiveBlendingClip);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetActiveBlendingClipWeight", (const void*)SetActiveBlendingClipWeight);
 
 	//MODULE PHYSICS FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.PhysX::RayCast", (const void*)RayCast);
@@ -1658,6 +1660,16 @@ float ImportScript::GetClipDuration(MonoObject * object, MonoString * string)
 void ImportScript::SetClipDuration(MonoObject * object, MonoString * string, float duration)
 {
 	current->SetClipDuration(object, string, duration);
+}
+
+void ImportScript::SetActiveBlendingClip(MonoObject * object, MonoString * string)
+{
+	current->SetActiveBlendingClip(object, string);
+}
+
+void ImportScript::SetActiveBlendingClipWeight(MonoObject * object, float weight)
+{
+	current->SetActiveBlendingClipWeight(object, weight);
 }
 
 void ImportScript::SetAlbedo(MonoObject * object, MonoString * string)

@@ -311,6 +311,11 @@ AnimationClip * CompAnimation::GetBlendingClip() const
 	return blending_animation;
 }
 
+AnimationNode * CompAnimation::GetActiveNode() const
+{
+	return active_node;
+}
+
 void CompAnimation::SetResource(ResourceAnimation * resource_animation, bool isImport)
 {
 	if (animation_resource != resource_animation)
@@ -680,9 +685,17 @@ void CompAnimation::ShowAnimationInfo()
 					int j = 0;
 					for (std::vector<BlendingClip*>::iterator new_item = (*it)->blending_clips.begin(); new_item != (*it)->blending_clips.end(); ++new_item, ++j)
 					{
-						std::string  blending_clip_name = "Blending Clip" + std::to_string(j);
-						if (ImGui::TreeNodeEx(blending_clip_name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
+						if (ImGui::TreeNodeEx((*new_item)->name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
 						{
+							char name_blending_node[50];
+							strcpy_s(name_blending_node, 50, (*new_item)->name.c_str());
+							ImGui::Text("Name: ");
+							ImGui::SameLine();
+							if (ImGui::InputText("##nameBlendingClip", name_blending_node, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+							{
+								(*new_item)->name = std::string(name_blending_node);
+							}
+
 							for (std::vector<AnimationClip*>::const_iterator item = animation_clips.begin(); item != animation_clips.end(); ++item)
 							{
 								if ((*item) == (*new_item)->clip)
@@ -693,7 +706,7 @@ void CompAnimation::ShowAnimationInfo()
 							}
 							i = 0;
 
-							if (ImGui::Combo(blending_clip_name.c_str(), &combo_pos, clip_names.c_str()))
+							if (ImGui::Combo((*new_item)->name.c_str(), &combo_pos, clip_names.c_str()))
 							{
 								(*new_item)->clip = animation_clips.at(combo_pos);
 							}
@@ -828,6 +841,19 @@ void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene,
 			json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(r) + ".ExitTime", (*trans_it)->exit_time);
 			r++;
 		}
+
+		r = 0;
+
+		json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + "NumberOfBlendingClips", (*it)->blending_clips.size());
+
+		for (std::vector<BlendingClip*>::const_iterator blend_it = (*it)->blending_clips.begin(); blend_it != (*it)->blending_clips.end(); ++blend_it)
+		{
+			json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(r) + ".Name", (*blend_it)->name.c_str());
+			json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(r) + ".ClipName", (*blend_it)->clip->name.c_str());
+			json_object_dotset_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(r) + ".Active", (*blend_it)->active);
+			json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(r) + ".Weight", (*blend_it)->weight);
+			r++;
+		}
 		i++;
 	}
 }
@@ -876,6 +902,7 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			blending_animation = temp;
 		}
 	}
+
 	int num_nodes = json_object_dotget_number_with_std(object, name + "NumberOfNodes");
 
 	for (int i = 0; i < num_nodes; i++)
@@ -920,6 +947,24 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 				}
 			}
 			animation_nodes.at(i)->transitions.push_back(temp_transition);
+		}
+
+		int num_blending_clips = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + "NumberOfBlendingClips");
+		for (int j = 0; j < num_blending_clips; j++)
+		{
+			BlendingClip* temp_blending_clip = new BlendingClip();
+			temp_blending_clip->name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".Name");
+			temp_blending_clip->active = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".Active");
+			temp_blending_clip->weight = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".Weight");
+
+			std::string clip_name_blending = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".ClipName");
+			
+			AnimationClip* temp_clip = GetClipFromName(clip_name_blending);
+			if (temp_clip != nullptr)
+			{
+				temp_blending_clip->clip = temp_clip;
+			}
+			animation_nodes.at(i)->blending_clips.push_back(temp_blending_clip);
 		}
 	}
 }
@@ -1055,6 +1100,7 @@ void AnimationNode::CreateTransition()
 void AnimationNode::CreateBlendingClip()
 {
 	BlendingClip* temp_blending_clip = new BlendingClip();
+	temp_blending_clip->name += std::to_string(blending_clips.size());
 	blending_clips.push_back(temp_blending_clip);
 }
 
@@ -1072,6 +1118,18 @@ void AnimationNode::SetActiveBlendingClip(BlendingClip* blnd_clip)
 	}
 }
 
+void AnimationNode::SetActiveBlendingClip(std::string name)
+{
+	for (std::vector<BlendingClip*>::iterator new_item = blending_clips.begin(); new_item != blending_clips.end(); ++new_item)
+	{
+		if ((*new_item)->name == name)
+		{
+			SetActiveBlendingClip((*new_item));
+			return;
+		}
+	}
+}
+
 BlendingClip * AnimationNode::GetActiveBlendingClip()
 {
 	for (std::vector<BlendingClip*>::const_iterator new_item = blending_clips.begin(); new_item != blending_clips.end(); ++new_item)
@@ -1082,4 +1140,13 @@ BlendingClip * AnimationNode::GetActiveBlendingClip()
 		}
 	}
 	return nullptr;
+}
+
+void AnimationNode::SetActiveBlendingClipWeight(float weight)
+{
+	BlendingClip* active = GetActiveBlendingClip();
+	if (active != nullptr)
+	{
+		active->weight = weight;
+	}
 }
