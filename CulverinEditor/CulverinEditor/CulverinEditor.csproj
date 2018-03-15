@@ -69,15 +69,11 @@
     <Compile Include="AI\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleGenerator.cs" />
+    <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
     <Compile Include="BarrelPuzle\BarrelScript.cs" />
     <Compile Include="BarrelPuzle\ChainManage.cs" />
     <Compile Include="BarrelPuzle\ChainMovement.cs" />
-    <Compile Include="BarrelPuzle\Paths\PuzzlePath1.cs" />
-    <Compile Include="BarrelPuzle\Paths\PuzzlePath2.cs" />
-    <Compile Include="BarrelPuzle\Paths\PuzzlePath3.cs" />
-    <Compile Include="BarrelPuzle\Paths\PuzzlePath4.cs" />
-    <Compile Include="BarrelPuzle\Paths\PuzzlePath5.cs" />
-    <Compile Include="BarrelPuzle\Paths\PuzzlePath6.cs" />
+    <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="CompMaterial.cs" />
     <Compile Include="CompParticleSystem.cs" />
     <Compile Include="CompJoint.cs" />
