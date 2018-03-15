@@ -15,6 +15,7 @@ enum AnimationState
 	A_STOP,
 	A_PAUSED,
 	A_BLENDING,
+	A_BLENDING_NODE,
 	A_NONE
 };
 class AnimationClip
@@ -32,11 +33,17 @@ public:
 
 	bool finished = true;
 	AnimationState state = A_STOP;
-
+	
 	bool IsAnimOverXTime(float num_between_0_and_1);
 	void RestartAnimationClip();
 };
-
+class BlendingClip
+{
+public:
+	AnimationClip* clip = nullptr;
+	bool active = false;
+	float weight = 0.0f;
+};
 class AnimationNode
 {
 public:
@@ -44,9 +51,15 @@ public:
 
 	void CreateTransition();
 
+	void CreateBlendingClip();
+
+	void SetActiveBlendingClip(BlendingClip * blnd_clip);
+	BlendingClip* GetActiveBlendingClip();
+
 	AnimationClip* clip = nullptr;
 	bool active = false;
 	std::string name = "Animation Node ";
+	std::vector<BlendingClip*> blending_clips;
 	std::vector<AnimationTransition*> transitions;
 };
 

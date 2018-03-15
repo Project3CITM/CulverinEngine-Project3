@@ -32,5 +32,11 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetClipsSpeed(float speed_value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern float GetClipDuration(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetClipDuration(string name, float duration);
     }
 }

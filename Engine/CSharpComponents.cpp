@@ -173,6 +173,43 @@ void CSharpScript::SetClipsSpeed(MonoObject * object, float speed_value)
 	}
 }
 
+float CSharpScript::GetClipDuration(MonoObject * object, MonoString * name)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			AnimationClip* clip = animation->GetClipFromName(mono_string_to_utf8(name));
+			if (clip != nullptr)
+			{
+				return (clip->end_frame_time - clip->start_frame_time) * clip->speed_factor;
+			}
+			else
+			{
+				return 0.0f;
+			}
+		}
+	}
+	return 0.0f;
+}
+
+void CSharpScript::SetClipDuration(MonoObject * object, MonoString * name, float duration)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			AnimationClip* clip = animation->GetClipFromName(mono_string_to_utf8(name));
+			if (clip != nullptr)
+			{
+				clip->speed_factor = (clip->end_frame_time - clip->start_frame_time) / duration;
+			}
+		}
+	}
+}
+
 // CompCollider -----------------------------------------------------------
 MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 {
