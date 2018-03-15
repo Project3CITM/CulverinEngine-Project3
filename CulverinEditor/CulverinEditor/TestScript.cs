@@ -7,6 +7,7 @@ class TestScript : CulverinBehaviour
     public GameObject magic;
     public int number;
     public bool active;
+    bool test = true;
     void Start()
     {
         number = 24;
@@ -24,7 +25,11 @@ class TestScript : CulverinBehaviour
         if (Input.GetKeyDown(KeyCode.U))
         {
             active = !active;
-            magic = GetLinkedObject("magic");
+            if (test == true)
+            {
+                test = false;
+              //  magic = GetLinkedObject("magic");
+            }
             magic.SetActive(active);
         }
     }

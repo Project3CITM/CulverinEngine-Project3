@@ -134,7 +134,7 @@ void JSONSerialization::SaveChildGameObject(JSON_Object* config_node, const Game
 	}
 }
 
-void JSONSerialization::LoadScene(const char* sceneName, bool script_start)
+void JSONSerialization::LoadScene(const char* sceneName)
 {
 	LOG("LOADING SCENE -----");
 
@@ -240,22 +240,6 @@ void JSONSerialization::LoadScene(const char* sceneName, bool script_start)
 		}
 		App->scene->RecalculateStaticObjects();
 
-		if (script_start)
-		{
-			//Prepare scripts to do a start if loading scene ingame
-			for (int i = 0; i < templist.size(); i++)
-			{
-				GameObject* obj = templist[i].go;
-				for (int j = 0; j < obj->GetNumComponents(); j++)
-				{
-					Component* temp = obj->GetComponentbyIndex(j);
-					if (temp->GetType() == Comp_Type::C_SCRIPT)
-					{
-						((CompScript*)temp)->do_start = true;
-					}
-				}
-			}
-		}
 		templist.clear();
 
 		//Link Skeletons

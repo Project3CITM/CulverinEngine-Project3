@@ -452,7 +452,7 @@ MonoObject* ImportScript::GetMonoObject(GameObject* gameobject)
 		std::multimap<MonoObject*, GameObject*>::iterator it = mono_map.begin();
 		while (it != mono_map.end())
 		{
-			if (it->second == gameobject)
+			if (it->second->GetUUID() == gameobject->GetUUID())
 			{
 				return it->first;
 			}
