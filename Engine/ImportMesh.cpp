@@ -273,6 +273,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					if (strcmp((*item)->name.c_str(), name.c_str()) == 0)
 					{
 						materialComp->material = (*item);
+						materialComp->material->active_num++;
 						exists = true;
 						break;
 					}
@@ -288,7 +289,8 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					new_mat->path = normalPath;
 					if (new_mat->textures.size() > 0)
 						new_mat->textures[0].value = resource_mat;
-					materialComp->material = new_mat;				
+					materialComp->material = new_mat;	
+					materialComp->material->active_num++;
 				}
 			
 				resource_mat->path_assets = normalPath;
@@ -301,6 +303,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					if (strcmp((*item)->name.c_str(), name.c_str()) == 0)
 					{
 						materialComp->material = (*item);
+						materialComp->material->active_num++;
 						exists = true;
 						break;
 					}
@@ -316,6 +319,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					new_mat->path = normalPath;
 					
 					materialComp->material = new_mat;
+					materialComp->material->active_num++;
 				}
 
 			}
