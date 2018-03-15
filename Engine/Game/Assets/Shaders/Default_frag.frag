@@ -1,6 +1,6 @@
 #version 330 core
  
-#define MAX_LIGHTS 30
+#define MAX_LIGHTS 40
 uniform int _numLights;
 uniform struct Light {
     vec3 position;
