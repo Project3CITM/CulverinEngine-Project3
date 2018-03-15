@@ -71,10 +71,10 @@ void InputManager::Clear()
 
 ControllerAxisAction* InputManager::GetAxis(const char * name)
 {
-	
+
 	for (int i = 0; i < action_vector.size(); i++)
 	{
-		if (action_vector[i]->name == name && action_vector[i]->action_type == ActionInputType::CONTROLLER_AXIS_ACTION)
+		if (action_vector[i]->name == name && action_vector[i]->action_type == ActionInputType::CONTROLLER_AXIS_ACTION && action_vector[i]->action_type == ActionInputType::KEY_ACTION)
 		{
 			return (ControllerAxisAction*)action_vector[i];
 		}
@@ -170,15 +170,21 @@ void InputManager::ShowInspectorInfo()
 			selected = i;
 			selected_action_name.clear();
 			selected_action_name = action->name;
-			selected_action_key.clear();
-			selected_action_key = action->key_relation->name;
+			selected_action_key_positive.clear();
+			selected_action_key_positive = action->positive_button->name;
+			selected_action_key_negative.clear();
+			selected_action_key_negative = action->negative_button->name;
 			action_type = action_vector[selected]->action_type;
 
 		}
 		bool hovered = ImGui::IsItemHovered();
 
 		ImGui::NextColumn();
-		ImGui::Text(action->key_relation->name.c_str());
+		if (action != nullptr)
+		{
+			ImGui::Text(action->positive_button->name.c_str());
+			ImGui::Text(action->negative_button->name.c_str());
+		}
 		ImGui::NextColumn();
 
 	}
@@ -192,10 +198,11 @@ void InputManager::ShowInspectorInfo()
 
 	
 
-	if (strcmp(selected_action_key.c_str(), "")!=0 && strcmp(selected_action_key.c_str(), "") != 0 && selected!=-1)
+	if (strcmp(selected_action_key_positive.c_str(), "")!=0 && strcmp(selected_action_key_positive.c_str(), "") != 0 && selected!=-1)
 	{
 		ImGui::InputText("Action Name##name_input", (char*)selected_action_name.c_str(), MAX_INPUT);
-		ImGui::InputText("Key Name##key_input", (char*)selected_action_key.c_str(), MAX_INPUT);
+		ImGui::InputText("Key Positive##key_input_positive", (char*)selected_action_key_positive.c_str(), MAX_INPUT);
+		ImGui::InputText("Key Negative##key_input_negative", (char*)selected_action_key_negative.c_str(), MAX_INPUT);
 		std::string action_type_names;
 		action_type_names += "Axis";
 		action_type_names += '\0';
@@ -211,14 +218,10 @@ void InputManager::ShowInspectorInfo()
 	
 		ImGui::Combo("Type##type_action", &action_type, action_type_names.c_str());
 	}
-	else {
-		int i = 34242;
-		selected_action_key;
-		selected_action_name;
-	}
+
 		if (ImGui::Button("Apply##apply_action"))
 		{
-			InputAction* new_action = CreateNewAction(selected_action_name.c_str(), selected_action_key.c_str(), static_cast<ActionInputType>(action_type));
+			InputAction* new_action = CreateNewAction(selected_action_name.c_str(), selected_action_key_positive.c_str(), selected_action_key_negative.c_str(), static_cast<ActionInputType>(action_type));
 			if (new_action != nullptr && selected >= 0 && selected < action_vector.size()) {
 				InputAction* temp = action_vector[selected];
 				RELEASE(temp);
@@ -231,7 +234,8 @@ void InputManager::ShowInspectorInfo()
 			if (selected > 0 && selected < action_vector.size())
 			{
 				selected_action_name = action_vector[selected]->name;
-				selected_action_key = action_vector[selected]->key_relation->name.c_str();
+				selected_action_key_positive = action_vector[selected]->positive_button->name.c_str();
+				selected_action_key_negative = action_vector[selected]->negative_button->name.c_str();
 				action_type = action_vector[selected]->action_type;
 			}
 		}
@@ -327,13 +331,14 @@ bool InputManager::GetWindowOpen() const
 	return window_open;
 }
 
-InputAction* InputManager::CreateNewAction(const char * new_name, const char * new_key_binding, ActionInputType new_type)
+InputAction* InputManager::CreateNewAction(const char * new_name, const char * new_key_positive, const char* new_key_negative, ActionInputType new_type)
 {
 
 	/*KeyRelation new_key_relation = KeyRelation(new_name);
 	new_key_relation.key_type= new_type*/
 	
-	KeyRelation* new_key_relation = App->module_key_binding->Find_key_binding(new_key_binding);
+	KeyRelation* new_key_relation_positive = App->module_key_binding->Find_key_binding(new_key_positive);
+	KeyRelation* new_key_relation_negative = App->module_key_binding->Find_key_binding(new_key_negative);
 	InputAction* temp = nullptr;
 	bool can_create_action = true;
 	switch (new_type) {
@@ -359,7 +364,8 @@ InputAction* InputManager::CreateNewAction(const char * new_name, const char * n
 	if (temp != nullptr)
 	{
 		temp->name = new_name;
-		temp->key_relation = new_key_relation;
+		temp->positive_button = new_key_relation_positive;
+		temp->negative_button = new_key_relation_negative;
 	}
 
 	return temp;

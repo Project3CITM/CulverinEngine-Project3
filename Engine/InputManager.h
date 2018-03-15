@@ -39,7 +39,7 @@ public:
 	const bool GetActiveInput()const;
 	bool GetActiveInput();
 	bool GetWindowOpen()const;
-	InputAction* CreateNewAction(const char* new_name, const char* new_key_binding, ActionInputType new_type = ActionInputType::UNKNOWN_ACTION);
+	InputAction* CreateNewAction(const char* new_name, const char* new_key_positive, const char* new_key_negative, ActionInputType new_type = ActionInputType::UNKNOWN_ACTION);
 	std::vector<InputAction*> GetActionVector() const;
 	std::vector<InputAction*> GetActionVector();
 
@@ -55,7 +55,8 @@ private:
 	bool window_open = false;
 	std::string name;
 	std::string selected_action_name;
-	std::string selected_action_key;
+	std::string selected_action_key_positive;
+	std::string selected_action_key_negative;
 	int action_type = 0;
 };
 #endif //INPUT_MANAGER_H
