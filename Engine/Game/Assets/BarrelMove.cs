@@ -2,11 +2,7 @@
 using CulverinEditor.Debug;
 
 public class BarrelMove : CulverinBehaviour
-{
-    
-    GameObject parent_obj;
-    Transform trans;
-
+{   
     public float final_pos_x;
     public float final_pos_y;
     public float final_pos_z;
@@ -15,10 +11,12 @@ public class BarrelMove : CulverinBehaviour
 
     public float fall_speed;
     public float fall_dist;
-
-    bool arrive = false;
-
+   
     public bool stop = false;
+    public bool arrive = false;
+
+    Transform trans;
+
     void Start()
     {
         arrive = false;
@@ -28,10 +26,23 @@ public class BarrelMove : CulverinBehaviour
     {
         float dt = Time.deltaTime;
 
-        Vector3 diff = trans.local_position - new Vector3(final_pos_x, final_pos_y, final_pos_z);
-        diff = diff.Normalized;
+        if (!arrive)
+        {
+            Vector3 diff = new Vector3(final_pos_x, final_pos_y, final_pos_z) - trans.local_position;
+            if (diff.Length < 0.1f)
+                arrive = true;
 
-        trans.local_position = diff * movSpeed * dt;
+            diff = diff.Normalized;
+
+            trans.local_position += diff * movSpeed * dt;
+        }
+        else
+        {
+            Vector3 diff = new Vector3(trans.local_position.x, final_pos_y - fall_dist, trans.local_position.z) - trans.local_position;
+
+            diff = diff.Normalized;
+            trans.local_position += diff * fall_speed * dt;
+        }
 
 
 

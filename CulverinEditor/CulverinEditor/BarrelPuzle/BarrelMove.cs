@@ -26,7 +26,7 @@ public class BarrelMove : CulverinBehaviour
     {
         float dt = Time.deltaTime;
 
-        if (!arrive)
+        if (!arrive && !stop)
         {
             Vector3 diff = new Vector3(final_pos_x, final_pos_y, final_pos_z) - trans.local_position;
             if (diff.Length < 0.1f)
@@ -36,14 +36,21 @@ public class BarrelMove : CulverinBehaviour
 
             trans.local_position += diff * movSpeed * dt;
         }
-        else
+        else if(arrive && !stop)
         {
+        
             Vector3 diff = new Vector3(trans.local_position.x, final_pos_y - fall_dist, trans.local_position.z) - trans.local_position;
+
+            if (diff.Length < 0.1f)
+                stop = true;
 
             diff = diff.Normalized;
             trans.local_position += diff * fall_speed * dt;
         }
+        else if(arrive && stop)
+        {
 
+        }
 
 
     }
