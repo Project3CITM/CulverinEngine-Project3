@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ResourceMaterial.h"
 #include "ResourceScript.h"
+#include "ResourceFont.h"
 #include "ResourceAnimation.h"
 #include "CompScript.h"
 #include "ModuleFS.h"
@@ -905,6 +906,34 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 			}
 		}
 	}
+}
+
+void JSONSerialization::SaveFont(const ResourceFont * font, const char * directory, const char * fileName)
+{
+	LOG("SAVING Font %s -----", font->name.c_str());
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = directory;
+	nameJson += "/";
+	nameJson += font->name;
+	nameJson += ".meta.json";
+	config_file = json_value_init_object();
+
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		json_object_clear(config);
+		json_object_dotset_string_with_std(config, "Font.Directory Material", App->fs->GetToAsstes(fileName).c_str());
+		json_object_dotset_number_with_std(config, "Font.UUID Resource", font->GetUUID());
+		json_object_dotset_string_with_std(config, "Font.Name", font->name.c_str());
+		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
+		std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
+		json_object_dotset_number_with_std(config, "Font.Last Write", cftime);
+		json_serialize_to_file(config_file, nameJson.c_str());
+	}
+	json_value_free(config_file);
 }
 
 

@@ -10,6 +10,7 @@ class GameObject;
 class ResourceMaterial;
 class ResourceScript;
 class ResourceAnimation;
+class ResourceFont;
 class InputManager;
 class InputAction;
 class PlayerActions;
@@ -72,6 +73,9 @@ public:
 	void SaveInputAction(JSON_Object* config_node, const InputAction* input_action, uint count, uint input_count);
 	void LoadPlayerAction(PlayerActions** player_action,const char* fileName);
 
+	// SAVE & LOAD FONT --------------------------
+	void SaveFont(const ResourceFont* font, const char* directory, const char* fileName);
+	
 
 	// --------------------------------------
 

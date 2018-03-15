@@ -1070,6 +1070,15 @@ std::string ModuleFS::LoadScript(std::string file)
 	return "";
 }
 
+bool ModuleFS::DuplicateFile(const char * origin, const char * destination, DIRECTORY_IMPORT directory)
+{
+
+	std::ifstream  src(origin, std::ios::binary);
+	std::ofstream  dst(destination, std::ios::binary);
+	dst << src.rdbuf();
+	return true;
+}
+
 bool ModuleFS::CheckIsFileExist(const std::string& name)
 {
 	std::ifstream fil(name.c_str());

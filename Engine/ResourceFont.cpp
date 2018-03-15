@@ -1,4 +1,5 @@
 #include "ResourceFont.h"
+#include "ImportFont.h"
 #include "SDL2_ttf/include/SDL_ttf.h"
 
 
@@ -25,6 +26,15 @@ void ResourceFont::Init(Font copy_font)
 	font.size = copy_font.size;
 	font.font = copy_font.font;
 
+}
+
+bool ResourceFont::ReLoadToMemory()
+{
+	TTF_CloseFont(font.font);
+
+	App->importer->iFont->LoadResource(std::to_string(GetUUID()).c_str(), font.size, this);
+
+	return true;
 }
 
 void ResourceFont::DeleteToMemory()

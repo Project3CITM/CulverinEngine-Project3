@@ -1,7 +1,7 @@
 #include "ImportFont.h"
 #include "SDL2_ttf/include/SDL_ttf.h"
 #include "ResourceFont.h"
-
+#include "ModuleFS.h"
 
 ImportFont::ImportFont()
 {
@@ -14,6 +14,17 @@ ImportFont::~ImportFont()
 
 bool ImportFont::Import(const char * file, uint uuid, bool isAutoImport)
 {
+
+	std::string name = std::to_string(uuid);
+	name = App->fs->FixName_directory(name);//?
+	name = App->fs->FixExtension(name, ".ttf");
+
+	App->fs->DuplicateFile(file, name.c_str(), DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_FONT);
+	/*
+	   std::ifstream  src("from.ogv", std::ios::binary);
+    std::ofstream  dst("to.ogv",   std::ios::binary);
+
+	*/
 	return false;
 }
 

@@ -4,6 +4,7 @@
 #include "ImportMaterial.h"
 #include "ImportScript.h"
 #include "ImportAnimation.h"
+#include "ImportFont.h"
 #include "CompMaterial.h"
 #include "CompTransform.h"
 #include "ModuleFS.h"
@@ -281,6 +282,13 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 	{
 		LOG("IMPORTING SCRIPT, File Path: %s", file);
 		iScript->Import(file, 0, isAutoImport);
+
+		break;
+	}
+	case Resource::Type::FONT:
+	{
+		LOG("IMPORTING SCRIPT, File Path: %s", file);
+		iFont->Import(file, 0, isAutoImport);
 
 		break;
 	}
