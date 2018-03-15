@@ -78,7 +78,7 @@ public class SwordGuard_Listener : PerceptionListener
                     events_in_memory.Add(new_event_to_memory);
                     GetComponent<EnemySword_BT>().InterruptAction();
                     GetComponent<EnemySword_BT>().player_detected = true;
-                    GetComponent<EnemySword_BT>().engage_combat = true;
+                    GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.ENGAGE_ACTION);
                     GetComponent<ChasePlayer_Action>().SetEvent(new_event_to_memory);
                     player_seen = true;
                     Debug.Log("Player in sight");
@@ -100,7 +100,7 @@ public class SwordGuard_Listener : PerceptionListener
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemySword_BT>().player_detected = false;
-                GetComponent<EnemySword_BT>().disengage_combat = true;
+                GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
                 GetComponent<ChasePlayer_Action>().forgot_event = true;
                 Debug.Log("Player out of sight");
                 break;

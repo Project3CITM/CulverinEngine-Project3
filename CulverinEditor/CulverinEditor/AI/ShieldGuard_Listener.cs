@@ -63,7 +63,7 @@ public class ShieldGuard_Listener : PerceptionListener
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemyShield_BT>().InterruptAction();
                 GetComponent<EnemyShield_BT>().player_detected = true;
-                GetComponent<EnemyShield_BT>().engage_combat = true;
+                GetComponent<EnemyShield_BT>().SetAction(Action.ACTION_TYPE.ENGAGE_ACTION);
                 player_seen = true;
                 GetComponent<Movement_Action>().look_at_player = false;
                 GetComponent<ChasePlayer_Action>().SetEvent(event_recieved);
@@ -85,7 +85,7 @@ public class ShieldGuard_Listener : PerceptionListener
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemyShield_BT>().player_detected = false;
-                GetComponent<EnemyShield_BT>().disengage_combat = true;
+                GetComponent<EnemyShield_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
                 GetComponent<ChasePlayer_Action>().forgot_event = true;
                 GetComponent<Movement_Action>().look_at_player = true;
                 Debug.Log("Player out of sight");

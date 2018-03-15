@@ -13,8 +13,9 @@ public class BT : CulverinBehaviour
         AI_DEAD
     }
 
-    protected Action current_action = new Action();
-    protected Action next_action = new Action();
+    protected Action null_action = new Action();
+    protected Action current_action = null;
+    protected Action next_action = null;
     protected AI_STATE state = AI_STATE.AI_IDLE;
 
     //Blackboard
@@ -32,6 +33,7 @@ public class BT : CulverinBehaviour
 
     virtual public void Start()
     {
+        next_action = null_action;
         current_action = GetComponent<Idle_Action>();
         current_action.SetAnimSpeed(anim_speed);
         current_action.ActionStart();

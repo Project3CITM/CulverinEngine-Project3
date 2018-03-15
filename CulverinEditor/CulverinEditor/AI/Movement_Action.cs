@@ -56,6 +56,9 @@ public class Movement_Action : Action
     float arrive_distance = 0.05f;
     float rot_margin = 0.05f;
 
+    bool rotation_finished = false;
+    bool translation_finished = false;
+
     public bool chase = false;
 
     public Movement_Action()
@@ -110,109 +113,129 @@ public class Movement_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        switch (state)
+        //Movement
+        if (translation_finished == false)
         {
-            case Motion_State.MS_MOVE:
-                //Velocity calculation
-                if (current_acceleration.Length > current_max_accel)
-                {
-                    current_acceleration = current_acceleration.Normalized * current_max_accel;
-                }
-                current_velocity.x = current_velocity.x + current_acceleration.x;
-                current_velocity.z = current_velocity.z + current_acceleration.z;
+            if (current_acceleration.Length > current_max_accel)
+            {
+                current_acceleration = current_acceleration.Normalized * current_max_accel;
+            }
+            current_velocity.x = current_velocity.x + current_acceleration.x;
+            current_velocity.z = current_velocity.z + current_acceleration.z;
 
-                if (current_velocity.Length > current_max_vel)
-                {
-                    current_velocity = current_velocity.Normalized * current_max_vel;
-                }
-                Vector3 local_pos = GetComponent<Transform>().local_position;
-                float dt = Time.deltaTime;
-                local_pos.x = local_pos.x + (current_velocity.x * dt);
-                local_pos.z = local_pos.z + (current_velocity.z * dt);
+            if (current_velocity.Length > current_max_vel)
+            {
+                current_velocity = current_velocity.Normalized * current_max_vel;
+            }
+
+            //Translate
+            Vector3 local_pos = GetComponent<Transform>().local_position;
+            float dt = Time.deltaTime;
+            local_pos.x = local_pos.x + (current_velocity.x * dt);
+            local_pos.z = local_pos.z + (current_velocity.z * dt);
+            GetComponent<Transform>().local_position = local_pos;
+
+            //Clean
+            current_acceleration = new Vector3(Vector3.Zero);
+
+            if (ReachedTile() == true)
+            {
+                
+
+                local_pos.x = path[0].GetTileX() * tile_size;
+                local_pos.z = path[0].GetTileY() * tile_size;
                 GetComponent<Transform>().local_position = local_pos;
 
-                current_acceleration = new Vector3(Vector3.Zero);
+                //Update Collider -> 
+                GetComponent<CompCollider>().MoveKinematic(new Vector3(local_pos.x, local_pos.y + 10, local_pos.z));
 
-                if (ReachedTile())
+                if (interupt == true)
                 {
-                    if (NextToPlayer())
-                    {
-                        GetComponent<Arrive_Steering>().SetEnabled(false);
-                        GetComponent<Seek_Steering>().SetEnabled(false);
-                        return ACTION_RESULT.AR_SUCCESS;
-                    }
-                    else
-                    {
-                        local_pos.x = path[0].GetTileX() * tile_size;
-                        local_pos.z = path[0].GetTileY() * tile_size;
-                        GetComponent<Transform>().local_position = local_pos;
-
-                        //Update Collider -> 
-                        GetComponent<CompCollider>().MoveKinematic(new Vector3(local_pos.x, local_pos.y + 10, local_pos.z));
-
-                        if (path.Count > 0)
-                            path.Remove(path[0]);
-
-                        GetComponent<Arrive_Steering>().SetEnabled(false);
-                        GetComponent<Seek_Steering>().SetEnabled(false);
-
-                        SetState();
-
-                        if (interupt == true)
-                        {
-                            //GetComponent<CompAnimation>().SetTransition("ToIdle");
-                            return ACTION_RESULT.AR_FAIL;
-                        }
-                    }
-                }
-                break;
-
-            case Motion_State.MS_ROTATE:
-                //Acceleration calculation
-                if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
-                {
-                    if (current_rot_acceleration > 0)
-                        current_rot_acceleration = current_max_rot_accel;
-                    else
-                        current_rot_acceleration = -current_max_rot_accel;
-                }
-                current_rot_velocity += current_rot_acceleration;
-
-                if (Mathf.Abs(current_rot_velocity) > current_max_rot_vel)
-                {
-                    if (current_rot_velocity > 0)
-                    {
-                        current_rot_velocity = current_max_rot_vel;
-                    }
-                    else current_rot_velocity = -current_max_rot_vel;
-                }
-
-                GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity);
-
-                current_rot_acceleration = 0.0f;
-
-                if(FinishedRotation())
-                {
-                    GetComponent<Align_Steering>().SetEnabled(false);
-
-                    Vector3 obj_vec = GetTargetPosition() - GetComponent<Transform>().position;
-                    GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
-
-                    SetDirection();
-                    SetState();
-
-                    if (interupt == true)
+                    if (rotation_finished == true)
                     {
                         //GetComponent<CompAnimation>().SetTransition("ToIdle");
                         return ACTION_RESULT.AR_FAIL;
                     }
+                    else
+                        translation_finished = true;
                 }
-                break;
-
-            case Motion_State.MS_NO_STATE:
-                return ACTION_RESULT.AR_SUCCESS;               
+                else
+                    NextTile();
+            }
         }
+
+        //Rotation
+        if (rotation_finished)
+        {
+            if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
+            {
+                if (current_rot_acceleration > 0)
+                    current_rot_acceleration = current_max_rot_accel;
+                else
+                    current_rot_acceleration = -current_max_rot_accel;
+            }
+            current_rot_velocity += current_rot_acceleration;
+
+            if (Mathf.Abs(current_rot_velocity) > current_max_rot_vel)
+            {
+                if (current_rot_velocity > 0)
+                {
+                    current_rot_velocity = current_max_rot_vel;
+                }
+                else current_rot_velocity = -current_max_rot_vel;
+            }
+
+            //Rotate
+            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity);
+
+            //Clean
+            current_rot_acceleration = 0.0f;
+
+            if (FinishedRotation() == true)
+            {
+                rotation_finished = true;
+
+                GetComponent<Align_Steering>().SetEnabled(false);
+
+                Vector3 obj_vec = GetTargetPosition() - GetComponent<Transform>().position;
+                GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
+
+                SetDirection();
+
+                if (interupt == true && translation_finished == true)
+                {
+                    //GetComponent<CompAnimation>().SetTransition("ToIdle");
+                    return ACTION_RESULT.AR_FAIL;
+                }
+            }
+        }
+
+        if(rotation_finished == true && translation_finished == true)
+            return ACTION_RESULT.AR_SUCCESS;
+
         return ACTION_RESULT.AR_IN_PROGRESS;
+    }
+
+    private void NextTile()
+    {
+        //Tiles
+        if (path.Count == 1)
+        {
+            GetComponent<Arrive_Steering>().SetEnabled(false);
+            GetComponent<Seek_Steering>().SetEnabled(false);
+            translation_finished = true;
+        }
+        else
+        {
+            path.Remove(path[0]);
+        }
+
+        //Rotation
+        if (FinishedRotation() == false)
+        {
+            rotation_finished = false;
+            GetComponent<Align_Steering>().SetEnabled(true);
+        }
     }
 
     public void GoTo(int cur_x, int cur_y, int obj_x, int obj_y, bool rot = false)
