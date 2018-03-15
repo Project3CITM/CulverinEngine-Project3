@@ -8,6 +8,7 @@
 
 class AnimationClip;
 class GameObject;
+class BlendingClip;
 
 struct PositionKey
 {
@@ -33,7 +34,7 @@ public:
 
 	~AnimBone();
 
-	void UpdateBone(GameObject * bone, AnimationClip * playing_clip = nullptr, AnimationClip * blending_clip = nullptr) const;
+	void UpdateBone(GameObject * bone, AnimationClip * playing_clip = nullptr, BlendingClip* blending_node_clip = nullptr, AnimationClip * blending_clip = nullptr) const;
 
 	float3 GetPosition(AnimationClip* clip_vec, bool activated) const;
 	Quat GetRotation(AnimationClip* clip_vec, bool activated) const;
