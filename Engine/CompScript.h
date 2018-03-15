@@ -21,7 +21,7 @@ public:
 	void Start();
 	void Update(float dt);
 	void postUpdate();
-	void ClearVariables();
+	void Clear();
 
 	bool StartScript();
 	bool UpdateScript(float dt);

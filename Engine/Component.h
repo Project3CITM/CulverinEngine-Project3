@@ -78,12 +78,14 @@ public:
 
 	void SetActive(bool active);
 	void SetUUIDRandom();
+	void SetInScripting();
 
 	uint GetUUID() const;
 	Comp_Type GetType() const;
 	bool IsActive() const;
 	const char* GetName() const;
 	bool WantDelete() const;
+	bool InScripting() const;
 
 	float3 GetGameObjectPos() const;
 
@@ -99,6 +101,7 @@ protected:
 	uint uid = 0;
 	const char* name_component = nullptr;
 	bool to_delete = false;
+	bool in_script = false;
 };
 
 #endif

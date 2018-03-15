@@ -66,6 +66,14 @@ public:
 	MonoObject* GetMonoObject(CSharpScript* script);
 	CSharpScript* GetScriptMono(MonoObject* monoobject);
 
+	//Delete Functions -----------------------
+	void RemoveGObjectVarFromScripting(GameObject* object);
+
+	void RemoveGObjectFromMonoMap(GameObject*object);
+	void RemoveComponentFromMonoList(Component* comp);
+	void RemoveTransformPosPointerFromMap(float3* pospointer);
+	void RemoveGObjectReferencesFromMonoScript(GameObject* object);
+
 	bool IsNameUnique(std::string name) const;
 
 private:

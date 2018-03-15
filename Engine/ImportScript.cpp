@@ -567,6 +567,88 @@ CSharpScript* ImportScript::GetScriptMono(MonoObject* monoobject)
 	return nullptr;
 }
 
+void ImportScript::RemoveGObjectVarFromScripting(GameObject * object)
+{
+	// Remove GameObject Variable form  multimap only during runtime
+	if (object != nullptr)
+	{
+		std::map<std::string, GameObject*>::const_iterator it_link = map_link_variables.begin();
+		for (; it_link != map_link_variables.end(); it_link++)
+		{
+			if (it_link._Ptr->_Myval.second == object)
+			{
+				map_link_variables.erase(it_link._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+void ImportScript::RemoveGObjectFromMonoMap(GameObject * object)
+{
+	// Remove MonoObject form mono_map multimap only during runtime
+	if (object != nullptr)
+	{
+		std::map<MonoObject*, GameObject*>::const_iterator it_map = mono_map.begin();
+		for (; it_map != mono_map.end(); it_map++)
+		{
+			if (it_map._Ptr->_Myval.second == object)
+			{
+				mono_map.erase(it_map._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+
+void ImportScript::RemoveComponentFromMonoList(Component* comp)
+{
+	// Remove Component from Components multimap only during runtime
+	if (comp != nullptr)
+	{
+		std::map<MonoObject*, Component*>::const_iterator it_comp = mono_comp.begin();
+		for (; it_comp != mono_comp.end(); it_comp++)
+		{
+			if (it_comp._Ptr->_Myval.second == comp)
+			{
+				mono_comp.erase(it_comp._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+void ImportScript::RemoveTransformPosPointerFromMap(float3 * pospointer)
+{
+	// Remove Transform Position pointer from mono_pos multimap only during runtime
+	if (pospointer != nullptr)
+	{
+		std::map<MonoObject*, float3*>::const_iterator it_pos = mono_pos.begin();
+		for (; it_pos != mono_pos.end(); it_pos++)
+		{
+			if (it_pos._Ptr->_Myval.second == pospointer)
+			{
+				mono_pos.erase(it_pos._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+void ImportScript::RemoveGObjectReferencesFromMonoScript(GameObject * object)
+{
+	// Set variables that reference to this object to null, only during runtime
+	if (object != nullptr)
+	{
+		std::map<MonoObject*, CSharpScript*>::const_iterator it_script = mono_script.begin();
+		for (; it_script != mono_script.end(); it_script++)
+		{
+			it_script._Ptr->_Myval.second->RemoveReferences(object);
+			return;
+		}
+	}
+}
 
 bool ImportScript::IsNameUnique(std::string name) const
 {

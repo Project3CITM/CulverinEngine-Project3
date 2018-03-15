@@ -1159,6 +1159,7 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 					if (new_object)
 					{
 						App->importer->iScript->UpdateMonoComp(comp, new_object);
+						comp->SetInScripting();
 						return new_object;
 					}
 				}
