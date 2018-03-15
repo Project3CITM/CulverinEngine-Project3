@@ -1055,6 +1055,7 @@ void AnimationNode::CreateTransition()
 void AnimationNode::CreateBlendingClip()
 {
 	BlendingClip* temp_blending_clip = new BlendingClip();
+	temp_blending_clip->clip = this->clip;
 	blending_clips.push_back(temp_blending_clip);
 }
 
