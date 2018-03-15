@@ -109,33 +109,10 @@ public class MovementController : CulverinBehaviour
                 }
             }
         }
-        intro = GetLinkedObject("intro");
-        intro.SetActive(true);
-        lore_screen = GetLinkedObject("lore_screen");
-        lore_screen.SetActive(false);
-        Time.timeScale = 0;
     }
 
     void Update()
     {
-        if (intro.IsActive() || lore_screen.IsActive())
-        {
-            if (Input.GetKeyDown(KeyCode.Space)|| Input.GetInput_KeyDown("Interact", "Player"))
-            {
-                if (intro.IsActive())
-                {
-                    Debug.Log("From intro to lore");
-                    intro.SetActive(false);
-                    lore_screen.SetActive(true);
-                }
-                else if (lore_screen.IsActive())
-                {
-                    Debug.Log("From lore to game");
-                    lore_screen.SetActive(false);
-                    Time.timeScale = 1;
-                }
-            }
-        }
         start_direction = (int)curr_dir;
 
         CheckIsWalkable();
