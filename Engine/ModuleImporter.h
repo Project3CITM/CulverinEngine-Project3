@@ -38,12 +38,11 @@ public:
 	update_status PreUpdate(float dt);
 	//update_status Update(float dt);
 	//update_status PostUpdate(float dt);
-	GameObject* ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, const char* file);
-	GameObject* ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, std::vector<ReImport>& resourcesToReimport, std::string path);
+	GameObject* ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, const char* file, bool anim_import);
+	GameObject* ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, std::vector<ReImport>& resourcesToReimport, std::string path, bool anim_import);
 	void ProcessTransform(aiNode* node, CompTransform* trans);
 	void ProcessTransform(CompTransform* trans);
 	bool CleanUp();
-
 
 	bool Import(const char* file, Resource::Type type, bool isAutoImport = false);
 	bool Import(const char* file, Resource::Type type, std::vector<ReImport>& resourcesToReimport, bool auto_reimport = false);
