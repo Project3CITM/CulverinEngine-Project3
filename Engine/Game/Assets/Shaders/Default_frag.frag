@@ -1,6 +1,6 @@
 #version 330 core
  
-#define MAX_LIGHTS 30
+#define MAX_LIGHTS 40
 uniform int _numLights;
 uniform struct Light {
     vec3 position;
@@ -134,9 +134,9 @@ void main()
     }      
                                                                                                
     final_ambient = final_ambient/_numLights;
-    final_color =final_color / _numLights;  
+    final_color =final_color;  
                                                                
-    vec3 col = max(final_ambient* color_texture,
+    vec3 col = max(final_ambient* color_texture* vec3(0,1,1),
      color_texture * (inten_final.x + inten_final.y * spec_texture.r)*occlusion_texture*final_color.rgb);
                                                                                        
     color = vec4(col,_alpha);
