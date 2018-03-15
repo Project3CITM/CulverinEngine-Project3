@@ -78,6 +78,10 @@ bool ModuleResourceManager::Start()
 				{
 					path_resources_library += ".dds";
 				}
+				if (to_reimport->GetType() == Resource::Type::FONT)
+				{
+					path_resources_library += ".ttf";
+				}
 				if (App->fs->CheckIsFileExist(path_resources_library) || to_reimport->GetType() == Resource::Type::ANIMATION)
 				{
 					continue;

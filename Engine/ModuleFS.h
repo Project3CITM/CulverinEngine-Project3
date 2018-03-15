@@ -17,6 +17,7 @@
 #define DIRECTORY_LIBRARY_MATERIALS "Library/Materials/"
 #define DIRECTORY_LIBRARY_SCRIPTS "Library/Scripts/"
 #define DIRECTORY_LIBRARY_ANIMATIONS "Library/Animations/"
+#define DIRECTORY_LIBRARY_FONTS "Library/Fonts/"
 
 class TextEditor;
 
@@ -69,7 +70,7 @@ public:
 	// Load Script From Assets ------------
 	std::string LoadScript(std::string file);
 	// Duplicate File
-	bool DuplicateFile(const char* origin, const char* destination, DIRECTORY_IMPORT directory = IMPORT_DEFAULT);
+	bool DuplicateFile(const char* origin, std::string destination, DIRECTORY_IMPORT directory = IMPORT_DEFAULT);
 	// Get Files to Window Project ---------------------------------------------------
 	void GetAllFolders(std::experimental::filesystem::path path, std::string folderActive, std::vector<FoldersNew>& folders);
 	bool GetAllFoldersChild(std::experimental::filesystem::path path, std::string folderActive, std::vector<FoldersNew>& folders);

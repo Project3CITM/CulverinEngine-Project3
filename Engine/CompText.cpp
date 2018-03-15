@@ -8,6 +8,8 @@
 #include "SDL2_ttf/include/SDL_ttf.h"
 #include "ModuleImporter.h"
 #include "ImportFont.h"
+#include "CompRectTransform.h"
+#include "CompCanvasRender.h"
 CompText::CompText(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
 	uid = App->random->Int();
@@ -60,6 +62,20 @@ void CompText::PreUpdate(float dt)
 		
 	}
 	// -------------------------------------------------------------------
+}
+void CompText::Update(float dt)
+{
+
+	if (transform != nullptr)
+	{
+		if (transform->GetUpdateRect() && my_canvas_render != nullptr)
+		{
+			GenerateText();
+			transform->SetUpdateRect(false);
+		}
+	}
+	render = true;
+
 }
 void CompText::ShowOptions()
 {
@@ -126,6 +142,45 @@ void CompText::ShowInspectorInfo()
 		ShowOptions();
 		ImGui::EndPopup();
 	}
+	if (ImGui::Button("Select Font..."))
+	{
+		show_resource_font_windows = true;
+	}
+	if (ImGui::InputText("Text", (char*)input_text.c_str(), max_input, ImGuiInputTextFlags_EnterReturnsTrue))
+	{
+		SetString(input_text.c_str());
+	}
+	ImGui::DragInt("Input limit", &max_input, 1.0f, 0, 50);
+	ImGui::ColorEdit4("Color##image_rgba", color.ptr());
+	ImGui::DragInt("Text Size", &text_size, 1.0f, 0, 200);
+	if (text == nullptr || show_resource_font_windows)
+	{
+		if (show_resource_font_windows)
+		{
+			ResourceFont* temp = (ResourceFont*)App->resource_manager->ShowResources(show_resource_font_windows, Resource::Type::FONT);
+			if (temp != nullptr)
+			{
+				if (text != nullptr)
+				{
+					if (text->num_game_objects_use_me > 0)
+					{
+						text->num_game_objects_use_me--;
+					}
+				}
+				text = temp;
+				text->num_game_objects_use_me++;
+				if (text->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iFont->LoadResource(std::to_string(text->GetUUID()).c_str(), text_size,text);
+
+
+				}
+				SetString("New Text");
+				//SetTextureID(text->GetTextureID());
+				Enable();
+			}
+		}
+	}
 
 	ImGui::TreePop();
 }
@@ -134,18 +189,52 @@ void CompText::SetRect(float x, float y, float width, float height)
 {
 	text_rect.x = x;
 	text_rect.y = y;
-	text_rect.width = width;
-	text_rect.height = height;
+	text_rect.z = width;
+	text_rect.w = height;
 }
+
+
 
 void CompText::SetString(std::string input)
 {
 	text_str = input;
 	UpdateText();
+	GenerateText();
+}
+
+void CompText::GenerateText()
+{
+	if (text_str.empty())
+		return;
+	float4 rect_transform = parent->GetComponentRectTransform()->GetRect();
+	if (TextCanFit(rect_transform, text_rect))
+	{
+		std::vector<float3> quad_pos;
+
+		quad_pos.push_back(float3(float2(text_rect.x, text_rect.y),0));
+		quad_pos.push_back(float3(float2(text_rect.x+text_rect.z, text_rect.y), 0));
+		quad_pos.push_back(float3(float2(text_rect.x, text_rect.y + text_rect.w), 0));
+		quad_pos.push_back(float3(float2(text_rect.x + text_rect.z, text_rect.y + text_rect.w), 0));
+		my_canvas_render->ProcessQuad(quad_pos);
+
+	}
+
+
+}
+
+bool CompText::TextCanFit(float4 rect_transform, float4 rect_text)
+{
+	if (abs(rect_transform.x) + abs(rect_transform.z) > rect_text.z&&abs(rect_transform.y) + abs(rect_transform.w) > rect_text.w)
+	{
+		return true;
+	}
+	return false;
 }
 
 void CompText::UpdateText()
 {
+	if (text == nullptr)
+		return;
 	if (!text->font.font || text_str.empty())
 		return;
 	else if (s_font != NULL && text_str.empty())
@@ -162,9 +251,9 @@ void CompText::UpdateText()
 	s_font = TTF_RenderText_Blended(text->font.font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) });
 
 	GLuint texture;
-	glGenTextures(1, &uid);
-	glBindTexture(GL_TEXTURE_2D, uid);
-
+	glGenTextures(1, &id_font);
+	glBindTexture(GL_TEXTURE_2D, id_font);
+	SetTextureID(id_font);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s_font->w, s_font->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, s_font->pixels);

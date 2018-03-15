@@ -83,12 +83,14 @@ public:
 	ReImport GetUUIDPrefab(const char* file, uint id);
 	ReImport GetUUIDMaterial(const char* file);
 	ReImport GetUUIDScript(const char* file);
+	ReImport GetUUIDFont(const char * file);
 	// -----------------------------------------------
 
 	// Get Last Write -------------------------------
 	std::time_t GetLastWritePrefab(const char* file);
 	std::time_t GetLastWriteMaterial(const char* file);
 	std::time_t GetLastWriteScript(const char* file);
+	std::time_t GetLastWriteFont(const char * file);
 	// -----------------------------------------------
 
 	// Geu UID if Resources has not imported in Library

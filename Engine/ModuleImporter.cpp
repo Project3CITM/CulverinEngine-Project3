@@ -52,6 +52,7 @@ bool ModuleImporter::Init(JSON_Object* node)
 	iMaterial = new ImportMaterial();
 	iScript = new ImportScript();
 	iAnimation = new ImportAnimation();
+	iFont = new ImportFont();
 
 	// Now InitSystem Domain Mono
 	if (iScript->InitScriptingSystem())
@@ -400,6 +401,26 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 		if (isReImport == false)
 		{
 			iScript->Import(file);
+		}
+		break;
+	}
+	case Resource::Type::FONT:
+	{
+		LOG("IMPORTING Font, File Path: %s", file);
+		//
+		bool isReImport = false;
+		for (int i = 0; i < resourcesToReimport.size(); i++)
+		{
+			if (strcmp(file, resourcesToReimport[i].directory_obj) == 0)
+			{
+				iFont->Import(file, resourcesToReimport[i].uuid);
+				isReImport = true;
+				break;
+			}
+		}
+		if (isReImport == false)
+		{
+			iFont->Import(file);
 		}
 		break;
 	}

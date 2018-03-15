@@ -16,6 +16,7 @@ public:
 	~ResourceFont();
 	void InitInfo(const char* name, const char* path);
 	void Init(Font copy_font);
+	bool ReLoadToMemory();
 	void DeleteToMemory();
 	bool LoadToMemory();
 	Resource::State IsLoadedToMemory();

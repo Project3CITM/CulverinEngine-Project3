@@ -1043,6 +1043,37 @@ ReImport JSONSerialization::GetUUIDScript(const char* file)
 	return info;
 	//json_value_free(config_file);
 }
+ReImport JSONSerialization::GetUUIDFont(const char* file)
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = file;
+	nameJson += ".meta.json";
+	config_file = json_parse_file(nameJson.c_str());
+
+	ReImport info;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		//config_node = json_object_get_object(config, "Material");
+		info.uuid = json_object_dotget_number_with_std(config, "Font.UUID Resource");
+		info.directory_obj = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Font.Directory Material"));
+		info.name_mesh = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Font.Name"));
+		if (strcmp(file, info.directory_obj) == 0)
+		{
+			json_value_free(config_file);
+			return info;
+		}
+		else
+		{
+			info.directory_obj = nullptr;
+		}
+	}
+	json_value_free(config_file);
+	return info;
+	//json_value_free(config_file);
+}
 
 std::time_t JSONSerialization::GetLastWritePrefab(const char* file)
 {
@@ -1100,7 +1131,24 @@ std::time_t JSONSerialization::GetLastWriteScript(const char* file)
 	json_value_free(config_file);
 	return last_write;
 }
+std::time_t JSONSerialization::GetLastWriteFont(const char* file)
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
 
+	std::string nameJson = file;
+	nameJson += ".meta.json";
+	config_file = json_parse_file(nameJson.c_str());
+
+	std::time_t last_write = 0;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		last_write = json_object_dotget_number(config, "Font.Last Write");
+	}
+	json_value_free(config_file);
+	return last_write;
+}
 uint JSONSerialization::ResourcesInLibrary(uint id, std::string& path)
 {
 	JSON_Value* config_file;

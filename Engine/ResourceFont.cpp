@@ -40,6 +40,8 @@ bool ResourceFont::ReLoadToMemory()
 void ResourceFont::DeleteToMemory()
 {
 	state = Resource::State::UNLOADED;
+	if (font.font == NULL)
+		return;
 	TTF_CloseFont(font.font);
 	LOG("UnLoaded Resource Material");
 }
