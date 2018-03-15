@@ -15,6 +15,7 @@
 #include "PlayerActions.h"
 #include "CompScript.h"
 #include <direct.h>
+#include "ModuleRenderGui.h"
 #pragma comment(lib, "mono-2.0-sgen.lib")
 
 CSharpScript* ImportScript::current = nullptr;
@@ -967,6 +968,17 @@ void ImportScript::LoadScene(MonoObject * scene_name)
 		std::string directory_scene = DIRECTORY_ASSETS;
 		directory_scene += scene;
 		directory_scene += ".scene.json";
+		/*
+		----------------------------------------------------------------
+
+		This is a vicente fix, in the future we need to make an event to change scene
+		to turn the focus into nullptr
+		*/
+		App->render_gui->focus = nullptr;
+		App->render_gui->selected = nullptr;
+		//----------------------------------------------------------------
+
+
 		App->SetActualScene(directory_scene.c_str());
 		App->WantToLoad(true);
 	}
