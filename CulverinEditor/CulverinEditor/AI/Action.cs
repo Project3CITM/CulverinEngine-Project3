@@ -19,6 +19,7 @@ public class Action : CulverinBehaviour
         MOVE_ACTION,
         ATTACK_ACTION,
         IDLE_ACTION,
+        IDLE_ATTACK_ACTION,
         INVESTIGATE_ACTION,
         CHASE_ACTION,
         PUSHBACK_ACTION,

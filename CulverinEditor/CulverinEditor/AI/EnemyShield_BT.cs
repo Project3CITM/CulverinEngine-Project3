@@ -19,7 +19,7 @@ public class EnemyShield_BT : Enemy_BT
         base.Update();
     }
 
-    public override void MakeDecision()
+    /*public override void MakeDecision()
     {
         if (alive == false)
         {
@@ -110,7 +110,7 @@ public class EnemyShield_BT : Enemy_BT
                 }
             }
         }
-    }
+    }*/
 
     public override void ApplyDamage(float damage)
     {

@@ -29,10 +29,7 @@ public class Enemy_BT : BT
     protected float current_interpolation = 1.0f;
     public uint range = 1;
 
-    public bool engage_combat = false;
-    public bool disengage_combat = false;
     protected bool in_combat = false;
-    protected bool alive = true;
 
     public override void Start()
     {
@@ -58,29 +55,58 @@ public class Enemy_BT : BT
     }
 
     public override void MakeDecision()
-    {}
-
-    protected bool ChangeCombatState()
     {
-        if (engage_combat == true && in_combat == false)
+        if(current_hp <= 0)
         {
-            Debug.Log("Engage");
-            engage_combat = false;
-            in_combat = true;
-            current_action = GetComponent<Engage_Action>();
+            current_action = GetComponent<Die_Action>();
             current_action.ActionStart();
-            return true;
+            return;
         }
-        else if (disengage_combat == true && in_combat == true)
+
+        if(next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
         {
-            Debug.Log("Disengage");
-            disengage_combat = false;
-            in_combat = false;
-            current_action = GetComponent<Disengage_Action>();
+            current_action = next_action;
+            next_action = null_action;
             current_action.ActionStart();
-            return true;
         }
-        return false;
+
+        if(in_combat)
+        {            
+            if (next_action.action_type == Action.ACTION_TYPE.ENGAGE_ACTION)
+            {
+                Debug.Log("Disengage");
+                in_combat = false;
+                current_action = GetComponent<Disengage_Action>();
+                current_action.ActionStart();
+                return;
+            }
+
+            InCombatDecesion();
+        }
+        else
+        {
+            if (next_action.action_type == Action.ACTION_TYPE.DISENGAGE_ACTION)
+            {
+                Debug.Log("Engage");
+                in_combat = true;
+                current_action = next_action;
+                next_action = null_action;
+                current_action.ActionStart();
+                return;
+            }
+
+            OutOfCombatDecesion();
+        }
+    }
+
+    protected virtual void InCombatDecesion()
+    {
+        Debug.Log("In Combat Not Defined");
+    }
+
+    protected virtual void OutOfCombatDecesion()
+    {
+        Debug.Log("Out Of Combat Not Defined");
     }
 
     public virtual void ApplyDamage(float damage)
@@ -99,14 +125,12 @@ public class Enemy_BT : BT
         if (current_hp <= 0)
         {
             anim.SetClipsSpeed(anim_speed);
-            alive = false;
             state = AI_STATE.AI_DEAD;
             life_state = ENEMY_STATE.ENEMY_DEAD;
         }
         else if (current_hp < total_hp * damaged_limit)
         {
             life_state = ENEMY_STATE.ENEMY_DAMAGED;
-
             current_interpolation = current_hp / total_hp;
             anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;
             anim.SetClipsSpeed(anim_speed);
@@ -133,4 +157,15 @@ public class Enemy_BT : BT
         return current_interpolation;
     }
 
+    public void SetAction(Action.ACTION_TYPE type)
+    {
+        switch(type)
+        {
+            case Action.ACTION_TYPE.GET_HIT_ACTION: next_action = GetComponent<GetHit_Action>(); break;
+            case Action.ACTION_TYPE.ENGAGE_ACTION: next_action = GetComponent<Engage_Action>(); break;
+            case Action.ACTION_TYPE.DISENGAGE_ACTION: next_action = GetComponent<Disengage_Action>(); break;
+
+            default: Debug.Log("Unknown action"); break;
+        }
+    }
 }
