@@ -31,7 +31,7 @@ public:
 	// SAVE & LOAD SCENE --------------------------
 	std::string SaveScene();
 	void SaveChildGameObject(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);
-	void LoadScene(const char* sceneName, bool script_start = false);
+	void LoadScene(const char* sceneName);
 	// --------------------------------------
 
 	// SAVE & LOAD PREFAB --------------------------
