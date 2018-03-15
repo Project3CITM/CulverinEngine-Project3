@@ -8,7 +8,7 @@ class TestLoad : CulverinBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Y))
         {
-            SceneManager.LoadScene("PeneScene");
+            SceneManager.LoadScene("TestScene");
         }
     }
 }

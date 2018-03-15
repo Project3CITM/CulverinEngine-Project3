@@ -46,6 +46,9 @@ private:
 	void SetString(std::string input);
 	std::string input_text;
 	int max_input = 20;
+	int text_size = 12;
+	uint uuid_source_font = 0;
+
 };
 #endif//COMPONENT_TEXT_H
 

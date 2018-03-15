@@ -452,7 +452,7 @@ MonoObject* ImportScript::GetMonoObject(GameObject* gameobject)
 		std::multimap<MonoObject*, GameObject*>::iterator it = mono_map.begin();
 		while (it != mono_map.end())
 		{
-			if (it->second == gameobject)
+			if (it->second->GetUUID() == gameobject->GetUUID())
 			{
 				return it->first;
 			}
@@ -964,12 +964,11 @@ void ImportScript::LoadScene(MonoObject * scene_name)
 		MonoString* strings = mono_object_to_string(scene_name, NULL);
 		const char* scene = mono_string_to_utf8(strings);
 
-		std::string directory_scene = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-		directory_scene += "/";
+		std::string directory_scene = DIRECTORY_ASSETS;
 		directory_scene += scene;
 		directory_scene += ".scene.json";
 		App->SetActualScene(directory_scene.c_str());
-		App->WantToLoad();
+		App->WantToLoad(true);
 	}
 }
 

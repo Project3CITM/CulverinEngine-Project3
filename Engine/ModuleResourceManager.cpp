@@ -4,6 +4,7 @@
 #include "ResourceMesh.h"
 #include "ResourceScript.h"
 #include "ResourceAnimation.h"
+#include "ResourceFont.h"
 #include "ImportMesh.h"
 #include "JSONSerialization.h"
 #include "ModuleFS.h"
@@ -258,6 +259,10 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 				{
 					App->fs->DeleteFileLibrary(std::to_string(it->second->GetUUID()).c_str(), DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_ANIMATIONS);
 				}
+				else if (it->second->GetType() == Resource::Type::FONT)
+				{
+					App->fs->DeleteFileLibrary(std::to_string(it->second->GetUUID()).c_str(), DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_ANIMATIONS);
+				}
 				delete it->second;
 				resources.erase(it);
 			}
@@ -471,6 +476,8 @@ Resource* ModuleResourceManager::CreateNewResource(Resource::Type type, uint uui
 	case Resource::MESH: ret = (Resource*) new ResourceMesh(uid); break;
 	case Resource::SCRIPT: ret = (Resource*) new ResourceScript(uid); break;
 	case Resource::ANIMATION: ret = (Resource*) new ResourceAnimation(uid); break;
+	case Resource::FONT: ret = (Resource*) new ResourceFont(uid); break;
+
 	}
 	if (ret != nullptr)
 		resources[uid] = ret;
@@ -527,6 +534,10 @@ Resource::Type ModuleResourceManager::CheckFileType(const char* filedir)
 		else if (file_type == "cs")
 		{
 			return Resource::Type::SCRIPT;
+		}
+		else if (file_type == "ttf")
+		{
+			return Resource::Type::FONT;
 		}
 		else
 		{
@@ -641,6 +652,11 @@ Resource*  ModuleResourceManager::ShowResources(bool& active, Resource::Type typ
 		nameWindow = "Select Animations";
 		subname = "All Animations:";
 	}
+	else if (type == Resource::Type::FONT)
+	{
+		nameWindow = "Select font";
+		subname = "All Fonts:";
+	}
 	if (!ImGui::Begin(nameWindow, &active, ImGuiWindowFlags_NoCollapse)) //TODO ELLIOT CLOSE Windows example
 	{
 		ImGui::End();
@@ -684,9 +700,9 @@ void ModuleResourceManager::ShowAllResources(bool& active)
 	else
 	{
 		static int selected_type = -1;
-		static std::string type_Name[] = { "Material", "Mesh", "Script", "Animation"};
+		static std::string type_Name[] = { "Material", "Mesh", "Script", "Animation","Font"};
 		static Resource::Type type_R[] = { Resource::Type::MATERIAL,
-			Resource::Type::MESH, Resource::Type::SCRIPT, Resource::Type::ANIMATION};
+			Resource::Type::MESH, Resource::Type::SCRIPT, Resource::Type::ANIMATION, Resource::Type::FONT };
 		//Frist Select Type
 		ImGui::Text("Select Type Resource:");
 		if (ImGui::Button("Select"))
@@ -893,6 +909,14 @@ void ModuleResourceManager::Load()
 						ResourceAnimation* animation = (ResourceAnimation*)CreateNewResource(type, uid);
 						animation->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
 						animation->name = json_object_dotget_string_with_std(config_node, name + "Name");
+						break;
+					}
+					case Resource::Type::FONT:
+					{
+						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
+						ResourceFont* font = (ResourceFont*)CreateNewResource(type, uid);
+						font->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
+						font->name = json_object_dotget_string_with_std(config_node, name + "Name");
 						break;
 					}
 					case Resource::Type::UNKNOWN:

@@ -118,6 +118,10 @@ void CompScript::Start()
 {
 	if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
 	{
+		if (csharp != nullptr)
+		{
+			LoadValuesGameObjectScript();
+		}
 		App->importer->iScript->SetCurrentScript(csharp);
 		SetCurrentGameObject(parent);
 		StartScript();
@@ -129,10 +133,6 @@ void CompScript::Update(float dt)
 	if (p_active == false && do_start == false)
 	{
 		// Link GameObject* variables of the script
-		if (csharp != nullptr)
-		{
-			LoadValuesGameObjectScript();
-		}
 		if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
 		{
 			SetOwnGameObject(parent);

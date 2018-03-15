@@ -1199,6 +1199,7 @@
     <ClInclude Include="ModuleEventSystemV2.h">
       <Filter>Engine\Events</Filter>
     </ClInclude>
+    <ClInclude Include="ImportFont.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1614,6 +1615,7 @@
     <ClCompile Include="ModuleEventSystemV2.cpp">
       <Filter>Engine\Events</Filter>
     </ClCompile>
+    <ClCompile Include="ImportFont.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">

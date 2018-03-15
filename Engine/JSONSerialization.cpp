@@ -239,7 +239,10 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			}
 		}
 		App->scene->RecalculateStaticObjects();
+
 		templist.clear();
+		
+		App->scene->root->SetName(App->fs->GetOnlyName(sceneName).c_str());
 
 		//Link Skeletons
 		for (std::vector<GameObject*>::iterator it = mesh_gos.begin(); it != mesh_gos.end(); it++)
