@@ -146,13 +146,47 @@ void CompText::ShowInspectorInfo()
 	{
 		show_resource_font_windows = true;
 	}
-	if (ImGui::InputText("Text", (char*)input_text.c_str(), max_input, ImGuiInputTextFlags_EnterReturnsTrue))
+	ImGui::Text("Name: ");
+
+	if (text != nullptr)
+	{
+		ImGui::SameLine();
+		ImGui::Text(text->name.c_str());
+
+	}
+	const char* horizontal[] = { "Right##h_right", "Middle##h_middle", "Left##h_left" };
+	const char* vertical[] = { "Top##v_right", "Middle##v_middle", "Bottom##v_bottom" };
+	ImGui::Text("Horizontal Position");
+	for (int i = 0; i < 3; i++)
+	{
+
+		if (ImGui::RadioButton(horizontal[i], &horizontal_position, i))
+		{
+			h_position = static_cast<HorizontalPosition>(horizontal_position);
+		}
+		if(i < 2)
+			ImGui::SameLine();
+	}
+	ImGui::Text("Vertical Position");
+	for (int i = 0; i < 3; i++)
+	{
+
+		if (ImGui::RadioButton(vertical[i], &vertical_position, i))
+		{
+			v_position = static_cast<VerticalPosition>(vertical_position);
+		}
+		if (i < 2)
+			ImGui::SameLine();
+	}
+	
+	if (ImGui::InputTextMultiline("Text", (char*)input_text.c_str(), max_input, ImVec2(ImGui::GetWindowWidth(),100), ImGuiInputTextFlags_EnterReturnsTrue|ImGuiInputTextFlags_CtrlEnterForNewLine))
 	{
 		SetString(input_text.c_str());
 	}
-	ImGui::DragInt("Input limit", &max_input, 1.0f, 0, 50);
+
 	ImGui::ColorEdit4("Color##image_rgba", color.ptr());
 	ImGui::DragInt("Text Size", &text_size, 1.0f, 0, 200);
+	ImGui::DragInt("Input limit", &max_input, 1.0f, 0, 50);
 	if (text == nullptr || show_resource_font_windows)
 	{
 		if (show_resource_font_windows)
@@ -213,8 +247,8 @@ void CompText::GenerateText()
 
 		quad_pos.push_back(float3(float2(text_rect.x, text_rect.y),0));
 		quad_pos.push_back(float3(float2(text_rect.x+text_rect.z, text_rect.y), 0));
-		quad_pos.push_back(float3(float2(text_rect.x, text_rect.y + text_rect.w), 0));
 		quad_pos.push_back(float3(float2(text_rect.x + text_rect.z, text_rect.y + text_rect.w), 0));
+		quad_pos.push_back(float3(float2(text_rect.x, text_rect.y + text_rect.w), 0));
 		my_canvas_render->ProcessQuad(quad_pos);
 
 	}
