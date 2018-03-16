@@ -9,8 +9,8 @@
 #---------------------------------#
 
 # version format
-version: Project3-0.8.{build}
-
+version: Project3.{build}-{branch}
+  
 #---------------------------------#
 #    environment configuration    #
 #---------------------------------#
@@ -44,7 +44,7 @@ before_package:
   
 artifacts:
 - path: Engine\Game
-  name: Game_files
+  name: Culverine_Engine
   
 #---------------------------------#
 #         notifications           #
@@ -85,15 +85,39 @@ notifications:
 # providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
 # provider names are case-sensitive!
 
-# Deploy to GitHub Releases
-deploy:
-- provider: GitHub
-  description: Release
-  auth_token:
-    secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
-  artifact: game_files
-  draft: false
-  prerelease: true
-  force_update: true
-  on:
-    CONFIGURATION: Release
+for:
+-
+  branches:
+    only:
+      - master
+      
+  # Deploy to GitHub Releases
+  deploy:
+  - provider: GitHub
+    description: Release
+    auth_token:
+      secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
+    artifact: Culverine_Engine
+    draft: false
+    prerelease: false
+    force_update: true
+    on:
+      CONFIGURATION: Release
+      
+-
+  branches:
+    only:
+      - Develop
+
+  # Deploy to GitHub Releases
+  deploy:
+  - provider: GitHub
+    description: Release
+    auth_token:
+      secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
+    artifact: Culverine_Engine
+    draft: false
+    prerelease: true
+    force_update: true
+    on:
+      CONFIGURATION: Debug
