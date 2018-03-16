@@ -200,7 +200,6 @@ public:
 	Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax);
 	~Particle();
 	bool PreUpdate(float dt);
-	bool Update(float dt);
 	bool PostUpdate(float dt);
 
 	bool isDead();												//Check if this particle is dead, we can use this to trigger a child emitter of the particle

@@ -29,8 +29,8 @@ CompScript::~CompScript()
 		{
 			resource_script->num_game_objects_use_me--;
 		}
+		resource_script = nullptr;
 	}
-	resource_script = nullptr;
 }
 
 void CompScript::Init()
@@ -118,6 +118,10 @@ void CompScript::Start()
 {
 	if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
 	{
+		if (csharp != nullptr)
+		{
+			LoadValuesGameObjectScript();
+		}
 		App->importer->iScript->SetCurrentScript(csharp);
 		SetCurrentGameObject(parent);
 		StartScript();
@@ -129,10 +133,6 @@ void CompScript::Update(float dt)
 	if (p_active == false && do_start == false)
 	{
 		// Link GameObject* variables of the script
-		if (csharp != nullptr)
-		{
-			LoadValuesGameObjectScript();
-		}
 		if (resource_script != nullptr && resource_script->GetState() == Resource::State::REIMPORTEDSCRIPT)
 		{
 			SetOwnGameObject(parent);
@@ -154,6 +154,19 @@ void CompScript::postUpdate()
 		{
 			csharp->DoMainFunction(FunctionBase::CS_OnDisable);
 		}
+	}
+}
+
+void CompScript::Clear()
+{
+	if (resource_script != nullptr && csharp != nullptr)
+	{
+		if (resource_script->num_game_objects_use_me > 0)
+		{
+			resource_script->num_game_objects_use_me--;
+		}
+		resource_script = nullptr;
+		csharp->Clear();
 	}
 }
 
@@ -208,14 +221,6 @@ void CompScript::SetOwnGameObject(GameObject* owenerofScript)
 void CompScript::SetCSharp(CSharpScript* csharp_)
 {
 	csharp = csharp_;
-}
-
-void CompScript::ClearVariables()
-{
-	if (resource_script != nullptr && csharp != nullptr)
-	{
-		csharp->Clear();
-	}
 }
 
 bool CompScript::StartScript()

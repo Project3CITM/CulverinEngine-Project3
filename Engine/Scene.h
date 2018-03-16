@@ -42,10 +42,6 @@ public:
 	// Scripting utility functions
 	bool CheckNoFails();
 	void StartScripts();
-	void ClearAllVariablesScript();
-
-	//Remove references of that gameobject in all scripts
-	void SetScriptVariablesToNull(GameObject* go);
 
 	GameObject* GetGameObjectfromScene(bool& active);
 	GameObject* GetGameObjectbyuid(uint uid);

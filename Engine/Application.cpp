@@ -28,6 +28,7 @@
 #include "mmgr/mmgr.h"
 #include "ModuleEventSystem.h"
 #include "ModuleKeyBinding.h"
+#include "ImportScript.h"
 static int malloc_count;
 static void *counted_malloc(size_t size);
 static void counted_free(void *ptr);
@@ -225,16 +226,23 @@ void Application::FinishUpdate()
 	if (want_to_load == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		App->scene->ClearAllVariablesScript();
 		App->scene->DeleteAllGameObjects(App->scene->root);
 		json_seria->LoadScene(actual_scene.c_str());
+
+		if (load_in_game)
+		{
+			importer->iScript->SetMonoMap(App->scene->root, true);
+			scene->root->StartScripts();
+		}
 		//App->resource_manager->ReImportAllScripts();
 		if (engine_state != EngineState::STOP)
 		{
 			change_to_game = true;
 		}
 		want_to_load = false;
+		load_in_game = false;
 	}
+	
 	// ---------------------------------------------
 
 	// Framerate calculations ----------------------
@@ -768,9 +776,10 @@ void Application::WantToSave()
 	want_to_save = true;
 }
 
-void Application::WantToLoad()
+void Application::WantToLoad(bool in_game)
 {
 	want_to_load = true;
+	load_in_game = in_game;
 }
 
 void Application::ChangeCamera(const char* window)

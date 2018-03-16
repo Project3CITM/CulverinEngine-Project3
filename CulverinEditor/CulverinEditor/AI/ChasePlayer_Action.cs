@@ -36,15 +36,12 @@ public class ChasePlayer_Action : Action
         bool ret = move.ActionStart();
         Debug.Log("Chasing Player");
 
-        current_tile_x = move.GetCurrentTileX();
-        current_tile_y = move.GetCurrentTileY();
-
         anim = GetComponent<CompAnimation>();
         anim.SetTransition("ToChase");
 
         event_to_react.start_counting = false;
 
-        move.GoToPrevious(current_tile_x, current_tile_y, event_to_react.objective_tile_x, event_to_react.objective_tile_y, true);
+        move.GoToPrevious(event_to_react.objective_tile_x, event_to_react.objective_tile_y, true);
 
         return ret;
     }
@@ -68,13 +65,8 @@ public class ChasePlayer_Action : Action
         if (timer >= check_player_timer)
         {
             timer = 0.0f;
-
-            current_tile_x = move.GetCurrentTileX();
-            current_tile_y = move.GetCurrentTileY();
-
-            int player_x, player_y;
-            GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out player_x, out player_y);
-            move.GoToPrevious(current_tile_x, current_tile_y, player_x, player_y);
+            GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
+            move.GoToPrevious(player_x, player_y);
         }
 
         if (GetComponent<PerceptionSightEnemy>().player_seen == false)

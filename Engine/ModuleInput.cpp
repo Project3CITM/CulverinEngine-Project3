@@ -274,6 +274,11 @@ update_status ModuleInput::PreUpdate(float dt)
 					LOG("Importing file: %s", e.drop.file);
 					dropedfiles.push_front(e.drop.file);
 				}
+				else if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::FONT)
+				{
+					LOG("Importing file: %s", e.drop.file);
+					dropedfiles.push_front(e.drop.file);
+				}
 				else if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::SCRIPT)
 				{
 					LOG("Importing file: %s", e.drop.file);

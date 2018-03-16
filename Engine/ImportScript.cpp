@@ -15,6 +15,7 @@
 #include "PlayerActions.h"
 #include "CompScript.h"
 #include <direct.h>
+#include "ModuleRenderGui.h"
 #pragma comment(lib, "mono-2.0-sgen.lib")
 
 CSharpScript* ImportScript::current = nullptr;
@@ -452,7 +453,7 @@ MonoObject* ImportScript::GetMonoObject(GameObject* gameobject)
 		std::multimap<MonoObject*, GameObject*>::iterator it = mono_map.begin();
 		while (it != mono_map.end())
 		{
-			if (it->second == gameobject)
+			if (it->second->GetUUID() == gameobject->GetUUID())
 			{
 				return it->first;
 			}
@@ -566,6 +567,88 @@ CSharpScript* ImportScript::GetScriptMono(MonoObject* monoobject)
 	return nullptr;
 }
 
+void ImportScript::RemoveGObjectVarFromScripting(GameObject * object)
+{
+	// Remove GameObject Variable form  multimap only during runtime
+	if (object != nullptr)
+	{
+		std::map<std::string, GameObject*>::const_iterator it_link = map_link_variables.begin();
+		for (; it_link != map_link_variables.end(); it_link++)
+		{
+			if (it_link._Ptr->_Myval.second == object)
+			{
+				map_link_variables.erase(it_link._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+void ImportScript::RemoveGObjectFromMonoMap(GameObject * object)
+{
+	// Remove MonoObject form mono_map multimap only during runtime
+	if (object != nullptr)
+	{
+		std::map<MonoObject*, GameObject*>::const_iterator it_map = mono_map.begin();
+		for (; it_map != mono_map.end(); it_map++)
+		{
+			if (it_map._Ptr->_Myval.second == object)
+			{
+				mono_map.erase(it_map._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+
+void ImportScript::RemoveComponentFromMonoList(Component* comp)
+{
+	// Remove Component from Components multimap only during runtime
+	if (comp != nullptr)
+	{
+		std::map<MonoObject*, Component*>::const_iterator it_comp = mono_comp.begin();
+		for (; it_comp != mono_comp.end(); it_comp++)
+		{
+			if (it_comp._Ptr->_Myval.second == comp)
+			{
+				mono_comp.erase(it_comp._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+void ImportScript::RemoveTransformPosPointerFromMap(float3 * pospointer)
+{
+	// Remove Transform Position pointer from mono_pos multimap only during runtime
+	if (pospointer != nullptr)
+	{
+		std::map<MonoObject*, float3*>::const_iterator it_pos = mono_pos.begin();
+		for (; it_pos != mono_pos.end(); it_pos++)
+		{
+			if (it_pos._Ptr->_Myval.second == pospointer)
+			{
+				mono_pos.erase(it_pos._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+void ImportScript::RemoveGObjectReferencesFromMonoScript(GameObject * object)
+{
+	// Set variables that reference to this object to null, only during runtime
+	if (object != nullptr)
+	{
+		std::map<MonoObject*, CSharpScript*>::const_iterator it_script = mono_script.begin();
+		for (; it_script != mono_script.end(); it_script++)
+		{
+			it_script._Ptr->_Myval.second->RemoveReferences(object);
+			return;
+		}
+	}
+}
 
 bool ImportScript::IsNameUnique(std::string name) const
 {
@@ -966,12 +1049,22 @@ void ImportScript::LoadScene(MonoObject * scene_name)
 		MonoString* strings = mono_object_to_string(scene_name, NULL);
 		const char* scene = mono_string_to_utf8(strings);
 
-		std::string directory_scene = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-		directory_scene += "/";
+		std::string directory_scene = DIRECTORY_ASSETS;
 		directory_scene += scene;
 		directory_scene += ".scene.json";
+		/*
+		----------------------------------------------------------------
+
+		This is a vicente fix, in the future we need to make an event to change scene
+		to turn the focus into nullptr
+		*/
+		App->render_gui->focus = nullptr;
+		App->render_gui->selected = nullptr;
+		//----------------------------------------------------------------
+
+
 		App->SetActualScene(directory_scene.c_str());
-		App->WantToLoad();
+		App->WantToLoad(true);
 	}
 }
 
