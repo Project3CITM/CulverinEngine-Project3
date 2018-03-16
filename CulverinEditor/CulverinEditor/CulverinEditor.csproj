@@ -78,6 +78,7 @@
     <Compile Include="BarrelPuzle\Paths\PuzzlePath4.cs" />
     <Compile Include="BarrelPuzle\Paths\PuzzlePath5.cs" />
     <Compile Include="BarrelPuzle\Paths\PuzzlePath6.cs" />
+    <Compile Include="Player\UI\Test_Input_New.cs" />
     <Compile Include="TestScript.cs" />
     <Compile Include="CompMaterial.cs" />
     <Compile Include="CompParticleSystem.cs" />

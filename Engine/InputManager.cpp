@@ -74,7 +74,7 @@ ControllerAxisAction* InputManager::GetAxis(const char * name)
 
 	for (int i = 0; i < action_vector.size(); i++)
 	{
-		if (action_vector[i]->name == name && action_vector[i]->action_type == ActionInputType::CONTROLLER_AXIS_ACTION && action_vector[i]->action_type == ActionInputType::KEY_ACTION)
+		if (action_vector[i]->name == name && (action_vector[i]->action_type == ActionInputType::CONTROLLER_AXIS_ACTION || action_vector[i]->action_type == ActionInputType::KEY_ACTION))
 		{
 			return (ControllerAxisAction*)action_vector[i];
 		}

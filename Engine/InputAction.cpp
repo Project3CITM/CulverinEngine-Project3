@@ -169,10 +169,10 @@ bool KeyAction::UpdateEventAction(const Uint8 * array_kys)
 {
 
 	int state_event = -1;
-	if (state == Keystateaction::KEY_IDLE_ACTION)
+	/*if (state == Keystateaction::KEY_IDLE_ACTION)
 	{
 		return true;
-	}
+	}*/
 
 	switch (positive_button->key_type)
 	{
@@ -202,6 +202,8 @@ bool KeyAction::UpdateEventAction(const Uint8 * array_kys)
 		else
 			state = Keystateaction::KEY_IDLE_ACTION;
 	}
+
+
 
 	return true;
 }
