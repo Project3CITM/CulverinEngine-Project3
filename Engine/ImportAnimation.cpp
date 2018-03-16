@@ -93,7 +93,7 @@ bool ImportAnimation::Import(const aiAnimation * animation, const char * name, c
 bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resource_animation)
 {
 	LOG("LOADING ANIMATION -----");
-
+	resource_animation->bones.clear();
 	JSON_Value* config_file;
 	JSON_Object* config;
 	JSON_Object* config_node;
