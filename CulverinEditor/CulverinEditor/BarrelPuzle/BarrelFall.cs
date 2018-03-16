@@ -1,129 +1,76 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 using CulverinEditor.Map;
+
 public class BarrelFall : CulverinBehaviour
 {
-    BarrelMovement barrel_mov;
 
-    public GameObject barrel_mov_go;
-    public GameObject puzzle_generator_go;
-    private BarrelPuzzleGenerator puzzle_generator;
-    CompRigidBody rigid_body = null;
-    Vector3 start_pos = Vector3.Zero;
-    Vector3 parent_pos = Vector3.Zero;
-    bool falling = false;
-    
-    float fall_x_pos = 0;
-    float final_x_pos = 0;
-    float start_x_pos = 0;
-    bool move_done = false;
-    bool calc_final_pos = false;
+    public float speed = 1.0f;
+    public int target_tile_x = 0;
+    public int target_tile_y = 0;
+    public float error_margin = 0.01f;
+    public float tile_size = 25.4f;
+    float target_pos_x = 0.0f;
+    float target_pos_y = 0.0f;
+    float floor_height = 0.0f;
 
-    void Start()
+
+    bool in_tile = false;
+
+    void OnEnabled()
     {
-        barrel_mov_go = GetLinkedObject("barrel_mov_go");
-        barrel_mov = barrel_mov_go.GetComponent<BarrelMovement>();
-        rigid_body = gameObject.GetComponent<CompRigidBody>();
-        start_pos = gameObject.GetComponent<Transform>().local_position;
-
-        BarrelManage manage = barrel_mov.instance.GetComponent<BarrelManage>();
-        parent_pos = new Vector3(manage.restart_pos_x, manage.restart_pos_y, manage.restart_pos_z);
-        manage = null;
-
-        puzzle_generator_go = GetLinkedObject("puzzle_generator_go");
-        puzzle_generator = puzzle_generator_go.GetComponent<BarrelPuzzleGenerator>();
-
-        Debug.Log(start_pos.ToString());
-        falling = false;
-        move_done = false;
+       
     }
 
     void Update()
     {
-
-        if (!move_done && !falling)
+       
+         if (in_tile == false)
         {
-            barrel_mov = barrel_mov_go.GetComponent<BarrelMovement>();
-            if (barrel_mov.restart)
+            target_pos_x = target_tile_x * tile_size;
+            target_pos_y = target_tile_y * tile_size;
+            bool in_x = false;
+            bool in_y = false;
+
+            //Displace barrel in X
+            if (Mathf.Abs(target_pos_x - transform.local_position.x) > error_margin)
             {
-                //CAL FUNCTION
-                Quaternion quat = rigid_body.GetColliderQuaternion();
-                rigid_body.MoveKinematic(start_pos * 13 + parent_pos, quat);
+                float displacement;
+                if (target_pos_x - transform.local_position.x < 0)
+                {
+                    displacement = -1;
+                }
+                else displacement = 1;
 
-                rigid_body.ResetForce();
-                rigid_body.ApplyImpulse(Vector3.Right);
-
+                transform.local_position = new Vector3(transform.local_position.x + (Time.deltaTime * speed * displacement), transform.local_position.y, transform.local_position.z);
             }
-        }
+            else in_x = true;
 
-        if (falling)
-        {
-            //ONE WAY TO CONTROL WHERE THE BARRELS FALL
-            Vector3 actual_pos = transform.local_position*13 + parent_pos;
+            //Displace barrel in Y
+            if (Mathf.Abs(target_pos_y - transform.local_position.z) > error_margin)
+            {
+                float displacement;
+                if (target_pos_y - transform.local_position.z < 0)
+                {
+                    displacement = -1;
+                }
+                else displacement = 1;
+
+                transform.local_position = new Vector3(transform.local_position.x, transform.local_position.y, transform.local_position.z + (Time.deltaTime * speed* displacement));
+            }
+            else in_y = true;
+
+            if(in_x && in_y)
+            {
+                //If arrived to tile
+                in_tile = true;
+            }
             
-            //ADD THIS X POSITION
-            Vector3 pos;
-            Debug.Log("Enter");
-            if ((actual_pos.x) - final_x_pos > 0.1f || (actual_pos.x) - final_x_pos < 0.1f)
-            {
-                pos = new Vector3(actual_pos.x + (final_x_pos - actual_pos.x)/10.0f, actual_pos.y - 2.0f, actual_pos.z);
-            }
-            else
-            {
-                pos = new Vector3(actual_pos.x, actual_pos.y - 0.1f, actual_pos.z);
-            }
-
-            Quaternion quat = rigid_body.GetColliderQuaternion();
-            if (actual_pos.y > -15.0f)
-            {
-                rigid_body.MoveKinematic(pos, quat);
-            }
-            else
-            {
-                actual_pos.x = final_x_pos;
-                rigid_body.MoveKinematic(actual_pos, quat);
-                rigid_body.LockTransform();
-                falling = false;
-                move_done = true;
-                Debug.Log("Before Barrel Fall");
-                puzzle_generator.OnBarrelFall(gameObject);
-                Debug.Log("Locked");
-      
-
-            }
         }
-        if (calc_final_pos)
+        else
         {
-            Quaternion quat = rigid_body.GetColliderQuaternion();
-
-            Debug.Log("parent pos : " + parent_pos);
-            start_x_pos = transform.local_position.x * 13 + parent_pos.x;
-            Debug.Log(transform.local_position.ToString());
-            Debug.Log("Start x pos : " + start_x_pos);
-            final_x_pos = Mathf.Round((Mathf.Round(transform.local_position.x / 2) * 2 + 1) * 13 + parent_pos.x);
-            Debug.Log("Final tile pos : " + final_x_pos.ToString());
-            calc_final_pos = false;
-            falling = true;
+            Debug.Log("Barrel Arrived");
         }
     }
-
-    void OnContact()
-    {
-        if (rigid_body != null)
-        {
-            rigid_body.RemoveJoint();
-            calc_final_pos = true;
-            rigid_body.ResetForce();
-            /* Quaternion quat = rigid_body.GetColliderQuaternion();
-             BarrelManage nmana = barrel_mov.instance.GetComponent<BarrelManage>();
-             Vector3 parent_pos = new Vector3(nmana.restart_pos_x, nmana.restart_pos_y, nmana.restart_pos_z);
-
-             Debug.Log("parent pos : " + parent_pos);
-             start_x_pos = transform.local_position.x * 13 + parent_pos.x;
-             Debug.Log(transform.local_position.ToString());
-             Debug.Log("Start x pos : " + start_x_pos);
-             final_x_pos = Mathf.Round((Mathf.Round(transform.local_position.x / 2)*2+1) * 13 + parent_pos.x);
-             Debug.Log("Final tile pos : " + final_x_pos.ToString());*/
-        }
-    }
+   
 }
