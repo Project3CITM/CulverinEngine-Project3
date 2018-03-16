@@ -3,16 +3,18 @@ using CulverinEditor;
 
 public class PushBack_Action : Action
 {
+    public GameObject map;
     Movement_Action move;
     PerceptionSightEnemy perceptionsight;
-    GameObject pathfinder_obj;
     Pathfinder pathfinder;
+    Vector3 push_direction;
 
     void Start()
     {
         move = GetComponent<Movement_Action>();
         perceptionsight = GetComponent<PerceptionSightEnemy>();
-        pathfinder = GetLinkedObject("pathfinder_obj").GetComponent<Pathfinder>();
+        map = GetLinkedObject("map");
+        pathfinder = map.GetComponent<Pathfinder>();
     }
 
     public PushBack_Action()
@@ -20,9 +22,10 @@ public class PushBack_Action : Action
         action_type = ACTION_TYPE.PUSHBACK_ACTION;
     }
 
-    public PushBack_Action(float speed) : base(speed)
+    public PushBack_Action(Vector3 push_direction_, float speed) : base(speed)
     {
         action_type = ACTION_TYPE.PUSHBACK_ACTION;
+        push_direction = push_direction_;
     }
 
     public override bool ActionStart()

@@ -63,7 +63,7 @@ public class Enemy_BT : BT
             return;
         }
 
-        if(next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
+        if(next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION)
         {
             current_action = next_action;
             next_action = null_action;
@@ -140,7 +140,7 @@ public class Enemy_BT : BT
     public void Push(Vector3 dir)
     {
         current_action.Interupt();
-        next_action = new PushBack_Action(anim_speed);
+        next_action = new PushBack_Action(dir, anim_speed);
     }
 
     public bool InRange()
