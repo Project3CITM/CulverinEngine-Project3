@@ -1,4 +1,3 @@
-/*
 #ifndef EVENTSYSTEM_V2
 #define EVENTSYSTEM_V2
 
@@ -6,15 +5,17 @@
 #include <vector>
 #include "Module.h"
 
+/*
 void PushEvent(Event& event);
 void PushImmediateEvent(Event& event);
 void AddListener(EventType type, Module* listener);
+*/
 
-class ModuleEventSystem : public Module
+class ModuleEventSystemV2 : public Module
 {
 public:
-	ModuleEventSystem(bool start_enabled = true);
-	~ModuleEventSystem();
+	ModuleEventSystemV2(bool start_enabled = true);
+	~ModuleEventSystemV2();
 	bool Init(JSON_Object* node);
 	bool Start();
 	update_status PreUpdate(float dt);
@@ -39,4 +40,3 @@ private:
 };
 
 #endif //EVENTSYSTEM_V2
-*/

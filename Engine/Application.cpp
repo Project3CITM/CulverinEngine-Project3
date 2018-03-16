@@ -12,6 +12,7 @@
 #include "ModuleFS.h"
 #include "ModuleResourceManager.h"
 #include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModuleRenderGui.h"
 #include "ModulePhysics.h"
 #include "ModuleLightning.h"
@@ -51,6 +52,7 @@ Application::Application()
 	textures = new ModuleTextures();
 	resource_manager = new ModuleResourceManager();
 	event_system = new ModuleEventSystem();
+	event_system_v2 = new ModuleEventSystemV2();
 
 	random = new math::LCG();
 	json_seria = new JSONSerialization();
@@ -82,6 +84,7 @@ Application::Application()
 	AddModule(textures);
 	AddModule(audio);
 	AddModule(event_system); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
+	AddModule(event_system_v2); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
 	// Renderer last!
 	AddModule(renderer3D);
 	AddModule(render_gui);

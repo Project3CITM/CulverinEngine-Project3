@@ -31,6 +31,7 @@ class ModuleFS;
 class ModuleTextures;
 class ModuleResourceManager;
 class ModuleEventSystem;
+class ModuleEventSystemV2;
 class ModuleShaders;
 class JSONSerialization;
 class ModuleRenderGui;
@@ -126,6 +127,7 @@ public:
 	ModuleTextures* textures = nullptr;
 	ModuleResourceManager* resource_manager = nullptr;
 	ModuleEventSystem* event_system = nullptr;
+	ModuleEventSystemV2* event_system_v2 = nullptr;
 	ModuleShaders* module_shaders = nullptr;
 	ModuleRenderGui* render_gui = nullptr;
 	ModulePhysics* physics = nullptr;
