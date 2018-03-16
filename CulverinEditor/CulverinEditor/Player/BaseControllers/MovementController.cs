@@ -55,6 +55,9 @@ public class MovementController : CulverinBehaviour
 
     private CharactersManager char_manager;
 
+    //Steps sound emitter
+    PerceptionEmitter event_emitter;
+
     //hardcoded
     public GameObject intro;
     public GameObject lore_screen;
@@ -109,6 +112,8 @@ public class MovementController : CulverinBehaviour
                 }
             }
         }
+
+        event_emitter = GetComponent<PerceptionEmitter>();
     }
 
     void Update()
@@ -282,21 +287,25 @@ public class MovementController : CulverinBehaviour
         {
             if (Input.GetKeyDown(KeyCode.A)/*!EnemyInLeft()*/) //Left
             {
+                event_emitter.TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT, 5, 3, curr_x, curr_y);
                 MoveLeft(out tile_mov_x, out tile_mov_y);
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.D) /*&& !EnemyInRight()*/) //Right
             {
+                event_emitter.TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT, 5, 3, curr_x, curr_y);
                 MoveRight(out tile_mov_x, out tile_mov_y);
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.W) /*&& !EnemyInFront()*/) //Up
             {
+                event_emitter.TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT, 5, 3, curr_x, curr_y);
                 MoveForward(out tile_mov_x, out tile_mov_y);
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.S) /*&& !EnemyBehind()*/) //Down
             {
+                event_emitter.TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT, 5, 3, curr_x, curr_y);
                 MoveBackward(out tile_mov_x, out tile_mov_y);
                 return true;
             }

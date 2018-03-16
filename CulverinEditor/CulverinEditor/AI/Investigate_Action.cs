@@ -38,6 +38,7 @@ public class Investigate_Action : Action
 
     public override bool ActionStart()
     {
+        Debug.Log("Going to investigate");
         bool ret = GetComponent<Movement_Action>().ActionStart();
 
         anim.SetClipsSpeed(anim_speed);

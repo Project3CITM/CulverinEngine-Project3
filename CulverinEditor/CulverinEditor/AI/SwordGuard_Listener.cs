@@ -10,6 +10,7 @@ public class SwordGuard_Listener : PerceptionListener
     void Start()
     {
         event_manager = GetLinkedObject("event_manager");
+        my_self = GetLinkedObject("my_self");
         event_manager.GetComponent<PerceptionManager>().AddListener(this);
         events_in_memory = new List<PerceptionEvent>();
     }
@@ -24,7 +25,6 @@ public class SwordGuard_Listener : PerceptionListener
         if (IsPriotitaryEvent(event_recieved))
         {
             ClearEvents();
-            events_in_memory.Add(event_recieved);
         }
         else return;
 
@@ -34,6 +34,7 @@ public class SwordGuard_Listener : PerceptionListener
             case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
 
                 PerceptionHearEvent tmp = (PerceptionHearEvent)event_recieved;
+                Debug.Log("Event Recieved");
 
                 if (OnHearRange(tmp))
                 {
@@ -45,6 +46,8 @@ public class SwordGuard_Listener : PerceptionListener
                         GetComponent<Investigate_Action>().forgot_event = false;
                         GetComponent<Investigate_Action>().SetEvent(event_to_memory);
                         GetComponent<EnemySword_BT>().InterruptAction();
+                        GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.INVESTIGATE_ACTION);
+
                         events_in_memory.Add(event_to_memory);
 
                         Debug.Log("I Heard The Player");
@@ -57,6 +60,7 @@ public class SwordGuard_Listener : PerceptionListener
                         GetComponent<Investigate_Action>().forgot_event = false;
                         GetComponent<Investigate_Action>().SetEvent(event_to_memory);
                         GetComponent<EnemySword_BT>().InterruptAction();
+                        GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.INVESTIGATE_ACTION);
 
                         events_in_memory.Add(event_to_memory);
 
@@ -107,26 +111,25 @@ public class SwordGuard_Listener : PerceptionListener
         }
     }
 
-    bool OnHearRange(PerceptionEvent event_heard)
+    bool OnHearRange(PerceptionHearEvent event_heard)
     {
-
-        PerceptionHearEvent tmp = (PerceptionHearEvent)event_heard;
-
+       
         int my_tile_x = my_self.GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = my_self.GetComponent<Movement_Action>().GetCurrentTileY();
 
-        if (hear_range < tmp.radius_in_tiles)
+        
+        if (hear_range < event_heard.radius_in_tiles)
         {
-            if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles))
+            if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, event_heard.objective_tile_x, event_heard.objective_tile_y, event_heard.radius_in_tiles))
                 return true;
-
+            
             return false;
         }
         else
         {
-            if (RadiusOverlap(tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles, my_tile_x, my_tile_y, hear_range))
+            if (RadiusOverlap(event_heard.objective_tile_x, event_heard.objective_tile_y, event_heard.radius_in_tiles, my_tile_x, my_tile_y, hear_range))
                 return true;
-
+           
             return false;
         }
     }
@@ -162,6 +165,7 @@ public class SwordGuard_Listener : PerceptionListener
             && ((little_tile_y + little_radius) <= (big_tile_y + big_radius)))
             return true;
 
+        Debug.Log("Not overlap");
         return false;
     }
 }

@@ -16,6 +16,7 @@ public class EnemySword_BT : Enemy_BT
 
     protected override void InCombatDecesion()
     {
+        Debug.Log("InCombatDecesion jajajaja");
         //Attack action
         if (InRange())
         {
@@ -55,6 +56,7 @@ public class EnemySword_BT : Enemy_BT
 
     protected override void OutOfCombatDecesion()
     {
+        Debug.Log("OutOfCombatDecesion jajajaja");
         //Investigate
         if (heard_something)
         {

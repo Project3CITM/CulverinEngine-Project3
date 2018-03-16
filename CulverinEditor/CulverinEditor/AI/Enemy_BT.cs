@@ -56,7 +56,9 @@ public class Enemy_BT : BT
 
     public override void MakeDecision()
     {
-        if(current_hp <= 0)
+        Debug.Log("ima here boii");
+
+        if (current_hp <= 0)
         {
             current_action = GetComponent<Die_Action>();
             current_action.ActionStart();
@@ -95,6 +97,7 @@ public class Enemy_BT : BT
                 return;
             }
 
+            Debug.Log("Out combat decisiom");
             OutOfCombatDecesion();
         }
     }
@@ -164,6 +167,7 @@ public class Enemy_BT : BT
             case Action.ACTION_TYPE.GET_HIT_ACTION: next_action = GetComponent<GetHit_Action>(); break;
             case Action.ACTION_TYPE.ENGAGE_ACTION: next_action = GetComponent<Engage_Action>(); break;
             case Action.ACTION_TYPE.DISENGAGE_ACTION: next_action = GetComponent<Disengage_Action>(); break;
+            case Action.ACTION_TYPE.INVESTIGATE_ACTION: next_action = GetComponent<Investigate_Action>(); break;
 
             default: Debug.Log("Unknown action"); break;
         }

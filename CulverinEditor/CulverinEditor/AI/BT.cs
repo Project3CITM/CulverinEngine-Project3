@@ -41,7 +41,7 @@ public class BT : CulverinBehaviour
     }
 
     public virtual void Update()
-    {
+    { 
         if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION)
         {
             switch (current_action.ActionUpdate())
