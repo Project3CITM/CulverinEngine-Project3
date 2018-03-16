@@ -10,6 +10,7 @@ public class Align_Steering : CulverinBehaviour
     float stopping_time = 0.2f;
     float break_acceleration = 0.0f;
     bool in_rot_margin = false;
+    float delta = 0.0f;
 
     void Start()
     {
@@ -21,8 +22,6 @@ public class Align_Steering : CulverinBehaviour
 
     void Update()
     {
-        float delta = move.GetDeltaAngle();
-
         float acceleration = 0;
 
         if (delta > 0)
@@ -44,6 +43,11 @@ public class Align_Steering : CulverinBehaviour
 
         if(move.FinishedRotation())
             in_rot_margin = false;
+    }
+
+    public void SetRotation(float delta)
+    {
+        this.delta = delta;
     }
 }
 

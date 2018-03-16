@@ -91,7 +91,6 @@ public:
 
 	void GetComponentsByRangeOfType(Comp_Type start, Comp_Type end, std::vector<Component*>* fill_comp, bool iterate_hierarchy);
 
-
 	Component* GetComponentByName(const char* name_component) const;
 
 	CompTransform* GetComponentTransform() const;

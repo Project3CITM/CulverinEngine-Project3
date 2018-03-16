@@ -1262,7 +1262,21 @@ void CSharpScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* 
 	}
 	else
 	{
-		LOG("[error] %s has not %s", current_game_object->GetName(), name_component.c_str());
+		if (comp == nullptr)
+		{
+			LOG("[error] %s does not have %s", current_game_object->GetName(), name_component.c_str());
+		}
+		else if (comp->GetEnabled() != active)
+		{
+			if (active == true)
+			{
+				LOG("Component is already active");
+			}
+			else
+			{
+				LOG("Component is already not active");
+			}
+		}
 	}
 }
 

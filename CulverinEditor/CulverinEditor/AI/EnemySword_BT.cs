@@ -73,7 +73,7 @@ public class EnemySword_BT : Enemy_BT
         if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
         {
             Debug.Log("Patrol");
-            GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, origin_path_x, origin_path_y);
+            GetComponent<Movement_Action>().GoTo(origin_path_x, origin_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();
             return;
@@ -81,7 +81,7 @@ public class EnemySword_BT : Enemy_BT
         else
         {
             Debug.Log("Patrol");
-            GetComponent<Movement_Action>().GoTo(my_tile_x, my_tile_y, end_path_x, end_path_y);
+            GetComponent<Movement_Action>().GoTo(end_path_x, end_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();
             return;
