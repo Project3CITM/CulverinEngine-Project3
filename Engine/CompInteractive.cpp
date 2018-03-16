@@ -773,7 +773,7 @@ CompInteractive * CompInteractive::FindInteractive(float3 direction)
 		float3 vector = position_it - position;
 
 		float dot_value = vector.Dot(norm_direction);
-
+		
 		if (dot_value <= 0)
 			continue;
 

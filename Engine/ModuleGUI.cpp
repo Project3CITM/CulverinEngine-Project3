@@ -121,7 +121,6 @@ update_status ModuleGUI::Update(float dt)
 			{
 				if (App->scene->scene_saved)
 				{
-					App->scene->ClearAllVariablesScript();
 					App->scene->DeleteAllGameObjects(App->scene->root);
 					App->event_system->ClearEvents(EventType::EVENT_DRAW);
 					App->scene->root->SetName("NewScene");

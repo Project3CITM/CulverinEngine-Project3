@@ -4,6 +4,7 @@
 #include "ImportMaterial.h"
 #include "ImportScript.h"
 #include "ImportAnimation.h"
+#include "ImportFont.h"
 #include "CompMaterial.h"
 #include "CompTransform.h"
 #include "ModuleFS.h"
@@ -51,6 +52,7 @@ bool ModuleImporter::Init(JSON_Object* node)
 	iMaterial = new ImportMaterial();
 	iScript = new ImportScript();
 	iAnimation = new ImportAnimation();
+	iFont = new ImportFont();
 
 	// Now InitSystem Domain Mono
 	if (iScript->InitScriptingSystem())
@@ -284,6 +286,13 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 
 		break;
 	}
+	case Resource::Type::FONT:
+	{
+		LOG("IMPORTING SCRIPT, File Path: %s", file);
+		iFont->Import(file, 0, isAutoImport);
+
+		break;
+	}
 	case Resource::Type::UNKNOWN:
 	{
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "UNKNOWN file type dropped on window",
@@ -392,6 +401,26 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 		if (isReImport == false)
 		{
 			iScript->Import(file);
+		}
+		break;
+	}
+	case Resource::Type::FONT:
+	{
+		LOG("IMPORTING Font, File Path: %s", file);
+		//
+		bool isReImport = false;
+		for (int i = 0; i < resourcesToReimport.size(); i++)
+		{
+			if (strcmp(file, resourcesToReimport[i].directory_obj) == 0)
+			{
+				iFont->Import(file, resourcesToReimport[i].uuid);
+				isReImport = true;
+				break;
+			}
+		}
+		if (isReImport == false)
+		{
+			iFont->Import(file);
 		}
 		break;
 	}

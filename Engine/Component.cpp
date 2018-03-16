@@ -82,6 +82,11 @@ bool Component::WantDelete() const
 	return to_delete;
 }
 
+bool Component::InScripting() const
+{
+	return in_script;
+}
+
 float3 Component::GetGameObjectPos() const
 {
    	CompTransform* transfrom = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
@@ -102,6 +107,11 @@ void Component::SetActive(bool active)
 void Component::SetUUIDRandom()
 {
 	uid = App->random->Int();
+}
+
+void Component::SetInScripting()
+{
+	in_script = true;
 }
 
 uint Component::GetUUID() const

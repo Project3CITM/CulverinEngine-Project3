@@ -43,6 +43,9 @@ private:
 	bool debug_draw = false;
 	float2 last_size_dock = float2(0, 0);
 	std::vector<CompInteractive*> iteractive_vector;
+
+public:
+
 	CompInteractive* focus = nullptr;
 	CompInteractive* selected = nullptr;
 
