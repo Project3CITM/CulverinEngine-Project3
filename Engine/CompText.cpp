@@ -74,6 +74,7 @@ void CompText::Update(float dt)
 			transform->SetUpdateRect(false);
 		}
 	}
+
 	render = true;
 
 }
@@ -163,6 +164,7 @@ void CompText::ShowInspectorInfo()
 		if (ImGui::RadioButton(horizontal[i], &horizontal_position, i))
 		{
 			h_position = static_cast<HorizontalPosition>(horizontal_position);
+			GenerateText();
 		}
 		if(i < 2)
 			ImGui::SameLine();
@@ -174,6 +176,8 @@ void CompText::ShowInspectorInfo()
 		if (ImGui::RadioButton(vertical[i], &vertical_position, i))
 		{
 			v_position = static_cast<VerticalPosition>(vertical_position);
+			GenerateText();
+
 		}
 		if (i < 2)
 			ImGui::SameLine();
@@ -185,7 +189,17 @@ void CompText::ShowInspectorInfo()
 	}
 
 	ImGui::ColorEdit4("Color##image_rgba", color.ptr());
-	ImGui::DragInt("Text Size", &text_size, 1.0f, 0, 200);
+	if (ImGui::DragInt("Text Size", &text_size, 1.0f, 0, 200))
+	{
+		if (text != nullptr)
+		{
+			text->SetSize(text_size);
+			text->ReLoadToMemory();
+			UpdateText();
+			GenerateText();
+
+		}
+	}
 	ImGui::DragInt("Input limit", &max_input, 1.0f, 0, 50);
 	if (text == nullptr || show_resource_font_windows)
 	{
@@ -236,22 +250,71 @@ void CompText::SetString(std::string input)
 	GenerateText();
 }
 
-void CompText::GenerateText()
+bool CompText::GenerateText()
 {
 	if (text_str.empty())
-		return;
+		return false;
 	float4 rect_transform = parent->GetComponentRectTransform()->GetRect();
+	float width = parent->GetComponentRectTransform()->GetWidth();
+	float height = parent->GetComponentRectTransform()->GetHeight();
+
 	if (TextCanFit(rect_transform, text_rect))
 	{
 		std::vector<float3> quad_pos;
+		float3 right_top=float3::zero;
+		float3 left_top = float3::zero;
+		float3 right_bottom = float3::zero;
+		float3 left_bottom = float3::zero;
 
-		quad_pos.push_back(float3(float2(text_rect.x, text_rect.y),0));
-		quad_pos.push_back(float3(float2(text_rect.x+text_rect.z, text_rect.y), 0));
-		quad_pos.push_back(float3(float2(text_rect.x + text_rect.z, text_rect.y + text_rect.w), 0));
-		quad_pos.push_back(float3(float2(text_rect.x, text_rect.y + text_rect.w), 0));
+		switch (h_position)
+		{
+		case RIGHT_HPOSITION:
+			left_top.x = rect_transform.x;
+			right_top.x = rect_transform.x + text_rect.z;
+			left_bottom.x = rect_transform.x;
+			right_bottom.x = rect_transform.x + text_rect.z;
+			break;
+		case MIDDLE_HPOSITION:
+		
+
+			break;
+		case LEFT_HPOSITION:
+			left_top.x = (rect_transform.x + width) - text_rect.z;
+			right_top.x = rect_transform.x + width;
+			left_bottom.x = (rect_transform.x + width) - text_rect.z;
+			right_bottom.x = rect_transform.x + width;
+			break;
+		default:
+			break;
+		}
+		switch (v_position)
+		{
+		case TOP_VPOSITION:
+			right_top.y = rect_transform.y + height;
+			left_top.y = rect_transform.y + height;
+			right_bottom.y = (rect_transform.y + height) - text_rect.w;
+			left_bottom.y = (rect_transform.y + height) - text_rect.w;
+			break;
+		case MIDDLE_VPOSITION:
+			break;
+		case BOTTOM_POSITION:
+			right_top.y = rect_transform.y + text_rect.w;
+			left_top.y = rect_transform.y + text_rect.w;
+			right_bottom.y = rect_transform.y;
+			left_bottom.y = rect_transform.y;
+			break;
+		default:
+			break;
+		}
+		quad_pos.push_back(left_bottom);
+		quad_pos.push_back(right_bottom);
+		quad_pos.push_back(right_top);
+		quad_pos.push_back(left_top);
 		my_canvas_render->ProcessQuad(quad_pos);
+		return true;
 
 	}
+	return false;
 
 
 }
@@ -281,8 +344,10 @@ void CompText::UpdateText()
 		FreeFont();
 	}
 	update_text = true;
-
-	s_font = TTF_RenderText_Blended(text->font.font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) });
+	int width = 0;
+	int height = 0;
+	TTF_SizeText(text->font.font, text_str.c_str(), &width, &height);
+	s_font = TTF_RenderText_Blended_Wrapped(text->font.font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) }, width);
 
 	GLuint texture;
 	glGenTextures(1, &id_font);

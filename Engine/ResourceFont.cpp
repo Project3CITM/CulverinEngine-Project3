@@ -30,8 +30,8 @@ void ResourceFont::Init(Font copy_font)
 
 bool ResourceFont::ReLoadToMemory()
 {
-	TTF_CloseFont(font.font);
-
+	if (font.font != NULL)
+		TTF_CloseFont(font.font);
 	App->importer->iFont->LoadResource(std::to_string(GetUUID()).c_str(), font.size, this);
 
 	return true;
@@ -51,6 +51,11 @@ bool ResourceFont::LoadToMemory()
 	state = Resource::State::LOADED;
 	LOG("Loaded Resource Material");
 	return true;
+}
+
+void ResourceFont::SetSize(int size)
+{
+	font.size = size;
 }
 
 Resource::State ResourceFont::IsLoadedToMemory()

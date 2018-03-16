@@ -28,7 +28,7 @@ public:
 	void SetRect(float x, float y, float width, float height);
 	void SetString(std::string input);
 
-	void GenerateText();
+	bool GenerateText();
 private:
 	bool TextCanFit(float4 rect_transform, float4 rect_text);
 public:
