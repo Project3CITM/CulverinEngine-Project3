@@ -291,7 +291,10 @@ void CompTransform::ShowTransform(float drag_speed)
 
 void CompTransform::SetPosGlobal(float3 pos)
 {
-	position_global = pos;
+	pos = (global_transform.Transposed() *  float4(pos, 1)).xyz();
+	SetPos(pos);
+
+
 	toUpdate = true;
 }
 
@@ -454,6 +457,7 @@ void CompTransform::UpdateMatrix(ImGuizmo::MODE mode)
 		UpdateGlobalTransform(); /*Then, update global matrix*/
 		break;
 	}
+
 	default:
 		break;
 	}
