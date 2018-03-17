@@ -218,4 +218,24 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         tile_x = (int)((world_x + (tile_size / 2.0f)) / tile_size);
         tile_z = (int)((world_z + (tile_size / 2.0f)) / tile_size);
     }
+
+    // Path getter.
+    public Path GetPath()
+    {
+        return current_path;
+    }
+
+    // Walkability map getter.
+    public int GetWalkabilityAtPos(int x, int y)
+    {
+        if (current_path != null)
+        {
+            if (x >= 0 && x < current_path.width && y >= 0 && y < current_path.height)
+            {
+                return current_path.walkability[x, y];
+            }
+        }
+
+        return -1;
+    }
 }
