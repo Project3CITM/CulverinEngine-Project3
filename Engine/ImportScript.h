@@ -122,6 +122,7 @@ private:
 	static int			ChildCount(MonoObject* object);
 	static MonoObject*	GetChildByIndex(MonoObject* object, int index);
 	static MonoObject*	GetChildByName(MonoObject* object, MonoString* name);
+	static MonoObject*	GetChildByTagIndex(MonoObject* object, MonoString* tag, int index);
 	static void			SetName(MonoObject* object, MonoString* name);
 	static MonoString*	GetName(MonoObject* object);
 	static MonoString*	GetTag(MonoObject* object);

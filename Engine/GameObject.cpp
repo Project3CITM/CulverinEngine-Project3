@@ -2043,7 +2043,28 @@ GameObject* GameObject::GetChildbyName(const char* name) const
 	return nullptr;
 }
 
-GameObject * GameObject::GetChildByRealName(std::string name) const
+GameObject* GameObject::GetChildByTagIndex(const char* tag, int index) const
+{
+	if (childs.size() > 0)
+	{
+		int index_count = 0;
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			if (strcmp(childs[i]->GetTag(), tag) == 0)
+			{
+				if (index_count == index)
+				{
+					return childs[i];
+				}
+				else
+					index_count++;
+			}
+		}
+	}
+	return nullptr;
+}
+
+GameObject* GameObject::GetChildByRealName(std::string name) const
 {
 	if (childs.size() > 0)
 	{

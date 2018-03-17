@@ -5,6 +5,14 @@ using CulverinEditor.Map;
 public class BarrelFall : CulverinBehaviour
 {
 
+    public enum ModeBarrel
+    {
+        UNKOWN = 0,
+        PUZZLE,
+        FILLING
+    }
+
+    ModeBarrel mode_puzzle = ModeBarrel.UNKOWN;
     public float speed = 1.0f;
     public float weight = 1.0f;
     public int target_tile_x = 0;
@@ -22,6 +30,11 @@ public class BarrelFall : CulverinBehaviour
 
     float fall_displacement = 0.0f;
     float fall_time = 0.0f;
+
+    void Start()
+    {
+
+    }
 
     void Update()
     {       
@@ -101,7 +114,12 @@ public class BarrelFall : CulverinBehaviour
         return placed;
     }
 
-    public void SetData(float new_speed, float new_weight, int new_target_tile_x, int new_target_tile_y, float new_initial_fall_speed, float new_floor_height = 0.0f)
+    public bool IsPuzzleMode()
+    {
+        return (mode_puzzle == ModeBarrel.PUZZLE);
+    }
+
+    public void SetData(float new_speed, float new_weight, int new_target_tile_x, int new_target_tile_y, float new_initial_fall_speed, ModeBarrel mode, float new_floor_height = 0.0f)
     {
         speed = new_speed;
         weight = new_weight;
@@ -112,6 +130,7 @@ public class BarrelFall : CulverinBehaviour
 
         target_pos_x = target_tile_x * tile_size;
         target_pos_y = target_tile_y * tile_size;
+        mode_puzzle = mode;
     }
 }
 

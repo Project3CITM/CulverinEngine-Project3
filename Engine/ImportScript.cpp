@@ -776,6 +776,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::ChildCount", (const void*)ChildCount);
 	mono_add_internal_call("CulverinEditor.GameObject::GetChildByIndex", (const void*)GetChildByIndex);
 	mono_add_internal_call("CulverinEditor.GameObject::GetChildByName", (const void*)GetChildByName);
+	mono_add_internal_call("CulverinEditor.GameObject::GetChildByTagIndex", (const void*)GetChildByTagIndex);
 	mono_add_internal_call("CulverinEditor.GameObject::Destroy",(const void*)DeleteGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::SetActive",(const void*)SetActive);
 	mono_add_internal_call("CulverinEditor.GameObject::IsActive",(const void*)IsActive);
@@ -1179,19 +1180,24 @@ MonoObject* ImportScript::GetOwnGameObject()
 	return current->GetOwnGameObject();
 }
 
-int ImportScript::ChildCount(MonoObject * object)
+int ImportScript::ChildCount(MonoObject* object)
 {
 	return current->ChildCount(object);
 }
 
-MonoObject * ImportScript::GetChildByIndex(MonoObject * object, int index)
+MonoObject* ImportScript::GetChildByIndex(MonoObject* object, int index)
 {
 	return current->GetChildByIndex(object, index);
 }
 
-MonoObject * ImportScript::GetChildByName(MonoObject * object, MonoString * name)
+MonoObject* ImportScript::GetChildByName(MonoObject* object, MonoString* name)
 {
 	return current->GetChildByName(object, name);
+}
+
+MonoObject*	ImportScript::GetChildByTagIndex(MonoObject* object, MonoString* tag, int index)
+{
+	return current->GetChildByTagIndex(object, tag, index);
 }
 
 void ImportScript::SetName(MonoObject* object, MonoString* name)

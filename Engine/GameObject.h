@@ -117,6 +117,7 @@ public:
 	uint GetNumChilds() const;
 	GameObject* GetChildbyIndex(uint pos_inVec) const;
 	GameObject* GetChildbyName(const char* name) const;
+	GameObject* GetChildByTagIndex(const char* tag, int index) const;
 	GameObject* GetChildByRealName(std::string name) const;
 	void GetChildDeepSearch(const char * name, std::vector<GameObject*>& GOVector) const;
 	uint GetIndexChildbyName(const char* name) const;

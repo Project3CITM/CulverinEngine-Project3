@@ -992,6 +992,16 @@ MonoObject * CSharpScript::GetChildByName(MonoObject * object, MonoString * name
 	return App->importer->iScript->GetMonoObject(target);
 }
 
+MonoObject* CSharpScript::GetChildByTagIndex(MonoObject* object, MonoString* tag, int index)
+{
+	if (!CheckMonoObject(object))
+	{
+		return nullptr;
+	}
+	GameObject* target = current_game_object->GetChildByTagIndex(mono_string_to_utf8(tag), index);
+	return App->importer->iScript->GetMonoObject(target);
+}
+
 MonoObject*	CSharpScript::Instantiate(MonoObject* object, MonoString* prefab_)
 {
 	const char* prefab = mono_string_to_utf8(prefab_);

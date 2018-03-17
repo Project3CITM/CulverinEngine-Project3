@@ -93,6 +93,9 @@ namespace CulverinEditor
         public extern GameObject GetChildByName(string name);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern GameObject GetChildByTagIndex(string tag, int index);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern Component AddComponent(Type componentType);
 
         public T AddComponent<T>() where T : Component
