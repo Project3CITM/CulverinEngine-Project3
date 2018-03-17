@@ -130,8 +130,13 @@ void CompParticleSystem::Update(float dt)
 void CompParticleSystem::Clear()
 {
 	App->event_system->ClearEvents(EventType::EVENT_PARTICLE_DRAW);
-	part_system->CleanUp();
-	RELEASE(part_system);
+
+	if (part_system != nullptr)
+	{
+		part_system->CleanUp();
+		delete part_system;
+		part_system = nullptr;
+	}
 }
 
 void CompParticleSystem::Draw()

@@ -5,7 +5,6 @@ using CulverinEditor.Debug;
 public class Align_Steering : CulverinBehaviour
 {
     Movement_Action move;
-    public GameObject myself;
     float rot_margin = 0.05f;
     float stopping_time = 0.2f;
     float break_acceleration = 0.0f;
@@ -15,7 +14,6 @@ public class Align_Steering : CulverinBehaviour
     void Start()
     {
         move = GetComponent<Movement_Action>();
-        myself = GetLinkedObject("myself");
         Debug.Log("Align Start");
         SetEnabled(false);
     }
@@ -40,14 +38,16 @@ public class Align_Steering : CulverinBehaviour
             acceleration = break_acceleration;
 
         move.Rotate(acceleration);
-
-        if(move.FinishedRotation())
-            in_rot_margin = false;
     }
 
     public void SetRotation(float delta)
     {
         this.delta = delta;
+    }
+
+    public void Reset()
+    {
+        in_rot_margin = false;
     }
 }
 

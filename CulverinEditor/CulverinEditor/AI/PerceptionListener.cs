@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class PerceptionListener : CulverinBehaviour
 {
     public GameObject event_manager;
-    public GameObject my_self;
     public List<PerceptionEvent> events_in_memory;
 
    void Start()

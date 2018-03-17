@@ -498,18 +498,26 @@ void CompTransform::SetForwardVector(float3 vec)
 	float3 right = math::Cross(up, vec).Normalized();
 	up = math::Cross(vec,right).Normalized();
 
-	float4x4 new_transform = float4x4(float3x3(right, up, vec));
+	float3 translation = global_transform.TranslatePart();
+
+	float4x4 new_transform(float3x4(right, up, vec, translation));
 	
-	const GameObject* parentparent = parent->GetParent();
+	/*const GameObject* parentparent = parent->GetParent();
 	if (parentparent != nullptr && parentparent->GetUUID() != 1)
 	{
 		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
-	}
-	rotation_euler = new_transform.ToEulerXYZ();;
+	}*/
+
+	float4x4 parent_transform = parent->GetComponentTransform()->GetGlobalTransform();
+
+	global_transform = new_transform;
+
+	local_transform = parent_transform.Inverted() * new_transform;
+
+	rotation_euler = local_transform.ToEulerXYZ();
 	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
 	rotation_euler *= RADTODEG;
 	toUpdate = true;
-
 }
 
 void CompTransform::SetBackwardVector(float3 vec)

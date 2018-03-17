@@ -7,12 +7,14 @@ public class Movement_Action : Action
 {
     public bool         look_at_player = false;
     public GameObject   map;
-    public GameObject   myself;
-    public GameObject   mesh;
     public GameObject   player;
     CompAnimation       anim;
     public float        tile_size = 0.0f;
     List<PathNode>      path = null;
+
+    Align_Steering align;
+    Arrive_Steering arrive;
+    Seek_Steering seek;
 
     enum Direction
     {
@@ -67,10 +69,13 @@ public class Movement_Action : Action
     {
         look_at_player = false;
         map = GetLinkedObject("map");
-        myself = GetLinkedObject("myself");
         player = GetLinkedObject("player");
         anim = GetComponent<CompAnimation>();
         anim.SetTransition("ToPatrol");
+
+        align = GetComponent<Align_Steering>();
+        arrive = GetComponent<Arrive_Steering>();
+        seek = GetComponent<Seek_Steering>();
 
         Enemy_BT bt = GetComponent<EnemySword_BT>();
         if(bt == null)
@@ -86,7 +91,7 @@ public class Movement_Action : Action
 
         //GetComponent<CompAnimation>().SetClipsSpeed(bt.anim_speed);
 
-        Vector3 fw = myself.GetComponent<Transform>().GetForwardVector();
+        Vector3 fw = GetComponent<Transform>().GetForwardVector();
         path = new List<PathNode>();
     }
 
@@ -120,24 +125,28 @@ public class Movement_Action : Action
                 current_velocity = current_velocity.Normalized * current_max_vel;
             }
 
+            Debug.Log("Position: " + GetComponent<Transform>().position);
+            Debug.Log("Current Velocity: " + current_velocity);
+            Debug.Log("Current Acceleration: " + current_acceleration);
+
             //Translate
-            Vector3 local_pos = GetComponent<Transform>().local_position;
+            Vector3 pos = GetComponent<Transform>().position;
             float dt = Time.deltaTime;
-            local_pos.x = local_pos.x + (current_velocity.x * dt);
-            local_pos.z = local_pos.z + (current_velocity.z * dt);
-            GetComponent<Transform>().local_position = local_pos;
+            pos.x = pos.x + (current_velocity.x * dt);
+            pos.z = pos.z + (current_velocity.z * dt);
+            GetComponent<Transform>().position = pos;
 
             //Clean
             current_acceleration = new Vector3(Vector3.Zero);
 
             if (ReachedTile() == true)
             {
-                local_pos.x = path[0].GetTileX() * tile_size;
-                local_pos.z = path[0].GetTileY() * tile_size;
-                GetComponent<Transform>().local_position = local_pos;
+                pos.x = path[0].GetTileX() * tile_size;
+                pos.z = path[0].GetTileY() * tile_size;
+                GetComponent<Transform>().position = pos;
 
                 //Update Collider -> 
-                GetComponent<CompCollider>().MoveKinematic(new Vector3(local_pos.x, local_pos.y + 10, local_pos.z));
+                GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
 
                 if (interupt == true)
                         translation_finished = true;
@@ -176,8 +185,10 @@ public class Movement_Action : Action
             if (FinishedRotation() == true)
             {
                 rotation_finished = true;
-                GetComponent<Align_Steering>().SetEnabled(false);
-                Vector3 obj_vec = new Vector3(GetTargetPosition() - GetComponent<Transform>().local_position);
+                Align_Steering align = GetComponent<Align_Steering>();
+                align.SetEnabled(false);
+                align.Reset();
+                Vector3 obj_vec = new Vector3(GetTargetPosition() - GetComponent<Transform>().GetGlobalPosition());
                 GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
 
                 SetDirection();
@@ -198,26 +209,26 @@ public class Movement_Action : Action
         //Tiles
         if (path.Count == 1)
         {
-            GetComponent<Arrive_Steering>().SetEnabled(false);
-            GetComponent<Seek_Steering>().SetEnabled(false);
+            arrive.SetEnabled(false);
+            seek.SetEnabled(false);
             translation_finished = true;
         }
         else
         {
             path.Remove(path[0]);
-            GetComponent<Arrive_Steering>().SetEnabled(true);
-            GetComponent<Seek_Steering>().SetEnabled(true);
+            arrive.SetEnabled(true);
+            seek.SetEnabled(true);
             translation_finished = false;
         }
 
         //Rotation
         if (FinishedRotation() == false)
         {
+            Debug.Log("Hello");
             GetDeltaAngle(true);
             rotation_finished = false;
-            Align_Steering steering = GetComponent<Align_Steering>();
-            steering.SetEnabled(true);
-            steering.SetRotation(GetDeltaAngle());
+            align.SetEnabled(true);
+            align.SetRotation(GetDeltaAngle());
         }
     }
 
@@ -236,22 +247,21 @@ public class Movement_Action : Action
         else
         {
             translation_finished = false;
-            GetComponent<Arrive_Steering>().SetEnabled(true);
-            GetComponent<Seek_Steering>().SetEnabled(true);
+            arrive.SetEnabled(true);
+            seek.SetEnabled(true);
         }
 
         if (FinishedRotation() == false)
         {
             rotation_finished = false;
-            Align_Steering steering = GetComponent<Align_Steering>();
-            steering.SetEnabled(true);
-            steering.SetRotation(GetDeltaAngle());
+            align.SetEnabled(true);
+            align.SetRotation(GetDeltaAngle());
             GetDeltaAngle(true);
         }
         else
         {
             rotation_finished = true;
-            GetComponent<Align_Steering>().SetEnabled(false);
+            align.SetEnabled(false);
         }
     }
 
@@ -318,7 +328,7 @@ public class Movement_Action : Action
 
     public bool ReachedTile()
     {
-        Vector3 my_pos = GetComponent<Transform>().local_position;
+        Vector3 my_pos = GetComponent<Transform>().position;
         Vector3 tile_pos = GetTargetPosition();
 
         Vector3 result = new Vector3 (Vector3.Zero);
@@ -338,95 +348,24 @@ public class Movement_Action : Action
         if (path.Count > 0)
         {
             result.x = path[0].GetTileX() * tile_size;
-            result.y = GetComponent<Transform>().local_position.y;
+            result.y = GetComponent<Transform>().position.y;
             result.z = path[0].GetTileY() * tile_size;
         }
         else
         {
-            result = GetComponent<Transform>().local_position;
-            Debug.Log("GetTargetPosition: Path has no values");
+            result = GetComponent<Transform>().position;
+            Debug.Log("GetTargetPosition(): Path has no values");
         }
 
         return result;
     }
 
-    /*void SetState()
-    {
-        if (!NextToPlayer())
-        {
-            if (path.Count > 0)
-            {
-                if (!FinishedRotation())
-                {
-                    if (GetDeltaAngle() < 0)
-                    {
-                        anim = GetComponent<CompAnimation>();
-
-                        if (chase)
-                        {
-                            Debug.Log("Right Turn Chase mudafukas");
-                            anim.SetTransition("ToRightChase");
-                        }                            
-                        else
-                        {
-                            Debug.Log("Right Turn mudafukas");
-                            anim.SetTransition("ToRight");
-                        }
-
-                        anim.SetClipsSpeed(anim_speed);
-                    }
-                    else
-                    {
-                        anim = GetComponent<CompAnimation>();
-
-                        if (chase)
-                        {
-                            Debug.Log("Left Turn Chase mudafukas");
-                            anim.SetTransition("ToLeftChase");
-                        }
-                        else
-                        {
-                            Debug.Log("Left Turn mudafukas");
-                            anim.SetTransition("ToLeft");
-                        }
-
-                        anim.SetClipsSpeed(anim_speed);
-                    }
-
-                    state = Motion_State.MS_ROTATE;
-                    GetComponent<Align_Steering>().SetEnabled(true);
-                    Debug.Log("State: ROTATE");
-                    return;
-                }
-                if (!ReachedTile())
-                {
-                    anim = GetComponent<CompAnimation>();
-
-                    if (chase == true)
-                        anim.SetTransition("ToChase");
-                    else
-                        anim.SetTransition("ToPatrol");
-
-                    anim.SetClipsSpeed(anim_speed);
-
-                    state = Motion_State.MS_MOVE;
-                    GetComponent<Arrive_Steering>().SetEnabled(true);
-                    GetComponent<Seek_Steering>().SetEnabled(true);
-                    Debug.Log("State: MOVE");
-                    return;
-                }
-            }
-        }
-        Debug.Log("State: NO_STATE");
-        state = Motion_State.MS_NO_STATE;
-    }*/
-
     public float GetDeltaAngle(bool db = false)
     {
         if (look_at_player == false)
         {
-            Vector3 forward = new Vector3(myself.GetComponent<Transform>().GetForwardVector());
-            Vector3 pos = new Vector3(myself.GetComponent<Transform>().GetPosition());
+            Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
+            Vector3 pos = new Vector3(GetComponent<Transform>().position);
             Vector3 target_pos = new Vector3(GetTargetPosition());
             Vector3 obj_vec = new Vector3(target_pos - pos);
 
@@ -456,8 +395,8 @@ public class Movement_Action : Action
         }
         else
         {
-            Vector3 forward = new Vector3(myself.GetComponent<Transform>().GetForwardVector());
-            Vector3 pos = new Vector3(myself.GetComponent<Transform>().GetPosition());
+            Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
+            Vector3 pos = new Vector3(GetComponent<Transform>().position);
             Vector3 player_pos = new Vector3(player.GetComponent<Transform>().GetGlobalPosition());
             Vector3 obj_vec = new Vector3(player_pos.x - pos.x, pos.y, player_pos.z - pos.z);
 
@@ -538,7 +477,7 @@ public class Movement_Action : Action
 
     public void SetDirection()
     {
-        Vector3 forward = new Vector3(myself.GetComponent<Transform>().GetForwardVector());
+        Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
         float delta = Mathf.Atan2(forward.x, forward.y);
 
         if (delta > Mathf.PI)
@@ -564,12 +503,12 @@ public class Movement_Action : Action
 
     public int GetCurrentTileX()
     {
-        return ((int)myself.GetComponent<Transform>().local_position.x / (int)tile_size);
+        return ((int)GetComponent<Transform>().position.x / (int)tile_size);
     }
 
     public int GetCurrentTileY()
     {
-        return ((int)myself.GetComponent<Transform>().local_position.z / (int)tile_size);
+        return ((int)GetComponent<Transform>().position.z / (int)tile_size);
     }
 
     public Vector3 GetCurrentVelocity()
@@ -589,7 +528,7 @@ public class Movement_Action : Action
     
     public float GetDistanceToTarget()
     {
-        return ((GetComponent<Transform>().local_position) - (GetTargetPosition())).Length;
+        return ((GetComponent<Transform>().position) - (GetTargetPosition())).Length;
     }
 
     public void SetCurrentVelocity(Vector3 vel)

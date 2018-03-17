@@ -10,7 +10,6 @@ public class SwordGuard_Listener : PerceptionListener
     void Start()
     {
         event_manager = GetLinkedObject("event_manager");
-        my_self = GetLinkedObject("my_self");
         event_manager.GetComponent<PerceptionManager>().AddListener(this);
         events_in_memory = new List<PerceptionEvent>();
     }
@@ -114,8 +113,8 @@ public class SwordGuard_Listener : PerceptionListener
     bool OnHearRange(PerceptionHearEvent event_heard)
     {
        
-        int my_tile_x = my_self.GetComponent<Movement_Action>().GetCurrentTileX();
-        int my_tile_y = my_self.GetComponent<Movement_Action>().GetCurrentTileY();
+        int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
         
         if (hear_range < event_heard.radius_in_tiles)

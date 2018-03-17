@@ -97,8 +97,8 @@ public class ShieldGuard_Listener : PerceptionListener
     {
         PerceptionHearEvent tmp = (PerceptionHearEvent)event_heard;
 
-        int my_tile_x = my_self.GetComponent<Movement_Action>().GetCurrentTileX();
-        int my_tile_y = my_self.GetComponent<Movement_Action>().GetCurrentTileY();
+        int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
         Debug.Log(my_tile_x.ToString());
         Debug.Log(my_tile_y.ToString());
