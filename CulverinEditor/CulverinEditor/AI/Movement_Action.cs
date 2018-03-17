@@ -125,10 +125,6 @@ public class Movement_Action : Action
                 current_velocity = current_velocity.Normalized * current_max_vel;
             }
 
-            Debug.Log("Position: " + GetComponent<Transform>().position);
-            Debug.Log("Current Velocity: " + current_velocity);
-            Debug.Log("Current Acceleration: " + current_acceleration);
-
             //Translate
             Vector3 pos = GetComponent<Transform>().position;
             float dt = Time.deltaTime;
@@ -206,6 +202,7 @@ public class Movement_Action : Action
 
     private void NextTile()
     {
+        Debug.Log("Get Cancer");
         //Tiles
         if (path.Count == 1)
         {
@@ -215,6 +212,7 @@ public class Movement_Action : Action
         }
         else
         {
+            Debug.Log("Get Cancer 1");
             path.Remove(path[0]);
             arrive.SetEnabled(true);
             seek.SetEnabled(true);

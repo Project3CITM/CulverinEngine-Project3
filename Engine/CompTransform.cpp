@@ -291,9 +291,9 @@ void CompTransform::ShowTransform(float drag_speed)
 
 void CompTransform::SetPosGlobal(float3 pos)
 {
-	pos = (global_transform.Transposed() *  float4(pos, 1)).xyz();
+	float4 tmp = float4(pos, 1);
+	pos = (parent->GetComponentTransform()->global_transform.Inverted()* local_transform * tmp).xyz();
 	SetPos(pos);
-
 
 	toUpdate = true;
 }

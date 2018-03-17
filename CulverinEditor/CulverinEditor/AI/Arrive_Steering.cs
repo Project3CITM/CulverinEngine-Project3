@@ -21,7 +21,7 @@ public class Arrive_Steering : CulverinBehaviour
     {
         Vector3 acceleration = Vector3.Zero;
         Vector3 ideal_velocity = new Vector3(Vector3.Zero);
-        Vector3 distance_to_target = new Vector3(GetComponent<Movement_Action>().GetTargetPosition() - transform.GetPosition());
+        Vector3 distance_to_target = new Vector3(GetComponent<Movement_Action>().GetTargetPosition() - transform.position);
         distance_to_target.y = 0;
         
         //On stop zone case
