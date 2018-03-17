@@ -7,7 +7,12 @@ public class Game : CulverinBehaviour
     {
         if(Input.GetInput_KeyDown("FinalSkill","Player"))
         {
-            SceneManager.LoadScene("Pause");
+            SceneManager.LoadScene("WinScreen");
+        }
+
+        else if (Input.GetKeyDown(KeyCode.Num9))
+        {
+            SceneManager.LoadScene("LoseScreen");
         }
     }
 }
