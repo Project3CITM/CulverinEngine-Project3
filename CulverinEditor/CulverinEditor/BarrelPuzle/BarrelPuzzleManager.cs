@@ -31,12 +31,12 @@ public class BarrelPuzzleManager : CulverinBehaviour
     void Update()
     {
         // TMP: Debugging purposes.
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            must_move = !must_move;
-            Debug.Log("Space pressed " + ((must_move) ? "started" : "stopped") + " moving.");
-            Debug.Log("Destination: " + water_destination_pos.x + ", " + water_destination_pos.y + ", " + water_destination_pos.z);
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    must_move = !must_move;
+        //    Debug.Log("Space pressed " + ((must_move) ? "started" : "stopped") + " moving.");
+        //    Debug.Log("Destination: " + water_destination_pos.x + ", " + water_destination_pos.y + ", " + water_destination_pos.z);
+        //}
 
         if (must_move)
         {
@@ -77,5 +77,10 @@ public class BarrelPuzzleManager : CulverinBehaviour
 
             Debug.Log("Water final pos: " + pos.x + ", " + pos.y + ", " + pos.z);
         }
+    }
+
+    public void OnPuzzleActivated()
+    {
+        must_move = true;
     }
 }

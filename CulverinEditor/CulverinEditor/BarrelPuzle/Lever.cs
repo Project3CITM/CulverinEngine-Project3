@@ -42,8 +42,20 @@ public class Lever : CulverinBehaviour
 
     private int[,] map;
 
+    //--------------
+
+    private CompAnimation anim_controller = null;
+    private bool on_lever_animation = false;
+    private string lever_animation_name = ""; // TODO: Set the animation name
+    private BarrelPuzzleManager barrel_puzzel_manager = null; // Put both scripts in same GO.
+
+    //--------------
+
     void Start()
     {
+        anim_controller = GetComponent<CompAnimation>();
+        barrel_puzzel_manager = GetComponent<BarrelPuzzleManager>();
+
         Puzzle_line_1 = GetLinkedObject("Puzzle_line_1");
         Puzzle_line_2 = GetLinkedObject("Puzzle_line_2");
         Puzzle_line_3 = GetLinkedObject("Puzzle_line_3");
@@ -92,6 +104,27 @@ public class Lever : CulverinBehaviour
     }
     void Update()
     {
+        //-- TMP-----
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Puzzle activated");
+            OnLeverActivated();
+        }
+        //---------------------
+
+        if (on_lever_animation == true)
+        {
+            if(anim_controller != null)
+            {
+                if (anim_controller.IsAnimationStopped(lever_animation_name))
+                {
+                    // The lever animation has stopped so puzzle must start.
+                    on_lever_animation = false;
+                    OnLeverAnimFinish();
+                }
+            }
+        }
+
         if (active_lever)
         {
             if (!phase1) // Set info all barrels
@@ -255,4 +288,19 @@ public class Lever : CulverinBehaviour
         }
     }
 
+    void OnLeverActivated()
+    {
+        // Called when lever is activated. Set flag to true and play the animation.
+        on_lever_animation = true;
+        if(anim_controller != null)
+            anim_controller.PlayAnimation(lever_animation_name);
+    }
+
+    void OnLeverAnimFinish()
+    {
+        // Activate the water
+        barrel_puzzel_manager.OnPuzzleActivated();
+        // Activate the puzzle
+        active_lever = true; // TODO: Verify this is correct
+    }
 }
