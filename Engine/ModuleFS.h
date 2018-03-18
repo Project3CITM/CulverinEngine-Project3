@@ -17,6 +17,7 @@
 #define DIRECTORY_LIBRARY_MATERIALS "Library/Materials/"
 #define DIRECTORY_LIBRARY_SCRIPTS "Library/Scripts/"
 #define DIRECTORY_LIBRARY_ANIMATIONS "Library/Animations/"
+#define DIRECTORY_LIBRARY_FONTS "Library/Fonts/"
 
 class TextEditor;
 
@@ -28,7 +29,8 @@ enum DIRECTORY_IMPORT
 	IMPORT_DIRECTORY_LIBRARY_MESHES,
 	IMPORT_DIRECTORY_LIBRARY_MATERIALS,
 	IMPORT_DIRECTORY_LIBRARY_SCRIPTS,
-	IMPORT_DIRECTORY_LIBRARY_ANIMATIONS
+	IMPORT_DIRECTORY_LIBRARY_ANIMATIONS,
+	IMPORT_DIRECTORY_LIBRARY_FONT
 };
 
 struct AllFiles
@@ -67,7 +69,8 @@ public:
 	bool SaveScript(std::string name, TextEditor& editor, DIRECTORY_IMPORT directory = IMPORT_DEFAULT);
 	// Load Script From Assets ------------
 	std::string LoadScript(std::string file);
-
+	// Duplicate File
+	bool DuplicateFile(const char* origin, std::string destination, DIRECTORY_IMPORT directory = IMPORT_DEFAULT);
 	// Get Files to Window Project ---------------------------------------------------
 	void GetAllFolders(std::experimental::filesystem::path path, std::string folderActive, std::vector<FoldersNew>& folders);
 	bool GetAllFoldersChild(std::experimental::filesystem::path path, std::string folderActive, std::vector<FoldersNew>& folders);

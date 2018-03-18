@@ -56,7 +56,7 @@ public:
 	std::vector<ColorVar>::iterator		it_color_variables;
 	std::vector<boolVar>::iterator		it_bool_variables;
 
-
+	uint active_num = 0;
 };
 
 #endif

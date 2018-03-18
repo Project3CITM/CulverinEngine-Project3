@@ -76,17 +76,21 @@ public:
 
 	void Enable_Text_Editor();
 	void SendEventWithAllShaders();
+	
+
+public:
 	std::string Shader_Directory_fs;
 	std::string Material_Directory_fs;
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;
 	std::vector<Material*> materials;
 
-public:
 	std::string last_shader_error = "";
 	TextEditor editor_shaders;
 	bool enable_editor = false;
 	Shader shader_text_active;
+
+
 };
 
 

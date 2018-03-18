@@ -19,8 +19,6 @@ public class MovementController : CulverinBehaviour
         DOWN
     }
 
-    GameObject enemy_obj = null;
-
     public Direction curr_dir = Direction.NORTH;
     public Facing curr_fac = Facing.STRAIGHT;
     public int start_direction = 1;
@@ -56,20 +54,25 @@ public class MovementController : CulverinBehaviour
     private CharactersManager char_manager;
 
     //hardcoded
-    public GameObject intro;
-    public GameObject lore_screen;
+    //public GameObject intro;
+    //public GameObject lore_screen;
     //2D coordinates, y=z in 3D coordinates
 
     void Start()
     {
-        char_manager = GetComponent<CharactersManager>();
+        //char_manager = GetComponent<CharactersManager>();
 
         audio = GetComponent<CompAudio>();
         audio.PlayEvent("PlayMusic");
+        Debug.Log("Play Music");
 
         curr_dir = (Direction)start_direction;
         map_width = Map.GetWidthMap();
         map_height = Map.GetHeightMap();
+
+        Debug.Log("Get Map");
+        Debug.Log(map_width);
+        Debug.Log(map_height);
 
         array2Da = new int[map_width, map_height];
         for (int y = 0; y < map_height; y++)
@@ -83,7 +86,10 @@ public class MovementController : CulverinBehaviour
         endPosition = GetComponent<Transform>().local_position;
         endRotation = GetComponent<Transform>().local_rotation;
 
+        Debug.Log("End Position");
+
         string map = Map.GetMapString();
+        Debug.Log(map);
 
         int t = 0;
         for (int y = 0; y < map_height; y++)
@@ -94,6 +100,8 @@ public class MovementController : CulverinBehaviour
                 t += 1;
             }
         }
+
+        Debug.Log("Parse Map");
 
         //Search player position
         for (int y = 0; y < map_height; y++)
@@ -109,33 +117,36 @@ public class MovementController : CulverinBehaviour
                 }
             }
         }
-        intro = GetLinkedObject("intro");
-        intro.SetActive(true);
-        lore_screen = GetLinkedObject("lore_screen");
-        lore_screen.SetActive(false);
-        Time.timeScale = 0;
+
+        Debug.Log("Move initial popsition");
+
+        //intro = GetLinkedObject("intro");
+        //intro.SetActive(true);
+        //lore_screen = GetLinkedObject("lore_screen");
+        //lore_screen.SetActive(false);
+        //Time.timeScale = 0;
     }
 
     void Update()
     {
-        if (intro.IsActive() || lore_screen.IsActive())
-        {
-            if (Input.GetKeyDown(KeyCode.Space)|| Input.GetInput_KeyDown("Interact", "Player"))
-            {
-                if (intro.IsActive())
-                {
-                    Debug.Log("From intro to lore");
-                    intro.SetActive(false);
-                    lore_screen.SetActive(true);
-                }
-                else if (lore_screen.IsActive())
-                {
-                    Debug.Log("From lore to game");
-                    lore_screen.SetActive(false);
-                    Time.timeScale = 1;
-                }
-            }
-        }
+        //if (intro.IsActive() || lore_screen.IsActive())
+        //{
+        //    if (Input.GetKeyDown(KeyCode.Space)|| Input.GetInput_KeyDown("Interact", "Player"))
+        //    {
+        //        if (intro.IsActive())
+        //        {
+        //            Debug.Log("From intro to lore");
+        //            intro.SetActive(false);
+        //            lore_screen.SetActive(true);
+        //        }
+        //        else if (lore_screen.IsActive())
+        //        {
+        //            Debug.Log("From lore to game");
+        //            lore_screen.SetActive(false);
+        //            Time.timeScale = 1;
+        //        }
+        //    }
+        //}
         start_direction = (int)curr_dir;
 
         CheckIsWalkable();
@@ -151,7 +162,6 @@ public class MovementController : CulverinBehaviour
             {
                 // CHECK MOVEMENT --------------------------
                 CheckMovement();
-
             }
             // CHECK FACING --------------------------
             //CheckFacingRotation();
@@ -164,7 +174,7 @@ public class MovementController : CulverinBehaviour
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
                 curr_x += tile_mov_x;
                 curr_y += tile_mov_y;
-                char_manager.SetCurrentPosition();
+                //char_manager.SetCurrentPosition();
                 moving = true;
             }
         }
@@ -197,7 +207,7 @@ public class MovementController : CulverinBehaviour
                         GetComponent<Transform>().RotateAroundAxis(Vector3.Up, -marge);
                     }
                 }
-                char_manager.SetCurrentPosition();
+                //char_manager.SetCurrentPosition();
             }
         }
         else if (face_rotating)
@@ -255,7 +265,7 @@ public class MovementController : CulverinBehaviour
 
     private bool CheckRotation()
     {
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
+        if (1 == 1/*GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle()*/)
         {
             if (Input.GetKeyDown(KeyCode.Q)) //Left
             {
@@ -301,26 +311,30 @@ public class MovementController : CulverinBehaviour
 
     private bool CheckMovement()
     {
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
+        if (1 == 1/*GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle()*/)
         {
             if (Input.GetKeyDown(KeyCode.A)/*!EnemyInLeft()*/) //Left
             {
                 MoveLeft(out tile_mov_x, out tile_mov_y);
+                Debug.Log("A");
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.D) /*&& !EnemyInRight()*/) //Right
             {
                 MoveRight(out tile_mov_x, out tile_mov_y);
+                Debug.Log("D");
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.W) /*&& !EnemyInFront()*/) //Up
             {
                 MoveForward(out tile_mov_x, out tile_mov_y);
+                Debug.Log("W");
                 return true;
             }
             else if (Input.GetKeyDown(KeyCode.S) /*&& !EnemyBehind()*/) //Down
             {
                 MoveBackward(out tile_mov_x, out tile_mov_y);
+                Debug.Log("S");
                 return true;
             }
 
@@ -361,7 +375,7 @@ public class MovementController : CulverinBehaviour
 
     private void CheckFacingRotation()
     {
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
+        if (1==1/*GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle()*/)
         {
             if (Input.GetKeyDown(KeyCode.Z)) //Look Up
             {

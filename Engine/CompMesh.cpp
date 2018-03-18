@@ -55,8 +55,10 @@ CompMesh::~CompMesh()
 			resource_mesh->num_game_objects_use_me--;
 		}
 	}
+	comp_material->material->active_num--;
 	comp_material = nullptr;
 	resource_mesh = nullptr;
+
 }
 
 //void CompMesh::Init(std::vector<_Vertex> v, std::vector<uint> i)

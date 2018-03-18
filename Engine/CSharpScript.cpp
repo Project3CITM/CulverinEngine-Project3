@@ -1159,6 +1159,7 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 					if (new_object)
 					{
 						App->importer->iScript->UpdateMonoComp(comp, new_object);
+						comp->SetInScripting();
 						return new_object;
 					}
 				}
@@ -1323,13 +1324,20 @@ void CSharpScript::Load(const JSON_Object* object, std::string name)
 }
 
 // Link script variables that has GameObjects assigned
-void CSharpScript::LoadValuesGO()
+void CSharpScript::LoadValuesGO(GameObject* sync_parent)
 {
 	for (int i = 0, j = 0; i < variables.size(); i++)
 	{
 		if (variables[i]->type == VarType::Var_GAMEOBJECT && re_load_values.size() > 0 && re_load_values.size() > j)
 		{
-			variables[i]->game_object = App->scene->GetGameObjectbyuid(re_load_values[j++]);
+			if (sync_parent != nullptr)
+			{
+				variables[i]->game_object = sync_parent->GetGameObjectbyuid(re_load_values[j++]);
+			}
+			else
+			{
+				variables[i]->game_object = App->scene->GetGameObjectbyuid(re_load_values[j++]);
+			}
 			variables[i]->SetMonoValue(variables[i]->game_object);
 		}
 	}

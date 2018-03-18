@@ -21,7 +21,7 @@ public:
 	void Start();
 	void Update(float dt);
 	void postUpdate();
-	void ClearVariables();
+	void Clear();
 
 	bool StartScript();
 	bool UpdateScript(float dt);
@@ -54,6 +54,7 @@ public:
 	// SAVE - LOAD METHODS ----------------
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+	void SyncComponent(GameObject* sync_parent);
 	void LoadValuesGameObjectScript();
 	// -------------------------------------
 

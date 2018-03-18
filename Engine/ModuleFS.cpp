@@ -40,6 +40,8 @@ bool ModuleFS::Init(JSON_Object * node)
 	CreateFolder("Library/Materials");
 	CreateFolder("Library/Scripts");
 	CreateFolder("Library/Animations");
+	CreateFolder("Library/Fonts");
+
 	CreateFolder("Library/JSON");
 	CreateFolder("Assets");
 	CreateFolder("Assets/Maps");
@@ -363,6 +365,10 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 			{
 				files_to_import.push_back(files[i].directory_name);
 			}
+			else if (App->resource_manager->CheckFileType(files[i].directory_name) == Resource::Type::FONT)
+			{
+				files_to_import.push_back(files[i].directory_name);
+			}
 		}
 	}
 	std::list<std::string>::iterator it = files_to_import.begin();
@@ -437,6 +443,19 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 					if (last_write != cftime)
 					{
 						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDScript(it._Ptr->_Myval.c_str()));
+						if (only_meta == 0)
+						{
+							only_meta = 2;
+						}
+					}
+					break;
+				}
+				case Resource::Type::FONT:
+				{
+					std::time_t last_write = App->json_seria->GetLastWriteFont(it._Ptr->_Myval.c_str());
+					if (last_write != cftime)
+					{
+						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDFont(it._Ptr->_Myval.c_str()));
 						if (only_meta == 0)
 						{
 							only_meta = 2;
@@ -878,6 +897,11 @@ bool ModuleFS::DeleteFileLibrary(const char* file, DIRECTORY_IMPORT directory)
 		temp = DIRECTORY_LIBRARY_ANIMATIONS + temp;
 		break;
 	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_FONT:
+	{
+		temp = DIRECTORY_LIBRARY_FONTS + temp;
+		break;
+	}
 	}
 	if (std::remove(temp.c_str()) == 0)
 	{
@@ -920,6 +944,11 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 	case IMPORT_DIRECTORY_LIBRARY_ANIMATIONS:
 	{
 		temp = DIRECTORY_LIBRARY_ANIMATIONS + temp;
+		break;
+	}
+	case IMPORT_DIRECTORY_LIBRARY_FONT:
+	{
+		temp = DIRECTORY_LIBRARY_FONTS + temp;
 		break;
 	}
 	}
@@ -986,6 +1015,11 @@ bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY
 	case IMPORT_DIRECTORY_LIBRARY_ANIMATIONS:
 	{
 		name = DIRECTORY_LIBRARY_ANIMATIONS + name;
+		break;
+	}
+	case IMPORT_DIRECTORY_LIBRARY_FONT:
+	{
+		name = DIRECTORY_LIBRARY_FONTS + name;
 		break;
 	}
 	}
@@ -1068,6 +1102,47 @@ std::string ModuleFS::LoadScript(std::string file)
 		return str;
 	}
 	return "";
+}
+
+bool ModuleFS::DuplicateFile(const char * origin, std::string destination, DIRECTORY_IMPORT directory)
+{
+	std::string name;
+	switch (directory)
+	{
+	case DIRECTORY_IMPORT::IMPORT_DEFAULT:
+	{
+		break;
+	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_ASSETS:
+	{
+		name = DIRECTORY_ASSETS + destination;
+		break;
+	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY:
+	{
+		name = DIRECTORY_LIBRARY + destination;
+		break;
+	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_MESHES:
+	{
+		name = DIRECTORY_LIBRARY_MESHES + destination;
+		break;
+	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_MATERIALS:
+	{
+		name = DIRECTORY_LIBRARY_MATERIALS + destination;
+		break;
+	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_FONT:
+	{
+		name = DIRECTORY_LIBRARY_FONTS + destination;
+		break;
+	}
+	}
+	std::ifstream  src(origin, std::ios::binary);
+	std::ofstream  dst(name.c_str(), std::ios::binary);
+	dst << src.rdbuf();
+	return true;
 }
 
 bool ModuleFS::CheckIsFileExist(const std::string& name)
@@ -1186,6 +1261,17 @@ std::string ModuleFS::GetOnlyName(std::string file)
 	nameFile = nameFile.substr(EndName + 1);
 	EndName = nameFile.find_last_of(".");
 	nameFile = nameFile.substr(0, EndName);
+	bool stop = false;
+	while (stop == false)
+	{
+		EndName = nameFile.find_last_of(".");
+		if (EndName != std::string::npos)
+		{
+			nameFile = nameFile.substr(0, EndName);
+		}
+		else
+			stop = true;
+	}
 
 	return nameFile;
 }
