@@ -40,6 +40,7 @@ public:
 class BlendingClip
 {
 public:
+	std::string name = "Blending Clip";
 	AnimationClip* clip = nullptr;
 	bool active = false;
 	float weight = 0.0f;
@@ -54,7 +55,9 @@ public:
 	void CreateBlendingClip();
 
 	void SetActiveBlendingClip(BlendingClip * blnd_clip);
+	void SetActiveBlendingClip(std::string name);
 	BlendingClip* GetActiveBlendingClip();
+	void SetActiveBlendingClipWeight(float weight);
 
 	AnimationClip* clip = nullptr;
 	bool active = false;
@@ -102,6 +105,7 @@ public:
 	AnimationNode* GetNodeFromName(std::string name) const;
 	AnimationTransition* GetTransitionFromName(std::string name, AnimationNode* node) const;
 	AnimationClip* GetBlendingClip() const;
+	AnimationNode* GetActiveNode()const;
 
 	// EDITOR METHODS ---------
 	void ShowOptions();
