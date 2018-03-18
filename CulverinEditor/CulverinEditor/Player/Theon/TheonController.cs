@@ -81,6 +81,7 @@ public class TheonController : CharacterController
         arrow1 = false;
         arrow2 = false;
         arrow3 = false;
+        secondary_ability = false;
         arrowtimers = 0.0f;
     }
 
@@ -210,6 +211,8 @@ public class TheonController : CharacterController
     public override void SecondaryAbility()
     {
         secondary_ability = true;
+        // Decrease stamina -----------
+        DecreaseStamina(sec_ability_cost);
     }
 
 

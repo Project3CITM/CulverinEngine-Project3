@@ -37,7 +37,7 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
     //private int map_width = 0;
     //private int map_height = 0;
 
-    const float tile_size = 25.4f;
+    float tile_size = 25.4f;
 
     // TMP: Testing purposes
     private List<GameObject> tmp_test_path;
@@ -53,7 +53,7 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         //map_width = Map.GetWidthMap();
         //map_height = Map.GetHeightMap();
         //GetPuzzleStartingPos();
-
+        tile_size = 25.4f;
         // TMP:
         tmp_test_path = new List<GameObject>();
 
