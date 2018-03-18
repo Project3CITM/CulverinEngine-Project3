@@ -279,7 +279,7 @@ public:
 	// LOAD - SAVE METHODS ------------------
 	void Save(JSON_Object* object, std::string name) const;
 	void Load(const JSON_Object* object, std::string name);
-	void LoadValuesGO();
+	void LoadValuesGO(GameObject* sync_parent);
 
 	GameObject* GetGameObject() const;
 

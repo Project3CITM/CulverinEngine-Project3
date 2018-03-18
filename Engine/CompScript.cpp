@@ -686,14 +686,19 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompScript::SyncComponent(GameObject * sync_parent)
+{
+	if (csharp != nullptr && csharp->NeedToLinkGO())
+	{
+		csharp->LoadValuesGO(sync_parent);
+	}
+}
+
 void CompScript::LoadValuesGameObjectScript()
 {
-	if (csharp != nullptr)
+	if (csharp != nullptr && csharp->NeedToLinkGO())
 	{
-		if (csharp->NeedToLinkGO())
-		{
-			csharp->LoadValuesGO();
-		}
+		csharp->LoadValuesGO(nullptr);
 	}
 }
 
