@@ -3,18 +3,15 @@ using CulverinEditor;
 
 public class PushBack_Action : Action
 {
-    public GameObject map;
-    Movement_Action move;
-    PerceptionSightEnemy perceptionsight;
-    Pathfinder pathfinder;
     Vector3 push_direction;
+
+    int target_x;
+    int target_y;
 
     void Start()
     {
-        move = GetComponent<Movement_Action>();
-        perceptionsight = GetComponent<PerceptionSightEnemy>();
-        map = GetLinkedObject("map");
-        pathfinder = map.GetComponent<Pathfinder>();
+        target_x = 0;
+        target_y = 0;
     }
 
     public PushBack_Action()
@@ -30,31 +27,14 @@ public class PushBack_Action : Action
 
     public override bool ActionStart()
     {
-        Debug.Log("PUSHBACK!");
         GetComponent<CompAnimation>().SetTransition("ToHit");
         GetComponent<Align_Steering>().SetEnabled(false);
-        uint target_x = (uint)move.GetCurrentTileX();
-        uint target_y = (uint)move.GetCurrentTileY();
 
-        switch(perceptionsight.GetDirection())
-        {
-            case PerceptionSightEnemy.DIRECTION.E_DIR_SOUTH:
-                target_y -= 1;
-                break;
-            case PerceptionSightEnemy.DIRECTION.E_DIR_NORTH:
-                target_y += 1;
-                break;
-            case PerceptionSightEnemy.DIRECTION.E_DIR_EAST:
-                target_x -= 1;
-                break;
-            case PerceptionSightEnemy.DIRECTION.E_DIR_WEST:
-                target_x += 1;
-                break;
-        }
-        if (!pathfinder.IsWalkableTile(target_x, target_y))
-        {
-            interupt = true;
-        }
+        target_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        target_y = GetComponent<Movement_Action>().GetCurrentTileY();
+
+        target_x += (int)push_direction.x;
+        target_y += (int)push_direction.z;
 
         return true;
     }
@@ -62,14 +42,23 @@ public class PushBack_Action : Action
     public override ACTION_RESULT ActionUpdate()
     {
         if (interupt == true)
-        {
             return ACTION_RESULT.AR_FAIL;
-        }
-        if (move.ReachedTile())
+
+        if (GetComponent<Movement_Action>().ReachedTile(target_x, target_y))
         {
-            return ACTION_RESULT.AR_IN_PROGRESS;
+            Debug.Log("Pushed");
+            GetComponent<CompAnimation>().SetTransition("ToIdle");
+            return ACTION_RESULT.AR_SUCCESS;
         }
 
+        Vector3 my_pos = GetComponent<Transform>().position;
+
+        Vector3 movement = new Vector3(Vector3.Zero);
+        movement.x = target_x - my_pos.x;
+        movement.z = target_y - my_pos.z;
+
+        GetComponent<Transform>().SetPosition(my_pos + (movement * Time.deltaTime * anim_speed));
+        
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 

@@ -7,6 +7,7 @@ public class Enemy_BT : BT
     {
         ENEMY_ALIVE,
         ENEMY_DAMAGED,
+        ENEMY_STUNNED,
         ENEMY_DEAD
     }
 
@@ -51,12 +52,16 @@ public class Enemy_BT : BT
         //Update attack cooldown
         attack_timer += Time.deltaTime;
 
+        if (Input.GetKeyDown(KeyCode.P))
+            PushEnemy(new Vector3(1, 0, 0));
+
         base.Update();
     }
 
     public override void MakeDecision()
     {
         Debug.Log("ima here boii");
+        Debug.Log(next_action.action_type);
 
         if (current_hp <= 0)
         {
@@ -67,12 +72,14 @@ public class Enemy_BT : BT
 
         if(next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION)
         {
+            Debug.Log(next_action.action_type);
             current_action = next_action;
             next_action = null_action;
             current_action.ActionStart();
+            return;
         }
 
-        if(in_combat)
+        if (in_combat)
         {            
             if (next_action.action_type == Action.ACTION_TYPE.ENGAGE_ACTION)
             {
@@ -140,10 +147,14 @@ public class Enemy_BT : BT
         }
     }
 
-    public void Push(Vector3 dir)
+    public void PushEnemy(Vector3 dir)
     {
         current_action.Interupt();
-        next_action = new PushBack_Action(dir, anim_speed);
+
+        if (!GetComponent<Movement_Action>().IsWalkable((uint)(GetComponent<Movement_Action>().GetCurrentTileX() + dir.x), (uint)(GetComponent<Movement_Action>().GetCurrentTileY() + dir.z)))
+            next_action = new PushBack_Action(dir, anim_speed);// TODO: STUN ACTION
+        else
+            next_action = new PushBack_Action(dir, anim_speed);
     }
 
     public bool InRange()

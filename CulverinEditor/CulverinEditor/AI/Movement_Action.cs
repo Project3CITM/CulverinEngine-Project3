@@ -339,7 +339,18 @@ public class Movement_Action : Action
 
         float distance_to_target = result.Length;
 
-        bool test = (distance_to_target < arrive_distance);
+        return (distance_to_target < arrive_distance);
+    }
+
+    public bool ReachedTile(int target_tile_x, int target_tile_y)
+    {
+        Vector3 my_pos = GetComponent<Transform>().position;
+
+        Vector3 result = new Vector3(Vector3.Zero);
+        result.x = target_tile_x - my_pos.x;
+        result.z = target_tile_y - my_pos.z;
+
+        float distance_to_target = result.Length;
 
         return (distance_to_target < arrive_distance);
     }
@@ -580,5 +591,10 @@ public class Movement_Action : Action
     public void NotChase()
     {
         chase = false;
+    }
+
+    public bool IsWalkable(uint tile_x, uint tile_y)
+    {
+        return map.GetComponent<Pathfinder>().IsWalkableTile(tile_x, tile_y);
     }
 }
