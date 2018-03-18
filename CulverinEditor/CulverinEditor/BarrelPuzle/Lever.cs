@@ -46,7 +46,7 @@ public class Lever : CulverinBehaviour
 
     private CompAnimation anim_controller = null;
     private bool on_lever_animation = false;
-    private string lever_animation_name = "Lever Activate"; // TODO: Set the animation name
+    private string lever_animation_name = ""; // TODO: Set the animation name
     private BarrelPuzzleManager barrel_puzzel_manager = null; // Put both scripts in same GO.
 
     //--------------
@@ -188,23 +188,6 @@ public class Lever : CulverinBehaviour
         }
     }
 
-    void OnTriggerEnter()
-    {
-        // TODO: Activate UI button "Interact"
-        Debug.Log("OnTriggerEnter Lever");
-        if(!active_lever)
-        {
-            Debug.Log("Lever Ready");
-            OnLeverActivated();
-            Debug.Log("Lever Activated");
-        }
-    }
-
-    void OnTriggerLost()
-    {
-        // TODO: Deactivate UI button "Interact"
-    }
-
     void MoveBarrels(List<GameObject> list, bool isfilling = false)
     {
         for (int i = 0; i < list.Count; i++)
@@ -318,10 +301,8 @@ public class Lever : CulverinBehaviour
     {
         // Called when lever is activated. Set flag to true and play the animation.
         on_lever_animation = true;
-        if (anim_controller != null)
-        {
+        if(anim_controller != null)
             anim_controller.PlayAnimation(lever_animation_name);
-        }
     }
 
     void OnLeverAnimFinish()
@@ -330,6 +311,6 @@ public class Lever : CulverinBehaviour
         // Activate the water
         barrel_puzzel_manager.OnPuzzleActivated();
         // Activate the puzzle
-        active_lever = true; // TODO: Verify this is correct and uncomment this line
+        //active_lever = true; // TODO: Verify this is correct and uncomment this line
     }
 }
