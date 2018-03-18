@@ -40,7 +40,7 @@ public class BarrelPuzzleManager : CulverinBehaviour
 
         if (must_move)
         {
-            Debug.Log("Moving---------------");
+            //Debug.Log("Moving---------------");
             MoveWater();
         }
     }
@@ -56,7 +56,7 @@ public class BarrelPuzzleManager : CulverinBehaviour
             Debug.Log("ALERT: Could not get water transform.");
         }
 
-        Debug.Log("Water distance to destination: " + water_destination_pos.Distance(water_trans.local_position, water_destination_pos));
+        //Debug.Log("Water distance to destination: " + water_destination_pos.Distance(water_trans.local_position, water_destination_pos));
 
         if (water_destination_pos.Distance(water_trans.local_position, water_destination_pos) <= 0.2f) // Just let a small threshold on distance
         {
@@ -70,17 +70,18 @@ public class BarrelPuzzleManager : CulverinBehaviour
 
             Vector3 pos = water_trans.local_position;
 
-            Debug.Log("Water pos: " + pos.x + ", " + pos.y + ", " + pos.z);
+            //Debug.Log("Water pos: " + pos.x + ", " + pos.y + ", " + pos.z);
 
             pos += (Vector3.Up * water_speed * Time.deltaTime);
             water_trans.SetPosition(pos);
 
-            Debug.Log("Water final pos: " + pos.x + ", " + pos.y + ", " + pos.z);
+            //Debug.Log("Water final pos: " + pos.x + ", " + pos.y + ", " + pos.z);
         }
     }
 
     public void OnPuzzleActivated()
     {
+        Debug.Log("Water started moving.");
         must_move = true;
     }
 }

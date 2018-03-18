@@ -104,12 +104,21 @@ public class Lever : CulverinBehaviour
     }
     void Update()
     {
-        //-- TMP-----
+        //-- TMP: Debug -----
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Puzzle activated");
-            OnLeverActivated();
+            if (on_lever_animation == true)
+            {
+                Debug.Log("Hardcoded lever anim finish.");
+                OnLeverAnimFinish();
+            }
+            else
+            {
+                Debug.Log("Puzzle activated");
+                OnLeverActivated();
+            }
         }
+        
         //---------------------
 
         if (on_lever_animation == true)
@@ -118,8 +127,8 @@ public class Lever : CulverinBehaviour
             {
                 if (anim_controller.IsAnimationStopped(lever_animation_name))
                 {
+                    Debug.Log("Lever animation ended.");
                     // The lever animation has stopped so puzzle must start.
-                    on_lever_animation = false;
                     OnLeverAnimFinish();
                 }
             }
@@ -298,9 +307,10 @@ public class Lever : CulverinBehaviour
 
     void OnLeverAnimFinish()
     {
+        on_lever_animation = false;
         // Activate the water
         barrel_puzzel_manager.OnPuzzleActivated();
         // Activate the puzzle
-        active_lever = true; // TODO: Verify this is correct
+        //active_lever = true; // TODO: Verify this is correct and uncomment this line
     }
 }
