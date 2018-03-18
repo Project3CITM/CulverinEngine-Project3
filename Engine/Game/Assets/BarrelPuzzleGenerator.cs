@@ -9,6 +9,7 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 {
     public int puzzle_width = 6;
     public int puzzle_height = 6;
+<<<<<<< HEAD
 
     public string path_name = "PuzzlePath"; // "PuzzlePath#.prefab.json";
     public int possible_paths = 4;
@@ -17,6 +18,15 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
     // The world position of the map tile 0,0 to properly calc the world to tile pos.
     public float map_first_tile_pos_x = 0.0f;
     public float map_first_tile_pos_z = 0.0f;
+=======
+    
+    public int possible_paths = 4;
+
+    
+    // The world position of the map tile 0,0 to properly calc the world to tile pos.
+    //public float map_first_tile_pos_x = 0.0f;
+    //public float map_first_tile_pos_z = 0.0f;
+>>>>>>> Stage
 
     // Reference to movement controller to acces walkability map.
     //public GameObject movement_controller_go = null;
@@ -26,12 +36,23 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
     private Random rnd = null;
     // Reference to the path generated.
     private Path current_path = null;
+<<<<<<< HEAD
     
     // Tile system puzzle map start
     //private int puzzle_start_tile_x = 0;
     //private int puzzle_start_tile_z = 0;
     //private float puzzle_start_pos_x = 0.0f;
     //private float puzzle_start_pos_z = 0.0f;
+=======
+
+    // Tile system puzzle map start
+    //      Tile coords
+    public int puzzle_start_tile_x = 0;
+    public int puzzle_start_tile_z = 0;
+    //      World coords
+    private float puzzle_start_pos_x = 0.0f;
+    private float puzzle_start_pos_z = 0.0f;
+>>>>>>> Stage
 
     //--Map data to calc some stuff.
     //private int map_width = 0;
@@ -54,6 +75,13 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         //map_height = Map.GetHeightMap();
         //GetPuzzleStartingPos();
 
+<<<<<<< HEAD
+=======
+        TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
+        Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
+        Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);
+
+>>>>>>> Stage
         // TMP:
         tmp_test_path = new List<GameObject>();
 
@@ -66,6 +94,10 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         //Just testing purposes.
         if (Input.GetKeyDown(KeyCode.M))
         {
+<<<<<<< HEAD
+=======
+            TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
+>>>>>>> Stage
             ResetPath();
             //DebugNewLogicMap();
         }
@@ -77,8 +109,12 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
     {
         int index = rnd.Next(0, possible_paths);
         Debug.Log("Path index: " + index);
+<<<<<<< HEAD
         current_path = new Path(puzzle_width, puzzle_height,
                                 index);
+=======
+        current_path = new Path(puzzle_width, puzzle_height, index);
+>>>>>>> Stage
         DebugNewLogicMap();
     }
 
@@ -106,6 +142,10 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         //// Update logic map if needed
         //CheckLogicMap((int)Mathf.Round(tile_pos.x), (int)Mathf.Round(tile_pos.y));
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> Stage
     //
     //void RemoveBarrels()
     //{
@@ -169,8 +209,16 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
     void DebugNewLogicMap()
     {
+<<<<<<< HEAD
         Debug.Log("Logging logic map.");
         
+=======
+        Debug.Log("Logging logic map ------------------");
+
+        Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
+        Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);
+
+>>>>>>> Stage
         for (int y = 0; y < current_path.height; ++y)
         {
             string t = "";
@@ -189,10 +237,31 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
                 if (current_path.walkability[x, y] == 0)
                 {
                     GameObject tmp = Instantiate(path_tile_prefab_name);
+<<<<<<< HEAD
                     tmp.transform.SetPosition(new Vector3(x * 25.4f, 0.0f, y * 25.4f));
+=======
+                    tmp.transform.SetPosition(new Vector3(x * 25.4f + puzzle_start_pos_x, 0.0f, y * 25.4f + puzzle_start_pos_z));
+>>>>>>> Stage
                     tmp_test_path.Add(tmp);
                 }
             }
         }
     }
+<<<<<<< HEAD
+=======
+
+    // Convert from tile coords to world coords
+    void TileToWorld(int tile_x, int tile_z, out float world_x, out float world_z)
+    {
+        world_x = tile_x * tile_size - (tile_size / 2.0f);
+        world_z = tile_z * tile_size - (tile_size / 2.0f);
+    }
+
+    // Convert from world coords to tile coords
+    void WorldToTile(float world_x, float world_z, out int tile_x, out int tile_z)
+    {
+        tile_x = (int)((world_x + (tile_size / 2.0f)) / tile_size);
+        tile_z = (int)((world_z + (tile_size / 2.0f)) / tile_size);
+    }
+>>>>>>> Stage
 }
