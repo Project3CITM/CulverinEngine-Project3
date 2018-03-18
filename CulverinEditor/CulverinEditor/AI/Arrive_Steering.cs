@@ -21,7 +21,7 @@ public class Arrive_Steering : CulverinBehaviour
     {
         Vector3 acceleration = Vector3.Zero;
         Vector3 ideal_velocity = new Vector3(Vector3.Zero);
-        Vector3 distance_to_target = new Vector3(GetComponent<Movement_Action>().GetTargetPosition() - transform.position);
+        Vector3 distance_to_target = new Vector3(GetComponent<Movement_Action>().GetTargetPosition() - transform.GetPosition());
         distance_to_target.y = 0;
         
         //On stop zone case
@@ -36,6 +36,7 @@ public class Arrive_Steering : CulverinBehaviour
         else if (distance_to_target.Length > slow_distance)
         {
             GetComponent<Movement_Action>().Accelerate(acceleration);
+            return;
         }
         //On slow zone case
         else
@@ -44,7 +45,7 @@ public class Arrive_Steering : CulverinBehaviour
         }
 
         Vector3 deceleration = new Vector3(ideal_velocity - GetComponent<Movement_Action>().GetCurrentVelocity());
-
+    
         GetComponent<Movement_Action>().Accelerate(deceleration);
     }
 }

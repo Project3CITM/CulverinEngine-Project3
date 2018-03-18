@@ -126,11 +126,11 @@ public class Movement_Action : Action
             }
 
             //Translate
-            Vector3 pos = GetComponent<Transform>().position;
+            Vector3 pos = GetComponent<Transform>().local_position;
             float dt = Time.deltaTime;
             pos.x = pos.x + (current_velocity.x * dt);
             pos.z = pos.z + (current_velocity.z * dt);
-            GetComponent<Transform>().position = pos;
+            GetComponent<Transform>().local_position = pos;
 
             //Clean
             current_acceleration = new Vector3(Vector3.Zero);
@@ -139,7 +139,7 @@ public class Movement_Action : Action
             {
                 pos.x = path[0].GetTileX() * tile_size;
                 pos.z = path[0].GetTileY() * tile_size;
-                GetComponent<Transform>().position = pos;
+                GetComponent<Transform>().local_position = pos;
 
                 //Update Collider -> 
                 GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
@@ -212,8 +212,8 @@ public class Movement_Action : Action
         }
         else
         {
-            Debug.Log("Get Cancer 1");
             path.Remove(path[0]);
+            Debug.Log("i am: x:" + GetCurrentTileX() + "/ y:" + GetCurrentTileY() + "|| going to: x:" + path[0].GetTileX() + "/ y:" + path[0].GetTileY());
             arrive.SetEnabled(true);
             seek.SetEnabled(true);
             translation_finished = false;
@@ -261,6 +261,10 @@ public class Movement_Action : Action
             rotation_finished = true;
             align.SetEnabled(false);
         }
+
+        foreach (PathNode n in path)
+            Debug.Log("Tile: " + n.GetTileX() + "," + n.GetTileY());
+
     }
 
     public void GoTo(PathNode obj, bool rot = false)
@@ -326,7 +330,7 @@ public class Movement_Action : Action
 
     public bool ReachedTile()
     {
-        Vector3 my_pos = GetComponent<Transform>().position;
+        Vector3 my_pos = GetComponent<Transform>().local_position;
         Vector3 tile_pos = GetTargetPosition();
 
         Vector3 result = new Vector3 (Vector3.Zero);
@@ -346,12 +350,12 @@ public class Movement_Action : Action
         if (path.Count > 0)
         {
             result.x = path[0].GetTileX() * tile_size;
-            result.y = GetComponent<Transform>().position.y;
+            result.y = GetComponent<Transform>().local_position.y;
             result.z = path[0].GetTileY() * tile_size;
         }
         else
         {
-            result = GetComponent<Transform>().position;
+            result = GetComponent<Transform>().local_position;
             Debug.Log("GetTargetPosition(): Path has no values");
         }
 
@@ -363,7 +367,7 @@ public class Movement_Action : Action
         if (look_at_player == false)
         {
             Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
-            Vector3 pos = new Vector3(GetComponent<Transform>().position);
+            Vector3 pos = new Vector3(GetComponent<Transform>().local_position);
             Vector3 target_pos = new Vector3(GetTargetPosition());
             Vector3 obj_vec = new Vector3(target_pos - pos);
 
@@ -394,8 +398,8 @@ public class Movement_Action : Action
         else
         {
             Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
-            Vector3 pos = new Vector3(GetComponent<Transform>().position);
-            Vector3 player_pos = new Vector3(player.GetComponent<Transform>().GetGlobalPosition());
+            Vector3 pos = new Vector3(GetComponent<Transform>().local_position);
+            Vector3 player_pos = new Vector3(player.GetComponent<Transform>().local_position);
             Vector3 obj_vec = new Vector3(player_pos.x - pos.x, pos.y, player_pos.z - pos.z);
 
             float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
@@ -501,12 +505,12 @@ public class Movement_Action : Action
 
     public int GetCurrentTileX()
     {
-        return ((int)GetComponent<Transform>().position.x / (int)tile_size);
+        return ((int)GetComponent<Transform>().local_position.x / (int)tile_size);
     }
 
     public int GetCurrentTileY()
     {
-        return ((int)GetComponent<Transform>().position.z / (int)tile_size);
+        return ((int)GetComponent<Transform>().local_position.z / (int)tile_size);
     }
 
     public Vector3 GetCurrentVelocity()
@@ -526,7 +530,7 @@ public class Movement_Action : Action
     
     public float GetDistanceToTarget()
     {
-        return ((GetComponent<Transform>().position) - (GetTargetPosition())).Length;
+        return ((GetComponent<Transform>().local_position) - (GetTargetPosition())).Length;
     }
 
     public void SetCurrentVelocity(Vector3 vel)
