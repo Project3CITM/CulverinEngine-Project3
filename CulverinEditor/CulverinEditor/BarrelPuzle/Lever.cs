@@ -65,6 +65,9 @@ public class Lever : CulverinBehaviour
         {
             Debug.Log("Animation is null!");
         }
+        BarrelPuzzleGenerator Generator = GetComponent<BarrelPuzzleGenerator>();
+        
+
 
         Puzzle_line_1 = GetLinkedObject("Puzzle_line_1");
         Puzzle_line_2 = GetLinkedObject("Puzzle_line_2");
@@ -93,22 +96,23 @@ public class Lever : CulverinBehaviour
 
         // Map
         map = new int[barrel_per_line, number_lines];
-        // Testing --------------------------------------------
-        for (int y = 0; y < number_lines; y++)
-        {
-            for (int x = 0; x < barrel_per_line; x++)
-            {
-                map[x, y] = 0;
-            }
-        }
+        map = Generator.GeneratePath();
+        //// Testing --------------------------------------------
+        //for (int y = 0; y < number_lines; y++)
+        //{
+        //    for (int x = 0; x < barrel_per_line; x++)
+        //    {
+        //        map[x, y] = 0;
+        //    }
+        //}
 
-        map[4, 0] = 1; 
-        map[4, 1] = 1; 
-        map[4, 2] = 1;
-        map[4, 3] = 1;
-        map[5, 3] = 1;
-        map[5, 4] = 1;
-        map[5, 5] = 1;
+        //map[4, 0] = 1; 
+        //map[4, 1] = 1; 
+        //map[4, 2] = 1;
+        //map[4, 3] = 1;
+        //map[5, 3] = 1;
+        //map[5, 4] = 1;
+        //map[5, 5] = 1;
 
         
    
@@ -233,12 +237,12 @@ public class Lever : CulverinBehaviour
         int y = number_of_lines;
         for (int x = barrel_per_line - 1; x >= 0; x--)
         {
-            if (map[x, y] == 1)
+            if (map[x, y] == 0)
             {
                 Debug.Log("Setting puzzle barrel");
                 list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, x, y, barrel_fall_speed, BarrelFall.ModeBarrel.PUZZLE, floor_height);
             }
-            else if (map[x, y] == 0)
+            else if (map[x, y] == 1)
             {
                 list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, x, y, barrel_fall_speed, BarrelFall.ModeBarrel.FILLING, floor_height);
             }

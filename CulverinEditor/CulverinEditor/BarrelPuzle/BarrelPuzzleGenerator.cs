@@ -38,7 +38,7 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
     //private int map_width = 0;
     //private int map_height = 0;
 
-    const float tile_size = 25.4f;
+    private float tile_size = 25.4f;
 
     // TMP: Testing purposes
     private List<GameObject> tmp_test_path;
@@ -55,15 +55,13 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         //map_height = Map.GetHeightMap();
         //GetPuzzleStartingPos();
 
-        TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
-        Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
-        Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);
+
 
         // TMP:
-        tmp_test_path = new List<GameObject>();
+        
 
-        rnd = new Random();
-        GeneratePath();
+
+        //GeneratePath();
     }
 
     void Update()
@@ -79,12 +77,21 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
     // ---------------------------------------
 
-    void GeneratePath()
+    public int[,] GeneratePath()
     {
+        tile_size = 25.4f;
+        TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
+        Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
+        Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);
+        if (tmp_test_path == null)
+            tmp_test_path = new List<GameObject>();
+        if (rnd == null)
+            rnd = new Random();
         int index = rnd.Next(0, possible_paths);
         Debug.Log("Path index: " + index);
         current_path = new Path(puzzle_width, puzzle_height, index);
-        DebugNewLogicMap();
+        //DebugNewLogicMap();
+        return current_path.walkability;
     }
 
     public void RemovePath()
