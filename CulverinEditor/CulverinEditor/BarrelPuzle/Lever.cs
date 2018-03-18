@@ -121,7 +121,7 @@ public class Lever : CulverinBehaviour
     void Update()
     {
         //-- TMP: Debug -----
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.B))
         {
             if (on_lever_animation == true)
             {
