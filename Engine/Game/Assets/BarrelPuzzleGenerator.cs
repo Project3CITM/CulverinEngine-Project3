@@ -9,16 +9,6 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 {
     public int puzzle_width = 6;
     public int puzzle_height = 6;
-<<<<<<< HEAD
-
-    public string path_name = "PuzzlePath"; // "PuzzlePath#.prefab.json";
-    public int possible_paths = 4;
-    // Its a really bad way to do this but scritps system can handel arrays so....
-    
-    // The world position of the map tile 0,0 to properly calc the world to tile pos.
-    public float map_first_tile_pos_x = 0.0f;
-    public float map_first_tile_pos_z = 0.0f;
-=======
     
     public int possible_paths = 4;
 
@@ -26,7 +16,6 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
     // The world position of the map tile 0,0 to properly calc the world to tile pos.
     //public float map_first_tile_pos_x = 0.0f;
     //public float map_first_tile_pos_z = 0.0f;
->>>>>>> Stage
 
     // Reference to movement controller to acces walkability map.
     //public GameObject movement_controller_go = null;
@@ -36,14 +25,6 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
     private Random rnd = null;
     // Reference to the path generated.
     private Path current_path = null;
-<<<<<<< HEAD
-    
-    // Tile system puzzle map start
-    //private int puzzle_start_tile_x = 0;
-    //private int puzzle_start_tile_z = 0;
-    //private float puzzle_start_pos_x = 0.0f;
-    //private float puzzle_start_pos_z = 0.0f;
-=======
 
     // Tile system puzzle map start
     //      Tile coords
@@ -52,13 +33,13 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
     //      World coords
     private float puzzle_start_pos_x = 0.0f;
     private float puzzle_start_pos_z = 0.0f;
->>>>>>> Stage
 
     //--Map data to calc some stuff.
     //private int map_width = 0;
     //private int map_height = 0;
 
-    const float tile_size = 25.4f;
+    float tile_size = 25.4f;
+
 
     // TMP: Testing purposes
     private List<GameObject> tmp_test_path;
@@ -75,18 +56,12 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         //map_height = Map.GetHeightMap();
         //GetPuzzleStartingPos();
 
-<<<<<<< HEAD
-=======
-        TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
-        Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
-        Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);
-
->>>>>>> Stage
+        tile_size = 25.4f;
         // TMP:
-        tmp_test_path = new List<GameObject>();
+        
 
-        rnd = new Random();
-        GeneratePath();
+
+        //GeneratePath();
     }
 
     void Update()
@@ -94,10 +69,7 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         //Just testing purposes.
         if (Input.GetKeyDown(KeyCode.M))
         {
-<<<<<<< HEAD
-=======
             TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
->>>>>>> Stage
             ResetPath();
             //DebugNewLogicMap();
         }
@@ -105,17 +77,21 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
     // ---------------------------------------
 
-    void GeneratePath()
+    public int[,] GeneratePath()
     {
+        tile_size = 25.4f;
+        TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
+        Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
+        Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);
+        if (tmp_test_path == null)
+            tmp_test_path = new List<GameObject>();
+        if (rnd == null)
+            rnd = new Random();
         int index = rnd.Next(0, possible_paths);
         Debug.Log("Path index: " + index);
-<<<<<<< HEAD
-        current_path = new Path(puzzle_width, puzzle_height,
-                                index);
-=======
         current_path = new Path(puzzle_width, puzzle_height, index);
->>>>>>> Stage
-        DebugNewLogicMap();
+        //DebugNewLogicMap();
+        return current_path.walkability;
     }
 
     public void RemovePath()
@@ -142,10 +118,7 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         //// Update logic map if needed
         //CheckLogicMap((int)Mathf.Round(tile_pos.x), (int)Mathf.Round(tile_pos.y));
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> Stage
     //
     //void RemoveBarrels()
     //{
@@ -209,16 +182,11 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
 
     void DebugNewLogicMap()
     {
-<<<<<<< HEAD
-        Debug.Log("Logging logic map.");
-        
-=======
         Debug.Log("Logging logic map ------------------");
 
         Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
         Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);
 
->>>>>>> Stage
         for (int y = 0; y < current_path.height; ++y)
         {
             string t = "";
@@ -237,18 +205,12 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
                 if (current_path.walkability[x, y] == 0)
                 {
                     GameObject tmp = Instantiate(path_tile_prefab_name);
-<<<<<<< HEAD
-                    tmp.transform.SetPosition(new Vector3(x * 25.4f, 0.0f, y * 25.4f));
-=======
                     tmp.transform.SetPosition(new Vector3(x * 25.4f + puzzle_start_pos_x, 0.0f, y * 25.4f + puzzle_start_pos_z));
->>>>>>> Stage
                     tmp_test_path.Add(tmp);
                 }
             }
         }
     }
-<<<<<<< HEAD
-=======
 
     // Convert from tile coords to world coords
     void TileToWorld(int tile_x, int tile_z, out float world_x, out float world_z)
@@ -263,5 +225,24 @@ public class BarrelPuzzleGenerator : CulverinBehaviour
         tile_x = (int)((world_x + (tile_size / 2.0f)) / tile_size);
         tile_z = (int)((world_z + (tile_size / 2.0f)) / tile_size);
     }
->>>>>>> Stage
+
+    // Path getter.
+    public Path GetPath()
+    {
+        return current_path;
+    }
+
+    // Walkability map getter.
+    public int GetWalkabilityAtPos(int x, int y)
+    {
+        if (current_path != null)
+        {
+            if (x >= 0 && x < current_path.width && y >= 0 && y < current_path.height)
+            {
+                return current_path.walkability[x, y];
+            }
+        }
+
+        return -1;
+    }
 }
