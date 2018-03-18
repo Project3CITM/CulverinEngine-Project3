@@ -112,11 +112,9 @@ public class SwordGuard_Listener : PerceptionListener
 
     bool OnHearRange(PerceptionHearEvent event_heard)
     {
-       
         int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        
         if (hear_range < event_heard.radius_in_tiles)
         {
             if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, event_heard.objective_tile_x, event_heard.objective_tile_y, event_heard.radius_in_tiles))

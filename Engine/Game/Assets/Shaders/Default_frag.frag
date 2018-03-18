@@ -1,15 +1,14 @@
 #version 330 core
  
-#define MAX_LIGHTS 40
+#define MAX_LIGHTS 30
 uniform int _numLights;
 uniform struct Light {
     vec3 position;
     int type;
     vec4 l_color; //a.k.a the color of the light
-    vec4 properties;
+    float intensity;
     float ambientCoefficient;
     float radius;
-   
  
 } _lights[MAX_LIGHTS];
  
@@ -55,7 +54,7 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
     vec3 v = normalize(TBN * _cameraPosition - surfacePos);                                      
        
                                                                                  
-    float lightInt = light.properties[0];
+    float lightInt = light.intensity;
            
                                                                          
     vec3 normal =  N ;                           
@@ -88,8 +87,11 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
         float cosAlpha = clamp( dot( v,r ), 0,1 );                                               
                                                                                                          
         float d = length((lightpos - surfacePos));
-        float attenuation =1/(light.properties[1] + light.properties[2]* d + light.properties[3] * d*d);
-        attenuation *= lightInt;                                   
+        float attenuation = clamp(((light.radius * light.radius )/(1 + 0.1 *(d* d ))),0,1);  
+               attenuation =  300*lightInt / (300+  300* d + 0.6 * (d * d));                    
+       //d = length(lightpos - surfacePos);
+       //attenuation = lightInt / (1.0 + 0.1 * pow(d,2));                                  
+                                                                                                         
         float diffuse = attenuation * Kd  * cosTheta;                    
         float spec = attenuation * Ks * pow(cosAlpha, shininess);
                                                                                                                  
@@ -134,9 +136,9 @@ void main()
     }      
                                                                                                
     final_ambient = final_ambient/_numLights;
-    final_color =final_color;  
+    final_color =final_color / _numLights;  
                                                                
-    vec3 col = max(0.5 * final_ambient* color_texture* vec3(0,1,1),
+    vec3 col = max(final_ambient* color_texture,
      color_texture * (inten_final.x + inten_final.y * spec_texture.r)*occlusion_texture*final_color.rgb);
                                                                                        
     color = vec4(col,_alpha);
