@@ -84,10 +84,10 @@ public class CharactersManager : CulverinBehaviour
 
     void Update()
     {
-        if (in_puzzle)
-        {
-            puzzle_start += Time.deltaTime;
-        }
+        //if (in_puzzle)
+        //{
+        //    puzzle_start += Time.deltaTime;
+        //}
 
         switch (state)
         {
@@ -105,11 +105,13 @@ public class CharactersManager : CulverinBehaviour
                         {
                             state = State.CHANGING_LEFT;
                             CurrentToOut();
+                            Debug.Log("Change Left");
                         }
                         else if(IsDead(right_character) == false)
                         {
                             state = State.CHANGING_RIGHT;
                             CurrentToOut();
+                            Debug.Log("Change Right");
                         }
                         else
                         {
@@ -125,6 +127,7 @@ public class CharactersManager : CulverinBehaviour
                             {
                                 state = State.CHANGING_RIGHT;
                                 CurrentToOut();
+                                Debug.Log("Change Right");
                             }
                         }
                     }
@@ -136,6 +139,7 @@ public class CharactersManager : CulverinBehaviour
                             {
                                 state = State.CHANGING_LEFT;
                                 CurrentToOut();
+                                Debug.Log("Change Left");
                             }
                         }
                     }
@@ -146,6 +150,7 @@ public class CharactersManager : CulverinBehaviour
                         if (IsDead(left_character) == false)
                         {
                             SecondaryAbility(Side.LEFT);
+                            Debug.Log("Left S Attack");
                         }
                     }
                     else if (Input.GetKeyDown(KeyCode.L))
@@ -153,6 +158,7 @@ public class CharactersManager : CulverinBehaviour
                         if (IsDead(left_character) == false)
                         {
                             SecondaryAbility(Side.RIGHT);
+                            Debug.Log("Right S Attack");
                         }
                     }
 
