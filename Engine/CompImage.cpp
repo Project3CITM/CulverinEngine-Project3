@@ -410,6 +410,32 @@ void CompImage::SetToFilled(bool filled)
 
 }
 
+void CompImage::GenerateUVBuffers()
+{
+	for (std::vector<unsigned int>::iterator item = SpritesUV_ID.begin(); item != SpritesUV_ID.cend(); ++item)
+		if (*item > 0) glDeleteBuffers(1, &(*item));
+	SpritesUV_ID.clear();
+
+	for (unsigned int i = 0; i < AtlasData.columns * AtlasData.rows; i++)
+	{
+		unsigned int NewID = 0;
+
+		float texture_coords[] =
+		{
+			SpritesUV_Data[i].x, SpritesUV_Data[i].w, 0.0f,
+			SpritesUV_Data[i].z, SpritesUV_Data[i].w, 0.0f,
+			SpritesUV_Data[i].x, SpritesUV_Data[i].y, 0.0f,
+			SpritesUV_Data[i].z, SpritesUV_Data[i].y, 0.0f
+		};
+
+		glGenBuffers(1, (GLuint*)&NewID);
+		glBindBuffer(GL_ARRAY_BUFFER, NewID);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) , texture_coords, GL_STATIC_DRAW);
+		this->GetParent();
+		SpritesUV_ID.push_back(NewID);
+	}
+}
+
 float4 CompImage::GetColor() const
 {
 	return color;
@@ -434,3 +460,86 @@ ResourceMaterial * CompImage::GetCurrentTexture() const
 	return overwrite_image;
 }
 
+void AtlasTextureData::Set(unsigned int ID, unsigned int width, unsigned int height, int columns, int rows, int frames)
+{
+	TextureID = ID;
+	TextureW = width;
+	TextureH = height;
+	this->columns = columns;
+	this->rows = rows;
+	this->numberOfFrames = numberOfFrames;
+
+}
+
+//ie particles
+//void Particle::DrawParticle(uint program_id)
+//{
+//
+//	const ParticleMeshData& Mesh = ParentParticleSystem->GetParticleMeshData();
+//
+//	//glColor4f(Properties.RGBATint.x, Properties.RGBATint.y, Properties.RGBATint.z, Properties.RGBATint.w);
+//
+//	glDisable(GL_CULL_FACE);
+//	glEnable(GL_NORMALIZE);
+//	glEnable(GL_TEXTURE_2D);
+//	glEnable(GL_DEPTH_TEST);
+//	glEnable(GL_LIGHTING);
+//	glEnable(GL_COLOR_MATERIAL);
+//	glEnable(GL_BLEND);
+//	if (ParentParticleSystem->TextureData.TextureID != 0)
+//	{
+//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//		uint texLoc = glGetUniformLocation(program_id, "albedo");
+//		glUniform1i(texLoc, 0);
+//		glActiveTexture(GL_TEXTURE0);
+//		glBindTexture(GL_TEXTURE_2D, ParentParticleSystem->TextureData.TextureID);
+//
+//	}
+//
+//
+//	uint color_id = glGetUniformLocation(program_id, "_my_color");
+//	glUniform4fv(color_id, 1, Properties.RGBATint.ptr());
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_vertices);
+//	glEnableVertexAttribArray(0);
+//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, ParentParticleSystem->GetTextureID(Properties.LifetimeMax, Properties.LifetimeActual));
+//	glEnableVertexAttribArray(1);
+//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
+//
+//	if (Mesh.normals != nullptr)
+//	{
+//		glBindBuffer(GL_ARRAY_BUFFER, Mesh.id_normals);
+//		glEnableVertexAttribArray(2);
+//		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
+//	}
+//
+//	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+//	unsigned int ID = ParentParticleSystem->GetTextureID(Properties.LifetimeMax, Properties.LifetimeActual);
+//	glBindBuffer(GL_ARRAY_BUFFER, ID);
+//	glTexCoordPointer(3, GL_FLOAT, 0, NULL);
+//
+//	uint modelLoc = glGetUniformLocation(program_id, "model");
+//
+//	//Properties.Rotation.x += 1;
+//	float4x4 transf_matrix = float4x4::FromTRS(Properties.Position, Properties.Rotation, Properties.Scale * Properties.Size);
+//	glUniformMatrix4fv(modelLoc, 1, GL_TRUE, transf_matrix.ptr());
+//	uint viewLoc = glGetUniformLocation(program_id, "viewproj");
+//	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, App->renderer3D->active_camera->frustum.ViewProjMatrix().ptr());
+//
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Mesh.id_indices);
+//	glDrawElements(GL_TRIANGLES, Mesh.num_indices, GL_UNSIGNED_INT, NULL);
+//
+//	glBindTexture(GL_TEXTURE_2D, 0);
+//	glDisable(GL_TEXTURE_2D);
+//	glDisable(GL_BLEND);
+//
+//	glDisable(GL_NORMALIZE);
+//
+//	glDisableClientState(GL_VERTEX_ARRAY);
+//	glDisableClientState(GL_NORMAL_ARRAY);
+//	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+//
+//	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+//}
