@@ -54,6 +54,7 @@ public:
 
 	void Save();
 	void Load();
+	void NewLoad();
 
 public:
 	

@@ -44,7 +44,8 @@ bool ModuleResourceManager::Init(JSON_Object* node)
 {
 	CreateResourceCube();
 	CreateResourcePlane();
-	Load();
+	//Load();
+	NewLoad();
 
 	return true;
 }
@@ -370,7 +371,7 @@ bool ModuleResourceManager::CleanUp()
 {
 	if (App->mode_game == false)
 	{
-		Save();
+		//Save();
 	}
 	std::map<uint, Resource*>::iterator it = resources.begin();
 	for (int i = 0; i < resources.size(); i++)
@@ -937,4 +938,12 @@ void ModuleResourceManager::Load()
 		App->fs->CopyFolderToLibrary("ParticleSystem");
 	}
 	json_value_free(config_file);
+}
+
+void ModuleResourceManager::NewLoad()
+{
+	std::vector<std::string> files_meta;
+	App->fs->GetAllMetas(App->fs->GetMainDirectory(), files_meta);
+
+
 }

@@ -620,6 +620,29 @@ void ModuleFS::GetUUIDFromFile(std::string path, std::vector<uint>& files)
 	}
 }
 
+void ModuleFS::GetAllMetas(std::experimental::filesystem::path path, std::vector<std::string>& files_meta)
+{
+	namespace stdfs = std::experimental::filesystem;
+
+	const stdfs::directory_iterator end{};
+	uint idpath = 0;
+	for (stdfs::directory_iterator iter{ path }; iter != end; ++iter)
+	{
+		if (stdfs::is_directory(*iter) == false)
+		{
+			std::string extension = GetExtension(iter->path().string(), true);
+			//Set lowercase the extension to normalize it
+			for (std::string::iterator it = extension.begin(); it != extension.end(); it++)
+			{
+				*it = tolower(*it);
+			}
+			if (IsPermitiveExtension(extension.c_str()))
+			{
+			}
+		}
+	}
+}
+
 void ModuleFS::ReImportAllFiles()
 {
 	namespace stdfs = std::experimental::filesystem;
@@ -1211,27 +1234,40 @@ std::string ModuleFS::GetPathWithoutExtension(std::string file)
 	return file;
 }
 
-std::string ModuleFS::GetExtension(std::string file)
+std::string ModuleFS::GetExtension(std::string file, bool is_meta)
 {
-	size_t EndName = file.find(".scene.json");
-	if (EndName != std::string::npos)
+	if (is_meta)
 	{
-		file = file.substr(EndName + 1);
-		return file;
-	}
-	EndName = file.find(".prefab.json");
-	if (EndName != std::string::npos)
-	{
-		file = file.substr(EndName + 1);
-		return file;
+		size_t EndName = file.find(".meta.json");
+		if (EndName != std::string::npos)
+		{
+			file = file.substr(EndName + 1);
+			return file;
+		}
 	}
 	else
-	{
 
+	{
+		size_t EndName = file.find(".scene.json");
+		if (EndName != std::string::npos)
+		{
+			file = file.substr(EndName + 1);
+			return file;
+		}
+		EndName = file.find(".prefab.json");
+		if (EndName != std::string::npos)
+		{
+			file = file.substr(EndName + 1);
+			return file;
+		}
+		else
+		{
+
+		}
+		EndName = file.find_last_of(".");
+		file = file.substr(EndName + 1);
+		return file;
 	}
-	EndName = file.find_last_of(".");
-	file = file.substr(EndName + 1);
-	return file;
 }
 
 char* ModuleFS::ConverttoChar(std::string name)
