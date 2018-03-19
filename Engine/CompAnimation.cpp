@@ -13,6 +13,7 @@
 #include "ModuleWindow.h"
 #include "WindowInspector.h"
 #include "WindowSceneWorld.h"
+#include "CompAudio.h"
 
 CompAnimation::CompAnimation(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
@@ -78,6 +79,7 @@ void CompAnimation::PreUpdate(float dt)
 
 void CompAnimation::Update(float dt)
 {
+	ManageActualAnimationNode();
 	ManageAnimationClips(current_animation,dt);
 	ManageAnimationClips(blending_animation, dt);
 	if (active_node != nullptr)
@@ -992,8 +994,9 @@ void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt
 	if(animation_clip != nullptr && animation_clip->state != AnimationState::A_STOP)
 	{
 		animation_clip->time += dt * animation_clip->speed_factor;
-		//animation_clip->time += animation_resource->ticks_per_sec / (1.0f/dt);
-		//animation_clip->time += animation_resource->ticks_per_sec / animation_resource->duration;
+		
+		
+
 		if (animation_clip->state == AnimationState::A_BLENDING)
 		{
 			animation_clip->current_blending_time -= dt;
@@ -1014,6 +1017,18 @@ void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt
 			}
 			else
 				animation_clip->state = AnimationState::A_STOP;
+		}
+	}
+}
+
+void CompAnimation::ManageActualAnimationNode()
+{
+	if (active_node->anim_audio != "Null_Audio")
+	{
+		CompAudio* temp_emiter = (CompAudio*)parent->FindComponentByType(C_AUDIO);
+		if (temp_emiter != nullptr)
+		{
+			temp_emiter->PlayAudioEvent("Dracarys");
 		}
 	}
 }

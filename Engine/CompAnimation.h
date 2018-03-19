@@ -63,6 +63,7 @@ public:
 	bool active = false;
 	std::string name = "Animation Node ";
 	std::vector<BlendingClip*> blending_clips;
+	std::string anim_audio = "Null_Audio";
 	std::vector<AnimationTransition*> transitions;
 };
 
@@ -123,7 +124,7 @@ public:
 
 	void CreateAnimationClip();
 	void ManageAnimationClips(AnimationClip* animation_clip, float dt);
-
+	void ManageActualAnimationNode();
 	void CreateAnimationNode();
 	void CheckNodesConditions(AnimationNode* node);
 
