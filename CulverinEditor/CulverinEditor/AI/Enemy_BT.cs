@@ -53,7 +53,7 @@ public class Enemy_BT : BT
         attack_timer += Time.deltaTime;
 
         if (Input.GetKeyDown(KeyCode.P))
-            PushEnemy(new Vector3(1, 0, 0));
+            PushEnemy(new Vector3(0, 0, -1));
 
         base.Update();
     }

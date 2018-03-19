@@ -348,6 +348,8 @@ public class Movement_Action : Action
     {
         Vector3 my_pos = GetComponent<Transform>().position;
 
+        my_pos /= tile_size;
+
         Vector3 result = new Vector3(Vector3.Zero);
         result.x = target_tile_x - my_pos.x;
         result.z = target_tile_y - my_pos.z;
