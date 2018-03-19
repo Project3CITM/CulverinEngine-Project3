@@ -1,22 +1,20 @@
 #include "Application.h"
 #include "ModuleEventSystemV2.h"
 
-/*
-void PushEvent(Event& event)
+void PushEventV2(Event& event)
 {
 	App->event_system_v2->PushEvent(event);
 }
 
-void PushImmediateEvent(Event& event)
+void PushImmediateEventV2(Event& event)
 {
 	App->event_system_v2->PushImmediateEvent(event);
 }
 
-void AddListener(EventType type, Module* listener)
+void AddListenerV2(EventType type, Module* listener)
 {
 	App->event_system_v2->AddListener(type, listener);
 }
-*/
 
 ModuleEventSystemV2::ModuleEventSystemV2(bool start_enabled)
 {
@@ -30,6 +28,20 @@ ModuleEventSystemV2::~ModuleEventSystemV2()
 
 bool ModuleEventSystemV2::Init(JSON_Object* node)
 {
+	//creation of event-listeners map
+	for (int i = 0; i < EventType::MAXEVENTS; i++)
+	{
+		std::vector<Module*> ListenersVec;
+		MEventListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, ListenersVec));
+	}
+	/*
+	for (int i = 0; i < EventType::MAXEVENTS; i++)
+		MEventListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, std::vector<Module*>()));
+	*/
+	//addlisteners
+	const std::vector<Module*>* ModuleList = App->GetModuleList();
+	for (std::vector<Module*>::const_iterator item = ModuleList->cbegin(); item != ModuleList->cend(); ++item)
+		(*item)->SetEventListeners();
 	return true;
 }
 

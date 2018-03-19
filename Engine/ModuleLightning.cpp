@@ -684,7 +684,7 @@ void ModuleLightning::GetActiveLightsCount(uint ammount, std::vector<CompLight*>
 	}
 }
 
-bool ModuleLightning::SetEventListenrs()
+bool ModuleLightning::SetEventListeners()
 {
 	AddListener(EventType::EVENT_SEND_3D_3DA_MM, this);
 	return false;

@@ -19,7 +19,7 @@ void PushImmediateEvent(Event& event)
 	App->event_system->PushImmediateEvent(event);
 }
 
-//Used in SetEventListenrs method of Modules to register this module to receive one event type
+//Used in SetEventListeners method of Modules to register this module to receive one event type
 void AddListener(EventType type, Module* listener)
 {
 	App->event_system->AddListener(type, listener);
@@ -46,7 +46,7 @@ bool ModuleEventSystem::Init(JSON_Object* node)
 	//addlisteners
 	const std::vector<Module*>* ModuleList = App->GetModuleList();
 	for (std::vector<Module*>::const_iterator item = ModuleList->cbegin(); item != ModuleList->cend(); ++item)
-		(*item)->SetEventListenrs();
+		(*item)->SetEventListeners();
 	return true;
 }
 

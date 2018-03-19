@@ -265,7 +265,7 @@ void Scene::LoadScene()
 	load_scene = false;
 }
 
-bool Scene::SetEventListenrs()
+bool Scene::SetEventListeners()
 {
 	AddListener(EventType::EVENT_DELETE_GO, this);
 	AddListener(EventType::EVENT_DRAW, this);

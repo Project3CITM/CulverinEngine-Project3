@@ -1266,7 +1266,7 @@ void ModuleGUI::ShowCreateNewScriptWindow()
 	window_create_new_script = true;
 }
 
-bool ModuleGUI::SetEventListenrs()
+bool ModuleGUI::SetEventListeners()
 {
 	AddListener(EventType::EVENT_SEND_ALL_SHADER_OBJECTS, this);
 	return true;

@@ -50,7 +50,7 @@ bool ModuleAudio::Init(JSON_Object* node)
 	return ret;
 }
 
-bool ModuleAudio::SetEventListenrs()
+bool ModuleAudio::SetEventListeners()
 {
 	AddListener(EventType::EVENT_TIME_MANAGER, this);
 	return true;

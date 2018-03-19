@@ -149,7 +149,7 @@ bool ModulePhysics::CleanUp()
 }
 
 // -----------------------------------------------------------------
-bool ModulePhysics::SetEventListenrs()
+bool ModulePhysics::SetEventListeners()
 {
 	AddListener(EventType::EVENT_TRIGGER_COLLISION, this);
 	AddListener(EventType::EVENT_TIME_MANAGER, this);

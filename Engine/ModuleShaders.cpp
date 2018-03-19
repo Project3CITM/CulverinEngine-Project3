@@ -760,7 +760,7 @@ Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)
 }
 
 
-bool ModuleShaders::SetEventListenrs()
+bool ModuleShaders::SetEventListeners()
 {
 	AddListener(EventType::EVENT_OPEN_SHADER_EDITOR, this);
 	AddListener(EventType::EVENT_CREATE_SHADER_PROGRAM, this);

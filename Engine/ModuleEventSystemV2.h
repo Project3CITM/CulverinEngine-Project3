@@ -5,11 +5,9 @@
 #include <vector>
 #include "Module.h"
 
-/*
-void PushEvent(Event& event);
-void PushImmediateEvent(Event& event);
-void AddListener(EventType type, Module* listener);
-*/
+void PushEventV2(Event& event);
+void PushImmediateEventV2(Event& event);
+void AddListenerV2(EventType type, Module* listener);
 
 class ModuleEventSystemV2 : public Module
 {

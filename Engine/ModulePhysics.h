@@ -38,7 +38,7 @@ public:
 	bool SaveConfig(JSON_Object* node);
 	bool CleanUp();
 
-	bool SetEventListenrs();
+	bool SetEventListeners();
 	void OnEvent(Event& event);
 
 	// PhysX Methods ----------------

@@ -57,7 +57,7 @@ public:
 	void SetLinkInspector(GameObject* obj);
 
 	//Event system test
-	bool SetEventListenrs();
+	bool SetEventListeners();
 	void OnEvent(Event& event);
 
 public:

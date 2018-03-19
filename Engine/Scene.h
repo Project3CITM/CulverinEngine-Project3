@@ -32,7 +32,7 @@ public:
 	void LoadScene();
 
 	//Event system test
-	bool SetEventListenrs();
+	bool SetEventListeners();
 	void OnEvent(Event& event);
 
 	// Editor outputs 

@@ -18,7 +18,7 @@
 /*---PushEvent(event);------------------------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------------------------------------------*/
 /*---Receive events:--------------------------------------------------------------------------------------------*/
-/*---In the module you want to receive events, define the method "bool SetEventListenrs()", inside that, call---*/
+/*---In the module you want to receive events, define the method "bool SetEventListeners()", inside that, call---*/
 /*---the function "AddListener(EventType, (Module*)this)" with the propper event type you want to receive.------*/
 /*---Now this module is ready to receive events of the type added, but you need to define the method to---------*/
 /*---receive the events, define "void OnEvent(Event& event)" with a switch inside like the one in input---------*/
@@ -34,7 +34,7 @@
 void PushEvent(Event& event);
 //You use this function to send events directly, this event send system doesn't wait until postupdate, with that is no needed to use App->eventsystem->PushImmediateEvent(event), only PushImmediateEvent(event)
 void PushImmediateEvent(Event& event);
-//Used in SetEventListenrs method of Modules to register this module to receive one event type
+//Used in SetEventListeners method of Modules to register this module to receive one event type
 void AddListener(EventType type, Module* listener);
 
 class ModuleEventSystem : public Module

@@ -71,7 +71,7 @@ public:
 	void SetUniform(uint ID, const GLchar* uniformName, float& v);
 
 	//Event system test
-	bool SetEventListenrs();
+	bool SetEventListeners();
 	void OnEvent(Event& event);
 
 	void Enable_Text_Editor();

@@ -18,7 +18,7 @@ public:
 
 	bool Init(JSON_Object* node);
 
-	bool SetEventListenrs();
+	bool SetEventListeners();
 	void OnEvent(Event& event);
 
 	update_status PostUpdate(float dt);

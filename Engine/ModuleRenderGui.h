@@ -19,7 +19,7 @@ public:
 	update_status PostUpdate(float dt);
 	update_status UpdateConfig(float dt);
 	void OnEvent(Event& event);
-	bool SetEventListenrs();
+	bool SetEventListeners();
 	void PassSelected(CompInteractive* to_pass);
 	void ChangeSelected(Event& this_event);
 	void WorldSpaceDraw();

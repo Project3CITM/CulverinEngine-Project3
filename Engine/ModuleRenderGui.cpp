@@ -98,7 +98,7 @@ update_status ModuleRenderGui::UpdateConfig(float dt)
 	return UPDATE_CONTINUE;
 }
 
-bool ModuleRenderGui::SetEventListenrs()
+bool ModuleRenderGui::SetEventListeners()
 {
 	AddListener(EventType::EVENT_DRAW, this);
 	AddListener(EventType::EVENT_BUTTON_DOWN, this);
