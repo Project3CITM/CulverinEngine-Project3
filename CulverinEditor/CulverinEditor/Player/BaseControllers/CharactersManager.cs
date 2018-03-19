@@ -45,6 +45,9 @@ public class CharactersManager : CulverinBehaviour
     Shield shield;
 
     public float puz_max_time;
+    public float drown_dmg = 20;
+    public int puz_respawn_x = 0;
+    public int puz_respawn_y = 0;
     //To manage player state
     State state = State.IDLE;   
 
@@ -501,6 +504,12 @@ public class CharactersManager : CulverinBehaviour
                 }
             }
         }
+    }
+
+    public void Drown()
+    {
+        GetDamage(drown_dmg);
+        GetComponent<MovementController>().SetMovement(puz_respawn_x, puz_respawn_y);
     }
 
     public bool IsIdle()

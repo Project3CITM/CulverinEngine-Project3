@@ -155,6 +155,7 @@ public class MovementController : CulverinBehaviour
         {
             tile_mov_x = 0;
             tile_mov_y = 0;
+
             moving = false;
 
             // CHECK ROTATION --------------------------
@@ -167,15 +168,24 @@ public class MovementController : CulverinBehaviour
             //CheckFacingRotation();
 
             //Calculate endPosition
-            if ((tile_mov_x != 0 || tile_mov_y != 0) && array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
+            if ((tile_mov_x != 0 || tile_mov_y != 0) )
             {
-                audio = GetComponent<CompAudio>();
-                audio.PlayEvent("Footsteps");
-                endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
-                curr_x += tile_mov_x;
-                curr_y += tile_mov_y;
-                char_manager.SetCurrentPosition();
-                moving = true;
+                if (array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
+                {
+                    audio = GetComponent<CompAudio>();
+                    audio.PlayEvent("Footsteps");
+                    endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
+                    curr_x += tile_mov_x;
+                    curr_y += tile_mov_y;
+                    char_manager.SetCurrentPosition();
+                    moving = true;
+                }
+                else if (array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 3) //Valryian Fire!
+                {
+                    audio = GetComponent<CompAudio>();
+                    audio.PlayEvent("Footsteps");
+                    char_manager.Drown();
+                }
             }
         }
         else if (rotating)
@@ -845,5 +855,16 @@ public class MovementController : CulverinBehaviour
         }
 
         return -1;
+    }
+
+    public void SetMovement(int destination_x, int destination_y)
+    {
+        int happy_x = destination_x - curr_x;
+        int happy_y = destination_y - curr_y;
+        curr_x = destination_x;
+        curr_y = destination_y;
+        endPosition = new Vector3(GetComponent<Transform>().local_position.x + (float)happy_x * distanceToMove, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z - (float)happy_y * distanceToMove);
+
+        GetComponent<Transform>().SetPosition(new Vector3(GetComponent<Transform>().local_position.x + (float)happy_x * distanceToMove, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z - (float)happy_y * distanceToMove)); 
     }
 }
