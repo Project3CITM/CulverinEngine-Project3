@@ -410,31 +410,31 @@ void CompImage::SetToFilled(bool filled)
 
 }
 
-void CompImage::GenerateUVBuffers()
-{
-	for (std::vector<unsigned int>::iterator item = SpritesUV_ID.begin(); item != SpritesUV_ID.cend(); ++item)
-		if (*item > 0) glDeleteBuffers(1, &(*item));
-	SpritesUV_ID.clear();
-
-	for (unsigned int i = 0; i < AtlasData.columns * AtlasData.rows; i++)
-	{
-		unsigned int NewID = 0;
-
-		float texture_coords[] =
-		{
-			SpritesUV_Data[i].x, SpritesUV_Data[i].w, 0.0f,
-			SpritesUV_Data[i].z, SpritesUV_Data[i].w, 0.0f,
-			SpritesUV_Data[i].x, SpritesUV_Data[i].y, 0.0f,
-			SpritesUV_Data[i].z, SpritesUV_Data[i].y, 0.0f
-		};
-
-		glGenBuffers(1, (GLuint*)&NewID);
-		glBindBuffer(GL_ARRAY_BUFFER, NewID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) , texture_coords, GL_STATIC_DRAW);
-		this->GetParent();
-		SpritesUV_ID.push_back(NewID);
-	}
-}
+//void CompImage::GenerateUVBuffers()
+//{
+//	for (std::vector<unsigned int>::iterator item = SpritesUV_ID.begin(); item != SpritesUV_ID.cend(); ++item)
+//		if (*item > 0) glDeleteBuffers(1, &(*item));
+//	SpritesUV_ID.clear();
+//
+//	for (unsigned int i = 0; i < AtlasData.columns * AtlasData.rows; i++)
+//	{
+//		unsigned int NewID = 0;
+//
+//		float texture_coords[] =
+//		{
+//			SpritesUV_Data[i].x, SpritesUV_Data[i].w, 0.0f,
+//			SpritesUV_Data[i].z, SpritesUV_Data[i].w, 0.0f,
+//			SpritesUV_Data[i].x, SpritesUV_Data[i].y, 0.0f,
+//			SpritesUV_Data[i].z, SpritesUV_Data[i].y, 0.0f
+//		};
+//
+//		glGenBuffers(1, (GLuint*)&NewID);
+//		glBindBuffer(GL_ARRAY_BUFFER, NewID);
+//		glBufferData(GL_ARRAY_BUFFER, sizeof(float) , texture_coords, GL_STATIC_DRAW);
+//		this->GetParent();
+//		SpritesUV_ID.push_back(NewID);
+//	}
+//}
 
 float4 CompImage::GetColor() const
 {

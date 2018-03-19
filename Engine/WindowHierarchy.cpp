@@ -217,6 +217,7 @@ void Hierarchy::ShowOptions()
 			CompSlider* to_move = (CompSlider*)slider->FindComponentByType(Comp_Type::C_SLIDER);
 			CompImage* bar = (CompImage*)to_slide->FindComponentByType(Comp_Type::C_IMAGE);
 			to_move->slide_bar = bar;
+			to_move->slider = (CompButton*)App->scene->CreateButton(to_slide);
 
 			App->gui->SetLinkInspector(slider);
 		}

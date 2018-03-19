@@ -309,8 +309,11 @@ void CompTransform::SetScaleGlobal(float3 scale)
 
 void CompTransform::SetPos(float3 pos_g)
 {
+	if(this!=nullptr)
+	{ 
 	position = pos_g;
 	toUpdate = true;
+	}
 }
 
 void CompTransform::Translate(float3 translation)

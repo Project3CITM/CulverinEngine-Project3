@@ -159,15 +159,6 @@ void CompSlider::Load(const JSON_Object * object, std::string name)
 	Enable();
 }
 
-/*
-bool CompSlider::PointerInside(float2 position)
-{
-
-
-
-
-}*/
-
 void CompSlider::OnDrag(Event event_input)
 {
 	float2 mous_pos = event_input.pointer.position;

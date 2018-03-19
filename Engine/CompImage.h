@@ -74,7 +74,7 @@ private:
 	//Animation values
 	bool animated = false;
 	bool AnimationEditorOpen = false;
-	AtlasTextureData AtlasData;
+//	AtlasTextureData AtlasData;
 	std::vector<unsigned int> SpritesUV_ID;				//Image animation UVs IDs
 	std::vector<float4> SpritesUV_Data;					//Image animation UVs: UV0 = X-Y		UV1 = Z-W
 
