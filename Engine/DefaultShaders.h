@@ -201,6 +201,41 @@ static const GLchar* DefaultVert[] =
 
 };
 
+static const GLchar* TextureVert[] =
+{
+	"#version 330 core\n"
+	"layout(location = 0) in vec3 position;\n"
+	"layout(location = 1) in vec2 texCoord;\n"
+
+
+	"out vec2 TexCoord;\n"
+
+	"void main()\n"
+	"{\n"
+	"gl_Position = vec4(position, 1.0f);\n"	
+	"TexCoord = texCoord;\n"
+
+
+	"}\n"
+};
+
+static const GLchar* TextureFrag[] =
+{
+	"#version 330 core\n"
+
+	"in vec2 TexCoord;\n"
+	"out vec4 color;\n"
+	"uniform sampler2D albedo;\n"
+
+	"void main()\n"
+	"{\n"
+
+	//Z-Buffer Line Shader
+	"color= vec4(vec3(1),1);\n"// texture(albedo, TexCoord);\n"
+	"}\n"
+};
+
+
 static const GLchar* DefaultFrag[] =
 {
 	"#version 330 core\n"
@@ -219,6 +254,26 @@ static const GLchar* DefaultFrag[] =
 	"color= _my_color * texture(albedo, TexCoord);\n"
 	"}\n"
 };
+
+static const GLchar* NonGlowFrag[] =
+{
+	"#version 330 core\n"
+	"in vec4 ourColor;\n"
+	"in float ourTime;\n"
+	"in vec2 TexCoord;\n"
+	"in vec3 ourNormal;\n"
+	"in vec4 gl_FragCoord;\n"
+	"out vec4 color;\n"
+	"uniform sampler2D albedo;\n"
+	"uniform vec4 _my_color;\n"
+	"void main()\n"
+	"{\n"
+
+	//Z-Buffer Line Shader
+	"color= vec4(vec3(0),1);\n"
+	"}\n"
+};
+
 
 static const GLchar* ShadowMapVert[] =
 {

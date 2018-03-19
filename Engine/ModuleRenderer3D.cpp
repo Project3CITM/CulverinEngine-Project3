@@ -43,6 +43,7 @@ ModuleRenderer3D::~ModuleRenderer3D()
 	RELEASE(lights_billboard_shader);
 	RELEASE(default_material);
 	RELEASE(default_texture);
+	RELEASE(non_glow_shader);
 }
 
 // Called before render is available
@@ -182,6 +183,15 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	lights_billboard_shader = App->module_shaders->CreateDefaultShader("Billboard Lights Shader", DefaultFrag, DefaultVert, nullptr);
 
 	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", DefaultFrag, DefaultVert, nullptr);
+	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr);
+	texture_shader = App->module_shaders->CreateDefaultShader("Texture Shader", TextureFrag, TextureVert, nullptr);
+
+
+	non_glow_material = new Material();
+	non_glow_material->name = "Non Glow Material";
+	non_glow_material->material_shader = non_glow_shader;
+	non_glow_material->GetProgramVariables();
+	
 
 	default_material = new Material();
 	default_material->name = "Default Material";
@@ -199,6 +209,41 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 bool ModuleRenderer3D::Start()
 {
 	perf_timer.Start();
+
+
+	GLfloat cube_vertices[] = {
+		// front
+		-1.0, -1.0,  0.0,
+		1.0, -1.0,  0.0,
+		1.0,  1.0,  0.0,
+		-1.0,  1.0,  0.0,
+	};
+
+	GLushort cube_elements[] = {
+		// front
+		0, 1, 2,
+		2, 3, 0,
+	};
+
+	static const GLfloat g_UV_buffer_data[] = {	
+		0.0f, 0.0f,
+		1.0f,  0.0f,
+		1.0f,  1.0f,		
+		0.0f, 1.0f,
+	};
+		
+
+	glGenBuffers(1, &vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &UVbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_UV_buffer_data), g_UV_buffer_data, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &ibo_cube_elements);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
 
 
 	(depth_test) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
@@ -223,107 +268,24 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 {
 	perf_timer.Start();
 
-	// 
-/*	if (App->mode_game == false)
-	{
-		App->scene->scene_buff->Bind("Scene");
-	}
-
-	// Refresh Projection of the camera
-	UpdateProjection(active_camera);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(active_camera->GetViewMatrix());*/
-
-	// light 0 on cam pos
-	
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
 
-//update_status ModuleRenderer3D::Update(float dt)
-//{
-//	perf_timer.Start();
-//	Update_t = perf_timer.ReadMs();
-//	return UPDATE_CONTINUE;
-//}
 
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 	perf_timer.Start();
 	
-	//All draw functions moved to Scene Update
-
-	// Draw Skybox (direct mode for now)
-	//if (App->scene->draw_skybox)
-	//{
-	//	App->scene->skybox->DrawSkybox(800, active_camera->frustum.pos, App->scene->skybox_index);
-	//}
-
-	//Draw Test Cube
-	//App->scene->DrawCube(5);
-
-	// Draw Plane
-	//App->scene->DrawPlane();
-
-	// Draw GameObjects
-	//App->scene->root->Draw();
-	
-
-	// Draw Quadtree
-	//if (App->scene->quadtree_draw)
-	//{
-	//	App->scene->quadtree.DebugDraw();
-	//}
-
-	// Draw GUI
 	App->render_gui->ScreenSpaceDraw();
-	
-	// Draw Mouse Picking Ray
-	//glBegin(GL_LINES);
-	//glLineWidth(3.0f);
-	//glColor4f(1.00f, 0.761f, 0.00f, 1.00f);
-	//glVertex3f(App->camera->ray.a.x, App->camera->ray.a.y, App->camera->ray.a.z); glVertex3f(App->camera->ray.b.x, App->camera->ray.b.y, App->camera->ray.b.z);
-	//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	//glEnd();
+	RenderSceneWiewport();
 
 	App->scene->scene_buff->UnBind("Scene");
 
-	//if (game_camera != nullptr)
-	//{
-	//	App->scene->sceneBuff->Bind("Game");
-	//	UpdateProjection(game_camera);
-	//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//	glLoadIdentity();
-	//	glMatrixMode(GL_MODELVIEW);
-	//	glLoadMatrixf(game_camera->GetViewMatrix());
-
-	//	// Render Lights
-	//	for (uint i = 0; i < MAX_LIGHTS; ++i)
-	//		lights[i].Render();
-
-	//	// Draw Plane
-	//	App->scene->DrawPlane();
-
-	//	// Draw GameObjects
-	//	for (uint i = 0; i < App->scene->gameobjects.size(); i++)
-	//	{
-	//		App->scene->gameobjects[i]->Draw();
-	//	}
-
-	//	App->scene->gameBuff->UnBind("Game");
-
-	//	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//	//glLoadIdentity();
-	//}
-
 	
 	ImGui::Render();
-
+	
 	SDL_GL_SwapWindow(App->window->window);
 
 	postUpdate_t = perf_timer.ReadMs();
@@ -537,5 +499,52 @@ bool ModuleRenderer3D::loadTextureFromPixels32(GLuint * id_pixels, GLuint width_
 	}
 
 	return true;
+}
+
+void ModuleRenderer3D::RenderSceneWiewport()
+{
+	
+	texture_shader->Bind();
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+
+
+	GLint texLoc = glGetUniformLocation(texture_shader->programID, "albedo");
+	glUniform1i(texLoc, 0);
+	glActiveTexture(GL_TEXTURE0);
+
+	glBindTexture(GL_TEXTURE_2D, App->scene->glow_buff->GetTexture());
+	
+
+
+	glBindBuffer(GL_ARRAY_BUFFER,vertexbuffer);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(
+		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+		3,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		3 * sizeof(float),                                // stride
+		(void*)0                          // array buffer offset
+	);
+	glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(
+		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+		2,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		2* sizeof(float),                                // stride
+		(void*)0                          // array buffer offset
+	);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	texture_shader->Unbind();
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+
 }
 

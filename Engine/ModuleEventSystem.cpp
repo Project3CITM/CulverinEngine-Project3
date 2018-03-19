@@ -155,14 +155,10 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 				}
 			else
 			{
-				if (i == 2)
-				item = MultimapToIterate->erase(item);
-				else item++;
+				item++;
 				continue;
 			}
-			if(i ==2)
-			item = MultimapToIterate->erase(item);
-			else item++;
+			item++;
 			count++;
 		}
 		if (i == 2)
@@ -171,7 +167,9 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 		}
 		active_frame->UnBind("Scene");
 	}
-
+	MM3DDrawEvent.clear();
+	MM3DADrawEvent.clear();
+	MM2DCanvasDrawEvent.clear();
 	//iterate and send MMNormalEvent
 	size = MMNormalEvent.size();
 	count = 0;

@@ -50,6 +50,7 @@ public:
 
 	float2 LoadImage_devil(const char * theFileName, GLuint *buff);
 	bool loadTextureFromPixels32(GLuint * id_pixels, GLuint width_img, GLuint height_img, GLuint *buff);
+	void RenderSceneWiewport();
 
 public:
 
@@ -80,11 +81,20 @@ public:
 	ShaderProgram* default_shader = nullptr;
 	ShaderProgram* particles_shader = nullptr;
 	ShaderProgram* lights_billboard_shader = nullptr;
+	ShaderProgram* non_glow_shader = nullptr;
+	ShaderProgram* texture_shader = nullptr;
 	ResourceMaterial* default_texture = nullptr;
 
 	Material* default_material = nullptr;
+	Material* non_glow_material = nullptr;
 
 	RenderMode render_mode = RenderMode::DEFAULT;
+
+	GLuint vertexbuffer;
+	GLuint UVbuffer;
+	GLuint VertexArrayID;
+	GLuint ibo_cube_elements;
+
 };
 
 #endif

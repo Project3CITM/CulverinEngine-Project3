@@ -268,21 +268,22 @@ void CompMesh::Draw(bool alpha)
 		//if (material->material_shader != nullptr)
 		if (comp_material != nullptr) material = comp_material->material;
 
+
+		//DRAW MODE
 		switch (App->renderer3D->render_mode) {
 		case RenderMode::DEFAULT:
 			glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 			break;
 		case RenderMode::GLOW:
-			if (!material->glow) return;
+			if (!material->glow) material = App->renderer3D->non_glow_material;
 			glViewport(0, 0, 128, 128);
 			break;
 		case RenderMode::DEPTH:
 
 			break;
-
-
 		}
 
+		//BIND MATERIAL
 		material->Bind();
 		
 	
