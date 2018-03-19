@@ -16,6 +16,13 @@
 
 class CompCamera;
 
+
+enum RenderMode {
+	DEFAULT,
+	GLOW,
+	DEPTH
+};
+
 class ModuleRenderer3D : public Module
 {
 public:
@@ -76,6 +83,8 @@ public:
 	ResourceMaterial* default_texture = nullptr;
 
 	Material* default_material = nullptr;
+
+	RenderMode render_mode = RenderMode::DEFAULT;
 };
 
 #endif

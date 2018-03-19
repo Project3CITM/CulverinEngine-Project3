@@ -77,6 +77,11 @@ bool ModuleGUI::Start()
 	App->scene->scene_buff = new FrameBuffer();
 	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
+	App->scene->glow_buff = new FrameBuffer();
+	App->scene->glow_buff->resize = false;
+	App->scene->glow_buff->Create(128, 128);
+
+
 	std::vector<WindowManager*>::iterator window = win_manager.begin();
 	for (int i = 0; i < win_manager.size(); i++)
 	{

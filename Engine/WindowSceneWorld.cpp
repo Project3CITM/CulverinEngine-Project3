@@ -65,13 +65,14 @@ void SceneWorld::ShowSceneWorld()
 				mouse_pos.x <= scene_window.z && mouse_pos.y <= scene_window.w && ImGui::IsMouseHoveringWindow())
 			{
 				App->camera->MousePick(mouse_pos.x, mouse_pos.y + PICK_OFFSET_Y, scene_window.z, scene_window.w);
-				//LOG("MOUSE CLICK (%f, %f).", mouse_pos.x, mouse_pos.y);
+			
 			}
 		}
 	}
 	App->camera->can_move_cam = ImGui::IsMouseHoveringWindow(); //TODO ELLIOT CHange to variable in WindowManager.h
 	
-	ImGui::Image((void*)App->scene->scene_buff->GetTexture(), ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0)); // Set texture to buffer
+	ImGui::Image((void*)App->scene->glow_buff->GetTexture(), ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0)); // Set texture to buffer
+	ImGui::Image((void*)App->scene->glow_buff->GetTexture(), ImVec2(128,128), ImVec2(0, 1), ImVec2(1, 0)); // Set texture to buffer
 
 	EndDock();
 }

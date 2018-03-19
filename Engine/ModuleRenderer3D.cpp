@@ -224,7 +224,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	perf_timer.Start();
 
 	// 
-	if (App->mode_game == false)
+/*	if (App->mode_game == false)
 	{
 		App->scene->scene_buff->Bind("Scene");
 	}
@@ -236,7 +236,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glLoadIdentity();
 
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(active_camera->GetViewMatrix());
+	glLoadMatrixf(active_camera->GetViewMatrix());*/
 
 	// light 0 on cam pos
 	

@@ -41,6 +41,9 @@ public:
 	//ALPHA
 	float alpha = 1.0f;
 
+	//GLOW
+	bool glow = false;
+
 	//Variables Vector
 	std::vector<TextureVar>	textures;
 	std::vector<intVar>		int_variables;

@@ -6,6 +6,8 @@
 #include "EventDef.h"
 #include "CompParticleSystem.h"
 #include "ParticleSystem.h"
+#include "ModuleFramebuffers.h"
+#include "Scene.h"
 
 //You use this function to push new events to the system, with that is no needed to use App->eventsystem->PushEvent(event), only PushEvent(event)
 void PushEvent(Event& event)
@@ -86,22 +88,36 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 	}
 	
 	std::multimap<float, Event>* MultimapToIterate = &MM3DDrawEvent;
-	for (int i = 0; i < 3; i++)
+	FrameBuffer* active_frame = nullptr;
+	for (int i = 0; i < 4; i++)
 	{
 		switch (i)
 		{
 		case 0: //iterate and send MM3DDrawEvent
 			if (MM3DDrawEvent.size() == 0) continue;
+			App->renderer3D->render_mode = RenderMode::DEFAULT;
+			active_frame = App->scene->scene_buff;
 			MultimapToIterate = &MM3DDrawEvent; break;
 		case 1: //iterate and send MM3DADrawEvent
 			if (MM3DADrawEvent.size() == 0) continue;
+			App->renderer3D->render_mode = RenderMode::DEFAULT;
+			active_frame = App->scene->scene_buff;
 			MultimapToIterate = &MM3DADrawEvent; break;
-		case 2: //iterate and send MM2DCanvasDrawEvent
+		case 2: //iterate and send MM3DDrawEvent
+			if (MM3DDrawEvent.size() == 0) continue;
+			App->renderer3D->render_mode = RenderMode::GLOW;
+			active_frame = App->scene->glow_buff;
+			MultimapToIterate = &MM3DDrawEvent; break;
+		case 3: //iterate and send MM2DCanvasDrawEvent
 			if (MM2DCanvasDrawEvent.size() == 0) continue;
+			App->renderer3D->render_mode = RenderMode::DEFAULT;
+			active_frame = App->scene->scene_buff;
 			MultimapToIterate = &MM2DCanvasDrawEvent;
 			//TODO Set perspective to orthographic here
 			break; 
 		}
+
+		active_frame->Init("Scene");
 		size = MultimapToIterate->size();
 		count = 0;
 		for (std::multimap<float, Event>::const_iterator item = MultimapToIterate->cbegin(); item != MultimapToIterate->cend();)
@@ -139,16 +155,21 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 				}
 			else
 			{
+				if (i == 2)
 				item = MultimapToIterate->erase(item);
+				else item++;
 				continue;
 			}
+			if(i ==2)
 			item = MultimapToIterate->erase(item);
+			else item++;
 			count++;
 		}
 		if (i == 2)
 		{
 			//TODO Set perspective back to perspective here
 		}
+		active_frame->UnBind("Scene");
 	}
 
 	//iterate and send MMNormalEvent

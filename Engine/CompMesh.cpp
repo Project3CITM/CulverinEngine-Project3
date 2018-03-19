@@ -18,6 +18,7 @@
 #include "CompCamera.h"
 #include "CompBone.h"
 #include "ModuleLightning.h"
+#include "ModuleWindow.h"
 
 //Delete this
 #include "glm\glm.hpp"
@@ -260,13 +261,30 @@ void CompMesh::Draw(bool alpha)
 		glDisable(GL_CULL_FACE);
 	}
 
-
+	
 	if (render && resource_mesh != nullptr)
 	{
 		Material* material = App->renderer3D->default_material;
 		//if (material->material_shader != nullptr)
 		if (comp_material != nullptr) material = comp_material->material;
+
+		switch (App->renderer3D->render_mode) {
+		case RenderMode::DEFAULT:
+			glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+			break;
+		case RenderMode::GLOW:
+			if (!material->glow) return;
+			glViewport(0, 0, 128, 128);
+			break;
+		case RenderMode::DEPTH:
+
+			break;
+
+
+		}
+
 		material->Bind();
+		
 	
 		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
 	
@@ -283,19 +301,6 @@ void CompMesh::Draw(bool alpha)
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			}
 
-			//Temporary, future delete incoming
-			//Set Color
-		/*	if (material != nullptr)
-			{
-				glColor4f(material->GetColor().r, material->GetColor().g, material->GetColor().b, material->GetColor().a);
-			}
-			else
-			{
-				glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
-			}
-			//*/
-
-			//Future Delete
 			int i = 0;
 			if (App->renderer3D->texture_2d)
 			{
@@ -318,27 +323,13 @@ void CompMesh::Draw(bool alpha)
 							glBindTexture(GL_TEXTURE_2D, temp->material->textures[i].value->GetTextureID());
 						}
 					}
-					
-					/*
-					uint texture_2D_sampler = 0;
-					glActiveTexture(GL_TEXTURE0);
-					if (temp->GetTextureID() == 0)
-					{
-						glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-					}
-					else
-					{
-						glBindTexture(GL_TEXTURE_2D, temp->GetTextureID());
-					}
-					texture_2D_sampler = glGetUniformLocation(App->renderer3D->default_shader->programID, "_texture");
-					glUniform1i(texture_2D_sampler, 0);
-					*/
+				
 				}
 			}		
 			//
 			SetUniformVariables(material);
 
-			Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
+			Frustum camFrust = App->renderer3D->active_camera->frustum;
 			float4x4 temp = camFrust.ViewMatrix();
 
 			GLint view2Loc = glGetUniformLocation(material->GetProgramID(), "view");
@@ -364,9 +355,7 @@ void CompMesh::Draw(bool alpha)
 			glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 			glUniformMatrix4fv(modelviewLoc, 1, GL_TRUE, ModelViewMatrix.ptr());
 
-			//---------------------------------------------
 	
-		//--------------this
 			float4x4 MVP =  camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
 			
 			glm::mat4 biasMatrix(
@@ -377,8 +366,7 @@ void CompMesh::Draw(bool alpha)
 			);
 		
 			glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
-			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-			//glm::mat4 depthViewMatrix = glm::lookAt(vec3(rot_eu_ang.x, rot_eu_ang.y, rot_eu_ang.z), glm::vec3(pos_light.x, pos_light.y, pos_light.z), glm::vec3(0, 1, 0));
+			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);		
 			glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 			glm::mat4 depthModelMatrix = glm::mat4(1.0);
 			glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
@@ -387,11 +375,7 @@ void CompMesh::Draw(bool alpha)
 			int depthMatrixID = glGetUniformLocation(material->GetProgramID(), "depthMVP");
 			int depthBiasID = glGetUniformLocation(material->GetProgramID(), "depthBias");
 			GLuint ShadowMapID = glGetUniformLocation(material->GetProgramID(), "shadowMap");
-			//-----------------------
-
-			//glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
-			//glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
-
+		
 
 			if (material->name == "Shadow_World_Render")
 			{
@@ -406,7 +390,7 @@ void CompMesh::Draw(bool alpha)
 
 			if (skeleton != nullptr)
 			{
-				total_save_buffer += 4; // 4 weights
+				total_save_buffer += 4;
 
 				bones_size_in_buffer = 4 * sizeof(GLint);
 

@@ -296,6 +296,7 @@ void CompMaterial::ShowInspectorInfo()
 
 	ImGui::Separator();
 	ImGui::SliderFloat("Alpha", &material->alpha, 0.0f, 1.0f);
+	ImGui:Checkbox("Glow", &material->glow);
 	ImGui::Separator();
 
 
