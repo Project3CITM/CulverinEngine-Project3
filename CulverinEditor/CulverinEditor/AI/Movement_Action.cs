@@ -125,12 +125,14 @@ public class Movement_Action : Action
                 current_velocity = current_velocity.Normalized * current_max_vel;
             }
 
+            Debug.Log("Velocity: " + current_velocity);
+
             //Translate
-            Vector3 pos = GetComponent<Transform>().local_position;
+            Vector3 pos = GetComponent<Transform>().position;
             float dt = Time.deltaTime;
             pos.x = pos.x + (current_velocity.x * dt);
             pos.z = pos.z + (current_velocity.z * dt);
-            GetComponent<Transform>().local_position = pos;
+            GetComponent<Transform>().position = pos;
 
             //Clean
             current_acceleration = new Vector3(Vector3.Zero);
@@ -139,7 +141,7 @@ public class Movement_Action : Action
             {
                 pos.x = path[0].GetTileX() * tile_size;
                 pos.z = path[0].GetTileY() * tile_size;
-                GetComponent<Transform>().local_position = pos;
+                GetComponent<Transform>().position = pos;
 
                 //Update Collider -> 
                 GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
@@ -184,7 +186,7 @@ public class Movement_Action : Action
                 Align_Steering align = GetComponent<Align_Steering>();
                 align.SetEnabled(false);
                 align.Reset();
-                Vector3 obj_vec = new Vector3(GetTargetPosition() - GetComponent<Transform>().GetGlobalPosition());
+                Vector3 obj_vec = new Vector3(GetTargetPosition() - GetComponent<Transform>().position);
                 GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
 
                 SetDirection();
@@ -330,7 +332,7 @@ public class Movement_Action : Action
 
     public bool ReachedTile()
     {
-        Vector3 my_pos = GetComponent<Transform>().local_position;
+        Vector3 my_pos = GetComponent<Transform>().position;
         Vector3 tile_pos = GetTargetPosition();
 
         Vector3 result = new Vector3 (Vector3.Zero);
@@ -361,12 +363,12 @@ public class Movement_Action : Action
         if (path.Count > 0)
         {
             result.x = path[0].GetTileX() * tile_size;
-            result.y = GetComponent<Transform>().local_position.y;
+            result.y = GetComponent<Transform>().position.y;
             result.z = path[0].GetTileY() * tile_size;
         }
         else
         {
-            result = GetComponent<Transform>().local_position;
+            result = GetComponent<Transform>().position;
             Debug.Log("GetTargetPosition(): Path has no values");
         }
 
@@ -378,7 +380,7 @@ public class Movement_Action : Action
         if (look_at_player == false)
         {
             Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
-            Vector3 pos = new Vector3(GetComponent<Transform>().local_position);
+            Vector3 pos = new Vector3(GetComponent<Transform>().position);
             Vector3 target_pos = new Vector3(GetTargetPosition());
             Vector3 obj_vec = new Vector3(target_pos - pos);
 
@@ -409,8 +411,8 @@ public class Movement_Action : Action
         else
         {
             Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
-            Vector3 pos = new Vector3(GetComponent<Transform>().local_position);
-            Vector3 player_pos = new Vector3(player.GetComponent<Transform>().local_position);
+            Vector3 pos = new Vector3(GetComponent<Transform>().position);
+            Vector3 player_pos = new Vector3(player.GetComponent<Transform>().position);
             Vector3 obj_vec = new Vector3(player_pos.x - pos.x, pos.y, player_pos.z - pos.z);
 
             float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
@@ -516,12 +518,12 @@ public class Movement_Action : Action
 
     public int GetCurrentTileX()
     {
-        return ((int)GetComponent<Transform>().local_position.x / (int)tile_size);
+        return ((int)GetComponent<Transform>().position.x / (int)tile_size);
     }
 
     public int GetCurrentTileY()
     {
-        return ((int)GetComponent<Transform>().local_position.z / (int)tile_size);
+        return ((int)GetComponent<Transform>().position.z / (int)tile_size);
     }
 
     public Vector3 GetCurrentVelocity()
@@ -541,7 +543,7 @@ public class Movement_Action : Action
     
     public float GetDistanceToTarget()
     {
-        return ((GetComponent<Transform>().local_position) - (GetTargetPosition())).Length;
+        return ((GetComponent<Transform>().position) - (GetTargetPosition())).Length;
     }
 
     public void SetCurrentVelocity(Vector3 vel)

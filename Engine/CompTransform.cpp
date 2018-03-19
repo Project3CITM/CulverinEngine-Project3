@@ -512,15 +512,19 @@ void CompTransform::SetForwardVector(float3 vec)
 		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
 	}*/
 
-	float4x4 parent_transform = parent->GetComponentTransform()->GetGlobalTransform();
+	GameObject* parent_go = parent->GetParent();
 
-	global_transform = new_transform;
+	if (parent_go != nullptr)
+	{
+		float4x4 parent_transform = parent_go->GetComponentTransform()->GetGlobalTransform();
+		local_transform = parent_transform.Inverted() * new_transform;
+	}
+	else
+		local_transform = new_transform;
 
-	local_transform = parent_transform.Inverted() * new_transform;
-
-	rotation_euler = local_transform.ToEulerXYZ();
+	/*rotation_euler = local_transform.ToEulerXYZ();
 	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
-	rotation_euler *= RADTODEG;
+	rotation_euler *= RADTODEG;*/
 	toUpdate = true;
 }
 

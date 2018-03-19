@@ -24,6 +24,7 @@ public class Attack_Action : Action
     SWA_STATE state = SWA_STATE.WAITING;
     float damage = 1.0f;
     public float apply_damage_point = 0.5f;
+    public float attack_duration = 1.0f;
 
     public GameObject target = null;
     public GameObject my_object = null;
@@ -33,14 +34,10 @@ public class Attack_Action : Action
     public override bool ActionStart()
     {
         state = SWA_STATE.PRE_APPLY;
-        Debug.Log("1");
         anim = gameObject.GetComponent<CompAnimation>();
-        Debug.Log("2");
         anim.SetTransition("ToAttack");
-        Debug.Log("3");
-        anim.SetClipsSpeed(anim_speed);
-        Debug.Log("Got Here");
-        player = GetLinkedObject("target").GetComponent<CharactersManager>();
+        anim.SetClipDuration("Attack", attack_duration);
+        player = GetLinkedObject("Target").GetComponent<CharactersManager>();
         //Interrupt player action
         return true;
     }
