@@ -31,8 +31,9 @@ public:
 	void ClearEvents(EventType type, Component* component);
 
 private:
-	std::vector<std::multimap<float, Event>> DrawV;
-	std::vector<std::multimap<float, Event>> NonDrawV;
+	std::vector<std::multimap<uint, Event>> DrawV;				//Draw events are stored here ordered by resource number (faster draw, less bind/unbind)
+	std::vector<std::multimap<float, Event>> DrawAlphaV;		//Draw events are stored here ordered by distance to active camera
+	std::vector<std::multimap<EventType, Event>> NonDrawV;		//No-Draw events are stored here ordered by EventType enum, less eventvector change when iterating
 	std::map<EventType, std::vector<Module*>> MEventListeners;
 	uint MapSetToIterate = 0;
 };
