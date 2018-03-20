@@ -404,6 +404,11 @@ void ModuleMap::ShowWalkableMap()
 				{
 					ImGui::PopStyleColor();
 				}
+				if (ImGui::BeginPopupContextItem("Options##maptile"))
+				{
+					OptionsTile(x, y);
+					ImGui::EndPopup();
+				}
 				ImGui::PopID();
 			}
 		}
@@ -628,6 +633,11 @@ void ModuleMap::ShowCreationMap()
 			if (map[x][y] > -1 && force_pop)
 			{
 				ImGui::PopStyleColor();
+			}
+			if (ImGui::BeginPopupContextItem("Options##maptile3d"))
+			{
+				OptionsTile(x, y);
+				ImGui::EndPopup();
 			}
 			ImGui::PopID();
 		}
@@ -931,6 +941,14 @@ void ModuleMap::ShowNavigationMap()
 	ImGui::SameLine();
 	ImGui::Text("Test...");
 
+}
+
+void ModuleMap::OptionsTile(int x, int y)
+{
+	if (ImGui::MenuItem("Delete"))
+	{
+		map[x][y] = -1;
+	}
 }
 
 void ModuleMap::GetSizePrefab(GameObject* obj, float& min_size, float& max_size)

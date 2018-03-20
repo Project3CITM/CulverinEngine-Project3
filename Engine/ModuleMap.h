@@ -31,6 +31,7 @@ public:
 
 	void ShowWalkableMap();
 	void ShowCreationMap();
+	void OptionsTile(int x, int y);
 	void GetSizePrefab(GameObject* obj, float& min_size, float& max_size);
 	void ShowNavigationMap();
 
