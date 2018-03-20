@@ -79,6 +79,13 @@ void CompSlider::ShowOptions()
 	}
 }
 
+void CompSlider::LinkPointers()
+{
+	std::vector<GameObject*> childs = parent->GetChildsVec();  //Temporal guarrada
+	slide_bar = (CompImage*)childs[0];
+	slider = (CompButton*)childs[1];
+}
+
 void CompSlider::ShowInspectorInfo()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 0));
@@ -88,11 +95,19 @@ void CompSlider::ShowInspectorInfo()
 		ImGui::OpenPopup("Options Slider");
 	}
 	ImGui::PopStyleVar();
+	if (ImGui::Button("Link pointers", ImVec2(120, 0)))
+	{
+		LinkPointers();
+	}
 	if (ImGui::Button("Sync Min/Max", ImVec2(120, 0)))
 	{
-		int bar_x = slide_bar->GetRectTrasnform()->GetPosGlobal().x;
-		min_pos = bar_x - slide_bar->GetRectTrasnform()->GetWidth()/2;
-		max_pos = bar_x + slide_bar->GetRectTrasnform()->GetWidth()/2;
+		//if (slide_bar == NULL)
+		//{
+		//	ImGui::Text("SLIDE BAR NOT FOUND!!!");
+		//	return;
+		//}
+		min_pos = -slide_bar->GetRectTrasnform()->GetWidth()/2;
+		max_pos = slide_bar->GetRectTrasnform()->GetWidth()/2;
 		slide_bar->SetToFilled(true);
 	}
 	ImGui::Text("Min pos: %f", min_pos);

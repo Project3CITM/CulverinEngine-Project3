@@ -399,6 +399,9 @@ void CompImage::SetOverwriteImage(ResourceMaterial * set_overwrite_image)
 
 void CompImage::SetToFilled(bool filled)
 {
+	if (this == nullptr)
+		return;
+
 	if (filled)
 	{
 		type = Type::FILLED;

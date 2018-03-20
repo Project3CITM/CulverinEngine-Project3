@@ -436,6 +436,7 @@ std::vector<float3> CompRectTransform::GenerateQuadVertices()
 
 int CompRectTransform::GetWidth()const
 {
+	if(this!=nullptr) //CRASH
 	return width;
 }
 

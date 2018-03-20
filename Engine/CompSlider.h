@@ -11,6 +11,7 @@ public:
 	~CompSlider();
 
 	void ShowOptions();
+	void LinkPointers();
 	void ShowInspectorInfo();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
