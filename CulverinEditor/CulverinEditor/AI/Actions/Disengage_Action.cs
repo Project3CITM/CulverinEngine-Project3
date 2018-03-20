@@ -1,30 +1,30 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 
-class Die_Action : Action
+class Disengage_Action : Action
 {
-    public Die_Action()
+    public Disengage_Action()
     {
-        action_type = ACTION_TYPE.DIE_ACTION;
+        action_type = ACTION_TYPE.ENGAGE_ACTION;
     }
 
-    public Die_Action(float anim_speed) : base(anim_speed)
+    public Disengage_Action(float anim_speed) : base(anim_speed)
     {
-        action_type = ACTION_TYPE.DIE_ACTION;
+        action_type = ACTION_TYPE.ENGAGE_ACTION;
     }
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().SetTransition("ToDie");
+        GetComponent<CompAnimation>().SetTransition("ToSheathe");
         GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (GetComponent<CompAnimation>().IsAnimationRunning("Die"))
+        if (GetComponent<CompAnimation>().IsAnimationRunning("Idle"))
         {
-            Debug.Log("Dead");
+            Debug.Log("Disengaged");
             return ACTION_RESULT.AR_SUCCESS;
         }
         return ACTION_RESULT.AR_IN_PROGRESS;
@@ -32,6 +32,8 @@ class Die_Action : Action
 
     public override bool ActionEnd()
     {
+        interupt = false;
         return true;
     }
 }
+

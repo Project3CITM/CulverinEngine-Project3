@@ -32,6 +32,7 @@ class Disengage_Action : Action
 
     public override bool ActionEnd()
     {
+        interupt = false;
         return true;
     }
 }

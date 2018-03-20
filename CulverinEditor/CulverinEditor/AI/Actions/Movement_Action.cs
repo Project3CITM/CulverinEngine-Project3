@@ -125,8 +125,6 @@ public class Movement_Action : Action
                 current_velocity = current_velocity.Normalized * current_max_vel;
             }
 
-            Debug.Log("Velocity: " + current_velocity);
-
             //Translate
             Vector3 pos = GetComponent<Transform>().position;
             float dt = Time.deltaTime;
@@ -202,9 +200,14 @@ public class Movement_Action : Action
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
+    public override bool ActionEnd()
+    {
+        interupt = false;
+        return false;
+    }
+
     private void NextTile()
     {
-        Debug.Log("Get Cancer");
         //Tiles
         if (path.Count == 1)
         {
@@ -224,8 +227,7 @@ public class Movement_Action : Action
         //Rotation
         if (FinishedRotation() == false)
         {
-            Debug.Log("Hello");
-            GetDeltaAngle(true);
+            GetDeltaAngle();
             rotation_finished = false;
             align.SetEnabled(true);
             align.SetRotation(GetDeltaAngle());
@@ -256,7 +258,7 @@ public class Movement_Action : Action
             rotation_finished = false;
             align.SetEnabled(true);
             align.SetRotation(GetDeltaAngle());
-            GetDeltaAngle(true);
+            GetDeltaAngle();
         }
         else
         {
@@ -288,12 +290,6 @@ public class Movement_Action : Action
             PathNode closest = adjacent_walkable_tiles[0];
             int closest_distance = Mathf.Abs(closest.GetTileX() - current_x) + Mathf.Abs(closest.GetTileY() - current_y);
 
-            Debug.Log("Current enemy pos:" + current_x + "," + current_y);
-            Debug.Log("Closest:" + closest_distance);
-            Debug.Log("Adjacent Tiles");
-            foreach (PathNode n in adjacent_walkable_tiles)
-                Debug.Log("Tile: " + n.GetTileX() + "," + n.GetTileY());
-
             if (adjacent_walkable_tiles.Count >= 1)
             {
                 for (int i = 1; i < adjacent_walkable_tiles.Count; i++)
@@ -314,8 +310,6 @@ public class Movement_Action : Action
 
             GoTo(closest);
 
-            foreach (PathNode n in path)
-                Debug.Log("Tile: " + n.GetTileX() + "," + n.GetTileY());
         }
     }
 

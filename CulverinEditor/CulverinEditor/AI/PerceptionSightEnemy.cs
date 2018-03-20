@@ -64,7 +64,9 @@ public class PerceptionSightEnemy : CulverinBehaviour
             }
 
             if (seen_this_frame == false)
+            {
                 player_seen = false;
+            }
             else
             {
                 player_seen = true;

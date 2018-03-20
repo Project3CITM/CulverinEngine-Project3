@@ -60,7 +60,6 @@ public class Enemy_BT : BT
 
     public override void MakeDecision()
     {
-        Debug.Log("ima here boii");
         Debug.Log(next_action.action_type);
 
         if (current_hp <= 0)
@@ -81,7 +80,7 @@ public class Enemy_BT : BT
 
         if (in_combat)
         {            
-            if (next_action.action_type == Action.ACTION_TYPE.ENGAGE_ACTION)
+            if (next_action.action_type == Action.ACTION_TYPE.DISENGAGE_ACTION)
             {
                 Debug.Log("Disengage");
                 in_combat = false;
@@ -94,7 +93,7 @@ public class Enemy_BT : BT
         }
         else
         {
-            if (next_action.action_type == Action.ACTION_TYPE.DISENGAGE_ACTION)
+            if (next_action.action_type == Action.ACTION_TYPE.ENGAGE_ACTION)
             {
                 Debug.Log("Engage");
                 in_combat = true;

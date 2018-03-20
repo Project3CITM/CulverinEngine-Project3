@@ -16,12 +16,13 @@ public class EnemySword_BT : Enemy_BT
 
     protected override void InCombatDecesion()
     {
-        Debug.Log("InCombatDecesion jajajaja");
+        Debug.Log("InCombatDecesion");
         //Attack action
         if (InRange())
         {
             Debug.Log("In Range");
             bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
+            Debug.Log(attack_timer);
 
             if (attack_ready)
             {
@@ -55,8 +56,7 @@ public class EnemySword_BT : Enemy_BT
     }
 
     protected override void OutOfCombatDecesion()
-    {
-        Debug.Log("OutOfCombatDecesion jajajaja");
+    {        
         //Investigate
         if (heard_something)
         {

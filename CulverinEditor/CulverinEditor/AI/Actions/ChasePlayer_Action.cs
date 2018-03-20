@@ -49,7 +49,7 @@ public class ChasePlayer_Action : Action
     public override bool ActionEnd()
     {
         move.NotChase();
-        base.ActionEnd();
+        interupt = false;
         return true;
     }
 

@@ -95,7 +95,7 @@ public class PerceptionListener : CulverinBehaviour
     {
         if (events_in_memory.Count > 0)
         {
-            if (new_event.type > events_in_memory[0].type) //>= to constntly hear while in range
+            if (new_event.type >= events_in_memory[0].type) //>= to constntly hear while in range
             {
                 return true;
             }

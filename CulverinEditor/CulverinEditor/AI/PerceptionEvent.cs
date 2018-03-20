@@ -83,6 +83,8 @@ public class PerceptionPlayerSeenEvent : PerceptionEvent
 
     public PerceptionPlayerSeenEvent(float _time_in_memory, int player_x, int player_y, GameObject enemy_who_saw_) : base(PERCEPTION_EVENT_TYPE.PLAYER_SEEN, _time_in_memory)
     {
+        Debug.Log(this.type);
+
         player_seen_in_x = player_x;
         player_seen_in_y = player_y;
         enemy_who_saw = enemy_who_saw_;
