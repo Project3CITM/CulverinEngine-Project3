@@ -47,8 +47,8 @@ public:
 
 	std::string name = "default";
 	ActionInputType action_type = ActionInputType::UNKNOWN_ACTION;
-	KeyRelation* positive_button;
-	KeyRelation* negative_button;
+	KeyRelation* positive_button = nullptr;
+	KeyRelation* negative_button = nullptr;
 	//KeyRelation* alt_positive_button;
 	//KeyRelation* alt_negative_button;
 
