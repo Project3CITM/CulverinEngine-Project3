@@ -21,11 +21,14 @@ public class SwordGuard_Listener : PerceptionListener
 
     public override void OnEventRecieved(PerceptionEvent event_recieved)
     {
-        if (IsPriotitaryEvent(event_recieved))
+        if (IsPriotitaryEvent(event_recieved) == true)
         {
             ClearEvents();
         }
-        else return;
+        else
+        {
+            return;
+        }
 
         switch (event_recieved.type)
         {
