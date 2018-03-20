@@ -6,19 +6,35 @@ using System.Threading.Tasks;
 
 public class Path
 {
+    public enum PUZZLE_DIRECTION
+    {
+        DIR_NORTH = 0,
+        DIR_EAST = 1,
+        DIR_SOUTH = 2,
+        DIR_WEST = 3
+    };
+
     public int[,] walkability;
     // 0: Walkable
     // 1: No walkable
     public int width = 0;
     public int height = 0;
 
-    public Path(int _width, int _height, int path_index)
+    public PUZZLE_DIRECTION puzzle_direction = PUZZLE_DIRECTION.DIR_NORTH;
+
+    public Path(int _width, int _height, int puzzle_orientation)
     {
         width = _width;
         height = _height;
+        puzzle_direction = (PUZZLE_DIRECTION) puzzle_orientation;
 
         walkability = new int[width, height];
+    }
 
+    // ---------------------------------
+
+    public void CreateWalkability(int path_index)
+    {
         for (int x = 0; x < width; ++x)
         {
             for (int y = 0; y < height; ++y)
@@ -28,13 +44,6 @@ public class Path
             }
         }
 
-        CreateWalkability(path_index);
-    }
-
-    // ---------------------------------
-
-    private void CreateWalkability(int path_index)
-    {
         switch (path_index)
         {
             case 0:
