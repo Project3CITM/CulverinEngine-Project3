@@ -213,37 +213,38 @@ bool ModuleRenderer3D::Start()
 
 	GLfloat cube_vertices[] = {
 		// front
-		-1.0, -1.0,  0.0,
-		1.0, -1.0,  0.0,
-		1.0,  1.0,  0.0,
-		-1.0,  1.0,  0.0,
+
+		-0.5, -0.5,  0.0f,
+		0.5, -0.5,  0.0f,
+		0.5,  0.5,  0.0f,
+		-0.5,  0.5, 0.0f,
 	};
 
-	GLushort cube_elements[] = {
+	uint cube_elements[] = {
 		// front
-		0, 1, 2,
-		2, 3, 0,
+		0, 1, 2, 3
+	
 	};
 
-	static const GLfloat g_UV_buffer_data[] = {	
+	/*static const GLfloat g_UV_buffer_data[] = {	
 		0.0f, 0.0f,
 		1.0f,  0.0f,
 		1.0f,  1.0f,		
 		0.0f, 1.0f,
 	};
 		
-
+		*/
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,12 *  sizeof(float), cube_vertices, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &UVbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_UV_buffer_data), g_UV_buffer_data, GL_STATIC_DRAW);
+	//glGenBuffers(1, &UVbuffer);
+	//glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(g_UV_buffer_data), g_UV_buffer_data, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &ibo_cube_elements);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(uint), cube_elements, GL_STATIC_DRAW);
 
 
 	(depth_test) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
@@ -267,7 +268,7 @@ bool ModuleRenderer3D::Start()
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
 	perf_timer.Start();
-
+	
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
@@ -277,15 +278,37 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 	perf_timer.Start();
-	
 	App->render_gui->ScreenSpaceDraw();
-	RenderSceneWiewport();
-
+	
 	App->scene->scene_buff->UnBind("Scene");
+	//ImGui::Begin("TEST");
+	//ImGui::Image((void*)App->scene->glow_buff->GetTexture(), ImVec2(128, 128));
+	//ImGui::End();
+	
+	
+	//ImGui::Render();
 
-	
-	ImGui::Render();
-	
+/*	texture_shader->Bind();
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+	//Solid cyan quad in the center
+
+
+
+	glBegin(GL_QUADS);
+	glVertex2f(-0.5f, -0.5f);
+	glVertex2f(0.5f, -0.5f);
+	glVertex2f(0.5f, 0.5f);
+	glVertex2f(-0.5f, 0.5f);
+	glEnd();
+
+	texture_shader->Unbind();
+	*/
+
+	RenderSceneWiewport();
 	SDL_GL_SwapWindow(App->window->window);
 
 	postUpdate_t = perf_timer.ReadMs();
@@ -505,46 +528,46 @@ void ModuleRenderer3D::RenderSceneWiewport()
 {
 	
 	texture_shader->Bind();
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-
-
-	GLint texLoc = glGetUniformLocation(texture_shader->programID, "albedo");
-	glUniform1i(texLoc, 0);
-	glActiveTexture(GL_TEXTURE0);
-
-	glBindTexture(GL_TEXTURE_2D, App->scene->glow_buff->GetTexture());
 	
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	
+	
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 
 
 	glBindBuffer(GL_ARRAY_BUFFER,vertexbuffer);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(
-		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-		3,                                // size
-		GL_FLOAT,                         // type
-		GL_FALSE,                         // normalized?
-		3 * sizeof(float),                                // stride
-		(void*)0                          // array buffer offset
+		0,                               
+		3,                               
+		GL_FLOAT,                        
+		GL_FALSE,                        
+		0,               
+		(void*)0                         
 	);
 	glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(
-		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-		2,                                // size
-		GL_FLOAT,                         // type
-		GL_FALSE,                         // normalized?
-		2* sizeof(float),                                // stride
-		(void*)0                          // array buffer offset
+		1,                               
+		2,                               
+		GL_FLOAT,                        
+		GL_FALSE,                        
+		0,                
+		(void*)0                         
 	);
-
+	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, NULL);
+
+	texture_shader->Unbind();
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
-	texture_shader->Unbind();
+	//Disable vertex arrays
+	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER,0);
-
+	glEnable(GL_DEPTH_TEST);
 }
 

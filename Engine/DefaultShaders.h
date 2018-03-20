@@ -231,7 +231,7 @@ static const GLchar* TextureFrag[] =
 	"{\n"
 
 	//Z-Buffer Line Shader
-	"color= vec4(vec3(1),1);\n"// texture(albedo, TexCoord);\n"
+	"color= vec4(vec3(0.5),1);\n"// texture(albedo, TexCoord);\n"
 	"}\n"
 };
 
