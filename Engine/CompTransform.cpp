@@ -586,7 +586,7 @@ float3 CompTransform::GetPos() const
 
 float3 CompTransform::GetPosGlobal() const
 {
-	return position_global;
+	return position_global; //SLIDER PROBLEM
 }
 
 float3 CompTransform::GetPosParent() const
