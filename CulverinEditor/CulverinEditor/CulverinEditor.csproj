@@ -69,7 +69,6 @@
     <Compile Include="AI\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
     <Compile Include="BarrelPuzle\BarrelMove.cs" />
-    <Compile Include="BarrelPuzle\BarrelPuzzleGenerator.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
     <Compile Include="BarrelPuzle\BarrelScript.cs" />
     <Compile Include="BarrelPuzle\ChainManage.cs" />
