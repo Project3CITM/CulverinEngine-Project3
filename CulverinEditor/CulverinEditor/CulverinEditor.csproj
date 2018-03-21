@@ -81,6 +81,7 @@
     <Compile Include="CompMesh.cs" />
     <Compile Include="CompRectTransform.cs" />
     <Compile Include="LevelMap.cs" />
+    <Compile Include="Miscellanea\RespawnWhenHit.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Secondary.cs" />
     <Compile Include="Player\Daenerys\Fireball.cs" />
     <Compile Include="float4x4.cs" />
