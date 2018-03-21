@@ -85,7 +85,7 @@ public:
 	ShaderProgram* lights_billboard_shader = nullptr;
 	ShaderProgram* non_glow_shader = nullptr;
 	ShaderProgram* blur_shader_tex = nullptr;
-	ShaderProgram* glow_shader_tex = nullptr;
+	ShaderProgram* final_shader_tex = nullptr;
 	ResourceMaterial* default_texture = nullptr;
 
 	Material* default_material = nullptr;
@@ -98,6 +98,11 @@ public:
 	GLuint VertexArrayID;
 	GLuint ibo_cube_elements;
 
+
+	//TEMP
+	int blur_amount = 0;
+	float blur_scale = 0;
+	float blur_strength = 0;
 };
 
 #endif

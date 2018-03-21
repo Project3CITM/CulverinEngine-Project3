@@ -185,7 +185,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", DefaultFrag, DefaultVert, nullptr);
 	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr);
 	blur_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr);
-	glow_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr);
+	final_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", FinalFrag, TextureVert, nullptr);
 
 	non_glow_material = new Material();
 	non_glow_material->name = "Non Glow Material";
@@ -279,22 +279,34 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 	perf_timer.Start();
 
+
 	App->render_gui->ScreenSpaceDraw();
 
-	//glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
-	App->scene->horizontal_blur_buff->Init("Scene");
 	BlurShaderVars(0);
+	App->scene->horizontal_blur_buff->Init("Scene");
 	RenderSceneWiewport();
 	App->scene->horizontal_blur_buff->UnBind("Scene");
-	App->scene->vertical_blur_buff->Init("Scene");
 	BlurShaderVars(1);
+	App->scene->vertical_blur_buff->Init("Scene");
 	RenderSceneWiewport();
 	App->scene->vertical_blur_buff->UnBind("Scene");
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+	GlowShaderVars();
+	App->scene->final_buff->Init("Scene");
 
+	RenderSceneWiewport();
+	App->scene->final_buff->UnBind("Scene");
 
 	ImGui::Begin("Test");
-	ImGui::Image((ImTextureID*)App->scene->vertical_blur_buff->GetTexture(), ImVec2(256,256));
+	ImGui::Image((ImTextureID*)App->scene->vertical_blur_buff->GetTexture(), ImVec2(256, 256));
+	ImGui::SliderFloat("Strength", &blur_strength, 0.0f, 50.0f);
+	ImGui::SliderInt("Amount", &blur_amount, 0.0f, 30.0f);
+	ImGui::SliderFloat("Scale", &blur_scale, 0.0f, 50.0f);
 	ImGui::End();
+
+
+
+	
 	ImGui::Render();
 
 
@@ -574,6 +586,34 @@ void ModuleRenderer3D::BlurShaderVars(int i)
 
 	GLint orientLoc = glGetUniformLocation(blur_shader_tex->programID, "_orientation");
 	glUniform1i(orientLoc, i);
+
+	GLint amountLoc = glGetUniformLocation(blur_shader_tex->programID, "BlurAmount");
+	glUniform1i(amountLoc, blur_amount);
+
+	GLint scaleLoc = glGetUniformLocation(blur_shader_tex->programID, "BlurScale");
+	glUniform1f(scaleLoc, blur_scale);
+
+	GLint strengthLoc = glGetUniformLocation(blur_shader_tex->programID, "BlurStrength");
+	glUniform1f(strengthLoc, blur_strength);
+
+
+}
+
+void ModuleRenderer3D::GlowShaderVars()
+{
+	final_shader_tex->Bind();
+
+	glActiveTexture(GL_TEXTURE0);
+	GLint texLoc = glGetUniformLocation(final_shader_tex->programID, "albedo");
+	glBindTexture(GL_TEXTURE_2D, App->scene->scene_buff->GetTexture());
+	glUniform1i(texLoc, 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	texLoc = glGetUniformLocation(final_shader_tex->programID, "glow_tex");
+	glBindTexture(GL_TEXTURE_2D, App->scene->vertical_blur_buff->GetTexture());
+
+	glUniform1i(texLoc, 1);
+
 
 }
 

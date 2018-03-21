@@ -227,6 +227,9 @@ static const GLchar* BlurFrag[] =
 	"out vec4 color;\n"
 	"uniform sampler2D albedo;\n"
 	"uniform int _orientation;\n"
+	"uniform int BlurAmount;\n"
+	"uniform float BlurScale;\n"
+	"uniform float BlurStrength;\n"
 	"float Gaussian(float x, float deviation)\n"
 	"{\n"
 	"	return (1.0 / sqrt(2.0 * 3.141592 * deviation)) * exp(-((x * x) / (2.0 * deviation)));\n"
@@ -235,36 +238,36 @@ static const GLchar* BlurFrag[] =
 	"void main()\n"
 	"{\n"
 
-	"float halfBlur = float(10) * 0.5;\n"
+	"float halfBlur = float(BlurAmount) * 0.5;\n"
 	"vec4 colour = vec4(0.0);\n"
 	"vec4 texColour = vec4(0.0);\n"
 
 
 	"float deviation = halfBlur * 0.35;\n"
 	"deviation *= deviation;\n"
-	"float strength = 1.0 - 0.5;\n"
+	"float strength = 1.0 - BlurStrength;\n"
 
 	"if(_orientation == 0){\n"
 	"	// Horizontal blur\n"
-	"	for (int i = 0; i < 10; ++i)\n"
+	"	for (int i = 0; i < BlurAmount; ++i)\n"
 	"	{\n"
-	"		if (i >= 10)\n"
+	"		if (i >= BlurAmount)\n"
 	"			break;\n"
 	"\n"
 	"		float offset = float(i) - halfBlur;\n"
-	"		texColour = texture2D(albedo, TexCoord + vec2(offset / 64, 0)) * Gaussian(offset * strength, deviation);\n"
+	"		texColour = texture2D(albedo, TexCoord + vec2(BlurScale * offset/128 , 0)) * Gaussian(offset * strength, deviation);\n"
 	"		colour += texColour;\n"
 	"	}\n"
 	"}\n"
 	"else {\n"
 	"	// Horizontal blur\n"
-		"	for (int i = 0; i < 10; ++i)\n"
+		"	for (int i = 0; i < BlurAmount; ++i)\n"
 		"	{\n"
-		"		if (i >= 10)\n"
+		"		if (i >= BlurAmount)\n"
 		"			break;\n"
 		"\n"
 		"		float offset = float(i) - halfBlur;\n"
-		"		texColour = texture2D(albedo, TexCoord + vec2(0,offset / 64)) * Gaussian(offset * strength, deviation);\n"
+		"		texColour = texture2D(albedo, TexCoord + vec2(0,BlurScale * offset /128)) * Gaussian(offset * strength, deviation);\n"
 		"		colour += texColour;\n"
 		"	}\n"
 	"}\n"
@@ -273,6 +276,27 @@ static const GLchar* BlurFrag[] =
 	"}\n"
 };
 
+static const GLchar* FinalFrag[] =
+{
+	"#version 330 core\n"
+	"in vec4 ourColor;\n"
+	"in float ourTime;\n"
+	"in vec2 TexCoord;\n"
+	"in vec3 ourNormal;\n"
+	"in vec4 gl_FragCoord;\n"
+	"out vec4 color;\n"
+	"uniform sampler2D albedo;\n"
+	"uniform sampler2D glow_tex;\n"
+
+	"uniform vec4 _my_color;\n"
+	"void main()\n"
+	"{\n"
+	"vec4 dst = texture2D(albedo, TexCoord);\n" // rendered scene
+	"vec4 src = texture2D(glow_tex, TexCoord); \n" // glowmap
+	//Z-Buffer Line Shader
+	"color= min(src + dst, 1.0);\n"
+	"}\n"
+};
 
 static const GLchar* DefaultFrag[] =
 {

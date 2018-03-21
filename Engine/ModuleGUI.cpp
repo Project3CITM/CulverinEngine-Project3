@@ -77,6 +77,10 @@ bool ModuleGUI::Start()
 	App->scene->scene_buff = new FrameBuffer();
 	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
+	App->scene->final_buff = new FrameBuffer();
+	App->scene->final_buff->resize = true;
+	App->scene->final_buff->Create(App->window->GetWidth(), App->window->GetHeight());
+
 	App->scene->glow_buff = new FrameBuffer();
 	App->scene->glow_buff->resize = false;
 	App->scene->glow_buff->Create(128, 128);
@@ -88,6 +92,9 @@ bool ModuleGUI::Start()
 	App->scene->vertical_blur_buff = new FrameBuffer();
 	App->scene->vertical_blur_buff->resize = false;
 	App->scene->vertical_blur_buff->Create(128, 128);
+
+
+
 
 	std::vector<WindowManager*>::iterator window = win_manager.begin();
 	for (int i = 0; i < win_manager.size(); i++)
