@@ -137,17 +137,26 @@ public class Movement_Action : Action
 
             if (ReachedTile() == true)
             {
-                pos.x = path[0].GetTileX() * tile_size;
-                pos.z = path[0].GetTileY() * tile_size;
-                GetComponent<Transform>().position = pos;
-
-                //Update Collider -> 
-                GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
-
-                if (interupt == true)
-                        translation_finished = true;
+                if (path[0] == null)
+                {
+                    interupt = true;
+                }
                 else
+                {
+                    pos.x = path[0].GetTileX() * tile_size;
+                    pos.z = path[0].GetTileY() * tile_size;
+                    GetComponent<Transform>().position = pos;
+
+                    GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
+                }
+                if (interupt == true)
+                {
+                    translation_finished = true;
+                }
+                else
+                {
                     NextTile();
+                }
             }
         }
 
@@ -157,9 +166,13 @@ public class Movement_Action : Action
             if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
             {
                 if (current_rot_acceleration > 0)
+                {
                     current_rot_acceleration = current_max_rot_accel;
+                }
                 else
+                {
                     current_rot_acceleration = -current_max_rot_accel;
+                }
             }
             current_rot_velocity += current_rot_acceleration;
 
@@ -169,7 +182,10 @@ public class Movement_Action : Action
                 {
                     current_rot_velocity = current_max_rot_vel;
                 }
-                else current_rot_velocity = -current_max_rot_vel;
+                else
+                {
+                    current_rot_velocity = -current_max_rot_vel;
+                }
             }
 
             //Rotate
@@ -193,6 +209,7 @@ public class Movement_Action : Action
 
         if (rotation_finished == true && translation_finished == true)
         {
+            Debug.Log("GG");
             GetComponent<CompAnimation>().SetTransition("ToIdle");
             return ACTION_RESULT.AR_SUCCESS;
         }
@@ -217,8 +234,12 @@ public class Movement_Action : Action
         }
         else
         {
-            path.Remove(path[0]);
-            Debug.Log("i am: x:" + GetCurrentTileX() + "/ y:" + GetCurrentTileY() + "|| going to: x:" + path[0].GetTileX() + "/ y:" + path[0].GetTileY());
+            if (path[0] != null)
+            {
+                Debug.Log("i am: x:" + GetCurrentTileX() + "/ y:" + GetCurrentTileY() + "|| going to: x:" + path[0].GetTileX() + "/ y:" + path[0].GetTileY());
+                path.Remove(path[0]);
+            }
+            
             arrive.SetEnabled(true);
             seek.SetEnabled(true);
             translation_finished = false;
@@ -365,7 +386,7 @@ public class Movement_Action : Action
         else
         {
             result = GetComponent<Transform>().position;
-            Debug.Log("GetTargetPosition(): Path has no values");
+            //Debug.Log("GetTargetPosition(): Path has no values");
         }
 
         return result;
