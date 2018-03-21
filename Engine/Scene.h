@@ -100,6 +100,8 @@ public:
 public:
 	FrameBuffer* scene_buff = nullptr;
 	FrameBuffer* glow_buff = nullptr;
+	FrameBuffer* horizontal_blur_buff = nullptr;
+	FrameBuffer* vertical_blur_buff = nullptr;
 	//Container of all Game Objects
 	GameObject* root = nullptr;
 

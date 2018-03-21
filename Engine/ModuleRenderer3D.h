@@ -51,6 +51,8 @@ public:
 	float2 LoadImage_devil(const char * theFileName, GLuint *buff);
 	bool loadTextureFromPixels32(GLuint * id_pixels, GLuint width_img, GLuint height_img, GLuint *buff);
 	void RenderSceneWiewport();
+	void BlurShaderVars(int i);
+	void GlowShaderVars();
 
 public:
 
@@ -82,7 +84,8 @@ public:
 	ShaderProgram* particles_shader = nullptr;
 	ShaderProgram* lights_billboard_shader = nullptr;
 	ShaderProgram* non_glow_shader = nullptr;
-	ShaderProgram* texture_shader = nullptr;
+	ShaderProgram* blur_shader_tex = nullptr;
+	ShaderProgram* glow_shader_tex = nullptr;
 	ResourceMaterial* default_texture = nullptr;
 
 	Material* default_material = nullptr;

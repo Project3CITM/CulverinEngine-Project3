@@ -219,19 +219,57 @@ static const GLchar* TextureVert[] =
 	"}\n"
 };
 
-static const GLchar* TextureFrag[] =
+static const GLchar* BlurFrag[] =
 {
 	"#version 330 core\n"
 
 	"in vec2 TexCoord;\n"
 	"out vec4 color;\n"
 	"uniform sampler2D albedo;\n"
+	"uniform int _orientation;\n"
+	"float Gaussian(float x, float deviation)\n"
+	"{\n"
+	"	return (1.0 / sqrt(2.0 * 3.141592 * deviation)) * exp(-((x * x) / (2.0 * deviation)));\n"
+	"}\n"
 
 	"void main()\n"
 	"{\n"
 
-	//Z-Buffer Line Shader
-	"color= vec4(vec3(0.5),1);\n"// texture(albedo, TexCoord);\n"
+	"float halfBlur = float(10) * 0.5;\n"
+	"vec4 colour = vec4(0.0);\n"
+	"vec4 texColour = vec4(0.0);\n"
+
+
+	"float deviation = halfBlur * 0.35;\n"
+	"deviation *= deviation;\n"
+	"float strength = 1.0 - 0.5;\n"
+
+	"if(_orientation == 0){\n"
+	"	// Horizontal blur\n"
+	"	for (int i = 0; i < 10; ++i)\n"
+	"	{\n"
+	"		if (i >= 10)\n"
+	"			break;\n"
+	"\n"
+	"		float offset = float(i) - halfBlur;\n"
+	"		texColour = texture2D(albedo, TexCoord + vec2(offset / 64, 0)) * Gaussian(offset * strength, deviation);\n"
+	"		colour += texColour;\n"
+	"	}\n"
+	"}\n"
+	"else {\n"
+	"	// Horizontal blur\n"
+		"	for (int i = 0; i < 10; ++i)\n"
+		"	{\n"
+		"		if (i >= 10)\n"
+		"			break;\n"
+		"\n"
+		"		float offset = float(i) - halfBlur;\n"
+		"		texColour = texture2D(albedo, TexCoord + vec2(0,offset / 64)) * Gaussian(offset * strength, deviation);\n"
+		"		colour += texColour;\n"
+		"	}\n"
+	"}\n"
+	
+	"color= vec4(colour);\n"
 	"}\n"
 };
 
