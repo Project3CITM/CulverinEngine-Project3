@@ -33,7 +33,7 @@ public class ChasePlayer_Action : Action
 
     public override bool ActionStart()
     {
-        bool ret = move.ActionStart();
+        
         Debug.Log("Chasing Player");
 
         anim = GetComponent<CompAnimation>();
@@ -42,6 +42,7 @@ public class ChasePlayer_Action : Action
         event_to_react.start_counting = false;
 
         move.GoToPrevious(event_to_react.objective_tile_x, event_to_react.objective_tile_y, true);
+        bool ret = move.ActionStart();
 
         return ret;
     }
@@ -57,6 +58,12 @@ public class ChasePlayer_Action : Action
     {
         if (interupt || forgot_event)
         {
+            move.Interupt();
+        }
+
+        if (forgot_event == true)
+        {
+            Interupt();
             move.Interupt();
         }
 

@@ -109,8 +109,12 @@ public class PerceptionPlayerSeenEvent : PerceptionEvent
 
     public override bool IsPrioritary(PerceptionEvent new_event)
     {
-        if (new_event.type >= PERCEPTION_EVENT_TYPE.PLAYER_SEEN)
+        if (new_event.type >= PERCEPTION_EVENT_TYPE.PLAYER_SEEN && counter_in_memory != 0.0f)
+        {
+            Debug.Log("[error] Cleared seen event");
+            Debug.Log(counter_in_memory);
             return true;
+        }
 
         return false;
     }

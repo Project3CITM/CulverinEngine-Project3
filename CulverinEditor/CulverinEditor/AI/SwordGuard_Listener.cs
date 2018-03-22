@@ -87,6 +87,7 @@ public class SwordGuard_Listener : PerceptionListener
                     GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.ENGAGE_ACTION);
                     GetComponent<ChasePlayer_Action>().SetEvent(new_event_to_memory);
                     player_seen = true;
+                    new_event_to_memory.start_counting = false;
                     Debug.Log("Player in sight");
                 }
                 break;
