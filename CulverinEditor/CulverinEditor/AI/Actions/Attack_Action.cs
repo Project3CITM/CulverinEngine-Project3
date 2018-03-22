@@ -27,7 +27,6 @@ public class Attack_Action : Action
     public float attack_duration = 1.0f;
 
     public GameObject target = null;
-    public GameObject my_object = null;
     CompAnimation anim = null;
     CharactersManager player = null;
 
