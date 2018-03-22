@@ -33,7 +33,7 @@ public class RespawnWhenHit : CulverinBehaviour
         if(obj.CompareTag("player"))
         {
             Debug.Log("Player");
-            obj.transform.SetPosition(new Vector3(respawn_tile_x* tile_size, respawn_tile_y* tile_size, respawn_height));
+            obj.transform.SetPosition(new Vector3(respawn_tile_x* tile_size, respawn_height, respawn_tile_y * tile_size));
             obj.GetComponent<CompRigidBody>().ResetForce();
         }
 
