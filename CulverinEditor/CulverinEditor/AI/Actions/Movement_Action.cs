@@ -102,9 +102,13 @@ public class Movement_Action : Action
 
         if (path == null)
         {
-            Debug.Log("Move: Path == null");
+            Debug.Log("Move: Path == null");                      
             return false;
         }
+
+        rotation_finished = false;
+        translation_finished = false;
+
         return true;
     }
 
@@ -211,6 +215,10 @@ public class Movement_Action : Action
         {
             Debug.Log("GG");
             GetComponent<CompAnimation>().SetTransition("ToIdle");
+
+            if (interupt == true)
+                return ACTION_RESULT.AR_FAIL;
+
             return ACTION_RESULT.AR_SUCCESS;
         }
 
@@ -243,6 +251,7 @@ public class Movement_Action : Action
             arrive.SetEnabled(true);
             seek.SetEnabled(true);
             translation_finished = false;
+            Debug.Log("GetTargetPosition(): Path has no values");
         }
 
         //Rotation

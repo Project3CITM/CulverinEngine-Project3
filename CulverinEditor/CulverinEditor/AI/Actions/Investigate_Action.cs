@@ -39,7 +39,7 @@ public class Investigate_Action : Action
     public override bool ActionStart()
     {
         Debug.Log("Going to investigate");
-        bool ret = GetComponent<Movement_Action>().ActionStart();
+        
 
         anim.SetClipsSpeed(anim_speed);
         anim.SetTransition("ToPatrol");
@@ -48,6 +48,7 @@ public class Investigate_Action : Action
         int current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
         GetComponent<Movement_Action>().GoTo(event_to_react.objective_tile_x, event_to_react.objective_tile_y);
+        bool ret = GetComponent<Movement_Action>().ActionStart();
 
         init_tile_x = current_tile_x;
         init_tile_y = current_tile_y;
