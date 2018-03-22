@@ -210,7 +210,9 @@ bool ModuleRenderer3D::Start()
 {
 	perf_timer.Start();
 
-
+	blur_amount = 15;
+	blur_scale = 1.0f;
+	blur_strength = 0.3f;
 	GLfloat cube_vertices[] = {
 		// front
 

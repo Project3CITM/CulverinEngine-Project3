@@ -73,7 +73,7 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
    
                                                                                          
         float diffuse = Kd * lightInt * cosTheta;
-        float spec =  Ks* lightInt* pow(cosAlpha, shininess);  
+        float spec =  Ks* lightInt* pow(cosAlpha,0);  
                      
         return vec3(diffuse,spec,1);                                                                     
                                                                                                          
@@ -123,7 +123,7 @@ void main()
     vec3 final_color = vec3(0);
                                                                          
     for (int i = 0; i <_numLights; ++i) {                                                                        
-        inten = blinnPhongDir(_lights[i], a_Kd, a_Ks,spec_texture.r, N);             
+        inten = blinnPhongDir(_lights[i], a_Kd, a_Ks,a_shininess, N);             
         inten_final.xy += inten.xy;                                                                        
         light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);                                            
     }                                                                                                      
@@ -134,9 +134,9 @@ void main()
     }      
                                                                                                
     final_ambient = final_ambient/_numLights;
-    final_color =final_color;  
+    final_color =normalize(final_color);  
                                                                
-    vec3 col = max(final_ambient* color_texture* vec3(0,1,1),
+    vec3 col = max(final_ambient* color_texture* vec3(0,0.9,0.9),
      color_texture * (inten_final.x + inten_final.y )*occlusion_texture*final_color.rgb);
 
                                                                                        
