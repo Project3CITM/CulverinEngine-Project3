@@ -265,7 +265,7 @@ void CompTransform::ShowTransform(float drag_speed)
 			editing_transform = true;
 		}
 		ImGui::Text("Rotation"); ImGui::SameLine(op + 30);
-		if (ImGui::DragFloat3("##rot", &rotation_euler[0], drag_speed))
+		if (ImGui::DragFloat3("##rot", &rotation_euler[0], drag_speed,-360,360))
 		{
 			SetRot(rotation_euler);
 			editing_transform = true;
@@ -351,7 +351,10 @@ void CompTransform::SetRot(Quat rot)
 
 void CompTransform::SetRot(float3 rot)
 {
-	rotation = Quat::FromEulerXYZ(rot[0] * DEGTORAD, rot[1] * DEGTORAD, rot[2] * DEGTORAD);
+	rot.x *= DEGTORAD;
+	rot.y *= DEGTORAD;
+	rot.z *= DEGTORAD;
+	rotation = Quat::FromEulerXYZ(rot.x, rot.y, rot.z);
 	toUpdate = true;
 }
 
@@ -401,7 +404,11 @@ void CompTransform::ResetMatrix()
 
 void CompTransform::SetLocalTransform()
 {
-	local_transform = float4x4::FromTRS(position, rotation, scale);
+	local_transform = float4x4::FromQuat(rotation);
+
+	local_transform = float4x4::Scale(scale, float3(0, 0, 0))* local_transform;
+
+	local_transform.float4x4::SetTranslatePart(position.x, position.y, position.z);
 }
 
 void CompTransform::SetGlobalTransform()
