@@ -41,10 +41,13 @@ public class Lever : CulverinBehaviour
     private bool phase_wait = false; // wait to move the other mode
     private bool phase3 = false; // Move barrels mode.FILLING
     private bool editmap = false; // editmap
-    
+
     public int possible_paths = 4;
     // Puzzle orientation: 0-North. 1-East. 2-South. 3-West.
-    public int puzzle_orientation = 0; 
+    public int puzzle_orientation = 0;
+
+    private Vector3 orientation_x;
+    private Vector3 orientation_z;
 
     // Tile system puzzle map start
     //      Tile coords
@@ -78,7 +81,7 @@ public class Lever : CulverinBehaviour
         rnd = new Random();
 
         anim_controller = GetComponent<CompAnimation>();
-       if(anim_controller == null)
+        if (anim_controller == null)
         {
             Debug.Log("Animation is null!");
         }
@@ -154,12 +157,12 @@ public class Lever : CulverinBehaviour
             //    OnLeverActivated();
             //}
         }
-        
+
         //---------------------
 
         if (on_lever_animation == true)
         {
-            if(anim_controller != null)
+            if (anim_controller != null)
             {
                 if (anim_controller.IsAnimationStopped(lever_animation_name))
                 {
@@ -257,16 +260,21 @@ public class Lever : CulverinBehaviour
     {
         int count_barrel = barrel_per_line - 1;
         int y = number_of_lines;
+
+        int curr_x;
+        int curr_y;
         for (int x = barrel_per_line - 1; x >= 0; x--)
         {
+            curr_x = puzzle_start_tile_x + x * (int)(orientation_x.x + orientation_z.x);
+            curr_y = puzzle_start_tile_z + y * (int)(orientation_x.z + orientation_z.z);
             if (current_path.walkability[x, y] == 0)
             {
                 Debug.Log("Setting puzzle barrel");
-                list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, x, y, barrel_fall_speed, BarrelFall.ModeBarrel.PUZZLE, floor_height);
+                list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.PUZZLE, floor_height);
             }
             else if (current_path.walkability[x, y] == 1)
             {
-                list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, x, y, barrel_fall_speed, BarrelFall.ModeBarrel.FILLING, floor_height);
+                list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.FILLING, floor_height);
             }
         }
     }
@@ -355,7 +363,7 @@ public class Lever : CulverinBehaviour
         // Activate the puzzle
         active_lever = true; // TODO: Verify this is correct and uncomment this line
     }
-    
+
     void OnTriggerEnter()
     {
         // TODO: Activate UI button "Interact"
@@ -431,6 +439,30 @@ public class Lever : CulverinBehaviour
                     //tmp_test_path.Add(tmp);
                 }
             }
+        }
+    }
+
+    void SetOrientationVectors()
+    {
+        // Puzzle orientation: 0-North. 1-East. 2-South. 3-West.
+        switch (puzzle_orientation)
+        {
+            case 0:
+                orientation_x = new Vector3(1, 0, 0);
+                orientation_z = new Vector3(0, 0, 1);
+                break;
+            case 1:
+                orientation_x = new Vector3(0, 0, -1);
+                orientation_z = new Vector3(1, 0, 0);
+                break;
+            case 2:
+                orientation_x = new Vector3(-1, 0, 0);
+                orientation_z = new Vector3(0, 0, -1);
+                break;
+            case 3:
+                orientation_x = new Vector3(0, 0, 1);
+                orientation_z = new Vector3(1, 0, 0);
+                break;
         }
     }
 }
