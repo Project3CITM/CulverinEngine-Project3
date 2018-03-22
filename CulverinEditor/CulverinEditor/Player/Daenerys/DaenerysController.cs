@@ -160,7 +160,7 @@ public class DaenerysController : CharacterController
                                         {
                                             break;
                                         }
-                                        GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
+                                        //GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
                                     }
 
                                     GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
@@ -598,6 +598,9 @@ public class DaenerysController : CharacterController
         fball.transform.SetPosition(pla_obj.transform.GetPosition());
         fball.transform.SetRotation(pla_obj.transform.GetRotation());
         fball.GetComponent<Fireball>().vfront = curr_forward;
+
+        // Decrease stamina -----------
+        DecreaseMana(sec_ability_cost);
     }
 
     public override void EnableAbilities(bool active)

@@ -31,6 +31,7 @@ public class BarrelPuzzleManager : CulverinBehaviour
     void Update()
     {
         // TMP: Debugging purposes.
+<<<<<<< HEAD
         if (Input.GetKeyDown(KeyCode.Space))
         {
             must_move = !must_move;
@@ -41,6 +42,18 @@ public class BarrelPuzzleManager : CulverinBehaviour
         if (must_move)
         {
             Debug.Log("Moving---------------");
+=======
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    must_move = !must_move;
+        //    Debug.Log("Space pressed " + ((must_move) ? "started" : "stopped") + " moving.");
+        //    Debug.Log("Destination: " + water_destination_pos.x + ", " + water_destination_pos.y + ", " + water_destination_pos.z);
+        //}
+
+        if (must_move)
+        {
+            //Debug.Log("Moving---------------");
+>>>>>>> Stage
             MoveWater();
         }
     }
@@ -56,7 +69,11 @@ public class BarrelPuzzleManager : CulverinBehaviour
             Debug.Log("ALERT: Could not get water transform.");
         }
 
+<<<<<<< HEAD
         Debug.Log("Water distance to destination: " + water_destination_pos.Distance(water_trans.local_position, water_destination_pos));
+=======
+        //Debug.Log("Water distance to destination: " + water_destination_pos.Distance(water_trans.local_position, water_destination_pos));
+>>>>>>> Stage
 
         if (water_destination_pos.Distance(water_trans.local_position, water_destination_pos) <= 0.2f) // Just let a small threshold on distance
         {
@@ -70,12 +87,28 @@ public class BarrelPuzzleManager : CulverinBehaviour
 
             Vector3 pos = water_trans.local_position;
 
+<<<<<<< HEAD
             Debug.Log("Water pos: " + pos.x + ", " + pos.y + ", " + pos.z);
+=======
+            //Debug.Log("Water pos: " + pos.x + ", " + pos.y + ", " + pos.z);
+>>>>>>> Stage
 
             pos += (Vector3.Up * water_speed * Time.deltaTime);
             water_trans.SetPosition(pos);
 
+<<<<<<< HEAD
             Debug.Log("Water final pos: " + pos.x + ", " + pos.y + ", " + pos.z);
         }
     }
+=======
+            //Debug.Log("Water final pos: " + pos.x + ", " + pos.y + ", " + pos.z);
+        }
+    }
+
+    public void OnPuzzleActivated()
+    {
+        Debug.Log("Water started moving.");
+        must_move = true;
+    }
+>>>>>>> Stage
 }

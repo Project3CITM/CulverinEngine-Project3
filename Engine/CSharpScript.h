@@ -160,6 +160,7 @@ public:
 	int			ChildCount(MonoObject* object);
 	MonoObject* GetChildByIndex(MonoObject* object, int index);
 	MonoObject* GetChildByName(MonoObject* object, MonoString* name);
+	MonoObject* GetChildByTagIndex(MonoObject* object, MonoString* tag, int index);
 
 	MonoObject* GetOwnGameObject();
 	void		SetCurrentGameObject(GameObject* current);

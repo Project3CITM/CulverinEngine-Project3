@@ -63,7 +63,7 @@ public class MovementController : CulverinBehaviour
 
     void Start()
     {
-        //char_manager = GetComponent<CharactersManager>();
+        char_manager = GetComponent<CharactersManager>();
 
         audio = GetComponent<CompAudio>();
         audio.PlayEvent("PlayMusic");
@@ -179,7 +179,7 @@ public class MovementController : CulverinBehaviour
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
                 curr_x += tile_mov_x;
                 curr_y += tile_mov_y;
-                //char_manager.SetCurrentPosition();
+                char_manager.SetCurrentPosition();
                 moving = true;
             }
         }
@@ -212,7 +212,7 @@ public class MovementController : CulverinBehaviour
                         GetComponent<Transform>().RotateAroundAxis(Vector3.Up, -marge);
                     }
                 }
-                //char_manager.SetCurrentPosition();
+                char_manager.SetCurrentPosition();
             }
         }
         else if (face_rotating)

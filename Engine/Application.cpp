@@ -166,6 +166,7 @@ bool Application::Init()
 			}
 			item++;
 		}
+		ImGui_ImplSdlGL3_Init(App->window->window);
 		real_time.engine_start_time.Start();
 		real_time.ms_timer.Start();
 	}
@@ -337,6 +338,24 @@ update_status Application::Update()
 	/* ImGui + ImGuizmo Begin Frame */
 	ImGui_ImplSdlGL3_NewFrame(window->window);
 	ImGuizmo::BeginFrame();
+
+	if (mode_game)
+	{
+		static bool active_fps = false;
+		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
+		{
+			active_fps = !active_fps;
+		}
+		if (active_fps)
+		{
+			ImGui::SetNextWindowPos(ImVec2(20, 20));
+			ImGui::Begin("Info", NULL, ImVec2(0, 0), 0.3f, ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings |
+				ImGuiWindowFlags_NoInputs);
+			ImGui::Text("FPS: %.0f", App->fps_log[App->frame_index - 1]);
+			ImGui::End();
+		}
+	}
 
 	item = list_modules.begin();
 
