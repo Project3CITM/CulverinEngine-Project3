@@ -7,7 +7,8 @@ public class CharactersManager : CulverinBehaviour
     {
         IDLE = 0,
         CHANGING_LEFT,
-        CHANGING_RIGHT
+        CHANGING_RIGHT, 
+        DROWNING
     }
 
     public enum Side
@@ -509,7 +510,9 @@ public class CharactersManager : CulverinBehaviour
     public void Drown()
     {
         GetDamage(drown_dmg);
-        GetComponent<MovementController>().SetMovement(puz_respawn_x, puz_respawn_y);
+        state = State.DROWNING;
+
+        GetComponent<CompRigidBody>().UnLockTransform();
     }
 
     public bool IsIdle()
@@ -593,6 +596,16 @@ public class CharactersManager : CulverinBehaviour
         {
             return false;
         }
+    }
+
+    public State GetManagerState()
+    {
+        return state;
+    }
+
+    public void SetManagerState(State value)
+    {
+        state = value;
     }
 
 
