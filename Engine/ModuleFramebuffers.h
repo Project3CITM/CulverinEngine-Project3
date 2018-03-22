@@ -15,6 +15,7 @@ public:
 	bool Create(int, int);
 	void Bind(const char* window);
 	void UnBind(const char* window);
+	void Init(const char* window);
 	void Destroy();
 	void Resize(int Width, int Height);
 	void WantRefreshRatio();
@@ -30,6 +31,8 @@ public:
 	int		width;
 	int		height;
 	float2	size;
+
+	bool resize = true;
 };
 
 #endif

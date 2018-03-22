@@ -69,7 +69,6 @@
     <Compile Include="AI\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
     <Compile Include="BarrelPuzle\BarrelMove.cs" />
-    <Compile Include="BarrelPuzle\BarrelPuzzleGenerator.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
     <Compile Include="BarrelPuzle\BarrelScript.cs" />
     <Compile Include="BarrelPuzle\ChainManage.cs" />
@@ -85,6 +84,8 @@
     <Compile Include="CompJoint.cs" />
     <Compile Include="CompMesh.cs" />
     <Compile Include="CompRectTransform.cs" />
+    <Compile Include="LevelMap.cs" />
+    <Compile Include="Miscellanea\RespawnWhenHit.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Secondary.cs" />
     <Compile Include="Player\Daenerys\Fireball.cs" />
     <Compile Include="float4x4.cs" />
