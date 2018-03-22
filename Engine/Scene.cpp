@@ -187,13 +187,13 @@ update_status Scene::Update(float dt)
 	App->scene->scene_buff->Init("Scene");
 	App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
 
+	App->scene->scene_buff->UnBind("Scene");
 	// Draw Plane
 	if (App->engine_state != EngineState::PLAY)
 	{
 		DrawPlane();
 	}
 
-	App->scene->scene_buff->UnBind("Scene");
 	// Draw GameObjects
 	root->Draw();
 	// Draw Quadtree
