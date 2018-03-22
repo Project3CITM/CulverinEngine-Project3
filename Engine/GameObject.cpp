@@ -1358,13 +1358,13 @@ Component* GameObject::FindParentComponentByType(Comp_Type type)const
 {
 	
 	Component * ret = nullptr;
-	ret = FindComponentByType(Comp_Type::C_CANVAS);
+	ret = FindComponentByType(type);
 	if (ret == nullptr)
 	{
 		GameObject* item = parent;
 		while (item != nullptr)
 		{
-			ret = ((CompCanvas*)item->FindComponentByType(Comp_Type::C_CANVAS));
+			ret = item->FindComponentByType(type);
 			if (ret != nullptr)
 				break;
 			item = item->GetParent();

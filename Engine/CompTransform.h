@@ -46,6 +46,7 @@ public:
 	void SetLocalTransform();
 	void SetGlobalTransform();
 	void UpdateGlobalTransform();
+	void UpdateGlobalTransformWorld();
 	void UpdateGlobalMatrixRecursive();
 	void SetToUpdate();
 
@@ -96,6 +97,7 @@ public:
 protected:
 	Axis axis;
 	bool toUpdate = false;
+	bool parentUpdate = false;
 	bool updated = false;
 	bool freeze = false;
 	bool editing_transform = false;
