@@ -279,7 +279,7 @@ void CompTransform::ShowTransform(float drag_speed)
 			editing_transform = true;
 		}
 		ImGui::Text("Rotation"); ImGui::SameLine(op + 30);
-		if (ImGui::DragFloat3("##rot", &rotation_euler[0], drag_speed))
+		if (ImGui::DragFloat3("##rot", &rotation_euler[0], drag_speed,-360,360))
 		{
 			SetRot(rotation_euler);
 			editing_transform = true;

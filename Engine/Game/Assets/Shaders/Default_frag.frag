@@ -109,7 +109,7 @@ void main()
     vec3 color_texture = texture(albedo, TexCoord).xyz;                                                          
     vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1);                                                        
     vec3 occlusion_texture = texture(occlusion_map,TexCoord).xyz;                                                
-    vec3 spec_texture = texture(specular_map, TexCoord).xyz;
+    vec3 spec_texture = texture(specular_map, TexCoord).xyz * 255;
 
     if(invert_norms)
     N.g = -N.g;    
@@ -123,7 +123,7 @@ void main()
     vec3 final_color = vec3(0);
                                                                          
     for (int i = 0; i <_numLights; ++i) {                                                                        
-        inten = blinnPhongDir(_lights[i], a_Kd, a_Ks, a_shininess, N);             
+        inten = blinnPhongDir(_lights[i], a_Kd, a_Ks,spec_texture.r, N);             
         inten_final.xy += inten.xy;                                                                        
         light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);                                            
     }                                                                                                      
@@ -136,8 +136,9 @@ void main()
     final_ambient = final_ambient/_numLights;
     final_color =final_color;  
                                                                
-    vec3 col = max(0.5 * final_ambient* color_texture* vec3(0,1,1),
-     color_texture * (inten_final.x + inten_final.y * spec_texture.r)*occlusion_texture*final_color.rgb);
+    vec3 col = max(final_ambient* color_texture* vec3(0,1,1),
+     color_texture * (inten_final.x + inten_final.y )*occlusion_texture*final_color.rgb);
+
                                                                                        
     color = vec4(col,_alpha);
  
