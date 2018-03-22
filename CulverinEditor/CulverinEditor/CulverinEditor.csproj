@@ -68,11 +68,7 @@
     <Compile Include="AI\Seek_Steering.cs" />
     <Compile Include="AI\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
-    <Compile Include="BarrelPuzle\BarrelMove.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
-    <Compile Include="BarrelPuzle\BarrelScript.cs" />
-    <Compile Include="BarrelPuzle\ChainManage.cs" />
-    <Compile Include="BarrelPuzle\ChainMovement.cs" />
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="Player\UI\Game.cs" />
@@ -92,8 +88,6 @@
     <Compile Include="PhysX.cs" />
     <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />
-    <Compile Include="BarrelPuzle\BarrelManage.cs" />
-    <Compile Include="BarrelPuzle\BarrelMovement.cs" />
     <Compile Include="BarrelPuzle\BarrelFall.cs" />
     <Compile Include="Player\BaseControllers\CharacterController.cs" />
     <Compile Include="Player\BaseControllers\CharactersManager.cs" />
