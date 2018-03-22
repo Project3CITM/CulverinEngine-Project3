@@ -668,7 +668,7 @@ void CompAnimation::ShowAnimationInfo()
 					{
 						(*it)->anim_audio = std::string(name_audio);
 					}
-					ImGui::SameLine(300);
+					ImGui::SameLine(200);
 					if (ImGui::DragFloat("##pos", &(*it)->audio_time, 0.05f, (*it)->clip->start_frame_time, (*it)->clip->end_frame_time));
 					std::string clip_names;
 					int combo_pos = 0;
@@ -837,7 +837,8 @@ void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene,
 		json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Name", (*it)->name.c_str());
 		json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".ClipName", (*it)->clip->name.c_str());
 		json_object_dotset_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Active", (*it)->active);
-		
+		json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioName", (*it)->anim_audio.c_str());
+		json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioTime", (*it)->audio_time);
 		int r = 0;
 
 		json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + "NumberOfTransitions", (*it)->transitions.size());
@@ -925,6 +926,9 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			active_node = temp;
 		}
 		std::string clip_name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".ClipName");
+		temp->anim_audio = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioName");
+		temp->audio_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioTime");
+	
 		for (std::vector<AnimationClip*>::iterator temp_it = animation_clips.begin(); temp_it != animation_clips.end(); temp_it++)
 		{
 			if ((*temp_it)->name == clip_name)
