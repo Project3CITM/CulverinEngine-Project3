@@ -306,12 +306,12 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	RenderSceneWiewport();
 	App->scene->final_buff->UnBind("Scene");
 
-	ImGui::Begin("Test");
+	/*ImGui::Begin("Test");
 	ImGui::Image((ImTextureID*)App->scene->scene_buff->GetTexture(), ImVec2(256, 256));
 	ImGui::SliderFloat("Strength", &blur_strength, 0.0f, 50.0f);
 	ImGui::SliderInt("Amount", &blur_amount, 0.0f, 30.0f);
 	ImGui::SliderFloat("Scale", &blur_scale, 0.0f, 50.0f);
-	ImGui::End();
+	ImGui::End();*/
 
 
 
