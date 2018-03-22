@@ -39,6 +39,7 @@ public class PerceptionListener : CulverinBehaviour
 
         foreach (PerceptionEvent e in to_remove)
         {
+            Debug.Log("Removed Element");
             events_in_memory.Remove(e);
         }
         to_remove.Clear();
@@ -95,13 +96,9 @@ public class PerceptionListener : CulverinBehaviour
     {
         if (events_in_memory.Count > 0)
         {
-            if (new_event.type >= events_in_memory[0].type) //>= to constntly hear while in range
-            {
-                return true;
-            }
-
-            return false;
+            return events_in_memory[0].IsPrioritary(new_event);           
         }
+
         return true;
     }
 
