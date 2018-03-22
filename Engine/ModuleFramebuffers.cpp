@@ -89,7 +89,7 @@ void FrameBuffer::Init(const char * window)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	glMatrixMode(GL_TEXTURE);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(App->renderer3D->active_camera->GetViewMatrix());
 
 }

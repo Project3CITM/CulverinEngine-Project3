@@ -187,7 +187,7 @@ update_status Scene::Update(float dt)
 	App->scene->scene_buff->Init("Scene");
 	App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
 
-	App->scene->scene_buff->UnBind("Scene");
+
 	// Draw Plane
 	if (App->engine_state != EngineState::PLAY)
 	{
@@ -198,6 +198,8 @@ update_status Scene::Update(float dt)
 	root->Draw();
 	// Draw Quadtree
 	if (quadtree_draw) App->scene->octree.DebugDraw();
+
+	App->scene->scene_buff->UnBind("Scene");
 	// Draw GUI
 	//App->render_gui->ScreenSpaceDraw();
 	static int nico = 0;
