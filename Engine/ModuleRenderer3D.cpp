@@ -269,6 +269,12 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 {
 	perf_timer.Start();
 	
+	App->scene->scene_buff->Init("Scene");
+	App->scene->final_buff->Init("Scene");
+	App->scene->glow_buff->Init("Scene");
+	App->scene->horizontal_blur_buff->Init("Scene");
+	App->scene->vertical_blur_buff->Init("Scene");
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
@@ -282,23 +288,26 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	App->render_gui->ScreenSpaceDraw();
 
+
+	App->scene->horizontal_blur_buff->Bind("Scene");
 	BlurShaderVars(0);
-	App->scene->horizontal_blur_buff->Init("Scene");
 	RenderSceneWiewport();
 	App->scene->horizontal_blur_buff->UnBind("Scene");
+
+	App->scene->vertical_blur_buff->Bind("Scene");
 	BlurShaderVars(1);
-	App->scene->vertical_blur_buff->Init("Scene");
 	RenderSceneWiewport();
 	App->scene->vertical_blur_buff->UnBind("Scene");
+
+	if(!App->mode_game)
+		App->scene->final_buff->Bind("Scene");
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	GlowShaderVars();
-	App->scene->final_buff->Init("Scene");
-
 	RenderSceneWiewport();
 	App->scene->final_buff->UnBind("Scene");
 
 	ImGui::Begin("Test");
-	ImGui::Image((ImTextureID*)App->scene->vertical_blur_buff->GetTexture(), ImVec2(256, 256));
+	ImGui::Image((ImTextureID*)App->scene->scene_buff->GetTexture(), ImVec2(256, 256));
 	ImGui::SliderFloat("Strength", &blur_strength, 0.0f, 50.0f);
 	ImGui::SliderInt("Amount", &blur_amount, 0.0f, 30.0f);
 	ImGui::SliderFloat("Scale", &blur_scale, 0.0f, 50.0f);
@@ -562,11 +571,16 @@ void ModuleRenderer3D::RenderSceneWiewport()
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
-		//Disable vertex arrays
+
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE0);
 		glUseProgram(0);
 }
 

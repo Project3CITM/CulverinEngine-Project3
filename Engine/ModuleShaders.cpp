@@ -641,6 +641,9 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 			material->name = material_name;
 			material->GetProgramVariables();
 			uint num_textures = json_object_dotget_number_with_std(object, name + "Num Textures:");
+			material->glow = json_object_dotget_boolean_with_std(object, name + "Glow:");
+			material->alpha = json_object_dotget_number_with_std(object, name + "Alpha:");
+
 			if (load_vars) {
 				for (int i = 0; i < num_textures; i++)
 				{

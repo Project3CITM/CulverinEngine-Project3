@@ -79,11 +79,10 @@ void FrameBuffer::UnBind(const char* window)
 
 void FrameBuffer::Init(const char * window)
 {
-	if (App->mode_game == false)
-	{
-		Bind(window);
 
-	}
+	Bind(window);
+
+
 	// Refresh Projection of the camera
 	App->renderer3D->UpdateProjection(App->renderer3D->active_camera);
 

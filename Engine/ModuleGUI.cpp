@@ -61,6 +61,7 @@ bool ModuleGUI::Init(JSON_Object* node)
 	win_manager[SCENEWORLD]->active[0].active = true;
 	win_manager[PROJECT]->active[0].active = true;
 
+	
 	return true;
 }
 
@@ -73,28 +74,6 @@ bool ModuleGUI::Start()
 
 	io.Fonts->AddFontFromFileTTF("Fonts\\Ruda-Bold.ttf", 15);
 	io.Fonts->AddFontDefault();
-
-	App->scene->scene_buff = new FrameBuffer();
-	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
-
-	App->scene->final_buff = new FrameBuffer();
-	App->scene->final_buff->resize = true;
-	App->scene->final_buff->Create(App->window->GetWidth(), App->window->GetHeight());
-
-	App->scene->glow_buff = new FrameBuffer();
-	App->scene->glow_buff->resize = false;
-	App->scene->glow_buff->Create(128, 128);
-
-	App->scene->horizontal_blur_buff = new FrameBuffer();
-	App->scene->horizontal_blur_buff->resize = false;
-	App->scene->horizontal_blur_buff->Create(128, 128);
-
-	App->scene->vertical_blur_buff = new FrameBuffer();
-	App->scene->vertical_blur_buff->resize = false;
-	App->scene->vertical_blur_buff->Create(128, 128);
-
-
-
 
 	std::vector<WindowManager*>::iterator window = win_manager.begin();
 	for (int i = 0; i < win_manager.size(); i++)

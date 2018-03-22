@@ -117,7 +117,7 @@ update_status ModuleEventSystem::PostUpdate(float dt)
 			break; 
 		}
 
-		active_frame->Init("Scene");
+		active_frame->Bind("Scene");
 		size = MultimapToIterate->size();
 		count = 0;
 		for (std::multimap<float, Event>::const_iterator item = MultimapToIterate->cbegin(); item != MultimapToIterate->cend();)
