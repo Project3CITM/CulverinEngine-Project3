@@ -145,17 +145,17 @@ public class Lever : CulverinBehaviour
         //-- TMP: Debug -----
         if (Input.GetKeyDown(KeyCode.B))
         {
-            GeneratePath();
-            //if (on_lever_animation == true)
-            //{
-            //    Debug.Log("Hardcoded lever anim finish.");
-            //    OnLeverAnimFinish();
-            //}
-            //else
-            //{
-            //    Debug.Log("Puzzle activated");
-            //    OnLeverActivated();
-            //}
+            //  GeneratePath();
+            if (on_lever_animation == true)
+            {
+                Debug.Log("Hardcoded lever anim finish.");
+                OnLeverAnimFinish();
+            }
+            else
+            {
+                Debug.Log("Puzzle activated");
+                OnLeverActivated();
+            }
         }
 
         //---------------------
@@ -177,6 +177,7 @@ public class Lever : CulverinBehaviour
         {
             if (!phase1) // Set info all barrels
             {
+                Debug.Log("Setting barrel info");
                 SetInfo(line1, 0);
                 SetInfo(line2, 1);
                 SetInfo(line3, 2);
@@ -258,15 +259,18 @@ public class Lever : CulverinBehaviour
 
     void SetInfo(List<GameObject> list, int number_of_lines)
     {
+        Debug.Log("Setting barrel info");
+
         int count_barrel = barrel_per_line - 1;
         int y = number_of_lines;
 
-        int curr_x;
-        int curr_y;
+        int curr_x = 0;
+        int curr_y = 0;
         for (int x = barrel_per_line - 1; x >= 0; x--)
         {
             curr_x = puzzle_start_tile_x + x * (int)(orientation_x.x + orientation_z.x);
             curr_y = puzzle_start_tile_z + y * (int)(orientation_x.z + orientation_z.z);
+    
             if (current_path.walkability[x, y] == 0)
             {
                 Debug.Log("Setting puzzle barrel");
@@ -428,7 +432,7 @@ public class Lever : CulverinBehaviour
         }
 
         //TMP: Debugging purposes.
-        for (int y = 0; y < current_path.height; ++y)
+      /*  for (int y = 0; y < current_path.height; ++y)
         {
             for (int x = 0; x < current_path.width; ++x)
             {
@@ -439,7 +443,7 @@ public class Lever : CulverinBehaviour
                     //tmp_test_path.Add(tmp);
                 }
             }
-        }
+        }*/
     }
 
     void SetOrientationVectors()
