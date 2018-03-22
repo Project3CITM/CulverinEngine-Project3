@@ -669,27 +669,52 @@ Resource*  ModuleResourceManager::ShowResources(bool& active, Resource::Type typ
 	{
 		ImGui::Text(subname);
 		ImGui::Spacing();
+		static ImGuiTextFilter filter;
+		filter.Draw();
 		std::map<uint, Resource*>::iterator it = resources.begin();
 		for (int i = 0; i < resources.size(); i++)
 		{
 			ImGui::PushID(i);
 			if (type == it->second->GetType())
 			{
-				ImGui::ButtonEx(it->second->name.c_str());
-				if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+				if (filter.PassFilter(it->second->name.c_str()))
 				{
-					if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+					ImGui::ButtonEx(it->second->name.c_str());
+					if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 					{
-						ImGui::PopID();
-						ImGui::End();
-						active = false;
-						return GetResource(it->second->GetUUID());
+						if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+						{
+							ImGui::PopID();
+							ImGui::End();
+							active = false;
+							return GetResource(it->second->GetUUID());
+						}
 					}
 				}
 			}
 			it++;
 			ImGui::PopID();
 		}
+		//for (int i = 0; i < resources.size(); i++)
+		//{
+		//	ImGui::PushID(i);
+		//	if (type == it->second->GetType())
+		//	{
+		//		ImGui::ButtonEx(it->second->name.c_str());
+		//		if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+		//		{
+		//			if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+		//			{
+		//				ImGui::PopID();
+		//				ImGui::End();
+		//				active = false;
+		//				return GetResource(it->second->GetUUID());
+		//			}
+		//		}
+		//	}
+		//	it++;
+		//	ImGui::PopID();
+		//}
 		ImGui::End();
 	}
 	return nullptr;
