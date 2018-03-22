@@ -79,7 +79,7 @@ void CompAnimation::PreUpdate(float dt)
 
 void CompAnimation::Update(float dt)
 {
-	ManageActualAnimationNode();
+	ManageActualAnimationNode(dt);
 	ManageAnimationClips(current_animation,dt);
 	ManageAnimationClips(blending_animation, dt);
 	if (active_node != nullptr)
@@ -662,6 +662,14 @@ void CompAnimation::ShowAnimationInfo()
 					{
 						ImGui::Text("I'm active!!!");
 					}
+					char name_audio[50];
+					strcpy_s(name_audio, 50, (*it)->anim_audio.c_str());
+					if (ImGui::InputText("##Audio Name", name_audio, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+					{
+						(*it)->anim_audio = std::string(name_audio);
+					}
+					ImGui::SameLine(300);
+					if (ImGui::DragFloat("##pos", &(*it)->audio_time, 0.05f, (*it)->clip->start_frame_time, (*it)->clip->end_frame_time));
 					std::string clip_names;
 					int combo_pos = 0;
 					int i = 0;
@@ -1021,14 +1029,17 @@ void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt
 	}
 }
 
-void CompAnimation::ManageActualAnimationNode()
+void CompAnimation::ManageActualAnimationNode(float dt)
 {
 	if (active_node->anim_audio != "Null_Audio")
 	{
-		CompAudio* temp_emiter = (CompAudio*)parent->FindComponentByType(C_AUDIO);
-		if (temp_emiter != nullptr)
+		if (active_node->clip->time > active_node->audio_time - dt && active_node->clip->time <= active_node->audio_time)
 		{
-			temp_emiter->PlayAudioEvent("Dracarys");
+			CompAudio* temp_emiter = (CompAudio*)parent->FindComponentByType(C_AUDIO);
+			if (temp_emiter != nullptr)
+			{
+				temp_emiter->PlayAudioEvent("Dracarys");
+			}
 		}
 	}
 }
