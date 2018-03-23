@@ -54,6 +54,9 @@ public class LevelMap : CulverinBehaviour
 
     public void UpdateMap(int x, int y, int value)
     {
+        Debug.Log(x);
+        Debug.Log(y);
+        Debug.Log(value);
         level_map[x, y] = value;
     }
 

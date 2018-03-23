@@ -73,7 +73,8 @@ public class Lever : CulverinBehaviour
     private BarrelPuzzleManager barrel_puzzel_manager = null; // Put both scripts in same GO.
 
 
-    public LevelMap level_map;
+    public GameObject level_map;
+    public GameObject player;
     //--------------
 
     void Start()
@@ -121,6 +122,8 @@ public class Lever : CulverinBehaviour
         // Map
         current_path = new Path(barrel_per_line, number_lines, puzzle_orientation);
         GeneratePath();
+
+        
         //// Testing --------------------------------------------
         //for (int y = 0; y < number_lines; y++)
         //{
@@ -229,6 +232,7 @@ public class Lever : CulverinBehaviour
             if (editmap)
             {
                 SetPathWalkable();
+                editmap = false;
             }
         }
     }
@@ -482,11 +486,16 @@ public class Lever : CulverinBehaviour
             {
                 if (current_path.walkability[x, y] == 0)
                 {
-                    //Get
-                  //  GameObject level_map = GetLinkedObject("FloorMap");
-                    GetLinkedObject("FloorMap").GetComponent<LevelMap>().UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);                       
-                    if (level_map == null)
-                        Debug.Log("MAP IS NULL");
+
+                     level_map = GetLinkedObject("level_map");
+                     if (level_map == null)
+                         Debug.Log("MAP IS NULL");
+                     else level_map.GetComponent<LevelMap>().UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);
+
+                    player = GetLinkedObject("player");
+                    player.GetComponent<MovementController>().SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);
+
+
                 }
             }
             
