@@ -23,8 +23,8 @@ public class MovementController : CulverinBehaviour
     public Facing curr_fac = Facing.STRAIGHT;
     public int start_direction = 1;
     public float movSpeed = 1.0f;
-    Vector3 endPosition;
-    Vector3 endRotation;
+    public Vector3 endPosition;
+    public Vector3 endRotation;
     public float distanceToMove = 10.0f;
     int[,] array2Da;
     public int curr_x = 0;
@@ -46,7 +46,7 @@ public class MovementController : CulverinBehaviour
     private float actual_facing_angle = 0;
 
     private bool rotating = false;
-    private bool moving = false;
+    public bool moving = false;
     private bool face_rotating = false;
 
     private CompAudio audio;
@@ -229,8 +229,8 @@ public class MovementController : CulverinBehaviour
         else if (face_rotating)
         {
             moving = false;
-            GetComponent<Transform>().RotateAroundAxis(Vector3.Left, face_angle * face_speed_rotation * Time.DeltaTime());
-            float moved_angle = (float)face_angle * face_speed_rotation * Time.DeltaTime();
+            GetComponent<Transform>().RotateAroundAxis(Vector3.Left, face_angle * face_speed_rotation * Time.deltaTime);
+            float moved_angle = (float)face_angle * face_speed_rotation * Time.deltaTime;
 
             if (angle < 0)
             {
@@ -287,7 +287,7 @@ public class MovementController : CulverinBehaviour
             if (Input.GetKeyDown(KeyCode.Q)) //Left
             {
                 actual_angle = 0;
-                angle = -10;
+                angle = 10;
                 rotating = true;
                 ModificateCurrentDirection(true);
                 return true;
@@ -295,7 +295,7 @@ public class MovementController : CulverinBehaviour
             if (Input.GetKeyDown(KeyCode.E)) //Right
             {
                 actual_angle = 0;
-                angle = 10;
+                angle = -10;
                 rotating = true;
                 ModificateCurrentDirection(false);
                 return true;
@@ -306,7 +306,7 @@ public class MovementController : CulverinBehaviour
             if (variation < -0.8)
             {
                 actual_angle = 0;
-                angle = -10;
+                angle = 10;
                 rotating = true;
                 ModificateCurrentDirection(true);
                 return true;
@@ -315,7 +315,7 @@ public class MovementController : CulverinBehaviour
             else if (variation > 0.8)
             {
                 actual_angle = 0;
-                angle = 10;
+                angle = -10;
                 rotating = true;
                 ModificateCurrentDirection(false);
                 return true;

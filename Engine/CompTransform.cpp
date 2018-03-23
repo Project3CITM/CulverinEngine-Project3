@@ -324,6 +324,28 @@ void CompTransform::ShowTransform(float drag_speed)
 	}
 }
 
+void CompTransform::SyncComponent(GameObject * sync_parent)
+{
+	if (toUpdate)
+	{
+		if (parentUpdate)
+		{
+			UpdateMatrix(ImGuizmo::LOCAL);
+			parentUpdate = false;
+		}
+		else
+		{
+			UpdateMatrix(transform_mode);
+		}
+		toUpdate = false;
+		updated = true;
+	}
+	else
+	{
+		updated = false;
+	}
+}
+
 void CompTransform::SetPosGlobal(float3 pos)
 {
 	transform_mode = ImGuizmo::WORLD;
@@ -375,10 +397,14 @@ void CompTransform::IncrementRot(float3 rot)
 
 void CompTransform::RotateAroundAxis(float3 rot, float angle)
 {
-	rot = rot.Normalized();
-	float3 euler_ang = { rot.x * angle,rot.y*angle,rot.z*angle };
-	rotation_euler += euler_ang;
-	SetRot(rotation_euler);
+	transform_mode = ImGuizmo::LOCAL;
+
+	rot.Normalize();
+	Quat new_rot;
+	new_rot.SetFromAxisAngle(rot, angle*DEGTORAD);
+	rotation = new_rot * rotation;
+	rotation_euler = rotation.ToEulerXYZ() * RADTODEG;
+
 	toUpdate = true;
 }
 
