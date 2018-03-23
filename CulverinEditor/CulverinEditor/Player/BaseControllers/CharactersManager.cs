@@ -7,7 +7,8 @@ public class CharactersManager : CulverinBehaviour
     {
         IDLE = 0,
         CHANGING_LEFT,
-        CHANGING_RIGHT
+        CHANGING_RIGHT, 
+        DROWNING
     }
 
     public enum Side
@@ -45,6 +46,9 @@ public class CharactersManager : CulverinBehaviour
     Shield shield;
 
     public float puz_max_time;
+    public float drown_dmg = 20;
+    public int puz_respawn_x = 0;
+    public int puz_respawn_y = 0;
     //To manage player state
     State state = State.IDLE;   
 
@@ -503,6 +507,14 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
+    public void Drown()
+    {
+        GetDamage(drown_dmg);
+        state = State.DROWNING;
+
+        GetComponent<CompRigidBody>().UnLockTransform();
+    }
+
     public bool IsIdle()
     {
         // CURRENT CHARACTER -------------------------------
@@ -584,6 +596,16 @@ public class CharactersManager : CulverinBehaviour
         {
             return false;
         }
+    }
+
+    public State GetManagerState()
+    {
+        return state;
+    }
+
+    public void SetManagerState(State value)
+    {
+        state = value;
     }
 
 

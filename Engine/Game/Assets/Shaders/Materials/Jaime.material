@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"JaimeShaderName:":"Skinning with texture Final version","JaimeNum Textures:":3,"JaimeResource Material UUID 0":874753810,"JaimeResource Material UUID 1":854530088,"JaimeResource Material UUID 2":1986376,"JaimeNum Bools:":0,"JaimeNum Ints:":0,"JaimeNum Floats:":3,"JaimeFloat:0":1,"JaimeFloat:1":1,"JaimeFloat:2":1,"JaimeNum Float3:":0,"JaimeNum Colors:":0}
+=======
+{"JaimeShaderName:":"Skinning with texture Final version","JaimeNum Textures:":4,"JaimeResource Material UUID 0":72117284,"JaimeResource Material UUID 1":1409792416,"JaimeResource Material UUID 2":1642860621,"JaimeResource Material UUID 3":0,"JaimeNum Bools:":1,"JaimeBool:0":false,"JaimeNum Ints:":0,"JaimeNum Floats:":3,"JaimeFloat:0":1,"JaimeFloat:1":1,"JaimeFloat:2":1,"JaimeNum Float3:":0,"JaimeNum Colors:":0}
+>>>>>>> Player&move
