@@ -288,8 +288,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	perf_timer.Start();
 
 
-	App->render_gui->ScreenSpaceDraw();
-
+	
 
 	App->scene->horizontal_blur_buff->Bind("Scene");
 	BlurShaderVars(0);
@@ -306,6 +305,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	GlowShaderVars();
 	RenderSceneWiewport();
+	App->render_gui->ScreenSpaceDraw();
 	App->scene->final_buff->UnBind("Scene");
 
 	/*ImGui::Begin("Test");
