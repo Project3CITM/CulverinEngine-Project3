@@ -8,6 +8,8 @@ public class PushBack_Action : Action
     int target_x;
     int target_y;
 
+    public float push_speed = 10.0f;
+
     void Start()
     {
         target_x = 0;
@@ -27,7 +29,7 @@ public class PushBack_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().SetTransition("ToHit");
+        //TODO: Animations GetComponent<CompAnimation>().SetTransition("ToHit");
         GetComponent<Align_Steering>().SetEnabled(false);
 
         target_x = GetComponent<Movement_Action>().GetCurrentTileX();
@@ -47,17 +49,19 @@ public class PushBack_Action : Action
         if (GetComponent<Movement_Action>().ReachedTile(target_x, target_y))
         {
             Debug.Log("Pushed");
-            GetComponent<CompAnimation>().SetTransition("ToIdle");
+           //TODO: Animations  GetComponent<CompAnimation>().SetTransition("ToIdle");
             return ACTION_RESULT.AR_SUCCESS;
         }
 
-        Vector3 my_pos = GetComponent<Transform>().position;
+        Vector3 my_pos = transform.position;
 
         Vector3 movement = new Vector3(Vector3.Zero);
-        movement.x = target_x - my_pos.x;
-        movement.z = target_y - my_pos.z;
+        movement.x = (target_x * GetComponent<Movement_Action>().tile_size) - my_pos.x;
+        movement.z = (target_y * GetComponent<Movement_Action>().tile_size) - my_pos.z;
 
-        GetComponent<Transform>().SetPosition(my_pos + (movement * Time.deltaTime * anim_speed));
+        movement = movement.Normalized * 10;
+
+        transform.SetPosition(my_pos + (movement * Time.deltaTime * push_speed));
         
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
