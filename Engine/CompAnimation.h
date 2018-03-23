@@ -66,6 +66,8 @@ public:
 	std::string anim_audio = "Null_Audio";
 	float audio_time = 0.0f;
 	std::vector<AnimationTransition*> transitions;
+
+	bool to_delete = false;
 };
 
 class AnimationTransition
@@ -79,6 +81,8 @@ public:
 
 	bool has_exit_time = false;
 	float exit_time = 0.0f;
+
+	bool to_delete = false;
 };
 
 class CompAnimation : public Component
@@ -131,6 +135,7 @@ public:
 
 	void SetClipsSpeed(float speed_value);
 
+	void SetActiveAnimationNode(AnimationNode * active);
 public:
 
 	ResourceAnimation* animation_resource = nullptr;

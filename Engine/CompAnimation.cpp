@@ -658,10 +658,24 @@ void CompAnimation::ShowAnimationInfo()
 					{
 						(*it)->name = std::string(name_node);
 					}
+					if ((*it)->active == false)
+					{
+						if (ImGui::Checkbox("Active", &(*it)->active))
+						{
+							SetActiveAnimationNode((*it));
+						}
+					}
 					if ((*it)->active == true)
 					{
 						ImGui::Text("I'm active!!!");
 					}
+			
+					if (ImGui::Button("DELETE",ImVec2(50,30)))
+					{
+						(*it)->to_delete = true;
+					}
+
+					ImGui::Text("Audio:");
 					char name_audio[50];
 					strcpy_s(name_audio, 50, (*it)->anim_audio.c_str());
 					if (ImGui::InputText("##Audio Name", name_audio, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
@@ -756,6 +770,11 @@ void CompAnimation::ShowAnimationInfo()
 
 							ImGui::Checkbox("Active", &(*trans_it)->condition);
 
+							if (ImGui::Button("DELETE", ImVec2(50, 30)))
+							{
+								(*trans_it)->to_delete = true;
+							}
+
 							ImGui::Checkbox("Has Exit Time", &(*trans_it)->has_exit_time);
 							ImGui::InputFloat("Exit Time:", &(*trans_it)->exit_time);
 
@@ -787,6 +806,22 @@ void CompAnimation::ShowAnimationInfo()
 		}
 		ImGui::End();
 	}
+
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	{
+		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
+		{
+			if ((*it)->transitions.size() != 0 && (*trans_it)->to_delete == true)
+			{
+				(*it)->transitions.erase(trans_it);
+			}
+		}
+		if (animation_nodes.size() != 0 && (*it)->to_delete == true)
+		{
+			animation_nodes.erase(it);
+		}
+	}
+	
 }
 
 void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
@@ -1035,14 +1070,17 @@ void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt
 
 void CompAnimation::ManageActualAnimationNode(float dt)
 {
-	if (active_node->anim_audio != "Null_Audio")
+	if (active_node != nullptr)
 	{
-		if (active_node->clip->time > active_node->audio_time - dt && active_node->clip->time <= active_node->audio_time)
+		if (active_node->anim_audio != "Null_Audio")
 		{
-			CompAudio* temp_emiter = (CompAudio*)parent->FindComponentByType(C_AUDIO);
-			if (temp_emiter != nullptr)
+			if (active_node->clip->time > active_node->audio_time - dt && active_node->clip->time <= active_node->audio_time)
 			{
-				temp_emiter->PlayAudioEvent("Dracarys");
+				CompAudio* temp_emiter = (CompAudio*)parent->FindComponentByType(C_AUDIO);
+				if (temp_emiter != nullptr)
+				{
+					temp_emiter->PlayAudioEvent(active_node->anim_audio.c_str());
+				}
 			}
 		}
 	}
@@ -1179,5 +1217,16 @@ void AnimationNode::SetActiveBlendingClipWeight(float weight)
 	if (active != nullptr)
 	{
 		active->weight = weight;
+	}
+}
+
+void CompAnimation::SetActiveAnimationNode(AnimationNode* active)
+{
+	for (std::vector<AnimationNode*>::const_iterator new_item = animation_nodes.begin(); new_item != animation_nodes.end(); ++new_item)
+	{
+		if ((*new_item) != active)
+		{
+			(*new_item)->active = false;
+		}
 	}
 }
