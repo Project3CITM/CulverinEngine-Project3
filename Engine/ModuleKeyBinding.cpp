@@ -1,7 +1,7 @@
 #include "ModuleKeyBinding.h"
 #include "Application.h"
 #include "InputManager.h"
-
+#define KEY_NONE_NUM 0
 ModuleKeyBinding::ModuleKeyBinding()
 {
 }
@@ -15,6 +15,8 @@ bool ModuleKeyBinding::Init(JSON_Object * node)
 {
 	
 	
+	// NONE-----------------------------------------------------------
+	key_binding_relations.push_back(KeyRelation(-1, "None", KeyBindingType::NULL_DEVICE));
 
 	// NUMBERS--------------------------------------------------------
 	key_binding_relations.push_back(KeyRelation(SDL_Scancode::SDL_SCANCODE_0, "0", KeyBindingType::KEYBOARD_DEVICE));
@@ -164,7 +166,6 @@ KeyRelation* ModuleKeyBinding::Find_key_binding(const char* name)
 
 	}
 
-	KeyRelation temp= KeyRelation(-1,"None", KeyBindingType::NULL_DEVICE);
 
-	return &temp;
+	return &key_binding_relations[KEY_NONE_NUM];
 }

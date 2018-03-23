@@ -20,7 +20,7 @@ enum KeyBindingType {
 struct KeyRelation 
 {
 	KeyRelation(int event, std::string name, KeyBindingType type) : event_value(event), name(name), key_type(type){}
-	std::string name = "";
+	std::string name = "default";
 	KeyBindingType key_type = KeyBindingType::NULL_DEVICE;
 	int event_value;
 };

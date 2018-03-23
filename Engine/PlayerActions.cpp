@@ -419,11 +419,24 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 		if (strcmp((*it)->GetName(), input) == 0)
 		{
 
-			ControllerAxisAction* axis_t = (*it)->GetAxis(name);
-			if (axis_t!=nullptr)
-			{
-				return axis_t->direction_axis;
+			(*it)->GetAxis(name);
+
+			InputAction* axis_t = (*it)->GetAxis(name);
+			if (axis_t != nullptr) {
+				if (axis_t->action_type == ActionInputType::AXIS_ACTION) {
+					if (axis_t != nullptr)
+					{
+						return ((ControllerAxisAction*)axis_t)->direction_axis;
+					}
+				}
+				else if (axis_t->action_type == ActionInputType::KEY_ACTION) {
+					if (axis_t != nullptr)
+					{
+						return ((KeyAction*)axis_t)->direction_axis;
+					}
+				}
 			}
+			
 		}
 		if ((*it)->GetBlockAction())
 			return false;
