@@ -70,7 +70,8 @@ enum EventType
 struct EventData
 {
 	EventType type = EventType::EVENT_UNKNOWN;
-	float delay = 0.0f;
+	unsigned int FrameDelay = 0;
+	float TimeDelay = 0.0f;
 	enum Consumability
 	{
 		CONSUMABILITY_CONSUMABLE,

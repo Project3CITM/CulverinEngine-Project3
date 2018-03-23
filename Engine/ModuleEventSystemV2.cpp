@@ -34,10 +34,8 @@ bool ModuleEventSystemV2::Init(JSON_Object* node)
 		std::vector<Module*> ListenersVec;
 		MEventListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, ListenersVec));
 	}
-	/*
-	for (int i = 0; i < EventType::MAXEVENTS; i++)
-		MEventListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, std::vector<Module*>()));
-	*/
+	//for (int i = 0; i < EventType::MAXEVENTS; i++)
+	//	MEventListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, std::vector<Module*>()));
 	//addlisteners
 	const std::vector<Module*>* ModuleList = App->GetModuleList();
 	for (std::vector<Module*>::const_iterator item = ModuleList->cbegin(); item != ModuleList->cend(); ++item)
@@ -62,6 +60,27 @@ update_status ModuleEventSystemV2::Update(float dt)
 
 update_status ModuleEventSystemV2::PostUpdate(float dt)
 {
+	IteratingMaps = true;
+
+	//Draw opaque events
+	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
+	{
+
+	}
+
+	//Draw alpha events
+	for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
+	{
+
+	}
+
+	//NoDraw events
+	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
+	{
+
+	}
+
+	IteratingMaps = false;
 	return update_status::UPDATE_CONTINUE;
 }
 
@@ -82,7 +101,8 @@ bool ModuleEventSystemV2::CleanUp()
 
 void ModuleEventSystemV2::PushEvent(Event& event)
 {
-
+	//if (IteratingMaps) -> if (event.framedelay == 0) event.framedelay = 1
+	//other idea -> if (IteratingMaps) -> event.framedelay += 1
 }
 
 void ModuleEventSystemV2::PushImmediateEvent(Event& event)
