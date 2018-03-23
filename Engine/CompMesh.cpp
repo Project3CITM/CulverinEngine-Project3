@@ -553,6 +553,7 @@ void CompMesh::Save(JSON_Object* object, std::string name, bool saveScene, uint&
 			std::string temp = std::to_string(countResources++);
 			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".UUID Resource", resource_mesh->GetUUID());
 			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", resource_mesh->name.c_str());
+			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".Type", (int)resource_mesh->GetType());
 		}
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", resource_mesh->GetUUID());
 

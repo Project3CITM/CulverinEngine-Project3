@@ -631,14 +631,14 @@ void ModuleFS::GetAllMetas(std::experimental::filesystem::path path, std::vector
 		if (stdfs::is_directory(*iter) == false)
 		{
 			std::string extension = GetExtension(iter->path().string(), true);
-			//Set lowercase the extension to normalize it
-			for (std::string::iterator it = extension.begin(); it != extension.end(); it++)
+			if (strcmp(extension.c_str(), "meta.json") == 0)
 			{
-				*it = tolower(*it);
+				files_meta.push_back(iter->path().string());
 			}
-			if (IsPermitiveExtension(extension.c_str()))
-			{
-			}
+		}
+		else
+		{
+			GetAllMetas(iter->path().string(), files_meta);
 		}
 	}
 }
@@ -1246,7 +1246,6 @@ std::string ModuleFS::GetExtension(std::string file, bool is_meta)
 		}
 	}
 	else
-
 	{
 		size_t EndName = file.find(".scene.json");
 		if (EndName != std::string::npos)
@@ -1260,14 +1259,14 @@ std::string ModuleFS::GetExtension(std::string file, bool is_meta)
 			file = file.substr(EndName + 1);
 			return file;
 		}
-		else
-		{
-
-		}
 		EndName = file.find_last_of(".");
-		file = file.substr(EndName + 1);
-		return file;
+		if(EndName != std::string::npos)
+		{
+			file = file.substr(EndName + 1);
+			return file;
+		}
 	}
+	return "";
 }
 
 char* ModuleFS::ConverttoChar(std::string name)

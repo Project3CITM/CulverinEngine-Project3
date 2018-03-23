@@ -45,6 +45,7 @@ bool ModuleResourceManager::Init(JSON_Object* node)
 	CreateResourceCube();
 	CreateResourcePlane();
 	//Load();
+
 	NewLoad();
 
 	return true;
@@ -63,14 +64,15 @@ bool ModuleResourceManager::Start()
 
 
 
-		for (int i = 0; i < resources.size(); i++)
+		for (std::map<uint, Resource*>::iterator it = resources.begin(); it != resources.end(); it++)
 		{
 			std::string path_resources_library;
-			uint uid_temp = App->json_seria->ResourcesInLibrary(i, path_resources_library);
-			path_resources_library += std::to_string(uid_temp);
-			if (uid_temp != 0)
+			uint uid_resources = it->first;
+			App->json_seria->ResourcesInLibrary(path_resources_library, (int)it->second->GetType());
+			path_resources_library += std::to_string(uid_resources);
+			if (uid_resources != 0)
 			{
-				Resource* to_reimport = GetResource(uid_temp);
+				Resource* to_reimport = GetResource(uid_resources);
 				if (to_reimport->GetType() == Resource::Type::SCRIPT)
 				{
 					path_resources_library += ".dll";
@@ -104,7 +106,7 @@ bool ModuleResourceManager::Start()
 					{
 						temp.path_dll = App->fs->ConverttoConstChar(((ResourceScript*)to_reimport)->GetPathdll());
 					}
-					temp.uuid = uid_temp;
+					temp.uuid = uid_resources;
 					resources_to_reimport.push_back(temp);
 				}
 			}
@@ -606,7 +608,7 @@ void ModuleResourceManager::CreateResourceCube()
 	std::vector<uint> indices;
 	std::vector<float3> vertices;
 	Init_IndexVertex(vertices_array, 36, indices, vertices);
-	App->importer->iMesh->Import(8, 36, 0, 0, indices, vertices, "cube_default",2); // 2 == Cube
+	App->importer->iMesh->Import(8, 36, 0, 0, indices, vertices, "cube_default", 2); // 2 == Cube
 	RELEASE_ARRAY(vertices_array);
 	RELEASE(bounding_box);
 }
@@ -801,61 +803,61 @@ void ModuleResourceManager::CheckLibrary()
 
 void ModuleResourceManager::Save()
 {
-	LOG("----- SAVING RESOURCES -----");
+	//LOG("----- SAVING RESOURCES -----");
 
-	JSON_Value* config_file;
-	JSON_Object* config;
-	JSON_Object* config_node;
+	//JSON_Value* config_file;
+	//JSON_Object* config;
+	//JSON_Object* config_node;
 
-	config_file = json_parse_file("Resources.json");
+	//config_file = json_parse_file("Resources.json");
 
 
-	if (config_file == nullptr)
-	{
-		config_file = json_value_init_object();
-	}
-	else if (config_file != nullptr)
-	{
-		config = json_value_get_object(config_file);
-	}
-	if (config_file != nullptr)
-	{
-		json_object_clear(config);
-		int num_resources = resources.size() - ResourcePrimitive;
-		json_object_dotset_number_with_std(config, "Resources.Info.Number of Resources", num_resources);
-		json_object_dotset_boolean_with_std(config, "Resources.Info.Load Resources", load_resources);
-		config_node = json_object_get_object(config, "Resources");
-		// Update Resoruces
-		std::map<uint, Resource*>::iterator it = resources.begin();
-		it++; // ++ = Resource "Cube" dont save - ResourcePrimitive
-		it++; // ++ = Resource "Plane" dont save - ResourcePrimitive
-		for (uint i = 0; i < num_resources; i++)
-		{
-			std::string name = "Resource " + std::to_string(i);
-			name += ".";
-			json_object_dotset_number_with_std(config_node, name + "UUID & UUID Directory", it->second->GetUUID());
-			json_object_dotset_number_with_std(config_node, name + "Type", (int)it->second->GetType());
-			json_object_dotset_string_with_std(config_node, name + "Name", it->second->name.c_str());
-			if (it->second->GetType() == Resource::Type::ANIMATION)
-			{
-				json_object_dotset_string_with_std(config_node, name + "PathAssets", it->second->path_assets.c_str());
-			}
-			else
-			{
-				json_object_dotset_string_with_std(config_node, name + "PathAssets", App->fs->GetToAsstes(it->second->path_assets).c_str());
-			}
+	//if (config_file == nullptr)
+	//{
+	//	config_file = json_value_init_object();
+	//}
+	//else if (config_file != nullptr)
+	//{
+	//	config = json_value_get_object(config_file);
+	//}
+	//if (config_file != nullptr)
+	//{
+	//	json_object_clear(config);
+	//	int num_resources = resources.size() - ResourcePrimitive;
+	//	json_object_dotset_number_with_std(config, "Resources.Info.Number of Resources", num_resources);
+	//	json_object_dotset_boolean_with_std(config, "Resources.Info.Load Resources", load_resources);
+	//	config_node = json_object_get_object(config, "Resources");
+	//	// Update Resoruces
+	//	std::map<uint, Resource*>::iterator it = resources.begin();
+	//	it++; // ++ = Resource "Cube" dont save - ResourcePrimitive
+	//	it++; // ++ = Resource "Plane" dont save - ResourcePrimitive
+	//	for (uint i = 0; i < num_resources; i++)
+	//	{
+	//		std::string name = "Resource " + std::to_string(i);
+	//		name += ".";
+	//		json_object_dotset_number_with_std(config_node, name + "UUID & UUID Directory", it->second->GetUUID());
+	//		json_object_dotset_number_with_std(config_node, name + "Type", (int)it->second->GetType());
+	//		json_object_dotset_string_with_std(config_node, name + "Name", it->second->name.c_str());
+	//		if (it->second->GetType() == Resource::Type::ANIMATION)
+	//		{
+	//			json_object_dotset_string_with_std(config_node, name + "PathAssets", it->second->path_assets.c_str());
+	//		}
+	//		else
+	//		{
+	//			json_object_dotset_string_with_std(config_node, name + "PathAssets", App->fs->GetToAsstes(it->second->path_assets).c_str());
+	//		}
 
-			if (it->second->GetType() == Resource::Type::SCRIPT)
-			{
-				json_object_dotset_string_with_std(config_node, name + "PathDll", ((ResourceScript*)it->second)->GetPathdll().c_str());
-			}
+	//		if (it->second->GetType() == Resource::Type::SCRIPT)
+	//		{
+	//			json_object_dotset_string_with_std(config_node, name + "PathDll", ((ResourceScript*)it->second)->GetPathdll().c_str());
+	//		}
 
-			it++;
-		}
-	}
+	//		it++;
+	//	}
+	//}
 
-	json_serialize_to_file(config_file, "Resources.json");
-	json_value_free(config_file);
+	//json_serialize_to_file(config_file, "Resources.json");
+	//json_value_free(config_file);
 }
 
 void ModuleResourceManager::Load()
@@ -944,6 +946,6 @@ void ModuleResourceManager::NewLoad()
 {
 	std::vector<std::string> files_meta;
 	App->fs->GetAllMetas(App->fs->GetMainDirectory(), files_meta);
-
+	App->json_seria->CreateResourcesLoad(files_meta);
 
 }

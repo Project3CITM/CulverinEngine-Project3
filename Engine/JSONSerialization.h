@@ -93,8 +93,12 @@ public:
 	std::time_t GetLastWriteFont(const char * file);
 	// -----------------------------------------------
 
+	// Create Resources -----------------------------
+	void CreateResourcesLoad(std::vector<std::string>& files_meta);
+	// ----------------------------------------------
+
 	// Geu UID if Resources has not imported in Library
-	uint ResourcesInLibrary(uint id, std::string& path);
+	void ResourcesInLibrary(std::string& path, uint type);
 
 	// This function will recive a path and will return a json_obj and json_value pointing to the file, to read and write
 	void Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile);
