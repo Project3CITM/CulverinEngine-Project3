@@ -40,7 +40,7 @@ bool ImportAnimation::Import(const aiAnimation * animation, const char * name, c
 		std::string assets_dir = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
 		assets_dir += "\\";
 		assets_dir += name;
-		App->json_seria->SaveAnimation(tmp_anim, assets_dir.c_str(), name);
+		App->json_seria->SaveAnimation(tmp_anim, assets_dir.c_str(), file);
 
 		json_object_dotset_string_with_std(config, "Animation.Name", animation->mName.C_Str());
 		json_object_dotset_number_with_std(config, "Animation.Duration", animation->mDuration);

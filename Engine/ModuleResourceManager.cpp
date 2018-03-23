@@ -44,8 +44,8 @@ bool ModuleResourceManager::Init(JSON_Object* node)
 {
 	CreateResourceCube();
 	CreateResourcePlane();
-	//Load();
 
+	// Load resources with meta
 	NewLoad();
 
 	return true;
@@ -55,15 +55,8 @@ bool ModuleResourceManager::Start()
 {
 	perf_timer.Start();
 
-	// Create Resource Cube
-	//CreateResourceCube();
-	//CreateResourcePlane();
-	//Load();
 	if (App->mode_game == false)
 	{
-
-
-
 		for (std::map<uint, Resource*>::iterator it = resources.begin(); it != resources.end(); it++)
 		{
 			std::string path_resources_library;
@@ -134,10 +127,6 @@ bool ModuleResourceManager::Start()
 			LOG("ReImporting...");
 			ImportFile(files_reimport, resources_to_reimport, true);
 			LOG("Finished ReImport.");
-			if (App->mode_game == false)
-			{
-				Save();
-			}
 			// After reimport, update time of vector of files in filesystem.
 			App->fs->UpdateFilesAssets();
 			files_reimport.clear();
@@ -165,11 +154,6 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 	{
 		ImportFile(App->input->dropedfiles);
 		App->input->dropedfiles.clear();
-
-		if (App->mode_game == false)
-		{
-			Save();
-		}
 	}
 
 	//Reimport All files ----------------
@@ -292,10 +276,6 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 		LOG("ReImporting...");
 		ImportFile(files_reimport, resources_to_reimport);
 		LOG("Finished ReImport.");
-		if (App->mode_game == false)
-		{
-			Save();
-		}
 		// After reimport, update time of vector of files in filesystem.
 		App->fs->UpdateFilesAssets();
 		files_reimport.clear();
@@ -371,10 +351,6 @@ update_status ModuleResourceManager::PostUpdate(float dt)
 
 bool ModuleResourceManager::CleanUp()
 {
-	if (App->mode_game == false)
-	{
-		//Save();
-	}
 	std::map<uint, Resource*>::iterator it = resources.begin();
 	for (int i = 0; i < resources.size(); i++)
 	{
@@ -799,147 +775,6 @@ bool ModuleResourceManager::ReImportAllScripts()
 void ModuleResourceManager::CheckLibrary()
 {
 
-}
-
-void ModuleResourceManager::Save()
-{
-	//LOG("----- SAVING RESOURCES -----");
-
-	//JSON_Value* config_file;
-	//JSON_Object* config;
-	//JSON_Object* config_node;
-
-	//config_file = json_parse_file("Resources.json");
-
-
-	//if (config_file == nullptr)
-	//{
-	//	config_file = json_value_init_object();
-	//}
-	//else if (config_file != nullptr)
-	//{
-	//	config = json_value_get_object(config_file);
-	//}
-	//if (config_file != nullptr)
-	//{
-	//	json_object_clear(config);
-	//	int num_resources = resources.size() - ResourcePrimitive;
-	//	json_object_dotset_number_with_std(config, "Resources.Info.Number of Resources", num_resources);
-	//	json_object_dotset_boolean_with_std(config, "Resources.Info.Load Resources", load_resources);
-	//	config_node = json_object_get_object(config, "Resources");
-	//	// Update Resoruces
-	//	std::map<uint, Resource*>::iterator it = resources.begin();
-	//	it++; // ++ = Resource "Cube" dont save - ResourcePrimitive
-	//	it++; // ++ = Resource "Plane" dont save - ResourcePrimitive
-	//	for (uint i = 0; i < num_resources; i++)
-	//	{
-	//		std::string name = "Resource " + std::to_string(i);
-	//		name += ".";
-	//		json_object_dotset_number_with_std(config_node, name + "UUID & UUID Directory", it->second->GetUUID());
-	//		json_object_dotset_number_with_std(config_node, name + "Type", (int)it->second->GetType());
-	//		json_object_dotset_string_with_std(config_node, name + "Name", it->second->name.c_str());
-	//		if (it->second->GetType() == Resource::Type::ANIMATION)
-	//		{
-	//			json_object_dotset_string_with_std(config_node, name + "PathAssets", it->second->path_assets.c_str());
-	//		}
-	//		else
-	//		{
-	//			json_object_dotset_string_with_std(config_node, name + "PathAssets", App->fs->GetToAsstes(it->second->path_assets).c_str());
-	//		}
-
-	//		if (it->second->GetType() == Resource::Type::SCRIPT)
-	//		{
-	//			json_object_dotset_string_with_std(config_node, name + "PathDll", ((ResourceScript*)it->second)->GetPathdll().c_str());
-	//		}
-
-	//		it++;
-	//	}
-	//}
-
-	//json_serialize_to_file(config_file, "Resources.json");
-	//json_value_free(config_file);
-}
-
-void ModuleResourceManager::Load()
-{
-	LOG("----- LOADING RESOURCES -----");
-
-	JSON_Value* config_file;
-	JSON_Object* config;
-	JSON_Object* config_node;
-
-	config_file = json_parse_file("Resources.json");
-	if (config_file != nullptr)
-	{
-		config = json_value_get_object(config_file);
-		config_node = json_object_get_object(config, "Resources");
-		int number_resources = json_object_dotget_number(config_node, "Info.Number of Resources");
-		load_resources = json_object_dotget_boolean(config_node, "Info.Load Resources");
-		if (load_resources)
-		{
-			if (number_resources > 0)
-			{
-				for (int i = 0; i < number_resources; i++)
-				{
-					std::string name = "Resource " + std::to_string(i);
-					name += ".";
-					Resource::Type type = (Resource::Type)(int)json_object_dotget_number_with_std(config_node, name + "Type");
-					switch (type)
-					{
-					case Resource::Type::MESH:
-					{
-						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
-						ResourceMesh* mesh = (ResourceMesh*)CreateNewResource(type, uid);
-						mesh->name = json_object_dotget_string_with_std(config_node, name + "Name");
-						mesh->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
-						break;
-					}
-					case Resource::Type::MATERIAL:
-					{
-						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
-						ResourceMaterial* material = (ResourceMaterial*)CreateNewResource(type, uid);
-						material->name = json_object_dotget_string_with_std(config_node, name + "Name");
-						break;
-					}
-					case Resource::Type::SCRIPT:
-					{
-						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
-						ResourceScript* script = (ResourceScript*)CreateNewResource(type, uid);
-						script->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
-						script->name = json_object_dotget_string_with_std(config_node, name + "Name");
-						script->SetPathDll(json_object_dotget_string_with_std(config_node, name + "PathDll"));
-						break;
-					}
-					case Resource::Type::ANIMATION:
-					{
-						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
-						ResourceAnimation* animation = (ResourceAnimation*)CreateNewResource(type, uid);
-						animation->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
-						animation->name = json_object_dotget_string_with_std(config_node, name + "Name");
-						break;
-					}
-					case Resource::Type::FONT:
-					{
-						uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
-						ResourceFont* font = (ResourceFont*)CreateNewResource(type, uid);
-						font->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
-						font->name = json_object_dotget_string_with_std(config_node, name + "Name");
-						break;
-					}
-					case Resource::Type::UNKNOWN:
-					{
-						LOG("Error load resoruce");
-						break;
-					}
-					}
-				}
-			}
-		}
-
-		//Duplicate Particle folder to library
-		App->fs->CopyFolderToLibrary("ParticleSystem");
-	}
-	json_value_free(config_file);
 }
 
 void ModuleResourceManager::NewLoad()

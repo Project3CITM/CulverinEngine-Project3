@@ -19,9 +19,10 @@ public:
 	void Load(const JSON_Object * object, std::string name);
 	void OnPointDown(Event event_input);
 	void OnClick();
+	void ClearLinkedScripts();
 
 public:
-	CompImage * Tick = nullptr;
+	CompImage* Tick = nullptr;
 private:
 private:
 	std::vector<CompScript*> linked_scripts;

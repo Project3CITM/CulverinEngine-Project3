@@ -19,6 +19,7 @@ public:
 
 	void Update(float dt);
 	void Clear();
+	void ClearCompCollider();
 
 	//EDITOR METHODS ---------------
 	void ShowOptions();

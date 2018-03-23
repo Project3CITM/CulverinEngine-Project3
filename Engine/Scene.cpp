@@ -11,13 +11,16 @@
 #include "CompRectTransform.h"
 #include "CompButton.h"
 #include "CompCheckBox.h"
+#include "CompCollider.h"
 #include "CompImage.h"
 #include "CompCanvas.h"
 #include "CompEditText.h"
 #include "CompText.h"
 #include "CompMesh.h"
+#include "CSharpScript.h"
 #include "CompScript.h"
 #include "ResourceMesh.h"
+#include "CompCheckBox.h"
 #include "CompSlider.h"
 #include "ImportMesh.h"
 #include "ImportScript.h"
@@ -57,7 +60,8 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 
 Scene::~Scene()
 {
-	DeleteAllGameObjects(root); //TODO-> Elliot
+	DeleteAllGameObjects(root);
+	DeleteAllGameObjects(temp_scene);
 
 	RELEASE(scene_buff);
 	RELEASE(skybox);
@@ -69,7 +73,7 @@ bool Scene::Start()
 
 	// First of all create New Scene
 	root = new GameObject("NewScene", 1);
-
+	temp_scene = new GameObject("Temporary Scene", 1);
 	/* Init Quadtree */
 	size_quadtree = 50000.0f;
 //	quadtree.Init(size_quadtree);
@@ -239,6 +243,7 @@ bool Scene::CleanUp()
 	skybox->DeleteSkyboxTex();
 	
 	root->CleanUp();
+	temp_scene->CleanUp();
 
 	return true;
 }
@@ -671,8 +676,12 @@ std::vector<std::string>* Scene::GetTagsVec()
 
 void Scene::ModificateParent(GameObject* child, GameObject* new_parent)
 {
-	if (child->IsDeleteFixed() == false && new_parent->IsDeleteFixed() == false)
+	if (child != nullptr && new_parent != nullptr)
 	{
+		if (child->IsDeleteFixed() || new_parent->IsDeleteFixed())
+		{
+			return;
+		}
 		if (child->HaveParent())
 		{
 			for (int i = 0; i < child->GetParent()->GetChildsVec().size(); i++)
@@ -686,12 +695,26 @@ void Scene::ModificateParent(GameObject* child, GameObject* new_parent)
 		}
 		else
 		{
+			bool ereased = false;
 			for (int i = 0; i < root->GetChildsVec().size(); i++)
 			{
 				if (root->GetChildsVec()[i] == child)
 				{
 					root->GetChildsPtr()->erase(root->GetChildsPtr()->begin() + i);
+					ereased = true;
 					break;
+				}
+			}
+			if (!ereased)
+			{
+				for (int i = 0; i < temp_scene->GetChildsVec().size(); i++)
+				{
+					if (temp_scene->GetChildsVec()[i] == child)
+					{
+						temp_scene->GetChildsPtr()->erase(temp_scene->GetChildsPtr()->begin() + i);
+						ereased = true;
+						break;
+					}
 				}
 			}
 		}
@@ -704,6 +727,90 @@ void Scene::ModificateParent(GameObject* child, GameObject* new_parent)
 			child->SetParent(new_parent);
 		}
 		new_parent->AddChildGameObject(child);
+		if (strcmp(new_parent->GetName(), "Temporary Scene") == 0)
+		{
+			// --------------------
+			RemoveAllPointers(child);
+		}
+	}
+}
+
+void Scene::RemoveAllPointers(GameObject* gameobject)
+{
+	for (int i = 0; i < gameobject->GetNumChilds(); i++)
+	{
+		if (gameobject->GetNumChilds() > 0)
+		{
+			RemoveAllPointers(*gameobject->GetChildsPtr()->begin() + i);
+		}
+	}
+	for (int i = 0; i < gameobject->GetNumComponents(); i++)
+	{
+		Component* comp = gameobject->GetComponentbyIndex(i);
+		switch (comp->GetType())
+		{
+		case Comp_Type::C_SCRIPT:
+		{
+			CompScript* script = (CompScript*)comp;
+			if (script->csharp != nullptr)
+			{
+				//Access chsharp script, it contains a vector of all variables with their respective info
+				for (uint i = 0; i < script->csharp->variables.size(); i++)
+				{
+					if (script->csharp->variables[i]->access == VarAccess::Var_PUBLIC)
+					{
+						if (script->csharp->variables[i]->type == VarType::Var_GAMEOBJECT)
+						{
+							script->csharp->variables[i]->game_object = nullptr;
+						}
+					}
+				}
+			}
+			break;
+		}
+		case Comp_Type::C_IMAGE:
+		{
+			CompImage* image = (CompImage*)comp;
+			image->SetNullCanvas();
+			break;
+		}
+		case Comp_Type::C_TEXT:
+		{
+			CompText* text = (CompText*)comp;
+			text->SetNullCanvas();
+			break;
+		}
+		case Comp_Type::C_CHECK_BOX:
+		{
+			CompCheckBox* check_box = (CompCheckBox*)comp;
+			check_box->Tick = nullptr;
+			check_box->ClearLinkedScripts();
+			break;
+		}
+		case Comp_Type::C_BUTTON:
+		{
+			CompButton* button = (CompButton*)comp;
+			button->ClearLinkedScripts();
+			break;
+		}
+		case Comp_Type::C_SLIDER:
+		{
+			//CompSlider* slider = (CompSlider*)comp;
+			break;
+		}
+		case Comp_Type::C_CANVAS:
+		{
+			CompCanvas* canvas = (CompCanvas*)comp;
+			canvas->ClearGraphicVector();
+			break;
+		}
+		case Comp_Type::C_COLLIDER:
+		{
+			CompCollider* collider = (CompCollider*)comp;
+			collider->ClearCompCollider();
+			break;
+		}
+		}
 	}
 }
 

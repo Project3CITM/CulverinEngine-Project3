@@ -291,6 +291,7 @@ void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* dir
 		json_object_dotset_number_with_std(config, "Prefab.Info.Number of GameObjects", count);
 		json_object_dotset_string_with_std(config, "Prefab.Info.Directory Prefab", App->fs->GetToAsstes(fileName).c_str());
 		json_object_dotset_number_with_std(config, "Prefab.Info.Resources.Number of Resources", countResources);
+		json_object_dotset_number_with_std(config, "Prefab.Info.Resources.Type", (int)Resource::Type::MESH);
 		if (is_FBX)
 		{
 			std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
@@ -762,6 +763,7 @@ void JSONSerialization::SaveScript(const ResourceScript* script, const char* dir
 		json_object_dotset_number_with_std(config, "Script.UUID Resource", script->GetUUID());
 		json_object_dotset_string_with_std(config, "Script.Name", script->name.c_str());
 		json_object_dotset_string_with_std(config, "Script.PathDLL", script->GetPathdll().c_str());
+		json_object_dotset_number_with_std(config, "Script.Type", (int)script->GetType());
 		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
 		std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
 		json_object_dotset_number_with_std(config, "Script.Last Write", cftime);
@@ -786,9 +788,10 @@ void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const
 	{
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
-		json_object_dotset_string_with_std(config, "Material.Directory Script", fileName);
-		json_object_dotset_number_with_std(config, "Material.UUID Resource", animation->GetUUID());
-		json_object_dotset_string_with_std(config, "Material.Name", animation->name.c_str());
+		json_object_dotset_string_with_std(config, "Animation.Directory Animation", App->fs->GetToAsstes(fileName).c_str());
+		json_object_dotset_number_with_std(config, "Animation.UUID Resource", animation->GetUUID());
+		json_object_dotset_string_with_std(config, "Animation.Name", animation->name.c_str());
+		json_object_dotset_number_with_std(config, "Animation.Type", (int)animation->GetType());
 		json_serialize_to_file(config_file, nameJson.c_str());
 	}
 	json_value_free(config_file);
@@ -916,9 +919,10 @@ void JSONSerialization::SaveFont(const ResourceFont * font, const char * directo
 	{
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
-		json_object_dotset_string_with_std(config, "Font.Directory Material", App->fs->GetToAsstes(fileName).c_str());
+		json_object_dotset_string_with_std(config, "Font.Directory Font", App->fs->GetToAsstes(fileName).c_str());
 		json_object_dotset_number_with_std(config, "Font.UUID Resource", font->GetUUID());
 		json_object_dotset_string_with_std(config, "Font.Name", font->name.c_str());
+		json_object_dotset_number_with_std(config, "Font.Type", (int)font->GetType());
 		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
 		std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
 		json_object_dotset_number_with_std(config, "Font.Last Write", cftime);
@@ -1143,7 +1147,6 @@ std::time_t JSONSerialization::GetLastWriteFont(const char* file)
 
 void JSONSerialization::CreateResourcesLoad(std::vector<std::string>& files_meta)
 {
-	
 	for (std::vector<std::string>::iterator it = files_meta.begin(); it != files_meta.end(); it++)
 	{
 		JSON_Value* config_file;
@@ -1154,33 +1157,61 @@ void JSONSerialization::CreateResourcesLoad(std::vector<std::string>& files_meta
 		if (config_file)
 		{
 			config = json_value_get_object(config_file);
-			//int type = json_object_dotget_number_with_std(config, "Material.Type");
-			//config_node = json_object_get_object(config, "Material");
-			Resource::Type type = (Resource::Type)(int)json_object_dotget_number_with_std(config, "Material.Type");
-			config_node = json_object_get_object(config, "Material");
+			Resource::Type type = Resource::Type::UNKNOWN;
+			while (type == Resource::Type::UNKNOWN)
+			{
+				// Check what is the type of resources
+				// Material (png, jpg) -----------------------------------
+				type = (Resource::Type)(int)json_object_dotget_number_with_std(config, "Material.Type");
+				if (type != Resource::Type::UNKNOWN)
+				{
+					config_node = json_object_get_object(config, "Material");
+					break;
+				}
+				// Prefab (fbx, dae, obj) -----------------------------------
+				type = (Resource::Type)(int)json_object_dotget_number_with_std(config, "Prefab.Info.Resources.Type");
+				if (type != Resource::Type::UNKNOWN)
+				{
+					config_node = json_object_get_object(config, "Prefab");
+					break;
+				}	
+				// Script (cs) -----------------------------------
+				type = (Resource::Type)(int)json_object_dotget_number_with_std(config, "Script.Type");
+				if (type != Resource::Type::UNKNOWN)
+				{
+					config_node = json_object_get_object(config, "Script");
+					break;
+				}
+				// Animation ------------------------------------
+				type = (Resource::Type)(int)json_object_dotget_number_with_std(config, "Animation.Type");
+				if (type != Resource::Type::UNKNOWN)
+				{
+					config_node = json_object_get_object(config, "Animation");
+					break;
+				}
+				// Font  -----------------------------------------
+				type = (Resource::Type)(int)json_object_dotget_number_with_std(config, "Font.Type");
+				if (type != Resource::Type::UNKNOWN)
+				{
+					config_node = json_object_get_object(config, "Font");
+					break;
+				}
+			}
+
+
 			switch (type)
 			{
 			case Resource::Type::MESH:
 			{
-				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
-				//ResourceMesh* mesh = (ResourceMesh*)App->resource_manager->CreateNewResource(type, uid);
-				//mesh->name = json_object_dotget_string_with_std(config_node, name + "Name");
-				//mesh->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
+				uint number_of_resources = json_object_dotget_number_with_std(config_node, "Info.Resources.Number of Resources");
+				for (int i = 0; i < number_of_resources; i++)
+				{
+					std::string name = "Info.Resources.Resource " + std::to_string(i) + ".";
+					uint uid = json_object_dotget_number_with_std(config_node, name + "UUID Resource");
+					ResourceMesh* mesh = (ResourceMesh*)App->resource_manager->CreateNewResource(type, uid);
+					mesh->InitInfo(json_object_dotget_string_with_std(config_node, name + "Name"), json_object_dotget_string_with_std(config_node, "Info.Directory Prefab"));
+				}
 				break;
-				/*  "Prefab": {
-    "Info": {
-      "Number of GameObjects": 3,
-      "Directory Prefab": "Assets/BakerHouse.fbx",
-      "Resources": {
-        "Number of Resources": 2,
-        "Last Write": 1519923348,
-        "Resource 0": {
-          "UUID Resource": 257406008,
-          "Name": "Chimney"
-        },
-        "Resource 1": {
-          "UUID Resource": 310677907,
-          "Name": "Baker_house"*/
 			}
 			case Resource::Type::MATERIAL:
 			{
@@ -1191,27 +1222,23 @@ void JSONSerialization::CreateResourcesLoad(std::vector<std::string>& files_meta
 			}
 			case Resource::Type::SCRIPT:
 			{
-				//uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
-				//ResourceScript* script = (ResourceScript*)CreateNewResource(type, uid);
-				//script->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
-				//script->name = json_object_dotget_string_with_std(config_node, name + "Name");
-				//script->SetPathDll(json_object_dotget_string_with_std(config_node, name + "PathDll"));
+				uint uid = json_object_dotget_number_with_std(config_node, "UUID Resource");
+				ResourceScript* script = (ResourceScript*)App->resource_manager->CreateNewResource(type, uid);
+				script->InitInfo(json_object_dotget_string_with_std(config_node, "PathDLL"), json_object_dotget_string_with_std(config_node, "Directory Script"));
 				break;
 			}
 			case Resource::Type::ANIMATION:
 			{
-				//uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
-				//ResourceAnimation* animation = (ResourceAnimation*)CreateNewResource(type, uid);
-				//animation->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
-				//animation->name = json_object_dotget_string_with_std(config_node, name + "Name");
+				uint uid = json_object_dotget_number_with_std(config_node, "UUID Resource");
+				ResourceAnimation* animation = (ResourceAnimation*)App->resource_manager->CreateNewResource(type, uid);
+				animation->InitInfo(json_object_dotget_string_with_std(config_node, "Name"), json_object_dotget_string_with_std(config_node, "Directory Animation"));
 				break;
 			}
 			case Resource::Type::FONT:
 			{
-				//uint uid = json_object_dotget_number_with_std(config_node, name + "UUID & UUID Directory");
-				//ResourceFont* font = (ResourceFont*)CreateNewResource(type, uid);
-				//font->path_assets = json_object_dotget_string_with_std(config_node, name + "PathAssets");
-				//font->name = json_object_dotget_string_with_std(config_node, name + "Name");
+				uint uid = json_object_dotget_number_with_std(config_node, "UUID Resource");
+				ResourceFont* font = (ResourceFont*)App->resource_manager->CreateNewResource(type, uid);
+				font->InitInfo(json_object_dotget_string_with_std(config_node, "Name"), json_object_dotget_string_with_std(config_node, "Directory Font"));
 				break;
 			}
 			case Resource::Type::UNKNOWN:
@@ -1242,6 +1269,11 @@ void JSONSerialization::ResourcesInLibrary(std::string& path, uint type)
 	case Resource::Type::MESH:
 	{
 		path = DIRECTORY_LIBRARY_MESHES;
+		break;
+	}
+	case Resource::Type::FONT:
+	{
+		path = DIRECTORY_LIBRARY_FONTS;
 		break;
 	}
 	}

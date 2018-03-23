@@ -366,6 +366,11 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 }
 
 
+void CompButton::ClearLinkedScripts()
+{
+	linked_scripts.clear();
+}
+
 void CompButton::SyncScript()
 {
 	std::vector<Component*> script_vec;

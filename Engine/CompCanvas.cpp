@@ -188,6 +188,7 @@ void CompCanvas::RemoveGraphic(CompGraphic * to_remove)
 	}
 	LOG("Error:CanvasRender not found on this Canvas");
 }
+
 void CompCanvas::DrawDebugRectTransform()
 {
 	if (!IsActive())
@@ -292,14 +293,22 @@ void CompCanvas::DrawGraphic(bool debug)
 		glPolygonMode(GL_FRONT, last_polygon_mode[0]); glPolygonMode(GL_BACK, last_polygon_mode[1]);
 		glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
 }
+
+void CompCanvas::ClearGraphicVector()
+{
+	graphic_vector.clear();
+}
+
 void CompCanvas::SetDefaultUIShader(ShaderProgram * shader)
 {
 	default_ui_shader = shader;
 }
+
 void CompCanvas::SetDefaultTexture(int texture)
 {
 	default_texture_id = texture;
 }
+
 int CompCanvas::GetDefaultTexture()const
 {
 	return default_texture_id;

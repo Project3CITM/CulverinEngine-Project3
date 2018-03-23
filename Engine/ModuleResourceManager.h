@@ -52,8 +52,6 @@ public:
 	// Check if a resources haven't file imported in Library
 	void CheckLibrary();
 
-	void Save();
-	void Load();
 	void NewLoad();
 
 public:
