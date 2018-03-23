@@ -269,8 +269,8 @@ public class Lever : CulverinBehaviour
         for (int x = barrel_per_line - 1; x >= 0; x--)
         {
             curr_x = puzzle_start_tile_x + x * (int)(orientation_x.x + orientation_z.x);
-            curr_y = puzzle_start_tile_z + y * (int)(orientation_x.z + orientation_z.z);
-    
+            curr_y = puzzle_start_tile_z + y * (int)(orientation_x.z + orientation_z.z);	
+
             if (current_path.walkability[x, y] == 0)
             {
                 Debug.Log("Setting puzzle barrel");
@@ -406,6 +406,7 @@ public class Lever : CulverinBehaviour
         current_path.CreateWalkability(index);
 
         TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
+        SetOrientationVectors();
         Debug.Log("Path index: " + index);
         Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
         Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);

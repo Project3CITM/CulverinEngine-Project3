@@ -90,10 +90,11 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 	visible = copy.IsVisible();
 	static_obj = copy.IsStatic();
 	bb_active = copy.IsAABBActive();
-	if (copy.bounding_box != nullptr)
+	if (copy.box_fixed.IsFinite())
 	{
 		bounding_box = new AABB(*copy.bounding_box);
 	}
+	else bounding_box = nullptr;
 
 	//Create all components from copy object with same data
 	for (uint i = 0; i < copy.GetNumComponents(); i++)
@@ -114,8 +115,13 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 GameObject::~GameObject()
 {
 	//RELEASE_ARRAY(name); FIX THIS
-	delete bounding_box;
-	bounding_box = nullptr;
+	// To Fix Delete Bounding Box, might crash deleting planes, right now we ignore planes bounding boxes
+	if (box_fixed.IsFinite())
+	{
+		delete bounding_box;
+		bounding_box = nullptr;
+	}
+
 	parent = nullptr;
 
 	if (components.size() > 0)
