@@ -425,6 +425,8 @@ void ModulePhysics::DrawPhysics()
 	}
 	const physx::PxRenderBuffer& rb = mScene->getRenderBuffer();
 
+	App->scene->scene_buff->Bind("Scene");
+
 	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 	glLineWidth(2.0f);
 	glBegin(GL_LINES);
@@ -439,6 +441,7 @@ void ModulePhysics::DrawPhysics()
 	glLineWidth(1.0f);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
+	App->scene->scene_buff->UnBind("Scene");
 }
 
 void ModulePhysics::DebugDrawUpdate()

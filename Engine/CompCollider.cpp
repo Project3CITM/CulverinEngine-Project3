@@ -214,11 +214,7 @@ void CompCollider::ShowInspectorInfo()
 
 	if (select_flags && App->physics->ShowColliderFilterOptions(collision_flags))
 	{
-		uint own_id = (1 << App->scene->GetTagID(parent->GetTag()));
-		if (body)
-		{
-			body->SetFilterFlags(own_id, collision_flags);
-		}
+		SetFilterFlags();
 		select_flags = false;
 	}
 
@@ -411,11 +407,7 @@ void CompCollider::SyncComponent(GameObject* sync_parent)
 	}
 
 	// Setup Filter Shader Masks
-	uint own_id = (1 << App->scene->GetTagID(parent->GetTag()));
-	if (body)
-	{
-		body->SetFilterFlags(own_id, collision_flags);
-	}
+	SetFilterFlags();
 
 }
 
@@ -519,6 +511,16 @@ void CompCollider::SetSizeFromBoundingBox()
 	}
 
 	UpdateCollider();
+}
+
+void CompCollider::SetFilterFlags()
+{
+	// Setup Filter Shader Masks
+	uint own_id = (1 << App->scene->GetTagID(parent->GetTag()));
+	if (body)
+	{
+		body->SetFilterFlags(own_id, collision_flags);
+	}
 }
 
 void CompCollider::SetRigidBodyComp(CompRigidBody * new_comp)
