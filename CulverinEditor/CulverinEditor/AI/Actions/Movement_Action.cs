@@ -273,6 +273,9 @@ public class Movement_Action : Action
             arrive.SetEnabled(true);
             seek.SetEnabled(true);
 
+            translation_finished = false;
+            rotation_finished = false;
+
             path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
             look_at_player = rot;
 

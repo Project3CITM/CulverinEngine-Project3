@@ -41,10 +41,16 @@ public class BT : CulverinBehaviour
     }
 
     public virtual void Update()
-    { 
-        if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION)
+    {
+        Action.ACTION_RESULT result = current_action.ActionUpdate();
+
+        if (current_action.action_type == Action.ACTION_TYPE.IDLE_ACTION || current_action.action_type == Action.ACTION_TYPE.IDLE_ATTACK_ACTION)
         {
-            switch (current_action.ActionUpdate())
+            MakeDecision();
+        }
+        else
+        {
+            switch (result)
             {
                 case Action.ACTION_RESULT.AR_FAIL:
                     current_action.ActionEnd();
@@ -63,10 +69,6 @@ public class BT : CulverinBehaviour
                     Debug.Log("Error on action state!");
                     break;
             }
-        }
-        else
-        {
-            MakeDecision();
         }
     }
 

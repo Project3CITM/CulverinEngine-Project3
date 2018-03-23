@@ -33,10 +33,10 @@ public class Attack_Action : Action
     public override bool ActionStart()
     {
         state = SWA_STATE.PRE_APPLY;
-        anim = GetComponent<CompAnimation>();
+        anim = gameObject.GetComponent<CompAnimation>();
         anim.SetTransition("ToAttack");
         anim.SetClipDuration("Attack", attack_duration);
-        player = GetLinkedObject("target").GetComponent<CharactersManager>();
+        player = GetLinkedObject("Target").GetComponent<CharactersManager>();
         //Interrupt player action
         return true;
     }
