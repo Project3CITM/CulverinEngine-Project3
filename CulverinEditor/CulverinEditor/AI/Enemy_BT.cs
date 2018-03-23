@@ -60,7 +60,7 @@ public class Enemy_BT : BT
 
     public override void MakeDecision()
     {
-        Debug.Log(next_action.action_type);
+        Debug.Log("Next Action:" + next_action.action_type);
 
         if (current_hp <= 0)
         {
