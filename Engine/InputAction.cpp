@@ -173,18 +173,26 @@ bool KeyAction::UpdateEventAction(const Uint8 * array_kys)
 	{
 		return true;
 	}*/
-
-	switch (positive_button->key_type)
+	if (positive_button == nullptr && negative_button ==nullptr)
 	{
-	case KeyBindingType::KEYBOARD_DEVICE:
-		state_event = array_kys[positive_button->event_value];
-		this->direction_axis = 0.0f;
-		break;
-
-	case KeyBindingType::CONTROLLER_BUTTON_DEVICE:
-		state_event = SDL_GameControllerGetButton(App->input->controller, (SDL_GameControllerButton)positive_button->event_value);
-		break;
+		return true;
 	}
+
+	if (positive_button != nullptr)
+	{
+		switch (positive_button->key_type)
+		{
+		case KeyBindingType::KEYBOARD_DEVICE:
+			state_event = array_kys[positive_button->event_value];
+			this->direction_axis = 0.0f;
+			break;
+
+		case KeyBindingType::CONTROLLER_BUTTON_DEVICE:
+			state_event = SDL_GameControllerGetButton(App->input->controller, (SDL_GameControllerButton)positive_button->event_value);
+			break;
+		}
+	}
+
 
 	if (state_event == 1)
 	{

@@ -16,7 +16,42 @@ InputManager::~InputManager()
 
 void InputManager::UpdateInputActions()
 {
+	/*
+	if (active_action.empty())
+		return;
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
+	int mouse_x = 0;
+	int mouse_y = 0;
+	Uint32 buttons = SDL_GetMouseState(&mouse_x, &mouse_y);
+	std::list<InputAction*>::iterator it = active_action.begin()
+	bool end_update = false;
+	while (it!= active_action.end())
+	{
+		InputAction
+		switch ((*it)->action_type) {
+		case ActionInputType::BUTTON_ACTION:
+		case ActionInputType::KEY_ACTION:
+			end_update=((KeyAction*)(*it))->UpdateEventAction(keys);
+			break;
 
+		case ActionInputType::MOUSE_BUTTON_ACTION:
+			end_update=((MouseButtonAction*)(*it))->UpdateEventAction(mouse_x, mouse_y, buttons);
+			break;
+
+
+		}
+
+		if(end_update)
+		{
+		it = active_action.remove(it);
+		}
+		else
+		{
+		it++;
+		}
+
+	}
+	*/
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	int mouse_x = 0;
 	int mouse_y = 0;

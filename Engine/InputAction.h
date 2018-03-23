@@ -113,7 +113,8 @@ public:
 	bool ProcessEventAction(SDL_Event * input_event);
 	bool DetectAction(const SDL_Event &input_event);
 	bool UpdateEventAction(const Uint8* array_kys);
-	
+	//int Update(const Uint8* array_kys);
+
 public:
 	Keystateaction state = Keystateaction::KEY_IDLE_ACTION;
 };

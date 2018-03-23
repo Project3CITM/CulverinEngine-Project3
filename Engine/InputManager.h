@@ -47,7 +47,7 @@ private:
 public:
 	int number_of_action = 0;
 	std::vector<InputAction*> action_vector;
-
+	std::list<InputAction*> active_action;
 	bool active_input = true;
 	bool block_action = false;
 private:
