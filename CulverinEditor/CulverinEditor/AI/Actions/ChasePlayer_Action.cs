@@ -3,9 +3,6 @@ using CulverinEditor.Debug;
 
 public class ChasePlayer_Action : Action
 {
-    int current_tile_x;
-    int current_tile_y;
-
     PerceptionEvent event_to_react;
     Movement_Action move;
     CompAnimation anim;
@@ -32,8 +29,7 @@ public class ChasePlayer_Action : Action
     }
 
     public override bool ActionStart()
-    {
-        
+    {       
         Debug.Log("Chasing Player");
 
         anim = GetComponent<CompAnimation>();
@@ -42,6 +38,7 @@ public class ChasePlayer_Action : Action
         event_to_react.start_counting = false;
 
         move.GoToPrevious(event_to_react.objective_tile_x, event_to_react.objective_tile_y, true);
+        move.Chase();
         bool ret = move.ActionStart();
 
         return ret;
@@ -61,7 +58,7 @@ public class ChasePlayer_Action : Action
             move.Interupt();
         }
 
-        if (forgot_event == true)
+        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true)
         {
             Interupt();
             move.Interupt();
@@ -82,20 +79,12 @@ public class ChasePlayer_Action : Action
             event_to_react.start_counting = false;
 
         ///Make Move update
-        move.chase = true;
         move_return = move.ActionUpdate();
 
-        if (move_return == ACTION_RESULT.AR_SUCCESS)
-        {
-            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
-            move.ActionEnd();
-        }
-
-        if (move_return == ACTION_RESULT.AR_FAIL)
+        if (move_return != ACTION_RESULT.AR_IN_PROGRESS)
         {
             move.ActionEnd();
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
-            return ACTION_RESULT.AR_FAIL;
         }        
 
         return move_return;

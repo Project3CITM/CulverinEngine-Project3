@@ -141,26 +141,17 @@ public class Movement_Action : Action
 
             if (ReachedTile() == true)
             {
-                if (path[0] == null)
-                {
-                    interupt = true;
-                }
-                else
-                {
-                    pos.x = path[0].GetTileX() * tile_size;
-                    pos.z = path[0].GetTileY() * tile_size;
-                    GetComponent<Transform>().position = pos;
-
-                    GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
-                }
-                if (interupt == true)
-                {
-                    translation_finished = true;
-                }
-                else
+                Debug.Log("Reached Tile: " + GetCurrentTileX() + "," + GetCurrentTileY());
+                if (interupt != true)
                 {
                     NextTile();
                 }
+                else
+                {
+                    arrive.SetEnabled(false);
+                    seek.SetEnabled(false);
+                    translation_finished = true;
+                }                
             }
         }
 
@@ -233,6 +224,12 @@ public class Movement_Action : Action
 
     private void NextTile()
     {
+        Vector3 pos = new Vector3(GetComponent<Transform>().position);
+        pos.x = path[0].GetTileX() * tile_size;
+        pos.z = path[0].GetTileY() * tile_size;
+        GetComponent<Transform>().position = pos;
+        GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
+
         //Tiles
         if (path.Count == 1)
         {
@@ -242,16 +239,7 @@ public class Movement_Action : Action
         }
         else
         {
-            if (path[0] != null)
-            {
-                Debug.Log("i am: x:" + GetCurrentTileX() + "/ y:" + GetCurrentTileY() + "|| going to: x:" + path[0].GetTileX() + "/ y:" + path[0].GetTileY());
-                path.Remove(path[0]);
-            }
-            
-            arrive.SetEnabled(true);
-            seek.SetEnabled(true);
-            translation_finished = false;
-            Debug.Log("GetTargetPosition(): Path has no values");
+            path.Remove(path[0]);
         }
 
         //Rotation
@@ -266,21 +254,30 @@ public class Movement_Action : Action
 
     public void GoTo(int obj_x, int obj_y, bool rot = false)
     {
-        path.Clear();
-
         int current_x = GetCurrentTileX();
         int current_y = GetCurrentTileY();
 
-        path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
-        look_at_player = rot;
+        Debug.Log("Current: " + current_x + "," + current_y);
+        Debug.Log("Objective: " + obj_x + "," + obj_y);
 
-        if (ReachedTile())
-            NextTile();
+        if ((obj_x == current_x && obj_y == current_y) || map.GetComponent<Pathfinder>().IsWalkableTile((uint)obj_x, (uint)obj_y) == false)
+        {
+            translation_finished = true;
+            arrive.SetEnabled(false);
+            seek.SetEnabled(false);
+        }
         else
         {
-            translation_finished = false;
+            path.Clear();
+
             arrive.SetEnabled(true);
             seek.SetEnabled(true);
+
+            path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
+            look_at_player = rot;
+
+            if (ReachedTile())
+                NextTile();
         }
 
         if (FinishedRotation() == false)
@@ -298,7 +295,6 @@ public class Movement_Action : Action
 
         foreach (PathNode n in path)
             Debug.Log("Tile: " + n.GetTileX() + "," + n.GetTileY());
-
     }
 
     public void GoTo(PathNode obj, bool rot = false)
@@ -320,7 +316,11 @@ public class Movement_Action : Action
             PathNode closest = adjacent_walkable_tiles[0];
             int closest_distance = Mathf.Abs(closest.GetTileX() - current_x) + Mathf.Abs(closest.GetTileY() - current_y);
 
-            if (adjacent_walkable_tiles.Count >= 1)
+            Debug.Log("Current: " + current_x + "," + current_y);
+            Debug.Log("Distance:" + closest_distance);
+            Debug.Log("Node: " + closest.GetTileX() + "," + closest.GetTileY());
+
+            if (adjacent_walkable_tiles.Count > 1)
             {
                 for (int i = 1; i < adjacent_walkable_tiles.Count; i++)
                 {
@@ -329,6 +329,7 @@ public class Movement_Action : Action
 
                     int distance = x_distance + y_distance;
                     Debug.Log("Distance:" + distance);
+                    Debug.Log("Node: " + adjacent_walkable_tiles[i].GetTileX() + "," + adjacent_walkable_tiles[i].GetTileY());
 
                     if (distance < closest_distance)
                     {
@@ -339,8 +340,11 @@ public class Movement_Action : Action
             }
 
             GoTo(closest);
-
         }
+
+        Debug.Log("Chase Path:");
+        foreach (PathNode pn in path)
+            Debug.Log(pn.GetTileX() + "," + pn.GetTileY());
     }
 
     public void Accelerate(Vector3 acceleration)    

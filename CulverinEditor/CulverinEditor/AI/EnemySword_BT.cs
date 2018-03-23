@@ -38,15 +38,15 @@ public class EnemySword_BT : Enemy_BT
             }
             else
             {
-                Debug.Log("Idle");
+                Debug.Log("IdleAttack");
                 state = AI_STATE.AI_IDLE;
-                current_action = GetComponent<Idle_Action>();
+                current_action = GetComponent<IdleAttack_Action>();
                 current_action.SetAnimSpeed(anim_speed);
                 current_action.ActionStart();
                 return;
             }
         }
-        else
+        else if(player_detected == true)
         {
             Debug.Log("Chase");
             GetComponent<ChasePlayer_Action>().ActionStart();
@@ -74,7 +74,7 @@ public class EnemySword_BT : Enemy_BT
         //Patrol
         if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
         {
-            Debug.Log("Patrol");
+            Debug.Log("Patrol-origin");
             GetComponent<Movement_Action>().GoTo(origin_path_x, origin_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();
@@ -82,7 +82,8 @@ public class EnemySword_BT : Enemy_BT
         }
         else
         {
-            Debug.Log("Patrol");
+            Debug.Log("Patrol-end");
+            Debug.Log("End:" + end_path_x + "," + end_path_y);
             GetComponent<Movement_Action>().GoTo(end_path_x, end_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();
