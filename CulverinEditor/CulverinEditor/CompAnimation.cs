@@ -44,5 +44,8 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetActiveBlendingClipWeight(float weight);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetBlendInTime(string name, float time);
     }
 }
