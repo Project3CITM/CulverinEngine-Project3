@@ -31,19 +31,30 @@ public class BarrelFall : CulverinBehaviour
     float fall_displacement = 0.0f;
     float fall_time = 0.0f;
 
-    void Start()
-    {
+    private bool get_init_pos = true;
+    private Vector3 initial_position;
 
-    }
 
     void Update()
-    {       
+    {
+        if (placed)
+            return;
+
+        Debug.Log("Updating barrel");
+        if(get_init_pos)
+        {
+            initial_position = transform.GetGlobalPosition();
+            get_init_pos = false;
+        }
+
         if (in_tile == false)
         {
+           
             MoveToTile();
         }
         else
         {
+            Debug.Log("Falling barrel...");
             Fall();
         }
     }
@@ -55,10 +66,14 @@ public class BarrelFall : CulverinBehaviour
 
 
         Vector3 global_pos = transform.GetGlobalPosition();
+
         bool in_x = false;
         bool in_y = false;
 
         //Displace barrel in X
+        Debug.Log("BarrelPos:");
+        Debug.Log(target_pos_x);
+        Debug.Log(global_pos.x);
         if (Mathf.Abs(target_pos_x - global_pos.x) > error_margin)
         {
             float displacement;
@@ -68,6 +83,7 @@ public class BarrelFall : CulverinBehaviour
             }
             else displacement = 1;
 
+           
             transform.local_position = new Vector3(transform.local_position.x + (Time.deltaTime * speed * displacement), transform.local_position.y, transform.local_position.z);
         }
         else in_x = true;
@@ -82,6 +98,7 @@ public class BarrelFall : CulverinBehaviour
             }
             else displacement = 1;
 
+            Debug.Log("Moving barrel in y");
             transform.local_position = new Vector3(transform.local_position.x, transform.local_position.y, transform.local_position.z + (Time.deltaTime * speed * displacement));
         }
         else in_y = true;
@@ -97,7 +114,6 @@ public class BarrelFall : CulverinBehaviour
         Vector3 global_pos = transform.GetGlobalPosition();
         if (global_pos.y > floor_height)
         {
-           // Debug.Log(fall_time);
             fall_time += Time.deltaTime;
             float new_height = transform.local_position.y;
 
@@ -108,8 +124,8 @@ public class BarrelFall : CulverinBehaviour
         }
         else
         {
-           this.SetEnabled(false);
-            placed = true;
+          // this.SetEnabled(false);
+           placed = true;
         }
     }
 
@@ -134,10 +150,18 @@ public class BarrelFall : CulverinBehaviour
 
         target_pos_x = target_tile_x * tile_size;
         target_pos_y = target_tile_y * tile_size;
-        mode_puzzle = mode;
+        mode_puzzle = mode;       
+    }
+    
 
-        //Debug.Log(target_pos_y);
-
+    public void ResetBarrel()
+    {
+        transform.SetGlobalPosition(initial_position);// = initial_position;
+        in_tile = placed = false;
+        get_init_pos = true;
+        fall_displacement = fall_time = 0.0f;
+        gameObject.SetActive(false);      
+       
     }
 }
 
