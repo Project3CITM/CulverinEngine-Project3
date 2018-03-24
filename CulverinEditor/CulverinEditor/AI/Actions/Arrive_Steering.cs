@@ -42,11 +42,13 @@ public class Arrive_Steering : CulverinBehaviour
                 if (GetComponent<Movement_Action>().chase == false)
                 {
                     GetComponent<CompAnimation>().SetTransition("ToIdle");
+                    GetComponent<CompAnimation>().SetBlendInTime("Idle", stopping_time);
                     Debug.Log("Animation To Idle - Arrive");
                 }
                 else
                 {
                     GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+                    GetComponent<CompAnimation>().SetBlendInTime("IdleAttack", stopping_time);
                     Debug.Log("Animation To IdleAttack - Arrive");
                 }
                 //set patrol/chase blend

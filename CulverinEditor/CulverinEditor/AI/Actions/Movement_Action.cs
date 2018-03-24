@@ -146,13 +146,10 @@ public class Movement_Action : Action
 
                 if (interupt != true)
                 {
-                    Debug.Log("Next tile");
-                    Debug.Log("Chase = " + chase);
                     NextTile();
                 }
                 else
                 {
-                    Debug.Log("Hellooooo");
                     arrive.SetEnabled(false);
                     seek.SetEnabled(false);
                     translation_finished = true;
