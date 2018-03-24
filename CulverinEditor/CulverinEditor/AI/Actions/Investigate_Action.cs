@@ -39,8 +39,6 @@ public class Investigate_Action : Action
 
     public override bool ActionStart()
     {
-        Debug.Log("Going to investigate");
-
         int current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
@@ -61,8 +59,6 @@ public class Investigate_Action : Action
         {
             case INVESTIGATESTATE.INVESTIGATE:
                 //Trigger investigate animation
-
-                Debug.Log("Forget Event:" + forgot_event);
 
                 if (interupt)
                 {
@@ -98,7 +94,11 @@ public class Investigate_Action : Action
                 if (move_return != ACTION_RESULT.AR_IN_PROGRESS)
                 {
                     move.ActionEnd();
-                    return move_return;
+
+                    if (my_state == INVESTIGATESTATE.GOING_TO_INVESTIGATE)
+                        my_state = INVESTIGATESTATE.INVESTIGATE;
+                    else
+                        return move_return;
                 }
 
                 break;

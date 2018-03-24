@@ -83,7 +83,6 @@ public class EnemySword_BT : Enemy_BT
         else
         {
             Debug.Log("Patrol-end");
-            Debug.Log("End:" + end_path_x + "," + end_path_y);
             GetComponent<Movement_Action>().GoTo(end_path_x, end_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();

@@ -143,7 +143,6 @@ public class Movement_Action : Action
 
             if (ReachedTile() == true)
             {
-                Debug.Log("Reached Tile: " + GetCurrentTileX() + "," + GetCurrentTileY());
                 current_velocity = new Vector3(Vector3.Zero);
 
                 if (interupt != true)
@@ -435,7 +434,7 @@ public class Movement_Action : Action
 
             if(pos == target_pos)
             {
-                Debug.Log("Target and Current positions are equal");
+                Debug.Log("[error] Target and Current positions are equal");
                 return 0.0f;
             }
 

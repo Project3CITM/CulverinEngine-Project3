@@ -27,9 +27,7 @@ public class ChasePlayer_Action : Action
     }
 
     public override bool ActionStart()
-    {       
-        Debug.Log("Chasing Player");
-
+    {
         event_to_react.start_counting = false;
 
         move.GoToPrevious(event_to_react.objective_tile_x, event_to_react.objective_tile_y, true);

@@ -39,7 +39,6 @@ public class PerceptionListener : CulverinBehaviour
 
         foreach (PerceptionEvent e in to_remove)
         {
-            Debug.Log("Removed Element");
             events_in_memory.Remove(e);
         }
         to_remove.Clear();
@@ -66,17 +65,6 @@ public class PerceptionListener : CulverinBehaviour
         }
 
         return null;
-    }
-
-    public PerceptionEvent GetEvent()
-    {
-        foreach (PerceptionEvent pe in events_in_memory)
-            Debug.Log("Event" + pe.objective_tile_x + "," + pe.objective_tile_y);
-        Debug.Log("Getting event");
-
-        if (events_in_memory.Count > 0)
-            return events_in_memory[0];
-        else return null;
     }
 
     void UpdateEvent(PerceptionEvent event_to_update)

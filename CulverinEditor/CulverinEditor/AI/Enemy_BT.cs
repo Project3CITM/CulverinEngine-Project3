@@ -39,8 +39,6 @@ public class Enemy_BT : BT
         Debug.Log("Total HP (Start): " + total_hp);
         //Enemy starts with the attack loaded!
         attack_timer = attack_cooldown * anim_speed;
-
-        Debug.Log("Enemy");
         base.Start();
     }
 

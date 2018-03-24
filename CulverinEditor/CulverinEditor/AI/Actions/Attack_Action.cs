@@ -52,7 +52,6 @@ public class Attack_Action : Action
         anim = GetComponent<CompAnimation>();
         if (state == SWA_STATE.PRE_APPLY && anim.IsAnimOverXTime(apply_damage_point))
         {
-            Debug.Log("I kill you bro!");
             state = SWA_STATE.POST_APPLY;
             player.GetDamage(damage);
             //Apply damage to the target
@@ -60,7 +59,6 @@ public class Attack_Action : Action
         }
         else if (state == SWA_STATE.POST_APPLY && anim.IsAnimationStopped("Attack"))
         {
-            Debug.Log("ATTACK_EEEEND!");
             state = SWA_STATE.WAITING;
             return ACTION_RESULT.AR_SUCCESS;
         }

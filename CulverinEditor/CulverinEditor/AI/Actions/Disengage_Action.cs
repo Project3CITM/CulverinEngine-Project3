@@ -15,18 +15,15 @@ class Disengage_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().SetTransition("ToSheathe");
+        GetComponent<CompAnimation>().SetTransition("ToSheatheSword");
         GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (GetComponent<CompAnimation>().IsAnimationRunning("Idle"))
-        {
-            Debug.Log("Disengaged");
+        if (GetComponent<CompAnimation>().IsAnimationStopped("Sheathe Sword"))
             return ACTION_RESULT.AR_SUCCESS;
-        }
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
