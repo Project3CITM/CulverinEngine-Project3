@@ -747,6 +747,7 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 
 		resourceMesh->InitRanges(num_vertices, num_indices, num_normals);
 		resourceMesh->Init(vertices, indices, vert_normals, tex_coords, tangents, bitangents);
+		resourceMesh->LoadAABBBox();
 		resourceMesh->LoadToMemory();
 		RELEASE_ARRAY(vertices);
 		RELEASE_ARRAY(indices);

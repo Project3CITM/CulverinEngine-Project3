@@ -1,7 +1,9 @@
 #ifndef COMPONENT_LIGHT
 #define COMPONENT_LIGHT
 #include "Component.h"
-#include"MathGeoLib.h"
+#include "MathGeoLib.h"
+
+class ResourceMesh;
 
 enum Light_type {
 	NO_LIGHT_TYPE=-1,

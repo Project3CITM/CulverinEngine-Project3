@@ -25,6 +25,7 @@ void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_
 	// SET VERTEX DATA -------------------------------
 	if (num_vertices > 0)
 	{
+		vertices.clear();
 		vertices.reserve(num_vertices);
 		for (uint i = 0; i < num_vertices; i++)
 		{
@@ -52,6 +53,7 @@ void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_
 	// SET INDEX DATA -----------------------------------------
 	if (num_indices > 0)
 	{
+		indices.clear();
 		indices.reserve(num_indices);
 		for (uint i = 0; i < num_indices; i++)
 		{
@@ -61,6 +63,7 @@ void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_
 	//NORMALS ARRAY ---------
 	if (num_vertices > 0)
 	{
+		vertices_normals.clear();
 		vertices_normals.reserve(num_vertices * 2);
 		for (int i = 0; i < num_vertices; i++)
 		{
@@ -69,7 +72,9 @@ void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_
 		}
 
 		//TANGENTS / BITANGENTS ARRAY -----------------
+		tangents.clear();
 		tangents.reserve(num_vertices);
+		bitangents.clear();
 		bitangents.reserve(num_vertices);
 		for (int i = 0; i < num_vertices; i++)
 		{
@@ -231,6 +236,21 @@ bool ResourceMesh::LoadToMemory()
 
 	state = Resource::State::LOADED;
 	return true;
+}
+
+void ResourceMesh::LoadAABBBox()
+{
+
+	float3* vertex_pos = new float3[num_vertices];
+	int i = 0;
+
+	for (std::vector<Vertex>::const_iterator item = vertices.begin(); item != vertices.end(); item++)
+	{
+		vertex_pos[i] = (*item).pos;
+		i++;
+	}
+	aabb_box.SetNegativeInfinity();
+	aabb_box.Enclose(vertex_pos, num_vertices);
 }
 
 Resource::State ResourceMesh::IsLoadedToMemory()

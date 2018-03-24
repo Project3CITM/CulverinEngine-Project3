@@ -975,16 +975,6 @@ void AABB::Enclose(const float3 *pointArray, int numPoints)
 		Enclose(pointArray[i]);
 }
 
-void AABB::Enclose(const std::vector<Vertex>& vertices, int numPoints)
-{
-	if (numPoints > 0) {
-		for (uint i = 0; i < vertices.size(); i++)
-		{
-			Enclose(vertices[i].pos);
-		}
-	}
-}
-
 void AABB::Triangulate(int numFacesX, int numFacesY, int numFacesZ,
                        float3 *outPos, float3 *outNormal, float2 *outUV,
                        bool ccwIsFrontFacing) const

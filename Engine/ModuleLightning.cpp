@@ -19,6 +19,7 @@
 #include "DefaultShaders.h"
 #include"ModuleWindow.h"
 #include "DepthCubeMap.h"
+#include "ResourceMesh.h"
 
 using namespace glm;
 

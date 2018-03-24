@@ -1133,7 +1133,6 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	box->axis[1] = float3(0, 1, 0);
 	box->axis[2] = float3(0, 0, 1);
 
-	obj->bounding_box = new AABB(*box);
 
 	//MATERIAL COMPONENT -------------------
 	CompMaterial* mat = (CompMaterial*)obj->AddComponent(C_MATERIAL);
@@ -1188,7 +1187,6 @@ GameObject * Scene::CreatePlane(GameObject * parent)
 	box->axis[1] = float3(0, 1, 0);
 	box->axis[2] = float3(0, 0, 1);
 
-	obj->bounding_box = new AABB(*box);
 
 	//MATERIAL COMPONENT -------------------
 	CompMaterial* mat = (CompMaterial*)obj->AddComponent(C_MATERIAL);

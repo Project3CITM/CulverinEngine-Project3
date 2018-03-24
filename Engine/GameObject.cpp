@@ -90,10 +90,10 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 	visible = copy.IsVisible();
 	static_obj = copy.IsStatic();
 	bb_active = copy.IsAABBActive();
-	if (copy.bounding_box != nullptr)
+	/*if (copy.bounding_box != nullptr)
 	{
 		bounding_box = new AABB(*copy.bounding_box);
-	}
+	}*/
 
 	//Create all components from copy object with same data
 	for (uint i = 0; i < copy.GetNumComponents(); i++)
@@ -114,8 +114,8 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 GameObject::~GameObject()
 {
 	//RELEASE_ARRAY(name); FIX THIS
-	delete bounding_box;
-	bounding_box = nullptr;
+	//delete bounding_box;
+	//bounding_box = nullptr;
 	parent = nullptr;
 
 	if (components.size() > 0)
@@ -369,7 +369,7 @@ void GameObject::Update(float dt)
 		}
 
 		// BOUNDING BOX -----------------
-		if (bounding_box != nullptr)
+		if (box_fixed.IsFinite())
 		{
 			CompTransform* transform = (CompTransform*)(FindComponentByType(C_TRANSFORM));
 			if (transform != nullptr)
@@ -377,7 +377,6 @@ void GameObject::Update(float dt)
 				if (transform->GetUpdated())
 				{
 					//Resize the Bounding Box
-					box_fixed = *bounding_box;
 					box_fixed.TransformAsAABB(transform->GetGlobalTransform());
 				}
 			}
@@ -956,7 +955,7 @@ void GameObject::ShowInspectorInfo()
 	}
 
 	/* BOUNDING BOX CHECKBOX */
-	if (bounding_box != nullptr)
+	if (box_fixed.IsFinite())
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 8));
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 3));
@@ -2184,12 +2183,13 @@ void GameObject::SetParent(GameObject* new_parent)
 
 void GameObject::AddBoundingBox(const ResourceMesh* mesh)
 {
-	if (bounding_box == nullptr)
+	//TODOJOAN
+	/*if (bounding_box == nullptr)
 	{
 		bounding_box = new AABB();
 	}
 	bounding_box->SetNegativeInfinity();
-	bounding_box->Enclose(mesh->vertices, mesh->num_vertices);
+	bounding_box->Enclose(mesh->vertices, mesh->num_vertices);*/
 }
 
 void GameObject::DrawBoundingBox()

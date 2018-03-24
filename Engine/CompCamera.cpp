@@ -318,7 +318,7 @@ void CompCamera::CullDynamicObjects()
 		// If it's not static, check if it's inside the vision of the camera to set 
 		if (!candidates_to_cull.front()->IsStatic())
 		{
-			if (candidates_to_cull.front()->bounding_box != nullptr) // Check if it has AABB and it's not the camera itself
+			if (candidates_to_cull.front()->box_fixed.IsFinite()) // Check if it has AABB and it's not the camera itself
 			{
 				box = &candidates_to_cull.front()->box_fixed;
 				if (ContainsAABox(*box) == CULL_OUT)

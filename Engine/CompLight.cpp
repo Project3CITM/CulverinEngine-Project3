@@ -14,6 +14,7 @@
 #include"CompCamera.h"
 #include"ModuleFS.h"
 #include "ModuleLightning.h"
+#include "ResourceMesh.h"
 
 CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 {

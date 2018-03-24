@@ -22,6 +22,7 @@ class CompButton;
 class CompCheckBox;
 class CompLight;
 class CompBone;
+class ResourceMesh;
 
 class GameObject
 {
@@ -160,7 +161,6 @@ public:
 	//-------------------------------
 
 public:
-	AABB * bounding_box = nullptr;
 	AABB  box_fixed;
 	bool beingUsedByScript = false;
 

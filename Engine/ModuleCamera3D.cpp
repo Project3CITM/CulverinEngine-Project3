@@ -294,7 +294,7 @@ void ModuleCamera3D::CheckAABBIntersection(GameObject* candidate, float& entry_d
 {
 	if (candidate->IsActive())
 	{
-		if (candidate->bounding_box != nullptr)
+		if (candidate->box_fixed.IsFinite())
 		{
 			box = &candidate->box_fixed;
 			bool hit = ray.Intersects(*box, entry_dist, exit_dist);
@@ -392,7 +392,7 @@ void ModuleCamera3D::CenterToObject()
 		float3 center = float3::zero;
 		const AABB* box;
 		// Only center camera if the game object has bounding box
-		if (focus->bounding_box != nullptr)
+		if (focus->box_fixed.IsFinite())
 		{
 			box = &focus->box_fixed;
 			center = box->Centroid();

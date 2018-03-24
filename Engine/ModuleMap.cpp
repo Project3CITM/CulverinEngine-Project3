@@ -955,13 +955,13 @@ void ModuleMap::GetSizePrefab(GameObject* obj, float& min_size, float& max_size)
 {
 	if (obj->GetComponentMesh() != nullptr)
 	{
-		if (min_size > obj->bounding_box->MinX())
+		if (min_size > obj->box_fixed.MinX())
 		{
-			min_size = obj->bounding_box->MinX();
+			min_size = obj->box_fixed.MinX();
 		}
-		if (max_size < obj->bounding_box->MaxX())
+		if (max_size < obj->box_fixed.MaxX())
 		{
-			max_size = obj->bounding_box->MaxX();
+			max_size = obj->box_fixed.MaxX();
 		}
 	}
 	for (int i = 0; i < obj->GetNumChilds(); i++)
