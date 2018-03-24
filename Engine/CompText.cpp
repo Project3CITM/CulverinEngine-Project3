@@ -75,7 +75,7 @@ void CompText::Update(float dt)
 		}
 	}
 
-	render = true;
+		render = can_draw;
 
 }
 void CompText::ShowOptions()
@@ -257,9 +257,10 @@ bool CompText::GenerateText()
 	float4 rect_transform = parent->GetComponentRectTransform()->GetRect();
 	float width = parent->GetComponentRectTransform()->GetWidth();
 	float height = parent->GetComponentRectTransform()->GetHeight();
-
+	can_draw = false;
 	if (TextCanFit(rect_transform, text_rect))
 	{
+		can_draw = true;
 		std::vector<float3> quad_pos;
 		float3 right_top=float3::zero;
 		float3 left_top = float3::zero;
@@ -275,7 +276,11 @@ bool CompText::GenerateText()
 			right_bottom.x = rect_transform.x + text_rect.z;
 			break;
 		case MIDDLE_HPOSITION:
-		
+			left_top.x = (rect_transform.x+ width*0.5)- text_rect.z*0.5;
+			right_top.x = (rect_transform.x + width*0.5) + text_rect.z*0.5;
+			left_bottom.x = (rect_transform.x + width*0.5) - text_rect.z*0.5;
+			right_bottom.x = (rect_transform.x + width*0.5) + text_rect.z*0.5;
+
 
 			break;
 		case LEFT_HPOSITION:
@@ -296,6 +301,11 @@ bool CompText::GenerateText()
 			left_bottom.y = (rect_transform.y + height) - text_rect.w;
 			break;
 		case MIDDLE_VPOSITION:
+
+			right_top.y = (rect_transform.y + height*0.5) + text_rect.w*0.5;
+			left_top.y = (rect_transform.x + height*0.5) + text_rect.w*0.5;
+			left_bottom.y = (rect_transform.x + height*0.5) - text_rect.w*0.5;
+			right_bottom.y = (rect_transform.x + height*0.5) - text_rect.w*0.5;
 			break;
 		case BOTTOM_POSITION:
 			right_top.y = rect_transform.y + text_rect.w;
@@ -314,6 +324,7 @@ bool CompText::GenerateText()
 		return true;
 
 	}
+
 	return false;
 
 
