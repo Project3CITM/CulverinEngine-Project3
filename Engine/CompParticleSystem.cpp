@@ -10,7 +10,7 @@
 #include "ModuleResourceManager.h"
 #include "ImportMaterial.h"
 #include "CompTransform.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 
@@ -129,7 +129,7 @@ void CompParticleSystem::Update(float dt)
 
 void CompParticleSystem::Clear()
 {
-	App->event_system->ClearEvents(EventType::EVENT_PARTICLE_DRAW);
+	App->event_system_v2->ClearEvents(EventType::EVENT_PARTICLE_DRAW);
 	part_system->CleanUp();
 	RELEASE(part_system);
 }

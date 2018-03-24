@@ -27,7 +27,7 @@
 #include "SDL/include/SDL.h"
 #include "JSONSerialization.h"
 #include "mmgr/mmgr.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModuleKeyBinding.h"
 #include "ImportScript.h"
 static int malloc_count;
@@ -51,7 +51,7 @@ Application::Application()
 	fs = new ModuleFS();
 	textures = new ModuleTextures();
 	resource_manager = new ModuleResourceManager();
-	event_system = new ModuleEventSystem();
+	//event_system = new ModuleEventSystem();
 	event_system_v2 = new ModuleEventSystemV2();
 
 	random = new math::LCG();
@@ -83,7 +83,7 @@ Application::Application()
 	AddModule(importer);
 	AddModule(textures);
 	AddModule(audio);
-	AddModule(event_system); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
+	//AddModule(event_system); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
 	AddModule(event_system_v2); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
 	// Renderer last!
 	AddModule(renderer3D);
@@ -318,7 +318,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system))
+			if (((*item) == camera) || ((*item) == event_system_v2))
 			{
 				ret = (*item)->PreUpdate(real_time.dt); // Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 			}
@@ -347,7 +347,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system))
+			if (((*item) == camera) || ((*item) == event_system_v2))
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 				ret = (*item)->Update(real_time.dt);
@@ -400,7 +400,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system))
+			if (((*item) == camera) || ((*item) == event_system_v2))
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 				ret = (*item)->PostUpdate(real_time.dt);
@@ -677,7 +677,7 @@ void Application::SetState(EngineState state)
 			{
 				//Send Play event
 				Event play_event;
-				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.time.event_data.type = EventType::EVENT_TIME_MANAGER;
 				play_event.time.time = play_event.time.TIME_PLAY;
 				PushEvent(play_event);
 			}
@@ -685,7 +685,7 @@ void Application::SetState(EngineState state)
 			{
 				//Send unpause Event
 				Event play_event;
-				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.time.event_data.type = EventType::EVENT_TIME_MANAGER;
 				play_event.time.time = play_event.time.TIME_UNPAUSE;
 				PushEvent(play_event);				
 			}
@@ -693,7 +693,7 @@ void Application::SetState(EngineState state)
 			{
 				//Send unpause Event
 				Event play_event;
-				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.time.event_data.type = EventType::EVENT_TIME_MANAGER;
 				play_event.time.time = play_event.time.TIME_STOP;
 				PushEvent(play_event);
 			}
@@ -705,7 +705,7 @@ void Application::SetState(EngineState state)
 	{
 		//Send Pause Event
 		Event play_event;
-		play_event.time.type = EventType::EVENT_TIME_MANAGER;
+		play_event.time.event_data.type = EventType::EVENT_TIME_MANAGER;
 		play_event.time.time = play_event.time.TIME_PAUSE;
 		PushEvent(play_event);
 		break;

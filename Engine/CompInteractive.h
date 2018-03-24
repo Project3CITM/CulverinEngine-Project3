@@ -4,7 +4,7 @@
 #include <list>
 #include "Math\float4.h"
 #include "Math\float2.h"
-#include "EventDef.h"
+#include "EventDefV2.h"
 
 class CompGraphic;
 class CompImage;

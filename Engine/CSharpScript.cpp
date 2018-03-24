@@ -20,7 +20,7 @@
 #include "CompRigidBody.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 
 //SCRIPT VARIABLE UTILITY METHODS ------
 ScriptVariable::ScriptVariable(const char* name, VarType type, VarAccess access, CSharpScript* script) : name(name), type(type), access(access), script(script)
@@ -1021,11 +1021,13 @@ MonoObject*	CSharpScript::Instantiate_respawn(MonoObject* object, MonoString* pr
 	if (gameobject != nullptr)
 	{
 		//Event system
+		/*
 		Event e;
 		e.delayed_go_spawn.type = EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN;
 		e.delayed_go_spawn.delay = time;
 		e.delayed_go_spawn.Tospawn = gameobject;
 		PushEvent(e);
+		*/
 		App->importer->iScript->UpdateMonoMap(gameobject);
 		return App->importer->iScript->GetMonoObject(gameobject);
 	}
@@ -1039,8 +1041,8 @@ void CSharpScript::Destroy(MonoObject* object, float time)
 	if (gameobject != nullptr)
 	{
 		Event e;
-		e.delete_go.type = EventType::EVENT_DELETE_GO;
-		e.delete_go.delay = time;
+		e.delete_go.event_data.type = EventType::EVENT_DELETE_GO;
+		e.delete_go.event_data.TimeDelay = time;
 		e.delete_go.Todelte = gameobject;
 		PushEvent(e);
 	}
@@ -1255,8 +1257,8 @@ void CSharpScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* 
 			{
 				comp->Disable();
 				Event script;
-				script.script.type = EventType::EVENT_SCRIPT_DISABLED;
-				script.script.script = (CompScript*)comp;
+				script.script_disabled.event_data.type = EventType::EVENT_SCRIPT_DISABLED;
+				script.script_disabled.script = (CompScript*)comp;
 				PushEvent(script);
 			}
 		}

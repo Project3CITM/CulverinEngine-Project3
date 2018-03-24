@@ -8,7 +8,7 @@
 #include "ModuleResourceManager.h"
 #include "SDL2_ttf/include/SDL_ttf.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "PlayerActions.h"
 #include "InputManager.h"
 #include "JSONSerialization.h"
@@ -205,7 +205,7 @@ update_status ModuleInput::PreUpdate(float dt)
 				mouse_y = e.motion.y / SCREEN_SIZE;
 
 				Event mouse_event;
-				mouse_event.pointer.type = EventType::EVENT_BUTTON_DOWN;
+				mouse_event.pointer.event_data.type = EventType::EVENT_BUTTON_DOWN;
 				if (e.button.button == SDL_BUTTON_LEFT)
 					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
 				if (e.button.button == SDL_BUTTON_MIDDLE)
@@ -223,7 +223,7 @@ update_status ModuleInput::PreUpdate(float dt)
 				mouse_x = e.motion.x / SCREEN_SIZE;
 				mouse_y = e.motion.y / SCREEN_SIZE;
 				Event mouse_event;
-				mouse_event.pointer.type = EventType::EVENT_BUTTON_UP;
+				mouse_event.pointer.event_data.type = EventType::EVENT_BUTTON_UP;
 				if (e.button.button == SDL_BUTTON_LEFT)
 					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
 				if (e.button.button == SDL_BUTTON_MIDDLE)
@@ -251,7 +251,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			mouse_y_motion = e.motion.yrel / SCREEN_SIZE;
 			{
 				Event mouse_event;
-				mouse_event.pointer.type = EventType::EVENT_MOUSE_MOTION;
+				mouse_event.pointer.event_data.type = EventType::EVENT_MOUSE_MOTION;
 				mouse_event.pointer.position.x = mouse_x;
 				mouse_event.pointer.position.y = mouse_y;
 				mouse_event.pointer.motion.x = mouse_x_motion;
@@ -454,10 +454,9 @@ void ModuleInput::UIInputManagerUpdate()
 		if (vect_temp[i]->OnClick())
 		{
 			Event mouse_event;
-			mouse_event.gui_submit.type = EventType::EVENT_SUBMIT;
+			mouse_event.gui_submit.event_data.type = EventType::EVENT_SUBMIT;
 			mouse_event.gui_submit.active = true;
 			PushEvent(mouse_event);
-
 		}
 	}
 	vect_temp.clear();
@@ -468,7 +467,7 @@ void ModuleInput::UIInputManagerUpdate()
 		{
 
 				Event mouse_event;
-				mouse_event.gui_cancel.type = EventType::EVENT_CANCEL;
+				mouse_event.gui_cancel.event_data.type = EventType::EVENT_CANCEL;
 				mouse_event.gui_cancel.active = true;
 				PushEvent(mouse_event);
 		}
@@ -478,7 +477,7 @@ void ModuleInput::UIInputManagerUpdate()
 	if (ui_manager->GetAxis(vertical.c_str())->direction_axis > 0.8f)
 	{
 		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.gui_axis.event_data.type = EventType::EVENT_AXIS;
 		mouse_event.gui_axis.value = ui_manager->GetAxis(vertical.c_str())->direction_axis;
 		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_DOWN;
 		PushEvent(mouse_event);
@@ -487,7 +486,7 @@ void ModuleInput::UIInputManagerUpdate()
 	else if (ui_manager->GetAxis(vertical.c_str())->direction_axis < -0.8f)
 	{
 		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.gui_axis.event_data.type = EventType::EVENT_AXIS;
 		mouse_event.gui_axis.value = ui_manager->GetAxis(vertical.c_str())->direction_axis;
 		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_UP;
 		PushEvent(mouse_event);
@@ -496,7 +495,7 @@ void ModuleInput::UIInputManagerUpdate()
 	if (ui_manager->GetAxis(horizontal.c_str())->direction_axis > 0.8f)
 	{
 		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.gui_axis.event_data.type = EventType::EVENT_AXIS;
 		mouse_event.gui_axis.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
 		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_RIGHT;
 		PushEvent(mouse_event);
@@ -504,11 +503,10 @@ void ModuleInput::UIInputManagerUpdate()
 	else if (ui_manager->GetAxis(horizontal.c_str())->direction_axis < -0.8f)
 	{
 		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.gui_axis.event_data.type = EventType::EVENT_AXIS;
 		mouse_event.gui_axis.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
 		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_LEFT;
 		PushEvent(mouse_event);
-
 	}
 }
 

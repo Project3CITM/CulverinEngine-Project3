@@ -3,7 +3,7 @@
 #include "ImportMaterial.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ResourceMaterial.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
@@ -12,7 +12,6 @@
 #include "CompButton.h"
 #include "ModuleFS.h"
 #include "Scene.h"
-#include "ModuleEventSystem.h"
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
 #define PRESSED_SPRITE 1
@@ -31,7 +30,7 @@ CompInteractive::CompInteractive(Comp_Type t, GameObject * parent) :Component(t,
 	uuid_reimported_sprite[1] = 0;
 	uuid_reimported_sprite[2] = 0;
 
-	component_event.pass_component.type = EventType::EVENT_PASS_COMPONENT;
+	component_event.pass_component.event_data.type = EventType::EVENT_PASS_COMPONENT;
 	component_event.pass_component.component = this;
 
 	name_component = "Interactive";
@@ -1112,7 +1111,7 @@ void CompInteractive::Navigate(Event event_data, CompInteractive * interactive)
 	if (interactive != nullptr && interactive->IsActive())
 	{
 		Event pass_selected;
-		pass_selected.pass_selected.type = EventType::EVENT_PASS_SELECTED;
+		pass_selected.pass_selected.event_data.type = EventType::EVENT_PASS_SELECTED;
 		pass_selected.pass_selected.component = interactive;
 		PushEvent(pass_selected);
 	}

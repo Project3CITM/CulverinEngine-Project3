@@ -126,7 +126,7 @@ public:
 	ModuleFS* fs = nullptr;
 	ModuleTextures* textures = nullptr;
 	ModuleResourceManager* resource_manager = nullptr;
-	ModuleEventSystem* event_system = nullptr;
+	//ModuleEventSystem* event_system = nullptr;
 	ModuleEventSystemV2* event_system_v2 = nullptr;
 	ModuleShaders* module_shaders = nullptr;
 	ModuleRenderGui* render_gui = nullptr;

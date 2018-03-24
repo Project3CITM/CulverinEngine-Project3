@@ -39,7 +39,7 @@
 #include <queue>
 
 //Event system test
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 
 GameObject::GameObject(GameObject* parent) :parent(parent)
 {
@@ -420,7 +420,7 @@ void GameObject::Draw()
 				/**/
 				CompMesh* comp = (CompMesh*)components[i];
 				Event draw_event;
-				draw_event.draw.type = EventType::EVENT_DRAW;
+				draw_event.draw.event_data.type = EventType::EVENT_DRAW;
 				if (comp->GetMaterial()->material->alpha < 1.0f) draw_event.draw.Dtype = draw_event.draw.DRAW_3D_ALPHA;
 				else draw_event.draw.Dtype = draw_event.draw.DRAW_3D;
 				draw_event.draw.ToDraw = components[i];
@@ -446,7 +446,7 @@ void GameObject::Draw()
 					continue;
 
 				Event draw_event;
-				draw_event.request_3d3damm.type = EventType::EVENT_REQUEST_3D_3DA_MM;
+				draw_event.request_3d3damm.event_data.type = EventType::EVENT_REQUEST_3D_3DA_MM;
 				draw_event.request_3d3damm.light = (CompLight*)components[i];
 				PushEvent(draw_event);
 				components[i]->Draw();
@@ -692,8 +692,8 @@ void GameObject::ShowGameObjectOptions()
 		{
 			//((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjecttoDelete(this);
 			Event e;
-			e.delete_go.type = EventType::EVENT_DELETE_GO;
-			e.delete_go.delay = 0.0f;
+			e.delete_go.event_data.type = EventType::EVENT_DELETE_GO;
+			e.delete_go.event_data.TimeDelay = 0.0f;
 			e.delete_go.Todelte = this;
 			PushEvent(e);
 		}

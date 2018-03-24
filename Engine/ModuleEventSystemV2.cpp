@@ -4,17 +4,17 @@
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
 
-void PushEventV2(Event& event)
+void PushEvent(Event& event)
 {
 	App->event_system_v2->PushEvent(event);
 }
 
-void PushImmediateEventV2(Event& event)
+void PushImmediateEvent(Event& event)
 {
 	App->event_system_v2->PushImmediateEvent(event);
 }
 
-void AddListenerV2(EventType type, Module* listener)
+void AddListener(EventType type, Module* listener)
 {
 	App->event_system_v2->AddListener(type, listener);
 }
@@ -70,16 +70,31 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	//Draw opaque events
 	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
-
+		if (item._Ptr->_Myval.second.event_data.PushedWhileIteriting)
+		{
+			item++;
+			continue;
+		}
+		//WIP
 	}
 	//Draw alpha events
 	for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
 	{
-
+		if (item._Ptr->_Myval.second.event_data.PushedWhileIteriting)
+		{
+			item++;
+			continue;
+		}
+		//WIP
 	}
 	//NoDraw events
 	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
 	{
+		if (item._Ptr->_Myval.second.event_data.PushedWhileIteriting)
+		{
+			item++;
+			continue;
+		}
 		if ((item._Ptr->_Myval.first < 0) || (item._Ptr->_Myval.first > EventType::MAXEVENTS))
 		{
 			item = NoDrawV.erase(item);

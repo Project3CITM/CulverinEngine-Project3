@@ -3,7 +3,7 @@
 #include "ParticleSystem.h"
 #include "GL3W\include\glew.h"
 #include "ImGui\imgui.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "Application.h"
 #include "CompCamera.h"
 #include "ModuleRenderer3D.h"
@@ -327,8 +327,8 @@ bool Particle::PostUpdate(float dt)
 	{
 		OrientateParticle();
 		Event draw_event;
-		draw_event.particle.type = EventType::EVENT_PARTICLE_DRAW;
-		draw_event.particle.ToDraw = this;
+		draw_event.particle_draw.event_data.type = EventType::EVENT_PARTICLE_DRAW;
+		draw_event.particle_draw.ToDraw = this;
 
 		PushEvent(draw_event);
 	}
