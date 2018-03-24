@@ -17,15 +17,15 @@ public class Code : CulverinBehaviour
     {
         Debug.Log(number);
     }
-    public void Hello2(float floa)
+    public void Hello2(float number)
     {
 
     }
-    public void Hello3(string str)
+    public void Hello3(string number)
     {
 
     }
-    public void Hello4(bool bos)
+    public void Hello4(bool number)
     {
 
     }

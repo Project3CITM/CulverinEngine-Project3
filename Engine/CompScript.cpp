@@ -145,14 +145,6 @@ void CompScript::Update(float dt)
 			UpdateScript(dt);
 		}
 	}
-	
-	if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
-	{
-		void* param[1];
-		k++;
-		param[0] = &k;
-		csharp->DoPublicMethod(csharp->methods[0], param);
-	}
 }
 
 void CompScript::postUpdate()
@@ -352,8 +344,298 @@ void CompScript::ShowInspectorInfo()
 	ImGui::PopStyleVar();
 	ShowFSMInspectorInfo();
 
+	ImGui::Separator();
+	ImGui::Text("");
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	int space_with_no_actions = 0;
+	if (actions.size() == 0)
+	{
+		space_with_no_actions = 96;
+	}
+	if (ImGui::BeginChild("Inspector", ImVec2(ImGui::GetWindowWidth() - 40, 96 * actions.size() + space_with_no_actions + 19), true, ImGuiWindowFlags_NoScrollWithMouse))
+	{
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.481f, 0.481f, 0.481f, 1.00f));
+		if (ImGui::BeginChild(ImGui::GetID("Inspector"), ImVec2(ImGui::GetWindowWidth(), 19), false, ImGuiWindowFlags_NoScrollWithMouse))
+		{
+			ImGui::Text("  On Click ()");
+			ImGui::Separator();
+		}
+		ImGui::EndChild();
+		ImGui::PopStyleColor();
+
+		if (actions.size() == 0)
+		{
+			ImGui::Text("  List is Empty ");
+		}
+		static std::string mode[] = { "Off", "Runtime Only" };
+		for (int i = 0; i < actions.size(); i++)
+		{
+			ImGui::PushID(i * actions.size());
+			if (i > 0)
+				ImGui::Separator();
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.311f, 0.311f, 0.311f, 1.00f));
+			ImGui::BeginChild("Inspector", ImVec2(ImGui::GetWindowWidth(), 90), false, ImGuiWindowFlags_NoScrollWithMouse);
+			ImGui::PushItemWidth(130);
+			if (ImGui::BeginCombo("##Mode", actions[i].current_mode.c_str()))
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(mode); n++)
+				{
+					if (ImGui::Selectable(mode[n].c_str()))
+					{
+						actions[i].selected_mode = n;
+						actions[i].current_mode = mode[n];
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			if (actions[i].attacked == nullptr)
+			{
+				ImGui::PushItemWidth(130);
+				if (ImGui::BeginCombo("##Function", "No Script"))
+				{
+					ImGui::EndCombo();
+				}
+				ImGui::PopItemWidth();
+			}
+			else
+			{
+				ImGui::PushItemWidth(130);
+				if (ImGui::BeginCombo("##SelectScript", actions[i].current_script.c_str()))
+				{
+					for (int id = -1; id < actions[i].attacked->GetNumComponents(); id++)
+					{
+						if (id == -1)
+						{
+							if (ImGui::Selectable("No Script"))
+							{
+								actions[i].script = nullptr;
+								actions[i].current_script = "No Script";
+								actions[i].current_function = "No Function";
+								actions[i].method = nullptr;
+								ImGui::SetItemDefaultFocus();
+							}
+							//ImGui::Separator();
+						}
+						else if (actions[i].attacked->GetComponentbyIndex(id)->GetType() == Comp_Type::C_SCRIPT)
+						{
+							if (ImGui::Selectable(((CompScript*)actions[i].attacked->GetComponentbyIndex(id))->GetScriptName()))
+							{
+								actions[i].script = (CompScript*)actions[i].attacked->GetComponentbyIndex(id);
+								actions[i].current_script = ((CompScript*)actions[i].attacked->GetComponentbyIndex(id))->GetScriptName();
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+					}
+					ImGui::EndCombo();
+				}
+				ImGui::PopItemWidth();
+			}
+			ImGui::Text("   GameObject: "); ImGui::SameLine();
+			if (actions[i].attacked == nullptr)
+			{
+				if (ImGui::Button("Select GO..."))
+				{
+					actions[i].select_game_object = true;
+				}
+
+				if (actions[i].select_game_object)
+				{
+					GameObject* temp = App->scene->GetGameObjectfromScene(actions[i].select_game_object);
+					if (temp != nullptr)
+					{
+						actions[i].attacked = temp;
+						actions[i].select_game_object = false;
+					}
+				}
+			}
+			else
+			{
+				ImGui::Text("   %s", actions[i].attacked->GetName()); ImGui::SameLine();
+				if (App->engine_state != EngineState::PLAY)
+				{
+					if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
+					{
+						actions[i].select_game_object = true;
+					}
+				}
+				ImGui::PushItemWidth(130);
+				if (actions[i].script == nullptr)
+				{
+					ImGui::PopItemWidth();
+					ImGui::EndChild();
+					ImGui::PopStyleColor();
+					ImGui::PopID();
+					continue;
+				}
+				if (ImGui::BeginCombo("##SelectFunction", actions[i].current_function.c_str()))
+				{
+					for (int id = 0; id < actions[i].script->csharp->methods.size(); id++)
+					{
+						if (ImGui::Selectable(actions[i].script->csharp->methods[id].name_method.c_str()))
+						{
+							actions[i].current_function = actions[i].script->csharp->methods[id].name_method;
+							actions[i].method = &actions[i].script->csharp->methods[id];
+							InitValueParamater(i);
+						}
+					}
+					
+					ImGui::EndCombo();
+				}
+				ImGui::PopItemWidth();
+				if (actions[i].method == nullptr)
+				{
+					ImGui::EndChild();
+					ImGui::PopStyleColor();
+					ImGui::PopID();
+					continue;
+				}
+				ImGui::SameLine();
+				// Show Type by Method (int, float, string, bool, gameobject)
+				ShowTypeMethod(i);
+				ImGui::Text("%s", actions[i].method->name_param.c_str()); ImGui::SameLine();
+				// Now Set Value with type param.
+				switch (actions[i].method->type)
+				{
+				case VarType::Var_INT:
+				{
+					if (ImGui::InputInt("##iVal", &*(int*)actions[i].value))
+					{
+						int val = *(int*)actions[i].value;
+					}
+					break;
+				}
+				case VarType::Var_FLOAT:
+				{
+					if (ImGui::InputFloat("##fVal", &*(float*)actions[i].value, 0, 0, 4))
+					{
+						float val = *(float*)actions[i].value;
+					}
+					break;
+				}
+				case VarType::Var_BOOL:
+				{
+					if (ImGui::Checkbox("##bVal", &*(bool*)actions[i].value))
+					{
+						bool val = *(bool*)actions[i].value;
+					}
+					break;
+				}
+				case VarType::Var_STRING:
+				{
+					ImGui::TextColored(ImVec4(0.0f, 0.58f, 1.0f, 1.0f), "...");
+					break;
+				}
+				case VarType::Var_GAMEOBJECT:
+				{
+
+					break;
+				}
+				}
+
+			}
+
+			ImGui::EndChild();
+			ImGui::PopStyleColor();
+			ImGui::PopID();
+		}
+	}
+	ImGui::EndChild();
+	ImGui::PopStyleVar();
+	ImGui::AlignFirstTextHeightToWidgets();
+	ImGui::Text(""); ImGui::SameLine(ImGui::GetWindowWidth() - 70);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 4));
+	ImGui::BeginChild(ImGui::GetID("Inspector"), ImVec2(60, 20), true, ImGuiWindowFlags_NoScrollWithMouse);
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.612f, 0.612f, 0.612f, 1.0f));
+	if (ImGui::ImageButton((ImTextureID*)App->gui->icon_plus, ImVec2(8, 8), ImVec2(-1, 1), ImVec2(0, 0)))
+	{
+		Actions new_action;
+		actions.push_back(new_action);
+	}
+	ImGui::SameLine();
+	if (ImGui::ImageButton((ImTextureID*)App->gui->icon_remove, ImVec2(8, 8), ImVec2(-1, 1), ImVec2(0, 0)))
+	{
+		Actions new_action;
+		actions.pop_back();
+	}
+	ImGui::PopStyleColor();
+	ImGui::EndChild();
+	ImGui::PopStyleVar();
 	ImGui::TreePop();
 	
+}
+
+void CompScript::InitValueParamater(int index)
+{
+	// Now Init Value with type param.
+	switch (actions[index].method->type)
+	{
+	case VarType::Var_INT:
+	{
+		int value = 0;
+		actions[index].value = new char[sizeof value];
+		*(int*)actions[index].value = value;
+		break;
+	}
+	case VarType::Var_FLOAT:
+	{
+		float value = 0.0f;
+		actions[index].value = new char[sizeof value];
+		*(float*)actions[index].value = value;
+		break;
+	}
+	case VarType::Var_BOOL:
+	{
+		bool value = false;
+		actions[index].value = new char[sizeof value];
+		*(bool*)actions[index].value = value;
+		break;
+	}
+	case VarType::Var_STRING:
+	{
+		ImGui::TextColored(ImVec4(0.0f, 0.58f, 1.0f, 1.0f), "...");
+		break;
+	}
+	case VarType::Var_GAMEOBJECT:
+	{
+
+		break;
+	}
+	}
+}
+
+void CompScript::ShowTypeMethod(int index)
+{
+	switch (actions[index].method->type)
+	{
+	case VarType::Var_INT:
+	{
+		ImGui::Text("Type: Int()");
+		break;
+	}
+	case VarType::Var_FLOAT:
+	{
+		ImGui::Text("Type: Float()");
+		break;
+	}
+	case VarType::Var_BOOL:
+	{
+		ImGui::Text("Type: Bool()");
+		break;
+	}
+	case VarType::Var_STRING:
+	{
+		ImGui::Text("Type: String()");
+		break;
+	}
+	case VarType::Var_GAMEOBJECT:
+	{
+		ImGui::Text("Type: GameObject()");
+		break;
+	}
+	}
 }
 
 void CompScript::ShowVariablesInfo()

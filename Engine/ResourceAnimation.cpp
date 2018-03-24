@@ -18,10 +18,11 @@ ResourceAnimation::~ResourceAnimation()
 	}
 }
 
-void ResourceAnimation::InitInfo(const char * resource_name, const char * path)
+void ResourceAnimation::InitInfo(const char * resource_name, const char * path, const char* path_library_)
 {
 	name = resource_name;
 	path_assets = path;
+	path_library = path_library_;
 }
 
 bool ResourceAnimation::LoadToMemory()
@@ -154,6 +155,14 @@ Quat AnimBone::GetRotation(AnimationClip* clip_vec, bool activated) const
 
 		for (std::vector<RotationKey*>::const_iterator it = rotation_keys.begin(); it != rotation_keys.end(); ++it)
 		{
+			if (clip_vec->time < rotation_keys[0]->time)
+			{
+				actual_pos = rotation_keys[0]->rotation;
+				actual_time = rotation_keys[0]->time;
+				next_pos = rotation_keys[1]->rotation;
+				next_time = rotation_keys[1]->time;
+				break;
+			}
 			if ((*it)->time <= clip_vec->time)
 			{
 				if (it == rotation_keys.end() - 1)

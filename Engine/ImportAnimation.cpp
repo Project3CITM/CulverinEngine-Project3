@@ -33,14 +33,14 @@ bool ImportAnimation::Import(const aiAnimation * animation, const char * name, c
 		
 		ResourceAnimation* tmp_anim = (ResourceAnimation*)App->resource_manager->CreateNewResource(Resource::Type::ANIMATION, 0);
 
-		tmp_anim->InitInfo(name, new_directory.c_str());
+		tmp_anim->InitInfo(name, App->fs->GetToAsstes(file).c_str(), new_directory.c_str());
 		tmp_anim->duration = animation->mDuration;
 		tmp_anim->ticks_per_sec = animation->mTicksPerSecond;
 
 		std::string assets_dir = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
 		assets_dir += "\\";
 		assets_dir += name;
-		App->json_seria->SaveAnimation(tmp_anim, assets_dir.c_str(), file);
+		App->json_seria->SaveAnimation(tmp_anim, assets_dir.c_str(), file, new_directory.c_str());
 
 		json_object_dotset_string_with_std(config, "Animation.Name", animation->mName.C_Str());
 		json_object_dotset_number_with_std(config, "Animation.Duration", animation->mDuration);

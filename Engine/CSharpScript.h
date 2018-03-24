@@ -140,7 +140,7 @@ public:
 	MainMonoMethod CreateMainFunction(std::string function, int parameters, FunctionBase type);
 	void DoMainFunction(FunctionBase function, void** parameters = nullptr);
 	void DoFunction(MonoMethod* function, void ** parameter);
-	void DoPublicMethod(PublicMethod function, void** parameter);
+	void DoPublicMethod(PublicMethod* function, void** parameter);
 
 	bool CheckMonoObject(MonoObject* object);
 

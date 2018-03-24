@@ -77,6 +77,9 @@ bool ModuleGUI::Start()
 	App->scene->scene_buff = new FrameBuffer();
 	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
+	icon_plus = App->textures->LoadTexture("Images/UI/icon_plus.png");
+	icon_remove = App->textures->LoadTexture("Images/UI/icon_remove.png");
+
 	std::vector<WindowManager*>::iterator window = win_manager.begin();
 	for (int i = 0; i < win_manager.size(); i++)
 	{

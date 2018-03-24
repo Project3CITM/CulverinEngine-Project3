@@ -772,7 +772,7 @@ void JSONSerialization::SaveScript(const ResourceScript* script, const char* dir
 	json_value_free(config_file);
 }
 
-void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const char * directory, const char * fileName)
+void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const char * directory, const char* fileName, const char* library)
 {
 	LOG("SAVING Animation %s -----", animation->name.c_str());
 
@@ -789,6 +789,7 @@ void JSONSerialization::SaveAnimation(const ResourceAnimation * animation, const
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
 		json_object_dotset_string_with_std(config, "Animation.Directory Animation", App->fs->GetToAsstes(fileName).c_str());
+		json_object_dotset_string_with_std(config, "Animation.Directory Library", library);
 		json_object_dotset_number_with_std(config, "Animation.UUID Resource", animation->GetUUID());
 		json_object_dotset_string_with_std(config, "Animation.Name", animation->name.c_str());
 		json_object_dotset_number_with_std(config, "Animation.Type", (int)animation->GetType());
@@ -1231,7 +1232,7 @@ void JSONSerialization::CreateResourcesLoad(std::vector<std::string>& files_meta
 			{
 				uint uid = json_object_dotget_number_with_std(config_node, "UUID Resource");
 				ResourceAnimation* animation = (ResourceAnimation*)App->resource_manager->CreateNewResource(type, uid);
-				animation->InitInfo(json_object_dotget_string_with_std(config_node, "Name"), json_object_dotget_string_with_std(config_node, "Directory Animation"));
+				animation->InitInfo(json_object_dotget_string_with_std(config_node, "Name"), json_object_dotget_string_with_std(config_node, "Directory Animation"), json_object_dotget_string_with_std(config_node, "Directory Library"));
 				break;
 			}
 			case Resource::Type::FONT:

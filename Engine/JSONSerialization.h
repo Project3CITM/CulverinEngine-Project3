@@ -65,7 +65,7 @@ public:
 	// --------------------------------------
 
 	// SAVE & LOAD ANIMATION --------------------------
-	void SaveAnimation(const ResourceAnimation* script, const char* directory, const char* fileName);
+	void SaveAnimation(const ResourceAnimation* script, const char* directory, const char* fileName, const char* library);
 	// --------------------------------------
 	// SAVE & LOAD PLAYER ACTION --------------------------
 	void SavePlayerAction(const PlayerActions* player_action, const char* directory, const char* fileName);

@@ -56,7 +56,7 @@ public:
 	ResourceAnimation(uint uid);
 	~ResourceAnimation();
 
-	void InitInfo(const char* name, const char* path);
+	void InitInfo(const char* name, const char* path_assets, const char* path_library);
 	bool LoadToMemory();
 	bool UnloadFromMemory();
 
@@ -64,6 +64,7 @@ public:
 
 	std::vector<AnimBone*> bones;
 	float duration;
+	std::string path_library;
 	float ticks_per_sec;
 };
 

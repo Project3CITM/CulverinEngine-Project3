@@ -515,7 +515,7 @@ void CompAnimation::ShowInspectorInfo()
 				animation_resource->num_game_objects_use_me++;
 				if (animation_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
-					App->importer->iAnimation->LoadResource(animation_resource->path_assets.c_str(), animation_resource);
+					App->importer->iAnimation->LoadResource(animation_resource->path_library.c_str(), animation_resource);
 		
 				}
 				Enable();
@@ -873,7 +873,7 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			// LOAD ANIMATION ----------------------------
 			if (animation_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
-				App->importer->iAnimation->LoadResource(animation_resource->path_assets.c_str(), animation_resource);
+				App->importer->iAnimation->LoadResource(animation_resource->path_library.c_str(), animation_resource);
 			}
 		}
 	}

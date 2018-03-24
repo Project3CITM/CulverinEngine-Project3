@@ -378,11 +378,11 @@ void CSharpScript::DoFunction(MonoMethod* function, void ** parameter)
 	}
 }
 
-void CSharpScript::DoPublicMethod(PublicMethod function, void** parameter)
+void CSharpScript::DoPublicMethod(PublicMethod* function, void** parameter)
 {
 	MonoObject* exception = nullptr;
 	// Do Main Function
-	mono_runtime_invoke(function.GetMethod(), function.GetScript(), parameter, &exception);
+	mono_runtime_invoke(function->GetMethod(), function->GetScript(), parameter, &exception);
 	if (exception)
 	{
 		mono_print_unhandled_exception(exception);

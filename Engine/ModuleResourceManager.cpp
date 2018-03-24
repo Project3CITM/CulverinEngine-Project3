@@ -713,7 +713,8 @@ void ModuleResourceManager::ShowAllResources(bool& active)
 			{
 				//Only Draw the Type Selected.
 				ImGui::Bullet();
-				ImGui::Text("Name: %s", it->second->name);
+				ImGui::Text("Name: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(0.933, 0.933, 0, 1), "%s", it->second->name.c_str());
 				char namedit[50];
 				strcpy_s(namedit, 50, it->second->name.c_str());
 				ImGui::AlignFirstTextHeightToWidgets();
@@ -734,10 +735,17 @@ void ModuleResourceManager::ShowAllResources(bool& active)
 				}
 				ImGui::Text("UID of Resource:"); ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0, 0.666, 1, 1), "%i", it->second->GetUUID());
+				ImGui::Text("Directory in Assets: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(0, 0.933, 0, 1), "%s", it->second->path_assets.c_str());
 				if (it->second->GetType() == Resource::Type::SCRIPT)
 				{
-					ImGui::Text("Directory in Assets: "); ImGui::SameLine();
-					ImGui::TextColored(ImVec4(0, 0.933, 0, 1), "%s", it->second->path_assets.c_str());
+					ImGui::Text("Directory in Library: "); ImGui::SameLine();
+					ImGui::TextColored(ImVec4(0, 0.933, 0.933, 1), "%s", ((ResourceScript*)it->second)->GetPathdll().c_str());
+				}
+				if (it->second->GetType() == Resource::Type::ANIMATION)
+				{
+					ImGui::Text("Directory in Library: "); ImGui::SameLine();
+					ImGui::TextColored(ImVec4(0, 0.933, 0.933, 1), "%s", ((ResourceAnimation*)it->second)->path_library.c_str());
 				}
 			}
 			it++;
