@@ -65,7 +65,7 @@ public class Enemy_BT : BT
             return;
         }
 
-        if(next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION)
+        if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION)
         {
             Debug.Log(next_action.action_type);
             current_action = next_action;
@@ -147,7 +147,7 @@ public class Enemy_BT : BT
         current_action.Interupt();
 
         if (!GetComponent<Movement_Action>().IsWalkable((uint)(GetComponent<Movement_Action>().GetCurrentTileX() + dir.x), (uint)(GetComponent<Movement_Action>().GetCurrentTileY() + dir.z)))
-            next_action = new PushBack_Action(dir, anim_speed);// TODO: STUN ACTION
+            next_action = new Stun_Action(anim_speed);
         else
             next_action = new PushBack_Action(dir, anim_speed);
     }
