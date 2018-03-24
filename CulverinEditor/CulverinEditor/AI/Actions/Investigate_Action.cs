@@ -58,8 +58,7 @@ public class Investigate_Action : Action
         switch(my_state)
         {
             case INVESTIGATESTATE.GOING_TO_INVESTIGATE:
-                
-                if(interupt)
+                if (interupt)
                 {
                     GetComponent<Movement_Action>().Interupt();
                 }               
@@ -82,7 +81,6 @@ public class Investigate_Action : Action
             break;
 
             case INVESTIGATESTATE.INVESTIGATE:
-
                 //Trigger investigate animation
 
                 event_to_react.start_counting = true;
@@ -108,7 +106,6 @@ public class Investigate_Action : Action
                 break;
 
             case INVESTIGATESTATE.RETURNING_TO_START:
-
                 if (interupt)
                 {
                     GetComponent<Movement_Action>().Interupt();

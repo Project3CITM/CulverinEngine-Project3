@@ -29,7 +29,7 @@ class Engage_Action : Action
             Debug.Log("Engaged");
             return ACTION_RESULT.AR_SUCCESS;
         }
-        return ACTION_RESULT.AR_IN_PROGRESS;
+        //return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
     public override bool ActionEnd()

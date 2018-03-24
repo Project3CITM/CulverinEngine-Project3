@@ -5,12 +5,12 @@ class Disengage_Action : Action
 {
     public Disengage_Action()
     {
-        action_type = ACTION_TYPE.ENGAGE_ACTION;
+        action_type = ACTION_TYPE.DISENGAGE_ACTION;
     }
 
     public Disengage_Action(float anim_speed) : base(anim_speed)
     {
-        action_type = ACTION_TYPE.ENGAGE_ACTION;
+        action_type = ACTION_TYPE.DISENGAGE_ACTION;
     }
 
     public override bool ActionStart()

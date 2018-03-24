@@ -144,6 +144,7 @@ public class Movement_Action : Action
                 Debug.Log("Reached Tile: " + GetCurrentTileX() + "," + GetCurrentTileY());
                 if (interupt != true)
                 {
+                    Debug.Log("[error] HERE");
                     NextTile();
                 }
                 else
@@ -224,7 +225,13 @@ public class Movement_Action : Action
 
     private void NextTile()
     {
+        if (path.Count == 0)
+        {
+            Debug.Log("[error]" + path.Count);
+        }
+
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
+
         pos.x = path[0].GetTileX() * tile_size;
         pos.z = path[0].GetTileY() * tile_size;
         GetComponent<Transform>().position = pos;
@@ -262,6 +269,7 @@ public class Movement_Action : Action
 
         if ((obj_x == current_x && obj_y == current_y) || map.GetComponent<Pathfinder>().IsWalkableTile((uint)obj_x, (uint)obj_y) == false)
         {
+            Debug.Log("[error] SET TO TRUE");
             translation_finished = true;
             arrive.SetEnabled(false);
             seek.SetEnabled(false);
@@ -279,8 +287,22 @@ public class Movement_Action : Action
             path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
             look_at_player = rot;
 
-            if (ReachedTile())
-                NextTile();
+            if (path.Count > 1)
+            {
+                if (ReachedTile())
+                {
+                    NextTile();
+                }
+            }
+            else
+            {
+                if (ReachedTile())
+                {
+                    translation_finished = true;
+                    arrive.SetEnabled(false);
+                    seek.SetEnabled(false);
+                }
+            }
         }
 
         if (FinishedRotation() == false)
@@ -608,14 +630,7 @@ public class Movement_Action : Action
     {
         player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
 
-        switch (dir)
-        {
-            case Direction.DIR_WEST: return (y == GetCurrentTileY() && x == GetCurrentTileX() - 1);
-            case Direction.DIR_EAST: return (y == GetCurrentTileY() && x == GetCurrentTileX() + 1);
-            case Direction.DIR_NORTH: return (y == GetCurrentTileY() - 1 && x == GetCurrentTileX());
-            case Direction.DIR_SOUTH: return (y == GetCurrentTileY() + 1 && x == GetCurrentTileX());
-        }
-        return false;
+        return (Mathf.Abs(y - GetCurrentTileY()) + Mathf.Abs(x - GetCurrentTileX())) <= 1;
     }
 
     public void Chase()

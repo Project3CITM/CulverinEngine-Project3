@@ -78,14 +78,21 @@ public class ChasePlayer_Action : Action
         else
             event_to_react.start_counting = false;
 
+
+        
+
         ///Make Move update
         move_return = move.ActionUpdate();
+
+        Debug.Log("[error]" + move_return);
+
 
         if (move_return != ACTION_RESULT.AR_IN_PROGRESS)
         {
             move.ActionEnd();
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
-        }        
+        }
+        
 
         return move_return;
     }
