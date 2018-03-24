@@ -146,7 +146,7 @@ public class Enemy_BT : BT
         current_action.Interupt();
 
         if (!GetComponent<Movement_Action>().IsWalkable((uint)(GetComponent<Movement_Action>().GetCurrentTileX() + dir.x), (uint)(GetComponent<Movement_Action>().GetCurrentTileY() + dir.z)))
-            next_action = new PushBack_Action(dir, anim_speed);// TODO: STUN ACTION
+            next_action = new Stun_Action(anim_speed);
         else
             next_action = new PushBack_Action(dir, anim_speed);
     }
