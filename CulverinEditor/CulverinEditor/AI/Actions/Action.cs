@@ -59,7 +59,7 @@ public class Action : CulverinBehaviour
         return false;
     }
 
-    public virtual void Interupt()
+    public void Interupt()
     {
         interupt = true;
     }

@@ -46,12 +46,12 @@ public class PushBack_Action : Action
         if (interupt == true)
             return ACTION_RESULT.AR_FAIL;
 
-        if (GetComponent<Movement_Action>().ReachedTile(target_x, target_y))
+        /*if (GetComponent<Movement_Action>().ReachedTile(target_x, target_y))
         {
             Debug.Log("Pushed");
            //TODO: Animations  GetComponent<CompAnimation>().SetTransition("ToIdle");
             return ACTION_RESULT.AR_SUCCESS;
-        }
+        }*/
 
         Vector3 my_pos = transform.position;
 

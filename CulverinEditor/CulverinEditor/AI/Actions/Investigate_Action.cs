@@ -95,10 +95,17 @@ public class Investigate_Action : Action
                 {
                     move.ActionEnd();
 
-                    if (my_state == INVESTIGATESTATE.GOING_TO_INVESTIGATE)
-                        my_state = INVESTIGATESTATE.INVESTIGATE;
-                    else
+                    if (move_return == ACTION_RESULT.AR_FAIL)
+                    {
                         return move_return;
+                    }
+                    else
+                    {
+                        if (my_state == INVESTIGATESTATE.GOING_TO_INVESTIGATE)
+                            my_state = INVESTIGATESTATE.INVESTIGATE;
+                        else
+                            return move_return;
+                    }
                 }
 
                 break;

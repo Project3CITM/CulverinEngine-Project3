@@ -31,29 +31,20 @@ public class ChasePlayer_Action : Action
         event_to_react.start_counting = false;
 
         move.GoToPrevious(event_to_react.objective_tile_x, event_to_react.objective_tile_y, true);
-        move.Chase();
         bool ret = move.ActionStart();
-
         return ret;
     }
 
     public override bool ActionEnd()
     {
-        move.NotChase();
         interupt = false;
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (interupt || forgot_event)
+        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true || forgot_event == true)
         {
-            move.Interupt();
-        }
-
-        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true)
-        {
-            Interupt();
             move.Interupt();
         }
 
@@ -63,7 +54,7 @@ public class ChasePlayer_Action : Action
         {
             timer = 0.0f;
             GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
-            move.GoToPrevious(player_x, player_y);
+            move.GoToPrevious(player_x, player_y, true);
         }
 
         if (GetComponent<PerceptionSightEnemy>().player_seen == false)

@@ -55,6 +55,7 @@ public class Enemy_BT : BT
 
     public override void MakeDecision()
     {
+        Debug.Log("Make Decision");
         Debug.Log("Next Action:" + next_action.action_type);
 
         if (current_hp <= 0)
@@ -176,5 +177,10 @@ public class Enemy_BT : BT
 
             default: Debug.Log("Unknown action"); break;
         }
+    }
+
+    public bool InCombat()
+    {
+        return in_combat;
     }
 }

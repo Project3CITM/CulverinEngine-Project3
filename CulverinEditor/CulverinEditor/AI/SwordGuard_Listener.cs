@@ -70,13 +70,17 @@ public class SwordGuard_Listener : PerceptionListener
 
                 if (gameObject == seen_event_tmp.enemy_who_saw)
                 {
-                    PerceptionPlayerSeenEvent new_event_to_memory = new PerceptionPlayerSeenEvent(seen_event_tmp);
-                    events_in_memory.Add(new_event_to_memory);
                     GetComponent<EnemySword_BT>().InterruptAction();
                     GetComponent<EnemySword_BT>().player_detected = true;
-                    GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.ENGAGE_ACTION);
-                    GetComponent<ChasePlayer_Action>().SetEvent(new_event_to_memory);
+
+                    if(GetComponent<EnemySword_BT>().InCombat() == false)
+                        GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.ENGAGE_ACTION);
+
                     player_seen = true;
+
+                    PerceptionPlayerSeenEvent new_event_to_memory = new PerceptionPlayerSeenEvent(seen_event_tmp);
+                    events_in_memory.Add(new_event_to_memory);
+                    GetComponent<ChasePlayer_Action>().SetEvent(new_event_to_memory);
                     new_event_to_memory.start_counting = false;
                 }
                 break;
@@ -95,7 +99,8 @@ public class SwordGuard_Listener : PerceptionListener
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemySword_BT>().player_detected = false;
-                GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
+                if (GetComponent<EnemySword_BT>().InCombat() == true)
+                    GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
                 GetComponent<ChasePlayer_Action>().forgot_event = true;
                 break;
         }

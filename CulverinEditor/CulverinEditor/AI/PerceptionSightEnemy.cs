@@ -72,7 +72,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
                 player_seen = true;
                 int current_x = GetComponent<Movement_Action>().GetCurrentTileX();
                 int current_y = GetComponent<Movement_Action>().GetCurrentTileY();
-                Debug.Log("Player Seen At Position:" + player_x + "," + player_y);
                 GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(time_to_forget, player_x, player_y, gameObject, current_x, current_y);
             }
         }

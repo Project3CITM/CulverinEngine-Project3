@@ -46,7 +46,6 @@ public class Movement_Action : Action
     Vector3 current_acceleration = new Vector3(Vector3.Zero);
     float current_rot_velocity = 0.0f;
     float current_rot_acceleration = 0.0f;
-    float arrive_distance = 0.05f;
     float rot_margin = 0.05f;
 
     bool rotation_finished = false;
@@ -141,16 +140,19 @@ public class Movement_Action : Action
             //Clean
             current_acceleration = new Vector3(Vector3.Zero);
 
-            if (ReachedTile() == true)
+            if (arrive.ReachedTile() == true)
             {
                 current_velocity = new Vector3(Vector3.Zero);
 
                 if (interupt != true)
                 {
+                    Debug.Log("Next tile");
+                    Debug.Log("Chase = " + chase);
                     NextTile();
                 }
                 else
                 {
+                    Debug.Log("Hellooooo");
                     arrive.SetEnabled(false);
                     seek.SetEnabled(false);
                     translation_finished = true;
@@ -221,13 +223,20 @@ public class Movement_Action : Action
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
-    override public void Interupt()
-    {
-        interupt = true;
-    }
-
     public override bool ActionEnd()
     {
+        Debug.Log("Action End");
+        if (chase == false)
+        {            
+            GetComponent<CompAnimation>().SetTransition("ToIdle");
+            Debug.Log("Animation to Idle");
+        }
+        else
+        {
+            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            Debug.Log("Animation to IdleAttack");
+        }
+
         if (chase != false)
             chase = false;
         interupt = false;
@@ -254,10 +263,16 @@ public class Movement_Action : Action
         {
             path.Remove(path[0]);
 
-            if (GetComponent<Movement_Action>().chase == false)
+            if (chase == false)
+            {
                 GetComponent<CompAnimation>().SetTransition("ToPatrol");
+                Debug.Log("Animation to Patrol");
+            }
             else
+            {
                 GetComponent<CompAnimation>().SetTransition("ToChase");
+                Debug.Log("Animation to Chase");
+            }
         }
 
         //Rotation
@@ -296,14 +311,14 @@ public class Movement_Action : Action
 
             if (path.Count > 1)
             {
-                if (ReachedTile())
+                if (arrive.ReachedTile())
                 {
                     NextTile();
                 }
             }
             else
             {
-                if (ReachedTile())
+                if (arrive.ReachedTile())
                 {
                     translation_finished = true;
                     arrive.SetEnabled(false);
@@ -375,35 +390,6 @@ public class Movement_Action : Action
     public void Rotate(float rotation)
     {
         current_rot_acceleration = current_rot_acceleration + rotation;
-    }
-
-    public bool ReachedTile()
-    {
-        Vector3 my_pos = GetComponent<Transform>().position;
-        Vector3 tile_pos = GetTargetPosition();
-
-        Vector3 result = new Vector3 (Vector3.Zero);
-        result.x = tile_pos.x - my_pos.x;
-        result.z = tile_pos.z - my_pos.z;
-
-        float distance_to_target = result.Length;
-
-        return (distance_to_target < arrive_distance);
-    }
-
-    public bool ReachedTile(int target_tile_x, int target_tile_y)
-    {
-        Vector3 my_pos = GetComponent<Transform>().position;
-
-        my_pos /= tile_size;
-
-        Vector3 result = new Vector3(Vector3.Zero);
-        result.x = target_tile_x - my_pos.x;
-        result.z = target_tile_y - my_pos.z;
-
-        float distance_to_target = result.Length;
-
-        return (distance_to_target < arrive_distance);
     }
 
     public Vector3 GetTargetPosition()
@@ -624,16 +610,6 @@ public class Movement_Action : Action
         player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
 
         return (Mathf.Abs(y - GetCurrentTileY()) + Mathf.Abs(x - GetCurrentTileX())) <= 1;
-    }
-
-    public void Chase()
-    {
-        chase = true;
-    }
-
-    public void NotChase()
-    {
-        chase = false;
     }
 
     public bool IsWalkable(uint tile_x, uint tile_y)
