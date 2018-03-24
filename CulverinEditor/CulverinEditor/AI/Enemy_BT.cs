@@ -64,7 +64,7 @@ public class Enemy_BT : BT
             return;
         }
 
-        if(next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION)
+        if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION)
         {
             Debug.Log(next_action.action_type);
             current_action = next_action;
