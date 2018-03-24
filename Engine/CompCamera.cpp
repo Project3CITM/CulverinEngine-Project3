@@ -283,9 +283,9 @@ void CompCamera::CullStaticObjects()
 {
 	// First, set all static objects invisible
 	App->scene->RecalculateStaticObjects();
-	for (std::list<GameObject*>::const_iterator item = App->scene->static_objects.cbegin(); item != App->scene->static_objects.cend(); ++item)
+	for (std::vector<GameObject*>::const_iterator item = App->scene->static_objects.cbegin(); item != App->scene->static_objects.cend(); ++item)
 	{
-		item._Ptr->_Myval->SetVisible(false);
+		(*item)->SetVisible(false);
 	}
 
 	// Get all static objects that are inside the frustum (accelerated with quadtree)

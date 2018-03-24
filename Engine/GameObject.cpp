@@ -266,6 +266,14 @@ GameObject* GameObject::GetGameObjectfromScene(int id)
 	return nullptr;
 }
 
+void GameObject::GetAllSceneGameObjects(std::vector<GameObject*>& SceneGameObjects) const
+{
+	SceneGameObjects.push_back((GameObject*)this);
+
+	for (std::vector<GameObject*>::const_iterator item = childs.cbegin(); item != childs.cend(); ++item)
+		(*item)->GetAllSceneGameObjects(SceneGameObjects);
+}
+
 void GameObject::FindChildsWithTag(const char * tag,std::vector<GameObject*>* vec)
 {
 	uint size = childs.size();

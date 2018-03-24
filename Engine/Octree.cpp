@@ -36,8 +36,8 @@ bool OctreeNode::isLeaf() const
 void OctreeNode::Insert(GameObject* obj, OctreeLimits& limits)
 {
 	AABB otherBox;
-	otherBox = *obj->bounding_box;
-	if (!box.Intersects(otherBox))
+	otherBox = obj->box_fixed;
+	if (!box.IsFinite() || !box.Intersects(otherBox))
 		return;
 
 	if (isLeaf() && (objects.size() < limits.octreeMaxItems || (box.HalfSize().LengthSq() <= limits.octreeMinSize * limits.octreeMinSize)))
@@ -254,7 +254,7 @@ void Octree::Remove(GameObject* mesh)
 
 void Octree::Insert(GameObject* obj)
 {
-	if (obj->bounding_box != nullptr)
+	if (obj->box_fixed.IsFinite())
 		root_node->Insert(obj, limits);
 }
 
