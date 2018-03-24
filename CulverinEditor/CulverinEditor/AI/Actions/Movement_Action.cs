@@ -71,7 +71,6 @@ public class Movement_Action : Action
         map = GetLinkedObject("map");
         player = GetLinkedObject("player");
         anim = GetComponent<CompAnimation>();
-        anim.SetTransition("ToPatrol");
 
         align = GetComponent<Align_Steering>();
         arrive = GetComponent<Arrive_Steering>();
@@ -89,8 +88,6 @@ public class Movement_Action : Action
         current_max_rot_vel = hurt_max_rot_vel + (max_rot_vel - hurt_max_rot_vel) * interpolation;
         current_max_rot_accel = hurt_max_rot_accel + (max_rot_accel - hurt_max_rot_accel) * interpolation;
 
-        //GetComponent<CompAnimation>().SetClipsSpeed(bt.anim_speed);
-
         Vector3 fw = GetComponent<Transform>().GetForwardVector();
         path = new List<PathNode>();
     }
@@ -98,16 +95,23 @@ public class Movement_Action : Action
     public override bool ActionStart()
     {
         anim.SetClipsSpeed(anim_speed);
-        anim.SetTransition("ToPatrol");
+
+        if (chase == false)
+        {
+            GetComponent<CompAnimation>().SetTransition("ToPatrol");
+            Debug.Log("Animation to Patrol");
+        }
+        else
+        {
+            GetComponent<CompAnimation>().SetTransition("ToChase");
+            Debug.Log("Animation to Chase");
+        }
 
         if (path == null)
         {
             Debug.Log("Move: Path == null");                      
             return false;
         }
-
-        rotation_finished = false;
-        translation_finished = false;
 
         return true;
     }
@@ -144,7 +148,6 @@ public class Movement_Action : Action
                 Debug.Log("Reached Tile: " + GetCurrentTileX() + "," + GetCurrentTileY());
                 if (interupt != true)
                 {
-                    Debug.Log("[error] HERE");
                     NextTile();
                 }
                 else
@@ -205,12 +208,13 @@ public class Movement_Action : Action
 
         if (rotation_finished == true && translation_finished == true)
         {
-            Debug.Log("GG");
-            GetComponent<CompAnimation>().SetTransition("ToIdle");
-
             if (interupt == true)
+            {
+                Debug.Log("Movement Interupted");
                 return ACTION_RESULT.AR_FAIL;
+            }
 
+            Debug.Log("Movement Finished");
             return ACTION_RESULT.AR_SUCCESS;
         }
 
@@ -219,17 +223,24 @@ public class Movement_Action : Action
 
     public override bool ActionEnd()
     {
+        if (chase == false)
+        {
+            GetComponent<CompAnimation>().SetTransition("ToIdle");
+            Debug.Log("Animation to Idle");
+        }
+        else
+        {
+            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            Debug.Log("Animation to IdleAttack");
+            chase = false;
+        }
+
         interupt = false;
         return false;
     }
 
     private void NextTile()
     {
-        if (path.Count == 0)
-        {
-            Debug.Log("[error]" + path.Count);
-        }
-
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
 
         pos.x = path[0].GetTileX() * tile_size;
@@ -264,12 +275,8 @@ public class Movement_Action : Action
         int current_x = GetCurrentTileX();
         int current_y = GetCurrentTileY();
 
-        Debug.Log("Current: " + current_x + "," + current_y);
-        Debug.Log("Objective: " + obj_x + "," + obj_y);
-
         if ((obj_x == current_x && obj_y == current_y) || map.GetComponent<Pathfinder>().IsWalkableTile((uint)obj_x, (uint)obj_y) == false)
         {
-            Debug.Log("[error] SET TO TRUE");
             translation_finished = true;
             arrive.SetEnabled(false);
             seek.SetEnabled(false);
@@ -317,9 +324,6 @@ public class Movement_Action : Action
             rotation_finished = true;
             align.SetEnabled(false);
         }
-
-        foreach (PathNode n in path)
-            Debug.Log("Tile: " + n.GetTileX() + "," + n.GetTileY());
     }
 
     public void GoTo(PathNode obj, bool rot = false)
@@ -341,10 +345,6 @@ public class Movement_Action : Action
             PathNode closest = adjacent_walkable_tiles[0];
             int closest_distance = Mathf.Abs(closest.GetTileX() - current_x) + Mathf.Abs(closest.GetTileY() - current_y);
 
-            Debug.Log("Current: " + current_x + "," + current_y);
-            Debug.Log("Distance:" + closest_distance);
-            Debug.Log("Node: " + closest.GetTileX() + "," + closest.GetTileY());
-
             if (adjacent_walkable_tiles.Count > 1)
             {
                 for (int i = 1; i < adjacent_walkable_tiles.Count; i++)
@@ -353,8 +353,6 @@ public class Movement_Action : Action
                     int y_distance = Mathf.Abs(adjacent_walkable_tiles[i].GetTileY() - current_y);
 
                     int distance = x_distance + y_distance;
-                    Debug.Log("Distance:" + distance);
-                    Debug.Log("Node: " + adjacent_walkable_tiles[i].GetTileX() + "," + adjacent_walkable_tiles[i].GetTileY());
 
                     if (distance < closest_distance)
                     {
@@ -366,10 +364,6 @@ public class Movement_Action : Action
 
             GoTo(closest);
         }
-
-        Debug.Log("Chase Path:");
-        foreach (PathNode pn in path)
-            Debug.Log(pn.GetTileX() + "," + pn.GetTileY());
     }
 
     public void Accelerate(Vector3 acceleration)    
@@ -424,7 +418,6 @@ public class Movement_Action : Action
         else
         {
             result = GetComponent<Transform>().position;
-            //Debug.Log("GetTargetPosition(): Path has no values");
         }
 
         return result;

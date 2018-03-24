@@ -17,6 +17,7 @@ public class Investigate_Action : Action
     INVESTIGATESTATE my_state;
     PerceptionEvent event_to_react;
     CompAnimation anim;
+    Movement_Action move;
     ACTION_RESULT move_return;
 
     public bool forgot_event = false;
@@ -43,7 +44,8 @@ public class Investigate_Action : Action
         int current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        GetComponent<Movement_Action>().GoTo(event_to_react.objective_tile_x, event_to_react.objective_tile_y);
+        move = GetComponent<Movement_Action>();
+        move.GoTo(event_to_react.objective_tile_x, event_to_react.objective_tile_y);
         bool ret = GetComponent<Movement_Action>().ActionStart();
 
         init_tile_x = current_tile_x;
@@ -60,77 +62,68 @@ public class Investigate_Action : Action
             case INVESTIGATESTATE.GOING_TO_INVESTIGATE:
                 if (interupt)
                 {
-                    GetComponent<Movement_Action>().Interupt();
+                    move.Interupt();
                 }               
 
                 ///Make Move update
-                move_return = GetComponent<Movement_Action>().ActionUpdate();
+                move_return = move.ActionUpdate();
 
-                if (move_return == ACTION_RESULT.AR_SUCCESS)
+                if (move_return != ACTION_RESULT.AR_IN_PROGRESS)
                 {
-                    my_state = INVESTIGATESTATE.INVESTIGATE;
-                    Debug.Log("Investigate");
+                    move.ActionEnd();
+
+                    if (move_return == ACTION_RESULT.AR_SUCCESS)
+                        my_state = INVESTIGATESTATE.INVESTIGATE;
+                    else
+                        return ACTION_RESULT.AR_FAIL;
                 }
 
-                if (move_return == ACTION_RESULT.AR_FAIL)
-                {
-                    GetComponent<Movement_Action>().ActionEnd();
-                    return ACTION_RESULT.AR_FAIL;
-                }
-
-            break;
+                break;
 
             case INVESTIGATESTATE.INVESTIGATE:
                 //Trigger investigate animation
 
                 event_to_react.start_counting = true;
 
-                if(forgot_event == true)
+                if (interupt)
                 {
-                    int current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
-                    int current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+                    return ACTION_RESULT.AR_FAIL;
+                }
 
-                    GetComponent<Movement_Action>().GoTo(init_tile_x, init_tile_y);
+                if (forgot_event == true)
+                {
+                    move.GoTo(init_tile_x, init_tile_y);
 
-                    if (!GetComponent<Movement_Action>().ActionStart())
+                    if (move.ActionStart() == false)
                         return ACTION_RESULT.AR_FAIL;
 
                     my_state = INVESTIGATESTATE.RETURNING_TO_START;
                 }
 
-                if (interupt)
-                {
-                    return ACTION_RESULT.AR_FAIL;
-                }
-
-                break;
+                return ACTION_RESULT.AR_IN_PROGRESS;
 
             case INVESTIGATESTATE.RETURNING_TO_START:
                 if (interupt)
                 {
-                    GetComponent<Movement_Action>().Interupt();
+                    move.Interupt();
                 }
 
-                move_return = GetComponent<Movement_Action>().ActionUpdate();
+                move_return = move.ActionUpdate();
 
-                if (move_return == ACTION_RESULT.AR_SUCCESS)
+                if (move_return != ACTION_RESULT.AR_IN_PROGRESS)
                 {
-                    Debug.Log("Arrived home");
-                    return ACTION_RESULT.AR_SUCCESS;
-                }
+                    move.ActionEnd();
 
-                if (move_return == ACTION_RESULT.AR_FAIL)
-                {
-                    GetComponent<Movement_Action>().ActionEnd();
-                    return ACTION_RESULT.AR_FAIL;
+                    if (move_return == ACTION_RESULT.AR_SUCCESS)
+                        return ACTION_RESULT.AR_SUCCESS;
+                    else
+                        return ACTION_RESULT.AR_FAIL;
                 }
 
                 break;
         }
 
         return ACTION_RESULT.AR_IN_PROGRESS;
-
-
     }
 
     public override bool ActionEnd()

@@ -5,7 +5,6 @@ public class ChasePlayer_Action : Action
 {
     PerceptionEvent event_to_react;
     Movement_Action move;
-    CompAnimation anim;
     ACTION_RESULT move_return;
 
     public bool forgot_event = false;
@@ -15,7 +14,6 @@ public class ChasePlayer_Action : Action
     void Start()
     {
         move = GetComponent<Movement_Action>();
-        anim = GetComponent<CompAnimation>();
     }
 
     public ChasePlayer_Action()
@@ -31,9 +29,6 @@ public class ChasePlayer_Action : Action
     public override bool ActionStart()
     {       
         Debug.Log("Chasing Player");
-
-        anim = GetComponent<CompAnimation>();
-        anim.SetTransition("ToChase");
 
         event_to_react.start_counting = false;
 
@@ -78,21 +73,11 @@ public class ChasePlayer_Action : Action
         else
             event_to_react.start_counting = false;
 
-
-        
-
         ///Make Move update
         move_return = move.ActionUpdate();
 
-        Debug.Log("[error]" + move_return);
-
-
         if (move_return != ACTION_RESULT.AR_IN_PROGRESS)
-        {
             move.ActionEnd();
-            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
-        }
-        
 
         return move_return;
     }
