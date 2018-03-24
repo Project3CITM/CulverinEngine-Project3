@@ -8,7 +8,6 @@ public class Movement_Action : Action
     public bool         look_at_player = false;
     public GameObject   map;
     public GameObject   player;
-    CompAnimation       anim;
     public float        tile_size = 0.0f;
     List<PathNode>      path = null;
 
@@ -70,7 +69,6 @@ public class Movement_Action : Action
         look_at_player = false;
         map = GetLinkedObject("map");
         player = GetLinkedObject("player");
-        anim = GetComponent<CompAnimation>();
 
         align = GetComponent<Align_Steering>();
         arrive = GetComponent<Arrive_Steering>();
@@ -94,7 +92,7 @@ public class Movement_Action : Action
 
     public override bool ActionStart()
     {
-        anim.SetClipsSpeed(anim_speed);
+        GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
 
         if (chase == false)
         {

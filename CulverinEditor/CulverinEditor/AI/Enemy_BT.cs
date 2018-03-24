@@ -14,8 +14,6 @@ public class Enemy_BT : BT
     public GameObject enemies_manager = null;
     public GameObject player = null;
 
-    CompAnimation anim = null;
-
     public float total_hp = 100;
     protected float current_hp;
     public ENEMY_STATE life_state = ENEMY_STATE.ENEMY_ALIVE;
@@ -36,7 +34,6 @@ public class Enemy_BT : BT
     {
         in_combat = false;
         player = GetLinkedObject("player");
-        anim = GetComponent<CompAnimation>();
         current_hp = total_hp;
         Debug.Log("Current HP (Start): " + current_hp);
         Debug.Log("Total HP (Start): " + total_hp);
@@ -133,7 +130,7 @@ public class Enemy_BT : BT
 
         if (current_hp <= 0)
         {
-            anim.SetClipsSpeed(anim_speed);
+            GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
             state = AI_STATE.AI_DEAD;
             life_state = ENEMY_STATE.ENEMY_DEAD;
         }
@@ -142,7 +139,7 @@ public class Enemy_BT : BT
             life_state = ENEMY_STATE.ENEMY_DAMAGED;
             current_interpolation = current_hp / total_hp;
             anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;
-            anim.SetClipsSpeed(anim_speed);
+            GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
         }
     }
 

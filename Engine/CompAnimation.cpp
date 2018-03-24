@@ -106,7 +106,6 @@ void CompAnimation::Update(float dt)
 	{
 		CheckNodesConditions((active_node));
 	}
-
 }
 
 void CompAnimation::PlayAnimation(AnimationNode * node)
@@ -114,33 +113,29 @@ void CompAnimation::PlayAnimation(AnimationNode * node)
 	node->active = true;
 	active_node = node;
 
-	if (node->clip->state == A_STOP)
-	{	
-		if (current_animation != nullptr && node->clip->total_blending_time > 0.001f)
+	if (current_animation != nullptr && node->clip->total_blending_time > 0.001f)
+	{
+		current_animation->state = AnimationState::A_PLAY;
+		node->clip->state = AnimationState::A_BLENDING;
+		blending_animation = (node->clip);
+		node->clip->RestartAnimationClip();
+		BlendingClip* node_blending_clip = active_node->GetActiveBlendingClip();
+		if (node_blending_clip != nullptr)
 		{
-			current_animation->state = AnimationState::A_PLAY;
-			node->clip->state = AnimationState::A_BLENDING;
-			blending_animation = (node->clip);
-			node->clip->RestartAnimationClip();
-			BlendingClip* node_blending_clip = active_node->GetActiveBlendingClip();
-			if (node_blending_clip != nullptr)
-			{
-				node_blending_clip->clip->state = AnimationState::A_BLENDING_NODE;
-				node_blending_clip->clip->RestartAnimationClip();
-			}
+			node_blending_clip->clip->state = AnimationState::A_BLENDING_NODE;
+			node_blending_clip->clip->RestartAnimationClip();
 		}
-		else
+	}
+	else
+	{
+		node->clip->state = AnimationState::A_PLAY;
+		current_animation = node->clip;
+		node->clip->RestartAnimationClip();
+		BlendingClip* node_blending_clip = active_node->GetActiveBlendingClip();
+		if (node_blending_clip != nullptr)
 		{
-			node->clip->state = AnimationState::A_PLAY;
-			current_animation = node->clip;
-			node->clip->RestartAnimationClip();
-			BlendingClip* node_blending_clip = active_node->GetActiveBlendingClip();
-			if (node_blending_clip != nullptr)
-			{
-				node_blending_clip->clip->state = AnimationState::A_BLENDING_NODE;
-				node_blending_clip->clip->RestartAnimationClip();
-			}
-			Update(0);
+			node_blending_clip->clip->state = AnimationState::A_BLENDING_NODE;
+			node_blending_clip->clip->RestartAnimationClip();
 		}
 	}
 }

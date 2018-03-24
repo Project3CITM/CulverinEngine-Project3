@@ -46,7 +46,7 @@ public class Investigate_Action : Action
 
         move = GetComponent<Movement_Action>();
         move.GoTo(event_to_react.objective_tile_x, event_to_react.objective_tile_y);
-        bool ret = GetComponent<Movement_Action>().ActionStart();
+        bool ret = move.ActionStart();
 
         init_tile_x = current_tile_x;
         init_tile_y = current_tile_y;
@@ -57,38 +57,18 @@ public class Investigate_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        switch(my_state)
+        switch (my_state)
         {
-            case INVESTIGATESTATE.GOING_TO_INVESTIGATE:
-                if (interupt)
-                {
-                    move.Interupt();
-                }               
-
-                ///Make Move update
-                move_return = move.ActionUpdate();
-
-                if (move_return != ACTION_RESULT.AR_IN_PROGRESS)
-                {
-                    move.ActionEnd();
-
-                    if (move_return == ACTION_RESULT.AR_SUCCESS)
-                        my_state = INVESTIGATESTATE.INVESTIGATE;
-                    else
-                        return ACTION_RESULT.AR_FAIL;
-                }
-
-                break;
-
             case INVESTIGATESTATE.INVESTIGATE:
                 //Trigger investigate animation
 
-                event_to_react.start_counting = true;
-
                 if (interupt)
                 {
+                    interupt = false;
                     return ACTION_RESULT.AR_FAIL;
                 }
+
+                event_to_react.start_counting = true;
 
                 if (forgot_event == true)
                 {
@@ -102,9 +82,12 @@ public class Investigate_Action : Action
 
                 return ACTION_RESULT.AR_IN_PROGRESS;
 
+            case INVESTIGATESTATE.GOING_TO_INVESTIGATE:
             case INVESTIGATESTATE.RETURNING_TO_START:
+
                 if (interupt)
                 {
+                    interupt = false;
                     move.Interupt();
                 }
 
@@ -113,11 +96,7 @@ public class Investigate_Action : Action
                 if (move_return != ACTION_RESULT.AR_IN_PROGRESS)
                 {
                     move.ActionEnd();
-
-                    if (move_return == ACTION_RESULT.AR_SUCCESS)
-                        return ACTION_RESULT.AR_SUCCESS;
-                    else
-                        return ACTION_RESULT.AR_FAIL;
+                    return move_return;
                 }
 
                 break;

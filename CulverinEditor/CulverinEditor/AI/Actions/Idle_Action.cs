@@ -16,7 +16,7 @@ public class Idle_Action : Action
     public override bool ActionStart()
     {        
         GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
-        GetComponent<CompAnimation>().SetTransition("ToIdle");
+        //GetComponent<CompAnimation>().SetTransition("ToIdle");
         return true;
     }
 
