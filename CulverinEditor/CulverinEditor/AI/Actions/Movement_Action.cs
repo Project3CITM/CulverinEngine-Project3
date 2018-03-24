@@ -144,6 +144,8 @@ public class Movement_Action : Action
             if (ReachedTile() == true)
             {
                 Debug.Log("Reached Tile: " + GetCurrentTileX() + "," + GetCurrentTileY());
+                current_velocity = new Vector3(Vector3.Zero);
+
                 if (interupt != true)
                 {
                     NextTile();
@@ -194,6 +196,7 @@ public class Movement_Action : Action
             if (FinishedRotation() == true)
             {
                 rotation_finished = true;
+                current_rot_velocity = 0.0f;
                 Align_Steering align = GetComponent<Align_Steering>();
                 align.SetEnabled(false);
                 align.Reset();
@@ -222,17 +225,6 @@ public class Movement_Action : Action
     override public void Interupt()
     {
         interupt = true;
-
-        if (chase == false)
-        {
-            GetComponent<CompAnimation>().SetTransition("ToIdle");
-            Debug.Log("Animation to Idle");
-        }
-        else
-        {
-            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
-            Debug.Log("Animation to IdleAttack");
-        }
     }
 
     public override bool ActionEnd()
@@ -240,8 +232,6 @@ public class Movement_Action : Action
         if (chase != false)
             chase = false;
         interupt = false;
-        current_velocity = new Vector3(Vector3.Zero);
-        current_rot_velocity = 0.0f;
         return false;
     }
 
@@ -265,19 +255,10 @@ public class Movement_Action : Action
         {
             path.Remove(path[0]);
 
-            if (path.Count == 1)
-            {
-                if (chase == false)
-                {
-                    GetComponent<CompAnimation>().SetTransition("ToIdle");
-                    Debug.Log("Animation to Idle");
-                }
-                else
-                {
-                    GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
-                    Debug.Log("Animation to IdleAttack");
-                }
-            }
+            if (GetComponent<Movement_Action>().chase == false)
+                GetComponent<CompAnimation>().SetTransition("ToPatrol");
+            else
+                GetComponent<CompAnimation>().SetTransition("ToChase");
         }
 
         //Rotation
