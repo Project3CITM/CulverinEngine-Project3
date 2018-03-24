@@ -79,6 +79,7 @@ struct EventData
 		CONSUMABILITY_CONSUMED
 	};
 	Consumability button = Consumability::CONSUMABILITY_UNCONSUMABLE;
+	bool PushedWhileIteriting = false;
 };
 
 /*--------------------------------------------------*/

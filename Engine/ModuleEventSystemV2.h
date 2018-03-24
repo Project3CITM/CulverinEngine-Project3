@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include "Module.h"
+#include "EventDefV2.h"
 
 void PushEventV2(Event& event);
 void PushImmediateEventV2(Event& event);
@@ -37,6 +38,7 @@ private:
 	std::map<EventType, std::vector<Module*>> MEventListeners;
 	uint MapSetToIterate = 0;
 	bool IteratingMaps = false;
+	bool EventPushedWhileIteratingMaps = false;
 };
 
 #endif //EVENTSYSTEM_V2
