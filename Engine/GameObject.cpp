@@ -36,6 +36,7 @@
 #include "CompRigidBody.h"
 #include "CompJoint.h"
 #include "CompParticleSystem.h"
+#include "ResourceMesh.h"
 #include <queue>
 
 //Event system test
@@ -2183,13 +2184,7 @@ void GameObject::SetParent(GameObject* new_parent)
 
 void GameObject::AddBoundingBox(const ResourceMesh* mesh)
 {
-	//TODOJOAN
-	/*if (bounding_box == nullptr)
-	{
-		bounding_box = new AABB();
-	}
-	bounding_box->SetNegativeInfinity();
-	bounding_box->Enclose(mesh->vertices, mesh->num_vertices);*/
+	box_fixed.Enclose(mesh->aabb_box);
 }
 
 void GameObject::DrawBoundingBox()
