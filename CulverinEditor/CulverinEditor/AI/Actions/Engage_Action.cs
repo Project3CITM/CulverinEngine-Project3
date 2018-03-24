@@ -23,13 +23,13 @@ class Engage_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        //Debug.Log("EnFFgaged");
-        //if (GetComponent<CompAnimation>().IsAnimationRunning("IdleAttack"))
+        Debug.Log("Engageing");
+        if (GetComponent<CompAnimation>().IsAnimationStopped("Draw"))
         {
             Debug.Log("Engaged");
             return ACTION_RESULT.AR_SUCCESS;
         }
-        //return ACTION_RESULT.AR_IN_PROGRESS;
+        return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
     public override bool ActionEnd()

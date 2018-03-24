@@ -41,7 +41,7 @@ public class Arrive_Steering : CulverinBehaviour
             ideal_velocity = ((distance_to_target.Normalized * GetComponent<Movement_Action>().GetMaxVelocity() * distance_to_target.Length)) / slow_distance;
         }
 
-        Vector3 deceleration = new Vector3(ideal_velocity - GetComponent<Movement_Action>().GetCurrentVelocity());
+        Vector3 deceleration = new Vector3(ideal_velocity - GetComponent<Movement_Action>().GetCurrentVelocity()) * Time.deltaTime;
     
         GetComponent<Movement_Action>().Accelerate(deceleration);
     }

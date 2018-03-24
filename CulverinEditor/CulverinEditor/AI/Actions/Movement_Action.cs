@@ -219,8 +219,10 @@ public class Movement_Action : Action
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
-    public override bool ActionEnd()
+    override public void Interupt()
     {
+        interupt = true;
+
         if (chase == false)
         {
             GetComponent<CompAnimation>().SetTransition("ToIdle");
@@ -230,10 +232,16 @@ public class Movement_Action : Action
         {
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
             Debug.Log("Animation to IdleAttack");
-            chase = false;
         }
+    }
 
+    public override bool ActionEnd()
+    {
+        if (chase != false)
+            chase = false;
         interupt = false;
+        current_velocity = new Vector3(Vector3.Zero);
+        current_rot_velocity = 0.0f;
         return false;
     }
 
@@ -256,6 +264,20 @@ public class Movement_Action : Action
         else
         {
             path.Remove(path[0]);
+
+            if (path.Count == 1)
+            {
+                if (chase == false)
+                {
+                    GetComponent<CompAnimation>().SetTransition("ToIdle");
+                    Debug.Log("Animation to Idle");
+                }
+                else
+                {
+                    GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+                    Debug.Log("Animation to IdleAttack");
+                }
+            }
         }
 
         //Rotation
