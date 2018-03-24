@@ -255,6 +255,7 @@ private:
 	static void SetClipDuration(MonoObject* object, MonoString* string, float duration);
 	static void SetActiveBlendingClip(MonoObject* object, MonoString* string);
 	static void SetActiveBlendingClipWeight(MonoObject* object, float weight);
+	static void SetBlendInTime(MonoObject* object, MonoString* string, float weight);
 
 	/*Component Material*/
 	static void SetAlbedo(MonoObject* object, MonoString* string);

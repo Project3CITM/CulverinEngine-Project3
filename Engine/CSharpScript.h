@@ -223,6 +223,7 @@ public:
 	void		SetClipDuration(MonoObject* object, MonoString* name, float duration);
 	void		SetActiveBlendingClip(MonoObject* object, MonoString* name);
 	void		SetActiveBlendingClipWeight(MonoObject* object, float weight);
+	void		SetBlendInTime(MonoObject* object, MonoString* name, float time);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
