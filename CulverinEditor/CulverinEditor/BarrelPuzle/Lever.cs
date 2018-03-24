@@ -72,6 +72,9 @@ public class Lever : CulverinBehaviour
     private string lever_animation_name = "Lever_Down"; // TODO: Set the animation name
     private BarrelPuzzleManager barrel_puzzel_manager = null; // Put both scripts in same GO.
 
+
+    public GameObject level_map;
+    public GameObject player;
     //--------------
 
     void Start()
@@ -119,6 +122,8 @@ public class Lever : CulverinBehaviour
         // Map
         current_path = new Path(barrel_per_line, number_lines, puzzle_orientation);
         GeneratePath();
+
+        
         //// Testing --------------------------------------------
         //for (int y = 0; y < number_lines; y++)
         //{
@@ -226,7 +231,8 @@ public class Lever : CulverinBehaviour
             }
             if (editmap)
             {
-
+                SetPathWalkable();
+                editmap = false;
             }
         }
     }
@@ -468,6 +474,31 @@ public class Lever : CulverinBehaviour
                 orientation_x = new Vector3(0, 0, 1);
                 orientation_z = new Vector3(1, 0, 0);
                 break;
+        }
+    }
+
+
+    void SetPathWalkable()
+    {
+        for (int y = 0; y < current_path.height; ++y)
+        {
+            for (int x = 0; x < current_path.width; ++x)
+            {
+                if (current_path.walkability[x, y] == 0)
+                {
+
+                     level_map = GetLinkedObject("level_map");
+                     if (level_map == null)
+                         Debug.Log("MAP IS NULL");
+                     else level_map.GetComponent<LevelMap>().UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);
+
+                    player = GetLinkedObject("player");
+                    player.GetComponent<MovementController>().SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);
+
+
+                }
+            }
+            
         }
     }
 }

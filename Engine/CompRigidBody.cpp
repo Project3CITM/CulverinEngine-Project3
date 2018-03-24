@@ -24,6 +24,7 @@ CompRigidBody::CompRigidBody(Comp_Type t, GameObject * parent) : Component(t, pa
 		{
 			body = collider_comp->GivePhysicsBody(this);
 			App->physics->ChangeRigidActorToDynamic(body, this);
+			collider_comp->SetFilterFlags();
 		}
 		else
 		{
@@ -46,6 +47,7 @@ CompRigidBody::CompRigidBody(const CompRigidBody & copy, GameObject * parent) : 
 		{
 			body = collider_comp->GivePhysicsBody(this);
 			App->physics->ChangeRigidActorToDynamic(body, this);
+			collider_comp->SetFilterFlags();
 		}
 		else
 		{

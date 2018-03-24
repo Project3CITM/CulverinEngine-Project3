@@ -30,6 +30,7 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void ShowTransform(float drag_speed);
+	void SyncComponent(GameObject* sync_parent);
 
 	void SetPosGlobal(float3 pos);
 	void SetRotGlobal(float3 rot);
