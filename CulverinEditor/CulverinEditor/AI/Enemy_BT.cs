@@ -147,9 +147,12 @@ public class Enemy_BT : BT
         current_action.Interupt();
 
         if (!GetComponent<Movement_Action>().IsWalkable((uint)(GetComponent<Movement_Action>().GetCurrentTileX() + dir.x), (uint)(GetComponent<Movement_Action>().GetCurrentTileY() + dir.z)))
-            next_action = new Stun_Action(anim_speed);
+            next_action = GetComponent<Stun_Action>();
         else
-            next_action = new PushBack_Action(dir, anim_speed);
+        {
+            next_action = GetComponent<PushBack_Action>();
+            ((PushBack_Action)next_action).SetPushDirection(dir);
+        }
     }
 
     public bool InRange()
