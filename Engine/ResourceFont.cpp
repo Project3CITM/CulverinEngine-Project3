@@ -13,6 +13,8 @@ ResourceFont::ResourceFont(uint uuid):Resource(uuid, Resource::Type::FONT, Resou
 
 ResourceFont::~ResourceFont()
 {
+	TTF_CloseFont(font.font);
+
 }
 
 void ResourceFont::InitInfo(const char * nameResource, const char * path)
@@ -42,7 +44,6 @@ void ResourceFont::DeleteToMemory()
 	state = Resource::State::UNLOADED;
 	if (font.font == NULL)
 		return;
-	TTF_CloseFont(font.font);
 	LOG("UnLoaded Resource Material");
 }
 
