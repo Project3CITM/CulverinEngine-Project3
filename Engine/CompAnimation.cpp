@@ -216,6 +216,7 @@ void CompAnimation::SetTransition(const char * transition_name, bool value)
 			if ((*it)->name == transition_name)
 			{
 				(*it)->condition = value;
+				CheckNodesConditions(active_node);
 				break;
 			}
 		}
