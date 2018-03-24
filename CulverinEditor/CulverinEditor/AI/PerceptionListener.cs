@@ -5,10 +5,10 @@ using System.Collections.Generic;
 public class PerceptionListener : CulverinBehaviour
 {
     public GameObject event_manager;
-    public GameObject my_self;
     public List<PerceptionEvent> events_in_memory;
+    List<PerceptionEvent> to_remove = new List<PerceptionEvent>();
 
-   void Start()
+    void Start()
     {
         events_in_memory = new List<PerceptionEvent>();
     }
@@ -24,21 +24,27 @@ public class PerceptionListener : CulverinBehaviour
 
     public void UpdateMemory()
     {
-        if (events_in_memory.Count > 0)
+        if (events_in_memory.Count == 0)
+            return;
+
+            
+        foreach (PerceptionEvent e in events_in_memory)
         {
-            List<PerceptionEvent> to_remove = new List<PerceptionEvent>();
-            foreach (PerceptionEvent e in events_in_memory)
-            {
-                if (e.start_counting)
-                    UpdateEvent(e);
+            if (e.start_counting)
+                UpdateEvent(e);
 
-                if (e.is_finished)
-                    to_remove.Add(e);
-            }
-
-            foreach (PerceptionEvent e in to_remove)
-                events_in_memory.Remove(e);
+            if (e.is_finished)
+                to_remove.Add(e);
         }
+
+        foreach (PerceptionEvent e in to_remove)
+        {
+            Debug.Log("Removed Element");
+            events_in_memory.Remove(e);
+        }
+        to_remove.Clear();
+
+
     }
 
     public void ClearEvents()
@@ -90,12 +96,7 @@ public class PerceptionListener : CulverinBehaviour
     {
         if (events_in_memory.Count > 0)
         {
-            if (new_event.type > events_in_memory[0].type) //>= to constntly hear while in range
-            {
-                return true;
-            }
-
-            return false;
+            return events_in_memory[0].IsPrioritary(new_event);           
         }
 
         return true;

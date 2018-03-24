@@ -13,6 +13,7 @@
 #include "ModuleWindow.h"
 #include "WindowInspector.h"
 #include "WindowSceneWorld.h"
+#include "CompAudio.h"
 
 CompAnimation::CompAnimation(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
@@ -58,7 +59,6 @@ void CompAnimation::PreUpdate(float dt)
 {
 	if (bones_placed == false)
 	{
-
 		if (animation_resource != nullptr)
 		{
 			for (int i = 0; i < animation_resource->bones.size(); i++)
@@ -79,8 +79,17 @@ void CompAnimation::PreUpdate(float dt)
 
 void CompAnimation::Update(float dt)
 {
+	ManageActualAnimationNode(dt);
 	ManageAnimationClips(current_animation,dt);
 	ManageAnimationClips(blending_animation, dt);
+	if (active_node != nullptr)
+	{
+		BlendingClip* node_blending_clip = active_node->GetActiveBlendingClip();
+		if (node_blending_clip != nullptr)
+		{
+			ManageAnimationClips(node_blending_clip->clip, dt);
+		}
+	}
 
 	if (current_animation != nullptr)
 	{
@@ -88,7 +97,7 @@ void CompAnimation::Update(float dt)
 		{
 			if (it->first != nullptr)
 			{
-				it->second->UpdateBone(it->first, current_animation, blending_animation);
+				it->second->UpdateBone(it->first, current_animation, active_node->GetActiveBlendingClip(), blending_animation);
 			}
 		}
 	}
@@ -97,7 +106,6 @@ void CompAnimation::Update(float dt)
 	{
 		CheckNodesConditions((active_node));
 	}
-
 }
 
 void CompAnimation::PlayAnimation(AnimationNode * node)
@@ -105,21 +113,29 @@ void CompAnimation::PlayAnimation(AnimationNode * node)
 	node->active = true;
 	active_node = node;
 
-	if (node->clip->state == A_STOP)
-	{	
-		if (current_animation != nullptr && node->clip->total_blending_time > 0.001f)
+	if (current_animation != nullptr && node->clip->total_blending_time > 0.001f)
+	{
+		current_animation->state = AnimationState::A_PLAY;
+		node->clip->state = AnimationState::A_BLENDING;
+		blending_animation = (node->clip);
+		node->clip->RestartAnimationClip();
+		BlendingClip* node_blending_clip = active_node->GetActiveBlendingClip();
+		if (node_blending_clip != nullptr)
 		{
-			current_animation->state = AnimationState::A_PLAY;
-			node->clip->state = AnimationState::A_BLENDING;
-			blending_animation = (node->clip);
-			node->clip->RestartAnimationClip();
+			node_blending_clip->clip->state = AnimationState::A_BLENDING_NODE;
+			node_blending_clip->clip->RestartAnimationClip();
 		}
-		else
+	}
+	else
+	{
+		node->clip->state = AnimationState::A_PLAY;
+		current_animation = node->clip;
+		node->clip->RestartAnimationClip();
+		BlendingClip* node_blending_clip = active_node->GetActiveBlendingClip();
+		if (node_blending_clip != nullptr)
 		{
-			node->clip->state = AnimationState::A_PLAY;
-			current_animation = node->clip;
-			node->clip->RestartAnimationClip();
-			Update(0);
+			node_blending_clip->clip->state = AnimationState::A_BLENDING_NODE;
+			node_blending_clip->clip->RestartAnimationClip();
 		}
 	}
 }
@@ -290,6 +306,11 @@ AnimationTransition * CompAnimation::GetTransitionFromName(std::string name, Ani
 AnimationClip * CompAnimation::GetBlendingClip() const
 {
 	return blending_animation;
+}
+
+AnimationNode * CompAnimation::GetActiveNode() const
+{
+	return active_node;
 }
 
 void CompAnimation::SetResource(ResourceAnimation * resource_animation, bool isImport)
@@ -469,6 +490,10 @@ void CompAnimation::ShowInspectorInfo()
 			select_animation = true;
 		}
 	}
+	if (active_node != nullptr)
+	{
+		ImGui::Text("%s", active_node->name.c_str());
+	}
 	if (animation_resource == nullptr || select_animation)
 	{
 		if (select_animation)
@@ -551,6 +576,8 @@ void CompAnimation::ShowAnimationInfo()
 			state_names += '\0';
 			state_names += "Blending";
 			state_names += '\0';
+			state_names += "Blending Node";
+			state_names += '\0';
 			int state = (*it)->state;
 			if (ImGui::Combo("State", &state, state_names.c_str()))
 			{
@@ -626,10 +653,32 @@ void CompAnimation::ShowAnimationInfo()
 					{
 						(*it)->name = std::string(name_node);
 					}
+					if ((*it)->active == false)
+					{
+						if (ImGui::Checkbox("Active", &(*it)->active))
+						{
+							SetActiveAnimationNode((*it));
+						}
+					}
 					if ((*it)->active == true)
 					{
 						ImGui::Text("I'm active!!!");
 					}
+			
+					if (ImGui::Button("DELETE",ImVec2(50,30)))
+					{
+						(*it)->to_delete = true;
+					}
+
+					ImGui::Text("Audio:");
+					char name_audio[50];
+					strcpy_s(name_audio, 50, (*it)->anim_audio.c_str());
+					if (ImGui::InputText("##Audio Name", name_audio, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+					{
+						(*it)->anim_audio = std::string(name_audio);
+					}
+					ImGui::SameLine(200);
+					if (ImGui::DragFloat("##pos", &(*it)->audio_time, 0.05f, (*it)->clip->start_frame_time, (*it)->clip->end_frame_time));
 					std::string clip_names;
 					int combo_pos = 0;
 					int i = 0;
@@ -643,9 +692,58 @@ void CompAnimation::ShowAnimationInfo()
 						}
 						i++;
 					}
+					i = 0;
 					if (ImGui::Combo("Clip", &combo_pos, clip_names.c_str()))
 					{
 						(*it)->clip = animation_clips.at(combo_pos);
+					}
+					if (ImGui::Button("Create Blending Clip", ImVec2(125, 25)))
+					{
+						(*it)->CreateBlendingClip();
+					}
+					int j = 0;
+					for (std::vector<BlendingClip*>::iterator new_item = (*it)->blending_clips.begin(); new_item != (*it)->blending_clips.end(); ++new_item, ++j)
+					{
+						if (ImGui::TreeNodeEx((*new_item)->name.c_str(), ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
+						{
+							char name_blending_node[50];
+							strcpy_s(name_blending_node, 50, (*new_item)->name.c_str());
+							ImGui::Text("Name: ");
+							ImGui::SameLine();
+							if (ImGui::InputText("##nameBlendingClip", name_blending_node, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+							{
+								(*new_item)->name = std::string(name_blending_node);
+							}
+
+							for (std::vector<AnimationClip*>::const_iterator item = animation_clips.begin(); item != animation_clips.end(); ++item)
+							{
+								if ((*item) == (*new_item)->clip)
+								{
+									combo_pos = i;
+								}
+								i++;
+							}
+							i = 0;
+
+							if (ImGui::Combo((*new_item)->name.c_str(), &combo_pos, clip_names.c_str()))
+							{
+								(*new_item)->clip = animation_clips.at(combo_pos);
+							}
+
+							if(ImGui::Checkbox("Active", &(*new_item)->active))
+							{
+								if ((*new_item)->active == true)
+								{
+									(*it)->SetActiveBlendingClip((*new_item));
+								}
+								else
+								{
+									(*new_item)->clip->state = AnimationState::A_STOP;
+								}
+							}
+							ImGui::SliderFloat("Weight", &(*new_item)->weight, 0, 1);
+							ImGui::TreePop();
+						}
 					}
 					if (ImGui::Button("Create Transition", ImVec2(125, 25)))
 					{
@@ -666,6 +764,11 @@ void CompAnimation::ShowAnimationInfo()
 							}
 
 							ImGui::Checkbox("Active", &(*trans_it)->condition);
+
+							if (ImGui::Button("DELETE", ImVec2(50, 30)))
+							{
+								(*trans_it)->to_delete = true;
+							}
 
 							ImGui::Checkbox("Has Exit Time", &(*trans_it)->has_exit_time);
 							ImGui::InputFloat("Exit Time:", &(*trans_it)->exit_time);
@@ -698,6 +801,22 @@ void CompAnimation::ShowAnimationInfo()
 		}
 		ImGui::End();
 	}
+
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	{
+		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
+		{
+			if ((*it)->transitions.size() != 0 && (*trans_it)->to_delete == true)
+			{
+				(*it)->transitions.erase(trans_it);
+			}
+		}
+		if (animation_nodes.size() != 0 && (*it)->to_delete == true)
+		{
+			animation_nodes.erase(it);
+		}
+	}
+	
 }
 
 void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
@@ -748,7 +867,8 @@ void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene,
 		json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Name", (*it)->name.c_str());
 		json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".ClipName", (*it)->clip->name.c_str());
 		json_object_dotset_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Active", (*it)->active);
-		
+		json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioName", (*it)->anim_audio.c_str());
+		json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioTime", (*it)->audio_time);
 		int r = 0;
 
 		json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + "NumberOfTransitions", (*it)->transitions.size());
@@ -760,6 +880,19 @@ void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene,
 			json_object_dotset_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(r) + ".Condition", (*trans_it)->condition);
 			json_object_dotset_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(r) + ".HasExitTime", (*trans_it)->has_exit_time);
 			json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Transitions" + std::to_string(r) + ".ExitTime", (*trans_it)->exit_time);
+			r++;
+		}
+
+		r = 0;
+
+		json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + "NumberOfBlendingClips", (*it)->blending_clips.size());
+
+		for (std::vector<BlendingClip*>::const_iterator blend_it = (*it)->blending_clips.begin(); blend_it != (*it)->blending_clips.end(); ++blend_it)
+		{
+			json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(r) + ".Name", (*blend_it)->name.c_str());
+			json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(r) + ".ClipName", (*blend_it)->clip->name.c_str());
+			json_object_dotset_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(r) + ".Active", (*blend_it)->active);
+			json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(r) + ".Weight", (*blend_it)->weight);
 			r++;
 		}
 		i++;
@@ -810,6 +943,7 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			blending_animation = temp;
 		}
 	}
+
 	int num_nodes = json_object_dotget_number_with_std(object, name + "NumberOfNodes");
 
 	for (int i = 0; i < num_nodes; i++)
@@ -822,6 +956,9 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			active_node = temp;
 		}
 		std::string clip_name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".ClipName");
+		//temp->anim_audio = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioName");
+		//temp->audio_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioTime");
+	
 		for (std::vector<AnimationClip*>::iterator temp_it = animation_clips.begin(); temp_it != animation_clips.end(); temp_it++)
 		{
 			if ((*temp_it)->name == clip_name)
@@ -855,6 +992,24 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			}
 			animation_nodes.at(i)->transitions.push_back(temp_transition);
 		}
+
+		int num_blending_clips = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + "NumberOfBlendingClips");
+		for (int j = 0; j < num_blending_clips; j++)
+		{
+			BlendingClip* temp_blending_clip = new BlendingClip();
+			temp_blending_clip->name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".Name");
+			temp_blending_clip->active = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".Active");
+			temp_blending_clip->weight = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".Weight");
+
+			std::string clip_name_blending = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".ClipName");
+			
+			AnimationClip* temp_clip = GetClipFromName(clip_name_blending);
+			if (temp_clip != nullptr)
+			{
+				temp_blending_clip->clip = temp_clip;
+			}
+			animation_nodes.at(i)->blending_clips.push_back(temp_blending_clip);
+		}
 	}
 }
 
@@ -881,8 +1036,9 @@ void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt
 	if(animation_clip != nullptr && animation_clip->state != AnimationState::A_STOP)
 	{
 		animation_clip->time += dt * animation_clip->speed_factor;
-		//animation_clip->time += animation_resource->ticks_per_sec / (1.0f/dt);
-		//animation_clip->time += animation_resource->ticks_per_sec / animation_resource->duration;
+		
+		
+
 		if (animation_clip->state == AnimationState::A_BLENDING)
 		{
 			animation_clip->current_blending_time -= dt;
@@ -903,6 +1059,24 @@ void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt
 			}
 			else
 				animation_clip->state = AnimationState::A_STOP;
+		}
+	}
+}
+
+void CompAnimation::ManageActualAnimationNode(float dt)
+{
+	if (active_node != nullptr)
+	{
+		if (active_node->anim_audio != "Null_Audio")
+		{
+			if (active_node->clip->time > active_node->audio_time - dt && active_node->clip->time <= active_node->audio_time)
+			{
+				CompAudio* temp_emiter = (CompAudio*)parent->FindComponentByType(C_AUDIO);
+				if (temp_emiter != nullptr)
+				{
+					temp_emiter->PlayAudioEvent(active_node->anim_audio.c_str());
+				}
+			}
 		}
 	}
 }
@@ -984,4 +1158,70 @@ void AnimationNode::CreateTransition()
 	temp_transition->name += std::to_string(transitions.size()).c_str();
 	temp_transition->destination = this;
 	transitions.push_back(temp_transition);
+}
+
+void AnimationNode::CreateBlendingClip()
+{
+	BlendingClip* temp_blending_clip = new BlendingClip();
+	temp_blending_clip->name += std::to_string(blending_clips.size());
+	temp_blending_clip->clip = this->clip;
+	blending_clips.push_back(temp_blending_clip);
+}
+
+void AnimationNode::SetActiveBlendingClip(BlendingClip* blnd_clip)
+{
+	blnd_clip->clip->state = AnimationState::A_BLENDING_NODE;
+	blnd_clip->clip->RestartAnimationClip();
+	for (std::vector<BlendingClip*>::iterator new_item = blending_clips.begin(); new_item != blending_clips.end(); ++new_item)
+	{
+		if(blnd_clip != (*new_item))
+		{
+			(*new_item)->clip->state = AnimationState::A_STOP;
+			(*new_item)->active = false;
+		}
+	}
+}
+
+void AnimationNode::SetActiveBlendingClip(std::string name)
+{
+	for (std::vector<BlendingClip*>::iterator new_item = blending_clips.begin(); new_item != blending_clips.end(); ++new_item)
+	{
+		if ((*new_item)->name == name)
+		{
+			SetActiveBlendingClip((*new_item));
+			return;
+		}
+	}
+}
+
+BlendingClip * AnimationNode::GetActiveBlendingClip()
+{
+	for (std::vector<BlendingClip*>::const_iterator new_item = blending_clips.begin(); new_item != blending_clips.end(); ++new_item)
+	{
+		if ((*new_item)->active == true)
+		{
+			return (*new_item);
+		}
+	}
+	return nullptr;
+}
+
+void AnimationNode::SetActiveBlendingClipWeight(float weight)
+{
+	BlendingClip* active = GetActiveBlendingClip();
+	if (active != nullptr)
+	{
+		active->weight = weight;
+	}
+}
+
+void CompAnimation::SetActiveAnimationNode(AnimationNode* active)
+{
+	for (std::vector<AnimationNode*>::const_iterator new_item = animation_nodes.begin(); new_item != animation_nodes.end(); ++new_item)
+	{
+		if ((*new_item) != active)
+		{
+			(*new_item)->active = false;
+		}
+	}
 }

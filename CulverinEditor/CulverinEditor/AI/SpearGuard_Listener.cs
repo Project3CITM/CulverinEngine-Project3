@@ -63,7 +63,7 @@ public class SpearGuard_Listener : PerceptionListener
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemySpear_BT>().InterruptAction();
                 GetComponent<EnemySpear_BT>().player_detected = true;
-                GetComponent<EnemySpear_BT>().engage_combat = true;
+                GetComponent<EnemySpear_BT>().SetAction(Action.ACTION_TYPE.ENGAGE_ACTION);
                 player_seen = true;
                 GetComponent<Movement_Action>().look_at_player = false;
                 GetComponent<ChasePlayer_Action>().SetEvent(event_recieved);
@@ -85,7 +85,7 @@ public class SpearGuard_Listener : PerceptionListener
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemySpear_BT>().player_detected = false;
-                GetComponent<EnemySpear_BT>().disengage_combat = true;
+                GetComponent<EnemySpear_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
                 GetComponent<ChasePlayer_Action>().forgot_event = true;
                 GetComponent<Movement_Action>().look_at_player = true;
                 Debug.Log("Player out of sight");
@@ -97,8 +97,8 @@ public class SpearGuard_Listener : PerceptionListener
     {
         PerceptionHearEvent tmp = (PerceptionHearEvent)event_heard;
 
-        int my_tile_x = my_self.GetComponent<Movement_Action>().GetCurrentTileX();
-        int my_tile_y = my_self.GetComponent<Movement_Action>().GetCurrentTileY();
+        int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
         Debug.Log(my_tile_x.ToString());
         Debug.Log(my_tile_y.ToString());

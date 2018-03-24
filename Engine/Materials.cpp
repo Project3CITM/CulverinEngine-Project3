@@ -6,6 +6,7 @@
 
 Material::Material()
 {
+	active_num = 0;
 }
 
 Material::~Material()

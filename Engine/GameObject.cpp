@@ -5,6 +5,8 @@
 #include "ModuleCamera3D.h"
 #include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleImporter.h"
+#include "ImportScript.h"
 #include "ModuleFS.h"
 #include "Scene.h"
 #include "ModuleGUI.h"
@@ -194,33 +196,6 @@ void GameObject::StartScripts()
 	}
 }
 
-void GameObject::ClearAllVariablesScript()
-{
-	if (active)
-	{
-		//Start Active scripts --------------------------
-		for (uint i = 0; i < components.size(); i++)
-		{
-			if (components[i]->IsActive())
-			{
-				if (components[i]->GetType() == Comp_Type::C_SCRIPT)
-				{
-					((CompScript*)components[i])->ClearVariables();
-				}
-			}
-		}
-
-		//Check child Game Objects -------------------
-		for (uint i = 0; i < childs.size(); i++)
-		{
-			if (childs[i]->IsActive())
-			{
-				childs[i]->ClearAllVariablesScript();
-			}
-		}
-	}
-}
-
 GameObject* GameObject::GetGameObjectbyuid(uint uid)
 {
 	std::queue<GameObject*> obj_queue;
@@ -324,7 +299,7 @@ void GameObject::PreUpdate(float dt)
 		{
 			if (components[i]->WantDelete())
 			{
-				DeleteComponent(components[i]);
+				DeleteComponent(i);
 			}
 			else
 			{
@@ -1979,42 +1954,49 @@ Component* GameObject::GetComponentbyIndex(uint i) const
 
 void GameObject::DeleteAllComponents()
 {
+	Component* comp = nullptr;
 	for (uint i = 0; i < components.size(); i++)
 	{
+		comp = components[i];
 		if (!App->mode_game)
 		{
-			if (((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
+			if (((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied() == comp)
 			{
 				((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetLinkComponentNull();
 			}
 		}
-		components[i]->Clear();
-		RELEASE(components[i]);
+
+		if (comp->InScripting())
+		{
+			App->importer->iScript->RemoveComponentFromMonoList(comp);
+			if (comp->GetType() == C_TRANSFORM)
+			{
+				App->importer->iScript->RemoveTransformPosPointerFromMap(((CompTransform*)comp)->GetPosPointer());
+			}
+		}
+
+		comp->Clear();
+		RELEASE(comp);
 		components[i] = nullptr;
 	}
 	components.clear();
 }
 
-void GameObject::DeleteComponent(Component* component)
+void GameObject::DeleteComponent(uint index)
 {
-	if (component != nullptr && components.size() > 0)
+	if (index < components.size() > 0)
 	{
-		std::vector<Component*>::iterator item = components.begin();
-		for (uint i = 0; i < components.size(); i++)
+		Component* comp = components[index];
+		if (((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied() == comp)
 		{
-			if (component == components[i])
-			{
-				if (((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied() == components[i])
-				{
-					((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetLinkComponentNull();
-				}
-				components[i]->Clear();
-				components.erase(item);
-				break;
-			}
-			item++;
+			((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->SetLinkComponentNull();
 		}
-		RELEASE(component);
+
+		comp->Clear();
+		RELEASE(comp);
+		comp = nullptr;
+
+		components.erase(components.begin() + index);
 	}
 }
 
@@ -2043,7 +2025,28 @@ GameObject* GameObject::GetChildbyName(const char* name) const
 	return nullptr;
 }
 
-GameObject * GameObject::GetChildByRealName(std::string name) const
+GameObject* GameObject::GetChildByTagIndex(const char* tag, int index) const
+{
+	if (childs.size() > 0)
+	{
+		int index_count = 0;
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			if (strcmp(childs[i]->GetTag(), tag) == 0)
+			{
+				if (index_count == index)
+				{
+					return childs[i];
+				}
+				else
+					index_count++;
+			}
+		}
+	}
+	return nullptr;
+}
+
+GameObject* GameObject::GetChildByRealName(std::string name) const
 {
 	if (childs.size() > 0)
 	{
@@ -2231,15 +2234,14 @@ void GameObject::SettoDelete()
 	to_delete = true;
 }
 
-void GameObject::RemoveScriptReference(GameObject* go)
+void GameObject::SetChildToNull(uint index)
 {
-	CompScript* script = (CompScript*)FindComponentByType(Comp_Type::C_SCRIPT);
-	if (script != nullptr)
+	if (index < childs.size())
 	{
-		script->RemoveReferences(go);
+		childs[index] = nullptr;
 	}
-
 }
+
 	//ANIMATION PURPOSES---------------------------
 
 bool GameObject::AreTranslationsActivateds() const

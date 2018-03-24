@@ -15,6 +15,7 @@
 #include "PlayerActions.h"
 #include "CompScript.h"
 #include <direct.h>
+#include "ModuleRenderGui.h"
 #pragma comment(lib, "mono-2.0-sgen.lib")
 
 CSharpScript* ImportScript::current = nullptr;
@@ -452,7 +453,7 @@ MonoObject* ImportScript::GetMonoObject(GameObject* gameobject)
 		std::multimap<MonoObject*, GameObject*>::iterator it = mono_map.begin();
 		while (it != mono_map.end())
 		{
-			if (it->second == gameobject)
+			if (it->second->GetUUID() == gameobject->GetUUID())
 			{
 				return it->first;
 			}
@@ -566,6 +567,88 @@ CSharpScript* ImportScript::GetScriptMono(MonoObject* monoobject)
 	return nullptr;
 }
 
+void ImportScript::RemoveGObjectVarFromScripting(GameObject * object)
+{
+	// Remove GameObject Variable form  multimap only during runtime
+	if (object != nullptr)
+	{
+		std::map<std::string, GameObject*>::const_iterator it_link = map_link_variables.begin();
+		for (; it_link != map_link_variables.end(); it_link++)
+		{
+			if (it_link._Ptr->_Myval.second == object)
+			{
+				map_link_variables.erase(it_link._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+void ImportScript::RemoveGObjectFromMonoMap(GameObject * object)
+{
+	// Remove MonoObject form mono_map multimap only during runtime
+	if (object != nullptr)
+	{
+		std::map<MonoObject*, GameObject*>::const_iterator it_map = mono_map.begin();
+		for (; it_map != mono_map.end(); it_map++)
+		{
+			if (it_map._Ptr->_Myval.second == object)
+			{
+				mono_map.erase(it_map._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+
+void ImportScript::RemoveComponentFromMonoList(Component* comp)
+{
+	// Remove Component from Components multimap only during runtime
+	if (comp != nullptr)
+	{
+		std::map<MonoObject*, Component*>::const_iterator it_comp = mono_comp.begin();
+		for (; it_comp != mono_comp.end(); it_comp++)
+		{
+			if (it_comp._Ptr->_Myval.second == comp)
+			{
+				mono_comp.erase(it_comp._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+void ImportScript::RemoveTransformPosPointerFromMap(float3 * pospointer)
+{
+	// Remove Transform Position pointer from mono_pos multimap only during runtime
+	if (pospointer != nullptr)
+	{
+		std::map<MonoObject*, float3*>::const_iterator it_pos = mono_pos.begin();
+		for (; it_pos != mono_pos.end(); it_pos++)
+		{
+			if (it_pos._Ptr->_Myval.second == pospointer)
+			{
+				mono_pos.erase(it_pos._Ptr->_Myval.first);
+				return;
+			}
+		}
+	}
+}
+
+void ImportScript::RemoveGObjectReferencesFromMonoScript(GameObject * object)
+{
+	// Set variables that reference to this object to null, only during runtime
+	if (object != nullptr)
+	{
+		std::map<MonoObject*, CSharpScript*>::const_iterator it_script = mono_script.begin();
+		for (; it_script != mono_script.end(); it_script++)
+		{
+			it_script._Ptr->_Myval.second->RemoveReferences(object);
+			return;
+		}
+	}
+}
 
 bool ImportScript::IsNameUnique(std::string name) const
 {
@@ -776,6 +859,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::ChildCount", (const void*)ChildCount);
 	mono_add_internal_call("CulverinEditor.GameObject::GetChildByIndex", (const void*)GetChildByIndex);
 	mono_add_internal_call("CulverinEditor.GameObject::GetChildByName", (const void*)GetChildByName);
+	mono_add_internal_call("CulverinEditor.GameObject::GetChildByTagIndex", (const void*)GetChildByTagIndex);
 	mono_add_internal_call("CulverinEditor.GameObject::Destroy",(const void*)DeleteGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::SetActive",(const void*)SetActive);
 	mono_add_internal_call("CulverinEditor.GameObject::IsActive",(const void*)IsActive);
@@ -937,6 +1021,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationRunning", (const void*)IsAnimationRunning);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimOverXTime", (const void*)IsAnimOverXTime);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipsSpeed", (const void*)SetClipsSpeed);
+	mono_add_internal_call("CulverinEditor.CompAnimation::GetClipDuration", (const void*)GetClipDuration);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipDuration", (const void*)SetClipDuration);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetActiveBlendingClip", (const void*)SetActiveBlendingClip);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetActiveBlendingClipWeight", (const void*)SetActiveBlendingClipWeight);
 
 	//MODULE PHYSICS FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.PhysX::RayCast", (const void*)RayCast);
@@ -962,12 +1050,22 @@ void ImportScript::LoadScene(MonoObject * scene_name)
 		MonoString* strings = mono_object_to_string(scene_name, NULL);
 		const char* scene = mono_string_to_utf8(strings);
 
-		std::string directory_scene = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-		directory_scene += "/";
+		std::string directory_scene = DIRECTORY_ASSETS;
 		directory_scene += scene;
 		directory_scene += ".scene.json";
+		/*
+		----------------------------------------------------------------
+
+		This is a vicente fix, in the future we need to make an event to change scene
+		to turn the focus into nullptr
+		*/
+		App->render_gui->focus = nullptr;
+		App->render_gui->selected = nullptr;
+		//----------------------------------------------------------------
+
+
 		App->SetActualScene(directory_scene.c_str());
-		App->WantToLoad();
+		App->WantToLoad(true);
 	}
 }
 
@@ -1179,19 +1277,24 @@ MonoObject* ImportScript::GetOwnGameObject()
 	return current->GetOwnGameObject();
 }
 
-int ImportScript::ChildCount(MonoObject * object)
+int ImportScript::ChildCount(MonoObject* object)
 {
 	return current->ChildCount(object);
 }
 
-MonoObject * ImportScript::GetChildByIndex(MonoObject * object, int index)
+MonoObject* ImportScript::GetChildByIndex(MonoObject* object, int index)
 {
 	return current->GetChildByIndex(object, index);
 }
 
-MonoObject * ImportScript::GetChildByName(MonoObject * object, MonoString * name)
+MonoObject* ImportScript::GetChildByName(MonoObject* object, MonoString* name)
 {
 	return current->GetChildByName(object, name);
+}
+
+MonoObject*	ImportScript::GetChildByTagIndex(MonoObject* object, MonoString* tag, int index)
+{
+	return current->GetChildByTagIndex(object, tag, index);
 }
 
 void ImportScript::SetName(MonoObject* object, MonoString* name)
@@ -1646,6 +1749,26 @@ mono_bool ImportScript::IsAnimOverXTime(MonoObject * object, float num_between_0
 void ImportScript::SetClipsSpeed(MonoObject * object, float speed_value)
 {
 	current->SetClipsSpeed(object, speed_value);
+}
+
+float ImportScript::GetClipDuration(MonoObject * object, MonoString * string)
+{
+	return current->GetClipDuration(object, string);
+}
+
+void ImportScript::SetClipDuration(MonoObject * object, MonoString * string, float duration)
+{
+	current->SetClipDuration(object, string, duration);
+}
+
+void ImportScript::SetActiveBlendingClip(MonoObject * object, MonoString * string)
+{
+	current->SetActiveBlendingClip(object, string);
+}
+
+void ImportScript::SetActiveBlendingClipWeight(MonoObject * object, float weight)
+{
+	current->SetActiveBlendingClipWeight(object, weight);
 }
 
 void ImportScript::SetAlbedo(MonoObject * object, MonoString * string)

@@ -28,6 +28,7 @@
 #include "mmgr/mmgr.h"
 #include "ModuleEventSystem.h"
 #include "ModuleKeyBinding.h"
+#include "ImportScript.h"
 static int malloc_count;
 static void *counted_malloc(size_t size);
 static void counted_free(void *ptr);
@@ -165,6 +166,7 @@ bool Application::Init()
 			}
 			item++;
 		}
+		ImGui_ImplSdlGL3_Init(App->window->window);
 		real_time.engine_start_time.Start();
 		real_time.ms_timer.Start();
 	}
@@ -225,16 +227,23 @@ void Application::FinishUpdate()
 	if (want_to_load == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		App->scene->ClearAllVariablesScript();
 		App->scene->DeleteAllGameObjects(App->scene->root);
 		json_seria->LoadScene(actual_scene.c_str());
+
+		if (load_in_game)
+		{
+			importer->iScript->SetMonoMap(App->scene->root, true);
+			scene->root->StartScripts();
+		}
 		//App->resource_manager->ReImportAllScripts();
 		if (engine_state != EngineState::STOP)
 		{
 			change_to_game = true;
 		}
 		want_to_load = false;
+		load_in_game = false;
 	}
+	
 	// ---------------------------------------------
 
 	// Framerate calculations ----------------------
@@ -329,6 +338,24 @@ update_status Application::Update()
 	/* ImGui + ImGuizmo Begin Frame */
 	ImGui_ImplSdlGL3_NewFrame(window->window);
 	ImGuizmo::BeginFrame();
+
+	if (mode_game)
+	{
+		static bool active_fps = false;
+		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
+		{
+			active_fps = !active_fps;
+		}
+		if (active_fps)
+		{
+			ImGui::SetNextWindowPos(ImVec2(20, 20));
+			ImGui::Begin("Info", NULL, ImVec2(0, 0), 0.3f, ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings |
+				ImGuiWindowFlags_NoInputs);
+			ImGui::Text("FPS: %.0f", App->fps_log[App->frame_index - 1]);
+			ImGui::End();
+		}
+	}
 
 	item = list_modules.begin();
 
@@ -768,9 +795,10 @@ void Application::WantToSave()
 	want_to_save = true;
 }
 
-void Application::WantToLoad()
+void Application::WantToLoad(bool in_game)
 {
 	want_to_load = true;
+	load_in_game = in_game;
 }
 
 void Application::ChangeCamera(const char* window)

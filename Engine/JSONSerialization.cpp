@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ResourceMaterial.h"
 #include "ResourceScript.h"
+#include "ResourceFont.h"
 #include "ResourceAnimation.h"
 #include "CompScript.h"
 #include "ModuleFS.h"
@@ -239,7 +240,10 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			}
 		}
 		App->scene->RecalculateStaticObjects();
+
 		templist.clear();
+		
+		App->scene->root->SetName(App->fs->GetOnlyName(sceneName).c_str());
 
 		//Link Skeletons
 		for (std::vector<GameObject*>::iterator it = mesh_gos.begin(); it != mesh_gos.end(); it++)
@@ -890,6 +894,34 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 	}
 }
 
+void JSONSerialization::SaveFont(const ResourceFont * font, const char * directory, const char * fileName)
+{
+	LOG("SAVING Font %s -----", font->name.c_str());
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = directory;
+	nameJson += "/";
+	nameJson += font->name;
+	nameJson += ".meta.json";
+	config_file = json_value_init_object();
+
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		json_object_clear(config);
+		json_object_dotset_string_with_std(config, "Font.Directory Material", App->fs->GetToAsstes(fileName).c_str());
+		json_object_dotset_number_with_std(config, "Font.UUID Resource", font->GetUUID());
+		json_object_dotset_string_with_std(config, "Font.Name", font->name.c_str());
+		std::experimental::filesystem::file_time_type temp = std::experimental::filesystem::last_write_time(fileName);
+		std::time_t cftime = decltype(temp)::clock::to_time_t(temp);
+		json_object_dotset_number_with_std(config, "Font.Last Write", cftime);
+		json_serialize_to_file(config_file, nameJson.c_str());
+	}
+	json_value_free(config_file);
+}
+
 
 
 ReImport JSONSerialization::GetUUIDPrefab(const char* file, uint id)
@@ -997,6 +1029,37 @@ ReImport JSONSerialization::GetUUIDScript(const char* file)
 	return info;
 	//json_value_free(config_file);
 }
+ReImport JSONSerialization::GetUUIDFont(const char* file)
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = file;
+	nameJson += ".meta.json";
+	config_file = json_parse_file(nameJson.c_str());
+
+	ReImport info;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		//config_node = json_object_get_object(config, "Material");
+		info.uuid = json_object_dotget_number_with_std(config, "Font.UUID Resource");
+		info.directory_obj = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Font.Directory Material"));
+		info.name_mesh = App->fs->ConverttoConstChar(json_object_dotget_string_with_std(config, "Font.Name"));
+		if (strcmp(file, info.directory_obj) == 0)
+		{
+			json_value_free(config_file);
+			return info;
+		}
+		else
+		{
+			info.directory_obj = nullptr;
+		}
+	}
+	json_value_free(config_file);
+	return info;
+	//json_value_free(config_file);
+}
 
 std::time_t JSONSerialization::GetLastWritePrefab(const char* file)
 {
@@ -1054,7 +1117,24 @@ std::time_t JSONSerialization::GetLastWriteScript(const char* file)
 	json_value_free(config_file);
 	return last_write;
 }
+std::time_t JSONSerialization::GetLastWriteFont(const char* file)
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
 
+	std::string nameJson = file;
+	nameJson += ".meta.json";
+	config_file = json_parse_file(nameJson.c_str());
+
+	std::time_t last_write = 0;
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		last_write = json_object_dotget_number(config, "Font.Last Write");
+	}
+	json_value_free(config_file);
+	return last_write;
+}
 uint JSONSerialization::ResourcesInLibrary(uint id, std::string& path)
 {
 	JSON_Value* config_file;

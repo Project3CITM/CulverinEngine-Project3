@@ -21,6 +21,7 @@ CompTransform::CompTransform(Comp_Type t, GameObject* parent) : Component(t, par
 {
 	name_component = "Transform";
 	position_pointer = &position;
+	global_position_pointer = &position_global;
 }
 
 CompTransform::CompTransform(const CompTransform& copy, GameObject* parent) : Component(copy.GetType(), parent)
@@ -91,6 +92,11 @@ void CompTransform::Update(float dt)
 				{
 					mCurrentGizmoOperation = ImGuizmo::SCALE;
 				}
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN)
+			{
+				SetUpVector(float3(0, 0.7, 0.7));
 			}
 
 			// EDIT TRANSFORM QITH GUIZMO
@@ -260,7 +266,7 @@ void CompTransform::ShowTransform(float drag_speed)
 			editing_transform = true;
 		}
 		ImGui::Text("Rotation"); ImGui::SameLine(op + 30);
-		if (ImGui::DragFloat3("##rot", &rotation_euler[0], drag_speed))
+		if (ImGui::DragFloat3("##rot", &rotation_euler[0], drag_speed,-360,360))
 		{
 			SetRot(rotation_euler);
 			editing_transform = true;
@@ -285,7 +291,10 @@ void CompTransform::ShowTransform(float drag_speed)
 
 void CompTransform::SetPosGlobal(float3 pos)
 {
-	position_global = pos;
+	float4 tmp = float4(pos, 1);
+	pos = (parent->GetComponentTransform()->global_transform.Inverted()* local_transform * tmp).xyz();
+	SetPos(pos);
+
 	toUpdate = true;
 }
 
@@ -346,7 +355,10 @@ void CompTransform::SetRot(Quat rot)
 
 void CompTransform::SetRot(float3 rot)
 {
-	rotation = Quat::FromEulerXYZ(rot[0] * DEGTORAD, rot[1] * DEGTORAD, rot[2] * DEGTORAD);
+	rot.x *= DEGTORAD;
+	rot.y *= DEGTORAD;
+	rot.z *= DEGTORAD;
+	rotation = Quat::FromEulerXYZ(rot.x, rot.y, rot.z);
 	toUpdate = true;
 }
 
@@ -396,7 +408,11 @@ void CompTransform::ResetMatrix()
 
 void CompTransform::SetLocalTransform()
 {
-	local_transform = float4x4::FromTRS(position, rotation, scale);
+	local_transform = float4x4::FromQuat(rotation);
+
+	local_transform = float4x4::Scale(scale, float3(0, 0, 0))* local_transform;
+
+	local_transform.float4x4::SetTranslatePart(position.x, position.y, position.z);
 }
 
 void CompTransform::SetGlobalTransform()
@@ -448,6 +464,7 @@ void CompTransform::UpdateMatrix(ImGuizmo::MODE mode)
 		UpdateGlobalTransform(); /*Then, update global matrix*/
 		break;
 	}
+
 	default:
 		break;
 	}
@@ -455,9 +472,7 @@ void CompTransform::UpdateMatrix(ImGuizmo::MODE mode)
 
 float3 CompTransform::GetForwardVector() const
 {
-	float4 result(0.0f, 0.0f, 1.0, 0.0);
-	result = global_transform * result;
-	return float3(result.x, result.y, result.z);
+	return global_transform.Col3(2);
 }
 
 float3 CompTransform::GetBackwardVector() const
@@ -467,9 +482,7 @@ float3 CompTransform::GetBackwardVector() const
 
 float3 CompTransform::GetUpVector() const
 {
-	float4 result(0.0f, 1.0f, 0.0, 0.0);
-	result = global_transform * result;
-	return float3(result.x, result.y, result.z);
+	return global_transform.Col3(1);
 }
 
 float3 CompTransform::GetDownVector() const
@@ -479,9 +492,7 @@ float3 CompTransform::GetDownVector() const
 
 float3 CompTransform::GetRightVector() const
 {
-	float4 result(1.0f, 0.0f, 0.0, 0.0);
-	result = global_transform * result;
-	return float3(result.x, result.y, result.z);
+	return global_transform.Col3(0);
 }
 
 float3 CompTransform::GetLeftVector() const
@@ -495,20 +506,22 @@ void CompTransform::SetForwardVector(float3 vec)
 
 	float3 up = GetUpVector();
 
-	float3 right = math::Cross(vec,up);
-	up = math::Cross(vec, right);
+	float3 right = math::Cross(up, vec).Normalized();
+	up = math::Cross(vec,right).Normalized();
 
-	local_transform[0][0] = right.x;
-	local_transform[1][0] = right.y;
-	local_transform[2][0] = right.z;
+	float3 translation = global_transform.TranslatePart();
 
-	local_transform[0][1] = up.x;
-	local_transform[1][1] = up.y;
-	local_transform[2][1] = up.z;
+	float4x4 new_transform(float3x4(right, up, vec, translation));
 
-	local_transform[0][2] = vec.x;
-	local_transform[1][2] = vec.y;
-	local_transform[2][2] = vec.z;
+	GameObject* parent_go = parent->GetParent();
+
+	if (parent_go != nullptr)
+	{
+		float4x4 parent_transform = parent_go->GetComponentTransform()->GetGlobalTransform();
+		local_transform = parent_transform.Inverted() * new_transform;
+	}
+	else
+		local_transform = new_transform;
 
 	toUpdate = true;
 }
@@ -524,21 +537,19 @@ void CompTransform::SetUpVector(float3 vec)
 
 	float3 frw = GetForwardVector();
 
-	float3 right = math::Cross(vec, frw);
-	frw = math::Cross(vec, right);
+	float3 right = math::Cross(vec, frw).Normalized();
+	frw = math::Cross(right,vec).Normalized();
 
-	local_transform[0][0] = right.x;
-	local_transform[1][0] = right.y;
-	local_transform[2][0] = right.z;
+	float4x4 new_transform = float4x4(float3x3(right, vec, frw));
 
-	local_transform[0][1] = vec.x;
-	local_transform[1][1] = vec.y;
-	local_transform[2][1] = vec.z;
-
-	local_transform[0][2] = frw.x;
-	local_transform[1][2] = frw.y;
-	local_transform[2][2] = frw.z;
-
+	const GameObject* parentparent = parent->GetParent();
+	if (parentparent != nullptr && parentparent->GetUUID() != 1)
+	{
+		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
+	}
+	rotation_euler = new_transform.ToEulerXYZ();;
+	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation_euler *= RADTODEG;
 	toUpdate = true;
 }
 
@@ -553,21 +564,18 @@ void CompTransform::SetRightVector(float3 vec)
 
 	float3 frw = GetForwardVector();
 
-	float3 up = math::Cross(vec, frw);
+	float3 up = math::Cross(frw, vec);
 	frw = math::Cross(vec, up);
+	float4x4 new_transform = float4x4(float3x3(vec, up, frw));
 
-	local_transform[0][0] = vec.x;
-	local_transform[1][0] = vec.y;
-	local_transform[2][0] = vec.z;
-
-	local_transform[0][1] = up.x;
-	local_transform[1][1] = up.y;
-	local_transform[2][1] = up.z;
-
-	local_transform[0][2] = frw.x;
-	local_transform[1][2] = frw.y;
-	local_transform[2][2] = frw.z;
-
+	const GameObject* parentparent = parent->GetParent();
+	if (parentparent != nullptr && parentparent->GetUUID() != 1)
+	{
+		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
+	}
+	rotation_euler = new_transform.ToEulerXYZ();;
+	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation_euler *= RADTODEG;
 	toUpdate = true;
 }
 
@@ -691,6 +699,11 @@ bool CompTransform::GetUpdated() const
 float3* CompTransform::GetPosPointer()
 {
 	return position_pointer;
+}
+
+float3* CompTransform::GetGlobalPosPointer()
+{
+	return global_position_pointer;
 }
 
 void CompTransform::Freeze(bool freeze)

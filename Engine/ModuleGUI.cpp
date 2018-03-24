@@ -69,7 +69,6 @@ bool ModuleGUI::Start()
 	perf_timer.Start();
 	
 	LOG("Using Glew %s", glewGetString(GLEW_VERSION));
-	ImGui_ImplSdlGL3_Init(App->window->window);
 	ImGuiIO& io{ ImGui::GetIO() };
 
 	io.Fonts->AddFontFromFileTTF("Fonts\\Ruda-Bold.ttf", 15);
@@ -121,7 +120,6 @@ update_status ModuleGUI::Update(float dt)
 			{
 				if (App->scene->scene_saved)
 				{
-					App->scene->ClearAllVariablesScript();
 					App->scene->DeleteAllGameObjects(App->scene->root);
 					App->event_system->ClearEvents(EventType::EVENT_DRAW);
 					App->scene->root->SetName("NewScene");

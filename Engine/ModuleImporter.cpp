@@ -4,6 +4,7 @@
 #include "ImportMaterial.h"
 #include "ImportScript.h"
 #include "ImportAnimation.h"
+#include "ImportFont.h"
 #include "CompMaterial.h"
 #include "CompTransform.h"
 #include "ModuleFS.h"
@@ -51,6 +52,7 @@ bool ModuleImporter::Init(JSON_Object* node)
 	iMaterial = new ImportMaterial();
 	iScript = new ImportScript();
 	iAnimation = new ImportAnimation();
+	iFont = new ImportFont();
 
 	// Now InitSystem Domain Mono
 	if (iScript->InitScriptingSystem())
@@ -235,14 +237,10 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 			if (scene->HasAnimations())
 			{
 				std::string fbx_name = App->fs->GetOnlyName(file);
-				for (int i = 0; i < scene->mNumAnimations; i++)
-				{
-					scene->mAnimations[i]->mName = fbx_name;
-					scene->mAnimations[i]->mName.Append("Animation");
-					scene->mAnimations[i]->mName.Append(std::to_string(i).c_str());
-					LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[i]->mName.C_Str());
-					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str());
-				}
+				scene->mAnimations[scene->mNumAnimations - 1]->mName = fbx_name;
+				scene->mAnimations[scene->mNumAnimations - 1]->mName.Append("Animation");
+				LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str());
+				iAnimation->Import(scene->mAnimations[scene->mNumAnimations - 1], scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str(), fbx_name.c_str());
 			}
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, file);
 			obj->SetName(App->fs->FixName_directory(file).c_str());
@@ -281,6 +279,13 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 	{
 		LOG("IMPORTING SCRIPT, File Path: %s", file);
 		iScript->Import(file, 0, isAutoImport);
+
+		break;
+	}
+	case Resource::Type::FONT:
+	{
+		LOG("IMPORTING SCRIPT, File Path: %s", file);
+		iFont->Import(file, 0, isAutoImport);
 
 		break;
 	}
@@ -392,6 +397,26 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 		if (isReImport == false)
 		{
 			iScript->Import(file);
+		}
+		break;
+	}
+	case Resource::Type::FONT:
+	{
+		LOG("IMPORTING Font, File Path: %s", file);
+		//
+		bool isReImport = false;
+		for (int i = 0; i < resourcesToReimport.size(); i++)
+		{
+			if (strcmp(file, resourcesToReimport[i].directory_obj) == 0)
+			{
+				iFont->Import(file, resourcesToReimport[i].uuid);
+				isReImport = true;
+				break;
+			}
+		}
+		if (isReImport == false)
+		{
+			iFont->Import(file);
 		}
 		break;
 	}

@@ -55,8 +55,10 @@ CompMesh::~CompMesh()
 			resource_mesh->num_game_objects_use_me--;
 		}
 	}
+	comp_material->material->active_num--;
 	comp_material = nullptr;
 	resource_mesh = nullptr;
+
 }
 
 //void CompMesh::Init(std::vector<_Vertex> v, std::vector<uint> i)
@@ -404,9 +406,9 @@ void CompMesh::Draw(bool alpha)
 
 			if (skeleton != nullptr)
 			{
-				total_save_buffer += 4; // 4 weights
+				//total_save_buffer += 4; // 4 weights
 
-				bones_size_in_buffer = 4 * sizeof(GLint);
+				bones_size_in_buffer = 4 * sizeof(GLint) + 4 * sizeof(GLfloat);
 
 				GLuint skinning_texture_id = glGetUniformLocation(material->GetProgramID(), "_skinning_text");
 

@@ -38,15 +38,16 @@ public class Investigate_Action : Action
 
     public override bool ActionStart()
     {
+        Debug.Log("Going to investigate");
         bool ret = GetComponent<Movement_Action>().ActionStart();
 
-        anim.SetClipsSpeed(anim_speed);
-        anim.SetTransition("ToPatrol");
+        //anim.SetClipsSpeed(anim_speed);
+        //anim.SetTransition("ToPatrol");
 
         int current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        GetComponent<Movement_Action>().GoTo(current_tile_x, current_tile_y, event_to_react.objective_tile_x, event_to_react.objective_tile_y);
+        GetComponent<Movement_Action>().GoTo(event_to_react.objective_tile_x, event_to_react.objective_tile_y);
 
         init_tile_x = current_tile_x;
         init_tile_y = current_tile_y;
@@ -94,7 +95,7 @@ public class Investigate_Action : Action
                     int current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
                     int current_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-                    GetComponent<Movement_Action>().GoTo(current_tile_x, current_tile_y, init_tile_x, init_tile_y);
+                    GetComponent<Movement_Action>().GoTo(init_tile_x, init_tile_y);
 
                     if (!GetComponent<Movement_Action>().ActionStart())
                         return ACTION_RESULT.AR_FAIL;
@@ -104,6 +105,7 @@ public class Investigate_Action : Action
 
                 if (interupt)
                 {
+                    //Need to change to add more enemies
                     return ACTION_RESULT.AR_FAIL;
                 }
 
@@ -139,6 +141,14 @@ public class Investigate_Action : Action
     public void SetEvent(PerceptionEvent e)
     {
         event_to_react = e;
+    }
+
+    public override bool ActionEnd()
+    {
+        interupt = false;
+        GetComponent<Movement_Action>().ActionEnd();
+
+        return false;
     }
 }
 

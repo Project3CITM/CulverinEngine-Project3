@@ -21,12 +21,14 @@ public class SwordGuard_Listener : PerceptionListener
 
     public override void OnEventRecieved(PerceptionEvent event_recieved)
     {
-        if (IsPriotitaryEvent(event_recieved))
+        if (IsPriotitaryEvent(event_recieved) == true)
         {
             ClearEvents();
-            events_in_memory.Add(event_recieved);
         }
-        else return;
+        else
+        {
+            return;
+        }
 
         switch (event_recieved.type)
         {
@@ -34,6 +36,7 @@ public class SwordGuard_Listener : PerceptionListener
             case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
 
                 PerceptionHearEvent tmp = (PerceptionHearEvent)event_recieved;
+                Debug.Log("Event Recieved");
 
                 if (OnHearRange(tmp))
                 {
@@ -45,6 +48,8 @@ public class SwordGuard_Listener : PerceptionListener
                         GetComponent<Investigate_Action>().forgot_event = false;
                         GetComponent<Investigate_Action>().SetEvent(event_to_memory);
                         GetComponent<EnemySword_BT>().InterruptAction();
+                        GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.INVESTIGATE_ACTION);
+
                         events_in_memory.Add(event_to_memory);
 
                         Debug.Log("I Heard The Player");
@@ -57,6 +62,7 @@ public class SwordGuard_Listener : PerceptionListener
                         GetComponent<Investigate_Action>().forgot_event = false;
                         GetComponent<Investigate_Action>().SetEvent(event_to_memory);
                         GetComponent<EnemySword_BT>().InterruptAction();
+                        GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.INVESTIGATE_ACTION);
 
                         events_in_memory.Add(event_to_memory);
 
@@ -78,9 +84,10 @@ public class SwordGuard_Listener : PerceptionListener
                     events_in_memory.Add(new_event_to_memory);
                     GetComponent<EnemySword_BT>().InterruptAction();
                     GetComponent<EnemySword_BT>().player_detected = true;
-                    GetComponent<EnemySword_BT>().engage_combat = true;
+                    GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.ENGAGE_ACTION);
                     GetComponent<ChasePlayer_Action>().SetEvent(new_event_to_memory);
                     player_seen = true;
+                    new_event_to_memory.start_counting = false;
                     Debug.Log("Player in sight");
                 }
                 break;
@@ -100,33 +107,30 @@ public class SwordGuard_Listener : PerceptionListener
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemySword_BT>().player_detected = false;
-                GetComponent<EnemySword_BT>().disengage_combat = true;
+                GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
                 GetComponent<ChasePlayer_Action>().forgot_event = true;
                 Debug.Log("Player out of sight");
                 break;
         }
     }
 
-    bool OnHearRange(PerceptionEvent event_heard)
+    bool OnHearRange(PerceptionHearEvent event_heard)
     {
+        int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        PerceptionHearEvent tmp = (PerceptionHearEvent)event_heard;
-
-        int my_tile_x = my_self.GetComponent<Movement_Action>().GetCurrentTileX();
-        int my_tile_y = my_self.GetComponent<Movement_Action>().GetCurrentTileY();
-
-        if (hear_range < tmp.radius_in_tiles)
+        if (hear_range < event_heard.radius_in_tiles)
         {
-            if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles))
+            if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, event_heard.objective_tile_x, event_heard.objective_tile_y, event_heard.radius_in_tiles))
                 return true;
-
+            
             return false;
         }
         else
         {
-            if (RadiusOverlap(tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles, my_tile_x, my_tile_y, hear_range))
+            if (RadiusOverlap(event_heard.objective_tile_x, event_heard.objective_tile_y, event_heard.radius_in_tiles, my_tile_x, my_tile_y, hear_range))
                 return true;
-
+           
             return false;
         }
     }
@@ -162,6 +166,7 @@ public class SwordGuard_Listener : PerceptionListener
             && ((little_tile_y + little_radius) <= (big_tile_y + big_radius)))
             return true;
 
+        Debug.Log("Not overlap");
         return false;
     }
 }

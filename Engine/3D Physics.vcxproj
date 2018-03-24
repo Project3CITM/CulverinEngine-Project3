@@ -14,7 +14,7 @@
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
     <ProjectName>CulverinEngine</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -142,6 +142,7 @@
     <ClInclude Include="ImGui\imgui_dock_v2.h" />
     <ClInclude Include="ImGui\imgui_graph_nodes.h" />
     <ClInclude Include="ImportAnimation.h" />
+    <ClInclude Include="ImportFont.h" />
     <ClInclude Include="ImportMesh.h" />
     <ClInclude Include="ImportMaterial.h" />
     <ClInclude Include="CompMesh.h" />
@@ -496,6 +497,7 @@
     <ClCompile Include="ImGui\imgui_dock_v2.cpp" />
     <ClCompile Include="ImGui\imgui_graph_nodes.cpp" />
     <ClCompile Include="ImportAnimation.cpp" />
+    <ClCompile Include="ImportFont.cpp" />
     <ClCompile Include="ImportMesh.cpp" />
     <ClCompile Include="ImportMaterial.cpp" />
     <ClCompile Include="CompMesh.cpp" />
