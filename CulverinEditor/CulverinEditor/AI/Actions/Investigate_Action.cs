@@ -62,6 +62,8 @@ public class Investigate_Action : Action
             case INVESTIGATESTATE.INVESTIGATE:
                 //Trigger investigate animation
 
+                Debug.Log("Forget Event:" + forgot_event);
+
                 if (interupt)
                 {
                     interupt = false;
@@ -74,10 +76,10 @@ public class Investigate_Action : Action
                 {
                     move.GoTo(init_tile_x, init_tile_y);
 
+                    my_state = INVESTIGATESTATE.RETURNING_TO_START;
+
                     if (move.ActionStart() == false)
                         return ACTION_RESULT.AR_FAIL;
-
-                    my_state = INVESTIGATESTATE.RETURNING_TO_START;
                 }
 
                 return ACTION_RESULT.AR_IN_PROGRESS;
