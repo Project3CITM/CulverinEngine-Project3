@@ -1035,14 +1035,17 @@ void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt
 
 void CompAnimation::ManageActualAnimationNode(float dt)
 {
-	if (active_node->anim_audio != "Null_Audio")
+	if (active_node != nullptr)
 	{
-		if (active_node->clip->time > active_node->audio_time - dt && active_node->clip->time <= active_node->audio_time)
+		if (active_node->anim_audio != "Null_Audio")
 		{
-			CompAudio* temp_emiter = (CompAudio*)parent->FindComponentByType(C_AUDIO);
-			if (temp_emiter != nullptr)
+			if (active_node->clip->time > active_node->audio_time - dt && active_node->clip->time <= active_node->audio_time)
 			{
-				temp_emiter->PlayAudioEvent("Dracarys");
+				CompAudio* temp_emiter = (CompAudio*)parent->FindComponentByType(C_AUDIO);
+				if (temp_emiter != nullptr)
+				{
+					temp_emiter->PlayAudioEvent(active_node->anim_audio.c_str());
+				}
 			}
 		}
 	}
