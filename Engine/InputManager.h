@@ -54,9 +54,10 @@ private:
 
 	bool window_open = false;
 	std::string name;
-	std::string selected_action_name;
-	std::string selected_action_key_positive;
-	std::string selected_action_key_negative;
+	char selected_action_name[50] = "default";
+	char selected_action_key_positive[50] = "default";
+	char selected_action_key_negative[50] = "default";
+
 	int action_type = 0;
 };
 #endif //INPUT_MANAGER_H

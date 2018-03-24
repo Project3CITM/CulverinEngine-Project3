@@ -38,7 +38,7 @@ bool MouseButtonAction::ProcessEventAction(SDL_Event * input_event)
 
 bool MouseButtonAction::UpdateEventAction(int mouse_x, int mouse_y, Uint32 buttons)
 {
-
+	bool ret = false;
 	if (buttons & SDL_BUTTON(positive_button->event_value))
 	{
 		if (state == Keystateaction::KEY_IDLE_ACTION)
@@ -51,12 +51,15 @@ bool MouseButtonAction::UpdateEventAction(int mouse_x, int mouse_y, Uint32 butto
 		if (state == Keystateaction::KEY_REPEAT_ACTION || state == Keystateaction::KEY_DOWN_ACTION)
 			state = Keystateaction::KEY_UP_ACTION;
 		else
+		{
 			state = Keystateaction::KEY_IDLE_ACTION;
+			ret = true;
+		}
 	}
 
 	// negative
 
-	return true;
+	return ret;
 
 }
 
@@ -139,7 +142,9 @@ bool KeyAction::DetectAction(const SDL_Event &input_event) {
 			}
 			else if (negative_button->event_value == input_event.key.keysym.scancode)
 			{
+				state = Keystateaction::KEY_DOWN_ACTION;
 				this->direction_axis = -1.0f;
+				return true;
 			}
 
 		}
@@ -167,7 +172,7 @@ bool KeyAction::DetectAction(const SDL_Event &input_event) {
 
 bool KeyAction::UpdateEventAction(const Uint8 * array_kys)
 {
-
+	bool ret = false;
 	int state_event = -1;
 	/*if (state == Keystateaction::KEY_IDLE_ACTION)
 	{
@@ -178,40 +183,73 @@ bool KeyAction::UpdateEventAction(const Uint8 * array_kys)
 		return true;
 	}
 
-	if (positive_button != nullptr)
+	state_event = UpdateKeyRelation(positive_button, array_kys);
+	ret = UpdateStateEvent(state_event,1.0f);
+	if (ret)
 	{
-		switch (positive_button->key_type)
-		{
-		case KeyBindingType::KEYBOARD_DEVICE:
-			state_event = array_kys[positive_button->event_value];
-			this->direction_axis = 0.0f;
-			break;
-
-		case KeyBindingType::CONTROLLER_BUTTON_DEVICE:
-			state_event = SDL_GameControllerGetButton(App->input->controller, (SDL_GameControllerButton)positive_button->event_value);
-			break;
-		}
+		state_event = UpdateKeyRelation(negative_button, array_kys);
+		ret = UpdateStateEvent(state_event,-1.0f);
 	}
 
 
+
+	return ret;
+}
+
+int KeyAction::UpdateKeyRelation(KeyRelation * to_update, const Uint8 * array_kys)
+{
+	int ret = -1;
+
+	if (to_update != nullptr)
+	{
+		switch (to_update->key_type)
+		{
+		case KeyBindingType::KEYBOARD_DEVICE:
+			ret = array_kys[to_update->event_value];
+			break;
+
+		case KeyBindingType::CONTROLLER_BUTTON_DEVICE:
+			ret = SDL_GameControllerGetButton(App->input->controller, (SDL_GameControllerButton)to_update->event_value);
+			break;
+		}
+	}
+	return ret;
+}
+
+bool KeyAction::UpdateStateEvent(int state_event,float axis_value)
+{
+	bool ret = false;
+	if (state_event == -1)
+		return true;
 	if (state_event == 1)
 	{
 		if (state == Keystateaction::KEY_IDLE_ACTION) {
 			state = Keystateaction::KEY_DOWN_ACTION;
+			direction_axis = axis_value;
 		}
 		else
+		{
 			state = Keystateaction::KEY_REPEAT_ACTION;
+			direction_axis = axis_value;
+		}
 	}
 	else
 	{
-		if (state == Keystateaction::KEY_REPEAT_ACTION || state == Keystateaction::KEY_DOWN_ACTION) {
+		if (state == Keystateaction::KEY_REPEAT_ACTION || state == Keystateaction::KEY_DOWN_ACTION)
+		{
 			state = Keystateaction::KEY_UP_ACTION;
+			direction_axis = 0.0f;
+
 		}
 		else
+		{
 			state = Keystateaction::KEY_IDLE_ACTION;
+			direction_axis = 0.0f;
+
+
+			ret = true;
+		}
+
 	}
-
-
-
-	return true;
+	return ret;
 }

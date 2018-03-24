@@ -16,42 +16,41 @@ InputManager::~InputManager()
 
 void InputManager::UpdateInputActions()
 {
-	/*
+	
 	if (active_action.empty())
 		return;
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	int mouse_x = 0;
 	int mouse_y = 0;
 	Uint32 buttons = SDL_GetMouseState(&mouse_x, &mouse_y);
-	std::list<InputAction*>::iterator it = active_action.begin()
+	std::list<InputAction*>::iterator it = active_action.begin();
 	bool end_update = false;
 	while (it!= active_action.end())
 	{
-		InputAction
-		switch ((*it)->action_type) {
+		InputAction* action = (*it);
+		switch (action->action_type)
+		{
 		case ActionInputType::BUTTON_ACTION:
 		case ActionInputType::KEY_ACTION:
-			end_update=((KeyAction*)(*it))->UpdateEventAction(keys);
+			end_update =((KeyAction*)action)->UpdateEventAction(keys);
 			break;
 
 		case ActionInputType::MOUSE_BUTTON_ACTION:
-			end_update=((MouseButtonAction*)(*it))->UpdateEventAction(mouse_x, mouse_y, buttons);
+			end_update=((MouseButtonAction*)action)->UpdateEventAction(mouse_x, mouse_y, buttons);
 			break;
 
 
 		}
-
-		if(end_update)
-		{
-		it = active_action.remove(it);
-		}
+		
+		if (end_update)	
+			it=active_action.erase(it);	
 		else
-		{
-		it++;
-		}
+			it++;
+		
 
 	}
-	*/
+	
+	/*
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	int mouse_x = 0;
 	int mouse_y = 0;
@@ -73,6 +72,7 @@ void InputManager::UpdateInputActions()
 		}
 	
 	}
+	*/
 }
 
 bool InputManager::ProcessEvent(SDL_Event * input_event)
@@ -81,6 +81,7 @@ bool InputManager::ProcessEvent(SDL_Event * input_event)
 	{
 		if ((*it)->ProcessEventAction(input_event))
 		{
+			active_action.push_back(*(it));
 			return true;
 		}
 	}
@@ -189,41 +190,54 @@ void InputManager::ShowInspectorInfo()
 	}
 	
 	ImGui::Text("Action:");
-	ImGui::Columns(2, "my_action");
-	ImGui::Text("Action"); 
-	ImGui::NextColumn();
-	ImGui::Text("Key Binding"); 
-	ImGui::NextColumn();
+
 	static int selected = 0;
 	for (int i = 0; i < action_vector.size(); i++)
 	{
 		InputAction* action = action_vector[i];
+		if (action == nullptr)
+		{
+			continue;
+		}
+
 		std::string tree_action_name = action->name +"##"+ std::to_string(i);
 		//bool active = ImGui::TreeNodeEx(tree_action_name.c_str());
-		if (ImGui::Selectable(tree_action_name.c_str(), selected == i, ImGuiSelectableFlags_SpanAllColumns))
+		bool open = ImGui::TreeNodeEx(tree_action_name.c_str());
+
+
+		if (ImGui::IsItemClicked())
 		{
 			selected = i;
-			selected_action_name.clear();
-			selected_action_name = action->name;
-			selected_action_key_positive.clear();
-			selected_action_key_positive = action->positive_button->name;
-			selected_action_key_negative.clear();
-			selected_action_key_negative = action->negative_button->name;
+
+			strcpy_s(selected_action_name, action->name.c_str());
+			strcpy_s(selected_action_key_positive, action->positive_button->name.c_str());
+			strcpy_s(selected_action_key_negative, action->negative_button->name.c_str());
+
 			action_type = action_vector[selected]->action_type;
-
 		}
-		bool hovered = ImGui::IsItemHovered();
 
-		ImGui::NextColumn();
-		if (action != nullptr)
+
+		if (open)
 		{
+
+			ImGui::Columns(2, "my_action");
+			ImGui::Text("Positive Button");
+			ImGui::NextColumn();
 			ImGui::Text(action->positive_button->name.c_str());
+			ImGui::NextColumn();
+			ImGui::Text("Negative Button");
+			ImGui::NextColumn();
 			ImGui::Text(action->negative_button->name.c_str());
+			ImGui::NextColumn();
+			ImGui::Columns(1);
+
+			ImGui::TreePop();
+
 		}
-		ImGui::NextColumn();
+
+		
 
 	}
-	ImGui::Columns(1); 
 	if (action_vector.empty())
 	{
 		ImGui::End();
@@ -233,11 +247,11 @@ void InputManager::ShowInspectorInfo()
 
 	
 
-	if (strcmp(selected_action_key_positive.c_str(), "")!=0 && strcmp(selected_action_key_positive.c_str(), "") != 0 && selected!=-1)
+	if (strcmp(selected_action_key_positive, "")!=0 && strcmp(selected_action_key_positive, "") != 0 && selected!=-1)
 	{
-		ImGui::InputText("Action Name##name_input", (char*)selected_action_name.c_str(), MAX_INPUT);
-		ImGui::InputText("Key Positive##key_input_positive", (char*)selected_action_key_positive.c_str(), MAX_INPUT);
-		ImGui::InputText("Key Negative##key_input_negative", (char*)selected_action_key_negative.c_str(), MAX_INPUT);
+		ImGui::InputText("Action Name##name_input",selected_action_name, MAX_INPUT);
+		ImGui::InputText("Key Positive##key_input_positive", selected_action_key_positive, MAX_INPUT);
+		ImGui::InputText("Key Negative##key_input_negative", selected_action_key_negative, MAX_INPUT);
 		std::string action_type_names;
 		action_type_names += "Axis";
 		action_type_names += '\0';
@@ -256,7 +270,7 @@ void InputManager::ShowInspectorInfo()
 
 		if (ImGui::Button("Apply##apply_action"))
 		{
-			InputAction* new_action = CreateNewAction(selected_action_name.c_str(), selected_action_key_positive.c_str(), selected_action_key_negative.c_str(), static_cast<ActionInputType>(action_type));
+			InputAction* new_action = CreateNewAction(selected_action_name, selected_action_key_positive, selected_action_key_negative, static_cast<ActionInputType>(action_type));
 			if (new_action != nullptr && selected >= 0 && selected < action_vector.size()) {
 				InputAction* temp = action_vector[selected];
 				RELEASE(temp);
@@ -268,9 +282,9 @@ void InputManager::ShowInspectorInfo()
 		{
 			if (selected > 0 && selected < action_vector.size())
 			{
-				selected_action_name = action_vector[selected]->name;
-				selected_action_key_positive = action_vector[selected]->positive_button->name.c_str();
-				selected_action_key_negative = action_vector[selected]->negative_button->name.c_str();
+				strcpy_s(selected_action_name, action_vector[selected]->name.c_str());
+				strcpy_s(selected_action_name, action_vector[selected]->positive_button->name.c_str());
+				strcpy_s(selected_action_name, action_vector[selected]->negative_button->name.c_str());
 				action_type = action_vector[selected]->action_type;
 			}
 		}
