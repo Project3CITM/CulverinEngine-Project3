@@ -1028,6 +1028,16 @@ void ImportScript::LinkFunctions()
 
 	//MODULE PHYSICS FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.PhysX::RayCast", (const void*)RayCast);
+
+	//COMPONENT LIGHT FUNCTIONS ----------------------------
+	mono_add_internal_call("CulverinEditor.CompLight::GetIntensity", (const void*)GetIntensity);
+	mono_add_internal_call("CulverinEditor.CompLight::SetIntensity", (const void*)SetIntensity);
+	mono_add_internal_call("CulverinEditor.CompLight::GetConstant", (const void*)GetConstant);
+	mono_add_internal_call("CulverinEditor.CompLight::SetConstant", (const void*)SetConstant);
+	mono_add_internal_call("CulverinEditor.CompLight::GetLinear", (const void*)GetLinear);
+	mono_add_internal_call("CulverinEditor.CompLight::SetLinear", (const void*)SetLinear);
+	mono_add_internal_call("CulverinEditor.CompLight::GetQuadratic", (const void*)GetQuadratic);
+	mono_add_internal_call("CulverinEditor.CompLight::SetQuadratic", (const void*)SetQuadratic);
 }
 
 //Log messages into Engine Console
@@ -1784,6 +1794,46 @@ void ImportScript::SetNormals(MonoObject * object, MonoString * string)
 void ImportScript::SetAmbientOcclusion(MonoObject * object, MonoString * string)
 {
 	current->SetAmbientOcclusion(object, string);
+}
+
+float ImportScript::GetIntensity(MonoObject * object)
+{
+	return current->GetIntensity(object);
+}
+
+void ImportScript::SetIntensity(MonoObject * object,float value)
+{
+	current->SetIntensity(object, value);
+}
+
+float ImportScript::GetConstant(MonoObject * object)
+{
+	return current->GetConstant(object);
+}
+
+void ImportScript::SetConstant(MonoObject * object, float value)
+{
+	current->SetConstant(object, value);
+}
+
+float ImportScript::GetLinear(MonoObject * object)
+{
+	return current->GetLinear(object);
+}
+
+void ImportScript::SetLinear(MonoObject * object, float value)
+{
+	current->SetLinear(object, value);
+}
+
+float ImportScript::GetQuadratic(MonoObject * object)
+{
+	return current->GetQuadratic(object);
+}
+
+void ImportScript::SetQuadratic(MonoObject * object, float value)
+{
+	current->SetQuadratic(object, value);
 }
 
 MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)

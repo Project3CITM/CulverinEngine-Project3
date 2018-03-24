@@ -28,7 +28,7 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 	properties[1] = 1.0f;
 	properties[2] = 1.0f;
 	properties[3] = 1.0f;
-	name_component = "Light component";
+	name_component = "CompLight";
 
 
 	types_lights += "Point Light";
