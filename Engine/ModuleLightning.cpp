@@ -192,7 +192,7 @@ update_status ModuleLightning::PreUpdate(float dt)
 
 	//TODO: Should think on optimitzations on this.
 
-	frame_used_lights.clear();
+	/*frame_used_lights.clear();
 	std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
 	for(uint i = 0; i < shadow_cast_points_count; ++i)
 	{
@@ -206,7 +206,7 @@ update_status ModuleLightning::PreUpdate(float dt)
 			}
 		}
 	}
-
+	*/
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -265,7 +265,7 @@ bool ModuleLightning::CleanUp()
 
 void ModuleLightning::OnEvent(Event & event)
 {
-	if (App->scene->scene_buff != nullptr)
+	/*if (App->scene->scene_buff != nullptr)
 	{
 		//This is only for shadows 
 
@@ -316,7 +316,7 @@ void ModuleLightning::OnEvent(Event & event)
 		App->scene->scene_buff->Bind("Scene");
 		glCullFace(GL_BACK);
 		shadow_Shader->Unbind();
-	}
+	}*/
 }
 
 void ModuleLightning::CalcPointShadowMaps(CompLight* light, CompMesh* mesh_to_render)
@@ -403,7 +403,8 @@ void ModuleLightning::CalcPointShadowMaps(CompLight* light, CompMesh* mesh_to_re
 
 void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 {
-	shadow_Shader->Bind();
+	int x = 0;
+	/*shadow_Shader->Bind();
 
 	Material* material = App->renderer3D->default_material;
 	//if (material->material_shader != nullptr)
@@ -596,7 +597,7 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
 }
 
 void ModuleLightning::SetShadowCastPoints(uint points)

@@ -30,6 +30,7 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void ShowTransform(float drag_speed);
+	void SyncComponent(GameObject* sync_parent);
 
 	void SetPosGlobal(float3 pos);
 	void SetRotGlobal(float3 rot);
@@ -46,6 +47,7 @@ public:
 	void SetLocalTransform();
 	void SetGlobalTransform();
 	void UpdateGlobalTransform();
+	void UpdateGlobalTransformWorld();
 	void UpdateGlobalMatrixRecursive();
 	void SetToUpdate();
 
@@ -96,6 +98,7 @@ public:
 protected:
 	Axis axis;
 	bool toUpdate = false;
+	bool parentUpdate = false;
 	bool updated = false;
 	bool freeze = false;
 	bool editing_transform = false;

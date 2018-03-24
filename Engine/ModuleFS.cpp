@@ -1261,6 +1261,17 @@ std::string ModuleFS::GetOnlyName(std::string file)
 	nameFile = nameFile.substr(EndName + 1);
 	EndName = nameFile.find_last_of(".");
 	nameFile = nameFile.substr(0, EndName);
+	bool stop = false;
+	while (stop == false)
+	{
+		EndName = nameFile.find_last_of(".");
+		if (EndName != std::string::npos)
+		{
+			nameFile = nameFile.substr(0, EndName);
+		}
+		else
+			stop = true;
+	}
 
 	return nameFile;
 }

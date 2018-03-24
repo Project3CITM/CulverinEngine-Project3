@@ -29,8 +29,8 @@ CompScript::~CompScript()
 		{
 			resource_script->num_game_objects_use_me--;
 		}
+		resource_script = nullptr;
 	}
-	resource_script = nullptr;
 }
 
 void CompScript::Init()
@@ -157,6 +157,19 @@ void CompScript::postUpdate()
 	}
 }
 
+void CompScript::Clear()
+{
+	if (resource_script != nullptr && csharp != nullptr)
+	{
+		if (resource_script->num_game_objects_use_me > 0)
+		{
+			resource_script->num_game_objects_use_me--;
+		}
+		resource_script = nullptr;
+		csharp->Clear();
+	}
+}
+
 bool CompScript::CheckAllVariables()
 {
 	//Access chsharp script, it contains a vector of all variables with their respective info
@@ -208,14 +221,6 @@ void CompScript::SetOwnGameObject(GameObject* owenerofScript)
 void CompScript::SetCSharp(CSharpScript* csharp_)
 {
 	csharp = csharp_;
-}
-
-void CompScript::ClearVariables()
-{
-	if (resource_script != nullptr && csharp != nullptr)
-	{
-		csharp->Clear();
-	}
 }
 
 bool CompScript::StartScript()
@@ -681,14 +686,19 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompScript::SyncComponent(GameObject * sync_parent)
+{
+	if (csharp != nullptr && csharp->NeedToLinkGO())
+	{
+		csharp->LoadValuesGO(sync_parent);
+	}
+}
+
 void CompScript::LoadValuesGameObjectScript()
 {
-	if (csharp != nullptr)
+	if (csharp != nullptr && csharp->NeedToLinkGO())
 	{
-		if (csharp->NeedToLinkGO())
-		{
-			csharp->LoadValuesGO();
-		}
+		csharp->LoadValuesGO(nullptr);
 	}
 }
 

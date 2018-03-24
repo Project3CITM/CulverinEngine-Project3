@@ -66,6 +66,14 @@ public:
 	MonoObject* GetMonoObject(CSharpScript* script);
 	CSharpScript* GetScriptMono(MonoObject* monoobject);
 
+	//Delete Functions -----------------------
+	void RemoveGObjectVarFromScripting(GameObject* object);
+
+	void RemoveGObjectFromMonoMap(GameObject*object);
+	void RemoveComponentFromMonoList(Component* comp);
+	void RemoveTransformPosPointerFromMap(float3* pospointer);
+	void RemoveGObjectReferencesFromMonoScript(GameObject* object);
+
 	bool IsNameUnique(std::string name) const;
 
 private:
@@ -122,6 +130,7 @@ private:
 	static int			ChildCount(MonoObject* object);
 	static MonoObject*	GetChildByIndex(MonoObject* object, int index);
 	static MonoObject*	GetChildByName(MonoObject* object, MonoString* name);
+	static MonoObject*	GetChildByTagIndex(MonoObject* object, MonoString* tag, int index);
 	static void			SetName(MonoObject* object, MonoString* name);
 	static MonoString*	GetName(MonoObject* object);
 	static MonoString*	GetTag(MonoObject* object);
@@ -242,6 +251,10 @@ private:
 	static mono_bool IsAnimationRunning(MonoObject* object, MonoString* string);
 	static mono_bool IsAnimOverXTime(MonoObject* object, float num_between_0_1);
 	static void SetClipsSpeed(MonoObject* object, float speed_value);
+	static float GetClipDuration(MonoObject* object, MonoString* string);
+	static void SetClipDuration(MonoObject* object, MonoString* string, float duration);
+	static void SetActiveBlendingClip(MonoObject* object, MonoString* string);
+	static void SetActiveBlendingClipWeight(MonoObject* object, float weight);
 
 	/*Component Material*/
 	static void SetAlbedo(MonoObject* object, MonoString* string);

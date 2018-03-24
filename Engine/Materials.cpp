@@ -6,6 +6,7 @@
 
 Material::Material()
 {
+	active_num = 0;
 }
 
 Material::~Material()
@@ -46,6 +47,8 @@ void Material::Save() const
 
 	json_object_dotset_string_with_std(object, name + "ShaderName:", material_shader->name.c_str());
 	json_object_dotset_number_with_std(object, name + "Num Textures:", textures.size());
+	json_object_dotset_number_with_std(object, name + "Alpha:", alpha);
+	json_object_dotset_boolean_with_std(object, name + "Glow:", glow);
 
 	for (int i = 0; i < textures.size(); i++)
 	{

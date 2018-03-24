@@ -36,7 +36,6 @@ public:
 	// Return if all scripts in scene are compilated correctly.
 	bool CheckScripts(int & numfails);
 	void StartScripts();
-	void ClearAllVariablesScript();
 	GameObject* GetGameObjectbyuid(uint uid);
 	GameObject* GetGameObjectfromScene(int);
 	void FindChildsWithTag(const char* tag, std::vector<GameObject*>* vec);
@@ -106,7 +105,7 @@ public:
 
 	Component* GetComponentbyIndex(uint i) const;
 	void DeleteAllComponents();
-	void DeleteComponent(Component* component);
+	void DeleteComponent(uint index);
 	void SaveComponents(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void LoadComponents(const JSON_Object * object, std::string name, uint numComponents);
 
@@ -117,6 +116,7 @@ public:
 	uint GetNumChilds() const;
 	GameObject* GetChildbyIndex(uint pos_inVec) const;
 	GameObject* GetChildbyName(const char* name) const;
+	GameObject* GetChildByTagIndex(const char* tag, int index) const;
 	GameObject* GetChildByRealName(std::string name) const;
 	void GetChildDeepSearch(const char * name, std::vector<GameObject*>& GOVector) const;
 	uint GetIndexChildbyName(const char* name) const;
@@ -146,7 +146,7 @@ public:
 	// Delete -----------------
 	bool WanttoDelete() const;
 	void SettoDelete();
-	void RemoveScriptReference(GameObject* go);
+	void SetChildToNull(uint index);
 
 	//ANIMATION PURPOSES-------------
 	bool AreTranslationsActivateds() const;

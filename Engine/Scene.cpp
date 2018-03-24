@@ -3,6 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleTextures.h"
 #include "ModuleCamera3D.h"
+#include "ModuleWindow.h"
 #include "ModuleGUI.h"
 #include "ModuleRenderer3D.h"
 #include "GameObject.h"
@@ -57,8 +58,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 
 Scene::~Scene()
 {
-	//DeleteAllGameObjects(root); //TODO-> Elliot
-	//App->importer->iScript->ClearMonoMap()
+	DeleteAllGameObjects(root); //TODO-> Elliot
 
 	RELEASE(scene_buff);
 	RELEASE(skybox);
@@ -94,6 +94,27 @@ bool Scene::Start()
 	defined_tags.push_back("undefined");
 	defined_tags.push_back("camera");
 	defined_tags.push_back("player");
+
+
+	App->scene->scene_buff = new FrameBuffer();
+	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
+
+	App->scene->final_buff = new FrameBuffer();
+	App->scene->final_buff->resize = true;
+	App->scene->final_buff->Create(App->window->GetWidth(), App->window->GetHeight());
+
+	App->scene->glow_buff = new FrameBuffer();
+	App->scene->glow_buff->resize = false;
+	App->scene->glow_buff->Create(128, 128);
+
+	App->scene->horizontal_blur_buff = new FrameBuffer();
+	App->scene->horizontal_blur_buff->resize = false;
+	App->scene->horizontal_blur_buff->Create(128, 128);
+
+	App->scene->vertical_blur_buff = new FrameBuffer();
+	App->scene->vertical_blur_buff->resize = false;
+	App->scene->vertical_blur_buff->Create(128, 128);
+
 
 	tagged_objects.reserve(defined_tags.size());
 	for (uint i = 0; i < defined_tags.size(); i++)
@@ -161,16 +182,24 @@ update_status Scene::Update(float dt)
 
 	// Draw Skybox (direct mode for now)
 	//if (App->scene->draw_skybox) 
-		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+	App->scene->scene_buff->Init("Scene");
+	App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+
+
 	// Draw Plane
 	if (App->engine_state != EngineState::PLAY)
 	{
 		DrawPlane();
 	}
+
 	// Draw GameObjects
 	root->Draw();
 	// Draw Quadtree
 	if (quadtree_draw) App->scene->octree.DebugDraw();
+
+	App->scene->scene_buff->UnBind("Scene");
 	// Draw GUI
 	//App->render_gui->ScreenSpaceDraw();
 	static int nico = 0;
@@ -238,7 +267,6 @@ update_status Scene::UpdateConfig(float dt)
 bool Scene::CleanUp()
 {
 	skybox->DeleteSkyboxTex();
-	ClearAllVariablesScript();
 	
 	root->CleanUp();
 
@@ -401,20 +429,6 @@ void Scene::StartScripts()
 {
 	//Iterate all GameObjects and, if they have scripts, call their start
 	root->StartScripts();
-}
-
-void Scene::ClearAllVariablesScript()
-{
-	//Iterate all GameObjects and, if they have scripts, call their ClearAllVariablesScript
-	root->ClearAllVariablesScript();
-}
-
-void Scene::SetScriptVariablesToNull(GameObject* go)
-{
-	for (uint i = 0; i < root->GetNumChilds(); i++)
-	{
-		root->GetChildbyIndex(i)->RemoveScriptReference(go);
-	}
 }
 
 GameObject* Scene::GetGameObjectfromScene(bool& active)
@@ -861,47 +875,54 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 // -----------------------------------------------------------------------------
 void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain, bool is_reimport)
 {
+	GameObject* child_index = nullptr;
 	for (int i = 0; i < gameobject->GetNumChilds(); i++)
 	{
-		if (gameobject->GetChildbyIndex(i)->GetNumChilds() > 0)
-		{
-			DeleteAllGameObjects(gameobject->GetChildbyIndex(i), false, is_reimport);
-		}
+		child_index = gameobject->GetChildbyIndex(i);
 
-		if (is_reimport == false)
+		if (child_index->GetNumChilds() > 0)
 		{
-			SetScriptVariablesToNull(gameobject->GetChildbyIndex(i));
+			DeleteAllGameObjects(child_index, false, is_reimport);
 		}
 
 		// First of all, Set nullptr all pointer to this GameObject
-		if (App->camera->GetFocus() == gameobject->GetChildbyIndex(i))
+		if (App->camera->GetFocus() == child_index)
 		{
 			App->camera->SetFocusNull();
 		}
+
 		if (!App->mode_game)
 		{
-			if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == gameobject->GetChildbyIndex(i))
+			if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == child_index)
 			{
 				((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
 			}
 		}
-		// First delete all components
-		if (gameobject->GetChildbyIndex(i)->GetNumComponents() > 0)
+
+		if (is_reimport == false)
 		{
-			gameobject->GetChildbyIndex(i)->DeleteAllComponents();
+			App->importer->iScript->RemoveGObjectVarFromScripting(child_index);
+			App->importer->iScript->RemoveGObjectFromMonoMap(child_index);
+			App->importer->iScript->RemoveGObjectReferencesFromMonoScript(child_index);
+		}
+
+		// First delete all components
+		if (child_index->GetNumComponents() > 0)
+		{
+			child_index->DeleteAllComponents();
 		}
 		// Now Delete GameObject
-		GameObject* it = gameobject->GetChildbyIndex(i);
-
-		if(it != nullptr)
+		if(child_index != nullptr)
 		{
-			if (!it->IsDeleteFixed())
+			if (!child_index->IsDeleteFixed())
 			{
-				RELEASE(it);
+				RELEASE(child_index);
 			}
 
-			it = nullptr;
+			child_index = nullptr;
 		}
+		//Prevent acces to invalid memory
+		gameobject->SetChildToNull(i);
 	}
 	gameobject->GetChildsPtr()->clear();
 
@@ -926,15 +947,19 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 			App->camera->SetFocusNull();
 		}
 
-		if(is_reimport == false)
-			SetScriptVariablesToNull(gameobject);
-
 		if (App->mode_game == false)
 		{
 			if (((Inspector*)App->gui->win_manager[INSPECTOR])->GetSelected() == gameobject)
 			{
 				((Inspector*)App->gui->win_manager[INSPECTOR])->SetLinkObjectNull();
 			}
+		}
+
+		if (is_reimport == false)
+		{
+			App->importer->iScript->RemoveGObjectVarFromScripting(gameobject);
+			App->importer->iScript->RemoveGObjectFromMonoMap(gameobject);
+			App->importer->iScript->RemoveGObjectReferencesFromMonoScript(gameobject);
 		}
 
 		// First Delete All Childs and their components

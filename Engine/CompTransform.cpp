@@ -93,6 +93,11 @@ void CompTransform::Update(float dt)
 				}
 			}
 
+			if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN)
+			{
+				SetUpVector(float3(0, 0.7, 0.7));
+			}
+
 			// EDIT TRANSFORM QITH GUIZMO
 			ImGuizmo::Manipulate(App->camera->GetViewMatrix(), App->camera->GetProjMatrix(), mCurrentGizmoOperation, transform_mode, global_transposed.ptr());
 
@@ -113,6 +118,12 @@ void CompTransform::Update(float dt)
 					local_transform = transform->GetGlobalTransform().Inverted() * global_transposed;
 				}
 
+				if (transform_mode == ImGuizmo::WORLD)
+				{
+					global_transposed.Decompose(position_global, rotation_global, scale_global);
+					rotation_euler_global = rotation_global.ToEulerXYZ()*RADTODEG;
+				}
+
 				local_transform.Decompose(position, rotation, scale);
 				rotation_euler = rotation.ToEulerXYZ() * RADTODEG;
 				toUpdate = true;
@@ -122,7 +133,15 @@ void CompTransform::Update(float dt)
 
 	if (toUpdate)
 	{
-		UpdateMatrix(transform_mode);
+		if (parentUpdate) 
+		{
+			UpdateMatrix(ImGuizmo::LOCAL);
+			parentUpdate = false;
+		}
+		else
+		{
+			UpdateMatrix(transform_mode);
+		}
 		toUpdate = false;
 		updated = true;
 	}
@@ -208,11 +227,11 @@ void CompTransform::ShowInspectorInfo()
 	{
 		transform_mode = ImGuizmo::LOCAL;
 	}
-	//ImGui::SameLine();
-	//if (ImGui::RadioButton("World", transform_mode == ImGuizmo::WORLD))
-	//{
-	//	transform_mode = ImGuizmo::WORLD;
-	//}
+	ImGui::SameLine();
+	if (ImGui::RadioButton("World", transform_mode == ImGuizmo::WORLD))
+	{
+		transform_mode = ImGuizmo::WORLD;
+	}
 
 	// SHOW OUTPUT (depending on mode and if transform is freezed) ---------------
 	if (App->engine_state == EngineState::STOP)
@@ -260,7 +279,7 @@ void CompTransform::ShowTransform(float drag_speed)
 			editing_transform = true;
 		}
 		ImGui::Text("Rotation"); ImGui::SameLine(op + 30);
-		if (ImGui::DragFloat3("##rot", &rotation_euler[0], drag_speed))
+		if (ImGui::DragFloat3("##rot", &rotation_euler[0], drag_speed,-360,360))
 		{
 			SetRot(rotation_euler);
 			editing_transform = true;
@@ -269,6 +288,28 @@ void CompTransform::ShowTransform(float drag_speed)
 		if (ImGui::DragFloat3("##scale", &scale[0], drag_speed))
 		{
 			SetScale(scale);
+			editing_transform = true;
+		}
+		break;
+	}
+	case ImGuizmo::MODE::WORLD:
+	{
+		ImGui::Text("Position"); ImGui::SameLine(op + 30);
+		if (ImGui::DragFloat3("##pos", &position_global[0], drag_speed))
+		{
+			SetPosGlobal(position_global);
+			editing_transform = true;
+		}
+		ImGui::Text("Rotation"); ImGui::SameLine(op + 30);
+		if (ImGui::DragFloat3("##rot", &rotation_euler_global[0], drag_speed))
+		{
+			SetRotGlobal(rotation_euler_global);
+			editing_transform = true;
+		}
+		ImGui::Text("Scale"); ImGui::SameLine(op + 30);
+		if (ImGui::DragFloat3("##scale", &scale_global[0], drag_speed))
+		{
+			SetRotGlobal(scale_global);
 			editing_transform = true;
 		}
 		break;
@@ -283,32 +324,59 @@ void CompTransform::ShowTransform(float drag_speed)
 	}
 }
 
+void CompTransform::SyncComponent(GameObject * sync_parent)
+{
+	if (toUpdate)
+	{
+		if (parentUpdate)
+		{
+			UpdateMatrix(ImGuizmo::LOCAL);
+			parentUpdate = false;
+		}
+		else
+		{
+			UpdateMatrix(transform_mode);
+		}
+		toUpdate = false;
+		updated = true;
+	}
+	else
+	{
+		updated = false;
+	}
+}
+
 void CompTransform::SetPosGlobal(float3 pos)
 {
+	transform_mode = ImGuizmo::WORLD;
 	position_global = pos;
 	toUpdate = true;
 }
 
 void CompTransform::SetRotGlobal(float3 rot_g)
 {
+	transform_mode = ImGuizmo::WORLD;
 	rotation_global = Quat::FromEulerXYZ(rot_g[0] * DEGTORAD, rot_g[1] * DEGTORAD, rot_g[2] * DEGTORAD);
 	toUpdate = true;
 }
 
 void CompTransform::SetRotGlobal(Quat rot_g)
 {
+	transform_mode = ImGuizmo::WORLD;
 	rotation_global = rot_g;
 	toUpdate = true;
 }
 
 void CompTransform::SetScaleGlobal(float3 scale)
 {
+	transform_mode = ImGuizmo::WORLD;
 	scale_global = scale;
 	toUpdate = true;
 }
 
 void CompTransform::SetPos(float3 pos_g)
 {
+	transform_mode = ImGuizmo::LOCAL;
 	position = pos_g;
 	toUpdate = true;
 }
@@ -329,16 +397,20 @@ void CompTransform::IncrementRot(float3 rot)
 
 void CompTransform::RotateAroundAxis(float3 rot, float angle)
 {
-	rot = rot.Normalized();
-	float3 euler_ang = { rot.x * angle,rot.y*angle,rot.z*angle };
-	rotation_euler += euler_ang;
-	SetRot(rotation_euler);
+	transform_mode = ImGuizmo::LOCAL;
+
+	rot.Normalize();
+	Quat new_rot;
+	new_rot.SetFromAxisAngle(rot, angle*DEGTORAD);
+	rotation = new_rot * rotation;
+	rotation_euler = rotation.ToEulerXYZ() * RADTODEG;
+
 	toUpdate = true;
-	Update(0.f);
 }
 
 void CompTransform::SetRot(Quat rot)
 {
+	transform_mode = ImGuizmo::LOCAL;
 	rotation_euler = rot.ToEulerXYZ() * RADTODEG;
 	rotation = rot;
 	toUpdate = true;
@@ -346,12 +418,15 @@ void CompTransform::SetRot(Quat rot)
 
 void CompTransform::SetRot(float3 rot)
 {
+	transform_mode = ImGuizmo::LOCAL;
 	rotation = Quat::FromEulerXYZ(rot[0] * DEGTORAD, rot[1] * DEGTORAD, rot[2] * DEGTORAD);
+	rotation_euler = rot;
 	toUpdate = true;
 }
 
 void CompTransform::SetScale(float3 scal)
 {
+	transform_mode = ImGuizmo::LOCAL;
 	scale = scal;
 	toUpdate = true;
 }
@@ -426,6 +501,31 @@ void CompTransform::UpdateGlobalTransform()
 	parent->UpdateChildsMatrices();
 }
 
+void CompTransform::UpdateGlobalTransformWorld()
+{
+	float4x4 new_transorm = float4x4::FromTRS(position_global, rotation_global, scale_global);
+
+	const GameObject* parent_object = parent->GetParent();
+
+	if (parent_object != nullptr && parent_object->GetUUID() != 1)
+	{
+		local_transform = ((CompTransform*)parent_object->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transorm;
+	}
+	else
+	{
+		local_transform = new_transorm;
+	}
+	global_transform = new_transorm;
+
+	local_transform.Decompose(position, rotation, scale);
+	rotation_euler = rotation.ToEulerXYZ()*RADTODEG;
+	updated = true;
+	toUpdate = true;
+
+	// Update Global matrices of all children
+	parent->UpdateChildsMatrices();
+}
+
 // Update Global transform and call this function for all its childs
 void CompTransform::UpdateGlobalMatrixRecursive()
 {
@@ -436,6 +536,7 @@ void CompTransform::UpdateGlobalMatrixRecursive()
 void CompTransform::SetToUpdate()
 {
 	toUpdate = true;
+	parentUpdate = true;
 }
 
 void CompTransform::UpdateMatrix(ImGuizmo::MODE mode)
@@ -448,6 +549,11 @@ void CompTransform::UpdateMatrix(ImGuizmo::MODE mode)
 		UpdateGlobalTransform(); /*Then, update global matrix*/
 		break;
 	}
+	case (ImGuizmo::MODE::WORLD):
+	{
+		UpdateGlobalTransformWorld();
+		SetLocalTransform();
+	}
 	default:
 		break;
 	}
@@ -455,9 +561,7 @@ void CompTransform::UpdateMatrix(ImGuizmo::MODE mode)
 
 float3 CompTransform::GetForwardVector() const
 {
-	float4 result(0.0f, 0.0f, 1.0, 0.0);
-	result = global_transform * result;
-	return float3(result.x, result.y, result.z);
+	return global_transform.Col3(2);
 }
 
 float3 CompTransform::GetBackwardVector() const
@@ -467,9 +571,7 @@ float3 CompTransform::GetBackwardVector() const
 
 float3 CompTransform::GetUpVector() const
 {
-	float4 result(0.0f, 1.0f, 0.0, 0.0);
-	result = global_transform * result;
-	return float3(result.x, result.y, result.z);
+	return global_transform.Col3(1);
 }
 
 float3 CompTransform::GetDownVector() const
@@ -479,9 +581,7 @@ float3 CompTransform::GetDownVector() const
 
 float3 CompTransform::GetRightVector() const
 {
-	float4 result(1.0f, 0.0f, 0.0, 0.0);
-	result = global_transform * result;
-	return float3(result.x, result.y, result.z);
+	return global_transform.Col3(0);
 }
 
 float3 CompTransform::GetLeftVector() const
@@ -495,22 +595,21 @@ void CompTransform::SetForwardVector(float3 vec)
 
 	float3 up = GetUpVector();
 
-	float3 right = math::Cross(vec,up);
-	up = math::Cross(vec, right);
+	float3 right = math::Cross(up, vec).Normalized();
+	up = math::Cross(vec,right).Normalized();
 
-	local_transform[0][0] = right.x;
-	local_transform[1][0] = right.y;
-	local_transform[2][0] = right.z;
-
-	local_transform[0][1] = up.x;
-	local_transform[1][1] = up.y;
-	local_transform[2][1] = up.z;
-
-	local_transform[0][2] = vec.x;
-	local_transform[1][2] = vec.y;
-	local_transform[2][2] = vec.z;
-
+	float4x4 new_transform = float4x4(float3x3(right, up, vec));
+	
+	const GameObject* parentparent = parent->GetParent();
+	if (parentparent != nullptr && parentparent->GetUUID() != 1)
+	{
+		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
+	}
+	rotation_euler = new_transform.ToEulerXYZ();;
+	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation_euler *= RADTODEG;
 	toUpdate = true;
+
 }
 
 void CompTransform::SetBackwardVector(float3 vec)
@@ -524,21 +623,19 @@ void CompTransform::SetUpVector(float3 vec)
 
 	float3 frw = GetForwardVector();
 
-	float3 right = math::Cross(vec, frw);
-	frw = math::Cross(vec, right);
+	float3 right = math::Cross(vec, frw).Normalized();
+	frw = math::Cross(right,vec).Normalized();
 
-	local_transform[0][0] = right.x;
-	local_transform[1][0] = right.y;
-	local_transform[2][0] = right.z;
+	float4x4 new_transform = float4x4(float3x3(right, vec, frw));
 
-	local_transform[0][1] = vec.x;
-	local_transform[1][1] = vec.y;
-	local_transform[2][1] = vec.z;
-
-	local_transform[0][2] = frw.x;
-	local_transform[1][2] = frw.y;
-	local_transform[2][2] = frw.z;
-
+	const GameObject* parentparent = parent->GetParent();
+	if (parentparent != nullptr && parentparent->GetUUID() != 1)
+	{
+		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
+	}
+	rotation_euler = new_transform.ToEulerXYZ();;
+	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation_euler *= RADTODEG;
 	toUpdate = true;
 }
 
@@ -553,21 +650,18 @@ void CompTransform::SetRightVector(float3 vec)
 
 	float3 frw = GetForwardVector();
 
-	float3 up = math::Cross(vec, frw);
+	float3 up = math::Cross(frw, vec);
 	frw = math::Cross(vec, up);
+	float4x4 new_transform = float4x4(float3x3(vec, up, frw));
 
-	local_transform[0][0] = vec.x;
-	local_transform[1][0] = vec.y;
-	local_transform[2][0] = vec.z;
-
-	local_transform[0][1] = up.x;
-	local_transform[1][1] = up.y;
-	local_transform[2][1] = up.z;
-
-	local_transform[0][2] = frw.x;
-	local_transform[1][2] = frw.y;
-	local_transform[2][2] = frw.z;
-
+	const GameObject* parentparent = parent->GetParent();
+	if (parentparent != nullptr && parentparent->GetUUID() != 1)
+	{
+		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
+	}
+	rotation_euler = new_transform.ToEulerXYZ();;
+	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation_euler *= RADTODEG;
 	toUpdate = true;
 }
 

@@ -160,6 +160,7 @@ public:
 	int			ChildCount(MonoObject* object);
 	MonoObject* GetChildByIndex(MonoObject* object, int index);
 	MonoObject* GetChildByName(MonoObject* object, MonoString* name);
+	MonoObject* GetChildByTagIndex(MonoObject* object, MonoString* tag, int index);
 
 	MonoObject* GetOwnGameObject();
 	void		SetCurrentGameObject(GameObject* current);
@@ -218,6 +219,10 @@ public:
 	mono_bool	IsAnimationRunning(MonoObject* object, MonoString* name);
 	mono_bool	IsAnimOverXTime(MonoObject* object, float number_between_0_1);
 	void		SetClipsSpeed(MonoObject* object, float speed_value);
+	float		GetClipDuration(MonoObject* object, MonoString* name);
+	void		SetClipDuration(MonoObject* object, MonoString* name, float duration);
+	void		SetActiveBlendingClip(MonoObject* object, MonoString* name);
+	void		SetActiveBlendingClipWeight(MonoObject* object, float weight);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
@@ -275,7 +280,7 @@ public:
 	// LOAD - SAVE METHODS ------------------
 	void Save(JSON_Object* object, std::string name) const;
 	void Load(const JSON_Object* object, std::string name);
-	void LoadValuesGO();
+	void LoadValuesGO(GameObject* sync_parent);
 
 	GameObject* GetGameObject() const;
 

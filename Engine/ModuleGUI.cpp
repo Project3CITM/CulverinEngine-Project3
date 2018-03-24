@@ -61,6 +61,7 @@ bool ModuleGUI::Init(JSON_Object* node)
 	win_manager[SCENEWORLD]->active[0].active = true;
 	win_manager[PROJECT]->active[0].active = true;
 
+	
 	return true;
 }
 
@@ -69,14 +70,10 @@ bool ModuleGUI::Start()
 	perf_timer.Start();
 	
 	LOG("Using Glew %s", glewGetString(GLEW_VERSION));
-	ImGui_ImplSdlGL3_Init(App->window->window);
 	ImGuiIO& io{ ImGui::GetIO() };
 
 	io.Fonts->AddFontFromFileTTF("Fonts\\Ruda-Bold.ttf", 15);
 	io.Fonts->AddFontDefault();
-
-	App->scene->scene_buff = new FrameBuffer();
-	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
 	std::vector<WindowManager*>::iterator window = win_manager.begin();
 	for (int i = 0; i < win_manager.size(); i++)
@@ -121,7 +118,6 @@ update_status ModuleGUI::Update(float dt)
 			{
 				if (App->scene->scene_saved)
 				{
-					App->scene->ClearAllVariablesScript();
 					App->scene->DeleteAllGameObjects(App->scene->root);
 					App->event_system->ClearEvents(EventType::EVENT_DRAW);
 					App->scene->root->SetName("NewScene");

@@ -41,6 +41,9 @@ public:
 	//ALPHA
 	float alpha = 1.0f;
 
+	//GLOW
+	bool glow = false;
+
 	//Variables Vector
 	std::vector<TextureVar>	textures;
 	std::vector<intVar>		int_variables;
@@ -56,7 +59,7 @@ public:
 	std::vector<ColorVar>::iterator		it_color_variables;
 	std::vector<boolVar>::iterator		it_bool_variables;
 
-
+	uint active_num = 0;
 };
 
 #endif

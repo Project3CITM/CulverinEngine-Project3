@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleWindow.h"
-
+#include "CompCamera.h"
 FrameBuffer::FrameBuffer()
 {
 	frame_id = 0;
@@ -10,6 +10,7 @@ FrameBuffer::FrameBuffer()
 	texture = 0;
 	width = 0;
 	height = 0;
+	resize = true;
 }
 
 FrameBuffer::~FrameBuffer()
@@ -65,15 +66,32 @@ bool FrameBuffer::Create(int width, int height)
 
 void FrameBuffer::Bind(const char* window)
 {
-	//size = GetSizeDock(window);
-	
-	Resize(App->window->GetWidth(), App->window->GetHeight());
+	if(resize)
+		Resize(App->window->GetWidth(), App->window->GetHeight());
+
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
 }
 
 void FrameBuffer::UnBind(const char* window)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBuffer::Init(const char * window)
+{
+
+	Bind(window);
+
+
+	// Refresh Projection of the camera
+	App->renderer3D->UpdateProjection(App->renderer3D->active_camera);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->renderer3D->active_camera->GetViewMatrix());
+
 }
 
 void FrameBuffer::Destroy()

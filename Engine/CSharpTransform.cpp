@@ -359,8 +359,8 @@ MonoObject* CSharpScript::GetPosition(MonoObject* object)
 
 MonoObject* CSharpScript::GetGlobalPosition(MonoObject * object)
 {
-	CheckMonoObject(object);
-	if (current_game_object != nullptr)
+	Component* obj = App->importer->iScript->GetComponentMono(object);
+	if (current_game_object != nullptr && obj != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)

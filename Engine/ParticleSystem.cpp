@@ -321,16 +321,11 @@ bool Particle::PreUpdate(float dt)
 	return true;
 }
 
-bool Particle::Update(float dt)
-{
-	OrientateParticle();
-	return true;
-}
-
 bool Particle::PostUpdate(float dt)
 {
 	if (!MeshChanged)
 	{
+		OrientateParticle();
 		Event draw_event;
 		draw_event.particle.type = EventType::EVENT_PARTICLE_DRAW;
 		draw_event.particle.ToDraw = this;
@@ -697,11 +692,7 @@ bool ParticleSystem::Update(float dt, bool emit)
 			}
 		}
 	}
-
-
-	/*Particle update*/
-
-
+	
 	//First time using Lambda operator, so i left a short explanation to don't forget what exactly is.
 	//[]->Lambda -> Shortcut to a function (or object that ca be called as a function, defined by operator ())
 	//Enables to bypass the creation of a function object, usefull to encapsulate short codes passed to algorithms.
@@ -709,11 +700,8 @@ bool ParticleSystem::Update(float dt, bool emit)
 	//and the function used to compare values in the algorithm.
 	//This sort can be modified using > operator override, and changing the sort function used
 	//Particles.sort([](const Particle* a, const Particle* b) { return a->CameraDistance > b->CameraDistance; });
-
-	bool ret = true;
-	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend() && ret == true; ++item)
-		ret = (*item).Update(dt);
-	return ret;
+	
+	return true;
 }
 
 bool ParticleSystem::PostUpdate(float dt)

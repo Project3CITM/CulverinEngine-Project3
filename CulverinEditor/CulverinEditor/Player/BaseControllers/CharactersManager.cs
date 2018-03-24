@@ -7,7 +7,8 @@ public class CharactersManager : CulverinBehaviour
     {
         IDLE = 0,
         CHANGING_LEFT,
-        CHANGING_RIGHT
+        CHANGING_RIGHT, 
+        DROWNING
     }
 
     public enum Side
@@ -45,6 +46,9 @@ public class CharactersManager : CulverinBehaviour
     Shield shield;
 
     public float puz_max_time;
+    public float drown_dmg = 20;
+    public int puz_respawn_x = 0;
+    public int puz_respawn_y = 0;
     //To manage player state
     State state = State.IDLE;   
 
@@ -84,10 +88,10 @@ public class CharactersManager : CulverinBehaviour
 
     void Update()
     {
-        if (in_puzzle)
-        {
-            puzzle_start += Time.deltaTime;
-        }
+        //if (in_puzzle)
+        //{
+        //    puzzle_start += Time.deltaTime;
+        //}
 
         switch (state)
         {
@@ -105,11 +109,13 @@ public class CharactersManager : CulverinBehaviour
                         {
                             state = State.CHANGING_LEFT;
                             CurrentToOut();
+                            Debug.Log("Change Left");
                         }
                         else if(IsDead(right_character) == false)
                         {
                             state = State.CHANGING_RIGHT;
                             CurrentToOut();
+                            Debug.Log("Change Right");
                         }
                         else
                         {
@@ -125,6 +131,7 @@ public class CharactersManager : CulverinBehaviour
                             {
                                 state = State.CHANGING_RIGHT;
                                 CurrentToOut();
+                                Debug.Log("Change Right");
                             }
                         }
                     }
@@ -136,6 +143,7 @@ public class CharactersManager : CulverinBehaviour
                             {
                                 state = State.CHANGING_LEFT;
                                 CurrentToOut();
+                                Debug.Log("Change Left");
                             }
                         }
                     }
@@ -146,6 +154,7 @@ public class CharactersManager : CulverinBehaviour
                         if (IsDead(left_character) == false)
                         {
                             SecondaryAbility(Side.LEFT);
+                            Debug.Log("Left S Attack");
                         }
                     }
                     else if (Input.GetKeyDown(KeyCode.L))
@@ -153,6 +162,7 @@ public class CharactersManager : CulverinBehaviour
                         if (IsDead(left_character) == false)
                         {
                             SecondaryAbility(Side.RIGHT);
+                            Debug.Log("Right S Attack");
                         }
                     }
 
@@ -497,6 +507,14 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
+    public void Drown()
+    {
+        GetDamage(drown_dmg);
+        state = State.DROWNING;
+
+        GetComponent<CompRigidBody>().UnLockTransform();
+    }
+
     public bool IsIdle()
     {
         // CURRENT CHARACTER -------------------------------
@@ -578,6 +596,16 @@ public class CharactersManager : CulverinBehaviour
         {
             return false;
         }
+    }
+
+    public State GetManagerState()
+    {
+        return state;
+    }
+
+    public void SetManagerState(State value)
+    {
+        state = value;
     }
 
 
