@@ -16,6 +16,8 @@ public:
 	bool ProcessEvent(SDL_Event* input_event);
 	void Clear();
 	ControllerAxisAction* GetAxis(const char* name);
+	std::vector<ControllerAxisAction*> GetAxisVector(const char* name);
+
 	//ButtonAction* GetButton(const char* name);
 	std::vector<KeyAction*> GetKey(const char* name);
 	MouseButtonAction* GetMouseButton(const char* name);

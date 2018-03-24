@@ -1,5 +1,5 @@
 #include "InputAction.h"
-
+#define DEAD_END 0.1f
 
 
 InputAction::InputAction():positive_button(new KeyRelation(-1,"default", KeyBindingType::NULL_DEVICE)), negative_button(new KeyRelation(-1, "default", KeyBindingType::NULL_DEVICE))
@@ -90,14 +90,16 @@ bool ControllerAxisAction::ProcessEventAction(SDL_Event * input_event)
 				//direction_axis = input_event->caxis.value;
 				direction_axis = (float)input_event->caxis.value / (float)maximum_axis_c;
 				//LOG("joystick %f", direction_axis);
-
+				if (DEAD_END > abs(direction_axis))
+					direction_axis = 0.0f;
 				return true;
 			}
 			else if (input_event->cbutton.button == positive_button->event_value) {
 				//direction_axis = input_event->caxis.value;
 				direction_axis = (float)input_event->caxis.value / (float)maximum_axis_c;
 				//LOG("joystick %f", direction_axis);
-
+				if (DEAD_END > abs(direction_axis))
+					direction_axis = 0.0f;
 				return true;
 			}
 

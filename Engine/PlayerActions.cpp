@@ -410,6 +410,7 @@ bool PlayerActions::GetInput_MouseButtonUp(const char * name, const char * input
 
 float PlayerActions::GetInput_ControllerAxis(const char * name, const char * input)
 {
+	float ret = 0.0f;
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 
@@ -421,21 +422,29 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 
 			(*it)->GetAxis(name);
 
-			InputAction* axis_t = (*it)->GetAxis(name);
-			if (axis_t != nullptr) {
-				if (axis_t->action_type == ActionInputType::AXIS_ACTION) {
-					if (axis_t != nullptr)
-					{
-						return ((ControllerAxisAction*)axis_t)->direction_axis;
+			//InputAction* axis_t = (*it)->GetAxis(name);
+			std::vector<ControllerAxisAction*> axis_v = (*it)->GetAxisVector(name);
+			for (int i = 0; i < axis_v.size(); i++)
+			{
+				ControllerAxisAction* axis_t = axis_v[i];
+				if (axis_t != nullptr) {
+					if (axis_t->action_type == ActionInputType::CONTROLLER_AXIS_ACTION) {
+					
+							ret = ((ControllerAxisAction*)axis_t)->direction_axis;
+					
+					}
+					else if (axis_t->action_type == ActionInputType::KEY_ACTION) {
+					
+							ret = ((KeyAction*)axis_t)->direction_axis;
+					
 					}
 				}
-				else if (axis_t->action_type == ActionInputType::KEY_ACTION) {
-					if (axis_t != nullptr)
-					{
-						return ((KeyAction*)axis_t)->direction_axis;
-					}
+				if (ret != 0.0f)
+				{
+					return ret;
 				}
 			}
+		
 			
 		}
 		if ((*it)->GetBlockAction())

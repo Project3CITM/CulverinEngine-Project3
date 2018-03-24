@@ -24,7 +24,7 @@ void InputManager::UpdateInputActions()
 	int mouse_y = 0;
 	Uint32 buttons = SDL_GetMouseState(&mouse_x, &mouse_y);
 	std::list<InputAction*>::iterator it = active_action.begin();
-	bool end_update = false;
+	bool end_update = true;
 	while (it!= active_action.end())
 	{
 		InputAction* action = (*it);
@@ -118,7 +118,20 @@ ControllerAxisAction* InputManager::GetAxis(const char * name)
 
 	return nullptr;
 }
+std::vector<ControllerAxisAction*> InputManager::GetAxisVector(const char * name)
+{
+	std::vector<ControllerAxisAction*>vect_temp;
 
+	for (int i = 0; i < action_vector.size(); i++)
+	{
+		if (action_vector[i]->name == name && (action_vector[i]->action_type == ActionInputType::CONTROLLER_AXIS_ACTION || action_vector[i]->action_type == ActionInputType::KEY_ACTION))
+		{
+			vect_temp.push_back((ControllerAxisAction*)action_vector[i]);
+		}
+	}
+
+	return vect_temp;
+}
 std::vector<KeyAction*> InputManager::GetKey(const char * name)
 {
 	std::vector<KeyAction*>vect_temp;
