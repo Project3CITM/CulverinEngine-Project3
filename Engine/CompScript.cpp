@@ -8,6 +8,7 @@
 #include "Scene.h"
 #include "ModuleFS.h"
 #include "ModuleGUI.h"
+#include "ModuleInput.h"
 #include "WindowInspector.h"
 
 CompScript::CompScript(Comp_Type t, GameObject* parent) : Component(t, parent)
@@ -143,6 +144,14 @@ void CompScript::Update(float dt)
 			//SetCurrentGameObject(parent);
 			UpdateScript(dt);
 		}
+	}
+	
+	if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
+	{
+		void* param[1];
+		k++;
+		param[0] = &k;
+		csharp->DoPublicMethod(csharp->methods[0], param);
 	}
 }
 

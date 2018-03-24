@@ -739,46 +739,86 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 			csharp->SetDomain(GetDomain());
 			csharp->SetImage(App->importer->iScript->GetCulverinImage());
 			csharp->SetClass(entity);
+			csharp->CreateCSObject();
 			csharp->SetClassName(classname);
 			csharp->SetNameSpace(name_space);
 
-			//void* iter = NULL;
+			void* iter = NULL;
 
-			//MonoMethod* test_method = NULL;
-			//while ((test_method = mono_class_get_methods(entity, &iter)))
-			//{
-			//	uint t, flag;
-			//	flag = mono_method_get_flags(test_method, &t);
-			//	std::string nadme = mono_method_get_name(test_method);
-			//	if (flag == 134)
-			//	{
-			//		MonoClassField* field = nullptr;
-			//		MonoType* type = nullptr;
-			//		void* iter = nullptr;
-
-			//		int num_fields = 0;
-			//		num_fields = mono_class_num_fields(entity);
-			//		for (uint i = 0; i < num_fields; i++)
-			//		{
-			//			field = mono_class_get_fields(entity, &iter);
-			//			if (field != NULL)
-			//			{
-			//				type = mono_field_get_type(field);
-			//				std::string name = mono_type_get_name(type);
-			//				bool tes = mono_method_can_access_field(test_method, field);
-			//				if (tes)
-			//				{
-			//					int c = 0;
-			//				}
-			//			}
-			//		}
-			//	}
-
-			//	char* test_char = mono_method_full_name(test_method, true);
-			//	LOG("Method: %s, flags 0x%x, iflags 0x%x\n",
-			//		mono_method_get_name(test_method), flag, t);
-			//	int x = 0;
-			//}
+			MonoMethod* method = NULL;
+			while ((method = mono_class_get_methods(entity, &iter)))
+			{
+				uint t, flag;
+				flag = mono_method_get_flags(method, &t);
+				std::string name_method = mono_method_get_name(method);
+				std::string fullname_method = mono_method_full_name(method, true);
+				const char* pram = nullptr;
+				mono_method_get_param_names(method, &pram);
+				int idx = 0, ind = 0;
+				if (pram != nullptr)
+				{
+					std::string type = fullname_method;
+					size_t EndName = type.find("(");
+					if (EndName != std::string::npos)
+					{
+						type = type.substr(EndName + 1);
+					}
+					EndName = type.find(")");
+					if (EndName != std::string::npos)
+					{
+						type = type.substr(0, EndName);
+					}
+					if (strcmp(type.c_str(), "int") == 0)
+					{
+						PublicMethod temp;
+						temp.name_method = name_method;
+						temp.name_param = pram;
+						temp.SetMonoMethod(method);
+						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.type = VarType::Var_INT;
+						csharp->methods.push_back(temp);
+					}
+					else if (strcmp(type.c_str(), "single") == 0)
+					{
+						PublicMethod temp;
+						temp.name_method = name_method;
+						temp.name_param = pram;
+						temp.SetMonoMethod(method);
+						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.type = VarType::Var_FLOAT;
+						csharp->methods.push_back(temp);
+					}
+					else if (strcmp(type.c_str(), "bool") == 0)
+					{
+						PublicMethod temp;
+						temp.name_method = name_method;
+						temp.name_param = pram;
+						temp.SetMonoMethod(method);
+						temp.type = VarType::Var_BOOL;
+						csharp->methods.push_back(temp);
+					}
+					else if (strcmp(type.c_str(), "string") == 0)
+					{
+						PublicMethod temp;
+						temp.name_method = name_method;
+						temp.name_param = pram;
+						temp.SetMonoMethod(method);
+						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.type = VarType::Var_STRING;
+						csharp->methods.push_back(temp);
+					}
+					else if (strcmp(type.c_str(), "CulverinEditor.GameObject") == 0)
+					{
+						PublicMethod temp;
+						temp.name_method = name_method;
+						temp.name_param = pram;
+						temp.SetMonoMethod(method);
+						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.type = VarType::Var_GAMEOBJECT;
+						csharp->methods.push_back(temp);
+					}
+				}
+			}
 
 			return csharp;
 		}

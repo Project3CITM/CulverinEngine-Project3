@@ -237,10 +237,6 @@ CSharpScript::~CSharpScript()
 
 void CSharpScript::LoadScript()
 {
-	if (CSClass)
-	{
-		CSObject = mono_object_new(App->importer->iScript->GetDomain(), CSClass);
-	}
 	if (CSObject)
 	{
 		mono_runtime_object_init(CSObject);
@@ -382,6 +378,17 @@ void CSharpScript::DoFunction(MonoMethod* function, void ** parameter)
 	}
 }
 
+void CSharpScript::DoPublicMethod(PublicMethod function, void** parameter)
+{
+	MonoObject* exception = nullptr;
+	// Do Main Function
+	mono_runtime_invoke(function.GetMethod(), function.GetScript(), parameter, &exception);
+	if (exception)
+	{
+		mono_print_unhandled_exception(exception);
+	}
+}
+
 bool CSharpScript::CheckMonoObject(MonoObject* object)
 {
 	if (object != nullptr)
@@ -420,6 +427,18 @@ void CSharpScript::SetAssembly(MonoAssembly* assembly)
 void CSharpScript::SetImage(MonoImage* image)
 {
 	CSimage = image;
+}
+
+void CSharpScript::CreateCSObject()
+{
+	if (CSClass)
+	{
+		CSObject = mono_object_new(App->importer->iScript->GetDomain(), CSClass);
+	}
+	else
+	{
+		LOG("[error] Cant create MonoObject!");
+	}
 }
 
 void CSharpScript::SetClass(MonoClass* klass)

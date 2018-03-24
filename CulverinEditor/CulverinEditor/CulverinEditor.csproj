@@ -76,6 +76,7 @@
     <Compile Include="BarrelPuzle\ChainMovement.cs" />
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
+    <Compile Include="Code.cs" />
     <Compile Include="Player\UI\Game.cs" />
     <Compile Include="Player\UI\Intro.cs" />
     <Compile Include="Player\UI\Return.cs" />

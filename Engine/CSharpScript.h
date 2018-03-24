@@ -54,6 +54,39 @@ enum VarAccess
 	Var_PRIVATE,
 };
 
+struct PublicMethod
+{
+public:
+
+	void SetMonoMethod(MonoMethod* method_)
+	{
+		method = method_;
+	}
+	MonoMethod* GetMethod()
+	{
+		return method;
+	}
+
+	void SetMonoObject(MonoObject* object)
+	{
+		Script = object;
+	}
+
+	MonoObject* GetScript()
+	{
+		return Script;
+	}
+
+	std::string name_param;
+	std::string name_method;
+	VarType type = Var_UNKNOWN;
+
+private:
+	MonoMethod* method = nullptr;
+	MonoObject* Script = nullptr;
+
+};
+
 class ScriptVariable
 {
 public:
@@ -107,6 +140,7 @@ public:
 	MainMonoMethod CreateMainFunction(std::string function, int parameters, FunctionBase type);
 	void DoMainFunction(FunctionBase function, void** parameters = nullptr);
 	void DoFunction(MonoMethod* function, void ** parameter);
+	void DoPublicMethod(PublicMethod function, void** parameter);
 
 	bool CheckMonoObject(MonoObject* object);
 
@@ -119,6 +153,7 @@ public:
 	void SetDomain(MonoDomain* domain);
 	void SetAssembly(MonoAssembly* assembly);
 	void SetImage(MonoImage* image);
+	void CreateCSObject(); //Use this function after SetClass().
 	void SetClass(MonoClass* klass);
 	void SetClassName(std::string _name);
 	void SetNameSpace(std::string _name_space);
@@ -287,6 +322,7 @@ public:
 public:
 	//Variables/Info containers (public to have access through other modules)
 	std::vector<ScriptVariable*> variables;
+	std::vector<PublicMethod> methods;
 
 private:
 	bool test = false;
