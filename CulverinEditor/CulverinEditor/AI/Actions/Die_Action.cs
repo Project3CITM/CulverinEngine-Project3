@@ -20,15 +20,15 @@ class Die_Action : Action
         return true;
     }
 
-    public override ACTION_RESULT ActionUpdate()
+    /*public override ACTION_RESULT ActionUpdate()
     {
         if (GetComponent<CompAnimation>().IsAnimationRunning("Die"))
         {
             Debug.Log("Dead");
-            return ACTION_RESULT.AR_SUCCESS;
+           // return ACTION_RESULT.AR_SUCCESS;
         }
         return ACTION_RESULT.AR_IN_PROGRESS;
-    }
+    }*/
 
     public override bool ActionEnd()
     {

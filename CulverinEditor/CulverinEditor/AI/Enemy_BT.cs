@@ -47,6 +47,11 @@ public class Enemy_BT : BT
         //Update attack cooldown
         attack_timer += Time.deltaTime;
 
+        /*if (Input.GetKeyDown(KeyCode.I))
+        {
+            ApplyDamage(50);
+        }*/
+
         if (Input.GetKeyDown(KeyCode.P))
             PushEnemy(new Vector3(0, 0, -1));
 
@@ -58,9 +63,11 @@ public class Enemy_BT : BT
         Debug.Log("Make Decision");
         Debug.Log("Next Action:" + next_action.action_type);
 
-        if (current_hp <= 0)
+        if (next_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
         {
-            current_action = GetComponent<Die_Action>();
+            Debug.Log("[error]"+ next_action.action_type);
+            current_action = next_action;
+            next_action = null_action;
             current_action.ActionStart();
             return;
         }
@@ -129,9 +136,11 @@ public class Enemy_BT : BT
 
         if (current_hp <= 0)
         {
-            GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+            //GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
             state = AI_STATE.AI_DEAD;
             life_state = ENEMY_STATE.ENEMY_DEAD;
+            next_action = GetComponent<Die_Action>();
+            current_action.Interupt();
         }
         else if (current_hp < total_hp * damaged_limit)
         {
