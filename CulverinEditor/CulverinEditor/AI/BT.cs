@@ -43,6 +43,9 @@ public class BT : CulverinBehaviour
     public virtual void Update()
     {
 
+        if (current_action == null)
+            return;
+
         if (current_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
         {
             return;
