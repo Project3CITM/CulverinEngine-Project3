@@ -368,20 +368,6 @@ void GameObject::Update(float dt)
 				childs[i]->Update(dt);
 			}
 		}
-
-		// BOUNDING BOX -----------------
-		if (box_fixed.IsFinite())
-		{
-			CompTransform* transform = (CompTransform*)(FindComponentByType(C_TRANSFORM));
-			if (transform != nullptr)
-			{
-				if (transform->GetUpdated())
-				{
-					//Resize the Bounding Box
-					box_fixed.TransformAsAABB(transform->GetGlobalTransform());
-				}
-			}
-		}
 	}
 }
 

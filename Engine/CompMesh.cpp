@@ -111,6 +111,15 @@ void CompMesh::PreUpdate(float dt)
 
 void CompMesh::Update(float dt)
 {
+
+	if (parent->GetComponentTransform()->GetUpdated())
+	{
+		if (resource_mesh != nullptr)
+		{
+			parent->box_fixed = resource_mesh->aabb_box;
+		}
+		parent->box_fixed.TransformAsAABB(parent->GetComponentTransform()->GetGlobalTransform());
+	}
 }
 
 void CompMesh::ShowOptions()
@@ -517,6 +526,8 @@ void CompMesh::SetResource(ResourceMesh* resourse_mesh, bool isImport)
 		}
 	}
 }
+
+
 
 void CompMesh::CopyValues(const CompMesh* component)
 {
