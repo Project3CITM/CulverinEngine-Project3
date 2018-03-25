@@ -180,7 +180,7 @@ public class Lever : CulverinBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.N))
         {
             ResetPuzzle();
         }
