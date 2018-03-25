@@ -23,8 +23,10 @@ public:
 	void UpdateText();
 	void FreeFont();
 	void CopyValues(const CompText * component);
+	void Clear();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+	void SyncComponent(GameObject * sync_parent);
 	void SetRect(float x, float y, float width, float height);
 	void SetString(std::string input);
 
