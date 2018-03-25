@@ -163,10 +163,10 @@ public class Lever : CulverinBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            ResetMap();
-        }
+        //if (Input.GetKeyDown(KeyCode.R))
+        //{
+        //    ResetMap();
+        //}
 
         //---------------------
 

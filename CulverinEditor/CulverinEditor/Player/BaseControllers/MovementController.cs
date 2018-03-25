@@ -148,7 +148,7 @@ public class MovementController : CulverinBehaviour
 
         CheckIsWalkable();
 
-        if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false )//&& char_manager.GetManagerState() != CharactersManager.State.DROWNING)
+        if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false && char_manager.GetManagerState() != CharactersManager.State.DROWNING)
         {
             tile_mov_x = 0;
             tile_mov_y = 0;
@@ -174,7 +174,7 @@ public class MovementController : CulverinBehaviour
                     endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
                     curr_x += tile_mov_x;
                     curr_y += tile_mov_y;
-                    //char_manager.SetCurrentPosition();
+                    char_manager.SetCurrentPosition();
                     moving = true;
                 }
                 else if (array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 3) //Valryian Fire!
@@ -184,10 +184,10 @@ public class MovementController : CulverinBehaviour
                     endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
                     curr_x += tile_mov_x;
                     curr_y += tile_mov_y;
-                 //   char_manager.SetCurrentPosition();
+                    char_manager.SetCurrentPosition();
                     moving = true;
                     GetComponent<CompRigidBody>().UnLockTransform();
-                 //   char_manager.Drown();
+                    //char_manager.Drown();
                 }
             }
         }
@@ -220,7 +220,7 @@ public class MovementController : CulverinBehaviour
                         GetComponent<Transform>().RotateAroundAxis(Vector3.Up, -marge);
                     }
                 }
-               // char_manager.SetCurrentPosition();
+                char_manager.SetCurrentPosition();
             }
         }
         else if (face_rotating)

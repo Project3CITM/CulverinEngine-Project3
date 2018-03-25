@@ -414,7 +414,7 @@ public class JaimeController : CharacterController
                 curr_hit_time = 0.0f;
                 Debug.Log("Enemies manager 1");
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
-                EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
+                //EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
                 Debug.Log("Enemies manager 2");
 
                 float damage = 1.0f;

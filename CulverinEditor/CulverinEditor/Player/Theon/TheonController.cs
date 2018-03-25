@@ -67,7 +67,7 @@ public class TheonController : CharacterController
         theon_icon_obj_stamina = GetLinkedObject("theon_icon_obj_stamina");   
 
         //Start Idle animation
-        //anim_controller = theon_obj.GetComponent<CompAnimation>();    
+        anim_controller = theon_obj.GetComponent<CompAnimation>();    
         ToggleMesh(false);
 
         //Move icon to the left
@@ -374,7 +374,6 @@ public class TheonController : CharacterController
        
         arrow.transform.SetPosition(curr_position);
         arrow.transform.SetRotation(player.transform.GetRotation());
-        //arrow.transform.ForceTransformUpdate();
         Arrow arrow_script = arrow.GetComponent<Arrow>();
         arrow_script.speed = curr_forward;
 
@@ -439,8 +438,8 @@ public class TheonController : CharacterController
             if (coll_object.CompareTag("Enemy"))
             {
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
-                EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
-                enemy_manager.Push(coll_object, curr_forward);
+                //EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
+                //enemy_manager.Push(coll_object, curr_forward);
             }
         }
 

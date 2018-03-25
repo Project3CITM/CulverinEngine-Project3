@@ -41,6 +41,9 @@ public class RespawnWhenHit : CulverinBehaviour
             controller.curr_x = respawn_tile_x;
             controller.curr_y = respawn_tile_y;
             controller.moving = false;
+            CharactersManager char_manager = obj.GetComponent<CharactersManager>();
+            char_manager.SetManagerState(CharactersManager.State.IDLE);
+            char_manager.GetDamage(char_manager.drown_dmg);
         }
 
     }

@@ -510,9 +510,7 @@ public class CharactersManager : CulverinBehaviour
     public void Drown()
     {
         GetDamage(drown_dmg);
-        state = State.DROWNING;
-
-        GetComponent<CompRigidBody>().UnLockTransform();
+        //state = State.DROWNING;
     }
 
     public bool IsIdle()
