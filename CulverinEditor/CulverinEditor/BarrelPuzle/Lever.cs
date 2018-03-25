@@ -75,6 +75,14 @@ public class Lever : CulverinBehaviour
 
     public GameObject level_map;
     public GameObject player;
+
+
+    PuzzleCountdown countdown;
+
+    //Needed to know when the fill barrels are placed in puzzle
+    BarrelFall fill_barrel;
+   
+    
     //--------------
 
     void Start()
@@ -82,6 +90,14 @@ public class Lever : CulverinBehaviour
         tile_size = 25.4f;
 
         rnd = new Random();
+
+
+
+        countdown = GetComponent<PuzzleCountdown>();
+        if(countdown == null)
+        {
+            Debug.Log("There is no countdown in puzzle!");
+        }
 
         anim_controller = GetComponent<CompAnimation>();
         if (anim_controller == null)
@@ -163,10 +179,12 @@ public class Lever : CulverinBehaviour
             }
         }
 
-        //if (Input.GetKeyDown(KeyCode.R))
-        //{
-        //    ResetMap();
-        //}
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ResetPuzzle();
+        }
+
 
         //---------------------
 
@@ -188,7 +206,6 @@ public class Lever : CulverinBehaviour
         {
             if (!phase1) // Set info all barrels
             {
-                Debug.Log("Setting Barrel Info");
                 SetInfo(line1, 0);
                 SetInfo(line2, 1);
                 SetInfo(line3, 2);
@@ -196,10 +213,11 @@ public class Lever : CulverinBehaviour
                 SetInfo(line5, 4);
                 SetInfo(line6, 5);
                 phase1 = true;
+                SetPuzzleWalkability(1);
             }
             if (!phase2) // Move barrels mode.PUZZLE
             {
-                Debug.Log("Moving barrels");
+
                 MoveBarrels(line1);
                 MoveBarrels(line2);
                 MoveBarrels(line3);
@@ -225,7 +243,6 @@ public class Lever : CulverinBehaviour
             }
             if (!phase3) // Move barrels mode.FILLING
             {
-                Debug.Log("Moving barrels 2");
                 MoveBarrels(line1, true);
                 MoveBarrels(line2, true);
                 MoveBarrels(line3, true);
@@ -235,12 +252,17 @@ public class Lever : CulverinBehaviour
                 phase3 = true;
                 editmap = true;
             }
-            if (editmap)
+
+            if (editmap && fill_barrel.IsPlaced())
             {
-                Debug.Log("Barrels on site");
                 SetPathWalkable();
                 editmap = false;
-                active_lever = false;
+            }
+
+
+            if(countdown.IsCountdownOver())
+            {
+                ResetPuzzle();
             }
         }
     }
@@ -263,7 +285,7 @@ public class Lever : CulverinBehaviour
             {
                 Debug.Log("Activating filling barrels");                
                 list[i].SetActive(true);
-
+                fill_barrel = b_fall;
             }
         }
     }
@@ -383,6 +405,8 @@ public class Lever : CulverinBehaviour
         barrel_puzzel_manager.OnPuzzleActivated();
         // Activate the puzzle
         active_lever = true; // TODO: Verify this is correct and uncomment this line
+
+        countdown.StartCountdown();
     }
 
     void OnTriggerEnter()
@@ -491,29 +515,37 @@ public class Lever : CulverinBehaviour
 
     void SetPathWalkable()
     {
+        level_map = GetLinkedObject("level_map");
+        LevelMap level_map_script;
+        if (level_map == null)
+            Debug.Log("MAP IS NULL");
+        level_map_script = level_map.GetComponent<LevelMap>();
+
+        player = GetLinkedObject("player");
+        MovementController player_mov = player.GetComponent<MovementController>();
+
+
         for (int y = 0; y < current_path.height; ++y)
         {
             for (int x = 0; x < current_path.width; ++x)
-            {
+            {   
+              
                 if (current_path.walkability[x, y] == 0)
                 {
-
-                     level_map = GetLinkedObject("level_map");
-                     if (level_map == null)
-                         Debug.Log("MAP IS NULL");
-                     else level_map.GetComponent<LevelMap>().UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);
-
-                    player = GetLinkedObject("player");
-                    player.GetComponent<MovementController>().SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);
-
-
+                    level_map_script.UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);
+                    player_mov.SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);
+                }
+                else
+                {
+                    level_map_script.UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 3);
+                    player_mov.SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 3);
                 }
             }
             
         }
     }
 
-    void ResetMap()
+    public void ResetPuzzle()
     {
         ResetLine(line1);
         ResetLine(line2);
@@ -530,26 +562,8 @@ public class Lever : CulverinBehaviour
         active_lever = false;
         time = 0.0f;
 
-
-        for (int y = 0; y < current_path.height; ++y)
-        {
-            for (int x = 0; x < current_path.width; ++x)
-            {
-                if (current_path.walkability[x, y] != 3)
-                {
-                    level_map = GetLinkedObject("level_map");
-                    if (level_map == null)
-                        Debug.Log("MAP IS NULL");
-                    else level_map.GetComponent<LevelMap>().UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 3);
-
-                    player = GetLinkedObject("player");
-                    player.GetComponent<MovementController>().SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 3);
-
-
-                }
-            }
-
-        }
+        SetPuzzleWalkability(3);
+       
 
     }
 
@@ -561,6 +575,29 @@ public class Lever : CulverinBehaviour
         {
             BarrelFall b_fall = list[i].GetComponent<BarrelFall>();            
             b_fall.ResetBarrel();
+        }
+    }
+
+
+    void SetPuzzleWalkability(int value)
+    {
+        level_map = GetLinkedObject("level_map");
+        LevelMap level_map_script;
+        if (level_map == null)
+            Debug.Log("MAP IS NULL");
+        level_map_script = level_map.GetComponent<LevelMap>();
+
+        player = GetLinkedObject("player");
+        MovementController player_mov = player.GetComponent<MovementController>();
+
+        for (int y = 0; y < current_path.height; ++y)
+        {
+            for (int x = 0; x < current_path.width; ++x)
+            {              
+                    level_map_script.UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, value);
+                    player_mov.SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, value);
+            }
+
         }
     }
 }
