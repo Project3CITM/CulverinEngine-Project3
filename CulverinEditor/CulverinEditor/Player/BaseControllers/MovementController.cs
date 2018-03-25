@@ -281,25 +281,9 @@ public class MovementController : CulverinBehaviour
     {
         if (1 == 1/*GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle()*/)
         {
-            if (Input.GetKeyDown(KeyCode.Q)) //Left
-            {
-                actual_angle = 0;
-                angle = 10;
-                rotating = true;
-                ModificateCurrentDirection(true);
-                return true;
-            }
-            if (Input.GetKeyDown(KeyCode.E)) //Right
-            {
-                actual_angle = 0;
-                angle = -10;
-                rotating = true;
-                ModificateCurrentDirection(false);
-                return true;
+      
 
-            }
-
-            float variation = Input.GetInput_ControllerAxis("RHorizontal", "Player");
+            float variation = Input.GetInput_ControllerAxis("Rotate", "Player");
             if (variation < -0.8)
             {
                 actual_angle = 0;
@@ -327,32 +311,7 @@ public class MovementController : CulverinBehaviour
     {
         if (1 == 1/*GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle()*/)
         {
-            if (Input.GetKeyDown(KeyCode.A)/*!EnemyInLeft()*/) //Left
-            {
-                MoveLeft(out tile_mov_x, out tile_mov_y);
-                Debug.Log("A");
-                return true;
-            }
-            else if (Input.GetKeyDown(KeyCode.D) /*&& !EnemyInRight()*/) //Right
-            {
-                MoveRight(out tile_mov_x, out tile_mov_y);
-                Debug.Log("D");
-                return true;
-            }
-            else if (Input.GetKeyDown(KeyCode.W) /*&& !EnemyInFront()*/) //Up
-            {
-                MoveForward(out tile_mov_x, out tile_mov_y);
-                Debug.Log("W");
-                return true;
-            }
-            else if (Input.GetKeyDown(KeyCode.S) /*&& !EnemyBehind()*/) //Down
-            {
-                MoveBackward(out tile_mov_x, out tile_mov_y);
-                Debug.Log("S");
-                return true;
-            }
-
-            float variation = Input.GetInput_ControllerAxis("LHorizontal", "Player");
+            float variation = Input.GetInput_ControllerAxis("Horizontal", "Player");
             if (variation > 0.8)
             {
                 MoveRight(out tile_mov_x, out tile_mov_y);
@@ -364,11 +323,12 @@ public class MovementController : CulverinBehaviour
                 return true;
             }
 
-            float variation2 = Input.GetInput_ControllerAxis("LVertical", "Player");
+            float variation2 = Input.GetInput_ControllerAxis("Vertical", "Player");
             if (variation2 > 0.8)
             {
                 if (/*!EnemyBehind()*/1 == 1)
                 {
+
                     MoveBackward(out tile_mov_x, out tile_mov_y);
                     return true;
                 }
@@ -376,11 +336,12 @@ public class MovementController : CulverinBehaviour
             }
             else if (variation2 < -0.8)
             {
-                if (/*!EnemyInFront()*/1 == 1)
-                {
-                    MoveForward(out tile_mov_x, out tile_mov_y);
-                    return true;
-                }
+                    if (/*!EnemyInFront()*/1 == 1)
+                    {
+
+                        MoveForward(out tile_mov_x, out tile_mov_y);
+                        return true;
+                    }
             }
         }
         return false;

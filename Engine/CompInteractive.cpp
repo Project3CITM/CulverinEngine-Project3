@@ -772,7 +772,7 @@ CompInteractive * CompInteractive::FindInteractive(float3 direction)
 		float3 position_it = (*it)->parent->GetComponentRectTransform()->GetGlobalPosition();
 		float3 vector = position_it - position;
 
-		float dot_value = vector.Dot(norm_direction);
+		float dot_value = norm_direction.Dot(vector);
 		
 		if (dot_value <= 0)
 			continue;

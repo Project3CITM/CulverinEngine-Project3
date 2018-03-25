@@ -849,7 +849,8 @@ void JSONSerialization::SaveInputAction(JSON_Object * config_node, const InputAc
 	std::string name = "Input.InputManager" + std::to_string(input_count)+".InputAction" + std::to_string(count);
 	name += ".";
 	json_object_dotset_string_with_std(config_node, name+"InputActionName", input_action->name.c_str());
-	json_object_dotset_string_with_std(config_node, name + "KeyRelationName", input_action->key_relation->name.c_str());
+	json_object_dotset_string_with_std(config_node, name + "KeyRelationNamePositive", input_action->positive_button->name.c_str());
+	json_object_dotset_string_with_std(config_node, name + "KeyRelationNameNegative", input_action->negative_button->name.c_str());
 	json_object_dotset_number_with_std(config_node, name + "ActionType", input_action->action_type);
 
 }
@@ -884,9 +885,10 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 				name += ".";
 				InputAction* input_action = nullptr;
 				std::string action_name = json_object_dotget_string_with_std(config, name + "InputActionName");
-				std::string key_relation = json_object_dotget_string_with_std(config, name + "KeyRelationName");
+				std::string key_relation_positive = json_object_dotget_string_with_std(config, name + "KeyRelationNamePositive");
+				std::string key_relation_negative = json_object_dotget_string_with_std(config, name + "KeyRelationNameNegative");
 				int action_type = json_object_dotget_number_with_std(config, name + "ActionType");
-				input_action = input_manager->CreateNewAction(action_name.c_str(), key_relation.c_str(), static_cast<ActionInputType>(action_type));
+				input_action = input_manager->CreateNewAction(action_name.c_str(), key_relation_positive.c_str(), key_relation_negative.c_str(),static_cast<ActionInputType>(action_type));
 				input_manager->action_vector.push_back(input_action);
 
 			}

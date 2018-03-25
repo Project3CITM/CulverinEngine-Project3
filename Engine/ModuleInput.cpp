@@ -6,7 +6,6 @@
 #include "WindowProject.h"
 #include "ModuleMap.h"
 #include "ModuleResourceManager.h"
-#include "SDL2_ttf/include/SDL_ttf.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
 #include "ModuleEventSystem.h"
 #include "PlayerActions.h"
@@ -41,7 +40,6 @@ bool ModuleInput::Init(JSON_Object* node)
 	LOG("Init SDL input event system");
 	bool ret = true;
 	SDL_Init(0);
-	TTF_Init();
 
 	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
@@ -437,7 +435,6 @@ bool ModuleInput::CleanUp()
 	RELEASE(player_action);
 	player_action = nullptr;
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
-	TTF_Quit();
 	return true;
 }
 

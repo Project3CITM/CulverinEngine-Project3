@@ -82,6 +82,13 @@ void CompGraphic::DrawGraphic()
 	
 }
 
+void CompGraphic::DrawRectTranforms()
+{
+	if (transform == nullptr)
+		return;
+	transform->DrawRectTransform();
+}
+
 void CompGraphic::ActivateRender()
 {
 	render = true;

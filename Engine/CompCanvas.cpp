@@ -195,6 +195,13 @@ void CompCanvas::DrawDebugRectTransform()
 	if (App->engine_state == EngineState::STOP)
 	{
 		my_transform->DrawRectTransform();
+		for (int i = 0; i < graphic_vector.size(); i++)
+		{
+			CompGraphic* graphic = graphic_vector[i];
+			if (!graphic->IsActive() || !graphic->GetToRender() || !graphic->GetParentActive())
+				continue;
+			graphic->DrawRectTranforms();
+		}
 	}
 }
 void CompCanvas::DrawGraphic(bool debug)
@@ -251,6 +258,16 @@ void CompCanvas::DrawGraphic(bool debug)
 			Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
 			glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 
+		}
+		if (App->engine_state == EngineState::STOP)
+		{
+			for (int i = 0; i < graphic_vector.size(); i++)
+			{
+				CompGraphic* graphic = graphic_vector[i];
+				if (!graphic->IsActive() || !graphic->GetToRender() || !graphic->GetParentActive())
+					continue;
+				graphic->DrawRectTranforms();
+			}
 		}
 		for (int i = 0; i < graphic_vector.size(); i++)
 		{
