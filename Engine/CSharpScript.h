@@ -267,6 +267,16 @@ public:
 	void		SetNormals(MonoObject* object, MonoString* string);
 	void		SetAmbientOcclusion(MonoObject* object, MonoString* string);
 
+	/*Lights*/
+	float		GetIntensity(MonoObject* object);
+	void		SetIntensity(MonoObject* object, float);
+	float		GetConstant(MonoObject* object);
+	void		SetConstant(MonoObject* object, float);
+	float		GetLinear(MonoObject* object);
+	void		SetLinear(MonoObject* object, float);
+	float		GetQuadratic(MonoObject* object);
+	void		SetQuadratic(MonoObject* object, float);
+
 	/*Components*/
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
 	MonoObject* GetParentGameObject(MonoObject* object);

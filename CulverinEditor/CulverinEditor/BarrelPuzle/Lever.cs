@@ -150,7 +150,7 @@ public class Lever : CulverinBehaviour
         //-- TMP: Debug -----
         if (Input.GetKeyDown(KeyCode.B))
         {
-            //  GeneratePath();
+         
             if (on_lever_animation == true)
             {
                 Debug.Log("Hardcoded lever anim finish.");
@@ -163,26 +163,32 @@ public class Lever : CulverinBehaviour
             }
         }
 
-        //---------------------
-
-        if (on_lever_animation == true)
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            if (anim_controller != null)
-            {
-                if (anim_controller.IsAnimationStopped(lever_animation_name))
-                {
-                    Debug.Log("Lever animation ended.");
-                    // The lever animation has stopped so puzzle must start.
-                    OnLeverAnimFinish();
-                }
-            }
+            ResetMap();
         }
 
+        //---------------------
+
+        /* if (on_lever_animation)
+         {
+             if (anim_controller != null)
+             {
+                 if (anim_controller.IsAnimationStopped(lever_animation_name))
+                 {
+                     Debug.Log("Lever animation ended.");
+                     // The lever animation has stopped so puzzle must start.
+                     OnLeverAnimFinish();
+                 }
+             }
+         }*/
+
+      ;
         if (active_lever)
         {
             if (!phase1) // Set info all barrels
             {
-                Debug.Log("Setting barrel info");
+                Debug.Log("Setting Barrel Info");
                 SetInfo(line1, 0);
                 SetInfo(line2, 1);
                 SetInfo(line3, 2);
@@ -193,7 +199,7 @@ public class Lever : CulverinBehaviour
             }
             if (!phase2) // Move barrels mode.PUZZLE
             {
-                Debug.Log("Phase 1: move path barrels");
+                Debug.Log("Moving barrels");
                 MoveBarrels(line1);
                 MoveBarrels(line2);
                 MoveBarrels(line3);
@@ -208,6 +214,7 @@ public class Lever : CulverinBehaviour
             }
             if (phase_wait) // wait to move the other mode
             {
+               // Debug.Log("Waiting");
                 // Wait delay to move other barrels
                 float time_transcured = Time.realtimeSinceStartup;
                 if (time_transcured >= time)
@@ -218,8 +225,7 @@ public class Lever : CulverinBehaviour
             }
             if (!phase3) // Move barrels mode.FILLING
             {
-                Debug.Log("Phase 2: move fill barrels");
-
+                Debug.Log("Moving barrels 2");
                 MoveBarrels(line1, true);
                 MoveBarrels(line2, true);
                 MoveBarrels(line3, true);
@@ -231,8 +237,10 @@ public class Lever : CulverinBehaviour
             }
             if (editmap)
             {
+                Debug.Log("Barrels on site");
                 SetPathWalkable();
                 editmap = false;
+                active_lever = false;
             }
         }
     }
@@ -243,14 +251,19 @@ public class Lever : CulverinBehaviour
     {
         for (int i = 0; i < list.Count; i++)
         {
-            if (list[i].GetComponent<BarrelFall>().IsPuzzleMode())
+            BarrelFall b_fall = list[i].GetComponent<BarrelFall>();
+
+            if (b_fall.IsPuzzleMode())
             {
-                Debug.Log("Moving puzzle barrel");
+                Debug.Log("Activating puzzle barrels");          
                 list[i].SetActive(true);
+
             }
             else if (isfilling)
             {
+                Debug.Log("Activating filling barrels");                
                 list[i].SetActive(true);
+
             }
         }
     }
@@ -265,8 +278,6 @@ public class Lever : CulverinBehaviour
 
     void SetInfo(List<GameObject> list, int number_of_lines)
     {
-        Debug.Log("Setting barrel info");
-
         int count_barrel = barrel_per_line - 1;
         int y = number_of_lines;
 
@@ -279,7 +290,7 @@ public class Lever : CulverinBehaviour
 
             if (current_path.walkability[x, y] == 0)
             {
-                Debug.Log("Setting puzzle barrel");
+               
                 list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.PUZZLE, floor_height);
             }
             else if (current_path.walkability[x, y] == 1)
@@ -499,6 +510,57 @@ public class Lever : CulverinBehaviour
                 }
             }
             
+        }
+    }
+
+    void ResetMap()
+    {
+        ResetLine(line1);
+        ResetLine(line2);
+        ResetLine(line3);
+        ResetLine(line4);
+        ResetLine(line5);
+        ResetLine(line6);
+
+        phase1 = false;
+        phase2 = false;
+        phase_wait = false;
+        phase3 = false;
+        editmap = false;
+        active_lever = false;
+        time = 0.0f;
+
+
+        for (int y = 0; y < current_path.height; ++y)
+        {
+            for (int x = 0; x < current_path.width; ++x)
+            {
+                if (current_path.walkability[x, y] != 3)
+                {
+                    level_map = GetLinkedObject("level_map");
+                    if (level_map == null)
+                        Debug.Log("MAP IS NULL");
+                    else level_map.GetComponent<LevelMap>().UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 3);
+
+                    player = GetLinkedObject("player");
+                    player.GetComponent<MovementController>().SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 3);
+
+
+                }
+            }
+
+        }
+
+    }
+
+    void ResetLine(List<GameObject> list)
+    {
+        int i = barrel_per_line - 1;     
+
+        for (; i >= 0; i--)
+        {
+            BarrelFall b_fall = list[i].GetComponent<BarrelFall>();            
+            b_fall.ResetBarrel();
         }
     }
 }
