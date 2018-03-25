@@ -85,6 +85,7 @@ public:
 	bool GetUpdated() const;
 
 	float3* GetPosPointer();
+	float3* GetGlobalPosPointer();
 
 	void Freeze(bool freeze);
 
@@ -115,6 +116,7 @@ protected:
 
 
 	float3* position_pointer = nullptr;
+	float3* global_position_pointer = nullptr;
 	float3* scale_pointer = nullptr;
 	// ------------------------------------
 

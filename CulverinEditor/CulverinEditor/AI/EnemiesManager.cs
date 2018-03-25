@@ -165,15 +165,15 @@ public class EnemiesManager : CulverinBehaviour
     {
         if (target.GetComponent<EnemySword_BT>() != null)
         {
-            target.GetComponent<EnemySword_BT>().Push(dir);
+            target.GetComponent<EnemySword_BT>().PushEnemy(dir);
         }
         else if (target.GetComponent<EnemySpear_BT>() != null)
         {
-            target.GetComponent<EnemySpear_BT>().Push(dir);
+            target.GetComponent<EnemySpear_BT>().PushEnemy(dir);
         }
         else if (target.GetComponent<EnemyShield_BT>() != null)
         {
-            target.GetComponent<EnemyShield_BT>().Push(dir);
+            target.GetComponent<EnemyShield_BT>().PushEnemy(dir);
         }
     }
 

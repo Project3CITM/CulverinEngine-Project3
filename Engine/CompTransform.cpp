@@ -21,6 +21,7 @@ CompTransform::CompTransform(Comp_Type t, GameObject* parent) : Component(t, par
 {
 	name_component = "Transform";
 	position_pointer = &position;
+	global_position_pointer = &position_global;
 }
 
 CompTransform::CompTransform(const CompTransform& copy, GameObject* parent) : Component(copy.GetType(), parent)
@@ -598,18 +599,21 @@ void CompTransform::SetForwardVector(float3 vec)
 	float3 right = math::Cross(up, vec).Normalized();
 	up = math::Cross(vec,right).Normalized();
 
-	float4x4 new_transform = float4x4(float3x3(right, up, vec));
-	
-	const GameObject* parentparent = parent->GetParent();
-	if (parentparent != nullptr && parentparent->GetUUID() != 1)
-	{
-		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
-	}
-	rotation_euler = new_transform.ToEulerXYZ();;
-	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
-	rotation_euler *= RADTODEG;
-	toUpdate = true;
+	float3 translation = global_transform.TranslatePart();
 
+	float4x4 new_transform(float3x4(right, up, vec, translation));
+
+	GameObject* parent_go = parent->GetParent();
+
+	if (parent_go != nullptr)
+	{
+		float4x4 parent_transform = parent_go->GetComponentTransform()->GetGlobalTransform();
+		local_transform = parent_transform.Inverted() * new_transform;
+	}
+	else
+		local_transform = new_transform;
+
+	toUpdate = true;
 }
 
 void CompTransform::SetBackwardVector(float3 vec)
@@ -785,6 +789,11 @@ bool CompTransform::GetUpdated() const
 float3* CompTransform::GetPosPointer()
 {
 	return position_pointer;
+}
+
+float3* CompTransform::GetGlobalPosPointer()
+{
+	return global_position_pointer;
 }
 
 void CompTransform::Freeze(bool freeze)

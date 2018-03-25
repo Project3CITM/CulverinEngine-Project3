@@ -243,6 +243,22 @@ void CSharpScript::SetActiveBlendingClipWeight(MonoObject * object, float weight
 	}
 }
 
+void CSharpScript::SetBlendInTime(MonoObject * object, MonoString * name, float time)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			AnimationClip* clip = animation->GetClipFromName(mono_string_to_utf8(name));
+			if (clip != nullptr)
+			{
+				clip->total_blending_time = time;
+			}
+		}
+	}
+}
+
 // CompCollider -----------------------------------------------------------
 MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 {

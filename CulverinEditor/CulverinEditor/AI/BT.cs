@@ -13,8 +13,9 @@ public class BT : CulverinBehaviour
         AI_DEAD
     }
 
-    protected Action current_action = new Action();
-    protected Action next_action = new Action();
+    protected Action null_action = new Action();
+    protected Action current_action = null;
+    protected Action next_action = null;
     protected AI_STATE state = AI_STATE.AI_IDLE;
 
     //Blackboard
@@ -32,6 +33,7 @@ public class BT : CulverinBehaviour
 
     virtual public void Start()
     {
+        next_action = null_action;
         current_action = GetComponent<Idle_Action>();
         current_action.SetAnimSpeed(anim_speed);
         current_action.ActionStart();
@@ -40,9 +42,24 @@ public class BT : CulverinBehaviour
 
     public virtual void Update()
     {
-        if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION)
+
+        if (current_action == null)
+            return;
+
+        if (current_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
         {
-            switch (current_action.ActionUpdate())
+            return;
+        }
+
+        Action.ACTION_RESULT result = current_action.ActionUpdate();
+
+        if (current_action.action_type == Action.ACTION_TYPE.IDLE_ACTION || current_action.action_type == Action.ACTION_TYPE.IDLE_ATTACK_ACTION)
+        {
+            MakeDecision();
+        }
+        else
+        {
+            switch (result)
             {
                 case Action.ACTION_RESULT.AR_FAIL:
                     current_action.ActionEnd();
@@ -61,10 +78,6 @@ public class BT : CulverinBehaviour
                     Debug.Log("Error on action state!");
                     break;
             }
-        }
-        else
-        {
-            MakeDecision();
         }
     }
 

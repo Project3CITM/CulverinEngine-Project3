@@ -42,5 +42,11 @@ class ShieldBlock_Action : Action
 
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
+
+    public override bool ActionEnd()
+    {
+        interupt = false;
+        return false;
+    }
 }
 

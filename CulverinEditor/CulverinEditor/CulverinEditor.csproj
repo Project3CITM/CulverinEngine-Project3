@@ -38,25 +38,27 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AI\Action.cs" />
+    <Compile Include="AI\Actions\Action.cs" />
+    <Compile Include="AI\Actions\Stun_Action.cs" />
     <Compile Include="AI\AIManager.cs" />
-    <Compile Include="AI\Align_Steering.cs" />
-    <Compile Include="AI\Arrive_Steering.cs" />
+    <Compile Include="AI\Actions\Align_Steering.cs" />
+    <Compile Include="AI\Actions\Arrive_Steering.cs" />
     <Compile Include="AI\BT.cs" />
-    <Compile Include="AI\ChasePlayer_Action.cs" />
-    <Compile Include="AI\Die_Action.cs" />
-    <Compile Include="AI\Disengage_Action.cs" />
+    <Compile Include="AI\Actions\ChasePlayer_Action.cs" />
+    <Compile Include="AI\Actions\Die_Action.cs" />
+    <Compile Include="AI\Actions\Disengage_Action.cs" />
     <Compile Include="AI\EnemiesManager.cs" />
     <Compile Include="AI\EnemySpear_BT.cs" />
     <Compile Include="AI\EnemyShield_BT.cs" />
     <Compile Include="AI\EnemySword_BT.cs" />
     <Compile Include="AI\Enemy_BT.cs" />
-    <Compile Include="AI\Engage_Action.cs" />
-    <Compile Include="AI\GetHit_Action.cs" />
-    <Compile Include="AI\Idle_Action.cs" />
-    <Compile Include="AI\Investigate_Action.cs" />
-    <Compile Include="AI\Movement_Action.cs" />
-    <Compile Include="AI\ShieldBlock_Action.cs" />
+    <Compile Include="AI\Actions\Engage_Action.cs" />
+    <Compile Include="AI\Actions\GetHit_Action.cs" />
+    <Compile Include="AI\Actions\IdleAttack_Action.cs" />
+    <Compile Include="AI\Actions\Idle_Action.cs" />
+    <Compile Include="AI\Actions\Investigate_Action.cs" />
+    <Compile Include="AI\Actions\Movement_Action.cs" />
+    <Compile Include="AI\Actions\ShieldBlock_Action.cs" />
     <Compile Include="AI\SpearGuard_Listener.cs" />
     <Compile Include="AI\SwordGuard_Listener.cs" />
     <Compile Include="AI\PerceptionEmitter.cs" />
@@ -64,9 +66,9 @@
     <Compile Include="AI\PerceptionListener.cs" />
     <Compile Include="AI\PerceptionManager.cs" />
     <Compile Include="AI\PerceptionSightEnemy.cs" />
-    <Compile Include="AI\PushBack_Action.cs" />
-    <Compile Include="AI\Seek_Steering.cs" />
-    <Compile Include="AI\Attack_Action.cs" />
+    <Compile Include="AI\Actions\PushBack_Action.cs" />
+    <Compile Include="AI\Actions\Seek_Steering.cs" />
+    <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
     <Compile Include="BarrelPuzle\Lever.cs" />
@@ -149,6 +151,8 @@
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

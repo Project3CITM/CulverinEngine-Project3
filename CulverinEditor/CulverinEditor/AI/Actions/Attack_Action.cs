@@ -24,22 +24,18 @@ public class Attack_Action : Action
     SWA_STATE state = SWA_STATE.WAITING;
     float damage = 1.0f;
     public float apply_damage_point = 0.5f;
+    public float attack_duration = 1.0f;
 
     public GameObject target = null;
-    public GameObject my_object = null;
     CompAnimation anim = null;
     CharactersManager player = null;
 
     public override bool ActionStart()
     {
         state = SWA_STATE.PRE_APPLY;
-        Debug.Log("1");
-        anim = gameObject.GetComponent<CompAnimation>();
-        Debug.Log("2");
+        anim = GetComponent<CompAnimation>();
         anim.SetTransition("ToAttack");
-        Debug.Log("3");
-        anim.SetClipsSpeed(anim_speed);
-        Debug.Log("Got Here");
+        anim.SetClipDuration("Attack", attack_duration);
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
         //Interrupt player action
         return true;
@@ -63,7 +59,6 @@ public class Attack_Action : Action
         }
         else if (state == SWA_STATE.POST_APPLY && anim.IsAnimationStopped("Attack"))
         {
-            Debug.Log("ATTACK_EEEEND!");
             state = SWA_STATE.WAITING;
             return ACTION_RESULT.AR_SUCCESS;
         }

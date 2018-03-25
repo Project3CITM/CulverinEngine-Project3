@@ -5,10 +5,10 @@ public enum PERCEPTION_EVENT_TYPE
 {
     //Hear events
     HEAR_EXPLORER_EVENT = 0,
-    HEAR_WALKING_PLAYER,
+    HEAR_WALKING_PLAYER = 1,
 
     //Visual events
-    PLAYER_SEEN,
+    PLAYER_SEEN = 2,
 
     //Other events
     PLAYER_DETECTED_EVENT
@@ -58,6 +58,7 @@ public class PerceptionEvent : CulverinBehaviour
 
     public void SetDestiny(int x, int y) { objective_tile_x = x; objective_tile_y = y; }
 
+    public virtual bool IsPrioritary(PerceptionEvent new_event) { return true; }
 }
 
 public class PerceptionHearEvent : PerceptionEvent
@@ -73,6 +74,15 @@ public class PerceptionHearEvent : PerceptionEvent
     {
         radius_in_tiles = e.radius_in_tiles;
     }
+
+    public override bool IsPrioritary(PerceptionEvent new_event)
+    {
+        if (new_event.type >= PERCEPTION_EVENT_TYPE.PLAYER_SEEN)
+            return true;
+
+        return false;
+    }
+
 }
 
 public class PerceptionPlayerSeenEvent : PerceptionEvent
@@ -94,4 +104,15 @@ public class PerceptionPlayerSeenEvent : PerceptionEvent
         player_seen_in_y = e.player_seen_in_y;
         enemy_who_saw = e.enemy_who_saw;
     }
+
+    public override bool IsPrioritary(PerceptionEvent new_event)
+    {
+        if (new_event.type >= PERCEPTION_EVENT_TYPE.PLAYER_SEEN && counter_in_memory != 0.0f)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 }

@@ -21,12 +21,14 @@ public class SwordGuard_Listener : PerceptionListener
 
     public override void OnEventRecieved(PerceptionEvent event_recieved)
     {
-        if (IsPriotitaryEvent(event_recieved))
+        if (IsPriotitaryEvent(event_recieved) == true)
         {
             ClearEvents();
-            events_in_memory.Add(event_recieved);
         }
-        else return;
+        else
+        {
+            return;
+        }
 
         switch (event_recieved.type)
         {
@@ -35,53 +37,39 @@ public class SwordGuard_Listener : PerceptionListener
 
                 PerceptionHearEvent tmp = (PerceptionHearEvent)event_recieved;
 
-                if (OnHearRange(tmp))
+                if (OnHearRange(tmp) && GetComponent<EnemySword_BT>().InCombat() == false)
                 {
                     PerceptionHearEvent event_to_memory = new PerceptionHearEvent(tmp);
 
-                    if (event_recieved.type == PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER && player_seen)
-                    {
                         GetComponent<EnemySword_BT>().heard_something = true;
                         GetComponent<Investigate_Action>().forgot_event = false;
                         GetComponent<Investigate_Action>().SetEvent(event_to_memory);
                         GetComponent<EnemySword_BT>().InterruptAction();
+                        GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.INVESTIGATE_ACTION);
                         events_in_memory.Add(event_to_memory);
-
-                        Debug.Log("I Heard The Player");
-
                         event_to_memory.start_counting = false;
-                    }
-                    else
-                    {
-                        GetComponent<EnemySword_BT>().heard_something = true;
-                        GetComponent<Investigate_Action>().forgot_event = false;
-                        GetComponent<Investigate_Action>().SetEvent(event_to_memory);
-                        GetComponent<EnemySword_BT>().InterruptAction();
-
-                        events_in_memory.Add(event_to_memory);
-
-                        Debug.Log("I Heard Somethin");
-
-                        event_to_memory.start_counting = false;
-                    }
                 }
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-                Debug.Log("Got Here");
+
                 PerceptionPlayerSeenEvent seen_event_tmp = (PerceptionPlayerSeenEvent)event_recieved;
 
                 if (gameObject == seen_event_tmp.enemy_who_saw)
                 {
-                    Debug.Log("Player Seen");
-                    PerceptionPlayerSeenEvent new_event_to_memory = new PerceptionPlayerSeenEvent(seen_event_tmp);
-                    events_in_memory.Add(new_event_to_memory);
                     GetComponent<EnemySword_BT>().InterruptAction();
                     GetComponent<EnemySword_BT>().player_detected = true;
-                    GetComponent<EnemySword_BT>().engage_combat = true;
-                    GetComponent<ChasePlayer_Action>().SetEvent(new_event_to_memory);
+
+                    if(GetComponent<EnemySword_BT>().InCombat() == false)
+                        GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.ENGAGE_ACTION);
+
                     player_seen = true;
-                    Debug.Log("Player in sight");
+
+                    PerceptionPlayerSeenEvent new_event_to_memory = new PerceptionPlayerSeenEvent(seen_event_tmp);
+                    events_in_memory.Add(new_event_to_memory);
+                    GetComponent<ChasePlayer_Action>().SetEvent(new_event_to_memory);
+                    GetComponent<ChasePlayer_Action>().forgot_event = false;
+                    new_event_to_memory.start_counting = false;
                 }
                 break;
         }
@@ -95,38 +83,36 @@ public class SwordGuard_Listener : PerceptionListener
             case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
                 GetComponent<EnemySword_BT>().heard_something = false;
                 GetComponent<Investigate_Action>().forgot_event = true;
-                Debug.Log("I lost Somethin");
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemySword_BT>().player_detected = false;
-                GetComponent<EnemySword_BT>().disengage_combat = true;
+                if (GetComponent<EnemySword_BT>().InCombat() == true)
+                    GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
                 GetComponent<ChasePlayer_Action>().forgot_event = true;
-                Debug.Log("Player out of sight");
+
+                Debug.Log("[error]Event gone type:" + event_recieved.type);
                 break;
         }
     }
 
-    bool OnHearRange(PerceptionEvent event_heard)
+    bool OnHearRange(PerceptionHearEvent event_heard)
     {
+        int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        PerceptionHearEvent tmp = (PerceptionHearEvent)event_heard;
-
-        int my_tile_x = my_self.GetComponent<Movement_Action>().GetCurrentTileX();
-        int my_tile_y = my_self.GetComponent<Movement_Action>().GetCurrentTileY();
-
-        if (hear_range < tmp.radius_in_tiles)
+        if (hear_range < event_heard.radius_in_tiles)
         {
-            if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles))
+            if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, event_heard.objective_tile_x, event_heard.objective_tile_y, event_heard.radius_in_tiles))
                 return true;
-
+            
             return false;
         }
         else
         {
-            if (RadiusOverlap(tmp.objective_tile_x, tmp.objective_tile_y, tmp.radius_in_tiles, my_tile_x, my_tile_y, hear_range))
+            if (RadiusOverlap(event_heard.objective_tile_x, event_heard.objective_tile_y, event_heard.radius_in_tiles, my_tile_x, my_tile_y, hear_range))
                 return true;
-
+           
             return false;
         }
     }

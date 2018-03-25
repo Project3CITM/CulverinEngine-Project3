@@ -15,6 +15,7 @@ class Engage_Action : Action
 
     public override bool ActionStart()
     {
+        Debug.Log("Engage Start");
         GetComponent<CompAnimation>().SetTransition("ToDraw");
         GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
         return true;
@@ -22,16 +23,14 @@ class Engage_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (GetComponent<CompAnimation>().IsAnimationRunning("IdleAttack"))
-        {
-            Debug.Log("Engaged");
+        if (GetComponent<CompAnimation>().IsAnimationStopped("Draw"))
             return ACTION_RESULT.AR_SUCCESS;
-        }
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
     public override bool ActionEnd()
     {
+        interupt = false;
         return true;
     }
 }

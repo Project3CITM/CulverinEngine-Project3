@@ -198,25 +198,25 @@ using CulverinEditor.Pathfinding;
 
             if (node.GetTileX() < map_width - 1)
             {
-                if (tile_map[node.GetTileX() + 1, node.GetTileY()] == 0)
+                if (tile_map[node.GetTileX() + 1, node.GetTileY()] != 1)
                     ret.Add(new PathNode(node.GetTileX() + 1, node.GetTileY()));
             }
 
             if (node.GetTileX() > 0)
             {
-                if (tile_map[node.GetTileX() - 1, node.GetTileY()] == 0)
+                if (tile_map[node.GetTileX() - 1, node.GetTileY()] != 1)
                     ret.Add(new PathNode(node.GetTileX() - 1, node.GetTileY()));
             }
 
             if (node.GetTileY() < map_height - 1)
             {
-                if (tile_map[node.GetTileX(), node.GetTileY() + 1] == 0)
+                if (tile_map[node.GetTileX(), node.GetTileY() + 1] != 1)
                     ret.Add(new PathNode(node.GetTileX(), node.GetTileY() + 1));
             }
 
             if (node.GetTileY() > 0)
             {
-                if (tile_map[node.GetTileX(), node.GetTileY() - 1] == 0)
+                if (tile_map[node.GetTileX(), node.GetTileY() - 1] != 1)
                     ret.Add(new PathNode(node.GetTileX(), node.GetTileY() - 1));
             }
 
@@ -229,7 +229,7 @@ using CulverinEditor.Pathfinding;
             //Check if the tiles are inside the map
             if (tile_to_check_x < map_width && tile_to_check_y < map_height)
             {
-                if (tile_map[tile_to_check_x, tile_to_check_y] == 0)
+                if (tile_map[tile_to_check_x, tile_to_check_y] != 1)
                     return true;
             }
             return false;
