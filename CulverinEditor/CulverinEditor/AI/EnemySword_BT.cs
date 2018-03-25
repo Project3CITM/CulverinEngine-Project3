@@ -5,7 +5,7 @@ public class EnemySword_BT : Enemy_BT
 {
     public override void Start()
     {
-        GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddSwordEnemy(gameObject);
+        //GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddSwordEnemy(gameObject);
         base.Start();
     }
 
