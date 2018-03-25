@@ -66,6 +66,11 @@ public:
 	std::string anim_audio = "Null_Audio";
 	float audio_time = 0.0f;
 	std::vector<AnimationTransition*> transitions;
+	std::string anim_prefab_particle = "Null_Prefab";
+	float prefab_particle_time = 0.0f;
+	float3 prefab_pos = { 0, 0, 0 };
+
+	bool to_delete = false;
 };
 
 class AnimationTransition
@@ -79,6 +84,8 @@ public:
 
 	bool has_exit_time = false;
 	float exit_time = 0.0f;
+
+	bool to_delete = false;
 };
 
 class CompAnimation : public Component
@@ -131,6 +138,7 @@ public:
 
 	void SetClipsSpeed(float speed_value);
 
+	void SetActiveAnimationNode(AnimationNode * active);
 public:
 
 	ResourceAnimation* animation_resource = nullptr;

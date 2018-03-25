@@ -9,6 +9,10 @@
 #include "ImportAnimation.h"
 #include "ModuleGUI.h"
 #include "ModuleInput.h"
+#include "ModuleFS.h"
+#include "ModuleImporter.h"
+#include "JSONSerialization.h"
+#include "ImportScript.h"
 #include "Scene.h"
 #include "ModuleWindow.h"
 #include "WindowInspector.h"
@@ -74,7 +78,6 @@ void CompAnimation::PreUpdate(float dt)
 			bones_placed = true;
 		}
 	}
-
 }
 
 void CompAnimation::Update(float dt)
@@ -658,10 +661,24 @@ void CompAnimation::ShowAnimationInfo()
 					{
 						(*it)->name = std::string(name_node);
 					}
+					if ((*it)->active == false)
+					{
+						if (ImGui::Checkbox("Active", &(*it)->active))
+						{
+							SetActiveAnimationNode((*it));
+						}
+					}
 					if ((*it)->active == true)
 					{
 						ImGui::Text("I'm active!!!");
 					}
+			
+					if (ImGui::Button("DELETE",ImVec2(50,30)))
+					{
+						(*it)->to_delete = true;
+					}
+
+					ImGui::Text("Audio:");
 					char name_audio[50];
 					strcpy_s(name_audio, 50, (*it)->anim_audio.c_str());
 					if (ImGui::InputText("##Audio Name", name_audio, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
@@ -669,7 +686,23 @@ void CompAnimation::ShowAnimationInfo()
 						(*it)->anim_audio = std::string(name_audio);
 					}
 					ImGui::SameLine(200);
-					if (ImGui::DragFloat("##pos", &(*it)->audio_time, 0.05f, (*it)->clip->start_frame_time, (*it)->clip->end_frame_time));
+					if (ImGui::DragFloat("##Audio Time", &(*it)->audio_time, 0.05f, (*it)->clip->start_frame_time, (*it)->clip->end_frame_time));
+
+					ImGui::Text("Prefab:");
+					char name_prefab[50];
+					strcpy_s(name_prefab, 50, (*it)->anim_prefab_particle.c_str());
+					if (ImGui::InputText("##Prefab Name", name_prefab, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+					{
+						(*it)->anim_prefab_particle = std::string(name_prefab);
+					}
+					ImGui::Text("Time to instantiate: ");
+					ImGui::SameLine(200);
+					if (ImGui::DragFloat("##Prefab Time", &(*it)->prefab_particle_time, 0.05f, (*it)->clip->start_frame_time, (*it)->clip->end_frame_time));
+					ImGui::Text("Position (Relative to who instantiates it): ");
+					ImGui::DragFloat("##PosX", &(*it)->prefab_pos.x);
+					ImGui::DragFloat("##PosY", &(*it)->prefab_pos.y);
+					ImGui::DragFloat("##PosZ", &(*it)->prefab_pos.z);
+
 					std::string clip_names;
 					int combo_pos = 0;
 					int i = 0;
@@ -756,6 +789,11 @@ void CompAnimation::ShowAnimationInfo()
 
 							ImGui::Checkbox("Active", &(*trans_it)->condition);
 
+							if (ImGui::Button("DELETE", ImVec2(50, 30)))
+							{
+								(*trans_it)->to_delete = true;
+							}
+
 							ImGui::Checkbox("Has Exit Time", &(*trans_it)->has_exit_time);
 							ImGui::InputFloat("Exit Time:", &(*trans_it)->exit_time);
 
@@ -787,6 +825,22 @@ void CompAnimation::ShowAnimationInfo()
 		}
 		ImGui::End();
 	}
+
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	{
+		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
+		{
+			if ((*it)->transitions.size() != 0 && (*trans_it)->to_delete == true)
+			{
+				(*it)->transitions.erase(trans_it);
+			}
+		}
+		if (animation_nodes.size() != 0 && (*it)->to_delete == true)
+		{
+			animation_nodes.erase(it);
+		}
+	}
+	
 }
 
 void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
@@ -839,6 +893,9 @@ void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene,
 		json_object_dotset_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".Active", (*it)->active);
 		json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioName", (*it)->anim_audio.c_str());
 		json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioTime", (*it)->audio_time);
+		json_object_dotset_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticleName", (*it)->anim_prefab_particle.c_str());
+		json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticleTime", (*it)->prefab_particle_time);
+		App->fs->json_array_dotset_float3(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticlePos", (*it)->prefab_pos);
 		int r = 0;
 
 		json_object_dotset_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + "NumberOfTransitions", (*it)->transitions.size());
@@ -926,8 +983,12 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			active_node = temp;
 		}
 		std::string clip_name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".ClipName");
-		temp->anim_audio = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioName");
-		temp->audio_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioTime");
+		//temp->anim_audio = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioName");
+		//temp->audio_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioTime");
+
+		//temp->anim_prefab_particle = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticleName");
+		//temp->prefab_particle_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticleTime");
+		//temp->prefab_pos = App->fs->json_array_dotget_float3_string(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticlePos");
 	
 		for (std::vector<AnimationClip*>::iterator temp_it = animation_clips.begin(); temp_it != animation_clips.end(); temp_it++)
 		{
@@ -1046,6 +1107,31 @@ void CompAnimation::ManageActualAnimationNode(float dt)
 				{
 					temp_emiter->PlayAudioEvent(active_node->anim_audio.c_str());
 				}
+			}
+		}
+		if (active_node->anim_prefab_particle != "Null_Prefab")
+		{
+			if (active_node->clip->time > active_node->prefab_particle_time - dt && active_node->clip->time <= active_node->prefab_particle_time)
+			{
+				std::string directory_prebaf = App->fs->GetMainDirectory();
+				directory_prebaf += "/";
+				directory_prebaf += active_node->anim_prefab_particle.c_str();
+				directory_prebaf += ".prefab.json";
+				GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str(), true);
+				if (gameobject != nullptr)
+				{
+					parent->AddChildGameObject(gameobject);
+					App->importer->iScript->UpdateMonoMap(gameobject);
+					CompTransform* trans = gameobject->GetComponentTransform();
+					//CompTransform* my_trans = parent->GetComponentTransform();
+					if (trans != nullptr)
+					{
+						//float3 final_pos = my_trans->GetPosGlobal() + active_node->prefab_pos;
+						//trans->SetPos(final_pos);
+						trans->SetPos(active_node->prefab_pos);
+					}
+				}
+				LOG("[error] with load prefab");
 			}
 		}
 	}
@@ -1182,5 +1268,16 @@ void AnimationNode::SetActiveBlendingClipWeight(float weight)
 	if (active != nullptr)
 	{
 		active->weight = weight;
+	}
+}
+
+void CompAnimation::SetActiveAnimationNode(AnimationNode* active)
+{
+	for (std::vector<AnimationNode*>::const_iterator new_item = animation_nodes.begin(); new_item != animation_nodes.end(); ++new_item)
+	{
+		if ((*new_item) != active)
+		{
+			(*new_item)->active = false;
+		}
 	}
 }
