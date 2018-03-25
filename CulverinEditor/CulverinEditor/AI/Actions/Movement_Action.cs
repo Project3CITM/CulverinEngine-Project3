@@ -53,6 +53,9 @@ public class Movement_Action : Action
 
     public bool chase = false;
 
+    float wait_timer = 0.0f;
+    public float wait_time = 1.0f;
+
     public Movement_Action()
     {
         action_type = ACTION_TYPE.MOVE_ACTION;
@@ -96,11 +99,13 @@ public class Movement_Action : Action
         if (chase == false)
         {
             GetComponent<CompAnimation>().SetTransition("ToPatrol");
+            GetComponent<CompAnimation>().SetActiveBlendingClip("Idle");
             Debug.Log("Animation to Patrol");
         }
         else
         {
             GetComponent<CompAnimation>().SetTransition("ToChase");
+            GetComponent<CompAnimation>().SetActiveBlendingClip("IdleAttack");
             Debug.Log("Animation to Chase");
         }
 
@@ -130,11 +135,13 @@ public class Movement_Action : Action
                 current_velocity = current_velocity.Normalized * current_max_vel;
             }
 
+            float point_in_speed = current_velocity.Length / current_max_vel;
+            GetComponent<CompAnimation>().SetActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
+
             //Translate
-            Vector3 pos = GetComponent<Transform>().position;
-            float dt = Time.deltaTime;
-            pos.x = pos.x + (current_velocity.x * dt);
-            pos.z = pos.z + (current_velocity.z * dt);
+            Vector3 pos = new Vector3(GetComponent<Transform>().position);
+            pos.x = pos.x + current_velocity.x * Time.deltaTime;
+            pos.z = pos.z + current_velocity.z * Time.deltaTime;
             GetComponent<Transform>().position = pos;
 
             //Clean
@@ -146,7 +153,19 @@ public class Movement_Action : Action
 
                 if (interupt != true)
                 {
-                    NextTile();
+                    if(wait_timer == 0.0f)
+                    {
+                        arrive.SetEnabled(false);
+                        seek.SetEnabled(false);
+                    }
+
+                    wait_timer += Time.deltaTime;
+
+                    if (wait_timer >= wait_time)
+                    {
+                        NextTile();
+                        wait_timer = 0.0f;
+                    }
                 }
                 else
                 {
@@ -186,7 +205,7 @@ public class Movement_Action : Action
             }
 
             //Rotate
-            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity);
+            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity * Time.deltaTime);
 
             //Clean
             current_rot_acceleration = 0.0f;
@@ -258,18 +277,9 @@ public class Movement_Action : Action
         }
         else
         {
+            arrive.SetEnabled(true);
+            seek.SetEnabled(true);
             path.Remove(path[0]);
-
-            if (chase == false)
-            {
-                GetComponent<CompAnimation>().SetTransition("ToPatrol");
-                Debug.Log("Animation to Patrol");
-            }
-            else
-            {
-                GetComponent<CompAnimation>().SetTransition("ToChase");
-                Debug.Log("Animation to Chase");
-            }
         }
 
         //Rotation

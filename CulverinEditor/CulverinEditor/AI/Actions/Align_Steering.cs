@@ -37,7 +37,7 @@ public class Align_Steering : CulverinBehaviour
         if (in_rot_margin)
             acceleration = break_acceleration;
 
-        move.Rotate(acceleration);
+        move.Rotate(Mathf.Rad2deg(acceleration));
     }
 
     public void SetRotation(float delta)

@@ -8,6 +8,7 @@ public class Arrive_Steering : CulverinBehaviour
     public float slow_distance = 5f;
     public float stopping_time = 1.5f;
     bool in_range = false;
+    Movement_Action move;
 
     // Use this for initialization
     void Start()
@@ -15,11 +16,11 @@ public class Arrive_Steering : CulverinBehaviour
         Debug.Log("Arrive Start");
         in_range = false;
         SetEnabled(false);
+        move = GetComponent<Movement_Action>();
     }
 
     void Update()
     {
-        Vector3 ideal_velocity = new Vector3(Vector3.Zero);
         Vector3 my_pos = GetComponent<Transform>().position;
         Vector3 tile_pos = GetComponent<Movement_Action>().GetTargetPosition();
         Vector3 distance_to_target = new Vector3(Vector3.Zero);
@@ -34,32 +35,18 @@ public class Arrive_Steering : CulverinBehaviour
             return;
         }
         //On slow zone case
-        else if(distance_to_target.Length < slow_distance && distance_to_target.Length > min_distance)
+        else if (distance_to_target.Length < slow_distance && distance_to_target.Length > min_distance)
         {
-            if (in_range == false)
-            {
-                in_range = true;
-                if (GetComponent<Movement_Action>().chase == false)
-                {
-                    GetComponent<CompAnimation>().SetTransition("ToIdle");
-                    GetComponent<CompAnimation>().SetBlendInTime("Idle", stopping_time);
-                    Debug.Log("Animation To Idle - Arrive");
-                }
-                else
-                {
-                    GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
-                    GetComponent<CompAnimation>().SetBlendInTime("IdleAttack", stopping_time);
-                    Debug.Log("Animation To IdleAttack - Arrive");
-                }
-                //set patrol/chase blend
-            }
-                
-            ideal_velocity = ((distance_to_target.Normalized * GetComponent<Movement_Action>().GetMaxVelocity() * distance_to_target.Length)) / slow_distance;
-        }
+            Vector3 ideal_velocity = distance_to_target.Normalized * move.GetMaxVelocity() * (distance_to_target.Length / slow_distance);
+            Vector3 deceleration = (ideal_velocity - move.GetCurrentVelocity());
 
-        Vector3 deceleration = new Vector3(ideal_velocity - GetComponent<Movement_Action>().GetCurrentVelocity());
-    
-        GetComponent<Movement_Action>().Accelerate(deceleration);
+            if (deceleration.Length > move.GetMaxAcceleration())
+                deceleration = deceleration.Normalized * move.GetMaxAcceleration();
+
+            deceleration = deceleration + distance_to_target.Normalized * move.GetMaxAcceleration() * (-1);
+
+            GetComponent<Movement_Action>().Accelerate(deceleration);
+        }
     }
 
     public bool ReachedTile()
