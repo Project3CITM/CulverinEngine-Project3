@@ -791,4 +791,7 @@ void ModuleResourceManager::NewLoad()
 	App->fs->GetAllMetas(App->fs->GetMainDirectory(), files_meta);
 	App->json_seria->CreateResourcesLoad(files_meta);
 
+	//Duplicate Particle folder to library
+	App->fs->CopyFolderToLibrary("ParticleSystem");
+
 }

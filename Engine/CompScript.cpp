@@ -169,6 +169,7 @@ void CompScript::Clear()
 		resource_script = nullptr;
 		csharp->Clear();
 	}
+	// Clear all Actions (UI Button) -----------------
 }
 
 bool CompScript::CheckAllVariables()
@@ -344,6 +345,7 @@ void CompScript::ShowInspectorInfo()
 	ImGui::PopStyleVar();
 	ShowFSMInspectorInfo();
 
+	// Show Editor Actions (UI Button) ----------------------------
 	ImGui::Separator();
 	ImGui::Text("");
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -581,6 +583,7 @@ void CompScript::ShowInspectorInfo()
 	
 }
 
+// (UI Button) -----------------------------
 void CompScript::InitValueParamater(int index)
 {
 	// Now Init Value with type param.
@@ -609,7 +612,7 @@ void CompScript::InitValueParamater(int index)
 	}
 	case VarType::Var_STRING:
 	{
-		ImGui::TextColored(ImVec4(0.0f, 0.58f, 1.0f, 1.0f), "...");
+		ImGui::TextColored(ImVec4(0.0f, 0.58f, 1.0f, 1.0f), "Value");
 		break;
 	}
 	case VarType::Var_GAMEOBJECT:
@@ -620,6 +623,7 @@ void CompScript::InitValueParamater(int index)
 	}
 }
 
+// (UI Button) -----------------------------
 void CompScript::ShowTypeMethod(int index)
 {
 	switch (actions[index].method->type)
@@ -957,6 +961,63 @@ void CompScript::Save(JSON_Object* object, std::string name, bool saveScene, uin
 		// Now Save Info in CSharp
 		App->fs->NormalitzatePath(name);
 		SaveScript(object, name);
+	}
+
+	// Save Actions (UI Button) ------------------------
+	if (actions.size() > 0)
+	{
+		json_object_dotset_number_with_std(object, name + "Actions.Number of Actions", actions.size());
+		for (int i = 0; i < actions.size(); i++)
+		{
+			std::string action_temp = name + "Actions.Action " + std::to_string(i) + ".";
+			json_object_dotset_number_with_std(object, action_temp + "Mode", actions[i].selected_mode);
+			if (actions[i].attacked == nullptr)
+			{
+				json_object_dotset_number_with_std(object, action_temp + "GameObject", -1);
+				continue;
+			}
+			json_object_dotset_number_with_std(object, action_temp + "GameObject", actions[i].attacked->GetUUID());
+			if (actions[i].script == nullptr)
+			{
+				json_object_dotset_string_with_std(object, action_temp + "Name Script", "No Script");
+				continue;
+			}
+			json_object_dotset_string_with_std(object, action_temp + "Name Script", actions[i].script->GetScriptName());
+			if (actions[i].method == nullptr)
+			{
+				json_object_dotset_string_with_std(object, action_temp + "Name Method", "No Function");
+				continue;
+			}
+			json_object_dotset_string_with_std(object, action_temp + "Name Method", actions[i].method->name_method.c_str());
+			switch (actions[i].method->type)
+			{
+			case VarType::Var_INT:
+			{
+				json_object_dotset_number_with_std(object, action_temp + "Value", *(int*)actions[i].value);
+				break;
+			}
+			case VarType::Var_FLOAT:
+			{
+				json_object_dotset_number_with_std(object, action_temp + "Value", *(float*)actions[i].value);
+				break;
+			}
+			case VarType::Var_BOOL:
+			{
+				json_object_dotset_number_with_std(object, action_temp + "Value", *(bool*)actions[i].value);
+				break;
+			}
+			case VarType::Var_STRING:
+			{
+				json_object_dotset_string_with_std(object, action_temp + "Value", actions[i].value_string.c_str());
+				break;
+			}
+			case VarType::Var_GAMEOBJECT:
+			{
+				json_object_dotset_number_with_std(object, action_temp + "Value", actions[i].value_go->GetUUID());
+				break;
+			}
+			}
+		}
 	}
 }
 

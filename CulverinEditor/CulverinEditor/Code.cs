@@ -3,10 +3,12 @@ using CulverinEditor.Debug;
 
 public class Code : CulverinBehaviour
 {
-
+    public int num = 0;
+    public float num2 = 0.0f;
     void Update()
     {
-
+        num++;
+        num2 += 0.1f;
     }
 
     public void Hola()

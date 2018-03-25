@@ -23,6 +23,7 @@ public:
 
 	void* value = nullptr;
 	GameObject* value_go = nullptr;
+	std::string value_string;
 };
 
 class CompScript : public Component
