@@ -27,6 +27,12 @@ public class PushBack_Action : Action
         push_direction = push_direction_;
     }
 
+    public void SetPushDirection(Vector3 push_dir)
+    {
+        Debug.Log("push direction is: " + push_dir);
+        push_direction = push_dir;
+    }
+
     public override bool ActionStart()
     {
         //TODO: Animations GetComponent<CompAnimation>().SetTransition("ToHit");
@@ -46,12 +52,12 @@ public class PushBack_Action : Action
         if (interupt == true)
             return ACTION_RESULT.AR_FAIL;
 
-        /*if (GetComponent<Movement_Action>().ReachedTile(target_x, target_y))
+        if (ReachedTile(target_x, target_y))
         {
             Debug.Log("Pushed");
            //TODO: Animations  GetComponent<CompAnimation>().SetTransition("ToIdle");
             return ACTION_RESULT.AR_SUCCESS;
-        }*/
+        }
 
         Vector3 my_pos = transform.position;
 
@@ -70,6 +76,21 @@ public class PushBack_Action : Action
     {
         interupt = false;
         return true;
+    }
+
+    public bool ReachedTile(int target_tile_x, int target_tile_y)
+    {
+        Vector3 my_pos = GetComponent<Transform>().position;
+
+        my_pos /= GetComponent<Movement_Action>().tile_size;
+
+        Vector3 result = new Vector3(Vector3.Zero);
+        result.x = target_tile_x - my_pos.x;
+        result.z = target_tile_y - my_pos.z;
+
+        float distance_to_target = result.Length;
+
+        return (distance_to_target < GetComponent<Arrive_Steering>().min_distance);
     }
 }
 
