@@ -45,7 +45,8 @@ enum VarType
 	Var_BOOL = 2,
 	Var_STRING = 3,
 	Var_CLASS = 4,
-	Var_GAMEOBJECT = 5
+	Var_GAMEOBJECT = 5,
+	Var_NONE
 };
 
 enum VarAccess

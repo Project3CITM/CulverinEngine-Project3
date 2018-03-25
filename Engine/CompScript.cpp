@@ -415,6 +415,8 @@ void CompScript::ShowInspectorInfo()
 								actions[i].current_script = "No Script";
 								actions[i].current_function = "No Function";
 								actions[i].method = nullptr;
+								actions[i].value_go = nullptr;
+								RELEASE_ARRAY(actions[i].value);
 								ImGui::SetItemDefaultFocus();
 							}
 							//ImGui::Separator();
@@ -459,6 +461,13 @@ void CompScript::ShowInspectorInfo()
 					if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 					{
 						actions[i].select_game_object = true;
+						actions[i].attacked = nullptr;
+						actions[i].method = nullptr;
+						actions[i].script = nullptr;
+						actions[i].current_function = "No Function";
+						actions[i].current_script = "No Script";
+						actions[i].value_go = nullptr;
+						RELEASE_ARRAY(actions[i].value);
 					}
 				}
 				ImGui::PushItemWidth(130);
@@ -474,11 +483,14 @@ void CompScript::ShowInspectorInfo()
 				{
 					for (int id = 0; id < actions[i].script->csharp->methods.size(); id++)
 					{
-						if (ImGui::Selectable(actions[i].script->csharp->methods[id].name_method.c_str()))
+						if (ImGui::Selectable(actions[i].script->csharp->methods[id].name_method.c_str()) &&
+							&actions[i].script->csharp->methods[id] != actions[i].method)
 						{
 							actions[i].current_function = actions[i].script->csharp->methods[id].name_method;
 							actions[i].method = &actions[i].script->csharp->methods[id];
-							InitValueParamater(i);
+							RELEASE_ARRAY(actions[i].value);
+							if(actions[i].method->type != VarType::Var_NONE)
+								InitValueParamater(i);
 						}
 					}
 					
@@ -563,6 +575,8 @@ void CompScript::ShowInspectorInfo()
 	ImGui::PopStyleColor();
 	ImGui::EndChild();
 	ImGui::PopStyleVar();
+	// Andre how to call functions :D
+	// actions[i].script->csharp->DoPublicMethod(actions[i].method, &actions[i].value);
 	ImGui::TreePop();
 	
 }
