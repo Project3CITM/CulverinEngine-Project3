@@ -22,7 +22,8 @@ class Disengage_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (GetComponent<CompAnimation>().IsAnimationStopped("Sheathe Sword"))
+        //We need to fix this if becaus this causes infinite loop.
+        //if (GetComponent<CompAnimation>().IsAnimationStopped("Sheathe Sword"))
             return ACTION_RESULT.AR_SUCCESS;
         return ACTION_RESULT.AR_IN_PROGRESS;
     }

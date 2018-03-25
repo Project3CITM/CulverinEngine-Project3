@@ -37,12 +37,10 @@ public class SwordGuard_Listener : PerceptionListener
 
                 PerceptionHearEvent tmp = (PerceptionHearEvent)event_recieved;
 
-                if (OnHearRange(tmp))
+                if (OnHearRange(tmp) && GetComponent<EnemySword_BT>().InCombat() == false)
                 {
                     PerceptionHearEvent event_to_memory = new PerceptionHearEvent(tmp);
 
-                    if (event_recieved.type == PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER && player_seen)
-                    {
                         GetComponent<EnemySword_BT>().heard_something = true;
                         GetComponent<Investigate_Action>().forgot_event = false;
                         GetComponent<Investigate_Action>().SetEvent(event_to_memory);
@@ -50,17 +48,6 @@ public class SwordGuard_Listener : PerceptionListener
                         GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.INVESTIGATE_ACTION);
                         events_in_memory.Add(event_to_memory);
                         event_to_memory.start_counting = false;
-                    }
-                    else
-                    {
-                        GetComponent<EnemySword_BT>().heard_something = true;
-                        GetComponent<Investigate_Action>().forgot_event = false;
-                        GetComponent<Investigate_Action>().SetEvent(event_to_memory);
-                        GetComponent<EnemySword_BT>().InterruptAction();
-                        GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.INVESTIGATE_ACTION);
-                        events_in_memory.Add(event_to_memory);
-                        event_to_memory.start_counting = false;
-                    }
                 }
                 break;
 
@@ -81,6 +68,7 @@ public class SwordGuard_Listener : PerceptionListener
                     PerceptionPlayerSeenEvent new_event_to_memory = new PerceptionPlayerSeenEvent(seen_event_tmp);
                     events_in_memory.Add(new_event_to_memory);
                     GetComponent<ChasePlayer_Action>().SetEvent(new_event_to_memory);
+                    GetComponent<ChasePlayer_Action>().forgot_event = false;
                     new_event_to_memory.start_counting = false;
                 }
                 break;
@@ -102,6 +90,8 @@ public class SwordGuard_Listener : PerceptionListener
                 if (GetComponent<EnemySword_BT>().InCombat() == true)
                     GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
                 GetComponent<ChasePlayer_Action>().forgot_event = true;
+
+                Debug.Log("[error]Event gone type:" + event_recieved.type);
                 break;
         }
     }

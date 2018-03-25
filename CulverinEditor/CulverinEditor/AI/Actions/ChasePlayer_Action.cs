@@ -48,20 +48,22 @@ public class ChasePlayer_Action : Action
             move.Interupt();
         }
 
-        timer += Time.deltaTime;
-
-        if (timer >= check_player_timer)
+        if (forgot_event == false)
         {
-            timer = 0.0f;
-            GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
-            move.GoToPrevious(player_x, player_y, true);
+            timer += Time.deltaTime;
+
+            if (timer >= check_player_timer)
+            {
+                timer = 0.0f;
+                GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
+                move.GoToPrevious(player_x, player_y, true);
+            }
+
+            if (GetComponent<PerceptionSightEnemy>().player_seen == false)
+                event_to_react.start_counting = true;
+            else
+                event_to_react.start_counting = false;
         }
-
-        if (GetComponent<PerceptionSightEnemy>().player_seen == false)
-            event_to_react.start_counting = true;
-        else
-            event_to_react.start_counting = false;
-
         ///Make Move update
         move_return = move.ActionUpdate();
 
