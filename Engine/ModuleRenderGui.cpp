@@ -156,7 +156,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 
 			for (; it != iteractive_vector.rend(); it++)
 			{
-				CompInteractive* find=(*it)->FindInteractive(float3(0, 0, 0));
+				CompInteractive* find=(*it)->FindInteractive(float3(1, 1,1));
 				if (find != nullptr)
 				{
 					PassSelected(find);
