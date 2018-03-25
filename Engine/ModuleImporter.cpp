@@ -269,6 +269,17 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 			if (scene->HasAnimations())
 			{
 				std::string fbx_name = App->fs->GetOnlyName(file);
+
+				for (int i = 0; i < scene->mNumAnimations; i++)
+				{
+					scene->mAnimations[i]->mName = fbx_name;
+					scene->mAnimations[i]->mName.Append("Animation");
+					scene->mAnimations[i]->mName.Append(std::to_string(i).c_str());
+					LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[i]->mName.C_Str());
+					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str());
+				}
+
+
 				scene->mAnimations[scene->mNumAnimations - 1]->mName = fbx_name;
 				scene->mAnimations[scene->mNumAnimations - 1]->mName.Append("Animation");
 				LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str());
@@ -353,9 +364,21 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 		const aiScene* scene = aiImportFile(file, aiProcessPreset_TargetRealtime_MaxQuality);
 		if (scene != nullptr)
 		{
+
 			if (scene->HasAnimations())
 			{
 				std::string fbx_name = App->fs->GetOnlyName(file);
+
+				for (int i = 0; i < scene->mNumAnimations; i++)
+				{
+					scene->mAnimations[i]->mName = fbx_name;
+					scene->mAnimations[i]->mName.Append("Animation");
+					scene->mAnimations[i]->mName.Append(std::to_string(i).c_str());
+					LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[i]->mName.C_Str());
+					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str());
+				}
+
+				
 				scene->mAnimations[scene->mNumAnimations - 1]->mName = fbx_name;
 				scene->mAnimations[scene->mNumAnimations - 1]->mName.Append("Animation");
 				LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str());
