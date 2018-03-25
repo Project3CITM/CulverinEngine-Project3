@@ -753,25 +753,22 @@ void Application::SetState(EngineState state)
 		else
 		{
 			if (App->renderer3D->game_camera != nullptr)
-			{
-
-				//PLAY ENGINE -------
-
-				engine_state = EngineState::PLAY;
-				ChangeCamera("Game"); // To notice renderer3D to change to Gcene Camera
-
+			{	
 				// Fill static objects vector when play
 				//scene->FillStaticObjectsVector(true); 
 
-				if (mode_game == false)
+				if (mode_game == false && engine_state != EngineState::PAUSE)
 				{
+					// To notice renderer3D to change to Gcene Camera
+					ChangeCamera("Game"); 			
 					scene->scene_buff->WantRefreshRatio();
-				}
-				if (App->mode_game == false)
-				{
+
 					//To Save all elements in the scene to load them correctly when exiting Game Mode
 					actual_scene = json_seria->SaveScene();
 				}
+
+				//PLAY ENGINE ------
+				engine_state = EngineState::PLAY;
 			}
 			else
 			{
