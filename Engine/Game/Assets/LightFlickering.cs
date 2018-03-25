@@ -4,16 +4,28 @@ using CulverinEditor.Map;
 
 public class LightFlickering : CulverinBehaviour
 {
-    int intensity;
+    float intensity;
     CompLight light;
+    public float max;
+    public float period;
+    public float random_factor;
+
+    float time = 0;
     void Start()
     {
         light = GetComponent<CompLight>();
+        time = 0;
+        intensity = light.GetIntensity();
     }
     void Update()
     {
-        intensity = light.GetIntensity();
-        Debug.Log(intensity.ToString());
+        time += Time.deltaTime;
+
+        float function = ((Mathf.Sin(2 * Mathf.PI * time * period) +  Mathf.Sin(2 * Mathf.PI * 1*33 *time * period)) / 2);
+        float new_intensity = intensity +  function * max;
+   
+        light.SetIntensity(new_intensity);
+     
     }
 
 
