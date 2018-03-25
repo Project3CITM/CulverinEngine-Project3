@@ -40,7 +40,6 @@ public class BarrelFall : CulverinBehaviour
         if (placed)
             return;
 
-        Debug.Log("Updating barrel");
         if(get_init_pos)
         {
             initial_position = transform.GetGlobalPosition();
@@ -54,7 +53,6 @@ public class BarrelFall : CulverinBehaviour
         }
         else
         {
-            Debug.Log("Falling barrel...");
             Fall();
         }
     }
@@ -71,9 +69,6 @@ public class BarrelFall : CulverinBehaviour
         bool in_y = false;
 
         //Displace barrel in X
-        Debug.Log("BarrelPos:");
-        Debug.Log(target_pos_x);
-        Debug.Log(global_pos.x);
         if (Mathf.Abs(target_pos_x - global_pos.x) > error_margin)
         {
             float displacement;
@@ -98,7 +93,6 @@ public class BarrelFall : CulverinBehaviour
             }
             else displacement = 1;
 
-            Debug.Log("Moving barrel in y");
             transform.local_position = new Vector3(transform.local_position.x, transform.local_position.y, transform.local_position.z + (Time.deltaTime * speed * displacement));
         }
         else in_y = true;
