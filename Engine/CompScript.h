@@ -14,6 +14,7 @@ struct Actions
 public:
 	PublicMethod* method = nullptr;
 	GameObject* attacked = nullptr;
+	int UID_attacked = -1;
 	bool select_game_object = false;
 	int selected_mode = 1;
 	CompScript* script = nullptr;
