@@ -38,7 +38,9 @@ private:
 	std::map<EventType, std::vector<Module*>> MEventListeners;
 	uint MapSetToIterate = 0;
 	bool IteratingMaps = false;
-	bool EventPushedWhileIteratingMaps = false;
+	bool EventPushedWhileIteratingMaps_DrawV = false;
+	bool EventPushedWhileIteratingMaps_DrawAlphaV = false;
+	bool EventPushedWhileIteratingMaps_NoDrawV = false;
 };
 
 #endif //EVENTSYSTEM_V2

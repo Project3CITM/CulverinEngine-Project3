@@ -66,7 +66,6 @@ update_status ModuleEventSystemV2::Update(float dt)
 update_status ModuleEventSystemV2::PostUpdate(float dt)
 {
 	IteratingMaps = true;
-	/*
 	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
 	//Draw opaque events
 	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
@@ -76,7 +75,19 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 			item++;
 			continue;
 		}
-		//WIP
+		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
+		if (type != EListener._Ptr->_Myval.first)
+			EListener = MEventListeners.find(type);
+		if (EListener != MEventListeners.end())
+			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+				(*item2)->OnEvent(item._Ptr->_Myval.second);
+				//TODO: Call Draw function
+		else
+		{
+			item = DrawV.erase(item);
+			continue;
+		}
+		item = DrawV.erase(item);
 	}
 	//Draw alpha events
 	for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
@@ -86,7 +97,19 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 			item++;
 			continue;
 		}
-		//WIP
+		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
+		if (type != EListener._Ptr->_Myval.first)
+			EListener = MEventListeners.find(type);
+		if (EListener != MEventListeners.end())
+			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+				(*item2)->OnEvent(item._Ptr->_Myval.second);
+				//TODO: Call Draw function
+		else
+		{
+			item = DrawAlphaV.erase(item);
+			continue;
+		}
+		item = DrawAlphaV.erase(item);
 	}
 	//NoDraw events
 	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
@@ -113,22 +136,23 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		}
 		item = NoDrawV.erase(item);
 	}
-	*/
 	IteratingMaps = false;
 
-	if (EventPushedWhileIteratingMaps)
-	{
-		//Draw opaque events
+	//Draw opaque events
+	if (EventPushedWhileIteratingMaps_DrawV)
 		for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend(); item++)
 			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
-		//Draw alpha events
+	//Draw alpha events
+	if (EventPushedWhileIteratingMaps_DrawAlphaV)
 		for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend(); item++)
 			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
-		//NoDraw events
+	//NoDraw events
+	if (EventPushedWhileIteratingMaps_NoDrawV)
 		for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend(); item++)
 			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
-		EventPushedWhileIteratingMaps = false;
-	}
+	EventPushedWhileIteratingMaps_DrawV = false;
+	EventPushedWhileIteratingMaps_DrawAlphaV = false;
+	EventPushedWhileIteratingMaps_NoDrawV = false;
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -150,14 +174,14 @@ bool ModuleEventSystemV2::CleanUp()
 
 void ModuleEventSystemV2::PushEvent(Event& event)
 {
-	if (IteratingMaps)
-	{
-		event.Set_event_data_PushedWhileIteriting(true);
-		EventPushedWhileIteratingMaps = true;
-	}
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_PARTICLE_DRAW:
+		if (IteratingMaps)
+		{
+			event.Set_event_data_PushedWhileIteriting(true);
+			EventPushedWhileIteratingMaps_DrawAlphaV = true;
+		}
 		DrawAlphaV.insert(std::pair<float, Event>(-((Particle*)event.particle_draw.ToDraw)->CameraDistance, event));
 		break;
 	case EventType::EVENT_DRAW:
@@ -166,8 +190,22 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		float DistanceCamToObject = diff_vect.Length();
 		switch (event.draw.Dtype)
 		{
-		case event.draw.DRAW_3D: DrawV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event)); break;
-		case event.draw.DRAW_3D_ALPHA: DrawAlphaV.insert(std::pair<float, Event>(DistanceCamToObject, event)); break;
+		case event.draw.DRAW_3D:
+			if (IteratingMaps)
+			{
+				event.Set_event_data_PushedWhileIteriting(true);
+				EventPushedWhileIteratingMaps_DrawV = true;
+			}
+			DrawV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event));
+			break;
+		case event.draw.DRAW_3D_ALPHA:
+			if (IteratingMaps)
+			{
+				event.Set_event_data_PushedWhileIteriting(true);
+				EventPushedWhileIteratingMaps_DrawAlphaV = true;
+			}
+			DrawAlphaV.insert(std::pair<float, Event>(DistanceCamToObject, event));
+			break;
 		case event.draw.DRAW_2D: 
 			//MM2DCanvasDrawEvent.insert(std::pair<float, Event>(DistanceCamToObject, event)); 
 			break;
@@ -182,17 +220,29 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 	}
 	case EventType::EVENT_REQUEST_3D_3DA_MM:
 	{
-		/*
+		if (IteratingMaps)
+		{
+			event.Set_event_data_PushedWhileIteriting(true);
+			EventPushedWhileIteratingMaps_DrawV = true;
+			EventPushedWhileIteratingMaps_DrawAlphaV = true;
+			EventPushedWhileIteratingMaps_NoDrawV = true;
+		}
 		Event event_temp;
-		event_temp.send_3d3damm.type = EventType::EVENT_SEND_3D_3DA_MM;
-		event_temp.send_3d3damm.MM3DDrawEvent = &MM3DDrawEvent;
-		event_temp.send_3d3damm.MM3DADrawEvent = &MM3DADrawEvent;
+		event_temp.Set_event_data(EventType::EVENT_SEND_3D_3DA_MM);
+		event_temp.send_3d3damm.MM3DDrawEvent = &DrawV;
+		event_temp.send_3d3damm.MM3DADrawEvent = &DrawAlphaV;
 		event_temp.send_3d3damm.light = event.request_3d3damm.light;
-		QShadowMapEvent.push(event_temp);
-		*/
+		PushEvent(event_temp);
 		break;
 	}
-	default: NoDrawV.insert(std::pair<EventType, Event>(event.Get_event_data_type(), event)); break;
+	default:
+		if (IteratingMaps)
+		{
+			event.Set_event_data_PushedWhileIteriting(true);
+			EventPushedWhileIteratingMaps_NoDrawV = true;
+		}
+		NoDrawV.insert(std::pair<EventType, Event>(event.Get_event_data_type(), event));
+		break;
 	}
 }
 
@@ -205,14 +255,12 @@ void ModuleEventSystemV2::PushImmediateEvent(Event& event)
 		{
 		case EventType::EVENT_REQUEST_3D_3DA_MM:
 		{
-			/*
 			Event event_temp;
-			event_temp.send_3d3damm.type = EventType::EVENT_SEND_3D_3DA_MM;
-			event_temp.send_3d3damm.MM3DDrawEvent = &MM3DDrawEvent;
-			event_temp.send_3d3damm.MM3DADrawEvent = &MM3DADrawEvent;
+			event_temp.Set_event_data(EventType::EVENT_SEND_3D_3DA_MM);
+			event_temp.send_3d3damm.MM3DDrawEvent = &DrawV;
+			event_temp.send_3d3damm.MM3DADrawEvent = &DrawAlphaV;
 			event_temp.send_3d3damm.light = event.request_3d3damm.light;
 			PushImmediateEvent(event_temp);
-			*/
 			break;
 		}
 		default:

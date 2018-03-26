@@ -151,7 +151,7 @@ struct ERequest3D3DAMM
 struct ESend3D3DAMM
 {
 	uint64_t event_data = 0;
-	const std::multimap<float, Event>* MM3DDrawEvent = nullptr;
+	const std::multimap<uint, Event>* MM3DDrawEvent = nullptr;
 	const std::multimap<float, Event>* MM3DADrawEvent = nullptr;
 	const CompLight* light = nullptr;
 };
