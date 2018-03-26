@@ -114,27 +114,53 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	//NoDraw events
 	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
 	{
+		//If this event is pushed while we iterate, skip it for the next frame
 		if (item._Ptr->_Myval.second.Get_event_data_PushedWhileIteriting())
 		{
 			item++;
 			continue;
 		}
-		if ((item._Ptr->_Myval.first < 0) || (item._Ptr->_Myval.first > EventType::MAXEVENTS))
+		//Check if it is a valid event type
+		if ((item._Ptr->_Myval.first < 0) || (item._Ptr->_Myval.first >= EventType::MAXEVENTS))
 		{
 			item = NoDrawV.erase(item);
 			continue;
 		}
-		if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
-			EListener = MEventListeners.find(item._Ptr->_Myval.first);
-		if (EListener != MEventListeners.end())
-			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-				(*item2)->OnEvent(item._Ptr->_Myval.second);
+		//If this point is reached, the event is valid to be analysed
+		//This event has frame delay?, if 0, evaluate time delay, if !=0, decrese 1 frame and change saved delay in event
+		uint FrameDelay = item._Ptr->_Myval.second.Get_event_data_frame_delay();
+		if (FrameDelay == 0)
+		{
+			//This event has time delay?, if 0, evaluate time delay, if !=0, decrese dt and change saved delay in event
+			uint TimeDelay = item._Ptr->_Myval.second.Get_event_data_time_delay();
+			if (TimeDelay == 0)
+			{
+				//Here we can execute the event, any delay is left and this is a valid event
+				//If EListener iterator is different from the actual analysed event, find the new iterator
+				if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
+					EListener = MEventListeners.find(item._Ptr->_Myval.first);
+				//if != end, we found it, iterate listeners and call OnEvent, if we didn't found it, erase and jump to next iteration
+				if (EListener != MEventListeners.end())
+					for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+						(*item2)->OnEvent(item._Ptr->_Myval.second);
+				else
+				{
+					item = NoDrawV.erase(item);
+					continue;
+				}
+			}
+			else
+			{
+				TimeDelay -= (uint)(dt * 1000.0f);
+				item._Ptr->_Myval.second.Set_event_data_time_delay(TimeDelay);
+			}
+		}
 		else
 		{
-			item = NoDrawV.erase(item);
-			continue;
+			FrameDelay -= 1;
+			item._Ptr->_Myval.second.Set_event_data_frame_delay(FrameDelay);
 		}
-		item = NoDrawV.erase(item);
+		item++;
 	}
 	IteratingMaps = false;
 
