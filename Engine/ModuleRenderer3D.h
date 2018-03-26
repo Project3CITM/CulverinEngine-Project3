@@ -90,6 +90,7 @@ public:
 
 	Material* default_material = nullptr;
 	Material* non_glow_material = nullptr;
+	Material* final_tex_material = nullptr;
 
 	RenderMode render_mode = RenderMode::DEFAULT;
 

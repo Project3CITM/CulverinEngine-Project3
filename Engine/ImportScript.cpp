@@ -1877,9 +1877,9 @@ MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, 
 	return current->RayCast(origin, direction, distance);
 }
 
-void ImportScript::SetBool(MonoObject * object, MonoString * name, float value)
+void ImportScript::SetBool(MonoObject * object, MonoString * name, bool value)
 {
-
+	current->SetBool(object, name, value);
 }
 
 MonoObject* ImportScript::GetMaterialByName(MonoObject * object, MonoString * name)

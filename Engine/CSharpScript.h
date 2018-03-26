@@ -288,7 +288,7 @@ public:
 	MonoString* GetMapString(MonoObject* object);
 
 	/*Material*/
-	void		SetBool(MonoObject* object, MonoString* name, float value);
+	void		SetBool(MonoObject* object, MonoString* name, bool value);
 	MonoObject*	GetMaterialByName(MonoString* name);
 
 	// LOAD - SAVE METHODS ------------------

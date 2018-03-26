@@ -280,7 +280,7 @@ private:
 	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);
 
 	/*Material*/
-	static void	SetBool(MonoObject* object, MonoString* name, float value);
+	static void	SetBool(MonoObject* object, MonoString* name, bool value);
 	static MonoObject* GetMaterialByName(MonoObject* object, MonoString* name);
 
 public: 

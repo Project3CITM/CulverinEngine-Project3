@@ -193,6 +193,12 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	non_glow_material->GetProgramVariables();
 	
 
+	final_tex_material = new Material();
+	final_tex_material->name = "Final Tex Material";
+	final_tex_material->material_shader = non_glow_shader;
+	final_tex_material->GetProgramVariables();
+	App->module_shaders->materials.push_back(final_tex_material);
+
 	default_material = new Material();
 	default_material->name = "Default Material";
 	default_material->material_shader = default_shader;
@@ -620,14 +626,13 @@ void ModuleRenderer3D::GlowShaderVars()
 	final_shader_tex->Bind();
 
 	glActiveTexture(GL_TEXTURE0);
-	GLint texLoc = glGetUniformLocation(final_shader_tex->programID, "albedo");
+	GLint texLoc = glGetUniformLocation(final_shader_tex->programID, "_albedo");
 	glBindTexture(GL_TEXTURE_2D, App->scene->scene_buff->GetTexture());
 	glUniform1i(texLoc, 0);
 
 	glActiveTexture(GL_TEXTURE1);
-	texLoc = glGetUniformLocation(final_shader_tex->programID, "glow_tex");
+	texLoc = glGetUniformLocation(final_shader_tex->programID, "_glow_tex");
 	glBindTexture(GL_TEXTURE_2D, App->scene->vertical_blur_buff->GetTexture());
-
 	glUniform1i(texLoc, 1);
 
 
