@@ -733,6 +733,21 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 	return nullptr;
 }
 
+Material * ModuleShaders::GetMaterialByName(const char * name)
+{
+	for (std::vector<Material*>::const_iterator item = materials.cbegin(); item != materials.cend(); item++)
+	{
+		std::string str_path = (*item)->name.c_str();
+		
+		if (strcmp(str_path.c_str(), name) == 0) {
+			return (*item);
+		}
+
+	}
+
+	return nullptr;
+}
+
 Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)
 {
 

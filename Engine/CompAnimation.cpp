@@ -1101,6 +1101,7 @@ void CompAnimation::ManageActualAnimationNode(float dt)
 				CompAudio* temp_emiter = (CompAudio*)parent->FindComponentByType(C_AUDIO);
 				if (temp_emiter != nullptr)
 				{
+
 					temp_emiter->PlayAudioEvent(active_node->anim_audio.c_str());
 				}
 			}
@@ -1128,6 +1129,7 @@ void CompAnimation::ManageActualAnimationNode(float dt)
 					}
 				}
 				LOG("[error] with load prefab");
+
 			}
 		}
 	}

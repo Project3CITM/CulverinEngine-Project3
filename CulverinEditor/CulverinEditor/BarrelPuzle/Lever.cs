@@ -67,10 +67,12 @@ public class Lever : CulverinBehaviour
 
     //--------------
 
+    public GameObject lever_go = null;
     private CompAnimation anim_controller = null;
     private bool on_lever_animation = false;
     private string lever_animation_name = "Lever_Down"; // TODO: Set the animation name
     private BarrelPuzzleManager barrel_puzzel_manager = null; // Put both scripts in same GO.
+
 
 
     public GameObject level_map;
@@ -91,6 +93,7 @@ public class Lever : CulverinBehaviour
 
         rnd = new Random();
 
+        lever_go = GetLinkedObject("lever_go");
 
 
         countdown = GetComponent<PuzzleCountdown>();
@@ -99,7 +102,7 @@ public class Lever : CulverinBehaviour
             Debug.Log("There is no countdown in puzzle!");
         }
 
-        anim_controller = GetComponent<CompAnimation>();
+        anim_controller = lever_go.GetComponent<CompAnimation>();
         if (anim_controller == null)
         {
             Debug.Log("Animation is null!");
@@ -188,9 +191,10 @@ public class Lever : CulverinBehaviour
 
         //---------------------
 
-        /* if (on_lever_animation)
+        if (on_lever_animation)
          {
-             if (anim_controller != null)
+             anim_controller = lever_go.GetComponent<CompAnimation>();
+            if (anim_controller != null)
              {
                  if (anim_controller.IsAnimationStopped(lever_animation_name))
                  {
@@ -199,7 +203,7 @@ public class Lever : CulverinBehaviour
                      OnLeverAnimFinish();
                  }
              }
-         }*/
+         }
 
       ;
         if (active_lever)
@@ -391,6 +395,7 @@ public class Lever : CulverinBehaviour
         // Called when lever is activated. Set flag to true and play the animation.
         on_lever_animation = true;
         Debug.Log("Animation called");
+        anim_controller = lever_go.GetComponent<CompAnimation>();
         if (anim_controller != null)
         {
             anim_controller.PlayAnimation(lever_animation_name);
@@ -563,7 +568,6 @@ public class Lever : CulverinBehaviour
         time = 0.0f;
 
         SetPuzzleWalkability(3);
-       
 
     }
 

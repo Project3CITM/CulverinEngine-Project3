@@ -51,6 +51,7 @@ public:
 	void LoadShaderMaterials();
 
 	Material* LoadMaterial(std::string path, bool load_vars = true);
+	Material* GetMaterialByName(const char* name);
 
 	Shader* GetShaderByName(const char* name, ShaderType type);
 

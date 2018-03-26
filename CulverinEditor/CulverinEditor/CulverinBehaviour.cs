@@ -15,6 +15,9 @@ namespace CulverinEditor
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern GameObject GetLinkedObject(string name_variable);
 
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Material GetMaterialByName(string name);
+
         //
         // Resumen:
         //     Get Enabled or Disbaled Behaviours.

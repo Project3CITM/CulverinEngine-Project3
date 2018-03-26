@@ -285,16 +285,18 @@ static const GLchar* FinalFrag[] =
 	"in vec3 ourNormal;\n"
 	"in vec4 gl_FragCoord;\n"
 	"out vec4 color;\n"
-	"uniform sampler2D albedo;\n"
-	"uniform sampler2D glow_tex;\n"
-
+	"uniform sampler2D _albedo;\n"
+	"uniform sampler2D _glow_tex;\n"
 	"uniform vec4 _my_color;\n"
+	"uniform bool test;\n"
+
 	"void main()\n"
 	"{\n"
-	"vec4 dst = texture2D(albedo, TexCoord);\n" // rendered scene
-	"vec4 src = texture2D(glow_tex, TexCoord); \n" // glowmap
+	"vec4 dst = texture2D(_albedo, TexCoord);\n" // rendered scene
+	"vec4 src = texture2D(_glow_tex, TexCoord); \n" // glowmap
 	//Z-Buffer Line Shader
 	"color= min(src + dst, 1.0);\n"
+
 	"}\n"
 };
 
