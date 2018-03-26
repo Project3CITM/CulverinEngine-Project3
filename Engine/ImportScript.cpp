@@ -479,6 +479,7 @@ void ImportScript::UpdateMonoComp(Component* modificate, MonoObject* object)
 	mono_comp.insert(std::pair<MonoObject*, Component*>(object, modificate));
 }
 
+
 MonoObject* ImportScript::GetMonoObject(Component* component)
 {
 	if (component != nullptr/* && gameobject->IsDeleteFixed()*/)
@@ -562,6 +563,36 @@ CSharpScript* ImportScript::GetScriptMono(MonoObject* monoobject)
 	{
 		std::multimap<MonoObject*, CSharpScript*>::iterator it = mono_script.find(monoobject);
 		if (it != mono_script.end())
+			return it->second;
+	}
+	return nullptr;
+}
+
+void ImportScript::UpdateMonoMaterial(Material* modificate, MonoObject* object)
+{
+	mono_material.insert(std::pair<MonoObject*, Material*>(object, modificate));
+}
+
+MonoObject * ImportScript::GetMonoObject(Material * script)
+{
+	std::multimap<MonoObject*, Material*>::iterator it = mono_material.begin();
+	while (it != mono_material.end())
+	{
+		if (it->second == script)
+		{
+			return it->first;
+		}
+		it++;
+	}
+	return nullptr;
+}
+
+Material* ImportScript::GetMaterialMono(MonoObject* monoobject)
+{
+	if (monoobject != nullptr)
+	{
+		std::multimap<MonoObject*, Material*>::iterator it = mono_material.find(monoobject);
+		if (it != mono_material.end())
 			return it->second;
 	}
 	return nullptr;
@@ -870,6 +901,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::GetName",(const void*)GetName);
 	//mono_add_internal_call("CulverinEditor.GameObject::AddComponent",(const void*)AddComponent);
 	mono_add_internal_call("CulverinEditor.GameObject::GetComponent",(const void*)GetComponent);
+	
 
 	/* Object */
 	mono_add_internal_call("CulverinEditor.Object::Instantiate(string)", (const void*)Instantiate);
@@ -1038,6 +1070,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompLight::SetLinear", (const void*)SetLinear);
 	mono_add_internal_call("CulverinEditor.CompLight::GetQuadratic", (const void*)GetQuadratic);
 	mono_add_internal_call("CulverinEditor.CompLight::SetQuadratic", (const void*)SetQuadratic);
+
+	//MATERIAL FUNCTIONS
+	mono_add_internal_call("CulverinEditor.Material::SetBool", (const void*)SetBool);
+	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetMaterialByName", (const void*)GetMaterialByName);
 }
 
 //Log messages into Engine Console
@@ -1839,4 +1875,14 @@ void ImportScript::SetQuadratic(MonoObject * object, float value)
 MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)
 {
 	return current->RayCast(origin, direction, distance);
+}
+
+void ImportScript::SetBool(MonoObject * object, MonoString * name, float value)
+{
+
+}
+
+MonoObject* ImportScript::GetMaterialByName(MonoObject * object, MonoString * name)
+{
+	return current->GetMaterialByName(name);
 }

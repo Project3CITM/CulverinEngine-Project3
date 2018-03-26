@@ -287,6 +287,10 @@ public:
 	// Map --------------------
 	MonoString* GetMapString(MonoObject* object);
 
+	/*Material*/
+	void		SetBool(MonoObject* object, MonoString* name, float value);
+	MonoObject*	GetMaterialByName(MonoString* name);
+
 	// LOAD - SAVE METHODS ------------------
 	void Save(JSON_Object* object, std::string name) const;
 	void Load(const JSON_Object* object, std::string name);
