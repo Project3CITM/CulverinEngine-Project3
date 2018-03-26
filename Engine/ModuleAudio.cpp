@@ -59,7 +59,7 @@ bool ModuleAudio::SetEventListeners()
 void ModuleAudio::OnEvent(Event& event)
 {
 	//ETimeManager::TIME_PLAY
-	switch (event.event_data.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_TIME_MANAGER:
 		{

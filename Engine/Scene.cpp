@@ -276,7 +276,7 @@ bool Scene::SetEventListeners()
 
 void Scene::OnEvent(Event & event)
 {
-	switch (event.event_data.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_DELETE_GO:
 	{

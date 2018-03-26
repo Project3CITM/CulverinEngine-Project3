@@ -484,7 +484,7 @@ update_status ModuleGUI::Update(float dt)
 		if (ImGui::Button("Create")) {
 
 			Event shader_event;
-			shader_event.shader_editor.event_data.type = EventType::EVENT_OPEN_SHADER_EDITOR;
+			shader_event.Set_event_data(EventType::EVENT_OPEN_SHADER_EDITOR);
 			shader_event.shader_editor.name = str_shad_temp;
 
 			switch (combo_shaders) {
@@ -534,7 +534,7 @@ update_status ModuleGUI::Update(float dt)
 		{
 
 			Event shader_event_prg;
-			shader_event_prg.shader_program.event_data.type = EventType::EVENT_CREATE_SHADER_PROGRAM;
+			shader_event_prg.Set_event_data(EventType::EVENT_CREATE_SHADER_PROGRAM);
 			shader_event_prg.shader_program.name = str_shad_prg_temp;
 
 			if (combo_shaders_obj != -1)
@@ -1274,7 +1274,7 @@ bool ModuleGUI::SetEventListeners()
 
 void ModuleGUI::OnEvent(Event& event)
 {
-	switch (event.event_data.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:
 		//need to fix std::pair

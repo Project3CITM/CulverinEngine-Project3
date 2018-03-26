@@ -770,7 +770,7 @@ bool ModuleShaders::SetEventListeners()
 void ModuleShaders::OnEvent(Event & event)
 {
 	std::string path;
-	switch (event.event_data.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_OPEN_SHADER_EDITOR:
 
@@ -887,7 +887,7 @@ void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, int & v)
 void ModuleShaders::SendEventWithAllShaders() 
 {
 	Event shader_event;
-	shader_event.send_shader_object.event_data.type = EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
+	shader_event.Set_event_data(EventType::EVENT_SEND_ALL_SHADER_OBJECTS);
 	shader_event.send_shader_object.shaders = &shaders;
 	PushEvent(shader_event);
 	App->gui->shader_program_creation = false;

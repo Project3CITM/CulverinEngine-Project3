@@ -30,7 +30,7 @@ CompInteractive::CompInteractive(Comp_Type t, GameObject * parent) :Component(t,
 	uuid_reimported_sprite[1] = 0;
 	uuid_reimported_sprite[2] = 0;
 
-	component_event.pass_component.event_data.type = EventType::EVENT_PASS_COMPONENT;
+	component_event.Set_event_data(EventType::EVENT_PASS_COMPONENT);
 	component_event.pass_component.component = this;
 
 	name_component = "Interactive";
@@ -1111,7 +1111,7 @@ void CompInteractive::Navigate(Event event_data, CompInteractive * interactive)
 	if (interactive != nullptr && interactive->IsActive())
 	{
 		Event pass_selected;
-		pass_selected.pass_selected.event_data.type = EventType::EVENT_PASS_SELECTED;
+		pass_selected.Set_event_data(EventType::EVENT_PASS_SELECTED);
 		pass_selected.pass_selected.component = interactive;
 		PushEvent(pass_selected);
 	}

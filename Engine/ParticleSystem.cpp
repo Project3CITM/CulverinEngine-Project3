@@ -327,7 +327,7 @@ bool Particle::PostUpdate(float dt)
 	{
 		OrientateParticle();
 		Event draw_event;
-		draw_event.particle_draw.event_data.type = EventType::EVENT_PARTICLE_DRAW;
+		draw_event.Set_event_data(EventType::EVENT_PARTICLE_DRAW);
 		draw_event.particle_draw.ToDraw = this;
 
 		PushEvent(draw_event);

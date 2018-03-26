@@ -1041,8 +1041,7 @@ void CSharpScript::Destroy(MonoObject* object, float time)
 	if (gameobject != nullptr)
 	{
 		Event e;
-		e.delete_go.event_data.type = EventType::EVENT_DELETE_GO;
-		e.delete_go.event_data.TimeDelay = time;
+		e.Set_event_data_f(EventType::EVENT_DELETE_GO, 0, time);
 		e.delete_go.Todelte = gameobject;
 		PushEvent(e);
 	}
@@ -1257,7 +1256,7 @@ void CSharpScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* 
 			{
 				comp->Disable();
 				Event script;
-				script.script_disabled.event_data.type = EventType::EVENT_SCRIPT_DISABLED;
+				script.Set_event_data(EventType::EVENT_SCRIPT_DISABLED);
 				script.script_disabled.script = (CompScript*)comp;
 				PushEvent(script);
 			}

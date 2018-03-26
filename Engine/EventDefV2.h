@@ -67,6 +67,7 @@ enum EventType
 /*--------------------------------------------------*/
 /*----------------Events Data struct----------------*/
 /*--------------------------------------------------*/
+/*
 struct EventData
 {
 	EventType type = EventType::EVENT_UNKNOWN;
@@ -81,6 +82,7 @@ struct EventData
 	Consumability button = Consumability::CONSUMABILITY_UNCONSUMABLE;
 	bool PushedWhileIteriting = false;
 };
+*/
 
 /*--------------------------------------------------*/
 /*-------------------Audio Engine-------------------*/
@@ -91,7 +93,7 @@ struct EventData
 /*--------------------------------------------------*/
 struct EScriptDisabled
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	CompScript* script = nullptr;
 };
 
@@ -100,7 +102,7 @@ struct EScriptDisabled
 /*--------------------------------------------------*/
 struct EParticleDraw
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	Particle* ToDraw = nullptr;
 };
 
@@ -109,7 +111,7 @@ struct EParticleDraw
 /*--------------------------------------------------*/
 struct ETrigger
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	JP_COLLISION_TYPE collision_type;
 	Component* trigger = nullptr;
 	Component* actor = nullptr;
@@ -120,7 +122,7 @@ struct ETrigger
 /*--------------------------------------------------*/
 struct ECreateShaderProgram
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	const char* name = nullptr;	//std::string?
 	Shader* Shader1 = nullptr;
 	Shader* Shader2 = nullptr;
@@ -128,13 +130,13 @@ struct ECreateShaderProgram
 
 struct ESendAllShaderObject
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	std::vector<Shader*>* shaders = nullptr;
 };
 
 struct EOpenShaderEditor
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	ShaderType shader_type;
 	const char* name = nullptr;
 	bool open_editor = false;
@@ -142,13 +144,13 @@ struct EOpenShaderEditor
 
 struct ERequest3D3DAMM
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	const CompLight* light = nullptr;
 };
 
 struct ESend3D3DAMM
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	const std::multimap<float, Event>* MM3DDrawEvent = nullptr;
 	const std::multimap<float, Event>* MM3DADrawEvent = nullptr;
 	const CompLight* light = nullptr;
@@ -163,7 +165,7 @@ struct ESend3D3DAMM
 /*--------------------------------------------------*/
 struct EGUIAxis
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	enum Direction
 	{
 		DIRECTION_NONE,
@@ -179,7 +181,7 @@ struct EGUIAxis
 
 struct EPoint
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	enum InputButton
 	{
 		INPUT_NONE = -1,
@@ -196,25 +198,25 @@ struct EPoint
 
 struct EGUICancel
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	bool active = false;
 };
 
 struct EPassComponent
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	Component* component = nullptr;
 };
 
 struct EPassSelected
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	CompInteractive* component = nullptr;
 };
 
 struct EGUISubmit
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	bool active = false;
 };
 
@@ -223,13 +225,13 @@ struct EGUISubmit
 /*--------------------------------------------------*/
 struct EDockingModif
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	//WIP
 };
 
 struct EDraw
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	enum DrawType
 	{
 		DRAW_3D,			//3D Game Objects without alpha
@@ -244,13 +246,13 @@ struct EDraw
 
 struct EDroppedFile
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	const char* FilePath = nullptr;	//std::string?
 };
 
 struct ETimeManager
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	enum TimeEvent
 	{
 		TIME_PLAY,
@@ -264,14 +266,14 @@ struct ETimeManager
 
 struct EWindowResize
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	unsigned int w = 0;
 	unsigned int h = 0;
 };
 
 struct EDeleteGO
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	GameObject* Todelte = nullptr;
 };
 
@@ -283,8 +285,28 @@ union Event
 	Event() {}
 	~Event() {}
 
+	inline void Set_event_data(EventType type, unsigned int FrameDelay = 0, unsigned int TimeDelay = 0);
+	inline void Set_event_data_f(EventType type, unsigned int FrameDelay = 0, float TimeDelay = 0.0f);
+	inline void Set_event_data_type(EventType type);
+	inline void Set_event_data_frame_delay(unsigned int FrameDelay);
+	inline void Set_event_data_time_delay(unsigned int TimeDelay);
+	inline void Set_event_data_time_delay_f(float TimeDelay);
+	inline void Set_event_data_PushedWhileIteriting(bool PushedWhileIteriting);
+	inline void Get_event_data(EventType& type, unsigned int& FrameDelay, unsigned int& TimeDelay, bool& PushedWhileIteriting);
+	inline void Get_event_data_f(EventType& type, unsigned int& FrameDelay, float& TimeDelay, bool& PushedWhileIteriting);
+	inline void Get_event_data_type(EventType& type);
+	inline EventType Get_event_data_type();
+	inline void Get_event_data_frame_delay(unsigned int& FrameDelay);
+	inline unsigned int Get_event_data_frame_delay();
+	inline void Get_event_data_time_delay(unsigned int& TimeDelay);
+	inline unsigned int Get_event_data_time_delay();
+	inline void Get_event_data_time_delay_f(float& TimeDelay);
+	inline float Get_event_data_time_delay_f();
+	inline void Get_event_data_PushedWhileIteriting(bool& PushedWhileIteriting);
+	inline bool Get_event_data_PushedWhileIteriting();
+
 	/*----------------Event Data Struct-----------------*/
-	EventData event_data;
+	uint64_t event_data;
 
 	/*-------------------Audio Engine-------------------*/
 
@@ -321,8 +343,114 @@ union Event
 	ETimeManager time;
 	EWindowResize window_resize;
 	EDeleteGO delete_go;
-
 };
+
+inline void Event::Set_event_data(EventType type, unsigned int FrameDelay, unsigned int TimeDelay)
+{
+	Set_event_data_type(type);
+	Set_event_data_frame_delay(FrameDelay);
+	Set_event_data_time_delay(TimeDelay);
+	Set_event_data_PushedWhileIteriting(false);
+}
+
+inline void Event::Set_event_data_f(EventType type, unsigned int FrameDelay, float TimeDelay)
+{
+	Set_event_data(type, FrameDelay, (unsigned int)(TimeDelay * 1000.0f));
+}
+
+inline void Event::Set_event_data_type(EventType type)
+{
+	event_data = (uint64_t)type << 48;
+}
+
+inline void Event::Set_event_data_frame_delay(unsigned int FrameDelay)
+{
+	event_data = event_data | ((uint64_t)FrameDelay << 32);
+}
+
+inline void Event::Set_event_data_time_delay(unsigned int TimeDelay)
+{
+	event_data = event_data | ((uint64_t)TimeDelay << 16);
+}
+
+inline void Event::Set_event_data_time_delay_f(float TimeDelay)
+{
+	Set_event_data_time_delay((unsigned int)(TimeDelay * 1000.0f));
+}
+
+inline void Event::Set_event_data_PushedWhileIteriting(bool PushedWhileIteriting)
+{
+	event_data = event_data | (uint64_t)PushedWhileIteriting;
+}
+
+inline void Event::Get_event_data(EventType& type, unsigned int& FrameDelay, unsigned int& TimeDelay, bool& PushedWhileIteriting)
+{
+	Get_event_data_type(type);
+	Get_event_data_frame_delay(FrameDelay);
+	Get_event_data_time_delay(TimeDelay);
+	Get_event_data_PushedWhileIteriting(PushedWhileIteriting);
+}
+
+inline void Event::Get_event_data_f(EventType & type, unsigned int & FrameDelay, float & TimeDelay, bool & PushedWhileIteriting)
+{
+	unsigned int TimeDlayMS = 0;
+	Get_event_data(type, FrameDelay, TimeDlayMS, PushedWhileIteriting);
+	TimeDelay = (float)TimeDlayMS / 1000.0f;
+}
+
+inline void Event::Get_event_data_type(EventType& type)
+{
+	type = (EventType)((event_data & 0xFFFF000000000000) >> 48);
+}
+
+inline EventType Event::Get_event_data_type()
+{
+	return (EventType)((event_data & 0xFFFF000000000000) >> 48);
+}
+
+inline void Event::Get_event_data_frame_delay(unsigned int& FrameDelay)
+{
+	FrameDelay = (event_data & 0x0000FFFF00000000) >> 32;
+}
+
+inline unsigned int Event::Get_event_data_frame_delay()
+{
+	return (event_data & 0x0000FFFF00000000) >> 32;
+}
+
+inline void Event::Get_event_data_time_delay(unsigned int& TimeDelay)
+{
+	TimeDelay = (event_data & 0x00000000FFFF0000) >> 16;
+}
+
+inline unsigned int Event::Get_event_data_time_delay()
+{
+	return (event_data & 0x00000000FFFF0000) >> 16;
+}
+
+inline void Event::Get_event_data_time_delay_f(float& TimeDelay)
+{
+	unsigned int TimeDlayMS = 0;
+	Get_event_data_time_delay(TimeDlayMS);
+	TimeDelay = (float)TimeDlayMS / 1000.0f;
+}
+
+inline float Event::Get_event_data_time_delay_f()
+{
+	unsigned int TimeDlayMS = 0;
+	Get_event_data_time_delay(TimeDlayMS);
+	return (float)TimeDlayMS / 1000.0f;
+}
+
+inline void Event::Get_event_data_PushedWhileIteriting(bool& PushedWhileIteriting)
+{
+	PushedWhileIteriting = (event_data & 0x000000000000FFFF);
+}
+
+inline bool Event::Get_event_data_PushedWhileIteriting()
+{
+	return (event_data & 0x000000000000FFFF);
+}
 
 #endif //EVENTDEF_V2
 /**/

@@ -634,7 +634,6 @@ bool Application::SaveConfig()
 		//Save ActualScene ----- 
 		json_object_set_string(config_node, "ActualScene", fs->GetToAsstes(actual_scene).c_str()); //TODO ELLIOT
 
-
 		//Iterate all modules to save each respective info
 		std::vector<Module*>::iterator item = list_modules.begin();
 
@@ -667,7 +666,6 @@ void Application::ShowHelpMarker(const char* desc, const char* icon)
 
 void Application::SetState(EngineState state)
 {
-
 	switch (state)
 	{
 	case EngineState::PLAYFRAME:
@@ -677,7 +675,7 @@ void Application::SetState(EngineState state)
 			{
 				//Send Play event
 				Event play_event;
-				play_event.time.event_data.type = EventType::EVENT_TIME_MANAGER;
+				play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 				play_event.time.time = play_event.time.TIME_PLAY;
 				PushEvent(play_event);
 			}
@@ -685,7 +683,7 @@ void Application::SetState(EngineState state)
 			{
 				//Send unpause Event
 				Event play_event;
-				play_event.time.event_data.type = EventType::EVENT_TIME_MANAGER;
+				play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 				play_event.time.time = play_event.time.TIME_UNPAUSE;
 				PushEvent(play_event);				
 			}
@@ -693,35 +691,29 @@ void Application::SetState(EngineState state)
 			{
 				//Send unpause Event
 				Event play_event;
-				play_event.time.event_data.type = EventType::EVENT_TIME_MANAGER;
+				play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 				play_event.time.time = play_event.time.TIME_STOP;
 				PushEvent(play_event);
 			}
 			break;
 		}
-
-
 	case EngineState::PAUSE:
 	{
 		//Send Pause Event
 		Event play_event;
-		play_event.time.event_data.type = EventType::EVENT_TIME_MANAGER;
+		play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 		play_event.time.time = play_event.time.TIME_PAUSE;
 		PushEvent(play_event);
 		break;
 	}
 	}
 
-
-
 	if (state == EngineState::PLAY)
 	{
 		// If it's already Game Mode, exit and start again Editor Mode
 		if (engine_state == EngineState::PLAY)
 		{
-
 			//STOP ENGINE ------------
-
 			engine_state = EngineState::STOP;
 			game_time.game_start_time = 0.0f;
 			game_time.timePlay = -1.0f;
@@ -738,9 +730,7 @@ void Application::SetState(EngineState state)
 		{
 			if (App->renderer3D->game_camera != nullptr)
 			{
-
 				//PLAY ENGINE -------
-
 				engine_state = EngineState::PLAY;
 				ChangeCamera("Game"); // To notice renderer3D to change to Gcene Camera
 

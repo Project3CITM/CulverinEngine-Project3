@@ -66,11 +66,12 @@ update_status ModuleEventSystemV2::Update(float dt)
 update_status ModuleEventSystemV2::PostUpdate(float dt)
 {
 	IteratingMaps = true;
+	/*
 	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
 	//Draw opaque events
 	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
-		if (item._Ptr->_Myval.second.event_data.PushedWhileIteriting)
+		if (item._Ptr->_Myval.second.Get_event_data_PushedWhileIteriting())
 		{
 			item++;
 			continue;
@@ -80,7 +81,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	//Draw alpha events
 	for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
 	{
-		if (item._Ptr->_Myval.second.event_data.PushedWhileIteriting)
+		if (item._Ptr->_Myval.second.Get_event_data_PushedWhileIteriting())
 		{
 			item++;
 			continue;
@@ -90,7 +91,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	//NoDraw events
 	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
 	{
-		if (item._Ptr->_Myval.second.event_data.PushedWhileIteriting)
+		if (item._Ptr->_Myval.second.Get_event_data_PushedWhileIteriting())
 		{
 			item++;
 			continue;
@@ -112,19 +113,20 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		}
 		item = NoDrawV.erase(item);
 	}
+	*/
 	IteratingMaps = false;
 
 	if (EventPushedWhileIteratingMaps)
 	{
 		//Draw opaque events
 		for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend(); item++)
-			item._Ptr->_Myval.second.event_data.PushedWhileIteriting = false;
+			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
 		//Draw alpha events
 		for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend(); item++)
-			item._Ptr->_Myval.second.event_data.PushedWhileIteriting = false;
+			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
 		//NoDraw events
 		for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend(); item++)
-			item._Ptr->_Myval.second.event_data.PushedWhileIteriting = false;
+			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
 		EventPushedWhileIteratingMaps = false;
 	}
 
@@ -148,8 +150,12 @@ bool ModuleEventSystemV2::CleanUp()
 
 void ModuleEventSystemV2::PushEvent(Event& event)
 {
-	if (IteratingMaps) event.event_data.PushedWhileIteriting = EventPushedWhileIteratingMaps = true;
-	switch (event.event_data.type)
+	if (IteratingMaps)
+	{
+		event.Set_event_data_PushedWhileIteriting(true);
+		EventPushedWhileIteratingMaps = true;
+	}
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_PARTICLE_DRAW:
 		DrawAlphaV.insert(std::pair<float, Event>(-((Particle*)event.particle_draw.ToDraw)->CameraDistance, event));
@@ -186,16 +192,16 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		*/
 		break;
 	}
-	default: NoDrawV.insert(std::pair<EventType, Event>(event.event_data.type, event)); break;
+	default: NoDrawV.insert(std::pair<EventType, Event>(event.Get_event_data_type(), event)); break;
 	}
 }
 
 void ModuleEventSystemV2::PushImmediateEvent(Event& event)
 {
-	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.find(event.event_data.type);
+	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.find(event.Get_event_data_type());
 	if (EListener != MEventListeners.end())
 	{
-		switch (event.event_data.type)
+		switch (event.Get_event_data_type())
 		{
 		case EventType::EVENT_REQUEST_3D_3DA_MM:
 		{

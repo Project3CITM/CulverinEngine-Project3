@@ -158,7 +158,7 @@ bool ModulePhysics::SetEventListeners()
 
 void ModulePhysics::OnEvent(Event & event)
 {
-	switch (event.event_data.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_TRIGGER_COLLISION:
 	{
@@ -360,7 +360,7 @@ bool ModulePhysics::ShowColliderFilterOptions(uint& flags)
 void ModulePhysics::OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor* actor1, JP_COLLISION_TYPE type)
 {
 	Event collision;
-	collision.trigger.event_data.type = EventType::EVENT_TRIGGER_COLLISION;
+	collision.Set_event_data(EventType::EVENT_TRIGGER_COLLISION);
 	collision.trigger.collision_type = type;
 
 	std::map<physx::PxRigidActor*, Component*>::const_iterator npair;
