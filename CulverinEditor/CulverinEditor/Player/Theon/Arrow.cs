@@ -74,20 +74,23 @@ public class Arrow : CulverinBehaviour
 
     void OnContact()
     {
-        Debug.Log("Trigger Start");
+        Debug.Log("Contact Start");
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
+        
         // DAMAGE ---
-        Debug.Log("Collided");
-
+        Debug.Log("[error] Collided");
         if (collided_obj != null)
         {
-            Debug.Log("OnTriggerEnter");
-            Debug.Log(collided_obj.GetName());
+            Debug.Log("[error] OnContact");
+            Debug.Log("[error]" + collided_obj.GetName());
+
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
             {
+                Debug.Log("[error] Enemy Found");
                 enemy_manager.ApplyDamage(collided_obj, damage);
+                Debug.Log("[error] Apply Damage");
                 Destroy(gameObject);
             }
             else

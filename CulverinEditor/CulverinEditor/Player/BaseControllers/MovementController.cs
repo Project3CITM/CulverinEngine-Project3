@@ -25,8 +25,9 @@ public class MovementController : CulverinBehaviour
     public float movSpeed = 1.0f;
     public Vector3 endPosition;
     public Vector3 endRotation;
+    public bool update_rotation = false;
     public float distanceToMove = 10.0f;
-    int[,] array2Da;
+    LevelMap level_map;
     public int curr_x = 0;
     public int curr_y = 0;
     private int tile_mov_x = 0;
@@ -57,6 +58,8 @@ public class MovementController : CulverinBehaviour
 
     void Start()
     {
+        level_map = GetLinkedObject("map_obj").GetComponent<LevelMap>();
+
         char_manager = GetComponent<CharactersManager>();
         characters_camera = GetLinkedObject("characters_camera");
         player_enemies_manager = GetLinkedObject("player_enemies_manager");
@@ -66,6 +69,8 @@ public class MovementController : CulverinBehaviour
         Debug.Log("Play Music");
 
         curr_dir = (Direction)start_direction;
+        update_rotation = false;
+
         map_width = Map.GetWidthMap();
         map_height = Map.GetHeightMap();
 
@@ -73,51 +78,16 @@ public class MovementController : CulverinBehaviour
         Debug.Log(map_width);
         Debug.Log(map_height);
 
-        array2Da = new int[map_width, map_height];
-        for (int y = 0; y < map_height; y++)
-        {
-            for (int x = 0; x < map_width; x++)
-            {
-                array2Da[x, y] = 0;
-            }
-        }
-
         endPosition = GetComponent<Transform>().local_position;
         endRotation = GetComponent<Transform>().local_rotation;
 
-        Debug.Log("End Position");
 
-        string map = Map.GetMapString();
-        Debug.Log(map);
-
-        int t = 0;
-        for (int y = 0; y < map_height; y++)
-        {
-            for (int x = 0; x < map_width; x++)
-            {
-                array2Da[x, y] = int.Parse(map[t].ToString());
-                t += 1;
-            }
-        }
-
-        Debug.Log("Parse Map");
-
-        //Search player position
-        for (int y = 0; y < map_height; y++)
-        {
-            for (int x = 0; x < map_width; x++)
-            {
-                if (array2Da[x, y] == 2)
-                {
-                    curr_x = x;
-                    curr_y = y;
-                    array2Da[x, y] = 0;
-                    MovePositionInitial(new Vector3((float)curr_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)curr_y * distanceToMove));
-                }
-            }
-        }
-
-        Debug.Log("Move initial popsition");
+        //SET PLAYER INTO THE CORRECT MAP TILE
+        int player_x, player_y = 0;
+        level_map.GetPositionByeValue(out player_x, out player_y, 2); //2 = player start position
+        level_map.UpdateMap(player_x, player_y, 0);
+        MovePositionInitial(new Vector3((float)player_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)player_y * distanceToMove));
+        Debug.Log("Move initial position");
 
         //intro = GetLinkedObject("intro");
         //intro.SetActive(true);
@@ -148,6 +118,12 @@ public class MovementController : CulverinBehaviour
         //}
         start_direction = (int)curr_dir;
 
+        //Update Forward Vector for rotations
+        if(update_rotation)
+        {
+            char_manager.SetCurrentPosition();
+        }
+
         CheckIsWalkable();
 
         if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false && char_manager.GetManagerState() != CharactersManager.State.DROWNING)
@@ -169,7 +145,7 @@ public class MovementController : CulverinBehaviour
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0))
             {
-                if (array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
+                if (level_map.map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
                 {
                     audio = GetComponent<CompAudio>();
                     audio.PlayEvent("Footsteps");
@@ -179,7 +155,7 @@ public class MovementController : CulverinBehaviour
                     char_manager.SetCurrentPosition();
                     moving = true;
                 }
-                else if (array2Da[curr_x + tile_mov_x, curr_y + tile_mov_y] == 3) //Valryian Fire!
+                else if (level_map.map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 3) //Valryian Fire!
                 {
                     audio = GetComponent<CompAudio>();
                     audio.PlayEvent("Footsteps");
@@ -222,7 +198,7 @@ public class MovementController : CulverinBehaviour
                         GetComponent<Transform>().RotateAroundAxis(Vector3.Up, -marge);
                     }
                 }
-                char_manager.SetCurrentPosition();
+                update_rotation = true;
             }
         }
         else if (face_rotating)
@@ -283,8 +259,6 @@ public class MovementController : CulverinBehaviour
     {
         if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
         {
-      
-
             float variation = Input.GetInput_ControllerAxis("Rotate", "Player");
             if (variation < -0.8)
             {
@@ -292,6 +266,7 @@ public class MovementController : CulverinBehaviour
                 angle = 10;
                 rotating = true;
                 ModificateCurrentDirection(true);
+
                 return true;
 
             }
@@ -301,6 +276,7 @@ public class MovementController : CulverinBehaviour
                 angle = -10;
                 rotating = true;
                 ModificateCurrentDirection(false);
+
                 return true;
 
             }
@@ -552,29 +528,29 @@ public class MovementController : CulverinBehaviour
 
     void CheckIsWalkable()
     {
-        if (array2Da[curr_x, curr_y] == 1) // no walkable
+        if (level_map.map[curr_x, curr_y] == 1) // no walkable
         {
             int temp_x = curr_x;
             int temp_y = curr_y;
-            if (array2Da[temp_x + 1, temp_y] == 0)
+            if (level_map.map[temp_x + 1, temp_y] == 0)
             {
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)1, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)0);
                 curr_x += 1;
                 curr_y += 0;
             }
-            else if (array2Da[temp_x - 1, temp_y] == 0)
+            else if (level_map.map[temp_x - 1, temp_y] == 0)
             {
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)-1, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)0);
                 curr_x -= 1;
                 curr_y += 0;
             }
-            else if (array2Da[temp_x, temp_y + 1] == 0)
+            else if (level_map.map[temp_x, temp_y + 1] == 0)
             {
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)0, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)1);
                 curr_x += 0;
                 curr_y += 1;
             }
-            else if (array2Da[temp_x, temp_y - 1] == 0)
+            else if (level_map.map[temp_x, temp_y - 1] == 0)
             {
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)0, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)-1);
                 curr_x += 0;
@@ -585,7 +561,7 @@ public class MovementController : CulverinBehaviour
 
     public bool CheckIsWalkable(int x, int y)
     {
-        if (array2Da[x, y] == 1)
+        if (level_map.map[x, y] == 1)
         {
             return false;
         }
@@ -819,7 +795,7 @@ public class MovementController : CulverinBehaviour
     {
         if (x >= 0 && x < map_width && y >= 0 && y < map_height)
         {
-            array2Da[x, y] = value;
+            level_map.map[x, y] = value;
         }
     }
 
@@ -827,7 +803,7 @@ public class MovementController : CulverinBehaviour
     {
         if (x >= 0 && x < map_width && y >= 0 && y < map_height)
         {
-            return array2Da[x, y];
+            return level_map.map[x, y];
         }
 
         return -1;
@@ -843,4 +819,91 @@ public class MovementController : CulverinBehaviour
 
         GetComponent<Transform>().SetPosition(new Vector3(GetComponent<Transform>().local_position.x + (float)happy_x * distanceToMove, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z - (float)happy_y * distanceToMove));
     }
+
+    public Vector3 GetForwardDir()
+    {
+        int direction = (int)curr_dir;
+        int position_front_x = 0;
+        int position_front_y = 0;
+
+        switch (direction)
+        {
+            case (int)MovementController.Direction.NORTH:
+                {
+                    position_front_y = - 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.SOUTH:
+                {
+                    position_front_y = 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.EAST:
+                {
+                    position_front_x = 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.WEST:
+                {
+                    position_front_x = -1;
+                    break;
+                }
+
+            default:
+                {
+                    break;
+                }
+
+        }
+        Vector3 forward_dir = new Vector3(position_front_x, 0, position_front_y);
+        Debug.Log("Dir: " + forward_dir);
+        return forward_dir;
+    }
+
+    public Vector3 SetForwardVector()
+    {
+        int direction = (int)curr_dir;
+        int position_front_x = 0;
+        int position_front_y = 0;
+
+        switch (direction)
+        {
+            case (int)MovementController.Direction.NORTH:
+                {
+                    position_front_y = -1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.SOUTH:
+                {
+                    position_front_y = 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.EAST:
+                {
+                    position_front_x = 1;
+                    break;
+                }
+
+            case (int)MovementController.Direction.WEST:
+                {
+                    position_front_x = -1;
+                    break;
+                }
+
+            default:
+                {
+                    break;
+                }
+
+        }
+        Vector3 forward_dir = new Vector3(position_front_x, 0, position_front_y);
+        Debug.Log("Dir: " + forward_dir);
+        return forward_dir;
+    }
+
 }

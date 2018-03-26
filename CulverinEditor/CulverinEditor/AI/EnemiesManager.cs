@@ -192,9 +192,9 @@ public class EnemiesManager : CulverinBehaviour
 
     public bool IsEnemy(GameObject target)
     {
-        if(target.GetComponent<EnemySpear_BT> () != null ||
+        if(target.GetComponent<EnemySword_BT> () != null ||
             target.GetComponent<EnemyShield_BT>() != null ||
-            target.GetComponent<EnemySword_BT>() != null)
+            target.GetComponent<EnemySpear_BT>() != null)
         {
             Debug.Log("[error] IS ENEMY");
             return true;

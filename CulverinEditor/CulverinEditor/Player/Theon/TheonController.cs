@@ -440,11 +440,12 @@ public class TheonController : CharacterController
             Debug.Log("[error]COOL OBJ NOT NULL!");
             if (coll_object.CompareTag("Enemy"))
             {
-                Debug.Log(curr_forward);
                 Debug.Log("[error]HERE!");
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
                 EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
-                enemy_manager.Push(coll_object, curr_forward);
+                movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
+                enemy_manager.Push(coll_object, movement.GetForwardDir());
+                Debug.Log("[error] " + movement.GetForwardDir());
             }
         }
 
