@@ -897,6 +897,11 @@ bool ModuleFS::DeleteFileLibrary(const char* file, DIRECTORY_IMPORT directory)
 		temp = DIRECTORY_LIBRARY_ANIMATIONS + temp;
 		break;
 	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_JSON:
+	{
+		temp = DIRECTORY_LIBRARY_JSON + temp;
+		break;
+	}
 	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_FONT:
 	{
 		temp = DIRECTORY_LIBRARY_FONTS + temp;
@@ -944,6 +949,11 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 	case IMPORT_DIRECTORY_LIBRARY_ANIMATIONS:
 	{
 		temp = DIRECTORY_LIBRARY_ANIMATIONS + temp;
+		break;
+	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_JSON:
+	{	
+		temp = DIRECTORY_LIBRARY_JSON + temp;
 		break;
 	}
 	case IMPORT_DIRECTORY_LIBRARY_FONT:
@@ -1015,6 +1025,11 @@ bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY
 	case IMPORT_DIRECTORY_LIBRARY_ANIMATIONS:
 	{
 		name = DIRECTORY_LIBRARY_ANIMATIONS + name;
+		break;
+	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_JSON:
+	{
+		name = DIRECTORY_LIBRARY_JSON + name;
 		break;
 	}
 	case IMPORT_DIRECTORY_LIBRARY_FONT:
@@ -1131,6 +1146,11 @@ bool ModuleFS::DuplicateFile(const char * origin, std::string destination, DIREC
 	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_MATERIALS:
 	{
 		name = DIRECTORY_LIBRARY_MATERIALS + destination;
+		break;
+	}
+	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_JSON:
+	{
+		name = DIRECTORY_LIBRARY_JSON + destination;
 		break;
 	}
 	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_FONT:
