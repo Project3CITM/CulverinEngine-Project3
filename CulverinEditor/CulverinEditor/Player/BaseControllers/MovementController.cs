@@ -121,6 +121,7 @@ public class MovementController : CulverinBehaviour
         //Update Forward Vector for rotations
         if(update_rotation)
         {
+            update_rotation = false;
             char_manager.SetCurrentPosition();
         }
 
