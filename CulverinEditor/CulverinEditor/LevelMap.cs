@@ -7,6 +7,7 @@ using CulverinEditor.Map;
 
 public class LevelMap : CulverinBehaviour
 {
+    public GameObject map_obj;
     private int[,] level_map;
     public int map_width = 0;
     public int map_height = 0;
@@ -75,9 +76,12 @@ public class LevelMap : CulverinBehaviour
                 {
                     x = i;
                     y = j;
+
+                    return;
                 }
             }
         }
+
         x = 0;
         y = 0;
     }

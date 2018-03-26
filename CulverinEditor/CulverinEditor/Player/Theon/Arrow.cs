@@ -74,39 +74,39 @@ public class Arrow : CulverinBehaviour
 
     void OnContact()
     {
-        //Debug.Log("Trigger Start");
-        //GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
-        //// DAMAGE ---
-        //Debug.Log("Collided");
+        Debug.Log("Contact Start");
+        GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
+        
+        // DAMAGE ---
+        Debug.Log("[error] Collided");
+        if (collided_obj != null)
+        {
+            Debug.Log("[error] OnContact");
+            Debug.Log("[error]" + collided_obj.GetName());
 
-        //if (collided_obj != null)
-        //{
-        //    Debug.Log("OnTriggerEnter");
-        //    Debug.Log(collided_obj.GetName());
-        //    // Check the specific enemy in front of you and apply dmg or call object OnContact
-        //    EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
-        //    if (enemy_manager.IsEnemy(collided_obj))
-        //    {
-        //        //enemy_manager.ApplyDamage(collided_obj, damage);
-        //        Destroy(gameObject);
-        //    }
-        //    else
-        //    {
-        //        CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
-        //        if (obj_col != null)
-        //        {
-        //            obj_col.CallOnContact();
-        //        }
-        //        Destroy(gameObject);
-        //    }
-        //}
-        //else
-        //{
-        //    Debug.Log("destroy 1");
-        //    Destroy(gameObject);
-        //    Debug.Log("destroy 2");
-        //}
-        Destroy(gameObject);
+            // Check the specific enemy in front of you and apply dmg or call object OnContact
+            EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
+            if (enemy_manager.IsEnemy(collided_obj))
+            {
+                Debug.Log("[error] Enemy Found");
+                enemy_manager.ApplyDamage(collided_obj, damage);
+                Debug.Log("[error] Apply Damage");
+                Destroy(gameObject);
+            }
+            else
+            {
+                CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
+                if (obj_col != null)
+                {
+                    obj_col.CallOnContact();
+                }
+                Destroy(gameObject);
+            }
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }
 

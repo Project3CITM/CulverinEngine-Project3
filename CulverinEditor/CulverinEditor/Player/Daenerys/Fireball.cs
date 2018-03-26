@@ -61,35 +61,31 @@ public class Fireball : CulverinBehaviour
 
     void OnContact()
     {
-        //    GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
-        //    // DAMAGE ---
-        //    if (collided_obj != null)
-        //    {
-        //        // Check the specific enemy in front of you and apply dmg or call object OnContact
-        //        EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
-        //        if (enemy_manager.IsEnemy(collided_obj))
-        //        {
-        //            //enemy_manager.ApplyDamage(collided_obj, damage);
-        //            Destroy(gameObject);
+        GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
+        // DAMAGE ---
+        if (collided_obj != null)
+        {
+            // Check the specific enemy in front of you and apply dmg or call object OnContact
+            EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
+            if (enemy_manager.IsEnemy(collided_obj))
+            {
+                enemy_manager.ApplyDamage(collided_obj, damage);
+                Destroy(gameObject);
 
-        //        }
-        //        else
-        //        {
-        //            CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
-        //            if (obj_col != null)
-        //            {
-        //                obj_col.CallOnContact();
-        //            }
-        //            Destroy(gameObject);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("destroy 1");
-        //        Destroy(gameObject);
-        //        Debug.Log("destroy 2");
-        //    }
-        //}
-        Destroy(gameObject);
+            }
+            else
+            {
+                CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
+                if (obj_col != null)
+                {
+                    obj_col.CallOnContact();
+                }
+                Destroy(gameObject);
+            }
+        }
+        else
+        {            
+            Destroy(gameObject);            
+        }
     }
 }
