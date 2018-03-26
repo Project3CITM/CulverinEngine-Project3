@@ -78,15 +78,15 @@ bool ModuleInput::Init(JSON_Object* node)
 	horizontal = json_object_get_string(node, "Horizontal");
 
 	player_action = new PlayerActions(this);
-	std::string name = App->fs->GetMainDirectory();
-	name += "/";
+	std::string name = DIRECTORY_LIBRARY_JSON;
+	name=App->fs->GetFullPath(name);
 	name += "player_action.json";
 	if (App->fs->CheckIsFileExist(name.c_str()))
 		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
 	else
 	{
-		std::string name = App->fs->GetMainDirectory();
-		name += "/";
+		std::string name = DIRECTORY_LIBRARY_JSON;
+		name = App->fs->GetFullPath(name);
 		name += "player_action_default.json";
 		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
 	}
@@ -430,7 +430,9 @@ update_status ModuleInput::UpdateConfig(float dt)
 bool ModuleInput::CleanUp()
 {
 	LOG("Quitting SDL input event subsystem");
-	App->json_seria->SavePlayerAction(player_action, App->fs->GetMainDirectory().c_str() , "player_action");
+	std::string name = DIRECTORY_LIBRARY_JSON;
+	name = App->fs->GetFullPath(name);
+	App->json_seria->SavePlayerAction(player_action, name.c_str() , "player_action");
 	player_action->Clear();
 	RELEASE(player_action);
 	player_action = nullptr;

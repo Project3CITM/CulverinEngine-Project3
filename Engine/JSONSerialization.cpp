@@ -796,7 +796,6 @@ void JSONSerialization::SavePlayerAction(const PlayerActions * player_action, co
 
 
 	std::string nameJson = directory;
-	nameJson += "/";
 	nameJson += fileName;
 	nameJson += ".json";
 	config_file = json_value_init_object();
