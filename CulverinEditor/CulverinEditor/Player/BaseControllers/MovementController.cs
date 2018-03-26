@@ -53,11 +53,13 @@ public class MovementController : CulverinBehaviour
 
     private CharactersManager char_manager;
     public GameObject characters_camera;
+    public GameObject player_enemies_manager;
 
     void Start()
     {
         char_manager = GetComponent<CharactersManager>();
         characters_camera = GetLinkedObject("characters_camera");
+        player_enemies_manager = GetLinkedObject("player_enemies_manager");
 
         audio = GetComponent<CompAudio>();
         audio.PlayEvent("PlayMusic");
@@ -272,14 +274,14 @@ public class MovementController : CulverinBehaviour
         }
         else if (moving)
         {
-            GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.DeltaTime());
+            GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.deltaTime);
             GetComponent<Transform>().local_rotation = Vector3.Lerp(new Vector3(GetComponent<Transform>().local_rotation.x, GetComponent<Transform>().local_rotation.y, GetComponent<Transform>().local_rotation.z), new Vector3(GetComponent<Transform>().local_rotation.x, GetComponent<Transform>().local_rotation.y, GetComponent<Transform>().local_rotation.z), (endPosition.Length - GetComponent<Transform>().local_position.Length));
         }
     }
 
     private bool CheckRotation()
     {
-        if (1 == 1/*GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle()*/)
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
         {
       
 
@@ -309,28 +311,33 @@ public class MovementController : CulverinBehaviour
 
     private bool CheckMovement()
     {
-        if (1 == 1/*GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle()*/)
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
         {
             float variation = Input.GetInput_ControllerAxis("Horizontal", "Player");
             if (variation > 0.8)
             {
-                MoveRight(out tile_mov_x, out tile_mov_y);
-                GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
-                return true;
+                if (!EnemyInRight())
+                {
+                    MoveRight(out tile_mov_x, out tile_mov_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
+                    return true;
+                }
             }
             else if (variation < -0.8)
             {
-                MoveLeft(out tile_mov_x, out tile_mov_y);
-                GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
-                return true;
+                if (!EnemyInLeft())
+                {
+                    MoveLeft(out tile_mov_x, out tile_mov_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
+                    return true;
+                }
             }
 
             float variation2 = Input.GetInput_ControllerAxis("Vertical", "Player");
             if (variation2 > 0.8)
             {
-                if (/*!EnemyBehind()*/1 == 1)
+                if (!EnemyBehind())
                 {
-
                     MoveBackward(out tile_mov_x, out tile_mov_y);
                     GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
                     return true;
@@ -339,13 +346,12 @@ public class MovementController : CulverinBehaviour
             }
             else if (variation2 < -0.8)
             {
-                    if (/*!EnemyInFront()*/1 == 1)
-                    {
-
-                        MoveForward(out tile_mov_x, out tile_mov_y);
-                        GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
+                if (!EnemyInFront())
+                {
+                    MoveForward(out tile_mov_x, out tile_mov_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
                     return true;
-                    }
+                }
             }
         }
         return false;
@@ -354,7 +360,7 @@ public class MovementController : CulverinBehaviour
 
     private void CheckFacingRotation()
     {
-        if (1 == 1/*GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle()*/)
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
         {
             if (Input.GetKeyDown(KeyCode.Z)) //Look Up
             {
@@ -636,11 +642,8 @@ public class MovementController : CulverinBehaviour
                 }
 
         }
-        if (CheckIsWalkable(position_front_x, position_front_y))
-        {
-            return false;
-        }
-        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null)
+
+        if (player_enemies_manager.GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null)
         {
             return true;
         }
@@ -687,7 +690,7 @@ public class MovementController : CulverinBehaviour
 
         }
 
-        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null)
+        if (player_enemies_manager.GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null)
         {
             return true;
         }
@@ -734,7 +737,7 @@ public class MovementController : CulverinBehaviour
 
         }
 
-        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null)
+        if (player_enemies_manager.GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null)
         {
             return true;
         }
@@ -781,7 +784,7 @@ public class MovementController : CulverinBehaviour
 
         }
 
-        if (GetLinkedObject("player_obj").GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null)
+        if (player_enemies_manager.GetComponent<EnemiesManager>().FindEnemyByTile(position_front_x, position_front_y) != null)
         {
             return true;
         }
