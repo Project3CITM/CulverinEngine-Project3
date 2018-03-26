@@ -6,6 +6,8 @@
 #include "Module.h"
 #include "EventDefV2.h"
 
+enum EventValidation;
+
 void PushEvent(Event& event);
 void PushImmediateEvent(Event& event);
 void AddListener(EventType type, Module* listener);
@@ -32,6 +34,9 @@ public:
 	void ClearEvents(EventType type, Component* component);
 
 private:
+	EventValidation ValidEvent(Event& event, float dt);
+
+private:
 	std::multimap<uint, Event> DrawV;							//Draw events are stored here ordered by resource number (faster draw, less bind/unbind)
 	std::multimap<float, Event> DrawAlphaV;						//Draw events are stored here ordered by distance to active camera
 	std::multimap<EventType, Event> NoDrawV;					//No-Draw events are stored here ordered by EventType enum, less eventvector change when iterating
@@ -41,6 +46,15 @@ private:
 	bool EventPushedWhileIteratingMaps_DrawV = false;
 	bool EventPushedWhileIteratingMaps_DrawAlphaV = false;
 	bool EventPushedWhileIteratingMaps_NoDrawV = false;
+};
+
+enum EventValidation
+{
+	EVENT_VALIDATION_VALID,
+	EVENT_VALIDATION_ACTIVE_DELAY,
+	EVENT_VALIDATION_ADD_CONTINUE,
+	EVENT_VALIDATION_ERASE_CONTINUE,
+	EVENT_VALIDATION_ERROR
 };
 
 #endif //EVENTSYSTEM_V2

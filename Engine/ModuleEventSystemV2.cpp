@@ -34,13 +34,6 @@ bool ModuleEventSystemV2::Init(JSON_Object* node)
 	//creation of event-listeners map
 	for (int i = 0; i < EventType::MAXEVENTS; i++)
 		MEventListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, std::vector<Module*>()));
-	/*
-	for (int i = 0; i < EventType::MAXEVENTS; i++)
-	{
-		std::vector<Module*> ListenersVec;
-		MEventListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, ListenersVec));
-	}
-	*/
 	//addlisteners
 	const std::vector<Module*>* ModuleList = App->GetModuleList();
 	for (std::vector<Module*>::const_iterator item = ModuleList->cbegin(); item != ModuleList->cend(); ++item)
@@ -70,42 +63,91 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	//Draw opaque events
 	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
-		if (item._Ptr->_Myval.second.Get_event_data_PushedWhileIteriting())
+		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
+		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
+		case EventValidation::EVENT_VALIDATION_VALID:
+			if (type == EventType::EVENT_PARTICLE_DRAW)
+			{
+				App->renderer3D->particles_shader->Bind();
+				((Particle*)item._Ptr->_Myval.second.particle_draw.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
+				App->renderer3D->particles_shader->Unbind();
+			}
+			else
+			{
+				switch (item._Ptr->_Myval.second.draw.Dtype)
+				{
+				case EDraw::DrawType::DRAW_3D:
+				case EDraw::DrawType::DRAW_2D:
+					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
+					break;
+				case EDraw::DrawType::DRAW_3D_ALPHA:
+					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
+					break;
+//				case EDraw::DrawType::DRAW_SCREEN_CANVAS:
+//					(*item2)->OnEvent(item._Ptr->_Myval.second);
+//					break;
+//				case EDraw::DrawType::DRAW_WORLD_CANVAS:
+//					break;
+				}
+			}
+			item = DrawV.erase(item);
+			/*
+			//Here we can execute the event, any delay is left and this is a valid event
+			//If EListener iterator is different from the actual analysed event, find the new iterator
+			EventType type = item._Ptr->_Myval.second.Get_event_data_type();
+			if (type != EListener._Ptr->_Myval.first)
+				EListener = MEventListeners.find(type);
+			//if != end, we found it, iterate listeners and call OnEvent, if we didn't found it, erase and jump to next iteration
+			if (EListener != MEventListeners.end())
+				for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+					//TODO: Call Draw function
+					int variableToAvoidFor_todelete = 0;
+			else
+			{
+				item = DrawV.erase(item);
+				continue;
+			}
+			*/
+			break;
+		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
+		case EventValidation::EVENT_VALIDATION_ADD_CONTINUE:
 			item++;
 			continue;
-		}
-		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
-		if (type != EListener._Ptr->_Myval.first)
-			EListener = MEventListeners.find(type);
-		if (EListener != MEventListeners.end())
-			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-				(*item2)->OnEvent(item._Ptr->_Myval.second);
-				//TODO: Call Draw function
-		else
-		{
+		case EventValidation::EVENT_VALIDATION_ERASE_CONTINUE:
+		case EventValidation::EVENT_VALIDATION_ERROR:
 			item = DrawV.erase(item);
 			continue;
 		}
-		item = DrawV.erase(item);
 	}
 	//Draw alpha events
 	for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
 	{
-		if (item._Ptr->_Myval.second.Get_event_data_PushedWhileIteriting())
+		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
+		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
+		case EventValidation::EVENT_VALIDATION_VALID:
+			//Here we can execute the event, any delay is left and this is a valid event
+			//If EListener iterator is different from the actual analysed event, find the new iterator
+			if (type != EListener._Ptr->_Myval.first)
+				EListener = MEventListeners.find(type);
+			//if != end, we found it, iterate listeners and call OnEvent, if we didn't found it, erase and jump to next iteration
+			if (EListener != MEventListeners.end())
+				for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+					//TODO: Call Draw function
+					int variableToAvoidFor_todelete = 0;
+			else
+			{
+				item = DrawAlphaV.erase(item);
+				continue;
+			}
+			break;
+		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
+		case EventValidation::EVENT_VALIDATION_ADD_CONTINUE:
 			item++;
 			continue;
-		}
-		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
-		if (type != EListener._Ptr->_Myval.first)
-			EListener = MEventListeners.find(type);
-		if (EListener != MEventListeners.end())
-			for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-				(*item2)->OnEvent(item._Ptr->_Myval.second);
-				//TODO: Call Draw function
-		else
-		{
+		case EventValidation::EVENT_VALIDATION_ERASE_CONTINUE:
+		case EventValidation::EVENT_VALIDATION_ERROR:
 			item = DrawAlphaV.erase(item);
 			continue;
 		}
@@ -114,53 +156,33 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	//NoDraw events
 	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
 	{
-		//If this event is pushed while we iterate, skip it for the next frame
-		if (item._Ptr->_Myval.second.Get_event_data_PushedWhileIteriting())
+		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
+		case EventValidation::EVENT_VALIDATION_VALID:
+			//Here we can execute the event, any delay is left and this is a valid event
+			//If EListener iterator is different from the actual analysed event, find the new iterator
+			if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
+				EListener = MEventListeners.find(item._Ptr->_Myval.first);
+			//if != end, we found it, iterate listeners and call OnEvent, if we didn't found it, erase and jump to next iteration
+			if (EListener != MEventListeners.end())
+				for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
+					(*item2)->OnEvent(item._Ptr->_Myval.second);
+			else
+			{
+				item = NoDrawV.erase(item);
+				continue;
+			}
+			break;
+		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
+		case EventValidation::EVENT_VALIDATION_ADD_CONTINUE:
 			item++;
 			continue;
-		}
-		//Check if it is a valid event type
-		if ((item._Ptr->_Myval.first < 0) || (item._Ptr->_Myval.first >= EventType::MAXEVENTS))
-		{
+		case EventValidation::EVENT_VALIDATION_ERASE_CONTINUE:
+		case EventValidation::EVENT_VALIDATION_ERROR:
 			item = NoDrawV.erase(item);
 			continue;
 		}
-		//If this point is reached, the event is valid to be analysed
-		//This event has frame delay?, if 0, evaluate time delay, if !=0, decrese 1 frame and change saved delay in event
-		uint FrameDelay = item._Ptr->_Myval.second.Get_event_data_frame_delay();
-		if (FrameDelay == 0)
-		{
-			//This event has time delay?, if 0, evaluate time delay, if !=0, decrese dt and change saved delay in event
-			uint TimeDelay = item._Ptr->_Myval.second.Get_event_data_time_delay();
-			if (TimeDelay == 0)
-			{
-				//Here we can execute the event, any delay is left and this is a valid event
-				//If EListener iterator is different from the actual analysed event, find the new iterator
-				if (item._Ptr->_Myval.first != EListener._Ptr->_Myval.first)
-					EListener = MEventListeners.find(item._Ptr->_Myval.first);
-				//if != end, we found it, iterate listeners and call OnEvent, if we didn't found it, erase and jump to next iteration
-				if (EListener != MEventListeners.end())
-					for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-						(*item2)->OnEvent(item._Ptr->_Myval.second);
-				else
-				{
-					item = NoDrawV.erase(item);
-					continue;
-				}
-			}
-			else
-			{
-				TimeDelay -= (uint)(dt * 1000.0f);
-				item._Ptr->_Myval.second.Set_event_data_time_delay(TimeDelay);
-			}
-		}
-		else
-		{
-			FrameDelay -= 1;
-			item._Ptr->_Myval.second.Set_event_data_frame_delay(FrameDelay);
-		}
-		item++;
+		item = NoDrawV.erase(item);
 	}
 	IteratingMaps = false;
 
@@ -181,6 +203,40 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	EventPushedWhileIteratingMaps_NoDrawV = false;
 
 	return update_status::UPDATE_CONTINUE;
+}
+
+EventValidation ModuleEventSystemV2::ValidEvent(Event& event, float dt)
+{
+	//If this event is pushed while we iterate, skip it for the next frame
+	if (event.Get_event_data_PushedWhileIteriting())
+		return EventValidation::EVENT_VALIDATION_ADD_CONTINUE;
+	//Check if it is a valid event type
+	EventType type = event.Get_event_data_type();
+	if ((type < 0) || (type >= EventType::MAXEVENTS))
+		return EventValidation::EVENT_VALIDATION_ERASE_CONTINUE;
+	//If this point is reached, the event is valid to be analysed
+	//This event has frame delay?, if 0, evaluate time delay, if !=0, decrese 1 frame and change saved delay in event
+	uint FrameDelay = event.Get_event_data_frame_delay();
+	if (FrameDelay == 0)
+	{
+		//This event has time delay?, if 0, evaluate event, if !=0, decrese dt and change saved delay in event
+		uint TimeDelay = event.Get_event_data_time_delay();
+		if (TimeDelay == 0)
+			return EventValidation::EVENT_VALIDATION_VALID;
+		else
+		{
+			TimeDelay -= (uint)(dt * 1000.0f);
+			event.Set_event_data_time_delay(TimeDelay);
+			return EventValidation::EVENT_VALIDATION_ACTIVE_DELAY;
+		}
+	}
+	else
+	{
+		FrameDelay -= 1;
+		event.Set_event_data_frame_delay(FrameDelay);
+		return EventValidation::EVENT_VALIDATION_ACTIVE_DELAY;
+	}
+	return EventValidation::EVENT_VALIDATION_ERROR;
 }
 
 update_status ModuleEventSystemV2::UpdateConfig(float dt)
