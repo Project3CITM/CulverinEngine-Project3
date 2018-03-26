@@ -60,8 +60,8 @@ public class Enemy_BT : BT
 
     public override void MakeDecision()
     {
-        Debug.Log("Make Decision");
-        Debug.Log("Next Action:" + next_action.action_type);
+        //Debug.Log("Make Decision");
+        //Debug.Log("Next Action:" + next_action.action_type);
 
         if (next_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
         {
@@ -132,7 +132,7 @@ public class Enemy_BT : BT
 
         current_hp -= damage;
 
-        Debug.Log("Current HP: " + current_hp);
+        Debug.Log("[error] Current HP: " + current_hp);
 
         if (current_hp <= 0)
         {
@@ -156,9 +156,13 @@ public class Enemy_BT : BT
         current_action.Interupt();
 
         if (!GetComponent<Movement_Action>().IsWalkable((uint)(GetComponent<Movement_Action>().GetCurrentTileX() + dir.x), (uint)(GetComponent<Movement_Action>().GetCurrentTileY() + dir.z)))
+        {
+            Debug.Log("[error] STUN!");
             next_action = GetComponent<Stun_Action>();
+        }
         else
         {
+            Debug.Log("[error] PUSH!");
             next_action = GetComponent<PushBack_Action>();
             ((PushBack_Action)next_action).SetPushDirection(dir);
         }

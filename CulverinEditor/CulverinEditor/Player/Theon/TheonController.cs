@@ -429,17 +429,23 @@ public class TheonController : CharacterController
     {
         // Decrease stamina -----------
         DecreaseStamina(right_ability_cost);
-
+        Debug.Log("[error]STAMINA!");
         SetAnimationTransition("ToAttack2", true);
-
+        Debug.Log("[error]TRANSITION!");
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
+        Debug.Log("[error]RAYCAST!");
         if (coll_object != null)
         {
+            Debug.Log(coll_object.GetTag());
+            Debug.Log("[error]COOL OBJ NOT NULL!");
             if (coll_object.CompareTag("Enemy"))
             {
+                Debug.Log("[error]HERE!");
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
-                //EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
-                //enemy_manager.Push(coll_object, curr_forward);
+                EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
+                movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
+                enemy_manager.Push(coll_object, movement.GetForwardDir());
+                Debug.Log("[error] " + movement.GetForwardDir());
             }
         }
 

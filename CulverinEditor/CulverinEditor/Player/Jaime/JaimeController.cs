@@ -226,7 +226,7 @@ public class JaimeController : CharacterController
                 enemy_y = curr_x + i;
 
                 //Apply damage on the enemy in the specified tile
-                //GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
+                GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
             }
         }
 
@@ -414,7 +414,7 @@ public class JaimeController : CharacterController
                 curr_hit_time = 0.0f;
                 Debug.Log("Enemies manager 1");
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
-                //EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
+                EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
                 Debug.Log("Enemies manager 2");
 
                 float damage = 1.0f;
@@ -432,7 +432,7 @@ public class JaimeController : CharacterController
                     damage = left_ability_dmg3;
                 }
 
-                //enemy_manager.ApplyDamage(coll_object, damage);
+                enemy_manager.ApplyDamage(coll_object, damage);
                 Debug.Log("Apply Damage");
 
                 if (hit_streak < 2)

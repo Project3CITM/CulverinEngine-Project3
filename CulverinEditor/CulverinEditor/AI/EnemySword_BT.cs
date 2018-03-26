@@ -30,7 +30,7 @@ public class EnemySword_BT : Enemy_BT
 
     protected override void InCombatDecesion()
     {
-        Debug.Log("InCombatDecesion");
+        //Debug.Log("InCombatDecesion");
         //Attack action
         if (InRange())
         {
@@ -50,7 +50,7 @@ public class EnemySword_BT : Enemy_BT
             }
             else
             {
-                Debug.Log("IdleAttack");
+                //Debug.Log("IdleAttack");
                 state = AI_STATE.AI_IDLE;
                 current_action = GetComponent<IdleAttack_Action>();
                 current_action.SetAnimSpeed(anim_speed);
@@ -60,7 +60,7 @@ public class EnemySword_BT : Enemy_BT
         }
         else if(player_detected == true)
         {
-            Debug.Log("Chase");
+            //Debug.Log("Chase");
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
             return;
