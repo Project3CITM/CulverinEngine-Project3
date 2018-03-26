@@ -10,6 +10,7 @@ public class EnemiesManager : CulverinBehaviour
 
     public void Start()
     {
+        Debug.Log("[error]Start EnemiesManager");
         sword_enemies = new List<GameObject>();
         lance_enemies = new List<GameObject>();
         shield_enemies = new List<GameObject>();
@@ -17,32 +18,74 @@ public class EnemiesManager : CulverinBehaviour
 
     public void AddSwordEnemy(GameObject enemy)
     {
-        sword_enemies.Add(enemy);
+        if (sword_enemies == null)
+        {
+            Debug.Log("[error]EnemiesManager: Sword_enemies is null");
+        }
+        else
+        {
+            sword_enemies.Add(enemy);
+        }
     }
 
     public void DeleteSwordEnemy(GameObject enemy)
     {
-        sword_enemies.Remove(enemy);
+        if (sword_enemies == null)
+        {
+            Debug.Log("[error]EnemiesManager: Sword_enemies is null");
+        }
+        else
+        {
+            sword_enemies.Remove(enemy);
+        }
     }
 
     public void AddLanceEnemy(GameObject enemy)
     {
-        lance_enemies.Add(enemy);
+        if (sword_enemies == null)
+        {
+            Debug.Log("[error]EnemiesManager: Lance_enemies is null");
+        }
+        else
+        {
+            lance_enemies.Remove(enemy);
+        }
     }
 
     public void DeleteLanceEnemy(GameObject enemy)
     {
-        lance_enemies.Remove(enemy);
+        if (sword_enemies == null)
+        {
+            Debug.Log("[error]EnemiesManager: Lance_enemies is null");
+        }
+        else
+        {
+            lance_enemies.Remove(enemy);
+        }
     }
 
     public void AddShieldEnemy(GameObject enemy)
     {
-        shield_enemies.Add(enemy);
+        if (sword_enemies == null)
+        {
+            Debug.Log("[error]EnemiesManager: Shield_enemies is null");
+        }
+        else
+        {
+            shield_enemies.Remove(enemy);
+        }
     }
 
     public void DeleteShieldEnemy(GameObject enemy)
     {
-        shield_enemies.Remove(enemy);
+        if (sword_enemies == null)
+        {
+            Debug.Log("[error]EnemiesManager: Shield_enemies is null");
+        }
+        else
+        {
+            shield_enemies.Remove(enemy);
+        }
     }
 
     public Enemy_BT FindEnemyByTile(int x, int y)

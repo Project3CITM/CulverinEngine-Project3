@@ -315,11 +315,13 @@ public class MovementController : CulverinBehaviour
             if (variation > 0.8)
             {
                 MoveRight(out tile_mov_x, out tile_mov_y);
+                GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
                 return true;
             }
             else if (variation < -0.8)
             {
                 MoveLeft(out tile_mov_x, out tile_mov_y);
+                GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
                 return true;
             }
 
@@ -330,6 +332,7 @@ public class MovementController : CulverinBehaviour
                 {
 
                     MoveBackward(out tile_mov_x, out tile_mov_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
                     return true;
                 }
 
@@ -340,7 +343,8 @@ public class MovementController : CulverinBehaviour
                     {
 
                         MoveForward(out tile_mov_x, out tile_mov_y);
-                        return true;
+                        GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
+                    return true;
                     }
             }
         }

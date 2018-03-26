@@ -8,6 +8,7 @@ public class PerceptionEmitter : CulverinBehaviour
     void Start()
     {
         event_manager = GetLinkedObject("event_manager");
+        if (event_manager == null) Debug.Log("[error]MANAGER NULL PERCEPTION");
     }
 
     public void TriggerHearEvent(PERCEPTION_EVENT_TYPE type, float time_in_memory, int radius, int tile_x, int tile_y)
