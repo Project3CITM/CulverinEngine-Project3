@@ -160,7 +160,7 @@ public class DaenerysController : CharacterController
                                         {
                                             break;
                                         }
-                                        //GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
+                                        GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
                                     }
 
                                     GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
