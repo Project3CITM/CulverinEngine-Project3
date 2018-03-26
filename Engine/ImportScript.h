@@ -18,6 +18,7 @@ class CSharpScript;
 class ResourceScript;
 class GameObject;
 class Component;
+class Material;
 
 class ImportScript
 {
@@ -65,6 +66,10 @@ public:
 	void UpdateMonoScript(CSharpScript* script, MonoObject* object);
 	MonoObject* GetMonoObject(CSharpScript* script);
 	CSharpScript* GetScriptMono(MonoObject* monoobject);
+
+	void UpdateMonoMaterial(Material* modificate, MonoObject* object);
+	MonoObject* GetMonoObject(Material* script);
+	Material* GetMaterialMono(MonoObject* monoobject);
 
 	//Delete Functions -----------------------
 	void RemoveGObjectVarFromScripting(GameObject* object);
@@ -274,6 +279,10 @@ private:
 	/*Module Physics*/
 	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);
 
+	/*Material*/
+	static void	SetBool(MonoObject* object, MonoString* name, float value);
+	static MonoObject* GetMaterialByName(MonoObject* object, MonoString* name);
+
 public: 
 	std::map<std::string, GameObject*> map_link_variables;
 
@@ -291,6 +300,7 @@ private:
 	std::multimap<MonoObject*, float3*> mono_pos;
 	std::multimap<MonoObject*, CSharpScript*> mono_script;
 	std::map<MonoObject*, Quat*> mono_quat;
+	std::multimap<MonoObject*, Material*> mono_material;
 
 };
 

@@ -21,6 +21,7 @@
 #include "CompGraphic.h"
 #include "CompImage.h"
 #include "ModuleEventSystem.h"
+#include "ModuleShaders.h"
 
 //SCRIPT VARIABLE UTILITY METHODS ------
 ScriptVariable::ScriptVariable(const char* name, VarType type, VarAccess access, CSharpScript* script) : name(name), type(type), access(access), script(script)
@@ -1293,6 +1294,39 @@ MonoObject* CSharpScript::Find(MonoObject * object, MonoString * name)
 MonoString* CSharpScript::GetMapString(MonoObject* object)
 {
 	return mono_string_new(CSdomain, App->map->map_string.c_str());
+}
+
+void CSharpScript::SetBool(MonoObject * object, MonoString * name, float value)
+{
+
+}
+
+MonoObject * CSharpScript::GetMaterialByName(MonoString * name)
+{
+		MonoClass* classT = nullptr;
+	
+		Material* comp = App->module_shaders->GetMaterialByName(mono_string_to_utf8(name));
+		if (comp != nullptr) // if has component
+		{
+			MonoObject* obj = App->importer->iScript->GetMonoObject(comp);
+			if (obj != nullptr)
+			{
+				return obj;
+			}
+			else
+			{
+				classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Material");
+				MonoObject* new_object = mono_object_new(CSdomain, classT);
+				if (new_object)
+				{
+					App->importer->iScript->UpdateMonoMaterial(comp, new_object);
+				
+					return new_object;
+				}
+			}
+		}
+	
+	return nullptr;
 }
 
 void CSharpScript::Save(JSON_Object* object, std::string name) const
