@@ -73,6 +73,7 @@ public class Lever : CulverinBehaviour
     private BarrelPuzzleManager barrel_puzzel_manager = null; // Put both scripts in same GO.
 
 
+
     public GameObject level_map;
     public GameObject player;
 
@@ -90,9 +91,7 @@ public class Lever : CulverinBehaviour
         tile_size = 25.4f;
 
         rnd = new Random();
-
-
-
+        
         countdown = GetComponent<PuzzleCountdown>();
         if(countdown == null)
         {
@@ -561,7 +560,6 @@ public class Lever : CulverinBehaviour
         time = 0.0f;
 
         SetPuzzleWalkability(3);
-       
 
     }
 

@@ -966,7 +966,7 @@ void ImportScript::LinkFunctions()
 
 
 	//COMPONENT AUDIO FUNCTIONS -----------------
-	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
+	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const bool*)PlayAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::SetAuxiliarySends", (const void*)SetAuxiliarySends);
 

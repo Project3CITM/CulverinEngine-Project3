@@ -39,6 +39,7 @@
 				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Scene1\MetalClash"/>
 				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene1\PlayMusic"/>
 				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene1\PlayTorch"/>
+				<Event Id="1503597272" Name="StartPuzzleCountdown" ObjectPath="\Events\Scene1\StartPuzzleCountdown"/>
 				<Event Id="1566564139" Name="SwordHit" ObjectPath="\Events\Scene1\SwordHit"/>
 				<Event Id="3113731383" Name="SwordSlash" ObjectPath="\Events\Scene1\SwordSlash"/>
 				<Event Id="837900871" Name="TheonDead" ObjectPath="\Events\Scene1\Characters\TheonDead"/>
@@ -160,6 +161,10 @@
 				<File Id="905197211" Language="SFX">
 					<ShortName>Enemy\Enemy_1\E1_Dead_2.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_1\E1_Dead_2_1C9C67B2.wem</Path>
+				</File>
+				<File Id="927245012" Language="SFX">
+					<ShortName>Puzzle\ClockTicking.wav</ShortName>
+					<Path>SFX\Puzzle\ClockTicking_F17FB28C.wem</Path>
 				</File>
 				<File Id="975369001" Language="SFX">
 					<ShortName>Enemy\Enemy_1\E1_Hurt_4.wav</ShortName>

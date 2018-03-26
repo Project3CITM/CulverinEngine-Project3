@@ -270,6 +270,7 @@ void CompAudio::CreateEmitter()
 void CompAudio::PlayAudioEvent(const char * event_name)
 {
 	emitter->PlayEvent(event_name);
+	LOG("Playing audio event: %s", event_name);
 }
 
 void CompAudio::StopAudioEvent(const char * event_name)

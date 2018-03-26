@@ -17,11 +17,28 @@ public class PuzzleCountdown:CulverinBehaviour
 
     int state = 1;
 
+    private CompAudio audio;
+
+    void Start()
+     {
+        audio = GetComponent<CompAudio>();
+        if (audio == null)
+        {
+            Debug.Log("There is no audio comp in puzzle!");
+        }
+    }
+
     public void StartCountdown()
     {
+
         current_time = initial_time;
         active = true;
         state = 1;
+        Audio.ChangeState("PuzzleCountDownState", "State1");
+        audio = GetComponent<CompAudio>();
+        audio.PlayEvent("StartPuzzleCountdown");
+        //Debug.Log("Playing countdown sound");
+
     }
 
     public bool IsCountdownOver()
@@ -44,14 +61,17 @@ public class PuzzleCountdown:CulverinBehaviour
             if(current_time <= state_2_time && state == 1)
             {
                 state = 2;
+                Audio.ChangeState("PuzzleCountDownState","State2");
             }
             else if (current_time <= state_3_time && state == 2)
             {
                 state = 3;
+                Audio.ChangeState("PuzzleCountDownState", "State3");
             }
             else if (current_time <= 0.0f)
             {
                 active = false;
+                audio.StopEvent("StartPuzzleCountdown");
             }
 
         }

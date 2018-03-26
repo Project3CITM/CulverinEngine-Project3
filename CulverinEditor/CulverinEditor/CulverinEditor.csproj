@@ -71,6 +71,7 @@
     <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
+    <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
     <Compile Include="CompLight.cs" />
     <Compile Include="Lights\LightFlickering.cs" />
     <Compile Include="Player\UI\Game.cs" />

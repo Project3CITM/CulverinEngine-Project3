@@ -6,6 +6,7 @@ Event	ID	Name			Wwise Object Path	Notes
 	1287847765	MetalClash			\Scene1\MetalClash	
 	1296876930	DaenerysDead			\Scene1\Characters\DaenerysDead	
 	1489596707	DaenerysHurt			\Scene1\Characters\DaenerysHurt	
+	1503597272	StartPuzzleCountdown			\Scene1\StartPuzzleCountdown	
 	1566564139	SwordHit			\Scene1\SwordHit	
 	1644787663	BehindMe			\Scene1\Characters\BehindMe	
 	2385628198	Footsteps			\Scene1\Footsteps	
@@ -32,7 +33,7 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	337181357	footstep_stone	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Ambient\footstep_stone_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\FootSepts_Stone\footstep_stone		44664
 	347745547	E3_Dead_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Dead_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy3\Enemy3_Dead\E3_Dead_2		190096
 	402319163	Flesh_Cut	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Misc_Combat\sword_hit_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Miscellaneous_Combat\Flesh_Cut		35344
-	473597307	Rains_of_Castemere_Little	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Rains_of_Castemere_Little_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\New Music Playlist Container\Rains_of_Castemere_Little\Rains_of_Castemere_Little		12058432
+	473597307	Rains_of_Castemere_Little	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Rains_of_Castemere_Little_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\Ambient\Rains_of_Castemere_Little\Rains_of_Castemere_Little		12058432
 	474583835	Jaime_Hurt_4	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Jaime_Hurt_4_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Jaime\Jaime_Hurt\Jaime_Hurt_4		215540
 	500858504	E1_Dead_1	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Dead_1_27BA3499.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy1_Dead\E1_Dead_1		150292
 	502356219	Metal_Clash	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Misc_Combat\metal_clash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Miscellaneous_Combat\Metal_Clash		128684
@@ -52,6 +53,7 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	845273263	Daenerys_Dead_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Daenerys\Daenerys_Dead_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Daenerys\Daenerys_Dead\Daenerys_Dead_2		289324
 	891353326	crossbow_recharge	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Theon\crossbow_recharge_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Theon\crossbow_recharge		176984
 	905197211	E1_Dead_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Dead_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy1_Dead\E1_Dead_2		252856
+	927245012	ClockTicking	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Puzzle\ClockTicking_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\PuzzleClock\State1\Puzzle_State1\ClockTicking		3276864
 	975369001	E1_Hurt_4	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Hurt_4_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy1_Hurt\E1_Hurt_4		122252
 	989877584	Daenerys_Hurt_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Daenerys\Daenerys_Hurt_5_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Daenerys\Daenerys_Hurt\Daenerys_Hurt_2		73912
 	1039896243	Theon_Hurt_2	C:\Users\Kay\Documents\WwiseProjects\Proyecto3\.cache\Windows\SFX\Characters\Theon\Theon_Hurt_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Characters\Theon\Theon_Hurt\Theon_Hurt_2		249464
