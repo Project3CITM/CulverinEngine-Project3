@@ -44,6 +44,7 @@ private:
 	GameObject* copy = nullptr;
 	bool wait_to_select = false;
 	bool dont_ask_me_next_time = false;
+	bool show_temporary_scene = false;
 
 };
 #endif //__MODULEHIERARCHY_H__

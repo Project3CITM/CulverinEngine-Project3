@@ -345,7 +345,6 @@ void ModuleFS::GetAllFilesAssets(std::experimental::filesystem::path path, std::
 bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 {
 	namespace fs = std::experimental::filesystem;
-	int only_meta = 0;
 	std::list<std::string> files_to_import;
 	for (int i = 0; i < files.size(); i++)
 	{
@@ -379,10 +378,6 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 		if (fs::exists(temp) == false && strcmp(GetExtension(it._Ptr->_Myval.c_str()).c_str(), "scene.json") != 0)
 		{
 			App->importer->Import(it._Ptr->_Myval.c_str(), App->resource_manager->CheckFileType(it._Ptr->_Myval.c_str()), true);
-			if (only_meta == 0)
-			{
-				only_meta = 1;
-			}
 			//App->importer->Import(files[i].directory_name, App->resource_manager->CheckFileType(files[i].directory_name), true);
 		}
 		else 
@@ -417,10 +412,6 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 								finish = true;
 							}
 						}
-						if (only_meta == 0)
-						{
-							only_meta = 2;
-						}
 					}
 					break;
 				}
@@ -430,10 +421,6 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 					if (last_write != cftime)
 					{
 						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDMaterial(it._Ptr->_Myval.c_str()));
-						if (only_meta == 0)
-						{
-							only_meta = 2;
-						}
 					}
 					break;
 				}
@@ -443,10 +430,6 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 					if (last_write != cftime)
 					{
 						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDScript(it._Ptr->_Myval.c_str()));
-						if (only_meta == 0)
-						{
-							only_meta = 2;
-						}
 					}
 					break;
 				}
@@ -456,10 +439,6 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 					if (last_write != cftime)
 					{
 						App->resource_manager->resources_to_reimport.push_back(App->json_seria->GetUUIDFont(it._Ptr->_Myval.c_str()));
-						if (only_meta == 0)
-						{
-							only_meta = 2;
-						}
 					}
 					break;
 				}
@@ -467,10 +446,6 @@ bool ModuleFS::ImportAllFilesNoMeta(std::vector<AllFiles>& files)
 			}
 		}
 		it++;
-	}
-	if (only_meta == 1 && App->mode_game == false)
-	{
-		App->resource_manager->Save();
 	}
 	return true;
 }
@@ -616,6 +591,29 @@ void ModuleFS::GetUUIDFromFile(std::string path, std::vector<uint>& files)
 			}
 			break;
 		}
+		}
+	}
+}
+
+void ModuleFS::GetAllMetas(std::experimental::filesystem::path path, std::vector<std::string>& files_meta)
+{
+	namespace stdfs = std::experimental::filesystem;
+
+	const stdfs::directory_iterator end{};
+	uint idpath = 0;
+	for (stdfs::directory_iterator iter{ path }; iter != end; ++iter)
+	{
+		if (stdfs::is_directory(*iter) == false)
+		{
+			std::string extension = GetExtension(iter->path().string(), true);
+			if (strcmp(extension.c_str(), "meta.json") == 0)
+			{
+				files_meta.push_back(iter->path().string());
+			}
+		}
+		else
+		{
+			GetAllMetas(iter->path().string(), files_meta);
 		}
 	}
 }
@@ -952,7 +950,7 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 		break;
 	}
 	case DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_JSON:
-	{	
+	{
 		temp = DIRECTORY_LIBRARY_JSON + temp;
 		break;
 	}
@@ -1231,27 +1229,39 @@ std::string ModuleFS::GetPathWithoutExtension(std::string file)
 	return file;
 }
 
-std::string ModuleFS::GetExtension(std::string file)
+std::string ModuleFS::GetExtension(std::string file, bool is_meta)
 {
-	size_t EndName = file.find(".scene.json");
-	if (EndName != std::string::npos)
+	if (is_meta)
 	{
-		file = file.substr(EndName + 1);
-		return file;
-	}
-	EndName = file.find(".prefab.json");
-	if (EndName != std::string::npos)
-	{
-		file = file.substr(EndName + 1);
-		return file;
+		size_t EndName = file.find(".meta.json");
+		if (EndName != std::string::npos)
+		{
+			file = file.substr(EndName + 1);
+			return file;
+		}
 	}
 	else
 	{
-
+		size_t EndName = file.find(".scene.json");
+		if (EndName != std::string::npos)
+		{
+			file = file.substr(EndName + 1);
+			return file;
+		}
+		EndName = file.find(".prefab.json");
+		if (EndName != std::string::npos)
+		{
+			file = file.substr(EndName + 1);
+			return file;
+		}
+		EndName = file.find_last_of(".");
+		if(EndName != std::string::npos)
+		{
+			file = file.substr(EndName + 1);
+			return file;
+		}
 	}
-	EndName = file.find_last_of(".");
-	file = file.substr(EndName + 1);
-	return file;
+	return "";
 }
 
 char* ModuleFS::ConverttoChar(std::string name)

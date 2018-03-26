@@ -124,6 +124,14 @@ void CompCollider::Clear()
 	}
 }
 
+void CompCollider::ClearCompCollider()
+{
+	listener = nullptr;
+	script_name.clear();
+	uid_script_asigned = 0;
+	collided_object = nullptr;
+}
+
 // -----------------------------------------------------------------
 void CompCollider::ShowOptions()
 {

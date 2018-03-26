@@ -7,6 +7,25 @@
 class ResourceScript;
 class ScriptVariable;
 class CSharpScript;
+struct PublicMethod;
+
+struct Actions
+{
+public:
+	PublicMethod* method = nullptr;
+	GameObject* attacked = nullptr;
+	int UID_attacked = -1;
+	bool select_game_object = false;
+	int selected_mode = 1;
+	CompScript* script = nullptr;
+	std::string current_mode = "Runtime Only";
+	std::string current_script = "No Script";
+	std::string current_function = "No Function";
+
+	void* value = nullptr;
+	GameObject* value_go = nullptr;
+	std::string value_string;
+};
 
 class CompScript : public Component
 {
@@ -47,6 +66,8 @@ public:
 	void CopyValues(const CompScript * component);
 	bool SelectScript(bool& selecting);
 	// -------------------------
+	void InitValueParamater(int index);
+	void ShowTypeMethod(int index);
 
 	//Special --------------
 	void AddScriptbyName(const char* name_script);
@@ -76,6 +97,8 @@ private:
 	bool select_script = false;
 	uint uuid_resource_reimported = 0;
 	bool active_script = false;
+
+	std::vector<Actions> actions;
 };
 
 

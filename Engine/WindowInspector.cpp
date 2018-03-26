@@ -43,7 +43,7 @@ void Inspector::ShowInspector()
 		return;
 	}
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(12, 3));
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 2));
 	if (selected_object != nullptr)
 	{ 
 		selected_object->ShowInspectorInfo();

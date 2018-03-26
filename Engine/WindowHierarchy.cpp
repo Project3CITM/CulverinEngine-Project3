@@ -50,6 +50,17 @@ update_status Hierarchy::Update(float dt)
 				}
 			}
 		}
+		if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
+		{
+			if (selected != nullptr && App->engine_state == EngineState::STOP)
+			{
+				SetGameObjecttoDelete(selected);
+			}
+			else
+			{
+				LOG("Deleting a GameObject while PlayMode may cause crashes... you can't delete now.");
+			}
+		}
 	}
 	return UPDATE_CONTINUE;
 }
@@ -80,6 +91,13 @@ void Hierarchy::ShowHierarchy()
 	ImGui::PopStyleVar();
 	// Iterate all root and show in Hierarchy all GameObjects -----------
 	App->scene->root->ShowHierarchy();
+
+	if (show_temporary_scene)
+	{
+		ImGui::Separator();
+		App->scene->temp_scene->ShowHierarchy();
+		ImGui::Separator();
+	}
 	// ----------------------------------------------------------------
 	ImGui::PopStyleVar();
 
@@ -105,6 +123,11 @@ void Hierarchy::ShowHierarchy()
 
 void Hierarchy::ShowOptions()
 {
+	if (ImGui::MenuItem("Show Temporary Scene", NULL, show_temporary_scene))
+	{
+		show_temporary_scene = !show_temporary_scene;
+	}
+	ImGui::Separator();
 	if (ImGui::MenuItem("Copy"))
 	{
 		if (selected != nullptr && selected->GetUUID() != 1)
@@ -327,7 +350,6 @@ void Hierarchy::ChangeShowConfirmDelete()
 	dont_ask_me_next_time = !show_confirm_delete;
 	wait_to_select = false;
 }
-
 
 bool Hierarchy::CleanUp()
 {

@@ -283,7 +283,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 				scene->mAnimations[scene->mNumAnimations - 1]->mName = fbx_name;
 				scene->mAnimations[scene->mNumAnimations - 1]->mName.Append("Animation");
 				LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str());
-				iAnimation->Import(scene->mAnimations[scene->mNumAnimations - 1], scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str(), fbx_name.c_str());
+				iAnimation->Import(scene->mAnimations[scene->mNumAnimations - 1], scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str(), file);
 			}
 
 			//Delete assimp's empty nodes
@@ -375,7 +375,7 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 					scene->mAnimations[i]->mName.Append("Animation");
 					scene->mAnimations[i]->mName.Append(std::to_string(i).c_str());
 					LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[i]->mName.C_Str());
-					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str());
+					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), file);
 				}
 
 				

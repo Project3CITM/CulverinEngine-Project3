@@ -79,7 +79,7 @@ bool ModuleInput::Init(JSON_Object* node)
 
 	player_action = new PlayerActions(this);
 	std::string name = DIRECTORY_LIBRARY_JSON;
-	name=App->fs->GetFullPath(name);
+	name = App->fs->GetFullPath(name);
 	name += "player_action.json";
 	if (App->fs->CheckIsFileExist(name.c_str()))
 		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
@@ -95,7 +95,7 @@ bool ModuleInput::Init(JSON_Object* node)
 	if (ui_manager != nullptr)
 	{
 		//ui_conected = t;
-			ui_conected=ui_manager->ActionExist(submit.c_str());
+		ui_conected = ui_manager->ActionExist(submit.c_str());
 		if (ui_conected == true)
 			ui_conected = ui_manager->ActionExist(cancel.c_str());
 		if (ui_conected == true)
@@ -105,7 +105,7 @@ bool ModuleInput::Init(JSON_Object* node)
 
 	}
 
-	
+
 	Awake_t = perf_timer.ReadMs();
 	return ret;
 }
@@ -119,19 +119,19 @@ update_status ModuleInput::PreUpdate(float dt)
 	player_action->UpdateInputsManager();
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
-	
-	for(int i = 0; i < MAX_KEYS; ++i)
+
+	for (int i = 0; i < MAX_KEYS; ++i)
 	{
-		if(keys[i] == 1)
+		if (keys[i] == 1)
 		{
-			if(keyboard[i] == KEY_IDLE)
+			if (keyboard[i] == KEY_IDLE)
 				keyboard[i] = KEY_DOWN;
 			else
 				keyboard[i] = KEY_REPEAT;
 		}
 		else
 		{
-			if(keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
+			if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
 				keyboard[i] = KEY_UP;
 			else
 				keyboard[i] = KEY_IDLE;
@@ -163,18 +163,18 @@ update_status ModuleInput::PreUpdate(float dt)
 	mouse_y /= SCREEN_SIZE;
 	mouse_z = 0;
 
-	for(int i = 0; i < 5; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		if(/*buttons*/buttons_global & SDL_BUTTON(i))
+		if (/*buttons*/buttons_global & SDL_BUTTON(i))
 		{
-			if(mouse_buttons[i] == KEY_IDLE)
+			if (mouse_buttons[i] == KEY_IDLE)
 				mouse_buttons[i] = KEY_DOWN;
 			else
 				mouse_buttons[i] = KEY_REPEAT;
 		}
 		else
 		{
-			if(mouse_buttons[i] == KEY_REPEAT || mouse_buttons[i] == KEY_DOWN)
+			if (mouse_buttons[i] == KEY_REPEAT || mouse_buttons[i] == KEY_DOWN)
 				mouse_buttons[i] = KEY_UP;
 			else
 				mouse_buttons[i] = KEY_IDLE;
@@ -186,61 +186,61 @@ update_status ModuleInput::PreUpdate(float dt)
 	bool quit = false;
 	SDL_Event e;
 
-	while(SDL_PollEvent(&e))
+	while (SDL_PollEvent(&e))
 	{
 		ImGui_ImplSdlGL3_ProcessEvent(&e);
 		//if (App->mode_game) {
-			player_action->ReceiveEvent(&e);
+		player_action->ReceiveEvent(&e);
 		//}
-		switch(e.type)
+		switch (e.type)
 		{
 
-			case SDL_MOUSEBUTTONDOWN:
-			{
+		case SDL_MOUSEBUTTONDOWN:
+		{
 
-				//LOG("mouse down");
-				mouse_x = e.motion.x / SCREEN_SIZE;
-				mouse_y = e.motion.y / SCREEN_SIZE;
+			//LOG("mouse down");
+			mouse_x = e.motion.x / SCREEN_SIZE;
+			mouse_y = e.motion.y / SCREEN_SIZE;
 
-				Event mouse_event;
-				mouse_event.pointer.type = EventType::EVENT_BUTTON_DOWN;
-				if (e.button.button == SDL_BUTTON_LEFT)
-					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
-				if (e.button.button == SDL_BUTTON_MIDDLE)
-					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_MIDDLE;
-				if (e.button.button == SDL_BUTTON_RIGHT)
-					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_RIGHT;
-				mouse_event.pointer.position.x = mouse_x;
-				mouse_event.pointer.position.y = mouse_y;
-				mouse_event.pointer.focus = nullptr;
-				PushEvent(mouse_event);
-			}
-			break;
-			case SDL_MOUSEBUTTONUP:
-			{
-				mouse_x = e.motion.x / SCREEN_SIZE;
-				mouse_y = e.motion.y / SCREEN_SIZE;
-				Event mouse_event;
-				mouse_event.pointer.type = EventType::EVENT_BUTTON_UP;
-				if (e.button.button == SDL_BUTTON_LEFT)
-					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
-				if (e.button.button == SDL_BUTTON_MIDDLE)
-					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_MIDDLE;
-				if (e.button.button == SDL_BUTTON_RIGHT)
-					mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_RIGHT;
-				mouse_event.pointer.position.x = mouse_x;
-				mouse_event.pointer.position.y = mouse_y;
-				mouse_event.pointer.focus = nullptr;
+			Event mouse_event;
+			mouse_event.pointer.type = EventType::EVENT_BUTTON_DOWN;
+			if (e.button.button == SDL_BUTTON_LEFT)
+				mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
+			if (e.button.button == SDL_BUTTON_MIDDLE)
+				mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_MIDDLE;
+			if (e.button.button == SDL_BUTTON_RIGHT)
+				mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_RIGHT;
+			mouse_event.pointer.position.x = mouse_x;
+			mouse_event.pointer.position.y = mouse_y;
+			mouse_event.pointer.focus = nullptr;
+			PushEvent(mouse_event);
+		}
+		break;
+		case SDL_MOUSEBUTTONUP:
+		{
+			mouse_x = e.motion.x / SCREEN_SIZE;
+			mouse_y = e.motion.y / SCREEN_SIZE;
+			Event mouse_event;
+			mouse_event.pointer.type = EventType::EVENT_BUTTON_UP;
+			if (e.button.button == SDL_BUTTON_LEFT)
+				mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
+			if (e.button.button == SDL_BUTTON_MIDDLE)
+				mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_MIDDLE;
+			if (e.button.button == SDL_BUTTON_RIGHT)
+				mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_RIGHT;
+			mouse_event.pointer.position.x = mouse_x;
+			mouse_event.pointer.position.y = mouse_y;
+			mouse_event.pointer.focus = nullptr;
 
-				PushEvent(mouse_event);
-			}
-			break;
-			case SDL_MOUSEWHEEL:
+			PushEvent(mouse_event);
+		}
+		break;
+		case SDL_MOUSEWHEEL:
 			mouse_z = e.wheel.y;
 			break;
-			
-			case SDL_MOUSEMOTION:
-			
+
+		case SDL_MOUSEMOTION:
+
 			mouse_x = e.motion.x / SCREEN_SIZE;
 			mouse_y = e.motion.y / SCREEN_SIZE;
 
@@ -260,64 +260,64 @@ update_status ModuleInput::PreUpdate(float dt)
 			}
 			break;
 
-			case SDL_DROPFILE:
+		case SDL_DROPFILE:
+		{
+			if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::MESH)
 			{
-				if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::MESH)
-				{
-					LOG("Importing file: %s", e.drop.file);
-					dropedfiles.push_back(e.drop.file);
-				}
-				else if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::MATERIAL)
-				{
-					LOG("Importing file: %s", e.drop.file);
-					dropedfiles.push_front(e.drop.file);
-				}
-				else if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::FONT)
-				{
-					LOG("Importing file: %s", e.drop.file);
-					dropedfiles.push_front(e.drop.file);
-				}
-				else if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::SCRIPT)
-				{
-					LOG("Importing file: %s", e.drop.file);
-					dropedfiles.push_back(e.drop.file);
-				}
-				else if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::FOLDER)
-				{
-					LOG("Importing file: %s", e.drop.file);
-					dropedfiles.push_back(e.drop.file);
-				}
-				else if (App->map->CheckTypeMap(e.drop.file) != TypeMap::MAP_NON)
-				{
-					App->map->imported_map = e.drop.file;
-				}
+				LOG("Importing file: %s", e.drop.file);
+				dropedfiles.push_back(e.drop.file);
 			}
-			break;
+			else if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::MATERIAL)
+			{
+				LOG("Importing file: %s", e.drop.file);
+				dropedfiles.push_front(e.drop.file);
+			}
+			else if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::FONT)
+			{
+				LOG("Importing file: %s", e.drop.file);
+				dropedfiles.push_front(e.drop.file);
+			}
+			else if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::SCRIPT)
+			{
+				LOG("Importing file: %s", e.drop.file);
+				dropedfiles.push_back(e.drop.file);
+			}
+			else if (App->resource_manager->CheckFileType(e.drop.file) == Resource::Type::FOLDER)
+			{
+				LOG("Importing file: %s", e.drop.file);
+				dropedfiles.push_back(e.drop.file);
+			}
+			else if (App->map->CheckTypeMap(e.drop.file) != TypeMap::MAP_NON)
+			{
+				App->map->imported_map = e.drop.file;
+			}
+		}
+		break;
 
-			case SDL_QUIT:
+		case SDL_QUIT:
 			quit = true;
 			break;
 
-			case SDL_WINDOWEVENT:
+		case SDL_WINDOWEVENT:
+		{
+			if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+				App->renderer3D->OnResize(e.window.data1, e.window.data2);
+			if (e.window.event == SDL_WINDOWEVENT_FOCUS_GAINED)
 			{
-				if(e.window.event == SDL_WINDOWEVENT_RESIZED)
-					App->renderer3D->OnResize(e.window.data1, e.window.data2);
-				if (e.window.event == SDL_WINDOWEVENT_FOCUS_GAINED)
+				// Now Update All vectors "project" and "fs"
+				if (App->mode_game == false)
 				{
-					// Now Update All vectors "project" and "fs"
-					if (App->mode_game == false)
-					{
-						((Project*)App->gui->win_manager[PROJECT])->UpdateNow();
-						App->fs->CheckNowfilesAssets();
-					}
+					((Project*)App->gui->win_manager[PROJECT])->UpdateNow();
+					App->fs->CheckNowfilesAssets();
 				}
 			}
+		}
 		}
 	}
 	UIInputManagerUpdate();
 	//LOG(std::to_string(mouse_x_motion).c_str());
-	
-	if(quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
+
+	if (quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
 		return UPDATE_STOP;
 
 	preUpdate_t = perf_timer.ReadMs();
@@ -416,11 +416,11 @@ update_status ModuleInput::UpdateConfig(float dt)
 		ImGui::TextColored(color, "Conection Fail");
 
 	}
-	ImGui::TextColored(color,"UI InputManager: %s", ui_input_manager.c_str());
-	ImGui::TextColored(color,"UI Vertical: %s", vertical.c_str());
-	ImGui::TextColored(color,"UI Horizontal: %s", horizontal.c_str());
-	ImGui::TextColored(color,"UI Submit: %s", submit.c_str());
-	ImGui::TextColored(color,"UI Cancel: %s", cancel.c_str());
+	ImGui::TextColored(color, "UI InputManager: %s", ui_input_manager.c_str());
+	ImGui::TextColored(color, "UI Vertical: %s", vertical.c_str());
+	ImGui::TextColored(color, "UI Horizontal: %s", horizontal.c_str());
+	ImGui::TextColored(color, "UI Submit: %s", submit.c_str());
+	ImGui::TextColored(color, "UI Cancel: %s", cancel.c_str());
 	//ImGui::Text("Keyboard Click");
 	//ImGui::TextColored(ImVec4(0.0f, 0.58f, 1.0f, 1.0f), "%i", SDL_GetKeyboardState(NULL));
 	return UPDATE_CONTINUE;
@@ -432,7 +432,7 @@ bool ModuleInput::CleanUp()
 	LOG("Quitting SDL input event subsystem");
 	std::string name = DIRECTORY_LIBRARY_JSON;
 	name = App->fs->GetFullPath(name);
-	App->json_seria->SavePlayerAction(player_action, name.c_str() , "player_action");
+	App->json_seria->SavePlayerAction(player_action, name.c_str(), "player_action");
 	player_action->Clear();
 	RELEASE(player_action);
 	player_action = nullptr;
@@ -442,7 +442,7 @@ bool ModuleInput::CleanUp()
 
 void ModuleInput::UIInputManagerUpdate()
 {
-	if (!ui_conected|| ui_manager==nullptr)
+	if (!ui_conected || ui_manager == nullptr)
 		return;
 	if (!ui_manager->GetActiveInput())
 		return;
@@ -466,10 +466,10 @@ void ModuleInput::UIInputManagerUpdate()
 		if (vect_temp[i]->OnClick())
 		{
 
-				Event mouse_event;
-				mouse_event.gui_cancel.type = EventType::EVENT_CANCEL;
-				mouse_event.gui_cancel.active = true;
-				PushEvent(mouse_event);
+			Event mouse_event;
+			mouse_event.gui_cancel.type = EventType::EVENT_CANCEL;
+			mouse_event.gui_cancel.active = true;
+			PushEvent(mouse_event);
 		}
 	}
 	vect_temp.clear();

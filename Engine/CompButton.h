@@ -19,6 +19,7 @@ public:
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
 
+	void ClearLinkedScripts();
 	void SyncScript();
 	void AddLinkedScript(const CompScript* script);
 

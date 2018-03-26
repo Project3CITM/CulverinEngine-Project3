@@ -89,6 +89,10 @@ public:
 	int combo_shaders_obj = -1;
 	int combo_shaders_obj2 = -1;
 	int combo_material_obj = -1;
+
+	// Add and remove icons Component UI Button
+	uint icon_plus;
+	uint icon_remove;
 	//-----------------
 
 private:

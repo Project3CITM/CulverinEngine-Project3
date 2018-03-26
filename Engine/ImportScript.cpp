@@ -479,7 +479,6 @@ void ImportScript::UpdateMonoComp(Component* modificate, MonoObject* object)
 	mono_comp.insert(std::pair<MonoObject*, Component*>(object, modificate));
 }
 
-
 MonoObject* ImportScript::GetMonoObject(Component* component)
 {
 	if (component != nullptr/* && gameobject->IsDeleteFixed()*/)
@@ -538,36 +537,6 @@ float3& ImportScript::GetPosMono(MonoObject* monoobject)
 	return float3(0,0,0);
 }
 
-void ImportScript::UpdateMonoScript(CSharpScript* script, MonoObject* object)
-{
-	mono_script.insert(std::pair<MonoObject*, CSharpScript*>(object, script));
-}
-
-MonoObject* ImportScript::GetMonoObject(CSharpScript* script)
-{
-	std::multimap<MonoObject*, CSharpScript*>::iterator it = mono_script.begin();
-	while (it != mono_script.end())
-	{
-		if (it->second == script)
-		{
-			return it->first;
-		}
-		it++;
-	}
-	return nullptr;
-}
-
-CSharpScript* ImportScript::GetScriptMono(MonoObject* monoobject)
-{
-	if (monoobject != nullptr)
-	{
-		std::multimap<MonoObject*, CSharpScript*>::iterator it = mono_script.find(monoobject);
-		if (it != mono_script.end())
-			return it->second;
-	}
-	return nullptr;
-}
-
 void ImportScript::UpdateMonoMaterial(Material* modificate, MonoObject* object)
 {
 	mono_material.insert(std::pair<MonoObject*, Material*>(object, modificate));
@@ -593,6 +562,36 @@ Material* ImportScript::GetMaterialMono(MonoObject* monoobject)
 	{
 		std::multimap<MonoObject*, Material*>::iterator it = mono_material.find(monoobject);
 		if (it != mono_material.end())
+			return it->second;
+	}
+	return nullptr;
+}
+
+void ImportScript::UpdateMonoScript(CSharpScript* script, MonoObject* object)
+{
+	mono_script.insert(std::pair<MonoObject*, CSharpScript*>(object, script));
+}
+
+MonoObject* ImportScript::GetMonoObject(CSharpScript* script)
+{
+	std::multimap<MonoObject*, CSharpScript*>::iterator it = mono_script.begin();
+	while (it != mono_script.end())
+	{
+		if (it->second == script)
+		{
+			return it->first;
+		}
+		it++;
+	}
+	return nullptr;
+}
+
+CSharpScript* ImportScript::GetScriptMono(MonoObject* monoobject)
+{
+	if (monoobject != nullptr)
+	{
+		std::multimap<MonoObject*, CSharpScript*>::iterator it = mono_script.find(monoobject);
+		if (it != mono_script.end())
 			return it->second;
 	}
 	return nullptr;
@@ -770,46 +769,99 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 			csharp->SetDomain(GetDomain());
 			csharp->SetImage(App->importer->iScript->GetCulverinImage());
 			csharp->SetClass(entity);
+			csharp->CreateCSObject();
 			csharp->SetClassName(classname);
 			csharp->SetNameSpace(name_space);
 
-			//void* iter = NULL;
+			void* iter = NULL;
 
-			//MonoMethod* test_method = NULL;
-			//while ((test_method = mono_class_get_methods(entity, &iter)))
-			//{
-			//	uint t, flag;
-			//	flag = mono_method_get_flags(test_method, &t);
-			//	std::string nadme = mono_method_get_name(test_method);
-			//	if (flag == 134)
-			//	{
-			//		MonoClassField* field = nullptr;
-			//		MonoType* type = nullptr;
-			//		void* iter = nullptr;
-
-			//		int num_fields = 0;
-			//		num_fields = mono_class_num_fields(entity);
-			//		for (uint i = 0; i < num_fields; i++)
-			//		{
-			//			field = mono_class_get_fields(entity, &iter);
-			//			if (field != NULL)
-			//			{
-			//				type = mono_field_get_type(field);
-			//				std::string name = mono_type_get_name(type);
-			//				bool tes = mono_method_can_access_field(test_method, field);
-			//				if (tes)
-			//				{
-			//					int c = 0;
-			//				}
-			//			}
-			//		}
-			//	}
-
-			//	char* test_char = mono_method_full_name(test_method, true);
-			//	LOG("Method: %s, flags 0x%x, iflags 0x%x\n",
-			//		mono_method_get_name(test_method), flag, t);
-			//	int x = 0;
-			//}
+			MonoMethod* method = NULL;
+			while ((method = mono_class_get_methods(entity, &iter)))
+			{
+				uint t, flag;
+				flag = mono_method_get_flags(method, &t);
+				std::string name_method = mono_method_get_name(method);
+				std::string fullname_method = mono_method_full_name(method, true);
+				const char* pram = nullptr;
+				mono_method_get_param_names(method, &pram);
+				int idx = 0, ind = 0;
+				if (flag != 134)
+				{
+					continue;
+				}
+				if (pram != nullptr)
+				{
+					std::string type = fullname_method;
+					size_t EndName = type.find("(");
+					if (EndName != std::string::npos)
+					{
+						type = type.substr(EndName + 1);
+					}
+					EndName = type.find(")");
+					if (EndName != std::string::npos)
+					{
+						type = type.substr(0, EndName);
+					}
+					if (strcmp(type.c_str(), "int") == 0)
+					{
+						PublicMethod temp;
+						temp.name_method = name_method;
+						temp.name_param = pram;
+						temp.SetMonoMethod(method);
+						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.type = VarType::Var_INT;
+						csharp->methods.push_back(temp);
+					}
+					else if (strcmp(type.c_str(), "single") == 0)
+					{
+						PublicMethod temp;
+						temp.name_method = name_method;
+						temp.name_param = pram;
+						temp.SetMonoMethod(method);
+						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.type = VarType::Var_FLOAT;
+						csharp->methods.push_back(temp);
+					}
+					else if (strcmp(type.c_str(), "bool") == 0)
+					{
+						PublicMethod temp;
+						temp.name_method = name_method;
+						temp.name_param = pram;
+						temp.SetMonoMethod(method);
+						temp.type = VarType::Var_BOOL;
+						csharp->methods.push_back(temp);
+					}
+					else if (strcmp(type.c_str(), "string") == 0)
+					{
+						PublicMethod temp;
+						temp.name_method = name_method;
+						temp.name_param = pram;
+						temp.SetMonoMethod(method);
+						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.type = VarType::Var_STRING;
+						csharp->methods.push_back(temp);
+					}
+					else if (strcmp(type.c_str(), "CulverinEditor.GameObject") == 0)
+					{
+						PublicMethod temp;
+						temp.name_method = name_method;
+						temp.name_param = pram;
+						temp.SetMonoMethod(method);
+						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.type = VarType::Var_GAMEOBJECT;
+						csharp->methods.push_back(temp);
+					}
+				}
+				else
+				{
+					PublicMethod temp;
+					temp.name_method = name_method;
+					temp.SetMonoMethod(method);
+					temp.SetMonoObject(csharp->GetMonoObject());
+					temp.type = VarType::Var_NONE;
+					csharp->methods.push_back(temp);
+				}
+			}
 
 			return csharp;
 		}
@@ -901,7 +953,6 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::GetName",(const void*)GetName);
 	//mono_add_internal_call("CulverinEditor.GameObject::AddComponent",(const void*)AddComponent);
 	mono_add_internal_call("CulverinEditor.GameObject::GetComponent",(const void*)GetComponent);
-	
 
 	/* Object */
 	mono_add_internal_call("CulverinEditor.Object::Instantiate(string)", (const void*)Instantiate);
@@ -998,7 +1049,7 @@ void ImportScript::LinkFunctions()
 
 
 	//COMPONENT AUDIO FUNCTIONS -----------------
-	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const bool*)PlayAudioEvent);
+	mono_add_internal_call("CulverinEditor.CompAudio::PlayEvent", (const void*)PlayAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::SetAuxiliarySends", (const void*)SetAuxiliarySends);
 
@@ -1022,6 +1073,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompCollider::MoveKinematic", (const void*)MoveStaticColliderTo);
 	mono_add_internal_call("CulverinEditor.CompCollider::CallOnContact", (const void*)CallOnContact);
 	mono_add_internal_call("CulverinEditor.CompCollider::CallOnTriggerEnter", (const void*)CallOnTriggerEnter);
+
+	//MATERIAL FUNCTIONS
+	mono_add_internal_call("CulverinEditor.Material::SetBool", (const void*)SetBool);
+	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetMaterialByName", (const void*)GetMaterialByName);
 
 	//COMPONENT RIGID BODY FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompRigidBody::GetColliderPosition", (const void*)GetColliderPosition);
@@ -1071,10 +1126,6 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompLight::SetLinear", (const void*)SetLinear);
 	mono_add_internal_call("CulverinEditor.CompLight::GetQuadratic", (const void*)GetQuadratic);
 	mono_add_internal_call("CulverinEditor.CompLight::SetQuadratic", (const void*)SetQuadratic);
-
-	//MATERIAL FUNCTIONS
-	mono_add_internal_call("CulverinEditor.Material::SetBool", (const void*)SetBool);
-	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetMaterialByName", (const void*)GetMaterialByName);
 }
 
 //Log messages into Engine Console

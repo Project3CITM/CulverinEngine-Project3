@@ -184,3 +184,8 @@ void CompCheckBox::OnClick()
 	Tick->SetToRender(!Tick->GetToRender());
 }
 
+void CompCheckBox::ClearLinkedScripts()
+{
+	linked_scripts.clear();
+}
+

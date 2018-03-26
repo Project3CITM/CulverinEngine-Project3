@@ -238,10 +238,6 @@ CSharpScript::~CSharpScript()
 
 void CSharpScript::LoadScript()
 {
-	if (CSClass)
-	{
-		CSObject = mono_object_new(App->importer->iScript->GetDomain(), CSClass);
-	}
 	if (CSObject)
 	{
 		mono_runtime_object_init(CSObject);
@@ -383,6 +379,17 @@ void CSharpScript::DoFunction(MonoMethod* function, void ** parameter)
 	}
 }
 
+void CSharpScript::DoPublicMethod(PublicMethod* function, void** parameter)
+{
+	MonoObject* exception = nullptr;
+	// Do Main Function
+	mono_runtime_invoke(function->GetMethod(), function->GetScript(), parameter, &exception);
+	if (exception)
+	{
+		mono_print_unhandled_exception(exception);
+	}
+}
+
 bool CSharpScript::CheckMonoObject(MonoObject* object)
 {
 	if (object != nullptr)
@@ -421,6 +428,18 @@ void CSharpScript::SetAssembly(MonoAssembly* assembly)
 void CSharpScript::SetImage(MonoImage* image)
 {
 	CSimage = image;
+}
+
+void CSharpScript::CreateCSObject()
+{
+	if (CSClass)
+	{
+		CSObject = mono_object_new(App->importer->iScript->GetDomain(), CSClass);
+	}
+	else
+	{
+		LOG("[error] Cant create MonoObject!");
+	}
 }
 
 void CSharpScript::SetClass(MonoClass* klass)
@@ -1310,46 +1329,6 @@ MonoString* CSharpScript::GetMapString(MonoObject* object)
 	return mono_string_new(CSdomain, App->map->map_string.c_str());
 }
 
-void CSharpScript::SetBool(MonoObject * object, MonoString * name, bool value)
-{
-	Material * mat = App->importer->iScript->GetMaterialMono(object);
-
-	for (auto it = mat->bool_variables.begin(); it != mat->bool_variables.end(); it++) {
-		if (strcmp((*it).var_name.c_str(), mono_string_to_utf8(name)) == 0) {
-			(*it).value = value;
-			break;
-		}
-	}
-}
-
-MonoObject * CSharpScript::GetMaterialByName(MonoString * name)
-{
-		MonoClass* classT = nullptr;
-	
-		Material* comp = App->module_shaders->GetMaterialByName(mono_string_to_utf8(name));
-		if (comp != nullptr) // if has component
-		{
-			MonoObject* obj = App->importer->iScript->GetMonoObject(comp);
-			if (obj != nullptr)
-			{
-				return obj;
-			}
-			else
-			{
-				classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Material");
-				MonoObject* new_object = mono_object_new(CSdomain, classT);
-				if (new_object)
-				{
-					App->importer->iScript->UpdateMonoMaterial(comp, new_object);
-				
-					return new_object;
-				}
-			}
-		}
-	
-	return nullptr;
-}
-
 void CSharpScript::Save(JSON_Object* object, std::string name) const
 {
 	std::string vars = name;
@@ -1418,3 +1397,42 @@ GameObject * CSharpScript::GetGameObject() const
 	return own_game_object;
 }
 
+void CSharpScript::SetBool(MonoObject * object, MonoString * name, bool value)
+{
+	Material * mat = App->importer->iScript->GetMaterialMono(object);
+
+	for (auto it = mat->bool_variables.begin(); it != mat->bool_variables.end(); it++) {
+		if (strcmp((*it).var_name.c_str(), mono_string_to_utf8(name)) == 0) {
+			(*it).value = value;
+			break;
+		}
+	}
+}
+
+MonoObject * CSharpScript::GetMaterialByName(MonoString * name)
+{
+	MonoClass* classT = nullptr;
+
+	Material* comp = App->module_shaders->GetMaterialByName(mono_string_to_utf8(name));
+	if (comp != nullptr) // if has component
+	{
+		MonoObject* obj = App->importer->iScript->GetMonoObject(comp);
+		if (obj != nullptr)
+		{
+			return obj;
+		}
+		else
+		{
+			classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Material");
+			MonoObject* new_object = mono_object_new(CSdomain, classT);
+			if (new_object)
+			{
+				App->importer->iScript->UpdateMonoMaterial(comp, new_object);
+
+				return new_object;
+			}
+		}
+	}
+
+	return nullptr;
+}

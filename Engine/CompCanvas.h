@@ -34,6 +34,8 @@ public:
 	void DrawDebugRectTransform();
 	void DrawGraphic(bool debug = false);
 
+	void ClearGraphicVector();
+
 	void SetDefaultUIShader(ShaderProgram* shader);
 	void SetDefaultTexture(int texture);
 	int GetDefaultTexture()const;

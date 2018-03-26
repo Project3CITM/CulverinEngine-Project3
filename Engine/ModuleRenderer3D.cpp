@@ -30,7 +30,7 @@ ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled)
 	Start_enabled = true;
 	preUpdate_enabled = true;
 	postUpdate_enabled = true;
-	
+
 	have_config = true;
 
 	name = "Renderer";
@@ -53,20 +53,20 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 	LOG("Creating 3D Renderer context");
 	bool ret = true;
-	
+
 	//Create context
 	context = SDL_GL_CreateContext(App->window->window);
 
-	if(context == NULL)
+	if (context == NULL)
 	{
 		LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
-	if(ret == true)
+	if (ret == true)
 	{
 		//Use Vsync
-		if(App->GetVSYNC() && SDL_GL_SetSwapInterval(1) < 0)
+		if (App->GetVSYNC() && SDL_GL_SetSwapInterval(1) < 0)
 			LOG("[error]Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		//Initialize Projection Matrix
@@ -75,7 +75,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 		//Check for error
 		GLenum error = glGetError();
-		if(error != GL_NO_ERROR)
+		if (error != GL_NO_ERROR)
 		{
 			LOG("[error]Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
@@ -87,7 +87,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 		//Check for error
 		error = glGetError();
-		if(error != GL_NO_ERROR)
+		if (error != GL_NO_ERROR)
 		{
 			LOG("[error]Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
@@ -95,8 +95,8 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glClearDepth(1.0f);
 
-		
-		
+
+
 		//Initialize clear color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -110,21 +110,21 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 		//Check for error
 		error = glGetError();
-		if(error != GL_NO_ERROR)
+		if (error != GL_NO_ERROR)
 		{
 			LOG("[error]Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
-		
-		GLfloat LightModelAmbient[] = {0.0f, 0.0f, 0.0f, 1.0f};
+
+		GLfloat LightModelAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
-		
-	
-		
-		GLfloat MaterialAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
+
+
+
+		GLfloat MaterialAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
 
-		GLfloat MaterialDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse);
 
 		error = glewInit();
@@ -145,10 +145,10 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 		wireframe = json_object_get_boolean(node, "Wireframe");
 		normals = json_object_get_boolean(node, "Normals");
 		smooth = json_object_get_boolean(node, "Smooth");
-		
+
 		node = json_object_get_object(node, "Fog");
 		fog_active = json_object_get_boolean(node, "Active");
-		fog_density = json_object_get_number(node, "Density");	
+		fog_density = json_object_get_number(node, "Density");
 	}
 
 	for (int i = 0; i < 64; i++) {
@@ -170,7 +170,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	
+
 	Texture default_text;
 	default_text.name = "default_texture";
 	default_text.id = id_checkImage;
@@ -191,7 +191,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	non_glow_material->name = "Non Glow Material";
 	non_glow_material->material_shader = non_glow_shader;
 	non_glow_material->GetProgramVariables();
-	
+
 
 	final_tex_material = new Material();
 	final_tex_material->name = "Final Tex Material";
@@ -202,7 +202,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	default_material = new Material();
 	default_material->name = "Default Material";
 	default_material->material_shader = default_shader;
-	default_material->GetProgramVariables();	
+	default_material->GetProgramVariables();
 
 	if (default_material->textures.size()>0)
 		default_material->textures[0].value = default_texture;
@@ -231,20 +231,20 @@ bool ModuleRenderer3D::Start()
 	uint cube_elements[] = {
 		// front
 		0, 1, 2, 3
-	
+
 	};
 
-	static const GLfloat g_UV_buffer_data[] = {	
+	static const GLfloat g_UV_buffer_data[] = {
 		0.0f, 0.0f,
 		1.0f,  0.0f,
-		1.0f,  1.0f,		
+		1.0f,  1.0f,
 		0.0f, 1.0f,
 	};
-		
-		
+
+
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER,12 *  sizeof(float), cube_vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), cube_vertices, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &UVbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
@@ -276,7 +276,7 @@ bool ModuleRenderer3D::Start()
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
 	perf_timer.Start();
-	
+
 	App->scene->scene_buff->Init("Scene");
 	App->scene->final_buff->Init("Scene");
 	App->scene->glow_buff->Init("Scene");
@@ -306,7 +306,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	RenderSceneWiewport();
 	App->scene->vertical_blur_buff->UnBind("Scene");
 
-	if(!App->mode_game)
+	if (!App->mode_game)
 		App->scene->final_buff->Bind("Scene");
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	GlowShaderVars();
@@ -326,11 +326,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 
 
-	
+
 	ImGui::Render();
 
 
-	
+
 	SDL_GL_SwapWindow(App->window->window);
 
 	postUpdate_t = perf_timer.ReadMs();
@@ -471,7 +471,7 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	
+
 	//glLoadMatrixf(active_camera->GetProjectionMatrix());
 
 	glMatrixMode(GL_MODELVIEW);
@@ -548,61 +548,61 @@ bool ModuleRenderer3D::loadTextureFromPixels32(GLuint * id_pixels, GLuint width_
 
 void ModuleRenderer3D::RenderSceneWiewport()
 {
-	
-		glDisable(GL_LIGHTING);
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_TEXTURE_2D);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		//DRAW QUAD
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(
-			0,
-			3,
-			GL_FLOAT,
-			GL_FALSE,
-			0,
-			(void*)0
-		);
-		glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(
-			1,
-			2,
-			GL_FLOAT,
-			GL_FALSE,
-			0,
-			(void*)0
-		);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
-		glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, NULL);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	//DRAW QUAD
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(
+		0,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		(void*)0
+	);
+	glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		(void*)0
+	);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
+	glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, NULL);
 
 
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_LIGHTING);
-		glDisable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glUseProgram(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glUseProgram(0);
 }
 
 void ModuleRenderer3D::BlurShaderVars(int i)
 {
 	blur_shader_tex->Bind();
-		
+
 	glActiveTexture(GL_TEXTURE0);
 	GLint texLoc = glGetUniformLocation(blur_shader_tex->programID, "albedo");
 
-	if(i ==0)
+	if (i == 0)
 		glBindTexture(GL_TEXTURE_2D, App->scene->glow_buff->GetTexture());
 	else
 		glBindTexture(GL_TEXTURE_2D, App->scene->horizontal_blur_buff->GetTexture());
@@ -640,5 +640,3 @@ void ModuleRenderer3D::GlowShaderVars()
 
 
 }
-
-
