@@ -47,22 +47,11 @@ public class Enemy_BT : BT
         //Update attack cooldown
         attack_timer += Time.deltaTime;
 
-        /*if (Input.GetKeyDown(KeyCode.I))
-        {
-            ApplyDamage(50);
-        }*/
-
-        if (Input.GetKeyDown(KeyCode.P))
-            PushEnemy(new Vector3(0, 0, -1));
-
         base.Update();
     }
 
     public override void MakeDecision()
     {
-        //Debug.Log("Make Decision");
-        //Debug.Log("Next Action:" + next_action.action_type);
-
         if (next_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
         {
             Debug.Log("[error]"+ next_action.action_type);

@@ -15,7 +15,7 @@ public class Movement_Action : Action
     Arrive_Steering arrive;
     Seek_Steering seek;
 
-    enum Direction
+    public enum Direction
     {
         DIR_NO_DIR,
         DIR_NORTH,
@@ -531,7 +531,7 @@ public class Movement_Action : Action
         }
     }
 
-    public void SetDirection()
+    public Direction SetDirection()
     {
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
         float delta = Mathf.Atan2(forward.x, forward.y);
@@ -549,6 +549,8 @@ public class Movement_Action : Action
             dir = Direction.DIR_NORTH;
         else if (delta <= -(Mathf.PI / 4) && delta >= -(3 * (Mathf.PI / 4)))
             dir = Direction.DIR_WEST;
+
+        return dir;
     }
 
     public bool FinishedRotation()
