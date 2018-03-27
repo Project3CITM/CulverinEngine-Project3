@@ -603,11 +603,15 @@ void ClickAction::SyncClickAction()
 
 	for (int i = 0; i < actions.size(); i++)
 	{
-		if (actions[i].UID_attacked == -1)
-		actions[i].attacked=App->scene->GetGameObjectbyuid(actions[i].UID_attacked);
-		if (actions[i].current_script == "No Script")
-		actions[i].script=(CompScript*)actions[i].attacked->GetComponentByName(actions[i].current_script.c_str());
-		if (actions[i].current_function == "No Function")
+		if (actions[i].UID_attacked != -1)
+		{
+			actions[i].attacked = App->scene->GetGameObjectbyuid(actions[i].UID_attacked);
+		}
+		if (actions[i].current_script != "No Script")
+		{
+			actions[i].script = (CompScript*)actions[i].attacked->GetComponentByName(actions[i].current_script.c_str());
+		}
+		if (actions[i].current_function != "No Function")
 		{
 
 			for (int j = 0; j < actions[i].script->csharp->methods.size(); j++)
