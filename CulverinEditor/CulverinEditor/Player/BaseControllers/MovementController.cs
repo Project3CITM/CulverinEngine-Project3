@@ -907,4 +907,9 @@ public class MovementController : CulverinBehaviour
         return forward_dir;
     }
 
+    public Direction GetPlayerDirection()
+    {
+        return curr_dir;
+    }
+
 }

@@ -3,11 +3,14 @@ using CulverinEditor.Debug;
 
 public class EnemyShield_BT : Enemy_BT
 {
-    public float shield_block_cooldown = 2.5f;
+    public float shield_block_cd = 4.0f;
+    public float shield_block_cd_damaged = 2.5f;
     float shield_block_timer = 0.0f;
+    GameObject player = null;
 
     public override void Start()
     {
+        player = GetLinkedObject("player_obj");
         GameObject Temp_go = GetLinkedObject("enemies_manager");
 
         if (Temp_go == null) Debug.Log("[error]Gameobject enemies_manager not found (EnemyShield_BT)");
@@ -105,15 +108,55 @@ public class EnemyShield_BT : Enemy_BT
 
     public override void ApplyDamage(float damage)
     {
-        base.ApplyDamage(damage);
-
-        if (life_state == ENEMY_STATE.ENEMY_DAMAGED)
+        switch (life_state)
         {
-            //enemy3_Specular_Hit
-            GetComponent<CompMaterial>().SetAlbedo("enemy3_Color_Hit.png");
-            GetComponent<CompMaterial>().SetNormals("enemy3_Normal_Hit.png");
-            GetComponent<CompMaterial>().SetAmbientOcclusion("enemy3_AO_Hit.png");
-        }
+            case ENEMY_STATE.ENEMY_ALIVE:
+                if (shield_block_timer >= shield_block_cd)
+                {
+                    MovementController.Direction player_dir = player.GetComponent<MovementController>().GetPlayerDirection();
+                    Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
+                    Debug.Log("[error] Player direction" + player_dir);
+                    Debug.Log("[error] Enemy direction" + enemy_dir);
+                    if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
+                        player_dir == MovementController.Direction.SOUTH && enemy_dir == Movement_Action.Direction.DIR_NORTH ||
+                        player_dir == MovementController.Direction.EAST && enemy_dir == Movement_Action.Direction.DIR_WEST ||
+                        player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
+                    {
+                        shield_block_timer = 0.0f;
+                        Debug.Log("Attack blocked");
+                    }
+                }
+                else
+                    base.ApplyDamage(damage);
+
+                break;
+
+            case ENEMY_STATE.ENEMY_DAMAGED:
+                if (shield_block_timer >= shield_block_cd_damaged)
+                {
+                    MovementController.Direction player_dir = player.GetComponent<MovementController>().GetPlayerDirection();
+                    Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
+                    if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
+                        player_dir == MovementController.Direction.SOUTH && enemy_dir == Movement_Action.Direction.DIR_NORTH ||
+                        player_dir == MovementController.Direction.EAST && enemy_dir == Movement_Action.Direction.DIR_WEST ||
+                        player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
+                    { shield_block_timer = 0.0f;
+                        Debug.Log("Attack blocked");
+                    }
+                }
+                else
+                    base.ApplyDamage(damage);
+
+                break;
+
+            case ENEMY_STATE.ENEMY_STUNNED:
+                base.ApplyDamage(damage);
+                break;
+
+            case ENEMY_STATE.ENEMY_DEAD:
+            default:
+                break;
+        }       
     }
 }
 
