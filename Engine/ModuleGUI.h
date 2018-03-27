@@ -80,12 +80,12 @@ public:
 	bool shader_obj_creation = false;
 	bool shader_program_creation= false;
 	bool shader_program_creation_UI = false;
-	bool camera_shaders_modify = false;
 	bool shader_obj_creation_begin = false;
 	bool material_creation = false;
 	char str_shad_temp[64] = "";
 	char str_shad_prg_temp[64] = "";
 	char str_mat_temp[64] = "";
+
 	std::vector<Shader*> vec_temp_shader;
 	int combo_shaders_obj = -1;
 	int combo_shaders_obj2 = -1;

@@ -16,6 +16,7 @@
 #include"Devil\include\ilut.h"
 #include "DefaultShaders.h"
 #include "Materials.h"
+#include "ModuleTextures.h"
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
@@ -199,6 +200,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	final_tex_material->GetProgramVariables();
 	App->module_shaders->materials.push_back(final_tex_material);
 	final_tex_material->active_num = 1;
+	dmg_texture_id = App->textures->LoadTexture("Assets/Damage2.png");
 
 	default_material = new Material();
 	default_material->name = "Default Material";
