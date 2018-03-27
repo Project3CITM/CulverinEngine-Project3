@@ -1076,6 +1076,7 @@ void ImportScript::LinkFunctions()
 
 	//MATERIAL FUNCTIONS
 	mono_add_internal_call("CulverinEditor.Material::SetBool", (const void*)SetBool);
+	mono_add_internal_call("CulverinEditor.Material::SetFloat", (const void*)SetFloat);
 	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetMaterialByName", (const void*)GetMaterialByName);
 
 	//COMPONENT RIGID BODY FUNCTIONS -----------------------
@@ -1938,6 +1939,12 @@ void ImportScript::SetBool(MonoObject * object, MonoString * name, bool value)
 {
 	current->SetBool(object, name, value);
 }
+
+void ImportScript::SetFloat(MonoObject * object, MonoString * name, float value)
+{
+	current->SetFloat(object, name, value);
+}
+
 
 MonoObject* ImportScript::GetMaterialByName(MonoObject * object, MonoString * name)
 {

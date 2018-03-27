@@ -98,6 +98,7 @@ public:
 	GLuint UVbuffer;
 	GLuint VertexArrayID;
 	GLuint ibo_cube_elements;
+	GLuint dmg_texture_id = 0;
 
 
 	//TEMP

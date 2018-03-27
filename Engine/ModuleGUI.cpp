@@ -27,6 +27,11 @@
 #include "Algorithm/Random/LCG.h"
 #include "SDL/include/SDL.h"
 #include "ModuleShaders.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleImporter.h"
+#include "ImportMaterial.h"
+
+
 
 ModuleGUI::ModuleGUI(bool start_enabled): Module(start_enabled)
 {
@@ -251,6 +256,11 @@ update_status ModuleGUI::Update(float dt)
 				{
 					shader_program_creation_UI = true;
 					shader_program_creation = true;
+				}
+
+				if (ImGui::MenuItem("Camera Shaders"))
+				{
+					camera_shaders_modify = true;
 				}
 				ImGui::EndMenu();
 			}
@@ -557,6 +567,45 @@ update_status ModuleGUI::Update(float dt)
 		}
 
 		ImGui::End();
+	}
+
+	if (camera_shaders_modify) {
+		static bool selected = false;
+		if (ImGui::Begin("Shader Program Definition", &camera_shaders_modify)) {
+			if (App->renderer3D->dmg_texture_id != 0)
+			{
+				/* Image of the texture */
+				if (ImGui::ImageButton((ImTextureID*)App->renderer3D->dmg_texture_id, ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0))) {
+					selected = true;
+
+				}
+			}
+
+			else {
+
+				if (ImGui::Button("Select Material..."))
+				{
+					selected = true;
+				}
+			}
+			if (selected)
+			{
+				ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(selected, Resource::Type::MATERIAL);
+				if (temp != nullptr)
+				{
+					
+					
+					temp->num_game_objects_use_me++;
+					if (temp->IsLoadedToMemory() == Resource::State::UNLOADED)
+					{
+						App->importer->iMaterial->LoadResource(std::to_string(temp->GetUUID()).c_str(), temp);
+					}
+					App->renderer3D->dmg_texture_id = temp->GetTextureID();
+				
+				}
+			}
+			ImGui::End();
+		}
 	}
 	
 	if (material_creation) {

@@ -1409,6 +1409,18 @@ void CSharpScript::SetBool(MonoObject * object, MonoString * name, bool value)
 	}
 }
 
+void CSharpScript::SetFloat(MonoObject * object, MonoString * name, float value)
+{
+	Material * mat = App->importer->iScript->GetMaterialMono(object);
+
+	for (auto it = mat->float_variables.begin(); it != mat->float_variables.end(); it++) {
+		if (strcmp((*it).var_name.c_str(), mono_string_to_utf8(name)) == 0) {
+			(*it).value = value;
+			break;
+		}
+	}
+}
+
 MonoObject * CSharpScript::GetMaterialByName(MonoString * name)
 {
 	MonoClass* classT = nullptr;

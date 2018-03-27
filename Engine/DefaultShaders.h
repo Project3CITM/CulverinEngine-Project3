@@ -287,14 +287,18 @@ static const GLchar* FinalFrag[] =
 	"out vec4 color;\n"
 	"uniform sampler2D _albedo;\n"
 	"uniform sampler2D _glow_tex;\n"
+	"uniform sampler2D _dmg_tex;\n"
 	"uniform vec4 _my_color;\n"
-	"uniform bool test;\n"
-
+	"uniform bool damage;\n"
+	"uniform float alpha; \n"
 	"void main()\n"
 	"{\n"
 	"vec4 dst = texture2D(_albedo, TexCoord);\n" // rendered scene
 	"vec4 src = texture2D(_glow_tex, TexCoord); \n" // glowmap
-													//Z-Buffer Line Shader
+	"vec4 dmg = texture(_dmg_tex,TexCoord);\n"
+	"if(damage)\n"
+	"color = mix(min(src + dst, 1.0) , dmg, dmg.a * alpha );\n"
+	"else\n"
 	"color= min(src + dst, 1.0);\n"
 
 	"}\n"

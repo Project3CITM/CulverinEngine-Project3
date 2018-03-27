@@ -326,6 +326,7 @@ public:
 
 	/*Material*/
 	void		SetBool(MonoObject* object, MonoString* name, bool value);
+	void		SetFloat(MonoObject* object, MonoString* name, float value);
 	MonoObject*	GetMaterialByName(MonoString* name);
 
 	// LOAD - SAVE METHODS ------------------

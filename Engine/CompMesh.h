@@ -87,7 +87,7 @@ public:
 	void LinkSkeleton();
 	// -------------------------------------
 
-	void SetUniformVariables(Material* shader);
+
 
 	bool HasSkeleton() const;
 	void SetSkeleton(bool has_skeleton);
