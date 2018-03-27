@@ -92,23 +92,6 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 				}
 			}
 			item = DrawV.erase(item);
-			/*
-			//Here we can execute the event, any delay is left and this is a valid event
-			//If EListener iterator is different from the actual analysed event, find the new iterator
-			EventType type = item._Ptr->_Myval.second.Get_event_data_type();
-			if (type != EListener._Ptr->_Myval.first)
-				EListener = MEventListeners.find(type);
-			//if != end, we found it, iterate listeners and call OnEvent, if we didn't found it, erase and jump to next iteration
-			if (EListener != MEventListeners.end())
-				for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-					//TODO: Call Draw function
-					int variableToAvoidFor_todelete = 0;
-			else
-			{
-				item = DrawV.erase(item);
-				continue;
-			}
-			*/
 			break;
 		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
 		case EventValidation::EVENT_VALIDATION_ADD_CONTINUE:

@@ -6,11 +6,50 @@
 #include "Module.h"
 #include "EventDefV2.h"
 
+/*-----------------------------------------------------------------------------------------------------------*/
+/*---Event System v2.0---------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------*/
+/*---How to create new events:-------------------------------------------------------------------------------*/
+/*-->If you want a new event type, go to the "EventDefV2.h" file and follow the instructions-----------------*/
+/*-->If you want to use a normal event keep reading this file------------------------------------------------*/
+/*-->First you must include this file and create a Event union instance like this (DeleteGo event example):--*/
+/*------Event new_event;-------------------------------------------------------------------------------------*/
+/*------new_event.Set_event_data(EventType::EVENT_DELETE_GO, 0, 0);------------------------------------------*/
+/*------new_event.delete_go.Todelte = this;------------------------------------------------------------------*/
+/*------PushEvent(new_event);--------------------------------------------------------------------------------*/
+/*---Example explanation:------------------------------------------------------------------------------------*/
+/*------Event declaration------------------------------------------------------------------------------------*/
+/*------Initialize the new event with type, frame delay and time delay---------------------------------------*/
+/*------This event type only need a pointer to GameObject, so we assign it to the event type instance--------*/
+/*------inside the Event union-------------------------------------------------------------------------------*/
+/*------Now we have the event created, initialized and filled, we can push it to the system------------------*/
+/*-->All events can have a type, used in a switch to know with specific event struct inside Event union we---*/
+/*---should read. Events also have a frame delay, that means that the event will be executed X frames from---*/
+/*---the moment we push it to the system. And events also can have a time delay, so the event will be--------*/
+/*---executed in X milisedons/seconds from the moment we push it to the system. If you put both delays, the--*/
+/*---event first will wait the frame delay and then the time delay.------------------------------------------*/
+/*-->To send created events to the system, you should use one of this:---------------------------------------*/
+/*------void PushEvent(Event& event);------------------------------------------------------------------------*/
+/*---------The event will be evaluated/executed at Event System postUpdate, right bedore Render postUpdate---*/
+/*------void PushImmediateEvent(Event& event);---------------------------------------------------------------*/
+/*---------The event will be evaluated/executed immediately, careful because this may crash with some event--*/
+/*---------type----------------------------------------------------------------------------------------------*/
+/*-->To receive any event, you must register your module to the system using:--------------------------------*/
+/*------void AddListener(EventType type, Module* listener);--------------------------------------------------*/
+/*---You must call this function inside "bool SetEventListeners()" Module method-----------------------------*/
+/*---With that when an event of the registered type is executed, you will receive it in the------------------*/
+/*---"void OnEvent(Event& event)" Module method, inside that method you should use a-------------------------*/
+/*---switch(event.Get_event_data_type()) and case EventType::EVENT_TIME_MANAGER:, for example----------------*/
+/*-----------------------------------------------------------------------------------------------------------*/
+
 enum EventValidation;
 
 void PushEvent(Event& event);
 void PushImmediateEvent(Event& event);
 void AddListener(EventType type, Module* listener);
+//TODO add clear functions
+//void ClearEvents(EventType type);
+//void ClearEvents(EventType type, Component* component);
 
 class ModuleEventSystemV2 : public Module
 {

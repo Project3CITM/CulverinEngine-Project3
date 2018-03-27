@@ -6,7 +6,25 @@
 
 /*-----------------------------------------------------------------------------------------------------------*/
 /*---Event System v2.0---------------------------------------------------------------------------------------*/
-/*---TODO: EventDefV2.h Guide--------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------*/
+/*---Try to add as least as possible includes----------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------*/
+/*---How to create new event:--------------------------------------------------------------------------------*/
+/*-->Add forward declarations for your use in "Forwad Declarations" area-------------------------------------*/
+/*-->Add new event enum type with a descriptive name, in the correct system area and carefull because--------*/
+/*---events are called by order, so lower enum value types are called before higher enum value types---------*/
+/*-->With the same order of the enum, add a struct for your event, with a name starting by E + Event type----*/
+/*-->All struct MUST have as FIRST element -> "uint64_t event_data = 0;"-------------------------------------*/
+/*-->Now the final step is to add an instance of your struct in the Event union, with the same order---------*/ 
+/*---followed in the enum and struct position----------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------*/
+/*---Usage:--------------------------------------------------------------------------------------------------*/
+/*-->Inside the structs you can add almost every variable type, but because Event is a Union, you might------*/
+/*---find some problems, be careful--------------------------------------------------------------------------*/
+/*-->The events store, type, time delay, frame delay and one bool inside the "uint64_t event_data" variable,-*/
+/*---this is stored and read with bitwise operators, use the Event union methods to store and read the-------*/
+/*---variables. With events first use, initialize using "Set_event_data" or "Set_event_data_f" for saffer----*/
+/*---memory management---------------------------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------*/
@@ -63,26 +81,6 @@ enum EventType
 	EVENT_DELETE_GO,				//Keep this event last
 	MAXEVENTS						//Keep this at the bottom, needed to know how many events se have
 };
-
-/*--------------------------------------------------*/
-/*----------------Events Data struct----------------*/
-/*--------------------------------------------------*/
-/*
-struct EventData
-{
-	EventType type = EventType::EVENT_UNKNOWN;
-	unsigned int FrameDelay = 0;
-	float TimeDelay = 0.0f;
-	enum Consumability
-	{
-		CONSUMABILITY_CONSUMABLE,
-		CONSUMABILITY_UNCONSUMABLE,
-		CONSUMABILITY_CONSUMED
-	};
-	Consumability button = Consumability::CONSUMABILITY_UNCONSUMABLE;
-	bool PushedWhileIteriting = false;
-};
-*/
 
 /*--------------------------------------------------*/
 /*-------------------Audio Engine-------------------*/
@@ -453,4 +451,3 @@ inline bool Event::Get_event_data_PushedWhileIteriting()
 }
 
 #endif //EVENTDEF_V2
-/**/
