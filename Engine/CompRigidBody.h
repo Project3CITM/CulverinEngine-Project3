@@ -7,6 +7,7 @@ class jpPhysicsRigidBody;
 class CompCollider;
 class CompJoint;
 class CompTransform;
+struct CollisionData;
 
 class CompRigidBody : public Component
 {
@@ -40,7 +41,7 @@ public:
 
 	//Getters ----------------------
 	jpPhysicsRigidBody* GetPhysicsBody() const;
-	
+
 	//Parent Methods ---------------
 	void UpdateParentPosition();
 
@@ -49,10 +50,10 @@ public:
 	void RemoveJoint();
 
 	// Collision Events ------------
-	void OnTriggerEnter(Component* trigger);
-	void OnTriggerLost(Component* trigger);
+	void OnTriggerEnter(Component* actor1);
+	void OnTriggerLost(Component* actor1);
 
-	void OnContact(Component* actor);
+	void OnContact(CollisionData new_data);
 
 	//PhysX Methods
 	// Dynamic and kinematic -------
@@ -71,7 +72,7 @@ public:
 
 private:
 
-	jpPhysicsRigidBody*		body = nullptr;
+	jpPhysicsRigidBody * body = nullptr;
 	CompCollider*			collider_comp = nullptr;
 	CompTransform*			transform = nullptr;
 	CompJoint*				joint = nullptr;

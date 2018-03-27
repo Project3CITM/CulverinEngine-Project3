@@ -94,7 +94,7 @@ void CompCollider::Update(float dt)
 {
 	if (transform->GetUpdated() && rigid_body_comp == nullptr)
 	{
-		if(trigger && !on_move)
+		if (trigger && !on_move)
 		{
 			body->SetAsTrigger(false);
 			on_move = true;
@@ -129,9 +129,7 @@ void CompCollider::ClearCompCollider()
 	listener = nullptr;
 	script_name.clear();
 	uid_script_asigned = 0;
-	collided_object = nullptr;
 }
-
 // -----------------------------------------------------------------
 void CompCollider::ShowOptions()
 {
@@ -205,16 +203,16 @@ void CompCollider::ShowInspectorInfo()
 			listener = nullptr;
 		}
 	}
-	
+
 	// Listener selection
-	
+
 	CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT, script_name);
 	if (sc != nullptr)
 	{
 		listener = sc;
 		uid_script_asigned = listener->GetUUID();
 	}
-	
+
 	if (ImGui::Button("Collision Filter"))
 	{
 		select_flags = true;
@@ -227,19 +225,19 @@ void CompCollider::ShowInspectorInfo()
 	}
 
 	// Collider type
-	if (ImGui::Combo("Collider", (int*)&collider_type, "Sphere\0Plane\0Capsule\0Box\0", 4) && curr_type != collider_type) 
+	if (ImGui::Combo("Collider", (int*)&collider_type, "Sphere\0Plane\0Capsule\0Box\0", 4) && curr_type != collider_type)
 	{
 		curr_type = collider_type;
 		ChangeCollider();
 	}
 	// Collider Position
-	if (ImGui::InputFloat3("Position", &position.x, 2, ImGuiInputTextFlags_EnterReturnsTrue) && body) 
+	if (ImGui::InputFloat3("Position", &position.x, 2, ImGuiInputTextFlags_EnterReturnsTrue) && body)
 	{
 		SetColliderPosition();
 	}
 
 	// Collider Angle
-	if (ImGui::InputFloat3("Angle", &angle.x, 2, ImGuiInputTextFlags_EnterReturnsTrue) && body) 
+	if (ImGui::InputFloat3("Angle", &angle.x, 2, ImGuiInputTextFlags_EnterReturnsTrue) && body)
 	{
 		// Set Good Rotation
 		local_quat = Quat::FromEulerXYZ(angle.x*DEGTORAD, angle.y*DEGTORAD, angle.z*DEGTORAD);
@@ -270,19 +268,19 @@ void CompCollider::ShowInspectorInfo()
 		break;
 	}
 
-	if (ImGui::Button("Size From AABB", ImVec2(100, 20))) 
+	if (ImGui::Button("Size From AABB", ImVec2(100, 20)))
 	{
 		SetSizeFromBoundingBox();
 	}
 
 	// Material
 	ImGui::Text("Friction: Static/Dynamic");
-	if (ImGui::InputFloat2("", &material.x, 2, ImGuiInputTextFlags_EnterReturnsTrue) && body) 
+	if (ImGui::InputFloat2("", &material.x, 2, ImGuiInputTextFlags_EnterReturnsTrue) && body)
 	{
 		body->SetMaterial(material.x, material.y, material.z);
 	}
 	ImGui::Text("Restitution");
-	if (ImGui::InputFloat("[0,1]", &material.z, 0.1f, 1.f, 3, ImGuiInputTextFlags_EnterReturnsTrue) && body) 
+	if (ImGui::InputFloat("[0,1]", &material.z, 0.1f, 1.f, 3, ImGuiInputTextFlags_EnterReturnsTrue) && body)
 	{
 		body->SetMaterial(material.x, material.y, material.z);
 	}
@@ -420,45 +418,33 @@ void CompCollider::SyncComponent(GameObject* sync_parent)
 }
 
 // -----------------------------------------------------------------
-void CompCollider::OnTriggerEnter(Component * actor)
+void CompCollider::OnTriggerEnter(Component* actor1)
 {
 	if (listener != nullptr)
 	{
-		if (actor != nullptr)
-		{
-			collided_object = actor->GetParent();
-		}
-		else  collided_object = nullptr;
+		collision_data.actor1 = actor1;
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
-		collided_object = nullptr;
+		collision_data.ResetData();
 	}
 }
 
-void CompCollider::OnTriggerLost(Component * actor)
+void CompCollider::OnTriggerLost(Component* actor1)
 {
 	if (listener != nullptr)
 	{
-		if (actor != nullptr)
-		{
-			collided_object = actor->GetParent();
-		}
-		else  collided_object = nullptr;
+		collision_data.actor1 = actor1;
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
-		collided_object = nullptr;
+		collision_data.ResetData();
 	}
 }
 
-void CompCollider::OnContact(Component * actor)
+void CompCollider::OnContact(CollisionData new_data)
 {
 	if (listener != nullptr)
 	{
-		if (actor != nullptr)
-		{
-			collided_object = actor->GetParent();
-		}
-		else  collided_object = nullptr;
+		collision_data = new_data;
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnContact);
-		collided_object = nullptr;
+		collision_data.ResetData();
 	}
 }
 
@@ -512,7 +498,7 @@ void CompCollider::SetSizeFromBoundingBox()
 		size = float3(box.MaxX() - box.MinX(), box.MaxY() - box.MinY(), box.MaxZ() - box.MinZ());
 		rad = size.x*0.5f;
 	}
-	else 
+	else
 	{
 		size = float3(1.f, 1.f, 1.f);
 		rad = 0.5;
@@ -534,11 +520,6 @@ void CompCollider::SetFilterFlags()
 void CompCollider::SetRigidBodyComp(CompRigidBody * new_comp)
 {
 	rigid_body_comp = new_comp;
-}
-
-void CompCollider::SetCollidedObject(GameObject * trigger_object)
-{
-	collided_object = trigger_object;
 }
 
 float3 CompCollider::GetPosition() const
@@ -569,7 +550,25 @@ Quat CompCollider::GetGlobalQuat() const
 
 GameObject * CompCollider::GetCollidedObject() const
 {
-	return collided_object;
+	return collision_data.GetCollidedParent();
+}
+
+float3 CompCollider::GetContactPoint() const
+{
+	if (collision_data.is_contact)
+	{
+		return collision_data.impact_point;
+	}
+	else return transform->GetPosGlobal();
+}
+
+float3 CompCollider::GetContactImpulse() const
+{
+	if (collision_data.is_contact)
+	{
+		return collision_data.impact_normal;
+	}
+	else return float3::zero;
 }
 
 void CompCollider::MoveStaticTo(float3 fpos)
@@ -605,3 +604,24 @@ jpPhysicsRigidBody* CompCollider::GivePhysicsBody(CompRigidBody* new_rigid_body)
 	}
 }
 
+void CollisionData::ResetData()
+{
+	actor1 = nullptr;
+
+	is_contact = false;
+
+	impact_point = float3::zero;
+	impact_normal = float3::zero;
+}
+
+GameObject * CollisionData::GetCollidedParent() const
+{
+	if (actor1 != nullptr)
+	{
+		return actor1->GetParent();
+	}
+	else
+	{
+		return nullptr;
+	}
+}

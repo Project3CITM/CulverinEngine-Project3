@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include "Math\float2.h"
+#include "Math\float3.h"
 /*-----------------------------------------------------------------------------------------------------------*/
 /*---Add new events:-----------------------------------------------------------------------------------------*/
 /*---Add type in EventType enum (in the proper place and alphabetical order (easier to search))--------------*/
@@ -26,8 +27,9 @@ enum ShaderType;
 class Shader;
 union Event;
 class CompLight;
-enum JP_COLLISION_TYPE;
 class Particle;
+enum JP_COLLISION_TYPE;
+
 /*--------------------------------------------------*/
 /*--------------------Events enum-------------------*/
 /*--------------------------------------------------*/
@@ -172,9 +174,14 @@ struct EScriptDisabled
 struct ETrigger
 {
 	EventType type;
-	JP_COLLISION_TYPE collision_type;
-	Component* trigger;
-	Component* actor;
+
+	JP_COLLISION_TYPE coll_type = (JP_COLLISION_TYPE)0;
+
+	Component* actor0 = nullptr;
+	Component* actor1 = nullptr;
+
+	float3 impact_point = float3::zero;
+	float3 impact_normal = float3::zero;
 };
 
 
@@ -313,7 +320,7 @@ union Event
 	/*------------------Particle System-----------------*/
 	EParticleDraw particle;
 	/*----------------------Physics---------------------*/
-	ETrigger physics_collision;
+	ETrigger collision;
 	/*------------------Shader Pipeline-----------------*/
 	ECreateShaderProgram shader_program;
 	ESendAllShaderObject send_shader_object;

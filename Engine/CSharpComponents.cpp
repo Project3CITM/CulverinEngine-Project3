@@ -295,7 +295,8 @@ void CSharpScript::CallOnContact(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
-		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnContact(nullptr);
+		CollisionData data;
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnContact(data);
 	}
 }
 
