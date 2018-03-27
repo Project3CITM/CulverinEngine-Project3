@@ -95,6 +95,7 @@ public:
 	void SetHighlightedSprite(ResourceMaterial* set_sprite);
 	void SetPressedSprite(ResourceMaterial* set_sprite);
 	void SetDisabledSprite(ResourceMaterial* set_sprite);
+	void SetSelective(bool selective);
 	//Getters Color tint parameters
 	float4 GetNormalColor()const;
 	float4 GetHighlightedColor()const;

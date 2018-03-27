@@ -13,12 +13,14 @@
 #include <vector>
 #include "CompSlider.h"
 #include "ModuleInput.h"
+#include "CompButton.h"
 
 CompSlider::CompSlider(Comp_Type t, GameObject * parent) : CompInteractive (t, parent)
 {
 	uid = App->random->Int();
 	name_component = "CompSlider";
 	selective = true;
+	slide_bar = (CompImage*)parent;
 }
 
 CompSlider::CompSlider(const CompImage & copy, GameObject * parent) : CompInteractive(Comp_Type::C_SLIDER, parent)
@@ -79,13 +81,6 @@ void CompSlider::ShowOptions()
 	}
 }
 
-void CompSlider::LinkPointers()
-{
-	std::vector<GameObject*> childs = parent->GetChildsVec();  //Temporal guarrada
-	slide_bar = (CompImage*)childs[0];
-	slider = (CompButton*)childs[1];
-}
-
 void CompSlider::ShowInspectorInfo()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 0));
@@ -95,17 +90,8 @@ void CompSlider::ShowInspectorInfo()
 		ImGui::OpenPopup("Options Slider");
 	}
 	ImGui::PopStyleVar();
-	if (ImGui::Button("Link pointers", ImVec2(120, 0)))
-	{
-		LinkPointers();
-	}
 	if (ImGui::Button("Sync Min/Max", ImVec2(120, 0)))
 	{
-		//if (slide_bar == NULL)
-		//{
-		//	ImGui::Text("SLIDE BAR NOT FOUND!!!");
-		//	return;
-		//}
 		min_pos = -slide_bar->GetRectTrasnform()->GetWidth()/2;
 		max_pos = slide_bar->GetRectTrasnform()->GetWidth()/2;
 		slide_bar->SetToFilled(true);
@@ -174,13 +160,19 @@ void CompSlider::Load(const JSON_Object * object, std::string name)
 	Enable();
 }
 
+//void CompSlider::OnClick()
+//{
+//	OnDrag
+//}
+
 void CompSlider::OnDrag(Event event_input)
 {
+	//entra en el hover (ha d entrar en el onclick!!!)
 	float2 mous_pos = event_input.pointer.position;
 	int new_x = 0;
 	if (mous_pos.x > min_pos && mous_pos.x < max_pos)
 	{
-		image->GetRectTrasnform()->SetPos(float3(mous_pos, 0));
+		GetParent()->GetComponentRectTransform()->SetPos(float3(mous_pos, 0));
 	}
 	else
 	{
@@ -192,6 +184,7 @@ void CompSlider::OnDrag(Event event_input)
 		{
 			new_x = min_pos;
 		}
-		image->GetRectTrasnform()->SetPos(float3(new_x,mous_pos.y, 0));
+		image->GetRectTrasnform()->SetPos(float3(new_x, mous_pos.y, 0));
 	}
+
 }

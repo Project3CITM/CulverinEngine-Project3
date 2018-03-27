@@ -848,6 +848,11 @@ void CompInteractive::SetDisabledSprite(ResourceMaterial * set_sprite)
 	sprite[DISSABLED_SPRITE] = set_sprite;
 }
 
+void CompInteractive::SetSelective(bool selective)
+{
+	this->selective = selective;
+}
+
 float4 CompInteractive::GetNormalColor() const
 {
 	return normal_color;

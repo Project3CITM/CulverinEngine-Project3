@@ -11,7 +11,6 @@ public:
 	~CompSlider();
 
 	void ShowOptions();
-	void LinkPointers();
 	void ShowInspectorInfo();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
@@ -23,12 +22,16 @@ public:
 private:
 public:
 	CompImage * slide_bar = nullptr;
-	CompButton * slider = nullptr;
+	//CompButton * slider = nullptr;
 private:
+	//Button caract
+	int number_script = 0;
 	std::vector<CompScript*> linked_scripts;
+	int* uid_linked_scripts = nullptr;
+	std::string	script_name;
+	//
 	float min_pos = 0;
 	float max_pos = 0;
-
 };
 
 #endif

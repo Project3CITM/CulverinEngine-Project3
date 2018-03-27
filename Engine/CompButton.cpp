@@ -25,6 +25,7 @@ CompButton::CompButton(const CompButton & copy, GameObject * parent) : CompInter
 CompButton::~CompButton()
 {
 }
+
 void CompButton::ShowOptions()
 {
 	//ImGui::MenuItem("CREATE", NULL, false, false);

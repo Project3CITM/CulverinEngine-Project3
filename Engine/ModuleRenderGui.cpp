@@ -198,6 +198,10 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 						}
 						if (this_event.type == EventType::EVENT_BUTTON_DOWN)
 						{
+							if ((*it)->IsSelective()) //slider_detection
+							{
+								(*it)->OnDrag(this_event); 
+							}
 							(*it)->OnPointDown(this_event);
 							if ((*it)->GetNavigationMode() != Navigation::NavigationMode::NAVIGATION_NONE)
 							{
@@ -218,10 +222,6 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 						}
 						if (this_event.type == EventType::EVENT_MOUSE_MOTION)
 						{
-							if ((*it)->IsSelective())
-							{
-								(*it)->OnDrag(this_event);
-							}
 							(*it)->OnPointEnter(this_event);
 						}
 

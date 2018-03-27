@@ -1376,9 +1376,6 @@ GameObject * Scene::CreateSlider(GameObject * parent)
 	image->Enable();
 	image->SyncComponent(nullptr);
 	image->UpdateSpriteId();
-	//BUTTON COMPONENT ---------------------
-	CompButton* circle = (CompButton*)obj->AddComponent(Comp_Type::C_BUTTON);
-	circle->Enable();
 	// SLIDER -----------------
 	CompSlider* slide = (CompSlider*)obj->AddComponent(Comp_Type::C_SLIDER);
 	slide->Enable();

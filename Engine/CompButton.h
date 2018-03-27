@@ -25,9 +25,7 @@ public:
 	void OnClick();
 
 private:
-
 	void OnSubmit(Event event_input);
-
 	void OnPointDown(Event event_input);
 	void ShowInspectorAnimationTransition();
 
@@ -41,3 +39,5 @@ private:
 };
 
 #endif//COMPONENT_BUTTON_H
+
+

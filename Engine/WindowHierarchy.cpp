@@ -212,13 +212,12 @@ void Hierarchy::ShowOptions()
 			{
 				canvas = App->scene->CreateCanvas(nullptr);
 			}
-			GameObject* slider = App->scene->CreateSlider(canvas);
+
+			CompImage* bar = (CompImage*)App->scene->CreateImage(canvas);
+			GameObject* slider = App->scene->CreateSlider((GameObject*)bar);
 			//CompSlider* comp = (CompSlider*)App->scene->CreateSlider(slider);
 			CompSlider* comp = (CompSlider*)slider;
-			CompImage* bar = (CompImage*)App->scene->CreateImage((GameObject*)comp);
 			comp->slide_bar = bar;
-			CompButton* drag = (CompButton*)App->scene->CreateButton((GameObject*)comp);
-			comp->slider = drag;
 
 			App->gui->SetLinkInspector(slider); //Necessary?¿?¿
 		}
