@@ -1,12 +1,12 @@
 #ifndef COMPONENT_BUTTON_H
 #define COMPONENT_BUTTON_H
 #include "CompInteractive.h"
-
+#include "ClickAction.h"
 #include <vector>
 
 class CompScript;
 
-class CompButton:public CompInteractive
+class CompButton:public CompInteractive,public ClickAction
 {
 public:
 

@@ -1200,6 +1200,7 @@
       <Filter>Engine\Events</Filter>
     </ClInclude>
     <ClInclude Include="ImportFont.h" />
+    <ClInclude Include="ClickAction.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1616,6 +1617,7 @@
       <Filter>Engine\Events</Filter>
     </ClCompile>
     <ClCompile Include="ImportFont.cpp" />
+    <ClCompile Include="ClickAction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">

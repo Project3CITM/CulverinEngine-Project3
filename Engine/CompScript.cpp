@@ -1052,67 +1052,7 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 		}
 	}
 
-	// Load Actions (UI Button) ------------------------
-	uint number_actions = json_object_dotget_number_with_std(object, name + "Actions.Number of Actions");
-	for (int i = 0; i < number_actions; i++)
-	{
-		std::string action_temp = name + "Actions.Action " + std::to_string(i) + ".";
-		Actions temp;
-		temp.selected_mode = json_object_dotget_number_with_std(object, action_temp + "Mode");
-		temp.UID_attacked = json_object_dotget_number_with_std(object, action_temp + "GameObject");
-		if (temp.UID_attacked == -1)
-		{
-			continue;
-		}
-		temp.current_script = json_object_dotget_string_with_std(object, action_temp + "Name Script");
-		if (temp.current_script == "No Script")
-		{
-			continue;
-		}
-		temp.current_function = json_object_dotget_string_with_std(object, action_temp + "Name Method");
-		if (temp.current_function == "No Function")
-		{
-			continue;
-		}
-		VarType type_function = (VarType)(int)json_object_dotget_number_with_std(object, action_temp + "Type Method");
-		if (type_function != VarType::Var_NONE)
-			//InitValueParamater();
-		switch (type_function)
-		{
-		case VarType::Var_INT:
-		{
-			int value = json_object_dotget_number_with_std(object, action_temp + "Value");
-			temp.value = new char[sizeof value];
-			*(int*)temp.value = value;
-			break;
-		}
-		case VarType::Var_FLOAT:
-		{
-			float value = json_object_dotget_number_with_std(object, action_temp + "Value");
-			temp.value = new char[sizeof value];
-			*(float*)temp.value = value;
-			break;
-		}
-		case VarType::Var_BOOL:
-		{
-			bool value = json_object_dotget_boolean_with_std(object, action_temp + "Value");
-			temp.value = new char[sizeof value];
-			*(bool*)temp.value = value;
-			break;
-		}
-		case VarType::Var_STRING:
-		{
-			break;
-		}
-		case VarType::Var_GAMEOBJECT:
-		{
-			// int value_go = json_object_dotget_number_with_std(object, action_temp + "Value");
-			break;
-		}
-		}
-	}
-
-
+	
 	Enable();
 }
 

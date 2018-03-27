@@ -11,7 +11,7 @@
 #include "ImportMaterial.h"
 
 #define BUTTON_LIMIT 10
-CompButton::CompButton(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
+CompButton::CompButton(Comp_Type t, GameObject * parent) :CompInteractive(t, parent), ClickAction()
 {
 	uid = App->random->Int();
 	name_component = "CompButton";
@@ -139,6 +139,8 @@ void CompButton::ShowInspectorInfo()
 	{
 		ShowNavigationInfo();
 	}
+	ShowOnClickInfo();
+	/*
 	ImGui::Text("On Click");
 
 	ImGui::Text("Number of Script"); 
@@ -199,7 +201,7 @@ void CompButton::ShowInspectorInfo()
 			ImGui::EndPopup();
 		}
 	}
-
+	*/
 	ImGui::TreePop();
 }
 
@@ -305,6 +307,7 @@ void CompButton::Save(JSON_Object * object, std::string name, bool saveScene, ui
 		json_object_dotset_number_with_std(object, name + "Interactive left", 0);
 
 	}
+	SaveClickAction(object,name);
 }
 
 void CompButton::Load(const JSON_Object * object, std::string name)
@@ -352,16 +355,24 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 	navigation.inteactive_down_uid = json_object_dotget_number_with_std(object, name + "Interactive down");
 	navigation.inteactive_right_uid = json_object_dotget_number_with_std(object, name + "Interactive right");
 	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive left");
-
+	LoadClickAction(object, name);
+	/*
 	if (number_script != 0)
 	{
 	uid_linked_scripts = new int[number_script];
 	}
+
 	for (int i = 0; i < number_script; i++)
 	{
 		std::string temp = std::to_string(i);
 		uid_linked_scripts[i]= json_object_dotget_number_with_std(object, name + "Linked Spites " + temp + " UUID");
 	}
+
+	*/
+
+
+	
+
 	Enable();
 }
 
@@ -373,6 +384,8 @@ void CompButton::ClearLinkedScripts()
 
 void CompButton::SyncScript()
 {
+	SyncClickAction();
+	/*
 	std::vector<Component*> script_vec;
 	App->scene->root->GetComponentsByType(Comp_Type::C_SCRIPT, &script_vec, true);
 	for (int i = 0; i < number_script; i++)
@@ -394,6 +407,7 @@ void CompButton::SyncScript()
 		}
 
 	}
+	*/
 	RELEASE_ARRAY(uid_linked_scripts);
 }
 
@@ -418,7 +432,10 @@ void CompButton::OnClick()
 
 		if (comp_script == nullptr)
 			continue;
-		linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
+
+		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
+
+		//linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
 	}
 }
 
@@ -438,7 +455,7 @@ void CompButton::OnSubmit(Event event_input)
 
 		if (comp_script == nullptr)
 			continue;
-		linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
+		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
 	}
 }
 
