@@ -52,12 +52,28 @@ public class Attack_Action : Action
         anim = GetComponent<CompAnimation>();
         if (state == SWA_STATE.PRE_APPLY && anim.IsAnimOverXTime(apply_damage_point))
         {
-            state = SWA_STATE.POST_APPLY;
-            player.GetDamage(damage);
-            //Apply damage to the target
-            //Play audio fx
+            if (GetComponent<EnemySword_BT>() != null || GetComponent<EnemySpear_BT>() != null)
+            {
+                state = SWA_STATE.POST_APPLY;
+                player.GetDamage(damage);
+                //Apply damage to the target
+                //Play audio fx
+            }
+            else if (GetComponent<EnemyShield_BT>() != null)
+            {
+                if (player.player_obj.GetComponent<Shield>().IsActive())
+                {
+                    //Animation to break defense
+                    Debug.Log("Break defense!");
+                }
+                state = SWA_STATE.POST_APPLY;
+                player.GetDamage(damage);
+                //Apply damage to the target
+                //Play audio fx
+            }
+
         }
-        else if (state == SWA_STATE.POST_APPLY && anim.IsAnimationStopped("Attack"))
+            else if (state == SWA_STATE.POST_APPLY && anim.IsAnimationStopped("Attack"))
         {
             state = SWA_STATE.WAITING;
             return ACTION_RESULT.AR_SUCCESS;

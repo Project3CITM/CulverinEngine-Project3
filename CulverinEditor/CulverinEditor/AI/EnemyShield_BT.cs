@@ -8,7 +8,20 @@ public class EnemyShield_BT : Enemy_BT
 
     public override void Start()
     {
-        GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddShieldEnemy(gameObject);
+        GameObject Temp_go = GetLinkedObject("enemies_manager");
+
+        if (Temp_go == null) Debug.Log("[error]Gameobject enemies_manager not found (EnemyShield_BT)");
+        else
+        {
+
+            EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
+
+            if (enemy_manager == null) Debug.Log("[error]EnemyShield_BT: enemies_manager is not detected");
+            else
+            {
+                enemy_manager.AddShieldEnemy(gameObject);
+            }
+        }
         base.Start();
     }
 
@@ -17,6 +30,77 @@ public class EnemyShield_BT : Enemy_BT
         shield_block_timer += Time.deltaTime;
 
         base.Update();
+    }
+
+    protected override void InCombatDecesion()
+    {
+        //Attack action
+        if (InRange())
+        {
+            bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
+
+            if (attack_ready)
+            {
+                Debug.Log("Attack");
+                attack_timer = 0.0f;
+                state = AI_STATE.AI_ATTACKING;
+                Attack_Action action = GetComponent<Attack_Action>();
+                action.SetDamage(attack_damage);
+                action.SetAnimSpeed(anim_speed);
+                current_action = action;
+                current_action.ActionStart();
+                return;
+            }
+            else
+            {
+                state = AI_STATE.AI_IDLE;
+                current_action = GetComponent<IdleAttack_Action>();
+                current_action.SetAnimSpeed(anim_speed);
+                current_action.ActionStart();
+                return;
+            }
+        }
+        else if (player_detected == true)
+        {
+            GetComponent<ChasePlayer_Action>().ActionStart();
+            current_action = GetComponent<ChasePlayer_Action>();
+            return;
+        }
+    }
+
+    protected override void OutOfCombatDecesion()
+    {
+        //Investigate
+        if (heard_something)
+        {
+            //Investigate
+            Debug.Log("Investigate");
+            GetComponent<Investigate_Action>().ActionStart();
+            current_action = GetComponent<Investigate_Action>();
+            return;
+        }
+
+        //If none of them -> patrol
+        int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+
+        //Patrol
+        if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
+        {
+            Debug.Log("Patrol origin");
+            GetComponent<Movement_Action>().GoTo(origin_path_x, origin_path_y);
+            GetComponent<Movement_Action>().ActionStart();
+            current_action = GetComponent<Movement_Action>();
+            return;
+        }
+        else
+        {
+            Debug.Log("Patrol end");
+            GetComponent<Movement_Action>().GoTo(end_path_x, end_path_y);
+            GetComponent<Movement_Action>().ActionStart();
+            current_action = GetComponent<Movement_Action>();
+            return;
+        }
     }
 
     public override void ApplyDamage(float damage)
