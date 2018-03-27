@@ -68,8 +68,6 @@ public class Attack_Action : Action
                 }
                 state = SWA_STATE.POST_APPLY;
                 player.GetDamage(damage);
-                //Apply damage to the target
-                //Play audio fx
             }
 
         }

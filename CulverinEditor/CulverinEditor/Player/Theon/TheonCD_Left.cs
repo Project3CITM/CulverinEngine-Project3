@@ -10,7 +10,8 @@ public class TheonCD_Left : CoolDown
 
     public override void OnClick()
     {
-        if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0)
+        if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0 
+            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetState() == 0)
         {
             if (in_cd == false)
             {

@@ -24,7 +24,6 @@ public class TheonController : CharacterController
     public float curr_hp = 100.0f;
     public float max_stamina = 100.0f;
     public float curr_stamina = 100.0f;
-    private float sec_ability_current_cd = 10.0f;
 
     //LEFT ABILITY STATS-------------------
     public float left_ability_dmg = 10;
@@ -32,6 +31,7 @@ public class TheonController : CharacterController
     private TheonCD_Left cd_left;
     //----------------------------------------
     //RIGHT ABILITY STATS-------------------
+    public bool reloading = false;
     public float right_ability_dmg = 10;
     public float right_ability_cost = 10.0f;
     private TheonCD_Right cd_right;
@@ -82,6 +82,7 @@ public class TheonController : CharacterController
         arrow2 = false;
         arrow3 = false;
         secondary_ability = false;
+        reloading = false;
         arrowtimers = 0.0f;
     }
 
@@ -110,6 +111,17 @@ public class TheonController : CharacterController
                         {
                             //Check For Input + It has to check if he's moving to block attack (¿?)
                             CheckAttack();
+
+                            if (reloading)
+                            {
+                                anim_controller = theon_obj.GetComponent<CompAnimation>();
+
+                                if (anim_controller.IsAnimationRunning("Idle"))
+                                {
+                                    Debug.Log("[error] Finished reloading");
+                                    reloading = false;
+                                }
+                            }
                             break;
                         }
                     case State.ATTACKING:
@@ -119,7 +131,9 @@ public class TheonController : CharacterController
 
                             if (anim_controller.IsAnimationStopped("Attack"))
                             {
+                                Debug.Log("[error] Reloading");
                                 state = State.RELOADING;
+                                reloading = true;
                             }
                             else
                             {
@@ -134,9 +148,9 @@ public class TheonController : CharacterController
                             if (anim_controller.IsAnimOverXTime(0.5f)) 
                             {
                                 //Activate arrow Placement
-                                Arrow.GetComponent<CompMesh>().SetEnabled(true, Arrow);
-                                state = State.IDLE;
+                                Arrow.GetComponent<CompMesh>().SetEnabled(true, Arrow);                       
                                 GetComponent<CompAudio>().PlayEvent("CrossbowRecharge");
+                                state = State.IDLE;
                             }
                             else
                             {

@@ -477,6 +477,7 @@ public class CharactersManager : CulverinBehaviour
         if (player_obj.GetComponent<Shield>().IsActive())
         {
             player_obj.GetComponent<Shield>().Break();
+            Debug.Log("[error] BREAK SHIELD");
         }
 
         else
@@ -753,6 +754,11 @@ public class CharactersManager : CulverinBehaviour
             tcontroller.curr_position = pos;
             tcontroller.curr_forward = vfront;
         }
+    }
+
+    public int GetState()
+    {
+        return (int)state;
     }
 }
 
