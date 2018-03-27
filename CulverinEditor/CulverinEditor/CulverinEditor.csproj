@@ -75,6 +75,7 @@
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
     <Compile Include="CompLight.cs" />
+    <Compile Include="Lights\Torch_sound.cs" />
     <Compile Include="Miscellanea\DamageFeedback.cs" />
     <Compile Include="Lights\LightFlickering.cs" />
     <Compile Include="ParticleManager.cs" />
@@ -140,7 +141,6 @@
     <Compile Include="Test_Input_Gamepad.cs" />
     <Compile Include="TestParticle.cs" />
     <Compile Include="Time.cs" />
-    <Compile Include="Torch_sound.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Debug.cs" />
