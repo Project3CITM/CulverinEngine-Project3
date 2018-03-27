@@ -79,11 +79,13 @@ public class EnemySword_BT : Enemy_BT
             return;
         }
 
-        //If none of them -> patrol
+        //Patrol
         int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        //Patrol
+        //Reset event list
+        GetComponent<SwordGuard_Listener>().ClearEvents();
+
         if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
         {
             Debug.Log("Patrol-origin");
