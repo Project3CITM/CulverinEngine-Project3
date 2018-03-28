@@ -51,18 +51,11 @@ public class Enemy_BT : BT
     }
 
     public override void MakeDecision()
-    {
-        if (next_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
-        {
-            Debug.Log("[error]"+ next_action.action_type);
-            current_action = next_action;
-            next_action = null_action;
-            current_action.ActionStart();
-            return;
-        }
+    { 
 
         if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION 
-            || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION)
+            || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION
+            || next_action.action_type == Action.ACTION_TYPE.FACE_PLAYER_ACTION || next_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
         {
             Debug.Log(next_action.action_type);
             current_action = next_action;

@@ -179,36 +179,10 @@ public class Movement_Action : Action
         //Rotation
         if (rotation_finished == false)
         {
-            if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
-            {
-                if (current_rot_acceleration > 0)
-                {
-                    current_rot_acceleration = current_max_rot_accel;
-                }
-                else
-                {
-                    current_rot_acceleration = -current_max_rot_accel;
-                }
-            }
-            current_rot_velocity += current_rot_acceleration;
+            UpdateRotation();
 
-            if (Mathf.Abs(current_rot_velocity) > current_max_rot_vel)
-            {
-                if (current_rot_velocity > 0)
-                {
-                    current_rot_velocity = current_max_rot_vel;
-                }
-                else
-                {
-                    current_rot_velocity = -current_max_rot_vel;
-                }
-            }
-
-            //Rotate
-            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity * Time.deltaTime);
-
-            //Clean
-            current_rot_acceleration = 0.0f;
+             //Clean
+             current_rot_acceleration = 0.0f;
 
             if (FinishedRotation() == true)
             {
@@ -258,6 +232,39 @@ public class Movement_Action : Action
         interupt = false;
         return false;
     }
+
+
+    public void UpdateRotation()
+    {
+        if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
+        {
+            if (current_rot_acceleration > 0)
+            {
+                current_rot_acceleration = current_max_rot_accel;
+            }
+            else
+            {
+                current_rot_acceleration = -current_max_rot_accel;
+            }
+        }
+        current_rot_velocity += current_rot_acceleration;
+
+        if (Mathf.Abs(current_rot_velocity) > current_max_rot_vel)
+        {
+            if (current_rot_velocity > 0)
+            {
+                current_rot_velocity = current_max_rot_vel;
+            }
+            else
+            {
+                current_rot_velocity = -current_max_rot_vel;
+            }
+        }
+
+        //Rotate
+        GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity * Time.deltaTime);
+    }
+
 
     private void NextTile()
     {

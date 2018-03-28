@@ -24,6 +24,7 @@ public class Action : CulverinBehaviour
         INVESTIGATE_ACTION,
         CHASE_ACTION,
         SEPARATE_ACTION,
+        FACE_PLAYER_ACTION,
         PUSHBACK_ACTION,
         STUN_ACTION,
         GET_HIT_ACTION,
