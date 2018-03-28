@@ -782,14 +782,29 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 				flag = mono_method_get_flags(method, &t);
 				std::string name_method = mono_method_get_name(method);
 				std::string fullname_method = mono_method_full_name(method, true);
-				const char* pram = nullptr;
-				mono_method_get_param_names(method, &pram);
-				int idx = 0, ind = 0;
+				MonoMethodSignature* signature = mono_method_signature(method);
+				uint num = mono_signature_get_param_count(signature);
+				if (num > 1)
+				{
+					continue;
+				}
 				if (flag != 134)
 				{
 					continue;
 				}
-				if (pram != nullptr)
+				if (num == 0)
+				{
+					PublicMethod temp;
+					temp.name_method = name_method;
+					temp.SetMonoMethod(method);
+					temp.SetMonoObject(csharp->GetMonoObject());
+					temp.type = VarType::Var_NONE;
+					csharp->methods.push_back(temp);
+					continue;
+				}
+				char** pram = new char*[num];
+				mono_method_get_param_names(method, (const char**)pram);
+				if (pram[0] != nullptr)
 				{
 					std::string type = fullname_method;
 					size_t EndName = type.find("(");
@@ -806,7 +821,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					{
 						PublicMethod temp;
 						temp.name_method = name_method;
-						temp.name_param = pram;
+						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
 						temp.type = VarType::Var_INT;
@@ -816,7 +831,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					{
 						PublicMethod temp;
 						temp.name_method = name_method;
-						temp.name_param = pram;
+						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
 						temp.type = VarType::Var_FLOAT;
@@ -826,7 +841,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					{
 						PublicMethod temp;
 						temp.name_method = name_method;
-						temp.name_param = pram;
+						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.type = VarType::Var_BOOL;
 						csharp->methods.push_back(temp);
@@ -835,7 +850,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					{
 						PublicMethod temp;
 						temp.name_method = name_method;
-						temp.name_param = pram;
+						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
 						temp.type = VarType::Var_STRING;
@@ -845,21 +860,12 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					{
 						PublicMethod temp;
 						temp.name_method = name_method;
-						temp.name_param = pram;
+						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
 						temp.type = VarType::Var_GAMEOBJECT;
 						csharp->methods.push_back(temp);
 					}
-				}
-				else
-				{
-					PublicMethod temp;
-					temp.name_method = name_method;
-					temp.SetMonoMethod(method);
-					temp.SetMonoObject(csharp->GetMonoObject());
-					temp.type = VarType::Var_NONE;
-					csharp->methods.push_back(temp);
 				}
 			}
 
