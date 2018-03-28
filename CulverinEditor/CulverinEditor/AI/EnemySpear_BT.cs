@@ -117,15 +117,7 @@ public class EnemySpear_BT : Enemy_BT
             ((ChasePlayer_Action)current_action).chase_lancer = true;
             return;
         }
-        else
-        {
-            //Debug.Log("IdleAttack");
-            state = AI_STATE.AI_IDLE;
-            current_action = GetComponent<IdleAttack_Action>();
-            current_action.SetAnimSpeed(anim_speed);
-            current_action.ActionStart();
-            return;
-        }
+      
     }
 
     protected override void OutOfCombatDecesion()

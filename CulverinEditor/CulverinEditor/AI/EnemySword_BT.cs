@@ -60,11 +60,14 @@ public class EnemySword_BT : Enemy_BT
         }
         else if(player_detected == true)
         {
-            //Debug.Log("Chase");
+            //Debug.Log("[error]LOKOOOOOO CHASEAAAMEE ESTAAAA");
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
+            ((ChasePlayer_Action)current_action).chase_lancer = false;
             return;
         }
+
+
     }
 
     protected override void OutOfCombatDecesion()

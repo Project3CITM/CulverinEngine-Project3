@@ -44,7 +44,7 @@ public class ChasePlayer_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true || forgot_event == true)
+        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true )
         {
             move.Interupt();
         }
