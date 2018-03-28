@@ -38,6 +38,7 @@
 				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene1\Footsteps"/>
 				<Event Id="3525158975" Name="JaimeDead" ObjectPath="\Events\Scene1\Characters\JaimeDead"/>
 				<Event Id="2682992486" Name="JaimeHurt" ObjectPath="\Events\Scene1\Characters\JaimeHurt"/>
+				<Event Id="2782712987" Name="Lever" ObjectPath="\Events\Scene1\Puzzle\Lever"/>
 				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Scene1\MetalClash"/>
 				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene1\PlayMusic"/>
 				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene1\PlayTorch"/>
@@ -50,6 +51,10 @@
 				<Event Id="777507535" Name="WaterSplash" ObjectPath="\Events\Scene1\Puzzle\WaterSplash"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
+				<File Id="16679997" Language="SFX">
+					<ShortName>Puzzle\Lever.wav</ShortName>
+					<Path>SFX\Puzzle\Lever_DBC752C0.wem</Path>
+				</File>
 				<File Id="60949840" Language="SFX">
 					<ShortName>Characters\Jaime\Jaime_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Jaime\Jaime_Dead_1_F7D0E330.wem</Path>
@@ -76,11 +81,11 @@
 				</File>
 				<File Id="178260986" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
-					<Path>SFX\Ambient\footstep_stone_69B03529.wem</Path>
+					<Path>SFX\Ambient\footstep_stone_C599367A.wem</Path>
 				</File>
 				<File Id="252929518" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
-					<Path>SFX\Ambient\footstep_stone_AF901D63.wem</Path>
+					<Path>SFX\Ambient\footstep_stone_DADC38C1.wem</Path>
 				</File>
 				<File Id="283710021" Language="SFX">
 					<ShortName>Enemy\Enemy_2\E2_Dead_1.wav</ShortName>
@@ -92,7 +97,7 @@
 				</File>
 				<File Id="337181357" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
-					<Path>SFX\Ambient\footstep_stone_E7DE3A1A.wem</Path>
+					<Path>SFX\Ambient\footstep_stone_1C39B089.wem</Path>
 				</File>
 				<File Id="347745547" Language="SFX">
 					<ShortName>Enemy\Enemy_3\E3_Dead_2.wav</ShortName>
@@ -192,7 +197,7 @@
 				</File>
 				<File Id="948585701" Language="SFX">
 					<ShortName>Puzzle\Chain1.wav</ShortName>
-					<Path>SFX\Puzzle\Chain1_83419930.wem</Path>
+					<Path>SFX\Puzzle\Chain1_249601E6.wem</Path>
 				</File>
 				<File Id="961807994" Language="SFX">
 					<ShortName>Puzzle\Timer120bpm.wav</ShortName>
@@ -208,11 +213,11 @@
 				</File>
 				<File Id="1017291416" Language="SFX">
 					<ShortName>Puzzle\BubbleLong.wav</ShortName>
-					<Path>SFX\Puzzle\BubbleLong_15D5A3A4.wem</Path>
+					<Path>SFX\Puzzle\BubbleLong_CE6DE23F.wem</Path>
 				</File>
 				<File Id="1022376451" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
-					<Path>SFX\Ambient\footstep_stone_799990CF.wem</Path>
+					<Path>SFX\Ambient\footstep_stone_706EA8A9.wem</Path>
 				</File>
 				<File Id="1039896243" Language="SFX">
 					<ShortName>Characters\Theon\Theon_Hurt_2.wav</ShortName>
