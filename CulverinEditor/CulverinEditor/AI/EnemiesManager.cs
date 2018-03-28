@@ -42,19 +42,19 @@ public class EnemiesManager : CulverinBehaviour
 
     public void AddLanceEnemy(GameObject enemy)
     {
-        if (sword_enemies == null)
+        if (lance_enemies == null)
         {
             Debug.Log("[error]EnemiesManager: Lance_enemies is null");
         }
         else
         {
-            lance_enemies.Remove(enemy);
+            lance_enemies.Add(enemy);
         }
     }
 
     public void DeleteLanceEnemy(GameObject enemy)
     {
-        if (sword_enemies == null)
+        if (lance_enemies == null)
         {
             Debug.Log("[error]EnemiesManager: Lance_enemies is null");
         }
@@ -66,19 +66,19 @@ public class EnemiesManager : CulverinBehaviour
 
     public void AddShieldEnemy(GameObject enemy)
     {
-        if (sword_enemies == null)
+        if (shield_enemies == null)
         {
             Debug.Log("[error]EnemiesManager: Shield_enemies is null");
         }
         else
         {
-            shield_enemies.Remove(enemy);
+            shield_enemies.Add(enemy);
         }
     }
 
     public void DeleteShieldEnemy(GameObject enemy)
     {
-        if (sword_enemies == null)
+        if (shield_enemies == null)
         {
             Debug.Log("[error]EnemiesManager: Shield_enemies is null");
         }

@@ -39,6 +39,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\Actions\Action.cs" />
+    <Compile Include="AI\Actions\Separate_Action.cs" />
+    <Compile Include="AI\Actions\SpearAttack_Action.cs" />
     <Compile Include="AI\Actions\Stun_Action.cs" />
     <Compile Include="AI\AIManager.cs" />
     <Compile Include="AI\Actions\Align_Steering.cs" />

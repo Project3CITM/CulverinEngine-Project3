@@ -26,7 +26,7 @@ public class Enemy_BT : BT
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
     protected float current_interpolation = 1.0f;
-    public uint range = 1;
+    public int range = 1;
 
     protected bool in_combat = false;
 
@@ -61,7 +61,8 @@ public class Enemy_BT : BT
             return;
         }
 
-        if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION)
+        if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION 
+            || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION)
         {
             Debug.Log(next_action.action_type);
             current_action = next_action;
@@ -80,7 +81,7 @@ public class Enemy_BT : BT
                 current_action.ActionStart();
                 return;
             }
-
+          
             InCombatDecesion();
         }
         else
@@ -164,6 +165,12 @@ public class Enemy_BT : BT
         if (distance <= range)
             return true;
         return false;
+    }
+
+    public int GetDistanceInRange()
+    {
+        player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+        return Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX()) + Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
     }
 
     public float GetCurrentInterpolation()
