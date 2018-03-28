@@ -35,6 +35,13 @@ public class BarrelFall : CulverinBehaviour
     private Vector3 initial_position;
 
 
+    CompAudio audio;
+
+    void Start()
+    {
+        audio = GetComponent<CompAudio>();
+    }
+
     void Update()
     {
         if (placed)
@@ -120,6 +127,7 @@ public class BarrelFall : CulverinBehaviour
         {
           // this.SetEnabled(false);
            placed = true;
+           audio.PlayEvent("WaterSplash");
         }
     }
 
