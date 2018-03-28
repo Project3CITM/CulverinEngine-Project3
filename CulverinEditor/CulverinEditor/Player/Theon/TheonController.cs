@@ -9,6 +9,7 @@ public class TheonController : CharacterController
     public GameObject R_Arm_Theon;
     public GameObject CrossBow;
     public GameObject Arrow;
+
     //UI ELEMENTS
     public GameObject theon_icon_obj;
     public GameObject theon_icon_obj_hp;
@@ -35,6 +36,7 @@ public class TheonController : CharacterController
     public float right_ability_dmg = 10;
     public float right_ability_cost = 10.0f;
     private TheonCD_Right cd_right;
+    bool do_push_attack = false;
 
     public bool secondary_ability = false;
     public float sec_ability_cost = 30;
@@ -162,6 +164,15 @@ public class TheonController : CharacterController
                         {
                             //Check for end of the Attack animation
                             anim_controller = theon_obj.GetComponent<CompAnimation>();
+                            
+                            //Apply damage over x time of the attack animation
+                            if (do_push_attack && anim_controller.IsAnimOverXTime(0.6f))
+                            {
+                                Debug.Log("[blue] PUSHHHHHHH");
+                                DoRightAbility();
+                                do_push_attack = false;
+                            }
+
                             if (anim_controller.IsAnimationStopped("Attack2"))
                             { 
                                 state = State.IDLE;
@@ -424,8 +435,15 @@ public class TheonController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!cd_right.in_cd)
                 {
-                    // First, OnClick of RightWeapon, then, onClick of Cooldown
-                    DoRightAbility();
+                    // Decrease stamina -----------
+                    DecreaseStamina(right_ability_cost);
+                    //Debug.Log("[error]STAMINA!");
+                    SetAnimationTransition("ToAttack2", true);
+
+                    do_push_attack = true;
+
+                    //Go to PUSH State
+                    SetState(State.STUN); 
                     return true;
                 }
                 else
@@ -449,29 +467,23 @@ public class TheonController : CharacterController
 
     public void DoRightAbility() //Might be virtual
     {
-        // Decrease stamina -----------
-        DecreaseStamina(right_ability_cost);
-        Debug.Log("[error]STAMINA!");
-        SetAnimationTransition("ToAttack2", true);
-        Debug.Log("[error]TRANSITION!");
+        //Debug.Log("[error]TRANSITION!");
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
-        Debug.Log("[error]RAYCAST!");
+        //Debug.Log("[error]RAYCAST!");
         if (coll_object != null)
         {
             Debug.Log(coll_object.GetTag());
-            Debug.Log("[error]COOL OBJ NOT NULL!");
+            //Debug.Log("[error]COOL OBJ NOT NULL!");
             if (coll_object.CompareTag("Enemy"))
             {
-                Debug.Log("[error]HERE!");
+                //Debug.Log("[error]HERE!");
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
                 EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
                 movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
                 enemy_manager.Push(coll_object, movement.GetForwardDir());
-                Debug.Log("[error] " + movement.GetForwardDir());
+                //Debug.Log("[error] " + movement.GetForwardDir());
             }
         }
-
-        SetState(CharacterController.State.STUN);
     }
 
     public bool OnSecondaryClick()
