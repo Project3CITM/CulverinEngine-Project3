@@ -34,6 +34,14 @@ public class EnemySword_BT : Enemy_BT
         //Attack action
         if (InRange())
         {
+
+            /*if (!GetComponent<FacePlayer_Action>().IsFaced())
+            {
+                current_action.Interupt();
+                next_action = GetComponent<FacePlayer_Action>();
+                return;
+            }*/
+
             bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
 
             if (attack_ready)
@@ -60,7 +68,6 @@ public class EnemySword_BT : Enemy_BT
         }
         else if(player_detected == true)
         {
-            //Debug.Log("[error]LOKOOOOOO CHASEAAAMEE ESTAAAA");
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
             ((ChasePlayer_Action)current_action).chase_lancer = false;
