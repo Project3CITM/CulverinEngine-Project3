@@ -3,6 +3,7 @@
 #include "MathGeoLib.h"
 enum ParameterValue
 {
+	PARAMETER_NONE = -1,
 	RECT_TRANSFORM_POSITION,
 	RECT_TRANSFORM_ROTATION,
 	RECT_TRANSFORM_SCALE,
@@ -31,7 +32,7 @@ public:
 	~AnimableComponent();
 
 	virtual void SetNewAnimationValue(const AnimationValue& value);
-
+	virtual AnimationValue ShowParameters();
 };
 
 #endif //_MODULE_ANIMATION_H_

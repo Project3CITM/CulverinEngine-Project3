@@ -37,20 +37,62 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 				ImGui::End();
 				return;
 			}
-			/*
-			for (std::vector<Component*>::const_iterator it = go->GetComponentVec().begin(); it != go->GetComponentVec().end(); it++)
+			//Add new animation
+
+			if (ImGui::Button("Select Sprite..."))
 			{
-				//(*it)
-				AnimableComponent* item = dynamic_cast<AnimableComponent*>((*it));
-
-				if (item == nullptr)
-					continue;
-				
-				
-
+				new_animation_window = true;
 			}
 
-			*/
+			if (new_animation_window)
+			{
+				for (int i = 0; i< go->GetNumComponents(); i++)
+				{
+					//(*it)
+					Component* component = go->GetComponentbyIndex(i);
+					AnimableComponent* item = dynamic_cast<AnimableComponent*>(component);
+
+					if (item == nullptr)
+						continue;
+					bool open = ImGui::TreeNodeEx(component->GetName());
+
+					if (open)
+					{
+						//item->ShowParameters();
+						
+						AnimationValue new_value = item->ShowParameters();
+						if (new_value.type != PARAMETER_NONE)
+						{
+							int find = HaveAnimData(item);
+							if (find != -1)
+							{
+
+								if (!animation_json->animations[find].HaveKeyFrameData(new_value.type))
+								{
+									animation_json->animations[find].key_data.push_back(KeyFrameData(0, new_value, new_value.type));
+								}
+
+							}
+							else
+							{
+								AnimData tmp_anim_data;
+								tmp_anim_data.data = item;
+								tmp_anim_data.key_data.push_back(KeyFrameData(0, new_value, new_value.type));
+								animation_json->animations.push_back(tmp_anim_data);
+							}
+						}
+						
+						ImGui::TreePop();
+
+					}
+
+
+
+
+				}
+			}
+
+			
 
 		}
 		ImGui::End();
@@ -67,5 +109,55 @@ void ModuleAnimation::SaveAnimation()
 }
 
 void ModuleAnimation::LoadAnimation()
+{
+}
+
+
+
+int ModuleAnimation::HaveAnimData(const AnimableComponent * data)
+{
+	for (int i = 0; i < animation_json->animations.size(); i++)
+	{
+		AnimableComponent* item = animation_json->animations[i].data;
+		if (item == data)
+		{
+			return i;
+		}
+
+	}
+	return -1;
+}
+
+
+bool AnimData::HaveKeyFrameData(const ParameterValue & data)
+{
+	
+	for (int i = 0; i <key_data.size(); i++)
+	{
+		ParameterValue item = key_data[i].parameter;
+		if (item == data)
+		{
+			return true;
+		}
+
+	}
+	
+	return false;
+}
+
+KeyFrameData::KeyFrameData(int key, AnimationValue value, ParameterValue param) 
+{
+	key_frames.push_back(key);
+	key_values.push_back(value);
+	parameter = param;
+}
+
+KeyFrameData::KeyFrameData(int key, AnimationValue value) 
+{
+	key_frames.push_back(key);
+	key_values.push_back(value);
+}
+
+KeyFrameData::~KeyFrameData()
 {
 }
