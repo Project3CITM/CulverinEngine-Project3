@@ -61,7 +61,6 @@ public class EnemySpear_BT : Enemy_BT
             if (CanISeparate(current_dir, out next_tile_x, out next_tile_y))
             {
                 int attack_type_value = rand.Next(1, 10);
-                Debug.Log("[error]Random number: " + attack_type_value);
                 RandomAttack(attack_type_value, next_tile_x, next_tile_y);
                 return;
             }
@@ -233,13 +232,15 @@ public class EnemySpear_BT : Enemy_BT
 
     void RandomAttack(int rand_number, uint next_tile_x, uint next_tile_y)
     {
-        
+
+
         if (rand_number % 2 == 0)
         {
             bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
+
             if (attack_ready)
             {
-                Debug.Log("[error]Spear Attack in random");
+
                 attack_timer = 0.0f;
                 state = AI_STATE.AI_ATTACKING;
                 SpearAttack_Action action = GetComponent<SpearAttack_Action>();
@@ -261,11 +262,19 @@ public class EnemySpear_BT : Enemy_BT
                 current_action.ActionStart();
                 return;
             }
+            else
+            {
+                //Debug.Log("IdleAttack");
+                state = AI_STATE.AI_IDLE;
+                current_action = GetComponent<IdleAttack_Action>();
+                current_action.SetAnimSpeed(anim_speed);
+                current_action.ActionStart();
+                return;
+            }
         }
         else
         {
             Debug.Log("[error]Separate in random");
-            attack_timer = 0.0f;
             state = AI_STATE.AI_ATTACKING;
             Separate_Action action = GetComponent<Separate_Action>();
             //We set the destiny of the separation

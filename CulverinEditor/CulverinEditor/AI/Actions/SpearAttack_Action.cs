@@ -48,8 +48,8 @@ public class SpearAttack_Action : Action
     public override ACTION_RESULT ActionUpdate()
     {
        // Debug.Log("[error]Is melee attack:" + melee_attack);
-        //if (melee_attack)
-        //{
+        if (melee_attack)
+        {
             if (interupt == true)
             {
                 return ACTION_RESULT.AR_FAIL;
@@ -70,7 +70,7 @@ public class SpearAttack_Action : Action
                 return ACTION_RESULT.AR_SUCCESS;
             }
             return ACTION_RESULT.AR_IN_PROGRESS;
-        /*}
+        }
         else
         {
             if (interupt == true)
@@ -93,7 +93,7 @@ public class SpearAttack_Action : Action
                 return ACTION_RESULT.AR_SUCCESS;
             }
             return ACTION_RESULT.AR_IN_PROGRESS;
-        }*/
+        }
     }
 
     public override bool ActionEnd()
