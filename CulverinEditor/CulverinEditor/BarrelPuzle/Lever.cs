@@ -78,13 +78,14 @@ public class Lever : CulverinBehaviour
     public GameObject level_map;
     public GameObject player;
 
+    CompAudio audio;
 
     PuzzleCountdown countdown;
 
-    //Needed to know when the fill barrels are placed in puzzle
+    //Needed to know when the barrels are placed in puzzle
     BarrelFall fill_barrel;
-   
-    
+    BarrelFall puzzle_barrel;
+
     //--------------
 
     void Start()
@@ -95,6 +96,11 @@ public class Lever : CulverinBehaviour
 
         lever_go = GetLinkedObject("lever_go");
 
+        audio = GetComponent<CompAudio>();
+        if (audio == null)
+        {
+            Debug.Log("There is no audio in puzzle!");
+        }
 
         countdown = GetComponent<PuzzleCountdown>();
         if(countdown == null)
@@ -221,7 +227,6 @@ public class Lever : CulverinBehaviour
             }
             if (!phase2) // Move barrels mode.PUZZLE
             {
-
                 MoveBarrels(line1);
                 MoveBarrels(line2);
                 MoveBarrels(line3);
@@ -232,8 +237,9 @@ public class Lever : CulverinBehaviour
                 phase2 = true;
                 phase_wait = true;
                 time = Time.realtimeSinceStartup + delay_second_mode;
-
+                audio.PlayEvent("Chain");
             }
+
             if (phase_wait) // wait to move the other mode
             {
                // Debug.Log("Waiting");
@@ -255,6 +261,12 @@ public class Lever : CulverinBehaviour
                 MoveBarrels(line6, true);
                 phase3 = true;
                 editmap = true;
+            }
+
+            
+            if(editmap && fill_barrel.IsFalling())
+            {
+                audio.StopEvent("Chain");
             }
 
             if (editmap && fill_barrel.IsPlaced())
@@ -283,7 +295,7 @@ public class Lever : CulverinBehaviour
             {
                 Debug.Log("Activating puzzle barrels");          
                 list[i].SetActive(true);
-
+                puzzle_barrel = b_fall;
             }
             else if (isfilling)
             {

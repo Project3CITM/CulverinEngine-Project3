@@ -108,6 +108,7 @@ public class BarrelFall : CulverinBehaviour
         {
             //If arrived to tile
             in_tile = true;
+            audio.PlayEvent("RopeCut");
         }
     }
     void Fall()
@@ -134,6 +135,11 @@ public class BarrelFall : CulverinBehaviour
     public bool IsPlaced()
     {
         return placed;
+    }
+
+    public bool IsFalling()
+    {
+        return (in_tile && !placed);
     }
 
     public bool IsPuzzleMode()
