@@ -75,6 +75,8 @@
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
     <Compile Include="CompLight.cs" />
+    <Compile Include="MainMenuSC.cs" />
+    <Compile Include="PKeyScene.cs" />
     <Compile Include="Miscellanea\DamageFeedback.cs" />
     <Compile Include="Lights\LightFlickering.cs" />
     <Compile Include="ParticleManager.cs" />
