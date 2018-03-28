@@ -43,21 +43,20 @@ public class CharactersManager : CulverinBehaviour
     public GameObject daenerys_s_button_obj;
     public GameObject theon_s_button_obj;
 
-    Shield shield;
-
     public float puz_max_time;
     public float drown_dmg = 20;
     public int puz_respawn_x = 0;
     public int puz_respawn_y = 0;
+
     //To manage player state
-    State state = State.IDLE;   
+    State state = State.IDLE;
+    public bool changing = false;
 
     //To manage Jaime Secondary Ability
     public bool shield_activated = false;
 
     void Start()
-    {
-       
+    {    
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
         current_character = GetLinkedObject("current_character");
         left_character = GetLinkedObject("left_character");
@@ -74,6 +73,9 @@ public class CharactersManager : CulverinBehaviour
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
 
         SetCurrentPosition();
+
+        changing = false;
+
         //core menu
         //bg = GetLinkedObject("bg");
         //coin1 = GetLinkedObject("coin1");
@@ -97,6 +99,14 @@ public class CharactersManager : CulverinBehaviour
         {
             case State.IDLE:
                 {
+                    //Check when finished In animation
+                    if(changing && IsCharacterAnimationRunning(current_character,"Idle"))
+                    {
+                        changing = false;
+
+                        Debug.Log("[yellow] FINISHED IN");
+                    }
+
                     //Test Jaime Secondary Ability
                     if (Input.GetKeyDown(KeyCode.Num0))
                     {
@@ -109,13 +119,11 @@ public class CharactersManager : CulverinBehaviour
                         {
                             state = State.CHANGING_LEFT;
                             CurrentToOut();
-                            Debug.Log("Change Left");
                         }
                         else if(IsDead(right_character) == false)
                         {
                             state = State.CHANGING_RIGHT;
                             CurrentToOut();
-                            Debug.Log("Change Right");
                         }
                         else
                         {
@@ -131,7 +139,6 @@ public class CharactersManager : CulverinBehaviour
                             {
                                 state = State.CHANGING_RIGHT;
                                 CurrentToOut();
-                                Debug.Log("Change Right");
                             }
                         }
                     }
@@ -143,7 +150,6 @@ public class CharactersManager : CulverinBehaviour
                             {
                                 state = State.CHANGING_LEFT;
                                 CurrentToOut();
-                                Debug.Log("Change Left");
                             }
                         }
                     }
@@ -189,8 +195,10 @@ public class CharactersManager : CulverinBehaviour
 
             case State.CHANGING_LEFT:
                 {
+                    Debug.Log("[blue] LEFT OUT");
                     if (IsCharacterAnimationStopped(current_character, "Out"))
                     {
+                        Debug.Log("[blue]  ----------------------------");
                         ChangeLeft();
 
                         //Change GameObjects --------------------
@@ -206,8 +214,10 @@ public class CharactersManager : CulverinBehaviour
 
             case State.CHANGING_RIGHT:
                 {
+                    Debug.Log("[green] RIGHT OUT");
                     if (IsCharacterAnimationStopped(current_character, "Out"))
                     {
+                        Debug.Log("[blue]  ----------------------------");
                         ChangeRight();
 
                         //Change GameObjects --------------------
@@ -317,6 +327,8 @@ public class CharactersManager : CulverinBehaviour
 
     void CurrentToOut()
     {
+        changing = true;
+
         Vector3 pos = transform.local_position;
         Vector3 vfront = transform.forward;
         Mathf.Round(vfront.x);
@@ -410,6 +422,26 @@ public class CharactersManager : CulverinBehaviour
         else if (characterGO.GetName() == "Theon")
         {
             return characterGO.GetComponent<TheonController>().IsAnimationStopped(name);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool IsCharacterAnimationRunning(GameObject characterGO, string name)
+    {
+        if (characterGO.GetName() == "Jaime")
+        {
+            return characterGO.GetComponent<JaimeController>().IsAnimationRunning(name);
+        }
+        else if (characterGO.GetName() == "Daenerys")
+        {
+            return characterGO.GetComponent<DaenerysController>().IsAnimationRunning(name);
+        }
+        else if (characterGO.GetName() == "Theon")
+        {
+            return characterGO.GetComponent<TheonController>().IsAnimationRunning(name);
         }
         else
         {

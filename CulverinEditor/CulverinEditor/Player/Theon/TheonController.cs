@@ -111,16 +111,16 @@ public class TheonController : CharacterController
                         {
                             //Check For Input + It has to check if he's moving to block attack (¿?)
                             CheckAttack();
-
+                        
                             if (reloading)
                             {
                                 anim_controller = theon_obj.GetComponent<CompAnimation>();
-
                                 if (anim_controller.IsAnimationRunning("Idle"))
-                                {
-                                    Debug.Log("[error] Finished reloading");
+                                {                          
                                     reloading = false;
+                                    Debug.Log("[error] Finished reloading");
                                 }
+
                             }
                             break;
                         }
@@ -328,7 +328,15 @@ public class TheonController : CharacterController
 
     public override bool IsAnimationStopped(string name)
     {
+        anim_controller = theon_obj.GetComponent<CompAnimation>();
         return anim_controller.IsAnimationStopped(name);
+    }
+
+    public override bool IsAnimationRunning(string name)
+    {
+        Debug.Log("[orange] THEON ANIMATION RUNNING");
+        anim_controller = theon_obj.GetComponent<CompAnimation>();
+        return anim_controller.IsAnimationRunning(name);
     }
 
     public override void ToggleMesh(bool active)

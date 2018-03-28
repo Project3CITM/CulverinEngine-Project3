@@ -359,6 +359,13 @@ public class JaimeController : CharacterController
         return anim_controller.IsAnimationStopped(name);
     }
 
+    public override bool IsAnimationRunning(string name)
+    {
+        anim_controller = jaime_obj.GetComponent<CompAnimation>();
+        Debug.Log("[orange] JAIME ANIMATION RUNNING");
+        return anim_controller.IsAnimationRunning(name);
+    }
+
     public void PrepareLeftAbility()
     {
         button = jaime_button_left.GetComponent<CompButton>();

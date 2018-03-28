@@ -12,7 +12,7 @@ public class TheonCD_Secondary : CoolDown
     {
         Debug.Log("FUCK THIS SHIT");
         if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0
-            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetState() == 0)
+            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
         {
             if (in_cd == false)
             {

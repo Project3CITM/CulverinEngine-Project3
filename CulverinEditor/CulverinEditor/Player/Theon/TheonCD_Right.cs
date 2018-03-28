@@ -12,7 +12,7 @@ public class TheonCD_Right : CoolDown
     {
         if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0 
             && GetLinkedObject("theon_obj").GetComponent<TheonController>().reloading == false
-            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetState() == 0)
+            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
         {
             if (in_cd == false)
             {
