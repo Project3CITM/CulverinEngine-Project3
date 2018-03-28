@@ -26,6 +26,9 @@ public:
 
 
 	void Update(float dt);
+	void ShowOptions();
+	void ShowInspectorInfo();
+	void CopyValues(const CompUIAnimation * component);
 private:
 	void PlayAnimation(float dt);
 public:
