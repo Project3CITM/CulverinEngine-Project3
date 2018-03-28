@@ -2622,7 +2622,33 @@ struct ExampleAppConsole
 			if (!filter.PassFilter(item))
 				continue;
 			ImVec4 col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // A better implementation may store a type per-item. For the sample let's just parse the text.
-			if (strstr(item, "[error]")) col = ImColor(1.0f, 0.4f, 0.4f, 1.0f);
+			if (strstr(item, "[error]"))
+			{
+				col = ImColor(1.0f, 0.4f, 0.4f, 1.0f);
+			}		
+			//COLOR LOGS --------
+			else if (strstr(item, "[blue]"))
+			{
+				col = ImColor(0.0f, 0.5f, 1.0f, 1.0f);
+			}
+			else if (strstr(item, "[green]"))
+			{
+				col = ImColor(0.062f, 0.678f, 0.09f, 1.0f);
+			}
+			else if (strstr(item, "[yellow]"))
+			{
+				col = ImColor(1.0f, 1.0f, 0.02f, 1.0f);
+			}
+			else if (strstr(item, "[orange]"))
+			{
+				col = ImColor(1.0f, 0.423f, 0.02f, 1.0f);
+			}
+			else if (strstr(item, "[pink]"))
+			{
+				col = ImColor(1.0f, 0.02f, 0.941f, 1.0f);
+			}
+			// -------------------
+						
 			else if (strncmp(item, "# ", 2) == 0) col = ImColor(1.0f, 0.78f, 0.58f, 1.0f);
 			ImGui::PushStyleColor(ImGuiCol_Text, col);
 			ImGui::TextUnformatted(item);
