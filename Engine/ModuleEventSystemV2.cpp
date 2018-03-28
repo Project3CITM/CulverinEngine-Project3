@@ -3,6 +3,7 @@
 #include "ParticleSystem.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
+#include "CompMaterial.h"
 
 void PushEvent(Event& event)
 {
@@ -261,6 +262,10 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 				event.Set_event_data_PushedWhileIteriting(true);
 				EventPushedWhileIteratingMaps_DrawV = true;
 			}
+
+
+
+
 			DrawV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event));
 			break;
 		case event.draw.DRAW_3D_ALPHA:

@@ -59,8 +59,8 @@ enum EventType
 	EVENT_CREATE_SHADER_PROGRAM,
 	EVENT_SEND_ALL_SHADER_OBJECTS,
 	EVENT_OPEN_SHADER_EDITOR,
-	EVENT_REQUEST_3D_3DA_MM,		//Call it from your code to get a reference to the drawable events multimap
-	EVENT_SEND_3D_3DA_MM,			//This event is sent if you call EVENT_REQUEST_3D_3DA_MM with the drawable events multimap
+	EVENT_REQUEST_3D_3DA_MM,								//Call it from your code to get a reference to the drawable events multimap
+	EVENT_SEND_3D_3DA_MM,									//This event is sent if you call EVENT_REQUEST_3D_3DA_MM with the drawable events multimaps
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
@@ -79,12 +79,13 @@ enum EventType
 	EVENT_TIME_MANAGER,
 	EVENT_WINDOW_RESIZE,
 	EVENT_DELETE_GO,				//Keep this event last
-	MAXEVENTS						//Keep this at the bottom, needed to know how many events se have
+	MAXEVENTS						//Keep this at the bottom, needed to know how many events we have
 };
 
 /*--------------------------------------------------*/
 /*-------------------Audio Engine-------------------*/
 /*--------------------------------------------------*/
+
 
 /*--------------------------------------------------*/
 /*------------------Gameplay System-----------------*/
@@ -283,30 +284,33 @@ union Event
 	Event() {}
 	~Event() {}
 
-	inline void Set_event_data(EventType type, unsigned int FrameDelay = 0, unsigned int TimeDelay = 0);
-	inline void Set_event_data_f(EventType type, unsigned int FrameDelay = 0, float TimeDelay = 0.0f);
-	inline void Set_event_data_type(EventType type);
-	inline void Set_event_data_frame_delay(unsigned int FrameDelay);
-	inline void Set_event_data_time_delay(unsigned int TimeDelay);
-	inline void Set_event_data_time_delay_f(float TimeDelay);
-	inline void Set_event_data_PushedWhileIteriting(bool PushedWhileIteriting);
-	inline void Get_event_data(EventType& type, unsigned int& FrameDelay, unsigned int& TimeDelay, bool& PushedWhileIteriting);
-	inline void Get_event_data_f(EventType& type, unsigned int& FrameDelay, float& TimeDelay, bool& PushedWhileIteriting);
-	inline void Get_event_data_type(EventType& type);
-	inline EventType Get_event_data_type();
-	inline void Get_event_data_frame_delay(unsigned int& FrameDelay);
-	inline unsigned int Get_event_data_frame_delay();
-	inline void Get_event_data_time_delay(unsigned int& TimeDelay);
-	inline unsigned int Get_event_data_time_delay();
-	inline void Get_event_data_time_delay_f(float& TimeDelay);
-	inline float Get_event_data_time_delay_f();
-	inline void Get_event_data_PushedWhileIteriting(bool& PushedWhileIteriting);
-	inline bool Get_event_data_PushedWhileIteriting();
+	//Setters
+	inline void Set_event_data(EventType type, unsigned int FrameDelay = 0, unsigned int TimeDelay = 0);							//Initialize event_data with time delay as miliseconds uint
+	inline void Set_event_data_f(EventType type, unsigned int FrameDelay = 0, float TimeDelay = 0.0f);								//Initialize event_data with time delay as seconds float
+	inline void Set_event_data_type(EventType type);																				//When the event is initialized, you can change type with this method
+	inline void Set_event_data_frame_delay(unsigned int FrameDelay);																//When the event is initialized, you can change frame delay with this method
+	inline void Set_event_data_time_delay(unsigned int TimeDelay);																	//When the event is initialized, you can change time delay as miliseconds with this method
+	inline void Set_event_data_time_delay_f(float TimeDelay);																		//When the event is initialized, you can change time delay as seconds with this method
+	inline void Set_event_data_PushedWhileIteriting(bool PushedWhileIteriting);														//DO NOT USE, This is to set the bool, used by Event System for correct event management
+	//Getters
+	inline void Get_event_data(EventType& type, unsigned int& FrameDelay, unsigned int& TimeDelay, bool& PushedWhileIteriting);		//Get all event_data variables, time delay as miliseconds uint
+	inline void Get_event_data_f(EventType& type, unsigned int& FrameDelay, float& TimeDelay, bool& PushedWhileIteriting);			//Get all event_data variables, time delay as seconds float
+	inline void Get_event_data_type(EventType& type);																				//Get event type by reference
+	inline EventType Get_event_data_type();																							//Get event type as return value
+	inline void Get_event_data_frame_delay(unsigned int& FrameDelay);																//Get event frame delay by reference
+	inline unsigned int Get_event_data_frame_delay();																				//Get event frame delay as return value
+	inline void Get_event_data_time_delay(unsigned int& TimeDelay);																	//Get event time delay as miliseconds uint by reference
+	inline unsigned int Get_event_data_time_delay();																				//Get event time delay as miliseconds uint as return value
+	inline void Get_event_data_time_delay_f(float& TimeDelay);																		//Get event time delay as seconds float by reference
+	inline float Get_event_data_time_delay_f();																						//Get event time delay as seconds float as return value
+	inline void Get_event_data_PushedWhileIteriting(bool& PushedWhileIteriting);													//DO NOT USE, This is to get the bool by refernce, used by Event System for correct event management
+	inline bool Get_event_data_PushedWhileIteriting();																				//DO NOT USE, This is to get the bool as return value, used by Event System for correct event management
 
-	/*----------------Event Data Struct-----------------*/
+	/*--------------------Event Data--------------------*/
 	uint64_t event_data;
 
 	/*-------------------Audio Engine-------------------*/
+
 
 	/*------------------Gameplay System-----------------*/
 	EScriptDisabled script_disabled;
@@ -325,6 +329,7 @@ union Event
 	ESend3D3DAMM send_3d3damm;
 
 	/*----------------Skeletal Animation----------------*/
+
 
 	/*------------------User Interface------------------*/
 	EGUIAxis gui_axis;
