@@ -34,18 +34,55 @@ public class BarrelFall : CulverinBehaviour
     private bool get_init_pos = true;
     private Vector3 initial_position;
 
+    // -------------------------
+    // Floating 
+
+    private float floatingTimeCounter = 0.0f;
+    public float floatingPeriod = 3.0f;
+    public float floatingAnimationDuration = 2.0f;
+    private float timeToNextFloatAnim; // Used to let add some randomness
+    public float floatingDisplacementMultiplier = 2.0f;
+
+    // -----------------------------
+
 
     CompAudio audio;
 
     void Start()
     {
         audio = GetComponent<CompAudio>();
+        timeToNextFloatAnim = floatingPeriod; 
     }
 
     void Update()
     {
         if (placed)
+        {
+            if (mode_puzzle == ModeBarrel.FILLING)
+            {
+                // It is not a path barrel
+                floatingTimeCounter += Time.deltaTime;
+
+                if (floatingTimeCounter >= timeToNextFloatAnim)
+                {
+                    // It is animating or must end the animation
+                    if (floatingTimeCounter >= (timeToNextFloatAnim + floatingAnimationDuration))
+                    {
+                        // Stop animation and reset
+                        // TODO: Need to reset the position to a certain pos??
+                        floatingTimeCounter = 0.0f;
+                        // TODO: change timeToNextFloatAnim with some randomness??
+                    }
+                    else
+                    {
+                        // Do floating animation
+                        DoFloatAnimation();
+                    }
+                }
+            }
+
             return;
+        }
 
         if(get_init_pos)
         {
@@ -170,6 +207,16 @@ public class BarrelFall : CulverinBehaviour
         fall_displacement = fall_time = 0.0f;
         gameObject.SetActive(false);      
        
+    }
+
+    private void DoFloatAnimation()
+    {
+        Vector3 pos = transform.GetGlobalPosition();
+
+        float t = Mathf.Cos(Time.realtimeSinceStartup * 2.0f) * floatingDisplacementMultiplier * Time.deltaTime;
+        pos.y += t;
+
+        transform.SetGlobalPosition(pos);
     }
 }
 
