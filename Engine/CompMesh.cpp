@@ -604,6 +604,17 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompMesh::SyncComponent(GameObject * sync_parent)
+{
+	parent->GetComponentTransform()->UpdateGlobalTransform();
+	if (resource_mesh != nullptr)
+	{
+		parent->box_fixed = resource_mesh->aabb_box;
+	}
+	float4x4 temp = parent->GetComponentTransform()->GetGlobalTransform();
+	parent->box_fixed.TransformAsAABB(temp);
+}
+
 void CompMesh::LinkSkeleton()
 {
 	if (skeleton != nullptr)

@@ -5,7 +5,6 @@
 #include "Globals.h"
 #include "ModuleFramebuffers.h"
 #include "CompMesh.h"
-#include "Quadtree.h"
 #include "Octree.h"
 #include <vector>
 

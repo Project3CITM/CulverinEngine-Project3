@@ -26,7 +26,6 @@
 #include "WindowInspector.h"
 #include "CompCamera.h"
 #include "MathGeoLib.h"
-#include "Quadtree.h"
 #include "JSONSerialization.h"
 #include "SkyBox.h"
 #include "ModuleRenderGui.h"
@@ -919,6 +918,9 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 // -----------------------------------------------------------------------------
 void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain, bool is_reimport)
 {
+	//Clear octree 
+	octree.Clear(false);
+
 	GameObject* child_index = nullptr;
 	for (int i = 0; i < gameobject->GetNumChilds(); i++)
 	{

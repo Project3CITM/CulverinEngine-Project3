@@ -17,12 +17,12 @@ struct OctreeLimits
 class OctreeNode
 {
 public:
-	OctreeNode(const AABB& box);
+	OctreeNode(const AABB& box, OctreeNode* parent = nullptr);
 	~OctreeNode();
 
 	bool isLeaf() const;
 
-	void Insert(GameObject* obj, OctreeLimits& limits);
+	bool Insert(GameObject* obj, OctreeLimits& limits);
 	void Remove(GameObject* obj);
 
 	void DebugDraw();

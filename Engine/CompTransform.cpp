@@ -459,6 +459,7 @@ void CompTransform::UpdateGlobalTransform()
 
 	if (parent_object != nullptr && parent_object->GetUUID() != 1)
 	{
+		parent_object->GetComponentTransform()->UpdateGlobalTransform();
 		global_transform = parent_object->GetComponentTransform()->GetGlobalTransform();
 		global_transform = global_transform * local_transform;
 	}
@@ -795,5 +796,6 @@ void CompTransform::Load(const JSON_Object* object, std::string name)
 	float4 rotation = App->fs->json_array_dotget_float4_string(object, name + "Rotation");
 	float3 scale = App->fs->json_array_dotget_float3_string(object, name + "Scale");
 	Init(position, rotation, scale);
+	SetLocalTransform();
 	Enable();
 }
