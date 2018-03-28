@@ -308,6 +308,7 @@ update_status ModuleInput::PreUpdate(float dt)
 				if (App->mode_game == false)
 				{
 					((Project*)App->gui->win_manager[PROJECT])->UpdateNow();
+					App->fs->UpdateFilesAssets();
 					App->fs->CheckNowfilesAssets();
 				}
 			}
