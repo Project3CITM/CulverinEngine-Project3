@@ -53,6 +53,7 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 		parent->childs.push_back(this);
 	}
 
+	bounding_box = nullptr;
 	box_fixed.SetNegativeInfinity();
 }
 
@@ -62,6 +63,8 @@ GameObject::GameObject(std::string nameGameObject)
 	SetVisible(true);
 	uid = App->random->Int();
 	name = nameGameObject;
+
+	bounding_box = nullptr;
 	box_fixed.SetNegativeInfinity();
 }
 
@@ -71,6 +74,8 @@ GameObject::GameObject(std::string nameGameObject, uint uuid)
 	SetVisible(true);
 	uid = uuid;
 	name = nameGameObject;
+
+	bounding_box = nullptr;
 	box_fixed.SetNegativeInfinity();
 }
 
@@ -90,12 +95,17 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 	visible = copy.IsVisible();
 	static_obj = copy.IsStatic();
 	bb_active = copy.IsAABBActive();
+
 	if (copy.box_fixed.IsFinite())
 	{
 		bounding_box = new AABB(*copy.bounding_box);
+		box_fixed = copy.box_fixed;
 	}
-	else bounding_box = nullptr;
-
+	else
+	{
+		bounding_box = nullptr;
+		box_fixed.SetNegativeInfinity();
+	}
 	//Create all components from copy object with same data
 	for (uint i = 0; i < copy.GetNumComponents(); i++)
 	{
@@ -109,18 +119,11 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 		childs.push_back(new GameObject(*copy.GetChildbyIndex(i), haveparent, parent_));
 		childs[i]->parent = this;
 	}
-	box_fixed.SetNegativeInfinity();
 }
 
 GameObject::~GameObject()
 {
 	//RELEASE_ARRAY(name); FIX THIS
-	// To Fix Delete Bounding Box, might crash deleting planes, right now we ignore planes bounding boxes
-	if (box_fixed.IsFinite())
-	{
-		delete bounding_box;
-		bounding_box = nullptr;
-	}
 
 	parent = nullptr;
 
@@ -367,7 +370,7 @@ void GameObject::Update(float dt)
 		}
 
 		// BOUNDING BOX -----------------
-		if (bounding_box != nullptr)
+		if (bounding_box != nullptr && box_fixed.IsFinite())
 		{
 			CompTransform* transform = (CompTransform*)(FindComponentByType(C_TRANSFORM));
 			if (transform != nullptr)
@@ -389,6 +392,13 @@ void GameObject::Update(float dt)
 
 bool GameObject::CleanUp()
 {
+	if (bounding_box != nullptr && box_fixed.IsFinite())
+	{
+		delete bounding_box;
+		bounding_box = nullptr;
+		box_fixed.SetNegativeInfinity();
+	}
+
 	//preUpdate Components --------------------------
 	for (uint i = 0; i < components.size(); i++)
 	{
@@ -2182,12 +2192,25 @@ void GameObject::SetParent(GameObject* new_parent)
 
 void GameObject::AddBoundingBox(const ResourceMesh* mesh)
 {
+	if (bounding_box != nullptr)
+	{
+		delete bounding_box;
+		bounding_box = nullptr;
+		box_fixed.SetNegativeInfinity();
+	}
+
 	if (bounding_box == nullptr)
 	{
 		bounding_box = new AABB();
+		bounding_box->SetNegativeInfinity();
+		bounding_box->Enclose(mesh->vertices, mesh->num_vertices);
+		box_fixed = *bounding_box;
+		CompTransform* transf = (CompTransform*)FindComponentByType(C_TRANSFORM);
+		if (transf != nullptr)
+		{
+			box_fixed.TransformAsAABB(transf->GetGlobalTransform());
+		}
 	}
-	bounding_box->SetNegativeInfinity();
-	bounding_box->Enclose(mesh->vertices, mesh->num_vertices);
 }
 
 void GameObject::DrawBoundingBox()

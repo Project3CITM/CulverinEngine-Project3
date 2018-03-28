@@ -75,7 +75,7 @@ public:
 	Quat GetGlobalQuat() const;
 	GameObject* GetCollidedObject()const;
 	float3 GetContactPoint() const;
-	float3 GetContactImpulse() const;
+	float3 GetContactNormal() const;
 
 	//Scripting Method ----------
 	void MoveStaticTo(float3 pos);

@@ -512,7 +512,7 @@ void CSharpScript::Clear()
 	{
 		if (variables[i]->game_object != nullptr)
 		{
-			variables[i]->game_object->FixedDelete(true);
+			variables[i]->game_object = nullptr;
 			variables[i]->select_game_object = false;
 		}
 	}

@@ -562,11 +562,11 @@ float3 CompCollider::GetContactPoint() const
 	else return transform->GetPosGlobal();
 }
 
-float3 CompCollider::GetContactImpulse() const
+float3 CompCollider::GetContactNormal() const
 {
 	if (collision_data.is_contact)
 	{
-		return collision_data.impact_normal;
+		return collision_data.impact_normal.Normalized();
 	}
 	else return float3::zero;
 }

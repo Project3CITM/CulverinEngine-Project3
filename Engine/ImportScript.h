@@ -227,6 +227,8 @@ private:
 
 	/*Component Collier*/
 	static MonoObject*	GetCollidedObject(MonoObject * object);
+	static MonoObject*	GetContactPoint(MonoObject* object);
+	static MonoObject*	GetContactNormal(MonoObject* object);
 	static void			MoveStaticColliderTo(MonoObject* object, MonoObject* position);
 	static void			CallOnContact(MonoObject* object);
 	static void			CallOnTriggerEnter(MonoObject* object);
