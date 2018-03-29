@@ -7,7 +7,6 @@ public class ChasePlayer_Action : Action
     PerceptionEvent event_to_react;
     Movement_Action move;
     ACTION_RESULT move_return;
-    public bool chase_lancer = false;
     public bool forgot_event = false;
     public float check_player_timer = 1.0f;
     float timer = 0.0f;

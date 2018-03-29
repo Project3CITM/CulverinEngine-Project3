@@ -114,7 +114,6 @@ public class EnemySpear_BT : Enemy_BT
             //Debug.Log("Chase");
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
-            ((ChasePlayer_Action)current_action).chase_lancer = true;
             return;
         }
       

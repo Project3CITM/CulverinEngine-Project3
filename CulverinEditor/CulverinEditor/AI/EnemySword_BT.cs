@@ -70,7 +70,6 @@ public class EnemySword_BT : Enemy_BT
         {
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
-            ((ChasePlayer_Action)current_action).chase_lancer = false;
             return;
         }
 

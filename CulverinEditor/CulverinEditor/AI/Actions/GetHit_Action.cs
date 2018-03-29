@@ -3,7 +3,7 @@
 class GetHit_Action: Action
 {
     CompAnimation anim;
-    public float hit_speed = 1.0f;
+    public float duration = 1.0f;
 
     public GetHit_Action()
     {
@@ -25,18 +25,14 @@ class GetHit_Action: Action
         interupt = false;
         anim = GetComponent<CompAnimation>();
         anim.SetTransition("ToHit");
-        anim.SetClipsSpeed(hit_speed);
+        anim.SetClipDuration("Hit", duration);
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        anim = GetComponent<CompAnimation>();
-
-        if (anim.IsAnimationStopped("Hit"))
-        {
+        if (GetComponent<CompAnimation>().IsAnimationStopped("Hit"))
             return ACTION_RESULT.AR_SUCCESS;
-        }
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 

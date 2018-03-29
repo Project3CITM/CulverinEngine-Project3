@@ -3,6 +3,8 @@ using CulverinEditor.Debug;
 
 class Engage_Action : Action
 {
+    public float duration = 1.0f;
+
     public Engage_Action()
     {
         action_type = ACTION_TYPE.ENGAGE_ACTION;
@@ -17,7 +19,7 @@ class Engage_Action : Action
     {
         Debug.Log("Engage Start");
         GetComponent<CompAnimation>().SetTransition("ToDraw");
-        GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+        GetComponent<CompAnimation>().SetClipDuration("Draw", duration);
         return true;
     }
 

@@ -3,6 +3,8 @@ using CulverinEditor.Debug;
 
 class Die_Action : Action
 {
+    public float duration = 1.0f;
+
     public Die_Action()
     {
         action_type = ACTION_TYPE.DIE_ACTION;
@@ -16,19 +18,14 @@ class Die_Action : Action
     public override bool ActionStart()
     {
         GetComponent<CompAnimation>().SetTransition("ToDie");
-        GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+        GetComponent<CompAnimation>().SetClipDuration("Die", duration);
         return true;
     }
 
-    /*public override ACTION_RESULT ActionUpdate()
+    public override ACTION_RESULT ActionUpdate()
     {
-        if (GetComponent<CompAnimation>().IsAnimationRunning("Die"))
-        {
-            Debug.Log("Dead");
-           // return ACTION_RESULT.AR_SUCCESS;
-        }
         return ACTION_RESULT.AR_IN_PROGRESS;
-    }*/
+    }
 
     public override bool ActionEnd()
     {
