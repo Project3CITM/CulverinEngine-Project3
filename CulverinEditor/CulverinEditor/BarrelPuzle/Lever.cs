@@ -68,8 +68,11 @@ public class Lever : CulverinBehaviour
 
     //--------------
 
+    public GameObject lever_interact = null;
     public GameObject lever_go = null;
     private CompAnimation anim_controller = null;
+
+    private bool on_lever_range = false;
     private bool on_lever_animation = false;
     private string lever_animation_name = "Lever_Down"; // TODO: Set the animation name
     private BarrelPuzzleManager barrel_puzzel_manager = null; // Put both scripts in same GO.
@@ -149,6 +152,7 @@ public class Lever : CulverinBehaviour
         current_path = new Path(barrel_per_line, number_lines, puzzle_orientation);
         GeneratePath();
 
+        lever_interact = GetLinkedObject("lever_interact");
         
         //// Testing --------------------------------------------
         //for (int y = 0; y < number_lines; y++)
@@ -189,6 +193,17 @@ public class Lever : CulverinBehaviour
             }
         }
 
+        //-- Lever Triggered -----
+        if(on_lever_range && !active_lever && !on_lever_animation)
+        {
+            //TODO: Change to GetKey_Action
+            if(Input.GetKeyDown(KeyCode.Space))
+            {
+                OnLeverActivated();
+                lever_interact.SetActive(false);
+            }
+        }
+
 
         if (Input.GetKeyDown(KeyCode.N))
         {
@@ -212,7 +227,6 @@ public class Lever : CulverinBehaviour
              }
          }
 
-      ;
         if (active_lever)
         {
             if (!phase1) // Set info all barrels
@@ -281,6 +295,39 @@ public class Lever : CulverinBehaviour
             {
                 ResetPuzzle();
             }
+        }
+    }
+
+    // OnTrigger Lever ------------------------
+    void OnTriggerEnter()
+    {
+        if (active_lever)
+        {
+            return;
+        }
+
+        CompCollider col = GetComponent<CompCollider>();
+        GameObject obj_col = col.GetCollidedObject();
+        if (obj_col != null && obj_col.CompareTag("player"))
+        {
+            lever_interact.SetActive(true);
+            on_lever_range = true;
+        }
+    }
+
+    void OnTriggerLost()
+    {
+        if (active_lever)
+        {
+            return;
+        }
+
+        CompCollider col = GetComponent<CompCollider>();
+        GameObject obj_col = col.GetCollidedObject();
+        if (obj_col != null && obj_col.CompareTag("player"))
+        {
+            lever_interact.SetActive(false);
+            on_lever_range = false;
         }
     }
 
@@ -425,23 +472,6 @@ public class Lever : CulverinBehaviour
         active_lever = true; // TODO: Verify this is correct and uncomment this line
 
         countdown.StartCountdown();
-    }
-
-    void OnTriggerEnter()
-    {
-        // TODO: Activate UI button "Interact"
-        Debug.Log("OnTriggerEnter Lever");
-        if (!active_lever)
-        {
-            Debug.Log("Lever Ready");
-            OnLeverActivated();
-            Debug.Log("Lever Activated");
-        }
-    }
-
-    void OnTriggerLost()
-    {
-        // TODO: Deactivate UI button "Interact"
     }
 
     // Convert from tile coords to world coords
