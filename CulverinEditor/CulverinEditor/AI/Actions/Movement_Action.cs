@@ -388,6 +388,12 @@ public class Movement_Action : Action
         }
     }
 
+    public void GoToPlayer(bool chase = true)
+    {
+        player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+        GoToPrevious(x, y, chase);
+    }
+
     public void Accelerate(Vector3 acceleration)    
     {
         current_acceleration.x = current_acceleration.x + acceleration.x;

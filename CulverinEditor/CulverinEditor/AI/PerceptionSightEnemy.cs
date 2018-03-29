@@ -48,7 +48,7 @@ public class PerceptionSightEnemy : CulverinBehaviour
 
             List<PathNode> seen_tiles = GetSeenTiles(GetDirection());
 
-            GetPlayerTilePos(out int player_x, out int player_y);
+            player_obj.GetComponent<MovementController>().GetPlayerPos(out int player_x, out int player_y);
 
             PathNode player_tile = new PathNode(player_x, player_y);
 
@@ -99,13 +99,6 @@ public class PerceptionSightEnemy : CulverinBehaviour
             ret = DIRECTION.E_DIR_WEST;
 
         return ret;
-    }
-
-    public void GetPlayerTilePos(out int player_x, out int player_y)
-    {
-        player_obj.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-        player_x = x;
-        player_y = y;
     }
 
     private List<PathNode> GetSeenTiles(DIRECTION dir)

@@ -55,8 +55,7 @@ public class ChasePlayer_Action : Action
             if (timer >= check_player_timer)
             {
                 timer = 0.0f;
-                GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
-                move.GoToPrevious(player_x, player_y, true);
+                move.GoToPlayer();
             }
 
             if (GetComponent<PerceptionSightEnemy>().player_seen == false)
