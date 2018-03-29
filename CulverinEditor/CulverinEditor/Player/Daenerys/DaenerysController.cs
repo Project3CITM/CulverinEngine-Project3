@@ -403,6 +403,13 @@ public class DaenerysController : CharacterController
         return anim_controller.IsAnimationStopped(name);
     }
 
+    public override bool IsAnimationRunning(string name)
+    {
+        Debug.Log("[orange] DAENERYS ANIMATION RUNNING");
+        anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+        return anim_controller.IsAnimationRunning(name);
+    }
+
     public override void ToggleMesh(bool active)
     {
         rarm_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active, rarm_daenerys_obj);

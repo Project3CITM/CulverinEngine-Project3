@@ -155,6 +155,12 @@ public class CharacterController : CulverinBehaviour
         return true;
     }
 
+    public virtual bool IsAnimationRunning(string name)
+    {
+        return true;
+    }
+
+
     public virtual void UpdateHUD(bool active, bool left)
     {
     }

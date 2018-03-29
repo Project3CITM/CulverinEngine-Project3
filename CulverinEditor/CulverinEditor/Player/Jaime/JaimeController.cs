@@ -35,6 +35,7 @@ public class JaimeController : CharacterController
     public float left_ability_dmg = 10.0f;
     public float left_ability_cost = 10.0f;
     JaimeCD_Left left_ability_cd;
+    bool do_left_attack = false;
 
     /* To perform different animations depending on the hit streak */
     int hit_streak = 0; 
@@ -124,6 +125,14 @@ public class JaimeController : CharacterController
                         {
                             //Check for end of the Attack animation
                             anim_controller = jaime_obj.GetComponent<CompAnimation>();
+
+                            //Apply damage over x time of the attack animation
+                            if (do_left_attack && anim_controller.IsAnimOverXTime(0.7f))
+                            {
+                                DoLeftAbility();
+                                do_left_attack = false;
+                            }
+
                             if (anim_controller.IsAnimationStopped(current_anim))
                             {
                                 state = State.IDLE;
@@ -359,6 +368,13 @@ public class JaimeController : CharacterController
         return anim_controller.IsAnimationStopped(name);
     }
 
+    public override bool IsAnimationRunning(string name)
+    {
+        anim_controller = jaime_obj.GetComponent<CompAnimation>();
+        Debug.Log("[orange] JAIME ANIMATION RUNNING");
+        return anim_controller.IsAnimationRunning(name);
+    }
+
     public void PrepareLeftAbility()
     {
         button = jaime_button_left.GetComponent<CompButton>();
@@ -376,8 +392,18 @@ public class JaimeController : CharacterController
                 left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
                 //Check if the ability is not in cooldown
                 if (!left_ability_cd.in_cd)
-                { 
-                    DoLeftAbility(left_ability_cost);              
+                {
+                    // Decrease stamina -----------
+                    DecreaseStamina(left_ability_cost);
+
+                    // Set Attacking Animation depending on the hit_streak
+                    current_anim = anim_name[hit_streak];
+                    SetAnimationTransition("To" + current_anim, true);
+
+                    do_left_attack = true;
+
+                    //Go to ATTACK State
+                    SetState(State.ATTACKING);
                     return true;
                 }
                 else
@@ -393,15 +419,8 @@ public class JaimeController : CharacterController
         return false;
     }
 
-    public void DoLeftAbility(float cost)
+    public void DoLeftAbility()
     {
-        // Decrease stamina -----------
-        DecreaseStamina(cost);
-
-        // Set Attacking Animation depending on the hit_streak
-        current_anim = anim_name[hit_streak];
-        SetAnimationTransition("To"+current_anim, true);
-
         // Attack the enemy in front of you
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
         Debug.Log("Raycast");
@@ -412,10 +431,8 @@ public class JaimeController : CharacterController
             if (coll_object.CompareTag("Enemy"))
             {
                 curr_hit_time = 0.0f;
-                Debug.Log("Enemies manager 1");
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
                 EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
-                Debug.Log("Enemies manager 2");
 
                 float damage = 1.0f;
 
@@ -465,8 +482,6 @@ public class JaimeController : CharacterController
 
         // Play the Sound FX
         PlayFx("SwordSlash");
-
-        SetState(CharacterController.State.ATTACKING);
     }
 
     public void PrepareRightAbility()
