@@ -360,12 +360,12 @@ public class Movement_Action : Action
         GoTo(obj.GetTileX(), obj.GetTileY());
     }
 
-    public void GoToPrevious(int obj_x, int obj_y, bool chase = false)    // Sets a path to the previous tile of your objective // Useful for chasing the player
+    private void GoToPrevious(int obj_x, int obj_y, uint range, bool chase = false)    // Sets a path to the previous tile of your objective // Useful for chasing the player
     {
         this.chase = chase;
         Pathfinder pf = map.GetComponent<Pathfinder>();
         path.Clear();
-        List<PathNode> adjacent_walkable_tiles = pf.GetWalkableAdjacents(new PathNode(obj_x, obj_y));
+        List<PathNode> adjacent_walkable_tiles = pf.GetWalkableAdjacents(new PathNode(obj_x, obj_y), range);
         int current_x = GetCurrentTileX();
         int current_y = GetCurrentTileY();
 
@@ -395,47 +395,17 @@ public class Movement_Action : Action
         }
     }
 
-
-    public PathNode CalculatePrevious(int obj_x, int obj_y, bool chase = false)    // Sets a path to the previous tile of your objective // Useful for chasing the player
-    {
-        this.chase = chase;
-        Pathfinder pf = map.GetComponent<Pathfinder>();
-        path.Clear();
-        List<PathNode> adjacent_walkable_tiles = pf.GetWalkableAdjacents(new PathNode(obj_x, obj_y));
-        int current_x = GetCurrentTileX();
-        int current_y = GetCurrentTileY();
-
-        if (adjacent_walkable_tiles.Count >= 0)
-        {
-            PathNode closest = adjacent_walkable_tiles[0];
-            int closest_distance = Mathf.Abs(closest.GetTileX() - current_x) + Mathf.Abs(closest.GetTileY() - current_y);
-
-            if (adjacent_walkable_tiles.Count > 1)
-            {
-                for (int i = 1; i < adjacent_walkable_tiles.Count; i++)
-                {
-                    int x_distance = Mathf.Abs(adjacent_walkable_tiles[i].GetTileX() - current_x);
-                    int y_distance = Mathf.Abs(adjacent_walkable_tiles[i].GetTileY() - current_y);
-
-                    int distance = x_distance + y_distance;
-
-                    if (distance < closest_distance)
-                    {
-                        closest = adjacent_walkable_tiles[i];
-                        closest_distance = distance;
-                    }
-                }
-            }
-            return closest;
-        }
-
-        return new PathNode(0,0);
-    }
-
-    public void GoToPlayer(bool chase = true)
+    public void GoToPlayer()
     {
         player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-        GoToPrevious(x, y, chase);
+
+        Enemy_BT bt = GetComponent<EnemySword_BT>();
+        if (bt == null)
+            bt = GetComponent<EnemyShield_BT>();
+        if (bt == null)
+            bt = GetComponent<EnemySpear_BT>();
+
+        GoToPrevious(x, y, (uint)bt.range, true);
     }
 
     public void Accelerate(Vector3 acceleration)    

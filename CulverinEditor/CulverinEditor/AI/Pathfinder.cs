@@ -192,36 +192,29 @@ using CulverinEditor.Pathfinding;
             return map_height;
         }
 
-        public List<PathNode> GetWalkableAdjacents(PathNode node)
+        public List<PathNode> GetWalkableAdjacents(PathNode node, uint range = 1)
         {
             List<PathNode> ret = new List<PathNode>();
 
-            if (node.GetTileX() < map_width - 1)
+            for (int i = (int)-range; i <= range; i++)
             {
-                if (tile_map[node.GetTileX() + 1, node.GetTileY()] != 1)
-                    ret.Add(new PathNode(node.GetTileX() + 1, node.GetTileY()));
-            }
+                if (i == 0)
+                    continue;
 
-            if (node.GetTileX() > 0)
-            {
-                if (tile_map[node.GetTileX() - 1, node.GetTileY()] != 1)
-                    ret.Add(new PathNode(node.GetTileX() - 1, node.GetTileY()));
-            }
+                if (node.GetTileX() + i > 0 && node.GetTileX() + i < map_width)
+                {
+                    if (tile_map[node.GetTileX() + i, node.GetTileY()] != 1)
+                        ret.Add(new PathNode(node.GetTileX() + i, node.GetTileY()));
+                }
 
-            if (node.GetTileY() < map_height - 1)
-            {
-                if (tile_map[node.GetTileX(), node.GetTileY() + 1] != 1)
-                    ret.Add(new PathNode(node.GetTileX(), node.GetTileY() + 1));
-            }
-
-            if (node.GetTileY() > 0)
-            {
-                if (tile_map[node.GetTileX(), node.GetTileY() - 1] != 1)
-                    ret.Add(new PathNode(node.GetTileX(), node.GetTileY() - 1));
+                if (node.GetTileY() + i > 0 && node.GetTileY() + i < map_height)
+                {
+                    if (tile_map[node.GetTileX(), node.GetTileY() + i] != 1)
+                        ret.Add(new PathNode(node.GetTileX(), node.GetTileY() + i));
+                }
             }
 
             return ret;
-
         }
 
         public bool IsWalkableTile(uint tile_to_check_x, uint tile_to_check_y)

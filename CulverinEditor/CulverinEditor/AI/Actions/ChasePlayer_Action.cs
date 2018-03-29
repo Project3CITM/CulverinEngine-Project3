@@ -30,8 +30,7 @@ public class ChasePlayer_Action : Action
     public override bool ActionStart()
     {
         event_to_react.start_counting = false;
-
-        move.GoToPrevious(event_to_react.objective_tile_x, event_to_react.objective_tile_y, true);
+        move.GoToPlayer();
         bool ret = move.ActionStart();
         return ret;
     }
@@ -56,26 +55,6 @@ public class ChasePlayer_Action : Action
             if (timer >= check_player_timer)
             {
                 timer = 0.0f;
-                GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
-                //move.GoToPrevious(player_x, player_y, true);
-                if (chase_lancer)
-                {
-                    PathNode temp_node = move.CalculatePrevious(player_x, player_y, true);
-                    int dest_x = temp_node.GetTileX();
-                    int dest_y = temp_node.GetTileY();
-                    if (dest_x != 0 && dest_y != 0)
-                    {
-                        move.GoToPrevious(dest_x, dest_y, true);
-                    }
-                }
-                else
-                {
-                    move.GoToPrevious(player_x, player_y, true);
-                }
-                    
-
-            }
-
                 move.GoToPlayer();
             }
 
