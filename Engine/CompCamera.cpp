@@ -282,19 +282,15 @@ void CompCamera::DoCulling()
 void CompCamera::CullStaticObjects()
 {
 	// First, set all static objects invisible
-	App->scene->RecalculateStaticObjects();
-	for (std::vector<GameObject*>::const_iterator item = App->scene->static_objects.cbegin(); item != App->scene->static_objects.cend(); ++item)
-	{
-		(*item)->SetVisible(false);
-	}
 
 	// Get all static objects that are inside the frustum (accelerated with quadtree)
+	candidates_to_cull.clear();
 	App->scene->octree.CollectIntersections(candidates_to_cull, frustum);
 
 	// Set visible only these static objects
 	while (!candidates_to_cull.empty())
 	{
-		candidates_to_cull.front()->SetVisible(true); // INSIDE CAMERA VISION
+		candidates_to_cull.front()->Draw(); // INSIDE CAMERA VISION
 		candidates_to_cull.pop_front();
 	}
 }

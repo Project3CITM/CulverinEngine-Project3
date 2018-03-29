@@ -10,7 +10,7 @@ class GameObject;
 
 struct OctreeLimits
 {
-	uint octreeMaxItems = 2;
+	uint octreeMaxItems = 5;
 	float octreeMinSize = 10.0f;
 };
 
