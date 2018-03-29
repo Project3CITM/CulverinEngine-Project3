@@ -2,21 +2,25 @@
 #define _MODULE_ANIMATION_H_
 #include "Globals.h"
 #include "Module.h"
-
+#include <queue>
 
 class AnimableComponent;
 enum ParameterValue;
 union AnimationValue;
+struct AnimData;
 
 struct KeyFrameData
 {
 	KeyFrameData(int key, AnimationValue value, ParameterValue parameter);
 	KeyFrameData(int key, AnimationValue value);
 	~KeyFrameData();
-
+	void ShowKeyValue(int i);
+	int max_keys = 0;
+	bool invalid_key = false;
 	std::vector<int> key_frames;
 	std::vector<AnimationValue> key_values;
 	ParameterValue parameter;
+
 };
 struct AnimData
 {
@@ -31,6 +35,7 @@ public:
 
 struct AnimationJson
 {
+	AnimationJson();
 	std::string name;
 	std::vector<AnimData> animations;
 
