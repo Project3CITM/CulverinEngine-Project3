@@ -122,7 +122,7 @@ struct ETrigger
 struct ECreateShaderProgram
 {
 	uint64_t event_data = 0;
-	const char* name = nullptr;	//std::string?
+	const char* name = nullptr;
 	Shader* Shader1 = nullptr;
 	Shader* Shader2 = nullptr;
 };
@@ -168,7 +168,6 @@ struct EGUIAxis
 	enum Direction
 	{
 		DIRECTION_NONE,
-
 		DIRECTION_UP,
 		DIRECTION_DOWN,
 		DIRECTION_RIGHT,
@@ -307,7 +306,7 @@ union Event
 	inline bool Get_event_data_PushedWhileIteriting();																				//DO NOT USE, This is to get the bool as return value, used by Event System for correct event management
 
 	/*--------------------Event Data--------------------*/
-	uint64_t event_data;
+	uint64_t event_data = 0;
 
 	/*-------------------Audio Engine-------------------*/
 

@@ -22,7 +22,12 @@ void AddListener(EventType type, Module* listener)
 
 ModuleEventSystemV2::ModuleEventSystemV2(bool start_enabled)
 {
-
+	name = "Event_System_V2";
+	Awake_enabled = true;
+	Start_enabled = true;
+	preUpdate_enabled = true;
+	Update_enabled = true;
+	postUpdate_enabled = true;
 }
 
 ModuleEventSystemV2::~ModuleEventSystemV2()
@@ -32,6 +37,7 @@ ModuleEventSystemV2::~ModuleEventSystemV2()
 
 bool ModuleEventSystemV2::Init(JSON_Object* node)
 {
+	perf_timer.Start();
 	//creation of event-listeners map
 	for (int i = 0; i < EventType::MAXEVENTS; i++)
 		MEventListeners.insert(std::pair<EventType, std::vector<Module*>>((EventType)i, std::vector<Module*>()));
@@ -39,26 +45,34 @@ bool ModuleEventSystemV2::Init(JSON_Object* node)
 	const std::vector<Module*>* ModuleList = App->GetModuleList();
 	for (std::vector<Module*>::const_iterator item = ModuleList->cbegin(); item != ModuleList->cend(); ++item)
 		(*item)->SetEventListeners();
+	Awake_t = perf_timer.ReadMs();
 	return true;
 }
 
 bool ModuleEventSystemV2::Start()
 {
+	perf_timer.Start();
+	Start_t = perf_timer.ReadMs();
 	return true;
 }
 
 update_status ModuleEventSystemV2::PreUpdate(float dt)
 {
+	perf_timer.Start();
+	preUpdate_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleEventSystemV2::Update(float dt)
 {
+	perf_timer.Start();
+	Update_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleEventSystemV2::PostUpdate(float dt)
 {
+	perf_timer.Start();
 	IteratingMaps = true;
 	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
 	//Draw opaque events
@@ -105,6 +119,15 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		}
 	}
 	//Draw alpha events
+	/*
+	bool alpha_draw = false;
+	if (DrawAlphaV.size() > 0) alpha_draw = true;
+	if (alpha_draw)
+	{
+		glEnable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
+	}
+	*/
 	for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -137,6 +160,13 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		}
 		item = DrawAlphaV.erase(item);
 	}
+	/*
+	if (alpha_draw)
+	{
+		glDisable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+	}
+	*/
 	//NoDraw events
 	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
 	{
@@ -185,7 +215,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	EventPushedWhileIteratingMaps_DrawV = false;
 	EventPushedWhileIteratingMaps_DrawAlphaV = false;
 	EventPushedWhileIteratingMaps_NoDrawV = false;
-
+	postUpdate_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 
