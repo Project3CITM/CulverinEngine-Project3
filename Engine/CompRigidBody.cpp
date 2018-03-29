@@ -181,7 +181,10 @@ void CompRigidBody::ShowInspectorInfo()
 		{
 			sleep_time = -sleep_time;
 		}
-		body->SetSleepTime(sleep_time);
+		if (!kinematic)
+		{
+			body->SetSleepTime(sleep_time);
+		}
 	}
 
 	// Lock Linear move -----------------
@@ -292,7 +295,10 @@ void CompRigidBody::SyncComponent(GameObject* sync_parent)
 		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 	}
 
-	body->SetSleepTime(sleep_time);
+	if (!kinematic)
+	{
+		body->SetSleepTime(sleep_time);
+	}
 }
 
 bool CompRigidBody::IsKinematic()
