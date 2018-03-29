@@ -157,4 +157,11 @@ public class EnemyShield_BT : Enemy_BT
                 break;
         }
     }
+
+    public override void ChangeTexturesToDamaged()
+    {
+        GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
+        GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
+        GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");
+    }
 }

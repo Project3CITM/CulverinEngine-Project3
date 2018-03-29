@@ -8,7 +8,7 @@ public class PushBack_Action : Action
     int target_x;
     int target_y;
 
-    public float push_speed = 10.0f;
+    public float push_time = 1.0f;
 
     void Start()
     {
@@ -35,8 +35,9 @@ public class PushBack_Action : Action
 
     public override bool ActionStart()
     {
-        //TODO: Animations GetComponent<CompAnimation>().SetTransition("ToHit");
         GetComponent<Align_Steering>().SetEnabled(false);
+        GetComponent<CompAnimation>().SetTransition("ToHit");
+        GetComponent<CompAnimation>().SetClipDuration("Hit", push_time);
 
         target_x = GetComponent<Movement_Action>().GetCurrentTileX();
         target_y = GetComponent<Movement_Action>().GetCurrentTileY();
@@ -52,10 +53,10 @@ public class PushBack_Action : Action
         if (interupt == true)
             return ACTION_RESULT.AR_FAIL;
 
-        if (ReachedTile(target_x, target_y))
+        if (GetComponent<CompAnimation>().IsAnimationStopped("Hit"))
         {
             Debug.Log("Pushed");
-           //TODO: Animations  GetComponent<CompAnimation>().SetTransition("ToIdle");
+            GetComponent<CompAnimation>().SetTransition("ToIdle");
             return ACTION_RESULT.AR_SUCCESS;
         }
 
@@ -65,9 +66,8 @@ public class PushBack_Action : Action
         movement.x = (target_x * GetComponent<Movement_Action>().tile_size) - my_pos.x;
         movement.z = (target_y * GetComponent<Movement_Action>().tile_size) - my_pos.z;
 
-        movement = movement.Normalized * 10;
-
-        transform.SetPosition(my_pos + (movement * Time.deltaTime * push_speed));
+        movement = movement.Normalized * GetComponent<Movement_Action>().tile_size * (1 - GetComponent<Arrive_Steering>().min_distance);
+        transform.SetPosition(my_pos + ((movement * Time.deltaTime) / push_time));
         
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
@@ -76,21 +76,6 @@ public class PushBack_Action : Action
     {
         interupt = false;
         return true;
-    }
-
-    public bool ReachedTile(int target_tile_x, int target_tile_y)
-    {
-        Vector3 my_pos = GetComponent<Transform>().position;
-
-        my_pos /= GetComponent<Movement_Action>().tile_size;
-
-        Vector3 result = new Vector3(Vector3.Zero);
-        result.x = target_tile_x - my_pos.x;
-        result.z = target_tile_y - my_pos.z;
-
-        float distance_to_target = result.Length;
-
-        return (distance_to_target < GetComponent<Arrive_Steering>().min_distance);
     }
 }
 

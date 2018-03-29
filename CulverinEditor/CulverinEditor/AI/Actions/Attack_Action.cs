@@ -61,13 +61,17 @@ public class Attack_Action : Action
             }
             else if (GetComponent<EnemyShield_BT>() != null)
             {
-                if (player.player_obj.GetComponent<Shield>().IsActive())
-                {
-                    //Animation to break defense
-                    Debug.Log("Break defense!");
-                }
+                //TODO: Need player functions to do this
+               // if (player.player_obj.GetComponent<Shield>().IsActive() || player.GetState() == (int)CharacterController.State.COVER)
+               // {
+               //     //Animation to break defense
+               //     player.DecreaseStamina(50);
+               //     Debug.Log("Break defense!");
+               // }
+               // else
+                    player.GetDamage(damage);
+
                 state = SWA_STATE.POST_APPLY;
-                player.GetDamage(damage);
             }
 
         }
