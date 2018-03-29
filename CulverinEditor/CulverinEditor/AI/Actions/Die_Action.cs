@@ -13,6 +13,7 @@ class Die_Action : Action
     public override bool ActionStart()
     {
         GetComponent<CompAnimation>().SetTransition("ToDie");
+        GetComponent<CompAudio>().PlayEvent("JaimeHurt");
         GetComponent<CompAnimation>().SetClipDuration("Die", duration);
         return true;
     }

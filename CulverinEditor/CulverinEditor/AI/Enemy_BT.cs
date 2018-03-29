@@ -124,12 +124,13 @@ public class Enemy_BT : BT
             next_action = GetComponent<Die_Action>();
             current_action.Interupt();
         }
-        else if (current_hp < total_hp * damaged_limit)
+        else if (life_state != ENEMY_STATE.ENEMY_DAMAGED && current_hp < total_hp * damaged_limit)
         {
             life_state = ENEMY_STATE.ENEMY_DAMAGED;
             current_interpolation = current_hp / total_hp;
             anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;
             GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+            ChangeTexturesToDamaged();
         }
     }
 
@@ -186,5 +187,10 @@ public class Enemy_BT : BT
     public bool InCombat()
     {
         return in_combat;
+    }
+
+    public virtual void ChangeTexturesToDamaged()
+    {
+        Debug.Log("[error] Change Textures not defined");
     }
 }

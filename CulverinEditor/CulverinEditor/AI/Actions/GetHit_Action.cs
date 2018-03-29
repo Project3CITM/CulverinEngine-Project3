@@ -17,6 +17,7 @@ class GetHit_Action: Action
         interupt = false;
         GetComponent<CompAnimation>().SetTransition("ToHit");
         GetComponent<CompAnimation>().SetClipDuration("Hit", duration);
+        GetComponent<CompAudio>().PlayEvent("JaimeHurt");
         return true;
     }
 

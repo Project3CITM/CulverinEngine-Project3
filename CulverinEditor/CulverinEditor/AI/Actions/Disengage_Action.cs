@@ -13,6 +13,7 @@ class Disengage_Action : Action
     public override bool ActionStart()
     {
         GetComponent<CompAnimation>().SetTransition("ToSheatheSword");
+        GetComponent<CompAudio>().PlayEvent("Dracarys");
         GetComponent<CompAnimation>().SetClipDuration("Sheathe Sword", duration);
         return true;
     }
