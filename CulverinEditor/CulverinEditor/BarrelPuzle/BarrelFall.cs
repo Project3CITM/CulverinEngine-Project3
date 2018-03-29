@@ -92,6 +92,7 @@ public class BarrelFall : CulverinBehaviour
         {
             initial_position = transform.GetGlobalPosition();
             get_init_pos = false;
+            Debug.Log("Getting initial pos");
         }
 
         if (in_tile == false)
@@ -232,7 +233,7 @@ public class BarrelFall : CulverinBehaviour
     {
         transform.SetGlobalPosition(initial_position);// = initial_position;
         in_tile = placed = sinking = false;
-        get_init_pos = true;
+        //get_init_pos = true;
         fall_displacement = fall_time = sink_timer = 0.0f;
         gameObject.SetActive(false);      
        

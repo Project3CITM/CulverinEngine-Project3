@@ -350,6 +350,8 @@ void JSONSerialization::SaveChildPrefab(JSON_Object* config_node, const GameObje
 	json_object_dotset_number_with_std(config_node, name + "Parent", uuidParent);
 	// Name- --------
 	json_object_dotset_string_with_std(config_node, name + "Name", gameObject.GetName());
+	// Tag ----------
+	json_object_dotset_string_with_std(config_node, name + "Tag", gameObject.GetTag());
 
 	// Components  ------------
 	std::string components = name;

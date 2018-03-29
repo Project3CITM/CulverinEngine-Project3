@@ -621,7 +621,7 @@ public class Lever : CulverinBehaviour
         for (; i >= 0; i--)
         {
             BarrelFall b_fall = list[i].GetComponent<BarrelFall>();            
-            b_fall.SetToSink();
+            b_fall.ResetBarrel();
         }
     }
 
