@@ -13,6 +13,8 @@
 #include "InputManager.h"
 #include "InputAction.h"
 #include "PlayerActions.h"
+#include "ResourceMesh.h"
+
 static int malloc_count;
 static void *counted_malloc(size_t size);
 static void counted_free(void *ptr);
