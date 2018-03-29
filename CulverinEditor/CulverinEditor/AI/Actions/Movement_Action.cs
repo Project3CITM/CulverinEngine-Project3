@@ -61,11 +61,6 @@ public class Movement_Action : Action
         action_type = ACTION_TYPE.MOVE_ACTION;
     }
 
-    public Movement_Action(float speed): base(speed)
-    {
-        action_type = ACTION_TYPE.MOVE_ACTION;
-    }
-
     void Start()
     {
         look_at_player = false;
@@ -94,8 +89,6 @@ public class Movement_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
-
         if (chase == false)
         {
             GetComponent<CompAnimation>().SetTransition("ToPatrol");

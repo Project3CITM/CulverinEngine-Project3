@@ -32,11 +32,6 @@ public class Investigate_Action : Action
         action_type = ACTION_TYPE.INVESTIGATE_ACTION;
     }
 
-    public Investigate_Action(float speed): base(speed)
-    {
-        action_type = ACTION_TYPE.INVESTIGATE_ACTION;
-    }
-
     public override bool ActionStart()
     {
         int current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();

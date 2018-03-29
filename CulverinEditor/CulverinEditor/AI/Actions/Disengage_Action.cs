@@ -10,11 +10,6 @@ class Disengage_Action : Action
         action_type = ACTION_TYPE.DISENGAGE_ACTION;
     }
 
-    public Disengage_Action(float anim_speed) : base(anim_speed)
-    {
-        action_type = ACTION_TYPE.DISENGAGE_ACTION;
-    }
-
     public override bool ActionStart()
     {
         GetComponent<CompAnimation>().SetTransition("ToSheatheSword");

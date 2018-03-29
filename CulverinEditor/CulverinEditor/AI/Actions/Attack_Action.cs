@@ -8,7 +8,7 @@ public class Attack_Action : Action
         action_type = ACTION_TYPE.ATTACK_ACTION;
     }
 
-    public Attack_Action(float attack_speed, float dmg): base(attack_speed)
+    public Attack_Action(float dmg)
     {
         action_type = ACTION_TYPE.ATTACK_ACTION;
         damage = dmg;

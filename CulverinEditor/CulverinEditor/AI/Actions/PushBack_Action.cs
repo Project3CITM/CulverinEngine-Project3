@@ -21,7 +21,7 @@ public class PushBack_Action : Action
         action_type = ACTION_TYPE.PUSHBACK_ACTION;
     }
 
-    public PushBack_Action(Vector3 push_direction_, float speed) : base(speed)
+    public PushBack_Action(Vector3 push_direction_)
     {
         action_type = ACTION_TYPE.PUSHBACK_ACTION;
         push_direction = push_direction_;

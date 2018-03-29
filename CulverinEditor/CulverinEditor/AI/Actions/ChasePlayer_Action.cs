@@ -21,11 +21,6 @@ public class ChasePlayer_Action : Action
         action_type = ACTION_TYPE.CHASE_ACTION;
     }
 
-    public ChasePlayer_Action(float speed):base(speed)
-    {
-        action_type = ACTION_TYPE.CHASE_ACTION;
-    }
-
     public override bool ActionStart()
     {
         event_to_react.start_counting = false;

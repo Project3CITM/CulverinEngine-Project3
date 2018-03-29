@@ -10,11 +10,6 @@ class Die_Action : Action
         action_type = ACTION_TYPE.DIE_ACTION;
     }
 
-    public Die_Action(float anim_speed) : base(anim_speed)
-    {
-        action_type = ACTION_TYPE.DIE_ACTION;
-    }
-
     public override bool ActionStart()
     {
         GetComponent<CompAnimation>().SetTransition("ToDie");

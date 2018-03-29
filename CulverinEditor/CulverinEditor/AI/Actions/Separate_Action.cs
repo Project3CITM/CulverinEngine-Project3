@@ -24,11 +24,6 @@ public class Separate_Action : Action
         action_type = ACTION_TYPE.SEPARATE_ACTION;
     }
 
-    public Separate_Action(float speed) : base(speed)
-    {
-        action_type = ACTION_TYPE.SEPARATE_ACTION;
-    }
-
     public override bool ActionStart()
     {
         bool ret = move.ActionStart();

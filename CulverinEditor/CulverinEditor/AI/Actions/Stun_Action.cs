@@ -15,11 +15,6 @@ public class Stun_Action : Action
         action_type = ACTION_TYPE.STUN_ACTION;
     }
 
-    public Stun_Action(float speed) : base(speed)
-    {
-        action_type = ACTION_TYPE.STUN_ACTION;
-    }
-
     public override bool ActionStart()
     {
         //TODO: Animations GetComponent<CompAnimation>().SetTransition("ToHit");

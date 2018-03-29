@@ -75,7 +75,6 @@ public class EnemySpear_BT : Enemy_BT
                     SpearAttack_Action action = GetComponent<SpearAttack_Action>();
                     action.IsMeleeAttack(true);
                     action.SetDamage(attack_damage);
-                    action.SetAnimSpeed(anim_speed);
                     current_action = action;
                     current_action.ActionStart();
                     return;
@@ -93,7 +92,6 @@ public class EnemySpear_BT : Enemy_BT
                 SpearAttack_Action action = GetComponent<SpearAttack_Action>();
                 action.IsMeleeAttack(false);
                 action.SetDamage(attack_damage);
-                action.SetAnimSpeed(anim_speed);
                 current_action = action;
                 current_action.ActionStart();
                 return;
@@ -103,7 +101,6 @@ public class EnemySpear_BT : Enemy_BT
                 //Debug.Log("IdleAttack");
                 state = AI_STATE.AI_IDLE;
                 current_action = GetComponent<IdleAttack_Action>();
-                current_action.SetAnimSpeed(anim_speed);
                 current_action.ActionStart();
                 return;
             }
@@ -248,7 +245,6 @@ public class EnemySpear_BT : Enemy_BT
                 }
 
                 action.SetDamage(attack_damage);
-                action.SetAnimSpeed(anim_speed);
                 current_action = action;
                 current_action.ActionStart();
                 return;
@@ -258,7 +254,6 @@ public class EnemySpear_BT : Enemy_BT
                 //Debug.Log("IdleAttack");
                 state = AI_STATE.AI_IDLE;
                 current_action = GetComponent<IdleAttack_Action>();
-                current_action.SetAnimSpeed(anim_speed);
                 current_action.ActionStart();
                 return;
             }
@@ -270,7 +265,6 @@ public class EnemySpear_BT : Enemy_BT
             Separate_Action action = GetComponent<Separate_Action>();
             //We set the destiny of the separation
             action.SetTileDestinySeparate(next_tile_x, next_tile_y);
-            action.SetAnimSpeed(anim_speed);
             current_action = action;
             current_action.ActionStart();
             next_action = GetComponent<SpearAttack_Action>();

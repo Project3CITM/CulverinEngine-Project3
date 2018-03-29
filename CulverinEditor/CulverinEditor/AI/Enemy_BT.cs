@@ -111,7 +111,6 @@ public class Enemy_BT : BT
         InterruptAction();
 
         next_action = GetComponent<GetHit_Action>();
-        next_action.SetAnimSpeed(anim_speed);
 
         current_hp -= damage;
 

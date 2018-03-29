@@ -10,11 +10,6 @@ class Engage_Action : Action
         action_type = ACTION_TYPE.ENGAGE_ACTION;
     }
 
-    public Engage_Action(float anim_speed) : base(anim_speed)
-    {
-        action_type = ACTION_TYPE.ENGAGE_ACTION;
-    }
-
     public override bool ActionStart()
     {
         Debug.Log("Engage Start");

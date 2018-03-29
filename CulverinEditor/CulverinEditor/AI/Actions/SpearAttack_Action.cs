@@ -3,7 +3,6 @@ using CulverinEditor;
 
 public class SpearAttack_Action : Action
 {
-
     bool melee_attack = false;
 
     public SpearAttack_Action()
@@ -11,7 +10,7 @@ public class SpearAttack_Action : Action
         action_type = ACTION_TYPE.SPEARATTACK_ACTION;
     }
 
-    public SpearAttack_Action(float attack_speed, float dmg) : base(attack_speed)
+    public SpearAttack_Action(float dmg)
     {
         action_type = ACTION_TYPE.SPEARATTACK_ACTION;
         damage = dmg;

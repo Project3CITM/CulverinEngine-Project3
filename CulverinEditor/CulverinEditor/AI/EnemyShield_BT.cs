@@ -49,7 +49,6 @@ public class EnemyShield_BT : Enemy_BT
                 state = AI_STATE.AI_ATTACKING;
                 Attack_Action action = GetComponent<Attack_Action>();
                 action.SetDamage(attack_damage);
-                action.SetAnimSpeed(anim_speed);
                 current_action = action;
                 current_action.ActionStart();
                 return;
@@ -58,7 +57,6 @@ public class EnemyShield_BT : Enemy_BT
             {
                 state = AI_STATE.AI_IDLE;
                 current_action = GetComponent<IdleAttack_Action>();
-                current_action.SetAnimSpeed(anim_speed);
                 current_action.ActionStart();
                 return;
             }

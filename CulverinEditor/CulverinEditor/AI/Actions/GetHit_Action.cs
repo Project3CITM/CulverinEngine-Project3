@@ -2,7 +2,6 @@
 
 class GetHit_Action: Action
 {
-    CompAnimation anim;
     public float duration = 1.0f;
 
     public GetHit_Action()
@@ -10,22 +9,14 @@ class GetHit_Action: Action
         action_type = ACTION_TYPE.GET_HIT_ACTION;
     }
 
-    public GetHit_Action(float speed):base(speed)
-    {
-        action_type = ACTION_TYPE.GET_HIT_ACTION;
-    }
-
     void Start()
-    {
-        anim = GetComponent<CompAnimation>();
-    }
+    {}
 
     public override bool ActionStart()
     {
         interupt = false;
-        anim = GetComponent<CompAnimation>();
-        anim.SetTransition("ToHit");
-        anim.SetClipDuration("Hit", duration);
+        GetComponent<CompAnimation>().SetTransition("ToHit");
+        GetComponent<CompAnimation>().SetClipDuration("Hit", duration);
         return true;
     }
 
@@ -39,8 +30,6 @@ class GetHit_Action: Action
     public override bool ActionEnd()
     {
         interupt = false;
-        anim = GetComponent<CompAnimation>();
-        anim.SetClipsSpeed(anim_speed);
         return true;
     }
 }

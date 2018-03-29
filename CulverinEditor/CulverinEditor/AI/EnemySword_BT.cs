@@ -5,20 +5,20 @@ public class EnemySword_BT : Enemy_BT
 {
     public override void Start()
     {
-
         GameObject Temp_go = GetLinkedObject("enemies_manager");
 
-        if(Temp_go==null) Debug.Log("[error]Gameobject enemies_manager not found");
+        if(Temp_go==null)
+            Debug.Log("[error]Gameobject enemies_manager not found");
         else
         {
+            EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
 
-        EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
-
-        if (enemy_manager == null) Debug.Log("[error]EnemySword_BT: enemies_manager is not detected");
-        else
-        {
-            enemy_manager.AddSwordEnemy(gameObject);
-        }
+            if (enemy_manager == null)
+                    Debug.Log("[error]EnemySword_BT: enemies_manager is not detected");
+            else
+            {
+                enemy_manager.AddSwordEnemy(gameObject);
+            }
         }
         base.Start();
     }
@@ -51,7 +51,6 @@ public class EnemySword_BT : Enemy_BT
                 state = AI_STATE.AI_ATTACKING;
                 Attack_Action action = GetComponent<Attack_Action>();
                 action.SetDamage(attack_damage);
-                action.SetAnimSpeed(anim_speed);
                 current_action = action;
                 current_action.ActionStart();
                 return;
@@ -61,7 +60,6 @@ public class EnemySword_BT : Enemy_BT
                 //Debug.Log("IdleAttack");
                 state = AI_STATE.AI_IDLE;
                 current_action = GetComponent<IdleAttack_Action>();
-                current_action.SetAnimSpeed(anim_speed);
                 current_action.ActionStart();
                 return;
             }
@@ -72,8 +70,6 @@ public class EnemySword_BT : Enemy_BT
             current_action = GetComponent<ChasePlayer_Action>();
             return;
         }
-
-
     }
 
     protected override void OutOfCombatDecesion()
