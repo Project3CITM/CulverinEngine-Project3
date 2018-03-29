@@ -28,12 +28,12 @@ public class FireWall : CulverinBehaviour
             Destroy(gameObject);
         }
 
-        //Enemy_BT enemy_in_tile = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().FindEnemyByTile(tile_x, tile_y);
-        //if (enemy_in_tile != null && damage_timer <= 0f)
-        //{
-        //    GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_per_second_percentage);
-        //    damage_timer = damage_tick;
-        //}
+        Enemy_BT enemy_in_tile = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>().FindEnemyByTile(tile_x, tile_y);
+        if (enemy_in_tile != null && damage_timer <= 0f)
+        {
+            GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_per_second_percentage);
+            damage_timer = damage_tick;
+        }
     }
 
     public void SetTiles (int x, int y)

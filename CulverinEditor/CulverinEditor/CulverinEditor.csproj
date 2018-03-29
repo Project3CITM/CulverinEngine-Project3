@@ -39,6 +39,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\Actions\Action.cs" />
+    <Compile Include="AI\Actions\FacePlayer_Action.cs" />
+    <Compile Include="AI\Actions\Separate_Action.cs" />
+    <Compile Include="AI\Actions\SpearAttack_Action.cs" />
     <Compile Include="AI\Actions\Stun_Action.cs" />
     <Compile Include="AI\AIManager.cs" />
     <Compile Include="AI\Actions\Align_Steering.cs" />
@@ -70,14 +73,13 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
-    <Compile Include="BarrelPuzle\BarrelMove.cs" />
-    <Compile Include="BarrelPuzle\BarrelPuzzleGenerator.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
-    <Compile Include="BarrelPuzle\BarrelScript.cs" />
-    <Compile Include="BarrelPuzle\ChainManage.cs" />
-    <Compile Include="BarrelPuzle\ChainMovement.cs" />
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
+    <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
+    <Compile Include="CompLight.cs" />
+    <Compile Include="Lights\LightFlickering.cs" />
+    <Compile Include="ParticleManager.cs" />
     <Compile Include="Player\UI\Game.cs" />
     <Compile Include="Player\UI\Intro.cs" />
     <Compile Include="Player\UI\Return.cs" />
@@ -87,14 +89,14 @@
     <Compile Include="CompJoint.cs" />
     <Compile Include="CompMesh.cs" />
     <Compile Include="CompRectTransform.cs" />
+    <Compile Include="LevelMap.cs" />
+    <Compile Include="Miscellanea\RespawnWhenHit.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Secondary.cs" />
     <Compile Include="Player\Daenerys\Fireball.cs" />
     <Compile Include="float4x4.cs" />
     <Compile Include="PhysX.cs" />
     <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />
-    <Compile Include="BarrelPuzle\BarrelManage.cs" />
-    <Compile Include="BarrelPuzle\BarrelMovement.cs" />
     <Compile Include="BarrelPuzle\BarrelFall.cs" />
     <Compile Include="Player\BaseControllers\CharacterController.cs" />
     <Compile Include="Player\BaseControllers\CharactersManager.cs" />

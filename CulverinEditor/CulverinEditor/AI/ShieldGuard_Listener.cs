@@ -9,9 +9,21 @@ public class ShieldGuard_Listener : PerceptionListener
 
     void Start()
     {
+
         event_manager = GetLinkedObject("event_manager");
-        event_manager.GetComponent<PerceptionManager>().AddListener(this);
+        if (event_manager == null) Debug.Log("[error]EVENT MANAGER NULL");
+
+        PerceptionManager perception_manager = event_manager.GetComponent<PerceptionManager>();
+        if (perception_manager != null)
+        {
+            perception_manager.AddListener(this);
+        }
+        else
+        {
+            Debug.Log("THERE IS NO PERCEPTION MANAGER");
+        }
         events_in_memory = new List<PerceptionEvent>();
+
     }
 
     void Update()
@@ -21,53 +33,55 @@ public class ShieldGuard_Listener : PerceptionListener
 
     public override void OnEventRecieved(PerceptionEvent event_recieved)
     {
-        if (IsPriotitaryEvent(event_recieved))
+
+        if (IsPriotitaryEvent(event_recieved) == true)
         {
             ClearEvents();
-            events_in_memory.Add(event_recieved);
         }
-        else return;
+        else
+        {
+            return;
+        }
 
         switch (event_recieved.type)
         {
             case PERCEPTION_EVENT_TYPE.HEAR_EXPLORER_EVENT:
             case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
+                PerceptionHearEvent tmp = (PerceptionHearEvent)event_recieved;
 
-                if (OnHearRange(event_recieved))
+                if (OnHearRange(tmp) && GetComponent<EnemyShield_BT>().InCombat() == false)
                 {
-                    if (event_recieved.type == PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER && player_seen)
-                    {
-                        GetComponent<EnemyShield_BT>().heard_something = true;
-                        GetComponent<Investigate_Action>().forgot_event = false;
-                        GetComponent<Investigate_Action>().SetEvent(event_recieved);
-                        GetComponent<EnemyShield_BT>().InterruptAction();
-
-                        Debug.Log("I Heard The Player");
-
-                        event_recieved.start_counting = false;
-                    }
-                    else
-                    {
-                        GetComponent<EnemyShield_BT>().heard_something = true;
-                        GetComponent<Investigate_Action>().forgot_event = false;
-                        GetComponent<Investigate_Action>().SetEvent(event_recieved);
-                        GetComponent<EnemyShield_BT>().InterruptAction();
-
-                        Debug.Log("I Heard Somethin");
-
-                        event_recieved.start_counting = false;
-                    }
+                    PerceptionHearEvent event_to_memory = new PerceptionHearEvent(tmp);
+                    GetComponent<EnemyShield_BT>().heard_something = true;
+                    GetComponent<Investigate_Action>().forgot_event = false;
+                    GetComponent<Investigate_Action>().SetEvent(event_to_memory);
+                    GetComponent<EnemyShield_BT>().InterruptAction();
+                    GetComponent<EnemyShield_BT>().SetAction(Action.ACTION_TYPE.INVESTIGATE_ACTION);
+                    events_in_memory.Add(event_to_memory);
+                    event_to_memory.start_counting = false;
                 }
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
-                GetComponent<EnemyShield_BT>().InterruptAction();
-                GetComponent<EnemyShield_BT>().player_detected = true;
-                GetComponent<EnemyShield_BT>().SetAction(Action.ACTION_TYPE.ENGAGE_ACTION);
-                player_seen = true;
-                GetComponent<Movement_Action>().look_at_player = false;
-                GetComponent<ChasePlayer_Action>().SetEvent(event_recieved);
-                Debug.Log("Player in sight");
+
+                PerceptionPlayerSeenEvent seen_event_tmp = (PerceptionPlayerSeenEvent)event_recieved;
+
+                if (gameObject == seen_event_tmp.enemy_who_saw)
+                {
+                    GetComponent<EnemyShield_BT>().InterruptAction();
+                    GetComponent<EnemyShield_BT>().player_detected = true;
+
+                    if (GetComponent<EnemyShield_BT>().InCombat() == false)
+                        GetComponent<EnemyShield_BT>().SetAction(Action.ACTION_TYPE.ENGAGE_ACTION);
+
+                    player_seen = true;
+
+                    PerceptionPlayerSeenEvent new_event_to_memory = new PerceptionPlayerSeenEvent(seen_event_tmp);
+                    events_in_memory.Add(new_event_to_memory);
+                    GetComponent<ChasePlayer_Action>().SetEvent(new_event_to_memory);
+                    GetComponent<ChasePlayer_Action>().forgot_event = false;
+                    new_event_to_memory.start_counting = false;
+                }
                 break;
         }
     }
@@ -80,39 +94,35 @@ public class ShieldGuard_Listener : PerceptionListener
             case PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER:
                 GetComponent<EnemyShield_BT>().heard_something = false;
                 GetComponent<Investigate_Action>().forgot_event = true;
-                Debug.Log("I lost Somethin");
                 break;
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemyShield_BT>().player_detected = false;
-                GetComponent<EnemyShield_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
+                if (GetComponent<EnemyShield_BT>().InCombat() == true)
+                    GetComponent<EnemyShield_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
                 GetComponent<ChasePlayer_Action>().forgot_event = true;
-                GetComponent<Movement_Action>().look_at_player = true;
-                Debug.Log("Player out of sight");
+
+                Debug.Log("[error]Event gone type:" + event_recieved.type);
                 break;
         }
     }
 
-    bool OnHearRange(PerceptionEvent event_heard)
+    bool OnHearRange(PerceptionHearEvent event_heard)
     {
-        PerceptionHearEvent tmp = (PerceptionHearEvent)event_heard;
-
         int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        Debug.Log(my_tile_x.ToString());
-        Debug.Log(my_tile_y.ToString());
-
-        if (hear_range < tmp.radius_in_tiles)
+        if (hear_range < event_heard.radius_in_tiles)
         {
-            if (RadiusOverlap((int)my_tile_x, (int)my_tile_y, hear_range, (int)tmp.objective_tile_x, (int)tmp.objective_tile_y, (int)tmp.radius_in_tiles))
+            if (RadiusOverlap(my_tile_x, my_tile_y, hear_range, event_heard.objective_tile_x, event_heard.objective_tile_y, event_heard.radius_in_tiles))
+            {
                 return true;
-
+            }
             return false;
         }
         else
         {
-            if (RadiusOverlap((int)tmp.objective_tile_x, (int)tmp.objective_tile_y, (int)tmp.radius_in_tiles, (int)my_tile_x, (int)my_tile_y, hear_range))
+            if (RadiusOverlap(event_heard.objective_tile_x, event_heard.objective_tile_y, event_heard.radius_in_tiles, my_tile_x, my_tile_y, hear_range))
                 return true;
 
             return false;
@@ -153,4 +163,3 @@ public class ShieldGuard_Listener : PerceptionListener
         return false;
     }
 }
-

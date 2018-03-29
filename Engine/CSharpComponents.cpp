@@ -21,6 +21,7 @@
 #include "CompJoint.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
+#include "CompLight.h"
 #include "CompParticleSystem.h"
 #include "CompMaterial.h"
 #include "Materials.h"
@@ -654,4 +655,76 @@ void CSharpScript::SetAmbientOcclusion(MonoObject * object, MonoString * string)
 	}
 
 	c_material->material->textures[2].value = (ResourceMaterial*)texture_resource;
+}
+
+float CSharpScript::GetIntensity(MonoObject * object)
+{
+	CompLight* c_light = current_game_object->GetComponentLight();
+
+	if (c_light == nullptr)
+		return 0;
+	return c_light->properties[0];
+}
+
+void CSharpScript::SetIntensity(MonoObject * object, float value)
+{
+	CompLight* c_light = current_game_object->GetComponentLight();
+
+	if (c_light == nullptr)
+		return ;
+	c_light->properties[0] = value;
+}
+
+float CSharpScript::GetConstant(MonoObject * object)
+{
+	CompLight* c_light = current_game_object->GetComponentLight();
+
+	if (c_light == nullptr)
+		return 0;
+	return c_light->properties[1];
+}
+
+void CSharpScript::SetConstant(MonoObject * object, float value)
+{
+	CompLight* c_light = current_game_object->GetComponentLight();
+
+	if (c_light == nullptr)
+		return;
+	c_light->properties[1] = value;
+}
+
+float CSharpScript::GetLinear(MonoObject * object)
+{
+	CompLight* c_light = current_game_object->GetComponentLight();
+
+	if (c_light == nullptr)
+		return 0;
+	return c_light->properties[2];
+}
+
+void CSharpScript::SetLinear(MonoObject * object, float value)
+{
+	CompLight* c_light = current_game_object->GetComponentLight();
+
+	if (c_light == nullptr)
+		return;
+	c_light->properties[2] = value;
+}
+
+float CSharpScript::GetQuadratic(MonoObject * object)
+{
+	CompLight* c_light = current_game_object->GetComponentLight();
+
+	if (c_light == nullptr)
+		return 0;
+	return c_light->properties[3];
+}
+
+void CSharpScript::SetQuadratic(MonoObject * object, float value)
+{
+	CompLight* c_light = current_game_object->GetComponentLight();
+
+	if (c_light == nullptr)
+		return;
+	c_light->properties[3] = value;
 }

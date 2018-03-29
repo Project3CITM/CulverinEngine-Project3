@@ -45,6 +45,7 @@ public:
 	void ProcessTransform(CompTransform* trans);
 	bool CleanUp();
 
+	void CleanEmptyNodes(aiNode* node) const;
 
 	bool Import(const char* file, Resource::Type type, bool isAutoImport = false);
 	bool Import(const char* file, Resource::Type type, std::vector<ReImport>& resourcesToReimport, bool auto_reimport = false);

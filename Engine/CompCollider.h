@@ -46,6 +46,8 @@ public:
 	//Setters -------------------
 	void SetColliderPosition();
 	void SetSizeFromBoundingBox();
+	void SetFilterFlags();
+
 	void SetRigidBodyComp(CompRigidBody* new_comp);
 	void SetCollidedObject(GameObject* trigger_object);
 

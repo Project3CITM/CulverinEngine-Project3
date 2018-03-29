@@ -5,7 +5,21 @@ public class EnemySword_BT : Enemy_BT
 {
     public override void Start()
     {
-        GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddSwordEnemy(gameObject);
+
+        GameObject Temp_go = GetLinkedObject("enemies_manager");
+
+        if(Temp_go==null) Debug.Log("[error]Gameobject enemies_manager not found");
+        else
+        {
+
+        EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
+
+        if (enemy_manager == null) Debug.Log("[error]EnemySword_BT: enemies_manager is not detected");
+        else
+        {
+            enemy_manager.AddSwordEnemy(gameObject);
+        }
+        }
         base.Start();
     }
 
@@ -16,10 +30,18 @@ public class EnemySword_BT : Enemy_BT
 
     protected override void InCombatDecesion()
     {
-        Debug.Log("InCombatDecesion");
+        //Debug.Log("InCombatDecesion");
         //Attack action
         if (InRange())
         {
+
+            /*if (!GetComponent<FacePlayer_Action>().IsFaced())
+            {
+                current_action.Interupt();
+                next_action = GetComponent<FacePlayer_Action>();
+                return;
+            }*/
+
             bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
 
             if (attack_ready)
@@ -36,7 +58,7 @@ public class EnemySword_BT : Enemy_BT
             }
             else
             {
-                Debug.Log("IdleAttack");
+                //Debug.Log("IdleAttack");
                 state = AI_STATE.AI_IDLE;
                 current_action = GetComponent<IdleAttack_Action>();
                 current_action.SetAnimSpeed(anim_speed);
@@ -46,11 +68,13 @@ public class EnemySword_BT : Enemy_BT
         }
         else if(player_detected == true)
         {
-            Debug.Log("Chase");
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
+            ((ChasePlayer_Action)current_action).chase_lancer = false;
             return;
         }
+
+
     }
 
     protected override void OutOfCombatDecesion()
@@ -65,11 +89,13 @@ public class EnemySword_BT : Enemy_BT
             return;
         }
 
-        //If none of them -> patrol
+        //Patrol
         int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        //Patrol
+        //Reset event list
+        GetComponent<SwordGuard_Listener>().ClearEvents();
+
         if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
         {
             Debug.Log("Patrol-origin");
@@ -95,9 +121,9 @@ public class EnemySword_BT : Enemy_BT
         if(life_state == ENEMY_STATE.ENEMY_DAMAGED)
         {
             //enemy1_Specular_Hit
-            GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
+            /*GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
             GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
-            GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");
+            GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");*/
         }
     }
 }

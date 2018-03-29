@@ -3,6 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleTextures.h"
 #include "ModuleCamera3D.h"
+#include "ModuleWindow.h"
 #include "ModuleGUI.h"
 #include "ModuleRenderer3D.h"
 #include "GameObject.h"
@@ -94,6 +95,27 @@ bool Scene::Start()
 	defined_tags.push_back("camera");
 	defined_tags.push_back("player");
 
+
+	App->scene->scene_buff = new FrameBuffer();
+	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
+
+	App->scene->final_buff = new FrameBuffer();
+	App->scene->final_buff->resize = true;
+	App->scene->final_buff->Create(App->window->GetWidth(), App->window->GetHeight());
+
+	App->scene->glow_buff = new FrameBuffer();
+	App->scene->glow_buff->resize = false;
+	App->scene->glow_buff->Create(128, 128);
+
+	App->scene->horizontal_blur_buff = new FrameBuffer();
+	App->scene->horizontal_blur_buff->resize = false;
+	App->scene->horizontal_blur_buff->Create(128, 128);
+
+	App->scene->vertical_blur_buff = new FrameBuffer();
+	App->scene->vertical_blur_buff->resize = false;
+	App->scene->vertical_blur_buff->Create(128, 128);
+
+
 	tagged_objects.reserve(defined_tags.size());
 	for (uint i = 0; i < defined_tags.size(); i++)
 	{
@@ -160,16 +182,24 @@ update_status Scene::Update(float dt)
 
 	// Draw Skybox (direct mode for now)
 	//if (App->scene->draw_skybox) 
-		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+	App->scene->scene_buff->Init("Scene");
+	App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+
+
 	// Draw Plane
 	if (App->engine_state != EngineState::PLAY)
 	{
 		DrawPlane();
 	}
+
 	// Draw GameObjects
 	root->Draw();
 	// Draw Quadtree
 	if (quadtree_draw) App->scene->octree.DebugDraw();
+
+	App->scene->scene_buff->UnBind("Scene");
 	// Draw GUI
 	//App->render_gui->ScreenSpaceDraw();
 	static int nico = 0;

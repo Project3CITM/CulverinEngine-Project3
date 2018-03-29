@@ -15,7 +15,7 @@ public class Movement_Action : Action
     Arrive_Steering arrive;
     Seek_Steering seek;
 
-    enum Direction
+    public enum Direction
     {
         DIR_NO_DIR,
         DIR_NORTH,
@@ -179,36 +179,10 @@ public class Movement_Action : Action
         //Rotation
         if (rotation_finished == false)
         {
-            if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
-            {
-                if (current_rot_acceleration > 0)
-                {
-                    current_rot_acceleration = current_max_rot_accel;
-                }
-                else
-                {
-                    current_rot_acceleration = -current_max_rot_accel;
-                }
-            }
-            current_rot_velocity += current_rot_acceleration;
+            UpdateRotation();
 
-            if (Mathf.Abs(current_rot_velocity) > current_max_rot_vel)
-            {
-                if (current_rot_velocity > 0)
-                {
-                    current_rot_velocity = current_max_rot_vel;
-                }
-                else
-                {
-                    current_rot_velocity = -current_max_rot_vel;
-                }
-            }
-
-            //Rotate
-            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity * Time.deltaTime);
-
-            //Clean
-            current_rot_acceleration = 0.0f;
+             //Clean
+             current_rot_acceleration = 0.0f;
 
             if (FinishedRotation() == true)
             {
@@ -258,6 +232,39 @@ public class Movement_Action : Action
         interupt = false;
         return false;
     }
+
+
+    public void UpdateRotation()
+    {
+        if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
+        {
+            if (current_rot_acceleration > 0)
+            {
+                current_rot_acceleration = current_max_rot_accel;
+            }
+            else
+            {
+                current_rot_acceleration = -current_max_rot_accel;
+            }
+        }
+        current_rot_velocity += current_rot_acceleration;
+
+        if (Mathf.Abs(current_rot_velocity) > current_max_rot_vel)
+        {
+            if (current_rot_velocity > 0)
+            {
+                current_rot_velocity = current_max_rot_vel;
+            }
+            else
+            {
+                current_rot_velocity = -current_max_rot_vel;
+            }
+        }
+
+        //Rotate
+        GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity * Time.deltaTime);
+    }
+
 
     private void NextTile()
     {
@@ -386,6 +393,43 @@ public class Movement_Action : Action
 
             GoTo(closest);
         }
+    }
+
+
+    public PathNode CalculatePrevious(int obj_x, int obj_y, bool chase = false)    // Sets a path to the previous tile of your objective // Useful for chasing the player
+    {
+        this.chase = chase;
+        Pathfinder pf = map.GetComponent<Pathfinder>();
+        path.Clear();
+        List<PathNode> adjacent_walkable_tiles = pf.GetWalkableAdjacents(new PathNode(obj_x, obj_y));
+        int current_x = GetCurrentTileX();
+        int current_y = GetCurrentTileY();
+
+        if (adjacent_walkable_tiles.Count >= 0)
+        {
+            PathNode closest = adjacent_walkable_tiles[0];
+            int closest_distance = Mathf.Abs(closest.GetTileX() - current_x) + Mathf.Abs(closest.GetTileY() - current_y);
+
+            if (adjacent_walkable_tiles.Count > 1)
+            {
+                for (int i = 1; i < adjacent_walkable_tiles.Count; i++)
+                {
+                    int x_distance = Mathf.Abs(adjacent_walkable_tiles[i].GetTileX() - current_x);
+                    int y_distance = Mathf.Abs(adjacent_walkable_tiles[i].GetTileY() - current_y);
+
+                    int distance = x_distance + y_distance;
+
+                    if (distance < closest_distance)
+                    {
+                        closest = adjacent_walkable_tiles[i];
+                        closest_distance = distance;
+                    }
+                }
+            }
+            return closest;
+        }
+
+        return new PathNode(0,0);
     }
 
     public void GoToPlayer(bool chase = true)
@@ -537,7 +581,7 @@ public class Movement_Action : Action
         }
     }
 
-    public void SetDirection()
+    public Direction SetDirection()
     {
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
         float delta = Mathf.Atan2(forward.x, forward.y);
@@ -555,6 +599,8 @@ public class Movement_Action : Action
             dir = Direction.DIR_NORTH;
         else if (delta <= -(Mathf.PI / 4) && delta >= -(3 * (Mathf.PI / 4)))
             dir = Direction.DIR_WEST;
+
+        return dir;
     }
 
     public bool FinishedRotation()
@@ -629,4 +675,5 @@ public class Movement_Action : Action
     {
         return map.GetComponent<Pathfinder>().IsWalkableTile(tile_x, tile_y);
     }
+
 }

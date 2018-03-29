@@ -4,12 +4,16 @@ layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 layout(location = 3) in vec4 influences;
 layout(location = 4) in vec4 bones;
+layout(location = 5) in vec3 tangent;
+layout(location = 6) in vec3 bitangent;
 
 out float ourTime;
 out vec4 ourColor;
 out vec3 ourNormal;
 out vec2 TexCoord;
 out vec3 ourPos;
+out mat3 TBN;
+out vec3 FragPos;
 uniform float _time;
 uniform vec4 _color;
 uniform mat4 model;
@@ -72,6 +76,14 @@ bool test = false;
         if(total_weight >= 1.0f)
             break;
     }
+
+
+    vec3 T = normalize(vec3( model * vec4(tangent, 0)));
+	vec3 B = normalize(vec3( model * vec4(bitangent, 0)));
+	vec3 N = normalize(vec3( model * vec4(normal, 0)));
+    TBN = transpose(mat3(T,B,N));
+	FragPos = TBN * vec3(model) * position; 
+	
     
 	gl_Position = viewproj *  model * vec4(skinned_pos, 1.0f);
 	ourColor = _color;

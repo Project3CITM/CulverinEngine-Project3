@@ -19,7 +19,7 @@ public:
 	void AddRectTransform();
 	void SyncComponent(GameObject* sync_parent);
 	void DrawGraphic();
-
+	void DrawRectTranforms();
 	void ActivateRender();
 	void DeactivateRender();
 

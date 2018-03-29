@@ -34,8 +34,8 @@ public class BarrelPuzzleManager : CulverinBehaviour
         if (Input.GetKeyDown(KeyCode.B))
         {
             must_move = !must_move;
-            Debug.Log("Space pressed " + ((must_move) ? "started" : "stopped") + " moving.");
-            Debug.Log("Destination: " + water_destination_pos.x + ", " + water_destination_pos.y + ", " + water_destination_pos.z);
+            //Debug.Log("Space pressed " + ((must_move) ? "started" : "stopped") + " moving.");
+           // Debug.Log("Destination: " + water_destination_pos.x + ", " + water_destination_pos.y + ", " + water_destination_pos.z);
         }
 
 

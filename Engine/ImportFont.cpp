@@ -57,6 +57,9 @@ Font ImportFont::Load(const char * file, int size)
 	temp = DIRECTORY_LIBRARY_FONTS + temp + ".ttf";
 
 	ret.font= TTF_OpenFont(temp.c_str(), size);
+	if (!ret.font) {
+
+	}
 	ret.size = size;
 	return ret;
 }

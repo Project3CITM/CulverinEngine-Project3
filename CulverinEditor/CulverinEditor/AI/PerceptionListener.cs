@@ -24,6 +24,9 @@ public class PerceptionListener : CulverinBehaviour
 
     public void UpdateMemory()
     {
+        if (events_in_memory == null || to_remove == null)
+            return;
+
         if (events_in_memory.Count == 0)
             return;
 

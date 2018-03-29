@@ -218,6 +218,39 @@ bool ModuleImporter::CleanUp()
 	return true;
 }
 
+void ModuleImporter::CleanEmptyNodes(aiNode * node) const
+{
+	for (uint i = 0; i < node->mNumChildren; i++)
+	{
+		std::string node_name(node->mChildren[i]->mName.C_Str());
+
+		if (node_name.find_first_of("$") < node_name.size())
+		{
+			aiNode* iterator = node->mChildren[i];
+			aiMatrix4x4 transform(node->mChildren[i]->mTransformation);
+			std::string child_name(iterator->mChildren[0]->mName.C_Str());
+
+			while (child_name.find_first_of("$") < child_name.size())
+			{
+				transform = transform * iterator->mChildren[0]->mTransformation;
+			
+				iterator = iterator->mChildren[0];
+				child_name = iterator->mChildren[0]->mName.C_Str();
+			}
+
+			iterator = iterator->mChildren[0];
+			iterator->mTransformation = transform * iterator->mTransformation;
+			iterator->mParent = node;
+			node->mChildren[i] = iterator;
+		}
+
+		for (int i = 0; i < node->mNumChildren; i++)
+		{
+			CleanEmptyNodes(node->mChildren[i]);
+		}
+	}
+}
+
 bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoImport)
 {
 	bool ret = true;
@@ -229,7 +262,6 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 		LOG("IMPORTING MODEL, File Path: %s", file);
 
 		//Clear vector of textures, but dont import same textures!
-		//iMesh->PrepareToImport();
 		unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_LimitBoneWeights;
 		const aiScene* scene = aiImportFile(file, flags);
 		if (scene != nullptr)
@@ -237,11 +269,26 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, bool isAutoIm
 			if (scene->HasAnimations())
 			{
 				std::string fbx_name = App->fs->GetOnlyName(file);
+
+				for (int i = 0; i < scene->mNumAnimations; i++)
+				{
+					scene->mAnimations[i]->mName = fbx_name;
+					scene->mAnimations[i]->mName.Append("Animation");
+					scene->mAnimations[i]->mName.Append(std::to_string(i).c_str());
+					LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[i]->mName.C_Str());
+					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str());
+				}
+
+
 				scene->mAnimations[scene->mNumAnimations - 1]->mName = fbx_name;
 				scene->mAnimations[scene->mNumAnimations - 1]->mName.Append("Animation");
 				LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str());
 				iAnimation->Import(scene->mAnimations[scene->mNumAnimations - 1], scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str(), fbx_name.c_str());
 			}
+
+			//Delete assimp's empty nodes
+			CleanEmptyNodes(scene->mRootNode);
+
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, file);
 			obj->SetName(App->fs->FixName_directory(file).c_str());
 
@@ -313,15 +360,15 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 	case Resource::Type::MESH:
 	{
 		LOG("IMPORTING MODEL, File Path: %s", file);
-
 		//Clear vector of textures, but dont import same textures!
-		//iMesh->PrepareToImport();
 		const aiScene* scene = aiImportFile(file, aiProcessPreset_TargetRealtime_MaxQuality);
 		if (scene != nullptr)
 		{
+
 			if (scene->HasAnimations())
 			{
 				std::string fbx_name = App->fs->GetOnlyName(file);
+
 				for (int i = 0; i < scene->mNumAnimations; i++)
 				{
 					scene->mAnimations[i]->mName = fbx_name;
@@ -330,9 +377,20 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 					LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[i]->mName.C_Str());
 					iAnimation->Import(scene->mAnimations[i], scene->mAnimations[i]->mName.C_Str(), fbx_name.c_str());
 				}
+
+				
+				scene->mAnimations[scene->mNumAnimations - 1]->mName = fbx_name;
+				scene->mAnimations[scene->mNumAnimations - 1]->mName.Append("Animation");
+				LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str());
+				iAnimation->Import(scene->mAnimations[scene->mNumAnimations - 1], scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str(), fbx_name.c_str());
 			}
+
+			//Delete assimp's empty nodes
+			CleanEmptyNodes(scene->mRootNode);
+		
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, resourcesToReimport, file);
 			obj->SetName(App->fs->FixName_directory(file).c_str());
+
 
 			//Now Save Serialitzate OBJ -> Prefab
 			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();

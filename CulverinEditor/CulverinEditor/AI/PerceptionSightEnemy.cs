@@ -101,6 +101,23 @@ public class PerceptionSightEnemy : CulverinBehaviour
         return ret;
     }
 
+    public void GetPlayerTilePos(out int player_x, out int player_y)
+    {
+        player_x = 0;
+        player_y = 0;
+
+        if (player_obj != null)
+        {
+            MovementController temp = player_obj.GetComponent<MovementController>();
+            if (temp != null)
+            {
+                temp.GetPlayerPos(out int x, out int y);
+                player_x = x;
+                player_y = y;
+            }
+        }
+    }
+
     private List<PathNode> GetSeenTiles(DIRECTION dir)
     {
         List<PathNode> tiles = new List<PathNode>();

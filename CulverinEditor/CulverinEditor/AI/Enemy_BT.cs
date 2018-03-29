@@ -26,7 +26,7 @@ public class Enemy_BT : BT
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
     protected float current_interpolation = 1.0f;
-    public uint range = 1;
+    public int range = 1;
 
     protected bool in_combat = false;
 
@@ -47,25 +47,15 @@ public class Enemy_BT : BT
         //Update attack cooldown
         attack_timer += Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.P))
-            PushEnemy(new Vector3(0, 0, -1));
-
         base.Update();
     }
 
     public override void MakeDecision()
-    {
-        Debug.Log("Make Decision");
-        Debug.Log("Next Action:" + next_action.action_type);
+    { 
 
-        if (current_hp <= 0)
-        {
-            current_action = GetComponent<Die_Action>();
-            current_action.ActionStart();
-            return;
-        }
-
-        if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION)
+        if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION 
+            || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION
+            || next_action.action_type == Action.ACTION_TYPE.FACE_PLAYER_ACTION || next_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
         {
             Debug.Log(next_action.action_type);
             current_action = next_action;
@@ -84,7 +74,7 @@ public class Enemy_BT : BT
                 current_action.ActionStart();
                 return;
             }
-
+          
             InCombatDecesion();
         }
         else
@@ -125,13 +115,15 @@ public class Enemy_BT : BT
 
         current_hp -= damage;
 
-        Debug.Log("Current HP: " + current_hp);
+        Debug.Log("[error] Current HP: " + current_hp);
 
         if (current_hp <= 0)
         {
-            GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+            //GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
             state = AI_STATE.AI_DEAD;
             life_state = ENEMY_STATE.ENEMY_DEAD;
+            next_action = GetComponent<Die_Action>();
+            current_action.Interupt();
         }
         else if (current_hp < total_hp * damaged_limit)
         {
@@ -147,9 +139,13 @@ public class Enemy_BT : BT
         current_action.Interupt();
 
         if (!GetComponent<Movement_Action>().IsWalkable((uint)(GetComponent<Movement_Action>().GetCurrentTileX() + dir.x), (uint)(GetComponent<Movement_Action>().GetCurrentTileY() + dir.z)))
+        {
+            Debug.Log("[error] STUN!");
             next_action = GetComponent<Stun_Action>();
+        }
         else
         {
+            Debug.Log("[error] PUSH!");
             next_action = GetComponent<PushBack_Action>();
             ((PushBack_Action)next_action).SetPushDirection(dir);
         }
@@ -162,6 +158,12 @@ public class Enemy_BT : BT
         if (distance <= range)
             return true;
         return false;
+    }
+
+    public int GetDistanceInRange()
+    {
+        player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+        return Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX()) + Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
     }
 
     public float GetCurrentInterpolation()

@@ -13,6 +13,7 @@
 #include "SDL/include/SDL_opengl.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
+#include "SDL2_ttf/include/SDL_ttf.h"
 
 enum main_states
 {
@@ -47,10 +48,12 @@ int main(int argc, char ** argv)
 		case MAIN_START:
 
 			LOG("-------------- Application Init --------------");
+			TTF_Init();
 			if (App->Init() == false)
 			{
 				LOG("Application Init exits with ERROR");
 				state = MAIN_EXIT;
+
 			}
 			else
 			{
@@ -95,6 +98,7 @@ int main(int argc, char ** argv)
 	LOG("Exiting game '%s'...\n", TITLE);
 
 	delete App;
+	TTF_Quit();
 
 	return main_return;
 }

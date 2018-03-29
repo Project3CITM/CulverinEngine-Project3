@@ -262,6 +262,16 @@ private:
 	static void SetNormals(MonoObject* object, MonoString* string);
 	static void SetAmbientOcclusion(MonoObject* object, MonoString* string);
 
+	/*Component Light*/
+	static float GetIntensity(MonoObject* object);
+	static void SetIntensity(MonoObject* object, float value);
+	static float GetConstant(MonoObject* object);
+	static void SetConstant(MonoObject* object, float value);
+	static float GetLinear(MonoObject* object);
+	static void SetLinear(MonoObject* object, float value);
+	static float GetQuadratic(MonoObject* object);
+	static void SetQuadratic(MonoObject* object, float value);
+
 	/*Module Physics*/
 	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);
 

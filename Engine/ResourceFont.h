@@ -19,6 +19,7 @@ public:
 	bool ReLoadToMemory();
 	void DeleteToMemory();
 	bool LoadToMemory();
+	void SetSize(int size);
 	Resource::State IsLoadedToMemory();
 
 public:

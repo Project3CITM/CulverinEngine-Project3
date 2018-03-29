@@ -4,16 +4,20 @@
 #include "WindowInspector.h"
 #include "GameObject.h"
 #include "Scene.h"
-#include "ResourceFont.h"
 #include "SDL2_ttf/include/SDL_ttf.h"
 #include "ModuleImporter.h"
 #include "ImportFont.h"
 #include "CompRectTransform.h"
 #include "CompCanvasRender.h"
+#include "ModuleFS.h"
+#include "ResourceFont.h"
+#include "CompCanvas.h"
+
 CompText::CompText(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
 	uid = App->random->Int();
 	name_component = "Text";
+	glGenTextures(1, &id_font);
 
 
 }
@@ -74,7 +78,8 @@ void CompText::Update(float dt)
 			transform->SetUpdateRect(false);
 		}
 	}
-	render = true;
+
+		render = can_draw;
 
 }
 void CompText::ShowOptions()
@@ -146,13 +151,60 @@ void CompText::ShowInspectorInfo()
 	{
 		show_resource_font_windows = true;
 	}
-	if (ImGui::InputText("Text", (char*)input_text.c_str(), max_input, ImGuiInputTextFlags_EnterReturnsTrue))
+	ImGui::Text("Name: ");
+
+	if (text != nullptr)
+	{
+		ImGui::SameLine();
+		ImGui::Text(text->name.c_str());
+
+	}
+	const char* horizontal[] = { "Right##h_right", "Middle##h_middle", "Left##h_left" };
+	const char* vertical[] = { "Top##v_right", "Middle##v_middle", "Bottom##v_bottom" };
+	ImGui::Text("Horizontal Position");
+	for (int i = 0; i < 3; i++)
+	{
+
+		if (ImGui::RadioButton(horizontal[i], &horizontal_position, i))
+		{
+			h_position = static_cast<HorizontalPosition>(horizontal_position);
+			GenerateText();
+		}
+		if(i < 2)
+			ImGui::SameLine();
+	}
+	ImGui::Text("Vertical Position");
+	for (int i = 0; i < 3; i++)
+	{
+
+		if (ImGui::RadioButton(vertical[i], &vertical_position, i))
+		{
+			v_position = static_cast<VerticalPosition>(vertical_position);
+			GenerateText();
+
+		}
+		if (i < 2)
+			ImGui::SameLine();
+	}
+	
+	if (ImGui::InputTextMultiline("Text", (char*)input_text.c_str(), max_input, ImVec2(ImGui::GetWindowWidth(),100), ImGuiInputTextFlags_EnterReturnsTrue|ImGuiInputTextFlags_CtrlEnterForNewLine))
 	{
 		SetString(input_text.c_str());
 	}
-	ImGui::DragInt("Input limit", &max_input, 1.0f, 0, 50);
+
 	ImGui::ColorEdit4("Color##image_rgba", color.ptr());
-	ImGui::DragInt("Text Size", &text_size, 1.0f, 0, 200);
+	if (ImGui::DragInt("Text Size", &text_size, 1.0f, 0, 200))
+	{
+		if (text != nullptr)
+		{
+			text->SetSize(text_size);
+			text->ReLoadToMemory();
+			UpdateText();
+			GenerateText();
+
+		}
+	}
+	ImGui::DragInt("Input limit", &max_input, 1.0f, 0, 50);
 	if (text == nullptr || show_resource_font_windows)
 	{
 		if (show_resource_font_windows)
@@ -202,22 +254,82 @@ void CompText::SetString(std::string input)
 	GenerateText();
 }
 
-void CompText::GenerateText()
+bool CompText::GenerateText()
 {
 	if (text_str.empty())
-		return;
+		return false;
 	float4 rect_transform = parent->GetComponentRectTransform()->GetRect();
+	float width = parent->GetComponentRectTransform()->GetWidth();
+	float height = parent->GetComponentRectTransform()->GetHeight();
+	can_draw = false;
 	if (TextCanFit(rect_transform, text_rect))
 	{
+		can_draw = true;
 		std::vector<float3> quad_pos;
+		float3 right_top=float3::zero;
+		float3 left_top = float3::zero;
+		float3 right_bottom = float3::zero;
+		float3 left_bottom = float3::zero;
 
-		quad_pos.push_back(float3(float2(text_rect.x, text_rect.y),0));
-		quad_pos.push_back(float3(float2(text_rect.x+text_rect.z, text_rect.y), 0));
-		quad_pos.push_back(float3(float2(text_rect.x, text_rect.y + text_rect.w), 0));
-		quad_pos.push_back(float3(float2(text_rect.x + text_rect.z, text_rect.y + text_rect.w), 0));
+		switch (h_position)
+		{
+		case RIGHT_HPOSITION:
+			left_top.x = rect_transform.x;
+			right_top.x = rect_transform.x + text_rect.z;
+			left_bottom.x = rect_transform.x;
+			right_bottom.x = rect_transform.x + text_rect.z;
+			break;
+		case MIDDLE_HPOSITION:
+			left_top.x = (rect_transform.x+ width*0.5)- text_rect.z*0.5;
+			right_top.x = (rect_transform.x + width*0.5) + text_rect.z*0.5;
+			left_bottom.x = (rect_transform.x + width*0.5) - text_rect.z*0.5;
+			right_bottom.x = (rect_transform.x + width*0.5) + text_rect.z*0.5;
+
+
+			break;
+		case LEFT_HPOSITION:
+			left_top.x = (rect_transform.x + width) - text_rect.z;
+			right_top.x = rect_transform.x + width;
+			left_bottom.x = (rect_transform.x + width) - text_rect.z;
+			right_bottom.x = rect_transform.x + width;
+			break;
+		default:
+			break;
+		}
+		switch (v_position)
+		{
+		case TOP_VPOSITION:
+			right_top.y = rect_transform.y + height;
+			left_top.y = rect_transform.y + height;
+			right_bottom.y = (rect_transform.y + height) - text_rect.w;
+			left_bottom.y = (rect_transform.y + height) - text_rect.w;
+			break;
+		case MIDDLE_VPOSITION:
+
+			right_top.y = (rect_transform.y + height*0.5) + text_rect.w*0.5;
+			left_top.y = (rect_transform.x + height*0.5) + text_rect.w*0.5;
+			left_bottom.y = (rect_transform.x + height*0.5) - text_rect.w*0.5;
+			right_bottom.y = (rect_transform.x + height*0.5) - text_rect.w*0.5;
+			break;
+		case BOTTOM_POSITION:
+			right_top.y = rect_transform.y + text_rect.w;
+			left_top.y = rect_transform.y + text_rect.w;
+			right_bottom.y = rect_transform.y;
+			left_bottom.y = rect_transform.y;
+			break;
+		default:
+			break;
+		}
+		quad_pos.push_back(left_bottom);
+		quad_pos.push_back(right_bottom);
+		quad_pos.push_back(right_top);
+		quad_pos.push_back(left_top);
 		my_canvas_render->ProcessQuad(quad_pos);
+		return true;
 
 	}
+
+	return false;
 
 
 }
@@ -247,11 +359,11 @@ void CompText::UpdateText()
 		FreeFont();
 	}
 	update_text = true;
+	int width = 0;
+	int height = 0;
+	TTF_SizeText(text->font.font, text_str.c_str(), &width, &height);
+	s_font = TTF_RenderText_Blended_Wrapped(text->font.font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) }, width);
 
-	s_font = TTF_RenderText_Blended(text->font.font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) });
-
-	GLuint texture;
-	glGenTextures(1, &id_font);
 	glBindTexture(GL_TEXTURE_2D, id_font);
 	SetTextureID(id_font);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -271,17 +383,96 @@ void CompText::FreeFont()
 void CompText::CopyValues(const CompText * component)
 {
 }
+void CompText::Clear()
+{
+	text = nullptr;
+	if (my_canvas != nullptr)
+		my_canvas->RemoveGraphic(this);
+	my_canvas = nullptr;
+	my_canvas_render = nullptr;
+	transform = nullptr;
 
+
+
+}
 void CompText::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+	if (text != nullptr)
+	{
+		if (saveScene == false)
+		{
+			// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
+			std::string temp = std::to_string(countResources++);
+			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".UUID Resource", text->GetUUID());
+			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", text->name.c_str());
+		}
+		json_object_dotset_number_with_std(object, name + "Resource Font UUID", text->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Resource Font UUID", 0);
+	}
+
+	json_object_dotset_boolean_with_std(object, name + "RayCast Target", raycast_target);
+	json_object_dotset_string_with_std(object, name + "Text", text_str.c_str());
+	json_object_dotset_number_with_std(object, name + "Max Input", max_input);
+	json_object_dotset_number_with_std(object, name + "Text Size", text_size);
+
+	json_object_dotset_number_with_std(object, name + "HPosition", h_position);
+	json_object_dotset_number_with_std(object, name + "VPosition", v_position);
+	json_object_dotset_boolean_with_std(object, name + "Can Draw", can_draw);
+
+	App->fs->json_array_dotset_float4(object, name + "Text Color", color);
 }
 
 void CompText::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
-	//...
+
+	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
+	text_str=json_object_dotget_string_with_std(object, name + "Text");
+	max_input=json_object_dotget_number_with_std(object, name + "Max Input");
+	text_size=json_object_dotget_number_with_std(object, name + "Text Size" );
+				   
+	h_position= static_cast<CompText::HorizontalPosition>((int)json_object_dotget_number_with_std(object, name + "HPosition" ));
+	v_position= static_cast<CompText::VerticalPosition>((int)json_object_dotget_number_with_std(object, name + "VPosition" ));
+	can_draw=json_object_dotget_boolean_with_std(object, name + "Can Draw");
+
+	color=App->fs->json_array_dotget_float4_string(object, name + "Text Color");
+
+	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Font UUID");
+	if (resourceID > 0)
+	{
+		text = (ResourceFont*)App->resource_manager->GetResource(resourceID);
+		if (text != nullptr)
+		{
+			text->num_game_objects_use_me++;
+
+			// LOAD Image ----------------------------
+			if (text->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iFont->LoadResource(std::to_string(text->GetUUID()).c_str(), text_size, text);
+			}
+		
+
+		}
+	}
+	
+
 	Enable();
+}
+void CompText::SyncComponent(GameObject* sync_parent)
+{
+	AddRectTransform();
+	AddCanvasRender();
+	AddCanvas();
+	if (my_canvas_render != nullptr&&my_canvas != nullptr)
+	{
+		UpdateText();
+		GenerateText();
+	}
 }

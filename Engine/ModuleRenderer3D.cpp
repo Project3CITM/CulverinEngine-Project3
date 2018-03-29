@@ -43,6 +43,7 @@ ModuleRenderer3D::~ModuleRenderer3D()
 	RELEASE(lights_billboard_shader);
 	RELEASE(default_material);
 	RELEASE(default_texture);
+	RELEASE(non_glow_shader);
 }
 
 // Called before render is available
@@ -182,6 +183,15 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	lights_billboard_shader = App->module_shaders->CreateDefaultShader("Billboard Lights Shader", DefaultFrag, DefaultVert, nullptr);
 
 	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", DefaultFrag, DefaultVert, nullptr);
+	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr);
+	blur_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr);
+	final_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", FinalFrag, TextureVert, nullptr);
+
+	non_glow_material = new Material();
+	non_glow_material->name = "Non Glow Material";
+	non_glow_material->material_shader = non_glow_shader;
+	non_glow_material->GetProgramVariables();
+	
 
 	default_material = new Material();
 	default_material->name = "Default Material";
@@ -199,6 +209,44 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 bool ModuleRenderer3D::Start()
 {
 	perf_timer.Start();
+
+	blur_amount = 15;
+	blur_scale = 1.0f;
+	blur_strength = 0.3f;
+	GLfloat cube_vertices[] = {
+		// front
+
+		-1, -1,  0.0f,
+		1, -1,  0.0f,
+		1,  1,  0.0f,
+		-1,  1, 0.0f,
+	};
+
+	uint cube_elements[] = {
+		// front
+		0, 1, 2, 3
+	
+	};
+
+	static const GLfloat g_UV_buffer_data[] = {	
+		0.0f, 0.0f,
+		1.0f,  0.0f,
+		1.0f,  1.0f,		
+		0.0f, 1.0f,
+	};
+		
+		
+	glGenBuffers(1, &vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER,12 *  sizeof(float), cube_vertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &UVbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_UV_buffer_data), g_UV_buffer_data, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &ibo_cube_elements);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(uint), cube_elements, GL_STATIC_DRAW);
 
 
 	(depth_test) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
@@ -222,108 +270,61 @@ bool ModuleRenderer3D::Start()
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
 	perf_timer.Start();
-
-	// 
-	if (App->mode_game == false)
-	{
-		App->scene->scene_buff->Bind("Scene");
-	}
-
-	// Refresh Projection of the camera
-	UpdateProjection(active_camera);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(active_camera->GetViewMatrix());
-
-	// light 0 on cam pos
 	
+	App->scene->scene_buff->Init("Scene");
+	App->scene->final_buff->Init("Scene");
+	App->scene->glow_buff->Init("Scene");
+	App->scene->horizontal_blur_buff->Init("Scene");
+	App->scene->vertical_blur_buff->Init("Scene");
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
 
-//update_status ModuleRenderer3D::Update(float dt)
-//{
-//	perf_timer.Start();
-//	Update_t = perf_timer.ReadMs();
-//	return UPDATE_CONTINUE;
-//}
 
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 	perf_timer.Start();
-	
-	//All draw functions moved to Scene Update
 
-	// Draw Skybox (direct mode for now)
-	//if (App->scene->draw_skybox)
-	//{
-	//	App->scene->skybox->DrawSkybox(800, active_camera->frustum.pos, App->scene->skybox_index);
-	//}
 
-	//Draw Test Cube
-	//App->scene->DrawCube(5);
 
-	// Draw Plane
-	//App->scene->DrawPlane();
 
-	// Draw GameObjects
-	//App->scene->root->Draw();
-	
+	App->scene->horizontal_blur_buff->Bind("Scene");
+	BlurShaderVars(0);
+	RenderSceneWiewport();
+	App->scene->horizontal_blur_buff->UnBind("Scene");
 
-	// Draw Quadtree
-	//if (App->scene->quadtree_draw)
-	//{
-	//	App->scene->quadtree.DebugDraw();
-	//}
+	App->scene->vertical_blur_buff->Bind("Scene");
+	BlurShaderVars(1);
+	RenderSceneWiewport();
+	App->scene->vertical_blur_buff->UnBind("Scene");
 
-	// Draw GUI
+	if(!App->mode_game)
+		App->scene->final_buff->Bind("Scene");
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+	GlowShaderVars();
+	RenderSceneWiewport();
+
 	App->render_gui->ScreenSpaceDraw();
-	
-	// Draw Mouse Picking Ray
-	//glBegin(GL_LINES);
-	//glLineWidth(3.0f);
-	//glColor4f(1.00f, 0.761f, 0.00f, 1.00f);
-	//glVertex3f(App->camera->ray.a.x, App->camera->ray.a.y, App->camera->ray.a.z); glVertex3f(App->camera->ray.b.x, App->camera->ray.b.y, App->camera->ray.b.z);
-	//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	//glEnd();
+	App->scene->final_buff->UnBind("Scene");
 
-	App->scene->scene_buff->UnBind("Scene");
 
-	//if (game_camera != nullptr)
-	//{
-	//	App->scene->sceneBuff->Bind("Game");
-	//	UpdateProjection(game_camera);
-	//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//	glLoadIdentity();
-	//	glMatrixMode(GL_MODELVIEW);
-	//	glLoadMatrixf(game_camera->GetViewMatrix());
 
-	//	// Render Lights
-	//	for (uint i = 0; i < MAX_LIGHTS; ++i)
-	//		lights[i].Render();
+	/*ImGui::Begin("Test");
+	ImGui::Image((ImTextureID*)App->scene->scene_buff->GetTexture(), ImVec2(256, 256));
+	ImGui::SliderFloat("Strength", &blur_strength, 0.0f, 50.0f);
+	ImGui::SliderInt("Amount", &blur_amount, 0.0f, 30.0f);
+	ImGui::SliderFloat("Scale", &blur_scale, 0.0f, 50.0f);
+	ImGui::End();*/
 
-	//	// Draw Plane
-	//	App->scene->DrawPlane();
 
-	//	// Draw GameObjects
-	//	for (uint i = 0; i < App->scene->gameobjects.size(); i++)
-	//	{
-	//		App->scene->gameobjects[i]->Draw();
-	//	}
-
-	//	App->scene->gameBuff->UnBind("Game");
-
-	//	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//	//glLoadIdentity();
-	//}
 
 	
 	ImGui::Render();
 
+
+	
 	SDL_GL_SwapWindow(App->window->window);
 
 	postUpdate_t = perf_timer.ReadMs();
@@ -538,4 +539,101 @@ bool ModuleRenderer3D::loadTextureFromPixels32(GLuint * id_pixels, GLuint width_
 
 	return true;
 }
+
+void ModuleRenderer3D::RenderSceneWiewport()
+{
+	
+		glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_TEXTURE_2D);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		//DRAW QUAD
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(
+			0,
+			3,
+			GL_FLOAT,
+			GL_FALSE,
+			0,
+			(void*)0
+		);
+		glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(
+			1,
+			2,
+			GL_FLOAT,
+			GL_FALSE,
+			0,
+			(void*)0
+		);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
+		glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, NULL);
+
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glUseProgram(0);
+}
+
+void ModuleRenderer3D::BlurShaderVars(int i)
+{
+	blur_shader_tex->Bind();
+		
+	glActiveTexture(GL_TEXTURE0);
+	GLint texLoc = glGetUniformLocation(blur_shader_tex->programID, "albedo");
+
+	if(i ==0)
+		glBindTexture(GL_TEXTURE_2D, App->scene->glow_buff->GetTexture());
+	else
+		glBindTexture(GL_TEXTURE_2D, App->scene->horizontal_blur_buff->GetTexture());
+	glUniform1i(texLoc, 0);
+
+
+	GLint orientLoc = glGetUniformLocation(blur_shader_tex->programID, "_orientation");
+	glUniform1i(orientLoc, i);
+
+	GLint amountLoc = glGetUniformLocation(blur_shader_tex->programID, "BlurAmount");
+	glUniform1i(amountLoc, blur_amount);
+
+	GLint scaleLoc = glGetUniformLocation(blur_shader_tex->programID, "BlurScale");
+	glUniform1f(scaleLoc, blur_scale);
+
+	GLint strengthLoc = glGetUniformLocation(blur_shader_tex->programID, "BlurStrength");
+	glUniform1f(strengthLoc, blur_strength);
+
+
+}
+
+void ModuleRenderer3D::GlowShaderVars()
+{
+	final_shader_tex->Bind();
+
+	glActiveTexture(GL_TEXTURE0);
+	GLint texLoc = glGetUniformLocation(final_shader_tex->programID, "albedo");
+	glBindTexture(GL_TEXTURE_2D, App->scene->scene_buff->GetTexture());
+	glUniform1i(texLoc, 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	texLoc = glGetUniformLocation(final_shader_tex->programID, "glow_tex");
+	glBindTexture(GL_TEXTURE_2D, App->scene->vertical_blur_buff->GetTexture());
+
+	glUniform1i(texLoc, 1);
+
+
+}
+
 

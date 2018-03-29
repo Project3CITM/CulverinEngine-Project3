@@ -1,12 +1,13 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using CulverinEditor.Pathfinding;
 
 public class ChasePlayer_Action : Action
 {
     PerceptionEvent event_to_react;
     Movement_Action move;
     ACTION_RESULT move_return;
-
+    public bool chase_lancer = false;
     public bool forgot_event = false;
     public float check_player_timer = 1.0f;
     float timer = 0.0f;
@@ -43,7 +44,7 @@ public class ChasePlayer_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true || forgot_event == true)
+        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true )
         {
             move.Interupt();
         }
@@ -55,6 +56,26 @@ public class ChasePlayer_Action : Action
             if (timer >= check_player_timer)
             {
                 timer = 0.0f;
+                GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
+                //move.GoToPrevious(player_x, player_y, true);
+                if (chase_lancer)
+                {
+                    PathNode temp_node = move.CalculatePrevious(player_x, player_y, true);
+                    int dest_x = temp_node.GetTileX();
+                    int dest_y = temp_node.GetTileY();
+                    if (dest_x != 0 && dest_y != 0)
+                    {
+                        move.GoToPrevious(dest_x, dest_y, true);
+                    }
+                }
+                else
+                {
+                    move.GoToPrevious(player_x, player_y, true);
+                }
+                    
+
+            }
+
                 move.GoToPlayer();
             }
 
@@ -76,4 +97,5 @@ public class ChasePlayer_Action : Action
     {
         event_to_react = e;
     }
+
 }
