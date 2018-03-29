@@ -25,6 +25,7 @@ class ImportScript
 public:
 	ImportScript();
 	~ImportScript();
+	void Clear();
 
 	bool InitScriptingSystem();
 	void ShutdownMono();

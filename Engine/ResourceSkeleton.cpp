@@ -8,6 +8,7 @@ SkeletonBone::~SkeletonBone()
 	{
 		RELEASE((*temp));
 	}
+	weights.clear();
 }
 
 ResourceSkeleton::ResourceSkeleton(uint uuid) : Resource(uuid, Resource::Type::SKELETON, Resource::State::UNLOADED)
@@ -22,6 +23,7 @@ ResourceSkeleton::~ResourceSkeleton()
 	{
 		RELEASE((*temp));
 	}
+	bones.clear();
 }
 
 void ResourceSkeleton::InitInfo(char * name, const char * path)

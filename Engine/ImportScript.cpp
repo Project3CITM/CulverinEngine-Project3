@@ -27,7 +27,21 @@ ImportScript::ImportScript()
 
 ImportScript::~ImportScript()
 {
-	//ShutdownMono();
+	ShutdownMono();
+}
+
+void ImportScript::Clear()
+{
+	nameScripts.clear();
+	current = nullptr;
+
+	mono_map.clear();
+	mono_comp.clear();
+	mono_pos.clear();
+	mono_script.clear();
+	mono_quat.clear();
+	mono_material.clear();
+
 }
 
 bool ImportScript::InitScriptingSystem()
@@ -80,7 +94,7 @@ bool ImportScript::InitScriptingSystem()
 
 void ImportScript::ShutdownMono()
 {
-	Unload_domain();
+	//Unload_domain();
 	mono_jit_cleanup(mono_domain_get());
 }
 

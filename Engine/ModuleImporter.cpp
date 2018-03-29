@@ -35,6 +35,7 @@ ModuleImporter::~ModuleImporter()
 	RELEASE(iMaterial);
 	RELEASE(iScript);
 	RELEASE(iAnimation);
+	RELEASE(iFont);
 }
 
 bool ModuleImporter::Init(JSON_Object* node)
@@ -215,6 +216,8 @@ void ModuleImporter::ProcessTransform(CompTransform* trans)
 bool ModuleImporter::CleanUp()
 {
 	aiDetachAllLogStreams();
+	iScript->Clear();
+
 	return true;
 }
 

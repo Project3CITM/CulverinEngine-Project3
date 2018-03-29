@@ -16,6 +16,7 @@ ResourceAnimation::~ResourceAnimation()
 	{
 		RELEASE((*temp));
 	}
+	bones.clear();
 }
 
 void ResourceAnimation::InitInfo(const char * resource_name, const char * path, const char* path_library_)

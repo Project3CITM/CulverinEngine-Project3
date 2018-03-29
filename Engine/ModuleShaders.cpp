@@ -25,14 +25,17 @@ ModuleShaders::~ModuleShaders()
 	for (auto item = materials.begin(); item != materials.end(); item++) {
 		RELEASE(*item);
 	}
+	materials.clear();
 	for (auto item = shaders.begin(); item != shaders.end(); item++) {
 		RELEASE(*item);
 
 	}
+	shaders.clear();
 	for (auto item = programs.begin(); item != programs.end(); item++) {
 		RELEASE(*item);
 	}
-
+	programs.clear();
+	editor_shaders.Delete();
 }
 
 bool ModuleShaders::Init(JSON_Object * node)

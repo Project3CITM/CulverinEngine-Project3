@@ -251,6 +251,7 @@ void ResourceMesh::LoadAABBBox()
 	}
 	aabb_box.SetNegativeInfinity();
 	aabb_box.Enclose(vertex_pos, num_vertices);
+	delete[] vertex_pos;
 }
 
 Resource::State ResourceMesh::IsLoadedToMemory()
