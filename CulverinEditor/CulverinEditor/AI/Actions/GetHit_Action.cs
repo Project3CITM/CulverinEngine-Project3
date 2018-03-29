@@ -26,6 +26,10 @@ class GetHit_Action: Action
         anim = GetComponent<CompAnimation>();
         anim.SetTransition("ToHit");
         anim.SetClipsSpeed(hit_speed);
+
+        //hurt audio
+        GetComponent<CompAudio>().PlayEvent("JaimeHurt");
+
         return true;
     }
 

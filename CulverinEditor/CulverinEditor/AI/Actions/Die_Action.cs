@@ -17,6 +17,10 @@ class Die_Action : Action
     {
         GetComponent<CompAnimation>().SetTransition("ToDie");
         GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+
+        //lost player audio
+        GetComponent<CompAudio>().PlayEvent("JaimeHurt");
+
         return true;
     }
 

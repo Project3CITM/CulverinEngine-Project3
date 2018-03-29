@@ -18,6 +18,10 @@ class Engage_Action : Action
         Debug.Log("Engage Start");
         GetComponent<CompAnimation>().SetTransition("ToDraw");
         GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+
+        //I see ya something audio
+        GetComponent<CompAudio>().PlayEvent("Dracarys");
+
         return true;
     }
 

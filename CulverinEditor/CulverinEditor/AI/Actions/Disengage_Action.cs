@@ -17,6 +17,10 @@ class Disengage_Action : Action
     {
         GetComponent<CompAnimation>().SetTransition("ToSheatheSword");
         GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+
+        //lost player audio
+        GetComponent<CompAudio>().PlayEvent("Dracarys");
+       
         return true;
     }
 
