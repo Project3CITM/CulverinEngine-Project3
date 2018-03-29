@@ -153,6 +153,10 @@ public class Lever : CulverinBehaviour
         GeneratePath();
 
         lever_interact = GetLinkedObject("lever_interact");
+        if(lever_interact != null)
+        {
+            lever_interact.SetActive(false);
+        }
         
         //// Testing --------------------------------------------
         //for (int y = 0; y < number_lines; y++)

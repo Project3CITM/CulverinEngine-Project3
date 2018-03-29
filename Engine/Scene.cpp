@@ -279,6 +279,7 @@ bool Scene::CleanUp()
 {
 	skybox->DeleteSkyboxTex();
 	
+	octree.Clear();
 	root->CleanUp();
 	temp_scene->CleanUp();
 
@@ -1025,9 +1026,6 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 // -----------------------------------------------------------------------------
 void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain, bool is_reimport)
 {
-	//Clear octree 
-	octree.Clear(false);
-
 	GameObject* child_index = nullptr;
 	for (int i = 0; i < gameobject->GetNumChilds(); i++)
 	{

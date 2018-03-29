@@ -659,7 +659,7 @@ void ImportScript::RemoveTransformPosPointerFromMap(float3 * pospointer)
 		{
 			if (it_pos._Ptr->_Myval.second == pospointer)
 			{
-				mono_pos.erase(it_pos);
+				it_pos = mono_pos.erase(it_pos);
 			}
 			else it_pos++;
 		}
