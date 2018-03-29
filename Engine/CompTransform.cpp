@@ -600,20 +600,16 @@ void CompTransform::SetForwardVector(float3 vec)
 	float3 right = math::Cross(up, vec).Normalized();
 	up = math::Cross(vec,right).Normalized();
 
-	float3 translation = global_transform.TranslatePart();
+	float4x4 new_transform = float4x4(float3x3(right, up, vec));
 
-	float4x4 new_transform(float3x4(right, up, vec, translation));
-
-	GameObject* parent_go = parent->GetParent();
-
-	if (parent_go != nullptr)
+	const GameObject* parentparent = parent->GetParent();
+	if (parentparent != nullptr)
 	{
-		float4x4 parent_transform = parent_go->GetComponentTransform()->GetGlobalTransform();
-		local_transform = parent_transform.Inverted() * new_transform;
+		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
 	}
-	else
-		local_transform = new_transform;
-
+	rotation_euler = new_transform.ToEulerXYZ();
+	rotation = Quat::FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation_euler *= RADTODEG;
 	toUpdate = true;
 }
 
@@ -638,8 +634,8 @@ void CompTransform::SetUpVector(float3 vec)
 	{
 		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
 	}
-	rotation_euler = new_transform.ToEulerXYZ();;
-	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation_euler = new_transform.ToEulerXYZ();
+	rotation = Quat::FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
 	rotation_euler *= RADTODEG;
 	toUpdate = true;
 }
@@ -665,7 +661,7 @@ void CompTransform::SetRightVector(float3 vec)
 		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
 	}
 	rotation_euler = new_transform.ToEulerXYZ();;
-	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation = Quat::FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
 	rotation_euler *= RADTODEG;
 	toUpdate = true;
 }

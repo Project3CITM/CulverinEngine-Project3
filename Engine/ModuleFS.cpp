@@ -591,6 +591,17 @@ void ModuleFS::GetUUIDFromFile(std::string path, std::vector<uint>& files)
 			}
 			break;
 		}
+		case Resource::Type::SCRIPT:
+		{
+			ReImport temp = App->json_seria->GetUUIDScript(path.c_str());
+			if (temp.uuid != 0)
+			{
+				App->resource_manager->files_to_delete.push_back(temp.uuid);
+				//RELEASE_ARRAY(temp.directoryObj);
+				//RELEASE_ARRAY(temp.nameMesh);
+			}
+			break;
+		}
 		}
 	}
 }

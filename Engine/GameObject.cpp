@@ -54,6 +54,7 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 		parent->childs.push_back(this);
 	}
 
+	
 	box_fixed.SetNegativeInfinity();
 }
 
@@ -63,6 +64,8 @@ GameObject::GameObject(std::string nameGameObject)
 	SetVisible(true);
 	uid = App->random->Int();
 	name = nameGameObject;
+
+	
 	box_fixed.SetNegativeInfinity();
 }
 
@@ -72,6 +75,7 @@ GameObject::GameObject(std::string nameGameObject, uint uuid)
 	SetVisible(true);
 	uid = uuid;
 	name = nameGameObject;
+
 	box_fixed.SetNegativeInfinity();
 }
 
@@ -91,7 +95,16 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 	visible = copy.IsVisible();
 	static_obj = copy.IsStatic();
 	bb_active = copy.IsAABBActive();
-	
+
+	if (copy.box_fixed.IsFinite())
+	{
+		
+		box_fixed = copy.box_fixed;
+	}
+	else
+	{
+		box_fixed.SetNegativeInfinity();
+	}
 
 	//Create all components from copy object with same data
 	for (uint i = 0; i < copy.GetNumComponents(); i++)
@@ -106,12 +119,12 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 		childs.push_back(new GameObject(*copy.GetChildbyIndex(i), haveparent, parent_));
 		childs[i]->parent = this;
 	}
-	box_fixed.SetNegativeInfinity();
 }
 
 GameObject::~GameObject()
 {
 	//RELEASE_ARRAY(name); FIX THIS
+
 	parent = nullptr;
 
 	if (components.size() > 0)
@@ -363,6 +376,9 @@ void GameObject::Update(float dt)
 				childs[i]->Update(dt);
 			}
 		}
+
+
+		
 	}
 }
 
@@ -372,6 +388,10 @@ void GameObject::Update(float dt)
 
 bool GameObject::CleanUp()
 {
+
+	box_fixed.SetNegativeInfinity();
+
+
 	//preUpdate Components --------------------------
 	for (uint i = 0; i < components.size(); i++)
 	{
@@ -2165,7 +2185,9 @@ void GameObject::SetParent(GameObject* new_parent)
 
 void GameObject::AddBoundingBox(const ResourceMesh* mesh)
 {
+
 	box_fixed.Enclose(mesh->aabb_box);
+
 }
 
 void GameObject::DrawBoundingBox()

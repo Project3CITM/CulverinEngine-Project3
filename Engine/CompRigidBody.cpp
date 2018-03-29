@@ -99,7 +99,7 @@ void CompRigidBody::Clear()
 		collider_comp = nullptr;
 		body = nullptr;
 	}
-	else if(body != nullptr)
+	else if (body != nullptr)
 	{
 		App->physics->DeleteCollider(this, body);
 		body = nullptr;
@@ -181,7 +181,10 @@ void CompRigidBody::ShowInspectorInfo()
 		{
 			sleep_time = -sleep_time;
 		}
-		body->SetSleepTime(sleep_time);
+		if (!kinematic)
+		{
+			body->SetSleepTime(sleep_time);
+		}
 	}
 
 	// Lock Linear move -----------------
@@ -189,7 +192,7 @@ void CompRigidBody::ShowInspectorInfo()
 	bool flags = (lock_move & (1 << 0));
 	if (ImGui::Checkbox("X", &flags))
 	{
-		(flags)? lock_move |= (1 << 0): lock_move &= ~(1 << 0);
+		(flags) ? lock_move |= (1 << 0) : lock_move &= ~(1 << 0);
 		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, flags);
 	}
 	ImGui::SameLine();
@@ -230,7 +233,7 @@ void CompRigidBody::ShowInspectorInfo()
 		(flags) ? lock_move |= (1 << 5) : lock_move &= ~(1 << 5);
 		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, flags);
 	}
-	
+
 	ImGui::TreePop();
 }
 
@@ -291,8 +294,11 @@ void CompRigidBody::SyncComponent(GameObject* sync_parent)
 	{
 		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 	}
-	
-	body->SetSleepTime(sleep_time);
+
+	if (!kinematic)
+	{
+		body->SetSleepTime(sleep_time);
+	}
 }
 
 bool CompRigidBody::IsKinematic()
@@ -312,8 +318,8 @@ void CompRigidBody::SetColliderPosition()
 
 	if (collider_comp)
 	{
-		 quat = quat*collider_comp->GetLocalQuat();
-		 fpos = fpos + quat * collider_comp->GetPosition();
+		quat = quat * collider_comp->GetLocalQuat();
+		fpos = fpos + quat * collider_comp->GetPosition();
 	}
 
 	body->SetTransform(fpos, quat);
@@ -388,27 +394,27 @@ void CompRigidBody::RemoveJoint()
 	}
 }
 
-void CompRigidBody::OnTriggerEnter(Component * trigger)
+void CompRigidBody::OnTriggerEnter(Component* actor1)
 {
 	if (collider_comp)
 	{
-		collider_comp->OnTriggerEnter(trigger);
+		collider_comp->OnTriggerEnter(actor1);
 	}
 }
 
-void CompRigidBody::OnTriggerLost(Component * trigger)
+void CompRigidBody::OnTriggerLost(Component* actor1)
 {
 	if (collider_comp)
 	{
-		collider_comp->OnTriggerLost(trigger);
+		collider_comp->OnTriggerLost(actor1);
 	}
 }
 
-void CompRigidBody::OnContact(Component * actor)
+void CompRigidBody::OnContact(CollisionData new_data)
 {
 	if (collider_comp)
 	{
-		collider_comp->OnContact(actor);
+		collider_comp->OnContact(new_data);
 	}
 }
 

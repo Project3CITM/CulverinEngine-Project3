@@ -272,6 +272,64 @@ MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 	return nullptr;
 }
 
+MonoObject * CSharpScript::GetContactPoint(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
+		if (classT)
+		{
+			Component* obj = App->importer->iScript->GetComponentMono(object);
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+				CompCollider* coll = (CompCollider*)current_game_object->FindComponentByType(C_COLLIDER);
+				float3 new_vec = coll->GetContactPoint();
+
+				if (x_field) mono_field_set_value(new_object, x_field, &new_vec.x);
+				if (y_field) mono_field_set_value(new_object, y_field, &new_vec.y);
+				if (z_field) mono_field_set_value(new_object, z_field, &new_vec.z);
+
+				return new_object;
+			}
+		}
+	}
+	return nullptr;
+}
+
+MonoObject * CSharpScript::GetContactNormal(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
+		if (classT)
+		{
+			Component* obj = App->importer->iScript->GetComponentMono(object);
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+				CompCollider* coll = (CompCollider*)current_game_object->FindComponentByType(C_COLLIDER);
+				float3 new_vec = coll->GetContactNormal();
+
+				if (x_field) mono_field_set_value(new_object, x_field, &new_vec.x);
+				if (y_field) mono_field_set_value(new_object, y_field, &new_vec.y);
+				if (z_field) mono_field_set_value(new_object, z_field, &new_vec.z);
+
+				return new_object;
+			}
+		}
+	}
+	return nullptr;
+}
+
 void CSharpScript::MoveStaticColliderTo(MonoObject * object, MonoObject * position)
 {
 	if (current_game_object != nullptr)
@@ -295,7 +353,8 @@ void CSharpScript::CallOnContact(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
-		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnContact(nullptr);
+		CollisionData data;
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnContact(data);
 	}
 }
 

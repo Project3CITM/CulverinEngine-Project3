@@ -512,7 +512,7 @@ void CSharpScript::Clear()
 	{
 		if (variables[i]->game_object != nullptr)
 		{
-			variables[i]->game_object->FixedDelete(true);
+			variables[i]->game_object = nullptr;
 			variables[i]->select_game_object = false;
 		}
 	}
@@ -1402,6 +1402,18 @@ void CSharpScript::SetBool(MonoObject * object, MonoString * name, bool value)
 	Material * mat = App->importer->iScript->GetMaterialMono(object);
 
 	for (auto it = mat->bool_variables.begin(); it != mat->bool_variables.end(); it++) {
+		if (strcmp((*it).var_name.c_str(), mono_string_to_utf8(name)) == 0) {
+			(*it).value = value;
+			break;
+		}
+	}
+}
+
+void CSharpScript::SetFloat(MonoObject * object, MonoString * name, float value)
+{
+	Material * mat = App->importer->iScript->GetMaterialMono(object);
+
+	for (auto it = mat->float_variables.begin(); it != mat->float_variables.end(); it++) {
 		if (strcmp((*it).var_name.c_str(), mono_string_to_utf8(name)) == 0) {
 			(*it).value = value;
 			break;
