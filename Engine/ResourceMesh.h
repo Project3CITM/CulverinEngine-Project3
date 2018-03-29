@@ -2,6 +2,7 @@
 #define _RESOURCEMESH_
 
 #include "Resource_.h"
+#include "MathGeoLib.h"
 #include "Math\float4x4.h"
 #include "Math/float3.h"
 #include "Math/float2.h"
@@ -60,6 +61,7 @@ public:
 
 	void DeleteToMemory();
 	bool LoadToMemory();
+	void LoadAABBBox();
 	Resource::State IsLoadedToMemory();
 
 	bool HasSkeleton() const;
@@ -75,6 +77,7 @@ public:
 	std::vector<uint> indices;
 	std::vector<float3> vertices_normals;
 
+	math::AABB aabb_box;
 	//std::vector<FaceCenter> face_centers;
 
 	//uint VAO = 0;				/* Vertex Array Object */

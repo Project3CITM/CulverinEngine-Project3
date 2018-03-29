@@ -14,6 +14,7 @@
 class CompLight;
 class ShaderProgram;
 class CompMesh;
+class ResourceMesh;
 
 bool OrderLights(CompLight* l1, CompLight* l2);
 

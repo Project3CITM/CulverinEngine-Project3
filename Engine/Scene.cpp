@@ -29,7 +29,6 @@
 #include "WindowInspector.h"
 #include "CompCamera.h"
 #include "MathGeoLib.h"
-#include "Quadtree.h"
 #include "JSONSerialization.h"
 #include "SkyBox.h"
 #include "ModuleRenderGui.h"
@@ -68,6 +67,14 @@ Scene::~Scene()
 	RELEASE(skybox);
 }
 
+bool Scene::Init(JSON_Object * node)
+{
+	/* Init Octree */
+	octree.Boundaries(AABB(float3(-1.0f, -1.0f, -1.0f), float3(1.0f, 1.0f, 1.0f)));
+
+	return true;
+}
+
 bool Scene::Start()
 {
 	perf_timer.Start();
@@ -76,7 +83,7 @@ bool Scene::Start()
 	root = new GameObject("NewScene", 1);
 	temp_scene = new GameObject("Temporary Scene", 1);
 	/* Init Quadtree */
-	size_quadtree = 50000.0f;
+	size_quadtree = 5000.0f;
 //	quadtree.Init(size_quadtree);
 	octree.limits.octreeMinSize = 50;
 	octree.Boundaries(AABB(float3(-size_quadtree, -size_quadtree, -size_quadtree), float3(size_quadtree, size_quadtree, size_quadtree)));
@@ -201,7 +208,7 @@ update_status Scene::Update(float dt)
 	// Draw GameObjects
 	root->Draw();
 	// Draw Quadtree
-	if (quadtree_draw) App->scene->octree.DebugDraw();
+	if (octree_draw) octree.DebugDraw();
 
 	App->scene->scene_buff->UnBind("Scene");
 	// Draw GUI
@@ -344,14 +351,43 @@ void Scene::EditorQuadtree()
 		//TODO: Joan->Redo quadtree config options
 
 		/* Enable Debug Draw */
-		ImGui::Checkbox("##quadtreedraw", &quadtree_draw); ImGui::SameLine();
-		ImGui::Text("Draw Quadtree");
+		ImGui::Checkbox("##quadtreedraw", &octree_draw); ImGui::SameLine();
+		ImGui::Text("Draw Octree");
 		ImGui::SliderFloat("Size", &size_quadtree, 50, 300);
 
 		/* Remake Quadtree with actual static objects*/
-		/*if (ImGui::Button("UPDATE QUADTREE"))
+		if (ImGui::Button("UPDATE QUADTREE"))
 		{
-			if (App->engine_state == EngineState::STOP)
+			octree.Clear(false);
+			//Clac adaptative size of scene octree
+			/**/
+			AABB AdaptativeAABB;
+		
+			AdaptativeAABB.SetNegativeInfinity();
+			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
+			{
+				if ((*item)->IsStatic())
+				{
+					
+
+					/*ComponentMesh* mesh = (ComponentMesh*)(*item)->FindComponentFirst(ComponentType::Mesh_Component);
+					if (mesh != nullptr)
+					{
+						AABB Box;
+						mesh->GetTransformedAABB(Box);
+						AdaptativeAABB.Enclose(Box);
+					}*/
+				}
+			}
+			octree.Boundaries(AdaptativeAABB);
+			/**/
+			//Insert AABBs to octree
+			for (std::vector<GameObject*>::const_iterator item = static_objects.cbegin(); item != static_objects.cend(); ++item)
+				if ((*item)->IsStatic())
+					octree.Insert(*item);
+
+
+		/*	if (App->engine_state == EngineState::STOP)
 			{
 				if (size_quadtree != quadtree.size)
 				{
@@ -366,8 +402,8 @@ void Scene::EditorQuadtree()
 			else
 			{
 				LOG("Update Quadtree not possible while GAME MODE is ON");
-			}
-		}*/
+			}*/
+		}
 		ImGui::TreePop();
 	}
 	else
@@ -927,8 +963,15 @@ void Scene::DrawCube(float size)
 
 void Scene::RecalculateStaticObjects()
 {
-	static_objects.clear();
-	octree.CollectAllObjects(static_objects);
+	//static_objects.clear();
+	//octree.CollectAllObjects(static_objects);
+}
+
+const std::vector<GameObject*>* Scene::GetAllSceneObjects()
+{
+	game_objects_scene.clear();
+	root->GetAllSceneGameObjects(game_objects_scene);
+	return &game_objects_scene;
 }
 
 GameObject * Scene::FindCanvas()
@@ -982,6 +1025,9 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 // -----------------------------------------------------------------------------
 void Scene::DeleteAllGameObjects(GameObject* gameobject, bool isMain, bool is_reimport)
 {
+	//Clear octree 
+	octree.Clear(false);
+
 	GameObject* child_index = nullptr;
 	for (int i = 0; i < gameobject->GetNumChilds(); i++)
 	{
@@ -1196,7 +1242,6 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	box->axis[1] = float3(0, 1, 0);
 	box->axis[2] = float3(0, 0, 1);
 
-	obj->bounding_box = new AABB(*box);
 
 	//MATERIAL COMPONENT -------------------
 	CompMaterial* mat = (CompMaterial*)obj->AddComponent(C_MATERIAL);
@@ -1251,7 +1296,6 @@ GameObject * Scene::CreatePlane(GameObject * parent)
 	box->axis[1] = float3(0, 1, 0);
 	box->axis[2] = float3(0, 0, 1);
 
-	obj->bounding_box = new AABB(*box);
 
 	//MATERIAL COMPONENT -------------------
 	CompMaterial* mat = (CompMaterial*)obj->AddComponent(C_MATERIAL);

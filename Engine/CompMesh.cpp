@@ -111,6 +111,15 @@ void CompMesh::PreUpdate(float dt)
 
 void CompMesh::Update(float dt)
 {
+
+	if (parent->GetComponentTransform()->GetUpdated())
+	{
+		if (resource_mesh != nullptr)
+		{
+			parent->box_fixed = resource_mesh->aabb_box;
+		}
+		parent->box_fixed.TransformAsAABB(parent->GetComponentTransform()->GetGlobalTransform());
+	}
 }
 
 void CompMesh::ShowOptions()
@@ -517,6 +526,8 @@ void CompMesh::SetResource(ResourceMesh* resourse_mesh, bool isImport)
 	}
 }
 
+
+
 void CompMesh::CopyValues(const CompMesh* component)
 {
 	resource_mesh = component->resource_mesh;
@@ -591,6 +602,17 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 	}
 
 	Enable();
+}
+
+void CompMesh::SyncComponent(GameObject * sync_parent)
+{
+	parent->GetComponentTransform()->UpdateGlobalTransform();
+	if (resource_mesh != nullptr)
+	{
+		parent->box_fixed = resource_mesh->aabb_box;
+	}
+	float4x4 temp = parent->GetComponentTransform()->GetGlobalTransform();
+	parent->box_fixed.TransformAsAABB(temp);
 }
 
 void CompMesh::LinkSkeleton()
