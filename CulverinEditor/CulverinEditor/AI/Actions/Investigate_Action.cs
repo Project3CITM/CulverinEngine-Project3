@@ -46,7 +46,7 @@ public class Investigate_Action : Action
         my_state = INVESTIGATESTATE.GOING_TO_INVESTIGATE;
 
         //hear something audio
-        GetComponent<CompAudio>().PlayEvent("Dracarys");
+        //GetComponent<CompAudio>().PlayEvent("Dracarys");
 
         return ret;
     }

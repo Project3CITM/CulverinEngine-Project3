@@ -15,6 +15,10 @@ class GetHit_Action: Action
     public override bool ActionStart()
     {
         interupt = false;
+        GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
+        int tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+
         GetComponent<CompAnimation>().SetTransition("ToHit");
         GetComponent<CompAnimation>().SetClipDuration("Hit", duration);
         GetComponent<CompAudio>().PlayEvent("JaimeHurt");
