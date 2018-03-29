@@ -11,12 +11,11 @@ enum ParameterValue
 	RECT_TRANSFORM_HEIGHT,
 
 };
+
 union AnimationValue
 {
-	AnimationValue() {}
-	~AnimationValue() {}
-
-	ParameterValue type;
+	AnimationValue(){}
+	~AnimationValue(){}
 	int i_value;
 	float f_value;
 	double d_value;
@@ -24,15 +23,22 @@ union AnimationValue
 	Quat q_value;
 
 };
+struct AnimationData
+{
+	AnimationData();
+	~AnimationData();
 
+	ParameterValue type;
+	AnimationValue value;
+};
 class AnimableComponent
 {
 public:
 	AnimableComponent();
 	~AnimableComponent();
 
-	virtual void SetNewAnimationValue(const AnimationValue& value);
-	virtual AnimationValue ShowParameters();
+	virtual void SetNewAnimationValue(const AnimationData& value);
+	virtual AnimationData ShowParameters();
 };
 
 #endif //_MODULE_ANIMATION_H_

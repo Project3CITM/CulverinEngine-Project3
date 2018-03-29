@@ -61,7 +61,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 					{
 						//item->ShowParameters();
 						
-						AnimationValue new_value = item->ShowParameters();
+						AnimationData new_value = item->ShowParameters();
 						if (new_value.type != PARAMETER_NONE)
 						{
 							int find = HaveAnimData(item);
@@ -70,7 +70,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 
 								if (!animation_json->animations[find].HaveKeyFrameData(new_value.type))
 								{
-									animation_json->animations[find].key_data.push_back(KeyFrameData(0, new_value, new_value.type));
+									animation_json->animations[find].key_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
 								}
 
 							}
@@ -78,7 +78,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 							{
 								AnimData tmp_anim_data;
 								tmp_anim_data.data = item;
-								tmp_anim_data.key_data.push_back(KeyFrameData(0, new_value, new_value.type));
+								tmp_anim_data.key_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
 								animation_json->animations.push_back(tmp_anim_data);
 							}
 							new_animation_window = false;

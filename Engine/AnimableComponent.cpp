@@ -11,14 +11,22 @@ AnimableComponent::~AnimableComponent()
 {
 }
 
-void AnimableComponent::SetNewAnimationValue(const AnimationValue & value)
+void AnimableComponent::SetNewAnimationValue(const AnimationData & value)
 {
 }
 
-AnimationValue AnimableComponent::ShowParameters()
+AnimationData AnimableComponent::ShowParameters()
 {
-	AnimationValue ret;
-	ret.type = PARAMETER_NONE;
+	AnimationData ret;
+	ret.type = ParameterValue::PARAMETER_NONE;
 	return ret;
 }
 
+AnimationData::AnimationData()
+{
+
+}
+
+AnimationData::~AnimationData()
+{
+}

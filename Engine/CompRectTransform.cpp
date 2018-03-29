@@ -388,35 +388,35 @@ void CompRectTransform::DrawRectTransform()
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-void CompRectTransform::SetNewAnimationValue(const AnimationValue & value)
+void CompRectTransform::SetNewAnimationValue(const AnimationData & value)
 {
 	switch (value.type)
 	{
 	case ParameterValue::RECT_TRANSFORM_POSITION:
-		SetPos(value.f3_value);
+		SetPos(value.value.f3_value);
 		break;
 	case ParameterValue::RECT_TRANSFORM_ROTATION:
-		SetRot(value.f3_value);
+		SetRot(value.value.f3_value);
 		break;
 	case ParameterValue::RECT_TRANSFORM_SCALE:
-		SetScale(value.f3_value);
+		SetScale(value.value.f3_value);
 		break;
 	case ParameterValue::RECT_TRANSFORM_WIDTH:
-		SetWidth(value.f_value);
+		SetWidth(value.value.f_value);
 		break;
 	case ParameterValue::RECT_TRANSFORM_HEIGHT:
-		SetHeight(value.f_value);
+		SetHeight(value.value.f_value);
 		break;
 	default:
 		break;
 	}
 }
 
-AnimationValue CompRectTransform::ShowParameters()
+AnimationData CompRectTransform::ShowParameters()
 {
 	ImGui::OpenPopup("OptionsCollider");
-	AnimationValue ret;
-	ret.type = PARAMETER_NONE;
+	AnimationData ret;
+	ret.type = ParameterValue::PARAMETER_NONE;
 	SetNextWindowSize(ImVec2(200,200));
 	if (ImGui::BeginPopup("OptionsCollider"))
 	{
@@ -432,7 +432,7 @@ AnimationValue CompRectTransform::ShowParameters()
 		if (ImGui::Button("Select##pos_button"))
 		{
 			ret.type = ParameterValue::RECT_TRANSFORM_POSITION;
-			ret.f3_value = GetPos();
+			ret.value.f3_value = GetPos();
 		}
 		ImGui::NextColumn();
 
@@ -441,7 +441,7 @@ AnimationValue CompRectTransform::ShowParameters()
 		if (ImGui::Button("Select##rot_button"))
 		{
 			ret.type = ParameterValue::RECT_TRANSFORM_ROTATION;
-			ret.f3_value = GetPos();
+			ret.value.f3_value = GetPos();
 		}
 		ImGui::NextColumn();
 
@@ -450,7 +450,7 @@ AnimationValue CompRectTransform::ShowParameters()
 		if (ImGui::Button("Select##sca_button"))
 		{
 			ret.type = ParameterValue::RECT_TRANSFORM_SCALE;
-			ret.f3_value = GetPos();
+			ret.value.f3_value = GetPos();
 		}
 		ImGui::NextColumn();
 
@@ -459,7 +459,7 @@ AnimationValue CompRectTransform::ShowParameters()
 		if (ImGui::Button("Select##width_button"))
 		{
 			ret.type = ParameterValue::RECT_TRANSFORM_WIDTH;
-			ret.f3_value = GetPos();
+			ret.value.f3_value = GetPos();
 		}
 		ImGui::NextColumn();
 
@@ -468,7 +468,7 @@ AnimationValue CompRectTransform::ShowParameters()
 		if (ImGui::Button("Select##height_button"))
 		{
 			ret.type = ParameterValue::RECT_TRANSFORM_HEIGHT;
-			ret.f3_value = GetPos();
+			ret.value.f3_value = GetPos();
 		}
 		ImGui::NextColumn();
 		ImGui::EndPopup();
