@@ -27,6 +27,7 @@ public class Lever : CulverinBehaviour
     public float wheight_barrel = 20.0f;
     public float barrel_fall_speed = 0.0f;
     public float floor_height = 0.0f;
+    public float time_sinking = 1.0f;
 
     //time to wait, move second mode
     public float delay_second_mode = 6.0f;
@@ -329,11 +330,11 @@ public class Lever : CulverinBehaviour
             if (current_path.walkability[x, y] == 0)
             {
                
-                list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.PUZZLE, floor_height);
+                list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.PUZZLE, time_sinking, floor_height);
             }
             else if (current_path.walkability[x, y] == 1)
             {
-                list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.FILLING, floor_height);
+                list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.FILLING, time_sinking, floor_height);
             }
         }
     }
@@ -590,7 +591,7 @@ public class Lever : CulverinBehaviour
         for (; i >= 0; i--)
         {
             BarrelFall b_fall = list[i].GetComponent<BarrelFall>();            
-            b_fall.ResetBarrel();
+            b_fall.SetToSink();
         }
     }
 
