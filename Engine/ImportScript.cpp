@@ -778,20 +778,26 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 			MonoMethod* method = NULL;
 			while ((method = mono_class_get_methods(entity, &iter)))
 			{
-				uint t, flag;
-				flag = mono_method_get_flags(method, &t);
+				uint t, flags;
+				flags = mono_method_get_flags(method, &t);
 				std::string name_method = mono_method_get_name(method);
 				std::string fullname_method = mono_method_full_name(method, true);
 				MonoMethodSignature* signature = mono_method_signature(method);
 				uint num = mono_signature_get_param_count(signature);
-				if (num > 1)
+				if (num > 1) // We can't use 2 or more paramaters (only 1 or 0)
 				{
 					continue;
 				}
-				if (flag != 134)
+				if (!(flags & MONO_METHOD_ATTR_PUBLIC))// Use Public !!
 				{
 					continue;
 				}
+				if (strcmp(name_method.c_str(), ".ctor") == 0) // Dont enter with constructors...
+				{
+					continue;
+				}
+
+
 				if (num == 0)
 				{
 					PublicMethod temp;
