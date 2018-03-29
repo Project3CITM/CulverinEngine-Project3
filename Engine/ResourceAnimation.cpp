@@ -114,7 +114,7 @@ float3 AnimBone::GetPosition(AnimationClip* clip_vec, bool activated) const
 		float next_time;
 
 		for (std::vector<PositionKey*>::const_iterator it = position_keys.begin(); it != position_keys.end(); ++it)
-		{
+		{			
 			if ((*it)->time <= clip_vec->time)
 			{
 				if (it == position_keys.end() - 1)
@@ -127,8 +127,16 @@ float3 AnimBone::GetPosition(AnimationClip* clip_vec, bool activated) const
 					actual_time = (*it)->time;
 					next_pos = (*(it + 1))->position;
 					next_time = (*(it + 1))->time;
-
+					continue;
 				}
+			}
+			if ((clip_vec->time < position_keys[0]->time))
+			{
+				actual_pos = position_keys[0]->position;
+				actual_time = position_keys[0]->time;
+				next_pos = position_keys[1]->position;
+				next_time = position_keys[1]->time;
+				break;
 			}
 		}
 		//if no interpolation get clip 0 
@@ -155,14 +163,7 @@ Quat AnimBone::GetRotation(AnimationClip* clip_vec, bool activated) const
 
 		for (std::vector<RotationKey*>::const_iterator it = rotation_keys.begin(); it != rotation_keys.end(); ++it)
 		{
-			if (clip_vec->time < rotation_keys[0]->time)
-			{
-				actual_pos = rotation_keys[0]->rotation;
-				actual_time = rotation_keys[0]->time;
-				next_pos = rotation_keys[1]->rotation;
-				next_time = rotation_keys[1]->time;
-				break;
-			}
+			
 			if ((*it)->time <= clip_vec->time)
 			{
 				if (it == rotation_keys.end() - 1)
@@ -175,8 +176,16 @@ Quat AnimBone::GetRotation(AnimationClip* clip_vec, bool activated) const
 					actual_time = (*it)->time;
 					next_pos = (*(it + 1))->rotation;
 					next_time = (*(it + 1))->time;
-
+					continue;
 				}
+			}
+			if ((clip_vec->time < rotation_keys[0]->time))
+			{
+				actual_pos = rotation_keys[0]->rotation;
+				actual_time = rotation_keys[0]->time;
+				next_pos = rotation_keys[1]->rotation;
+				next_time = rotation_keys[1]->time;
+				break;
 			}
 		}
 		//if no interpolation get clip 0 
@@ -219,8 +228,16 @@ float3 AnimBone::GetScale(AnimationClip* clip_vec, bool activated) const
 					actual_time = (*it)->time;
 					next_pos = (*(it + 1))->scale;
 					next_time = (*(it + 1))->time;
-
+					continue;
 				}
+			}
+			if ((clip_vec->time < rotation_keys[0]->time))
+			{
+				actual_pos = scale_keys[0]->scale;
+				actual_time = scale_keys[0]->time;
+				next_pos = scale_keys[1]->scale;
+				next_time = scale_keys[1]->time;
+				break;
 			}
 		}
 		//if no interpolation get clip 0 
