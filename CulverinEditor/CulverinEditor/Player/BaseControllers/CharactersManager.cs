@@ -36,7 +36,6 @@ public class CharactersManager : CulverinBehaviour
     public GameObject health_obj;
     public GameObject stamina_obj;
     public GameObject mana_obj;
-    public GameObject enemies_obj;
 
     //To manage secondary abilities buttons
     public GameObject jaime_s_button_obj;
@@ -66,7 +65,6 @@ public class CharactersManager : CulverinBehaviour
         health_obj = GetLinkedObject("health_obj");
         stamina_obj = GetLinkedObject("stamina_obj");
         mana_obj = GetLinkedObject("mana_obj");
-        enemies_obj = GetLinkedObject("enemies_obj");
 
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");

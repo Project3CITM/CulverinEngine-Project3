@@ -17,6 +17,9 @@ public class Shield : CulverinBehaviour
     // Use this for initialization
     void Start()
     {
+        active = false;
+        broken_shield = false;
+
         shield_obj = GetLinkedObject("shield_obj");
         broken_shield_obj = GetLinkedObject("broken_shield_obj");
 
