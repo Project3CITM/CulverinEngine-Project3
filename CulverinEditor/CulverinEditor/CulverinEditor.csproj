@@ -74,7 +74,10 @@
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
+    <Compile Include="CompText.cs" />
     <Compile Include="CompLight.cs" />
+    <Compile Include="PlayQuit.cs" />
+    <Compile Include="Scroll.cs" />
     <Compile Include="StatsScore.cs" />
     <Compile Include="PKeyScene.cs" />
     <Compile Include="Miscellanea\DamageFeedback.cs" />
