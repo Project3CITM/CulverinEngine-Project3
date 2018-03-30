@@ -507,6 +507,27 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
+    public int GetCurrCharacterState()
+    {
+        // CURRENT CHARACTER -------------------------------
+        if (current_character.GetName() == "Jaime")
+        {
+            return current_character.GetComponent<JaimeController>().GetState();
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+           return current_character.GetComponent<DaenerysController>().GetState();
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            return current_character.GetComponent<TheonController>().GetState();
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
     public void Drown()
     {
         GetDamage(drown_dmg);
@@ -607,7 +628,7 @@ public class CharactersManager : CulverinBehaviour
     }
 
 
-        //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+    // THIS IS HARDCODED FOR SCORE SCREEN --------------------------------
     void EnemyKilled(uint number = 1)
     {
         enem_killed += number;
@@ -674,7 +695,7 @@ public class CharactersManager : CulverinBehaviour
                 break;
         }
     }
-    //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+    // THIS IS HARDCODED FOR SCORE SCREEN --------------------------------
 
     public void SetCurrentPosition()
     {
@@ -752,6 +773,24 @@ public class CharactersManager : CulverinBehaviour
             dcontroller.curr_forward = vfront;
             tcontroller.curr_position = pos;
             tcontroller.curr_forward = vfront;
+        }
+    }
+
+
+    public void ApplyFatigue(float fatigue)
+    {
+        // CURRENT CHARACTER -------------------------------
+        if (current_character.GetName() == "Jaime")
+        {
+            current_character.GetComponent<JaimeController>().DecreaseStamina(fatigue);
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+            current_character.GetComponent<DaenerysController>().DecreaseMana(fatigue);
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            current_character.GetComponent<TheonController>().DecreaseStamina(fatigue);
         }
     }
 }
