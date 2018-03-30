@@ -26,7 +26,7 @@ struct KeyFrameData
 	KeyFrameData(int key, AnimationValue value);
 	~KeyFrameData();
 	void ShowKeyValue(int i);
-	int max_keys = 0;
+	int max_keys = 20;
 	bool invalid_key = false;
 	std::vector<KeyData> key_data;
 	ParameterValue parameter;

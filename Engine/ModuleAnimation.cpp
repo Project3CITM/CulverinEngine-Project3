@@ -19,7 +19,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 {
 	
 		//ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.176f, 0.176f, 0.176f, 1.0f));
-		if (!ImGui::Begin("Animation UI Window", &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar))
+		if (!ImGui::Begin("Animation UI Window", &active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar))
 		{
 			ImGui::End();
 		}
@@ -99,38 +99,47 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 				}
 				for (int i = 0; i < animation_json->animations.size();i++)
 				{
-					AnimData item = animation_json->animations[i];
-					Component* component = dynamic_cast<Component*>(item.data);
+					AnimData* item = &animation_json->animations[i];
+					Component* component = dynamic_cast<Component*>(item->data);
 
 					bool open = ImGui::TreeNodeEx(component->GetName());
 					if (open)
 					{
-						for (int j = 0; j < item.key_frame_data.size(); j++)
+						for (int j = 0; j < item->key_frame_data.size(); j++)
 						{
-							KeyFrameData key_frame_item = item.key_frame_data[j];
-							if (key_frame_item.key_data.empty())
+							KeyFrameData* key_frame_item = &item->key_frame_data[j];
+
+							if (key_frame_item->key_data.empty())
 								continue;
 
-							int size = key_frame_item.key_data.size();
-							ImGui::Columns(size, "keys");
+							int size = key_frame_item->key_data.size();
+
+
 							for (int k = 0; k < size; k++)
 							{
-								key_frame_item.ShowKeyValue(k);
-								ImGui::NextColumn();
+								key_frame_item->ShowKeyValue(k);
+							}
+
+							if(ImGui::Button("Apply Changes##apply_changes"))
+							{
+								std::sort(key_frame_item->key_data.begin(), key_frame_item->key_data.end());
+							}
+							ImGui::SameLine();
+							if (ImGui::Button("Create New Key##new_key"))
+							{
+								KeyData copy_data = key_frame_item->key_data.back();
+								key_frame_item->key_data.push_back(copy_data);
+							}
+							ImGui::SameLine();
+							if (ImGui::ImageButton((ImTextureID*)App->gui->icon_remove, ImVec2(8, 8), ImVec2(-1, 1), ImVec2(0, 0)))
+							{
+								item->key_frame_data.erase(item->key_frame_data.begin() + j);
 
 							}
-							ImGui::Columns(1);
 						}
 						ImGui::TreePop();
 					}
-					if (ImGui::ImageButton((ImTextureID*)App->gui->icon_plus, ImVec2(8, 8), ImVec2(-1, 1), ImVec2(0, 0)))
-					{
-
-					}
-					ImGui::SameLine();
-					if (ImGui::ImageButton((ImTextureID*)App->gui->icon_remove, ImVec2(8, 8), ImVec2(-1, 1), ImVec2(0, 0)))
-					{
-					}
+					
 				}
 			}
 
@@ -209,10 +218,13 @@ KeyFrameData::~KeyFrameData()
 
 void KeyFrameData::ShowKeyValue(int i)
 {
+	ImGui::PushItemWidth(150.0f);
 	if(invalid_key)
 		ImGui::TextColored(ImVec4(1,0,0,1),"Key frame duplicated");
 	ImGui::Text("Key");
-	if (ImGui::DragInt("", &key_data[i].key_frame))
+	std::string key_frame_name = "##key_frame";
+	key_frame_name += std::to_string(i);
+	if (ImGui::DragInt(key_frame_name.c_str(), &key_data[i].key_frame,1.0f,0, max_keys))
 	{
 		if (key_data[i].key_frame < 0)
 		{
@@ -222,6 +234,7 @@ void KeyFrameData::ShowKeyValue(int i)
 		{
 			key_data[i].key_frame = max_keys;
 		}
+
 		for (int j = 0; j < key_data.size(); j++)
 		{
 			if (i == j)
@@ -238,32 +251,49 @@ void KeyFrameData::ShowKeyValue(int i)
 
 		}
 	}
+	std::string paramter_name;
 	switch (parameter)
 	{
 	case ParameterValue::RECT_TRANSFORM_POSITION:
-		ImGui::Text("Transform");
-		ImGui::DragFloat3("##transform_pos", key_data[i].key_values.f3_value.ptr());
+
+		ImGui::Text("Position");
+		paramter_name = "##transform_pos";
+		paramter_name += std::to_string(i);
+
+		ImGui::DragFloat3(paramter_name.c_str(), key_data[i].key_values.f3_value.ptr());
 		break;
 	case ParameterValue::RECT_TRANSFORM_ROTATION:
 		ImGui::Text("Rotation");
-		ImGui::DragFloat3("##transform_pos", key_data[i].key_values.f3_value.ptr());
+		paramter_name = "##transform_rot";
+		paramter_name += std::to_string(i);
+
+		ImGui::DragFloat3(paramter_name.c_str(), key_data[i].key_values.f3_value.ptr());	
 		break;
 	case ParameterValue::RECT_TRANSFORM_SCALE:
 		ImGui::Text("Scale");
-		ImGui::DragFloat3("##transform_pos", key_data[i].key_values.f3_value.ptr());
+		paramter_name = "##transform_sca";
+		paramter_name += std::to_string(i);
+
+		ImGui::DragFloat3(paramter_name.c_str(), key_data[i].key_values.f3_value.ptr());	
 		break;
 	case ParameterValue::RECT_TRANSFORM_WIDTH:
 		ImGui::Text("Width");
-		ImGui::DragFloat3("##transform_pos", &key_data[i].key_values.f_value);
+		paramter_name = "##transform_w";
+		paramter_name += std::to_string(i);
+		ImGui::DragFloat(paramter_name.c_str(), &key_data[i].key_values.f_value);
 
 		break;
 	case ParameterValue::RECT_TRANSFORM_HEIGHT:
 		ImGui::Text("Height");
-		ImGui::DragFloat3("##transform_pos", &key_data[i].key_values.f_value);
+		paramter_name = "##transform_h";
+		paramter_name += std::to_string(i);
+		ImGui::DragFloat(paramter_name.c_str(), &key_data[i].key_values.f_value);
 		break;
 	default:
 		break;
 	}
+	ImGui::PopItemWidth();
+
 }
 
 AnimationJson::AnimationJson()
