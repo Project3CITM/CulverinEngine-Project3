@@ -38,6 +38,7 @@ class ModulePhysics;
 class ModuleMap;
 class ModuleLightning;
 class ModuleKeyBinding;
+class ModuleAnimation;
 enum EngineState
 {
 	PLAY = 0,
@@ -121,6 +122,8 @@ public:
 	Scene* scene = nullptr;
 	Console* console = nullptr;
 	ModuleGUI* gui = nullptr;
+	ModuleAnimation* animation_ui = nullptr;
+
 	ModuleImporter* importer = nullptr;
 	ModuleFS* fs = nullptr;
 	ModuleTextures* textures = nullptr;

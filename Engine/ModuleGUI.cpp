@@ -13,6 +13,8 @@
 #include "WindowSceneWorld.h"
 #include "WindowProject.h"
 #include "ModuleImporter.h"
+#include "ModuleAnimation.h"
+
 #include "ImportScript.h"
 #include "GameObject.h"
 #include "ModuleAudio.h"
@@ -326,6 +328,11 @@ update_status ModuleGUI::Update(float dt)
 			{
 				window_create_map = !window_create_map;
 			}
+
+			if (ImGui::MenuItem("Animation"))
+			{
+				window_create_animation = !window_create_animation;
+			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Resources"))
 			{
@@ -474,7 +481,12 @@ update_status ModuleGUI::Update(float dt)
 		App->map->ShowEditorMap(window_create_map);
 	}
 	//----------------------------------------------
-
+	//MAP ----------------------
+	if (window_create_animation)
+	{
+		App->animation_ui->ShowAnimationWindow(window_create_animation);
+	}
+	//----------------------------------------------
 	// Window Creating Shader Object --------------------------------
 
 	if (shader_obj_creation) {

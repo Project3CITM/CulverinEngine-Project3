@@ -1,9 +1,10 @@
 #ifndef COMPONENT_RECT_TRANSFORM_H
 #define COMPONENT_RECT_TRANSFORM_H
 #include "CompTransform.h"
+#include "AnimableComponent.h"
 #include "Math\float2.h"
 
-class CompRectTransform:public CompTransform
+class CompRectTransform:public CompTransform,public AnimableComponent
 {
 public:
 	CompRectTransform(Comp_Type t, GameObject* parent);
@@ -17,6 +18,9 @@ public:
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
 	void DrawRectTransform();
+
+	void SetNewAnimationValue(const AnimationData& value);
+	AnimationData ShowParameters();
 
 	void SetWidth(int set_width);
 	void SetHeight(int set_height);

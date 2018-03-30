@@ -36,6 +36,7 @@
 #include "CompRigidBody.h"
 #include "CompJoint.h"
 #include "CompParticleSystem.h"
+#include "CompUIAnimation.h"
 #include <queue>
 
 //Event system test
@@ -1087,6 +1088,11 @@ void GameObject::ShowInspectorInfo()
 
 		//	ImGui::EndMenu();
 		//}
+		if (ImGui::MenuItem("Animation UI"))
+		{
+			AddComponent(Comp_Type::C_ANIMATION_UI);
+			add_component = false;
+		}
 		if (ImGui::MenuItem("Canvas"))
 		{
 			AddComponent(Comp_Type::C_CANVAS);
@@ -1453,6 +1459,15 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			if (mesh_to_link != nullptr) mesh_to_link->LinkMaterial(material);
 			else LOG("MATERIAL not linked to any mesh");
 			return material;
+		}	
+		case Comp_Type::C_ANIMATION_UI:
+		{
+			LOG("Adding ANIMATION UI COMPONENT.");
+			CompUIAnimation* animation = new CompUIAnimation(type, this);
+			components.push_back(animation);
+			//If is not RectTransform
+			//TODO change transform
+			return animation;
 		}
 		case Comp_Type::C_CANVAS:
 		{
