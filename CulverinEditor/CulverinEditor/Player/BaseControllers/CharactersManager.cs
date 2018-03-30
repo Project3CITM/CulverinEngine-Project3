@@ -501,13 +501,14 @@ public class CharactersManager : CulverinBehaviour
     }
 
     //Call thius function to deal damage to the current character
-    public void GetDamage(float dmg)
+    public bool GetDamage(float dmg)
     {
         // Shield Ability Consumable
         if (player_obj.GetComponent<Shield>().IsActive())
         {
             player_obj.GetComponent<Shield>().Break();
             Debug.Log("[error] BREAK SHIELD");
+            return false;
         }
 
         else
@@ -515,16 +516,29 @@ public class CharactersManager : CulverinBehaviour
             // CURRENT CHARACTER -------------------------------
             if (current_character.GetName() == "Jaime")
             {
-                current_character.GetComponent<JaimeController>().GetDamage(dmg);
-                if(health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                if (current_character.GetComponent<JaimeController>().GetDamage(dmg))
                 {
-                    current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
-                    current_character.GetComponent<JaimeController>().PlayFx("JaimeDead");
+                    if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                    {
+                        current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
+                        current_character.GetComponent<JaimeController>().PlayFx("JaimeDead");
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
             else if (current_character.GetName() == "Daenerys")
             {
                 current_character.GetComponent<DaenerysController>().GetDamage(dmg);
+                if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                {
+                    current_character.GetComponent<DaenerysController>().SetState(CharacterController.State.DEAD);
+                    current_character.GetComponent<DaenerysController>().PlayFx("DaenerysDead");
+                }
+                return true;
             }
             else if (current_character.GetName() == "Theon")
             {
@@ -534,7 +548,10 @@ public class CharactersManager : CulverinBehaviour
                     current_character.GetComponent<TheonController>().SetState(CharacterController.State.DEAD);
                     current_character.GetComponent<TheonController>().PlayFx("TheonDead");
                 }
+                return true;
             }
+
+            return true;
         }
     }
 
