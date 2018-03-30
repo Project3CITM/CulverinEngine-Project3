@@ -360,8 +360,8 @@ void CompText::ReSizeInput()
 	if (input_text != nullptr)
 		tmp = input_text;
 	RELEASE_ARRAY(input_text);
-	input_text = new char[max_input];
-	strcpy_s(input_text, max_input, tmp.c_str());
+	input_text = new char[50];
+	strcpy_s(input_text, 50,  tmp.c_str());
 }
 
 void CompText::UpdateText()
