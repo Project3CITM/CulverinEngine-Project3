@@ -109,7 +109,6 @@ public class BarrelFall : CulverinBehaviour
         {
             initial_position = transform.GetGlobalPosition();
             get_init_pos = false;
-            Debug.Log("Getting initial pos");
         }
 
         if (in_tile == false)

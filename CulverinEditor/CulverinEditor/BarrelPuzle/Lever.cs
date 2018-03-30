@@ -497,20 +497,20 @@ public class Lever : CulverinBehaviour
 
         TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
         SetOrientationVectors();
-        Debug.Log("Path index: " + index);
+       /* Debug.Log("Path index: " + index);
         Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
-        Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);
+        Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);*/
 
         LogLogicMap();
     }
 
     void LogLogicMap()
     {
-        Debug.Log("Logging logic map ------------------");
+       /* Debug.Log("Logging logic map ------------------");
 
         Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
         Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);
-        Debug.Log("Puzzle orienttion: " + current_path.puzzle_direction);
+        Debug.Log("Puzzle orienttion: " + current_path.puzzle_direction);*/
 
         for (int y = 0; y < current_path.height; ++y)
         {
@@ -519,7 +519,7 @@ public class Lever : CulverinBehaviour
             {
                 t += (current_path.walkability[x, y] + " - ");
             }
-            Debug.Log(t);
+            //Debug.Log(t);
         }
 
         //TMP: Debugging purposes.
@@ -644,6 +644,12 @@ public class Lever : CulverinBehaviour
             {              
                     level_map_script.UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, value);
                     player_mov.SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, value);
+
+                Debug.Log("Setting tile value");
+                Debug.Log(x + puzzle_start_tile_x);
+                Debug.Log(y + puzzle_start_tile_z);
+                Debug.Log(value);
+
             }
 
         }
