@@ -71,12 +71,7 @@ CompCamera::~CompCamera()
 
 void CompCamera::PreUpdate(float dt)
 {
-	// Only the main camera will be able to apply culling (Game Mode)
-	if (culling /*&& dt > 0.f*/ && is_main)
-	{
-		// Iterate All GameObjects and apply culling
-		DoCulling();
-	}
+	
 }
 
 void CompCamera::Update(float dt)
@@ -272,8 +267,17 @@ void CompCamera::ShowCameraPopup()
 
 void CompCamera::DoCulling()
 {
-	// First check culling with static objects (optimized with quadtree)
-	CullStaticObjects();
+	if (parent == nullptr || !culling)
+	{
+		return;
+	}
+
+	const CompTransform* transform = parent->GetComponentTransform();
+	if (transform != nullptr && transform->GetUpdated())
+	{
+		// First check culling with static objects (optimized with quadtree)
+		CullStaticObjects();
+	}
 
 	// Then check dynamic objects
 	//CullDynamicObjects();

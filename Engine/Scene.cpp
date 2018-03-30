@@ -235,6 +235,12 @@ update_status Scene::Update(float dt)
 		}
 	}
 
+	CompCamera* active_camera = App->renderer3D->GetActiveCamera();
+	if (active_camera != nullptr)
+	{
+		active_camera->DoCulling();
+	}
+
 	Update_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }

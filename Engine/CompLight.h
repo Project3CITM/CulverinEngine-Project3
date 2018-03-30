@@ -62,6 +62,8 @@ public:
 
 	bool use_light_to_render = false;
 
+	float3 bounding_box_size = float3::one;
+
 };
 
 #endif
