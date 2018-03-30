@@ -241,7 +241,7 @@ public class TheonController : CharacterController
     }
 
 
-    public override void GetDamage(float dmg)
+    public override bool GetDamage(float dmg)
     {
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         health.GetDamage(dmg);
@@ -265,6 +265,8 @@ public class TheonController : CharacterController
         }
 
         SetState(State.HIT);
+
+        return true;
     }
 
     public override void SetAnimationTransition(string name, bool value)
