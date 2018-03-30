@@ -327,44 +327,32 @@ MonoObject* CSharpScript::GetPosition(MonoObject* object)
 		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-		//CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
 		float3* new_pos = ((CompTransform*)obj)->GetPosPointer();
-		MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
-		if (new_object)
+		MonoObject* new_obj = App->importer->iScript->GetMonoObject(((CompTransform*)obj)->GetPosPointer());
+		if (new_obj != nullptr)
 		{
-			if (x_field) mono_field_set_value(new_object, x_field, &new_pos->x);
-			if (y_field) mono_field_set_value(new_object, y_field, &new_pos->y);
-			if (z_field) mono_field_set_value(new_object, z_field, &new_pos->z);
+			if (x_field) mono_field_set_value(new_obj, x_field, &new_pos->x);
+			if (y_field) mono_field_set_value(new_obj, y_field, &new_pos->y);
+			if (z_field) mono_field_set_value(new_obj, z_field, &new_pos->z);
 
-			// Put in map the new MonoObject
-			//App->importer->iScript->UpdateMonoPos(new_pos, new_object);
-
-			return new_object;
+			return new_obj;
 		}
-		//MonoObject* new_obj = App->importer->iScript->GetMonoObject(((CompTransform*)obj)->GetPosPointer());
-		//if (new_obj != nullptr)
-		//{
-		//	if (x_field) mono_field_set_value(new_obj, x_field, &new_pos->x);
-		//	if (y_field) mono_field_set_value(new_obj, y_field, &new_pos->y);
-		//	if (z_field) mono_field_set_value(new_obj, z_field, &new_pos->z);
+		else
+		{
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				if (x_field) mono_field_set_value(new_object, x_field, &new_pos->x);
+				if (y_field) mono_field_set_value(new_object, y_field, &new_pos->y);
+				if (z_field) mono_field_set_value(new_object, z_field, &new_pos->z);
 
-		//	return new_obj;
-		//}
-		//else
-		//{
-		//	MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
-		//	if (new_object)
-		//	{
-		//		if (x_field) mono_field_set_value(new_object, x_field, &new_pos->x);
-		//		if (y_field) mono_field_set_value(new_object, y_field, &new_pos->y);
-		//		if (z_field) mono_field_set_value(new_object, z_field, &new_pos->z);
+				// Put in map the new MonoObject
+				App->importer->iScript->UpdateMonoPos(new_pos, new_object);
 
-		//		// Put in map the new MonoObject
-		//		App->importer->iScript->UpdateMonoPos(new_pos, new_object);
-
-		//		return new_object;
-		//	}
-		//}
+				return new_object;
+			}
+		}
 	}
 	return nullptr;
 }
@@ -423,7 +411,7 @@ void CSharpScript::SetPosition(MonoObject* object, MonoObject* vector3)
 
 void CSharpScript::SetGlobalPosition(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr && vector3 != nullptr)
+	if (current_game_object != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -788,12 +776,12 @@ MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
 				if (b1_field) mono_field_set_value(new_object, b1_field, &global_transform.At(1, 1));
 				if (b2_field) mono_field_set_value(new_object, b2_field, &global_transform.At(1, 2));
 				if (b3_field) mono_field_set_value(new_object, b3_field, &global_transform.At(1, 3));
-				
+
 				if (c0_field) mono_field_set_value(new_object, c0_field, &global_transform.At(2, 0));
 				if (c1_field) mono_field_set_value(new_object, c1_field, &global_transform.At(2, 1));
 				if (c2_field) mono_field_set_value(new_object, c2_field, &global_transform.At(2, 2));
 				if (c3_field) mono_field_set_value(new_object, c3_field, &global_transform.At(2, 3));
-				
+
 				if (d0_field) mono_field_set_value(new_object, d0_field, &global_transform.At(3, 0));
 				if (d1_field) mono_field_set_value(new_object, d1_field, &global_transform.At(3, 1));
 				if (d2_field) mono_field_set_value(new_object, d2_field, &global_transform.At(3, 2));
@@ -803,7 +791,7 @@ MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
 			}
 		}
 	}
-	else 
+	else
 	{
 		return nullptr;
 	}
