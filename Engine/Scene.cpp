@@ -365,25 +365,23 @@ void Scene::EditorQuadtree()
 			AABB AdaptativeAABB;
 		
 			AdaptativeAABB.SetNegativeInfinity();
+			
+			//Make sure that we have all go
+			GetAllSceneObjects();
 			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 			{
 				if ((*item)->IsStatic())
 				{
-					
-
-					/*ComponentMesh* mesh = (ComponentMesh*)(*item)->FindComponentFirst(ComponentType::Mesh_Component);
-					if (mesh != nullptr)
+					if ((*item)->box_fixed.IsFinite())
 					{
-						AABB Box;
-						mesh->GetTransformedAABB(Box);
-						AdaptativeAABB.Enclose(Box);
-					}*/
+						AdaptativeAABB.Enclose((*item)->box_fixed);
+					}
 				}
 			}
 			octree.Boundaries(AdaptativeAABB);
 			/**/
 			//Insert AABBs to octree
-			for (std::vector<GameObject*>::const_iterator item = static_objects.cbegin(); item != static_objects.cend(); ++item)
+			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 				if ((*item)->IsStatic())
 					octree.Insert(*item);
 

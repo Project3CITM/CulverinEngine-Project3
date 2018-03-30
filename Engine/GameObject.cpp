@@ -466,7 +466,8 @@ void GameObject::Draw()
 		//Draw child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i]->IsActive())
+			//Static objects will be drawn using camera culling
+			if (childs[i]->IsActive() && !childs[i]->IsStatic())
 			{
 				childs[i]->Draw();
 			}
