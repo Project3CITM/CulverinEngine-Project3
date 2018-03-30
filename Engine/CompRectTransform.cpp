@@ -471,6 +471,8 @@ AnimationData CompRectTransform::ShowParameters()
 			ret.value.f3_value = GetPos();
 		}
 		ImGui::NextColumn();
+		ImGui::Columns(1);
+
 		ImGui::EndPopup();
 	}
 	return ret;

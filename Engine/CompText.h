@@ -33,6 +33,8 @@ public:
 	bool GenerateText();
 private:
 	bool TextCanFit(float4 rect_transform, float4 rect_text);
+	void ReSizeInput();
+
 public:
 	SDL_Surface * s_font = nullptr;
 	ResourceFont* text = nullptr;
@@ -54,7 +56,8 @@ private:
 	bool can_draw = false;
 	float4 text_rect;
 	bool show_resource_font_windows = false;
-	std::string input_text;
+	//std::string input_text;
+	char* input_text = nullptr;
 	int max_input = 20;
 	int text_size = 12;
 	HorizontalPosition h_position= HorizontalPosition::RIGHT_HPOSITION;

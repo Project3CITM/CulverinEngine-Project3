@@ -3,22 +3,32 @@
 #include "Globals.h"
 #include "Module.h"
 #include <queue>
-
+#include "AnimableComponent.h"
 class AnimableComponent;
 enum ParameterValue;
-union AnimationValue;
-struct AnimData;
+//union AnimationValue;
+
+struct KeyData
+{
+	KeyData(int key_frame, AnimationValue key_values);
+	~KeyData();
+
+	int key_frame;
+	AnimationValue key_values;
+
+	bool operator<(const KeyData& compare) const; 
+};
 
 struct KeyFrameData
 {
+
 	KeyFrameData(int key, AnimationValue value, ParameterValue parameter);
 	KeyFrameData(int key, AnimationValue value);
 	~KeyFrameData();
 	void ShowKeyValue(int i);
 	int max_keys = 0;
 	bool invalid_key = false;
-	std::vector<int> key_frames;
-	std::vector<AnimationValue> key_values;
+	std::vector<KeyData> key_data;
 	ParameterValue parameter;
 
 };
@@ -29,7 +39,7 @@ struct AnimData
 public:
 
 	AnimableComponent* data = nullptr;
-	std::vector<KeyFrameData> key_data;
+	std::vector<KeyFrameData> key_frame_data;
 };
 
 

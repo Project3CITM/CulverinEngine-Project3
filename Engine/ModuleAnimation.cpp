@@ -4,7 +4,6 @@
 #include "JSONSerialization.h"
 #include "ModuleGUI.h"
 #include "WindowHierarchy.h"
-#include "AnimableComponent.h"
 #include "Component.h"
 
 ModuleAnimation::ModuleAnimation()
@@ -70,7 +69,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 
 								if (!animation_json->animations[find].HaveKeyFrameData(new_value.type))
 								{
-									animation_json->animations[find].key_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
+									animation_json->animations[find].key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
 								}
 
 							}
@@ -78,7 +77,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 							{
 								AnimData tmp_anim_data;
 								tmp_anim_data.data = item;
-								tmp_anim_data.key_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
+								tmp_anim_data.key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
 								animation_json->animations.push_back(tmp_anim_data);
 							}
 							new_animation_window = false;
@@ -106,17 +105,31 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 					bool open = ImGui::TreeNodeEx(component->GetName());
 					if (open)
 					{
-						for (int j = 0; j < item.key_data.size(); j++)
+						for (int j = 0; j < item.key_frame_data.size(); j++)
 						{
-							KeyFrameData key_frame_item = item.key_data[j];
-							if (key_frame_item.key_frames.size() != key_frame_item.key_values.size())
+							KeyFrameData key_frame_item = item.key_frame_data[j];
+							if (key_frame_item.key_data.empty())
 								continue;
-							for (int k = 0; k < key_frame_item.key_values.size(); k++)
+
+							int size = key_frame_item.key_data.size();
+							ImGui::Columns(size, "keys");
+							for (int k = 0; k < size; k++)
 							{
 								key_frame_item.ShowKeyValue(k);
+								ImGui::NextColumn();
+
 							}
+							ImGui::Columns(1);
 						}
 						ImGui::TreePop();
+					}
+					if (ImGui::ImageButton((ImTextureID*)App->gui->icon_plus, ImVec2(8, 8), ImVec2(-1, 1), ImVec2(0, 0)))
+					{
+
+					}
+					ImGui::SameLine();
+					if (ImGui::ImageButton((ImTextureID*)App->gui->icon_remove, ImVec2(8, 8), ImVec2(-1, 1), ImVec2(0, 0)))
+					{
 					}
 				}
 			}
@@ -162,9 +175,9 @@ int ModuleAnimation::HaveAnimData(const AnimableComponent * data)
 bool AnimData::HaveKeyFrameData(const ParameterValue & data)
 {
 	
-	for (int i = 0; i <key_data.size(); i++)
+	for (int i = 0; i <key_frame_data.size(); i++)
 	{
-		ParameterValue item = key_data[i].parameter;
+		ParameterValue item = key_frame_data[i].parameter;
 		if (item == data)
 		{
 			return true;
@@ -177,17 +190,17 @@ bool AnimData::HaveKeyFrameData(const ParameterValue & data)
 
 KeyFrameData::KeyFrameData(int key, AnimationValue value, ParameterValue param) 
 {
-	key_frames.push_back(key);
-	std::sort(key_frames.begin(), key_frames.end());
-	key_values.push_back(value);
+	key_data.push_back(KeyData(key, value));
+	//std::sort(key_frames.begin(), key_frames.end());
+	std::sort(key_data.begin(), key_data.end());
+
 	parameter = param;
 }
 
 KeyFrameData::KeyFrameData(int key, AnimationValue value) 
 {
-	key_frames.push_back(key);
-	std::sort(key_frames.begin(), key_frames.end());
-	key_values.push_back(value);
+	key_data.push_back(KeyData(key, value));
+	std::sort(key_data.begin(), key_data.end());
 }
 
 KeyFrameData::~KeyFrameData()
@@ -199,21 +212,21 @@ void KeyFrameData::ShowKeyValue(int i)
 	if(invalid_key)
 		ImGui::TextColored(ImVec4(1,0,0,1),"Key frame duplicated");
 	ImGui::Text("Key");
-	if (ImGui::DragInt("", &key_frames[i]))
+	if (ImGui::DragInt("", &key_data[i].key_frame))
 	{
-		if (key_frames[i] < 0)
+		if (key_data[i].key_frame < 0)
 		{
-			key_frames[i] = 0;
+			key_data[i].key_frame = 0;
 		}
-		if (key_frames[i] >= max_keys)
+		if (key_data[i].key_frame >= max_keys)
 		{
-			key_frames[i] = max_keys;
+			key_data[i].key_frame = max_keys;
 		}
-		for (int j = 0; j < key_frames.size(); j++)
+		for (int j = 0; j < key_data.size(); j++)
 		{
 			if (i == j)
 				continue;
-			if (key_frames[j] == key_frames[i])
+			if (key_data[j].key_frame == key_data[i].key_frame)
 			{
 				invalid_key = true;
 				break;
@@ -229,24 +242,24 @@ void KeyFrameData::ShowKeyValue(int i)
 	{
 	case ParameterValue::RECT_TRANSFORM_POSITION:
 		ImGui::Text("Transform");
-		ImGui::DragFloat3("##transform_pos", key_values[i].f3_value.ptr());
+		ImGui::DragFloat3("##transform_pos", key_data[i].key_values.f3_value.ptr());
 		break;
 	case ParameterValue::RECT_TRANSFORM_ROTATION:
 		ImGui::Text("Rotation");
-		ImGui::DragFloat3("##transform_pos", key_values[i].f3_value.ptr());
+		ImGui::DragFloat3("##transform_pos", key_data[i].key_values.f3_value.ptr());
 		break;
 	case ParameterValue::RECT_TRANSFORM_SCALE:
 		ImGui::Text("Scale");
-		ImGui::DragFloat3("##transform_pos", key_values[i].f3_value.ptr());
+		ImGui::DragFloat3("##transform_pos", key_data[i].key_values.f3_value.ptr());
 		break;
 	case ParameterValue::RECT_TRANSFORM_WIDTH:
 		ImGui::Text("Width");
-		ImGui::DragFloat3("##transform_pos", &key_values[i].f_value);
+		ImGui::DragFloat3("##transform_pos", &key_data[i].key_values.f_value);
 
 		break;
 	case ParameterValue::RECT_TRANSFORM_HEIGHT:
 		ImGui::Text("Height");
-		ImGui::DragFloat3("##transform_pos", &key_values[i].f_value);
+		ImGui::DragFloat3("##transform_pos", &key_data[i].key_values.f_value);
 		break;
 	default:
 		break;
@@ -255,4 +268,20 @@ void KeyFrameData::ShowKeyValue(int i)
 
 AnimationJson::AnimationJson()
 {
+}
+
+KeyData::KeyData(int key_frame, AnimationValue set_key_value):key_frame(key_frame) 
+{
+	key_values = set_key_value;
+}
+
+KeyData::~KeyData()
+{
+}
+
+bool KeyData::operator<(const KeyData & compare) const
+{
+	
+		return key_frame < compare.key_frame;
+	
 }
