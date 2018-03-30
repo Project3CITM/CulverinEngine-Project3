@@ -43,6 +43,9 @@ public:
 	void SaveClickAction(JSON_Object* object, std::string name)const;
 	void LoadClickAction(const JSON_Object* object, std::string name);
 	void SyncClickAction();
+	void ClearLinkedScripts();
+
+
 public:
 	std::vector<ClickActionData> actions;
 	CSharpScript* csharp = nullptr;

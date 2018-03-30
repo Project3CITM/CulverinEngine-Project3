@@ -411,10 +411,13 @@ public class TheonController : CharacterController
         arrow_script.speed = curr_forward;
 
         Arrow.GetComponent<CompMesh>().SetEnabled(false, Arrow);
+        Debug.Log("[green] SetEnabled");
 
         //Set Attack Animation
         SetAnimationTransition("ToAttack1", true);
         GetComponent<CompAudio>().PlayEvent("CrossbowShot");
+        Debug.Log("[green] Shoot Audio");
+
         SetState(CharacterController.State.ATTACKING);
     }
 
