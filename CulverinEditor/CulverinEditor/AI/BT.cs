@@ -35,7 +35,6 @@ public class BT : CulverinBehaviour
     {
         next_action = null_action;
         current_action = GetComponent<Idle_Action>();
-        current_action.SetAnimSpeed(anim_speed);
         current_action.ActionStart();
         MakeDecision();
     }

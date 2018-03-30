@@ -8,7 +8,7 @@ public class Attack_Action : Action
         action_type = ACTION_TYPE.ATTACK_ACTION;
     }
 
-    public Attack_Action(float attack_speed, float dmg): base(attack_speed)
+    public Attack_Action(float dmg)
     {
         action_type = ACTION_TYPE.ATTACK_ACTION;
         damage = dmg;
@@ -52,10 +52,28 @@ public class Attack_Action : Action
         anim = GetComponent<CompAnimation>();
         if (state == SWA_STATE.PRE_APPLY && anim.IsAnimOverXTime(apply_damage_point))
         {
-            state = SWA_STATE.POST_APPLY;
-            player.GetDamage(damage);
-            //Apply damage to the target
-            //Play audio fx
+            if (GetComponent<EnemySword_BT>() != null || GetComponent<EnemySpear_BT>() != null)
+            {
+                state = SWA_STATE.POST_APPLY;
+                player.GetDamage(damage);
+                //Apply damage to the target
+                //Play audio fx
+            }
+            else if (GetComponent<EnemyShield_BT>() != null)
+            {
+                //TODO: Need player functions to do this
+                if (player.player_obj.GetComponent<Shield>().IsActive() || player.GetCurrCharacterState() == (int)CharacterController.State.COVER)
+                {
+                    //Animation to break defense
+                    player.ApplyFatigue(50);
+                    Debug.Log("Break defense!");
+                }
+                else
+                    player.GetDamage(damage);
+
+                state = SWA_STATE.POST_APPLY;
+            }
+
         }
         else if (state == SWA_STATE.POST_APPLY && anim.IsAnimationStopped("Attack"))
         {

@@ -4,7 +4,6 @@ using CulverinEditor.Debug;
 public class Action : CulverinBehaviour
 {
     protected bool interupt = false;
-    protected float anim_speed = 1.0f;
 
     public enum ACTION_RESULT
     {
@@ -18,10 +17,13 @@ public class Action : CulverinBehaviour
         NO_ACTION,
         MOVE_ACTION,
         ATTACK_ACTION,
+        SPEARATTACK_ACTION,
         IDLE_ACTION,
         IDLE_ATTACK_ACTION,
         INVESTIGATE_ACTION,
         CHASE_ACTION,
+        SEPARATE_ACTION,
+        FACE_PLAYER_ACTION,
         PUSHBACK_ACTION,
         STUN_ACTION,
         GET_HIT_ACTION,
@@ -35,11 +37,6 @@ public class Action : CulverinBehaviour
 
     public Action()
     {}
-
-    public Action(float speed)
-    {
-        anim_speed = speed;
-    }
 
     public virtual bool ActionStart()
     {
@@ -68,16 +65,6 @@ public class Action : CulverinBehaviour
     public bool IsInterrupted()
     {
         return interupt == true;
-    }
-
-    public void SetAnimSpeed(float speed)
-    {
-        anim_speed = speed;
-    }
-
-    public void Init(float speed)
-    {
-        anim_speed = speed;
     }
 }
 

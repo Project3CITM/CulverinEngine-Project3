@@ -6,9 +6,7 @@ public class Align_Steering : CulverinBehaviour
 {
     Movement_Action move;
     float rot_margin = 0.05f;
-    float stopping_time = 0.2f;
-    float break_acceleration = 0.0f;
-    bool in_rot_margin = false;
+    float slow_angle = 0.6f;
     float delta = 0.0f;
 
     void Start()
@@ -27,17 +25,15 @@ public class Align_Steering : CulverinBehaviour
         else
             acceleration = -move.GetMaxRotAcceleration();
 
-        if (!in_rot_margin && Mathf.Abs(delta) <= rot_margin)
+        if (Mathf.Abs(delta) <= rot_margin)
         {
-            in_rot_margin = true;
-            float current_rot_velocity = move.GetCurrentRotVelocity();
-            break_acceleration = -current_rot_velocity / stopping_time;
+            float ideal_velocity = delta / slow_angle;
+            acceleration = ideal_velocity - move.GetCurrentRotVelocity();
         }
 
-        if (in_rot_margin)
-            acceleration = break_acceleration;
-
         move.Rotate(Mathf.Rad2deg(acceleration));
+
+        Debug.Log("Delta: " + delta);
     }
 
     public void SetRotation(float delta)
@@ -45,9 +41,25 @@ public class Align_Steering : CulverinBehaviour
         this.delta = delta;
     }
 
-    public void Reset()
+    public float GetDeltaAngle()
     {
-        in_rot_margin = false;
+        return delta;
+    }
+
+    public bool RotationFinished()
+    {
+        return Mathf.Abs(delta) <= rot_margin;
+    }
+
+    public void UpdateRotation(float rotation)
+    {
+        GetComponent<Transform>().RotateAroundAxis(Vector3.Up, rotation);
+        delta -= Mathf.Deg2rad(rotation);
+    }
+
+    public float GetRotMargin()
+    {
+        return rot_margin;
     }
 }
 

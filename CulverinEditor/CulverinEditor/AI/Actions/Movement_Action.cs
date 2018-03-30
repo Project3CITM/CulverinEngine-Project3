@@ -15,7 +15,7 @@ public class Movement_Action : Action
     Arrive_Steering arrive;
     Seek_Steering seek;
 
-    enum Direction
+    public enum Direction
     {
         DIR_NO_DIR,
         DIR_NORTH,
@@ -34,19 +34,18 @@ public class Movement_Action : Action
     public float hurt_accel = 1.0f;
     float current_max_accel;
 
-    public float max_rot_vel = 2.0f;
+    public float max_rot_vel = Mathf.PI;
     public float hurt_max_rot_vel = 1.0f;
     float current_max_rot_vel;
 
-    public float max_rot_accel = 0.7f;
-    public float hurt_max_rot_accel = 0.3f;
+    public float max_rot_accel = 0.05f;
+    public float hurt_max_rot_accel = 0.01f;
     float current_max_rot_accel;
 
     Vector3 current_velocity = new Vector3(Vector3.Zero);
     Vector3 current_acceleration = new Vector3(Vector3.Zero);
     float current_rot_velocity = 0.0f;
     float current_rot_acceleration = 0.0f;
-    float rot_margin = 0.05f;
 
     bool rotation_finished = false;
     bool translation_finished = false;
@@ -56,12 +55,9 @@ public class Movement_Action : Action
     float wait_timer = 0.0f;
     public float wait_time = 1.0f;
 
-    public Movement_Action()
-    {
-        action_type = ACTION_TYPE.MOVE_ACTION;
-    }
+    Vector3 look_at_pos = new Vector3(Vector3.Zero);
 
-    public Movement_Action(float speed): base(speed)
+    public Movement_Action()
     {
         action_type = ACTION_TYPE.MOVE_ACTION;
     }
@@ -94,8 +90,6 @@ public class Movement_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
-
         if (chase == false)
         {
             GetComponent<CompAnimation>().SetTransition("ToPatrol");
@@ -123,29 +117,7 @@ public class Movement_Action : Action
         //Movement
         if (translation_finished == false)
         {
-            if (current_acceleration.Length > current_max_accel)
-            {
-                current_acceleration = current_acceleration.Normalized * current_max_accel;
-            }
-            current_velocity.x = current_velocity.x + current_acceleration.x;
-            current_velocity.z = current_velocity.z + current_acceleration.z;
-
-            if (current_velocity.Length > current_max_vel)
-            {
-                current_velocity = current_velocity.Normalized * current_max_vel;
-            }
-
-            float point_in_speed = current_velocity.Length / current_max_vel;
-            GetComponent<CompAnimation>().SetActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
-
-            //Translate
-            Vector3 pos = new Vector3(GetComponent<Transform>().position);
-            pos.x = pos.x + current_velocity.x * Time.deltaTime;
-            pos.z = pos.z + current_velocity.z * Time.deltaTime;
-            GetComponent<Transform>().position = pos;
-
-            //Clean
-            current_acceleration = new Vector3(Vector3.Zero);
+            UpdateTranslation();
 
             if (arrive.ReachedTile() == true)
             {
@@ -179,45 +151,15 @@ public class Movement_Action : Action
         //Rotation
         if (rotation_finished == false)
         {
-            if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
+            UpdateRotation();
+
+            if (GetComponent<Align_Steering>().RotationFinished() == true)
             {
-                if (current_rot_acceleration > 0)
-                {
-                    current_rot_acceleration = current_max_rot_accel;
-                }
-                else
-                {
-                    current_rot_acceleration = -current_max_rot_accel;
-                }
-            }
-            current_rot_velocity += current_rot_acceleration;
-
-            if (Mathf.Abs(current_rot_velocity) > current_max_rot_vel)
-            {
-                if (current_rot_velocity > 0)
-                {
-                    current_rot_velocity = current_max_rot_vel;
-                }
-                else
-                {
-                    current_rot_velocity = -current_max_rot_vel;
-                }
-            }
-
-            //Rotate
-            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, current_rot_velocity * Time.deltaTime);
-
-            //Clean
-            current_rot_acceleration = 0.0f;
-
-            if (FinishedRotation() == true)
-            {
+                Debug.Log("Sttoping rotation");
                 rotation_finished = true;
                 current_rot_velocity = 0.0f;
-                Align_Steering align = GetComponent<Align_Steering>();
                 align.SetEnabled(false);
-                align.Reset();
-                Vector3 obj_vec = new Vector3(GetTargetPosition() - GetComponent<Transform>().position);
+                Vector3 obj_vec = new Vector3(look_at_pos - GetComponent<Transform>().position);
                 GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
 
                 SetDirection();
@@ -259,10 +201,71 @@ public class Movement_Action : Action
         return false;
     }
 
+    private void UpdateRotation()
+    {
+        if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
+        {
+            if (current_rot_acceleration > 0)
+            {
+                current_rot_acceleration = current_max_rot_accel;
+            }
+            else
+            {
+                current_rot_acceleration = -current_max_rot_accel;
+            }
+        }
+        current_rot_velocity += current_rot_acceleration;
+
+        if (Mathf.Abs(current_rot_velocity) > current_max_rot_vel)
+        {
+            if (current_rot_velocity > 0)
+            {
+                current_rot_velocity = current_max_rot_vel;
+            }
+            else
+            {
+                current_rot_velocity = -current_max_rot_vel;
+            }
+        }
+
+        //Rotate
+        Debug.Log("Current Rot Vel: " + current_rot_velocity + "* dt " + Time.deltaTime);
+        align.UpdateRotation(current_rot_velocity * Time.deltaTime);
+
+        //Clean
+        current_rot_acceleration = 0.0f;
+    }
+
+    private void UpdateTranslation()
+    {
+        if (current_acceleration.Length > current_max_accel)
+        {
+            current_acceleration = current_acceleration.Normalized * current_max_accel;
+        }
+        current_velocity.x = current_velocity.x + current_acceleration.x;
+        current_velocity.z = current_velocity.z + current_acceleration.z;
+
+        if (current_velocity.Length > current_max_vel)
+        {
+            current_velocity = current_velocity.Normalized * current_max_vel;
+        }
+
+        float point_in_speed = current_velocity.Length / current_max_vel;
+        GetComponent<CompAnimation>().SetActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
+
+        //Translate
+        Vector3 pos = new Vector3(GetComponent<Transform>().position);
+        pos.x = pos.x + current_velocity.x * Time.deltaTime;
+        pos.z = pos.z + current_velocity.z * Time.deltaTime;
+        GetComponent<Transform>().position = pos;
+
+        //Clean
+        current_acceleration = new Vector3(Vector3.Zero);
+    }
+
     private void NextTile()
     {
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
-
         pos.x = path[0].GetTileX() * tile_size;
         pos.z = path[0].GetTileY() * tile_size;
         GetComponent<Transform>().position = pos;
@@ -280,15 +283,7 @@ public class Movement_Action : Action
             arrive.SetEnabled(true);
             seek.SetEnabled(true);
             path.Remove(path[0]);
-        }
-
-        //Rotation
-        if (FinishedRotation() == false)
-        {
-            GetDeltaAngle();
-            rotation_finished = false;
-            align.SetEnabled(true);
-            align.SetRotation(GetDeltaAngle());
+            LookAtNextTile();
         }
     }
 
@@ -334,18 +329,7 @@ public class Movement_Action : Action
             }
         }
 
-        if (FinishedRotation() == false)
-        {
-            rotation_finished = false;
-            align.SetEnabled(true);
-            align.SetRotation(GetDeltaAngle());
-            GetDeltaAngle();
-        }
-        else
-        {
-            rotation_finished = true;
-            align.SetEnabled(false);
-        }
+        LookAtNextTile();
     }
 
     public void GoTo(PathNode obj, bool rot = false)
@@ -353,12 +337,12 @@ public class Movement_Action : Action
         GoTo(obj.GetTileX(), obj.GetTileY());
     }
 
-    public void GoToPrevious(int obj_x, int obj_y, bool chase = false)    // Sets a path to the previous tile of your objective // Useful for chasing the player
+    private void GoToPrevious(int obj_x, int obj_y, uint range, bool chase = false)    // Sets a path to the previous tile of your objective // Useful for chasing the player
     {
         this.chase = chase;
         Pathfinder pf = map.GetComponent<Pathfinder>();
         path.Clear();
-        List<PathNode> adjacent_walkable_tiles = pf.GetWalkableAdjacents(new PathNode(obj_x, obj_y));
+        List<PathNode> adjacent_walkable_tiles = pf.GetWalkableAdjacents(new PathNode(obj_x, obj_y), range);
         int current_x = GetCurrentTileX();
         int current_y = GetCurrentTileY();
 
@@ -386,6 +370,19 @@ public class Movement_Action : Action
 
             GoTo(closest);
         }
+    }
+
+    public void GoToPlayer()
+    {
+        player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+
+        Enemy_BT bt = GetComponent<EnemySword_BT>();
+        if (bt == null)
+            bt = GetComponent<EnemyShield_BT>();
+        if (bt == null)
+            bt = GetComponent<EnemySpear_BT>();
+
+        GoToPrevious(x, y, (uint)bt.range, true);
     }
 
     public void Accelerate(Vector3 acceleration)    
@@ -416,7 +413,50 @@ public class Movement_Action : Action
         return result;
     }
 
-    public float GetDeltaAngle(bool db = false)
+    public void LookAt(Vector3 target_position)
+    {
+        look_at_pos = new Vector3(target_position);
+
+        GetComponent<Align_Steering>().SetEnabled(true);
+
+        Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
+        Vector3 pos = new Vector3(GetComponent<Transform>().position);
+        Vector3 obj_vec = new Vector3(target_position - pos);
+
+        float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
+
+        if (delta > Mathf.PI)
+        {
+            delta = delta - 2 * Mathf.PI;
+        }
+        if (delta < (-Mathf.PI))
+        {
+            delta = delta + 2 * Mathf.PI;
+        }
+
+        if (Mathf.Abs(delta) > align.GetRotMargin())
+        {
+            rotation_finished = false;
+            align.SetEnabled(true);
+            align.SetRotation(delta);
+        }
+    }
+
+    public void LookAtNextTile()
+    {
+        Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
+        next_tile.x = path[0].GetTileX() * tile_size;
+        next_tile.z = path[0].GetTileY() * tile_size;
+        LookAt(next_tile);
+    }
+
+    public void LookAtPlayer()
+    {
+        Vector3 target_pos = new Vector3(GetLinkedObject("player").GetComponent<Transform>().position);
+        LookAt(target_pos);
+    }
+
+    /*public float GetDeltaAngle(bool db = false)
     {
         if (look_at_player == false)
         {
@@ -529,9 +569,9 @@ public class Movement_Action : Action
             Debug.Log("Retards 4 the win");
             return 0.0f;
         }
-    }
+    }*/
 
-    public void SetDirection()
+    public Direction SetDirection()
     {
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
         float delta = Mathf.Atan2(forward.x, forward.y);
@@ -549,12 +589,8 @@ public class Movement_Action : Action
             dir = Direction.DIR_NORTH;
         else if (delta <= -(Mathf.PI / 4) && delta >= -(3 * (Mathf.PI / 4)))
             dir = Direction.DIR_WEST;
-    }
 
-    public bool FinishedRotation()
-    {
-        float delta_angle = GetDeltaAngle();
-        return Mathf.Abs(delta_angle) < rot_margin;
+        return dir;
     }
 
     public int GetCurrentTileX()
@@ -607,11 +643,6 @@ public class Movement_Action : Action
         return max_rot_accel;
     }
 
-    public float GetRotMargin()
-    {
-        return rot_margin;
-    }
-
     public bool NextToPlayer()
     {
         player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
@@ -623,4 +654,5 @@ public class Movement_Action : Action
     {
         return map.GetComponent<Pathfinder>().IsWalkableTile(tile_x, tile_y);
     }
+
 }

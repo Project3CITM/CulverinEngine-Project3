@@ -5,20 +5,20 @@ public class EnemySword_BT : Enemy_BT
 {
     public override void Start()
     {
-
         GameObject Temp_go = GetLinkedObject("enemies_manager");
 
-        if(Temp_go==null) Debug.Log("[error]Gameobject enemies_manager not found");
+        if(Temp_go==null)
+            Debug.Log("[error]Gameobject enemies_manager not found");
         else
         {
+            EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
 
-        EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
-
-        if (enemy_manager == null) Debug.Log("[error]EnemySword_BT: enemies_manager is not detected");
-        else
-        {
-            enemy_manager.AddSwordEnemy(gameObject);
-        }
+            if (enemy_manager == null)
+                    Debug.Log("[error]EnemySword_BT: enemies_manager is not detected");
+            else
+            {
+                enemy_manager.AddSwordEnemy(gameObject);
+            }
         }
         base.Start();
     }
@@ -34,6 +34,14 @@ public class EnemySword_BT : Enemy_BT
         //Attack action
         if (InRange())
         {
+
+            /*if (!GetComponent<FacePlayer_Action>().IsFaced())
+            {
+                current_action.Interupt();
+                next_action = GetComponent<FacePlayer_Action>();
+                return;
+            }*/
+
             bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
 
             if (attack_ready)
@@ -43,7 +51,6 @@ public class EnemySword_BT : Enemy_BT
                 state = AI_STATE.AI_ATTACKING;
                 Attack_Action action = GetComponent<Attack_Action>();
                 action.SetDamage(attack_damage);
-                action.SetAnimSpeed(anim_speed);
                 current_action = action;
                 current_action.ActionStart();
                 return;
@@ -53,14 +60,12 @@ public class EnemySword_BT : Enemy_BT
                 //Debug.Log("IdleAttack");
                 state = AI_STATE.AI_IDLE;
                 current_action = GetComponent<IdleAttack_Action>();
-                current_action.SetAnimSpeed(anim_speed);
                 current_action.ActionStart();
                 return;
             }
         }
         else if(player_detected == true)
         {
-            //Debug.Log("Chase");
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
             return;
@@ -79,11 +84,13 @@ public class EnemySword_BT : Enemy_BT
             return;
         }
 
-        //If none of them -> patrol
+        //Patrol
         int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        //Patrol
+        //Reset event list
+        GetComponent<SwordGuard_Listener>().ClearEvents();
+
         if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
         {
             Debug.Log("Patrol-origin");
@@ -105,13 +112,12 @@ public class EnemySword_BT : Enemy_BT
     public override void ApplyDamage(float damage)
     {
         base.ApplyDamage(damage);
+    }
 
-        if(life_state == ENEMY_STATE.ENEMY_DAMAGED)
-        {
-            //enemy1_Specular_Hit
-            /*GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
-            GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
-            GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");*/
-        }
+    public override void ChangeTexturesToDamaged()
+    {
+        GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
+        GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
+        GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");
     }
 }
