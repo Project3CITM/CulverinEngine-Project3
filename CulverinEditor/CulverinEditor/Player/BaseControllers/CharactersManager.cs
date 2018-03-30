@@ -812,7 +812,6 @@ public class CharactersManager : CulverinBehaviour
         return (int)state;
     }
 
-
     public void ApplyFatigue(float fatigue)
     {
         // CURRENT CHARACTER -------------------------------
