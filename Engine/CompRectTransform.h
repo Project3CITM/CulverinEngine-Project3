@@ -19,9 +19,10 @@ public:
 	void Load(const JSON_Object * object, std::string name);
 	void DrawRectTransform();
 
-	void SetNewAnimationValue(const AnimationData& value);
 	AnimationData ShowParameters();
+	const char* ReturnParameterName(ParameterValue parameter);
 
+	void SetNewAnimationValue(const AnimationData& value);
 	void SetWidth(int set_width);
 	void SetHeight(int set_height);
 	void SetMaxAnchor(float2 set_max_anchor);

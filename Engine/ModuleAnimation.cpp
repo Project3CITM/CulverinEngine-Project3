@@ -46,101 +46,13 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 
 			if (new_animation_window)
 			{
-				for (int i = 0; i< go->GetNumComponents(); i++)
-				{
-					//(*it)
-					Component* component = go->GetComponentbyIndex(i);
-					AnimableComponent* item = dynamic_cast<AnimableComponent*>(component);
-
-					if (item == nullptr)
-						continue;
-					bool open = ImGui::TreeNodeEx(component->GetName());
-
-					if (open)
-					{
-						//item->ShowParameters();
-						
-						AnimationData new_value = item->ShowParameters();
-						if (new_value.type != PARAMETER_NONE)
-						{
-							int find = HaveAnimData(item);
-							if (find != -1)
-							{
-
-								if (!animation_json->animations[find].HaveKeyFrameData(new_value.type))
-								{
-									animation_json->animations[find].key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
-								}
-
-							}
-							else
-							{
-								AnimData tmp_anim_data;
-								tmp_anim_data.data = item;
-								tmp_anim_data.key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
-								animation_json->animations.push_back(tmp_anim_data);
-							}
-							new_animation_window = false;
-						}
-						
-						ImGui::TreePop();
-
-					}
-				}
+				ShowNewAnimationWindow();
 			}
 
 
 			if (animation_json != nullptr)
 			{
-				if (animation_json->animations.empty())
-				{
-					ImGui::End();
-					return;
-				}
-				for (int i = 0; i < animation_json->animations.size();i++)
-				{
-					AnimData* item = &animation_json->animations[i];
-					Component* component = dynamic_cast<Component*>(item->data);
-
-					bool open = ImGui::TreeNodeEx(component->GetName());
-					if (open)
-					{
-						for (int j = 0; j < item->key_frame_data.size(); j++)
-						{
-							KeyFrameData* key_frame_item = &item->key_frame_data[j];
-
-							if (key_frame_item->key_data.empty())
-								continue;
-
-							int size = key_frame_item->key_data.size();
-
-
-							for (int k = 0; k < size; k++)
-							{
-								key_frame_item->ShowKeyValue(k);
-							}
-
-							if(ImGui::Button("Apply Changes##apply_changes"))
-							{
-								std::sort(key_frame_item->key_data.begin(), key_frame_item->key_data.end());
-							}
-							ImGui::SameLine();
-							if (ImGui::Button("Create New Key##new_key"))
-							{
-								KeyData copy_data = key_frame_item->key_data.back();
-								key_frame_item->key_data.push_back(copy_data);
-							}
-							ImGui::SameLine();
-							if (ImGui::ImageButton((ImTextureID*)App->gui->icon_remove, ImVec2(8, 8), ImVec2(-1, 1), ImVec2(0, 0)))
-							{
-								item->key_frame_data.erase(item->key_frame_data.begin() + j);
-
-							}
-						}
-						ImGui::TreePop();
-					}
-					
-				}
+				ShowAnimationJsonInfo();
 			}
 
 			
@@ -149,6 +61,118 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 		ImGui::End();
 	
 
+}
+
+void ModuleAnimation::ShowNewAnimationWindow()
+{
+	GameObject* go = ((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected();
+
+	for (int i = 0; i< go->GetNumComponents(); i++)
+	{
+		//(*it)
+		Component* component = go->GetComponentbyIndex(i);
+		AnimableComponent* item = dynamic_cast<AnimableComponent*>(component);
+
+		if (item == nullptr)
+			continue;
+		bool open = ImGui::TreeNodeEx(component->GetName());
+
+		if (open)
+		{
+			//item->ShowParameters();
+
+			AnimationData new_value = item->ShowParameters();
+			if (new_value.type != PARAMETER_NONE)
+			{
+				int find = HaveAnimData(item);
+				if (find != -1)
+				{
+
+					if (!animation_json->animations[find].HaveKeyFrameData(new_value.type))
+					{
+						animation_json->animations[find].key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
+					}
+
+				}
+				else
+				{
+					AnimData tmp_anim_data;
+					tmp_anim_data.data = item;
+					tmp_anim_data.key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
+					animation_json->animations.push_back(tmp_anim_data);
+				}
+				new_animation_window = false;
+			}
+
+			ImGui::TreePop();
+
+		}
+	}
+}
+
+void ModuleAnimation::ShowAnimationJsonInfo()
+{
+
+	if (animation_json->animations.empty())
+	{
+		return;
+	}
+	for (int i = 0; i < animation_json->animations.size(); i++)
+	{
+		AnimData* item = &animation_json->animations[i];
+		Component* component = dynamic_cast<Component*>(item->data);
+
+		bool out_open = ImGui::TreeNodeEx(component->GetName());
+		if (out_open)
+		{
+			for (int j = 0; j < item->key_frame_data.size(); j++)
+			{
+				KeyFrameData* key_frame_item = &item->key_frame_data[j];
+
+				if (key_frame_item->key_data.empty())
+				{
+					item->key_frame_data.erase(item->key_frame_data.begin() + j);
+					continue;
+				}
+				int size = key_frame_item->key_data.size();
+
+				bool in_open = ImGui::TreeNodeEx(item->data->ReturnParameterName(key_frame_item->parameter));
+				if (in_open)
+				{
+					static int value = -1;
+					Columns(2, "key");
+					ImGui::Text("KeyFrames");
+					
+					value=key_frame_item->ReturnKeyDataPos(value);				
+					
+					ImGui::NextColumn();
+					ImGui::Text("KeySelected");
+					if (!key_frame_item->ShowKeyValue(value))
+					{
+						key_frame_item->key_data.erase(key_frame_item->key_data.begin() + value);
+					}
+					Columns();
+					ImGui::Separator();
+
+					if (ImGui::Button("Apply Changes##apply_changes"))
+					{
+						std::sort(key_frame_item->key_data.begin(), key_frame_item->key_data.end());
+					}
+					ImGui::SameLine();
+					
+					if (ImGui::Button("Create New Key##new_key"))
+					{
+						KeyData copy_data = key_frame_item->key_data.back();
+						key_frame_item->key_data.push_back(copy_data);
+					}
+
+					ImGui::TreePop();
+				}
+			}
+			ImGui::TreePop();
+		}
+
+	}
 }
 
 
@@ -197,6 +221,8 @@ bool AnimData::HaveKeyFrameData(const ParameterValue & data)
 	return false;
 }
 
+
+
 KeyFrameData::KeyFrameData(int key, AnimationValue value, ParameterValue param) 
 {
 	key_data.push_back(KeyData(key, value));
@@ -216,8 +242,10 @@ KeyFrameData::~KeyFrameData()
 {
 }
 
-void KeyFrameData::ShowKeyValue(int i)
+bool KeyFrameData::ShowKeyValue(int i)
 {
+	if (i == -1||i>key_data.size())
+		return true;
 	ImGui::PushItemWidth(150.0f);
 	if(invalid_key)
 		ImGui::TextColored(ImVec4(1,0,0,1),"Key frame duplicated");
@@ -292,8 +320,33 @@ void KeyFrameData::ShowKeyValue(int i)
 	default:
 		break;
 	}
+	std::string erase_name;
+	erase_name = "Erase Keyframe##erase_key";
+	erase_name += std::to_string(i);
+	if (ImGui::Button(erase_name.c_str()))
+	{
+		return false;
+	}
 	ImGui::PopItemWidth();
+	return true;
 
+}
+
+int KeyFrameData::ReturnKeyDataPos(int& selected)
+{
+	for (int i = 0; i < key_data.size(); i++)
+	{
+		std::string key_name = std::to_string(key_data[i].key_frame);
+		key_name += "##";
+		key_name += std::to_string(i);
+		if (ImGui::Selectable(key_name.c_str(), selected==i))
+		{
+			selected = i;
+
+			return selected;
+		}
+	}
+	return selected;
 }
 
 AnimationJson::AnimationJson()

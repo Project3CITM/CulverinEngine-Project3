@@ -478,6 +478,31 @@ AnimationData CompRectTransform::ShowParameters()
 	return ret;
 }
 
+const char * CompRectTransform::ReturnParameterName(ParameterValue parameter)
+{
+	switch (parameter)
+	{
+	case ParameterValue::RECT_TRANSFORM_POSITION:
+		return "Position";
+		break;
+	case ParameterValue::RECT_TRANSFORM_ROTATION:
+		return "Rotation";
+		break;
+	case ParameterValue::RECT_TRANSFORM_SCALE:
+		return "Scale";
+		break;
+	case ParameterValue::RECT_TRANSFORM_WIDTH:
+		return "Width";
+		break;
+	case ParameterValue::RECT_TRANSFORM_HEIGHT:
+		return "Height";
+		break;
+	default:
+		break;
+	}
+	return nullptr;
+}
+
 void CompRectTransform::SetWidth(int set_width)
 {
 	update_rect = true;

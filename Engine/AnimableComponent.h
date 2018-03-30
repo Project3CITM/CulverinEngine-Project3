@@ -39,6 +39,7 @@ public:
 
 	virtual void SetNewAnimationValue(const AnimationData& value);
 	virtual AnimationData ShowParameters();
+	virtual const char* ReturnParameterName(ParameterValue parameter);
 };
 
 #endif //_MODULE_ANIMATION_H_

@@ -15,7 +15,6 @@ struct KeyData
 
 	int key_frame;
 	AnimationValue key_values;
-
 	bool operator<(const KeyData& compare) const; 
 };
 
@@ -25,7 +24,9 @@ struct KeyFrameData
 	KeyFrameData(int key, AnimationValue value, ParameterValue parameter);
 	KeyFrameData(int key, AnimationValue value);
 	~KeyFrameData();
-	void ShowKeyValue(int i);
+	bool ShowKeyValue(int i);
+	int ReturnKeyDataPos(int& selected);
+
 	int max_keys = 20;
 	bool invalid_key = false;
 	std::vector<KeyData> key_data;
@@ -39,6 +40,7 @@ struct AnimData
 public:
 
 	AnimableComponent* data = nullptr;
+
 	std::vector<KeyFrameData> key_frame_data;
 };
 
@@ -59,11 +61,12 @@ public:
 	virtual ~ModuleAnimation();
 
 	void ShowAnimationWindow(bool& active);
+	void ShowNewAnimationWindow();
+	void ShowAnimationJsonInfo();
 	void FindAnimComponent();
 	void SaveAnimation();
 	void LoadAnimation();
 	int HaveAnimData(const AnimableComponent* data);
-
 private:
 	bool new_animation_window = false;
 	AnimationJson* animation_json = nullptr;
