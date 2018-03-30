@@ -327,32 +327,44 @@ MonoObject* CSharpScript::GetPosition(MonoObject* object)
 		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		//CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
 		float3* new_pos = ((CompTransform*)obj)->GetPosPointer();
-		MonoObject* new_obj = App->importer->iScript->GetMonoObject(((CompTransform*)obj)->GetPosPointer());
-		if (new_obj != nullptr)
+		MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+		if (new_object)
 		{
-			if (x_field) mono_field_set_value(new_obj, x_field, &new_pos->x);
-			if (y_field) mono_field_set_value(new_obj, y_field, &new_pos->y);
-			if (z_field) mono_field_set_value(new_obj, z_field, &new_pos->z);
+			if (x_field) mono_field_set_value(new_object, x_field, &new_pos->x);
+			if (y_field) mono_field_set_value(new_object, y_field, &new_pos->y);
+			if (z_field) mono_field_set_value(new_object, z_field, &new_pos->z);
 
-			return new_obj;
+			// Put in map the new MonoObject
+			//App->importer->iScript->UpdateMonoPos(new_pos, new_object);
+
+			return new_object;
 		}
-		else
-		{
-			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
-			if (new_object)
-			{
-				if (x_field) mono_field_set_value(new_object, x_field, &new_pos->x);
-				if (y_field) mono_field_set_value(new_object, y_field, &new_pos->y);
-				if (z_field) mono_field_set_value(new_object, z_field, &new_pos->z);
+		//MonoObject* new_obj = App->importer->iScript->GetMonoObject(((CompTransform*)obj)->GetPosPointer());
+		//if (new_obj != nullptr)
+		//{
+		//	if (x_field) mono_field_set_value(new_obj, x_field, &new_pos->x);
+		//	if (y_field) mono_field_set_value(new_obj, y_field, &new_pos->y);
+		//	if (z_field) mono_field_set_value(new_obj, z_field, &new_pos->z);
 
-				// Put in map the new MonoObject
-				App->importer->iScript->UpdateMonoPos(new_pos, new_object);
+		//	return new_obj;
+		//}
+		//else
+		//{
+		//	MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+		//	if (new_object)
+		//	{
+		//		if (x_field) mono_field_set_value(new_object, x_field, &new_pos->x);
+		//		if (y_field) mono_field_set_value(new_object, y_field, &new_pos->y);
+		//		if (z_field) mono_field_set_value(new_object, z_field, &new_pos->z);
 
-				return new_object;
-			}
-		}
+		//		// Put in map the new MonoObject
+		//		App->importer->iScript->UpdateMonoPos(new_pos, new_object);
+
+		//		return new_object;
+		//	}
+		//}
 	}
 	return nullptr;
 }
@@ -411,7 +423,7 @@ void CSharpScript::SetPosition(MonoObject* object, MonoObject* vector3)
 
 void CSharpScript::SetGlobalPosition(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	if (current_game_object != nullptr && vector3 != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");

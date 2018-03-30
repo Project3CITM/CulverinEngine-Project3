@@ -751,29 +751,33 @@ bool CSharpScript::UpdateValueFromMono(ScriptVariable * variable, MonoClassField
 {
 	if (variable != nullptr && mfield != nullptr && mtype != nullptr)
 	{
-		if (variable->type != VarType::Var_STRING && variable->type != VarType::Var_GAMEOBJECT)
+		if (variable->access == VarAccess::Var_PUBLIC)
 		{
-			//Set value of the variable by passing it as a reference in this function
-			mono_field_get_value(CSObject, mfield, variable->value);
-		}
-		else if (variable->type == VarType::Var_GAMEOBJECT)
-		{
-			if (variable->game_object != nullptr)
+			if (variable->type != VarType::Var_STRING && variable->type != VarType::Var_GAMEOBJECT)
 			{
 				//Set value of the variable by passing it as a reference in this function
-				mono_field_get_value(CSObject, mfield, variable->game_object);
+				mono_field_get_value(CSObject, mfield, variable->value);
+			}
+			else if (variable->type == VarType::Var_GAMEOBJECT)
+			{
+				if (variable->game_object != nullptr)
+				{
+					//Set value of the variable by passing it as a reference in this function
+					mono_field_get_value(CSObject, mfield, variable->game_object);
+				}
+			}
+			else
+			{
+				MonoString* str = nullptr;
+
+				//Set value of the variable by passing it as a reference in this function
+				mono_field_get_value(CSObject, mfield, &str);
+
+				//Copy string into str_value (specific for strings)
+				variable->str_value = mono_string_to_utf8(str);
 			}
 		}
-		else
-		{
-			MonoString* str = nullptr;
 
-			//Set value of the variable by passing it as a reference in this function
-			mono_field_get_value(CSObject, mfield, &str);
-
-			//Copy string into str_value (specific for strings)
-			variable->str_value = mono_string_to_utf8(str);
-		}
 		return true;
 	}
 	else
