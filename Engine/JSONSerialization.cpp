@@ -1181,7 +1181,7 @@ void JSONSerialization::CreateResourcesLoad(std::vector<std::string>& files_meta
 				{
 					config_node = json_object_get_object(config, "Prefab");
 					break;
-				}	
+				}
 				// Script (cs) -----------------------------------
 				type = (Resource::Type)(int)json_object_dotget_number_with_std(config, "Script.Type");
 				if (type != Resource::Type::UNKNOWN)
