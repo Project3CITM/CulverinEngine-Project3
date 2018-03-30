@@ -82,6 +82,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
 		case EventValidation::EVENT_VALIDATION_VALID:
+			//Here we can execute the event, any delay is left and this is a valid event
 			switch (item._Ptr->_Myval.second.draw.Dtype)
 			{
 			case EDraw::DrawType::DRAW_3D:
@@ -116,7 +117,22 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
 		case EventValidation::EVENT_VALIDATION_VALID:
-			((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
+			//Here we can execute the event, any delay is left and this is a valid event
+			switch (item._Ptr->_Myval.second.draw.Dtype)
+			{
+			case EDraw::DrawType::DRAW_3D:
+			case EDraw::DrawType::DRAW_2D:
+				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
+				break;
+//			case EDraw::DrawType::DRAW_3D_ALPHA:
+//				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
+//				break;
+//			case EDraw::DrawType::DRAW_SCREEN_CANVAS:
+//				(*item2)->OnEvent(item._Ptr->_Myval.second);
+//				break;
+//			case EDraw::DrawType::DRAW_WORLD_CANVAS:
+//				break;
+			}
 			item = DrawV.erase(item);
 			break;
 		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
@@ -146,18 +162,32 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		{
 		case EventValidation::EVENT_VALIDATION_VALID:
 			//Here we can execute the event, any delay is left and this is a valid event
-			//If EListener iterator is different from the actual analysed event, find the new iterator
-			if (type != EListener._Ptr->_Myval.first)
-				EListener = MEventListeners.find(type);
-			//if != end, we found it, iterate listeners and call OnEvent, if we didn't found it, erase and jump to next iteration
-			if (EListener != MEventListeners.end())
-				for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
-			else
+			switch (type)
 			{
-				item = DrawAlphaV.erase(item);
-				continue;
+			case EventType::EVENT_DRAW:
+				switch (item._Ptr->_Myval.second.draw.Dtype)
+				{
+//				case EDraw::DrawType::DRAW_3D:
+//				case EDraw::DrawType::DRAW_2D:
+//					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
+//					break;
+				case EDraw::DrawType::DRAW_3D_ALPHA:
+					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
+					break;
+//				case EDraw::DrawType::DRAW_SCREEN_CANVAS:
+//					(*item2)->OnEvent(item._Ptr->_Myval.second);
+//					break;
+//				case EDraw::DrawType::DRAW_WORLD_CANVAS:
+//					break;
+				}
+				break;
+			case EventType::EVENT_PARTICLE_DRAW:
+				App->renderer3D->particles_shader->Bind();
+				((Particle*)item._Ptr->_Myval.second.particle_draw.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
+				App->renderer3D->particles_shader->Unbind();
+				break;
 			}
+			item = DrawAlphaV.erase(item);
 			break;
 		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
 		case EventValidation::EVENT_VALIDATION_ADD_CONTINUE:
@@ -168,7 +198,6 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 			item = DrawAlphaV.erase(item);
 			continue;
 		}
-		item = DrawAlphaV.erase(item);
 	}
 	/*
 	if (alpha_draw)
