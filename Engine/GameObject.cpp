@@ -124,7 +124,7 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 GameObject::~GameObject()
 {
 	//RELEASE_ARRAY(name); FIX THIS
-
+	LOG("[pink] DELETEEEEEEE");
 	parent = nullptr;
 
 	if (components.size() > 0)

@@ -1128,32 +1128,22 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 		// Finally Check have Parent and remove from childs
 		if (gameobject->GetParent() != nullptr)
 		{
+			LOG("[green] DELETE");
 			int index = gameobject->GetParent()->GetIndexChildbyName(gameobject->GetName());
 			gameobject->GetParent()->RemoveChildbyIndex(index);
+			gameobject = nullptr;
 		}
 
 		else if (isImport == false && is_reimport == false)
 		{
-			int index = 0;
 			for (int i = 0; i < root->GetNumChilds(); i++)
 			{
-				if (strcmp(gameobject->GetName(), root->GetChildbyIndex(i)->GetName()) == 0)
+				if (gameobject == root->GetChildbyIndex(i))
 				{
-					index = i;
-				}
-			}
-			std::vector<GameObject*>::iterator item = root->GetChildsPtr()->begin();
-			for (int i = 0; i < root->GetNumChilds(); i++)
-			{
-				if (i == index)
-				{
-					GameObject* it = root->GetChildbyIndex(i);
-					RELEASE(it);
-					root->GetChildsPtr()->erase(item);
-					it = nullptr;
+					root->RemoveChildbyIndex(i);
+					gameobject = nullptr;
 					break;
 				}
-				item++;
 			}
 		}
 		else
