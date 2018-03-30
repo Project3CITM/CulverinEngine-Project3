@@ -137,7 +137,7 @@ public class TheonController : CharacterController
 
                             if (anim_controller.IsAnimationStopped("Attack"))
                             {
-                                Debug.Log("[error] Reloading");
+                                CrossBow.GetComponent<CompAnimation>().PlayAnimation("Reload");
                                 state = State.RELOADING;
                                 reloading = true;
                             }
@@ -421,6 +421,8 @@ public class TheonController : CharacterController
 
         //Set Attack Animation
         SetAnimationTransition("ToAttack1", true);
+        CrossBow.GetComponent<CompAnimation>().PlayAnimation("Attack");
+
         GetComponent<CompAudio>().PlayEvent("CrossbowShot");
         Debug.Log("[green] Shoot Audio");
 
