@@ -30,6 +30,7 @@ public class BarrelFall : CulverinBehaviour
     bool in_tile = false;
     bool placed = false;
     bool sinking = false;
+    bool disable_barrels = false;
 
     float fall_displacement = 0.0f;
     float fall_time = 0.0f;
@@ -60,6 +61,12 @@ public class BarrelFall : CulverinBehaviour
 
     void Update()
     {
+        if(disable_barrels == true)
+        {
+            gameObject.SetActive(false);
+            disable_barrels = false;
+        }
+
         if (placed)
         {
             if (mode_puzzle == ModeBarrel.FILLING)
@@ -235,8 +242,7 @@ public class BarrelFall : CulverinBehaviour
         in_tile = placed = sinking = false;
         //get_init_pos = true;
         fall_displacement = fall_time = sink_timer = 0.0f;
-        gameObject.SetActive(false);      
-       
+        disable_barrels = true;
     }
 
     private void DoFloatAnimation()
