@@ -43,10 +43,10 @@ public class BarrelFall : CulverinBehaviour
     // Floating 
 
     private float floatingTimeCounter = 0.0f;
-    public float floatingPeriod = 3.0f;
+    public float floatingPeriod = 0.0f;
     public float floatingAnimationDuration = 2.0f;
     private float timeToNextFloatAnim; // Used to let add some randomness
-    public float floatingDisplacementMultiplier = 2.0f;
+    public float floatingDisplacementMultiplier = 0.1f;
 
     // -----------------------------
 
@@ -71,12 +71,15 @@ public class BarrelFall : CulverinBehaviour
         {
             if (mode_puzzle == ModeBarrel.FILLING)
             {
+
+                DoFloatAnimation();
+                /*
                 // It is not a path barrel
                 floatingTimeCounter += Time.deltaTime;
 
                 if (floatingTimeCounter >= timeToNextFloatAnim)
                 {
-                    // It is animating or must end the animation
+                   // It is animating or must end the animation
                     if (floatingTimeCounter >= (timeToNextFloatAnim + floatingAnimationDuration))
                     {
                         // Stop animation and reset
@@ -87,9 +90,16 @@ public class BarrelFall : CulverinBehaviour
                     else
                     {
                         // Do floating animation
-                        DoFloatAnimation();
-                    }
-                }
+                       
+                    //}
+                }*/
+            }
+
+
+
+            if (sinking)
+            {
+                Sink();
             }
 
             return;
@@ -110,10 +120,7 @@ public class BarrelFall : CulverinBehaviour
         {
             Fall();
         }
-        if (sinking)
-        {
-            Sink();
-        }
+
     }
 
     void MoveToTile()
@@ -195,10 +202,11 @@ public class BarrelFall : CulverinBehaviour
 
         Vector3 global_pos = transform.GetGlobalPosition();
         sink_timer += Time.deltaTime;
-        float new_height = transform.local_position.y;
-        fall_displacement = initial_fall_speed * Time.deltaTime * fall_time - 0.5f * 9.8f * weight * (fall_time * fall_time);
+        Debug.Log(sink_timer);
+        float new_height = global_pos.y;
+        fall_displacement = -weight;
         new_height += fall_displacement * Time.deltaTime;
-        transform.local_position = new Vector3(transform.local_position.x, new_height, transform.local_position.z);
+        transform.SetGlobalPosition(new Vector3(global_pos.x, new_height, global_pos.z));
     }
 
     public bool IsPlaced()
@@ -234,6 +242,8 @@ public class BarrelFall : CulverinBehaviour
     public void SetToSink()
     {
         sinking = true;
+        audio.PlayEvent("BarrelSinking");
+       // Debug.Log("Setting to sink");
     }
 
     public void ResetBarrel()
