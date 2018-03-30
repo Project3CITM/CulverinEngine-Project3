@@ -244,6 +244,10 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend(); item++)
 			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
 	//Draw alpha events
+	if (EventPushedWhileIteratingMaps_DrawGlowV)
+		for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend(); item++)
+			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
+	//Draw alpha events
 	if (EventPushedWhileIteratingMaps_DrawAlphaV)
 		for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend(); item++)
 			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
@@ -252,6 +256,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend(); item++)
 			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
 	EventPushedWhileIteratingMaps_DrawV = false;
+	EventPushedWhileIteratingMaps_DrawGlowV = false;
 	EventPushedWhileIteratingMaps_DrawAlphaV = false;
 	EventPushedWhileIteratingMaps_NoDrawV = false;
 	postUpdate_t = perf_timer.ReadMs();
