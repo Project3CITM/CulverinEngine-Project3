@@ -77,12 +77,14 @@ private:
 
 private:
 	std::multimap<uint, Event> DrawV;							//Draw events are stored here ordered by resource number (faster draw, less bind/unbind)
+	std::multimap<uint, Event> DrawGlowV;							//Draw glow events are stored here ordered by resource number (faster draw, less bind/unbind)
 	std::multimap<float, Event> DrawAlphaV;						//Draw events are stored here ordered by distance to active camera
 	std::multimap<EventType, Event> NoDrawV;					//No-Draw events are stored here ordered by EventType enum, less eventvector change when iterating
 	std::map<EventType, std::vector<Module*>> MEventListeners;
 	uint MapSetToIterate = 0;
 	bool IteratingMaps = false;
 	bool EventPushedWhileIteratingMaps_DrawV = false;
+	bool EventPushedWhileIteratingMaps_DrawGlowV = false;
 	bool EventPushedWhileIteratingMaps_DrawAlphaV = false;
 	bool EventPushedWhileIteratingMaps_NoDrawV = false;
 };

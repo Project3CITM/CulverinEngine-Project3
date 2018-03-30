@@ -82,30 +82,41 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
 		case EventValidation::EVENT_VALIDATION_VALID:
-			if (type == EventType::EVENT_PARTICLE_DRAW)
+			switch (item._Ptr->_Myval.second.draw.Dtype)
 			{
-				App->renderer3D->particles_shader->Bind();
-				((Particle*)item._Ptr->_Myval.second.particle_draw.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
-				App->renderer3D->particles_shader->Unbind();
+			case EDraw::DrawType::DRAW_3D:
+			case EDraw::DrawType::DRAW_2D:
+				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
+				break;
+//			case EDraw::DrawType::DRAW_3D_ALPHA:
+//				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
+//				break;
+//			case EDraw::DrawType::DRAW_SCREEN_CANVAS:
+//				(*item2)->OnEvent(item._Ptr->_Myval.second);
+//				break;
+//			case EDraw::DrawType::DRAW_WORLD_CANVAS:
+//				break;
 			}
-			else
-			{
-				switch (item._Ptr->_Myval.second.draw.Dtype)
-				{
-				case EDraw::DrawType::DRAW_3D:
-				case EDraw::DrawType::DRAW_2D:
-					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
-					break;
-				case EDraw::DrawType::DRAW_3D_ALPHA:
-					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
-					break;
-//				case EDraw::DrawType::DRAW_SCREEN_CANVAS:
-//					(*item2)->OnEvent(item._Ptr->_Myval.second);
-//					break;
-//				case EDraw::DrawType::DRAW_WORLD_CANVAS:
-//					break;
-				}
-			}
+			item = DrawV.erase(item);
+			break;
+		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
+		case EventValidation::EVENT_VALIDATION_ADD_CONTINUE:
+			item++;
+			continue;
+		case EventValidation::EVENT_VALIDATION_ERASE_CONTINUE:
+		case EventValidation::EVENT_VALIDATION_ERROR:
+			item = DrawV.erase(item);
+			continue;
+		}
+	}
+	//Draw opaque with glow events
+	for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend();)
+	{
+		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
+		switch (ValidEvent(item._Ptr->_Myval.second, dt))
+		{
+		case EventValidation::EVENT_VALIDATION_VALID:
+			((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
 			item = DrawV.erase(item);
 			break;
 		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
@@ -141,8 +152,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 			//if != end, we found it, iterate listeners and call OnEvent, if we didn't found it, erase and jump to next iteration
 			if (EListener != MEventListeners.end())
 				for (std::vector<Module*>::const_iterator item2 = EListener._Ptr->_Myval.second.cbegin(); item2 != EListener._Ptr->_Myval.second.cend(); ++item2)
-					//TODO: Call Draw function
-					int variableToAvoidFor_todelete = 0;
+					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
 			else
 			{
 				item = DrawAlphaV.erase(item);
@@ -292,11 +302,15 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 				event.Set_event_data_PushedWhileIteriting(true);
 				EventPushedWhileIteratingMaps_DrawV = true;
 			}
-
-
-
-
 			DrawV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event));
+			break;
+		case event.draw.DRAW_3D_GLOW:
+			if (IteratingMaps)
+			{
+				event.Set_event_data_PushedWhileIteriting(true);
+				EventPushedWhileIteratingMaps_DrawGlowV = true;
+			}
+			DrawGlowV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event));
 			break;
 		case event.draw.DRAW_3D_ALPHA:
 			if (IteratingMaps)

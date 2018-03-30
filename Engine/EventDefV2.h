@@ -233,6 +233,7 @@ struct EDraw
 	enum DrawType
 	{
 		DRAW_3D,			//3D Game Objects without alpha
+		DRAW_3D_GLOW,		//3D Game Objects with glow
 		DRAW_3D_ALPHA,		//3D Game Objects with alpha & World space canvas
 		DRAW_2D,			//2D GameObject / game object you want to draw with orthogonal perspective
 		DRAW_WORLD_CANVAS,	//World space canvas
