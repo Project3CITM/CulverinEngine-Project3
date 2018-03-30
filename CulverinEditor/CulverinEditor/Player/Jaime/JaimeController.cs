@@ -379,6 +379,8 @@ public class JaimeController : CharacterController
     {
         button = jaime_button_left.GetComponent<CompButton>();
         button.Clicked(); // This will execute LeftCooldown  
+        Debug.Log("[yellow] Clicked");
+
     }
 
     public bool OnLeftClick()

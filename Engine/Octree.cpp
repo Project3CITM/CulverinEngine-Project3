@@ -205,8 +205,42 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 	if (!box.Intersects(frustum))
 		return ret;
 
+	Plane planes[6];
+	frustum.GetPlanes(planes);
+	AABB Box;
+	//Custom intersec, MathGeoLib was too slow
+	//Should be changed if there is more time
 	for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
 	{
+		
+		AABB Box = item._Ptr->_Myval->box_fixed;
+
+		int iTotalIn = 0;
+		bool is_in = true;
+		for (int p = 0; p < 6; ++p) {
+			int iInCount = 8;
+			int iPtIn = 1;
+			for (int i = 0; i < 8; ++i) {
+				// test this point against the planes
+				if (planes[p].normal.Dot(Box.CornerPoint(i)) >= planes[p].d) {
+					iPtIn = 0;
+					--iInCount;
+				}
+			}
+			// were all the points outside of plane p?
+			if (iInCount == 0)
+			{
+				is_in = false;
+			}
+			// check if they were all on the right side of the plane
+			iTotalIn += iPtIn;
+		}
+
+		if (is_in)
+		{
+			nodes.push_back(*item);
+		}
+	/*
 		ret++;
 		AABB Box = item._Ptr->_Myval->box_fixed;
 		for (int i = 0; i < 8; ++i)
@@ -216,7 +250,7 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 				nodes.push_back(*item);
 				break;
 			}
-		}
+		}*/
 	}
 
 	// If there is no children, end

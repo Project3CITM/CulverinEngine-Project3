@@ -711,8 +711,50 @@ void JSONSerialization::SaveMapCreation(std::vector<std::string>& map, std::vect
 	json_value_free(config_file);
 }
 
-void JSONSerialization::LoadMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int height_map, int width_map, float separation, const char * name)
+bool JSONSerialization::LoadMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int& height_map, int& width_map, float& separation, int& number_prefabs, const char* file, std::string& name)
 {
+	//LOG("LOADING MAP %s -----", file);
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+	JSON_Object* config_node;
+
+	config_file = json_parse_file(file);
+	if (config_file)
+	{
+		config = json_value_get_object(config_file);
+		config_node = json_object_get_object(config, "Map");
+		name = json_object_dotget_string_with_std(config_node, "Info.Name Map");
+		height_map = json_object_dotget_number_with_std(config_node, "Info.Height Map");
+		width_map = json_object_dotget_number_with_std(config_node, "Info.Width Map");
+		separation = json_object_dotget_number_with_std(config_node, "Info.Separation");
+
+		number_prefabs = json_object_dotget_number_with_std(config_node, "Prefabs.Number of Prefabs");
+		if (number_prefabs > 0)
+		{
+			for (int i = 0; i < number_prefabs; i++)
+			{
+				std::string pref = "Prefabs.Prefab " + std::to_string(i);
+				//line += ".";
+				prefabs.push_back(json_object_dotget_string_with_std(config_node, pref));
+			}
+		}
+		else
+		{
+			json_value_free(config_file);
+			return false;
+		}
+		for (int i = 0; i < height_map; i++)
+		{
+			std::string line = "Line_" + std::to_string(i);
+			//line += ".";
+			map.push_back(json_object_dotget_string_with_std(config_node, line));
+		}
+		json_value_free(config_file);
+		return true;
+	}
+	json_value_free(config_file);
+	return false;
 }
 
 void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const char* directory, const char* fileName)

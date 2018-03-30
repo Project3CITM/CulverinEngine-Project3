@@ -238,9 +238,10 @@ public class DaenerysController : CharacterController
                                 }
 
                                 anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                                if (anim_controller.IsAnimOverXTime(0.9f))
+                                if (anim_controller.IsAnimOverXTime(0.8f))
                                 {
                                     state = State.IDLE;
+                                    Debug.Log("[error] PACOOOOOOO");
                                 }
                                 else
                                 {

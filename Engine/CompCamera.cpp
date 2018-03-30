@@ -71,12 +71,7 @@ CompCamera::~CompCamera()
 
 void CompCamera::PreUpdate(float dt)
 {
-	// Only the main camera will be able to apply culling (Game Mode)
-	if (culling /*&& dt > 0.f*/ && is_main)
-	{
-		// Iterate All GameObjects and apply culling
-		DoCulling();
-	}
+	
 }
 
 void CompCamera::Update(float dt)
@@ -272,8 +267,17 @@ void CompCamera::ShowCameraPopup()
 
 void CompCamera::DoCulling()
 {
-	// First check culling with static objects (optimized with quadtree)
-	CullStaticObjects();
+	if (parent == nullptr || !culling)
+	{
+		return;
+	}
+
+	const CompTransform* transform = parent->GetComponentTransform();
+	if (transform != nullptr && transform->GetUpdated())
+	{
+		// First check culling with static objects (optimized with quadtree)
+		CullStaticObjects();
+	}
 
 	// Then check dynamic objects
 	//CullDynamicObjects();
@@ -282,19 +286,15 @@ void CompCamera::DoCulling()
 void CompCamera::CullStaticObjects()
 {
 	// First, set all static objects invisible
-	App->scene->RecalculateStaticObjects();
-	for (std::vector<GameObject*>::const_iterator item = App->scene->static_objects.cbegin(); item != App->scene->static_objects.cend(); ++item)
-	{
-		(*item)->SetVisible(false);
-	}
 
 	// Get all static objects that are inside the frustum (accelerated with quadtree)
+	candidates_to_cull.clear();
 	App->scene->octree.CollectIntersections(candidates_to_cull, frustum);
 
 	// Set visible only these static objects
 	while (!candidates_to_cull.empty())
 	{
-		candidates_to_cull.front()->SetVisible(true); // INSIDE CAMERA VISION
+		candidates_to_cull.front()->Draw(); // INSIDE CAMERA VISION
 		candidates_to_cull.pop_front();
 	}
 }

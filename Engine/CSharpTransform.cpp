@@ -776,12 +776,12 @@ MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
 				if (b1_field) mono_field_set_value(new_object, b1_field, &global_transform.At(1, 1));
 				if (b2_field) mono_field_set_value(new_object, b2_field, &global_transform.At(1, 2));
 				if (b3_field) mono_field_set_value(new_object, b3_field, &global_transform.At(1, 3));
-				
+
 				if (c0_field) mono_field_set_value(new_object, c0_field, &global_transform.At(2, 0));
 				if (c1_field) mono_field_set_value(new_object, c1_field, &global_transform.At(2, 1));
 				if (c2_field) mono_field_set_value(new_object, c2_field, &global_transform.At(2, 2));
 				if (c3_field) mono_field_set_value(new_object, c3_field, &global_transform.At(2, 3));
-				
+
 				if (d0_field) mono_field_set_value(new_object, d0_field, &global_transform.At(3, 0));
 				if (d1_field) mono_field_set_value(new_object, d1_field, &global_transform.At(3, 1));
 				if (d2_field) mono_field_set_value(new_object, d2_field, &global_transform.At(3, 2));
@@ -791,7 +791,7 @@ MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
 			}
 		}
 	}
-	else 
+	else
 	{
 		return nullptr;
 	}

@@ -10,6 +10,7 @@ public class JaimeCD_Left : CoolDown
 
     public override void OnClick()
     {
+        Debug.Log("[blue] OnClick");
         if (GetLinkedObject("jaime_obj").GetComponent<JaimeController>().GetState() == 0
             && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
         {

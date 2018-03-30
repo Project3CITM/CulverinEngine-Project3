@@ -105,7 +105,7 @@ void ScriptVariable::SetMonoType(MonoType* mtype)
 void ScriptVariable::Save(JSON_Object * object, const std::string& title)
 {
 	const char* type_name = nullptr;
-	
+
 	//SAVE VAR TYPE -------------------
 	switch (type)
 	{
@@ -736,7 +736,7 @@ bool CSharpScript::GetValueFromMono(ScriptVariable* variable, MonoClassField* mf
 			variable->game_object = nullptr;
 			//Set value of the variable by passing it as a reference in this function
 			//mono_field_get_value(CSObject, mfield, variable->gameObject);
-			
+
 		}
 		return true;
 	}
@@ -857,7 +857,7 @@ mono_bool CSharpScript::IsActive(MonoObject* object)
 		return current_game_object->IsActive();
 	}
 	else
-	{ 
+	{
 		LOG("[error] GameObject was null.");
 	}
 	return false;
@@ -1341,14 +1341,14 @@ void CSharpScript::Save(JSON_Object* object, std::string name) const
 	{
 		temp_var = name + "Variables.Variable " + std::to_string(i);
 		temp_var += ".";
-		
+
 		variables[i]->Save(object, temp_var);
 	}
 }
 
 void CSharpScript::Load(const JSON_Object* object, std::string name)
 {
-	if(re_load_values.size() > 0)
+	if (re_load_values.size() > 0)
 		re_load_values.clear();
 	std::string temp_var = name;
 
@@ -1359,7 +1359,7 @@ void CSharpScript::Load(const JSON_Object* object, std::string name)
 		temp_var = name + "Variables.Variable " + std::to_string(i);
 		temp_var += ".";
 
-		
+
 		std::string name_variable_temp = json_object_dotget_string_with_std(object, temp_var + "Name: ");
 		for (int j = 0; j < variables.size(); j++)
 		{

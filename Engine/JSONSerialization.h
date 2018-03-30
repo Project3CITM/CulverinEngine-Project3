@@ -46,13 +46,13 @@ public:
 
 	// SAVE & LOAD MAP ---------------------------
 	void SaveMapWalkable(std::vector<std::string>& map, int height_map, int width_map, float separation, const char* name);
-	bool LoadMapWalkable(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* name, std::string& name_map);
+	bool LoadMapWalkable(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* file, std::string& name_map);
 
 	void SaveMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int height_map, int width_map, float separation, const char* name);
-	void LoadMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int height_map, int width_map, float separation, const char* name);
+	bool LoadMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int& height_map, int& width_map, float& separation, int& number_prefabs, const char* file, std::string& name_map);
 
 	void SaveMapNavigation(std::vector<std::string>& map, int height_map, int width_map, float separation, const char* name);
-	void LoadMapNavigation(std::vector<std::string>& map, int height_map, int width_map, float separation,const char* name);
+	void LoadMapNavigation(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* name, std::string& file);
 	// --------------------------------------
 
 	// SAVE & LOAD MATERIAL --------------------------

@@ -281,15 +281,12 @@ public class Lever : CulverinBehaviour
                 phase3 = true;
                 editmap = true;
             }
-
+                       
             
-            if(editmap && fill_barrel.IsFalling())
-            {
-                audio.StopEvent("Chain");
-            }
 
             if (editmap && fill_barrel.IsPlaced())
             {
+                audio.StopEvent("Chain");
                 SetPathWalkable();
                 editmap = false;
             }
@@ -625,7 +622,7 @@ public class Lever : CulverinBehaviour
         for (; i >= 0; i--)
         {
             BarrelFall b_fall = list[i].GetComponent<BarrelFall>();            
-            b_fall.ResetBarrel();
+            b_fall.SetToSink();
         }
     }
 

@@ -124,7 +124,6 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 GameObject::~GameObject()
 {
 	//RELEASE_ARRAY(name); FIX THIS
-
 	parent = nullptr;
 
 	if (components.size() > 0)
@@ -466,7 +465,8 @@ void GameObject::Draw()
 		//Draw child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
-			if (childs[i]->IsActive())
+			//Static objects will be drawn using camera culling
+			if (childs[i]->IsActive() && !childs[i]->IsStatic())
 			{
 				childs[i]->Draw();
 			}

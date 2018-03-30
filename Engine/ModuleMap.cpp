@@ -503,7 +503,6 @@ void ModuleMap::ShowWalkableMap()
 void ModuleMap::ShowCreationMap()
 {
 	//static bool settings = false;
-	static int numPrefabs = 0;
 	//if (ImGui::Button("Open Settings"))
 	//{
 	//	settings = true;
@@ -526,7 +525,7 @@ void ModuleMap::ShowCreationMap()
 		force_reload = true;
 	}
 	ImGui::Text("Press to load all prefabs:");
-	static bool go_select_prefab = false;
+
 	if (ImGui::Button("Load / Reload Prefabs") || force_reload)
 	{
 		prefabs.clear();
@@ -1143,7 +1142,40 @@ void ModuleMap::ImportMap()
 	}
 	case TypeMap::MAP_3D:
 	{
-
+		prefabs.clear();
+		if (App->json_seria->LoadMapCreation(vector_map, prefabs, height_map, width_map, size_separation, numPrefabs, imported_map.c_str(), name_map))
+		{
+			all_prefabs.clear();
+			App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "fbx");
+			App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "obj");
+			App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "prefab.json");
+			App->fs->FixNames_directories(all_prefabs);
+			for (int y = 0; y < height_map; y++)
+			{
+				std::string line = vector_map[y];
+				for (int x = 0; x < width_map; x++)
+				{
+					std::string number;
+					number += line[x];
+					map[x][y] = atoi(number.c_str());
+					//t += 1;
+				}
+			}
+			map_string = "";
+			for (int y = 0; y < height_map; y++)
+			{
+				for (int x = 0; x < width_map; x++)
+				{
+					if (map[x][y] > 3)
+					{
+						map[x][y] = 1;
+					}
+					map_string += std::to_string(map[x][y]);
+				}
+			}
+			go_select_prefab = true;
+			LOG("Walkable Map Loaded -----------");
+		}
 	}
 	case TypeMap::MAP_NAVIGATION:
 	{

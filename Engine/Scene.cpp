@@ -235,6 +235,12 @@ update_status Scene::Update(float dt)
 		}
 	}
 
+	CompCamera* active_camera = App->renderer3D->GetActiveCamera();
+	if (active_camera != nullptr)
+	{
+		active_camera->DoCulling();
+	}
+
 	Update_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
@@ -365,25 +371,23 @@ void Scene::EditorQuadtree()
 			AABB AdaptativeAABB;
 		
 			AdaptativeAABB.SetNegativeInfinity();
+			
+			//Make sure that we have all go
+			GetAllSceneObjects();
 			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 			{
 				if ((*item)->IsStatic())
 				{
-					
-
-					/*ComponentMesh* mesh = (ComponentMesh*)(*item)->FindComponentFirst(ComponentType::Mesh_Component);
-					if (mesh != nullptr)
+					if ((*item)->box_fixed.IsFinite())
 					{
-						AABB Box;
-						mesh->GetTransformedAABB(Box);
-						AdaptativeAABB.Enclose(Box);
-					}*/
+						AdaptativeAABB.Enclose((*item)->box_fixed);
+					}
 				}
 			}
 			octree.Boundaries(AdaptativeAABB);
 			/**/
 			//Insert AABBs to octree
-			for (std::vector<GameObject*>::const_iterator item = static_objects.cbegin(); item != static_objects.cend(); ++item)
+			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 				if ((*item)->IsStatic())
 					octree.Insert(*item);
 
@@ -1128,32 +1132,22 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 		// Finally Check have Parent and remove from childs
 		if (gameobject->GetParent() != nullptr)
 		{
+			LOG("[green] DELETE");
 			int index = gameobject->GetParent()->GetIndexChildbyName(gameobject->GetName());
 			gameobject->GetParent()->RemoveChildbyIndex(index);
+			gameobject = nullptr;
 		}
 
 		else if (isImport == false && is_reimport == false)
 		{
-			int index = 0;
 			for (int i = 0; i < root->GetNumChilds(); i++)
 			{
-				if (strcmp(gameobject->GetName(), root->GetChildbyIndex(i)->GetName()) == 0)
+				if (gameobject == root->GetChildbyIndex(i))
 				{
-					index = i;
-				}
-			}
-			std::vector<GameObject*>::iterator item = root->GetChildsPtr()->begin();
-			for (int i = 0; i < root->GetNumChilds(); i++)
-			{
-				if (i == index)
-				{
-					GameObject* it = root->GetChildbyIndex(i);
-					RELEASE(it);
-					root->GetChildsPtr()->erase(item);
-					it = nullptr;
+					root->RemoveChildbyIndex(i);
+					gameobject = nullptr;
 					break;
 				}
-				item++;
 			}
 		}
 		else
