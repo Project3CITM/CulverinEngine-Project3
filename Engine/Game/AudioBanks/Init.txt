@@ -1,3 +1,12 @@
+State Group	ID	Name			Wwise Object Path	Notes
+	1981396969	PuzzleCountDownState			\Default Work Unit\PuzzleCountDownState	
+
+State	ID	Name	State Group			Notes
+	748895195	None	PuzzleCountDownState			
+	1208172673	State1	PuzzleCountDownState			
+	1208172674	State2	PuzzleCountDownState			
+	1208172675	State3	PuzzleCountDownState			
+
 Game Parameter	ID	Name			Wwise Object Path	Notes
 	504532776	Brick			\Factory Reflect Acoustic Textures\Textures\Brick	
 	513139656	Mountain			\Factory Reflect Acoustic Textures\Textures\Mountain	
@@ -23,5 +32,5 @@ Auxiliary Bus	ID	Name			Wwise Object Path	Notes
 	4063189299	Corridor			\Default Work Unit\Master Audio Bus\Corridor	
 
 Effect plug-ins	ID	Name	Type				Notes
-	3442768367	Hall_Large_Dark	Wwise RoomVerb			
+	484890516	Church_Small_Wood	Wwise RoomVerb			
 
