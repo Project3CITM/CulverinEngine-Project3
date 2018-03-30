@@ -21,9 +21,7 @@
 			<ShortName>VerticalSlice</ShortName>
 			<Path>VerticalSlice.bnk</Path>
 			<IncludedEvents>
-				<Event Id="2503704488" Name="BarrelSinking" ObjectPath="\Events\Scene1\Puzzle\BarrelSinking"/>
 				<Event Id="1644787663" Name="BehindMe" ObjectPath="\Events\Scene1\Characters\BehindMe"/>
-				<Event Id="48383132" Name="Chain" ObjectPath="\Events\Scene1\Puzzle\Chain"/>
 				<Event Id="2665825462" Name="CrossbowRecharge" ObjectPath="\Events\Scene1\Characters\CrossbowRecharge"/>
 				<Event Id="3519619633" Name="CrossbowShot" ObjectPath="\Events\Scene1\Characters\CrossbowShot"/>
 				<Event Id="1296876930" Name="DaenerysDead" ObjectPath="\Events\Scene1\Characters\DaenerysDead"/>
@@ -38,23 +36,15 @@
 				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene1\Footsteps"/>
 				<Event Id="3525158975" Name="JaimeDead" ObjectPath="\Events\Scene1\Characters\JaimeDead"/>
 				<Event Id="2682992486" Name="JaimeHurt" ObjectPath="\Events\Scene1\Characters\JaimeHurt"/>
-				<Event Id="2782712987" Name="Lever" ObjectPath="\Events\Scene1\Puzzle\Lever"/>
 				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Scene1\MetalClash"/>
 				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene1\PlayMusic"/>
 				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene1\PlayTorch"/>
-				<Event Id="3627978879" Name="RopeCut" ObjectPath="\Events\Scene1\Puzzle\RopeCut"/>
-				<Event Id="1503597272" Name="StartPuzzleCountdown" ObjectPath="\Events\Scene1\Puzzle\StartPuzzleCountdown"/>
 				<Event Id="1566564139" Name="SwordHit" ObjectPath="\Events\Scene1\SwordHit"/>
 				<Event Id="3113731383" Name="SwordSlash" ObjectPath="\Events\Scene1\SwordSlash"/>
 				<Event Id="837900871" Name="TheonDead" ObjectPath="\Events\Scene1\Characters\TheonDead"/>
 				<Event Id="3974846078" Name="TheonHurt" ObjectPath="\Events\Scene1\Characters\TheonHurt"/>
-				<Event Id="777507535" Name="WaterSplash" ObjectPath="\Events\Scene1\Puzzle\WaterSplash"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
-				<File Id="16679997" Language="SFX">
-					<ShortName>Puzzle\Lever.wav</ShortName>
-					<Path>SFX\Puzzle\Lever_DBC752C0.wem</Path>
-				</File>
 				<File Id="60949840" Language="SFX">
 					<ShortName>Characters\Jaime\Jaime_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Jaime\Jaime_Dead_1_F7D0E330.wem</Path>
@@ -67,25 +57,9 @@
 					<ShortName>Characters\Theon\Theon_Dead_2.wav</ShortName>
 					<Path>SFX\Characters\Theon\Theon_Dead_2_EE628D5C.wem</Path>
 				</File>
-				<File Id="116569670" Language="SFX">
-					<ShortName>Puzzle\BarrelSplash.wav</ShortName>
-					<Path>SFX\Puzzle\BarrelSplash_1F4389CB.wem</Path>
-				</File>
 				<File Id="132180465" Language="SFX">
 					<ShortName>Enemy\Enemy_2\E2_Hurt_1.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_2\E2_Hurt_1_1C9C67B2.wem</Path>
-				</File>
-				<File Id="141306871" Language="SFX">
-					<ShortName>Puzzle\Rope.wav</ShortName>
-					<Path>SFX\Puzzle\Rope_1C9C67B2.wem</Path>
-				</File>
-				<File Id="178260986" Language="SFX">
-					<ShortName>Ambient\footstep_stone.wav</ShortName>
-					<Path>SFX\Ambient\footstep_stone_C599367A.wem</Path>
-				</File>
-				<File Id="252929518" Language="SFX">
-					<ShortName>Ambient\footstep_stone.wav</ShortName>
-					<Path>SFX\Ambient\footstep_stone_DADC38C1.wem</Path>
 				</File>
 				<File Id="283710021" Language="SFX">
 					<ShortName>Enemy\Enemy_2\E2_Dead_1.wav</ShortName>
@@ -97,7 +71,7 @@
 				</File>
 				<File Id="337181357" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
-					<Path>SFX\Ambient\footstep_stone_1C39B089.wem</Path>
+					<Path>SFX\Ambient\footstep_stone_1C9C67B2.wem</Path>
 				</File>
 				<File Id="347745547" Language="SFX">
 					<ShortName>Enemy\Enemy_3\E3_Dead_2.wav</ShortName>
@@ -106,10 +80,6 @@
 				<File Id="402319163" Language="SFX">
 					<ShortName>Misc_Combat\sword_hit.wav</ShortName>
 					<Path>SFX\Misc_Combat\sword_hit_1C9C67B2.wem</Path>
-				</File>
-				<File Id="471313250" Language="SFX">
-					<ShortName>Puzzle\Timer60bpm.wav</ShortName>
-					<Path>SFX\Puzzle\Timer60bpm_F17FB28C.wem</Path>
 				</File>
 				<File Id="473597307" Language="SFX">
 					<ShortName>Rains_of_Castemere_Little.wav</ShortName>
@@ -183,10 +153,6 @@
 					<ShortName>Characters\Daenerys\Daenerys_Dead_2.wav</ShortName>
 					<Path>SFX\Characters\Daenerys\Daenerys_Dead_2_1C9C67B2.wem</Path>
 				</File>
-				<File Id="848720781" Language="SFX">
-					<ShortName>Puzzle\Timer240bpm.wav</ShortName>
-					<Path>SFX\Puzzle\Timer240bpm_F17FB28C.wem</Path>
-				</File>
 				<File Id="891353326" Language="SFX">
 					<ShortName>Characters\Theon\crossbow_recharge.wav</ShortName>
 					<Path>SFX\Characters\Theon\crossbow_recharge_1C9C67B2.wem</Path>
@@ -195,14 +161,6 @@
 					<ShortName>Enemy\Enemy_1\E1_Dead_2.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_1\E1_Dead_2_1C9C67B2.wem</Path>
 				</File>
-				<File Id="948585701" Language="SFX">
-					<ShortName>Puzzle\Chain1.wav</ShortName>
-					<Path>SFX\Puzzle\Chain1_249601E6.wem</Path>
-				</File>
-				<File Id="961807994" Language="SFX">
-					<ShortName>Puzzle\Timer120bpm.wav</ShortName>
-					<Path>SFX\Puzzle\Timer120bpm_F17FB28C.wem</Path>
-				</File>
 				<File Id="975369001" Language="SFX">
 					<ShortName>Enemy\Enemy_1\E1_Hurt_4.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_1\E1_Hurt_4_1C9C67B2.wem</Path>
@@ -210,14 +168,6 @@
 				<File Id="989877584" Language="SFX">
 					<ShortName>Characters\Daenerys\Daenerys_Hurt_5.wav</ShortName>
 					<Path>SFX\Characters\Daenerys\Daenerys_Hurt_5_1C9C67B2.wem</Path>
-				</File>
-				<File Id="1017291416" Language="SFX">
-					<ShortName>Puzzle\BubbleLong.wav</ShortName>
-					<Path>SFX\Puzzle\BubbleLong_CE6DE23F.wem</Path>
-				</File>
-				<File Id="1022376451" Language="SFX">
-					<ShortName>Ambient\footstep_stone.wav</ShortName>
-					<Path>SFX\Ambient\footstep_stone_706EA8A9.wem</Path>
 				</File>
 				<File Id="1039896243" Language="SFX">
 					<ShortName>Characters\Theon\Theon_Hurt_2.wav</ShortName>
