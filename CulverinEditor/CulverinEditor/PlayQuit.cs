@@ -1,15 +1,17 @@
 ﻿using CulverinEditor;
 using CulverinEditor.SceneManagement;
+using CulverinEditor.Debug;
 
 public class PlayQuit : CulverinBehaviour
 {
-
-    void Play()
+    public void Play()
     {
+        Debug.Log("GOING TO PLAY");
         SceneManager.LoadScene("NewScene");
     }
-    void Quit()
+
+    public void Quit()
     {
-        //Quit
+        Debug.Log("GOING TO Quit");
     }
 }
