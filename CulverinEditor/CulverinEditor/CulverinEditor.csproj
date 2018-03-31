@@ -145,7 +145,6 @@
     <Compile Include="Quaternion.cs" />
     <Compile Include="Player\UI\Stamina.cs" />
     <Compile Include="Player\TestMovement.cs" />
-	<Compile Include="Torch_sound.cs" />
     <Compile Include="Player\Theon\TheonController.cs" />
     <Compile Include="SceneManager.cs" />
     <Compile Include="Test.cs" />

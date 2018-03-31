@@ -10,6 +10,12 @@ public class PlayQuit : CulverinBehaviour
         SceneManager.LoadScene("NewScene");
     }
 
+    void OnClick()
+    {
+        Debug.Log("GOING TO PLAY");
+        SceneManager.LoadScene("NewScene");
+    }
+
     public void Quit()
     {
         Debug.Log("GOING TO Quit");
