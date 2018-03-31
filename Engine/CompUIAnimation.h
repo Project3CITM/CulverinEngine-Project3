@@ -3,7 +3,7 @@
 #include "Component.h"
 #include <vector>
 #include "ModuleAnimation.h"
-
+struct AnimationJson;
 class CompUIAnimation:public Component
 {
 public:
@@ -15,14 +15,21 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompUIAnimation * component);
+
 private:
-	void PlayAnimation(float dt);
+	bool PlayAnimation(float dt);
+	bool ResetAnimation();
+
 public:
-	std::vector<AnimData> animations;
+	AnimationJson* animation_json = nullptr;
 	bool play = false;
 	bool on_execution = false;
 	bool loop = false;
 	int max_frames = 0;
+	int current_frame = 0;
+	float sample_rate = 0.0f;
+	float current_time = 0.0f;
+
 
 };
 

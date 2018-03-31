@@ -435,6 +435,72 @@ void KeyFrameData::UpdateSampleRate()
 	}
 }
 
+void KeyFrameData::UpdateInterpolationKeys()
+{
+	if (destination < key_data.size())
+	{
+		destination++;
+		initial++;
+	}
+}
+
+void KeyFrameData::ResetInterpolationKeys()
+{
+	if (key_data.size() >1)
+	{
+		destination = 1;
+		initial=0;
+	}
+}
+
+AnimationValue KeyFrameData::Interpolate(float current_time, int frame)
+{
+	AnimationValue ret;
+	switch (parameter)
+	{
+	case ParameterValue::RECT_TRANSFORM_POSITION:
+		if (key_data[destination].key_frame == frame)
+			ret.f3_value = key_data[destination].key_values.f3_value;
+		else
+			ret.f3_value= key_data[initial].key_values.f3_value + current_time*(key_data[destination].key_values.f3_value - key_data[initial].key_values.f3_value);
+
+		break;
+	case ParameterValue::RECT_TRANSFORM_ROTATION:
+		if (key_data[destination].key_frame == frame)
+			ret.f3_value = key_data[destination].key_values.f3_value;
+		else
+			ret.f3_value = key_data[initial].key_values.f3_value + current_time*(key_data[destination].key_values.f3_value - key_data[initial].key_values.f3_value);
+
+		break;
+	case ParameterValue::RECT_TRANSFORM_SCALE:
+		if (key_data[destination].key_frame == frame)
+			ret.f3_value = key_data[destination].key_values.f3_value;
+		else
+			ret.f3_value = key_data[initial].key_values.f3_value + current_time*(key_data[destination].key_values.f3_value - key_data[initial].key_values.f3_value);
+
+		break;
+	case ParameterValue::RECT_TRANSFORM_WIDTH:
+		if (key_data[destination].key_frame == frame)
+			ret.f_value = key_data[destination].key_values.f_value;
+		else
+			ret.f_value = key_data[initial].key_values.f_value + current_time*(key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
+
+	break;
+	case ParameterValue::RECT_TRANSFORM_HEIGHT:
+		if (key_data[destination].key_frame == frame)
+			ret.f_value = key_data[destination].key_values.f_value;
+		else
+			ret.f_value = key_data[initial].key_values.f_value + current_time*(key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
+
+		break;
+	default:
+		break;
+	}
+	if (key_data[destination].key_frame == frame)
+		UpdateInterpolationKeys();
+	return ret;
+}
+
 AnimationJson::AnimationJson()
 {
 }

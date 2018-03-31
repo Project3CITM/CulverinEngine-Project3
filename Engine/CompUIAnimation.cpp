@@ -19,7 +19,21 @@ CompUIAnimation::~CompUIAnimation()
 void CompUIAnimation::Update(float dt)
 {
 	if (play)
-		PlayAnimation(dt);
+	{
+		if (PlayAnimation(dt))
+		{
+			if (loop)
+			{
+				ResetAnimation();
+			}
+			else
+			{
+				play = false;
+			}
+
+		}
+	}
+
 }
 void CompUIAnimation::ShowOptions()
 {
@@ -86,6 +100,79 @@ void CompUIAnimation::ShowInspectorInfo()
 void CompUIAnimation::CopyValues(const CompUIAnimation * component)
 {
 }
-void CompUIAnimation::PlayAnimation(float dt)
+bool CompUIAnimation::PlayAnimation(float dt)
 {
+	if (animation_json != nullptr)
+	{
+		if (animation_json->animations.empty())
+		{
+			return true;
+		}
+		current_time += dt;
+		current_frame = current_time*sample_rate;
+	
+
+		for (int i = 0; i < animation_json->animations.size(); i++)
+		{
+			AnimData* item = &animation_json->animations[i];
+
+			for (int j = 0; j < item->key_frame_data.size(); j++)
+			{
+				
+				KeyFrameData* key_frame_item = &item->key_frame_data[j];
+
+				if (current_frame == max_frames)
+				{
+					AnimationData data;
+					data.type = key_frame_item->parameter;
+					data.value = key_frame_item->key_data.back().key_values;
+					item->data->SetNewAnimationValue(data);
+				}
+				else
+				{
+					AnimationData data;
+					data.type = key_frame_item->parameter;
+					data.value = key_frame_item->Interpolate(dt,current_frame);
+					item->data->SetNewAnimationValue(data);
+				}
+
+			}
+		}
+	}
+	if (current_frame == max_frames)
+		return true;
+	return false;
+}
+
+bool CompUIAnimation::ResetAnimation()
+{
+	if (animation_json != nullptr)
+	{
+		if (animation_json->animations.empty())
+		{
+			return true;
+		}
+		current_time =0;
+		current_frame = current_time*sample_rate;
+
+
+		for (int i = 0; i < animation_json->animations.size(); i++)
+		{
+			AnimData* item = &animation_json->animations[i];
+
+			for (int j = 0; j < item->key_frame_data.size(); j++)
+			{
+
+				KeyFrameData* key_frame_item = &item->key_frame_data[j];
+				key_frame_item->ResetInterpolationKeys();
+				AnimationData data;
+				data.type = key_frame_item->parameter;
+				data.value = key_frame_item->key_data.front().key_values;
+				item->data->SetNewAnimationValue(data);
+
+			}
+		}
+	}
+
+	return true;
 }

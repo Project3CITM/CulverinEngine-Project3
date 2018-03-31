@@ -32,10 +32,14 @@ struct KeyFrameData
 	int ReturnKeyDataPos(int& selected);
 	void UpdateKeyFrame();
 	void UpdateSampleRate();
+	void UpdateInterpolationKeys();
+	void ResetInterpolationKeys();
+	AnimationValue Interpolate(float time,int frame);
 
 	int max_keys = 20;
 	int sample_rate = 60;
-
+	int initial=0;
+	int destination=0;
 	bool invalid_key = false;
 	std::vector<KeyData> key_data;
 	ParameterValue parameter;
