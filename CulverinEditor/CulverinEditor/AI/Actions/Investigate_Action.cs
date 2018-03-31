@@ -45,7 +45,7 @@ public class Investigate_Action : Action
         init_tile_y = current_tile_y;
         my_state = INVESTIGATESTATE.GOING_TO_INVESTIGATE;
 
-        //hear something audio
+        //TODO_AI:hear something audio
         //GetComponent<CompAudio>().PlayEvent("Dracarys");
 
         return ret;
@@ -71,7 +71,8 @@ public class Investigate_Action : Action
                     move.GoTo(init_tile_x, init_tile_y);
 
                     //Lost something audio
-                    GetComponent<CompAudio>().PlayEvent("Dracarys");
+                    //TODO_AI: Ivestigation audio
+                    //GetComponent<CompAudio>().PlayEvent("Dracarys");
 
                     my_state = INVESTIGATESTATE.RETURNING_TO_START;
 

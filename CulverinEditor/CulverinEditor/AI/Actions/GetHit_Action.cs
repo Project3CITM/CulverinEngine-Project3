@@ -118,7 +118,8 @@ class GetHit_Action: Action
                 break;
         }
         GetComponent<CompAnimation>().SetClipDuration(animation_clip, duration);
-        GetComponent<CompAudio>().PlayEvent("JaimeHurt");
+        //TODO_AI: Hurt audio
+        //GetComponent<CompAudio>().PlayEvent("JaimeHurt");
         return true;
     }
 
