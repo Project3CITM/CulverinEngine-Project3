@@ -171,7 +171,12 @@ void CompRigidBody::ShowInspectorInfo()
 
 	if (ImGui::Checkbox("Kinematic", &kinematic))
 	{
-		body->SetAsKinematic(true);
+		body->SetAsKinematic(kinematic);
+		
+		if (!kinematic)
+		{
+			SetDinamicLockFlags();
+		}
 	}
 	ImGui::Separator();
 
@@ -270,34 +275,10 @@ void CompRigidBody::SyncComponent(GameObject* sync_parent)
 {
 	body->SetAsKinematic(kinematic);
 
-	if ((lock_move & (1 << 0)))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
-	}
-	if (lock_move & (1 << 1))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
-	}
-	if (lock_move & (1 << 2))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
-	}
-	if (lock_move & (1 << 3))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
-	}
-	if (lock_move & (1 << 4))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
-	}
-	if (lock_move & (1 << 5))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
-	}
-
 	if (!kinematic)
 	{
 		body->SetSleepTime(sleep_time);
+		SetDinamicLockFlags();
 	}
 }
 
@@ -328,10 +309,20 @@ void CompRigidBody::SetColliderPosition()
 
 void CompRigidBody::SetMomentumToZero()
 {
-	if (body)
+	if (body && !kinematic)
 	{
 		body->ResetForces();
 	}
+}
+
+void CompRigidBody::SetDinamicLockFlags()
+{
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, lock_move & (1 << 0));
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, lock_move & (1 << 1));
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, lock_move & (1 << 2));
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, lock_move & (1 << 3));
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, lock_move & (1 << 4));
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, lock_move & (1 << 5));
 }
 
 void CompRigidBody::SetColliderComp(CompCollider * new_comp)
@@ -468,7 +459,7 @@ void CompRigidBody::LockTransform()
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(true);
-		body->SetAsKinematic(true);
+		//body->SetAsKinematic(true);
 	}
 }
 
@@ -477,7 +468,8 @@ void CompRigidBody::UnLockTransform()
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(false);
-		body->SetAsKinematic(kinematic);
+		SetDinamicLockFlags();
+		//body->SetAsKinematic(kinematic);
 	}
 }
 

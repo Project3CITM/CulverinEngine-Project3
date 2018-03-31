@@ -36,6 +36,7 @@ public:
 	//Setters ----------------------
 	void SetColliderPosition();
 	void SetMomentumToZero();
+	void SetDinamicLockFlags();
 	void SetColliderComp(CompCollider* new_comp);
 	void SetJointActor(CompJoint* joint);
 
