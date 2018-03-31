@@ -812,7 +812,7 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 	{
 		if (gameobject->GetNumChilds() > 0)
 		{
-			RemoveAllPointers(*gameobject->GetChildsPtr()->begin() + i);
+			RemoveAllPointers(*(gameobject->GetChildsPtr()->begin() + i));
 		}
 	}
 	for (int i = 0; i < gameobject->GetNumComponents(); i++)
