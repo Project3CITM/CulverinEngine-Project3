@@ -14,77 +14,61 @@ static public class Data
     static public int oneCoin_time_lvl = 0; //one coin time
     static public int twoCoin_time_lvl = 0; //two coin time
     static public int threeCoin_time_lvl = 0; //three coin time
-}
 
-class StatsScore : CulverinBehaviour
-{
-    void Start()
+
+    static public void Start()
     {
         Time.StartTimePlay();
     }
 
-    void Update()
+    static public void StartPuzzle()  //NEEDS TO BE CALLED ONCE WE START PUZZLE
     {
-        if(Data.in_puzzle)
-        {
-            Data.puzzle_time += Time.deltaTime;
-        }
-    }
-    
-    void StartPuzzle()
-    {
-        Data.puzzle_time = 0;
-        Data.in_puzzle = true;
+        puzzle_time = 0;
+        in_puzzle = true;
     }
 
-    float PuzzleTimer()
+    static public float PuzzleTimer()
     {
-        Data.in_puzzle = false;
-        return Data.puzzle_time;
+        in_puzzle = false;
+        return puzzle_time;
     }
 
-    void KillEnemy()
+    static public void KillEnemy()
     {
-        Data.enem_killed++;
+        enem_killed++;
     }
 
-    uint GetEnemKilled()
+    static public void PuzzleTry()
     {
-        return Data.enem_killed;
+        puzzle_tries++;
     }
 
-    void PuzzleTry()
+    static public void CharactUsed()
     {
-        Data.puzzle_tries++;
+        characters_used++;
     }
 
-    uint GetPuzzleTries()
-    {
-        return Data.puzzle_tries;
-    }
-
-    void CharactUsed()
-    {
-        Data.characters_used++;
-    }
-
-    uint GetCaractUsed()
-    {
-        return Data.characters_used;
-    }
-
-    float GetTime()
+    static public float GetTime()
     {
         return Time.timePlay;
     }
 
-    void ResetScore()
+    static public void ResetScore()
     {
-        Data.enem_killed = 0;
-        Data.puzzle_time = 0;
-        Data.puzzle_tries = 0;
-        Data.characters_used = 0;
+       enem_killed = 0;
+       puzzle_time = 0;
+       puzzle_tries = 0;
+       characters_used = 0;
     }
-    
+}
 
+class StatsScore : CulverinBehaviour
+{
+    static public void Update()
+    {
+        if (Data.in_puzzle)
+        {
+            Data.puzzle_time += Time.deltaTime;
+        }
+    }
 }

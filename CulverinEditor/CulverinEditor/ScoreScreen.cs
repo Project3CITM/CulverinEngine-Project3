@@ -36,6 +36,9 @@ public class ScoreScreen : CulverinBehaviour
     public GameObject golden;
 
     //methods placeholders
-
+    void TimeCoins()
+    {
+        if(Data.)
+    }
     
 }
