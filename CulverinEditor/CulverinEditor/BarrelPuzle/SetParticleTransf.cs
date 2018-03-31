@@ -4,7 +4,6 @@ using CulverinEditor.Map;
 
 public class SetParticleTransf : CulverinBehaviour
 {
-  
     public GameObject wall_particle_obj;
     public GameObject enemy_particle_obj;
 
