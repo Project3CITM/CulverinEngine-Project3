@@ -77,6 +77,7 @@
     <Compile Include="CompText.cs" />
     <Compile Include="CompLight.cs" />
     <Compile Include="PlayQuit.cs" />
+    <Compile Include="ScoreScreen.cs" />
     <Compile Include="Scroll.cs" />
     <Compile Include="StatsScore.cs" />
     <Compile Include="PKeyScene.cs" />

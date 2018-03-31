@@ -34,10 +34,21 @@ class StatsScore : CulverinBehaviour
         puzzle_time = 0;
         in_puzzle = true;
     }
-    
+
+    float PuzzleTimer()
+    {
+        in_puzzle = false;
+        return puzzle_time;
+    }
+
     void KillEnemy()
     {
         enem_killed++;
+    }
+
+    uint GetEnemKilled()
+    {
+        return enem_killed;
     }
 
     void PuzzleTry()
@@ -45,9 +56,19 @@ class StatsScore : CulverinBehaviour
         puzzle_tries++;
     }
 
+    uint GetPuzzleTries()
+    {
+        return puzzle_tries;
+    }
+
     void CharactUsed()
     {
         characters_used++;
+    }
+
+    uint GetCaractUsed()
+    {
+        return characters_used;
     }
 
     void ResetScore()
