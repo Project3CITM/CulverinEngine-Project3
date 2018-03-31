@@ -468,7 +468,7 @@ void CompRigidBody::UnLockTransform()
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(false);
-		SetDinamicLockFlags();
+		//SetDinamicLockFlags();
 		//body->SetAsKinematic(kinematic);
 	}
 }

@@ -156,6 +156,7 @@ public class Lever : CulverinBehaviour
         if(lever_interact != null)
         {
             lever_interact.SetActive(false);
+            Debug.Log("[green] Deactivated Interact");
         }
         
         //// Testing --------------------------------------------
@@ -182,19 +183,9 @@ public class Lever : CulverinBehaviour
     void Update()
     {
         //-- TMP: Debug -----
-        if (Input.GetKeyDown(KeyCode.B))
+        if(on_lever_animation && anim_controller.IsAnimationStopped(lever_animation_name))
         {
-         
-            if (on_lever_animation == true)
-            {
-                Debug.Log("Hardcoded lever anim finish.");
-                OnLeverAnimFinish();
-            }
-            else
-            {
-                Debug.Log("Puzzle activated");
-                OnLeverActivated();
-            }
+            OnLeverAnimFinish();
         }
 
         //-- Lever Triggered -----
@@ -284,10 +275,13 @@ public class Lever : CulverinBehaviour
                        
             
 
-            if (editmap && fill_barrel.IsPlaced())
+            if (editmap)
             {
-                audio.StopEvent("Chain");
-                SetPathWalkable(0);
+                if (fill_barrel.IsPlaced() == true)
+                {
+                    audio.StopEvent("Chain");
+                    SetPathWalkable(0);
+                }
                 editmap = false;
             }
 
@@ -302,6 +296,7 @@ public class Lever : CulverinBehaviour
     // OnTrigger Lever ------------------------
     void OnTriggerEnter()
     {
+
         if (active_lever)
         {
             return;
@@ -309,15 +304,21 @@ public class Lever : CulverinBehaviour
 
         CompCollider col = GetComponent<CompCollider>();
         GameObject obj_col = col.GetCollidedObject();
+        Debug.Log(obj_col.GetTag().ToString());
+
         if (obj_col != null && obj_col.CompareTag("player"))
         {
+
             lever_interact.SetActive(true);
             on_lever_range = true;
+
         }
+
     }
 
     void OnTriggerLost()
     {
+
         if (active_lever)
         {
             return;
@@ -325,11 +326,16 @@ public class Lever : CulverinBehaviour
 
         CompCollider col = GetComponent<CompCollider>();
         GameObject obj_col = col.GetCollidedObject();
+        Debug.Log(obj_col.GetTag().ToString());
+
         if (obj_col != null && obj_col.CompareTag("player"))
         {
+
             lever_interact.SetActive(false);
             on_lever_range = false;
+
         }
+
     }
 
     // -------------------------------------------------------------------------------------
@@ -342,13 +348,11 @@ public class Lever : CulverinBehaviour
 
             if (b_fall.IsPuzzleMode())
             {
-                Debug.Log("Activating puzzle barrels");          
                 list[i].SetActive(true);
                 puzzle_barrel = b_fall;
             }
             else if (isfilling)
             {
-                Debug.Log("Activating filling barrels");                
                 list[i].SetActive(true);
                 fill_barrel = b_fall;
             }
@@ -570,8 +574,11 @@ public class Lever : CulverinBehaviour
             Debug.Log("MAP IS NULL");
         level_map_script = level_map.GetComponent<LevelMap>();
 
+        Debug.Log("[green] player");
+
         player = GetLinkedObject("player");
         MovementController player_mov = player.GetComponent<MovementController>();
+        Debug.Log("[green] player done");
 
         int count_barrel = barrel_per_line - 1;
 

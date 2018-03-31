@@ -52,12 +52,12 @@ public class BarrelFall : CulverinBehaviour
 
 
     CompAudio audio;
-    CompCollider col;
+    //CompCollider col;
 
     void Start()
     {
         audio = GetComponent<CompAudio>();
-        col = GetComponent<CompCollider>();
+        //col = GetComponent<CompCollider>();
         timeToNextFloatAnim = floatingPeriod; 
     }
 
@@ -117,7 +117,7 @@ public class BarrelFall : CulverinBehaviour
         {           
             MoveToTile();
         }
-        else
+        else if (!placed)
         {
             Fall();
         }
@@ -187,7 +187,6 @@ public class BarrelFall : CulverinBehaviour
         }
         else
         {
-          // this.SetEnabled(false);
            placed = true;
            audio.PlayEvent("WaterSplash");
            transform.SetGlobalPosition(new Vector3(global_pos.x, floor_height, global_pos.z));
@@ -270,12 +269,10 @@ public class BarrelFall : CulverinBehaviour
 
     void OnTriggerEnter()
     {
-        Debug.Log("BARREL PLAYER COLLISION");
-        if(col.GetCollidedObject().CompareTag("player") && mode_puzzle == ModeBarrel.FILLING && placed)
-        {
-            Debug.Log("BarrelSetToSkin");
-            sinking = true;
-        }
+        //if(col.GetCollidedObject().CompareTag("player") && mode_puzzle == ModeBarrel.FILLING && placed)
+        //{
+        //    sinking = true;
+        //}
 
     }
 }
