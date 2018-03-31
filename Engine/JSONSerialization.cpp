@@ -312,6 +312,10 @@ void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* dir
 		// Tag ----------
 		json_object_dotset_string_with_std(config_node, name + "Tag", gameObject.GetTag());
 
+		json_object_dotset_boolean_with_std(config_node, name + "AnimRotations", gameObject.animation_rotations);
+		json_object_dotset_boolean_with_std(config_node, name + "AnimScales", gameObject.animation_scales);
+		json_object_dotset_boolean_with_std(config_node, name + "AnimTranslations", gameObject.animation_translations);
+
 		// Components  ------------
 		std::string components = name;
 		json_object_dotset_number_with_std(config_node, components + "Number of Components", gameObject.GetNumComponents());
@@ -352,6 +356,10 @@ void JSONSerialization::SaveChildPrefab(JSON_Object* config_node, const GameObje
 	json_object_dotset_string_with_std(config_node, name + "Name", gameObject.GetName());
 	// Tag ----------
 	json_object_dotset_string_with_std(config_node, name + "Tag", gameObject.GetTag());
+
+	json_object_dotset_boolean_with_std(config_node, name + "AnimRotations", gameObject.animation_rotations);
+	json_object_dotset_boolean_with_std(config_node, name + "AnimScales", gameObject.animation_scales);
+	json_object_dotset_boolean_with_std(config_node, name + "AnimTranslations", gameObject.animation_translations);
 
 	// Components  ------------
 	std::string components = name;
@@ -405,9 +413,15 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 				const char* nameGameObject = json_object_dotget_string_with_std(config_node, name + "Name");
 				const char* tagGameObject = nullptr;
 				tagGameObject = json_object_dotget_string_with_std(config_node, name + "Tag");
+				
+
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
 				if(tagGameObject != nullptr)obj->SetTag(tagGameObject);
+
+				obj->animation_rotations = json_object_dotget_boolean_with_std(config_node, name + "AnimRotations");
+				obj->animation_scales = json_object_dotget_boolean_with_std(config_node, name + "AnimScales");
+				obj->animation_translations = json_object_dotget_boolean_with_std(config_node, name + "AnimTranslations");
 
 				// Now Check that the name is not repet
 				CheckChangeName(*obj);
@@ -507,6 +521,11 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instant
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
 				if (tagGameObject != nullptr) obj->SetTag(tagGameObject);
+
+				obj->animation_rotations = json_object_dotget_boolean_with_std(config_node, name + "AnimRotations");
+				obj->animation_scales = json_object_dotget_boolean_with_std(config_node, name + "AnimScales");
+				obj->animation_translations = json_object_dotget_boolean_with_std(config_node, name + "AnimTranslations");
+
 				// Now Check that the name is not repet
 				CheckChangeName(*obj);
 				//Load Components

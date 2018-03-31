@@ -1116,15 +1116,15 @@ void CompAnimation::ManageActualAnimationNode(float dt)
 				GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str(), true);
 				if (gameobject != nullptr)
 				{
-					parent->AddChildGameObject(gameobject);
+					App->scene->root->AddChildGameObject(gameobject);
 					App->importer->iScript->UpdateMonoMap(gameobject);
 					CompTransform* trans = gameobject->GetComponentTransform();
-					//CompTransform* my_trans = parent->GetComponentTransform();
+					CompTransform* my_trans = parent->GetComponentTransform();
 					if (trans != nullptr)
 					{
-						//float3 final_pos = my_trans->GetPosGlobal() + active_node->prefab_pos;
-						//trans->SetPos(final_pos);
-						trans->SetPos(active_node->prefab_pos);
+						float3 final_pos = my_trans->GetPosGlobal() + active_node->prefab_pos;
+						trans->SetPos(final_pos);
+						//trans->SetPos(active_node->prefab_pos);
 					}
 				}
 				LOG("[error] with load prefab");
