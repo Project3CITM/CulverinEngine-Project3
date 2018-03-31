@@ -125,6 +125,8 @@ physx::PxScene * jpPhysicsWorld::CreateNewScene()
 	sceneDesc.filterShader = jpFilterShader;
 	sceneDesc.simulationEventCallback = collision_callback;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_PCM;
+	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS;
+	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
 
 	return jpWorld->createScene(sceneDesc);
 }

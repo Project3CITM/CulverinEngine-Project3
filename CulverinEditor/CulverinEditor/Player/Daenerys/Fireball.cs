@@ -65,13 +65,14 @@ public class Fireball : CulverinBehaviour
         // DAMAGE ---
         if (collided_obj != null)
         {
+            //Lock transform to avoid trespassing more than one collider
+            rb.LockTransform();
+
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
             {
                 enemy_manager.ApplyDamage(collided_obj, damage);
-                Destroy(gameObject);
-
             }
             else
             {
@@ -80,12 +81,8 @@ public class Fireball : CulverinBehaviour
                 {
                     obj_col.CallOnContact();
                 }
-                Destroy(gameObject);
             }
         }
-        else
-        {            
-            Destroy(gameObject);            
-        }
+        Destroy(gameObject);
     }
 }
