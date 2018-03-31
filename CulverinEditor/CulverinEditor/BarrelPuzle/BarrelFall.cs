@@ -190,6 +190,8 @@ public class BarrelFall : CulverinBehaviour
           // this.SetEnabled(false);
            placed = true;
            audio.PlayEvent("WaterSplash");
+           transform.SetGlobalPosition(new Vector3(global_pos.x, floor_height, global_pos.z));
+
         }
     }
 
