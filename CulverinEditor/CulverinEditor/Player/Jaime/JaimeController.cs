@@ -227,29 +227,29 @@ public class JaimeController : CharacterController
     {
         int curr_x = 0;
         int curr_y = 0;
-        int enemy_x = 0;
-        int enemy_y = 0;
+        //int enemy_x = 0;
+        //int enemy_y = 0;
 
         //Do Damage Around
         movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
         movement.GetPlayerPos(out curr_x, out curr_y);
 
         //Check enemy in the tiles around the player
-        for (int i = -1; i < 1; i++)
-        {
-            for (int j = -1; j < 1; j++)
-            {
-                if (i == 0 && j == 0)
-                {
-                    continue;
-                }
-                enemy_x = curr_x + j;
-                enemy_y = curr_x + i;
+        //for (int i = -1; i < 1; i++)
+        //{
+        //    for (int j = -1; j < 1; j++)
+        //    {
+        //        if (i == 0 && j == 0)
+        //        {
+        //            continue;
+        //        }
+        //        enemy_x = curr_x + j;
+        //        enemy_y = curr_x + i;
 
-                //Apply damage on the enemy in the specified tile
-                GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
-            }
-        }
+        //        //Apply damage on the enemy in the specified tile (SURE ?¿)
+        //        //GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
+        //    }
+        //}
 
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);
@@ -467,6 +467,7 @@ public class JaimeController : CharacterController
                 }
 
                 enemy_manager.ApplyDamage(coll_object, damage);
+
                 Debug.Log("Apply Damage");
 
                 if (hit_streak < 2)
@@ -477,6 +478,30 @@ public class JaimeController : CharacterController
                 {
                     hit_streak = 0; //Reset hit count
                 }
+
+                /* ---------- IN CASE THAT THE ENEMY BLOCKS THE ATTACK, UNCOMMENT AND COMPLETE THIS CODE ---------- */
+                //if (enemy_manager.ApplyDamage(coll_object, damage))
+                //{
+                //    Debug.Log("Apply Damage");
+
+                //    if (hit_streak < 2)
+                //    {
+                //        hit_streak++; //Increase hit count
+                //    }
+                //    else
+                //    {
+                //        hit_streak = 0; //Reset hit count
+                //    }
+                //}
+                //else
+                //{
+                //    hit_streak = 0; // Reset Hit Count
+
+                //    //Set FailAttack Transition
+                //    SetAnimationTransition("ToFail", true);
+                //    Debug.Log("[pink] --- FAIL ATTACK ---");
+                //}
+                /* ----------------------------------------------------------------------------------- */
             }
             else
             {
