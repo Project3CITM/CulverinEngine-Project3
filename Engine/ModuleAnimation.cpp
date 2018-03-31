@@ -241,6 +241,9 @@ void ModuleAnimation::FindAnimComponent()
 
 void ModuleAnimation::SaveAnimation()
 {
+	if (animation_json == nullptr)
+		return;
+
 }
 
 void ModuleAnimation::LoadAnimation()

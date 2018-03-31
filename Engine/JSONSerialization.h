@@ -15,7 +15,7 @@ class InputManager;
 class InputAction;
 class PlayerActions;
 struct ReImport;
-
+struct AnimationJson;
 struct LoadSceneSt
 {
 	GameObject* go = nullptr;
@@ -75,7 +75,8 @@ public:
 
 	// SAVE & LOAD FONT --------------------------
 	void SaveFont(const ResourceFont* font, const char* directory, const char* fileName);
-	
+	// SAVE & LOAD UI ANIMATION --------------------------
+	void SaveUIAnimation(const AnimationJson* font, const char* directory, const char* fileName);
 
 	// --------------------------------------
 
