@@ -272,17 +272,16 @@ public class Lever : CulverinBehaviour
                 phase3 = true;
                 editmap = true;
             }
-                       
-            
 
-            if (editmap)
+
+
+            if (editmap && fill_barrel.IsPlaced() == true)
             {
-                if (fill_barrel.IsPlaced() == true)
-                {
-                    audio.StopEvent("Chain");
-                    SetPathWalkable(0);
-                }
+
+                audio.StopEvent("Chain");
+                SetPathWalkable(0);
                 editmap = false;
+
             }
 
 

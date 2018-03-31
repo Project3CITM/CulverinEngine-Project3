@@ -99,8 +99,16 @@ void jpPhysicsRigidBody::SetAsTrigger(bool trigger)
 {
 	if (body_shape)
 	{
-		body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !trigger);
-		body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, trigger);
+		if (trigger)
+		{
+			body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else
+		{
+			body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		}
 	}
 }
 
