@@ -3,7 +3,7 @@ using CulverinEditor.SceneManagement;
 using CulverinEditor.Debug;
 
 
-class Scroll : CulverinBehaviour
+public class Scroll : CulverinBehaviour
 {
     public GameObject scroll_text;
     CompText lore;

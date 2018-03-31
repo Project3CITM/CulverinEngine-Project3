@@ -3,7 +3,7 @@ using CulverinEditor.SceneManagement;
 using CulverinEditor.Debug;
 
 
-class ScoreScreen : CulverinBehaviour
+public class ScoreScreen : CulverinBehaviour
 {
     //Time coins
     public GameObject coin1_time;
@@ -37,4 +37,5 @@ class ScoreScreen : CulverinBehaviour
 
     //methods placeholders
 
+    
 }

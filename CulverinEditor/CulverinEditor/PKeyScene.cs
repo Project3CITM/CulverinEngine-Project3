@@ -3,7 +3,7 @@ using CulverinEditor.SceneManagement;
 using CulverinEditor.Debug;
 
 
-class PKeyScene : CulverinBehaviour
+public class PKeyScene : CulverinBehaviour
 {
     void Update()
     {
