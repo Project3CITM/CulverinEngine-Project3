@@ -45,10 +45,10 @@ public class BT : CulverinBehaviour
         if (current_action == null)
             return;
 
-        if (current_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
+        /*if (current_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
         {
             return;
-        }
+        }*/
 
         Action.ACTION_RESULT result = current_action.ActionUpdate();
 

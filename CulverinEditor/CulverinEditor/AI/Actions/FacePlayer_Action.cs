@@ -4,7 +4,6 @@ using CulverinEditor.Debug;
 public class FacePlayer_Action : Action
 {
     float delta = 0.0f;
-    float cur_delta = 0.0f;
     Vector3 obj_vec;
     Vector3 forward;
     Movement_Action move;
@@ -16,7 +15,8 @@ public class FacePlayer_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<Movement_Action>().LookAtPlayer();
+        move = GetComponent<Movement_Action>();
+        move.LookAtPlayer();
         return true;
     }
 

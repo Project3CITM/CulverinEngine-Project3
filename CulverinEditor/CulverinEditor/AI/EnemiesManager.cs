@@ -37,6 +37,7 @@ public class EnemiesManager : CulverinBehaviour
         else
         {
             sword_enemies.Remove(enemy);
+            Debug.Log("Sword enemy deleted!");
         }
     }
 
@@ -61,6 +62,7 @@ public class EnemiesManager : CulverinBehaviour
         else
         {
             lance_enemies.Remove(enemy);
+            Debug.Log("Lance enemy deleted!");
         }
     }
 
@@ -85,6 +87,7 @@ public class EnemiesManager : CulverinBehaviour
         else
         {
             shield_enemies.Remove(enemy);
+            Debug.Log("Shield enemy deleted!");
         }
     }
 

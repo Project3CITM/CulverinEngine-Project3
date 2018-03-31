@@ -143,8 +143,9 @@ public class CharacterController : CulverinBehaviour
     {
     }
 
-    public virtual void GetDamage(float dmg)
+    public virtual bool GetDamage(float dmg)
     {
+        return true;
     }
 
     public virtual void SetAnimationTransition(string name, bool value)

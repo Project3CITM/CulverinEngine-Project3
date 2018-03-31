@@ -3,6 +3,17 @@ using CulverinEditor;
 
 public class Attack_Action : Action
 {
+    public float block_point = 0.3f;
+    public float damage_point = 0.7f;
+    public float damage = 1.0f;
+    public uint fatigue = 50;
+    public float attack_duration = 1.0f;
+    public GameObject target = null;
+    CompAnimation anim = null;
+    CharactersManager player = null;
+    bool shield_attack = false;
+    bool damage_done = false;
+
     public Attack_Action()
     {
         action_type = ACTION_TYPE.ATTACK_ACTION;
@@ -14,71 +25,57 @@ public class Attack_Action : Action
         damage = dmg;
     }
 
-    public enum SWA_STATE
-    {
-        WAITING,
-        PRE_APPLY,
-        POST_APPLY
-    }
-
-    SWA_STATE state = SWA_STATE.WAITING;
-    float damage = 1.0f;
-    public float apply_damage_point = 0.5f;
-    public float attack_duration = 1.0f;
-
-    public GameObject target = null;
-    CompAnimation anim = null;
-    CharactersManager player = null;
-
     public override bool ActionStart()
     {
-        state = SWA_STATE.PRE_APPLY;
         anim = GetComponent<CompAnimation>();
-        anim.SetTransition("ToAttack");
-        anim.SetClipDuration("Attack", attack_duration);
+
+        if (GetComponent<EnemyShield_BT>() != null && (player.player_obj.GetComponent<Shield>().IsActive() || player.GetCurrCharacterState() == (int)CharacterController.State.COVER))
+        {
+            shield_attack = true;
+            anim.SetTransition("ToShieldAttack");
+            anim.SetClipDuration("ShieldAttack", attack_duration);
+        }
+        else
+        {
+            anim.SetTransition("ToAttack");
+            anim.SetClipDuration("Attack", attack_duration);
+        }
+            
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
+        damage_done = false;
+        shield_attack = false;
         //Interrupt player action
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (interupt == true)
-        {
-            return ACTION_RESULT.AR_FAIL;
-        }
-
-        //Doing attack
         anim = GetComponent<CompAnimation>();
-        if (state == SWA_STATE.PRE_APPLY && anim.IsAnimOverXTime(apply_damage_point))
+
+        if (anim.IsAnimOverXTime(damage_point) && damage_done == false)
         {
-            if (GetComponent<EnemySword_BT>() != null || GetComponent<EnemySpear_BT>() != null)
+            damage_done = true;
+
+            if (shield_attack)
+                player.ApplyFatigue(fatigue);
+            else
             {
-                state = SWA_STATE.POST_APPLY;
-                player.GetDamage(damage);
-                //Apply damage to the target
-                //Play audio fx
-            }
-            else if (GetComponent<EnemyShield_BT>() != null)
-            {
-                //TODO: Need player functions to do this
-                if (player.player_obj.GetComponent<Shield>().IsActive() || player.GetCurrCharacterState() == (int)CharacterController.State.COVER)
-                {
-                    //Animation to break defense
-                    player.ApplyFatigue(50);
-                    Debug.Log("Break defense!");
-                }
+                if (player.GetDamage(damage) == true)
+                    anim.SetActiveBlendingClipWeight(0.0f);
                 else
-                    player.GetDamage(damage);
-
-                state = SWA_STATE.POST_APPLY;
+                    anim.SetActiveBlendingClipWeight(1.0f);
             }
-
         }
-        else if (state == SWA_STATE.POST_APPLY && anim.IsAnimationStopped("Attack"))
+
+        if (shield_attack == true)
         {
-            state = SWA_STATE.WAITING;
-            return ACTION_RESULT.AR_SUCCESS;
+            if (anim.IsAnimationStopped("ShieldAttack"))
+                return ACTION_RESULT.AR_SUCCESS;
+        }
+        else
+        {
+            if (anim.IsAnimationStopped("Attack"))
+                return ACTION_RESULT.AR_SUCCESS;
         }
 
         return ACTION_RESULT.AR_IN_PROGRESS;

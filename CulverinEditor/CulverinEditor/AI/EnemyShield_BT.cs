@@ -162,4 +162,11 @@ public class EnemyShield_BT : Enemy_BT
         GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
         GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");
     }
+
+    public override void ChangeTexturesToAlive()
+    {
+        GetComponent<CompMaterial>().SetAlbedo("enemy1_Color.png");
+        GetComponent<CompMaterial>().SetNormals("enemy1_Normal.png");
+        GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO.png");
+    }
 }

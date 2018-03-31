@@ -289,7 +289,7 @@ public class DaenerysController : CharacterController
         }
     }
 
-    public override void GetDamage(float dmg)
+    public override bool GetDamage(float dmg)
     {
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         health.GetDamage(dmg);
@@ -311,6 +311,8 @@ public class DaenerysController : CharacterController
             SetState(State.DEAD);
             PlayFx("DaenerysDead");
         }
+
+        return true;
     }
 
     public override void SetAnimationTransition(string name, bool value)

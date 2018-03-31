@@ -260,7 +260,7 @@ public class JaimeController : CharacterController
         GetLinkedObject("player_obj").GetComponent<Shield>().ActivateShield();
     }
 
-    public override void GetDamage(float dmg)
+    public override bool GetDamage(float dmg)
     {
         if (state == State.COVER)
         {
@@ -269,6 +269,8 @@ public class JaimeController : CharacterController
             GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
             PlayFx("MetalClash");
             SetState(State.BLOCKING);
+
+            return false;
         }
         else
         {
@@ -290,11 +292,12 @@ public class JaimeController : CharacterController
             {
                 SetState(State.DEAD);
                 PlayFx("JaimeDead");
-            }
-            
+            }         
 
             //Reset hit count
             hit_streak = 0;
+
+            return true;
         }
     }
 
