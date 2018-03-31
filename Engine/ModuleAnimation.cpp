@@ -5,7 +5,7 @@
 #include "ModuleGUI.h"
 #include "WindowHierarchy.h"
 #include "Component.h"
-
+#include "CompUIAnimation.h"
 ModuleAnimation::ModuleAnimation()
 {
 }
@@ -26,16 +26,76 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 		if (((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected() != nullptr)
 		{
 			GameObject* go = ((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected();
-			if (go->FindComponentByType(Comp_Type::C_ANIMATION_UI) == nullptr)
+			CompUIAnimation* item = (CompUIAnimation*)go->FindComponentByType(Comp_Type::C_ANIMATION_UI);
+			if (item == nullptr)
 			{
 				ImGui::Text("This GameObject don't have component animation create one");
-				if(ImGui::Button("Create CompAnimation"))
+
+				if (ImGui::Button("Create CompAnimation"))
 				{
-					animation_json = new AnimationJson();
-					go->AddComponent(Comp_Type::C_ANIMATION_UI);
+					item = (CompUIAnimation*)go->AddComponent(Comp_Type::C_ANIMATION_UI);
+					item->animation_json = new AnimationJson();
+					animation_json = item->animation_json;
+					ImGui::OpenPopup("Select Name");
 				}
+				
+				
 				ImGui::End();
 				return;
+			}
+			else
+			{
+				if (item->animation_json == nullptr)
+				{
+					if (ImGui::Button("Create Animation"))
+					{
+						item->animation_json = new AnimationJson();
+						animation_json = item->animation_json;
+						ImGui::OpenPopup("Select Name");
+					}
+				}
+			}
+			bool release = false;
+			if (ImGui::BeginPopupModal("Select Name", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::Text("Animation name:");
+
+				static char str0[50] = "";
+
+				if (ImGui::InputText("##animation name", str0, IM_ARRAYSIZE(str0), ImGuiInputTextFlags_EnterReturnsTrue))
+				{
+					animation_json->name = str0;
+					if (animation_json->name.empty())
+					{
+						release = true;
+	
+					}
+					ImGui::CloseCurrentPopup();
+
+				}
+
+				if (ImGui::Button("Submit", ImVec2(120, 0)))
+				{
+					animation_json->name = str0;
+					if (animation_json->name.empty())
+					{
+						release = true;
+					}
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(120, 0)))
+				{
+					release = true;
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
+			if (release)
+			{
+
+				go->DeleteComponent(go->GetNumComponents()-1);
+				animation_json = nullptr;
 			}
 			//Add new animation
 
@@ -265,6 +325,8 @@ int ModuleAnimation::HaveAnimData(const AnimableComponent * data)
 	}
 	return -1;
 }
+
+
 
 
 bool AnimData::HaveKeyFrameData(const ParameterValue & data)

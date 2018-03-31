@@ -951,6 +951,7 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 	{
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
+		json_object_dotset_number_with_std(config, "UIAnimation.Size ", animation->animations.size());
 		for (int i = 0; i < animation->animations.size(); i++)
 		{
 			std::string animations = std::to_string(i);
@@ -958,16 +959,21 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 			
 			json_object_dotset_string_with_std(config, "UIAnimation.Name ", App->fs->GetToAsstes(fileName).c_str());
 			json_object_dotset_number_with_std(config, "UIAnimation.Type " + animations, component->GetType());
+			json_object_dotset_number_with_std(config, "UIAnimation.Keyframe Size " + animations , animation->animations[i].key_frame_data.size());
 
 			for (int j = 0; j < animation->animations[i].key_frame_data.size(); j++)
 			{
 				std::string key_frame = std::to_string(j);
+
 				json_object_dotset_number_with_std(config, "UIAnimation " + animations+".Animations.Max_Key " + key_frame, animation->animations[i].key_frame_data[j].max_keys);
 				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Samples " + key_frame, animation->animations[i].key_frame_data[j].sample_rate);
 				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Initial " + key_frame, animation->animations[i].key_frame_data[j].initial);
 				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Destination " + key_frame, animation->animations[i].key_frame_data[j].destination);
 				json_object_dotset_boolean_with_std(config, "UIAnimation " + animations + ".Animations.Invalid Key " + key_frame, animation->animations[i].key_frame_data[j].invalid_key);
 				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Parameter " + key_frame, animation->animations[i].key_frame_data[j].parameter);
+
+
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData Size " + key_frame, animation->animations[i].key_frame_data[j].key_data.size());
 
 				for (int k = 0; k < animation->animations[i].key_frame_data[j].key_data.size(); k++)
 				{
@@ -1004,6 +1010,7 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 	}
 	json_value_free(config_file);
 }
+
 
 
 

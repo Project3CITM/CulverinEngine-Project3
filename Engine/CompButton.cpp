@@ -86,11 +86,7 @@ void CompButton::ShowInspectorInfo()
 	ImGui::PopStyleVar();
 
 	// Button Options --------------------------------------
-	if (ImGui::BeginPopup("OptionButton"))
-	{
-		ShowOptions();
-		ImGui::EndPopup();
-	}
+
 	if (ImGui::Button("Sync Image..."))
 	{
 		SetTargetGraphic((CompGraphic*)parent->FindComponentByType(Comp_Type::C_IMAGE));

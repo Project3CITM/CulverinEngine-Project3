@@ -83,6 +83,8 @@ public:
 	void LoadAnimation();
 	int HaveAnimData(const AnimableComponent* data);
 private:
+
+private:
 	int max_keys = 20;
 	int sample_rate = 60;
 

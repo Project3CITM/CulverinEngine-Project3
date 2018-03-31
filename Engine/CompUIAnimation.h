@@ -10,6 +10,8 @@ public:
 	CompUIAnimation(Comp_Type t, GameObject* parent);
 	virtual ~CompUIAnimation();
 
+	void Init();
+	void Clear();
 
 	void Update(float dt);
 	void ShowOptions();
@@ -29,7 +31,8 @@ public:
 	int current_frame = 0;
 	float sample_rate = 0.0f;
 	float current_time = 0.0f;
-
+private:
+	bool select_ui_animation = false;
 
 };
 

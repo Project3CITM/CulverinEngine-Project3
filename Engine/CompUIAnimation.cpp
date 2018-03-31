@@ -16,6 +16,16 @@ CompUIAnimation::~CompUIAnimation()
 {
 }
 
+void CompUIAnimation::Init()
+{
+	play = on_execution;
+}
+
+void CompUIAnimation::Clear()
+{
+	RELEASE(animation_json);
+}
+
 void CompUIAnimation::Update(float dt)
 {
 	if (play)
@@ -86,13 +96,45 @@ void CompUIAnimation::ShowOptions()
 
 void CompUIAnimation::ShowInspectorInfo()
 {
+	int op = ImGui::GetWindowWidth() / 4;
+
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 0));
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ImGui::OpenPopup("OptionsMesh");
+		ImGui::OpenPopup("OpenButton");
 	}
 	ImGui::PopStyleVar();
+
+	if (ImGui::BeginPopup("OptionButton"))
+	{
+		ShowOptions();
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::Button("Select AnimationJson"))
+	{
+		select_ui_animation = true;
+	}
+	ImGui::Text("Animation: ");
+	if (animation_json != nullptr)
+	{
+		ImGui::SameLine();
+		ImGui::Text("%s", animation_json->name.c_str());
+	}
+	if (select_ui_animation)
+	{
+
+	}
+	ImGui::Text("Play"); ImGui::SameLine(op + 30);
+	ImGui::Checkbox("##play", &play);
+
+	ImGui::Text("On Execution"); ImGui::SameLine(op + 30);
+	ImGui::Checkbox("##execution", &play);
+
+	ImGui::Text("Loop"); ImGui::SameLine(op + 30);
+	ImGui::Checkbox("##loop", &play);
+
 
 
 	ImGui::TreePop();
