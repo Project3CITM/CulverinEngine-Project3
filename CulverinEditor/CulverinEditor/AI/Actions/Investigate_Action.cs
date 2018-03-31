@@ -32,11 +32,6 @@ public class Investigate_Action : Action
         action_type = ACTION_TYPE.INVESTIGATE_ACTION;
     }
 
-    public Investigate_Action(float speed): base(speed)
-    {
-        action_type = ACTION_TYPE.INVESTIGATE_ACTION;
-    }
-
     public override bool ActionStart()
     {
         int current_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
@@ -49,6 +44,9 @@ public class Investigate_Action : Action
         init_tile_x = current_tile_x;
         init_tile_y = current_tile_y;
         my_state = INVESTIGATESTATE.GOING_TO_INVESTIGATE;
+
+        //TODO_AI:hear something audio
+        //GetComponent<CompAudio>().PlayEvent("Dracarys");
 
         return ret;
     }
@@ -71,6 +69,10 @@ public class Investigate_Action : Action
                 if (forgot_event == true)
                 {
                     move.GoTo(init_tile_x, init_tile_y);
+
+                    //Lost something audio
+                    //TODO_AI: Ivestigation audio
+                    //GetComponent<CompAudio>().PlayEvent("Dracarys");
 
                     my_state = INVESTIGATESTATE.RETURNING_TO_START;
 

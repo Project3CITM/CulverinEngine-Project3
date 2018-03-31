@@ -27,7 +27,21 @@ ImportScript::ImportScript()
 
 ImportScript::~ImportScript()
 {
-	//ShutdownMono();
+	ShutdownMono();
+}
+
+void ImportScript::Clear()
+{
+	nameScripts.clear();
+	current = nullptr;
+
+	mono_map.clear();
+	mono_comp.clear();
+	mono_pos.clear();
+	mono_script.clear();
+	mono_quat.clear();
+	mono_material.clear();
+
 }
 
 bool ImportScript::InitScriptingSystem()
@@ -80,7 +94,7 @@ bool ImportScript::InitScriptingSystem()
 
 void ImportScript::ShutdownMono()
 {
-	Unload_domain();
+	//Unload_domain();
 	mono_jit_cleanup(mono_domain_get());
 }
 
@@ -603,13 +617,13 @@ void ImportScript::RemoveGObjectVarFromScripting(GameObject * object)
 	if (object != nullptr)
 	{
 		std::map<std::string, GameObject*>::const_iterator it_link = map_link_variables.begin();
-		for (; it_link != map_link_variables.end(); it_link++)
+		for (; it_link != map_link_variables.end();)
 		{
 			if (it_link._Ptr->_Myval.second == object)
 			{
-				map_link_variables.erase(it_link._Ptr->_Myval.first);
-				return;
+				it_link = map_link_variables.erase(it_link);
 			}
+			else it_link++;
 		}
 	}
 }
@@ -619,14 +633,14 @@ void ImportScript::RemoveGObjectFromMonoMap(GameObject * object)
 	// Remove MonoObject form mono_map multimap only during runtime
 	if (object != nullptr)
 	{
-		std::map<MonoObject*, GameObject*>::const_iterator it_map = mono_map.begin();
-		for (; it_map != mono_map.end(); it_map++)
+		std::map<MonoObject*, GameObject*>::iterator it_map = mono_map.begin();
+		for (; it_map != mono_map.end();)
 		{
 			if (it_map._Ptr->_Myval.second == object)
 			{
-				mono_map.erase(it_map._Ptr->_Myval.first);
-				return;
+				it_map = mono_map.erase(it_map);
 			}
+			else it_map++;
 		}
 	}
 }
@@ -638,13 +652,13 @@ void ImportScript::RemoveComponentFromMonoList(Component* comp)
 	if (comp != nullptr)
 	{
 		std::map<MonoObject*, Component*>::const_iterator it_comp = mono_comp.begin();
-		for (; it_comp != mono_comp.end(); it_comp++)
+		for (; it_comp != mono_comp.end();)
 		{
 			if (it_comp._Ptr->_Myval.second == comp)
 			{
-				mono_comp.erase(it_comp._Ptr->_Myval.first);
-				return;
+				it_comp = mono_comp.erase(it_comp);
 			}
+			else it_comp++;
 		}
 	}
 }
@@ -655,13 +669,13 @@ void ImportScript::RemoveTransformPosPointerFromMap(float3 * pospointer)
 	if (pospointer != nullptr)
 	{
 		std::map<MonoObject*, float3*>::const_iterator it_pos = mono_pos.begin();
-		for (; it_pos != mono_pos.end(); it_pos++)
+		for (; it_pos != mono_pos.end();)
 		{
 			if (it_pos._Ptr->_Myval.second == pospointer)
 			{
-				mono_pos.erase(it_pos._Ptr->_Myval.first);
-				return;
+				it_pos = mono_pos.erase(it_pos);
 			}
+			else it_pos++;
 		}
 	}
 }
@@ -675,7 +689,6 @@ void ImportScript::RemoveGObjectReferencesFromMonoScript(GameObject * object)
 		for (; it_script != mono_script.end(); it_script++)
 		{
 			it_script._Ptr->_Myval.second->RemoveReferences(object);
-			return;
 		}
 	}
 }
@@ -778,18 +791,39 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 			MonoMethod* method = NULL;
 			while ((method = mono_class_get_methods(entity, &iter)))
 			{
-				uint t, flag;
-				flag = mono_method_get_flags(method, &t);
+				uint t, flags;
+				flags = mono_method_get_flags(method, &t);
 				std::string name_method = mono_method_get_name(method);
 				std::string fullname_method = mono_method_full_name(method, true);
-				const char* pram = nullptr;
-				mono_method_get_param_names(method, &pram);
-				int idx = 0, ind = 0;
-				if (flag != 134)
+				MonoMethodSignature* signature = mono_method_signature(method);
+				uint num = mono_signature_get_param_count(signature);
+				if (num > 1) // We can't use 2 or more paramaters (only 1 or 0)
 				{
 					continue;
 				}
-				if (pram != nullptr)
+				if (!(flags & MONO_METHOD_ATTR_PUBLIC))// Use Public !!
+				{
+					continue;
+				}
+				if (strcmp(name_method.c_str(), ".ctor") == 0) // Dont enter with constructors...
+				{
+					continue;
+				}
+
+
+				if (num == 0)
+				{
+					PublicMethod temp;
+					temp.name_method = name_method;
+					temp.SetMonoMethod(method);
+					temp.SetMonoObject(csharp->GetMonoObject());
+					temp.type = VarType::Var_NONE;
+					csharp->methods.push_back(temp);
+					continue;
+				}
+				char** pram = new char*[num];
+				mono_method_get_param_names(method, (const char**)pram);
+				if (pram[0] != nullptr)
 				{
 					std::string type = fullname_method;
 					size_t EndName = type.find("(");
@@ -806,7 +840,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					{
 						PublicMethod temp;
 						temp.name_method = name_method;
-						temp.name_param = pram;
+						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
 						temp.type = VarType::Var_INT;
@@ -816,7 +850,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					{
 						PublicMethod temp;
 						temp.name_method = name_method;
-						temp.name_param = pram;
+						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
 						temp.type = VarType::Var_FLOAT;
@@ -826,7 +860,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					{
 						PublicMethod temp;
 						temp.name_method = name_method;
-						temp.name_param = pram;
+						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.type = VarType::Var_BOOL;
 						csharp->methods.push_back(temp);
@@ -835,7 +869,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					{
 						PublicMethod temp;
 						temp.name_method = name_method;
-						temp.name_param = pram;
+						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
 						temp.type = VarType::Var_STRING;
@@ -845,21 +879,12 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					{
 						PublicMethod temp;
 						temp.name_method = name_method;
-						temp.name_param = pram;
+						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
 						temp.type = VarType::Var_GAMEOBJECT;
 						csharp->methods.push_back(temp);
 					}
-				}
-				else
-				{
-					PublicMethod temp;
-					temp.name_method = name_method;
-					temp.SetMonoMethod(method);
-					temp.SetMonoObject(csharp->GetMonoObject());
-					temp.type = VarType::Var_NONE;
-					csharp->methods.push_back(temp);
 				}
 			}
 
@@ -1070,12 +1095,15 @@ void ImportScript::LinkFunctions()
 
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
+	mono_add_internal_call("CulverinEditor.CompCollider::GetContactPoint", (const void*)GetContactPoint);
+	mono_add_internal_call("CulverinEditor.CompCollider::GetContactNormal", (const void*)GetContactNormal);
 	mono_add_internal_call("CulverinEditor.CompCollider::MoveKinematic", (const void*)MoveStaticColliderTo);
 	mono_add_internal_call("CulverinEditor.CompCollider::CallOnContact", (const void*)CallOnContact);
 	mono_add_internal_call("CulverinEditor.CompCollider::CallOnTriggerEnter", (const void*)CallOnTriggerEnter);
 
 	//MATERIAL FUNCTIONS
 	mono_add_internal_call("CulverinEditor.Material::SetBool", (const void*)SetBool);
+	mono_add_internal_call("CulverinEditor.Material::SetFloat", (const void*)SetFloat);
 	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetMaterialByName", (const void*)GetMaterialByName);
 
 	//COMPONENT RIGID BODY FUNCTIONS -----------------------
@@ -1734,6 +1762,16 @@ MonoObject * ImportScript::GetCollidedObject(MonoObject* object)
 	return current->GetCollidedObject(object);
 }
 
+MonoObject * ImportScript::GetContactPoint(MonoObject * object)
+{
+	return current->GetContactPoint(object);
+}
+
+MonoObject * ImportScript::GetContactNormal(MonoObject * object)
+{
+	return current->GetContactNormal(object);
+}
+
 void ImportScript::MoveStaticColliderTo(MonoObject * object, MonoObject * position)
 {
 	current->MoveStaticColliderTo(object, position);
@@ -1938,6 +1976,12 @@ void ImportScript::SetBool(MonoObject * object, MonoString * name, bool value)
 {
 	current->SetBool(object, name, value);
 }
+
+void ImportScript::SetFloat(MonoObject * object, MonoString * name, float value)
+{
+	current->SetFloat(object, name, value);
+}
+
 
 MonoObject* ImportScript::GetMaterialByName(MonoObject * object, MonoString * name)
 {

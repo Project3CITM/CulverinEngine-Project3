@@ -14,6 +14,7 @@
 #include"CompCamera.h"
 #include"ModuleFS.h"
 #include "ModuleLightning.h"
+#include "ResourceMesh.h"
 
 CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
@@ -151,7 +152,12 @@ void CompLight::PreUpdate(float dt)
 
 void CompLight::Update(float dt)
 {
-
+	CompTransform* transf = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
+	if (transf != nullptr && transf->GetUpdated())
+	{
+		parent->box_fixed.SetFromCenterAndSize(float3::zero, bounding_box_size);
+		parent->box_fixed.TransformAsAABB(transf->GetGlobalTransform());
+	}
 }
 
 void CompLight::Draw()
@@ -302,6 +308,15 @@ void CompLight::ShowInspectorInfo()
 	ImGui::Combo("Light Type", &ui_light_type, types_lights.c_str());
 	type = (Light_type)ui_light_type;
 
+	if (ImGui::InputFloat3("Size", &bounding_box_size.x, 2, ImGuiInputTextFlags_EnterReturnsTrue))
+	{
+		CompTransform* transf = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
+		if (transf != nullptr)
+		{
+			parent->box_fixed.SetFromCenterAndSize(float3::zero, bounding_box_size);
+			parent->box_fixed.TransformAsAABB(transf->GetGlobalTransform());
+		}
+	}
 	ImGui::TreePop();
 
 }
@@ -320,7 +335,7 @@ void CompLight::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	json_object_dotset_number_with_std(object, name + "Linear", properties[2]);
 	json_object_dotset_number_with_std(object, name + "Quadratic", properties[3]);
 
-
+	App->fs->json_array_dotset_float3(object, name + "Box Size", bounding_box_size);
 }
 
 void CompLight::Load(const JSON_Object * object, std::string name)
@@ -338,6 +353,8 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	color=App->fs->json_array_dotget_float4_string(object, name + "Color");
 	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
 
+	// bounding box size
+	bounding_box_size = App->fs->json_array_dotget_float3_string(object, name + "Box Size");
 }
 
 void CompLight::UpdateFrustum()

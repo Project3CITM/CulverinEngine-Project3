@@ -6,6 +6,10 @@ namespace CulverinEditor
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetBool(string name, bool value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetFloat(string name, float value);
+
     }
 }
 

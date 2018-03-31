@@ -25,6 +25,7 @@ class ImportScript
 public:
 	ImportScript();
 	~ImportScript();
+	void Clear();
 
 	bool InitScriptingSystem();
 	void ShutdownMono();
@@ -227,6 +228,8 @@ private:
 
 	/*Component Collier*/
 	static MonoObject*	GetCollidedObject(MonoObject * object);
+	static MonoObject*	GetContactPoint(MonoObject* object);
+	static MonoObject*	GetContactNormal(MonoObject* object);
 	static void			MoveStaticColliderTo(MonoObject* object, MonoObject* position);
 	static void			CallOnContact(MonoObject* object);
 	static void			CallOnTriggerEnter(MonoObject* object);
@@ -282,6 +285,7 @@ private:
 
 	/*Material*/
 	static void	SetBool(MonoObject* object, MonoString* name, bool value);
+	static void	SetFloat(MonoObject* object, MonoString* name, float value);
 	static MonoObject* GetMaterialByName(MonoObject* object, MonoString* name);
 
 public: 

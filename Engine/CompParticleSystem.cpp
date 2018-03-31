@@ -59,10 +59,7 @@ CompParticleSystem::CompParticleSystem(const CompParticleSystem& copy, GameObjec
 
 CompParticleSystem::~CompParticleSystem()
 {
-	if(texture_resource && texture_resource->num_game_objects_use_me > 0)
-	{
-		texture_resource->num_game_objects_use_me--;
-	}
+	
 }
 
 
@@ -72,7 +69,7 @@ void CompParticleSystem::PreUpdate(float dt)
 	if (camera != nullptr)
 		part_system->SetCameraPosToFollow(camera->frustum.pos);
 		
-	distance_to_camera = camera->frustum.pos.Distance(parent->GetComponentTransform()->GetPos());
+	distance_to_camera = camera->frustum.pos.Distance(parent->GetComponentTransform()->GetPosGlobal());
 
 	if(distance_to_camera < discard_distance)
 		if(App->engine_state == EngineState::STOP)
@@ -136,6 +133,12 @@ void CompParticleSystem::Clear()
 		part_system->CleanUp();
 		delete part_system;
 		part_system = nullptr;
+	}
+
+	if (texture_resource && texture_resource->num_game_objects_use_me > 0)
+	{
+		texture_resource->num_game_objects_use_me--;
+		texture_resource = nullptr;
 	}
 }
 

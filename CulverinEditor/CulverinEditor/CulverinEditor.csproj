@@ -39,6 +39,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\Actions\Action.cs" />
+    <Compile Include="AI\Actions\FacePlayer_Action.cs" />
+    <Compile Include="AI\Actions\Separate_Action.cs" />
+    <Compile Include="AI\Actions\SpearAttack_Action.cs" />
     <Compile Include="AI\Actions\Stun_Action.cs" />
     <Compile Include="AI\AIManager.cs" />
     <Compile Include="AI\Actions\Align_Steering.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="BarrelPuzle\SetParticleTransf.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
@@ -81,10 +85,12 @@
     <Compile Include="Scroll.cs" />
     <Compile Include="StatsScore.cs" />
     <Compile Include="PKeyScene.cs" />
+    <Compile Include="Lights\Torch_sound.cs" />
     <Compile Include="Miscellanea\DamageFeedback.cs" />
     <Compile Include="Lights\LightFlickering.cs" />
     <Compile Include="ParticleManager.cs" />
     <Compile Include="Material.cs" />
+    <Compile Include="Player\BaseControllers\SwordParticles.cs" />
     <Compile Include="Player\UI\Game.cs" />
     <Compile Include="Player\UI\Intro.cs" />
     <Compile Include="Player\UI\Return.cs" />
@@ -139,6 +145,7 @@
     <Compile Include="Quaternion.cs" />
     <Compile Include="Player\UI\Stamina.cs" />
     <Compile Include="Player\TestMovement.cs" />
+	<Compile Include="Torch_sound.cs" />
     <Compile Include="Player\Theon\TheonController.cs" />
     <Compile Include="SceneManager.cs" />
     <Compile Include="Test.cs" />
@@ -146,7 +153,6 @@
     <Compile Include="Test_Input_Gamepad.cs" />
     <Compile Include="TestParticle.cs" />
     <Compile Include="Time.cs" />
-    <Compile Include="Torch_sound.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Debug.cs" />

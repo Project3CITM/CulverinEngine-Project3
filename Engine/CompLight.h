@@ -1,7 +1,9 @@
 #ifndef COMPONENT_LIGHT
 #define COMPONENT_LIGHT
 #include "Component.h"
-#include"MathGeoLib.h"
+#include "MathGeoLib.h"
+
+class ResourceMesh;
 
 enum Light_type {
 	NO_LIGHT_TYPE=-1,
@@ -59,6 +61,8 @@ public:
 	//---------
 
 	bool use_light_to_render = false;
+
+	float3 bounding_box_size = float3::one;
 
 };
 

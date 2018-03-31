@@ -663,7 +663,7 @@ void CompScript::ShowVariablesInfo()
 		//Access chsharp script, it contains a vector of all variables with their respective info
 		for (uint i = 0; i < csharp->variables.size(); i++)
 		{
-			ImGui::PushID(i);
+			ImGui::PushID(i * csharp->variables.size());
 			if (csharp->variables[i]->access == VarAccess::Var_PUBLIC)
 			{
 				//Show variable TYPE --------------------------
@@ -862,9 +862,10 @@ void CompScript::ShowVarValue(ScriptVariable* var, int pushi)
 		{
 			if (!var->game_object->WanttoDelete())
 			{
-				ImGui::Text("%s", var->game_object->GetName()); ImGui::SameLine();
+				ImGui::Text("%s", var->game_object->GetName()); 
 				if (App->engine_state != EngineState::PLAY)
 				{
+					ImGui::SameLine();
 					if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 					{
 						var->EreaseMonoValue(var->game_object);

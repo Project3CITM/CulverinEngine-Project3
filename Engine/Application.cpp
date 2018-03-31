@@ -232,6 +232,7 @@ void Application::FinishUpdate()
 	if (want_to_load == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
+		App->scene->octree.Clear(false);
 		App->scene->DeleteAllGameObjects(App->scene->root);
 		json_seria->LoadScene(actual_scene.c_str());
 

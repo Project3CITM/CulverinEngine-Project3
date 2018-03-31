@@ -15,17 +15,12 @@ public class Stun_Action : Action
         action_type = ACTION_TYPE.STUN_ACTION;
     }
 
-    public Stun_Action(float speed) : base(speed)
-    {
-        action_type = ACTION_TYPE.STUN_ACTION;
-    }
-
     public override bool ActionStart()
     {
-        //TODO: Animations GetComponent<CompAnimation>().SetTransition("ToHit");
         GetComponent<Align_Steering>().SetEnabled(false);
         GetComponent<Arrive_Steering>().SetEnabled(false);
         GetComponent<Seek_Steering>().SetEnabled(false);
+        GetComponent<CompAnimation>().SetTransition("ToStun");
 
         stun_timer = 0.0f;
 
@@ -41,6 +36,7 @@ public class Stun_Action : Action
         if (stun_timer >= stun_duration)
         {
             Debug.Log("Stun finished");
+            GetComponent<CompAnimation>().SetTransition("ToIdle");
             return ACTION_RESULT.AR_SUCCESS;
         }
 

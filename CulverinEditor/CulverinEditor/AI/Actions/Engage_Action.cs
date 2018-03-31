@@ -3,12 +3,9 @@ using CulverinEditor.Debug;
 
 class Engage_Action : Action
 {
-    public Engage_Action()
-    {
-        action_type = ACTION_TYPE.ENGAGE_ACTION;
-    }
+    public float duration = 1.0f;
 
-    public Engage_Action(float anim_speed) : base(anim_speed)
+    public Engage_Action()
     {
         action_type = ACTION_TYPE.ENGAGE_ACTION;
     }
@@ -17,7 +14,9 @@ class Engage_Action : Action
     {
         Debug.Log("Engage Start");
         GetComponent<CompAnimation>().SetTransition("ToDraw");
-        GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+        GetComponent<CompAnimation>().SetClipDuration("Draw", duration);
+        //TODO_AI: Engage action
+        //GetComponent<CompAudio>().PlayEvent("Dracarys");
         return true;
     }
 

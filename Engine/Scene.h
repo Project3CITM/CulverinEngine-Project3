@@ -5,7 +5,6 @@
 #include "Globals.h"
 #include "ModuleFramebuffers.h"
 #include "CompMesh.h"
-#include "Quadtree.h"
 #include "Octree.h"
 #include <vector>
 
@@ -20,7 +19,7 @@ public:
 	Scene(bool start_enabled = false);
 	virtual ~Scene();
 
-	//bool Init(JSON_Object* node);
+	bool Init(JSON_Object* node);
 	bool Start();
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
@@ -70,6 +69,7 @@ public:
 	// CULLING HELPER FUNCTION -----------
 	//void FillStaticObjectsVector(bool fill);
 	void RecalculateStaticObjects();
+	const std::vector<GameObject*>* GetAllSceneObjects();
 
 	//OBJECTS CREATION / DELETION ---------------------
 	GameObject* FindCanvas();
@@ -105,7 +105,7 @@ public:
 	GameObject* temp_scene = nullptr;
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
-	std::list<GameObject*> static_objects;
+	std::vector<GameObject*> static_objects;
 
 	// Scene Saved
 	bool scene_saved = true; // TODO XAVI - need implementation with Event System
@@ -113,7 +113,7 @@ public:
 	// Quadtree ----------------
 	//Quadtree quadtree;
 	Octree octree;
-	bool quadtree_draw = false;
+	bool octree_draw = false;
 	// -------------------------
 
 	// Skybox --------------------
@@ -138,6 +138,7 @@ private:
 	char					tag_buffer[100];
 	std::vector<std::string>				defined_tags;
 	std::vector<std::vector<GameObject*>*>	tagged_objects;
+	std::vector<GameObject*>				game_objects_scene; 
 };
 
 #endif

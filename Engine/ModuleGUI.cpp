@@ -29,6 +29,11 @@
 #include "Algorithm/Random/LCG.h"
 #include "SDL/include/SDL.h"
 #include "ModuleShaders.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleImporter.h"
+#include "ImportMaterial.h"
+
+
 
 ModuleGUI::ModuleGUI(bool start_enabled): Module(start_enabled)
 {
@@ -254,6 +259,7 @@ update_status ModuleGUI::Update(float dt)
 					shader_program_creation_UI = true;
 					shader_program_creation = true;
 				}
+			
 				ImGui::EndMenu();
 			}
 			if (ImGui::MenuItem("Material"))
@@ -570,6 +576,8 @@ update_status ModuleGUI::Update(float dt)
 
 		ImGui::End();
 	}
+
+
 	
 	if (material_creation) {
 		if (ImGui::Begin("Shader Program Definition", &material_creation))

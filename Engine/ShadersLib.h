@@ -99,7 +99,7 @@ public:
 		
 	}
 	~ShaderProgram() {
-
+		shader_editor.Delete();
 	}
 
 	void AddFragment(Shader* fragment);

@@ -25,14 +25,17 @@ ModuleShaders::~ModuleShaders()
 	for (auto item = materials.begin(); item != materials.end(); item++) {
 		RELEASE(*item);
 	}
+	materials.clear();
 	for (auto item = shaders.begin(); item != shaders.end(); item++) {
 		RELEASE(*item);
 
 	}
+	shaders.clear();
 	for (auto item = programs.begin(); item != programs.end(); item++) {
 		RELEASE(*item);
 	}
-
+	programs.clear();
+	editor_shaders.Delete();
 }
 
 bool ModuleShaders::Init(JSON_Object * node)
@@ -73,6 +76,7 @@ update_status ModuleShaders::Update(float dt)
 
 		(*item)->Bind();
 
+		SetUniformVariables(*item);
 		//TIME		
 		GLint timeLoc = glGetUniformLocation((*item)->GetProgramID(), "_time");
 		glUniform1f(timeLoc, time_dt);
@@ -901,6 +905,50 @@ void ModuleShaders::SetUniform(uint ID, const GLchar * uniformName, int & v)
 	glUniform1i(var_loc, v);
 
 }
+
+
+void ModuleShaders::SetUniformVariables(Material * material)
+{
+	material->RestartIterators();
+	//BOOL
+	if (material->bool_variables.size() != 0)
+		while (material->it_bool_variables != material->bool_variables.end()) {
+
+			GLint bool_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_bool_variables).var_name.c_str());
+			glUniform1i(bool_loc, (*material->it_bool_variables).value);
+			material->it_bool_variables++;
+		}
+	//INT
+	if (material->int_variables.size() != 0)
+		while (material->it_int_variables != material->int_variables.end()) {
+			GLint int_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_int_variables).var_name.c_str());
+			glUniform1i(int_loc, (*material->it_int_variables).value);
+			material->it_int_variables++;
+		}
+	if (material->float_variables.size() != 0)
+		while (material->it_float_variables != material->float_variables.end()) {
+			GLint float_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_float_variables).var_name.c_str());
+			glUniform1f(float_loc, (*material->it_float_variables).value);
+			material->it_float_variables++;
+		}
+
+	if (material->float3_variables.size() != 0)
+		while (material->it_float3_variables != material->float3_variables.end()) {
+			GLint float3_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_float3_variables).var_name.c_str());
+			glUniform3fv(float3_loc, 1, &(*material->it_float3_variables).value[0]);
+			material->it_float3_variables++;
+		}
+
+	if (material->color_variables.size() != 0)
+		while (material->it_color_variables != material->color_variables.end()) {
+			GLint color_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_color_variables).var_name.c_str());
+			glUniform4fv(color_loc, 1, &(*material->it_color_variables).value[0]);
+			material->it_color_variables++;
+		}
+
+	material->RestartIterators();
+}
+
 
 void ModuleShaders::SendEventWithAllShaders() 
 {

@@ -7,8 +7,11 @@ public class TheonController : CharacterController
     public GameObject theon_obj; 
     public GameObject L_Arm_Theon;
     public GameObject R_Arm_Theon;
+    public GameObject L_Shoulder_Theon;
+    public GameObject R_Shoulder_Theon;
     public GameObject CrossBow;
     public GameObject Arrow;
+
     //UI ELEMENTS
     public GameObject theon_icon_obj;
     public GameObject theon_icon_obj_hp;
@@ -24,7 +27,6 @@ public class TheonController : CharacterController
     public float curr_hp = 100.0f;
     public float max_stamina = 100.0f;
     public float curr_stamina = 100.0f;
-    private float sec_ability_current_cd = 10.0f;
 
     //LEFT ABILITY STATS-------------------
     public float left_ability_dmg = 10;
@@ -32,9 +34,11 @@ public class TheonController : CharacterController
     private TheonCD_Left cd_left;
     //----------------------------------------
     //RIGHT ABILITY STATS-------------------
+    public bool reloading = false;
     public float right_ability_dmg = 10;
     public float right_ability_cost = 10.0f;
     private TheonCD_Right cd_right;
+    bool do_push_attack = false;
 
     public bool secondary_ability = false;
     public float sec_ability_cost = 30;
@@ -54,6 +58,8 @@ public class TheonController : CharacterController
         theon_obj = GetLinkedObject("theon_obj");
         L_Arm_Theon = GetLinkedObject("L_Arm_Theon");
         R_Arm_Theon = GetLinkedObject("R_Arm_Theon");
+        L_Shoulder_Theon = GetLinkedObject("L_Shoulder_Theon");
+        R_Shoulder_Theon = GetLinkedObject("R_Shoulder_Theon");
         CrossBow = GetLinkedObject("CrossBow");
         Arrow = GetLinkedObject("Arrow");
 
@@ -82,6 +88,7 @@ public class TheonController : CharacterController
         arrow2 = false;
         arrow3 = false;
         secondary_ability = false;
+        reloading = false;
         arrowtimers = 0.0f;
     }
 
@@ -110,6 +117,17 @@ public class TheonController : CharacterController
                         {
                             //Check For Input + It has to check if he's moving to block attack (¿?)
                             CheckAttack();
+                        
+                            if (reloading)
+                            {
+                                anim_controller = theon_obj.GetComponent<CompAnimation>();
+                                if (anim_controller.IsAnimationRunning("Idle"))
+                                {                          
+                                    reloading = false;
+                                    Debug.Log("[error] Finished reloading");
+                                }
+
+                            }
                             break;
                         }
                     case State.ATTACKING:
@@ -119,7 +137,9 @@ public class TheonController : CharacterController
 
                             if (anim_controller.IsAnimationStopped("Attack"))
                             {
+                                CrossBow.GetComponent<CompAnimation>().PlayAnimation("Reload");
                                 state = State.RELOADING;
+                                reloading = true;
                             }
                             else
                             {
@@ -134,9 +154,9 @@ public class TheonController : CharacterController
                             if (anim_controller.IsAnimOverXTime(0.5f)) 
                             {
                                 //Activate arrow Placement
-                                Arrow.GetComponent<CompMesh>().SetEnabled(true, Arrow);
-                                state = State.IDLE;
+                                Arrow.GetComponent<CompMesh>().SetEnabled(true, Arrow);                       
                                 GetComponent<CompAudio>().PlayEvent("CrossbowRecharge");
+                                state = State.IDLE;
                             }
                             else
                             {
@@ -148,6 +168,15 @@ public class TheonController : CharacterController
                         {
                             //Check for end of the Attack animation
                             anim_controller = theon_obj.GetComponent<CompAnimation>();
+                            
+                            //Apply damage over x time of the attack animation
+                            if (do_push_attack && anim_controller.IsAnimOverXTime(0.6f))
+                            {
+                                Debug.Log("[blue] PUSHHHHHHH");
+                                DoRightAbility();
+                                do_push_attack = false;
+                            }
+
                             if (anim_controller.IsAnimationStopped("Attack2"))
                             { 
                                 state = State.IDLE;
@@ -216,7 +245,7 @@ public class TheonController : CharacterController
     }
 
 
-    public override void GetDamage(float dmg)
+    public override bool GetDamage(float dmg)
     {
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         health.GetDamage(dmg);
@@ -240,6 +269,8 @@ public class TheonController : CharacterController
         }
 
         SetState(State.HIT);
+
+        return true;
     }
 
     public override void SetAnimationTransition(string name, bool value)
@@ -314,13 +345,23 @@ public class TheonController : CharacterController
 
     public override bool IsAnimationStopped(string name)
     {
+        anim_controller = theon_obj.GetComponent<CompAnimation>();
         return anim_controller.IsAnimationStopped(name);
+    }
+
+    public override bool IsAnimationRunning(string name)
+    {
+        Debug.Log("[orange] THEON ANIMATION RUNNING");
+        anim_controller = theon_obj.GetComponent<CompAnimation>();
+        return anim_controller.IsAnimationRunning(name);
     }
 
     public override void ToggleMesh(bool active)
     {
         L_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, L_Arm_Theon);
         R_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, R_Arm_Theon);
+        L_Shoulder_Theon.GetComponent<CompMesh>().SetEnabled(active, L_Shoulder_Theon);
+        R_Shoulder_Theon.GetComponent<CompMesh>().SetEnabled(active, R_Shoulder_Theon);
         CrossBow.GetComponent<CompMesh>().SetEnabled(active, CrossBow);
         Arrow.GetComponent<CompMesh>().SetEnabled(active, Arrow);
     }
@@ -378,10 +419,15 @@ public class TheonController : CharacterController
         arrow_script.speed = curr_forward;
 
         Arrow.GetComponent<CompMesh>().SetEnabled(false, Arrow);
+        Debug.Log("[green] SetEnabled");
 
         //Set Attack Animation
         SetAnimationTransition("ToAttack1", true);
+        CrossBow.GetComponent<CompAnimation>().PlayAnimation("Attack");
+
         GetComponent<CompAudio>().PlayEvent("CrossbowShot");
+        Debug.Log("[green] Shoot Audio");
+
         SetState(CharacterController.State.ATTACKING);
     }
 
@@ -402,8 +448,15 @@ public class TheonController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!cd_right.in_cd)
                 {
-                    // First, OnClick of RightWeapon, then, onClick of Cooldown
-                    DoRightAbility();
+                    // Decrease stamina -----------
+                    DecreaseStamina(right_ability_cost);
+                    //Debug.Log("[error]STAMINA!");
+                    SetAnimationTransition("ToAttack2", true);
+
+                    do_push_attack = true;
+
+                    //Go to PUSH State
+                    SetState(State.STUN); 
                     return true;
                 }
                 else
@@ -427,29 +480,23 @@ public class TheonController : CharacterController
 
     public void DoRightAbility() //Might be virtual
     {
-        // Decrease stamina -----------
-        DecreaseStamina(right_ability_cost);
-        Debug.Log("[error]STAMINA!");
-        SetAnimationTransition("ToAttack2", true);
-        Debug.Log("[error]TRANSITION!");
+        //Debug.Log("[error]TRANSITION!");
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
-        Debug.Log("[error]RAYCAST!");
+        //Debug.Log("[error]RAYCAST!");
         if (coll_object != null)
         {
             Debug.Log(coll_object.GetTag());
-            Debug.Log("[error]COOL OBJ NOT NULL!");
+            //Debug.Log("[error]COOL OBJ NOT NULL!");
             if (coll_object.CompareTag("Enemy"))
             {
-                Debug.Log("[error]HERE!");
+                //Debug.Log("[error]HERE!");
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
                 EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
                 movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
                 enemy_manager.Push(coll_object, movement.GetForwardDir());
-                Debug.Log("[error] " + movement.GetForwardDir());
+                //Debug.Log("[error] " + movement.GetForwardDir());
             }
         }
-
-        SetState(CharacterController.State.STUN);
     }
 
     public bool OnSecondaryClick()

@@ -20,6 +20,7 @@ public class CharacterController : CulverinBehaviour
         FIRE_WALL,
         RELOADING,
         STUN,
+        FAIL_ATTACK,
         DEAD
     }
 
@@ -142,8 +143,9 @@ public class CharacterController : CulverinBehaviour
     {
     }
 
-    public virtual void GetDamage(float dmg)
+    public virtual bool GetDamage(float dmg)
     {
+        return true;
     }
 
     public virtual void SetAnimationTransition(string name, bool value)
@@ -154,6 +156,12 @@ public class CharacterController : CulverinBehaviour
     {
         return true;
     }
+
+    public virtual bool IsAnimationRunning(string name)
+    {
+        return true;
+    }
+
 
     public virtual void UpdateHUD(bool active, bool left)
     {

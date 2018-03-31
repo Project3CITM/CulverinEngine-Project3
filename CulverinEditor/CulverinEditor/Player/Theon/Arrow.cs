@@ -40,7 +40,7 @@ public class Arrow : CulverinBehaviour
 
     void OnTriggerEnter()
     {
-        //Debug.Log("Trigger Start");
+        //Debug.Log("[]Trigger Start");
         //GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
         //// DAMAGE ---
         //Debug.Log("Collided");
@@ -74,13 +74,16 @@ public class Arrow : CulverinBehaviour
 
     void OnContact()
     {
-        Debug.Log("Contact Start");
+        Debug.Log("[yellow]Contact Start");
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
-        
+
         // DAMAGE ---
         Debug.Log("[error] Collided");
         if (collided_obj != null)
         {
+            //Lock transform to avoid trespassing more than one collider
+            rb.LockTransform();
+
             Debug.Log("[error] OnContact");
             Debug.Log("[error]" + collided_obj.GetName());
 
@@ -91,7 +94,7 @@ public class Arrow : CulverinBehaviour
                 Debug.Log("[error] Enemy Found");
                 enemy_manager.ApplyDamage(collided_obj, damage);
                 Debug.Log("[error] Apply Damage");
-                Destroy(gameObject);
+
             }
             else
             {
@@ -100,13 +103,10 @@ public class Arrow : CulverinBehaviour
                 {
                     obj_col.CallOnContact();
                 }
-                Destroy(gameObject);
+
             }
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
     }
 }
 

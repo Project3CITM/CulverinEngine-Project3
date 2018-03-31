@@ -10,14 +10,15 @@ public class TheonCD_Right : CoolDown
 
     public override void OnClick()
     {
-        if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0)
+        if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0 
+            && GetLinkedObject("theon_obj").GetComponent<TheonController>().reloading == false
+            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
         {
             if (in_cd == false)
             {
                 if (GetLinkedObject("theon_obj").GetComponent<TheonController>().OnRightClick() == true)
                 {
                     ActivateAbility();
-                    // Set Attacking State
                 }
             }
         }

@@ -296,7 +296,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyInRight())
                 {
                     MoveRight(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
                     return true;
                 }
             }
@@ -305,7 +305,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyInLeft())
                 {
                     MoveLeft(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
                     return true;
                 }
             }
@@ -316,7 +316,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyBehind())
                 {
                     MoveBackward(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
                     return true;
                 }
 
@@ -326,7 +326,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyInFront())
                 {
                     MoveForward(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 3, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
                     return true;
                 }
             }
@@ -905,6 +905,11 @@ public class MovementController : CulverinBehaviour
         Vector3 forward_dir = new Vector3(position_front_x, 0, position_front_y);
         Debug.Log("Dir: " + forward_dir);
         return forward_dir;
+    }
+
+    public Direction GetPlayerDirection()
+    {
+        return curr_dir;
     }
 
 }

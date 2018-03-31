@@ -16,6 +16,7 @@
 #include"Devil\include\ilut.h"
 #include "DefaultShaders.h"
 #include "Materials.h"
+#include "ModuleTextures.h"
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
@@ -195,9 +196,11 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 	final_tex_material = new Material();
 	final_tex_material->name = "Final Tex Material";
-	final_tex_material->material_shader = non_glow_shader;
+	final_tex_material->material_shader = final_shader_tex;
 	final_tex_material->GetProgramVariables();
 	App->module_shaders->materials.push_back(final_tex_material);
+	final_tex_material->active_num = 1;
+	dmg_texture_id = App->textures->LoadTexture("Assets/Damage2.png");
 
 	default_material = new Material();
 	default_material->name = "Default Material";
@@ -638,5 +641,9 @@ void ModuleRenderer3D::GlowShaderVars()
 	glBindTexture(GL_TEXTURE_2D, App->scene->vertical_blur_buff->GetTexture());
 	glUniform1i(texLoc, 1);
 
+	glActiveTexture(GL_TEXTURE2);
+	texLoc = glGetUniformLocation(final_shader_tex->programID, "_dmg_tex");
+	glBindTexture(GL_TEXTURE_2D, dmg_texture_id);
+	glUniform1i(texLoc, 2);
 
 }

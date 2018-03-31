@@ -35,6 +35,7 @@ ModuleImporter::~ModuleImporter()
 	RELEASE(iMaterial);
 	RELEASE(iScript);
 	RELEASE(iAnimation);
+	RELEASE(iFont);
 }
 
 bool ModuleImporter::Init(JSON_Object* node)
@@ -173,7 +174,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 		}
 		if (isReimported == false)
 		{
-			iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), 0);
+			iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), path.c_str());
 		}
 	}
 
@@ -215,6 +216,8 @@ void ModuleImporter::ProcessTransform(CompTransform* trans)
 bool ModuleImporter::CleanUp()
 {
 	aiDetachAllLogStreams();
+	iScript->Clear();
+
 	return true;
 }
 

@@ -26,7 +26,7 @@
 #endif // _DEBUG
 
 jpPhysicsWorld::jpPhysicsWorld()
-{	
+{
 }
 
 jpPhysicsWorld::jpPhysicsWorld(ModulePhysics * module_callback)
@@ -43,7 +43,7 @@ jpPhysicsWorld::~jpPhysicsWorld()
 			scene->release();
 			scene = nullptr;
 		}
-		jpWorld->release();	
+		jpWorld->release();
 		//pvd->release();
 		jpFoundation->release();
 	}
@@ -67,7 +67,7 @@ bool jpPhysicsWorld::CreateNewPhysicsWorld()
 
 bool jpPhysicsWorld::Simulate(float dt)
 {
-	if (jpWorld && jpWorld->getNbScenes() > 0) 
+	if (jpWorld && jpWorld->getNbScenes() > 0)
 	{
 		physx::PxScene* scene;
 		jpWorld->getScenes(&scene, 1, 0);
@@ -79,7 +79,7 @@ bool jpPhysicsWorld::Simulate(float dt)
 
 bool jpPhysicsWorld::StopSimulation(bool priority)
 {
-	if (jpWorld && jpWorld->getNbScenes() > 0) 
+	if (jpWorld && jpWorld->getNbScenes() > 0)
 	{
 		physx::PxScene* scene;
 		jpWorld->getScenes(&scene, 1, 0);
@@ -106,8 +106,13 @@ physx::PxFilterFlags jpFilterShader(
 	// trigger the contact callback for pairs (A,B) where 
 	// the filtermask of A contains the ID of B and vice versa.
 	if ((filterData0.word0 & filterData1.word1) || (filterData1.word0 & filterData0.word1))
+	{
 		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
 
+		pairFlags |= physx::PxPairFlag::eSOLVE_CONTACT;
+		pairFlags |= physx::PxPairFlag::eDETECT_DISCRETE_CONTACT;
+		pairFlags |= physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+	}
 	return physx::PxFilterFlag::eDEFAULT;
 }
 
@@ -120,6 +125,8 @@ physx::PxScene * jpPhysicsWorld::CreateNewScene()
 	sceneDesc.filterShader = jpFilterShader;
 	sceneDesc.simulationEventCallback = collision_callback;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_PCM;
+	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS;
+	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
 
 	return jpWorld->createScene(sceneDesc);
 }
@@ -149,7 +156,7 @@ jpPhysicsRigidBody * jpPhysicsWorld::CreateRigidBody(physx::PxScene * curr_scene
 		if (curr_scene != nullptr)
 			curr_scene->addActor(*new_body->GetActor());
 	}
-	
+
 	return new_body;
 }
 
@@ -157,7 +164,47 @@ void jpCollisionCallback::onContact(const physx::PxContactPairHeader & pairHeade
 {
 	if (callback_module)
 	{
-		callback_module->OnCollision(pairHeader.actors[0], pairHeader.actors[1], JP_COLLISION_TYPE::CONTACT_ENTER);
+		physx::PxU32 nbContacts = 0;
+		physx::PxVec3 cpoint = physx::PxVec3();
+		physx::PxVec3 cnormal = physx::PxVec3();
+
+		float3 impact_point = float3::zero;
+		float3 impact_normal = float3::zero;
+
+		for (physx::PxU32 i = 0; i < nbPairs; i++)
+		{
+			const physx::PxContactPair& cp = pairs[i];
+
+			physx::PxContactStreamIterator iter(cp.contactPatches, cp.contactPoints, cp.getInternalFaceIndices(), cp.patchCount, cp.contactCount);
+			const physx::PxReal* impulses = cp.contactImpulses;
+
+			physx::PxU32 hasImpulses = (cp.flags & physx::PxContactPairFlag::eINTERNAL_HAS_IMPULSES);
+
+
+			while (iter.hasNextPatch())
+			{
+				iter.nextPatch();
+				while (iter.hasNextContact())
+				{
+					iter.nextContact();
+					cpoint = iter.getContactPoint();
+					cnormal = iter.getContactNormal();
+
+					impact_point += float3(cpoint.x, cpoint.y, cpoint.z);
+					impact_normal += float3(cnormal.x, cnormal.y, cnormal.z);
+
+					nbContacts++;
+				}
+			}
+		}
+
+		if (nbContacts > 1)
+		{
+			impact_point /= nbContacts;
+			impact_normal /= nbContacts;
+		}
+
+		callback_module->OnCollision(pairHeader.actors[0], pairHeader.actors[1], JP_COLLISION_TYPE::CONTACT_ENTER, impact_point, impact_normal);
 	}
 }
 

@@ -36,28 +36,26 @@ public class CharactersManager : CulverinBehaviour
     public GameObject health_obj;
     public GameObject stamina_obj;
     public GameObject mana_obj;
-    public GameObject enemies_obj;
 
     //To manage secondary abilities buttons
     public GameObject jaime_s_button_obj;
     public GameObject daenerys_s_button_obj;
     public GameObject theon_s_button_obj;
 
-    Shield shield;
-
     public float puz_max_time;
     public float drown_dmg = 20;
     public int puz_respawn_x = 0;
     public int puz_respawn_y = 0;
+
     //To manage player state
-    State state = State.IDLE;   
+    State state = State.IDLE;
+    public bool changing = false;
 
     //To manage Jaime Secondary Ability
     public bool shield_activated = false;
 
     void Start()
-    {
-       
+    {    
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
         current_character = GetLinkedObject("current_character");
         left_character = GetLinkedObject("left_character");
@@ -67,13 +65,15 @@ public class CharactersManager : CulverinBehaviour
         health_obj = GetLinkedObject("health_obj");
         stamina_obj = GetLinkedObject("stamina_obj");
         mana_obj = GetLinkedObject("mana_obj");
-        enemies_obj = GetLinkedObject("enemies_obj");
 
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
 
         SetCurrentPosition();
+
+        changing = false;
+
         //core menu
         //bg = GetLinkedObject("bg");
         //coin1 = GetLinkedObject("coin1");
@@ -97,6 +97,14 @@ public class CharactersManager : CulverinBehaviour
         {
             case State.IDLE:
                 {
+                    //Check when finished In animation
+                    if(changing && IsCharacterAnimationRunning(current_character,"Idle"))
+                    {
+                        changing = false;
+
+                        Debug.Log("[yellow] FINISHED IN");
+                    }
+
                     //Test Jaime Secondary Ability
                     if (Input.GetKeyDown(KeyCode.Num0))
                     {
@@ -109,13 +117,11 @@ public class CharactersManager : CulverinBehaviour
                         {
                             state = State.CHANGING_LEFT;
                             CurrentToOut();
-                            Debug.Log("Change Left");
                         }
                         else if(IsDead(right_character) == false)
                         {
                             state = State.CHANGING_RIGHT;
                             CurrentToOut();
-                            Debug.Log("Change Right");
                         }
                         else
                         {
@@ -131,7 +137,6 @@ public class CharactersManager : CulverinBehaviour
                             {
                                 state = State.CHANGING_RIGHT;
                                 CurrentToOut();
-                                Debug.Log("Change Right");
                             }
                         }
                     }
@@ -143,7 +148,6 @@ public class CharactersManager : CulverinBehaviour
                             {
                                 state = State.CHANGING_LEFT;
                                 CurrentToOut();
-                                Debug.Log("Change Left");
                             }
                         }
                     }
@@ -189,8 +193,10 @@ public class CharactersManager : CulverinBehaviour
 
             case State.CHANGING_LEFT:
                 {
+                    Debug.Log("[blue] LEFT OUT");
                     if (IsCharacterAnimationStopped(current_character, "Out"))
                     {
+                        Debug.Log("[blue]  ----------------------------");
                         ChangeLeft();
 
                         //Change GameObjects --------------------
@@ -206,8 +212,10 @@ public class CharactersManager : CulverinBehaviour
 
             case State.CHANGING_RIGHT:
                 {
+                    Debug.Log("[green] RIGHT OUT");
                     if (IsCharacterAnimationStopped(current_character, "Out"))
                     {
+                        Debug.Log("[blue]  ----------------------------");
                         ChangeRight();
 
                         //Change GameObjects --------------------
@@ -317,6 +325,8 @@ public class CharactersManager : CulverinBehaviour
 
     void CurrentToOut()
     {
+        changing = true;
+
         Vector3 pos = transform.local_position;
         Vector3 vfront = transform.forward;
         Mathf.Round(vfront.x);
@@ -417,6 +427,26 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
+    bool IsCharacterAnimationRunning(GameObject characterGO, string name)
+    {
+        if (characterGO.GetName() == "Jaime")
+        {
+            return characterGO.GetComponent<JaimeController>().IsAnimationRunning(name);
+        }
+        else if (characterGO.GetName() == "Daenerys")
+        {
+            return characterGO.GetComponent<DaenerysController>().IsAnimationRunning(name);
+        }
+        else if (characterGO.GetName() == "Theon")
+        {
+            return characterGO.GetComponent<TheonController>().IsAnimationRunning(name);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     void ControlCurrentCharacter()
     {
         if (current_character.GetName() == "Jaime")
@@ -471,12 +501,14 @@ public class CharactersManager : CulverinBehaviour
     }
 
     //Call thius function to deal damage to the current character
-    public void GetDamage(float dmg)
+    public bool GetDamage(float dmg)
     {
         // Shield Ability Consumable
         if (player_obj.GetComponent<Shield>().IsActive())
         {
             player_obj.GetComponent<Shield>().Break();
+            Debug.Log("[error] BREAK SHIELD");
+            return false;
         }
 
         else
@@ -484,16 +516,29 @@ public class CharactersManager : CulverinBehaviour
             // CURRENT CHARACTER -------------------------------
             if (current_character.GetName() == "Jaime")
             {
-                current_character.GetComponent<JaimeController>().GetDamage(dmg);
-                if(health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                if (current_character.GetComponent<JaimeController>().GetDamage(dmg))
                 {
-                    current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
-                    current_character.GetComponent<JaimeController>().PlayFx("JaimeDead");
+                    if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                    {
+                        current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
+                        current_character.GetComponent<JaimeController>().PlayFx("JaimeDead");
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
             else if (current_character.GetName() == "Daenerys")
             {
                 current_character.GetComponent<DaenerysController>().GetDamage(dmg);
+                if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                {
+                    current_character.GetComponent<DaenerysController>().SetState(CharacterController.State.DEAD);
+                    current_character.GetComponent<DaenerysController>().PlayFx("DaenerysDead");
+                }
+                return true;
             }
             else if (current_character.GetName() == "Theon")
             {
@@ -503,7 +548,31 @@ public class CharactersManager : CulverinBehaviour
                     current_character.GetComponent<TheonController>().SetState(CharacterController.State.DEAD);
                     current_character.GetComponent<TheonController>().PlayFx("TheonDead");
                 }
+                return true;
             }
+
+            return true;
+        }
+    }
+
+    public int GetCurrCharacterState()
+    {
+        // CURRENT CHARACTER -------------------------------
+        if (current_character.GetName() == "Jaime")
+        {
+            return current_character.GetComponent<JaimeController>().GetState();
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+           return current_character.GetComponent<DaenerysController>().GetState();
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            return current_character.GetComponent<TheonController>().GetState();
+        }
+        else
+        {
+            return -1;
         }
     }
 
@@ -607,7 +676,7 @@ public class CharactersManager : CulverinBehaviour
     }
 
 
-        //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+    // THIS IS HARDCODED FOR SCORE SCREEN --------------------------------
     void EnemyKilled(uint number = 1)
     {
         enem_killed += number;
@@ -674,7 +743,7 @@ public class CharactersManager : CulverinBehaviour
                 break;
         }
     }
-    //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+    // THIS IS HARDCODED FOR SCORE SCREEN --------------------------------
 
     public void SetCurrentPosition()
     {
@@ -752,6 +821,28 @@ public class CharactersManager : CulverinBehaviour
             dcontroller.curr_forward = vfront;
             tcontroller.curr_position = pos;
             tcontroller.curr_forward = vfront;
+        }
+    }
+
+    public int GetState()
+    {
+        return (int)state;
+    }
+
+    public void ApplyFatigue(float fatigue)
+    {
+        // CURRENT CHARACTER -------------------------------
+        if (current_character.GetName() == "Jaime")
+        {
+            current_character.GetComponent<JaimeController>().DecreaseStamina(fatigue);
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+            current_character.GetComponent<DaenerysController>().DecreaseMana(fatigue);
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            current_character.GetComponent<TheonController>().DecreaseStamina(fatigue);
         }
     }
 }

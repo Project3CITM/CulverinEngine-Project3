@@ -238,9 +238,10 @@ public class DaenerysController : CharacterController
                                 }
 
                                 anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                                if (anim_controller.IsAnimOverXTime(0.9f))
+                                if (anim_controller.IsAnimOverXTime(0.8f))
                                 {
                                     state = State.IDLE;
+                                    Debug.Log("[error] PACOOOOOOO");
                                 }
                                 else
                                 {
@@ -288,7 +289,7 @@ public class DaenerysController : CharacterController
         }
     }
 
-    public override void GetDamage(float dmg)
+    public override bool GetDamage(float dmg)
     {
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         health.GetDamage(dmg);
@@ -310,6 +311,8 @@ public class DaenerysController : CharacterController
             SetState(State.DEAD);
             PlayFx("DaenerysDead");
         }
+
+        return true;
     }
 
     public override void SetAnimationTransition(string name, bool value)
@@ -401,6 +404,13 @@ public class DaenerysController : CharacterController
     {
         anim_controller = daenerys_obj.GetComponent<CompAnimation>();
         return anim_controller.IsAnimationStopped(name);
+    }
+
+    public override bool IsAnimationRunning(string name)
+    {
+        Debug.Log("[orange] DAENERYS ANIMATION RUNNING");
+        anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+        return anim_controller.IsAnimationRunning(name);
     }
 
     public override void ToggleMesh(bool active)

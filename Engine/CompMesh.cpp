@@ -111,6 +111,15 @@ void CompMesh::PreUpdate(float dt)
 
 void CompMesh::Update(float dt)
 {
+
+	if (parent->GetComponentTransform()->GetUpdated())
+	{
+		if (resource_mesh != nullptr)
+		{
+			parent->box_fixed = resource_mesh->aabb_box;
+		}
+		parent->box_fixed.TransformAsAABB(parent->GetComponentTransform()->GetGlobalTransform());
+	}
 }
 
 void CompMesh::ShowOptions()
@@ -327,8 +336,7 @@ void CompMesh::Draw(bool alpha)
 				
 				}
 			}		
-			//
-			SetUniformVariables(material);
+			
 
 			Frustum camFrust = App->renderer3D->active_camera->frustum;
 			float4x4 temp = camFrust.ViewMatrix();
@@ -517,6 +525,8 @@ void CompMesh::SetResource(ResourceMesh* resourse_mesh, bool isImport)
 	}
 }
 
+
+
 void CompMesh::CopyValues(const CompMesh* component)
 {
 	resource_mesh = component->resource_mesh;
@@ -593,52 +603,21 @@ void CompMesh::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompMesh::SyncComponent(GameObject * sync_parent)
+{
+	parent->GetComponentTransform()->UpdateGlobalTransform();
+	if (resource_mesh != nullptr)
+	{
+		parent->box_fixed = resource_mesh->aabb_box;
+	}
+	float4x4 temp = parent->GetComponentTransform()->GetGlobalTransform();
+	parent->box_fixed.TransformAsAABB(temp);
+}
+
 void CompMesh::LinkSkeleton()
 {
 	if (skeleton != nullptr)
 		skeleton->Link(resource_mesh->skeleton);
-}
-
-void CompMesh::SetUniformVariables(Material * material)
-{
-	material->RestartIterators();
-	//BOOL
-	if(material->bool_variables.size() != 0)
-	while (material->it_bool_variables != material->bool_variables.end()) {
-
-		GLint bool_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_bool_variables).var_name.c_str());
-		glUniform1i(bool_loc,(*material->it_bool_variables).value);
-		material->it_bool_variables++;
-	}
-	//INT
-	if (material->int_variables.size() != 0)
-	while (material->it_int_variables != material->int_variables.end()) {
-		GLint int_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_int_variables).var_name.c_str());
-		glUniform1i(int_loc, (*material->it_int_variables).value);
-		material->it_int_variables++;
-	}
-	if (material->float_variables.size() != 0)
-	while (material->it_float_variables != material->float_variables.end()) {
-		GLint float_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_float_variables).var_name.c_str());
-		glUniform1f(float_loc, (*material->it_float_variables).value);
-		material->it_float_variables++;
-	}
-
-	if (material->float3_variables.size() != 0)
-	while (material->it_float3_variables != material->float3_variables.end()) {
-		GLint float3_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_float3_variables).var_name.c_str());
-		glUniform3fv(float3_loc,1, &(*material->it_float3_variables).value[0]);
-		material->it_float3_variables++;
-	}
-
-	if (material->color_variables.size() != 0)
-	while (material->it_color_variables != material->color_variables.end()) {
-		GLint color_loc = glGetUniformLocation(material->GetProgramID(), (*material->it_color_variables).var_name.c_str());
-		glUniform4fv(color_loc,1, &(*material->it_color_variables).value[0]);
-		material->it_color_variables++;
-	}
-
-	material->RestartIterators();
 }
 
 bool CompMesh::HasSkeleton() const

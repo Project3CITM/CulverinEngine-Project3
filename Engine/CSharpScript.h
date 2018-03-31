@@ -274,6 +274,8 @@ public:
 
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
+	MonoObject* GetContactPoint(MonoObject* object);
+	MonoObject* GetContactNormal(MonoObject* object);
 	void		MoveStaticColliderTo(MonoObject* object, MonoObject* positio);
 	void		CallOnContact(MonoObject* object);
 	void		CallOnTriggerEnter(MonoObject* object);
@@ -326,6 +328,7 @@ public:
 
 	/*Material*/
 	void		SetBool(MonoObject* object, MonoString* name, bool value);
+	void		SetFloat(MonoObject* object, MonoString* name, float value);
 	MonoObject*	GetMaterialByName(MonoString* name);
 
 	// LOAD - SAVE METHODS ------------------

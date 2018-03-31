@@ -68,6 +68,8 @@ public class SwordGuard_Listener : PerceptionListener
 
                 if (gameObject == seen_event_tmp.enemy_who_saw)
                 {
+                    Debug.Log("[error] Seeeee you");
+
                     GetComponent<EnemySword_BT>().InterruptAction();
                     GetComponent<EnemySword_BT>().player_detected = true;
 
@@ -98,9 +100,10 @@ public class SwordGuard_Listener : PerceptionListener
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemySword_BT>().player_detected = false;
-                if (GetComponent<EnemySword_BT>().InCombat() == true)
-                    GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
                 GetComponent<ChasePlayer_Action>().forgot_event = true;
+
+                if (GetComponent<EnemySword_BT>().InCombat() == true && GetComponent<PerceptionSightEnemy>().player_seen == false)
+                    GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
 
                 Debug.Log("[error]Event gone type:" + event_recieved.type);
                 break;

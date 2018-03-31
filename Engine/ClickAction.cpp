@@ -629,3 +629,8 @@ void ClickAction::SyncClickAction()
 	}
 }
 
+void ClickAction::ClearLinkedScripts()
+{
+	actions.clear();
+}
+
