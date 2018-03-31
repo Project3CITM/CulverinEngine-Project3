@@ -52,10 +52,12 @@ public class BarrelFall : CulverinBehaviour
 
 
     CompAudio audio;
+    CompCollider col;
 
     void Start()
     {
         audio = GetComponent<CompAudio>();
+        col = GetComponent<CompCollider>();
         timeToNextFloatAnim = floatingPeriod; 
     }
 
@@ -262,6 +264,17 @@ public class BarrelFall : CulverinBehaviour
         pos.y += t;
 
         transform.SetGlobalPosition(pos);
+    }
+
+    void OnTriggerEnter()
+    {
+        Debug.Log("BARREL PLAYER COLLISION");
+        if(col.GetCollidedObject().CompareTag("player") && mode_puzzle == ModeBarrel.FILLING && placed)
+        {
+            Debug.Log("BarrelSetToSkin");
+            sinking = true;
+        }
+
     }
 }
 
