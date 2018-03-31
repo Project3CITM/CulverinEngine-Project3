@@ -34,11 +34,15 @@ public class ScoreScreen : CulverinBehaviour
     public GameObject bronze;
     public GameObject silver;
     public GameObject golden;
+    public int coin_count = 0;
 
-    //methods placeholders
+    public int oneCoin_time_lvl = 0; //one coin time
+    public int twoCoin_time_lvl = 0; //two coin time
+    public int threeCoin_time_lvl = 0; //three coin time
+    //space for sergio saez methods 
     void TimeCoins()
     {
-        if(Data.)
+        //Data getters
     }
     
 }

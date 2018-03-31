@@ -11,10 +11,7 @@ static public class Data
     static public uint characters_used = 0; //counter for tracking how many characters you have used (1,2 or 3)
     //variables for Sergio Saez, to manage balancing though inspector
     static public int total_enemies = 0; //total enemies in the level
-    static public int oneCoin_time_lvl = 0; //one coin time
-    static public int twoCoin_time_lvl = 0; //two coin time
-    static public int threeCoin_time_lvl = 0; //three coin time
-
+   
 
     static public void Start()
     {
