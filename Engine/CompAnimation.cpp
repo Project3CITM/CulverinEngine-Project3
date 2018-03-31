@@ -979,12 +979,12 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			active_node = temp;
 		}
 		std::string clip_name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".ClipName");
-		temp->anim_audio = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioName");
-		temp->audio_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioTime");
+		//temp->anim_audio = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioName");
+		//temp->audio_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".AudioTime");
 
-		temp->anim_prefab_particle = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticleName");
-		temp->prefab_particle_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticleTime");
-		temp->prefab_pos = App->fs->json_array_dotget_float3_string(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticlePos");
+		//temp->anim_prefab_particle = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticleName");
+		//temp->prefab_particle_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticleTime");
+		//temp->prefab_pos = App->fs->json_array_dotget_float3_string(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticlePos");
 	
 		for (std::vector<AnimationClip*>::iterator temp_it = animation_clips.begin(); temp_it != animation_clips.end(); temp_it++)
 		{
