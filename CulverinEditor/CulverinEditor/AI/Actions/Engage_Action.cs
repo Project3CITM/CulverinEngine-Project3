@@ -15,7 +15,8 @@ class Engage_Action : Action
         Debug.Log("Engage Start");
         GetComponent<CompAnimation>().SetTransition("ToDraw");
         GetComponent<CompAnimation>().SetClipDuration("Draw", duration);
-        GetComponent<CompAudio>().PlayEvent("Dracarys");
+        //TODO_AI: Engage action
+        //GetComponent<CompAudio>().PlayEvent("Dracarys");
         return true;
     }
 

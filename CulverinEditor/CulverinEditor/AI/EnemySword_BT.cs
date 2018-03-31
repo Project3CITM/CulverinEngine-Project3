@@ -35,12 +35,12 @@ public class EnemySword_BT : Enemy_BT
         if (InRange())
         {
 
-            /*if (!GetComponent<FacePlayer_Action>().IsFaced())
+            if (!GetComponent<FacePlayer_Action>().IsFaced())
             {
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
                 return;
-            }*/
+            }
 
             bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
 
@@ -116,8 +116,15 @@ public class EnemySword_BT : Enemy_BT
 
     public override void ChangeTexturesToDamaged()
     {
-        GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
-        GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
-        GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");
+        mesh.GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
+        mesh.GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
+        mesh.GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");
+    }
+
+    public override void ChangeTexturesToAlive()
+    {
+        mesh.GetComponent<CompMaterial>().SetAlbedo("enemy1_Color.png");
+        mesh.GetComponent<CompMaterial>().SetNormals("enemy1_Normal.png");
+        mesh.GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO.png");
     }
 }
