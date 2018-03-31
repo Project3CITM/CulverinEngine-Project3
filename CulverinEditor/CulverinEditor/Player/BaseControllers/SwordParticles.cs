@@ -25,6 +25,7 @@ public class SwordParticles : CulverinBehaviour
 
     void OnContact()
     {
+        Debug.Log("--- OnContact ---");
         col = GetComponent<CompCollider>();
         GameObject obj = col.GetCollidedObject();
         if (obj != null)
@@ -44,6 +45,8 @@ public class SwordParticles : CulverinBehaviour
 
                 enemy_particle = sword_enemy_particle.GetComponent<CompParticleSystem>();
                 enemy_particle.ActivateEmission(true);
+
+                Debug.Log("Enemy particle");
             }
             else if (obj.CompareTag("undefined"))
             {
@@ -59,6 +62,9 @@ public class SwordParticles : CulverinBehaviour
 
                 wall_particle = sword_wall_particle.GetComponent<CompParticleSystem>();
                 wall_particle.ActivateEmission(true);
+
+                Debug.Log("Wall particle");
+
             }
         }
     }
