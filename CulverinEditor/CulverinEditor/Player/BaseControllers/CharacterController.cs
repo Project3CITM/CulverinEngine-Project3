@@ -20,6 +20,7 @@ public class CharacterController : CulverinBehaviour
         FIRE_WALL,
         RELOADING,
         STUN,
+        FAIL_ATTACK,
         DEAD
     }
 

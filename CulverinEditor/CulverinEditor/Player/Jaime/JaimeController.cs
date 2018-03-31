@@ -143,6 +143,18 @@ public class JaimeController : CharacterController
                             }
                             break;
                         }
+                    case State.FAIL_ATTACK:
+                        {
+                            Debug.Log("[error] FAIL ATTACK");
+                            //Check for end of the Attack animation
+                            anim_controller = jaime_obj.GetComponent<CompAnimation>();
+
+                            if (anim_controller.IsAnimationStopped("Attack Fail"))
+                            {
+                                state = State.IDLE;
+                            }
+                            break;
+                        }
                     case State.COVER:
                         {
                             //Check for end of the Attack animation
@@ -424,7 +436,7 @@ public class JaimeController : CharacterController
     public void DoLeftAbility()
     {
         // Attack the enemy in front of you
-        GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
+        GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 30.0f);
         Debug.Log("Raycast");
         if (coll_object != null)
         {
@@ -465,16 +477,20 @@ public class JaimeController : CharacterController
             }
             else
             {
+                Debug.Log("[green] Collision Obstacle");
                 // Call Collider OnContact to notify raycast
                 CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
                 if (obj_collider != null)
                 {
                     obj_collider.CallOnContact();
+                    Debug.Log("[blue] Call On Contact");
                 }
-                else
-                {
-                    hit_streak = 0; //Reset hit count
-                }
+
+                hit_streak = 0; // Reset Hit Count
+
+                //Set FailAttack Transition
+                SetAnimationTransition("ToFail", true);
+                Debug.Log("[pink] --- FAIL ATTACK ---");     
             }
         }
         else
