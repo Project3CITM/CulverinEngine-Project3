@@ -159,6 +159,7 @@ public class Movement_Action : Action
                 rotation_finished = true;
                 current_rot_velocity = 0.0f;
                 align.SetEnabled(false);
+                look_at_pos.y = GetComponent<Transform>().position.y;
                 Vector3 obj_vec = new Vector3(look_at_pos - GetComponent<Transform>().position);
                 GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
                 SetDirection();
@@ -228,7 +229,7 @@ public class Movement_Action : Action
         }
 
         //Rotate
-        Debug.Log("Current Rot Vel: " + current_rot_velocity + "* dt " + Time.deltaTime);
+        //Debug.Log("Current Rot Vel: " + current_rot_velocity + "* dt " + Time.deltaTime);
         align.UpdateRotation(current_rot_velocity * Time.deltaTime);
 
         //Clean

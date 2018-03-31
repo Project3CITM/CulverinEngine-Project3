@@ -116,8 +116,15 @@ public class EnemySword_BT : Enemy_BT
 
     public override void ChangeTexturesToDamaged()
     {
-        GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
-        GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
-        GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");
+        mesh.GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
+        mesh.GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
+        mesh.GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");
+    }
+
+    public override void ChangeTexturesToAlive()
+    {
+        mesh.GetComponent<CompMaterial>().SetAlbedo("enemy1_Color.png");
+        mesh.GetComponent<CompMaterial>().SetNormals("enemy1_Normal.png");
+        mesh.GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO.png");
     }
 }

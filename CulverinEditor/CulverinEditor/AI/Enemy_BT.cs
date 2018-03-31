@@ -13,6 +13,7 @@ public class Enemy_BT : BT
 
     public GameObject enemies_manager = null;
     public GameObject player = null;
+    public GameObject mesh = null;
 
     public float total_hp = 100;
     protected float current_hp;
@@ -39,6 +40,9 @@ public class Enemy_BT : BT
         Debug.Log("Total HP (Start): " + total_hp);
         //Enemy starts with the attack loaded!
         attack_timer = attack_cooldown * anim_speed;
+        mesh = GetLinkedObject("mesh");
+        enemies_manager = GetLinkedObject("enemies_manager");
+        ChangeTexturesToAlive();
         base.Start();
     }
 
@@ -123,6 +127,9 @@ public class Enemy_BT : BT
             life_state = ENEMY_STATE.ENEMY_DEAD;
             next_action = GetComponent<Die_Action>();
             current_action.Interupt();
+            if (GetComponent<EnemySword_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteSwordEnemy(GetComponent<EnemySword_BT>().gameObject);
+            else if (GetComponent<EnemyShield_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteShieldEnemy(GetComponent<EnemyShield_BT>().gameObject);
+            else if (GetComponent<EnemySpear_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteLanceEnemy(GetComponent<EnemySpear_BT>().gameObject);
         }
         else if (life_state != ENEMY_STATE.ENEMY_DAMAGED && current_hp < total_hp * damaged_limit)
         {
@@ -191,6 +198,11 @@ public class Enemy_BT : BT
 
     public virtual void ChangeTexturesToDamaged()
     {
-        Debug.Log("[error] Change Textures not defined");
+        Debug.Log("[error] Damaged change Textures not defined");
+    }
+
+    public virtual void ChangeTexturesToAlive()
+    {
+        Debug.Log("[error] Alive change Textures not defined");
     }
 }
