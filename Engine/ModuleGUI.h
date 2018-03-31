@@ -115,6 +115,8 @@ private:
 	bool window_show_all_resources = false;
 	bool window_audio = false;
 	bool window_create_map = false;
+	bool window_create_animation = false;
+
 	//bool window_NewScene = false;
 
 	int menu_height = 0;

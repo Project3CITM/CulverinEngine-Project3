@@ -1201,6 +1201,9 @@
     </ClInclude>
     <ClInclude Include="ImportFont.h" />
     <ClInclude Include="ClickAction.h" />
+    <ClInclude Include="ModuleAnimation.h" />
+    <ClInclude Include="AnimableComponent.h" />
+    <ClInclude Include="CompUIAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1618,6 +1621,9 @@
     </ClCompile>
     <ClCompile Include="ImportFont.cpp" />
     <ClCompile Include="ClickAction.cpp" />
+    <ClCompile Include="ModuleAnimation.cpp" />
+    <ClCompile Include="AnimableComponent.cpp" />
+    <ClCompile Include="CompUIAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">

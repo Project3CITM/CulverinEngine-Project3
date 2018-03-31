@@ -28,6 +28,7 @@
 #include "mmgr/mmgr.h"
 #include "ModuleEventSystem.h"
 #include "ModuleKeyBinding.h"
+#include "ModuleAnimation.h"
 #include "ImportScript.h"
 static int malloc_count;
 static void *counted_malloc(size_t size);
@@ -46,6 +47,8 @@ Application::Application()
 	scene = new Scene();
 	console = new Console();
 	gui = new ModuleGUI();
+	animation_ui = new ModuleAnimation();
+
 	importer = new ModuleImporter();
 	fs = new ModuleFS();
 	textures = new ModuleTextures();
@@ -77,6 +80,8 @@ Application::Application()
 	AddModule(module_lightning); // Ask this module creators before changing the order, possible dependencies with scene and shaders module.
 	AddModule(module_shaders);
 	AddModule(gui);
+	AddModule(animation_ui);
+
 	AddModule(map); // Possible change position
 	AddModule(importer);
 	AddModule(textures);
