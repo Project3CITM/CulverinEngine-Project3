@@ -69,7 +69,7 @@ void CompParticleSystem::PreUpdate(float dt)
 	if (camera != nullptr)
 		part_system->SetCameraPosToFollow(camera->frustum.pos);
 		
-	distance_to_camera = camera->frustum.pos.Distance(parent->GetComponentTransform()->GetPos());
+	distance_to_camera = camera->frustum.pos.Distance(parent->GetComponentTransform()->GetPosGlobal());
 
 	if(distance_to_camera < discard_distance)
 		if(App->engine_state == EngineState::STOP)
