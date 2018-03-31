@@ -242,7 +242,7 @@ public class Lever : CulverinBehaviour
                 SetInfo(line5, 4);
                 SetInfo(line6, 5);
                 phase1 = true;
-                SetPuzzleWalkability(1);
+                //SetPuzzleWalkability(1);
             }
             if (!phase2) // Move barrels mode.PUZZLE
             {
@@ -287,7 +287,7 @@ public class Lever : CulverinBehaviour
             if (editmap && fill_barrel.IsPlaced())
             {
                 audio.StopEvent("Chain");
-                SetPathWalkable();
+                SetPathWalkable(0);
                 editmap = false;
             }
 
@@ -562,7 +562,7 @@ public class Lever : CulverinBehaviour
     }
 
 
-    void SetPathWalkable()
+    void SetPathWalkable(int value)
     {
         level_map = GetLinkedObject("level_map");
         LevelMap level_map_script;
@@ -573,25 +573,26 @@ public class Lever : CulverinBehaviour
         player = GetLinkedObject("player");
         MovementController player_mov = player.GetComponent<MovementController>();
 
+        int count_barrel = barrel_per_line - 1;
 
-        for (int y = 0; y < current_path.height; ++y)
+        int curr_x = 0;
+        int curr_y = 0;
+        for (int x = barrel_per_line - 1; x >= 0; x--)
         {
-            for (int x = 0; x < current_path.width; ++x)
-            {   
-              
+            for (int y = 0; y < 6; y++)
+            {
+                curr_x = puzzle_start_tile_x + x * (int)(orientation_x.x + orientation_z.x);
+                curr_y = puzzle_start_tile_z + y * (int)(orientation_x.z + orientation_z.z);
+
                 if (current_path.walkability[x, y] == 0)
                 {
-                    level_map_script.UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);
-                    player_mov.SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 0);
+                    level_map_script.UpdateMap(curr_x, curr_y, value);
+                    player_mov.SetTileWalkability(curr_x, curr_y, value);
                 }
-                else
-                {
-                    level_map_script.UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 3);
-                    player_mov.SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, 3);
-                }
+
             }
-            
         }
+
     }
 
     public void ResetPuzzle()
@@ -611,7 +612,7 @@ public class Lever : CulverinBehaviour
         active_lever = false;
         time = 0.0f;
 
-        SetPuzzleWalkability(3);
+        SetPathWalkable(3);
 
     }
 
@@ -626,32 +627,4 @@ public class Lever : CulverinBehaviour
         }
     }
 
-
-    void SetPuzzleWalkability(int value)
-    {
-        level_map = GetLinkedObject("level_map");
-        LevelMap level_map_script;
-        if (level_map == null)
-            Debug.Log("MAP IS NULL");
-        level_map_script = level_map.GetComponent<LevelMap>();
-
-        player = GetLinkedObject("player");
-        MovementController player_mov = player.GetComponent<MovementController>();
-
-        for (int y = 0; y < current_path.height; ++y)
-        {
-            for (int x = 0; x < current_path.width; ++x)
-            {              
-                    level_map_script.UpdateMap(x + puzzle_start_tile_x, y + puzzle_start_tile_z, value);
-                    player_mov.SetTileWalkability(x + puzzle_start_tile_x, y + puzzle_start_tile_z, value);
-
-                Debug.Log("Setting tile value");
-                Debug.Log(x + puzzle_start_tile_x);
-                Debug.Log(y + puzzle_start_tile_z);
-                Debug.Log(value);
-
-            }
-
-        }
-    }
 }
