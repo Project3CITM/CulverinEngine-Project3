@@ -385,7 +385,7 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 void CompCollider::SyncComponent(GameObject* sync_parent)
 {
-	ChangeCollider();
+	body->SetGeometry(size, rad, curr_type);
 	SetColliderPosition();
 	if (trigger)
 	{
