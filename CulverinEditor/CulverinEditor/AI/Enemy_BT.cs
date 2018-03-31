@@ -38,7 +38,7 @@ public class Enemy_BT : BT
         current_hp = total_hp;
         Debug.Log("Current HP (Start): " + current_hp);
         Debug.Log("Total HP (Start): " + total_hp);
-        //Enemy starts with the attack loaded!
+        //Enemy starts with the attack loaded
         attack_timer = attack_cooldown * anim_speed;
         mesh = GetLinkedObject("mesh");
         enemies_manager = GetLinkedObject("enemies_manager");
