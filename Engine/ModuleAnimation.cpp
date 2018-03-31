@@ -112,6 +112,13 @@ void ModuleAnimation::ShowNewAnimationWindow()
 
 void ModuleAnimation::ShowAnimationJsonInfo()
 {
+	ShowAnimationKeyFrameInfo();
+	ImGui::Separator();
+	ShowAnimationDataInfo();
+}
+
+void ModuleAnimation::ShowAnimationDataInfo()
+{
 
 	if (animation_json->animations.empty())
 	{
@@ -140,11 +147,16 @@ void ModuleAnimation::ShowAnimationJsonInfo()
 				if (in_open)
 				{
 					static int value = -1;
-					Columns(2, "key");
+					Columns(3, "key");
 					ImGui::Text("KeyFrames");
-					
-					value=key_frame_item->ReturnKeyDataPos(value);				
-					
+
+					value = key_frame_item->ReturnKeyDataPos(value);
+
+					ImGui::NextColumn();
+					ImGui::Text("Time");
+
+					key_frame_item->ShowKeyOnTime();
+
 					ImGui::NextColumn();
 					ImGui::Text("KeySelected");
 					if (!key_frame_item->ShowKeyValue(value))
@@ -159,7 +171,7 @@ void ModuleAnimation::ShowAnimationJsonInfo()
 						std::sort(key_frame_item->key_data.begin(), key_frame_item->key_data.end());
 					}
 					ImGui::SameLine();
-					
+
 					if (ImGui::Button("Create New Key##new_key"))
 					{
 						KeyData copy_data = key_frame_item->key_data.back();
@@ -172,6 +184,53 @@ void ModuleAnimation::ShowAnimationJsonInfo()
 			ImGui::TreePop();
 		}
 
+	}
+}
+
+void ModuleAnimation::ShowAnimationKeyFrameInfo()
+{
+	ImGui::Text("Max Keyframes");
+	ImGui::SameLine();
+
+	if(ImGui::DragInt("##max_keys", &max_keys, 1.0f, 1, 100))
+	{
+
+		if (animation_json->animations.empty())
+		{
+			return;
+		}
+		for (int i = 0; i < animation_json->animations.size(); i++)
+		{
+			AnimData* item = &animation_json->animations[i];
+			for (int j = 0; j < item->key_frame_data.size(); j++)
+			{
+				KeyFrameData* key_frame_item = &item->key_frame_data[j];
+				key_frame_item->max_keys = max_keys;
+				key_frame_item->UpdateKeyFrame();
+				key_frame_item->UpdateSampleRate();
+
+			}
+		}
+	}
+	ImGui::Text("Sample");
+	ImGui::SameLine();
+	if (ImGui::DragInt("##sample_rate", &sample_rate, 1.0f, 1, 100))
+	{
+		if (animation_json->animations.empty())
+		{
+			return;
+		}
+		for (int i = 0; i < animation_json->animations.size(); i++)
+		{
+			AnimData* item = &animation_json->animations[i];
+			for (int j = 0; j < item->key_frame_data.size(); j++)
+			{
+				KeyFrameData* key_frame_item = &item->key_frame_data[j];
+				key_frame_item->sample_rate = sample_rate;
+				key_frame_item->UpdateSampleRate();
+
+			}
+		}
 	}
 }
 
@@ -258,7 +317,7 @@ bool KeyFrameData::ShowKeyValue(int i)
 		{
 			key_data[i].key_frame = 0;
 		}
-		if (key_data[i].key_frame >= max_keys)
+		if (key_data[i].key_frame > max_keys)
 		{
 			key_data[i].key_frame = max_keys;
 		}
@@ -278,6 +337,7 @@ bool KeyFrameData::ShowKeyValue(int i)
 			}
 
 		}
+		key_data[i].key_on_time = (float)key_data[i].key_frame / (float)sample_rate;
 	}
 	std::string paramter_name;
 	switch (parameter)
@@ -332,6 +392,14 @@ bool KeyFrameData::ShowKeyValue(int i)
 
 }
 
+void KeyFrameData::ShowKeyOnTime()
+{
+	for (int i = 0; i < key_data.size(); i++)
+	{
+		ImGui::Text("%.2f", key_data[i].key_on_time);
+	}
+}
+
 int KeyFrameData::ReturnKeyDataPos(int& selected)
 {
 	for (int i = 0; i < key_data.size(); i++)
@@ -347,6 +415,24 @@ int KeyFrameData::ReturnKeyDataPos(int& selected)
 		}
 	}
 	return selected;
+}
+void KeyFrameData::UpdateKeyFrame()
+{
+	for (int i = 0; i < key_data.size(); i++)
+	{
+		if (key_data[i].key_frame > max_keys)
+		{
+			key_data[i].key_frame = max_keys;
+		}
+	}
+}
+
+void KeyFrameData::UpdateSampleRate()
+{
+	for (int i = 0; i < key_data.size(); i++)
+	{
+			key_data[i].key_on_time = (float)key_data[i].key_frame/ (float)sample_rate;
+	}
 }
 
 AnimationJson::AnimationJson()
