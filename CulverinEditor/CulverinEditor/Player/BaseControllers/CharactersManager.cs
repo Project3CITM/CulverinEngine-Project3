@@ -54,6 +54,8 @@ public class CharactersManager : CulverinBehaviour
     //To manage Jaime Secondary Ability
     public bool shield_activated = false;
 
+    CompAudio audio;
+
     void Start()
     {    
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
@@ -71,6 +73,8 @@ public class CharactersManager : CulverinBehaviour
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
 
         SetCurrentPosition();
+
+        audio = GetComponent<CompAudio>();
 
         changing = false;
 
@@ -503,6 +507,7 @@ public class CharactersManager : CulverinBehaviour
     //Call thius function to deal damage to the current character
     public bool GetDamage(float dmg)
     {
+ 
         // Shield Ability Consumable
         if (player_obj.GetComponent<Shield>().IsActive())
         {
@@ -513,6 +518,9 @@ public class CharactersManager : CulverinBehaviour
 
         else
         {
+
+            audio.PlayEvent("SwordHit");
+
             // CURRENT CHARACTER -------------------------------
             if (current_character.GetName() == "Jaime")
             {

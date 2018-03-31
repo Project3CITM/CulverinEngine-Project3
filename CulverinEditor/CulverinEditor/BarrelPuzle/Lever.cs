@@ -195,6 +195,7 @@ public class Lever : CulverinBehaviour
             if(Input.GetKeyDown(KeyCode.Space))
             {
                 OnLeverActivated();
+                audio.PlayEvent("Lever");
                 lever_interact.SetActive(false);
             }
         }
