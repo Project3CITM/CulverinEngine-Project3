@@ -67,8 +67,16 @@ public class Attack_Action : Action
             }
         }
 
-        if(anim.IsAnimationStopped("Attack"))
-            return ACTION_RESULT.AR_SUCCESS;
+        if (shield_attack == true)
+        {
+            if (anim.IsAnimationStopped("ShieldAttack"))
+                return ACTION_RESULT.AR_SUCCESS;
+        }
+        else
+        {
+            if (anim.IsAnimationStopped("Attack"))
+                return ACTION_RESULT.AR_SUCCESS;
+        }
 
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
