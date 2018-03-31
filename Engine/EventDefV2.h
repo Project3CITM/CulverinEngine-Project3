@@ -291,10 +291,10 @@ union Event
 	inline void Set_event_data_frame_delay(unsigned int FrameDelay);																//When the event is initialized, you can change frame delay with this method
 	inline void Set_event_data_time_delay(unsigned int TimeDelay);																	//When the event is initialized, you can change time delay as miliseconds with this method
 	inline void Set_event_data_time_delay_f(float TimeDelay);																		//When the event is initialized, you can change time delay as seconds with this method
-	inline void Set_event_data_PushedWhileIteriting(bool PushedWhileIteriting);														//DO NOT USE, This is to set the bool, used by Event System for correct event management
+	//inline void Set_event_data_PushedWhileIteriting(bool PushedWhileIteriting);													//DO NOT USE, This is to set the bool, used by Event System for correct event management
 	//Getters
-	inline void Get_event_data(EventType& type, unsigned int& FrameDelay, unsigned int& TimeDelay, bool& PushedWhileIteriting);		//Get all event_data variables, time delay as miliseconds uint
-	inline void Get_event_data_f(EventType& type, unsigned int& FrameDelay, float& TimeDelay, bool& PushedWhileIteriting);			//Get all event_data variables, time delay as seconds float
+	inline void Get_event_data(EventType& type, unsigned int& FrameDelay, unsigned int& TimeDelay/*, bool& PushedWhileIteriting*/);	//Get all event_data variables, time delay as miliseconds uint
+	inline void Get_event_data_f(EventType& type, unsigned int& FrameDelay, float& TimeDelay/*, bool& PushedWhileIteriting*/);		//Get all event_data variables, time delay as seconds float
 	inline void Get_event_data_type(EventType& type);																				//Get event type by reference
 	inline EventType Get_event_data_type();																							//Get event type as return value
 	inline void Get_event_data_frame_delay(unsigned int& FrameDelay);																//Get event frame delay by reference
@@ -303,8 +303,8 @@ union Event
 	inline unsigned int Get_event_data_time_delay();																				//Get event time delay as miliseconds uint as return value
 	inline void Get_event_data_time_delay_f(float& TimeDelay);																		//Get event time delay as seconds float by reference
 	inline float Get_event_data_time_delay_f();																						//Get event time delay as seconds float as return value
-	inline void Get_event_data_PushedWhileIteriting(bool& PushedWhileIteriting);													//DO NOT USE, This is to get the bool by refernce, used by Event System for correct event management
-	inline bool Get_event_data_PushedWhileIteriting();																				//DO NOT USE, This is to get the bool as return value, used by Event System for correct event management
+	//inline void Get_event_data_PushedWhileIteriting(bool& PushedWhileIteriting);													//DO NOT USE, This is to get the bool by refernce, used by Event System for correct event management
+	//inline bool Get_event_data_PushedWhileIteriting();																			//DO NOT USE, This is to get the bool as return value, used by Event System for correct event management
 
 	/*--------------------Event Data--------------------*/
 	uint64_t event_data = 0;
@@ -353,7 +353,8 @@ inline void Event::Set_event_data(EventType type, unsigned int FrameDelay, unsig
 	Set_event_data_type(type);
 	Set_event_data_frame_delay(FrameDelay);
 	Set_event_data_time_delay(TimeDelay);
-	Set_event_data_PushedWhileIteriting(false);
+	//Set_event_data_PushedWhileIteriting(false);
+	event_data = event_data | (uint64_t)false;
 }
 
 inline void Event::Set_event_data_f(EventType type, unsigned int FrameDelay, float TimeDelay)
@@ -381,23 +382,25 @@ inline void Event::Set_event_data_time_delay_f(float TimeDelay)
 	Set_event_data_time_delay((unsigned int)(TimeDelay * 1000.0f));
 }
 
+/*
 inline void Event::Set_event_data_PushedWhileIteriting(bool PushedWhileIteriting)
 {
 	event_data = event_data | (uint64_t)PushedWhileIteriting;
 }
+*/
 
-inline void Event::Get_event_data(EventType& type, unsigned int& FrameDelay, unsigned int& TimeDelay, bool& PushedWhileIteriting)
+inline void Event::Get_event_data(EventType& type, unsigned int& FrameDelay, unsigned int& TimeDelay/*, bool& PushedWhileIteriting*/)
 {
 	Get_event_data_type(type);
 	Get_event_data_frame_delay(FrameDelay);
 	Get_event_data_time_delay(TimeDelay);
-	Get_event_data_PushedWhileIteriting(PushedWhileIteriting);
+	//Get_event_data_PushedWhileIteriting(PushedWhileIteriting);
 }
 
-inline void Event::Get_event_data_f(EventType & type, unsigned int & FrameDelay, float & TimeDelay, bool & PushedWhileIteriting)
+inline void Event::Get_event_data_f(EventType& type, unsigned int& FrameDelay, float& TimeDelay/*, bool& PushedWhileIteriting*/)
 {
 	unsigned int TimeDlayMS = 0;
-	Get_event_data(type, FrameDelay, TimeDlayMS, PushedWhileIteriting);
+	Get_event_data(type, FrameDelay, TimeDlayMS/*, PushedWhileIteriting*/);
 	TimeDelay = (float)TimeDlayMS / 1000.0f;
 }
 
@@ -445,6 +448,7 @@ inline float Event::Get_event_data_time_delay_f()
 	return (float)TimeDlayMS / 1000.0f;
 }
 
+/*
 inline void Event::Get_event_data_PushedWhileIteriting(bool& PushedWhileIteriting)
 {
 	PushedWhileIteriting = (event_data & 0x000000000000FFFF);
@@ -454,5 +458,6 @@ inline bool Event::Get_event_data_PushedWhileIteriting()
 {
 	return (event_data & 0x000000000000FFFF);
 }
+*/
 
 #endif //EVENTDEF_V2

@@ -73,20 +73,26 @@ public:
 	void ClearEvents(EventType type, Component* component);
 
 private:
+	void IterateDrawV(float dt);
+	void IterateDrawGlowV(float dt);
+	void IterateDrawAlphaV(float dt);
+	void IterateNoDrawV(float dt);
 	EventValidation ValidEvent(Event& event, float dt);
 
 private:
 	std::multimap<uint, Event> DrawV;							//Draw events are stored here ordered by resource number (faster draw, less bind/unbind)
-	std::multimap<uint, Event> DrawGlowV;							//Draw glow events are stored here ordered by resource number (faster draw, less bind/unbind)
+	std::multimap<uint, Event> DrawGlowV;						//Draw glow events are stored here ordered by resource number (faster draw, less bind/unbind)
 	std::multimap<float, Event> DrawAlphaV;						//Draw events are stored here ordered by distance to active camera
 	std::multimap<EventType, Event> NoDrawV;					//No-Draw events are stored here ordered by EventType enum, less eventvector change when iterating
+	std::list<Event> PushedWhileIteratingEvents;				//Store events while iterating, used by event system internally
 	std::map<EventType, std::vector<Module*>> MEventListeners;
-	uint MapSetToIterate = 0;
 	bool IteratingMaps = false;
+	/*
 	bool EventPushedWhileIteratingMaps_DrawV = false;
 	bool EventPushedWhileIteratingMaps_DrawGlowV = false;
 	bool EventPushedWhileIteratingMaps_DrawAlphaV = false;
 	bool EventPushedWhileIteratingMaps_NoDrawV = false;
+	*/
 };
 
 enum EventValidation

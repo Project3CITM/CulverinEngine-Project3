@@ -74,8 +74,50 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 {
 	perf_timer.Start();
 	IteratingMaps = true;
-	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
 	//Draw opaque events
+	IterateDrawV(dt);
+	//Draw opaque with glow events
+	IterateDrawGlowV(dt);
+	//Draw alpha events
+	IterateDrawAlphaV(dt);
+	//NoDraw events
+	IterateNoDrawV(dt);
+	IteratingMaps = false;
+	//Push events added while iterating to the respective multimaps
+	if (PushedWhileIteratingEvents.size() > 0)
+	{
+		for (std::list<Event>::const_iterator item = PushedWhileIteratingEvents.cbegin(); item != PushedWhileIteratingEvents.cend(); item++)
+			PushEvent(item._Ptr->_Myval);
+		PushedWhileIteratingEvents.clear();
+	}
+	/*
+	//Draw opaque events
+	if (EventPushedWhileIteratingMaps_DrawV)
+		for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend(); item++)
+			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
+	//Draw alpha events
+	if (EventPushedWhileIteratingMaps_DrawGlowV)
+		for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend(); item++)
+			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
+	//Draw alpha events
+	if (EventPushedWhileIteratingMaps_DrawAlphaV)
+		for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend(); item++)
+			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
+	//NoDraw events
+	if (EventPushedWhileIteratingMaps_NoDrawV)
+		for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend(); item++)
+			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
+	EventPushedWhileIteratingMaps_DrawV = false;
+	EventPushedWhileIteratingMaps_DrawGlowV = false;
+	EventPushedWhileIteratingMaps_DrawAlphaV = false;
+	EventPushedWhileIteratingMaps_NoDrawV = false;
+	*/
+	postUpdate_t = perf_timer.ReadMs();
+	return update_status::UPDATE_CONTINUE;
+}
+
+void ModuleEventSystemV2::IterateDrawV(float dt)
+{
 	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -89,9 +131,6 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 			case EDraw::DrawType::DRAW_2D:
 				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
 				break;
-//			case EDraw::DrawType::DRAW_3D_ALPHA:
-//				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
-//				break;
 //			case EDraw::DrawType::DRAW_SCREEN_CANVAS:
 //				(*item2)->OnEvent(item._Ptr->_Myval.second);
 //				break;
@@ -110,7 +149,10 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 			continue;
 		}
 	}
-	//Draw opaque with glow events
+}
+
+void ModuleEventSystemV2::IterateDrawGlowV(float dt)
+{
 	for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -145,14 +187,17 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 			continue;
 		}
 	}
-	//Draw alpha events
+}
+
+void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
+{
 	/*
 	bool alpha_draw = false;
 	if (DrawAlphaV.size() > 0) alpha_draw = true;
 	if (alpha_draw)
 	{
-		glEnable(GL_BLEND);
-		glDisable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
 	}
 	*/
 	for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
@@ -167,10 +212,6 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 			case EventType::EVENT_DRAW:
 				switch (item._Ptr->_Myval.second.draw.Dtype)
 				{
-//				case EDraw::DrawType::DRAW_3D:
-//				case EDraw::DrawType::DRAW_2D:
-//					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
-//					break;
 				case EDraw::DrawType::DRAW_3D_ALPHA:
 					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
 					break;
@@ -202,11 +243,15 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	/*
 	if (alpha_draw)
 	{
-		glDisable(GL_BLEND);
-		glEnable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
 	}
 	*/
-	//NoDraw events
+}
+
+void ModuleEventSystemV2::IterateNoDrawV(float dt)
+{
+	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
 	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
 	{
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
@@ -237,37 +282,15 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 		}
 		item = NoDrawV.erase(item);
 	}
-	IteratingMaps = false;
-
-	//Draw opaque events
-	if (EventPushedWhileIteratingMaps_DrawV)
-		for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend(); item++)
-			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
-	//Draw alpha events
-	if (EventPushedWhileIteratingMaps_DrawGlowV)
-		for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend(); item++)
-			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
-	//Draw alpha events
-	if (EventPushedWhileIteratingMaps_DrawAlphaV)
-		for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend(); item++)
-			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
-	//NoDraw events
-	if (EventPushedWhileIteratingMaps_NoDrawV)
-		for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend(); item++)
-			item._Ptr->_Myval.second.Set_event_data_PushedWhileIteriting(false);
-	EventPushedWhileIteratingMaps_DrawV = false;
-	EventPushedWhileIteratingMaps_DrawGlowV = false;
-	EventPushedWhileIteratingMaps_DrawAlphaV = false;
-	EventPushedWhileIteratingMaps_NoDrawV = false;
-	postUpdate_t = perf_timer.ReadMs();
-	return update_status::UPDATE_CONTINUE;
 }
 
 EventValidation ModuleEventSystemV2::ValidEvent(Event& event, float dt)
 {
 	//If this event is pushed while we iterate, skip it for the next frame
+	/*
 	if (event.Get_event_data_PushedWhileIteriting())
 		return EventValidation::EVENT_VALIDATION_ADD_CONTINUE;
+	*/
 	//Check if it is a valid event type
 	EventType type = event.Get_event_data_type();
 	if ((type < 0) || (type >= EventType::MAXEVENTS))
@@ -314,14 +337,22 @@ bool ModuleEventSystemV2::CleanUp()
 
 void ModuleEventSystemV2::PushEvent(Event& event)
 {
+	if (IteratingMaps)
+	{
+		PushedWhileIteratingEvents.push_back(event);
+		return;
+	}
+
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_PARTICLE_DRAW:
+		/*
 		if (IteratingMaps)
 		{
 			event.Set_event_data_PushedWhileIteriting(true);
 			EventPushedWhileIteratingMaps_DrawAlphaV = true;
 		}
+		*/
 		DrawAlphaV.insert(std::pair<float, Event>(-((Particle*)event.particle_draw.ToDraw)->CameraDistance, event));
 		break;
 	case EventType::EVENT_DRAW:
@@ -331,27 +362,33 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		switch (event.draw.Dtype)
 		{
 		case event.draw.DRAW_3D:
+			/*
 			if (IteratingMaps)
 			{
 				event.Set_event_data_PushedWhileIteriting(true);
 				EventPushedWhileIteratingMaps_DrawV = true;
 			}
+			*/
 			DrawV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event));
 			break;
 		case event.draw.DRAW_3D_GLOW:
+			/*
 			if (IteratingMaps)
 			{
 				event.Set_event_data_PushedWhileIteriting(true);
 				EventPushedWhileIteratingMaps_DrawGlowV = true;
 			}
+			*/
 			DrawGlowV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event));
 			break;
 		case event.draw.DRAW_3D_ALPHA:
+			/*
 			if (IteratingMaps)
 			{
 				event.Set_event_data_PushedWhileIteriting(true);
 				EventPushedWhileIteratingMaps_DrawAlphaV = true;
 			}
+			*/
 			DrawAlphaV.insert(std::pair<float, Event>(DistanceCamToObject, event));
 			break;
 		case event.draw.DRAW_2D: 
@@ -368,6 +405,7 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 	}
 	case EventType::EVENT_REQUEST_3D_3DA_MM:
 	{
+		/*
 		if (IteratingMaps)
 		{
 			event.Set_event_data_PushedWhileIteriting(true);
@@ -375,6 +413,7 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 			EventPushedWhileIteratingMaps_DrawAlphaV = true;
 			EventPushedWhileIteratingMaps_NoDrawV = true;
 		}
+		*/
 		Event event_temp;
 		event_temp.Set_event_data(EventType::EVENT_SEND_3D_3DA_MM);
 		event_temp.send_3d3damm.MM3DDrawEvent = &DrawV;
@@ -384,11 +423,13 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		break;
 	}
 	default:
+		/*
 		if (IteratingMaps)
 		{
 			event.Set_event_data_PushedWhileIteriting(true);
 			EventPushedWhileIteratingMaps_NoDrawV = true;
 		}
+		*/
 		NoDrawV.insert(std::pair<EventType, Event>(event.Get_event_data_type(), event));
 		break;
 	}
