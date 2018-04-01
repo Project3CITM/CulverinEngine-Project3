@@ -22,6 +22,16 @@ void AddListener(EventType type, Module* listener)
 	App->event_system_v2->AddListener(type, listener);
 }
 
+void ClearEvents(EventType type)
+{
+	App->event_system_v2->ClearEvents(type);
+}
+
+void ClearEvents(EventType type, Component* component)
+{
+	App->event_system_v2->ClearEvents(type, component);
+}
+
 ModuleEventSystemV2::ModuleEventSystemV2(bool start_enabled)
 {
 	name = "Event_System_V2";
@@ -83,17 +93,17 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	active_frame->Bind("Scene");
 	IterateDrawV(dt);
 	active_frame->UnBind("Scene");
-	//Draw opaque with glow events
-	App->renderer3D->render_mode = RenderMode::GLOW;
-	active_frame = App->scene->scene_buff;
-	active_frame->Bind("Scene");
-	IterateDrawGlowV(dt);
-	active_frame->UnBind("Scene");
 	//Draw alpha events
 	App->renderer3D->render_mode = RenderMode::DEFAULT;
 	active_frame = App->scene->scene_buff;
 	active_frame->Bind("Scene");
 	IterateDrawAlphaV(dt);
+	active_frame->UnBind("Scene");
+	//Draw opaque with glow events
+	App->renderer3D->render_mode = RenderMode::GLOW;
+	active_frame = App->scene->glow_buff;
+	active_frame->Bind("Scene");
+	IterateDrawGlowV(dt);
 	active_frame->UnBind("Scene");
 	//NoDraw events
 	App->renderer3D->render_mode = RenderMode::DEFAULT;
@@ -194,7 +204,7 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 //			case EDraw::DrawType::DRAW_WORLD_CANVAS:
 //				break;
 			}
-			item = DrawV.erase(item);
+			item = DrawGlowV.erase(item);
 			break;
 		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
 		case EventValidation::EVENT_VALIDATION_ADD_CONTINUE:
@@ -202,7 +212,7 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 			continue;
 		case EventValidation::EVENT_VALIDATION_ERASE_CONTINUE:
 		case EventValidation::EVENT_VALIDATION_ERROR:
-			item = DrawV.erase(item);
+			item = DrawGlowV.erase(item);
 			continue;
 		}
 	}
@@ -389,15 +399,6 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 			}
 			*/
 			DrawV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event));
-			break;
-		case event.draw.DRAW_3D_GLOW:
-			/*
-			if (IteratingMaps)
-			{
-				event.Set_event_data_PushedWhileIteriting(true);
-				EventPushedWhileIteratingMaps_DrawGlowV = true;
-			}
-			*/
 			DrawGlowV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event));
 			break;
 		case event.draw.DRAW_3D_ALPHA:
@@ -489,39 +490,42 @@ void ModuleEventSystemV2::AddListener(EventType type, Module* listener)
 
 void ModuleEventSystemV2::ClearEvents(EventType type)
 {
-	/*
 	switch (type)
 	{
 	case EventType::EVENT_DRAW:
-		MM3DDrawEvent.clear();
-		for (std::multimap<float, Event>::const_iterator item = MM3DADrawEvent.cbegin(); item != MM3DADrawEvent.cend();)
+		DrawV.clear();
+		DrawGlowV.clear();
+		for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
 		{
-			if (item._Ptr->_Myval.second.type == type)
-				item = MM3DADrawEvent.erase(item);
+			if (item._Ptr->_Myval.second.Get_event_data_type() == type) item = DrawAlphaV.erase(item);
 			else item++;
 		}
-		MM2DCanvasDrawEvent.clear();
+		for (std::list<Event>::const_iterator item = PushedWhileIteratingEvents.cbegin(); item != PushedWhileIteratingEvents.cend();)
+		{
+			if (item._Ptr->_Myval.Get_event_data_type() == type) item = PushedWhileIteratingEvents.erase(item);
+			else item++;
+		}
 		break;
 	case EventType::EVENT_PARTICLE_DRAW:
-		for (std::multimap<float, Event>::const_iterator item = MM3DADrawEvent.cbegin(); item != MM3DADrawEvent.cend();)
+		for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
 		{
-			if (item._Ptr->_Myval.second.type == type)
-				item = MM3DADrawEvent.erase(item);
+			if (item._Ptr->_Myval.second.Get_event_data_type() == type) item = DrawAlphaV.erase(item);
+			else item++;
+		}
+		for (std::list<Event>::const_iterator item = PushedWhileIteratingEvents.cbegin(); item != PushedWhileIteratingEvents.cend();)
+		{
+			if (item._Ptr->_Myval.Get_event_data_type() == type) item = PushedWhileIteratingEvents.erase(item);
 			else item++;
 		}
 		break;
-	case EventType::EVENT_SEND_3D_3DA_MM:
-		//QShadowMapEvent
-		break;
 	default:
-		for (std::multimap<EventType, Event>::const_iterator item = MMNormalEvent.cbegin(); item != MMNormalEvent.cend();)
+		for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
 		{
-			if (item._Ptr->_Myval.first == type) item = MMNormalEvent.erase(item);
+			if (item._Ptr->_Myval.first == type) item = NoDrawV.erase(item);
 			else item++;
 		}
 		break;
 	}
-	*/
 }
 
 void ModuleEventSystemV2::ClearEvents(EventType type, Component* component)

@@ -132,7 +132,7 @@ update_status ModuleGUI::Update(float dt)
 				if (App->scene->scene_saved)
 				{
 					App->scene->DeleteAllGameObjects(App->scene->root);
-					App->event_system_v2->ClearEvents(EventType::EVENT_DRAW);
+					ClearEvents(EventType::EVENT_DRAW);
 					App->scene->root->SetName("NewScene");
 					App->scene->CreateMainCamera(nullptr);
 					App->resource_manager->ReImportAllScripts();

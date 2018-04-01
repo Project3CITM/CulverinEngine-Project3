@@ -47,9 +47,8 @@ enum EventValidation;
 void PushEvent(Event& event);
 void PushImmediateEvent(Event& event);
 void AddListener(EventType type, Module* listener);
-//TODO add clear functions
-//void ClearEvents(EventType type);
-//void ClearEvents(EventType type, Component* component);
+void ClearEvents(EventType type);
+void ClearEvents(EventType type, Component* component);
 
 class ModuleEventSystemV2 : public Module
 {
