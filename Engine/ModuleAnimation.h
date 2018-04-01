@@ -7,7 +7,7 @@
 class AnimableComponent;
 enum ParameterValue;
 //union AnimationValue;
-
+struct AnimData;
 struct KeyData
 {
 	KeyData();
@@ -28,6 +28,8 @@ struct KeyFrameData
 	KeyFrameData(int key, AnimationValue value);
 	~KeyFrameData();
 	bool ShowKeyValue(int i);
+	void CaptureKeyValue(int i);
+
 	void ShowKeyOnTime();
 
 	int ReturnKeyDataPos(int& selected);
@@ -44,7 +46,7 @@ struct KeyFrameData
 	bool invalid_key = false;
 	std::vector<KeyData> key_data;
 	ParameterValue parameter;
-
+	AnimData* my_anim_data = nullptr;
 };
 struct AnimData
 {

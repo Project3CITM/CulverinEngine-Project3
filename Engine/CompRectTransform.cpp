@@ -549,6 +549,37 @@ std::vector<float3> CompRectTransform::GenerateQuadVertices()
 	return ret;
 }
 
+AnimationValue CompRectTransform::GetParameter(ParameterValue parameter)
+{
+	AnimationValue ret;
+	switch (parameter)
+	{
+	case PARAMETER_NONE:
+		break;
+	case RECT_TRANSFORM_POSITION:
+		ret.f3_value = GetPos();
+		break;
+	case RECT_TRANSFORM_ROTATION:
+		ret.f3_value = GetRotEuler();
+		break;
+	case RECT_TRANSFORM_SCALE:
+		ret.f3_value = GetScale();
+
+		break;
+	case RECT_TRANSFORM_WIDTH:
+		ret.f_value = GetWidth();
+
+		break;
+	case RECT_TRANSFORM_HEIGHT:
+		ret.f_value = GetHeight();
+
+		break;
+	default:
+		break;
+	}
+	return ret;
+}
+
 int CompRectTransform::GetWidth()const
 {
 	return width;

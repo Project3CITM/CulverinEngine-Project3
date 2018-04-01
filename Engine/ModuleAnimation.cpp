@@ -212,6 +212,8 @@ void ModuleAnimation::ShowNewAnimationWindow()
 					if (!animation_json->animations[find].HaveKeyFrameData(new_value.type))
 					{
 						animation_json->animations[find].key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
+						animation_json->animations[find].key_frame_data.back().my_anim_data = &animation_json->animations[find];
+
 					}
 
 				}
@@ -220,7 +222,9 @@ void ModuleAnimation::ShowNewAnimationWindow()
 					AnimData tmp_anim_data;
 					tmp_anim_data.data = item;
 					tmp_anim_data.key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
+					tmp_anim_data.key_frame_data.back().my_anim_data = &tmp_anim_data;
 					animation_json->animations.push_back(tmp_anim_data);
+
 				}
 				new_animation_window = false;
 			}
@@ -476,6 +480,7 @@ void ModuleAnimation::LoadAnimation(AnimationJson** animation, const char* path)
 					}
 					keyframe_data.key_data.push_back(key_data_item);
 				}
+				keyframe_data.my_anim_data = &anim_data;
 				anim_data.key_frame_data.push_back(keyframe_data);
 			}
 			(*animation)->animations.push_back(anim_data);		
@@ -631,9 +636,17 @@ bool KeyFrameData::ShowKeyValue(int i)
 	default:
 		break;
 	}
+	std::string capture_name;
+	capture_name = "Camputure value##campture_value";
+	capture_name += std::to_string(i);
+	if (ImGui::Button(capture_name.c_str()))
+	{
+		CaptureKeyValue(i);
+	}
 	std::string erase_name;
 	erase_name = "Erase Keyframe##erase_key";
 	erase_name += std::to_string(i);
+	ImGui::SameLine();
 	if (ImGui::Button(erase_name.c_str()))
 	{
 		return false;
@@ -641,6 +654,12 @@ bool KeyFrameData::ShowKeyValue(int i)
 	ImGui::PopItemWidth();
 	return true;
 
+}
+
+void KeyFrameData::CaptureKeyValue(int i)
+{
+	key_data[i].key_values = my_anim_data->data->GetParameter(parameter);
+	return;
 }
 
 void KeyFrameData::ShowKeyOnTime()

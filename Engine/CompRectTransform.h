@@ -21,8 +21,8 @@ public:
 
 	AnimationData ShowParameters();
 	const char* ReturnParameterName(ParameterValue parameter);
-
 	void SetNewAnimationValue(const AnimationData& value);
+
 	void SetWidth(int set_width);
 	void SetHeight(int set_height);
 	void SetMaxAnchor(float2 set_max_anchor);
@@ -30,6 +30,9 @@ public:
 	void SetPivot(float2 set_pivot);
 	void SetUpdateRect(bool set_update_rect);
 	std::vector<float3> GenerateQuadVertices();
+
+	AnimationValue GetParameter(ParameterValue parameter);
+
 	int GetWidth()const;
 	int GetHeight()const;
 	float2 GetMaxAnchor()const;
