@@ -1041,6 +1041,10 @@ void ModuleMap::ShowTextWithColor(ImGuiCol_ type,int id)
 	{
 		ImGui::PushStyleColor(type, ImVec4(0.55f, 0.45f, 0.3f, 1.0f));
 	}
+	else if (id >= 17) // ...
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.2f, 0.81f, 0.31f, 1.0f));
+	}
 	else if (id == 20) // Same Background
 	{
 		ImGui::PushStyleColor(type, ImVec4(0.136f, 0.136f, 0.136f, 1.0f));
@@ -1157,7 +1161,7 @@ void ModuleMap::ImportMap()
 				{
 					std::string number;
 					number += line[x];
-					map[x][y] = atoi(number.c_str());
+					map[x][y] = atoi(number.c_str())-1;
 					//t += 1;
 				}
 			}
@@ -1166,9 +1170,9 @@ void ModuleMap::ImportMap()
 			{
 				for (int x = 0; x < width_map; x++)
 				{
-					if (map[x][y] > 3)
+					if (map[x][y] > 17)
 					{
-						map[x][y] = 1;
+						map[x][y] = -1;
 					}
 					map_string += std::to_string(map[x][y]);
 				}
