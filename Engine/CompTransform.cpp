@@ -94,11 +94,6 @@ void CompTransform::Update(float dt)
 				}
 			}
 
-			if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN)
-			{
-				SetUpVector(float3(0, 0.7, 0.7));
-			}
-
 			// EDIT TRANSFORM QITH GUIZMO
 			ImGuizmo::Manipulate(App->camera->GetViewMatrix(), App->camera->GetProjMatrix(), mCurrentGizmoOperation, transform_mode, global_transposed.ptr());
 
