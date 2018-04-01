@@ -160,6 +160,9 @@ void ClickAction::ShowOnClickInfo()
 				}
 				if (ImGui::BeginCombo("##SelectFunction", actions[i].current_function.c_str()))
 				{
+					if (actions[i].script->csharp != nullptr)
+					{
+					
 					for (int id = 0; id < actions[i].script->csharp->methods.size(); id++)
 					{
 						if (ImGui::Selectable(actions[i].script->csharp->methods[id].name_method.c_str()) &&
@@ -172,7 +175,8 @@ void ClickAction::ShowOnClickInfo()
 								InitValueParamater(i);
 						}
 					}
-
+					
+					}
 					ImGui::EndCombo();
 				}
 				ImGui::PopItemWidth();
