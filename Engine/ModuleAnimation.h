@@ -89,7 +89,7 @@ private:
 private:
 	int max_keys = 20;
 	int sample_rate = 60;
-
+	bool select_animation_window = false;
 	bool new_animation_window = false;
 	AnimationJson* animation_json = nullptr;
 };

@@ -33,19 +33,47 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 			{
 				if (ImGui::MenuItem("New Animation",NULL,&new_animation,(((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected() != nullptr)))
 				{
-
+					GameObject* go = ((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected();
+					if (go != nullptr)
+					{
+						CompUIAnimation* item = (CompUIAnimation*)go->FindComponentByType(Comp_Type::C_ANIMATION_UI);
+						if (item != nullptr)
+						{
+							if (item->animation_json != nullptr)
+							{
+								RELEASE(item->animation_json);
+							}
+							item->animation_json = new AnimationJson();
+							animation_json = item->animation_json;
+						}
+					}
 				}
 				if (ImGui::MenuItem("Save Animation", NULL, &save_animation, (animation_json != nullptr)))
 				{
-
+					App->json_seria->SaveUIAnimation(animation_json, App->fs->GetMainDirectory().c_str(), animation_json->name.c_str());
 
 				}
 				if (ImGui::MenuItem("Load Animation", NULL, &open_animation, (((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected() != nullptr)))
 				{
-
-				}
-
-				
+					AnimationJson* new_animation_json = ShowAnimationJsonFiles(select_animation_window);
+					if (new_animation_json != nullptr)
+					{
+						GameObject* go = ((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected();
+						if (go != nullptr)
+						{
+							CompUIAnimation* item = (CompUIAnimation*)go->FindComponentByType(Comp_Type::C_ANIMATION_UI);
+							if (item != nullptr)
+							{
+								if (item->animation_json != nullptr)
+								{
+									RELEASE(item->animation_json);
+								}
+								item->animation_json = new_animation_json;
+								animation_json = item->animation_json;
+							}
+						}
+					}
+				}			
 				ImGui::Separator();
 				if (ImGui::MenuItem("Close", NULL, !active))
 				{
@@ -329,13 +357,13 @@ void ModuleAnimation::ShowAnimationKeyFrameInfo()
 
 AnimationJson* ModuleAnimation::ShowAnimationJsonFiles(bool& active)
 {
-	AnimationJson* ret = nullptr;
+	AnimationJson* ret = new AnimationJson();
 	std::vector<std::string> all_prefabs; // Vector with all animations in assets
 
 	App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "prefab.json");
 	App->fs->FixNames_directories(all_prefabs);
 	if (all_prefabs.empty())
-		return ret;
+		return nullptr;
 	if (!ImGui::Begin("Animations:", &active, ImGuiWindowFlags_NoCollapse)) //TODO ELLIOT CLOSE Windows example
 	{
 		ImGui::End();
@@ -356,7 +384,7 @@ AnimationJson* ModuleAnimation::ShowAnimationJsonFiles(bool& active)
 			LoadAnimation(&ret, all_prefabs[selected].c_str());
 		}
 	}
-	return ret;
+	return nullptr;
 }
 
 
@@ -375,7 +403,10 @@ void ModuleAnimation::LoadAnimation(AnimationJson** animation, const char* path)
 {
 	GameObject* go = ((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected();
 	if (go == nullptr)
+	{
+		RELEASE(*animation);
 		return;
+	}
 	JSON_Value* config_file;
 	JSON_Object* config;
 
