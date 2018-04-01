@@ -34,6 +34,7 @@ bool Project::Start()
 	icon_script = App->textures->LoadTexture("Images/UI/icon_script.png");
 	icon_unknown = App->textures->LoadTexture("Images/UI/icon_unknown.png");
 	icon_scene = App->textures->LoadTexture("Images/UI/icon_Culverin.png");
+	icon_prefab = App->textures->LoadTexture("Images/UI/icon_prefab.png");
 
 	//directory_see = App->fs->GetMainDirectory();
 	//directory_see = "Assets\\";
@@ -387,7 +388,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 		}
 		case TYPE_FILE::PREFAB:
 		{
-			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_fbx, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_prefab, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 			{
 				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())

@@ -82,6 +82,7 @@ private:
 	uint icon_png;
 	uint icon_jpg;
 	uint icon_fbx;
+	uint icon_prefab;
 	uint icon_obj;
 	uint icon_script;
 	uint icon_unknown;
