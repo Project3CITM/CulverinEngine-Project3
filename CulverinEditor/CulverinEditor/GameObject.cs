@@ -8,9 +8,7 @@ namespace CulverinEditor
     public sealed class GameObject : Object
     {
         public GameObject()
-        {
-            CreateGameObject(this);
-        }
+        {   }
 
         public GameObject gameObject
         {

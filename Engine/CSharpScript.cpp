@@ -240,7 +240,7 @@ void CSharpScript::LoadScript()
 {
 	if (CSObject)
 	{
-		mono_runtime_object_init(CSObject);
+		//mono_runtime_object_init(CSObject);
 
 		//Create main Functions
 		Start = CreateMainFunction("Start", DefaultParam, FunctionBase::CS_Start);
@@ -273,12 +273,6 @@ MainMonoMethod CSharpScript::CreateMainFunction(std::string function, int parame
 //Depending on the function passed, script will perform its actions
 void CSharpScript::DoMainFunction(FunctionBase function, void** parameters)
 {
-	if (!test)
-	{
-		App->importer->iScript->UpdateMonoScript(this, GetMonoObject());
-		test = true;
-	}
-
 	switch (function)
 	{
 	case FunctionBase::CS_Start:
@@ -402,7 +396,7 @@ bool CSharpScript::CheckMonoObject(MonoObject* object)
 
 MonoObject* CSharpScript::GetMonoObject() const
 {
-	return CSObject;
+	return mono_gchandle_get_target(CSReference);
 }
 
 void CSharpScript::SetMonoObject(MonoObject* new_object)
@@ -435,6 +429,9 @@ void CSharpScript::CreateCSObject()
 	if (CSClass)
 	{
 		CSObject = mono_object_new(App->importer->iScript->GetDomain(), CSClass);
+		CSReference = mono_gchandle_new(CSObject, false);
+		mono_runtime_object_init(CSObject);
+		App->importer->iScript->UpdateMonoScript(this, CSReference);
 	}
 	else
 	{
@@ -900,8 +897,8 @@ void CSharpScript::SetVarValue(ScriptVariable* variable, void* new_val)
 
 void CSharpScript::CreateGameObject(MonoObject* object)
 {
-	GameObject* gameobject = App->scene->CreateGameObject();
-	App->importer->iScript->UpdateMonoMap(gameobject, object);
+	//GameObject* gameobject = App->scene->CreateGameObject();
+	//App->importer->iScript->UpdateMonoMap(gameobject, object);
 	//game_objects[object] = gameobject;
 }
 
@@ -1190,7 +1187,7 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 					MonoObject* new_object = mono_object_new(CSdomain, classT);
 					if (new_object)
 					{
-						App->importer->iScript->UpdateMonoComp(comp, new_object);
+						App->importer->iScript->UpdateMonoComp(comp, mono_gchandle_new(new_object, false));
 						comp->SetInScripting();
 						return new_object;
 					}
@@ -1437,7 +1434,8 @@ MonoObject * CSharpScript::GetMaterialByName(MonoString * name)
 			MonoObject* new_object = mono_object_new(CSdomain, classT);
 			if (new_object)
 			{
-				App->importer->iScript->UpdateMonoMaterial(comp, new_object);
+				mono_runtime_object_init(new_object);
+				App->importer->iScript->UpdateMonoMaterial(comp, mono_gchandle_new(new_object, false));
 
 				return new_object;
 			}

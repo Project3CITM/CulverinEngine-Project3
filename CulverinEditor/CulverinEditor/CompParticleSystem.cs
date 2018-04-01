@@ -9,6 +9,9 @@ namespace CulverinEditor
 {
     public class CompParticleSystem : CulverinBehaviour
     {
+        public CompParticleSystem()
+        { }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void ActivateEmission(bool active);
 

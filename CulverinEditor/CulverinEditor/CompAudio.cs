@@ -9,6 +9,9 @@ namespace CulverinEditor
 {
     public class CompAudio : CulverinBehaviour
     {
+        public CompAudio()
+        {  }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern bool PlayEvent(string name);
 

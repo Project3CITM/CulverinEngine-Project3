@@ -95,7 +95,7 @@ bool ImportScript::InitScriptingSystem()
 void ImportScript::ShutdownMono()
 {
 	//Unload_domain();
-	mono_jit_cleanup(mono_domain_get());
+	mono_jit_cleanup(domain);
 }
 
 bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
@@ -409,9 +409,8 @@ void ImportScript::SetMonoMap(GameObject* gameobject, bool is_root)
 			MonoObject* new_object = mono_object_new(GetMainDomain(), c);
 			if (new_object)
 			{
-				//CSSelfObject = new_object;
-				//mono_map.insert(new_object, gameobject);
-				mono_map.insert(std::pair<MonoObject*, GameObject*>(new_object, gameobject));
+				mono_runtime_object_init(new_object);
+				mono_map.insert(std::pair<uint, GameObject*>(mono_gchandle_new(new_object, false), gameobject));
 			}
 		}
 	}
@@ -426,7 +425,7 @@ void ImportScript::UpdateMonoMap(GameObject* modificate, bool do_delete)
 {
 	if (do_delete)
 	{
-		std::multimap<MonoObject*, GameObject*>::iterator it = mono_map.begin();
+		std::multimap<uint, GameObject*>::iterator it = mono_map.begin();
 		while (it != mono_map.end())
 		{
 			if (it->second == modificate)
@@ -447,9 +446,8 @@ void ImportScript::UpdateMonoMap(GameObject* modificate, bool do_delete)
 			MonoObject* new_object = mono_object_new(GetMainDomain(), c);
 			if (new_object)
 			{
-				//CSSelfObject = new_object;
-				//mono_map[new_object] = modificate;
-				mono_map.insert(std::pair<MonoObject*, GameObject*>(new_object, modificate));
+				mono_runtime_object_init(new_object);
+				mono_map.insert(std::pair<uint, GameObject*>(mono_gchandle_new(new_object, false), modificate));
 			}
 		}
 	}
@@ -457,19 +455,19 @@ void ImportScript::UpdateMonoMap(GameObject* modificate, bool do_delete)
 
 void ImportScript::UpdateMonoMap(GameObject* modificate, MonoObject* object)
 {
-	mono_map.insert(std::pair<MonoObject*, GameObject*>(object, modificate));
+	//mono_map.insert(std::pair<uint, GameObject*>(object, modificate));
 }
 
 MonoObject* ImportScript::GetMonoObject(GameObject* gameobject)
 {
 	if (gameobject != nullptr/* && gameobject->IsDeleteFixed()*/)
 	{
-		std::multimap<MonoObject*, GameObject*>::iterator it = mono_map.begin();
+		std::multimap<uint, GameObject*>::iterator it = mono_map.begin();
 		while (it != mono_map.end())
 		{
 			if (it->second->GetUUID() == gameobject->GetUUID())
 			{
-				return it->first;
+				return mono_gchandle_get_target(it->first);
 			}
 			it++;
 		}
@@ -481,31 +479,38 @@ GameObject* ImportScript::GetGameObject(MonoObject* monoobject)
 {
 	if (monoobject != nullptr)
 	{
-		std::multimap<MonoObject*, GameObject*>::iterator it = mono_map.find(monoobject);
-		if (it != mono_map.end())
-			return it->second;
+		std::multimap<uint, GameObject*>::iterator it = mono_map.begin();
+		while (it != mono_map.end())
+		{
+			if (mono_gchandle_get_target(it->first) == monoobject)
+			{
+				return it->second;
+			}
+			it++;
+		}
 	}
+	LOG("RETURN NULLPTR");
 	return nullptr;
 }
 
-void ImportScript::UpdateMonoComp(Component* modificate, MonoObject* object)
+void ImportScript::UpdateMonoComp(Component* modificate, uint csreference)
 {
-	mono_comp.insert(std::pair<MonoObject*, Component*>(object, modificate));
+	mono_comp.insert(std::pair<uint, Component*>(csreference, modificate));
 }
 
 MonoObject* ImportScript::GetMonoObject(Component* component)
 {
 	if (component != nullptr/* && gameobject->IsDeleteFixed()*/)
 	{
-		std::multimap<MonoObject*, Component*>::iterator it = mono_comp.begin();
+		std::multimap<uint, Component*>::iterator it = mono_comp.begin();
 		while (it != mono_comp.end())
 		{
 			if (it->second == component)
 			{
-				return it->first;
+				return mono_gchandle_get_target(it->first);
 			}
 			it++;
-		}
+		}		
 	}
 	return nullptr;
 }
@@ -514,26 +519,32 @@ Component* ImportScript::GetComponentMono(MonoObject* monoobject)
 {
 	if (monoobject != nullptr)
 	{
-		std::multimap<MonoObject*, Component*>::iterator it = mono_comp.find(monoobject);
-		if (it != mono_comp.end())
-			return it->second;
+		std::multimap<uint, Component*>::iterator it = mono_comp.begin();
+		while (it != mono_comp.end())
+		{
+			if (mono_gchandle_get_target(it->first) == monoobject)
+			{
+				return it->second;
+			}
+			it++;
+		}
 	}
 	return nullptr;
 }
 
-void ImportScript::UpdateMonoPos(float3* pos, MonoObject* object)
+void ImportScript::UpdateMonoPos(float3* pos, uint csreference)
 {
-	mono_pos.insert(std::pair<MonoObject*, float3*>(object, pos));
+	mono_pos.insert(std::pair<uint, float3*>(csreference, pos));
 }
 
 MonoObject* ImportScript::GetMonoObject(float3* pos)
 {
-	std::multimap<MonoObject*, float3*>::iterator it = mono_pos.begin();
+	std::multimap<uint, float3*>::iterator it = mono_pos.begin();
 	while (it != mono_pos.end())
 	{
 		if (it->second == pos)
 		{
-			return it->first;
+			return mono_gchandle_get_target(it->first);
 		}
 		it++;
 	}
@@ -544,26 +555,32 @@ float3& ImportScript::GetPosMono(MonoObject* monoobject)
 {
 	if (monoobject != nullptr)
 	{
-		std::multimap<MonoObject*, float3*>::iterator it = mono_pos.find(monoobject);
-		if (it != mono_pos.end())
-			return *it->second;
+		std::multimap<uint, float3*>::iterator it = mono_pos.begin();
+		while (it != mono_pos.end())
+		{
+			if (mono_gchandle_get_target(it->first) == monoobject)
+			{
+				return *it->second;
+			}
+			it++;
+		}
 	}
 	return float3(0,0,0);
 }
 
-void ImportScript::UpdateMonoMaterial(Material* modificate, MonoObject* object)
+void ImportScript::UpdateMonoMaterial(Material* modificate, uint csreference)
 {
-	mono_material.insert(std::pair<MonoObject*, Material*>(object, modificate));
+	mono_material.insert(std::pair<uint, Material*>(csreference, modificate));
 }
 
-MonoObject * ImportScript::GetMonoObject(Material * script)
+MonoObject* ImportScript::GetMonoObject(Material* material)
 {
-	std::multimap<MonoObject*, Material*>::iterator it = mono_material.begin();
+	std::multimap<uint, Material*>::iterator it = mono_material.begin();
 	while (it != mono_material.end())
 	{
-		if (it->second == script)
+		if (it->second == material)
 		{
-			return it->first;
+			return mono_gchandle_get_target(it->first);
 		}
 		it++;
 	}
@@ -574,26 +591,32 @@ Material* ImportScript::GetMaterialMono(MonoObject* monoobject)
 {
 	if (monoobject != nullptr)
 	{
-		std::multimap<MonoObject*, Material*>::iterator it = mono_material.find(monoobject);
-		if (it != mono_material.end())
-			return it->second;
+		std::multimap<uint, Material*>::iterator it = mono_material.begin();
+		while (it != mono_material.end())
+		{
+			if (mono_gchandle_get_target(it->first) == monoobject)
+			{
+				return it->second;
+			}
+			it++;
+		}
 	}
 	return nullptr;
 }
 
-void ImportScript::UpdateMonoScript(CSharpScript* script, MonoObject* object)
+void ImportScript::UpdateMonoScript(CSharpScript* script, uint csreference)
 {
-	mono_script.insert(std::pair<MonoObject*, CSharpScript*>(object, script));
+	mono_script.insert(std::pair<uint, CSharpScript*>(csreference, script));
 }
 
 MonoObject* ImportScript::GetMonoObject(CSharpScript* script)
 {
-	std::multimap<MonoObject*, CSharpScript*>::iterator it = mono_script.begin();
+	std::multimap<uint, CSharpScript*>::iterator it = mono_script.begin();
 	while (it != mono_script.end())
 	{
 		if (it->second == script)
 		{
-			return it->first;
+			return mono_gchandle_get_target(it->first);
 		}
 		it++;
 	}
@@ -604,9 +627,15 @@ CSharpScript* ImportScript::GetScriptMono(MonoObject* monoobject)
 {
 	if (monoobject != nullptr)
 	{
-		std::multimap<MonoObject*, CSharpScript*>::iterator it = mono_script.find(monoobject);
-		if (it != mono_script.end())
-			return it->second;
+		std::multimap<uint, CSharpScript*>::iterator it = mono_script.begin();
+		while (it != mono_script.end())
+		{
+			if (mono_gchandle_get_target(it->first) == monoobject)
+			{
+				return it->second;
+			}
+			it++;
+		}
 	}
 	return nullptr;
 }
@@ -628,19 +657,19 @@ void ImportScript::RemoveGObjectVarFromScripting(GameObject * object)
 	}
 }
 
-void ImportScript::RemoveGObjectFromMonoMap(GameObject * object)
+void ImportScript::RemoveGObjectFromMonoMap(GameObject* object)
 {
 	// Remove MonoObject form mono_map multimap only during runtime
 	if (object != nullptr)
 	{
-		std::map<MonoObject*, GameObject*>::iterator it_map = mono_map.begin();
-		for (; it_map != mono_map.end();)
+		std::map<uint, GameObject*>::iterator it = mono_map.begin();
+		while (it != mono_map.end())
 		{
-			if (it_map._Ptr->_Myval.second == object)
+			if (it->second == object)
 			{
-				it_map = mono_map.erase(it_map);
+				it = mono_map.erase(it);
 			}
-			else it_map++;
+			it++;
 		}
 	}
 }
@@ -651,7 +680,7 @@ void ImportScript::RemoveComponentFromMonoList(Component* comp)
 	// Remove Component from Components multimap only during runtime
 	if (comp != nullptr)
 	{
-		std::map<MonoObject*, Component*>::const_iterator it_comp = mono_comp.begin();
+		std::map<uint, Component*>::const_iterator it_comp = mono_comp.begin();
 		for (; it_comp != mono_comp.end();)
 		{
 			if (it_comp._Ptr->_Myval.second == comp)
@@ -668,7 +697,7 @@ void ImportScript::RemoveTransformPosPointerFromMap(float3 * pospointer)
 	// Remove Transform Position pointer from mono_pos multimap only during runtime
 	if (pospointer != nullptr)
 	{
-		std::map<MonoObject*, float3*>::const_iterator it_pos = mono_pos.begin();
+		std::map<uint, float3*>::const_iterator it_pos = mono_pos.begin();
 		for (; it_pos != mono_pos.end();)
 		{
 			if (it_pos._Ptr->_Myval.second == pospointer)
@@ -685,7 +714,7 @@ void ImportScript::RemoveGObjectReferencesFromMonoScript(GameObject * object)
 	// Set variables that reference to this object to null, only during runtime
 	if (object != nullptr)
 	{
-		std::map<MonoObject*, CSharpScript*>::const_iterator it_script = mono_script.begin();
+		std::map<uint, CSharpScript*>::const_iterator it_script = mono_script.begin();
 		for (; it_script != mono_script.end(); it_script++)
 		{
 			it_script._Ptr->_Myval.second->RemoveReferences(object);
@@ -962,7 +991,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::SetTag", (const void*)SetTag);
 	mono_add_internal_call("CulverinEditor.GameObject::CompareTag", (const void*)CompareTag);
 	mono_add_internal_call("CulverinEditor.GameObject::FindGameObjectWithTag", (const void*)FindGameObjectWithTag);
-	mono_add_internal_call("CulverinEditor.GameObject::CreateGameObject",(const void*)CreateGameObject);
+	//mono_add_internal_call("CulverinEditor.GameObject::CreateGameObject",(const void*)CreateGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::GetOwnGameObject", (const void*)GetOwnGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::ChildCount", (const void*)ChildCount);
 	mono_add_internal_call("CulverinEditor.GameObject::GetChildByIndex", (const void*)GetChildByIndex);
@@ -1371,10 +1400,7 @@ void ImportScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* 
 MonoObject* ImportScript::GetLinkedObject(MonoObject* object, MonoString* name)
 {
 	std::string name_variable = mono_string_to_utf8(name);
-	if (name_variable == "lweapon_obj")
-	{
-		int c = 0;
-	}
+
 	return current->GetMonoObjectLink(name_variable);
 }
 
@@ -1455,7 +1481,7 @@ MonoObject* ImportScript::FindGameObjectWithTag(MonoObject* object, MonoString* 
 
 void ImportScript::CreateGameObject(MonoObject* object)
 {
-	current->CreateGameObject(object);
+	//current->CreateGameObject(object);
 }
 
 void ImportScript::DeleteGameObject(MonoObject* object)

@@ -4,6 +4,9 @@ namespace CulverinEditor
 {
     public class CompCollider : CulverinBehaviour
     {
+        public CompCollider()
+        { }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern GameObject GetCollidedObject();
 

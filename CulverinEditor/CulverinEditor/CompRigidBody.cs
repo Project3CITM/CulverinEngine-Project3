@@ -4,6 +4,9 @@ namespace CulverinEditor
 {
     public class CompRigidBody : CulverinBehaviour
     {
+        public CompRigidBody()
+        { }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern Vector3 GetColliderPosition();
 

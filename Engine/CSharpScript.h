@@ -344,7 +344,6 @@ public:
 	std::vector<PublicMethod> methods;
 
 private:
-	bool test = false;
 
 	//Auxiliar map to fill variables vector with info
 	std::map<MonoClassField*, MonoType*> field_type;
@@ -356,6 +355,7 @@ private:
 	MonoImage* CSimage = nullptr;
 	MonoClass* CSClass = nullptr;
 	MonoObject* CSObject = nullptr;
+	uint CSReference;
 	//MonoObject* CSSelfObject = nullptr;
 	GameObject* own_game_object = nullptr;
 
