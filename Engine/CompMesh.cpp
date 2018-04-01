@@ -49,17 +49,7 @@ CompMesh::CompMesh(const CompMesh& copy, GameObject* parent) :Component(Comp_Typ
 CompMesh::~CompMesh()
 {
 	//RELEASE_ARRAY(name);
-	if (resource_mesh != nullptr)
-	{
-		if (resource_mesh->num_game_objects_use_me > 0)
-		{
-			resource_mesh->num_game_objects_use_me--;
-		}
-	}
-	comp_material->material->active_num--;
-	comp_material = nullptr;
-	resource_mesh = nullptr;
-
+	
 }
 
 //void CompMesh::Init(std::vector<_Vertex> v, std::vector<uint> i)
@@ -479,7 +469,20 @@ void CompMesh::Draw(bool alpha)
 
 void CompMesh::Clear()
 {
-	resource_mesh = nullptr;
+	if (resource_mesh != nullptr)
+	{
+		if (resource_mesh->num_game_objects_use_me > 0)
+		{
+			resource_mesh->num_game_objects_use_me--;
+		}
+		resource_mesh = nullptr;
+	}
+
+	if (comp_material != nullptr)
+	{
+		comp_material->material->active_num--;
+		comp_material = nullptr;
+	}
 }
 
 void CompMesh::Render(bool render)
