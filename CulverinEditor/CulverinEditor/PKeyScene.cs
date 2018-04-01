@@ -7,6 +7,7 @@ public class PKeyScene : CulverinBehaviour
 {
     void Update()
     {
+        Debug.Log("PressAnyKey");
         if (Input.GetInput_KeyDown("TriangleR", "Player"))
         {
             Debug.Log("SceneSwap");
