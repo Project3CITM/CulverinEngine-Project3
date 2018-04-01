@@ -420,7 +420,9 @@ public class Movement_Action : Action
     {
         look_at_pos = new Vector3(target_position);
 
-        GetComponent<Align_Steering>().SetEnabled(true);
+        Align_Steering align_scr= GetComponent<Align_Steering>();
+        if (align_scr == null) Debug.Log("Align steering null");
+        align_scr.SetEnabled(true);
 
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
@@ -459,6 +461,7 @@ public class Movement_Action : Action
     public void LookAtPlayer()
     {
         Vector3 target_pos = new Vector3(GetLinkedObject("player").GetComponent<Transform>().position);
+        Debug.Log("Look at player pos: " + target_pos);
         LookAt(target_pos);
     }
 

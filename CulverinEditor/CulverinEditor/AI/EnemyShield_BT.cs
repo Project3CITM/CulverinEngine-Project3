@@ -40,6 +40,14 @@ public class EnemyShield_BT : Enemy_BT
         //Attack action
         if (InRange())
         {
+
+            if (!GetComponent<FacePlayer_Action>().IsFaced())
+            {
+                current_action.Interupt();
+                next_action = GetComponent<FacePlayer_Action>();
+                return;
+            }
+
             bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
 
             if (attack_ready)
