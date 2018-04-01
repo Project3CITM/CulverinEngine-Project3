@@ -613,7 +613,10 @@ void ClickAction::SyncClickAction()
 		}
 		if (actions[i].current_function != "No Function")
 		{
-
+			if(actions[i].script->csharp == nullptr)
+			{
+				continue;
+			}
 			for (int j = 0; j < actions[i].script->csharp->methods.size(); j++)
 			{
 				if (actions[i].script->csharp->methods[j].name_method == actions[i].current_function)
