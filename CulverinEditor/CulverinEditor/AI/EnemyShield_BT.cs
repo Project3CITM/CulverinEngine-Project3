@@ -85,6 +85,9 @@ public class EnemyShield_BT : Enemy_BT
         int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
+        //Reset event list
+        GetComponent<ShieldGuard_Listener>().ClearEvents();
+
         //Patrol
         if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
         {

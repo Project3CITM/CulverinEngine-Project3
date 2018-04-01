@@ -266,24 +266,27 @@ public class Movement_Action : Action
     private void NextTile()
     {
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
-        pos.x = path[0].GetTileX() * tile_size;
-        pos.z = path[0].GetTileY() * tile_size;
-        GetComponent<Transform>().position = pos;
-        GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
+        if (path.Count > 0)
+        {
+            pos.x = path[0].GetTileX() * tile_size;
+            pos.z = path[0].GetTileY() * tile_size;
+            GetComponent<Transform>().position = pos;
+            GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
 
-        //Tiles
-        if (path.Count == 1)
-        {
-            arrive.SetEnabled(false);
-            seek.SetEnabled(false);
-            translation_finished = true;
-        }
-        else
-        {
-            arrive.SetEnabled(true);
-            seek.SetEnabled(true);
-            path.Remove(path[0]);
-            LookAtNextTile();
+            //Tiles
+            if (path.Count == 1)
+            {
+                arrive.SetEnabled(false);
+                seek.SetEnabled(false);
+                translation_finished = true;
+            }
+            else
+            {
+                arrive.SetEnabled(true);
+                seek.SetEnabled(true);
+                path.Remove(path[0]);
+                LookAtNextTile();
+            }
         }
     }
 
