@@ -95,7 +95,7 @@ bool ImportScript::InitScriptingSystem()
 void ImportScript::ShutdownMono()
 {
 	//Unload_domain();
-	mono_jit_cleanup(domain);
+	//mono_jit_cleanup(domain);
 }
 
 bool ImportScript::Import(const char* file, uint uuid, bool isAutoImport)
