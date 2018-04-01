@@ -200,9 +200,19 @@ static const GLchar* fragmentShaderSource[] =
 	"	final_ambient = final_ambient / _numLights;\n"
 	"	final_color = final_color;\n"
 	"\n"
+	"	vec3 col = max( color_texture,\n"
+	"		color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb);\n"
+	"\n"
+	/*
 	"	vec3 col = max(final_ambient* color_texture* vec3(0,1,1),\n"
 	"		color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb);\n"
 	"\n"
+	*/
+	/*
+	Default_frag
+	vec3 col = max(final_ambient* color_texture* vec3(0,0.9,0.9),
+	color_texture * (inten_final.x + inten_final.y )*occlusion_texture*final_color.rgb);
+	*/
 	"	color = vec4(col,_alpha); \n"
 	"\n"
 	"}\n"

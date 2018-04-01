@@ -135,11 +135,10 @@ void main()
                                                                                                
     final_ambient = final_ambient/_numLights;
     final_color =normalize(final_color);  
-                                                               
-    vec3 col = max(final_ambient* color_texture* vec3(0,0.9,0.9),
-     color_texture * (inten_final.x + inten_final.y )*occlusion_texture*final_color.rgb);
-
-                                                                                       
+        
+	vec3 col = max( color_texture,
+	color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb);
+	
     color = vec4(col,_alpha);
  
 }
