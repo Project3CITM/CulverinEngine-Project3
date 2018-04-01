@@ -19,7 +19,7 @@
 #include "GameObject.h"
 #include "ModuleAudio.h"
 #include "ModuleMap.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ShadersLib.h"
 #include "EventDef.h"
 #include "ImGui/imgui.h"
@@ -132,7 +132,7 @@ update_status ModuleGUI::Update(float dt)
 				if (App->scene->scene_saved)
 				{
 					App->scene->DeleteAllGameObjects(App->scene->root);
-					App->event_system->ClearEvents(EventType::EVENT_DRAW);
+					App->event_system_v2->ClearEvents(EventType::EVENT_DRAW);
 					App->scene->root->SetName("NewScene");
 					App->scene->CreateMainCamera(nullptr);
 					App->resource_manager->ReImportAllScripts();
@@ -505,7 +505,7 @@ update_status ModuleGUI::Update(float dt)
 		if (ImGui::Button("Create")) {
 
 			Event shader_event;
-			shader_event.shader_editor.type = EventType::EVENT_OPEN_SHADER_EDITOR;
+			shader_event.Set_event_data(EventType::EVENT_OPEN_SHADER_EDITOR);
 			shader_event.shader_editor.name = str_shad_temp;
 
 			switch (combo_shaders) {
@@ -545,8 +545,6 @@ update_status ModuleGUI::Update(float dt)
 			shader_options += '\0';
 		}
 
-	
-
 		ImGui::Combo("Shader 1:", &combo_shaders_obj, shader_options.c_str());
 
 		ImGui::Combo("Shader 2:", &combo_shaders_obj2, shader_options.c_str());
@@ -555,7 +553,7 @@ update_status ModuleGUI::Update(float dt)
 		{
 
 			Event shader_event_prg;
-			shader_event_prg.shader_program.type = EventType::EVENT_CREATE_SHADER_PROGRAM;
+			shader_event_prg.Set_event_data(EventType::EVENT_CREATE_SHADER_PROGRAM);
 			shader_event_prg.shader_program.name = str_shad_prg_temp;
 
 			if (combo_shaders_obj != -1)
@@ -1297,7 +1295,7 @@ bool ModuleGUI::SetEventListenrs()
 
 void ModuleGUI::OnEvent(Event& event)
 {
-	switch (event.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:
 		//need to fix std::pair

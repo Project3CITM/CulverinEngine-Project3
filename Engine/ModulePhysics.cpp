@@ -1,5 +1,5 @@
 #include "Application.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModulePhysics.h"
 #include "Scene.h"
 
@@ -158,7 +158,7 @@ bool ModulePhysics::SetEventListenrs()
 
 void ModulePhysics::OnEvent(Event & event)
 {
-	switch (event.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_TRIGGER_COLLISION:
 	{
@@ -167,47 +167,47 @@ void ModulePhysics::OnEvent(Event & event)
 			break;
 		}
 
-		switch (event.collision.coll_type)
+		switch (event.trigger.coll_type)
 		{
 		case JP_COLLISION_TYPE::TRIGGER_ENTER:
 		{
-			if (event.collision.actor0->GetType() == C_COLLIDER)
+			if (event.trigger.actor0->GetType() == C_COLLIDER)
 			{
-				static_cast<CompCollider*>(event.collision.actor0)->OnTriggerEnter(event.collision.actor1);
+				static_cast<CompCollider*>(event.trigger.actor0)->OnTriggerEnter(event.trigger.actor1);
 			}
 			else
 			{
-				static_cast<CompRigidBody*>(event.collision.actor0)->OnTriggerEnter(event.collision.actor1);
+				static_cast<CompRigidBody*>(event.trigger.actor0)->OnTriggerEnter(event.trigger.actor1);
 			}
 
-			if (event.collision.actor1->GetType() == C_RIGIDBODY)
+			if (event.trigger.actor1->GetType() == C_RIGIDBODY)
 			{
-				static_cast<CompRigidBody*>(event.collision.actor1)->OnTriggerEnter(event.collision.actor0);
+				static_cast<CompRigidBody*>(event.trigger.actor1)->OnTriggerEnter(event.trigger.actor0);
 			}
 			else
 			{
-				static_cast<CompCollider*>(event.collision.actor1)->OnTriggerEnter(event.collision.actor0);
+				static_cast<CompCollider*>(event.trigger.actor1)->OnTriggerEnter(event.trigger.actor0);
 			}
 			break;
 		}
 		case JP_COLLISION_TYPE::TRIGGER_LOST:
 		{
-			if (event.collision.actor0->GetType() == C_COLLIDER)
+			if (event.trigger.actor0->GetType() == C_COLLIDER)
 			{
-				static_cast<CompCollider*>(event.collision.actor0)->OnTriggerLost(event.collision.actor1);
+				static_cast<CompCollider*>(event.trigger.actor0)->OnTriggerLost(event.trigger.actor1);
 			}
 			else
 			{
-				static_cast<CompRigidBody*>(event.collision.actor0)->OnTriggerLost(event.collision.actor1);
+				static_cast<CompRigidBody*>(event.trigger.actor0)->OnTriggerLost(event.trigger.actor1);
 			}
 
-			if (event.collision.actor1->GetType() == C_RIGIDBODY)
+			if (event.trigger.actor1->GetType() == C_RIGIDBODY)
 			{
-				static_cast<CompRigidBody*>(event.collision.actor1)->OnTriggerLost(event.collision.actor0);
+				static_cast<CompRigidBody*>(event.trigger.actor1)->OnTriggerLost(event.trigger.actor0);
 			}
 			else
 			{
-				static_cast<CompCollider*>(event.collision.actor1)->OnTriggerLost(event.collision.actor0);
+				static_cast<CompCollider*>(event.trigger.actor1)->OnTriggerLost(event.trigger.actor0);
 			}
 			break;
 		}
@@ -215,27 +215,27 @@ void ModulePhysics::OnEvent(Event & event)
 		{
 			CollisionData data;
 			data.is_contact = true;
-			data.impact_point = event.collision.impact_point;
-			data.impact_normal = event.collision.impact_normal;
+			data.impact_point = event.trigger.impact_point;
+			data.impact_normal = event.trigger.impact_normal;
 
-			data.actor1 = event.collision.actor1;
-			if (event.collision.actor0->GetType() == C_COLLIDER)
+			data.actor1 = event.trigger.actor1;
+			if (event.trigger.actor0->GetType() == C_COLLIDER)
 			{
-				static_cast<CompCollider*>(event.collision.actor0)->OnContact(data);
+				static_cast<CompCollider*>(event.trigger.actor0)->OnContact(data);
 			}
 			else
 			{
-				static_cast<CompRigidBody*>(event.collision.actor0)->OnContact(data);
+				static_cast<CompRigidBody*>(event.trigger.actor0)->OnContact(data);
 			}
 
-			data.actor1 = event.collision.actor0;
-			if (event.collision.actor1->GetType() == C_COLLIDER)
+			data.actor1 = event.trigger.actor0;
+			if (event.trigger.actor1->GetType() == C_COLLIDER)
 			{
-				static_cast<CompCollider*>(event.collision.actor1)->OnContact(data);
+				static_cast<CompCollider*>(event.trigger.actor1)->OnContact(data);
 			}
 			else
 			{
-				static_cast<CompRigidBody*>(event.collision.actor1)->OnContact(data);
+				static_cast<CompRigidBody*>(event.trigger.actor1)->OnContact(data);
 			}
 			break;
 		}
@@ -370,19 +370,19 @@ bool ModulePhysics::ShowColliderFilterOptions(uint& flags)
 void ModulePhysics::OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor* actor1, JP_COLLISION_TYPE type, float3 point, float3 normal)
 {
 	Event phys_event;
-	phys_event.collision.type = EventType::EVENT_TRIGGER_COLLISION;
-	phys_event.collision.coll_type = type;
+	phys_event.Set_event_data(EventType::EVENT_TRIGGER_COLLISION);
+	phys_event.trigger.coll_type = type;
 
 	std::map<physx::PxRigidActor*, Component*>::const_iterator npair;
 	npair = colliders.find(actor0);
 	if (npair != colliders.end())
 	{
-		phys_event.collision.actor0 = npair._Ptr->_Myval.second;
+		phys_event.trigger.actor0 = npair._Ptr->_Myval.second;
 
 		npair = colliders.find(actor1);
 		if (npair != colliders.end())
 		{
-			phys_event.collision.actor1 = npair._Ptr->_Myval.second;
+			phys_event.trigger.actor1 = npair._Ptr->_Myval.second;
 		}
 		else
 		{
@@ -394,8 +394,8 @@ void ModulePhysics::OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor
 		return;
 	}
 
-	phys_event.collision.impact_point = point;
-	phys_event.collision.impact_normal = normal;
+	phys_event.trigger.impact_point = point;
+	phys_event.trigger.impact_normal = normal;
 
 	PushEvent(phys_event);
 }

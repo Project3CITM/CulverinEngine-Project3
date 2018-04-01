@@ -6,7 +6,7 @@
 #include "PerfTimer.h"
 #include "ImGui\imgui.h"
 #include "ImGui\imgui_impl_sdl_gl3.h"
-#include "EventDef.h"
+#include "EventDefV2.h"
 #include <string>
 
 class Application;
@@ -25,7 +25,7 @@ public:
 		return true; 
 	}
 
-	virtual bool SetEventListenrs() //Called at EventSystemModule Init, set all event listeners, call example inside this method: AddListener(EventType::DELETE_GO, (Module*)this);
+	virtual bool SetEventListeners() //Called at EventSystemModule Init, set all event listeners, call example inside this method: AddListener(EventType::DELETE_GO, (Module*)this);
 	{
 		return true;
 	}

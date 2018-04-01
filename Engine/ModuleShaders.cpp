@@ -3,7 +3,7 @@
 #include "ModuleFS.h"
 #include "Application.h"
 #include "JSONSerialization.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
 #include "ModuleCamera3D.h"
@@ -792,7 +792,7 @@ bool ModuleShaders::SetEventListenrs()
 void ModuleShaders::OnEvent(Event & event)
 {
 	std::string path;
-	switch (event.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_OPEN_SHADER_EDITOR:
 
@@ -953,7 +953,7 @@ void ModuleShaders::SetUniformVariables(Material * material)
 void ModuleShaders::SendEventWithAllShaders() 
 {
 	Event shader_event;
-	shader_event.send_shader_object.type = EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
+	shader_event.Set_event_data(EventType::EVENT_SEND_ALL_SHADER_OBJECTS);
 	shader_event.send_shader_object.shaders = &shaders;
 	PushEvent(shader_event);
 	App->gui->shader_program_creation = false;

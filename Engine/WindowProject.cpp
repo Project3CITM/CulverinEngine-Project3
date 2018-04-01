@@ -5,7 +5,7 @@
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 
 Project::Project()
 {
@@ -456,7 +456,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 				{
 					// Set new Scene and before change scene, check if he want save scene.
 					App->scene->DeleteAllGameObjects(App->scene->root); //TODO->Elliot
-					App->event_system->ClearEvents(EventType::EVENT_DRAW);
+					App->event_system_v2->ClearEvents(EventType::EVENT_DRAW);
 					std::string directory_scene = GetDirectory();
 					directory_scene += "/";
 					directory_scene += files[i].file_name;

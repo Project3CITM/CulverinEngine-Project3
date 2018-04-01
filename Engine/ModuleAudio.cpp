@@ -4,7 +4,7 @@
 #include "wwished.h"
 #include "ModuleFS.h"
 #include "CompAudio.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 
 #include <locale>
 #include <codecvt>
@@ -59,7 +59,7 @@ bool ModuleAudio::SetEventListenrs()
 void ModuleAudio::OnEvent(Event& event)
 {
 	//ETimeManager::TIME_PLAY
-	switch (event.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_TIME_MANAGER:
 		{

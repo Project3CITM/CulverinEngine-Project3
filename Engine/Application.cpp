@@ -26,7 +26,7 @@
 #include "SDL/include/SDL.h"
 #include "JSONSerialization.h"
 #include "mmgr/mmgr.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModuleKeyBinding.h"
 #include "ModuleAnimation.h"
 #include "ImportScript.h"
@@ -53,7 +53,7 @@ Application::Application()
 	fs = new ModuleFS();
 	textures = new ModuleTextures();
 	resource_manager = new ModuleResourceManager();
-	event_system = new ModuleEventSystem();
+	event_system_v2 = new ModuleEventSystemV2();
 
 	random = new math::LCG();
 	json_seria = new JSONSerialization();
@@ -86,7 +86,7 @@ Application::Application()
 	AddModule(importer);
 	AddModule(textures);
 	AddModule(audio);
-	AddModule(event_system); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
+	AddModule(event_system_v2); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
 	// Renderer last!
 	AddModule(renderer3D);
 	AddModule(render_gui);
@@ -322,7 +322,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system))
+			if (((*item) == camera) || ((*item) == event_system_v2))
 			{
 				ret = (*item)->PreUpdate(real_time.dt); // Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 			}
@@ -369,7 +369,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system))
+			if (((*item) == camera) || ((*item) == event_system_v2))
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 				ret = (*item)->Update(real_time.dt);
@@ -422,7 +422,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system))
+			if (((*item) == camera) || ((*item) == event_system_v2))
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 				ret = (*item)->PostUpdate(real_time.dt);
@@ -689,7 +689,6 @@ void Application::ShowHelpMarker(const char* desc, const char* icon)
 
 void Application::SetState(EngineState state)
 {
-
 	switch (state)
 	{
 	case EngineState::PLAYFRAME:
@@ -699,7 +698,7 @@ void Application::SetState(EngineState state)
 			{
 				//Send Play event
 				Event play_event;
-				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 				play_event.time.time = play_event.time.TIME_PLAY;
 				PushEvent(play_event);
 			}
@@ -707,7 +706,7 @@ void Application::SetState(EngineState state)
 			{
 				//Send unpause Event
 				Event play_event;
-				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 				play_event.time.time = play_event.time.TIME_UNPAUSE;
 				PushEvent(play_event);				
 			}
@@ -715,35 +714,29 @@ void Application::SetState(EngineState state)
 			{
 				//Send unpause Event
 				Event play_event;
-				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 				play_event.time.time = play_event.time.TIME_STOP;
 				PushEvent(play_event);
 			}
 			break;
 		}
-
-
 	case EngineState::PAUSE:
 	{
 		//Send Pause Event
 		Event play_event;
-		play_event.time.type = EventType::EVENT_TIME_MANAGER;
+		play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 		play_event.time.time = play_event.time.TIME_PAUSE;
 		PushEvent(play_event);
 		break;
 	}
 	}
 
-
-
 	if (state == EngineState::PLAY)
 	{
 		// If it's already Game Mode, exit and start again Editor Mode
 		if (engine_state == EngineState::PLAY)
 		{
-
 			//STOP ENGINE ------------
-
 			engine_state = EngineState::STOP;
 			game_time.game_start_time = 0.0f;
 			game_time.timePlay = -1.0f;
