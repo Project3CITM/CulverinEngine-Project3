@@ -10,6 +10,7 @@ enum ParameterValue;
 
 struct KeyData
 {
+	KeyData();
 	KeyData(int key_frame, AnimationValue key_values);
 	~KeyData();
 
@@ -22,7 +23,7 @@ struct KeyData
 
 struct KeyFrameData
 {
-
+	KeyFrameData();
 	KeyFrameData(int key, AnimationValue value, ParameterValue parameter);
 	KeyFrameData(int key, AnimationValue value);
 	~KeyFrameData();
@@ -39,7 +40,7 @@ struct KeyFrameData
 	int max_keys = 20;
 	int sample_rate = 60;
 	int initial=0;
-	int destination=0;
+	int destination=1;
 	bool invalid_key = false;
 	std::vector<KeyData> key_data;
 	ParameterValue parameter;
@@ -47,7 +48,8 @@ struct KeyFrameData
 };
 struct AnimData
 {
-
+	AnimData();
+	~AnimData();
 	bool HaveKeyFrameData(const ParameterValue& data);
 public:
 
@@ -77,10 +79,10 @@ public:
 	void ShowAnimationJsonInfo();
 	void ShowAnimationDataInfo();
 	void ShowAnimationKeyFrameInfo();
-
+	AnimationJson* ShowAnimationJsonFiles(bool& active);
 	void FindAnimComponent();
 	void SaveAnimation();
-	void LoadAnimation();
+	void LoadAnimation(AnimationJson** animation, const char* path);
 	int HaveAnimData(const AnimableComponent* data);
 private:
 
