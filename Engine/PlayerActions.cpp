@@ -215,7 +215,9 @@ void PlayerActions::SetInputManagerActive(const char * name, bool set)
 	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		if (strcmp((*it)->GetName(), name) == 0)
-			(*it)->ActiveInput();
+		{
+			(*it)->SetActiveInput(set);
+		}
 	}
 }
 
