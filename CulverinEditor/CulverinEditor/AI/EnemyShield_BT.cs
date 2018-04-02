@@ -43,6 +43,10 @@ public class EnemyShield_BT : Enemy_BT
 
             if (!GetComponent<FacePlayer_Action>().IsFaced())
             {
+                if (current_action.action_type == Action.ACTION_TYPE.CHASE_ACTION)
+                {
+                    Debug.Log("[error]TE PARARON CHASEANDO WILLY");
+                }
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
                 return;
@@ -130,8 +134,11 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
+                        GetComponent<CompAnimation>().SetTransition("ToBlock");
                         Debug.Log("Attack blocked");
                     }
+                    else
+                        base.ApplyDamage(damage);
                 }
                 else
                     base.ApplyDamage(damage);
@@ -149,8 +156,11 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
+                        GetComponent<CompAnimation>().SetTransition("ToBlock");
                         Debug.Log("Attack blocked");
                     }
+                    else
+                        base.ApplyDamage(damage);
                 }
                 else
                     base.ApplyDamage(damage);
