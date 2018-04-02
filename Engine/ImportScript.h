@@ -223,6 +223,8 @@ private:
 	static void SetRaycastTarget(MonoObject * object, mono_bool flag);
 	static void ActivateRender(MonoObject * object);
 	static void DeactivateRender(MonoObject * object);
+	/*Component Text*/
+	static void SetAlpha(MonoObject* object, float alpha);
 	/*Component Graphic Image*/
 	static void FillAmount(MonoObject * object, float value);
 

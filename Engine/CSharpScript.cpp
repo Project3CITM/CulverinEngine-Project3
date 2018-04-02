@@ -1152,6 +1152,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompLight";
 	}
+	else if (name_class == "CompText")
+	{
+		comp_name = "CompText";
+	}
 	/* Scripts */
 	if (comp_name == "")
 	{

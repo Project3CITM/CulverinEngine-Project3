@@ -28,6 +28,7 @@ public:
 	void SetTextureID(uint set_texture_id);
 	void SetColor(const float4& set_rgba);
 	void SetColor(float set_r, float set_g, float set_b, float set_a);
+	void SetAlpha(float alpha);
 	void SetToRender(bool render);
 	void SetRaycastTarget(bool flag);
 	void SetInteractive(CompInteractive* set_interactive);

@@ -16,7 +16,7 @@
 CompText::CompText(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Text";
+	name_component = "CompText";
 	glGenTextures(1, &id_font);
 	RELEASE_ARRAY(input_text);
 	ReSizeInput();

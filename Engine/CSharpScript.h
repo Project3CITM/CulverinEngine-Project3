@@ -271,6 +271,7 @@ public:
 	void		FillAmount(MonoObject * object, float value);
 	void		ActivateRender(MonoObject * object);
 	void		DeactivateRender(MonoObject * object);
+	void		SetAlpha(MonoObject * object, float alpha);
 
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
