@@ -33,7 +33,7 @@ configuration:
 - Release
 
 build:
-  project: Engine\3D Physics.sln
+  project: Engine\Culverin.sln
   
   # MSBuild verbosity level
   verbosity: normal

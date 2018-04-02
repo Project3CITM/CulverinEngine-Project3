@@ -56,7 +56,7 @@ bool ModuleEventSystemV2::Init(JSON_Object* node)
 	//addlisteners
 	const std::vector<Module*>* ModuleList = App->GetModuleList();
 	for (std::vector<Module*>::const_iterator item = ModuleList->cbegin(); item != ModuleList->cend(); ++item)
-		(*item)->SetEventListeners();
+		(*item)->SetEventListenrs();
 	Awake_t = perf_timer.ReadMs();
 	return true;
 }

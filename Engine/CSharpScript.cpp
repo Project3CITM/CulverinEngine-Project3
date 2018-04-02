@@ -1068,7 +1068,9 @@ void CSharpScript::Destroy(MonoObject* object, float time)
 	if (gameobject != nullptr)
 	{
 		Event e;
-		e.Set_event_data_f(EventType::EVENT_DELETE_GO, 0, time);
+		LOG("Destroy ITEM gameobject %s", gameobject->GetName());
+		
+		e.Set_event_data(EventType::EVENT_DELETE_GO, 0, 0);
 		e.delete_go.Todelte = gameobject;
 		PushEvent(e);
 	}

@@ -25,7 +25,7 @@ public:
 		return true; 
 	}
 
-	virtual bool SetEventListeners() //Called at EventSystemModule Init, set all event listeners, call example inside this method: AddListener(EventType::DELETE_GO, (Module*)this);
+	virtual bool SetEventListenrs() //Called at EventSystemModule Init, set all event listeners, call example inside this method: AddListener(EventType::DELETE_GO, (Module*)this);
 	{
 		return true;
 	}
