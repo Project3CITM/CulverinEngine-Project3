@@ -1190,7 +1190,7 @@ void ImportScript::LinkFunctions()
 //Log messages into Engine Console
 void ImportScript::ConsoleLog(MonoObject* string)
 {
-	if (string != nullptr)
+	if (string != nullptr && !App->mode_game)
 	{
 		//Pass from MonoString to const char*
 		MonoString* strings = mono_object_to_string(string, NULL);
