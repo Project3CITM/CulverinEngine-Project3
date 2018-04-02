@@ -322,6 +322,7 @@ public class Lever : CulverinBehaviour
 
         if (active_lever)
         {
+            on_lever_range = false;
             return;
         }
 
