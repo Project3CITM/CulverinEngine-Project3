@@ -645,7 +645,7 @@ void ImportScript::RemoveGObjectVarFromScripting(GameObject * object)
 	// Remove GameObject Variable form  multimap only during runtime
 	if (object != nullptr)
 	{
-		std::map<std::string, GameObject*>::const_iterator it_link = map_link_variables.begin();
+		std::multimap<std::string, GameObject*>::const_iterator it_link = map_link_variables.begin();
 		for (; it_link != map_link_variables.end();)
 		{
 			if (it_link._Ptr->_Myval.second == object)
@@ -662,7 +662,7 @@ void ImportScript::RemoveGObjectFromMonoMap(GameObject* object)
 	// Remove MonoObject form mono_map multimap only during runtime
 	if (object != nullptr)
 	{
-		std::map<uint, GameObject*>::iterator it = mono_map.begin();
+		std::multimap<uint, GameObject*>::iterator it = mono_map.begin();
 		while (it != mono_map.end())
 		{
 			if (it->second == object)
@@ -680,7 +680,7 @@ void ImportScript::RemoveComponentFromMonoList(Component* comp)
 	// Remove Component from Components multimap only during runtime
 	if (comp != nullptr)
 	{
-		std::map<uint, Component*>::const_iterator it_comp = mono_comp.begin();
+		std::multimap<uint, Component*>::const_iterator it_comp = mono_comp.begin();
 		for (; it_comp != mono_comp.end();)
 		{
 			if (it_comp._Ptr->_Myval.second == comp)
@@ -697,7 +697,7 @@ void ImportScript::RemoveTransformPosPointerFromMap(float3 * pospointer)
 	// Remove Transform Position pointer from mono_pos multimap only during runtime
 	if (pospointer != nullptr)
 	{
-		std::map<uint, float3*>::const_iterator it_pos = mono_pos.begin();
+		std::multimap<uint, float3*>::const_iterator it_pos = mono_pos.begin();
 		for (; it_pos != mono_pos.end();)
 		{
 			if (it_pos._Ptr->_Myval.second == pospointer)
@@ -714,7 +714,7 @@ void ImportScript::RemoveGObjectReferencesFromMonoScript(GameObject * object)
 	// Set variables that reference to this object to null, only during runtime
 	if (object != nullptr)
 	{
-		std::map<uint, CSharpScript*>::const_iterator it_script = mono_script.begin();
+		std::multimap<uint, CSharpScript*>::const_iterator it_script = mono_script.begin();
 		for (; it_script != mono_script.end(); it_script++)
 		{
 			it_script._Ptr->_Myval.second->RemoveReferences(object);

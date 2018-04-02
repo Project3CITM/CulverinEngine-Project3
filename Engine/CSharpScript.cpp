@@ -364,7 +364,7 @@ void CSharpScript::DoMainFunction(FunctionBase function, void** parameters)
 void CSharpScript::DoFunction(MonoMethod* function, void ** parameter)
 {
 	MonoObject* exception = nullptr;
-
+	current_game_object = own_game_object;
 	// Do Main Function
 	mono_runtime_invoke(function, GetMonoObject(), parameter, &exception);
 	if (exception)

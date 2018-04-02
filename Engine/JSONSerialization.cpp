@@ -553,6 +553,7 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instant
 				{
 					//App->scene->gameobjects.push_back(obj);
 					mainParent = obj;
+					mainParent->SetParent(nullptr);
 				}
 				else
 				{
