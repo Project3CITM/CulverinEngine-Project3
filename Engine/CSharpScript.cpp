@@ -44,7 +44,7 @@ void ScriptVariable::SetMonoValue(void* newVal)
 			//script->game_objects[object] = game_object;*/
 			//App->importer->iScript->UpdateMonoMap(game_object);
 			std::string temp = mono_field_get_name(mono_field);
-			App->importer->iScript->map_link_variables[temp] = game_object;
+			App->importer->iScript->map_link_variables.insert(std::pair<std::string, GameObject*>(temp, game_object));
 		}
 	}
 	else
@@ -456,7 +456,36 @@ void CSharpScript::SetNameSpace(std::string _name_space)
 
 MonoObject* CSharpScript::GetMonoObjectLink(std::string name)
 {
-	return App->importer->iScript->GetMonoObject(App->importer->iScript->map_link_variables[name]);
+	for (int i = 0; i < variables.size(); i++)
+	{
+		if (strcmp(variables[i]->name, name.c_str()) == 0)
+		{
+			std::map<std::string, GameObject*>::iterator it = App->importer->iScript->map_link_variables.begin();
+			while (it != App->importer->iScript->map_link_variables.end())
+			{
+				if (strcmp(name.c_str(), it->first.c_str()) == 0)
+				{
+					GameObject* temp = it->second;
+					if (temp == variables[i]->game_object)
+					{
+						return App->importer->iScript->GetMonoObject(temp);
+					}
+				}
+				it++;
+			}
+		}
+	}
+	std::multimap<std::string, GameObject*>::iterator it = App->importer->iScript->map_link_variables.begin();
+	while (it != App->importer->iScript->map_link_variables.end())
+	{
+		if (it->first == name)
+		{
+			return App->importer->iScript->GetMonoObject(it->second);
+		}
+		it++;
+	}
+	//return App->importer->iScript->GetMonoObject(App->importer->iScript->map_link_variables[name]);
+	return nullptr;
 }
 
 bool CSharpScript::ReImport(std::string pathdll, std::string nameClass)

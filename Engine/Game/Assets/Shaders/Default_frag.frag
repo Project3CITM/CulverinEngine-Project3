@@ -24,8 +24,9 @@ uniform vec4 diff_color;
 out vec4 color;                    
 uniform sampler2D albedo;          
 uniform sampler2D normal_map;      
-uniform sampler2D occlusion_map;
-uniform sampler2D specular_map;                    
+
+uniform sampler2D specular_map;
+uniform sampler2D glossines_map;                   
                                
 uniform float a;
 uniform float b;
@@ -73,7 +74,7 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
    
                                                                                          
         float diffuse = Kd * lightInt * cosTheta;
-        float spec =  Ks* lightInt* pow(cosAlpha,0);  
+        float spec =  Ks* lightInt* pow(cosAlpha,shininess);  
                      
         return vec3(diffuse,spec,1);                                                                     
                                                                                                          
@@ -84,14 +85,14 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
         vec3 s =  normalize(lightpos - surfacePos);      
         vec3 r = reflect(-s,normal);
  
-        float cosTheta = clamp( dot( s,normal ), 0,1 );      
+        float cosTheta = clamp( dot( s,normal ), 0,1 ) ;      
         float cosAlpha = clamp( dot( v,r ), 0,1 );                                               
                                                                                                          
         float d = length((lightpos - surfacePos));
         float attenuation =1/(light.properties[1] + light.properties[2]* d + light.properties[3] * d*d);
         attenuation *= lightInt;                                   
         float diffuse = attenuation * Kd  * cosTheta;                    
-        float spec = attenuation * Ks * pow(cosAlpha, shininess);
+        float spec = attenuation * Ks * pow(cosAlpha,shininess);
                                                                                                                  
         return vec3(diffuse,spec,attenuation);                                                               
                                                                                                                  
@@ -107,13 +108,13 @@ void main()
                                                                                              
                                                      
     vec3 color_texture = texture(albedo, TexCoord).xyz;                                                          
-    vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1);                                                        
-    vec3 occlusion_texture = texture(occlusion_map,TexCoord).xyz;                                                
-    vec3 spec_texture = texture(specular_map, TexCoord).xyz * 255;
+    vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1) ;                                                       
+    vec3 spec_texture = texture(specular_map, TexCoord).xyz ;
+    vec3 gloss_texture =abs(texture(glossines_map,TexCoord).xyz - vec3(1));
 
-    if(invert_norms)
-    N.g = -N.g;    
-    N.r = -N.r;                                                  
+   // if(invert_norms)
+   // N.g = -N.g;    
+   // N.r = -N.r;                                                  
                                                                                                                  
     vec3 inten = vec3(0); vec3 inten_final = vec3(0);                                                                                    
                                                                          
@@ -123,7 +124,7 @@ void main()
     vec3 final_color = vec3(0);
                                                                          
     for (int i = 0; i <_numLights; ++i) {                                                                        
-        inten = blinnPhongDir(_lights[i], a_Kd, a_Ks,a_shininess, N);             
+        inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N);             
         inten_final.xy += inten.xy;                                                                        
         light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);                                            
     }                                                                                                      
@@ -136,9 +137,9 @@ void main()
     final_ambient = final_ambient/_numLights;
     final_color =normalize(final_color);  
         
-	vec3 col = max( color_texture,
-	color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb);
+	vec3 col = max( color_texture * 0.25 ,
+	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
 	
     color = vec4(col,_alpha);
- 
+  //color = vec4( TBN* vec3(model * vec4(ourPos, 1.0)),1);
 }

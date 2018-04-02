@@ -291,7 +291,7 @@ private:
 	static MonoObject* GetMaterialByName(MonoObject* object, MonoString* name);
 
 public: 
-	std::map<std::string, GameObject*> map_link_variables;
+	std::multimap<std::string, GameObject*> map_link_variables;
 private:
 	std::string nameNewScript;
 	std::string mono_path;
