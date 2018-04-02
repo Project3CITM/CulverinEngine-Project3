@@ -126,10 +126,6 @@ public class BarrelFall : CulverinBehaviour
 
     void MoveToTile()
     {
-        target_pos_x = target_tile_x * tile_size;
-        target_pos_y = target_tile_y * tile_size;
-
-
         Vector3 global_pos = transform.GetGlobalPosition();
 
         bool in_x = false;
@@ -146,7 +142,7 @@ public class BarrelFall : CulverinBehaviour
             else displacement = 1;
 
            
-            transform.local_position = new Vector3(transform.local_position.x + (Time.deltaTime * speed * displacement), transform.local_position.y, transform.local_position.z);
+            transform.SetGlobalPosition(new Vector3(global_pos.x + (Time.deltaTime * speed * displacement), global_pos.y, global_pos.z));
         }
         else in_x = true;
 
@@ -160,7 +156,7 @@ public class BarrelFall : CulverinBehaviour
             }
             else displacement = 1;
 
-            transform.local_position = new Vector3(transform.local_position.x, transform.local_position.y, transform.local_position.z + (Time.deltaTime * speed * displacement));
+            transform.SetGlobalPosition(new Vector3(global_pos.x, global_pos.y, global_pos.z + (Time.deltaTime * speed * displacement)));
         }
         else in_y = true;
 
