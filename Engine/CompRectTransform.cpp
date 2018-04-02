@@ -393,6 +393,7 @@ void CompRectTransform::SetNewAnimationValue(const AnimationData & value)
 	switch (value.type)
 	{
 	case ParameterValue::RECT_TRANSFORM_POSITION:
+		LOG("%f,%f,%f",value.value.f3_value.x, value.value.f3_value.y, value.value.f3_value.z)
 		SetPos(value.value.f3_value);
 		break;
 	case ParameterValue::RECT_TRANSFORM_ROTATION:

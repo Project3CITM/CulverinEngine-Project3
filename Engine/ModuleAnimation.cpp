@@ -209,20 +209,20 @@ void ModuleAnimation::ShowNewAnimationWindow()
 				if (find != -1)
 				{
 
-					if (!animation_json->animations[find].HaveKeyFrameData(new_value.type))
+					if (!animation_json->animations[find]->HaveKeyFrameData(new_value.type))
 					{
-						animation_json->animations[find].key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
-						animation_json->animations[find].key_frame_data.back().my_anim_data = &animation_json->animations[find];
+						animation_json->animations[find]->key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
+						animation_json->animations[find]->key_frame_data.back().my_anim_data = animation_json->animations[find];
 
 					}
 
 				}
 				else
 				{
-					AnimData tmp_anim_data;
-					tmp_anim_data.data = item;
-					tmp_anim_data.key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
-					tmp_anim_data.key_frame_data.back().my_anim_data = &tmp_anim_data;
+					AnimData* tmp_anim_data = new AnimData();
+					tmp_anim_data->data = item;
+					tmp_anim_data->key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
+					tmp_anim_data->key_frame_data.back().my_anim_data = tmp_anim_data;
 					animation_json->animations.push_back(tmp_anim_data);
 
 				}
@@ -251,7 +251,7 @@ void ModuleAnimation::ShowAnimationDataInfo()
 	}
 	for (int i = 0; i < animation_json->animations.size(); i++)
 	{
-		AnimData* item = &animation_json->animations[i];
+		AnimData* item = animation_json->animations[i];
 		Component* component = dynamic_cast<Component*>(item->data);
 
 		bool out_open = ImGui::TreeNodeEx(component->GetName());
@@ -317,7 +317,7 @@ void ModuleAnimation::ShowAnimationKeyFrameInfo()
 	ImGui::Text("Max Keyframes");
 	ImGui::SameLine();
 
-	if(ImGui::DragInt("##max_keys", &max_keys, 1.0f, 1, 100))
+	if(ImGui::DragInt("##max_keys", &animation_json->max_keys, 1.0f, 1, 100))
 	{
 
 		if (animation_json->animations.empty())
@@ -326,11 +326,11 @@ void ModuleAnimation::ShowAnimationKeyFrameInfo()
 		}
 		for (int i = 0; i < animation_json->animations.size(); i++)
 		{
-			AnimData* item = &animation_json->animations[i];
+			AnimData* item = animation_json->animations[i];
 			for (int j = 0; j < item->key_frame_data.size(); j++)
 			{
 				KeyFrameData* key_frame_item = &item->key_frame_data[j];
-				key_frame_item->max_keys = max_keys;
+				key_frame_item->max_keys = animation_json->max_keys;
 				key_frame_item->UpdateKeyFrame();
 				key_frame_item->UpdateSampleRate();
 
@@ -339,7 +339,7 @@ void ModuleAnimation::ShowAnimationKeyFrameInfo()
 	}
 	ImGui::Text("Sample");
 	ImGui::SameLine();
-	if (ImGui::DragInt("##sample_rate", &sample_rate, 1.0f, 1, 100))
+	if (ImGui::DragInt("##sample_rate", &animation_json->sample_rate, 1.0f, 1, 100))
 	{
 		if (animation_json->animations.empty())
 		{
@@ -347,11 +347,11 @@ void ModuleAnimation::ShowAnimationKeyFrameInfo()
 		}
 		for (int i = 0; i < animation_json->animations.size(); i++)
 		{
-			AnimData* item = &animation_json->animations[i];
+			AnimData* item = animation_json->animations[i];
 			for (int j = 0; j < item->key_frame_data.size(); j++)
 			{
 				KeyFrameData* key_frame_item = &item->key_frame_data[j];
-				key_frame_item->sample_rate = sample_rate;
+				key_frame_item->sample_rate = animation_json->sample_rate;
 				key_frame_item->UpdateSampleRate();
 
 			}
@@ -424,13 +424,13 @@ void ModuleAnimation::LoadAnimation(AnimationJson** animation, const char* path)
 		for (uint i = 0; i < animation_size; i++)
 		{
 			std::string animations = std::to_string(i);
-			AnimData anim_data;
+			AnimData* anim_data = new AnimData();
 			AnimableComponent* item = dynamic_cast<AnimableComponent*>(go->FindComponentByType(static_cast<Comp_Type>((int)json_object_dotget_number_with_std(config, "UIAnimation.Type " + animations))));
 			if (item == nullptr)
 			{
 				continue;
 			}
-			anim_data.data = item;
+			anim_data->data = item;
 			int key_frame_data = json_object_dotget_number_with_std(config, "UIAnimation.Keyframe Size " + animations);
 			for (int j = 0; j < key_frame_data; j++)
 			{
@@ -480,8 +480,8 @@ void ModuleAnimation::LoadAnimation(AnimationJson** animation, const char* path)
 					}
 					keyframe_data.key_data.push_back(key_data_item);
 				}
-				keyframe_data.my_anim_data = &anim_data;
-				anim_data.key_frame_data.push_back(keyframe_data);
+				keyframe_data.my_anim_data = anim_data;
+				anim_data->key_frame_data.push_back(keyframe_data);
 			}
 			(*animation)->animations.push_back(anim_data);		
 		}
@@ -495,7 +495,7 @@ int ModuleAnimation::HaveAnimData(const AnimableComponent * data)
 {
 	for (int i = 0; i < animation_json->animations.size(); i++)
 	{
-		AnimableComponent* item = animation_json->animations[i].data;
+		AnimableComponent* item = animation_json->animations[i]->data;
 		if (item == data)
 		{
 			return i;
@@ -662,6 +662,14 @@ void KeyFrameData::CaptureKeyValue(int i)
 	return;
 }
 
+float KeyFrameData::Normalize(float value, float min, float max)
+{
+
+	float a = value - min;
+	float b = max - min;
+	return (a/b);
+}
+
 void KeyFrameData::ShowKeyOnTime()
 {
 	for (int i = 0; i < key_data.size(); i++)
@@ -707,6 +715,7 @@ void KeyFrameData::UpdateSampleRate()
 
 void KeyFrameData::UpdateInterpolationKeys()
 {
+	current_interpolation = 0.0f;
 	if (destination < key_data.size())
 	{
 		destination++;
@@ -716,6 +725,8 @@ void KeyFrameData::UpdateInterpolationKeys()
 
 void KeyFrameData::ResetInterpolationKeys()
 {
+	current_interpolation = 0.0f;
+
 	if (key_data.size() >1)
 	{
 		destination = 1;
@@ -726,53 +737,65 @@ void KeyFrameData::ResetInterpolationKeys()
 AnimationValue KeyFrameData::Interpolate(float current_time, int frame)
 {
 	AnimationValue ret;
+	current_interpolation+=Normalize(current_time, key_data[initial].key_on_time, key_data[destination].key_on_time);
+
 	switch (parameter)
 	{
 	case ParameterValue::RECT_TRANSFORM_POSITION:
-		if (key_data[destination].key_frame == frame)
+		if (key_data[destination].key_frame <= frame &&current_interpolation>=1.0f)
 			ret.f3_value = key_data[destination].key_values.f3_value;
+
 		else
-			ret.f3_value= key_data[initial].key_values.f3_value + current_time*(key_data[destination].key_values.f3_value - key_data[initial].key_values.f3_value);
+			ret.f3_value= key_data[initial].key_values.f3_value + current_interpolation*(key_data[destination].key_values.f3_value - key_data[initial].key_values.f3_value);
+
 
 		break;
 	case ParameterValue::RECT_TRANSFORM_ROTATION:
-		if (key_data[destination].key_frame == frame)
+		if (key_data[destination].key_frame <= frame&&current_interpolation >= 1.0f)
 			ret.f3_value = key_data[destination].key_values.f3_value;
 		else
-			ret.f3_value = key_data[initial].key_values.f3_value + current_time*(key_data[destination].key_values.f3_value - key_data[initial].key_values.f3_value);
+			ret.f3_value = key_data[initial].key_values.f3_value + current_interpolation*(key_data[destination].key_values.f3_value - key_data[initial].key_values.f3_value);
 
 		break;
 	case ParameterValue::RECT_TRANSFORM_SCALE:
-		if (key_data[destination].key_frame == frame)
+		if (key_data[destination].key_frame <= frame&&current_interpolation >= 1.0f)
 			ret.f3_value = key_data[destination].key_values.f3_value;
 		else
-			ret.f3_value = key_data[initial].key_values.f3_value + current_time*(key_data[destination].key_values.f3_value - key_data[initial].key_values.f3_value);
+			ret.f3_value = key_data[initial].key_values.f3_value + current_interpolation*(key_data[destination].key_values.f3_value - key_data[initial].key_values.f3_value);
 
 		break;
 	case ParameterValue::RECT_TRANSFORM_WIDTH:
-		if (key_data[destination].key_frame == frame)
+		if (key_data[destination].key_frame <= frame&&current_interpolation >= 1.0f)
 			ret.f_value = key_data[destination].key_values.f_value;
 		else
-			ret.f_value = key_data[initial].key_values.f_value + current_time*(key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
+			ret.f_value = key_data[initial].key_values.f_value + current_interpolation*(key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
 
 	break;
 	case ParameterValue::RECT_TRANSFORM_HEIGHT:
-		if (key_data[destination].key_frame == frame)
+		if (key_data[destination].key_frame <= frame&&current_interpolation >= 1.0f)
 			ret.f_value = key_data[destination].key_values.f_value;
 		else
-			ret.f_value = key_data[initial].key_values.f_value + current_time*(key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
+			ret.f_value = key_data[initial].key_values.f_value + current_interpolation*(key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
 
 		break;
 	default:
 		break;
 	}
-	if (key_data[destination].key_frame == frame)
+	if (key_data[destination].key_frame <= frame&&current_interpolation >= 1.0f)
+	{
 		UpdateInterpolationKeys();
+		LOG("UPDATE INTERPOLATION");
+	}
 	return ret;
 }
 
 AnimationJson::AnimationJson()
 {
+}
+
+AnimationJson::~AnimationJson()
+{
+
 }
 
 KeyData::KeyData()

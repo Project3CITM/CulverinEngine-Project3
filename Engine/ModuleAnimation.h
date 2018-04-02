@@ -29,7 +29,7 @@ struct KeyFrameData
 	~KeyFrameData();
 	bool ShowKeyValue(int i);
 	void CaptureKeyValue(int i);
-
+	float Normalize(float value, float min, float max);
 	void ShowKeyOnTime();
 
 	int ReturnKeyDataPos(int& selected);
@@ -43,6 +43,7 @@ struct KeyFrameData
 	int sample_rate = 60;
 	int initial=0;
 	int destination=1;
+	float current_interpolation = 0.0f;
 	bool invalid_key = false;
 	std::vector<KeyData> key_data;
 	ParameterValue parameter;
@@ -64,8 +65,11 @@ public:
 struct AnimationJson
 {
 	AnimationJson();
+	~AnimationJson();
+	int max_keys = 20;
+	int sample_rate = 60;
 	std::string name;
-	std::vector<AnimData> animations;
+	std::vector<AnimData*> animations;
 
 };
 
@@ -86,11 +90,11 @@ public:
 	void SaveAnimation();
 	void LoadAnimation(AnimationJson** animation, const char* path);
 	int HaveAnimData(const AnimableComponent* data);
+	
 private:
-
 private:
-	int max_keys = 20;
-	int sample_rate = 60;
+	//int max_keys = 20;
+	//int sample_rate = 60;
 	bool select_animation_window = false;
 	bool new_animation_window = false;
 	AnimationJson* animation_json = nullptr;

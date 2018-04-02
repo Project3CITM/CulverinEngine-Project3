@@ -34,6 +34,7 @@ void CompUIAnimation::Update(float dt)
 		{
 			if (loop)
 			{
+				LOG("ResetAnimation");
 				ResetAnimation();
 			}
 			else
@@ -130,10 +131,10 @@ void CompUIAnimation::ShowInspectorInfo()
 	ImGui::Checkbox("##play", &play);
 
 	ImGui::Text("On Execution"); ImGui::SameLine(op + 30);
-	ImGui::Checkbox("##execution", &play);
+	ImGui::Checkbox("##execution", &on_execution);
 
 	ImGui::Text("Loop"); ImGui::SameLine(op + 30);
-	ImGui::Checkbox("##loop", &play);
+	ImGui::Checkbox("##loop", &loop);
 
 
 
@@ -150,20 +151,20 @@ bool CompUIAnimation::PlayAnimation(float dt)
 		{
 			return true;
 		}
+
 		current_time += dt;
-		current_frame = current_time*sample_rate;
-	
+		current_frame = current_time*animation_json->sample_rate;
 
 		for (int i = 0; i < animation_json->animations.size(); i++)
 		{
-			AnimData* item = &animation_json->animations[i];
+			AnimData* item = animation_json->animations[i];
 
 			for (int j = 0; j < item->key_frame_data.size(); j++)
 			{
 				
 				KeyFrameData* key_frame_item = &item->key_frame_data[j];
 
-				if (current_frame == max_frames)
+				if (current_frame == key_frame_item->max_keys)
 				{
 					AnimationData data;
 					data.type = key_frame_item->parameter;
@@ -172,6 +173,7 @@ bool CompUIAnimation::PlayAnimation(float dt)
 				}
 				else
 				{
+
 					AnimationData data;
 					data.type = key_frame_item->parameter;
 					data.value = key_frame_item->Interpolate(dt,current_frame);
@@ -181,7 +183,7 @@ bool CompUIAnimation::PlayAnimation(float dt)
 			}
 		}
 	}
-	if (current_frame == max_frames)
+	if (current_frame == animation_json->max_keys)
 		return true;
 	return false;
 }
@@ -195,12 +197,12 @@ bool CompUIAnimation::ResetAnimation()
 			return true;
 		}
 		current_time =0;
-		current_frame = current_time*sample_rate;
+		current_frame = current_time*animation_json->sample_rate;
 
 
 		for (int i = 0; i < animation_json->animations.size(); i++)
 		{
-			AnimData* item = &animation_json->animations[i];
+			AnimData* item = animation_json->animations[i];
 
 			for (int j = 0; j < item->key_frame_data.size(); j++)
 			{

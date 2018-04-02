@@ -21,16 +21,14 @@ public:
 private:
 	bool PlayAnimation(float dt);
 	bool ResetAnimation();
-
 public:
 	AnimationJson* animation_json = nullptr;
 	bool play = false;
 	bool on_execution = false;
 	bool loop = false;
-	int max_frames = 0;
 	int current_frame = 0;
-	float sample_rate = 0.0f;
 	float current_time = 0.0f;
+	float current_animation_time = 0.0f;
 private:
 	bool select_ui_animation = false;
 

@@ -955,49 +955,49 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 		for (int i = 0; i < animation->animations.size(); i++)
 		{
 			std::string animations = std::to_string(i);
-			Component* component = dynamic_cast<Component*>(animation->animations[i].data);
+			Component* component = dynamic_cast<Component*>(animation->animations[i]->data);
 			
 			json_object_dotset_string_with_std(config, "UIAnimation.Name ", App->fs->GetToAsstes(fileName).c_str());
 			json_object_dotset_number_with_std(config, "UIAnimation.Type " + animations, component->GetType());
-			json_object_dotset_number_with_std(config, "UIAnimation.Keyframe Size " + animations , animation->animations[i].key_frame_data.size());
+			json_object_dotset_number_with_std(config, "UIAnimation.Keyframe Size " + animations , animation->animations[i]->key_frame_data.size());
 
-			for (int j = 0; j < animation->animations[i].key_frame_data.size(); j++)
+			for (int j = 0; j < animation->animations[i]->key_frame_data.size(); j++)
 			{
 				std::string key_frame = std::to_string(j);
 
-				json_object_dotset_number_with_std(config, "UIAnimation " + animations+".Animations.Max_Key " + key_frame, animation->animations[i].key_frame_data[j].max_keys);
-				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Samples " + key_frame, animation->animations[i].key_frame_data[j].sample_rate);
-				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Initial " + key_frame, animation->animations[i].key_frame_data[j].initial);
-				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Destination " + key_frame, animation->animations[i].key_frame_data[j].destination);
-				json_object_dotset_boolean_with_std(config, "UIAnimation " + animations + ".Animations.Invalid Key " + key_frame, animation->animations[i].key_frame_data[j].invalid_key);
-				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Parameter " + key_frame, animation->animations[i].key_frame_data[j].parameter);
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations+".Animations.Max_Key " + key_frame, animation->animations[i]->key_frame_data[j].max_keys);
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Samples " + key_frame, animation->animations[i]->key_frame_data[j].sample_rate);
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Initial " + key_frame, animation->animations[i]->key_frame_data[j].initial);
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Destination " + key_frame, animation->animations[i]->key_frame_data[j].destination);
+				json_object_dotset_boolean_with_std(config, "UIAnimation " + animations + ".Animations.Invalid Key " + key_frame, animation->animations[i]->key_frame_data[j].invalid_key);
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Parameter " + key_frame, animation->animations[i]->key_frame_data[j].parameter);
 
 
-				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData Size " + key_frame, animation->animations[i].key_frame_data[j].key_data.size());
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData Size " + key_frame, animation->animations[i]->key_frame_data[j].key_data.size());
 
-				for (int k = 0; k < animation->animations[i].key_frame_data[j].key_data.size(); k++)
+				for (int k = 0; k < animation->animations[i]->key_frame_data[j].key_data.size(); k++)
 				{
 					std::string key_data = std::to_string(k);
-					json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i].key_frame_data[j].key_data[k].key_on_time);
-					json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Keyframe " + key_data, animation->animations[i].key_frame_data[j].key_data[k].key_frame);
-					switch (animation->animations[i].key_frame_data[j].parameter)
+					json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_on_time);
+					json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Keyframe " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_frame);
+					switch (animation->animations[i]->key_frame_data[j].parameter)
 					{
 					case ParameterValue::RECT_TRANSFORM_POSITION:
 			
-						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i].key_frame_data[j].key_data[k].key_values.f3_value);
+						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f3_value);
 						break;
 					case ParameterValue::RECT_TRANSFORM_ROTATION:
-						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i].key_frame_data[j].key_data[k].key_values.f3_value);
+						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f3_value);
 						break;
 					case ParameterValue::RECT_TRANSFORM_SCALE:
-						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i].key_frame_data[j].key_data[k].key_values.f3_value);
+						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f3_value);
 						break;
 					case ParameterValue::RECT_TRANSFORM_WIDTH:
 						
-						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i].key_frame_data[j].key_data[k].key_values.f_value);
+						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
 						break;
 					case ParameterValue::RECT_TRANSFORM_HEIGHT:
-						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i].key_frame_data[j].key_data[k].key_values.f_value);
+						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
 						break;
 					default:
 						break;
