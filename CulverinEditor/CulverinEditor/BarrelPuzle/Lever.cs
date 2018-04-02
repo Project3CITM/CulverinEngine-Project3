@@ -192,8 +192,9 @@ public class Lever : CulverinBehaviour
         if(on_lever_range && !active_lever && !on_lever_animation)
         {
             //TODO: Change to GetKey_Action
-            if(Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
+                SetOrientationVectors();
                 OnLeverActivated();
                 audio.PlayEvent("Lever");
                 lever_interact.SetActive(false);
@@ -234,7 +235,7 @@ public class Lever : CulverinBehaviour
                 SetInfo(line5, 4);
                 SetInfo(line6, 5);
                 phase1 = true;
-                //SetPuzzleWalkability(1);
+                SetPathWalkable(1,1);
             }
             if (!phase2) // Move barrels mode.PUZZLE
             {
@@ -280,7 +281,7 @@ public class Lever : CulverinBehaviour
             {
 
                 audio.StopEvent("Chain");
-                SetPathWalkable(0);
+                SetPathWalkable(0, 3);
                 editmap = false;
 
             }
@@ -348,11 +349,13 @@ public class Lever : CulverinBehaviour
 
             if (b_fall.IsPuzzleMode())
             {
+                Debug.Log("Barrels Activate");
                 list[i].SetActive(true);
                 puzzle_barrel = b_fall;
             }
             else if (isfilling)
             {
+                Debug.Log("Filling Activata");
                 list[i].SetActive(true);
                 fill_barrel = b_fall;
             }
@@ -376,9 +379,14 @@ public class Lever : CulverinBehaviour
         int curr_y = 0;
         for (int x = barrel_per_line - 1; x >= 0; x--)
         {
-            curr_x = puzzle_start_tile_x + x * (int)(orientation_x.x + orientation_z.x);
-            curr_y = puzzle_start_tile_z + y * (int)(orientation_x.z + orientation_z.z);	
-
+            Debug.Log("Barrel Pos");
+            Debug.Log(x);
+            Debug.Log(y);
+            curr_x = puzzle_start_tile_x + y * (int)(orientation_x.x + orientation_z.x);
+            curr_y = puzzle_start_tile_z + x * (int)(orientation_x.z + orientation_z.z);
+            Debug.Log("[Red] Current Set Info");
+            Debug.Log(curr_x);
+            Debug.Log(curr_y);
             if (current_path.walkability[x, y] == 0)
             {
                
@@ -547,26 +555,26 @@ public class Lever : CulverinBehaviour
         switch (puzzle_orientation)
         {
             case 0:
-                orientation_x = new Vector3(1, 0, 0);
-                orientation_z = new Vector3(0, 0, 1);
-                break;
-            case 1:
-                orientation_x = new Vector3(0, 0, -1);
-                orientation_z = new Vector3(1, 0, 0);
-                break;
-            case 2:
                 orientation_x = new Vector3(-1, 0, 0);
                 orientation_z = new Vector3(0, 0, -1);
                 break;
-            case 3:
+            case 1:
                 orientation_x = new Vector3(0, 0, 1);
                 orientation_z = new Vector3(1, 0, 0);
+                break;
+            case 2:
+                orientation_x = new Vector3(1, 0, 0);
+                orientation_z = new Vector3(0, 0, 1);
+                break;
+            case 3:
+                orientation_x = new Vector3(0, 0, 1);
+                orientation_z = new Vector3(-1, 0, 0);
                 break;
         }
     }
 
 
-    void SetPathWalkable(int value)
+    void SetPathWalkable(int value, int value2)
     {
         level_map = GetLinkedObject("level_map");
         LevelMap level_map_script;
@@ -584,19 +592,23 @@ public class Lever : CulverinBehaviour
 
         int curr_x = 0;
         int curr_y = 0;
-        for (int x = barrel_per_line - 1; x >= 0; x--)
+        for (int x = 0; x < 6; x++)
         {
             for (int y = 0; y < 6; y++)
             {
-                curr_x = puzzle_start_tile_x + x * (int)(orientation_x.x + orientation_z.x);
-                curr_y = puzzle_start_tile_z + y * (int)(orientation_x.z + orientation_z.z);
+                curr_x = puzzle_start_tile_x + y * (int)(orientation_x.x + orientation_z.x);
+                curr_y = puzzle_start_tile_z + x * (int)(orientation_x.z + orientation_z.z);
 
                 if (current_path.walkability[x, y] == 0)
                 {
                     level_map_script.UpdateMap(curr_x, curr_y, value);
                     player_mov.SetTileWalkability(curr_x, curr_y, value);
                 }
-
+                else
+                {
+                    level_map_script.UpdateMap(curr_x, curr_y, value2);
+                    player_mov.SetTileWalkability(curr_x, curr_y, value2);
+                }
             }
         }
 
@@ -619,7 +631,7 @@ public class Lever : CulverinBehaviour
         active_lever = false;
         time = 0.0f;
 
-        SetPathWalkable(3);
+        SetPathWalkable(3,3);
 
     }
 

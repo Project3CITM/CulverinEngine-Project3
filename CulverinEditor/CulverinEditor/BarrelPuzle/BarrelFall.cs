@@ -147,7 +147,7 @@ public class BarrelFall : CulverinBehaviour
         else in_x = true;
 
         //Displace barrel in Y
-        if (Mathf.Abs(target_pos_y - global_pos.z) > error_margin)
+        if (in_x == true && Mathf.Abs(target_pos_y - global_pos.z) > error_margin)
         {
             float displacement;
             if (target_pos_y - global_pos.z < 0)
