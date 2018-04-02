@@ -196,7 +196,7 @@ public class Lever : CulverinBehaviour
             {
                 SetOrientationVectors();
                 OnLeverActivated();
-                audio.PlayEvent("Lever");
+                GetComponent<CompAudio>().PlayEvent("Lever");
                 lever_interact.SetActive(false);
             }
         }
@@ -275,22 +275,25 @@ public class Lever : CulverinBehaviour
                 editmap = true;
             }
 
-
-
-            if (editmap && fill_barrel.IsPlaced() == true)
+            if(fill_barrel != null && fill_barrel.IsPlaced() == true)
             {
-
-                audio.StopEvent("Chain");
-                SetPathWalkable(0, 3);
-                editmap = false;
-
+                if (editmap)
+                {
+                    audio.StopEvent("Chain");
+                    SetPathWalkable(0, 3);
+                    editmap = false;
+                    countdown.StartCountdown();
+                }
+                else if (countdown.IsCountdownOver())
+                {
+                    ResetPuzzle();
+                }
             }
 
+           
 
-            if(countdown.IsCountdownOver())
-            {
-                ResetPuzzle();
-            }
+
+            
         }
     }
 
@@ -485,7 +488,7 @@ public class Lever : CulverinBehaviour
         // Activate the puzzle
         active_lever = true; // TODO: Verify this is correct and uncomment this line
 
-        countdown.StartCountdown();
+    
     }
 
     // Convert from tile coords to world coords
