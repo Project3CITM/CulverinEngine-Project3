@@ -25,7 +25,7 @@ using CulverinEditor.Pathfinding;
             //Pathfinding
             open_list = new List<PathNode>();
             close_list = new List<PathNode>();
-            path_list = new List<PathNode>();
+
 
             //Map Settings
             map_width = Map.GetWidthMap();
@@ -163,11 +163,9 @@ using CulverinEditor.Pathfinding;
 
         private void FillPathList()
         {
-            //Clean the return list
-            if (path_list.Count > 0)
-                path_list.Clear();
+        path_list = new List<PathNode>();
 
-            PathNode new_node = close_list[close_list.Count - 1];
+        PathNode new_node = close_list[close_list.Count - 1];
 
             path_list.Add(new_node);
 

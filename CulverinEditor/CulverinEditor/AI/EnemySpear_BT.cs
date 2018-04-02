@@ -13,7 +13,7 @@ public class EnemySpear_BT : Enemy_BT
 
         this.range = 2;
 
-        current_map = GetLinkedObject("map");
+        current_map = GetLinkedObject("current_map");
         if (current_map == null) Debug.Log("[error]Map GameObject in Enemy spear is NULL");
 
         rand = new System.Random();
