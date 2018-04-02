@@ -5,8 +5,22 @@ using CulverinEditor.Debug;
 
 public class PKeyScene : CulverinBehaviour
 {
+    void Start()
+    {
+        Input.SetInputManagerActive("GUI", false);
+    }
     void Update()
     {
+        if(Input.GetInput_ControllerAxis("Vertical", "Player") > 0.5 || Input.GetInput_ControllerAxis("Vertical", "Player") < -0.5 )
+        {
+            Debug.Log("SceneSwap");
+            SceneSwap();
+        }
+        if (Input.GetInput_ControllerAxis("Horizontal", "Player") > 0.5 || Input.GetInput_ControllerAxis("Horizontal", "Player") < -0.5)
+        {
+            Debug.Log("SceneSwap");
+            SceneSwap();
+        }
         if (Input.GetInput_KeyDown("TriangleR", "Player"))
         {
             Debug.Log("SceneSwap");
@@ -42,6 +56,7 @@ public class PKeyScene : CulverinBehaviour
     void SceneSwap()
     {
         Debug.Log("SceneSwap");
+        Input.SetInputManagerActive("GUI", true);
         SceneManager.LoadScene("MainMenuScene");
     }
 }
