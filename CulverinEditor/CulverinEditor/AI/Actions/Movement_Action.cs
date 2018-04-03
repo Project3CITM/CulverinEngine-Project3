@@ -196,7 +196,10 @@ public class Movement_Action : Action
         }
 
         if (chase != false)
+        {
             chase = false;
+        }
+
         interupt = false;
         return false;
     }

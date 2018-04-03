@@ -49,6 +49,14 @@ public class EnemySpear_BT : Enemy_BT
         Debug.Log("[error]Tiles in range:" + inrange_i);
         if (inrange_i == 1)
         {
+
+            if (!GetComponent<FacePlayer_Action>().IsFaced())
+            {
+                current_action.Interupt();
+                next_action = GetComponent<FacePlayer_Action>();
+                return;
+            }
+
             //We need the direction to know if behind of the enemy there is
             //a tile wakable to make our separate or not.
             Movement_Action.Direction current_dir = mov.SetDirection();
@@ -83,9 +91,17 @@ public class EnemySpear_BT : Enemy_BT
         }
         else if (inrange_i == 2)
         {
+            if (!GetComponent<FacePlayer_Action>().IsFaced())
+            {
+                current_action.Interupt();
+                next_action = GetComponent<FacePlayer_Action>();
+                return;
+            }
+
             bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
             if (attack_ready)
             {
+
                 Debug.Log("[error]Spear Attack at 2 tiles of distance");
                 attack_timer = 0.0f;
                 state = AI_STATE.AI_ATTACKING;
@@ -186,20 +202,20 @@ public class EnemySpear_BT : Enemy_BT
         switch (dir)
         {
             case Movement_Action.Direction.DIR_NORTH:
-                next_tile_x = (uint)tile_x_enemy ;
+                next_tile_x = (uint)tile_x_enemy;
                 next_tile_y = (uint)tile_y_enemy + 1;
                 break;
             case Movement_Action.Direction.DIR_WEST:
-                next_tile_x = (uint)tile_x_enemy;
-                next_tile_y = (uint)tile_y_enemy-1;
+                next_tile_x = (uint)tile_x_enemy + 1;
+                next_tile_y = (uint)tile_y_enemy;
                 break;
             case Movement_Action.Direction.DIR_SOUTH:
                 next_tile_x = (uint)tile_x_enemy;
-                next_tile_y = (uint)tile_y_enemy-1;
+                next_tile_y = (uint)tile_y_enemy - 1;
                 break;
             case Movement_Action.Direction.DIR_EAST:
-                next_tile_x = (uint)tile_x_enemy;
-                next_tile_y = (uint)tile_y_enemy+1;
+                next_tile_x = (uint)tile_x_enemy - 1;
+                next_tile_y = (uint)tile_y_enemy;
                 break;
         }
 

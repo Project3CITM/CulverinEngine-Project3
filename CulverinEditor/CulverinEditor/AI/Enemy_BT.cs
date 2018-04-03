@@ -61,7 +61,7 @@ public class Enemy_BT : BT
             || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION
             || next_action.action_type == Action.ACTION_TYPE.FACE_PLAYER_ACTION || next_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
         {
-            Debug.Log(next_action.action_type);
+            Debug.Log("[blue]" +next_action.action_type);
             current_action = next_action;
             next_action = null_action;
             current_action.ActionStart();

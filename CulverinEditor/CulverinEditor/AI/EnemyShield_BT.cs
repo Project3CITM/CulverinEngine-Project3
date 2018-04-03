@@ -43,10 +43,6 @@ public class EnemyShield_BT : Enemy_BT
 
             if (!GetComponent<FacePlayer_Action>().IsFaced())
             {
-                if (current_action.action_type == Action.ACTION_TYPE.CHASE_ACTION)
-                {
-                    Debug.Log("[error]TE PARARON CHASEANDO WILLY");
-                }
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
                 return;
