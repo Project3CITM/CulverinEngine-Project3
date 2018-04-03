@@ -52,7 +52,7 @@ public class BarrelFall : CulverinBehaviour
 
 
     CompAudio audio;
-    //CompCollider col;
+    CompCollider col;
 
     void Start()
     {
@@ -265,10 +265,11 @@ public class BarrelFall : CulverinBehaviour
 
     void OnTriggerEnter()
     {
-        //if(col.GetCollidedObject().CompareTag("player") && mode_puzzle == ModeBarrel.FILLING && placed)
-        //{
-        //    sinking = true;
-        //}
+        Debug.Log("[Green] Collision!!!!!!!!!!");
+        if(col.GetCollidedObject().CompareTag("player") && mode_puzzle == ModeBarrel.FILLING && placed)
+        {
+            sinking = true;
+        }
 
     }
 }
