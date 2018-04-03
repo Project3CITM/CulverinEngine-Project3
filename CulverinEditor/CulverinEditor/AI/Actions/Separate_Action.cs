@@ -27,6 +27,8 @@ public class Separate_Action : Action
     public override bool ActionStart()
     {
         bool ret = move.ActionStart();
+        move.chase = true;
+        move.GoTo((int)destiny_tile_x, (int)destiny_tile_y);
         return ret;
     }
 
@@ -43,7 +45,7 @@ public class Separate_Action : Action
             move.Interupt();
         }
 
-        move.GoTo((int)destiny_tile_x, (int)destiny_tile_y);
+        
         move_return = move.ActionUpdate();
        // Debug.Log("[error]Separate action move return:"+ move_return);
 
