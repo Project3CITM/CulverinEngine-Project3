@@ -1118,13 +1118,24 @@ void CompAnimation::ManageActualAnimationNode(float dt)
 				{
 					App->scene->root->AddChildGameObject(gameobject);
 					App->importer->iScript->UpdateMonoMap(gameobject);
+
 					CompTransform* trans = gameobject->GetComponentTransform();
 					CompTransform* my_trans = parent->GetComponentTransform();
+
 					if (trans != nullptr)
 					{
-						float3 final_pos = my_trans->GetPosGlobal() + active_node->prefab_pos;
+						float3 final_pos = my_trans->GetPosGlobal();
+						Quat globalrot = my_trans->GetRotGlobal();
+						float3x3 mat;
+						mat = mat.identity;
+						mat = mat.FromQuat(globalrot);
+
+						float3 rotatedpos =  mat * active_node->prefab_pos;
+						final_pos = final_pos + rotatedpos;
 						trans->SetPos(final_pos);
-						//trans->SetPos(active_node->prefab_pos);
+						float3 final_rot = globalrot.ToEulerXYZ() * RADTODEG;
+						trans->SetRot(final_rot);
+						
 					}
 				}
 				LOG("[error] with load prefab");
