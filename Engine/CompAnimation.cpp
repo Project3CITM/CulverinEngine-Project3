@@ -1134,8 +1134,15 @@ void CompAnimation::ManageActualAnimationNode(float dt)
 						final_pos = final_pos + rotatedpos;
 						trans->SetPos(final_pos);
 						float3 final_rot = globalrot.ToEulerXYZ() * RADTODEG;
+						LOG("player = x %.2f y %.2f z %.2f", final_rot.x, final_rot.y, final_rot.z);
+						final_rot.x = 0;
+						final_rot.z = 0;
+						LOG("player = x %.2f y %.2f z %.2f", final_rot.x, final_rot.y, final_rot.z);
+						float3 prefabrot = ((trans->GetRotGlobal()).ToEulerXYZ()) *RADTODEG;
+						LOG("prefabrot = x %.2f y %.2f z %.2f", prefabrot.x, prefabrot.y, prefabrot.z);
+						final_rot  = final_rot + prefabrot;
 						trans->SetRot(final_rot);
-						
+						gameobject->UpdateChildsMatrices();
 					}
 				}
 				LOG("[error] with load prefab");
