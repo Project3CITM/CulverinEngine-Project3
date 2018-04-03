@@ -846,6 +846,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 					temp.name_method = name_method;
 					temp.SetMonoMethod(method);
 					temp.SetMonoObject(csharp->GetMonoObject());
+					temp.references = csharp->GetReferences();
 					temp.type = VarType::Var_NONE;
 					csharp->methods.push_back(temp);
 					continue;
@@ -872,6 +873,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.references = csharp->GetReferences();
 						temp.type = VarType::Var_INT;
 						csharp->methods.push_back(temp);
 					}
@@ -882,6 +884,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.references = csharp->GetReferences();
 						temp.type = VarType::Var_FLOAT;
 						csharp->methods.push_back(temp);
 					}
@@ -891,6 +894,8 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 						temp.name_method = name_method;
 						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
+						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.references = csharp->GetReferences();
 						temp.type = VarType::Var_BOOL;
 						csharp->methods.push_back(temp);
 					}
@@ -901,6 +906,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.references = csharp->GetReferences();
 						temp.type = VarType::Var_STRING;
 						csharp->methods.push_back(temp);
 					}
@@ -911,6 +917,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 						temp.name_param = pram[0];
 						temp.SetMonoMethod(method);
 						temp.SetMonoObject(csharp->GetMonoObject());
+						temp.references = csharp->GetReferences();
 						temp.type = VarType::Var_GAMEOBJECT;
 						csharp->methods.push_back(temp);
 					}

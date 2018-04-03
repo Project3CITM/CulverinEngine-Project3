@@ -377,7 +377,7 @@ void CSharpScript::DoPublicMethod(PublicMethod* function, void** parameter)
 {
 	MonoObject* exception = nullptr;
 	// Do Main Function
-	mono_runtime_invoke(function->GetMethod(), function->GetScript(), parameter, &exception);
+	mono_runtime_invoke(function->GetMethod(), mono_gchandle_get_target(function->references), parameter, &exception);
 	if (exception)
 	{
 		mono_print_unhandled_exception(exception);
@@ -397,6 +397,11 @@ bool CSharpScript::CheckMonoObject(MonoObject* object)
 MonoObject* CSharpScript::GetMonoObject() const
 {
 	return mono_gchandle_get_target(CSReference);
+}
+
+uint CSharpScript::GetReferences() const
+{
+	return CSReference;
 }
 
 void CSharpScript::SetMonoObject(MonoObject* new_object)
