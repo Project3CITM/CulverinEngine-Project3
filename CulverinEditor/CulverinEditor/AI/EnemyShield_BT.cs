@@ -40,6 +40,14 @@ public class EnemyShield_BT : Enemy_BT
         //Attack action
         if (InRange())
         {
+
+            if (!GetComponent<FacePlayer_Action>().IsFaced())
+            {
+                current_action.Interupt();
+                next_action = GetComponent<FacePlayer_Action>();
+                return;
+            }
+
             bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
 
             if (attack_ready)
@@ -85,6 +93,9 @@ public class EnemyShield_BT : Enemy_BT
         int my_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int my_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
+        //Reset event list
+        GetComponent<ShieldGuard_Listener>().ClearEvents();
+
         //Patrol
         if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
         {
@@ -119,8 +130,11 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
+                        GetComponent<CompAnimation>().SetTransition("ToBlock");
                         Debug.Log("Attack blocked");
                     }
+                    else
+                        base.ApplyDamage(damage);
                 }
                 else
                     base.ApplyDamage(damage);
@@ -138,8 +152,11 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
+                        GetComponent<CompAnimation>().SetTransition("ToBlock");
                         Debug.Log("Attack blocked");
                     }
+                    else
+                        base.ApplyDamage(damage);
                 }
                 else
                     base.ApplyDamage(damage);

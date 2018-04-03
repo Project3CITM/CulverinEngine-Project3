@@ -28,8 +28,19 @@ public class Attack_Action : Action
     public override bool ActionStart()
     {
         anim = GetComponent<CompAnimation>();
+        if (anim == null)
+        {
+            Debug.Log("[error]Attack Action Start: CompAnimation is null!!");
+        }
 
-        if (GetComponent<EnemyShield_BT>() != null && (player.player_obj.GetComponent<Shield>().IsActive() || player.GetCurrCharacterState() == (int)CharacterController.State.COVER))
+        player = GetLinkedObject("target").GetComponent<CharactersManager>();
+        if (player == null)
+        {
+            Debug.Log("[error]Attack Action Start: Player is null!!");
+        }
+
+        if (GetComponent<EnemyShield_BT>() != null && (player.player_obj.GetComponent<Shield>().IsActive() 
+            || player.GetCurrCharacterState() == (int)CharacterController.State.COVER))
         {
             shield_attack = true;
             anim.SetTransition("ToShieldAttack");
@@ -41,7 +52,8 @@ public class Attack_Action : Action
             anim.SetClipDuration("Attack", attack_duration);
         }
             
-        player = GetLinkedObject("target").GetComponent<CharactersManager>();
+      
+
         damage_done = false;
         shield_attack = false;
         //Interrupt player action

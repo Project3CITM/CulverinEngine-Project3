@@ -232,18 +232,18 @@ void CompTransform::ShowInspectorInfo()
 	// SHOW OUTPUT (depending on mode and if transform is freezed) ---------------
 	if (App->engine_state == EngineState::STOP)
 	{
-		ShowTransform(0.5f); // 0.5f = drag speed of editor variables of the transform
+		ShowTransform(SPEED); // 0.5f = drag speed of editor variables of the transform
 	}
 	else
 	{
 		// In game mode, you can't edit transforms of static objects
 		if (freeze)
 		{
-			ShowTransform(0.0f);  // 0.0f = no editable
+			ShowTransform(SPEED);  // 0.0f = no editable
 		}
 		else
 		{
-			ShowTransform(0.5f);
+			ShowTransform(SPEED);
 		}
 	}
 	// ------------------------------------------------------------------

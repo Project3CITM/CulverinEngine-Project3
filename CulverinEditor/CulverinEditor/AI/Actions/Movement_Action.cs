@@ -196,7 +196,10 @@ public class Movement_Action : Action
         }
 
         if (chase != false)
+        {
             chase = false;
+        }
+
         interupt = false;
         return false;
     }
@@ -266,24 +269,27 @@ public class Movement_Action : Action
     private void NextTile()
     {
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
-        pos.x = path[0].GetTileX() * tile_size;
-        pos.z = path[0].GetTileY() * tile_size;
-        GetComponent<Transform>().position = pos;
-        GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
+        if (path.Count > 0)
+        {
+            pos.x = path[0].GetTileX() * tile_size;
+            pos.z = path[0].GetTileY() * tile_size;
+            GetComponent<Transform>().position = pos;
+            GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
 
-        //Tiles
-        if (path.Count == 1)
-        {
-            arrive.SetEnabled(false);
-            seek.SetEnabled(false);
-            translation_finished = true;
-        }
-        else
-        {
-            arrive.SetEnabled(true);
-            seek.SetEnabled(true);
-            path.Remove(path[0]);
-            LookAtNextTile();
+            //Tiles
+            if (path.Count == 1)
+            {
+                arrive.SetEnabled(false);
+                seek.SetEnabled(false);
+                translation_finished = true;
+            }
+            else
+            {
+                arrive.SetEnabled(true);
+                seek.SetEnabled(true);
+                path.Remove(path[0]);
+                LookAtNextTile();
+            }
         }
     }
 
@@ -417,7 +423,9 @@ public class Movement_Action : Action
     {
         look_at_pos = new Vector3(target_position);
 
-        GetComponent<Align_Steering>().SetEnabled(true);
+        Align_Steering align_scr= GetComponent<Align_Steering>();
+        if (align_scr == null) Debug.Log("Align steering null");
+        align_scr.SetEnabled(true);
 
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
@@ -456,6 +464,7 @@ public class Movement_Action : Action
     public void LookAtPlayer()
     {
         Vector3 target_pos = new Vector3(GetLinkedObject("player").GetComponent<Transform>().position);
+        Debug.Log("Look at player pos: " + target_pos);
         LookAt(target_pos);
     }
 

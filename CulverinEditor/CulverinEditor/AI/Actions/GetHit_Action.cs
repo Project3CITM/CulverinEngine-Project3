@@ -3,8 +3,9 @@
 class GetHit_Action: Action
 {
     public float duration = 1.0f;
-    string animation_clip;
-   
+
+    string animation_clip = "a";
+
 
     public GetHit_Action()
     {

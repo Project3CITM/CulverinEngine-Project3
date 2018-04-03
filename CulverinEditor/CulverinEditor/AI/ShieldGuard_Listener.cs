@@ -68,6 +68,8 @@ public class ShieldGuard_Listener : PerceptionListener
 
                 if (gameObject == seen_event_tmp.enemy_who_saw)
                 {
+                    Debug.Log("[error] Seeeee you");
+
                     GetComponent<EnemyShield_BT>().InterruptAction();
                     GetComponent<EnemyShield_BT>().player_detected = true;
 
@@ -98,9 +100,10 @@ public class ShieldGuard_Listener : PerceptionListener
 
             case PERCEPTION_EVENT_TYPE.PLAYER_SEEN:
                 GetComponent<EnemyShield_BT>().player_detected = false;
-                if (GetComponent<EnemyShield_BT>().InCombat() == true)
-                    GetComponent<EnemyShield_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
                 GetComponent<ChasePlayer_Action>().forgot_event = true;
+
+                if (GetComponent<EnemyShield_BT>().InCombat() == true && GetComponent<PerceptionSightEnemy>().player_seen == false)
+                    GetComponent<EnemyShield_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
 
                 Debug.Log("[error]Event gone type:" + event_recieved.type);
                 break;
@@ -163,3 +166,4 @@ public class ShieldGuard_Listener : PerceptionListener
         return false;
     }
 }
+

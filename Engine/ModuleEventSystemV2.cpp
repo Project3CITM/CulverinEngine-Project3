@@ -6,6 +6,7 @@
 #include "CompMaterial.h"
 #include "ModuleFramebuffers.h"
 #include "Scene.h"
+#include "ModuleWindow.h"
 
 void PushEvent(Event& event)
 {
@@ -88,25 +89,34 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	IteratingMaps = true;
 	FrameBuffer* active_frame = nullptr;
 	//Draw opaque events
-	App->renderer3D->render_mode = RenderMode::DEFAULT;
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	active_frame = App->scene->scene_buff;
 	active_frame->Bind("Scene");
 	IterateDrawV(dt);
-	active_frame->UnBind("Scene");
+	//active_frame->UnBind("Scene");
 	//Draw alpha events
-	App->renderer3D->render_mode = RenderMode::DEFAULT;
-	active_frame = App->scene->scene_buff;
-	active_frame->Bind("Scene");
+	//active_frame->Bind("Scene");
 	IterateDrawAlphaV(dt);
 	active_frame->UnBind("Scene");
 	//Draw opaque with glow events
-	App->renderer3D->render_mode = RenderMode::GLOW;
+	glViewport(0, 0, 128, 128);
 	active_frame = App->scene->glow_buff;
 	active_frame->Bind("Scene");
 	IterateDrawGlowV(dt);
 	active_frame->UnBind("Scene");
+	glUseProgram(NULL);
+	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	//NoDraw events
-	App->renderer3D->render_mode = RenderMode::DEFAULT;
+	//glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	active_frame = App->scene->scene_buff;
 	active_frame->Bind("Scene");
 	IterateNoDrawV(dt);
@@ -147,18 +157,27 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 
 void ModuleEventSystemV2::IterateDrawV(float dt)
 {
+	uint LastBindedProgram = 0;
+	uint NewProgramID = 0;
 	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
-		case EventValidation::EVENT_VALIDATION_VALID:
-			//Here we can execute the event, any delay is left and this is a valid event
+		case EventValidation::EVENT_VALIDATION_VALID: //Here we can execute the event, any delay is left and this is a valid event
+			NewProgramID = 0;
+			if (item._Ptr->_Myval.first != 0)
+				NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
+			if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+			{
+				LastBindedProgram = NewProgramID;
+				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->Bind();
+			}
 			switch (item._Ptr->_Myval.second.draw.Dtype)
 			{
 			case EDraw::DrawType::DRAW_3D:
 			case EDraw::DrawType::DRAW_2D:
-				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
+				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw2(LastBindedProgram);
 				break;
 //			case EDraw::DrawType::DRAW_SCREEN_CANVAS:
 //				(*item2)->OnEvent(item._Ptr->_Myval.second);
@@ -182,18 +201,33 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 
 void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 {
+	uint LastBindedProgram = 0;
+	uint NewProgramID = 0;
+	bool UseGlow = 0;
 	for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
-		case EventValidation::EVENT_VALIDATION_VALID:
-			//Here we can execute the event, any delay is left and this is a valid event
+		case EventValidation::EVENT_VALIDATION_VALID: //Here we can execute the event, any delay is left and this is a valid event
+			NewProgramID = 0;
+			UseGlow = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->glow;
+			if (item._Ptr->_Myval.first != 0)
+			{
+				if (UseGlow) NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
+				else NewProgramID = App->renderer3D->non_glow_material->GetProgramID();
+			}
+			if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+			{
+				LastBindedProgram = NewProgramID;
+				if (!UseGlow) App->renderer3D->non_glow_material->Bind();
+				else ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->Bind();
+			}
 			switch (item._Ptr->_Myval.second.draw.Dtype)
 			{
 			case EDraw::DrawType::DRAW_3D:
 			case EDraw::DrawType::DRAW_2D:
-				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw();
+				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw2(LastBindedProgram);
 				break;
 //			case EDraw::DrawType::DRAW_3D_ALPHA:
 //				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
@@ -220,29 +254,35 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 
 void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 {
-	/*
 	bool alpha_draw = false;
 	if (DrawAlphaV.size() > 0) alpha_draw = true;
 	if (alpha_draw)
 	{
-	glEnable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
 	}
-	*/
+	uint LastBindedProgram = 0;
+	uint NewProgramID = 0;
+	bool UseGlow = 0;
 	for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
-		case EventValidation::EVENT_VALIDATION_VALID:
-			//Here we can execute the event, any delay is left and this is a valid event
+		case EventValidation::EVENT_VALIDATION_VALID: //Here we can execute the event, any delay is left and this is a valid event
 			switch (type)
 			{
 			case EventType::EVENT_DRAW:
+				NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
+				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+				{
+					LastBindedProgram = NewProgramID;
+					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->Bind();
+				}
 				switch (item._Ptr->_Myval.second.draw.Dtype)
 				{
 				case EDraw::DrawType::DRAW_3D_ALPHA:
-					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
+					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw2(LastBindedProgram);
 					break;
 //				case EDraw::DrawType::DRAW_SCREEN_CANVAS:
 //					(*item2)->OnEvent(item._Ptr->_Myval.second);
@@ -252,9 +292,13 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 				}
 				break;
 			case EventType::EVENT_PARTICLE_DRAW:
-				App->renderer3D->particles_shader->Bind();
+				NewProgramID = App->renderer3D->particles_shader->programID;
+				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+				{
+					LastBindedProgram = NewProgramID;
+					App->renderer3D->particles_shader->Bind();
+				}
 				((Particle*)item._Ptr->_Myval.second.particle_draw.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
-				App->renderer3D->particles_shader->Unbind();
 				break;
 			}
 			item = DrawAlphaV.erase(item);
@@ -269,13 +313,11 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 			continue;
 		}
 	}
-	/*
 	if (alpha_draw)
 	{
-	glDisable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
+		glDisable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
 	}
-	*/
 }
 
 void ModuleEventSystemV2::IterateNoDrawV(float dt)
@@ -387,6 +429,9 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 	case EventType::EVENT_DRAW:
 	{
 		float3 diff_vect = event.draw.ToDraw->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;
+		uint ID = 0;
+		if ((event.draw.ToDraw != nullptr) && (((CompMesh*)event.draw.ToDraw)->GetMaterial() != nullptr) && (((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram() != nullptr))
+			ID = ((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
 		float DistanceCamToObject = diff_vect.Length();
 		switch (event.draw.Dtype)
 		{
@@ -398,8 +443,8 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 				EventPushedWhileIteratingMaps_DrawV = true;
 			}
 			*/
-			DrawV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event));
-			DrawGlowV.insert(std::pair<uint, Event>(event.draw.ToDraw->GetUUID(), event));
+			DrawV.insert(std::pair<uint, Event>(ID, event));
+			DrawGlowV.insert(std::pair<uint, Event>(ID, event));
 			break;
 		case event.draw.DRAW_3D_ALPHA:
 			/*
@@ -528,7 +573,7 @@ void ModuleEventSystemV2::ClearEvents(EventType type)
 	}
 }
 
-void ModuleEventSystemV2::ClearEvents(EventType type, Component* component)
+void ModuleEventSystemV2::ClearEvents(EventType type, void* component)
 {
 
 }

@@ -81,7 +81,7 @@ public:
 	std::string name_param;
 	std::string name_method;
 	VarType type = Var_UNKNOWN;
-
+	uint references;
 private:
 	MonoMethod* method = nullptr;
 	MonoObject* Script = nullptr;
@@ -147,6 +147,7 @@ public:
 
 	//GET functions ------------------------------------
 	MonoObject* GetMonoObject() const;
+	uint GetReferences() const;
 	void SetMonoObject(MonoObject* new_object);
 	MonoClass* GetMonoClass() const;
 
