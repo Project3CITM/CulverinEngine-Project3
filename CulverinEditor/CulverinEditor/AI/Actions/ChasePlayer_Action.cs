@@ -25,13 +25,17 @@ public class ChasePlayer_Action : Action
     {
         event_to_react.start_counting = false;
         move.GoToPlayer();
+        //Debug.Log("[green] woooow party path");
+        interupt = false;
         bool ret = move.ActionStart();
         return ret;
     }
 
     public override bool ActionEnd()
     {
+        Debug.Log("[blue] chase player action end");
         interupt = false;
+        move.SetInterupt(false);
         return true;
     }
 
@@ -39,6 +43,7 @@ public class ChasePlayer_Action : Action
     {
         if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true )
         {
+            Debug.Log("[yellow] Move interruptus " + forgot_event + " " + GetComponent<Movement_Action>().NextToPlayer() + " " + interupt);
             move.Interupt();
         }
 
@@ -46,7 +51,7 @@ public class ChasePlayer_Action : Action
         {
             timer += Time.deltaTime;
 
-            if (timer >= check_player_timer)
+            if (timer >= check_player_timer && move.CenteredInTile())
             {
                 timer = 0.0f;
                 move.GoToPlayer();
@@ -69,6 +74,11 @@ public class ChasePlayer_Action : Action
     public void SetEvent(PerceptionEvent e)
     {
         event_to_react = e;
+    }
+
+    public void SetInterupt(bool i)
+    {
+        interupt = i;
     }
 
 }

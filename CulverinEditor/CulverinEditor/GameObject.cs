@@ -39,6 +39,14 @@ namespace CulverinEditor
             }
         }
 
+        public bool IsEquals(GameObject other)
+        {
+            if (GetName() == other.GetName())
+                return true;
+
+            return false;
+        }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public  extern string GetTag();
 

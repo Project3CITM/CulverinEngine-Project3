@@ -15,6 +15,8 @@ public class Movement_Action : Action
     Arrive_Steering arrive;
     Seek_Steering seek;
 
+    PathNode tile = null;
+
     public enum Direction
     {
         DIR_NO_DIR,
@@ -86,6 +88,10 @@ public class Movement_Action : Action
 
         Vector3 fw = GetComponent<Transform>().GetForwardVector();
         path = new List<PathNode>();
+
+        //Set Occupied tile in Pathfinder
+        tile = new PathNode(GetCurrentTileX(), GetCurrentTileY());
+        map.GetComponent<Pathfinder>().UpdateOccupiedTiles(gameObject.GetName(), tile);
     }
 
     public override bool ActionStart()
@@ -557,6 +563,19 @@ public class Movement_Action : Action
     public bool IsWalkable(uint tile_x, uint tile_y)
     {
         return map.GetComponent<Pathfinder>().IsWalkableTile(tile_x, tile_y);
+    }
+
+    public void SetInterupt(bool i)
+    {
+        interupt = i;
+    }
+
+    public bool CenteredInTile()
+    {
+        if ((Mathf.Abs((GetCurrentTileX() - (path[0].GetTileX() * tile_size))) < arrive.min_distance) && (Mathf.Abs((GetCurrentTileY() - (path[0].GetTileY() * tile_size))) < arrive.min_distance))
+            return true;
+        
+        return false;
     }
 
 }
