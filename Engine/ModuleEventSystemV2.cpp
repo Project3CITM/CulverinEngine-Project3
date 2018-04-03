@@ -89,6 +89,11 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	IteratingMaps = true;
 	FrameBuffer* active_frame = nullptr;
 	//Draw opaque events
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	active_frame = App->scene->scene_buff;
 	active_frame->Bind("Scene");
@@ -104,6 +109,12 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	active_frame->Bind("Scene");
 	IterateDrawGlowV(dt);
 	active_frame->UnBind("Scene");
+	glUseProgram(NULL);
+	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	//NoDraw events
 	//glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	active_frame = App->scene->scene_buff;
@@ -148,11 +159,6 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 {
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -191,13 +197,6 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 			continue;
 		}
 	}
-	glUseProgram(NULL);
-	if (App->renderer3D->wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void ModuleEventSystemV2::IterateDrawGlowV(float dt)
@@ -205,10 +204,6 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	bool UseGlow = 0;
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -255,13 +250,6 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 			continue;
 		}
 	}
-	glUseProgram(NULL);
-	if (App->renderer3D->wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
@@ -276,10 +264,6 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	bool UseGlow = 0;
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -329,13 +313,6 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 			continue;
 		}
 	}
-	glUseProgram(NULL);
-	if (App->renderer3D->wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	if (alpha_draw)
 	{
 		glDisable(GL_BLEND);
@@ -596,7 +573,7 @@ void ModuleEventSystemV2::ClearEvents(EventType type)
 	}
 }
 
-void ModuleEventSystemV2::ClearEvents(EventType type, Component* component)
+void ModuleEventSystemV2::ClearEvents(EventType type, void* component)
 {
 
 }
