@@ -92,5 +92,11 @@ namespace CulverinEditor.Pathfinding
 
             return false;
         }
+
+        public void SetCoords(int x_, int y_)
+        {
+            x = x_;
+            y = y_;
+        }
     }
 }
