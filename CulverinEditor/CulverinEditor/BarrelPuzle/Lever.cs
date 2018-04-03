@@ -81,6 +81,8 @@ public class Lever : CulverinBehaviour
 
     public GameObject level_map;
     public GameObject player;
+    public GameObject other_lever_1;
+    public GameObject other_lever_2;
 
     CompAudio audio;
 
@@ -158,7 +160,12 @@ public class Lever : CulverinBehaviour
             lever_interact.SetActive(false);
             Debug.Log("[green] Deactivated Interact");
         }
-        
+
+        if(other_lever_1 != null)
+            other_lever_1 = GetLinkedObject("other_lever_1");
+        if (other_lever_2 != null)
+            other_lever_2 = GetLinkedObject("other_lever_2");
+
         //// Testing --------------------------------------------
         //for (int y = 0; y < number_lines; y++)
         //{
@@ -194,6 +201,20 @@ public class Lever : CulverinBehaviour
             //TODO: Change to GetKey_Action
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                //Reset other puzzles if exists to avoid audio conflicts
+                if(other_lever_1 != null)
+                {
+                    Debug.Log("Reset previous puzzle");
+                    other_lever_1.GetComponent<Lever>().ResetPuzzle();
+                    other_lever_1.GetComponent<PuzzleCountdown>().StopCountdown();
+                }
+                if (other_lever_2 != null)
+                {
+                    Debug.Log("Reset previous puzzle");
+                    other_lever_2.GetComponent<Lever>().ResetPuzzle();
+                    other_lever_2.GetComponent<PuzzleCountdown>().StopCountdown();
+                }
+
                 SetOrientationVectors();
                 OnLeverActivated();
                 GetComponent<CompAudio>().PlayEvent("Lever");
@@ -202,10 +223,10 @@ public class Lever : CulverinBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.N))
+        /*if (Input.GetKeyDown(KeyCode.N))
         {
             ResetPuzzle();
-        }
+        }*/
 
 
         //---------------------
@@ -283,6 +304,7 @@ public class Lever : CulverinBehaviour
                     SetPathWalkable(0, 3);
                     editmap = false;
                     countdown.StartCountdown();
+                    
                 }
                 else if (countdown.IsCountdownOver())
                 {
@@ -353,13 +375,11 @@ public class Lever : CulverinBehaviour
 
             if (b_fall.IsPuzzleMode())
             {
-                Debug.Log("Barrels Activate");
                 list[i].SetActive(true);
                 puzzle_barrel = b_fall;
             }
             else if (isfilling)
             {
-                Debug.Log("Filling Activata");
                 list[i].SetActive(true);
                 fill_barrel = b_fall;
             }
@@ -383,14 +403,9 @@ public class Lever : CulverinBehaviour
         int curr_y = 0;
         for (int x = barrel_per_line - 1; x >= 0; x--)
         {
-            Debug.Log("Barrel Pos");
-            Debug.Log(x);
-            Debug.Log(y);
             curr_x = puzzle_start_tile_x + y * (int)(orientation_x.x + orientation_z.x);
             curr_y = puzzle_start_tile_z + x * (int)(orientation_x.z + orientation_z.z);
-            Debug.Log("[Red] Current Set Info");
-            Debug.Log(curr_x);
-            Debug.Log(curr_y);
+
             if (current_path.walkability[x, y] == 0)
             {
                
@@ -620,6 +635,9 @@ public class Lever : CulverinBehaviour
 
     public void ResetPuzzle()
     {
+        if (!active_lever)
+            return;
+
         ResetLine(line1);
         ResetLine(line2);
         ResetLine(line3);
