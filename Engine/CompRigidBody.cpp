@@ -65,7 +65,7 @@ CompRigidBody::~CompRigidBody()
 
 void CompRigidBody::PreUpdate(float dt)
 {
-	if (((dt > 0 && body && !kinematic) || (own_update)) && !transform->GetToUpdate())
+	if (((dt > 0 && body && !kinematic && lock_move != 63) || (own_update)) && !transform->GetToUpdate())
 	{
 		own_update = true;
 		UpdateParentPosition();
@@ -294,7 +294,7 @@ bool CompRigidBody::HaveBodyShape()
 
 void CompRigidBody::SetColliderPosition()
 {
-	Quat quat = transform->GetRotGlobal();
+	Quat quat = transform->GetRotParent()*transform->GetRot();
 	float3 fpos = transform->GetPosGlobal();
 
 	if (collider_comp)
