@@ -33,6 +33,7 @@ the specific language governing permissions and limitations under the License.
 #include <AK/SoundEngine/Common/AkTypes.h>
 #include <windows.h>
 //#define AK_ENABLE_PERF_RECORDING
+#include <stdio.h>
 #if defined(AK_ENABLE_PERF_RECORDING)
 #include <stdio.h>
 #endif

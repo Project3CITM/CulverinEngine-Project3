@@ -190,7 +190,9 @@ public:
 			fileAttributes = fileInfo.dwFileAttributes;
 		}
 #else
-		fileAttributes = GetFileAttributes( in_pszBasePath );
+		char ansi_string[512];
+		AKPLATFORM::AkWideCharToChar(in_pszBasePath, 512, &ansi_string[0]);
+		fileAttributes = GetFileAttributes(&ansi_string[0]);
 #endif
 		if (fileAttributes == INVALID_FILE_ATTRIBUTES)
 			return AK_Fail;  //something is wrong with your path!
