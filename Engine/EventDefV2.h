@@ -283,6 +283,7 @@ struct EDeleteGO
 {
 	uint64_t event_data = 0;
 	GameObject* Todelte = nullptr;
+	uint uuid = 0;
 };
 
 /*--------------------------------------------------*/

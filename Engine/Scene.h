@@ -91,6 +91,7 @@ public:
 
 	void DeleteAllGameObjects(GameObject* gameobject, bool isMain = true, bool is_reimport = false);
 	void DeleteGameObject(GameObject* gameobject, bool isImport = false, bool is_reimport = false);
+	bool CheckDeletedObjcet(uint uuid);
 	// -------------------------------------
 
 	// UI ----------------------------------
@@ -143,6 +144,7 @@ private:
 	std::vector<std::string>				defined_tags;
 	std::vector<std::vector<GameObject*>*>	tagged_objects;
 	std::vector<GameObject*>				game_objects_scene; 
+	std::vector<uint>						deleted_objects;
 };
 
 #endif

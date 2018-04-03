@@ -182,6 +182,8 @@ update_status Scene::PreUpdate(float dt)
 	//	}
 	//}
 
+	deleted_objects.clear();
+
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
@@ -333,7 +335,10 @@ void Scene::OnEvent(Event & event)
 	case EventType::EVENT_DELETE_GO:
 	{
 		LOG("Delete GameObject");
-		DeleteGameObject(event.delete_go.Todelte);
+		if (CheckDeletedObjcet(event.delete_go.uuid))
+		{
+			DeleteGameObject(event.delete_go.Todelte);
+		}
 		break;
 	}
 	case EventType::EVENT_SPAWN_GAMEOBJECT:
@@ -1167,6 +1172,19 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 			RELEASE(gameobject);
 		}
 	}
+}
+bool Scene::CheckDeletedObjcet(uint uuid)
+{
+	// Return false if the object had been deleted and true if has to be deleted
+	for (uint i = 0; i < deleted_objects.size(); i++)
+	{
+		if (deleted_objects[i] == uuid)
+		{
+			return false;
+		}
+	}
+	deleted_objects.push_back(uuid);
+	return true;
 }
 // -------------------------------------------------------------------------------------
 
