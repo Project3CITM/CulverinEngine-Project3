@@ -1,29 +1,3 @@
-/*******************************************************************************
-The content of this file includes portions of the AUDIOKINETIC Wwise Technology
-released in source code form as part of the SDK installer package.
-
-Commercial License Usage
-
-Licensees holding valid commercial licenses to the AUDIOKINETIC Wwise Technology
-may use this file in accordance with the end user license agreement provided 
-with the software or, alternatively, in accordance with the terms contained in a
-written agreement between you and Audiokinetic Inc.
-
-Apache License Usage
-
-Alternatively, this file may be used under the Apache License, Version 2.0 (the 
-"Apache License"); you may not use this file except in compliance with the 
-Apache License. You may obtain a copy of the Apache License at 
-http://www.apache.org/licenses/LICENSE-2.0.
-
-Unless required by applicable law or agreed to in writing, software distributed
-under the Apache License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
-OR CONDITIONS OF ANY KIND, either express or implied. See the Apache License for
-the specific language governing permissions and limitations under the License.
-
-  Version: v2017.1.2  Build: 6361
-  Copyright (c) 2006-2017 Audiokinetic Inc.
-*******************************************************************************/
 namespace ak {
     namespace soundengine {
         // Set multiple positions for a single game object. Setting multiple positions for a single game object is a way to simulate multiple emission sources while using the resources of only one voice. This can be used to simulate wall openings, area sounds, or multiple objects emitting the same sound in the same area. See <tt>AK::SoundEngine::SetMultiplePositions</tt>.
@@ -75,10 +49,16 @@ namespace ak {
             static const char* testAssert =  "ak.wwise.debug.testAssert"; 
             // Sent when an assert has failed.
             static const char* assertFailed =  "ak.wwise.debug.assertFailed"; 
-            // Enables debug assertions.
+            // Enables debug assertions. Every call to enableAsserts with false increments the ref count. Calling with true will decrement the ref count. This is only available with Debug builds.
             static const char* enableAsserts =  "ak.wwise.debug.enableAsserts";
         } 
         namespace core {
+            namespace audioSourcePeaks {
+                // Get the min/max peak pairs, in a given region of an audio source, as a collection of binary strings (one per channel). If getCrossChannelPeaks is true, there will be only one binary string representing peaks across all channels globally.
+                static const char* getMinMaxPeaksInRegion =  "ak.wwise.core.audioSourcePeaks.getMinMaxPeaksInRegion"; 
+                // Get the min/max peak pairs in the entire trimmed region of an audio source, for each channel, as an array of binary strings (one per channel). If getCrossChannelPeaks is true, there will be only one binary string representing peaks across all channels globally.
+                static const char* getMinMaxPeaksInTrimmedRegion =  "ak.wwise.core.audioSourcePeaks.getMinMaxPeaksInTrimmedRegion";
+            } 
             namespace remote {
                 // Retrieves the connection status.
                 static const char* getConnectionStatus =  "ak.wwise.core.remote.getConnectionStatus"; 
@@ -92,22 +72,24 @@ namespace ak {
             // Retrieve global Wwise information.
             static const char* getInfo =  "ak.wwise.core.getInfo"; 
             namespace object {
+                // Sent when an object reference is changed.
+                static const char* referenceChanged =  "ak.wwise.core.object.referenceChanged"; 
                 // Moves an object to the given parent.
                 static const char* move =  "ak.wwise.core.object.move"; 
                 // Sent when an attenuation curve's link/unlink is changed.
                 static const char* attenuationCurveLinkChanged =  "ak.wwise.core.object.attenuationCurveLinkChanged"; 
                 // Sent when an object is added as a child to another object.
                 static const char* childAdded =  "ak.wwise.core.object.childAdded"; 
+                // Retrieves the list of all object types.
+                static const char* getTypes =  "ak.wwise.core.object.getTypes"; 
                 // Sent when the watched property of an object changes.
                 static const char* propertyChanged =  "ak.wwise.core.object.propertyChanged"; 
                 // Creates an object of type 'type', as a child of 'parent'.
                 static const char* create =  "ak.wwise.core.object.create"; 
-                // Sent when one or many curves are changed.
-                static const char* curveChanged =  "ak.wwise.core.object.curveChanged"; 
-                // Sent prior to an object's deletion.
-                static const char* preDeleted =  "ak.wwise.core.object.preDeleted"; 
                 // Performs a query, returns specified data for each object in query result. Refer to \ref waapi_query for more information.
                 static const char* get =  "ak.wwise.core.object.get"; 
+                // Sent prior to an object's deletion.
+                static const char* preDeleted =  "ak.wwise.core.object.preDeleted"; 
                 // Sent when an object is renamed.
                 static const char* nameChanged =  "ak.wwise.core.object.nameChanged"; 
                 // Sent following an object's deletion.
@@ -126,6 +108,8 @@ namespace ak {
                 static const char* copy =  "ak.wwise.core.object.copy"; 
                 // Retrieves the status of a property.
                 static const char* isPropertyEnabled =  "ak.wwise.core.object.isPropertyEnabled"; 
+                // Retrieves information about an object property.
+                static const char* getPropertyInfo =  "ak.wwise.core.object.getPropertyInfo"; 
                 // Sets an object's reference value.
                 static const char* setReference =  "ak.wwise.core.object.setReference"; 
                 // Sent when an attenuation curve is changed.
@@ -134,8 +118,12 @@ namespace ak {
                 static const char* created =  "ak.wwise.core.object.created"; 
                 // Sent when an object is removed from the children of another object.
                 static const char* childRemoved =  "ak.wwise.core.object.childRemoved"; 
+                // Retrieves the list of property names for an object.
+                static const char* getPropertyNames =  "ak.wwise.core.object.getPropertyNames"; 
                 // Gets the specified attenuation curve for a given attenuation object.
                 static const char* getAttenuationCurve =  "ak.wwise.core.object.getAttenuationCurve"; 
+                // Sent when one or many curves are changed.
+                static const char* curveChanged =  "ak.wwise.core.object.curveChanged"; 
                 // Deletes the specified object.
                 static const char* delete_ =  "ak.wwise.core.object.delete";
             } 
@@ -148,7 +136,7 @@ namespace ak {
                 static const char* beginGroup =  "ak.wwise.core.undo.beginGroup";
             } 
             namespace project {
-                // Sent when the after the project is completly closed.
+                // Sent when the after the project is completely closed.
                 static const char* postClosed =  "ak.wwise.core.project.postClosed"; 
                 // Sent when the project has been loaded.
                 static const char* loaded =  "ak.wwise.core.project.loaded"; 
@@ -156,6 +144,20 @@ namespace ak {
                 static const char* preClosed =  "ak.wwise.core.project.preClosed"; 
                 // Saves the current project.
                 static const char* save =  "ak.wwise.core.project.save";
+            } 
+            namespace transport {
+                // Gets the state of the given transport object.
+                static const char* getState =  "ak.wwise.core.transport.getState"; 
+                // Sent when the transport's state has changed.
+                static const char* stateChanged =  "ak.wwise.core.transport.stateChanged"; 
+                // Creates a transport object for the given Wwise object.  The return transport object can be used to play, stop, pause and resume the Wwise object via the other transport functions.
+                static const char* create =  "ak.wwise.core.transport.create"; 
+                // Returns the list of transport objects.
+                static const char* getList =  "ak.wwise.core.transport.getList"; 
+                // Destroys the given transport object.
+                static const char* destroy =  "ak.wwise.core.transport.destroy"; 
+                // Executes an action on the given transport object, or all transports if no transport is specified.
+                static const char* executeAction =  "ak.wwise.core.transport.executeAction";
             } 
             namespace soundbank {
                 // Retrieves a SoundBank's inclusion list.
@@ -169,23 +171,28 @@ namespace ak {
                 // Scripted object creation and audio file import from a tab-delimited file.
                 static const char* importTabDelimited =  "ak.wwise.core.audio.importTabDelimited";
             } 
-            namespace transport {
-                // Destroys the given transport object.
-                static const char* destroy =  "ak.wwise.core.transport.destroy"; 
-                // Creates a transport object for the given Wwise object.  The return transport object can be used to play, stop, pause and resume the Wwise object via the other transport functions.
-                static const char* create =  "ak.wwise.core.transport.create"; 
-                // Gets the state of the given transport object.
-                static const char* getState =  "ak.wwise.core.transport.getState"; 
-                // Executes an action on the given transport object, or all transports if no transport is specified.
-                static const char* executeAction =  "ak.wwise.core.transport.executeAction"; 
-                // Returns the list of transport objects.
-                static const char* getList =  "ak.wwise.core.transport.getList";
+            namespace switchContainer {
+                // Remove an assignment between a Switch Container's child and a State.
+                static const char* removeAssignment =  "ak.wwise.core.switchContainer.removeAssignment"; 
+                // Returns the list of assignments between a Switch Container's children and states.
+                static const char* getAssignments =  "ak.wwise.core.switchContainer.getAssignments"; 
+                // Sent when an assignment is removed from a Switch Container.
+                static const char* assignmentRemoved =  "ak.wwise.core.switchContainer.assignmentRemoved"; 
+                // Assign a Switch Container's child to a Switch. This is the equivalent of doing a drag&drop of the child to a state in the Assigned Objects view. The child is always added at the end for each state.
+                static const char* addAssignment =  "ak.wwise.core.switchContainer.addAssignment"; 
+                // Sent when an assignment is added to a Switch Container.
+                static const char* assignmentAdded =  "ak.wwise.core.switchContainer.assignmentAdded";
             } 
             namespace plugin {
-                // Retrieves the list of all plugins.
+                // Retrieves the list of all object types.
+                // \deprecated in favor of ak.wwise.core.object.getTypes
                 static const char* getList =  "ak.wwise.core.plugin.getList"; 
-                // Retrieves information about a plugin property.
-                static const char* getProperty =  "ak.wwise.core.plugin.getProperty";
+                // Retrieves information about an object property.
+                // \deprecated in favor of ak.wwise.core.object.getPropertyInfo
+                static const char* getProperty =  "ak.wwise.core.plugin.getProperty"; 
+                // Retrieves the list of property names for an object.
+                // \deprecated in favor of ak.wwise.core.object.getPropertyNames
+                static const char* getProperties =  "ak.wwise.core.plugin.getProperties";
             }
         } 
         namespace ui {
@@ -195,14 +202,26 @@ namespace ak {
                 // Opens a project, specified by path.
                 static const char* open =  "ak.wwise.ui.project.open";
             } 
+            // Bring Wwise main window to foreground. Refer to SetForegroundWindow and AllowSetForegroundWindow on MSDN for more information on the restrictions. Refer to ak.wwise.core.getInfo to obtain the Wwise process ID for AllowSetForegroundWindow.
+            static const char* bringToForeground =  "ak.wwise.ui.bringToForeground"; 
             namespace commands {
                 // Executes a command. Some commands can take a list of objects as parameter. Refer to \ref globalcommandsids for the available commands.
-                static const char* execute =  "ak.wwise.ui.commands.execute";
+                static const char* execute =  "ak.wwise.ui.commands.execute"; 
+                // Get the list of commands.
+                static const char* getCommands =  "ak.wwise.ui.commands.getCommands";
             } 
             // Retrieves the list of objects currently selected by the user in the active view.
             static const char* getSelectedObjects =  "ak.wwise.ui.getSelectedObjects"; 
             // Sent when the selection changes in the project.
             static const char* selectionChanged =  "ak.wwise.ui.selectionChanged";
+        } 
+        namespace waapi {
+            // Retrieve the list of topics to which a client can subscribe.
+            static const char* getTopics =  "ak.wwise.waapi.getTopics"; 
+            // Retrieve the list of functions.
+            static const char* getFunctions =  "ak.wwise.waapi.getFunctions"; 
+            // Retrieve the JSON schema of a Waapi URI.
+            static const char* getSchema =  "ak.wwise.waapi.getSchema";
         }
     }
 }

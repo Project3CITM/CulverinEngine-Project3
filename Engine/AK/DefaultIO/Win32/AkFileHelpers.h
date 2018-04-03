@@ -9,8 +9,8 @@ may use this file in accordance with the end user license agreement provided
 with the software or, alternatively, in accordance with the terms contained in a
 written agreement between you and Audiokinetic Inc.
 
-  Version: v2016.2.1  Build: 5995
-  Copyright (c) 2006-2016 Audiokinetic Inc.
+  Version: v2017.2.3  Build: 6575
+  Copyright (c) 2006-2018 Audiokinetic Inc.
 *******************************************************************************/
 //////////////////////////////////////////////////////////////////////
 //
@@ -26,9 +26,6 @@ written agreement between you and Audiokinetic Inc.
 #include <AK/Tools/Common/AkAssert.h>
 #include <windows.h>
 #include <AK/SoundEngine/Common/IAkStreamMgr.h>
-
-// CRZ
-#include <AK/Tools/Common/AkPlatformFuncs.h> 
 
 class CAkFileHelpers
 {
@@ -91,7 +88,7 @@ public:
 			dwFlags |= FILE_FLAG_OVERLAPPED;
 
 		// Create the file handle.
-#if defined(AK_USE_METRO_API) && !defined(AK_XBOXONE) // Xbox One can use "normal" IO
+#if defined(AK_USE_UWP_API) && !defined(AK_XBOXONE) // Xbox One can use "normal" IO
 		out_hFile = ::CreateFile2( 
 			in_pszFilename,
 			dwAccessMode,
@@ -166,7 +163,7 @@ public:
 		AKASSERT( in_uSizeToRead % s_uRequiredBlockSize == 0 
 			&& in_uPosition % s_uRequiredBlockSize == 0 );
 
-#ifdef AK_USE_METRO_API
+#ifdef AK_USE_UWP_API
 		LARGE_INTEGER uPosition;
 		uPosition.QuadPart = in_uPosition;
 		if ( SetFilePointerEx( in_hFile, uPosition, NULL, FILE_BEGIN ) == FALSE )
@@ -186,21 +183,14 @@ public:
 	static AKRESULT CheckDirectoryExists( const AkOSChar* in_pszBasePath )
 	{
 		DWORD fileAttributes = INVALID_FILE_ATTRIBUTES;
-#ifdef AK_USE_METRO_API
+#ifdef AK_USE_UWP_API
 		WIN32_FILE_ATTRIBUTE_DATA    fileInfo;
 		if( GetFileAttributesEx(in_pszBasePath, GetFileExInfoStandard, &fileInfo ) )
 		{
 			fileAttributes = fileInfo.dwFileAttributes;
 		}
 #else
-		//CRZ -> Conversion needed (AKPLATFORM::AkWideCharToChar to change between const wchar_t* with const char*
-		// https://www.audiokinetic.com/library/edge/?source=SDK&id=projectsettings.html
-		char ansi_string[512];
-		AKPLATFORM::AkWideCharToChar(in_pszBasePath, 512, &ansi_string[0]);
-		fileAttributes = GetFileAttributes(&ansi_string[0]);
-
-		// Original code
-		//fileAttributes = GetFileAttributes(in_pszBasePath);
+		fileAttributes = GetFileAttributes( in_pszBasePath );
 #endif
 		if (fileAttributes == INVALID_FILE_ATTRIBUTES)
 			return AK_Fail;  //something is wrong with your path!

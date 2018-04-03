@@ -21,8 +21,8 @@ under the Apache License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 OR CONDITIONS OF ANY KIND, either express or implied. See the Apache License for
 the specific language governing permissions and limitations under the License.
 
-  Version: v2017.1.2  Build: 6361
-  Copyright (c) 2006-2017 Audiokinetic Inc.
+  Version: v2017.2.3  Build: 6575
+  Copyright (c) 2006-2018 Audiokinetic Inc.
 *******************************************************************************/
 
 #pragma once
@@ -32,64 +32,14 @@ the specific language governing permissions and limitations under the License.
 #include <locale>
 #include <codecvt>
 
+#include "AkGuid.h"
+
 #include <AK/SoundEngine/Common/AkTypes.h>
 
 namespace AK
 {
 	namespace WwiseAuthoringAPI
 	{
-		// -----------------------------------
-		// AkGuid
-
-#define AkGuidIsEqual(rguid1, rguid2) ( \
-        ((uint32_t*) rguid1)[0] == ((uint32_t*) rguid2)[0] && \
-        ((uint32_t*) rguid1)[1] == ((uint32_t*) rguid2)[1] && \
-        ((uint32_t*) rguid1)[2] == ((uint32_t*) rguid2)[2] && \
-        ((uint32_t*) rguid1)[3] == ((uint32_t*) rguid2)[3] )
-
-		struct AkGuid
-		{
-			AkGuid() = default;
-
-			AkGuid( const AkGuid& other )
-			{
-				memcpy( this, &other, sizeof other );
-			}
-#ifdef _MFC_VER
-			AkGuid( const GUID& guid )
-			{
-				*this = guid;
-			}
-			inline operator GUID() const
-			{
-				return *reinterpret_cast<const GUID*>(this);
-			}
-#endif
-			inline bool operator==(const AkGuid& other)
-			{
-				return AkGuidIsEqual(this, &other);
-			}
-			inline bool operator!=(const AkGuid& other)
-			{
-				return !AkGuidIsEqual(this, &other);
-			}
-			inline AkGuid& operator=(const AkGuid& other)
-			{
-				memcpy( this, &other, sizeof other );
-				return *this;
-			}
-#ifdef _MFC_VER
-			inline AkGuid& operator=(const GUID& other)
-			{
-				return *this = * reinterpret_cast<const AkGuid*>( &other );
-			}
-#endif
-			uint32_t data1;
-			uint16_t data2;
-			uint16_t data3;
-			uint8_t data4[8];
-		};
-
 		enum AkVariantTypeBase
 		{
 			AkVariantType_none = 0,
@@ -300,6 +250,8 @@ namespace AK
 				case VT_R8: operator=(static_cast<double>(in_var.dblVal)); break;
 
 				case VT_BOOL: operator=(in_var.boolVal == VARIANT_TRUE); break;
+				case VT_BSTR: operator=(in_var.bstrVal); break;
+				case VT_EMPTY: Clear(); Nullify(); break;
 
 				default:
 					AKASSERT(!"Unsupported type");
