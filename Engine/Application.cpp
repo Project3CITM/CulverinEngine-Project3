@@ -756,14 +756,18 @@ void Application::SetState(EngineState state)
 				// Fill static objects vector when play
 				//scene->FillStaticObjectsVector(true); 
 
-				if (mode_game == false && engine_state != EngineState::PAUSE)
+				if (engine_state != EngineState::PAUSE)
 				{
 					// To notice renderer3D to change to Gcene Camera
-					ChangeCamera("Game"); 			
-					scene->scene_buff->WantRefreshRatio();
+					ChangeCamera("Game");
 
-					//To Save all elements in the scene to load them correctly when exiting Game Mode
-					actual_scene = json_seria->SaveScene();
+					if (mode_game == false)
+					{
+						scene->scene_buff->WantRefreshRatio();
+
+						//To Save all elements in the scene to load them correctly when exiting Game Mode
+						actual_scene = json_seria->SaveScene();
+					}
 				}
 
 				//PLAY ENGINE ------
