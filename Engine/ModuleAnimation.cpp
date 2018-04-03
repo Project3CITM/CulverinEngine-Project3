@@ -737,7 +737,7 @@ void KeyFrameData::ResetInterpolationKeys()
 AnimationValue KeyFrameData::Interpolate(float current_time, int frame)
 {
 	AnimationValue ret;
-	current_interpolation+=Normalize(current_time, key_data[initial].key_on_time, key_data[destination].key_on_time);
+	current_interpolation+=Normalize(current_time, 0, key_data[destination].key_on_time-key_data[initial].key_on_time);
 
 	switch (parameter)
 	{
@@ -781,7 +781,7 @@ AnimationValue KeyFrameData::Interpolate(float current_time, int frame)
 	default:
 		break;
 	}
-	if (key_data[destination].key_frame <= frame&&current_interpolation >= 1.0f)
+	if (key_data[destination].key_frame <= frame && current_interpolation >= 1.0f)
 	{
 		UpdateInterpolationKeys();
 		LOG("UPDATE INTERPOLATION");

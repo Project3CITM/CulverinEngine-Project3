@@ -164,7 +164,7 @@ bool CompUIAnimation::PlayAnimation(float dt)
 				
 				KeyFrameData* key_frame_item = &item->key_frame_data[j];
 
-				if (current_frame == key_frame_item->max_keys)
+				if (current_frame >= key_frame_item->max_keys)
 				{
 					AnimationData data;
 					data.type = key_frame_item->parameter;
@@ -183,7 +183,7 @@ bool CompUIAnimation::PlayAnimation(float dt)
 			}
 		}
 	}
-	if (current_frame == animation_json->max_keys)
+	if (current_frame >= animation_json->max_keys)
 		return true;
 	return false;
 }
