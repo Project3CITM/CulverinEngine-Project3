@@ -88,7 +88,7 @@ public:
 	AnimationJson* ShowAnimationJsonFiles(bool& active);
 	void FindAnimComponent();
 	void SaveAnimation();
-	void LoadAnimation(AnimationJson** animation, const char* path);
+	void LoadAnimation(AnimationJson** animation, const char* path,const char* name);
 	int HaveAnimData(const AnimableComponent* data);
 	
 private:

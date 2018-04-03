@@ -17,10 +17,13 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompUIAnimation * component);
-
+	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
+	void Load(const JSON_Object * object, std::string name);
 private:
 	bool PlayAnimation(float dt);
 	bool ResetAnimation();
+	void LoadAnimation(AnimationJson ** animation, const char * path, const char * name);
+
 public:
 	AnimationJson* animation_json = nullptr;
 	bool play = false;

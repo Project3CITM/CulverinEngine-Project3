@@ -385,7 +385,7 @@ AnimationJson* ModuleAnimation::ShowAnimationJsonFiles(bool& active)
 	{
 		if (selected < all_prefabs.size())
 		{
-			LoadAnimation(&ret, all_prefabs[selected].c_str());
+			LoadAnimation(&ret, App->fs->GetMainDirectory().c_str(),all_prefabs[selected].c_str());
 		}
 	}
 	return nullptr;
@@ -403,7 +403,9 @@ void ModuleAnimation::SaveAnimation()
 
 }
 
-void ModuleAnimation::LoadAnimation(AnimationJson** animation, const char* path)
+
+
+void ModuleAnimation::LoadAnimation(AnimationJson ** animation, const char * path, const char * name)
 {
 	GameObject* go = ((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected();
 	if (go == nullptr)
@@ -413,8 +415,10 @@ void ModuleAnimation::LoadAnimation(AnimationJson** animation, const char* path)
 	}
 	JSON_Value* config_file;
 	JSON_Object* config;
-
-	config_file = json_parse_file(path);
+	std::string nameJson = path;
+	nameJson += "/";
+	nameJson += name;
+	config_file = json_parse_file(nameJson.c_str());
 	if (config_file != nullptr)
 	{
 		config = json_value_get_object(config_file);
