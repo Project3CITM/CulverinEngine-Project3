@@ -60,7 +60,9 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 Scene::~Scene()
 {
 	DeleteAllGameObjects(root);
-	DeleteAllGameObjects(temp_scene);
+	DeleteAllGameObjects(temporary_scene);
+	search_name->GetChildsPtr()->clear();
+	RELEASE(search_name);
 
 	RELEASE(scene_buff);
 	RELEASE(skybox);
@@ -80,7 +82,8 @@ bool Scene::Start()
 
 	// First of all create New Scene
 	root = new GameObject("NewScene", 1);
-	temp_scene = new GameObject("Temporary Scene", 1);
+	temporary_scene = new GameObject("Temporary Scene", 1);
+	search_name = new GameObject("search_name", 1);
 	/* Init Quadtree */
 	size_quadtree = 5000.0f;
 //	quadtree.Init(size_quadtree);
@@ -286,7 +289,7 @@ bool Scene::CleanUp()
 	
 	octree.Clear();
 	root->CleanUp();
-	temp_scene->CleanUp();
+	temporary_scene->CleanUp();
 
 	return true;
 }
@@ -777,11 +780,11 @@ void Scene::ModificateParent(GameObject* child, GameObject* new_parent)
 			}
 			if (!ereased)
 			{
-				for (int i = 0; i < temp_scene->GetChildsVec().size(); i++)
+				for (int i = 0; i < temporary_scene->GetChildsVec().size(); i++)
 				{
-					if (temp_scene->GetChildsVec()[i] == child)
+					if (temporary_scene->GetChildsVec()[i] == child)
 					{
-						temp_scene->GetChildsPtr()->erase(temp_scene->GetChildsPtr()->begin() + i);
+						temporary_scene->GetChildsPtr()->erase(temporary_scene->GetChildsPtr()->begin() + i);
 						ereased = true;
 						break;
 					}
@@ -882,6 +885,15 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 		}
 		}
 	}
+}
+
+void Scene::GetAllGameObjects(GameObject* parent, GameObject* root)
+{
+	for (int i = 0; i < root->GetNumChilds(); i++)
+	{
+		GetAllGameObjects(parent, root->GetChildbyIndex(i));
+	}
+	parent->GetChildsPtr()->push_back(root);
 }
 
 void Scene::DrawPlane()

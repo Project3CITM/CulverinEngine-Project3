@@ -61,6 +61,9 @@ public:
 	void ModificateParent(GameObject* child, GameObject* new_parent);
 	void RemoveAllPointers(GameObject* gameobject);
 
+	//Dont use!
+	void GetAllGameObjects(GameObject* parent, GameObject* root);
+
 	
 	// DRAWING METHODS ---------
 	void DrawPlane();
@@ -102,7 +105,8 @@ public:
 	FrameBuffer* final_buff = nullptr;
 	//Container of all Game Objects
 	GameObject* root = nullptr;
-	GameObject* temp_scene = nullptr;
+	GameObject* search_name = nullptr;
+	GameObject* temporary_scene = nullptr;
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
 	std::vector<GameObject*> static_objects;

@@ -68,6 +68,7 @@ public:
 	Plane plane;*/
 	bool show_test = false;
 	bool is_saved = false;
+	bool develop_mode = false;
 	std::vector<WindowManager*> win_manager;
 
 	//RANDOM NUMBERS TEST ----------

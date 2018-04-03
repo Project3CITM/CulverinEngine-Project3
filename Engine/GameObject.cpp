@@ -581,7 +581,7 @@ void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* p
 	}
 }
 
-void GameObject::ShowHierarchy()
+void GameObject::ShowHierarchy(bool use_search)
 {
 	if (!IsVisible())
 	{
@@ -642,7 +642,11 @@ void GameObject::ShowHierarchy()
 				}
 			}
 		}
-
+		if (use_search)
+		{
+			ImGui::TreePop();
+			return;
+		}
 		for (uint i = 0; i < childs.size(); i++)
 		{
 			ImGui::PushID(i);

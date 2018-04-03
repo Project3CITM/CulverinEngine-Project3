@@ -817,6 +817,11 @@ update_status ModuleGUI::UpdateConfig(float dt)
 	ImGui::Checkbox("##WindowInfoMouse", &window_infoMouse); ImGui::SameLine();
 	ImGui::Text("Info Mouse");
 
+	//develop_mode
+	ImGui::Checkbox("##develop_mode", &develop_mode); ImGui::SameLine();
+	ImGui::Text("Use Develop Mode"); ImGui::SameLine();
+	App->ShowHelpMarker("Be careful, you can make the engine explode!");
+
 	ImGui::PopStyleVar();
 
 

@@ -68,7 +68,7 @@ public:
 	bool CompareTag(const char* str)const;
 
 	// EDITOR METHODS ------------------
-	void ShowHierarchy();
+	void ShowHierarchy(bool use_search = false);
 	void ShowGameObjectOptions();
 	void ShowInspectorInfo();
 	void FreezeTransforms(bool freeze, bool change_childs);
