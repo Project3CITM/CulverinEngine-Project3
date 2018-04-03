@@ -343,18 +343,8 @@ bool Particle::isDead()
 
 void Particle::DrawParticle(uint program_id)
 {
-
 	const ParticleMeshData& Mesh = ParentParticleSystem->GetParticleMeshData();
-
-	//glColor4f(Properties.RGBATint.x, Properties.RGBATint.y, Properties.RGBATint.z, Properties.RGBATint.w);
-
-	glDisable(GL_CULL_FACE);
-	glEnable(GL_NORMALIZE);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_BLEND);
+	//glEnable(GL_NORMALIZE);
 	if (ParentParticleSystem->TextureData.TextureID != 0)
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -362,9 +352,7 @@ void Particle::DrawParticle(uint program_id)
 		glUniform1i(texLoc, 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, ParentParticleSystem->TextureData.TextureID);
-
 	}
-
 
 	uint color_id = glGetUniformLocation(program_id, "_my_color");
 	glUniform4fv(color_id, 1, Properties.RGBATint.ptr());
@@ -402,15 +390,8 @@ void Particle::DrawParticle(uint program_id)
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);
 
 	glDisable(GL_NORMALIZE);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void Particle::SetAssignedStateFromVariables(ParticleAssignedState& AState, const ParticleState& State)
@@ -607,7 +588,7 @@ bool ParticleSystem::PreUpdate(float dt)
 		bool to_delete = false;
 	
 		//Check if particle is alive
-	  if ((*item).isDead())
+	    if ((*item).isDead())
 		{
 			Emitter.ParticleNumber--;
 			item = Particles.erase(item);

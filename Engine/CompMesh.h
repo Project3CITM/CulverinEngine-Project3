@@ -64,6 +64,7 @@ public:
 	~CompMesh();
 
 	void Draw(bool alpha = false);
+	void Draw2(uint ID);
 	void Clear();
 	void PreUpdate(float dt);
 	void Update(float dt);
