@@ -11,9 +11,11 @@ public class FireWall : CulverinBehaviour
     private float damage_timer = 0;
     private int tile_x = 0;
     private int tile_y = 0;
+
     // Use this for initialization
     void Start()
     {
+        GetComponent<CompAudio>().PlayEvent("PlayTorch"); // Change This!!
         GetComponent<CompParticleSystem>().ActivateEmission(true);
     }
 

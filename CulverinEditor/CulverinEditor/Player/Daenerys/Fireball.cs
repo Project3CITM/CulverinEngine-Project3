@@ -17,6 +17,8 @@ public class Fireball : CulverinBehaviour
         damage = 10.0f;
         timer = 0.0f;
         life = 5.0f;
+
+        GetComponent<CompAudio>().PlayEvent("PlayTorch"); //Change This!!
     }
 
     public void Shoot()

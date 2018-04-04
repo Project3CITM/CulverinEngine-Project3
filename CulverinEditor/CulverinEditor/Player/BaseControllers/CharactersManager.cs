@@ -97,6 +97,85 @@ public class CharactersManager : CulverinBehaviour
         //    puzzle_start += Time.deltaTime;
         //}
 
+        //Check all audios
+        //if(Input.GetKeyDown(KeyCode.Y))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("DaenerysHurt");
+        //}
+        //if (Input.GetKeyDown(KeyCode.U))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("DaenerysWalk");
+        //}
+        //if (Input.GetKeyDown(KeyCode.V))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("DaenerysDead");
+        //}
+
+        //if (Input.GetKeyDown(KeyCode.I))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("JaimeImpact");
+        //}
+        //if (Input.GetKeyDown(KeyCode.O))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("JaimeFailImpact");
+        //}
+        //if (Input.GetKeyDown(KeyCode.P))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("JaimeBlock");
+        //}
+        //if (Input.GetKeyDown(KeyCode.T))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("JaimeDead");
+        //}
+        //if (Input.GetKeyDown(KeyCode.F))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("JaimeHurt");
+        //}
+        //if (Input.GetKeyDown(KeyCode.G))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("JaimeWarCry");
+        //}
+
+        //if (Input.GetKeyDown(KeyCode.H))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("CrossbowShot");
+        //}
+        //if (Input.GetKeyDown(KeyCode.J))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("TheonMele");
+        //}
+        //if (Input.GetKeyDown(KeyCode.K))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("TheonTripleShot");
+        //}
+        //if (Input.GetKeyDown(KeyCode.L))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("CrossbowRecharge");
+        //}
+        //if (Input.GetKeyDown(KeyCode.M))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("TheonDead");
+        //}
+        //if (Input.GetKeyDown(KeyCode.N))
+        //{
+        //    audio.GetComponent<CompAudio>();
+        //    audio.PlayEvent("TheonHurt");
+        //}
+
         switch (state)
         {
             case State.IDLE:
@@ -507,7 +586,7 @@ public class CharactersManager : CulverinBehaviour
     //Call thius function to deal damage to the current character
     public bool GetDamage(float dmg)
     {
- 
+
         // Shield Ability Consumable
         if (player_obj.GetComponent<Shield>().IsActive())
         {
@@ -518,8 +597,10 @@ public class CharactersManager : CulverinBehaviour
 
         else
         {
-
-            audio.PlayEvent("SwordHit");
+            if(GetCurrCharacterState() != (int)CharacterController.State.COVER)
+            {
+                audio.PlayEvent("SwordHit");
+            }
 
             // CURRENT CHARACTER -------------------------------
             if (current_character.GetName() == "Jaime")

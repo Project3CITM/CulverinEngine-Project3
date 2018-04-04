@@ -17,8 +17,6 @@ public class DaenerysController : CharacterController
     public GameObject daenerys_left_flag;
     public GameObject daenerys_right_flag;
 
-    public GameObject particle_firebreath_obj;
-
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
     public float curr_hp = 100.0f;
@@ -27,8 +25,6 @@ public class DaenerysController : CharacterController
 
     public float sec_ability_cost = 30.0f;
     DaenerysCD_Secondary sec_ability_cd;
-
-    private CompParticleSystem particle_system;
 
     //Left Ability Stats
     public float mana_cost_percentage_left = 20f;
@@ -42,6 +38,8 @@ public class DaenerysController : CharacterController
     public float damage_percentage_right = 10f;
     private DaenerysCD_Right cd_right;
     private bool set_fire_wall = false;
+
+    private bool play_audio_roar = false;
 
     protected override void Start()
     {
@@ -60,8 +58,6 @@ public class DaenerysController : CharacterController
 
         daenerys_icon_obj_hp = GetLinkedObject("daenerys_icon_obj_hp");
         daenerys_icon_obj_mana = GetLinkedObject("daenerys_icon_obj_mana");
-
-        particle_firebreath_obj = GetLinkedObject("particle_firebreath_obj");
 
         // Start Idle animation
         anim_controller = daenerys_obj.GetComponent<CompAnimation>();
@@ -118,10 +114,6 @@ public class DaenerysController : CharacterController
                                 if (set_fire_breath == false && anim_controller.IsAnimOverXTime(0.4f))
                                 {
                                     set_fire_breath = true;
-                                    particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
-                                    particle_system.ActivateEmission(true);
-                                    audio = daenerys_obj.GetComponent<CompAudio>();
-                                    audio.PlayEvent("Dracarys");
 
                                     // Attack all enemies in 3 rows in front of you
                                     int tile_x, tile_y;
@@ -176,11 +168,17 @@ public class DaenerysController : CharacterController
                                     }
                                 }
                                 anim_controller = daenerys_obj.GetComponent<CompAnimation>();
+
+                                if (anim_controller.IsAnimOverXTime(0.6f) && play_audio_roar)
+                                {
+                                    PlayFx("DaenerysDragonRoar");
+                                    PlayFx("DaenerysFire");
+                                    play_audio_roar = false;
+                                }
+
                                 if (anim_controller.IsAnimOverXTime(0.9f))
                                 {
                                     state = State.IDLE;
-                                    particle_system = particle_firebreath_obj.GetComponent<CompParticleSystem>();
-                                    particle_system.ActivateEmission(false);
                                 }
                             }                          
                             break;
@@ -241,7 +239,6 @@ public class DaenerysController : CharacterController
                                 if (anim_controller.IsAnimOverXTime(0.8f))
                                 {
                                     state = State.IDLE;
-                                    Debug.Log("[error] PACOOOOOOO");
                                 }
                                 else
                                 {
@@ -302,8 +299,7 @@ public class DaenerysController : CharacterController
                 SetAnimationTransition("ToHit", true);
                 SetState(State.HIT);
             }
-            audio = daenerys_obj.GetComponent<CompAudio>();
-            audio.PlayEvent("DaenerysHurt");
+            PlayFx("DaenerysHurt");
         }
 
         else
@@ -468,6 +464,11 @@ public class DaenerysController : CharacterController
         // Decrease mana -----------
         DecreaseManaPercentage(mana_cost_percentage_left);
         set_fire_breath = false;
+
+        audio = daenerys_obj.GetComponent<CompAudio>();
+        PlayFx("Dracarys");
+
+        play_audio_roar = true;
     }
 
     //------------------------------

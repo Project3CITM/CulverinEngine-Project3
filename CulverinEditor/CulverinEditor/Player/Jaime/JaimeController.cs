@@ -258,7 +258,7 @@ public class JaimeController : CharacterController
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);
 
-        PlayFx("BehindMe");
+        PlayFx("JaimeWarCry");
 
         // Activate the shield that protects from damage once
         GetLinkedObject("player_obj").GetComponent<Shield>().ActivateShield();
@@ -270,7 +270,8 @@ public class JaimeController : CharacterController
         {
             SetAnimationTransition("ToBlock", true);
             GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
-            PlayFx("MetalClash");
+            //PlayFx("MetalClash");
+            PlayFx("JaimeBlock");
             SetState(State.BLOCKING);
 
             return false;
@@ -287,14 +288,12 @@ public class JaimeController : CharacterController
                     SetAnimationTransition("ToHit", true);
                     SetState(State.HIT);
                 }
-                audio = jaime_obj.GetComponent<CompAudio>();
-                audio.PlayEvent("JaimeHurt");
+                PlayFx("JaimeHurt");
             }
 
             else
             {
                 SetState(State.DEAD);
-                PlayFx("JaimeDead");
             }         
 
             //Reset hit count
@@ -478,6 +477,9 @@ public class JaimeController : CharacterController
                     hit_streak = 0; //Reset hit count
                 }
 
+                // Hit to enemy Impact
+                //PlayFx("JaimeImpact");
+
                 /* ---------- IN CASE THAT THE ENEMY BLOCKS THE ATTACK, UNCOMMENT AND COMPLETE THIS CODE ---------- */
                 //if (enemy_manager.ApplyDamage(coll_object, damage))
                 //{
@@ -511,7 +513,8 @@ public class JaimeController : CharacterController
 
                 //Set FailAttack Transition & Audio
                 SetAnimationTransition("ToFail", true);
-                PlayFx("JaimeFailImpact");  
+                
+                //PlayFx -> Obstacle Impact
             }
         }
         else
@@ -520,7 +523,7 @@ public class JaimeController : CharacterController
         }
 
         // Play the Sound FX
-        PlayFx("SwordSlash");
+        PlayFx("JaimeFailImpact");
     }
 
     public void PrepareRightAbility()

@@ -155,7 +155,7 @@ public class TheonController : CharacterController
                             {
                                 //Activate arrow Placement
                                 Arrow.GetComponent<CompMesh>().SetEnabled(true, Arrow);                       
-                                GetComponent<CompAudio>().PlayEvent("CrossbowRecharge");
+                                PlayFx("CrossbowRecharge");
                                 state = State.IDLE;
                             }
                             else
@@ -172,7 +172,6 @@ public class TheonController : CharacterController
                             //Apply damage over x time of the attack animation
                             if (do_push_attack && anim_controller.IsAnimOverXTime(0.6f))
                             {
-                                Debug.Log("[blue] PUSHHHHHHH");
                                 DoRightAbility();
                                 do_push_attack = false;
                             }
@@ -258,8 +257,7 @@ public class TheonController : CharacterController
                 SetAnimationTransition("ToHit", true);
                 SetState(State.HIT);
             }
-            audio = theon_obj.GetComponent<CompAudio>();
-            audio.PlayEvent("TheonHurt");
+            PlayFx("TheonHurt");
         }
 
         else
@@ -381,8 +379,6 @@ public class TheonController : CharacterController
                     // First, OnClick of LeftWeapon, then, onClick of Cooldown
                     DoLeftAbility();
 
-                    // Play the Sound FX
-                    PlayFx();
 
                     return true;
                 }
@@ -425,7 +421,7 @@ public class TheonController : CharacterController
         SetAnimationTransition("ToAttack1", true);
         CrossBow.GetComponent<CompAnimation>().PlayAnimation("Attack");
 
-        GetComponent<CompAudio>().PlayEvent("CrossbowShot");
+        PlayFx("CrossbowShot");
         Debug.Log("[green] Shoot Audio");
 
         SetState(CharacterController.State.ATTACKING);
@@ -450,6 +446,9 @@ public class TheonController : CharacterController
                 {
                     // Decrease stamina -----------
                     DecreaseStamina(right_ability_cost);
+
+                    PlayFx("TheonMele");
+
                     //Debug.Log("[error]STAMINA!");
                     SetAnimationTransition("ToAttack2", true);
 
@@ -494,7 +493,6 @@ public class TheonController : CharacterController
                 EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
                 movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
                 enemy_manager.Push(coll_object, movement.GetForwardDir());
-                //Debug.Log("[error] " + movement.GetForwardDir());
             }
         }
     }
