@@ -131,6 +131,7 @@ public class EnemyShield_BT : Enemy_BT
                     {
                         shield_block_timer = 0.0f;
                         GetComponent<CompAnimation>().SetTransition("ToBlock");
+                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         Debug.Log("Attack blocked");
                     }
                     else
@@ -153,6 +154,7 @@ public class EnemyShield_BT : Enemy_BT
                     {
                         shield_block_timer = 0.0f;
                         GetComponent<CompAnimation>().SetTransition("ToBlock");
+                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         Debug.Log("Attack blocked");
                     }
                     else

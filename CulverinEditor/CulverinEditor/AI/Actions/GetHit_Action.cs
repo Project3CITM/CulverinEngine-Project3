@@ -6,6 +6,7 @@ class GetHit_Action: Action
 
     string animation_clip = "a";
 
+    bool played_audio = false;
 
     public GetHit_Action()
     {
@@ -130,6 +131,12 @@ class GetHit_Action: Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if(GetComponent<CompAnimation>().IsAnimOverXTime(0.3f) && !played_audio)
+        {
+            GetComponent<CompAudio>().PlayEvent("JaimeHurt");
+            played_audio = true;
+        }
+
         if (GetComponent<CompAnimation>().IsAnimationStopped(animation_clip))
             return ACTION_RESULT.AR_SUCCESS;
         return ACTION_RESULT.AR_IN_PROGRESS;
@@ -138,6 +145,7 @@ class GetHit_Action: Action
     public override bool ActionEnd()
     {
         interupt = false;
+        played_audio = false;
         return true;
     }
 }
