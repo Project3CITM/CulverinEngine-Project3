@@ -1179,6 +1179,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetActiveBlendingClip", (const void*)SetActiveBlendingClip);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetActiveBlendingClipWeight", (const void*)SetActiveBlendingClipWeight);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetBlendInTime", (const void*)SetBlendInTime);
+	mono_add_internal_call("CulverinEditor.CompAnimation::PlayAnimationNode", (const void*)PlayAnimationNode);
 
 	//MODULE PHYSICS FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.PhysX::RayCast", (const void*)RayCast);
@@ -1950,6 +1951,11 @@ void ImportScript::SetActiveBlendingClipWeight(MonoObject * object, float weight
 void ImportScript::SetBlendInTime(MonoObject * object, MonoString * string, float time)
 {
 	current->SetBlendInTime(object, string, time);
+}
+
+void ImportScript::PlayAnimationNode(MonoObject * object, MonoString * string)
+{
+	current->PlayAnimationNode(object, string);
 }
 
 void ImportScript::SetAlbedo(MonoObject * object, MonoString * string)

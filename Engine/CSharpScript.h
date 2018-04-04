@@ -261,6 +261,7 @@ public:
 	void		SetActiveBlendingClip(MonoObject* object, MonoString* name);
 	void		SetActiveBlendingClipWeight(MonoObject* object, float weight);
 	void		SetBlendInTime(MonoObject* object, MonoString* name, float time);
+	void		PlayAnimationNode(MonoObject* object, MonoString* name);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);

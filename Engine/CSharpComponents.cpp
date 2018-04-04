@@ -259,6 +259,22 @@ void CSharpScript::SetBlendInTime(MonoObject * object, MonoString * name, float 
 	}
 }
 
+void CSharpScript::PlayAnimationNode(MonoObject * object, MonoString * name)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			AnimationNode* node = animation->GetNodeFromName(mono_string_to_utf8(name));
+			if (node != nullptr)
+			{
+				animation->PlayAnimation(node);
+			}
+		}
+	}
+}
+
 // CompCollider -----------------------------------------------------------
 MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 {
