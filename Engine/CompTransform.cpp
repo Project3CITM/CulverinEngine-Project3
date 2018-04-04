@@ -305,7 +305,7 @@ void CompTransform::ShowTransform(float drag_speed)
 		ImGui::Text("Scale"); ImGui::SameLine(op + 30);
 		if (ImGui::DragFloat3("##scale", &scale_global[0], drag_speed))
 		{
-			SetRotGlobal(scale_global);
+			SetScaleGlobal(scale_global);
 			editing_transform = true;
 		}
 		break;
