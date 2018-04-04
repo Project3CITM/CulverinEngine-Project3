@@ -56,6 +56,9 @@ public class MovementController : CulverinBehaviour
     public GameObject characters_camera;
     public GameObject player_enemies_manager;
 
+    public float time_in_memory = 3.0f;
+    public int footstep_radius = 1;
+
     void Start()
     {
         level_map = GetLinkedObject("map_obj").GetComponent<LevelMap>();
@@ -296,7 +299,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyInRight())
                 {
                     MoveRight(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
                     return true;
                 }
             }
@@ -305,7 +308,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyInLeft())
                 {
                     MoveLeft(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
                     return true;
                 }
             }
@@ -316,7 +319,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyBehind())
                 {
                     MoveBackward(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
                     return true;
                 }
 
@@ -326,7 +329,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyInFront())
                 {
                     MoveForward(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
                     return true;
                 }
             }

@@ -27,6 +27,7 @@ public class FireWall : CulverinBehaviour
         if (timer >= duration)
         {
             GetComponent<CompParticleSystem>().ActivateEmission(false);
+            GetComponent<CompAudio>().StopEvent("PlayTorch");
             Destroy(gameObject);
         }
 

@@ -19,6 +19,7 @@ public class Fireball : CulverinBehaviour
         life = 5.0f;
 
         GetComponent<CompAudio>().PlayEvent("PlayTorch"); //Change This!!
+        Debug.Log("[blue] PLAY TORCH -----------------");
     }
 
     public void Shoot()
@@ -37,36 +38,17 @@ public class Fireball : CulverinBehaviour
         }
     }
 
-    void OnTriggerEnter()
-    {
-        //GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
-        //// DAMAGE ---
-        //if (collided_obj != null)
-        //{
-        //    // Check the specific enemy in front of you and apply dmg or call object OnContact
-        //    EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
-        //    if (enemy_manager.IsEnemy(collided_obj))
-        //    {
-        //        enemy_manager.ApplyDamage(collided_obj, damage);
-        //    }
-        //    else
-        //    {
-        //        CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
-        //        if (obj_col != null)
-        //        {
-        //            obj_col.CallOnContact();
-        //        }
-        //    }
-        //}
-        Destroy(gameObject);
-    }
-
     void OnContact()
     {
+        Debug.Log("[error] ON CONTACT -----------");
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
+
         // DAMAGE ---
         if (collided_obj != null)
         {
+            Debug.Log("[pink]" + collided_obj.GetName());
+
+            rb = GetComponent<CompRigidBody>();
             //Lock transform to avoid trespassing more than one collider
             rb.LockTransform();
 
@@ -85,6 +67,8 @@ public class Fireball : CulverinBehaviour
                 }
             }
         }
+        GetComponent<CompAudio>().StopEvent("PlayTorch");
+        Debug.Log("[blue] STOP TORCH ---------------");
         Destroy(gameObject);
     }
 }

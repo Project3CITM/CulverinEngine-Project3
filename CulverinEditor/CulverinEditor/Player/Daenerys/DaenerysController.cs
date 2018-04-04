@@ -167,12 +167,11 @@ public class DaenerysController : CharacterController
                                         }
                                     }
                                 }
-                                anim_controller = daenerys_obj.GetComponent<CompAnimation>();
 
+                                anim_controller = daenerys_obj.GetComponent<CompAnimation>();
                                 if (anim_controller.IsAnimOverXTime(0.6f) && play_audio_roar)
                                 {
-                                    PlayFx("DaenerysDragonRoar");
-                                    PlayFx("DaenerysFire");
+                                    PlayFx("DaenerysDragonRoar");                             
                                     play_audio_roar = false;
                                 }
 

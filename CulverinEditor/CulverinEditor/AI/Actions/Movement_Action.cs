@@ -280,7 +280,6 @@ public class Movement_Action : Action
             pos.x = path[0].GetTileX() * tile_size;
             pos.z = path[0].GetTileY() * tile_size;
             GetComponent<Transform>().position = pos;
-            GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
 
             //Tiles
             if (path.Count == 1)
