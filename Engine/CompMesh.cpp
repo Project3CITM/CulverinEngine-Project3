@@ -275,7 +275,7 @@ void CompMesh::Draw(bool alpha)
 			break;
 		case RenderMode::GLOW:
 			if (!material->glow) material = App->renderer3D->non_glow_material;
-			glViewport(0, 0, 128, 128);
+			glViewport(0, 0, 64, 64);
 			break;
 		case RenderMode::DEPTH:
 

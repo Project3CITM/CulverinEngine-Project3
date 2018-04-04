@@ -118,15 +118,15 @@ bool Scene::Start()
 
 	App->scene->glow_buff = new FrameBuffer();
 	App->scene->glow_buff->resize = false;
-	App->scene->glow_buff->Create(128, 128);
+	App->scene->glow_buff->Create(64, 64);
 
 	App->scene->horizontal_blur_buff = new FrameBuffer();
 	App->scene->horizontal_blur_buff->resize = false;
-	App->scene->horizontal_blur_buff->Create(128, 128);
+	App->scene->horizontal_blur_buff->Create(64, 64);
 
 	App->scene->vertical_blur_buff = new FrameBuffer();
 	App->scene->vertical_blur_buff->resize = false;
-	App->scene->vertical_blur_buff->Create(128, 128);
+	App->scene->vertical_blur_buff->Create(64, 64);
 
 
 	tagged_objects.reserve(defined_tags.size());

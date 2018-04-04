@@ -129,7 +129,7 @@ bool ModuleLightning::Init(JSON_Object* node)
 	perf_timer.Start();
 
 	// TODO: Read ammount of shadow cast point from config. Will use default for now for testing purposes
-	shadow_cast_points_count = 1;
+	//shadow_cast_points_count = 1;
 
 	Awake_t = perf_timer.ReadMs();
 	return true;
@@ -193,7 +193,7 @@ update_status ModuleLightning::PreUpdate(float dt)
 
 	//TODO: Should think on optimitzations on this.
 
-	/*frame_used_lights.clear();
+	frame_used_lights.clear();
 	std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
 	for(uint i = 0; i < shadow_cast_points_count; ++i)
 	{
@@ -207,7 +207,7 @@ update_status ModuleLightning::PreUpdate(float dt)
 			}
 		}
 	}
-	*/
+	
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
