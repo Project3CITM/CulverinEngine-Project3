@@ -60,8 +60,6 @@ enum EventType
 	EVENT_CREATE_SHADER_PROGRAM,
 	EVENT_SEND_ALL_SHADER_OBJECTS,
 	EVENT_OPEN_SHADER_EDITOR,
-	EVENT_REQUEST_3D_3DA_MM,								//Call it from your code to get a reference to the drawable events multimap
-	EVENT_SEND_3D_3DA_MM,									//This event is sent if you call EVENT_REQUEST_3D_3DA_MM with the drawable events multimaps
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
@@ -73,6 +71,11 @@ enum EventType
 	EVENT_PASS_COMPONENT,
 	EVENT_PASS_SELECTED,
 	EVENT_SUBMIT,
+	/*------------------Request & Send------------------*/
+	EVENT_MIN_REQUEST_SEND,									//Keep this above request & send events, and don't use as an event type
+	EVENT_REQUEST_3D_3DA_MM,								//Call it from your code to get a reference to the drawable events multimap
+	EVENT_SEND_3D_3DA_MM,									//This event is sent if you call EVENT_REQUEST_3D_3DA_MM with the drawable events multimaps
+	EVENT_MAX_REQUEST_SEND,									//Keep this below request & send events, and don't use as an event type
 	/*----------------------Engine----------------------*/
 	EVENT_DOCKING_MODIF,
 	EVENT_DRAW,
@@ -80,8 +83,8 @@ enum EventType
 	EVENT_TIME_MANAGER,
 	EVENT_SPAWN_GAMEOBJECT,
 	EVENT_WINDOW_RESIZE,
-	EVENT_DELETE_GO,				//Keep this event last
-	MAXEVENTS						//Keep this at the bottom, needed to know how many events we have
+	EVENT_DELETE_GO,										//Keep this event last
+	MAXEVENTS												//Keep this at the bottom, needed to know how many events we have
 };
 
 /*--------------------------------------------------*/
@@ -145,20 +148,6 @@ struct EOpenShaderEditor
 	bool open_editor = false;
 };
 
-struct ERequest3D3DAMM
-{
-	uint64_t event_data = 0;
-	const CompLight* light = nullptr;
-};
-
-struct ESend3D3DAMM
-{
-	uint64_t event_data = 0;
-	const std::multimap<uint, Event>* MM3DDrawEvent = nullptr;
-	const std::multimap<float, Event>* MM3DADrawEvent = nullptr;
-	const CompLight* light = nullptr;
-};
-
 /*--------------------------------------------------*/
 /*----------------Skeletal Animation----------------*/
 /*--------------------------------------------------*/
@@ -220,6 +209,24 @@ struct EGUISubmit
 {
 	uint64_t event_data = 0;
 	bool active = false;
+};
+
+/*--------------------------------------------------*/
+/*------------------Request & Send------------------*/
+/*--------------------------------------------------*/
+
+struct ERequest3D3DAMM
+{
+	uint64_t event_data = 0;
+	const CompLight* light = nullptr;
+};
+
+struct ESend3D3DAMM
+{
+	uint64_t event_data = 0;
+	const std::multimap<uint, Event>* MM3DDrawEvent = nullptr;
+	const std::multimap<float, Event>* MM3DADrawEvent = nullptr;
+	const CompLight* light = nullptr;
 };
 
 /*--------------------------------------------------*/

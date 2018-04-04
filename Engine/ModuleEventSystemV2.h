@@ -44,9 +44,10 @@
 
 enum EventValidation;
 
+void AddListener(EventType type, Module* listener);
 void PushEvent(Event& event);
 void PushImmediateEvent(Event& event);
-void AddListener(EventType type, Module* listener);
+Event GetResponseFromRequestEvent(Event& event);
 void ClearEvents(EventType type);
 void ClearEvents(EventType type, void* component);
 
@@ -64,10 +65,10 @@ public:
 	bool SaveConfig(JSON_Object* node);
 	bool CleanUp();
 
+	void AddListener(EventType type, Module* listener);
 	void PushEvent(Event& event);
 	void PushImmediateEvent(Event& event);
-	void AddListener(EventType type, Module* listener);
-
+	Event GetResponseFromRequestEvent(Event& event);
 	void ClearEvents(EventType type); //Used by particle system, modulegui, window project, must fix
 	void ClearEvents(EventType type, void* component);
 

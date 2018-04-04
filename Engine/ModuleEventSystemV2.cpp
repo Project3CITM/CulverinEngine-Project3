@@ -8,6 +8,11 @@
 #include "Scene.h"
 #include "ModuleWindow.h"
 
+void AddListener(EventType type, Module* listener)
+{
+	App->event_system_v2->AddListener(type, listener);
+}
+
 void PushEvent(Event& event)
 {
 	App->event_system_v2->PushEvent(event);
@@ -18,9 +23,9 @@ void PushImmediateEvent(Event& event)
 	App->event_system_v2->PushImmediateEvent(event);
 }
 
-void AddListener(EventType type, Module* listener)
+Event GetResponseFromRequestEvent(Event& event)
 {
-	App->event_system_v2->AddListener(type, listener);
+	return App->event_system_v2->GetResponseFromRequestEvent(event);
 }
 
 void ClearEvents(EventType type)
@@ -28,7 +33,7 @@ void ClearEvents(EventType type)
 	App->event_system_v2->ClearEvents(type);
 }
 
-void ClearEvents(EventType type, Component* component)
+void ClearEvents(EventType type, void* component)
 {
 	App->event_system_v2->ClearEvents(type, component);
 }
@@ -203,7 +208,7 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 {
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
-	bool UseGlow = 0;
+	bool UseGlow = false;
 	for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -406,6 +411,15 @@ bool ModuleEventSystemV2::CleanUp()
 	return true;
 }
 
+void ModuleEventSystemV2::AddListener(EventType type, Module* listener)
+{
+	if (listener != nullptr)
+	{
+		std::map<EventType, std::vector<Module*>>::iterator EListener = MEventListeners.find(type);
+		if (EListener != MEventListeners.end()) EListener._Ptr->_Myval.second.push_back(listener);
+	}
+}
+
 void ModuleEventSystemV2::PushEvent(Event& event)
 {
 	if (IteratingMaps)
@@ -524,13 +538,9 @@ void ModuleEventSystemV2::PushImmediateEvent(Event& event)
 	}
 }
 
-void ModuleEventSystemV2::AddListener(EventType type, Module* listener)
+Event ModuleEventSystemV2::GetResponseFromRequestEvent(Event & event)
 {
-	if (listener != nullptr)
-	{
-		std::map<EventType, std::vector<Module*>>::iterator EListener = MEventListeners.find(type);
-		if (EListener != MEventListeners.end()) EListener._Ptr->_Myval.second.push_back(listener);
-	}
+	return Event();
 }
 
 void ModuleEventSystemV2::ClearEvents(EventType type)
