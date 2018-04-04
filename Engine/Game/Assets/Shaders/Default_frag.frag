@@ -48,10 +48,13 @@ uniform float a_Kd;
 uniform float a_Ks;                
 uniform float a_shininess;         
                                                                                                          
-                                                                                                         
+           
+vec4 light_colors[MAX_LIGHTS];
+                                                                                              
 vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
 {                                                                                                        
-                                                                                             
+          
+                                                                              
     vec3 surfacePos = TBN* vec3(model * vec4(ourPos, 1.0));                                      
     vec3 v = normalize(TBN * _cameraPosition - surfacePos);                                      
        
@@ -104,9 +107,7 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
                                                                                                                  
                                                                                                                  
 void main()                                                                                                
-{                                                                                                                
-                                                                                             
-                                                     
+{                                                 
     vec3 color_texture = texture(albedo, TexCoord).xyz;                                                          
     vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1) ;                                                       
     vec3 spec_texture = texture(specular_map, TexCoord).xyz ;
@@ -116,30 +117,30 @@ void main()
    // N.g = -N.g;    
    // N.r = -N.r;                                                  
                                                                                                                  
-    vec3 inten = vec3(0); vec3 inten_final = vec3(0);                                                                                    
-                                                                         
-    vec4 light_colors[MAX_LIGHTS];
-       
+    vec3 inten = vec3(0); vec3 inten_final = vec3(0);
+
     float final_ambient = 0.0;                                                                                             
     vec3 final_color = vec3(0);
-                                                                         
-    for (int i = 0; i <_numLights; ++i) {                                                                        
-        inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N);             
-        inten_final.xy += inten.xy;                                                                        
-        light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);                                            
-    }                                                                                                      
-                                                                           
-    for (int i = 0; i<_numLights; ++i) {                                                                   
-        final_color += vec3(light_colors[i]) * light_colors[i].a;                                          
-        final_ambient += _lights[i].ambientCoefficient;
-    }      
+                          
+                                          
+ for (int i = 0; i <_numLights; ++i) {
+                                                                        
+       inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N);             
+       inten_final.xy += inten.xy;                                                                        
+       light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);          
+                                                             
+       final_color += vec3(light_colors[i]) * light_colors[i].a;                                          
+       final_ambient += _lights[i].ambientCoefficient;
+
+
+   }    
                                                                                                
     final_ambient = final_ambient/_numLights;
     final_color =normalize(final_color);  
         
-	vec3 col = max( color_texture * vec3(0.2,0.3,0.3) ,
+	vec3 col = max( color_texture * vec3(0.0,0.3,0.3) ,
 	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
 	
     color = vec4(col,_alpha);
-  //color = vec4( TBN* vec3(model * vec4(ourPos, 1.0)),1);
+ 
 }
