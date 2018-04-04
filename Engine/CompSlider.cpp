@@ -1,24 +1,26 @@
-#include "CompImage.h"
 #include "Application.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 #include "GameObject.h"
 #include "Scene.h"
-#include "ImportMaterial.h"
-#include "ResourceMaterial.h"
-#include "CompCanvasRender.h"
-#include "CompRectTransform.h"
-#include "CompCanvas.h"
+#include "CompScript.h"
+#include "CSharpScript.h"
 #include "ModuleFS.h"
+#include "ResourceMaterial.h"
+#include "ImportMaterial.h"
 #include <vector>
+#include "CompRectTransform.h"
 #include "CompSlider.h"
 #include "ModuleInput.h"
+#include "CompImage.h"
+#include "CompGraphic.h"
+#include "ModuleFS.h"
+
 
 CompSlider::CompSlider(Comp_Type t, GameObject * parent) : CompInteractive (t, parent)
 {
 	uid = App->random->Int();
 	name_component = "CompSlider";
-	selective = true;
 }
 
 CompSlider::CompSlider(const CompImage & copy, GameObject * parent) : CompInteractive(Comp_Type::C_SLIDER, parent)
@@ -90,14 +92,15 @@ void CompSlider::ShowInspectorInfo()
 	ImGui::PopStyleVar();
 	if (ImGui::Button("Sync Min/Max", ImVec2(120, 0)))
 	{
-		int bar_x = slide_bar->GetRectTrasnform()->GetPosGlobal().x;
-		min_pos = bar_x - slide_bar->GetRectTrasnform()->GetWidth()/2;
-		max_pos = bar_x + slide_bar->GetRectTrasnform()->GetWidth()/2;
-		slide_bar->SetToFilled(true);
+		if (slide_bg != nullptr)
+		{
+			int bar_x = slide_bg->GetRectTrasnform()->GetPosGlobal().x;
+			min_pos = bar_x - slide_bg->GetRectTrasnform()->GetWidth() / 2;
+			max_pos = bar_x + slide_bg->GetRectTrasnform()->GetWidth() / 2;
+		}
 	}
 	ImGui::Text("Min pos: %f", min_pos);
 	ImGui::Text("Max pos: %f", max_pos);
-
 	ImGui::TreePop();
 }
 
@@ -129,6 +132,18 @@ void CompSlider::Save(JSON_Object * object, std::string name, bool saveScene, ui
 		}
 	}
 
+	if (slide_bg != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Slider background", slide_bg->GetUUID());
+	}
+	if (slide_bar != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Slider filler", slide_bar->GetUUID()); 
+	}
+	if (slide_ball != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Slider ball", slide_ball->GetUUID());
+	}
 }
 
 void CompSlider::Load(const JSON_Object * object, std::string name)
@@ -156,17 +171,26 @@ void CompSlider::Load(const JSON_Object * object, std::string name)
 			}
 		}
 	}
+
+	//GUARDARME LES ID PER DESPRES FER UN SYNC I COLOCARLES BE, IE: COMPINTERACTIVE
+	//slide_bg = App->GetGameObjectbyuid(uint uid)App->fs->json_array_dotget_float4_string(object, name + "Slider background");
+	//slide_bar = App->fs->json_array_dotget_float4_string(object, name + "Slider filler");
+	//slide_ball = App->fs->json_array_dotget_float4_string(object, name + "Slider ball");
 	Enable();
 }
 
-/*
-bool CompSlider::PointerInside(float2 position)
+void CompSlider::OnPointDown(Event event_input)
 {
+	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
+	{
+		return;
+	}
+	OnDrag(event_input);
+	point_down = true;
 
-
-
-
-}*/
+	UpdateSelectionState(event_input);
+	PrepareHandleTransition();
+}
 
 void CompSlider::OnDrag(Event event_input)
 {

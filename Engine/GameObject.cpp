@@ -846,7 +846,15 @@ void GameObject::ShowGameObjectOptions()
 					parent = App->scene->CreateCanvas(this);
 				}
 				GameObject* slider = App->scene->CreateSlider(parent);
+				GameObject* slide_bg = App->scene->CreateImage(slider);
+				GameObject* slide_bar = App->scene->CreateImage(slider);
+				GameObject* slide_ball = App->scene->CreateImage(slider);
+				CompSlider* linker = (CompSlider*)slider;
+				linker->slide_bg = (CompImage*)slide_bg;
+				linker->slide_bar = (CompImage*)slide_bar;
+				linker->slide_ball = (CompImage*)slide_bar;
 				App->gui->SetLinkInspector(slider);
+				linker->slide_bar->SetToFilled(true);
 
 			}
 			if (ImGui::MenuItem("Text"))
@@ -1563,12 +1571,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			LOG("Adding SLIDER COMPONENT.");
 			CompSlider* slider = new CompSlider(type, this);
 			components.push_back(slider);
-			CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
-			if (image_to_link != nullptr)
-			{
-
-			}
-			else LOG("IMAGE not linked to any slider");
 			return slider;
 		}
 		case Comp_Type::C_CAMERA:
@@ -1823,6 +1825,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			break;
 		case Comp_Type::C_IMAGE:
 			this->AddComponent(Comp_Type::C_IMAGE);
+			break;
+		case Comp_Type::C_SLIDER:
+			this->AddComponent(Comp_Type::C_SLIDER);
 			break;
 		case Comp_Type::C_SCRIPT:
 			this->AddComponent(Comp_Type::C_SCRIPT, true);

@@ -1538,12 +1538,6 @@ GameObject * Scene::CreateSlider(GameObject * parent)
 	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
 	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
 	transform->Enable();
-
-	// IMAGE COMPONENT -----------------
-	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
-	image->Enable();
-	image->SyncComponent(nullptr);
-	image->UpdateSpriteId();
 	// SLIDER -----------------
 	CompSlider* slide = (CompSlider*)obj->AddComponent(Comp_Type::C_SLIDER);
 	slide->Enable();
