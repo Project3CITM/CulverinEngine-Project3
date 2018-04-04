@@ -477,7 +477,7 @@ public class Movement_Action : Action
     public Direction SetDirection()
     {
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
-        float delta = Mathf.Atan2(forward.x, forward.y);
+        float delta = Mathf.Atan2(forward.x, forward.z);
 
         if (delta > Mathf.PI)
             delta = delta - 2 * Mathf.PI;

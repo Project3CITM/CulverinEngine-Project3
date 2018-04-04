@@ -196,27 +196,25 @@ public class EnemySpear_BT : Enemy_BT
 
         uint next_tile_x = 0;
         uint next_tile_y = 0;
-
         //This switch is only to set the direction opposite of the player
         //to see if it is possible walk
         switch (dir)
         {
             case Movement_Action.Direction.DIR_NORTH:
-                next_tile_x = (uint)tile_x_enemy + 1;
-                next_tile_y = (uint)tile_y_enemy;
+                next_tile_x = (uint)tile_x_enemy;
+                next_tile_y = (uint)tile_y_enemy+1;
                 break;
             case Movement_Action.Direction.DIR_WEST:
-                Debug.Log("[error] HEREEEEEEEEEEEEEEEEEEEEE!");
-                next_tile_x = (uint)tile_x_enemy;
-                next_tile_y = (uint)tile_y_enemy  + 1;
-                break;
-            case Movement_Action.Direction.DIR_SOUTH:
-                next_tile_x = (uint)tile_x_enemy + 1;
+                next_tile_x = (uint)tile_x_enemy+1;
                 next_tile_y = (uint)tile_y_enemy;
                 break;
-            case Movement_Action.Direction.DIR_EAST:
+            case Movement_Action.Direction.DIR_SOUTH:
                 next_tile_x = (uint)tile_x_enemy;
-                next_tile_y = (uint)tile_y_enemy - 1;
+                next_tile_y = (uint)tile_y_enemy-1;
+                break;
+            case Movement_Action.Direction.DIR_EAST:
+                next_tile_x = (uint)tile_x_enemy-1;
+                next_tile_y = (uint)tile_y_enemy;
                 break;
         }
 
