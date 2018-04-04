@@ -477,27 +477,16 @@ void CompMesh::Draw2(uint ID)
 		{
 			if (App->renderer3D->texture_2d)
 			{
-				CompMaterial* temp = parent->GetComponentMaterial();
-				if (temp != nullptr)
-				{
-					for (uint i = 0; i < temp->material->textures.size(); i++)
-					{
-						uint texLoc = glGetUniformLocation(temp->material->GetProgramID(), temp->material->textures[i].var_name.c_str());
-						glUniform1i(texLoc, i);
-						glActiveTexture(GL_TEXTURE0 + i);
-						if (temp->material->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-						else glBindTexture(GL_TEXTURE_2D, temp->material->textures[i].value->GetTextureID());
-					}
-				}
+				
 			}
 			uint TexturesSize = parent->GetComponentMaterial()->material->textures.size();
-			Frustum camFrust = App->renderer3D->active_camera->frustum;
-			float4x4 temp = camFrust.ViewMatrix();
+			
+			//float4x4 temp = camFrust.ViewMatrix();
 			//GLint view2Loc = glGetUniformLocation(ID, "view");
-			GLint modelLoc = glGetUniformLocation(ID, "model");
-			GLint viewLoc = glGetUniformLocation(ID, "viewproj");
+			GLint modelLoc = glGetUniformLocation(ID, "model");			
 			//GLint modelviewLoc = glGetUniformLocation(ID, "modelview");
 			float4x4 matrixfloat = transform->GetGlobalTransform();
+
 			GLfloat matrix[16] =
 			{
 				matrixfloat[0][0],matrixfloat[1][0],matrixfloat[2][0],matrixfloat[3][0],
@@ -505,10 +494,11 @@ void CompMesh::Draw2(uint ID)
 				matrixfloat[0][2],matrixfloat[1][2],matrixfloat[2][2],matrixfloat[3][2],
 				matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
 			};
-			float4x4 ModelViewMatrix = temp.Inverted() * matrixfloat;
+			//float4x4 ModelViewMatrix = temp.Inverted() * matrixfloat;
 			//glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
-			glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+
+			//glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 			//glUniformMatrix4fv(modelviewLoc, 1, GL_TRUE, ModelViewMatrix.ptr());
 			//Shadow mapping
 			/*
@@ -573,8 +563,7 @@ void CompMesh::Draw2(uint ID)
 			}
 			//Reset TextureColor
 			//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
+	
 		}
 		else
 			LOG("Cannot draw the mesh");

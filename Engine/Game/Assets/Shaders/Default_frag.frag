@@ -13,9 +13,8 @@ uniform struct Light {
  
 } _lights[MAX_LIGHTS];
  
-in vec4 ourColor;
-in vec2 TexCoord;
-in vec3 ourNormal;
+
+in vec2 TexCoord;
 in vec3 ourPos;
 in mat3 TBN;
 in vec3 FragPos;
@@ -55,14 +54,14 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
 {                                                                                                        
           
                                                                               
-    vec3 surfacePos = TBN* vec3(model * vec4(ourPos, 1.0));                                      
-    vec3 v = normalize(TBN * _cameraPosition - surfacePos);                                      
+                                        
+    vec3 v = normalize(TBN * _cameraPosition - FragPos);                                      
        
                                                                                  
     float lightInt = light.properties[0];
            
                                                                          
-    vec3 normal =  N ;                           
+                            
                                                                                                          
     if (light.type != 0) {                                                                               
                                                                                                          
@@ -70,9 +69,9 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
        
         vec3 s =  normalize(TBN * light.position );
        
-        vec3 r = reflect(-s,normal);   
+        vec3 r = reflect(-s,N);   
  
-        float cosTheta = clamp( dot(s, normal), 0,1 );                                                               
+        float cosTheta = clamp( dot(s, N), 0,1 );                                                               
         float cosAlpha = clamp( dot( v,r ), 0,1 );                                                                                               
    
                                                                                          
@@ -85,13 +84,13 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
                                                                                                          
     else {     
         vec3 lightpos =  TBN*light.position;                                                                             
-        vec3 s =  normalize(lightpos - surfacePos);      
-        vec3 r = reflect(-s,normal);
+        vec3 s =  normalize(lightpos - FragPos);      
+        vec3 r = reflect(-s,N);
  
-        float cosTheta = clamp( dot( s,normal ), 0,1 ) ;      
+        float cosTheta = clamp( dot( s,N ), 0,1 ) ;      
         float cosAlpha = clamp( dot( v,r ), 0,1 );                                               
                                                                                                          
-        float d = length((lightpos - surfacePos));
+        float d = length((lightpos - FragPos));
         float attenuation =1/(light.properties[1] + light.properties[2]* d + light.properties[3] * d*d);
         attenuation *= lightInt;                                   
         float diffuse = attenuation * Kd  * cosTheta;                    

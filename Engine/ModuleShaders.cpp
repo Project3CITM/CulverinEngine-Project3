@@ -69,6 +69,7 @@ update_status ModuleShaders::Update(float dt)
 	time_dt += dt * App->game_time.time_scale;
 	while (item != materials.end())
 	{
+		uint ID = (*item)->GetProgramID();
 		if ((*item)->active_num == 0) {
 			item++;
 			continue;
@@ -78,44 +79,51 @@ update_status ModuleShaders::Update(float dt)
 
 		SetUniformVariables(*item);
 		//TIME		
-		GLint timeLoc = glGetUniformLocation((*item)->GetProgramID(), "_time");
-		glUniform1f(timeLoc, time_dt);
+		GLint timeLoc = glGetUniformLocation(ID, "_time");
+		if(timeLoc != -1) glUniform1f(timeLoc, time_dt);
 
 		//CAMERA POSITION
 		float3 cam_pos = App->camera->GetPos();
-		GLint cameraLoc = glGetUniformLocation((*item)->GetProgramID(), "_cameraPosition");
-		glUniform3fv(cameraLoc, 1, &cam_pos[0]);
+		GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
+		if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
 
 		//ALPHA
 		float alpha = (*item)->alpha;
-		GLint alphaLoc = glGetUniformLocation((*item)->GetProgramID(), "_alpha");
-		glUniform1f(alphaLoc, alpha);
+		GLint alphaLoc = glGetUniformLocation(ID, "_alpha");
+		if (alphaLoc != -1) glUniform1f(alphaLoc, alpha);
+
+		//VIEWPROJ MATRIX
+		Frustum camFrust = App->renderer3D->active_camera->frustum;
+		GLint viewLoc = glGetUniformLocation(ID, "viewproj");
+		if (viewLoc != -1)glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 		
 		//LIGHTS
 		std::vector<CompLight*> lights_vec = *App->module_lightning->GetActiveLights();
-		GLint lightsizeLoc = glGetUniformLocation((*item)->GetProgramID(), "_numLights");	
-		glUniform1i(lightsizeLoc, lights_vec.size());
+		GLint lightsizeLoc = glGetUniformLocation(ID, "_numLights");
+		if (lightsizeLoc != -1) glUniform1i(lightsizeLoc, lights_vec.size());
 		
+
+
 		
-		if(lightsizeLoc >= 0)
+		if(lightsizeLoc != -1)
 			for (size_t i = 0; i < lights_vec.size(); ++i) {
 
 				if(lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
-					SetLightUniform((*item)->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
+					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
 				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
 					SetLightUniform((*item)->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
 
-				SetLightUniform((*item)->GetProgramID(), "type", i, (int)lights_vec[i]->type);
-				SetLightUniform((*item)->GetProgramID(), "l_color", i, lights_vec[i]->color);
-				SetLightUniform((*item)->GetProgramID(), "ambientCoefficient", i, lights_vec[i]->ambientCoefficient);
+				SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
+				SetLightUniform(ID, "l_color", i, lights_vec[i]->color);
+				SetLightUniform(ID, "ambientCoefficient", i, lights_vec[i]->ambientCoefficient);
 
-				SetLightUniform((*item)->GetProgramID(), "properties", i, lights_vec[i]->properties);
+				SetLightUniform(ID, "properties", i, lights_vec[i]->properties);
 
 			}
-		(*item)->Unbind();
+		
 		item++;
 	}
-
+	glUseProgram(0);
 	Enable_Text_Editor();
 	
 	if (App->gui->shader_program_creation) {

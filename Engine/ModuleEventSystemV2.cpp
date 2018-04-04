@@ -164,6 +164,8 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 {
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
+	Material* LastUsedMaterial = nullptr;
+	Material* ActualMaterial =  nullptr;
 	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -173,10 +175,30 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 			NewProgramID = 0;
 			if (item._Ptr->_Myval.first != 0)
 				NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
-			if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+
+				ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
+
+			if (LastUsedMaterial != ActualMaterial)
 			{
-				LastBindedProgram = NewProgramID;
-				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->Bind();
+				LastUsedMaterial = ActualMaterial;
+
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glActiveTexture(GL_TEXTURE0);				
+				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+				{
+					LastBindedProgram = NewProgramID;					
+					ActualMaterial->Bind();
+
+				}			
+				for (uint i = 0; i < ActualMaterial->textures.size(); i++)
+				{
+					uint texLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), ActualMaterial->textures[i].var_name.c_str());
+					glUniform1i(texLoc, i);
+					glActiveTexture(GL_TEXTURE0 + i);
+					if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+					else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
+				}
+
 			}
 			switch (item._Ptr->_Myval.second.draw.Dtype)
 			{
@@ -202,6 +224,8 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 			continue;
 		}
 	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
 }
 
 void ModuleEventSystemV2::IterateDrawGlowV(float dt)
@@ -209,6 +233,8 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	bool UseGlow = false;
+	Material* LastUsedMaterial = nullptr;
+	Material* ActualMaterial = nullptr;
 	for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -221,12 +247,32 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 			{
 				if (UseGlow) NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
 				else NewProgramID = App->renderer3D->non_glow_material->GetProgramID();
-			}
-			if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+			}			
+			
+			if (!UseGlow) ActualMaterial = App->renderer3D->non_glow_material;
+			else ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
+
+			if (LastUsedMaterial != ActualMaterial)
 			{
-				LastBindedProgram = NewProgramID;
-				if (!UseGlow) App->renderer3D->non_glow_material->Bind();
-				else ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->Bind();
+				LastUsedMaterial = ActualMaterial;
+
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glActiveTexture(GL_TEXTURE0);
+				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+				{
+					LastBindedProgram = NewProgramID;
+					ActualMaterial->Bind();
+
+				}
+				for (uint i = 0; i < ActualMaterial->textures.size(); i++)
+				{
+					uint texLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), ActualMaterial->textures[i].var_name.c_str());
+					glUniform1i(texLoc, i);
+					glActiveTexture(GL_TEXTURE0 + i);
+					if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+					else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
+				}
+
 			}
 			switch (item._Ptr->_Myval.second.draw.Dtype)
 			{
@@ -255,6 +301,8 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 			continue;
 		}
 	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
 }
 
 void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
@@ -269,6 +317,8 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	bool UseGlow = 0;
+	Material* LastUsedMaterial = nullptr;
+	Material* ActualMaterial = nullptr;
 	for (std::multimap<float, Event>::const_iterator item = DrawAlphaV.cbegin(); item != DrawAlphaV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -278,11 +328,29 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 			switch (type)
 			{
 			case EventType::EVENT_DRAW:
-				NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
-				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+
+				NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;					
+				ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
+
+				if (LastUsedMaterial != ActualMaterial)
 				{
-					LastBindedProgram = NewProgramID;
-					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->Bind();
+					LastUsedMaterial = ActualMaterial;
+					glBindTexture(GL_TEXTURE_2D, 0);
+					glActiveTexture(GL_TEXTURE0);
+					if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+					{
+						LastBindedProgram = NewProgramID;
+						ActualMaterial->Bind();
+
+					}
+					for (uint i = 0; i < ActualMaterial->textures.size(); i++)
+					{
+						uint texLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), ActualMaterial->textures[i].var_name.c_str());
+						glUniform1i(texLoc, i);
+						glActiveTexture(GL_TEXTURE0 + i);
+						if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+						else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
+					}
 				}
 				switch (item._Ptr->_Myval.second.draw.Dtype)
 				{
@@ -323,6 +391,8 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 		glDisable(GL_BLEND);
 		glEnable(GL_CULL_FACE);
 	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
 }
 
 void ModuleEventSystemV2::IterateNoDrawV(float dt)
