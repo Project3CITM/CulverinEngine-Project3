@@ -572,6 +572,8 @@ public class Movement_Action : Action
 
     public bool CenteredInTile()
     {
+        if (path == null || path.Count == 0) return true;
+
         if ((Mathf.Abs((GetCurrentTileX() - (path[0].GetTileX() * tile_size))) < arrive.min_distance) && (Mathf.Abs((GetCurrentTileY() - (path[0].GetTileY() * tile_size))) < arrive.min_distance))
             return true;
         

@@ -15,9 +15,9 @@ class GetHit_Action: Action
     public override bool ActionStart()
     {
         interupt = false;
-        CompAudio audio = GetComponent<CompAudio>();
+        /*CompAudio audio = GetComponent<CompAudio>();
         audio.PlayEvent("Enemy2_Hurt");
-        audio.PlayEvent("SwordHit");
+        audio.PlayEvent("SwordHit");*/
         GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
         int tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
