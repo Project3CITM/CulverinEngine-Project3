@@ -375,13 +375,13 @@ void Scene::EditorQuadtree()
 			octree.Clear(false);
 			//Clac adaptative size of scene octree
 			/**/
-			AABB AdaptativeAABB;
+			//AABB AdaptativeAABB;
 		
-			AdaptativeAABB.SetNegativeInfinity();
+			//AdaptativeAABB.SetNegativeInfinity();
 			
 			//Make sure that we have all go
 			GetAllSceneObjects();
-			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
+			/*for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 			{
 				if ((*item)->IsStatic())
 				{
@@ -391,7 +391,7 @@ void Scene::EditorQuadtree()
 					}
 				}
 			}
-			octree.Boundaries(AdaptativeAABB);
+			octree.Boundaries(AdaptativeAABB);*/
 			/**/
 			//Insert AABBs to octree
 			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
