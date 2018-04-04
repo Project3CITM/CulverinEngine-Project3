@@ -39,6 +39,11 @@ public class BarrelFall : CulverinBehaviour
     private bool get_init_pos = true;
     private Vector3 initial_position;
 
+    private float wait_time;
+    public float random_wait = 20.0f;
+    bool canSwitch = false;
+    float time_ = 0;
+    public float speedanim_floating = 2.0f;
     // -------------------------
     // Floating 
 
@@ -58,7 +63,10 @@ public class BarrelFall : CulverinBehaviour
     {
         audio = GetComponent<CompAudio>();
         //col = GetComponent<CompCollider>();
-        timeToNextFloatAnim = floatingPeriod; 
+        timeToNextFloatAnim = floatingPeriod;
+      
+        wait_time = (float)GetLinkedObject("map_obj").GetComponent<LevelMap>().randomspeed.NextDouble();
+        wait_time = wait_time * random_wait;
     }
 
     void Update()
@@ -68,36 +76,31 @@ public class BarrelFall : CulverinBehaviour
             gameObject.SetActive(false);
             disable_barrels = false;
         }
-
+        if (canSwitch)
+        {
+            time_ += Time.deltaTime;
+        }
+        else
+        {
+            wait_time += Time.deltaTime;
+            if (wait_time >= random_wait)
+            {
+                canSwitch = true;
+            }
+        }
         if (placed)
         {
-            if (mode_puzzle == ModeBarrel.FILLING)
+            if (mode_puzzle != ModeBarrel.UNKOWN)
             {
-
-                DoFloatAnimation();
-                /*
-                // It is not a path barrel
-                floatingTimeCounter += Time.deltaTime;
-
-                if (floatingTimeCounter >= timeToNextFloatAnim)
+                if (!sinking)
                 {
-                   // It is animating or must end the animation
-                    if (floatingTimeCounter >= (timeToNextFloatAnim + floatingAnimationDuration))
-                    {
-                        // Stop animation and reset
-                        // TODO: Need to reset the position to a certain pos??
-                        floatingTimeCounter = 0.0f;
-                        // TODO: change timeToNextFloatAnim with some randomness??
-                    }
-                    else
-                    {
-                        // Do floating animation
-                       
-                    //}
-                }*/
+                    DoFloatAnimation();
+                }
+                else
+                {
+                    Sink();
+                }
             }
-
-
 
             if (sinking)
             {
@@ -255,12 +258,13 @@ public class BarrelFall : CulverinBehaviour
 
     private void DoFloatAnimation()
     {
-        Vector3 pos = transform.GetGlobalPosition();
+        if (canSwitch)
+        {
+            Vector3 pos = transform.GetGlobalPosition();
+            pos.y += (Mathf.Sin(time_ * speedanim_floating) * (floatingDisplacementMultiplier / 2.0f)) * Time.deltaTime;
 
-        float t = Mathf.Cos(Time.realtimeSinceStartup * 2.0f) * floatingDisplacementMultiplier * Time.deltaTime;
-        pos.y += t;
-
-        transform.SetGlobalPosition(pos);
+            transform.SetGlobalPosition(pos);
+        }
     }
 
     void OnTriggerEnter()
