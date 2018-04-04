@@ -277,6 +277,7 @@ public class Movement_Action : Action
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
         if (path.Count > 0)
         {
+            tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
             pos.x = path[0].GetTileX() * tile_size;
             pos.z = path[0].GetTileY() * tile_size;
             GetComponent<Transform>().position = pos;
@@ -505,12 +506,17 @@ public class Movement_Action : Action
 
     public int GetCurrentTileX()
     {
-        return ((int)GetComponent<Transform>().position.x / (int)tile_size);
+        return tile.GetTileX();
     }
 
     public int GetCurrentTileY()
     {
-        return ((int)GetComponent<Transform>().position.z / (int)tile_size);
+        return tile.GetTileY();
+    }
+
+    public PathNode GetCurrentTile()
+    {
+        return new PathNode(tile.GetTileX(), tile.GetTileY());
     }
 
     public Vector3 GetCurrentVelocity()
