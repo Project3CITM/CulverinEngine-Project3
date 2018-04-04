@@ -7,8 +7,6 @@ public class TheonController : CharacterController
     public GameObject theon_obj; 
     public GameObject L_Arm_Theon;
     public GameObject R_Arm_Theon;
-    public GameObject L_Shoulder_Theon;
-    public GameObject R_Shoulder_Theon;
     public GameObject CrossBow;
     public GameObject Arrow;
 
@@ -58,8 +56,6 @@ public class TheonController : CharacterController
         theon_obj = GetLinkedObject("theon_obj");
         L_Arm_Theon = GetLinkedObject("L_Arm_Theon");
         R_Arm_Theon = GetLinkedObject("R_Arm_Theon");
-        L_Shoulder_Theon = GetLinkedObject("L_Shoulder_Theon");
-        R_Shoulder_Theon = GetLinkedObject("R_Shoulder_Theon");
         CrossBow = GetLinkedObject("CrossBow");
         Arrow = GetLinkedObject("Arrow");
 
@@ -358,8 +354,6 @@ public class TheonController : CharacterController
     {
         L_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, L_Arm_Theon);
         R_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, R_Arm_Theon);
-        L_Shoulder_Theon.GetComponent<CompMesh>().SetEnabled(active, L_Shoulder_Theon);
-        R_Shoulder_Theon.GetComponent<CompMesh>().SetEnabled(active, R_Shoulder_Theon);
         CrossBow.GetComponent<CompMesh>().SetEnabled(active, CrossBow);
         Arrow.GetComponent<CompMesh>().SetEnabled(active, Arrow);
     }
@@ -378,7 +372,6 @@ public class TheonController : CharacterController
                 { 
                     // First, OnClick of LeftWeapon, then, onClick of Cooldown
                     DoLeftAbility();
-
 
                     return true;
                 }
