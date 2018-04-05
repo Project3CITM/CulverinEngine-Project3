@@ -19,6 +19,8 @@ class Die_Action : Action
         //TODO_AI: Die audio
         GetComponent<CompAudio>().PlayEvent("Enemy_SwordDrop");
 
+        StatsScore.KillEnemy();
+
         //Play Dead Audio
         if (GetComponent<EnemyShield_BT>() != null)
             GetComponent<CompAudio>().PlayEvent("Enemy3_Dead");

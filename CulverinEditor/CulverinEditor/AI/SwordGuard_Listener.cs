@@ -69,7 +69,7 @@ public class SwordGuard_Listener : PerceptionListener
 
                 if (gameObject.IsEquals(seen_event_tmp.enemy_who_saw))
                 {
-                    Debug.Log("CCCCCCCCCCCCCCCCCCCCCCCCCc");
+                   
 
                     GetComponent<EnemySword_BT>().InterruptAction();
                     GetComponent<EnemySword_BT>().player_detected = true;
@@ -108,7 +108,7 @@ public class SwordGuard_Listener : PerceptionListener
                 if (GetComponent<EnemySword_BT>().InCombat() == true && GetComponent<PerceptionSightEnemy>().player_seen == false)
                     GetComponent<EnemySword_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
 
-                Debug.Log("[error]Event gone type:" + event_recieved.type);
+                
                 break;
         }
     }
