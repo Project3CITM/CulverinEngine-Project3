@@ -40,9 +40,9 @@ public class ShowScore : CulverinBehaviour
     public int enemy_silver_kills = 1;
     public int enemy_bronze_kills = 0;
 
-    public int puzzle_gold_trys = 0;
-    public int puzzle_silver_trys = 1;
-    public int puzzle_bronze_trys = 2;
+    public int puzzle_gold_trys = 1;
+    public int puzzle_silver_trys = 3;
+    public int puzzle_bronze_trys = 10;
 
     public int characters_gold_alive = 3;
     public int characters_silver_alive = 2;
@@ -86,7 +86,7 @@ public class ShowScore : CulverinBehaviour
         coin1_time.SetActive(false);
         coin2_time.SetActive(false);
         coin3_time.SetActive(false);
-
+        StatsScore.time = Time.timePlay;
         EnemyKillsScore();
         AliveScore();
         TimeScore();
