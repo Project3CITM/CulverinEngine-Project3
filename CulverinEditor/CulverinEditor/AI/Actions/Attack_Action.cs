@@ -72,7 +72,10 @@ public class Attack_Action : Action
             else
             {
                 if (player.GetDamage(damage) == true)
+                {
+                    GetComponent<CompAudio>().PlayEvent("SwordHit");
                     anim.SetActiveBlendingClipWeight(0.0f);
+                }
                 else
                     anim.SetActiveBlendingClipWeight(1.0f);
             }

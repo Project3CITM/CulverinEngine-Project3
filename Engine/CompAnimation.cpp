@@ -78,12 +78,9 @@ void CompAnimation::PreUpdate(float dt)
 			bones_placed = true;
 		}
 	}
-}
 
-void CompAnimation::Update(float dt)
-{
 	ManageActualAnimationNode(dt);
-	ManageAnimationClips(current_animation,dt);
+	ManageAnimationClips(current_animation, dt);
 	ManageAnimationClips(blending_animation, dt);
 	if (active_node != nullptr)
 	{
@@ -93,14 +90,24 @@ void CompAnimation::Update(float dt)
 			ManageAnimationClips(node_blending_clip->clip, dt);
 		}
 	}
-
+	playing = false;
 	if (current_animation != nullptr)
 	{
-		for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
+		for (std::vector<AnimationClip*>::iterator it = animation_clips.begin(); it != animation_clips.end(); it++)
 		{
-			if (it->first != nullptr)
+			if ((*it)->state != A_STOP)
 			{
-				it->second->UpdateBone(it->first, current_animation, active_node->GetActiveBlendingClip(), blending_animation);
+				playing = true;
+			}
+		}
+		if (playing)
+		{
+			for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
+			{
+				if (it->first != nullptr)
+				{
+					it->second->UpdateBone(it->first, current_animation, active_node->GetActiveBlendingClip(), blending_animation);
+				}
 			}
 		}
 	}
@@ -109,6 +116,11 @@ void CompAnimation::Update(float dt)
 	{
 		CheckNodesConditions((active_node));
 	}
+}
+
+void CompAnimation::Update(float dt)
+{
+	
 }
 
 void CompAnimation::PlayAnimation(AnimationNode * node)
@@ -1135,7 +1147,6 @@ void CompAnimation::ManageActualAnimationNode(float dt)
 						trans->SetPos(final_pos);
 						float3 final_rot = globalrot.ToEulerXYZ() * RADTODEG;
 						
-				
 						float3 prefabrot = ((trans->GetRotGlobal()).ToEulerXYZ()) *RADTODEG;
 			
 						final_rot  = final_rot + prefabrot;

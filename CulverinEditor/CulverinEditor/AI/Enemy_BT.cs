@@ -165,8 +165,10 @@ public class Enemy_BT : BT
     public bool InRange()
     {
         player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-        int distance = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX()) + Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
-        if (distance <= range)
+        int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
+        int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+
+        if ((distance_x <= range && distance_y == 0) || (distance_y <= range && distance_x == 0))
             return true;
         return false;
     }

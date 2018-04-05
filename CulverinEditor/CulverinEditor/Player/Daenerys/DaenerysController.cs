@@ -239,10 +239,6 @@ public class DaenerysController : CharacterController
                                 {
                                     state = State.IDLE;
                                 }
-                                else
-                                {
-                                    // Keep playing specific attack animation  until it ends
-                                }
                             }
                             break;
                         }
@@ -253,10 +249,6 @@ public class DaenerysController : CharacterController
                             if (anim_controller.IsAnimationStopped("Hit"))
                             {
                                 state = State.IDLE;
-                            }
-                            else
-                            {
-                                // Keep playing specific attack animation  until it ends
                             }
                             break;
                         }
