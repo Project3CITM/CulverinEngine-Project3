@@ -48,6 +48,7 @@ public class SwordParticles : CulverinBehaviour
                 Vector3 normal = col.GetContactNormal();
 
                 sword_enemy_particle.GetComponent<Transform>().SetUpVector(normal);
+                point = point + normal * 2;
                 sword_enemy_particle.GetComponent<Transform>().SetPosition(point);
 
                 enemy_particle = sword_enemy_particle.GetComponent<CompParticleSystem>();
