@@ -8,7 +8,7 @@ public class PlayQuit : CulverinBehaviour
     {
         Debug.Log("GOING TO PLAY");
         Input.SetInputManagerActive("GUI", false);
-        SceneManager.LoadScene("PlayerScene");
+        SceneManager.LoadScene("HistoryScene");
     }
 
     public void Quit()
