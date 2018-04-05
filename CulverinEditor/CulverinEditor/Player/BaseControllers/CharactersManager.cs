@@ -77,104 +77,10 @@ public class CharactersManager : CulverinBehaviour
         audio = GetComponent<CompAudio>();
 
         changing = false;
-
-        //core menu
-        //bg = GetLinkedObject("bg");
-        //coin1 = GetLinkedObject("coin1");
-        //coin2= GetLinkedObject("coin2");
-        //coin3= GetLinkedObject("coin3");
-
-        //coin1.SetActive(false);
-        //coin2.SetActive(false);
-        //coin3.SetActive(false);
-        //bg.SetActive(false);
     }
 
     void Update()
     {
-        //if (in_puzzle)
-        //{
-        //    puzzle_start += Time.deltaTime;
-        //}
-
-        //Check all audios
-        //if(Input.GetKeyDown(KeyCode.Y))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("DaenerysHurt");
-        //}
-        //if (Input.GetKeyDown(KeyCode.U))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("DaenerysWalk");
-        //}
-        //if (Input.GetKeyDown(KeyCode.V))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("DaenerysDead");
-        //}
-
-        //if (Input.GetKeyDown(KeyCode.I))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("JaimeImpact");
-        //}
-        //if (Input.GetKeyDown(KeyCode.O))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("JaimeFailImpact");
-        //}
-        //if (Input.GetKeyDown(KeyCode.P))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("JaimeBlock");
-        //}
-        //if (Input.GetKeyDown(KeyCode.T))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("JaimeDead");
-        //}
-        //if (Input.GetKeyDown(KeyCode.F))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("JaimeHurt");
-        //}
-        //if (Input.GetKeyDown(KeyCode.G))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("JaimeWarCry");
-        //}
-
-        //if (Input.GetKeyDown(KeyCode.H))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("CrossbowShot");
-        //}
-        //if (Input.GetKeyDown(KeyCode.J))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("TheonMele");
-        //}
-        //if (Input.GetKeyDown(KeyCode.K))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("TheonTripleShot");
-        //}
-        //if (Input.GetKeyDown(KeyCode.L))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("CrossbowRecharge");
-        //}
-        //if (Input.GetKeyDown(KeyCode.M))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("TheonDead");
-        //}
-        //if (Input.GetKeyDown(KeyCode.N))
-        //{
-        //    audio.GetComponent<CompAudio>();
-        //    audio.PlayEvent("TheonHurt");
-        //}
 
         switch (state)
         {
@@ -184,8 +90,6 @@ public class CharactersManager : CulverinBehaviour
                     if(changing && IsCharacterAnimationRunning(current_character,"Idle"))
                     {
                         changing = false;
-
-                        Debug.Log("[yellow] FINISHED IN");
                     }
 
                     //Test Jaime Secondary Ability
@@ -235,24 +139,6 @@ public class CharactersManager : CulverinBehaviour
                         }
                     }
 
-                    //MANAGE SECONDARY ABILITIES ------------
-                    else if (Input.GetKeyDown(KeyCode.K))
-                    {
-                        if (IsDead(left_character) == false)
-                        {
-                            SecondaryAbility(Side.LEFT);
-                            Debug.Log("Left S Attack");
-                        }
-                    }
-                    else if (Input.GetKeyDown(KeyCode.L))
-                    {
-                        if (IsDead(left_character) == false)
-                        {
-                            SecondaryAbility(Side.RIGHT);
-                            Debug.Log("Right S Attack");
-                        }
-                    }
-
                     float vari = Input.GetInput_ControllerAxis("LAllyAttack", "Player");
 
                     if (vari>0.8)
@@ -276,13 +162,10 @@ public class CharactersManager : CulverinBehaviour
 
             case State.CHANGING_LEFT:
                 {
-                    Debug.Log("[blue] LEFT OUT");
                     if (IsCharacterAnimationStopped(current_character, "Out"))
                     {
-                        Debug.Log("[blue]  ----------------------------");
                         ChangeLeft();
 
-                        //Change GameObjects --------------------
                         temporal_change = current_character;
                         current_character = left_character;
                         left_character = temporal_change;
