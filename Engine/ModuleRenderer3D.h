@@ -12,7 +12,7 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 9
 
 class CompCamera;
 
