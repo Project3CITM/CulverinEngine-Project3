@@ -120,11 +120,15 @@ public class DaenerysController : CharacterController
                                     play_audio_roar = false;
                                 }
 
-                                if (anim_controller.IsAnimOverXTime(0.9f))
+                                if (anim_controller.IsAnimOverXTime(1.0f))
                                 {
                                     state = State.IDLE;
                                 }
-                            }                          
+                            }
+                            else if(play_audio_roar == false)
+                            {
+                                state = State.IDLE;
+                            }
                             break;
                         }
                     case State.FIRE_WALL:
