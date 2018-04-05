@@ -1,5 +1,6 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using CulverinEditor.SceneManagement;
 
 public class CharactersManager : CulverinBehaviour
 {
@@ -116,6 +117,7 @@ public class CharactersManager : CulverinBehaviour
                         }
                         else
                         {
+                            SceneManager.LoadScene("LoseMenu");
                             //DEFEAT
                         }
                     }

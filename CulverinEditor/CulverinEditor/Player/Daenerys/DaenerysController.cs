@@ -32,7 +32,6 @@ public class DaenerysController : CharacterController
     public float damage_percentage_left = 10f;
     public int distance_left_attack = 3;
     private DaenerysCD_Left cd_left;
-    private bool set_fire_breath = false;
 
     //Right Ability Stats
     public float mana_cost_percentage_right = 20f;
@@ -143,7 +142,7 @@ public class DaenerysController : CharacterController
                                     int tile_x, tile_y;
                                     GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out tile_x, out tile_y);
                                     Vector3 player_pos = GetLinkedObject("player_obj").GetComponent<Transform>().GetPosition();
-                                    player_pos.y -= 8.7f;
+                                    player_pos.y -= 2.5f;
                                     MovementController.Direction direction = GetLinkedObject("player_obj").GetComponent<MovementController>().curr_dir;
                                     switch (direction)
                                     {
@@ -403,8 +402,6 @@ public class DaenerysController : CharacterController
     {
         // Decrease mana -----------
         DecreaseManaPercentage(mana_cost_percentage_left);
-        set_fire_breath = false;
-
         audio = daenerys_obj.GetComponent<CompAudio>();
         PlayFx("Dracarys");
 
