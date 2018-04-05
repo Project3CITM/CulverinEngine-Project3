@@ -188,6 +188,10 @@ public class DaenerysController : CharacterController
                                     state = State.IDLE;
                                 }
                             }
+                            else if(set_fire_wall == true && IsAnimationStopped("AttackRight"))
+                            {
+                                state = State.IDLE;
+                            }
                             break;
                         }
                     case State.HIT:
