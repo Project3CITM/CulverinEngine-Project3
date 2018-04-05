@@ -10,6 +10,9 @@ public class Arrow : CulverinBehaviour
     CompRigidBody rb;
     private bool destroyed = false;
 
+    public GameObject arrow_blood_particles;
+    public GameObject arrow_sparks_particles;
+
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
@@ -44,7 +47,11 @@ public class Arrow : CulverinBehaviour
     void OnContact()
     {
         Debug.Log("[yellow]Contact Start");
-        GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
+        CompCollider col = GetComponent<CompCollider>();
+        GameObject collided_obj = col.GetCollidedObject();
+       
+        Vector3 point = col.GetContactPoint();
+        Vector3 normal = col.GetContactNormal();
 
         // DAMAGE ---
         Debug.Log("[error] Collided");
@@ -64,6 +71,15 @@ public class Arrow : CulverinBehaviour
             if (enemy_manager.IsEnemy(collided_obj))
             {
                 enemy_manager.ApplyDamage(collided_obj, damage);
+                if (arrow_blood_particles != null)
+                {
+
+                    arrow_blood_particles.GetComponent<Transform>().SetUpVector(normal);
+                    arrow_blood_particles.GetComponent<Transform>().SetPosition(point);
+
+                    CompParticleSystem arrow_particles_script = arrow_blood_particles.GetComponent<CompParticleSystem>();
+                    arrow_particles_script.ActivateEmission(true);
+                }
             }
             else
             {
@@ -71,6 +87,15 @@ public class Arrow : CulverinBehaviour
                 if (obj_col != null)
                 {
                     obj_col.CallOnContact();
+                }
+                if (arrow_sparks_particles != null)
+                {
+
+                    arrow_sparks_particles.GetComponent<Transform>().SetUpVector(normal);
+                    arrow_sparks_particles.GetComponent<Transform>().SetPosition(point);
+
+                    CompParticleSystem wall_particles_script = arrow_sparks_particles.GetComponent<CompParticleSystem>();
+                    wall_particles_script.ActivateEmission(true);
                 }
             }
         }

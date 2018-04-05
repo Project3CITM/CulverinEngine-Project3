@@ -46,6 +46,9 @@ public class TheonController : CharacterController
     bool arrow2 = false;
     bool arrow3 = false;
     float arrowtimers = 0.0f;
+
+    public GameObject theon_blood_particles;
+    public GameObject theon_sparks_particles;
     //----------------------------------------
 
     protected override void Start()
@@ -66,7 +69,10 @@ public class TheonController : CharacterController
         theon_right_flag = GetLinkedObject("theon_right_flag");
 
         theon_icon_obj_hp = GetLinkedObject("theon_icon_obj_hp");
-        theon_icon_obj_stamina = GetLinkedObject("theon_icon_obj_stamina");   
+        theon_icon_obj_stamina = GetLinkedObject("theon_icon_obj_stamina");
+
+        theon_blood_particles = GetLinkedObject("theon_blood_particles");
+        theon_sparks_particles = GetLinkedObject("theon_sparks_particles");
 
         //Start Idle animation
         anim_controller = theon_obj.GetComponent<CompAnimation>();    
@@ -407,6 +413,9 @@ public class TheonController : CharacterController
         Arrow arrow_script = arrow.GetComponent<Arrow>();
         arrow_script.speed = curr_forward;
 
+        arrow_script.arrow_blood_particles = theon_blood_particles;
+        arrow_script.arrow_sparks_particles = theon_sparks_particles;
+
         Arrow.GetComponent<CompMesh>().SetEnabled(false, Arrow);
         Debug.Log("[green] SetEnabled");
 
@@ -504,6 +513,7 @@ public class TheonController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!sec_ability_cd.in_cd)
                 {
+                    PlayFx("TheonRope");
                     SecondaryAbility();
                     return true;
                 }
@@ -542,8 +552,11 @@ public class TheonController : CharacterController
 
                 arrow.transform.SetPosition(curr_position);
                 arrow.transform.SetRotation(player.transform.GetRotation());
-                arrow.GetComponent<Arrow>().speed = curr_forward;
-                //sarrow.transform.ForceTransformUpdate();
+
+                Arrow arrow_script = arrow.GetComponent<Arrow>();
+                arrow_script.speed = curr_forward;
+                arrow_script.arrow_blood_particles = theon_blood_particles;
+                arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
 
             if (arrowtimers >= 1.0f && arrow2 == false)
@@ -556,8 +569,11 @@ public class TheonController : CharacterController
 
                 arrow.transform.SetPosition(curr_position);
                 arrow.transform.SetRotation(player.transform.GetRotation());
-                arrow.GetComponent<Arrow>().speed = curr_forward;
-                //arrow.transform.ForceTransformUpdate();
+
+                Arrow arrow_script = arrow.GetComponent<Arrow>();
+                arrow_script.speed = curr_forward;
+                arrow_script.arrow_blood_particles = theon_blood_particles;
+                arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
 
             if (arrowtimers >= 1.5f && arrow3 == false)
@@ -573,9 +589,11 @@ public class TheonController : CharacterController
                 GameObject player = GetLinkedObject("player_obj");
                 arrow.transform.SetPosition(curr_position);
                 arrow.transform.SetRotation(player.transform.GetRotation());
-                arrow.GetComponent<Arrow>().speed = curr_forward;
-                //arrow.transform.ForceTransformUpdate();
 
+                Arrow arrow_script = arrow.GetComponent<Arrow>();
+                arrow_script.speed = curr_forward;
+                arrow_script.arrow_blood_particles = theon_blood_particles;
+                arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
         }
     }

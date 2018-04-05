@@ -413,6 +413,9 @@ public class JaimeController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!left_ability_cd.in_cd)
                 {
+                    // Play the Sound FX
+                    PlayFx("JaimeFailImpact");
+
                     // Decrease stamina -----------
                     DecreaseStamina(left_ability_cost);
 
@@ -529,8 +532,10 @@ public class JaimeController : CharacterController
 
                 //Set FailAttack Transition & Audio
                 SetAnimationTransition("ToFail", true);
-                
+
                 //PlayFx -> Obstacle Impact
+                //PlayFx("JaimeImpactStone");
+                PlayFx("JaimeImpact");
             }
         }
         else
@@ -539,7 +544,7 @@ public class JaimeController : CharacterController
         }
 
         // Play the Sound FX
-        PlayFx("JaimeFailImpact");
+        //PlayFx("JaimeFailImpact");
     }
 
     public void PrepareRightAbility()

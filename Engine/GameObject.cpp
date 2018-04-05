@@ -1887,7 +1887,7 @@ void GameObject::SyncComponentsRecursive(GameObject * sync_parent)
 	// Now Iterate All components and Load variables
 	for (uint i = 0; i < components.size(); i++)
 	{
-		components[i]->SyncComponent(parent);
+		components[i]->SyncComponent(sync_parent);
 	}
 
 	// Now Iterate All Childs to Sync Components
