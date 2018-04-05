@@ -666,16 +666,48 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 				{
 					if (i >= material->textures.size()) break;
 					char mat_name[128] = { 0 };
+					char mat_var[128] = { 0 };
 
 					char* num = new char[4];
 					itoa(i, num, 10);
+
 					strcat(mat_name, "Resource Material UUID ");
 					strcat(mat_name, num);
+
+					strcat(mat_var, "Resource Material Var Name ");
+					strcat(mat_var, num);
+
 					RELEASE_ARRAY(num);
 
 					uint uuid = json_object_dotget_number_with_std(object, name + mat_name);
+					std::string var_name = json_object_dotget_string_with_std(object, name + mat_var);
 
-					material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(uuid);
+					if (strcmp(var_name.c_str(), material->textures[i].var_name.c_str()) == 0) {
+						material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(uuid);
+					}
+					else {
+						for (int n = 0; n < num_textures; n++) {
+							char temp_name[128] = { 0 };
+							char temp_var[128] = { 0 };
+
+							char* num = new char[4];
+							itoa(n, num, 10);
+
+							strcat(temp_name, "Resource Material UUID ");
+							strcat(temp_name, num);
+
+							strcat(temp_var, "Resource Material Var Name ");
+							strcat(temp_var, num);
+
+							uint temp_uuid = json_object_dotget_number_with_std(object, name + temp_name);
+							std::string var_name_temp = json_object_dotget_string_with_std(object, name + temp_var);
+
+							if (strcmp(var_name_temp.c_str(), material->textures[n].var_name.c_str()) == 0) {
+								material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(temp_uuid);
+								break;
+							}
+						}
+					}
 					if (material->textures[i].value != nullptr)
 					{
 						material->textures[i].value->num_game_objects_use_me++;
@@ -697,8 +729,35 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					ss << name << "Bool:" << i;
 					std::string json_name = ss.str();
 
+					std::ostringstream ss2;
+					ss2 << name << "Bool Name:" << i;
+					std::string json_var = ss2.str();
+
 					if (i >= material->bool_variables.size()) break;
-					material->bool_variables[i].value = json_object_dotget_boolean_with_std(object, json_name);
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->bool_variables[i].var_name.c_str()) == 0) {
+						material->bool_variables[i].value = json_object_dotget_boolean_with_std(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_bools; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Bool:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Bool Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->bool_variables[n].var_name.c_str()) == 0) {
+								material->bool_variables[n].value = json_object_dotget_boolean_with_std(object, temp_name);
+								break;
+							}
+
+						}
+					}
 				}
 				uint num_ints = json_object_dotget_number_with_std(object, name + "Num Int:");
 				for (int i = 0; i < num_ints; i++)
@@ -707,8 +766,35 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					ss << name << "Int:" << i;
 					std::string json_name = ss.str();
 
-					if (i >= material->bool_variables.size()) break;
-					material->int_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+					std::ostringstream ss2;
+					ss2 << name << "Int Name:" << i;
+					std::string json_var = ss2.str();
+
+					if (i >= material->int_variables.size()) break;
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->int_variables[i].var_name.c_str()) == 0) {
+						material->int_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_ints; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Int:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Int Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->int_variables[n].var_name.c_str()) == 0) {
+								material->int_variables[n].value = json_object_dotget_number_with_std(object, temp_name);
+								break;
+							}
+
+						}
+					}
 				}
 
 				uint num_floats = json_object_dotget_number_with_std(object, name + "Num Floats:");
@@ -718,8 +804,35 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					ss << name << "Float:" << i;
 					std::string json_name = ss.str();
 
+					std::ostringstream ss2;
+					ss2 << name << "Float Name:" << i;
+					std::string json_var = ss2.str();
+
 					if (i >= material->float_variables.size()) break;
-					material->float_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->float_variables[i].var_name.c_str()) == 0) {
+						material->float_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_floats; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Float:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Float Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->float_variables[n].var_name.c_str()) == 0) {
+								material->float_variables[n].value = json_object_dotget_number_with_std(object, temp_name);
+								break;
+							}
+
+						}
+					}
 				}
 				uint num_float3 = json_object_dotget_number_with_std(object, name + "Num Float3:");
 				for (int i = 0; i < num_float3; i++)
@@ -728,8 +841,35 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					ss << name << "Float3:" << i;
 					std::string json_name = ss.str();
 
+					std::ostringstream ss2;
+					ss2 << name << "Float3 Name:" << i;
+					std::string json_var = ss2.str();
+
 					if (i >= material->float3_variables.size()) break;
-					material->float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, json_name);
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->float3_variables[i].var_name.c_str()) == 0) {
+						material->float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_floats; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Float3:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Float3 Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->float3_variables[n].var_name.c_str()) == 0) {
+								material->float3_variables[n].value = App->fs->json_array_dotget_float3_string(object, temp_name);
+								break;
+							}
+
+						}
+					}
 				}
 				uint num_colors = json_object_dotget_number_with_std(object, name + "Num Colors:");
 				for (int i = 0; i < num_colors; i++)
@@ -738,8 +878,35 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					ss << name << "Color:" << i;
 					std::string json_name = ss.str();
 
+					std::ostringstream ss2;
+					ss2 << name << "Color Name:" << i;
+					std::string json_var = ss2.str();
+
 					if (i >= material->color_variables.size()) break;
-					material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, json_name);
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->color_variables[i].var_name.c_str()) == 0) {
+						material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_floats; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Color:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Color Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->color_variables[n].var_name.c_str()) == 0) {
+								material->color_variables[n].value = App->fs->json_array_dotget_float4_string(object, temp_name);
+								break;
+							}
+
+						}
+					}
 				}
 			}
 			App->module_shaders->materials.push_back(material);

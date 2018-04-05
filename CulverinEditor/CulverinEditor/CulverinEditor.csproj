@@ -82,6 +82,7 @@
     <Compile Include="CompLight.cs" />
     <Compile Include="Player\Daenerys\FireSound.cs" />
     <Compile Include="PlayQuit.cs" />
+    <Compile Include="ReturnToMenu.cs" />
     <Compile Include="ScoreScreen.cs" />
     <Compile Include="FadeAlpha.cs" />
     <Compile Include="Scroll.cs" />
