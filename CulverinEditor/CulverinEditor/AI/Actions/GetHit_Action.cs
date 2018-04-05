@@ -133,7 +133,15 @@ class GetHit_Action: Action
     {
         if(GetComponent<CompAnimation>().IsAnimOverXTime(0.3f) && !played_audio)
         {
-            GetComponent<CompAudio>().PlayEvent("JaimeHurt");
+            if(GetComponent<EnemyShield_BT>() != null)
+                GetComponent<CompAudio>().PlayEvent("Enemy3_Hurt");
+
+            if (GetComponent<EnemySpear_BT>() != null)
+                GetComponent<CompAudio>().PlayEvent("Enemy2_Hurt");
+
+            if (GetComponent<EnemySword_BT>() != null)
+                GetComponent<CompAudio>().PlayEvent("Enemy1_Hurt");
+
             played_audio = true;
         }
 
