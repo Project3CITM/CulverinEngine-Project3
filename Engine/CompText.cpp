@@ -490,11 +490,17 @@ void CompText::Load(const JSON_Object * object, std::string name)
 }
 void CompText::SyncComponent(GameObject* sync_parent)
 {
+
 	AddRectTransform();
 	AddCanvasRender();
 	AddCanvas();
 	if (my_canvas_render != nullptr&&my_canvas != nullptr)
 	{
+		if (text != nullptr)
+		{
+			text->SetSize(text_size);
+			text->ReLoadToMemory();
+		}
 		UpdateText();
 		GenerateText();
 	}
