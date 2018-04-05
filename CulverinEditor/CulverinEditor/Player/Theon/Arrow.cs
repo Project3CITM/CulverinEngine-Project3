@@ -58,8 +58,8 @@ public class Arrow : CulverinBehaviour
         if (collided_obj != null && destroyed == false)
         {
             /* PLAY AUDIO */
-            //GetComponent<CompAudio>().PlayEvent("TheonImpact");
-
+            GetComponent<CompAudio>().PlayEvent("TheonImpact");
+            Debug.Log("[yellow] AJAAAA -------------------------------------");
             //Lock transform to avoid trespassing more than one collider
             rb.LockTransform();
 
