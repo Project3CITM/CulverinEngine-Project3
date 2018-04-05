@@ -199,7 +199,7 @@ public class Lever : CulverinBehaviour
         if(on_lever_range && !active_lever && !on_lever_animation)
         {
             //TODO: Change to GetKey_Action
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetInput_KeyDown("Interact", "Player"))
             {
                 //Reset other puzzles if exists to avoid audio conflicts
                 if(other_lever_1 != null)
