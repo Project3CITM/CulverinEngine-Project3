@@ -272,6 +272,7 @@ public class JaimeController : CharacterController
         if (state == State.COVER)
         {
             SetAnimationTransition("ToBlock", true);
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimation("J_Block");
             GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
             //PlayFx("MetalClash");
             PlayFx("JaimeBlock");
