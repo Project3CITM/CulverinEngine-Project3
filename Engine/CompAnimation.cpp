@@ -833,19 +833,27 @@ void CompAnimation::ShowAnimationInfo()
 		}
 		ImGui::End();
 	}
-
-	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end();)
 	{
-		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
+		for (std::vector<AnimationTransition*>::iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end();)
 		{
-			if ((*it)->transitions.size() != 0 && (*trans_it)->to_delete == true)
+			if (trans_it != (*it)->transitions.end() && (*it)->transitions.size() != 0 && (*trans_it)->to_delete == true)
 			{
-				(*it)->transitions.erase(trans_it);
+				trans_it = (*it)->transitions.erase(trans_it);
+			}
+			else
+			{
+				trans_it++;
 			}
 		}
 		if (animation_nodes.size() != 0 && (*it)->to_delete == true)
 		{
-			animation_nodes.erase(it);
+			it = animation_nodes.erase(it);
+		}
+		else
+		{
+			it++;
 		}
 	}
 	

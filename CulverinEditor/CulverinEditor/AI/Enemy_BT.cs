@@ -176,7 +176,16 @@ public class Enemy_BT : BT
     public int GetDistanceInRange()
     {
         player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-        return Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX()) + Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+        int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
+        int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+
+        if (distance_x <= range && distance_y == 0)
+            return distance_x;
+
+        if (distance_y <= range && distance_x == 0)
+            return distance_y;
+
+        return range + 1;
     }
 
     public float GetCurrentInterpolation()

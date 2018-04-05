@@ -39,17 +39,9 @@ public class Attack_Action : Action
             Debug.Log("[error]Attack Action Start: Player is null!!");
         }
 
-        if (GetComponent<EnemyShield_BT>() != null && (player.player_obj.GetComponent<Shield>().IsActive() || player.GetCurrCharacterState() == (int)CharacterController.State.COVER))
-        {
-            shield_attack = true;
-            anim.SetTransition("ToShieldAttack");
-            anim.SetClipDuration("ShieldAttack", attack_duration);
-        }
-        else
-        {
-            anim.SetTransition("ToAttack");
-            anim.SetClipDuration("Attack", attack_duration);
-        }
+        Debug.Log("Starting attack");
+        anim.SetTransition("ToAttack");
+        anim.SetClipDuration("Attack", attack_duration);
 
         GetComponent<CompAudio>().PlayEvent("Enemy1_Slash");
 
@@ -67,6 +59,8 @@ public class Attack_Action : Action
         {
             damage_done = true;
 
+            Debug.Log("Damage point");
+
             if (shield_attack)
                 player.ApplyFatigue(fatigue);
             else
@@ -81,15 +75,10 @@ public class Attack_Action : Action
             }
         }
 
-        if (shield_attack == true)
+        if (anim.IsAnimOverXTime(1.0f))
         {
-            if (anim.IsAnimationStopped("ShieldAttack"))
-                return ACTION_RESULT.AR_SUCCESS;
-        }
-        else
-        {
-            if (anim.IsAnimationStopped("Attack"))
-                return ACTION_RESULT.AR_SUCCESS;
+            Debug.Log("Attack end");
+            return ACTION_RESULT.AR_SUCCESS;
         }
 
         return ACTION_RESULT.AR_IN_PROGRESS;
