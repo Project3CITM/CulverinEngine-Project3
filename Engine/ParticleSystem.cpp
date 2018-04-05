@@ -343,6 +343,7 @@ bool Particle::isDead()
 
 void Particle::DrawParticle(uint program_id)
 {
+	glDepthMask(GL_FALSE);
 	const ParticleMeshData& Mesh = ParentParticleSystem->GetParticleMeshData();
 	//glEnable(GL_NORMALIZE);
 	if (ParentParticleSystem->TextureData.TextureID != 0)
@@ -392,6 +393,7 @@ void Particle::DrawParticle(uint program_id)
 	glDisable(GL_TEXTURE_2D);
 
 	glDisable(GL_NORMALIZE);
+	glDepthMask(GL_TRUE);
 }
 
 void Particle::SetAssignedStateFromVariables(ParticleAssignedState& AState, const ParticleState& State)
@@ -420,23 +422,22 @@ void Particle::OrientateParticle()
 	}
 	case 1: //Billboard
 	{
-		float3 Direction = ParentParticleSystem->CameraPosition - Properties.Position;
-		Direction.Normalize();
-		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		float3 direction = App->renderer3D->active_camera->frustum.front;
+		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
 		break;
 	}
 	case 2: //VerticalBillboard
 	{
-		float3 Direction = ParentParticleSystem->CameraPosition - Properties.Position;
-		Direction.y = Properties.Position.y;
-		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		float3 direction = App->renderer3D->active_camera->frustum.front;
+		direction.y = Properties.Position.y;
+		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
 		break;
 	}
 	case 3: //HorizontalBillboard
 	{
-		float3 Direction = ParentParticleSystem->CameraPosition - Properties.Position;
-		Direction.x = Properties.Position.x;
-		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		float3 direction = App->renderer3D->active_camera->frustum.front;
+		direction.x = Properties.Position.x;
+		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
 		break;
 	}
 	}
