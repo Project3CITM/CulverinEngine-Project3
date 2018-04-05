@@ -385,6 +385,8 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 void CompCollider::SyncComponent(GameObject* sync_parent)
 {
+	local_quat = Quat::FromEulerXYZ(angle.x*DEGTORAD, angle.y*DEGTORAD, angle.z*DEGTORAD);
+
 	body->SetGeometry(size, rad, curr_type);
 	SetColliderPosition();
 	if (trigger)
@@ -457,6 +459,7 @@ void CompCollider::ChangeCollider()
 			body->SetAsTrigger(false);
 		}
 		body->SetGeometry(size, rad, curr_type);
+		SetFilterFlags();
 		if (trigger)
 		{
 			body->SetAsTrigger(true);
@@ -479,6 +482,29 @@ void CompCollider::UpdateCollider()
 			body->SetAsTrigger(true);
 		}
 		App->physics->DebugDrawUpdate();
+	}
+}
+
+void CompCollider::CollisionActive(bool active)
+{
+	if (body)
+	{
+		if (trigger)
+		{
+			if (active)
+			{
+				body->SetAsTrigger(trigger);
+			}
+			else
+			{
+				body->SetAsTrigger(false);
+				body->DisableCollisions();
+			}
+		}
+		else
+		{
+			(active) ? body->EnableCollisions() : body->DisableCollisions();
+		}
 	}
 }
 

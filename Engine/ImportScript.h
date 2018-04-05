@@ -235,6 +235,7 @@ private:
 	static void			MoveStaticColliderTo(MonoObject* object, MonoObject* position);
 	static void			CallOnContact(MonoObject* object);
 	static void			CallOnTriggerEnter(MonoObject* object);
+	static void			CollisionActive(MonoObject* object, bool active);
 
 	/*Component RigidBody*/
 	static MonoObject*	GetColliderPosition(MonoObject* object);
@@ -245,7 +246,11 @@ private:
 	static void			ApplyImpulse(MonoObject* object, MonoObject* impulse);
 	static void			ApplyTorqueForce(MonoObject* object, MonoObject* force);
 	static void			ApplyTorqueImpulse(MonoObject* object, MonoObject* impulse);
+	static void			LockMotion(MonoObject* object);
+	static void			LockRotation(MonoObject* object);
 	static void			LockTransform(MonoObject* object);
+	static void			UnLockMotion(MonoObject* object);
+	static void			UnLockRotation(MonoObject* object);
 	static void			UnLockTransform(MonoObject* object);
 	static void			ResetForce(MonoObject* object);
 	static void			WakeUp(MonoObject* object);

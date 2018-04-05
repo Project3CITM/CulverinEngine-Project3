@@ -1138,6 +1138,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompCollider::MoveKinematic", (const void*)MoveStaticColliderTo);
 	mono_add_internal_call("CulverinEditor.CompCollider::CallOnContact", (const void*)CallOnContact);
 	mono_add_internal_call("CulverinEditor.CompCollider::CallOnTriggerEnter", (const void*)CallOnTriggerEnter);
+	mono_add_internal_call("CulverinEditor.CompCollider::CollisionActive", (const void*)CollisionActive);
+
 
 	//MATERIAL FUNCTIONS
 	mono_add_internal_call("CulverinEditor.Material::SetBool", (const void*)SetBool);
@@ -1153,7 +1155,11 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyImpulse", (const void*)ApplyImpulse);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyTorqueForce", (const void*)ApplyTorqueForce);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::ApplyTorqueImpulse", (const void*)ApplyTorqueImpulse);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::LockMotion", (const void*)LockMotion);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::LockRotation", (const void*)LockRotation);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::LockTransform", (const void*)LockTransform);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::UnLockMotion", (const void*)UnLockMotion);
+	mono_add_internal_call("CulverinEditor.CompRigidBody::UnLockRotation", (const void*)UnLockRotation);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::UnLockTransform", (const void*)UnLockTransform);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::ResetForce", (const void*)ResetForce);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::WakeUp", (const void*)WakeUp);
@@ -1828,6 +1834,11 @@ void ImportScript::CallOnTriggerEnter(MonoObject * object)
 	current->CallOnTriggerEnter(object);
 }
 
+void ImportScript::CollisionActive(MonoObject * object, bool active)
+{
+	current->CollisionActive(object, active);
+}
+
 MonoObject* ImportScript::GetColliderPosition(MonoObject* object)
 {
 	return current->GetColliderPosition(object);
@@ -1868,9 +1879,29 @@ void ImportScript::ApplyTorqueImpulse(MonoObject * object, MonoObject * impulse)
 	current->ApplyTorqueImpulse(object, impulse);
 }
 
+void ImportScript::LockMotion(MonoObject * object)
+{
+	current->LockMotion(object);
+}
+
+void ImportScript::LockRotation(MonoObject * object)
+{
+	current->LockRotation(object);
+}
+
 void ImportScript::LockTransform(MonoObject * object)
 {
 	current->LockTransform(object);
+}
+
+void ImportScript::UnLockMotion(MonoObject * object)
+{
+	current->UnLockMotion(object);
+}
+
+void ImportScript::UnLockRotation(MonoObject * object)
+{
+	current->UnLockRotation(object);
 }
 
 void ImportScript::UnLockTransform(MonoObject * object)

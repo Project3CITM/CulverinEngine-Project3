@@ -19,7 +19,7 @@ class Die_Action : Action
         //TODO_AI: Die audio
         GetComponent<CompAudio>().PlayEvent("Enemy_SwordDrop");
         GetComponent<CompAnimation>().SetClipDuration("Die", duration);
-        
+        GetComponent<CompCollider>().CollisionActive(false);
         return true;
     }
 

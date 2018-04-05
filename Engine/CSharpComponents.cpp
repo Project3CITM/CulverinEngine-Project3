@@ -382,6 +382,14 @@ void CSharpScript::CallOnTriggerEnter(MonoObject * object)
 	}
 }
 
+void CSharpScript::CollisionActive(MonoObject * object, bool active)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->CollisionActive(active);
+	}
+}
+
 // CompRigidBody ----------------------------------------------------------
 MonoObject * CSharpScript::GetColliderPosition(MonoObject * object)
 {
@@ -564,11 +572,43 @@ void CSharpScript::ApplyTorqueImpulse(MonoObject * object, MonoObject * impulse)
 	}
 }
 
+void CSharpScript::LockMotion(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockMotion();
+	}
+}
+
+void CSharpScript::LockRotation(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockRotation();
+	}
+}
+
 void CSharpScript::LockTransform(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
 		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockTransform();
+	}
+}
+
+void CSharpScript::UnLockMotion(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->UnLockMotion();
+	}
+}
+
+void CSharpScript::UnLockRotation(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->UnLockRotation();
 	}
 }
 

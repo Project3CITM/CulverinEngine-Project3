@@ -57,6 +57,9 @@ CompRigidBody::CompRigidBody(const CompRigidBody & copy, GameObject * parent) : 
 
 	kinematic = copy.kinematic;
 	body->SetAsKinematic(kinematic);
+
+	lock_move = copy.lock_move;
+	SetDinamicLockFlags();
 }
 
 CompRigidBody::~CompRigidBody()
@@ -454,13 +457,64 @@ void CompRigidBody::ApplyTorqueImpulse(float3 impulse)
 	}
 }
 
+void CompRigidBody::LockMotion()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
+		lock_move |= (1 << 0);
+		lock_move |= (1 << 1);
+		lock_move |= (1 << 2);
+	}
+}
+
+void CompRigidBody::LockRotation()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+		lock_move |= (1 << 3);
+		lock_move |= (1 << 4);
+		lock_move |= (1 << 5);
+	}
+}
+
 void CompRigidBody::LockTransform()
 {
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(true);
 		lock_move = 63;
-		//body->SetAsKinematic(true);
+	}
+}
+
+void CompRigidBody::UnLockMotion()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, false);
+		lock_move &= ~(1 << 0);
+		lock_move &= ~(1 << 1);
+		lock_move &= ~(1 << 2);
+	}
+}
+
+void CompRigidBody::UnLockRotation()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, false);
+		lock_move &= ~(1 << 3);
+		lock_move &= ~(1 << 4);
+		lock_move &= ~(1 << 5);
 	}
 }
 
@@ -470,8 +524,6 @@ void CompRigidBody::UnLockTransform()
 	{
 		body->SetDynamicLock(false);
 		lock_move = 0;
-		//SetDinamicLockFlags();
-		//body->SetAsKinematic(kinematic);
 	}
 }
 

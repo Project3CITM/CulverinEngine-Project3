@@ -322,24 +322,10 @@ void CompTransform::ShowTransform(float drag_speed)
 
 void CompTransform::SyncComponent(GameObject * sync_parent)
 {
-	if (toUpdate)
-	{
-		if (parentUpdate)
-		{
-			UpdateMatrix(ImGuizmo::LOCAL);
-			parentUpdate = false;
-		}
-		else
-		{
-			UpdateMatrix(transform_mode);
-		}
-		toUpdate = false;
-		updated = true;
-	}
-	else
-	{
-		updated = false;
-	}
+	UpdateMatrix(transform_mode);
+	parentUpdate = false;
+	toUpdate = false;
+	updated = true;
 }
 
 void CompTransform::SetPosGlobal(float3 pos)

@@ -8,6 +8,9 @@ namespace CulverinEditor
         { }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void CollisionActive(bool active);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern GameObject GetCollidedObject();
 
         [MethodImpl(MethodImplOptions.InternalCall)]

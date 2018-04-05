@@ -35,7 +35,7 @@ public class RespawnWhenHit : CulverinBehaviour
             obj.transform.SetPosition(respawn_pos_float3);
             CompRigidBody collbody = obj.GetComponent<CompRigidBody>();
             collbody.ResetForce();
-            collbody.LockTransform();
+            collbody.LockMotion();
             MovementController controller = obj.GetComponent<MovementController>();
             controller.endPosition = respawn_pos_float3;
             controller.curr_x = respawn_tile_x;

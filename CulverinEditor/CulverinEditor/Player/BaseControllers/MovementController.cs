@@ -168,7 +168,7 @@ public class MovementController : CulverinBehaviour
                     curr_y += tile_mov_y;
                     char_manager.SetCurrentPosition();
                     moving = true;
-                    GetComponent<CompRigidBody>().UnLockTransform();
+                    GetComponent<CompRigidBody>().UnLockMotion();
                     //char_manager.Drown();
                 }
             }
