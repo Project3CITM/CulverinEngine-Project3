@@ -57,16 +57,18 @@ Event	ID	Name			Wwise Object Path	Notes
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	16679997	LeverFx	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\Lever_DBC752C0.wem		\Actor-Mixer Hierarchy\Default Work Unit\Puzzle\LeverFx		131372
 	46166543	Enemy_SpearSwing	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SpearSwing_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy2\Enemy_SpearSwing		44164
-	60949840	Jaime_Dead_1	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Jaime_Dead_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Jaime_Dead\Jaime_Dead_1		39761
+	60949840	Jaime_Dead_1	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Jaime_Dead_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Jaime_Dead_1		39761
 	74496819	Theon_MeleeHit	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Theon_MeleeHit_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_MeleeHit		123544
 	77924659	Daennerys_FlameLoop	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Daennerys_FlameLoop_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Daenerys\Daennerys_FlameLoop		1874080
 	89926475	Theon_MeleeShout	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Theon_MeleeShout_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_MeleeShout		87384
 	95151264	Enemy_ShieldBlock	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_ShieldBlock_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy3\Enemy_ShieldBlock		186320
 	100153174	Theon_Dead_2	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Characters\Theon\Theon_Dead_2_EE628D5C.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_Dead\Theon_Dead_2		210384
 	116569670	WaterSplash_1	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\BarrelSplash_1F4389CB.wem		\Actor-Mixer Hierarchy\Default Work Unit\Puzzle\WaterSplash\WaterSplash_1		508364
+	126710670	Theon_Shot	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Theon_Shot_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_Shot		73628
 	132180465	E2_Hurt_1	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Hurt_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy2\Enemy2_Hurt\E2_Hurt_1		128188
 	137727506	Jaime_Handblock	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Jaime_Handblock_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Jaime_Handblock		167276
 	141306871	RopeCut	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\Rope_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Puzzle\RopeCut		188224
+	155747366	Arrow_Impact_Wall	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Arrow_Impact_Wall_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Arrow_Impact_Wall		37080
 	178260986	footstep_stone	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\footstep_stone_C599367A.wem		\Actor-Mixer Hierarchy\Default Work Unit\FootSepts_Stone\footstep_stone		33908
 	191702901	Theon_TripleShot	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Theon_TripleShot_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_TripleShot		123418
 	232669740	Enemy_SwordClash	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SwordClash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy_SwordClash		241128
@@ -97,7 +99,6 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	719922881	E2_Hurt_2	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Hurt_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy2\Enemy2_Hurt\E2_Hurt_2		121404
 	732253576	Behind_Me	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Behind Me_3_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Behind_Me		175680
 	737435909	E3_Hurt_2	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Hurt_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy3\Enemy3_Hurt\E3_Hurt_2		189248
-	742931709	Theon_NormalShot	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Theon_NormalShot_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_NormalShot		121288
 	764335624	Daenerys_Dead_1	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Characters\Daenerys\Daenerys_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Daenerys\Daenerys_Dead\Daenerys_Dead_1		517456
 	774964111	Theon_Hurt_1	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Characters\Theon\Theon_Hurt_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_Hurt\Theon_Hurt_1		319852
 	825063114	Theon_Melee	E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Theon_Melee_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_Melee		181776
