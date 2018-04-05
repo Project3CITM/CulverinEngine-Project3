@@ -145,6 +145,7 @@ public class MovementController : CulverinBehaviour
                     char_manager.SetCurrentPosition();
                     moving = true;
                     GetComponent<CompRigidBody>().UnLockMotion();
+                    GetComponent<CompRigidBody>().ApplyImpulse(new Vector3(0.0f, -100.0f, 0.0f));
                     //char_manager.Drown();
                 }
             }
