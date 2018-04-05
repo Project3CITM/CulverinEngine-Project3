@@ -78,6 +78,7 @@
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
+    <Compile Include="LevelFinished.cs" />
     <Compile Include="CompText.cs" />
     <Compile Include="CompLight.cs" />
     <Compile Include="ContinueButton.cs" />
