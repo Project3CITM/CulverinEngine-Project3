@@ -7,7 +7,7 @@ public class JaimeController : CharacterController
     public GameObject jaime_obj;
     public GameObject larm_jaime_obj; //To enable/disable mesh
     public GameObject rarm_jaime_obj; //To enable/disable mesh
-
+    public GameObject Global_Camera;
     //UI ELEMENTS
     public GameObject jaime_icon_obj;
     public GameObject jaime_icon_obj_hp;
@@ -17,6 +17,7 @@ public class JaimeController : CharacterController
     public GameObject jaime_left_flag;
     public GameObject jaime_right_flag;
 
+    CompAnimation jaime_anim_controller;
 
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
@@ -66,6 +67,8 @@ public class JaimeController : CharacterController
         larm_jaime_obj = GetLinkedObject("larm_jaime_obj");
         rarm_jaime_obj = GetLinkedObject("rarm_jaime_obj");
         jaime_sword_obj = GetLinkedObject("jaime_sword_obj");
+
+        Global_Camera = GetLinkedObject("Global_Camera");
 
         jaime_icon_obj = GetLinkedObject("jaime_icon_obj");
         jaime_button_left = GetLinkedObject("jaime_button_left");
@@ -415,7 +418,19 @@ public class JaimeController : CharacterController
                     // Set Attacking Animation depending on the hit_streak
                     current_anim = anim_name[hit_streak];
                     SetAnimationTransition("To" + current_anim, true);
-
+                    jaime_anim_controller = Global_Camera.GetComponent<CompAnimation>();
+                    if(current_anim == "Attack1")
+                    {
+                        jaime_anim_controller.PlayAnimation("J_Attack1");
+                    }
+                    if(current_anim == "Attack2")
+                    {
+                        jaime_anim_controller.PlayAnimation("J_Attack2");
+                    }
+                    if(current_anim == "Attack3")
+                    {
+                        jaime_anim_controller.PlayAnimation("J_Attack3");
+                    }
                     do_left_attack = true;
 
                     //Go to ATTACK State
