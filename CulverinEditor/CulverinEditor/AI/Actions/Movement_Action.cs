@@ -90,10 +90,9 @@ public class Movement_Action : Action
         path = new List<PathNode>();
 
         //Set Occupied tile in Pathfinder
-        tile = new PathNode((int)(GetComponent<Transform>().position.x / tile_size), (int)(GetComponent<Transform>().position.z / tile_size));
-        Debug.Log(GetComponent<Transform>().position.x + "/" + tile_size + " = " + tile.GetTileX());
-        Debug.Log(GetComponent<Transform>().position.z + "/" + tile_size + " = " + tile.GetTileY());
-        Debug.Log("Tile:" + tile.GetTileX() + "," + tile.GetTileY());
+        tile = new PathNode(0,0);
+        tile.SetCoords((int)(GetComponent<Transform>().position.x / tile_size + Mathf.Epsilon), (int)(GetComponent<Transform>().position.z / tile_size + Mathf.Epsilon));
+        Debug.Log("Start at Tile: " + tile.GetTileX() + "," + tile.GetTileY());
         map.GetComponent<Pathfinder>().UpdateOccupiedTiles(gameObject.GetName(), tile);
     }
 
@@ -117,6 +116,14 @@ public class Movement_Action : Action
             Debug.Log("Move: Path == null");                      
             return false;
         }
+
+        if (path.Count != 0)
+        {
+            tile = new PathNode(0, 0);
+            tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
+            Debug.Log("Moving to: " + tile.GetTileX() + "," + tile.GetTileY());
+        }
+
 
         return true;
     }
@@ -280,7 +287,6 @@ public class Movement_Action : Action
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
         if (path.Count > 0)
         {
-            tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
             pos.x = path[0].GetTileX() * tile_size;
             pos.z = path[0].GetTileY() * tile_size;
             GetComponent<Transform>().position = pos;
@@ -297,6 +303,8 @@ public class Movement_Action : Action
                 arrive.SetEnabled(true);
                 seek.SetEnabled(true);
                 path.Remove(path[0]);
+                Debug.Log("Moving to Tile: " + path[0].GetTileX() + "," + path[0].GetTileY());
+                tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
                 LookAtNextTile();
             }
         }
