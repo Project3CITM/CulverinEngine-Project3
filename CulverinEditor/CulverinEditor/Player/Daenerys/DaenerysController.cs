@@ -112,65 +112,7 @@ public class DaenerysController : CharacterController
                             //Check for end of the Attack animation
                             anim_controller = daenerys_obj.GetComponent<CompAnimation>();
                             if (anim_controller.IsAnimationStopped("Idle"))
-                            {
-                                anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                                if (set_fire_breath == false && anim_controller.IsAnimOverXTime(0.4f))
-                                {
-                                    set_fire_breath = true;
-
-                                    // Attack all enemies in 3 rows in front of you
-                                    int tile_x, tile_y;
-                                    GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out tile_x, out tile_y);
-                                    MovementController.Direction direction = GetLinkedObject("player_obj").GetComponent<MovementController>().curr_dir;
-                                    for (int i = 0; i < distance_left_attack; i++)
-                                    {
-                                        switch (direction)
-                                        {
-                                            case MovementController.Direction.NORTH:
-                                                {
-                                                    tile_y -= 1;
-                                                    break;
-                                                }
-                                            case MovementController.Direction.SOUTH:
-                                                {
-                                                    tile_y += 1;
-                                                    break;
-                                                }
-                                            case MovementController.Direction.EAST:
-                                                {
-                                                    tile_x += 1;
-                                                    break;
-                                                }
-                                            case MovementController.Direction.WEST:
-                                                {
-                                                    tile_x -= 1;
-                                                    break;
-                                                }
-                                            default:
-                                                {
-                                                    break;
-                                                }
-                                        }
-                                        if (GetLinkedObject("player_obj").GetComponent<MovementController>().CheckIsWalkable(tile_x, tile_y) == false)
-                                        {
-                                            break;
-                                        }
-                                        GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>().DamageEnemyInTile(tile_x, tile_y, damage_percentage_right);
-                                    }
-
-                                    GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
-
-                                    if (coll_object != null)
-                                    {
-                                        CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
-
-                                        if (obj_collider != null)
-                                        {
-                                            obj_collider.CallOnContact();
-                                        }
-                                    }
-                                }
-
+                            { 
                                 anim_controller = daenerys_obj.GetComponent<CompAnimation>();
                                 if (anim_controller.IsAnimOverXTime(0.6f) && play_audio_roar)
                                 {
