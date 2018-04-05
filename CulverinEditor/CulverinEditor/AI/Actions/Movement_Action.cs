@@ -509,6 +509,11 @@ public class Movement_Action : Action
         return dir;
     }
 
+    public void SetEnemyTile(int x, int y)
+    {
+        tile.SetCoords(x, y);
+    }
+
     public Direction GetDirection()
     {
         return dir;

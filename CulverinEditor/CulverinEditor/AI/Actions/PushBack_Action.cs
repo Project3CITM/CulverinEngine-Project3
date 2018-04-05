@@ -162,6 +162,7 @@ public class PushBack_Action : Action
         {
             Debug.Log("Pushed");
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            GetComponent<Movement_Action>().SetEnemyTile(target_x, target_y);
             return ACTION_RESULT.AR_SUCCESS;
         }
 
