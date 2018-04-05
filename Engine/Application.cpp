@@ -213,6 +213,12 @@ void Application::PrepareUpdate()
 		renderer3D->SetActiveCamera(renderer3D->scene_camera);
 		change_to_scene = false;
 	}
+
+	if (mode_game)
+	{
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.WindowBorderSize = 0.0f;
+	}
 }
 
 // ---------------------------------------------

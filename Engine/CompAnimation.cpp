@@ -1134,12 +1134,7 @@ void CompAnimation::ManageActualAnimationNode(float dt)
 						final_pos = final_pos + rotatedpos;
 						trans->SetPos(final_pos);
 						float3 final_rot = globalrot.ToEulerXYZ() * RADTODEG;
-						if (abs(final_rot.x) == 180 && abs(final_rot.z) == 180 && abs(final_rot.y) == 0)
-						{
-							final_rot.y = 180;
-						}
-						final_rot.x = 0;
-						final_rot.z = 0;
+						
 				
 						float3 prefabrot = ((trans->GetRotGlobal()).ToEulerXYZ()) *RADTODEG;
 			
