@@ -44,6 +44,9 @@ public class RespawnWhenHit : CulverinBehaviour
             CharactersManager char_manager = obj.GetComponent<CharactersManager>();
             char_manager.SetManagerState(CharactersManager.State.IDLE);
             char_manager.GetDamage(char_manager.drown_dmg);
+
+            MovementController movement = obj.GetComponent<MovementController>();
+            movement.drowning = false;
         }
 
     }

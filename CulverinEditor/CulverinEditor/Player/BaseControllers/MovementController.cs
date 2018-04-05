@@ -59,6 +59,8 @@ public class MovementController : CulverinBehaviour
     public float time_in_memory = 3.0f;
     public int footstep_radius = 1;
 
+    public bool drowning = false;
+
     void Start()
     {
         level_map = GetLinkedObject("map_obj").GetComponent<LevelMap>();
@@ -91,6 +93,8 @@ public class MovementController : CulverinBehaviour
         level_map.UpdateMap(player_x, player_y, 0);
         MovePositionInitial(new Vector3((float)player_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)player_y * distanceToMove));
         Debug.Log("Move initial position");
+
+        drowning = false;
     }
 
     void Update()
@@ -145,8 +149,9 @@ public class MovementController : CulverinBehaviour
                     char_manager.SetCurrentPosition();
                     moving = true;
                     GetComponent<CompRigidBody>().UnLockMotion();
-                    GetComponent<CompRigidBody>().ApplyImpulse(new Vector3(0.0f, -100.0f, 0.0f));
+                    GetComponent<CompRigidBody>().ApplyImpulse(new Vector3(0.0f, -50.0f, 0.0f));
                     //char_manager.Drown();
+                    drowning = true;
                 }
             }
         }
@@ -238,7 +243,7 @@ public class MovementController : CulverinBehaviour
 
     private bool CheckRotation()
     {
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
             float variation = Input.GetInput_ControllerAxis("Rotate", "Player");
             if (variation < -0.8)
@@ -268,7 +273,7 @@ public class MovementController : CulverinBehaviour
 
     private bool CheckMovement()
     {
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
             float variation = Input.GetInput_ControllerAxis("Horizontal", "Player");
             if (variation > 0.8)
@@ -317,7 +322,7 @@ public class MovementController : CulverinBehaviour
 
     private void CheckFacingRotation()
     {
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
             if (Input.GetKeyDown(KeyCode.Z)) //Look Up
             {

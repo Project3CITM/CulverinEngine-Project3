@@ -401,9 +401,9 @@ public class TheonController : CharacterController
 
         GameObject arrow = Instantiate("ArrowTheon");
         GameObject player = GetLinkedObject("player_obj");
-       
-        arrow.transform.SetPosition(curr_position);
+
         arrow.transform.SetRotation(player.transform.GetRotation());
+        arrow.transform.SetPosition(new Vector3(curr_position.x, curr_position.y - 1.5f, curr_position.z));
         Arrow arrow_script = arrow.GetComponent<Arrow>();
         arrow_script.speed = curr_forward;
 
@@ -440,7 +440,7 @@ public class TheonController : CharacterController
                     // Decrease stamina -----------
                     DecreaseStamina(right_ability_cost);
 
-                    PlayFx("TheonMele");
+                    PlayFx("TheonMeleShout");
 
                     //Debug.Log("[error]STAMINA!");
                     SetAnimationTransition("ToAttack2", true);
@@ -477,6 +477,8 @@ public class TheonController : CharacterController
         //Debug.Log("[error]RAYCAST!");
         if (coll_object != null)
         {
+            PlayFx("TheonMeleHit");
+
             Debug.Log(coll_object.GetTag());
             //Debug.Log("[error]COOL OBJ NOT NULL!");
             if (coll_object.CompareTag("Enemy"))
