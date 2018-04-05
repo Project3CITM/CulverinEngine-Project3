@@ -239,7 +239,10 @@ void Application::FinishUpdate()
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		App->scene->octree.Clear(false);
+		
 		App->scene->DeleteAllGameObjects(App->scene->root);
+		App->render_gui->focus = nullptr;
+		App->render_gui->selected = nullptr;
 		json_seria->LoadScene(actual_scene.c_str());
 
 		if (load_in_game)
