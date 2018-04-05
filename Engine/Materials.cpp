@@ -17,7 +17,7 @@ Material::~Material()
 bool Material::Bind()
 {
 	glUseProgram(GetProgramID());
-	
+
 	return true;
 }
 
@@ -53,11 +53,16 @@ void Material::Save() const
 	for (int i = 0; i < textures.size(); i++)
 	{
 		char mat_name[128] = { 0 };
+		char mat_var[128] = { 0 };
 
 		char* num = new char[4];
 		itoa(i, num, 10);
 		strcat(mat_name, "Resource Material UUID ");
 		strcat(mat_name, num);
+
+		strcat(mat_var, "Resource Material Var Name ");
+		strcat(mat_var, num);
+
 		RELEASE_ARRAY(num);
 
 		if (textures[i].value != nullptr && textures[i].value->GetTextureID() != App->renderer3D->id_checkImage)
@@ -68,7 +73,7 @@ void Material::Save() const
 		{
 			json_object_dotset_number_with_std(object, name + mat_name, 0);
 		}
-
+		json_object_dotset_string_with_std(object, name + mat_var, textures[i].var_name.c_str());
 	}
 	json_object_dotset_number_with_std(object, name + "Num Bools:", bool_variables.size());
 	for (int i = 0; i < bool_variables.size(); i++)
@@ -77,7 +82,12 @@ void Material::Save() const
 		ss << name << "Bool:" << i;
 		std::string json_name = ss.str();
 
+		std::ostringstream ss2;
+		ss2 << name << "Bool Name:" << i;
+		std::string json_name_var = ss2.str();
+
 		json_object_dotset_boolean_with_std(object, json_name, bool_variables[i].value);
+		json_object_dotset_string_with_std(object, json_name_var, bool_variables[i].var_name.c_str());
 
 	}
 	json_object_dotset_number_with_std(object, name + "Num Ints:", int_variables.size());
@@ -87,7 +97,12 @@ void Material::Save() const
 		ss << name << "Int:" << i;
 		std::string json_name = ss.str();
 
+		std::ostringstream ss2;
+		ss2 << name << "Int Name:" << i;
+		std::string json_name_var = ss2.str();
+
 		json_object_dotset_number_with_std(object, json_name, int_variables[i].value);
+		json_object_dotset_string_with_std(object, json_name_var, int_variables[i].var_name.c_str());
 
 	}
 	json_object_dotset_number_with_std(object, name + "Num Floats:", float_variables.size());
@@ -97,7 +112,12 @@ void Material::Save() const
 		ss << name << "Float:" << i;
 		std::string json_name = ss.str();
 
+		std::ostringstream ss2;
+		ss2 << name << "Float Name:" << i;
+		std::string json_name_var = ss2.str();
+
 		json_object_dotset_number_with_std(object, json_name, float_variables[i].value);
+		json_object_dotset_string_with_std(object, json_name_var, float_variables[i].var_name.c_str());
 
 	}
 	json_object_dotset_number_with_std(object, name + "Num Float3:", float3_variables.size());
@@ -107,7 +127,12 @@ void Material::Save() const
 		ss << name << "Float3:" << i;
 		std::string json_name = ss.str();
 
+		std::ostringstream ss2;
+		ss2 << name << "Float3 Name:" << i;
+		std::string json_name_var = ss2.str();
+
 		App->fs->json_array_dotset_float3(object, json_name, float3_variables[i].value);
+		json_object_dotset_string_with_std(object, json_name_var, float3_variables[i].var_name.c_str());
 	}
 
 	json_object_dotset_number_with_std(object, name + "Num Colors:", color_variables.size());
@@ -117,7 +142,12 @@ void Material::Save() const
 		ss << name << "Color:" << i;
 		std::string json_name = ss.str();
 
+		std::ostringstream ss2;
+		ss2 << name << "Color Name:" << i;
+		std::string json_name_var = ss2.str();
+
 		App->fs->json_array_dotset_float4(object, json_name, color_variables[i].value);
+		json_object_dotset_string_with_std(object, json_name_var, color_variables[i].var_name.c_str());
 
 
 	}
@@ -128,7 +158,7 @@ void Material::Save() const
 
 void Material::Load()
 {
-	
+
 }
 
 UniformVar Material::GetVariableInfo(uint index)
@@ -203,7 +233,7 @@ void Material::GetProgramVariables()
 		if (temp.type == GL_SAMPLER_2D)
 		{
 			TextureVar texture_var;
-			texture_var.var_name = temp.name;		
+			texture_var.var_name = temp.name;
 			textures.push_back(texture_var);
 		}
 
@@ -258,7 +288,7 @@ void Material::GetProgramVariables()
 				(*item2).value = (*item).value;
 				(*item2).selected = (*item).selected;
 			}
-			
+
 		}
 	}
 	for (auto item = temp_float.begin(); item != temp_float.end(); item++)
