@@ -564,7 +564,7 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instant
 			//Sync components Recursive
 			if (mainParent!= nullptr)
 			{
-				mainParent->SyncComponents(mainParent);
+				mainParent->SyncComponentsRecursive(mainParent);
 			}
 
 			// Now Iterate All GameObjects and Components and create a new UUID!
