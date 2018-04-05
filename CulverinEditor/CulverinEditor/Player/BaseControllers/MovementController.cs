@@ -141,6 +141,7 @@ public class MovementController : CulverinBehaviour
                 }
                 else if (level_map.map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 3) //Valryian Fire!
                 {
+                    StatsScore.PuzzleTry();
                     audio = GetComponent<CompAudio>();
                     audio.PlayEvent("Footsteps");
                     endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);

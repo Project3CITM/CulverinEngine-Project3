@@ -493,6 +493,8 @@ public class CharactersManager : CulverinBehaviour
                     camera.GetComponent<CompAnimation>().PlayAnimation("Player_Hit");
                     if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
                     {
+                        StatsScore.CharacterDead();
+
                         current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
                         current_character.GetComponent<JaimeController>().PlayFx("JaimeDead");
                     }
@@ -508,6 +510,8 @@ public class CharactersManager : CulverinBehaviour
                 current_character.GetComponent<DaenerysController>().GetDamage(dmg);
                 if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
                 {
+                    StatsScore.CharacterDead();
+
                     current_character.GetComponent<DaenerysController>().SetState(CharacterController.State.DEAD);
                     current_character.GetComponent<DaenerysController>().PlayFx("DaenerysDead");
                 }
@@ -518,6 +522,8 @@ public class CharactersManager : CulverinBehaviour
                 current_character.GetComponent<TheonController>().GetDamage(dmg);
                 if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
                 {
+                    StatsScore.CharacterDead();
+
                     current_character.GetComponent<TheonController>().SetState(CharacterController.State.DEAD);
                     current_character.GetComponent<TheonController>().PlayFx("TheonDead");
                 }

@@ -23,7 +23,7 @@ static public class StatsScore
 
     static public void CharacterDead()
     {
-        characters_alive--;
+        characters_alive++;
     }
 
     static public void GetTime()
