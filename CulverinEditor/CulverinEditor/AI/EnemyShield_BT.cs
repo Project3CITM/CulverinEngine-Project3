@@ -6,8 +6,7 @@ public class EnemyShield_BT : Enemy_BT
     public float shield_block_cd = 4.0f;
     public float shield_block_cd_damaged = 2.5f;
     float shield_block_timer = 0.0f;
-    GameObject player = null;
-
+    
     public override void Start()
     {
         player = GetLinkedObject("player_obj");
