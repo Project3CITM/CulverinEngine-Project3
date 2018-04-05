@@ -59,7 +59,7 @@ public class Lever : CulverinBehaviour
     private float puzzle_start_pos_z = 0.0f;
 
     // A random generator object
-    //private Random rnd = null;
+    private Random rnd = null;
 
     private float tile_size;
 
@@ -98,7 +98,7 @@ public class Lever : CulverinBehaviour
     {
         tile_size = 25.4f;
 
-        //rnd = new Random();
+        rnd = new Random();
 
         lever_go = GetLinkedObject("lever_go");
 
@@ -523,8 +523,8 @@ public class Lever : CulverinBehaviour
     // Actually generate the path walkability
     void GeneratePath()
     {
-        int index = GetLinkedObject("map_obj").GetComponent<LevelMap>().randomspeed.Next(0, possible_paths);
-        //int index = rnd.Next(0, possible_paths);
+        //int index = GetLinkedObject("map_obj").GetComponent<LevelMap>().randomspeed.Next(0, possible_paths);
+        int index = rnd.Next(0, possible_paths);
         current_path.CreateWalkability(index);
 
         TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
