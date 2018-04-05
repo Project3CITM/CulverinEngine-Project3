@@ -14,6 +14,6 @@ public class PlayQuit : CulverinBehaviour
     public void Quit()
     {
         Debug.Log("GOING TO Quit");
-        
+        SceneManager.QuitScene();
     }
 }

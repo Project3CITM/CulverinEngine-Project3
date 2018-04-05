@@ -91,6 +91,7 @@ private:
 
 	/* Scene Management */
 	static void LoadScene(MonoObject* scene_name);
+	static void QuitScene();
 
 	/* Input */
 	static mono_bool	GetKeyDown(int key);

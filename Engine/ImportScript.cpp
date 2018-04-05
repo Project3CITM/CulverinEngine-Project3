@@ -1059,6 +1059,7 @@ void ImportScript::LinkFunctions()
 
 	//SCENE MANAGEMENT FUNCTIONS ---------
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadScene",(const void*)LoadScene);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
 
 	//INPUT FUNCTIONS -------------------
 	mono_add_internal_call("CulverinEditor.Input::GetKeyDown", (const void*)GetKeyDown);
@@ -1238,6 +1239,13 @@ void ImportScript::LoadScene(MonoObject * scene_name)
 		App->SetActualScene(directory_scene.c_str());
 		App->WantToLoad(true);
 	}
+}
+
+void ImportScript::QuitScene()
+{
+	
+		App->input->quit = true;
+	
 }
 
 mono_bool ImportScript::GetKeyDown(int key)

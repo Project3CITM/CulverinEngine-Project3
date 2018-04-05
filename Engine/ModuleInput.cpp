@@ -36,9 +36,9 @@ ModuleInput::~ModuleInput()
 bool ModuleInput::Init(JSON_Object* node)
 {
 	perf_timer.Start();
-
 	LOG("Init SDL input event system");
 	bool ret = true;
+	quit = false;
 	SDL_Init(0);
 
 	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
@@ -183,7 +183,6 @@ update_status ModuleInput::PreUpdate(float dt)
 
 	mouse_x_motion = mouse_y_motion = 0;
 
-	bool quit = false;
 	SDL_Event e;
 
 	while (SDL_PollEvent(&e))
@@ -319,8 +318,10 @@ update_status ModuleInput::PreUpdate(float dt)
 	//LOG(std::to_string(mouse_x_motion).c_str());
 
 	if (quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
+	{
+		LOG("QUIT");
 		return UPDATE_STOP;
-
+	}
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }

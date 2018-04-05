@@ -43,7 +43,6 @@ public:
 
 	int GetMouseXMotionNormalized();
 	int GetMouseYMotionNormalized();
-
 	SDL_Scancode GetKeyFromName(const char* name);
 
 	KEY_STATE GetKey(int id) const
@@ -110,6 +109,8 @@ public:
 		mouse_x_global = x;
 		mouse_y_global = y;
 	}
+public:
+	bool quit = false;
 
 private:
 	KEY_STATE* keyboard;
