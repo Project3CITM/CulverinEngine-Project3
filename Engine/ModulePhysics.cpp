@@ -17,6 +17,7 @@ ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 	Awake_enabled = true;
 	Start_enabled = true;
 	Update_enabled = true;
+	preUpdate_enabled = true;
 
 	have_config = true; // not yet
 	name = "Physics";
@@ -70,6 +71,7 @@ bool ModulePhysics::Start()
 // -----------------------------------------------------------------
 update_status ModulePhysics::PreUpdate(float dt)
 {
+	perf_timer.Start();
 	// Update Physics World
 	if (dt > 0) {
 		did_simulation = physics_world->Simulate(dt);
@@ -78,7 +80,7 @@ update_status ModulePhysics::PreUpdate(float dt)
 	{
 		did_simulation = false;
 	}
-
+	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
 

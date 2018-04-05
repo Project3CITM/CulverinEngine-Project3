@@ -8,6 +8,7 @@
 
 ModuleAnimation::ModuleAnimation()
 {
+	name = "UI Animation";
 }
 
 

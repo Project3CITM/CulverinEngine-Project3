@@ -68,11 +68,13 @@ Scene::~Scene()
 	RELEASE(skybox);
 }
 
-bool Scene::Init(JSON_Object * node)
+bool Scene::Init(JSON_Object* node)
 {
+	perf_timer.Start();
 	/* Init Octree */
 	octree.Boundaries(AABB(float3(-1.0f, -1.0f, -1.0f), float3(1.0f, 1.0f, 1.0f)));
-
+	skybox_index = json_object_get_number(node, "Skybox Index");
+	Awake_t = perf_timer.ReadMs();
 	return true;
 }
 
@@ -101,7 +103,7 @@ bool Scene::Start()
 	/* Init Skybox */ 
 	skybox = new SkyBox();
 	skybox->InitSkybox();
-	skybox_index = 1;
+	//skybox_index = 1;
 	draw_skybox = true;
 
 	defined_tags.push_back("undefined");
@@ -1223,6 +1225,12 @@ Component* Scene::BlitSceneComponentsAsButtons(Comp_Type type, std::string& curr
 		ImGui::EndCombo();
 	}
 	return ret;
+}
+
+bool Scene::SaveConfig(JSON_Object* node)
+{
+	json_object_set_number(node, "Skybox Index", skybox_index);
+	return true;
 }
 
 GameObject* Scene::CreateCube(GameObject* parent)

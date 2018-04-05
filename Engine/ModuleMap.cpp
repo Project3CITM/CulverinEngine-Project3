@@ -14,6 +14,8 @@
 ModuleMap::ModuleMap()
 {
 	name = "Map";
+	Awake_enabled = true;
+	Start_enabled = true;
 }
 
 
@@ -25,6 +27,7 @@ ModuleMap::~ModuleMap()
 
 bool ModuleMap::Init(JSON_Object* node)
 {
+	perf_timer.Start();
 	name_map = json_object_get_string(node, "Walkable Map");
 	if (name_map.size() > 0)
 	{
@@ -40,36 +43,45 @@ bool ModuleMap::Init(JSON_Object* node)
 	{
 		name_map = "New Map";
 	}
+	Awake_t = perf_timer.ReadMs();
 	return true;
 }
 
 bool ModuleMap::Start()
 {
+	perf_timer.Start();
 	imported_map.clear();
 	icon_arrow_north = App->textures->LoadTexture("Images/UI/Arrow_north.png");
 	icon_arrow_east = App->textures->LoadTexture("Images/UI/Arrow_east.png");
 	icon_arrow_south = App->textures->LoadTexture("Images/UI/Arrow_south.png");
 	icon_arrow_west = App->textures->LoadTexture("Images/UI/Arrow_west.png");
 	icon_circle = App->textures->LoadTexture("Images/UI/Circle.png");
+	Start_t = perf_timer.ReadMs();
 	return true;
 }
 
 update_status ModuleMap::PreUpdate(float dt)
 {
+	perf_timer.Start();
 	if (imported_map.size() > 0)
 	{
 		ImportMap();
 	}
+	preUpdate_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleMap::Update(float dt)
 {
+	perf_timer.Start();
+	Update_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleMap::PostUpdate(float dt)
 {
+	perf_timer.Start();
+	postUpdate_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 

@@ -18,6 +18,9 @@
 
 ModuleShaders::ModuleShaders()
 {
+	name = "Shaders";
+	Start_enabled = true;
+	Update_enabled = true;
 }
 
 ModuleShaders::~ModuleShaders()
@@ -48,12 +51,12 @@ bool ModuleShaders::Init(JSON_Object * node)
 
 bool ModuleShaders::Start()
 {
-
+	perf_timer.Start();
 	//Import all the asset files related to shaders
 
 	ImportShaderObjects();
 	//ImportShaderMaterials();	
-
+	Start_t = perf_timer.ReadMs();
 	return true;
 }
 
@@ -64,6 +67,7 @@ update_status ModuleShaders::PreUpdate(float dt)
 
 update_status ModuleShaders::Update(float dt)
 {
+	perf_timer.Start();
 	std::vector<Material*>::iterator item = materials.begin();
 	static float time_dt = 0;
 	time_dt += dt * App->game_time.time_scale;
@@ -129,7 +133,7 @@ update_status ModuleShaders::Update(float dt)
 	if (App->gui->shader_program_creation) {
 		SendEventWithAllShaders();
 	}
-
+	Update_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 

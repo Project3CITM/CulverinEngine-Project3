@@ -98,6 +98,8 @@ public:
 	Component* BlitSceneComponentsAsButtons(Comp_Type type, std::string& current_item);
 	// -------------------------------------
 
+	bool SaveConfig(JSON_Object* node);
+
 public:
 	FrameBuffer* scene_buff = nullptr;
 	FrameBuffer* glow_buff = nullptr;

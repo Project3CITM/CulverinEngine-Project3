@@ -56,6 +56,7 @@ ModuleGUI::~ModuleGUI()
 
 bool ModuleGUI::Init(JSON_Object* node)
 {
+	perf_timer.Start();
 	win_manager.push_back(new Hardware());		//0---- HARDWARE
 	win_manager.push_back(new Inspector());		//1---- INSPECTOR
 	win_manager.push_back(new Hierarchy());		//2---- Hierarchy
@@ -68,7 +69,7 @@ bool ModuleGUI::Init(JSON_Object* node)
 	win_manager[SCENEWORLD]->active[0].active = true;
 	win_manager[PROJECT]->active[0].active = true;
 
-	
+	Awake_t = perf_timer.ReadMs();
 	return true;
 }
 
