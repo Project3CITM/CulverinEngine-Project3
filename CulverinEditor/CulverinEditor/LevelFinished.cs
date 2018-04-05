@@ -16,11 +16,8 @@ using CulverinEditor.Debug;
 
         void OnTriggerEnter()
         {
-            GameObject obj = GetComponent<CompCollider>().GetCollidedObject();
-            if(obj != null && obj.CompareTag("player"))
-            {
-                SceneManager.LoadScene("ScoreMenu");
-            }
+            Debug.Log("Restarting");
+            SceneManager.LoadScene("ScoreMenu");            
         }               
     }
 

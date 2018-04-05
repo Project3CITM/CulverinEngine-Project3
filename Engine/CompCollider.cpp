@@ -198,10 +198,7 @@ void CompCollider::ShowInspectorInfo()
 	if (!rigid_body_comp && ImGui::Checkbox("Trigger", &trigger))
 	{
 		body->SetAsTrigger(trigger);
-		if (trigger == false)
-		{
-			listener = nullptr;
-		}
+	
 	}
 
 	// Listener selection
@@ -422,7 +419,7 @@ void CompCollider::SyncComponent(GameObject* sync_parent)
 // -----------------------------------------------------------------
 void CompCollider::OnTriggerEnter(Component* actor1)
 {
-	if (listener != nullptr)
+	if (trigger && listener != nullptr)
 	{
 		collision_data.actor1 = actor1;
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerEnter);
@@ -432,7 +429,7 @@ void CompCollider::OnTriggerEnter(Component* actor1)
 
 void CompCollider::OnTriggerLost(Component* actor1)
 {
-	if (listener != nullptr)
+	if (trigger && listener != nullptr)
 	{
 		collision_data.actor1 = actor1;
 		listener->csharp->DoMainFunction(FunctionBase::CS_OnTriggerLost);
