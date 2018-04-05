@@ -121,11 +121,17 @@ public class ShowScore : CulverinBehaviour
         }
         if (StatsScore.characters_alive <= 2)
         {
+            coin_score += bronze_value;
+            coin1_alive.SetActive(true);
             coin_score += silver_value;
             coin2_alive.SetActive(true);
         }
         if (StatsScore.characters_alive <= 1)
         {
+            coin_score += bronze_value;
+            coin1_alive.SetActive(true);
+            coin_score += silver_value;
+            coin2_alive.SetActive(true);
             coin_score += gold_value;
             coin3_alive.SetActive(true);
 
@@ -139,7 +145,7 @@ public class ShowScore : CulverinBehaviour
             coin1_time.SetActive(true);
 
         }
-        if (StatsScore.characters_alive < silver_time)
+        if (StatsScore.time < silver_time)
         {
             coin_score += bronze_value;
             coin_score += silver_value;
@@ -148,7 +154,7 @@ public class ShowScore : CulverinBehaviour
 
 
         }
-        if (StatsScore.characters_alive < gold_time)
+        if (StatsScore.time < gold_time)
         {
             coin_score += bronze_value;
             coin_score += silver_value;
