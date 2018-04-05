@@ -68,7 +68,7 @@ public class SpearGuard_Listener : PerceptionListener
 
                 if (gameObject.IsEquals(seen_event_tmp.enemy_who_saw))
                 {
-                    Debug.Log("CCCCCCCCCCCCCCCCCCCCCCCCCc");
+                   
 
                     GetComponent<EnemySpear_BT>().InterruptAction();
                     GetComponent<EnemySpear_BT>().player_detected = true;
@@ -107,7 +107,7 @@ public class SpearGuard_Listener : PerceptionListener
                 if (GetComponent<EnemySpear_BT>().InCombat() == true && GetComponent<PerceptionSightEnemy>().player_seen == false)
                     GetComponent<EnemySpear_BT>().SetAction(Action.ACTION_TYPE.DISENGAGE_ACTION);
 
-                Debug.Log("[error]Event gone type:" + event_recieved.type);
+                
                 break;
         }
     }

@@ -40,10 +40,11 @@ public class Attack_Action : Action
         }
 
         Debug.Log("Starting attack");
-        anim.SetTransition("ToAttack");
+        GetComponent<CompAnimation>().SetTransition("ToAttack");
         anim.SetClipDuration("Attack", attack_duration);
-
+       
         GetComponent<CompAudio>().PlayEvent("Enemy1_Slash");
+      
 
         damage_done = false;
         shield_attack = false;
@@ -53,20 +54,17 @@ public class Attack_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        anim = GetComponent<CompAnimation>();
-
-        if (anim.IsAnimOverXTime(damage_point) && damage_done == false)
+      
+        if (GetComponent<CompAnimation>().IsAnimOverXTime(damage_point) && damage_done == false)
         {
             damage_done = true;
-
-            Debug.Log("Damage point");
 
             if (shield_attack)
                 player.ApplyFatigue(fatigue);
             else
             {
                 if (player.GetDamage(damage) == true)
-                {
+                { 
                     GetComponent<CompAudio>().PlayEvent("SwordHit");
                     anim.SetActiveBlendingClipWeight(0.0f);
                 }
@@ -75,7 +73,7 @@ public class Attack_Action : Action
             }
         }
 
-        if (anim.IsAnimOverXTime(1.0f))
+        if (GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
         {
             Debug.Log("Attack end");
             return ACTION_RESULT.AR_SUCCESS;

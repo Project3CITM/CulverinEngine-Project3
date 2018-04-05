@@ -51,7 +51,7 @@ public class PerceptionListener : CulverinBehaviour
 
     public void ClearEvents()
     {
-        Debug.Log("[yellow] Event in memory count:" + events_in_memory.Count);
+        
         foreach (PerceptionEvent memory_event in events_in_memory)
         {
             OnEventGone(memory_event);
