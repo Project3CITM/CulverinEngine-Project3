@@ -54,6 +54,8 @@ public class CharactersManager : CulverinBehaviour
     //To manage Jaime Secondary Ability
     public bool shield_activated = false;
 
+    public GameObject camera;
+
     CompAudio audio;
 
     void Start()
@@ -71,6 +73,8 @@ public class CharactersManager : CulverinBehaviour
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
+
+        camera = GetLinkedObject("camera");
 
         SetCurrentPosition();
 
@@ -480,16 +484,13 @@ public class CharactersManager : CulverinBehaviour
 
         else
         {
-            if(GetCurrCharacterState() != (int)CharacterController.State.COVER)
-            {
-                audio.PlayEvent("SwordHit");
-            }
 
             // CURRENT CHARACTER -------------------------------
             if (current_character.GetName() == "Jaime")
             {
                 if (current_character.GetComponent<JaimeController>().GetDamage(dmg))
                 {
+                    camera.GetComponent<CompAnimation>().PlayAnimation("Player_Hit");
                     if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
                     {
                         current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);

@@ -2,34 +2,15 @@
 using CulverinEditor.SceneManagement;
 using CulverinEditor.Debug;
 
-static public class Data
+static public class StatsScore
 {
     static public uint enem_killed = 0; // enemies player has killed
-    static public float puzzle_time = 0; // time wasted trying to solve puzzle
-    static public bool in_puzzle = false; //boolean to track if we are solving the puzzle (to track time)
     static public uint puzzle_tries = 0; // tries used to solve the puzzle
-    static public uint characters_used = 0; //counter for tracking how many characters you have used (1,2 or 3)
-    //variables for Sergio Saez, to manage balancing though inspector
-    static public int total_enemies = 0; //total enemies in the level
-   
+    static public uint characters_alive = 0; //counter for tracking how many characters you have used (1,2 or 3)
+    static public float time = 0.0f; //counter for tracking how many characters you have used (1,2 or 3)
 
-    static public void Start()
-    {
-        Time.StartTimePlay();
-    }
 
-    static public void StartPuzzle()  //NEEDS TO BE CALLED ONCE WE START PUZZLE
-    {
-        puzzle_time = 0;
-        in_puzzle = true;
-    }
-
-    static public float PuzzleTimer()
-    {
-        in_puzzle = false;
-        return puzzle_time;
-    }
-
+ 
     static public void KillEnemy()
     {
         enem_killed++;
@@ -40,32 +21,21 @@ static public class Data
         puzzle_tries++;
     }
 
-    static public void CharactUsed()
+    static public void CharacterDead()
     {
-        characters_used++;
+        characters_alive--;
     }
 
-    static public float GetTime()
+    static public void GetTime()
     {
-        return Time.timePlay;
+        time = Time.timePlay;
     }
 
     static public void ResetScore()
     {
+       time = 0.0f;
        enem_killed = 0;
-       puzzle_time = 0;
        puzzle_tries = 0;
-       characters_used = 0;
-    }
-}
-
-class StatsScore : CulverinBehaviour
-{
-    static public void Update()
-    {
-        if (Data.in_puzzle)
-        {
-            Data.puzzle_time += Time.deltaTime;
-        }
+       characters_alive = 0;
     }
 }

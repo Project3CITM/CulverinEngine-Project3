@@ -50,6 +50,9 @@ public class Arrow : CulverinBehaviour
         Debug.Log("[error] Collided");
         if (collided_obj != null && destroyed == false)
         {
+            /* PLAY AUDIO */
+            //GetComponent<CompAudio>().PlayEvent("TheonImpact");
+
             //Lock transform to avoid trespassing more than one collider
             rb.LockTransform();
 
@@ -60,10 +63,7 @@ public class Arrow : CulverinBehaviour
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
             {
-                Debug.Log("[error] Enemy Found");
                 enemy_manager.ApplyDamage(collided_obj, damage);
-                Debug.Log("[error] Apply Damage");
-
             }
             else
             {
@@ -72,7 +72,6 @@ public class Arrow : CulverinBehaviour
                 {
                     obj_col.CallOnContact();
                 }
-
             }
         }
         if (destroyed == false)

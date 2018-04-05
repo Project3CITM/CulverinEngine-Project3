@@ -102,9 +102,9 @@ public:
 
 
 	//TEMP
-	int blur_amount = 9;
-	float blur_scale = 1.2f;
-	float blur_strength = 0.3f;
+	int blur_amount = 16;
+	float blur_scale = 1.186f;
+	float blur_strength = 0.169f;
 };
 
 #endif
