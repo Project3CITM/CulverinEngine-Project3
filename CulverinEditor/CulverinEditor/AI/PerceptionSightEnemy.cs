@@ -18,6 +18,7 @@ public class PerceptionSightEnemy : CulverinBehaviour
     float timer = 0.0f;
 
     public bool player_seen = false;
+    public bool can_see_around = true;
 
     public enum DIRECTION
     {
@@ -124,6 +125,59 @@ public class PerceptionSightEnemy : CulverinBehaviour
         List<PathNode> unseen_tiles = new List<PathNode>();
         int current_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int current_y = GetComponent<Movement_Action>().GetCurrentTileY();
+
+        // -------- Add the tiles in a circle -------- //
+        // ------- [Adds realism to the enemy] ------- //
+        if (can_see_around)
+        {
+            switch (dir)
+            {
+                case DIRECTION.E_DIR_NORTH:
+                    tiles.Add(new PathNode(current_x - 1, current_y));
+                    tiles.Add(new PathNode(current_x + 1, current_y));
+
+                    tiles.Add(new PathNode(current_x - 1, current_y + 1));
+                    tiles.Add(new PathNode(current_x, current_y + 1));
+                    tiles.Add(new PathNode(current_x + 1, current_y + 1));
+                    break;
+
+                case DIRECTION.E_DIR_SOUTH:
+                    tiles.Add(new PathNode(current_x - 1, current_y - 1));
+                    tiles.Add(new PathNode(current_x, current_y - 1));
+                    tiles.Add(new PathNode(current_x + 1, current_y - 1));
+
+                    tiles.Add(new PathNode(current_x - 1, current_y));
+                    tiles.Add(new PathNode(current_x + 1, current_y));
+                    break;
+
+                case DIRECTION.E_DIR_EAST:
+                    tiles.Add(new PathNode(current_x - 1, current_y - 1));
+                    tiles.Add(new PathNode(current_x, current_y - 1));
+
+                    tiles.Add(new PathNode(current_x - 1, current_y));
+
+                    tiles.Add(new PathNode(current_x - 1, current_y + 1));
+                    tiles.Add(new PathNode(current_x, current_y + 1));
+                    break;
+
+                case DIRECTION.E_DIR_WEST:
+                    tiles.Add(new PathNode(current_x, current_y - 1));
+                    tiles.Add(new PathNode(current_x + 1, current_y - 1));
+
+                    tiles.Add(new PathNode(current_x + 1, current_y));
+
+                    tiles.Add(new PathNode(current_x, current_y + 1));
+                    tiles.Add(new PathNode(current_x + 1, current_y + 1));
+                    break;
+
+                case DIRECTION.E_DIR_NONE:
+                case DIRECTION.E_DIR_MAX:
+                default:
+                    Debug.Log("[error] GetSeenTiles: Wrong Direction: " + dir);
+                    break;
+            }
+        }
+        // --------------------------------------------- //
 
         switch (dir)
         {
