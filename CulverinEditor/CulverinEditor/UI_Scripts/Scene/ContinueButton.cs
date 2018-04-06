@@ -8,7 +8,6 @@ public class ContinueButton : CulverinBehaviour
     {
         StatsScore.ResetScore();
         Debug.Log("GOING TO GAME");
-        Input.SetInputManagerActive("GUI", false);
         SceneManager.LoadScene("FinalMap1");
     }
 

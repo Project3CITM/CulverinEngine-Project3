@@ -12,7 +12,6 @@ public class ReturnToMenu : CulverinBehaviour
     }
     public void Return()
     {
-        Input.SetInputManagerActive("GUI", false);
         SceneManager.LoadScene("MainMenuScene");
     }
 
