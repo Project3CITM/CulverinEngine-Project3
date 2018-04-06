@@ -112,10 +112,8 @@ public class Enemy_BT : BT
         Debug.Log("Out Of Combat Not Defined");
     }
 
-    public virtual void ApplyDamage(float damage)
+    public virtual bool ApplyDamage(float damage)
     {
-        if (current_action.action_type == Action.ACTION_TYPE.SHIELD_BLOCK_ACTION) return;
-
         InterruptAction();
 
         next_action = GetComponent<GetHit_Action>();
@@ -143,6 +141,8 @@ public class Enemy_BT : BT
             GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
             //ChangeTexturesToDamaged();
         }
+
+        return true;
     }
 
     public void PushEnemy(Vector3 dir)
@@ -164,7 +164,7 @@ public class Enemy_BT : BT
 
     public bool InRange()
     {
-        GetLinkedObject("player").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
         int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
         int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
 
@@ -175,7 +175,7 @@ public class Enemy_BT : BT
 
     public int GetDistanceInRange()
     {
-        GetLinkedObject("player").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
         int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
         int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
 

@@ -485,42 +485,38 @@ public class JaimeController : CharacterController
                     damage = left_ability_dmg3;
                 }
 
-                enemy_manager.ApplyDamage(coll_object, damage);
-
-                if (hit_streak < 2)
-                {
-                    hit_streak++; //Increase hit count
-                }
-                else
-                {
-                    hit_streak = 0; //Reset hit count
-                }
-
                 // Hit to enemy Impact
                 //PlayFx("JaimeImpact");
 
                 /* ---------- IN CASE THAT THE ENEMY BLOCKS THE ATTACK, UNCOMMENT AND COMPLETE THIS CODE ---------- */
-                //if (enemy_manager.ApplyDamage(coll_object, damage))
-                //{
-                //    Debug.Log("Apply Damage");
+                if (enemy_manager.ApplyDamage(coll_object, damage))
+                {
+                    Debug.Log("Apply Damage");
 
-                //    if (hit_streak < 2)
-                //    {
-                //        hit_streak++; //Increase hit count
-                //    }
-                //    else
-                //    {
-                //        hit_streak = 0; //Reset hit count
-                //    }
-                //}
-                //else
-                //{
-                //    hit_streak = 0; // Reset Hit Count
+                    if (hit_streak < 2)
+                    {
+                        hit_streak++; //Increase hit count
+                    }
+                    else
+                    {
+                        hit_streak = 0; //Reset hit count
+                    }
+                }
+                else
+                {
+                    hit_streak = 0; // Reset Hit Count
 
-                //    //Set FailAttack Transition
-                //    SetAnimationTransition("ToFail", true);
-                //    Debug.Log("[pink] --- FAIL ATTACK ---");
-                //}
+                    //Enable particles emission of enemy blood
+                    particles_jaime.GetComponent<SwordParticles>().EnableWallCollision(true);
+
+                    //Set FailAttack Transition & Audio
+                    SetAnimationTransition("ToFail", true);
+
+                    //PlayFx -> Obstacle Impact
+                    //PlayFx("JaimeImpactStone");
+                    PlayFx("JaimeImpact");
+                    Debug.Log("[pink] --- FAIL ATTACK ---");
+                }
                 /* ----------------------------------------------------------------------------------- */
             }
             else if(coll_object.CompareTag("obstacle"))

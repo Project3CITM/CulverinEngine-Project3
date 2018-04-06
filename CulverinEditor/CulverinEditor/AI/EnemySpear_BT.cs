@@ -169,9 +169,9 @@ public class EnemySpear_BT : Enemy_BT
         }
     }
 
-    public override void ApplyDamage(float damage)
+    public override bool ApplyDamage(float damage)
     {
-        base.ApplyDamage(damage);
+        return base.ApplyDamage(damage);
     }
 
     public override void ChangeTexturesToDamaged()
