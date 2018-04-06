@@ -35,7 +35,7 @@ public class RespawnWhenHit : CulverinBehaviour
             obj.transform.SetPosition(respawn_pos_float3);
             CompRigidBody collbody = obj.GetComponent<CompRigidBody>();
             collbody.ResetForce();
-            collbody.LockTransform();
+            collbody.LockMotion();
             MovementController controller = obj.GetComponent<MovementController>();
             controller.endPosition = respawn_pos_float3;
             controller.curr_x = respawn_tile_x;
@@ -44,6 +44,9 @@ public class RespawnWhenHit : CulverinBehaviour
             CharactersManager char_manager = obj.GetComponent<CharactersManager>();
             char_manager.SetManagerState(CharactersManager.State.IDLE);
             char_manager.GetDamage(char_manager.drown_dmg);
+
+            MovementController movement = obj.GetComponent<MovementController>();
+            movement.drowning = false;
         }
 
     }

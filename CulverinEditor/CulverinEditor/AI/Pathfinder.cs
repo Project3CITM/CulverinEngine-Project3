@@ -236,7 +236,7 @@ public class Pathfinder : CulverinBehaviour
         //Check if the tiles are inside the map
         if (tile_to_check_x < map_width && tile_to_check_y < map_height)
         {
-            if (tile_map[tile_to_check_x, tile_to_check_y] != 1)
+            if (tile_map[tile_to_check_x, tile_to_check_y] == 0 || tile_map[tile_to_check_x, tile_to_check_y] == 2)
                 return true;
         }
         return false;

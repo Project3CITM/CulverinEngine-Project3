@@ -56,6 +56,11 @@ public class MovementController : CulverinBehaviour
     public GameObject characters_camera;
     public GameObject player_enemies_manager;
 
+    public float time_in_memory = 3.0f;
+    public int footstep_radius = 1;
+
+    public bool drowning = false;
+
     void Start()
     {
         level_map = GetLinkedObject("map_obj").GetComponent<LevelMap>();
@@ -89,33 +94,11 @@ public class MovementController : CulverinBehaviour
         MovePositionInitial(new Vector3((float)player_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)player_y * distanceToMove));
         Debug.Log("Move initial position");
 
-        //intro = GetLinkedObject("intro");
-        //intro.SetActive(true);
-        //lore_screen = GetLinkedObject("lore_screen");
-        //lore_screen.SetActive(false);
-        //Time.timeScale = 0;
+        drowning = false;
     }
 
     void Update()
     {
-        //if (intro.IsActive() || lore_screen.IsActive())
-        //{
-        //    if (Input.GetKeyDown(KeyCode.Space)|| Input.GetInput_KeyDown("Interact", "Player"))
-        //    {
-        //        if (intro.IsActive())
-        //        {
-        //            Debug.Log("From intro to lore");
-        //            intro.SetActive(false);
-        //            lore_screen.SetActive(true);
-        //        }
-        //        else if (lore_screen.IsActive())
-        //        {
-        //            Debug.Log("From lore to game");
-        //            lore_screen.SetActive(false);
-        //            Time.timeScale = 1;
-        //        }
-        //    }
-        //}
         start_direction = (int)curr_dir;
 
         //Update Forward Vector for rotations
@@ -158,6 +141,7 @@ public class MovementController : CulverinBehaviour
                 }
                 else if (level_map.map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 3) //Valryian Fire!
                 {
+                    StatsScore.PuzzleTry();
                     audio = GetComponent<CompAudio>();
                     audio.PlayEvent("Footsteps");
                     endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
@@ -165,8 +149,10 @@ public class MovementController : CulverinBehaviour
                     curr_y += tile_mov_y;
                     char_manager.SetCurrentPosition();
                     moving = true;
-                    GetComponent<CompRigidBody>().UnLockTransform();
+                    GetComponent<CompRigidBody>().UnLockMotion();
+                    GetComponent<CompRigidBody>().ApplyImpulse(new Vector3(0.0f, -50.0f, 0.0f));
                     //char_manager.Drown();
+                    drowning = true;
                 }
             }
         }
@@ -258,7 +244,7 @@ public class MovementController : CulverinBehaviour
 
     private bool CheckRotation()
     {
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
             float variation = Input.GetInput_ControllerAxis("Rotate", "Player");
             if (variation < -0.8)
@@ -288,7 +274,7 @@ public class MovementController : CulverinBehaviour
 
     private bool CheckMovement()
     {
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
             float variation = Input.GetInput_ControllerAxis("Horizontal", "Player");
             if (variation > 0.8)
@@ -296,7 +282,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyInRight())
                 {
                     MoveRight(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
                     return true;
                 }
             }
@@ -305,7 +291,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyInLeft())
                 {
                     MoveLeft(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
                     return true;
                 }
             }
@@ -316,7 +302,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyBehind())
                 {
                     MoveBackward(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
                     return true;
                 }
 
@@ -326,7 +312,7 @@ public class MovementController : CulverinBehaviour
                 if (!EnemyInFront())
                 {
                     MoveForward(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, 7, 5, curr_x, curr_y);
+                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
                     return true;
                 }
             }
@@ -337,7 +323,7 @@ public class MovementController : CulverinBehaviour
 
     private void CheckFacingRotation()
     {
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle())
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
             if (Input.GetKeyDown(KeyCode.Z)) //Look Up
             {

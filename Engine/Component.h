@@ -38,6 +38,7 @@ enum Comp_Type
 	C_LIGHT,
 	C_PARTICLE_SYSTEM,
 	C_JOINT,
+	C_ANIMATION_UI,
 
 	//Graphic
 	C_CANVAS = 50,

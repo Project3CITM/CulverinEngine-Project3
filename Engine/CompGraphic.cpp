@@ -119,6 +119,11 @@ void CompGraphic::SetColor(float set_r, float set_g, float set_b, float set_a)
 	SetColor(float4(set_r, set_g, set_b, set_a));
 }
 
+void CompGraphic::SetAlpha(float alpha)
+{
+	color.w = alpha;
+}
+
 void CompGraphic::SetToRender(bool render)
 {
 	this->render = render;

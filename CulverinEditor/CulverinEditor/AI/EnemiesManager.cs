@@ -221,24 +221,25 @@ public class EnemiesManager : CulverinBehaviour
         }
     }
 
-    public void ApplyDamage(GameObject target, float damage)
+    public bool ApplyDamage(GameObject target, float damage)
     {
         Debug.Log("Apply Damage");
         if (target.GetComponent<EnemySword_BT>() != null)
         {
             Debug.Log("Sword");
-            target.GetComponent<EnemySword_BT>().ApplyDamage(damage);
+            return target.GetComponent<EnemySword_BT>().ApplyDamage(damage);
         }
         else if(target.GetComponent<EnemySpear_BT>() != null)
         {
             Debug.Log("Spear");
-            target.GetComponent<EnemySpear_BT>().ApplyDamage(damage);
+            return target.GetComponent<EnemySpear_BT>().ApplyDamage(damage);
         }
         else if(target.GetComponent<EnemyShield_BT>() != null)
         {
             Debug.Log("Shield");
-            target.GetComponent<EnemyShield_BT>().ApplyDamage(damage);
-        }           
+            return target.GetComponent<EnemyShield_BT>().ApplyDamage(damage);
+        }
+        return true;
     }
 
     public bool IsEnemy(GameObject target)

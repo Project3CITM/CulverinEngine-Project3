@@ -200,9 +200,19 @@ static const GLchar* fragmentShaderSource[] =
 	"	final_ambient = final_ambient / _numLights;\n"
 	"	final_color = final_color;\n"
 	"\n"
+	"	vec3 col = max( color_texture,\n"
+	"		color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb);\n"
+	"\n"
+	/*
 	"	vec3 col = max(final_ambient* color_texture* vec3(0,1,1),\n"
 	"		color_texture * (inten_final.x + inten_final.y)*occlusion_texture*final_color.rgb);\n"
 	"\n"
+	*/
+	/*
+	Default_frag
+	vec3 col = max(final_ambient* color_texture* vec3(0,0.9,0.9),
+	color_texture * (inten_final.x + inten_final.y )*occlusion_texture*final_color.rgb);
+	*/
 	"	color = vec4(col,_alpha); \n"
 	"\n"
 	"}\n"
@@ -289,7 +299,7 @@ static const GLchar* BlurFrag[] =
 	"			break;\n"
 	"\n"
 	"		float offset = float(i) - halfBlur;\n"
-	"		texColour = texture2D(albedo, TexCoord + vec2(BlurScale * offset/128 , 0)) * Gaussian(offset * strength, deviation);\n"
+	"		texColour = texture2D(albedo, TexCoord + vec2(BlurScale * offset/64 , 0)) * Gaussian(offset * strength, deviation);\n"
 	"		colour += texColour;\n"
 	"	}\n"
 	"}\n"
@@ -301,7 +311,7 @@ static const GLchar* BlurFrag[] =
 	"			break;\n"
 	"\n"
 	"		float offset = float(i) - halfBlur;\n"
-	"		texColour = texture2D(albedo, TexCoord + vec2(0,BlurScale * offset /128)) * Gaussian(offset * strength, deviation);\n"
+	"		texColour = texture2D(albedo, TexCoord + vec2(0,BlurScale * offset /64)) * Gaussian(offset * strength, deviation);\n"
 	"		colour += texColour;\n"
 	"	}\n"
 	"}\n"

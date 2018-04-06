@@ -78,12 +78,9 @@ void CompAnimation::PreUpdate(float dt)
 			bones_placed = true;
 		}
 	}
-}
 
-void CompAnimation::Update(float dt)
-{
 	ManageActualAnimationNode(dt);
-	ManageAnimationClips(current_animation,dt);
+	ManageAnimationClips(current_animation, dt);
 	ManageAnimationClips(blending_animation, dt);
 	if (active_node != nullptr)
 	{
@@ -93,14 +90,24 @@ void CompAnimation::Update(float dt)
 			ManageAnimationClips(node_blending_clip->clip, dt);
 		}
 	}
-
+	playing = false;
 	if (current_animation != nullptr)
 	{
-		for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
+		for (std::vector<AnimationClip*>::iterator it = animation_clips.begin(); it != animation_clips.end(); it++)
 		{
-			if (it->first != nullptr)
+			if ((*it)->state != A_STOP)
 			{
-				it->second->UpdateBone(it->first, current_animation, active_node->GetActiveBlendingClip(), blending_animation);
+				playing = true;
+			}
+		}
+		if (playing)
+		{
+			for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
+			{
+				if (it->first != nullptr)
+				{
+					it->second->UpdateBone(it->first, current_animation, active_node->GetActiveBlendingClip(), blending_animation);
+				}
 			}
 		}
 	}
@@ -109,6 +116,11 @@ void CompAnimation::Update(float dt)
 	{
 		CheckNodesConditions((active_node));
 	}
+}
+
+void CompAnimation::Update(float dt)
+{
+	
 }
 
 void CompAnimation::PlayAnimation(AnimationNode * node)
@@ -821,19 +833,27 @@ void CompAnimation::ShowAnimationInfo()
 		}
 		ImGui::End();
 	}
-
-	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end();)
 	{
-		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
+		for (std::vector<AnimationTransition*>::iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end();)
 		{
-			if ((*it)->transitions.size() != 0 && (*trans_it)->to_delete == true)
+			if (trans_it != (*it)->transitions.end() && (*it)->transitions.size() != 0 && (*trans_it)->to_delete == true)
 			{
-				(*it)->transitions.erase(trans_it);
+				trans_it = (*it)->transitions.erase(trans_it);
+			}
+			else
+			{
+				trans_it++;
 			}
 		}
 		if (animation_nodes.size() != 0 && (*it)->to_delete == true)
 		{
-			animation_nodes.erase(it);
+			it = animation_nodes.erase(it);
+		}
+		else
+		{
+			it++;
 		}
 	}
 	
@@ -1118,13 +1138,28 @@ void CompAnimation::ManageActualAnimationNode(float dt)
 				{
 					App->scene->root->AddChildGameObject(gameobject);
 					App->importer->iScript->UpdateMonoMap(gameobject);
+
 					CompTransform* trans = gameobject->GetComponentTransform();
 					CompTransform* my_trans = parent->GetComponentTransform();
+
 					if (trans != nullptr)
 					{
-						float3 final_pos = my_trans->GetPosGlobal() + active_node->prefab_pos;
+						float3 final_pos = my_trans->GetPosGlobal();
+						Quat globalrot = my_trans->GetRotGlobal();
+						float3x3 mat;
+						mat = mat.identity;
+						mat = mat.FromQuat(globalrot);
+
+						float3 rotatedpos =  mat * active_node->prefab_pos;
+						final_pos = final_pos + rotatedpos;
 						trans->SetPos(final_pos);
-						//trans->SetPos(active_node->prefab_pos);
+						float3 final_rot = globalrot.ToEulerXYZ() * RADTODEG;
+						
+						float3 prefabrot = ((trans->GetRotGlobal()).ToEulerXYZ()) *RADTODEG;
+			
+						final_rot  = final_rot + prefabrot;
+						trans->SetRot(final_rot);
+						gameobject->UpdateChildsMatrices();
 					}
 				}
 				LOG("[error] with load prefab");

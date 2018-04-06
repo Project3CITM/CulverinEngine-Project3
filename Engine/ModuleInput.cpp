@@ -7,7 +7,7 @@
 #include "ModuleMap.h"
 #include "ModuleResourceManager.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "PlayerActions.h"
 #include "InputManager.h"
 #include "JSONSerialization.h"
@@ -36,9 +36,9 @@ ModuleInput::~ModuleInput()
 bool ModuleInput::Init(JSON_Object* node)
 {
 	perf_timer.Start();
-
 	LOG("Init SDL input event system");
 	bool ret = true;
+	quit = false;
 	SDL_Init(0);
 
 	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
@@ -183,7 +183,6 @@ update_status ModuleInput::PreUpdate(float dt)
 
 	mouse_x_motion = mouse_y_motion = 0;
 
-	bool quit = false;
 	SDL_Event e;
 
 	while (SDL_PollEvent(&e))
@@ -203,7 +202,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			mouse_y = e.motion.y / SCREEN_SIZE;
 
 			Event mouse_event;
-			mouse_event.pointer.type = EventType::EVENT_BUTTON_DOWN;
+			mouse_event.Set_event_data(EventType::EVENT_BUTTON_DOWN);
 			if (e.button.button == SDL_BUTTON_LEFT)
 				mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
 			if (e.button.button == SDL_BUTTON_MIDDLE)
@@ -221,7 +220,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			mouse_x = e.motion.x / SCREEN_SIZE;
 			mouse_y = e.motion.y / SCREEN_SIZE;
 			Event mouse_event;
-			mouse_event.pointer.type = EventType::EVENT_BUTTON_UP;
+			mouse_event.Set_event_data(EventType::EVENT_BUTTON_UP);
 			if (e.button.button == SDL_BUTTON_LEFT)
 				mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
 			if (e.button.button == SDL_BUTTON_MIDDLE)
@@ -249,7 +248,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			mouse_y_motion = e.motion.yrel / SCREEN_SIZE;
 			{
 				Event mouse_event;
-				mouse_event.pointer.type = EventType::EVENT_MOUSE_MOTION;
+				mouse_event.Set_event_data(EventType::EVENT_MOUSE_MOTION);
 				mouse_event.pointer.position.x = mouse_x;
 				mouse_event.pointer.position.y = mouse_y;
 				mouse_event.pointer.motion.x = mouse_x_motion;
@@ -319,8 +318,10 @@ update_status ModuleInput::PreUpdate(float dt)
 	//LOG(std::to_string(mouse_x_motion).c_str());
 
 	if (quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
+	{
+		LOG("QUIT");
 		return UPDATE_STOP;
-
+	}
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
@@ -454,7 +455,7 @@ void ModuleInput::UIInputManagerUpdate()
 		if (vect_temp[i]->OnClick())
 		{
 			Event mouse_event;
-			mouse_event.gui_submit.type = EventType::EVENT_SUBMIT;
+			mouse_event.Set_event_data(EventType::EVENT_SUBMIT);
 			mouse_event.gui_submit.active = true;
 			PushEvent(mouse_event);
 
@@ -468,7 +469,7 @@ void ModuleInput::UIInputManagerUpdate()
 		{
 
 			Event mouse_event;
-			mouse_event.gui_cancel.type = EventType::EVENT_CANCEL;
+			mouse_event.Set_event_data(EventType::EVENT_CANCEL);
 			mouse_event.gui_cancel.active = true;
 			PushEvent(mouse_event);
 		}
@@ -478,7 +479,7 @@ void ModuleInput::UIInputManagerUpdate()
 	if (ui_manager->GetAxis(vertical.c_str())->direction_axis > 0.8f)
 	{
 		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.Set_event_data(EventType::EVENT_AXIS);
 		mouse_event.gui_axis.value = ui_manager->GetAxis(vertical.c_str())->direction_axis;
 		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_DOWN;
 		PushEvent(mouse_event);
@@ -487,7 +488,7 @@ void ModuleInput::UIInputManagerUpdate()
 	else if (ui_manager->GetAxis(vertical.c_str())->direction_axis < -0.8f)
 	{
 		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.Set_event_data(EventType::EVENT_AXIS);
 		mouse_event.gui_axis.value = ui_manager->GetAxis(vertical.c_str())->direction_axis;
 		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_UP;
 		PushEvent(mouse_event);
@@ -496,7 +497,7 @@ void ModuleInput::UIInputManagerUpdate()
 	if (ui_manager->GetAxis(horizontal.c_str())->direction_axis > 0.8f)
 	{
 		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.Set_event_data(EventType::EVENT_AXIS);
 		mouse_event.gui_axis.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
 		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_RIGHT;
 		PushEvent(mouse_event);
@@ -504,11 +505,10 @@ void ModuleInput::UIInputManagerUpdate()
 	else if (ui_manager->GetAxis(horizontal.c_str())->direction_axis < -0.8f)
 	{
 		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
+		mouse_event.Set_event_data(EventType::EVENT_AXIS);
 		mouse_event.gui_axis.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
 		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_LEFT;
 		PushEvent(mouse_event);
-
 	}
 }
 

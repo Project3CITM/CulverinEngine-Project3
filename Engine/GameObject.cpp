@@ -40,7 +40,7 @@
 #include <queue>
 
 //Event system test
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 
 GameObject::GameObject(GameObject* parent) :parent(parent)
 {
@@ -54,7 +54,7 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 		parent->childs.push_back(this);
 	}
 
-	
+
 	box_fixed.SetNegativeInfinity();
 }
 
@@ -65,7 +65,7 @@ GameObject::GameObject(std::string nameGameObject)
 	uid = App->random->Int();
 	name = nameGameObject;
 
-	
+
 	box_fixed.SetNegativeInfinity();
 }
 
@@ -98,7 +98,7 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 
 	if (copy.box_fixed.IsFinite())
 	{
-		
+
 		box_fixed = copy.box_fixed;
 	}
 	else
@@ -131,7 +131,7 @@ GameObject::~GameObject()
 		components.clear();
 	}
 
-	if(childs.size() > 0)
+	if (childs.size() > 0)
 	{
 		childs.clear();
 	}
@@ -282,7 +282,7 @@ void GameObject::GetAllSceneGameObjects(std::vector<GameObject*>& SceneGameObjec
 		(*item)->GetAllSceneGameObjects(SceneGameObjects);
 }
 
-void GameObject::FindChildsWithTag(const char * tag,std::vector<GameObject*>* vec)
+void GameObject::FindChildsWithTag(const char * tag, std::vector<GameObject*>* vec)
 {
 	uint size = childs.size();
 	for (uint k = 0; k < size; k++)
@@ -377,7 +377,7 @@ void GameObject::Update(float dt)
 		}
 
 
-		
+
 	}
 }
 
@@ -428,7 +428,7 @@ void GameObject::Draw()
 				/**/
 				CompMesh* comp = (CompMesh*)components[i];
 				Event draw_event;
-				draw_event.draw.type = EventType::EVENT_DRAW;
+				draw_event.Set_event_data(EventType::EVENT_DRAW);
 				if (comp->GetMaterial()->material->alpha < 1.0f) draw_event.draw.Dtype = draw_event.draw.DRAW_3D_ALPHA;
 				else draw_event.draw.Dtype = draw_event.draw.DRAW_3D;
 				draw_event.draw.ToDraw = components[i];
@@ -450,11 +450,11 @@ void GameObject::Draw()
 			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_LIGHT)
 			{
 				CompLight* l = (CompLight*)components[i];
-				if(!l->use_light_to_render)
+				if (!l->use_light_to_render)
 					continue;
 
 				Event draw_event;
-				draw_event.request_3d3damm.type = EventType::EVENT_REQUEST_3D_3DA_MM;
+				draw_event.Set_event_data(EventType::EVENT_REQUEST_3D_3DA_MM);
 				draw_event.request_3d3damm.light = (CompLight*)components[i];
 				PushEvent(draw_event);
 				components[i]->Draw();
@@ -526,7 +526,7 @@ const char * GameObject::GetTag() const
 
 bool GameObject::CompareTag(const char * str) const
 {
-	return strcmp(tag.c_str(),str) == 0;
+	return strcmp(tag.c_str(), str) == 0;
 }
 
 void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* parent_)
@@ -581,7 +581,7 @@ void GameObject::NameNotRepeat(std::string& name, bool haveParent, GameObject* p
 	}
 }
 
-void GameObject::ShowHierarchy()
+void GameObject::ShowHierarchy(bool use_search)
 {
 	if (!IsVisible())
 	{
@@ -626,7 +626,7 @@ void GameObject::ShowHierarchy()
 	}
 	ImGui::PopStyleVar();
 	ImGui::SameLine(); App->ShowHelpMarker("Right Click to open Options");
-	if(treeNod)
+	if (treeNod)
 	{
 		ImGui::PopStyleColor();
 
@@ -642,7 +642,11 @@ void GameObject::ShowHierarchy()
 				}
 			}
 		}
-
+		if (use_search)
+		{
+			ImGui::TreePop();
+			return;
+		}
 		for (uint i = 0; i < childs.size(); i++)
 		{
 			ImGui::PushID(i);
@@ -701,8 +705,7 @@ void GameObject::ShowGameObjectOptions()
 		{
 			//((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjecttoDelete(this);
 			Event e;
-			e.delete_go.type = EventType::EVENT_DELETE_GO;
-			e.delete_go.delay = 0.0f;
+			e.Set_event_data(EventType::EVENT_DELETE_GO);
 			e.delete_go.Todelte = this;
 			PushEvent(e);
 		}
@@ -722,7 +725,7 @@ void GameObject::ShowGameObjectOptions()
 		GameObject* cube = App->scene->CreateCube(this);
 		((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->LinkObject(cube);
 	}
-	
+
 
 	//if (ImGui::MenuItem("Sphere"))
 	//{
@@ -789,7 +792,7 @@ void GameObject::ShowGameObjectOptions()
 			{
 				AddComponent(Comp_Type::C_PARTICLE_SYSTEM);
 			}
-			
+
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("UI"))
@@ -917,7 +920,7 @@ void GameObject::ShowInspectorInfo()
 		/* STATIC CHECKBOX */
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 8));
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 3));
-		
+
 		static bool window_active = false;
 		static bool static_object = false;
 		ImGui::Text(""); ImGui::SameLine(8);
@@ -961,7 +964,7 @@ void GameObject::ShowInspectorInfo()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 8));
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 3));
-		
+
 		ImGui::Text(""); ImGui::SameLine(8);
 		ImGui::Checkbox("##3", &bb_active);
 
@@ -979,7 +982,7 @@ void GameObject::ShowInspectorInfo()
 	{
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.25f, 1.00f, 0.00f, 1.00f));
 		bool open = false;
-		char tmp [255];
+		char tmp[255];
 		sprintf(tmp, "%i", components[i]->GetUUID());
 		ImGui::PushID(tmp);
 		if (ImGui::TreeNodeEx(components[i]->GetName(), ImGuiTreeNodeFlags_DefaultOpen))
@@ -994,7 +997,7 @@ void GameObject::ShowInspectorInfo()
 			ImGui::PopStyleVar();
 			ImGui::EndPopup();
 		}
-		if(open)
+		if (open)
 		{
 			components[i]->ShowInspectorInfo();
 			ImGui::Separator();
@@ -1015,7 +1018,7 @@ void GameObject::ShowInspectorInfo()
 		add_component = !add_component;
 	}
 	ImGui::PopStyleColor();
-	ImVec2 pos_min = ImVec2(0,0);
+	ImVec2 pos_min = ImVec2(0, 0);
 	ImVec2 pos_max = ImVec2(0, 0);
 	if (add_component)
 	{
@@ -1097,7 +1100,7 @@ void GameObject::ShowInspectorInfo()
 		}
 		if (ImGui::MenuItem("Image"))
 		{
-			CompImage* image =(CompImage*)AddComponent(Comp_Type::C_IMAGE);
+			CompImage* image = (CompImage*)AddComponent(Comp_Type::C_IMAGE);
 			image->SetTextureID(App->renderer3D->id_checkImage);
 			add_component = false;
 		}
@@ -1140,11 +1143,11 @@ void GameObject::ShowInspectorInfo()
 
 		ImGui::End();
 		ImGui::PopStyleColor();
-		
+
 	}
 	if (ImGui::IsMouseHoveringRect(pos_min, pos_max) == false)
 	{
-		if(ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1) || ImGui::IsMouseClicked(2))
+		if (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1) || ImGui::IsMouseClicked(2))
 			add_component = false;
 	}
 }
@@ -1155,7 +1158,7 @@ void GameObject::FreezeTransforms(bool freeze, bool change_childs)
 	{
 		static_obj = freeze;
 		GetComponentTransform()->Freeze(freeze);
-		
+
 		if (change_childs)
 		{
 			for (uint i = 0; i < childs.size(); i++)
@@ -1245,7 +1248,7 @@ Component* GameObject::FindComponentByType(Comp_Type type) const
 		if (components[i] != nullptr && components[i]->GetType() == type) // We need to check if the component is ACTIVE first?¿
 		{
 
-			return components[i];		
+			return components[i];
 		}
 	}
 	return nullptr;
@@ -1286,7 +1289,7 @@ Component* GameObject::GetComponentsByUID(int uid, bool iterate_hierarchy)
 					return queue.front()->components[i];
 				}
 			}
-			for (uint k = 0; k <  queue.front()->childs.size(); k++)
+			for (uint k = 0; k < queue.front()->childs.size(); k++)
 			{
 				queue.push(queue.front()->childs[k]);
 			}
@@ -1316,9 +1319,9 @@ void GameObject::GetComponentsByRangeOfType(Comp_Type start, Comp_Type end, std:
 		{
 			for (uint i = 0; i < queue.front()->components.size(); i++)
 			{
-				if (queue.front()->components[i]->GetType() >= start&&queue.front()->components[i]->GetType() <= end)
+				if (queue.front()->components[i]->GetType() >= start && queue.front()->components[i]->GetType() <= end)
 				{
-					fill_comp->push_back( queue.front()->components[i]);
+					fill_comp->push_back(queue.front()->components[i]);
 				}
 			}
 			for (uint k = 0; k < queue.front()->childs.size(); k++)
@@ -1365,7 +1368,7 @@ Component* GameObject::GetComponentByName(const char* name_component) const
 
 Component* GameObject::FindParentComponentByType(Comp_Type type)const
 {
-	
+
 	Component * ret = nullptr;
 	ret = FindComponentByType(type);
 	if (ret == nullptr)
@@ -1403,7 +1406,7 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 	for (uint i = 0; i < components.size(); i++)
 	{
 		//We need to check if there is already a component of that type (no duplication)
-		if (components[i]->GetType() == type && type != Comp_Type::C_SCRIPT) 
+		if (components[i]->GetType() == type && type != Comp_Type::C_SCRIPT)
 		{
 			dupe = true;
 			LOG("There's already one component of this type in '%s'.", name.c_str());
@@ -1866,12 +1869,12 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		components[i]->Load(object, temp);
 
 		/*if (components[i]->GetType() == Comp_Type::C_MESH && ((CompMesh*)components[i])->HasSkeleton())
-			((CompMesh*)components[i])->GenSkeleton();*/
+		((CompMesh*)components[i])->GenSkeleton();*/
 	}
 }
 void GameObject::SyncComponents(GameObject* parent)
 {
-	
+
 	// Now Iterate All components and Load variables
 	for (uint i = 0; i < components.size(); i++)
 	{
@@ -1884,7 +1887,7 @@ void GameObject::SyncComponentsRecursive(GameObject * sync_parent)
 	// Now Iterate All components and Load variables
 	for (uint i = 0; i < components.size(); i++)
 	{
-		components[i]->SyncComponent(parent);
+		components[i]->SyncComponent(sync_parent);
 	}
 
 	// Now Iterate All Childs to Sync Components
@@ -1915,7 +1918,7 @@ CompTransform* GameObject::GetComponentTransform() const
 }
 CompRectTransform* GameObject::GetComponentRectTransform() const
 {
-		return (CompRectTransform*)FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
+	return (CompRectTransform*)FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
 }
 CompMesh* GameObject::GetComponentMesh() const
 {
@@ -2130,7 +2133,7 @@ std::vector<GameObject*> GameObject::GetChildsVec() const
 	return childs;
 }
 
-std::vector<GameObject*>* GameObject::GetChildsPtr() 
+std::vector<GameObject*>* GameObject::GetChildsPtr()
 {
 	return &childs;
 }
@@ -2248,7 +2251,7 @@ void GameObject::SetChildToNull(uint index)
 	}
 }
 
-	//ANIMATION PURPOSES---------------------------
+//ANIMATION PURPOSES---------------------------
 
 bool GameObject::AreTranslationsActivateds() const
 {

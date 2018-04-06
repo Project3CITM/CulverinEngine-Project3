@@ -4,6 +4,8 @@ namespace CulverinEditor
 {
     public class Transform : Component
     {
+        public Transform()
+        { }
         //protected Transform();        
         public Vector3 local_position {
             get

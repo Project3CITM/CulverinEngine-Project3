@@ -4,6 +4,9 @@ namespace CulverinEditor
 {
     public class CompLight : CulverinBehaviour
     {
+        public CompLight()
+        { }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern float GetIntensity();
 

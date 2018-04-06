@@ -12,6 +12,9 @@ public class LevelMap : CulverinBehaviour
     public int map_width = 0;
     public int map_height = 0;
 
+    // Elliot ----
+    public System.Random randomspeed;
+
     public int[,] map
     {
         get
@@ -22,6 +25,7 @@ public class LevelMap : CulverinBehaviour
 
     void Start()
     {
+        randomspeed = new System.Random(8675309);
         map_width = Map.GetWidthMap();
         map_height = Map.GetHeightMap();
 

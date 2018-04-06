@@ -4,6 +4,8 @@ namespace CulverinEditor
 {
     public class Material : CulverinBehaviour
     {
+        public Material()
+        { }
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetBool(string name, bool value);
 

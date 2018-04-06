@@ -8,10 +8,15 @@ public class Arrow : CulverinBehaviour
     public Vector3 speed = Vector3.Zero;
     public bool collision;
     CompRigidBody rb;
+    private bool destroyed = false;
+
+    public GameObject arrow_blood_particles;
+    public GameObject arrow_sparks_particles;
 
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
+        destroyed = false;
         Shoot();
         collision = true;
         damage = 10.0f;
@@ -27,9 +32,10 @@ public class Arrow : CulverinBehaviour
 
     void Update()
     {
-        if (GetComponent<Transform>().local_position.y < -5)
+        if (GetComponent<Transform>().local_position.y < -5 && destroyed == false)
         {
             Destroy(gameObject);
+            destroyed = true;
         }
 
         //if(rb.LockedTransform())
@@ -38,49 +44,22 @@ public class Arrow : CulverinBehaviour
         //}
     }
 
-    void OnTriggerEnter()
-    {
-        //Debug.Log("[]Trigger Start");
-        //GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
-        //// DAMAGE ---
-        //Debug.Log("Collided");
-
-        //if (collided_obj != null)
-        //{
-        //    Debug.Log("OnTriggerEnter");
-        //    Debug.Log(collided_obj.GetName());
-        //    // Check the specific enemy in front of you and apply dmg or call object OnContact
-        //    EnemiesManager enemy_manager = GetLinkedObject("enemies_obj").GetComponent<EnemiesManager>();
-        //    if (enemy_manager.IsEnemy(collided_obj))
-        //    {
-        //        enemy_manager.ApplyDamage(collided_obj, damage);
-        //    }
-        //    else
-        //    {
-        //        CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
-        //        if (obj_col != null)
-        //        {
-        //            obj_col.CallOnContact();
-        //        }
-        //    }
-        //}
-
-        //// DESTROY ---
-        if (collision)
-        {
-            Destroy(gameObject);
-        }
-    }
-
     void OnContact()
     {
         Debug.Log("[yellow]Contact Start");
-        GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
+        CompCollider col = GetComponent<CompCollider>();
+        GameObject collided_obj = col.GetCollidedObject();
+       
+        Vector3 point = col.GetContactPoint();
+        Vector3 normal = col.GetContactNormal();
 
         // DAMAGE ---
         Debug.Log("[error] Collided");
-        if (collided_obj != null)
+        if (collided_obj != null && destroyed == false)
         {
+            /* PLAY AUDIO */
+            GetComponent<CompAudio>().PlayEvent("TheonImpact");
+            Debug.Log("[yellow] AJAAAA -------------------------------------");
             //Lock transform to avoid trespassing more than one collider
             rb.LockTransform();
 
@@ -91,10 +70,19 @@ public class Arrow : CulverinBehaviour
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
             {
-                Debug.Log("[error] Enemy Found");
                 enemy_manager.ApplyDamage(collided_obj, damage);
-                Debug.Log("[error] Apply Damage");
+                if (arrow_blood_particles != null)
+                {
 
+                    arrow_blood_particles.GetComponent<Transform>().SetUpVector(normal);
+                    arrow_blood_particles.GetComponent<Transform>().SetPosition(point);
+
+                    CompParticleSystem arrow_particles_script = arrow_blood_particles.GetComponent<CompParticleSystem>();
+                    arrow_particles_script.ActivateEmission(true);
+
+                    Debug.Log("[pink] ---------------- BLOOOOOD -------------------");
+
+                }
             }
             else
             {
@@ -103,10 +91,23 @@ public class Arrow : CulverinBehaviour
                 {
                     obj_col.CallOnContact();
                 }
+                if (arrow_sparks_particles != null)
+                {
 
+                    arrow_sparks_particles.GetComponent<Transform>().SetUpVector(normal);
+                    arrow_sparks_particles.GetComponent<Transform>().SetPosition(point);
+
+                    CompParticleSystem wall_particles_script = arrow_sparks_particles.GetComponent<CompParticleSystem>();
+                    wall_particles_script.ActivateEmission(true);
+                    Debug.Log("[pink] ---------------- BLOOOOOD -------------------");
+                }
             }
         }
-        Destroy(gameObject);
+        if (destroyed == false)
+        {
+            Destroy(gameObject);
+            destroyed = true;
+        }
     }
 }
 

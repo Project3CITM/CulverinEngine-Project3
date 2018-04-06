@@ -16,8 +16,10 @@
 CompText::CompText(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Text";
+	name_component = "CompText";
 	glGenTextures(1, &id_font);
+	RELEASE_ARRAY(input_text);
+	ReSizeInput();
 
 
 }
@@ -187,9 +189,9 @@ void CompText::ShowInspectorInfo()
 			ImGui::SameLine();
 	}
 	
-	if (ImGui::InputTextMultiline("Text", (char*)input_text.c_str(), max_input, ImVec2(ImGui::GetWindowWidth(),100), ImGuiInputTextFlags_EnterReturnsTrue|ImGuiInputTextFlags_CtrlEnterForNewLine))
+	if (ImGui::InputTextMultiline("Text", input_text, max_input, ImVec2(ImGui::GetWindowWidth(),100), ImGuiInputTextFlags_EnterReturnsTrue|ImGuiInputTextFlags_CtrlEnterForNewLine))
 	{
-		SetString(input_text.c_str());
+		SetString(input_text);
 	}
 
 	ImGui::ColorEdit4("Color##image_rgba", color.ptr());
@@ -204,7 +206,15 @@ void CompText::ShowInspectorInfo()
 
 		}
 	}
-	ImGui::DragInt("Input limit", &max_input, 1.0f, 0, 50);
+	if (ImGui::DragInt("Input limit", &max_input, 1.0f, 1, 50))
+	{
+		if (max_input < 0)
+		{
+			max_input = 1;
+		}
+		ReSizeInput();
+	
+	}
 	if (text == nullptr || show_resource_font_windows)
 	{
 		if (show_resource_font_windows)
@@ -343,6 +353,17 @@ bool CompText::TextCanFit(float4 rect_transform, float4 rect_text)
 	return false;
 }
 
+void CompText::ReSizeInput()
+{
+	std::string tmp;
+	tmp.clear();
+	if (input_text != nullptr)
+		tmp = input_text;
+	RELEASE_ARRAY(input_text);
+	input_text = new char[max_input];
+	strcpy_s(input_text, max_input,  tmp.c_str());
+}
+
 void CompText::UpdateText()
 {
 	if (text == nullptr)
@@ -385,6 +406,7 @@ void CompText::CopyValues(const CompText * component)
 }
 void CompText::Clear()
 {
+	RELEASE_ARRAY(input_text);
 	text = nullptr;
 	if (my_canvas != nullptr)
 		my_canvas->RemoveGraphic(this);
@@ -435,9 +457,12 @@ void CompText::Load(const JSON_Object * object, std::string name)
 
 	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
 	text_str=json_object_dotget_string_with_std(object, name + "Text");
+
 	max_input=json_object_dotget_number_with_std(object, name + "Max Input");
 	text_size=json_object_dotget_number_with_std(object, name + "Text Size" );
-				   
+	ReSizeInput();
+	strcpy_s(input_text, max_input, text_str.c_str());
+
 	h_position= static_cast<CompText::HorizontalPosition>((int)json_object_dotget_number_with_std(object, name + "HPosition" ));
 	v_position= static_cast<CompText::VerticalPosition>((int)json_object_dotget_number_with_std(object, name + "VPosition" ));
 	can_draw=json_object_dotget_boolean_with_std(object, name + "Can Draw");
@@ -461,17 +486,21 @@ void CompText::Load(const JSON_Object * object, std::string name)
 
 		}
 	}
-	
-
 	Enable();
 }
 void CompText::SyncComponent(GameObject* sync_parent)
 {
+
 	AddRectTransform();
 	AddCanvasRender();
 	AddCanvas();
 	if (my_canvas_render != nullptr&&my_canvas != nullptr)
 	{
+		if (text != nullptr)
+		{
+			text->SetSize(text_size);
+			text->ReLoadToMemory();
+		}
 		UpdateText();
 		GenerateText();
 	}

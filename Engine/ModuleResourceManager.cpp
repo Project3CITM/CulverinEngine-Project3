@@ -12,9 +12,11 @@
 #include "ModuleGUI.h"
 
 ModuleResourceManager::ModuleResourceManager(bool start_enabled): Module(start_enabled)
-{
+{	
+	Awake_enabled = true;
 	Start_enabled = true;
 	preUpdate_enabled = true;
+	postUpdate_enabled = true;
 
 	name = "Resources Manager";
 }

@@ -259,6 +259,22 @@ void CSharpScript::SetBlendInTime(MonoObject * object, MonoString * name, float 
 	}
 }
 
+void CSharpScript::PlayAnimationNode(MonoObject * object, MonoString * name)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			AnimationNode* node = animation->GetNodeFromName(mono_string_to_utf8(name));
+			if (node != nullptr)
+			{
+				animation->PlayAnimation(node);
+			}
+		}
+	}
+}
+
 // CompCollider -----------------------------------------------------------
 MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 {
@@ -363,6 +379,14 @@ void CSharpScript::CallOnTriggerEnter(MonoObject * object)
 	if (current_game_object != nullptr)
 	{
 		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnTriggerEnter(nullptr);
+	}
+}
+
+void CSharpScript::CollisionActive(MonoObject * object, bool active)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->CollisionActive(active);
 	}
 }
 
@@ -548,11 +572,43 @@ void CSharpScript::ApplyTorqueImpulse(MonoObject * object, MonoObject * impulse)
 	}
 }
 
+void CSharpScript::LockMotion(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockMotion();
+	}
+}
+
+void CSharpScript::LockRotation(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockRotation();
+	}
+}
+
 void CSharpScript::LockTransform(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
 		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockTransform();
+	}
+}
+
+void CSharpScript::UnLockMotion(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->UnLockMotion();
+	}
+}
+
+void CSharpScript::UnLockRotation(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->UnLockRotation();
 	}
 }
 

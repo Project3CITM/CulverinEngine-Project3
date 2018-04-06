@@ -6,5 +6,9 @@ namespace CulverinEditor.SceneManagement
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void LoadScene(object scene_name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void QuitScene();
+
     }
 }

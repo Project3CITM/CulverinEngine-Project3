@@ -20,7 +20,7 @@
 #include "CompRigidBody.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModuleShaders.h"
 
 //SCRIPT VARIABLE UTILITY METHODS ------
@@ -44,7 +44,7 @@ void ScriptVariable::SetMonoValue(void* newVal)
 			//script->game_objects[object] = game_object;*/
 			//App->importer->iScript->UpdateMonoMap(game_object);
 			std::string temp = mono_field_get_name(mono_field);
-			App->importer->iScript->map_link_variables[temp] = game_object;
+			App->importer->iScript->map_link_variables.insert(std::pair<std::string, GameObject*>(temp, game_object));
 		}
 	}
 	else
@@ -240,7 +240,7 @@ void CSharpScript::LoadScript()
 {
 	if (CSObject)
 	{
-		mono_runtime_object_init(CSObject);
+		//mono_runtime_object_init(CSObject);
 
 		//Create main Functions
 		Start = CreateMainFunction("Start", DefaultParam, FunctionBase::CS_Start);
@@ -273,12 +273,6 @@ MainMonoMethod CSharpScript::CreateMainFunction(std::string function, int parame
 //Depending on the function passed, script will perform its actions
 void CSharpScript::DoMainFunction(FunctionBase function, void** parameters)
 {
-	if (!test)
-	{
-		App->importer->iScript->UpdateMonoScript(this, GetMonoObject());
-		test = true;
-	}
-
 	switch (function)
 	{
 	case FunctionBase::CS_Start:
@@ -370,9 +364,9 @@ void CSharpScript::DoMainFunction(FunctionBase function, void** parameters)
 void CSharpScript::DoFunction(MonoMethod* function, void ** parameter)
 {
 	MonoObject* exception = nullptr;
-
+	current_game_object = own_game_object;
 	// Do Main Function
-	mono_runtime_invoke(function, CSObject, parameter, &exception);
+	mono_runtime_invoke(function, GetMonoObject(), parameter, &exception);
 	if (exception)
 	{
 		mono_print_unhandled_exception(exception);
@@ -383,7 +377,7 @@ void CSharpScript::DoPublicMethod(PublicMethod* function, void** parameter)
 {
 	MonoObject* exception = nullptr;
 	// Do Main Function
-	mono_runtime_invoke(function->GetMethod(), function->GetScript(), parameter, &exception);
+	mono_runtime_invoke(function->GetMethod(), mono_gchandle_get_target(function->references), parameter, &exception);
 	if (exception)
 	{
 		mono_print_unhandled_exception(exception);
@@ -402,7 +396,12 @@ bool CSharpScript::CheckMonoObject(MonoObject* object)
 
 MonoObject* CSharpScript::GetMonoObject() const
 {
-	return CSObject;
+	return mono_gchandle_get_target(CSReference);
+}
+
+uint CSharpScript::GetReferences() const
+{
+	return CSReference;
 }
 
 void CSharpScript::SetMonoObject(MonoObject* new_object)
@@ -435,6 +434,9 @@ void CSharpScript::CreateCSObject()
 	if (CSClass)
 	{
 		CSObject = mono_object_new(App->importer->iScript->GetDomain(), CSClass);
+		CSReference = mono_gchandle_new(CSObject, false);
+		mono_runtime_object_init(CSObject);
+		App->importer->iScript->UpdateMonoScript(this, CSReference);
 	}
 	else
 	{
@@ -459,7 +461,36 @@ void CSharpScript::SetNameSpace(std::string _name_space)
 
 MonoObject* CSharpScript::GetMonoObjectLink(std::string name)
 {
-	return App->importer->iScript->GetMonoObject(App->importer->iScript->map_link_variables[name]);
+	for (int i = 0; i < variables.size(); i++)
+	{
+		if (strcmp(variables[i]->name, name.c_str()) == 0)
+		{
+			std::map<std::string, GameObject*>::iterator it = App->importer->iScript->map_link_variables.begin();
+			while (it != App->importer->iScript->map_link_variables.end())
+			{
+				if (strcmp(name.c_str(), it->first.c_str()) == 0)
+				{
+					GameObject* temp = it->second;
+					if (temp == variables[i]->game_object)
+					{
+						return App->importer->iScript->GetMonoObject(temp);
+					}
+				}
+				it++;
+			}
+		}
+	}
+	std::multimap<std::string, GameObject*>::iterator it = App->importer->iScript->map_link_variables.begin();
+	while (it != App->importer->iScript->map_link_variables.end())
+	{
+		if (it->first == name)
+		{
+			return App->importer->iScript->GetMonoObject(it->second);
+		}
+		it++;
+	}
+	//return App->importer->iScript->GetMonoObject(App->importer->iScript->map_link_variables[name]);
+	return nullptr;
 }
 
 bool CSharpScript::ReImport(std::string pathdll, std::string nameClass)
@@ -713,13 +744,13 @@ bool CSharpScript::GetValueFromMono(ScriptVariable* variable, MonoClassField* mf
 			variable->value = new char[mono_type_stack_size(mtype, NULL)];
 
 			//Set value of the variable by passing it as a reference in this function
-			mono_field_get_value(CSObject, mfield, variable->value);
+			mono_field_get_value(GetMonoObject(), mfield, variable->value);
 		}
 		else if (variable->type == VarType::Var_STRING)
 		{
 			MonoString* str = nullptr;
 			//Set value of the variable by passing it as a reference in this function
-			mono_field_get_value(CSObject, mfield, &str);
+			mono_field_get_value(GetMonoObject(), mfield, &str);
 
 			if (str != nullptr)
 			{
@@ -751,28 +782,31 @@ bool CSharpScript::UpdateValueFromMono(ScriptVariable * variable, MonoClassField
 {
 	if (variable != nullptr && mfield != nullptr && mtype != nullptr)
 	{
-		if (variable->type != VarType::Var_STRING && variable->type != VarType::Var_GAMEOBJECT)
+		if (variable->access == VarAccess::Var_PUBLIC)
 		{
-			//Set value of the variable by passing it as a reference in this function
-			mono_field_get_value(CSObject, mfield, variable->value);
-		}
-		else if (variable->type == VarType::Var_GAMEOBJECT)
-		{
-			if (variable->game_object != nullptr)
+			if (variable->type != VarType::Var_STRING && variable->type != VarType::Var_GAMEOBJECT)
 			{
 				//Set value of the variable by passing it as a reference in this function
-				mono_field_get_value(CSObject, mfield, variable->game_object);
+				mono_field_get_value(GetMonoObject(), mfield, variable->value);
 			}
-		}
-		else
-		{
-			MonoString* str = nullptr;
+			else if (variable->type == VarType::Var_GAMEOBJECT)
+			{
+				if (variable->game_object != nullptr)
+				{
+					//Set value of the variable by passing it as a reference in this function
+					mono_field_get_value(GetMonoObject(), mfield, variable->game_object);
+				}
+			}
+			else
+			{
+				MonoString* str = nullptr;
 
-			//Set value of the variable by passing it as a reference in this function
-			mono_field_get_value(CSObject, mfield, &str);
+				//Set value of the variable by passing it as a reference in this function
+				mono_field_get_value(GetMonoObject(), mfield, &str);
 
-			//Copy string into str_value (specific for strings)
-			variable->str_value = mono_string_to_utf8(str);
+				//Copy string into str_value (specific for strings)
+				variable->str_value = mono_string_to_utf8(str);
+			}
 		}
 		return true;
 	}
@@ -900,8 +934,8 @@ void CSharpScript::SetVarValue(ScriptVariable* variable, void* new_val)
 
 void CSharpScript::CreateGameObject(MonoObject* object)
 {
-	GameObject* gameobject = App->scene->CreateGameObject();
-	App->importer->iScript->UpdateMonoMap(gameobject, object);
+	//GameObject* gameobject = App->scene->CreateGameObject();
+	//App->importer->iScript->UpdateMonoMap(gameobject, object);
 	//game_objects[object] = gameobject;
 }
 
@@ -1052,9 +1086,8 @@ MonoObject*	CSharpScript::Instantiate_respawn(MonoObject* object, MonoString* pr
 	{
 		//Event system
 		Event e;
-		e.delayed_go_spawn.type = EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN;
-		e.delayed_go_spawn.delay = time;
-		e.delayed_go_spawn.Tospawn = gameobject;
+		e.Set_event_data_f(EventType::EVENT_SPAWN_GAMEOBJECT, 0, time);
+		e.spawnGO.Tospawn = gameobject;
 		PushEvent(e);
 		App->importer->iScript->UpdateMonoMap(gameobject);
 		return App->importer->iScript->GetMonoObject(gameobject);
@@ -1069,9 +1102,11 @@ void CSharpScript::Destroy(MonoObject* object, float time)
 	if (gameobject != nullptr)
 	{
 		Event e;
-		e.delete_go.type = EventType::EVENT_DELETE_GO;
-		e.delete_go.delay = time;
+		LOG("Destroy ITEM gameobject %s", gameobject->GetName());
+		
+		e.Set_event_data(EventType::EVENT_DELETE_GO, 0, time);
 		e.delete_go.Todelte = gameobject;
+		e.delete_go.uuid = gameobject->GetUUID();
 		PushEvent(e);
 	}
 	else
@@ -1152,6 +1187,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompLight";
 	}
+	else if (name_class == "CompText")
+	{
+		comp_name = "CompText";
+	}
 	/* Scripts */
 	if (comp_name == "")
 	{
@@ -1192,7 +1231,7 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 					MonoObject* new_object = mono_object_new(CSdomain, classT);
 					if (new_object)
 					{
-						App->importer->iScript->UpdateMonoComp(comp, new_object);
+						App->importer->iScript->UpdateMonoComp(comp, mono_gchandle_new(new_object, false));
 						comp->SetInScripting();
 						return new_object;
 					}
@@ -1289,8 +1328,8 @@ void CSharpScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* 
 			{
 				comp->Disable();
 				Event script;
-				script.script.type = EventType::EVENT_SCRIPT_DISABLED;
-				script.script.script = (CompScript*)comp;
+				script.Set_event_data(EventType::EVENT_SCRIPT_DISABLED);
+				script.script_disabled.script = (CompScript*)comp;
 				PushEvent(script);
 			}
 		}
@@ -1439,7 +1478,8 @@ MonoObject * CSharpScript::GetMaterialByName(MonoString * name)
 			MonoObject* new_object = mono_object_new(CSdomain, classT);
 			if (new_object)
 			{
-				App->importer->iScript->UpdateMonoMaterial(comp, new_object);
+				mono_runtime_object_init(new_object);
+				App->importer->iScript->UpdateMonoMaterial(comp, mono_gchandle_new(new_object, false));
 
 				return new_object;
 			}

@@ -36,6 +36,9 @@ public:
 	void ActivateShape();
 	void DeActivateShape();
 
+	void EnableCollisions();
+	void DisableCollisions();
+
 	// Set Methods
 	void SetAsKinematic(bool kinematic);
 	void SetAsTrigger(bool trigger);

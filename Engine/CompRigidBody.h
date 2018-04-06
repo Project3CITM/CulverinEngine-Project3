@@ -66,7 +66,11 @@ public:
 	void ApplyTorqueForce(float3 force);
 	void ApplyTorqueImpulse(float3 impulse);
 
+	void LockMotion();
+	void LockRotation();
 	void LockTransform();
+	void UnLockMotion();
+	void UnLockRotation();
 	void UnLockTransform();
 
 	void WakeUp();

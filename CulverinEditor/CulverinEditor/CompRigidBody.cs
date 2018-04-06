@@ -4,6 +4,9 @@ namespace CulverinEditor
 {
     public class CompRigidBody : CulverinBehaviour
     {
+        public CompRigidBody()
+        { }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern Vector3 GetColliderPosition();
 
@@ -29,7 +32,19 @@ namespace CulverinEditor
         public extern void ApplyTorqueImpulse(Vector3 impulse);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void LockMotion();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void LockRotation();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void LockTransform();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void UnLockMotion();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void UnLockRotation();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void UnLockTransform();

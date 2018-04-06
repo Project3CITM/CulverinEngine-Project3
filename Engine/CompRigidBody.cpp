@@ -57,6 +57,9 @@ CompRigidBody::CompRigidBody(const CompRigidBody & copy, GameObject * parent) : 
 
 	kinematic = copy.kinematic;
 	body->SetAsKinematic(kinematic);
+
+	lock_move = copy.lock_move;
+	SetDinamicLockFlags();
 }
 
 CompRigidBody::~CompRigidBody()
@@ -65,7 +68,7 @@ CompRigidBody::~CompRigidBody()
 
 void CompRigidBody::PreUpdate(float dt)
 {
-	if (((dt > 0 && body && !kinematic) || (own_update)) && !transform->GetToUpdate())
+	if (((dt > 0 && body && !kinematic && lock_move != 63) || (own_update)) && !transform->GetToUpdate())
 	{
 		own_update = true;
 		UpdateParentPosition();
@@ -294,7 +297,7 @@ bool CompRigidBody::HaveBodyShape()
 
 void CompRigidBody::SetColliderPosition()
 {
-	Quat quat = transform->GetRotGlobal();
+	Quat quat = transform->GetRotParent()*transform->GetRot();
 	float3 fpos = transform->GetPosGlobal();
 
 	if (collider_comp)
@@ -454,12 +457,64 @@ void CompRigidBody::ApplyTorqueImpulse(float3 impulse)
 	}
 }
 
+void CompRigidBody::LockMotion()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
+		lock_move |= (1 << 0);
+		lock_move |= (1 << 1);
+		lock_move |= (1 << 2);
+	}
+}
+
+void CompRigidBody::LockRotation()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+		lock_move |= (1 << 3);
+		lock_move |= (1 << 4);
+		lock_move |= (1 << 5);
+	}
+}
+
 void CompRigidBody::LockTransform()
 {
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(true);
-		//body->SetAsKinematic(true);
+		lock_move = 63;
+	}
+}
+
+void CompRigidBody::UnLockMotion()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, false);
+		lock_move &= ~(1 << 0);
+		lock_move &= ~(1 << 1);
+		lock_move &= ~(1 << 2);
+	}
+}
+
+void CompRigidBody::UnLockRotation()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, false);
+		lock_move &= ~(1 << 3);
+		lock_move &= ~(1 << 4);
+		lock_move &= ~(1 << 5);
 	}
 }
 
@@ -468,8 +523,7 @@ void CompRigidBody::UnLockTransform()
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(false);
-		SetDinamicLockFlags();
-		//body->SetAsKinematic(kinematic);
+		lock_move = 0;
 	}
 }
 

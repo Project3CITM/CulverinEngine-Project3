@@ -1,5 +1,6 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using CulverinEditor.SceneManagement;
 
 public class CharactersManager : CulverinBehaviour
 {
@@ -54,6 +55,10 @@ public class CharactersManager : CulverinBehaviour
     //To manage Jaime Secondary Ability
     public bool shield_activated = false;
 
+    public GameObject camera;
+
+    CompAudio audio;
+
     void Start()
     {    
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
@@ -70,28 +75,17 @@ public class CharactersManager : CulverinBehaviour
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
 
+        camera = GetLinkedObject("camera");
+
         SetCurrentPosition();
 
+        audio = GetComponent<CompAudio>();
+
         changing = false;
-
-        //core menu
-        //bg = GetLinkedObject("bg");
-        //coin1 = GetLinkedObject("coin1");
-        //coin2= GetLinkedObject("coin2");
-        //coin3= GetLinkedObject("coin3");
-
-        //coin1.SetActive(false);
-        //coin2.SetActive(false);
-        //coin3.SetActive(false);
-        //bg.SetActive(false);
     }
 
     void Update()
     {
-        //if (in_puzzle)
-        //{
-        //    puzzle_start += Time.deltaTime;
-        //}
 
         switch (state)
         {
@@ -101,8 +95,6 @@ public class CharactersManager : CulverinBehaviour
                     if(changing && IsCharacterAnimationRunning(current_character,"Idle"))
                     {
                         changing = false;
-
-                        Debug.Log("[yellow] FINISHED IN");
                     }
 
                     //Test Jaime Secondary Ability
@@ -125,6 +117,7 @@ public class CharactersManager : CulverinBehaviour
                         }
                         else
                         {
+                            SceneManager.LoadScene("LoseMenu");
                             //DEFEAT
                         }
                     }
@@ -152,24 +145,6 @@ public class CharactersManager : CulverinBehaviour
                         }
                     }
 
-                    //MANAGE SECONDARY ABILITIES ------------
-                    else if (Input.GetKeyDown(KeyCode.K))
-                    {
-                        if (IsDead(left_character) == false)
-                        {
-                            SecondaryAbility(Side.LEFT);
-                            Debug.Log("Left S Attack");
-                        }
-                    }
-                    else if (Input.GetKeyDown(KeyCode.L))
-                    {
-                        if (IsDead(left_character) == false)
-                        {
-                            SecondaryAbility(Side.RIGHT);
-                            Debug.Log("Right S Attack");
-                        }
-                    }
-
                     float vari = Input.GetInput_ControllerAxis("LAllyAttack", "Player");
 
                     if (vari>0.8)
@@ -193,13 +168,10 @@ public class CharactersManager : CulverinBehaviour
 
             case State.CHANGING_LEFT:
                 {
-                    Debug.Log("[blue] LEFT OUT");
                     if (IsCharacterAnimationStopped(current_character, "Out"))
                     {
-                        Debug.Log("[blue]  ----------------------------");
                         ChangeLeft();
 
-                        //Change GameObjects --------------------
                         temporal_change = current_character;
                         current_character = left_character;
                         left_character = temporal_change;
@@ -503,6 +475,7 @@ public class CharactersManager : CulverinBehaviour
     //Call thius function to deal damage to the current character
     public bool GetDamage(float dmg)
     {
+
         // Shield Ability Consumable
         if (player_obj.GetComponent<Shield>().IsActive())
         {
@@ -513,13 +486,17 @@ public class CharactersManager : CulverinBehaviour
 
         else
         {
+
             // CURRENT CHARACTER -------------------------------
             if (current_character.GetName() == "Jaime")
             {
                 if (current_character.GetComponent<JaimeController>().GetDamage(dmg))
                 {
+                    camera.GetComponent<CompAnimation>().PlayAnimation("Player_Hit");
                     if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
                     {
+                        StatsScore.CharacterDead();
+
                         current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
                         current_character.GetComponent<JaimeController>().PlayFx("JaimeDead");
                     }
@@ -535,6 +512,8 @@ public class CharactersManager : CulverinBehaviour
                 current_character.GetComponent<DaenerysController>().GetDamage(dmg);
                 if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
                 {
+                    StatsScore.CharacterDead();
+
                     current_character.GetComponent<DaenerysController>().SetState(CharacterController.State.DEAD);
                     current_character.GetComponent<DaenerysController>().PlayFx("DaenerysDead");
                 }
@@ -545,6 +524,8 @@ public class CharactersManager : CulverinBehaviour
                 current_character.GetComponent<TheonController>().GetDamage(dmg);
                 if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
                 {
+                    StatsScore.CharacterDead();
+
                     current_character.GetComponent<TheonController>().SetState(CharacterController.State.DEAD);
                     current_character.GetComponent<TheonController>().PlayFx("TheonDead");
                 }

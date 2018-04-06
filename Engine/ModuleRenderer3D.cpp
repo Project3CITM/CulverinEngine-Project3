@@ -192,7 +192,8 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	non_glow_material->name = "Non Glow Material";
 	non_glow_material->material_shader = non_glow_shader;
 	non_glow_material->GetProgramVariables();
-
+	App->module_shaders->materials.push_back(non_glow_material);
+	non_glow_material->active_num = 1;
 
 	final_tex_material = new Material();
 	final_tex_material->name = "Final Tex Material";

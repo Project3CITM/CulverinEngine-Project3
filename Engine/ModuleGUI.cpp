@@ -13,11 +13,13 @@
 #include "WindowSceneWorld.h"
 #include "WindowProject.h"
 #include "ModuleImporter.h"
+#include "ModuleAnimation.h"
+
 #include "ImportScript.h"
 #include "GameObject.h"
 #include "ModuleAudio.h"
 #include "ModuleMap.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ShadersLib.h"
 #include "EventDef.h"
 #include "ImGui/imgui.h"
@@ -54,6 +56,7 @@ ModuleGUI::~ModuleGUI()
 
 bool ModuleGUI::Init(JSON_Object* node)
 {
+	perf_timer.Start();
 	win_manager.push_back(new Hardware());		//0---- HARDWARE
 	win_manager.push_back(new Inspector());		//1---- INSPECTOR
 	win_manager.push_back(new Hierarchy());		//2---- Hierarchy
@@ -66,7 +69,7 @@ bool ModuleGUI::Init(JSON_Object* node)
 	win_manager[SCENEWORLD]->active[0].active = true;
 	win_manager[PROJECT]->active[0].active = true;
 
-	
+	Awake_t = perf_timer.ReadMs();
 	return true;
 }
 
@@ -130,7 +133,7 @@ update_status ModuleGUI::Update(float dt)
 				if (App->scene->scene_saved)
 				{
 					App->scene->DeleteAllGameObjects(App->scene->root);
-					App->event_system->ClearEvents(EventType::EVENT_DRAW);
+					ClearEvents(EventType::EVENT_DRAW);
 					App->scene->root->SetName("NewScene");
 					App->scene->CreateMainCamera(nullptr);
 					App->resource_manager->ReImportAllScripts();
@@ -332,6 +335,11 @@ update_status ModuleGUI::Update(float dt)
 			{
 				window_create_map = !window_create_map;
 			}
+
+			if (ImGui::MenuItem("Animation"))
+			{
+				window_create_animation = !window_create_animation;
+			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Resources"))
 			{
@@ -480,7 +488,12 @@ update_status ModuleGUI::Update(float dt)
 		App->map->ShowEditorMap(window_create_map);
 	}
 	//----------------------------------------------
-
+	//MAP ----------------------
+	if (window_create_animation)
+	{
+		App->animation_ui->ShowAnimationWindow(window_create_animation);
+	}
+	//----------------------------------------------
 	// Window Creating Shader Object --------------------------------
 
 	if (shader_obj_creation) {
@@ -493,7 +506,7 @@ update_status ModuleGUI::Update(float dt)
 		if (ImGui::Button("Create")) {
 
 			Event shader_event;
-			shader_event.shader_editor.type = EventType::EVENT_OPEN_SHADER_EDITOR;
+			shader_event.Set_event_data(EventType::EVENT_OPEN_SHADER_EDITOR);
 			shader_event.shader_editor.name = str_shad_temp;
 
 			switch (combo_shaders) {
@@ -533,8 +546,6 @@ update_status ModuleGUI::Update(float dt)
 			shader_options += '\0';
 		}
 
-	
-
 		ImGui::Combo("Shader 1:", &combo_shaders_obj, shader_options.c_str());
 
 		ImGui::Combo("Shader 2:", &combo_shaders_obj2, shader_options.c_str());
@@ -543,7 +554,7 @@ update_status ModuleGUI::Update(float dt)
 		{
 
 			Event shader_event_prg;
-			shader_event_prg.shader_program.type = EventType::EVENT_CREATE_SHADER_PROGRAM;
+			shader_event_prg.Set_event_data(EventType::EVENT_CREATE_SHADER_PROGRAM);
 			shader_event_prg.shader_program.name = str_shad_prg_temp;
 
 			if (combo_shaders_obj != -1)
@@ -806,6 +817,11 @@ update_status ModuleGUI::UpdateConfig(float dt)
 	ImGui::Text("Style Editor");
 	ImGui::Checkbox("##WindowInfoMouse", &window_infoMouse); ImGui::SameLine();
 	ImGui::Text("Info Mouse");
+
+	//develop_mode
+	ImGui::Checkbox("##develop_mode", &develop_mode); ImGui::SameLine();
+	ImGui::Text("Use Develop Mode"); ImGui::SameLine();
+	App->ShowHelpMarker("Be careful, you can make the engine explode!");
 
 	ImGui::PopStyleVar();
 
@@ -1285,7 +1301,7 @@ bool ModuleGUI::SetEventListenrs()
 
 void ModuleGUI::OnEvent(Event& event)
 {
-	switch (event.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:
 		//need to fix std::pair

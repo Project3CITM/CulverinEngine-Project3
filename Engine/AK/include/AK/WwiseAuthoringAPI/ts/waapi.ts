@@ -49,10 +49,16 @@ export const ak = {
             testAssert: "ak.wwise.debug.testAssert", 
             /** Sent when an assert has failed. */
             assertFailed: "ak.wwise.debug.assertFailed", 
-            /** Enables debug assertions. */
+            /** Enables debug assertions. Every call to enableAsserts with false increments the ref count. Calling with true will decrement the ref count. This is only available with Debug builds. */
             enableAsserts: "ak.wwise.debug.enableAsserts"
         }, 
         core: {
+            audioSourcePeaks: {
+                /** Get the min/max peak pairs, in a given region of an audio source, as a collection of binary strings (one per channel). If getCrossChannelPeaks is true, there will be only one binary string representing peaks across all channels globally. */
+                getMinMaxPeaksInRegion: "ak.wwise.core.audioSourcePeaks.getMinMaxPeaksInRegion", 
+                /** Get the min/max peak pairs in the entire trimmed region of an audio source, for each channel, as an array of binary strings (one per channel). If getCrossChannelPeaks is true, there will be only one binary string representing peaks across all channels globally. */
+                getMinMaxPeaksInTrimmedRegion: "ak.wwise.core.audioSourcePeaks.getMinMaxPeaksInTrimmedRegion"
+            }, 
             remote: {
                 /** Retrieves the connection status. */
                 getConnectionStatus: "ak.wwise.core.remote.getConnectionStatus", 
@@ -66,22 +72,24 @@ export const ak = {
             /** Retrieve global Wwise information. */
             getInfo: "ak.wwise.core.getInfo", 
             object: {
+                /** Sent when an object reference is changed. */
+                referenceChanged: "ak.wwise.core.object.referenceChanged", 
                 /** Moves an object to the given parent. */
                 move: "ak.wwise.core.object.move", 
                 /** Sent when an attenuation curve's link/unlink is changed. */
                 attenuationCurveLinkChanged: "ak.wwise.core.object.attenuationCurveLinkChanged", 
                 /** Sent when an object is added as a child to another object. */
                 childAdded: "ak.wwise.core.object.childAdded", 
+                /** Retrieves the list of all object types. */
+                getTypes: "ak.wwise.core.object.getTypes", 
                 /** Sent when the watched property of an object changes. */
                 propertyChanged: "ak.wwise.core.object.propertyChanged", 
                 /** Creates an object of type 'type', as a child of 'parent'. */
                 create: "ak.wwise.core.object.create", 
-                /** Sent when one or many curves are changed. */
-                curveChanged: "ak.wwise.core.object.curveChanged", 
-                /** Sent prior to an object's deletion. */
-                preDeleted: "ak.wwise.core.object.preDeleted", 
                 /** Performs a query, returns specified data for each object in query result. Refer to \ref waapi_query for more information. */
                 get: "ak.wwise.core.object.get", 
+                /** Sent prior to an object's deletion. */
+                preDeleted: "ak.wwise.core.object.preDeleted", 
                 /** Sent when an object is renamed. */
                 nameChanged: "ak.wwise.core.object.nameChanged", 
                 /** Sent following an object's deletion. */
@@ -100,6 +108,8 @@ export const ak = {
                 copy: "ak.wwise.core.object.copy", 
                 /** Retrieves the status of a property. */
                 isPropertyEnabled: "ak.wwise.core.object.isPropertyEnabled", 
+                /** Retrieves information about an object property. */
+                getPropertyInfo: "ak.wwise.core.object.getPropertyInfo", 
                 /** Sets an object's reference value. */
                 setReference: "ak.wwise.core.object.setReference", 
                 /** Sent when an attenuation curve is changed. */
@@ -108,8 +118,12 @@ export const ak = {
                 created: "ak.wwise.core.object.created", 
                 /** Sent when an object is removed from the children of another object. */
                 childRemoved: "ak.wwise.core.object.childRemoved", 
+                /** Retrieves the list of property names for an object. */
+                getPropertyNames: "ak.wwise.core.object.getPropertyNames", 
                 /** Gets the specified attenuation curve for a given attenuation object. */
                 getAttenuationCurve: "ak.wwise.core.object.getAttenuationCurve", 
+                /** Sent when one or many curves are changed. */
+                curveChanged: "ak.wwise.core.object.curveChanged", 
                 /** Deletes the specified object. */
                 delete_: "ak.wwise.core.object.delete"
             }, 
@@ -122,7 +136,7 @@ export const ak = {
                 beginGroup: "ak.wwise.core.undo.beginGroup"
             }, 
             project: {
-                /** Sent when the after the project is completly closed. */
+                /** Sent when the after the project is completely closed. */
                 postClosed: "ak.wwise.core.project.postClosed", 
                 /** Sent when the project has been loaded. */
                 loaded: "ak.wwise.core.project.loaded", 
@@ -130,6 +144,20 @@ export const ak = {
                 preClosed: "ak.wwise.core.project.preClosed", 
                 /** Saves the current project. */
                 save: "ak.wwise.core.project.save"
+            }, 
+            transport: {
+                /** Gets the state of the given transport object. */
+                getState: "ak.wwise.core.transport.getState", 
+                /** Sent when the transport's state has changed. */
+                stateChanged: "ak.wwise.core.transport.stateChanged", 
+                /** Creates a transport object for the given Wwise object.  The return transport object can be used to play, stop, pause and resume the Wwise object via the other transport functions. */
+                create: "ak.wwise.core.transport.create", 
+                /** Returns the list of transport objects. */
+                getList: "ak.wwise.core.transport.getList", 
+                /** Destroys the given transport object. */
+                destroy: "ak.wwise.core.transport.destroy", 
+                /** Executes an action on the given transport object, or all transports if no transport is specified. */
+                executeAction: "ak.wwise.core.transport.executeAction"
             }, 
             soundbank: {
                 /** Retrieves a SoundBank's inclusion list. */
@@ -143,23 +171,34 @@ export const ak = {
                 /** Scripted object creation and audio file import from a tab-delimited file. */
                 importTabDelimited: "ak.wwise.core.audio.importTabDelimited"
             }, 
-            transport: {
-                /** Destroys the given transport object. */
-                destroy: "ak.wwise.core.transport.destroy", 
-                /** Creates a transport object for the given Wwise object.  The return transport object can be used to play, stop, pause and resume the Wwise object via the other transport functions. */
-                create: "ak.wwise.core.transport.create", 
-                /** Gets the state of the given transport object. */
-                getState: "ak.wwise.core.transport.getState", 
-                /** Executes an action on the given transport object, or all transports if no transport is specified. */
-                executeAction: "ak.wwise.core.transport.executeAction", 
-                /** Returns the list of transport objects. */
-                getList: "ak.wwise.core.transport.getList"
+            switchContainer: {
+                /** Remove an assignment between a Switch Container's child and a State. */
+                removeAssignment: "ak.wwise.core.switchContainer.removeAssignment", 
+                /** Returns the list of assignments between a Switch Container's children and states. */
+                getAssignments: "ak.wwise.core.switchContainer.getAssignments", 
+                /** Sent when an assignment is removed from a Switch Container. */
+                assignmentRemoved: "ak.wwise.core.switchContainer.assignmentRemoved", 
+                /** Assign a Switch Container's child to a Switch. This is the equivalent of doing a drag&drop of the child to a state in the Assigned Objects view. The child is always added at the end for each state. */
+                addAssignment: "ak.wwise.core.switchContainer.addAssignment", 
+                /** Sent when an assignment is added to a Switch Container. */
+                assignmentAdded: "ak.wwise.core.switchContainer.assignmentAdded"
             }, 
             plugin: {
-                /** Retrieves the list of all plugins. */
+                /**
+                 * Retrieves the list of all object types.
+                 * \deprecated in favor of ak.wwise.core.object.getTypes
+                 */
                 getList: "ak.wwise.core.plugin.getList", 
-                /** Retrieves information about a plugin property. */
-                getProperty: "ak.wwise.core.plugin.getProperty"
+                /**
+                 * Retrieves information about an object property.
+                 * \deprecated in favor of ak.wwise.core.object.getPropertyInfo
+                 */
+                getProperty: "ak.wwise.core.plugin.getProperty", 
+                /**
+                 * Retrieves the list of property names for an object.
+                 * \deprecated in favor of ak.wwise.core.object.getPropertyNames
+                 */
+                getProperties: "ak.wwise.core.plugin.getProperties"
             }
         }, 
         ui: {
@@ -169,14 +208,26 @@ export const ak = {
                 /** Opens a project, specified by path. */
                 open: "ak.wwise.ui.project.open"
             }, 
+            /** Bring Wwise main window to foreground. Refer to SetForegroundWindow and AllowSetForegroundWindow on MSDN for more information on the restrictions. Refer to ak.wwise.core.getInfo to obtain the Wwise process ID for AllowSetForegroundWindow. */
+            bringToForeground: "ak.wwise.ui.bringToForeground", 
             commands: {
                 /** Executes a command. Some commands can take a list of objects as parameter. Refer to \ref globalcommandsids for the available commands. */
-                execute: "ak.wwise.ui.commands.execute"
+                execute: "ak.wwise.ui.commands.execute", 
+                /** Get the list of commands. */
+                getCommands: "ak.wwise.ui.commands.getCommands"
             }, 
             /** Retrieves the list of objects currently selected by the user in the active view. */
             getSelectedObjects: "ak.wwise.ui.getSelectedObjects", 
             /** Sent when the selection changes in the project. */
             selectionChanged: "ak.wwise.ui.selectionChanged"
+        }, 
+        waapi: {
+            /** Retrieve the list of topics to which a client can subscribe. */
+            getTopics: "ak.wwise.waapi.getTopics", 
+            /** Retrieve the list of functions. */
+            getFunctions: "ak.wwise.waapi.getFunctions", 
+            /** Retrieve the JSON schema of a Waapi URI. */
+            getSchema: "ak.wwise.waapi.getSchema"
         }
     }
 }

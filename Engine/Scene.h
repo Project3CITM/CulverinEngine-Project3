@@ -61,6 +61,9 @@ public:
 	void ModificateParent(GameObject* child, GameObject* new_parent);
 	void RemoveAllPointers(GameObject* gameobject);
 
+	//Dont use!
+	void GetAllGameObjects(GameObject* parent, GameObject* root);
+
 	
 	// DRAWING METHODS ---------
 	void DrawPlane();
@@ -88,11 +91,14 @@ public:
 
 	void DeleteAllGameObjects(GameObject* gameobject, bool isMain = true, bool is_reimport = false);
 	void DeleteGameObject(GameObject* gameobject, bool isImport = false, bool is_reimport = false);
+	bool CheckDeletedObjcet(uint uuid);
 	// -------------------------------------
 
 	// UI ----------------------------------
 	Component* BlitSceneComponentsAsButtons(Comp_Type type, std::string& current_item);
 	// -------------------------------------
+
+	bool SaveConfig(JSON_Object* node);
 
 public:
 	FrameBuffer* scene_buff = nullptr;
@@ -102,7 +108,8 @@ public:
 	FrameBuffer* final_buff = nullptr;
 	//Container of all Game Objects
 	GameObject* root = nullptr;
-	GameObject* temp_scene = nullptr;
+	GameObject* search_name = nullptr;
+	GameObject* temporary_scene = nullptr;
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
 	std::vector<GameObject*> static_objects;
@@ -139,6 +146,7 @@ private:
 	std::vector<std::string>				defined_tags;
 	std::vector<std::vector<GameObject*>*>	tagged_objects;
 	std::vector<GameObject*>				game_objects_scene; 
+	std::vector<uint>						deleted_objects;
 };
 
 #endif

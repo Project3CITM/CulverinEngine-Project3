@@ -7,6 +7,8 @@
 #include "ImGui/ImGuizmo.h"
 #include <vector>
 
+#define SPEED 0.025f
+
 class GameObject;
 
 struct Axis

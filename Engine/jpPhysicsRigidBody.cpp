@@ -87,6 +87,22 @@ void jpPhysicsRigidBody::DeActivateShape()
 	body_shape = nullptr;
 }
 
+void jpPhysicsRigidBody::EnableCollisions()
+{
+	if (body_shape)
+	{
+		body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+	}
+}
+
+void jpPhysicsRigidBody::DisableCollisions()
+{
+	if (body_shape)
+	{
+		body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+	}
+}
+
 void jpPhysicsRigidBody::SetAsKinematic(bool kinematic)
 {
 	if (is_dynamic)
@@ -99,8 +115,16 @@ void jpPhysicsRigidBody::SetAsTrigger(bool trigger)
 {
 	if (body_shape)
 	{
-		body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, !trigger);
-		body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, trigger);
+		if (trigger)
+		{
+			body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+			body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else
+		{
+			body_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+			body_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
+		}
 	}
 }
 
@@ -217,7 +241,7 @@ void jpPhysicsRigidBody::SetGeometry(float3 new_scale, float radius, JP_COLLIDER
 	}
 		break;
 	case COLL_CAPSULE:
-		body_shape = body->createShape(physx::PxCapsuleGeometry(radius, scale.z), *default_material);
+		body_shape = body->createShape(physx::PxCapsuleGeometry(radius, scale.z*0.5), *default_material);
 		break;
 	case COLL_BOX: {
 		scale = scale*0.5;

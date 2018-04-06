@@ -17,9 +17,22 @@ class Die_Action : Action
     {
         GetComponent<CompAnimation>().SetTransition("ToDie");
         //TODO_AI: Die audio
-        //GetComponent<CompAudio>().PlayEvent("JaimeHurt");
+        GetComponent<CompAudio>().PlayEvent("Enemy_SwordDrop");
+
+        StatsScore.KillEnemy();
+
+        //Play Dead Audio
+        if (GetComponent<EnemyShield_BT>() != null)
+            GetComponent<CompAudio>().PlayEvent("Enemy3_Dead");
+
+        if (GetComponent<EnemySpear_BT>() != null)
+            GetComponent<CompAudio>().PlayEvent("Enemy2_Dead");
+
+        if (GetComponent<EnemySword_BT>() != null)
+            GetComponent<CompAudio>().PlayEvent("Enemy1_Dead");
+
         GetComponent<CompAnimation>().SetClipDuration("Die", duration);
-        
+        GetComponent<CompCollider>().CollisionActive(false);
         return true;
     }
 

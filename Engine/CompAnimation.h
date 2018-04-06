@@ -161,6 +161,7 @@ private:
 	bool show_asm_window = false;
 
 	bool show_bone_transformations = false;
+	bool playing = false;
 };
 
 #endif

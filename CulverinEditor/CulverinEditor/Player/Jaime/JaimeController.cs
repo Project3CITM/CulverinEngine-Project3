@@ -7,7 +7,7 @@ public class JaimeController : CharacterController
     public GameObject jaime_obj;
     public GameObject larm_jaime_obj; //To enable/disable mesh
     public GameObject rarm_jaime_obj; //To enable/disable mesh
-
+    public GameObject Global_Camera;
     //UI ELEMENTS
     public GameObject jaime_icon_obj;
     public GameObject jaime_icon_obj_hp;
@@ -17,6 +17,7 @@ public class JaimeController : CharacterController
     public GameObject jaime_left_flag;
     public GameObject jaime_right_flag;
 
+    CompAnimation jaime_anim_controller;
 
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
@@ -56,6 +57,9 @@ public class JaimeController : CharacterController
     public float curr_hit_time = 0.0f;
     // ---------------------
 
+    //Particle emitter GameObject
+    public GameObject particles_jaime;
+
     protected override void Start()
     {
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
@@ -63,6 +67,8 @@ public class JaimeController : CharacterController
         larm_jaime_obj = GetLinkedObject("larm_jaime_obj");
         rarm_jaime_obj = GetLinkedObject("rarm_jaime_obj");
         jaime_sword_obj = GetLinkedObject("jaime_sword_obj");
+
+        Global_Camera = GetLinkedObject("Global_Camera");
 
         jaime_icon_obj = GetLinkedObject("jaime_icon_obj");
         jaime_button_left = GetLinkedObject("jaime_button_left");
@@ -72,6 +78,8 @@ public class JaimeController : CharacterController
 
         jaime_icon_obj_hp = GetLinkedObject("jaime_icon_obj_hp");
         jaime_icon_obj_stamina = GetLinkedObject("jaime_icon_obj_stamina");
+
+        particles_jaime = GetLinkedObject("particles_jaime");
 
         //Start Idle animation
         anim_controller = jaime_obj.GetComponent<CompAnimation>();
@@ -145,7 +153,6 @@ public class JaimeController : CharacterController
                         }
                     case State.FAIL_ATTACK:
                         {
-                            Debug.Log("[error] FAIL ATTACK");
                             //Check for end of the Attack animation
                             anim_controller = jaime_obj.GetComponent<CompAnimation>();
 
@@ -227,34 +234,34 @@ public class JaimeController : CharacterController
     {
         int curr_x = 0;
         int curr_y = 0;
-        int enemy_x = 0;
-        int enemy_y = 0;
+        //int enemy_x = 0;
+        //int enemy_y = 0;
 
         //Do Damage Around
         movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
         movement.GetPlayerPos(out curr_x, out curr_y);
 
         //Check enemy in the tiles around the player
-        for (int i = -1; i < 1; i++)
-        {
-            for (int j = -1; j < 1; j++)
-            {
-                if (i == 0 && j == 0)
-                {
-                    continue;
-                }
-                enemy_x = curr_x + j;
-                enemy_y = curr_x + i;
+        //for (int i = -1; i < 1; i++)
+        //{
+        //    for (int j = -1; j < 1; j++)
+        //    {
+        //        if (i == 0 && j == 0)
+        //        {
+        //            continue;
+        //        }
+        //        enemy_x = curr_x + j;
+        //        enemy_y = curr_x + i;
 
-                //Apply damage on the enemy in the specified tile
-                GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
-            }
-        }
+        //        //Apply damage on the enemy in the specified tile (SURE ?¿)
+        //        //GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
+        //    }
+        //}
 
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);
 
-        PlayFx("BehindMe");
+        PlayFx("JaimeWarCry");
 
         // Activate the shield that protects from damage once
         GetLinkedObject("player_obj").GetComponent<Shield>().ActivateShield();
@@ -265,9 +272,10 @@ public class JaimeController : CharacterController
         if (state == State.COVER)
         {
             SetAnimationTransition("ToBlock", true);
-
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimation("J_Block");
             GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
-            PlayFx("MetalClash");
+            //PlayFx("MetalClash");
+            PlayFx("JaimeBlock");
             SetState(State.BLOCKING);
 
             return false;
@@ -284,14 +292,12 @@ public class JaimeController : CharacterController
                     SetAnimationTransition("ToHit", true);
                     SetState(State.HIT);
                 }
-                audio = jaime_obj.GetComponent<CompAudio>();
-                audio.PlayEvent("JaimeHurt");
+                PlayFx("JaimeHurt");
             }
 
             else
             {
                 SetState(State.DEAD);
-                PlayFx("JaimeDead");
             }         
 
             //Reset hit count
@@ -386,7 +392,6 @@ public class JaimeController : CharacterController
     public override bool IsAnimationRunning(string name)
     {
         anim_controller = jaime_obj.GetComponent<CompAnimation>();
-        Debug.Log("[orange] JAIME ANIMATION RUNNING");
         return anim_controller.IsAnimationRunning(name);
     }
 
@@ -394,8 +399,6 @@ public class JaimeController : CharacterController
     {
         button = jaime_button_left.GetComponent<CompButton>();
         button.Clicked(); // This will execute LeftCooldown  
-        Debug.Log("[yellow] Clicked");
-
     }
 
     public bool OnLeftClick()
@@ -410,13 +413,28 @@ public class JaimeController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!left_ability_cd.in_cd)
                 {
+                    // Play the Sound FX
+                    PlayFx("JaimeFailImpact");
+
                     // Decrease stamina -----------
                     DecreaseStamina(left_ability_cost);
 
                     // Set Attacking Animation depending on the hit_streak
                     current_anim = anim_name[hit_streak];
                     SetAnimationTransition("To" + current_anim, true);
-
+                    jaime_anim_controller = Global_Camera.GetComponent<CompAnimation>();
+                    if(current_anim == "Attack1")
+                    {
+                        jaime_anim_controller.PlayAnimation("J_Attack1");
+                    }
+                    if(current_anim == "Attack2")
+                    {
+                        jaime_anim_controller.PlayAnimation("J_Attack2");
+                    }
+                    if(current_anim == "Attack3")
+                    {
+                        jaime_anim_controller.PlayAnimation("J_Attack3");
+                    }
                     do_left_attack = true;
 
                     //Go to ATTACK State
@@ -440,13 +458,14 @@ public class JaimeController : CharacterController
     {
         // Attack the enemy in front of you
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 30.0f);
-        Debug.Log("Raycast");
         if (coll_object != null)
         {
-            Debug.Log("Collided object found");
-            Debug.Log(coll_object.GetTag());
+            Debug.Log("[error]"+coll_object.GetTag());
             if (coll_object.CompareTag("Enemy"))
             {
+                //Enable particles emission of enemy blood
+                particles_jaime.GetComponent<SwordParticles>().EnableEnemyCollision(true);
+
                 curr_hit_time = 0.0f;
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
                 EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
@@ -466,34 +485,53 @@ public class JaimeController : CharacterController
                     damage = left_ability_dmg3;
                 }
 
-                enemy_manager.ApplyDamage(coll_object, damage);
-                Debug.Log("Apply Damage");
+                // Hit to enemy Impact
+                //PlayFx("JaimeImpact");
 
-                if (hit_streak < 2)
+                /* ---------- IN CASE THAT THE ENEMY BLOCKS THE ATTACK, UNCOMMENT AND COMPLETE THIS CODE ---------- */
+                if (enemy_manager.ApplyDamage(coll_object, damage))
                 {
-                    hit_streak++; //Increase hit count
+                    Debug.Log("Apply Damage");
+
+                    if (hit_streak < 2)
+                    {
+                        hit_streak++; //Increase hit count
+                    }
+                    else
+                    {
+                        hit_streak = 0; //Reset hit count
+                    }
                 }
                 else
                 {
-                    hit_streak = 0; //Reset hit count
-                }
-            }
-            else
-            {
-                Debug.Log("[green] Collision Obstacle");
-                // Call Collider OnContact to notify raycast
-                CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
-                if (obj_collider != null)
-                {
-                    obj_collider.CallOnContact();
-                    Debug.Log("[blue] Call On Contact");
-                }
+                    hit_streak = 0; // Reset Hit Count
 
+                    //Enable particles emission of enemy blood
+                    particles_jaime.GetComponent<SwordParticles>().EnableWallCollision(true);
+
+                    //Set FailAttack Transition & Audio
+                    SetAnimationTransition("ToFail", true);
+
+                    //PlayFx -> Obstacle Impact
+                    //PlayFx("JaimeImpactStone");
+                    PlayFx("JaimeImpact");
+                    Debug.Log("[pink] --- FAIL ATTACK ---");
+                }
+                /* ----------------------------------------------------------------------------------- */
+            }
+            else if(coll_object.CompareTag("obstacle"))
+            {       
                 hit_streak = 0; // Reset Hit Count
 
-                //Set FailAttack Transition
+                //Enable particles emission of enemy blood
+                particles_jaime.GetComponent<SwordParticles>().EnableWallCollision(true);
+
+                //Set FailAttack Transition & Audio
                 SetAnimationTransition("ToFail", true);
-                Debug.Log("[pink] --- FAIL ATTACK ---");     
+
+                //PlayFx -> Obstacle Impact
+                //PlayFx("JaimeImpactStone");
+                PlayFx("JaimeImpact");
             }
         }
         else
@@ -502,7 +540,7 @@ public class JaimeController : CharacterController
         }
 
         // Play the Sound FX
-        PlayFx("SwordSlash");
+        //PlayFx("JaimeFailImpact");
     }
 
     public void PrepareRightAbility()

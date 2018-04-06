@@ -2,7 +2,7 @@
 #define COMPONENT_CANVAS_H
 
 #include "Component.h"
-#include "EventDef.h"
+#include "EventDefV2.h"
 #include <vector>
 class ShaderProgram;
 

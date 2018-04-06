@@ -271,13 +271,10 @@ void CompCamera::DoCulling()
 	{
 		return;
 	}
-
-	const CompTransform* transform = parent->GetComponentTransform();
-	if (transform != nullptr && transform->GetUpdated())
-	{
-		// First check culling with static objects (optimized with quadtree)
-		CullStaticObjects();
-	}
+	
+	// First check culling with static objects (optimized with quadtree)
+	CullStaticObjects();
+	
 
 	// Then check dynamic objects
 	//CullDynamicObjects();

@@ -49,17 +49,7 @@ CompMesh::CompMesh(const CompMesh& copy, GameObject* parent) :Component(Comp_Typ
 CompMesh::~CompMesh()
 {
 	//RELEASE_ARRAY(name);
-	if (resource_mesh != nullptr)
-	{
-		if (resource_mesh->num_game_objects_use_me > 0)
-		{
-			resource_mesh->num_game_objects_use_me--;
-		}
-	}
-	comp_material->material->active_num--;
-	comp_material = nullptr;
-	resource_mesh = nullptr;
-
+	
 }
 
 //void CompMesh::Init(std::vector<_Vertex> v, std::vector<uint> i)
@@ -285,7 +275,7 @@ void CompMesh::Draw(bool alpha)
 			break;
 		case RenderMode::GLOW:
 			if (!material->glow) material = App->renderer3D->non_glow_material;
-			glViewport(0, 0, 128, 128);
+			glViewport(0, 0, 64, 64);
 			break;
 		case RenderMode::DEPTH:
 
@@ -477,9 +467,125 @@ void CompMesh::Draw(bool alpha)
 
 }
 
+void CompMesh::Draw2(uint ID)
+{
+	if (render && resource_mesh != nullptr)
+	{
+		//BIND MATERIAL
+		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
+		if (resource_mesh->vertices.size() > 0 && resource_mesh->indices.size() > 0)
+		{
+			if (App->renderer3D->texture_2d)
+			{
+				
+			}
+			uint TexturesSize = parent->GetComponentMaterial()->material->textures.size();
+			
+			//float4x4 temp = camFrust.ViewMatrix();
+			//GLint view2Loc = glGetUniformLocation(ID, "view");
+			GLint modelLoc = glGetUniformLocation(ID, "model");			
+			//GLint modelviewLoc = glGetUniformLocation(ID, "modelview");
+			float4x4 matrixfloat = transform->GetGlobalTransform();
+
+			GLfloat matrix[16] =
+			{
+				matrixfloat[0][0],matrixfloat[1][0],matrixfloat[2][0],matrixfloat[3][0],
+				matrixfloat[0][1],matrixfloat[1][1],matrixfloat[2][1],matrixfloat[3][1],
+				matrixfloat[0][2],matrixfloat[1][2],matrixfloat[2][2],matrixfloat[3][2],
+				matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
+			};
+			//float4x4 ModelViewMatrix = temp.Inverted() * matrixfloat;
+			//glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
+
+			//glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+			//glUniformMatrix4fv(modelviewLoc, 1, GL_TRUE, ModelViewMatrix.ptr());
+			//Shadow mapping
+			/*
+			float4x4 MVP = camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
+			glm::mat4 biasMatrix(
+				0.5, 0.0, 0.0, 0,
+				0.0, 0.5, 0.0, 0,
+				0.0, 0.0, 0.5, 0,
+				0.5, 0.5, 0.5, 1.0
+			);
+			glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
+			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+			glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+			glm::mat4 depthModelMatrix = glm::mat4(1.0);
+			glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+			glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
+			int depthMatrixID = glGetUniformLocation(ID, "depthMVP");
+			int depthBiasID = glGetUniformLocation(ID, "depthBias");
+			GLuint ShadowMapID = glGetUniformLocation(ID, "shadowMap");
+			if (material->name == "Shadow_World_Render")
+			{
+				glActiveTexture(GL_TEXTURE0 + (++TexturesSize));
+				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
+				glUniform1i(ID, App->module_lightning->test_fix.depthTex);
+				glUniform1i(ShadowMapID, TexturesSize);
+			}
+			*/
+			int total_save_buffer = 14;
+			uint bones_size_in_buffer = 0;
+			if (skeleton != nullptr)
+			{
+				bones_size_in_buffer = 4 * sizeof(GLint) + 4 * sizeof(GLfloat);
+				GLuint skinning_texture_id = glGetUniformLocation(ID, "_skinning_text");
+				skeleton->GenSkinningTexture(parent);
+				glActiveTexture(GL_TEXTURE0 + TexturesSize);
+				glBindTexture(GL_TEXTURE_BUFFER, skeleton->skinning_mats_id);
+				glUniform1i(skinning_texture_id, TexturesSize);
+			}
+			if (resource_mesh->vertices.size() > 0)
+			{
+				glBindBuffer(GL_ARRAY_BUFFER, resource_mesh->id_total_buffer);
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (0 * sizeof(float)));
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (3 * sizeof(float)));
+				glEnableVertexAttribArray(2);
+				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (5 * sizeof(float)));
+				glEnableVertexAttribArray(5);
+				glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (8 * sizeof(float)) + bones_size_in_buffer);
+				glEnableVertexAttribArray(6);
+				glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (11 * sizeof(float)) + bones_size_in_buffer);
+				if (skeleton != nullptr)
+				{
+					glEnableVertexAttribArray(3);
+					glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (8 * sizeof(float)));
+					glEnableVertexAttribArray(4);
+					glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (12 * sizeof(float)));
+				}
+				glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource_mesh->indices_id);
+				glDrawElements(GL_TRIANGLES, resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);
+			}
+			//Reset TextureColor
+			//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	
+		}
+		else
+			LOG("Cannot draw the mesh");
+	}
+}
+
 void CompMesh::Clear()
 {
-	resource_mesh = nullptr;
+	if (resource_mesh != nullptr)
+	{
+		if (resource_mesh->num_game_objects_use_me > 0)
+		{
+			resource_mesh->num_game_objects_use_me--;
+		}
+		resource_mesh = nullptr;
+	}
+
+	if (comp_material != nullptr)
+	{
+		comp_material->material->active_num--;
+		comp_material = nullptr;
+	}
 }
 
 void CompMesh::Render(bool render)

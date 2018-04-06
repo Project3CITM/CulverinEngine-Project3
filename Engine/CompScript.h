@@ -65,9 +65,6 @@ public:
 	void ShowVarValue(ScriptVariable* var, int i);
 	void CopyValues(const CompScript * component);
 	bool SelectScript(bool& selecting);
-	// -------------------------
-	void InitValueParamater(int index);
-	void ShowTypeMethod(int index);
 
 	//Special --------------
 	void AddScriptbyName(const char* name_script);
@@ -98,7 +95,6 @@ private:
 	uint uuid_resource_reimported = 0;
 	bool active_script = false;
 
-	std::vector<Actions> actions;
 };
 
 

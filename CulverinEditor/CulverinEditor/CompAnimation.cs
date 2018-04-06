@@ -47,5 +47,8 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetBlendInTime(string name, float time);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void PlayAnimationNode(string node_name);
     }
 }

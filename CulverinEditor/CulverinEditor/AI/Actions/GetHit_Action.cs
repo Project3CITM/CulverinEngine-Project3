@@ -3,7 +3,10 @@
 class GetHit_Action: Action
 {
     public float duration = 1.0f;
+
     string animation_clip = "a";
+
+    bool played_audio = false;
 
     public GetHit_Action()
     {
@@ -13,6 +16,9 @@ class GetHit_Action: Action
     public override bool ActionStart()
     {
         interupt = false;
+        /*CompAudio audio = GetComponent<CompAudio>();
+        audio.PlayEvent("Enemy2_Hurt");
+        audio.PlayEvent("SwordHit");*/
         GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
         int tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
@@ -125,6 +131,20 @@ class GetHit_Action: Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if(GetComponent<CompAnimation>().IsAnimOverXTime(0.3f) && !played_audio)
+        {
+            if(GetComponent<EnemyShield_BT>() != null)
+                GetComponent<CompAudio>().PlayEvent("Enemy3_Hurt");
+
+            if (GetComponent<EnemySpear_BT>() != null)
+                GetComponent<CompAudio>().PlayEvent("Enemy2_Hurt");
+
+            if (GetComponent<EnemySword_BT>() != null)
+                GetComponent<CompAudio>().PlayEvent("Enemy1_Hurt");
+
+            played_audio = true;
+        }
+
         if (GetComponent<CompAnimation>().IsAnimationStopped(animation_clip))
             return ACTION_RESULT.AR_SUCCESS;
         return ACTION_RESULT.AR_IN_PROGRESS;
@@ -133,6 +153,7 @@ class GetHit_Action: Action
     public override bool ActionEnd()
     {
         interupt = false;
+        played_audio = false;
         return true;
     }
 }

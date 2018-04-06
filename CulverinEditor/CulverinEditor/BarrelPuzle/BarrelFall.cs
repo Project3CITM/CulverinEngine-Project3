@@ -39,6 +39,11 @@ public class BarrelFall : CulverinBehaviour
     private bool get_init_pos = true;
     private Vector3 initial_position;
 
+    private float wait_time;
+    public float random_wait = 20.0f;
+    bool canSwitch = false;
+    float time_ = 0;
+    public float speedanim_floating = 2.0f;
     // -------------------------
     // Floating 
 
@@ -57,8 +62,11 @@ public class BarrelFall : CulverinBehaviour
     void Start()
     {
         audio = GetComponent<CompAudio>();
-        col = GetComponent<CompCollider>();
-        timeToNextFloatAnim = floatingPeriod; 
+        //col = GetComponent<CompCollider>();
+        timeToNextFloatAnim = floatingPeriod;
+      
+        wait_time = (float)GetLinkedObject("map_obj").GetComponent<LevelMap>().randomspeed.NextDouble();
+        wait_time = wait_time * random_wait;
     }
 
     void Update()
@@ -68,36 +76,31 @@ public class BarrelFall : CulverinBehaviour
             gameObject.SetActive(false);
             disable_barrels = false;
         }
-
+        if (canSwitch)
+        {
+            time_ += Time.deltaTime;
+        }
+        else
+        {
+            wait_time += Time.deltaTime;
+            if (wait_time >= random_wait)
+            {
+                canSwitch = true;
+            }
+        }
         if (placed)
         {
-            if (mode_puzzle == ModeBarrel.FILLING)
+            if (mode_puzzle != ModeBarrel.UNKOWN)
             {
-
-                DoFloatAnimation();
-                /*
-                // It is not a path barrel
-                floatingTimeCounter += Time.deltaTime;
-
-                if (floatingTimeCounter >= timeToNextFloatAnim)
+                if (!sinking)
                 {
-                   // It is animating or must end the animation
-                    if (floatingTimeCounter >= (timeToNextFloatAnim + floatingAnimationDuration))
-                    {
-                        // Stop animation and reset
-                        // TODO: Need to reset the position to a certain pos??
-                        floatingTimeCounter = 0.0f;
-                        // TODO: change timeToNextFloatAnim with some randomness??
-                    }
-                    else
-                    {
-                        // Do floating animation
-                       
-                    //}
-                }*/
+                    DoFloatAnimation();
+                }
+                else
+                {
+                    Sink();
+                }
             }
-
-
 
             if (sinking)
             {
@@ -117,7 +120,7 @@ public class BarrelFall : CulverinBehaviour
         {           
             MoveToTile();
         }
-        else
+        else if (!placed)
         {
             Fall();
         }
@@ -126,10 +129,6 @@ public class BarrelFall : CulverinBehaviour
 
     void MoveToTile()
     {
-        target_pos_x = target_tile_x * tile_size;
-        target_pos_y = target_tile_y * tile_size;
-
-
         Vector3 global_pos = transform.GetGlobalPosition();
 
         bool in_x = false;
@@ -146,12 +145,12 @@ public class BarrelFall : CulverinBehaviour
             else displacement = 1;
 
            
-            transform.local_position = new Vector3(transform.local_position.x + (Time.deltaTime * speed * displacement), transform.local_position.y, transform.local_position.z);
+            transform.SetGlobalPosition(new Vector3(global_pos.x + (Time.deltaTime * speed * displacement), global_pos.y, global_pos.z));
         }
         else in_x = true;
 
         //Displace barrel in Y
-        if (Mathf.Abs(target_pos_y - global_pos.z) > error_margin)
+        if (in_x == true && Mathf.Abs(target_pos_y - global_pos.z) > error_margin)
         {
             float displacement;
             if (target_pos_y - global_pos.z < 0)
@@ -160,7 +159,7 @@ public class BarrelFall : CulverinBehaviour
             }
             else displacement = 1;
 
-            transform.local_position = new Vector3(transform.local_position.x, transform.local_position.y, transform.local_position.z + (Time.deltaTime * speed * displacement));
+            transform.SetGlobalPosition(new Vector3(global_pos.x, global_pos.y, global_pos.z + (Time.deltaTime * speed * displacement)));
         }
         else in_y = true;
 
@@ -187,7 +186,6 @@ public class BarrelFall : CulverinBehaviour
         }
         else
         {
-          // this.SetEnabled(false);
            placed = true;
            audio.PlayEvent("WaterSplash");
            transform.SetGlobalPosition(new Vector3(global_pos.x, floor_height, global_pos.z));
@@ -260,20 +258,20 @@ public class BarrelFall : CulverinBehaviour
 
     private void DoFloatAnimation()
     {
-        Vector3 pos = transform.GetGlobalPosition();
+        if (canSwitch)
+        {
+            Vector3 pos = transform.GetGlobalPosition();
+            pos.y += (Mathf.Sin(time_ * speedanim_floating) * (floatingDisplacementMultiplier / 2.0f)) * Time.deltaTime;
 
-        float t = Mathf.Cos(Time.realtimeSinceStartup * 2.0f) * floatingDisplacementMultiplier * Time.deltaTime;
-        pos.y += t;
-
-        transform.SetGlobalPosition(pos);
+            transform.SetGlobalPosition(pos);
+        }
     }
 
     void OnTriggerEnter()
     {
-        Debug.Log("BARREL PLAYER COLLISION");
+        Debug.Log("[Green] Collision!!!!!!!!!!");
         if(col.GetCollidedObject().CompareTag("player") && mode_puzzle == ModeBarrel.FILLING && placed)
         {
-            Debug.Log("BarrelSetToSkin");
             sinking = true;
         }
 

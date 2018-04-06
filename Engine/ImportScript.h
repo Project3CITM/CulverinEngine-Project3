@@ -56,19 +56,19 @@ public:
 	MonoObject* GetMonoObject(GameObject* gameobject);
 	GameObject* GetGameObject(MonoObject* monoobject);
 
-	void UpdateMonoComp(Component* modificate, MonoObject* object);
+	void UpdateMonoComp(Component* modificate, uint csreference);
 	MonoObject* GetMonoObject(Component* component);
 	Component* GetComponentMono(MonoObject* monoobject);
 
-	void UpdateMonoPos(float3* pos, MonoObject* object);
+	void UpdateMonoPos(float3* pos, uint csreference);
 	MonoObject* GetMonoObject(float3* pos);
 	float3& GetPosMono(MonoObject* monoobject);
 
-	void UpdateMonoScript(CSharpScript* script, MonoObject* object);
+	void UpdateMonoScript(CSharpScript* script, uint csreference);
 	MonoObject* GetMonoObject(CSharpScript* script);
 	CSharpScript* GetScriptMono(MonoObject* monoobject);
 
-	void UpdateMonoMaterial(Material* modificate, MonoObject* object);
+	void UpdateMonoMaterial(Material* modificate, uint csreference);
 	MonoObject* GetMonoObject(Material* script);
 	Material* GetMaterialMono(MonoObject* monoobject);
 
@@ -91,6 +91,7 @@ private:
 
 	/* Scene Management */
 	static void LoadScene(MonoObject* scene_name);
+	static void QuitScene();
 
 	/* Input */
 	static mono_bool	GetKeyDown(int key);
@@ -223,6 +224,8 @@ private:
 	static void SetRaycastTarget(MonoObject * object, mono_bool flag);
 	static void ActivateRender(MonoObject * object);
 	static void DeactivateRender(MonoObject * object);
+	/*Component Text*/
+	static void SetAlpha(MonoObject* object, float alpha);
 	/*Component Graphic Image*/
 	static void FillAmount(MonoObject * object, float value);
 
@@ -233,6 +236,7 @@ private:
 	static void			MoveStaticColliderTo(MonoObject* object, MonoObject* position);
 	static void			CallOnContact(MonoObject* object);
 	static void			CallOnTriggerEnter(MonoObject* object);
+	static void			CollisionActive(MonoObject* object, bool active);
 
 	/*Component RigidBody*/
 	static MonoObject*	GetColliderPosition(MonoObject* object);
@@ -243,7 +247,11 @@ private:
 	static void			ApplyImpulse(MonoObject* object, MonoObject* impulse);
 	static void			ApplyTorqueForce(MonoObject* object, MonoObject* force);
 	static void			ApplyTorqueImpulse(MonoObject* object, MonoObject* impulse);
+	static void			LockMotion(MonoObject* object);
+	static void			LockRotation(MonoObject* object);
 	static void			LockTransform(MonoObject* object);
+	static void			UnLockMotion(MonoObject* object);
+	static void			UnLockRotation(MonoObject* object);
 	static void			UnLockTransform(MonoObject* object);
 	static void			ResetForce(MonoObject* object);
 	static void			WakeUp(MonoObject* object);
@@ -264,6 +272,7 @@ private:
 	static void SetActiveBlendingClip(MonoObject* object, MonoString* string);
 	static void SetActiveBlendingClipWeight(MonoObject* object, float weight);
 	static void SetBlendInTime(MonoObject* object, MonoString* string, float weight);
+	static void PlayAnimationNode(MonoObject* object, MonoString* string);
 
 	/*Component Material*/
 	static void SetAlbedo(MonoObject* object, MonoString* string);
@@ -289,8 +298,7 @@ private:
 	static MonoObject* GetMaterialByName(MonoObject* object, MonoString* name);
 
 public: 
-	std::map<std::string, GameObject*> map_link_variables;
-
+	std::multimap<std::string, GameObject*> map_link_variables;
 private:
 	std::string nameNewScript;
 	std::string mono_path;
@@ -300,12 +308,12 @@ private:
 	std::list<std::string> nameScripts;
 	static CSharpScript* current;
 
-	std::multimap<MonoObject*, GameObject*> mono_map;
-	std::multimap<MonoObject*, Component*> mono_comp;
-	std::multimap<MonoObject*, float3*> mono_pos;
-	std::multimap<MonoObject*, CSharpScript*> mono_script;
-	std::map<MonoObject*, Quat*> mono_quat;
-	std::multimap<MonoObject*, Material*> mono_material;
+	std::multimap<uint, GameObject*> mono_map;
+	std::multimap<uint, Component*> mono_comp;
+	std::multimap<uint, float3*> mono_pos;
+	std::multimap<uint, CSharpScript*> mono_script;
+	std::map<uint, Quat*> mono_quat;
+	std::multimap<uint, Material*> mono_material;
 
 };
 

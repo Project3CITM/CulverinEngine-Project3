@@ -6,17 +6,14 @@ public class EnemyShield_BT : Enemy_BT
     public float shield_block_cd = 4.0f;
     public float shield_block_cd_damaged = 2.5f;
     float shield_block_timer = 0.0f;
-    GameObject player = null;
-
+    
     public override void Start()
     {
-        player = GetLinkedObject("player_obj");
         GameObject Temp_go = GetLinkedObject("enemies_manager");
 
         if (Temp_go == null) Debug.Log("[error]Gameobject enemies_manager not found (EnemyShield_BT)");
         else
         {
-
             EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
 
             if (enemy_manager == null) Debug.Log("[error]EnemyShield_BT: enemies_manager is not detected");
@@ -40,7 +37,6 @@ public class EnemyShield_BT : Enemy_BT
         //Attack action
         if (InRange())
         {
-
             if (!GetComponent<FacePlayer_Action>().IsFaced())
             {
                 current_action.Interupt();
@@ -115,14 +111,14 @@ public class EnemyShield_BT : Enemy_BT
         }
     }
 
-    public override void ApplyDamage(float damage)
+    public override bool ApplyDamage(float damage)
     {
         switch (life_state)
         {
             case ENEMY_STATE.ENEMY_ALIVE:
                 if (shield_block_timer >= shield_block_cd)
                 {
-                    MovementController.Direction player_dir = player.GetComponent<MovementController>().GetPlayerDirection();
+                    MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
                     Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
                     if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
                         player_dir == MovementController.Direction.SOUTH && enemy_dir == Movement_Action.Direction.DIR_NORTH ||
@@ -131,20 +127,22 @@ public class EnemyShield_BT : Enemy_BT
                     {
                         shield_block_timer = 0.0f;
                         GetComponent<CompAnimation>().SetTransition("ToBlock");
+                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         Debug.Log("Attack blocked");
+                        return false;
                     }
                     else
-                        base.ApplyDamage(damage);
+                        return base.ApplyDamage(damage);
                 }
                 else
-                    base.ApplyDamage(damage);
+                    return base.ApplyDamage(damage);
 
                 break;
 
             case ENEMY_STATE.ENEMY_DAMAGED:
                 if (shield_block_timer >= shield_block_cd_damaged)
                 {
-                    MovementController.Direction player_dir = player.GetComponent<MovementController>().GetPlayerDirection();
+                    MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
                     Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
                     if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
                         player_dir == MovementController.Direction.SOUTH && enemy_dir == Movement_Action.Direction.DIR_NORTH ||
@@ -153,24 +151,27 @@ public class EnemyShield_BT : Enemy_BT
                     {
                         shield_block_timer = 0.0f;
                         GetComponent<CompAnimation>().SetTransition("ToBlock");
+                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         Debug.Log("Attack blocked");
+                        return false;
                     }
                     else
-                        base.ApplyDamage(damage);
+                        return base.ApplyDamage(damage);
                 }
                 else
-                    base.ApplyDamage(damage);
+                    return base.ApplyDamage(damage);
 
                 break;
 
             case ENEMY_STATE.ENEMY_STUNNED:
-                base.ApplyDamage(damage);
+                return base.ApplyDamage(damage);
                 break;
 
             case ENEMY_STATE.ENEMY_DEAD:
             default:
                 break;
         }
+        return true;
     }
 
     public override void ChangeTexturesToDamaged()

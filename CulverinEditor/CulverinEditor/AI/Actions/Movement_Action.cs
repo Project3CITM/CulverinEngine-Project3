@@ -90,7 +90,9 @@ public class Movement_Action : Action
         path = new List<PathNode>();
 
         //Set Occupied tile in Pathfinder
-        tile = new PathNode(GetCurrentTileX(), GetCurrentTileY());
+        tile = new PathNode(0,0);
+        tile.SetCoords((int)(GetComponent<Transform>().position.x / tile_size + Mathf.Epsilon), (int)(GetComponent<Transform>().position.z / tile_size + Mathf.Epsilon));
+        Debug.Log("Start at Tile: " + tile.GetTileX() + "," + tile.GetTileY());
         map.GetComponent<Pathfinder>().UpdateOccupiedTiles(gameObject.GetName(), tile);
     }
 
@@ -114,6 +116,14 @@ public class Movement_Action : Action
             Debug.Log("Move: Path == null");                      
             return false;
         }
+
+        if (path.Count != 0)
+        {
+            tile = new PathNode(0, 0);
+            tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
+            Debug.Log("Moving to: " + tile.GetTileX() + "," + tile.GetTileY());
+        }
+
 
         return true;
     }
@@ -281,7 +291,6 @@ public class Movement_Action : Action
             pos.x = path[0].GetTileX() * tile_size;
             pos.z = path[0].GetTileY() * tile_size;
             GetComponent<Transform>().position = pos;
-            GetComponent<CompCollider>().MoveKinematic(new Vector3(pos.x, pos.y + 10, pos.z));
 
             //Tiles
             if (path.Count == 1)
@@ -295,6 +304,8 @@ public class Movement_Action : Action
                 arrive.SetEnabled(true);
                 seek.SetEnabled(true);
                 path.Remove(path[0]);
+                Debug.Log("Moving to Tile: " + path[0].GetTileX() + "," + path[0].GetTileY());
+                tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
                 LookAtNextTile();
             }
         }
@@ -478,7 +489,7 @@ public class Movement_Action : Action
     public Direction SetDirection()
     {
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
-        float delta = Mathf.Atan2(forward.x, forward.y);
+        float delta = Mathf.Atan2(forward.x, forward.z);
 
         if (delta > Mathf.PI)
             delta = delta - 2 * Mathf.PI;
@@ -497,6 +508,11 @@ public class Movement_Action : Action
         Debug.Log("Direction: " + dir);
 
         return dir;
+    }
+
+    public void SetEnemyTile(int x, int y)
+    {
+        tile.SetCoords(x, y);
     }
 
     public Direction GetDirection()
@@ -578,6 +594,8 @@ public class Movement_Action : Action
 
     public bool CenteredInTile()
     {
+        if (path == null || path.Count == 0) return true;
+
         if ((Mathf.Abs((GetCurrentTileX() - (path[0].GetTileX() * tile_size))) < arrive.min_distance) && (Mathf.Abs((GetCurrentTileY() - (path[0].GetTileY() * tile_size))) < arrive.min_distance))
             return true;
         

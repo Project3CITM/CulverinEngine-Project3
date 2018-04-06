@@ -39,19 +39,11 @@ public class Attack_Action : Action
             Debug.Log("[error]Attack Action Start: Player is null!!");
         }
 
-        if (GetComponent<EnemyShield_BT>() != null && (player.player_obj.GetComponent<Shield>().IsActive() 
-            || player.GetCurrCharacterState() == (int)CharacterController.State.COVER))
-        {
-            shield_attack = true;
-            anim.SetTransition("ToShieldAttack");
-            anim.SetClipDuration("ShieldAttack", attack_duration);
-        }
-        else
-        {
-            anim.SetTransition("ToAttack");
-            anim.SetClipDuration("Attack", attack_duration);
-        }
-            
+        Debug.Log("Starting attack");
+        GetComponent<CompAnimation>().SetTransition("ToAttack");
+        anim.SetClipDuration("Attack", attack_duration);
+       
+        GetComponent<CompAudio>().PlayEvent("Enemy1_Slash");
       
 
         damage_done = false;
@@ -62,9 +54,8 @@ public class Attack_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        anim = GetComponent<CompAnimation>();
-
-        if (anim.IsAnimOverXTime(damage_point) && damage_done == false)
+      
+        if (GetComponent<CompAnimation>().IsAnimOverXTime(damage_point) && damage_done == false)
         {
             damage_done = true;
 
@@ -73,21 +64,19 @@ public class Attack_Action : Action
             else
             {
                 if (player.GetDamage(damage) == true)
+                { 
+                    GetComponent<CompAudio>().PlayEvent("SwordHit");
                     anim.SetActiveBlendingClipWeight(0.0f);
+                }
                 else
                     anim.SetActiveBlendingClipWeight(1.0f);
             }
         }
 
-        if (shield_attack == true)
+        if (GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
         {
-            if (anim.IsAnimationStopped("ShieldAttack"))
-                return ACTION_RESULT.AR_SUCCESS;
-        }
-        else
-        {
-            if (anim.IsAnimationStopped("Attack"))
-                return ACTION_RESULT.AR_SUCCESS;
+            Debug.Log("Attack end");
+            return ACTION_RESULT.AR_SUCCESS;
         }
 
         return ACTION_RESULT.AR_IN_PROGRESS;

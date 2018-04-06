@@ -3,7 +3,7 @@
 #include "ModuleFS.h"
 #include "Application.h"
 #include "JSONSerialization.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
 #include "ModuleCamera3D.h"
@@ -18,6 +18,9 @@
 
 ModuleShaders::ModuleShaders()
 {
+	name = "Shaders";
+	Start_enabled = true;
+	Update_enabled = true;
 }
 
 ModuleShaders::~ModuleShaders()
@@ -48,12 +51,12 @@ bool ModuleShaders::Init(JSON_Object * node)
 
 bool ModuleShaders::Start()
 {
-
+	perf_timer.Start();
 	//Import all the asset files related to shaders
 
 	ImportShaderObjects();
 	//ImportShaderMaterials();	
-
+	Start_t = perf_timer.ReadMs();
 	return true;
 }
 
@@ -64,11 +67,13 @@ update_status ModuleShaders::PreUpdate(float dt)
 
 update_status ModuleShaders::Update(float dt)
 {
+	perf_timer.Start();
 	std::vector<Material*>::iterator item = materials.begin();
 	static float time_dt = 0;
 	time_dt += dt * App->game_time.time_scale;
 	while (item != materials.end())
 	{
+		uint ID = (*item)->GetProgramID();
 		if ((*item)->active_num == 0) {
 			item++;
 			continue;
@@ -78,49 +83,57 @@ update_status ModuleShaders::Update(float dt)
 
 		SetUniformVariables(*item);
 		//TIME		
-		GLint timeLoc = glGetUniformLocation((*item)->GetProgramID(), "_time");
-		glUniform1f(timeLoc, time_dt);
+		GLint timeLoc = glGetUniformLocation(ID, "_time");
+		if (timeLoc != -1) glUniform1f(timeLoc, time_dt);
 
 		//CAMERA POSITION
 		float3 cam_pos = App->camera->GetPos();
-		GLint cameraLoc = glGetUniformLocation((*item)->GetProgramID(), "_cameraPosition");
-		glUniform3fv(cameraLoc, 1, &cam_pos[0]);
+		GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
+		if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
 
 		//ALPHA
 		float alpha = (*item)->alpha;
-		GLint alphaLoc = glGetUniformLocation((*item)->GetProgramID(), "_alpha");
-		glUniform1f(alphaLoc, alpha);
-		
+		GLint alphaLoc = glGetUniformLocation(ID, "_alpha");
+		if (alphaLoc != -1) glUniform1f(alphaLoc, alpha);
+
+		//VIEWPROJ MATRIX
+		Frustum camFrust = App->renderer3D->active_camera->frustum;
+		GLint viewLoc = glGetUniformLocation(ID, "viewproj");
+		if (viewLoc != -1)glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+
 		//LIGHTS
-		GLint lightsizeLoc = glGetUniformLocation((*item)->GetProgramID(), "_numLights");
-		std::vector<CompLight*> lights = App->module_lightning->GetSceneLights();
-		glUniform1i(lightsizeLoc, lights.size());
-		
-		if(lightsizeLoc >= 0)
-			for (size_t i = 0; i < lights.size(); ++i) {
+		std::vector<CompLight*> lights_vec = *App->module_lightning->GetActiveLights();
+		GLint lightsizeLoc = glGetUniformLocation(ID, "_numLights");
+		if (lightsizeLoc != -1) glUniform1i(lightsizeLoc, lights_vec.size());
 
-				if(lights[i]->type == Light_type::DIRECTIONAL_LIGHT)
-					SetLightUniform((*item)->GetProgramID(), "position", i,lights[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
-				if (lights[i]->type == Light_type::POINT_LIGHT)
-					SetLightUniform((*item)->GetProgramID(), "position", i, lights[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
 
-				SetLightUniform((*item)->GetProgramID(), "type", i, (int)lights[i]->type);
-				SetLightUniform((*item)->GetProgramID(), "l_color", i, lights[i]->color);			
-				SetLightUniform((*item)->GetProgramID(), "ambientCoefficient", i, lights[i]->ambientCoefficient);
 
-				SetLightUniform((*item)->GetProgramID(), "properties", i, lights[i]->properties);
+
+		if (lightsizeLoc != -1)
+			for (size_t i = 0; i < lights_vec.size(); ++i) {
+
+				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
+					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
+				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
+					SetLightUniform((*item)->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
+
+				SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
+				SetLightUniform(ID, "l_color", i, lights_vec[i]->color);
+				SetLightUniform(ID, "ambientCoefficient", i, lights_vec[i]->ambientCoefficient);
+
+				SetLightUniform(ID, "properties", i, lights_vec[i]->properties);
 
 			}
-		(*item)->Unbind();
+
 		item++;
 	}
-
+	glUseProgram(0);
 	Enable_Text_Editor();
-	
+
 	if (App->gui->shader_program_creation) {
 		SendEventWithAllShaders();
 	}
-
+	Update_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 
@@ -144,7 +157,7 @@ bool ModuleShaders::CleanUp()
 
 	for (auto item = materials.begin(); item != materials.end(); item++) {
 		(*item)->Save();
-		
+
 	}
 	return true;
 }
@@ -247,7 +260,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const 
 	//Attach fragment shader to program
 	glAttachShader(defaultShader->programID, fragmentShader);
 
-	if(geometry_text != nullptr)
+	if (geometry_text != nullptr)
 	{
 		// Create geometry shader
 		GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
@@ -260,7 +273,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const 
 
 		// Check errors on geometry
 		GLint gShaderCompiled = GL_FALSE;
-		
+
 		glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &gShaderCompiled);
 		if (gShaderCompiled != GL_TRUE)
 		{
@@ -289,7 +302,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const 
 	newFragment->shaderID = fragmentShader;
 	newFragment->shaderText = *fragment_text;
 	newFragment->shaderType = ShaderType::fragment;
-	newFragment->name =  name_text;
+	newFragment->name = name_text;
 	newFragment->name.append("_frag");
 	newFragment->shaderPath = "";
 
@@ -306,7 +319,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const 
 	defaultShader->AddVertex(newVertex);
 
 
-	
+
 
 	if (push_in_list) {
 		programs.push_back(defaultShader);
@@ -314,7 +327,7 @@ ShaderProgram * ModuleShaders::CreateDefaultShader(const char* name_text, const 
 		shaders.push_back(newVertex);
 
 	}
-	
+
 	return defaultShader;
 
 }
@@ -391,7 +404,7 @@ Shader* ModuleShaders::CompileShader(std::string path, std::string name, ShaderT
 std::string ModuleShaders::GetShaderError(uint ID)
 {
 	std::string ret = "";
-	
+
 	int infoLogLength = 0;
 	int maxLength = infoLogLength;
 
@@ -426,52 +439,52 @@ void ModuleShaders::ImportShaderObjects()
 		std::string str_path = item.path().string().c_str();
 
 		//Extracting the extension file
-		std::string extension_path=	App->fs->GetExtension(str_path);
+		std::string extension_path = App->fs->GetExtension(str_path);
 
-		if (extension_path == "vert" || extension_path == "frag" || extension_path == "geom" || extension_path == "mat") 
+		if (extension_path == "vert" || extension_path == "frag" || extension_path == "geom" || extension_path == "mat")
 		{
 
 			//Extracting name of the file
-			size_t size_name_front = str_path.rfind("\\")+1;
+			size_t size_name_front = str_path.rfind("\\") + 1;
 			size_t size_name_end = str_path.rfind(".");
 			std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
 
 			//Loading the file to extract the file buffer information
-			
+
 			App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
 
 			//If the shader object is vertex
-			if (extension_path == "vert") 
+			if (extension_path == "vert")
 			{
-				
-				if (buffer != nullptr) 
+
+				if (buffer != nullptr)
 				{
 					//Compile shader
-					Shader* shader_temp = CompileShader(str_path, name,ShaderType::vertex);
+					Shader* shader_temp = CompileShader(str_path, name, ShaderType::vertex);
 				}
 
 			}
 
 			//If the shader object is fragment
-			else if (extension_path == "frag") 
+			else if (extension_path == "frag")
 			{
 
-				if (buffer != nullptr) 
+				if (buffer != nullptr)
 				{
 					//Compile shader
-					Shader* shader_temp = CompileShader(str_path, name,ShaderType::fragment);
+					Shader* shader_temp = CompileShader(str_path, name, ShaderType::fragment);
 				}
 
 			}
 
 			//If the shader object is geometry
-			else if (extension_path == "geom") 
+			else if (extension_path == "geom")
 			{
 
-				if (buffer != nullptr) 
+				if (buffer != nullptr)
 				{
 					//Compile shader
-					Shader* shader_temp = CompileShader(str_path, name,ShaderType::geometry);
+					Shader* shader_temp = CompileShader(str_path, name, ShaderType::geometry);
 				}
 			}
 
@@ -480,7 +493,7 @@ void ModuleShaders::ImportShaderObjects()
 		}
 	}
 
-	
+
 
 }
 
@@ -498,72 +511,72 @@ void ModuleShaders::ImportShaderMaterials()
 		//Extracting the extension file
 		std::string extension_path = App->fs->GetExtension(str_path);
 
-			if (extension_path == "mat")
+		if (extension_path == "mat")
+		{
+			//Extracting name of the file
+			size_t size_name_front = str_path.rfind("\\") + 1;
+			size_t size_name_end = str_path.rfind(".");
+			std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
+
+			//Loading the file to extract the file buffer information
+
+			App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
+
+			if (buffer != nullptr)
 			{
-				//Extracting name of the file
-				size_t size_name_front = str_path.rfind("\\") + 1;
-				size_t size_name_end = str_path.rfind(".");
-				std::string name = str_path.substr(size_name_front, size_name_end - size_name_front);
+				JSON_Object* obj_proj;
+				JSON_Value* file_proj;
+				//Point JSON_Object and JSON_Value to the path we want
+				App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, str_path.c_str());
 
-				//Loading the file to extract the file buffer information
-			
-				App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
+				//Creating the shader program
+				mat_shader = CreateShader(name.c_str());
 
-				if (buffer != nullptr)
+				//If the program has a fragment shader
+				if (json_object_has_value(obj_proj, "Fragment Shader") > 0)
 				{
-					JSON_Object* obj_proj;
-					JSON_Value* file_proj;
-					//Point JSON_Object and JSON_Value to the path we want
-					App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, str_path.c_str());
+					std::string frag_name = json_object_get_string(obj_proj, "Fragment Shader");
 
-					//Creating the shader program
-					mat_shader = CreateShader(name.c_str());
-
-					//If the program has a fragment shader
-					if (json_object_has_value(obj_proj, "Fragment Shader") > 0)
-					{
-						std::string frag_name = json_object_get_string(obj_proj, "Fragment Shader");
-
-						//Find the shader object by name
-						mat_shader->fragment = GetShaderByName(frag_name.c_str(), ShaderType::fragment);
-					}
-
-					//If the program has a vertex shader
-					if (json_object_has_value(obj_proj, "Vertex Shader") > 0)
-					{
-						std::string vertex_name = json_object_get_string(obj_proj, "Vertex Shader");
-
-						//Find the shader object by name
-						mat_shader->vertex = GetShaderByName(vertex_name.c_str(), ShaderType::vertex);
-					}
-
-					//If the program has a geometry shader
-					if (json_object_has_value(obj_proj, "Geometry Shader"))
-					{
-						std::string geometry_name = json_object_get_string(obj_proj, "Geometry Shader");
-
-						//Find the shader object by name
-						mat_shader->geometry = GetShaderByName(geometry_name.c_str(), ShaderType::geometry);
-					}
-
-					//Store the program
-					mat_shader->LoadProgram();
-					
-					mat_shader->CreateMaterialFile();
-
-					//IF default material found, change it
-					if (App->fs->GetOnlyName(str_path).compare("DefaultShader") == 0)
-					{
-						App->renderer3D->default_shader = mat_shader;
-						App->renderer3D->default_material->material_shader = mat_shader;
-					}
-					RELEASE_ARRAY(buffer);
+					//Find the shader object by name
+					mat_shader->fragment = GetShaderByName(frag_name.c_str(), ShaderType::fragment);
 				}
 
+				//If the program has a vertex shader
+				if (json_object_has_value(obj_proj, "Vertex Shader") > 0)
+				{
+					std::string vertex_name = json_object_get_string(obj_proj, "Vertex Shader");
+
+					//Find the shader object by name
+					mat_shader->vertex = GetShaderByName(vertex_name.c_str(), ShaderType::vertex);
+				}
+
+				//If the program has a geometry shader
+				if (json_object_has_value(obj_proj, "Geometry Shader"))
+				{
+					std::string geometry_name = json_object_get_string(obj_proj, "Geometry Shader");
+
+					//Find the shader object by name
+					mat_shader->geometry = GetShaderByName(geometry_name.c_str(), ShaderType::geometry);
+				}
+
+				//Store the program
+				mat_shader->LoadProgram();
+
+				mat_shader->CreateMaterialFile();
+
+				//IF default material found, change it
+				if (App->fs->GetOnlyName(str_path).compare("DefaultShader") == 0)
+				{
+					App->renderer3D->default_shader = mat_shader;
+					App->renderer3D->default_material->material_shader = mat_shader;
+				}
+				RELEASE_ARRAY(buffer);
 			}
-		
+
+		}
+
 	}
-	
+
 
 	for (stdfs::directory_iterator::value_type item : stdfs::directory_iterator(Material_Directory_fs))
 	{
@@ -602,7 +615,7 @@ void ModuleShaders::LoadShaderMaterials()
 Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 {
 
-	
+
 	char* buffer = nullptr;
 	App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
 
@@ -614,12 +627,12 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 	std::string program_name = json_object_dotget_string_with_std(object, name + "ShaderName:");
 	Material* material = nullptr;
 	ShaderProgram* program = nullptr;
-	for (int i = 0; i < App->module_shaders->programs.size(); i++)	{
+	for (int i = 0; i < App->module_shaders->programs.size(); i++) {
 
 		if (strcmp(App->module_shaders->programs[i]->name.c_str(), program_name.c_str()) == 0)
 		{
 			program = App->module_shaders->programs[i];
-			
+
 			break;
 		}
 
@@ -633,7 +646,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 			if (strcmp(App->module_shaders->materials[i]->name.c_str(), material_name.c_str()) == 0)
 			{
 				material = App->module_shaders->materials[i];
-				
+
 				break;
 			}
 
@@ -653,16 +666,48 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 				{
 					if (i >= material->textures.size()) break;
 					char mat_name[128] = { 0 };
+					char mat_var[128] = { 0 };
 
 					char* num = new char[4];
 					itoa(i, num, 10);
+
 					strcat(mat_name, "Resource Material UUID ");
 					strcat(mat_name, num);
+
+					strcat(mat_var, "Resource Material Var Name ");
+					strcat(mat_var, num);
+
 					RELEASE_ARRAY(num);
 
 					uint uuid = json_object_dotget_number_with_std(object, name + mat_name);
+					std::string var_name = json_object_dotget_string_with_std(object, name + mat_var);
 
-					material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(uuid);
+					if (strcmp(var_name.c_str(), material->textures[i].var_name.c_str()) == 0) {
+						material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(uuid);
+					}
+					else {
+						for (int n = 0; n < num_textures; n++) {
+							char temp_name[128] = { 0 };
+							char temp_var[128] = { 0 };
+
+							char* temp_num = new char[4];
+							itoa(n, temp_num, 10);
+
+							strcat(temp_name, "Resource Material UUID ");
+							strcat(temp_name, temp_num);
+
+							strcat(temp_var, "Resource Material Var Name ");
+							strcat(temp_var, temp_num);
+
+							uint temp_uuid = json_object_dotget_number_with_std(object, name + temp_name);
+							std::string var_name_temp = json_object_dotget_string_with_std(object, name + temp_var);
+
+							if (strcmp(var_name_temp.c_str(), material->textures[i].var_name.c_str()) == 0) {
+								material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(temp_uuid);
+								break;
+							}
+						}
+					}
 					if (material->textures[i].value != nullptr)
 					{
 						material->textures[i].value->num_game_objects_use_me++;
@@ -684,8 +729,35 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					ss << name << "Bool:" << i;
 					std::string json_name = ss.str();
 
+					std::ostringstream ss2;
+					ss2 << name << "Bool Name:" << i;
+					std::string json_var = ss2.str();
+
 					if (i >= material->bool_variables.size()) break;
-					material->bool_variables[i].value = json_object_dotget_boolean_with_std(object, json_name);
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->bool_variables[i].var_name.c_str()) == 0) {
+						material->bool_variables[i].value = json_object_dotget_boolean_with_std(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_bools; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Bool:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Bool Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->bool_variables[i].var_name.c_str()) == 0) {
+								material->bool_variables[i].value = json_object_dotget_boolean_with_std(object, temp_name);
+								break;
+							}
+
+						}
+					}
 				}
 				uint num_ints = json_object_dotget_number_with_std(object, name + "Num Int:");
 				for (int i = 0; i < num_ints; i++)
@@ -694,8 +766,35 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					ss << name << "Int:" << i;
 					std::string json_name = ss.str();
 
-					if (i >= material->bool_variables.size()) break;
-					material->int_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+					std::ostringstream ss2;
+					ss2 << name << "Int Name:" << i;
+					std::string json_var = ss2.str();
+
+					if (i >= material->int_variables.size()) break;
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->int_variables[i].var_name.c_str()) == 0) {
+						material->int_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_ints; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Int:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Int Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->int_variables[i].var_name.c_str()) == 0) {
+								material->int_variables[i].value = json_object_dotget_number_with_std(object, temp_name);
+								break;
+							}
+
+						}
+					}
 				}
 
 				uint num_floats = json_object_dotget_number_with_std(object, name + "Num Floats:");
@@ -705,8 +804,35 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					ss << name << "Float:" << i;
 					std::string json_name = ss.str();
 
+					std::ostringstream ss2;
+					ss2 << name << "Float Name:" << i;
+					std::string json_var = ss2.str();
+
 					if (i >= material->float_variables.size()) break;
-					material->float_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->float_variables[i].var_name.c_str()) == 0) {
+						material->float_variables[i].value = json_object_dotget_number_with_std(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_floats; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Float:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Float Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->float_variables[i].var_name.c_str()) == 0) {
+								material->float_variables[i].value = json_object_dotget_number_with_std(object, temp_name);
+								break;
+							}
+
+						}
+					}
 				}
 				uint num_float3 = json_object_dotget_number_with_std(object, name + "Num Float3:");
 				for (int i = 0; i < num_float3; i++)
@@ -715,8 +841,35 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					ss << name << "Float3:" << i;
 					std::string json_name = ss.str();
 
+					std::ostringstream ss2;
+					ss2 << name << "Float3 Name:" << i;
+					std::string json_var = ss2.str();
+
 					if (i >= material->float3_variables.size()) break;
-					material->float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, json_name);
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->float3_variables[i].var_name.c_str()) == 0) {
+						material->float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_floats; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Float3:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Float3 Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->float3_variables[i].var_name.c_str()) == 0) {
+								material->float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, temp_name);
+								break;
+							}
+
+						}
+					}
 				}
 				uint num_colors = json_object_dotget_number_with_std(object, name + "Num Colors:");
 				for (int i = 0; i < num_colors; i++)
@@ -725,14 +878,41 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					ss << name << "Color:" << i;
 					std::string json_name = ss.str();
 
+					std::ostringstream ss2;
+					ss2 << name << "Color Name:" << i;
+					std::string json_var = ss2.str();
+
 					if (i >= material->color_variables.size()) break;
-					material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, json_name);
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->color_variables[i].var_name.c_str()) == 0) {
+						material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_floats; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Color:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Color Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->color_variables[i].var_name.c_str()) == 0) {
+								material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, temp_name);
+								break;
+							}
+
+						}
+					}
 				}
 			}
 			App->module_shaders->materials.push_back(material);
 		}
 	}
-	
+
 
 	return nullptr;
 }
@@ -742,7 +922,7 @@ Material * ModuleShaders::GetMaterialByName(const char * name)
 	for (std::vector<Material*>::const_iterator item = materials.cbegin(); item != materials.cend(); item++)
 	{
 		std::string str_path = (*item)->name.c_str();
-		
+
 		if (strcmp(str_path.c_str(), name) == 0) {
 			return (*item);
 		}
@@ -755,26 +935,26 @@ Material * ModuleShaders::GetMaterialByName(const char * name)
 Shader * ModuleShaders::GetShaderByName(const char * name, ShaderType type)
 {
 
-	for (std::vector<Shader*>::const_iterator item = shaders.cbegin(); item != shaders.cend(); item++) 
+	for (std::vector<Shader*>::const_iterator item = shaders.cbegin(); item != shaders.cend(); item++)
 	{
 		std::string str_path = (*item)->shaderPath.c_str();
 		std::string extension_path = App->fs->GetExtension(str_path);
-		if ((*item)->name == name) 
+		if ((*item)->name == name)
 		{
 
 			//This is to led all the shader objects to have the same name and the engine will
 			//find them searching by name and extension too.
 
-			switch (type) 
+			switch (type)
 			{
 			case ShaderType::fragment:
-				if (extension_path=="frag") return *item;break;
+				if (extension_path == "frag") return *item; break;
 
 			case ShaderType::vertex:
-				if (extension_path == "vert") return *item;break;
+				if (extension_path == "vert") return *item; break;
 
 			case ShaderType::geometry:
-				if (extension_path == "geom") return *item;break;
+				if (extension_path == "geom") return *item; break;
 			}
 		}
 	}
@@ -792,11 +972,11 @@ bool ModuleShaders::SetEventListenrs()
 void ModuleShaders::OnEvent(Event & event)
 {
 	std::string path;
-	switch (event.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_OPEN_SHADER_EDITOR:
 
-		path = Shader_Directory_fs+ "/" + event.shader_editor.name;
+		path = Shader_Directory_fs + "/" + event.shader_editor.name;
 
 		switch (event.shader_editor.shader_type)
 		{
@@ -817,7 +997,7 @@ void ModuleShaders::OnEvent(Event & event)
 		break;
 	case EventType::EVENT_CREATE_SHADER_PROGRAM:
 		path = Shader_Directory_fs + "/" + event.shader_program.name + ".mat";
-		ShaderProgram * program=CreateShader(event.shader_program.name);
+		ShaderProgram * program = CreateShader(event.shader_program.name);
 		program->path = path;
 		switch (event.shader_program.Shader1->shaderType) {
 		case ShaderType::vertex:
@@ -854,28 +1034,28 @@ void ModuleShaders::Enable_Text_Editor()
 
 
 	if (enable_editor) {
-	
-			std::string temp_name= "Shader editor";
-			ImGui::Begin(temp_name.c_str(), &enable_editor);
 
-			if (editor_shaders.GetText().size()==0) {
-				editor_shaders.InsertText("#version 330 core\n void main(){\n }");
-			}
+		std::string temp_name = "Shader editor";
+		ImGui::Begin(temp_name.c_str(), &enable_editor);
 
-			ImGuiIO& io = ImGui::GetIO();
-			ImGui::PushFont(io.Fonts->Fonts[1]);
-			editor_shaders.Render(temp_name.c_str());
-			ImGui::PopFont();
-			if (ImGui::Button("Save"))
-			{
-				FILE* pFile = fopen(shader_text_active.shaderPath.c_str(), "wb");
-				uint buffer_size = strlen(editor_shaders.GetText().c_str());
-				fwrite(editor_shaders.GetText().c_str(), sizeof(char), buffer_size, pFile);
-				fclose(pFile);
-				CompileShader(shader_text_active.shaderPath, shader_text_active.name, shader_text_active.shaderType);
-				enable_editor = false;
-			}
-			ImGui::End();
+		if (editor_shaders.GetText().size() == 0) {
+			editor_shaders.InsertText("#version 330 core\n void main(){\n }");
+		}
+
+		ImGuiIO& io = ImGui::GetIO();
+		ImGui::PushFont(io.Fonts->Fonts[1]);
+		editor_shaders.Render(temp_name.c_str());
+		ImGui::PopFont();
+		if (ImGui::Button("Save"))
+		{
+			FILE* pFile = fopen(shader_text_active.shaderPath.c_str(), "wb");
+			uint buffer_size = strlen(editor_shaders.GetText().c_str());
+			fwrite(editor_shaders.GetText().c_str(), sizeof(char), buffer_size, pFile);
+			fclose(pFile);
+			CompileShader(shader_text_active.shaderPath, shader_text_active.name, shader_text_active.shaderType);
+			enable_editor = false;
+		}
+		ImGui::End();
 	}
 }
 
@@ -950,10 +1130,10 @@ void ModuleShaders::SetUniformVariables(Material * material)
 }
 
 
-void ModuleShaders::SendEventWithAllShaders() 
+void ModuleShaders::SendEventWithAllShaders()
 {
 	Event shader_event;
-	shader_event.send_shader_object.type = EventType::EVENT_SEND_ALL_SHADER_OBJECTS;
+	shader_event.Set_event_data(EventType::EVENT_SEND_ALL_SHADER_OBJECTS);
 	shader_event.send_shader_object.shaders = &shaders;
 	PushEvent(shader_event);
 	App->gui->shader_program_creation = false;

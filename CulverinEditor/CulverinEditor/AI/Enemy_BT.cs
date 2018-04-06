@@ -61,6 +61,10 @@ public class Enemy_BT : BT
             || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION
             || next_action.action_type == Action.ACTION_TYPE.FACE_PLAYER_ACTION || next_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
         {
+            if (next_action.action_type == Action.ACTION_TYPE.STUN_ACTION)
+            {
+                life_state = ENEMY_STATE.ENEMY_STUNNED;
+            }
             Debug.Log("[blue]" +next_action.action_type);
             current_action = next_action;
             next_action = null_action;
@@ -108,10 +112,8 @@ public class Enemy_BT : BT
         Debug.Log("Out Of Combat Not Defined");
     }
 
-    public virtual void ApplyDamage(float damage)
+    public virtual bool ApplyDamage(float damage)
     {
-        if (current_action.action_type == Action.ACTION_TYPE.SHIELD_BLOCK_ACTION) return;
-
         InterruptAction();
 
         next_action = GetComponent<GetHit_Action>();
@@ -139,6 +141,8 @@ public class Enemy_BT : BT
             GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
             //ChangeTexturesToDamaged();
         }
+
+        return true;
     }
 
     public void PushEnemy(Vector3 dir)
@@ -160,18 +164,28 @@ public class Enemy_BT : BT
 
     public bool InRange()
     {
-        player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
         int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
         int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
-        if((distance_x <= range && distance_y == 0) || (distance_y <= range && distance_x == 0))
+
+        if ((distance_x <= range && distance_y == 0) || (distance_y <= range && distance_x == 0))
             return true;
         return false;
     }
 
     public int GetDistanceInRange()
     {
-        player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-        return Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX()) + Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+        int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
+        int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+
+        if (distance_x <= range && distance_y == 0)
+            return distance_x;
+
+        if (distance_y <= range && distance_x == 0)
+            return distance_y;
+
+        return range + 1;
     }
 
     public float GetCurrentInterpolation()

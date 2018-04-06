@@ -20,6 +20,7 @@
 #include "CompJoint.h"
 #include "CompGraphic.h"
 #include "CompImage.h"
+#include "CompText.h"
 
 
 void CSharpScript::Activate(MonoObject* object, int uid)
@@ -111,6 +112,7 @@ void CSharpScript::ActivateRender(MonoObject * object)
 	}
 }
 
+
 void CSharpScript::DeactivateRender(MonoObject * object)
 {
 	if (current_game_object != nullptr)
@@ -119,6 +121,18 @@ void CSharpScript::DeactivateRender(MonoObject * object)
 		if (image != nullptr)
 		{
 			image->DeactivateRender();
+		}
+	}
+}
+
+void CSharpScript::SetAlpha(MonoObject * object, float alpha)
+{
+	if (current_game_object != nullptr)
+	{
+		CompText* text = (CompText*)current_game_object->FindComponentByType(Comp_Type::C_TEXT);
+		if (text != nullptr)
+		{
+			text->SetAlpha(alpha);
 		}
 	}
 }

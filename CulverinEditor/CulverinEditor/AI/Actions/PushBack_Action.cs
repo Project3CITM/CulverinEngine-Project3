@@ -161,7 +161,8 @@ public class PushBack_Action : Action
         if (GetComponent<CompAnimation>().IsAnimationStopped(animation_clip_push))
         {
             Debug.Log("Pushed");
-            GetComponent<CompAnimation>().SetTransition("ToIdle");
+            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            GetComponent<Movement_Action>().SetEnemyTile(target_x, target_y);
             return ACTION_RESULT.AR_SUCCESS;
         }
 

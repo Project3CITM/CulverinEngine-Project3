@@ -2,7 +2,7 @@ State Group	ID	Name			Wwise Object Path	Notes
 	1981396969	PuzzleCountDownState			\Default Work Unit\PuzzleCountDownState	
 
 State	ID	Name	State Group			Notes
-	748895195	None	PuzzleCountDownState			
+	0	None	PuzzleCountDownState			
 	1208172673	State1	PuzzleCountDownState			
 	1208172674	State2	PuzzleCountDownState			
 	1208172675	State3	PuzzleCountDownState			
@@ -33,4 +33,8 @@ Auxiliary Bus	ID	Name			Wwise Object Path	Notes
 
 Effect plug-ins	ID	Name	Type				Notes
 	2995775460	Room_Small	Wwise RoomVerb			
+
+Audio Devices	ID	Name	Type				Notes
+	2317455096	No_Output	No Output			
+	3859886410	System	System			
 
