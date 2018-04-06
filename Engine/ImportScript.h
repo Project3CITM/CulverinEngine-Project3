@@ -90,10 +90,10 @@ private:
 	static void ConsoleLog(MonoObject* string);
 
 	/* Scene Management */
-	static void LoadScene(MonoObject* scene_name);
-	static void LoadSceneNoDestroy(MonoObject* scene_name);
-	static bool CheckSceneReady(MonoObject* scene_name);
-	static void ChangeToScene(MonoObject* scene_name);
+	static void LoadScene(MonoString* scene_name);
+	static void LoadSceneNoDestroy(MonoString* scene_name);
+	static bool CheckSceneReady();
+	static void RemoveNoDestroy();
 	static void QuitScene();
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);

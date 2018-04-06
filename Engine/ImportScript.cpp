@@ -1062,7 +1062,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadScene",(const void*)LoadScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadSceneNoDestroy", (const void*)LoadSceneNoDestroy);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadSceneNoDestroy", (const void*)CheckSceneReady);
-	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::ChangeToScene", (const void*)ChangeToScene);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::RemoveNoDestroy", (const void*)RemoveNoDestroy);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
 
 	//EVENT SYSTEM FUNCTIONS ----------------------------
@@ -1222,12 +1222,11 @@ void ImportScript::ConsoleLog(MonoObject* string)
 	}
 }
 
-void ImportScript::LoadScene(MonoObject * scene_name)
+void ImportScript::LoadScene(MonoString* scene_name)
 {
 	if (scene_name != nullptr)
 	{
-		MonoString* strings = mono_object_to_string(scene_name, NULL);
-		const char* scene = mono_string_to_utf8(strings);
+		const char* scene = mono_string_to_utf8(scene_name);
 
 		std::string directory_scene = DIRECTORY_ASSETS;
 		directory_scene += scene;
@@ -1248,12 +1247,11 @@ void ImportScript::LoadScene(MonoObject * scene_name)
 	}
 }
 
-void ImportScript::LoadSceneNoDestroy(MonoObject * scene_name)
+void ImportScript::LoadSceneNoDestroy(MonoString* scene_name)
 {
 	if (scene_name != nullptr)
 	{
-		MonoString* strings = mono_object_to_string(scene_name, NULL);
-		const char* scene = mono_string_to_utf8(strings);
+		const char* scene = mono_string_to_utf8(scene_name);
 
 		std::string directory_scene = DIRECTORY_ASSETS;
 		directory_scene += scene;
@@ -1271,54 +1269,15 @@ void ImportScript::LoadSceneNoDestroy(MonoObject * scene_name)
 	}
 }
 
-bool ImportScript::CheckSceneReady(MonoObject * scene_name)
+bool ImportScript::CheckSceneReady()
 {
-	if (scene_name != nullptr)
-	{
-		MonoString* strings = mono_object_to_string(scene_name, NULL);
-		const char* scene = mono_string_to_utf8(strings);
 
-		std::string directory_scene = DIRECTORY_ASSETS;
-		directory_scene += scene;
-		directory_scene += ".scene.json";
-
-		/*
-		----------------------------------------------------------------
-		This is a vicente fix, in the future we need to make an event to change scene
-		to turn the focus into nullptr
-		*/
-		App->render_gui->focus = nullptr;
-		App->render_gui->selected = nullptr;
-		//----------------------------------------------------------------
-
-
-	
-	}
 	return false;
 }
 
-void ImportScript::ChangeToScene(MonoObject * scene_name)
+void ImportScript::RemoveNoDestroy()
 {
-	if (scene_name != nullptr)
-	{
-		MonoString* strings = mono_object_to_string(scene_name, NULL);
-		const char* scene = mono_string_to_utf8(strings);
 
-		std::string directory_scene = DIRECTORY_ASSETS;
-		directory_scene += scene;
-		directory_scene += ".scene.json";
-		/*
-		----------------------------------------------------------------
-
-		This is a vicente fix, in the future we need to make an event to change scene
-		to turn the focus into nullptr
-		*/
-		App->render_gui->focus = nullptr;
-		App->render_gui->selected = nullptr;
-		//----------------------------------------------------------------
-
-
-	}
 }
 
 void ImportScript::QuitScene()
