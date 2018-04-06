@@ -120,7 +120,7 @@ void CompAnimation::PreUpdate(float dt)
 
 void CompAnimation::Update(float dt)
 {
-	
+
 }
 
 void CompAnimation::PlayAnimation(AnimationNode * node)
@@ -173,7 +173,7 @@ void CompAnimation::PlayClip(const char * clip_name, bool blending)
 		return;
 	}
 	else if (blending == true && current_animation != nullptr && current_animation != temp && blending_animation != temp)
-	{	
+	{
 		current_animation->state = AnimationState::A_PLAY;
 		temp->state = AnimationState::A_BLENDING;
 		blending_animation = temp;
@@ -215,7 +215,7 @@ void CompAnimation::SetNode(const char * node_name)
 		LOG("Node with name %s can't be found and won't be set.", node_name);
 		return;
 	}
-	else if(temp != prev_node)
+	else if (temp != prev_node)
 	{
 		prev_node->active = false;
 		PlayAnimation(temp);
@@ -255,7 +255,7 @@ bool CompAnimation::IsAnimationStopped(const char * clip_name) const
 		}
 	}
 	LOG("Couldn't find animation clip with name %s!", clip_name)
-	return false;
+		return false;
 }
 
 bool CompAnimation::IsAnimationRunning(const char * clip_name) const
@@ -358,7 +358,7 @@ void CompAnimation::CopyValues(const CompAnimation* component)
 	for (std::vector<AnimationClip*>::const_iterator it = component->animation_clips.begin(); it != component->animation_clips.end(); it++)
 	{
 		AnimationClip* temp = GetClipFromName((*it)->name);
-		if(temp == nullptr)
+		if (temp == nullptr)
 		{
 			AnimationClip* temp = new AnimationClip();
 			temp->name = (*it)->name;
@@ -478,7 +478,7 @@ void CompAnimation::ShowOptions()
 			CopyValues(((CompAnimation*)((Inspector*)App->gui->win_manager[WindowName::INSPECTOR])->GetComponentCopied()));
 		}
 	}
-	
+
 }
 
 void CompAnimation::ShowInspectorInfo()
@@ -528,8 +528,8 @@ void CompAnimation::ShowInspectorInfo()
 				animation_resource->num_game_objects_use_me++;
 				if (animation_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
-					App->importer->iAnimation->LoadResource(animation_resource->path_library.c_str(), animation_resource);
-		
+					App->importer->iAnimation->LoadResource(animation_resource->name.c_str(), animation_resource);
+
 				}
 				Enable();
 			}
@@ -631,7 +631,7 @@ void CompAnimation::ShowAnimationInfo()
 			ImGui::TreePop();
 		}
 	}
-	
+
 	if (show_bone_transformations)
 	{
 		if (ImGui::Begin("Bones", &show_bone_transformations))
@@ -680,8 +680,8 @@ void CompAnimation::ShowAnimationInfo()
 					{
 						ImGui::Text("I'm active!!!");
 					}
-			
-					if (ImGui::Button("DELETE",ImVec2(50,30)))
+
+					if (ImGui::Button("DELETE", ImVec2(50, 30)))
 					{
 						(*it)->to_delete = true;
 					}
@@ -762,7 +762,7 @@ void CompAnimation::ShowAnimationInfo()
 								(*new_item)->clip = animation_clips.at(combo_pos);
 							}
 
-							if(ImGui::Checkbox("Active", &(*new_item)->active))
+							if (ImGui::Checkbox("Active", &(*new_item)->active))
 							{
 								if ((*new_item)->active == true)
 								{
@@ -825,7 +825,7 @@ void CompAnimation::ShowAnimationInfo()
 								(*trans_it)->destination = animation_nodes.at(combo_pos);
 							}
 							ImGui::TreePop(); //Transitions
-						}					
+						}
 					}
 					ImGui::TreePop(); //Nodes
 				}
@@ -833,7 +833,7 @@ void CompAnimation::ShowAnimationInfo()
 		}
 		ImGui::End();
 	}
-	
+
 	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end();)
 	{
 		for (std::vector<AnimationTransition*>::iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end();)
@@ -856,7 +856,7 @@ void CompAnimation::ShowAnimationInfo()
 			it++;
 		}
 	}
-	
+
 }
 
 void CompAnimation::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
@@ -954,10 +954,10 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 		{
 			animation_resource->num_game_objects_use_me++;
 
-			// LOAD ANIMATION ----------------------------
+			// LOAD ANIMATION ----------------------------  
 			if (animation_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
 			{
-				App->importer->iAnimation->LoadResource(animation_resource->path_library.c_str(), animation_resource);
+				App->importer->iAnimation->LoadResource(animation_resource->name.c_str(), animation_resource);
 			}
 		}
 	}
@@ -1005,7 +1005,7 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 		temp->anim_prefab_particle = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticleName");
 		temp->prefab_particle_time = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticleTime");
 		temp->prefab_pos = App->fs->json_array_dotget_float3_string(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".PrefabParticlePos");
-	
+
 		for (std::vector<AnimationClip*>::iterator temp_it = animation_clips.begin(); temp_it != animation_clips.end(); temp_it++)
 		{
 			if ((*temp_it)->name == clip_name)
@@ -1049,7 +1049,7 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 			temp_blending_clip->weight = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".Weight");
 
 			std::string clip_name_blending = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".ClipName");
-			
+
 			AnimationClip* temp_clip = GetClipFromName(clip_name_blending);
 			if (temp_clip != nullptr)
 			{
@@ -1080,11 +1080,11 @@ void CompAnimation::CreateAnimationClip()
 
 void CompAnimation::ManageAnimationClips(AnimationClip* animation_clip, float dt)
 {
-	if(animation_clip != nullptr && animation_clip->state != AnimationState::A_STOP)
+	if (animation_clip != nullptr && animation_clip->state != AnimationState::A_STOP)
 	{
 		animation_clip->time += dt * animation_clip->speed_factor;
-		
-		
+
+
 
 		if (animation_clip->state == AnimationState::A_BLENDING)
 		{
@@ -1150,14 +1150,14 @@ void CompAnimation::ManageActualAnimationNode(float dt)
 						mat = mat.identity;
 						mat = mat.FromQuat(globalrot);
 
-						float3 rotatedpos =  mat * active_node->prefab_pos;
+						float3 rotatedpos = mat * active_node->prefab_pos;
 						final_pos = final_pos + rotatedpos;
 						trans->SetPos(final_pos);
 						float3 final_rot = globalrot.ToEulerXYZ() * RADTODEG;
-						
+
 						float3 prefabrot = ((trans->GetRotGlobal()).ToEulerXYZ()) *RADTODEG;
-			
-						final_rot  = final_rot + prefabrot;
+
+						final_rot = final_rot + prefabrot;
 						trans->SetRot(final_rot);
 						gameobject->UpdateChildsMatrices();
 					}
@@ -1261,7 +1261,7 @@ void AnimationNode::SetActiveBlendingClip(BlendingClip* blnd_clip)
 	blnd_clip->clip->RestartAnimationClip();
 	for (std::vector<BlendingClip*>::iterator new_item = blending_clips.begin(); new_item != blending_clips.end(); ++new_item)
 	{
-		if(blnd_clip != (*new_item))
+		if (blnd_clip != (*new_item))
 		{
 			(*new_item)->clip->state = AnimationState::A_STOP;
 			(*new_item)->active = false;

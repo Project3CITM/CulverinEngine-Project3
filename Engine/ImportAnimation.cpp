@@ -17,75 +17,133 @@ bool ImportAnimation::Import(const aiAnimation * animation, const char * name, c
 {
 	LOG("IMPORTING Animation %s -----", file);
 
-	JSON_Value* config_file;
-	JSON_Object* config;
-
-	config_file = json_value_init_object();
+	uint size = 0;
 
 	std::string new_directory = DIRECTORY_LIBRARY_ANIMATIONS;
 	new_directory += name;
-	new_directory += ".json";
 
-	if (config_file != nullptr)
+	ResourceAnimation* tmp_anim = (ResourceAnimation*)App->resource_manager->CreateNewResource(Resource::Type::ANIMATION, 0);
+
+	tmp_anim->InitInfo(name, App->fs->GetToAsstes(file).c_str(), name);
+	tmp_anim->duration = animation->mDuration;
+	tmp_anim->ticks_per_sec = animation->mTicksPerSecond;
+
+	std::string assets_dir = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+	assets_dir += "\\";
+	assets_dir += name;
+	App->json_seria->SaveAnimation(tmp_anim, assets_dir.c_str(), file, new_directory.c_str());
+
+	size += sizeof(char) * 50; //mName
+	size += sizeof(double); //mDuration
+	size += sizeof(double); //mTicksPerSecond
+	size += sizeof(uint); //mNumChannels
+
+	for (int i = 0; i < animation->mNumChannels; i++)
 	{
-		config = json_value_get_object(config_file);
-		json_object_clear(config);
-		
-		ResourceAnimation* tmp_anim = (ResourceAnimation*)App->resource_manager->CreateNewResource(Resource::Type::ANIMATION, 0);
+		size += sizeof(char) * 50; //mNodeName
+		size += sizeof(uint); //mNumPositionKeys
 
-		tmp_anim->InitInfo(name, App->fs->GetToAsstes(file).c_str(), new_directory.c_str());
-		tmp_anim->duration = animation->mDuration;
-		tmp_anim->ticks_per_sec = animation->mTicksPerSecond;
+		size += sizeof(double) * animation->mChannels[i]->mNumPositionKeys; //mTime for each PosKey
+		size += sizeof(float3) * animation->mChannels[i]->mNumPositionKeys; //posValue
 
-		std::string assets_dir = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-		assets_dir += "\\";
-		assets_dir += name;
-		App->json_seria->SaveAnimation(tmp_anim, assets_dir.c_str(), file, new_directory.c_str());
+		size += sizeof(uint); //mNumRotKeys
+		size += sizeof(double) * animation->mChannels[i]->mNumRotationKeys; //mTime for each RotKey
+		size += sizeof(float4) * animation->mChannels[i]->mNumRotationKeys; //rotValue
 
-		json_object_dotset_string_with_std(config, "Animation.Name", animation->mName.C_Str());
-		json_object_dotset_number_with_std(config, "Animation.Duration", animation->mDuration);
-		json_object_dotset_number_with_std(config, "Animation.TicksPerSecond", animation->mTicksPerSecond);
-		json_object_dotset_number_with_std(config, "Animation.NumBones", animation->mNumChannels);
-
-		for (int i = 0; i < animation->mNumChannels; i++)
-		{
-			std::string bone_name = "Animation.Bone" + std::to_string(i);
-			bone_name += ".";
-			json_object_dotset_string_with_std(config, bone_name + "Name", animation->mChannels[i]->mNodeName.C_Str());
-			json_object_dotset_number_with_std(config, bone_name + "NumPosKeys", animation->mChannels[i]->mNumPositionKeys);
-			for (int x = 0; x < animation->mChannels[i]->mNumPositionKeys; x++)
-			{
-				std::string position_key_name = "Position_Key" + std::to_string(x);
-				position_key_name += ".";
-				json_object_dotset_number_with_std(config, bone_name + position_key_name + "Time", animation->mChannels[i]->mPositionKeys[x].mTime);
-
-				float3 pos = {animation->mChannels[i]->mPositionKeys[x].mValue.x,animation->mChannels[i]->mPositionKeys[x].mValue.y,animation->mChannels[i]->mPositionKeys[x].mValue.z};
-				App->fs->json_array_dotset_float3(config, bone_name + position_key_name + "Position", pos);
-			}
-			json_object_dotset_number_with_std(config, bone_name + "NumRotKeys", animation->mChannels[i]->mNumRotationKeys);
-			for (int p = 0; p < animation->mChannels[i]->mNumRotationKeys; p++)
-			{
-				std::string rotation_key_name = "Rotation_Key" + std::to_string(p);
-				rotation_key_name += ".";
-				json_object_dotset_number_with_std(config, bone_name + rotation_key_name + "Time", animation->mChannels[i]->mRotationKeys[p].mTime);
-
-				float4 rot = { animation->mChannels[i]->mRotationKeys[p].mValue.x ,animation->mChannels[i]->mRotationKeys[p].mValue.y ,animation->mChannels[i]->mRotationKeys[p].mValue.z ,animation->mChannels[i]->mRotationKeys[p].mValue.w};
-				App->fs->json_array_dotset_float4(config, bone_name + rotation_key_name + "Rotation",rot );
-			}
-			json_object_dotset_number_with_std(config, bone_name + "NumScaleKeys", animation->mChannels[i]->mNumScalingKeys);
-			for (int r = 0; r < animation->mChannels[i]->mNumScalingKeys; r++)
-			{
-				std::string scale_key_name = "Scale_Key" + std::to_string(r);
-				scale_key_name += ".";
-				json_object_dotset_number_with_std(config, bone_name + scale_key_name + "Time", animation->mChannels[i]->mScalingKeys[r].mTime);
-
-				float3 pos = { animation->mChannels[i]->mScalingKeys[r].mValue.x,animation->mChannels[i]->mScalingKeys[r].mValue.y,animation->mChannels[i]->mScalingKeys[r].mValue.z };
-				App->fs->json_array_dotset_float3(config, bone_name + scale_key_name + "Scale", pos);
-			}
-		}
-		json_serialize_to_file(config_file, new_directory.c_str());
+		size += sizeof(uint); //mNumScaKeys
+		size += sizeof(double) * animation->mChannels[i]->mNumScalingKeys; //mTime for each ScaleKey
+		size += sizeof(float3) * animation->mChannels[i]->mNumScalingKeys; //ScaleValue
 	}
-	json_value_free(config_file);
+
+	char* data = new char[size];
+	char* cursor = data;
+
+	//Storing name
+	uint bytes = sizeof(char) * 50;
+	memcpy(cursor, animation->mName.C_Str(), bytes);
+	cursor += bytes;
+
+	//Storing duration
+	bytes = sizeof(double);
+	memcpy(cursor, &animation->mDuration, bytes);
+	cursor += bytes;
+
+	//Storing ticks per second
+	bytes = sizeof(double);
+	memcpy(cursor, &animation->mTicksPerSecond, bytes);
+	cursor += bytes;
+
+	//Storing NumChannels
+	bytes = sizeof(uint);
+	memcpy(cursor, &animation->mNumChannels, bytes);
+	cursor += bytes;
+
+	for (int i = 0; i < animation->mNumChannels; i++)
+	{
+		//Storing NodeName
+		bytes = sizeof(char) * 50;
+		memcpy(cursor, animation->mChannels[i]->mNodeName.C_Str(), bytes);
+		cursor += bytes;
+
+		//Storing NumPosKeys
+		bytes = sizeof(uint);
+		memcpy(cursor, &animation->mChannels[i]->mNumPositionKeys, bytes);
+		cursor += bytes;
+		for (int x = 0; x < animation->mChannels[i]->mNumPositionKeys; x++)
+		{
+			//Storing mTime
+			bytes = sizeof(double);
+			memcpy(cursor, &animation->mChannels[i]->mPositionKeys[x].mTime, bytes);
+			cursor += bytes;
+
+			//Storing PosValue
+			bytes = sizeof(float3);
+			memcpy(cursor, &animation->mChannels[i]->mPositionKeys[x].mValue, bytes);
+			cursor += bytes;
+		}
+
+		//Storing NumRotKeys
+		bytes = sizeof(uint);
+		memcpy(cursor, &animation->mChannels[i]->mNumRotationKeys, bytes);
+		cursor += bytes;
+
+		for (int p = 0; p < animation->mChannels[i]->mNumRotationKeys; p++)
+		{
+			//Storing mTime
+			bytes = sizeof(double);
+			memcpy(cursor, &animation->mChannels[i]->mRotationKeys[p].mTime, bytes);
+			cursor += bytes;
+
+			//Storing RotValue
+			bytes = sizeof(float4);
+			float4 real_rot = { animation->mChannels[i]->mRotationKeys[p].mValue.x, animation->mChannels[i]->mRotationKeys[p].mValue.y, animation->mChannels[i]->mRotationKeys[p].mValue.z, animation->mChannels[i]->mRotationKeys[p].mValue.w };
+			memcpy(cursor, &real_rot, bytes);
+			cursor += bytes;
+		}
+
+		//Storing NumScaleKeys
+		bytes = sizeof(uint);
+		memcpy(cursor, &animation->mChannels[i]->mNumScalingKeys, bytes);
+		cursor += bytes;
+
+		for (int r = 0; r < animation->mChannels[i]->mNumScalingKeys; r++)
+		{
+			//Storing mTime
+			bytes = sizeof(double);
+			memcpy(cursor, &animation->mChannels[i]->mScalingKeys[r].mTime, bytes);
+			cursor += bytes;
+
+			//Storing RotValue
+			bytes = sizeof(float3);
+			memcpy(cursor, &animation->mChannels[i]->mScalingKeys[r].mValue, bytes);
+			cursor += bytes;
+		}
+	}
+
+	std::string tmp_name = name;
+	App->fs->SaveFile(data, tmp_name, size, IMPORT_DIRECTORY_LIBRARY_ANIMATIONS);
+
+	RELEASE_ARRAY(data);
 
 	return true;
 }
@@ -93,73 +151,134 @@ bool ImportAnimation::Import(const aiAnimation * animation, const char * name, c
 bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resource_animation)
 {
 	LOG("LOADING ANIMATION -----");
-	resource_animation->bones.clear();
-	JSON_Value* config_file;
-	JSON_Object* config;
-	JSON_Object* config_node;
 
-	config_file = json_parse_file(file);
-	if (file != nullptr)
+	resource_animation->bones.clear();
+
+	char* buffer = nullptr;
+	char* name = new char[50];
+	double ticks_per_sec;
+	double duration;
+	uint num_bones;
+
+	uint size = App->fs->LoadFile(file, &buffer, IMPORT_DIRECTORY_LIBRARY_ANIMATIONS);
+
+	if (buffer != nullptr && size > 0)
 	{
-		config = json_value_get_object(config_file);
-		config_node = json_object_get_object(config, "Animation");
-		resource_animation->name = json_object_dotget_string(config_node, "Name");
-		resource_animation->ticks_per_sec = json_object_dotget_number(config_node, "TicksPerSecond");
-		resource_animation->duration = json_object_dotget_number(config_node, "Duration");
-		int num_bones = json_object_dotget_number(config_node, "NumBones");
+		char* cursor = buffer;
+
+		//Name
+		uint bytes = sizeof(char) * 50;
+		memcpy(name, cursor, bytes);
+		cursor += bytes;
+		resource_animation->name = name;
+
+		RELEASE_ARRAY(name);
+
+		//Duration
+		bytes = sizeof(double);
+		memcpy(&duration, cursor, bytes);
+		resource_animation->duration = duration;
+		cursor += bytes;
+
+		//Ticks per second
+		bytes = sizeof(double);
+		memcpy(&ticks_per_sec, cursor, bytes);
+		resource_animation->ticks_per_sec = ticks_per_sec;
+		cursor += bytes;
+
+		//NumChannels
+		bytes = sizeof(uint);
+		memcpy(&num_bones, cursor, bytes);
+		cursor += bytes;
+
 		for (int i = 0; i < num_bones; i++)
 		{
 			AnimBone* temp_bone = new AnimBone();
-			std::string name = "Bone" + std::to_string(i);
-			JSON_Object* config_bone;
-			config_bone = json_object_get_object(config_node, name.c_str());
+			//NodeName
+			bytes = sizeof(char) * 50;
+			char* tmp_name = new char[50];
+			memcpy(tmp_name, cursor, bytes);
+			temp_bone->name = tmp_name;
+			cursor += bytes;
 
-			temp_bone->name = json_object_dotget_string(config_bone, "Name");
-			int num_pos_keys = json_object_dotget_number(config_bone, "NumPosKeys");
-			for (int p = 0; p < num_pos_keys; p++)
+			//NumPosKeys
+			uint num_pos_keys;
+			bytes = sizeof(uint);
+			memcpy(&num_pos_keys, cursor, bytes);
+			cursor += bytes;
+			for (int j = 0; j < num_pos_keys; j++)
 			{
 				PositionKey* temp_pos_key = new PositionKey();
-				JSON_Object* config_pos_key;
 
-				std::string name_pos = "Position_Key" + std::to_string(p);
-				config_pos_key = json_object_get_object(config_bone, name_pos.c_str());
+				//Time
+				double temp_double;
+				bytes = sizeof(double);
+				memcpy(&temp_double, cursor, bytes);
+				temp_pos_key->time = (float)temp_double;
+				cursor += bytes;
 
-				temp_pos_key->time = json_object_dotget_number(config_pos_key, "Time");
-				temp_pos_key->position = App->fs->json_array_dotget_float3_string(config_pos_key, "Position");
-
+				//PosValue
+				bytes = sizeof(float3);
+				memcpy(&temp_pos_key->position, cursor, bytes);
+				cursor += bytes;
 				temp_bone->position_keys.push_back(temp_pos_key);
 			}
-			int num_rot_keys = json_object_dotget_number(config_bone, "NumRotKeys");
-			for (int j = 0; j < num_rot_keys; j++)
+
+			//NumRotKeys
+			uint num_rot_keys;
+
+			bytes = sizeof(uint);
+			memcpy(&num_rot_keys, cursor, bytes);
+			cursor += bytes;
+			for (int p = 0; p < num_rot_keys; p++)
 			{
 				RotationKey* temp_rot_key = new RotationKey();
-				JSON_Object* config_rot_key;
 
-				std::string name_rot = "Rotation_Key" + std::to_string(j);
-				config_rot_key = json_object_get_object(config_bone, name_rot.c_str());
+				//Time
+				double temp_double;
+				bytes = sizeof(double);
+				memcpy(&temp_double, cursor, bytes);
+				temp_rot_key->time = (float)temp_double;
+				cursor += bytes;
 
-				temp_rot_key->time = json_object_dotget_number(config_rot_key, "Time");
-				float4 rot = App->fs->json_array_dotget_float4_string(config_rot_key, "Rotation");
-				temp_rot_key->rotation = { Quat(rot.x, rot.y, rot.z, rot.w) };
+				//RotValue
+				float4 temp_float4;
+				bytes = sizeof(float4);
+				memcpy(&temp_float4, cursor, bytes);
+				cursor += bytes;
+				temp_rot_key->rotation = { temp_float4.x, temp_float4.y, temp_float4.z, temp_float4.w };
+
 				temp_bone->rotation_keys.push_back(temp_rot_key);
 			}
-			int num_scale_keys = json_object_dotget_number(config_bone, "NumScaleKeys");
-			for (int z = 0; z < num_scale_keys; z++)
+
+			//NumScaKeys
+			uint num_sca_keys;
+
+			bytes = sizeof(uint);
+			memcpy(&num_sca_keys, cursor, bytes);
+			cursor += bytes;
+			for (int p = 0; p < num_sca_keys; p++)
 			{
-				ScaleKey* temp_scale_key = new ScaleKey();
-				JSON_Object* config_scale_key;
+				ScaleKey* temp_sca_key = new ScaleKey();
 
-				std::string name_scale = "Scale_Key" + std::to_string(z);
-				config_scale_key = json_object_get_object(config_bone, name_scale.c_str());
+				//Time
+				double temp_double;
+				bytes = sizeof(double);
+				memcpy(&temp_double, cursor, bytes);
+				temp_sca_key->time = (float)temp_double;
+				cursor += bytes;
 
-				temp_scale_key->time = json_object_dotget_number(config_scale_key, "Time");
-				temp_scale_key->scale = App->fs->json_array_dotget_float3_string(config_scale_key, "Scale");
-
-				temp_bone->scale_keys.push_back(temp_scale_key);
+				//ScaValue
+				bytes = sizeof(float3);
+				memcpy(&temp_sca_key->scale, cursor, bytes);
+				cursor += bytes;
+				temp_bone->scale_keys.push_back(temp_sca_key);
 			}
-
 			resource_animation->bones.push_back(temp_bone);
 		}
 	}
+
+	RELEASE_ARRAY(buffer);
+
 	return true;
 }
