@@ -1060,6 +1060,9 @@ void ImportScript::LinkFunctions()
 
 	//SCENE MANAGEMENT FUNCTIONS ---------
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadScene",(const void*)LoadScene);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadSceneNoDestroy", (const void*)LoadSceneNoDestroy);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadSceneNoDestroy", (const void*)CheckSceneReady);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::ChangeToScene", (const void*)ChangeToScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
 
 	//EVENT SYSTEM FUNCTIONS ----------------------------
@@ -1242,6 +1245,79 @@ void ImportScript::LoadScene(MonoObject * scene_name)
 
 		App->SetActualScene(directory_scene.c_str());
 		App->WantToLoad(true);
+	}
+}
+
+void ImportScript::LoadSceneNoDestroy(MonoObject * scene_name)
+{
+	if (scene_name != nullptr)
+	{
+		MonoString* strings = mono_object_to_string(scene_name, NULL);
+		const char* scene = mono_string_to_utf8(strings);
+
+		std::string directory_scene = DIRECTORY_ASSETS;
+		directory_scene += scene;
+		directory_scene += ".scene.json";
+
+		/*
+		----------------------------------------------------------------
+		This is a vicente fix, in the future we need to make an event to change scene
+		to turn the focus into nullptr
+		*/
+		App->render_gui->focus = nullptr;
+		App->render_gui->selected = nullptr;
+		//----------------------------------------------------------------
+
+	}
+}
+
+bool ImportScript::CheckSceneReady(MonoObject * scene_name)
+{
+	if (scene_name != nullptr)
+	{
+		MonoString* strings = mono_object_to_string(scene_name, NULL);
+		const char* scene = mono_string_to_utf8(strings);
+
+		std::string directory_scene = DIRECTORY_ASSETS;
+		directory_scene += scene;
+		directory_scene += ".scene.json";
+
+		/*
+		----------------------------------------------------------------
+		This is a vicente fix, in the future we need to make an event to change scene
+		to turn the focus into nullptr
+		*/
+		App->render_gui->focus = nullptr;
+		App->render_gui->selected = nullptr;
+		//----------------------------------------------------------------
+
+
+	
+	}
+	return false;
+}
+
+void ImportScript::ChangeToScene(MonoObject * scene_name)
+{
+	if (scene_name != nullptr)
+	{
+		MonoString* strings = mono_object_to_string(scene_name, NULL);
+		const char* scene = mono_string_to_utf8(strings);
+
+		std::string directory_scene = DIRECTORY_ASSETS;
+		directory_scene += scene;
+		directory_scene += ".scene.json";
+		/*
+		----------------------------------------------------------------
+
+		This is a vicente fix, in the future we need to make an event to change scene
+		to turn the focus into nullptr
+		*/
+		App->render_gui->focus = nullptr;
+		App->render_gui->selected = nullptr;
+		//----------------------------------------------------------------
+
+
 	}
 }
 

@@ -91,6 +91,9 @@ private:
 
 	/* Scene Management */
 	static void LoadScene(MonoObject* scene_name);
+	static void LoadSceneNoDestroy(MonoObject* scene_name);
+	static bool CheckSceneReady(MonoObject* scene_name);
+	static void ChangeToScene(MonoObject* scene_name);
 	static void QuitScene();
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);
