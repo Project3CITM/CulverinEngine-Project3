@@ -16,6 +16,7 @@
 #include "CompScript.h"
 #include <direct.h>
 #include "ModuleRenderGui.h"
+#include "ModuleEventSystemV2.h"
 #pragma comment(lib, "mono-2.0-sgen.lib")
 
 CSharpScript* ImportScript::current = nullptr;
@@ -1061,6 +1062,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadScene",(const void*)LoadScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
 
+	//EVENT SYSTEM FUNCTIONS ----------------------------
+	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
+
 	//INPUT FUNCTIONS -------------------
 	mono_add_internal_call("CulverinEditor.Input::GetKeyDown", (const void*)GetKeyDown);
 	mono_add_internal_call("CulverinEditor.Input::GetKeyUp", (const void*)GetKeyUp);
@@ -1246,6 +1250,18 @@ void ImportScript::QuitScene()
 	
 		App->input->quit = true;
 	
+}
+
+void ImportScript::SendInteractiveSelected(MonoObject * interactive)
+{
+	if (interactive != nullptr)
+	{
+		Event pass_selected;
+		pass_selected.Set_event_data(EventType::EVENT_PASS_SELECTED);
+		GameObject*  go= App->importer->iScript->GetGameObject(interactive);
+		pass_selected.pass_selected.component = (CompInteractive*)go->FindComponentByType(Comp_Type::C_BUTTON);
+		PushEvent(pass_selected);
+	}
 }
 
 mono_bool ImportScript::GetKeyDown(int key)

@@ -78,6 +78,7 @@
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
+    <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
     <Compile Include="LevelFinished.cs" />
     <Compile Include="CompText.cs" />
     <Compile Include="CompLight.cs" />
@@ -120,11 +121,11 @@
     <Compile Include="Player\BaseControllers\CharactersManager.cs" />
     <Compile Include="CompAnimation.cs" />
     <Compile Include="CompAudio.cs" />
-    <Compile Include="CompButton.cs" />
+    <Compile Include="UI_Scripts\Component\CompButton.cs" />
     <Compile Include="CompCollider.cs" />
-    <Compile Include="CompGraphic.cs" />
-    <Compile Include="CompImage.cs" />
-    <Compile Include="CompInteractive.cs" />
+    <Compile Include="UI_Scripts\Component\CompGraphic.cs" />
+    <Compile Include="UI_Scripts\Component\CompImage.cs" />
+    <Compile Include="UI_Scripts\Component\CompInteractive.cs" />
     <Compile Include="CompRigidBody.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Left.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Right.cs" />
@@ -163,9 +164,10 @@
     <Compile Include="Component.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="GameObject.cs" />
-    <Compile Include="Input.cs" />
+    <Compile Include="UI_Scripts\Input\Input.cs" />
     <Compile Include="KeyCode.cs" />
     <Compile Include="Math.cs" />
+    <Compile Include="UI_Scripts\Scene\InputManager.cs" />
     <Compile Include="Vector3.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -126,7 +126,8 @@ void ModuleRenderGui::ChangeSelected(Event & this_event)
 	if (selected != nullptr)
 		selected->ForceClear(this_event);
 	selected = this_event.pass_selected.component;
-	selected->OnInteractiveSelected(this_event);
+	if (selected != nullptr)
+		selected->OnInteractiveSelected(this_event);
 }
 
 

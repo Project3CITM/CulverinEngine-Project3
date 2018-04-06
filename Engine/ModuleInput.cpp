@@ -475,41 +475,53 @@ void ModuleInput::UIInputManagerUpdate()
 		}
 	}
 	vect_temp.clear();
+	std::vector<ControllerAxisAction*> axis_temp = ui_manager->GetAxisVector(vertical.c_str());
+	for (int i = 0; i < axis_temp.size(); i++)
+	{
+		if (axis_temp[i]->direction_axis > 0.8f)
+		{
+			Event mouse_event;
+			mouse_event.Set_event_data(EventType::EVENT_AXIS);
+			mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
+			mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_DOWN;
+			PushEvent(mouse_event);
 
-	if (ui_manager->GetAxis(vertical.c_str())->direction_axis > 0.8f)
-	{
-		Event mouse_event;
-		mouse_event.Set_event_data(EventType::EVENT_AXIS);
-		mouse_event.gui_axis.value = ui_manager->GetAxis(vertical.c_str())->direction_axis;
-		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_DOWN;
-		PushEvent(mouse_event);
+		}
+		else if (axis_temp[i]->direction_axis < -0.8f)
+		{
+			Event mouse_event;
+			mouse_event.Set_event_data(EventType::EVENT_AXIS);
+			mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
+			mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_UP;
+			PushEvent(mouse_event);
 
+		}
 	}
-	else if (ui_manager->GetAxis(vertical.c_str())->direction_axis < -0.8f)
+	axis_temp.clear();
+	axis_temp = ui_manager->GetAxisVector(horizontal.c_str());
+	for (int i = 0; i < axis_temp.size(); i++)
 	{
-		Event mouse_event;
-		mouse_event.Set_event_data(EventType::EVENT_AXIS);
-		mouse_event.gui_axis.value = ui_manager->GetAxis(vertical.c_str())->direction_axis;
-		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_UP;
-		PushEvent(mouse_event);
+		if (axis_temp[i]->direction_axis > 0.8f)
+		{
+			Event mouse_event;
+			mouse_event.Set_event_data(EventType::EVENT_AXIS);
+			mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
+			mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_RIGHT;
+			PushEvent(mouse_event);
 
+		}
+		else if (axis_temp[i]->direction_axis < -0.8f)
+		{
+			Event mouse_event;
+			mouse_event.Set_event_data(EventType::EVENT_AXIS);
+			mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
+			mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_LEFT;
+			PushEvent(mouse_event);
+
+		}
 	}
-	if (ui_manager->GetAxis(horizontal.c_str())->direction_axis > 0.8f)
-	{
-		Event mouse_event;
-		mouse_event.Set_event_data(EventType::EVENT_AXIS);
-		mouse_event.gui_axis.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
-		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_RIGHT;
-		PushEvent(mouse_event);
-	}
-	else if (ui_manager->GetAxis(horizontal.c_str())->direction_axis < -0.8f)
-	{
-		Event mouse_event;
-		mouse_event.Set_event_data(EventType::EVENT_AXIS);
-		mouse_event.gui_axis.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
-		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_LEFT;
-		PushEvent(mouse_event);
-	}
+	axis_temp.clear();
+
 }
 
 SDL_Scancode ModuleInput::GetKeyFromName(const char* name)

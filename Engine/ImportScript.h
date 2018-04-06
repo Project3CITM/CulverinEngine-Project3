@@ -92,7 +92,8 @@ private:
 	/* Scene Management */
 	static void LoadScene(MonoObject* scene_name);
 	static void QuitScene();
-
+	/* Scene Management */
+	static void SendInteractiveSelected(MonoObject* interactive);
 	/* Input */
 	static mono_bool	GetKeyDown(int key);
 	static mono_bool	GetKeyUp(int key);

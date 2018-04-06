@@ -16,7 +16,8 @@ struct Navigation
 	enum NavigationMode
 {
 	NAVIGATION_NONE,
-	NAVIGATION_EXTRICTE
+	NAVIGATION_EXTRICTE,
+	NAVIGATION_AUTOMATIC
 };
 	NavigationMode current_navigation_mode = NavigationMode::NAVIGATION_NONE;
 	CompInteractive* interactive_up = nullptr;
