@@ -62,7 +62,12 @@ Scene::~Scene()
 	DeleteAllGameObjects(root);
 	DeleteAllGameObjects(temporary_scene);
 	search_name->GetChildsPtr()->clear();
+	//DeleteAllGameObjects(dontdestroyonload);
+
+	RELEASE(root);
+	RELEASE(temporary_scene);
 	RELEASE(search_name);
+	RELEASE(dontdestroyonload);
 
 	RELEASE(scene_buff);
 	RELEASE(skybox);
@@ -86,6 +91,8 @@ bool Scene::Start()
 	root = new GameObject("NewScene", 1);
 	temporary_scene = new GameObject("Temporary Scene", 1);
 	search_name = new GameObject("search_name", 1);
+	dontdestroyonload = new GameObject("Dont't Destroy On Load", 1);
+
 	/* Init Quadtree */
 	size_quadtree = 5000.0f;
 //	quadtree.Init(size_quadtree);
@@ -158,7 +165,14 @@ update_status Scene::PreUpdate(float dt)
 	// PreUpdate GameObjects ------------------------
 	if (root->WanttoDelete() == false)
 	{
-		root->PreUpdate(dt);
+		if (dontdestroyonload->GetNumChilds() > 0)
+		{
+			dontdestroyonload->PreUpdate(dt);
+		}
+		else
+		{
+			root->PreUpdate(dt);
+		}
 	}
 	else
 	{
@@ -195,7 +209,14 @@ update_status Scene::Update(float dt)
 	perf_timer.Start();
 
 	// Update GameObjects -----------
-	root->Update(dt);
+	if (dontdestroyonload->GetNumChilds() > 0)
+	{
+		dontdestroyonload->Update(dt);
+	}
+	else
+	{
+		root->Update(dt);
+	}
 
 	// Draw Skybox (direct mode for now)
 	//if (App->scene->draw_skybox) 
@@ -749,6 +770,15 @@ uint Scene::GetTagID(const char * tag)
 	return 0;
 }
 
+void Scene::ClearAllTags()
+{
+	// Now remove tagged_objects
+	for (int i = 0; i < tagged_objects.size(); i++)
+	{
+		tagged_objects[i]->clear();
+	}
+}
+
 std::vector<std::string>* Scene::GetTagsVec()
 {
 	return &defined_tags;
@@ -894,14 +924,23 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 	}
 }
 
-void Scene::GetAllGameObjects(GameObject* parent, GameObject* root)
+void Scene::GetAllGameObjectsWithoutParents(GameObject* parent, GameObject* root)
 {
 	for (int i = 0; i < root->GetNumChilds(); i++)
 	{
-		GetAllGameObjects(parent, root->GetChildbyIndex(i));
+		GetAllGameObjectsWithoutParents(parent, root->GetChildbyIndex(i));
 	}
 	parent->GetChildsPtr()->push_back(root);
 }
+
+void Scene::ChangeRoot(GameObject* parent, GameObject* root)
+{
+	for (int i = 0; i < root->GetNumChilds(); i++)
+	{
+		parent->GetChildsPtr()->push_back(root->GetChildbyIndex(i));
+	}
+	root->GetChildsPtr()->clear();
+}	
 
 void Scene::DrawPlane()
 {

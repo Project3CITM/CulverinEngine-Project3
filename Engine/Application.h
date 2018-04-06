@@ -98,6 +98,7 @@ public:
 
 	void WantToSave();
 	void WantToLoad(bool in_game = false);
+	void DontDestroyOnLoad();
 
 	void ChangeCamera(const char* window);
 
@@ -164,6 +165,8 @@ public:
 	bool show_config = false;
 	bool show_performance = false;
 	bool show_camera_popup = false;
+	bool dont_destroy_on_load = false;
+	bool remove_dont_destroy_on_load = false;
 	// -------------------------------------------
 
 	float4 scene_dock = { 0, 0, 0, 0 };

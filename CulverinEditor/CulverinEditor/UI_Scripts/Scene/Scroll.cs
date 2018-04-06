@@ -37,8 +37,8 @@ public class Scroll : CulverinBehaviour
         {
             loading_text.SetActive(true);
             end_scroll = true;
-            start_load = false;
-            SceneManager.LoadSceneNoDestroy("");
+            start_load = true;
+            SceneManager.LoadSceneNoDestroy("LoseMenu");
         }
         if (start_load)
         {

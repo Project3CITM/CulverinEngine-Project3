@@ -100,7 +100,7 @@ void Hierarchy::ShowHierarchy()
 			if (!filt)
 			{
 				App->scene->search_name->GetChildsPtr()->clear();
-				App->scene->GetAllGameObjects(App->scene->search_name, App->scene->root);
+				App->scene->GetAllGameObjectsWithoutParents(App->scene->search_name, App->scene->root);
 			}
 
 			filt = true;
@@ -128,6 +128,13 @@ void Hierarchy::ShowHierarchy()
 	else
 	{
 		App->scene->root->ShowHierarchy();
+	}
+
+	if (App->scene->dontdestroyonload->GetNumChilds() > 0)
+	{
+		ImGui::Separator();
+		App->scene->dontdestroyonload->ShowHierarchy();
+		ImGui::Separator();
 	}
 
 	if (show_temporary_scene)

@@ -1061,7 +1061,7 @@ void ImportScript::LinkFunctions()
 	//SCENE MANAGEMENT FUNCTIONS ---------
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadScene",(const void*)LoadScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadSceneNoDestroy", (const void*)LoadSceneNoDestroy);
-	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadSceneNoDestroy", (const void*)CheckSceneReady);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::CheckSceneReady", (const void*)CheckSceneReady);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::RemoveNoDestroy", (const void*)RemoveNoDestroy);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
 
@@ -1265,19 +1265,20 @@ void ImportScript::LoadSceneNoDestroy(MonoString* scene_name)
 		App->render_gui->focus = nullptr;
 		App->render_gui->selected = nullptr;
 		//----------------------------------------------------------------
-
+		App->SetActualScene(directory_scene.c_str());
+		App->DontDestroyOnLoad();
 	}
 }
 
 bool ImportScript::CheckSceneReady()
 {
-
-	return false;
+	return !App->dont_destroy_on_load;
 }
 
 void ImportScript::RemoveNoDestroy()
 {
-
+	// Remove Dont Destroy On Load on final frame
+	App->remove_dont_destroy_on_load = true;
 }
 
 void ImportScript::QuitScene()

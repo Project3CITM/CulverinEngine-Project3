@@ -8,7 +8,7 @@ public class ContinueButton : CulverinBehaviour
     {
         StatsScore.ResetScore();
         Debug.Log("GOING TO GAME");
-        SceneManager.LoadScene("FinalMap1");
+        SceneManager.RemoveNoDestroy();
     }
 
 }

@@ -56,13 +56,15 @@ public:
 	void						RemoveTaggedObject(const GameObject* target);
 	void						AddTaggedObject(const GameObject* target);
 	uint						GetTagID(const char* str);
+	void						ClearAllTags();
 	std::vector<std::string>*	GetTagsVec();
 
 	void ModificateParent(GameObject* child, GameObject* new_parent);
 	void RemoveAllPointers(GameObject* gameobject);
 
 	//Dont use!
-	void GetAllGameObjects(GameObject* parent, GameObject* root);
+	void GetAllGameObjectsWithoutParents(GameObject* parent, GameObject* root);
+	void ChangeRoot(GameObject* parent, GameObject* root);
 
 	
 	// DRAWING METHODS ---------
@@ -110,6 +112,7 @@ public:
 	GameObject* root = nullptr;
 	GameObject* search_name = nullptr;
 	GameObject* temporary_scene = nullptr;
+	GameObject* dontdestroyonload = nullptr;
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
 	std::vector<GameObject*> static_objects;

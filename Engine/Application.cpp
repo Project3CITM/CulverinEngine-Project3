@@ -8,6 +8,7 @@
 #include "ModuleConsole.h"
 #include "ModuleGUI.h"
 #include "ModuleImporter.h"
+#include "CompCamera.h"
 #include "ModuleTextures.h"
 #include "ModuleFS.h"
 #include "ModuleResourceManager.h"
@@ -257,6 +258,52 @@ void Application::FinishUpdate()
 		}
 		want_to_load = false;
 		load_in_game = false;
+	}
+
+	if (dont_destroy_on_load)
+	{
+		//Before Delete GameObjects Del Variables Scripts GameObject 
+		App->scene->octree.Clear(false);
+
+		//App->scene->DeleteAllGameObjects(App->scene->root);
+		scene->ChangeRoot(scene->dontdestroyonload, scene->root);
+
+		//First swap main camera
+		GameObject* camera = scene->dontdestroyonload->FindGameObjectWithTag("camera");
+		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
+
+		scene->ClearAllTags();
+
+		App->render_gui->focus = nullptr;
+		App->render_gui->selected = nullptr;
+		json_seria->LoadScene(actual_scene.c_str());
+
+		importer->iScript->SetMonoMap(App->scene->root, true);
+		//scene->root->StartScripts();
+
+		//App->resource_manager->ReImportAllScripts();
+		dont_destroy_on_load = false;
+	}
+
+	if (remove_dont_destroy_on_load)
+	{
+		render_gui->focus = nullptr;
+		render_gui->selected = nullptr;
+
+		scene->DeleteAllGameObjects(App->scene->dontdestroyonload);
+
+		GameObject* camera2 = scene->root->FindGameObjectWithTag("camera");
+		((CompCamera*)camera2->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
+
+		if (engine_state != EngineState::STOP)
+		{
+			change_to_game = true;
+		}
+
+		// Now do Start Scripts
+		scene->root->StartScripts();
+
+		remove_dont_destroy_on_load = false;
 	}
 	
 	// ---------------------------------------------
@@ -808,6 +855,11 @@ void Application::WantToLoad(bool in_game)
 {
 	want_to_load = true;
 	load_in_game = in_game;
+}
+
+void Application::DontDestroyOnLoad()
+{
+	dont_destroy_on_load = true;
 }
 
 void Application::ChangeCamera(const char* window)
