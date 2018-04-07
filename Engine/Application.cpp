@@ -277,13 +277,12 @@ void Application::FinishUpdate()
 		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
 
 		scene->ClearAllTags();
-		App->importer->iScript->ClearMonoMap();
+		importer->iScript->ClearLinkVariables();
 
 		App->render_gui->focus = nullptr;
 		App->render_gui->selected = nullptr;
 		json_seria->LoadScene(actual_scene.c_str());
 
-		importer->iScript->SetMonoMap(App->scene->root, true);
 		//scene->root->StartScripts();
 
 		//App->resource_manager->ReImportAllScripts();
@@ -305,6 +304,8 @@ void Application::FinishUpdate()
 			change_to_game = true;
 		}
 
+		App->importer->iScript->ClearMonoMap();
+		importer->iScript->SetMonoMap(App->scene->root, true);
 		// Now do Start Scripts
 		scene->root->StartScripts();
 

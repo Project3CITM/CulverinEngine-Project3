@@ -417,6 +417,11 @@ void ImportScript::SetMonoMap(GameObject* gameobject, bool is_root)
 	}
 }
 
+void ImportScript::ClearLinkVariables()
+{
+	map_link_variables.clear();
+}
+
 void ImportScript::ClearMonoMap()
 {
 	map_link_variables.clear();
