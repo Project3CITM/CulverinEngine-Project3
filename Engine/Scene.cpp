@@ -63,6 +63,12 @@ Scene::~Scene()
 	DeleteAllGameObjects(temporary_scene);
 	search_name->GetChildsPtr()->clear();
 	//DeleteAllGameObjects(dontdestroyonload);
+	defined_tags.clear();
+	for (int i = 0; i < tagged_objects.size(); i++)
+	{
+		tagged_objects[i]->clear();
+	}
+	tagged_objects.clear();
 
 	RELEASE(root);
 	RELEASE(temporary_scene);

@@ -152,7 +152,15 @@ void Project::ShowProject()
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(20, 2));
 		if (ImGui::Button("Select.."))
 			ImGui::OpenPopup("select");
+
+		ImGui::SameLine(ImGui::GetWindowWidth() - 425);
+		ImGui::Text("Filter(inc, -exc)"); ImGui::SameLine();
+		ImGui::PushItemWidth(150);
+		filter.Draw("");
+		ImGui::PopItemWidth();
 		ImGui::PopStyleVar(2);
+		ImGui::SameLine();
+		ImGui::Text("|");
 		ImGui::SameLine();
 		if (ImGui::BeginPopup("select"))
 		{
@@ -310,11 +318,18 @@ void Project::Folders_update(std::vector<FoldersNew>& folders)
 
 void Project::Files_Update(const std::vector<FilesNew>& files)
 {
+	ImGui::SetWindowFontScale(0.9);
 	uint width = DISTANCEBUTTONS;
+	float size_test = 0.0f;
 	for (int i = 0; i < files.size(); i++)
 	{
 		ImGui::PushID(i);
-
+		if (filter.PassFilter(files[i].file_name) == false)
+		{
+			ImGui::PopID();
+			continue;
+		}
+			
 		//std::string namebySize = files[i].file_name;
 		static char nameTemp[100];
 		int lenght = strlen(files[i].file_name);
@@ -469,9 +484,10 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 			break;
 		}
 		}
-		width += size_files + MARGEBUTTON + DISTANCEBUTTONS; // Size of imatge + marge button + between buttons
+		size_test = ImGui::GetItemRectSize().x;
+		width += size_test + DISTANCEBUTTONS; // Size of imatge + marge button + between buttons
 		int temp = ImGui::GetWindowWidth();
-		if ((width + DISTANCEBUTTONS + SPERATIONCOLUMN) > temp)
+		if ((width + size_test + DISTANCEBUTTONS + SPERATIONCOLUMN) > temp)
 		{
 			width = 0;
 		}
@@ -518,6 +534,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 		}
 		ImGui::PopID();
 	}
+	ImGui::SetWindowFontScale(1);
 }
 
 const char* Project::GetDirectory() const
