@@ -29,16 +29,14 @@ public class SpearAttack_Action : Action
     public float attack_duration = 1.0f;
 
     public GameObject target = null;
-    CompAnimation anim = null;
     CharactersManager player = null;
 
 
     public override bool ActionStart()
     {
         state = SWA_STATE.PRE_APPLY;
-        anim = GetComponent<CompAnimation>();
-        anim.SetTransition("ToAttack");
-        anim.SetClipDuration("Attack", attack_duration);
+        GetComponent<CompAnimation>().SetTransition("ToAttack");
+        GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
         //Interrupt player action
         return true;
@@ -55,15 +53,14 @@ public class SpearAttack_Action : Action
             }
 
             //Doing attack
-            anim = GetComponent<CompAnimation>();
-            if (state == SWA_STATE.PRE_APPLY && anim.IsAnimOverXTime(apply_damage_point))
+            if (state == SWA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
             {
                 state = SWA_STATE.POST_APPLY;
                 player.GetDamage(damage);
                 //Apply damage to the target
                 //Play audio fx
             }
-            else if (state == SWA_STATE.POST_APPLY && anim.IsAnimationStopped("Attack"))
+            else if (state == SWA_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
             {
                 state = SWA_STATE.WAITING;
                 return ACTION_RESULT.AR_SUCCESS;
@@ -78,15 +75,14 @@ public class SpearAttack_Action : Action
             }
 
             //Doing attack
-            anim = GetComponent<CompAnimation>();
-            if (state == SWA_STATE.PRE_APPLY && anim.IsAnimOverXTime(apply_damage_point))
+            if (state == SWA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
             {
                 state = SWA_STATE.POST_APPLY;
                 player.GetDamage(damage);
                 //Apply damage to the target
                 //Play audio fx
             }
-            else if (state == SWA_STATE.POST_APPLY && anim.IsAnimationStopped("Attack"))
+            else if (state == SWA_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
             {
                 state = SWA_STATE.WAITING;
                 return ACTION_RESULT.AR_SUCCESS;

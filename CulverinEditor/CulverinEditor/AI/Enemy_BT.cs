@@ -42,6 +42,7 @@ public class Enemy_BT : BT
         attack_timer = attack_cooldown * anim_speed;
         mesh = GetLinkedObject("mesh");
         enemies_manager = GetLinkedObject("enemies_manager");
+        GetComponent<CompAnimation>().PlayAnimation("Idle");
         //ChangeTexturesToAlive();
         base.Start();
     }

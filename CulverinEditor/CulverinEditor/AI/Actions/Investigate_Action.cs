@@ -16,16 +16,13 @@ public class Investigate_Action : Action
 
     INVESTIGATESTATE my_state;
     PerceptionEvent event_to_react;
-    CompAnimation anim;
     Movement_Action move;
     ACTION_RESULT move_return;
 
     public bool forgot_event = false;
 
     void Start()
-    {
-        anim = GetComponent<CompAnimation>();
-    }
+    {}
 
     public Investigate_Action()
     {

@@ -9,7 +9,6 @@ public class Attack_Action : Action
     public uint fatigue = 50;
     public float attack_duration = 1.0f;
     public GameObject target = null;
-    CompAnimation anim = null;
     CharactersManager player = null;
     bool shield_attack = false;
     bool damage_done = false;
@@ -27,12 +26,6 @@ public class Attack_Action : Action
 
     public override bool ActionStart()
     {
-        anim = GetComponent<CompAnimation>();
-        if (anim == null)
-        {
-            Debug.Log("[error]Attack Action Start: CompAnimation is null!!");
-        }
-
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
         if (player == null)
         {
@@ -41,7 +34,7 @@ public class Attack_Action : Action
 
         Debug.Log("Starting attack");
         GetComponent<CompAnimation>().SetTransition("ToAttack");
-        anim.SetClipDuration("Attack", attack_duration);
+        GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
        
         GetComponent<CompAudio>().PlayEvent("Enemy1_Slash");
       
@@ -66,10 +59,10 @@ public class Attack_Action : Action
                 if (player.GetDamage(damage) == true)
                 { 
                     GetComponent<CompAudio>().PlayEvent("SwordHit");
-                    anim.SetActiveBlendingClipWeight(0.0f);
+                    GetComponent<CompAnimation>().SetActiveBlendingClipWeight(0.0f);
                 }
                 else
-                    anim.SetActiveBlendingClipWeight(1.0f);
+                    GetComponent<CompAnimation>().SetActiveBlendingClipWeight(1.0f);
             }
         }
 
