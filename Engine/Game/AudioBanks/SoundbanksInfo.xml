@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="128">
 	<RootPaths>
-		<ProjectRoot>E:\Repos\AudioWwiseProject\Proyecto3\</ProjectRoot>
-		<SourceFilesRoot>E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
-		<SoundBanksRoot>E:\Repos\AudioWwiseProject\SoundBank\</SoundBanksRoot>
+		<ProjectRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\</ProjectRoot>
+		<SourceFilesRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>C:\Users\Kay\Documents\GitHub\TempMotor3D_P3\Engine\Game\AudioBanks\</SoundBanksRoot>
 		<ExternalSourcesInputFile></ExternalSourcesInputFile>
-		<ExternalSourcesOutputRoot>E:\Repos\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
+		<ExternalSourcesOutputRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
 	</RootPaths>
 	<DialogueEvents/>
 	<StreamedFiles/>
@@ -70,11 +70,11 @@
 				<Event Id="846696053" Name="Enemy3_ShieldHit" ObjectPath="\Events\Scene1\Enemies\Enemy3_ShieldHit"/>
 				<Event Id="222867808" Name="Enemy3_Slash" ObjectPath="\Events\Scene1\Enemies\Enemy3_Slash"/>
 				<Event Id="622126552" Name="Enemy_Chase" ObjectPath="\Events\Scene1\Enemies\Enemy_Chase"/>
+				<Event Id="1987237454" Name="Enemy_Flesh_Hit" ObjectPath="\Events\Scene1\Enemies\Enemy_Flesh_Hit"/>
 				<Event Id="1522974588" Name="Enemy_Patrol" ObjectPath="\Events\Scene1\Enemies\Enemy_Patrol"/>
 				<Event Id="3434500843" Name="Enemy_SwordDraw" ObjectPath="\Events\Scene1\Enemies\Enemy_SwordDraw"/>
 				<Event Id="3535166590" Name="Enemy_SwordDrop" ObjectPath="\Events\Scene1\Enemies\Enemy_SwordDrop"/>
 				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene1\Footsteps"/>
-				<Event Id="3753593413" Name="Hover" ObjectPath="\Events\UI\Hover"/>
 				<Event Id="4134768252" Name="JaimeBlock" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeBlock"/>
 				<Event Id="3525158975" Name="JaimeDead" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeDead"/>
 				<Event Id="3224688943" Name="JaimeFailImpact" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeFailImpact"/>
@@ -86,8 +86,6 @@
 				<Event Id="4091047182" Name="PauseAll" ObjectPath="\Events\Default Work Unit\PauseAll"/>
 				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene1\PlayMusic"/>
 				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene1\PlayTorch"/>
-				<Event Id="1616796442" Name="PlayUIMusic" ObjectPath="\Events\UI\PlayUIMusic"/>
-				<Event Id="1758001241" Name="Push" ObjectPath="\Events\UI\Push"/>
 				<Event Id="3240900869" Name="ResumeAll" ObjectPath="\Events\Default Work Unit\ResumeAll"/>
 				<Event Id="3627978879" Name="RopeCut" ObjectPath="\Events\Scene1\Puzzle\RopeCut"/>
 				<Event Id="1503597272" Name="StartPuzzleCountdown" ObjectPath="\Events\Scene1\Puzzle\StartPuzzleCountdown"/>
@@ -172,13 +170,13 @@
 					<ShortName>Theon_Hurt.wav</ShortName>
 					<Path>SFX\Theon_Hurt_1C9C67B2.wem</Path>
 				</File>
+				<File Id="274806199" Language="SFX">
+					<ShortName>Enemy_Hit.wav</ShortName>
+					<Path>SFX\Enemy_Hit_1C9C67B2.wem</Path>
+				</File>
 				<File Id="283710021" Language="SFX">
 					<ShortName>Enemy\Enemy_2\E2_Dead_1.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_2\E2_Dead_1_1C9C67B2.wem</Path>
-				</File>
-				<File Id="299845700" Language="SFX">
-					<ShortName>UI\Button_Hover.wav</ShortName>
-					<Path>SFX\UI\Button_Hover_1C9C67B2.wem</Path>
 				</File>
 				<File Id="337181357" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
@@ -264,10 +262,6 @@
 					<ShortName>Theon_NormalShot.wav</ShortName>
 					<Path>SFX\Theon_NormalShot_1C9C67B2.wem</Path>
 				</File>
-				<File Id="761312164" Language="SFX">
-					<ShortName>Main_Menu.wav</ShortName>
-					<Path>SFX\Main_Menu_F17FB28C.wem</Path>
-				</File>
 				<File Id="764335624" Language="SFX">
 					<ShortName>Characters\Daenerys\Daenerys_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Daenerys\Daenerys_Dead_1_1C9C67B2.wem</Path>
@@ -315,10 +309,6 @@
 				<File Id="948585701" Language="SFX">
 					<ShortName>Puzzle\Chain1.wav</ShortName>
 					<Path>SFX\Puzzle\Chain1_249601E6.wem</Path>
-				</File>
-				<File Id="948936751" Language="SFX">
-					<ShortName>UI\Button_Push.wav</ShortName>
-					<Path>SFX\UI\Button_Push_1C9C67B2.wem</Path>
 				</File>
 				<File Id="961807994" Language="SFX">
 					<ShortName>Puzzle\Timer120bpm.wav</ShortName>
