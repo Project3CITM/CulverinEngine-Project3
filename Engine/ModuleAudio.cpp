@@ -272,14 +272,33 @@ void ModuleAudio::SaveAudioBanks(JSON_Object * config_node)
 
 void ModuleAudio::LoadAudioBanksFromScene(int number_of_banks, JSON_Object * config_node)
 {
-	UnloadAllBanks();
+	std::vector<std::string> banks_in_scene;
+
+	//Get all used banks to unload unused ones. Do this to avoid unload and load same banks
 	for (int i = 0; i < number_of_banks; i++)
 	{
 		std::string bank_number = "AudioBanks.Bank ";
 		bank_number += std::to_string(i).c_str();
 		std::string bank_name = json_object_dotget_string_with_std(config_node, bank_number.c_str());
-		LoadBank(bank_name.c_str());		
+		banks_in_scene.push_back(bank_name);
 	}
+
+	//Unload all unused banks
+	for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end();)
+	{
+		if (std::find(banks_in_scene.begin(), banks_in_scene.end(), (*it)) == loaded_banks.end()) {
+			Wwished::Utility::UnLoadBank((*it).c_str());
+			it = loaded_banks.erase(it);
+		}
+		else it++;	
+	}
+
+	//Load used banks
+	for (std::vector<std::string>::iterator it = banks_in_scene.begin(); it != banks_in_scene.end(); it++)
+	{
+		LoadBank((*it).c_str());
+	}
+
 }
 
 //Given nullptr, it sets the current listener to nullptr
