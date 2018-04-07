@@ -286,7 +286,7 @@ void ModuleAudio::LoadAudioBanksFromScene(int number_of_banks, JSON_Object * con
 	//Unload all unused banks
 	for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end();)
 	{
-		if (std::find(banks_in_scene.begin(), banks_in_scene.end(), (*it)) == loaded_banks.end()) {
+		if (std::find(banks_in_scene.begin(), banks_in_scene.end(), (*it)) == banks_in_scene.end()) {
 			Wwished::Utility::UnLoadBank((*it).c_str());
 			it = loaded_banks.erase(it);
 		}
