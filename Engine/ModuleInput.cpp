@@ -325,7 +325,7 @@ update_status ModuleInput::PreUpdate(float dt)
 	UIInputManagerUpdate();
 	//LOG(std::to_string(mouse_x_motion).c_str());
 
-	if (quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
+	if (quit == true/* || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP*/)
 	{
 		LOG("QUIT");
 		return UPDATE_STOP;
