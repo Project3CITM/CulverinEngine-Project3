@@ -497,7 +497,10 @@ public class CharactersManager : CulverinBehaviour
                     {
                         StatsScore.CharacterDead();
 
-                        current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
+                        JaimeController jaime_controller = current_character.GetComponent<JaimeController>();
+                        jaime_controller.SetState(CharacterController.State.DEAD);
+                        jaime_controller.jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
                         current_character.GetComponent<JaimeController>().PlayFx("JaimeDead");
                     }
                     return true;
@@ -514,8 +517,11 @@ public class CharactersManager : CulverinBehaviour
                 {
                     StatsScore.CharacterDead();
 
-                    current_character.GetComponent<DaenerysController>().SetState(CharacterController.State.DEAD);
-                    current_character.GetComponent<DaenerysController>().PlayFx("DaenerysDead");
+                    DaenerysController daenerys_controller = current_character.GetComponent<DaenerysController>();
+                    daenerys_controller.SetState(CharacterController.State.DEAD);
+                    daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                    daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                    daenerys_controller.PlayFx("DaenerysDead");
                 }
                 return true;
             }
@@ -526,8 +532,11 @@ public class CharactersManager : CulverinBehaviour
                 {
                     StatsScore.CharacterDead();
 
-                    current_character.GetComponent<TheonController>().SetState(CharacterController.State.DEAD);
-                    current_character.GetComponent<TheonController>().PlayFx("TheonDead");
+                    TheonController theon_controller = current_character.GetComponent<TheonController>();
+                    theon_controller.SetState(CharacterController.State.DEAD);
+                    theon_controller.theon_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                    theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                    theon_controller.PlayFx("TheonDead");
                 }
                 return true;
             }

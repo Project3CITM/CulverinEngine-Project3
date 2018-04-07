@@ -427,7 +427,7 @@ public class JaimeController : CharacterController
                 if (!left_ability_cd.in_cd)
                 {
                     // Play the Sound FX
-                    //PlayFx("JaimeFailImpact"); //GOOD ONE
+                    PlayFx("JaimeFailImpact"); //GOOD ONE
 
                     // Decrease stamina -----------
                     DecreaseStamina(left_ability_cost);
