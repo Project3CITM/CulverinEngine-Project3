@@ -196,7 +196,13 @@ update_status ModuleLightning::PreUpdate(float dt)
 	frame_used_lights.clear();
 	std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
 
+
 	for (uint i = 0; i < scene_lights.size(); ++i)
+	{
+		if(scene_lights[i]->use_light_to_render == true)
+			frame_used_lights.push_back(scene_lights[i]);
+	}
+	/*for (uint i = 0; i < scene_lights.size(); ++i)
 	{
 		if (frame_used_lights.size() >= shadow_cast_points_count) break;
 
@@ -228,7 +234,7 @@ update_status ModuleLightning::PreUpdate(float dt)
 		if (frame_used_lights.size() >= shadow_cast_points_count) break;
 		
 	}
-	
+	*/
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -793,8 +799,8 @@ bool OrderLights(CompLight* l1, CompLight* l2)
 {
 	if (!l1 || !l2) return false;
 
-	l1->use_light_to_render = false;
-	l2->use_light_to_render = false;
+	//l1->use_light_to_render = false;
+	//l2->use_light_to_render = false;
 
 	if(l1->type == Light_type::POINT_LIGHT && l2->type == Light_type::POINT_LIGHT)
 	{

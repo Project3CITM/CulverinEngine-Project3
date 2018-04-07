@@ -78,7 +78,7 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 	//---------------------------------------------
 
 	App->module_lightning->OnLightCreated(this);
-
+	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(50, 50, 50));
 }
 
 CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Comp_Type::C_LIGHT, parent)
@@ -123,8 +123,9 @@ CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Co
 	frustum.farPlaneDistance = far_plane;
 	frustum.verticalFov = vertical_fov * DEGTORAD;
 	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
-
+	
 	App->module_lightning->OnLightCreated(this);
+	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(50, 50, 50));
 }
 
 CompLight::~CompLight()
@@ -148,20 +149,29 @@ void CompLight::Init()
 
 void CompLight::PreUpdate(float dt)
 {
+	float3 box_pos = parent->box_fixed.CenterPoint();
+	float3 parent_pos = GetGameObjectPos();
+	float epsilon = 0.4f;
+	if(abs(box_pos.x - parent_pos.x) > epsilon || abs(box_pos.y - parent_pos.y) > epsilon || abs(box_pos.z - parent_pos.z) > epsilon)
+		parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(50,50, 50));
+	
 }
 
 void CompLight::Update(float dt)
 {
-	CompTransform* transf = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
+	use_light_to_render = false;
+	/*CompTransform* transf = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
 	if (transf != nullptr && transf->GetUpdated())
 	{
 		parent->box_fixed.SetFromCenterAndSize(float3::zero, bounding_box_size);
 		parent->box_fixed.TransformAsAABB(transf->GetGlobalTransform());
-	}
+	}*/
+
 }
 
 void CompLight::Draw()
 {
+
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.8);
 
