@@ -78,6 +78,7 @@
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
+    <Compile Include="Player\Jaime\ComboController.cs" />
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
     <Compile Include="LevelFinished.cs" />
     <Compile Include="UI_Scripts\Scene\CompText.cs" />
