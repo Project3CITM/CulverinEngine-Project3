@@ -19,7 +19,7 @@ public class Fireball : CulverinBehaviour
         timer = 0.0f;
         life = 5.0f;
 
-        GetComponent<CompAudio>().PlayEvent("PlayTorch"); //Change This!!
+        GetComponent<CompAudio>().PlayEvent("DaenerysFire"); //Change This!!
         Debug.Log("[blue] PLAY TORCH -----------------");
     }
 
@@ -72,8 +72,10 @@ public class Fireball : CulverinBehaviour
                 enemy_manager.ApplyDamage(collided_obj, damage);
             }
         }
-        GetComponent<CompAudio>().StopEvent("PlayTorch");
-        Debug.Log("[blue] STOP TORCH ---------------");
+
+        GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
+        GetComponent<CompAudio>().StopEvent("DaenerysFire");      
+
         Destroy(gameObject);
     }
 }

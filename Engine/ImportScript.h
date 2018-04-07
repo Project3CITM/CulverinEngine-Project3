@@ -236,7 +236,8 @@ private:
 
 	
 	/*Component Graphic Image*/
-	static void FillAmount(MonoObject * object, float value);
+	static void FillAmount(MonoObject* object, float value);
+	static void SetColor(MonoObject* object, MonoObject* color, float alpha);
 
 	/*Component Collier*/
 	static MonoObject*	GetCollidedObject(MonoObject * object);

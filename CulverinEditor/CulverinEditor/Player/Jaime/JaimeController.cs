@@ -92,6 +92,8 @@ public class JaimeController : CharacterController
 
         //Set Icon in the center
         jaime_icon_obj.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj);
+        jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(1.0f, 1.0f, 1.0f), 1.0f);
+
         jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
         jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
         jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_hp);
@@ -414,7 +416,7 @@ public class JaimeController : CharacterController
                 if (!left_ability_cd.in_cd)
                 {
                     // Play the Sound FX
-                    PlayFx("JaimeFailImpact");
+                    //PlayFx("JaimeFailImpact"); //GOOD ONE
 
                     // Decrease stamina -----------
                     DecreaseStamina(left_ability_cost);
@@ -487,9 +489,6 @@ public class JaimeController : CharacterController
                 {
                     damage = left_ability_dmg3;
                 }
-
-                // Hit to enemy Impact
-                //PlayFx("JaimeImpact");
 
                 /* ---------- IN CASE THAT THE ENEMY BLOCKS THE ATTACK, UNCOMMENT AND COMPLETE THIS CODE ---------- */
                 if (enemy_manager.ApplyDamage(coll_object, damage))

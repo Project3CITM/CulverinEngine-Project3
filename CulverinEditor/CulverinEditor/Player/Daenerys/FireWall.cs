@@ -15,7 +15,7 @@ public class FireWall : CulverinBehaviour
     // Use this for initialization
     void Start()
     {
-        GetComponent<CompAudio>().PlayEvent("PlayTorch"); // Change This!!
+        GetComponent<CompAudio>().PlayEvent("DaenerysFire"); // Change This!!
         GetComponent<CompParticleSystem>().ActivateEmission(true);
     }
 

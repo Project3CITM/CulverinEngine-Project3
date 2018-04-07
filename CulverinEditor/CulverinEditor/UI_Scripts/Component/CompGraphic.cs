@@ -18,6 +18,7 @@ namespace CulverinEditor
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void DeactivateRender();
 
-
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetColor(Vector3 color, float alpha);
     }
 }

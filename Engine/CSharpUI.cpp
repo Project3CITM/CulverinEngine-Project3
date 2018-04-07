@@ -148,3 +148,26 @@ void CSharpScript::SetText(MonoObject * object, MonoString * string)
 		}
 	}
 }
+
+void CSharpScript::SetColor(MonoObject * object, MonoObject * color, float alpha)
+{
+	if (current_game_object != nullptr)
+	{
+		CompImage* image = (CompImage*)current_game_object->FindComponentByType(Comp_Type::C_IMAGE);
+		if (image != nullptr)
+		{
+			MonoClass* classT = mono_object_get_class(color);
+			MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+			MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+			MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+			float3 new_vec;
+
+			if (x_field) mono_field_get_value(color, x_field, &new_vec.x);
+			if (y_field) mono_field_get_value(color, y_field, &new_vec.y);
+			if (z_field) mono_field_get_value(color, z_field, &new_vec.z);
+
+			image->SetColor(new_vec.x, new_vec.y, new_vec.z, alpha);
+		}
+	}
+}

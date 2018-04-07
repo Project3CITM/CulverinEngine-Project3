@@ -275,6 +275,7 @@ public:
 	void		DeactivateRender(MonoObject * object);
 	void		SetAlpha(MonoObject * object, float alpha);
 	void		SetText(MonoObject * object, MonoString* string);
+	void		SetColor(MonoObject * object, MonoObject * color, float alpha);
 
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
