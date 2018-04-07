@@ -75,7 +75,8 @@ public class TheonController : CharacterController
         theon_sparks_particles = GetLinkedObject("theon_sparks_particles");
 
         //Start Idle animation
-        anim_controller = theon_obj.GetComponent<CompAnimation>();    
+        anim_controller = theon_obj.GetComponent<CompAnimation>();
+        anim_controller.PlayAnimationNode("Out");
         ToggleMesh(false);
 
         //Move icon to the left
@@ -262,6 +263,7 @@ public class TheonController : CharacterController
 
         else
         {
+            SetAnimationTransition("ToDeath", true);
             SetState(State.DEAD);
             PlayFx("TheonDead");
         }

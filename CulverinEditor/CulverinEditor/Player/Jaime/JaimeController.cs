@@ -308,6 +308,7 @@ public class JaimeController : CharacterController
 
             else
             {
+                SetAnimationTransition("ToDeath", true);
                 SetState(State.DEAD);
             }
 

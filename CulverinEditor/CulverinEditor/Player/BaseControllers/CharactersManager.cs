@@ -168,15 +168,32 @@ public class CharactersManager : CulverinBehaviour
 
             case State.CHANGING_LEFT:
                 {
-                    if (IsCharacterAnimationStopped(current_character, "Out"))
+                    if (IsDead(current_character) == false)
                     {
-                        ChangeLeft();
+                        if (IsCharacterAnimationStopped(current_character, "Out"))
+                        {
+                            ChangeLeft();
 
-                        temporal_change = current_character;
-                        current_character = left_character;
-                        left_character = temporal_change;
+                            temporal_change = current_character;
+                            current_character = left_character;
+                            left_character = temporal_change;
 
-                        state = State.IDLE;
+                            state = State.IDLE;
+                        }
+                    }
+
+                    else
+                    {
+                        if (IsCharacterAnimationStopped(current_character, "Death"))
+                        {
+                            ChangeLeft();
+
+                            temporal_change = current_character;
+                            current_character = left_character;
+                            left_character = temporal_change;
+
+                            state = State.IDLE;
+                        }
                     }
 
                     break;
@@ -185,17 +202,36 @@ public class CharactersManager : CulverinBehaviour
             case State.CHANGING_RIGHT:
                 {
                     Debug.Log("[green] RIGHT OUT");
-                    if (IsCharacterAnimationStopped(current_character, "Out"))
+                    if (IsDead(current_character) == false)
                     {
-                        Debug.Log("[blue]  ----------------------------");
-                        ChangeRight();
+                        if (IsCharacterAnimationStopped(current_character, "Out"))
+                        {
+                            Debug.Log("[blue]  ----------------------------");
+                            ChangeRight();
 
-                        //Change GameObjects --------------------
-                        temporal_change = current_character;
-                        current_character = right_character;
-                        right_character = temporal_change;
+                            //Change GameObjects --------------------
+                            temporal_change = current_character;
+                            current_character = right_character;
+                            right_character = temporal_change;
 
-                        state = State.IDLE;
+                            state = State.IDLE;
+                        }
+                    }
+
+                    else
+                    {
+                        if (IsCharacterAnimationStopped(current_character, "Death"))
+                        {
+                            Debug.Log("[blue]  ----------------------------");
+                            ChangeRight();
+
+                            //Change GameObjects --------------------
+                            temporal_change = current_character;
+                            current_character = right_character;
+                            right_character = temporal_change;
+
+                            state = State.IDLE;
+                        }
                     }
                     break;
                 }

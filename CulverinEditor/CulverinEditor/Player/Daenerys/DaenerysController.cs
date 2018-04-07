@@ -63,7 +63,7 @@ public class DaenerysController : CharacterController
 
         // Start Idle animation
         anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-        anim_controller.PlayAnimation("Idle");
+        anim_controller.PlayAnimationNode("Out");
         ToggleMesh(false);
 
         //Disable Mana bar
@@ -246,6 +246,7 @@ public class DaenerysController : CharacterController
 
         else
         {
+            SetAnimationTransition("ToDeath", true);
             SetState(State.DEAD);
             PlayFx("DaenerysDead");
         }
