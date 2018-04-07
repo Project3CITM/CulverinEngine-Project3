@@ -453,7 +453,7 @@ bool ModuleInput::CleanUp()
 
 void ModuleInput::UIInputManagerUpdate()
 {
-	if (App->mode_game) {
+	if (App->mode_game|| App->engine_state != EngineState::STOP) {
 
 		if (!ui_conected || ui_manager == nullptr)
 			return;

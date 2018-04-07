@@ -276,6 +276,11 @@ void ModuleRenderGui::ScreenSpaceDraw(bool debug)
 	screen_space_canvas.clear();
 }
 
+void ModuleRenderGui::ClearInteractiveVector()
+{
+	iteractive_vector.clear();
+}
+
 
 bool ModuleRenderGui::CleanUp()
 {

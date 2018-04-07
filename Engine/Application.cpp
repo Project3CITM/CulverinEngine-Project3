@@ -246,8 +246,10 @@ void Application::FinishUpdate()
 		App->scene->DeleteAllGameObjects(App->scene->root);
 		scene->ClearAllTags();
 
-		App->render_gui->focus = nullptr;
-		App->render_gui->selected = nullptr;
+		render_gui->focus = nullptr;
+		render_gui->selected = nullptr;
+		render_gui->ClearInteractiveVector();
+
 		json_seria->LoadScene(actual_scene.c_str());
 
 		if (load_in_game)
@@ -279,8 +281,10 @@ void Application::FinishUpdate()
 		scene->ClearAllTags();
 		importer->iScript->ClearLinkVariables();
 
-		App->render_gui->focus = nullptr;
-		App->render_gui->selected = nullptr;
+		render_gui->focus = nullptr;
+		render_gui->selected = nullptr;
+		render_gui->ClearInteractiveVector();
+
 		json_seria->LoadScene(actual_scene.c_str());
 
 		//scene->root->StartScripts();
@@ -293,6 +297,7 @@ void Application::FinishUpdate()
 	{
 		render_gui->focus = nullptr;
 		render_gui->selected = nullptr;
+		render_gui->ClearInteractiveVector();
 
 		scene->DeleteAllGameObjects(App->scene->dontdestroyonload);
 
