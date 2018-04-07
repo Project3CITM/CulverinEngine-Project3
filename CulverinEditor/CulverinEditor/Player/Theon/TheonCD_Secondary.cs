@@ -3,9 +3,25 @@ using CulverinEditor.Debug;
 
 public class TheonCD_Secondary : CoolDown
 {
+    public bool theon_dead = false;
+
+    void Start()
+    {
+        theon_dead = false;
+    }
+
     public override void Update()
     {
-        base.Update();
+        if (!theon_dead && in_cd)
+        {
+            act_time += Time.deltaTime;
+            if (act_time >= cd_time)
+            {
+                in_cd = false;
+                button_cd = GetComponent<CompButton>();
+                button_cd.Activate();
+            }
+        }
     }
 
     public override void OnClick()

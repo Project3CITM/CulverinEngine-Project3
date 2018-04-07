@@ -111,21 +111,6 @@ public class CharacterController : CulverinBehaviour
         mana.DecreaseManaPercentage(mana_cost);
     }
 
-    public void CheckHealth()
-    {
-        // Debug for check Health control
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            health = GetLinkedObject("health_obj").GetComponent<Hp>();
-            health.GetDamage(10.0f);
-        }
-        else if (Input.GetKeyDown(KeyCode.P))
-        {
-            health = GetLinkedObject("health_obj").GetComponent<Hp>();
-            health.GetDamage(-10.0f);
-        }
-    }
-
     public void PlayFx(string name)
     {
         GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent(name);

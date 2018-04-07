@@ -102,9 +102,6 @@ public class TheonController : CharacterController
 
     public override void ControlCharacter()
     {
-        // Debug method to control Hp
-        CheckHealth();
-
         // First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)

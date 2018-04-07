@@ -501,7 +501,11 @@ public class CharactersManager : CulverinBehaviour
                         jaime_controller.SetState(CharacterController.State.DEAD);
                         jaime_controller.jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
                         jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
-                        current_character.GetComponent<JaimeController>().PlayFx("JaimeDead");
+
+                        //Deactivate Secondary ability button
+                        jaime_s_button_obj.GetComponent<CompButton>().Deactivate();
+
+                        jaime_controller.PlayFx("JaimeDead");
                     }
                     return true;
                 }
@@ -521,6 +525,10 @@ public class CharactersManager : CulverinBehaviour
                     daenerys_controller.SetState(CharacterController.State.DEAD);
                     daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
                     daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+
+                    //Deactivate Secondary ability button
+                    daenerys_s_button_obj.GetComponent<CompButton>().Deactivate();
+
                     daenerys_controller.PlayFx("DaenerysDead");
                 }
                 return true;
@@ -536,6 +544,10 @@ public class CharactersManager : CulverinBehaviour
                     theon_controller.SetState(CharacterController.State.DEAD);
                     theon_controller.theon_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
                     theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+
+                    //Deactivate Secondary ability button
+                    theon_s_button_obj.GetComponent<CompButton>().Deactivate();
+
                     theon_controller.PlayFx("TheonDead");
                 }
                 return true;
