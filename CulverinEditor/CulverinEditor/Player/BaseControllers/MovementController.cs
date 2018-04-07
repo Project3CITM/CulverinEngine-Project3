@@ -240,6 +240,12 @@ public class MovementController : CulverinBehaviour
             GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.deltaTime);
             GetComponent<Transform>().local_rotation = Vector3.Lerp(new Vector3(GetComponent<Transform>().local_rotation.x, GetComponent<Transform>().local_rotation.y, GetComponent<Transform>().local_rotation.z), new Vector3(GetComponent<Transform>().local_rotation.x, GetComponent<Transform>().local_rotation.y, GetComponent<Transform>().local_rotation.z), (endPosition.Length - GetComponent<Transform>().local_position.Length));
         }
+
+        if(!moving && characters_camera.GetComponent<CompAnimation>().IsAnimationStopped("Idle"))
+        {
+            characters_camera.GetComponent<CompAnimation>().PlayAnimation("Idle");
+        }
+        
     }
 
     private bool CheckRotation()

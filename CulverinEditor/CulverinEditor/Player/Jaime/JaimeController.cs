@@ -59,6 +59,8 @@ public class JaimeController : CharacterController
     public GameObject particles_jaime;
 
     //
+    public float cover_duration = 3.0f;
+    private float cover_timer = 0.0f;
 
     protected override void Start()
     {
@@ -98,6 +100,8 @@ public class JaimeController : CharacterController
         jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
         jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_hp);
         jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_stamina);
+
+        cover_timer = 0.0f;
     }
 
     public override void Update()
@@ -163,14 +167,21 @@ public class JaimeController : CharacterController
                     case State.COVER:
                         {
                             //Check for end of the Attack animation
-                            anim_controller = jaime_obj.GetComponent<CompAnimation>();                     
-                            if (anim_controller.IsAnimationStopped("Cover"))
+                            if (jaime_obj.GetComponent<CompAnimation>().IsAnimationStopped("CoverIn") && cover_timer <= 0.0f)
+                            {
+                                jaime_obj.GetComponent<CompAnimation>().SetTransition("ToCoverIdle");
+                            }
+                            if(jaime_obj.GetComponent<CompAnimation>().IsAnimationRunning("CoverIdle") == true)
+                            {
+                                cover_timer += Time.deltaTime;
+                            }
+                            if(jaime_obj.GetComponent<CompAnimation>().IsAnimationRunning("CoverIdle") && cover_timer >= cover_duration)
+                            {
+                                jaime_obj.GetComponent<CompAnimation>().SetTransition("ToCoverOut");
+                            }
+                            if (jaime_obj.GetComponent<CompAnimation>().IsAnimationStopped("CoverOut") && cover_timer >= cover_duration)
                             {
                                 state = State.IDLE;
-                            }
-                            else
-                            {
-                                // Keep playing specific attack animation  until it ends
                             }
                             break;
                         }
@@ -587,7 +598,8 @@ public class JaimeController : CharacterController
     public void DoRightAbility()
     {
         //Set Animation
-        SetAnimationTransition("ToCover", true);
+        SetAnimationTransition("ToCoverIn", true);
+        cover_timer = 0.0f;
 
         // Set Covering State
         SetState(CharacterController.State.COVER);
