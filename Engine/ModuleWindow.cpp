@@ -267,6 +267,10 @@ void ModuleWindow::SetWindowOption(int i)
 		resizable = false;
 		borderless = false;
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+		int w = 0;
+		int h = 0;
+		SDL_GetWindowSize(window, &w, &h);
+		SetWindowSize(w, h);
 		break;
 	}
 	case 1:

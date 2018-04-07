@@ -109,7 +109,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	IterateDrawAlphaV(dt);
 	active_frame->UnBind("Scene");
 	//Draw opaque with glow events
-	glViewport(0, 0, 64, 64);
+	glViewport(0, 0, 128, 128);
 	active_frame = App->scene->glow_buff;
 	active_frame->Bind("Scene");
 	IterateDrawGlowV(dt);

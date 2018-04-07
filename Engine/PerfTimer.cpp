@@ -6,6 +6,7 @@
 #include "PerfTimer.h"
 #include "SDL\include\SDL_timer.h"
 
+
 uint64 PerfTimer::frequency = 0;
 
 // ---------------------------------------------
@@ -20,19 +21,22 @@ PerfTimer::PerfTimer()
 // ---------------------------------------------
 void PerfTimer::Start()
 {
-	started_at = SDL_GetPerformanceCounter();
+	started_at = Clock::now();
 }
 
 // ---------------------------------------------
 double PerfTimer::ReadMs() const
 {
-	return 1000.0 * (double(SDL_GetPerformanceCounter() - started_at) / double(frequency));
+
+	std::chrono::duration<double> diff = Clock::now() - started_at;
+
+	return diff.count()*1000;
 }
 
 // ---------------------------------------------
 uint64 PerfTimer::ReadTicks() const
 {
-	return SDL_GetPerformanceCounter() - started_at;
+	return 0;// SDL_GetTicks() - started_at;
 }
 
 

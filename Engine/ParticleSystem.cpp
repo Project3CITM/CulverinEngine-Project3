@@ -348,7 +348,7 @@ void Particle::DrawParticle(uint program_id)
 	//glEnable(GL_NORMALIZE);
 	if (ParentParticleSystem->TextureData.TextureID != 0)
 	{
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);		
 		uint texLoc = glGetUniformLocation(program_id, "albedo");
 		glUniform1i(texLoc, 0);
 		glActiveTexture(GL_TEXTURE0);
@@ -394,6 +394,7 @@ void Particle::DrawParticle(uint program_id)
 
 	glDisable(GL_NORMALIZE);
 	glDepthMask(GL_TRUE);
+
 }
 
 void Particle::SetAssignedStateFromVariables(ParticleAssignedState& AState, const ParticleState& State)
