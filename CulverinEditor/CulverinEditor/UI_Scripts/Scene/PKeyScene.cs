@@ -8,6 +8,7 @@ public class PKeyScene : CulverinBehaviour
     void Start()
     {
         Input.SetInputManagerActive("GUI", false);
+        GetComponent<CompAudio>().PlayEvent("PlayUIMusic");
     }
     void Update()
     {
