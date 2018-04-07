@@ -240,8 +240,12 @@ void Application::FinishUpdate()
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		App->scene->octree.Clear(false);
-		
+
+		App->importer->iScript->ClearMonoMap();
+
 		App->scene->DeleteAllGameObjects(App->scene->root);
+		scene->ClearAllTags();
+
 		App->render_gui->focus = nullptr;
 		App->render_gui->selected = nullptr;
 		json_seria->LoadScene(actual_scene.c_str());
@@ -273,6 +277,7 @@ void Application::FinishUpdate()
 		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
 
 		scene->ClearAllTags();
+		App->importer->iScript->ClearMonoMap();
 
 		App->render_gui->focus = nullptr;
 		App->render_gui->selected = nullptr;
