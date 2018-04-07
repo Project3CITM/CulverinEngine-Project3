@@ -47,12 +47,14 @@ public class EnemySpear_BT : Enemy_BT
     protected override void InCombatDecesion()
     {
         int inrange_i = GetDistanceInRange();
-        Debug.Log("[error]Tiles in range:" + inrange_i);
+        Debug.Log("[error]Tiles to player:" + inrange_i);
         if (inrange_i == 1)
         {
 
             if (!GetComponent<FacePlayer_Action>().IsFaced())
             {
+
+                Debug.Log("[pink]FACE PLAYER ACTION IS ACTIVE!!");
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
                 return;
@@ -60,9 +62,9 @@ public class EnemySpear_BT : Enemy_BT
 
             //We need the direction to know if behind of the enemy there is
             //a tile wakable to make our separate or not.
-            Movement_Action.Direction current_dir = mov.SetDirection();
+            Movement_Action.Direction current_dir = GetComponent<Movement_Action>().SetDirection();
 
-            Debug.Log("[error]Direction looking:" + current_dir);
+            Debug.Log("[pink]Direction looking:" + current_dir);
 
             uint next_tile_x = 0;
             uint next_tile_y = 0;
@@ -70,7 +72,17 @@ public class EnemySpear_BT : Enemy_BT
             if (CanISeparate(current_dir, out next_tile_x, out next_tile_y))
             {
                 int attack_type_value = rand.Next(1, 10);
-                RandomAttack(attack_type_value, next_tile_x, next_tile_y);
+                //RandomAttack(attack_type_value, next_tile_x, next_tile_y);
+                Debug.Log("[error]Separate in random");
+                state = AI_STATE.AI_ATTACKING;
+                Separate_Action action = GetComponent<Separate_Action>();
+                //We set the destiny of the separation
+                action.SetTileDestinySeparate(next_tile_x, next_tile_y);
+                current_action = action;
+                current_action.ActionStart();
+
+
+                //next_action = GetComponent<SpearAttack_Action>();
                 return;
             }
             else
@@ -85,6 +97,13 @@ public class EnemySpear_BT : Enemy_BT
                     action.IsMeleeAttack(true);
                     action.SetDamage(attack_damage);
                     current_action = action;
+                    current_action.ActionStart();
+                    return;
+                }
+                else
+                {
+                    state = AI_STATE.AI_IDLE;
+                    current_action = GetComponent<IdleAttack_Action>();
                     current_action.ActionStart();
                     return;
                 }
