@@ -11,6 +11,8 @@ public class PushBack_Action : Action
     public float push_time = 1.0f;
     string animation_clip_push="a";
 
+    float push_timer = 0.0f;
+
     void Start()
     {
         target_x = 0;
@@ -163,7 +165,18 @@ public class PushBack_Action : Action
             Debug.Log("Pushed");
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
             GetComponent<Movement_Action>().SetEnemyTile(target_x, target_y);
-            return ACTION_RESULT.AR_SUCCESS;
+
+            if (push_timer >= 0.5f)
+            {
+                push_timer = 0.0f;
+                return ACTION_RESULT.AR_SUCCESS;
+            }
+            else
+            {
+                push_timer = push_timer + Time.deltaTime;
+                return ACTION_RESULT.AR_IN_PROGRESS;
+            }
+
         }
 
         Vector3 my_pos = transform.position;
