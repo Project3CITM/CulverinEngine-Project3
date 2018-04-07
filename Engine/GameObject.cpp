@@ -2078,7 +2078,7 @@ GameObject* GameObject::GetChildByRealName(std::string name) const
 
 void GameObject::GetChildDeepSearch(const char * name, std::vector<GameObject*>& GOVector) const
 {
-	GameObject* found = GetChildByRealName(name);
+	GameObject* found = GetChildbyName(name);
 
 	if (found != nullptr)
 	{
