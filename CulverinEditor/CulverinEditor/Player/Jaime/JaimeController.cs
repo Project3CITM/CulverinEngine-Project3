@@ -8,6 +8,7 @@ public class JaimeController : CharacterController
     public GameObject larm_jaime_obj; //To enable/disable mesh
     public GameObject rarm_jaime_obj; //To enable/disable mesh
     public GameObject Global_Camera;
+    
     //UI ELEMENTS
     public GameObject jaime_icon_obj;
     public GameObject jaime_icon_obj_hp;
@@ -34,12 +35,14 @@ public class JaimeController : CharacterController
 
     //Left Ability Stats ---
     public float left_ability_dmg = 10.0f;
+    public float left_ability_dmg2 = 1.0f;
+    public float left_ability_dmg3 = 15.0f;
     public float left_ability_cost = 10.0f;
     JaimeCD_Left left_ability_cd;
     bool do_left_attack = false;
+    public GameObject combo_obj; // Combo controller
 
     /* To perform different animations depending on the hit streak */
-    int hit_streak = 0; 
     string[] anim_name = { "Attack1", "Attack2", "Attack3" };
     string current_anim = "Attack1";
     // ---------------------
@@ -50,15 +53,12 @@ public class JaimeController : CharacterController
     JaimeCD_Right right_ability_cd;
 
     public GameObject jaime_sword_obj;
-
-    public float left_ability_dmg2 = 1.0f;
-    public float left_ability_dmg3 = 15.0f;
-    public float reset_hit_time = 1.0f;
-    public float curr_hit_time = 0.0f;
     // ---------------------
 
     //Particle emitter GameObject
     public GameObject particles_jaime;
+
+    //
 
     protected override void Start()
     {
@@ -80,6 +80,8 @@ public class JaimeController : CharacterController
         jaime_icon_obj_stamina = GetLinkedObject("jaime_icon_obj_stamina");
 
         particles_jaime = GetLinkedObject("particles_jaime");
+
+        combo_obj = GetLinkedObject("combo_obj");
 
         //Start Idle animation
         anim_controller = jaime_obj.GetComponent<CompAnimation>();
@@ -119,12 +121,6 @@ public class JaimeController : CharacterController
                 {
                     case State.IDLE:
                         {
-                            curr_hit_time += Time.deltaTime;
-                            if (curr_hit_time > reset_hit_time) 
-                            {
-                                hit_streak = 0;
-                            }
-
                             //Check For Input + It has to check if he's moving to block attack (¿?)
                             CheckAttack();
                             break;
@@ -274,8 +270,12 @@ public class JaimeController : CharacterController
             SetAnimationTransition("ToBlock", true);
             Global_Camera.GetComponent<CompAnimation>().PlayAnimation("J_Block");
             GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
+            
             //PlayFx("MetalClash");
             PlayFx("JaimeBlock");
+
+            DecreaseStamina(right_ability_cost);
+
             SetState(State.BLOCKING);
 
             return false;
@@ -298,10 +298,10 @@ public class JaimeController : CharacterController
             else
             {
                 SetState(State.DEAD);
-            }         
+            }
 
             //Reset hit count
-            hit_streak = 0;
+            combo_obj.GetComponent<ComboController>().ResetHitStreak();
 
             return true;
         }
@@ -420,7 +420,7 @@ public class JaimeController : CharacterController
                     DecreaseStamina(left_ability_cost);
 
                     // Set Attacking Animation depending on the hit_streak
-                    current_anim = anim_name[hit_streak];
+                    current_anim = anim_name[combo_obj.GetComponent<ComboController>().GetHitStreak()];
                     SetAnimationTransition("To" + current_anim, true);
                     jaime_anim_controller = Global_Camera.GetComponent<CompAnimation>();
                     if(current_anim == "Attack1")
@@ -463,10 +463,13 @@ public class JaimeController : CharacterController
             Debug.Log("[error]"+coll_object.GetTag());
             if (coll_object.CompareTag("Enemy"))
             {
+                //Get current hit streak
+                int hit_streak = combo_obj.GetComponent<ComboController>().GetHitStreak();
+                Debug.Log("[blue] --------------------- " + hit_streak +" ---------------------");
+
                 //Enable particles emission of enemy blood
                 particles_jaime.GetComponent<SwordParticles>().EnableEnemyCollision(true);
 
-                curr_hit_time = 0.0f;
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
                 EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
 
@@ -493,18 +496,20 @@ public class JaimeController : CharacterController
                 {
                     Debug.Log("Apply Damage");
 
-                    if (hit_streak < 2)
+                    if (hit_streak == 0)
                     {
-                        hit_streak++; //Increase hit count
+                        //Start combo time controller to manage hit streaks
+                        combo_obj.GetComponent<ComboController>().StartComboTime();
+                        Debug.Log("[error]                       START COMBO TIME");
                     }
-                    else
-                    {
-                        hit_streak = 0; //Reset hit count
-                    }
+
+                    // If damage done effectively, increase Hit Streak
+                    combo_obj.GetComponent<ComboController>().IncreaseHitStreak();
                 }
                 else
                 {
-                    hit_streak = 0; // Reset Hit Count
+                    // Reset Hit Count
+                    combo_obj.GetComponent<ComboController>().ResetHitStreak(); 
 
                     //Enable particles emission of enemy blood
                     particles_jaime.GetComponent<SwordParticles>().EnableWallCollision(true);
@@ -520,8 +525,9 @@ public class JaimeController : CharacterController
                 /* ----------------------------------------------------------------------------------- */
             }
             else if(coll_object.CompareTag("obstacle"))
-            {       
-                hit_streak = 0; // Reset Hit Count
+            {
+                //Reset Hit Count
+                combo_obj.GetComponent<ComboController>().ResetHitStreak(); 
 
                 //Enable particles emission of enemy blood
                 particles_jaime.GetComponent<SwordParticles>().EnableWallCollision(true);
@@ -536,7 +542,8 @@ public class JaimeController : CharacterController
         }
         else
         {
-            hit_streak = 0; //Reset hit count
+            //Reset Hit Count
+            combo_obj.GetComponent<ComboController>().ResetHitStreak();
         }
 
         // Play the Sound FX
@@ -580,9 +587,6 @@ public class JaimeController : CharacterController
 
     public void DoRightAbility()
     {
-        //Decrease stamina -----------
-        DecreaseStamina(right_ability_cost);
-
         //Set Animation
         SetAnimationTransition("ToCover", true);
 
