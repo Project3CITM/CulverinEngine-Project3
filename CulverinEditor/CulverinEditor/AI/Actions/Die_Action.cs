@@ -39,7 +39,7 @@ class Die_Action : Action
     public override ACTION_RESULT ActionUpdate()
     {
         
-        if (cur_time <= time_to_move)
+        if (GetComponent<EnemySword_BT>() != null && cur_time <= time_to_move)
         {
             cur_time += Time.deltaTime;
             float val = y_move * (cur_time / time_to_move);
