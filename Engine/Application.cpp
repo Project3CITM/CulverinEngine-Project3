@@ -287,6 +287,10 @@ void Application::FinishUpdate()
 
 		json_seria->LoadScene(actual_scene.c_str());
 
+		importer->iScript->SetMonoMap(App->scene->root, true);
+		// Now do Start Scripts
+		scene->root->StartScripts();
+
 		//scene->root->StartScripts();
 
 		//App->resource_manager->ReImportAllScripts();
@@ -299,7 +303,8 @@ void Application::FinishUpdate()
 		render_gui->selected = nullptr;
 		render_gui->ClearInteractiveVector();
 
-		scene->DeleteAllGameObjects(App->scene->dontdestroyonload);
+		//scene->DeleteAllGameObjects(App->scene->dontdestroyonload);
+		App->scene->dontdestroyonload->GetChildsPtr()->clear();
 
 		GameObject* camera2 = scene->root->FindGameObjectWithTag("camera");
 		((CompCamera*)camera2->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
@@ -309,10 +314,11 @@ void Application::FinishUpdate()
 			change_to_game = true;
 		}
 
-		App->importer->iScript->ClearMonoMap();
-		importer->iScript->SetMonoMap(App->scene->root, true);
+		//App->importer->iScript->ClearMonoMap();
+
+		//importer->iScript->SetMonoMap(App->scene->root, true);
 		// Now do Start Scripts
-		scene->root->StartScripts();
+		//scene->root->StartScripts();
 
 		remove_dont_destroy_on_load = false;
 	}
