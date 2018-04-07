@@ -103,7 +103,10 @@ public:
 	{
 		return mouse_y_motion_global;
 	}
-
+	bool GetPressAnyKey()const
+	{
+		return press_any_key;
+	}
 	void SetMotionGlobal(int x, int y)
 	{
 		mouse_x_global = x;
@@ -122,7 +125,7 @@ private:
 	int mouse_y_motion = 0;
 
 	bool chek = false;
-
+	bool press_any_key = false;
 	int mouse_x_global = 0;
 	int mouse_y_global = 0;
 	int mouse_x_motion_global = 0;

@@ -9,6 +9,10 @@ namespace CulverinEditor
 {
     public class Input
     {
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetPressAnyKey();
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool GetKeyDown(KeyCode key);
 

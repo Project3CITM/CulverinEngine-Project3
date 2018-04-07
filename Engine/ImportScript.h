@@ -98,6 +98,7 @@ private:
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);
 	/* Input */
+	static mono_bool	GetPressAnyKey();
 	static mono_bool	GetKeyDown(int key);
 	static mono_bool	GetKeyUp(int key);
 	static mono_bool	GetKeyRepeat(int key);

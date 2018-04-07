@@ -114,7 +114,7 @@ bool ModuleInput::Init(JSON_Object* node)
 update_status ModuleInput::PreUpdate(float dt)
 {
 	perf_timer.Start();
-
+	press_any_key = false;
 	SDL_PumpEvents();
 	player_action->UpdateInputsManager();
 
@@ -193,10 +193,18 @@ update_status ModuleInput::PreUpdate(float dt)
 		//}
 		switch (e.type)
 		{
+		case SDL_KEYDOWN:
+		case SDL_CONTROLLERBUTTONDOWN:
+			press_any_key = true;
 
+			break;
+		case SDL_CONTROLLERAXISMOTION:
+			if(e.caxis.axis<-5000 ||e.caxis.axis>5000)
+				press_any_key = true;
+			break;
 		case SDL_MOUSEBUTTONDOWN:
 		{
-
+			press_any_key = true;
 			//LOG("mouse down");
 			mouse_x = e.motion.x / SCREEN_SIZE;
 			mouse_y = e.motion.y / SCREEN_SIZE;

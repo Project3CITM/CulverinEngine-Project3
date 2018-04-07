@@ -1069,6 +1069,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
 
 	//INPUT FUNCTIONS -------------------
+	
+	mono_add_internal_call("CulverinEditor.Input::GetPressAnyKey", (const void*)GetPressAnyKey);
 	mono_add_internal_call("CulverinEditor.Input::GetKeyDown", (const void*)GetKeyDown);
 	mono_add_internal_call("CulverinEditor.Input::GetKeyUp", (const void*)GetKeyUp);
 	mono_add_internal_call("CulverinEditor.Input::GetKeyRepeat", (const void*)GetKeyRepeat);
@@ -1298,6 +1300,11 @@ void ImportScript::SendInteractiveSelected(MonoObject * interactive)
 		pass_selected.pass_selected.component = (CompInteractive*)go->FindComponentByType(Comp_Type::C_BUTTON);
 		PushEvent(pass_selected);
 	}
+}
+
+mono_bool ImportScript::GetPressAnyKey()
+{
+	return App->input->GetPressAnyKey();
 }
 
 mono_bool ImportScript::GetKeyDown(int key)
