@@ -424,7 +424,6 @@ void ImportScript::ClearLinkVariables()
 
 void ImportScript::ClearMonoMap()
 {
-	map_link_variables.clear();
 	mono_map.clear();
 	mono_comp.clear();
 	mono_pos.clear();
