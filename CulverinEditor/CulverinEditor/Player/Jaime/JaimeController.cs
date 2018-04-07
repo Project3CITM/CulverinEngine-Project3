@@ -506,6 +506,8 @@ public class JaimeController : CharacterController
                 {
                     Debug.Log("Apply Damage");
 
+                    GetComponent<CompAudio>().PlayEvent("Enemy_Flesh_Hit");
+
                     if (hit_streak == 0)
                     {
                         //Start combo time controller to manage hit streaks
