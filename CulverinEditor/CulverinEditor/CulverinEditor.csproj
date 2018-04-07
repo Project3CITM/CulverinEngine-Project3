@@ -80,7 +80,7 @@
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
     <Compile Include="LevelFinished.cs" />
-    <Compile Include="CompText.cs" />
+    <Compile Include="UI_Scripts\Scene\CompText.cs" />
     <Compile Include="CompLight.cs" />
     <Compile Include="UI_Scripts\Scene\ContinueButton.cs" />
     <Compile Include="Player\Daenerys\FireBreath.cs" />

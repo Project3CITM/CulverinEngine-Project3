@@ -1140,6 +1140,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompImage::DeactivateRender", (const void*)DeactivateRender);
 	//COMPONENT TEXT
 	mono_add_internal_call("CulverinEditor.CompText::SetAlpha", (const void*)SetAlpha);
+	mono_add_internal_call("CulverinEditor.CompText::SetText", (const void*)SetText);
 
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
@@ -1864,6 +1865,12 @@ void ImportScript::DeactivateRender(MonoObject * object)
 void ImportScript::SetAlpha(MonoObject * object, float alpha)
 {
 	current->SetAlpha(object, alpha);
+}
+
+void ImportScript::SetText(MonoObject * object, MonoString * text)
+{
+	current->SetText(object, text);
+
 }
 
 void ImportScript::FillAmount(MonoObject * object, float value)

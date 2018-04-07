@@ -136,3 +136,15 @@ void CSharpScript::SetAlpha(MonoObject * object, float alpha)
 		}
 	}
 }
+
+void CSharpScript::SetText(MonoObject * object, MonoString * string)
+{
+	if (current_game_object != nullptr)
+	{
+		CompText* text = (CompText*)current_game_object->FindComponentByType(Comp_Type::C_TEXT);
+		if (text != nullptr)
+		{
+			text->SetString(mono_string_to_utf8(string));
+		}
+	}
+}

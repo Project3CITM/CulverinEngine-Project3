@@ -231,6 +231,9 @@ private:
 	static void DeactivateRender(MonoObject * object);
 	/*Component Text*/
 	static void SetAlpha(MonoObject* object, float alpha);
+	static void SetText(MonoObject* object, MonoString* alpha);
+
+	
 	/*Component Graphic Image*/
 	static void FillAmount(MonoObject * object, float value);
 

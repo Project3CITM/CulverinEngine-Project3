@@ -259,6 +259,8 @@ void CompText::SetRect(float x, float y, float width, float height)
 
 void CompText::SetString(std::string input)
 {
+	if (input.size() > max_input)
+		return;
 	text_str = input;
 	UpdateText();
 	GenerateText();
