@@ -31,6 +31,8 @@
 #include "ModuleKeyBinding.h"
 #include "ModuleAnimation.h"
 #include "ImportScript.h"
+#include "ModuleInput.h"
+#include "PlayerActions.h"
 static int malloc_count;
 static void *counted_malloc(size_t size);
 static void counted_free(void *ptr);
@@ -281,9 +283,6 @@ void Application::FinishUpdate()
 		scene->ClearAllTags();
 		importer->iScript->ClearLinkVariables();
 
-		//render_gui->focus = nullptr;
-		//render_gui->selected = nullptr;
-		//render_gui->ClearInteractiveVector();
 
 		json_seria->LoadScene(actual_scene.c_str());
 
@@ -291,6 +290,7 @@ void Application::FinishUpdate()
 		importer->iScript->SetMonoMap(App->scene->root, true);
 		// Now do Start Scripts
 		scene->root->StartScripts();
+		input->player_action->SetInputManagerActive("GUI", true);
 
 		//App->resource_manager->ReImportAllScripts();
 		dont_destroy_on_load = false;
