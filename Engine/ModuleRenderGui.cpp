@@ -16,7 +16,7 @@
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
 #include "DefaultShaders.h"
-
+#include "GameObject.h"
 ModuleRenderGui::ModuleRenderGui(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
@@ -146,9 +146,11 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 		iteractive_vector.push_back((CompInteractive*)this_event.pass_component.component);
 		break;
 	case EventType::EVENT_AXIS:
+		
 		if (selected != nullptr)
 		{
-			selected->OnMove(this_event);
+			if(selected->GetParent()->IsActive())
+				selected->OnMove(this_event);
 		}
 		else
 		{
@@ -171,13 +173,15 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	case EventType::EVENT_SUBMIT:
 		if (selected != nullptr)
 		{
-			selected->OnSubmit(this_event);
+			if (selected->GetParent()->IsActive())
+				selected->OnSubmit(this_event);
 		}
 		break;
 	case EventType::EVENT_CANCEL:
 		if (selected != nullptr)
 		{
-			selected->OnCancel(this_event);
+			if (selected->GetParent()->IsActive())
+				selected->OnCancel(this_event);
 		}
 		break;
 	case EventType::EVENT_BUTTON_DOWN:

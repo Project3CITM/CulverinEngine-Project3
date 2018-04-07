@@ -1278,8 +1278,6 @@ void ImportScript::LoadSceneNoDestroy(MonoString* scene_name)
 		This is a vicente fix, in the future we need to make an event to change scene
 		to turn the focus into nullptr
 		*/
-		App->render_gui->focus = nullptr;
-		App->render_gui->selected = nullptr;
 		//----------------------------------------------------------------
 		App->SetActualScene(directory_scene.c_str());
 		App->DontDestroyOnLoad();
