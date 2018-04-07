@@ -40,7 +40,7 @@ public class Separate_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true)
+        if (interupt == true)
         {
             move.Interupt();
         }

@@ -40,6 +40,7 @@ public class EnemySpear_BT : Enemy_BT
 
     public override void Update()
     {
+        //Debug.Log("[green] Spear at Tile: " + GetComponent<Movement_Action>().tile.GetTileX() + "," + GetComponent<Movement_Action>().tile.GetTileY());
         base.Update();
     }
 
@@ -281,7 +282,7 @@ public class EnemySpear_BT : Enemy_BT
             action.SetTileDestinySeparate(next_tile_x, next_tile_y);
             current_action = action;
             current_action.ActionStart();
-            next_action = GetComponent<SpearAttack_Action>();
+            //next_action = GetComponent<SpearAttack_Action>();
             return;
         }
 

@@ -43,7 +43,7 @@ public class ChasePlayer_Action : Action
     {
         if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true )
         {
-            Debug.Log("[yellow] Move interruptus " + forgot_event + " " + GetComponent<Movement_Action>().NextToPlayer() + " " + interupt);
+            //Debug.Log("[yellow] Move interruptus " + forgot_event + " " + GetComponent<Movement_Action>().NextToPlayer() + " " + interupt);
             move.Interupt();
         }
 

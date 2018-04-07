@@ -15,7 +15,7 @@ public class Movement_Action : Action
     Arrive_Steering arrive;
     Seek_Steering seek;
 
-    PathNode tile = null;
+    public PathNode tile = null;
 
     public enum Direction
     {
@@ -159,7 +159,7 @@ public class Movement_Action : Action
                 {
                     arrive.SetEnabled(false);
                     seek.SetEnabled(false);
-                    translation_finished = true;
+                    translation_finished = true;                 
                 }                
             }
         }
@@ -297,6 +297,8 @@ public class Movement_Action : Action
                 arrive.SetEnabled(false);
                 seek.SetEnabled(false);
                 translation_finished = true;
+
+                tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
             }
             else
             {
@@ -480,7 +482,7 @@ public class Movement_Action : Action
 
     public void LookAtPlayer()
     {
-        Vector3 target_pos = new Vector3(GetLinkedObject("player").GetComponent<Transform>().position);
+        Vector3 target_pos = new Vector3(GetLinkedObject("player_obj").GetComponent<Transform>().position);
         Debug.Log("Look at player pos: " + target_pos);
         LookAt(target_pos);
     }
