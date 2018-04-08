@@ -277,7 +277,7 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 			resource_animation->bones.push_back(temp_bone);
 		}
 	}
-
+	resource_animation->SetState(Resource::State::LOADED);
 	RELEASE_ARRAY(buffer);
 
 	return true;

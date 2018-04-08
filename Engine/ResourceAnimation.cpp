@@ -28,6 +28,7 @@ void ResourceAnimation::InitInfo(const char * resource_name, const char * path, 
 
 bool ResourceAnimation::LoadToMemory()
 {
+	state = State::LOADED;
 	return true;
 }
 
