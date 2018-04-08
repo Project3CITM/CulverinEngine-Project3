@@ -11,6 +11,10 @@ namespace CulverinEditor
     {
         public Time() { }
 
+        /// <summary>  
+        ///     Returns a random float number between and min [inclusive] and max [exclusive]
+        ///     (Read Only).
+        /// </summary>  
         public static float deltaTime
         {
             get
@@ -19,9 +23,9 @@ namespace CulverinEditor
             }
         }
 
-        //
-        // Resumen:
-        //     The real time in seconds since the game started (Read Only).
+        /// <summary>  
+        ///     The real time in seconds since the game started (Read Only).
+        /// </summary>  
         public static float realtimeSinceStartup
         {
             get
@@ -29,9 +33,9 @@ namespace CulverinEditor
                 return RealtimeSinceStartup();
             }
         }
-        //
-        // Resumen:
-        //     The scale at which the time is passing. This can be used for slow motion effects.
+        /// <summary>  
+        ///     The scale at which the time is passing. This can be used for slow motion effects.
+        /// </summary>  
         public static float timeScale
         {
             get
@@ -44,9 +48,9 @@ namespace CulverinEditor
             }
         }
 
-        //
-        // Resumen:
-        //     The time in seconds since you set Time.timePlay = 0; Only use Time.timePlay = 0 one time!
+        /// <summary>  
+        ///     The time in seconds since you set Time.timePlay = 0; Only use Time.timePlay = 0 one time!
+        /// </summary>  
         public static float timePlay
         {
             get
