@@ -24,11 +24,10 @@ ModuleResourceManager::ModuleResourceManager(bool start_enabled): Module(start_e
 ModuleResourceManager::~ModuleResourceManager()
 {
 	std::map<uint, Resource*>::iterator it = resources.begin();
-	for (int i = 0; i < resources.size(); i++)
+	for(; it != resources.end(); it++)
 	{
 		it->second->DeleteToMemory();
 		RELEASE(it->second);
-		it++;
 	}
 	resources.clear();
 	files_reimport.clear();
@@ -465,7 +464,14 @@ Resource* ModuleResourceManager::CreateNewResource(Resource::Type type, uint uui
 
 	}
 	if (ret != nullptr)
+	{
+		if (resources[uid] != nullptr)
+		{
+			delete resources[uid];
+			resources[uid] = nullptr;
+		}
 		resources[uid] = ret;
+	}
 	return ret;
 }
 

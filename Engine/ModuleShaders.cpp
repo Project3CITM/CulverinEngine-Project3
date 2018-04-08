@@ -385,6 +385,7 @@ Shader* ModuleShaders::CompileShader(std::string path, std::string name, ShaderT
 	if (fShaderCompiled != GL_TRUE)
 	{
 		last_shader_error = GetShaderError(id);
+		RELEASE_ARRAY(buffer);
 		return nullptr;
 	}
 
@@ -396,7 +397,7 @@ Shader* ModuleShaders::CompileShader(std::string path, std::string name, ShaderT
 	newShader->shaderText = buffer;
 
 	AddShaderList(newShader);
-	delete[] buffer;
+	RELEASE_ARRAY(buffer);
 	return newShader;
 
 }
@@ -570,6 +571,9 @@ void ModuleShaders::ImportShaderMaterials()
 					App->renderer3D->default_shader = mat_shader;
 					App->renderer3D->default_material->material_shader = mat_shader;
 				}
+
+				json_object_clear(obj_proj);
+				json_value_free(file_proj);
 				RELEASE_ARRAY(buffer);
 			}
 
@@ -618,6 +622,8 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 
 	char* buffer = nullptr;
 	App->fs->LoadFile(str_path.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DEFAULT);
+	delete[] buffer;
+	buffer = nullptr;
 
 	JSON_Object* object;
 	JSON_Value* file_proj;
@@ -706,6 +712,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 								material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(temp_uuid);
 								break;
 							}
+							RELEASE_ARRAY(temp_num);
 						}
 					}
 					if (material->textures[i].value != nullptr)
@@ -912,7 +919,8 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 			App->module_shaders->materials.push_back(material);
 		}
 	}
-
+	json_object_clear(object);
+	json_value_free(file_proj);
 
 	return nullptr;
 }

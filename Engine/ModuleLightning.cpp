@@ -145,8 +145,8 @@ bool ModuleLightning::Start()
 
 	//------------------------------------
 
-	shadow_Shader = App->module_shaders->CreateDefaultShader("Shadow_Map", ShadowMapFrag, ShadowMapVert);
-	point_light_shadow_depth_shader = App->module_shaders->CreateDefaultShader("Point_Shadow_Map", PointShadowMapFrag, PointShadowMapVert, PointShadowMapGeo);
+	shadow_Shader = App->module_shaders->CreateDefaultShader("Shadow_Map", ShadowMapFrag, ShadowMapVert, nullptr, true);
+	point_light_shadow_depth_shader = App->module_shaders->CreateDefaultShader("Point_Shadow_Map", PointShadowMapFrag, PointShadowMapVert, PointShadowMapGeo,true);
 	
 	//-------------------------------------
 
@@ -181,9 +181,9 @@ bool ModuleLightning::Start()
 	}
 	light_UI_plane->num_game_objects_use_me++;
 	light_UI_plane->LoadToMemory();
+	delete[] total_buffer_mesh;
 
 	Start_t = perf_timer.ReadMs();
-
 	return true;
 }
 
@@ -284,8 +284,8 @@ bool ModuleLightning::CleanUp()
 		RELEASE((*it));
 	}
 
-	RELEASE(shadow_Shader);
-	RELEASE(point_light_shadow_depth_shader);
+	//RELEASE(shadow_Shader);
+	//RELEASE(point_light_shadow_depth_shader);
 
 
 	return true;

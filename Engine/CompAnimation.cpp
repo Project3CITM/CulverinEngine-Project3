@@ -31,14 +31,7 @@ CompAnimation::CompAnimation(const CompAnimation & copy, GameObject * parent) : 
 
 CompAnimation::~CompAnimation()
 {
-	for (std::vector<AnimationNode*>::iterator temp = animation_nodes.begin(); temp != animation_nodes.end(); temp++)
-	{
-		RELEASE((*temp));
-	}
-	for (std::vector<AnimationClip*>::iterator temp = animation_clips.begin(); temp != animation_clips.end(); temp++)
-	{
-		RELEASE((*temp));
-	}
+
 }
 
 void CompAnimation::Draw()
@@ -57,6 +50,23 @@ void CompAnimation::Draw()
 
 void CompAnimation::Clear()
 {
+	for (std::vector<AnimationNode*>::iterator temp = animation_nodes.begin(); temp != animation_nodes.end(); temp++)
+	{
+		RELEASE((*temp));
+	}
+	animation_nodes.clear();
+	for (std::vector<AnimationClip*>::iterator temp = animation_clips.begin(); temp != animation_clips.end(); temp++)
+	{
+		RELEASE((*temp));
+	}
+	animation_clips.clear();
+
+	bone_update_vector.clear();
+
+	current_animation = nullptr;
+	blending_animation = nullptr;
+	active_node = nullptr;
+	animation_resource = nullptr;
 }
 
 void CompAnimation::PreUpdate(float dt)
@@ -1233,10 +1243,17 @@ void AnimationClip::RestartAnimationClip()
 
 AnimationNode::~AnimationNode()
 {
+
+	for (std::vector<BlendingClip*>::iterator temp = blending_clips.begin(); temp != blending_clips.end(); temp++)
+	{
+		RELEASE((*temp));
+	}
+	blending_clips.clear();
 	for (std::vector<AnimationTransition*>::iterator temp = transitions.begin(); temp != transitions.end(); temp++)
 	{
 		RELEASE((*temp));
 	}
+	transitions.clear();
 }
 
 void AnimationNode::CreateTransition()

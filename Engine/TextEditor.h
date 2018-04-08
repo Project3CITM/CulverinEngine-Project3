@@ -154,10 +154,13 @@ public:
 		static LanguageDefinition SQL();
 		static LanguageDefinition AngelScript();
 		static LanguageDefinition Lua();
+
+		void Clear();
 	};
 
 	TextEditor();
 	~TextEditor();
+	void Clear();
 
 	void SetLanguageDefinition(const LanguageDefinition& aLanguageDef);
 	const LanguageDefinition& GetLanguageDefinition() const { return mLanguageDefinition; }
