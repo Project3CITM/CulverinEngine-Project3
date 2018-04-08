@@ -69,6 +69,7 @@ public class MovementController : CulverinBehaviour
         characters_camera = GetLinkedObject("characters_camera");
         player_enemies_manager = GetLinkedObject("player_enemies_manager");
 
+        Audio.StopAllSounds();
         audio = GetComponent<CompAudio>();
         audio.PlayEvent("PlayMusic");
         Debug.Log("Play Music");

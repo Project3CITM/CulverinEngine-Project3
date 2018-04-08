@@ -7,8 +7,9 @@ public class ReturnToMenu : CulverinBehaviour
 
     void Start()
     {
+        Audio.StopAllSounds();
         Input.SetInputManagerActive("GUI", true);
-
+        GetComponent<CompAudio>().PlayEvent("PlayUIMusic");
     }
     public void Return()
     {

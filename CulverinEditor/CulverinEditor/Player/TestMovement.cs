@@ -38,7 +38,7 @@ public class TestMovement : CulverinBehaviour
 
     void Start()
     {
-
+        Audio.StopAllSounds();
         audio = GetComponent<CompAudio>();
         audio.PlayEvent("PlayMusic");
         curr_dir = (Direction)start_direction;
