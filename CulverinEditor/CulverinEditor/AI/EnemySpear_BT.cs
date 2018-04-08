@@ -206,8 +206,8 @@ public class EnemySpear_BT : Enemy_BT
     {
         //This function is to calculate the tile behind the enemy
         //and see if the enemy should attack or he can separate and then attack
-        int tile_x_enemy= mov.GetCurrentTileX();
-        int tile_y_enemy = mov.GetCurrentTileY();
+        int tile_x_enemy= GetComponent<Movement_Action>().GetCurrentTileX();
+        int tile_y_enemy = GetComponent<Movement_Action>().GetCurrentTileY();
 
         Debug.Log("Tile X pos:" + tile_x_enemy);
         Debug.Log("Tile Y pos:" + tile_y_enemy);
@@ -244,7 +244,7 @@ public class EnemySpear_BT : Enemy_BT
         //We want to return if it is possible and also if we already did the calcules
         //to know what tile should we move we can take advantage of
 
-        can_i_separate_b = current_map.GetComponent<Pathfinder>().IsWalkableTile(next_tile_x, next_tile_y);
+        can_i_separate_b = GetLinkedObject("enemies_manager").GetComponent<Pathfinder>().IsWalkableTile(next_tile_x, next_tile_y);
         
         return_next_tile_x = next_tile_x;
         return_next_tile_y = next_tile_y;

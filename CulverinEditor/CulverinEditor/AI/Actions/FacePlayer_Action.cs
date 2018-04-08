@@ -22,7 +22,18 @@ public class FacePlayer_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+       /* if (interupt == true)
+        {
+            move.Interupt();
+        }*/
+
         return move.ActionUpdate();
+    }
+
+    public override bool ActionEnd()
+    {
+        interupt = false;
+        return true;
     }
 
     public bool IsFaced()
