@@ -35,7 +35,7 @@ public class Shield : CulverinBehaviour
     {
         if (active)
         {
-            timer += Time.DeltaTime();
+            timer += Time.deltaTime;
             if (timer >= shield_duration)
             {
                 //If the time reaches the limit, disable UI.
@@ -46,7 +46,7 @@ public class Shield : CulverinBehaviour
 
         else if(broken_shield)
         {
-            timer += Time.DeltaTime();
+            timer += Time.deltaTime;
             if (timer >= broken_shield_duration)
             {
                 //If the time reaches the limit, disable UI.
@@ -73,6 +73,8 @@ public class Shield : CulverinBehaviour
         active = false;
         broken_shield = true;
         timer = 0.0f;
+
+        GetComponent<CompAudio>().PlayEvent("JaimeBlock");
     }
 
     //Enable UI Image
