@@ -539,6 +539,7 @@ bool CSharpScript::ReImport(std::string pathdll, std::string nameClass)
 
 void CSharpScript::Clear()
 {
+	App->importer->iScript->RemoveCSharpScriptFromMonoScript(this);
 	for (uint i = 0; i < variables.size(); i++)
 	{
 		if (variables[i]->game_object != nullptr)
