@@ -723,6 +723,23 @@ void ImportScript::RemoveTransformPosPointerFromMap(float3 * pospointer)
 	}
 }
 
+void ImportScript::RemoveCSharpScriptFromMonoScript(CSharpScript * script)
+{
+	if (script != nullptr)
+	{
+		std::multimap<uint, CSharpScript*>::const_iterator it_pos = mono_script.begin();
+		for (; it_pos != mono_script.end();)
+		{
+			if (it_pos._Ptr->_Myval.second == script)
+			{
+				it_pos = mono_script.erase(it_pos);
+				return;
+			}
+			else it_pos++;
+		}
+	}
+}
+
 void ImportScript::RemoveGObjectReferencesFromMonoScript(GameObject * object)
 {
 	// Set variables that reference to this object to null, only during runtime

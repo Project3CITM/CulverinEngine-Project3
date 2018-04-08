@@ -79,6 +79,7 @@ public:
 	void RemoveGObjectFromMonoMap(GameObject*object);
 	void RemoveComponentFromMonoList(Component* comp);
 	void RemoveTransformPosPointerFromMap(float3* pospointer);
+	void RemoveCSharpScriptFromMonoScript(CSharpScript* script);
 	void RemoveGObjectReferencesFromMonoScript(GameObject* object);
 
 	bool IsNameUnique(std::string name) const;
