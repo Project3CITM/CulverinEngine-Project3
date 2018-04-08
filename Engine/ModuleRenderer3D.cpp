@@ -40,7 +40,11 @@ ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled)
 // Destructor
 ModuleRenderer3D::~ModuleRenderer3D()
 {
-
+	RELEASE(particles_shader);
+	RELEASE(lights_billboard_shader);
+	RELEASE(default_material);
+	RELEASE(default_texture);
+	RELEASE(non_glow_shader);
 }
 
 // Called before render is available
@@ -177,12 +181,12 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 
 	default_shader = App->module_shaders->CreateDefaultShader("Default Shader", fragmentShaderSource, vertexShaderSource, nullptr, true);
-	lights_billboard_shader = App->module_shaders->CreateDefaultShader("Billboard Lights Shader", DefaultFrag, DefaultVert, nullptr,true);
+	lights_billboard_shader = App->module_shaders->CreateDefaultShader("Billboard Lights Shader", DefaultFrag, DefaultVert, nullptr);
 
-	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", DefaultFrag, DefaultVert, nullptr, true);
-	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr, true);
-	blur_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr, true);
-	final_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", FinalFrag, TextureVert, nullptr, true);
+	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", DefaultFrag, DefaultVert, nullptr);
+	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr);
+	blur_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr);
+	final_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", FinalFrag, TextureVert, nullptr);
 
 	non_glow_material = new Material();
 	non_glow_material->name = "Non Glow Material";
@@ -419,9 +423,6 @@ bool ModuleRenderer3D::SaveConfig(JSON_Object * node)
 bool ModuleRenderer3D::CleanUp()
 {
 	LOG("Destroying 3D Renderer");
-
-	RELEASE(default_texture);
-	RELEASE(default_material);
 
 	SDL_GL_DeleteContext(context);
 

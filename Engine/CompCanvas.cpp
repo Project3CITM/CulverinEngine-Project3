@@ -58,7 +58,7 @@ void CompCanvas::Clear()
 			App->render_gui->screen_space_canvas.erase(App->render_gui->screen_space_canvas.begin() + i);
 		}
 	}
-	//RELEASE(default_ui_shader);
+	RELEASE(default_ui_shader);
 
 }
 
@@ -147,7 +147,7 @@ void CompCanvas::Save(JSON_Object* object, std::string name, bool saveScene, uin
 void CompCanvas::Load(const JSON_Object* object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
-	default_ui_shader=App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert,nullptr,true);
+	default_ui_shader=App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert);
 
 	//...
 	Enable();

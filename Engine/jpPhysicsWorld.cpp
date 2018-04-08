@@ -47,7 +47,6 @@ jpPhysicsWorld::~jpPhysicsWorld()
 		//pvd->release();
 		jpFoundation->release();
 	}
-	RELEASE(collision_callback);
 }
 
 bool jpPhysicsWorld::CreateNewPhysicsWorld()

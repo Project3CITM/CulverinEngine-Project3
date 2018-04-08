@@ -45,8 +45,6 @@ struct Skeleton
 
 	~Skeleton()
 	{
-		bones.clear();
-		bone_uids.clear();
 		delete [] skinning_mats;
 	}
 

@@ -30,11 +30,6 @@ ScriptVariable::ScriptVariable(const char* name, VarType type, VarAccess access,
 
 ScriptVariable::~ScriptVariable()
 {
-	if (value != nullptr && type != VarType::Var_STRING && type != VarType::Var_GAMEOBJECT)
-	{
-		delete[](char*)value;
-		value = nullptr;
-	}
 }
 
 void ScriptVariable::SetMonoValue(void* newVal)
@@ -238,7 +233,6 @@ CSharpScript::CSharpScript()
 CSharpScript::~CSharpScript()
 {
 	temp.clear();
-	methods.clear();
 }
 
 
@@ -547,7 +541,11 @@ void CSharpScript::Clear()
 {
 	for (uint i = 0; i < variables.size(); i++)
 	{
-		RELEASE(variables[i]);
+		if (variables[i]->game_object != nullptr)
+		{
+			variables[i]->game_object = nullptr;
+			variables[i]->select_game_object = false;
+		}
 	}
 }
 
@@ -556,6 +554,8 @@ void CSharpScript::ResetScriptVariables()
 {
 	for (uint i = 0; i < variables.size(); i++)
 	{
+		variables[i]->value = nullptr;
+		variables[i]->game_object = nullptr;
 		RELEASE(variables[i]);
 	}
 
@@ -732,9 +732,9 @@ bool CSharpScript::GetValueFromMono(ScriptVariable* variable, MonoClassField* mf
 	if (variable != nullptr && mfield != nullptr && mtype != nullptr)
 	{
 		//Free memory
-		if (variable->value != nullptr && variable->type != VarType::Var_STRING && variable->type != VarType::Var_GAMEOBJECT)
+		if (variable->value != nullptr)
 		{
-			delete[](char*)variable->value;
+			RELEASE(variable->value);
 			variable->value = nullptr;
 		}
 

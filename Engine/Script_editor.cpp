@@ -21,7 +21,7 @@ Script_editor::Script_editor(ResourceScript* parent) : parent(parent)
 
 Script_editor::~Script_editor()
 {
-	editor.Clear();
+	editor.Delete();
 }
 
 void Script_editor::Start(std::string nameScript, bool isnew)

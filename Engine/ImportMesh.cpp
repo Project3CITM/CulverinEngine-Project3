@@ -493,12 +493,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	RELEASE_ARRAY(tangents);
 	RELEASE_ARRAY(bitangents);
 	//RELEASE(texture);
-	//Release vertex_weights
-	for (uint i = 0; i < num_bones; i++)
-	{
-		delete[] weights[i];
-	}
-	vertex_weights.clear();
 
 	// Set Info ResoruceMesh
 	std::string fileName = std::to_string(uuid_mesh);
@@ -748,10 +742,6 @@ bool ImportMesh::LoadResource(const char* file, ResourceMesh* resourceMesh)
 			memcpy(skeleton_source->bone_hirarchy_names, cursor, bytes);
 
 			resourceMesh->SetSkeleton(skeleton_source);
-
-			RELEASE_ARRAY(num_weights);
-			RELEASE_ARRAY(bone_offsets);
-			RELEASE_ARRAY(bone_name_sizes);
 		}
 		//--
 

@@ -24,7 +24,14 @@ CompScript::CompScript(const CompScript & copy, GameObject * parent) : Component
 
 CompScript::~CompScript()
 {
-	
+	if (resource_script != nullptr)
+	{
+		if (resource_script->num_game_objects_use_me > 0)
+		{
+			resource_script->num_game_objects_use_me--;
+		}
+		resource_script = nullptr;
+	}
 }
 
 void CompScript::Init()
@@ -153,20 +160,14 @@ void CompScript::postUpdate()
 
 void CompScript::Clear()
 {
-	if (resource_script != nullptr)
+	if (resource_script != nullptr && csharp != nullptr)
 	{
 		if (resource_script->num_game_objects_use_me > 0)
 		{
 			resource_script->num_game_objects_use_me--;
 		}
 		resource_script = nullptr;
-	}
-
-	if (csharp != nullptr)
-	{
 		csharp->Clear();
-		delete csharp;
-		csharp = nullptr;
 	}
 	// Clear all Actions (UI Button) -----------------
 }
@@ -678,7 +679,6 @@ void CompScript::Load(const JSON_Object* object, std::string name)
 
 			if (resource_script->GetState() != Resource::State::FAILED)
 			{
-				RELEASE(csharp);
 				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll(), resource_script->name);
 				LoadScript(object, name);
 				SetOwnGameObject(parent);

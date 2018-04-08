@@ -64,10 +64,9 @@ Scene::~Scene()
 	search_name->GetChildsPtr()->clear();
 	//DeleteAllGameObjects(dontdestroyonload);
 	defined_tags.clear();
-	for (uint i = 0; i < tagged_objects.size(); i++)
+	for (int i = 0; i < tagged_objects.size(); i++)
 	{
 		tagged_objects[i]->clear();
-		RELEASE(tagged_objects[i]);
 	}
 	tagged_objects.clear();
 
@@ -124,25 +123,25 @@ bool Scene::Start()
 	defined_tags.push_back("camera");
 	defined_tags.push_back("player");
 
-	RELEASE(scene_buff);
-	scene_buff = new FrameBuffer();
-	scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
-	final_buff = new FrameBuffer();
-	final_buff->resize = true;
-	final_buff->Create(App->window->GetWidth(), App->window->GetHeight());
+	App->scene->scene_buff = new FrameBuffer();
+	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
-	glow_buff = new FrameBuffer();
-	glow_buff->resize = false;
-	glow_buff->Create(128, 128);
+	App->scene->final_buff = new FrameBuffer();
+	App->scene->final_buff->resize = true;
+	App->scene->final_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
-	horizontal_blur_buff = new FrameBuffer();
-	horizontal_blur_buff->resize = false;
-	horizontal_blur_buff->Create(128, 128);
+	App->scene->glow_buff = new FrameBuffer();
+	App->scene->glow_buff->resize = false;
+	App->scene->glow_buff->Create(128, 128);
 
-	vertical_blur_buff = new FrameBuffer();
-	vertical_blur_buff->resize = false;
-	vertical_blur_buff->Create(128, 128);
+	App->scene->horizontal_blur_buff = new FrameBuffer();
+	App->scene->horizontal_blur_buff->resize = false;
+	App->scene->horizontal_blur_buff->Create(128, 128);
+
+	App->scene->vertical_blur_buff = new FrameBuffer();
+	App->scene->vertical_blur_buff->resize = false;
+	App->scene->vertical_blur_buff->Create(128, 128);
 
 
 	tagged_objects.reserve(defined_tags.size());
@@ -322,13 +321,6 @@ bool Scene::CleanUp()
 	octree.Clear();
 	root->CleanUp();
 	temporary_scene->CleanUp();
-	
-	RELEASE(scene_buff);
-	RELEASE(glow_buff);
-	RELEASE(horizontal_blur_buff);
-	RELEASE(vertical_blur_buff);
-	RELEASE(final_buff);
-
 
 	return true;
 }

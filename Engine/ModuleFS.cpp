@@ -1401,7 +1401,6 @@ JSON_Status ModuleFS::json_array_dotset_float3(JSON_Object *object, std::string 
 	json_array_append_number(arry, transform.x);
 	json_array_append_number(arry, transform.y);
 	json_array_append_number(arry, transform.z);
-	json_array_clear(arry);
 	return JSONSuccess;
 }
 
@@ -1419,7 +1418,6 @@ JSON_Status ModuleFS::json_array_dotset_float2(JSON_Object *object, std::string 
 	}
 	json_array_append_number(arry, transform.x);
 	json_array_append_number(arry, transform.y);
-	json_array_clear(arry);
 	return JSONSuccess;
 }
 
@@ -1439,7 +1437,6 @@ JSON_Status ModuleFS::json_array_dotset_float4(JSON_Object *object, std::string 
 	json_array_append_number(arry, transform.y);
 	json_array_append_number(arry, transform.z);
 	json_array_append_number(arry, transform.w);
-	json_array_clear(arry);
 	return JSONSuccess;
 }
 
@@ -1450,7 +1447,7 @@ float3 ModuleFS::json_array_dotget_float3_string(const JSON_Object* object, std:
 	transform.x = (float)json_value_get_number(json_array_get_value(array, 0));
 	transform.y = (float)json_value_get_number(json_array_get_value(array, 1));
 	transform.z = (float)json_value_get_number(json_array_get_value(array, 2));
-	json_array_clear(array);
+
 	return transform;
 }
 float2 ModuleFS::json_array_dotget_float2_string(const JSON_Object* object, std::string name)
@@ -1459,7 +1456,7 @@ float2 ModuleFS::json_array_dotget_float2_string(const JSON_Object* object, std:
 	float2 transform;
 	transform.x = (float)json_value_get_number(json_array_get_value(array, 0));
 	transform.y = (float)json_value_get_number(json_array_get_value(array, 1));
-	json_array_clear(array);
+
 	return transform;
 }
 float4 ModuleFS::json_array_dotget_float4_string(const JSON_Object* object, std::string name)
@@ -1470,6 +1467,6 @@ float4 ModuleFS::json_array_dotget_float4_string(const JSON_Object* object, std:
 	transform.y = (float)json_value_get_number(json_array_get_value(array, 1));
 	transform.z = (float)json_value_get_number(json_array_get_value(array, 2));
 	transform.w = (float)json_value_get_number(json_array_get_value(array, 3));
-	json_array_clear(array);
+
 	return transform;
 }

@@ -36,18 +36,9 @@ TextEditor::~TextEditor()
 {
 }
 
-void TextEditor::Clear()
-{
-	mLines.clear();
-	mLanguageDefinition.Clear();
-	mRegexList.clear();
-}
-
 void TextEditor::SetLanguageDefinition(const LanguageDefinition & aLanguageDef)
 {
-	mLanguageDefinition.Clear();
 	mLanguageDefinition = aLanguageDef;
-
 	mRegexList.clear();
 
 	for (auto& r : mLanguageDefinition.mTokenRegexStrings)
@@ -2001,12 +1992,4 @@ TextEditor::LanguageDefinition TextEditor::LanguageDefinition::Lua()
 		inited = true;
 	}
 	return langDef;
-}
-
-void TextEditor::LanguageDefinition::Clear()
-{
-	mKeywords.clear();
-	mIdentifiers.clear();
-	mPreprocIdentifiers.clear();
-	mTokenRegexStrings.clear();
 }

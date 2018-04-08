@@ -34,11 +34,6 @@ ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 
 ModulePhysics::~ModulePhysics()
 {
-	if (physics_world)
-	{
-		delete physics_world;
-		physics_world = nullptr;
-	}
 }
 
 // -----------------------------------------------------------------
@@ -146,7 +141,8 @@ bool ModulePhysics::CleanUp()
 
 	if (physics_world)
 	{
-		physics_world->StopSimulation();
+		delete physics_world;
+		physics_world = nullptr;
 	}
 
 	colliders.clear();
