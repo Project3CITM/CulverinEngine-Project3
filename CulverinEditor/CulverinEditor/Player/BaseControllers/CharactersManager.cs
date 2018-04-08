@@ -122,6 +122,11 @@ public class CharactersManager : CulverinBehaviour
                         }
                     }
 
+                    if (Input.GetKeyDown(KeyCode.M))
+                    {
+                        SceneManager.LoadScene("MainMenuScene");
+                    }
+
                     if (Input.GetInput_KeyDown("TriangleR", "Player"))
                     {
                         if (IsIdle() == true)
