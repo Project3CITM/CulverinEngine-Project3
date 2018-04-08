@@ -15,7 +15,7 @@ class Die_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().SetTransition("ToDie");
+        GetComponent<CompAnimation>().PlayAnimationNode("Die");
         //TODO_AI: Die audio
         GetComponent<CompAudio>().PlayEvent("Enemy_SwordDrop");
 
