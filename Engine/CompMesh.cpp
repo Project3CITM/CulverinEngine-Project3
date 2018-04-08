@@ -586,6 +586,7 @@ void CompMesh::Clear()
 		comp_material->material->active_num--;
 		comp_material = nullptr;
 	}
+	RELEASE(skeleton);
 }
 
 void CompMesh::Render(bool render)

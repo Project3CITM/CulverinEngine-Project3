@@ -953,6 +953,7 @@ CSharpScript* ImportScript::CreateCSharp(MonoImage* image, std::string nameClass
 						csharp->methods.push_back(temp);
 					}
 				}
+				delete[] pram;
 			}
 
 			return csharp;

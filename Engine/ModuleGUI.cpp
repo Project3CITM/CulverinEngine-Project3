@@ -83,6 +83,7 @@ bool ModuleGUI::Start()
 	io.Fonts->AddFontFromFileTTF("Fonts\\Ruda-Bold.ttf", 15);
 	io.Fonts->AddFontDefault();
 
+	RELEASE(App->scene->scene_buff);
 	App->scene->scene_buff = new FrameBuffer();
 	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
@@ -840,7 +841,10 @@ void ModuleGUI::LoadDocks()
 	config = json_value_get_object(config_file);
 	config_node = json_object_get_object(config, "Docking");
 	getDockContext()->LoadDock(config_node);
+	json_object_clear(config_node);
+	json_object_clear(config);
 	json_value_free(config_file);
+
 }
 
 void ModuleGUI::RevertStyleDocks()

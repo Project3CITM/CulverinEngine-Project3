@@ -96,6 +96,9 @@ void CompBone::Clear()
 		}
 		resource_mesh = nullptr;
 	}
+	child_bones.clear();
+	child_uids.clear();
+	weights.clear();
 }
 
 void CompBone::ShowOptions()

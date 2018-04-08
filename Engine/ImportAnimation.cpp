@@ -152,8 +152,6 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 {
 	LOG("LOADING ANIMATION -----");
 
-	resource_animation->bones.clear();
-
 	char* buffer = nullptr;
 	char* name = new char[50];
 	double ticks_per_sec;
@@ -275,6 +273,7 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 				temp_bone->scale_keys.push_back(temp_sca_key);
 			}
 			resource_animation->bones.push_back(temp_bone);
+			RELEASE_ARRAY(tmp_name);
 		}
 	}
 	resource_animation->SetState(Resource::State::LOADED);

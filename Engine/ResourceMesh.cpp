@@ -17,7 +17,7 @@ ResourceMesh::~ResourceMesh()
 	tangents.clear();
 	bitangents.clear();
 
-	delete skeleton;
+	RELEASE(skeleton);
 }
 
 void ResourceMesh::Init(const float3* vert, const uint* ind, const float3* vert_normals, const float2* texCoord, const float3* tangs, const float3* bitangs)
