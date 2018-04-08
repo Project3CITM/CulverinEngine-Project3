@@ -1226,6 +1226,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompLight::SetLinear", (const void*)SetLinear);
 	mono_add_internal_call("CulverinEditor.CompLight::GetQuadratic", (const void*)GetQuadratic);
 	mono_add_internal_call("CulverinEditor.CompLight::SetQuadratic", (const void*)SetQuadratic);
+
+	//RANDOM FUNCTIONS ----------------------------
+	mono_add_internal_call("CulverinEditor.Random::Range(int,int)", (const void*)RangeInt);
+	mono_add_internal_call("CulverinEditor.Random::Range(single,single)", (const void*)RangeFloat);
 }
 
 //Log messages into Engine Console
@@ -2154,4 +2158,14 @@ void ImportScript::SetFloat(MonoObject * object, MonoString * name, float value)
 MonoObject* ImportScript::GetMaterialByName(MonoObject * object, MonoString * name)
 {
 	return current->GetMaterialByName(name);
+}
+
+int ImportScript::RangeInt(int min, int max)
+{
+	return App->random->Int(min, max);
+}
+
+float ImportScript::RangeFloat(float min, float max)
+{
+	return App->random->Float(min, max);;
 }

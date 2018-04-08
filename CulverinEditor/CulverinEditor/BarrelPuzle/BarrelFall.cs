@@ -65,7 +65,7 @@ public class BarrelFall : CulverinBehaviour
         //col = GetComponent<CompCollider>();
         timeToNextFloatAnim = floatingPeriod;
       
-        wait_time = (float)GetLinkedObject("map_obj").GetComponent<LevelMap>().randomspeed.NextDouble();
+        wait_time = Random.Range(0.0f, 1.0f);
         wait_time = wait_time * random_wait;
     }
 

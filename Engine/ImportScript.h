@@ -307,6 +307,12 @@ private:
 	static void	SetFloat(MonoObject* object, MonoString* name, float value);
 	static MonoObject* GetMaterialByName(MonoObject* object, MonoString* name);
 
+	/*Random*/
+	// min [inclusive] - max [inclusive]
+	static int RangeInt(int min, int max); 
+	// min [inclusive] - max [exclusive]
+	static float RangeFloat(float min, float max);
+
 public: 
 	std::multimap<std::string, GameObject*> map_link_variables;
 private:
