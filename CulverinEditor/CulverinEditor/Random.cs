@@ -11,11 +11,6 @@ namespace CulverinEditor
         ///     Returns a random float number between and min [inclusive] and max [exclusive]
         ///     (Read Only).
         /// </summary>  
-        /// <remarks>Updates the record <paramref name="min"/>.
-        /// <para>
-        /// Use <see cref="DoesRecordExist"/> to verify that ''' the record exists before calling this method.
-        /// </para>
-        /// </remarks>
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern int Range(int min, int max);
 
