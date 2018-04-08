@@ -71,7 +71,13 @@ CompCamera::~CompCamera()
 
 void CompCamera::PreUpdate(float dt)
 {
-	
+	int w = 0;
+	int h = 0;
+	SDL_GetWindowSize(App->window->window, &w, &h);
+	if (abs(GetRatio() - (float)w / (float)h) > 0.1)
+	{
+		SetRatio((float)w / (float)h);
+	}
 }
 
 void CompCamera::Update(float dt)
