@@ -317,7 +317,7 @@ public class Lever : CulverinBehaviour
     void OnTriggerEnter()
     {
 
-        if (active_lever)
+        if (active_lever || on_lever_animation)
         {
             return;
         }
