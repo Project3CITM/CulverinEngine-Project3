@@ -553,7 +553,7 @@ public class DaenerysController : CharacterController
         fballscript.fireball_particles = daenerys_fireball_particles;
 
         // Decrease stamina -----------
-        DecreaseMana(sec_ability_cost);
+        DecreaseStamina(sec_ability_cost);
     }
 
     public override void EnableAbilities(bool active)
