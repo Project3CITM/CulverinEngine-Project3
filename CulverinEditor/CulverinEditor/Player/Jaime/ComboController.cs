@@ -5,7 +5,7 @@ public class ComboController : CulverinBehaviour
 {
     public GameObject this_combo_2_text_obj;
     public GameObject this_combo_3_text_obj;
-
+    public GameObject this_combo_1_text_obj;
     public GameObject this_combo_bar_obj;
     CompImage combo_bar;
 
@@ -21,19 +21,18 @@ public class ComboController : CulverinBehaviour
     {
         hit_streak = 0;
 
+        this_combo_bar_obj = GetLinkedObject("this_combo_bar_obj");
         this_combo_2_text_obj = GetLinkedObject("this_combo_2_text_obj");
         this_combo_3_text_obj = GetLinkedObject("this_combo_3_text_obj");
-
-        this_combo_bar_obj = GetLinkedObject("this_combo_bar_obj");
+        this_combo_1_text_obj = GetLinkedObject("this_combo_1_text_obj");
 
         curr_time = max_time;
 
         //Disable images
         this_combo_2_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_2_text_obj);
         this_combo_3_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_3_text_obj);
-
         this_combo_bar_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_bar_obj);
-
+        this_combo_1_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_1_text_obj);
     }
 
     void Update()
@@ -57,9 +56,10 @@ public class ComboController : CulverinBehaviour
     {
         curr_time = max_time;
 
-        //Enable images
-        this_combo_2_text_obj.GetComponent<CompImage>().SetEnabled(true, this_combo_2_text_obj);
+        this_combo_2_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_2_text_obj);
+        this_combo_3_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_3_text_obj);
         this_combo_bar_obj.GetComponent<CompImage>().SetEnabled(true, this_combo_bar_obj);
+        this_combo_1_text_obj.GetComponent<CompImage>().SetEnabled(true, this_combo_1_text_obj);
     }
 
     public void ResetHitStreak()
@@ -71,6 +71,7 @@ public class ComboController : CulverinBehaviour
         this_combo_2_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_2_text_obj);
         this_combo_3_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_3_text_obj);
         this_combo_bar_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_bar_obj);
+        this_combo_1_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_1_text_obj);
 
         Debug.Log("[green] RESET HIT STREAK");
     }
@@ -78,12 +79,16 @@ public class ComboController : CulverinBehaviour
     public int GetHitStreak()
     {
         Debug.Log("[green] --------------------- " + hit_streak + " ---------------------");
+        if(hit_streak >= 2)
+        {
+            return 2;
+        }
         return hit_streak;
     }
 
     public void IncreaseHitStreak()
     {
-        if (hit_streak < 2)
+        if (hit_streak < 3)
         {
             Debug.Log("[orange] ----------- INCREASE HIT STREAK ------------");
 
@@ -92,13 +97,21 @@ public class ComboController : CulverinBehaviour
 
             if (hit_streak == 1)
             {
-                this_combo_2_text_obj.GetComponent<CompImage>().SetEnabled(true, this_combo_2_text_obj);
+                this_combo_2_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_2_text_obj);
                 this_combo_3_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_3_text_obj);
+                this_combo_1_text_obj.GetComponent<CompImage>().SetEnabled(true, this_combo_1_text_obj);
             }
             else if (hit_streak == 2)
             {
+                this_combo_2_text_obj.GetComponent<CompImage>().SetEnabled(true, this_combo_2_text_obj);
+                this_combo_3_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_3_text_obj);
+                this_combo_1_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_1_text_obj);
+            }
+            else if (hit_streak == 3)
+            {
                 this_combo_2_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_2_text_obj);
                 this_combo_3_text_obj.GetComponent<CompImage>().SetEnabled(true, this_combo_3_text_obj);
+                this_combo_1_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_1_text_obj);
             }
 
             curr_time = max_time;
