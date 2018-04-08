@@ -72,14 +72,16 @@ public class EnemySpear_BT : Enemy_BT
             if (CanISeparate(current_dir, out next_tile_x, out next_tile_y))
             {
                 int attack_type_value = rand.Next(1, 10);
-                //RandomAttack(attack_type_value, next_tile_x, next_tile_y);
-                Debug.Log("[error]Separate in random");
-                state = AI_STATE.AI_ATTACKING;
-                Separate_Action action = GetComponent<Separate_Action>();
-                //We set the destiny of the separation
-                action.SetTileDestinySeparate(next_tile_x, next_tile_y);
-                current_action = action;
-                current_action.ActionStart();
+                Debug.Log("[green] random: " + attack_type_value);
+                RandomAttack(attack_type_value, next_tile_x, next_tile_y);
+
+                //Debug.Log("[error]Separate in random");
+                //state = AI_STATE.AI_ATTACKING;
+                //Separate_Action action = GetComponent<Separate_Action>();
+                ////We set the destiny of the separation
+                //action.SetTileDestinySeparate(next_tile_x, next_tile_y);
+                //current_action = action;
+                //current_action.ActionStart();
 
 
                 //next_action = GetComponent<SpearAttack_Action>();
@@ -142,14 +144,14 @@ public class EnemySpear_BT : Enemy_BT
             }
         }
 
-       if (player_detected == true)
+        if (player_detected == true)
         {
             //Debug.Log("Chase");
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
             return;
         }
-      
+
     }
 
     protected override void OutOfCombatDecesion()
@@ -206,7 +208,7 @@ public class EnemySpear_BT : Enemy_BT
     {
         //This function is to calculate the tile behind the enemy
         //and see if the enemy should attack or he can separate and then attack
-        int tile_x_enemy= GetComponent<Movement_Action>().GetCurrentTileX();
+        int tile_x_enemy = GetComponent<Movement_Action>().GetCurrentTileX();
         int tile_y_enemy = GetComponent<Movement_Action>().GetCurrentTileY();
 
         Debug.Log("Tile X pos:" + tile_x_enemy);
@@ -222,18 +224,18 @@ public class EnemySpear_BT : Enemy_BT
         {
             case Movement_Action.Direction.DIR_NORTH:
                 next_tile_x = (uint)tile_x_enemy;
-                next_tile_y = (uint)tile_y_enemy+1;
+                next_tile_y = (uint)tile_y_enemy + 1;
                 break;
             case Movement_Action.Direction.DIR_WEST:
-                next_tile_x = (uint)tile_x_enemy+1;
+                next_tile_x = (uint)tile_x_enemy + 1;
                 next_tile_y = (uint)tile_y_enemy;
                 break;
             case Movement_Action.Direction.DIR_SOUTH:
                 next_tile_x = (uint)tile_x_enemy;
-                next_tile_y = (uint)tile_y_enemy-1;
+                next_tile_y = (uint)tile_y_enemy - 1;
                 break;
             case Movement_Action.Direction.DIR_EAST:
-                next_tile_x = (uint)tile_x_enemy-1;
+                next_tile_x = (uint)tile_x_enemy - 1;
                 next_tile_y = (uint)tile_y_enemy;
                 break;
         }
@@ -244,8 +246,8 @@ public class EnemySpear_BT : Enemy_BT
         //We want to return if it is possible and also if we already did the calcules
         //to know what tile should we move we can take advantage of
 
-        can_i_separate_b = GetLinkedObject("enemies_manager").GetComponent<Pathfinder>().IsWalkableTile(next_tile_x, next_tile_y);
-        
+        can_i_separate_b = GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile(next_tile_x, next_tile_y);
+
         return_next_tile_x = next_tile_x;
         return_next_tile_y = next_tile_y;
 
@@ -254,60 +256,53 @@ public class EnemySpear_BT : Enemy_BT
 
     void RandomAttack(int rand_number, uint next_tile_x, uint next_tile_y)
     {
+        bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
 
-
-        if (rand_number % 2 == 0)
+        if (attack_ready)
         {
-            bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
+            Debug.Log("[blue] RANDFOM ATTACK");
+            attack_timer = 0.0f;
+            state = AI_STATE.AI_ATTACKING;
+            SpearAttack_Action action = GetComponent<SpearAttack_Action>();
 
-            if (attack_ready)
-            {
+            int distance = GetDistanceInRange();
 
-                attack_timer = 0.0f;
-                state = AI_STATE.AI_ATTACKING;
-                SpearAttack_Action action = GetComponent<SpearAttack_Action>();
 
-                int distance= GetDistanceInRange();
+            action.IsMeleeAttack(true);
 
-                if (distance == 1)
-                {
-                    action.IsMeleeAttack(true);
-                }
-                else if(distance == 2)
-                {
-                    action.IsMeleeAttack(false);
-                }
 
-                action.SetDamage(attack_damage);
-                current_action = action;
-                current_action.ActionStart();
-                return;
-            }
-            else
-            {
-                //Debug.Log("IdleAttack");
-                state = AI_STATE.AI_IDLE;
-                current_action = GetComponent<IdleAttack_Action>();
-                current_action.ActionStart();
-                return;
-            }
+            action.SetDamage(attack_damage);
+            current_action = action;
+            current_action.ActionStart();
+
+            GetComponent<Separate_Action>().SetTileDestinySeparate(next_tile_x, next_tile_y);
+            next_action = GetComponent<Separate_Action>();
+            return;
         }
         else
         {
-            Debug.Log("[error]Separate in random");
-            state = AI_STATE.AI_ATTACKING;
-            Separate_Action action = GetComponent<Separate_Action>();
-            //We set the destiny of the separation
-            action.SetTileDestinySeparate(next_tile_x, next_tile_y);
-            current_action = action;
+            //Debug.Log("IdleAttack");
+            Debug.Log("[blue] RANDFOM IDLE ATTACK");
+            state = AI_STATE.AI_IDLE;
+            current_action = GetComponent<IdleAttack_Action>();
             current_action.ActionStart();
-            //next_action = GetComponent<SpearAttack_Action>();
             return;
         }
-
-
     }
-
-
-
 }
+
+       
+        //{
+        //    Debug.Log("[blue] RANDFOM                          SEPARATE");
+        //    state = AI_STATE.AI_ATTACKING;
+        //    Separate_Action action = GetComponent<Separate_Action>();
+        //    //We set the destiny of the separation
+        //    action.SetTileDestinySeparate(next_tile_x, next_tile_y);
+        //    current_action = action;
+        //    current_action.ActionStart();
+        //    //next_action = GetComponent<SpearAttack_Action>();
+        //    return;
+        //}
+
+
+
