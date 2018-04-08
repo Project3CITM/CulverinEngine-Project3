@@ -58,7 +58,7 @@ public:
 
 	void InitInfo(const char* name, const char* path_assets, const char* path_library);
 	bool LoadToMemory();
-	bool UnloadFromMemory();
+	void DeleteToMemory();
 
 public:
 

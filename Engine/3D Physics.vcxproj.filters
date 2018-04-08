@@ -1089,9 +1089,6 @@
     <ClInclude Include="ImGui\imgui_graph_nodes.h">
       <Filter>Engine\Tools\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceSkeleton.h">
-      <Filter>Engine\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="ImportAnimation.h">
       <Filter>Engine\Importer</Filter>
     </ClInclude>
@@ -1520,9 +1517,6 @@
     </ClCompile>
     <ClCompile Include="ImGui\imgui_graph_nodes.cpp">
       <Filter>Engine\Tools\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceSkeleton.cpp">
-      <Filter>Engine\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ImportAnimation.cpp">
       <Filter>Engine\Importer</Filter>

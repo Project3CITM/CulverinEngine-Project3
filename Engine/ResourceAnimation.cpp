@@ -31,9 +31,13 @@ bool ResourceAnimation::LoadToMemory()
 	return true;
 }
 
-bool ResourceAnimation::UnloadFromMemory()
+void ResourceAnimation::DeleteToMemory()
 {
-	return true;
+	for (std::vector<AnimBone*>::iterator temp = bones.begin(); temp != bones.end(); temp++)
+	{
+		RELEASE((*temp));
+	}
+	bones.clear();
 }
 
 AnimBone::~AnimBone()

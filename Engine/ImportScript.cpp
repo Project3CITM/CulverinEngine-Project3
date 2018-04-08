@@ -680,7 +680,10 @@ void ImportScript::RemoveGObjectFromMonoMap(GameObject* object)
 			{
 				it = mono_map.erase(it);
 			}
-			it++;
+			else
+			{
+				it++;
+			}
 		}
 	}
 }

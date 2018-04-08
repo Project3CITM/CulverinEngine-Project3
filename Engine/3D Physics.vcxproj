@@ -14,7 +14,7 @@
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
     <ProjectName>CulverinEngine</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -362,7 +362,6 @@
     <ClInclude Include="ResourceMaterial.h" />
     <ClInclude Include="ResourceMesh.h" />
     <ClInclude Include="ResourceScript.h" />
-    <ClInclude Include="ResourceSkeleton.h" />
     <ClInclude Include="Resource_.h" />
     <ClInclude Include="Script_editor.h" />
     <ClInclude Include="ShadersLib.h" />
@@ -539,7 +538,6 @@
     <ClCompile Include="ResourceMaterial.cpp" />
     <ClCompile Include="ResourceMesh.cpp" />
     <ClCompile Include="ResourceScript.cpp" />
-    <ClCompile Include="ResourceSkeleton.cpp" />
     <ClCompile Include="Resource_.cpp" />
     <ClCompile Include="Script_editor.cpp" />
     <ClCompile Include="ShadersLib.cpp" />

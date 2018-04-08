@@ -208,7 +208,7 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 			cursor += bytes;
 			for (int j = 0; j < num_pos_keys; j++)
 			{
-				PositionKey* temp_pos_key = new PositionKey();
+				PositionKey* temp_pos_key = new PositionKey;
 
 				//Time
 				double temp_double;
@@ -232,7 +232,7 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 			cursor += bytes;
 			for (int p = 0; p < num_rot_keys; p++)
 			{
-				RotationKey* temp_rot_key = new RotationKey();
+				RotationKey* temp_rot_key = new RotationKey;
 
 				//Time
 				double temp_double;
@@ -259,7 +259,7 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 			cursor += bytes;
 			for (int p = 0; p < num_sca_keys; p++)
 			{
-				ScaleKey* temp_sca_key = new ScaleKey();
+				ScaleKey* temp_sca_key = new ScaleKey;
 
 				//Time
 				double temp_double;
