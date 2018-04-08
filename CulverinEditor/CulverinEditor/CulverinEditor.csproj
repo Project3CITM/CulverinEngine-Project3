@@ -90,6 +90,7 @@
     <Compile Include="UI_Scripts\Scene\ReturnToMenu.cs" />
     <Compile Include="ScoreScreen.cs" />
     <Compile Include="UI_Scripts\Scene\FadeAlpha.cs" />
+    <Compile Include="UI_Scripts\Scene\ReturnToMenuFromLose.cs" />
     <Compile Include="UI_Scripts\Scene\Scroll.cs" />
     <Compile Include="ShowScore.cs" />
     <Compile Include="StatsScore.cs" />
