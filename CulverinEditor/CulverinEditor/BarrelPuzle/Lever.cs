@@ -43,7 +43,7 @@ public class Lever : CulverinBehaviour
     private bool phase3 = false; // Move barrels mode.FILLING
     private bool editmap = false; // editmap
 
-    public int possible_paths = 4;
+    public int possible_paths = 13;
     // Puzzle orientation: 0-North. 1-East. 2-South. 3-West.
     public int puzzle_orientation = 0;
 
