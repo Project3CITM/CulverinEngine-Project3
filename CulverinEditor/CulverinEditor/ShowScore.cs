@@ -113,20 +113,20 @@ public class ShowScore : CulverinBehaviour
     }
     void AliveScore()
     {
-        if (StatsScore.characters_alive <= 3)
+        if (StatsScore.characters_alive < 3)
         {
             coin_score += bronze_value;
             coin1_alive.SetActive(true);
 
         }
-        if (StatsScore.characters_alive <= 2)
+        if (StatsScore.characters_alive < 2)
         {
             coin_score += bronze_value;
             coin1_alive.SetActive(true);
             coin_score += silver_value;
             coin2_alive.SetActive(true);
         }
-        if (StatsScore.characters_alive <= 1)
+        if (StatsScore.characters_alive < 1)
         {
             coin_score += bronze_value;
             coin1_alive.SetActive(true);
