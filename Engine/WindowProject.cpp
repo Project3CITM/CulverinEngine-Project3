@@ -5,7 +5,7 @@
 #include "ModuleTextures.h"
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 
 Project::Project()
 {
@@ -34,6 +34,7 @@ bool Project::Start()
 	icon_script = App->textures->LoadTexture("Images/UI/icon_script.png");
 	icon_unknown = App->textures->LoadTexture("Images/UI/icon_unknown.png");
 	icon_scene = App->textures->LoadTexture("Images/UI/icon_Culverin.png");
+	icon_prefab = App->textures->LoadTexture("Images/UI/icon_prefab.png");
 
 	//directory_see = App->fs->GetMainDirectory();
 	//directory_see = "Assets\\";
@@ -151,7 +152,15 @@ void Project::ShowProject()
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(20, 2));
 		if (ImGui::Button("Select.."))
 			ImGui::OpenPopup("select");
+
+		ImGui::SameLine(ImGui::GetWindowWidth() - 425);
+		ImGui::Text("Filter(inc, -exc)"); ImGui::SameLine();
+		ImGui::PushItemWidth(150);
+		filter.Draw("");
+		ImGui::PopItemWidth();
 		ImGui::PopStyleVar(2);
+		ImGui::SameLine();
+		ImGui::Text("|");
 		ImGui::SameLine();
 		if (ImGui::BeginPopup("select"))
 		{
@@ -309,11 +318,18 @@ void Project::Folders_update(std::vector<FoldersNew>& folders)
 
 void Project::Files_Update(const std::vector<FilesNew>& files)
 {
+	ImGui::SetWindowFontScale(0.9);
 	uint width = DISTANCEBUTTONS;
+	float size_test = 0.0f;
 	for (int i = 0; i < files.size(); i++)
 	{
 		ImGui::PushID(i);
-
+		if (filter.PassFilter(files[i].file_name) == false)
+		{
+			ImGui::PopID();
+			continue;
+		}
+			
 		//std::string namebySize = files[i].file_name;
 		static char nameTemp[100];
 		int lenght = strlen(files[i].file_name);
@@ -387,7 +403,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 		}
 		case TYPE_FILE::PREFAB:
 		{
-			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_fbx, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
+			ImGui::ImageButtonWithTextDOWN_NoReajust((ImTextureID*)icon_prefab, nameTemp, ImVec2(size_files, size_files), ImVec2(-1, 1), ImVec2(0, 0));
 			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
 			{
 				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
@@ -456,11 +472,11 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 				{
 					// Set new Scene and before change scene, check if he want save scene.
 					App->scene->DeleteAllGameObjects(App->scene->root); //TODO->Elliot
-					App->event_system->ClearEvents(EventType::EVENT_DRAW);
+					ClearEvents(EventType::EVENT_DRAW);
 					std::string directory_scene = GetDirectory();
 					directory_scene += "/";
 					directory_scene += files[i].file_name;
-					App->json_seria->LoadScene(directory_scene.c_str());
+					App->WantToLoad();
 					App->SetActualScene(directory_scene.c_str());
 					//App->resource_manager->ReImportAllScripts();
 				}
@@ -468,9 +484,10 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 			break;
 		}
 		}
-		width += size_files + MARGEBUTTON + DISTANCEBUTTONS; // Size of imatge + marge button + between buttons
+		size_test = ImGui::GetItemRectSize().x;
+		width += size_test + DISTANCEBUTTONS; // Size of imatge + marge button + between buttons
 		int temp = ImGui::GetWindowWidth();
-		if ((width + DISTANCEBUTTONS + SPERATIONCOLUMN) > temp)
+		if ((width + size_test + DISTANCEBUTTONS + SPERATIONCOLUMN) > temp)
 		{
 			width = 0;
 		}
@@ -517,6 +534,7 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 		}
 		ImGui::PopID();
 	}
+	ImGui::SetWindowFontScale(1);
 }
 
 const char* Project::GetDirectory() const

@@ -4,7 +4,8 @@ namespace CulverinEditor
 {
     public class CompRectTransform : Transform
     {
-
+        public CompRectTransform()
+        { }
     }
 
 }

@@ -4,7 +4,6 @@ using CulverinEditor;
 public class Stun_Action : Action
 {
     public float stun_duration = 1.0f;
-    float stun_timer = 0.0f;
 
     void Start()
     {
@@ -15,20 +14,13 @@ public class Stun_Action : Action
         action_type = ACTION_TYPE.STUN_ACTION;
     }
 
-    public Stun_Action(float speed) : base(speed)
-    {
-        action_type = ACTION_TYPE.STUN_ACTION;
-    }
-
     public override bool ActionStart()
     {
-        //TODO: Animations GetComponent<CompAnimation>().SetTransition("ToHit");
         GetComponent<Align_Steering>().SetEnabled(false);
         GetComponent<Arrive_Steering>().SetEnabled(false);
         GetComponent<Seek_Steering>().SetEnabled(false);
-
-        stun_timer = 0.0f;
-
+        GetComponent<CompAnimation>().SetTransition("ToStun");
+        GetComponent<CompAnimation>().SetClipDuration("Stun", stun_duration);
         return true;
     }
 
@@ -37,10 +29,10 @@ public class Stun_Action : Action
         if (interupt == true)
             return ACTION_RESULT.AR_FAIL;
 
-        stun_timer += Time.deltaTime;
-        if (stun_timer >= stun_duration)
+        if (GetComponent<CompAnimation>().IsAnimationStopped("Stun"))
         {
             Debug.Log("Stun finished");
+            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_SUCCESS;
         }
 

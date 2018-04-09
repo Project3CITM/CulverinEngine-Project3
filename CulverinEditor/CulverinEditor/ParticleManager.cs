@@ -8,7 +8,6 @@ public class ParticleManager : CulverinBehaviour
     // Use this for initialization
     void Start()
     {
-        GetComponent<CompParticleSystem>().ActivateEmission(true);
         timer = 0.0f;
     }
 
@@ -18,7 +17,6 @@ public class ParticleManager : CulverinBehaviour
         timer += Time.deltaTime;
         if (timer >= duration)
         {
-            GetComponent<CompParticleSystem>().ActivateEmission(false);
             Destroy(gameObject);
         }
     }

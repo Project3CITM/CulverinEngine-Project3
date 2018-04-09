@@ -13,6 +13,7 @@ public class Enemy_BT : BT
 
     public GameObject enemies_manager = null;
     public GameObject player = null;
+    public GameObject mesh = null;
 
     public float total_hp = 100;
     protected float current_hp;
@@ -26,7 +27,7 @@ public class Enemy_BT : BT
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
     protected float current_interpolation = 1.0f;
-    public uint range = 1;
+    public int range = 1;
 
     protected bool in_combat = false;
 
@@ -37,8 +38,12 @@ public class Enemy_BT : BT
         current_hp = total_hp;
         Debug.Log("Current HP (Start): " + current_hp);
         Debug.Log("Total HP (Start): " + total_hp);
-        //Enemy starts with the attack loaded!
+        //Enemy starts with the attack loaded
         attack_timer = attack_cooldown * anim_speed;
+        mesh = GetLinkedObject("mesh");
+        enemies_manager = GetLinkedObject("enemies_manager");
+        GetComponent<CompAnimation>().PlayAnimation("Idle");
+        //ChangeTexturesToAlive();
         base.Start();
     }
 
@@ -47,34 +52,22 @@ public class Enemy_BT : BT
         //Update attack cooldown
         attack_timer += Time.deltaTime;
 
-        /*if (Input.GetKeyDown(KeyCode.I))
-        {
-            ApplyDamage(50);
-        }*/
-
-        if (Input.GetKeyDown(KeyCode.P))
-            PushEnemy(new Vector3(0, 0, -1));
-
         base.Update();
     }
 
     public override void MakeDecision()
     {
-        //Debug.Log("Make Decision");
-        //Debug.Log("Next Action:" + next_action.action_type);
 
-        if (next_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
+        if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION 
+            || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION
+            || next_action.action_type == Action.ACTION_TYPE.FACE_PLAYER_ACTION || next_action.action_type == Action.ACTION_TYPE.DIE_ACTION
+            || next_action.action_type == Action.ACTION_TYPE.SEPARATE_ACTION)
         {
-            Debug.Log("[error]"+ next_action.action_type);
-            current_action = next_action;
-            next_action = null_action;
-            current_action.ActionStart();
-            return;
-        }
-
-        if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION)
-        {
-            Debug.Log(next_action.action_type);
+            if (next_action.action_type == Action.ACTION_TYPE.STUN_ACTION)
+            {
+                life_state = ENEMY_STATE.ENEMY_STUNNED;
+            }
+            Debug.Log("[blue]" +next_action.action_type);
             current_action = next_action;
             next_action = null_action;
             current_action.ActionStart();
@@ -91,7 +84,7 @@ public class Enemy_BT : BT
                 current_action.ActionStart();
                 return;
             }
-
+          
             InCombatDecesion();
         }
         else
@@ -121,14 +114,11 @@ public class Enemy_BT : BT
         Debug.Log("Out Of Combat Not Defined");
     }
 
-    public virtual void ApplyDamage(float damage)
+    public virtual bool ApplyDamage(float damage)
     {
-        if (current_action.action_type == Action.ACTION_TYPE.SHIELD_BLOCK_ACTION) return;
-
         InterruptAction();
 
         next_action = GetComponent<GetHit_Action>();
-        next_action.SetAnimSpeed(anim_speed);
 
         current_hp -= damage;
 
@@ -141,14 +131,20 @@ public class Enemy_BT : BT
             life_state = ENEMY_STATE.ENEMY_DEAD;
             next_action = GetComponent<Die_Action>();
             current_action.Interupt();
+            if (GetComponent<EnemySword_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteSwordEnemy(GetComponent<EnemySword_BT>().gameObject);
+            else if (GetComponent<EnemyShield_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteShieldEnemy(GetComponent<EnemyShield_BT>().gameObject);
+            else if (GetComponent<EnemySpear_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteLanceEnemy(GetComponent<EnemySpear_BT>().gameObject);
         }
-        else if (current_hp < total_hp * damaged_limit)
+        else if (life_state != ENEMY_STATE.ENEMY_DAMAGED && current_hp < total_hp * damaged_limit)
         {
             life_state = ENEMY_STATE.ENEMY_DAMAGED;
             current_interpolation = current_hp / total_hp;
             anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;
             GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+            //ChangeTexturesToDamaged();
         }
+
+        return true;
     }
 
     public void PushEnemy(Vector3 dir)
@@ -170,11 +166,28 @@ public class Enemy_BT : BT
 
     public bool InRange()
     {
-        player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-        int distance = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX()) + Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
-        if (distance <= range)
+        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+        int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
+        int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+
+        if ((distance_x <= range && distance_y == 0) || (distance_y <= range && distance_x == 0))
             return true;
         return false;
+    }
+
+    public int GetDistanceInRange()
+    {
+        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+        int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
+        int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+
+        if (distance_x <= range && distance_y == 0)
+            return distance_x;
+
+        if (distance_y <= range && distance_x == 0)
+            return distance_y;
+
+        return range + 1;
     }
 
     public float GetCurrentInterpolation()
@@ -198,5 +211,15 @@ public class Enemy_BT : BT
     public bool InCombat()
     {
         return in_combat;
+    }
+
+    public virtual void ChangeTexturesToDamaged()
+    {
+        Debug.Log("[error] Damaged change Textures not defined");
+    }
+
+    public virtual void ChangeTexturesToAlive()
+    {
+        Debug.Log("[error] Alive change Textures not defined");
     }
 }

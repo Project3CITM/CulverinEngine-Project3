@@ -51,6 +51,7 @@ public class PerceptionListener : CulverinBehaviour
 
     public void ClearEvents()
     {
+        
         foreach (PerceptionEvent memory_event in events_in_memory)
         {
             OnEventGone(memory_event);

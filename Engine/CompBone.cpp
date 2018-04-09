@@ -28,14 +28,7 @@ CompBone::CompBone(const CompBone & copy, GameObject * parent) : Component(Comp_
 CompBone::~CompBone()
 {
 	//RELEASE_ARRAY(name);
-	if (resource_mesh != nullptr)
-	{
-		if (resource_mesh->num_game_objects_use_me > 0)
-		{
-			resource_mesh->num_game_objects_use_me--;
-		}
-	}
-	resource_mesh = nullptr;
+	
 }
 
 bool CompBone::Enable()
@@ -94,7 +87,19 @@ void CompBone::Draw()
 {}
 
 void CompBone::Clear()
-{}
+{
+	if (resource_mesh != nullptr)
+	{
+		if (resource_mesh->num_game_objects_use_me > 0)
+		{
+			resource_mesh->num_game_objects_use_me--;
+		}
+		resource_mesh = nullptr;
+	}
+	child_bones.clear();
+	child_uids.clear();
+	weights.clear();
+}
 
 void CompBone::ShowOptions()
 {

@@ -259,6 +259,22 @@ void CSharpScript::SetBlendInTime(MonoObject * object, MonoString * name, float 
 	}
 }
 
+void CSharpScript::PlayAnimationNode(MonoObject * object, MonoString * name)
+{
+	if (current_game_object != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			AnimationNode* node = animation->GetNodeFromName(mono_string_to_utf8(name));
+			if (node != nullptr)
+			{
+				animation->PlayAnimation(node);
+			}
+		}
+	}
+}
+
 // CompCollider -----------------------------------------------------------
 MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 {
@@ -268,6 +284,64 @@ MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 		if (target == nullptr)return nullptr;
 
 		return App->importer->iScript->GetMonoObject(target);
+	}
+	return nullptr;
+}
+
+MonoObject * CSharpScript::GetContactPoint(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
+		if (classT)
+		{
+			Component* obj = App->importer->iScript->GetComponentMono(object);
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+				CompCollider* coll = (CompCollider*)current_game_object->FindComponentByType(C_COLLIDER);
+				float3 new_vec = coll->GetContactPoint();
+
+				if (x_field) mono_field_set_value(new_object, x_field, &new_vec.x);
+				if (y_field) mono_field_set_value(new_object, y_field, &new_vec.y);
+				if (z_field) mono_field_set_value(new_object, z_field, &new_vec.z);
+
+				return new_object;
+			}
+		}
+	}
+	return nullptr;
+}
+
+MonoObject * CSharpScript::GetContactNormal(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
+		if (classT)
+		{
+			Component* obj = App->importer->iScript->GetComponentMono(object);
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+				CompCollider* coll = (CompCollider*)current_game_object->FindComponentByType(C_COLLIDER);
+				float3 new_vec = coll->GetContactNormal();
+
+				if (x_field) mono_field_set_value(new_object, x_field, &new_vec.x);
+				if (y_field) mono_field_set_value(new_object, y_field, &new_vec.y);
+				if (z_field) mono_field_set_value(new_object, z_field, &new_vec.z);
+
+				return new_object;
+			}
+		}
 	}
 	return nullptr;
 }
@@ -295,7 +369,8 @@ void CSharpScript::CallOnContact(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
-		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnContact(nullptr);
+		CollisionData data;
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnContact(data);
 	}
 }
 
@@ -304,6 +379,14 @@ void CSharpScript::CallOnTriggerEnter(MonoObject * object)
 	if (current_game_object != nullptr)
 	{
 		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnTriggerEnter(nullptr);
+	}
+}
+
+void CSharpScript::CollisionActive(MonoObject * object, bool active)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->CollisionActive(active);
 	}
 }
 
@@ -489,11 +572,43 @@ void CSharpScript::ApplyTorqueImpulse(MonoObject * object, MonoObject * impulse)
 	}
 }
 
+void CSharpScript::LockMotion(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockMotion();
+	}
+}
+
+void CSharpScript::LockRotation(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockRotation();
+	}
+}
+
 void CSharpScript::LockTransform(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
 		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockTransform();
+	}
+}
+
+void CSharpScript::UnLockMotion(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->UnLockMotion();
+	}
+}
+
+void CSharpScript::UnLockRotation(MonoObject * object)
+{
+	if (current_game_object != nullptr)
+	{
+		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->UnLockRotation();
 	}
 }
 

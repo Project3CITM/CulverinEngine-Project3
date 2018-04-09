@@ -22,6 +22,7 @@ class CompButton;
 class CompCheckBox;
 class CompLight;
 class CompBone;
+class ResourceMesh;
 
 class GameObject
 {
@@ -38,6 +39,7 @@ public:
 	void StartScripts();
 	GameObject* GetGameObjectbyuid(uint uid);
 	GameObject* GetGameObjectfromScene(int);
+	void GetAllSceneGameObjects(std::vector<GameObject*>& SceneGameObjects) const;
 	void FindChildsWithTag(const char* tag, std::vector<GameObject*>* vec);
 	GameObject * FindGameObjectWithTag(const char * tag);
 
@@ -66,7 +68,7 @@ public:
 	bool CompareTag(const char* str)const;
 
 	// EDITOR METHODS ------------------
-	void ShowHierarchy();
+	void ShowHierarchy(bool use_search = false);
 	void ShowGameObjectOptions();
 	void ShowInspectorInfo();
 	void FreezeTransforms(bool freeze, bool change_childs);
@@ -158,7 +160,6 @@ public:
 	//-------------------------------
 
 public:
-	AABB * bounding_box = nullptr;
 	AABB  box_fixed;
 	bool beingUsedByScript = false;
 

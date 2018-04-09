@@ -4,6 +4,9 @@ namespace CulverinEditor
 {
     public class CompMaterial : CulverinBehaviour
     {
+        public CompMaterial()
+        { }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetAlbedo(string name);
 

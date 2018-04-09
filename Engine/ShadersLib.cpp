@@ -78,7 +78,6 @@ void ShaderProgram::CreateMaterialFile()
 	JSON_Object* obj_proj;
 	JSON_Value* file_proj;
 	App->json_seria->Create_Json_Doc(&file_proj, &obj_proj, path.c_str());
-	JSON_Object* node;
 	int i = 0;
 
 	if (fragment!=nullptr) {
@@ -95,6 +94,8 @@ void ShaderProgram::CreateMaterialFile()
 
 	char* serialized_string = json_serialize_to_string_pretty(file_proj);
 	json_serialize_to_file(file_proj, path.c_str());
+	json_object_clear(obj_proj);
+	json_value_free(file_proj);
 
 }
 

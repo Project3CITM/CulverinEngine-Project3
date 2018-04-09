@@ -8,7 +8,7 @@
 #include "Timer.h"
 
 #define MARGEBUTTON 20
-#define DISTANCEBUTTONS 10
+#define DISTANCEBUTTONS 8
 #define SPERATIONCOLUMN 200
 
 enum TYPE_FILE
@@ -78,10 +78,13 @@ private:
 	bool update_folders_now = false;
 	bool update_files_now = false;
 
+	ImGuiTextFilter filter;
+
 	uint folder_icon;
 	uint icon_png;
 	uint icon_jpg;
 	uint icon_fbx;
+	uint icon_prefab;
 	uint icon_obj;
 	uint icon_script;
 	uint icon_unknown;

@@ -591,6 +591,17 @@ void ModuleFS::GetUUIDFromFile(std::string path, std::vector<uint>& files)
 			}
 			break;
 		}
+		case Resource::Type::SCRIPT:
+		{
+			ReImport temp = App->json_seria->GetUUIDScript(path.c_str());
+			if (temp.uuid != 0)
+			{
+				App->resource_manager->files_to_delete.push_back(temp.uuid);
+				//RELEASE_ARRAY(temp.directoryObj);
+				//RELEASE_ARRAY(temp.nameMesh);
+			}
+			break;
+		}
 		}
 	}
 }
@@ -1436,7 +1447,7 @@ float3 ModuleFS::json_array_dotget_float3_string(const JSON_Object* object, std:
 	transform.x = (float)json_value_get_number(json_array_get_value(array, 0));
 	transform.y = (float)json_value_get_number(json_array_get_value(array, 1));
 	transform.z = (float)json_value_get_number(json_array_get_value(array, 2));
-
+	json_array_clear(array);
 	return transform;
 }
 float2 ModuleFS::json_array_dotget_float2_string(const JSON_Object* object, std::string name)
@@ -1445,7 +1456,7 @@ float2 ModuleFS::json_array_dotget_float2_string(const JSON_Object* object, std:
 	float2 transform;
 	transform.x = (float)json_value_get_number(json_array_get_value(array, 0));
 	transform.y = (float)json_value_get_number(json_array_get_value(array, 1));
-
+	json_array_clear(array);
 	return transform;
 }
 float4 ModuleFS::json_array_dotget_float4_string(const JSON_Object* object, std::string name)
@@ -1456,6 +1467,6 @@ float4 ModuleFS::json_array_dotget_float4_string(const JSON_Object* object, std:
 	transform.y = (float)json_value_get_number(json_array_get_value(array, 1));
 	transform.z = (float)json_value_get_number(json_array_get_value(array, 2));
 	transform.w = (float)json_value_get_number(json_array_get_value(array, 3));
-
+	json_array_clear(array);
 	return transform;
 }

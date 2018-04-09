@@ -2,21 +2,21 @@
 #include "ModuleRenderGui.h"
 #include "EventDef.h"
 #include "CompCanvas.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModuleWindow.h"
 #include "SDL/include/SDL_opengl.h"
 #include "GL3W/include/glew.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
-#include"ModuleShaders.h"
+#include "ModuleShaders.h"
 #include "Scene.h"
 #include "ModuleFramebuffers.h"
-#include"ShadersLib.h"
+#include "ShadersLib.h"
 #include "CompInteractive.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
 #include "DefaultShaders.h"
-
+#include "GameObject.h"
 ModuleRenderGui::ModuleRenderGui(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
@@ -116,7 +116,7 @@ bool ModuleRenderGui::SetEventListenrs()
 void ModuleRenderGui::PassSelected(CompInteractive * to_pass)
 {
 	Event pass_selected;
-	pass_selected.pass_selected.type = EventType::EVENT_PASS_SELECTED;
+	pass_selected.Set_event_data(EventType::EVENT_PASS_SELECTED);
 	pass_selected.pass_selected.component = to_pass;
 	ChangeSelected(pass_selected);
 }
@@ -126,7 +126,8 @@ void ModuleRenderGui::ChangeSelected(Event & this_event)
 	if (selected != nullptr)
 		selected->ForceClear(this_event);
 	selected = this_event.pass_selected.component;
-	selected->OnInteractiveSelected(this_event);
+	if (selected != nullptr)
+		selected->OnInteractiveSelected(this_event);
 }
 
 
@@ -136,7 +137,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	if (focus != nullptr)
 		this_event.pointer.focus = focus->GetParent();
 
-	switch (this_event.type)
+	switch (this_event.Get_event_data_type())
 	{
 	case EventType::EVENT_PASS_SELECTED:
 		ChangeSelected(this_event);
@@ -145,9 +146,11 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 		iteractive_vector.push_back((CompInteractive*)this_event.pass_component.component);
 		break;
 	case EventType::EVENT_AXIS:
+		
 		if (selected != nullptr)
 		{
-			selected->OnMove(this_event);
+			if(selected->GetParent()->IsActive())
+				selected->OnMove(this_event);
 		}
 		else
 		{
@@ -170,13 +173,15 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	case EventType::EVENT_SUBMIT:
 		if (selected != nullptr)
 		{
-			selected->OnSubmit(this_event);
+			if (selected->GetParent()->IsActive())
+				selected->OnSubmit(this_event);
 		}
 		break;
 	case EventType::EVENT_CANCEL:
 		if (selected != nullptr)
 		{
-			selected->OnCancel(this_event);
+			if (selected->GetParent()->IsActive())
+				selected->OnCancel(this_event);
 		}
 		break;
 	case EventType::EVENT_BUTTON_DOWN:
@@ -196,8 +201,9 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 							(*it)->ForceClear(this_event);
 							continue;
 						}
-						if (this_event.type == EventType::EVENT_BUTTON_DOWN)
+						switch (this_event.Get_event_data_type())
 						{
+						case EventType::EVENT_BUTTON_DOWN:
 							(*it)->OnPointDown(this_event);
 							if ((*it)->GetNavigationMode() != Navigation::NavigationMode::NAVIGATION_NONE)
 							{
@@ -206,46 +212,41 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 							}
 							focus = (*it);
 							mouse_down = true;
-
-						}
-						if (this_event.type == EventType::EVENT_BUTTON_UP)
-						{
+							break;
+						case EventType::EVENT_BUTTON_UP:
 							(*it)->OnPointUP(this_event);
 							focus = nullptr;
 							mouse_down = false;
-
-
-						}
-						if (this_event.type == EventType::EVENT_MOUSE_MOTION)
-						{
+							break;
+						case EventType::EVENT_MOUSE_MOTION:
 							if ((*it)->IsSelective())
 							{
 								(*it)->OnDrag(this_event);
 							}
 							(*it)->OnPointEnter(this_event);
+							break;
 						}
-
 						positive_colision = true;
-
 					}
 					else
 					{
-						if (this_event.type == EventType::EVENT_BUTTON_UP)
+						switch (this_event.Get_event_data_type())
 						{
+						case EventType::EVENT_BUTTON_UP:
 							(*it)->OnPointUP(this_event);
 							focus = nullptr;
 							mouse_down = false;
-						}
-						if (this_event.type == EventType::EVENT_MOUSE_MOTION)
-						{
+							break;
+						case EventType::EVENT_MOUSE_MOTION:
 							(*it)->OnPointExit(this_event);
+							break;
 						}
 					}
 				}
 				if (!positive_colision&&!mouse_down && selected != nullptr)
 				{
 					focus = nullptr;
-					if (this_event.type == EventType::EVENT_BUTTON_DOWN)
+					if (this_event.Get_event_data_type() == EventType::EVENT_BUTTON_DOWN)
 					{
 						selected->ForceClear(this_event);
 						selected = nullptr;
@@ -277,6 +278,11 @@ void ModuleRenderGui::ScreenSpaceDraw(bool debug)
 		screen_space_canvas[i]->DrawGraphic(debug_draw);
 	}	
 	screen_space_canvas.clear();
+}
+
+void ModuleRenderGui::ClearInteractiveVector()
+{
+	iteractive_vector.clear();
 }
 
 

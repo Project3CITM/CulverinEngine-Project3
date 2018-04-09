@@ -9,18 +9,16 @@
 
 class jpPhysicsWorld;
 class jpPhysicsRigidBody;
+class Component;
 class CompCollider;
+enum JP_COLLISION_TYPE;
 
-namespace physx 
+namespace physx
 {
 	class PxPhysics;
 	class PxScene;
-	class PxSceneDesc;
 	class PxRigidActor;
-	class PxRigidStatic;
-	class PxRigidDynamic;
 	class PxBounds3;
-	class PxSimulationEventCallback;
 }
 
 class ModulePhysics : public Module
@@ -54,7 +52,7 @@ public:
 	bool ShowColliderFilterOptions(uint& flags);
 
 	// Collision Callback -----------
-	void OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor* actor1, JP_COLLISION_TYPE type);
+	void OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor* actor1, JP_COLLISION_TYPE type, float3 point = float3(0.f, 0.f, 0.f), float3 normal = float3(0.f, 0.f, 0.f));
 
 	// Collision Test with Ray ------
 	GameObject* RayCast(float3 origin, float3 direction, float distance);
@@ -82,4 +80,4 @@ private:
 };
 
 
-#endif // !MODULEPHYSICS_H_
+#endif // !MODULEPHYSICS_H_	

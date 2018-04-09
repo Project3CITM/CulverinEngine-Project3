@@ -1,5 +1,5 @@
 #include "Application.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModulePhysics.h"
 #include "Scene.h"
 
@@ -17,6 +17,7 @@ ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 	Awake_enabled = true;
 	Start_enabled = true;
 	Update_enabled = true;
+	preUpdate_enabled = true;
 
 	have_config = true; // not yet
 	name = "Physics";
@@ -28,11 +29,16 @@ ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 	// Create and Get Current Scene and Physics world
 	mScene = physics_world->CreateNewScene();
 	mPhysics = physics_world->GetPhysicsWorld();
-	
+
 }
 
 ModulePhysics::~ModulePhysics()
 {
+	if (physics_world)
+	{
+		delete physics_world;
+		physics_world = nullptr;
+	}
 }
 
 // -----------------------------------------------------------------
@@ -70,6 +76,7 @@ bool ModulePhysics::Start()
 // -----------------------------------------------------------------
 update_status ModulePhysics::PreUpdate(float dt)
 {
+	perf_timer.Start();
 	// Update Physics World
 	if (dt > 0) {
 		did_simulation = physics_world->Simulate(dt);
@@ -78,7 +85,7 @@ update_status ModulePhysics::PreUpdate(float dt)
 	{
 		did_simulation = false;
 	}
-
+	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
 
@@ -86,7 +93,7 @@ update_status ModulePhysics::Update(float dt)
 {
 	perf_timer.Start();
 
-	if (dt > 0) 
+	if (dt > 0)
 	{
 		physics_world->StopSimulation();
 	}
@@ -139,12 +146,11 @@ bool ModulePhysics::CleanUp()
 
 	if (physics_world)
 	{
-		delete physics_world;
-		physics_world = nullptr;
+		physics_world->StopSimulation();
 	}
 
 	colliders.clear();
-	
+
 	return true;
 }
 
@@ -158,7 +164,7 @@ bool ModulePhysics::SetEventListenrs()
 
 void ModulePhysics::OnEvent(Event & event)
 {
-	switch (event.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_TRIGGER_COLLISION:
 	{
@@ -166,66 +172,76 @@ void ModulePhysics::OnEvent(Event & event)
 		{
 			break;
 		}
-		switch (event.physics_collision.collision_type)
+
+		switch (event.trigger.coll_type)
 		{
 		case JP_COLLISION_TYPE::TRIGGER_ENTER:
 		{
-			if (event.physics_collision.trigger->GetType() == C_COLLIDER)
+			if (event.trigger.actor0->GetType() == C_COLLIDER)
 			{
-				static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerEnter(event.physics_collision.actor);
+				static_cast<CompCollider*>(event.trigger.actor0)->OnTriggerEnter(event.trigger.actor1);
 			}
 			else
 			{
-				static_cast<CompRigidBody*>(event.physics_collision.actor)->OnTriggerEnter(event.physics_collision.actor);
+				static_cast<CompRigidBody*>(event.trigger.actor0)->OnTriggerEnter(event.trigger.actor1);
 			}
-			if (event.physics_collision.actor->GetType() == C_RIGIDBODY)
+
+			if (event.trigger.actor1->GetType() == C_RIGIDBODY)
 			{
-				static_cast<CompRigidBody*>(event.physics_collision.actor)->OnTriggerEnter(event.physics_collision.trigger);
+				static_cast<CompRigidBody*>(event.trigger.actor1)->OnTriggerEnter(event.trigger.actor0);
 			}
 			else
 			{
-				static_cast<CompCollider*>(event.physics_collision.actor)->OnTriggerEnter(event.physics_collision.trigger);
+				static_cast<CompCollider*>(event.trigger.actor1)->OnTriggerEnter(event.trigger.actor0);
 			}
 			break;
 		}
 		case JP_COLLISION_TYPE::TRIGGER_LOST:
 		{
-			if (event.physics_collision.trigger->GetType() == C_COLLIDER)
+			if (event.trigger.actor0->GetType() == C_COLLIDER)
 			{
-				static_cast<CompCollider*>(event.physics_collision.trigger)->OnTriggerLost(event.physics_collision.actor);
+				static_cast<CompCollider*>(event.trigger.actor0)->OnTriggerLost(event.trigger.actor1);
 			}
 			else
 			{
-				static_cast<CompRigidBody*>(event.physics_collision.actor)->OnTriggerLost(event.physics_collision.actor);
+				static_cast<CompRigidBody*>(event.trigger.actor0)->OnTriggerLost(event.trigger.actor1);
 			}
-			if (event.physics_collision.actor->GetType() == C_RIGIDBODY)
+
+			if (event.trigger.actor1->GetType() == C_RIGIDBODY)
 			{
-				static_cast<CompRigidBody*>(event.physics_collision.actor)->OnTriggerLost(event.physics_collision.trigger);
+				static_cast<CompRigidBody*>(event.trigger.actor1)->OnTriggerLost(event.trigger.actor0);
 			}
 			else
 			{
-				static_cast<CompCollider*>(event.physics_collision.actor)->OnTriggerLost(event.physics_collision.trigger);
+				static_cast<CompCollider*>(event.trigger.actor1)->OnTriggerLost(event.trigger.actor0);
 			}
 			break;
 		}
 		case JP_COLLISION_TYPE::CONTACT_ENTER:
 		{
-			if (event.physics_collision.trigger->GetType() == C_COLLIDER)
+			CollisionData data;
+			data.is_contact = true;
+			data.impact_point = event.trigger.impact_point;
+			data.impact_normal = event.trigger.impact_normal;
+
+			data.actor1 = event.trigger.actor1;
+			if (event.trigger.actor0->GetType() == C_COLLIDER)
 			{
-				static_cast<CompCollider*>(event.physics_collision.trigger)->OnContact(event.physics_collision.actor);
+				static_cast<CompCollider*>(event.trigger.actor0)->OnContact(data);
 			}
 			else
 			{
-				static_cast<CompRigidBody*>(event.physics_collision.trigger)->OnContact(event.physics_collision.actor);
+				static_cast<CompRigidBody*>(event.trigger.actor0)->OnContact(data);
 			}
 
-			if (event.physics_collision.actor->GetType() == C_COLLIDER)
+			data.actor1 = event.trigger.actor0;
+			if (event.trigger.actor1->GetType() == C_COLLIDER)
 			{
-				static_cast<CompCollider*>(event.physics_collision.actor)->OnContact(event.physics_collision.trigger);
+				static_cast<CompCollider*>(event.trigger.actor1)->OnContact(data);
 			}
 			else
 			{
-				static_cast<CompRigidBody*>(event.physics_collision.actor)->OnContact(event.physics_collision.trigger);
+				static_cast<CompRigidBody*>(event.trigger.actor1)->OnContact(data);
 			}
 			break;
 		}
@@ -236,21 +252,21 @@ void ModulePhysics::OnEvent(Event & event)
 		switch (event.time.time)
 		{
 		case event.time.TIME_PLAY:
-		
+
 			for (std::map<physx::PxRigidActor*, Component*>::const_iterator item = colliders.cbegin(); item != colliders.cend(); item++)
 			{
 				if (item->second->GetType() != Comp_Type::C_RIGIDBODY || ((CompRigidBody*)item->second)->IsKinematic())
 				{
 					continue;
 				}
-				
+
 				CompRigidBody* rbody = (CompRigidBody*)item->second;
 				if (rbody->HaveBodyShape())
 				{
 					rbody->SetMomentumToZero();
 					rbody->SetColliderPosition();
 				}
-		
+
 			}
 			break;
 		default:
@@ -288,7 +304,7 @@ jpPhysicsRigidBody * ModulePhysics::GetNewRigidBody(Component * component, bool 
 	{
 		return nullptr;
 	}
-	
+
 }
 
 bool ModulePhysics::DeleteCollider(Component * component, jpPhysicsRigidBody * body)
@@ -357,22 +373,22 @@ bool ModulePhysics::ShowColliderFilterOptions(uint& flags)
 	return false;
 }
 
-void ModulePhysics::OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor* actor1, JP_COLLISION_TYPE type)
+void ModulePhysics::OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor* actor1, JP_COLLISION_TYPE type, float3 point, float3 normal)
 {
-	Event collision;
-	collision.physics_collision.type = EventType::EVENT_TRIGGER_COLLISION;
-	collision.physics_collision.collision_type = type;
+	Event phys_event;
+	phys_event.Set_event_data(EventType::EVENT_TRIGGER_COLLISION);
+	phys_event.trigger.coll_type = type;
 
 	std::map<physx::PxRigidActor*, Component*>::const_iterator npair;
 	npair = colliders.find(actor0);
 	if (npair != colliders.end())
 	{
-		collision.physics_collision.trigger = npair._Ptr->_Myval.second;
+		phys_event.trigger.actor0 = npair._Ptr->_Myval.second;
 
 		npair = colliders.find(actor1);
 		if (npair != colliders.end())
 		{
-			collision.physics_collision.actor = npair._Ptr->_Myval.second;
+			phys_event.trigger.actor1 = npair._Ptr->_Myval.second;
 		}
 		else
 		{
@@ -384,7 +400,10 @@ void ModulePhysics::OnCollision(physx::PxRigidActor* actor0, physx::PxRigidActor
 		return;
 	}
 
-	PushEvent(collision);
+	phys_event.trigger.impact_point = point;
+	phys_event.trigger.impact_normal = normal;
+
+	PushEvent(phys_event);
 }
 
 GameObject * ModulePhysics::RayCast(float3 origin, float3 direction, float distance)
@@ -448,3 +467,5 @@ void ModulePhysics::DebugDrawUpdate()
 {
 	update_debug_draw = true;
 }
+
+

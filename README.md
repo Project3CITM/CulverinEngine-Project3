@@ -36,7 +36,7 @@ nJoy Game uses and requires Microsoft DirectX 11.0.
 
 	1.2 GHz Intel core i3
 	1Gb of RAM
-	260 MB of free hard disk space
+	500 MB of free hard disk space
 	video card support OpenGL 3.3
 	Keyboard
 	Mouse
@@ -45,7 +45,7 @@ nJoy Game uses and requires Microsoft DirectX 11.0.
 
 Download our latest build at https://github.com/Project3CITM/CulverinEngine-Project3/releases
 
-Just download the release, unpack it, open the NjoyGames_VerticalSlice1 folders and open the NjoyGames_VerticalSlice1.exe file.
+Just download the release, unpack it, open the NjoyGames_VerticalSlice3 folders and open the NjoyGames_VerticalSlice1.exe file.
 
 ### Save Games:
 
@@ -67,6 +67,7 @@ We recommend manufacturer distributed drivers for Windows 10 (i.e. drivers that 
 
 ### Sound Provider:
 We use Wwise for the sound management.
+& provided some audios from https://freesound.org/
 
 ### Screen Resolution:
 For this release, is recommended to not rescale the window, UI not rescaled yet.
@@ -80,14 +81,13 @@ As a player you can execute the following controls:
 * Press S to move backward one tile.
 * Press D to move one tile to your Right.
 * Press A to move one tile to your Left.
-* Press 1 to perform your attack, or click the UI button.
-* Press 2 to block an incoming attack, or click the UI button.
+* Press 1  to use primary ability
+* Press 2  to use secondary ability
 * Press Tab to switch to the left character
 * Press R to switch to the right character
-* Press K to use the right secondary ability
-* Press L to use the left secondary ability
-
-![Controls](https://gyazo.com/c1760fade1baf6bf3b9edc391442ffc2.jpg)
+* Press 4 to use the right suport ability
+* Press 3 to use the left suport ability
+* Press SPACE to activate the lever
 
 ## 6) KNOWN ISSUES
 
@@ -98,6 +98,20 @@ https://github.com/Project3CITM/CulverinEngine-Project3/issues
 Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
 ## 8) CHANGELOG
+
+###Vertical Slice 3 V1.0
+
+	* 2 Enemy added
+	* realistic AI for each of the enemies
+	* New Map
+	* New Puzzle
+ 	* New PBR materials
+	* New Map Assets
+	* Bloom
+	* GameLoop
+	* New UI Menus & win/lose Windows
+	* BUG fixes
+
 ###Vertical Slice 2 v0.9:
 	* Enemy added	
 	* Puzzle completed

@@ -16,6 +16,7 @@ enum JP_COLLIDER_TYPE
 
 enum JP_COLLISION_TYPE
 {
+	COLLISION_UNKNOWN,
 	TRIGGER_ENTER,
 	TRIGGER_LOST,
 	CONTACT_ENTER,
@@ -35,6 +36,9 @@ public:
 	void ActivateShape();
 	void DeActivateShape();
 
+	void EnableCollisions();
+	void DisableCollisions();
+
 	// Set Methods
 	void SetAsKinematic(bool kinematic);
 	void SetAsTrigger(bool trigger);
@@ -43,7 +47,7 @@ public:
 	void SetTransform(float* trans_mat);
 	void SetTransform(float3 pos, Quat rotation, bool autoawake = true);
 	void SetGeometry(physx::PxGeometry new_geometry); //DO NOT USE, does nothing, will be later on defined to use with convexmesh
-	
+
 	void SetMaterial(float &static_friction, float &dynamic_friction, float &restitution);
 	void SetShape(physx::PxShape* new_shape);
 
@@ -85,4 +89,3 @@ private:
 };
 
 #endif // !JP_PHYSICS_RIGIDBODY_H__
-

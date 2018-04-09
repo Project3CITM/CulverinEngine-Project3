@@ -8,9 +8,7 @@ namespace CulverinEditor
     public sealed class GameObject : Object
     {
         public GameObject()
-        {
-            CreateGameObject(this);
-        }
+        {   }
 
         public GameObject gameObject
         {
@@ -39,6 +37,14 @@ namespace CulverinEditor
             {
                 return GetComponent<Transform>();
             }
+        }
+
+        public bool IsEquals(GameObject other)
+        {
+            if (GetName() == other.GetName())
+                return true;
+
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]

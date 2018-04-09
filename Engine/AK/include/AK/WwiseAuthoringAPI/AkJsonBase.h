@@ -21,8 +21,8 @@ under the Apache License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 OR CONDITIONS OF ANY KIND, either express or implied. See the Apache License for
 the specific language governing permissions and limitations under the License.
 
-Version: v2017.1.2  Build: 6361
-Copyright (c) 2006-2017 Audiokinetic Inc.
+Version: v2017.2.3  Build: 6575
+Copyright (c) 2006-2018 Audiokinetic Inc.
 *******************************************************************************/
 
 #pragma once
@@ -51,42 +51,42 @@ namespace AK
 			};
 
 			AkJsonBase()
-				: m_ptr(nullptr)
-				, m_eType(Type::Empty)
+				: m_eType(Type::Empty)
+				, m_ptr(nullptr)
 			{
 			}
 
 			AkJsonBase(const VariantType& in_other)
-				: m_ptr(nullptr)
-				, m_eType(Type::Empty)
+				: m_eType(Type::Empty)
+				, m_ptr(nullptr)
 			{
 				SetVariant(in_other);
 			}
 
 			AkJsonBase(const Array& in_other)
-				: m_ptr(nullptr)
-				, m_eType(Type::Empty)
+				: m_eType(Type::Empty)
+				, m_ptr(nullptr)
 			{
 				SetArray(in_other);
 			}
 
 			AkJsonBase(const Map& in_other)
-				: m_ptr(nullptr)
-				, m_eType(Type::Empty)
+				: m_eType(Type::Empty)
+				, m_ptr(nullptr)
 			{
 				SetMap(in_other);
 			}
 
 			AkJsonBase(Type in_eType)
-				: m_ptr(nullptr)
-				, m_eType(Type::Empty)
+				: m_eType(Type::Empty)
+				, m_ptr(nullptr)
 			{
 				SetType(in_eType);
 			}
 
 			AkJsonBase(const AkJsonBase& in_other)
-				: m_ptr(nullptr)
-				, m_eType(Type::Empty)
+				: m_eType(Type::Empty)
+				, m_ptr(nullptr)
 			{
 				Copy(in_other, *this);
 			}

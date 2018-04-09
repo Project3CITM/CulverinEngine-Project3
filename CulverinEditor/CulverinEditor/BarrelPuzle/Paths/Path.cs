@@ -47,7 +47,6 @@ public class Path
          switch (path_index)
         {
             case 0:
-                walkability[0, 0] = 0;
                 walkability[1, 0] = 0;
                 walkability[1, 1] = 0;
                 walkability[2, 1] = 0;
@@ -133,6 +132,117 @@ public class Path
                 SetWalkability(4, 4, 0);
                 SetWalkability(5, 4, 0);
                 SetWalkability(5, 5, 0);*/
+                break;
+            case 4:
+                walkability[4, 0] = 0;
+                walkability[4, 1] = 0;
+                walkability[3, 1] = 0;
+                walkability[3, 2] = 0;
+                walkability[2, 2] = 0;
+                walkability[2, 3] = 0;
+                walkability[2, 4] = 0;
+                walkability[1, 4] = 0;
+                walkability[1, 5] = 0;
+                break;
+            case 5:
+                walkability[4, 0] = 0;
+                walkability[4, 1] = 0;
+                walkability[4, 2] = 0;
+                walkability[3, 2] = 0;
+                walkability[2, 2] = 0;
+                walkability[2, 3] = 0;
+                walkability[2, 4] = 0;
+                walkability[3, 4] = 0;
+                walkability[3, 5] = 0;
+                break;
+            case 6:
+                walkability[3, 0] = 0;
+                walkability[3, 1] = 0;
+                walkability[4, 1] = 0;
+                walkability[4, 2] = 0;
+                walkability[4, 3] = 0;
+                walkability[3, 3] = 0;
+                walkability[3, 4] = 0;
+                walkability[2, 4] = 0;
+                walkability[1, 4] = 0;
+                walkability[1, 5] = 0;
+                break;
+            case 7:
+                walkability[5, 0] = 0;
+                walkability[5, 1] = 0;
+                walkability[5, 2] = 0;
+                walkability[4, 2] = 0;
+                walkability[4, 3] = 0;
+                walkability[3, 3] = 0;
+                walkability[3, 4] = 0;
+                walkability[2, 4] = 0;
+                walkability[1, 4] = 0;
+                walkability[1, 5] = 0;
+                break;
+            case 8:
+                walkability[1, 0] = 0;
+                walkability[1, 1] = 0;
+                walkability[2, 1] = 0;
+                walkability[2, 2] = 0;
+                walkability[3, 2] = 0;
+                walkability[3, 3] = 0;
+                walkability[4, 3] = 0;
+                walkability[4, 4] = 0;
+                walkability[5, 4] = 0;
+                walkability[5, 5] = 0;
+                break;
+            case 9:
+                walkability[2, 0] = 0;
+                walkability[2, 1] = 0;
+                walkability[3, 1] = 0;
+                walkability[3, 2] = 0;
+                walkability[3, 3] = 0;
+                walkability[2, 3] = 0;
+                walkability[2, 4] = 0;
+                walkability[1, 4] = 0;
+                walkability[1, 5] = 0;
+                break;
+            case 10:
+                walkability[5, 0] = 0;
+                walkability[5, 1] = 0;
+                walkability[4, 1] = 0;
+                walkability[3, 1] = 0;
+                walkability[3, 2] = 0;
+                walkability[3, 3] = 0;
+                walkability[2, 3] = 0;
+                walkability[2, 4] = 0;
+                walkability[1, 4] = 0;
+                walkability[1, 5] = 0;
+                break;
+            case 11:
+                walkability[4, 0] = 0;
+                walkability[4, 1] = 0;
+                walkability[3, 1] = 0;
+                walkability[2, 1] = 0;
+                walkability[2, 2] = 0;
+                walkability[2, 3] = 0;
+                walkability[3, 3] = 0;
+                walkability[4, 3] = 0;
+                walkability[4, 4] = 0;
+                walkability[5, 4] = 0;
+                walkability[5, 5] = 0;
+                break;
+            case 12:
+                walkability[4, 0] = 0;
+                walkability[4, 1] = 0;
+                walkability[4, 2] = 0;
+                walkability[3, 2] = 0;
+                walkability[2, 2] = 0;
+                walkability[2, 1] = 0;
+                walkability[1, 1] = 0;
+                walkability[0, 1] = 0;
+                walkability[0, 2] = 0;
+                walkability[0, 3] = 0;
+                walkability[0, 4] = 0;
+                walkability[1, 4] = 0;
+                walkability[2, 4] = 0;
+                walkability[3, 4] = 0;
+                walkability[3, 5] = 0;
                 break;
         }
 

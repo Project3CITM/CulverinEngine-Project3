@@ -287,7 +287,7 @@ void Quadtree::Insert(GameObject* obj)
 	if (root_node != nullptr)
 	{
 		// If object is inside the Boundaries & has an AABB, insert it in a node
-		if (obj->bounding_box != nullptr)
+		if (obj->box_fixed.IsFinite())
 		{
 			if (obj->box_fixed.Intersects(root_node->box))
 			{

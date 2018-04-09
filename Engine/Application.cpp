@@ -8,6 +8,7 @@
 #include "ModuleConsole.h"
 #include "ModuleGUI.h"
 #include "ModuleImporter.h"
+#include "CompCamera.h"
 #include "ModuleTextures.h"
 #include "ModuleFS.h"
 #include "ModuleResourceManager.h"
@@ -26,10 +27,12 @@
 #include "SDL/include/SDL.h"
 #include "JSONSerialization.h"
 #include "mmgr/mmgr.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ModuleKeyBinding.h"
 #include "ModuleAnimation.h"
 #include "ImportScript.h"
+#include "ModuleInput.h"
+#include "PlayerActions.h"
 static int malloc_count;
 static void *counted_malloc(size_t size);
 static void counted_free(void *ptr);
@@ -53,7 +56,7 @@ Application::Application()
 	fs = new ModuleFS();
 	textures = new ModuleTextures();
 	resource_manager = new ModuleResourceManager();
-	event_system = new ModuleEventSystem();
+	event_system_v2 = new ModuleEventSystemV2();
 
 	random = new math::LCG();
 	json_seria = new JSONSerialization();
@@ -86,7 +89,7 @@ Application::Application()
 	AddModule(importer);
 	AddModule(textures);
 	AddModule(audio);
-	AddModule(event_system); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
+	AddModule(event_system_v2); //keep event system down and before render, we have events to draw, so we need to update everrything before, draw with events and render
 	// Renderer last!
 	AddModule(renderer3D);
 	AddModule(render_gui);
@@ -213,6 +216,12 @@ void Application::PrepareUpdate()
 		renderer3D->SetActiveCamera(renderer3D->scene_camera);
 		change_to_scene = false;
 	}
+
+	if (mode_game)
+	{
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.WindowBorderSize = 0.0f;
+	}
 }
 
 // ---------------------------------------------
@@ -232,7 +241,17 @@ void Application::FinishUpdate()
 	if (want_to_load == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
+		App->scene->octree.Clear(false);
+
+		App->importer->iScript->ClearMonoMap();
+
 		App->scene->DeleteAllGameObjects(App->scene->root);
+		scene->ClearAllTags();
+
+		render_gui->focus = nullptr;
+		render_gui->selected = nullptr;
+		render_gui->ClearInteractiveVector();
+
 		json_seria->LoadScene(actual_scene.c_str());
 
 		if (load_in_game)
@@ -247,6 +266,59 @@ void Application::FinishUpdate()
 		}
 		want_to_load = false;
 		load_in_game = false;
+	}
+
+	if (dont_destroy_on_load)
+	{
+		//Before Delete GameObjects Del Variables Scripts GameObject 
+		App->scene->octree.Clear(false);
+
+		//App->scene->DeleteAllGameObjects(App->scene->root);
+		scene->ChangeRoot(scene->dontdestroyonload, scene->root);
+
+		//First swap main camera
+		GameObject* camera = scene->dontdestroyonload->FindGameObjectWithTag("camera");
+		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
+
+		scene->ClearAllTags();
+		importer->iScript->ClearLinkVariables();
+
+
+		json_seria->LoadScene(actual_scene.c_str());
+
+
+		importer->iScript->SetMonoMap(App->scene->root, true);
+		// Now do Start Scripts
+		scene->root->StartScripts();
+		input->player_action->SetInputManagerActive("GUI", true);
+
+		//App->resource_manager->ReImportAllScripts();
+		dont_destroy_on_load = false;
+	}
+
+	if (remove_dont_destroy_on_load)
+	{
+		render_gui->focus = nullptr;
+		render_gui->selected = nullptr;
+		render_gui->ClearInteractiveVector();
+
+		//scene->DeleteAllGameObjects(App->scene->dontdestroyonload);
+		App->scene->dontdestroyonload->GetChildsPtr()->clear();
+
+		GameObject* camera2 = scene->root->FindGameObjectWithTag("camera");
+		((CompCamera*)camera2->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
+
+		if (engine_state != EngineState::STOP)
+		{
+			change_to_game = true;
+		}
+
+		//App->importer->iScript->ClearMonoMap();
+		//importer->iScript->SetMonoMap(App->scene->root, true);
+		//// Now do Start Scripts
+		//scene->root->StartScripts();
+
+		remove_dont_destroy_on_load = false;
 	}
 	
 	// ---------------------------------------------
@@ -321,7 +393,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system))
+			if (((*item) == camera) || ((*item) == event_system_v2))
 			{
 				ret = (*item)->PreUpdate(real_time.dt); // Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 			}
@@ -368,7 +440,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system))
+			if (((*item) == camera) || ((*item) == event_system_v2))
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 				ret = (*item)->Update(real_time.dt);
@@ -421,7 +493,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system))
+			if (((*item) == camera) || ((*item) == event_system_v2))
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 				ret = (*item)->PostUpdate(real_time.dt);
@@ -688,7 +760,6 @@ void Application::ShowHelpMarker(const char* desc, const char* icon)
 
 void Application::SetState(EngineState state)
 {
-
 	switch (state)
 	{
 	case EngineState::PLAYFRAME:
@@ -698,7 +769,7 @@ void Application::SetState(EngineState state)
 			{
 				//Send Play event
 				Event play_event;
-				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 				play_event.time.time = play_event.time.TIME_PLAY;
 				PushEvent(play_event);
 			}
@@ -706,7 +777,7 @@ void Application::SetState(EngineState state)
 			{
 				//Send unpause Event
 				Event play_event;
-				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 				play_event.time.time = play_event.time.TIME_UNPAUSE;
 				PushEvent(play_event);				
 			}
@@ -714,35 +785,29 @@ void Application::SetState(EngineState state)
 			{
 				//Send unpause Event
 				Event play_event;
-				play_event.time.type = EventType::EVENT_TIME_MANAGER;
+				play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 				play_event.time.time = play_event.time.TIME_STOP;
 				PushEvent(play_event);
 			}
 			break;
 		}
-
-
 	case EngineState::PAUSE:
 	{
 		//Send Pause Event
 		Event play_event;
-		play_event.time.type = EventType::EVENT_TIME_MANAGER;
+		play_event.Set_event_data(EventType::EVENT_TIME_MANAGER);
 		play_event.time.time = play_event.time.TIME_PAUSE;
 		PushEvent(play_event);
 		break;
 	}
 	}
 
-
-
 	if (state == EngineState::PLAY)
 	{
 		// If it's already Game Mode, exit and start again Editor Mode
 		if (engine_state == EngineState::PLAY)
 		{
-
 			//STOP ENGINE ------------
-
 			engine_state = EngineState::STOP;
 			game_time.game_start_time = 0.0f;
 			game_time.timePlay = -1.0f;
@@ -762,14 +827,18 @@ void Application::SetState(EngineState state)
 				// Fill static objects vector when play
 				//scene->FillStaticObjectsVector(true); 
 
-				if (mode_game == false && engine_state != EngineState::PAUSE)
+				if (engine_state != EngineState::PAUSE)
 				{
 					// To notice renderer3D to change to Gcene Camera
-					ChangeCamera("Game"); 			
-					scene->scene_buff->WantRefreshRatio();
+					ChangeCamera("Game");
 
-					//To Save all elements in the scene to load them correctly when exiting Game Mode
-					actual_scene = json_seria->SaveScene();
+					if (mode_game == false)
+					{
+						scene->scene_buff->WantRefreshRatio();
+
+						//To Save all elements in the scene to load them correctly when exiting Game Mode
+						actual_scene = json_seria->SaveScene();
+					}
 				}
 
 				//PLAY ENGINE ------
@@ -801,6 +870,11 @@ void Application::WantToLoad(bool in_game)
 {
 	want_to_load = true;
 	load_in_game = in_game;
+}
+
+void Application::DontDestroyOnLoad()
+{
+	dont_destroy_on_load = true;
 }
 
 void Application::ChangeCamera(const char* window)

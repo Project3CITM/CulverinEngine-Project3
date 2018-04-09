@@ -10,19 +10,19 @@ class GameObject;
 
 struct OctreeLimits
 {
-	uint octreeMaxItems = 2;
+	uint octreeMaxItems = 5;
 	float octreeMinSize = 10.0f;
 };
 
 class OctreeNode
 {
 public:
-	OctreeNode(const AABB& box);
+	OctreeNode(const AABB& box, OctreeNode* parent = nullptr);
 	~OctreeNode();
 
 	bool isLeaf() const;
 
-	void Insert(GameObject* obj, OctreeLimits& limits);
+	bool Insert(GameObject* obj, OctreeLimits& limits);
 	void Remove(GameObject* obj);
 
 	void DebugDraw();

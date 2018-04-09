@@ -3,10 +3,29 @@
 #include <vector>
 #include <map>
 #include "Math\float2.h"
+#include "Math\float3.h"
 
 /*-----------------------------------------------------------------------------------------------------------*/
 /*---Event System v2.0---------------------------------------------------------------------------------------*/
-/*---TODO: EventDefV2.h Guide--------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------*/
+/*---Try to add as least as possible includes----------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------*/
+/*---How to create new event:--------------------------------------------------------------------------------*/
+/*-->Add forward declarations for your use in "Forwad Declarations" area-------------------------------------*/
+/*-->Add new event enum type with a descriptive name, in the correct system area and carefull because--------*/
+/*---events are called by order, so lower enum value types are called before higher enum value types---------*/
+/*-->With the same order of the enum, add a struct for your event, with a name starting by E + Event type----*/
+/*-->All struct MUST have as FIRST element -> "uint64_t event_data = 0;"-------------------------------------*/
+/*-->Now the final step is to add an instance of your struct in the Event union, with the same order---------*/ 
+/*---followed in the enum and struct position----------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------*/
+/*---Usage:--------------------------------------------------------------------------------------------------*/
+/*-->Inside the structs you can add almost every variable type, but because Event is a Union, you might------*/
+/*---find some problems, be careful--------------------------------------------------------------------------*/
+/*-->The events store, type, time delay, frame delay and one bool inside the "uint64_t event_data" variable,-*/
+/*---this is stored and read with bitwise operators, use the Event union methods to store and read the-------*/
+/*---variables. With events first use, initialize using "Set_event_data" or "Set_event_data_f" for saffer----*/
+/*---memory management---------------------------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------*/
@@ -41,8 +60,6 @@ enum EventType
 	EVENT_CREATE_SHADER_PROGRAM,
 	EVENT_SEND_ALL_SHADER_OBJECTS,
 	EVENT_OPEN_SHADER_EDITOR,
-	EVENT_REQUEST_3D_3DA_MM,		//Call it from your code to get a reference to the drawable events multimap
-	EVENT_SEND_3D_3DA_MM,			//This event is sent if you call EVENT_REQUEST_3D_3DA_MM with the drawable events multimap
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
@@ -54,42 +71,33 @@ enum EventType
 	EVENT_PASS_COMPONENT,
 	EVENT_PASS_SELECTED,
 	EVENT_SUBMIT,
+	/*------------------Request & Send------------------*/
+	EVENT_MIN_REQUEST_SEND,									//Keep this above request & send events, and don't use as an event type
+	EVENT_REQUEST_3D_3DA_MM,								//Call it from your code to get a reference to the drawable events multimap
+	EVENT_SEND_3D_3DA_MM,									//This event is sent if you call EVENT_REQUEST_3D_3DA_MM with the drawable events multimaps
+	EVENT_MAX_REQUEST_SEND,									//Keep this below request & send events, and don't use as an event type
 	/*----------------------Engine----------------------*/
 	EVENT_DOCKING_MODIF,
 	EVENT_DRAW,
 	EVENT_DROPPED_FILE,
 	EVENT_TIME_MANAGER,
+	EVENT_SPAWN_GAMEOBJECT,
 	EVENT_WINDOW_RESIZE,
-	EVENT_DELETE_GO,				//Keep this event last
-	MAXEVENTS						//Keep this at the bottom, needed to know how many events se have
-};
-
-/*--------------------------------------------------*/
-/*----------------Events Data struct----------------*/
-/*--------------------------------------------------*/
-struct EventData
-{
-	EventType type = EventType::EVENT_UNKNOWN;
-	float delay = 0.0f;
-	enum Consumability
-	{
-		CONSUMABILITY_CONSUMABLE,
-		CONSUMABILITY_UNCONSUMABLE,
-		CONSUMABILITY_CONSUMED
-	};
-	Consumability button = Consumability::CONSUMABILITY_UNCONSUMABLE;
+	EVENT_DELETE_GO,										//Keep this event last
+	MAXEVENTS												//Keep this at the bottom, needed to know how many events we have
 };
 
 /*--------------------------------------------------*/
 /*-------------------Audio Engine-------------------*/
 /*--------------------------------------------------*/
 
+
 /*--------------------------------------------------*/
 /*------------------Gameplay System-----------------*/
 /*--------------------------------------------------*/
 struct EScriptDisabled
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	CompScript* script = nullptr;
 };
 
@@ -98,7 +106,7 @@ struct EScriptDisabled
 /*--------------------------------------------------*/
 struct EParticleDraw
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	Particle* ToDraw = nullptr;
 };
 
@@ -107,10 +115,12 @@ struct EParticleDraw
 /*--------------------------------------------------*/
 struct ETrigger
 {
-	EventData event_data;
-	JP_COLLISION_TYPE collision_type;
-	Component* trigger = nullptr;
-	Component* actor = nullptr;
+	uint64_t event_data = 0;
+	JP_COLLISION_TYPE coll_type = (JP_COLLISION_TYPE)0;
+	Component* actor0 = nullptr;
+	Component* actor1 = nullptr;
+	float3 impact_point = float3::zero;
+	float3 impact_normal = float3::zero;
 };
 
 /*--------------------------------------------------*/
@@ -118,38 +128,24 @@ struct ETrigger
 /*--------------------------------------------------*/
 struct ECreateShaderProgram
 {
-	EventData event_data;
-	const char* name = nullptr;	//std::string?
+	uint64_t event_data = 0;
+	const char* name = nullptr;
 	Shader* Shader1 = nullptr;
 	Shader* Shader2 = nullptr;
 };
 
 struct ESendAllShaderObject
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	std::vector<Shader*>* shaders = nullptr;
 };
 
 struct EOpenShaderEditor
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	ShaderType shader_type;
 	const char* name = nullptr;
 	bool open_editor = false;
-};
-
-struct ERequest3D3DAMM
-{
-	EventData event_data;
-	const CompLight* light = nullptr;
-};
-
-struct ESend3D3DAMM
-{
-	EventData event_data;
-	const std::multimap<float, Event>* MM3DDrawEvent = nullptr;
-	const std::multimap<float, Event>* MM3DADrawEvent = nullptr;
-	const CompLight* light = nullptr;
 };
 
 /*--------------------------------------------------*/
@@ -161,11 +157,10 @@ struct ESend3D3DAMM
 /*--------------------------------------------------*/
 struct EGUIAxis
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	enum Direction
 	{
 		DIRECTION_NONE,
-
 		DIRECTION_UP,
 		DIRECTION_DOWN,
 		DIRECTION_RIGHT,
@@ -177,7 +172,7 @@ struct EGUIAxis
 
 struct EPoint
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	enum InputButton
 	{
 		INPUT_NONE = -1,
@@ -194,26 +189,44 @@ struct EPoint
 
 struct EGUICancel
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	bool active = false;
 };
 
 struct EPassComponent
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	Component* component = nullptr;
 };
 
 struct EPassSelected
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	CompInteractive* component = nullptr;
 };
 
 struct EGUISubmit
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	bool active = false;
+};
+
+/*--------------------------------------------------*/
+/*------------------Request & Send------------------*/
+/*--------------------------------------------------*/
+
+struct ERequest3D3DAMM
+{
+	uint64_t event_data = 0;
+	const CompLight* light = nullptr;
+};
+
+struct ESend3D3DAMM
+{
+	uint64_t event_data = 0;
+	const std::multimap<uint, Event>* MM3DDrawEvent = nullptr;
+	const std::multimap<float, Event>* MM3DADrawEvent = nullptr;
+	const CompLight* light = nullptr;
 };
 
 /*--------------------------------------------------*/
@@ -221,13 +234,13 @@ struct EGUISubmit
 /*--------------------------------------------------*/
 struct EDockingModif
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	//WIP
 };
 
 struct EDraw
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	enum DrawType
 	{
 		DRAW_3D,			//3D Game Objects without alpha
@@ -242,13 +255,13 @@ struct EDraw
 
 struct EDroppedFile
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	const char* FilePath = nullptr;	//std::string?
 };
 
 struct ETimeManager
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	enum TimeEvent
 	{
 		TIME_PLAY,
@@ -260,17 +273,24 @@ struct ETimeManager
 	TimeEvent time = TimeEvent::TIME_STOP;
 };
 
+struct ESpawnGO
+{
+	uint64_t event_data = 0;
+	GameObject* Tospawn = nullptr;
+};
+
 struct EWindowResize
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	unsigned int w = 0;
 	unsigned int h = 0;
 };
 
 struct EDeleteGO
 {
-	EventData event_data;
+	uint64_t event_data = 0;
 	GameObject* Todelte = nullptr;
+	uint uuid = 0;
 };
 
 /*--------------------------------------------------*/
@@ -281,10 +301,33 @@ union Event
 	Event() {}
 	~Event() {}
 
-	/*----------------Event Data Struct-----------------*/
-	EventData event_data;
+	//Setters
+	inline void Set_event_data(EventType type, unsigned int FrameDelay = 0, unsigned int TimeDelay = 0);							//Initialize event_data with time delay as miliseconds uint
+	inline void Set_event_data_f(EventType type, unsigned int FrameDelay = 0, float TimeDelay = 0.0f);								//Initialize event_data with time delay as seconds float
+	inline void Set_event_data_type(EventType type);																				//When the event is initialized, you can change type with this method
+	inline void Set_event_data_frame_delay(unsigned int FrameDelay);																//When the event is initialized, you can change frame delay with this method
+	inline void Set_event_data_time_delay(unsigned int TimeDelay);																	//When the event is initialized, you can change time delay as miliseconds with this method
+	inline void Set_event_data_time_delay_f(float TimeDelay);																		//When the event is initialized, you can change time delay as seconds with this method
+	//inline void Set_event_data_PushedWhileIteriting(bool PushedWhileIteriting);													//DO NOT USE, This is to set the bool, used by Event System for correct event management
+	//Getters
+	inline void Get_event_data(EventType& type, unsigned int& FrameDelay, unsigned int& TimeDelay/*, bool& PushedWhileIteriting*/);	//Get all event_data variables, time delay as miliseconds uint
+	inline void Get_event_data_f(EventType& type, unsigned int& FrameDelay, float& TimeDelay/*, bool& PushedWhileIteriting*/);		//Get all event_data variables, time delay as seconds float
+	inline void Get_event_data_type(EventType& type);																				//Get event type by reference
+	inline EventType Get_event_data_type();																							//Get event type as return value
+	inline void Get_event_data_frame_delay(unsigned int& FrameDelay);																//Get event frame delay by reference
+	inline unsigned int Get_event_data_frame_delay();																				//Get event frame delay as return value
+	inline void Get_event_data_time_delay(unsigned int& TimeDelay);																	//Get event time delay as miliseconds uint by reference
+	inline unsigned int Get_event_data_time_delay();																				//Get event time delay as miliseconds uint as return value
+	inline void Get_event_data_time_delay_f(float& TimeDelay);																		//Get event time delay as seconds float by reference
+	inline float Get_event_data_time_delay_f();																						//Get event time delay as seconds float as return value
+	//inline void Get_event_data_PushedWhileIteriting(bool& PushedWhileIteriting);													//DO NOT USE, This is to get the bool by refernce, used by Event System for correct event management
+	//inline bool Get_event_data_PushedWhileIteriting();																			//DO NOT USE, This is to get the bool as return value, used by Event System for correct event management
+
+	/*--------------------Event Data--------------------*/
+	uint64_t event_data = 0;
 
 	/*-------------------Audio Engine-------------------*/
+
 
 	/*------------------Gameplay System-----------------*/
 	EScriptDisabled script_disabled;
@@ -304,6 +347,7 @@ union Event
 
 	/*----------------Skeletal Animation----------------*/
 
+
 	/*------------------User Interface------------------*/
 	EGUIAxis gui_axis;
 	EPoint pointer;
@@ -317,10 +361,121 @@ union Event
 	EDraw draw;
 	EDroppedFile file_drop;
 	ETimeManager time;
+	ESpawnGO spawnGO;
 	EWindowResize window_resize;
 	EDeleteGO delete_go;
-
 };
 
+inline void Event::Set_event_data(EventType type, unsigned int FrameDelay, unsigned int TimeDelay)
+{
+	Set_event_data_type(type);
+	Set_event_data_frame_delay(FrameDelay);
+	Set_event_data_time_delay(TimeDelay);
+	//Set_event_data_PushedWhileIteriting(false);
+	event_data = event_data | (uint64_t)false;
+}
+
+inline void Event::Set_event_data_f(EventType type, unsigned int FrameDelay, float TimeDelay)
+{
+	Set_event_data(type, FrameDelay, (unsigned int)(TimeDelay * 1000.0f));
+}
+
+inline void Event::Set_event_data_type(EventType type)
+{
+	event_data = (uint64_t)type << 48;
+}
+
+inline void Event::Set_event_data_frame_delay(unsigned int FrameDelay)
+{
+	event_data = event_data | ((uint64_t)FrameDelay << 32);
+}
+
+inline void Event::Set_event_data_time_delay(unsigned int TimeDelay)
+{
+	event_data = event_data | ((uint64_t)TimeDelay << 16);
+}
+
+inline void Event::Set_event_data_time_delay_f(float TimeDelay)
+{
+	Set_event_data_time_delay((unsigned int)(TimeDelay * 1000.0f));
+}
+
+/*
+inline void Event::Set_event_data_PushedWhileIteriting(bool PushedWhileIteriting)
+{
+	event_data = event_data | (uint64_t)PushedWhileIteriting;
+}
+*/
+
+inline void Event::Get_event_data(EventType& type, unsigned int& FrameDelay, unsigned int& TimeDelay/*, bool& PushedWhileIteriting*/)
+{
+	Get_event_data_type(type);
+	Get_event_data_frame_delay(FrameDelay);
+	Get_event_data_time_delay(TimeDelay);
+	//Get_event_data_PushedWhileIteriting(PushedWhileIteriting);
+}
+
+inline void Event::Get_event_data_f(EventType& type, unsigned int& FrameDelay, float& TimeDelay/*, bool& PushedWhileIteriting*/)
+{
+	unsigned int TimeDlayMS = 0;
+	Get_event_data(type, FrameDelay, TimeDlayMS/*, PushedWhileIteriting*/);
+	TimeDelay = (float)TimeDlayMS / 1000.0f;
+}
+
+inline void Event::Get_event_data_type(EventType& type)
+{
+	type = (EventType)((event_data & 0xFFFF000000000000) >> 48);
+}
+
+inline EventType Event::Get_event_data_type()
+{
+	return (EventType)((event_data & 0xFFFF000000000000) >> 48);
+}
+
+inline void Event::Get_event_data_frame_delay(unsigned int& FrameDelay)
+{
+	FrameDelay = (event_data & 0x0000FFFF00000000) >> 32;
+}
+
+inline unsigned int Event::Get_event_data_frame_delay()
+{
+	return (event_data & 0x0000FFFF00000000) >> 32;
+}
+
+inline void Event::Get_event_data_time_delay(unsigned int& TimeDelay)
+{
+	TimeDelay = (event_data & 0x00000000FFFF0000) >> 16;
+}
+
+inline unsigned int Event::Get_event_data_time_delay()
+{
+	return (event_data & 0x00000000FFFF0000) >> 16;
+}
+
+inline void Event::Get_event_data_time_delay_f(float& TimeDelay)
+{
+	unsigned int TimeDlayMS = 0;
+	Get_event_data_time_delay(TimeDlayMS);
+	TimeDelay = (float)TimeDlayMS / 1000.0f;
+}
+
+inline float Event::Get_event_data_time_delay_f()
+{
+	unsigned int TimeDlayMS = 0;
+	Get_event_data_time_delay(TimeDlayMS);
+	return (float)TimeDlayMS / 1000.0f;
+}
+
+/*
+inline void Event::Get_event_data_PushedWhileIteriting(bool& PushedWhileIteriting)
+{
+	PushedWhileIteriting = (event_data & 0x000000000000FFFF);
+}
+
+inline bool Event::Get_event_data_PushedWhileIteriting()
+{
+	return (event_data & 0x000000000000FFFF);
+}
+*/
+
 #endif //EVENTDEF_V2
-/**/

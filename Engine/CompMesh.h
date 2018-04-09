@@ -45,6 +45,8 @@ struct Skeleton
 
 	~Skeleton()
 	{
+		bones.clear();
+		bone_uids.clear();
 		delete [] skinning_mats;
 	}
 
@@ -64,6 +66,7 @@ public:
 	~CompMesh();
 
 	void Draw(bool alpha = false);
+	void Draw2(uint ID);
 	void Clear();
 	void PreUpdate(float dt);
 	void Update(float dt);
@@ -84,10 +87,11 @@ public:
 	// SAVE - LOAD METHODS ----------------
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+	void SyncComponent(GameObject* sync_parent);
 	void LinkSkeleton();
 	// -------------------------------------
 
-	void SetUniformVariables(Material* shader);
+
 
 	bool HasSkeleton() const;
 	void SetSkeleton(bool has_skeleton);

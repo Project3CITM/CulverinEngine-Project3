@@ -160,6 +160,9 @@ void ClickAction::ShowOnClickInfo()
 				}
 				if (ImGui::BeginCombo("##SelectFunction", actions[i].current_function.c_str()))
 				{
+					if (actions[i].script->csharp != nullptr)
+					{
+					
 					for (int id = 0; id < actions[i].script->csharp->methods.size(); id++)
 					{
 						if (ImGui::Selectable(actions[i].script->csharp->methods[id].name_method.c_str()) &&
@@ -172,7 +175,8 @@ void ClickAction::ShowOnClickInfo()
 								InitValueParamater(i);
 						}
 					}
-
+					
+					}
 					ImGui::EndCombo();
 				}
 				ImGui::PopItemWidth();
@@ -613,7 +617,10 @@ void ClickAction::SyncClickAction()
 		}
 		if (actions[i].current_function != "No Function")
 		{
-
+			if(actions[i].script->csharp == nullptr)
+			{
+				continue;
+			}
 			for (int j = 0; j < actions[i].script->csharp->methods.size(); j++)
 			{
 				if (actions[i].script->csharp->methods[j].name_method == actions[i].current_function)
@@ -627,5 +634,10 @@ void ClickAction::SyncClickAction()
 			}
 		}
 	}
+}
+
+void ClickAction::ClearLinkedScripts()
+{
+	actions.clear();
 }
 

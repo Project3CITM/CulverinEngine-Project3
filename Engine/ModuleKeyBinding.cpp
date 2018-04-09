@@ -4,6 +4,8 @@
 #define KEY_NONE_NUM 0
 ModuleKeyBinding::ModuleKeyBinding()
 {
+	name = "Key Binding";
+	Awake_enabled = true;
 }
 
 
@@ -13,8 +15,7 @@ ModuleKeyBinding::~ModuleKeyBinding()
 
 bool ModuleKeyBinding::Init(JSON_Object * node)
 {
-	
-	
+	perf_timer.Start();
 	// NONE-----------------------------------------------------------
 	key_binding_relations.push_back(KeyRelation(-1, "None", KeyBindingType::NULL_DEVICE));
 
@@ -113,7 +114,7 @@ bool ModuleKeyBinding::Init(JSON_Object * node)
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY, "CLeftY", KeyBindingType::CONTROLLER_AXIS_DEVICE));
 
 
-
+	Awake_t = perf_timer.ReadMs();
 	return true;
 }
 

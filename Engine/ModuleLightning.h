@@ -9,11 +9,12 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <vector>
 
-#define DEFAULT_SHADOW_CAST_POINTS_COUNT 4
+#define DEFAULT_SHADOW_CAST_POINTS_COUNT 9
 
 class CompLight;
 class ShaderProgram;
 class CompMesh;
+class ResourceMesh;
 
 bool OrderLights(CompLight* l1, CompLight* l2);
 

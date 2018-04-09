@@ -1,13 +1,13 @@
 #include "ModuleLightning.h"
-#include"Application.h"
+#include "Application.h"
 #include "GL3W/include/glew.h"
-#include"MathGeoLib.h"
-#include"ShadersLib.h"
-#include"Scene.h"
+#include "MathGeoLib.h"
+#include "ShadersLib.h"
+#include "Scene.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
 #include "ModuleResourceManager.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "CompTransform.h"
 #include "ModuleShaders.h"
 #include "GameObject.h"
@@ -17,8 +17,9 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "DefaultShaders.h"
-#include"ModuleWindow.h"
+#include "ModuleWindow.h"
 #include "DepthCubeMap.h"
+#include "ResourceMesh.h"
 
 using namespace glm;
 
@@ -128,7 +129,7 @@ bool ModuleLightning::Init(JSON_Object* node)
 	perf_timer.Start();
 
 	// TODO: Read ammount of shadow cast point from config. Will use default for now for testing purposes
-	shadow_cast_points_count = 1;
+	//shadow_cast_points_count = 1;
 
 	Awake_t = perf_timer.ReadMs();
 	return true;
@@ -144,8 +145,8 @@ bool ModuleLightning::Start()
 
 	//------------------------------------
 
-	shadow_Shader = App->module_shaders->CreateDefaultShader("Shadow_Map", ShadowMapFrag, ShadowMapVert);
-	point_light_shadow_depth_shader = App->module_shaders->CreateDefaultShader("Point_Shadow_Map", PointShadowMapFrag, PointShadowMapVert, PointShadowMapGeo);
+	shadow_Shader = App->module_shaders->CreateDefaultShader("Shadow_Map", ShadowMapFrag, ShadowMapVert, nullptr, true);
+	point_light_shadow_depth_shader = App->module_shaders->CreateDefaultShader("Point_Shadow_Map", PointShadowMapFrag, PointShadowMapVert, PointShadowMapGeo,true);
 	
 	//-------------------------------------
 
@@ -180,9 +181,9 @@ bool ModuleLightning::Start()
 	}
 	light_UI_plane->num_game_objects_use_me++;
 	light_UI_plane->LoadToMemory();
+	delete[] total_buffer_mesh;
 
 	Start_t = perf_timer.ReadMs();
-
 	return true;
 }
 
@@ -192,19 +193,46 @@ update_status ModuleLightning::PreUpdate(float dt)
 
 	//TODO: Should think on optimitzations on this.
 
-	/*frame_used_lights.clear();
+	frame_used_lights.clear();
 	std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
-	for(uint i = 0; i < shadow_cast_points_count; ++i)
+
+
+	for (uint i = 0; i < scene_lights.size(); ++i)
 	{
-		if(i < scene_lights.size())
-		{
-			CompLight* l = scene_lights[i];
-			if (l->type == Light_type::POINT_LIGHT)
+		if(scene_lights[i]->use_light_to_render == true)
+			frame_used_lights.push_back(scene_lights[i]);
+	}
+	/*for (uint i = 0; i < scene_lights.size(); ++i)
+	{
+		if (frame_used_lights.size() >= shadow_cast_points_count) break;
+
+		Frustum cam_frust = App->renderer3D->active_camera->frustum;
+		if (cam_frust.Contains(scene_lights[i]->GetGameObjectPos()) || i < 2) {
+			if (scene_lights[i]->type == Light_type::POINT_LIGHT)
 			{
+				scene_lights[i]->use_light_to_render = true;
+				frame_used_lights.push_back(scene_lights[i]);
+			}
+		}
+	}
+
+
+	for(uint i = 0; i < scene_lights.size(); ++i)
+	{
+		bool exists = false;
+		
+			CompLight* l = scene_lights[i];
+			for (auto it = frame_used_lights.begin(); it != frame_used_lights.end(); it++) {
+				if ((*it) == l)
+					exists = true;
+			}
+			if (l->type == Light_type::POINT_LIGHT  && !exists)
+			{			
 				l->use_light_to_render = true;
 				frame_used_lights.push_back(l);
 			}
-		}
+		if (frame_used_lights.size() >= shadow_cast_points_count) break;
+		
 	}
 	*/
 
@@ -256,8 +284,8 @@ bool ModuleLightning::CleanUp()
 		RELEASE((*it));
 	}
 
-	RELEASE(shadow_Shader);
-	RELEASE(point_light_shadow_depth_shader);
+	//RELEASE(shadow_Shader);
+	//RELEASE(point_light_shadow_depth_shader);
 
 
 	return true;
@@ -771,8 +799,8 @@ bool OrderLights(CompLight* l1, CompLight* l2)
 {
 	if (!l1 || !l2) return false;
 
-	l1->use_light_to_render = false;
-	l2->use_light_to_render = false;
+	//l1->use_light_to_render = false;
+	//l2->use_light_to_render = false;
 
 	if(l1->type == Light_type::POINT_LIGHT && l2->type == Light_type::POINT_LIGHT)
 	{

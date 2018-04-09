@@ -29,7 +29,6 @@
 #include "WindowInspector.h"
 #include "CompCamera.h"
 #include "MathGeoLib.h"
-#include "Quadtree.h"
 #include "JSONSerialization.h"
 #include "SkyBox.h"
 #include "ModuleRenderGui.h"
@@ -43,8 +42,7 @@
 //#include "..\..\3D-Engine\ScriptingSystem\ScriptingSystem\ScriptManager.h"
 
 //Event system test
-#include "EventDef.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 
 #define SPHERE_DEFINITION 1536
 
@@ -62,10 +60,34 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 Scene::~Scene()
 {
 	DeleteAllGameObjects(root);
-	DeleteAllGameObjects(temp_scene);
+	DeleteAllGameObjects(temporary_scene);
+	search_name->GetChildsPtr()->clear();
+	//DeleteAllGameObjects(dontdestroyonload);
+	defined_tags.clear();
+	for (uint i = 0; i < tagged_objects.size(); i++)
+	{
+		tagged_objects[i]->clear();
+		RELEASE(tagged_objects[i]);
+	}
+	tagged_objects.clear();
+
+	RELEASE(root);
+	RELEASE(temporary_scene);
+	RELEASE(search_name);
+	RELEASE(dontdestroyonload);
 
 	RELEASE(scene_buff);
 	RELEASE(skybox);
+}
+
+bool Scene::Init(JSON_Object* node)
+{
+	perf_timer.Start();
+	/* Init Octree */
+	octree.Boundaries(AABB(float3(-1.0f, -1.0f, -1.0f), float3(1.0f, 1.0f, 1.0f)));
+	skybox_index = json_object_get_number(node, "Skybox Index");
+	Awake_t = perf_timer.ReadMs();
+	return true;
 }
 
 bool Scene::Start()
@@ -74,9 +96,12 @@ bool Scene::Start()
 
 	// First of all create New Scene
 	root = new GameObject("NewScene", 1);
-	temp_scene = new GameObject("Temporary Scene", 1);
+	temporary_scene = new GameObject("Temporary Scene", 1);
+	search_name = new GameObject("search_name", 1);
+	dontdestroyonload = new GameObject("Dont't Destroy On Load", 1);
+
 	/* Init Quadtree */
-	size_quadtree = 50000.0f;
+	size_quadtree = 5000.0f;
 //	quadtree.Init(size_quadtree);
 	octree.limits.octreeMinSize = 50;
 	octree.Boundaries(AABB(float3(-size_quadtree, -size_quadtree, -size_quadtree), float3(size_quadtree, size_quadtree, size_quadtree)));
@@ -92,32 +117,32 @@ bool Scene::Start()
 	/* Init Skybox */ 
 	skybox = new SkyBox();
 	skybox->InitSkybox();
-	skybox_index = 1;
+	//skybox_index = 1;
 	draw_skybox = true;
 
 	defined_tags.push_back("undefined");
 	defined_tags.push_back("camera");
 	defined_tags.push_back("player");
 
+	RELEASE(scene_buff);
+	scene_buff = new FrameBuffer();
+	scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
-	App->scene->scene_buff = new FrameBuffer();
-	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
+	final_buff = new FrameBuffer();
+	final_buff->resize = true;
+	final_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
-	App->scene->final_buff = new FrameBuffer();
-	App->scene->final_buff->resize = true;
-	App->scene->final_buff->Create(App->window->GetWidth(), App->window->GetHeight());
+	glow_buff = new FrameBuffer();
+	glow_buff->resize = false;
+	glow_buff->Create(128, 128);
 
-	App->scene->glow_buff = new FrameBuffer();
-	App->scene->glow_buff->resize = false;
-	App->scene->glow_buff->Create(128, 128);
+	horizontal_blur_buff = new FrameBuffer();
+	horizontal_blur_buff->resize = false;
+	horizontal_blur_buff->Create(128, 128);
 
-	App->scene->horizontal_blur_buff = new FrameBuffer();
-	App->scene->horizontal_blur_buff->resize = false;
-	App->scene->horizontal_blur_buff->Create(128, 128);
-
-	App->scene->vertical_blur_buff = new FrameBuffer();
-	App->scene->vertical_blur_buff->resize = false;
-	App->scene->vertical_blur_buff->Create(128, 128);
+	vertical_blur_buff = new FrameBuffer();
+	vertical_blur_buff->resize = false;
+	vertical_blur_buff->Create(128, 128);
 
 
 	tagged_objects.reserve(defined_tags.size());
@@ -147,7 +172,14 @@ update_status Scene::PreUpdate(float dt)
 	// PreUpdate GameObjects ------------------------
 	if (root->WanttoDelete() == false)
 	{
-		root->PreUpdate(dt);
+		if (dontdestroyonload->GetNumChilds() > 0)
+		{
+			dontdestroyonload->PreUpdate(dt);
+		}
+		else
+		{
+			root->PreUpdate(dt);
+		}
 	}
 	else
 	{
@@ -173,6 +205,8 @@ update_status Scene::PreUpdate(float dt)
 	//	}
 	//}
 
+	deleted_objects.clear();
+
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
@@ -182,7 +216,14 @@ update_status Scene::Update(float dt)
 	perf_timer.Start();
 
 	// Update GameObjects -----------
-	root->Update(dt);
+	if (dontdestroyonload->GetNumChilds() > 0)
+	{
+		dontdestroyonload->Update(dt);
+	}
+	else
+	{
+		root->Update(dt);
+	}
 
 	// Draw Skybox (direct mode for now)
 	//if (App->scene->draw_skybox) 
@@ -201,7 +242,7 @@ update_status Scene::Update(float dt)
 	// Draw GameObjects
 	root->Draw();
 	// Draw Quadtree
-	if (quadtree_draw) App->scene->octree.DebugDraw();
+	if (octree_draw) octree.DebugDraw();
 
 	App->scene->scene_buff->UnBind("Scene");
 	// Draw GUI
@@ -226,6 +267,12 @@ update_status Scene::Update(float dt)
 				App->scene->StartScripts();
 			}
 		}
+	}
+
+	CompCamera* active_camera = App->renderer3D->GetActiveCamera();
+	if (active_camera != nullptr)
+	{
+		active_camera->DoCulling();
 	}
 
 	Update_t = perf_timer.ReadMs();
@@ -272,8 +319,16 @@ bool Scene::CleanUp()
 {
 	skybox->DeleteSkyboxTex();
 	
+	octree.Clear();
 	root->CleanUp();
-	temp_scene->CleanUp();
+	temporary_scene->CleanUp();
+	
+	RELEASE(scene_buff);
+	RELEASE(glow_buff);
+	RELEASE(horizontal_blur_buff);
+	RELEASE(vertical_blur_buff);
+	RELEASE(final_buff);
+
 
 	return true;
 }
@@ -306,28 +361,31 @@ bool Scene::SetEventListenrs()
 	AddListener(EventType::EVENT_DRAW, this);
 	AddListener(EventType::EVENT_PARTICLE_DRAW, this);
 	AddListener(EventType::EVENT_SCRIPT_DISABLED, this);
-	AddListener(EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN, this);
+	AddListener(EventType::EVENT_SPAWN_GAMEOBJECT, this);
 	return true;
 }
 
 void Scene::OnEvent(Event & event)
 {
-	switch (event.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_DELETE_GO:
 	{
 		LOG("Delete GameObject");
-		DeleteGameObject(event.delete_go.Todelte);
+		if (CheckDeletedObjcet(event.delete_go.uuid))
+		{
+			DeleteGameObject(event.delete_go.Todelte);
+		}
 		break;
 	}
-	case EventType::EVENT_DELAYED_GAMEOBJECT_SPAWN:
+	case EventType::EVENT_SPAWN_GAMEOBJECT:
 	{
-		root->AddChildGameObject(event.delayed_go_spawn.Tospawn);
+		root->AddChildGameObject(event.spawnGO.Tospawn);
 		break;
 	}
 	case EventType::EVENT_SCRIPT_DISABLED:
 	{
-		event.script.script->postUpdate();
+		event.script_disabled.script->postUpdate();
 		break;
 	}
 	}
@@ -344,14 +402,41 @@ void Scene::EditorQuadtree()
 		//TODO: Joan->Redo quadtree config options
 
 		/* Enable Debug Draw */
-		ImGui::Checkbox("##quadtreedraw", &quadtree_draw); ImGui::SameLine();
-		ImGui::Text("Draw Quadtree");
+		ImGui::Checkbox("##quadtreedraw", &octree_draw); ImGui::SameLine();
+		ImGui::Text("Draw Octree");
 		ImGui::SliderFloat("Size", &size_quadtree, 50, 300);
 
 		/* Remake Quadtree with actual static objects*/
-		/*if (ImGui::Button("UPDATE QUADTREE"))
+		if (ImGui::Button("UPDATE QUADTREE"))
 		{
-			if (App->engine_state == EngineState::STOP)
+			octree.Clear(false);
+			//Clac adaptative size of scene octree
+			/**/
+			//AABB AdaptativeAABB;
+		
+			//AdaptativeAABB.SetNegativeInfinity();
+			
+			//Make sure that we have all go
+			GetAllSceneObjects();
+			/*for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
+			{
+				if ((*item)->IsStatic())
+				{
+					if ((*item)->box_fixed.IsFinite())
+					{
+						AdaptativeAABB.Enclose((*item)->box_fixed);
+					}
+				}
+			}
+			octree.Boundaries(AdaptativeAABB);*/
+			/**/
+			//Insert AABBs to octree
+			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
+				if ((*item)->IsStatic())
+					octree.Insert(*item);
+
+
+		/*	if (App->engine_state == EngineState::STOP)
 			{
 				if (size_quadtree != quadtree.size)
 				{
@@ -366,8 +451,8 @@ void Scene::EditorQuadtree()
 			else
 			{
 				LOG("Update Quadtree not possible while GAME MODE is ON");
-			}
-		}*/
+			}*/
+		}
 		ImGui::TreePop();
 	}
 	else
@@ -699,6 +784,15 @@ uint Scene::GetTagID(const char * tag)
 	return 0;
 }
 
+void Scene::ClearAllTags()
+{
+	// Now remove tagged_objects
+	for (int i = 0; i < tagged_objects.size(); i++)
+	{
+		tagged_objects[i]->clear();
+	}
+}
+
 std::vector<std::string>* Scene::GetTagsVec()
 {
 	return &defined_tags;
@@ -737,11 +831,11 @@ void Scene::ModificateParent(GameObject* child, GameObject* new_parent)
 			}
 			if (!ereased)
 			{
-				for (int i = 0; i < temp_scene->GetChildsVec().size(); i++)
+				for (int i = 0; i < temporary_scene->GetChildsVec().size(); i++)
 				{
-					if (temp_scene->GetChildsVec()[i] == child)
+					if (temporary_scene->GetChildsVec()[i] == child)
 					{
-						temp_scene->GetChildsPtr()->erase(temp_scene->GetChildsPtr()->begin() + i);
+						temporary_scene->GetChildsPtr()->erase(temporary_scene->GetChildsPtr()->begin() + i);
 						ereased = true;
 						break;
 					}
@@ -771,7 +865,7 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 	{
 		if (gameobject->GetNumChilds() > 0)
 		{
-			RemoveAllPointers(*gameobject->GetChildsPtr()->begin() + i);
+			RemoveAllPointers(*(gameobject->GetChildsPtr()->begin() + i));
 		}
 	}
 	for (int i = 0; i < gameobject->GetNumComponents(); i++)
@@ -843,6 +937,24 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 		}
 	}
 }
+
+void Scene::GetAllGameObjectsWithoutParents(GameObject* parent, GameObject* root)
+{
+	for (int i = 0; i < root->GetNumChilds(); i++)
+	{
+		GetAllGameObjectsWithoutParents(parent, root->GetChildbyIndex(i));
+	}
+	parent->GetChildsPtr()->push_back(root);
+}
+
+void Scene::ChangeRoot(GameObject* parent, GameObject* root)
+{
+	for (int i = 0; i < root->GetNumChilds(); i++)
+	{
+		parent->GetChildsPtr()->push_back(root->GetChildbyIndex(i));
+	}
+	root->GetChildsPtr()->clear();
+}	
 
 void Scene::DrawPlane()
 {
@@ -927,8 +1039,15 @@ void Scene::DrawCube(float size)
 
 void Scene::RecalculateStaticObjects()
 {
-	static_objects.clear();
-	octree.CollectAllObjects(static_objects);
+	//static_objects.clear();
+	//octree.CollectAllObjects(static_objects);
+}
+
+const std::vector<GameObject*>* Scene::GetAllSceneObjects()
+{
+	game_objects_scene.clear();
+	root->GetAllSceneGameObjects(game_objects_scene);
+	return &game_objects_scene;
 }
 
 GameObject * Scene::FindCanvas()
@@ -1084,32 +1203,22 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 		// Finally Check have Parent and remove from childs
 		if (gameobject->GetParent() != nullptr)
 		{
+			LOG("[green] DELETE");
 			int index = gameobject->GetParent()->GetIndexChildbyName(gameobject->GetName());
 			gameobject->GetParent()->RemoveChildbyIndex(index);
+			gameobject = nullptr;
 		}
 
 		else if (isImport == false && is_reimport == false)
 		{
-			int index = 0;
 			for (int i = 0; i < root->GetNumChilds(); i++)
 			{
-				if (strcmp(gameobject->GetName(), root->GetChildbyIndex(i)->GetName()) == 0)
+				if (gameobject == root->GetChildbyIndex(i))
 				{
-					index = i;
-				}
-			}
-			std::vector<GameObject*>::iterator item = root->GetChildsPtr()->begin();
-			for (int i = 0; i < root->GetNumChilds(); i++)
-			{
-				if (i == index)
-				{
-					GameObject* it = root->GetChildbyIndex(i);
-					RELEASE(it);
-					root->GetChildsPtr()->erase(item);
-					it = nullptr;
+					root->RemoveChildbyIndex(i);
+					gameobject = nullptr;
 					break;
 				}
-				item++;
 			}
 		}
 		else
@@ -1118,6 +1227,19 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 			RELEASE(gameobject);
 		}
 	}
+}
+bool Scene::CheckDeletedObjcet(uint uuid)
+{
+	// Return false if the object had been deleted and true if has to be deleted
+	for (uint i = 0; i < deleted_objects.size(); i++)
+	{
+		if (deleted_objects[i] == uuid)
+		{
+			return false;
+		}
+	}
+	deleted_objects.push_back(uuid);
+	return true;
 }
 // -------------------------------------------------------------------------------------
 
@@ -1158,6 +1280,12 @@ Component* Scene::BlitSceneComponentsAsButtons(Comp_Type type, std::string& curr
 	return ret;
 }
 
+bool Scene::SaveConfig(JSON_Object* node)
+{
+	json_object_set_number(node, "Skybox Index", skybox_index);
+	return true;
+}
+
 GameObject* Scene::CreateCube(GameObject* parent)
 {
 	GameObject* obj = new GameObject(parent);
@@ -1196,7 +1324,6 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	box->axis[1] = float3(0, 1, 0);
 	box->axis[2] = float3(0, 0, 1);
 
-	obj->bounding_box = new AABB(*box);
 
 	//MATERIAL COMPONENT -------------------
 	CompMaterial* mat = (CompMaterial*)obj->AddComponent(C_MATERIAL);
@@ -1251,7 +1378,6 @@ GameObject * Scene::CreatePlane(GameObject * parent)
 	box->axis[1] = float3(0, 1, 0);
 	box->axis[2] = float3(0, 0, 1);
 
-	obj->bounding_box = new AABB(*box);
 
 	//MATERIAL COMPONENT -------------------
 	CompMaterial* mat = (CompMaterial*)obj->AddComponent(C_MATERIAL);

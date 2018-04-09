@@ -283,7 +283,7 @@ Quat MUST_USE_RESULT Quat::Lerp(const Quat &a, const Quat &b, float t)
 Quat MUST_USE_RESULT Quat::Slerp(const Quat &q2, float t) const
 {
 	///\todo SSE.
-	assume(0.f <= t && t <= 1.f);
+	//assume(0.f <= t && t <= 1.f);
 	assume(IsNormalized());
 	assume(q2.IsNormalized());
 

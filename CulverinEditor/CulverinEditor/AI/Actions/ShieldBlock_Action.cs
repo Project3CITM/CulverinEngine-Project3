@@ -12,12 +12,6 @@ class ShieldBlock_Action : Action
         action_type = ACTION_TYPE.SHIELD_BLOCK_ACTION;
     }
 
-    public ShieldBlock_Action(float speed)
-    {
-        anim_speed = speed;
-        action_type = ACTION_TYPE.SHIELD_BLOCK_ACTION;
-    }
-
     public void Start()
     {
         animator = GetComponent<CompAnimation>();

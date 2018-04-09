@@ -12,7 +12,7 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 9
 
 class CompCamera;
 
@@ -98,12 +98,13 @@ public:
 	GLuint UVbuffer;
 	GLuint VertexArrayID;
 	GLuint ibo_cube_elements;
+	GLuint dmg_texture_id = 0;
 
 
 	//TEMP
-	int blur_amount = 9;
-	float blur_scale = 1.2f;
-	float blur_strength = 0.3f;
+	int blur_amount = 28;
+	float blur_scale = 0.3;
+	float blur_strength = 0.0f;
 };
 
 #endif

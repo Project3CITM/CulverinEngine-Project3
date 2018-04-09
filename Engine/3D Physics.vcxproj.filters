@@ -492,42 +492,6 @@
     <ClInclude Include="wwished.h">
       <Filter>Engine\Tools\Wwished</Filter>
     </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Common\AkFileLocationBase.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Common\AkFilePackage.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLUT.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Win32\AkFileHelpers.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIOBlocking.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIODeferred.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="AK\DefaultIO\Win32\stdafx.h">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClInclude>
     <ClInclude Include="CompText.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
@@ -1125,9 +1089,6 @@
     <ClInclude Include="ImGui\imgui_graph_nodes.h">
       <Filter>Engine\Tools\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceSkeleton.h">
-      <Filter>Engine\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="ImportAnimation.h">
       <Filter>Engine\Importer</Filter>
     </ClInclude>
@@ -1204,6 +1165,42 @@
     <ClInclude Include="ModuleAnimation.h" />
     <ClInclude Include="AnimableComponent.h" />
     <ClInclude Include="CompUIAnimation.h" />
+    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFileHelpers.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIOBlocking.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIODeferred.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\stdafx.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFileLocationBase.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackage.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLUT.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1467,27 +1464,6 @@
     <ClCompile Include="wwished.cpp">
       <Filter>Engine\Tools\Wwished</Filter>
     </ClCompile>
-    <ClCompile Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.cpp">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="AK\DefaultIO\Common\AkFileLocationBase.cpp">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="AK\DefaultIO\Common\AkFilePackage.cpp">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="AK\DefaultIO\Common\AkFilePackageLUT.cpp">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.cpp">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.cpp">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClCompile>
-    <ClCompile Include="AK\DefaultIO\Win32\stdafx.cpp">
-      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </ClCompile>
     <ClCompile Include="CompButton.cpp">
       <Filter>Engine\Components</Filter>
     </ClCompile>
@@ -1541,9 +1517,6 @@
     </ClCompile>
     <ClCompile Include="ImGui\imgui_graph_nodes.cpp">
       <Filter>Engine\Tools\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceSkeleton.cpp">
-      <Filter>Engine\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ImportAnimation.cpp">
       <Filter>Engine\Importer</Filter>
@@ -1624,6 +1597,27 @@
     <ClCompile Include="ModuleAnimation.cpp" />
     <ClCompile Include="AnimableComponent.cpp" />
     <ClCompile Include="CompUIAnimation.cpp" />
+    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Win32\stdafx.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkFileLocationBase.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkFilePackage.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkFilePackageLUT.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">
@@ -1633,14 +1627,14 @@
       <Filter>Engine\Tools\MathGeoLib\Math</Filter>
     </None>
     <None Include="Game\config.json" />
+    <None Include="Snippets\CodeSnippets.snippet">
+      <Filter>Engine\Tools\Snippets</Filter>
+    </None>
     <None Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.inl">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </None>
     <None Include="AK\DefaultIO\Common\AkMultipleFileLocation.inl">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
-    </None>
-    <None Include="Snippets\CodeSnippets.snippet">
-      <Filter>Engine\Tools\Snippets</Filter>
     </None>
   </ItemGroup>
 </Project>

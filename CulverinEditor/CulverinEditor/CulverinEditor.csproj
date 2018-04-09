@@ -30,6 +30,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -39,6 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\Actions\Action.cs" />
+    <Compile Include="AI\Actions\FacePlayer_Action.cs" />
+    <Compile Include="AI\Actions\Separate_Action.cs" />
+    <Compile Include="AI\Actions\SpearAttack_Action.cs" />
     <Compile Include="AI\Actions\Stun_Action.cs" />
     <Compile Include="AI\AIManager.cs" />
     <Compile Include="AI\Actions\Align_Steering.cs" />
@@ -70,17 +75,35 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="BarrelPuzle\SetParticleTransf.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
+    <Compile Include="Player\Jaime\ComboController.cs" />
+    <Compile Include="Random.cs" />
+    <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
+    <Compile Include="LevelFinished.cs" />
+    <Compile Include="UI_Scripts\Scene\CompText.cs" />
     <Compile Include="CompLight.cs" />
+    <Compile Include="UI_Scripts\Scene\ContinueButton.cs" />
+    <Compile Include="Player\Daenerys\FireBreath.cs" />
+    <Compile Include="Player\Daenerys\FireSound.cs" />
+    <Compile Include="UI_Scripts\Scene\PlayQuit.cs" />
+    <Compile Include="UI_Scripts\Scene\ReturnToMenu.cs" />
+    <Compile Include="ScoreScreen.cs" />
+    <Compile Include="UI_Scripts\Scene\FadeAlpha.cs" />
+    <Compile Include="UI_Scripts\Scene\ReturnToMenuFromLose.cs" />
+    <Compile Include="UI_Scripts\Scene\Scroll.cs" />
+    <Compile Include="ShowScore.cs" />
     <Compile Include="StatsScore.cs" />
-    <Compile Include="PKeyScene.cs" />
+    <Compile Include="UI_Scripts\Scene\PKeyScene.cs" />
+    <Compile Include="Lights\Torch_sound.cs" />
     <Compile Include="Miscellanea\DamageFeedback.cs" />
     <Compile Include="Lights\LightFlickering.cs" />
     <Compile Include="ParticleManager.cs" />
     <Compile Include="Material.cs" />
+    <Compile Include="Player\BaseControllers\SwordParticles.cs" />
     <Compile Include="Player\UI\Game.cs" />
     <Compile Include="Player\UI\Intro.cs" />
     <Compile Include="Player\UI\Return.cs" />
@@ -103,11 +126,11 @@
     <Compile Include="Player\BaseControllers\CharactersManager.cs" />
     <Compile Include="CompAnimation.cs" />
     <Compile Include="CompAudio.cs" />
-    <Compile Include="CompButton.cs" />
+    <Compile Include="UI_Scripts\Component\CompButton.cs" />
     <Compile Include="CompCollider.cs" />
-    <Compile Include="CompGraphic.cs" />
-    <Compile Include="CompImage.cs" />
-    <Compile Include="CompInteractive.cs" />
+    <Compile Include="UI_Scripts\Component\CompGraphic.cs" />
+    <Compile Include="UI_Scripts\Component\CompImage.cs" />
+    <Compile Include="UI_Scripts\Component\CompInteractive.cs" />
     <Compile Include="CompRigidBody.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Left.cs" />
     <Compile Include="Player\Daenerys\DaenerysCD_Right.cs" />
@@ -142,14 +165,14 @@
     <Compile Include="Test_Input_Gamepad.cs" />
     <Compile Include="TestParticle.cs" />
     <Compile Include="Time.cs" />
-    <Compile Include="Torch_sound.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="GameObject.cs" />
-    <Compile Include="Input.cs" />
+    <Compile Include="UI_Scripts\Input\Input.cs" />
     <Compile Include="KeyCode.cs" />
     <Compile Include="Math.cs" />
+    <Compile Include="UI_Scripts\Scene\InputManager.cs" />
     <Compile Include="Vector3.cs" />
   </ItemGroup>
   <ItemGroup>

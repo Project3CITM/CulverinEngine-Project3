@@ -7,10 +7,8 @@
 
 // Octree NODE -------------------------
 
-OctreeNode::OctreeNode(const AABB& box) : box(box)
+OctreeNode::OctreeNode(const AABB& box, OctreeNode* parent) : box(box), parent(parent)
 {
-	parent = nullptr;
-
 	for (uint i = 0; i < 8; i++)
 		childs[i] = nullptr;
 }
@@ -33,41 +31,88 @@ bool OctreeNode::isLeaf() const
 	return false;
 }
 
-void OctreeNode::Insert(GameObject* obj, OctreeLimits& limits)
+bool OctreeNode::Insert(GameObject* obj, OctreeLimits& limits)
 {
 	AABB otherBox;
-	otherBox = *obj->bounding_box;
-	if (!box.Intersects(otherBox))
-		return;
+	otherBox = obj->box_fixed;
+	if (!box.IsFinite() || !box.Intersects(otherBox))
+		return false;
 
-	if (isLeaf() && (objects.size() < limits.octreeMaxItems || (box.HalfSize().LengthSq() <= limits.octreeMinSize * limits.octreeMinSize)))
+	
+	if (isLeaf() && box.Contains(otherBox) && (objects.size() < limits.octreeMaxItems || (box.HalfSize().LengthSq() <= limits.octreeMinSize * limits.octreeMinSize)) )
 	{
-		//std::list<ComponentMesh*>::iterator it = std::find(objects.begin(), objects.end(), mesh);
-		//if (it == objects.end())
-			objects.push_back(obj);
+		objects.push_back(obj);
+		return true;
 	}
-		
 	else
 	{
+		//Check if insert failed becouse box is too big, if so try to insert it to parent node
+		if (!box.Contains(otherBox))
+		{
+			if (parent != nullptr)
+				return parent->Insert(obj, limits);
+			else
+			{
+				LOG("Object too big to enter octree");
+				return false;
+			}
+		}
+		
+		//If object is inside octree and failed beacouse the octree needs subdivision divide the node
 		if (isLeaf())
 		{
-			if (childs[0] == nullptr)
-				CreateChilds();
-			for (std::list<GameObject*>::iterator item = objects.begin(); item != objects.cend(); ++item)
+			CreateChilds();
+
+			for (std::list<GameObject*>::iterator item = objects.begin(); item != objects.cend();)
 			{
-				AABB meshBox;
-				meshBox = item._Ptr->_Myval->box_fixed;
+				uint node_to_push = 0;
+				uint multiple_collision = 0;
 				for (uint i = 0; i < 8; i++)
 				{
-					if (childs[i]->box.Intersects(meshBox))
-						childs[i]->Insert(item._Ptr->_Myval, limits);
+					if (childs[i]->box.Intersects(item._Ptr->_Myval->box_fixed))
+					{
+						multiple_collision++;
+						node_to_push = i;
+					}
+				}
+				if (multiple_collision == 1)
+				{
+					childs[node_to_push]->Insert(item._Ptr->_Myval, limits);
+					item = objects.erase(item);
+				}
+				else
+				{
+					item++;
 				}
 			}
-			objects.clear();
+
+			
 		}
+		else if (box.Contains(otherBox))
+		{
+			bool push_in_childs = false;
+			//If one of the childs can containt the box contine to insert in childs
+			for (uint i = 0; i < 8; i++)
+			{
+				if (childs[i]->box.Contains(otherBox))
+					push_in_childs = true;
+			}
+			
+			if (!push_in_childs)
+			{
+				objects.push_back(obj);
+				return true;
+			}
+		}
+
 		for (uint i = 0; i < 8; i++)
-			childs[i]->Insert(obj, limits);
+		{
+			if (childs[i]->Insert(obj, limits))
+				return true;
+		}
 	}
+
+	return false;
 }
 
 void OctreeNode::Remove(GameObject* obj)
@@ -113,42 +158,42 @@ void OctreeNode::CreateChilds()
 	// -X / -Y / -Z
 	center_new.Set(center.x - size_new.x * 0.5f, center.y - size_new.y * 0.5f, center.z - size_new.z * 0.5f);
 	box_new.SetFromCenterAndSize(center_new, size_new);
-	childs[0] = new OctreeNode(box_new);
+	childs[0] = new OctreeNode(box_new, this);
 
 	// +X / -Y / -Z
 	center_new.Set(center.x + size_new.x * 0.5f, center.y - size_new.y * 0.5f, center.z - size_new.z * 0.5f);
 	box_new.SetFromCenterAndSize(center_new, size_new);
-	childs[1] = new OctreeNode(box_new);
+	childs[1] = new OctreeNode(box_new, this);
 
 	// -X / +Y / -Z
 	center_new.Set(center.x - size_new.x * 0.5f, center.y + size_new.y * 0.5f, center.z - size_new.z * 0.5f);
 	box_new.SetFromCenterAndSize(center_new, size_new);
-	childs[2] = new OctreeNode(box_new);
+	childs[2] = new OctreeNode(box_new, this);
 
 	// -X / -Y / +Z
 	center_new.Set(center.x - size_new.x * 0.5f, center.y - size_new.y * 0.5f, center.z + size_new.z * 0.5f);
 	box_new.SetFromCenterAndSize(center_new, size_new);
-	childs[3] = new OctreeNode(box_new);
+	childs[3] = new OctreeNode(box_new, this);
 
 	// +X / +Y / +Z
 	center_new.Set(center.x + size_new.x * 0.5f, center.y + size_new.y * 0.5f, center.z + size_new.z * 0.5f);
 	box_new.SetFromCenterAndSize(center_new, size_new);
-	childs[4] = new OctreeNode(box_new);
+	childs[4] = new OctreeNode(box_new, this);
 
 	// +X / +Y / -Z
 	center_new.Set(center.x + size_new.x * 0.5f, center.y + size_new.y * 0.5f, center.z - size_new.z * 0.5f);
 	box_new.SetFromCenterAndSize(center_new, size_new);
-	childs[5] = new OctreeNode(box_new);
+	childs[5] = new OctreeNode(box_new, this);
 
 	// +X / -Y / +Z
 	center_new.Set(center.x + size_new.x * 0.5f, center.y - size_new.y * 0.5f, center.z + size_new.z * 0.5f);
 	box_new.SetFromCenterAndSize(center_new, size_new);
-	childs[6] = new OctreeNode(box_new);
+	childs[6] = new OctreeNode(box_new, this);
 
 	// -X / +Y / +Z
 	center_new.Set(center.x - size_new.x * 0.5f, center.y + size_new.y * 0.5f, center.z + size_new.z * 0.5f);
 	box_new.SetFromCenterAndSize(center_new, size_new);
-	childs[7] = new OctreeNode(box_new);
+	childs[7] = new OctreeNode(box_new, this);
 }
 
 //template<typename TYPE>
@@ -160,14 +205,44 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 	if (!box.Intersects(frustum))
 		return ret;
 
+	Plane planes[6];
+	frustum.GetPlanes(planes);
+	AABB Box;
+	//Custom intersec, MathGeoLib was too slow
+	//Should be changed if there is more time
 	for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
 	{
-		std::list<GameObject*>::iterator it = std::find(nodes.begin(), nodes.end(), item._Ptr->_Myval);
-		if (it != nodes.end())
-				continue;
+		
+		AABB Box = item._Ptr->_Myval->box_fixed;
+
+		int iTotalIn = 0;
+		bool is_in = true;
+		for (int p = 0; p < 6; ++p) {
+			int iInCount = 8;
+			int iPtIn = 1;
+			for (int i = 0; i < 8; ++i) {
+				// test this point against the planes
+				if (planes[p].normal.Dot(Box.CornerPoint(i)) >= planes[p].d) {
+					iPtIn = 0;
+					--iInCount;
+				}
+			}
+			// were all the points outside of plane p?
+			if (iInCount == 0)
+			{
+				is_in = false;
+			}
+			// check if they were all on the right side of the plane
+			iTotalIn += iPtIn;
+		}
+
+		if (is_in)
+		{
+			nodes.push_back(*item);
+		}
+	/*
 		ret++;
-		AABB Box;
-		Box = item._Ptr->_Myval->box_fixed;
+		AABB Box = item._Ptr->_Myval->box_fixed;
 		for (int i = 0; i < 8; ++i)
 		{
 			if (frustum.Contains(Box.CornerPoint(i)))
@@ -175,7 +250,7 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 				nodes.push_back(*item);
 				break;
 			}
-		}
+		}*/
 	}
 
 	// If there is no children, end
@@ -254,7 +329,7 @@ void Octree::Remove(GameObject* mesh)
 
 void Octree::Insert(GameObject* obj)
 {
-	if (obj->bounding_box != nullptr)
+	if (obj->box_fixed.IsFinite())
 		root_node->Insert(obj, limits);
 }
 

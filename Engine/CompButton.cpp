@@ -252,16 +252,6 @@ void CompButton::Save(JSON_Object * object, std::string name, bool saveScene, ui
 	{
 		json_object_dotset_number_with_std(object, name + "Graphic UUID", 0);
 	}
-	json_object_dotset_number_with_std(object, name + "Linked Spites Size", linked_scripts.size());
-	for (int i = 0; i < linked_scripts.size(); i++)
-	{
-		std::string temp = std::to_string(i);
-		CompScript* sc = linked_scripts[i];
-		if (sc != nullptr)
-			json_object_dotset_number_with_std(object, name + "Linked Spites " + temp + " UUID", linked_scripts[i]->GetUUID());
-		else
-			json_object_dotset_number_with_std(object, name + "Linked Spites " + temp + " UUID", 0);
-	}
 
 	json_object_dotset_number_with_std(object, name + "Selection Mode", current_selection_state);
 	json_object_dotset_number_with_std(object, name + "Transition Mode", current_transition_mode);
@@ -372,12 +362,6 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 	Enable();
 }
 
-
-void CompButton::ClearLinkedScripts()
-{
-	linked_scripts.clear();
-}
-
 void CompButton::SyncScript()
 {
 	SyncClickAction();
@@ -407,30 +391,22 @@ void CompButton::SyncScript()
 	RELEASE_ARRAY(uid_linked_scripts);
 }
 
-void CompButton::AddLinkedScript(const CompScript * script)
-{
-	linked_scripts.push_back((CompScript*)script);
-}
-
 void CompButton::OnClick()
 {
 	if (IsActivate() || !IsActive())
 		return;
-	if (linked_scripts.empty())
+	if (actions.empty())
 	{
 		return;
 	}
 
-	uint size = linked_scripts.size();
+	uint size = actions.size();
 	for (uint k = 0; k < size; k++)
 	{
-		CompScript* comp_script = linked_scripts[k];
-
-		if (comp_script == nullptr)
+		if (actions[k].script == nullptr)
 			continue;
 
 		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
-
 		//linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
 	}
 }
@@ -439,19 +415,19 @@ void CompButton::OnSubmit(Event event_input)
 {
 	if (IsActivate() || !IsActive())
 		return;
-	if (linked_scripts.empty())
+	if (actions.empty())
 	{
 		return;
 	}
 
-	uint size = linked_scripts.size();
+	uint size = actions.size();
 	for (uint k = 0; k < size; k++)
 	{
-		CompScript* comp_script = linked_scripts[k];
-
-		if (comp_script == nullptr)
+		if (actions[k].script == nullptr)
 			continue;
+
 		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
+		//linked_scripts[k]->csharp->DoMainFunction(CS_OnClick);
 	}
 }
 

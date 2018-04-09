@@ -8,6 +8,7 @@ namespace CulverinEditor
 {
     public class CompMesh : CulverinBehaviour
     {
-
+        public CompMesh()
+        { }
     }
 }

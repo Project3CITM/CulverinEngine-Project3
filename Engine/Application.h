@@ -30,7 +30,7 @@ class ModuleImporter;
 class ModuleFS;
 class ModuleTextures;
 class ModuleResourceManager;
-class ModuleEventSystem;
+class ModuleEventSystemV2;
 class ModuleShaders;
 class JSONSerialization;
 class ModuleRenderGui;
@@ -98,6 +98,7 @@ public:
 
 	void WantToSave();
 	void WantToLoad(bool in_game = false);
+	void DontDestroyOnLoad();
 
 	void ChangeCamera(const char* window);
 
@@ -128,7 +129,7 @@ public:
 	ModuleFS* fs = nullptr;
 	ModuleTextures* textures = nullptr;
 	ModuleResourceManager* resource_manager = nullptr;
-	ModuleEventSystem* event_system = nullptr;
+	ModuleEventSystemV2* event_system_v2 = nullptr;
 	ModuleShaders* module_shaders = nullptr;
 	ModuleRenderGui* render_gui = nullptr;
 	ModulePhysics* physics = nullptr;
@@ -164,6 +165,8 @@ public:
 	bool show_config = false;
 	bool show_performance = false;
 	bool show_camera_popup = false;
+	bool dont_destroy_on_load = false;
+	bool remove_dont_destroy_on_load = false;
 	// -------------------------------------------
 
 	float4 scene_dock = { 0, 0, 0, 0 };

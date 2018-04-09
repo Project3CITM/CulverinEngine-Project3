@@ -14,6 +14,8 @@
 #include "InputAction.h"
 #include "PlayerActions.h"
 #include "ModuleAnimation.h"
+#include "ResourceMesh.h"
+
 static int malloc_count;
 static void *counted_malloc(size_t size);
 static void counted_free(void *ptr);
@@ -311,6 +313,10 @@ void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* dir
 		// Tag ----------
 		json_object_dotset_string_with_std(config_node, name + "Tag", gameObject.GetTag());
 
+		json_object_dotset_boolean_with_std(config_node, name + "AnimRotations", gameObject.animation_rotations);
+		json_object_dotset_boolean_with_std(config_node, name + "AnimScales", gameObject.animation_scales);
+		json_object_dotset_boolean_with_std(config_node, name + "AnimTranslations", gameObject.animation_translations);
+
 		// Components  ------------
 		std::string components = name;
 		json_object_dotset_number_with_std(config_node, components + "Number of Components", gameObject.GetNumComponents());
@@ -349,6 +355,12 @@ void JSONSerialization::SaveChildPrefab(JSON_Object* config_node, const GameObje
 	json_object_dotset_number_with_std(config_node, name + "Parent", uuidParent);
 	// Name- --------
 	json_object_dotset_string_with_std(config_node, name + "Name", gameObject.GetName());
+	// Tag ----------
+	json_object_dotset_string_with_std(config_node, name + "Tag", gameObject.GetTag());
+
+	json_object_dotset_boolean_with_std(config_node, name + "AnimRotations", gameObject.animation_rotations);
+	json_object_dotset_boolean_with_std(config_node, name + "AnimScales", gameObject.animation_scales);
+	json_object_dotset_boolean_with_std(config_node, name + "AnimTranslations", gameObject.animation_translations);
 
 	// Components  ------------
 	std::string components = name;
@@ -402,9 +414,15 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 				const char* nameGameObject = json_object_dotget_string_with_std(config_node, name + "Name");
 				const char* tagGameObject = nullptr;
 				tagGameObject = json_object_dotget_string_with_std(config_node, name + "Tag");
+				
+
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
 				if(tagGameObject != nullptr)obj->SetTag(tagGameObject);
+
+				obj->animation_rotations = json_object_dotget_boolean_with_std(config_node, name + "AnimRotations");
+				obj->animation_scales = json_object_dotget_boolean_with_std(config_node, name + "AnimScales");
+				obj->animation_translations = json_object_dotget_boolean_with_std(config_node, name + "AnimTranslations");
 
 				// Now Check that the name is not repet
 				CheckChangeName(*obj);
@@ -504,8 +522,13 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instant
 				uint uid = json_object_dotget_number_with_std(config_node, name + "UUID");
 				GameObject* obj = new GameObject(nameGameObject, uid);
 				if (tagGameObject != nullptr) obj->SetTag(tagGameObject);
+
+				obj->animation_rotations = json_object_dotget_boolean_with_std(config_node, name + "AnimRotations");
+				obj->animation_scales = json_object_dotget_boolean_with_std(config_node, name + "AnimScales");
+				obj->animation_translations = json_object_dotget_boolean_with_std(config_node, name + "AnimTranslations");
+
 				// Now Check that the name is not repet
-				CheckChangeName(*obj);
+				//CheckChangeName(*obj);
 				//Load Components
 				int NumberofComponents = json_object_dotget_number_with_std(config_node, name + "Number of Components");
 				if (NumberofComponents > 0)
@@ -531,6 +554,7 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instant
 				{
 					//App->scene->gameobjects.push_back(obj);
 					mainParent = obj;
+					mainParent->SetParent(nullptr);
 				}
 				else
 				{
@@ -541,7 +565,7 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instant
 			//Sync components Recursive
 			if (mainParent!= nullptr)
 			{
-				mainParent->SyncComponents(mainParent);
+				mainParent->SyncComponentsRecursive(mainParent);
 			}
 
 			// Now Iterate All GameObjects and Components and create a new UUID!
@@ -708,8 +732,50 @@ void JSONSerialization::SaveMapCreation(std::vector<std::string>& map, std::vect
 	json_value_free(config_file);
 }
 
-void JSONSerialization::LoadMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int height_map, int width_map, float separation, const char * name)
+bool JSONSerialization::LoadMapCreation(std::vector<std::string>& map, std::vector<std::string>& prefabs, int& height_map, int& width_map, float& separation, int& number_prefabs, const char* file, std::string& name)
 {
+	//LOG("LOADING MAP %s -----", file);
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+	JSON_Object* config_node;
+
+	config_file = json_parse_file(file);
+	if (config_file)
+	{
+		config = json_value_get_object(config_file);
+		config_node = json_object_get_object(config, "Map");
+		name = json_object_dotget_string_with_std(config_node, "Info.Name Map");
+		height_map = json_object_dotget_number_with_std(config_node, "Info.Height Map");
+		width_map = json_object_dotget_number_with_std(config_node, "Info.Width Map");
+		separation = json_object_dotget_number_with_std(config_node, "Info.Separation");
+
+		number_prefabs = json_object_dotget_number_with_std(config_node, "Prefabs.Number of Prefabs");
+		if (number_prefabs > 0)
+		{
+			for (int i = 0; i < number_prefabs; i++)
+			{
+				std::string pref = "Prefabs.Prefab " + std::to_string(i);
+				//line += ".";
+				prefabs.push_back(json_object_dotget_string_with_std(config_node, pref));
+			}
+		}
+		else
+		{
+			json_value_free(config_file);
+			return false;
+		}
+		for (int i = 0; i < height_map; i++)
+		{
+			std::string line = "Line_" + std::to_string(i);
+			//line += ".";
+			map.push_back(json_object_dotget_string_with_std(config_node, line));
+		}
+		json_value_free(config_file);
+		return true;
+	}
+	json_value_free(config_file);
+	return false;
 }
 
 void JSONSerialization::SaveMaterial(const ResourceMaterial* material, const char* directory, const char* fileName)

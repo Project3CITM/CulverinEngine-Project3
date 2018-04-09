@@ -4,7 +4,7 @@
 #include <list>
 #include "Math\float4.h"
 #include "Math\float2.h"
-#include "EventDef.h"
+#include "EventDefV2.h"
 
 class CompGraphic;
 class CompImage;
@@ -16,7 +16,8 @@ struct Navigation
 	enum NavigationMode
 {
 	NAVIGATION_NONE,
-	NAVIGATION_EXTRICTE
+	NAVIGATION_EXTRICTE,
+	NAVIGATION_AUTOMATIC
 };
 	NavigationMode current_navigation_mode = NavigationMode::NAVIGATION_NONE;
 	CompInteractive* interactive_up = nullptr;

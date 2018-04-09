@@ -3,7 +3,7 @@
 #include "ParticleSystem.h"
 #include "GL3W\include\glew.h"
 #include "ImGui\imgui.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "Application.h"
 #include "CompCamera.h"
 #include "ModuleRenderer3D.h"
@@ -327,9 +327,8 @@ bool Particle::PostUpdate(float dt)
 	{
 		OrientateParticle();
 		Event draw_event;
-		draw_event.particle.type = EventType::EVENT_PARTICLE_DRAW;
-		draw_event.particle.ToDraw = this;
-
+		draw_event.Set_event_data(EventType::EVENT_PARTICLE_DRAW);
+		draw_event.particle_draw.ToDraw = this;
 		PushEvent(draw_event);
 	}
 	if (Properties.LifetimeActual >= Properties.LifetimeMax) ToDelete = true;
@@ -344,28 +343,17 @@ bool Particle::isDead()
 
 void Particle::DrawParticle(uint program_id)
 {
-
+	glDepthMask(GL_FALSE);
 	const ParticleMeshData& Mesh = ParentParticleSystem->GetParticleMeshData();
-
-	//glColor4f(Properties.RGBATint.x, Properties.RGBATint.y, Properties.RGBATint.z, Properties.RGBATint.w);
-
-	glDisable(GL_CULL_FACE);
-	glEnable(GL_NORMALIZE);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_BLEND);
+	//glEnable(GL_NORMALIZE);
 	if (ParentParticleSystem->TextureData.TextureID != 0)
 	{
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);		
 		uint texLoc = glGetUniformLocation(program_id, "albedo");
 		glUniform1i(texLoc, 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, ParentParticleSystem->TextureData.TextureID);
-
 	}
-
 
 	uint color_id = glGetUniformLocation(program_id, "_my_color");
 	glUniform4fv(color_id, 1, Properties.RGBATint.ptr());
@@ -403,15 +391,10 @@ void Particle::DrawParticle(uint program_id)
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);
 
 	glDisable(GL_NORMALIZE);
+	glDepthMask(GL_TRUE);
 
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void Particle::SetAssignedStateFromVariables(ParticleAssignedState& AState, const ParticleState& State)
@@ -440,23 +423,22 @@ void Particle::OrientateParticle()
 	}
 	case 1: //Billboard
 	{
-		float3 Direction = ParentParticleSystem->CameraPosition - Properties.Position;
-		Direction.Normalize();
-		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		float3 direction = App->renderer3D->active_camera->frustum.front;
+		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
 		break;
 	}
 	case 2: //VerticalBillboard
 	{
-		float3 Direction = ParentParticleSystem->CameraPosition - Properties.Position;
-		Direction.y = Properties.Position.y;
-		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		float3 direction = App->renderer3D->active_camera->frustum.front;
+		direction.y = Properties.Position.y;
+		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
 		break;
 	}
 	case 3: //HorizontalBillboard
 	{
-		float3 Direction = ParentParticleSystem->CameraPosition - Properties.Position;
-		Direction.x = Properties.Position.x;
-		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), Direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		float3 direction = App->renderer3D->active_camera->frustum.front;
+		direction.x = Properties.Position.x;
+		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
 		break;
 	}
 	}
@@ -608,7 +590,7 @@ bool ParticleSystem::PreUpdate(float dt)
 		bool to_delete = false;
 	
 		//Check if particle is alive
-	  if ((*item).isDead())
+	    if ((*item).isDead())
 		{
 			Emitter.ParticleNumber--;
 			item = Particles.erase(item);

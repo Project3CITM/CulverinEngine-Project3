@@ -14,6 +14,8 @@
 ModuleMap::ModuleMap()
 {
 	name = "Map";
+	Awake_enabled = true;
+	Start_enabled = true;
 }
 
 
@@ -25,6 +27,7 @@ ModuleMap::~ModuleMap()
 
 bool ModuleMap::Init(JSON_Object* node)
 {
+	perf_timer.Start();
 	name_map = json_object_get_string(node, "Walkable Map");
 	if (name_map.size() > 0)
 	{
@@ -40,36 +43,45 @@ bool ModuleMap::Init(JSON_Object* node)
 	{
 		name_map = "New Map";
 	}
+	Awake_t = perf_timer.ReadMs();
 	return true;
 }
 
 bool ModuleMap::Start()
 {
+	perf_timer.Start();
 	imported_map.clear();
 	icon_arrow_north = App->textures->LoadTexture("Images/UI/Arrow_north.png");
 	icon_arrow_east = App->textures->LoadTexture("Images/UI/Arrow_east.png");
 	icon_arrow_south = App->textures->LoadTexture("Images/UI/Arrow_south.png");
 	icon_arrow_west = App->textures->LoadTexture("Images/UI/Arrow_west.png");
 	icon_circle = App->textures->LoadTexture("Images/UI/Circle.png");
+	Start_t = perf_timer.ReadMs();
 	return true;
 }
 
 update_status ModuleMap::PreUpdate(float dt)
 {
+	perf_timer.Start();
 	if (imported_map.size() > 0)
 	{
 		ImportMap();
 	}
+	preUpdate_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleMap::Update(float dt)
 {
+	perf_timer.Start();
+	Update_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleMap::PostUpdate(float dt)
 {
+	perf_timer.Start();
+	postUpdate_t = perf_timer.ReadMs();
 	return update_status::UPDATE_CONTINUE;
 }
 
@@ -503,7 +515,6 @@ void ModuleMap::ShowWalkableMap()
 void ModuleMap::ShowCreationMap()
 {
 	//static bool settings = false;
-	static int numPrefabs = 0;
 	//if (ImGui::Button("Open Settings"))
 	//{
 	//	settings = true;
@@ -526,7 +537,7 @@ void ModuleMap::ShowCreationMap()
 		force_reload = true;
 	}
 	ImGui::Text("Press to load all prefabs:");
-	static bool go_select_prefab = false;
+
 	if (ImGui::Button("Load / Reload Prefabs") || force_reload)
 	{
 		prefabs.clear();
@@ -568,7 +579,11 @@ void ModuleMap::ShowCreationMap()
 			ImGui::PopID();
 		}
 	}
-
+	bool do_numeration = false;
+	if (show_numeration)
+	{
+		do_numeration = true;
+	}
 	ImGui::NextColumn();
 	ImGui::PushItemWidth(10);
 	//ImGui::Separator();
@@ -610,36 +625,63 @@ void ModuleMap::ShowCreationMap()
 	int total_map = width_map * height_map;
 	for (int y = 0; y < height_map; y++)
 	{
-		for (int x = 0; x < width_map; x++)
+		if (do_numeration)
 		{
-			if (x > 0) ImGui::SameLine();
-			ImGui::PushID(x + y * 1000);
-			if (map[x][y] > -1)
+			do_numeration = false;
+			ShowTextWithColor(ImGuiCol_Button, 20);
+			ImGui::ButtonEx("", ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+			ImGui::SameLine();
+			ImGui::PopStyleColor();
+			for (int n = 0; n < width_map; n++)
 			{
-				ShowTextWithColor(ImGuiCol_Button, map[x][y]);
-				total_map--;
-			}
-			//	ImGui::OpenPopup("ID");
-			bool force_pop = false;
-			if (map[x][y] > -1)
-			{
-				force_pop = true;
-			}
-			if (ImGui::Button("ID"))
-			{
-				map[x][y] = paint;
-			}
-
-			if (map[x][y] > -1 && force_pop)
-			{
+				ShowTextWithColor(ImGuiCol_Button, 20);
+				ImGui::ButtonEx(std::to_string(n).c_str(), ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+				if (n + 1 < width_map)
+					ImGui::SameLine();
 				ImGui::PopStyleColor();
 			}
-			if (ImGui::BeginPopupContextItem("Options##maptile3d"))
+			y--;
+		}
+		else
+		{
+			if (show_numeration)
 			{
-				OptionsTile(x, y);
-				ImGui::EndPopup();
+				ShowTextWithColor(ImGuiCol_Button, 20);
+				ImGui::ButtonEx(std::to_string(y).c_str(), ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+				ImGui::SameLine();
+				ImGui::PopStyleColor();
 			}
-			ImGui::PopID();
+			for (int x = 0; x < width_map; x++)
+			{
+				if (x > 0) ImGui::SameLine();
+				ImGui::PushID(x + y * 1000);
+				if (map[x][y] > -1)
+				{
+					ShowTextWithColor(ImGuiCol_Button, map[x][y]);
+					total_map--;
+				}
+				//	ImGui::OpenPopup("ID");
+				bool force_pop = false;
+				if (map[x][y] > -1)
+				{
+					force_pop = true;
+				}
+				if (ImGui::Button("ID"))
+				{
+					map[x][y] = paint;
+				}
+
+				if (map[x][y] > -1 && force_pop)
+				{
+					ImGui::PopStyleColor();
+				}
+				if (ImGui::BeginPopupContextItem("Options##maptile3d"))
+				{
+					OptionsTile(x, y);
+					ImGui::EndPopup();
+				}
+				ImGui::PopID();
+			}
 		}
 	}
 	ImGui::EndColumns();
@@ -955,13 +997,13 @@ void ModuleMap::GetSizePrefab(GameObject* obj, float& min_size, float& max_size)
 {
 	if (obj->GetComponentMesh() != nullptr)
 	{
-		if (min_size > obj->bounding_box->MinX())
+		if (min_size > obj->box_fixed.MinX())
 		{
-			min_size = obj->bounding_box->MinX();
+			min_size = obj->box_fixed.MinX();
 		}
-		if (max_size < obj->bounding_box->MaxX())
+		if (max_size < obj->box_fixed.MaxX())
 		{
-			max_size = obj->bounding_box->MaxX();
+			max_size = obj->box_fixed.MaxX();
 		}
 	}
 	for (int i = 0; i < obj->GetNumChilds(); i++)
@@ -1041,6 +1083,10 @@ void ModuleMap::ShowTextWithColor(ImGuiCol_ type,int id)
 	else if (id == 16) // Same Background
 	{
 		ImGui::PushStyleColor(type, ImVec4(0.55f, 0.45f, 0.3f, 1.0f));
+	}
+	else if (id >= 17 && id != 20) // ...
+	{
+		ImGui::PushStyleColor(type, ImVec4(0.2f, 0.81f, 0.31f, 1.0f));
 	}
 	else if (id == 20) // Same Background
 	{
@@ -1143,7 +1189,40 @@ void ModuleMap::ImportMap()
 	}
 	case TypeMap::MAP_3D:
 	{
-
+		prefabs.clear();
+		if (App->json_seria->LoadMapCreation(vector_map, prefabs, height_map, width_map, size_separation, numPrefabs, imported_map.c_str(), name_map))
+		{
+			all_prefabs.clear();
+			App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "fbx");
+			App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "obj");
+			App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "prefab.json");
+			App->fs->FixNames_directories(all_prefabs);
+			for (int y = 0; y < height_map; y++)
+			{
+				std::string line = vector_map[y];
+				for (int x = 0; x < width_map; x++)
+				{
+					std::string number;
+					number += line[x];
+					map[x][y] = atoi(number.c_str())-1;
+					//t += 1;
+				}
+			}
+			map_string = "";
+			for (int y = 0; y < height_map; y++)
+			{
+				for (int x = 0; x < width_map; x++)
+				{
+					if (map[x][y] > 17)
+					{
+						map[x][y] = -1;
+					}
+					map_string += std::to_string(map[x][y]);
+				}
+			}
+			go_select_prefab = true;
+			LOG("Walkable Map Loaded -----------");
+		}
 	}
 	case TypeMap::MAP_NAVIGATION:
 	{

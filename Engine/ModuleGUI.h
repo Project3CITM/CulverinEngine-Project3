@@ -68,6 +68,7 @@ public:
 	Plane plane;*/
 	bool show_test = false;
 	bool is_saved = false;
+	bool develop_mode = false;
 	std::vector<WindowManager*> win_manager;
 
 	//RANDOM NUMBERS TEST ----------
@@ -85,6 +86,7 @@ public:
 	char str_shad_temp[64] = "";
 	char str_shad_prg_temp[64] = "";
 	char str_mat_temp[64] = "";
+
 	std::vector<Shader*> vec_temp_shader;
 	int combo_shaders_obj = -1;
 	int combo_shaders_obj2 = -1;

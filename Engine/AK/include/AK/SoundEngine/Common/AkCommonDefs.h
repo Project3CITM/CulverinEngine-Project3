@@ -21,8 +21,8 @@ under the Apache License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 OR CONDITIONS OF ANY KIND, either express or implied. See the Apache License for
 the specific language governing permissions and limitations under the License.
 
-  Version: v2017.1.2  Build: 6361
-  Copyright (c) 2006-2017 Audiokinetic Inc.
+  Version: v2017.2.3  Build: 6575
+  Copyright (c) 2006-2018 Audiokinetic Inc.
 *******************************************************************************/
 
 // AkCommonDefs.h
@@ -279,13 +279,13 @@ public:
 	/// \name Channel queries.
 	//@{
 	/// Get the number of channels.
-	AkForceInline AkUInt32 NumChannels()
+	AkForceInline AkUInt32 NumChannels() const
 	{
 		return channelConfig.uNumChannels;
 	}
 
 	/// Returns true if there is an LFE channel present.
-	AkForceInline bool HasLFE()
+	AkForceInline bool HasLFE() const
 	{ 
 		return channelConfig.HasLFE(); 
 	}
@@ -320,7 +320,7 @@ public:
 	//@{
 
 	/// Check if buffer has samples attached to it.
-	AkForceInline bool HasData() 
+	AkForceInline bool HasData() const
 	{
 		return ( NULL != pData ); 
 	}
@@ -458,7 +458,7 @@ protected:
 public:
 	/// Access to the number of sample frames the buffer can hold.
 	/// \return Number of sample frames the buffer can hold.
-	AkForceInline AkUInt16 MaxFrames() { return uMaxFrames; }
+	AkForceInline AkUInt16 MaxFrames() const { return uMaxFrames; }
 	
 	AkUInt16		uValidFrames;		///< Number of valid sample frames in the audio buffer
 } AK_ALIGN_DMA;

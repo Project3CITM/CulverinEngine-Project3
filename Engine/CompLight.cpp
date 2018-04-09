@@ -14,6 +14,7 @@
 #include"CompCamera.h"
 #include"ModuleFS.h"
 #include "ModuleLightning.h"
+#include "ResourceMesh.h"
 
 CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
@@ -21,7 +22,7 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 	type = NO_LIGHT_TYPE;
 
 	ambientCoefficient = 0.2;
-
+	radius = 50.0f;
 	
 
 	properties[0] = 10;
@@ -77,14 +78,14 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 	//---------------------------------------------
 
 	App->module_lightning->OnLightCreated(this);
-
+	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 }
 
 CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Comp_Type::C_LIGHT, parent)
 {
 	//App->module_lightning->OnLightDestroyed(this); //TODO/CHECK: Why delete the light?? Should add it to the list. Why create another method, already one to erase a light from the list on module lighting.
 	this->ambientCoefficient = copy.ambientCoefficient;
-
+	this->radius = copy.radius;
 	this->color = copy.color;
 	this->type = copy.type;
 	this->types_lights = copy.types_lights;
@@ -122,8 +123,9 @@ CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Co
 	frustum.farPlaneDistance = far_plane;
 	frustum.verticalFov = vertical_fov * DEGTORAD;
 	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
-
+	
 	App->module_lightning->OnLightCreated(this);
+	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 }
 
 CompLight::~CompLight()
@@ -147,15 +149,23 @@ void CompLight::Init()
 
 void CompLight::PreUpdate(float dt)
 {
+	float3 box_pos = parent->box_fixed.CenterPoint();
+	float3 parent_pos = GetGameObjectPos();
+	float epsilon = 0.4f;
+	if(abs(box_pos.x - parent_pos.x) > epsilon || abs(box_pos.y - parent_pos.y) > epsilon || abs(box_pos.z - parent_pos.z) > epsilon)
+		parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
+	
 }
 
 void CompLight::Update(float dt)
 {
+	use_light_to_render = false;
 
 }
 
 void CompLight::Draw()
 {
+
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.8);
 
@@ -295,6 +305,10 @@ void CompLight::ShowInspectorInfo()
 
 	ImGui::DragFloat("Intensity", &properties[0]);
 	ImGui::DragFloat("Ambient Coefficient", &ambientCoefficient);
+	if (ImGui::DragFloat("Radius", &radius, 1.0f, 0.0f, 500.0f)) 
+	{	
+			parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
+	}
 	ImGui::DragFloat("Constant", &properties[1]);
 	ImGui::DragFloat("Linear", &properties[2]);
 	ImGui::DragFloat("Quadratic", &properties[3]);
@@ -302,6 +316,7 @@ void CompLight::ShowInspectorInfo()
 	ImGui::Combo("Light Type", &ui_light_type, types_lights.c_str());
 	type = (Light_type)ui_light_type;
 
+	
 	ImGui::TreePop();
 
 }
@@ -316,11 +331,12 @@ void CompLight::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	json_object_dotset_number_with_std(object, name + "Light Type", (int)type);
 	json_object_dotset_number_with_std(object, name + "Intensity", properties[0]);
 	json_object_dotset_number_with_std(object, name + "Ambient Coefficient", ambientCoefficient);
+	json_object_dotset_number_with_std(object, name + "Radius", radius);
 	json_object_dotset_number_with_std(object, name + "Constant", properties[1]);
 	json_object_dotset_number_with_std(object, name + "Linear", properties[2]);
 	json_object_dotset_number_with_std(object, name + "Quadratic", properties[3]);
 
-
+	
 }
 
 void CompLight::Load(const JSON_Object * object, std::string name)
@@ -330,7 +346,7 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	ui_light_type =json_object_dotget_number_with_std(object, name + "Light Type");
 	type = (Light_type)ui_light_type;
 	ambientCoefficient = json_object_dotget_number_with_std(object, name + "Ambient Coefficient");
-	
+	radius = json_object_dotget_number_with_std(object, name + "Radius");
 	properties[0] = json_object_dotget_number_with_std(object, name + "Intensity");
 	properties[1] = json_object_dotget_number_with_std(object, name + "Constant");
 	properties[2] = json_object_dotget_number_with_std(object, name + "Linear");
@@ -338,6 +354,8 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	color=App->fs->json_array_dotget_float4_string(object, name + "Color");
 	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
 
+	// bounding box size
+	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 }
 
 void CompLight::UpdateFrustum()

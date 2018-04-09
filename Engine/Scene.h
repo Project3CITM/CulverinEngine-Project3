@@ -5,7 +5,6 @@
 #include "Globals.h"
 #include "ModuleFramebuffers.h"
 #include "CompMesh.h"
-#include "Quadtree.h"
 #include "Octree.h"
 #include <vector>
 
@@ -20,7 +19,7 @@ public:
 	Scene(bool start_enabled = false);
 	virtual ~Scene();
 
-	//bool Init(JSON_Object* node);
+	bool Init(JSON_Object* node);
 	bool Start();
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
@@ -57,10 +56,15 @@ public:
 	void						RemoveTaggedObject(const GameObject* target);
 	void						AddTaggedObject(const GameObject* target);
 	uint						GetTagID(const char* str);
+	void						ClearAllTags();
 	std::vector<std::string>*	GetTagsVec();
 
 	void ModificateParent(GameObject* child, GameObject* new_parent);
 	void RemoveAllPointers(GameObject* gameobject);
+
+	//Dont use!
+	void GetAllGameObjectsWithoutParents(GameObject* parent, GameObject* root);
+	void ChangeRoot(GameObject* parent, GameObject* root);
 
 	
 	// DRAWING METHODS ---------
@@ -70,6 +74,7 @@ public:
 	// CULLING HELPER FUNCTION -----------
 	//void FillStaticObjectsVector(bool fill);
 	void RecalculateStaticObjects();
+	const std::vector<GameObject*>* GetAllSceneObjects();
 
 	//OBJECTS CREATION / DELETION ---------------------
 	GameObject* FindCanvas();
@@ -88,11 +93,14 @@ public:
 
 	void DeleteAllGameObjects(GameObject* gameobject, bool isMain = true, bool is_reimport = false);
 	void DeleteGameObject(GameObject* gameobject, bool isImport = false, bool is_reimport = false);
+	bool CheckDeletedObjcet(uint uuid);
 	// -------------------------------------
 
 	// UI ----------------------------------
 	Component* BlitSceneComponentsAsButtons(Comp_Type type, std::string& current_item);
 	// -------------------------------------
+
+	bool SaveConfig(JSON_Object* node);
 
 public:
 	FrameBuffer* scene_buff = nullptr;
@@ -102,10 +110,12 @@ public:
 	FrameBuffer* final_buff = nullptr;
 	//Container of all Game Objects
 	GameObject* root = nullptr;
-	GameObject* temp_scene = nullptr;
+	GameObject* search_name = nullptr;
+	GameObject* temporary_scene = nullptr;
+	GameObject* dontdestroyonload = nullptr;
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
-	std::list<GameObject*> static_objects;
+	std::vector<GameObject*> static_objects;
 
 	// Scene Saved
 	bool scene_saved = true; // TODO XAVI - need implementation with Event System
@@ -113,7 +123,7 @@ public:
 	// Quadtree ----------------
 	//Quadtree quadtree;
 	Octree octree;
-	bool quadtree_draw = false;
+	bool octree_draw = false;
 	// -------------------------
 
 	// Skybox --------------------
@@ -138,6 +148,8 @@ private:
 	char					tag_buffer[100];
 	std::vector<std::string>				defined_tags;
 	std::vector<std::vector<GameObject*>*>	tagged_objects;
+	std::vector<GameObject*>				game_objects_scene; 
+	std::vector<uint>						deleted_objects;
 };
 
 #endif

@@ -7,7 +7,7 @@
 #include "ModuleMap.h"
 #include "ModuleResourceManager.h"
 #include "ImGui/imgui_impl_sdl_gl3.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "PlayerActions.h"
 #include "InputManager.h"
 #include "JSONSerialization.h"
@@ -36,9 +36,9 @@ ModuleInput::~ModuleInput()
 bool ModuleInput::Init(JSON_Object* node)
 {
 	perf_timer.Start();
-
 	LOG("Init SDL input event system");
 	bool ret = true;
+	quit = false;
 	SDL_Init(0);
 
 	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
@@ -114,7 +114,7 @@ bool ModuleInput::Init(JSON_Object* node)
 update_status ModuleInput::PreUpdate(float dt)
 {
 	perf_timer.Start();
-
+	press_any_key = false;
 	SDL_PumpEvents();
 	player_action->UpdateInputsManager();
 
@@ -183,7 +183,6 @@ update_status ModuleInput::PreUpdate(float dt)
 
 	mouse_x_motion = mouse_y_motion = 0;
 
-	bool quit = false;
 	SDL_Event e;
 
 	while (SDL_PollEvent(&e))
@@ -194,16 +193,24 @@ update_status ModuleInput::PreUpdate(float dt)
 		//}
 		switch (e.type)
 		{
+		case SDL_KEYDOWN:
+		case SDL_CONTROLLERBUTTONDOWN:
+			press_any_key = true;
 
+			break;
+		case SDL_CONTROLLERAXISMOTION:
+			if(e.caxis.axis<-5000 ||e.caxis.axis>5000)
+				press_any_key = true;
+			break;
 		case SDL_MOUSEBUTTONDOWN:
 		{
-
+			press_any_key = true;
 			//LOG("mouse down");
 			mouse_x = e.motion.x / SCREEN_SIZE;
 			mouse_y = e.motion.y / SCREEN_SIZE;
 
 			Event mouse_event;
-			mouse_event.pointer.type = EventType::EVENT_BUTTON_DOWN;
+			mouse_event.Set_event_data(EventType::EVENT_BUTTON_DOWN);
 			if (e.button.button == SDL_BUTTON_LEFT)
 				mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
 			if (e.button.button == SDL_BUTTON_MIDDLE)
@@ -221,7 +228,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			mouse_x = e.motion.x / SCREEN_SIZE;
 			mouse_y = e.motion.y / SCREEN_SIZE;
 			Event mouse_event;
-			mouse_event.pointer.type = EventType::EVENT_BUTTON_UP;
+			mouse_event.Set_event_data(EventType::EVENT_BUTTON_UP);
 			if (e.button.button == SDL_BUTTON_LEFT)
 				mouse_event.pointer.button = EPoint::InputButton::INPUT_MOUSE_LEFT;
 			if (e.button.button == SDL_BUTTON_MIDDLE)
@@ -249,7 +256,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			mouse_y_motion = e.motion.yrel / SCREEN_SIZE;
 			{
 				Event mouse_event;
-				mouse_event.pointer.type = EventType::EVENT_MOUSE_MOTION;
+				mouse_event.Set_event_data(EventType::EVENT_MOUSE_MOTION);
 				mouse_event.pointer.position.x = mouse_x;
 				mouse_event.pointer.position.y = mouse_y;
 				mouse_event.pointer.motion.x = mouse_x_motion;
@@ -308,6 +315,7 @@ update_status ModuleInput::PreUpdate(float dt)
 				if (App->mode_game == false)
 				{
 					((Project*)App->gui->win_manager[PROJECT])->UpdateNow();
+					App->fs->UpdateFilesAssets();
 					App->fs->CheckNowfilesAssets();
 				}
 			}
@@ -317,9 +325,11 @@ update_status ModuleInput::PreUpdate(float dt)
 	UIInputManagerUpdate();
 	//LOG(std::to_string(mouse_x_motion).c_str());
 
-	if (quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
+	if (quit == true/* || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP*/)
+	{
+		LOG("QUIT");
 		return UPDATE_STOP;
-
+	}
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
@@ -370,6 +380,7 @@ int ModuleInput::GetMouseYMotionNormalized()
 
 update_status ModuleInput::UpdateConfig(float dt)
 {
+
 	ImGui::Text("Mouse Data");
 	ImGui::Spacing();
 	ImGui::Text("Mouse Position:"); ImGui::SameLine();
@@ -442,72 +453,85 @@ bool ModuleInput::CleanUp()
 
 void ModuleInput::UIInputManagerUpdate()
 {
-	if (!ui_conected || ui_manager == nullptr)
-		return;
-	if (!ui_manager->GetActiveInput())
-		return;
+	if (App->mode_game|| App->engine_state != EngineState::STOP) {
 
-	std::vector<KeyAction*> vect_temp = ui_manager->GetKey(submit.c_str());
-	for (int i = 0; i < vect_temp.size(); i++)
-	{
-		if (vect_temp[i]->OnClick())
+		if (!ui_conected || ui_manager == nullptr)
+			return;
+		if (!ui_manager->GetActiveInput())
+			return;
+
+		std::vector<KeyAction*> vect_temp = ui_manager->GetKey(submit.c_str());
+		for (int i = 0; i < vect_temp.size(); i++)
 		{
-			Event mouse_event;
-			mouse_event.gui_submit.type = EventType::EVENT_SUBMIT;
-			mouse_event.gui_submit.active = true;
-			PushEvent(mouse_event);
+			if (vect_temp[i]->OnClick())
+			{
+				Event mouse_event;
+				mouse_event.Set_event_data(EventType::EVENT_SUBMIT);
+				mouse_event.gui_submit.active = true;
+				PushEvent(mouse_event);
 
+			}
 		}
-	}
-	vect_temp.clear();
-	vect_temp = ui_manager->GetKey(cancel.c_str());
-	for (int i = 0; i < vect_temp.size(); i++)
-	{
-		if (vect_temp[i]->OnClick())
+		vect_temp.clear();
+		vect_temp = ui_manager->GetKey(cancel.c_str());
+		for (int i = 0; i < vect_temp.size(); i++)
 		{
+			if (vect_temp[i]->OnClick())
+			{
 
-			Event mouse_event;
-			mouse_event.gui_cancel.type = EventType::EVENT_CANCEL;
-			mouse_event.gui_cancel.active = true;
-			PushEvent(mouse_event);
+				Event mouse_event;
+				mouse_event.Set_event_data(EventType::EVENT_CANCEL);
+				mouse_event.gui_cancel.active = true;
+				PushEvent(mouse_event);
+			}
 		}
-	}
-	vect_temp.clear();
+		vect_temp.clear();
+		std::vector<ControllerAxisAction*> axis_temp = ui_manager->GetAxisVector(vertical.c_str());
+		for (int i = 0; i < axis_temp.size(); i++)
+		{
+			if (axis_temp[i]->direction_axis > 0.8f)
+			{
+				Event mouse_event;
+				mouse_event.Set_event_data(EventType::EVENT_AXIS);
+				mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
+				mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_DOWN;
+				PushEvent(mouse_event);
 
-	if (ui_manager->GetAxis(vertical.c_str())->direction_axis > 0.8f)
-	{
-		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
-		mouse_event.gui_axis.value = ui_manager->GetAxis(vertical.c_str())->direction_axis;
-		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_DOWN;
-		PushEvent(mouse_event);
+			}
+			else if (axis_temp[i]->direction_axis < -0.8f)
+			{
+				Event mouse_event;
+				mouse_event.Set_event_data(EventType::EVENT_AXIS);
+				mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
+				mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_UP;
+				PushEvent(mouse_event);
 
-	}
-	else if (ui_manager->GetAxis(vertical.c_str())->direction_axis < -0.8f)
-	{
-		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
-		mouse_event.gui_axis.value = ui_manager->GetAxis(vertical.c_str())->direction_axis;
-		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_UP;
-		PushEvent(mouse_event);
+			}
+		}
+		axis_temp.clear();
+		axis_temp = ui_manager->GetAxisVector(horizontal.c_str());
+		for (int i = 0; i < axis_temp.size(); i++)
+		{
+			if (axis_temp[i]->direction_axis > 0.8f)
+			{
+				Event mouse_event;
+				mouse_event.Set_event_data(EventType::EVENT_AXIS);
+				mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
+				mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_RIGHT;
+				PushEvent(mouse_event);
 
-	}
-	if (ui_manager->GetAxis(horizontal.c_str())->direction_axis > 0.8f)
-	{
-		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
-		mouse_event.gui_axis.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
-		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_RIGHT;
-		PushEvent(mouse_event);
-	}
-	else if (ui_manager->GetAxis(horizontal.c_str())->direction_axis < -0.8f)
-	{
-		Event mouse_event;
-		mouse_event.gui_axis.type = EventType::EVENT_AXIS;
-		mouse_event.gui_axis.value = ui_manager->GetAxis(horizontal.c_str())->direction_axis;
-		mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_LEFT;
-		PushEvent(mouse_event);
+			}
+			else if (axis_temp[i]->direction_axis < -0.8f)
+			{
+				Event mouse_event;
+				mouse_event.Set_event_data(EventType::EVENT_AXIS);
+				mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
+				mouse_event.gui_axis.direction = mouse_event.gui_axis.DIRECTION_LEFT;
+				PushEvent(mouse_event);
 
+			}
+		}
+		axis_temp.clear();
 	}
 }
 

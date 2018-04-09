@@ -9,6 +9,7 @@
 #include "ModuleFS.h"
 ModuleAnimation::ModuleAnimation()
 {
+	name = "UI Animation";
 }
 
 

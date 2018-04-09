@@ -2,6 +2,7 @@
 #define _RESOURCEMESH_
 
 #include "Resource_.h"
+#include "MathGeoLib.h"
 #include "Math\float4x4.h"
 #include "Math/float3.h"
 #include "Math/float2.h"
@@ -15,6 +16,7 @@ struct Vertex
 
 struct ImportBone
 {
+
 	struct Weight
 	{
 		Weight(float weight, uint vertex_id) : weight(weight), vertex_id(vertex_id)
@@ -30,6 +32,17 @@ struct ImportBone
 	float4x4 offset;
 	uint num_weights;
 	Weight* weights;
+
+	~ImportBone()
+	{
+		RELEASE_ARRAY(weights);
+	}
+
+	void Clear()
+	{
+		RELEASE_ARRAY(weights);
+	}
+
 };
 
 struct SkeletonSource
@@ -44,7 +57,20 @@ struct SkeletonSource
 
 	~SkeletonSource()
 	{
+		for (uint i = 0; i < bones.size(); i++)
+		{
+			bones[i].~ImportBone();
+		}
+		bones.clear();
+		bone_hirarchy_num_childs.clear();
+		bone_hirarchy_local_transforms.clear();
+
 		delete [] bone_hirarchy_names;
+		for (uint i = 0; i < vertex_weights.size(); i++)
+		{
+			vertex_weights[i].clear();
+		}
+		vertex_weights.clear();
 	}
 };
 
@@ -60,6 +86,7 @@ public:
 
 	void DeleteToMemory();
 	bool LoadToMemory();
+	void LoadAABBBox();
 	Resource::State IsLoadedToMemory();
 
 	bool HasSkeleton() const;
@@ -75,6 +102,7 @@ public:
 	std::vector<uint> indices;
 	std::vector<float3> vertices_normals;
 
+	math::AABB aabb_box;
 	//std::vector<FaceCenter> face_centers;
 
 	//uint VAO = 0;				/* Vertex Array Object */

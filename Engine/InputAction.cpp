@@ -84,6 +84,7 @@ bool ControllerAxisAction::ProcessEventAction(SDL_Event * input_event)
 {
 	if (positive_button->key_type == KeyBindingType::CONTROLLER_AXIS_DEVICE)
 	{
+
 		if (input_event->type == SDL_CONTROLLERAXISMOTION)
 		{
 			if (input_event->caxis.axis == positive_button->event_value) {
@@ -154,6 +155,7 @@ bool KeyAction::DetectAction(const SDL_Event &input_event) {
 		break;
 
 	case KeyBindingType::CONTROLLER_BUTTON_DEVICE:
+
 
 
 		if (input_event.type == SDL_CONTROLLERBUTTONDOWN)

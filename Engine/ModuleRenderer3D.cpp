@@ -16,6 +16,7 @@
 #include"Devil\include\ilut.h"
 #include "DefaultShaders.h"
 #include "Materials.h"
+#include "ModuleTextures.h"
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
@@ -39,11 +40,7 @@ ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled)
 // Destructor
 ModuleRenderer3D::~ModuleRenderer3D()
 {
-	RELEASE(particles_shader);
-	RELEASE(lights_billboard_shader);
-	RELEASE(default_material);
-	RELEASE(default_texture);
-	RELEASE(non_glow_shader);
+
 }
 
 // Called before render is available
@@ -180,24 +177,27 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 
 	default_shader = App->module_shaders->CreateDefaultShader("Default Shader", fragmentShaderSource, vertexShaderSource, nullptr, true);
-	lights_billboard_shader = App->module_shaders->CreateDefaultShader("Billboard Lights Shader", DefaultFrag, DefaultVert, nullptr);
+	lights_billboard_shader = App->module_shaders->CreateDefaultShader("Billboard Lights Shader", DefaultFrag, DefaultVert, nullptr,true);
 
-	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", DefaultFrag, DefaultVert, nullptr);
-	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr);
-	blur_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr);
-	final_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", FinalFrag, TextureVert, nullptr);
+	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", DefaultFrag, DefaultVert, nullptr, true);
+	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr, true);
+	blur_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr, true);
+	final_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", FinalFrag, TextureVert, nullptr, true);
 
 	non_glow_material = new Material();
 	non_glow_material->name = "Non Glow Material";
 	non_glow_material->material_shader = non_glow_shader;
 	non_glow_material->GetProgramVariables();
-
+	App->module_shaders->materials.push_back(non_glow_material);
+	non_glow_material->active_num = 1;
 
 	final_tex_material = new Material();
 	final_tex_material->name = "Final Tex Material";
-	final_tex_material->material_shader = non_glow_shader;
+	final_tex_material->material_shader = final_shader_tex;
 	final_tex_material->GetProgramVariables();
 	App->module_shaders->materials.push_back(final_tex_material);
+	final_tex_material->active_num = 1;
+	dmg_texture_id = App->textures->LoadTexture("Assets/Damage2.png");
 
 	default_material = new Material();
 	default_material->name = "Default Material";
@@ -420,6 +420,9 @@ bool ModuleRenderer3D::CleanUp()
 {
 	LOG("Destroying 3D Renderer");
 
+	RELEASE(default_texture);
+	RELEASE(default_material);
+
 	SDL_GL_DeleteContext(context);
 
 	return true;
@@ -638,5 +641,9 @@ void ModuleRenderer3D::GlowShaderVars()
 	glBindTexture(GL_TEXTURE_2D, App->scene->vertical_blur_buff->GetTexture());
 	glUniform1i(texLoc, 1);
 
+	glActiveTexture(GL_TEXTURE2);
+	texLoc = glGetUniformLocation(final_shader_tex->programID, "_dmg_tex");
+	glBindTexture(GL_TEXTURE_2D, dmg_texture_id);
+	glUniform1i(texLoc, 2);
 
 }

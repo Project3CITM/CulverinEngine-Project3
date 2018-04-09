@@ -81,7 +81,7 @@ public:
 	std::string name_param;
 	std::string name_method;
 	VarType type = Var_UNKNOWN;
-
+	uint references;
 private:
 	MonoMethod* method = nullptr;
 	MonoObject* Script = nullptr;
@@ -147,6 +147,7 @@ public:
 
 	//GET functions ------------------------------------
 	MonoObject* GetMonoObject() const;
+	uint GetReferences() const;
 	void SetMonoObject(MonoObject* new_object);
 	MonoClass* GetMonoClass() const;
 
@@ -260,6 +261,7 @@ public:
 	void		SetActiveBlendingClip(MonoObject* object, MonoString* name);
 	void		SetActiveBlendingClipWeight(MonoObject* object, float weight);
 	void		SetBlendInTime(MonoObject* object, MonoString* name, float time);
+	void		PlayAnimationNode(MonoObject* object, MonoString* name);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
@@ -271,12 +273,18 @@ public:
 	void		FillAmount(MonoObject * object, float value);
 	void		ActivateRender(MonoObject * object);
 	void		DeactivateRender(MonoObject * object);
+	void		SetAlpha(MonoObject * object, float alpha);
+	void		SetText(MonoObject * object, MonoString* string);
+	void		SetColor(MonoObject * object, MonoObject * color, float alpha);
 
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
+	MonoObject* GetContactPoint(MonoObject* object);
+	MonoObject* GetContactNormal(MonoObject* object);
 	void		MoveStaticColliderTo(MonoObject* object, MonoObject* positio);
 	void		CallOnContact(MonoObject* object);
 	void		CallOnTriggerEnter(MonoObject* object);
+	void		CollisionActive(MonoObject* object, bool active);
 
 	/*RigidBody*/
 	MonoObject* GetColliderPosition(MonoObject* object);
@@ -287,7 +295,11 @@ public:
 	void		ApplyImpulse(MonoObject* object, MonoObject* impulse);
 	void		ApplyTorqueForce(MonoObject* object, MonoObject* force);
 	void		ApplyTorqueImpulse(MonoObject* object, MonoObject* impulse);
+	void		LockMotion(MonoObject* object);
+	void		LockRotation(MonoObject* object);
 	void		LockTransform(MonoObject* object);
+	void		UnLockMotion(MonoObject* object);
+	void		UnLockRotation(MonoObject* object);
 	void		UnLockTransform(MonoObject* object);
 	void		ResetForce(MonoObject* object);
 	void		WakeUp(MonoObject* object);
@@ -326,6 +338,7 @@ public:
 
 	/*Material*/
 	void		SetBool(MonoObject* object, MonoString* name, bool value);
+	void		SetFloat(MonoObject* object, MonoString* name, float value);
 	MonoObject*	GetMaterialByName(MonoString* name);
 
 	// LOAD - SAVE METHODS ------------------
@@ -341,7 +354,6 @@ public:
 	std::vector<PublicMethod> methods;
 
 private:
-	bool test = false;
 
 	//Auxiliar map to fill variables vector with info
 	std::map<MonoClassField*, MonoType*> field_type;
@@ -353,6 +365,7 @@ private:
 	MonoImage* CSimage = nullptr;
 	MonoClass* CSClass = nullptr;
 	MonoObject* CSObject = nullptr;
+	uint CSReference;
 	//MonoObject* CSSelfObject = nullptr;
 	GameObject* own_game_object = nullptr;
 

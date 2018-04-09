@@ -26,9 +26,21 @@ public class PerceptionManager : CulverinBehaviour
         if (!AnyEvent())
             return;
 
+        if(perception_events_queue == null)
+        {
+            Debug.Log("VERY BAD THING:Perception events queue is null");
+            return;
+        }
+
         foreach(PerceptionEvent perception_event in perception_events_queue)
         {
-            SendEventtoListeners(perception_event);
+            if (perception_event != null) {
+                SendEventtoListeners(perception_event);
+            }
+            else
+            {
+                Debug.Log("[error]Perception manager: An event null");
+            }
         }
 
         //Clean frame events

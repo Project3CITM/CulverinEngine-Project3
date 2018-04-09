@@ -16,7 +16,7 @@
 CompText::CompText(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Text";
+	name_component = "CompText";
 	glGenTextures(1, &id_font);
 	RELEASE_ARRAY(input_text);
 	ReSizeInput();
@@ -259,6 +259,8 @@ void CompText::SetRect(float x, float y, float width, float height)
 
 void CompText::SetString(std::string input)
 {
+	if (input.size() > max_input)
+		return;
 	text_str = input;
 	UpdateText();
 	GenerateText();
@@ -490,11 +492,17 @@ void CompText::Load(const JSON_Object * object, std::string name)
 }
 void CompText::SyncComponent(GameObject* sync_parent)
 {
+
 	AddRectTransform();
 	AddCanvasRender();
 	AddCanvas();
 	if (my_canvas_render != nullptr&&my_canvas != nullptr)
 	{
+		if (text != nullptr)
+		{
+			text->SetSize(text_size);
+			text->ReLoadToMemory();
+		}
 		UpdateText();
 		GenerateText();
 	}

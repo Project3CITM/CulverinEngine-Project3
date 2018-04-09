@@ -57,6 +57,9 @@ CompRigidBody::CompRigidBody(const CompRigidBody & copy, GameObject * parent) : 
 
 	kinematic = copy.kinematic;
 	body->SetAsKinematic(kinematic);
+
+	lock_move = copy.lock_move;
+	SetDinamicLockFlags();
 }
 
 CompRigidBody::~CompRigidBody()
@@ -65,7 +68,7 @@ CompRigidBody::~CompRigidBody()
 
 void CompRigidBody::PreUpdate(float dt)
 {
-	if (((dt > 0 && body && !kinematic) || (own_update)) && !transform->GetToUpdate())
+	if (((dt > 0 && body && !kinematic && lock_move != 63) || (own_update)) && !transform->GetToUpdate())
 	{
 		own_update = true;
 		UpdateParentPosition();
@@ -99,7 +102,7 @@ void CompRigidBody::Clear()
 		collider_comp = nullptr;
 		body = nullptr;
 	}
-	else if(body != nullptr)
+	else if (body != nullptr)
 	{
 		App->physics->DeleteCollider(this, body);
 		body = nullptr;
@@ -171,7 +174,12 @@ void CompRigidBody::ShowInspectorInfo()
 
 	if (ImGui::Checkbox("Kinematic", &kinematic))
 	{
-		body->SetAsKinematic(true);
+		body->SetAsKinematic(kinematic);
+		
+		if (!kinematic)
+		{
+			SetDinamicLockFlags();
+		}
 	}
 	ImGui::Separator();
 
@@ -181,7 +189,10 @@ void CompRigidBody::ShowInspectorInfo()
 		{
 			sleep_time = -sleep_time;
 		}
-		body->SetSleepTime(sleep_time);
+		if (!kinematic)
+		{
+			body->SetSleepTime(sleep_time);
+		}
 	}
 
 	// Lock Linear move -----------------
@@ -189,7 +200,7 @@ void CompRigidBody::ShowInspectorInfo()
 	bool flags = (lock_move & (1 << 0));
 	if (ImGui::Checkbox("X", &flags))
 	{
-		(flags)? lock_move |= (1 << 0): lock_move &= ~(1 << 0);
+		(flags) ? lock_move |= (1 << 0) : lock_move &= ~(1 << 0);
 		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, flags);
 	}
 	ImGui::SameLine();
@@ -230,7 +241,7 @@ void CompRigidBody::ShowInspectorInfo()
 		(flags) ? lock_move |= (1 << 5) : lock_move &= ~(1 << 5);
 		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, flags);
 	}
-	
+
 	ImGui::TreePop();
 }
 
@@ -267,32 +278,11 @@ void CompRigidBody::SyncComponent(GameObject* sync_parent)
 {
 	body->SetAsKinematic(kinematic);
 
-	if ((lock_move & (1 << 0)))
+	if (!kinematic)
 	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
+		body->SetSleepTime(sleep_time);
+		SetDinamicLockFlags();
 	}
-	if (lock_move & (1 << 1))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
-	}
-	if (lock_move & (1 << 2))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
-	}
-	if (lock_move & (1 << 3))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
-	}
-	if (lock_move & (1 << 4))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
-	}
-	if (lock_move & (1 << 5))
-	{
-		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
-	}
-	
-	body->SetSleepTime(sleep_time);
 }
 
 bool CompRigidBody::IsKinematic()
@@ -307,13 +297,13 @@ bool CompRigidBody::HaveBodyShape()
 
 void CompRigidBody::SetColliderPosition()
 {
-	Quat quat = transform->GetRotGlobal();
+	Quat quat = transform->GetRotParent()*transform->GetRot();
 	float3 fpos = transform->GetPosGlobal();
 
 	if (collider_comp)
 	{
-		 quat = quat*collider_comp->GetLocalQuat();
-		 fpos = fpos + quat * collider_comp->GetPosition();
+		quat = quat * collider_comp->GetLocalQuat();
+		fpos = fpos + quat * collider_comp->GetPosition();
 	}
 
 	body->SetTransform(fpos, quat);
@@ -322,10 +312,20 @@ void CompRigidBody::SetColliderPosition()
 
 void CompRigidBody::SetMomentumToZero()
 {
-	if (body)
+	if (body && !kinematic)
 	{
 		body->ResetForces();
 	}
+}
+
+void CompRigidBody::SetDinamicLockFlags()
+{
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, lock_move & (1 << 0));
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, lock_move & (1 << 1));
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, lock_move & (1 << 2));
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, lock_move & (1 << 3));
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, lock_move & (1 << 4));
+	body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, lock_move & (1 << 5));
 }
 
 void CompRigidBody::SetColliderComp(CompCollider * new_comp)
@@ -388,27 +388,27 @@ void CompRigidBody::RemoveJoint()
 	}
 }
 
-void CompRigidBody::OnTriggerEnter(Component * trigger)
+void CompRigidBody::OnTriggerEnter(Component* actor1)
 {
 	if (collider_comp)
 	{
-		collider_comp->OnTriggerEnter(trigger);
+		collider_comp->OnTriggerEnter(actor1);
 	}
 }
 
-void CompRigidBody::OnTriggerLost(Component * trigger)
+void CompRigidBody::OnTriggerLost(Component* actor1)
 {
 	if (collider_comp)
 	{
-		collider_comp->OnTriggerLost(trigger);
+		collider_comp->OnTriggerLost(actor1);
 	}
 }
 
-void CompRigidBody::OnContact(Component * actor)
+void CompRigidBody::OnContact(CollisionData new_data)
 {
 	if (collider_comp)
 	{
-		collider_comp->OnContact(actor);
+		collider_comp->OnContact(new_data);
 	}
 }
 
@@ -457,12 +457,64 @@ void CompRigidBody::ApplyTorqueImpulse(float3 impulse)
 	}
 }
 
+void CompRigidBody::LockMotion()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
+		lock_move |= (1 << 0);
+		lock_move |= (1 << 1);
+		lock_move |= (1 << 2);
+	}
+}
+
+void CompRigidBody::LockRotation()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+		lock_move |= (1 << 3);
+		lock_move |= (1 << 4);
+		lock_move |= (1 << 5);
+	}
+}
+
 void CompRigidBody::LockTransform()
 {
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(true);
-		body->SetAsKinematic(true);
+		lock_move = 63;
+	}
+}
+
+void CompRigidBody::UnLockMotion()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, false);
+		lock_move &= ~(1 << 0);
+		lock_move &= ~(1 << 1);
+		lock_move &= ~(1 << 2);
+	}
+}
+
+void CompRigidBody::UnLockRotation()
+{
+	if (body && !kinematic)
+	{
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, false);
+		body->SetDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, false);
+		lock_move &= ~(1 << 3);
+		lock_move &= ~(1 << 4);
+		lock_move &= ~(1 << 5);
 	}
 }
 
@@ -471,7 +523,7 @@ void CompRigidBody::UnLockTransform()
 	if (body && !kinematic)
 	{
 		body->SetDynamicLock(false);
-		body->SetAsKinematic(kinematic);
+		lock_move = 0;
 	}
 }
 

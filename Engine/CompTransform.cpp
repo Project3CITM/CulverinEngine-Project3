@@ -94,11 +94,6 @@ void CompTransform::Update(float dt)
 				}
 			}
 
-			if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN)
-			{
-				SetUpVector(float3(0, 0.7, 0.7));
-			}
-
 			// EDIT TRANSFORM QITH GUIZMO
 			ImGuizmo::Manipulate(App->camera->GetViewMatrix(), App->camera->GetProjMatrix(), mCurrentGizmoOperation, transform_mode, global_transposed.ptr());
 
@@ -237,18 +232,18 @@ void CompTransform::ShowInspectorInfo()
 	// SHOW OUTPUT (depending on mode and if transform is freezed) ---------------
 	if (App->engine_state == EngineState::STOP)
 	{
-		ShowTransform(0.5f); // 0.5f = drag speed of editor variables of the transform
+		ShowTransform(SPEED); // 0.5f = drag speed of editor variables of the transform
 	}
 	else
 	{
 		// In game mode, you can't edit transforms of static objects
 		if (freeze)
 		{
-			ShowTransform(0.0f);  // 0.0f = no editable
+			ShowTransform(SPEED);  // 0.0f = no editable
 		}
 		else
 		{
-			ShowTransform(0.5f);
+			ShowTransform(SPEED);
 		}
 	}
 	// ------------------------------------------------------------------
@@ -310,7 +305,7 @@ void CompTransform::ShowTransform(float drag_speed)
 		ImGui::Text("Scale"); ImGui::SameLine(op + 30);
 		if (ImGui::DragFloat3("##scale", &scale_global[0], drag_speed))
 		{
-			SetRotGlobal(scale_global);
+			SetScaleGlobal(scale_global);
 			editing_transform = true;
 		}
 		break;
@@ -327,24 +322,10 @@ void CompTransform::ShowTransform(float drag_speed)
 
 void CompTransform::SyncComponent(GameObject * sync_parent)
 {
-	if (toUpdate)
-	{
-		if (parentUpdate)
-		{
-			UpdateMatrix(ImGuizmo::LOCAL);
-			parentUpdate = false;
-		}
-		else
-		{
-			UpdateMatrix(transform_mode);
-		}
-		toUpdate = false;
-		updated = true;
-	}
-	else
-	{
-		updated = false;
-	}
+	UpdateMatrix(transform_mode);
+	parentUpdate = false;
+	toUpdate = false;
+	updated = true;
 }
 
 void CompTransform::SetPosGlobal(float3 pos)
@@ -599,20 +580,16 @@ void CompTransform::SetForwardVector(float3 vec)
 	float3 right = math::Cross(up, vec).Normalized();
 	up = math::Cross(vec,right).Normalized();
 
-	float3 translation = global_transform.TranslatePart();
+	float4x4 new_transform = float4x4(float3x3(right, up, vec));
 
-	float4x4 new_transform(float3x4(right, up, vec, translation));
-
-	GameObject* parent_go = parent->GetParent();
-
-	if (parent_go != nullptr)
+	const GameObject* parentparent = parent->GetParent();
+	if (parentparent != nullptr)
 	{
-		float4x4 parent_transform = parent_go->GetComponentTransform()->GetGlobalTransform();
-		local_transform = parent_transform.Inverted() * new_transform;
+		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
 	}
-	else
-		local_transform = new_transform;
-
+	rotation_euler = new_transform.ToEulerXYZ();
+	rotation = Quat::FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation_euler *= RADTODEG;
 	toUpdate = true;
 }
 
@@ -637,8 +614,8 @@ void CompTransform::SetUpVector(float3 vec)
 	{
 		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
 	}
-	rotation_euler = new_transform.ToEulerXYZ();;
-	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation_euler = new_transform.ToEulerXYZ();
+	rotation = Quat::FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
 	rotation_euler *= RADTODEG;
 	toUpdate = true;
 }
@@ -664,7 +641,7 @@ void CompTransform::SetRightVector(float3 vec)
 		new_transform = ((CompTransform*)parentparent->FindComponentByType(C_TRANSFORM))->GetGlobalTransform().Inverted()*new_transform;
 	}
 	rotation_euler = new_transform.ToEulerXYZ();;
-	rotation.FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
+	rotation = Quat::FromEulerXYZ(rotation_euler.x, rotation_euler.y, rotation_euler.z);
 	rotation_euler *= RADTODEG;
 	toUpdate = true;
 }
@@ -830,5 +807,6 @@ void CompTransform::Load(const JSON_Object* object, std::string name)
 	float4 rotation = App->fs->json_array_dotget_float4_string(object, name + "Rotation");
 	float3 scale = App->fs->json_array_dotget_float3_string(object, name + "Scale");
 	Init(position, rotation, scale);
+	
 	Enable();
 }

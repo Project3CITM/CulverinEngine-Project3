@@ -5,20 +5,31 @@ using CulverinEditor.Map;
 public class DamageFeedback: CulverinBehaviour
 {
     Material mat;
-    bool test;
+    bool damage;
+    float alpha;
     void Start()
     {
         mat = GetMaterialByName("Final Tex Material");
-        test = false;
+        damage = false;
+        alpha = 0;
     }
     void Update()
     {
-        mat.SetBool("test", test);
-
+        mat.SetBool("damage", damage);
+        mat.SetFloat("alpha", alpha);
         if (Input.GetKeyDown(KeyCode.Q))
-            test = !test;
+        {
+            alpha = 1.0f;
+            damage = true;
+        }
 
+        if (alpha > 0.0f)
+            alpha -= Time.deltaTime ;
       
+        if(alpha <= 0.0f)
+        {
+            damage = false;
+        }
     }
 
 

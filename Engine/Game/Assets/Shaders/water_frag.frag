@@ -3,13 +3,14 @@
 #define MAX_LIGHTS 30
 uniform int _numLights;
 uniform struct Light {
-	vec3 position;
-	int type;
-	vec4 l_color; //a.k.a the color of the light
-	float intensity;
-	float ambientCoefficient;
-    float radius; 
-
+    vec3 position;
+    int type;
+    vec4 l_color; //a.k.a the color of the light
+    vec4 properties;
+    float ambientCoefficient;
+    float radius;
+   
+ 
 } _lights[MAX_LIGHTS];
 
 in vec4 ourColor;
@@ -52,7 +53,7 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
 	vec3 v = normalize(_cameraPosition - surfacePos);										 
 		
 																				 
-	float lightInt = light.intensity;
+	float lightInt =  light.properties[0];
   			
 																		 
 	vec3 normal =  ourNormal ;							 
@@ -77,21 +78,22 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
 	}																									 
 																										 
 	else {		
-		vec3 lightpos =  light.position;																			 
-		vec3 s =  normalize(lightpos - surfacePos);       
+				
+        vec3 lightpos =  light.position;                                                                             
+        vec3 s =  normalize(lightpos - surfacePos);      
         vec3 r = reflect(-s,normal);
-
-        float cosTheta = clamp( dot( s,normal ), 0.3,1 );       
-        float cosAlpha = clamp( dot( v,r ), 0.3,1 ) ;												 
-																										 
-		float d = length((lightpos - surfacePos));									 
-		float attenuation = max(light.ambientCoefficient,clamp(((light.radius * light.radius)/(d * d)),0,1)* lightInt);									 
-																										 
-		float diffuse = attenuation * Kd * cosTheta;					 
-		float spec = attenuation * Ks* pow(cosAlpha, shininess);
-																												 
-		return vec3(diffuse,spec,attenuation);																 
-																												 
+ 
+       float cosTheta = clamp( dot( s,normal ), 0.3,1 );       
+        float cosAlpha = clamp( dot( v,r ), 0.3,1 ) ;	                                             
+                                                                                                         
+        float d = length((lightpos - surfacePos));
+        float attenuation =1/(light.properties[1] + light.properties[2]* d + light.properties[3] * d*d);
+        attenuation *= lightInt;                                   
+        float diffuse = attenuation * Kd  * cosTheta;                    
+        float spec = attenuation * Ks * pow(cosAlpha,shininess);
+                                                                                                                 
+        return vec3(diffuse,spec,attenuation);                                                               
+                                                              															 
 																												 
 	}																											 
 																												 

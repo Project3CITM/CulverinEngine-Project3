@@ -43,7 +43,6 @@ public:
 
 	int GetMouseXMotionNormalized();
 	int GetMouseYMotionNormalized();
-
 	SDL_Scancode GetKeyFromName(const char* name);
 
 	KEY_STATE GetKey(int id) const
@@ -104,12 +103,17 @@ public:
 	{
 		return mouse_y_motion_global;
 	}
-
+	bool GetPressAnyKey()const
+	{
+		return press_any_key;
+	}
 	void SetMotionGlobal(int x, int y)
 	{
 		mouse_x_global = x;
 		mouse_y_global = y;
 	}
+public:
+	bool quit = false;
 
 private:
 	KEY_STATE* keyboard;
@@ -121,7 +125,7 @@ private:
 	int mouse_y_motion = 0;
 
 	bool chek = false;
-
+	bool press_any_key = false;
 	int mouse_x_global = 0;
 	int mouse_y_global = 0;
 	int mouse_x_motion_global = 0;

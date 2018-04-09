@@ -41,6 +41,19 @@ public class PuzzleCountdown:CulverinBehaviour
 
     }
 
+    public void StopCountdown()
+    {
+
+        current_time = 0.0f;
+        active = false;
+        state = 1;
+       // Audio.ChangeState("PuzzleCountDownState", "State1");
+        //audio = GetComponent<CompAudio>();
+        audio.StopEvent("StartPuzzleCountdown");
+        //Debug.Log("Playing countdown sound");
+
+    }
+
     public bool IsCountdownOver()
     {
         if(current_time <= 0.0f && active == false)

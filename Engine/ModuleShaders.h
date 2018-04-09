@@ -71,6 +71,8 @@ public:
 	void SetUniform(uint ID, const GLchar* uniformName, int& v);
 	void SetUniform(uint ID, const GLchar* uniformName, float& v);
 
+	void SetUniformVariables(Material * material);
+
 	//Event system test
 	bool SetEventListenrs();
 	void OnEvent(Event& event);

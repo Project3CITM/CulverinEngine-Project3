@@ -32,8 +32,8 @@ void CompAudio::Update(float dt)
 {
 	if (transf != nullptr)
 	{
-		float3 pos = transf->GetPos();
-		Quat rot = transf->GetRot();
+		float3 pos = transf->GetPosGlobal();
+		Quat rot = transf->GetRotGlobal();
 
 		float3 up = rot.Transform(float3(0, 1, 0));
 		float3 front = rot.Transform(float3(0, 0, 1));

@@ -1,7 +1,9 @@
 #ifndef COMPONENT_LIGHT
 #define COMPONENT_LIGHT
 #include "Component.h"
-#include"MathGeoLib.h"
+#include "MathGeoLib.h"
+
+class ResourceMesh;
 
 enum Light_type {
 	NO_LIGHT_TYPE=-1,
@@ -48,6 +50,7 @@ public:
 	float4 color; //a.k.a. the color of the light
 
 	float ambientCoefficient=0.2;
+	float radius = 50;
 
 	float4 properties;
 	Light_type type;
@@ -59,6 +62,8 @@ public:
 	//---------
 
 	bool use_light_to_render = false;
+
+
 
 };
 

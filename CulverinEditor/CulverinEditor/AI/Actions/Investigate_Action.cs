@@ -16,23 +16,15 @@ public class Investigate_Action : Action
 
     INVESTIGATESTATE my_state;
     PerceptionEvent event_to_react;
-    CompAnimation anim;
     Movement_Action move;
     ACTION_RESULT move_return;
 
     public bool forgot_event = false;
 
     void Start()
-    {
-        anim = GetComponent<CompAnimation>();
-    }
+    {}
 
     public Investigate_Action()
-    {
-        action_type = ACTION_TYPE.INVESTIGATE_ACTION;
-    }
-
-    public Investigate_Action(float speed): base(speed)
     {
         action_type = ACTION_TYPE.INVESTIGATE_ACTION;
     }
@@ -49,6 +41,9 @@ public class Investigate_Action : Action
         init_tile_x = current_tile_x;
         init_tile_y = current_tile_y;
         my_state = INVESTIGATESTATE.GOING_TO_INVESTIGATE;
+
+        //TODO_AI:hear something audio
+        //GetComponent<CompAudio>().PlayEvent("Dracarys");
 
         return ret;
     }
@@ -71,6 +66,10 @@ public class Investigate_Action : Action
                 if (forgot_event == true)
                 {
                     move.GoTo(init_tile_x, init_tile_y);
+
+                    //Lost something audio
+                    //TODO_AI: Ivestigation audio
+                    //GetComponent<CompAudio>().PlayEvent("Dracarys");
 
                     my_state = INVESTIGATESTATE.RETURNING_TO_START;
 

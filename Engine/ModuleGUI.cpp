@@ -19,7 +19,7 @@
 #include "GameObject.h"
 #include "ModuleAudio.h"
 #include "ModuleMap.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEventSystemV2.h"
 #include "ShadersLib.h"
 #include "EventDef.h"
 #include "ImGui/imgui.h"
@@ -29,6 +29,11 @@
 #include "Algorithm/Random/LCG.h"
 #include "SDL/include/SDL.h"
 #include "ModuleShaders.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleImporter.h"
+#include "ImportMaterial.h"
+
+
 
 ModuleGUI::ModuleGUI(bool start_enabled): Module(start_enabled)
 {
@@ -51,6 +56,7 @@ ModuleGUI::~ModuleGUI()
 
 bool ModuleGUI::Init(JSON_Object* node)
 {
+	perf_timer.Start();
 	win_manager.push_back(new Hardware());		//0---- HARDWARE
 	win_manager.push_back(new Inspector());		//1---- INSPECTOR
 	win_manager.push_back(new Hierarchy());		//2---- Hierarchy
@@ -63,7 +69,7 @@ bool ModuleGUI::Init(JSON_Object* node)
 	win_manager[SCENEWORLD]->active[0].active = true;
 	win_manager[PROJECT]->active[0].active = true;
 
-	
+	Awake_t = perf_timer.ReadMs();
 	return true;
 }
 
@@ -77,6 +83,7 @@ bool ModuleGUI::Start()
 	io.Fonts->AddFontFromFileTTF("Fonts\\Ruda-Bold.ttf", 15);
 	io.Fonts->AddFontDefault();
 
+	RELEASE(App->scene->scene_buff);
 	App->scene->scene_buff = new FrameBuffer();
 	App->scene->scene_buff->Create(App->window->GetWidth(), App->window->GetHeight());
 
@@ -127,7 +134,7 @@ update_status ModuleGUI::Update(float dt)
 				if (App->scene->scene_saved)
 				{
 					App->scene->DeleteAllGameObjects(App->scene->root);
-					App->event_system->ClearEvents(EventType::EVENT_DRAW);
+					ClearEvents(EventType::EVENT_DRAW);
 					App->scene->root->SetName("NewScene");
 					App->scene->CreateMainCamera(nullptr);
 					App->resource_manager->ReImportAllScripts();
@@ -142,12 +149,19 @@ update_status ModuleGUI::Update(float dt)
 			{
 				App->WantToSave();
 			}
-			if (ImGui::MenuItem("Save Scene as...", false, false))
+			if (ImGui::MenuItem("Save Scene as...", NULL, false, false))
 			{
 			}
 			if (ImGui::MenuItem("Load Scene"))
 			{
 				App->WantToLoad();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Build Settings...", NULL, false, false))
+			{
+			}
+			if (ImGui::MenuItem("Build & Run", NULL, false, false))
+			{
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit", NULL, &window_exit))
@@ -254,6 +268,7 @@ update_status ModuleGUI::Update(float dt)
 					shader_program_creation_UI = true;
 					shader_program_creation = true;
 				}
+			
 				ImGui::EndMenu();
 			}
 			if (ImGui::MenuItem("Material"))
@@ -499,7 +514,7 @@ update_status ModuleGUI::Update(float dt)
 		if (ImGui::Button("Create")) {
 
 			Event shader_event;
-			shader_event.shader_editor.type = EventType::EVENT_OPEN_SHADER_EDITOR;
+			shader_event.Set_event_data(EventType::EVENT_OPEN_SHADER_EDITOR);
 			shader_event.shader_editor.name = str_shad_temp;
 
 			switch (combo_shaders) {
@@ -539,8 +554,6 @@ update_status ModuleGUI::Update(float dt)
 			shader_options += '\0';
 		}
 
-	
-
 		ImGui::Combo("Shader 1:", &combo_shaders_obj, shader_options.c_str());
 
 		ImGui::Combo("Shader 2:", &combo_shaders_obj2, shader_options.c_str());
@@ -549,7 +562,7 @@ update_status ModuleGUI::Update(float dt)
 		{
 
 			Event shader_event_prg;
-			shader_event_prg.shader_program.type = EventType::EVENT_CREATE_SHADER_PROGRAM;
+			shader_event_prg.Set_event_data(EventType::EVENT_CREATE_SHADER_PROGRAM);
 			shader_event_prg.shader_program.name = str_shad_prg_temp;
 
 			if (combo_shaders_obj != -1)
@@ -570,6 +583,8 @@ update_status ModuleGUI::Update(float dt)
 
 		ImGui::End();
 	}
+
+
 	
 	if (material_creation) {
 		if (ImGui::Begin("Shader Program Definition", &material_creation))
@@ -811,6 +826,11 @@ update_status ModuleGUI::UpdateConfig(float dt)
 	ImGui::Checkbox("##WindowInfoMouse", &window_infoMouse); ImGui::SameLine();
 	ImGui::Text("Info Mouse");
 
+	//develop_mode
+	ImGui::Checkbox("##develop_mode", &develop_mode); ImGui::SameLine();
+	ImGui::Text("Use Develop Mode"); ImGui::SameLine();
+	App->ShowHelpMarker("Be careful, you can make the engine explode!");
+
 	ImGui::PopStyleVar();
 
 
@@ -828,7 +848,10 @@ void ModuleGUI::LoadDocks()
 	config = json_value_get_object(config_file);
 	config_node = json_object_get_object(config, "Docking");
 	getDockContext()->LoadDock(config_node);
+	json_object_clear(config_node);
+	json_object_clear(config);
 	json_value_free(config_file);
+
 }
 
 void ModuleGUI::RevertStyleDocks()
@@ -1107,7 +1130,6 @@ void ModuleGUI::UpdateWindows(float dt)
 				int exc = App->engine_state;
 				App->SetState(EngineState::PLAY); // OR STOP
 				// -------------
-				//App->importer->iScript->ClearMonoMap();
 
 				if (exc == EngineState::STOP)
 				{
@@ -1289,7 +1311,7 @@ bool ModuleGUI::SetEventListenrs()
 
 void ModuleGUI::OnEvent(Event& event)
 {
-	switch (event.type)
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:
 		//need to fix std::pair

@@ -2,61 +2,42 @@
 using CulverinEditor.SceneManagement;
 using CulverinEditor.Debug;
 
-
-class StatsScore : CulverinBehaviour
+static public class StatsScore
 {
-    uint enem_killed = 0; // enemies player has killed
-    float puzzle_time = 0; // time wasted trying to solve puzzle
-    bool in_puzzle = false; //boolean to track if we are solving the puzzle (to track time)
-    uint puzzle_tries = 0; // tries used to solve the puzzle
-    uint characters_used = 0; //counter for tracking how many characters you have used (1,2 or 3)
-    //variables for Sergio Saez, to manage balancing though inspector
-    public int total_enemies = 0; //total enemies in the level
-    public int oneCoin_time_lvl = 0; //one coin time
-    public int twoCoin_time_lvl = 0; //two coin time
-    public int threeCoin_time_lvl = 0; //three coin time
+    static public uint enem_killed = 0; // enemies player has killed
+    static public uint puzzle_tries = 0; // tries used to solve the puzzle
+    static public uint characters_alive = 0; //counter for tracking how many characters you have used (1,2 or 3)
+    static public float time = 0.0f; //counter for tracking how many characters you have used (1,2 or 3)
 
-    void Start()
-    {
-        Time.StartTimePlay();
-    }
 
-    void Update()
-    {
-        if(in_puzzle)
-        {
-            puzzle_time += Time.deltaTime;
-        }
-    }
-    
-    void StartPuzzle()
-    {
-        puzzle_time = 0;
-        in_puzzle = true;
-    }
-    
-    void KillEnemy()
+ 
+    static public void KillEnemy()
     {
         enem_killed++;
     }
 
-    void PuzzleTry()
+    static public void PuzzleTry()
     {
         puzzle_tries++;
     }
 
-    void CharactUsed()
+    static public void CharacterDead()
     {
-        characters_used++;
+        characters_alive++;
     }
 
-    void ResetScore()
+    static public void GetTime()
     {
+        time = Time.timePlay;
+    }
+
+    static public void ResetScore()
+    {
+        Debug.Log("Reset Score");
+        time = 0.0f;
         enem_killed = 0;
-        puzzle_time = 0;
         puzzle_tries = 0;
-        characters_used = 0;
+        characters_alive = 0;
+        Time.StartTimePlay();
     }
-    
-
 }

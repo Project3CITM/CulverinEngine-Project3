@@ -90,12 +90,57 @@ void Hierarchy::ShowHierarchy()
 	}
 	ImGui::PopStyleVar();
 	// Iterate all root and show in Hierarchy all GameObjects -----------
-	App->scene->root->ShowHierarchy();
+	static ImGuiTextFilter filter;
+	static bool filt = false;
+	if (App->gui->develop_mode)
+	{
+		filter.Draw();
+		if (filter.IsActive())
+		{
+			if (!filt)
+			{
+				App->scene->search_name->GetChildsPtr()->clear();
+				App->scene->GetAllGameObjectsWithoutParents(App->scene->search_name, App->scene->root);
+			}
+
+			filt = true;
+		}
+		else
+		{
+			filt = false;
+		}
+		if (filt)
+		{
+			for (int i = 0; i < App->scene->search_name->GetNumChilds(); i++)
+			{
+				if (filter.PassFilter(App->scene->search_name->GetChildbyIndex(i)->GetName()))
+				{
+					App->scene->search_name->GetChildbyIndex(i)->ShowHierarchy(true);
+				}
+			}
+
+		}
+		else
+		{
+			App->scene->root->ShowHierarchy();
+		}
+	}
+	else
+	{
+		App->scene->root->ShowHierarchy();
+	}
+
+	if (App->scene->dontdestroyonload->GetNumChilds() > 0)
+	{
+		ImGui::Separator();
+		App->scene->dontdestroyonload->ShowHierarchy();
+		ImGui::Separator();
+	}
 
 	if (show_temporary_scene)
 	{
 		ImGui::Separator();
-		App->scene->temp_scene->ShowHierarchy();
+		App->scene->temporary_scene->ShowHierarchy();
 		ImGui::Separator();
 	}
 	// ----------------------------------------------------------------

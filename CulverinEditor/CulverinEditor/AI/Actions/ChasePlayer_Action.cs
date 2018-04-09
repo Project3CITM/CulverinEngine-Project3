@@ -1,12 +1,12 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using CulverinEditor.Pathfinding;
 
 public class ChasePlayer_Action : Action
 {
     PerceptionEvent event_to_react;
     Movement_Action move;
     ACTION_RESULT move_return;
-
     public bool forgot_event = false;
     public float check_player_timer = 1.0f;
     float timer = 0.0f;
@@ -21,30 +21,29 @@ public class ChasePlayer_Action : Action
         action_type = ACTION_TYPE.CHASE_ACTION;
     }
 
-    public ChasePlayer_Action(float speed):base(speed)
-    {
-        action_type = ACTION_TYPE.CHASE_ACTION;
-    }
-
     public override bool ActionStart()
     {
         event_to_react.start_counting = false;
-
-        move.GoToPrevious(event_to_react.objective_tile_x, event_to_react.objective_tile_y, true);
+        move.GoToPlayer();
+        //Debug.Log("[green] woooow party path");
+        interupt = false;
         bool ret = move.ActionStart();
         return ret;
     }
 
     public override bool ActionEnd()
     {
+        Debug.Log("[blue] chase player action end");
         interupt = false;
+        move.SetInterupt(false);
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true || forgot_event == true)
+        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true )
         {
+            //Debug.Log("[yellow] Move interruptus " + forgot_event + " " + GetComponent<Movement_Action>().NextToPlayer() + " " + interupt);
             move.Interupt();
         }
 
@@ -52,11 +51,10 @@ public class ChasePlayer_Action : Action
         {
             timer += Time.deltaTime;
 
-            if (timer >= check_player_timer)
+            if (timer >= check_player_timer && move.CenteredInTile())
             {
                 timer = 0.0f;
-                GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
-                move.GoToPrevious(player_x, player_y, true);
+                move.GoToPlayer();
             }
 
             if (GetComponent<PerceptionSightEnemy>().player_seen == false)
@@ -77,4 +75,10 @@ public class ChasePlayer_Action : Action
     {
         event_to_react = e;
     }
+
+    public void SetInterupt(bool i)
+    {
+        interupt = i;
+    }
+
 }

@@ -3,12 +3,10 @@ using CulverinEditor.Debug;
 
 class Engage_Action : Action
 {
-    public Engage_Action()
-    {
-        action_type = ACTION_TYPE.ENGAGE_ACTION;
-    }
+    public float duration = 1.0f;
+    bool play_audio = false;
 
-    public Engage_Action(float anim_speed) : base(anim_speed)
+    public Engage_Action()
     {
         action_type = ACTION_TYPE.ENGAGE_ACTION;
     }
@@ -17,12 +15,22 @@ class Engage_Action : Action
     {
         Debug.Log("Engage Start");
         GetComponent<CompAnimation>().SetTransition("ToDraw");
-        GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+        GetComponent<CompAnimation>().SetClipDuration("Draw", duration);
+
+        
+
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if(GetComponent<CompAnimation>().IsAnimOverXTime(0.2f) && !play_audio && GetComponent<EnemySpear_BT>() == null)
+        {
+            //TODO_AI: Engage action
+            GetComponent<CompAudio>().PlayEvent("Enemy_SwordDraw");
+            play_audio = true;
+        }
+
         if (GetComponent<CompAnimation>().IsAnimationStopped("Draw"))
             return ACTION_RESULT.AR_SUCCESS;
         return ACTION_RESULT.AR_IN_PROGRESS;
@@ -31,6 +39,7 @@ class Engage_Action : Action
     public override bool ActionEnd()
     {
         interupt = false;
+        play_audio = false;
         return true;
     }
 }
