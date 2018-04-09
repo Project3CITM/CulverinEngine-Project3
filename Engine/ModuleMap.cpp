@@ -579,7 +579,11 @@ void ModuleMap::ShowCreationMap()
 			ImGui::PopID();
 		}
 	}
-
+	bool do_numeration = false;
+	if (show_numeration)
+	{
+		do_numeration = true;
+	}
 	ImGui::NextColumn();
 	ImGui::PushItemWidth(10);
 	//ImGui::Separator();
@@ -621,36 +625,63 @@ void ModuleMap::ShowCreationMap()
 	int total_map = width_map * height_map;
 	for (int y = 0; y < height_map; y++)
 	{
-		for (int x = 0; x < width_map; x++)
+		if (do_numeration)
 		{
-			if (x > 0) ImGui::SameLine();
-			ImGui::PushID(x + y * 1000);
-			if (map[x][y] > -1)
+			do_numeration = false;
+			ShowTextWithColor(ImGuiCol_Button, 20);
+			ImGui::ButtonEx("", ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+			ImGui::SameLine();
+			ImGui::PopStyleColor();
+			for (int n = 0; n < width_map; n++)
 			{
-				ShowTextWithColor(ImGuiCol_Button, map[x][y]);
-				total_map--;
-			}
-			//	ImGui::OpenPopup("ID");
-			bool force_pop = false;
-			if (map[x][y] > -1)
-			{
-				force_pop = true;
-			}
-			if (ImGui::Button("ID"))
-			{
-				map[x][y] = paint;
-			}
-
-			if (map[x][y] > -1 && force_pop)
-			{
+				ShowTextWithColor(ImGuiCol_Button, 20);
+				ImGui::ButtonEx(std::to_string(n).c_str(), ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+				if (n + 1 < width_map)
+					ImGui::SameLine();
 				ImGui::PopStyleColor();
 			}
-			if (ImGui::BeginPopupContextItem("Options##maptile3d"))
+			y--;
+		}
+		else
+		{
+			if (show_numeration)
 			{
-				OptionsTile(x, y);
-				ImGui::EndPopup();
+				ShowTextWithColor(ImGuiCol_Button, 20);
+				ImGui::ButtonEx(std::to_string(y).c_str(), ImVec2(19, 0), ImGuiButtonFlags_Disabled);
+				ImGui::SameLine();
+				ImGui::PopStyleColor();
 			}
-			ImGui::PopID();
+			for (int x = 0; x < width_map; x++)
+			{
+				if (x > 0) ImGui::SameLine();
+				ImGui::PushID(x + y * 1000);
+				if (map[x][y] > -1)
+				{
+					ShowTextWithColor(ImGuiCol_Button, map[x][y]);
+					total_map--;
+				}
+				//	ImGui::OpenPopup("ID");
+				bool force_pop = false;
+				if (map[x][y] > -1)
+				{
+					force_pop = true;
+				}
+				if (ImGui::Button("ID"))
+				{
+					map[x][y] = paint;
+				}
+
+				if (map[x][y] > -1 && force_pop)
+				{
+					ImGui::PopStyleColor();
+				}
+				if (ImGui::BeginPopupContextItem("Options##maptile3d"))
+				{
+					OptionsTile(x, y);
+					ImGui::EndPopup();
+				}
+				ImGui::PopID();
+			}
 		}
 	}
 	ImGui::EndColumns();
@@ -1053,7 +1084,7 @@ void ModuleMap::ShowTextWithColor(ImGuiCol_ type,int id)
 	{
 		ImGui::PushStyleColor(type, ImVec4(0.55f, 0.45f, 0.3f, 1.0f));
 	}
-	else if (id >= 17) // ...
+	else if (id >= 17 && id != 20) // ...
 	{
 		ImGui::PushStyleColor(type, ImVec4(0.2f, 0.81f, 0.31f, 1.0f));
 	}
