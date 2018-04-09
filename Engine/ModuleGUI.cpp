@@ -149,12 +149,19 @@ update_status ModuleGUI::Update(float dt)
 			{
 				App->WantToSave();
 			}
-			if (ImGui::MenuItem("Save Scene as...", false, false))
+			if (ImGui::MenuItem("Save Scene as...", NULL, false, false))
 			{
 			}
 			if (ImGui::MenuItem("Load Scene"))
 			{
 				App->WantToLoad();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Build Settings...", NULL, false, false))
+			{
+			}
+			if (ImGui::MenuItem("Build & Run", NULL, false, false))
+			{
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit", NULL, &window_exit))
