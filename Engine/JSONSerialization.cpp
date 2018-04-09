@@ -1000,6 +1000,31 @@ void JSONSerialization::SaveFont(const ResourceFont * font, const char * directo
 	json_value_free(config_file);
 }
 
+void JSONSerialization::SaveConfig(std::string config_path, std::string game_name, std::string inital_scene, bool game_mode, bool full_screen, bool resizable_window, bool borderless, bool full_desktop)
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	config_file = json_parse_file(config_path.c_str());
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		// Application
+		json_object_dotset_boolean_with_std(config, "Application.Mode Game", game_mode);
+		std::string actual_scene = "Assets/";
+		actual_scene += inital_scene;
+		json_object_dotset_string_with_std(config, "Application.ActualScene", actual_scene.c_str());
+		// Application
+		json_object_dotset_string_with_std(config, "Window.Window Name", game_name.c_str());
+		json_object_dotset_boolean_with_std(config, "Window.Fullscreen", full_screen);
+		json_object_dotset_boolean_with_std(config, "Window.Resizable", resizable_window);
+		json_object_dotset_boolean_with_std(config, "Window.Borderless", borderless);
+		json_object_dotset_boolean_with_std(config, "Window.Full Desktop", full_desktop);
+	}
+	json_serialize_to_file(config_file, config_path.c_str());
+	json_value_free(config_file);
+}
+
 
 
 ReImport JSONSerialization::GetUUIDPrefab(const char* file, uint id)

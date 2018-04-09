@@ -51,6 +51,8 @@ ModuleGUI::~ModuleGUI()
 		delete win_manager[i];
 	}
 	win_manager.clear();
+	scenes_build.clear();
+	scenes_only_name.clear();
 }
 
 
@@ -157,8 +159,9 @@ update_status ModuleGUI::Update(float dt)
 				App->WantToLoad();
 			}
 			ImGui::Separator();
-			if (ImGui::MenuItem("Build Settings...", NULL, false, false))
+			if (ImGui::MenuItem("Build Settings...", "Ctrl + Shift + B"))
 			{
+				window_build = !window_build;
 			}
 			if (ImGui::MenuItem("Build & Run", NULL, false, false))
 			{
@@ -500,6 +503,12 @@ update_status ModuleGUI::Update(float dt)
 	if (window_create_animation)
 	{
 		App->animation_ui->ShowAnimationWindow(window_create_animation);
+	}
+	//----------------------------------------------
+	// Build Window
+	if (window_build && App->mode_game == false)
+	{
+		ShowWindowBuild(&window_build);
 	}
 	//----------------------------------------------
 	// Window Creating Shader Object --------------------------------

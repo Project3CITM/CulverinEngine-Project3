@@ -1618,6 +1618,9 @@
     <ClCompile Include="AK\DefaultIO\Common\AkFilePackageLUT.cpp">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleGUI_Build.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">
