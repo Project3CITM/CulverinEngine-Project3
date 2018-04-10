@@ -38,14 +38,6 @@ build:
   # MSBuild verbosity level
   verbosity: normal
   
-before_package:
-- ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\CulverinEngine.exe C:\projects\TempMotor3D_P3\Engine\Game\.
-- ps: Copy-Item C:\projects\TempMotor3D_P3\README.md C:\projects\TempMotor3D_P3\Engine\Game\.
-  
-artifacts:
-- path: Engine\Game
-  name: Culverine_Engine
-  
 #---------------------------------#
 #         notifications           #
 #---------------------------------#
@@ -77,47 +69,3 @@ notifications:
     on_build_success: false
     on_build_failure: true
     on_build_status_changed: false
-
-#---------------------------------#
-#     deployment configuration    #
-#---------------------------------#
-
-# providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
-# provider names are case-sensitive!
-
-for:
--
-  branches:
-    only:
-      - master
-      
-  # Deploy to GitHub Releases
-  deploy:
-  - provider: GitHub
-    description: Release
-    auth_token:
-      secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
-    artifact: Culverine_Engine
-    draft: false
-    prerelease: false
-    force_update: true
-    on:
-      CONFIGURATION: Release
-      
--
-  branches:
-    only:
-      - Develop
-
-  # Deploy to GitHub Releases
-  deploy:
-  - provider: GitHub
-    description: Release
-    auth_token:
-      secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
-    artifact: Culverine_Engine
-    draft: false
-    prerelease: true
-    force_update: true
-    on:
-      CONFIGURATION: Debug
