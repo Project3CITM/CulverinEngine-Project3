@@ -42,12 +42,16 @@
   <ItemGroup>
     <Compile Include="AI\Actions\Action.cs" />
     <Compile Include="AI\Actions\FacePlayer_Action.cs" />
+    <Compile Include="AI\Actions\InfiniteChasePlayer_Action.cs" />
     <Compile Include="AI\Actions\Separate_Action.cs" />
     <Compile Include="AI\Actions\SpearAttack_Action.cs" />
     <Compile Include="AI\Actions\Stun_Action.cs" />
     <Compile Include="AI\AIManager.cs" />
     <Compile Include="AI\Actions\Align_Steering.cs" />
     <Compile Include="AI\Actions\Arrive_Steering.cs" />
+    <Compile Include="AI\BossSight.cs" />
+    <Compile Include="AI\Boss_BT.cs" />
+    <Compile Include="AI\Boss_Listener.cs" />
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\Actions\ChasePlayer_Action.cs" />
     <Compile Include="AI\Actions\Die_Action.cs" />

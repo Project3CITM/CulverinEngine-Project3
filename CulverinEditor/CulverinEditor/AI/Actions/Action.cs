@@ -22,6 +22,7 @@ public class Action : CulverinBehaviour
         IDLE_ATTACK_ACTION,
         INVESTIGATE_ACTION,
         CHASE_ACTION,
+        INFINITE_CHASE_ACTION,
         SEPARATE_ACTION,
         FACE_PLAYER_ACTION,
         PUSHBACK_ACTION,
