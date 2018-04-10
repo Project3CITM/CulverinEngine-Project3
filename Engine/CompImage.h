@@ -1,6 +1,8 @@
 #ifndef COMPONENT_IMAGE_H
 #define COMPONENT_IMAGE_H
 #include "CompGraphic.h"
+#include <vector>
+
 class ResourceMaterial;
 class CompRectTransform;
 
@@ -23,7 +25,7 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void FillAmount(float value);
-	void GenerateFilledSprite(float fill, FillMethod method);
+	void GenerateFilledSprite(FillMethod method);
 	void CopyValues(const CompImage * component);
 	void Clear();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
@@ -40,6 +42,9 @@ public:
 	ResourceMaterial* GetCurrentTexture()const;
 
 private:
+	bool RadialCut(std::vector<float2>& position, const std::vector<float2>& texture_cord, float fill_value, int box_corner, bool invert = false);
+	void RadialCut(std::vector<float2>& modify,float cos, float sin, int box_corner, bool invert = false);
+
 public:
 	enum Type
 	{
