@@ -1201,6 +1201,9 @@
     <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleParticles.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1617,6 +1620,9 @@
     </ClCompile>
     <ClCompile Include="AK\DefaultIO\Common\AkFilePackageLUT.cpp">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleParticles.cpp">
+      <Filter>Engine\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -39,6 +39,8 @@ class ModuleMap;
 class ModuleLightning;
 class ModuleKeyBinding;
 class ModuleAnimation;
+class ModuleParticles;
+
 enum EngineState
 {
 	PLAY = 0,
@@ -136,6 +138,8 @@ public:
 	ModuleMap* map = nullptr;
 	ModuleLightning* module_lightning = nullptr;
 	ModuleKeyBinding* module_key_binding = nullptr;
+	ModuleParticles* particles = nullptr;
+
 private:
 	std::vector<Module*> list_modules;
 	// ----------------------------------

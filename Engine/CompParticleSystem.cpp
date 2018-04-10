@@ -86,26 +86,7 @@ void CompParticleSystem::Update(float dt)
 		pop_up_save_open = false;
 	}
 
-	if (!child_loaded && part_system->IsEmitterDead() && !child_particle.empty() && !child_emitter.empty())
-	{
-		//Load Child Particle
-		ParticleState InitialState;
-		ParticleState FinalState;
-
-		child_particle_name = App->fs->GetOnlyName(child_particle);
-		LoadParticleStates(child_particle_name.c_str(),this, InitialState, FinalState);
 	
-		part_system->SetInitialStateResource(InitialState);
-		part_system->SetFinalStateResource(FinalState);
-
-		//Load Child Emitter
-		ParticleEmitter Emitter;
-		child_emitter_name = App->fs->GetOnlyName(child_emitter);
-		LoadParticleEmitter(child_emitter_name.c_str(), this, Emitter);
-		part_system->SetEmitterResource(Emitter);
-
-		child_loaded = false;
-	}
 
 	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());
 	
@@ -182,17 +163,7 @@ void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, in
 }
 
 
-const std::string* CompParticleSystem::GetChildParticle() const
-{
-	if (!child_particle.empty()) return &child_particle;
-	return nullptr;
-}
 
-const std::string* CompParticleSystem::GetChildEmitter() const
-{
-	if (!child_emitter.empty()) return &child_emitter;
-	return nullptr;
-}
 
 void CompParticleSystem::ActivateEmitter(bool a)
 {
@@ -451,10 +422,7 @@ bool CompParticleSystem::SaveParticleEmitter(const CompParticleSystem* system, c
 	SetBool(conf, "ShowEmitterBoundBox", ShowEmitterBoundBox);
 	SetBool(conf, "ShowEmitter", ShowEmitter);
 
-	if (system->GetChildParticle() != nullptr)
-		SetString(conf, "ChildParticle", GetChildParticle()->c_str());
-	if (system->GetChildEmitter() != nullptr)
-		SetString(conf, "ChildEmitter", GetChildEmitter()->c_str());
+
 
 	SetFloat(conf, "EmitterLifeMax", emitter->EmitterLifeMax);
 	SetFloat4x4(conf, "Transform", emitter->Transform);
@@ -523,8 +491,7 @@ bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticle
 
 	const char* ChildParticle = GetString(conf, "ChildParticle");
 	const char* ChildEmitter = GetString(conf, "ChildEmitter");
-	if ((ChildParticle != nullptr) && (ChildEmitter != nullptr))
-		system->SetChild(ChildParticle, ChildEmitter);
+
 
 	emitter.EmitterLifeMax = GetFloat(conf, "EmitterLifeMax");
 	emitter.Transform = GetFloat4x4(conf, "Transform");
@@ -568,11 +535,6 @@ bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticle
 
 
 
-void CompParticleSystem::SetChild(const char* Particle, const char* Emitter)
-{
-	child_particle = Particle;
-	child_emitter = Emitter;
-}
 //-----------------------------------------------------------
 void CompParticleSystem::ShowOptions()
 {
@@ -762,7 +724,7 @@ void CompParticleSystem::DrawDirectory(const char * directory)
 			switch (file_type)
 			{
 			case Texture_Resource: if ((directory_temporal_str == ".png") || (directory_temporal_str == ".PNG") || (directory_temporal_str == ".jpg") || (directory_temporal_str == ".JPG") || (directory_temporal_str == ".tga") || (directory_temporal_str == ".TGA") || (directory_temporal_str == ".dds") || (directory_temporal_str == ".DDS")) Valid = true; break;
-			case Particle_Resource: case Child_Particle_Resource: case Emitter_Resource: case Child_Emitter_Resource: if (directory_temporal_str == ".json") Valid = true; break;
+			case Particle_Resource: case Emitter_Resource: if (directory_temporal_str == ".json") Valid = true; break;
 			case MeshResource: Valid = true; break;
 			}
 			if (Valid)
@@ -792,8 +754,6 @@ void CompParticleSystem::ImGuiLoadPopUp()
 	case Texture_Resource: Str = "Load Texture"; break;
 	case Particle_Resource: Str = "Load Particle"; break;
 	case Emitter_Resource: Str = "Load Emitter"; break;
-	case Child_Particle_Resource: Str = "Load Child Particle"; break;
-	case Child_Emitter_Resource: Str = "Load Child Emitter"; break;
 	case MeshResource: Str = "Load Mesh"; break;
 	}
 
@@ -812,8 +772,8 @@ void CompParticleSystem::ImGuiLoadPopUp()
 		switch (file_type)
 		{
 		case Texture_Resource: DrawDirectory(App->fs->GetFullPath("Assets").c_str()); break;
-		case Particle_Resource: case Child_Particle_Resource: DrawDirectory(App->fs->GetFullPath("Assets\\ParticleSystem\\Particles").c_str()); break;
-		case Emitter_Resource: case Child_Emitter_Resource: DrawDirectory(App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters").c_str()); break;
+		case Particle_Resource:  DrawDirectory(App->fs->GetFullPath("Assets\\ParticleSystem\\Particles").c_str()); break;
+		case Emitter_Resource:  DrawDirectory(App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters").c_str()); break;
 		case MeshResource: DrawDirectory(App->fs->GetFullPath("Assets").c_str()); break;
 		}
 		ImGui::EndChild();
@@ -830,8 +790,7 @@ void CompParticleSystem::ImGuiLoadPopUp()
 				case Texture_Resource: ImGuiLoadTexturePopUp(); break;
 				case Particle_Resource: ImGuiLoadParticlePopUp(); break;
 				case Emitter_Resource: ImGuiLoadEmitterPopUp(); break;
-				case Child_Particle_Resource: child_particle = file_to_load; break;
-				case Child_Emitter_Resource: child_emitter = file_to_load; break;
+
 				case MeshResource: ImGuiLoadMeshPopUp(); break;
 				}
 			}

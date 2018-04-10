@@ -16,6 +16,7 @@
 #include "ModuleRenderGui.h"
 #include "ModulePhysics.h"
 #include "ModuleLightning.h"
+#include "ModuleParticles.h"
 #include "parson.h"
 #include "PerfTimer.h"
 #include "WindowSceneWorld.h"
@@ -65,6 +66,7 @@ Application::Application()
 	module_shaders = new ModuleShaders();
 	physics = new ModulePhysics();
 	map = new ModuleMap();
+	particles = new ModuleParticles();
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -80,8 +82,10 @@ Application::Application()
 	AddModule(input);
 	AddModule(console);
 	AddModule(scene);
+	AddModule(particles);
 	AddModule(module_lightning); // Ask this module creators before changing the order, possible dependencies with scene and shaders module.
 	AddModule(module_shaders);
+	
 	AddModule(gui);
 	AddModule(animation_ui);
 

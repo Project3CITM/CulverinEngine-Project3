@@ -48,13 +48,11 @@ public:
 
 private:
 
-	void SetChild(const char* Particle, const char* Emitter);
 
 	void SetTextureResource(uint uuid, int columns = 1, int rows = 1, int numberOfFrames = 1, uint AnimationOrder = 0);
 	void SetTextureResource(const char* Path, int columns = 1, int rows = 1, int numberOfFrames = 1, uint AnimationOrder = 0);
 
-	const std::string* GetChildParticle() const;
-	const std::string* GetChildEmitter() const;
+
 
 	void DrawDirectory(const char* directory);
 
@@ -116,10 +114,7 @@ private:
 	std::string particle_resource_name;
 	std::string emitter_resource_name;
 
-	std::string child_particle;
-	std::string child_particle_name;
-	std::string child_emitter;
-	std::string child_emitter_name;
+	
 	bool child_loaded = false;
 
 
@@ -131,8 +126,6 @@ private:
 		Texture_Resource,
 		Particle_Resource,
 		Emitter_Resource,
-		Child_Particle_Resource,
-		Child_Emitter_Resource,
 		MeshResource
 	} file_type = Texture_Resource;
 
