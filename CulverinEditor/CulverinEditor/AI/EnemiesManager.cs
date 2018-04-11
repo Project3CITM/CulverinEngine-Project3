@@ -7,6 +7,7 @@ public class EnemiesManager : CulverinBehaviour
     public List<GameObject> sword_enemies = null;
     public List<GameObject> lance_enemies = null;
     public List<GameObject> shield_enemies = null;
+    public GameObject boss = null;
 
     public void Start()
     {
@@ -92,7 +93,32 @@ public class EnemiesManager : CulverinBehaviour
         }
     }
 
-    public Enemy_BT FindEnemyByTile(int x, int y)
+    public void AddBoss(GameObject boss_)
+    {
+        if (boss_ == null)
+        {
+            Debug.Log("[error]EnemiesManager: Boss_Object is null");
+        }
+        else
+        {
+            boss = boss_;
+            Debug.Log("Boss added!");
+        }
+    }
+
+    public void DeleteBoss()
+    {
+        if (boss == null)
+        {
+            Debug.Log("[error]EnemiesManager: Boss_Object is null");
+        }
+        else
+        {
+            boss = null;
+        }
+    }
+
+    public BT FindEnemyByTile(int x, int y)
     {
         int size = sword_enemies.Count;
 
@@ -173,20 +199,40 @@ public class EnemiesManager : CulverinBehaviour
             }
             else
             {
-                Debug.Log("[error]Sowrd enemy null!!!!!");
+                Debug.Log("[error]Sword enemy null!!!!!");
             }
         }
+
+        if (boss != null)
+        {
+            Movement_Action t_move = boss.GetComponent<Movement_Action>();
+            if (t_move != null)
+            {
+                int tile_x = t_move.GetCurrentTileX();
+                int tile_y = t_move.GetCurrentTileY();
+                if (x == tile_x && y == tile_y)
+                {
+                    return boss.GetComponent<Boss_BT>();
+                }
+            }
+            else
+            {
+                Debug.Log("[error]No movement action!!!!!");
+            }
+        }
+
         return null;
     }
 
     public void DamageEnemyInTile(int x,int y, float damage)
     {
         int size = sword_enemies.Count;
-
+        int tile_x = 0;
+        int tile_y = 0;
         for (int k = 0; k < size; k++)
         {
-            int tile_x = sword_enemies[k].GetComponent<Movement_Action>().GetCurrentTileX();
-            int tile_y = sword_enemies[k].GetComponent<Movement_Action>().GetCurrentTileY();
+            tile_x = sword_enemies[k].GetComponent<Movement_Action>().GetCurrentTileX();
+            tile_y = sword_enemies[k].GetComponent<Movement_Action>().GetCurrentTileY();
             if (x == tile_x && y == tile_y)
             {
                 sword_enemies[k].GetComponent<EnemySword_BT>().ApplyDamage(damage);
@@ -198,8 +244,8 @@ public class EnemiesManager : CulverinBehaviour
 
         for (int k = 0; k < size; k++)
         {
-            int tile_x = lance_enemies[k].GetComponent<Movement_Action>().GetCurrentTileX();
-            int tile_y = lance_enemies[k].GetComponent<Movement_Action>().GetCurrentTileY();
+            tile_x = lance_enemies[k].GetComponent<Movement_Action>().GetCurrentTileX();
+            tile_y = lance_enemies[k].GetComponent<Movement_Action>().GetCurrentTileY();
             if (x == tile_x && y == tile_y)
             {
                 lance_enemies[k].GetComponent<EnemySpear_BT>().ApplyDamage(damage);
@@ -211,13 +257,19 @@ public class EnemiesManager : CulverinBehaviour
 
         for (int k = 0; k < size; k++)
         {
-            int tile_x = shield_enemies[k].GetComponent<Movement_Action>().GetCurrentTileX();
-            int tile_y = shield_enemies[k].GetComponent<Movement_Action>().GetCurrentTileY();
+            tile_x = shield_enemies[k].GetComponent<Movement_Action>().GetCurrentTileX();
+            tile_y = shield_enemies[k].GetComponent<Movement_Action>().GetCurrentTileY();
             if (x == tile_x && y == tile_y)
             {
                 shield_enemies[k].GetComponent<EnemyShield_BT>().ApplyDamage(damage);
                 return;
             }
+        }
+
+        if (x == boss.GetComponent<Movement_Action>().GetCurrentTileX() && y == boss.GetComponent<Movement_Action>().GetCurrentTileY())
+        {
+            boss.GetComponent<Boss_BT>().ApplyDamage(damage);
+            return;
         }
     }
 
@@ -229,15 +281,20 @@ public class EnemiesManager : CulverinBehaviour
             Debug.Log("Sword");
             return target.GetComponent<EnemySword_BT>().ApplyDamage(damage);
         }
-        else if(target.GetComponent<EnemySpear_BT>() != null)
+        else if (target.GetComponent<EnemySpear_BT>() != null)
         {
             Debug.Log("Spear");
             return target.GetComponent<EnemySpear_BT>().ApplyDamage(damage);
         }
-        else if(target.GetComponent<EnemyShield_BT>() != null)
+        else if (target.GetComponent<EnemyShield_BT>() != null)
         {
             Debug.Log("Shield");
             return target.GetComponent<EnemyShield_BT>().ApplyDamage(damage);
+        }
+        else if (target.GetComponent<Boss_BT>() != null)
+        {
+            Debug.Log("Boss");
+            return target.GetComponent<Boss_BT>().ApplyDamage(damage);
         }
         return true;
     }
@@ -246,7 +303,8 @@ public class EnemiesManager : CulverinBehaviour
     {
         if(target.GetComponent<EnemySword_BT> () != null ||
             target.GetComponent<EnemyShield_BT>() != null ||
-            target.GetComponent<EnemySpear_BT>() != null)
+            target.GetComponent<EnemySpear_BT>() != null ||
+            target.GetComponent<Boss_BT>() != null)
         {
             Debug.Log("[error] IS ENEMY");
             return true;
