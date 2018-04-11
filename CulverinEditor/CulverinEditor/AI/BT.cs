@@ -33,14 +33,8 @@ public class BT : CulverinBehaviour
 
     public virtual void Update()
     {
-
         if (current_action == null)
             return;
-
-        /*if (current_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
-        {
-            return;
-        }*/
 
         Action.ACTION_RESULT result = current_action.ActionUpdate();
 
@@ -78,6 +72,7 @@ public class BT : CulverinBehaviour
         {
             current_action = next_action;
             next_action = new Action();
+            Debug.Log("Starting: " + current_action);
         }
     }
 
