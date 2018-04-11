@@ -4,7 +4,7 @@ using CulverinEditor.Debug;
 
 public class TestLog
 {
-    void Start()
+    void Update()
     {   
         Debug.Log("Hello", Department.PLAYER, Color.BLUE);
 

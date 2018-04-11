@@ -19,6 +19,9 @@ public:
 	//update_status Postdate(float dt);
 	bool CleanUp();
 
+	//Remove the desired string part from initial LOG line
+	void Remove(const char* name);
+
 	void OpenClose();
 	bool IsOpen();
 
@@ -48,6 +51,10 @@ private:
 	static int   Stricmp(const char* str1, const char* str2) { int d; while ((d = toupper(*str2) - toupper(*str1)) == 0 && *str1) { str1++; str2++; } return d; }
 	static int   Strnicmp(const char* str1, const char* str2, int n) { int d = 0; while (n > 0 && (d = toupper(*str2) - toupper(*str1)) == 0 && *str1) { str1++; str2++; n--; } return d; }
 	static char* Strdup(const char *str) { size_t len = strlen(str) + 1; void* buff = malloc(len); return (char*)memcpy(buff, (const void*)str, len); }
+
+	//Temp string to parse commands
+	std::string temp_string = "";
+	size_t size;
 
 };
 

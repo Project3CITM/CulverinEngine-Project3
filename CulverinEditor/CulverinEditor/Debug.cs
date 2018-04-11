@@ -39,37 +39,37 @@ namespace CulverinEditor.Debug
 
                 case Color.BLUE:
                     {
-                        message += " [blue]";
+                        message += "[blue]";
                         break;
                     }
 
                 case Color.GREEN:
                     {
-                        message += " [green]";
+                        message += "[green]";
                         break;
                     }
 
                 case Color.YELLOW:
                     {
-                        message += " [yellow]";
+                        message += "[yellow]";
                         break;
                     }
 
                 case Color.ORANGE:
                     {
-                        message += " [orange]";
+                        message += "[orange]";
                         break;
                     }
 
                 case Color.PINK:
                     {
-                        message += " [pink]";
+                        message += "[pink]";
                         break;
                     }
 
                 case Color.RED:
                     {
-                        message += " [red]";
+                        message += "[red]";
                         break;
                     }
 
@@ -88,19 +88,19 @@ namespace CulverinEditor.Debug
 
                 case Department.PLAYER:
                     {
-                        message = "[player] | " + message;
+                        message = "[Player] " + message;
                         break;
                     }
 
                 case Department.IA:
                     {
-                        message = "[IA] | " + message;
+                        message = "[IA] " + message;
                         break;
                     }
 
                 case Department.STAGE:
                     {
-                        message = "[stage] | " + message;
+                        message = "[Stage] " + message;
                         break;
                     }
 

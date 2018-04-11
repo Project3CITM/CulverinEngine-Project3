@@ -112,6 +112,15 @@ void Console::AddLog(const char* fmt, ...) IM_FMTARGS(2)
 	ScrollToBottom = true;
 }
 
+void Console::Remove(const char* name)
+{
+	size = temp_string.find(name);
+	if (size != std::string::npos)
+	{
+		temp_string.erase(size, temp_string.length());
+	}
+}
+
 void Console::Draw(const char* title)
 {
 	if (!BeginDock(title, NULL, ImGuiWindowFlags_NoCollapse))
@@ -166,35 +175,46 @@ void Console::Draw(const char* title)
 		if (!filter.PassFilter(item))
 			continue;
 		ImVec4 col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // A better implementation may store a type per-item. For the sample let's just parse the text.
+		
+		//Get the string LOG
+		temp_string = item;
+		
+		//COLOR LOGS --------
 		if (strstr(item, "[red]"))
 		{
 			col = ImColor(1.0f, 0.4f, 0.4f, 1.0f);
+			Remove("[red]");
 		}
-		//COLOR LOGS --------
 		else if (strstr(item, "[blue]"))
 		{
 			col = ImColor(0.0f, 0.5f, 1.0f, 1.0f);
+			Remove("[blue]");
 		}
 		else if (strstr(item, "[green]"))
 		{
 			col = ImColor(0.062f, 0.678f, 0.09f, 1.0f);
+			Remove("[green]");
 		}
 		else if (strstr(item, "[yellow]"))
 		{
 			col = ImColor(1.0f, 1.0f, 0.02f, 1.0f);
+			Remove("[yellow]");
 		}
 		else if (strstr(item, "[orange]"))
 		{
 			col = ImColor(1.0f, 0.423f, 0.02f, 1.0f);
+			Remove("[orange]");
 		}
 		else if (strstr(item, "[pink]"))
 		{
 			col = ImColor(1.0f, 0.02f, 0.941f, 1.0f);
+			Remove("[pink]");
 		}
 		// -------------------
+
 		else if (strncmp(item, "# ", 2) == 0) col = ImColor(1.0f, 0.78f, 0.58f, 1.0f);
 		ImGui::PushStyleColor(ImGuiCol_Text, col);
-		ImGui::TextUnformatted(item);
+		ImGui::TextUnformatted(temp_string.c_str());
 		ImGui::PopStyleColor();
 	}
 	if (copy_to_clipboard)

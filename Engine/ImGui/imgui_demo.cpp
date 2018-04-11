@@ -2622,11 +2622,12 @@ struct ExampleAppConsole
 			if (!filter.PassFilter(item))
 				continue;
 			ImVec4 col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // A better implementation may store a type per-item. For the sample let's just parse the text.
+			
+			//COLOR LOGS --------
 			if (strstr(item, "[red]"))
 			{
 				col = ImColor(1.0f, 0.4f, 0.4f, 1.0f);
 			}		
-			//COLOR LOGS --------
 			else if (strstr(item, "[blue]"))
 			{
 				col = ImColor(0.0f, 0.5f, 1.0f, 1.0f);
