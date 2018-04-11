@@ -265,8 +265,6 @@ void JSONSerialization::LoadScene(const char* sceneName)
 
 void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* directory, const char* fileName, bool is_FBX)
 {
-	LOG("SAVING PREFAB %s -----", gameObject.GetName());
-
 	JSON_Value* config_file;
 	JSON_Object* config;
 	JSON_Object* config_node;

@@ -242,11 +242,13 @@ bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script
 		}
 		//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
 		//resourceScript->SetCSharp(newCSharp);
-
-		// Then Create Meta
-		std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-		Newdirectory += "/" + App->fs->FixName_directory(fileAssets);
-		App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+		if (App->build_mode == false)
+		{
+			// Then Create Meta
+			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+			Newdirectory += "/" + App->fs->FixName_directory(fileAssets);
+			App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+		}
 	}
 
 	return true;
@@ -798,8 +800,8 @@ CSharpScript* ImportScript::LoadScript_CSharp(std::string file, std::string name
 {
 	if (file != "")
 	{
-		MonoAssembly* assembly = mono_domain_assembly_open(GetDomain(), file.c_str());
-		if (assembly)
+		//MonoAssembly* assembly = mono_domain_assembly_open(GetDomain(), file.c_str());
+		if (1)
 		{
 			// First Get the Image
 			//MonoImage* image = mono_assembly_get_image(assembly);
@@ -808,7 +810,7 @@ CSharpScript* ImportScript::LoadScript_CSharp(std::string file, std::string name
 				CSharpScript* csharp = CreateCSharp(App->importer->iScript->GetCulverinImage(), name);
 				if (csharp != nullptr)
 				{
-					csharp->SetAssembly(assembly);
+					csharp->SetAssembly(nullptr);
 					csharp->LoadScript();
 					return csharp;
 				}

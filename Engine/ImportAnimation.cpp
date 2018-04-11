@@ -28,10 +28,14 @@ bool ImportAnimation::Import(const aiAnimation * animation, const char * name, c
 	tmp_anim->duration = animation->mDuration;
 	tmp_anim->ticks_per_sec = animation->mTicksPerSecond;
 
-	std::string assets_dir = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-	assets_dir += "\\";
-	assets_dir += name;
-	App->json_seria->SaveAnimation(tmp_anim, assets_dir.c_str(), file, new_directory.c_str());
+	if (App->build_mode == false)
+	{
+		std::string assets_dir = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+		assets_dir += "\\";
+		assets_dir += name;
+		App->json_seria->SaveAnimation(tmp_anim, assets_dir.c_str(), file, new_directory.c_str());
+	}
+
 
 	size += sizeof(char) * 50; //mName
 	size += sizeof(double); //mDuration

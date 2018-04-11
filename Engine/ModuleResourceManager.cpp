@@ -43,8 +43,11 @@ ModuleResourceManager::~ModuleResourceManager()
 
 bool ModuleResourceManager::Init(JSON_Object* node)
 {
-	CreateResourceCube();
-	CreateResourcePlane();
+	if (App->build_mode == false)
+	{
+		CreateResourceCube();
+		CreateResourcePlane();
+	}
 
 	// Load resources with meta
 	NewLoad();
@@ -55,7 +58,7 @@ bool ModuleResourceManager::Init(JSON_Object* node)
 bool ModuleResourceManager::Start()
 {
 	perf_timer.Start();
-
+	LOG("Start ResourceManager -------------");
 	if (App->mode_game == false)
 	{
 		for (std::map<uint, Resource*>::iterator it = resources.begin(); it != resources.end(); it++)
@@ -79,7 +82,7 @@ bool ModuleResourceManager::Start()
 				{
 					path_resources_library += ".ttf";
 				}
-				if (App->fs->CheckIsFileExist(path_resources_library) || to_reimport->GetType() == Resource::Type::ANIMATION)
+				if (App->fs->CheckIsFileExist(path_resources_library) || to_reimport->GetType() == Resource::Type::ANIMATION || to_reimport->GetType() == Resource::Type::SCRIPT)
 				{
 					continue;
 				}
@@ -123,7 +126,6 @@ bool ModuleResourceManager::Start()
 				delete it->second;
 				resources.erase(it);
 			}
-
 			// Now ReImport
 			LOG("ReImporting...");
 			ImportFile(files_reimport, resources_to_reimport, true);
@@ -141,7 +143,6 @@ bool ModuleResourceManager::Start()
 			reimport_now = false;
 		}
 	}
-
 	Start_t = perf_timer.ReadMs();
 	return true;
 }
@@ -435,7 +436,7 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(file[i]).c_str(), App->fs->GetExtension(file[i]).c_str());
 		}
 	}
-	if (App->mode_game == false)
+	if (App->mode_game == false && App->build_mode == false)
 	{
 		if (auto_reimport == false)
 		{

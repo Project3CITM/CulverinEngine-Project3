@@ -55,16 +55,18 @@ bool ModuleImporter::Init(JSON_Object* node)
 	iAnimation = new ImportAnimation();
 	iFont = new ImportFont();
 
-	// Now InitSystem Domain Mono
-	if (iScript->InitScriptingSystem())
+	if (App->build_mode == false)
 	{
-		LOG("Culverin Assembly Init SUCCESS.");
+		// Now InitSystem Domain Mono
+		if (iScript->InitScriptingSystem())
+		{
+			LOG("Culverin Assembly Init SUCCESS.");
+		}
+		else
+		{
+			LOG("Culverin Assembly Init FAIL.");
+		}
 	}
-	else
-	{
-		LOG("Culverin Assembly Init FAIL.");
-	}
-
 	Awake_t = perf_timer.ReadMs();
 	return true;
 }
@@ -352,7 +354,6 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 	{
 	case Resource::Type::MESH:
 	{
-		LOG("IMPORTING MODEL, File Path: %s", file);
 		//Clear vector of textures, but dont import same textures!
 		const aiScene* scene = aiImportFile(file, aiProcessPreset_TargetRealtime_MaxQuality);
 		if (scene != nullptr)
@@ -364,34 +365,36 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 			
 				scene->mAnimations[scene->mNumAnimations - 1]->mName = fbx_name;
 				scene->mAnimations[scene->mNumAnimations - 1]->mName.Append("Animation");
-				LOG("IMPORTING ANIMATION, File Path: %s", scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str());
 				iAnimation->Import(scene->mAnimations[scene->mNumAnimations - 1], scene->mAnimations[scene->mNumAnimations - 1]->mName.C_Str(), fbx_name.c_str());
 			}
 
 			//Delete assimp's empty nodes
 			CleanEmptyNodes(scene->mRootNode);
-		
 			GameObject* obj = ProcessNode(scene->mRootNode, scene, nullptr, resourcesToReimport, file);
 			obj->SetName(App->fs->FixName_directory(file).c_str());
 
-
-			//Now Save Serialitzate OBJ -> Prefab
-			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-			Newdirectory += "\\" + App->fs->FixName_directory(file);
-			App->json_seria->SavePrefab(*obj, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
-
-			//TODO-> Elliot -------------------------------------------
-			if (auto_reimport == false)
+			if (App->build_mode == false)
 			{
-				App->scene->root->AddChildGameObject(obj); // Temp obj needs to be erased
-				App->scene->DeleteGameObject(obj);
-			}
-			else
-			{
-				App->scene->DeleteGameObject(obj, false, true);
+				//Now Save Serialitzate OBJ -> Prefab
+				std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+				Newdirectory += "\\" + App->fs->FixName_directory(file);
+				App->json_seria->SavePrefab(*obj, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+
+				//Save -------------------------------------------
+				if (auto_reimport == false)
+				{
+					App->scene->root->AddChildGameObject(obj); // Temp obj needs to be erased
+					App->scene->DeleteGameObject(obj);
+				}
+				else
+				{
+					App->scene->DeleteGameObject(obj, false, true);
+				}
+
+				//---------------------------------------------------------
 			}
 
-			//---------------------------------------------------------
+
 		}
 		else
 		{
@@ -403,8 +406,6 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 	}
 	case Resource::Type::MATERIAL:
 	{
-		LOG("IMPORTING TEXTURE, File Path: %s", file);
-		//
 		bool isReImport = false;
 		for (int i = 0; i < resourcesToReimport.size(); i++)
 		{
@@ -423,19 +424,17 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 	}
 	case Resource::Type::SCRIPT:
 	{
-		LOG("IMPORTING SCRIPT, File Path: %s", file);
-		//
 		bool isReImport = false;
 		for (int i = 0; i < resourcesToReimport.size(); i++)
 		{
-			if (strcmp(file, resourcesToReimport[i].directory_obj) == 0)
+			if (strcmp(file, resourcesToReimport[i].directory_obj) == 0 && App->build_mode == false)
 			{
 				iScript->ReImportScript(file, std::to_string(resourcesToReimport[i].uuid), nullptr, auto_reimport);
 				isReImport = true;
 				break;
 			}
 		}
-		if (isReImport == false)
+		if (isReImport == false && App->build_mode == false)
 		{
 			iScript->Import(file);
 		}
@@ -443,8 +442,6 @@ bool ModuleImporter::Import(const char* file, Resource::Type type, std::vector<R
 	}
 	case Resource::Type::FONT:
 	{
-		LOG("IMPORTING Font, File Path: %s", file);
-		//
 		bool isReImport = false;
 		for (int i = 0; i < resourcesToReimport.size(); i++)
 		{

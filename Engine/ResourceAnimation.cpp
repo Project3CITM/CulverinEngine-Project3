@@ -7,7 +7,6 @@
 ResourceAnimation::ResourceAnimation(uint uid):Resource(uid, Resource::Type::ANIMATION, Resource::State::UNLOADED)
 {
 	num_game_objects_use_me = 0;
-	LOG("Resource Animation Created!");
 }
 
 ResourceAnimation::~ResourceAnimation()

@@ -78,13 +78,10 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 	if (mesh != nullptr)
 	{
-		LOG("Importing Mesh %s", name);
-		
 		// SET VERTEX DATA -------------------------------
 		num_vertices = mesh->mNumVertices;
 		vertices = new float3[num_vertices];
 		memcpy(vertices, mesh->mVertices, sizeof(float3) * num_vertices);
-		LOG("- Imported all vertex from data, total vertex: %i", num_vertices);
 
 		//SET TANGENTS / BITANGENTS
 
@@ -111,7 +108,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					memcpy(&indices[i * 3], mesh->mFaces[i].mIndices, sizeof(uint) * 3);
 				}
 			}
-			LOG("- Imported all index from data, total indices: %i", num_indices);
 		}
 		else
 		{
@@ -124,7 +120,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			num_normals = num_vertices;
 			vert_normals = new float3[num_normals];
 			memcpy(vert_normals, mesh->mNormals, sizeof(float3) * num_normals);
-			LOG("- Imported all Normals from data");
 		}
 		else
 		{
@@ -143,7 +138,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				tex_coords[i].y = mesh->mTextureCoords[0][i].y;
 			}
 			//memcpy(tex_coords, mesh->mTextureCoords[0], sizeof(float2) * num_tex_coords);
-			LOG("- Imported all Tex Coords from data");
 		}
 		else
 		{
@@ -154,7 +148,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 			LOG("- Mesh %s does not have Tex Coords", mesh->mName.C_Str());
 		}
-
 		// Skeleton
 		if (mesh->HasBones())
 		{
@@ -227,15 +220,13 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			}
 			else
 			{
-				LOG("Imported joints correctly");
+				//LOG("Imported joints correctly");
 			}
 		}
 		else
 		{
-			LOG("- Mesh %s does not have Bones", mesh->mName.C_Str());
+			//LOG("- Mesh %s does not have Bones", mesh->mName.C_Str());
 		}
-
-		LOG("Imported all data");
 	}
 	else
 	{

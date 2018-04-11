@@ -113,6 +113,7 @@ int main(int argc, char ** argv)
 		LOG("Build Created -------------------");
 		std::string savelogs_path = destination + "/Logs.txt";
 		App->SaveLogs(savelogs_path.c_str());
+		App->SaveLogs();
 		delete App;
 		return EXIT_SUCCESS;
 	}

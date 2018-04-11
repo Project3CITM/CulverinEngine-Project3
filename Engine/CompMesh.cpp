@@ -604,7 +604,7 @@ void CompMesh::LinkMaterial(const CompMaterial* mat)
 	if (mat != nullptr)
 	{
 		comp_material = mat;
-		LOG("MATERIAL linked to MESH %s", name);
+		//LOG("MATERIAL linked to MESH %s", name);
 	}
 }
 

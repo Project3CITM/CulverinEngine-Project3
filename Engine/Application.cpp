@@ -101,9 +101,26 @@ Application::Application()
 Application::Application(bool make_Build)
 {
 	fs = new ModuleFS();
+
 	json_seria = new JSONSerialization();
+	random = new math::LCG();
+
+	importer = new ModuleImporter();
+	resource_manager = new ModuleResourceManager();
+	textures = new ModuleTextures();
+	module_shaders = new ModuleShaders();
+	renderer3D = new ModuleRenderer3D();
+	window = new ModuleWindow();
+
 	build_mode = true;
+	AddModule(window);
 	AddModule(fs);
+	AddModule(resource_manager);
+	AddModule(module_shaders);
+	AddModule(importer);
+	AddModule(textures);
+	AddModule(renderer3D);
+
 	// ^^
 }
 
@@ -117,10 +134,10 @@ Application::~Application()
 		item++;
 	}
 	RELEASE(json_seria);
+	RELEASE(random);
 	if (build_mode == false)
 	{
 		RELEASE(configuration);
-		RELEASE(random);
 	}
 }
 
@@ -1002,6 +1019,19 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	LOG("Copy all cs");
 	App->SaveLogs();
 
+	std::vector<std::string> prefabs;
+	App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), prefabs, "prefab.json");
+	for (int i = 0; i < prefabs.size(); i++)
+	{
+		std::string desktop_assets_temp = desktop_assets + "/";
+		desktop_assets_temp += App->fs->FixName_directory(prefabs[i]);
+		App->fs->CopyPasteFile(prefabs[i].c_str(), desktop_assets_temp.c_str());
+	}
+	prefabs.clear();
+
+	LOG("Copy all prefabs");
+	App->SaveLogs();
+
 	// Now copy all scenes
 	for (int i = 0; i < scenes_build.size(); i++)
 	{
@@ -1089,6 +1119,13 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	LOG("Copy Fonts folder");
 	App->SaveLogs();
 
+	// Player Actions
+	std::string desktop_library = desktop + "/";
+	desktop_library += "Library/JSON/player_action.json";
+	std::string temp_player = App->fs->GetMainDirectory();
+	temp_player += "/player_action.json";
+	App->fs->CopyPasteFile(temp_player.c_str(), desktop_library.c_str());
+
 	// Then all files (no Folders) in Game.
 	std::vector<std::string> files_game;
 	App->fs->GetOnlyFilesFromFolder(App->fs->GetGameDirectory(), files_game);
@@ -1112,7 +1149,7 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 
 		// Finnaly .exe from Release
 	std::string folder = App->fs->GetGameDirectory();
-	folder += "../../Release/CulverinEngine.exe";
+	folder += "/CulverinEngine.exe";
 	std::string executable = desktop;
 	executable += "/" + game_name + ".exe";
 	App->fs->CopyPasteFile(folder.c_str(), executable.c_str());
@@ -1152,12 +1189,26 @@ bool Application::InitBuild()
 	config_file = json_parse_file("config.json");
 	config = json_value_get_object(config_file);
 	std::vector<Module*>::iterator item = list_modules.begin();
+	LOG("Application Init --------------");
+	App->SaveLogs();
 	while (item != list_modules.end())
 	{
 		if ((*item)->IsEnabled())
 		{
 			config_node = json_object_get_object(config, (*item)->name.c_str());
 			(*item)->Init(config_node);
+		}
+		item++;
+	}
+	LOG("Application Start --------------");
+	App->SaveLogs();
+	item = list_modules.begin();
+
+	while (item != list_modules.end())
+	{
+		if ((*item)->IsEnabled())
+		{
+			(*item)->Start();
 		}
 		item++;
 	}
