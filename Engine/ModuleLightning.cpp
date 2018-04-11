@@ -146,7 +146,7 @@ bool ModuleLightning::Start()
 	//------------------------------------
 
 	shadow_Shader = App->module_shaders->CreateDefaultShader("Shadow_Map", ShadowMapFrag, ShadowMapVert, nullptr, true);
-	point_light_shadow_depth_shader = App->module_shaders->CreateDefaultShader("Point_Shadow_Map", PointShadowMapFrag, PointShadowMapVert, PointShadowMapGeo,true);
+	point_light_shadow_depth_shader = App->module_shaders->CreateDefaultShader("Point_Shadow_Map", PointShadowMapFrag, PointShadowMapVert, nullptr, true);
 	
 	//-------------------------------------
 
@@ -293,7 +293,8 @@ bool ModuleLightning::CleanUp()
 
 void ModuleLightning::OnEvent(Event & event)
 {
-	/*if (App->scene->scene_buff != nullptr)
+	
+/*	if (App->scene->scene_buff != nullptr)
 	{
 		//This is only for shadows 
 
@@ -306,39 +307,43 @@ void ModuleLightning::OnEvent(Event & event)
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
-
-	switch (event.type)
+	*/
+	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_3D_3DA_MM:
-		
-	
-		for (std::multimap<float, Event>::const_iterator item = event.send_3d3damm.MM3DDrawEvent->begin(); item != event.send_3d3damm.MM3DDrawEvent->end();item++)
-		{
 
-			CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
+		const CompLight* light = event.send_3d3damm.light;
 
-			if (m->resource_mesh != nullptr)
+		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
+
+			for (std::multimap<uint, Event>::const_iterator item = event.send_3d3damm.MM3DDrawEvent->begin(); item != event.send_3d3damm.MM3DDrawEvent->end(); item++)
 			{
-				if (m->resource_mesh->vertices.size() > 0 && m->resource_mesh->indices.size() > 0)
-				{
-					const CompLight* light = event.send_3d3damm.light;
+				CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
 
-					if (light->type == Light_type::DIRECTIONAL_LIGHT)
+				if (m->resource_mesh != nullptr)
+				{
+					if (m->resource_mesh->vertices.size() > 0 && m->resource_mesh->indices.size() > 0)
+					{
 						CalcDirectionalShadowMap((CompLight*)light, m);
-					else if(light->type == Light_type::POINT_LIGHT)
-						CalcPointShadowMaps((CompLight*)light, m);
+					}
+
+					else
+					{
+						LOG("Cannot draw the mesh");
+					}
 				}
 
-				else
-				{
-					LOG("Cannot draw the mesh");
-				}
 			}
-
 		}
-		break;
+
+		else if (light->type == Light_type::POINT_LIGHT) {
+
+			CalcPointShadowMaps(event, (CompLight*)light);
+		}
+
 	}
-	if (App->scene->scene_buff != nullptr)
+
+	/*if (App->scene->scene_buff != nullptr)
 	{
 		ImGui::Image((ImTextureID*)test_fix.depthTex, ImVec2(500, 500));
 		App->scene->scene_buff->Bind("Scene");
@@ -347,18 +352,17 @@ void ModuleLightning::OnEvent(Event & event)
 	}*/
 }
 
-void ModuleLightning::CalcPointShadowMaps(CompLight* light, CompMesh* mesh_to_render)
+void ModuleLightning::CalcPointShadowMaps(Event& events, CompLight* light)
 {
-	if (!mesh_to_render || !mesh_to_render->resource_mesh) return;
-	if(mesh_to_render->resource_mesh->vertices.size() <= 0) return;
+
 
 	// First  check if the mesh is in range of the point light
-	float3 object_pos = mesh_to_render->GetGameObjectPos();
 
-	/*uint depth_cube_map_index = 0;
-	for(std::vector<CompLight*>::iterator it = frame_used_lights.begin(); it != frame_used_lights.end(); ++it)
+
+	uint depth_cube_map_index = 0;
+	for (std::vector<CompLight*>::iterator it = frame_used_lights.begin(); it != frame_used_lights.end(); ++it)
 	{
-		if((*it)->type == Light_type::POINT_LIGHT)
+		if ((*it)->type == Light_type::POINT_LIGHT)
 		{
 			float3 light_pos = (*it)->GetGameObjectPos();
 			//TODO: Add range to point lights
@@ -372,7 +376,7 @@ void ModuleLightning::CalcPointShadowMaps(CompLight* light, CompMesh* mesh_to_re
 
 			fbo->Bind();
 			point_light_shadow_depth_shader->Bind();
-			
+
 			// Actually render the mesh
 
 			//Get vieport and resize it to shadow res
@@ -384,7 +388,7 @@ void ModuleLightning::CalcPointShadowMaps(CompLight* light, CompMesh* mesh_to_re
 
 			//
 			float near_plane = 1.f;
-			float far_plane = 25.f; //TODO: Change it for light range
+			float far_plane = 50.f; //TODO: Change it for light range
 			glm::mat4 shadow_proj = glm::perspective(glm::radians(90.f), (float)shadow_w / (float)shadow_h, near_plane, far_plane);
 
 			std::vector<glm::mat4> shadow_transforms;
@@ -397,36 +401,64 @@ void ModuleLightning::CalcPointShadowMaps(CompLight* light, CompMesh* mesh_to_re
 			shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
 
 			uint sh_id = point_light_shadow_depth_shader->programID;
-			for(uint i = 0; i < 6; ++i)
+
+			for (uint i = 0; i < 6; ++i)
 			{
-				glUniformMatrix4fv(glGetUniformLocation(sh_id, ("shadow_matrices[" + std::to_string(i) + "]").c_str()),
-					1, GL_FALSE, &((shadow_transforms[i])[0][0]));
+
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, fbo->GetTexture(), 0);
+				glClear(GL_DEPTH_BUFFER_BIT);
+				for (std::multimap<uint, Event>::const_iterator item = events.send_3d3damm.MM3DDrawEvent->begin(); item != events.send_3d3damm.MM3DDrawEvent->end(); item++)
+				{
+					CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
+
+					float3 object_pos = m->GetGameObjectPos();
+
+					CompTransform* transform = (CompTransform*)m->GetParent()->FindComponentByType(C_TRANSFORM);
+					float4x4 matrixfloat = transform->GetGlobalTransform();
+
+					GLfloat matrix[16] =
+					{
+						matrixfloat[0][0],matrixfloat[1][0],matrixfloat[2][0],matrixfloat[3][0],
+						matrixfloat[0][1],matrixfloat[1][1],matrixfloat[2][1],matrixfloat[3][1],
+						matrixfloat[0][2],matrixfloat[1][2],matrixfloat[2][2],matrixfloat[3][2],
+						matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
+					};
+
+					uint sh_id = point_light_shadow_depth_shader->programID;
+
+					GLint modelLoc = glGetUniformLocation(sh_id, "model");
+					glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
+
+					glUniformMatrix4fv(glGetUniformLocation(sh_id, "viewproj"),
+						1, GL_FALSE, &((shadow_transforms[i])[0][0]));
+
+					glUniform1f(glGetUniformLocation(sh_id, "far_plane"), far_plane);
+					glUniform3fv(glGetUniformLocation(sh_id, "light_pos"), 1, &l_pos.x);
+
+					ResourceMesh* mesh = m->resource_mesh;
+					glBindBuffer(GL_ARRAY_BUFFER, mesh->id_total_buffer);
+
+					glEnableVertexAttribArray(0);
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (char*)NULL + (0 * sizeof(float)));
+
+
+					glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indices_id);
+					glDrawElements(GL_TRIANGLES, mesh->num_indices, GL_UNSIGNED_INT, NULL);
+
+				}
 			}
-			glUniform1f(glGetUniformLocation(sh_id, "far_plane"), far_plane);
-			glUniform3fv(glGetUniformLocation(sh_id, "light_pos"), 1, &l_pos.x);
-
-			ResourceMesh* m = mesh_to_render->resource_mesh;
-			glBindBuffer(GL_ARRAY_BUFFER, m->id_total_buffer);
-
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (char*)NULL + (0 * sizeof(float)));
-
-
-			glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->indices_id);
-			glDrawElements(GL_TRIANGLES, m->num_indices, GL_UNSIGNED_INT, NULL);
-
 
 			//Reset viewport
 			glViewport(viewport_size[0], viewport_size[1], viewport_size[2], viewport_size[3]);
-			
+
 			//Unbind shader and cube map
 			point_light_shadow_depth_shader->Unbind();
 			fbo->UnBind();
 
 			++depth_cube_map_index;
 		}
-	}*/
+	}
 }
 
 void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)

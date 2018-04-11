@@ -74,7 +74,7 @@ public:
 	
 private:
 	void AddShadowMapCastViews(uint ammount);
-	void CalcPointShadowMaps(CompLight* light, CompMesh* mesh_to_render);
+	void CalcPointShadowMaps(Event& events, CompLight* light);
 	void CalcDirectionalShadowMap(CompLight* light, CompMesh* mesh);
 
 public:

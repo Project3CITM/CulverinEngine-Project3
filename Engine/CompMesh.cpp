@@ -526,6 +526,19 @@ void CompMesh::Draw2(uint ID)
 				glUniform1i(ShadowMapID, TexturesSize);
 			}
 			*/
+
+			/*TEMPORAL*/
+			DepthCubeMap* fbo;
+			auto temp_vec = App->module_lightning->GetShadowMaps();
+			fbo = (*temp_vec)[0];
+			glEnable(GL_TEXTURE_CUBE_MAP_EXT);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, fbo->GetTexture());
+			
+			uint cubeLoc = glGetUniformLocation(ID, "cubeMap");
+			glUniform1i(cubeLoc, 0);
+		/*-----------------*/
+
 			int total_save_buffer = 14;
 			uint bones_size_in_buffer = 0;
 			if (skeleton != nullptr)
@@ -563,7 +576,8 @@ void CompMesh::Draw2(uint ID)
 			}
 			//Reset TextureColor
 			//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	
+		
+			glDisable(GL_TEXTURE_CUBE_MAP_EXT);
 		}
 		else
 			LOG("Cannot draw the mesh");
