@@ -36,7 +36,7 @@ public class Boss_BT : BT
 
         //Phase1Textures();
         current_action = GetComponent<Idle_Action>();
-        GetComponent<CompAnimation>().PlayAnimationNode("Idle");
+        GetComponent<CompAnimation>().PlayAnimation("Idle");
 
         base.Start();
     }
@@ -51,13 +51,15 @@ public class Boss_BT : BT
         if (next_action.action_type != Action.ACTION_TYPE.NO_ACTION)
         {
             current_action = next_action;
-            next_action = new Action();
+            current_action.ActionStart();
+            next_action = null_action;
             Debug.Log("Starting: " + current_action);
             return;
         }
 
-        if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION || current_action.action_type != Action.ACTION_TYPE.DIE_ACTION)
+        if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION && current_action.action_type != Action.ACTION_TYPE.DIE_ACTION)
         {
+            Debug.Log("Makeing Decision");
             int distance_x = GetDistanceXToPlayer();
             int distance_y = GetDistanceYToPlayer();
 

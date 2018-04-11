@@ -27,15 +27,13 @@ public class BT : CulverinBehaviour
     {
         next_action = null_action;
         current_action = GetComponent<Idle_Action>();
+        Debug.Log("Starting at Idle");
         current_action.ActionStart();
         MakeDecision();
     }
 
     public virtual void Update()
     {
-        if (current_action == null)
-            return;
-
         Action.ACTION_RESULT result = current_action.ActionUpdate();
 
         if (current_action.action_type == Action.ACTION_TYPE.IDLE_ACTION || current_action.action_type == Action.ACTION_TYPE.IDLE_ATTACK_ACTION)
@@ -68,12 +66,7 @@ public class BT : CulverinBehaviour
 
     public virtual void MakeDecision()
     {
-        if(next_action.action_type != Action.ACTION_TYPE.NO_ACTION)
-        {
-            current_action = next_action;
-            next_action = new Action();
-            Debug.Log("Starting: " + current_action);
-        }
+        Debug.Log("[error]MakeDecision not Defined");
     }
 
     public AI_STATE GetState()

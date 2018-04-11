@@ -37,7 +37,9 @@ public class Action : CulverinBehaviour
     public ACTION_TYPE action_type = ACTION_TYPE.NO_ACTION;
 
     public Action()
-    {}
+    {
+        action_type = ACTION_TYPE.NO_ACTION;
+    }
 
     public virtual bool ActionStart()
     {

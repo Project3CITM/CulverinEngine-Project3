@@ -126,7 +126,6 @@ public class Movement_Action : Action
             Debug.Log("Moving to: " + tile.GetTileX() + "," + tile.GetTileY());
         }
 
-
         return true;
     }
 

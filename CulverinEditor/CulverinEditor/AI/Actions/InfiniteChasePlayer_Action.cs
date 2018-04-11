@@ -23,7 +23,6 @@ public class InfiniteChasePlayer_Action : Action
     public override bool ActionStart()
     {
         move.GoToPlayer(chase_range);
-        //Debug.Log("[green] woooow party path");
         interupt = false;
         bool ret = move.ActionStart();
         return ret;
@@ -40,12 +39,10 @@ public class InfiniteChasePlayer_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-       
         if (GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true)
         {
             move.Interupt();
         }
-
 
         timer += Time.deltaTime;
 

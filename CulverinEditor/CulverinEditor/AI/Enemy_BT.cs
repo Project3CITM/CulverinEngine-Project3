@@ -74,7 +74,6 @@ public class Enemy_BT : BT
             {
                 life_state = ENEMY_STATE.ENEMY_STUNNED;
             }
-            Debug.Log("[blue]" +next_action.action_type);
             current_action = next_action;
             next_action = null_action;
             current_action.ActionStart();

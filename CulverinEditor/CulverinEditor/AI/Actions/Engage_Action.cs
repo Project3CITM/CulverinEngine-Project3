@@ -15,24 +15,28 @@ class Engage_Action : Action
     {
         Debug.Log("Engage Start");
         GetComponent<CompAnimation>().SetTransition("ToDraw");
+        Debug.Log("Animation to Draw");
         GetComponent<CompAnimation>().SetClipDuration("Draw", duration);
-
-        
-
+        Debug.Log("Duration: " + duration);
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if(GetComponent<CompAnimation>().IsAnimOverXTime(0.2f) && !play_audio && GetComponent<EnemySpear_BT>() == null)
+        Debug.Log("Engageing");
+
+        if (GetComponent<CompAnimation>().IsAnimOverXTime(0.2f) && !play_audio && GetComponent<EnemySpear_BT>() == null)
         {
-            //TODO_AI: Engage action
             GetComponent<CompAudio>().PlayEvent("Enemy_SwordDraw");
             play_audio = true;
         }
 
         if (GetComponent<CompAnimation>().IsAnimationStopped("Draw"))
+        {
+            Debug.Log("engage done");
             return ACTION_RESULT.AR_SUCCESS;
+        }
+        Debug.Log("engage in progres");
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 

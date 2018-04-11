@@ -11,7 +11,6 @@ public class EnemiesManager : CulverinBehaviour
 
     public void Start()
     {
-        Debug.Log("[error]Start EnemiesManager");
         sword_enemies = new List<GameObject>();
         lance_enemies = new List<GameObject>();
         shield_enemies = new List<GameObject>();

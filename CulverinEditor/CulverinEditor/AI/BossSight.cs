@@ -61,6 +61,7 @@ public class BossSight : CulverinBehaviour
 
             if (seen_this_frame == true)
             {
+                Debug.Log("Activating Boss");
                 GetComponent<Boss_BT>().Activate();
                 SetEnabled(false);
             }
