@@ -101,7 +101,7 @@ private:
 	bool preview = true;
 
 	ParticleSystem* part_system = nullptr;
-	ResourceMaterial* texture_resource = nullptr;
+	
 	bool pop_up_load_open = false;
 	bool pop_up_save_open = false;
 	std::string file_to_load;

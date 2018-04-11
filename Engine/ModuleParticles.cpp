@@ -13,7 +13,7 @@ ModuleParticles::ModuleParticles(bool start_enabled) : Module(start_enabled)
 // Destructor
 ModuleParticles::~ModuleParticles()
 {
-
+	particle_systems.clear();
 }
 
 // Called before render is available
@@ -50,7 +50,22 @@ bool ModuleParticles::SaveConfig(JSON_Object * node)
 // Called before quitting
 bool ModuleParticles::CleanUp()
 {
+	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); item++)
+	{
+		if((*item)!=nullptr)
+			delete (*item);
+	}
+
+	particle_systems.clear();
+
 	return true;
+}
+
+ParticleSystem * ModuleParticles::CreateParticleSystem()
+{
+	ParticleSystem* new_system = new ParticleSystem;
+	particle_systems.push_back(new_system);
+	return new_system;
 }
 
 

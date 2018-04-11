@@ -17,17 +17,17 @@ public:
 
 	bool Init(JSON_Object* node);
 
-	update_status PreUpdate(float dt);
-	update_status Update(float dt);
+	//update_status PreUpdate(float dt);
+	//update_status Update(float dt);
 	update_status PostUpdate(float dt);
 	bool SaveConfig(JSON_Object* node);
 	bool CleanUp();
 
-	
+	ParticleSystem* CreateParticleSystem();
 
 private:
 	
-	std::vector<ParticleSystem> particle_systems;
+	std::vector<ParticleSystem*> particle_systems;
 };
 
 #endif // __ModuleAudio_H__

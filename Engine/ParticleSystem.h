@@ -4,7 +4,7 @@
 #include <vector>
 #include <list>
 #include "MathGeoLib.h"
-#include "CompMesh.h"
+#include "CompMaterial.h"
 
 
 #ifdef NULL
@@ -343,6 +343,10 @@ public:
 	bool ShowEmitterBoundBox = false;							//Draw emitter AABB
 	bool ShowEmitter = true;									//Draw emitter shape
 
+	bool to_delete = false;
+
+	ResourceMaterial* texture_resource = nullptr;
+
 private:
 	ParticleMeshData ParticleMesh;								//Particle mesh to use
 	std::vector<Particle> Particles;								//Particles created
@@ -355,7 +359,7 @@ private:
 	std::vector<unsigned int> TexturesUV_ID;					//Particle animation UVs IDs
 	float NextParticleTime = 0.0f;								//Store next time when the next particle will be spawned
 
-	uint last_particle_alive = 0;
+
 
 	enum
 	{

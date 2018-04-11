@@ -572,7 +572,11 @@ ParticleSystem::ParticleSystem()
 
 ParticleSystem::~ParticleSystem()
 {
-
+	if (texture_resource && texture_resource->num_game_objects_use_me > 0)
+	{
+		texture_resource->num_game_objects_use_me--;
+		texture_resource = nullptr;
+	}
 }
 
 bool ParticleSystem::PreUpdate(float dt)
@@ -1298,6 +1302,6 @@ bool ParticleSystem::CreateParticle()
 	Direction = float3(Rot.x, Rot.y, Rot.z);
 
 	Particles.push_back(Particle(this, InitialState, FinalState, Direction * (Emitter.Speed + RandGen.Float(-Emitter.SpeedVariation, Emitter.SpeedVariation)), offset, Emitter.Lifetime + RandGen.Float(-Emitter.LifetimeVariation, Emitter.LifetimeVariation)));
-	
+
 	return true;
 }

@@ -12,6 +12,7 @@
 #include "CompTransform.h"
 #include "ModuleEventSystemV2.h"
 #include "ModuleGUI.h"
+#include "ModuleParticles.h"
 #include "WindowInspector.h"
 
 CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Component(t, parent)
@@ -26,7 +27,7 @@ CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Compon
 	particle_resource_name = parent->GetName();
 	particle_resource_name += "_particle";
 
-	part_system = new ParticleSystem();
+	part_system = App->particles->CreateParticleSystem();
 	uid = App->random->Int();
 }
 
@@ -40,7 +41,7 @@ CompParticleSystem::CompParticleSystem(const CompParticleSystem& copy, GameObjec
 	emitter_resource_name = copy.emitter_resource_name;
 	particle_resource_name = copy.particle_resource_name;
 
-	part_system = new ParticleSystem();
+	part_system = App->particles->CreateParticleSystem();
 
 	discard_distance = copy.discard_distance;
 
@@ -111,16 +112,11 @@ void CompParticleSystem::Clear()
 
 	if (part_system != nullptr)
 	{
-		part_system->CleanUp();
-		delete part_system;
+		part_system->to_delete = true;
 		part_system = nullptr;
 	}
 
-	if (texture_resource && texture_resource->num_game_objects_use_me > 0)
-	{
-		texture_resource->num_game_objects_use_me--;
-		texture_resource = nullptr;
-	}
+
 }
 
 void CompParticleSystem::Draw()
@@ -141,23 +137,23 @@ void CompParticleSystem::SetTextureResource(const char * Path, int columns, int 
 
 void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, int numberOfFrames, uint AnimationOrder)
 {
-	if (texture_resource != nullptr && texture_resource->num_game_objects_use_me > 0)
+	if (part_system->texture_resource != nullptr && part_system->texture_resource->num_game_objects_use_me > 0)
 	{
-		texture_resource->num_game_objects_use_me--;
+		part_system->texture_resource->num_game_objects_use_me--;
 	}		
 	
-	texture_resource = (ResourceMaterial*)App->resource_manager->GetResource(uuid);//(texture_resource*)App->resources->Get(uuid);
-	if (texture_resource != nullptr)
+	part_system->texture_resource = (ResourceMaterial*)App->resource_manager->GetResource(uuid);//(texture_resource*)App->resources->Get(uuid);
+	if (part_system->texture_resource != nullptr)
 	{
-		if (texture_resource->GetState() != Resource::State::LOADED)
+		if (part_system->texture_resource->GetState() != Resource::State::LOADED)
 		{
-			texture_resource->LoadToMemory();
-			App->importer->iMaterial->LoadResource(std::to_string(texture_resource->GetUUID()).c_str(), texture_resource);
+			part_system->texture_resource->LoadToMemory();
+			App->importer->iMaterial->LoadResource(std::to_string(part_system->texture_resource->GetUUID()).c_str(), part_system->texture_resource);
 			
 		}
-		texture_resource->num_game_objects_use_me++;
+		part_system->texture_resource->num_game_objects_use_me++;
 
-		part_system->SetTextureResource(texture_resource->GetTextureID(), texture_resource->GetTextureWidth(), texture_resource->GetTextureHeight(), columns, rows, numberOfFrames, AnimationOrder);
+		part_system->SetTextureResource(part_system->texture_resource->GetTextureID(), part_system->texture_resource->GetTextureWidth(), part_system->texture_resource->GetTextureHeight(), columns, rows, numberOfFrames, AnimationOrder);
 	}
 	else LOG("WARNING: Texture resource in particles is nullptr");
 }
@@ -901,7 +897,7 @@ void CompParticleSystem::ImGuiSaveParticlePopUp()const
 	part_system->GetInitialState(InitialState);
 	ParticleState FinalState;
 	part_system->GetFinalState(FinalState);
-	SaveParticleStates(texture_resource, part_system->GetTextureResource(), &InitialState, &FinalState);
+	SaveParticleStates(part_system->texture_resource, part_system->GetTextureResource(), &InitialState, &FinalState);
 }
 
 void CompParticleSystem::ImGuiSaveEmitterPopUp()const
