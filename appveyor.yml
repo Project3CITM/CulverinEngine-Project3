@@ -49,7 +49,7 @@ before_package:
 
 artifacts:	
 - path: Engine\MyBuilds\CulverineEngine.{build}	
-name: CulverineEngine.{build}
+  name: CulverineEngine.{build}
   
 #---------------------------------#
 #         notifications           #
