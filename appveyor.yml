@@ -75,7 +75,7 @@ notifications:
 
 # providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment	
 # provider names are case-sensitive!	
-	
+
 only_commits:
   message: /appveyor_build/
     before_package:
