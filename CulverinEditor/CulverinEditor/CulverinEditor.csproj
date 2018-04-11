@@ -80,6 +80,7 @@
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
+    <Compile Include="Leftamina.cs" />
     <Compile Include="Player\ActivateEnemies.cs" />
     <Compile Include="Player\Jaime\ComboController.cs" />
     <Compile Include="Random.cs" />
