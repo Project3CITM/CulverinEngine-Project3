@@ -33,6 +33,9 @@
 #include "ImportScript.h"
 #include "ModuleInput.h"
 #include "PlayerActions.h"
+
+#include <shlobj.h>
+
 static int malloc_count;
 static void *counted_malloc(size_t size);
 static void counted_free(void *ptr);
@@ -93,7 +96,15 @@ Application::Application()
 	// Renderer last!
 	AddModule(renderer3D);
 	AddModule(render_gui);
+}
 
+Application::Application(bool make_Build)
+{
+	fs = new ModuleFS();
+	json_seria = new JSONSerialization();
+	build_mode = true;
+	AddModule(fs);
+	// ^^
 }
 
 Application::~Application()
@@ -105,9 +116,12 @@ Application::~Application()
 		delete *item;
 		item++;
 	}
-	RELEASE(configuration);
-	RELEASE(random);
 	RELEASE(json_seria);
+	if (build_mode == false)
+	{
+		RELEASE(configuration);
+		RELEASE(random);
+	}
 }
 
 bool Application::Init()
@@ -909,6 +923,245 @@ const std::vector<Module*>* Application::GetModuleList() const
 void Application::AddModule(Module* mod)
 {
 	list_modules.push_back(mod);
+}
+
+void Application::MakeBuild(std::string build_name, std::string Initial_scene, std::string destination, bool game_mode_)
+{
+	static std::string initial_scene;
+	std::vector<std::string> scenes_build;
+	App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), scenes_build, "scene.json");
+	if (scenes_build.size() > 0)
+	{
+		initial_scene = "UnKnown";
+		for (int i = 0; i < scenes_build.size(); i++)
+		{
+			if (strcmp(App->fs->GetOnlyName(scenes_build[i]).c_str(), Initial_scene.c_str()) == 0)
+			{
+				initial_scene = Initial_scene;
+				initial_scene += ".scene.json";
+				LOG("Initial Scene: %s", initial_scene.c_str());
+			}
+		}
+	}
+
+	LOG("Save Initial Scene");
+	App->SaveLogs();
+
+	// Settings
+	static std::string game_name;
+	game_name = build_name;
+
+	static bool full_screen = false;
+	static bool native_resolution = false;
+	static bool run_in_background = false;
+	static bool resizable_window = true;
+	static bool borderless = false;
+	static bool full_desktop = false;
+	static bool game_mode = true;
+	static bool use_release = true;
+
+	// First Create a new folder in desktop
+	// Destination: "/MyBuilds"
+	std::string desktop = App->fs->GetGameDirectory() + destination; 
+	App->fs->CreateFolder(desktop.c_str());
+	//desktop = "C:/Users/Administrador/Desktop";
+	App->fs->NormalitzatePath(desktop);
+	desktop += "/" + game_name;
+	App->fs->CreateFolder(desktop.c_str());
+
+	LOG("Create Main Folders");
+	App->SaveLogs();
+
+	// Now Create a folder Assets and copy-paste all metas/cs
+	std::string desktop_assets = desktop + "/Assets";
+	App->fs->CreateFolder(desktop_assets.c_str());
+	std::vector<std::string> files_meta;
+	App->fs->GetAllMetas(App->fs->GetMainDirectory(), files_meta);
+	for (int i = 0; i < files_meta.size(); i++)
+	{
+		std::string desktop_assets_temp = desktop_assets + "/";
+		desktop_assets_temp += App->fs->FixName_directory(files_meta[i]);
+		App->fs->CopyPasteFile(files_meta[i].c_str(), desktop_assets_temp.c_str());
+	}
+	files_meta.clear();
+
+	LOG("Copy all metas");
+	App->SaveLogs();
+
+	// Now copy-paste all files .cs
+	std::vector<std::string> files_cs;
+	App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), files_cs, "cs");
+	for (int i = 0; i < files_cs.size(); i++)
+	{
+		std::string desktop_assets_temp = desktop_assets + "/";
+		desktop_assets_temp += App->fs->FixName_directory(files_cs[i]);
+		App->fs->CopyPasteFile(files_cs[i].c_str(), desktop_assets_temp.c_str());
+	}
+	files_cs.clear();
+
+	LOG("Copy all cs");
+	App->SaveLogs();
+
+	// Now copy all scenes
+	for (int i = 0; i < scenes_build.size(); i++)
+	{
+		std::string desktop_assets_temp = desktop_assets + "/";
+		desktop_assets_temp += App->fs->GetOnlyName(scenes_build[i]);
+		desktop_assets_temp += ".scene.json";
+		App->fs->CopyPasteFile(scenes_build[i].c_str(), desktop_assets_temp.c_str());
+	}
+	scenes_build.clear();
+
+	LOG("Copy all scenes");
+	App->SaveLogs();
+
+	// Copy Folder Maps -------------------------------------------
+	std::string path_copy = App->fs->GetMainDirectory() + "/Maps";
+	std::string path_paste = desktop_assets + "/Maps";
+	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+	LOG("Copy Map folder");
+	App->SaveLogs();
+
+
+	// Copy Folder ParticleSystem -------------------------------------------
+	path_copy = App->fs->GetMainDirectory() + "/ParticleSystem";
+	path_paste = desktop_assets + "/ParticleSystem";
+	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+	LOG("Copy ParticleSystem folder");
+	App->SaveLogs();
+
+	// Copy Folder Shaders -------------------------------------------
+	path_copy = App->fs->GetMainDirectory() + "/Shaders";
+	path_paste = desktop_assets + "/Shaders";
+	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+	LOG("Copy Shaders folder");
+	App->SaveLogs();
+
+	// After, copy folders (Library, AudioBanks, Images, Mono, ScriptManager, Fonts)
+	// Library -----------------------------------------------------
+	path_copy = App->fs->GetGameDirectory() + "/Library";
+	path_paste = desktop + "/Library";
+	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+	LOG("Copy Library folder");
+	App->SaveLogs();
+
+	// AudioBanks -----------------------------------------------------
+	path_copy = App->fs->GetGameDirectory() + "/AudioBanks";
+	path_paste = desktop + "/AudioBanks";
+	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+	LOG("Copy AudioBanks folder");
+	App->SaveLogs();
+
+	// Images -----------------------------------------------------
+	path_copy = App->fs->GetGameDirectory() + "/Images";
+	path_paste = desktop + "/Images";
+	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+	LOG("Copy Images folder");
+	App->SaveLogs();
+
+	// Mono -----------------------------------------------------
+	path_copy = App->fs->GetGameDirectory() + "/Mono";
+	path_paste = desktop + "/Mono";
+	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+	LOG("Copy Mono folder");
+	App->SaveLogs();
+
+	// ScriptManager -----------------------------------------------------
+	path_copy = App->fs->GetGameDirectory() + "/ScriptManager";
+	path_paste = desktop + "/ScriptManager";
+	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+	LOG("Copy ScriptManager folder");
+	App->SaveLogs();
+
+	// Fonts -----------------------------------------------------
+	path_copy = App->fs->GetGameDirectory() + "/Fonts";
+	path_paste = desktop + "/Fonts";
+	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+	LOG("Copy Fonts folder");
+	App->SaveLogs();
+
+	// Then all files (no Folders) in Game.
+	std::vector<std::string> files_game;
+	App->fs->GetOnlyFilesFromFolder(App->fs->GetGameDirectory(), files_game);
+	for (int i = 0; i < files_game.size(); i++)
+	{
+		std::string files_game_new = desktop + "/";
+		files_game_new += App->fs->FixName_directory(files_game[i]);
+		App->fs->CopyPasteFile(files_game[i].c_str(), files_game_new.c_str());
+	}
+
+	LOG("Copy all files (Game)");
+	App->SaveLogs();
+
+	// Then Edit config file with new settings
+	std::string new_config = desktop;
+	new_config += "/config.json";
+	App->json_seria->SaveConfig(new_config, game_name, initial_scene, game_mode, full_screen, resizable_window, borderless, full_desktop);
+
+	LOG("Save New Config");
+	App->SaveLogs();
+
+		// Finnaly .exe from Release
+	std::string folder = App->fs->GetGameDirectory();
+	folder += "../../Release/CulverinEngine.exe";
+	std::string executable = desktop;
+	executable += "/" + game_name + ".exe";
+	App->fs->CopyPasteFile(folder.c_str(), executable.c_str());
+	LOG("Copy .exe");
+
+}
+
+void Application::SaveLogs(const char* path)
+{
+	// Create a file Logs.txt to saw all errors.
+	if (path != nullptr)
+	{
+		std::ofstream outfile(path);
+		for (int i = 0; i < savelogs.size(); i++)
+		{
+			outfile << savelogs[i].c_str() << std::endl;
+		}
+		outfile.close();
+	}
+	else
+	{
+		std::ofstream outfile("Logs.txt");
+		for (int i = 0; i < savelogs.size(); i++)
+		{
+			outfile << savelogs[i].c_str() << std::endl;
+		}
+		outfile.close();
+	}
+}
+
+bool Application::InitBuild()
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
+	JSON_Object* config_node;
+
+	config_file = json_parse_file("config.json");
+	config = json_value_get_object(config_file);
+	std::vector<Module*>::iterator item = list_modules.begin();
+	while (item != list_modules.end())
+	{
+		if ((*item)->IsEnabled())
+		{
+			config_node = json_object_get_object(config, (*item)->name.c_str());
+			(*item)->Init(config_node);
+		}
+		item++;
+	}
+	return true;
 }
 
 static void *counted_malloc(size_t size) {

@@ -21,6 +21,10 @@ void log(const char file[], int line, const char* format, ...)
 	{
 		App->console->AddLog(tmp_string);
 	}
+	if (App != nullptr && App->build_mode)
+	{
+		App->savelogs.push_back(tmp_string);
+	}
 	
 	OutputDebugString(tmp_string2);
 }

@@ -80,6 +80,7 @@ class Application
 {
 public:
 	Application();
+	Application(bool make_Build);
 	~Application();
 
 	bool Init();
@@ -106,6 +107,10 @@ public:
 	void SetActualScene(std::string);
 
 	const std::vector<Module*>* GetModuleList() const;
+
+	void MakeBuild(std::string build_name, std::string Initial_scene, std::string destination, bool game_mode = true);
+	void SaveLogs(const char* path = nullptr);
+	bool InitBuild();
 
 private:
 
@@ -158,6 +163,10 @@ public:
 	// ----------------------------------
 
 	bool mode_game = false;
+
+	// Build Mode--------
+	bool build_mode = false;
+	std::vector<std::string> savelogs;
 
 public:
 	// Variables for enable different windows ---

@@ -25,7 +25,7 @@ ModuleFS::~ModuleFS()
 	allfilesAsstes.clear(); 
 }
 
-bool ModuleFS::Init(JSON_Object * node)
+bool ModuleFS::Init(JSON_Object* node)
 {
 	// Will contain exe path
 	GetCurrentDirectory(MAX_PATH, ownPth);
@@ -35,19 +35,22 @@ bool ModuleFS::Init(JSON_Object * node)
 	LOG("%s", directory_game);
 	LOG("%s", directory_assets);
 
-	// Check if Main Folders exist --------------------
-	CreateFolder("Library");
-	CreateFolder("Library/Meshes");
-	CreateFolder("Library/Materials");
-	CreateFolder("Library/Scripts");
-	CreateFolder("Library/Animations");
-	CreateFolder("Library/Fonts");
+	if (App->build_mode == false)
+	{
+		// Check if Main Folders exist --------------------
+		CreateFolder("Library");
+		CreateFolder("Library/Meshes");
+		CreateFolder("Library/Materials");
+		CreateFolder("Library/Scripts");
+		CreateFolder("Library/Animations");
+		CreateFolder("Library/Fonts");
 
-	CreateFolder("Library/JSON");
-	CreateFolder("Assets");
-	CreateFolder("Assets/Maps");
-	CreateFolder("Assets/Shaders");
-	CreateFolder("Assets/Shaders/Materials");
+		CreateFolder("Library/JSON");
+		CreateFolder("Assets");
+		CreateFolder("Assets/Maps");
+		CreateFolder("Assets/Shaders");
+		CreateFolder("Assets/Shaders/Materials");
+	}
 	return true;
 }
 
