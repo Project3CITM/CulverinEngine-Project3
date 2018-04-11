@@ -141,7 +141,7 @@ public class DaenerysController : CharacterController
                                     int tile_x, tile_y;
                                     GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out tile_x, out tile_y);
                                     Vector3 player_pos = GetLinkedObject("player_obj").GetComponent<Transform>().GetPosition();
-                                    player_pos.y -= 2.5f;
+                                    player_pos.y -= 9.1f;
                                     MovementController.Direction direction = GetLinkedObject("player_obj").GetComponent<MovementController>().curr_dir;
                                     switch (direction)
                                     {
