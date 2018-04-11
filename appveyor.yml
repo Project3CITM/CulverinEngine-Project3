@@ -38,20 +38,24 @@ build:
   # MSBuild verbosity level
   verbosity: normal
   
-before_package:
-- ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\CulverinEngine.exe C:\projects\TempMotor3D_P3\Engine\Game\.
-- ps: Copy-Item C:\projects\TempMotor3D_P3\README.md C:\projects\TempMotor3D_P3\Engine\Game\.
+only_commits:
+  message: /appveyor_build/
   
-artifacts:
-- path: Engine\Game
-  name: Culverine_Engine
+ 
+before_package:
+- C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\CulverinEngine.exe --make_build:/Assets --destination:/MyBuilds/ --build_name:CulverineEngine.{build}--initial_scene:PKey --game_mode:true
+- ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\CulverinEngine.exe C:\projects\TempMotor3D_P3\Engine\MyBuilds\CulverineEngine.{build}\.	
+- ps: Copy-Item C:\projects\TempMotor3D_P3\README.md C:\projects\TempMotor3D_P3\Engine\MyBuilds\CulverineEngine.{build}\.	
+
+artifacts:	
+- path: Engine\MyBuilds\CulverineEngine.{build}	
+  name: CulverineEngine.{build}
   
 #---------------------------------#
 #         notifications           #
 #---------------------------------#
 
 notifications:
-
   # Email
   - provider: Email
     to:		
@@ -77,13 +81,13 @@ notifications:
     on_build_success: false
     on_build_failure: true
     on_build_status_changed: false
+    
+#---------------------------------#	
+#     deployment configuration    #	
+#---------------------------------#	
 
-#---------------------------------#
-#     deployment configuration    #
-#---------------------------------#
-
-# providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
-# provider names are case-sensitive!
+# providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment	
+# provider names are case-sensitive!	
 
 for:
 -
@@ -91,33 +95,32 @@ for:
     only:
       - master
       
-  # Deploy to GitHub Releases
+  # Deploy to GitHub Releases	
   deploy:
   - provider: GitHub
     description: Release
     auth_token:
       secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
-    artifact: Culverine_Engine
+    artifact: CulverineEngine.{build}
     draft: false
     prerelease: false
     force_update: true
     on:
       CONFIGURATION: Release
-      
 -
   branches:
     only:
       - Develop
-
-  # Deploy to GitHub Releases
+      
+  # Deploy to GitHub Releases	
   deploy:
   - provider: GitHub
     description: Release
     auth_token:
       secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
-    artifact: Culverine_Engine
+    artifact: CulverineEngine.{build}
     draft: false
     prerelease: true
     force_update: true
     on:
-      CONFIGURATION: Debug
+      CONFIGURATION: Release
