@@ -456,8 +456,10 @@ static const GLchar* PointShadowMapVert[] =
 	"layout (location = 0) in vec3 position;\n"
 	"uniform mat4 model;\n"
 	"uniform mat4 viewproj;\n"
+	"out vec4 FragPos;\n"
 	"void main()\n"
 	"{\n"
+	"	FragPos = model * vec4(position, 1.0);\n"
 	"	gl_Position = viewproj * model * vec4(position, 1.0);\n"
 	"}\n"
 };
@@ -489,14 +491,14 @@ static const GLchar* PointShadowMapFrag[] =
 {
 	"#version 330 core\n"
 	"in vec4 FragPos;\n"
-	"out vec4 fragmentdepth;\n"
-	"uniform vec3 light_pos;\n"
-	"uniform float far_plane;\n"
+	
+	"uniform vec3 _light_pos;\n"
+	"uniform float _far_plane;\n"
 	"void main()\n"
 	"{\n"
-	"	float light_dist = length(FragPos.xyz - light_pos);\n"
-	"	light_dist = light_dist / far_plane; // Normalize it\n"
-	"	fragmentdepth = vec4(light_dist);\n"
+	"	float light_dist = length(FragPos.xyz - _light_pos);\n"
+	"	light_dist = (light_dist-1) / (_far_plane-1); // Normalize it\n"
+	"	gl_FragDepth = light_dist;\n"
 	"}\n"
 };
 

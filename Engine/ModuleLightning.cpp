@@ -432,8 +432,8 @@ void ModuleLightning::CalcPointShadowMaps(Event& events, CompLight* light)
 					glUniformMatrix4fv(glGetUniformLocation(sh_id, "viewproj"),
 						1, GL_FALSE, &((shadow_transforms[i])[0][0]));
 
-					glUniform1f(glGetUniformLocation(sh_id, "far_plane"), far_plane);
-					glUniform3fv(glGetUniformLocation(sh_id, "light_pos"), 1, &l_pos.x);
+					glUniform1f(glGetUniformLocation(sh_id, "_far_plane"), far_plane);
+					glUniform3fv(glGetUniformLocation(sh_id, "_light_pos"), 1, &l_pos.x);
 
 					ResourceMesh* mesh = m->resource_mesh;
 					glBindBuffer(GL_ARRAY_BUFFER, mesh->id_total_buffer);

@@ -7,6 +7,8 @@
 #include "ModuleFramebuffers.h"
 #include "Scene.h"
 #include "ModuleWindow.h"
+#include "CompLight.h"
+#include "ModuleLightning.h"
 
 void AddListener(EventType type, Module* listener)
 {
@@ -99,6 +101,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	IterateLightsV(dt);
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	active_frame = App->scene->scene_buff;
 	active_frame->Bind("Scene");
@@ -430,6 +433,40 @@ void ModuleEventSystemV2::IterateNoDrawV(float dt)
 	}
 }
 
+void ModuleEventSystemV2::IterateLightsV(float dt)
+{
+	uint LastBindedProgram = 0;
+	uint NewProgramID = 0;
+	Material* LastUsedMaterial = nullptr;
+	Material* ActualMaterial = nullptr;
+	for (std::multimap<float, Event>::const_iterator item = DrawLightV.cbegin(); item != DrawLightV.cend();)
+	{
+		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
+		switch (ValidEvent(item._Ptr->_Myval.second, dt))
+		{
+		case EventValidation::EVENT_VALIDATION_VALID: //Here we can execute the event, any delay is left and this is a valid event
+		{
+			App->module_lightning->OnEvent(item._Ptr->_Myval.second);
+			
+			item = DrawLightV.erase(item);
+		}
+			break;
+		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
+		case EventValidation::EVENT_VALIDATION_ADD_CONTINUE:
+			item++;
+			continue;
+		case EventValidation::EVENT_VALIDATION_ERASE_CONTINUE:
+		case EventValidation::EVENT_VALIDATION_ERROR:
+			item = DrawLightV.erase(item);
+			continue;
+		}
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+
+
+}
+
 EventValidation ModuleEventSystemV2::ValidEvent(Event& event, float dt)
 {
 	//If this event is pushed while we iterate, skip it for the next frame
@@ -567,10 +604,15 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		event_temp.Set_event_data(EventType::EVENT_SEND_3D_3DA_MM);
 		event_temp.send_3d3damm.MM3DDrawEvent = &DrawV;
 		event_temp.send_3d3damm.MM3DADrawEvent = &DrawAlphaV;
-		event_temp.send_3d3damm.light = event.request_3d3damm.light;
-		PushEvent(event_temp);
+		event_temp.send_3d3damm.light = event.request_3d3damm.light;	
+
+		float3 diff_vect = event_temp.send_3d3damm.light->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;
+		float DistanceCamToObject = diff_vect.Length();
+		DrawLightV.insert(std::pair<float, Event>(DistanceCamToObject, event_temp));
+		
 		break;
 	}
+	
 	default:
 		/*
 		if (IteratingMaps)

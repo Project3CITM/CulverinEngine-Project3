@@ -138,7 +138,7 @@ vec3 l = normalize(_light_dir);
 
 float cosTheta = dot(n,l);
 float s_bias = bias * cosTheta;
-// cosTheta is dot( n,l ), clamped between 0 and 1
+
 s_bias = clamp(s_bias, 0.000,0.0045);
   float visibility = 1.0f;
 
@@ -146,22 +146,16 @@ vec4 ShadowPos = ShadowCoord/ShadowCoord.w;
 vec3 LightDir = vec3(model * vec4(ourPos, 1)) -  _lights[0].position;
 float LightDepth    = VectorToDepth (LightDir);
 
-//for(int i =0;i<iterations;i++){
-
-	//float SampledDistance = texture(cubeMap,vec4(normalize(LightDir),LightDepth));
 
 	float SampledDistance = texture(cubeMap,normalize(LightDir)).r;
-//float asd = texture(cubeMap,vec4(-LightDir,1));
-	float Distance =  abs((length(LightDir) - 1)/(50-1)-1);
-Distance = abs(length(LightDir)/50 - 1);
-    if (Distance> SampledDistance)
+
+	float Distance =  (length(LightDir) - 1)/(50-1);
+ 
+    if (Distance> SampledDistance + s_bias)
         visibility =0;// Inside the light
     else
         visibility =1; // Inside the shadow
-	//int index = int(16.0*random(floor(mat3(model)* ourPos*1000.0), i))%16;
 
-//visibility = Distance;
-//visibility = SampledDistance;
 
 
 //}
@@ -170,8 +164,10 @@ for(int i =0 ; i< _numLights ; i++){
 a = 0;
 }
 
+color = vec4(vec3(SampledDistance-(Distance-0.5)), 1   - a * 0.001);
+//color = vec4(vec3(Distance), 1   - a * 0.001);
 color = vec4(vec3(SampledDistance), 1   - a * 0.001);
-//color = vec4(vec3(visibility), 1  - a * 0.001);
+color = vec4(vec3(visibility), 1  - a * 0.001);
 //color =vec4(ambient,1) + vec4(color_texture,1) * visibility * cosTheta;
 
 }
