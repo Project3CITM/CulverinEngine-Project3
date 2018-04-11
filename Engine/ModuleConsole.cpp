@@ -166,7 +166,7 @@ void Console::Draw(const char* title)
 		if (!filter.PassFilter(item))
 			continue;
 		ImVec4 col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // A better implementation may store a type per-item. For the sample let's just parse the text.
-		if (strstr(item, "[error]"))
+		if (strstr(item, "[red]"))
 		{
 			col = ImColor(1.0f, 0.4f, 0.4f, 1.0f);
 		}
