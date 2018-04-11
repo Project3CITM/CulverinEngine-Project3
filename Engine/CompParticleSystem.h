@@ -19,7 +19,7 @@ public:
 	CompParticleSystem(const CompParticleSystem& copy, GameObject* parent);
 	~CompParticleSystem();
 
-	void PreUpdate(float dt);
+
 	void Update(float dt);
 	void Clear();
 	void Draw();
@@ -97,8 +97,6 @@ private:
 private:
 
 
-	bool active = true;
-	bool preview = true;
 
 	ParticleSystem* part_system = nullptr;
 	
@@ -115,11 +113,7 @@ private:
 	std::string emitter_resource_name;
 
 	
-	bool child_loaded = false;
 
-
-	float discard_distance = 100.0;
-	float distance_to_camera = 0.0;
 
 	enum
 	{

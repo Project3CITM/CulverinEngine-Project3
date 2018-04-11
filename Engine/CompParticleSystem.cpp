@@ -43,9 +43,7 @@ CompParticleSystem::CompParticleSystem(const CompParticleSystem& copy, GameObjec
 
 	part_system = App->particles->CreateParticleSystem();
 
-	discard_distance = copy.discard_distance;
-
-
+	
 	file_to_load = particle_resource_name;
 	ImGuiLoadParticlePopUp();
 
@@ -64,19 +62,6 @@ CompParticleSystem::~CompParticleSystem()
 }
 
 
-void CompParticleSystem::PreUpdate(float dt)
-{
-	const CompCamera* camera = App->renderer3D->GetActiveCamera();
-	if (camera != nullptr)
-		part_system->SetCameraPosToFollow(camera->frustum.pos);
-		
-	distance_to_camera = camera->frustum.pos.Distance(parent->GetComponentTransform()->GetPosGlobal());
-
-	if(distance_to_camera < discard_distance)
-		if(App->engine_state == EngineState::STOP)
-			part_system->PreUpdate(0.02);
-		else part_system->PreUpdate(dt);
-}
 
 void CompParticleSystem::Update(float dt)
 {
@@ -86,24 +71,9 @@ void CompParticleSystem::Update(float dt)
 		ImGuiSavePopUp();
 		pop_up_save_open = false;
 	}
+		
 
-	
-
-	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());
-	
-	if (distance_to_camera < discard_distance)
-	{
-		if (App->engine_state == EngineState::STOP)
-			part_system->Update(0.02, preview);
-		else part_system->Update(dt);
-
-		part_system->DrawImGuiEditorWindow();
-
-		if (App->engine_state == EngineState::STOP)
-			part_system->PostUpdate(0.02);
-		else part_system->PostUpdate(dt);
-	}
-	
+	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());	
 }
 
 void CompParticleSystem::Clear()
@@ -115,8 +85,6 @@ void CompParticleSystem::Clear()
 		part_system->to_delete = true;
 		part_system = nullptr;
 	}
-
-
 }
 
 void CompParticleSystem::Draw()
@@ -160,7 +128,6 @@ void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, in
 
 
 
-
 void CompParticleSystem::ActivateEmitter(bool a)
 {
 	if (a)
@@ -178,10 +145,10 @@ void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveSc
 
 	json_object_dotset_string_with_std(object, name + "ParticleResource:", particle_resource_name.c_str());
 	json_object_dotset_string_with_std(object, name + "EmitterResource:", emitter_resource_name.c_str());
-	json_object_dotset_boolean_with_std(object, name + "Preview:", preview);
+	json_object_dotset_boolean_with_std(object, name + "Preview:", part_system->preview);
 	json_object_dotset_boolean_with_std(object, name + "Active:", part_system->IsEmitterActive());
 
-	json_object_dotset_number_with_std(object, name + "DiscardDistance", discard_distance);
+	json_object_dotset_number_with_std(object, name + "DiscardDistance", part_system->discard_distance);
 
 
 	ImGuiSaveParticlePopUp();
@@ -202,14 +169,14 @@ void CompParticleSystem::Load(const JSON_Object* object, std::string name)
 	file_to_load = emitter_resource_name;
 	ImGuiLoadEmitterPopUp();
 
-	preview = json_object_dotget_boolean_with_std(object, name + "Preview:");
+	part_system->preview = json_object_dotget_boolean_with_std(object, name + "Preview:");
 	bool active = json_object_dotget_boolean_with_std(object, name + "Active:");
 	if (active)
 		part_system->ActivateEmitter();
 	else
 		part_system->DeactivateEmitter();
 
-	discard_distance = json_object_dotget_number_with_std(object, name + "DiscardDistance");
+	part_system->discard_distance = json_object_dotget_number_with_std(object, name + "DiscardDistance");
 
 
 	
@@ -583,9 +550,9 @@ void CompParticleSystem::ShowInspectorInfo()
 		else 
 			part_system->DeactivateEmitter();
 	}
-	ImGui::Checkbox("Preview", &preview);
+	ImGui::Checkbox("Preview", &part_system->preview);
 
-	ImGui::DragFloat("Discard distance", &discard_distance, 1.0f, 0, 1000, "%.2f");
+	ImGui::DragFloat("Discard distance", &part_system->discard_distance, 1.0f, 0, 1000, "%.2f");
 	
 	//Emitter options
 	if (ImGui::TreeNodeEx("Emitter"))

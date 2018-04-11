@@ -313,6 +313,8 @@ public:
 	void DeactivateEmitter();
 	bool IsEmitterActive() const;
 
+	bool SystemIsEmpty() const;
+
 	void DebugDrawEmitter();									//Draw emitter shape
 	void DebugDrawEmitterAABB();								//Draw emitter AABB
 	void DrawImGuiEditorWindow();								//Draw Particle Editor Window
@@ -343,9 +345,15 @@ public:
 	bool ShowEmitterBoundBox = false;							//Draw emitter AABB
 	bool ShowEmitter = true;									//Draw emitter shape
 
+
+	bool active = true;
+	bool preview = true;
 	bool to_delete = false;
 
 	ResourceMaterial* texture_resource = nullptr;
+
+	float discard_distance = 100.0;
+	float distance_to_camera = 0.0;
 
 private:
 	ParticleMeshData ParticleMesh;								//Particle mesh to use

@@ -1,6 +1,8 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleParticles.h"
+#include "CompCamera.h"
+#include "ModuleRenderer3D.h"
 
 
 ModuleParticles::ModuleParticles(bool start_enabled) : Module(start_enabled)
@@ -13,7 +15,7 @@ ModuleParticles::ModuleParticles(bool start_enabled) : Module(start_enabled)
 // Destructor
 ModuleParticles::~ModuleParticles()
 {
-	particle_systems.clear();
+	
 }
 
 // Called before render is available
@@ -26,6 +28,58 @@ bool ModuleParticles::Init(JSON_Object* node)
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;
+}
+
+update_status ModuleParticles::PreUpdate(float dt)
+{
+	const CompCamera* camera = App->renderer3D->GetActiveCamera();
+	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); )
+	{
+		if ((*item)->to_delete == true && (*item)->SystemIsEmpty())
+		{
+			delete (*item);
+			item = particle_systems.erase(item);
+
+			continue;
+		}
+
+		if (camera != nullptr)
+			(*item)->SetCameraPosToFollow(camera->frustum.pos);
+
+		float3 emitter_pos;
+		((ParticleEmitter*)(*item)->GetEmitter())->GetPosition(emitter_pos);
+		(*item)->distance_to_camera = camera->frustum.pos.Distance(emitter_pos);
+
+		if ((*item)->distance_to_camera < (*item)->discard_distance)
+			if (App->engine_state == EngineState::STOP)
+				(*item)->PreUpdate(0.02);
+			else (*item)->PreUpdate(dt);
+
+		item++;
+	}
+
+
+	return UPDATE_CONTINUE;
+}
+
+update_status ModuleParticles::Update(float dt)
+{
+	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); item++)
+	{
+		if ((*item)->distance_to_camera < (*item)->discard_distance)
+		{
+			if (App->engine_state == EngineState::STOP)
+				(*item)->Update(0.02, (*item)->preview);
+			else (*item)->Update(dt);
+
+			(*item)->DrawImGuiEditorWindow();
+
+			if (App->engine_state == EngineState::STOP)
+				(*item)->PostUpdate(0.02);
+			else (*item)->PostUpdate(dt);
+		}
+	}
+	return UPDATE_CONTINUE;
 }
 
 
@@ -63,9 +117,8 @@ bool ModuleParticles::CleanUp()
 
 ParticleSystem * ModuleParticles::CreateParticleSystem()
 {
-	ParticleSystem* new_system = new ParticleSystem;
-	particle_systems.push_back(new_system);
-	return new_system;
+	particle_systems.push_back(new ParticleSystem());
+	return particle_systems.back();
 }
 
 

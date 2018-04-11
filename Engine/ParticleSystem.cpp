@@ -567,6 +567,10 @@ void ParticleTextureData::Set(unsigned int ID, unsigned int width, unsigned int 
 ParticleSystem::ParticleSystem()
 {
 	Particles.reserve(MAX_PARTICLES_PER_EMITTER);
+	active = true;
+	preview = true;
+	to_delete = false;
+	discard_distance = 100.0;
 	SetMeshResourcePlane();
 }
 
@@ -612,7 +616,7 @@ bool ParticleSystem::PreUpdate(float dt)
 bool ParticleSystem::Update(float dt, bool emit)
 {	
 
-	if(emit)
+	if(emit && to_delete == false)
 	{ 
 		if (App->engine_state != EngineState::STOP && !Emitter.IsEmitterActive())
 			return true;
@@ -857,6 +861,11 @@ void ParticleSystem::DeactivateEmitter()
 bool ParticleSystem::IsEmitterActive() const
 {
 	return Emitter.IsEmitterActive();
+}
+
+bool ParticleSystem::SystemIsEmpty() const
+{
+	return Particles.empty();
 }
 
 void ParticleSystem::DebugDrawEmitter()
