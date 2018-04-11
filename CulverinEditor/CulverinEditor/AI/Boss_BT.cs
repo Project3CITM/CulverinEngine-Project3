@@ -22,10 +22,24 @@ public class Boss_BT : BT
     public float max_anim_speed = 1.5f;
     public float min_anim_speed = 0.5f;
 
-    public float attack_cooldown = 1.0f;
-    public float attack_damage = 1.0f;
+    //distance Attack
+    public float distance_attack_cooldown = 1.0f;
+    public float distance_attack_damage = 1.0f;
+
+    //AOE Attack
+    public float aoe_attack_cooldown = 1.0f;
+    public float aoe_attack_damage = 1.0f;
+
+    //Strong Attack
+    public float strong_attack_cooldown = 1.0f;
+    public float strong_attack_damage = 1.0f;
+
+    //Triple Attack
+    public float triple_attack_cooldown = 1.0f;
+    public float triple_attack_damage = 1.0f;
+
     public float damaged_limit = 0.6f;
-    protected float attack_timer = 0.0f;
+    protected float cooldown = 0.0f;
 
     System.Random rand_gen = null;
 
@@ -59,93 +73,109 @@ public class Boss_BT : BT
 
         if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION && current_action.action_type != Action.ACTION_TYPE.DIE_ACTION)
         {
-            Debug.Log("Makeing Decision");
             int distance_x = GetDistanceXToPlayer();
             int distance_y = GetDistanceYToPlayer();
+            cooldown -= Time.deltaTime;
 
-            switch (phase)
+            bool in_cd = cooldown <= 0.0;
+
+            if (in_cd == true)
             {
-                case BOSS_STATE.BOSS_PHASE1:
-
-                    if (distance_x == 2 && distance_y == 0 || distance_x == 0 && distance_y == 2)
-                    {
-                        int rand = rand_gen.Next(1, 10);
-
-                        if (rand > 3)
+                switch (phase)
+                {
+                    case BOSS_STATE.BOSS_PHASE1:
+                        if (distance_x == 2 && distance_y == 0 || distance_x == 0 && distance_y == 2)
                         {
-                            //distance attack
-                            return;
+                            int rand = rand_gen.Next(1, 10);
+
+                            if (rand > 3)
+                            {
+                                //distance attack
+                                Debug.Log("Distance Attack");
+                                cooldown = distance_attack_cooldown;
+                                return;
+                            }
+                            else
+                            {
+                                GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(1);
+                                GetComponent<InfiniteChasePlayer_Action>().ActionStart();
+                                current_action = GetComponent<InfiniteChasePlayer_Action>();
+                                return;
+                            }
+                        }
+                        else if (distance_x == 1 && distance_y == 0 || distance_x == 0 && distance_y == 1)
+                        {
+                            int rand = rand_gen.Next(1, 10);
+
+                            if (rand > 3)
+                            {
+                                //AOE attack
+                                Debug.Log("AOE Attack");
+                                cooldown = aoe_attack_cooldown;
+                                return;
+                            }
+                            else
+                            {
+                                //distance attack
+                                Debug.Log("Distance Attack");
+                                cooldown = distance_attack_cooldown;
+                                return;
+                            }
                         }
                         else
                         {
-                            GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(1);
                             GetComponent<InfiniteChasePlayer_Action>().ActionStart();
                             current_action = GetComponent<InfiniteChasePlayer_Action>();
                             return;
                         }
-                    }
-                    else if (distance_x == 1 && distance_y == 0 || distance_x == 0 && distance_y == 1)
-                    {
-                        int rand = rand_gen.Next(1, 10);
 
-                        if (rand > 3)
+                    case BOSS_STATE.BOSS_PHASE2:
+
+                        if (distance_x == 2 && distance_y == 0 || distance_x == 0 && distance_y == 2)
                         {
-                            //AOE attack
-                            return;
+                            int rand = rand_gen.Next(1, 10);
+
+                            if (rand > 3)
+                            {
+                                //triple attack
+                                Debug.Log("Triple Attack");
+                                cooldown = triple_attack_cooldown;
+                                return;
+                            }
+                            else
+                            {
+                                GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(1);
+                                GetComponent<InfiniteChasePlayer_Action>().ActionStart();
+                                current_action = GetComponent<InfiniteChasePlayer_Action>();
+                                return;
+                            }
+                        }
+                        else if (distance_x == 1 && distance_y == 0 || distance_x == 0 && distance_y == 1)
+                        {
+                            int rand = rand_gen.Next(1, 10);
+
+                            if (rand > 3)
+                            {
+                                //Strong attack
+                                Debug.Log("Strong Attack");
+                                cooldown = strong_attack_cooldown;
+                                return;
+                            }
+                            else
+                            {
+                                //triple attack
+                                Debug.Log("Triple Attack");
+                                cooldown = triple_attack_cooldown;
+                                return;
+                            }
                         }
                         else
                         {
-                            //distance attack
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        GetComponent<InfiniteChasePlayer_Action>().ActionStart();
-                        current_action = GetComponent<InfiniteChasePlayer_Action>();
-                        return;
-                    }
-
-                case BOSS_STATE.BOSS_PHASE2:
-
-                    if (distance_x == 2 && distance_y == 0 || distance_x == 0 && distance_y == 2)
-                    {
-                        int rand = rand_gen.Next(1, 10);
-
-                        if (rand > 3)
-                        {
-                            //triple attack
-                            return;
-                        }
-                        else
-                        {
-                            GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(1);
                             GetComponent<InfiniteChasePlayer_Action>().ActionStart();
                             current_action = GetComponent<InfiniteChasePlayer_Action>();
                             return;
                         }
-                    }
-                    else if (distance_x == 1 && distance_y == 0 || distance_x == 0 && distance_y == 1)
-                    {
-                        int rand = rand_gen.Next(1, 10);
-
-                        if (rand > 3)
-                        {
-                            //Strong attack
-                            return;
-                        }
-                        else
-                        {
-                            //triple attack
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        GetComponent<InfiniteChasePlayer_Action>().ActionStart();
-                        current_action = GetComponent<InfiniteChasePlayer_Action>();
-                        return;
-                    }
+                }
             }
         }
     }
