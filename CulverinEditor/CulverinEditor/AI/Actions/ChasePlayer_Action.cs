@@ -24,7 +24,14 @@ public class ChasePlayer_Action : Action
     public override bool ActionStart()
     {
         event_to_react.start_counting = false;
-        move.GoToPlayer();
+
+        Enemy_BT bt = GetComponent<EnemySword_BT>();
+        if (bt == null)
+            bt = GetComponent<EnemyShield_BT>();
+        if (bt == null)
+            bt = GetComponent<EnemySpear_BT>();
+
+        move.GoToPlayer((uint)bt.range);
         //Debug.Log("[green] woooow party path");
         interupt = false;
         bool ret = move.ActionStart();
@@ -54,7 +61,14 @@ public class ChasePlayer_Action : Action
             if (timer >= check_player_timer && move.CenteredInTile())
             {
                 timer = 0.0f;
-                move.GoToPlayer();
+
+                Enemy_BT bt = GetComponent<EnemySword_BT>();
+                if (bt == null)
+                    bt = GetComponent<EnemyShield_BT>();
+                if (bt == null)
+                    bt = GetComponent<EnemySpear_BT>();
+
+                move.GoToPlayer((uint)bt.range);
             }
 
             if (GetComponent<PerceptionSightEnemy>().player_seen == false)

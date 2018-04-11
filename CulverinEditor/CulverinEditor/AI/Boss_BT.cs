@@ -25,7 +25,6 @@ public class Boss_BT : BT
     public float attack_damage = 1.0f;
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
-    protected float current_interpolation = 1.0f;
 
     public override void Start()
     {
@@ -96,6 +95,8 @@ public class Boss_BT : BT
 
         current_hp -= damage;
 
+        current_interpolation = current_hp / total_hp;
+
         Debug.Log("[error] Current HP: " + current_hp);
 
         if (current_hp <= 0)
@@ -113,9 +114,6 @@ public class Boss_BT : BT
         else if (life_state != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
         {
             life_state = BOSS_STATE.BOSS_PHASE2;
-            current_interpolation = current_hp / total_hp;
-            anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;
-            GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
             Phase2Textures();
         }
 

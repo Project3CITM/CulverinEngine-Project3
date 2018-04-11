@@ -4,7 +4,7 @@ using CulverinEditor.Pathfinding;
 
 public class InfiniteChasePlayer_Action : Action
 {
-
+    protected uint chase_range = 1;
     Movement_Action move;
 
     public float check_player_timer = 1.0f;
@@ -22,7 +22,7 @@ public class InfiniteChasePlayer_Action : Action
 
     public override bool ActionStart()
     {
-        move.GoToPlayer();
+        move.GoToPlayer(chase_range);
         //Debug.Log("[green] woooow party path");
         interupt = false;
         bool ret = move.ActionStart();
@@ -51,7 +51,7 @@ public class InfiniteChasePlayer_Action : Action
         if (timer >= check_player_timer && move.CenteredInTile())
         {
             timer = 0.0f;
-            move.GoToPlayer();
+            move.GoToPlayer(chase_range);
         }
 
         ///Make Move update
@@ -61,5 +61,10 @@ public class InfiniteChasePlayer_Action : Action
             move.ActionEnd();
 
         return move_return;
+    }
+
+    public void SetChaseRange(uint range)
+    {
+        chase_range = range;
     }
 }

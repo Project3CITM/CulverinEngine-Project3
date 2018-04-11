@@ -42,7 +42,7 @@ public class EnemySword_BT : Enemy_BT
                 return;
             }
 
-            bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
+            bool attack_ready = attack_timer >= attack_cooldown;
 
             if (attack_ready)
             {

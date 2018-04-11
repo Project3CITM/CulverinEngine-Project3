@@ -10,7 +10,6 @@ public class EnemySpear_BT : Enemy_BT
 
     public override void Start()
     {
-
         this.range = 2;
 
         current_map = GetLinkedObject("current_map");
@@ -26,7 +25,6 @@ public class EnemySpear_BT : Enemy_BT
         if (Temp_go == null) Debug.Log("[error]Gameobject enemies_manager not found");
         else
         {
-
             EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
 
             if (enemy_manager == null) Debug.Log("[error]EnemySpear_BT: enemies_manager is not detected");
@@ -89,7 +87,7 @@ public class EnemySpear_BT : Enemy_BT
             }
             else
             {
-                bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
+                bool attack_ready = attack_timer >= attack_cooldown;
                 if (attack_ready)
                 {
                     Debug.Log("[error]Spear Attack Can't separate");
@@ -120,7 +118,7 @@ public class EnemySpear_BT : Enemy_BT
                 return;
             }
 
-            bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
+            bool attack_ready = attack_timer >= attack_cooldown;
             if (attack_ready)
             {
 
@@ -256,7 +254,7 @@ public class EnemySpear_BT : Enemy_BT
 
     void RandomAttack(int rand_number, uint next_tile_x, uint next_tile_y)
     {
-        bool attack_ready = attack_timer >= (attack_cooldown * anim_speed);
+        bool attack_ready = attack_timer >= attack_cooldown;
 
         if (attack_ready)
         {

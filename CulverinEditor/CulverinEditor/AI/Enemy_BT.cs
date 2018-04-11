@@ -26,10 +26,18 @@ public class Enemy_BT : BT
     public float attack_damage = 1.0f;
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
-    protected float current_interpolation = 1.0f;
     public int range = 1;
 
+    public bool heard_something = false;
+
     protected bool in_combat = false;
+
+    //Path Go and Back
+    public int origin_path_x;
+    public int origin_path_y;
+
+    public int end_path_x;
+    public int end_path_y;
 
     public override void Start()
     {
@@ -39,7 +47,7 @@ public class Enemy_BT : BT
         Debug.Log("Current HP (Start): " + current_hp);
         Debug.Log("Total HP (Start): " + total_hp);
         //Enemy starts with the attack loaded
-        attack_timer = attack_cooldown * anim_speed;
+        attack_timer = 0.0f;
         mesh = GetLinkedObject("mesh");
         enemies_manager = GetLinkedObject("enemies_manager");
         GetComponent<CompAnimation>().PlayAnimation("Idle");
@@ -57,7 +65,6 @@ public class Enemy_BT : BT
 
     public override void MakeDecision()
     {
-
         if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION 
             || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION
             || next_action.action_type == Action.ACTION_TYPE.FACE_PLAYER_ACTION || next_action.action_type == Action.ACTION_TYPE.DIE_ACTION
@@ -122,6 +129,8 @@ public class Enemy_BT : BT
 
         current_hp -= damage;
 
+        current_interpolation = current_hp / total_hp;
+
         Debug.Log("[error] Current HP: " + current_hp);
 
         if (current_hp <= 0)
@@ -138,9 +147,6 @@ public class Enemy_BT : BT
         else if (life_state != ENEMY_STATE.ENEMY_DAMAGED && current_hp < total_hp * damaged_limit)
         {
             life_state = ENEMY_STATE.ENEMY_DAMAGED;
-            current_interpolation = current_hp / total_hp;
-            anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;
-            GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
             //ChangeTexturesToDamaged();
         }
 
@@ -188,11 +194,6 @@ public class Enemy_BT : BT
             return distance_y;
 
         return range + 1;
-    }
-
-    public float GetCurrentInterpolation()
-    {
-        return current_interpolation;
     }
 
     public void SetAction(Action.ACTION_TYPE type)

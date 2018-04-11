@@ -74,11 +74,13 @@ public class Movement_Action : Action
         arrive = GetComponent<Arrive_Steering>();
         seek = GetComponent<Seek_Steering>();
 
-        Enemy_BT bt = GetComponent<EnemySword_BT>();
+        BT bt = GetComponent<EnemySword_BT>();
         if(bt == null)
             bt = GetComponent<EnemyShield_BT>();
         if (bt == null)
             bt = GetComponent<EnemySpear_BT>();
+        if (bt == null)
+            bt = GetComponent<Boss_BT>();
 
         float interpolation = bt.GetCurrentInterpolation();
         current_max_vel = hurt_max_vel + (max_vel - hurt_max_vel) * interpolation;
@@ -397,17 +399,10 @@ public class Movement_Action : Action
         }
     }
 
-    public void GoToPlayer()
+    public void GoToPlayer(uint range)
     {
         player.GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-
-        Enemy_BT bt = GetComponent<EnemySword_BT>();
-        if (bt == null)
-            bt = GetComponent<EnemyShield_BT>();
-        if (bt == null)
-            bt = GetComponent<EnemySpear_BT>();
-
-        GoToPrevious(x, y, (uint)bt.range, true);
+        GoToPrevious(x, y, range, true);
     }
 
     public void Accelerate(Vector3 acceleration)    

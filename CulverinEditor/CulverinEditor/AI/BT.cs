@@ -20,16 +20,8 @@ public class BT : CulverinBehaviour
 
     //Blackboard
     public bool player_detected = false;
-    public bool heard_something = false;
 
-    //Path Go and Back
-    public int origin_path_x;
-    public int origin_path_y;
-           
-    public int end_path_x;
-    public int end_path_y;
-
-    public float anim_speed = 1.0f;
+    protected float current_interpolation = 1.0f;
 
     virtual public void Start()
     {
@@ -97,5 +89,10 @@ public class BT : CulverinBehaviour
     public void InterruptAction()
     {
         current_action.Interupt();
+    }
+
+    public float GetCurrentInterpolation()
+    {
+        return current_interpolation;
     }
 }
