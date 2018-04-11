@@ -183,6 +183,7 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 
 			if (LastUsedMaterial != ActualMaterial)
 			{
+				
 				LastUsedMaterial = ActualMaterial;
 
 				glBindTexture(GL_TEXTURE_2D, 0);
@@ -201,6 +202,7 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 					if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
 					else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
 				}
+				App->module_shaders->SetUniformVariables(ActualMaterial);
 
 			}
 			switch (item._Ptr->_Myval.second.draw.Dtype)
