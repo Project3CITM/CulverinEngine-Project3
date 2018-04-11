@@ -90,7 +90,7 @@ notifications:
 # provider names are case-sensitive!	
  
 for:	
--	
+-
   branches:	
     only:	
       - master	
