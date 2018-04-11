@@ -119,7 +119,7 @@ public class Movement_Action : Action
 
         if (path.Count != 0)
         {
-            tile = new PathNode(0, 0);
+            //tile = new PathNode(0, 0);
             tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
             Debug.Log("Moving to: " + tile.GetTileX() + "," + tile.GetTileY());
         }
@@ -302,6 +302,19 @@ public class Movement_Action : Action
             }
             else
             {
+                if (map.GetComponent<Pathfinder>().IsOccupiedTile(path[1]))
+                {
+                    Debug.Log("[green]The Dream: " + gameObject.GetName());
+                    if (gameObject.GetName() == "ShieldEnemy")
+                    {
+                        foreach(PathNode node in path)
+                        {
+                            Debug.Log("[blue]SHIELD PATH x: " + node.GetTileX() + "y: " + node.GetTileY());
+                        }
+                    }
+                    Debug.Log("[pink]Next tile ocupated x: " + path[1].GetTileX() + "y: " + path[1].GetTileY());
+                    return;
+                }
                 arrive.SetEnabled(true);
                 seek.SetEnabled(true);
                 path.Remove(path[0]);
@@ -334,6 +347,7 @@ public class Movement_Action : Action
             rotation_finished = false;
 
             path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
+
             look_at_player = rot;
 
             if (path.Count > 1)
