@@ -94,9 +94,15 @@ private:
 	/* Scene Management */
 	static void LoadScene(MonoString* scene_name);
 	static void LoadSceneNoDestroy(MonoString* scene_name);
+	static void LoadMultisceneNoDestroy(MonoString* main_scene_name, MonoString* secondary_scene_name);
 	static bool CheckSceneReady();
+	static bool CheckMultiSceneReady();
 	static void RemoveNoDestroy();
+	static void RemoveSecondaryScene();
+	static void ChangeToSecondaryScene();
+	static void BlockGUIinput();
 	static void QuitScene();
+
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);
 	/* Input */

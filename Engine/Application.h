@@ -101,11 +101,14 @@ public:
 	void WantToSave();
 	void WantToLoad(bool in_game = false);
 	void DontDestroyOnLoad();
+	void LoadMultiScene();
+	void ChangeToSecondary();
 
 	void ChangeCamera(const char* window);
 
 	std::string GetActualScene();
 	void SetActualScene(std::string);
+	void SetSecondaryScene(std::string);
 
 	const std::vector<Module*>* GetModuleList() const;
 
@@ -171,6 +174,11 @@ public:
 	bool show_camera_popup = false;
 	bool dont_destroy_on_load = false;
 	bool remove_dont_destroy_on_load = false;
+	bool load_multi_scene = false;
+	bool change_to_secondary_scene = false;
+	bool remove_secondary_scene = false;
+	bool activate_gui_input = false;
+
 	// -------------------------------------------
 
 	float4 scene_dock = { 0, 0, 0, 0 };
@@ -184,6 +192,7 @@ private:
 	std::string org_name;
 
 	std::string actual_scene;
+	std::string secondary_scene;
 
 	bool want_to_save = false;
 	bool want_to_load = false;

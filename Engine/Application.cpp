@@ -161,6 +161,7 @@ bool Application::Init()
 			{
 				config_node = json_object_get_object(config, (*item)->name.c_str());
 				ret = (*item)->Init(config_node);
+				json_object_clear(config_node);
 			}
 			item++;
 		}
@@ -306,8 +307,7 @@ void Application::FinishUpdate()
 		render_gui->selected = nullptr;
 		render_gui->ClearInteractiveVector();
 
-		//scene->DeleteAllGameObjects(App->scene->dontdestroyonload);
-		App->scene->dontdestroyonload->GetChildsPtr()->clear();
+		scene->DeleteAllGameObjects(App->scene->dontdestroyonload);
 
 		GameObject* camera2 = scene->root->FindGameObjectWithTag("camera");
 		((CompCamera*)camera2->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
@@ -323,6 +323,87 @@ void Application::FinishUpdate()
 		//scene->root->StartScripts();
 
 		remove_dont_destroy_on_load = false;
+	}
+
+	if (load_multi_scene)
+	{
+		//Before Delete GameObjects Del Variables Scripts GameObject 
+		App->scene->octree.Clear(false);
+
+		scene->ChangeRoot(scene->dontdestroyonload, scene->root);
+
+		//First swap main camera
+		GameObject* camera = scene->dontdestroyonload->FindGameObjectWithTag("camera");
+		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
+
+		scene->ClearAllTags();
+		importer->iScript->ClearLinkVariables();
+
+		// Load SecondaryScene and swap
+		json_seria->LoadScene(secondary_scene.c_str());
+		scene->ChangeRoot(scene->secondary_root, scene->root);
+
+		// Load Root 
+		json_seria->LoadScene(actual_scene.c_str());
+
+		// Set Scripting MonoMaps
+		importer->iScript->SetMonoMap(App->scene->root, true);
+		importer->iScript->SetMonoMap(App->scene->secondary_root, true);
+
+		// Now do Start Scripts
+		scene->root->StartScripts();
+		scene->secondary_root->StartScripts();
+
+		input->player_action->SetInputManagerActive("GUI", true);
+
+		load_multi_scene = false;
+	}
+
+	if (remove_secondary_scene)
+	{
+		render_gui->focus = nullptr;
+		render_gui->selected = nullptr;
+		render_gui->ClearInteractiveVector();
+
+		scene->DeleteAllGameObjects(scene->secondary_root);
+
+		if (engine_state != EngineState::STOP)
+		{
+			change_to_game = true;
+		}
+
+		remove_secondary_scene = false;
+	}
+
+	if (change_to_secondary_scene)
+	{
+		if (scene->secondary_root->GetChildsVec().size() > 0)
+		{
+			// Reset gui inputs?
+			render_gui->focus = nullptr;
+			render_gui->selected = nullptr;
+			render_gui->ClearInteractiveVector();
+
+			//First swap main camera
+			GameObject* camera = scene->root->FindGameObjectWithTag("camera");
+			((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
+
+			//Swap Scenes
+			GameObject* temp = new GameObject();
+			scene->ChangeRoot(temp, scene->root);
+			scene->ChangeRoot(scene->root, scene->secondary_root);
+			scene->ChangeRoot(scene->secondary_root, temp);
+			RELEASE(temp);
+
+			//Set new main camera
+			GameObject* camera2 = scene->root->FindGameObjectWithTag("camera");
+			((CompCamera*)camera2->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
+
+			//Block or not in Game InputEvents 
+			input->player_action->SetInputManagerActive("GUI", activate_gui_input);
+		}
+		activate_gui_input = false;
+		change_to_secondary_scene = false;
 	}
 	
 	// ---------------------------------------------
@@ -743,6 +824,8 @@ bool Application::SaveConfig()
 		}
 
 		json_serialize_to_file(config_file, "config.json");
+		json_object_clear(config_node);
+		json_object_clear(config);
 	}
 	json_value_free(config_file);
 
@@ -881,6 +964,16 @@ void Application::DontDestroyOnLoad()
 	dont_destroy_on_load = true;
 }
 
+void Application::LoadMultiScene()
+{
+	load_multi_scene = true;
+}
+
+void Application::ChangeToSecondary()
+{
+	change_to_secondary_scene = true;
+}
+
 void Application::ChangeCamera(const char* window)
 {
 	if (window == "Game")
@@ -903,6 +996,11 @@ std::string Application::GetActualScene()
 void Application::SetActualScene(std::string scene)
 {
 	actual_scene = scene;
+}
+
+void Application::SetSecondaryScene(std::string scene)
+{
+	secondary_scene = scene;
 }
 
 const std::vector<Module*>* Application::GetModuleList() const
