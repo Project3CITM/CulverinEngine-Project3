@@ -108,7 +108,7 @@ for:
     on:	
       CONFIGURATION: Release	
 
--	
+-
   branches:	
     only:	
       - Develop	
