@@ -1201,6 +1201,7 @@
     <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
+    <ClInclude Include="VertexUIData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1618,6 +1619,7 @@
     <ClCompile Include="AK\DefaultIO\Common\AkFilePackageLUT.cpp">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
+    <ClCompile Include="VertexUIData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">

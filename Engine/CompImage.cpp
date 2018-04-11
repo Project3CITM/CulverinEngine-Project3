@@ -73,7 +73,7 @@ void CompImage::Update(float dt)
 	{
 		if (transform->GetUpdateRect() && my_canvas_render!=nullptr)
 		{
-			my_canvas_render->ProcessQuad(transform->GenerateQuadVertices());
+			GenerateMesh();
 			transform->SetUpdateRect(false);
 		}
 	}
@@ -215,48 +215,61 @@ void CompImage::ShowInspectorInfo()
 		}
 		if (ImGui::DragFloat("##fillQuantity", &filled, 0.01f, 0.0f, 1.0f))
 		{
-			GenerateFilledSprite(method);
+			CorrectFillAmount();
+			GenerateMesh();
+
 		}
 	}
 	ImGui::TreePop();
 }
 
+
+
 void CompImage::FillAmount(float value)
 {
-	if (filled < 0.0f)
+	if (value < 0.0f)
 	{
 		filled = 0.0f;
 	}
-	else if (filled > 1.0f)
+	else if (value > 1.0f)
 	{
 		filled = 1.0f;
 	}
-	GenerateFilledSprite(method);
+	GenerateMesh();
 }
-void CompImage::GenerateFilledSprite(FillMethod Method)
+void CompImage::GenerateFilledSprite()
 {
 	float4 vertex = parent->GetComponentRectTransform()->GetRect();
 	float4 outer = { 0.0f,0.0f,1.0f,1.0f };	
-	std::vector<float2> quad_pos;
+	std::vector<float3> quad_pos;
 	quad_pos.reserve(4);
-	std::vector<float2> quad_uv;
+	quad_pos.push_back(float3::zero);
+	quad_pos.push_back(float3::zero);
+	quad_pos.push_back(float3::zero);
+	quad_pos.push_back(float3::zero);
+
+	std::vector<float3> quad_uv;
 	quad_uv.reserve(4);
+	quad_uv.push_back(float3::zero);
+	quad_uv.push_back(float3::zero);
+	quad_uv.push_back(float3::zero);
+	quad_uv.push_back(float3::zero);
 
 	float uv_x0 = outer.x;
 	float uv_y0 = outer.y;
 	float uv_x1 = outer.z;
 	float uv_y1 = outer.w;
 
-	if (Method == FillMethod::HORITZONTAL || Method == FillMethod::VERTICAL)
+	if (method == FillMethod::HORITZONTAL || method == FillMethod::VERTICAL)
 	{
-		if (Method == FillMethod::HORITZONTAL)
+		if (method == FillMethod::HORITZONTAL)
 		{
 			float fill = (uv_x1 - uv_x0) * filled;
 
 			vertex.z = vertex.x + (vertex.z - vertex.x) * filled;
 			uv_x1 = uv_x0 + fill;
 		}
-		else if (Method == FillMethod::VERTICAL)
+		else if (method == FillMethod::VERTICAL)
 		{
 			float fill = (uv_y1 - uv_y0) * filled;
 
@@ -264,15 +277,15 @@ void CompImage::GenerateFilledSprite(FillMethod Method)
 			uv_y1 = uv_y0 + fill;
 		}
 	}
-	quad_pos[0]=(float2({ vertex.x,vertex.y }));
-	quad_pos[1]=(float2({ vertex.x,vertex.w }));
-	quad_pos[2]=(float2({ vertex.z,vertex.w, }));
-	quad_pos[3]=(float2({ vertex.z,vertex.y, }));
+	quad_pos[0]=(float3({ vertex.x,vertex.y ,0}));
+	quad_pos[1]=(float3({ vertex.x,vertex.w ,0}));
+	quad_pos[2]=(float3({ vertex.z,vertex.w,0 }));
+	quad_pos[3]=(float3({ vertex.z,vertex.y,0 }));
 
-	quad_uv[0] = float2({ uv_x0,uv_y0 });
-	quad_uv[1] = float2({ uv_x0,uv_y1, });
-	quad_uv[2] = float2({ uv_x1,uv_y1, });
-	quad_uv[3] = float2({ uv_x1,uv_y0, });
+	quad_uv[0] = float3({ uv_x0,uv_y0 ,0});
+	quad_uv[1] = float3({ uv_x0,uv_y1,0 });
+	quad_uv[2] = float3({ uv_x1,uv_y1,0 });
+	quad_uv[3] = float3({ uv_x1,uv_y0,0 });
 
 	if (filled < 1.0f && method != FillMethod::HORITZONTAL && method != FillMethod::VERTICAL)
 	{
@@ -307,70 +320,56 @@ void CompImage::GenerateFilledSprite(FillMethod Method)
 				quad_pos[1].x = quad_pos[0].x;
 				quad_pos[2].x = Lerp(vertex.x, vertex.z, pos_x1);
 				quad_pos[3].x = quad_pos[2].x;
-				quad_pos[0].y = Lerp(vertex.x, vertex.z, pos_y0);
-				quad_pos[1].y = Lerp(vertex.x, vertex.z, pos_y1);
+
+				quad_pos[0].y = Lerp(vertex.y, vertex.w, pos_y0);
+				quad_pos[1].y = Lerp(vertex.y, vertex.w, pos_y1);
 				quad_pos[2].y = quad_pos[1].y;
 				quad_pos[3].y = quad_pos[0].y;
 
 
 				quad_uv[0].x = Lerp(uv_x0, uv_x1, pos_x0);
-
 				quad_uv[1].x = quad_uv[0].x;
-
 				quad_uv[2].x = Lerp(uv_x0, uv_x1, pos_x1);
-
 				quad_uv[3].x = quad_uv[2].x;
 
-				quad_uv[0].y = Lerp(uv_y0, uv_y1, pos_x0);
-
+				quad_uv[0].y = Lerp(uv_y0, uv_y1, pos_y0);
 				quad_uv[1].y = Lerp(uv_y0, uv_y1, pos_y1);
-
 				quad_uv[2].y = quad_uv[1].y;		
-
 				quad_uv[3].y = quad_uv[0].y;
 
-				LOG("PRE RADIAL CUT");
-				LOG(" quad_pos[0].x %f", quad_pos[0].x);
-				LOG(" quad_pos[1].x %f", quad_pos[1].x);
-				LOG(" quad_pos[2].x %f", quad_pos[2].x);
-				LOG(" quad_pos[3].x %f", quad_pos[3].x);
-				LOG(" quad_pos[0].y %f", quad_pos[0].y);
-				LOG(" quad_pos[1].y %f", quad_pos[0].y);
-				LOG(" quad_pos[2].y %f", quad_pos[0].y);
-				LOG(" quad_pos[3].y %f", quad_pos[0].y);
-
-				LOG(" quad_uv[0].x %f", quad_uv[0].x);
-				LOG(" quad_uv[1].x %f", quad_uv[1].x);
-				LOG(" quad_uv[2].x %f", quad_uv[2].x);
-				LOG(" quad_uv[3].x %f", quad_uv[3].x);
-				LOG(" quad_uv[0].y %f", quad_uv[0].y);
-				LOG(" quad_uv[1].y %f", quad_uv[0].y);
-				LOG(" quad_uv[2].y %f", quad_uv[0].y);
-				LOG(" quad_uv[3].y %f", quad_uv[0].y);
-
-
 				float value = filled*4.0f - (box_corner % 4);
-				if (RadialCut(quad_pos, quad_uv, abs(value), ((box_corner + 2) % 4)))
+				
+				
+				if (value > 1)
+					value = 1.0f;
+				else if (value < 0)
+					value = 0.0f;
+		
+				if (RadialCut(quad_pos, quad_uv, value, ((box_corner + 2) % 4)))
 				{
-					my_canvas_render->ProcessQuad(quad_pos, quad_uv);
-					LOG("RADIAL CUT");
+					ProcesQuad(quad_pos, quad_uv);
+
+					//my_canvas_render->ProcessQuad(quad_pos, quad_uv);
+					LOG("RADIAL CUT %i", box_corner);
 					LOG(" quad_pos[0].x %f", quad_pos[0].x);
-					LOG(" quad_pos[1].x %f", quad_pos[1].x);
-					LOG(" quad_pos[2].x %f", quad_pos[2].x);
-					LOG(" quad_pos[3].x %f", quad_pos[3].x);
 					LOG(" quad_pos[0].y %f", quad_pos[0].y);
-					LOG(" quad_pos[1].y %f", quad_pos[0].y);
-					LOG(" quad_pos[2].y %f", quad_pos[0].y);
-					LOG(" quad_pos[3].y %f", quad_pos[0].y);
+					LOG(" quad_pos[1].x %f", quad_pos[1].x);
+					LOG(" quad_pos[1].y %f", quad_pos[1].y);
+					LOG(" quad_pos[2].x %f", quad_pos[2].x);		
+					LOG(" quad_pos[2].y %f", quad_pos[2].y);
+					LOG(" quad_pos[3].x %f", quad_pos[3].x);
+					LOG(" quad_pos[3].y %f", quad_pos[3].y);
+					
 
 					LOG(" quad_uv[0].x %f", quad_uv[0].x);
 					LOG(" quad_uv[1].x %f", quad_uv[1].x);
 					LOG(" quad_uv[2].x %f", quad_uv[2].x);
 					LOG(" quad_uv[3].x %f", quad_uv[3].x);
 					LOG(" quad_uv[0].y %f", quad_uv[0].y);
-					LOG(" quad_uv[1].y %f", quad_uv[0].y);
-					LOG(" quad_uv[2].y %f", quad_uv[0].y);
-					LOG(" quad_uv[3].y %f", quad_uv[0].y);
+					LOG(" quad_uv[1].y %f", quad_uv[1].y);
+					LOG(" quad_uv[2].y %f", quad_uv[2].y);
+					LOG(" quad_uv[3].y %f", quad_uv[3].y);
+					
 
 				}
 			}
@@ -378,7 +377,7 @@ void CompImage::GenerateFilledSprite(FillMethod Method)
 	}
 	else
 	{
-		my_canvas_render->ProcessQuad(quad_pos, quad_uv);
+		ProcesQuad(quad_pos, quad_uv);
 	}
 }
 
@@ -538,7 +537,22 @@ ResourceMaterial * CompImage::GetCurrentTexture() const
 	return overwrite_image;
 }
 
-bool CompImage::RadialCut(std::vector<float2>& position, const std::vector<float2>& texture_cord, float fill_value, int box_corner,bool invert)
+void CompImage::CorrectFillAmount()
+{
+	if (filled < 0.0f)
+	{
+		filled = 0.0f;
+	}
+	else if (filled > 1.0f)
+	{
+		filled = 1.0f;
+	}
+}
+
+
+
+
+bool CompImage::RadialCut(std::vector<float3>& position, std::vector<float3>& texture_cord, float fill_value, int box_corner,bool invert)
 {
 	if (fill_value < 0.001f) 
 		return false;
@@ -549,23 +563,36 @@ bool CompImage::RadialCut(std::vector<float2>& position, const std::vector<float
 	if (!invert && fill_value > 0.999f)
 		return true;
 
-	float angle = fill_value / 1.0f;
+	float angle;
+	if (fill_value > 1)
+		angle = 1.0f;
+	else if (fill_value < 0)	
+		angle = 0.0f;
+	else
+		angle = fill_value;
+	
 	if (invert)
 		angle = 1.0f - angle;
 	angle *= DegToRad(90.0f);
 
 	float cos = Cos(angle);
 	float sin = Sin(angle);
+
 	RadialCut(position, cos, sin, box_corner, invert);
+	RadialCut(texture_cord, cos, sin, box_corner, invert);
+
 }
 
-void CompImage::RadialCut(std::vector<float2>& modify, float cos, float sin, int box_corner, bool invert)
+void CompImage::RadialCut(std::vector<float3>& modify, float cos, float sin, int box_corner, bool invert)
 {
 	int pos0 = box_corner;
 	int pos1 = ((box_corner + 1) % 4);
 	int pos2 = ((box_corner + 2) % 4);
 	int pos3 = ((box_corner + 3) % 4);
-
+	LOG(" pos0 %i", pos0);
+	LOG(" pos1 %i", pos1);
+	LOG(" pos2 %i", pos2);
+	LOG(" pos3 %i", pos3);
 	if ((box_corner & 1) == 1)
 	{
 		if (sin > cos)
@@ -596,14 +623,17 @@ void CompImage::RadialCut(std::vector<float2>& modify, float cos, float sin, int
 			sin = 1.0f;
 		}
 
-		if (!invert) modify[pos3].x = Lerp(modify[pos0].x, modify[pos2].x, cos);
-		else modify[pos1].y = Lerp(modify[pos0].y, modify[pos2].y, sin);
+		if (!invert)
+			modify[pos3].x = Lerp(modify[pos0].x, modify[pos2].x, cos);
+		else
+			modify[pos1].y = Lerp(modify[pos0].y, modify[pos2].y, sin);
 	}
 	else
 	{
 		if (cos > sin)
 		{
 			sin /= cos;
+			sin /= 1.0f;
 			cos = 1.0f;
 
 			if (!invert)
@@ -629,8 +659,27 @@ void CompImage::RadialCut(std::vector<float2>& modify, float cos, float sin, int
 			sin = 1.0f;
 		}
 
-		if (invert) modify[pos3].y = Lerp(modify[pos0].y, modify[pos2].y, sin);
-		else modify[pos1].x = Lerp(modify[pos0].x, modify[pos2].x, cos);
+		if (invert) 
+			modify[pos3].y = Lerp(modify[pos0].y, modify[pos2].y, sin);
+		else 
+			modify[pos1].x = Lerp(modify[pos0].x, modify[pos2].x, cos);
+	}
+}
+
+void CompImage::ExpandMesh()
+{
+	switch (type)
+	{
+	case Type::SIMPLE:
+	{
+		ProcesQuad(transform->GenerateQuadVertices());
+	}
+		break;
+	case Type::FILLED:
+		GenerateFilledSprite();
+
+		break;
+
 	}
 }
 

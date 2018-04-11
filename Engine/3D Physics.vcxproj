@@ -367,6 +367,7 @@
     <ClInclude Include="ShadersLib.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="TextEditor.h" />
+    <ClInclude Include="VertexUIData.h" />
     <ClInclude Include="WindowHierarchy.h" />
     <ClInclude Include="ModuleImporter.h" />
     <ClInclude Include="WindowProject.h" />
@@ -543,6 +544,7 @@
     <ClCompile Include="ShadersLib.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="TextEditor.cpp" />
+    <ClCompile Include="VertexUIData.cpp" />
     <ClCompile Include="WindowHierarchy.cpp" />
     <ClCompile Include="ModuleImporter.cpp" />
     <ClCompile Include="WindowProject.cpp" />

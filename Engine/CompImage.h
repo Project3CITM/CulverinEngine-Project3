@@ -25,7 +25,7 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void FillAmount(float value);
-	void GenerateFilledSprite(FillMethod method);
+
 	void CopyValues(const CompImage * component);
 	void Clear();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
@@ -40,11 +40,14 @@ public:
 	float4 GetColor()const;
 	ResourceMaterial* GetSourceImage()const;
 	ResourceMaterial* GetCurrentTexture()const;
-
 private:
-	bool RadialCut(std::vector<float2>& position, const std::vector<float2>& texture_cord, float fill_value, int box_corner, bool invert = false);
-	void RadialCut(std::vector<float2>& modify,float cos, float sin, int box_corner, bool invert = false);
+	void CorrectFillAmount();
 
+	void GenerateFilledSprite();
+	bool RadialCut(std::vector<float3>& position, std::vector<float3>& texture_cord, float fill_value, int box_corner, bool invert = true);
+	void RadialCut(std::vector<float3>& modify,float cos, float sin, int box_corner, bool invert = false);
+protected:
+	void ExpandMesh();
 public:
 	enum Type
 	{

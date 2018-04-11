@@ -2,7 +2,7 @@
 #define COMPONENT_GRAPHIC_H
 #include "Component.h"
 #include "Math\float4.h"
-
+#include "VertexUIData.h"
 class CompRectTransform;
 class CompCanvasRender;
 class CompCanvas;
@@ -40,10 +40,17 @@ public:
 	bool GetParentActive();
 
 private:
-public:
 protected:
+	void ProcesQuad(std::vector<float3>& position, std::vector<float3>& texture_cord);
+
+	void ProcesQuad(std::vector<float3>& position);
+
+	virtual void ExpandMesh();
+	void GenerateMesh();
+
+protected:	
+	VertexUIData vertex_data;
 	bool render = true;
-protected:
 	bool raycast_target = true;
 	CompCanvas* my_canvas = nullptr;
 	CompCanvasRender* my_canvas_render = nullptr;

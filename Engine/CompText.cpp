@@ -201,8 +201,8 @@ void CompText::ShowInspectorInfo()
 		{
 			text->SetSize(text_size);
 			text->ReLoadToMemory();
-			UpdateText();
-			GenerateText();
+			GenerateMesh();
+
 
 		}
 	}
@@ -262,8 +262,8 @@ void CompText::SetString(std::string input)
 	if (input.size() > max_input)
 		return;
 	text_str = input;
-	UpdateText();
-	GenerateText();
+	GenerateMesh();
+
 }
 
 bool CompText::GenerateText()
@@ -336,7 +336,9 @@ bool CompText::GenerateText()
 		quad_pos.push_back(right_bottom);
 		quad_pos.push_back(right_top);
 		quad_pos.push_back(left_top);
-		my_canvas_render->ProcessQuad(quad_pos);
+
+		ProcesQuad(quad_pos);
+
 		return true;
 
 	}
@@ -364,6 +366,12 @@ void CompText::ReSizeInput()
 	RELEASE_ARRAY(input_text);
 	input_text = new char[max_input];
 	strcpy_s(input_text, max_input,  tmp.c_str());
+}
+
+void CompText::ExpandMesh()
+{
+	UpdateText();
+	GenerateText();
 }
 
 void CompText::UpdateText()
@@ -503,7 +511,7 @@ void CompText::SyncComponent(GameObject* sync_parent)
 			text->SetSize(text_size);
 			text->ReLoadToMemory();
 		}
-		UpdateText();
-		GenerateText();
+		GenerateMesh();
+
 	}
 }
