@@ -86,7 +86,7 @@ only_commits:
     artifacts:	
     - path: Engine\MyBuilds\CulverineEngine.{build}	
       name: CulverineEngine.{build}
-  
+      
     for:	
     -	
       branches:	
