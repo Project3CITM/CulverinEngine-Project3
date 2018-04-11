@@ -28,10 +28,9 @@ public class Boss_BT : BT
 
     public override void Start()
     {
-        //todosforme
-        //GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddSwordEnemy();
+        GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddBoss(gameObject);
 
-        Phase1Textures();
+        //Phase1Textures();
         current_action = GetComponent<Idle_Action>();
         GetComponent<CompAnimation>().PlayAnimationNode("Idle");
 
@@ -108,7 +107,7 @@ public class Boss_BT : BT
             current_action.Interupt();
             
             //todosforme
-            //enemies_manager.GetComponent<EnemiesManager>().DeleteSwordEnemy(GetComponent<EnemySword_BT>().gameObject);
+            enemies_manager.GetComponent<EnemiesManager>().DeleteBoss();
           
         }
         else if (life_state != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
