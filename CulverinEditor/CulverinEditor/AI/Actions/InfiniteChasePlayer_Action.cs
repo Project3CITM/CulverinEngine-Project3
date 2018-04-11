@@ -30,7 +30,6 @@ public class InfiniteChasePlayer_Action : Action
 
     public override bool ActionEnd()
     {
-        Debug.Log("[blue] chase player action end");
         interupt = false;
         move.SetInterupt(false);
         chase_range = 2;

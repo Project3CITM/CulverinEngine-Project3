@@ -20,7 +20,6 @@ public class Fireball : CulverinBehaviour
         life = 5.0f;
 
         GetComponent<CompAudio>().PlayEvent("DaenerysFire"); //Change This!!
-        Debug.Log("[blue] PLAY TORCH -----------------");
     }
 
     public void Shoot()
@@ -41,7 +40,6 @@ public class Fireball : CulverinBehaviour
 
     void OnContact()
     {
-        Debug.Log("[error] ON CONTACT -----------");
         CompCollider col = GetComponent<CompCollider>();
         if (fireball_particles != null)
         {
@@ -59,8 +57,6 @@ public class Fireball : CulverinBehaviour
         // DAMAGE ---
         if (collided_obj != null)
         {
-            Debug.Log("[pink]" + collided_obj.GetName());
-
             rb = GetComponent<CompRigidBody>();
             //Lock transform to avoid trespassing more than one collider
             rb.LockTransform();

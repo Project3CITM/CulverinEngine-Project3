@@ -32,7 +32,6 @@ public class ChasePlayer_Action : Action
             bt = GetComponent<EnemySpear_BT>();
 
         move.GoToPlayer((uint)bt.range);
-        //Debug.Log("[green] woooow party path");
         interupt = false;
         bool ret = move.ActionStart();
         return ret;
@@ -40,7 +39,6 @@ public class ChasePlayer_Action : Action
 
     public override bool ActionEnd()
     {
-        Debug.Log("[blue] chase player action end");
         interupt = false;
         move.SetInterupt(false);
         return true;
@@ -49,10 +47,7 @@ public class ChasePlayer_Action : Action
     public override ACTION_RESULT ActionUpdate()
     {
         if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true )
-        {
-            //Debug.Log("[yellow] Move interruptus " + forgot_event + " " + GetComponent<Movement_Action>().NextToPlayer() + " " + interupt);
             move.Interupt();
-        }
 
         if (forgot_event == false)
         {

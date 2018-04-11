@@ -11,16 +11,16 @@ public class EnemyShield_BT : Enemy_BT
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
 
-        if (Temp_go == null) Debug.Log("[error]Gameobject enemies_manager not found (EnemyShield_BT)");
+        if (Temp_go == null)
+            Debug.Log("[error] Gameobject enemies_manager not found (EnemyShield_BT)");
         else
         {
             EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
 
-            if (enemy_manager == null) Debug.Log("[error]EnemyShield_BT: enemies_manager is not detected");
+            if (enemy_manager == null)
+                Debug.Log("[error] EnemyShield_BT: enemies_manager is not detected");
             else
-            {
                 enemy_manager.AddShieldEnemy(gameObject);
-            }
         }
         base.Start();
     }
@@ -48,7 +48,6 @@ public class EnemyShield_BT : Enemy_BT
 
             if (attack_ready)
             {
-                Debug.Log("Attack");
                 attack_timer = 0.0f;
                 state = AI_STATE.AI_ATTACKING;
                 Attack_Action action = GetComponent<Attack_Action>();
@@ -79,7 +78,6 @@ public class EnemyShield_BT : Enemy_BT
         if (heard_something)
         {
             //Investigate
-            Debug.Log("Investigate");
             GetComponent<Investigate_Action>().ActionStart();
             current_action = GetComponent<Investigate_Action>();
             return;
@@ -95,7 +93,6 @@ public class EnemyShield_BT : Enemy_BT
         //Patrol
         if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
         {
-            Debug.Log("Patrol origin");
             GetComponent<Movement_Action>().GoTo(origin_path_x, origin_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();
@@ -103,7 +100,6 @@ public class EnemyShield_BT : Enemy_BT
         }
         else
         {
-            Debug.Log("Patrol end");
             GetComponent<Movement_Action>().GoTo(end_path_x, end_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();
@@ -128,7 +124,6 @@ public class EnemyShield_BT : Enemy_BT
                         shield_block_timer = 0.0f;
                         GetComponent<CompAnimation>().SetTransition("ToBlock");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
-                        Debug.Log("Attack blocked");
                         return false;
                     }
                     else
@@ -152,7 +147,6 @@ public class EnemyShield_BT : Enemy_BT
                         shield_block_timer = 0.0f;
                         GetComponent<CompAnimation>().SetTransition("ToBlock");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
-                        Debug.Log("Attack blocked");
                         return false;
                     }
                     else

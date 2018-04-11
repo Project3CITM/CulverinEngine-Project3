@@ -27,7 +27,6 @@ public class BT : CulverinBehaviour
     {
         next_action = null_action;
         current_action = GetComponent<Idle_Action>();
-        Debug.Log("Starting at Idle");
         current_action.ActionStart();
         MakeDecision();
     }
@@ -58,7 +57,7 @@ public class BT : CulverinBehaviour
                     break;
 
                 default:
-                    Debug.Log("Error on action state!");
+                    Debug.Log("[error] No action state!");
                     break;
             }
         }
@@ -66,7 +65,7 @@ public class BT : CulverinBehaviour
 
     public virtual void MakeDecision()
     {
-        Debug.Log("[error]MakeDecision not Defined");
+        Debug.Log("[error] MakeDecision not Defined");
     }
 
     public AI_STATE GetState()

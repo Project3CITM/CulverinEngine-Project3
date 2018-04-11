@@ -41,8 +41,6 @@ public class DaenerysCD_Left : CoolDown
                 current_charges++;
                 UpdateChargesIcon();
 
-                Debug.Log("[error] increase charges");
-
                 if (current_charges < max_charges)
                 {
                     act_time = 0.0f;

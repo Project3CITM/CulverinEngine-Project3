@@ -8,13 +8,13 @@ public class EnemySword_BT : Enemy_BT
         GameObject Temp_go = GetLinkedObject("enemies_manager");
 
         if(Temp_go==null)
-            Debug.Log("[error]Gameobject enemies_manager not found");
+            Debug.Log("[error] Gameobject enemies_manager not found");
         else
         {
             EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
 
             if (enemy_manager == null)
-                    Debug.Log("[error]EnemySword_BT: enemies_manager is not detected");
+                    Debug.Log("[error] EnemySword_BT: enemies_manager is not detected");
             else
             {
                 enemy_manager.AddSwordEnemy(gameObject);
@@ -30,7 +30,6 @@ public class EnemySword_BT : Enemy_BT
 
     protected override void InCombatDecesion()
     {
-        //Debug.Log("InCombatDecesion");
         //Attack action
         if (InRange())
         {
@@ -46,7 +45,6 @@ public class EnemySword_BT : Enemy_BT
 
             if (attack_ready)
             {
-                Debug.Log("Attack");
                 attack_timer = 0.0f;
                 state = AI_STATE.AI_ATTACKING;
                 Attack_Action action = GetComponent<Attack_Action>();
@@ -57,7 +55,6 @@ public class EnemySword_BT : Enemy_BT
             }
             else
             {
-                //Debug.Log("IdleAttack");
                 state = AI_STATE.AI_IDLE;
                 current_action = GetComponent<IdleAttack_Action>();
                 current_action.ActionStart();
@@ -78,7 +75,6 @@ public class EnemySword_BT : Enemy_BT
         if (heard_something)
         {
             //Investigate
-            Debug.Log("Investigate");
             GetComponent<Investigate_Action>().ActionStart();
             current_action = GetComponent<Investigate_Action>();
             return;
@@ -93,7 +89,6 @@ public class EnemySword_BT : Enemy_BT
 
         if (my_tile_x != origin_path_x || my_tile_y != origin_path_y)
         {
-            Debug.Log("Patrol-origin");
             GetComponent<Movement_Action>().GoTo(origin_path_x, origin_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();
@@ -101,7 +96,6 @@ public class EnemySword_BT : Enemy_BT
         }
         else
         {
-            Debug.Log("Patrol-end");
             GetComponent<Movement_Action>().GoTo(end_path_x, end_path_y);
             GetComponent<Movement_Action>().ActionStart();
             current_action = GetComponent<Movement_Action>();

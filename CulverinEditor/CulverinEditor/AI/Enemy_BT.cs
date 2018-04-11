@@ -44,8 +44,6 @@ public class Enemy_BT : BT
         in_combat = false;
         player = GetLinkedObject("player");
         current_hp = total_hp;
-        Debug.Log("Current HP (Start): " + current_hp);
-        Debug.Log("Total HP (Start): " + total_hp);
         //Enemy starts with the attack loaded
         attack_timer = 0.0f;
         mesh = GetLinkedObject("mesh");
@@ -84,7 +82,6 @@ public class Enemy_BT : BT
         {            
             if (next_action.action_type == Action.ACTION_TYPE.DISENGAGE_ACTION)
             {
-                Debug.Log("Disengage");
                 in_combat = false;
                 current_action = GetComponent<Disengage_Action>();
                 current_action.ActionStart();
@@ -97,7 +94,6 @@ public class Enemy_BT : BT
         {
             if (next_action.action_type == Action.ACTION_TYPE.ENGAGE_ACTION)
             {
-                Debug.Log("Engage");
                 in_combat = true;
                 current_action = next_action;
                 next_action = null_action;
@@ -105,19 +101,18 @@ public class Enemy_BT : BT
                 return;
             }
 
-            Debug.Log("Out combat decisiom");
             OutOfCombatDecesion();
         }
     }
 
     protected virtual void InCombatDecesion()
     {
-        Debug.Log("In Combat Not Defined");
+        Debug.Log("[error] In Combat Not Defined");
     }
 
     protected virtual void OutOfCombatDecesion()
     {
-        Debug.Log("Out Of Combat Not Defined");
+        Debug.Log("[error] Out Of Combat Not Defined");
     }
 
     public virtual bool ApplyDamage(float damage)
@@ -129,8 +124,6 @@ public class Enemy_BT : BT
         current_hp -= damage;
 
         current_interpolation = current_hp / total_hp;
-
-        Debug.Log("[error] Current HP: " + current_hp);
 
         if (current_hp <= 0)
         {
@@ -157,13 +150,9 @@ public class Enemy_BT : BT
         current_action.Interupt();
 
         if (!GetComponent<Movement_Action>().IsWalkable((uint)(GetComponent<Movement_Action>().GetCurrentTileX() + dir.x), (uint)(GetComponent<Movement_Action>().GetCurrentTileY() + dir.z)))
-        {
-            Debug.Log("[error] STUN!");
             next_action = GetComponent<Stun_Action>();
-        }
         else
         {
-            Debug.Log("[error] PUSH!");
             next_action = GetComponent<PushBack_Action>();
             ((PushBack_Action)next_action).SetPushDirection(dir);
         }
@@ -204,7 +193,7 @@ public class Enemy_BT : BT
             case Action.ACTION_TYPE.DISENGAGE_ACTION: next_action = GetComponent<Disengage_Action>(); break;
             case Action.ACTION_TYPE.INVESTIGATE_ACTION: next_action = GetComponent<Investigate_Action>(); break;
 
-            default: Debug.Log("Unknown action"); break;
+            default: Debug.Log("[error] Unknown action"); break;
         }
     }
 

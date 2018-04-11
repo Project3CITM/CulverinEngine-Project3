@@ -29,7 +29,6 @@ public class Scroll : CulverinBehaviour
     {
         if (scroll_text.GetComponent<CompRectTransform>().GetPosition().y < limit_y)
         {
-            Debug.Log(position.y);
             Vector3 new_pos = new Vector3(position.x, position.y + speed * Time.deltaTime, position.z);
             scroll_text.GetComponent<CompRectTransform>().SetPosition(new_pos);
         }

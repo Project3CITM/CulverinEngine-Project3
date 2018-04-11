@@ -20,101 +20,70 @@ public class EnemiesManager : CulverinBehaviour
     {
         if (sword_enemies == null)
         {
-            Debug.Log("[error]EnemiesManager: Sword_enemies is null");
+            Debug.Log("[error] EnemiesManager: Sword_enemies is null");
         }
         else
-        {
             sword_enemies.Add(enemy);
-        }
     }
 
     public void DeleteSwordEnemy(GameObject enemy)
     {
         if (sword_enemies == null)
         {
-            Debug.Log("[error]EnemiesManager: Sword_enemies is null");
+            Debug.Log("[error] EnemiesManager: Sword_enemies is null");
         }
         else
-        {
             sword_enemies.Remove(enemy);
-            Debug.Log("Sword enemy deleted!");
-        }
     }
 
     public void AddLanceEnemy(GameObject enemy)
     {
         if (lance_enemies == null)
         {
-            Debug.Log("[error]EnemiesManager: Lance_enemies is null");
+            Debug.Log("[error] EnemiesManager: Lance_enemies is null");
         }
         else
-        {
             lance_enemies.Add(enemy);
-        }
     }
 
     public void DeleteLanceEnemy(GameObject enemy)
     {
         if (lance_enemies == null)
-        {
-            Debug.Log("[error]EnemiesManager: Lance_enemies is null");
-        }
+            Debug.Log("[error] EnemiesManager: Lance_enemies is null");
         else
-        {
             lance_enemies.Remove(enemy);
-            Debug.Log("Lance enemy deleted!");
-        }
     }
 
     public void AddShieldEnemy(GameObject enemy)
     {
         if (shield_enemies == null)
-        {
-            Debug.Log("[error]EnemiesManager: Shield_enemies is null");
-        }
+            Debug.Log("[error] EnemiesManager: Shield_enemies is null");
         else
-        {
             shield_enemies.Add(enemy);
-            Debug.Log("[error]ShieldEnemy is in the house");
-        }
     }
 
     public void DeleteShieldEnemy(GameObject enemy)
     {
         if (shield_enemies == null)
-        {
-            Debug.Log("[error]EnemiesManager: Shield_enemies is null");
-        }
+            Debug.Log("[error] EnemiesManager: Shield_enemies is null");
         else
-        {
             shield_enemies.Remove(enemy);
-            Debug.Log("Shield enemy deleted!");
-        }
     }
 
     public void AddBoss(GameObject boss_)
     {
         if (boss_ == null)
-        {
-            Debug.Log("[error]EnemiesManager: Boss_Object is null");
-        }
+            Debug.Log("[error] EnemiesManager: Boss_Object is null");
         else
-        {
             boss = boss_;
-            Debug.Log("Boss added!");
-        }
     }
 
     public void DeleteBoss()
     {
         if (boss == null)
-        {
-            Debug.Log("[error]EnemiesManager: Boss_Object is null");
-        }
+            Debug.Log("[error] EnemiesManager: Boss_Object is null");
         else
-        {
             boss = null;
-        }
     }
 
     public BT FindEnemyByTile(int x, int y)
@@ -136,14 +105,10 @@ public class EnemiesManager : CulverinBehaviour
                     }
                 }
                 else
-                {
-                    Debug.Log("[error]No movement action!!!!!");
-                }
+                    Debug.Log("[error] No movement action!");
             }
             else
-            {
-                Debug.Log("[error]Sowrd enemy null!!!!!");
-            }
+                Debug.Log("[error] Sword enemy null!");
         }
 
         size = lance_enemies.Count;
@@ -164,14 +129,10 @@ public class EnemiesManager : CulverinBehaviour
                     }
                 }
                 else
-                {
-                    Debug.Log("[error]No movement action!!!!!");
-                }
+                    Debug.Log("[error] No movement action!");
             }
             else
-            {
-                Debug.Log("[error]Sowrd enemy null!!!!!");
-            }
+                Debug.Log("[error] Sowrd enemy null!");
         }
 
         size = shield_enemies.Count;
@@ -192,14 +153,10 @@ public class EnemiesManager : CulverinBehaviour
                     }
                 }
                 else
-                {
-                    Debug.Log("[error]No movement action!!!!!");
-                }
+                    Debug.Log("[error] No movement action!");
             }
             else
-            {
-                Debug.Log("[error]Sword enemy null!!!!!");
-            }
+                Debug.Log("[error] Sword enemy null!");
         }
 
         if (boss != null)
@@ -215,9 +172,7 @@ public class EnemiesManager : CulverinBehaviour
                 }
             }
             else
-            {
-                Debug.Log("[error]No movement action!!!!!");
-            }
+                Debug.Log("[error] No movement action!");
         }
 
         return null;
@@ -274,27 +229,14 @@ public class EnemiesManager : CulverinBehaviour
 
     public bool ApplyDamage(GameObject target, float damage)
     {
-        Debug.Log("Apply Damage");
         if (target.GetComponent<EnemySword_BT>() != null)
-        {
-            Debug.Log("Sword");
             return target.GetComponent<EnemySword_BT>().ApplyDamage(damage);
-        }
         else if (target.GetComponent<EnemySpear_BT>() != null)
-        {
-            Debug.Log("Spear");
             return target.GetComponent<EnemySpear_BT>().ApplyDamage(damage);
-        }
         else if (target.GetComponent<EnemyShield_BT>() != null)
-        {
-            Debug.Log("Shield");
             return target.GetComponent<EnemyShield_BT>().ApplyDamage(damage);
-        }
         else if (target.GetComponent<Boss_BT>() != null)
-        {
-            Debug.Log("Boss");
             return target.GetComponent<Boss_BT>().ApplyDamage(damage);
-        }
         return true;
     }
 
@@ -304,31 +246,19 @@ public class EnemiesManager : CulverinBehaviour
             target.GetComponent<EnemyShield_BT>() != null ||
             target.GetComponent<EnemySpear_BT>() != null ||
             target.GetComponent<Boss_BT>() != null)
-        {
-            Debug.Log("[error] IS ENEMY");
             return true;
-        }
         else
-        {
-            Debug.Log("[error] IS NOOOOOOOT ENEMY");
             return false;
-        }
     }
 
     public void Push(GameObject target, Vector3 dir)
     {
         if (target.GetComponent<EnemySword_BT>() != null)
-        {
             target.GetComponent<EnemySword_BT>().PushEnemy(dir);
-        }
         else if (target.GetComponent<EnemySpear_BT>() != null)
-        {
             target.GetComponent<EnemySpear_BT>().PushEnemy(dir);
-        }
         else if (target.GetComponent<EnemyShield_BT>() != null)
-        {
             target.GetComponent<EnemyShield_BT>().PushEnemy(dir);
-        }
     }
 
 }

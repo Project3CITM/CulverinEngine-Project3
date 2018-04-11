@@ -347,7 +347,6 @@ public class DaenerysController : CharacterController
 
     public override bool IsAnimationRunning(string name)
     {
-        Debug.Log("[orange] DAENERYS ANIMATION RUNNING");
         anim_controller = daenerys_obj.GetComponent<CompAnimation>();
         return anim_controller.IsAnimationRunning(name);
     }

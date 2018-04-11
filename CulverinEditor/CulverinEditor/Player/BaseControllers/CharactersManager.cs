@@ -206,12 +206,10 @@ public class CharactersManager : CulverinBehaviour
 
             case State.CHANGING_RIGHT:
                 {
-                    Debug.Log("[green] RIGHT OUT");
                     if (IsDead(current_character) == false)
                     {
                         if (IsCharacterAnimationStopped(current_character, "Out"))
                         {
-                            Debug.Log("[blue]  ----------------------------");
                             ChangeRight();
 
                             //Change GameObjects --------------------
@@ -227,7 +225,6 @@ public class CharactersManager : CulverinBehaviour
                     {
                         if (IsCharacterAnimationStopped(current_character, "Death"))
                         {
-                            Debug.Log("[blue]  ----------------------------");
                             ChangeRight();
 
                             //Change GameObjects --------------------
@@ -521,7 +518,6 @@ public class CharactersManager : CulverinBehaviour
         if (player_obj.GetComponent<Shield>().IsActive())
         {
             player_obj.GetComponent<Shield>().Break();
-            Debug.Log("[error] BREAK SHIELD");
             return false;
         }
 

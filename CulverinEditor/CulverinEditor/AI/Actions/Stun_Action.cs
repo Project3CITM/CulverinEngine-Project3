@@ -31,7 +31,6 @@ public class Stun_Action : Action
 
         if (GetComponent<CompAnimation>().IsAnimationStopped("Stun"))
         {
-            Debug.Log("Stun finished");
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_SUCCESS;
         }

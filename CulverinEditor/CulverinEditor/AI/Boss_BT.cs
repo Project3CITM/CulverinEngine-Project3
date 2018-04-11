@@ -67,7 +67,6 @@ public class Boss_BT : BT
             current_action = next_action;
             current_action.ActionStart();
             next_action = null_action;
-            Debug.Log("Starting: " + current_action);
             return;
         }
 
@@ -183,26 +182,19 @@ public class Boss_BT : BT
     public bool ApplyDamage(float damage)
     {
         InterruptAction();
-
         next_action = GetComponent<GetHit_Action>();
-
         current_hp -= damage;
-
         current_interpolation = current_hp / total_hp;
-
-        Debug.Log("[error] Current HP: " + current_hp);
 
         if (current_hp <= 0)
         {
-            //GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
             state = AI_STATE.AI_DEAD;
             phase = BOSS_STATE.BOSS_DEAD;
             next_action = GetComponent<Die_Action>();
             current_action.Interupt();
-            
+
             //todosforme
-            enemies_manager.GetComponent<EnemiesManager>().DeleteBoss();
-          
+            GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
         }
         else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
         {
@@ -239,7 +231,7 @@ public class Boss_BT : BT
             case Action.ACTION_TYPE.GET_HIT_ACTION: next_action = GetComponent<GetHit_Action>(); break;
             case Action.ACTION_TYPE.ENGAGE_ACTION: next_action = GetComponent<Engage_Action>(); break;
 
-            default: Debug.Log("Unknown action"); break;
+            default: Debug.Log("[error] Unknown action"); break;
         }
     }
 

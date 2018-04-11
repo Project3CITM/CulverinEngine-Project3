@@ -46,7 +46,6 @@ public class Separate_Action : Action
         }
 
         move_return = move.ActionUpdate();
-       // Debug.Log("[error]Separate action move return:"+ move_return);
         if (move_return != ACTION_RESULT.AR_IN_PROGRESS)
         {
             move.ActionEnd();

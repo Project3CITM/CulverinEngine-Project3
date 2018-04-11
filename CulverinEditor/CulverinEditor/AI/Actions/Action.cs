@@ -43,19 +43,19 @@ public class Action : CulverinBehaviour
 
     public virtual bool ActionStart()
     {
-        Debug.Log("Action start not defined!");
+        Debug.Log("[error] Action start not defined!");
         return false;
     }
 
     public virtual ACTION_RESULT ActionUpdate()
     {
-        Debug.Log("Action update not defined!");
+        Debug.Log("[error] Action update not defined!");
         return ACTION_RESULT.AR_FAIL;
     }
 
     public virtual bool ActionEnd()
     {
-        Debug.Log("Action end not defined!");
+        Debug.Log("[error] Action end not defined!");
         interupt = false;
         return false;
     }

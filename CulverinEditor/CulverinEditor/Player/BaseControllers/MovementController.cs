@@ -72,17 +72,12 @@ public class MovementController : CulverinBehaviour
         Audio.StopAllSounds();
         audio = GetComponent<CompAudio>();
         audio.PlayEvent("PlayMusic");
-        Debug.Log("Play Music");
 
         curr_dir = (Direction)start_direction;
         update_rotation = false;
 
         map_width = Map.GetWidthMap();
         map_height = Map.GetHeightMap();
-
-        Debug.Log("Get Map");
-        Debug.Log(map_width);
-        Debug.Log(map_height);
 
         endPosition = GetComponent<Transform>().local_position;
         endRotation = GetComponent<Transform>().local_rotation;
@@ -93,7 +88,6 @@ public class MovementController : CulverinBehaviour
         level_map.GetPositionByeValue(out player_x, out player_y, 2); //2 = player start position
         level_map.UpdateMap(player_x, player_y, 0);
         MovePositionInitial(new Vector3((float)player_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)player_y * distanceToMove));
-        Debug.Log("Move initial position");
 
         drowning = false;
     }
@@ -853,7 +847,6 @@ public class MovementController : CulverinBehaviour
 
         }
         Vector3 forward_dir = new Vector3(position_front_x, 0, position_front_y);
-        Debug.Log("Dir: " + forward_dir);
         return forward_dir;
     }
 
@@ -896,7 +889,6 @@ public class MovementController : CulverinBehaviour
 
         }
         Vector3 forward_dir = new Vector3(position_front_x, 0, position_front_y);
-        Debug.Log("Dir: " + forward_dir);
         return forward_dir;
     }
 

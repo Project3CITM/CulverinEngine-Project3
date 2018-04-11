@@ -94,7 +94,6 @@ public class Movement_Action : Action
         //Set Occupied tile in Pathfinder
         tile = new PathNode(0,0);
         tile.SetCoords((int)(GetComponent<Transform>().position.x / tile_size + Mathf.Epsilon), (int)(GetComponent<Transform>().position.z / tile_size + Mathf.Epsilon));
-        Debug.Log("Start at Tile: " + tile.GetTileX() + "," + tile.GetTileY());
         map.GetComponent<Pathfinder>().UpdateOccupiedTiles(gameObject.GetName(), tile);
     }
 
@@ -104,26 +103,17 @@ public class Movement_Action : Action
         {
             GetComponent<CompAnimation>().SetTransition("ToPatrol");
             GetComponent<CompAnimation>().SetActiveBlendingClip("Idle");
-            Debug.Log("Animation to Patrol");
         }
         else
         {
             GetComponent<CompAnimation>().SetTransition("ToChase");
             GetComponent<CompAnimation>().SetActiveBlendingClip("IdleAttack");
-            Debug.Log("Animation to Chase");
-        }
-
-        if (path == null)
-        {
-            Debug.Log("Move: Path == null");                      
-            return false;
         }
 
         if (path.Count != 0)
         {
             tile = new PathNode(0, 0);
             tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
-            Debug.Log("Moving to: " + tile.GetTileX() + "," + tile.GetTileY());
         }
 
         return true;
@@ -172,7 +162,6 @@ public class Movement_Action : Action
 
             if (GetComponent<Align_Steering>().RotationFinished() == true)
             {
-                Debug.Log("Sttoping rotation");
                 rotation_finished = true;
                 current_rot_velocity = 0.0f;
                 align.SetEnabled(false);
@@ -186,12 +175,7 @@ public class Movement_Action : Action
         if (rotation_finished == true && translation_finished == true)
         {
             if (interupt == true)
-            {
-                Debug.Log("Movement Interupted");
                 return ACTION_RESULT.AR_FAIL;
-            }
-
-            Debug.Log("Movement Finished");
             return ACTION_RESULT.AR_SUCCESS;
         }
 
@@ -200,24 +184,17 @@ public class Movement_Action : Action
 
     public override bool ActionEnd()
     {
-        Debug.Log("Action End");
-        if (chase == false)
-        {            
+        if (chase == false)       
             GetComponent<CompAnimation>().SetTransition("ToIdle");
-            Debug.Log("Animation to Idle");
-        }
         else
-        {
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
-            Debug.Log("Animation to IdleAttack");
-        }
 
         if (chase != false)
-        {
             chase = false;
-        }
 
-        interupt = false;
+        if(interupt == true)
+            interupt = false;
+
         return false;
     }
 
@@ -249,7 +226,6 @@ public class Movement_Action : Action
         }
 
         //Rotate
-        //Debug.Log("Current Rot Vel: " + current_rot_velocity + "* dt " + Time.deltaTime);
         align.UpdateRotation(current_rot_velocity * Time.deltaTime);
 
         //Clean
@@ -306,7 +282,6 @@ public class Movement_Action : Action
                 arrive.SetEnabled(true);
                 seek.SetEnabled(true);
                 path.Remove(path[0]);
-                Debug.Log("Moving to Tile: " + path[0].GetTileX() + "," + path[0].GetTileY());
                 tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
                 LookAtNextTile();
             }
@@ -436,9 +411,7 @@ public class Movement_Action : Action
     {
         look_at_pos = new Vector3(target_position);
 
-        Align_Steering align_scr= GetComponent<Align_Steering>();
-        if (align_scr == null) Debug.Log("Align steering null");
-        align_scr.SetEnabled(true);
+        align.SetEnabled(true);
 
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
@@ -477,7 +450,6 @@ public class Movement_Action : Action
     public void LookAtPlayer()
     {
         Vector3 target_pos = new Vector3(GetLinkedObject("player_obj").GetComponent<Transform>().position);
-        Debug.Log("Look at player pos: " + target_pos);
         LookAt(target_pos);
     }
 
@@ -499,8 +471,6 @@ public class Movement_Action : Action
             dir = Direction.DIR_NORTH;
         else if (delta <= -(Mathf.PI / 4) && delta >= -(3 * (Mathf.PI / 4)))
             dir = Direction.DIR_WEST;
-
-        Debug.Log("Direction: " + dir);
 
         return dir;
     }
