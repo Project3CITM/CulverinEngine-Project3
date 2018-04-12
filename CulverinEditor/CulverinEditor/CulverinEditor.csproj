@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\Actions\Action.cs" />
+    <Compile Include="AI\Actions\BossAttackSwordDown_Action.cs" />
     <Compile Include="AI\Actions\FacePlayer_Action.cs" />
     <Compile Include="AI\Actions\InfiniteChasePlayer_Action.cs" />
     <Compile Include="AI\Actions\Separate_Action.cs" />
