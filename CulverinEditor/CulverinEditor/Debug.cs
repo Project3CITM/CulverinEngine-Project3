@@ -88,19 +88,19 @@ namespace CulverinEditor.Debug
 
                 case Department.PLAYER:
                     {
-                        message = "[Player] " + message;
+                        message = "[Player]  " + message;
                         break;
                     }
 
                 case Department.IA:
                     {
-                        message = "[IA] " + message;
+                        message = "[IA]           " + message;
                         break;
                     }
 
                 case Department.STAGE:
                     {
-                        message = "[Stage] " + message;
+                        message = "[Stage]    " + message;
                         break;
                     }
 
