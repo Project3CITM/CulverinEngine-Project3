@@ -94,7 +94,7 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
         float attenuation =1/(light.properties[1] + light.properties[2]* d + light.properties[3] * d*d);
         attenuation *= lightInt;                                   
         float diffuse = attenuation * Kd  * cosTheta;                    
-        float spec = attenuation * Ks * pow(cosAlpha,shininess);
+        float spec = attenuation * Ks * pow(max(0.0,cosAlpha),shininess);
                                                                                                                  
         return vec3(diffuse,spec,attenuation);                                                               
                                                                                                                  
@@ -109,8 +109,8 @@ void main()
 {                                                 
     vec3 color_texture = texture(albedo, TexCoord).xyz;                                                          
     vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1) ;                                                       
-    vec3 spec_texture = texture(specular_map, TexCoord).xyz ;
-    vec3 gloss_texture =abs(texture(glossines_map,TexCoord).xyz - vec3(1));
+    vec3 spec_texture = exp2( texture(specular_map, TexCoord).xyz)+  0.5;
+    vec3 gloss_texture =exp2(10 * abs(texture(glossines_map,TexCoord).xyz - vec3(1)) + 1) * 128;
 
    // if(invert_norms)
    // N.g = -N.g;    
@@ -138,7 +138,7 @@ void main()
     final_color =normalize(final_color);  
         
 	vec3 col = max( color_texture * vec3(0.0,0.3,0.3) ,
-	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
+	color_texture * (inten_final.x + inten_final.y)*final_color.rgb);
 	
     color = vec4(col,_alpha);
  
