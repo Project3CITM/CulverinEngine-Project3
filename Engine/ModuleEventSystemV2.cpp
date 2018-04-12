@@ -253,54 +253,83 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
 		case EventValidation::EVENT_VALIDATION_VALID: //Here we can execute the event, any delay is left and this is a valid event
-			NewProgramID = 0;
-			UseGlow = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->glow;
-			if (item._Ptr->_Myval.first != 0)
-			{
-				if (UseGlow) NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
-				else NewProgramID = App->renderer3D->non_glow_material->GetProgramID();
-			}			
-			
-			if (!UseGlow) ActualMaterial = App->renderer3D->non_glow_material;
-			else ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
 
-			if (LastUsedMaterial != ActualMaterial)
+			switch (type)
 			{
-				LastUsedMaterial = ActualMaterial;
 
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glActiveTexture(GL_TEXTURE0);
+			case EventType::EVENT_PARTICLE_DRAW:
+				glEnable(GL_BLEND);
+				glDisable(GL_CULL_FACE);
+				NewProgramID = App->renderer3D->particles_shader->programID;
 				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
 				{
 					LastBindedProgram = NewProgramID;
-					ActualMaterial->Bind();
-
+					App->renderer3D->particles_shader->Bind();
 				}
-				for (uint i = 0; i < ActualMaterial->textures.size(); i++)
-				{
-					uint texLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), ActualMaterial->textures[i].var_name.c_str());
-					glUniform1i(texLoc, i);
-					glActiveTexture(GL_TEXTURE0 + i);
-					if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-					else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
-				}
-
-			}
-			switch (item._Ptr->_Myval.second.draw.Dtype)
-			{
-			case EDraw::DrawType::DRAW_3D:
-			case EDraw::DrawType::DRAW_2D:
-				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw2(LastBindedProgram);
+				((Particle*)item._Ptr->_Myval.second.particle_draw.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
+				glDisable(GL_BLEND);
+				glEnable(GL_CULL_FACE);
 				break;
-//			case EDraw::DrawType::DRAW_3D_ALPHA:
-//				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
-//				break;
-//			case EDraw::DrawType::DRAW_SCREEN_CANVAS:
-//				(*item2)->OnEvent(item._Ptr->_Myval.second);
-//				break;
-//			case EDraw::DrawType::DRAW_WORLD_CANVAS:
-//				break;
+
+
+
+			case EventType::EVENT_DRAW:
+
+				NewProgramID = 0;
+
+				UseGlow = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->glow;
+				if (item._Ptr->_Myval.first != 0)
+				{
+					if (UseGlow) NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
+					else NewProgramID = App->renderer3D->non_glow_material->GetProgramID();
+				}
+
+				if (!UseGlow) ActualMaterial = App->renderer3D->non_glow_material;
+				else ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
+
+				if (LastUsedMaterial != ActualMaterial)
+				{
+					LastUsedMaterial = ActualMaterial;
+
+					glBindTexture(GL_TEXTURE_2D, 0);
+					glActiveTexture(GL_TEXTURE0);
+					if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
+					{
+						LastBindedProgram = NewProgramID;
+						ActualMaterial->Bind();
+
+					}
+					for (uint i = 0; i < ActualMaterial->textures.size(); i++)
+					{
+						uint texLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), ActualMaterial->textures[i].var_name.c_str());
+						glUniform1i(texLoc, i);
+						glActiveTexture(GL_TEXTURE0 + i);
+						if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+						else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
+					}
+
+				}
+
+				switch (item._Ptr->_Myval.second.draw.Dtype)
+				{
+				case EDraw::DrawType::DRAW_3D:
+				case EDraw::DrawType::DRAW_2D:
+					((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw2(LastBindedProgram);
+					break;
+					//			case EDraw::DrawType::DRAW_3D_ALPHA:
+					//				((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->Draw(true);
+					//				break;
+					//			case EDraw::DrawType::DRAW_SCREEN_CANVAS:
+					//				(*item2)->OnEvent(item._Ptr->_Myval.second);
+					//				break;
+					//			case EDraw::DrawType::DRAW_WORLD_CANVAS:
+					//				break;
+				}
+
+				break;
 			}
+
+
 			item = DrawGlowV.erase(item);
 			break;
 		case EventValidation::EVENT_VALIDATION_ACTIVE_DELAY:
@@ -555,6 +584,10 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		}
 		*/
 		DrawAlphaV.insert(std::pair<float, Event>(-((Particle*)event.particle_draw.ToDraw)->CameraDistance, event));
+
+		if((Particle*)event.particle_draw.ToDraw->glow)
+			DrawGlowV.insert(std::pair<float, Event>(-((Particle*)event.particle_draw.ToDraw)->CameraDistance, event));
+
 		break;
 	case EventType::EVENT_DRAW:
 	{

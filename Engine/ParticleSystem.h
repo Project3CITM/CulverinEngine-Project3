@@ -108,6 +108,8 @@ public:
 	float Speed = 5.0f;								//Speed of emitted particles
 	float SpeedVariation = 0.0f;					//Speed variation of emitted particles
 	AABB BoundingBox;								//User can set AABB for camera culling purpose (we can add physics...)
+
+	bool glow = false;
 	
 	/*
 	//Not working properly, transformations errors, so to avoid malfunctionality and a
@@ -197,7 +199,7 @@ class ParticleSystem;
 class Particle
 {
 public:
-	Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax);
+	Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax, bool _glow);
 	~Particle();
 	bool PreUpdate(float dt);
 	bool PostUpdate(float dt);
@@ -222,6 +224,8 @@ public:
 	ParticleAssignedState FinalState;							//Particle Final State Properties with no variations, all are final values (calculated from ParticleState +- Var)
 	bool MeshChanged = false;									//If we cahnge the mesh, we need to stop drowing it, update buffers and then start again
 	long double CameraDistance = 0.0;							//Store camera distance of this particle, used to sort them and draw with correct order
+	
+	bool glow = false;
 
 private:
 	bool ToDelete = false;	//If this particle is dead, we set this bool to true and wait to the right time to delete it

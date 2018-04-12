@@ -295,7 +295,7 @@ ParticleEmitter::EmitterShapeUnion::EmitterShapeUnion()
 
 }
 
-Particle::Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax) : ParentParticleSystem(parent)
+Particle::Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax, bool _glow) : ParentParticleSystem(parent)
 {
 	
 	SetAssignedStateFromVariables(InitialState, Initial);
@@ -304,6 +304,7 @@ Particle::Particle(ParticleSystem* parent, const ParticleState& Initial, const P
 	Properties.LifetimeMax = LifetimeMax;
 	parent->Emitter.GetPosition(Properties.Position);
 	Properties.Position += offset;
+	glow = _glow;
 }
 
 Particle::~Particle()
@@ -1222,6 +1223,7 @@ void ParticleSystem::DrawEmitterOptions()
 	sprintf_s(title, 100, "Emission Duration: %.3f", Emitter.EmissionDuration);
 	ImGui::Text(title);
 	ImGui::Checkbox("Loop", &Emitter.Loop);
+	ImGui::Checkbox("Glow effect", &Emitter.glow);
 	sprintf_s(title, 100, "Particle Num: %i", Particles.size());
 	ImGui::Text(title);
 	ImGui::DragFloat("+-##Speed", &Emitter.Speed, 0.01f, 0.0f, 100.0f);
@@ -1297,7 +1299,7 @@ bool ParticleSystem::CreateParticle()
 	Rot.Normalize();
 	Direction = float3(Rot.x, Rot.y, Rot.z);
 
-	Particles.push_back(Particle(this, InitialState, FinalState, Direction * (Emitter.Speed + RandGen.Float(-Emitter.SpeedVariation, Emitter.SpeedVariation)), offset, Emitter.Lifetime + RandGen.Float(-Emitter.LifetimeVariation, Emitter.LifetimeVariation)));
+	Particles.push_back(Particle(this, InitialState, FinalState, Direction * (Emitter.Speed + RandGen.Float(-Emitter.SpeedVariation, Emitter.SpeedVariation)), offset, Emitter.Lifetime + RandGen.Float(-Emitter.LifetimeVariation, Emitter.LifetimeVariation), Emitter.glow));
 	
 	return true;
 }
