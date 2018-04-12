@@ -3,26 +3,38 @@
 #include "Component.h"
 #include <vector>
 #include "ModuleAnimation.h"
-
+struct AnimationJson;
 class CompUIAnimation:public Component
 {
 public:
 	CompUIAnimation(Comp_Type t, GameObject* parent);
+	CompUIAnimation(const CompUIAnimation & copy, GameObject * parent);
 	virtual ~CompUIAnimation();
 
+	void Init();
+	void Clear();
 
 	void Update(float dt);
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompUIAnimation * component);
+	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
+	void Load(const JSON_Object * object, std::string name);
 private:
-	void PlayAnimation(float dt);
+	bool PlayAnimation(float dt);
+	bool ResetAnimation();
+	void LoadAnimation(AnimationJson ** animation, const char * path, const char * name);
+
 public:
-	std::vector<AnimData> animations;
+	AnimationJson* animation_json = nullptr;
 	bool play = false;
 	bool on_execution = false;
 	bool loop = false;
-	int max_frames = 0;
+	int current_frame = 0;
+	float current_time = 0.0f;
+	float current_animation_time = 0.0f;
+private:
+	bool select_ui_animation = false;
 
 };
 

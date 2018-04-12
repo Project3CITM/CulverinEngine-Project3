@@ -7,38 +7,59 @@
 class AnimableComponent;
 enum ParameterValue;
 //union AnimationValue;
-
+struct AnimData;
 struct KeyData
 {
+	KeyData();
 	KeyData(int key_frame, AnimationValue key_values);
 	~KeyData();
 
-	int key_frame;
-	AnimationValue key_values;
+	int key_frame=0;
+	float key_on_time = 0.0f;
 
+	AnimationValue key_values;
 	bool operator<(const KeyData& compare) const; 
 };
 
 struct KeyFrameData
 {
-
-	KeyFrameData(int key, AnimationValue value, ParameterValue parameter);
-	KeyFrameData(int key, AnimationValue value);
+	KeyFrameData();
+	KeyFrameData(int key,int max_keys,int sample_rate, AnimationValue value, ParameterValue parameter);
+	KeyFrameData(int key, int max_keys, int sample_rate, AnimationValue value);
 	~KeyFrameData();
-	void ShowKeyValue(int i);
+	bool ShowKeyValue(int i);
+	void CaptureKeyValue(int i);
+	void SetKeyValue(int i);
+
+	float Normalize(float value, float min, float max);
+	void ShowKeyOnTime();
+
+	int ReturnKeyDataPos(int& selected);
+	void UpdateKeyFrame();
+	void UpdateSampleRate();
+	void UpdateInterpolationKeys();
+	void ResetInterpolationKeys();
+	AnimationValue Interpolate(float time,int frame);
+
 	int max_keys = 20;
+	int sample_rate = 60;
+	int initial=0;
+	int destination=1;
+	float current_interpolation = 0.0f;
 	bool invalid_key = false;
 	std::vector<KeyData> key_data;
 	ParameterValue parameter;
-
+	AnimData* my_anim_data = nullptr;
 };
 struct AnimData
 {
-
+	AnimData();
+	~AnimData();
 	bool HaveKeyFrameData(const ParameterValue& data);
 public:
 
 	AnimableComponent* data = nullptr;
+
 	std::vector<KeyFrameData> key_frame_data;
 };
 
@@ -46,8 +67,11 @@ public:
 struct AnimationJson
 {
 	AnimationJson();
+	~AnimationJson();
+	int max_keys = 20;
+	int sample_rate = 60;
 	std::string name;
-	std::vector<AnimData> animations;
+	std::vector<AnimData*> animations;
 
 };
 
@@ -59,12 +83,21 @@ public:
 	virtual ~ModuleAnimation();
 
 	void ShowAnimationWindow(bool& active);
+	void ShowNewAnimationWindow();
+	void ShowAnimationJsonInfo();
+	void ShowAnimationDataInfo();
+	void ShowAnimationKeyFrameInfo();
+	AnimationJson* ShowAnimationJsonFiles(bool& active);
 	void FindAnimComponent();
 	void SaveAnimation();
-	void LoadAnimation();
+	bool LoadAnimation(AnimationJson** animation, const char* path,const char* name);
 	int HaveAnimData(const AnimableComponent* data);
-
+	
 private:
+private:
+	//int max_keys = 20;
+	//int sample_rate = 60;
+	bool select_animation_window = false;
 	bool new_animation_window = false;
 	AnimationJson* animation_json = nullptr;
 };

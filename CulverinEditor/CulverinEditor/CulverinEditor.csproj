@@ -80,11 +80,15 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="LeftMana.cs" />
+    <Compile Include="LeftHp.cs" />
     <Compile Include="BarrelPuzle\SetParticleTransf.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
+    <Compile Include="Leftamina.cs" />
+    <Compile Include="Player\ActivateEnemies.cs" />
     <Compile Include="Player\Jaime\ComboController.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />

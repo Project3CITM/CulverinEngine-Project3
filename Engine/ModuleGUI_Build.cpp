@@ -138,7 +138,7 @@ void ModuleGUI::ShowWindowBuild(bool* active)
 	static bool borderless = false;
 	static bool full_desktop = false;
 	static bool game_mode = true;
-	static bool use_release = false;
+	static bool use_release = true;
 
 	ImGui::Bullet(); ImGui::SameLine();
 	ImGui::TextWrapped("Resolution");

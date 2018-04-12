@@ -100,14 +100,26 @@ void CSharpScript::FillAmount(MonoObject * object, float value)
 	}
 }
 
+void CSharpScript::SetRender(MonoObject * object, mono_bool flag)
+{
+	if (current_game_object != nullptr)
+	{
+		CompGraphic* item = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			item->SetCanDraw(flag);
+		}
+	}
+}
+
 void CSharpScript::ActivateRender(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
-		CompImage* image = (CompImage*)current_game_object->FindComponentByType(Comp_Type::C_IMAGE);
-		if (image != nullptr)
+		CompGraphic* item = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
 		{
-			image->ActivateRender();
+			item->ActivateRender();
 		}
 	}
 }
@@ -117,11 +129,12 @@ void CSharpScript::DeactivateRender(MonoObject * object)
 {
 	if (current_game_object != nullptr)
 	{
-		CompImage* image = (CompImage*)current_game_object->FindComponentByType(Comp_Type::C_IMAGE);
-		if (image != nullptr)
+		CompGraphic* item = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
 		{
-			image->DeactivateRender();
+			item->DeactivateRender();
 		}
+		
 	}
 }
 

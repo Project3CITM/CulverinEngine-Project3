@@ -5,6 +5,7 @@ public class Stamina : CulverinBehaviour
 {
     public GameObject this_obj_stamina;
     CompImage stamina_bar;
+    public GameObject other_bar_lastamina;
     public float regen = 1.0f;
     public float max_stamina = 100.0f;
     float curr_stamina = 100.0f;
@@ -13,6 +14,7 @@ public class Stamina : CulverinBehaviour
     void Start()
     {
         this_obj_stamina = GetLinkedObject("this_obj_stamina");
+        other_bar_lastamina = GetLinkedObject("other_bar_lastamina");
     }
 
     void Update()
@@ -32,6 +34,7 @@ public class Stamina : CulverinBehaviour
 
     public void DecreaseStamina(float cost)
     {
+        other_bar_lastamina.GetComponent<Leftamina>().lastamina_value = curr_stamina;
         if (curr_stamina > cost)
         {
             curr_stamina -= cost;
@@ -39,6 +42,8 @@ public class Stamina : CulverinBehaviour
         calc_stamina = curr_stamina / max_stamina;
         stamina_bar = this_obj_stamina.GetComponent<CompImage>();
         stamina_bar.FillAmount(calc_stamina);
+        other_bar_lastamina.GetComponent<Leftamina>().stamina_bar_changed = false;
+     
     }
 
     public float GetCurrentStamina()
@@ -54,5 +59,17 @@ public class Stamina : CulverinBehaviour
         calc_stamina = curr_stamina / max_stamina;
         stamina_bar = this_obj_stamina.GetComponent<CompImage>();
         stamina_bar.FillAmount(calc_stamina);
+    }
+
+    public bool CanWasteStamina(float value)
+    {
+        if(curr_stamina >= value)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

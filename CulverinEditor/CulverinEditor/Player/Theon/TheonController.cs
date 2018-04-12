@@ -365,7 +365,7 @@ public class TheonController : CharacterController
         if (state == State.IDLE) /*0 = IDLE*/
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > left_ability_cost)
+            if (CanWasteStamina(left_ability_cost))
             {
                 cd_left = theon_button_left.GetComponent<TheonCD_Left>();
                 //Check if the ability is not in cooldown
@@ -433,7 +433,7 @@ public class TheonController : CharacterController
         if (state == State.IDLE)
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > right_ability_cost)
+            if (CanWasteStamina(right_ability_cost))
             {
                 cd_right = theon_button_right.GetComponent<TheonCD_Right>();
                 //Check if the ability is not in cooldown
@@ -493,7 +493,7 @@ public class TheonController : CharacterController
         if (GetState() == 0)
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > sec_ability_cost)
+            if (CanWasteStamina(sec_ability_cost))
             {
                 sec_ability_cd = GetLinkedObject("theon_s_button_obj").GetComponent<TheonCD_Secondary>();
                 //Check if the ability is not in cooldown
