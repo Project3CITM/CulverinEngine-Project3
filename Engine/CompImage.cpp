@@ -235,12 +235,16 @@ void CompImage::FillAmount(float value)
 	{
 		filled = 1.0f;
 	}
+	filled = value;
 	GenerateMesh();
 }
 void CompImage::GenerateFilledSprite()
 {
 	if (filled < 0.001f)
 		return;
+
+	if (filled > 1.0f)
+		filled = 1.0f;
 	float4 vertex = parent->GetComponentRectTransform()->GetRect();
 	float4 outer = { 0.0f,0.0f,1.0f,1.0f };	
 	std::vector<float3> quad_pos;

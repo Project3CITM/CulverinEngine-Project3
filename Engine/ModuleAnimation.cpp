@@ -116,6 +116,11 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 						ImGui::OpenPopup("Select Name");
 					}
 				}
+				else
+				{
+					animation_json = item->animation_json;
+
+				}
 			}
 			bool release = false;
 			if (ImGui::BeginPopupModal("Select Name", NULL, ImGuiWindowFlags_AlwaysAutoResize))
@@ -218,7 +223,7 @@ void ModuleAnimation::ShowNewAnimationWindow()
 
 					if (!animation_json->animations[find]->HaveKeyFrameData(new_value.type))
 					{
-						animation_json->animations[find]->key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
+						animation_json->animations[find]->key_frame_data.push_back(KeyFrameData(0, animation_json->max_keys, animation_json->sample_rate, new_value.value, new_value.type));
 						animation_json->animations[find]->key_frame_data.back().my_anim_data = animation_json->animations[find];
 
 					}
@@ -228,7 +233,7 @@ void ModuleAnimation::ShowNewAnimationWindow()
 				{
 					AnimData* tmp_anim_data = new AnimData();
 					tmp_anim_data->data = item;
-					tmp_anim_data->key_frame_data.push_back(KeyFrameData(0, new_value.value, new_value.type));
+					tmp_anim_data->key_frame_data.push_back(KeyFrameData(0, animation_json->max_keys, animation_json->sample_rate, new_value.value, new_value.type));
 					tmp_anim_data->key_frame_data.back().my_anim_data = tmp_anim_data;
 					animation_json->animations.push_back(tmp_anim_data);
 
@@ -379,16 +384,16 @@ AnimationJson* ModuleAnimation::ShowAnimationJsonFiles(bool& active)
 	{
 		return nullptr;
 	}
-	if (!ImGui::Begin("Animations:", &active, ImGuiWindowFlags_NoCollapse)) //TODO ELLIOT CLOSE Windows example
+	if (!ImGui::Begin("Animations:", &active, ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::End();
 	}
 	static int selected = 0;
 	for (int i = 0; i < all_prefabs.size(); i++)
 	{
-		if (ImGui::Selectable(all_prefabs[i].c_str()), selected == i)
-		{
-			selected = i;
+		if (ImGui::Selectable(all_prefabs[i].c_str(), selected == i))
+		{	
+				selected = i;		
 		}
 	}
 	ImGui::Separator();
@@ -396,11 +401,13 @@ AnimationJson* ModuleAnimation::ShowAnimationJsonFiles(bool& active)
 	{
 		if (selected < all_prefabs.size())
 		{
-			LoadAnimation(&ret, App->fs->GetMainDirectory().c_str(),all_prefabs[selected].c_str());
+			if (LoadAnimation(&ret, App->fs->GetMainDirectory().c_str(), all_prefabs[selected].c_str()))
+				ImGui::End();
+				return ret;
 		}
 	}
 	ImGui::End();
-	return ret;
+	return nullptr;
 }
 
 
@@ -417,13 +424,13 @@ void ModuleAnimation::SaveAnimation()
 
 
 
-void ModuleAnimation::LoadAnimation(AnimationJson ** animation, const char * path, const char * name)
+bool ModuleAnimation::LoadAnimation(AnimationJson ** animation, const char * path, const char * name)
 {
 	GameObject* go = ((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected();
 	if (go == nullptr)
 	{
 		RELEASE(*animation);
-		return;
+		return false;
 	}
 	JSON_Value* config_file;
 	JSON_Object* config;
@@ -435,7 +442,7 @@ void ModuleAnimation::LoadAnimation(AnimationJson ** animation, const char * pat
 	{
 		config = json_value_get_object(config_file);
 
-		(*animation)->name = path;//<------not
+		(*animation)->name = name;//<------not
 		int animation_size = json_object_dotget_number_with_std(config, "UIAnimation.Size ");
 		for (uint i = 0; i < animation_size; i++)
 		{
@@ -502,6 +509,7 @@ void ModuleAnimation::LoadAnimation(AnimationJson ** animation, const char * pat
 			(*animation)->animations.push_back(anim_data);		
 		}
 	}
+	return true;
 
 }
 
@@ -554,7 +562,7 @@ KeyFrameData::KeyFrameData()
 {
 }
 
-KeyFrameData::KeyFrameData(int key, AnimationValue value, ParameterValue param)
+KeyFrameData::KeyFrameData(int key, int max_keys, int sample_rate, AnimationValue value, ParameterValue param):max_keys(max_keys),sample_rate(sample_rate)
 {
 	key_data.push_back(KeyData(key, value));
 	//std::sort(key_frames.begin(), key_frames.end());
@@ -563,7 +571,7 @@ KeyFrameData::KeyFrameData(int key, AnimationValue value, ParameterValue param)
 	parameter = param;
 }
 
-KeyFrameData::KeyFrameData(int key, AnimationValue value) 
+KeyFrameData::KeyFrameData(int key, int max_keys, int sample_rate, AnimationValue value) :max_keys(max_keys), sample_rate(sample_rate)
 {
 	key_data.push_back(KeyData(key, value));
 	std::sort(key_data.begin(), key_data.end());
