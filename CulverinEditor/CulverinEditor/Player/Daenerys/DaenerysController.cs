@@ -521,7 +521,7 @@ public class DaenerysController : CharacterController
         if (GetState() == 0)
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > sec_ability_cost)
+            if (CanWasteStamina(sec_ability_cost))
             {
                 sec_ability_cd = GetLinkedObject("daenerys_s_button_obj").GetComponent<DaenerysCD_Secondary>();
                 //Check if the ability is not in cooldown

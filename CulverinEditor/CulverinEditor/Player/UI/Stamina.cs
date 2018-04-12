@@ -60,4 +60,16 @@ public class Stamina : CulverinBehaviour
         stamina_bar = this_obj_stamina.GetComponent<CompImage>();
         stamina_bar.FillAmount(calc_stamina);
     }
+
+    public bool CanWasteStamina(float value)
+    {
+        if(curr_stamina >= value)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

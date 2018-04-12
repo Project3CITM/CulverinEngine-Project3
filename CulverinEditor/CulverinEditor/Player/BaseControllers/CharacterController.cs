@@ -79,11 +79,10 @@ public class CharacterController : CulverinBehaviour
         return (int)position;
     }
 
-    public virtual float GetCurrentStamina()
+    public virtual bool CanWasteStamina(float value)
     {
         stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
-        float ret = stamina.GetCurrentStamina();
-        return ret;
+        return stamina.CanWasteStamina(value);
     }
 
     public virtual float GetCurrentMana()
