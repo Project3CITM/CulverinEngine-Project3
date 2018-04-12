@@ -47,6 +47,7 @@ public:
 	void ShowCameraMissing();
 	void ShowEngineState();
 	void ShowCreateNewScriptWindow();
+	void ShowWindowBuild(bool* active);
 
 	void ShowStyleEditor(ImGuiStyle* ref = NULL);
 	//void ShowConfig();
@@ -117,6 +118,12 @@ private:
 	bool window_audio = false;
 	bool window_create_map = false;
 	bool window_create_animation = false;
+
+	// Build variables
+	bool window_build = false;
+	bool load_scenes = true;
+	std::vector<std::string> scenes_build;
+	std::vector<std::string> scenes_only_name;
 
 	//bool window_NewScene = false;
 
