@@ -12,7 +12,11 @@ CompUIAnimation::CompUIAnimation(Comp_Type t, GameObject * parent):Component(t,p
 	uid = App->random->Int();
 	name_component = "Comp UI Animation";
 }
+CompUIAnimation::CompUIAnimation(const CompUIAnimation& copy, GameObject* parent) : Component(Comp_Type::C_ANIMATION_UI, parent)
+{
+	uid = App->random->Int();
 
+}
 CompUIAnimation::~CompUIAnimation()
 {
 }
@@ -126,7 +130,7 @@ void CompUIAnimation::ShowInspectorInfo()
 	}
 	if (select_ui_animation)
 	{
-
+		animation_json = App->animation_ui->ShowAnimationJsonFiles(select_ui_animation);
 	}
 	ImGui::Text("Play"); ImGui::SameLine(op + 30);
 	ImGui::Checkbox("##play", &play);

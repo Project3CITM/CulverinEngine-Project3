@@ -229,6 +229,7 @@ private:
 
 	/*Component Graphic*/
 	static void SetRaycastTarget(MonoObject * object, mono_bool flag);
+	static void SetRender(MonoObject * object, mono_bool flag);
 	static void ActivateRender(MonoObject * object);
 	static void DeactivateRender(MonoObject * object);
 	/*Component Text*/

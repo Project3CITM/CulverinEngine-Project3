@@ -271,6 +271,8 @@ public:
 	/*UI-Graphics*/
 	void		SetRaycastTarget(MonoObject * object, mono_bool flag);
 	void		FillAmount(MonoObject * object, float value);
+	void		SetRender(MonoObject * object, mono_bool flag);
+
 	void		ActivateRender(MonoObject * object);
 	void		DeactivateRender(MonoObject * object);
 	void		SetAlpha(MonoObject * object, float alpha);

@@ -187,8 +187,14 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 
 void ModuleAnimation::ShowNewAnimationWindow()
 {
+	std::string window_name = "Animation Components from ";
 	GameObject* go = ((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->GetSelected();
+	window_name += go->GetName();
 
+	if (!ImGui::Begin(window_name.c_str(), &new_animation_window, ImGuiWindowFlags_NoCollapse))
+	{
+		ImGui::End();
+	}
 	for (int i = 0; i< go->GetNumComponents(); i++)
 	{
 		//(*it)
@@ -234,6 +240,8 @@ void ModuleAnimation::ShowNewAnimationWindow()
 
 		}
 	}
+	ImGui::End();
+
 }
 
 void ModuleAnimation::ShowAnimationJsonInfo()
@@ -365,10 +373,12 @@ AnimationJson* ModuleAnimation::ShowAnimationJsonFiles(bool& active)
 	AnimationJson* ret = new AnimationJson();
 	std::vector<std::string> all_prefabs; // Vector with all animations in assets
 
-	App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "prefab.json");
+	App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), all_prefabs, "anim.json");
 	App->fs->FixNames_directories(all_prefabs);
 	if (all_prefabs.empty())
+	{
 		return nullptr;
+	}
 	if (!ImGui::Begin("Animations:", &active, ImGuiWindowFlags_NoCollapse)) //TODO ELLIOT CLOSE Windows example
 	{
 		ImGui::End();
@@ -389,7 +399,8 @@ AnimationJson* ModuleAnimation::ShowAnimationJsonFiles(bool& active)
 			LoadAnimation(&ret, App->fs->GetMainDirectory().c_str(),all_prefabs[selected].c_str());
 		}
 	}
-	return nullptr;
+	ImGui::End();
+	return ret;
 }
 
 
@@ -648,10 +659,17 @@ bool KeyFrameData::ShowKeyValue(int i)
 	{
 		CaptureKeyValue(i);
 	}
+	std::string set_name;
+	set_name = "Set this value##set_value";
+	set_name += std::to_string(i);
+	ImGui::SameLine();
+	if (ImGui::Button(set_name.c_str()))
+	{
+		SetKeyValue(i);
+	}
 	std::string erase_name;
 	erase_name = "Erase Keyframe##erase_key";
 	erase_name += std::to_string(i);
-	ImGui::SameLine();
 	if (ImGui::Button(erase_name.c_str()))
 	{
 		return false;
@@ -665,6 +683,15 @@ void KeyFrameData::CaptureKeyValue(int i)
 {
 	key_data[i].key_values = my_anim_data->data->GetParameter(parameter);
 	return;
+}
+
+void KeyFrameData::SetKeyValue(int i)
+{
+	AnimationData data;
+	data.type = parameter;
+	data.value = key_data[i].key_values;
+	 my_anim_data->data->SetNewAnimationValue(data);
+
 }
 
 float KeyFrameData::Normalize(float value, float min, float max)

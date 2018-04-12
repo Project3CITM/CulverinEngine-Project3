@@ -91,12 +91,12 @@ void CompGraphic::DrawRectTranforms()
 
 void CompGraphic::ActivateRender()
 {
-	render = true;
+	can_draw = true;
 }
 
 void CompGraphic::DeactivateRender()
 {
-	render = false;
+	can_draw = false;
 }
 
 void CompGraphic::SetNullCanvas()

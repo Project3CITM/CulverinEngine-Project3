@@ -29,6 +29,8 @@ struct KeyFrameData
 	~KeyFrameData();
 	bool ShowKeyValue(int i);
 	void CaptureKeyValue(int i);
+	void SetKeyValue(int i);
+
 	float Normalize(float value, float min, float max);
 	void ShowKeyOnTime();
 

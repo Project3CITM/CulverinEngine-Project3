@@ -8,6 +8,7 @@ class CompUIAnimation:public Component
 {
 public:
 	CompUIAnimation(Comp_Type t, GameObject* parent);
+	CompUIAnimation(const CompUIAnimation & copy, GameObject * parent);
 	virtual ~CompUIAnimation();
 
 	void Init();
