@@ -101,13 +101,13 @@ public class Movement_Action : Action
         if (chase == false)
         {
             GetComponent<CompAnimation>().SetTransition("ToPatrol");
-            GetComponent<CompAnimation>().SetActiveBlendingClip("Idle");
+            GetComponent<CompAnimation>().SetFirstActiveBlendingClip("Idle");
             Debug.Log("Animation to Patrol");
         }
         else
         {
             GetComponent<CompAnimation>().SetTransition("ToChase");
-            GetComponent<CompAnimation>().SetActiveBlendingClip("IdleAttack");
+            GetComponent<CompAnimation>().SetFirstActiveBlendingClip("IdleAttack");
             Debug.Log("Animation to Chase");
         }
 
@@ -270,7 +270,7 @@ public class Movement_Action : Action
         }
 
         float point_in_speed = current_velocity.Length / current_max_vel;
-        GetComponent<CompAnimation>().SetActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
+        GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
 
         //Translate
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
