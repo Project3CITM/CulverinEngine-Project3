@@ -1,0 +1,6 @@
+C:\Users\Joan Pareja\Documents\GitHub\CulverinEngine-Project3\Engine\Game\ScriptManager\AssemblyReference\CulverinEditor.dll.config
+C:\Users\Joan Pareja\Documents\GitHub\CulverinEngine-Project3\Engine\Game\ScriptManager\AssemblyReference\CulverinEditor.dll
+C:\Users\Joan Pareja\Documents\GitHub\CulverinEngine-Project3\Engine\Game\ScriptManager\AssemblyReference\CulverinEditor.pdb
+C:\Users\Joan Pareja\Documents\GitHub\CulverinEngine-Project3\CulverinEditor\CulverinEditor\obj\Release\CulverinEditor.csproj.CoreCompileInputs.cache
+C:\Users\Joan Pareja\Documents\GitHub\CulverinEngine-Project3\CulverinEditor\CulverinEditor\obj\Release\CulverinEditor.dll
+C:\Users\Joan Pareja\Documents\GitHub\CulverinEngine-Project3\CulverinEditor\CulverinEditor\obj\Release\CulverinEditor.pdb
