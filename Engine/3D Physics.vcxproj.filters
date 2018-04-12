@@ -130,6 +130,18 @@
     <Filter Include="Engine\Tools\OliEngine">
       <UniqueIdentifier>{75bb7a05-f41d-436e-bf28-310d18c1268c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Components\Animation">
+      <UniqueIdentifier>{6da54461-7b03-41f8-9f68-cf1fe0a66db6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UI\InputManager">
+      <UniqueIdentifier>{b639beb6-5c8e-4196-a84c-d7545edbb352}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Components\ActionScript">
+      <UniqueIdentifier>{1d5f3893-02e1-43ef-988b-ffaf393c88e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UI\VertexUIData">
+      <UniqueIdentifier>{1d4253c3-dd68-421c-9199-ed4e34b1d36b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -1134,12 +1146,8 @@
     <ClInclude Include="Materials.h">
       <Filter>Engine\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.h" />
     <ClInclude Include="ModuleKeyBinding.h">
       <Filter>Engine\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="InputAction.h">
-      <Filter>Engine\UI</Filter>
     </ClInclude>
     <ClInclude Include="jpPhysicsJoint.h">
       <Filter>Engine\PhysX\jpPhysX</Filter>
@@ -1150,7 +1158,6 @@
     <ClInclude Include="CompSlider.h">
       <Filter>Engine\Components</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerActions.h" />
     <ClInclude Include="Octree.h">
       <Filter>Engine\Containers</Filter>
     </ClInclude>
@@ -1160,11 +1167,6 @@
     <ClInclude Include="ModuleEventSystemV2.h">
       <Filter>Engine\Events</Filter>
     </ClInclude>
-    <ClInclude Include="ImportFont.h" />
-    <ClInclude Include="ClickAction.h" />
-    <ClInclude Include="ModuleAnimation.h" />
-    <ClInclude Include="AnimableComponent.h" />
-    <ClInclude Include="CompUIAnimation.h" />
     <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.h">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
@@ -1201,7 +1203,33 @@
     <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
-    <ClInclude Include="VertexUIData.h" />
+    <ClInclude Include="CompUIAnimation.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportFont.h">
+      <Filter>Engine\Importer</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimableComponent.h">
+      <Filter>Engine\Components\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerActions.h">
+      <Filter>Engine\UI\InputManager</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Engine\UI\InputManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleAnimation.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ClickAction.h">
+      <Filter>Engine\Components\ActionScript</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexUIData.h">
+      <Filter>Engine\UI\VertexUIData</Filter>
+    </ClInclude>
+    <ClInclude Include="InputAction.h">
+      <Filter>Engine\UI\InputManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1561,12 +1589,8 @@
     <ClCompile Include="Materials.cpp">
       <Filter>Engine\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ModuleKeyBinding.cpp">
       <Filter>Engine\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="InputAction.cpp">
-      <Filter>Engine\UI</Filter>
     </ClCompile>
     <ClCompile Include="jpPhysicsJoint.cpp">
       <Filter>Engine\PhysX\jpPhysX</Filter>
@@ -1577,7 +1601,6 @@
     <ClCompile Include="CompSlider.cpp">
       <Filter>Engine\Components</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerActions.cpp" />
     <ClCompile Include="CSharpComponents.cpp">
       <Filter>Engine\Resources\Script</Filter>
     </ClCompile>
@@ -1593,11 +1616,6 @@
     <ClCompile Include="ModuleEventSystemV2.cpp">
       <Filter>Engine\Events</Filter>
     </ClCompile>
-    <ClCompile Include="ImportFont.cpp" />
-    <ClCompile Include="ClickAction.cpp" />
-    <ClCompile Include="ModuleAnimation.cpp" />
-    <ClCompile Include="AnimableComponent.cpp" />
-    <ClCompile Include="CompUIAnimation.cpp" />
     <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.cpp">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
@@ -1619,7 +1637,33 @@
     <ClCompile Include="AK\DefaultIO\Common\AkFilePackageLUT.cpp">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClCompile>
-    <ClCompile Include="VertexUIData.cpp" />
+    <ClCompile Include="CompUIAnimation.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportFont.cpp">
+      <Filter>Engine\Importer</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimableComponent.cpp">
+      <Filter>Engine\Components\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerActions.cpp">
+      <Filter>Engine\UI\InputManager</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Engine\UI\InputManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleAnimation.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ClickAction.cpp">
+      <Filter>Engine\Components\ActionScript</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexUIData.cpp">
+      <Filter>Engine\UI\VertexUIData</Filter>
+    </ClCompile>
+    <ClCompile Include="InputAction.cpp">
+      <Filter>Engine\UI\InputManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">
