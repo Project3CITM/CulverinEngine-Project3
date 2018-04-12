@@ -83,6 +83,7 @@
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\Paths\Path.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\PuzzleCountdown.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\SetParticleTransf.cs" />
+    <Compile Include="Puzzles\Level 2\DoorLevel2.cs" />
     <Compile Include="Puzzles\Level 2\ProjectilePuzzle\Projectile.cs" />
     <Compile Include="Puzzles\Level 2\ProjectilePuzzle\ManagerProjectile.cs" />
     <Compile Include="Random.cs" />

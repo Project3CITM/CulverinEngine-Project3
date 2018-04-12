@@ -595,12 +595,6 @@ public class Lever : CulverinBehaviour
             Debug.Log("MAP IS NULL");
         level_map_script = level_map.GetComponent<LevelMap>();
 
-        Debug.Log("[green] player");
-
-        player = GetLinkedObject("player");
-        MovementController player_mov = player.GetComponent<MovementController>();
-        Debug.Log("[green] player done");
-
         int count_barrel = barrel_per_line - 1;
 
         int curr_x = 0;
@@ -615,16 +609,13 @@ public class Lever : CulverinBehaviour
                 if (current_path.walkability[x, y] == 0)
                 {
                     level_map_script.UpdateMap(curr_x, curr_y, value);
-                    player_mov.SetTileWalkability(curr_x, curr_y, value);
                 }
                 else
                 {
                     level_map_script.UpdateMap(curr_x, curr_y, value2);
-                    player_mov.SetTileWalkability(curr_x, curr_y, value2);
                 }
             }
         }
-
     }
 
     public void ResetPuzzle()
