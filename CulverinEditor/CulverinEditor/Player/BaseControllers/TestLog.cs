@@ -11,6 +11,8 @@ public class TestLog
         Debug.Log("Good Bye", Department.IA, Color.RED);
 
         Debug.Log("Y lo saee", Department.STAGE, Color.PINK);
+
+        Debug.Log("asd", Department.GENERAL, Color.NONE);
     }
 }
 
