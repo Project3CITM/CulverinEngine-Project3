@@ -57,7 +57,7 @@ AnimBone::~AnimBone()
 	}
 }
 
-void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, BlendingClip* blending_node_clip,AnimationClip* blending_clip) const
+void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, BlendingClip* blending_node_clip, BlendingClip* second_blending_node_clip ,AnimationClip* blending_clip) const
 {
 	if (playing_clip != nullptr)
 	{
@@ -67,19 +67,34 @@ void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, Blendin
 
 		CompTransform* transform = bone->GetComponentTransform();
 
-		pos = GetPosition(playing_clip, bone->AreTranslationsActivateds());
-		rot = GetRotation(playing_clip, bone->AreRotationsActivateds());
-		scale = GetScale(playing_clip, bone->AreScalesActivateds());
+		bool bonetransf = bone->AreTranslationsActivateds();
+		bool bonerots = bone->AreRotationsActivateds();
+		bool bonescals = bone->AreScalesActivateds();
+
+		pos = GetPosition(playing_clip, bonetransf);
+		rot = GetRotation(playing_clip, bonerots);
+		scale = GetScale(playing_clip, bonescals);
 
 		if (blending_node_clip != nullptr)
 		{
-			blending_node_pos = GetPosition(blending_node_clip->clip, bone->AreTranslationsActivateds());
-			blending_node_rot = GetRotation(blending_node_clip->clip, bone->AreRotationsActivateds());
-			blending_node_scale = GetScale(blending_node_clip->clip, bone->AreScalesActivateds());
+			blending_node_pos = GetPosition(blending_node_clip->clip, bonetransf);
+			blending_node_rot = GetRotation(blending_node_clip->clip, bonerots);
+			blending_node_scale = GetScale(blending_node_clip->clip, bonescals);
 
 			pos = pos.Lerp(blending_node_pos, blending_node_clip->weight);
 			rot = rot.Slerp(blending_node_rot, blending_node_clip->weight);
 			scale = scale.Lerp(blending_node_scale, blending_node_clip->weight);
+		}
+
+		if (second_blending_node_clip != nullptr)
+		{
+			blending_node_pos = GetPosition(second_blending_node_clip->clip, bonetransf);
+			blending_node_rot = GetRotation(second_blending_node_clip->clip, bonerots);
+			blending_node_scale = GetScale(second_blending_node_clip->clip, bonescals);
+
+			pos = pos.Lerp(blending_node_pos, second_blending_node_clip->weight);
+			rot = rot.Slerp(blending_node_rot, second_blending_node_clip->weight);
+			scale = scale.Lerp(blending_node_scale, second_blending_node_clip->weight);
 		}
 
 		if (blending_clip == nullptr)
@@ -90,9 +105,9 @@ void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, Blendin
 		}
 		else
 		{
-			blending_pos = GetPosition(blending_clip, bone->AreTranslationsActivateds());
-			blending_rot = GetRotation(blending_clip, bone->AreRotationsActivateds());
-			blending_scale = GetScale(blending_clip, bone->AreScalesActivateds());
+			blending_pos = GetPosition(blending_clip, bonetransf);
+			blending_rot = GetRotation(blending_clip, bonerots);
+			blending_scale = GetScale(blending_clip, bonescals);
 
 			float weight = (blending_clip->total_blending_time - blending_clip->current_blending_time) / blending_clip->total_blending_time;
 
