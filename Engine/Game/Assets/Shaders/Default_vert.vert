@@ -11,12 +11,18 @@ out vec3 ourPos;
 out mat3 TBN;
 out vec3 FragPos;
 
+//Outputs for shadow-mapping
+out vec4 shadowCoord;
+
 uniform float _time;
 uniform vec4 _color;
 uniform mat4 model;
 uniform mat4 viewproj;
 uniform mat4 view;
 uniform mat4 modelview;
+
+// Uniform for shadow-mapping
+uniform mat4 depthBias;
 
 
 
@@ -25,6 +31,7 @@ void main()
 	TexCoord = texCoord;
 	ourPos = position;
 
+	shadowCoord = depthBias * model * vec4(position, 1);
 
     vec3 T = normalize(vec3( model * vec4(tangent, 0)));
 	vec3 B = normalize(vec3( model * vec4(bitangent, 0)));
