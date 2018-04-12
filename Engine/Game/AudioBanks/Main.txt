@@ -1,0 +1,4 @@
+Event	ID	Name			Wwise Object Path	Notes
+	3240900869	ResumeAll			\Default Work Unit\ResumeAll	
+	4091047182	PauseAll			\Default Work Unit\PauseAll	
+

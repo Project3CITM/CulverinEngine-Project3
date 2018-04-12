@@ -1,0 +1,4 @@
+Meeting 20/01: httpsyoutu.beiXgQP5-_EIQ
+- First Meeting, explain...
+Meeting 22/01: https://youtu.be/F8HNIt8fTvw
+- Explain structure GameObject and ResourceManager

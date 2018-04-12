@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">  
+  <!--Alert snippet-->
+  <CodeSnippet Format="1.0.0">  
+      <Header>  
+        <Title>ALERT</Title>  
+			  <Author>anonymous</Author>  
+			  <Description>Print a LOG alert</Description>  
+			  <Shortcut>log_alert</Shortcut>
+      </Header>  
+      <Snippet>  
+          <Code Language="CPP">  
+              <![CDATA[LOG("ALERT!");]]>  
+          </Code>  
+      </Snippet>  
+  </CodeSnippet>
+
+  <!--List iterator snippet-->
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>list_iteration</Title>
+      <Author>anonymous</Author>
+      <Description>Print a std::list iteration</Description>
+      <Shortcut>list_iteration</Shortcut>
+    </Header>
+    <Snippet>
+      <Code Language="CPP">
+        <![CDATA[
+std::list<data>::iterator item = $my_list$.begin();
+while(item != $my_list$.end())
+{
+        
+  item++;
+}
+        ]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+  
+  <!--Vector iterator snippet-->
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>vector_iteration</Title>
+      <Author>anonymous</Author>
+      <Description>Print a std::vector iteration</Description>
+      <Shortcut>vector_iteration</Shortcut>
+    </Header>
+    <Snippet>
+      <Code Language="CPP">
+        <![CDATA[
+uint size = $my_vector$.size();
+for(uint k = 0; k < size; k++)
+{
+        
+}
+        ]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+
+  <!--Class template snippet-->
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>class_template</Title>
+      <Author>anonymous</Author>
+      <Description>Class standard</Description>
+      <Shortcut>class standard</Shortcut>
+    </Header>
+    <Snippet>
+      <Code Language="CPP">
+        <![CDATA[
+class _X_
+{
+    //Methods
+    public:
+
+        //Constructor
+        //Destructor
+        //Game Loop methods
+        //Functionality
+        //Set Methods 
+        //Get Methods
+
+    protected:
+    private:
+
+    //Variables
+    public:
+    protected:
+    private:
+}
+        ]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+  
+</CodeSnippets> 

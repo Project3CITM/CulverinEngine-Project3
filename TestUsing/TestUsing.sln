@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CulverinEditor", "CulverinEditor\CulverinEditor.csproj", "{CC7B7538-9331-4996-847E-78762C9A8CBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CC7B7538-9331-4996-847E-78762C9A8CBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC7B7538-9331-4996-847E-78762C9A8CBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC7B7538-9331-4996-847E-78762C9A8CBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC7B7538-9331-4996-847E-78762C9A8CBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {473E5ECE-527C-48EC-9D7B-89227D7C2147}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,123 @@
+# Notes:
+#   - Minimal appveyor.yml file is an empty file. All sections are optional.
+#   - Indent each level of configuration with 2 spaces. Do not use tabs!
+#   - All section names are case-sensitive.
+#   - Section names should be unique on each level.
+
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: Project3.{build}-{branch}
+  
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+# clone directory
+clone_folder: C:\projects\TempMotor3D_P3
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+platform: Win32
+
+# build Configuration, i.e. Debug, Release, etc.
+configuration:
+- Debug
+- Release
+
+build:
+  project: Engine\Culverin.sln
+  
+  # MSBuild verbosity level
+  verbosity: normal
+  
+before_package:
+- ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\CulverinEngine.exe C:\projects\TempMotor3D_P3\Engine\Game\.
+- ps: Copy-Item C:\projects\TempMotor3D_P3\README.md C:\projects\TempMotor3D_P3\Engine\Game\.
+  
+artifacts:
+- path: Engine\Game
+  name: Culverine_Engine
+  
+#---------------------------------#
+#         notifications           #
+#---------------------------------#
+
+notifications:
+
+  # Email
+  - provider: Email
+    to:		
+      - martimyc@gmail.com
+      - nico.babotaltisen@gmail.com
+      - andreu.rbj@gmail.com
+      - jordior97@gmail.com
+      - yotolivenza@gmail.com
+      - mizquierdo97@gmail.com
+      - marcfv97@gmail.com
+      - elliot.jimenez1@gmail.com
+      - ferranmartinvila21@gmail.com
+      - adriancl1996@gmail.com
+      - imbecilustotalus@gmail.com
+      - marc.lafrwy@gmail.com
+      - pere.rifaplanellas@gmail.com
+      - josef21296@gmail.com
+      - carcasanchez@gmail.com
+      - th_sola@hotmail.com
+      - dlopez3a@gmail.com
+    subject: 'Build {{status}}'                  # optional
+    message: "{{message}}, {{commitId}}, ..."    # optional
+    on_build_success: false
+    on_build_failure: true
+    on_build_status_changed: false
+
+#---------------------------------#
+#     deployment configuration    #
+#---------------------------------#
+
+# providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
+# provider names are case-sensitive!
+
+for:
+-
+  branches:
+    only:
+      - master
+      
+  # Deploy to GitHub Releases
+  deploy:
+  - provider: GitHub
+    description: Release
+    auth_token:
+      secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
+    artifact: Culverine_Engine
+    draft: false
+    prerelease: false
+    force_update: true
+    on:
+      CONFIGURATION: Release
+      
+-
+  branches:
+    only:
+      - Develop
+
+  # Deploy to GitHub Releases
+  deploy:
+  - provider: GitHub
+    description: Release
+    auth_token:
+      secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
+    artifact: Culverine_Engine
+    draft: false
+    prerelease: true
+    force_update: true
+    on:
+      CONFIGURATION: Debug

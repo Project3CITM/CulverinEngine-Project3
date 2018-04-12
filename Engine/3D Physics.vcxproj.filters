@@ -1,0 +1,1645 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{8b7ed093-66ce-4096-96d2-fbb9faa4bf52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Modules">
+      <UniqueIdentifier>{7b418be2-1631-4a31-9ef2-8a8b234a7339}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Containers">
+      <UniqueIdentifier>{afc36133-f401-499a-aa33-0da1e500fb52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools">
+      <UniqueIdentifier>{7e4dfaf7-022c-4f7d-92aa-f3b3fa9d6248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Components">
+      <UniqueIdentifier>{f93e1b93-4b03-4d39-a9fe-b23aeb1ec2aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Importer">
+      <UniqueIdentifier>{e2f9b83b-9fdf-4f22-a19a-c5339cbd8c80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resources">
+      <UniqueIdentifier>{f609da17-e50f-4057-aa5d-4e5cdf0fb1c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scene">
+      <UniqueIdentifier>{6b6604d6-5443-4ace-bc98-2b5ec7a6644c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UI">
+      <UniqueIdentifier>{57009f2d-5c28-4ee8-b19f-51edef2f7ca0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GameObjects">
+      <UniqueIdentifier>{3e5dc33e-7212-40b1-92c9-9ed45dbfb6a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\Parson">
+      <UniqueIdentifier>{b19f9a02-ebed-4122-83b4-caf0bb4431ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\MathGeoLib">
+      <UniqueIdentifier>{de24078f-d076-4751-804f-c382be02a72b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\MathGeoLib\Algorithm">
+      <UniqueIdentifier>{3db769ff-5b0d-479f-a232-b3332a8e8027}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\MathGeoLib\Geometry">
+      <UniqueIdentifier>{8b3e318f-dc5f-44ff-99fc-6a029d7874c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\MathGeoLib\Math">
+      <UniqueIdentifier>{2261a44f-caee-477e-8148-8c112cf99c0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\MathGeoLib\Time">
+      <UniqueIdentifier>{6286d2d2-877a-4d01-ae19-f300cc45e963}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\mmgr">
+      <UniqueIdentifier>{95959b6b-83d6-4c50-bdfd-14d1bd442b66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\ImGUI">
+      <UniqueIdentifier>{3a461483-07e2-49b8-874c-558975aee6e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Components\Light">
+      <UniqueIdentifier>{121f8e6b-df36-4ab0-be0d-601ddfc9e503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resources\Script">
+      <UniqueIdentifier>{ba62ae01-4435-4755-9343-6cc18c3996e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Events">
+      <UniqueIdentifier>{b78ef69c-e45a-47c5-a161-38e8153cba34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Shaders">
+      <UniqueIdentifier>{4ac4f5d4-60a2-4354-b4ec-5dc7d5776fec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\Wwished">
+      <UniqueIdentifier>{d1555f45-e1b9-4150-b38a-ad9d15d78630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\Wwished\Wwise_libraries">
+      <UniqueIdentifier>{507d365f-226e-4cf8-a7fc-001bfaf27ba3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\Snippets">
+      <UniqueIdentifier>{12f4a194-d014-4209-8e33-7a9d6a13f5c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX">
+      <UniqueIdentifier>{4fefc72e-3aa2-45ba-80d5-6ad4aa5cd55c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\CharacterKinematic">
+      <UniqueIdentifier>{c4eccf08-73ca-4190-b33a-3237bac29835}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Collision">
+      <UniqueIdentifier>{8acddbed-3549-477c-a793-613579c65572}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Common">
+      <UniqueIdentifier>{6702dbe0-db31-486e-9885-fae57cf1d7ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Cooking">
+      <UniqueIdentifier>{dd58bf14-8e7a-4615-b179-560ff5cf58c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Cuda">
+      <UniqueIdentifier>{e3acd4f6-e285-4af2-9e22-b4b91db2c51c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Extensions">
+      <UniqueIdentifier>{6e169ab8-e075-4310-85f9-a965b4f404f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\FileBuf">
+      <UniqueIdentifier>{260c3a8e-7b9b-4755-9413-e6a3e38a024e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Fundation">
+      <UniqueIdentifier>{038dc69f-15c9-4178-8b8e-864add34b617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Geometry">
+      <UniqueIdentifier>{0a7ebbea-2e26-4a9f-a1e2-843172cfb0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\GeometryUtils">
+      <UniqueIdentifier>{fb53038d-7e93-460b-9ad5-57175c40f702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Gpu">
+      <UniqueIdentifier>{6af2fe59-1b11-4821-9cee-8419ccf1daba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Particles">
+      <UniqueIdentifier>{197d52c4-7604-44b8-b943-08d4b2340bed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Pvd">
+      <UniqueIdentifier>{89b2c78f-f4fa-44a2-a378-e04b15c364f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Solver">
+      <UniqueIdentifier>{31df5aa9-e1cb-40de-a843-8c9cedb3744c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\Task">
+      <UniqueIdentifier>{fd80a174-032b-4611-a524-f57e6d7ac4a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PhysX\jpPhysX">
+      <UniqueIdentifier>{1ef8a2bb-0ccd-42f5-adcb-e22c9e15b491}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Tools\OliEngine">
+      <UniqueIdentifier>{75bb7a05-f41d-436e-bf28-310d18c1268c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Module.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleAudio.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleCamera3D.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleInput.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleRenderer3D.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleWindow.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Engine\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Engine\Components\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Engine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MathBuildConfig.h">
+      <Filter>Engine\Tools\MathGeoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLib.h">
+      <Filter>Engine\Tools\MathGeoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MathGeoLibFwd.h">
+      <Filter>Engine\Tools\MathGeoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Random\LCG.h">
+      <Filter>Engine\Tools\MathGeoLib\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\AABB.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\AABB2D.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Capsule.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Circle.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Frustum.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\GeometryAll.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\GeomType.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\HitInfo.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\KDTree.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Line.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\LineSegment.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\OBB.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\PBVolume.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Plane.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Polygon.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Polyhedron.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Ray.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Sphere.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Triangle.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\TriangleMesh.h">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\assume.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\BitOps.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Complex.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\CoordinateAxisConvention.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\FixedPoint.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\float2.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\float3.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\float3x3.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\float3x4.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\float4.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\float4_neon.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\float4_sse.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\float4x4.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\float4x4_neon.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\float4x4_sse.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\FloatCmp.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathAll.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathConstants.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathFunc.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathLog.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathNamespace.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathTypes.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MatrixProxy.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\myassert.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Polynomial.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Quat.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\quat_simd.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Rect.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Reinterpret.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\sse_mathfun.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\SSEMath.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\TransformOps.h">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Time\Clock.h">
+      <Filter>Engine\Tools\MathGeoLib\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleConsole.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleGUI.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowManager.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="parson.h">
+      <Filter>Engine\Tools\Parson</Filter>
+    </ClInclude>
+    <ClInclude Include="PerfTimer.h">
+      <Filter>Engine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imconfig.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_sdl_gl3.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_internal.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\stb_rect_pack.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\stb_textedit.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\stb_truetype.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTextures.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_dock_v2.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleFramebuffers.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="mmgr\mmgr.h">
+      <Filter>Engine\Tools\mmgr</Filter>
+    </ClInclude>
+    <ClInclude Include="mmgr\nommgr.h">
+      <Filter>Engine\Tools\mmgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleImporter.h">
+      <Filter>Engine\Importer</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportMaterial.h">
+      <Filter>Engine\Importer</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportMesh.h">
+      <Filter>Engine\Importer</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Engine\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="CompTransform.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompMesh.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleFS.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="CompMaterial.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompCamera.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\ImGuizmo.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowHardware.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowHierarchy.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowInspector.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowProject.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowSceneWorld.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Quadtree.h">
+      <Filter>Engine\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="JSONSerialization.h">
+      <Filter>Engine\Importer</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleResourceManager.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceMaterial.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceMesh.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource_.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Engine\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextEditor.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Script_editor.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CompScript.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceScript.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportScript.h">
+      <Filter>Engine\Importer</Filter>
+    </ClInclude>
+    <ClInclude Include="CSharpScript.h">
+      <Filter>Engine\Resources\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="EventDef.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleEventSystem.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadersLib.h">
+      <Filter>Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include_wwise.h">
+      <Filter>Engine\Tools\Wwished</Filter>
+    </ClInclude>
+    <ClInclude Include="wwished.h">
+      <Filter>Engine\Tools\Wwished</Filter>
+    </ClInclude>
+    <ClInclude Include="CompText.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompButton.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompCanvas.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompCanvasRender.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompCheckBox.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompEditText.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompGraphic.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompImage.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompInteractive.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompRectTransform.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFont.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleRenderGui.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="CompAnimation.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompAudio.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceAnimation.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleShaders.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\characterkinematic\PxBoxController.h">
+      <Filter>Engine\PhysX\CharacterKinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\characterkinematic\PxCapsuleController.h">
+      <Filter>Engine\PhysX\CharacterKinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\characterkinematic\PxCharacter.h">
+      <Filter>Engine\PhysX\CharacterKinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\characterkinematic\PxController.h">
+      <Filter>Engine\PhysX\CharacterKinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\characterkinematic\PxControllerBehavior.h">
+      <Filter>Engine\PhysX\CharacterKinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\characterkinematic\PxControllerManager.h">
+      <Filter>Engine\PhysX\CharacterKinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\characterkinematic\PxControllerObstacles.h">
+      <Filter>Engine\PhysX\CharacterKinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\characterkinematic\PxExtended.h">
+      <Filter>Engine\PhysX\CharacterKinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\collision\PxCollisionDefs.h">
+      <Filter>Engine\PhysX\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxBase.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxCollection.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxCoreUtilityTypes.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxMetaData.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxMetaDataFlags.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxPhysicsInsertionCallback.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxPhysXCommonConfig.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxRenderBuffer.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxSerialFramework.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxSerializer.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxStringTable.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxTolerancesScale.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\PxTypeInfo.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\common\windows\PxWindowsDelayLoadHook.h">
+      <Filter>Engine\PhysX\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cooking\PxBVH33MidphaseDesc.h">
+      <Filter>Engine\PhysX\Cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cooking\PxBVH34MidphaseDesc.h">
+      <Filter>Engine\PhysX\Cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cooking\Pxc.h">
+      <Filter>Engine\PhysX\Cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cooking\PxConvexMeshDesc.h">
+      <Filter>Engine\PhysX\Cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cooking\PxCooking.h">
+      <Filter>Engine\PhysX\Cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cooking\PxMidphaseDesc.h">
+      <Filter>Engine\PhysX\Cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cooking\PxTriangleMeshDesc.h">
+      <Filter>Engine\PhysX\Cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cudamanager\PxCudaContextManager.h">
+      <Filter>Engine\PhysX\Cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cudamanager\PxCudaMemoryManager.h">
+      <Filter>Engine\PhysX\Cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cudamanager\PxGpuCopyDesc.h">
+      <Filter>Engine\PhysX\Cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\cudamanager\PxGpuCopyDescQueue.h">
+      <Filter>Engine\PhysX\Cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxBinaryConverter.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxBroadPhaseExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxCollectionExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxConstraintExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxConvexMeshExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxD6Joint.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxDefaultAllocator.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxDefaultCpuDispatcher.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxDefaultErrorCallback.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxDefaultSimulationFilterShader.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxDefaultStreams.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxDistanceJoint.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxExtensionsAPI.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxFixedJoint.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxJoint.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxJointLimit.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxMassProperties.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxParticleExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxPrismaticJoint.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxRaycastCCD.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxRepXSerializer.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxRepXSimpleType.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxRevoluteJoint.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxRigidActorExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxRigidBodyExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxSceneQueryExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxSerialization.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxShapeExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxSimpleFactory.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxSmoothNormals.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxSphericalJoint.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxStringTableExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\extensions\PxTriangleMeshExt.h">
+      <Filter>Engine\PhysX\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\filebuf\PxFileBuf.h">
+      <Filter>Engine\PhysX\FileBuf</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\Px.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxAllocatorCallback.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxAssert.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxBitAndData.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxBounds3.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxErrorCallback.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxErrors.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxFlags.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxFoundation.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxFoundationVersion.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxIntrinsics.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxIO.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxMat33.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxMat44.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxMath.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxMathUtils.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxMemory.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxPlane.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxPreprocessor.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxProfiler.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxQuat.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxSimpleTypes.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxStrideIterator.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxTransform.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxUnionCast.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxVec2.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxVec3.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\PxVec4.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\windows\PxWindowsFoundationDelayLoadHook.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\foundation\windows\PxWindowsIntrinsics.h">
+      <Filter>Engine\PhysX\Fundation</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxBoxGeometry.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxCapsuleGeometry.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxConvexMesh.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxConvexMeshGeometry.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxGeometry.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxGeometryHelpers.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxGeometryQuery.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxHeightField.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxHeightFieldDesc.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxHeightFieldFlag.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxHeightFieldGeometry.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxHeightFieldSample.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxMeshQuery.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxMeshScale.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxPlaneGeometry.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxSimpleTriangleMesh.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxSphereGeometry.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxTriangle.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxTriangleMesh.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\geometry\PxTriangleMeshGeometry.h">
+      <Filter>Engine\PhysX\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\GeomUtils\GuContactBuffer.h">
+      <Filter>Engine\PhysX\GeometryUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\GeomUtils\GuContactPoint.h">
+      <Filter>Engine\PhysX\GeometryUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\gpu\PxGpu.h">
+      <Filter>Engine\PhysX\Gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\gpu\PxParticleGpu.h">
+      <Filter>Engine\PhysX\Gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\particles\PxParticleBase.h">
+      <Filter>Engine\PhysX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\particles\PxParticleBaseFlag.h">
+      <Filter>Engine\PhysX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\particles\PxParticleCreationData.h">
+      <Filter>Engine\PhysX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\particles\PxParticleFlag.h">
+      <Filter>Engine\PhysX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\particles\PxParticleFluid.h">
+      <Filter>Engine\PhysX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\particles\PxParticleFluidReadData.h">
+      <Filter>Engine\PhysX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\particles\PxParticleReadData.h">
+      <Filter>Engine\PhysX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\particles\PxParticleSystem.h">
+      <Filter>Engine\PhysX\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\pvd\PxPvd.h">
+      <Filter>Engine\PhysX\Pvd</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\pvd\PxPvdSceneClient.h">
+      <Filter>Engine\PhysX\Pvd</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\pvd\PxPvdTransport.h">
+      <Filter>Engine\PhysX\Pvd</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\pvd\windows\PxWindowsPvdDelayLoadHook.h">
+      <Filter>Engine\PhysX\Pvd</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\solver\PxSolverDefs.h">
+      <Filter>Engine\PhysX\Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\task\PxCpuDispatcher.h">
+      <Filter>Engine\PhysX\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\task\PxGpuDispatcher.h">
+      <Filter>Engine\PhysX\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\task\PxGpuTask.h">
+      <Filter>Engine\PhysX\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\task\PxTask.h">
+      <Filter>Engine\PhysX\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\task\PxTaskDefine.h">
+      <Filter>Engine\PhysX\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\task\PxTaskManager.h">
+      <Filter>Engine\PhysX\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxActor.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxAggregate.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxArticulation.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxArticulationJoint.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxArticulationLink.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxBatchQuery.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxBatchQueryDesc.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxBroadPhase.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxClient.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxConstraint.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxConstraintDesc.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxContact.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxContactModifyCallback.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxDeletionListener.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxFiltering.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxForceMode.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxImmediateMode.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxLockedData.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxMaterial.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxPhysics.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxPhysicsAPI.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxPhysicsSerialization.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxPhysicsVersion.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxPhysXConfig.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxPruningStructure.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxQueryFiltering.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxQueryReport.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxRigidActor.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxRigidBody.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxRigidDynamic.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxRigidStatic.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxScene.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxSceneDesc.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxSceneLock.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxShape.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxSimulationEventCallback.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxSimulationStatistics.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxSpatialIndex.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxVisualizationParameter.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysX\Include\PxVolumeCache.h">
+      <Filter>Engine\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="ModulePhysics.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_graph_nodes.h">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportAnimation.h">
+      <Filter>Engine\Importer</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleMap.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="jpPhysicsRigidBody.h">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="jpPhysicsWorld.h">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="CompBone.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompFSM.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompLight.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleLightning.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="CompCollider.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompRigidBody.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompParticleSystem.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultShaders.h">
+      <Filter>Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Engine\Tools\OliEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthCubeMap.h">
+      <Filter>Engine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials.h">
+      <Filter>Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="ModuleKeyBinding.h">
+      <Filter>Engine\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="InputAction.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="jpPhysicsJoint.h">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="CompJoint.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompSlider.h">
+      <Filter>Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerActions.h" />
+    <ClInclude Include="Octree.h">
+      <Filter>Engine\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="EventDefV2.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleEventSystemV2.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportFont.h" />
+    <ClInclude Include="ClickAction.h" />
+    <ClInclude Include="ModuleAnimation.h" />
+    <ClInclude Include="AnimableComponent.h" />
+    <ClInclude Include="CompUIAnimation.h" />
+    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFileHelpers.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIOBlocking.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\AkFilePackageLowLevelIODeferred.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Win32\stdafx.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFileLocationBase.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackage.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkFilePackageLUT.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexUIData.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ModuleAudio.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleCamera3D.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleInput.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleRenderer3D.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleWindow.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="log.cpp">
+      <Filter>Engine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Engine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>Engine\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Engine\Components\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Algorithm\Random\LCG.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\AABB.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Capsule.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Circle.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Frustum.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Line.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\LineSegment.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\OBB.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Plane.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Polygon.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Polyhedron.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Ray.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Sphere.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Triangle.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\TriangleMesh.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\BitOps.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\float2.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\float3.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\float3x3.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\float3x4.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\float4.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\float4x4.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MathFunc.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MathLog.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MathOps.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Polynomial.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Quat.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\SSEMath.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\TransformOps.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Time\Clock.cpp">
+      <Filter>Engine\Tools\MathGeoLib\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleConsole.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleGUI.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="parson.cpp">
+      <Filter>Engine\Tools\Parson</Filter>
+    </ClCompile>
+    <ClCompile Include="PerfTimer.cpp">
+      <Filter>Engine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui.cpp">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_demo.cpp">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_draw.cpp">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_sdl_gl3.cpp">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTextures.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_dock_v2.cpp">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleFramebuffers.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="mmgr\mmgr.cpp">
+      <Filter>Engine\Tools\mmgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleImporter.cpp">
+      <Filter>Engine\Importer</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportMaterial.cpp">
+      <Filter>Engine\Importer</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportMesh.cpp">
+      <Filter>Engine\Importer</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Engine\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="CompTransform.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompMesh.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleFS.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="CompMaterial.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompCamera.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\ImGuizmo.cpp">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowHardware.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowHierarchy.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowInspector.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowProject.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowSceneWorld.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Quadtree.cpp">
+      <Filter>Engine\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="JSONSerialization.cpp">
+      <Filter>Engine\Importer</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleResourceManager.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource_.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceMaterial.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceMesh.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Engine\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="TextEditor.cpp">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Script_editor.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CompScript.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceScript.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportScript.cpp">
+      <Filter>Engine\Importer</Filter>
+    </ClCompile>
+    <ClCompile Include="CSharpScript.cpp">
+      <Filter>Engine\Resources\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleEventSystem.cpp">
+      <Filter>Engine\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadersLib.cpp">
+      <Filter>Engine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="include_wwise.cpp">
+      <Filter>Engine\Tools\Wwished</Filter>
+    </ClCompile>
+    <ClCompile Include="wwished.cpp">
+      <Filter>Engine\Tools\Wwished</Filter>
+    </ClCompile>
+    <ClCompile Include="CompButton.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompCanvas.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompCanvasRender.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompCheckBox.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompEditText.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompGraphic.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompImage.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompInteractive.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompRectTransform.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompText.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceFont.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleRenderGui.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="CompAnimation.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompAudio.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceAnimation.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleShaders.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModulePhysics.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_graph_nodes.cpp">
+      <Filter>Engine\Tools\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportAnimation.cpp">
+      <Filter>Engine\Importer</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleMap.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="jpPhysicsRigidBody.cpp">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="jpPhysicsWorld.cpp">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="CompBone.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompFSM.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompLight.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleLightning.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="CompCollider.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompRigidBody.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompParticleSystem.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Engine\Tools\OliEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthCubeMap.cpp">
+      <Filter>Engine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials.cpp">
+      <Filter>Engine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="ModuleKeyBinding.cpp">
+      <Filter>Engine\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="InputAction.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="jpPhysicsJoint.cpp">
+      <Filter>Engine\PhysX\jpPhysX</Filter>
+    </ClCompile>
+    <ClCompile Include="CompJoint.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CompSlider.cpp">
+      <Filter>Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerActions.cpp" />
+    <ClCompile Include="CSharpComponents.cpp">
+      <Filter>Engine\Resources\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="CSharpTransform.cpp">
+      <Filter>Engine\Resources\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="CSharpUI.cpp">
+      <Filter>Engine\Resources\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="Octree.cpp">
+      <Filter>Engine\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleEventSystemV2.cpp">
+      <Filter>Engine\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportFont.cpp" />
+    <ClCompile Include="ClickAction.cpp" />
+    <ClCompile Include="ModuleAnimation.cpp" />
+    <ClCompile Include="AnimableComponent.cpp" />
+    <ClCompile Include="CompUIAnimation.cpp" />
+    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookBlocking.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Win32\AkDefaultIOHookDeferred.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Win32\stdafx.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkDefaultLowLevelIODispatcher.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkFileLocationBase.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkFilePackage.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="AK\DefaultIO\Common\AkFilePackageLUT.cpp">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleGUI_Build.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexUIData.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Geometry\KDTree.inl">
+      <Filter>Engine\Tools\MathGeoLib\Geometry</Filter>
+    </None>
+    <None Include="Math\Matrix.inl">
+      <Filter>Engine\Tools\MathGeoLib\Math</Filter>
+    </None>
+    <None Include="Game\config.json" />
+    <None Include="Snippets\CodeSnippets.snippet">
+      <Filter>Engine\Tools\Snippets</Filter>
+    </None>
+    <None Include="AK\DefaultIO\Common\AkFilePackageLowLevelIO.inl">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </None>
+    <None Include="AK\DefaultIO\Common\AkMultipleFileLocation.inl">
+      <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
+    </None>
+  </ItemGroup>
+</Project>
