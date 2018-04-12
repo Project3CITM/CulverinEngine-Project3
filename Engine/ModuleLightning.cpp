@@ -211,6 +211,29 @@ update_status ModuleLightning::PreUpdate(float dt)
 update_status ModuleLightning::Update(float dt)
 {
 
+	for (uint i = 0; i < frame_used_lights.size(); ++i)
+	{
+		if (frame_used_lights[i]->type == Light_type::DIRECTIONAL_LIGHT) {
+			float3 dir = frame_used_lights[i]->GetParent()->GetComponentTransform()->GetEulerToDirection();
+
+			glm::mat4 biasMatrix(
+				0.5, 0.0, 0.0, 0,
+				0.0, 0.5, 0.0, 0,
+				0.0, 0.0, 0.5, 0,
+				0.5, 0.5, 0.5, 1.0
+			);
+			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+			glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(dir.x, dir.y, dir.z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+			glm::mat4 depthModelMatrix = glm::mat4(1.0);
+
+
+			frame_used_lights[i]->depthMVPMat = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+			frame_used_lights[i]->depthBiasMat = biasMatrix * frame_used_lights[i]->depthMVPMat;
+		}
+	}
+
+
+
 /*
 	shadow_Shader->Bind();
 	text.Bind("peter");
@@ -262,20 +285,7 @@ bool ModuleLightning::CleanUp()
 void ModuleLightning::OnEvent(Event & event)
 {
 	
-/*	if (App->scene->scene_buff != nullptr)
-	{
-		//This is only for shadows 
 
-		test_fix.Bind("peter");
-
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
-		// Cull back-facing triangles -> draw only front-facing triangles
-
-		// Clear the screen
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	*/
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_3D_3DA_MM:
@@ -283,7 +293,11 @@ void ModuleLightning::OnEvent(Event & event)
 		const CompLight* light = event.send_3d3damm.light;
 
 		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
+			test_fix.Bind("peter");
 
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_FRONT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			for (std::multimap<uint, Event>::const_iterator item = event.send_3d3damm.MM3DDrawEvent->begin(); item != event.send_3d3damm.MM3DDrawEvent->end(); item++)
 			{
 				CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
@@ -302,6 +316,7 @@ void ModuleLightning::OnEvent(Event & event)
 				}
 
 			}
+			
 		}
 
 		else if (light->type == Light_type::POINT_LIGHT) {
@@ -310,14 +325,8 @@ void ModuleLightning::OnEvent(Event & event)
 		}
 
 	}
-
-	/*if (App->scene->scene_buff != nullptr)
-	{
-		ImGui::Image((ImTextureID*)test_fix.depthTex, ImVec2(500, 500));
-		App->scene->scene_buff->Bind("Scene");
-		glCullFace(GL_BACK);
-		shadow_Shader->Unbind();
-	}*/
+	App->scene->scene_buff->Bind("Scene"); glCullFace(GL_BACK);
+	
 }
 
 void ModuleLightning::CalcPointShadowMaps(Event& events, CompLight* light)
@@ -458,48 +467,7 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 
 
 	//Future Delete
-	if (App->renderer3D->texture_2d)
-	{
-		CompMaterial* temp = m->GetParent()->GetComponentMaterial();
-		if (temp != nullptr) {
-			for (int i = 0; i < temp->material->textures.size(); i++) {
-
-
-				uint texLoc = glGetUniformLocation(temp->material->GetProgramID(), temp->material->textures[i].var_name.c_str());
-				glUniform1i(texLoc, i);
-
-
-				glActiveTexture(GL_TEXTURE0 + i);
-
-
-				if (temp->material->textures[i].value == nullptr)
-				{
-					glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-				}
-				else
-				{
-					glBindTexture(GL_TEXTURE_2D, temp->material->textures[i].value->GetTextureID());
-				}
-
-			}
-
-
-			uint texture_2D_sampler = 0;
-			glActiveTexture(GL_TEXTURE0);
-			if (temp->GetTextureID() == 0)
-			{
-				glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-			}
-			else
-			{
-				glBindTexture(GL_TEXTURE_2D, temp->GetTextureID());
-			}
-			texture_2D_sampler = glGetUniformLocation(App->renderer3D->default_shader->programID, "_texture");
-			glUniform1i(texture_2D_sampler, 0);
-
-
-		}
-	}
+	
 	//
 
 	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
@@ -535,15 +503,10 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 		0.0, 0.0, 0.5, 0,
 		0.5, 0.5, 0.5, 1.0
 	);
-
-
 	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-	//glm::mat4 depthViewMatrix = glm::lookAt(vec3(rot_eu_ang.x, rot_eu_ang.y, rot_eu_ang.z), glm::vec3(pos_light.x, pos_light.y, pos_light.z), glm::vec3(0, 1, 0));
 	glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(dir.x, dir.y, dir.z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	glm::mat4 depthModelMatrix = glm::mat4(1.0);
-	//	depthModelMatrix[3][0] = pos_light.x;
-	//depthModelMatrix[3][1] = pos_light.y;
-	//depthModelMatrix[3][2] = pos_light.z;
+
 
 
 
@@ -585,15 +548,11 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 		material->Bind();
 
 		int depthMatrixID = glGetUniformLocation(material->GetProgramID(), "depthMVP");
-		int depthBiasID = glGetUniformLocation(material->GetProgramID(), "depthBias");
-		GLuint ShadowMapID = glGetUniformLocation(material->GetProgramID(), "shadowMap");
-		GLuint light_dir_id = glGetUniformLocation(material->GetProgramID(), "_light_dir");
+		int depthBiasID = glGetUniformLocation(material->GetProgramID(), "depthBias");		
 		//-----------------------
-
-
 		glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
-		glUniform3fv(light_dir_id, 1, dir.ptr());
+
 		material->Unbind();
 	}
 	shadow_Shader->Bind();

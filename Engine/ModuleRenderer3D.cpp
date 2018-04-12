@@ -17,6 +17,8 @@
 #include "DefaultShaders.h"
 #include "Materials.h"
 #include "ModuleTextures.h"
+#include "ModuleLightning.h"
+
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
@@ -317,12 +319,12 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 
 
-	/*ImGui::Begin("Test");
-	ImGui::Image((ImTextureID*)App->scene->scene_buff->GetTexture(), ImVec2(256, 256));
+	ImGui::Begin("Test");
+	ImGui::Image((ImTextureID*)App->module_lightning->test_fix.depthTex, ImVec2(256, 256));
 	ImGui::SliderFloat("Strength", &blur_strength, 0.0f, 50.0f);
 	ImGui::SliderInt("Amount", &blur_amount, 0.0f, 30.0f);
 	ImGui::SliderFloat("Scale", &blur_scale, 0.0f, 50.0f);
-	ImGui::End();*/
+	ImGui::End();
 
 
 
