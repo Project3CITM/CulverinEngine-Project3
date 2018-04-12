@@ -131,6 +131,8 @@ void CompUIAnimation::ShowInspectorInfo()
 	if (select_ui_animation)
 	{
 		animation_json = App->animation_ui->ShowAnimationJsonFiles(select_ui_animation);
+		if (animation_json != nullptr)
+			select_ui_animation = false;
 	}
 	ImGui::Text("Play"); ImGui::SameLine(op + 30);
 	ImGui::Checkbox("##play", &play);
@@ -274,8 +276,12 @@ void CompUIAnimation::LoadAnimation(AnimationJson ** animation, const char * pat
 		{
 			config = json_value_get_object(config_file);
 
-			(*animation)->name = path;//<------not
+			(*animation)->name = json_object_dotget_string_with_std(config, "UIAnimation.Name ");
+			(*animation)->max_keys= json_object_dotget_number_with_std(config, "UIAnimation.Max_Key ");
+			(*animation)->sample_rate = json_object_dotget_number_with_std(config, "UIAnimation.Samples ");
 			int animation_size = json_object_dotget_number_with_std(config, "UIAnimation.Size ");
+
+
 			for (uint i = 0; i < animation_size; i++)
 			{
 				std::string animations = std::to_string(i);

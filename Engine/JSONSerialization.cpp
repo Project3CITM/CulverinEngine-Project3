@@ -1018,6 +1018,10 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 		config = json_value_get_object(config_file);
 		json_object_clear(config);
 		json_object_dotset_number_with_std(config, "UIAnimation.Size ", animation->animations.size());
+		json_object_dotset_number_with_std(config, "UIAnimation.Max_Key ", animation->max_keys);
+		json_object_dotset_number_with_std(config, "UIAnimation.Samples ", animation->sample_rate);
+		json_object_dotset_string_with_std(config, "UIAnimation.Name ", animation->name.c_str());
+
 		for (int i = 0; i < animation->animations.size(); i++)
 		{
 			std::string animations = std::to_string(i);

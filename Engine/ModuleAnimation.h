@@ -24,8 +24,8 @@ struct KeyData
 struct KeyFrameData
 {
 	KeyFrameData();
-	KeyFrameData(int key, AnimationValue value, ParameterValue parameter);
-	KeyFrameData(int key, AnimationValue value);
+	KeyFrameData(int key,int max_keys,int sample_rate, AnimationValue value, ParameterValue parameter);
+	KeyFrameData(int key, int max_keys, int sample_rate, AnimationValue value);
 	~KeyFrameData();
 	bool ShowKeyValue(int i);
 	void CaptureKeyValue(int i);
@@ -90,7 +90,7 @@ public:
 	AnimationJson* ShowAnimationJsonFiles(bool& active);
 	void FindAnimComponent();
 	void SaveAnimation();
-	void LoadAnimation(AnimationJson** animation, const char* path,const char* name);
+	bool LoadAnimation(AnimationJson** animation, const char* path,const char* name);
 	int HaveAnimData(const AnimableComponent* data);
 	
 private:
