@@ -419,7 +419,7 @@ public class JaimeController : CharacterController
         if (GetState() == 0) /*0 = IDLE*/
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > left_ability_cost)
+            if (CanWasteStamina(left_ability_cost))
             {
                 left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
                 //Check if the ability is not in cooldown
@@ -568,7 +568,7 @@ public class JaimeController : CharacterController
         if (GetState() == 0)
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > right_ability_cost)
+            if (CanWasteStamina(right_ability_cost))
             {
                 right_ability_cd = jaime_button_right.GetComponent<JaimeCD_Right>();
                 //Check if the ability is not in cooldown
@@ -604,7 +604,7 @@ public class JaimeController : CharacterController
         if (GetState() == 0)
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > sec_ability_cost)
+            if (CanWasteStamina(sec_ability_cost))
             {
                 sec_ability_cd = GetLinkedObject("jaime_s_button_obj").GetComponent<JaimeCD_Secondary>();
                 //Check if the ability is not in cooldown

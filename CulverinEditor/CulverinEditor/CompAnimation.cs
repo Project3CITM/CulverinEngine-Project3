@@ -40,10 +40,16 @@ namespace CulverinEditor
         public extern void SetClipDuration(string name, float duration);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern void SetActiveBlendingClip(string name);
+        public extern void SetFirstActiveBlendingClip(string name);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern void SetActiveBlendingClipWeight(float weight);
+        public extern void SetFirstActiveBlendingClipWeight(float weight);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetSecondActiveBlendingClip(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetSecondActiveBlendingClipWeight(float weight);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetBlendInTime(string name, float time);

@@ -106,16 +106,26 @@ public class Movement_Action : Action
         {
             GetComponent<CompAnimation>().SetTransition("ToPatrol");
             GetComponent<CompAnimation>().SetActiveBlendingClip("Idle");
+            GetComponent<CompAnimation>().SetFirstActiveBlendingClip("Idle");
+            Debug.Log("Animation to Patrol");
         }
         else
         {
             GetComponent<CompAnimation>().SetTransition("ToChase");
             GetComponent<CompAnimation>().SetActiveBlendingClip("IdleAttack");
+            GetComponent<CompAnimation>().SetFirstActiveBlendingClip("IdleAttack");
+            Debug.Log("Animation to Chase");
+        }
+
+        if (path == null)
+        {
+            Debug.Log("Move: Path == null");                      
+            return false;
         }
 
         if (path.Count != 0)
         {
-            tile = new PathNode(0, 0);
+            //tile = new PathNode(0, 0);
             tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
         }
 
@@ -250,7 +260,7 @@ public class Movement_Action : Action
         }
 
         float point_in_speed = current_velocity.Length / current_max_vel;
-        GetComponent<CompAnimation>().SetActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
+        GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
 
         //Translate
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
@@ -282,6 +292,19 @@ public class Movement_Action : Action
             }
             else
             {
+                if (map.GetComponent<Pathfinder>().IsOccupiedTile(path[1]))
+                {
+                    Debug.Log("[green]The Dream: " + gameObject.GetName());
+                    if (gameObject.GetName() == "ShieldEnemy")
+                    {
+                        foreach(PathNode node in path)
+                        {
+                            Debug.Log("[blue]SHIELD PATH x: " + node.GetTileX() + "y: " + node.GetTileY());
+                        }
+                    }
+                    Debug.Log("[pink]Next tile ocupated x: " + path[1].GetTileX() + "y: " + path[1].GetTileY());
+                    return;
+                }
                 arrive.SetEnabled(true);
                 seek.SetEnabled(true);
                 path.Remove(path[0]);
@@ -323,6 +346,7 @@ public class Movement_Action : Action
             rotation_finished = false;
 
             path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
+
             look_at_player = rot;
 
             if (path.Count > 1)
