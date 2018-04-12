@@ -4,7 +4,7 @@
 #include "Module.h"
 #include "Globals.h"
 #include "ImGui\imgui.h"
-
+#include <map>
 
 class Console : public Module
 {
@@ -25,7 +25,6 @@ public:
 
 	//Active/Deactive Filters 
 	void ManageFilters();
-	void ApplyFilter(const char* filter);
 
 	void OpenClose();
 	bool IsOpen();
@@ -60,6 +59,16 @@ private:
 	//Temp string to parse commands
 	std::string temp_string = "";
 	size_t size;
+
+	//Filters -------------
+	ImGuiTextFilter console_filter;
+	std::map<const char*, bool> filters_map;
+	bool player_filter = false;
+	bool ia_filter = false;
+	bool stage_filter = false;
+	ImVector<const char*> filters;
+	bool update_filters = false;
+	//--------------------
 
 };
 

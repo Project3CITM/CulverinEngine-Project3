@@ -20,6 +20,12 @@ Console::Console(bool start_enabled): Module(start_enabled)
 	Commands.push_back("CLASSIFY");  // "classify" is here to provide an example of "C"+[tab] completing to "CL" and displaying matches.
 	AddLog("Welcome to ImGui!");
 
+	//Init filters map ------------
+	filters_map.insert(std::pair<const char*, bool>("[Player]", false)); 
+	filters_map.insert(std::pair<const char*, bool>("[IA]", false));
+	filters_map.insert(std::pair<const char*, bool>("[Stage]", false));
+	// -----------------------------
+
 	name = "Console";
 }
 
@@ -82,22 +88,44 @@ bool Console::CleanUp()
 
 void Console::ManageFilters()
 {
-	//Filters -------------
-	static bool player_filter = false;
-	static bool ia_filter = false;
-	static bool stage_filter = false;
-	//--------------------
-	ImGui::Text(" | ");
+	ImGui::Text("DEPARTMENT FILTERS     |     ");
 	ImGui::SameLine();
-	ImGui::Checkbox("Player", &player_filter);
-	ImGui::SameLine();
-	ImGui::Checkbox("Stage", &ia_filter);
-	ImGui::SameLine();
-	ImGui::Checkbox("IA", &stage_filter);
-}
 
-void Console::ApplyFilter(const char * filter)
-{
+	if (ImGui::Checkbox("Player", &player_filter))
+	{
+		update_filters = true;
+		filters_map["[Player]"] = player_filter;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox("Stage", &ia_filter))
+	{
+		update_filters = true;
+		filters_map["[Stage]"] = ia_filter;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox("IA", &stage_filter))
+	{
+		update_filters = true;
+		filters_map["[IA]"] = stage_filter;
+	}
+
+	//Update filters Vector to pass to the console
+	if (update_filters)
+	{
+		filters.resize(0);
+		for (std::map<const char*, bool>::iterator it = filters_map.begin(); it != filters_map.end(); ++it)
+		{
+			if (it->second)
+			{
+				filters.push_back(it->first);
+			}
+		}
+	}
+
 }
 
 void Console::OpenClose()
@@ -163,13 +191,14 @@ void Console::Draw(const char* title)
 	ImGui::Separator();
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-	static ImGuiTextFilter filter;
-	filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
-
-	ImGui::SameLine();
 
 	ManageFilters();
-	
+
+	console_filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180, filters, update_filters);
+	if (update_filters)
+	{
+		update_filters = false;
+	}
 
 	ImGui::PopStyleVar();
 
@@ -199,7 +228,7 @@ void Console::Draw(const char* title)
 	for (int i = 0; i < Items.Size; i++)
 	{
 		const char* item = Items[i];
-		if (!filter.PassFilter(item))
+		if (!console_filter.PassFilter(item))
 			continue;
 		ImVec4 col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // A better implementation may store a type per-item. For the sample let's just parse the text.
 		
