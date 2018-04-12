@@ -32,6 +32,7 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 
+
 	void CopyComponent();
 
 	void ImGuiLoadPopUp();
@@ -45,6 +46,9 @@ public:
 
 
 	void ActivateEmitter(bool);
+	float GetDiscardDistance() const;
+	bool IsActive() const;
+	bool IsPreview() const;
 
 private:
 

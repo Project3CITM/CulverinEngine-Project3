@@ -42,7 +42,9 @@ CompParticleSystem::CompParticleSystem(const CompParticleSystem& copy, GameObjec
 	particle_resource_name = copy.particle_resource_name;
 
 	part_system = App->particles->CreateParticleSystem();
-
+	part_system->discard_distance = copy.GetDiscardDistance();
+	part_system->preview = copy.IsPreview();
+	part_system->active = copy.IsActive();
 	
 	file_to_load = particle_resource_name;
 	ImGuiLoadParticlePopUp();
@@ -133,6 +135,19 @@ void CompParticleSystem::ActivateEmitter(bool a)
 	if (a)
 		part_system->ActivateEmitter();
 	else part_system->DeactivateEmitter();
+}
+
+float CompParticleSystem::GetDiscardDistance() const
+{
+	return part_system->discard_distance;
+}
+bool CompParticleSystem::IsActive() const
+{
+	return part_system->active;
+}
+bool CompParticleSystem::IsPreview() const
+{
+	return part_system->preview;
 }
 
 
