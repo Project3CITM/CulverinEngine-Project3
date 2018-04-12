@@ -30,7 +30,7 @@ uniform sampler2D normal_map;
 uniform sampler2D specular_map;
 uniform sampler2D glossines_map;
 
-uniform sampler2D _shadowMap;
+uniform sampler2DShadow _shadowMap;
 
 uniform vec3 _cameraPosition;
 uniform float _alpha;
@@ -138,14 +138,13 @@ void main()
     vec4 shadowPos = shadowCoord / shadowCoord.w;
     float visibility = 1.0;
 float shadow_val;
-  shadow_val = texture(_shadowMap, shadowCoord.xy).x;
-    /*for(int i = 0; i < iterations; ++i)
-    {
-		int index = int(16.0*random(floor(mat3(model)* ourPos*1000.0), i))%16;
-		shadow_val = (1-texture( shadowMap, vec3(shadowPos.xy + poissonDisk[index]/shadow_blur , (shadowCoord.z-bias)/shadowCoord.w) ));
 
-   		visibility -=(0.007)*shadow_val;
-    }*/
+  
+		//int index = int(16.0*random(floor(mat3(model)* ourPos*1000.0), i))%16;
+		shadow_val = (texture( _shadowMap, vec3(shadowPos.xy , (shadowCoord.z - bias)/shadowCoord.w) ));
+
+   		visibility =shadow_val;
+
 
 
  for (int i = 0; i <_numLights; ++i) {
@@ -166,11 +165,11 @@ float shadow_val;
 	vec3 col = max( color_texture * vec3(0.0,0.3,0.3) ,
 	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
 
-    color = vec4(col * visibility, _alpha);
+    color = vec4(color_texture * visibility, _alpha);
 
- color = vec4(vec3(shadow_val), 1);
 
-    //float tmp = texture(shadowMap, vec3(shadowPos.xy, (shadowPos.z-bias)));
-    //color = vec4(tmp, tmp, tmp, 1);
+
+   // float tmp = texture(_shadowMap, vec3(shadowPos.xy, (shadowPos.z-bias)));
+   // color = vec4(tmp, tmp, tmp, 1);
 
 }

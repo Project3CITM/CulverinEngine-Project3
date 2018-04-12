@@ -94,7 +94,7 @@ void DepthFrameBuffer::Bind(const char* window)
 {
 	//size = GetSizeDock(window);
 
-	Resize(App->window->GetWidth(), App->window->GetHeight());
+	//Resize(App->window->GetWidth(), App->window->GetHeight());
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_id);
 }
 
@@ -294,9 +294,8 @@ void ModuleLightning::OnEvent(Event & event)
 
 		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
 			test_fix.Bind("peter");
-
-			glEnable(GL_CULL_FACE);
-			glCullFace(GL_FRONT);
+			glViewport(0, 0, 1024, 1024);
+			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			for (std::multimap<uint, Event>::const_iterator item = event.send_3d3damm.MM3DDrawEvent->begin(); item != event.send_3d3damm.MM3DDrawEvent->end(); item++)
 			{
@@ -326,6 +325,7 @@ void ModuleLightning::OnEvent(Event & event)
 
 	}
 	App->scene->scene_buff->Bind("Scene"); glCullFace(GL_BACK);
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	
 }
 
@@ -528,7 +528,7 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 	glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
 
 
-	int total_save_buffer = 8;
+	int total_save_buffer = 14;
 
 	if (m->resource_mesh->vertices.size()>0) {
 		glBindBuffer(GL_ARRAY_BUFFER, m->resource_mesh->id_total_buffer);
