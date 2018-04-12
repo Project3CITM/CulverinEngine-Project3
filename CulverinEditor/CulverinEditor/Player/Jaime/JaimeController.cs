@@ -472,6 +472,7 @@ public class JaimeController : CharacterController
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 30.0f);
         if (coll_object != null)
         {
+            coll_object.GetTag();
             if (coll_object.CompareTag("Enemy"))
             {
                 //Get current hit streak
