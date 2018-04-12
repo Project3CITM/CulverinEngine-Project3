@@ -31,7 +31,8 @@ public class Action : CulverinBehaviour
         SHIELD_BLOCK_ACTION,
         ENGAGE_ACTION,
         DISENGAGE_ACTION,
-        DIE_ACTION
+        DIE_ACTION,
+        BOSS_ATTACK_SWORD_DOWN_ACTION
     }
 
     public ACTION_TYPE action_type = ACTION_TYPE.NO_ACTION;

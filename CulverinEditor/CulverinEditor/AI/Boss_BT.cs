@@ -39,7 +39,7 @@ public class Boss_BT : BT
     public float triple_attack_damage = 1.0f;
 
     public float damaged_limit = 0.6f;
-    protected float cooldown = 0.0f;
+    public float cooldown = 0.0f;
 
     System.Random rand_gen = null;
 
@@ -69,9 +69,9 @@ public class Boss_BT : BT
             current_action = next_action;
             current_action.ActionStart();
             next_action = null_action;
+
             return;
         }
-
         if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION && current_action.action_type != Action.ACTION_TYPE.DIE_ACTION)
         {
             int distance_x = GetDistanceXToPlayer();
@@ -82,6 +82,7 @@ public class Boss_BT : BT
 
             if (in_cd == true)
             {
+
                 switch (phase)
                 {
                     case BOSS_STATE.BOSS_PHASE1:
@@ -89,9 +90,11 @@ public class Boss_BT : BT
                         {
                             int rand = rand_gen.Next(1, 10);
 
-                            if (rand > 3)
+                            if (true)
                             {
                                 //distance attack
+                                current_action.Interupt();
+                                next_action = GetComponent<BossAttackSwordDown_Action>();
                                 Debug.Log("Distance Attack");
                                 cooldown = distance_attack_cooldown;
                                 return;
