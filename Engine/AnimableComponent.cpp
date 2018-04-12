@@ -22,6 +22,16 @@ AnimationData AnimableComponent::ShowParameters()
 	return ret;
 }
 
+const char * AnimableComponent::ReturnParameterName(ParameterValue parameter)
+{
+	return nullptr;
+}
+
+AnimationValue AnimableComponent::GetParameter(ParameterValue parameter)
+{
+	return AnimationValue();
+}
+
 AnimationData::AnimationData()
 {
 

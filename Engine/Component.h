@@ -80,6 +80,7 @@ public:
 	void SetActive(bool active);
 	void SetUUIDRandom();
 	void SetInScripting();
+	void SetDelete(bool set_delete);
 
 	uint GetUUID() const;
 	Comp_Type GetType() const;
