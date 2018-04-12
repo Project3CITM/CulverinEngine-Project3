@@ -22,6 +22,11 @@ public:
 	//Remove the desired string part from initial LOG line
 	void Remove(const char* name);
 
+
+	//Active/Deactive Filters 
+	void ManageFilters();
+	void ApplyFilter(const char* filter);
+
 	void OpenClose();
 	bool IsOpen();
 

@@ -80,6 +80,26 @@ bool Console::CleanUp()
 	return true;
 }
 
+void Console::ManageFilters()
+{
+	//Filters -------------
+	static bool player_filter = false;
+	static bool ia_filter = false;
+	static bool stage_filter = false;
+	//--------------------
+	ImGui::Text(" | ");
+	ImGui::SameLine();
+	ImGui::Checkbox("Player", &player_filter);
+	ImGui::SameLine();
+	ImGui::Checkbox("Stage", &ia_filter);
+	ImGui::SameLine();
+	ImGui::Checkbox("IA", &stage_filter);
+}
+
+void Console::ApplyFilter(const char * filter)
+{
+}
+
 void Console::OpenClose()
 {
 	console_activated = !console_activated;
@@ -145,7 +165,14 @@ void Console::Draw(const char* title)
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 	static ImGuiTextFilter filter;
 	filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
+
+	ImGui::SameLine();
+
+	ManageFilters();
+	
+
 	ImGui::PopStyleVar();
+
 	ImGui::Separator();
 
 	ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
