@@ -202,39 +202,7 @@ update_status ModuleLightning::PreUpdate(float dt)
 		if(scene_lights[i]->use_light_to_render == true)
 			frame_used_lights.push_back(scene_lights[i]);
 	}
-	/*for (uint i = 0; i < scene_lights.size(); ++i)
-	{
-		if (frame_used_lights.size() >= shadow_cast_points_count) break;
-
-		Frustum cam_frust = App->renderer3D->active_camera->frustum;
-		if (cam_frust.Contains(scene_lights[i]->GetGameObjectPos()) || i < 2) {
-			if (scene_lights[i]->type == Light_type::POINT_LIGHT)
-			{
-				scene_lights[i]->use_light_to_render = true;
-				frame_used_lights.push_back(scene_lights[i]);
-			}
-		}
-	}
-
-
-	for(uint i = 0; i < scene_lights.size(); ++i)
-	{
-		bool exists = false;
-		
-			CompLight* l = scene_lights[i];
-			for (auto it = frame_used_lights.begin(); it != frame_used_lights.end(); it++) {
-				if ((*it) == l)
-					exists = true;
-			}
-			if (l->type == Light_type::POINT_LIGHT  && !exists)
-			{			
-				l->use_light_to_render = true;
-				frame_used_lights.push_back(l);
-			}
-		if (frame_used_lights.size() >= shadow_cast_points_count) break;
-		
-	}
-	*/
+	
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -365,21 +333,13 @@ void ModuleLightning::CalcPointShadowMaps(Event& events, CompLight* light)
 		if ((*it)->type == Light_type::POINT_LIGHT)
 		{
 			float3 light_pos = (*it)->GetGameObjectPos();
-			//TODO: Add range to point lights
-			//if(light_pos.Distance(object_pos) <= (*it)->range * (*it)->range)
-			//{
-			//	
-			//}
-
-			// If is range bind the frame buffer and the shader
+			
 			DepthCubeMap* fbo = shadow_point_lights_maps[depth_cube_map_index];
 
 			fbo->Bind();
 			point_light_shadow_depth_shader->Bind();
 
-			// Actually render the mesh
-
-			//Get vieport and resize it to shadow res
+			
 			GLint viewport_size[4];
 			glGetIntegerv(GL_VIEWPORT, viewport_size);
 			uint shadow_w, shadow_h;
@@ -464,7 +424,7 @@ void ModuleLightning::CalcPointShadowMaps(Event& events, CompLight* light)
 void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 {
 	int x = 0;
-	/*shadow_Shader->Bind();
+	shadow_Shader->Bind();
 
 	Material* material = App->renderer3D->default_material;
 	//if (material->material_shader != nullptr)
@@ -624,9 +584,6 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 
 		material->Bind();
 
-
-
-
 		int depthMatrixID = glGetUniformLocation(material->GetProgramID(), "depthMVP");
 		int depthBiasID = glGetUniformLocation(material->GetProgramID(), "depthBias");
 		GLuint ShadowMapID = glGetUniformLocation(material->GetProgramID(), "shadowMap");
@@ -657,7 +614,7 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void ModuleLightning::SetShadowCastPoints(uint points)
