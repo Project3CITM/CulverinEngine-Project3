@@ -105,19 +105,13 @@ public class Movement_Action : Action
         if (chase == false)
         {
             GetComponent<CompAnimation>().SetTransition("ToPatrol");
-<<<<<<< HEAD
-            GetComponent<CompAnimation>().SetActiveBlendingClip("Idle");
-=======
             GetComponent<CompAnimation>().SetFirstActiveBlendingClip("Idle");
             Debug.Log("Animation to Patrol");
->>>>>>> CombatAlpha1
+
         }
         else
         {
             GetComponent<CompAnimation>().SetTransition("ToChase");
-<<<<<<< HEAD
-            GetComponent<CompAnimation>().SetActiveBlendingClip("IdleAttack");
-=======
             GetComponent<CompAnimation>().SetFirstActiveBlendingClip("IdleAttack");
             Debug.Log("Animation to Chase");
         }
@@ -126,7 +120,6 @@ public class Movement_Action : Action
         {
             Debug.Log("Move: Path == null");                      
             return false;
->>>>>>> CombatAlpha1
         }
 
         if (path.Count != 0)
