@@ -282,8 +282,18 @@ public class Movement_Action : Action
                 arrive.SetEnabled(true);
                 seek.SetEnabled(true);
                 path.Remove(path[0]);
+
+                if (chase == true)
+                {
+                    if (LookingAtPlayer() == true)
+                        MoveSideways(path[0]);
+                    else
+                        LookAtPlayer();
+                }
+                else
+                    LookAtNextTile();
+
                 tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
-                LookAtNextTile();
             }
         }
     }
@@ -447,10 +457,108 @@ public class Movement_Action : Action
         LookAt(next_tile);
     }
 
+    public void LookAtTile(PathNode tile)
+    {
+        Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
+        if (path != null && path.Count > 0)
+        {
+            next_tile.x = tile.GetTileX() * tile_size;
+            next_tile.z = tile.GetTileY() * tile_size;
+        }
+        LookAt(next_tile);
+    }
+
     public void LookAtPlayer()
     {
         Vector3 target_pos = new Vector3(GetLinkedObject("player_obj").GetComponent<Transform>().position);
-        LookAt(target_pos);
+
+        Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
+        Vector3 pos = new Vector3(GetComponent<Transform>().position);
+        Vector3 obj_vec = new Vector3(target_pos - pos);
+
+        float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
+
+        if (delta > Mathf.PI)
+        {
+            delta = delta - 2 * Mathf.PI;
+        }
+        if (delta < (-Mathf.PI))
+        {
+            delta = delta + 2 * Mathf.PI;
+        }
+
+        switch (dir)
+        {
+            case Direction.DIR_EAST:
+                //North
+                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
+                    LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
+                //South
+                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
+                    LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
+                //West
+                if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
+                    LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
+                break;
+
+            case Direction.DIR_NORTH:
+                //West
+                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
+                    LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
+                //East
+                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
+                    LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY() + 1));
+                //South
+                if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
+                    LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
+                break;
+            case Direction.DIR_SOUTH:
+                //East
+                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
+                    LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
+                //West
+                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
+                    LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY() + 1));
+                //North
+                if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
+                    LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
+                break;
+            case Direction.DIR_WEST:
+                //South
+                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
+                    LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
+                //North
+                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
+                    LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
+                //East
+                if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
+                    LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
+                break;
+        }
+    }
+
+    private bool LookingAtPlayer()
+    {
+        Vector3 target_pos = new Vector3(GetLinkedObject("player_obj").GetComponent<Transform>().position);
+
+        Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
+        Vector3 pos = new Vector3(GetComponent<Transform>().position);
+        Vector3 obj_vec = new Vector3(target_pos - pos);
+
+        float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
+
+        if (delta > Mathf.PI)
+        {
+            delta = delta - 2 * Mathf.PI;
+        }
+        if (delta < (-Mathf.PI))
+        {
+            delta = delta + 2 * Mathf.PI;
+        }
+
+        if (delta > -(Mathf.PI / 4) && delta < (Mathf.PI / 4))
+            return true;
+        return false;
     }
 
     public Direction SetDirection()
@@ -567,4 +675,22 @@ public class Movement_Action : Action
         return false;
     }
 
+
+    private void MoveSideways(PathNode destination_node)
+    {
+        /*int distance_x = destination_node - GetCurrentTileX();
+        int distance_y = destination_node - GetCurrentTileY();
+        switch (dir)
+        {
+            case Direction.DIR_EAST:
+                
+                break;
+            case Direction.DIR_NORTH:
+                break;
+            case Direction.DIR_SOUTH:
+                break;
+            case Direction.DIR_WEST:
+                break;
+        }*/
+    }
 }
