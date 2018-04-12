@@ -95,6 +95,9 @@ public class Movement_Action : Action
         tile = new PathNode(0,0);
         tile.SetCoords((int)(GetComponent<Transform>().position.x / tile_size + Mathf.Epsilon), (int)(GetComponent<Transform>().position.z / tile_size + Mathf.Epsilon));
         map.GetComponent<Pathfinder>().UpdateOccupiedTiles(gameObject.GetName(), tile);
+
+        //Set direction
+        SetDirection();
     }
 
     public override bool ActionStart()

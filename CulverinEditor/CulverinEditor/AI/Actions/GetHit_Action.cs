@@ -1,4 +1,5 @@
 ﻿using CulverinEditor;
+using CulverinEditor.Debug;
 
 class GetHit_Action: Action
 {
@@ -16,18 +17,28 @@ class GetHit_Action: Action
     public override bool ActionStart()
     {
         interupt = false;
+
         /*CompAudio audio = GetComponent<CompAudio>();
         audio.PlayEvent("Enemy2_Hurt");
         audio.PlayEvent("SwordHit");*/
-        GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
+
         int tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
         int tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
-
+        int player_x = tile_x;
+        int player_y = tile_y;
+        MovementController temp = GetLinkedObject("player_obj").GetComponent<MovementController>();
+        if (temp != null)
+        {
+            temp.GetPlayerPos(out int x, out int y);
+            player_x = x;
+            player_y = y;
+        }
+ 
         int dif_x = player_x - tile_x;
         int dif_y = player_y - tile_y;
-
+        
         Movement_Action.Direction dir = GetComponent<Movement_Action>().GetDirection();
-
+       
         switch(dir)
         {
             case Movement_Action.Direction.DIR_EAST:
