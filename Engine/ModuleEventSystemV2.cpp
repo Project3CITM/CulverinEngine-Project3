@@ -202,6 +202,15 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 					if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
 					else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
 				}
+
+
+				GLuint ShadowMapID = glGetUniformLocation(ActualMaterial->GetProgramID(), "shadowMap");
+			
+					glActiveTexture(GL_TEXTURE0 + (ActualMaterial->textures.size()));
+					glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
+					glUniform1i(ActualMaterial->GetProgramID(), (ActualMaterial->textures.size()));
+		
+			
 				App->module_shaders->SetUniformVariables(ActualMaterial);
 
 			}

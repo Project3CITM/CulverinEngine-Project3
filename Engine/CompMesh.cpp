@@ -501,31 +501,10 @@ void CompMesh::Draw2(uint ID)
 			//glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
 			//glUniformMatrix4fv(modelviewLoc, 1, GL_TRUE, ModelViewMatrix.ptr());
 			//Shadow mapping
-			/*
-			float4x4 MVP = camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
-			glm::mat4 biasMatrix(
-				0.5, 0.0, 0.0, 0,
-				0.0, 0.5, 0.0, 0,
-				0.0, 0.0, 0.5, 0,
-				0.5, 0.5, 0.5, 1.0
-			);
-			glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
-			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-			glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-			glm::mat4 depthModelMatrix = glm::mat4(1.0);
-			glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-			glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
-			int depthMatrixID = glGetUniformLocation(ID, "depthMVP");
-			int depthBiasID = glGetUniformLocation(ID, "depthBias");
-			GLuint ShadowMapID = glGetUniformLocation(ID, "shadowMap");
-			if (material->name == "Shadow_World_Render")
-			{
-				glActiveTexture(GL_TEXTURE0 + (++TexturesSize));
-				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
-				glUniform1i(ID, App->module_lightning->test_fix.depthTex);
-				glUniform1i(ShadowMapID, TexturesSize);
-			}
-			*/
+			
+			
+		
+			
 
 			/*TEMPORAL*/
 			DepthCubeMap* fbo;
