@@ -52,6 +52,8 @@ public class Boss_BT : BT
         current_action = GetComponent<Idle_Action>();
         GetComponent<CompAnimation>().PlayAnimation("Idle");
 
+        current_hp = total_hp;
+
         base.Start();
     }
 
