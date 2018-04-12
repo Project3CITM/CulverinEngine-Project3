@@ -35,8 +35,11 @@ public class ReverbCorridor: CulverinBehaviour
     {
         Debug.Log("[green] REVERB OUT");
         GameObject col_obj = col.GetCollidedObject();
-
-        CompAudio col_audio = col_obj.GetComponent<CompAudio>();
+        CompAudio col_audio = null;
+        if (col_obj != null)
+        {
+            col_audio = col_obj.GetComponent<CompAudio>();
+        }
         if (col_audio != null)
         {
             col_audio.SetAuxiliarySends(bus_name, out_value);
