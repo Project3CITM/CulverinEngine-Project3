@@ -30,6 +30,7 @@ public:
 	void SetColor(float set_r, float set_g, float set_b, float set_a);
 	void SetAlpha(float alpha);
 	void SetToRender(bool render);
+	void SetCanDraw(bool render);
 	void SetRaycastTarget(bool flag);
 	void SetInteractive(CompInteractive* set_interactive);
 	bool GetToRender()const;
@@ -49,6 +50,7 @@ protected:
 	void GenerateMesh();
 
 protected:	
+	bool can_draw = true;
 	VertexUIData vertex_data;
 	bool render = true;
 	bool raycast_target = true;

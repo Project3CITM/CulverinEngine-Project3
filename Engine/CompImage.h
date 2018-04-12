@@ -42,6 +42,7 @@ public:
 	ResourceMaterial* GetCurrentTexture()const;
 private:
 	void CorrectFillAmount();
+	float CorrectValue01(float value);
 
 	void GenerateFilledSprite();
 	bool RadialCut(std::vector<float3>& position, std::vector<float3>& texture_cord, float fill_value, int box_corner, bool invert = true);

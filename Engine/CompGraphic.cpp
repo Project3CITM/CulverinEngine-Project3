@@ -128,6 +128,10 @@ void CompGraphic::SetToRender(bool render)
 {
 	this->render = render;
 }
+void CompGraphic::SetCanDraw(bool render)
+{
+	this->can_draw = render;
+}
 
 void CompGraphic::SetRaycastTarget(bool flag)
 {
@@ -221,7 +225,12 @@ void CompGraphic::GenerateMesh()
 		return;
 	vertex_data.CleanUp();
 	ExpandMesh();
-	if(vertex_data.current_vertex_count == 0)
+
+	(vertex_data.current_vertex_count == 0) ? can_draw = false : can_draw = true;
+
+	if (vertex_data.current_vertex_count == 0)
+	{
 		return;
+	}
 	my_canvas_render->SetVertex(vertex_data);
 }

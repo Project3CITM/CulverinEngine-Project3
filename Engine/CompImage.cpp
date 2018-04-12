@@ -77,7 +77,7 @@ void CompImage::Update(float dt)
 			transform->SetUpdateRect(false);
 		}
 	}
-	render = true;
+	render = can_draw;
 
 }
 void CompImage::ShowOptions()
@@ -239,6 +239,8 @@ void CompImage::FillAmount(float value)
 }
 void CompImage::GenerateFilledSprite()
 {
+	if (filled < 0.001f)
+		return;
 	float4 vertex = parent->GetComponentRectTransform()->GetRect();
 	float4 outer = { 0.0f,0.0f,1.0f,1.0f };	
 	std::vector<float3> quad_pos;
@@ -339,13 +341,8 @@ void CompImage::GenerateFilledSprite()
 
 				float value = filled*4.0f - (box_corner % 4);
 				
-				
-				if (value > 1)
-					value = 1.0f;
-				else if (value < 0)
-					value = 0.0f;
 		
-				if (RadialCut(quad_pos, quad_uv, value, ((box_corner + 2) % 4)))
+				if (RadialCut(quad_pos, quad_uv, CorrectValue01(value), ((box_corner + 2) % 4)))
 				{
 					ProcesQuad(quad_pos, quad_uv);
 
@@ -372,6 +369,7 @@ void CompImage::GenerateFilledSprite()
 					
 
 				}
+			
 			}
 		}
 	}
@@ -549,6 +547,16 @@ void CompImage::CorrectFillAmount()
 	}
 }
 
+float CompImage::CorrectValue01(float value)
+{
+	if (value > 1)
+		value = 1.0f;
+	else if (value < 0)
+		value = 0.0f;
+
+	return value;
+}
+
 
 
 
@@ -563,13 +571,8 @@ bool CompImage::RadialCut(std::vector<float3>& position, std::vector<float3>& te
 	if (!invert && fill_value > 0.999f)
 		return true;
 
-	float angle;
-	if (fill_value > 1)
-		angle = 1.0f;
-	else if (fill_value < 0)	
-		angle = 0.0f;
-	else
-		angle = fill_value;
+	
+	float angle = CorrectValue01(fill_value);
 	
 	if (invert)
 		angle = 1.0f - angle;

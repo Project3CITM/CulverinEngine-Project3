@@ -54,7 +54,6 @@ private:
 		BOTTOM_POSITION
 	};
 	bool update_text = false;
-	bool can_draw = false;
 	float4 text_rect;
 	bool show_resource_font_windows = false;
 	//std::string input_text;
