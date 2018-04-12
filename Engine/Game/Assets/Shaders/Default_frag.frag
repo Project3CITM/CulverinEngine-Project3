@@ -137,11 +137,12 @@ void main()
     // Shadow
     vec4 shadowPos = shadowCoord / shadowCoord.w;
     float visibility = 1.0;
+float shadow_val;
 
     for(int i = 0; i < iterations; ++i)
     {
 		int index = int(16.0*random(floor(mat3(model)* ourPos*1000.0), i))%16;
-		float shadow_val = (1-texture( shadowMap, vec3(shadowPos.xy + poissonDisk[index]/shadow_blur , (shadowCoord.z-bias)/shadowCoord.w) ));
+		shadow_val = (1-texture( shadowMap, vec3(shadowPos.xy + poissonDisk[index]/shadow_blur , (shadowCoord.z-bias)/shadowCoord.w) ));
 
    		visibility -=(0.007)*shadow_val;
     }
@@ -166,5 +167,8 @@ void main()
 	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb * visibility);
 	
     color = vec4(col,_alpha);
+
+    float tmp = texture(shadowMap, vec3(shadowPos.xy, (shadowPos.z-bias)/shadowCoord.w), bias);
+    color = vec4(tmp, tmp, tmp, 1);
  
 }
