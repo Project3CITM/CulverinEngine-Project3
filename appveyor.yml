@@ -43,8 +43,6 @@ only_commits:
   
 before_package:
 - ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\CulverinEngine.exe C:\projects\TempMotor3D_P3\Engine\Game\.
-- ps: cd C:\projects\TempMotor3D_P3\Engine\Game
-- ps: .\CulverinEngine.exe --make_build:/Assets --destination:/MyBuilds --build_name:CulverinEngineTest --initial_scene:PKey --game_mode:true
 
 artifacts:	
 - path: C:\projects\TempMotor3D_P3\Engine\MyBuilds\CulverinEngineTest	
@@ -100,7 +98,7 @@ for:
     description: Release
     auth_token:
       secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
-    artifact: CulverineEngine.{build}
+    artifact: CulverinEngineTest
     draft: false
     prerelease: false
     force_update: true
@@ -117,7 +115,7 @@ for:
     description: Release
     auth_token:
       secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
-    artifact: CulverineEngine.{build}
+    artifact: CulverinEngineTest
     draft: false
     prerelease: true
     force_update: true
