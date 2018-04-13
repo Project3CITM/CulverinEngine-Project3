@@ -70,7 +70,8 @@ namespace CulverinEditor
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern float GetInput_ControllerAxis(string name, string input);
 
-
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void RumblePlay(float intensity, int milliseconds);
 
     }
 }

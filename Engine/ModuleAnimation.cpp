@@ -132,10 +132,17 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 				if (ImGui::InputText("##animation name", str0, IM_ARRAYSIZE(str0), ImGuiInputTextFlags_EnterReturnsTrue))
 				{
 					animation_json->name = str0;
+					memset(str0, 0, 50);
+
 					if (animation_json->name.empty())
 					{
 						release = true;
 	
+					}
+					else
+					{
+						animation_json->name += "anim.json";
+
 					}
 					ImGui::CloseCurrentPopup();
 
@@ -144,9 +151,16 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 				if (ImGui::Button("Submit", ImVec2(120, 0)))
 				{
 					animation_json->name = str0;
+					memset(str0, 0, 50);
+
 					if (animation_json->name.empty())
 					{
 						release = true;
+					}
+					else
+					{
+						animation_json->name += "anim.json";
+
 					}
 					ImGui::CloseCurrentPopup();
 				}
@@ -154,6 +168,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 				if (ImGui::Button("Cancel", ImVec2(120, 0)))
 				{
 					release = true;
+
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::EndPopup();

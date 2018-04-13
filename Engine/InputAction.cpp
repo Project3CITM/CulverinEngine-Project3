@@ -213,7 +213,7 @@ int KeyAction::UpdateKeyRelation(KeyRelation * to_update, const Uint8 * array_ky
 			break;
 
 		case KeyBindingType::CONTROLLER_BUTTON_DEVICE:
-			ret = SDL_GameControllerGetButton(App->input->controller, (SDL_GameControllerButton)to_update->event_value);
+			ret = SDL_GameControllerGetButton(App->input->GetGameController(), (SDL_GameControllerButton)to_update->event_value);
 			break;
 		}
 	}
