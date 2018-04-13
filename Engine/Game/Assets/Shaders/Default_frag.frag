@@ -137,11 +137,29 @@ void main()
     // Shadow
     vec4 shadowPos = shadowCoord / shadowCoord.w;
     float visibility = 1.0;
-float shadow_val;
+    float shadow_val;
+    
+
+    vec3 lightDir = vec3(0, 0, 0);
+    // Iterate all lights to search the first directional light for now
+    for(int i = 0; i < _numLights; ++i)
+    {
+        if(_lights[i].type != 0)
+        {
+            //Directional
+            lightDir = _lights[0].position;
+            break;
+        }
+    }
+
+    vec3 l = normalize(lightDir);
+    float cosTheta = dot(N, l);
+    float usedBias = bias * tan(acos(cosTheta));
+    usedBias = clamp(usedBias, 0, 0.01);
 
   
 		//int index = int(16.0*random(floor(mat3(model)* ourPos*1000.0), i))%16;
-		shadow_val = (texture( _shadowMap, vec3(shadowPos.xy , (shadowCoord.z - bias)/shadowCoord.w) ));
+		shadow_val = (texture( _shadowMap, vec3(shadowPos.xy , (shadowCoord.z - usedBias)/shadowCoord.w) ));
 
    		visibility =shadow_val;
 
@@ -169,7 +187,7 @@ float shadow_val;
 
 
 
-   // float tmp = texture(_shadowMap, vec3(shadowPos.xy, (shadowPos.z-bias)));
-   // color = vec4(tmp, tmp, tmp, 1);
+    //float tmp = texture(_shadowMap, vec3(shadowPos.xy, (shadowPos.z-bias)));
+    //color = vec4(visibility, visibility, visibility, 1);
 
 }
