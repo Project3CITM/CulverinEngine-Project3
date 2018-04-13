@@ -110,6 +110,8 @@ public class EnemySword_BT : Enemy_BT
 
     public override void ChangeTexturesToDamaged()
     {
+
+
         mesh.GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
         mesh.GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
         mesh.GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");

@@ -15,6 +15,9 @@ public class Enemy_BT : BT
     public GameObject player = null;
     public GameObject mesh = null;
 
+    Material enemy_mat;
+    float dmg_alpha = 0.0f;
+
     public float total_hp = 100;
     protected float current_hp;
     public ENEMY_STATE life_state = ENEMY_STATE.ENEMY_ALIVE;
@@ -49,6 +52,8 @@ public class Enemy_BT : BT
         mesh = GetLinkedObject("mesh");
         enemies_manager = GetLinkedObject("enemies_manager");
         GetComponent<CompAnimation>().PlayAnimation("Idle");
+        enemy_mat = GetMaterialByName("EnemyWithSword");
+        dmg_alpha = 0.0f;
         //ChangeTexturesToAlive();
         base.Start();
     }
@@ -58,6 +63,8 @@ public class Enemy_BT : BT
         //Update attack cooldown
         attack_timer += Time.deltaTime;
 
+        enemy_mat.SetFloat("dmg_alpha", dmg_alpha);
+        Debug.Log("[blue]alpha update: " + dmg_alpha);
         base.Update();
     }
 
@@ -122,9 +129,11 @@ public class Enemy_BT : BT
         next_action = GetComponent<GetHit_Action>();
 
         current_hp -= damage;
-
+        //ChangeTexturesToDamaged();
+ 
         current_interpolation = current_hp / total_hp;
-
+        dmg_alpha += 0.2f;
+        Debug.Log("[pink]AUMENTAME ALPHA PUTA: " + dmg_alpha);
         if (current_hp <= 0)
         {
             //GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);

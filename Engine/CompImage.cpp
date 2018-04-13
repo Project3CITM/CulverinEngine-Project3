@@ -351,26 +351,7 @@ void CompImage::GenerateFilledSprite()
 					ProcesQuad(quad_pos, quad_uv);
 
 					//my_canvas_render->ProcessQuad(quad_pos, quad_uv);
-					LOG("RADIAL CUT %i", box_corner);
-					LOG(" quad_pos[0].x %f", quad_pos[0].x);
-					LOG(" quad_pos[0].y %f", quad_pos[0].y);
-					LOG(" quad_pos[1].x %f", quad_pos[1].x);
-					LOG(" quad_pos[1].y %f", quad_pos[1].y);
-					LOG(" quad_pos[2].x %f", quad_pos[2].x);		
-					LOG(" quad_pos[2].y %f", quad_pos[2].y);
-					LOG(" quad_pos[3].x %f", quad_pos[3].x);
-					LOG(" quad_pos[3].y %f", quad_pos[3].y);
-					
-
-					LOG(" quad_uv[0].x %f", quad_uv[0].x);
-					LOG(" quad_uv[1].x %f", quad_uv[1].x);
-					LOG(" quad_uv[2].x %f", quad_uv[2].x);
-					LOG(" quad_uv[3].x %f", quad_uv[3].x);
-					LOG(" quad_uv[0].y %f", quad_uv[0].y);
-					LOG(" quad_uv[1].y %f", quad_uv[1].y);
-					LOG(" quad_uv[2].y %f", quad_uv[2].y);
-					LOG(" quad_uv[3].y %f", quad_uv[3].y);
-					
+		
 
 				}
 			
