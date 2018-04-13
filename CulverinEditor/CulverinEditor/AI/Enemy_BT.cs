@@ -171,16 +171,75 @@ public class Enemy_BT : BT
 
     public int GetDistanceInRange()
     {
-        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-        int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
-        int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+        int enemy_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int enemy_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        if (distance_x <= range && distance_y == 0)
-            return distance_x;
+        if (GetLinkedObject("player_obj") == null)
+        {
+            Debug.Log("[error]WILLYYYYYY QUE ESTO ES TO NULL");
+        }
+        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int player_tile_x, out int player_tile_y);
 
-        if (distance_y <= range && distance_x == 0)
-            return distance_y;
-
+        switch (GetComponent<Movement_Action>().GetDirection())
+        {
+            case Movement_Action.Direction.DIR_WEST:
+                if (enemy_tile_x - 2 == player_tile_x 
+                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x - 1, (uint)enemy_tile_y) ==true
+                    && player_tile_y == enemy_tile_y)
+                {
+                    Debug.Log("[pink]WEST 2 TILES");
+                    return 2;
+                }
+                else if (enemy_tile_x - 1 == player_tile_x && player_tile_y == enemy_tile_y)
+                {
+                    Debug.Log("[pink]WEST 1 TILES");
+                    return 1;
+                }
+                break;
+            case Movement_Action.Direction.DIR_EAST:
+                if (enemy_tile_x + 2 == player_tile_x
+                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x + 1, (uint)enemy_tile_y) == true
+                    && player_tile_y == enemy_tile_y)
+                {
+                    Debug.Log("[pink]EAST 2 TILES");
+                    return 2;
+                }
+                else if (enemy_tile_x + 1 == player_tile_x && player_tile_y == enemy_tile_y)
+                {
+                    Debug.Log("[pink]EAST 1 TILES");
+                    return 1;
+                }
+                break;
+            case Movement_Action.Direction.DIR_NORTH:
+                if (enemy_tile_y - 2 == player_tile_y 
+                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x, (uint)enemy_tile_y - 1) == true
+                    && player_tile_x == enemy_tile_x)
+                {
+                    Debug.Log("[pink]NORTH 2 TILES");
+                    return 2;
+                }
+                else if (enemy_tile_y - 1 == player_tile_y && player_tile_x == enemy_tile_x)
+                {
+                    Debug.Log("[pink]NORTH 1 TILES");
+                    return 1;
+                }
+                break;
+            case Movement_Action.Direction.DIR_SOUTH:
+                if (enemy_tile_y + 2 == player_tile_y 
+                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x, (uint)enemy_tile_y+1) == true
+                    && player_tile_x == enemy_tile_x)
+                {
+                    Debug.Log("[pink]SOUTH 2 TILES");
+                    return 2;
+                }
+                else if (enemy_tile_y + 1 == player_tile_y && player_tile_x == enemy_tile_x)
+                {
+                    Debug.Log("[pink]SOUTH 1 TILES");
+                    return 1;
+                }
+                break;
+        }
+        Debug.Log("[pink]3 TILES");
         return range + 1;
     }
 
