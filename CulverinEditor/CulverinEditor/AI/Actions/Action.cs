@@ -33,7 +33,8 @@ public class Action : CulverinBehaviour
         DISENGAGE_ACTION,
         DIE_ACTION,
         BOSS_ATTACK_SWORD_DOWN_ACTION,
-        BOSS_ATTACK_WIDE_ACTION
+        BOSS_ATTACK_WIDE_ACTION,
+        BOSS_ATTACK_STRONG_ACTION
     }
 
     public ACTION_TYPE action_type = ACTION_TYPE.NO_ACTION;

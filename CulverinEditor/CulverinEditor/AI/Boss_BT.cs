@@ -94,9 +94,9 @@ public class Boss_BT : BT
                             if (rand > 3)
                             {
                                 //distance attack
+                                Debug.Log("Distance Attack");
                                 current_action.Interupt();
                                 next_action = GetComponent<BossAttackSwordDown_Action>();
-                                Debug.Log("Distance Attack");
                                 cooldown = distance_attack_cooldown;
                                 return;
                             }
@@ -125,6 +125,8 @@ public class Boss_BT : BT
                             {
                                 //distance attack
                                 Debug.Log("Distance Attack");
+                                current_action.Interupt();
+                                next_action = GetComponent<BossAttackSwordDown_Action>();
                                 cooldown = distance_attack_cooldown;
                                 return;
                             }
@@ -165,6 +167,8 @@ public class Boss_BT : BT
                             {
                                 //Strong attack
                                 Debug.Log("Strong Attack");
+                                current_action.Interupt();
+                                next_action = GetComponent<BossBasicStrongAttack_Action>();
                                 cooldown = strong_attack_cooldown;
                                 return;
                             }
@@ -188,7 +192,6 @@ public class Boss_BT : BT
             {
                 if (distance_x + distance_y > 2 || distance_x != 0 && distance_y != 0)
                 {
-                    Debug.Log("[error]CHASE");
                     current_action = GetComponent<InfiniteChasePlayer_Action>();
                     GetComponent<InfiniteChasePlayer_Action>().ActionStart();
                     return;
@@ -203,7 +206,6 @@ public class Boss_BT : BT
                     }
                     else
                     {
-                        Debug.Log("[error]IDLE");
                         current_action = GetComponent<IdleAttack_Action>();
                         GetComponent<IdleAttack_Action>().ActionStart();
                         return;
@@ -232,6 +234,7 @@ public class Boss_BT : BT
         }
         else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
         {
+            Debug.Log("[yellow] BOSS PHASE2!!!!!");
             phase = BOSS_STATE.BOSS_PHASE2;
             //Phase2Textures();
         }
