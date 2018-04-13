@@ -69,6 +69,21 @@ struct ConeTrunk			//Definition of a cone trunk for the cone emitter type
 	float heigth = 1.0f;
 };
 
+enum ParticleBlendingType
+{
+	GlZero = 0,
+	GlOne,
+	GlSrcColor,
+	GlOneMinusSrcColor,
+	GlDstColor,
+	GlOneMinusDstColor,
+	GlSrcAlpha,
+	GlOneMinusSrcAlpha,
+	GlDstAlpha,
+	GlOneMinusDstAlpha,
+	GlSrcAlphaSaturate
+};
+
 class ParticleEmitter
 {
 public:
@@ -110,6 +125,16 @@ public:
 	AABB BoundingBox;								//User can set AABB for camera culling purpose (we can add physics...)
 
 	bool glow = false;
+
+	//Particle Blendings
+	ParticleBlendingType source_type = ParticleBlendingType::GlSrcAlpha;
+	int p_source_type = 0x0302; //GL_SRC_ALPHA
+	ParticleBlendingType destiny_type = ParticleBlendingType::GlOne;
+	int p_destiny_type = 1; //GL_ONE
+
+	void SetSourceBlendingType();
+	void SetDestinyBlendingType();
+	
 	
 	/*
 	//Not working properly, transformations errors, so to avoid malfunctionality and a
@@ -192,6 +217,8 @@ struct ParticleProperties
 	float LifetimeActual = 0;					//Actual Particle Lifetime
 	unsigned int TextureID = 0;					//Texture ID used by this particle
 	float4 RGBATint = float4::zero;				//Particle Texture tint
+	int source_blend_type = 0x0302;				//0x0302 is for GL_SRC_ALPHA
+	int destiny_blend_type = 1;					//1 is for GL_ONE
 };
 
 class ParticleSystem;
@@ -199,7 +226,7 @@ class ParticleSystem;
 class Particle
 {
 public:
-	Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax, bool _glow);
+	Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax, bool _glow, int source_blend, int destiny_blend);
 	~Particle();
 	bool PreUpdate(float dt);
 	bool PostUpdate(float dt);
