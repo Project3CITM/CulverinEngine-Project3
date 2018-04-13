@@ -12,7 +12,9 @@ public class TestLog
 
         Debug.Log("Y lo saee", Department.STAGE, Color.PINK);
 
-        Debug.Log("asd", Department.GENERAL, Color.NONE);
+        Debug.Log("My name is Jeff", Department.GENERAL, Color.NONE);
+
+        Debug.Log("Collision", Department.PHYSICS, Color.YELLOW);
     }
 }
 

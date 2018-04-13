@@ -63,9 +63,12 @@ private:
 	//Filters -------------
 	ImGuiTextFilter console_filter;
 	std::map<const char*, bool> filters_map;
+
 	bool player_filter = false;
 	bool ia_filter = false;
 	bool stage_filter = false;
+	bool physics_filter = false;
+
 	ImVector<const char*> filters;
 	bool update_filters = false;
 	//--------------------

@@ -24,6 +24,7 @@ Console::Console(bool start_enabled): Module(start_enabled)
 	filters_map.insert(std::pair<const char*, bool>("[Player]", false)); 
 	filters_map.insert(std::pair<const char*, bool>("[IA]", false));
 	filters_map.insert(std::pair<const char*, bool>("[Stage]", false));
+	filters_map.insert(std::pair<const char*, bool>("[Physics]", false));
 	// -----------------------------
 
 	name = "Console";
@@ -111,6 +112,14 @@ void Console::ManageFilters()
 	{
 		update_filters = true;
 		filters_map["[IA]"] = stage_filter;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox("Physics", &physics_filter))
+	{
+		update_filters = true;
+		filters_map["[Physics]"] = physics_filter;
 	}
 
 	//Update filters Vector to pass to the console

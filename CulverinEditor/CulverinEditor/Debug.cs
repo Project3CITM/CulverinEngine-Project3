@@ -18,7 +18,8 @@ namespace CulverinEditor.Debug
         GENERAL = 0,
         PLAYER,
         IA,
-        STAGE
+        STAGE,
+        PHYSICS
     }
 
     public class Debug
@@ -101,6 +102,11 @@ namespace CulverinEditor.Debug
                 case Department.STAGE:
                     {
                         message = "[Stage]    " + message;
+                        break;
+                    }
+                case Department.PHYSICS:
+                    {
+                        message = "[Physics] " + message;
                         break;
                     }
 
