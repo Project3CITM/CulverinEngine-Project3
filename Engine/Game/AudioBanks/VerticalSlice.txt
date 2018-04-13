@@ -58,7 +58,6 @@ Event	ID	Name			Wwise Object Path	Notes
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	46166543	Enemy_SpearSwing	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SpearSwing_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy2\Enemy_SpearSwing		44164
-	60949840	Jaime_Dead_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Jaime_Dead_1_F7D0E330.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Jaime_Dead\Jaime_Dead_1		21479
 	74496819	Theon_MeleeHit	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Theon_MeleeHit_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_MeleeHit		123544
 	77924659	Daennerys_FlameLoop	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Daennerys_FlameLoop_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Daenerys\Daennerys_FlameLoop		1874080
 	81794340	Sword_Impact_Stone	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Sword_Impact_Stone_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Sword_Impact_Stone		182108
@@ -102,7 +101,8 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	732253576	Behind_Me	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Behind Me_3_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Behind_Me		175680
 	737435909	E3_Hurt_2	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Hurt_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy3\Enemy3_Hurt\E3_Hurt_2		189248
 	764335624	Daenerys_Dead_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Characters\Daenerys\Daenerys_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Daenerys\Daenerys_Dead\Daenerys_Dead_1		258728
-	823990075	LeverFx	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\Lever_EBCC3BBD.wem		\Actor-Mixer Hierarchy\Default Work Unit\Puzzle\LeverFx		183976
+	802761961	Jaime_Dead_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Characters\Jaime\Jaime_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Jaime_Dead\Jaime_Dead_1		198514
+	823990075	LeverFx	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\Lever_152A5EEC.wem		\Actor-Mixer Hierarchy\Default Work Unit\Puzzle\LeverFx		183976
 	825063114	Theon_Melee	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Theon_Melee_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_Melee		181776
 	832813184	Jaime_BattleCry	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Jaime_BattleCry_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Jaime_BattleCry		127452
 	842002003	Torch	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\torch_938F94C4.wem		\Actor-Mixer Hierarchy\Default Work Unit\Torch		5053736
