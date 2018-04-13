@@ -17,6 +17,9 @@ public class DaenerysController : CharacterController
     public GameObject daenerys_left_flag;
     public GameObject daenerys_right_flag;
     public GameObject daenerys_fireball_particles;
+    public GameObject daenerys_fireball_particles2;
+    public GameObject daenerys_fireball_particles3;
+    public GameObject daenerys_fireball_particles4;
 
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
@@ -60,6 +63,9 @@ public class DaenerysController : CharacterController
         daenerys_icon_obj_mana = GetLinkedObject("daenerys_icon_obj_mana");
 
         daenerys_fireball_particles = GetLinkedObject("daenerys_fireball_particles");
+        daenerys_fireball_particles2 = GetLinkedObject("daenerys_fireball_particles2");
+        daenerys_fireball_particles3 = GetLinkedObject("daenerys_fireball_particles3");
+        daenerys_fireball_particles4 = GetLinkedObject("daenerys_fireball_particles4");
 
         // Start Idle animation
         anim_controller = daenerys_obj.GetComponent<CompAnimation>();
@@ -553,7 +559,9 @@ public class DaenerysController : CharacterController
         Fireball fballscript = fball.GetComponent<Fireball>();
         fballscript.vfront = curr_forward;
         fballscript.fireball_particles = daenerys_fireball_particles;
-
+        fballscript.fireball_particles2 = daenerys_fireball_particles2;
+        fballscript.fireball_particles3 = daenerys_fireball_particles3;
+        fballscript.fireball_particles4 = daenerys_fireball_particles4;
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);
     }

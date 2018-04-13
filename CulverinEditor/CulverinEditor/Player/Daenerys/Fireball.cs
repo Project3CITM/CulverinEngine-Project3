@@ -8,6 +8,9 @@ public class Fireball : CulverinBehaviour
     public float life = 5.0f;
     public Vector3 vfront = Vector3.Zero;
     public GameObject fireball_particles;
+    public GameObject fireball_particles2;
+    public GameObject fireball_particles3;
+    public GameObject fireball_particles4;
     private CompRigidBody rb;
     private float timer = 0.0f;
 
@@ -47,9 +50,28 @@ public class Fireball : CulverinBehaviour
             Vector3 normal = col.GetContactNormal();
 
             fireball_particles.GetComponent<Transform>().SetUpVector(normal);
+            point = point + normal * 2;
             fireball_particles.GetComponent<Transform>().SetPosition(point);
 
             CompParticleSystem fireball_particles_script = fireball_particles.GetComponent<CompParticleSystem>();
+            fireball_particles_script.ActivateEmission(true);
+        }
+
+        if (fireball_particles2 != null)
+        {
+            CompParticleSystem fireball_particles_script = fireball_particles2.GetComponent<CompParticleSystem>();
+            fireball_particles_script.ActivateEmission(true);
+        }
+
+        if (fireball_particles3 != null)
+        {
+            CompParticleSystem fireball_particles_script = fireball_particles3.GetComponent<CompParticleSystem>();
+            fireball_particles_script.ActivateEmission(true);
+        }
+
+        if (fireball_particles4 != null)
+        {
+            CompParticleSystem fireball_particles_script = fireball_particles4.GetComponent<CompParticleSystem>();
             fireball_particles_script.ActivateEmission(true);
         }
 
