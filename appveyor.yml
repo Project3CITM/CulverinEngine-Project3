@@ -47,7 +47,7 @@ before_package:
 - ps: .\CulverinEngine.exe --make_build:/Assets --destination:/MyBuilds --build_name:CulverinEngineTest --initial_scene:PKey --game_mode:true
 
 artifacts:	
-- path: Engine\Game
+- path: Engine\MyBuilds
   name: CulverinEngineTest
   
 #---------------------------------#
