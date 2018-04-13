@@ -3,6 +3,9 @@ using CulverinEditor.Debug;
 
 public class EnemySword_BT : Enemy_BT
 {
+
+    Material enemy_mat_sword;
+
     public override void Start()
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
@@ -20,11 +23,19 @@ public class EnemySword_BT : Enemy_BT
                 enemy_manager.AddSwordEnemy(gameObject);
             }
         }
+
+        enemy_mat_sword = GetMaterialByName("EnemyWithSword");
+
+        dmg_alpha = 0.0f;
+
         base.Start();
     }
 
     public override void Update()
     {
+
+        enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
+
         base.Update();
     }
 
