@@ -64,9 +64,12 @@ public class ManagerProjectile : CulverinBehaviour
         }
         if (active_puzzle)
         {
-            if (door_puzzle_level2.GetComponent<DoorLevel2>().door_closed && phase_active == 0)
+            if (door_puzzle_level2 != null)
             {
-                phase_active = 1;
+                if (door_puzzle_level2.GetComponent<DoorLevel2>().door_closed && phase_active == 0)
+                {
+                    phase_active = 1;
+                }
             }
 
             if (phase_active > 0)
@@ -90,7 +93,10 @@ public class ManagerProjectile : CulverinBehaviour
             }
             else if (phase_active == 4 && actualtime_puzzle >= phase1 + phase2 + phase3 + wait_open_exit_door)
             {
-                door_puzzle_level2_exit.GetComponent<DoorLevel2>().OpenDoor();
+                if (door_puzzle_level2_exit != null)
+                {
+                    door_puzzle_level2_exit.GetComponent<DoorLevel2>().OpenDoor();
+                }
                 active_puzzle = false;
                 phase_active = -1;
             }
@@ -219,7 +225,10 @@ public class ManagerProjectile : CulverinBehaviour
             {
                 // Close door
                 Debug.Log("[yellow] Collision");
-                door_puzzle_level2.GetComponent<DoorLevel2>().CloseDoor();
+                if (door_puzzle_level2 != null)
+                {
+                    door_puzzle_level2.GetComponent<DoorLevel2>().CloseDoor();
+                }
                 active_puzzle = true;
             }
         }
