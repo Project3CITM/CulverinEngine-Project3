@@ -228,17 +228,20 @@ public class JaimeController : CharacterController
 
     public override void ManageEnergy()
     {
-        //Regen Stamina Bar
-        if (curr_stamina < max_stamina)
+        if (state != State.DEAD)
         {
-            curr_stamina += stamina_regen;
-            if (curr_stamina > max_stamina)
+            //Regen Stamina Bar
+            if (curr_stamina < max_stamina)
             {
-                curr_stamina = max_stamina;
+                curr_stamina += stamina_regen;
+                if (curr_stamina > max_stamina)
+                {
+                    curr_stamina = max_stamina;
+                }
+                float calc_stamina = curr_stamina / max_stamina;
+                jaime_icon_stamina_bar = jaime_icon_obj_stamina.GetComponent<CompImage>();
+                jaime_icon_stamina_bar.FillAmount(calc_stamina);
             }
-            float calc_stamina = curr_stamina / max_stamina;
-            jaime_icon_stamina_bar = jaime_icon_obj_stamina.GetComponent<CompImage>();
-            jaime_icon_stamina_bar.FillAmount(calc_stamina);
         }
     }
 

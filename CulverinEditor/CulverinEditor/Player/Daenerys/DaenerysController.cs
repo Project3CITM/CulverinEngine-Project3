@@ -228,17 +228,20 @@ public class DaenerysController : CharacterController
 
     public override void ManageEnergy()
     {
-        if (curr_mana < max_mana)
+        if (state != State.DEAD)
         {
-            curr_mana += mana_regen;
-            if (curr_mana > max_mana) 
+            if (curr_mana < max_mana)
             {
-                curr_mana = max_mana;
+                curr_mana += mana_regen;
+                if (curr_mana > max_mana)
+                {
+                    curr_mana = max_mana;
+                }
             }
+            float calc_mana = curr_mana / max_mana;
+            daenerys_icon_mana_bar = daenerys_icon_obj_mana.GetComponent<CompImage>();
+            daenerys_icon_mana_bar.FillAmount(calc_mana);
         }
-        float calc_mana = curr_mana / max_mana;
-        daenerys_icon_mana_bar = daenerys_icon_obj_mana.GetComponent<CompImage>();
-        daenerys_icon_mana_bar.FillAmount(calc_mana);
     }
 
     public override void CheckAttack()
