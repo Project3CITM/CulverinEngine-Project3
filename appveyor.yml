@@ -41,10 +41,10 @@ build:
 only_commits:
   message: /appveyor_build/
   
- 
 before_package:
 - ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\CulverinEngine.exe C:\projects\TempMotor3D_P3\Engine\Game\.	
-- cmd: C:\projects\TempMotor3D_P3\Engine\Game\CulverinEngine.exe --make_build:/Assets --destination:/MyBuilds --build_name:CulverineEngine.{build} --initial_scene:PKey --game_mode:true
+- ps: cd C:\projects\TempMotor3D_P3\Engine\Game
+- ps: .\CulverinEngine.exe --make_build:/Assets --destination:/MyBuilds --build_name:CulverineEngine.{build}_$env:CONFIGURATION --initial_scene:PKey --game_mode:true
 - ps: Copy-Item C:\projects\TempMotor3D_P3\README.md C:\projects\TempMotor3D_P3\Engine\MyBuilds\CulverineEngine.{build}\.	
 
 artifacts:	
