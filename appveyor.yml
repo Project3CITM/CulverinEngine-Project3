@@ -42,7 +42,7 @@ only_commits:
   message: /appveyor_build/
   
 before_package:
-- ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\CulverinEngine.exe C:\projects\TempMotor3D_P3\Engine\Game\.	
+- ps: Copy-Item C:\projects\TempMotor3D_P3\Engine\$env:CONFIGURATION\CulverinEngine.exe C:\projects\TempMotor3D_P3\Engine\Game\.
 
 artifacts:	
 - path: Engine\MyBuilds\CulverineEngine.{build}	
