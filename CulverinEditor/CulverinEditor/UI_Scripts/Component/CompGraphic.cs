@@ -13,6 +13,9 @@ namespace CulverinEditor
         public extern void SetRaycastTarget(bool flag);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetRender(bool flag);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void  ActivateRender();
 
         [MethodImpl(MethodImplOptions.InternalCall)]

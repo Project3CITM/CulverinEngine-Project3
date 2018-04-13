@@ -28,11 +28,8 @@ public class Attack_Action : Action
     {
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
         if (player == null)
-        {
-            Debug.Log("[error]Attack Action Start: Player is null!!");
-        }
+            Debug.Log("[error] Attack Action Start: Player is null!");
 
-        Debug.Log("Starting attack");
         GetComponent<CompAnimation>().SetTransition("ToAttack");
         GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
        
@@ -59,19 +56,15 @@ public class Attack_Action : Action
                 if (player.GetDamage(damage) == true)
                 { 
                     GetComponent<CompAudio>().PlayEvent("SwordHit");
-                    GetComponent<CompAnimation>().SetActiveBlendingClipWeight(0.0f);
+                    GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight(0.0f);
                 }
                 else
-                    GetComponent<CompAnimation>().SetActiveBlendingClipWeight(1.0f);
+                    GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight(1.0f);
             }
         }
 
         if (GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
-        {
-            Debug.Log("Attack end");
             return ACTION_RESULT.AR_SUCCESS;
-        }
-
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 

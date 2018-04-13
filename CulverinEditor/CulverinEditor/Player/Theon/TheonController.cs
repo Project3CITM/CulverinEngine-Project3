@@ -123,11 +123,7 @@ public class TheonController : CharacterController
                             {
                                 anim_controller = theon_obj.GetComponent<CompAnimation>();
                                 if (anim_controller.IsAnimationRunning("Idle"))
-                                {                          
                                     reloading = false;
-                                    Debug.Log("[error] Finished reloading");
-                                }
-
                             }
                             break;
                         }
@@ -351,7 +347,6 @@ public class TheonController : CharacterController
 
     public override bool IsAnimationRunning(string name)
     {
-        Debug.Log("[orange] THEON ANIMATION RUNNING");
         anim_controller = theon_obj.GetComponent<CompAnimation>();
         return anim_controller.IsAnimationRunning(name);
     }
@@ -370,7 +365,7 @@ public class TheonController : CharacterController
         if (state == State.IDLE) /*0 = IDLE*/
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > left_ability_cost)
+            if (CanWasteStamina(left_ability_cost))
             {
                 cd_left = theon_button_left.GetComponent<TheonCD_Left>();
                 //Check if the ability is not in cooldown
@@ -417,14 +412,12 @@ public class TheonController : CharacterController
         arrow_script.arrow_sparks_particles = theon_sparks_particles;
 
         Arrow.GetComponent<CompMesh>().SetEnabled(false, Arrow);
-        Debug.Log("[green] SetEnabled");
 
         //Set Attack Animation
         SetAnimationTransition("ToAttack1", true);
         CrossBow.GetComponent<CompAnimation>().PlayAnimation("Attack");
 
         PlayFx("CrossbowShot");
-        Debug.Log("[green] Shoot Audio");
 
         SetState(CharacterController.State.ATTACKING);
     }
@@ -440,7 +433,7 @@ public class TheonController : CharacterController
         if (state == State.IDLE)
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > right_ability_cost)
+            if (CanWasteStamina(right_ability_cost))
             {
                 cd_right = theon_button_right.GetComponent<TheonCD_Right>();
                 //Check if the ability is not in cooldown
@@ -450,8 +443,6 @@ public class TheonController : CharacterController
                     DecreaseStamina(right_ability_cost);
 
                     PlayFx("TheonMeleShout");
-
-                    //Debug.Log("[error]STAMINA!");
                     SetAnimationTransition("ToAttack2", true);
 
                     do_push_attack = true;
@@ -481,18 +472,13 @@ public class TheonController : CharacterController
 
     public void DoRightAbility() //Might be virtual
     {
-        //Debug.Log("[error]TRANSITION!");
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
-        //Debug.Log("[error]RAYCAST!");
         if (coll_object != null)
         {
             PlayFx("TheonMeleHit");
 
-            Debug.Log(coll_object.GetTag());
-            //Debug.Log("[error]COOL OBJ NOT NULL!");
             if (coll_object.CompareTag("Enemy"))
             {
-                //Debug.Log("[error]HERE!");
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
                 EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
                 movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
@@ -507,7 +493,7 @@ public class TheonController : CharacterController
         if (GetState() == 0)
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > sec_ability_cost)
+            if (CanWasteStamina(sec_ability_cost))
             {
                 sec_ability_cd = GetLinkedObject("theon_s_button_obj").GetComponent<TheonCD_Secondary>();
                 //Check if the ability is not in cooldown

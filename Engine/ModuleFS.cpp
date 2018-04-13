@@ -1299,6 +1299,12 @@ std::string ModuleFS::GetExtension(std::string file, bool is_meta)
 			file = file.substr(EndName + 1);
 			return file;
 		}
+		EndName = file.find(".anim.json");
+		if (EndName != std::string::npos)
+		{
+			file = file.substr(EndName + 1);
+			return file;
+		}
 		EndName = file.find_last_of(".");
 		if(EndName != std::string::npos)
 		{

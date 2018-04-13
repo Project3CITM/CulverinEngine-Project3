@@ -53,7 +53,6 @@ public class TestMovement : CulverinBehaviour
             }
         }
         //array2Da[0,0] = 1;
-        //Debug.Log(array2Da[0,0].ToString());
         endPosition = GetComponent<Transform>().local_position;
         endRotation = GetComponent<Transform>().local_rotation;
 
@@ -143,17 +142,11 @@ public class TestMovement : CulverinBehaviour
                 curr_x += tile_mov_x;
                 curr_y += tile_mov_y;
             }
-            else
-            {
-                //Debug.Log("Failed to move");
-                //Debug.Log(tile_mov_x.ToString());
-                //Debug.Log(tile_mov_y.ToString());
-            }
         }
         else if (rotating)
         {
-            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.DeltaTime());
-            float moved_angle = (float)angle * speed_rotation * Time.DeltaTime();
+            GetComponent<Transform>().RotateAroundAxis(Vector3.Up, angle * speed_rotation * Time.deltaTime);
+            float moved_angle = (float)angle * speed_rotation * Time.deltaTime;
             if (angle < 0)
             {
                 actual_angle += (moved_angle * -1);
@@ -183,7 +176,7 @@ public class TestMovement : CulverinBehaviour
         }
         else
         {
-            GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.DeltaTime());
+            GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.deltaTime);
         }
     }
 

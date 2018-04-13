@@ -114,6 +114,11 @@ void Component::SetInScripting()
 	in_script = true;
 }
 
+void Component::SetDelete(bool set_delete)
+{
+	to_delete = set_delete;
+}
+
 uint Component::GetUUID() const
 {
 	return uid;

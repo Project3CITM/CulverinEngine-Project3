@@ -11,17 +11,14 @@ public class SwordGuard_Listener : PerceptionListener
     {
 
         event_manager = GetLinkedObject("event_manager");
-        if(event_manager==null) Debug.Log("[error]EVENT MANAGER NULL");
+        if(event_manager==null)
+            Debug.Log("[error] Event manager is null");
         
         PerceptionManager perception_manager = event_manager.GetComponent<PerceptionManager>();
         if (perception_manager != null)
-        {
             perception_manager.AddListener(this);
-        }
         else
-        {
-            Debug.Log("THERE IS NO PERCEPTION MANAGER");
-        }
+            Debug.Log("[error] Perception manager is null");
         events_in_memory = new List<PerceptionEvent>();
 
     }

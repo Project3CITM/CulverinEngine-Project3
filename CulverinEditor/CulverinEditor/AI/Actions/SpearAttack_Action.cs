@@ -44,7 +44,6 @@ public class SpearAttack_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-       // Debug.Log("[error]Is melee attack:" + melee_attack);
         if (melee_attack)
         {
             if (interupt == true)

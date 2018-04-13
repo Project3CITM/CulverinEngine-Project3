@@ -31,7 +31,6 @@ public class SetParticleTransf : CulverinBehaviour
         GameObject obj = col.GetCollidedObject();
         if (obj != null)
         {
-            Debug.Log(obj.GetName());
             if (obj.CompareTag("enemy"))
             {
                 col = GetComponent<CompCollider>();

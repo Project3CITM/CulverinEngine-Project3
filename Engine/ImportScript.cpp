@@ -1169,6 +1169,8 @@ void ImportScript::LinkFunctions()
 	//COMPONENT UI_GRAPHIC FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetRaycastTarget", (const void*)SetRaycastTarget);
 	mono_add_internal_call("CulverinEditor.CompImage::FillAmount", (const void*)FillAmount);
+	mono_add_internal_call("CulverinEditor.CompImage::SetRender", (const void*)SetRender);
+
 	mono_add_internal_call("CulverinEditor.CompImage::ActivateRender", (const void*)ActivateRender);
 	mono_add_internal_call("CulverinEditor.CompImage::DeactivateRender", (const void*)DeactivateRender);
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetColor", (const void*)SetColor);
@@ -1229,8 +1231,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipsSpeed", (const void*)SetClipsSpeed);
 	mono_add_internal_call("CulverinEditor.CompAnimation::GetClipDuration", (const void*)GetClipDuration);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipDuration", (const void*)SetClipDuration);
-	mono_add_internal_call("CulverinEditor.CompAnimation::SetActiveBlendingClip", (const void*)SetActiveBlendingClip);
-	mono_add_internal_call("CulverinEditor.CompAnimation::SetActiveBlendingClipWeight", (const void*)SetActiveBlendingClipWeight);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetFirstActiveBlendingClip", (const void*)SetFirstActiveBlendingClip);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetFirstActiveBlendingClipWeight", (const void*)SetFirstActiveBlendingClipWeight);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetBlendInTime", (const void*)SetBlendInTime);
 	mono_add_internal_call("CulverinEditor.CompAnimation::PlayAnimationNode", (const void*)PlayAnimationNode);
 
@@ -1888,6 +1890,10 @@ void ImportScript::SetRaycastTarget(MonoObject * object, mono_bool flag)
 {
 	current->SetRaycastTarget(object, flag);
 }
+void ImportScript::SetRender(MonoObject * object, mono_bool flag)
+{
+	current->SetRender(object, flag);
+}
 
 void ImportScript::ActivateRender(MonoObject * object)
 {
@@ -2084,14 +2090,24 @@ void ImportScript::SetClipDuration(MonoObject * object, MonoString * string, flo
 	current->SetClipDuration(object, string, duration);
 }
 
-void ImportScript::SetActiveBlendingClip(MonoObject * object, MonoString * string)
+void ImportScript::SetFirstActiveBlendingClip(MonoObject * object, MonoString * string)
 {
-	current->SetActiveBlendingClip(object, string);
+	current->SetFirstActiveBlendingClip(object, string);
 }
 
-void ImportScript::SetActiveBlendingClipWeight(MonoObject * object, float weight)
+void ImportScript::SetFirstActiveBlendingClipWeight(MonoObject * object, float weight)
 {
-	current->SetActiveBlendingClipWeight(object, weight);
+	current->SetFirstActiveBlendingClipWeight(object, weight);
+}
+
+void ImportScript::SetSecondActiveBlendingClip(MonoObject * object, MonoString * string)
+{
+	current->SetSecondActiveBlendingClip(object,string);
+}
+
+void ImportScript::SetSecondctiveBlendingClipWeight(MonoObject * object, float weight)
+{
+	current->SetSecondActiveBlendingClipWeight(object, weight);
 }
 
 void ImportScript::SetBlendInTime(MonoObject * object, MonoString * string, float time)

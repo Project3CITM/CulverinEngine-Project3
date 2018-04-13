@@ -393,6 +393,7 @@ void CompRectTransform::SetNewAnimationValue(const AnimationData & value)
 	switch (value.type)
 	{
 	case ParameterValue::RECT_TRANSFORM_POSITION:
+		LOG("%f,%f,%f",value.value.f3_value.x, value.value.f3_value.y, value.value.f3_value.z)
 		SetPos(value.value.f3_value);
 		break;
 	case ParameterValue::RECT_TRANSFORM_ROTATION:
@@ -478,6 +479,31 @@ AnimationData CompRectTransform::ShowParameters()
 	return ret;
 }
 
+const char * CompRectTransform::ReturnParameterName(ParameterValue parameter)
+{
+	switch (parameter)
+	{
+	case ParameterValue::RECT_TRANSFORM_POSITION:
+		return "Position";
+		break;
+	case ParameterValue::RECT_TRANSFORM_ROTATION:
+		return "Rotation";
+		break;
+	case ParameterValue::RECT_TRANSFORM_SCALE:
+		return "Scale";
+		break;
+	case ParameterValue::RECT_TRANSFORM_WIDTH:
+		return "Width";
+		break;
+	case ParameterValue::RECT_TRANSFORM_HEIGHT:
+		return "Height";
+		break;
+	default:
+		break;
+	}
+	return nullptr;
+}
+
 void CompRectTransform::SetWidth(int set_width)
 {
 	update_rect = true;
@@ -521,6 +547,37 @@ std::vector<float3> CompRectTransform::GenerateQuadVertices()
 	ret.push_back(GetSouthEastPosition());
 	ret.push_back(GetNorthEastPosition());
 	ret.push_back(GetNorthWestPosition());
+	return ret;
+}
+
+AnimationValue CompRectTransform::GetParameter(ParameterValue parameter)
+{
+	AnimationValue ret;
+	switch (parameter)
+	{
+	case PARAMETER_NONE:
+		break;
+	case RECT_TRANSFORM_POSITION:
+		ret.f3_value = GetPos();
+		break;
+	case RECT_TRANSFORM_ROTATION:
+		ret.f3_value = GetRotEuler();
+		break;
+	case RECT_TRANSFORM_SCALE:
+		ret.f3_value = GetScale();
+
+		break;
+	case RECT_TRANSFORM_WIDTH:
+		ret.f_value = GetWidth();
+
+		break;
+	case RECT_TRANSFORM_HEIGHT:
+		ret.f_value = GetHeight();
+
+		break;
+	default:
+		break;
+	}
 	return ret;
 }
 

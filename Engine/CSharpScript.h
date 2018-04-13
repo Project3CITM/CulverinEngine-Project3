@@ -258,8 +258,10 @@ public:
 	void		SetClipsSpeed(MonoObject* object, float speed_value);
 	float		GetClipDuration(MonoObject* object, MonoString* name);
 	void		SetClipDuration(MonoObject* object, MonoString* name, float duration);
-	void		SetActiveBlendingClip(MonoObject* object, MonoString* name);
-	void		SetActiveBlendingClipWeight(MonoObject* object, float weight);
+	void		SetFirstActiveBlendingClip(MonoObject* object, MonoString* name);
+	void		SetFirstActiveBlendingClipWeight(MonoObject* object, float weight);
+	void		SetSecondActiveBlendingClip(MonoObject* object, MonoString* name);
+	void		SetSecondActiveBlendingClipWeight(MonoObject* object, float weight);
 	void		SetBlendInTime(MonoObject* object, MonoString* name, float time);
 	void		PlayAnimationNode(MonoObject* object, MonoString* name);
 
@@ -271,6 +273,8 @@ public:
 	/*UI-Graphics*/
 	void		SetRaycastTarget(MonoObject * object, mono_bool flag);
 	void		FillAmount(MonoObject * object, float value);
+	void		SetRender(MonoObject * object, mono_bool flag);
+
 	void		ActivateRender(MonoObject * object);
 	void		DeactivateRender(MonoObject * object);
 	void		SetAlpha(MonoObject * object, float alpha);

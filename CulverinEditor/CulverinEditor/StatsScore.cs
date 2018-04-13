@@ -33,7 +33,6 @@ static public class StatsScore
 
     static public void ResetScore()
     {
-        Debug.Log("Reset Score");
         time = 0.0f;
         enem_killed = 0;
         puzzle_tries = 0;

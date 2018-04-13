@@ -26,20 +26,26 @@ public class Enemy_BT : BT
     public float attack_damage = 1.0f;
     public float damaged_limit = 0.6f;
     protected float attack_timer = 0.0f;
-    protected float current_interpolation = 1.0f;
     public int range = 1;
 
+    public bool heard_something = false;
+
     protected bool in_combat = false;
+
+    //Path Go and Back
+    public int origin_path_x;
+    public int origin_path_y;
+
+    public int end_path_x;
+    public int end_path_y;
 
     public override void Start()
     {
         in_combat = false;
         player = GetLinkedObject("player");
         current_hp = total_hp;
-        Debug.Log("Current HP (Start): " + current_hp);
-        Debug.Log("Total HP (Start): " + total_hp);
         //Enemy starts with the attack loaded
-        attack_timer = attack_cooldown * anim_speed;
+        attack_timer = 0.0f;
         mesh = GetLinkedObject("mesh");
         enemies_manager = GetLinkedObject("enemies_manager");
         GetComponent<CompAnimation>().PlayAnimation("Idle");
@@ -57,7 +63,6 @@ public class Enemy_BT : BT
 
     public override void MakeDecision()
     {
-
         if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION 
             || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION
             || next_action.action_type == Action.ACTION_TYPE.FACE_PLAYER_ACTION || next_action.action_type == Action.ACTION_TYPE.DIE_ACTION
@@ -67,7 +72,6 @@ public class Enemy_BT : BT
             {
                 life_state = ENEMY_STATE.ENEMY_STUNNED;
             }
-            Debug.Log("[blue]" +next_action.action_type);
             current_action = next_action;
             next_action = null_action;
             current_action.ActionStart();
@@ -78,7 +82,6 @@ public class Enemy_BT : BT
         {            
             if (next_action.action_type == Action.ACTION_TYPE.DISENGAGE_ACTION)
             {
-                Debug.Log("Disengage");
                 in_combat = false;
                 current_action = GetComponent<Disengage_Action>();
                 current_action.ActionStart();
@@ -91,7 +94,6 @@ public class Enemy_BT : BT
         {
             if (next_action.action_type == Action.ACTION_TYPE.ENGAGE_ACTION)
             {
-                Debug.Log("Engage");
                 in_combat = true;
                 current_action = next_action;
                 next_action = null_action;
@@ -99,19 +101,18 @@ public class Enemy_BT : BT
                 return;
             }
 
-            Debug.Log("Out combat decisiom");
             OutOfCombatDecesion();
         }
     }
 
     protected virtual void InCombatDecesion()
     {
-        Debug.Log("In Combat Not Defined");
+        Debug.Log("[error] In Combat Not Defined");
     }
 
     protected virtual void OutOfCombatDecesion()
     {
-        Debug.Log("Out Of Combat Not Defined");
+        Debug.Log("[error] Out Of Combat Not Defined");
     }
 
     public virtual bool ApplyDamage(float damage)
@@ -122,7 +123,7 @@ public class Enemy_BT : BT
 
         current_hp -= damage;
 
-        Debug.Log("[error] Current HP: " + current_hp);
+        current_interpolation = current_hp / total_hp;
 
         if (current_hp <= 0)
         {
@@ -138,9 +139,6 @@ public class Enemy_BT : BT
         else if (life_state != ENEMY_STATE.ENEMY_DAMAGED && current_hp < total_hp * damaged_limit)
         {
             life_state = ENEMY_STATE.ENEMY_DAMAGED;
-            current_interpolation = current_hp / total_hp;
-            anim_speed = min_anim_speed + (max_anim_speed - min_anim_speed) * current_interpolation;
-            GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
             //ChangeTexturesToDamaged();
         }
 
@@ -152,13 +150,9 @@ public class Enemy_BT : BT
         current_action.Interupt();
 
         if (!GetComponent<Movement_Action>().IsWalkable((uint)(GetComponent<Movement_Action>().GetCurrentTileX() + dir.x), (uint)(GetComponent<Movement_Action>().GetCurrentTileY() + dir.z)))
-        {
-            Debug.Log("[error] STUN!");
             next_action = GetComponent<Stun_Action>();
-        }
         else
         {
-            Debug.Log("[error] PUSH!");
             next_action = GetComponent<PushBack_Action>();
             ((PushBack_Action)next_action).SetPushDirection(dir);
         }
@@ -190,11 +184,6 @@ public class Enemy_BT : BT
         return range + 1;
     }
 
-    public float GetCurrentInterpolation()
-    {
-        return current_interpolation;
-    }
-
     public void SetAction(Action.ACTION_TYPE type)
     {
         switch(type)
@@ -204,7 +193,7 @@ public class Enemy_BT : BT
             case Action.ACTION_TYPE.DISENGAGE_ACTION: next_action = GetComponent<Disengage_Action>(); break;
             case Action.ACTION_TYPE.INVESTIGATE_ACTION: next_action = GetComponent<Investigate_Action>(); break;
 
-            default: Debug.Log("Unknown action"); break;
+            default: Debug.Log("[error] Unknown action"); break;
         }
     }
 

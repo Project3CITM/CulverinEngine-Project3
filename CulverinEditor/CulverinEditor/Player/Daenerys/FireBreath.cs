@@ -18,14 +18,11 @@ public class FireBreath : CulverinBehaviour
     {
         if (collided == false)
         {
-            Debug.Log("FIRE BREATH COLLIDED");
             GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
 
             // DAMAGE ---
             if (collided_obj != null)
             {
-                Debug.Log("[pink]" + collided_obj.GetName());
-
                 rb = GetComponent<CompRigidBody>();
                 //Lock transform to avoid trespassing more than one collider
                 rb.LockTransform();

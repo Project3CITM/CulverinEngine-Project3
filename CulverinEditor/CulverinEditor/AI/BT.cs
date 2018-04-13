@@ -20,16 +20,8 @@ public class BT : CulverinBehaviour
 
     //Blackboard
     public bool player_detected = false;
-    public bool heard_something = false;
 
-    //Path Go and Back
-    public int origin_path_x;
-    public int origin_path_y;
-           
-    public int end_path_x;
-    public int end_path_y;
-
-    public float anim_speed = 1.0f;
+    protected float current_interpolation = 1.0f;
 
     virtual public void Start()
     {
@@ -41,15 +33,6 @@ public class BT : CulverinBehaviour
 
     public virtual void Update()
     {
-
-        if (current_action == null)
-            return;
-
-        /*if (current_action.action_type == Action.ACTION_TYPE.DIE_ACTION)
-        {
-            return;
-        }*/
-
         Action.ACTION_RESULT result = current_action.ActionUpdate();
 
         if (current_action.action_type == Action.ACTION_TYPE.IDLE_ACTION || current_action.action_type == Action.ACTION_TYPE.IDLE_ATTACK_ACTION)
@@ -74,7 +57,7 @@ public class BT : CulverinBehaviour
                     break;
 
                 default:
-                    Debug.Log("Error on action state!");
+                    Debug.Log("[error] No action state!");
                     break;
             }
         }
@@ -82,11 +65,7 @@ public class BT : CulverinBehaviour
 
     public virtual void MakeDecision()
     {
-        if(next_action.action_type != Action.ACTION_TYPE.NO_ACTION)
-        {
-            current_action = next_action;
-            next_action = new Action();
-        }
+        Debug.Log("[error] MakeDecision not Defined");
     }
 
     public AI_STATE GetState()
@@ -97,5 +76,10 @@ public class BT : CulverinBehaviour
     public void InterruptAction()
     {
         current_action.Interupt();
+    }
+
+    public float GetCurrentInterpolation()
+    {
+        return current_interpolation;
     }
 }

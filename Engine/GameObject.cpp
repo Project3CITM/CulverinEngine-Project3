@@ -19,6 +19,7 @@
 #include "CompCamera.h"
 #include "CompScript.h"
 #include "CompAnimation.h"
+#include "CompUIAnimation.h"
 #include "CompButton.h"
 #include "CompCheckBox.h"
 #include "CompImage.h"
@@ -1079,6 +1080,11 @@ void GameObject::ShowInspectorInfo()
 			AddComponent(Comp_Type::C_ANIMATION);
 			add_component = false;
 		}
+		if (ImGui::MenuItem("UI Animation"))
+		{
+			AddComponent(Comp_Type::C_ANIMATION_UI);
+			add_component = false;
+		}
 		if (ImGui::MenuItem("Finite State Machine"))
 		{
 			AddComponent(Comp_Type::C_FSM);
@@ -1580,6 +1586,13 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(anim);
 			return anim;
 		}
+		case Comp_Type::C_ANIMATION_UI:
+		{
+			LOG("Adding ANIMATION COMPONENT.");
+			CompUIAnimation* anim = new CompUIAnimation(type, this);
+			components.push_back(anim);
+			return anim;
+		}
 		case Comp_Type::C_AUDIO:
 		{
 			CompAudio* audio = new CompAudio(type, this);
@@ -1691,6 +1704,12 @@ void GameObject::AddComponentCopy(const Component& copy)
 	case Comp_Type::C_ANIMATION:
 	{
 		CompAnimation* anim = new CompAnimation((CompAnimation&)copy, this); //Anim copy constructor
+		components.push_back(anim);
+		break;
+	}
+	case Comp_Type::C_ANIMATION_UI:
+	{
+		CompUIAnimation* anim = new CompUIAnimation((CompUIAnimation&)copy, this); //Anim copy constructor
 		components.push_back(anim);
 		break;
 	}
@@ -1808,6 +1827,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			break;
 		case Comp_Type::C_ANIMATION:
 			this->AddComponent(Comp_Type::C_ANIMATION);
+			break;
+		case Comp_Type::C_ANIMATION_UI:
+			this->AddComponent(Comp_Type::C_ANIMATION_UI);
 			break;
 		case Comp_Type::C_AUDIO:
 			this->AddComponent(Comp_Type::C_AUDIO);

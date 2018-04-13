@@ -24,21 +24,18 @@ public class PuzzleCountdown:CulverinBehaviour
         audio = GetComponent<CompAudio>();
         if (audio == null)
         {
-            Debug.Log("There is no audio comp in puzzle!");
+            Debug.Log("[error] There is no audio comp in puzzle!");
         }
     }
 
     public void StartCountdown()
     {
-
         current_time = initial_time;
         active = true;
         state = 1;
         Audio.ChangeState("PuzzleCountDownState", "State1");
         audio = GetComponent<CompAudio>();
         audio.PlayEvent("StartPuzzleCountdown");
-        //Debug.Log("Playing countdown sound");
-
     }
 
     public void StopCountdown()
@@ -50,8 +47,6 @@ public class PuzzleCountdown:CulverinBehaviour
        // Audio.ChangeState("PuzzleCountDownState", "State1");
         //audio = GetComponent<CompAudio>();
         audio.StopEvent("StartPuzzleCountdown");
-        //Debug.Log("Playing countdown sound");
-
     }
 
     public bool IsCountdownOver()

@@ -41,13 +41,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\Actions\Action.cs" />
+    <Compile Include="AI\Actions\BossAttackSwordDown_Action.cs" />
     <Compile Include="AI\Actions\FacePlayer_Action.cs" />
+    <Compile Include="AI\Actions\InfiniteChasePlayer_Action.cs" />
     <Compile Include="AI\Actions\Separate_Action.cs" />
     <Compile Include="AI\Actions\SpearAttack_Action.cs" />
     <Compile Include="AI\Actions\Stun_Action.cs" />
     <Compile Include="AI\AIManager.cs" />
     <Compile Include="AI\Actions\Align_Steering.cs" />
     <Compile Include="AI\Actions\Arrive_Steering.cs" />
+    <Compile Include="AI\BossSight.cs" />
+    <Compile Include="AI\Boss_BT.cs" />
+    <Compile Include="AI\Boss_Listener.cs" />
     <Compile Include="AI\BT.cs" />
     <Compile Include="AI\Actions\ChasePlayer_Action.cs" />
     <Compile Include="AI\Actions\Die_Action.cs" />
@@ -75,11 +80,15 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="LeftMana.cs" />
+    <Compile Include="LeftHp.cs" />
     <Compile Include="BarrelPuzle\SetParticleTransf.cs" />
     <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
     <Compile Include="BarrelPuzle\Lever.cs" />
     <Compile Include="BarrelPuzle\Paths\Path.cs" />
     <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
+    <Compile Include="Leftamina.cs" />
+    <Compile Include="Player\ActivateEnemies.cs" />
     <Compile Include="Player\Jaime\ComboController.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
