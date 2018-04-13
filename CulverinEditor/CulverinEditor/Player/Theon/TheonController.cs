@@ -19,12 +19,14 @@ public class TheonController : CharacterController
     public GameObject theon_left_flag;
     public GameObject theon_right_flag;
 
+    CompImage theon_icon_stamina_bar;
 
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
     public float curr_hp = 100.0f;
     public float max_stamina = 100.0f;
     public float curr_stamina = 100.0f;
+    private float stamina_regen = 0.0f;
 
     //LEFT ABILITY STATS-------------------
     public float left_ability_dmg = 10;
@@ -70,6 +72,7 @@ public class TheonController : CharacterController
 
         theon_icon_obj_hp = GetLinkedObject("theon_icon_obj_hp");
         theon_icon_obj_stamina = GetLinkedObject("theon_icon_obj_stamina");
+        stamina_regen = GetLinkedObject("stamina_obj").GetComponent<Stamina>().regen;
 
         theon_blood_particles = GetLinkedObject("theon_blood_particles");
         theon_sparks_particles = GetLinkedObject("theon_sparks_particles");
@@ -217,6 +220,22 @@ public class TheonController : CharacterController
                         }
                 }
             }
+        }
+    }
+
+    public override void ManageEnergy()
+    {
+        //Regen Stamina Bar
+        if (curr_stamina < max_stamina)
+        {
+            curr_stamina += stamina_regen;
+            if (curr_stamina > max_stamina)
+            {
+                curr_stamina = max_stamina;
+            }
+            float calc_stamina = curr_stamina / max_stamina;
+            theon_icon_stamina_bar = theon_icon_obj_stamina.GetComponent<CompImage>();
+            theon_icon_stamina_bar.FillAmount(calc_stamina);
         }
     }
 

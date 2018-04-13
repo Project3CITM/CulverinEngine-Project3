@@ -51,12 +51,16 @@ public class CharacterController : CulverinBehaviour
         {
             ControlCharacter();
         }
+
         else if(position == Position.BEHIND_LEFT || position == Position.BEHIND_RIGHT)
         {
             if(gameObject.GetName() == "Theon")
             {
                 gameObject.GetComponent<TheonController>().TheonSecondaryAbility();
             }
+
+            //If the character is behind, manage the stamina/mana bar to regen it
+            ManageEnergy();
         }
     }
 
@@ -117,6 +121,10 @@ public class CharacterController : CulverinBehaviour
     }
 
     public virtual void ControlCharacter()
+    {
+    }
+
+    public virtual void ManageEnergy()
     {
     }
 

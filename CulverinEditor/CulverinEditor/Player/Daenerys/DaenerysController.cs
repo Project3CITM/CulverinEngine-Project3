@@ -21,11 +21,14 @@ public class DaenerysController : CharacterController
     public GameObject daenerys_fireball_particles3;
     public GameObject daenerys_fireball_particles4;
 
+    CompImage daenerys_icon_mana_bar;
+
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
     public float curr_hp = 100.0f;
     public float max_mana = 100.0f;
     public float curr_mana = 100.0f;
+    private float mana_regen = 0.0f;
 
     public float sec_ability_cost = 30.0f;
     DaenerysCD_Secondary sec_ability_cd;
@@ -61,6 +64,7 @@ public class DaenerysController : CharacterController
 
         daenerys_icon_obj_hp = GetLinkedObject("daenerys_icon_obj_hp");
         daenerys_icon_obj_mana = GetLinkedObject("daenerys_icon_obj_mana");
+        mana_regen = GetLinkedObject("mana_obj").GetComponent<Mana>().regen;
 
         daenerys_fireball_particles = GetLinkedObject("daenerys_fireball_particles");
         daenerys_fireball_particles2 = GetLinkedObject("daenerys_fireball_particles2");
@@ -220,6 +224,21 @@ public class DaenerysController : CharacterController
                 }
             }
         }
+    }
+
+    public override void ManageEnergy()
+    {
+        if (curr_mana < max_mana)
+        {
+            curr_mana += mana_regen;
+            if (curr_mana > max_mana) 
+            {
+                curr_mana = max_mana;
+            }
+        }
+        float calc_mana = curr_mana / max_mana;
+        daenerys_icon_mana_bar = daenerys_icon_obj_mana.GetComponent<CompImage>();
+        daenerys_icon_mana_bar.FillAmount(calc_mana);
     }
 
     public override void CheckAttack()

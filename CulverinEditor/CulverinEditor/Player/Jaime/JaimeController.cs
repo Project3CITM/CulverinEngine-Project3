@@ -19,12 +19,14 @@ public class JaimeController : CharacterController
     public GameObject jaime_right_flag;
 
     CompAnimation jaime_anim_controller;
+    CompImage jaime_icon_stamina_bar;
 
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
     public float curr_hp = 100.0f;
     public float max_stamina = 100.0f;
     public float curr_stamina = 100.0f;
+    private float stamina_regen = 0.0f;
 
     //Secondary Ability Stats ---
     public float duration = 4.0f;
@@ -58,7 +60,6 @@ public class JaimeController : CharacterController
     //Particle emitter GameObject
     public GameObject particles_jaime;
 
-    //
     public float cover_duration = 3.0f;
     private float cover_timer = 0.0f;
 
@@ -80,6 +81,7 @@ public class JaimeController : CharacterController
 
         jaime_icon_obj_hp = GetLinkedObject("jaime_icon_obj_hp");
         jaime_icon_obj_stamina = GetLinkedObject("jaime_icon_obj_stamina");
+        stamina_regen = GetLinkedObject("stamina_obj").GetComponent<Stamina>().regen;
 
         particles_jaime = GetLinkedObject("particles_jaime");
 
@@ -221,6 +223,22 @@ public class JaimeController : CharacterController
                         }
                 }
             }
+        }
+    }
+
+    public override void ManageEnergy()
+    {
+        //Regen Stamina Bar
+        if (curr_stamina < max_stamina)
+        {
+            curr_stamina += stamina_regen;
+            if (curr_stamina > max_stamina)
+            {
+                curr_stamina = max_stamina;
+            }
+            float calc_stamina = curr_stamina / max_stamina;
+            jaime_icon_stamina_bar = jaime_icon_obj_stamina.GetComponent<CompImage>();
+            jaime_icon_stamina_bar.FillAmount(calc_stamina);
         }
     }
 
@@ -380,6 +398,7 @@ public class JaimeController : CharacterController
             //Enable Secondary Bars And Update them
             jaime_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
             jaime_icon_obj_stamina.GetComponent<CompImage>().FillAmount(curr_stamina / max_stamina);
+            Debug.Log(curr_stamina / max_stamina);
             jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj_hp);
             jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj_stamina);
 

@@ -154,8 +154,7 @@ public class CharactersManager : CulverinBehaviour
 
                     if (vari>0.8)
                     {
-                        SecondaryAbility(Side.LEFT);
-                        
+                        SecondaryAbility(Side.LEFT);                
                     }
 
                     vari = Input.GetInput_ControllerAxis("RAllyAttack", "Player");
