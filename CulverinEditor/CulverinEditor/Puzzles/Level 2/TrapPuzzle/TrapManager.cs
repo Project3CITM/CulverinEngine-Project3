@@ -43,7 +43,8 @@ public class TrapManager : CulverinBehaviour
             int tile_z = 0;
             int value = 0;
             bool switch_done = true;
-            
+
+            map = GetLinkedObject("map_obj");
             LevelMap map_level = map.GetComponent<LevelMap>();
             for (int i = 0; i < childs_to_switch.Count; i++)
             {
@@ -61,10 +62,15 @@ public class TrapManager : CulverinBehaviour
         }
     }
 
+    void OnTriggerEnter()
+    {
+        SwitchTraps();
+    }
+
     public void SwitchTraps()
     {
+        map = GetLinkedObject("map_obj");
         LevelMap map_level = map.GetComponent<LevelMap>();
-
         int curr_x = 0;
         int curr_z = 0;
         int curr_val = 0;

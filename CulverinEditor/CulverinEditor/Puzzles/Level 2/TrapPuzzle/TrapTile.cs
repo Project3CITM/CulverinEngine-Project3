@@ -31,12 +31,17 @@ public class TrapTile : CulverinBehaviour
 
         if (trap_walkable)
         {
+            global_pos.y = min_height;
             value = 0;
-        }
+        } 
         else
         {
+            global_pos.y = max_height;
             value = 1;
         }
+        GetComponent<Transform>().SetPosition(global_pos);
+
+        curr_state = CHANGE_STATE.TRAP_IDLE;
     }
 
     void Update()
@@ -94,7 +99,7 @@ public class TrapTile : CulverinBehaviour
         curr_z = tile_z;
         out_value = value;
 
-        return !trap_walkable;
+        return trap_walkable == false;
     }
 
     public bool CheckChangeState(out int curr_x, out int curr_z, out int out_value)
@@ -102,6 +107,6 @@ public class TrapTile : CulverinBehaviour
         curr_x = tile_x;
         curr_z = tile_z;
         out_value = value;
-        return (curr_state == 0 && trap_walkable);
+        return (curr_state == 0 && trap_walkable == true);
     }
 }
