@@ -43,7 +43,7 @@ public class DaenerysController : CharacterController
 
     protected override void Start()
     {
-        SetPosition(Position.BEHIND);
+        SetPosition(Position.BEHIND_RIGHT);
 
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         daenerys_obj = GetLinkedObject("daenerys_obj");
@@ -547,7 +547,10 @@ public class DaenerysController : CharacterController
     {
         GameObject fball = Instantiate("DaenerysFireball");
         GameObject pla_obj = GetLinkedObject("player_obj");
-        fball.transform.SetPosition(new Vector3(pla_obj.transform.GetPosition().x, pla_obj.transform.GetPosition().y - 5, pla_obj.transform.GetPosition().z)); fball.transform.SetRotation(pla_obj.transform.GetRotation());
+
+        fball.transform.SetPosition(GetSecondaryPosition(curr_position));
+        fball.transform.SetRotation(pla_obj.transform.GetRotation());
+
         Fireball fballscript = fball.GetComponent<Fireball>();
         fballscript.vfront = curr_forward;
         fballscript.fireball_particles = daenerys_fireball_particles;

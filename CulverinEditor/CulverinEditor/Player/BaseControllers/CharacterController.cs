@@ -6,7 +6,8 @@ public class CharacterController : CulverinBehaviour
     public enum Position
     {
         CURRENT = 0,
-        BEHIND
+        BEHIND_LEFT,
+        BEHIND_RIGHT
     }
 
     //Enum to control all the states of each character
@@ -50,7 +51,7 @@ public class CharacterController : CulverinBehaviour
         {
             ControlCharacter();
         }
-        else if(position == Position.BEHIND)
+        else if(position == Position.BEHIND_LEFT || position == Position.BEHIND_RIGHT)
         {
             if(gameObject.GetName() == "Theon")
             {
@@ -170,5 +171,52 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void EnableAbilities(bool active)
     {
+    }
+
+    public virtual Vector3 GetSecondaryPosition(Vector3 player_pos)
+    {
+        Vector3 ret = new Vector3(player_pos.x, player_pos.y - 5.0f, player_pos.z);
+
+        if (position == Position.BEHIND_LEFT)
+        {
+            if (curr_forward.z <= -2.0f)
+            {
+                ret.x -= 6.5f;
+            }
+            else if (curr_forward.z >= 2.0f)
+            {
+                ret.x += 6.5f;
+            }
+            else if (curr_forward.x >= 2.0f)
+            {
+                ret.z -= 6.5f;
+            }
+            else if (curr_forward.x <= 2.0f)
+            {
+                ret.z += 6.5f;
+            }
+            
+        }
+        else if (position == Position.BEHIND_RIGHT)
+        {
+            if (curr_forward.z <= -2.0f)
+            {
+                ret.x += 6.5f;
+            }
+            else if (curr_forward.z >= 2.0f)
+            {
+                ret.x -= 6.5f;
+            }
+            else if (curr_forward.x >= 2.0f)
+            {
+                ret.z += 6.5f;
+            }
+            else if (curr_forward.x <= -2.0f)
+            {
+                ret.z -= 6.5f;
+            }
+        }
+
+        return ret;
     }
 }

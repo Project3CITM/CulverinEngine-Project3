@@ -53,7 +53,7 @@ public class TheonController : CharacterController
 
     protected override void Start()
     {
-        SetPosition(Position.BEHIND);
+        SetPosition(Position.BEHIND_LEFT);
 
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         theon_obj = GetLinkedObject("theon_obj");
@@ -550,7 +550,7 @@ public class TheonController : CharacterController
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
 
-                arrow.transform.SetPosition(curr_position);
+                arrow.transform.SetPosition(GetSecondaryPosition(curr_position));
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
@@ -567,7 +567,7 @@ public class TheonController : CharacterController
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
 
-                arrow.transform.SetPosition(curr_position);
+                arrow.transform.SetPosition(GetSecondaryPosition(curr_position));
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
@@ -587,7 +587,8 @@ public class TheonController : CharacterController
 
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
-                arrow.transform.SetPosition(curr_position);
+
+                arrow.transform.SetPosition(GetSecondaryPosition(curr_position));
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
