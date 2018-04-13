@@ -284,7 +284,8 @@ bool ModuleLightning::CleanUp()
 
 void ModuleLightning::OnEvent(Event & event)
 {
-	
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
 
 	switch (event.Get_event_data_type())
 	{
@@ -324,6 +325,9 @@ void ModuleLightning::OnEvent(Event & event)
 		}
 
 	}
+
+	glCullFace(GL_BACK);
+
 	App->scene->scene_buff->Bind("Scene"); glCullFace(GL_BACK);
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	
