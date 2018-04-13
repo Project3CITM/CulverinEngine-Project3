@@ -148,12 +148,8 @@ public:
 		bool mCaseSensitive;
 
 		static LanguageDefinition CPlusPlus();
-		static LanguageDefinition HLSL();
 		static LanguageDefinition GLSL();
 		static LanguageDefinition C();
-		static LanguageDefinition SQL();
-		static LanguageDefinition AngelScript();
-		static LanguageDefinition Lua();
 
 		void Clear();
 	};

@@ -6,9 +6,10 @@ public class Arrow : CulverinBehaviour
 {
     public float damage = 20;
     public Vector3 speed = Vector3.Zero;
-    public bool collision;
+
+    public float to_destroy_time = 0;
     CompRigidBody rb;
-    private bool destroyed = false;
+    private bool to_destroy = false;
 
     public GameObject arrow_blood_particles;
     public GameObject arrow_sparks_particles;
@@ -16,55 +17,59 @@ public class Arrow : CulverinBehaviour
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
-        destroyed = false;
+        to_destroy = false;
         Shoot();
-        collision = true;
         damage = 10.0f;
     }
 
     public void Shoot()
     {
         rb.UnLockTransform();
-        Vector3 force = new Vector3(0, 5, 0);
-        rb.ApplyImpulse(force + speed*100); // Forward impulse
+        speed = speed * 100;
+        speed.y += 5;
+        rb.ApplyImpulse(speed); // Forward impulse
         rb.ApplyTorqueForce(speed*40); // Fall force
     }
 
     void Update()
     {
-        if (GetComponent<Transform>().local_position.y < -5 && destroyed == false)
+        if(to_destroy)
+        {
+            to_destroy_time -= Time.deltaTime;
+            if (to_destroy_time <= 0)
+            {
+                Destroy(gameObject);
+                to_destroy = false;
+            }
+        }
+        else if (GetComponent<Transform>().local_position.y < -5)
         {
             Destroy(gameObject);
-            destroyed = true;
+            to_destroy = true;
         }
-
-        //if(rb.LockedTransform())
-        //{
-        //    Destroy(float delay)
-        //}
     }
 
     void OnContact()
     {
-        Debug.Log("[yellow]Contact Start");
+        if(to_destroy)
+        {
+            return;
+        }
+
         CompCollider col = GetComponent<CompCollider>();
         GameObject collided_obj = col.GetCollidedObject();
        
         Vector3 point = col.GetContactPoint();
         Vector3 normal = col.GetContactNormal();
+        col.CollisionActive(false);
 
         // DAMAGE ---
-        Debug.Log("[error] Collided");
-        if (collided_obj != null && destroyed == false)
+        if (collided_obj != null)
         {
+            to_destroy = true;
             /* PLAY AUDIO */
             GetComponent<CompAudio>().PlayEvent("TheonImpact");
-            Debug.Log("[yellow] AJAAAA -------------------------------------");
             //Lock transform to avoid trespassing more than one collider
-            rb.LockTransform();
-
-            Debug.Log("[error] OnContact");
-            Debug.Log("[error]" + collided_obj.GetName());
 
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
@@ -80,33 +85,27 @@ public class Arrow : CulverinBehaviour
                     CompParticleSystem arrow_particles_script = arrow_blood_particles.GetComponent<CompParticleSystem>();
                     arrow_particles_script.ActivateEmission(true);
 
+                    Destroy(gameObject);
                     Debug.Log("[pink] ---------------- BLOOOOOD -------------------");
 
                 }
             }
             else
             {
-                CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
-                if (obj_col != null)
-                {
-                    obj_col.CallOnContact();
-                }
                 if (arrow_sparks_particles != null)
                 {
-
                     arrow_sparks_particles.GetComponent<Transform>().SetUpVector(normal);
                     arrow_sparks_particles.GetComponent<Transform>().SetPosition(point);
 
                     CompParticleSystem wall_particles_script = arrow_sparks_particles.GetComponent<CompParticleSystem>();
                     wall_particles_script.ActivateEmission(true);
-                    Debug.Log("[pink] ---------------- BLOOOOOD -------------------");
+
+                    normal = normal * 15;
+                    normal.y -= 4;
+                    GetComponent<CompRigidBody>().ApplyImpulse(normal);
+
                 }
             }
-        }
-        if (destroyed == false)
-        {
-            Destroy(gameObject);
-            destroyed = true;
         }
     }
 }

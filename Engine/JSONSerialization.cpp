@@ -21,6 +21,7 @@ static void counted_free(void *ptr);
 
 JSONSerialization::JSONSerialization()
 {
+	json_set_allocation_functions(counted_malloc, counted_free);
 }
 
 
@@ -968,7 +969,9 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 
 			}
 		}
+		json_object_clear(config);
 	}
+	json_value_free(config_file);
 }
 
 void JSONSerialization::SaveFont(const ResourceFont * font, const char * directory, const char * fileName)
@@ -1350,8 +1353,6 @@ void JSONSerialization::ResourcesInLibrary(std::string& path, uint type)
 
 void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile)
 {
-	json_set_allocation_functions(counted_malloc, counted_free);
-
 	*root_value_scene = json_value_init_object();
 	*root_object_scene = json_value_get_object(*root_value_scene);
 

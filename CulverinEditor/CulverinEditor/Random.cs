@@ -8,7 +8,7 @@ namespace CulverinEditor
     public sealed class Random
     {
         /// <summary>  
-        ///     Returns a random float number between and min [inclusive] and max [exclusive]
+        ///     Returns a random float number between and min [inclusive] and max [inclusive]
         ///     (Read Only).
         /// </summary>  
         [MethodImpl(MethodImplOptions.InternalCall)]

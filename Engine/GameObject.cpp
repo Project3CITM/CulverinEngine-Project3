@@ -128,11 +128,21 @@ GameObject::~GameObject()
 
 	if (components.size() > 0)
 	{
+		for (uint i = 0; i < components.size(); i++)
+		{
+			components[i]->Clear();
+			RELEASE(components[i]);
+		}
 		components.clear();
 	}
 
 	if (childs.size() > 0)
 	{
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			childs[i]->CleanUp();
+			RELEASE(childs[i]);
+		}
 		childs.clear();
 	}
 }
