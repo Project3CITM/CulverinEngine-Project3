@@ -229,6 +229,7 @@ private:
 
 	/*Component Graphic*/
 	static void SetRaycastTarget(MonoObject * object, mono_bool flag);
+	static void SetRender(MonoObject * object, mono_bool flag);
 	static void ActivateRender(MonoObject * object);
 	static void DeactivateRender(MonoObject * object);
 	/*Component Text*/
@@ -280,8 +281,10 @@ private:
 	static void SetClipsSpeed(MonoObject* object, float speed_value);
 	static float GetClipDuration(MonoObject* object, MonoString* string);
 	static void SetClipDuration(MonoObject* object, MonoString* string, float duration);
-	static void SetActiveBlendingClip(MonoObject* object, MonoString* string);
-	static void SetActiveBlendingClipWeight(MonoObject* object, float weight);
+	static void SetFirstActiveBlendingClip(MonoObject* object, MonoString* string);
+	static void SetFirstActiveBlendingClipWeight(MonoObject* object, float weight);
+	static void SetSecondActiveBlendingClip(MonoObject* object, MonoString* string);
+	static void SetSecondctiveBlendingClipWeight(MonoObject* object, float weight);
 	static void SetBlendInTime(MonoObject* object, MonoString* string, float weight);
 	static void PlayAnimationNode(MonoObject* object, MonoString* string);
 

@@ -9,7 +9,7 @@ class CompText;
 class CompImage;
 class CompGraphic;
 class CompCanvas;
-
+class VertexUIData;
 enum FillMethod;
 
 struct CanvasVertex
@@ -33,22 +33,17 @@ public:
 	void Load(const JSON_Object * object, std::string name);
 	void SyncComponent(GameObject* sync_parent);
 
-	void ProcessImage(CompImage* image);
-	void ProcessQuad(const std::vector<float3>&ver_quad);
-
-	void ProcessQuad(const std::vector<float2>&ver_quad, const std::vector<float2>&uv_coord);
-	void PorcessText(CompText* text);
 	void DrawGraphic();
 
 	void SetGraphic(CompGraphic* set_graphic);
-
+	void SetVertex(VertexUIData& data);
 	void CheckOpenGlError(std::string info);
-
+	
 private:
 public:
 private:
 	CompGraphic* graphic = nullptr;
-	std::vector<CanvasVertex> vertices;
+	std::vector<VertexUI> vertices;
 	std::vector<uint> indices;
 
 	uint vertices_id = 0;		/* VERTICES ID */

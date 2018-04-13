@@ -4,6 +4,7 @@ using CulverinEditor.Debug;
 public class Hp : CulverinBehaviour
 {
     public GameObject this_obj_hp;
+    public GameObject other_obj_hp;
     CompImage hp_bar;
     public float max_hp = 100.0f;
     float current_hp = 100.0f;
@@ -13,6 +14,7 @@ public class Hp : CulverinBehaviour
     {
         current_hp = 100.0f;
         this_obj_hp = GetLinkedObject("this_obj_hp");
+        other_obj_hp = GetLinkedObject("other_obj_hp");
     }
 
     void Update()
@@ -21,6 +23,11 @@ public class Hp : CulverinBehaviour
 
     public void GetDamage(float dmg)
     {
+        if (other_obj_hp.GetComponent<LeftHp>().current_lasthp < current_hp)
+        {
+            other_obj_hp.GetComponent<LeftHp>().lasthp_value = current_hp;
+            other_obj_hp.GetComponent<LeftHp>().hp_bar_changed = false;
+        }
         current_hp -= dmg;
         if(current_hp < 0)
         {
@@ -30,6 +37,7 @@ public class Hp : CulverinBehaviour
         calc_hp = current_hp / max_hp;
         hp_bar = this_obj_hp.GetComponent<CompImage>();
         hp_bar.FillAmount(calc_hp);
+     
     }
 
     public float GetCurrentHealth()
