@@ -68,4 +68,16 @@ public class Mana : CulverinBehaviour
         mana_bar = this_obj_mana.GetComponent<CompImage>();
         mana_bar.FillAmount(calc_mana);
     }
+
+    public bool CanWasteMana(float value)
+    {
+        if (curr_mana >= value)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

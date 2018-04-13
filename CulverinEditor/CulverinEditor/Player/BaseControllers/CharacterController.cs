@@ -86,11 +86,11 @@ public class CharacterController : CulverinBehaviour
         return stamina.CanWasteStamina(value);
     }
 
-    public virtual float GetCurrentMana()
+    public virtual bool CanWasteMana(float value)
     {
         mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
-        float ret = mana.GetCurrentMana();
-        return ret;
+        return mana.CanWasteMana(value);
+        
     }
 
     public virtual void DecreaseStamina(float stamina_cost)

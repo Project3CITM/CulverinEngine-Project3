@@ -365,7 +365,7 @@ public class DaenerysController : CharacterController
         {
             // Check if player has enough stamina to perform its attack
             float mana_cost = mana_cost_percentage_left * max_mana / 100.0f;
-            if (GetCurrentMana() > mana_cost)
+            if (CanWasteMana(mana_cost))
             {
                 cd_left = daenerys_button_left_obj.GetComponent<DaenerysCD_Left>();
                 //Check if the ability has enough charges
@@ -454,7 +454,7 @@ public class DaenerysController : CharacterController
             if (GetLinkedObject("player_obj").GetComponent<MovementController>().CheckIsWalkable(tile_x, tile_y))
             {
                 float mana_cost = mana_cost_percentage_right * max_mana / 100.0f;
-                if (GetCurrentMana() > mana_cost)
+                if (CanWasteMana(mana_cost))
                 {
                     cd_right = daenerys_button_right_obj.GetComponent<DaenerysCD_Right>();
                     //Check if the ability is not in cooldown
