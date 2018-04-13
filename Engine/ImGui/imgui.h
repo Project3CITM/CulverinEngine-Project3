@@ -1112,9 +1112,11 @@ struct ImGuiTextFilter
 	int                 CountGrep;
 
 	IMGUI_API           ImGuiTextFilter(const char* default_filter = "");
-	IMGUI_API bool      Draw(const char* label = "Filter (inc,-exc)", float width = 0.0f);    // Helper calling InputText+Build
+	IMGUI_API bool		Draw(const char* label = "Filter (inc,-exc)", float width = 0.0f);    // Helper calling InputText+Build
+	IMGUI_API bool      Draw(const char* label, float width, ImVector<const char*>& filters, bool filters_changed);   
 	IMGUI_API bool      PassFilter(const char* text, const char* text_end = NULL) const;
 	IMGUI_API void      Build();
+	IMGUI_API void      Build(ImVector<const char*>& filters);
 	void                Clear() { InputBuf[0] = 0; Build(); }
 	bool                IsActive() const { return !Filters.empty(); }
 };
