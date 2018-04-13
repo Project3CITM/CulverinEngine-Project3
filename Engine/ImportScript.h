@@ -120,7 +120,7 @@ private:
 	static mono_bool	GetInput_MouseButtonDown(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_MouseButtonUp(MonoString* name, MonoString* input);
 	static float		GetInput_ControllerAxis(MonoString* name, MonoString* input);
-	
+	static void			RumblePlay(float intensity, int milliseconds);
 
 	/* Time */
 	static float GetDeltaTime();

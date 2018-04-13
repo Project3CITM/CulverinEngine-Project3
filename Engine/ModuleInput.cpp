@@ -12,7 +12,7 @@
 #include "InputManager.h"
 #include "JSONSerialization.h"
 #define MAX_KEYS 300
-
+#define MAX_MILLISECONDS 2000
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
@@ -197,7 +197,8 @@ update_status ModuleInput::PreUpdate(float dt)
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 		{
-			RumblePlay(0.50f, 500);
+
+
 			press_any_key = true;
 			//LOG("mouse down");
 			mouse_x = e.motion.x / SCREEN_SIZE;
@@ -219,7 +220,6 @@ update_status ModuleInput::PreUpdate(float dt)
 		break;
 		case SDL_MOUSEBUTTONUP:
 		{			
-			RumblePlay(1.0f, 500);
 
 			mouse_x = e.motion.x / SCREEN_SIZE;
 			mouse_y = e.motion.y / SCREEN_SIZE;
@@ -580,7 +580,7 @@ void ModuleInput::RumblePlay(float intensity, int milliseconds)
 {
 	if (gamepad.Empty())
 		return;
-	if (intensity > 1)
+	if (intensity > 1|| milliseconds> MAX_MILLISECONDS|| milliseconds<0)
 		return;
 	if (SDL_HapticRumblePlay(gamepad.haptic, intensity, milliseconds) != 0) {
 		LOG("Warning: Unable to play rumble! %s\n", SDL_GetError()); 
@@ -654,6 +654,8 @@ void GamePad::Clear()
 	if (controller == nullptr)
 		return;
 	SDL_GameControllerClose(controller);
+	controller = nullptr;
 	SDL_HapticClose(haptic);
+	haptic = NULL;
 	joystick = NULL;
 }
