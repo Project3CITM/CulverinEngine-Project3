@@ -26,7 +26,6 @@ public class TheonCD_Secondary : CoolDown
 
     public override void OnClick()
     {
-        Debug.Log("FUCK THIS SHIT");
         if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0
             && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
         {

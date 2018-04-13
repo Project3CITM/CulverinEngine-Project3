@@ -16,7 +16,6 @@ using CulverinEditor.Debug;
 
         void OnTriggerEnter()
         {
-            Debug.Log("Restarting");
             SceneManager.LoadScene("ScoreMenu");            
         }               
     }

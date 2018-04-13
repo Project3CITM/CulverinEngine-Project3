@@ -32,7 +32,6 @@ public class PushBack_Action : Action
 
     public void SetPushDirection(Vector3 push_dir)
     {
-        Debug.Log("push direction is: " + push_dir);
         push_direction = push_dir;
     }
 
@@ -143,7 +142,6 @@ public class PushBack_Action : Action
                 }
                 break;
         }
-        Debug.Log("[error] animation clip: " + animation_clip_push);
         GetComponent<CompAnimation>().SetClipDuration(animation_clip_push, push_time);
 
         target_x = GetComponent<Movement_Action>().GetCurrentTileX();
@@ -162,7 +160,6 @@ public class PushBack_Action : Action
 
         if (GetComponent<CompAnimation>().IsAnimationStopped(animation_clip_push))
         {
-            Debug.Log("Pushed");
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
             GetComponent<Movement_Action>().SetEnemyTile(target_x, target_y);
 

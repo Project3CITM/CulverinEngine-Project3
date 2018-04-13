@@ -98,26 +98,19 @@ public class Lever : CulverinBehaviour
 
         audio = GetComponent<CompAudio>();
         if (audio == null)
-        {
-            Debug.Log("There is no audio in puzzle!");
-        }
+            Debug.Log("[error] There is no audio in puzzle!");
 
         countdown = GetComponent<PuzzleCountdown>();
         if(countdown == null)
-        {
-            Debug.Log("There is no countdown in puzzle!");
-        }
+            Debug.Log("[error] There is no countdown in puzzle!");
 
         anim_controller = lever_go.GetComponent<CompAnimation>();
         if (anim_controller == null)
-        {
-            Debug.Log("Animation is null!");
-        }
+            Debug.Log("[error] Animation is null!");
+
         barrel_puzzel_manager = GetComponent<BarrelPuzzleManager>();
         if (barrel_puzzel_manager == null)
-        {
-            Debug.Log("Animation is null!");
-        }
+            Debug.Log("[error] Animation is null!");
 
         Puzzle_line_1 = GetLinkedObject("Puzzle_line_1");
         Puzzle_line_2 = GetLinkedObject("Puzzle_line_2");
@@ -150,10 +143,7 @@ public class Lever : CulverinBehaviour
 
         lever_interact = GetLinkedObject("lever_interact");
         if(lever_interact != null)
-        {
             lever_interact.SetActive(false);
-            Debug.Log("[green] Deactivated Interact");
-        }
 
         if(other_lever_1 != null)
             other_lever_1 = GetLinkedObject("other_lever_1");
@@ -198,13 +188,11 @@ public class Lever : CulverinBehaviour
                 //Reset other puzzles if exists to avoid audio conflicts
                 if(other_lever_1 != null)
                 {
-                    Debug.Log("Reset previous puzzle");
                     other_lever_1.GetComponent<Lever>().ResetPuzzle();
                     other_lever_1.GetComponent<PuzzleCountdown>().StopCountdown();
                 }
                 if (other_lever_2 != null)
                 {
-                    Debug.Log("Reset previous puzzle");
                     other_lever_2.GetComponent<Lever>().ResetPuzzle();
                     other_lever_2.GetComponent<PuzzleCountdown>().StopCountdown();
                 }
@@ -232,7 +220,6 @@ public class Lever : CulverinBehaviour
              {
                  if (anim_controller.IsAnimationStopped(lever_animation_name))
                  {
-                     Debug.Log("Lever animation ended.");
                      // The lever animation has stopped so puzzle must start.
                      OnLeverAnimFinish();
                  }
@@ -269,7 +256,6 @@ public class Lever : CulverinBehaviour
 
             if (phase_wait) // wait to move the other mode
             {
-               // Debug.Log("Waiting");
                 // Wait delay to move other barrels
                 float time_transcured = Time.realtimeSinceStartup;
                 if (time_transcured >= time)
@@ -324,7 +310,6 @@ public class Lever : CulverinBehaviour
 
         CompCollider col = GetComponent<CompCollider>();
         GameObject obj_col = col.GetCollidedObject();
-        Debug.Log(obj_col.GetTag().ToString());
 
         if (obj_col != null && obj_col.CompareTag("player"))
         {
@@ -347,7 +332,6 @@ public class Lever : CulverinBehaviour
 
         CompCollider col = GetComponent<CompCollider>();
         GameObject obj_col = col.GetCollidedObject();
-        Debug.Log(obj_col.GetTag().ToString());
 
         if (obj_col != null && obj_col.CompareTag("player"))
         {
@@ -480,13 +464,9 @@ public class Lever : CulverinBehaviour
     {
         // Called when lever is activated. Set flag to true and play the animation.
         on_lever_animation = true;
-        Debug.Log("Animation called");
         anim_controller = lever_go.GetComponent<CompAnimation>();
         if (anim_controller != null)
-        {
             anim_controller.PlayAnimation(lever_animation_name);
-            Debug.Log("Animation activated");
-        }
     }
 
     void OnLeverAnimFinish()
@@ -522,21 +502,12 @@ public class Lever : CulverinBehaviour
 
         TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
         SetOrientationVectors();
-       /* Debug.Log("Path index: " + index);
-        Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
-        Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);*/
 
         LogLogicMap();
     }
 
     void LogLogicMap()
     {
-       /* Debug.Log("Logging logic map ------------------");
-
-        Debug.Log("Puzzle start at tile: " + puzzle_start_tile_x + ", " + puzzle_start_tile_z);
-        Debug.Log("Puzzle start at pos: " + puzzle_start_pos_x + ", " + puzzle_start_pos_z);
-        Debug.Log("Puzzle orienttion: " + current_path.puzzle_direction);*/
-
         for (int y = 0; y < current_path.height; ++y)
         {
             string t = "";
@@ -544,7 +515,6 @@ public class Lever : CulverinBehaviour
             {
                 t += (current_path.walkability[x, y] + " - ");
             }
-            //Debug.Log(t);
         }
 
         //TMP: Debugging purposes.
@@ -592,14 +562,11 @@ public class Lever : CulverinBehaviour
         level_map = GetLinkedObject("level_map");
         LevelMap level_map_script;
         if (level_map == null)
-            Debug.Log("MAP IS NULL");
+            Debug.Log("[error] Map is null");
         level_map_script = level_map.GetComponent<LevelMap>();
-
-        Debug.Log("[green] player");
 
         player = GetLinkedObject("player");
         MovementController player_mov = player.GetComponent<MovementController>();
-        Debug.Log("[green] player done");
 
         int count_barrel = barrel_per_line - 1;
 

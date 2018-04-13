@@ -13,14 +13,12 @@ public class PlayQuit : CulverinBehaviour
 
     public void Play()
     {
-        Debug.Log("GOING TO PLAY");
         push.PlayEvent("Push");
         SceneManager.LoadScene("HistoryScene");
     }
 
     public void Quit()
     {
-        Debug.Log("GOING TO Quit");
         push.PlayEvent("Push");
         SceneManager.QuitScene();
     }

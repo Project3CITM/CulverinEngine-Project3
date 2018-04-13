@@ -203,7 +203,6 @@ public class BarrelFall : CulverinBehaviour
 
         Vector3 global_pos = transform.GetGlobalPosition();
         sink_timer += Time.deltaTime;
-        Debug.Log(sink_timer);
         float new_height = global_pos.y;
         fall_displacement = -weight;
         new_height += fall_displacement * Time.deltaTime;
@@ -244,7 +243,6 @@ public class BarrelFall : CulverinBehaviour
     {
         sinking = true;
         audio.PlayEvent("BarrelSinking");
-       // Debug.Log("Setting to sink");
     }
 
     public void ResetBarrel()
@@ -269,12 +267,8 @@ public class BarrelFall : CulverinBehaviour
 
     void OnTriggerEnter()
     {
-        Debug.Log("[Green] Collision!!!!!!!!!!");
         if(col.GetCollidedObject().CompareTag("player") && mode_puzzle == ModeBarrel.FILLING && placed)
-        {
             sinking = true;
-        }
-
     }
 }
 

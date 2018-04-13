@@ -12,7 +12,6 @@ public class Align_Steering : CulverinBehaviour
     void Start()
     {
         move = GetComponent<Movement_Action>();
-        Debug.Log("Align Start");
         SetEnabled(false);
     }
 
@@ -32,8 +31,6 @@ public class Align_Steering : CulverinBehaviour
         }
 
         move.Rotate(Mathf.Rad2deg(acceleration));
-
-        //Debug.Log("Delta: " + delta);
     }
 
     public void SetRotation(float delta)

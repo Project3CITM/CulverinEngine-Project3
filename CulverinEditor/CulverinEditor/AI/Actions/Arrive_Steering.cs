@@ -13,7 +13,6 @@ public class Arrive_Steering : CulverinBehaviour
     // Use this for initialization
     void Start()
     {
-        Debug.Log("Arrive Start");
         in_range = false;
         SetEnabled(false);
         move = GetComponent<Movement_Action>();

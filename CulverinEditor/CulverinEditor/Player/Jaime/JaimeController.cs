@@ -472,12 +472,11 @@ public class JaimeController : CharacterController
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 30.0f);
         if (coll_object != null)
         {
-            Debug.Log("[error]"+coll_object.GetTag());
+            coll_object.GetTag();
             if (coll_object.CompareTag("Enemy"))
             {
                 //Get current hit streak
                 int hit_streak = combo_obj.GetComponent<ComboController>().GetHitStreak();
-                Debug.Log("[blue] --------------------- " + hit_streak +" ---------------------");
 
                 //Enable particles emission of enemy blood
                 particles_jaime.GetComponent<SwordParticles>().EnableEnemyCollision(true);
@@ -503,15 +502,12 @@ public class JaimeController : CharacterController
                 /* ---------- IN CASE THAT THE ENEMY BLOCKS THE ATTACK, UNCOMMENT AND COMPLETE THIS CODE ---------- */
                 if (enemy_manager.ApplyDamage(coll_object, damage))
                 {
-                    Debug.Log("Apply Damage");
-
                     GetComponent<CompAudio>().PlayEvent("Enemy_Flesh_Hit");
 
                     if (hit_streak == 0)
                     {
                         //Start combo time controller to manage hit streaks
                         combo_obj.GetComponent<ComboController>().StartComboTime();
-                        Debug.Log("[error]                       START COMBO TIME");
                     }
 
                     // If damage done effectively, increase Hit Streak
@@ -531,7 +527,6 @@ public class JaimeController : CharacterController
                     //PlayFx -> Obstacle Impact
                     //PlayFx("JaimeImpactStone");
                     PlayFx("JaimeImpact");
-                    Debug.Log("[pink] --- FAIL ATTACK ---");
                 }
                 /* ----------------------------------------------------------------------------------- */
             }
@@ -588,10 +583,7 @@ public class JaimeController : CharacterController
                 }
             }
             else
-            {
-                Debug.Log("Jaime RW Not Enough Stamina");
                 return false;
-            }
         }
         return false;
     }
@@ -622,14 +614,10 @@ public class JaimeController : CharacterController
                     return true;
                 }
                 else
-                {
                     return false;
-                }
             }
             else
-            {
                 return false;
-            }
         }
         return false;
     }

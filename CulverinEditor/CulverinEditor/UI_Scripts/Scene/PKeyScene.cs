@@ -13,15 +13,11 @@ public class PKeyScene : CulverinBehaviour
     void Update()
     {
         if(Input.GetPressAnyKey())
-        { 
-            Debug.Log("SceneSwap");
             SceneSwap();
-        }
     }
 
     void SceneSwap()
     {
-        Debug.Log("SceneSwap");
         Input.SetInputManagerActive("GUI", true);
         SceneManager.LoadScene("MainMenuScene");
     }
