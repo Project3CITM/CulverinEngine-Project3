@@ -9,6 +9,15 @@
 #define MAX_CONTROLLER_BUTTONS 15
 class InputManager;
 class PlayerActions;
+struct GamePad
+{
+	bool Empty();
+	void Clear();
+	_SDL_GameController* controller = nullptr;
+	SDL_Joystick* joystick = NULL;
+	SDL_Haptic* haptic = NULL;
+	int id = -1;
+};
 enum KEY_STATE
 {
 	KEY_IDLE = 0,
@@ -112,6 +121,14 @@ public:
 		mouse_x_global = x;
 		mouse_y_global = y;
 	}
+	void RumblePlay(float intensity, int milliseconds);
+	_SDL_GameController* GetGameController()const;
+	SDL_Joystick* GetJoystick() const;
+	SDL_Haptic* GetHaptic() const;
+
+
+private:
+	bool ConnectGameController();
 public:
 	bool quit = false;
 
@@ -140,7 +157,7 @@ private:
 
 public:
 	std::list<const char*> dropedfiles;
-	_SDL_GameController* controller = nullptr;
+	GamePad gamepad;
 	PlayerActions* player_action = nullptr;
 	InputManager* ui_manager = nullptr;
 };
