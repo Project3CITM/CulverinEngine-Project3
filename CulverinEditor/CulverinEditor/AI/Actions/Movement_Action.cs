@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 public class Movement_Action : Action
 {
-    public bool         look_at_player = false;
     public GameObject   map;
     public GameObject   player;
     public float        tile_size = 0.0f;
@@ -66,7 +65,6 @@ public class Movement_Action : Action
 
     void Start()
     {
-        look_at_player = false;
         map = GetLinkedObject("map");
         player = GetLinkedObject("player");
 
@@ -153,7 +151,9 @@ public class Movement_Action : Action
                 {
                     arrive.SetEnabled(false);
                     seek.SetEnabled(false);
-                    translation_finished = true;                 
+                    translation_finished = true;
+                    if (chase == true)
+                        LookAtPlayer();
                 }                
             }
         }
@@ -170,6 +170,7 @@ public class Movement_Action : Action
                 align.SetEnabled(false);
                 look_at_pos.y = GetComponent<Transform>().position.y;
                 Vector3 obj_vec = new Vector3(look_at_pos - GetComponent<Transform>().position);
+                Debug.Log("Looking At: " + look_at_pos);
                 GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
                 SetDirection();
             }
@@ -264,6 +265,7 @@ public class Movement_Action : Action
 
     private void NextTile()
     {
+        Debug.Log("[yellow] Next Tile");
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
         if (path.Count > 0)
         {
@@ -278,6 +280,17 @@ public class Movement_Action : Action
                 seek.SetEnabled(false);
                 translation_finished = true;
 
+                if (chase == true)
+                {
+                    if (LookingAtPlayer() == false)
+                        LookAtPlayer();
+                    else
+                    {
+                        rotation_finished = true;
+                        MoveSideways(path[0]);
+                    }
+                }
+
                 tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
             }
             else
@@ -288,21 +301,30 @@ public class Movement_Action : Action
 
                 if (chase == true)
                 {
+                    Debug.Log("[pink]chase = true");
                     if (LookingAtPlayer() == true)
+                    {
+                        rotation_finished = true;
                         MoveSideways(path[0]);
+                        Debug.Log("[green]MoveSideways");
+                    }
                     else
                         LookAtPlayer();
                 }
                 else
+                {
                     LookAtNextTile();
+                    Debug.Log("[blue]LookAtNextTile");
+                }
 
                 tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
             }
         }
     }
 
-    public void GoTo(int obj_x, int obj_y, bool rot = false)
+    public void GoTo(int obj_x, int obj_y)
     {
+        Debug.Log("Go To");
         int current_x = GetCurrentTileX();
         int current_y = GetCurrentTileY();
 
@@ -320,17 +342,13 @@ public class Movement_Action : Action
             seek.SetEnabled(true);
 
             translation_finished = false;
-            rotation_finished = false;
 
             path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
-            look_at_player = rot;
 
             if (path.Count > 1)
             {
                 if (arrive.ReachedTile())
-                {
                     NextTile();
-                }
             }
             else
             {
@@ -340,10 +358,20 @@ public class Movement_Action : Action
                     arrive.SetEnabled(false);
                     seek.SetEnabled(false);
                 }
+
+                if (chase == true)
+                {
+                    Debug.Log("LookingAtPlayer: " + LookingAtPlayer());
+                    if (LookingAtPlayer() == false)
+                    {
+                        Debug.Log("LookAtPlayer");
+                        LookAtPlayer();
+                    }
+                    else
+                        rotation_finished = true;
+                }
             }
         }
-
-        LookAtNextTile();
     }
 
     public void GoTo(PathNode obj, bool rot = false)
@@ -422,10 +450,6 @@ public class Movement_Action : Action
 
     public void LookAt(Vector3 target_position)
     {
-        look_at_pos = new Vector3(target_position);
-
-        align.SetEnabled(true);
-
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
         Vector3 obj_vec = new Vector3(target_position - pos);
@@ -433,17 +457,14 @@ public class Movement_Action : Action
         float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
 
         if (delta > Mathf.PI)
-        {
             delta = delta - 2 * Mathf.PI;
-        }
         if (delta < (-Mathf.PI))
-        {
             delta = delta + 2 * Mathf.PI;
-        }
 
         if (Mathf.Abs(delta) > align.GetRotMargin())
         {
             rotation_finished = false;
+            look_at_pos = new Vector3(target_position);
             align.SetEnabled(true);
             align.SetRotation(delta);
         }
@@ -451,6 +472,7 @@ public class Movement_Action : Action
 
     public void LookAtNextTile()
     {
+        Debug.Log("Look At next tile");
         Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
         if (path != null && path.Count > 0)
         {
@@ -473,6 +495,7 @@ public class Movement_Action : Action
 
     public void LookAtPlayer()
     {
+        Debug.Log("Hello");
         Vector3 target_pos = new Vector3(GetLinkedObject("player_obj").GetComponent<Transform>().position);
 
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
@@ -482,60 +505,95 @@ public class Movement_Action : Action
         float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
 
         if (delta > Mathf.PI)
-        {
             delta = delta - 2 * Mathf.PI;
-        }
         if (delta < (-Mathf.PI))
-        {
             delta = delta + 2 * Mathf.PI;
-        }
+
+        Debug.Log("Angle To Player: " + Mathf.Rad2deg(delta));
+        Debug.Log("Rotation done: " + rotation_finished);
 
         switch (dir)
         {
             case Direction.DIR_EAST:
-                //North
-                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                    LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
                 //South
-                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
+                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
+                {
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
+                    Debug.Log("Looking at East rotationg to South");
+                }
+                //North
+                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
+                {
+                    LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
+                    Debug.Log("Looking at East rotationg to North");
+                }
                 //West
                 if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
+                {
                     LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
+                    Debug.Log("Looking at East rotationg to West");
+                }
                 break;
 
             case Direction.DIR_NORTH:
-                //West
-                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                    LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
                 //East
+                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
+                {
+                    LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
+                    Debug.Log("Looking at North rotationg to East");
+                }
+                //West
                 if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
-                    LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY() + 1));
+                {
+                    LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
+                    Debug.Log("Looking at North rotationg to West");
+                }
                 //South
                 if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
+                {
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
+                    Debug.Log("Looking at North rotationg to South");
+                }
                 break;
             case Direction.DIR_SOUTH:
-                //East
-                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                    LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
                 //West
+                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
+                {
+                    LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
+                    Debug.Log("Looking at South rotationg to West");
+                }
+                //East
                 if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
-                    LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY() + 1));
+                {
+                    LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
+                    Debug.Log("Looking at South rotationg to East");
+                }
                 //North
                 if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
+                {
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
+                    Debug.Log("Looking at South rotationg to North");
+                }
                 break;
             case Direction.DIR_WEST:
-                //South
-                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                    LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
                 //North
-                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
+                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
+                {
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
+                    Debug.Log("Looking at West rotationg to North");
+                }
+                //South
+                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
+                {
+                    LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
+                    Debug.Log("Looking at West rotationg to South");
+                }
                 //East
                 if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
+                {
                     LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
+                    Debug.Log("Looking at West rotationg to East");
+                }  
                 break;
         }
     }
@@ -551,15 +609,11 @@ public class Movement_Action : Action
         float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
 
         if (delta > Mathf.PI)
-        {
             delta = delta - 2 * Mathf.PI;
-        }
         if (delta < (-Mathf.PI))
-        {
             delta = delta + 2 * Mathf.PI;
-        }
 
-        if (delta > -(Mathf.PI / 4) && delta < (Mathf.PI / 4))
+        if (delta >= -(Mathf.PI / 4) && delta <= (Mathf.PI / 4))
             return true;
         return false;
     }
