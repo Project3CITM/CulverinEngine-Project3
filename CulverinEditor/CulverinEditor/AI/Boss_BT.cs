@@ -72,6 +72,7 @@ public class Boss_BT : BT
 
             return;
         }
+
         if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION && current_action.action_type != Action.ACTION_TYPE.DIE_ACTION)
         {
             int distance_x = GetDistanceXToPlayer();
@@ -90,7 +91,7 @@ public class Boss_BT : BT
                         {
                             int rand = rand_gen.Next(1, 10);
 
-                            if (true)
+                            if (rand > 3)
                             {
                                 //distance attack
                                 current_action.Interupt();
@@ -115,6 +116,8 @@ public class Boss_BT : BT
                             {
                                 //AOE attack
                                 Debug.Log("AOE Attack");
+                                current_action.Interupt();
+                                next_action = GetComponent<BossWideAttack_Action>();
                                 cooldown = aoe_attack_cooldown;
                                 return;
                             }
@@ -179,6 +182,32 @@ public class Boss_BT : BT
                             current_action = GetComponent<InfiniteChasePlayer_Action>();
                             return;
                         }
+                }
+            }
+            else
+            {
+                if (distance_x + distance_y > 2 || distance_x != 0 && distance_y != 0)
+                {
+                    Debug.Log("[error]CHASE");
+                    current_action = GetComponent<InfiniteChasePlayer_Action>();
+                    GetComponent<InfiniteChasePlayer_Action>().ActionStart();
+                    return;
+                }
+                else
+                {
+                    if (!GetComponent<FacePlayer_Action>().IsFaced())
+                    {
+                        current_action.Interupt();
+                        next_action = GetComponent<FacePlayer_Action>();
+                        return;
+                    }
+                    else
+                    {
+                        Debug.Log("[error]IDLE");
+                        current_action = GetComponent<IdleAttack_Action>();
+                        GetComponent<IdleAttack_Action>().ActionStart();
+                        return;
+                    }
                 }
             }
         }

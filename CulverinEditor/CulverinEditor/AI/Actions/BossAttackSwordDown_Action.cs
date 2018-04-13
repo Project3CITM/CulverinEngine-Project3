@@ -38,7 +38,6 @@ public class BossAttackSwordDown_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-
         if (state == BASD_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
         {
             state = BASD_STATE.POST_APPLY;

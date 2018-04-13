@@ -38,7 +38,6 @@ public class BossWideAttack_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-
         if (state == BWA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
         {
             state = BWA_STATE.POST_APPLY;
