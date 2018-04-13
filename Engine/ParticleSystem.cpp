@@ -290,12 +290,113 @@ void ParticleEmitter::DrawCircle(const Circle& shape)
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
+void ParticleEmitter::SetSourceBlendingType()
+{
+	switch (source_type)
+	{
+	case GlZero:
+		p_source_type = GL_ZERO;
+		break;
+
+	case GlOne:
+		p_source_type = GL_ONE;
+		break;
+
+	case GlSrcColor:
+		p_source_type = GL_SRC_COLOR;
+		break;
+
+	case GlOneMinusSrcColor:
+		p_source_type = GL_ONE_MINUS_SRC_COLOR;
+		break;
+
+	case GlDstColor:
+		p_source_type = GL_DST_COLOR;
+		break;
+
+	case GlOneMinusDstColor:
+		p_source_type = GL_ONE_MINUS_DST_COLOR;
+		break;
+
+	case GlSrcAlpha:
+		p_source_type = GL_SRC_ALPHA;
+		break;
+
+	case GlOneMinusSrcAlpha:
+		p_source_type = GL_ONE_MINUS_SRC_ALPHA;
+		break;
+
+	case GlDstAlpha:
+		p_source_type = GL_DST_ALPHA;
+		break;
+
+	case GlOneMinusDstAlpha:
+		p_source_type = GL_ONE_MINUS_DST_ALPHA;
+		break;
+
+	case GlSrcAlphaSaturate:
+		p_source_type = GL_SRC_ALPHA_SATURATE;
+		break;
+	}
+	
+}
+
+void ParticleEmitter::SetDestinyBlendingType()
+{
+	switch (destiny_type)
+	{
+	case GlZero:
+		p_destiny_type = GL_ZERO;
+		break;
+
+	case GlOne:
+		p_destiny_type = GL_ONE;
+		break;
+
+	case GlSrcColor:
+		p_destiny_type = GL_SRC_COLOR;
+		break;
+
+	case GlOneMinusSrcColor:
+		p_destiny_type = GL_ONE_MINUS_SRC_COLOR;
+		break;
+
+	case GlDstColor:
+		p_destiny_type = GL_DST_COLOR;
+		break;
+
+	case GlOneMinusDstColor:
+		p_destiny_type = GL_ONE_MINUS_DST_COLOR;
+		break;
+
+	case GlSrcAlpha:
+		p_destiny_type = GL_SRC_ALPHA;
+		break;
+
+	case GlOneMinusSrcAlpha:
+		p_destiny_type = GL_ONE_MINUS_SRC_ALPHA;
+		break;
+
+	case GlDstAlpha:
+		p_destiny_type = GL_DST_ALPHA;
+		break;
+
+	case GlOneMinusDstAlpha:
+		p_destiny_type = GL_ONE_MINUS_DST_ALPHA;
+		break;
+
+	case GlSrcAlphaSaturate:
+		p_destiny_type = GL_SRC_ALPHA_SATURATE;
+		break;
+	}
+}
+
 ParticleEmitter::EmitterShapeUnion::EmitterShapeUnion()
 {
 
 }
 
-Particle::Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax, bool _glow) : ParentParticleSystem(parent)
+Particle::Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax, bool _glow, int source_blend, int destiny_blend) : ParentParticleSystem(parent)
 {
 	
 	SetAssignedStateFromVariables(InitialState, Initial);
@@ -305,6 +406,8 @@ Particle::Particle(ParticleSystem* parent, const ParticleState& Initial, const P
 	parent->Emitter.GetPosition(Properties.Position);
 	Properties.Position += offset;
 	glow = _glow;
+	Properties.source_blend_type = source_blend;
+	Properties.destiny_blend_type = destiny_blend;
 }
 
 Particle::~Particle()
@@ -349,7 +452,8 @@ void Particle::DrawParticle(uint program_id)
 	//glEnable(GL_NORMALIZE);
 	if (ParentParticleSystem->TextureData.TextureID != 0)
 	{
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);		
+		glEnable(GL_BLEND);
+		glBlendFunc(Properties.source_blend_type, Properties.destiny_blend_type);
 		uint texLoc = glGetUniformLocation(program_id, "albedo");
 		glUniform1i(texLoc, 0);
 		glActiveTexture(GL_TEXTURE0);
@@ -392,7 +496,7 @@ void Particle::DrawParticle(uint program_id)
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
-
+	glDisable(GL_BLEND);
 	glDisable(GL_NORMALIZE);
 	glDepthMask(GL_TRUE);
 
@@ -1152,7 +1256,8 @@ void ParticleSystem::DrawEmitterOptions()
 {
 	ImGui::Columns(3, "##mycolumns3", false);  // 2-ways, no border
 	ImGui::PushItemWidth(100);
-	if (ImGui::Combo("Emitter Shape", (int*)&Emitter.Type, "Sphere\0SemiSphere\0Cone\0Box\0Circle")) Emitter.ResetEmitterValues();
+	if (ImGui::Combo("Emitter Shape", (int*)&Emitter.Type, "Sphere\0SemiSphere\0Cone\0Box\0Circle"))
+		Emitter.ResetEmitterValues();
 	ImGui::PopItemWidth();
 	switch (Emitter.Type)
 	{
@@ -1212,6 +1317,15 @@ void ParticleSystem::DrawEmitterOptions()
 		ImGui::PopItemWidth();
 		break;
 	}
+
+	ImGui::PushItemWidth(175);
+	if (ImGui::Combo("Blend Source type", (int*)&Emitter.source_type, "GL_ZERO\0GL_ONE\0GL_SRC_COLOR\0GL_ONE_MINUS_SRC_COLOR\0GL_DST_COLOR\0GL_ONE_MINUS_DST_COLOR\0GL_SRC_ALPHA\0GL_ONE_MINUS_SRC_ALPHA\0GL_DST_ALPHA\0GL_ONE_MINUS_DST_ALPHA\0GL_SRC_ALPHA_SATURATE\0GL_CONSTANT_COLOR\0GL_ONE_MINUS_CONSTANT_COLOR\0GL_CONSTANT_ALPHA\0GL_ONE_MINUS_CONSTANT_ALPHA"))
+		Emitter.SetSourceBlendingType();
+
+	if (ImGui::Combo("Blend Destiny type", (int*)&Emitter.destiny_type, "GL_ZERO\0GL_ONE\0GL_SRC_COLOR\0GL_ONE_MINUS_SRC_COLOR\0GL_DST_COLOR\0GL_ONE_MINUS_DST_COLOR\0GL_SRC_ALPHA\0GL_ONE_MINUS_SRC_ALPHA\0GL_DST_ALPHA\0GL_ONE_MINUS_DST_ALPHA\0GL_SRC_ALPHA_SATURATE\0GL_CONSTANT_COLOR\0GL_ONE_MINUS_CONSTANT_COLOR\0GL_CONSTANT_ALPHA\0GL_ONE_MINUS_CONSTANT_ALPHA"))
+		Emitter.SetDestinyBlendingType();
+	ImGui::PopItemWidth();
+
 	ImGui::NextColumn();
 	ImGui::PushItemWidth(80);
 	ImGui::DragFloat("Emitter Life", &Emitter.EmitterLifeMax, 0.1f, -1.0f, 120.0f);
@@ -1299,7 +1413,7 @@ bool ParticleSystem::CreateParticle()
 	Rot.Normalize();
 	Direction = float3(Rot.x, Rot.y, Rot.z);
 
-	Particles.push_back(Particle(this, InitialState, FinalState, Direction * (Emitter.Speed + RandGen.Float(-Emitter.SpeedVariation, Emitter.SpeedVariation)), offset, Emitter.Lifetime + RandGen.Float(-Emitter.LifetimeVariation, Emitter.LifetimeVariation), Emitter.glow));
+	Particles.push_back(Particle(this, InitialState, FinalState, Direction * (Emitter.Speed + RandGen.Float(-Emitter.SpeedVariation, Emitter.SpeedVariation)), offset, Emitter.Lifetime + RandGen.Float(-Emitter.LifetimeVariation, Emitter.LifetimeVariation), Emitter.glow, Emitter.p_source_type, Emitter.p_destiny_type));
 	
 	return true;
 }
