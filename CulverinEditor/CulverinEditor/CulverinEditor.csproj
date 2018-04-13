@@ -84,6 +84,7 @@
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\PuzzleCountdown.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\SetParticleTransf.cs" />
     <Compile Include="Puzzles\Level 2\DoorLevel2.cs" />
+    <Compile Include="Puzzles\Level 2\MovementPlayer2_test.cs" />
     <Compile Include="Puzzles\Level 2\ProjectilePuzzle\Projectile.cs" />
     <Compile Include="Puzzles\Level 2\ProjectilePuzzle\ManagerProjectile.cs" />
     <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapManager.cs" />
