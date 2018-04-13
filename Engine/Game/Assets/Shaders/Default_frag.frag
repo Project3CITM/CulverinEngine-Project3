@@ -137,8 +137,6 @@ void main()
     // Shadow
     vec4 shadowPos = shadowCoord / shadowCoord.w;
     float visibility = 1.0;
-    float shadow_val;
-    
 
     vec3 lightDir = vec3(0, 0, 0);
     // Iterate all lights to search the first directional light for now
@@ -157,12 +155,16 @@ void main()
     float usedBias = bias * tan(acos(cosTheta));
     usedBias = clamp(usedBias, 0, 0.01);
 
-  
-		//int index = int(16.0*random(floor(mat3(model)* ourPos*1000.0), i))%16;
-		shadow_val = (texture( _shadowMap, vec3(shadowPos.xy , (shadowCoord.z - usedBias)/shadowCoord.w) ));
+    for(int i = 0; i < iterations; ++i)
+    {
+		    int index = int(16.0*random(floor(mat3(model)* ourPos*1000.0), i))%16;
+        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowCoord.xy + poissonDisk[index] / 700.0, (shadowCoord.z - usedBias) / shadowCoord.w)));
+        float tmp = 0.05 * shadowVal;
 
-   		visibility =shadow_val;
-
+        visibility -= tmp;
+        //float shadow_val = (texture( _shadowMap, vec3(shadowPos.xy , (shadowCoord.z - usedBias)/shadowCoord.w) ));
+        //visibility = shadow_val;
+}
 
 
  for (int i = 0; i <_numLights; ++i) {
@@ -184,10 +186,4 @@ void main()
 	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
 
     color = vec4(color_texture * visibility, _alpha);
-
-
-
-    //float tmp = texture(_shadowMap, vec3(shadowPos.xy, (shadowPos.z-bias)));
-    //color = vec4(visibility, visibility, visibility, 1);
-
 }
