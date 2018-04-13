@@ -466,6 +466,12 @@ update_status ModuleInput::UpdateConfig(float dt)
 	ImGui::TextColored(color, "UI Horizontal: %s", horizontal.c_str());
 	ImGui::TextColored(color, "UI Submit: %s", submit.c_str());
 	ImGui::TextColored(color, "UI Cancel: %s", cancel.c_str());
+	if (ImGui::Button("Save PlayerActions"))
+	{
+		App->json_seria->SavePlayerAction(player_action, name.c_str(), "player_action");
+
+	}
+
 	//ImGui::Text("Keyboard Click");
 	//ImGui::TextColored(ImVec4(0.0f, 0.58f, 1.0f, 1.0f), "%i", SDL_GetKeyboardState(NULL));
 	return UPDATE_CONTINUE;
@@ -479,7 +485,6 @@ bool ModuleInput::CleanUp()
 	name = App->fs->GetFullPath(name);
 	//Crash if not open?
 	gamepad.Clear();
-	App->json_seria->SavePlayerAction(player_action, name.c_str(), "player_action");
 	player_action->Clear();
 	RELEASE(player_action);
 	player_action = nullptr;
