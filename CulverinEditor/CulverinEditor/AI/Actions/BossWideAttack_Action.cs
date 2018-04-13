@@ -1,16 +1,16 @@
 ﻿using CulverinEditor.Debug;
 using CulverinEditor;
 
-public class BossAttackSwordDown_Action : Action
+public class BossWideAttack_Action : Action
 {
-    public BossAttackSwordDown_Action()
+    public BossWideAttack_Action()
     {
-        action_type = ACTION_TYPE.BOSS_ATTACK_SWORD_DOWN_ACTION;
+        action_type = ACTION_TYPE.BOSS_ATTACK_WIDE_ACTION;
     }
 
-    public BossAttackSwordDown_Action(float dmg)
+    public BossWideAttack_Action(float dmg)
     {
-        action_type = ACTION_TYPE.BOSS_ATTACK_SWORD_DOWN_ACTION;
+        action_type = ACTION_TYPE.BOSS_ATTACK_WIDE_ACTION;
         damage = dmg;
     }
 
@@ -47,11 +47,11 @@ public class BossAttackSwordDown_Action : Action
             int enemy_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
             GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int player_tile_x, out int player_tile_y);
-         
-            switch(GetComponent<Movement_Action>().GetDirection())
+
+            switch (GetComponent<Movement_Action>().GetDirection())
             {
                 case Movement_Action.Direction.DIR_WEST:
-                    if ((enemy_tile_x - 1 == player_tile_x || enemy_tile_x - 2 == player_tile_x) && player_tile_y == enemy_tile_y)
+                    //if ((enemy_tile_x - 1 == player_tile_x || enemy_tile_x == player_tile_x) && (player_tile_y == enemy_tile_y || ))
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
                     }
@@ -87,7 +87,7 @@ public class BossAttackSwordDown_Action : Action
 
     public override bool ActionEnd()
     {
-        Debug.Log("SwordDown attack end!");
+        Debug.Log("Wide attack end!");
         interupt = false;
         return false;
     }
