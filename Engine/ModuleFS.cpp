@@ -170,6 +170,10 @@ void ModuleFS::CopyPasteFile(const char * fileFrom, const char* fileTo)
 	namespace fs = std::experimental::filesystem;
 	if (fileFrom != nullptr && fileTo != nullptr)
 	{
+		if (fs::exists(fileTo))
+		{
+			fs::remove(fileTo);
+		}
 		fs::copy(fileFrom, fileTo);
 	}
 }
