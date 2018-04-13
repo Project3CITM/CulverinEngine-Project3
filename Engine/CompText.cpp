@@ -81,7 +81,7 @@ void CompText::Update(float dt)
 		}
 	}
 
-		render = can_draw;
+		render = CheckRender();
 
 }
 void CompText::ShowOptions()
