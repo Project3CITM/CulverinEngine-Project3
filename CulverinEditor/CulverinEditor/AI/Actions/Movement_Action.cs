@@ -302,19 +302,6 @@ public class Movement_Action : Action
             }
             else
             {
-                if (map.GetComponent<Pathfinder>().IsOccupiedTile(path[1]))
-                {
-                    Debug.Log("[green]The Dream: " + gameObject.GetName());
-                    if (gameObject.GetName() == "ShieldEnemy")
-                    {
-                        foreach(PathNode node in path)
-                        {
-                            Debug.Log("[blue]SHIELD PATH x: " + node.GetTileX() + "y: " + node.GetTileY());
-                        }
-                    }
-                    Debug.Log("[pink]Next tile ocupated x: " + path[1].GetTileX() + "y: " + path[1].GetTileY());
-                    return;
-                }
                 arrive.SetEnabled(true);
                 seek.SetEnabled(true);
                 path.Remove(path[0]);
