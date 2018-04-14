@@ -528,7 +528,7 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instant
 				obj->animation_translations = json_object_dotget_boolean_with_std(config_node, name + "AnimTranslations");
 
 				// Now Check that the name is not repet
-				//CheckChangeName(*obj);
+				CheckChangeName(*obj);
 				//Load Components
 				int NumberofComponents = json_object_dotget_number_with_std(config_node, name + "Number of Components");
 				if (NumberofComponents > 0)

@@ -120,7 +120,8 @@ public:
 	GameObject* GetChildByTagIndex(const char* tag, int index) const;
 	GameObject* GetChildByRealName(std::string name) const;
 	void GetChildDeepSearch(const char * name, std::vector<GameObject*>& GOVector) const;
-	uint GetIndexChildbyName(const char* name) const;
+	int GetIndexChildbyName(const char* name) const;
+	int GetIndexChildbyGO(const GameObject* child) const;
 	void RemoveChildbyIndex(uint index);
 	std::vector<GameObject*> GetChildsVec() const;
 	std::vector<GameObject*>* GetChildsPtr();

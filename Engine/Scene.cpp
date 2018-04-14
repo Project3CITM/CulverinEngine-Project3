@@ -1213,8 +1213,11 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 		if (gameobject->GetParent() != nullptr)
 		{
 			LOG("[green] DELETE");
-			int index = gameobject->GetParent()->GetIndexChildbyName(gameobject->GetName());
-			gameobject->GetParent()->RemoveChildbyIndex(index);
+			int index = gameobject->GetParent()->GetIndexChildbyGO(gameobject);
+			if (index != -1)
+			{
+				gameobject->GetParent()->RemoveChildbyIndex(index);
+			}
 			gameobject = nullptr;
 		}
 

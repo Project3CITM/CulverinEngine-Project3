@@ -718,6 +718,7 @@ void GameObject::ShowGameObjectOptions()
 			Event e;
 			e.Set_event_data(EventType::EVENT_DELETE_GO);
 			e.delete_go.Todelte = this;
+			e.delete_go.uuid = uid;
 			PushEvent(e);
 		}
 		else
@@ -2104,7 +2105,7 @@ void GameObject::GetChildDeepSearch(const char * name, std::vector<GameObject*>&
 }
 
 
-uint GameObject::GetIndexChildbyName(const char * name) const
+int GameObject::GetIndexChildbyName(const char * name) const
 {
 	if (childs.size() > 0)
 	{
@@ -2116,7 +2117,22 @@ uint GameObject::GetIndexChildbyName(const char * name) const
 			}
 		}
 	}
-	return 0;
+	return -1;
+}
+
+int GameObject::GetIndexChildbyGO(const GameObject * child) const
+{
+	if (childs.size() > 0)
+	{
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			if (childs[i] == child)
+			{
+				return i;
+			}
+		}
+	}
+	return -1;
 }
 
 void GameObject::RemoveChildbyIndex(uint index)
