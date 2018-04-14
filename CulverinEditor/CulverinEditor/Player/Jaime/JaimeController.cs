@@ -646,8 +646,18 @@ public class JaimeController : CharacterController
 
     public override void EnableAbilities(bool active)
     {
-        jaime_button_left.SetActive(active);
-        jaime_button_right.SetActive(active);
+        //jaime_button_left.SetActive(active);
+        //jaime_button_right.SetActive(active);
+
+        //Disable Button Interaction
+        jaime_button_left.GetComponent<CompButton>().SetInteractivity(active);
+        jaime_button_right.GetComponent<CompButton>().SetInteractivity(active);
+
+        //Disable Image
+        jaime_button_left.GetComponent<CompImage>().SetRender(active);
+        jaime_button_right.GetComponent<CompImage>().SetRender(active);
+
+        //Disable Flags
         jaime_left_flag.SetActive(active);
         jaime_right_flag.SetActive(active);
     }

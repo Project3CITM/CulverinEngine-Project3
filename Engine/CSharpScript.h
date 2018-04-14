@@ -269,6 +269,7 @@ public:
 	void		Activate(MonoObject * object, int uid);
 	void		Deactivate(MonoObject * object, int uid);
 	void		Clicked(MonoObject* object);
+	void		SetInteractivity(MonoObject* object, mono_bool enable);
 
 	/*UI-Graphics*/
 	void		SetRaycastTarget(MonoObject * object, mono_bool flag);

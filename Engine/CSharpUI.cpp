@@ -76,6 +76,18 @@ void CSharpScript::Clicked(MonoObject * object)
 	}
 }
 
+void CSharpScript::SetInteractivity(MonoObject * object, mono_bool enable)
+{
+	if (current_game_object != nullptr)
+	{
+		CompInteractive* item = (CompInteractive*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			item->SetInteractivity(enable);
+		}
+	}
+}
+
 void CSharpScript::SetRaycastTarget(MonoObject * object, mono_bool flag)
 {
 	if (current_game_object != nullptr)

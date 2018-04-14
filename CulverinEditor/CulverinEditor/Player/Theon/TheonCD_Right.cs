@@ -6,6 +6,8 @@ public class TheonCD_Right : CoolDown
     public override void Update()
     {
         base.Update();
+
+        Debug.Log(act_time, Department.PLAYER, Color.RED);
     }
 
     public override void OnClick()

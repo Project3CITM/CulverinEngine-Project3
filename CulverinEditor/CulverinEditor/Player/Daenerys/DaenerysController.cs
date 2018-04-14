@@ -590,8 +590,18 @@ public class DaenerysController : CharacterController
 
     public override void EnableAbilities(bool active)
     {
-        daenerys_button_left_obj.SetActive(active);
-        daenerys_button_right_obj.SetActive(active);
+        //daenerys_button_left_obj.SetActive(active);
+        //daenerys_button_right_obj.SetActive(active);
+
+        //Disable Button Interaction
+        daenerys_button_left_obj.GetComponent<CompButton>().SetInteractivity(active);
+        daenerys_button_right_obj.GetComponent<CompButton>().SetInteractivity(active);
+
+        //Disable Image
+        daenerys_button_left_obj.GetComponent<CompImage>().SetRender(active);
+        daenerys_button_right_obj.GetComponent<CompImage>().SetRender(active);
+
+        //Disable Flags
         daenerys_left_flag.SetActive(active);
         daenerys_right_flag.SetActive(active);
     }

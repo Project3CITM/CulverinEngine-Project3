@@ -540,8 +540,18 @@ public class TheonController : CharacterController
 
     public override void EnableAbilities(bool active)
     {
-        theon_button_left.SetActive(active);
-        theon_button_right.SetActive(active);
+        //theon_button_left.SetActive(active);
+        //theon_button_right.SetActive(active);
+
+        //Disable Button Interaction
+        theon_button_left.GetComponent<CompButton>().SetInteractivity(active);
+        theon_button_right.GetComponent<CompButton>().SetInteractivity(active);  
+
+        //Disable Image
+        theon_button_left.GetComponent<CompImage>().SetRender(active);
+        theon_button_right.GetComponent<CompImage>().SetRender(active);
+
+        //Disable Flags
         theon_left_flag.SetActive(active);
         theon_right_flag.SetActive(active);
     }
