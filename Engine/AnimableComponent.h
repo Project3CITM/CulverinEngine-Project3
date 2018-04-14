@@ -11,6 +11,7 @@ enum ParameterValue
 	RECT_TRANSFORM_WIDTH,
 	RECT_TRANSFORM_HEIGHT,
 	IMAGE_ALPHA_VALUE,
+	IMAGE_SPRITE_ANIM,
 };
 
 union AnimationValue

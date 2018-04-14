@@ -42,10 +42,12 @@ public:
 	void SetToFilled(bool filled);
 	void SetNewAnimationValue(const AnimationData& value);
 	const char* ReturnParameterName(ParameterValue parameter);
+
 	float4 GetColor()const;
 	ResourceMaterial* GetSourceImage()const;
 	ResourceMaterial* GetCurrentTexture()const;
 	AnimationData ShowParameters();
+	AnimationValue GetParameter(ParameterValue parameter);
 private:
 	void CorrectFillAmount();
 	float CorrectValue01(float value);

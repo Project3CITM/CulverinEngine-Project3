@@ -672,11 +672,17 @@ bool KeyFrameData::ShowKeyValue(int i)
 		paramter_name += std::to_string(i);
 		ImGui::DragFloat(paramter_name.c_str(), &key_data[i].key_values.f_value);
 		break;
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		ImGui::Text("Alpha");
+		paramter_name = "##image_alpha";
+		paramter_name += std::to_string(i);
+		ImGui::DragFloat(paramter_name.c_str(), &key_data[i].key_values.f_value,1.0f,0.0f,255.0f);
+		break;
 	default:
 		break;
 	}
 	std::string capture_name;
-	capture_name = "Camputure value##campture_value";
+	capture_name = "Capture value##campture_value";
 	capture_name += std::to_string(i);
 	if (ImGui::Button(capture_name.c_str()))
 	{

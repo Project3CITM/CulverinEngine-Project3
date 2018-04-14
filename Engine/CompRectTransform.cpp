@@ -565,15 +565,12 @@ AnimationValue CompRectTransform::GetParameter(ParameterValue parameter)
 		break;
 	case RECT_TRANSFORM_SCALE:
 		ret.f3_value = GetScale();
-
 		break;
 	case RECT_TRANSFORM_WIDTH:
 		ret.f_value = GetWidth();
-
 		break;
 	case RECT_TRANSFORM_HEIGHT:
 		ret.f_value = GetHeight();
-
 		break;
 	default:
 		break;

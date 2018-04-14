@@ -527,6 +527,21 @@ void CompImage::SetNewAnimationValue(const AnimationData & value)
 	}
 }
 
+const char * CompImage::ReturnParameterName(ParameterValue parameter)
+{
+	switch (parameter)
+	{
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		return "Alpha";
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		return "Sprite";
+		break;
+	default:		
+		break;
+	}
+}
+
 float4 CompImage::GetColor() const
 {
 	return color;
@@ -565,6 +580,22 @@ AnimationData CompImage::ShowParameters()
 			ImGui::SliderFloat("Select Alpha:", &ret.value.f_value, 0, 1);
 			SetAlpha(ret.value.f_value);
 		}
+	}
+	return ret;
+}
+
+AnimationValue CompImage::GetParameter(ParameterValue parameter)
+{
+	AnimationValue ret;
+	switch (parameter)
+	{
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		ret.f_value = GetColor().w;
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		//FILL
+	default:
+		break;
 	}
 	return ret;
 }
