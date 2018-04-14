@@ -380,7 +380,6 @@ public class JaimeController : CharacterController
             GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().SetInteractivity(false);
             GetLinkedObject("jaime_s_button_obj").GetComponent<CompImage>().SetRender(false);
             GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);
-
         }
 
         //Get values from var and store them
