@@ -42,6 +42,12 @@ public class Enemy_BT : BT
     public int end_path_x;
     public int end_path_y;
 
+    //UI Components
+    public GameObject enemy_hp_bar;
+    public float hp_timer_total = 10.0f;
+    protected float hp_timer = 10.0f;
+    protected bool hud_active = false;
+
     public override void Start()
     {
         in_combat = false;
@@ -54,6 +60,12 @@ public class Enemy_BT : BT
         GetComponent<CompAnimation>().PlayAnimation("Idle");
         dmg_alpha = 0.0f;
         //ChangeTexturesToAlive();
+        enemy_hp_bar = GetLinkedObject("enemy_hp_bar");
+        enemy_hp_bar.GetComponent<CompImage>().DeactivateRender();
+        hp_timer_total = 10.0f;
+        hp_timer = 0.0f;
+        hud_active = false;
+
         base.Start();
     }
 
@@ -146,6 +158,8 @@ public class Enemy_BT : BT
             life_state = ENEMY_STATE.ENEMY_DAMAGED;
             //ChangeTexturesToDamaged();
         }
+
+        UpdateHUD();
 
         return true;
     }
@@ -274,5 +288,29 @@ public class Enemy_BT : BT
     public virtual void ChangeTexturesToAlive()
     {
         Debug.Log("[error] Alive change Textures not defined");
+    }
+
+    public virtual void UpdateHUD()
+    {
+        float calc_hp = current_hp / total_hp;
+        enemy_hp_bar.GetComponent<CompImage>().FillAmount(calc_hp);
+        hp_timer = 0.0f;
+    }
+
+    public virtual void ActivateHUD(GameObject icon, GameObject text)
+    {
+        hp_timer = 0.0f;
+        enemy_hp_bar.GetComponent<CompImage>().ActivateRender();
+        icon.GetComponent<CompImage>().ActivateRender();
+        text.SetActive(true);
+        hud_active = true;
+    }
+
+    public virtual void DeactivateHUD(GameObject icon, GameObject text)
+    {
+        enemy_hp_bar.GetComponent<CompImage>().DeactivateRender();
+        icon.GetComponent<CompImage>().DeactivateRender();
+        text.SetActive(false);
+        hud_active = false;
     }
 }

@@ -9,6 +9,9 @@ public class EnemySpear_BT : Enemy_BT
     System.Random rand;
     Material enemy_mat_sword;
 
+    public GameObject spear_icon;
+    public GameObject spear_name;
+
     public override void Start()
     {
         this.range = 2;
@@ -41,12 +44,26 @@ public class EnemySpear_BT : Enemy_BT
 
         enemy_mat_sword = GetMaterialByName("EnemyWithSpear");
 
+        spear_icon = GetLinkedObject("spear_icon");
+        spear_name = GetLinkedObject("spear_name");
+
         base.Start();
+        base.DeactivateHUD(spear_icon, spear_name);
     }
 
     public override void Update()
     {
         enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
+
+        if (hp_timer < hp_timer_total && hud_active == true)
+        {
+            hp_timer += Time.deltaTime;
+        }
+        else if (hud_active == true)
+        {
+            base.DeactivateHUD(spear_icon, spear_name);
+        }
+
         base.Update();
     }
 
@@ -174,6 +191,7 @@ public class EnemySpear_BT : Enemy_BT
 
     public override bool ApplyDamage(float damage)
     {
+        base.ActivateHUD(spear_icon, spear_name);
         return base.ApplyDamage(damage);
     }
 

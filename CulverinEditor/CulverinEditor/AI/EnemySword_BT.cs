@@ -6,6 +6,9 @@ public class EnemySword_BT : Enemy_BT
 
     Material enemy_mat_sword;
 
+    public GameObject sword_icon;
+    public GameObject sword_name;
+
     public override void Start()
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
@@ -26,15 +29,28 @@ public class EnemySword_BT : Enemy_BT
 
         enemy_mat_sword = GetMaterialByName("EnemyWithSword");
 
+        sword_icon = GetLinkedObject("sword_icon");
+        sword_name = GetLinkedObject("sword_name");
+
         dmg_alpha = 0.0f;
 
         base.Start();
+        base.DeactivateHUD(sword_icon, sword_name);
     }
 
     public override void Update()
     {
 
         enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
+
+        if (hp_timer < hp_timer_total && hud_active == true)
+        {
+            hp_timer += Time.deltaTime;
+        }
+        else if (hud_active == true)
+        {
+            base.DeactivateHUD(sword_icon, sword_name);
+        }
 
         base.Update();
     }
@@ -116,6 +132,7 @@ public class EnemySword_BT : Enemy_BT
 
     public override bool ApplyDamage(float damage)
     {
+        base.ActivateHUD(sword_icon, sword_name);
         return base.ApplyDamage(damage);
     }
 
