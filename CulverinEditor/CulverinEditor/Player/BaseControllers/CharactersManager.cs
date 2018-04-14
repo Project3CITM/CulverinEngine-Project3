@@ -36,6 +36,8 @@ public class CharactersManager : CulverinBehaviour
     public GameObject player_obj; 
     public GameObject health_obj;
     public GameObject stamina_obj;
+    public GameObject leftamina_bar;
+    public GameObject leftmana_bar;
     public GameObject mana_obj;
 
     //To manage secondary abilities buttons
@@ -56,7 +58,6 @@ public class CharactersManager : CulverinBehaviour
     public bool shield_activated = false;
 
     public GameObject camera;
-
     CompAudio audio;
 
     void Start()
@@ -70,6 +71,11 @@ public class CharactersManager : CulverinBehaviour
         health_obj = GetLinkedObject("health_obj");
         stamina_obj = GetLinkedObject("stamina_obj");
         mana_obj = GetLinkedObject("mana_obj");
+
+        leftamina_bar = GetLinkedObject("leftamina_bar");
+        leftmana_bar = GetLinkedObject("leftmana_bar");
+
+        GetLinkedObject("leftmana_bar").GetComponent<CompImage>().SetEnabled(false, GetLinkedObject("leftmana_bar"));
 
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
