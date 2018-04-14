@@ -58,7 +58,7 @@ for:
 
   artifacts:	
   - path: Engine\Game\MyBuilds
-    name: CulverinEngineTest
+    name: CulverinEngine.{build}-{branch}
   
   #---------------------------------#	
   #     deployment configuration    #	
