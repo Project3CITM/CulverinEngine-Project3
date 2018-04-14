@@ -51,6 +51,9 @@ public class TheonController : CharacterController
 
     public GameObject theon_blood_particles;
     public GameObject theon_sparks_particles;
+
+    public GameObject theon_button_left_idle;
+    public GameObject theon_button_right_idle;
     //----------------------------------------
 
     protected override void Start()
@@ -67,6 +70,8 @@ public class TheonController : CharacterController
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
         theon_button_right = GetLinkedObject("theon_button_right");
         theon_button_left = GetLinkedObject("theon_button_left");
+        theon_button_right_idle = GetLinkedObject("theon_button_right_idle");
+        theon_button_left_idle = GetLinkedObject("theon_button_left_idle");
         theon_left_flag = GetLinkedObject("theon_left_flag");
         theon_right_flag = GetLinkedObject("theon_right_flag");
 
@@ -550,6 +555,8 @@ public class TheonController : CharacterController
         //Disable Image
         theon_button_left.GetComponent<CompImage>().SetRender(active);
         theon_button_right.GetComponent<CompImage>().SetRender(active);
+        theon_button_left_idle.GetComponent<CompImage>().SetRender(active);
+        theon_button_right_idle.GetComponent<CompImage>().SetRender(active);
 
         //Disable Flags
         theon_left_flag.SetActive(active);

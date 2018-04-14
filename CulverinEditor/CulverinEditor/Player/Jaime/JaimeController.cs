@@ -60,6 +60,9 @@ public class JaimeController : CharacterController
     //Particle emitter GameObject
     public GameObject particles_jaime;
 
+    public GameObject jaime_button_left_idle;
+    public GameObject jaime_button_right_idle;
+
     public float cover_duration = 3.0f;
     private float cover_timer = 0.0f;
 
@@ -76,6 +79,9 @@ public class JaimeController : CharacterController
         jaime_icon_obj = GetLinkedObject("jaime_icon_obj");
         jaime_button_left = GetLinkedObject("jaime_button_left");
         jaime_button_right = GetLinkedObject("jaime_button_right");
+        jaime_button_left_idle = GetLinkedObject("jaime_button_left_idle");
+        jaime_button_right_idle = GetLinkedObject("jaime_button_right_idle");
+
         jaime_left_flag = GetLinkedObject("jaime_left_flag");
         jaime_right_flag = GetLinkedObject("jaime_right_flag");
 
@@ -656,6 +662,8 @@ public class JaimeController : CharacterController
         //Disable Image
         jaime_button_left.GetComponent<CompImage>().SetRender(active);
         jaime_button_right.GetComponent<CompImage>().SetRender(active);
+        jaime_button_left_idle.GetComponent<CompImage>().SetRender(active);
+        jaime_button_right_idle.GetComponent<CompImage>().SetRender(active);
 
         //Disable Flags
         jaime_left_flag.SetActive(active);

@@ -47,6 +47,9 @@ public class DaenerysController : CharacterController
 
     private bool play_audio_roar = false;
 
+    public GameObject daenerys_button_left_obj_idle;
+    public GameObject daenerys_button_right_obj_idle;
+
     protected override void Start()
     {
         SetPosition(Position.BEHIND_RIGHT);
@@ -59,6 +62,9 @@ public class DaenerysController : CharacterController
         daenerys_icon_obj = GetLinkedObject("daenerys_icon_obj");
         daenerys_button_left_obj = GetLinkedObject("daenerys_button_left_obj");
         daenerys_button_right_obj = GetLinkedObject("daenerys_button_right_obj");
+        daenerys_button_left_obj_idle = GetLinkedObject("daenerys_button_left_obj_idle");
+        daenerys_button_right_obj_idle = GetLinkedObject("daenerys_button_right_obj_idle");
+
         daenerys_left_flag = GetLinkedObject("daenerys_left_flag");
         daenerys_right_flag = GetLinkedObject("daenerys_right_flag");
 
@@ -612,6 +618,8 @@ public class DaenerysController : CharacterController
         //Disable Image
         daenerys_button_left_obj.GetComponent<CompImage>().SetRender(active);
         daenerys_button_right_obj.GetComponent<CompImage>().SetRender(active);
+        daenerys_button_left_obj_idle.GetComponent<CompImage>().SetRender(active);
+        daenerys_button_right_obj_idle.GetComponent<CompImage>().SetRender(active);
 
         //Disable Flags
         daenerys_left_flag.SetActive(active);
