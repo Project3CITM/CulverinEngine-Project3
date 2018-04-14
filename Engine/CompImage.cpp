@@ -515,6 +515,18 @@ void CompImage::SetToFilled(bool filled)
 
 }
 
+void CompImage::SetNewAnimationValue(const AnimationData & value)
+{
+	switch (value.type)
+	{
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		SetAlpha(value.value.f_value);
+		break;
+	default:
+		break;
+	}
+}
+
 float4 CompImage::GetColor() const
 {
 	return color;
@@ -537,6 +549,24 @@ ResourceMaterial * CompImage::GetCurrentTexture() const
 
 	}
 	return overwrite_image;
+}
+
+AnimationData CompImage::ShowParameters()
+{
+	ImGui::OpenPopup("Sprite Options");
+	AnimationData ret;
+	ret.type = ParameterValue::PARAMETER_NONE;
+	SetNextWindowSize(ImVec2(200, 200));
+	if (ImGui::BeginPopup("Sprite Options"))
+	{
+		ImGui::Button("Set Alpha");
+		{
+			ret.type = ParameterValue::IMAGE_ALPHA_VALUE;
+			ImGui::SliderFloat("Select Alpha:", &ret.value.f_value, 0, 1);
+			SetAlpha(ret.value.f_value);
+		}
+	}
+	return ret;
 }
 
 void CompImage::CorrectFillAmount()

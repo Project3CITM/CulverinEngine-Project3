@@ -1,10 +1,13 @@
 #ifndef COMPONENT_IMAGE_H
 #define COMPONENT_IMAGE_H
 #include "CompGraphic.h"
+#include "AnimableComponent.h"
 #include <vector>
 
 class ResourceMaterial;
 class CompRectTransform;
+
+struct AnimationData;
 
 enum FillMethod
 {
@@ -14,7 +17,7 @@ enum FillMethod
 	NONE
 };
 
-class CompImage:public CompGraphic
+class CompImage:public CompGraphic, public AnimableComponent
 {
 public:
 	CompImage(Comp_Type t, GameObject* parent);
@@ -37,9 +40,12 @@ public:
 	void SetTextureID(uint uid);
 	void SetOverwriteImage(ResourceMaterial* overwrite_image);
 	void SetToFilled(bool filled);
+	void SetNewAnimationValue(const AnimationData& value);
+	const char* ReturnParameterName(ParameterValue parameter);
 	float4 GetColor()const;
 	ResourceMaterial* GetSourceImage()const;
 	ResourceMaterial* GetCurrentTexture()const;
+	AnimationData ShowParameters();
 private:
 	void CorrectFillAmount();
 	float CorrectValue01(float value);

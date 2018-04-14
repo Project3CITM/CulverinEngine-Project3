@@ -1009,7 +1009,6 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 	std::string nameJson = directory;
 	nameJson += "/";
 	nameJson += animation->name;
-	nameJson += ".anim.json";
 	config_file = json_value_init_object();
 	if (config_file != nullptr)
 	{

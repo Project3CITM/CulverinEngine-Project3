@@ -141,7 +141,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 					}
 					else
 					{
-						animation_json->name += "anim.json";
+						animation_json->name += ".anim.json";
 
 					}
 					ImGui::CloseCurrentPopup();
@@ -159,7 +159,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 					}
 					else
 					{
-						animation_json->name += "anim.json";
+						animation_json->name += ".anim.json";
 
 					}
 					ImGui::CloseCurrentPopup();
