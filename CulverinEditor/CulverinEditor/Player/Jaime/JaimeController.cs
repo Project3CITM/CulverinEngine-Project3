@@ -98,7 +98,9 @@ public class JaimeController : CharacterController
         anim_controller.PlayAnimation("Idle");
 
         //Disable Jaime secondary ability button
-        GetLinkedObject("jaime_s_button_obj").SetActive(false);
+        GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().SetInteractivity(false);
+        GetLinkedObject("jaime_s_button_obj").GetComponent<CompImage>().SetRender(false);
+        GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);
 
         //Set Icon in the center
         jaime_icon_obj.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj);
@@ -374,8 +376,11 @@ public class JaimeController : CharacterController
             //Enable Jaime Abilities buttons
             EnableAbilities(true);
 
-            //Disable Secondary button
-            GetLinkedObject("jaime_s_button_obj").SetActive(false);
+            //Disable Secondary button     
+            GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().SetInteractivity(false);
+            GetLinkedObject("jaime_s_button_obj").GetComponent<CompImage>().SetRender(false);
+            GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);
+
         }
 
         //Get values from var and store them
@@ -392,17 +397,22 @@ public class JaimeController : CharacterController
             {
                 jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
                 jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
-                GetLinkedObject("jaime_s_button_obj").SetActive(true);
-                GetLinkedObject("jaime_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
+                GetLinkedObject("jaime_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));           
+                GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
             }
             //Set the icon at the right
             else
             {
                 jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
                 jaime_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
-                GetLinkedObject("jaime_s_button_obj").SetActive(true);
                 GetLinkedObject("jaime_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, -31.5f, 0.0f));
+                GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, -31.5f, 0.0f));
             }
+
+            //Enable Secondary Button
+            GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().SetInteractivity(true);
+            GetLinkedObject("jaime_s_button_obj").GetComponent<CompImage>().SetRender(true);
+            GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(true);
 
             //Enable Secondary Bars And Update them
             jaime_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);

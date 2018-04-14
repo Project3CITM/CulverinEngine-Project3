@@ -325,7 +325,10 @@ public class TheonController : CharacterController
             EnableAbilities(true);
 
             //Disable Secondary button
-            GetLinkedObject("theon_s_button_obj").SetActive(false);
+            GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>().SetInteractivity(false);
+            GetLinkedObject("theon_s_button_obj").GetComponent<CompImage>().SetRender(false);
+            GetLinkedObject("theon_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);
+
         }
 
         //Get values from var and store them
@@ -342,8 +345,8 @@ public class TheonController : CharacterController
             {
                 theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
                 theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
-                GetLinkedObject("theon_s_button_obj").SetActive(true);
                 GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
+                GetLinkedObject("theon_s_button_obj_idle").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
             }
 
             //Set the icon at the right
@@ -351,9 +354,14 @@ public class TheonController : CharacterController
             {
                 theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
                 theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
-                GetLinkedObject("theon_s_button_obj").SetActive(true);
                 GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, -31.5f, 0.0f));
+                GetLinkedObject("theon_s_button_obj_idle").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
             }
+
+            //Enable Secondary Button
+            GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>().SetInteractivity(true);
+            GetLinkedObject("theon_s_button_obj").GetComponent<CompImage>().SetRender(true);
+            GetLinkedObject("theon_s_button_obj_idle").GetComponent<CompImage>().SetRender(true);
 
             //Enable Secondary Bars & Update them
             theon_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);

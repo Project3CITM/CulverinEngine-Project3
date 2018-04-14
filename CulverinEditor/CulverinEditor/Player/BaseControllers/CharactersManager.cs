@@ -45,6 +45,10 @@ public class CharactersManager : CulverinBehaviour
     public GameObject daenerys_s_button_obj;
     public GameObject theon_s_button_obj;
 
+    public GameObject jaime_s_button_obj_idle;
+    public GameObject daenerys_s_button_obj_idle;
+    public GameObject theon_s_button_obj_idle;
+
     public float puz_max_time;
     public float drown_dmg = 20;
     public int puz_respawn_x = 0;
@@ -80,6 +84,9 @@ public class CharactersManager : CulverinBehaviour
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
+        jaime_s_button_obj_idle = GetLinkedObject("jaime_s_button_obj_idle");
+        daenerys_s_button_obj_idle = GetLinkedObject("daenerys_s_button_obj_idle");
+        theon_s_button_obj_idle = GetLinkedObject("theon_s_button_obj_idle");
 
         camera = GetLinkedObject("camera");
 
