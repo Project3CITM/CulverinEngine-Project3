@@ -981,6 +981,7 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	// Destination: "/MyBuilds"
 	std::string desktop = App->fs->GetGameDirectory() + destination; 
 	App->fs->CreateFolder(desktop.c_str());
+	LOG("%s", desktop.c_str());
 	//desktop = "C:/Users/Administrador/Desktop";
 	App->fs->NormalitzatePath(desktop);
 	desktop += "/" + game_name;
