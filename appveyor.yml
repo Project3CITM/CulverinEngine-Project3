@@ -47,7 +47,7 @@ before_package:
 
 artifacts:	
 - path: Engine\Game\MyBuilds
-  name: CulverinEngine.{build}-{branch}
+  name: CulverinEngine
   
 #---------------------------------#
 #         notifications           #
