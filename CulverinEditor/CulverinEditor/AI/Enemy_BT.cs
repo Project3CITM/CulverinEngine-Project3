@@ -52,7 +52,7 @@ public class Enemy_BT : BT
         mesh = GetLinkedObject("mesh");
         enemies_manager = GetLinkedObject("enemies_manager");
         GetComponent<CompAnimation>().PlayAnimation("Idle");
-
+        dmg_alpha = 0.0f;
         //ChangeTexturesToAlive();
         base.Start();
     }

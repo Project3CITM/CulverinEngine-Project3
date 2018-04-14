@@ -495,7 +495,6 @@ public class Movement_Action : Action
 
     public void LookAtPlayer()
     {
-        Debug.Log("Hello");
         Vector3 target_pos = new Vector3(GetLinkedObject("player_obj").GetComponent<Transform>().position);
 
         Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
@@ -511,89 +510,54 @@ public class Movement_Action : Action
 
         Debug.Log("Angle To Player: " + Mathf.Rad2deg(delta));
         Debug.Log("Rotation done: " + rotation_finished);
+        Debug.Log("Looking at: " + dir);
 
         switch (dir)
         {
             case Direction.DIR_EAST:
                 //South
                 if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                {
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
-                    Debug.Log("Looking at East rotationg to South");
-                }
                 //North
                 if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
-                {
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
-                    Debug.Log("Looking at East rotationg to North");
-                }
                 //West
-                if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
-                {
+                if (delta < (-(3 * Mathf.PI) / 4) || delta > (3 * Mathf.PI) / 4)
                     LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
-                    Debug.Log("Looking at East rotationg to West");
-                }
                 break;
 
             case Direction.DIR_NORTH:
                 //East
                 if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                {
                     LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
-                    Debug.Log("Looking at North rotationg to East");
-                }
                 //West
                 if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
-                {
                     LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
-                    Debug.Log("Looking at North rotationg to West");
-                }
                 //South
-                if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
-                {
+                if (delta < (-(3 * Mathf.PI) / 4) || delta > (3 * Mathf.PI) / 4)
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
-                    Debug.Log("Looking at North rotationg to South");
-                }
                 break;
             case Direction.DIR_SOUTH:
                 //West
                 if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                {
                     LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
-                    Debug.Log("Looking at South rotationg to West");
-                }
                 //East
                 if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
-                {
                     LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
-                    Debug.Log("Looking at South rotationg to East");
-                }
                 //North
-                if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
-                {
+                if (delta < (-(3 * Mathf.PI) / 4) || delta > (3 * Mathf.PI) / 4)
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
-                    Debug.Log("Looking at South rotationg to North");
-                }
                 break;
             case Direction.DIR_WEST:
                 //North
                 if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                {
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
-                    Debug.Log("Looking at West rotationg to North");
-                }
                 //South
                 if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
-                {
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
-                    Debug.Log("Looking at West rotationg to South");
-                }
                 //East
-                if (delta < (-(3 * Mathf.PI) / 4) && delta > (3 * Mathf.PI) / 4)
-                {
+                if (delta < (-(3 * Mathf.PI) / 4) || delta > (3 * Mathf.PI) / 4)
                     LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
-                    Debug.Log("Looking at West rotationg to East");
-                }  
                 break;
         }
     }

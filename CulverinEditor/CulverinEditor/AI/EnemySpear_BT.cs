@@ -7,6 +7,7 @@ public class EnemySpear_BT : Enemy_BT
     public GameObject current_map;
     Movement_Action mov;
     System.Random rand;
+    Material enemy_mat_sword;
 
     public override void Start()
     {
@@ -37,11 +38,15 @@ public class EnemySpear_BT : Enemy_BT
                 enemy_manager.AddLanceEnemy(gameObject);
             }
         }
+
+        enemy_mat_sword = GetMaterialByName("EnemyWithSpear");
+
         base.Start();
     }
 
     public override void Update()
     {
+        enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
         base.Update();
     }
 

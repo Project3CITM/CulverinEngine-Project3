@@ -6,7 +6,8 @@ public class EnemyShield_BT : Enemy_BT
     public float shield_block_cd = 4.0f;
     public float shield_block_cd_damaged = 2.5f;
     float shield_block_timer = 0.0f;
-    
+    Material enemy_mat_sword;
+
     public override void Start()
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
@@ -22,12 +23,17 @@ public class EnemyShield_BT : Enemy_BT
             else
                 enemy_manager.AddShieldEnemy(gameObject);
         }
+
+        enemy_mat_sword = GetMaterialByName("EnemyShield");
+
         base.Start();
     }
 
     public override void Update()
     {
         shield_block_timer += Time.deltaTime;
+
+        enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
 
         base.Update();
     }
