@@ -18,6 +18,7 @@
 #include "Materials.h"
 #include "ModuleTextures.h"
 #include "ModuleInput.h"
+#include "gif-h\gif.h"
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
@@ -327,43 +328,110 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	ImGui::Render();
 
+	if (App->input->GetKey(SDL_SCANCODE_9) == KEY_DOWN)
+	{
+		if (FirstPoint)
+		{
+			Point1.x = App->input->GetMouseX();
+			Point1.y = App->input->GetMouseY();
+			FirstPoint = false;
+		}
+		else
+		{
+			Point2.x = App->input->GetMouseX();
+			Point2.y = App->input->GetMouseY();
+
+			float2 MinPoint = ((Point1.x + Point1.y) <= (Point2.x + Point2.y)) ? Point1 : Point2;
+			float2 MaxPoint = ((Point1.x + Point1.y) >= (Point2.x + Point2.y)) ? Point1 : Point2;
+
+			MinPoint.x = 100;
+			MinPoint.y = App->window->GetHeight() - 200;
+			MaxPoint.x = 200;
+			MaxPoint.y = App->window->GetHeight() - 100;
+
+			uint width = abs(MaxPoint.x - MinPoint.x);
+			uint height = abs(MaxPoint.y - MinPoint.y);
+			uint bytesToUsePerPixel = 3;
+			uint sizeOfByte = sizeof(unsigned char);
+			uint theSize = width * height * sizeOfByte * bytesToUsePerPixel;
+			unsigned char* s_pixels = new unsigned char[3 * width * height];
+			glReadPixels(MinPoint.x, MinPoint.y, width, height, GL_RGB, GL_UNSIGNED_BYTE, s_pixels);
+			ILuint imageID = ilGenImage();
+			ilBindImage(imageID);
+			ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, s_pixels);
+			ilEnable(IL_FILE_OVERWRITE);
+			ilSave(IL_PNG, "output.png");
+			ilDisable(IL_FILE_OVERWRITE);
+			ilDeleteImage(imageID);
+			RELEASE_ARRAY(s_pixels);
+
+			FirstPoint = true;
+		}
+
+		/*
+		uint width = App->window->GetWidth();
+		uint height = App->window->GetHeight();
+		uint bytesToUsePerPixel = 3;
+		uint sizeOfByte = sizeof(unsigned char);
+		uint theSize = width * height * sizeOfByte * bytesToUsePerPixel;
+		unsigned char* s_pixels = new unsigned char[3 * width * height];
+		glReadPixels(0, 0, App->window->GetWidth(), App->window->GetHeight(), GL_RGB, GL_UNSIGNED_BYTE, s_pixels);
+		ILuint imageID = ilGenImage();
+		ilBindImage(imageID);
+		ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, s_pixels);
+		ilEnable(IL_FILE_OVERWRITE);
+		ilSave(IL_PNG, "output.png");
+		ilDisable(IL_FILE_OVERWRITE);
+		ilDeleteImage(imageID);
+		RELEASE_ARRAY(s_pixels);
+		*/
+	}
 	if (App->input->GetKey(SDL_SCANCODE_0))
 	{
 		ILuint imageID = ilGenImage();
 		ilBindImage(imageID);
 		ilutGLScreen();
 		ilEnable(IL_FILE_OVERWRITE);
-		ilSaveImage("screen.png");
+		ilSaveImage("output.png");
 		ilDisable(IL_FILE_OVERWRITE);
 		ilDeleteImage(imageID);
 	}
 
-	static bool gif_in_progress = false;
+	//static bool gif_in_progress = false;
+	//static GifWriter gif_writer;
+	//static unsigned char* pixels = nullptr;
 
-	if (App->input->GetKey(SDL_SCANCODE_8))
-	{
-		//TODO: Initialize gif
-		gif_in_progress = true;
-	}
+	//if (App->input->GetKey(SDL_SCANCODE_8))
+	//{
+	//	gif_in_progress = GifBegin(&gif_writer, "testgif.gif", App->window->GetWidth(), App->window->GetHeight(), dt, 8, false);
+	//	uint width = App->window->GetWidth();
+	//	uint height = App->window->GetHeight();
+	//	uint bytesToUsePerPixel = 3;
+	//	pixels = new unsigned char[width * height * bytesToUsePerPixel];
+	//}
 
-	if (gif_in_progress)
-	{
-		ILuint imageID = ilGenImage();
-		ilBindImage(imageID);
-		ilutGLScreen();
-		ILubyte * bytes = ilGetData();
-		//TODO: Store frame
-		ilDeleteImage(imageID);
-	}
+	//if (gif_in_progress)
+	//{
+	//	/*
+	//	ILuint imageID = ilGenImage();
+	//	ilBindImage(imageID);
+	//	ilutGLScreen();
+	//	ILubyte* pixels = ilGetData();
+	//	GifWriteFrame(&gif_writer, pixels, App->window->GetWidth(), App->window->GetHeight(), dt, 8, false);
+	//	ilDeleteImage(imageID);
+	//	*/
+	//	/*
+	//	glReadPixels(0, 0, App->window->GetWidth(), App->window->GetHeight(), GL_RGB, GL_UNSIGNED_BYTE, pixels);
+	//	GifWriteFrame(&gif_writer, pixels, App->window->GetWidth(), App->window->GetHeight(), dt, 8, false);
+	//	*/
+	//}
 
-	if (App->input->GetKey(SDL_SCANCODE_9))
-	{
-		//TODO: Save & close gif
-		ilEnable(IL_FILE_OVERWRITE);
-		ilSaveImage("giftest.gif");
-		ilDisable(IL_FILE_OVERWRITE);
-		gif_in_progress = false;
-	}
+	//if (App->input->GetKey(SDL_SCANCODE_9) && gif_in_progress)
+	//{
+	//	GifEnd(&gif_writer);
+	//	RELEASE_ARRAY(pixels);
+	//	gif_in_progress = false;
+	//}
 	
 	SDL_GL_SwapWindow(App->window->window);
 

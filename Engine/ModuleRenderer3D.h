@@ -105,6 +105,12 @@ public:
 	int blur_amount = 28;
 	float blur_scale = 0.3;
 	float blur_strength = 0.0f;
+
+
+	//Screenshot
+	float2 Point1 = float2::zero;
+	float2 Point2 = float2::zero;
+	bool FirstPoint = true;
 };
 
 #endif
