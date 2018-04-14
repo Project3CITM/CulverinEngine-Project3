@@ -598,7 +598,7 @@ public class Movement_Action : Action
         }
     }
 
-    private bool LookingAtPlayer()
+    public bool LookingAtPlayer()
     {
         Vector3 target_pos = new Vector3(GetLinkedObject("player_obj").GetComponent<Transform>().position);
 
