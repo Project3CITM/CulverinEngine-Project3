@@ -884,5 +884,11 @@ public class CharactersManager : CulverinBehaviour
             current_character.GetComponent<TheonController>().DecreaseStamina(fatigue);
         }
     }
+
+
+    public void SetCurrentCharacterState(CharacterController.State currstate)
+    {
+        current_character.GetComponent<CharacterController>().SetState(currstate);
+    }
 }
 

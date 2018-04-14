@@ -21,7 +21,8 @@ public class CharacterController : CulverinBehaviour
         RELOADING,
         STUN,
         FAIL_ATTACK,
-        DEAD
+        DEAD,
+        GRABBED
     }
 
     protected MovementController movement;              // To manage when the player is moving to block attacks/abilities
@@ -46,15 +47,18 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void Update()
     {
-        if (position == Position.CURRENT)
+        if (state != State.GRABBED)
         {
-            ControlCharacter();
-        }
-        else if(position == Position.BEHIND)
-        {
-            if(gameObject.GetName() == "Theon")
+            if (position == Position.CURRENT)
             {
-                gameObject.GetComponent<TheonController>().TheonSecondaryAbility();
+                ControlCharacter();
+            }
+            else if (position == Position.BEHIND)
+            {
+                if (gameObject.GetName() == "Theon")
+                {
+                    gameObject.GetComponent<TheonController>().TheonSecondaryAbility();
+                }
             }
         }
     }
