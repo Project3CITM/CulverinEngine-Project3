@@ -296,6 +296,7 @@ public class JaimeController : CharacterController
 
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);
+        DecreaseMana(sec_ability_cost);
 
         PlayFx("JaimeWarCry");
 

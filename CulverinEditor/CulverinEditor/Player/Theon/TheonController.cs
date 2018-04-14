@@ -266,6 +266,7 @@ public class TheonController : CharacterController
         secondary_ability = true;
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);
+        DecreaseMana(sec_ability_cost);
     }
 
 
