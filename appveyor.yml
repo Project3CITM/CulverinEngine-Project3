@@ -100,7 +100,7 @@ for:
     description: Release
     auth_token:
       secure: bgNhN1vlgT+IUw3jL4WW0Qo1Yc9POV0u4KB/roZuv0Yu8EUf18Fpq+jNkwAJxrnj
-    artifact: CulverinEngineTest
+    artifact: CulverinEngine.{build}-{branch}
     draft: false
     prerelease: false
     force_update: true
