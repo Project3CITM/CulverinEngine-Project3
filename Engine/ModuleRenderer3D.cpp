@@ -17,6 +17,7 @@
 #include "DefaultShaders.h"
 #include "Materials.h"
 #include "ModuleTextures.h"
+#include "ModuleInput.h"
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
@@ -246,30 +247,30 @@ bool ModuleRenderer3D::Start()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), cube_vertices, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &UVbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_UV_buffer_data), g_UV_buffer_data, GL_STATIC_DRAW);
+glGenBuffers(1, &UVbuffer);
+glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
+glBufferData(GL_ARRAY_BUFFER, sizeof(g_UV_buffer_data), g_UV_buffer_data, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &ibo_cube_elements);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(uint), cube_elements, GL_STATIC_DRAW);
+glGenBuffers(1, &ibo_cube_elements);
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(uint), cube_elements, GL_STATIC_DRAW);
 
 
-	(depth_test) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
-	(cull_face) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
-	(lighting) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
-	(color_material) ? glEnable(GL_COLOR_MATERIAL) : glDisable(GL_COLOR_MATERIAL);
-	(texture_2d) ? glEnable(GL_TEXTURE_2D) : glDisable(GL_TEXTURE_2D);
-	(smooth) ? glShadeModel(GL_SMOOTH) : glShadeModel(GL_FLAT);
+(depth_test) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+(cull_face) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+(lighting) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
+(color_material) ? glEnable(GL_COLOR_MATERIAL) : glDisable(GL_COLOR_MATERIAL);
+(texture_2d) ? glEnable(GL_TEXTURE_2D) : glDisable(GL_TEXTURE_2D);
+(smooth) ? glShadeModel(GL_SMOOTH) : glShadeModel(GL_FLAT);
 
-	if (fog_active)
-	{
-		glEnable(GL_FOG);
-		glFogfv(GL_FOG_DENSITY, &fog_density);
-	}
+if (fog_active)
+{
+	glEnable(GL_FOG);
+	glFogfv(GL_FOG_DENSITY, &fog_density);
+}
 
-	Start_t = perf_timer.ReadMs();
-	return true;
+Start_t = perf_timer.ReadMs();
+return true;
 }
 
 // PreUpdate: clear buffer
@@ -324,13 +325,46 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	ImGui::SliderFloat("Scale", &blur_scale, 0.0f, 50.0f);
 	ImGui::End();*/
 
-
-
-
 	ImGui::Render();
 
+	if (App->input->GetKey(SDL_SCANCODE_0))
+	{
+		ILuint imageID = ilGenImage();
+		ilBindImage(imageID);
+		ilutGLScreen();
+		ilEnable(IL_FILE_OVERWRITE);
+		ilSaveImage("screen.png");
+		ilDisable(IL_FILE_OVERWRITE);
+		ilDeleteImage(imageID);
+	}
 
+	static bool gif_in_progress = false;
 
+	if (App->input->GetKey(SDL_SCANCODE_8))
+	{
+		//TODO: Initialize gif
+		gif_in_progress = true;
+	}
+
+	if (gif_in_progress)
+	{
+		ILuint imageID = ilGenImage();
+		ilBindImage(imageID);
+		ilutGLScreen();
+		ILubyte * bytes = ilGetData();
+		//TODO: Store frame
+		ilDeleteImage(imageID);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_9))
+	{
+		//TODO: Save & close gif
+		ilEnable(IL_FILE_OVERWRITE);
+		ilSaveImage("giftest.gif");
+		ilDisable(IL_FILE_OVERWRITE);
+		gif_in_progress = false;
+	}
+	
 	SDL_GL_SwapWindow(App->window->window);
 
 	postUpdate_t = perf_timer.ReadMs();
