@@ -142,7 +142,7 @@ public class Boss_BT : BT
                                 {
                                     int rand = rand_gen.Next(1, 10);
 
-                                    if (rand > 3)
+                                    if (false)
                                     {
                                         //triple attack
                                         Debug.Log("Triple Attack");
@@ -174,6 +174,8 @@ public class Boss_BT : BT
                                     {
                                         //triple attack
                                         Debug.Log("Triple Attack");
+                                        current_action = GetComponent<BossGrabAttack_Action>();
+                                        current_action.ActionStart();
                                         cooldown = triple_attack_cooldown;
                                         return;
                                     }

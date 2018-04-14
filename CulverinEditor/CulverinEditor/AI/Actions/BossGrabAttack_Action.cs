@@ -60,6 +60,7 @@ public class BossGrabAttack_Action : Action
                         state = BGA_STATE.FIRST_APPLY;
                         Debug.Log("Grabing player...");
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.GRABBED);
                     }
                     break;
                 case Movement_Action.Direction.DIR_EAST:
@@ -68,6 +69,7 @@ public class BossGrabAttack_Action : Action
                         state = BGA_STATE.FIRST_APPLY;
                         Debug.Log("Grabing player...");
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.GRABBED);
                     }
                     break;
                 case Movement_Action.Direction.DIR_NORTH:
@@ -76,6 +78,7 @@ public class BossGrabAttack_Action : Action
                         state = BGA_STATE.FIRST_APPLY;
                         Debug.Log("Grabing player...");
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.GRABBED);
                     }
                     break;
                 case Movement_Action.Direction.DIR_SOUTH:
@@ -84,6 +87,7 @@ public class BossGrabAttack_Action : Action
                         state = BGA_STATE.FIRST_APPLY;
                         Debug.Log("Grabing player...");
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.GRABBED);
                     }
                     break;
             }
@@ -105,10 +109,10 @@ public class BossGrabAttack_Action : Action
             state = BGA_STATE.POST_APPLY;
             Debug.Log("Third crush...");
             GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.IDLE);
         }
         else if (state == BGA_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
         {
-
             state = BGA_STATE.WAITING;
             return ACTION_RESULT.AR_SUCCESS;
         }
