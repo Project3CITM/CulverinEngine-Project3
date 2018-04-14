@@ -14,13 +14,7 @@ public class JaimeCD_Secondary : CoolDown
     {
         if (!jaime_dead && in_cd)
         {
-            act_time += Time.deltaTime;
-            if (act_time >= cd_time)
-            {
-                in_cd = false;
-                button_cd = GetComponent<CompButton>();
-                button_cd.Activate();
-            }
+            base.Update();
         }
     }
 

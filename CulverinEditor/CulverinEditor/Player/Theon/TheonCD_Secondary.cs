@@ -14,13 +14,7 @@ public class TheonCD_Secondary : CoolDown
     {
         if (!theon_dead && in_cd)
         {
-            act_time += Time.deltaTime;
-            if (act_time >= cd_time)
-            {
-                in_cd = false;
-                button_cd = GetComponent<CompButton>();
-                button_cd.Activate();
-            }
+            base.Update();
         }
     }
 

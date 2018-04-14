@@ -237,10 +237,10 @@ public class DaenerysController : CharacterController
                 {
                     curr_mana = max_mana;
                 }
+                float calc_mana = curr_mana / max_mana;
+                daenerys_icon_mana_bar = daenerys_icon_obj_mana.GetComponent<CompImage>();
+                daenerys_icon_mana_bar.FillAmount(calc_mana);
             }
-            float calc_mana = curr_mana / max_mana;
-            daenerys_icon_mana_bar = daenerys_icon_obj_mana.GetComponent<CompImage>();
-            daenerys_icon_mana_bar.FillAmount(calc_mana);
         }
     }
 

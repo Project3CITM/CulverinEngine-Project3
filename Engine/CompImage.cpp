@@ -217,7 +217,6 @@ void CompImage::ShowInspectorInfo()
 		{
 			CorrectFillAmount();
 			GenerateMesh();
-
 		}
 	}
 	ImGui::TreePop();
@@ -236,6 +235,7 @@ void CompImage::FillAmount(float value)
 		filled = 1.0f;
 	}
 	filled = value;
+
 	GenerateMesh();
 }
 void CompImage::GenerateFilledSprite()
@@ -349,7 +349,7 @@ void CompImage::GenerateFilledSprite()
 				if (RadialCut(quad_pos, quad_uv, CorrectValue01(value), ((box_corner + 2) % 4)))
 				{
 					ProcesQuad(quad_pos, quad_uv);
-
+					LOG("[Player] box corner %i", box_corner);
 					//my_canvas_render->ProcessQuad(quad_pos, quad_uv);
 		
 
