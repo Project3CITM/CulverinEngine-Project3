@@ -1121,6 +1121,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::GetInput_MouseButtonDown", (const void*)GetInput_MouseButtonDown);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_MouseButtonUp", (const void*)GetInput_MouseButtonUp);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerAxis);
+	mono_add_internal_call("CulverinEditor.Input::RumblePlay", (const void*)RumblePlay);
 
 	//TIME FUNCTIONS -------------------
 	mono_add_internal_call("CulverinEditor.Time::DeltaTime()", (const void*)GetDeltaTime);
@@ -1474,6 +1475,11 @@ mono_bool ImportScript::GetInput_MouseButtonUp(MonoString* name, MonoString* inp
 float ImportScript::GetInput_ControllerAxis(MonoString* name, MonoString* input)
 {
 	return App->input->player_action->GetInput_ControllerAxis(mono_string_to_utf8(name), mono_string_to_utf8(input));
+}
+
+void ImportScript::RumblePlay(float intensity, int milliseconds)
+{
+	App->input->RumblePlay(intensity, milliseconds);
 }
 
 // TIME -----------------------------------------------

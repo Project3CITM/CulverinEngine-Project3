@@ -221,11 +221,18 @@ void CompGraphic::GenerateMesh()
 	vertex_data.CleanUp();
 	ExpandMesh();
 
-	(vertex_data.current_vertex_count == 0) ? can_draw = false : can_draw = true;
+	(vertex_data.current_vertex_count == 0) ? invalid = true : invalid = false;
 
 	if (vertex_data.current_vertex_count == 0)
 	{
 		return;
 	}
 	my_canvas_render->SetVertex(vertex_data);
+}
+
+bool CompGraphic::CheckRender()
+{
+	if(invalid|| !IsActive())
+		return false;
+	return can_draw;
 }

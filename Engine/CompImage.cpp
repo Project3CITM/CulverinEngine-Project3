@@ -77,7 +77,7 @@ void CompImage::Update(float dt)
 			transform->SetUpdateRect(false);
 		}
 	}
-	render = can_draw;
+	render = CheckRender();
 
 }
 void CompImage::ShowOptions()

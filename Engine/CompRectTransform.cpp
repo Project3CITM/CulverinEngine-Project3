@@ -442,7 +442,7 @@ AnimationData CompRectTransform::ShowParameters()
 		if (ImGui::Button("Select##rot_button"))
 		{
 			ret.type = ParameterValue::RECT_TRANSFORM_ROTATION;
-			ret.value.f3_value = GetPos();
+			ret.value.f3_value = GetRotEuler();
 		}
 		ImGui::NextColumn();
 
@@ -451,7 +451,7 @@ AnimationData CompRectTransform::ShowParameters()
 		if (ImGui::Button("Select##sca_button"))
 		{
 			ret.type = ParameterValue::RECT_TRANSFORM_SCALE;
-			ret.value.f3_value = GetPos();
+			ret.value.f3_value = GetScale();
 		}
 		ImGui::NextColumn();
 
@@ -460,7 +460,7 @@ AnimationData CompRectTransform::ShowParameters()
 		if (ImGui::Button("Select##width_button"))
 		{
 			ret.type = ParameterValue::RECT_TRANSFORM_WIDTH;
-			ret.value.f3_value = GetPos();
+			ret.value.f_value = GetWidth();
 		}
 		ImGui::NextColumn();
 
@@ -469,7 +469,7 @@ AnimationData CompRectTransform::ShowParameters()
 		if (ImGui::Button("Select##height_button"))
 		{
 			ret.type = ParameterValue::RECT_TRANSFORM_HEIGHT;
-			ret.value.f3_value = GetPos();
+			ret.value.f_value = GetHeight();
 		}
 		ImGui::NextColumn();
 		ImGui::Columns(1);

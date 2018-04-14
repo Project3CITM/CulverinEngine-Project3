@@ -33,8 +33,11 @@ void CompUIAnimation::Clear()
 
 void CompUIAnimation::Update(float dt)
 {
+	
 	if (play)
 	{
+		if (animation_json == nullptr)
+			return;
 		if (PlayAnimation(dt))
 		{
 			if (loop)
@@ -155,6 +158,9 @@ void CompUIAnimation::Save(JSON_Object * object, std::string name, bool saveScen
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	json_object_dotset_boolean_with_std(object, name + "OnExecution", on_execution);
+	json_object_dotset_boolean_with_std(object, name + "Loop", loop);
+
 	//...
 
 	if (animation_json != nullptr)
@@ -172,6 +178,10 @@ void CompUIAnimation::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	std::string animation_json_file= json_object_dotget_string_with_std(object, name + "Animation UI name");
+	on_execution=json_object_dotget_boolean_with_std(object, name + "OnExecution" );
+	loop=json_object_dotget_boolean_with_std(object, name + "Loop" );
+	play = on_execution;
+
 	if (!animation_json_file.empty())
 	{
 		if (animation_json == nullptr)
