@@ -676,7 +676,13 @@ bool KeyFrameData::ShowKeyValue(int i)
 		ImGui::Text("Alpha");
 		paramter_name = "##image_alpha";
 		paramter_name += std::to_string(i);
-		ImGui::DragFloat(paramter_name.c_str(), &key_data[i].key_values.f_value,1.0f,0.0f,255.0f);
+		ImGui::DragFloat(paramter_name.c_str(), &key_data[i].key_values.f_value,0.2f,0.0f,1.0f);
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		ImGui::Text("Sprite");
+		paramter_name = "##image_sprite";
+		paramter_name += std::to_string(i);
+		ImGui::DragFloat(paramter_name.c_str(), &key_data[i].key_values.f_value, 0.01f, 0.0f, 1.0f);
 		break;
 	default:
 		break;
