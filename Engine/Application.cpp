@@ -110,16 +110,16 @@ Application::Application(bool make_Build)
 	textures = new ModuleTextures();
 	module_shaders = new ModuleShaders();
 	renderer3D = new ModuleRenderer3D();
-	window = new ModuleWindow();
+	//window = new ModuleWindow();
 
 	build_mode = true;
-	AddModule(window);
+	//AddModule(window);
 	AddModule(fs);
 	AddModule(resource_manager);
 	AddModule(module_shaders);
 	AddModule(importer);
 	AddModule(textures);
-	AddModule(renderer3D);
+	//AddModule(renderer3D);
 
 	// ^^
 }

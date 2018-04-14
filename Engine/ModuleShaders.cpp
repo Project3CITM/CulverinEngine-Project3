@@ -53,8 +53,11 @@ bool ModuleShaders::Start()
 {
 	perf_timer.Start();
 	//Import all the asset files related to shaders
+	if (App->build_mode == false)
+	{
+		ImportShaderObjects();
+	}
 
-	ImportShaderObjects();
 	//ImportShaderMaterials();	
 	Start_t = perf_timer.ReadMs();
 	return true;

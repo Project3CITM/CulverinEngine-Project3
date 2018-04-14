@@ -233,15 +233,17 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 		LOG("Can't Import Mesh");
 		ret = false;
 	}
-	
+
 	// SET MATERIAL DATA -----------------------------------------
-	if (mesh->mMaterialIndex >= 0)
+	if (mesh->mMaterialIndex >= 0 && App->build_mode == false)
 	{
+		LOG("2");
 		CompMaterial* materialComp = (CompMaterial*)obj->AddComponent(C_MATERIAL);
 		//
+		LOG("6");
 		//std::vector<Texture> text_t;
 		aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
-
+		LOG("Now Set Material 0");
 		for (uint i = 0; i < mat->GetTextureCount(aiTextureType_DIFFUSE); i++)
 		{
 			aiString str;
@@ -251,6 +253,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			ResourceMaterial* resource_mat = (ResourceMaterial*)App->resource_manager->GetResource(normalPath.c_str());
 			if (resource_mat != nullptr)
 			{
+				LOG("Now Set Material");
 				if (resource_mat->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					std::string temp = std::to_string(resource_mat->GetUUID());
@@ -269,7 +272,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 						break;
 					}
 				}
-				if (!exists)
+				if (!exists && !App->build_mode)
 				{
 					Material* new_mat = new Material();
 					new_mat->name = name;
@@ -287,6 +290,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				resource_mat->path_assets = normalPath;
 			}
 			else {
+				LOG("Now Set Material2");
 				std::string name = App->fs->GetOnlyName(normalPath);
 				bool exists = false;
 				for (auto item = App->module_shaders->materials.begin(); item < App->module_shaders->materials.end(); item++)
@@ -299,7 +303,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 						break;
 					}
 				}
-				if (!exists)
+				if (!exists && !App->build_mode)
 				{
 					Material* new_mat = new Material();
 					new_mat->name = name;
@@ -316,7 +320,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			}
 		}
 	}
-	
+	LOG("3");
 	meshComp->Enable();
 	// Create Resource ----------------------
 	uint uuid_mesh = 0;
