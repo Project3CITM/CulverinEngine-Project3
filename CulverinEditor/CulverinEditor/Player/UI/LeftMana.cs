@@ -25,7 +25,6 @@ public class LeftMana : CulverinBehaviour
     {
         if (lastmana_value != mana_bar.GetComponent<Mana>().GetCurrentMana() && !mana_bar_changed)
         {
-            Debug.Log("Jimmy");
             current_lastmana = lastmana_value;
             lastmana_value = mana_bar.GetComponent<Mana>().GetCurrentMana();
 

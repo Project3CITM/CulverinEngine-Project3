@@ -75,7 +75,7 @@ public class CharactersManager : CulverinBehaviour
         leftamina_bar = GetLinkedObject("leftamina_bar");
         leftmana_bar = GetLinkedObject("leftmana_bar");
 
-        GetLinkedObject("leftmana_bar").GetComponent<CompImage>().SetEnabled(false, GetLinkedObject("leftmana_bar"));
+        leftmana_bar.GetComponent<CompImage>().SetEnabled(false, GetLinkedObject("leftmana_bar"));
 
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
