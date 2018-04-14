@@ -196,6 +196,8 @@ public class Boss_BT : BT
                 }
             }
         }
+        current_action = GetComponent<IdleAttack_Action>();
+        GetComponent<IdleAttack_Action>().ActionStart();
     }
 
     public bool ApplyDamage(float damage)
