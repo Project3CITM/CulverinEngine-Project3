@@ -14,6 +14,7 @@ public class Boss_BT : BT
     public GameObject enemies_manager = null;
     public GameObject player = null;
     public GameObject mesh = null;
+    public GameObject hp_bar = null;
 
     public float total_hp = 100;
     protected float current_hp;
@@ -45,6 +46,7 @@ public class Boss_BT : BT
 
     public override void Start()
     {
+        hp_bar = GetLinkedObject("hp_bar");
         GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddBoss(gameObject);
         rand_gen = new System.Random();
 
@@ -209,6 +211,8 @@ public class Boss_BT : BT
         next_action = GetComponent<GetHit_Action>();
         current_hp -= damage;
         current_interpolation = current_hp / total_hp;
+
+        hp_bar.GetComponent<BossHPBar>().SetHPBar(current_interpolation);
 
         if (current_hp <= 0)
         {

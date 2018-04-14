@@ -53,6 +53,7 @@
     <Compile Include="AI\AIManager.cs" />
     <Compile Include="AI\Actions\Align_Steering.cs" />
     <Compile Include="AI\Actions\Arrive_Steering.cs" />
+    <Compile Include="AI\BossHPBar.cs" />
     <Compile Include="AI\BossSight.cs" />
     <Compile Include="AI\Boss_BT.cs" />
     <Compile Include="AI\Boss_Listener.cs" />
