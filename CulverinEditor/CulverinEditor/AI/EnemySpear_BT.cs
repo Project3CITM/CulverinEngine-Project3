@@ -64,6 +64,14 @@ public class EnemySpear_BT : Enemy_BT
             base.DeactivateHUD(spear_icon, spear_name);
         }
 
+        bool attack_ready = attack_timer >= attack_cooldown;
+
+        if (attack_ready && current_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
+        {
+            Debug.Log("GetHitInterrupted BITCH", Department.IA);
+            current_action.Interupt();
+        }
+
         base.Update();
     }
 

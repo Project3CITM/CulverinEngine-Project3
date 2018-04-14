@@ -161,6 +161,7 @@ public class Movement_Action : Action
         //Rotation
         if (rotation_finished == false)
         {
+
             UpdateRotation();
 
             if (GetComponent<Align_Steering>().RotationFinished() == true)
@@ -328,7 +329,11 @@ public class Movement_Action : Action
         int current_x = GetCurrentTileX();
         int current_y = GetCurrentTileY();
 
-        if ((obj_x == current_x && obj_y == current_y) || map.GetComponent<Pathfinder>().IsWalkableTile((uint)obj_x, (uint)obj_y) == false)
+        //Debug.Log("In tile x: " + current_x + "y: " + current_y, Department.IA);
+
+        //Debug.Log("Going to tile x: " + obj_x + "y: " + obj_y, Department.IA);
+
+        if ((obj_x == current_x && obj_y == current_y) || GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)obj_x, (uint)obj_y) == false)
         {
             translation_finished = true;
             arrive.SetEnabled(false);
@@ -343,7 +348,7 @@ public class Movement_Action : Action
 
             translation_finished = false;
 
-            path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
+            path = GetLinkedObject("map").GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
 
             if (path.Count > 1)
             {
@@ -382,7 +387,7 @@ public class Movement_Action : Action
     private void GoToPrevious(int obj_x, int obj_y, uint range, bool chase = false)    // Sets a path to the previous tile of your objective // Useful for chasing the player
     {
         this.chase = chase;
-        Pathfinder pf = map.GetComponent<Pathfinder>();
+        Pathfinder pf = GetLinkedObject("map").GetComponent<Pathfinder>();
         path.Clear();
         List<PathNode> adjacent_walkable_tiles = pf.GetWalkableAdjacents(new PathNode(obj_x, obj_y), range);
         int current_x = GetCurrentTileX();
@@ -571,6 +576,8 @@ public class Movement_Action : Action
         Vector3 obj_vec = new Vector3(target_pos - pos);
 
         float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
+
+        Debug.Log("Angulo de rotacion:" + delta, Department.IA);
 
         if (delta > Mathf.PI)
             delta = delta - 2 * Mathf.PI;
