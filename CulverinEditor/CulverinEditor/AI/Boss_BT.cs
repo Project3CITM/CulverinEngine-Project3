@@ -98,16 +98,16 @@ public class Boss_BT : BT
                                     {
                                         //distance attack
                                         Debug.Log("Distance Attack");
-                                        current_action.Interupt();
-                                        next_action = GetComponent<BossAttackSwordDown_Action>();
+                                        current_action = GetComponent<BossAttackSwordDown_Action>();
+                                        current_action.ActionStart();
                                         cooldown = distance_attack_cooldown;
                                         return;
                                     }
                                     else
                                     {
                                         GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(1);
-                                        GetComponent<InfiniteChasePlayer_Action>().ActionStart();
                                         current_action = GetComponent<InfiniteChasePlayer_Action>();
+                                        current_action.ActionStart();
                                         return;
                                     }
                                 }
@@ -119,8 +119,8 @@ public class Boss_BT : BT
                                     {
                                         //AOE attack
                                         Debug.Log("AOE Attack");
-                                        current_action.Interupt();
-                                        next_action = GetComponent<BossWideAttack_Action>();
+                                        current_action = GetComponent<BossWideAttack_Action>();
+                                        current_action.ActionStart();
                                         cooldown = aoe_attack_cooldown;
                                         return;
                                     }
@@ -128,8 +128,8 @@ public class Boss_BT : BT
                                     {
                                         //distance attack
                                         Debug.Log("Distance Attack");
-                                        current_action.Interupt();
-                                        next_action = GetComponent<BossAttackSwordDown_Action>();
+                                        current_action = GetComponent<BossAttackSwordDown_Action>();
+                                        current_action.ActionStart();
                                         cooldown = distance_attack_cooldown;
                                         return;
                                     }
@@ -152,8 +152,8 @@ public class Boss_BT : BT
                                     else
                                     {
                                         GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(1);
-                                        GetComponent<InfiniteChasePlayer_Action>().ActionStart();
                                         current_action = GetComponent<InfiniteChasePlayer_Action>();
+                                        current_action.ActionStart();
                                         return;
                                     }
                                 }
@@ -165,8 +165,8 @@ public class Boss_BT : BT
                                     {
                                         //Strong attack
                                         Debug.Log("Strong Attack");
-                                        current_action.Interupt();
-                                        next_action = GetComponent<BossBasicStrongAttack_Action>();
+                                        current_action = GetComponent<BossBasicStrongAttack_Action>();
+                                        current_action.ActionStart();
                                         cooldown = strong_attack_cooldown;
                                         return;
                                     }
@@ -183,15 +183,16 @@ public class Boss_BT : BT
                     }
                     else
                     {
-                        current_action.Interupt();
-                        next_action = GetComponent<FacePlayer_Action>();
+                        current_action = GetComponent<FacePlayer_Action>();
+                        current_action.ActionStart();
                         return;
                     }
                 }
                 else
                 {
+                    GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
                     current_action = GetComponent<InfiniteChasePlayer_Action>();
-                    GetComponent<InfiniteChasePlayer_Action>().ActionStart();
+                    current_action.ActionStart();
                     return;
                 }
             }
