@@ -22,6 +22,7 @@ public class CharacterController : CulverinBehaviour
         RELOADING,
         STUN,
         FAIL_ATTACK,
+        GRABBED,
         DEAD
     }
 
@@ -47,7 +48,7 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void Update()
     {
-        if (position == Position.CURRENT)
+        if (position == Position.CURRENT && state != State.GRABBED)
         {
             ControlCharacter();
         }
