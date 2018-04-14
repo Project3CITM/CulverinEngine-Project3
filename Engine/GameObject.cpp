@@ -676,11 +676,11 @@ void GameObject::ShowHierarchy(bool use_search)
 void GameObject::ShowGameObjectOptions()
 {
 	//Create child Game Objects / Components
-	if (ImGui::MenuItem("Copy"))
+	if (ImGui::MenuItem("Copy", NULL, false, false))
 	{
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjectCopy(this);
 	}
-	if (ImGui::MenuItem("Paste"))
+	if (ImGui::MenuItem("Paste", NULL, false, false))
 	{
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->CopyGameObject(this);
 	}
