@@ -617,6 +617,11 @@ void GameObject::ShowHierarchy(bool use_search)
 		node_flags |= ImGuiTreeNodeFlags_DefaultOpen;
 	}
 	//ImGui::SetNextTreeNodeOpen(true);
+	if (set_next_tree_node_open && App->gui->develop_mode)
+	{
+		ImGui::SetNextTreeNodeOpen(true);
+		set_next_tree_node_open = false;
+	}
 	if (ImGui::TreeNodeEx(name.c_str(), node_flags))
 	{
 		treeNod = true;

@@ -164,6 +164,8 @@ public:
 	AABB  box_fixed;
 	bool beingUsedByScript = false;
 
+	bool set_next_tree_node_open = false;
+
 
 	//ANIMATION PURPOSES------
 	bool animation_translations = false;
