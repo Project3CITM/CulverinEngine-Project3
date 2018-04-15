@@ -88,11 +88,16 @@ public class TrapTile : CulverinBehaviour
         {
             curr_state = CHANGE_STATE.MOVING_DOWN;
             value = 0;
+            Debug.Log("Currents state is");
+            Debug.Log(curr_state);
+
         }
         else
         {
             curr_state = CHANGE_STATE.MOVING_UP;
             value = 1;
+            Debug.Log("Currents state is");
+            Debug.Log(curr_state);
         }
 
         curr_x = tile_x;

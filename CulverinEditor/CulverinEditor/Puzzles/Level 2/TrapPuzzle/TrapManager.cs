@@ -79,7 +79,11 @@ public class TrapManager : CulverinBehaviour
         {
             if(childs_to_switch[i].GetComponent<TrapTile>().SwitchTileState(out curr_x, out curr_z, out curr_val))
             {
-                map_level.UpdateMap(curr_x, curr_z, curr_val);
+                map_level.UpdateMap(curr_x, curr_z, 1);             
+            }
+            else
+            {
+                map_level.UpdateMap(curr_x, curr_z, 0);
             }
         }
         switching_states = true;
