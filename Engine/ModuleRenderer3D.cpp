@@ -332,14 +332,14 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	{
 		if (FirstPoint)
 		{
-			Point1.x = App->input->GetMouseX();
-			Point1.y = App->input->GetMouseY();
+			Point1.x = ImGui::GetIO().MousePos.x;
+			Point1.y = App->window->GetHeight() - ImGui::GetIO().MousePos.y;
 			FirstPoint = false;
 		}
 		else
 		{
-			Point2.x = App->input->GetMouseX();
-			Point2.y = App->input->GetMouseY();
+			Point2.x = ImGui::GetIO().MousePos.x;
+			Point2.y = App->window->GetHeight() - ImGui::GetIO().MousePos.y;
 
 			float2 MinPoint = ((Point1.x + Point1.y) <= (Point2.x + Point2.y)) ? Point1 : Point2;
 			float2 MaxPoint = ((Point1.x + Point1.y) >= (Point2.x + Point2.y)) ? Point1 : Point2;
@@ -348,6 +348,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 			MinPoint.y = App->window->GetHeight() - 200;
 			MaxPoint.x = 200;
 			MaxPoint.y = App->window->GetHeight() - 100;
+
+			MinPoint.x = (Point1.x <= Point2.x) ? Point1.x : Point2.x;
+			MinPoint.y = (Point1.y <= Point2.y) ? Point1.y : Point2.y;
+			MaxPoint.x = (Point1.x >= Point2.x) ? Point1.x : Point2.x;
+			MaxPoint.y = (Point1.y >= Point2.y) ? Point1.y : Point2.y;
 
 			uint width = abs(MaxPoint.x - MinPoint.x);
 			uint height = abs(MaxPoint.y - MinPoint.y);
