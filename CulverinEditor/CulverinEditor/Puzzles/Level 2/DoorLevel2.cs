@@ -31,7 +31,7 @@ public class DoorLevel2 : CulverinBehaviour
                 pos.y = min_height;
                 GetComponent<Transform>().SetPosition(pos);
             }
-           // GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(door_pos_x, door_pos_y, 1);
+            GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(door_pos_x, door_pos_y, 1);
         }
         else
         {
@@ -41,6 +41,7 @@ public class DoorLevel2 : CulverinBehaviour
                 pos.y = max_height;
                 GetComponent<Transform>().SetPosition(pos);
             }
+            GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(door_pos_x, door_pos_y, 0);
         }
     }
 
