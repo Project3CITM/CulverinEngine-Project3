@@ -19,7 +19,7 @@ in vec2 TexCoord;
 in vec3 ourPos;
 in mat3 TBN;
 in vec3 FragPos;
-
+in vec3 ourNormal;
 in vec4 shadowCoord;
 
 uniform vec4 diff_color;
@@ -151,14 +151,14 @@ void main()
     }
 
     vec3 l = normalize(lightDir);
-    float cosTheta = dot(N, l);
+    float cosTheta = clamp(dot(ourNormal,l),0,1);
     float usedBias = bias * tan(acos(cosTheta));
     usedBias = clamp(usedBias, 0, 0.01);
 
     for(int i = 0; i < iterations; ++i)
     {
 		    int index = int(16.0*random(floor(mat3(model)* ourPos*1000.0), i))%16;
-        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowCoord.xy + poissonDisk[index] / 700.0, (shadowCoord.z - usedBias) / shadowCoord.w)));
+        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowCoord.xy + poissonDisk[index] / 200.0, (shadowCoord.z - usedBias) / shadowCoord.w)));
         float tmp = 0.05 * shadowVal;
 
         visibility -= tmp;
@@ -182,8 +182,8 @@ void main()
     final_ambient = final_ambient/_numLights;
     final_color =normalize(final_color);
 
-	vec3 col = max( color_texture * vec3(0.0,0.3,0.3) ,
-	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
+	vec3 col = max( color_texture * 0.1 ,
+	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb * visibility);
 
-    color = vec4(color_texture * visibility, _alpha);
+    color = vec4(col, _alpha);
 }
