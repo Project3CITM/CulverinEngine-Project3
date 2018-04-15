@@ -11,6 +11,8 @@ public class DaenerysCD_Left : CoolDown
     public GameObject charge_count_2;
     public GameObject charge_count_3;
 
+    public GameObject daenerys_left_cd_text;
+
     void Start()
     {
         charge_count_0 = GetLinkedObject("charge_count_0");
@@ -22,6 +24,9 @@ public class DaenerysCD_Left : CoolDown
         charge_count_1.GetComponent<CompImage>().SetEnabled(false, charge_count_1);
         charge_count_2.GetComponent<CompImage>().SetEnabled(false, charge_count_2);
         charge_count_3.GetComponent<CompImage>().SetEnabled(true, charge_count_3);
+
+        daenerys_left_cd_text = GetLinkedObject("daenerys_left_cd_text");
+        ResetTextTimer(daenerys_left_cd_text);
     }
 
     public override void Update()
@@ -36,15 +41,25 @@ public class DaenerysCD_Left : CoolDown
                 if (final_time <= 0.0f)
                 {
                     final_time = 0.0f;
+                    reset_timer = true;
                 }
 
                 calc_time = final_time / cd_time;
                 GetComponent<CompImage>().FillAmount(calc_time);
+
+                //Manage Seconds Counter     
+                ManageTextTimer(daenerys_left_cd_text);          
+
+                //Reset Seconds Counter
+                if (reset_timer)
+                {
+                    ResetTextTimer(daenerys_left_cd_text);
+                    reset_timer = false;
+                }
             }
            
             act_time += Time.deltaTime;
             
-
             if (act_time >= cd_time)
             {
                 if (in_cd == true)
@@ -98,6 +113,7 @@ public class DaenerysCD_Left : CoolDown
             button_cd = GetLinkedObject("daenerys_button_left_obj").GetComponent<CompButton>();
             button_cd.Deactivate();
             in_cd = true;
+            prev_seconds = 1000;
         }
     }
 

@@ -4,17 +4,35 @@ using CulverinEditor.Debug;
 public class JaimeCD_Secondary : CoolDown
 {
     public bool jaime_dead = false;
+    public GameObject jaime_secondary_cd_text;
+
 
     void Start()
     {
         jaime_dead = false;
+
+        jaime_secondary_cd_text = GetLinkedObject("jaime_secondary_cd_text");
+        ResetTextTimer(jaime_secondary_cd_text);
     }
 
     public override void Update()
     {
-        if (!jaime_dead && in_cd)
+        if (!jaime_dead)
         {
             base.Update();
+
+            //Manage Seconds Counter
+            if (in_cd)
+            {
+                ManageTextTimer(jaime_secondary_cd_text);
+            }
+
+            //Reset Seconds Counter
+            if (reset_timer)
+            {
+                ResetTextTimer(jaime_secondary_cd_text);
+                reset_timer = false;
+            }
         }
     }
 
@@ -39,6 +57,7 @@ public class JaimeCD_Secondary : CoolDown
         button_cd = GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>();
         button_cd.Deactivate();
         act_time = 0.0f;
+        prev_seconds = 1000;
         in_cd = true;
     }
 }
