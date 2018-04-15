@@ -102,7 +102,8 @@
     <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapTile.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
-    <Compile Include="LevelFinished.cs" />
+    <Compile Include="UI_Scripts\Scene\FinishedLevel2.cs" />
+    <Compile Include="UI_Scripts\Scene\LevelFinished.cs" />
     <Compile Include="UI_Scripts\Scene\CompText.cs" />
     <Compile Include="CompLight.cs" />
     <Compile Include="UI_Scripts\Scene\ContinueButton.cs" />
