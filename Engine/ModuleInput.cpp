@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleRenderGui.h"
 #include "ModuleFS.h"
 #include "ModuleGUI.h"
 #include "WindowProject.h"
@@ -342,7 +343,10 @@ update_status ModuleInput::PreUpdate(float dt)
 		case SDL_WINDOWEVENT:
 		{
 			if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+			{
 				App->renderer3D->OnResize(e.window.data1, e.window.data2);
+				App->render_gui->OnResize(e.window.data1, e.window.data2);
+			}
 			if (e.window.event == SDL_WINDOWEVENT_FOCUS_GAINED)
 			{
 				// Now Update All vectors "project" and "fs"

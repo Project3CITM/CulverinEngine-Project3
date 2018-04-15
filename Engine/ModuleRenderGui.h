@@ -18,7 +18,10 @@ public:
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
 	update_status UpdateConfig(float dt);
+	
 	void OnEvent(Event& event);
+	void OnResize(float width, float height);
+
 	bool SetEventListenrs();
 	void PassSelected(CompInteractive* to_pass);
 	void ChangeSelected(Event& this_event);
@@ -28,9 +31,6 @@ public:
 	bool CleanUp();
 	std::vector<CompCanvas*> screen_space_canvas;
 
-
-
-	void OnResize(int width, int height);
 
 
 private:

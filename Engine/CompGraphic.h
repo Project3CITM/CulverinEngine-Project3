@@ -40,6 +40,8 @@ public:
 	float4 GetColor()const;
 	bool GetParentActive();
 
+	void ResizeGenerateMesh();
+
 private:
 protected:
 	void ProcesQuad(std::vector<float3>& position, std::vector<float3>& texture_cord);

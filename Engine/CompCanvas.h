@@ -9,7 +9,7 @@ class ShaderProgram;
 class CompCanvasRender;
 class CompRectTransform;
 class CompGraphic;
-class CompCanvas:public Component
+class CompCanvas :public Component
 {
 public:
 	CompCanvas(Comp_Type t, GameObject* parent);
@@ -23,7 +23,7 @@ public:
 	void CopyValues(const CompCanvas * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
-
+	void Resize(int width, int height);
 
 	void SyncComponent(GameObject* sync_parent);
 
@@ -54,7 +54,6 @@ private:
 	CompRectTransform* my_transform = nullptr;
 	std::vector<CompGraphic*> graphic_vector;
 	ShaderProgram* default_ui_shader = nullptr;
-
 };
 
 #endif // !COMPONENT_CANVAS_H
