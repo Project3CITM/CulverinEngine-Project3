@@ -28,7 +28,23 @@ public class DaenerysCD_Left : CoolDown
     {
         if (current_charges < max_charges)
         {
+            //Perform Radial Fill when charges are 0
+            if (current_charges == 0) 
+            {
+                //Manage the Radial Fill Cooldown
+                float final_time = cd_time - act_time;
+                if (final_time <= 0.0f)
+                {
+                    final_time = 0.0f;
+                }
+
+                calc_time = final_time / cd_time;
+                GetComponent<CompImage>().FillAmount(calc_time);
+            }
+           
             act_time += Time.deltaTime;
+            
+
             if (act_time >= cd_time)
             {
                 if (in_cd == true)
@@ -36,9 +52,15 @@ public class DaenerysCD_Left : CoolDown
                     in_cd = false;
                     button_cd = GetLinkedObject("daenerys_button_left_obj").GetComponent<CompButton>();
                     button_cd.Activate();
+
+                    if (current_charges == 0)
+                    {
+                        GetComponent<CompImage>().FillAmount(1.0f);
+                    }
                 }
 
                 current_charges++;
+
                 UpdateChargesIcon();
 
                 if (current_charges < max_charges)
