@@ -381,6 +381,7 @@ public class JaimeController : CharacterController
             GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().SetInteractivity(false);
             GetLinkedObject("jaime_s_button_obj").GetComponent<CompImage>().SetRender(false);
             GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);
+            GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);        
         }
 
         //Get values from var and store them
@@ -665,15 +666,21 @@ public class JaimeController : CharacterController
         //jaime_button_left.SetActive(active);
         //jaime_button_right.SetActive(active);
 
-        //Disable Button Interaction
+        //Button Interaction
         jaime_button_left.GetComponent<CompButton>().SetInteractivity(active);
         jaime_button_right.GetComponent<CompButton>().SetInteractivity(active);
 
-        //Disable Image
+        //Image
         jaime_button_left.GetComponent<CompImage>().SetRender(active);
         jaime_button_right.GetComponent<CompImage>().SetRender(active);
         jaime_button_left_idle.GetComponent<CompImage>().SetRender(active);
         jaime_button_right_idle.GetComponent<CompImage>().SetRender(active);
+        
+        //Right Cooldown Text Render
+        GetLinkedObject("jaime_right_cd_text").GetComponent<CompText>().SetRender(active);
+
+        //Sec Cooldown Text Render
+        GetLinkedObject("jaime_secondary_cd_text").GetComponent<CompText>().SetRender(!active);
 
         //Disable Flags
         jaime_left_flag.SetActive(active);

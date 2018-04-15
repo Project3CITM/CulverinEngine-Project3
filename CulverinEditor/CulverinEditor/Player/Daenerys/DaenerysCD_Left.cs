@@ -38,24 +38,18 @@ public class DaenerysCD_Left : CoolDown
             {
                 //Manage the Radial Fill Cooldown
                 float final_time = cd_time - act_time;
-                if (final_time <= 0.0f)
-                {
-                    final_time = 0.0f;
-                    reset_timer = true;
-                }
+                //if (final_time <= 0.0f)
+                //{
+                //    final_time = 0.0f;
+                //    reset_timer = true;
+                //    Debug.Log("RESET TIMER TRUE", Department.PLAYER, Color.YELLOW);
+                //}
 
                 calc_time = final_time / cd_time;
                 GetComponent<CompImage>().FillAmount(calc_time);
 
                 //Manage Seconds Counter     
                 ManageTextTimer(daenerys_left_cd_text);          
-
-                //Reset Seconds Counter
-                if (reset_timer)
-                {
-                    ResetTextTimer(daenerys_left_cd_text);
-                    reset_timer = false;
-                }
             }
            
             act_time += Time.deltaTime;
@@ -71,7 +65,12 @@ public class DaenerysCD_Left : CoolDown
                     if (current_charges == 0)
                     {
                         GetComponent<CompImage>().FillAmount(1.0f);
-                    }
+
+                        ResetTextTimer(daenerys_left_cd_text);
+                        Debug.Log("RESET TIMER FALSE", Department.PLAYER, Color.YELLOW);
+
+                        reset_timer = false;
+                    }              
                 }
 
                 current_charges++;

@@ -270,13 +270,16 @@ bool CompText::GenerateText()
 {
 	if (text_str.empty())
 		return false;
+
 	float4 rect_transform = parent->GetComponentRectTransform()->GetRect();
 	float width = parent->GetComponentRectTransform()->GetWidth();
 	float height = parent->GetComponentRectTransform()->GetHeight();
-	can_draw = false;
+	
+	invalid = true;
+
 	if (TextCanFit(rect_transform, text_rect))
 	{
-		can_draw = true;
+		invalid = false;
 		std::vector<float3> quad_pos;
 		float3 right_top=float3::zero;
 		float3 left_top = float3::zero;

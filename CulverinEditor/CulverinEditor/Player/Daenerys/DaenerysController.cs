@@ -631,6 +631,13 @@ public class DaenerysController : CharacterController
         daenerys_button_left_obj_idle.GetComponent<CompImage>().SetRender(active);
         daenerys_button_right_obj_idle.GetComponent<CompImage>().SetRender(active);
 
+        //Right Cooldown Text Render
+        GetLinkedObject("daenerys_right_cd_text").GetComponent<CompText>().SetRender(active);
+        //Left Cooldown Text Render
+        GetLinkedObject("daenerys_left_cd_text").GetComponent<CompText>().SetRender(active);
+        //Sec Cooldown Text Render
+        GetLinkedObject("daenerys_secondary_cd_text").GetComponent<CompText>().SetRender(!active);
+
         //Disable Flags
         daenerys_left_flag.SetActive(active);
         daenerys_right_flag.SetActive(active);

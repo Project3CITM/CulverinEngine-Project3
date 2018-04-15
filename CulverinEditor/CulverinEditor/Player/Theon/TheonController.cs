@@ -577,6 +577,14 @@ public class TheonController : CharacterController
         theon_button_left_idle.GetComponent<CompImage>().SetRender(active);
         theon_button_right_idle.GetComponent<CompImage>().SetRender(active);
 
+        //Right Cooldown Text Render
+        GetLinkedObject("theon_right_cd_text").GetComponent<CompText>().SetRender(active);
+        //Left Cooldown Text Render
+        GetLinkedObject("theon_left_cd_text").GetComponent<CompText>().SetRender(active);
+        //Sec Cooldown Text Render
+        GetLinkedObject("theon_secondary_cd_text").GetComponent<CompText>().SetRender(!active);
+
+
         //Disable Flags
         theon_left_flag.SetActive(active);
         theon_right_flag.SetActive(active);
