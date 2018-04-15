@@ -44,6 +44,8 @@ public class Boss_BT : BT
 
     System.Random rand_gen = null;
 
+    private bool boss_active;
+
     public override void Start()
     {
         hp_bar = GetLinkedObject("hp_bar");
@@ -55,6 +57,7 @@ public class Boss_BT : BT
         GetComponent<CompAnimation>().PlayAnimation("Idle");
 
         current_hp = total_hp;
+        boss_active = false;
 
         base.Start();
     }
@@ -266,7 +269,7 @@ public class Boss_BT : BT
 
     public void Activate()
     {
-        next_action = GetComponent<Engage_Action>();
+        next_action = GetComponent<BossEngage_Action>();
     }
 
     public int GetDistanceXToPlayer()
@@ -281,5 +284,16 @@ public class Boss_BT : BT
         GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
         int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
         return distance_y;
+    }
+
+    void OnTriggerEnter()
+    {
+        if (boss_active == false)
+        {
+            Debug.Log("Boss is triggered");
+            Activate();
+            GetComponent<BossSight>().SetEnabled(false);
+            boss_active = true;
+        }
     }
 }
