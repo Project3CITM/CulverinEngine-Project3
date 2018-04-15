@@ -987,6 +987,7 @@ void ModuleMap::ShowNavigationMap()
 
 void ModuleMap::OptionsTile(int x, int y)
 {
+	ImGui::Text("%i,%i", x, y);
 	if (ImGui::MenuItem("Delete"))
 	{
 		map[x][y] = -1;
