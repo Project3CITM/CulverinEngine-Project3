@@ -15,14 +15,18 @@ public class DoorLevel2 : CulverinBehaviour
     public float speed_up = 10.0f;
     public float speed_down = 30.0f;
 
-    public int door_pos_x = 0;
-    public int door_pos_y = 0;
+     int door_pos_x = 0;
+     int door_pos_y = 0;
 
     private bool go_close = false;
     private bool go_open = false;
 
     void Start()
     {
+        Vector3 global_pos = transform.GetGlobalPosition();
+        door_pos_x = (int)((global_pos.x + (12.7f)) / 25.4);
+        door_pos_y = (int)((global_pos.z + (12.7f)) / 25.4);
+
         if (door_closed)
         {
             Vector3 pos = GetComponent<Transform>().GetPosition();
