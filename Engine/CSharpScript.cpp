@@ -1041,8 +1041,19 @@ int CSharpScript::ChildCount(MonoObject * object)
 
 MonoObject * CSharpScript::GetChildByIndex(MonoObject* object, int index)
 {
-	GameObject* target = current_game_object->GetChildbyIndex(index);
-	return App->importer->iScript->GetMonoObject(target);
+	if (!CheckMonoObject(object))
+	{
+		return nullptr;
+	}
+	if (current_game_object != nullptr)
+	{
+		GameObject* target = current_game_object->GetChildbyIndex(index);
+		if (target != nullptr)
+		{
+			return App->importer->iScript->GetMonoObject(target);
+		}
+		return nullptr;
+	}
 }
 
 MonoObject * CSharpScript::GetChildByName(MonoObject * object, MonoString * name)

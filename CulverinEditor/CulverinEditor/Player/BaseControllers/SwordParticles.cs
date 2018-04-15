@@ -50,6 +50,13 @@ public class SwordParticles : CulverinBehaviour
                 enemy_particle = sword_enemy_particle.GetComponent<CompParticleSystem>();
                 enemy_particle.ActivateEmission(true);
 
+                //Iterate all childs, they have a ParticleSystem too
+                int childs = sword_enemy_particle.ChildCount();
+                for (int i = 0; i < childs; i++)
+                {
+                    sword_enemy_particle.GetChildByIndex(i).GetComponent<CompParticleSystem>().ActivateEmission(true);
+                }
+
                 //Disable Enemy Collisions
                 EnableEnemyCollision(false);
             }
