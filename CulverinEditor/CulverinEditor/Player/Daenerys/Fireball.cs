@@ -8,9 +8,6 @@ public class Fireball : CulverinBehaviour
     public float life = 5.0f;
     public Vector3 vfront = Vector3.Zero;
     public GameObject fireball_particles;
-    public GameObject fireball_particles2;
-    public GameObject fireball_particles3;
-    public GameObject fireball_particles4;
     private CompRigidBody rb;
     private float timer = 0.0f;
 
@@ -55,25 +52,17 @@ public class Fireball : CulverinBehaviour
 
             CompParticleSystem fireball_particles_script = fireball_particles.GetComponent<CompParticleSystem>();
             fireball_particles_script.ActivateEmission(true);
+
+            //Iterate all childs, they have a ParticleSystem too
+            Debug.Log("Childs: " + gameObject.ChildCount(), Department.PHYSICS, Color.PINK);
+            for (int i = 0; i < gameObject.ChildCount(); i++) 
+            {
+                gameObject.GetChildByIndex(i).GetComponent<CompParticleSystem>().ActivateEmission(true);
+                Debug.Log("Child "+ gameObject.GetChildByIndex(i).GetName(), Department.PHYSICS, Color.PINK);
+
+            }
         }
 
-        if (fireball_particles2 != null)
-        {
-            CompParticleSystem fireball_particles_script = fireball_particles2.GetComponent<CompParticleSystem>();
-            fireball_particles_script.ActivateEmission(true);
-        }
-
-        if (fireball_particles3 != null)
-        {
-            CompParticleSystem fireball_particles_script = fireball_particles3.GetComponent<CompParticleSystem>();
-            fireball_particles_script.ActivateEmission(true);
-        }
-
-        if (fireball_particles4 != null)
-        {
-            CompParticleSystem fireball_particles_script = fireball_particles4.GetComponent<CompParticleSystem>();
-            fireball_particles_script.ActivateEmission(true);
-        }
 
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
         // DAMAGE ---

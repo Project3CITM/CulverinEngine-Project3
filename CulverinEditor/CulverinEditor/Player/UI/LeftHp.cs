@@ -5,13 +5,13 @@ public class LeftHp : CulverinBehaviour
 {
     public GameObject this_obj_lasthp;
     public GameObject hp_bar;
-    float lasthp_value = 0.0f;
+    public float lasthp_value = 0.0f;
     float current_lasthp = 0.0f;
     public float hp_dissapear_vel = 0.1f;
-    bool hp_bar_changed = false;
+    public bool hp_bar_changed = false;
     public float time_to_below_hp = 0.3f;
     public float current_temp_hp_time = 0.0f;
-    bool hp_ready_to_below = false;
+    public bool hp_ready_to_below = false;
 
     void Start()
     {
