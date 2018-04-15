@@ -158,10 +158,22 @@ public class PushBack_Action : Action
         if (interupt == true)
             return ACTION_RESULT.AR_FAIL;
 
+
+        Vector3 my_pos = transform.position;
+
+        Vector3 movement = new Vector3(Vector3.Zero);
+
         if (GetComponent<CompAnimation>().IsAnimationStopped(animation_clip_push))
         {
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            Debug.Log("Tile Destiny x: " + target_x + "y:" + target_y, Department.IA, Color.YELLOW);
             GetComponent<Movement_Action>().SetEnemyTile(target_x, target_y);
+
+            movement.x = (target_x * GetComponent<Movement_Action>().tile_size) - my_pos.x;
+            movement.z = (target_y * GetComponent<Movement_Action>().tile_size) - my_pos.z;
+
+            movement = movement.Normalized * GetComponent<Movement_Action>().tile_size * (1 - GetComponent<Arrive_Steering>().min_distance);
+            transform.SetPosition(my_pos + ((movement * Time.deltaTime) / push_time));
 
             if (push_timer >= 0.5f)
             {
@@ -176,9 +188,6 @@ public class PushBack_Action : Action
 
         }
 
-        Vector3 my_pos = transform.position;
-
-        Vector3 movement = new Vector3(Vector3.Zero);
         movement.x = (target_x * GetComponent<Movement_Action>().tile_size) - my_pos.x;
         movement.z = (target_y * GetComponent<Movement_Action>().tile_size) - my_pos.z;
 

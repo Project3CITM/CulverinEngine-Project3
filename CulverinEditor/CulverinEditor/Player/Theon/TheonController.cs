@@ -121,7 +121,7 @@ public class TheonController : CharacterController
             if (!movement.IsMoving())
             {
                 /* Player is alive */
-                Debug.Log("THEON STATE:" + state, Department.IA);
+                //Debug.Log("THEON STATE:" + state, Department.IA);
                 switch (state)
                 {
                     case State.IDLE:
@@ -208,7 +208,6 @@ public class TheonController : CharacterController
                         }
                     case State.HIT:
                         {
-                            Debug.Log("HITEADO WILLY", Department.IA);
                             //Check for end of the Attack animation
                             anim_controller = theon_obj.GetComponent<CompAnimation>();
                             if (anim_controller.IsAnimationStopped("Hit"))
