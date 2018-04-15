@@ -38,8 +38,7 @@ public class EnemyShield_BT : Enemy_BT
 
     public override void Update()
     {
-        Debug.Log("CURRENT ACTION : ", Department.IA, Color.ORANGE);
-        Debug.Log(current_action.action_type, Department.IA, Color.ORANGE);
+
         shield_block_timer += Time.deltaTime;
 
         enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);

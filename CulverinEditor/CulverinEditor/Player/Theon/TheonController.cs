@@ -119,12 +119,14 @@ public class TheonController : CharacterController
             // Check if player is moving to block attacks/abilities
             movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
             if (!movement.IsMoving())
-            { 
+            {
                 /* Player is alive */
+                Debug.Log("THEON STATE:" + state, Department.IA);
                 switch (state)
                 {
                     case State.IDLE:
                         {
+                           
                             //Check For Input + It has to check if he's moving to block attack (¿?)
                             CheckAttack();
                         
@@ -173,16 +175,18 @@ public class TheonController : CharacterController
                     case State.STUN:
                         {
                             //Check for end of the Attack animation
-                            anim_controller = theon_obj.GetComponent<CompAnimation>();
+                            //anim_controller = theon_obj.GetComponent<CompAnimation>();
                             
                             //Apply damage over x time of the attack animation
-                            if (do_push_attack && anim_controller.IsAnimOverXTime(0.6f))
+                            if (do_push_attack && theon_obj.GetComponent<CompAnimation>().IsAnimOverXTime(0.6f))
                             {
+                                Debug.Log("CAN I DO RIGHT ATTACK", Department.IA);
                                 DoRightAbility();
                                 do_push_attack = false;
                             }
+             
 
-                            if (anim_controller.IsAnimationStopped("Attack2"))
+                            if (theon_obj.GetComponent<CompAnimation>().IsAnimationStopped("Attack2"))
                             { 
                                 state = State.IDLE;
                             }
@@ -204,6 +208,7 @@ public class TheonController : CharacterController
                         }
                     case State.HIT:
                         {
+                            Debug.Log("HITEADO WILLY", Department.IA);
                             //Check for end of the Attack animation
                             anim_controller = theon_obj.GetComponent<CompAnimation>();
                             if (anim_controller.IsAnimationStopped("Hit"))
@@ -280,6 +285,7 @@ public class TheonController : CharacterController
         {
             if (GetState() == 0)
             {
+                Debug.Log("GET STATE DAMAGE", Department.IA);
                 SetAnimationTransition("ToHit", true);
                 SetState(State.HIT);
             }
@@ -292,8 +298,6 @@ public class TheonController : CharacterController
             SetState(State.DEAD);
             PlayFx("TheonDead");
         }
-
-        SetState(State.HIT);
 
         return true;
     }
@@ -509,12 +513,19 @@ public class TheonController : CharacterController
     public void DoRightAbility() //Might be virtual
     {
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
+
+        Debug.Log("RIGHT ABILITY", Department.IA);
+
         if (coll_object != null)
         {
+
+            Debug.Log("OBJ COLLECTED:" + coll_object.GetTag(), Department.IA);
+
             PlayFx("TheonMeleHit");
 
-            if (coll_object.CompareTag("Enemy"))
+            if (coll_object.GetTag() == "Enemy")
             {
+                Debug.Log("IS AN ENEMY", Department.IA);
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
                 EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
                 movement = GetLinkedObject("player_obj").GetComponent<MovementController>();

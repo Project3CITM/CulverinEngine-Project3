@@ -52,15 +52,35 @@ public class Enemy_BT : BT
     {
         in_combat = false;
         player = GetLinkedObject("player");
+        if (GetLinkedObject("player") == null)
+        {
+            Debug.Log("PLAYER NULL!!",Department.IA,Color.RED);
+        }
         current_hp = total_hp;
         //Enemy starts with the attack loaded
         attack_timer = 0.0f;
         mesh = GetLinkedObject("mesh");
+        if (GetLinkedObject("mesh") == null)
+        {
+            Debug.Log("MESH NULL!!", Department.IA, Color.RED);
+        }
         enemies_manager = GetLinkedObject("enemies_manager");
+        if (GetLinkedObject("enemies_manager") == null)
+        {
+            Debug.Log("ENEMIES MANAGER NULL!!", Department.IA, Color.RED);
+        }
         GetComponent<CompAnimation>().PlayAnimation("Idle");
         dmg_alpha = 0.0f;
         //ChangeTexturesToAlive();
         enemy_hp_bar = GetLinkedObject("enemy_hp_bar");
+        if (GetLinkedObject("enemy_hp_bar") == null)
+        {
+            Debug.Log("HALTH BAR NULL!!", Department.IA, Color.RED);
+        }
+        if (enemy_hp_bar.GetComponent<CompImage>() == null)
+        {
+            Debug.Log("COMP IMAGE NULL!!", Department.IA, Color.RED);
+        }
         enemy_hp_bar.GetComponent<CompImage>().DeactivateRender();
         hp_timer_total = 10.0f;
         hp_timer = 0.0f;
@@ -167,6 +187,10 @@ public class Enemy_BT : BT
     public void PushEnemy(Vector3 dir)
     {
         current_action.Interupt();
+
+        Debug.Log("Enemy:" + gameObject.GetName(), Department.IA);
+        Debug.Log("Enemy posx:" + GetComponent<Movement_Action>().GetCurrentTileX() + "posy:" + GetComponent<Movement_Action>().GetCurrentTileY(), Department.IA);
+        Debug.Log("Player direction push:" + dir, Department.IA);
 
         if (!GetComponent<Movement_Action>().IsWalkable((uint)(GetComponent<Movement_Action>().GetCurrentTileX() + dir.x), (uint)(GetComponent<Movement_Action>().GetCurrentTileY() + dir.z)))
             next_action = GetComponent<Stun_Action>();
