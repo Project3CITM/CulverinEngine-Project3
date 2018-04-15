@@ -169,6 +169,7 @@
     <ClInclude Include="ModulePhysics.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="ClickAction.h" />
+    <ClInclude Include="Performance.h" />
     <ClInclude Include="PlayerActions.h" />
     <ClInclude Include="ModuleRenderGui.h" />
     <ClInclude Include="ModuleResourceManager.h" />
@@ -528,6 +529,7 @@
     <ClCompile Include="ModulePhysics.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="ClickAction.cpp" />
+    <ClCompile Include="Performance.cpp" />
     <ClCompile Include="PlayerActions.cpp" />
     <ClCompile Include="ModuleRenderGui.cpp" />
     <ClCompile Include="ModuleResourceManager.cpp" />
