@@ -80,10 +80,12 @@ update_status ModulePhysics::PreUpdate(float dt)
 	// Update Physics World
 	if (dt > 0) {
 		did_simulation = physics_world->Simulate(dt);
+		simulation_done = false;
 	}
 	else
 	{
 		did_simulation = false;
+		simulation_done = true;
 	}
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -96,6 +98,7 @@ update_status ModulePhysics::Update(float dt)
 	if (dt > 0)
 	{
 		physics_world->StopSimulation();
+		simulation_done = true;
 	}
 
 	Update_t = perf_timer.ReadMs();
@@ -144,7 +147,7 @@ bool ModulePhysics::CleanUp()
 {
 	LOG("Cleaning Physics");
 
-	if (physics_world)
+	if (physics_world && !simulation_done)
 	{
 		physics_world->StopSimulation();
 	}

@@ -1094,8 +1094,13 @@ void ImportScript::LinkFunctions()
 	//SCENE MANAGEMENT FUNCTIONS ---------
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadScene",(const void*)LoadScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadSceneNoDestroy", (const void*)LoadSceneNoDestroy);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadMultiSceneNoDestroy", (const void*)LoadMultisceneNoDestroy);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::CheckSceneReady", (const void*)CheckSceneReady);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::CheckMultiSceneReady", (const void*)CheckMultiSceneReady);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::RemoveNoDestroy", (const void*)RemoveNoDestroy);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::RemoveSecondaryScene", (const void*)RemoveSecondaryScene);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::ChangeToSecondaryScene", (const void*)ChangeToSecondaryScene);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::BlockGUIinput", (const void*)BlockGUIinput);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
 
 	//EVENT SYSTEM FUNCTIONS ----------------------------
@@ -1314,9 +1319,53 @@ void ImportScript::LoadSceneNoDestroy(MonoString* scene_name)
 	}
 }
 
+void ImportScript::LoadMultisceneNoDestroy(MonoString * main_scene_name, MonoString * secondary_scene_name)
+{
+	std::string directory_scene;
+	if (main_scene_name != nullptr)
+	{
+		const char* scene = mono_string_to_utf8(main_scene_name);
+
+		directory_scene = DIRECTORY_ASSETS;
+		directory_scene += scene;
+		directory_scene += ".scene.json";
+
+		/*
+		----------------------------------------------------------------
+		This is a vicente fix, in the future we need to make an event to change scene
+		to turn the focus into nullptr
+		*/
+		//----------------------------------------------------------------
+		App->SetActualScene(directory_scene.c_str());
+		App->LoadMultiScene();
+	}
+	if (secondary_scene_name != nullptr)
+	{
+		const char* scene2 = mono_string_to_utf8(secondary_scene_name);
+
+		directory_scene = DIRECTORY_ASSETS;
+		directory_scene += scene2;
+		directory_scene += ".scene.json";
+
+		/*
+		----------------------------------------------------------------
+		This is a vicente fix, in the future we need to make an event to change scene
+		to turn the focus into nullptr
+		*/
+		//----------------------------------------------------------------
+		App->SetSecondaryScene(directory_scene.c_str());
+		App->LoadMultiScene();
+	}
+}
+
 bool ImportScript::CheckSceneReady()
 {
 	return !App->dont_destroy_on_load;
+}
+
+bool ImportScript::CheckMultiSceneReady()
+{
+	return !App->load_multi_scene;
 }
 
 void ImportScript::RemoveNoDestroy()
@@ -1325,11 +1374,24 @@ void ImportScript::RemoveNoDestroy()
 	App->remove_dont_destroy_on_load = true;
 }
 
+void ImportScript::RemoveSecondaryScene()
+{
+	App->remove_secondary_scene = true;
+}
+
+void ImportScript::ChangeToSecondaryScene()
+{
+	App->change_to_secondary_scene = true;
+}
+
+void ImportScript::BlockGUIinput()
+{
+	App->activate_gui_input = true;
+}
+
 void ImportScript::QuitScene()
 {
-	
-		App->input->quit = true;
-	
+	App->input->quit = true;
 }
 
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)

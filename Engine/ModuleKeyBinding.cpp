@@ -152,6 +152,7 @@ bool ModuleKeyBinding::SaveConfig(JSON_Object * node)
 
 bool ModuleKeyBinding::CleanUp()
 {
+	key_binding_relations.clear();
 	return true;
 }
 

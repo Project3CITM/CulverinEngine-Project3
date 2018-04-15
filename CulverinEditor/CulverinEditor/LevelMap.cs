@@ -52,7 +52,13 @@ public class LevelMap : CulverinBehaviour
     //{
 
     //}
-
+    /// <summary>
+    /// Value == 0 -> Walkable
+    /// Value == 1 -> No Walkable
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="value"></param>
     public void UpdateMap(int x, int y, int value)
     {
         level_map[x, y] = value;

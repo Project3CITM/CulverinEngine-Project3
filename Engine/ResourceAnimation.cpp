@@ -42,18 +42,9 @@ void ResourceAnimation::DeleteToMemory()
 
 AnimBone::~AnimBone()
 {
-	for (std::vector<PositionKey*>::iterator temp = position_keys.begin(); temp != position_keys.end(); temp++)
-	{
-		RELEASE((*temp));
-	}
-	for (std::vector<RotationKey*>::iterator temp = rotation_keys.begin(); temp != rotation_keys.end(); temp++)
-	{
-		RELEASE((*temp));
-	}
-	for (std::vector<ScaleKey*>::iterator temp = scale_keys.begin(); temp != scale_keys.end(); temp++)
-	{
-		RELEASE((*temp));
-	}
+	position_keys.clear();
+	rotation_keys.clear();
+	scale_keys.clear();
 }
 
 void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, BlendingClip* blending_node_clip, BlendingClip* second_blending_node_clip ,AnimationClip* blending_clip) const
@@ -125,7 +116,7 @@ void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, Blendin
 float3 AnimBone::GetPosition(AnimationClip* clip_vec, bool activated) const
 {
 	if(activated == false)
-		return position_keys[0]->position;
+		return position_keys[0].position;
 	if (position_keys.size() > 1)
 	{
 		float3 actual_pos;
@@ -133,29 +124,29 @@ float3 AnimBone::GetPosition(AnimationClip* clip_vec, bool activated) const
 		float actual_time;
 		float next_time;
 
-		for (std::vector<PositionKey*>::const_iterator it = position_keys.begin(); it != position_keys.end(); ++it)
+		for (std::vector<PositionKey>::const_iterator it = position_keys.begin(); it != position_keys.end(); ++it)
 		{			
-			if ((*it)->time <= clip_vec->time)
+			if ((*it).time <= clip_vec->time)
 			{
 				if (it == position_keys.end() - 1)
 				{
-					return position_keys[position_keys.size() - 1]->position;
+					return position_keys[position_keys.size() - 1].position;
 				}
 				else
 				{
-					actual_pos = (*it)->position;
-					actual_time = (*it)->time;
-					next_pos = (*(it + 1))->position;
-					next_time = (*(it + 1))->time;
+					actual_pos = (*it).position;
+					actual_time = (*it).time;
+					next_pos = (*(it + 1)).position;
+					next_time = (*(it + 1)).time;
 					continue;
 				}
 			}
-			if ((clip_vec->time < position_keys[0]->time))
+			if ((clip_vec->time < position_keys[0].time))
 			{
-				actual_pos = position_keys[0]->position;
-				actual_time = position_keys[0]->time;
-				next_pos = position_keys[1]->position;
-				next_time = position_keys[1]->time;
+				actual_pos = position_keys[0].position;
+				actual_time = position_keys[0].time;
+				next_pos = position_keys[1].position;
+				next_time = position_keys[1].time;
 				break;
 			}
 		}
@@ -166,13 +157,13 @@ float3 AnimBone::GetPosition(AnimationClip* clip_vec, bool activated) const
 		return actual_pos.Lerp(next_pos, weight);
 
 	}
-	return position_keys[0]->position;
+	return position_keys[0].position;
 }
 
 Quat AnimBone::GetRotation(AnimationClip* clip_vec, bool activated) const
 {
 	if (activated == false)
-		return rotation_keys[0]->rotation;
+		return rotation_keys[0].rotation;
 
 	if (rotation_keys.size() > 1)
 	{
@@ -181,30 +172,30 @@ Quat AnimBone::GetRotation(AnimationClip* clip_vec, bool activated) const
 		float actual_time;
 		float next_time;
 
-		for (std::vector<RotationKey*>::const_iterator it = rotation_keys.begin(); it != rotation_keys.end(); ++it)
+		for (std::vector<RotationKey>::const_iterator it = rotation_keys.begin(); it != rotation_keys.end(); ++it)
 		{
 			
-			if ((*it)->time <= clip_vec->time)
+			if ((*it).time <= clip_vec->time)
 			{
 				if (it == rotation_keys.end() - 1)
 				{
-					return rotation_keys[rotation_keys.size() - 1]->rotation;
+					return rotation_keys[rotation_keys.size() - 1].rotation;
 				}
 				else
 				{
-					actual_pos = (*it)->rotation;
-					actual_time = (*it)->time;
-					next_pos = (*(it + 1))->rotation;
-					next_time = (*(it + 1))->time;
+					actual_pos = (*it).rotation;
+					actual_time = (*it).time;
+					next_pos = (*(it + 1)).rotation;
+					next_time = (*(it + 1)).time;
 					continue;
 				}
 			}
-			if ((clip_vec->time < rotation_keys[0]->time))
+			if ((clip_vec->time < rotation_keys[0].time))
 			{
-				actual_pos = rotation_keys[0]->rotation;
-				actual_time = rotation_keys[0]->time;
-				next_pos = rotation_keys[1]->rotation;
-				next_time = rotation_keys[1]->time;
+				actual_pos = rotation_keys[0].rotation;
+				actual_time = rotation_keys[0].time;
+				next_pos = rotation_keys[1].rotation;
+				next_time = rotation_keys[1].time;
 				break;
 			}
 		}
@@ -217,7 +208,7 @@ Quat AnimBone::GetRotation(AnimationClip* clip_vec, bool activated) const
 	else
 	{
 		
-		return rotation_keys[0]->rotation;
+		return rotation_keys[0].rotation;
 		
 	}
 }
@@ -225,7 +216,7 @@ Quat AnimBone::GetRotation(AnimationClip* clip_vec, bool activated) const
 float3 AnimBone::GetScale(AnimationClip* clip_vec, bool activated) const
 {
 	if (activated == false)
-		return scale_keys[0]->scale;
+		return scale_keys[0].scale;
 
 	if (scale_keys.size() > 1)
 	{
@@ -234,29 +225,29 @@ float3 AnimBone::GetScale(AnimationClip* clip_vec, bool activated) const
 		float actual_time;
 		float next_time;
 
-		for (std::vector<ScaleKey*>::const_iterator it = scale_keys.begin(); it != scale_keys.end(); ++it)
+		for (std::vector<ScaleKey>::const_iterator it = scale_keys.begin(); it != scale_keys.end(); ++it)
 		{
-			if ((*it)->time <= clip_vec->time)
+			if ((*it).time <= clip_vec->time)
 			{
 				if (it == scale_keys.end() - 1)
 				{
-					return scale_keys[scale_keys.size() - 1]->scale;
+					return scale_keys[scale_keys.size() - 1].scale;
 				}
 				else
 				{
-					actual_pos = (*it)->scale;
-					actual_time = (*it)->time;
-					next_pos = (*(it + 1))->scale;
-					next_time = (*(it + 1))->time;
+					actual_pos = (*it).scale;
+					actual_time = (*it).time;
+					next_pos = (*(it + 1)).scale;
+					next_time = (*(it + 1)).time;
 					continue;
 				}
 			}
-			if ((clip_vec->time < rotation_keys[0]->time))
+			if ((clip_vec->time < scale_keys[0].time))
 			{
-				actual_pos = scale_keys[0]->scale;
-				actual_time = scale_keys[0]->time;
-				next_pos = scale_keys[1]->scale;
-				next_time = scale_keys[1]->time;
+				actual_pos = scale_keys[0].scale;
+				actual_time = scale_keys[0].time;
+				next_pos = scale_keys[1].scale;
+				next_time = scale_keys[1].time;
 				break;
 			}
 		}
@@ -267,7 +258,7 @@ float3 AnimBone::GetScale(AnimationClip* clip_vec, bool activated) const
 		return actual_pos.Lerp(next_pos, weight);
 
 	}
-	return scale_keys[0]->scale;
+	return scale_keys[0].scale;
 }
 
 void AnimBone::DrawDebug(GameObject * bone) const

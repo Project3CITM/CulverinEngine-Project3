@@ -475,9 +475,7 @@ public class Lever : CulverinBehaviour
         // Activate the water
         barrel_puzzel_manager.OnPuzzleActivated();
         // Activate the puzzle
-        active_lever = true; // TODO: Verify this is correct and uncomment this line
-
-    
+        active_lever = true; 
     }
 
     // Convert from tile coords to world coords
@@ -565,9 +563,7 @@ public class Lever : CulverinBehaviour
             Debug.Log("[error] Map is null");
         level_map_script = level_map.GetComponent<LevelMap>();
 
-        player = GetLinkedObject("player");
-        MovementController player_mov = player.GetComponent<MovementController>();
-
+      
         int count_barrel = barrel_per_line - 1;
 
         int curr_x = 0;
@@ -582,16 +578,13 @@ public class Lever : CulverinBehaviour
                 if (current_path.walkability[x, y] == 0)
                 {
                     level_map_script.UpdateMap(curr_x, curr_y, value);
-                    player_mov.SetTileWalkability(curr_x, curr_y, value);
                 }
                 else
                 {
                     level_map_script.UpdateMap(curr_x, curr_y, value2);
-                    player_mov.SetTileWalkability(curr_x, curr_y, value2);
                 }
             }
         }
-
     }
 
     public void ResetPuzzle()

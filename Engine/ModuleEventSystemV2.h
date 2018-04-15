@@ -77,6 +77,7 @@ private:
 	void IterateDrawGlowV(float dt);
 	void IterateDrawAlphaV(float dt);
 	void IterateNoDrawV(float dt);
+	void IterateLightsV(float dt);
 	EventValidation ValidEvent(Event& event, float dt);
 
 private:
@@ -84,6 +85,7 @@ private:
 	std::multimap<uint, Event> DrawGlowV;						//Draw glow events are stored here ordered by resource number (faster draw, less bind/unbind)
 	std::multimap<float, Event> DrawAlphaV;						//Draw events are stored here ordered by distance to active camera
 	std::multimap<EventType, Event> NoDrawV;					//No-Draw events are stored here ordered by EventType enum, less eventvector change when iterating
+	std::multimap<float, Event> DrawLightV;							//Lights events are stored here ordered by distance to active
 	std::list<Event> PushedWhileIteratingEvents;				//Store events while iterating, used by event system internally
 	std::map<EventType, std::vector<Module*>> MEventListeners;
 	bool IteratingMaps = false;

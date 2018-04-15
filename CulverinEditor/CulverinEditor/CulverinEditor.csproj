@@ -82,15 +82,24 @@
     <Compile Include="AI\ShieldGuard_Listener.cs" />
     <Compile Include="Player\UI\LeftMana.cs" />
     <Compile Include="Player\UI\LeftHp.cs" />
-    <Compile Include="BarrelPuzle\SetParticleTransf.cs" />
-    <Compile Include="BarrelPuzle\BarrelPuzzleManager.cs" />
-    <Compile Include="BarrelPuzle\Lever.cs" />
-    <Compile Include="BarrelPuzle\Paths\Path.cs" />
-    <Compile Include="BarrelPuzle\PuzzleCountdown.cs" />
     <Compile Include="Player\UI\Leftamina.cs" />
     <Compile Include="Player\ActivateEnemies.cs" />
     <Compile Include="Player\BaseControllers\TestLog.cs" />
+    <Compile Include="Miscellanea\DoorLever.cs" />
+    <Compile Include="Miscellanea\ReverbCorridor.cs" />
     <Compile Include="Player\Jaime\ComboController.cs" />
+    <Compile Include="Puzzles\Level 2\BarrelPuzzle\BarrelFall.cs" />
+    <Compile Include="Puzzles\Level 2\BarrelPuzzle\BarrelPuzzleManager.cs" />
+    <Compile Include="Puzzles\Level 2\BarrelPuzzle\Lever.cs" />
+    <Compile Include="Puzzles\Level 2\BarrelPuzzle\Paths\Path.cs" />
+    <Compile Include="Puzzles\Level 2\BarrelPuzzle\PuzzleCountdown.cs" />
+    <Compile Include="Puzzles\Level 2\BarrelPuzzle\SetParticleTransf.cs" />
+    <Compile Include="Puzzles\Level 2\DoorLevel2.cs" />
+    <Compile Include="Puzzles\Level 2\MovementPlayer2_test.cs" />
+    <Compile Include="Puzzles\Level 2\ProjectilePuzzle\Projectile.cs" />
+    <Compile Include="Puzzles\Level 2\ProjectilePuzzle\ManagerProjectile.cs" />
+    <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapManager.cs" />
+    <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapTile.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
     <Compile Include="LevelFinished.cs" />
@@ -131,7 +140,6 @@
     <Compile Include="PhysX.cs" />
     <Compile Include="Player\AttackTarget.cs" />
     <Compile Include="Audio.cs" />
-    <Compile Include="BarrelPuzle\BarrelFall.cs" />
     <Compile Include="Player\BaseControllers\CharacterController.cs" />
     <Compile Include="Player\BaseControllers\CharactersManager.cs" />
     <Compile Include="CompAnimation.cs" />
@@ -190,6 +198,10 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Puzzles\Level 1\" />
+    <Folder Include="Puzzles\Level 3\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
