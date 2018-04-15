@@ -7,8 +7,8 @@ public class DoorLever : CulverinBehaviour
 {
     
     public bool active_lever = false;
-  
 
+    public GameObject door_to_open = null;
     public GameObject lever_interact = null;
     public GameObject lever_go = null;
     private CompAnimation anim_controller = null;
@@ -24,6 +24,7 @@ public class DoorLever : CulverinBehaviour
     {
         
         lever_go = GetLinkedObject("lever_go");
+        door_to_open = GetLinkedObject("door_to_open");
 
         audio = GetComponent<CompAudio>();
         if (audio == null)
@@ -155,7 +156,10 @@ public class DoorLever : CulverinBehaviour
         on_lever_animation = false;
       
         active_lever = true;
-        Debug.Log("DOOR OPENED");
+
+
+        DoorLevel2 to_open = door_to_open.GetComponent<DoorLevel2>();
+        to_open.OpenDoor();
     }
 
 
