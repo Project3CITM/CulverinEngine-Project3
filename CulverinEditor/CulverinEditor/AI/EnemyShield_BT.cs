@@ -38,6 +38,8 @@ public class EnemyShield_BT : Enemy_BT
 
     public override void Update()
     {
+        Debug.Log("CURRENT ACTION : ", Department.IA, Color.ORANGE);
+        Debug.Log(current_action.action_type, Department.IA, Color.ORANGE);
         shield_block_timer += Time.deltaTime;
 
         enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
@@ -154,7 +156,7 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
-                        GetComponent<CompAnimation>().SetTransition("ToBlock");
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         return false;
                     }
@@ -177,7 +179,7 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
-                        GetComponent<CompAnimation>().SetTransition("ToBlock");
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         return false;
                     }
