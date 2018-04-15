@@ -12,6 +12,10 @@ public class Mana : CulverinBehaviour
     float calc_mana = 100.0f;
     bool not_enough_mana = false;
     float flickering_time = 0.0f;
+    public float mana_flickering_time = 0.15f;
+    bool wasted_mana = false;
+    float wasted_mana_time = 0.0f;
+    public float wait_for_mana_recovery = 0.2f;
     void Start()
     {
         this_obj_mana = GetLinkedObject("this_obj_mana");
@@ -22,34 +26,45 @@ public class Mana : CulverinBehaviour
 
     void Update()
     {
-        if (curr_mana < max_mana)
+        if (!wasted_mana)
         {
-            curr_mana += regen;
-            if (curr_mana > max_mana)
+            if (curr_mana < max_mana)
             {
-                curr_mana = max_mana;
+                curr_mana += regen;
+                if (curr_mana > max_mana)
+                {
+                    curr_mana = max_mana;
+                }
+                calc_mana = curr_mana / max_mana;
+                mana_bar = this_obj_mana.GetComponent<CompImage>();
+                mana_bar.FillAmount(calc_mana);
             }
-            calc_mana = curr_mana / max_mana;
-            mana_bar = this_obj_mana.GetComponent<CompImage>();
-            mana_bar.FillAmount(calc_mana);
+        }
+        else
+        {
+            wasted_mana_time += Time.deltaTime;
+            if (wasted_mana_time >= wait_for_mana_recovery)
+            {
+                wasted_mana = false;
+            }
         }
 
         if (not_enough_mana)
         {
             flickering_time += Time.deltaTime;
-            if (flickering_time >= 0.2)
+            if (flickering_time >= wait_for_mana_recovery)
             {
                 this_obj_mana.GetComponent<CompImage>().DeactivateRender();
             }
-            if (flickering_time >= 0.4)
+            if (flickering_time >= wait_for_mana_recovery*2)
             {
                 this_obj_mana.GetComponent<CompImage>().ActivateRender();
             }
-            if (flickering_time >= 0.6)
+            if (flickering_time >= wait_for_mana_recovery*3)
             {
                 this_obj_mana.GetComponent<CompImage>().DeactivateRender();
             }
-            if (flickering_time >= 0.8)
+            if (flickering_time >= wait_for_mana_recovery*4)
             {
                 this_obj_mana.GetComponent<CompImage>().ActivateRender();
                 not_enough_mana = false;
@@ -103,6 +118,8 @@ public class Mana : CulverinBehaviour
     {
         if (curr_mana >= value)
         {
+            wasted_mana = true;
+            wasted_mana_time = 0.0f;
             return true;
         }
         else
