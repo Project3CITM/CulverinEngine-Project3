@@ -84,7 +84,7 @@ update_status ModuleShaders::Update(float dt)
 
 		(*item)->Bind();
 
-		SetUniformVariables(*item);
+		//SetUniformVariables(*item);
 		//TIME		
 		GLint timeLoc = glGetUniformLocation(ID, "_time");
 		if (timeLoc != -1) glUniform1f(timeLoc, time_dt);

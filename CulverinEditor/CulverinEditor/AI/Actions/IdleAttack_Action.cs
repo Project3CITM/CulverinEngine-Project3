@@ -10,7 +10,10 @@ public class IdleAttack_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+        if (GetComponent<CompAnimation>().IsAnimationStopped("IdleAttack"))
+        {
+            GetComponent<CompAnimation>().PlayAnimationNode("IdleAttack");
+        }
         return true;
     }
 

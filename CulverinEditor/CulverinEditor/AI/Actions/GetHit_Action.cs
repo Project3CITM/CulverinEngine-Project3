@@ -142,6 +142,11 @@ class GetHit_Action: Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if (interupt == true)
+        {
+            return ACTION_RESULT.AR_FAIL;
+        }
+
         if(GetComponent<CompAnimation>().IsAnimOverXTime(0.3f) && !played_audio)
         {
             if(GetComponent<EnemyShield_BT>() != null)

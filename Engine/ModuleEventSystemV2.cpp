@@ -189,7 +189,8 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 					LastBindedProgram = NewProgramID;					
 					ActualMaterial->Bind();
 
-				}			
+				}	
+				App->module_shaders->SetUniformVariables(ActualMaterial);
 				for (uint i = 0; i < ActualMaterial->textures.size(); i++)
 				{
 					uint texLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), ActualMaterial->textures[i].var_name.c_str());

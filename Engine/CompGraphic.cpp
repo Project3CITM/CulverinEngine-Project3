@@ -193,12 +193,7 @@ void CompGraphic::ProcesQuad(std::vector<float3>& position, std::vector<float3>&
 	{
 		vertex_data.AddVertex(position[i], float2(texture_cord[i].x, texture_cord[i].y));
 	}
-	LOG(" quad_pos[0].x %i", indice_position);
-	LOG(" quad_pos[0].x %i", indice_position + 1);
-	LOG(" quad_pos[0].x %i", indice_position + 2);
-	LOG(" quad_pos[0].x %i", indice_position + 2);
-	LOG(" quad_pos[0].x %i", indice_position + 3);
-	LOG(" quad_pos[0].x %i", indice_position);
+
 
 	vertex_data.AddTriangleIndex(indice_position, indice_position + 1, indice_position + 2);
 	vertex_data.AddTriangleIndex(indice_position + 2, indice_position + 3, indice_position);
@@ -226,11 +221,18 @@ void CompGraphic::GenerateMesh()
 	vertex_data.CleanUp();
 	ExpandMesh();
 
-	(vertex_data.current_vertex_count == 0) ? can_draw = false : can_draw = true;
+	(vertex_data.current_vertex_count == 0) ? invalid = true : invalid = false;
 
 	if (vertex_data.current_vertex_count == 0)
 	{
 		return;
 	}
 	my_canvas_render->SetVertex(vertex_data);
+}
+
+bool CompGraphic::CheckRender()
+{
+	if(invalid|| !IsActive())
+		return false;
+	return can_draw;
 }

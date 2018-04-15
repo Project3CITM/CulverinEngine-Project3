@@ -57,6 +57,9 @@ public:
 	bool IsSelective() const;
 	void Activate();
 
+	bool IsInteractiveEnabled() const;
+	
+
 	void Deactive();
 	void NavigationRemove(CompInteractive* to_remove);
 	virtual void ForceClear(Event event_input);
@@ -92,6 +95,8 @@ public:
 	void SetPressedColor(float set_r, float set_g, float set_b, float set_a);
 	void SetDisabledColor(const float4& set_rgba);
 	void SetDisabledColor(float set_r, float set_g, float set_b, float set_a);
+	/*Setter for Interactivity*/
+	void SetInteractivity(bool enable);
 	//Getters Sprite Swap  parameters
 	void SetHighlightedSprite(ResourceMaterial* set_sprite);
 	void SetPressedSprite(ResourceMaterial* set_sprite);
@@ -178,6 +183,8 @@ protected:
 	bool point_inside = false;
 	bool interactive_selected = false;
 	bool selective = false;
+
+	bool interactive_enabled = true;
 
 private:
 	

@@ -1161,6 +1161,8 @@ void ImportScript::LinkFunctions()
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
+	mono_add_internal_call("CulverinEditor.CompInteractive::SetInteractivity", (const void*)SetInteractivity);
+
 	
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompButton::Activate", (const void*)Activate);
@@ -1169,13 +1171,12 @@ void ImportScript::LinkFunctions()
 	
 	//COMPONENT UI_GRAPHIC FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetRaycastTarget", (const void*)SetRaycastTarget);
-	mono_add_internal_call("CulverinEditor.CompImage::FillAmount", (const void*)FillAmount);
-	mono_add_internal_call("CulverinEditor.CompImage::SetRender", (const void*)SetRender);
-
-	mono_add_internal_call("CulverinEditor.CompImage::ActivateRender", (const void*)ActivateRender);
-	mono_add_internal_call("CulverinEditor.CompImage::DeactivateRender", (const void*)DeactivateRender);
+	mono_add_internal_call("CulverinEditor.CompGraphic::SetRender", (const void*)SetRender);
+	mono_add_internal_call("CulverinEditor.CompGraphic::ActivateRender", (const void*)ActivateRender);
+	mono_add_internal_call("CulverinEditor.CompGraphic::DeactivateRender", (const void*)DeactivateRender);
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetColor", (const void*)SetColor);
-
+	
+	mono_add_internal_call("CulverinEditor.CompImage::FillAmount", (const void*)FillAmount);
 	
 	//COMPONENT TEXT
 	mono_add_internal_call("CulverinEditor.CompText::SetAlpha", (const void*)SetAlpha);
@@ -1885,6 +1886,11 @@ void ImportScript::Activate(MonoObject * object, int uid)
 void ImportScript::Deactivate(MonoObject * object, int uid)
 {
 	current->Deactivate(object, uid);
+}
+
+void ImportScript::SetInteractivity(MonoObject * object, mono_bool enable)
+{
+	current->SetInteractivity(object, enable);
 }
 
 void ImportScript::Clicked(MonoObject * object)

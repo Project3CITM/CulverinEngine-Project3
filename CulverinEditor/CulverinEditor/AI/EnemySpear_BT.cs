@@ -7,6 +7,10 @@ public class EnemySpear_BT : Enemy_BT
     public GameObject current_map;
     Movement_Action mov;
     System.Random rand;
+    Material enemy_mat_sword;
+
+    public GameObject spear_icon;
+    public GameObject spear_name;
 
     public override void Start()
     {
@@ -37,11 +41,37 @@ public class EnemySpear_BT : Enemy_BT
                 enemy_manager.AddLanceEnemy(gameObject);
             }
         }
+
+        enemy_mat_sword = GetMaterialByName("EnemyWithSpear");
+
+        spear_icon = GetLinkedObject("spear_icon");
+        spear_name = GetLinkedObject("spear_name");
+
         base.Start();
+        base.DeactivateHUD(spear_icon, spear_name);
     }
 
     public override void Update()
     {
+        enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
+
+        if (hp_timer < hp_timer_total && hud_active == true)
+        {
+            hp_timer += Time.deltaTime;
+        }
+        else if (hud_active == true)
+        {
+            base.DeactivateHUD(spear_icon, spear_name);
+        }
+
+        bool attack_ready = attack_timer >= attack_cooldown;
+
+        if (attack_ready && current_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
+        {
+            Debug.Log("GetHitInterrupted BITCH", Department.IA);
+            current_action.Interupt();
+        }
+
         base.Update();
     }
 
@@ -169,6 +199,7 @@ public class EnemySpear_BT : Enemy_BT
 
     public override bool ApplyDamage(float damage)
     {
+        base.ActivateHUD(spear_icon, spear_name);
         return base.ApplyDamage(damage);
     }
 
