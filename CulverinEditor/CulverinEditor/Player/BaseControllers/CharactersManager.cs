@@ -525,7 +525,7 @@ public class CharactersManager : CulverinBehaviour
     //Call thius function to deal damage to the current character
     public bool GetDamage(float dmg)
     {
-
+        Input.RumblePlay(0.5f, 200);
         // Shield Ability Consumable
         if (player_obj.GetComponent<Shield>().IsActive())
         {
