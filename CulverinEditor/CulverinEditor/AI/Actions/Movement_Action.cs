@@ -485,11 +485,8 @@ public class Movement_Action : Action
     public void LookAtTile(PathNode tile)
     {
         Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
-        if (path != null && path.Count > 0)
-        {
-            next_tile.x = tile.GetTileX() * tile_size;
-            next_tile.z = tile.GetTileY() * tile_size;
-        }
+        next_tile.x = tile.GetTileX() * tile_size;
+        next_tile.z = tile.GetTileY() * tile_size;
         LookAt(next_tile);
     }
 
