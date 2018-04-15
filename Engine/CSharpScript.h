@@ -88,6 +88,12 @@ private:
 
 };
 
+struct XaviStruct
+{
+	MonoClassField* mono_field = nullptr;
+	MonoType* mono_type = nullptr;
+};
+
 class ScriptVariable
 {
 public:
@@ -361,7 +367,8 @@ public:
 private:
 
 	//Auxiliar map to fill variables vector with info
-	std::map<MonoClassField*, MonoType*> field_type;
+	std::multimap<uint, XaviStruct> field_type;
+	uint count_variables = 0;
 	std::string nameCSharp;
 	std::string name_space;
 
