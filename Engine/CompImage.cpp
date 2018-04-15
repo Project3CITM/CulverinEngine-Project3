@@ -534,9 +534,9 @@ void CompImage::CorrectFillAmount()
 
 float CompImage::CorrectValue01(float value)
 {
-	if (value > 1)
+	if (value > 1.0f)
 		value = 1.0f;
-	else if (value < 0)
+	else if (value < 0.0f)
 		value = 0.0f;
 
 	return value;
