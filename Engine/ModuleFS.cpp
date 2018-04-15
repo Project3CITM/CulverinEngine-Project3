@@ -29,6 +29,7 @@ bool ModuleFS::Init(JSON_Object * node)
 {
 	// Will contain exe path
 	GetCurrentDirectory(MAX_PATH, ownPth);
+
 	directory_game = ownPth;
 	directory_assets = directory_game + "\\Assets";
 	LOG("%s", directory_game);
@@ -163,6 +164,15 @@ std::string ModuleFS::CopyFileToAssetsS(const char* fileNameFrom, const char* fi
 	return exits;
 }
 
+void ModuleFS::CopyPasteFile(const char * fileFrom, const char* fileTo)
+{
+	namespace fs = std::experimental::filesystem;
+	if (fileFrom != nullptr && fileTo != nullptr)
+	{
+		fs::copy(fileFrom, fileTo);
+	}
+}
+
 void ModuleFS::CopyFolderToLibrary(const char * folder)
 {
 	namespace fs = std::experimental::filesystem;
@@ -178,6 +188,15 @@ void ModuleFS::CopyFolderToLibrary(const char * folder)
 	CreateFolder("Library");
 	CreateFolder("Library/ParticleSystem");
 	fs::copy(from, to, fs::copy_options::recursive);
+}
+
+void ModuleFS::CopyPasteFolder(const char* folderFrom, const char* folderTo)
+{
+	namespace fs = std::experimental::filesystem;
+	if (folderFrom != nullptr && folderTo != nullptr)
+	{
+		fs::copy(folderFrom, folderTo, fs::copy_options::recursive);
+	}
 }
 
 bool ModuleFS::CheckAssetsIsModify()
@@ -288,7 +307,7 @@ void ModuleFS::GetAllFiles(std::experimental::filesystem::path path, std::vector
 	}
 }
 
-void ModuleFS::GetAllFilesByExtension(std::experimental::filesystem::path path, std::vector<std::string>& files, const char* ext)
+void ModuleFS::GetAllFilesByExtension(std::experimental::filesystem::path path, std::vector<std::string>& files, const char* ext, bool recursive)
 {
 	namespace stdfs = std::experimental::filesystem;
 
@@ -305,9 +324,24 @@ void ModuleFS::GetAllFilesByExtension(std::experimental::filesystem::path path, 
 		{
 			files.push_back(iter->path().string());
 		}
-		if (stdfs::is_directory(*iter))
+		if (stdfs::is_directory(*iter) && recursive)
 		{
 			GetAllFilesByExtension(iter->path().string(), files, ext);
+		}
+	}
+}
+
+void ModuleFS::GetOnlyFilesFromFolder(std::experimental::filesystem::path path, std::vector<std::string>& files)
+{
+	namespace stdfs = std::experimental::filesystem;
+
+	const stdfs::directory_iterator end{};
+
+	for (stdfs::directory_iterator iter{ path }; iter != end; ++iter)
+	{
+		if (!stdfs::is_directory(*iter))
+		{
+			files.push_back(iter->path().string());
 		}
 	}
 }
@@ -1338,7 +1372,7 @@ const char* ModuleFS::ConverttoConstChar(std::string name)
 	return temp;
 }
 
-std::string ModuleFS::GetAssetsDirectory()
+std::string ModuleFS::GetGameDirectory()
 {
 	return directory_game;
 }

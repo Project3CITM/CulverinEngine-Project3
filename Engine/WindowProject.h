@@ -66,6 +66,8 @@ public:
 	void SetDirectory(const char* newDirectory);
 	void UpdateNow();
 	void SetAllFolderBool(std::vector<FoldersNew>& folders, bool setBoolean);
+
+	uint GetIconScene() const;
 	//void AddFile(std::vector<Files>* folderViwe, std::string newFile);
 
 private:

@@ -55,8 +55,10 @@ public:
 	std::string CopyFileToAssets(const char* fileNameFrom, const char* fileNameTo = "");
 	// Same to CopyFileToAssets but this return path of file to save
 	std::string CopyFileToAssetsS(const char* fileNameFrom, const char* fileNameTo = "");
+	void CopyPasteFile(const char* fileFrom, const char* fileTo);
 
 	void CopyFolderToLibrary(const char* folder);
+	void CopyPasteFolder(const char* folderFrom, const char* folderTo);
 
 	//update_status UpdateConfig(float dt);
 
@@ -77,7 +79,8 @@ public:
 	void GetAllFolders(std::experimental::filesystem::path path, std::string folderActive, std::vector<FoldersNew>& folders);
 	bool GetAllFoldersChild(std::experimental::filesystem::path path, std::string folderActive, std::vector<FoldersNew>& folders);
 	void GetAllFiles(std::experimental::filesystem::path path, std::vector<FilesNew>& files);
-	void GetAllFilesByExtension(std::experimental::filesystem::path path, std::vector<std::string>& files, const char* extension);
+	void GetAllFilesByExtension(std::experimental::filesystem::path path, std::vector<std::string>& files, const char* extension, bool recursive = true);
+	void GetOnlyFilesFromFolder(std::experimental::filesystem::path path, std::vector<std::string>& files);
 
 	// Get Files to check if a file was modificated ---------------------------------
 	void GetAllFilesAssets(std::experimental::filesystem::path path, std::vector<AllFiles>& files);
@@ -135,7 +138,7 @@ public:
 	float4 json_array_dotget_float4_string(const JSON_Object* object, std::string name);
 
 	//Don't used for now -------------------------
-	std::string GetAssetsDirectory();
+	std::string GetGameDirectory();
 
 private:
 	Timer checkAssets;

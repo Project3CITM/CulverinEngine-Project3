@@ -75,6 +75,9 @@ public:
 
 	// SAVE & LOAD FONT --------------------------
 	void SaveFont(const ResourceFont* font, const char* directory, const char* fileName);
+
+	// Edit Config (only used by Build) ---------------------------
+	void SaveConfig(std::string config_path, std::string game_name, std::string inital_scene, bool game_mode, bool full_screen, bool resizable_window, bool borderless, bool full_desktop);
 	
 
 	// --------------------------------------

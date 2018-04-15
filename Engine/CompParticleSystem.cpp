@@ -417,6 +417,12 @@ bool CompParticleSystem::SaveParticleEmitter(const CompParticleSystem* system, c
 	SetUInt(conf, "Type", emitter->Type);
 	SetUInt(conf, "ParticleFacingOptions", emitter->ParticleFacingOptions);
 
+	//Blend modes
+	SetUInt(conf, "SourceBlendType", emitter->p_source_type);
+	SetUInt(conf, "DestinyBlendType", emitter->p_destiny_type);
+
+	SetBool(conf, "Glow", emitter->glow);
+
 	switch (emitter->Type)
 	{
 	case 0: //EmitterType_Sphere
@@ -485,6 +491,12 @@ bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticle
 	//emitter.EmissionType = (ParticleEmitter::TypeEmission)GetUInt(conf, "EmissionType");
 	emitter.Type = (ParticleEmitter::TypeEmitter)GetUInt(conf, "Type");
 	emitter.ParticleFacingOptions = (ParticleEmitter::TypeBillboard)GetUInt(conf, "ParticleFacingOptions");
+
+	//Blend modes
+	emitter.p_source_type = GetUInt(conf, "SourceBlendType", 0x0302);
+	emitter.p_destiny_type = GetUInt(conf, "DestinyBlendType", 1);
+
+	emitter.glow = GetBool(conf, "Glow");
 
 	switch (emitter.Type)
 	{

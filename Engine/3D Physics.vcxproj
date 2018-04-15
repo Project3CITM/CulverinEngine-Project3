@@ -521,6 +521,7 @@
     <ClCompile Include="ModuleEventSystemV2.cpp" />
     <ClCompile Include="ModuleFS.cpp" />
     <ClCompile Include="ModuleFramebuffers.cpp" />
+    <ClCompile Include="ModuleGUI_Build.cpp" />
     <ClCompile Include="ModuleKeyBinding.cpp" />
     <ClCompile Include="ModuleLightning.cpp" />
     <ClCompile Include="ModuleMap.cpp" />

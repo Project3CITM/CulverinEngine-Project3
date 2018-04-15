@@ -823,7 +823,7 @@ void ModuleResourceManager::NewLoad()
 	std::vector<std::string> files_meta;
 	App->fs->GetAllMetas(App->fs->GetMainDirectory(), files_meta);
 	App->json_seria->CreateResourcesLoad(files_meta);
-
+	files_meta.clear();
 	//Duplicate Particle folder to library
 	App->fs->CopyFolderToLibrary("ParticleSystem");
 

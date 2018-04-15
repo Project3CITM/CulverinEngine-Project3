@@ -566,3 +566,8 @@ void Project::SetAllFolderBool(std::vector<FoldersNew>& folders, bool setBoolean
 		folders[i].active = setBoolean;
 	}
 }
+
+uint Project::GetIconScene() const
+{
+	return icon_scene;
+}

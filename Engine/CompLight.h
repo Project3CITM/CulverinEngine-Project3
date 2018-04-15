@@ -2,7 +2,8 @@
 #define COMPONENT_LIGHT
 #include "Component.h"
 #include "MathGeoLib.h"
-
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 class ResourceMesh;
 
 enum Light_type {
@@ -55,6 +56,8 @@ public:
 	float4 properties;
 	Light_type type;
 	Frustum frustum;
+	glm::mat4 depthMVPMat;
+	glm::mat4 depthBiasMat;
 	//UI variables------------
 	float color_temp[4];
 	std::string types_lights;

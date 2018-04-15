@@ -461,14 +461,13 @@ void GameObject::Draw()
 			{
 				CompLight* l = (CompLight*)components[i];
 				l->use_light_to_render = true;
-				//if (!l->use_light_to_render)
-				//	continue;
+				
 
-				/*Event draw_event;
+				Event draw_event;
 				draw_event.Set_event_data(EventType::EVENT_REQUEST_3D_3DA_MM);
 				draw_event.request_3d3damm.light = (CompLight*)components[i];
 				PushEvent(draw_event);
-				components[i]->Draw();*/
+				components[i]->Draw();
 			}
 
 		}
