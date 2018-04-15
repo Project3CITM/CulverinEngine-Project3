@@ -601,7 +601,7 @@ public class DaenerysController : CharacterController
         fball.transform.SetRotation(pla_obj.transform.GetRotation());
 
         Fireball fballscript = fball.GetComponent<Fireball>();
-        fballscript.vfront = curr_forward;
+        fballscript.vfront = GetSecondaryForward(curr_forward);
         fballscript.fireball_particles = daenerys_fireball_particles;
 
         // Decrease stamina -----------
