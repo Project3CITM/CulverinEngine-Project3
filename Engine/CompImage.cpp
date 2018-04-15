@@ -213,6 +213,7 @@ void CompImage::ShowInspectorInfo()
 				method = FillMethod::RADIAL360;
 			
 		}
+		ShowMethodInfo();
 		if (ImGui::DragFloat("##fillQuantity", &filled, 0.01f, 0.0f, 1.0f))
 		{
 			CorrectFillAmount();
@@ -221,6 +222,14 @@ void CompImage::ShowInspectorInfo()
 		}
 	}
 	ImGui::TreePop();
+}
+
+void CompImage::ShowMethodInfo()
+{
+	if (method == FillMethod::RADIAL360)
+	{
+		ImGui::Checkbox("Invert Radial##radial invert", &radial_inverse);
+	}
 }
 
 
@@ -343,33 +352,18 @@ void CompImage::GenerateFilledSprite()
 				quad_uv[2].y = quad_uv[1].y;		
 				quad_uv[3].y = quad_uv[0].y;
 
-				float value = filled*4.0f - (box_corner % 4);
-				
-		
-				if (RadialCut(quad_pos, quad_uv, CorrectValue01(value), ((box_corner + 2) % 4)))
+				float value = (radial_inverse)
+					?filled*4.0f - (box_corner % 4)
+					:filled*4.0f - (3-((box_corner) % 4));
+
+
+				if (RadialCut(quad_pos, quad_uv, CorrectValue01(value), ((box_corner + 2) % 4), radial_inverse))
 				{
 					ProcesQuad(quad_pos, quad_uv);
 
 					//my_canvas_render->ProcessQuad(quad_pos, quad_uv);
-					LOG("RADIAL CUT %i", box_corner);
-					LOG(" quad_pos[0].x %f", quad_pos[0].x);
-					LOG(" quad_pos[0].y %f", quad_pos[0].y);
-					LOG(" quad_pos[1].x %f", quad_pos[1].x);
-					LOG(" quad_pos[1].y %f", quad_pos[1].y);
-					LOG(" quad_pos[2].x %f", quad_pos[2].x);		
-					LOG(" quad_pos[2].y %f", quad_pos[2].y);
-					LOG(" quad_pos[3].x %f", quad_pos[3].x);
-					LOG(" quad_pos[3].y %f", quad_pos[3].y);
-					
+				
 
-					LOG(" quad_uv[0].x %f", quad_uv[0].x);
-					LOG(" quad_uv[1].x %f", quad_uv[1].x);
-					LOG(" quad_uv[2].x %f", quad_uv[2].x);
-					LOG(" quad_uv[3].x %f", quad_uv[3].x);
-					LOG(" quad_uv[0].y %f", quad_uv[0].y);
-					LOG(" quad_uv[1].y %f", quad_uv[1].y);
-					LOG(" quad_uv[2].y %f", quad_uv[2].y);
-					LOG(" quad_uv[3].y %f", quad_uv[3].y);
 					
 
 				}
@@ -427,6 +421,10 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	json_object_dotset_number_with_std(object, name + "Fill Amount", filled);
 	json_object_dotset_number_with_std(object, name + "Image Type", type);
 	json_object_dotset_number_with_std(object, name + "Fill Method", method);
+	if (method == FillMethod::RADIAL360)
+	{
+		json_object_dotset_boolean_with_std(object, name + "Fill Radian Inverse", radial_inverse);
+	}
 	App->fs->json_array_dotset_float4(object, name + "Image Color", color);
 
 }
@@ -455,6 +453,10 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 	filled=json_object_dotget_number_with_std(object, name + "Fill Amount");
 	type = static_cast<CompImage::Type>((int)json_object_dotget_number_with_std(object, name + "Image Type"));
 	method = static_cast<FillMethod>((int)json_object_dotget_number_with_std(object, name + "Fill Method"));
+	if (method == FillMethod::RADIAL360)
+	{
+		radial_inverse = json_object_dotget_boolean_with_std(object, name + "Fill Radian Inverse");
+	}
 	color = App->fs->json_array_dotget_float4_string(object, name + "Image Color");
 
 	Enable();
@@ -553,9 +555,9 @@ void CompImage::CorrectFillAmount()
 
 float CompImage::CorrectValue01(float value)
 {
-	if (value > 1)
+	if (value > 1.0f)
 		value = 1.0f;
-	else if (value < 0)
+	else if (value < 0.0f)
 		value = 0.0f;
 
 	return value;
@@ -566,14 +568,22 @@ float CompImage::CorrectValue01(float value)
 
 bool CompImage::RadialCut(std::vector<float3>& position, std::vector<float3>& texture_cord, float fill_value, int box_corner,bool invert)
 {
-	if (fill_value < 0.001f) 
+	if (fill_value < 0.001f)
+	{
+
 		return false;
+
+	}
 
 	if ((box_corner & 1) == 1) 
 		invert = !invert;
 
 	if (!invert && fill_value > 0.999f)
+	{
+
 		return true;
+
+	}
 
 	
 	float angle = CorrectValue01(fill_value);
@@ -587,7 +597,7 @@ bool CompImage::RadialCut(std::vector<float3>& position, std::vector<float3>& te
 
 	RadialCut(position, cos, sin, box_corner, invert);
 	RadialCut(texture_cord, cos, sin, box_corner, invert);
-
+	return true;
 }
 
 void CompImage::RadialCut(std::vector<float3>& modify, float cos, float sin, int box_corner, bool invert)
@@ -596,10 +606,7 @@ void CompImage::RadialCut(std::vector<float3>& modify, float cos, float sin, int
 	int pos1 = ((box_corner + 1) % 4);
 	int pos2 = ((box_corner + 2) % 4);
 	int pos3 = ((box_corner + 3) % 4);
-	LOG(" pos0 %i", pos0);
-	LOG(" pos1 %i", pos1);
-	LOG(" pos2 %i", pos2);
-	LOG(" pos3 %i", pos3);
+
 	if ((box_corner & 1) == 1)
 	{
 		if (sin > cos)
@@ -640,7 +647,6 @@ void CompImage::RadialCut(std::vector<float3>& modify, float cos, float sin, int
 		if (cos > sin)
 		{
 			sin /= cos;
-			sin /= 1.0f;
 			cos = 1.0f;
 
 			if (!invert)
@@ -671,6 +677,7 @@ void CompImage::RadialCut(std::vector<float3>& modify, float cos, float sin, int
 		else 
 			modify[pos1].x = Lerp(modify[pos0].x, modify[pos2].x, cos);
 	}
+	
 }
 
 void CompImage::ExpandMesh()

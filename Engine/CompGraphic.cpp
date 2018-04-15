@@ -193,12 +193,7 @@ void CompGraphic::ProcesQuad(std::vector<float3>& position, std::vector<float3>&
 	{
 		vertex_data.AddVertex(position[i], float2(texture_cord[i].x, texture_cord[i].y));
 	}
-	LOG(" quad_pos[0].x %i", indice_position);
-	LOG(" quad_pos[0].x %i", indice_position + 1);
-	LOG(" quad_pos[0].x %i", indice_position + 2);
-	LOG(" quad_pos[0].x %i", indice_position + 2);
-	LOG(" quad_pos[0].x %i", indice_position + 3);
-	LOG(" quad_pos[0].x %i", indice_position);
+
 
 	vertex_data.AddTriangleIndex(indice_position, indice_position + 1, indice_position + 2);
 	vertex_data.AddTriangleIndex(indice_position + 2, indice_position + 3, indice_position);
