@@ -102,6 +102,7 @@ private:
 	static void ChangeToSecondaryScene();
 	static void BlockGUIinput();
 	static void QuitScene();
+	static void LoadNewWalkableMap(MonoString* walkable_map);
 
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);

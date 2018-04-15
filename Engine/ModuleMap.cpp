@@ -1152,6 +1152,13 @@ void ModuleMap::ImportMap()
 {
 	TypeMap type = App->map->CheckTypeMap(imported_map.c_str());
 	vector_map.clear();
+	for (int y = 0; y < 99; y++)
+	{
+		for (int x = 0; x < 99; x++)
+		{
+			map[x][y] = -1;
+		}
+	}
 	switch (type)
 	{
 	case TypeMap::MAP_WALKABLE:

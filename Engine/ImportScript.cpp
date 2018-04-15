@@ -1394,6 +1394,16 @@ void ImportScript::QuitScene()
 	App->input->quit = true;
 }
 
+void ImportScript::LoadNewWalkableMap(MonoString* walkable_map)
+{
+	if (walkable_map != nullptr)
+	{
+		const char* map = mono_string_to_utf8(walkable_map);
+		App->map->imported_map = map;
+		App->map->ImportMap();
+	}
+}
+
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)
 {
 	if (interactive != nullptr)

@@ -64,5 +64,11 @@ namespace CulverinEditor.SceneManagement
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void QuitScene();
 
+        /// <summary>  
+        ///     Check if the loaded scene is over.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void LoadNewWalkableMap(string map);
+
     }
 }
