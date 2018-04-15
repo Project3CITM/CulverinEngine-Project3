@@ -75,6 +75,7 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="Miscellanea\DoorLever.cs" />
     <Compile Include="Miscellanea\ReverbCorridor.cs" />
     <Compile Include="Player\Jaime\ComboController.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\BarrelFall.cs" />

@@ -495,9 +495,7 @@ public class Lever : CulverinBehaviour
         // Activate the water
         barrel_puzzel_manager.OnPuzzleActivated();
         // Activate the puzzle
-        active_lever = true; // TODO: Verify this is correct and uncomment this line
-
-    
+        active_lever = true; 
     }
 
     // Convert from tile coords to world coords
