@@ -851,7 +851,7 @@ void Scene::ModificateParent(GameObject* child, GameObject* new_parent)
 			child->SetParent(new_parent);
 		}
 		new_parent->AddChildGameObject(child);
-		if (strcmp(new_parent->GetName(), "Temporary Scene") == 0)
+		if (strcmp(new_parent->GetName(), "Temporary Scene") == 0 && App->gui->develop_mode == false)
 		{
 			// --------------------
 			RemoveAllPointers(child);
