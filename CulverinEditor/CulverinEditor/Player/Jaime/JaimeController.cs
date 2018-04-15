@@ -129,7 +129,7 @@ public class JaimeController : CharacterController
             // Check if player is moving to block attacks/abilities
             movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
             if (!movement.IsMoving())
-            { 
+            {
                 /* Player is alive */
                 switch (state)
                 {
@@ -566,6 +566,8 @@ public class JaimeController : CharacterController
                     //PlayFx -> Obstacle Impact
                     //PlayFx("JaimeImpactStone");
                     PlayFx("JaimeImpact");
+
+                    SetState(State.FAIL_ATTACK);
                 }
                 /* ----------------------------------------------------------------------------------- */
             }
@@ -574,7 +576,7 @@ public class JaimeController : CharacterController
                 //Reset Hit Count
                 combo_obj.GetComponent<ComboController>().ResetHitStreak(); 
 
-                //Enable particles emission of enemy blood
+                //Enable particles emission of sparks
                 particles_jaime.GetComponent<SwordParticles>().EnableWallCollision(true);
 
                 //Set FailAttack Transition & Audio
@@ -583,6 +585,8 @@ public class JaimeController : CharacterController
                 //PlayFx -> Obstacle Impact
                 //PlayFx("JaimeImpactStone");
                 PlayFx("JaimeImpact");
+
+                SetState(State.FAIL_ATTACK);
             }
         }
         else
