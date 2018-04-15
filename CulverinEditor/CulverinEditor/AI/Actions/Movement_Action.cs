@@ -240,7 +240,7 @@ public class Movement_Action : Action
 
         float point_in_speed = current_rot_velocity / current_max_rot_vel;
 
-        GetComponent<CompAnimation>().SetSecondActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
+        //GetComponent<CompAnimation>().SetSecondActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
 
         //Rotate
         align.UpdateRotation(current_rot_velocity * Time.deltaTime);
@@ -452,10 +452,10 @@ public class Movement_Action : Action
             rotation_finished = false;
             align.SetRotation(delta);
 
-            if (delta < 0.0f)
+            /*if (delta < 0.0f)
                 GetComponent<CompAnimation>().SetSecondActiveBlendingClip("RotateRight");
             else
-                GetComponent<CompAnimation>().SetSecondActiveBlendingClip("RotateLeft");
+                GetComponent<CompAnimation>().SetSecondActiveBlendingClip("RotateLeft");*/
         }
     }
 
