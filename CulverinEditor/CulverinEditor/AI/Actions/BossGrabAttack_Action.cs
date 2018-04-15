@@ -21,7 +21,9 @@ public class BossGrabAttack_Action : Action
         FIRST_APPLY,
         SECOND_APPLY,
         THIRD_APPLY,
-        POST_APPLY
+        POST_APPLY,
+        GRAB_FAILING,
+        GRAB_FAILED
     }
 
     BGA_STATE state = BGA_STATE.WAITING;
@@ -45,7 +47,7 @@ public class BossGrabAttack_Action : Action
     {
         if (state == BGA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(grab_point))
         {
-            state = BGA_STATE.POST_APPLY;
+            state = BGA_STATE.GRAB_FAILING;
 
             int enemy_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
             int enemy_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
@@ -92,30 +94,38 @@ public class BossGrabAttack_Action : Action
                     break;
             }
         }
-        else if (state == BGA_STATE.FIRST_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(first_hit_point))
+        else if (state == BGA_STATE.GRAB_FAILING && GetComponent<CompAnimation>().IsAnimOverXTime(grab_point))
+        {
+            Debug.Log("[yellow] Grab dodged!!");
+            state = BGA_STATE.GRAB_FAILED;
+            GetComponent<CompAnimation>().SetTransition("ToGrabFail");
+        }
+        else if (state == BGA_STATE.FIRST_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(first_hit_point) && GetComponent<CompAnimation>().IsAnimationRunning("Attack"))
         {
             state = BGA_STATE.SECOND_APPLY;
             Debug.Log("First crush...");
             GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
         }
-        else if (state == BGA_STATE.SECOND_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(second_hit_point))
+        else if (state == BGA_STATE.SECOND_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(second_hit_point) && GetComponent<CompAnimation>().IsAnimationRunning("Attack"))
         {
             state = BGA_STATE.THIRD_APPLY;
             Debug.Log("Second crush...");
             GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
         }
-        else if (state == BGA_STATE.THIRD_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(third_hit_point))
+        else if (state == BGA_STATE.THIRD_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(third_hit_point) && GetComponent<CompAnimation>().IsAnimationRunning("Attack"))
         {
             state = BGA_STATE.POST_APPLY;
             Debug.Log("Third crush...");
             GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
             GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.IDLE);
         }
-        else if (state == BGA_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
+        else if ((state == BGA_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("Attack")) || 
+            (state == BGA_STATE.GRAB_FAILED && GetComponent<CompAnimation>().IsAnimationStopped("GrabFailed")))
         {
             state = BGA_STATE.WAITING;
             return ACTION_RESULT.AR_SUCCESS;
         }
+
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
