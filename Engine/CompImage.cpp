@@ -522,6 +522,9 @@ void CompImage::SetNewAnimationValue(const AnimationData & value)
 	case ParameterValue::IMAGE_ALPHA_VALUE:
 		SetAlpha(value.value.f_value);
 		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		source_image = value.value.sprite;
+		break;
 	default:
 		break;
 	}
@@ -574,11 +577,22 @@ AnimationData CompImage::ShowParameters()
 	SetNextWindowSize(ImVec2(200, 200));
 	if (ImGui::BeginPopup("Sprite Options"))
 	{
+		ImGui::Columns(2, "Type");
+		ImGui::Text("Anim type");
+		ImGui::NextColumn();
+		ImGui::Text("Select");
+		ImGui::NextColumn();
+		ImGui::Separator();
+
 		ImGui::Button("Set Alpha");
 		{
 			ret.type = ParameterValue::IMAGE_ALPHA_VALUE;
-			ImGui::SliderFloat("Select Alpha:", &ret.value.f_value, 0, 1);
-			SetAlpha(ret.value.f_value);
+			ret.value.i_value = GetColor().w;
+		}
+		ImGui::Button("Set Sprite");
+		{
+			ret.type = ParameterValue::IMAGE_SPRITE_ANIM;
+			ret.value.sprite = nullptr;
 		}
 	}
 	return ret;
@@ -593,7 +607,7 @@ AnimationValue CompImage::GetParameter(ParameterValue parameter)
 		ret.f_value = GetColor().w;
 		break;
 	case ParameterValue::IMAGE_SPRITE_ANIM:
-		//FILL
+		ret.sprite = source_image;
 	default:
 		break;
 	}
@@ -621,9 +635,6 @@ float CompImage::CorrectValue01(float value)
 
 	return value;
 }
-
-
-
 
 bool CompImage::RadialCut(std::vector<float3>& position, std::vector<float3>& texture_cord, float fill_value, int box_corner,bool invert)
 {

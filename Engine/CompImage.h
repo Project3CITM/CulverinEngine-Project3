@@ -47,6 +47,7 @@ public:
 	ResourceMaterial* GetSourceImage()const;
 	ResourceMaterial* GetCurrentTexture()const;
 	AnimationData ShowParameters();
+	//ResourceMaterial * SelectImage();
 	AnimationValue GetParameter(ParameterValue parameter);
 private:
 	void CorrectFillAmount();
@@ -75,7 +76,6 @@ public:
 	};
 
 private:
-	//CompImage * slide = nullptr;
 	ResourceMaterial* source_image = nullptr;
 	ResourceMaterial* overwrite_image = nullptr;
 	Type type = SIMPLE;
