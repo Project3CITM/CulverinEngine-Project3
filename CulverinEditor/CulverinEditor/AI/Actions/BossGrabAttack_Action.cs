@@ -131,7 +131,6 @@ public class BossGrabAttack_Action : Action
 
     public override bool ActionEnd()
     {
-        Debug.Log("Wide attack end!");
         interupt = false;
         return false;
     }

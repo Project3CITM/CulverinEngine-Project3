@@ -25,7 +25,6 @@ public class LeftHp : CulverinBehaviour
     {
         if (lasthp_value != hp_bar.GetComponent<Hp>().GetCurrentHealth() && !hp_bar_changed)
         {
-            Debug.Log("Jimmy");
             current_lasthp = lasthp_value;
             lasthp_value = hp_bar.GetComponent<Hp>().GetCurrentHealth();
 
