@@ -606,7 +606,7 @@ public class TheonController : CharacterController
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
-                arrow_script.speed = curr_forward;
+                arrow_script.speed = GetSecondaryForward(curr_forward);
                 arrow_script.arrow_blood_particles = theon_blood_particles;
                 arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
@@ -623,7 +623,7 @@ public class TheonController : CharacterController
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
-                arrow_script.speed = curr_forward;
+                arrow_script.speed = GetSecondaryForward(curr_forward);
                 arrow_script.arrow_blood_particles = theon_blood_particles;
                 arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
@@ -644,7 +644,7 @@ public class TheonController : CharacterController
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
-                arrow_script.speed = curr_forward;
+                arrow_script.speed = GetSecondaryForward(curr_forward);
                 arrow_script.arrow_blood_particles = theon_blood_particles;
                 arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
