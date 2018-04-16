@@ -29,6 +29,7 @@ Event	ID	Name			Wwise Object Path	Notes
 	2159928993	TheonMeleHit			\Player_01\Characters\Theon\TheonMeleHit	
 	2385628198	Footsteps			\Scene1\Footsteps	
 	2435509993	Enemy3_ShieldBlock			\Scene1\Enemies\Enemy3_ShieldBlock	
+	2493198437	PlayBossMusic			\UI\PlayBossMusic	
 	2503704488	BarrelSinking			\Scene1\Puzzle\BarrelSinking	
 	2665825462	CrossbowRecharge			\Player_01\Characters\Theon\CrossbowRecharge	
 	2682992486	JaimeHurt			\Player_01\Characters\Jaime\JaimeHurt	
@@ -72,6 +73,7 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	153064777	Jaime_Hurt	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Jaime_Hurt_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Jaime_Hurt		108680
 	178260986	footstep_stone	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\footstep_stone_C599367A.wem		\Actor-Mixer Hierarchy\Default Work Unit\FootSepts_Stone\footstep_stone		33908
 	191702901	Theon_TripleShot	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Theon_TripleShot_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_TripleShot		123418
+	195378477	Boss_theme	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_theme_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\FinalBossMusic\FinalBossMusic\Boss_theme		17621640
 	195426196	Theon_Arrow_Impact_Wall	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Arrow_Impact_Wall_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_Arrow_Impact_Wall		37080
 	232669740	Enemy_SwordClash	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SwordClash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy_SwordClash		241128
 	250696451	Enemy_Slash	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_Slash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy_Slash		153528
