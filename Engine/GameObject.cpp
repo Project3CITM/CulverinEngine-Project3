@@ -129,11 +129,21 @@ GameObject::~GameObject()
 
 	if (components.size() > 0)
 	{
+		for (uint i = 0; i < components.size(); i++)
+		{
+			components[i]->Clear();
+			RELEASE(components[i]);
+		}
 		components.clear();
 	}
 
 	if (childs.size() > 0)
 	{
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			childs[i]->CleanUp();
+			RELEASE(childs[i]);
+		}
 		childs.clear();
 	}
 }
@@ -452,14 +462,13 @@ void GameObject::Draw()
 			{
 				CompLight* l = (CompLight*)components[i];
 				l->use_light_to_render = true;
-				//if (!l->use_light_to_render)
-				//	continue;
+				
 
-				/*Event draw_event;
+				Event draw_event;
 				draw_event.Set_event_data(EventType::EVENT_REQUEST_3D_3DA_MM);
 				draw_event.request_3d3damm.light = (CompLight*)components[i];
 				PushEvent(draw_event);
-				components[i]->Draw();*/
+				components[i]->Draw();
 			}
 
 		}
@@ -608,6 +617,11 @@ void GameObject::ShowHierarchy(bool use_search)
 		node_flags |= ImGuiTreeNodeFlags_DefaultOpen;
 	}
 	//ImGui::SetNextTreeNodeOpen(true);
+	if (set_next_tree_node_open && App->gui->develop_mode)
+	{
+		ImGui::SetNextTreeNodeOpen(true);
+		set_next_tree_node_open = false;
+	}
 	if (ImGui::TreeNodeEx(name.c_str(), node_flags))
 	{
 		treeNod = true;
@@ -667,11 +681,11 @@ void GameObject::ShowHierarchy(bool use_search)
 void GameObject::ShowGameObjectOptions()
 {
 	//Create child Game Objects / Components
-	if (ImGui::MenuItem("Copy"))
+	if (ImGui::MenuItem("Copy", NULL, false, false))
 	{
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjectCopy(this);
 	}
-	if (ImGui::MenuItem("Paste"))
+	if (ImGui::MenuItem("Paste", NULL, false, false))
 	{
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->CopyGameObject(this);
 	}
@@ -709,6 +723,7 @@ void GameObject::ShowGameObjectOptions()
 			Event e;
 			e.Set_event_data(EventType::EVENT_DELETE_GO);
 			e.delete_go.Todelte = this;
+			e.delete_go.uuid = uid;
 			PushEvent(e);
 		}
 		else
@@ -1427,7 +1442,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		{
 		case Comp_Type::C_MESH:
 		{
-			LOG("Adding MESH COMPONENT.");
 			CompMesh* mesh = new CompMesh(type, this);
 			components.push_back(mesh);
 			/* Link Material to the Mesh if exists */
@@ -1438,7 +1452,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		}
 		case Comp_Type::C_TRANSFORM:
 		{
-			LOG("Adding TRANSFORM COMPONENT.");
 			CompTransform* transform = new CompTransform(type, this);
 			components.push_back(transform);
 			return transform;
@@ -1446,7 +1459,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		case Comp_Type::C_RECT_TRANSFORM:
 		{
 			if (FindComponentByType(Comp_Type::C_RECT_TRANSFORM) != nullptr) return nullptr;
-			LOG("Adding RECT TRANSFORM COMPONENT.");
 			CompRectTransform* transform = new CompRectTransform(type, this);
 			if (!components.empty())
 			{
@@ -1458,7 +1470,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		}
 		case Comp_Type::C_MATERIAL:
 		{
-			LOG("Adding MATERIAL COMPONENT.");
 			CompMaterial* material = new CompMaterial(type, this);
 			components.push_back(material);
 			/* Link Material to the Mesh if exists */
@@ -1470,7 +1481,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		case Comp_Type::C_CANVAS:
 		{
 			AddComponent(Comp_Type::C_RECT_TRANSFORM);
-			LOG("Adding CANVAS COMPONENT.");
 			CompCanvas* canvas = new CompCanvas(type, this);
 			components.push_back(canvas);
 			//If is not RectTransform
@@ -1479,7 +1489,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		}
 		case Comp_Type::C_CANVAS_RENDER:
 		{
-			LOG("Adding CANVAS RENDER COMPONENT.");
 			CompCanvasRender* canvas_renderer = new CompCanvasRender(type, this);
 			components.push_back(canvas_renderer);
 			return canvas_renderer;
@@ -1491,11 +1500,9 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			CompCanvasRender* canvas_renderer = (CompCanvasRender*)FindComponentByType(Comp_Type::C_CANVAS_RENDER);
 			if (canvas_renderer == nullptr)
 			{
-				LOG("Adding CANVAS RENDER COMPONENT.");
 				canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
 				components.push_back(canvas_renderer);
 			}
-			LOG("Adding IMAGE COMPONENT.");
 			CompImage* image = new CompImage(type, this);
 
 			components.push_back(image);
@@ -1508,11 +1515,9 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			CompCanvasRender* canvas_renderer = (CompCanvasRender*)FindComponentByType(Comp_Type::C_CANVAS_RENDER);
 			if (canvas_renderer == nullptr)
 			{
-				LOG("Adding CANVAS RENDER COMPONENT.");
 				canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
 				components.push_back(canvas_renderer);
 			}
-			LOG("Adding TEXT COMPONENT.");
 			CompText* text = new CompText(type, this);
 
 			components.push_back(text);
@@ -1522,7 +1527,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		{
 			//If is not RectTransform
 			//TODO change transform
-			LOG("Adding EDIT TEXT COMPONENT.");
 			CompEditText* edit_text = new CompEditText(type, this);
 			components.push_back(edit_text);
 			/* Link image to the button if exists */
@@ -1538,7 +1542,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		{
 			//If is not RectTransform
 			//TODO change transform
-			LOG("Adding BUTTON COMPONENT.");
 			CompButton* button = new CompButton(type, this);
 			components.push_back(button);
 			/* Link image to the button if exists */
@@ -1554,7 +1557,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		{
 			//If is not RectTransform
 			//TODO change transform
-			LOG("Adding CHECK BOX COMPONENT.");
 			CompCheckBox* check_box = new CompCheckBox(type, this);
 			components.push_back(check_box);
 			/* Link image to the button if exists */
@@ -1570,7 +1572,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		{
 			//If is not RectTransform
 			//TODO change transform
-			LOG("Adding SLIDER COMPONENT.");
 			CompSlider* slider = new CompSlider(type, this);
 			components.push_back(slider);
 			CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
@@ -1583,14 +1584,12 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		}
 		case Comp_Type::C_CAMERA:
 		{
-			LOG("Adding CAMERA COMPONENT.");
 			CompCamera* camera = new CompCamera(type, this);
 			components.push_back(camera);
 			return camera;
 		}
 		case Comp_Type::C_SCRIPT:
 		{
-			LOG("Adding SCRIPT COMPONENT.");
 			CompScript* script = new CompScript(type, this);
 			if (!isFromLoader) script->Init();
 			components.push_back(script);
@@ -1598,7 +1597,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		}
 		case Comp_Type::C_ANIMATION:
 		{
-			LOG("Adding ANIMATION COMPONENT.");
 			CompAnimation* anim = new CompAnimation(type, this);
 			components.push_back(anim);
 			return anim;
@@ -1612,56 +1610,48 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		}
 		case Comp_Type::C_AUDIO:
 		{
-			LOG("Adding AUDIO COMPONENT.");
 			CompAudio* audio = new CompAudio(type, this);
 			components.push_back(audio);
 			return audio;
 		}
 		case Comp_Type::C_BONE:
 		{
-			LOG("Adding BONE COMPONENT.");
 			CompBone* bone = new CompBone(type, this);
 			components.push_back(bone);
 			return bone;
 		}
 		case Comp_Type::C_FSM:
 		{
-			LOG("Adding FINITE STATE MACHINE COMPONENT.");
 			CompFiniteStateMachine* fsm = new CompFiniteStateMachine(type, this);
 			components.push_back(fsm);
 			return fsm;
 		}
 		case Comp_Type::C_LIGHT:
 		{
-			LOG("Adding LIGHT COMPONENT.");
 			CompLight* light = new CompLight(type, this);
 			components.push_back(light);
 			return light;
 		}
 		case Comp_Type::C_COLLIDER:
 		{
-			LOG("Adding COLLIDER COMPONENT");
 			CompCollider* collider = new CompCollider(type, this);
 			components.push_back(collider);
 			return collider;
 		}
 		case Comp_Type::C_RIGIDBODY:
 		{
-			LOG("Adding RIGIDBODY COMPONENT");
 			CompRigidBody* rigid_body = new CompRigidBody(type, this);
 			components.push_back(rigid_body);
 			return rigid_body;
 		}
 		case Comp_Type::C_PARTICLE_SYSTEM:
 		{
-			LOG("Adding Particle system COMPONENT.");
 			CompParticleSystem* particlesystem = new CompParticleSystem(type, this);
 			components.push_back(particlesystem);
 			return particlesystem;
 		}
 		case Comp_Type::C_JOINT:
 		{
-			LOG("Adding JOINT COMPONENT");
 			CompJoint* joint = new CompJoint(type, this);
 			components.push_back(joint);
 			return joint;
@@ -1710,7 +1700,7 @@ void GameObject::AddComponentCopy(const Component& copy)
 		}
 		else
 		{
-			LOG("MATERIAL not linked to any mesh");
+			//LOG("MATERIAL not linked to any mesh");
 		}
 		break;
 	}
@@ -2116,7 +2106,7 @@ void GameObject::GetChildDeepSearch(const char * name, std::vector<GameObject*>&
 }
 
 
-uint GameObject::GetIndexChildbyName(const char * name) const
+int GameObject::GetIndexChildbyName(const char * name) const
 {
 	if (childs.size() > 0)
 	{
@@ -2128,7 +2118,22 @@ uint GameObject::GetIndexChildbyName(const char * name) const
 			}
 		}
 	}
-	return 0;
+	return -1;
+}
+
+int GameObject::GetIndexChildbyGO(const GameObject * child) const
+{
+	if (childs.size() > 0)
+	{
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			if (childs[i] == child)
+			{
+				return i;
+			}
+		}
+	}
+	return -1;
 }
 
 void GameObject::RemoveChildbyIndex(uint index)

@@ -242,11 +242,13 @@ bool ImportScript::ReImportScript(std::string fileAssets, std::string uid_script
 		}
 		//CSharpScript* newCSharp = LoadScript_CSharp(path_dll);
 		//resourceScript->SetCSharp(newCSharp);
-
-		// Then Create Meta
-		std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-		Newdirectory += "/" + App->fs->FixName_directory(fileAssets);
-		App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+		if (App->build_mode == false)
+		{
+			// Then Create Meta
+			std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+			Newdirectory += "/" + App->fs->FixName_directory(fileAssets);
+			App->json_seria->SaveScript(resourceScript, ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory(), Newdirectory.c_str());
+		}
 	}
 
 	return true;
@@ -798,8 +800,8 @@ CSharpScript* ImportScript::LoadScript_CSharp(std::string file, std::string name
 {
 	if (file != "")
 	{
-		MonoAssembly* assembly = mono_domain_assembly_open(GetDomain(), file.c_str());
-		if (assembly)
+		//MonoAssembly* assembly = mono_domain_assembly_open(GetDomain(), file.c_str());
+		if (1)
 		{
 			// First Get the Image
 			//MonoImage* image = mono_assembly_get_image(assembly);
@@ -808,7 +810,7 @@ CSharpScript* ImportScript::LoadScript_CSharp(std::string file, std::string name
 				CSharpScript* csharp = CreateCSharp(App->importer->iScript->GetCulverinImage(), name);
 				if (csharp != nullptr)
 				{
-					csharp->SetAssembly(assembly);
+					csharp->SetAssembly(nullptr);
 					csharp->LoadScript();
 					return csharp;
 				}
@@ -1092,10 +1094,15 @@ void ImportScript::LinkFunctions()
 	//SCENE MANAGEMENT FUNCTIONS ---------
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadScene",(const void*)LoadScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadSceneNoDestroy", (const void*)LoadSceneNoDestroy);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadMultiSceneNoDestroy", (const void*)LoadMultisceneNoDestroy);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::CheckSceneReady", (const void*)CheckSceneReady);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::CheckMultiSceneReady", (const void*)CheckMultiSceneReady);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::RemoveNoDestroy", (const void*)RemoveNoDestroy);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::RemoveSecondaryScene", (const void*)RemoveSecondaryScene);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::ChangeToSecondaryScene", (const void*)ChangeToSecondaryScene);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::BlockGUIinput", (const void*)BlockGUIinput);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
-
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadNewWalkableMap", (const void*)LoadNewWalkableMap);
 	//EVENT SYSTEM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
 
@@ -1312,9 +1319,53 @@ void ImportScript::LoadSceneNoDestroy(MonoString* scene_name)
 	}
 }
 
+void ImportScript::LoadMultisceneNoDestroy(MonoString * main_scene_name, MonoString * secondary_scene_name)
+{
+	std::string directory_scene;
+	if (main_scene_name != nullptr)
+	{
+		const char* scene = mono_string_to_utf8(main_scene_name);
+
+		directory_scene = DIRECTORY_ASSETS;
+		directory_scene += scene;
+		directory_scene += ".scene.json";
+
+		/*
+		----------------------------------------------------------------
+		This is a vicente fix, in the future we need to make an event to change scene
+		to turn the focus into nullptr
+		*/
+		//----------------------------------------------------------------
+		App->SetActualScene(directory_scene.c_str());
+		App->LoadMultiScene();
+	}
+	if (secondary_scene_name != nullptr)
+	{
+		const char* scene2 = mono_string_to_utf8(secondary_scene_name);
+
+		directory_scene = DIRECTORY_ASSETS;
+		directory_scene += scene2;
+		directory_scene += ".scene.json";
+
+		/*
+		----------------------------------------------------------------
+		This is a vicente fix, in the future we need to make an event to change scene
+		to turn the focus into nullptr
+		*/
+		//----------------------------------------------------------------
+		App->SetSecondaryScene(directory_scene.c_str());
+		App->LoadMultiScene();
+	}
+}
+
 bool ImportScript::CheckSceneReady()
 {
 	return !App->dont_destroy_on_load;
+}
+
+bool ImportScript::CheckMultiSceneReady()
+{
+	return !App->load_multi_scene;
 }
 
 void ImportScript::RemoveNoDestroy()
@@ -1323,11 +1374,34 @@ void ImportScript::RemoveNoDestroy()
 	App->remove_dont_destroy_on_load = true;
 }
 
+void ImportScript::RemoveSecondaryScene()
+{
+	App->remove_secondary_scene = true;
+}
+
+void ImportScript::ChangeToSecondaryScene()
+{
+	App->change_to_secondary_scene = true;
+}
+
+void ImportScript::BlockGUIinput()
+{
+	App->activate_gui_input = true;
+}
+
 void ImportScript::QuitScene()
 {
-	
-		App->input->quit = true;
-	
+	App->input->quit = true;
+}
+
+void ImportScript::LoadNewWalkableMap(MonoString* walkable_map)
+{
+	if (walkable_map != nullptr)
+	{
+		const char* map = mono_string_to_utf8(walkable_map);
+		App->map->imported_map = map;
+		App->map->ImportMap(true);
+	}
 }
 
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)

@@ -25,6 +25,7 @@ public class Hp : CulverinBehaviour
     {
         other_obj_hp.GetComponent<CompImage>().FillAmount(other_obj_hp.GetComponent<LeftHp>().lasthp_value / 100);
         other_obj_hp.GetComponent<LeftHp>().lasthp_value = current_hp;
+        other_obj_hp.GetComponent<LeftHp>().hp_ready_to_below = false;
         other_obj_hp.GetComponent<LeftHp>().current_temp_hp_time = 0.0f;
         current_hp -= dmg;
         if(current_hp < 0)

@@ -25,7 +25,7 @@ ModuleFS::~ModuleFS()
 	allfilesAsstes.clear(); 
 }
 
-bool ModuleFS::Init(JSON_Object * node)
+bool ModuleFS::Init(JSON_Object* node)
 {
 	// Will contain exe path
 	GetCurrentDirectory(MAX_PATH, ownPth);
@@ -48,6 +48,7 @@ bool ModuleFS::Init(JSON_Object * node)
 	CreateFolder("Assets/Maps");
 	CreateFolder("Assets/Shaders");
 	CreateFolder("Assets/Shaders/Materials");
+
 	return true;
 }
 
@@ -164,11 +165,29 @@ std::string ModuleFS::CopyFileToAssetsS(const char* fileNameFrom, const char* fi
 	return exits;
 }
 
-void ModuleFS::CopyPasteFile(const char * fileFrom, const char* fileTo)
+void ModuleFS::CopyPasteFile(const char * fileFrom, const char* fileTo, bool check_filefromTo)
 {
 	namespace fs = std::experimental::filesystem;
 	if (fileFrom != nullptr && fileTo != nullptr)
 	{
+		if (fs::exists(fileTo))
+		{
+			fs::remove(fileTo);
+		}
+		if (check_filefromTo)
+		{
+			std::string temp = fileTo;
+			temp = GetOnlyPath(temp);
+			temp += "/" + GetOnlyName(fileFrom);
+			temp += ".exe";
+			NormalitzatePath(temp);
+			LOG("%s", temp.c_str());
+			App->SaveLogs();
+			if (fs::exists(temp.c_str()))
+			{
+				fs::remove(temp.c_str());
+			}
+		}
 		fs::copy(fileFrom, fileTo);
 	}
 }
@@ -1005,35 +1024,39 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 		break;
 	}
 	}
-	std::ifstream is(temp, std::ifstream::binary);
-	int length = 0;
-	if (is)
+	if (std::experimental::filesystem::exists(temp))
 	{
-		// get length of file:
-		is.seekg(0, is.end);
-		length = is.tellg();
-		is.seekg(0, is.beg);
-
-		*buffer = new char[length];
-
-		is.read(*buffer, length);
-
+		std::ifstream is(temp, std::ifstream::binary);
+		int length = 0;
 		if (is)
 		{
-			LOG("File Loaded.")
+			// get length of file:
+			is.seekg(0, is.end);
+			length = is.tellg();
+			is.seekg(0, is.beg);
+
+			*buffer = new char[length];
+
+			is.read(*buffer, length);
+
+			if (is)
+			{
+				LOG("File Loaded.")
+			}
+			else
+			{
+				LOG("Error %s", is.gcount());
+			}
+
+			is.close();
 		}
 		else
 		{
-			LOG("Error %s", is.gcount());
+			LOG("Error to Load File -> %s", file);
 		}
-
-		is.close();
+		return length;
 	}
-	else
-	{
-		LOG("Error to Load File -> %s", file);
-	}
-	return length;
+	return 0;
 }
 
 bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY_IMPORT directory)
@@ -1088,7 +1111,6 @@ bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY
 	{
 		// write to outfile
 		outfile.write(data, size);
-		LOG("Save File %s", name.c_str());
 	}
 	else
 	{

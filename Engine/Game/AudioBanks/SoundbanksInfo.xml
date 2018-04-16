@@ -108,17 +108,9 @@
 				<Event Id="777507535" Name="WaterSplash" ObjectPath="\Events\Scene1\Puzzle\WaterSplash"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
-				<File Id="16679997" Language="SFX">
-					<ShortName>Puzzle\Lever.wav</ShortName>
-					<Path>SFX\Puzzle\Lever_DBC752C0.wem</Path>
-				</File>
 				<File Id="46166543" Language="SFX">
 					<ShortName>Enemy_SpearSwing.wav</ShortName>
 					<Path>SFX\Enemy_SpearSwing_1C9C67B2.wem</Path>
-				</File>
-				<File Id="60949840" Language="SFX">
-					<ShortName>Characters\Jaime\Jaime_Dead_1.wav</ShortName>
-					<Path>SFX\Characters\Jaime\Jaime_Dead_1_F7D0E330.wem</Path>
 				</File>
 				<File Id="74496819" Language="SFX">
 					<ShortName>Theon_MeleeHit.wav</ShortName>
@@ -291,6 +283,14 @@
 				<File Id="764335624" Language="SFX">
 					<ShortName>Characters\Daenerys\Daenerys_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Daenerys\Daenerys_Dead_1_1C9C67B2.wem</Path>
+				</File>
+				<File Id="802761961" Language="SFX">
+					<ShortName>Characters\Jaime\Jaime_Dead_1.wav</ShortName>
+					<Path>SFX\Characters\Jaime\Jaime_Dead_1_1C9C67B2.wem</Path>
+				</File>
+				<File Id="823990075" Language="SFX">
+					<ShortName>Puzzle\Lever.wav</ShortName>
+					<Path>SFX\Puzzle\Lever_152A5EEC.wem</Path>
 				</File>
 				<File Id="825063114" Language="SFX">
 					<ShortName>Theon_Melee.wav</ShortName>

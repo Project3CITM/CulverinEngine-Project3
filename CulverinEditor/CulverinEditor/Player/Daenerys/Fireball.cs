@@ -54,12 +54,10 @@ public class Fireball : CulverinBehaviour
             fireball_particles_script.ActivateEmission(true);
 
             //Iterate all childs, they have a ParticleSystem too
-            Debug.Log("Childs: " + gameObject.ChildCount(), Department.PHYSICS, Color.PINK);
-            for (int i = 0; i < gameObject.ChildCount(); i++) 
+            int childs = fireball_particles.ChildCount();
+            for (int i = 0; i < childs; i++) 
             {
-                gameObject.GetChildByIndex(i).GetComponent<CompParticleSystem>().ActivateEmission(true);
-                Debug.Log("Child "+ gameObject.GetChildByIndex(i).GetName(), Department.PHYSICS, Color.PINK);
-
+                fireball_particles.GetChildByIndex(i).GetComponent<CompParticleSystem>().ActivateEmission(true);
             }
         }
 

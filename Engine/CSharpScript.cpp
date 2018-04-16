@@ -1025,7 +1025,15 @@ MonoString* CSharpScript::GetTag(MonoObject* object)
 
 bool CSharpScript::CompareTag(MonoObject * object, MonoString * tag)
 {
-	return current_game_object->CompareTag(mono_string_to_utf8(tag));
+	if (object)
+	{
+		GameObject* actual = App->importer->iScript->GetGameObject(object);
+		if (actual)
+		{
+			return actual->CompareTag(mono_string_to_utf8(tag));
+		}
+	}
+	return false;
 }
 
 MonoObject* CSharpScript::FindGameObjectWithTag(MonoObject* object, MonoString * tag)
@@ -1041,8 +1049,19 @@ int CSharpScript::ChildCount(MonoObject * object)
 
 MonoObject * CSharpScript::GetChildByIndex(MonoObject* object, int index)
 {
-	GameObject* target = current_game_object->GetChildbyIndex(index);
-	return App->importer->iScript->GetMonoObject(target);
+	if (!CheckMonoObject(object))
+	{
+		return nullptr;
+	}
+	if (current_game_object != nullptr)
+	{
+		GameObject* target = current_game_object->GetChildbyIndex(index);
+		if (target != nullptr)
+		{
+			return App->importer->iScript->GetMonoObject(target);
+		}
+		return nullptr;
+	}
 }
 
 MonoObject * CSharpScript::GetChildByName(MonoObject * object, MonoString * name)

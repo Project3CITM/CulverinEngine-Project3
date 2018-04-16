@@ -791,8 +791,5 @@ MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
 			}
 		}
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }

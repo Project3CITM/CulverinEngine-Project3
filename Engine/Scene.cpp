@@ -60,6 +60,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 Scene::~Scene()
 {
 	DeleteAllGameObjects(root);
+	DeleteAllGameObjects(secondary_root);
 	DeleteAllGameObjects(temporary_scene);
 	search_name->GetChildsPtr()->clear();
 	//DeleteAllGameObjects(dontdestroyonload);
@@ -72,6 +73,7 @@ Scene::~Scene()
 	tagged_objects.clear();
 
 	RELEASE(root);
+	RELEASE(secondary_root);
 	RELEASE(temporary_scene);
 	RELEASE(search_name);
 	RELEASE(dontdestroyonload);
@@ -96,6 +98,7 @@ bool Scene::Start()
 
 	// First of all create New Scene
 	root = new GameObject("NewScene", 1);
+	secondary_root = new GameObject("SecondScene", 1);
 	temporary_scene = new GameObject("Temporary Scene", 1);
 	search_name = new GameObject("search_name", 1);
 	dontdestroyonload = new GameObject("Dont't Destroy On Load", 1);
@@ -240,7 +243,12 @@ update_status Scene::Update(float dt)
 	}
 
 	// Draw GameObjects
-	root->Draw();
+	if (dontdestroyonload->GetNumChilds() == 0)
+	{
+		root->Draw();
+		secondary_root->Draw();
+	}
+
 	// Draw Quadtree
 	if (octree_draw) octree.DebugDraw();
 
@@ -321,6 +329,7 @@ bool Scene::CleanUp()
 	
 	octree.Clear();
 	root->CleanUp();
+	secondary_root->CleanUp();
 	temporary_scene->CleanUp();
 	
 	RELEASE(scene_buff);
@@ -851,7 +860,7 @@ void Scene::ModificateParent(GameObject* child, GameObject* new_parent)
 			child->SetParent(new_parent);
 		}
 		new_parent->AddChildGameObject(child);
-		if (strcmp(new_parent->GetName(), "Temporary Scene") == 0)
+		if (strcmp(new_parent->GetName(), "Temporary Scene") == 0 && App->gui->develop_mode == false)
 		{
 			// --------------------
 			RemoveAllPointers(child);
@@ -1204,8 +1213,11 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 		if (gameobject->GetParent() != nullptr)
 		{
 			LOG("[green] DELETE");
-			int index = gameobject->GetParent()->GetIndexChildbyName(gameobject->GetName());
-			gameobject->GetParent()->RemoveChildbyIndex(index);
+			int index = gameobject->GetParent()->GetIndexChildbyGO(gameobject);
+			if (index != -1)
+			{
+				gameobject->GetParent()->RemoveChildbyIndex(index);
+			}
 			gameobject = nullptr;
 		}
 

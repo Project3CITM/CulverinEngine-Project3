@@ -6,7 +6,6 @@
 ResourceMesh::ResourceMesh(uint uid) : Resource(uid, Resource::Type::MESH, Resource::State::UNLOADED)
 {
 	num_game_objects_use_me = 0;
-	LOG("Resource Mesh Created!");
 }
 
 ResourceMesh::~ResourceMesh()

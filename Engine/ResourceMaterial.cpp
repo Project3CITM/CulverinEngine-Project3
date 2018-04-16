@@ -5,7 +5,6 @@
 ResourceMaterial::ResourceMaterial(uint uuid) : Resource(uuid, Resource::Type::MATERIAL, Resource::State::UNLOADED)
 {
 	num_game_objects_use_me = 0;
-	LOG("Resource Material Created!");
 }
 
 
