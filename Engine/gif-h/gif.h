@@ -651,7 +651,8 @@ void GifWriteLzwImage(FILE* f, uint8_t* image, uint32_t left, uint32_t top,  uin
 
     GifWriteCode(f, stat, clearCode, codeSize);  // start with a fresh LZW dictionary
 
-    for(uint32_t yy=0; yy<height; ++yy)
+    //for(uint32_t yy=0; yy<height; ++yy)
+	for (uint32_t yy = height - 1; yy > 0; --yy)
     {
         for(uint32_t xx=0; xx<width; ++xx)
         {
