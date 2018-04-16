@@ -11,6 +11,7 @@
 #include "PlayerActions.h"
 #include "InputManager.h"
 #include "JSONSerialization.h"
+#include "KeyBinding.h"
 #define MAX_KEYS 300
 #define MAX_MILLISECONDS 2000
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
@@ -36,6 +37,8 @@ ModuleInput::~ModuleInput()
 bool ModuleInput::Init(JSON_Object* node)
 {
 	perf_timer.Start();
+	key_binding = new KeyBinding();
+	key_binding->InitKeyBinding();
 	LOG("Init SDL input event system");
 	bool ret = true;
 	quit = false;
@@ -484,6 +487,9 @@ bool ModuleInput::CleanUp()
 	std::string name = DIRECTORY_LIBRARY_JSON;
 	name = App->fs->GetFullPath(name);
 	//Crash if not open?
+	//Release Key Binding
+	key_binding->CleanUp();
+	RELEASE(key_binding);
 	gamepad.Clear();
 	player_action->Clear();
 	RELEASE(player_action);
@@ -606,6 +612,13 @@ SDL_Joystick * ModuleInput::GetJoystick()const
 SDL_Haptic * ModuleInput::GetHaptic()const
 {
 	return gamepad.haptic;
+}
+
+KeyRelation * ModuleInput::FindKeyBinding(const char* string)
+{
+	if(key_binding==nullptr)
+		return nullptr;
+	return key_binding->FindKeyBinding(string);
 }
 
 bool ModuleInput::ConnectGameController()

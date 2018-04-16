@@ -72,23 +72,18 @@ struct MouseAxisDevice : public KeyRelation
 };*/
 
 
-class ModuleKeyBinding :
-	public Module
+class KeyBinding 
 {
 public:
-	ModuleKeyBinding();
-	~ModuleKeyBinding();
+	KeyBinding();
+	~KeyBinding();
 
-	bool Init(JSON_Object* node);
-	bool Start();
-	update_status PreUpdate(float dt);
-	update_status Update(float dt);
-	update_status PostUpdate(float dt);
-	update_status UpdateConfig(float dt);
-	bool SaveConfig(JSON_Object* node);
+	bool InitKeyBinding();
+	
+
 	bool CleanUp();
 
-	KeyRelation* Find_key_binding(const char* name);
+	KeyRelation* FindKeyBinding(const char* name);
 
 private:
 

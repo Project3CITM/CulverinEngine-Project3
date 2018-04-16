@@ -1,21 +1,18 @@
-#include "ModuleKeyBinding.h"
+#include "KeyBinding.h"
 #include "Application.h"
 #include "InputManager.h"
 #define KEY_NONE_NUM 0
-ModuleKeyBinding::ModuleKeyBinding()
-{
-	name = "Key Binding";
-	Awake_enabled = true;
-}
-
-
-ModuleKeyBinding::~ModuleKeyBinding()
+KeyBinding::KeyBinding()
 {
 }
 
-bool ModuleKeyBinding::Init(JSON_Object * node)
+
+KeyBinding::~KeyBinding()
 {
-	perf_timer.Start();
+}
+
+bool KeyBinding::InitKeyBinding()
+{
 	// NONE-----------------------------------------------------------
 	key_binding_relations.push_back(KeyRelation(-1, "None", "None", KeyBindingType::NULL_DEVICE));
 
@@ -123,54 +120,23 @@ bool ModuleKeyBinding::Init(JSON_Object * node)
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY, "CLeftY", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
 
 
-	Awake_t = perf_timer.ReadMs();
 	return true;
 }
 
-bool ModuleKeyBinding::Start()
-{
-	return true;
-}
 
-update_status ModuleKeyBinding::PreUpdate(float dt)
-{
-	return update_status::UPDATE_CONTINUE;
-}
 
-update_status ModuleKeyBinding::Update(float dt)
-{
-	
-
-	return update_status::UPDATE_CONTINUE;
-}
-
-update_status ModuleKeyBinding::PostUpdate(float dt)
-{
-	return update_status::UPDATE_CONTINUE;
-}
-
-update_status ModuleKeyBinding::UpdateConfig(float dt)
-{
-	return update_status::UPDATE_CONTINUE;
-}
-
-bool ModuleKeyBinding::SaveConfig(JSON_Object * node)
-{
-	return true;
-}
-
-bool ModuleKeyBinding::CleanUp()
+bool KeyBinding::CleanUp()
 {
 	key_binding_relations.clear();
 	return true;
 }
 
-KeyRelation* ModuleKeyBinding::Find_key_binding(const char* name)
+KeyRelation * KeyBinding::FindKeyBinding(const char * name)
 {
-	for (int i = 0; i < key_binding_relations.size(); i++) 
+	for (int i = 0; i < key_binding_relations.size(); i++)
 	{
 
-		if (key_binding_relations[i].name == name) 
+		if (key_binding_relations[i].name == name)
 		{
 			return &key_binding_relations[i];
 		}

@@ -33,7 +33,8 @@ enum KEY_STATE
 	uint					left_joystick_dir[4];
 	_SDL_GameController*	pad = nullptr;
 };*/
-
+struct KeyRelation;
+class KeyBinding;
 class ModuleInput : public Module
 {
 public:
@@ -125,7 +126,7 @@ public:
 	_SDL_GameController* GetGameController()const;
 	SDL_Joystick* GetJoystick() const;
 	SDL_Haptic* GetHaptic() const;
-
+	KeyRelation* FindKeyBinding(const char* string);
 
 private:
 	bool ConnectGameController();
@@ -133,6 +134,7 @@ public:
 	bool quit = false;
 
 private:
+	KeyBinding* key_binding = nullptr;
 	KEY_STATE* keyboard;
 	KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
 	int mouse_x = 0;
