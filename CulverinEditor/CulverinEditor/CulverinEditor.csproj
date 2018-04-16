@@ -85,6 +85,7 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="DebugSceneChanger.cs" />
     <Compile Include="Player\UI\LeftMana.cs" />
     <Compile Include="Player\UI\LeftHp.cs" />
     <Compile Include="Player\UI\Leftamina.cs" />
