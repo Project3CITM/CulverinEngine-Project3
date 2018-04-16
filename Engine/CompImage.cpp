@@ -584,16 +584,26 @@ AnimationData CompImage::ShowParameters()
 		ImGui::NextColumn();
 		ImGui::Separator();
 
-		ImGui::Button("Set Alpha");
+		ImGui::Text("Alpha");
+		ImGui::NextColumn();
+		if(ImGui::Button("Set Alpha"))
 		{
 			ret.type = ParameterValue::IMAGE_ALPHA_VALUE;
 			ret.value.i_value = GetColor().w;
 		}
-		ImGui::Button("Set Sprite");
+		ImGui::NextColumn();
+
+		ImGui::Text("Sprite");
+		ImGui::NextColumn();
+		if(ImGui::Button("Set Sprite"))
 		{
 			ret.type = ParameterValue::IMAGE_SPRITE_ANIM;
 			ret.value.sprite = nullptr;
 		}
+		ImGui::NextColumn();
+		ImGui::Columns(1);
+
+		ImGui::EndPopup();
 	}
 	return ret;
 }
