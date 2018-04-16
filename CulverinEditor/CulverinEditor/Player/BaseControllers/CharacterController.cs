@@ -188,19 +188,19 @@ public class CharacterController : CulverinBehaviour
 
         if (position == Position.BEHIND_LEFT)
         {
-            if (curr_forward.z <= -2.0f)
+            if (Mathf.Round(curr_forward.z) <= -2.0f)
             {
                 ret.x -= 5.2f;
             }
-            else if (curr_forward.z >= 2.0f)
+            else if (Mathf.Round(curr_forward.z) >= 2.0f)
             {
                 ret.x += 5.2f;
             }
-            else if (curr_forward.x >= 2.0f)
+            else if (Mathf.Round(curr_forward.x) >= 2.0f)
             {
                 ret.z -= 5.2f;
             }
-            else if (curr_forward.x <= -2.0f)
+            else if (Mathf.Round(curr_forward.x) <= -2.0f)
             {
                 ret.z += 5.2f;
             }
@@ -208,19 +208,19 @@ public class CharacterController : CulverinBehaviour
         }
         else if (position == Position.BEHIND_RIGHT)
         {
-            if (curr_forward.z <= -2.0f)
+            if (Mathf.Round(curr_forward.z) <= -2.0f)
             {
                 ret.x += 5.2f;
             }
-            else if (curr_forward.z >= 2.0f)
+            else if (Mathf.Round(curr_forward.z) >= 2.0f)
             {
                 ret.x -= 5.2f;
             }
-            else if (curr_forward.x >= 2.0f)
+            else if (Mathf.Round(curr_forward.x) >= 2.0f)
             {
                 ret.z += 5.2f;
             }
-            else if (curr_forward.x <= -2.0f)
+            else if (Mathf.Round(curr_forward.x) <= -2.0f)
             {
                 ret.z -= 5.2f;
             }
@@ -236,22 +236,22 @@ public class CharacterController : CulverinBehaviour
         ret = new Vector3(curr_forward);
         if (position == Position.BEHIND_LEFT)
         {
-            if (curr_forward.z <= -2.0f)
+            if (Mathf.Round(curr_forward.z) <= -2.0f)
             {
                 ret.x = 0.18f;
                 ret.z = -1.99f;
             }
-            else if (curr_forward.z >= 2.0f)
+            else if (Mathf.Round(curr_forward.z) >= 2.0f)
             {
                 ret.x = -0.18f;
                 ret.z = 1.99f;
             }
-            else if (curr_forward.x >= 2.0f)
+            else if (Mathf.Round(curr_forward.x) >= 2.0f)
             {
                 ret.x = 1.99f;
                 ret.z = 0.18f;
             }
-            else if (curr_forward.x <= -2.0f)
+            else if (Mathf.Round(curr_forward.x) <= -2.0f)
             {
                 ret.x = -1.99f;
                 ret.z = -0.18f;
@@ -260,22 +260,23 @@ public class CharacterController : CulverinBehaviour
         }
         else if (position == Position.BEHIND_RIGHT)
         {
-            if (curr_forward.z <= -2.0f)
+            if (Mathf.Round(curr_forward.z) <= -2.0f)
             {
                 ret.x = -0.18f;
                 ret.z = -1.99f;
             }
-            else if (curr_forward.z >= 2.0f)
+            
+            else if (Mathf.Round(curr_forward.z) >= 2.0f)
             {
                 ret.x = 0.18f;
                 ret.z = 1.99f;
             }
-            else if (curr_forward.x >= 2.0f)
+            else if (Mathf.Round(curr_forward.x) >= 2.0f)
             {
                 ret.x = 1.99f;
                 ret.z = -0.18f;
             }
-            else if (curr_forward.x <= -2.0f)
+            else if (Mathf.Round(curr_forward.x) <= -2.0f)
             {
                 ret.x = -1.99f;
                 ret.z = 0.18f;
