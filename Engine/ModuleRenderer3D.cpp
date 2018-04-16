@@ -407,45 +407,41 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		ScreenshotsNum++;
 	}
 
-	static bool gif_in_progress = false;
 	static GifWriter gif_writer;
 	static unsigned char* pixels = nullptr;
+	static Gif_StateMachine Gif_State = Gif_StateMachine::CAN_START;
 
-	if ((App->input->GetKey(SDL_SCANCODE_8) == KEY_DOWN) && gif_in_progress)
+	switch (Gif_State)
 	{
-		GifEnd(&gif_writer);
-		RELEASE_ARRAY(pixels);
-		gif_in_progress = false;
-		ScreenshotsNum++;
-	}
-
-	if ((App->input->GetKey(SDL_SCANCODE_8) == KEY_DOWN) && !gif_in_progress)
-	{
-		time_t now = time(0);
-		tm ltm;
-		localtime_s(&ltm, &now);
-		static char tmp_string[1024];
-		sprintf_s(tmp_string, 1024, "Screenshots/GifFull/GifFull_%i_%i_%i_%i_%i_%i__%i.gif", ltm.tm_mday, 1 + ltm.tm_mon, 1900 + ltm.tm_year, ltm.tm_hour, ltm.tm_min, ltm.tm_sec, ScreenshotsNum);
-
-		ImGuiIO GuiIO = ImGui::GetIO();
-		gif_in_progress = GifBegin(&gif_writer, tmp_string, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, (uint32_t)(dt * 100.0f), 8, false);
-		if (gif_in_progress)
-			pixels = new unsigned char[GuiIO.DisplaySize.x *  GuiIO.DisplaySize.y * sizeof(unsigned char) * 4];
-	}
-
-	if (gif_in_progress)
-	{
-		/*
-		ILuint imageID = ilGenImage();
-		ilBindImage(imageID);
-		ilutGLScreen();
-		ILubyte* pixels = ilGetData();
-		GifWriteFrame(&gif_writer, pixels, App->window->GetWidth(), App->window->GetHeight(), dt, 8, false);
-		ilDeleteImage(imageID);
-		*/
+	case Gif_StateMachine::CAN_START:
+		if (App->input->GetKey(SDL_SCANCODE_8) == KEY_DOWN)
+		{
+			time_t now = time(0);
+			tm ltm;
+			localtime_s(&ltm, &now);
+			static char tmp_string[1024];
+			sprintf_s(tmp_string, 1024, "Screenshots/GifFull/GifFull_%i_%i_%i_%i_%i_%i__%i.gif", ltm.tm_mday, 1 + ltm.tm_mon, 1900 + ltm.tm_year, ltm.tm_hour, ltm.tm_min, ltm.tm_sec, ScreenshotsNum);
+			ImGuiIO GuiIO = ImGui::GetIO();
+			bool gif_in_progress = GifBegin(&gif_writer, tmp_string, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, (uint32_t)(dt * 100.0f), 8, false);
+			if (gif_in_progress)
+			{
+				pixels = new unsigned char[GuiIO.DisplaySize.x *  GuiIO.DisplaySize.y * sizeof(unsigned char) * 4];
+				Gif_State = Gif_StateMachine::RUNNING;
+			}
+		}
+		break;
+	case Gif_StateMachine::RUNNING:
 		ImGuiIO GuiIO = ImGui::GetIO();
 		glReadPixels(0, 0, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 		GifWriteFrame(&gif_writer, pixels, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, (uint32_t)(dt * 100.0f), 8, false);
+		if (App->input->GetKey(SDL_SCANCODE_8) == KEY_DOWN)
+		{
+			GifEnd(&gif_writer);
+			RELEASE_ARRAY(pixels);
+			ScreenshotsNum++;
+			Gif_State = Gif_StateMachine::CAN_START;
+		}
+		break;
 	}
 
 	SDL_GL_SwapWindow(App->window->window);

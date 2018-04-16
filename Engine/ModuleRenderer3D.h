@@ -16,11 +16,17 @@
 
 class CompCamera;
 
-
-enum RenderMode {
+enum RenderMode
+{
 	DEFAULT,
 	GLOW,
 	DEPTH
+};
+
+enum Gif_StateMachine
+{
+	CAN_START,
+	RUNNING
 };
 
 class ModuleRenderer3D : public Module
