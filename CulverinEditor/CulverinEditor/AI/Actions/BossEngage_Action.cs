@@ -5,7 +5,6 @@ class BossEngage_Action : Action
 {
     public float duration = 1.0f;
     bool play_audio = false;
-    public GameObject hp_bar = null;
 
     public BossEngage_Action()
     {
@@ -15,7 +14,6 @@ class BossEngage_Action : Action
     public override bool ActionStart()
     {
         Debug.Log("Boss is triggered");
-        hp_bar = GetLinkedObject("hp_bar");
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.GRABBED);
         GetComponent<CompAnimation>().SetTransition("ToDraw");
         GetComponent<CompAnimation>().SetClipDuration("Draw", duration);
@@ -41,7 +39,7 @@ class BossEngage_Action : Action
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.IDLE);
         interupt = false;
         play_audio = false;
-        hp_bar.SetActive(true);
+        GetLinkedObject("hp_bar_boss").SetActive(true);
         return true;
     }
 

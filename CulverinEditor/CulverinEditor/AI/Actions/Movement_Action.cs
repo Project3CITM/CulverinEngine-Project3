@@ -286,30 +286,30 @@ public class Movement_Action : Action
             pos.z = path[0].GetTileY() * tile_size;
             GetComponent<Transform>().position = pos;
 
-            arrive.SetEnabled(false);
-            seek.SetEnabled(false);
-
-            if (chase == true)
-            {
-                if (LookingAtPlayer() == false)
-                    LookAtPlayer();
-                else
-                {
-                    rotation_finished = true;
-                    moving_sideways = true;
-                    MoveSideways(path[0]);
-                }
-            }
-
             //Tiles
             if (path.Count == 1)
                 translation_finished = true;
             else
             {
+                arrive.SetEnabled(true);
+                seek.SetEnabled(true);
                 path.Remove(path[0]);
 
                 if (chase == false)
                     LookAtNextTile();
+                else
+                {
+                    if (LookingAtPlayer() == false)
+                        LookAtPlayer();
+                    else
+                    {
+                        rotation_finished = true;
+                        moving_sideways = true;
+                        Debug.Log("Moving sideways to x: " + path[0].GetTileX() + " y: " + path[0].GetTileY());
+                        Debug.Log("Translation finished == " + translation_finished);
+                        MoveSideways(path[0]);
+                    }
+                }
             }
 
             tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
@@ -689,8 +689,6 @@ public class Movement_Action : Action
 
         if (distance_x == 0 && distance_y == 0)
             Debug.Log("[error] destination == current");
-
-        Debug.Log("[pink] HELLO");
 
         //Moving West
         if (distance_x < 0)

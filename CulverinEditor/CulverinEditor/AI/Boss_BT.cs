@@ -14,7 +14,7 @@ public class Boss_BT : BT
     public GameObject enemies_manager = null;
     public GameObject player = null;
     public GameObject mesh = null;
-    public GameObject hp_bar = null;
+    public GameObject hp_bar_boss = null;
 
     public float total_hp = 100;
     protected float current_hp;
@@ -48,8 +48,8 @@ public class Boss_BT : BT
 
     public override void Start()
     {
-        hp_bar = GetLinkedObject("hp_bar");
-        hp_bar.SetActive(false);
+        hp_bar_boss = GetLinkedObject("hp_bar_boss");
+        hp_bar_boss.SetActive(false);
         GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddBoss(gameObject);
         rand_gen = new System.Random();
 
@@ -146,22 +146,10 @@ public class Boss_BT : BT
 
                                 if (distance_x == 2 && distance_y == 0 || distance_x == 0 && distance_y == 2)
                                 {
-                                    int rand = rand_gen.Next(1, 10);
-
-                                    if (false)
-                                    {
-                                        //triple attack
-                                        Debug.Log("Triple Attack");
-                                        cooldown = triple_attack_cooldown;
-                                        return;
-                                    }
-                                    else
-                                    {
                                         GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(1);
                                         current_action = GetComponent<InfiniteChasePlayer_Action>();
                                         current_action.ActionStart();
                                         return;
-                                    }
                                 }
                                 else if (distance_x == 1 && distance_y == 0 || distance_x == 0 && distance_y == 1)
                                 {
@@ -216,7 +204,7 @@ public class Boss_BT : BT
         current_hp -= damage;
         current_interpolation = current_hp / total_hp;
 
-        hp_bar.GetComponent<BossHPBar>().SetHPBar(current_interpolation);
+        hp_bar_boss.GetComponent<BossHPBar>().SetHPBar(current_interpolation);
 
         if (current_hp <= 0)
         {
@@ -228,12 +216,12 @@ public class Boss_BT : BT
             //todosforme
             GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
         }
-        else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
+        /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
         {
             Debug.Log("[yellow] BOSS PHASE2!!!!!");
             phase = BOSS_STATE.BOSS_PHASE2;
             //Phase2Textures();
-        }
+        }*/
 
         return true;
     }
