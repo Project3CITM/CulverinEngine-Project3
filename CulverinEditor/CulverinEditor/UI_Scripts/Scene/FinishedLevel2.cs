@@ -10,14 +10,16 @@ using CulverinEditor.Debug;
         {
             if (Input.GetKeyDown(KeyCode.P))
             {
+                SceneManager.LoadNewWalkableMap("Map_Level_3");
                 SceneManager.LoadScene("Level_3");
             }
         }
 
         void OnTriggerEnter()
         {
+          SceneManager.LoadNewWalkableMap("Map_Level_3");
+          SceneManager.LoadScene("Level_3");            
 
-            SceneManager.LoadScene("Level_3");            
 
 
         Debug.Log("[red] FINISHING LEVEL");

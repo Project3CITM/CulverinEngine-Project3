@@ -37,6 +37,7 @@ public class Scroll : CulverinBehaviour
             loading_text.SetActive(true);
             end_scroll = true;
             start_load = true;
+            SceneManager.LoadNewWalkableMap("Map_Level_2");
             SceneManager.LoadSceneNoDestroy("Level 2");
         }
         if (start_load)

@@ -1102,7 +1102,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::ChangeToSecondaryScene", (const void*)ChangeToSecondaryScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::BlockGUIinput", (const void*)BlockGUIinput);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
-
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadNewWalkableMap", (const void*)LoadNewWalkableMap);
 	//EVENT SYSTEM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
 
@@ -1400,7 +1400,7 @@ void ImportScript::LoadNewWalkableMap(MonoString* walkable_map)
 	{
 		const char* map = mono_string_to_utf8(walkable_map);
 		App->map->imported_map = map;
-		App->map->ImportMap();
+		App->map->ImportMap(true);
 	}
 }
 
