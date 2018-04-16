@@ -49,6 +49,7 @@ public class Boss_BT : BT
     public override void Start()
     {
         hp_bar = GetLinkedObject("hp_bar");
+        hp_bar.SetActive(false);
         GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddBoss(gameObject);
         rand_gen = new System.Random();
 
