@@ -407,42 +407,47 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		ScreenshotsNum++;
 	}
 
-	//static bool gif_in_progress = false;
-	//static GifWriter gif_writer;
-	//static unsigned char* pixels = nullptr;
+	static bool gif_in_progress = false;
+	static GifWriter gif_writer;
+	static unsigned char* pixels = nullptr;
 
-	//if (App->input->GetKey(SDL_SCANCODE_8))
-	//{
-	//	gif_in_progress = GifBegin(&gif_writer, "testgif.gif", App->window->GetWidth(), App->window->GetHeight(), dt, 8, false);
-	//	uint width = App->window->GetWidth();
-	//	uint height = App->window->GetHeight();
-	//	uint bytesToUsePerPixel = 3;
-	//	pixels = new unsigned char[width * height * bytesToUsePerPixel];
-	//}
+	if ((App->input->GetKey(SDL_SCANCODE_8) == KEY_DOWN) && gif_in_progress)
+	{
+		GifEnd(&gif_writer);
+		RELEASE_ARRAY(pixels);
+		gif_in_progress = false;
+		ScreenshotsNum++;
+	}
 
-	//if (gif_in_progress)
-	//{
-	//	/*
-	//	ILuint imageID = ilGenImage();
-	//	ilBindImage(imageID);
-	//	ilutGLScreen();
-	//	ILubyte* pixels = ilGetData();
-	//	GifWriteFrame(&gif_writer, pixels, App->window->GetWidth(), App->window->GetHeight(), dt, 8, false);
-	//	ilDeleteImage(imageID);
-	//	*/
-	//	/*
-	//	glReadPixels(0, 0, App->window->GetWidth(), App->window->GetHeight(), GL_RGB, GL_UNSIGNED_BYTE, pixels);
-	//	GifWriteFrame(&gif_writer, pixels, App->window->GetWidth(), App->window->GetHeight(), dt, 8, false);
-	//	*/
-	//}
+	if ((App->input->GetKey(SDL_SCANCODE_8) == KEY_DOWN) && !gif_in_progress)
+	{
+		time_t now = time(0);
+		tm ltm;
+		localtime_s(&ltm, &now);
+		static char tmp_string[1024];
+		sprintf_s(tmp_string, 1024, "Screenshots/GifFull/GifFull_%i_%i_%i_%i_%i_%i__%i.gif", ltm.tm_mday, 1 + ltm.tm_mon, 1900 + ltm.tm_year, ltm.tm_hour, ltm.tm_min, ltm.tm_sec, ScreenshotsNum);
 
-	//if (App->input->GetKey(SDL_SCANCODE_9) && gif_in_progress)
-	//{
-	//	GifEnd(&gif_writer);
-	//	RELEASE_ARRAY(pixels);
-	//	gif_in_progress = false;
-	//}
-	
+		ImGuiIO GuiIO = ImGui::GetIO();
+		gif_in_progress = GifBegin(&gif_writer, tmp_string, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, (uint32_t)(dt * 100.0f), 8, false);
+		if (gif_in_progress)
+			pixels = new unsigned char[GuiIO.DisplaySize.x *  GuiIO.DisplaySize.y * sizeof(unsigned char) * 4];
+	}
+
+	if (gif_in_progress)
+	{
+		/*
+		ILuint imageID = ilGenImage();
+		ilBindImage(imageID);
+		ilutGLScreen();
+		ILubyte* pixels = ilGetData();
+		GifWriteFrame(&gif_writer, pixels, App->window->GetWidth(), App->window->GetHeight(), dt, 8, false);
+		ilDeleteImage(imageID);
+		*/
+		ImGuiIO GuiIO = ImGui::GetIO();
+		glReadPixels(0, 0, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		GifWriteFrame(&gif_writer, pixels, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, (uint32_t)(dt * 100.0f), 8, false);
+	}
+
 	SDL_GL_SwapWindow(App->window->window);
 
 	postUpdate_t = perf_timer.ReadMs();
