@@ -230,12 +230,12 @@ public class Enemy_BT : BT
                     && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x - 1, (uint)enemy_tile_y) ==true
                     && player_tile_y == enemy_tile_y)
                 {
-                    Debug.Log("[pink]WEST 2 TILES");
+                    Debug.Log("WEST 2 TILES");
                     return 2;
                 }
                 else if (enemy_tile_x - 1 == player_tile_x && player_tile_y == enemy_tile_y)
                 {
-                    Debug.Log("[pink]WEST 1 TILES");
+                    Debug.Log("WEST 1 TILES");
                     return 1;
                 }
                 break;
@@ -244,12 +244,12 @@ public class Enemy_BT : BT
                     && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x + 1, (uint)enemy_tile_y) == true
                     && player_tile_y == enemy_tile_y)
                 {
-                    Debug.Log("[pink]EAST 2 TILES");
+                    Debug.Log("EAST 2 TILES");
                     return 2;
                 }
                 else if (enemy_tile_x + 1 == player_tile_x && player_tile_y == enemy_tile_y)
                 {
-                    Debug.Log("[pink]EAST 1 TILES");
+                    Debug.Log("EAST 1 TILES");
                     return 1;
                 }
                 break;
@@ -258,12 +258,12 @@ public class Enemy_BT : BT
                     && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x, (uint)enemy_tile_y - 1) == true
                     && player_tile_x == enemy_tile_x)
                 {
-                    Debug.Log("[pink]NORTH 2 TILES");
+                    Debug.Log("NORTH 2 TILES");
                     return 2;
                 }
                 else if (enemy_tile_y - 1 == player_tile_y && player_tile_x == enemy_tile_x)
                 {
-                    Debug.Log("[pink]NORTH 1 TILES");
+                    Debug.Log("NORTH 1 TILES");
                     return 1;
                 }
                 break;
@@ -272,17 +272,17 @@ public class Enemy_BT : BT
                     && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x, (uint)enemy_tile_y+1) == true
                     && player_tile_x == enemy_tile_x)
                 {
-                    Debug.Log("[pink]SOUTH 2 TILES");
+                    Debug.Log("SOUTH 2 TILES");
                     return 2;
                 }
                 else if (enemy_tile_y + 1 == player_tile_y && player_tile_x == enemy_tile_x)
                 {
-                    Debug.Log("[pink]SOUTH 1 TILES");
+                    Debug.Log("SOUTH 1 TILES");
                     return 1;
                 }
                 break;
         }
-        Debug.Log("[pink]3 TILES");
+        Debug.Log("3 TILES");
         return range + 1;
     }
 
