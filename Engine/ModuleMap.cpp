@@ -1304,7 +1304,10 @@ float ModuleMap::GetSeparation()
 bool ModuleMap::SaveConfig(JSON_Object* node)
 {
 	//Save --------------------------------
-	json_object_set_string(node, "Walkable Map", name_map.c_str());
+	if (App->mode_game == false)
+	{
+		json_object_set_string(node, "Walkable Map", name_map.c_str());
+	}
 
 	// Navigation maps
 	//json_object_set_string(node, "Walkable Map", map_string.c_str());
