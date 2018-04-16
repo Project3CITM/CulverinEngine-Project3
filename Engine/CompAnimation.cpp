@@ -482,7 +482,9 @@ void CompAnimation::ShowOptions()
 	}
 	if (ImGui::MenuItem("Reset"))
 	{
-		ImGui::CloseCurrentPopup();
+		animation_resource = nullptr;
+		bone_update_vector.clear();
+		bones_placed = false;
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Move to Front", NULL, false, false))
