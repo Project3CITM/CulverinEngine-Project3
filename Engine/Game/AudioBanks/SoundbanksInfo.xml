@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="128">
 	<RootPaths>
-		<ProjectRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\</ProjectRoot>
-		<SourceFilesRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
-		<SoundBanksRoot>C:\Users\Kay\Documents\GitHub\TempMotor3D_P3\Engine\Game\AudioBanks\</SoundBanksRoot>
+		<ProjectRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\</ProjectRoot>
+		<SourceFilesRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>F:\Escritorio\Proyectos GitHub\CulverinEngine-Project3\Engine\Game\AudioBanks\</SoundBanksRoot>
 		<ExternalSourcesInputFile></ExternalSourcesInputFile>
-		<ExternalSourcesOutputRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
+		<ExternalSourcesOutputRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
 	</RootPaths>
 	<DialogueEvents/>
 	<StreamedFiles/>
@@ -16,17 +16,123 @@
 			<ShortName>Init</ShortName>
 			<Path>Init.bnk</Path>
 		</SoundBank>
+		<SoundBank Id="2242381963" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\Enemies</ObjectPath>
+			<ShortName>Enemies</ShortName>
+			<Path>Enemies.bnk</Path>
+			<IncludedEvents>
+				<Event Id="1240136664" Name="AttackPreparation" ObjectPath="\Events\Scene1\Boss\AttackPreparation"/>
+				<Event Id="1481017468" Name="BossDeath" ObjectPath="\Events\Scene1\Boss\BossDeath"/>
+				<Event Id="3122217888" Name="BossFalls" ObjectPath="\Events\Scene1\Boss\BossFalls"/>
+				<Event Id="1746793429" Name="BossGrowl" ObjectPath="\Events\Scene1\Boss\BossGrowl"/>
+				<Event Id="3928559768" Name="BossHitGround" ObjectPath="\Events\Scene1\Boss\BossHitGround"/>
+				<Event Id="1437879705" Name="BossHurt" ObjectPath="\Events\Scene1\Boss\BossHurt"/>
+				<Event Id="385405090" Name="BossSoldierFalls" ObjectPath="\Events\Scene1\Boss\BossSoldierFalls"/>
+				<Event Id="3748885507" Name="BossSoldierScream" ObjectPath="\Events\Scene1\Boss\BossSoldierScream"/>
+				<Event Id="843639065" Name="BossSwordSwing" ObjectPath="\Events\Scene1\Boss\BossSwordSwing"/>
+				<Event Id="837426219" Name="BossToKnees" ObjectPath="\Events\Scene1\Boss\BossToKnees"/>
+				<Event Id="2483303643" Name="BossWalkPhase1" ObjectPath="\Events\Scene1\Boss\BossWalkPhase1"/>
+				<Event Id="2483303640" Name="BossWalkPhase2" ObjectPath="\Events\Scene1\Boss\BossWalkPhase2"/>
+				<Event Id="513450771" Name="CraniumCrush" ObjectPath="\Events\Scene1\Boss\CraniumCrush"/>
+				<Event Id="2493198437" Name="PlayBossMusic" ObjectPath="\Events\UI\PlayBossMusic"/>
+				<Event Id="3380664611" Name="PunchAttack" ObjectPath="\Events\Scene1\Boss\PunchAttack"/>
+				<Event Id="1268857950" Name="SwordFalls" ObjectPath="\Events\Scene1\Boss\SwordFalls"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="34303078" Language="SFX">
+					<ShortName>Boss_craniumcrush.wav</ShortName>
+					<Path>SFX\Boss_craniumcrush_1C9C67B2.wem</Path>
+				</File>
+				<File Id="46750343" Language="SFX">
+					<ShortName>Boss_step2.wav</ShortName>
+					<Path>SFX\Boss_step2_1C9C67B2.wem</Path>
+				</File>
+				<File Id="195378477" Language="SFX">
+					<ShortName>Boss_theme.wav</ShortName>
+					<Path>SFX\Boss_theme_F17FB28C.wem</Path>
+				</File>
+				<File Id="246088314" Language="SFX">
+					<ShortName>Boss_hurt1.wav</ShortName>
+					<Path>SFX\Boss_hurt1_1C9C67B2.wem</Path>
+				</File>
+				<File Id="254082414" Language="SFX">
+					<ShortName>Boss_hurt2.wav</ShortName>
+					<Path>SFX\Boss_hurt2_1C9C67B2.wem</Path>
+				</File>
+				<File Id="304824152" Language="SFX">
+					<ShortName>Boss_falls_to_ground.wav</ShortName>
+					<Path>SFX\Boss_falls_to_ground_1C9C67B2.wem</Path>
+				</File>
+				<File Id="364269213" Language="SFX">
+					<ShortName>Boss_hit_ground.wav</ShortName>
+					<Path>SFX\Boss_hit_ground_1C9C67B2.wem</Path>
+				</File>
+				<File Id="475114885" Language="SFX">
+					<ShortName>Boss_sword_falls.wav</ShortName>
+					<Path>SFX\Boss_sword_falls_1C9C67B2.wem</Path>
+				</File>
+				<File Id="495546356" Language="SFX">
+					<ShortName>Boss_attack_preparation.wav</ShortName>
+					<Path>SFX\Boss_attack_preparation_1C9C67B2.wem</Path>
+				</File>
+				<File Id="508510935" Language="SFX">
+					<ShortName>Boss_Growl.wav</ShortName>
+					<Path>SFX\Boss_Growl_1C9C67B2.wem</Path>
+				</File>
+				<File Id="567468000" Language="SFX">
+					<ShortName>Boss_soldier_falls.wav</ShortName>
+					<Path>SFX\Boss_soldier_falls_1C9C67B2.wem</Path>
+				</File>
+				<File Id="587520127" Language="SFX">
+					<ShortName>Boss_death_groan.wav</ShortName>
+					<Path>SFX\Boss_death_groan_1C9C67B2.wem</Path>
+				</File>
+				<File Id="628133761" Language="SFX">
+					<ShortName>Boss_hurt4.wav</ShortName>
+					<Path>SFX\Boss_hurt4_1C9C67B2.wem</Path>
+				</File>
+				<File Id="713280947" Language="SFX">
+					<ShortName>Boss_falls_to_knees.wav</ShortName>
+					<Path>SFX\Boss_falls_to_knees_1C9C67B2.wem</Path>
+				</File>
+				<File Id="731437871" Language="SFX">
+					<ShortName>Boss_step.wav</ShortName>
+					<Path>SFX\Boss_step_1C9C67B2.wem</Path>
+				</File>
+				<File Id="881114355" Language="SFX">
+					<ShortName>Boss_punch_air.wav</ShortName>
+					<Path>SFX\Boss_punch_air_1C9C67B2.wem</Path>
+				</File>
+				<File Id="928489495" Language="SFX">
+					<ShortName>Boss_hurt3.wav</ShortName>
+					<Path>SFX\Boss_hurt3_1C9C67B2.wem</Path>
+				</File>
+				<File Id="1071164662" Language="SFX">
+					<ShortName>Boss_swordswing.wav</ShortName>
+					<Path>SFX\Boss_swordswing_1C9C67B2.wem</Path>
+				</File>
+				<File Id="1073014169" Language="SFX">
+					<ShortName>Boss_soldier_scream.wav</ShortName>
+					<Path>SFX\Boss_soldier_scream_1C9C67B2.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
 		<SoundBank Id="2607556080" Language="SFX">
 			<ObjectPath>\SoundBanks\Default Work Unit\Menu</ObjectPath>
 			<ShortName>Menu</ShortName>
 			<Path>Menu.bnk</Path>
 			<IncludedEvents>
 				<Event Id="3753593413" Name="Hover" ObjectPath="\Events\UI\Hover"/>
+				<Event Id="2493198437" Name="PlayBossMusic" ObjectPath="\Events\UI\PlayBossMusic"/>
 				<Event Id="1306286961" Name="PlayLoseMusic" ObjectPath="\Events\UI\PlayLoseMusic"/>
 				<Event Id="1616796442" Name="PlayUIMusic" ObjectPath="\Events\UI\PlayUIMusic"/>
 				<Event Id="1758001241" Name="Push" ObjectPath="\Events\UI\Push"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
+				<File Id="195378477" Language="SFX">
+					<ShortName>Boss_theme.wav</ShortName>
+					<Path>SFX\Boss_theme_F17FB28C.wem</Path>
+				</File>
 				<File Id="299845700" Language="SFX">
 					<ShortName>UI\Button_Hover.wav</ShortName>
 					<Path>SFX\UI\Button_Hover_1C9C67B2.wem</Path>
@@ -108,17 +214,9 @@
 				<Event Id="777507535" Name="WaterSplash" ObjectPath="\Events\Scene1\Puzzle\WaterSplash"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
-				<File Id="16679997" Language="SFX">
-					<ShortName>Puzzle\Lever.wav</ShortName>
-					<Path>SFX\Puzzle\Lever_DBC752C0.wem</Path>
-				</File>
 				<File Id="46166543" Language="SFX">
 					<ShortName>Enemy_SpearSwing.wav</ShortName>
 					<Path>SFX\Enemy_SpearSwing_1C9C67B2.wem</Path>
-				</File>
-				<File Id="60949840" Language="SFX">
-					<ShortName>Characters\Jaime\Jaime_Dead_1.wav</ShortName>
-					<Path>SFX\Characters\Jaime\Jaime_Dead_1_F7D0E330.wem</Path>
 				</File>
 				<File Id="74496819" Language="SFX">
 					<ShortName>Theon_MeleeHit.wav</ShortName>
@@ -280,10 +378,6 @@
 					<ShortName>Enemy\Enemy_2\E2_Hurt_2.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_2\E2_Hurt_2_1C9C67B2.wem</Path>
 				</File>
-				<File Id="732253576" Language="SFX">
-					<ShortName>Characters\Jaime\Behind Me_3.wav</ShortName>
-					<Path>SFX\Characters\Jaime\Behind Me_3_1C9C67B2.wem</Path>
-				</File>
 				<File Id="737435909" Language="SFX">
 					<ShortName>Enemy\Enemy_3\E3_Hurt_2.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_3\E3_Hurt_2_1C9C67B2.wem</Path>
@@ -291,6 +385,14 @@
 				<File Id="764335624" Language="SFX">
 					<ShortName>Characters\Daenerys\Daenerys_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Daenerys\Daenerys_Dead_1_1C9C67B2.wem</Path>
+				</File>
+				<File Id="802761961" Language="SFX">
+					<ShortName>Characters\Jaime\Jaime_Dead_1.wav</ShortName>
+					<Path>SFX\Characters\Jaime\Jaime_Dead_1_1C9C67B2.wem</Path>
+				</File>
+				<File Id="823990075" Language="SFX">
+					<ShortName>Puzzle\Lever.wav</ShortName>
+					<Path>SFX\Puzzle\Lever_152A5EEC.wem</Path>
 				</File>
 				<File Id="825063114" Language="SFX">
 					<ShortName>Theon_Melee.wav</ShortName>
