@@ -165,7 +165,7 @@ std::string ModuleFS::CopyFileToAssetsS(const char* fileNameFrom, const char* fi
 	return exits;
 }
 
-void ModuleFS::CopyPasteFile(const char * fileFrom, const char* fileTo)
+void ModuleFS::CopyPasteFile(const char * fileFrom, const char* fileTo, bool check_filefromTo)
 {
 	namespace fs = std::experimental::filesystem;
 	if (fileFrom != nullptr && fileTo != nullptr)
@@ -173,6 +173,20 @@ void ModuleFS::CopyPasteFile(const char * fileFrom, const char* fileTo)
 		if (fs::exists(fileTo))
 		{
 			fs::remove(fileTo);
+		}
+		if (check_filefromTo)
+		{
+			std::string temp = fileTo;
+			temp = GetOnlyPath(temp);
+			temp += "/" + GetOnlyName(fileFrom);
+			temp += ".exe";
+			NormalitzatePath(temp);
+			LOG("%s", temp.c_str());
+			App->SaveLogs();
+			if (fs::exists(temp.c_str()))
+			{
+				fs::remove(temp.c_str());
+			}
 		}
 		fs::copy(fileFrom, fileTo);
 	}
