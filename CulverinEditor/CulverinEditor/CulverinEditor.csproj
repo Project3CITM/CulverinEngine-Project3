@@ -42,6 +42,10 @@
   <ItemGroup>
     <Compile Include="AI\Actions\Action.cs" />
     <Compile Include="AI\Actions\BossAttackSwordDown_Action.cs" />
+    <Compile Include="AI\Actions\BossBasicStrongAttack_Action.cs" />
+    <Compile Include="AI\Actions\BossEngage_Action.cs" />
+    <Compile Include="AI\Actions\BossGrabAttack_Action.cs" />
+    <Compile Include="AI\Actions\BossWideAttack_Action.cs" />
     <Compile Include="AI\Actions\FacePlayer_Action.cs" />
     <Compile Include="AI\Actions\InfiniteChasePlayer_Action.cs" />
     <Compile Include="AI\Actions\Separate_Action.cs" />
@@ -50,6 +54,7 @@
     <Compile Include="AI\AIManager.cs" />
     <Compile Include="AI\Actions\Align_Steering.cs" />
     <Compile Include="AI\Actions\Arrive_Steering.cs" />
+    <Compile Include="AI\BossHPBar.cs" />
     <Compile Include="AI\BossSight.cs" />
     <Compile Include="AI\Boss_BT.cs" />
     <Compile Include="AI\Boss_Listener.cs" />

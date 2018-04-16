@@ -33,12 +33,12 @@ public class BossAttackSwordDown_Action : Action
         state = BASD_STATE.PRE_APPLY;
         GetComponent<CompAnimation>().SetTransition("ToAttack");
         GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
+        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-
         if (state == BASD_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
         {
             state = BASD_STATE.POST_APPLY;
@@ -54,24 +54,28 @@ public class BossAttackSwordDown_Action : Action
                     if ((enemy_tile_x - 1 == player_tile_x || enemy_tile_x - 2 == player_tile_x) && player_tile_y == enemy_tile_y)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        GetComponent<CompAudio>().PlayEvent("BossHitGround");
                     }
                     break;
                 case Movement_Action.Direction.DIR_EAST:
                     if ((enemy_tile_x + 1 == player_tile_x || enemy_tile_x + 2 == player_tile_x) && player_tile_y == enemy_tile_y)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        GetComponent<CompAudio>().PlayEvent("BossHitGround");
                     }
                     break;
                 case Movement_Action.Direction.DIR_NORTH:
                     if ((enemy_tile_y - 1 == player_tile_y || enemy_tile_y - 2 == player_tile_y) && player_tile_x == enemy_tile_x)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        GetComponent<CompAudio>().PlayEvent("BossHitGround");
                     }
                     break;
                 case Movement_Action.Direction.DIR_SOUTH:
                     if ((enemy_tile_y + 1 == player_tile_y || enemy_tile_y + 2 == player_tile_y) && player_tile_x == enemy_tile_x)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        GetComponent<CompAudio>().PlayEvent("BossHitGround");
                     }
                     break;
             }
@@ -83,5 +87,12 @@ public class BossAttackSwordDown_Action : Action
             return ACTION_RESULT.AR_SUCCESS;
         }
         return ACTION_RESULT.AR_IN_PROGRESS;
+    }
+
+    public override bool ActionEnd()
+    {
+        Debug.Log("SwordDown attack end!");
+        interupt = false;
+        return false;
     }
 }

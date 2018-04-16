@@ -900,9 +900,22 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
-    public void SetCurrentPlayerState(CharacterController.State state)
+
+    public void SetCurrentCharacterState(CharacterController.State currstate)
     {
-        current_character.GetComponent<CharacterController>().SetState(state);
-    } 
+        if (current_character.GetName() == "Jaime")
+        {
+            current_character.GetComponent<JaimeController>().SetState(currstate);
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+            current_character.GetComponent<DaenerysController>().SetState(currstate);
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            current_character.GetComponent<TheonController>().SetState(currstate);
+        }
+        
+    }
 }
 
