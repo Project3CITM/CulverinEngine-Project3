@@ -310,6 +310,7 @@ public class Lever : CulverinBehaviour
 
         CompCollider col = GetComponent<CompCollider>();
         GameObject obj_col = col.GetCollidedObject();
+        Debug.Log(obj_col.GetTag().ToString());
 
         if (obj_col != null && obj_col.CompareTag("player"))
         {
