@@ -1024,35 +1024,39 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 		break;
 	}
 	}
-	std::ifstream is(temp, std::ifstream::binary);
-	int length = 0;
-	if (is)
+	if (std::experimental::filesystem::exists(temp))
 	{
-		// get length of file:
-		is.seekg(0, is.end);
-		length = is.tellg();
-		is.seekg(0, is.beg);
-
-		*buffer = new char[length];
-
-		is.read(*buffer, length);
-
+		std::ifstream is(temp, std::ifstream::binary);
+		int length = 0;
 		if (is)
 		{
-			LOG("File Loaded.")
+			// get length of file:
+			is.seekg(0, is.end);
+			length = is.tellg();
+			is.seekg(0, is.beg);
+
+			*buffer = new char[length];
+
+			is.read(*buffer, length);
+
+			if (is)
+			{
+				LOG("File Loaded.")
+			}
+			else
+			{
+				LOG("Error %s", is.gcount());
+			}
+
+			is.close();
 		}
 		else
 		{
-			LOG("Error %s", is.gcount());
+			LOG("Error to Load File -> %s", file);
 		}
-
-		is.close();
+		return length;
 	}
-	else
-	{
-		LOG("Error to Load File -> %s", file);
-	}
-	return length;
+	return 0;
 }
 
 bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY_IMPORT directory)
