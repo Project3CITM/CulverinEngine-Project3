@@ -328,6 +328,8 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	ImGui::Render();
 
+	static uint ScreenshotsNum = 0; //Used to enable multiple screenshots in the same second
+
 	if (App->input->GetKey(SDL_SCANCODE_9) == KEY_DOWN)
 	{
 		if (FirstPoint)
@@ -354,17 +356,28 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 			ilBindImage(imageID);
 			ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, s_pixels);
 			ilEnable(IL_FILE_OVERWRITE);
+
+			/*
 			static char tmp_string[1024];
 			static std::string tmp_string2;
 			sprintf_s(tmp_string, 1024, "Screenshots/ScreenPortion/ScreenPortion_%s_%s.png", __DATE__, __TIME__, tmp_string);
 			tmp_string2 = tmp_string;
 			for (uint i = 0; i < tmp_string2.length(); i++) if ((tmp_string2[i] == ' ') || (tmp_string2[i] == ':')) tmp_string2[i] = '_';
-			ilSave(IL_PNG, tmp_string2.c_str());
+			*/
+			
+			time_t now = time(0);
+			tm ltm;
+			localtime_s(&ltm, &now);
+			static char tmp_string[1024];
+			sprintf_s(tmp_string, 1024, "Screenshots/ScreenPortion/ScreenPortion_%i_%i_%i_%i_%i_%i__%i.png", ltm.tm_mday, 1 + ltm.tm_mon, 1900 + ltm.tm_year, ltm.tm_hour, ltm.tm_min, ltm.tm_sec, ScreenshotsNum);
+
+			ilSave(IL_PNG, tmp_string);
 			ilDisable(IL_FILE_OVERWRITE);
 			ilDeleteImage(imageID);
 			RELEASE_ARRAY(s_pixels);
 
 			FirstPoint = true;
+			ScreenshotsNum++;
 		}
 	}
 	if (App->input->GetKey(SDL_SCANCODE_0) == KEY_DOWN)
@@ -373,14 +386,25 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		ilBindImage(imageID);
 		ilutGLScreen();
 		ilEnable(IL_FILE_OVERWRITE);
+
+		/*
 		static char tmp_string[1024];
 		static std::string tmp_string2;
 		sprintf_s(tmp_string, 1024, "Screenshots/ScreenFull/ScreenFull_%s_%s.png", __DATE__, __TIME__, tmp_string);
 		tmp_string2 = tmp_string;
 		for (uint i = 0; i < tmp_string2.length(); i++) if ((tmp_string2[i] == ' ') || (tmp_string2[i] == ':')) tmp_string2[i] = '_';
-		ilSave(IL_PNG, tmp_string2.c_str());
+		*/
+		
+		time_t now = time(0);
+		tm ltm;
+		localtime_s(&ltm, &now);
+		static char tmp_string[1024];
+		sprintf_s(tmp_string, 1024, "Screenshots/ScreenFull/ScreenFull_%i_%i_%i_%i_%i_%i__%i.png", ltm.tm_mday, 1 + ltm.tm_mon, 1900 + ltm.tm_year, ltm.tm_hour, ltm.tm_min, ltm.tm_sec, ScreenshotsNum);
+
+		ilSave(IL_PNG, tmp_string);
 		ilDisable(IL_FILE_OVERWRITE);
 		ilDeleteImage(imageID);
+		ScreenshotsNum++;
 	}
 
 	//static bool gif_in_progress = false;
