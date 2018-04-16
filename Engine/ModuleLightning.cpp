@@ -139,7 +139,7 @@ bool ModuleLightning::Start()
 {
 	perf_timer.Start();
 
-	AddShadowMapCastViews(shadow_cast_points_count);
+	//AddShadowMapCastViews(shadow_cast_points_count);
 
 	test_fix.Create(shadow_maps_res_w, shadow_maps_res_h);
 

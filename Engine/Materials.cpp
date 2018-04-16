@@ -375,4 +375,5 @@ void Material::RestartIterators()
 	it_float3_variables = float3_variables.begin();
 	it_color_variables = color_variables.begin();
 	it_bool_variables = bool_variables.begin();
+	it_cube_maps = cube_maps.begin();
 }

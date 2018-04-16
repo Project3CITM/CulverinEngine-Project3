@@ -19,10 +19,12 @@
 #include "CompBone.h"
 #include "ModuleLightning.h"
 #include "ModuleWindow.h"
+#include "CubeMap_Texture.h"
 
 //Delete this
 #include "glm\glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "ModuleInput.h"
 
 
 CompMesh::CompMesh(Comp_Type t, GameObject* parent) : Component(t, parent)
@@ -507,15 +509,20 @@ void CompMesh::Draw2(uint ID)
 			
 
 			/*TEMPORAL*/
-			DepthCubeMap* fbo;
-			auto temp_vec = App->module_lightning->GetShadowMaps();
-			fbo = (*temp_vec)[0];
-			glEnable(GL_TEXTURE_CUBE_MAP_EXT);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, fbo->GetTexture());
+			if (App->renderer3D->cube_maps.size() > 0) {
+				
+				
+				
+				glEnable(GL_TEXTURE_CUBE_MAP_EXT);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, App->renderer3D->cube_maps[0]->GetTextureId());
+
+				int cubeLoc = glGetUniformLocation(ID, "cubeMap");
+
 			
-			uint cubeLoc = glGetUniformLocation(ID, "cubeMap");
-			glUniform1i(cubeLoc, 0);
+				glUniform1i(cubeLoc, 0);
+					
+			}
 		/*-----------------*/
 
 			int total_save_buffer = 14;

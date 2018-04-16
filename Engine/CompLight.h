@@ -12,8 +12,7 @@ enum Light_type {
 	DIRECTIONAL_LIGHT	
 };
 
-class CompLight :
-	public Component
+class CompLight :	public Component
 {
 public:
 	CompLight(Comp_Type t, GameObject * parent);

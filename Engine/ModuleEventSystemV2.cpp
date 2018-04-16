@@ -9,6 +9,7 @@
 #include "ModuleWindow.h"
 #include "CompLight.h"
 #include "ModuleLightning.h"
+#include "CompCubeMapRenderer.h"
 
 void AddListener(EventType type, Module* listener)
 {
@@ -654,6 +655,17 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		
 		break;
 	}
+
+	case EventType::EVENT_CUBEMAP_REQUEST:
+	{
+		Event event_temp;
+		event_temp.Set_event_data(EventType::EVENT_CUBEMAP_DRAW);
+		event_temp.cube_map_draw.MM3DDrawEvent = &DrawV;
+		((CompCubeMapRenderer*)event.cube_map_request.comp_cubemap)->Bake(event_temp);	
+
+	}
+
+
 	
 	default:
 		/*

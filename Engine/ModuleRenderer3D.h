@@ -16,7 +16,7 @@
 
 class CompCamera;
 class CubeMap_Texture;
-
+class DepthCubeMap;
 
 enum RenderMode {
 	DEFAULT,
@@ -102,6 +102,7 @@ public:
 
 	//Reflexion Cubemaps
 	CubeMap_Texture*	temp_cubemap = nullptr;
+	std::vector<CubeMap_Texture*> cube_maps;
 
 	//TEMP
 	int blur_amount = 28;
