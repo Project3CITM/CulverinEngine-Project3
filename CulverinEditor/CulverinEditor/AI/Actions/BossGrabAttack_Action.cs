@@ -40,6 +40,7 @@ public class BossGrabAttack_Action : Action
         state = BGA_STATE.PRE_APPLY;
         GetComponent<CompAnimation>().SetTransition("ToAttack");
         GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
+        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
         return true;
     }
 

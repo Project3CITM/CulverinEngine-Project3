@@ -32,6 +32,7 @@ public class BossBasicStrongAttack_Action : Action
         state = BSA_STATE.PRE_APPLY;
         GetComponent<CompAnimation>().SetTransition("ToAttack");
         GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
+        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
         return true;
     }
 

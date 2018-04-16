@@ -201,9 +201,10 @@ public class Boss_BT : BT
     {
         InterruptAction();
         next_action = GetComponent<GetHit_Action>();
+        GetComponent<CompAudio>().PlayEvent("BossHurt");
         current_hp -= damage;
         current_interpolation = current_hp / total_hp;
-
+        
         hp_bar_boss.GetComponent<BossHPBar>().SetHPBar(current_interpolation);
 
         if (current_hp <= 0)
@@ -212,16 +213,17 @@ public class Boss_BT : BT
             phase = BOSS_STATE.BOSS_DEAD;
             next_action = GetComponent<Die_Action>();
             current_action.Interupt();
+            GetComponent<CompAudio>().PlayEvent("BossDeath");
 
             //todosforme
             GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
         }
         /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
-        {
-            Debug.Log("[yellow] BOSS PHASE2!!!!!");
-            phase = BOSS_STATE.BOSS_PHASE2;
-            //Phase2Textures();
-        }*/
+                {
+                    Debug.Log("[yellow] BOSS PHASE2!!!!!");
+                    phase = BOSS_STATE.BOSS_PHASE2;
+                    //Phase2Textures();
+                }*/
 
         return true;
     }
@@ -259,6 +261,7 @@ public class Boss_BT : BT
     public void Activate()
     {
         next_action = GetComponent<BossEngage_Action>();
+        GetComponent<CompAudio>().PlayEvent("BossGrowl");
     }
 
     public int GetDistanceXToPlayer()

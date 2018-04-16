@@ -33,6 +33,7 @@ public class BossWideAttack_Action : Action
         state = BWA_STATE.PRE_APPLY;
         GetComponent<CompAnimation>().SetTransition("ToAttack");
         GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
+        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
         return true;
     }
 
@@ -52,24 +53,28 @@ public class BossWideAttack_Action : Action
                 case Movement_Action.Direction.DIR_WEST:
                     if ((enemy_tile_x - 1 == player_tile_x || enemy_tile_x == player_tile_x) && (player_tile_y == enemy_tile_y || player_tile_y == enemy_tile_y -1 || player_tile_y == enemy_tile_y + 1))
                     {
+                        GetComponent<CompAudio>().PlayEvent("BossSwordSwing");
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
                     }
                     break;
                 case Movement_Action.Direction.DIR_EAST:
                     if ((enemy_tile_x + 1 == player_tile_x || enemy_tile_x == player_tile_x) && (player_tile_y == enemy_tile_y || player_tile_y == enemy_tile_y - 1 || player_tile_y == enemy_tile_y + 1))
                     {
+                        GetComponent<CompAudio>().PlayEvent("BossSwordSwing");
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
                     }
                     break;
                 case Movement_Action.Direction.DIR_NORTH:
                     if ((enemy_tile_y - 1 == player_tile_y || enemy_tile_y == player_tile_y) && (player_tile_x == enemy_tile_y || player_tile_x == enemy_tile_y - 1 || player_tile_y == enemy_tile_x + 1))
                     {
+                        GetComponent<CompAudio>().PlayEvent("BossSwordSwing");
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
                     }
                     break;
                 case Movement_Action.Direction.DIR_SOUTH:
                     if ((enemy_tile_y + 1 == player_tile_y || enemy_tile_y == player_tile_y) && (player_tile_x == enemy_tile_y || player_tile_x == enemy_tile_y - 1 || player_tile_y == enemy_tile_x + 1))
                     {
+                        GetComponent<CompAudio>().PlayEvent("BossSwordSwing");
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
                     }
                     break;
