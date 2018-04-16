@@ -1,4 +1,6 @@
-﻿using CulverinEditor;
+﻿using System.Collections;
+using System.Collections.Generic;
+using CulverinEditor;
 using CulverinEditor.Debug;
 
 
@@ -23,8 +25,11 @@ public class TrapTile : CulverinBehaviour
     private int tile_z = 0;
     private int value = 0;
 
+    private GameObject map = null;
+
     void Start()
     {
+
         Vector3 global_pos = transform.GetGlobalPosition();
         tile_x = (int)((global_pos.x + (12.7f)) / 25.4);
         tile_z = (int)((global_pos.z + (12.7f)) / 25.4);
@@ -40,6 +45,13 @@ public class TrapTile : CulverinBehaviour
             value = 1;
         }
         GetComponent<Transform>().SetPosition(global_pos);
+
+        map = GetLinkedObject("map_obj");
+        LevelMap map_level = map.GetComponent<LevelMap>();
+        if (map_level != null)
+        {
+            map_level.UpdateMap(tile_x, tile_z, value);
+        }
 
         curr_state = CHANGE_STATE.TRAP_IDLE;
     }
@@ -61,6 +73,11 @@ public class TrapTile : CulverinBehaviour
                     pos.y = min_height;
                     GetComponent<Transform>().SetPosition(pos);
                     curr_state = CHANGE_STATE.TRAP_IDLE;
+                    LevelMap map_level = map.GetComponent<LevelMap>();
+                    if(map_level != null)
+                    {
+                        map_level.UpdateMap(tile_x, tile_z, value);
+                    }
                 }
             }
             else
@@ -81,37 +98,24 @@ public class TrapTile : CulverinBehaviour
         }
     }
 
-    public bool SwitchTileState(out int curr_x, out int curr_z, out int out_value)
+    public void SwitchTileState()
     {
         trap_walkable = !trap_walkable;
         if (trap_walkable)
         {
             curr_state = CHANGE_STATE.MOVING_DOWN;
             value = 0;
-            Debug.Log("Currents state is");
-            Debug.Log(curr_state);
-
         }
         else
         {
             curr_state = CHANGE_STATE.MOVING_UP;
             value = 1;
-            Debug.Log("Currents state is");
-            Debug.Log(curr_state);
+            LevelMap map_level = map.GetComponent<LevelMap>();
+            if (map_level != null)
+            {
+                map_level.UpdateMap(tile_x, tile_z, value);
+            }
         }
-
-        curr_x = tile_x;
-        curr_z = tile_z;
-        out_value = value;
-
-        return trap_walkable == false;
     }
 
-    public bool CheckChangeState(out int curr_x, out int curr_z, out int out_value)
-    {
-        curr_x = tile_x;
-        curr_z = tile_z;
-        out_value = value;
-        return (curr_state == 0 && trap_walkable == true);
-    }
 }
