@@ -15,6 +15,7 @@
 #define MAX_LIGHTS 9
 
 class CompCamera;
+class CubeMap_Texture;
 
 
 enum RenderMode {
@@ -99,6 +100,8 @@ public:
 	GLuint ibo_cube_elements;
 	GLuint dmg_texture_id = 0;
 
+	//Reflexion Cubemaps
+	CubeMap_Texture*	temp_cubemap = nullptr;
 
 	//TEMP
 	int blur_amount = 28;

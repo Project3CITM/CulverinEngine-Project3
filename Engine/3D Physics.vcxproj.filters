@@ -1201,6 +1201,9 @@
     <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
+    <ClInclude Include="CubeMap_Texture.h">
+      <Filter>Engine\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1620,6 +1623,9 @@
     </ClCompile>
     <ClCompile Include="ModuleGUI_Build.cpp">
       <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeMap_Texture.cpp">
+      <Filter>Engine\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
