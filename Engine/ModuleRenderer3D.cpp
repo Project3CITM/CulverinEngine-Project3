@@ -332,72 +332,53 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	{
 		if (FirstPoint)
 		{
-			Point1.x = ImGui::GetIO().MousePos.x;
-			Point1.y = App->window->GetHeight() - ImGui::GetIO().MousePos.y;
+			ImGuiIO GuiIO = ImGui::GetIO();
+			Point1.x = GuiIO.MousePos.x;
+			Point1.y = GuiIO.DisplaySize.y - GuiIO.MousePos.y;
 			FirstPoint = false;
 		}
 		else
 		{
-			Point2.x = ImGui::GetIO().MousePos.x;
-			Point2.y = App->window->GetHeight() - ImGui::GetIO().MousePos.y;
+			ImGuiIO GuiIO = ImGui::GetIO();
+			Point2.x = GuiIO.MousePos.x;
+			Point2.y = GuiIO.DisplaySize.y - GuiIO.MousePos.y;
 
-			float2 MinPoint = ((Point1.x + Point1.y) <= (Point2.x + Point2.y)) ? Point1 : Point2;
-			float2 MaxPoint = ((Point1.x + Point1.y) >= (Point2.x + Point2.y)) ? Point1 : Point2;
-
-			MinPoint.x = 100;
-			MinPoint.y = App->window->GetHeight() - 200;
-			MaxPoint.x = 200;
-			MaxPoint.y = App->window->GetHeight() - 100;
-
-			MinPoint.x = (Point1.x <= Point2.x) ? Point1.x : Point2.x;
-			MinPoint.y = (Point1.y <= Point2.y) ? Point1.y : Point2.y;
-			MaxPoint.x = (Point1.x >= Point2.x) ? Point1.x : Point2.x;
-			MaxPoint.y = (Point1.y >= Point2.y) ? Point1.y : Point2.y;
+			float2 MinPoint = float2((Point1.x <= Point2.x) ? Point1.x : Point2.x, (Point1.y <= Point2.y) ? Point1.y : Point2.y);
+			float2 MaxPoint = float2((Point1.x >= Point2.x) ? Point1.x : Point2.x, (Point1.y >= Point2.y) ? Point1.y : Point2.y);
 
 			uint width = abs(MaxPoint.x - MinPoint.x);
 			uint height = abs(MaxPoint.y - MinPoint.y);
-			uint bytesToUsePerPixel = 3;
-			uint sizeOfByte = sizeof(unsigned char);
-			uint theSize = width * height * sizeOfByte * bytesToUsePerPixel;
-			unsigned char* s_pixels = new unsigned char[3 * width * height];
+			unsigned char* s_pixels = new unsigned char[width * height * sizeof(unsigned char) * 3];
 			glReadPixels(MinPoint.x, MinPoint.y, width, height, GL_RGB, GL_UNSIGNED_BYTE, s_pixels);
 			ILuint imageID = ilGenImage();
 			ilBindImage(imageID);
 			ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, s_pixels);
 			ilEnable(IL_FILE_OVERWRITE);
-			ilSave(IL_PNG, "output.png");
+			static char tmp_string[1024];
+			static std::string tmp_string2;
+			sprintf_s(tmp_string, 1024, "Screenshots/ScreenPortion/ScreenPortion_%s_%s.png", __DATE__, __TIME__, tmp_string);
+			tmp_string2 = tmp_string;
+			for (uint i = 0; i < tmp_string2.length(); i++) if ((tmp_string2[i] == ' ') || (tmp_string2[i] == ':')) tmp_string2[i] = '_';
+			ilSave(IL_PNG, tmp_string2.c_str());
 			ilDisable(IL_FILE_OVERWRITE);
 			ilDeleteImage(imageID);
 			RELEASE_ARRAY(s_pixels);
 
 			FirstPoint = true;
 		}
-
-		/*
-		uint width = App->window->GetWidth();
-		uint height = App->window->GetHeight();
-		uint bytesToUsePerPixel = 3;
-		uint sizeOfByte = sizeof(unsigned char);
-		uint theSize = width * height * sizeOfByte * bytesToUsePerPixel;
-		unsigned char* s_pixels = new unsigned char[3 * width * height];
-		glReadPixels(0, 0, App->window->GetWidth(), App->window->GetHeight(), GL_RGB, GL_UNSIGNED_BYTE, s_pixels);
-		ILuint imageID = ilGenImage();
-		ilBindImage(imageID);
-		ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, s_pixels);
-		ilEnable(IL_FILE_OVERWRITE);
-		ilSave(IL_PNG, "output.png");
-		ilDisable(IL_FILE_OVERWRITE);
-		ilDeleteImage(imageID);
-		RELEASE_ARRAY(s_pixels);
-		*/
 	}
-	if (App->input->GetKey(SDL_SCANCODE_0))
+	if (App->input->GetKey(SDL_SCANCODE_0) == KEY_DOWN)
 	{
 		ILuint imageID = ilGenImage();
 		ilBindImage(imageID);
 		ilutGLScreen();
 		ilEnable(IL_FILE_OVERWRITE);
-		ilSaveImage("output.png");
+		static char tmp_string[1024];
+		static std::string tmp_string2;
+		sprintf_s(tmp_string, 1024, "Screenshots/ScreenFull/ScreenFull_%s_%s.png", __DATE__, __TIME__, tmp_string);
+		tmp_string2 = tmp_string;
+		for (uint i = 0; i < tmp_string2.length(); i++) if ((tmp_string2[i] == ' ') || (tmp_string2[i] == ':')) tmp_string2[i] = '_';
+		ilSave(IL_PNG, tmp_string2.c_str());
 		ilDisable(IL_FILE_OVERWRITE);
 		ilDeleteImage(imageID);
 	}
