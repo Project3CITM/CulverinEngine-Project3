@@ -150,7 +150,7 @@ bool ModuleLightning::Start()
 	
 	//-------------------------------------
 
-	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png", &texture_bulb);
+	
 
 	light_UI_plane = (ResourceMesh*)App->resource_manager->GetResource(4);
 

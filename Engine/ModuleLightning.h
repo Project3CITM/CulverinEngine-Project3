@@ -85,7 +85,7 @@ public:
 	FrameBuffer text;
 	DepthFrameBuffer test_fix;
 	ResourceMesh*  light_UI_plane = nullptr;
-	uint texture_bulb = 0;
+
 
 	glm::mat4 depthBiasMVP;
 

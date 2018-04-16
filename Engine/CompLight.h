@@ -44,9 +44,7 @@ public:
 	void FrustumDebug();
 
 public:
-	//Billboard to show where are the lights----
-	uint texture_bulb = 0;
-	ResourceMesh* plane;
+
 	//---------------------------------------------
 	float4 color; //a.k.a. the color of the light
 
