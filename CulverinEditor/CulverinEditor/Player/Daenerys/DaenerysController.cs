@@ -601,9 +601,18 @@ public class DaenerysController : CharacterController
         fball.transform.SetRotation(pla_obj.transform.GetRotation());
 
         Fireball fballscript = fball.GetComponent<Fireball>();
-        fballscript.vfront = GetSecondaryForward(curr_forward);
+        fballscript.vfront = curr_forward;
         fballscript.fireball_particles = daenerys_fireball_particles;
 
+        GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
+        if(coll_object != null)
+        {
+            coll_object.GetTag();
+            if(coll_object.CompareTag("Enemy"))
+            {
+                fballscript.vfront = GetSecondaryForwardToEnemy(fball.transform.GetPosition(), coll_object.transform.GetPosition());
+            }
+        }
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);
     }

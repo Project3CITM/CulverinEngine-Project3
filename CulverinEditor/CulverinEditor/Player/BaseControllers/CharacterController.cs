@@ -285,4 +285,9 @@ public class CharacterController : CulverinBehaviour
 
         return ret;
     }
+
+    public virtual Vector3 GetSecondaryForwardToEnemy(Vector3 player_pos, Vector3 enemy_pos)
+    {
+        return new Vector3(enemy_pos - player_pos).Normalized;
+    }
 }

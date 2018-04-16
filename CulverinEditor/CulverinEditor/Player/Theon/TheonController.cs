@@ -607,6 +607,17 @@ public class TheonController : CharacterController
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
                 arrow_script.speed = GetSecondaryForward(curr_forward);
+
+                GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
+                if (coll_object != null)
+                {
+                    coll_object.GetTag();
+                    if (coll_object.CompareTag("Enemy"))
+                    {
+                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), coll_object.transform.GetPosition());
+                    }
+                }
+
                 arrow_script.arrow_blood_particles = theon_blood_particles;
                 arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
@@ -624,6 +635,17 @@ public class TheonController : CharacterController
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
                 arrow_script.speed = GetSecondaryForward(curr_forward);
+
+                GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
+                if (coll_object != null)
+                {
+                    coll_object.GetTag();
+                    if (coll_object.CompareTag("Enemy"))
+                    {
+                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), coll_object.transform.GetPosition());
+                    }
+                }
+
                 arrow_script.arrow_blood_particles = theon_blood_particles;
                 arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
@@ -645,6 +667,17 @@ public class TheonController : CharacterController
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
                 arrow_script.speed = GetSecondaryForward(curr_forward);
+
+                GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
+                if (coll_object != null)
+                {
+                    coll_object.GetTag();
+                    if (coll_object.CompareTag("Enemy"))
+                    {
+                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), coll_object.transform.GetPosition());
+                    }
+                }
+
                 arrow_script.arrow_blood_particles = theon_blood_particles;
                 arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
