@@ -67,6 +67,11 @@ struct boolVar {
 	bool value = false;
 };
 
+struct CubeMapVar {
+	std::string var_name;	
+	uint value = 0;	
+};
+
 class Shader {
 public:
 	Shader() {

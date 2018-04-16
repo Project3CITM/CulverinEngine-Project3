@@ -211,6 +211,7 @@ void Material::GetProgramVariables()
 	auto temp_color = color_variables;
 	auto temp_bool = bool_variables;
 	auto  temp_int = int_variables;
+	auto temp_cube_maps = cube_maps;
 
 	textures.clear();
 	float3_variables.clear();
@@ -218,6 +219,7 @@ void Material::GetProgramVariables()
 	int_variables.clear();
 	bool_variables.clear();
 	color_variables.clear();
+	cube_maps.clear();
 
 
 	uint var_size = GetVariablesSize();
@@ -278,6 +280,14 @@ void Material::GetProgramVariables()
 			color_variables.push_back(color_var);
 		}
 
+		//CubeMaps
+		if (temp.type == GL_SAMPLER_CUBE)
+		{
+			CubeMapVar cube_var;
+			cube_var.var_name = temp.name;
+			cube_maps.push_back(cube_var);
+		}
+
 	}
 
 	for (auto item = temp_textures.begin(); item != temp_textures.end(); item++)
@@ -334,6 +344,16 @@ void Material::GetProgramVariables()
 	for (auto item = temp_float3.begin(); item != temp_float3.end(); item++)
 	{
 		for (auto item2 = float3_variables.begin(); item2 != float3_variables.end(); item2++)
+		{
+			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
+				(*item2).value = (*item).value;
+			}
+		}
+	}
+
+	for (auto item = temp_cube_maps.begin(); item != temp_cube_maps.end(); item++)
+	{
+		for (auto item2 = cube_maps.begin(); item2 != cube_maps.end(); item2++)
 		{
 			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
 				(*item2).value = (*item).value;
