@@ -5,6 +5,13 @@
 #include"SDL\include\SDL_gamecontroller.h"
 #include"SDL\include\SDL_events.h"
 
+
+enum DeviceCombinationType {
+
+	NULL_COMB_DEVICE = -1,
+	KEYBOARD_AND_MOUSE_COMB_DEVICE,
+	CONTROLLER_COMB_DEVICE,
+};
 enum KeyBindingType {
 
 	NULL_DEVICE=-1,
@@ -19,9 +26,11 @@ enum KeyBindingType {
 
 struct KeyRelation 
 {
-	KeyRelation(int event, std::string name, KeyBindingType type) : event_value(event), name(name), key_type(type){}
+	KeyRelation(int event, std::string name, std::string device, KeyBindingType type) : event_value(event), name(name), key_type(type){}
 	std::string name = "default";
 	KeyBindingType key_type = KeyBindingType::NULL_DEVICE;
+	DeviceCombinationType device = DeviceCombinationType::NULL_COMB_DEVICE;
+	DeviceCombinationType SelectDeviceCombination(const char* value);
 	int event_value;
 };
 
