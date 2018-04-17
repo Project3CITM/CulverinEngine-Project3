@@ -335,6 +335,9 @@ public class JaimeController : CharacterController
                     SetState(State.HIT);
                 }
                 PlayFx("JaimeHurt");
+
+                //Damage Feedback
+                GetLinkedObject("player_obj").GetComponent<DamageFeedback>().SetDamage(health.GetCurrentHealth(), max_hp);
             }
 
             else
