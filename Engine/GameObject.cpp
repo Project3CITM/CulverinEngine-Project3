@@ -1308,7 +1308,12 @@ Component* GameObject::GetComponentsByUID(int uid, bool iterate_hierarchy)
 			{
 				if (queue.front()->components[i]->GetUUID() == uid)
 				{
-					return queue.front()->components[i];
+					Component* ret = queue.front()->components[i];
+
+					while (!queue.empty())
+						queue.pop();
+
+					return ret;
 				}
 			}
 			for (uint k = 0; k < queue.front()->childs.size(); k++)
@@ -1460,10 +1465,10 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		{
 			if (FindComponentByType(Comp_Type::C_RECT_TRANSFORM) != nullptr) return nullptr;
 			CompRectTransform* transform = new CompRectTransform(type, this);
-			if (!components.empty())
+			if (components.size() > 0 && components[0]->GetType() == Comp_Type::C_TRANSFORM)
 			{
 				RELEASE(components[0]);
-				components.at(0) = transform;
+				components[0] = transform;
 			}
 			else components.push_back(transform);
 			return transform;
