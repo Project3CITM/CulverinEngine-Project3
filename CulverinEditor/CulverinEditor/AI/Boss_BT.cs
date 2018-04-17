@@ -15,6 +15,7 @@ public class Boss_BT : BT
     public GameObject player = null;
     public GameObject mesh = null;
     public GameObject hp_bar_boss = null;
+    public GameObject boss_door = null;
 
     public float total_hp = 100;
     protected float current_hp;
@@ -283,6 +284,7 @@ public class Boss_BT : BT
         if (boss_active == false)
         {
             Debug.Log("Boss is triggered");
+            GetLinkedObject("boss_door").GetComponent<DoorLevel2>().CloseDoor();
             Activate();
             GetComponent<BossSight>().SetEnabled(false);
             boss_active = true;

@@ -1,7 +1,12 @@
 State Group	ID	Name			Wwise Object Path	Notes
+	1021618141	MusicState			\Default Work Unit\MusicState	
 	1981396969	PuzzleCountDownState			\Default Work Unit\PuzzleCountDownState	
 
 State	ID	Name	State Group			Notes
+	0	None	MusicState			
+	2147352708	FinalBoss	MusicState			
+	2678230381	Level2	MusicState			
+	2764240573	Combat	MusicState			
 	0	None	PuzzleCountDownState			
 	1208172673	State1	PuzzleCountDownState			
 	1208172674	State2	PuzzleCountDownState			
