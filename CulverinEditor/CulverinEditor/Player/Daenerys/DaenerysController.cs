@@ -272,6 +272,9 @@ public class DaenerysController : CharacterController
                 SetState(State.HIT);
             }
             PlayFx("DaenerysHurt");
+
+            //Damage Feedback
+            GetLinkedObject("player_obj").GetComponent<DamageFeedback>().SetDamage(health.GetCurrentHealth(), max_hp);
         }
 
         else
