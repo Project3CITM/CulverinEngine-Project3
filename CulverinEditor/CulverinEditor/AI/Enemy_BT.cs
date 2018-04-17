@@ -11,6 +11,14 @@ public class Enemy_BT : BT
         ENEMY_DEAD
     }
 
+    public enum ENEMY_GET_DAMAGE_TYPE
+    {
+        ARROW,
+        FIREWALL,
+        FIREBALL,
+        SWORD
+    }
+
     public GameObject enemies_manager = null;
     public GameObject player = null;
     public GameObject mesh = null;
@@ -151,7 +159,7 @@ public class Enemy_BT : BT
         Debug.Log("[error] Out Of Combat Not Defined");
     }
 
-    public virtual bool ApplyDamage(float damage)
+    public virtual bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
         InterruptAction();
 

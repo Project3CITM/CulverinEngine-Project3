@@ -294,6 +294,9 @@ public class TheonController : CharacterController
                 SetState(State.HIT);
             }
             PlayFx("TheonHurt");
+
+            //Damage Feedback
+            GetLinkedObject("player_obj").GetComponent<DamageFeedback>().SetDamage(health.GetCurrentHealth(), max_hp);
         }
 
         else
