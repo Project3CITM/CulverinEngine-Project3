@@ -109,7 +109,7 @@ public class CharactersManager : CulverinBehaviour
         mat.SetBool("damage", false);
         mat.SetFloat("alpha", 0.0f);
         mat.SetFloat("mult_dead", mult_dead);
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.P))
         {           
             is_dead = true;
             mult_dead = 1.0f;

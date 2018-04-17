@@ -93,6 +93,7 @@ public class Enemy_BT : BT
     {
         //Update attack cooldown
         attack_timer += Time.deltaTime;
+        Debug.Log("Current action: " + current_action.action_type, Department.IA, Color.PINK);
         base.Update();
     }
 

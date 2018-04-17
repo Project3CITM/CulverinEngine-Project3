@@ -131,6 +131,7 @@ public class JaimeController : CharacterController
             if (!movement.IsMoving())
             {
                 /* Player is alive */
+                Debug.Log("JAIME STATE:" + state, Department.PLAYER);
                 switch (state)
                 {
                     case State.IDLE:
