@@ -213,22 +213,34 @@ update_status ModuleLightning::Update(float dt)
 
 	for (uint i = 0; i < frame_used_lights.size(); ++i)
 	{
-		if (frame_used_lights[i]->type == Light_type::DIRECTIONAL_LIGHT) {
-			float3 dir = frame_used_lights[i]->GetParent()->GetComponentTransform()->GetEulerToDirection();
+		CompLight* light = frame_used_lights[i];
 
+		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
+			float3 dir = light->GetParent()->GetComponentTransform()->GetEulerToDirection();
+			dir = dir.Normalized();
+
+			float3 cameraPos = App->renderer3D->GetActiveCamera()->frustum.pos;
+
+			glm::vec3 lDir = glm::vec3(dir.x, dir.y, dir.z);
+			glm::vec3 camPos = glm::vec3(cameraPos.x, cameraPos.y, cameraPos.z);
+
+			glm::vec3 eye = camPos + lDir;
+			
 			glm::mat4 biasMatrix(
 				0.5, 0.0, 0.0, 0,
 				0.0, 0.5, 0.0, 0,
 				0.0, 0.0, 0.5, 0,
 				0.5, 0.5, 0.5, 1.0
 			);
-			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-			glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(dir.x, dir.y, dir.z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-			glm::mat4 depthModelMatrix = glm::mat4(1.0);
+
+			float projSize = 10.0f, nearPlane = 1.0f, farPlane = 20.0;
+
+			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-projSize, projSize, -projSize, projSize, nearPlane, farPlane);
+			glm::mat4 depthViewMatrix = glm::lookAt(eye, camPos, glm::vec3(0, 1, 0));
 
 
-			frame_used_lights[i]->depthMVPMat = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-			frame_used_lights[i]->depthBiasMat = biasMatrix * frame_used_lights[i]->depthMVPMat;
+			light->depthMVPMat = depthProjectionMatrix * depthViewMatrix;
+			light->depthBiasMat = biasMatrix * light->depthMVPMat;
 		}
 	}
 
@@ -474,9 +486,7 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 	
 	//
 
-	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
-	float4x4 temp = camFrust.ViewMatrix();
-
+	Frustum camFrust = App->renderer3D->active_camera->frustum;
 
 	float4x4 matrixfloat = transform->GetGlobalTransform();
 	GLfloat matrix[16] =
@@ -487,40 +497,10 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 		matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
 	};
 
-	GameObject* parent = light->GetParent();
-	CompTransform* trans = parent->GetComponentTransform();
-
-
-	float3 pos_light = light->GetParent()->GetComponentTransform()->GetPos();
-	float3 rot_eu_ang = light->GetParent()->GetComponentTransform()->GetRotEuler();
-
-
-	Quat rot = light->GetParent()->GetComponentTransform()->GetRot();
-
-	float3 dir = light->GetParent()->GetComponentTransform()->GetEulerToDirection();
-
 	float4x4 MVP = camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
 
-	glm::mat4 biasMatrix(
-		0.5, 0.0, 0.0, 0,
-		0.0, 0.5, 0.0, 0,
-		0.0, 0.0, 0.5, 0,
-		0.5, 0.5, 0.5, 1.0
-	);
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-	glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(dir.x, dir.y, dir.z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	glm::mat4 depthModelMatrix = glm::mat4(1.0);
-
-
-
-
-	glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-	glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
-
 	//This is needed for the shadow projection in CompMesh cpp
-
-
-
+	
 	//----------------------------
 
 	GLint modelLoc = glGetUniformLocation(shadow_Shader->programID, "model");
@@ -528,8 +508,7 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 
 
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
-
-	glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
+	glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &light->depthMVPMat[0][0]);
 
 
 	int total_save_buffer = 14;
@@ -555,7 +534,7 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 		int depthBiasID = glGetUniformLocation(material->GetProgramID(), "depthBias");		
 		//-----------------------
 		glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
+		glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &light->depthBiasMat[0][0]);
 
 		material->Unbind();
 	}
