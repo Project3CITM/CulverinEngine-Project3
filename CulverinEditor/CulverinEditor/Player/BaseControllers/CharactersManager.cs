@@ -8,7 +8,7 @@ public class CharactersManager : CulverinBehaviour
     {
         IDLE = 0,
         CHANGING_LEFT,
-        CHANGING_RIGHT, 
+        CHANGING_RIGHT,
         DROWNING
     }
 
@@ -33,7 +33,7 @@ public class CharactersManager : CulverinBehaviour
     public GameObject right_character;
     private GameObject temporal_change = null;
     //GameObject arrow;
-    public GameObject player_obj; 
+    public GameObject player_obj;
     public GameObject health_obj;
     public GameObject stamina_obj;
     public GameObject leftamina_bar;
@@ -64,17 +64,18 @@ public class CharactersManager : CulverinBehaviour
     public GameObject camera;
     CompAudio audio;
 
-    Material mat;
-    float mult_dead;
-    bool is_dead;
     private bool is_healing = false;
+
+    public GameObject god_mode_sprite;
+    public bool god_mode = false;
+
     void Start()
-    {    
+    {
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
         current_character = GetLinkedObject("current_character");
         left_character = GetLinkedObject("left_character");
         right_character = GetLinkedObject("right_character");
-  
+
         player_obj = GetLinkedObject("player_obj");
         health_obj = GetLinkedObject("health_obj");
         stamina_obj = GetLinkedObject("stamina_obj");
@@ -94,22 +95,25 @@ public class CharactersManager : CulverinBehaviour
 
         camera = GetLinkedObject("camera");
 
+        god_mode_sprite = GetLinkedObject("god_mode_sprite");
+        god_mode_sprite.GetComponent<CompImage>().SetRender(false);
+
         SetCurrentPosition();
 
         audio = GetComponent<CompAudio>();
 
         changing = false;
-
-        mat = GetMaterialByName("Final Tex Material");
-        mult_dead = 1.0f;
-        is_dead = false;
         is_healing = false;
+        god_mode = false;
     }
 
     void Update()
     {
+        //MANAGE GOD MODE
+        CheckGodMode();
 
-        if(is_healing)
+        //CONTROL LEFT HP BAR
+        if (is_healing)
         {
             Debug.Log("Healing", Department.PLAYER, Color.PINK);
             health_obj = GetLinkedObject("health_obj");
@@ -160,13 +164,13 @@ public class CharactersManager : CulverinBehaviour
             }
         }
 
-
+        //MANAGE CHARACTERS MANAGER STATES (IDLE/CHANGING LEFT & RIGHT)
         switch (state)
         {
             case State.IDLE:
                 {
                     //Check when finished In animation
-                    if(changing && IsCharacterAnimationRunning(current_character,"Idle"))
+                    if (changing && IsCharacterAnimationRunning(current_character, "Idle"))
                     {
                         changing = false;
                     }
@@ -177,14 +181,14 @@ public class CharactersManager : CulverinBehaviour
                         GetDamage(10);
                     }
 
-                    if(health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                    if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
                     {
                         if (IsDead(left_character) == false)
                         {
                             state = State.CHANGING_LEFT;
                             CurrentToOut();
                         }
-                        else if(IsDead(right_character) == false)
+                        else if (IsDead(right_character) == false)
                         {
                             state = State.CHANGING_RIGHT;
                             CurrentToOut();
@@ -226,14 +230,14 @@ public class CharactersManager : CulverinBehaviour
 
                     float vari = Input.GetInput_ControllerAxis("LAllyAttack", "Player");
 
-                    if (vari>0.8)
+                    if (vari > 0.8)
                     {
-                        SecondaryAbility(Side.LEFT);                
+                        SecondaryAbility(Side.LEFT);
                     }
 
                     vari = Input.GetInput_ControllerAxis("RAllyAttack", "Player");
 
-                    if (vari>0.8)
+                    if (vari > 0.8)
                     {
                         SecondaryAbility(Side.RIGHT);
                     }
@@ -319,7 +323,7 @@ public class CharactersManager : CulverinBehaviour
         if (current_character.GetName() == "Jaime")
         {
             current_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.BEHIND_LEFT);
-            current_character.GetComponent<JaimeController>().UpdateHUD(false,true);
+            current_character.GetComponent<JaimeController>().UpdateHUD(false, true);
             current_character.GetComponent<JaimeController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Daenerys")
@@ -356,7 +360,7 @@ public class CharactersManager : CulverinBehaviour
             left_character.GetComponent<TheonController>().UpdateHUD(true, true);
             left_character.GetComponent<TheonController>().ToggleMesh(true);
             left_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
-            
+
         }
     }
 
@@ -447,7 +451,7 @@ public class CharactersManager : CulverinBehaviour
         {
             dcontroller = current_character.GetComponent<DaenerysController>();
             dcontroller.SetAnimationTransition("ToOut", true);
-      
+
             if (right_character.GetName() == "Jaime")
             {
                 jcontroller = right_character.GetComponent<JaimeController>();
@@ -586,7 +590,9 @@ public class CharactersManager : CulverinBehaviour
     //Call thius function to deal damage to the current character
     public bool GetDamage(float dmg)
     {
+        //Rumble Gamepad
         Input.RumblePlay(0.5f, 200);
+
         // Shield Ability Consumable
         if (player_obj.GetComponent<Shield>().IsActive())
         {
@@ -596,6 +602,11 @@ public class CharactersManager : CulverinBehaviour
 
         else
         {
+            // 0 DAMAGE TAKEN IN GOD MODE
+            if (god_mode)
+            {
+                dmg = 0;
+            }
 
             // CURRENT CHARACTER -------------------------------
             if (current_character.GetName() == "Jaime")
@@ -679,7 +690,7 @@ public class CharactersManager : CulverinBehaviour
         }
         else if (current_character.GetName() == "Daenerys")
         {
-           return current_character.GetComponent<DaenerysController>().GetState();
+            return current_character.GetComponent<DaenerysController>().GetState();
         }
         else if (current_character.GetName() == "Theon")
         {
@@ -702,7 +713,7 @@ public class CharactersManager : CulverinBehaviour
         // CURRENT CHARACTER -------------------------------
         if (current_character.GetName() == "Jaime")
         {
-            if(current_character.GetComponent<JaimeController>().GetState() == (int)CharacterController.State.IDLE)
+            if (current_character.GetComponent<JaimeController>().GetState() == (int)CharacterController.State.IDLE)
             {
                 return true;
             }
@@ -1010,6 +1021,18 @@ public class CharactersManager : CulverinBehaviour
                 right_character.GetComponent<DaenerysController>().Heal();
                 left_character.GetComponent<JaimeController>().Heal();
             }
+        }
+    }
+
+    public void CheckGodMode()
+    {
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            god_mode = !god_mode;
+
+            //Enable god mode sprite
+            god_mode_sprite.GetComponent<CompImage>().SetRender(god_mode);
+            Debug.Log("Helloo", Department.PLAYER, Color.ORANGE);
         }
     }
 }
