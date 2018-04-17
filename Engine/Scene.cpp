@@ -246,13 +246,7 @@ update_status Scene::Update(float dt)
 		DrawPlane();
 	}
 
-	// Draw GameObjects
-	if (dontdestroyonload->GetNumChilds() == 0)
-	{
-		root->Draw();
-		secondary_root->Draw();
-	}
-
+	
 	// Draw Quadtree
 	if (octree_draw) octree.DebugDraw();
 
@@ -284,6 +278,7 @@ update_status Scene::Update(float dt)
 	CompCamera* active_camera = App->renderer3D->GetActiveCamera();
 	if (active_camera != nullptr)
 	{
+		BROFILER_CATEGORY("DoCulling: ModuleScene", Profiler::Color::Blue);
 		active_camera->DoCulling();
 	}
 

@@ -296,7 +296,8 @@ void CompCamera::DoCulling()
 	
 
 	// Then check dynamic objects
-	//CullDynamicObjects();
+	BROFILER_CATEGORY("CullDynamic: CompCamera", Profiler::Color::Blue);
+	CullDynamicObjects();
 }
 
 void CompCamera::CullStaticObjects()
@@ -305,8 +306,10 @@ void CompCamera::CullStaticObjects()
 
 	// Get all static objects that are inside the frustum (accelerated with quadtree)
 	candidates_to_cull.clear();
+	BROFILER_CATEGORY("CullStatic: CompCamera", Profiler::Color::Blue);
 	App->scene->octree.CollectIntersections(candidates_to_cull, frustum);
 
+	BROFILER_CATEGORY("Draw CullStatic: CompCamera", Profiler::Color::Blue);
 	// Set visible only these static objects
 	while (!candidates_to_cull.empty())
 	{
@@ -318,6 +321,8 @@ void CompCamera::CullStaticObjects()
 void CompCamera::CullDynamicObjects()
 {
 	const AABB* box = nullptr;
+	float3 frustum_center = frustum.CenterPoint();
+	float far_plane_Sq = far_plane * far_plane;
 
 	// Push all active elements that are main childs of root & active
 	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
@@ -337,13 +342,15 @@ void CompCamera::CullDynamicObjects()
 			if (candidates_to_cull.front()->box_fixed.IsFinite()) // Check if it has AABB and it's not the camera itself
 			{
 				box = &candidates_to_cull.front()->box_fixed;
-				if (ContainsAABox(*box) == CULL_OUT)
+				
+				if ((box->CenterPoint() - frustum_center).LengthSq() + box->HalfSize().LengthSq() >  far_plane_Sq)
 				{
 					candidates_to_cull.front()->SetVisible(false); // OUTSIDE CAMERA VISION
 				}
 				else
 				{
 					candidates_to_cull.front()->SetVisible(true); // INSIDE CAMERA VISION
+					candidates_to_cull.front()->Draw();
 				}
 			}
 		}

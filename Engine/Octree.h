@@ -31,6 +31,7 @@ public:
 
 	//template<typename TYPE>
 	int CollectIntersections(std::list<GameObject*>& nodes, const Frustum& frustum) const;
+	int CollectAllChilds(std::list<GameObject*>& nodes) const;
 	void CollectAllObjects(std::list<GameObject*>& all_obj) const;
 
 public:

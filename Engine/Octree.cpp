@@ -204,6 +204,11 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 	// If range is not in the octree, return
 	if (!box.Intersects(frustum))
 		return ret;
+	
+	if (frustum.Contains(box))
+	{
+		return ret += CollectAllChilds(nodes);
+	}
 
 	Plane planes[6];
 	frustum.GetPlanes(planes);
@@ -231,6 +236,7 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 			if (iInCount == 0)
 			{
 				is_in = false;
+				break;
 			}
 			// check if they were all on the right side of the plane
 			iTotalIn += iPtIn;
@@ -240,17 +246,7 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 		{
 			nodes.push_back(*item);
 		}
-	/*
-		ret++;
-		AABB Box = item._Ptr->_Myval->box_fixed;
-		for (int i = 0; i < 8; ++i)
-		{
-			if (frustum.Contains(Box.CornerPoint(i)))
-			{
-				nodes.push_back(*item);
-				break;
-			}
-		}*/
+	
 	}
 
 	// If there is no children, end
@@ -260,6 +256,24 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 	// Otherwise, add the points from the children
 	for (uint i = 0; i < 8; i++)
 		ret += childs[i]->CollectIntersections(nodes, frustum);
+
+	return ret;
+}
+
+int OctreeNode::CollectAllChilds(std::list<GameObject*>& nodes) const
+{
+	int ret = 0;
+
+	for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
+	{
+		nodes.push_back(*item);
+	}
+
+	if (isLeaf())
+		return ret;
+
+	for (uint i = 0; i < 8; i++)
+		ret += childs[i]->CollectAllChilds(nodes);
 
 	return ret;
 }

@@ -430,49 +430,56 @@ void GameObject::Draw()
 {
 	if (visible)
 	{
+		bool comp_active = false;
+		Component* comp = nullptr;
+		Comp_Type type = Comp_Type::C_TRANSFORM;
 		//Draw Components --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_MESH)
+			comp = components[i];
+			type = comp->GetType();
+			if (comp->IsActive())
 			{
-				//components[i]->Draw();
-				/**/
-				CompMesh* comp = (CompMesh*)components[i];
-				Event draw_event;
-				draw_event.Set_event_data(EventType::EVENT_DRAW);
-				if (comp->GetMaterial()->material->alpha < 1.0f) draw_event.draw.Dtype = draw_event.draw.DRAW_3D_ALPHA;
-				else draw_event.draw.Dtype = draw_event.draw.DRAW_3D;
-				draw_event.draw.ToDraw = components[i];
-				PushEvent(draw_event);
-				/**/
-			}
-			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_CAMERA)
-			{
-				components[i]->Draw();
-			}
-			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_PARTICLE_SYSTEM)
-			{
-				components[i]->Draw();
-			}
-			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_ANIMATION)
-			{
-				components[i]->Draw();
-			}
-			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_LIGHT)
-			{
-				CompLight* l = (CompLight*)components[i];
-				l->use_light_to_render = true;
-				
+				if (type == Comp_Type::C_MESH)
+				{
+					//components[i]->Draw();
+					/**/
+					CompMesh* comp_mesh = (CompMesh*)comp;
+					Event draw_event;
+					draw_event.Set_event_data(EventType::EVENT_DRAW);
+					if (comp_mesh->GetMaterial()->material->alpha < 1.0f) draw_event.draw.Dtype = draw_event.draw.DRAW_3D_ALPHA;
+					else draw_event.draw.Dtype = draw_event.draw.DRAW_3D;
+					draw_event.draw.ToDraw = comp;
+					PushEvent(draw_event);
+					/**/
+				}
+				else if (type == Comp_Type::C_CAMERA)
+				{
+					comp->Draw();
+				}
+				else if (type == Comp_Type::C_PARTICLE_SYSTEM)
+				{
+					comp->Draw();
+				}
+				else if (type == Comp_Type::C_ANIMATION)
+				{
+					comp->Draw();
+				}
+				else if (type == Comp_Type::C_LIGHT)
+				{
+					CompLight* l = (CompLight*)comp;
+					l->use_light_to_render = true;
 
-				Event draw_event;
-				draw_event.Set_event_data(EventType::EVENT_REQUEST_3D_3DA_MM);
-				draw_event.request_3d3damm.light = (CompLight*)components[i];
-				PushEvent(draw_event);
-				components[i]->Draw();
-			}
 
+					Event draw_event;
+					draw_event.Set_event_data(EventType::EVENT_REQUEST_3D_3DA_MM);
+					draw_event.request_3d3damm.light = (CompLight*)comp;
+					PushEvent(draw_event);
+					comp->Draw();
+				}
+			}
 		}
-
+		/*
 		//Draw child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
@@ -481,8 +488,8 @@ void GameObject::Draw()
 			{
 				childs[i]->Draw();
 			}
-		}
-
+		}*/
+		
 		if (bb_active)
 		{
 			// Draw Bounding Box
