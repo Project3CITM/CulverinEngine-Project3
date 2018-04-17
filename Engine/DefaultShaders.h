@@ -415,6 +415,34 @@ static const GLchar* ShadowMapFrag[] =
 	"fragmentdepth = vec4(gl_FragCoord.z);\n"
 	"}\n"
 };
+static const GLchar* CubeMapVert[] =
+{
+	"#version 330 core\n"
+	"layout(location = 0) in vec3 position;\n"
+	"layout(location = 1) in vec2 texCoord;\n"
+	"layout(location = 2) in vec3 normal;\n"
+	"layout(location = 3) in vec4 color;\n"
+
+	"uniform mat4 viewproj;\n"
+	"uniform mat4 model;\n"
+
+	"void main()\n"
+	"{\n"
+	" gl_Position =  viewproj *model * vec4(position,1);\n"
+	"}\n"
+};
+
+
+static const GLchar* CubeMapFrag[] =
+{
+	"#version 330 core\n"
+	"out vec4 color;\n"
+
+	"void main()\n"
+	"{\n"
+	"color = vec4(1);\n"
+	"}\n"
+};
 
 
 static const  GLchar* UIShaderVert[] =

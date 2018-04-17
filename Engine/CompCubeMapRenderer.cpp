@@ -57,13 +57,13 @@ void CompCubeMapRenderer::Bake(Event& event)
 	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
 	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
 
-	uint sh_id = App->module_lightning->point_light_shadow_depth_shader->programID;
-	App->module_lightning->point_light_shadow_depth_shader->Bind();
+	uint sh_id = App->renderer3D->cube_map_shader->programID;
+	App->renderer3D->cube_map_shader->Bind();
 	for (uint i = 0; i < 6; ++i)
 	{
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, fbo->GetTextureId(), 0);
-		glClear(GL_DEPTH_BUFFER_BIT);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, fbo->GetTextureId(), 0);
+		glClear(GL_COLOR_BUFFER_BIT);
 		//GET VECTOR OF GAMEOBJECTS
 	
 		for (std::multimap<uint, Event>::const_iterator item = event.cube_map_draw.MM3DDrawEvent->begin(); item != event.cube_map_draw.MM3DDrawEvent->end(); item++)
@@ -89,8 +89,8 @@ void CompCubeMapRenderer::Bake(Event& event)
 			GLint modelLoc = glGetUniformLocation(sh_id, "model");
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
 
-			glUniformMatrix4fv(glGetUniformLocation(sh_id, "viewproj"),
-				1, GL_FALSE, &((shadow_transforms[i])[0][0]));
+			GLint viewLoc = glGetUniformLocation(sh_id, "viewproj");
+			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &((shadow_transforms[i])[0][0]));
 
 			glUniform1f(glGetUniformLocation(sh_id, "_far_plane"), far_plane);
 			glUniform3fv(glGetUniformLocation(sh_id, "_light_pos"), 1, &l_pos.x);

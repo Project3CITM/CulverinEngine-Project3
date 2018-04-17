@@ -185,6 +185,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr, true);
 	blur_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr, true);
 	final_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", FinalFrag, TextureVert, nullptr, true);
+	cube_map_shader = App->module_shaders->CreateDefaultShader("CubeMapShader", CubeMapFrag, CubeMapVert, nullptr, true);
 
 	non_glow_material = new Material();
 	non_glow_material->name = "Non Glow Material";

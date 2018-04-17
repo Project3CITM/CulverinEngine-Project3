@@ -86,6 +86,7 @@ public:
 	ShaderProgram* non_glow_shader = nullptr;
 	ShaderProgram* blur_shader_tex = nullptr;
 	ShaderProgram* final_shader_tex = nullptr;
+	ShaderProgram* cube_map_shader = nullptr;
 	ResourceMaterial* default_texture = nullptr;
 
 	Material* default_material = nullptr;
