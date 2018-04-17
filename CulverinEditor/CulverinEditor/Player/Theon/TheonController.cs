@@ -54,6 +54,8 @@ public class TheonController : CharacterController
 
     public GameObject theon_button_left_idle;
     public GameObject theon_button_right_idle;
+
+    public GameObject Global_Camera;
     //----------------------------------------
 
     protected override void Start()
@@ -81,6 +83,8 @@ public class TheonController : CharacterController
 
         theon_blood_particles = GetLinkedObject("theon_blood_particles");
         theon_sparks_particles = GetLinkedObject("theon_sparks_particles");
+
+        Global_Camera = GetLinkedObject("Global_Camera");
 
         //Start Idle animation
         anim_controller = theon_obj.GetComponent<CompAnimation>();
@@ -285,6 +289,7 @@ public class TheonController : CharacterController
             if (GetState() == 0)
             {
                 Debug.Log("GET STATE DAMAGE", Department.IA);
+                Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
                 SetAnimationTransition("ToHit", true);
                 SetState(State.HIT);
             }
@@ -293,6 +298,7 @@ public class TheonController : CharacterController
 
         else
         {
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Death");
             SetAnimationTransition("ToDeath", true);
             SetState(State.DEAD);
             PlayFx("TheonDead");
@@ -453,6 +459,7 @@ public class TheonController : CharacterController
         Arrow.GetComponent<CompMesh>().SetEnabled(false, Arrow);
 
         //Set Attack Animation
+        Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Attack");
         SetAnimationTransition("ToAttack1", true);
         CrossBow.GetComponent<CompAnimation>().PlayAnimation("Attack");
 
@@ -482,6 +489,7 @@ public class TheonController : CharacterController
                     DecreaseStamina(right_ability_cost);
 
                     PlayFx("TheonMeleShout");
+                    Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Push");
                     SetAnimationTransition("ToAttack2", true);
 
                     do_push_attack = true;

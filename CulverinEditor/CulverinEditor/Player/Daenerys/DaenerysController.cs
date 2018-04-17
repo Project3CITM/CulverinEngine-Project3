@@ -47,6 +47,8 @@ public class DaenerysController : CharacterController
     public GameObject daenerys_button_left_obj_idle;
     public GameObject daenerys_button_right_obj_idle;
 
+    public GameObject Global_Camera;
+
     protected override void Start()
     {
         SetPosition(Position.BEHIND_RIGHT);
@@ -70,6 +72,8 @@ public class DaenerysController : CharacterController
         mana_regen = GetLinkedObject("mana_obj").GetComponent<Mana>().regen;
 
         daenerys_fireball_particles = GetLinkedObject("daenerys_fireball_particles");
+
+        Global_Camera = GetLinkedObject("Global_Camera");
 
         // Start Idle animation
         anim_controller = daenerys_obj.GetComponent<CompAnimation>();
@@ -268,6 +272,7 @@ public class DaenerysController : CharacterController
         {
             if (GetState() == 0)
             {
+                Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
                 SetAnimationTransition("ToHit", true);
                 SetState(State.HIT);
             }
@@ -277,6 +282,7 @@ public class DaenerysController : CharacterController
         else
         {
             SetAnimationTransition("ToDeath", true);
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Death");
             SetState(State.DEAD);
             PlayFx("DaenerysDead");
         }
@@ -431,6 +437,8 @@ public class DaenerysController : CharacterController
                     // Set Attacking Animation
                     SetAnimationTransition("ToAttackLeft", true);
 
+                    Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Firebreath");
+
                     return true;
                 }
                 else
@@ -517,6 +525,7 @@ public class DaenerysController : CharacterController
                         DoRightAbility();
 
                         // Set Animation
+                        Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Firewall");
                         SetAnimationTransition("ToAttackRight", true);
 
                         return true;

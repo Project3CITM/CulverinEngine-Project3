@@ -310,7 +310,7 @@ public class JaimeController : CharacterController
         if (state == State.COVER)
         {
             SetAnimationTransition("ToBlock", true);
-            Global_Camera.GetComponent<CompAnimation>().PlayAnimation("J_Block");
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Block");
             GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
             
             //PlayFx("MetalClash");
@@ -331,6 +331,7 @@ public class JaimeController : CharacterController
             {
                 if (GetState() == 0)
                 {
+                    Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
                     SetAnimationTransition("ToHit", true);
                     SetState(State.HIT);
                 }
@@ -339,6 +340,7 @@ public class JaimeController : CharacterController
 
             else
             {
+                Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Death");
                 SetAnimationTransition("ToDeath", true);
                 SetState(State.DEAD);
             }
@@ -477,15 +479,15 @@ public class JaimeController : CharacterController
                     jaime_anim_controller = Global_Camera.GetComponent<CompAnimation>();
                     if(current_anim == "Attack1")
                     {
-                        jaime_anim_controller.PlayAnimation("J_Attack1");
+                        jaime_anim_controller.PlayAnimationNode("J_Attack1");
                     }
                     if(current_anim == "Attack2")
                     {
-                        jaime_anim_controller.PlayAnimation("J_Attack2");
+                        jaime_anim_controller.PlayAnimationNode("J_Attack2");
                     }
                     if(current_anim == "Attack3")
                     {
-                        jaime_anim_controller.PlayAnimation("J_Attack3");
+                        jaime_anim_controller.PlayAnimationNode("J_Attack3");
                     }
                     do_left_attack = true;
 
