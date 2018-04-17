@@ -40,6 +40,8 @@ class BossEngage_Action : Action
         interupt = false;
         play_audio = false;
         GetLinkedObject("hp_bar_boss").SetActive(true);
+        GetLinkedObject("hp_bar_boss").GetComponent<BossHPBar>().ActivateHPBar(true);
+
         return true;
     }
 
