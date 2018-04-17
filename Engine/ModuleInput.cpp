@@ -87,6 +87,7 @@ bool ModuleInput::Init(JSON_Object* node)
 		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
 	}
 
+	ConnectGameController();
 	ui_manager = player_action->GetInputManager(ui_input_manager.c_str());
 	if (ui_manager != nullptr)
 	{
@@ -100,7 +101,6 @@ bool ModuleInput::Init(JSON_Object* node)
 			ui_conected = ui_manager->ActionExist(horizontal.c_str());
 
 	}
-
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;
@@ -191,16 +191,23 @@ update_status ModuleInput::PreUpdate(float dt)
 		switch (e.type)
 		{
 		case SDL_KEYDOWN:
+			UpdateDeviceType(DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE);
+			break;
 		case SDL_CONTROLLERBUTTONDOWN:
+			UpdateDeviceType(DeviceCombinationType::CONTROLLER_COMB_DEVICE);
 			press_any_key = true;
 
 			break;
 		case SDL_CONTROLLERAXISMOTION:
-			if(e.caxis.axis<-5000 ||e.caxis.axis>5000)
+			if (e.caxis.value < -5000 || e.caxis.value>5000)
+			{
+				UpdateDeviceType(DeviceCombinationType::CONTROLLER_COMB_DEVICE);
 				press_any_key = true;
+			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 		{
+			UpdateDeviceType(DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE);
 
 
 			press_any_key = true;
@@ -600,8 +607,10 @@ DeviceCombinationType ModuleInput::GetActualDeviceCombo() const
 
 void ModuleInput::UpdateDeviceType(DeviceCombinationType actual_player_action)
 {
-	update_new_device = true;
-	actual_device_combo = actual_player_action;
+	if (App->mode_game || App->engine_state != EngineState::STOP) {
+		update_new_device = true;
+		actual_device_combo = actual_player_action;
+	}
 }
 
 void ModuleInput::RumblePlay(float intensity, int milliseconds)

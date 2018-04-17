@@ -82,7 +82,7 @@ bool InputManager::ProcessEvent(SDL_Event * input_event)
 	{
 		if ((*it)->ProcessEventAction(input_event))
 		{
-			my_player_action->SendNewDeviceCombinationType((*it)->positive_button->device);
+			//my_player_action->SendNewDeviceCombinationType((*it)->positive_button->device);
 			active_action.push_back(*(it));
 			return true;
 		}

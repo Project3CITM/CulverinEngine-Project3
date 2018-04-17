@@ -166,6 +166,8 @@ void CompImage::ShowInspectorInfo()
 			select_source_image = true;
 	}
 	ImGui::Checkbox("Sprite Swap(Controller)", &device_swap);
+	ImGui::Checkbox("Sprite Swap Active(Controller)", &device_swap_active);
+
 	if (device_swap)
 	{
 		if (controller_image != nullptr)
@@ -551,9 +553,9 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 				{
 					App->importer->iMaterial->LoadResource(std::to_string(controller_image->GetUUID()).c_str(), controller_image);
 				}
-				UpdateSpriteId();
 			}
 		}
+		DeviceCheck();
 	}
 	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
 	filled=json_object_dotget_number_with_std(object, name + "Fill Amount");
