@@ -48,9 +48,12 @@ protected:
 
 	virtual void ExpandMesh();
 	void GenerateMesh();
+	bool CheckRender();
 
 protected:	
 	bool can_draw = true;
+	bool invalid = false;
+
 	VertexUIData vertex_data;
 	bool render = true;
 	bool raycast_target = true;

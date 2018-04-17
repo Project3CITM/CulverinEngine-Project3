@@ -19,8 +19,9 @@ public class Stun_Action : Action
         GetComponent<Align_Steering>().SetEnabled(false);
         GetComponent<Arrive_Steering>().SetEnabled(false);
         GetComponent<Seek_Steering>().SetEnabled(false);
-        GetComponent<CompAnimation>().SetTransition("ToStun");
+        //GetComponent<CompAnimation>().SetTransition("ToStun");
         GetComponent<CompAnimation>().SetClipDuration("Stun", stun_duration);
+        GetComponent<CompAnimation>().PlayAnimationNode("Stun");
         return true;
     }
 

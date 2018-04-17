@@ -12,6 +12,7 @@
 #include "CompTransform.h"
 #include "ModuleEventSystemV2.h"
 #include "ModuleGUI.h"
+#include "ModuleParticles.h"
 #include "WindowInspector.h"
 
 CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Component(t, parent)
@@ -26,7 +27,7 @@ CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Compon
 	particle_resource_name = parent->GetName();
 	particle_resource_name += "_particle";
 
-	part_system = new ParticleSystem();
+	part_system = App->particles->CreateParticleSystem();
 	uid = App->random->Int();
 }
 
@@ -40,11 +41,11 @@ CompParticleSystem::CompParticleSystem(const CompParticleSystem& copy, GameObjec
 	emitter_resource_name = copy.emitter_resource_name;
 	particle_resource_name = copy.particle_resource_name;
 
-	part_system = new ParticleSystem();
-
-	discard_distance = copy.discard_distance;
-
-
+	part_system = App->particles->CreateParticleSystem();
+	part_system->discard_distance = copy.GetDiscardDistance();
+	part_system->preview = copy.IsPreview();
+	part_system->active = copy.IsActive();
+	
 	file_to_load = particle_resource_name;
 	ImGuiLoadParticlePopUp();
 
@@ -63,19 +64,6 @@ CompParticleSystem::~CompParticleSystem()
 }
 
 
-void CompParticleSystem::PreUpdate(float dt)
-{
-	const CompCamera* camera = App->renderer3D->GetActiveCamera();
-	if (camera != nullptr)
-		part_system->SetCameraPosToFollow(camera->frustum.pos);
-		
-	distance_to_camera = camera->frustum.pos.Distance(parent->GetComponentTransform()->GetPosGlobal());
-
-	if(distance_to_camera < discard_distance)
-		if(App->engine_state == EngineState::STOP)
-			part_system->PreUpdate(0.02);
-		else part_system->PreUpdate(dt);
-}
 
 void CompParticleSystem::Update(float dt)
 {
@@ -85,43 +73,9 @@ void CompParticleSystem::Update(float dt)
 		ImGuiSavePopUp();
 		pop_up_save_open = false;
 	}
+		
 
-	if (!child_loaded && part_system->IsEmitterDead() && !child_particle.empty() && !child_emitter.empty())
-	{
-		//Load Child Particle
-		ParticleState InitialState;
-		ParticleState FinalState;
-
-		child_particle_name = App->fs->GetOnlyName(child_particle);
-		LoadParticleStates(child_particle_name.c_str(),this, InitialState, FinalState);
-	
-		part_system->SetInitialStateResource(InitialState);
-		part_system->SetFinalStateResource(FinalState);
-
-		//Load Child Emitter
-		ParticleEmitter Emitter;
-		child_emitter_name = App->fs->GetOnlyName(child_emitter);
-		LoadParticleEmitter(child_emitter_name.c_str(), this, Emitter);
-		part_system->SetEmitterResource(Emitter);
-
-		child_loaded = false;
-	}
-
-	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());
-	
-	if (distance_to_camera < discard_distance)
-	{
-		if (App->engine_state == EngineState::STOP)
-			part_system->Update(0.02, preview);
-		else part_system->Update(dt);
-
-		part_system->DrawImGuiEditorWindow();
-
-		if (App->engine_state == EngineState::STOP)
-			part_system->PostUpdate(0.02);
-		else part_system->PostUpdate(dt);
-	}
-	
+	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());	
 }
 
 void CompParticleSystem::Clear()
@@ -130,15 +84,8 @@ void CompParticleSystem::Clear()
 
 	if (part_system != nullptr)
 	{
-		part_system->CleanUp();
-		delete part_system;
+		part_system->to_delete = true;
 		part_system = nullptr;
-	}
-
-	if (texture_resource && texture_resource->num_game_objects_use_me > 0)
-	{
-		texture_resource->num_game_objects_use_me--;
-		texture_resource = nullptr;
 	}
 }
 
@@ -160,45 +107,47 @@ void CompParticleSystem::SetTextureResource(const char * Path, int columns, int 
 
 void CompParticleSystem::SetTextureResource(uint uuid, int columns, int rows, int numberOfFrames, uint AnimationOrder)
 {
-	if (texture_resource != nullptr && texture_resource->num_game_objects_use_me > 0)
+	if (part_system->texture_resource != nullptr && part_system->texture_resource->num_game_objects_use_me > 0)
 	{
-		texture_resource->num_game_objects_use_me--;
+		part_system->texture_resource->num_game_objects_use_me--;
 	}		
 	
-	texture_resource = (ResourceMaterial*)App->resource_manager->GetResource(uuid);//(texture_resource*)App->resources->Get(uuid);
-	if (texture_resource != nullptr)
+	part_system->texture_resource = (ResourceMaterial*)App->resource_manager->GetResource(uuid);//(texture_resource*)App->resources->Get(uuid);
+	if (part_system->texture_resource != nullptr)
 	{
-		if (texture_resource->GetState() != Resource::State::LOADED)
+		if (part_system->texture_resource->GetState() != Resource::State::LOADED)
 		{
-			texture_resource->LoadToMemory();
-			App->importer->iMaterial->LoadResource(std::to_string(texture_resource->GetUUID()).c_str(), texture_resource);
+			part_system->texture_resource->LoadToMemory();
+			App->importer->iMaterial->LoadResource(std::to_string(part_system->texture_resource->GetUUID()).c_str(), part_system->texture_resource);
 			
 		}
-		texture_resource->num_game_objects_use_me++;
+		part_system->texture_resource->num_game_objects_use_me++;
 
-		part_system->SetTextureResource(texture_resource->GetTextureID(), texture_resource->GetTextureWidth(), texture_resource->GetTextureHeight(), columns, rows, numberOfFrames, AnimationOrder);
+		part_system->SetTextureResource(part_system->texture_resource->GetTextureID(), part_system->texture_resource->GetTextureWidth(), part_system->texture_resource->GetTextureHeight(), columns, rows, numberOfFrames, AnimationOrder);
 	}
 	else LOG("WARNING: Texture resource in particles is nullptr");
 }
 
 
-const std::string* CompParticleSystem::GetChildParticle() const
-{
-	if (!child_particle.empty()) return &child_particle;
-	return nullptr;
-}
-
-const std::string* CompParticleSystem::GetChildEmitter() const
-{
-	if (!child_emitter.empty()) return &child_emitter;
-	return nullptr;
-}
 
 void CompParticleSystem::ActivateEmitter(bool a)
 {
 	if (a)
 		part_system->ActivateEmitter();
 	else part_system->DeactivateEmitter();
+}
+
+float CompParticleSystem::GetDiscardDistance() const
+{
+	return part_system->discard_distance;
+}
+bool CompParticleSystem::IsActive() const
+{
+	return part_system->active;
+}
+bool CompParticleSystem::IsPreview() const
+{
+	return part_system->preview;
 }
 
 
@@ -211,10 +160,10 @@ void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveSc
 
 	json_object_dotset_string_with_std(object, name + "ParticleResource:", particle_resource_name.c_str());
 	json_object_dotset_string_with_std(object, name + "EmitterResource:", emitter_resource_name.c_str());
-	json_object_dotset_boolean_with_std(object, name + "Preview:", preview);
+	json_object_dotset_boolean_with_std(object, name + "Preview:", part_system->preview);
 	json_object_dotset_boolean_with_std(object, name + "Active:", part_system->IsEmitterActive());
 
-	json_object_dotset_number_with_std(object, name + "DiscardDistance", discard_distance);
+	json_object_dotset_number_with_std(object, name + "DiscardDistance", part_system->discard_distance);
 
 
 	ImGuiSaveParticlePopUp();
@@ -235,14 +184,14 @@ void CompParticleSystem::Load(const JSON_Object* object, std::string name)
 	file_to_load = emitter_resource_name;
 	ImGuiLoadEmitterPopUp();
 
-	preview = json_object_dotget_boolean_with_std(object, name + "Preview:");
+	part_system->preview = json_object_dotget_boolean_with_std(object, name + "Preview:");
 	bool active = json_object_dotget_boolean_with_std(object, name + "Active:");
 	if (active)
 		part_system->ActivateEmitter();
 	else
 		part_system->DeactivateEmitter();
 
-	discard_distance = json_object_dotget_number_with_std(object, name + "DiscardDistance");
+	part_system->discard_distance = json_object_dotget_number_with_std(object, name + "DiscardDistance");
 
 
 	
@@ -451,10 +400,7 @@ bool CompParticleSystem::SaveParticleEmitter(const CompParticleSystem* system, c
 	SetBool(conf, "ShowEmitterBoundBox", ShowEmitterBoundBox);
 	SetBool(conf, "ShowEmitter", ShowEmitter);
 
-	if (system->GetChildParticle() != nullptr)
-		SetString(conf, "ChildParticle", GetChildParticle()->c_str());
-	if (system->GetChildEmitter() != nullptr)
-		SetString(conf, "ChildEmitter", GetChildEmitter()->c_str());
+
 
 	SetFloat(conf, "EmitterLifeMax", emitter->EmitterLifeMax);
 	SetFloat4x4(conf, "Transform", emitter->Transform);
@@ -470,6 +416,12 @@ bool CompParticleSystem::SaveParticleEmitter(const CompParticleSystem* system, c
 	//SetUInt(conf, "EmissionType", emitter->EmissionType);
 	SetUInt(conf, "Type", emitter->Type);
 	SetUInt(conf, "ParticleFacingOptions", emitter->ParticleFacingOptions);
+
+	//Blend modes
+	SetUInt(conf, "SourceBlendType", emitter->p_source_type);
+	SetUInt(conf, "DestinyBlendType", emitter->p_destiny_type);
+
+	SetBool(conf, "Glow", emitter->glow);
 
 	switch (emitter->Type)
 	{
@@ -523,8 +475,7 @@ bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticle
 
 	const char* ChildParticle = GetString(conf, "ChildParticle");
 	const char* ChildEmitter = GetString(conf, "ChildEmitter");
-	if ((ChildParticle != nullptr) && (ChildEmitter != nullptr))
-		system->SetChild(ChildParticle, ChildEmitter);
+
 
 	emitter.EmitterLifeMax = GetFloat(conf, "EmitterLifeMax");
 	emitter.Transform = GetFloat4x4(conf, "Transform");
@@ -540,6 +491,12 @@ bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticle
 	//emitter.EmissionType = (ParticleEmitter::TypeEmission)GetUInt(conf, "EmissionType");
 	emitter.Type = (ParticleEmitter::TypeEmitter)GetUInt(conf, "Type");
 	emitter.ParticleFacingOptions = (ParticleEmitter::TypeBillboard)GetUInt(conf, "ParticleFacingOptions");
+
+	//Blend modes
+	emitter.p_source_type = GetUInt(conf, "SourceBlendType", 0x0302);
+	emitter.p_destiny_type = GetUInt(conf, "DestinyBlendType", 1);
+
+	emitter.glow = GetBool(conf, "Glow");
 
 	switch (emitter.Type)
 	{
@@ -568,11 +525,6 @@ bool CompParticleSystem::LoadParticleEmitter(const char* file_name, CompParticle
 
 
 
-void CompParticleSystem::SetChild(const char* Particle, const char* Emitter)
-{
-	child_particle = Particle;
-	child_emitter = Emitter;
-}
 //-----------------------------------------------------------
 void CompParticleSystem::ShowOptions()
 {
@@ -625,9 +577,9 @@ void CompParticleSystem::ShowInspectorInfo()
 		else 
 			part_system->DeactivateEmitter();
 	}
-	ImGui::Checkbox("Preview", &preview);
+	ImGui::Checkbox("Preview", &part_system->preview);
 
-	ImGui::DragFloat("Discard distance", &discard_distance, 1.0f, 0, 1000, "%.2f");
+	ImGui::DragFloat("Discard distance", &part_system->discard_distance, 1.0f, 0, 1000, "%.2f");
 	
 	//Emitter options
 	if (ImGui::TreeNodeEx("Emitter"))
@@ -762,7 +714,7 @@ void CompParticleSystem::DrawDirectory(const char * directory)
 			switch (file_type)
 			{
 			case Texture_Resource: if ((directory_temporal_str == ".png") || (directory_temporal_str == ".PNG") || (directory_temporal_str == ".jpg") || (directory_temporal_str == ".JPG") || (directory_temporal_str == ".tga") || (directory_temporal_str == ".TGA") || (directory_temporal_str == ".dds") || (directory_temporal_str == ".DDS")) Valid = true; break;
-			case Particle_Resource: case Child_Particle_Resource: case Emitter_Resource: case Child_Emitter_Resource: if (directory_temporal_str == ".json") Valid = true; break;
+			case Particle_Resource: case Emitter_Resource: if (directory_temporal_str == ".json") Valid = true; break;
 			case MeshResource: Valid = true; break;
 			}
 			if (Valid)
@@ -792,8 +744,6 @@ void CompParticleSystem::ImGuiLoadPopUp()
 	case Texture_Resource: Str = "Load Texture"; break;
 	case Particle_Resource: Str = "Load Particle"; break;
 	case Emitter_Resource: Str = "Load Emitter"; break;
-	case Child_Particle_Resource: Str = "Load Child Particle"; break;
-	case Child_Emitter_Resource: Str = "Load Child Emitter"; break;
 	case MeshResource: Str = "Load Mesh"; break;
 	}
 
@@ -812,8 +762,8 @@ void CompParticleSystem::ImGuiLoadPopUp()
 		switch (file_type)
 		{
 		case Texture_Resource: DrawDirectory(App->fs->GetFullPath("Assets").c_str()); break;
-		case Particle_Resource: case Child_Particle_Resource: DrawDirectory(App->fs->GetFullPath("Assets\\ParticleSystem\\Particles").c_str()); break;
-		case Emitter_Resource: case Child_Emitter_Resource: DrawDirectory(App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters").c_str()); break;
+		case Particle_Resource:  DrawDirectory(App->fs->GetFullPath("Assets\\ParticleSystem\\Particles").c_str()); break;
+		case Emitter_Resource:  DrawDirectory(App->fs->GetFullPath("Assets\\ParticleSystem\\Emitters").c_str()); break;
 		case MeshResource: DrawDirectory(App->fs->GetFullPath("Assets").c_str()); break;
 		}
 		ImGui::EndChild();
@@ -830,8 +780,7 @@ void CompParticleSystem::ImGuiLoadPopUp()
 				case Texture_Resource: ImGuiLoadTexturePopUp(); break;
 				case Particle_Resource: ImGuiLoadParticlePopUp(); break;
 				case Emitter_Resource: ImGuiLoadEmitterPopUp(); break;
-				case Child_Particle_Resource: child_particle = file_to_load; break;
-				case Child_Emitter_Resource: child_emitter = file_to_load; break;
+
 				case MeshResource: ImGuiLoadMeshPopUp(); break;
 				}
 			}
@@ -942,7 +891,7 @@ void CompParticleSystem::ImGuiSaveParticlePopUp()const
 	part_system->GetInitialState(InitialState);
 	ParticleState FinalState;
 	part_system->GetFinalState(FinalState);
-	SaveParticleStates(texture_resource, part_system->GetTextureResource(), &InitialState, &FinalState);
+	SaveParticleStates(part_system->texture_resource, part_system->GetTextureResource(), &InitialState, &FinalState);
 }
 
 void CompParticleSystem::ImGuiSaveEmitterPopUp()const

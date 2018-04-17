@@ -78,13 +78,10 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 	if (mesh != nullptr)
 	{
-		LOG("Importing Mesh %s", name);
-		
 		// SET VERTEX DATA -------------------------------
 		num_vertices = mesh->mNumVertices;
 		vertices = new float3[num_vertices];
 		memcpy(vertices, mesh->mVertices, sizeof(float3) * num_vertices);
-		LOG("- Imported all vertex from data, total vertex: %i", num_vertices);
 
 		//SET TANGENTS / BITANGENTS
 
@@ -111,7 +108,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					memcpy(&indices[i * 3], mesh->mFaces[i].mIndices, sizeof(uint) * 3);
 				}
 			}
-			LOG("- Imported all index from data, total indices: %i", num_indices);
 		}
 		else
 		{
@@ -124,7 +120,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			num_normals = num_vertices;
 			vert_normals = new float3[num_normals];
 			memcpy(vert_normals, mesh->mNormals, sizeof(float3) * num_normals);
-			LOG("- Imported all Normals from data");
 		}
 		else
 		{
@@ -143,7 +138,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				tex_coords[i].y = mesh->mTextureCoords[0][i].y;
 			}
 			//memcpy(tex_coords, mesh->mTextureCoords[0], sizeof(float2) * num_tex_coords);
-			LOG("- Imported all Tex Coords from data");
 		}
 		else
 		{
@@ -154,7 +148,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 			LOG("- Mesh %s does not have Tex Coords", mesh->mName.C_Str());
 		}
-
 		// Skeleton
 		if (mesh->HasBones())
 		{
@@ -227,30 +220,30 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			}
 			else
 			{
-				LOG("Imported joints correctly");
+				//LOG("Imported joints correctly");
 			}
 		}
 		else
 		{
-			LOG("- Mesh %s does not have Bones", mesh->mName.C_Str());
+			//LOG("- Mesh %s does not have Bones", mesh->mName.C_Str());
 		}
-
-		LOG("Imported all data");
 	}
 	else
 	{
 		LOG("Can't Import Mesh");
 		ret = false;
 	}
-	
+
 	// SET MATERIAL DATA -----------------------------------------
-	if (mesh->mMaterialIndex >= 0)
+	if (mesh->mMaterialIndex >= 0 && App->build_mode == false)
 	{
+		LOG("2");
 		CompMaterial* materialComp = (CompMaterial*)obj->AddComponent(C_MATERIAL);
 		//
+		LOG("6");
 		//std::vector<Texture> text_t;
 		aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
-
+		LOG("Now Set Material 0");
 		for (uint i = 0; i < mat->GetTextureCount(aiTextureType_DIFFUSE); i++)
 		{
 			aiString str;
@@ -260,6 +253,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			ResourceMaterial* resource_mat = (ResourceMaterial*)App->resource_manager->GetResource(normalPath.c_str());
 			if (resource_mat != nullptr)
 			{
+				LOG("Now Set Material");
 				if (resource_mat->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					std::string temp = std::to_string(resource_mat->GetUUID());
@@ -278,7 +272,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 						break;
 					}
 				}
-				if (!exists)
+				if (!exists && !App->build_mode)
 				{
 					Material* new_mat = new Material();
 					new_mat->name = name;
@@ -296,6 +290,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				resource_mat->path_assets = normalPath;
 			}
 			else {
+				LOG("Now Set Material2");
 				std::string name = App->fs->GetOnlyName(normalPath);
 				bool exists = false;
 				for (auto item = App->module_shaders->materials.begin(); item < App->module_shaders->materials.end(); item++)
@@ -308,7 +303,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 						break;
 					}
 				}
-				if (!exists)
+				if (!exists && !App->build_mode)
 				{
 					Material* new_mat = new Material();
 					new_mat->name = name;
@@ -325,7 +320,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			}
 		}
 	}
-	
+	LOG("3");
 	meshComp->Enable();
 	// Create Resource ----------------------
 	uint uuid_mesh = 0;

@@ -95,26 +95,33 @@ physx::PxFilterFlags jpFilterShader(
 	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
 	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
-	// report all contacts with triggers
-	if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
-	{
-		pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
-		return physx::PxFilterFlag::eDEFAULT;
-	}
-	// generate contacts for all that were not filtered above
-	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
-
-	// trigger the contact callback for pairs (A,B) where 
-	// the filtermask of A contains the ID of B and vice versa.
 	if ((filterData0.word0 & filterData1.word1) || (filterData1.word0 & filterData0.word1))
 	{
+		// report all contacts with triggers
+		if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1))
+		{
+			pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+			return physx::PxFilterFlag::eDEFAULT;
+		}
+		// generate contacts for all that were not filtered above
+		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+
+		// trigger the contact callback for pairs (A,B) where 
+		// the filtermask of A contains the ID of B and vice versa.
+		
 		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
 
 		pairFlags |= physx::PxPairFlag::eSOLVE_CONTACT;
 		pairFlags |= physx::PxPairFlag::eDETECT_DISCRETE_CONTACT;
 		pairFlags |= physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+		
+	}
+	else 
+	{
+		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 	}
 	return physx::PxFilterFlag::eDEFAULT;
+
 }
 
 // Create Default Scene
@@ -126,8 +133,6 @@ physx::PxScene * jpPhysicsWorld::CreateNewScene()
 	sceneDesc.filterShader = jpFilterShader;
 	sceneDesc.simulationEventCallback = collision_callback;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_PCM;
-	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_PAIRS;
-	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS;
 
 	return jpWorld->createScene(sceneDesc);
 }

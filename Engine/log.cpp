@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleConsole.h"
+#include <iostream>
 
 void log(const char file[], int line, const char* format, ...)
 {
@@ -21,7 +22,12 @@ void log(const char file[], int line, const char* format, ...)
 	{
 		App->console->AddLog(tmp_string);
 	}
-	
+	if (App != nullptr && App->build_mode)
+	{
+		std::cout << tmp_string << std::endl;
+		App->savelogs.push_back(tmp_string);
+	}
+
 	OutputDebugString(tmp_string2);
 }
 

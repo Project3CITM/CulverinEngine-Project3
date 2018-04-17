@@ -593,6 +593,7 @@ of a deep nested inner loop in your code.
 #include <stdlib.h>     // NULL, malloc, free, qsort, atoi
 #include <stdio.h>      // vsnprintf, sscanf, printf
 #include <limits.h>     // INT_MIN, INT_MAX
+#include <vector>
 #if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
 #include <stddef.h>     // intptr_t
 #else
@@ -1627,7 +1628,7 @@ ImGuiTextFilter::ImGuiTextFilter(const char* default_filter)
 	}
 }
 
-bool ImGuiTextFilter::Draw(const char* label, float width)
+bool ImGuiTextFilter::Draw(const char * label, float width)
 {
 	if (width != 0.0f)
 		ImGui::PushItemWidth(width);
@@ -1636,6 +1637,20 @@ bool ImGuiTextFilter::Draw(const char* label, float width)
 		ImGui::PopItemWidth();
 	if (value_changed)
 		Build();
+	return value_changed;
+}
+
+bool ImGuiTextFilter::Draw(const char* label, float width, ImVector<const char*>& filters, bool filters_changed)
+{
+	if (width != 0.0f)
+		ImGui::PushItemWidth(width);
+	bool value_changed = ImGui::InputText(label, InputBuf, IM_ARRAYSIZE(InputBuf));
+	if (width != 0.0f)
+		ImGui::PopItemWidth();
+	if (value_changed || filters_changed)
+	{
+		Build(filters);
+	}
 	return value_changed;
 }
 
@@ -1657,11 +1672,24 @@ void ImGuiTextFilter::TextRange::split(char separator, ImVector<TextRange>& out)
 		out.push_back(TextRange(wb, we));
 }
 
-void ImGuiTextFilter::Build()
+void ImGuiTextFilter::Build(ImVector<const char*>& filters)
 {
 	Filters.resize(0);
 	TextRange input_range(InputBuf, InputBuf + strlen(InputBuf));
 	input_range.split(',', Filters);
+
+	//Add Department filters
+	if (!filters.empty())
+	{
+		for (int i = 0; i < filters.Size; i++)
+		{
+			auto filter = filters[i];
+			TextRange input_range(filter, filter + strlen(filter));
+
+			Filters.push_back(input_range);
+		}
+
+	}
 
 	CountGrep = 0;
 	for (int i = 0; i != Filters.Size; i++)
@@ -1706,6 +1734,23 @@ bool ImGuiTextFilter::PassFilter(const char* text, const char* text_end) const
 		return true;
 
 	return false;
+}
+
+void ImGuiTextFilter::Build()
+{
+	Filters.resize(0);
+	TextRange input_range(InputBuf, InputBuf + strlen(InputBuf));
+	input_range.split(',', Filters);
+
+	CountGrep = 0;
+	for (int i = 0; i != Filters.Size; i++)
+	{
+		Filters[i].trim_blanks();
+		if (Filters[i].empty())
+			continue;
+		if (Filters[i].front() != '-')
+			CountGrep += 1;
+	}
 }
 
 //-----------------------------------------------------------------------------

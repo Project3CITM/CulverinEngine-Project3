@@ -23,21 +23,19 @@ public class Hp : CulverinBehaviour
 
     public void GetDamage(float dmg)
     {
-        if (other_obj_hp.GetComponent<LeftHp>().current_lasthp < current_hp)
-        {
-            other_obj_hp.GetComponent<LeftHp>().lasthp_value = current_hp;
-            other_obj_hp.GetComponent<LeftHp>().hp_bar_changed = false;
-        }
+        other_obj_hp.GetComponent<CompImage>().FillAmount(other_obj_hp.GetComponent<LeftHp>().lasthp_value / 100);
+        other_obj_hp.GetComponent<LeftHp>().lasthp_value = current_hp;
+        other_obj_hp.GetComponent<LeftHp>().hp_ready_to_below = false;
+        other_obj_hp.GetComponent<LeftHp>().current_temp_hp_time = 0.0f;
         current_hp -= dmg;
         if(current_hp < 0)
         {
             current_hp = 0;
         }
-
         calc_hp = current_hp / max_hp;
         hp_bar = this_obj_hp.GetComponent<CompImage>();
         hp_bar.FillAmount(calc_hp);
-     
+        other_obj_hp.GetComponent<LeftHp>().hp_bar_changed = false;
     }
 
     public float GetCurrentHealth()

@@ -3,7 +3,7 @@
 namespace CulverinEditor
 {
     
-    public class CompText : CompInteractive
+    public class CompText : CompGraphic
     {
         public CompText()
         { }

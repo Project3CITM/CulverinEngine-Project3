@@ -53,8 +53,11 @@ bool ModuleShaders::Start()
 {
 	perf_timer.Start();
 	//Import all the asset files related to shaders
+	if (App->build_mode == false)
+	{
+		ImportShaderObjects();
+	}
 
-	ImportShaderObjects();
 	//ImportShaderMaterials();	
 	Start_t = perf_timer.ReadMs();
 	return true;
@@ -81,7 +84,7 @@ update_status ModuleShaders::Update(float dt)
 
 		(*item)->Bind();
 
-		SetUniformVariables(*item);
+
 		//TIME		
 		GLint timeLoc = glGetUniformLocation(ID, "_time");
 		if (timeLoc != -1) glUniform1f(timeLoc, time_dt);
@@ -123,6 +126,26 @@ update_status ModuleShaders::Update(float dt)
 
 				SetLightUniform(ID, "properties", i, lights_vec[i]->properties);
 
+				// Bias matrix. TODO: Might be better to set other place
+
+				glm::mat4 biasMatrix(
+					0.5, 0.0, 0.0, 0,
+					0.0, 0.5, 0.0, 0,
+					0.0, 0.0, 0.5, 0,
+					0.5, 0.5, 0.5, 1.0
+				);
+				float3 dir = lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection();
+				glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+				glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(dir.x, dir.y, dir.z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+				glm::mat4 depthModelMatrix = glm::mat4(1.0);
+
+				glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+				glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
+
+				int depthBiasID = glGetUniformLocation(ID, "depthBias");
+				glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
+
+				// End Bias matrix.
 			}
 
 		item++;

@@ -598,9 +598,11 @@ void CSharpScript::GetScriptVariables()
 			if (field != NULL)
 			{
 				type = mono_field_get_type(field);
-
+				XaviStruct temp;
+				temp.mono_field = field;
+				temp.mono_type = type;
 				//Insert this info pair into the map
-				field_type.insert(std::pair<MonoClassField*, MonoType*>(field, type));
+				field_type.insert(std::pair<uint, XaviStruct>(count_variables++, temp));
 			}
 		}
 		parent = mono_class_get_parent(parent);
@@ -616,20 +618,22 @@ void CSharpScript::GetScriptVariables()
 		if (field != NULL)
 		{
 			type = mono_field_get_type(field);
-
+			XaviStruct temp;
+			temp.mono_field = field;
+			temp.mono_type = type;
 			//Insert this info pair into the map
-			field_type.insert(std::pair<MonoClassField*, MonoType*>(field, type));
+			field_type.insert(std::pair<uint, XaviStruct>(count_variables++, temp));
 		}
 	}
 
 	// From the previous map, fill VariablesScript vector that will contain info (name, type, value) of each variable
-	for (std::map<MonoClassField*, MonoType*>::iterator it = field_type.begin(); it != field_type.end(); ++it)
+	for (std::multimap<uint, XaviStruct>::iterator it = field_type.begin(); it != field_type.end(); ++it)
 	{
-		VarType type = GetTypeFromMono(it->second);
+		VarType type = GetTypeFromMono(it->second.mono_type);
 		VarAccess access = VarAccess::Var_PRIVATE;
 
 		//Set info about accessibility of the variable -> DOESN'T WORK!!!
-		flags = mono_field_get_flags(it->first);
+		flags = mono_field_get_flags(it->second.mono_field);
 		if (flags == MONO_FIELD_ATTR_FAMILY)
 		{
 			access = VarAccess::Var_PRIVATE;
@@ -644,13 +648,13 @@ void CSharpScript::GetScriptVariables()
 		}
 
 		//Create variable
-		ScriptVariable* new_var = new ScriptVariable(mono_field_get_name(it->first), type, access, this);
+		ScriptVariable* new_var = new ScriptVariable(mono_field_get_name(it->second.mono_field), type, access, this);
 
 		//Set its value
-		GetValueFromMono(new_var, it->first, it->second);
+		GetValueFromMono(new_var, it->second.mono_field, it->second.mono_type);
 
 		//Link to Mono properties
-		LinkVarToMono(new_var, it->first, it->second);
+		LinkVarToMono(new_var, it->second.mono_field, it->second.mono_type);
 
 		//Put it in variables vector
 		variables.push_back(new_var);
@@ -661,10 +665,10 @@ void CSharpScript::UpdateScriptVariables()
 {
 	uint count = 0;
 	// From the map, update the value of each script
-	for (std::map<MonoClassField*, MonoType*>::iterator it = field_type.begin(); it != field_type.end(); ++it)
+	for (std::multimap<uint, XaviStruct>::iterator it = field_type.begin(); it != field_type.end(); ++it)
 	{
 		//Set its value
-		UpdateValueFromMono(variables[count++], it->first, it->second);
+		UpdateValueFromMono(variables[count++], it->second.mono_field, it->second.mono_type);
 	}
 }
 
@@ -1021,7 +1025,15 @@ MonoString* CSharpScript::GetTag(MonoObject* object)
 
 bool CSharpScript::CompareTag(MonoObject * object, MonoString * tag)
 {
-	return current_game_object->CompareTag(mono_string_to_utf8(tag));
+	if (object)
+	{
+		GameObject* actual = App->importer->iScript->GetGameObject(object);
+		if (actual)
+		{
+			return actual->CompareTag(mono_string_to_utf8(tag));
+		}
+	}
+	return false;
 }
 
 MonoObject* CSharpScript::FindGameObjectWithTag(MonoObject* object, MonoString * tag)
@@ -1037,8 +1049,19 @@ int CSharpScript::ChildCount(MonoObject * object)
 
 MonoObject * CSharpScript::GetChildByIndex(MonoObject* object, int index)
 {
-	GameObject* target = current_game_object->GetChildbyIndex(index);
-	return App->importer->iScript->GetMonoObject(target);
+	if (!CheckMonoObject(object))
+	{
+		return nullptr;
+	}
+	if (current_game_object != nullptr)
+	{
+		GameObject* target = current_game_object->GetChildbyIndex(index);
+		if (target != nullptr)
+		{
+			return App->importer->iScript->GetMonoObject(target);
+		}
+		return nullptr;
+	}
 }
 
 MonoObject * CSharpScript::GetChildByName(MonoObject * object, MonoString * name)

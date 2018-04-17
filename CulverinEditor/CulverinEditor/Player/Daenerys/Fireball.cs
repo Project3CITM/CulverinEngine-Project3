@@ -47,11 +47,20 @@ public class Fireball : CulverinBehaviour
             Vector3 normal = col.GetContactNormal();
 
             fireball_particles.GetComponent<Transform>().SetUpVector(normal);
+            point = point + normal * 2;
             fireball_particles.GetComponent<Transform>().SetPosition(point);
 
             CompParticleSystem fireball_particles_script = fireball_particles.GetComponent<CompParticleSystem>();
             fireball_particles_script.ActivateEmission(true);
+
+            //Iterate all childs, they have a ParticleSystem too
+            int childs = fireball_particles.ChildCount();
+            for (int i = 0; i < childs; i++) 
+            {
+                fireball_particles.GetChildByIndex(i).GetComponent<CompParticleSystem>().ActivateEmission(true);
+            }
         }
+
 
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
         // DAMAGE ---

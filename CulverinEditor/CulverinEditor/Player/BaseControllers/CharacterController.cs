@@ -6,7 +6,8 @@ public class CharacterController : CulverinBehaviour
     public enum Position
     {
         CURRENT = 0,
-        BEHIND
+        BEHIND_LEFT,
+        BEHIND_RIGHT
     }
 
     //Enum to control all the states of each character
@@ -21,8 +22,8 @@ public class CharacterController : CulverinBehaviour
         RELOADING,
         STUN,
         FAIL_ATTACK,
-        DEAD,
-        GRABBED
+        GRABBED,
+        DEAD
     }
 
     protected MovementController movement;              // To manage when the player is moving to block attacks/abilities
@@ -47,19 +48,20 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void Update()
     {
-        if (state != State.GRABBED)
+        if (position == Position.CURRENT && state != State.GRABBED)
         {
-            if (position == Position.CURRENT)
+            ControlCharacter();
+        }
+
+        else if(position == Position.BEHIND_LEFT || position == Position.BEHIND_RIGHT)
+        {
+            if(gameObject.GetName() == "Theon")
             {
-                ControlCharacter();
+                gameObject.GetComponent<TheonController>().TheonSecondaryAbility();
             }
-            else if (position == Position.BEHIND)
-            {
-                if (gameObject.GetName() == "Theon")
-                {
-                    gameObject.GetComponent<TheonController>().TheonSecondaryAbility();
-                }
-            }
+
+            //If the character is behind, manage the stamina/mana bar to regen it
+            ManageEnergy();
         }
     }
 
@@ -89,11 +91,11 @@ public class CharacterController : CulverinBehaviour
         return stamina.CanWasteStamina(value);
     }
 
-    public virtual float GetCurrentMana()
+    public virtual bool CanWasteMana(float value)
     {
         mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
-        float ret = mana.GetCurrentMana();
-        return ret;
+        return mana.CanWasteMana(value);
+        
     }
 
     public virtual void DecreaseStamina(float stamina_cost)
@@ -120,6 +122,10 @@ public class CharacterController : CulverinBehaviour
     }
 
     public virtual void ControlCharacter()
+    {
+    }
+
+    public virtual void ManageEnergy()
     {
     }
 
@@ -174,5 +180,109 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void EnableAbilities(bool active)
     {
+    }
+
+    public virtual Vector3 GetSecondaryPosition(Vector3 player_pos)
+    {
+        Vector3 ret = new Vector3(player_pos.x, player_pos.y - 5.0f, player_pos.z);
+
+        if (position == Position.BEHIND_LEFT)
+        {
+            if (Mathf.Round(curr_forward.z) <= -2.0f)
+            {
+                ret.x -= 5.2f;
+            }
+            else if (Mathf.Round(curr_forward.z) >= 2.0f)
+            {
+                ret.x += 5.2f;
+            }
+            else if (Mathf.Round(curr_forward.x) >= 2.0f)
+            {
+                ret.z -= 5.2f;
+            }
+            else if (Mathf.Round(curr_forward.x) <= -2.0f)
+            {
+                ret.z += 5.2f;
+            }
+            
+        }
+        else if (position == Position.BEHIND_RIGHT)
+        {
+            if (Mathf.Round(curr_forward.z) <= -2.0f)
+            {
+                ret.x += 5.2f;
+            }
+            else if (Mathf.Round(curr_forward.z) >= 2.0f)
+            {
+                ret.x -= 5.2f;
+            }
+            else if (Mathf.Round(curr_forward.x) >= 2.0f)
+            {
+                ret.z += 5.2f;
+            }
+            else if (Mathf.Round(curr_forward.x) <= -2.0f)
+            {
+                ret.z -= 5.2f;
+            }
+        }
+
+        return ret;
+    }
+
+    public virtual Vector3 GetSecondaryForward(Vector3 curr_forward)
+    {
+        Vector3 ret;
+
+        ret = new Vector3(curr_forward);
+        if (position == Position.BEHIND_LEFT)
+        {
+            if (Mathf.Round(curr_forward.z) <= -2.0f)
+            {
+                ret.x = 0.18f;
+                ret.z = -1.99f;
+            }
+            else if (Mathf.Round(curr_forward.z) >= 2.0f)
+            {
+                ret.x = -0.18f;
+                ret.z = 1.99f;
+            }
+            else if (Mathf.Round(curr_forward.x) >= 2.0f)
+            {
+                ret.x = 1.99f;
+                ret.z = 0.18f;
+            }
+            else if (Mathf.Round(curr_forward.x) <= -2.0f)
+            {
+                ret.x = -1.99f;
+                ret.z = -0.18f;
+            }
+
+        }
+        else if (position == Position.BEHIND_RIGHT)
+        {
+            if (Mathf.Round(curr_forward.z) <= -2.0f)
+            {
+                ret.x = -0.18f;
+                ret.z = -1.99f;
+            }
+            
+            else if (Mathf.Round(curr_forward.z) >= 2.0f)
+            {
+                ret.x = 0.18f;
+                ret.z = 1.99f;
+            }
+            else if (Mathf.Round(curr_forward.x) >= 2.0f)
+            {
+                ret.x = 1.99f;
+                ret.z = -0.18f;
+            }
+            else if (Mathf.Round(curr_forward.x) <= -2.0f)
+            {
+                ret.x = -1.99f;
+                ret.z = 0.18f;
+            }
+        }
+
+        return ret;
     }
 }

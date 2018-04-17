@@ -194,6 +194,15 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 				std::vector<CompInteractive*>::reverse_iterator it = iteractive_vector.rbegin();
 				for (; it != iteractive_vector.rend(); it++)
 				{
+					if (!(*it)->IsInteractiveEnabled())
+					{
+						if (!(*it)->IsActivate()) //if it's active 
+						{
+							(*it)->ForceClear(this_event);
+						}
+						continue;
+					}
+					
 					if ((*it)->PointerInside(this_event.pointer.position))
 					{
 						if (positive_colision)

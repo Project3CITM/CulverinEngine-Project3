@@ -15,6 +15,9 @@ public class Enemy_BT : BT
     public GameObject player = null;
     public GameObject mesh = null;
 
+    Material enemy_mat;
+    public float dmg_alpha = 0.0f;
+
     public float total_hp = 100;
     protected float current_hp;
     public ENEMY_STATE life_state = ENEMY_STATE.ENEMY_ALIVE;
@@ -39,17 +42,50 @@ public class Enemy_BT : BT
     public int end_path_x;
     public int end_path_y;
 
+    //UI Components
+    public GameObject enemy_hp_bar;
+    public float hp_timer_total = 10.0f;
+    protected float hp_timer = 10.0f;
+    protected bool hud_active = false;
+
     public override void Start()
     {
         in_combat = false;
         player = GetLinkedObject("player");
+        if (GetLinkedObject("player") == null)
+        {
+            Debug.Log("PLAYER NULL!!",Department.IA,Color.RED);
+        }
         current_hp = total_hp;
         //Enemy starts with the attack loaded
         attack_timer = 0.0f;
         mesh = GetLinkedObject("mesh");
+        if (GetLinkedObject("mesh") == null)
+        {
+            Debug.Log("MESH NULL!!", Department.IA, Color.RED);
+        }
         enemies_manager = GetLinkedObject("enemies_manager");
+        if (GetLinkedObject("enemies_manager") == null)
+        {
+            Debug.Log("ENEMIES MANAGER NULL!!", Department.IA, Color.RED);
+        }
         GetComponent<CompAnimation>().PlayAnimation("Idle");
+        dmg_alpha = 0.0f;
         //ChangeTexturesToAlive();
+        enemy_hp_bar = GetLinkedObject("enemy_hp_bar");
+        if (GetLinkedObject("enemy_hp_bar") == null)
+        {
+            Debug.Log("HALTH BAR NULL!!", Department.IA, Color.RED);
+        }
+        if (enemy_hp_bar.GetComponent<CompImage>() == null)
+        {
+            Debug.Log("COMP IMAGE NULL!!", Department.IA, Color.RED);
+        }
+        enemy_hp_bar.GetComponent<CompImage>().DeactivateRender();
+        hp_timer_total = 10.0f;
+        hp_timer = 0.0f;
+        hud_active = false;
+
         base.Start();
     }
 
@@ -57,16 +93,15 @@ public class Enemy_BT : BT
     {
         //Update attack cooldown
         attack_timer += Time.deltaTime;
-
         base.Update();
     }
 
     public override void MakeDecision()
     {
-        if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION 
+        if (next_action.action_type == Action.ACTION_TYPE.ATTACK_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION 
             || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION
             || next_action.action_type == Action.ACTION_TYPE.FACE_PLAYER_ACTION || next_action.action_type == Action.ACTION_TYPE.DIE_ACTION
-            || next_action.action_type == Action.ACTION_TYPE.SEPARATE_ACTION)
+            || next_action.action_type == Action.ACTION_TYPE.SEPARATE_ACTION || next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
         {
             if (next_action.action_type == Action.ACTION_TYPE.STUN_ACTION)
             {
@@ -122,9 +157,11 @@ public class Enemy_BT : BT
         next_action = GetComponent<GetHit_Action>();
 
         current_hp -= damage;
-
+        //ChangeTexturesToDamaged();
+ 
         current_interpolation = current_hp / total_hp;
-
+        dmg_alpha += 0.2f;
+        Debug.Log("[pink]AUMENTAME ALPHA PUTA: " + dmg_alpha);
         if (current_hp <= 0)
         {
             //GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
@@ -142,12 +179,18 @@ public class Enemy_BT : BT
             //ChangeTexturesToDamaged();
         }
 
+        UpdateHUD();
+
         return true;
     }
 
     public void PushEnemy(Vector3 dir)
     {
         current_action.Interupt();
+
+        Debug.Log("Enemy:" + gameObject.GetName(), Department.IA);
+        Debug.Log("Enemy posx:" + GetComponent<Movement_Action>().GetCurrentTileX() + "posy:" + GetComponent<Movement_Action>().GetCurrentTileY(), Department.IA);
+        Debug.Log("Player direction push:" + dir, Department.IA);
 
         if (!GetComponent<Movement_Action>().IsWalkable((uint)(GetComponent<Movement_Action>().GetCurrentTileX() + dir.x), (uint)(GetComponent<Movement_Action>().GetCurrentTileY() + dir.z)))
             next_action = GetComponent<Stun_Action>();
@@ -171,16 +214,75 @@ public class Enemy_BT : BT
 
     public int GetDistanceInRange()
     {
-        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-        int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
-        int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+        int enemy_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int enemy_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        if (distance_x <= range && distance_y == 0)
-            return distance_x;
+        if (GetLinkedObject("player_obj") == null)
+        {
+            Debug.Log("[error]WILLYYYYYY QUE ESTO ES TO NULL");
+        }
+        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int player_tile_x, out int player_tile_y);
 
-        if (distance_y <= range && distance_x == 0)
-            return distance_y;
-
+        switch (GetComponent<Movement_Action>().GetDirection())
+        {
+            case Movement_Action.Direction.DIR_WEST:
+                if (enemy_tile_x - 2 == player_tile_x 
+                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x - 1, (uint)enemy_tile_y) ==true
+                    && player_tile_y == enemy_tile_y)
+                {
+                    Debug.Log("[pink]WEST 2 TILES");
+                    return 2;
+                }
+                else if (enemy_tile_x - 1 == player_tile_x && player_tile_y == enemy_tile_y)
+                {
+                    Debug.Log("[pink]WEST 1 TILES");
+                    return 1;
+                }
+                break;
+            case Movement_Action.Direction.DIR_EAST:
+                if (enemy_tile_x + 2 == player_tile_x
+                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x + 1, (uint)enemy_tile_y) == true
+                    && player_tile_y == enemy_tile_y)
+                {
+                    Debug.Log("[pink]EAST 2 TILES");
+                    return 2;
+                }
+                else if (enemy_tile_x + 1 == player_tile_x && player_tile_y == enemy_tile_y)
+                {
+                    Debug.Log("[pink]EAST 1 TILES");
+                    return 1;
+                }
+                break;
+            case Movement_Action.Direction.DIR_NORTH:
+                if (enemy_tile_y - 2 == player_tile_y 
+                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x, (uint)enemy_tile_y - 1) == true
+                    && player_tile_x == enemy_tile_x)
+                {
+                    Debug.Log("[pink]NORTH 2 TILES");
+                    return 2;
+                }
+                else if (enemy_tile_y - 1 == player_tile_y && player_tile_x == enemy_tile_x)
+                {
+                    Debug.Log("[pink]NORTH 1 TILES");
+                    return 1;
+                }
+                break;
+            case Movement_Action.Direction.DIR_SOUTH:
+                if (enemy_tile_y + 2 == player_tile_y 
+                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x, (uint)enemy_tile_y+1) == true
+                    && player_tile_x == enemy_tile_x)
+                {
+                    Debug.Log("[pink]SOUTH 2 TILES");
+                    return 2;
+                }
+                else if (enemy_tile_y + 1 == player_tile_y && player_tile_x == enemy_tile_x)
+                {
+                    Debug.Log("[pink]SOUTH 1 TILES");
+                    return 1;
+                }
+                break;
+        }
+        Debug.Log("[pink]3 TILES");
         return range + 1;
     }
 
@@ -210,5 +312,29 @@ public class Enemy_BT : BT
     public virtual void ChangeTexturesToAlive()
     {
         Debug.Log("[error] Alive change Textures not defined");
+    }
+
+    public virtual void UpdateHUD()
+    {
+        float calc_hp = current_hp / total_hp;
+        enemy_hp_bar.GetComponent<CompImage>().FillAmount(calc_hp);
+        hp_timer = 0.0f;
+    }
+
+    public virtual void ActivateHUD(GameObject icon, GameObject text)
+    {
+        hp_timer = 0.0f;
+        enemy_hp_bar.GetComponent<CompImage>().ActivateRender();
+        icon.GetComponent<CompImage>().ActivateRender();
+        text.SetActive(true);
+        hud_active = true;
+    }
+
+    public virtual void DeactivateHUD(GameObject icon, GameObject text)
+    {
+        enemy_hp_bar.GetComponent<CompImage>().DeactivateRender();
+        icon.GetComponent<CompImage>().DeactivateRender();
+        text.SetActive(false);
+        hud_active = false;
     }
 }

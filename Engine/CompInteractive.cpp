@@ -415,6 +415,17 @@ void CompInteractive::Activate()
 	current_selection_state = SelectionStates::STATE_NORMAL;
 	PrepareHandleTransition();
 }
+
+bool CompInteractive::IsInteractiveEnabled() const
+{
+	return interactive_enabled;
+}
+
+void CompInteractive::SetInteractivity(bool enable)
+{
+	interactive_enabled = enable;
+}
+
 void CompInteractive::Deactive()
 {
 	disabled = true;
@@ -990,7 +1001,6 @@ void CompInteractive::HandleTransition(SelectionStates selection_state)
 	case  SelectionStates::STATE_PRESSED:
 		desired_color = pressed_color;
 		desired_sprite = sprite[PRESSED_SPRITE];
-
 		break;
 	case  SelectionStates::STATE_DISABLED:
 		desired_color = disabled_color;

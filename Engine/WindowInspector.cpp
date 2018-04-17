@@ -57,6 +57,15 @@ void Inspector::LinkObject(GameObject * obj)
 	if (obj != nullptr)
 	{
 		selected_object = obj;
+		if (selected_object->GetParent() != nullptr)
+		{
+			GameObject* parent_open = selected_object->GetParent();
+			while (parent_open != nullptr)
+			{
+				parent_open->set_next_tree_node_open = true;
+				parent_open = parent_open->GetParent();
+			}
+		}
 	}
 }
 

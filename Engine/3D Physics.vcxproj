@@ -14,7 +14,7 @@
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
     <ProjectName>CulverinEngine</ProjectName>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -166,6 +166,7 @@
     <ClInclude Include="ModuleKeyBinding.h" />
     <ClInclude Include="ModuleLightning.h" />
     <ClInclude Include="ModuleMap.h" />
+    <ClInclude Include="ModuleParticles.h" />
     <ClInclude Include="ModulePhysics.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="ClickAction.h" />
@@ -525,6 +526,7 @@
     <ClCompile Include="ModuleKeyBinding.cpp" />
     <ClCompile Include="ModuleLightning.cpp" />
     <ClCompile Include="ModuleMap.cpp" />
+    <ClCompile Include="ModuleParticles.cpp" />
     <ClCompile Include="ModulePhysics.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="ClickAction.cpp" />

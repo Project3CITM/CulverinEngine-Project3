@@ -94,9 +94,16 @@ private:
 	/* Scene Management */
 	static void LoadScene(MonoString* scene_name);
 	static void LoadSceneNoDestroy(MonoString* scene_name);
+	static void LoadMultisceneNoDestroy(MonoString* main_scene_name, MonoString* secondary_scene_name);
 	static bool CheckSceneReady();
+	static bool CheckMultiSceneReady();
 	static void RemoveNoDestroy();
+	static void RemoveSecondaryScene();
+	static void ChangeToSecondaryScene();
+	static void BlockGUIinput();
 	static void QuitScene();
+	static void LoadNewWalkableMap(MonoString* walkable_map);
+
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);
 	/* Input */
@@ -120,7 +127,7 @@ private:
 	static mono_bool	GetInput_MouseButtonDown(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_MouseButtonUp(MonoString* name, MonoString* input);
 	static float		GetInput_ControllerAxis(MonoString* name, MonoString* input);
-	
+	static void			RumblePlay(float intensity, int milliseconds);
 
 	/* Time */
 	static float GetDeltaTime();
@@ -223,6 +230,7 @@ private:
 	/*Component Interactive*/
 	static void Activate(MonoObject* object, int uid);
 	static void Deactivate(MonoObject* object, int uid);
+	static void SetInteractivity(MonoObject* object, mono_bool enable);
 
 	/*Component Interactive Button*/
 	static void Clicked(MonoObject * object);

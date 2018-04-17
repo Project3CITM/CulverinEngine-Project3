@@ -243,6 +243,16 @@ void ModuleGUI::ShowWindowBuild(bool* active)
 			App->fs->CopyPasteFile(files_cs[i].c_str(), desktop_assets_temp.c_str());
 		}
 		files_cs.clear();
+
+		std::vector<std::string> prefabs;
+		App->fs->GetAllFilesByExtension(App->fs->GetMainDirectory(), prefabs, "prefab.json");
+		for (int i = 0; i < prefabs.size(); i++)
+		{
+			std::string desktop_assets_temp = desktop_assets + "/";
+			desktop_assets_temp += App->fs->FixName_directory(prefabs[i]);
+			App->fs->CopyPasteFile(prefabs[i].c_str(), desktop_assets_temp.c_str());
+		}
+		prefabs.clear();
 		// Now copy all scenes
 		for (int i = 0; i < scenes_build.size(); i++)
 		{
@@ -289,6 +299,15 @@ void ModuleGUI::ShowWindowBuild(bool* active)
 		path_copy = App->fs->GetGameDirectory() + "/Fonts";
 		path_paste = desktop + "/Fonts";
 		App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+		// Player Actions
+		std::string desktop_library = desktop + "/";
+		desktop_library += "Library/JSON/";
+		desktop_library += "player_action.json";
+		std::string temp_player = App->fs->GetMainDirectory();
+		temp_player += "/player_action.json";
+		App->fs->CopyPasteFile(temp_player.c_str(), desktop_library.c_str());
+
 
 		// Then all files (no Folders) in Game.
 		std::vector<std::string> files_game;

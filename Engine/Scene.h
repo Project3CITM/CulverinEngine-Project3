@@ -110,9 +110,11 @@ public:
 	FrameBuffer* final_buff = nullptr;
 	//Container of all Game Objects
 	GameObject* root = nullptr;
+	GameObject* dontdestroyonload = nullptr;
+	GameObject* secondary_root = nullptr;
+
 	GameObject* search_name = nullptr;
 	GameObject* temporary_scene = nullptr;
-	GameObject* dontdestroyonload = nullptr;
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
 	std::vector<GameObject*> static_objects;

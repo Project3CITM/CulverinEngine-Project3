@@ -35,12 +35,17 @@ bool ImportFont::Import(const char * file, uint uuid, bool isAutoImport)
 
 	ResourceFont* res_font = (ResourceFont*)App->resource_manager->CreateNewResource(Resource::Type::FONT, uuid_mesh);
 	res_font->InitInfo(App->fs->FixName_directory(file).c_str(), file);
-	std::string Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
-	Newdirectory += "\\" + App->fs->FixName_directory(file);
-	
+	std::string Newdirectory;
+	if (App->build_mode == false)
+	{
+		Newdirectory = ((Project*)App->gui->win_manager[WindowName::PROJECT])->GetDirectory();
+		Newdirectory += "\\" + App->fs->FixName_directory(file);
+
+
+		App->json_seria->SaveFont(res_font, App->fs->GetOnlyPath(file).c_str(), Newdirectory.c_str());
+	}
 	App->fs->DuplicateFile(file, name, DIRECTORY_IMPORT::IMPORT_DIRECTORY_LIBRARY_FONT);
 
-	App->json_seria->SaveFont(res_font, App->fs->GetOnlyPath(file).c_str(), Newdirectory.c_str());
 
 	/*
 	   std::ifstream  src("from.ogv", std::ios::binary);

@@ -6,7 +6,11 @@ public class EnemyShield_BT : Enemy_BT
     public float shield_block_cd = 4.0f;
     public float shield_block_cd_damaged = 2.5f;
     float shield_block_timer = 0.0f;
-    
+    Material enemy_mat_sword;
+
+    public GameObject shield_icon;
+    public GameObject shield_name;
+
     public override void Start()
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
@@ -22,12 +26,39 @@ public class EnemyShield_BT : Enemy_BT
             else
                 enemy_manager.AddShieldEnemy(gameObject);
         }
+
+        enemy_mat_sword = GetMaterialByName("EnemyShield");
+
+        shield_icon = GetLinkedObject("shield_icon");
+        shield_name = GetLinkedObject("shield_name");
+
         base.Start();
+        base.DeactivateHUD(shield_icon, shield_name);
     }
 
     public override void Update()
     {
+
         shield_block_timer += Time.deltaTime;
+
+        enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
+
+        if (hp_timer < hp_timer_total && hud_active == true)
+        {
+            hp_timer += Time.deltaTime;
+        }
+        else if(hud_active == true)
+        {
+            base.DeactivateHUD(shield_icon, shield_name);
+        }
+
+        bool attack_ready = attack_timer >= attack_cooldown;
+
+        if (attack_ready && current_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
+        {
+            Debug.Log("GetHitInterrupted BITCH", Department.IA);
+            current_action.Interupt();
+        }
 
         base.Update();
     }
@@ -109,6 +140,8 @@ public class EnemyShield_BT : Enemy_BT
 
     public override bool ApplyDamage(float damage)
     {
+        base.ActivateHUD(shield_icon, shield_name);
+
         switch (life_state)
         {
             case ENEMY_STATE.ENEMY_ALIVE:
@@ -122,7 +155,7 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
-                        GetComponent<CompAnimation>().SetTransition("ToBlock");
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         return false;
                     }
@@ -145,7 +178,7 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
-                        GetComponent<CompAnimation>().SetTransition("ToBlock");
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         return false;
                     }

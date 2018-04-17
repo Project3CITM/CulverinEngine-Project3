@@ -36,12 +36,18 @@ public class CharactersManager : CulverinBehaviour
     public GameObject player_obj; 
     public GameObject health_obj;
     public GameObject stamina_obj;
+    public GameObject leftamina_bar;
+    public GameObject leftmana_bar;
     public GameObject mana_obj;
 
     //To manage secondary abilities buttons
     public GameObject jaime_s_button_obj;
     public GameObject daenerys_s_button_obj;
     public GameObject theon_s_button_obj;
+
+    public GameObject jaime_s_button_obj_idle;
+    public GameObject daenerys_s_button_obj_idle;
+    public GameObject theon_s_button_obj_idle;
 
     public float puz_max_time;
     public float drown_dmg = 20;
@@ -56,7 +62,6 @@ public class CharactersManager : CulverinBehaviour
     public bool shield_activated = false;
 
     public GameObject camera;
-
     CompAudio audio;
 
     void Start()
@@ -71,9 +76,17 @@ public class CharactersManager : CulverinBehaviour
         stamina_obj = GetLinkedObject("stamina_obj");
         mana_obj = GetLinkedObject("mana_obj");
 
+        leftamina_bar = GetLinkedObject("leftamina_bar");
+        leftmana_bar = GetLinkedObject("leftmana_bar");
+
+        leftmana_bar.GetComponent<CompImage>().SetEnabled(false, GetLinkedObject("leftmana_bar"));
+
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
         daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
         theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
+        jaime_s_button_obj_idle = GetLinkedObject("jaime_s_button_obj_idle");
+        daenerys_s_button_obj_idle = GetLinkedObject("daenerys_s_button_obj_idle");
+        theon_s_button_obj_idle = GetLinkedObject("theon_s_button_obj_idle");
 
         camera = GetLinkedObject("camera");
 
@@ -154,8 +167,7 @@ public class CharactersManager : CulverinBehaviour
 
                     if (vari>0.8)
                     {
-                        SecondaryAbility(Side.LEFT);
-                        
+                        SecondaryAbility(Side.LEFT);                
                     }
 
                     vari = Input.GetInput_ControllerAxis("RAllyAttack", "Player");
@@ -245,19 +257,19 @@ public class CharactersManager : CulverinBehaviour
         // CURRENT CHARACTER -------------------------------
         if (current_character.GetName() == "Jaime")
         {
-            current_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.BEHIND);
+            current_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.BEHIND_LEFT);
             current_character.GetComponent<JaimeController>().UpdateHUD(false,true);
             current_character.GetComponent<JaimeController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Daenerys")
         {
-            current_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.BEHIND);
+            current_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.BEHIND_LEFT);
             current_character.GetComponent<DaenerysController>().UpdateHUD(false, true);
             current_character.GetComponent<DaenerysController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Theon")
         {
-            current_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.BEHIND);
+            current_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.BEHIND_LEFT);
             current_character.GetComponent<TheonController>().UpdateHUD(false, true);
             current_character.GetComponent<TheonController>().ToggleMesh(false);
         }
@@ -292,19 +304,19 @@ public class CharactersManager : CulverinBehaviour
         // CURRENT CHARACTER -------------------------------
         if (current_character.GetName() == "Jaime")
         {
-            current_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.BEHIND);
+            current_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.BEHIND_RIGHT);
             current_character.GetComponent<JaimeController>().UpdateHUD(false, false);
             current_character.GetComponent<JaimeController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Daenerys")
         {
-            current_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.BEHIND);
+            current_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.BEHIND_RIGHT);
             current_character.GetComponent<DaenerysController>().UpdateHUD(false, false);
             current_character.GetComponent<DaenerysController>().ToggleMesh(false);
         }
         else if (current_character.GetName() == "Theon")
         {
-            current_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.BEHIND);
+            current_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.BEHIND_RIGHT);
             current_character.GetComponent<TheonController>().UpdateHUD(false, false);
             current_character.GetComponent<TheonController>().ToggleMesh(false);
         }
@@ -513,7 +525,7 @@ public class CharactersManager : CulverinBehaviour
     //Call thius function to deal damage to the current character
     public bool GetDamage(float dmg)
     {
-
+        Input.RumblePlay(0.5f, 200);
         // Shield Ability Consumable
         if (player_obj.GetComponent<Shield>().IsActive())
         {
@@ -538,6 +550,7 @@ public class CharactersManager : CulverinBehaviour
                         jaime_controller.SetState(CharacterController.State.DEAD);
                         jaime_controller.jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
                         jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
 
                         //Deactivate Secondary ability button
                         jaime_s_button_obj.GetComponent<CompButton>().Deactivate();
@@ -562,6 +575,7 @@ public class CharactersManager : CulverinBehaviour
                     daenerys_controller.SetState(CharacterController.State.DEAD);
                     daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
                     daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                    daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
 
                     //Deactivate Secondary ability button
                     daenerys_s_button_obj.GetComponent<CompButton>().Deactivate();
@@ -581,6 +595,7 @@ public class CharactersManager : CulverinBehaviour
                     theon_controller.SetState(CharacterController.State.DEAD);
                     theon_controller.theon_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
                     theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                    theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
 
                     //Deactivate Secondary ability button
                     theon_s_button_obj.GetComponent<CompButton>().Deactivate();

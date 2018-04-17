@@ -33,7 +33,11 @@ public class EnemiesManager : CulverinBehaviour
             Debug.Log("[error] EnemiesManager: Sword_enemies is null");
         }
         else
+        {
             sword_enemies.Remove(enemy);
+            EnemySword_BT temp_bt = enemy.GetComponent<EnemySword_BT>();
+            temp_bt.DeactivateHUD(temp_bt.sword_icon, temp_bt.sword_name);
+        }
     }
 
     public void AddLanceEnemy(GameObject enemy)
@@ -51,7 +55,11 @@ public class EnemiesManager : CulverinBehaviour
         if (lance_enemies == null)
             Debug.Log("[error] EnemiesManager: Lance_enemies is null");
         else
+        {
             lance_enemies.Remove(enemy);
+            EnemySpear_BT temp_bt = enemy.GetComponent<EnemySpear_BT>();
+            temp_bt.DeactivateHUD(temp_bt.spear_icon, temp_bt.spear_name);
+        }
     }
 
     public void AddShieldEnemy(GameObject enemy)
@@ -67,7 +75,11 @@ public class EnemiesManager : CulverinBehaviour
         if (shield_enemies == null)
             Debug.Log("[error] EnemiesManager: Shield_enemies is null");
         else
+        {
             shield_enemies.Remove(enemy);
+            EnemyShield_BT temp_bt = enemy.GetComponent<EnemyShield_BT>();
+            temp_bt.DeactivateHUD(temp_bt.shield_icon, temp_bt.shield_name);
+        }
     }
 
     public void AddBoss(GameObject boss_)

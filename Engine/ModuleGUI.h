@@ -12,6 +12,12 @@
 
 class GameObject;
 
+#ifdef _DEBUG
+#define DEBUGMODE true
+#else
+#define DEBUGMODE false
+#endif
+
 #define IM_NEWLINE "\r\n"
 
 enum WindowName
@@ -70,6 +76,7 @@ public:
 	bool show_test = false;
 	bool is_saved = false;
 	bool develop_mode = false;
+
 	std::vector<WindowManager*> win_manager;
 
 	//RANDOM NUMBERS TEST ----------

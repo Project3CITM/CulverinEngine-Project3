@@ -1,7 +1,8 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using System;
 
-public class Boss_BT : Enemy_BT
+public class Boss_BT : BT
 {
-    
+   
 }

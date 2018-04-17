@@ -3,6 +3,5 @@ using CulverinEditor;
 
 public class BossAttackSwordDown_Action : Action
 {
-
-
+    
 }

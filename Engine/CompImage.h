@@ -24,6 +24,8 @@ public:
 	void Update(float dt);
 	void ShowOptions();
 	void ShowInspectorInfo();
+	void ShowMethodInfo();
+
 	void FillAmount(float value);
 
 	void CopyValues(const CompImage * component);
@@ -75,5 +77,6 @@ private:
 	uint uuid_source_image = 0;
 	bool select_source_image = false;
 	float filled = 1.0f;
+	bool radial_inverse = true;
 };
 #endif//COMPONENT_IMAGE_H
