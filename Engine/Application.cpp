@@ -493,7 +493,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system_v2))
+			if (((*item) == camera) || ((*item) == event_system_v2) || ((*item) == renderer3D))
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 				ret = (*item)->PostUpdate(real_time.dt);
