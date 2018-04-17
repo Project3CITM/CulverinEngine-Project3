@@ -125,7 +125,7 @@ public class TheonController : CharacterController
             if (!movement.IsMoving())
             {
                 /* Player is alive */
-                Debug.Log("THEON STATE:" + state, Department.PLAYER);
+
                 switch (state)
                 {
                     case State.IDLE:

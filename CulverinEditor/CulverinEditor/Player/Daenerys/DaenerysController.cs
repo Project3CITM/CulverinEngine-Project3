@@ -112,7 +112,7 @@ public class DaenerysController : CharacterController
             if (!movement.IsMoving())
             {
                 /* Player is alive */
-                Debug.Log("DAENERYS STATE:" + state, Department.PLAYER);
+
                 switch (state)
                 {
                     case State.IDLE:
