@@ -103,9 +103,9 @@ private:
 
 	// Some directional light variables on shadow map render
 	// On directional light shadow map calculations, distance from the scene camera to look at from shadow map camera
-	float distanceFromSceneCameraToLookAt = 1.0f;
-	float projSize = 10.0f, nearPlane = 1.0f, farPlane = 20.0;
-	float distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos = 1.0f;
+	float distanceFromSceneCameraToLookAt = 20.0f;
+	float projSize = 20.0f, nearPlane = 1.0f, farPlane = 60.0;
+	float distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos = 20.0f;
 };
 
 #endif // __MODULELIGHTNING_H__

@@ -217,16 +217,17 @@ update_status ModuleLightning::Update(float dt)
 
 		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
 			float3 dir = light->GetParent()->GetComponentTransform()->GetEulerToDirection();
-			dir = dir.Normalized() * distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos;
+			dir = dir.Normalized();
 
-			Frustum* frustum = &App->renderer3D->GetActiveCamera()->frustum;
+			
+			Frustum* frustum = /*&App->renderer3D->game_camera->frustum;//*/&App->renderer3D->GetActiveCamera()->frustum;
 
 			glm::vec3 lDir = glm::vec3(dir.x, dir.y, dir.z);
 			glm::vec3 camPos = glm::vec3(frustum->pos.x, frustum->pos.y, frustum->pos.z);
 
 			glm::vec3 lookPos = camPos + (glm::vec3(frustum->front.x, frustum->front.y, frustum->front.z) * distanceFromSceneCameraToLookAt);
 
-			glm::vec3 eye = lookPos + lDir;
+			glm::vec3 eye = lookPos + (lDir * distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos);
 			
 			glm::mat4 biasMatrix(
 				0.5, 0.0, 0.0, 0,
