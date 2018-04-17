@@ -137,8 +137,8 @@ struct ECubeMapRequest
 struct ECubeMapDraw
 {
 	uint64_t event_data = 0;
-	const std::multimap<uint, Event>* MM3DDrawEvent = nullptr;
-
+	//const std::multimap<uint, Event>* MM3DDrawEvent = nullptr;
+	const std::vector<GameObject*>* all_gameobjects = nullptr;
 };
 
 

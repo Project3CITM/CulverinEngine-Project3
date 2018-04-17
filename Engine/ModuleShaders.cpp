@@ -1140,6 +1140,21 @@ void ModuleShaders::SetUniformVariables(Material * material)
 			material->it_color_variables++;
 		}
 
+	//Textures
+	if (material->textures.size() != 0)
+	{
+		for (uint i = 0; i < material->textures.size(); i++)
+		{
+			uint texLoc = glGetUniformLocation(material->GetProgramID(), material->textures[i].var_name.c_str());
+			glUniform1i(texLoc, i);
+			glActiveTexture(GL_TEXTURE0 + i);
+			if (material->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+			else glBindTexture(GL_TEXTURE_2D, material->textures[i].value->GetTextureID());
+		}
+
+	}
+
+
 	material->RestartIterators();
 }
 

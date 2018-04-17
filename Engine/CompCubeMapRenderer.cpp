@@ -57,7 +57,7 @@ void CompCubeMapRenderer::Bake(Event& event)
 	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
 	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
 
-	uint sh_id = App->renderer3D->cube_map_shader->programID;
+	
 	App->renderer3D->cube_map_shader->Bind();
 	for (uint i = 0; i < 6; ++i)
 	{
@@ -66,14 +66,19 @@ void CompCubeMapRenderer::Bake(Event& event)
 		glClear(GL_COLOR_BUFFER_BIT);
 		//GET VECTOR OF GAMEOBJECTS
 	
-		for (std::multimap<uint, Event>::const_iterator item = event.cube_map_draw.MM3DDrawEvent->begin(); item != event.cube_map_draw.MM3DDrawEvent->end(); item++)
+		for (std::vector<GameObject*>::const_iterator item = event.cube_map_draw.all_gameobjects->begin(); item != event.cube_map_draw.all_gameobjects->end(); item++)
 		{
+				
+			CompMesh* m = (*item)->GetComponentMesh();
 
-			CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
-			//m->GetMaterial()->material->Bind();
+			if (m == nullptr)
+				continue;
+
+			uint sh_id = m->GetMaterial()->material->GetProgramID();
+			m->GetMaterial()->material->Bind();
 			float3 object_pos = m->GetGameObjectPos();
 
-			CompTransform* transform = (CompTransform*)m->GetParent()->FindComponentByType(C_TRANSFORM);
+			CompTransform* transform = (*item)->GetComponentTransform();
 			float4x4 matrixfloat = transform->GetGlobalTransform();
 
 			GLfloat matrix[16] =
@@ -84,7 +89,7 @@ void CompCubeMapRenderer::Bake(Event& event)
 				matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
 			};
 
-		
+			App->module_shaders->SetUniformVariables(m->GetMaterial()->material);
 
 			GLint modelLoc = glGetUniformLocation(sh_id, "model");
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
@@ -95,13 +100,23 @@ void CompCubeMapRenderer::Bake(Event& event)
 			glUniform1f(glGetUniformLocation(sh_id, "_far_plane"), far_plane);
 			glUniform3fv(glGetUniformLocation(sh_id, "_light_pos"), 1, &l_pos.x);
 
+
+			int total_save_buffer = 14;
 			ResourceMesh* mesh = m->resource_mesh;
 			glBindBuffer(GL_ARRAY_BUFFER, mesh->id_total_buffer);
 
+
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (char*)NULL + (0 * sizeof(float)));
-
-
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) , (char *)NULL + (3 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (5 * sizeof(float)));
+			glEnableVertexAttribArray(5);
+			glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (8 * sizeof(float)));
+			glEnableVertexAttribArray(6);
+			glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) , (char *)NULL + (11 * sizeof(float)) );
+			
 			glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indices_id);
 			glDrawElements(GL_TRIANGLES, mesh->num_indices, GL_UNSIGNED_INT, NULL);
@@ -133,3 +148,4 @@ void CompCubeMapRenderer::ShowInspectorInfo()
 	}
 	ImGui::TreePop();
 }
+
