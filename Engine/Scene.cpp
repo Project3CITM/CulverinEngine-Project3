@@ -1272,10 +1272,23 @@ Component* Scene::BlitSceneComponentsAsButtons(Comp_Type type, std::string& curr
 	//ImGui::PushItemWidth(150);
 	ImGui::Text("Select: "); ImGui::SameLine();
 
+	
+
 	if (ImGui::BeginCombo("##SelectComponent", current_item.c_str()))
 	{
+		static char comp_name[100];
+		ImGui::InputText("Name: ", comp_name, 99); 
+
 		for (int i = 0; i < temp_vector.size(); i++)
 		{
+			std::string tmp = temp_vector[i]->GetParent()->GetName();
+			std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+
+			if (tmp.find(comp_name) == std::string::npos)
+			{
+			 continue;
+			}
+
 			char buffer[100];
 			if (temp_vector[i]->GetType() == Comp_Type::C_SCRIPT)
 			{
