@@ -41,6 +41,8 @@ public:
 	int GetDefaultTexture()const;
 
 private:
+	void CorrectCanvasAlpha();
+	void SetCanvasAlpha(bool alpha_down);
 public:
 	enum DisplayMode
 	{
@@ -54,6 +56,8 @@ private:
 	CompRectTransform* my_transform = nullptr;
 	std::vector<CompGraphic*> graphic_vector;
 	ShaderProgram* default_ui_shader = nullptr;
+	float canvas_alpha = 1.0f;
+	float current_canvas_alpha = 1.0f;
 
 };
 

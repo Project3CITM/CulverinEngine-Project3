@@ -38,7 +38,7 @@ public:
 	CompCanvasRender* GetCanvasRender()const;
 	float4 GetColor()const;
 	bool GetParentActive();
-
+	float GetAlpha()const;
 private:
 protected:
 	void ProcesQuad(std::vector<float3>& position, std::vector<float3>& texture_cord);

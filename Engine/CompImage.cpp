@@ -233,7 +233,7 @@ void CompImage::ShowInspectorInfo()
 
 
 				}
-				SetTextureID(controller_image->GetTextureID());
+				DeviceCheck();
 				Enable();
 			}
 		}

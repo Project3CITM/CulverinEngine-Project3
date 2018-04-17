@@ -127,7 +127,17 @@ void CompCanvas::ShowInspectorInfo()
 		ShowOptions();
 		ImGui::EndPopup();
 	}
-
+	if (ImGui::DragFloat("Canvas Alpha##canvas_image", &canvas_alpha,0.1f,0.0f,1.0f))
+	{
+		CorrectCanvasAlpha();
+		bool down = false;
+		if (canvas_alpha<=current_canvas_alpha)
+		{
+			down = true;
+		}
+		current_canvas_alpha = canvas_alpha;
+		SetCanvasAlpha(down);
+	}
 	ImGui::TreePop();
 }
 
@@ -141,6 +151,9 @@ void CompCanvas::Save(JSON_Object* object, std::string name, bool saveScene, uin
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+
+	json_object_dotset_number_with_std(object, name + "Canvas Alpha", current_canvas_alpha);
 	//...
 }
 
@@ -148,6 +161,8 @@ void CompCanvas::Load(const JSON_Object* object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	default_ui_shader=App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert,nullptr,true);
+	current_canvas_alpha = json_object_dotget_number_with_std(object, name + "Canvas Alpha");
+	canvas_alpha = current_canvas_alpha;
 
 	//...
 	Enable();
@@ -329,5 +344,32 @@ void CompCanvas::SetDefaultTexture(int texture)
 int CompCanvas::GetDefaultTexture()const
 {
 	return default_texture_id;
+}
+
+void CompCanvas::CorrectCanvasAlpha()
+{
+	if (canvas_alpha < 0.0f)
+		canvas_alpha = 0.0f;
+	else if (canvas_alpha > 1.0f)
+		canvas_alpha = 1.0f;
+}
+
+void CompCanvas::SetCanvasAlpha(bool alpha_down)
+{
+	for (int i = 0; i < graphic_vector.size(); i++)
+	{
+		if(alpha_down)
+		{
+			if (graphic_vector[i]->GetAlpha() < current_canvas_alpha)
+				graphic_vector[i]->SetAlpha(current_canvas_alpha);
+
+		}
+		else
+		{
+			if (graphic_vector[i]->GetAlpha()> current_canvas_alpha)
+				graphic_vector[i]->SetAlpha(current_canvas_alpha);
+
+		}
+	}
 }
 

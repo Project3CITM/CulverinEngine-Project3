@@ -179,6 +179,11 @@ bool CompGraphic::GetParentActive()
 	return parent->IsActive();
 }
 
+float CompGraphic::GetAlpha() const
+{
+	return color.w;
+}
+
 void CompGraphic::ProcesQuad(std::vector<float3>& position, std::vector<float3>& texture_cord)
 {
 	uint indice_position = vertex_data.current_vertex_count;
