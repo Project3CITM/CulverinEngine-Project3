@@ -29,7 +29,8 @@ struct Culverin_Screenshot
 
 enum Culverin_PartGif_STATE
 {
-	Culverin_PartGif_STATE_CAN_START,
+	Culverin_PartGif_STATE_CAN_START_OR_WAITING_FOR_POINT1,
+	Culverin_PartGif_STATE_WAITING_FOR_POINT2,
 	Culverin_PartGif_STATE_RUNNING
 };
 
@@ -39,7 +40,7 @@ struct Culverin_Gif
 	int PartScreenKey = SDL_Scancode::SDL_SCANCODE_7;
 
 	unsigned char* pixels = nullptr;
-	Culverin_PartGif_STATE Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START;
+	Culverin_PartGif_STATE Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START_OR_WAITING_FOR_POINT1;
 
 	void TakeFullScreen(float dt);
 	void TakePartScreen(float dt);

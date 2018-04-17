@@ -80,9 +80,11 @@ GifWriter gif_writer;
 
 void Culverin_Gif::TakeFullScreen(float dt)
 {
+	if (Gif_State == Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING) return;
+
 	switch (Gif_State)
 	{
-	case Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START:
+	case Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START_OR_WAITING_FOR_POINT1:
 		if (App->input->GetKey(FullScreenKey) == KEY_DOWN)
 		{
 			time_t now = time(0);
@@ -108,7 +110,7 @@ void Culverin_Gif::TakeFullScreen(float dt)
 			GifEnd(&gif_writer);
 			RELEASE_ARRAY(pixels);
 			ScreenshotsNum++;
-			Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START;
+			Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START_OR_WAITING_FOR_POINT1;
 		}
 		break;
 	}
@@ -116,5 +118,27 @@ void Culverin_Gif::TakeFullScreen(float dt)
 
 void Culverin_Gif::TakePartScreen(float dt)
 {
+	if (Gif_State == Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING) return;
 
+	switch (Gif_State)
+	{
+	case Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START_OR_WAITING_FOR_POINT1:
+		if (App->input->GetKey(FullScreenKey) == KEY_DOWN)
+		{
+			Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT2;
+		}
+		break;
+	case Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT2:
+		if (App->input->GetKey(FullScreenKey) == KEY_DOWN)
+		{
+			Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING;
+		}
+		break;
+	case Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING:
+		if (App->input->GetKey(FullScreenKey) == KEY_DOWN)
+		{
+			Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START_OR_WAITING_FOR_POINT1;
+		}
+		break;
+	}
 }
