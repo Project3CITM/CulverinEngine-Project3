@@ -217,14 +217,16 @@ update_status ModuleLightning::Update(float dt)
 
 		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
 			float3 dir = light->GetParent()->GetComponentTransform()->GetEulerToDirection();
-			dir = dir.Normalized();
+			dir = dir.Normalized() * distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos;
 
-			float3 cameraPos = App->renderer3D->GetActiveCamera()->frustum.pos;
+			Frustum* frustum = &App->renderer3D->GetActiveCamera()->frustum;
 
 			glm::vec3 lDir = glm::vec3(dir.x, dir.y, dir.z);
-			glm::vec3 camPos = glm::vec3(cameraPos.x, cameraPos.y, cameraPos.z);
+			glm::vec3 camPos = glm::vec3(frustum->pos.x, frustum->pos.y, frustum->pos.z);
 
-			glm::vec3 eye = camPos + lDir;
+			glm::vec3 lookPos = camPos + (glm::vec3(frustum->front.x, frustum->front.y, frustum->front.z) * distanceFromSceneCameraToLookAt);
+
+			glm::vec3 eye = lookPos + lDir;
 			
 			glm::mat4 biasMatrix(
 				0.5, 0.0, 0.0, 0,
@@ -232,11 +234,9 @@ update_status ModuleLightning::Update(float dt)
 				0.0, 0.0, 0.5, 0,
 				0.5, 0.5, 0.5, 1.0
 			);
-
-			float projSize = 10.0f, nearPlane = 1.0f, farPlane = 20.0;
-
+			
 			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-projSize, projSize, -projSize, projSize, nearPlane, farPlane);
-			glm::mat4 depthViewMatrix = glm::lookAt(eye, camPos, glm::vec3(0, 1, 0));
+			glm::mat4 depthViewMatrix = glm::lookAt(eye, lookPos, glm::vec3(0, 1, 0));
 
 
 			light->depthMVPMat = depthProjectionMatrix * depthViewMatrix;
@@ -675,6 +675,12 @@ update_status ModuleLightning::UpdateConfig(float dt)
 
 	ImGui::Text("Lights used on frame:"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", frame_used_lights.size());
+
+	ImGui::DragFloat("Distance from camera front to render shadow map", &distanceFromSceneCameraToLookAt, 1.0f, 1.0f, 100.0f);
+	ImGui::DragFloat("Shadow map camera size", &projSize, 1.0f, 10.0f, 100.0f);
+	ImGui::DragFloat("Shadow map camera near plane dist", &nearPlane, 1.0f, 1.0f, 100.0f);
+	ImGui::DragFloat("Shadow map camera far plane dist", &farPlane, 1.0f, 10.0f, 100.0f);
+	ImGui::DragFloat("Shadow map camera distance from look at position", &distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos, 1.0f, 1.0f, 100.0f);
 	
 	int u_l = shadow_cast_points_count;
 	if(ImGui::DragInt("Set used lights", &u_l, 1, 0, 8))
