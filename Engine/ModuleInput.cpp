@@ -11,7 +11,7 @@
 #include "PlayerActions.h"
 #include "InputManager.h"
 #include "JSONSerialization.h"
-#include "KeyBinding.h"
+
 #define MAX_KEYS 300
 #define MAX_MILLISECONDS 2000
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
@@ -111,6 +111,7 @@ update_status ModuleInput::PreUpdate(float dt)
 {
 	perf_timer.Start();
 	press_any_key = false;
+	update_new_device = false;
 	SDL_PumpEvents();
 	player_action->UpdateInputsManager();
 
@@ -585,6 +586,22 @@ void ModuleInput::UIInputManagerUpdate()
 SDL_Scancode ModuleInput::GetKeyFromName(const char* name)
 {
 	return SDL_GetScancodeFromName(name);
+}
+
+bool ModuleInput::GetUpdateNewDevice() const
+{
+	return update_new_device;
+}
+
+DeviceCombinationType ModuleInput::GetActualDeviceCombo() const
+{
+	return actual_device_combo;
+}
+
+void ModuleInput::UpdateDeviceType(DeviceCombinationType actual_player_action)
+{
+	update_new_device = true;
+	actual_device_combo = actual_player_action;
 }
 
 void ModuleInput::RumblePlay(float intensity, int milliseconds)

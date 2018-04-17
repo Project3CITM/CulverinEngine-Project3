@@ -27,7 +27,7 @@ public:
 	void ShowMethodInfo();
 
 	void FillAmount(float value);
-
+	void DeviceCheck();
 	void CopyValues(const CompImage * component);
 	void Clear();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
@@ -71,11 +71,14 @@ public:
 private:
 	//CompImage * slide = nullptr;
 	ResourceMaterial* source_image = nullptr;
+	ResourceMaterial* controller_image = nullptr;
 	ResourceMaterial* overwrite_image = nullptr;
 	Type type = SIMPLE;
 	FillMethod method = HORITZONTAL;
 	uint uuid_source_image = 0;
 	bool select_source_image = false;
+	bool select_controller_source_image = false;
+
 	float filled = 1.0f;
 	bool radial_inverse = true;
 };

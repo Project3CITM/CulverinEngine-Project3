@@ -32,7 +32,6 @@ public:
 	void SetToRender(bool render);
 	void SetCanDraw(bool render);
 	void SetRaycastTarget(bool flag);
-	void SetInteractive(CompInteractive* set_interactive);
 	bool GetToRender()const;
 	uint GetTextureID()const;
 	CompRectTransform* GetRectTrasnform()const;
@@ -49,10 +48,12 @@ protected:
 	virtual void ExpandMesh();
 	void GenerateMesh();
 	bool CheckRender();
-
+	virtual void DeviceCheck();
 protected:	
 	bool can_draw = true;
 	bool invalid = false;
+	bool device_swap = false;
+	bool device_swap_active = false;
 
 	VertexUIData vertex_data;
 	bool render = true;
@@ -60,7 +61,6 @@ protected:
 	CompCanvas* my_canvas = nullptr;
 	CompCanvasRender* my_canvas_render = nullptr;
 	CompRectTransform* transform = nullptr;
-	CompInteractive* interactive = nullptr;
 	uint texture_id = 0;
 	float4 color = float4::one;
 

@@ -35,7 +35,7 @@ void PlayerActions::UpdateConfig(float dt)
 		{
 			for (int i = interactive_vector.size(); i < number_of_inputs; i++)
 			{
-				InputManager* input_manager = new InputManager();
+				InputManager* input_manager = new InputManager(this);
 				interactive_vector.push_back(input_manager);
 				std::string temp_name = "Input " + std::to_string(number_of_inputs);
 				input_manager->SetName(temp_name.c_str());
@@ -455,4 +455,12 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 
 	}
 	return 0;
+}
+
+void PlayerActions::SendNewDeviceCombinationType(DeviceCombinationType type)
+{
+	if (actual_player_action == type)
+		return;
+	actual_player_action = type;
+	my_module->UpdateDeviceType(actual_player_action);
 }

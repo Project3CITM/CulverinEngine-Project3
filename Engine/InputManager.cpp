@@ -2,10 +2,11 @@
 #include "ImGui/imgui.h"
 #include "InputAction.h"
 #include"Application.h"
+#include "PlayerActions.h"
 #define ACTION_LIMIT 50
 #define MAX_INPUT 25
 
-InputManager::InputManager()
+InputManager::InputManager(PlayerActions* my_player_action):my_player_action(my_player_action)
 {
 }
 
@@ -81,6 +82,7 @@ bool InputManager::ProcessEvent(SDL_Event * input_event)
 	{
 		if ((*it)->ProcessEventAction(input_event))
 		{
+			my_player_action->SendNewDeviceCombinationType((*it)->positive_button->device);
 			active_action.push_back(*(it));
 			return true;
 		}

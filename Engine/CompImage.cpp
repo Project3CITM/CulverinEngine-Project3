@@ -10,6 +10,7 @@
 #include "CompRectTransform.h"
 #include "CompCanvas.h"
 #include "ModuleFS.h"
+#include "ModuleInput.h"
 
 CompImage::CompImage(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
@@ -77,6 +78,15 @@ void CompImage::Update(float dt)
 			transform->SetUpdateRect(false);
 		}
 	}
+	if (device_swap)
+	{
+		if (App->input->GetUpdateNewDevice())
+		{
+			DeviceCheck();
+			
+		}
+	}
+
 	render = CheckRender();
 
 }
@@ -150,10 +160,25 @@ void CompImage::ShowInspectorInfo()
 		ImGui::Image((ImTextureID*)source_image->GetTextureID(), ImVec2(170, 170), ImVec2(-1, 1), ImVec2(0, 0));
 
 	}		
-	
 	if (ImGui::Button("Select Sprite..."))
 	{
-		select_source_image = true;
+		if (!select_controller_source_image)
+			select_source_image = true;
+	}
+	ImGui::Checkbox("Sprite Swap(Controller)", &device_swap);
+	if (device_swap)
+	{
+		if (controller_image != nullptr)
+		{
+		ImGui::Image((ImTextureID*)controller_image->GetTextureID(), ImVec2(170, 170), ImVec2(-1, 1), ImVec2(0, 0));
+
+		}
+	
+		if (ImGui::Button("Select Controller Sprite..."))
+		{
+			if(!select_source_image)
+				select_controller_source_image = true;
+		}
 	}
 	ImGui::ColorEdit4("Color##image_rgba", color.ptr());
 	ImGui::Checkbox("RayCast Target", &raycast_target);
@@ -176,13 +201,41 @@ void CompImage::ShowInspectorInfo()
 				if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
-					
+
 
 				}
 				SetTextureID(source_image->GetTextureID());
 				Enable();
 			}
 		}
+	}
+	if (controller_image == nullptr || select_controller_source_image)
+	{
+		if (select_controller_source_image)
+		{
+			ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(select_controller_source_image, Resource::Type::MATERIAL);
+			if (temp != nullptr)
+			{
+				if (controller_image != nullptr)
+				{
+					if (controller_image->num_game_objects_use_me > 0)
+					{
+						controller_image->num_game_objects_use_me--;
+					}
+				}
+				controller_image = temp;
+				controller_image->num_game_objects_use_me++;
+				if (controller_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(controller_image->GetUUID()).c_str(), controller_image);
+
+
+				}
+				SetTextureID(controller_image->GetTextureID());
+				Enable();
+			}
+		}
+		
 	}
 	int selection = type;
 	ImGui::Text("Image Type:"); ImGui::SameLine();
@@ -246,6 +299,18 @@ void CompImage::FillAmount(float value)
 	filled = value;
 
 	GenerateMesh();
+}
+void CompImage::DeviceCheck()
+{
+	if (DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE == App->input->GetActualDeviceCombo())
+	{
+		device_swap_active = false;
+	}
+	else if (DeviceCombinationType::CONTROLLER_COMB_DEVICE == App->input->GetActualDeviceCombo())
+	{
+		device_swap_active = true;
+	}
+	UpdateSpriteId();
 }
 void CompImage::GenerateFilledSprite()
 {
@@ -410,7 +475,29 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", 0);
 	}
+	json_object_dotset_boolean_with_std(object, name + "Device Swap", device_swap);
+	json_object_dotset_boolean_with_std(object, name + "Device Swap Active", device_swap_active);
+	json_object_dotset_boolean_with_std(object, name + "Invalid", invalid);
+	json_object_dotset_boolean_with_std(object, name + "Can draw", can_draw);
 
+	if (device_swap)
+	{
+		if (controller_image != nullptr)
+		{
+			if (saveScene == false)
+			{
+				// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
+				std::string temp = std::to_string(countResources++);
+				json_object_dotset_number_with_std(object, "Info.Resources.ControllerResource " + temp + ".UUID Resource", controller_image->GetUUID());
+				json_object_dotset_string_with_std(object, "Info.Resources.ControllerResource " + temp + ".Name", controller_image->name.c_str());
+			}
+			json_object_dotset_number_with_std(object, name + "Resource Controller UUID", controller_image->GetUUID());
+		}
+		else
+		{
+			json_object_dotset_number_with_std(object, name + "Resource Controller UUID", 0);
+		}
+	}
 	json_object_dotset_boolean_with_std(object, name + "RayCast Target", raycast_target);
 	json_object_dotset_number_with_std(object, name + "Fill Amount", filled);
 	json_object_dotset_number_with_std(object, name + "Image Type", type);
@@ -443,6 +530,31 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 			UpdateSpriteId();
 		}
 	}
+
+	device_swap = json_object_dotget_boolean_with_std(object, name + "Device Swap");
+	device_swap_active= json_object_dotget_boolean_with_std(object, name + "Device Swap Active");
+
+	invalid = json_object_dotget_boolean_with_std(object, name + "Invalid");
+	can_draw = json_object_dotget_boolean_with_std(object, name + "Can draw");
+	if (device_swap)
+	{
+		uint resource_controllerID = json_object_dotget_number_with_std(object, name + "Resource Controller UUID");
+		if (resource_controllerID > 0)
+		{
+			controller_image = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+			if (controller_image != nullptr)
+			{
+				controller_image->num_game_objects_use_me++;
+
+				// LOAD Image ----------------------------
+				if (controller_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(controller_image->GetUUID()).c_str(), controller_image);
+				}
+				UpdateSpriteId();
+			}
+		}
+	}
 	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
 	filled=json_object_dotget_number_with_std(object, name + "Fill Amount");
 	type = static_cast<CompImage::Type>((int)json_object_dotget_number_with_std(object, name + "Image Type"));
@@ -460,11 +572,21 @@ void CompImage::UpdateSpriteId()
 {
 	if (overwrite_image == nullptr)
 	{
+		
 		if (source_image == nullptr)
 		{
 			// return default texture;
 			SetTextureID(my_canvas->GetDefaultTexture());
 			return;
+		}
+		if (device_swap_active)
+		{
+			if (controller_image != nullptr)
+			{
+			// return default texture;
+				SetTextureID(controller_image->GetTextureID());
+				return;
+			}
 		}
 		SetTextureID(source_image->GetTextureID());
 		return;
@@ -490,6 +612,8 @@ void CompImage::SetColor(float set_r, float set_g, float set_b, float set_a)
 
 void CompImage::SetTextureID(uint uid)
 {
+	if (texture_id == uid)
+		return;
 	texture_id = uid;
 }
 

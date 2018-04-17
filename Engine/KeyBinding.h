@@ -1,10 +1,10 @@
 #ifndef MODULE_KEY_BINDING_H_
 #define MODULE_KEY_BINDING_H_
-#include "Module.h"
 #include"SDL\include\SDL_scancode.h"
 #include"SDL\include\SDL_gamecontroller.h"
 #include"SDL\include\SDL_events.h"
-
+#include <string>
+#include <vector>
 
 enum DeviceCombinationType {
 

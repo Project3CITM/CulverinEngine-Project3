@@ -138,13 +138,7 @@ void CompGraphic::SetRaycastTarget(bool flag)
 	raycast_target = flag;
 }
 
-void CompGraphic::SetInteractive(CompInteractive * set_interactive)
-{
-	if (this != nullptr)
-	{
-		interactive = set_interactive;
-	}
-}
+
 
 bool CompGraphic::GetToRender() const
 {
@@ -235,4 +229,8 @@ bool CompGraphic::CheckRender()
 	if(invalid|| !IsActive())
 		return false;
 	return can_draw;
+}
+
+void CompGraphic::DeviceCheck()
+{
 }

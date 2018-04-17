@@ -121,7 +121,6 @@ void CompInteractive::Update(float dt)
 
 void CompInteractive::Clear()
 {
-	target_graphic->SetInteractive(nullptr);
 	target_graphic = nullptr;
 	image = nullptr;
 	if (!iteractive_list.empty())
@@ -550,7 +549,6 @@ void CompInteractive::SetTargetGraphic(CompGraphic * set_target_graphic)
 	if (set_target_graphic == nullptr)
 		return;
 	target_graphic = set_target_graphic;
-	target_graphic->SetInteractive(this);
 	target_graphic_uid = target_graphic->GetUUID();
 	TryConversion();
 }
