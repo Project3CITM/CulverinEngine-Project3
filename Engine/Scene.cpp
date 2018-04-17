@@ -182,6 +182,7 @@ update_status Scene::PreUpdate(float dt)
 		}
 		else
 		{
+			BROFILER_CATEGORY("Scene: PreUpdate", Profiler::Color::Red);
 			root->PreUpdate(dt);
 		}
 	}
@@ -227,6 +228,7 @@ update_status Scene::Update(float dt)
 	}
 	else
 	{
+		BROFILER_CATEGORY("Scene: Update", Profiler::Color::Red);
 		root->Update(dt);
 	}
 

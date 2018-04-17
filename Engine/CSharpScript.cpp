@@ -47,7 +47,7 @@ void ScriptVariable::SetMonoValue(void* newVal)
 			/*MonoObject* object = mono_field_get_value_object(App->importer->iScript->GetDomain(), mono_field, script->GetMonoObject());
 
 			//script->game_objects[object] = game_object;*/
-			//App->importer->iScript->UpdateMonoMap(game_object);
+			App->importer->iScript->UpdateMonoMap(game_object);
 			std::string temp = mono_field_get_name(mono_field);
 			App->importer->iScript->map_link_variables.insert(std::pair<std::string, GameObject*>(temp, game_object));
 		}

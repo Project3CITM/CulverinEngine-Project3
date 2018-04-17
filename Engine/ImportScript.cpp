@@ -406,6 +406,17 @@ void ImportScript::SetMonoMap(GameObject* gameobject, bool is_root)
 
 	if (is_root == false)
 	{
+		if (GetMonoObject(gameobject) != nullptr)
+		{
+			return;
+		}
+		if (gameobject->GetNumComponents() == 1)
+		{
+			if (strcmp(gameobject->GetTag(), "undefined") == 0)
+			{
+				return;
+			}
+		}
 		MonoClass* c = mono_class_from_name(GetCulverinImage(), "CulverinEditor", "GameObject");
 		if (c)
 		{
