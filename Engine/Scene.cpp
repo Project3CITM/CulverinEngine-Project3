@@ -51,7 +51,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 	Start_enabled = true;
 	preUpdate_enabled = true;
 	Update_enabled = true;
-
+	
 	name = "Scene";
 	have_config = true;
 	load_scene = true;
@@ -160,6 +160,7 @@ bool Scene::Start()
 
 update_status Scene::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: Scene", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (root == nullptr)
@@ -216,6 +217,7 @@ update_status Scene::PreUpdate(float dt)
 
 update_status Scene::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: Scene", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	// Update GameObjects -----------
@@ -376,6 +378,7 @@ bool Scene::SetEventListenrs()
 
 void Scene::OnEvent(Event & event)
 {
+	BROFILER_CATEGORY("OnEvent: Scene", Profiler::Color::Blue);
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_DELETE_GO:

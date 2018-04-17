@@ -90,6 +90,7 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: ModuleCamera3D", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (App->engine_state == EngineState::STOP) //Block camera movement while game is executing

@@ -76,6 +76,7 @@ bool ModulePhysics::Start()
 // -----------------------------------------------------------------
 update_status ModulePhysics::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModulePhysics", Profiler::Color::Blue);
 	perf_timer.Start();
 	// Update Physics World
 	if (dt > 0) {
@@ -93,6 +94,7 @@ update_status ModulePhysics::PreUpdate(float dt)
 
 update_status ModulePhysics::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: ModulePhysics", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (dt > 0)
@@ -107,6 +109,7 @@ update_status ModulePhysics::Update(float dt)
 
 update_status ModulePhysics::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModulePhysics", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (!App->mode_game)
@@ -167,6 +170,8 @@ bool ModulePhysics::SetEventListenrs()
 
 void ModulePhysics::OnEvent(Event & event)
 {
+	BROFILER_CATEGORY("OnEvent: ModulePhysics", Profiler::Color::Blue);
+
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_TRIGGER_COLLISION:

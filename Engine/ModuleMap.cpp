@@ -62,6 +62,7 @@ bool ModuleMap::Start()
 
 update_status ModuleMap::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleMap", Profiler::Color::Blue);
 	perf_timer.Start();
 	if (imported_map.size() > 0)
 	{

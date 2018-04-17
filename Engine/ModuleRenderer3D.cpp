@@ -277,6 +277,7 @@ bool ModuleRenderer3D::Start()
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleRenderer3D", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	App->scene->scene_buff->Init("Scene");
@@ -293,10 +294,8 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModuleRenderer3D", Profiler::Color::Blue);
 	perf_timer.Start();
-
-
-
 
 	App->scene->horizontal_blur_buff->Bind("Scene");
 	BlurShaderVars(0);

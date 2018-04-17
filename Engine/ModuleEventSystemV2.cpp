@@ -92,6 +92,7 @@ update_status ModuleEventSystemV2::Update(float dt)
 
 update_status ModuleEventSystemV2::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModuleEventSystemV2", Profiler::Color::Blue);
 	perf_timer.Start();
 	IteratingMaps = true;
 	FrameBuffer* active_frame = nullptr;
@@ -165,6 +166,8 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 
 void ModuleEventSystemV2::IterateDrawV(float dt)
 {
+	BROFILER_CATEGORY("ModuleEventSystemV2: IterateDrawV", Profiler::Color::Blue);
+
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	Material* LastUsedMaterial = nullptr;
@@ -243,6 +246,7 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 
 void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 {
+	BROFILER_CATEGORY("ModuleEventSystemV2: IterateDrawGlowV", Profiler::Color::Blue);
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	bool UseGlow = false;
@@ -349,6 +353,8 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 
 void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 {
+	BROFILER_CATEGORY("ModuleEventSystemV2: IterateDrawAlphaV", Profiler::Color::Blue);
+
 	bool alpha_draw = false;
 	if (DrawAlphaV.size() > 0) alpha_draw = true;
 	if (alpha_draw)
@@ -439,6 +445,8 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 
 void ModuleEventSystemV2::IterateNoDrawV(float dt)
 {
+	BROFILER_CATEGORY("ModuleEventSystemV2: IterateNoDrawV", Profiler::Color::Blue);
+
 	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
 	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
 	{
@@ -474,6 +482,7 @@ void ModuleEventSystemV2::IterateNoDrawV(float dt)
 
 void ModuleEventSystemV2::IterateLightsV(float dt)
 {
+	BROFILER_CATEGORY("ModuleEventSystemV2: IterateLightsV", Profiler::Color::Blue);
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	Material* LastUsedMaterial = nullptr;

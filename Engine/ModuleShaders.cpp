@@ -70,6 +70,7 @@ update_status ModuleShaders::PreUpdate(float dt)
 
 update_status ModuleShaders::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: ModuleShaders", Profiler::Color::Blue);
 	perf_timer.Start();
 	std::vector<Material*>::iterator item = materials.begin();
 	static float time_dt = 0;
@@ -1002,6 +1003,7 @@ bool ModuleShaders::SetEventListenrs()
 
 void ModuleShaders::OnEvent(Event & event)
 {
+	BROFILER_CATEGORY("OnEvent: ModuleShaders", Profiler::Color::Blue);
 	std::string path;
 	switch (event.Get_event_data_type())
 	{

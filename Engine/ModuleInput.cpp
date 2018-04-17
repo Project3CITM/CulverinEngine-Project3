@@ -106,6 +106,7 @@ bool ModuleInput::Init(JSON_Object* node)
 // Called every draw update
 update_status ModuleInput::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleInput", Profiler::Color::Blue);
 	perf_timer.Start();
 	press_any_key = false;
 	SDL_PumpEvents();

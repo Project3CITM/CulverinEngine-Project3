@@ -58,6 +58,7 @@ bool ModuleAudio::SetEventListenrs()
 
 void ModuleAudio::OnEvent(Event& event)
 {
+	BROFILER_CATEGORY("OnEvent: ModuleAudio", Profiler::Color::Blue);
 	//ETimeManager::TIME_PLAY
 	switch (event.Get_event_data_type())
 	{
@@ -119,6 +120,7 @@ void ModuleAudio::OnEvent(Event& event)
 
 update_status ModuleAudio::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModuleAudio", Profiler::Color::Blue);
 	perf_timer.Start();
 	Wwished::ProcessAudio();
 	postUpdate_t = perf_timer.ReadMs();

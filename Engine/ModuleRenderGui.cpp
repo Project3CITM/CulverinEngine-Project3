@@ -50,6 +50,7 @@ bool ModuleRenderGui::Start()
 
 update_status ModuleRenderGui::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleRenderGui", Profiler::Color::Blue);
 	perf_timer.Start();
 
 
@@ -133,7 +134,7 @@ void ModuleRenderGui::ChangeSelected(Event & this_event)
 
 void ModuleRenderGui::OnEvent(Event & this_event)
 {
-
+	BROFILER_CATEGORY("OnEvent: ModuleRenderGui", Profiler::Color::Blue);
 	if (focus != nullptr)
 		this_event.pointer.focus = focus->GetParent();
 

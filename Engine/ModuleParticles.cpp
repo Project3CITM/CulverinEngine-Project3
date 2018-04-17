@@ -32,6 +32,7 @@ bool ModuleParticles::Init(JSON_Object* node)
 
 update_status ModuleParticles::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleParticles", Profiler::Color::Blue);
 	const CompCamera* camera = App->renderer3D->GetActiveCamera();
 	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); )
 	{
@@ -64,6 +65,7 @@ update_status ModuleParticles::PreUpdate(float dt)
 
 update_status ModuleParticles::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: ModuleParticles", Profiler::Color::Blue);
 	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); item++)
 	{
 		if ((*item)->distance_to_camera < (*item)->discard_distance)
@@ -87,6 +89,7 @@ update_status ModuleParticles::Update(float dt)
 
 update_status ModuleParticles::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModuleParticles", Profiler::Color::Blue);
 	perf_timer.Start();
 	postUpdate_t = perf_timer.ReadMs();
 

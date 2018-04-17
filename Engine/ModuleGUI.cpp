@@ -114,6 +114,7 @@ bool ModuleGUI::Start()
 
 update_status ModuleGUI::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: ModuleGUI", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	//ShowTest -----------------------
@@ -1320,6 +1321,7 @@ bool ModuleGUI::SetEventListenrs()
 
 void ModuleGUI::OnEvent(Event& event)
 {
+	BROFILER_CATEGORY("OnEvent: ModuleGUI", Profiler::Color::Blue);
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:

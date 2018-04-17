@@ -192,7 +192,6 @@ bool Application::Init()
 		{
 			if ((*item)->IsEnabled())
 			{
-				BROFILER_CATEGORY((*item)->name.c_str(), Profiler::Color::Yellow);
 				config_node = json_object_get_object(config, (*item)->name.c_str());
 				ret = (*item)->Init(config_node);
 				json_object_clear(config_node);
@@ -210,7 +209,6 @@ bool Application::Init()
 		{
 			if ((*item)->IsEnabled())
 			{
-				BROFILER_CATEGORY((*item)->name.c_str(), Profiler::Color::Yellow);
 				ret = (*item)->Start();
 			}
 			item++;
@@ -496,7 +494,7 @@ void Application::FinishUpdate()
 // Call PreUpdate, Update and PostUpdate on all modules
 update_status Application::Update()
 {
-	BROFILER_CATEGORY("Application Update", Profiler::Color::PaleVioletRed);
+	BROFILER_CATEGORY("Application PreUpdate", Profiler::Color::PaleVioletRed);
 	update_status ret = UPDATE_CONTINUE;
 	PrepareUpdate();
 
@@ -558,7 +556,7 @@ update_status Application::Update()
 	}
 
 	item = list_modules.begin();
-
+	BROFILER_CATEGORY("Application Update", Profiler::Color::PaleVioletRed);
 	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
 		if ((*item)->IsEnabled())
@@ -610,7 +608,7 @@ update_status Application::Update()
 		stop_perf = false;
 	}
 	//-----------------------------------------------
-
+	BROFILER_CATEGORY("Application PostUpdate", Profiler::Color::PaleVioletRed);
 	item = list_modules.begin();
 	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
@@ -962,7 +960,7 @@ void Application::SetState(EngineState state)
 						scene->scene_buff->WantRefreshRatio();
 
 						//To Save all elements in the scene to load them correctly when exiting Game Mode
-						actual_scene = json_seria->SaveScene();
+						//actual_scene = json_seria->SaveScene();
 					}
 				}
 

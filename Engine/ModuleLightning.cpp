@@ -189,6 +189,7 @@ bool ModuleLightning::Start()
 
 update_status ModuleLightning::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleLightning", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	//TODO: Should think on optimitzations on this.
@@ -210,7 +211,7 @@ update_status ModuleLightning::PreUpdate(float dt)
 
 update_status ModuleLightning::Update(float dt)
 {
-
+	BROFILER_CATEGORY("Update: ModuleLightning", Profiler::Color::Blue);
 	for (uint i = 0; i < frame_used_lights.size(); ++i)
 	{
 		if (frame_used_lights[i]->type == Light_type::DIRECTIONAL_LIGHT) {
@@ -284,6 +285,8 @@ bool ModuleLightning::CleanUp()
 
 void ModuleLightning::OnEvent(Event & event)
 {
+	BROFILER_CATEGORY("OnEvent: ModuleLightning", Profiler::Color::Blue);
+
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
 

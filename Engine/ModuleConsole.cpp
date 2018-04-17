@@ -63,6 +63,7 @@ Console::~Console()
 
 update_status Console::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: Console", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_UP)
