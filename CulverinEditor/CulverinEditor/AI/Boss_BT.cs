@@ -50,6 +50,7 @@ public class Boss_BT : BT
     public override void Start()
     {
         hp_bar_boss = GetLinkedObject("hp_bar_boss");
+        hp_bar_boss.GetComponent<BossHPBar>().ActivateHPBar(false);
         hp_bar_boss.SetActive(false);
         GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddBoss(gameObject);
         rand_gen = new System.Random();
@@ -215,6 +216,9 @@ public class Boss_BT : BT
             next_action = GetComponent<Die_Action>();
             current_action.Interupt();
             GetComponent<CompAudio>().PlayEvent("BossDeath");
+
+            hp_bar_boss.GetComponent<BossHPBar>().ActivateHPBar(false);
+            hp_bar_boss.SetActive(false);
 
             //todosforme
             GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
