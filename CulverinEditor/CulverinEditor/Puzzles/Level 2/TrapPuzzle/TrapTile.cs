@@ -81,6 +81,7 @@ public class TrapTile : CulverinBehaviour
                         map_level.UpdateMap(tile_x, tile_z, value);
                     }
                     audio.PlayEvent("DoorEnd");
+                    Input.RumblePlay(1.0f, 500);
                 }
             }
             else
@@ -97,7 +98,7 @@ public class TrapTile : CulverinBehaviour
                     GetComponent<Transform>().SetPosition(pos);
                     curr_state = CHANGE_STATE.TRAP_IDLE;
                     audio.PlayEvent("DoorEnd");
-
+                    Input.RumblePlay(1.0f, 500);
                 }
             }
         }

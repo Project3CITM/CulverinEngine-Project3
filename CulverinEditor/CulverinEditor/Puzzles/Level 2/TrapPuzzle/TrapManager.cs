@@ -52,6 +52,7 @@ public class TrapManager : CulverinBehaviour
 
     public void SwitchTraps()
     {
+        Input.RumblePlay(0.1f,1000);
         for (int i = 0; i < childs_to_switch.Count; i++)
         {
             childs_to_switch[i].GetComponent<TrapTile>().SwitchTileState();
