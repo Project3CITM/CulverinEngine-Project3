@@ -517,6 +517,13 @@ bool ModuleAnimation::LoadAnimation(AnimationJson ** animation, const char * pat
 					case ParameterValue::RECT_TRANSFORM_HEIGHT:
 						key_data_item.key_values.f_value = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data);
 						break;
+					case ParameterValue::IMAGE_ALPHA_VALUE:
+						key_data_item.key_values.i_value = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Alpha on time " + key_data);
+						break;
+					case ParameterValue::IMAGE_SPRITE_ANIM:
+						uint id = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "UUID Sprite on time " + key_data);
+						key_data_item.key_values.sprite = (ResourceMaterial*)App->resource_manager->GetResource(id);
+						break;
 					default:
 						break;
 					}
