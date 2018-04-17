@@ -236,7 +236,7 @@ public class MovementController : CulverinBehaviour
             GetComponent<Transform>().local_rotation = Vector3.Lerp(new Vector3(GetComponent<Transform>().local_rotation.x, GetComponent<Transform>().local_rotation.y, GetComponent<Transform>().local_rotation.z), new Vector3(GetComponent<Transform>().local_rotation.x, GetComponent<Transform>().local_rotation.y, GetComponent<Transform>().local_rotation.z), (endPosition.Length - GetComponent<Transform>().local_position.Length));
         }
 
-        if(!moving && characters_camera.GetComponent<CompAnimation>().IsAnimationStopped("Idle"))
+        if(!moving && characters_camera.GetComponent<CompAnimation>().IsAnimationStopped("Idle") && GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetCurrCharacterState() == 0)
         {
             characters_camera.GetComponent<CompAnimation>().PlayAnimation("Idle");
         }
