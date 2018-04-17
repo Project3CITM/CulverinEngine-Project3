@@ -461,13 +461,10 @@ public class Movement_Action : Action
 
     public void LookAtNextTile()
     {
-        Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
         if (path != null && path.Count > 0)
-        {
-            next_tile.x = path[0].GetTileX() * tile_size;
-            next_tile.z = path[0].GetTileY() * tile_size;
-        }
-        LookAt(next_tile);
+            LookAtTile(path[0]);
+        else
+            Debug.Log("There is no next tile to look at", Department.GENERAL, Color.RED);
     }
 
     public void LookAtTile(PathNode tile)
