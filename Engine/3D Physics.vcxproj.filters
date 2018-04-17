@@ -130,6 +130,9 @@
     <Filter Include="Engine\Tools\OliEngine">
       <UniqueIdentifier>{75bb7a05-f41d-436e-bf28-310d18c1268c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Tools\Gif">
+      <UniqueIdentifier>{7a3fc125-cb2f-4931-8155-5866fbb3dfa7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -1201,6 +1204,12 @@
     <ClInclude Include="AK\DefaultIO\Common\AkMultipleFileLocation.h">
       <Filter>Engine\Tools\Wwished\Wwise_libraries</Filter>
     </ClInclude>
+    <ClInclude Include="gif-h\gif.h">
+      <Filter>Engine\Tools\Gif</Filter>
+    </ClInclude>
+    <ClInclude Include="Screenshot_and_gif.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1620,6 +1629,9 @@
     </ClCompile>
     <ClCompile Include="ModuleGUI_Build.cpp">
       <Filter>Engine\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Screenshot_and_gif.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

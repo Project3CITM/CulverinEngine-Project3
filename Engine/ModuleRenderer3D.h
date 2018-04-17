@@ -9,6 +9,8 @@
 #include "ModuleShaders.h"
 #include "Materials.h"
 
+#include "Screenshot_and_gif.h"
+
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
@@ -21,12 +23,6 @@ enum RenderMode
 	DEFAULT,
 	GLOW,
 	DEPTH
-};
-
-enum Gif_StateMachine
-{
-	CAN_START,
-	RUNNING
 };
 
 class ModuleRenderer3D : public Module
@@ -62,7 +58,6 @@ public:
 
 public:
 
-	
 	SDL_GLContext context;
 	CompCamera* active_camera = nullptr; /* Render the scene through the active camera (it can be SCENE camera or GAME camera)*/
 	CompCamera* scene_camera = nullptr;
@@ -106,17 +101,14 @@ public:
 	GLuint ibo_cube_elements;
 	GLuint dmg_texture_id = 0;
 
-
 	//TEMP
 	int blur_amount = 28;
 	float blur_scale = 0.3;
 	float blur_strength = 0.0f;
 
-
-	//Screenshot
-	float2 Point1 = float2::zero;
-	float2 Point2 = float2::zero;
-	bool FirstPoint = true;
+private:
+	Culverin_Screenshot screenshot;
+	Culverin_Gif gif;
 };
 
 #endif

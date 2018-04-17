@@ -13,12 +13,10 @@
 #include "GL3W/include/glew.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
-#include"Devil\include\ilut.h"
+#include "Devil\include\ilut.h"
 #include "DefaultShaders.h"
 #include "Materials.h"
 #include "ModuleTextures.h"
-#include "ModuleInput.h"
-#include "gif-h\gif.h"
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
@@ -94,12 +92,9 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glClearDepth(1.0f);
 
-
-
 		//Initialize clear color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
@@ -118,8 +113,6 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 		GLfloat LightModelAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 
-
-
 		GLfloat MaterialAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
 
@@ -132,8 +125,6 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 			LOG("[error]Error initializing GL3W! %s\n", gluErrorString(error));
 			ret = false;
 		}
-
-
 
 		//Load render config info -------
 		depth_test = json_object_get_boolean(node, "Depth Test");
@@ -243,35 +234,33 @@ bool ModuleRenderer3D::Start()
 		0.0f, 1.0f,
 	};
 
-
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), cube_vertices, GL_STATIC_DRAW);
 
-glGenBuffers(1, &UVbuffer);
-glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
-glBufferData(GL_ARRAY_BUFFER, sizeof(g_UV_buffer_data), g_UV_buffer_data, GL_STATIC_DRAW);
+	glGenBuffers(1, &UVbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, UVbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_UV_buffer_data), g_UV_buffer_data, GL_STATIC_DRAW);
 
-glGenBuffers(1, &ibo_cube_elements);
-glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
-glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(uint), cube_elements, GL_STATIC_DRAW);
+	glGenBuffers(1, &ibo_cube_elements);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(uint), cube_elements, GL_STATIC_DRAW);
 
+	(depth_test) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+	(cull_face) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+	(lighting) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
+	(color_material) ? glEnable(GL_COLOR_MATERIAL) : glDisable(GL_COLOR_MATERIAL);
+	(texture_2d) ? glEnable(GL_TEXTURE_2D) : glDisable(GL_TEXTURE_2D);
+	(smooth) ? glShadeModel(GL_SMOOTH) : glShadeModel(GL_FLAT);
 
-(depth_test) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
-(cull_face) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
-(lighting) ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
-(color_material) ? glEnable(GL_COLOR_MATERIAL) : glDisable(GL_COLOR_MATERIAL);
-(texture_2d) ? glEnable(GL_TEXTURE_2D) : glDisable(GL_TEXTURE_2D);
-(smooth) ? glShadeModel(GL_SMOOTH) : glShadeModel(GL_FLAT);
+	if (fog_active)
+	{
+		glEnable(GL_FOG);
+		glFogfv(GL_FOG_DENSITY, &fog_density);
+	}
 
-if (fog_active)
-{
-	glEnable(GL_FOG);
-	glFogfv(GL_FOG_DENSITY, &fog_density);
-}
-
-Start_t = perf_timer.ReadMs();
-return true;
+	Start_t = perf_timer.ReadMs();
+	return true;
 }
 
 // PreUpdate: clear buffer
@@ -295,9 +284,6 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 	perf_timer.Start();
 
-
-
-
 	App->scene->horizontal_blur_buff->Bind("Scene");
 	BlurShaderVars(0);
 	RenderSceneWiewport();
@@ -317,132 +303,21 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	App->render_gui->ScreenSpaceDraw();
 	App->scene->final_buff->UnBind("Scene");
 
-
-
-	/*ImGui::Begin("Test");
+	/*
+	ImGui::Begin("Test");
 	ImGui::Image((ImTextureID*)App->scene->scene_buff->GetTexture(), ImVec2(256, 256));
 	ImGui::SliderFloat("Strength", &blur_strength, 0.0f, 50.0f);
 	ImGui::SliderInt("Amount", &blur_amount, 0.0f, 30.0f);
 	ImGui::SliderFloat("Scale", &blur_scale, 0.0f, 50.0f);
-	ImGui::End();*/
+	ImGui::End();
+	*/
 
 	ImGui::Render();
 
-	static uint ScreenshotsNum = 0; //Used to enable multiple screenshots in the same second
-
-	if (App->input->GetKey(SDL_SCANCODE_9) == KEY_DOWN)
-	{
-		if (FirstPoint)
-		{
-			ImGuiIO GuiIO = ImGui::GetIO();
-			Point1.x = GuiIO.MousePos.x;
-			Point1.y = GuiIO.DisplaySize.y - GuiIO.MousePos.y;
-			FirstPoint = false;
-		}
-		else
-		{
-			ImGuiIO GuiIO = ImGui::GetIO();
-			Point2.x = GuiIO.MousePos.x;
-			Point2.y = GuiIO.DisplaySize.y - GuiIO.MousePos.y;
-
-			float2 MinPoint = float2((Point1.x <= Point2.x) ? Point1.x : Point2.x, (Point1.y <= Point2.y) ? Point1.y : Point2.y);
-			float2 MaxPoint = float2((Point1.x >= Point2.x) ? Point1.x : Point2.x, (Point1.y >= Point2.y) ? Point1.y : Point2.y);
-
-			uint width = abs(MaxPoint.x - MinPoint.x);
-			uint height = abs(MaxPoint.y - MinPoint.y);
-			unsigned char* s_pixels = new unsigned char[width * height * sizeof(unsigned char) * 3];
-			glReadPixels(MinPoint.x, MinPoint.y, width, height, GL_RGB, GL_UNSIGNED_BYTE, s_pixels);
-			ILuint imageID = ilGenImage();
-			ilBindImage(imageID);
-			ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, s_pixels);
-			ilEnable(IL_FILE_OVERWRITE);
-
-			/*
-			static char tmp_string[1024];
-			static std::string tmp_string2;
-			sprintf_s(tmp_string, 1024, "Screenshots/ScreenPortion/ScreenPortion_%s_%s.png", __DATE__, __TIME__, tmp_string);
-			tmp_string2 = tmp_string;
-			for (uint i = 0; i < tmp_string2.length(); i++) if ((tmp_string2[i] == ' ') || (tmp_string2[i] == ':')) tmp_string2[i] = '_';
-			*/
-			
-			time_t now = time(0);
-			tm ltm;
-			localtime_s(&ltm, &now);
-			static char tmp_string[1024];
-			sprintf_s(tmp_string, 1024, "Screenshots/ScreenPortion/ScreenPortion_%i_%i_%i_%i_%i_%i__%i.png", ltm.tm_mday, 1 + ltm.tm_mon, 1900 + ltm.tm_year, ltm.tm_hour, ltm.tm_min, ltm.tm_sec, ScreenshotsNum);
-
-			ilSave(IL_PNG, tmp_string);
-			ilDisable(IL_FILE_OVERWRITE);
-			ilDeleteImage(imageID);
-			RELEASE_ARRAY(s_pixels);
-
-			FirstPoint = true;
-			ScreenshotsNum++;
-		}
-	}
-	if (App->input->GetKey(SDL_SCANCODE_0) == KEY_DOWN)
-	{
-		ILuint imageID = ilGenImage();
-		ilBindImage(imageID);
-		ilutGLScreen();
-		ilEnable(IL_FILE_OVERWRITE);
-
-		/*
-		static char tmp_string[1024];
-		static std::string tmp_string2;
-		sprintf_s(tmp_string, 1024, "Screenshots/ScreenFull/ScreenFull_%s_%s.png", __DATE__, __TIME__, tmp_string);
-		tmp_string2 = tmp_string;
-		for (uint i = 0; i < tmp_string2.length(); i++) if ((tmp_string2[i] == ' ') || (tmp_string2[i] == ':')) tmp_string2[i] = '_';
-		*/
-		
-		time_t now = time(0);
-		tm ltm;
-		localtime_s(&ltm, &now);
-		static char tmp_string[1024];
-		sprintf_s(tmp_string, 1024, "Screenshots/ScreenFull/ScreenFull_%i_%i_%i_%i_%i_%i__%i.png", ltm.tm_mday, 1 + ltm.tm_mon, 1900 + ltm.tm_year, ltm.tm_hour, ltm.tm_min, ltm.tm_sec, ScreenshotsNum);
-
-		ilSave(IL_PNG, tmp_string);
-		ilDisable(IL_FILE_OVERWRITE);
-		ilDeleteImage(imageID);
-		ScreenshotsNum++;
-	}
-
-	static GifWriter gif_writer;
-	static unsigned char* pixels = nullptr;
-	static Gif_StateMachine Gif_State = Gif_StateMachine::CAN_START;
-
-	switch (Gif_State)
-	{
-	case Gif_StateMachine::CAN_START:
-		if (App->input->GetKey(SDL_SCANCODE_8) == KEY_DOWN)
-		{
-			time_t now = time(0);
-			tm ltm;
-			localtime_s(&ltm, &now);
-			static char tmp_string[1024];
-			sprintf_s(tmp_string, 1024, "Screenshots/GifFull/GifFull_%i_%i_%i_%i_%i_%i__%i.gif", ltm.tm_mday, 1 + ltm.tm_mon, 1900 + ltm.tm_year, ltm.tm_hour, ltm.tm_min, ltm.tm_sec, ScreenshotsNum);
-			ImGuiIO GuiIO = ImGui::GetIO();
-			bool gif_in_progress = GifBegin(&gif_writer, tmp_string, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, (uint32_t)(dt * 100.0f), 8, false);
-			if (gif_in_progress)
-			{
-				pixels = new unsigned char[GuiIO.DisplaySize.x *  GuiIO.DisplaySize.y * sizeof(unsigned char) * 4];
-				Gif_State = Gif_StateMachine::RUNNING;
-			}
-		}
-		break;
-	case Gif_StateMachine::RUNNING:
-		ImGuiIO GuiIO = ImGui::GetIO();
-		glReadPixels(0, 0, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-		GifWriteFrame(&gif_writer, pixels, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, (uint32_t)(dt * 100.0f), 8, false);
-		if (App->input->GetKey(SDL_SCANCODE_8) == KEY_DOWN)
-		{
-			GifEnd(&gif_writer);
-			RELEASE_ARRAY(pixels);
-			ScreenshotsNum++;
-			Gif_State = Gif_StateMachine::CAN_START;
-		}
-		break;
-	}
+	screenshot.TakeFullScreen();
+	screenshot.TakePartScreen();
+	gif.TakeFullScreen(dt);
+	gif.TakePartScreen(dt);
 
 	SDL_GL_SwapWindow(App->window->window);
 
@@ -639,8 +514,6 @@ float2 ModuleRenderer3D::LoadImage_devil(const char * theFileName, GLuint *buff)
 
 bool ModuleRenderer3D::loadTextureFromPixels32(GLuint * id_pixels, GLuint width_img, GLuint height_img, GLuint *buff)
 {
-
-
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glGenTextures(1, buff);
 	glBindTexture(GL_TEXTURE_2D, *buff);
@@ -648,9 +521,9 @@ bool ModuleRenderer3D::loadTextureFromPixels32(GLuint * id_pixels, GLuint width_
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_img, height_img,
-		0, GL_RGBA, GL_UNSIGNED_BYTE, id_pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_img, height_img, 0, GL_RGBA, GL_UNSIGNED_BYTE, id_pixels);
 	glBindTexture(GL_TEXTURE_2D, NULL);
+
 	//Check for error
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR)
