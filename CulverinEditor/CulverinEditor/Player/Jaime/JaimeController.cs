@@ -691,4 +691,9 @@ public class JaimeController : CharacterController
         jaime_left_flag.SetActive(active);
         jaime_right_flag.SetActive(active);
     }
+
+    public void Heal()
+    {
+        curr_hp = max_hp;
+    }
 }

@@ -931,6 +931,63 @@ public class CharactersManager : CulverinBehaviour
     public void SetCurrentPlayerState(CharacterController.State state)
     {
         current_character.GetComponent<CharacterController>().SetState(state);
-    } 
+    }
+
+    public void HealCharacters()
+    {
+        if (current_character.GetName() == "Jaime")
+        {
+            health_obj = GetLinkedObject("health_obj");
+            float max_hp = current_character.GetComponent<JaimeController>().max_hp;
+            health_obj.GetComponent<Hp>().SetHP(max_hp, max_hp);
+
+            if (left_character.GetName() == "Daenerys")
+            {
+                left_character.GetComponent<DaenerysController>().Heal();
+                right_character.GetComponent<TheonController>().Heal();
+            }
+            else if (left_character.GetName() == "Theon")
+            {
+                right_character.GetComponent<DaenerysController>().Heal();
+                left_character.GetComponent<TheonController>().Heal();
+            }
+        }
+
+        else if (current_character.GetName() == "Daenerys")
+        {
+            health_obj = GetLinkedObject("health_obj");
+            float max_hp = current_character.GetComponent<DaenerysController>().max_hp;
+            health_obj.GetComponent<Hp>().SetHP(max_hp, max_hp);
+
+            if (left_character.GetName() == "Jaime")
+            {
+                left_character.GetComponent<JaimeController>().Heal();
+                right_character.GetComponent<TheonController>().Heal();
+            }
+            else if (left_character.GetName() == "Theon")
+            {
+                right_character.GetComponent<JaimeController>().Heal();
+                left_character.GetComponent<TheonController>().Heal();
+            }
+        }
+
+        else if (current_character.GetName() == "Theon")
+        {
+            health_obj = GetLinkedObject("health_obj");
+            float max_hp = current_character.GetComponent<TheonController>().max_hp;
+            health_obj.GetComponent<Hp>().SetHP(max_hp, max_hp);
+
+            if (left_character.GetName() == "Daenerys")
+            {
+                left_character.GetComponent<DaenerysController>().Heal();
+                right_character.GetComponent<JaimeController>().Heal();
+            }
+            else if (left_character.GetName() == "Jaime")
+            {
+                right_character.GetComponent<DaenerysController>().Heal();
+                left_character.GetComponent<JaimeController>().Heal();
+            }
+        }
+    }
 }
 

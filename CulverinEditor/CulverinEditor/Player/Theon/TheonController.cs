@@ -688,4 +688,9 @@ public class TheonController : CharacterController
     {
         secondary_ability = true;
     }
+
+    public void Heal()
+    {
+        curr_hp = max_hp;
+    }
 }

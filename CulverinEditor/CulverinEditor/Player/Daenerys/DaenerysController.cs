@@ -645,5 +645,8 @@ public class DaenerysController : CharacterController
         daenerys_right_flag.SetActive(active);
     }
 
-    //---------------------------   
+    public void Heal()
+    {
+        curr_hp = max_hp;
+    }
 }
