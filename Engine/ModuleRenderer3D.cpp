@@ -632,7 +632,7 @@ void ModuleRenderer3D::BlurShaderVars(int i)
 void ModuleRenderer3D::GlowShaderVars()
 {
 	final_shader_tex->Bind();
-
+	App->module_shaders->SetUniformVariables(final_tex_material);
 	glActiveTexture(GL_TEXTURE0);
 	GLint texLoc = glGetUniformLocation(final_shader_tex->programID, "_albedo");
 	glBindTexture(GL_TEXTURE_2D, App->scene->scene_buff->GetTexture());

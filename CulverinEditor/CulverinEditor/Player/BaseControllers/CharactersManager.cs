@@ -64,6 +64,9 @@ public class CharactersManager : CulverinBehaviour
     public GameObject camera;
     CompAudio audio;
 
+    Material mat;
+    float mult_dead;
+    bool is_dead;
     void Start()
     {    
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
@@ -95,10 +98,35 @@ public class CharactersManager : CulverinBehaviour
         audio = GetComponent<CompAudio>();
 
         changing = false;
+
+        mat = GetMaterialByName("Final Tex Material");
+        mult_dead = 1.0f;
+        is_dead = false;
     }
 
     void Update()
     {
+        mat.SetBool("damage", false);
+        mat.SetFloat("alpha", 0.0f);
+        mat.SetFloat("mult_dead", mult_dead);
+        if (Input.GetKeyDown(KeyCode.Q))
+        {           
+            is_dead = true;
+            mult_dead = 1.0f;
+            Debug.Log("TEST");
+        }
+        if (is_dead)
+        {
+            if (mult_dead > 0.0f)
+                mult_dead -= Time.deltaTime;
+        }       
+
+        if (mult_dead <= 0.0f)
+        {
+            is_dead = false;
+
+        }
+
 
         switch (state)
         {
