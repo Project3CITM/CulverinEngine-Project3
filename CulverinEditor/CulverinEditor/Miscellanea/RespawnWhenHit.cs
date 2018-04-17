@@ -19,7 +19,7 @@ public class RespawnWhenHit : CulverinBehaviour
         }
 
         GameObject obj = col.GetCollidedObject();
-        Debug.Log(obj.GetTag().ToString());
+     //   Debug.Log(obj.GetTag().ToString());
 
 
         if (obj.CompareTag("player"))
