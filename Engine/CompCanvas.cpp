@@ -20,7 +20,7 @@
 CompCanvas::CompCanvas(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
-	name_component = "Canvas";
+	name_component = "CompCanvas";
 	my_transform = (CompRectTransform*)parent->FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
 	UpdateCanvasScale();
 
@@ -380,6 +380,19 @@ void CompCanvas::SetDefaultTexture(int texture)
 int CompCanvas::GetDefaultTexture()const
 {
 	return default_texture_id;
+}
+
+void CompCanvas::SetNewCanvasAlphaValue(float value)
+{
+	canvas_alpha = value;
+	CorrectCanvasAlpha();
+	bool down = false;
+	if (canvas_alpha <= current_canvas_alpha)
+	{
+		down = true;
+	}
+	current_canvas_alpha = canvas_alpha;
+	SetCanvasAlpha(down);
 }
 
 void CompCanvas::CorrectCanvasAlpha()

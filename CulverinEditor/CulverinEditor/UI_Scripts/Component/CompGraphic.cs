@@ -23,5 +23,8 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetColor(Vector3 color, float alpha);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern CompText SetAlpha(float alpha);
     }
 }

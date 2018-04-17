@@ -287,6 +287,8 @@ public:
 	void		SetAlpha(MonoObject * object, float alpha);
 	void		SetText(MonoObject * object, MonoString* string);
 	void		SetColor(MonoObject * object, MonoObject * color, float alpha);
+	/*UI- Canvas*/
+	void		SetCanvasAlpha(MonoObject * object, float alpha);
 
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);

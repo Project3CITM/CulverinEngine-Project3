@@ -39,7 +39,7 @@ public:
 	void SetDefaultUIShader(ShaderProgram* shader);
 	void SetDefaultTexture(int texture);
 	int GetDefaultTexture()const;
-
+	void SetNewCanvasAlphaValue(float value);
 private:
 	void CorrectCanvasAlpha();
 	void SetCanvasAlpha(bool alpha_down);
