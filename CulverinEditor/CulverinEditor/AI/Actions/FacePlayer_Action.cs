@@ -17,15 +17,19 @@ public class FacePlayer_Action : Action
     {
         move = GetComponent<Movement_Action>();
         move.LookAtPlayer();
+        move.ActionStart();
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-       /* if (interupt == true)
-        {
+        if (interupt == true)
             move.Interupt();
-        }*/
+
+        ACTION_RESULT move_update = move.ActionUpdate();
+
+        if (move_update != ACTION_RESULT.AR_IN_PROGRESS)
+            move.ActionEnd();
 
         return move.ActionUpdate();
     }
