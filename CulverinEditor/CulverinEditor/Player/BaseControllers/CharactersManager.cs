@@ -67,6 +67,7 @@ public class CharactersManager : CulverinBehaviour
     Material mat;
     float mult_dead;
     bool is_dead;
+    private bool is_healing = false;
     void Start()
     {    
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
@@ -102,6 +103,7 @@ public class CharactersManager : CulverinBehaviour
         mat = GetMaterialByName("Final Tex Material");
         mult_dead = 1.0f;
         is_dead = false;
+        is_healing = false;
     }
 
     void Update()
@@ -125,6 +127,57 @@ public class CharactersManager : CulverinBehaviour
         {
             is_dead = false;
 
+        }
+
+        if(is_healing)
+        {
+            Debug.Log("Healing", Department.PLAYER, Color.PINK);
+            health_obj = GetLinkedObject("health_obj");
+            if (current_character.GetName() == "Theon")
+            {
+                float curr_hp = health_obj.GetComponent<Hp>().GetCurrentHealth();
+                float max_hp = current_character.GetComponent<TheonController>().max_hp;
+                if (curr_hp < max_hp)
+                {
+                    health_obj.GetComponent<Hp>().SetHP(curr_hp + 0.9f, max_hp);
+                    current_character.GetComponent<TheonController>().curr_hp = curr_hp + 0.9f;
+                }
+                else
+                {
+                    health_obj.GetComponent<Hp>().SetHP(max_hp, max_hp);
+                    is_healing = false;
+                }
+            }
+            else if (current_character.GetName() == "Jaime")
+            {
+                float curr_hp = health_obj.GetComponent<Hp>().GetCurrentHealth();
+                float max_hp = current_character.GetComponent<JaimeController>().max_hp;
+                if (curr_hp < max_hp)
+                {
+                    health_obj.GetComponent<Hp>().SetHP(curr_hp + 0.9f, max_hp);
+                    current_character.GetComponent<JaimeController>().curr_hp = curr_hp + 0.9f;
+                }
+                else
+                {
+                    health_obj.GetComponent<Hp>().SetHP(max_hp, max_hp);
+                    is_healing = false;
+                }
+            }
+            else if (current_character.GetName() == "Daenerys")
+            {
+                float curr_hp = health_obj.GetComponent<Hp>().GetCurrentHealth();
+                float max_hp = current_character.GetComponent<DaenerysController>().max_hp;
+                if (curr_hp < max_hp)
+                {
+                    health_obj.GetComponent<Hp>().SetHP(curr_hp + 0.9f, max_hp);
+                    current_character.GetComponent<DaenerysController>().curr_hp = curr_hp + 0.9f;
+                }
+                else
+                {
+                    health_obj.GetComponent<Hp>().SetHP(max_hp, max_hp);
+                    is_healing = false;
+                }
+            }
         }
 
 
@@ -935,12 +988,10 @@ public class CharactersManager : CulverinBehaviour
 
     public void HealCharacters()
     {
+        is_healing = true;
+
         if (current_character.GetName() == "Jaime")
         {
-            health_obj = GetLinkedObject("health_obj");
-            float max_hp = current_character.GetComponent<JaimeController>().max_hp;
-            health_obj.GetComponent<Hp>().SetHP(max_hp, max_hp);
-
             if (left_character.GetName() == "Daenerys")
             {
                 left_character.GetComponent<DaenerysController>().Heal();
@@ -955,10 +1006,6 @@ public class CharactersManager : CulverinBehaviour
 
         else if (current_character.GetName() == "Daenerys")
         {
-            health_obj = GetLinkedObject("health_obj");
-            float max_hp = current_character.GetComponent<DaenerysController>().max_hp;
-            health_obj.GetComponent<Hp>().SetHP(max_hp, max_hp);
-
             if (left_character.GetName() == "Jaime")
             {
                 left_character.GetComponent<JaimeController>().Heal();
@@ -973,10 +1020,6 @@ public class CharactersManager : CulverinBehaviour
 
         else if (current_character.GetName() == "Theon")
         {
-            health_obj = GetLinkedObject("health_obj");
-            float max_hp = current_character.GetComponent<TheonController>().max_hp;
-            health_obj.GetComponent<Hp>().SetHP(max_hp, max_hp);
-
             if (left_character.GetName() == "Daenerys")
             {
                 left_character.GetComponent<DaenerysController>().Heal();

@@ -18,9 +18,12 @@ public class Fountain : CulverinBehaviour
 
     void Update()
     {
-        if (on_fountain_range && Input.GetInput_KeyDown("Interact", "Player"))
+        if (on_fountain_range)
         {
-            GetLinkedObject("player").GetComponent<CharactersManager>().HealCharacters();
+            if (Input.GetInput_KeyDown("Interact", "Player"))
+            {
+                GetLinkedObject("player").GetComponent<CharactersManager>().HealCharacters();
+            }
         }
     }
 
@@ -33,10 +36,15 @@ public class Fountain : CulverinBehaviour
 
         if (obj_col != null && obj_col.CompareTag("player"))
         {
-
+            fountain_interact = GetLinkedObject("fountain_interact");
             fountain_interact.SetActive(true);
             on_fountain_range = true;
 
         }
+    }
+
+    void OnTriggerLost()
+    {
+        on_fountain_range = false;
     }
 }
