@@ -121,6 +121,26 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
 
 }
 
+float CalcShadow(vec4 shadowPos, float usedBias)
+{
+    float shadow = 1.0;
+
+    if(shadowPos.z > 1.0)
+        return 0.0;
+
+    for(int i = 0; i < iterations; ++i)
+    {
+        int index = int(16.0 * random(floor(mat3(model) * ourPos * 1000.0), i)) % 16;
+
+        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowPos.xy + poissonDisk[index] / 200.0, (shadowPos.z - usedBias) / shadowPos.w)));
+        float tmp = 0.05 * shadowVal;
+
+        shadow -= tmp;
+    }
+
+    return shadow;
+}
+
 
 void main()
 {
@@ -133,10 +153,6 @@ void main()
 
     float final_ambient = 0.0;
     vec3 final_color = vec3(0);
-
-    // Shadow
-    vec4 shadowPos = shadowCoord / shadowCoord.w;
-    float visibility = 1.0;
 
     vec3 lightDir = vec3(0, 0, 0);
     // Iterate all lights to search the first directional light for now
@@ -155,17 +171,10 @@ void main()
     float usedBias = bias * tan(acos(cosTheta));
     usedBias = clamp(usedBias, 0, 0.01);
 
-    for(int i = 0; i < iterations; ++i)
-    {
-		    int index = int(16.0*random(floor(mat3(model)* ourPos*1000.0), i))%16;
-        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowCoord.xy + poissonDisk[index] / 200.0, (shadowCoord.z - usedBias) / shadowCoord.w)));
-        float tmp = 0.05 * shadowVal;
 
-        visibility -= tmp;
-        //float shadow_val = (texture( _shadowMap, vec3(shadowPos.xy , (shadowCoord.z - usedBias)/shadowCoord.w) ));
-        //visibility = shadow_val;
-}
-
+    // Shadow
+    vec4 shadowPos = shadowCoord / shadowCoord.w;
+    float shadow = CalcShadow(shadowPos, usedBias);
 
  for (int i = 0; i <_numLights; ++i) {
 
@@ -183,7 +192,7 @@ void main()
     final_color =normalize(final_color);
 
 	vec3 col = max( color_texture * 0.1 ,
-	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb * visibility);
+	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb * shadow);
 
     color = vec4(col, _alpha);
 }
