@@ -9,23 +9,31 @@ public class Fireball : CulverinBehaviour
     public Vector3 vfront = Vector3.Zero;
     public GameObject fireball_particles;
     private CompRigidBody rb;
+    public float vel = 50;
     private float timer = 0.0f;
-
+    public bool rotate = true;
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
+        if(vfront == Vector3.Zero)
+        {
+            vfront = transform.GetBackwardVector();
+        }
         Shoot();
         damage = 10.0f;
         timer = 0.0f;
         life = 5.0f;
-
-        GetComponent<CompAudio>().PlayEvent("DaenerysFire"); //Change This!!
+        
+        //GetComponent<CompAudio>().PlayEvent("DaenerysFire"); //Change This!!
     }
 
     public void Shoot()
     {
-        rb.ApplyImpulse(vfront * 50); // Forward impulse
-        rb.ApplyTorqueForce(new Vector3(0, 0, 40)); // Fall force
+        rb.ApplyImpulse(vfront * vel); // Forward impulse
+        if(rotate)
+        {
+            rb.ApplyTorqueForce(new Vector3(0, 0, 40));
+        }
     }
 
     void Update()
