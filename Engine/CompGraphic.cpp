@@ -183,14 +183,23 @@ float CompGraphic::GetAlpha() const
 {
 	return color.w;
 }
+void CompGraphic::ResizeGenerateMesh()
+{
+	GenerateMesh();
+}
 
 void CompGraphic::ProcesQuad(std::vector<float3>& position, std::vector<float3>& texture_cord)
 {
 	uint indice_position = vertex_data.current_vertex_count;
 
+	float2 res_fact = transform->GetResizeFactor();
+	float3 curr_pos = float3::zero;
 	for (uint i = 0; i < 4; i++)
 	{
-		vertex_data.AddVertex(position[i], float2(texture_cord[i].x, texture_cord[i].y));
+		curr_pos = position[i];
+		curr_pos.x *= res_fact.x;
+		curr_pos.y *= res_fact.y;
+		vertex_data.AddVertex(curr_pos, float2(texture_cord[i].x, texture_cord[i].y));
 	}
 
 
