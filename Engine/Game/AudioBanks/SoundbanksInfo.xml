@@ -338,6 +338,10 @@
 					<ShortName>Enemy_SwordDrop.wav</ShortName>
 					<Path>SFX\Enemy_SwordDrop_1C9C67B2.wem</Path>
 				</File>
+				<File Id="448295503" Language="SFX">
+					<ShortName>Combat_theme.wav</ShortName>
+					<Path>SFX\Combat_theme_F17FB28C.wem</Path>
+				</File>
 				<File Id="460932244" Language="SFX">
 					<ShortName>Enemy_ShortSwordSlash.wav</ShortName>
 					<Path>SFX\Enemy_ShortSwordSlash_1C9C67B2.wem</Path>
