@@ -138,7 +138,7 @@ public class EnemyShield_BT : Enemy_BT
         }
     }
 
-    public override bool ApplyDamage(float damage)
+    public override bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
         base.ActivateHUD(shield_icon, shield_name);
 
@@ -160,15 +160,15 @@ public class EnemyShield_BT : Enemy_BT
                         return false;
                     }
                     else
-                        return base.ApplyDamage(damage);
+                        return base.ApplyDamage(damage, damage_type);
                 }
                 else
-                    return base.ApplyDamage(damage);
+                    return base.ApplyDamage(damage, damage_type);
 
                 break;
 
             case ENEMY_STATE.ENEMY_DAMAGED:
-                if (shield_block_timer >= shield_block_cd_damaged)
+                if (shield_block_timer >= shield_block_cd_damaged && damage_type != ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                 {
                     MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
                     Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
@@ -183,15 +183,15 @@ public class EnemyShield_BT : Enemy_BT
                         return false;
                     }
                     else
-                        return base.ApplyDamage(damage);
+                        return base.ApplyDamage(damage, damage_type);
                 }
                 else
-                    return base.ApplyDamage(damage);
+                    return base.ApplyDamage(damage, damage_type);
 
                 break;
 
             case ENEMY_STATE.ENEMY_STUNNED:
-                return base.ApplyDamage(damage);
+                return base.ApplyDamage(damage, damage_type);
                 break;
 
             case ENEMY_STATE.ENEMY_DEAD:

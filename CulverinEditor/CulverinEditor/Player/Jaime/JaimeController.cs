@@ -540,7 +540,7 @@ public class JaimeController : CharacterController
                 }
 
                 /* ---------- IN CASE THAT THE ENEMY BLOCKS THE ATTACK, UNCOMMENT AND COMPLETE THIS CODE ---------- */
-                if (enemy_manager.ApplyDamage(coll_object, damage))
+                if (enemy_manager.ApplyDamage(coll_object, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.SWORD))
                 {
                     GetComponent<CompAudio>().PlayEvent("Enemy_Flesh_Hit");
 

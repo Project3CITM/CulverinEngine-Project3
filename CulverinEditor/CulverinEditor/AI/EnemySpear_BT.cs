@@ -197,10 +197,10 @@ public class EnemySpear_BT : Enemy_BT
         }
     }
 
-    public override bool ApplyDamage(float damage)
+    public override bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
         base.ActivateHUD(spear_icon, spear_name);
-        return base.ApplyDamage(damage);
+        return base.ApplyDamage(damage, damage_type);
     }
 
     public override void ChangeTexturesToDamaged()
