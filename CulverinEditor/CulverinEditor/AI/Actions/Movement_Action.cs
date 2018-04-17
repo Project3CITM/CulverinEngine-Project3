@@ -470,11 +470,11 @@ public class Movement_Action : Action
         LookAt(next_tile);
     }
 
-    public void LookAtTile(PathNode tile)
+    public void LookAtTile(PathNode destiny_tile)
     {
         Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
-        next_tile.x = tile.GetTileX() * tile_size;
-        next_tile.z = tile.GetTileY() * tile_size;
+        next_tile.x = destiny_tile.GetTileX() * tile_size;
+        next_tile.z = destiny_tile.GetTileY() * tile_size;
         LookAt(next_tile);
     }
 
