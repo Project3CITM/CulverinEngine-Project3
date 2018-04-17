@@ -357,7 +357,7 @@ void CompMaterial::ShowInspectorInfo()
 			material->it_color_variables++;
 		}
 
-		//Textures
+		//CubeMaps
 		if (temp.type == GL_SAMPLER_CUBE && material->cube_maps.size() != 0)
 		{
 			ShowCubeMapVariable(i, &(*material->it_cube_maps));
@@ -541,6 +541,19 @@ void CompMaterial::ShowCubeMapVariable(int index, CubeMapVar * var)
 {
 	//CHANGE for combo if we have more than one cubemap
 	//var->value = App->renderer3D->temp_cubemap->GetTextureId();
+	int cube_pos = 0;
+	std::string cube_names;
+	for (int i = 0; i < App->renderer3D->cube_maps.size(); i++) {
+		cube_names += App->renderer3D->cube_maps[i]->GetName().c_str();
+		cube_names += '\0';
+		if (var->value == App->renderer3D->cube_maps[i]->GetTextureId())
+			cube_pos = i;
+	}
+	if (ImGui::Combo("CubeMap", &cube_pos, cube_names.c_str())) {
+		var->value = App->renderer3D->cube_maps[cube_pos]->GetTextureId();
+
+	}
+
 
 }
 

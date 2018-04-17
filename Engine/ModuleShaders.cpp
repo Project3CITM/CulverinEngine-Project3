@@ -1153,7 +1153,19 @@ void ModuleShaders::SetUniformVariables(Material * material)
 		}
 
 	}
+	if (material->cube_maps.size() != 0)
+	{
+		for (uint i = 0; i < material->cube_maps.size(); i++)
+		{
+			
+			uint texLoc = glGetUniformLocation(material->GetProgramID(), material->cube_maps[i].var_name.c_str());
+			glUniform1i(texLoc, i);
+			glActiveTexture(GL_TEXTURE0 + i + material->textures.size());
+			if (material->cube_maps[i].value <= 0) glBindTexture(GL_TEXTURE_CUBE_MAP, App->renderer3D->id_checkImage);
+			else glBindTexture(GL_TEXTURE_CUBE_MAP, material->cube_maps[i].value);
 
+		}
+	}
 
 	material->RestartIterators();
 }

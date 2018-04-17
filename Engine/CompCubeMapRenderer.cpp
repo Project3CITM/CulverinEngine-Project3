@@ -12,6 +12,7 @@
 #include "ResourceMesh.h"
 #include "CompMaterial.h"
 #include "ModuleLightning.h"
+#include "ModuleFS.h"
 CompCubeMapRenderer::CompCubeMapRenderer(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	name_component = "CubeMapRenderer";	
@@ -21,6 +22,8 @@ CompCubeMapRenderer::CompCubeMapRenderer(Comp_Type t, GameObject * parent) : Com
 
 CompCubeMapRenderer::~CompCubeMapRenderer()
 {
+	auto item = std::find(App->renderer3D->cube_maps.begin(), App->renderer3D->cube_maps.end(), &cube_map);
+	App->renderer3D->cube_maps.erase(item);
 }
 
 void CompCubeMapRenderer::Bake(Event& event)
@@ -88,7 +91,7 @@ void CompCubeMapRenderer::Bake(Event& event)
 				matrixfloat[0][2],matrixfloat[1][2],matrixfloat[2][2],matrixfloat[3][2],
 				matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
 			};
-
+	
 			App->module_shaders->SetUniformVariables(m->GetMaterial()->material);
 
 			GLint modelLoc = glGetUniformLocation(sh_id, "model");
@@ -139,7 +142,12 @@ void CompCubeMapRenderer::Bake(Event& event)
 
 void CompCubeMapRenderer::ShowInspectorInfo()
 {
-
+	char namedit[150];
+	strcpy_s(namedit, 150, cube_map.GetName().c_str());
+	if (ImGui::InputText("##nameModel", namedit, 150))
+	{
+		cube_map.SetName(App->fs->ConverttoChar(std::string(namedit).c_str()));
+	}
 	if (ImGui::Button("Bake")) {
 		Event draw_event;
 		draw_event.Set_event_data(EventType::EVENT_CUBEMAP_REQUEST);

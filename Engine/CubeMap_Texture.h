@@ -22,14 +22,15 @@ public:
 	}
 	unsigned int GetFbo() const { return cubemap_fbo; }
 	unsigned int GetSize() const { return cubemap_size; }
-
+	std::string GetName() const { return name; }
+	void SetName(std::string _name) { name = _name; }
 	void Bind();
 	void UnBind();
 	void Create();
 	void Destroy();
 private:
 
-
+	std::string name;
 
 	unsigned int cubemap_texture_id = 0;
 	unsigned int cubemap_fbo = 0;
