@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="128">
 	<RootPaths>
-		<ProjectRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\</ProjectRoot>
-		<SourceFilesRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
-		<SoundBanksRoot>F:\Escritorio\Proyectos GitHub\CulverinEngine-Project3\Engine\Game\AudioBanks\</SoundBanksRoot>
+		<ProjectRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\</ProjectRoot>
+		<SourceFilesRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>C:\Users\Kay\Documents\GitHub\TempMotor3D_P3\Engine\Game\AudioBanks\</SoundBanksRoot>
 		<ExternalSourcesInputFile></ExternalSourcesInputFile>
-		<ExternalSourcesOutputRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
+		<ExternalSourcesOutputRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
 	</RootPaths>
 	<DialogueEvents/>
 	<StreamedFiles/>
@@ -21,22 +21,22 @@
 			<ShortName>Enemies</ShortName>
 			<Path>Enemies.bnk</Path>
 			<IncludedEvents>
-				<Event Id="1240136664" Name="AttackPreparation" ObjectPath="\Events\Scene1\Boss\AttackPreparation"/>
-				<Event Id="1481017468" Name="BossDeath" ObjectPath="\Events\Scene1\Boss\BossDeath"/>
-				<Event Id="3122217888" Name="BossFalls" ObjectPath="\Events\Scene1\Boss\BossFalls"/>
-				<Event Id="1746793429" Name="BossGrowl" ObjectPath="\Events\Scene1\Boss\BossGrowl"/>
-				<Event Id="3928559768" Name="BossHitGround" ObjectPath="\Events\Scene1\Boss\BossHitGround"/>
-				<Event Id="1437879705" Name="BossHurt" ObjectPath="\Events\Scene1\Boss\BossHurt"/>
-				<Event Id="385405090" Name="BossSoldierFalls" ObjectPath="\Events\Scene1\Boss\BossSoldierFalls"/>
-				<Event Id="3748885507" Name="BossSoldierScream" ObjectPath="\Events\Scene1\Boss\BossSoldierScream"/>
-				<Event Id="843639065" Name="BossSwordSwing" ObjectPath="\Events\Scene1\Boss\BossSwordSwing"/>
-				<Event Id="837426219" Name="BossToKnees" ObjectPath="\Events\Scene1\Boss\BossToKnees"/>
-				<Event Id="2483303643" Name="BossWalkPhase1" ObjectPath="\Events\Scene1\Boss\BossWalkPhase1"/>
-				<Event Id="2483303640" Name="BossWalkPhase2" ObjectPath="\Events\Scene1\Boss\BossWalkPhase2"/>
-				<Event Id="513450771" Name="CraniumCrush" ObjectPath="\Events\Scene1\Boss\CraniumCrush"/>
+				<Event Id="1240136664" Name="AttackPreparation" ObjectPath="\Events\Scene\Boss\AttackPreparation"/>
+				<Event Id="1481017468" Name="BossDeath" ObjectPath="\Events\Scene\Boss\BossDeath"/>
+				<Event Id="3122217888" Name="BossFalls" ObjectPath="\Events\Scene\Boss\BossFalls"/>
+				<Event Id="1746793429" Name="BossGrowl" ObjectPath="\Events\Scene\Boss\BossGrowl"/>
+				<Event Id="3928559768" Name="BossHitGround" ObjectPath="\Events\Scene\Boss\BossHitGround"/>
+				<Event Id="1437879705" Name="BossHurt" ObjectPath="\Events\Scene\Boss\BossHurt"/>
+				<Event Id="385405090" Name="BossSoldierFalls" ObjectPath="\Events\Scene\Boss\BossSoldierFalls"/>
+				<Event Id="3748885507" Name="BossSoldierScream" ObjectPath="\Events\Scene\Boss\BossSoldierScream"/>
+				<Event Id="843639065" Name="BossSwordSwing" ObjectPath="\Events\Scene\Boss\BossSwordSwing"/>
+				<Event Id="837426219" Name="BossToKnees" ObjectPath="\Events\Scene\Boss\BossToKnees"/>
+				<Event Id="2483303643" Name="BossWalkPhase1" ObjectPath="\Events\Scene\Boss\BossWalkPhase1"/>
+				<Event Id="2483303640" Name="BossWalkPhase2" ObjectPath="\Events\Scene\Boss\BossWalkPhase2"/>
+				<Event Id="513450771" Name="CraniumCrush" ObjectPath="\Events\Scene\Boss\CraniumCrush"/>
 				<Event Id="2493198437" Name="PlayBossMusic" ObjectPath="\Events\UI\PlayBossMusic"/>
-				<Event Id="3380664611" Name="PunchAttack" ObjectPath="\Events\Scene1\Boss\PunchAttack"/>
-				<Event Id="1268857950" Name="SwordFalls" ObjectPath="\Events\Scene1\Boss\SwordFalls"/>
+				<Event Id="3380664611" Name="PunchAttack" ObjectPath="\Events\Scene\Boss\PunchAttack"/>
+				<Event Id="1268857950" Name="SwordFalls" ObjectPath="\Events\Scene\Boss\SwordFalls"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
 				<File Id="34303078" Language="SFX">
@@ -156,9 +156,8 @@
 			<ShortName>VerticalSlice</ShortName>
 			<Path>VerticalSlice.bnk</Path>
 			<IncludedEvents>
-				<Event Id="2503704488" Name="BarrelSinking" ObjectPath="\Events\Scene1\Puzzle\BarrelSinking"/>
-				<Event Id="1644787663" Name="BehindMe" ObjectPath="\Events\Player_01\Characters\Jaime\BehindMe"/>
-				<Event Id="48383132" Name="Chain" ObjectPath="\Events\Scene1\Puzzle\Chain"/>
+				<Event Id="2503704488" Name="BarrelSinking" ObjectPath="\Events\Scene\Puzzle\BarrelSinking"/>
+				<Event Id="48383132" Name="Chain" ObjectPath="\Events\Scene\Puzzle\Chain"/>
 				<Event Id="2665825462" Name="CrossbowRecharge" ObjectPath="\Events\Player_01\Characters\Theon\CrossbowRecharge"/>
 				<Event Id="3519619633" Name="CrossbowShot" ObjectPath="\Events\Player_01\Characters\Theon\CrossbowShot"/>
 				<Event Id="1296876930" Name="DaenerysDead" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysDead"/>
@@ -167,25 +166,27 @@
 				<Event Id="461797665" Name="DaenerysFireballImpact" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysFireballImpact"/>
 				<Event Id="1489596707" Name="DaenerysHurt" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysHurt"/>
 				<Event Id="3969506851" Name="DaenerysWalk" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysWalk"/>
+				<Event Id="2666752652" Name="DoorEnd" ObjectPath="\Events\Scene\Puzzle\DoorEnd"/>
+				<Event Id="2469070767" Name="DoorLoop" ObjectPath="\Events\Scene\Puzzle\DoorLoop"/>
 				<Event Id="3712468846" Name="Dracarys" ObjectPath="\Events\Player_01\Characters\Daenerys\Dracarys"/>
-				<Event Id="916833145" Name="Enemy1_Dead" ObjectPath="\Events\Scene1\Enemies\Enemy1_Dead"/>
-				<Event Id="4028347596" Name="Enemy1_Hurt" ObjectPath="\Events\Scene1\Enemies\Enemy1_Hurt"/>
-				<Event Id="3176015810" Name="Enemy1_Slash" ObjectPath="\Events\Scene1\Enemies\Enemy1_Slash"/>
-				<Event Id="1251584733" Name="Enemy1_SwordClash" ObjectPath="\Events\Scene1\Enemies\Enemy1_SwordClash"/>
-				<Event Id="4117129356" Name="Enemy2_Dead" ObjectPath="\Events\Scene1\Enemies\Enemy2_Dead"/>
-				<Event Id="202441241" Name="Enemy2_Hurt" ObjectPath="\Events\Scene1\Enemies\Enemy2_Hurt"/>
-				<Event Id="540308745" Name="Enemy2_Slash" ObjectPath="\Events\Scene1\Enemies\Enemy2_Slash"/>
-				<Event Id="3461881315" Name="Enemy3_Dead" ObjectPath="\Events\Scene1\Enemies\Enemy3_Dead"/>
-				<Event Id="4111352050" Name="Enemy3_Hurt" ObjectPath="\Events\Scene1\Enemies\Enemy3_Hurt"/>
-				<Event Id="2435509993" Name="Enemy3_ShieldBlock" ObjectPath="\Events\Scene1\Enemies\Enemy3_ShieldBlock"/>
-				<Event Id="846696053" Name="Enemy3_ShieldHit" ObjectPath="\Events\Scene1\Enemies\Enemy3_ShieldHit"/>
-				<Event Id="222867808" Name="Enemy3_Slash" ObjectPath="\Events\Scene1\Enemies\Enemy3_Slash"/>
-				<Event Id="622126552" Name="Enemy_Chase" ObjectPath="\Events\Scene1\Enemies\Enemy_Chase"/>
-				<Event Id="1987237454" Name="Enemy_Flesh_Hit" ObjectPath="\Events\Scene1\Enemies\Enemy_Flesh_Hit"/>
-				<Event Id="1522974588" Name="Enemy_Patrol" ObjectPath="\Events\Scene1\Enemies\Enemy_Patrol"/>
-				<Event Id="3434500843" Name="Enemy_SwordDraw" ObjectPath="\Events\Scene1\Enemies\Enemy_SwordDraw"/>
-				<Event Id="3535166590" Name="Enemy_SwordDrop" ObjectPath="\Events\Scene1\Enemies\Enemy_SwordDrop"/>
-				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene1\Footsteps"/>
+				<Event Id="916833145" Name="Enemy1_Dead" ObjectPath="\Events\Scene\Enemies\Enemy1_Dead"/>
+				<Event Id="4028347596" Name="Enemy1_Hurt" ObjectPath="\Events\Scene\Enemies\Enemy1_Hurt"/>
+				<Event Id="3176015810" Name="Enemy1_Slash" ObjectPath="\Events\Scene\Enemies\Enemy1_Slash"/>
+				<Event Id="1251584733" Name="Enemy1_SwordClash" ObjectPath="\Events\Scene\Enemies\Enemy1_SwordClash"/>
+				<Event Id="4117129356" Name="Enemy2_Dead" ObjectPath="\Events\Scene\Enemies\Enemy2_Dead"/>
+				<Event Id="202441241" Name="Enemy2_Hurt" ObjectPath="\Events\Scene\Enemies\Enemy2_Hurt"/>
+				<Event Id="540308745" Name="Enemy2_Slash" ObjectPath="\Events\Scene\Enemies\Enemy2_Slash"/>
+				<Event Id="3461881315" Name="Enemy3_Dead" ObjectPath="\Events\Scene\Enemies\Enemy3_Dead"/>
+				<Event Id="4111352050" Name="Enemy3_Hurt" ObjectPath="\Events\Scene\Enemies\Enemy3_Hurt"/>
+				<Event Id="2435509993" Name="Enemy3_ShieldBlock" ObjectPath="\Events\Scene\Enemies\Enemy3_ShieldBlock"/>
+				<Event Id="846696053" Name="Enemy3_ShieldHit" ObjectPath="\Events\Scene\Enemies\Enemy3_ShieldHit"/>
+				<Event Id="222867808" Name="Enemy3_Slash" ObjectPath="\Events\Scene\Enemies\Enemy3_Slash"/>
+				<Event Id="622126552" Name="Enemy_Chase" ObjectPath="\Events\Scene\Enemies\Enemy_Chase"/>
+				<Event Id="1987237454" Name="Enemy_Flesh_Hit" ObjectPath="\Events\Scene\Enemies\Enemy_Flesh_Hit"/>
+				<Event Id="1522974588" Name="Enemy_Patrol" ObjectPath="\Events\Scene\Enemies\Enemy_Patrol"/>
+				<Event Id="3434500843" Name="Enemy_SwordDraw" ObjectPath="\Events\Scene\Enemies\Enemy_SwordDraw"/>
+				<Event Id="3535166590" Name="Enemy_SwordDrop" ObjectPath="\Events\Scene\Enemies\Enemy_SwordDrop"/>
+				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene\Footsteps"/>
 				<Event Id="4134768252" Name="JaimeBlock" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeBlock"/>
 				<Event Id="3525158975" Name="JaimeDead" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeDead"/>
 				<Event Id="3224688943" Name="JaimeFailImpact" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeFailImpact"/>
@@ -193,16 +194,19 @@
 				<Event Id="3599404043" Name="JaimeImpact" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeImpact"/>
 				<Event Id="299504778" Name="JaimeImpactStone" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeImpactStone"/>
 				<Event Id="1759595795" Name="JaimeWarCry" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeWarCry"/>
-				<Event Id="2782712987" Name="Lever" ObjectPath="\Events\Scene1\Puzzle\Lever"/>
-				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Scene1\MetalClash"/>
+				<Event Id="2782712987" Name="Lever" ObjectPath="\Events\Scene\Puzzle\Lever"/>
+				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Scene\MetalClash"/>
 				<Event Id="4091047182" Name="PauseAll" ObjectPath="\Events\Default Work Unit\PauseAll"/>
-				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene1\PlayMusic"/>
-				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene1\PlayTorch"/>
+				<Event Id="1181117825" Name="PlayAmbient" ObjectPath="\Events\Scene\PlayAmbient"/>
+				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene\PlayMusic"/>
+				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene\PlayTorch"/>
 				<Event Id="3240900869" Name="ResumeAll" ObjectPath="\Events\Default Work Unit\ResumeAll"/>
-				<Event Id="3627978879" Name="RopeCut" ObjectPath="\Events\Scene1\Puzzle\RopeCut"/>
-				<Event Id="1503597272" Name="StartPuzzleCountdown" ObjectPath="\Events\Scene1\Puzzle\StartPuzzleCountdown"/>
-				<Event Id="1566564139" Name="SwordHit" ObjectPath="\Events\Scene1\SwordHit"/>
-				<Event Id="3113731383" Name="SwordSlash" ObjectPath="\Events\Scene1\SwordSlash"/>
+				<Event Id="3627978879" Name="RopeCut" ObjectPath="\Events\Scene\Puzzle\RopeCut"/>
+				<Event Id="1503597272" Name="StartPuzzleCountdown" ObjectPath="\Events\Scene\Puzzle\StartPuzzleCountdown"/>
+				<Event Id="3953897988" Name="SwitchOff" ObjectPath="\Events\Scene\Puzzle\SwitchOff"/>
+				<Event Id="1242499422" Name="SwitchOn" ObjectPath="\Events\Scene\Puzzle\SwitchOn"/>
+				<Event Id="1566564139" Name="SwordHit" ObjectPath="\Events\Scene\SwordHit"/>
+				<Event Id="3113731383" Name="SwordSlash" ObjectPath="\Events\Scene\SwordSlash"/>
 				<Event Id="837900871" Name="TheonDead" ObjectPath="\Events\Player_01\Characters\Theon\TheonDead"/>
 				<Event Id="3974846078" Name="TheonHurt" ObjectPath="\Events\Player_01\Characters\Theon\TheonHurt"/>
 				<Event Id="45876787" Name="TheonImpact" ObjectPath="\Events\Player_01\Characters\Theon\TheonImpact"/>
@@ -211,7 +215,7 @@
 				<Event Id="3836375561" Name="TheonMeleShout" ObjectPath="\Events\Player_01\Characters\Theon\TheonMeleShout"/>
 				<Event Id="3412427529" Name="TheonRope" ObjectPath="\Events\Player_01\Characters\Theon\TheonRope"/>
 				<Event Id="1916661861" Name="TheonTripleShot" ObjectPath="\Events\Player_01\Characters\Theon\TheonTripleShot"/>
-				<Event Id="777507535" Name="WaterSplash" ObjectPath="\Events\Scene1\Puzzle\WaterSplash"/>
+				<Event Id="777507535" Name="WaterSplash" ObjectPath="\Events\Scene\Puzzle\WaterSplash"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
 				<File Id="46166543" Language="SFX">
@@ -302,6 +306,10 @@
 					<ShortName>Enemy\Enemy_2\E2_Dead_1.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_2\E2_Dead_1_1C9C67B2.wem</Path>
 				</File>
+				<File Id="304204776" Language="SFX">
+					<ShortName>Switch_Disable.wav</ShortName>
+					<Path>SFX\Switch_Disable_2B7D241B.wem</Path>
+				</File>
 				<File Id="337181357" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
 					<Path>SFX\Ambient\footstep_stone_1C39B089.wem</Path>
@@ -370,6 +378,14 @@
 					<ShortName>Characters\Theon\Theon_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Theon\Theon_Dead_1_715F20C0.wem</Path>
 				</File>
+				<File Id="583166116" Language="SFX">
+					<ShortName>Door_open_close_end.wav</ShortName>
+					<Path>SFX\Door_open_close_end_1C9C67B2.wem</Path>
+				</File>
+				<File Id="688257092" Language="SFX">
+					<ShortName>Switch_Enable.wav</ShortName>
+					<Path>SFX\Switch_Enable_E685A16D.wem</Path>
+				</File>
 				<File Id="706131552" Language="SFX">
 					<ShortName>Daennerys_FlameCrepitarLoop.wav</ShortName>
 					<Path>SFX\Daennerys_FlameCrepitarLoop_1C9C67B2.wem</Path>
@@ -389,6 +405,10 @@
 				<File Id="802761961" Language="SFX">
 					<ShortName>Characters\Jaime\Jaime_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Jaime\Jaime_Dead_1_1C9C67B2.wem</Path>
+				</File>
+				<File Id="823093066" Language="SFX">
+					<ShortName>Door_open_close_loop.wav</ShortName>
+					<Path>SFX\Door_open_close_loop_1C9C67B2.wem</Path>
 				</File>
 				<File Id="823990075" Language="SFX">
 					<ShortName>Puzzle\Lever.wav</ShortName>
@@ -445,6 +465,10 @@
 				<File Id="975369001" Language="SFX">
 					<ShortName>Enemy\Enemy_1\E1_Hurt_4.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_1\E1_Hurt_4_1C9C67B2.wem</Path>
+				</File>
+				<File Id="991530287" Language="SFX">
+					<ShortName>Ambient\Ambience.wav</ShortName>
+					<Path>SFX\Ambient\Ambience_1C9C67B2.wem</Path>
 				</File>
 				<File Id="999653156" Language="SFX">
 					<ShortName>Enemy_ShieldHit.wav</ShortName>
