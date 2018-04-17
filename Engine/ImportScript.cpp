@@ -1038,6 +1038,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetLinkedObject", (const void*)GetLinkedObject);
 	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetEnabled", (const void*)GetEnabled);
 	mono_add_internal_call("CulverinEditor.CulverinBehaviour::SetEnabled", (const void*)SetEnabled);
+	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetMaterialByName", (const void*)GetMaterialByName);
+
 	//GAMEOBJECT FUNCTIONS ---------------
 	mono_add_internal_call("CulverinEditor.GameObject::GetTag", (const void*)GetTag);
 	mono_add_internal_call("CulverinEditor.GameObject::SetTag", (const void*)SetTag);
@@ -1049,7 +1051,6 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.GameObject::GetChildByIndex", (const void*)GetChildByIndex);
 	mono_add_internal_call("CulverinEditor.GameObject::GetChildByName", (const void*)GetChildByName);
 	mono_add_internal_call("CulverinEditor.GameObject::GetChildByTagIndex", (const void*)GetChildByTagIndex);
-	mono_add_internal_call("CulverinEditor.GameObject::Destroy",(const void*)DeleteGameObject);
 	mono_add_internal_call("CulverinEditor.GameObject::SetActive",(const void*)SetActive);
 	mono_add_internal_call("CulverinEditor.GameObject::IsActive",(const void*)IsActive);
 	mono_add_internal_call("CulverinEditor.GameObject::IsStatic", (const void*)IsStatic);
@@ -1211,8 +1212,7 @@ void ImportScript::LinkFunctions()
 	//MATERIAL FUNCTIONS
 	mono_add_internal_call("CulverinEditor.Material::SetBool", (const void*)SetBool);
 	mono_add_internal_call("CulverinEditor.Material::SetFloat", (const void*)SetFloat);
-	mono_add_internal_call("CulverinEditor.CulverinBehaviour::GetMaterialByName", (const void*)GetMaterialByName);
-
+	
 	//COMPONENT RIGID BODY FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompRigidBody::GetColliderPosition", (const void*)GetColliderPosition);
 	mono_add_internal_call("CulverinEditor.CompRigidBody::GetColliderQuaternion", (const void*)GetColliderQuaternion);
@@ -1600,14 +1600,14 @@ float ImportScript::TimePlay()
 }
 
 
-bool ImportScript::GetEnabled(MonoObject* object, MonoObject* gameobject)
+bool ImportScript::GetEnabled(MonoObject* object)
 {
-	return current->GetEnabled(object, gameobject);
+	return current->GetEnabled(object);
 }
 
-void ImportScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject)
+void ImportScript::SetEnabled(MonoObject* object, mono_bool active)
 {
-	current->SetEnabled(object, active, gameobject);
+	current->SetEnabled(object, active);
 }
 
 MonoObject* ImportScript::GetLinkedObject(MonoObject* object, MonoString* name)
@@ -1695,11 +1695,6 @@ MonoObject* ImportScript::FindGameObjectWithTag(MonoObject* object, MonoString* 
 void ImportScript::CreateGameObject(MonoObject* object)
 {
 	//current->CreateGameObject(object);
-}
-
-void ImportScript::DeleteGameObject(MonoObject* object)
-{
-	current->DestroyGameObject(object);
 }
 
 MonoObject* ImportScript::GetComponent(MonoObject* object, MonoReflectionType* type)

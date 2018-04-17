@@ -139,8 +139,8 @@ private:
 
 	/* CulverinBehaciour */
 	static MonoObject*	GetLinkedObject(MonoObject* object, MonoString* name);
-	static bool			GetEnabled(MonoObject* object, MonoObject* gameobject);
-	static void			SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject);
+	static bool			GetEnabled(MonoObject* object);
+	static void			SetEnabled(MonoObject* object, mono_bool active);
 
 	/* GameObject */
 	static mono_bool	IsStatic(MonoObject* object);
@@ -159,7 +159,6 @@ private:
 	static mono_bool	CompareTag(MonoObject* object, MonoString* tag);
 	static MonoObject*	FindGameObjectWithTag(MonoObject* object, MonoString* tag);
 	static void			CreateGameObject(MonoObject* object);
-	static void			DeleteGameObject(MonoObject* object);
 	static MonoObject*	GetComponent(MonoObject* object, MonoReflectionType* type);
 
 	/* Object */

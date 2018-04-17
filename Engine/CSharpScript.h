@@ -181,13 +181,17 @@ public:
 	void SetVarValue(ScriptVariable* variable, void* new_val);
 	// ------------------------------------------------------------------
 
+	// ------------------------------------------------------------------
+	// C# CulverinEditor -------------------------------------------------
+	// ------------------------------------------------------------------
+
 	/*Input*/
 	MonoObject* GetMousePosition();
 
 	/* CulverinBehaviour */
 	MonoObject* GetMonoObjectLink(std::string name);
-	mono_bool	GetEnabled(MonoObject* object, MonoObject* gameobect);
-	void		SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject);
+	mono_bool	GetEnabled(MonoObject* object);
+	void		SetEnabled(MonoObject* object, mono_bool active);
 
 	/*Game Object*/
 	bool		IsStatic(MonoObject* object);
@@ -209,7 +213,6 @@ public:
 	void		SetCurrentGameObject(GameObject* current);
 	void		SetOwnGameObject(GameObject* gameobject);
 	void		CreateGameObject(MonoObject* object);
-	bool		DestroyGameObject(MonoObject* object);
 	MonoObject*	Instantiate(MonoObject* object, MonoString* prefab);
 	MonoObject*	Instantiate_respawn(MonoObject* object, MonoString* prefab, float time);
 	void		Destroy(MonoObject* object, float time);
