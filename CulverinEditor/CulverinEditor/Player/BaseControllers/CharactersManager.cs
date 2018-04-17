@@ -108,26 +108,6 @@ public class CharactersManager : CulverinBehaviour
 
     void Update()
     {
-        mat.SetBool("damage", false);
-        mat.SetFloat("alpha", 0.0f);
-        mat.SetFloat("mult_dead", mult_dead);
-        if (Input.GetKeyDown(KeyCode.P))
-        {           
-            is_dead = true;
-            mult_dead = 1.0f;
-            Debug.Log("TEST");
-        }
-        if (is_dead)
-        {
-            if (mult_dead > 0.0f)
-                mult_dead -= Time.deltaTime;
-        }       
-
-        if (mult_dead <= 0.0f)
-        {
-            is_dead = false;
-
-        }
 
         if(is_healing)
         {
