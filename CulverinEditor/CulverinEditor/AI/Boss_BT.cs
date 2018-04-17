@@ -217,6 +217,9 @@ public class Boss_BT : BT
             current_action.Interupt();
             GetComponent<CompAudio>().PlayEvent("BossDeath");
 
+            hp_bar_boss.GetComponent<BossHPBar>().ActivateHPBar(false);
+            hp_bar_boss.SetActive(false);
+
             //todosforme
             GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
         }
