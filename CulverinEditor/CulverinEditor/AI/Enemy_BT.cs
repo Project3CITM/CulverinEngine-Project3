@@ -1,5 +1,7 @@
 ﻿using CulverinEditor;
+using System.Collections.Generic;
 using CulverinEditor.Debug;
+using CulverinEditor.Pathfinding;
 
 public class Enemy_BT : BT
 {
@@ -222,76 +224,53 @@ public class Enemy_BT : BT
 
     public int GetDistanceInRange()
     {
-        int enemy_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
-        int enemy_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
-
         if (GetLinkedObject("player_obj") == null)
-        {
-            Debug.Log("[error]WILLYYYYYY QUE ESTO ES TO NULL");
-        }
+            Debug.Log("[error] player object is null");
+
         GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int player_tile_x, out int player_tile_y);
 
-        switch (GetComponent<Movement_Action>().GetDirection())
+        int enemy_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int enemy_y = GetComponent<Movement_Action>().GetCurrentTileY();
+
+        int distance_x = player_tile_x - enemy_x;
+        int distance_y = player_tile_y - enemy_y;
+
+        if (distance_x != 0 && distance_y != 0)
+            return range + 1;
+        else
         {
-            case Movement_Action.Direction.DIR_WEST:
-                if (enemy_tile_x - 2 == player_tile_x 
-                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x - 1, (uint)enemy_tile_y) ==true
-                    && player_tile_y == enemy_tile_y)
-                {
-                    Debug.Log("WEST 2 TILES");
-                    return 2;
-                }
-                else if (enemy_tile_x - 1 == player_tile_x && player_tile_y == enemy_tile_y)
-                {
-                    Debug.Log("WEST 1 TILES");
-                    return 1;
-                }
-                break;
-            case Movement_Action.Direction.DIR_EAST:
-                if (enemy_tile_x + 2 == player_tile_x
-                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x + 1, (uint)enemy_tile_y) == true
-                    && player_tile_y == enemy_tile_y)
-                {
-                    Debug.Log("EAST 2 TILES");
-                    return 2;
-                }
-                else if (enemy_tile_x + 1 == player_tile_x && player_tile_y == enemy_tile_y)
-                {
-                    Debug.Log("EAST 1 TILES");
-                    return 1;
-                }
-                break;
-            case Movement_Action.Direction.DIR_NORTH:
-                if (enemy_tile_y - 2 == player_tile_y 
-                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x, (uint)enemy_tile_y - 1) == true
-                    && player_tile_x == enemy_tile_x)
-                {
-                    Debug.Log("NORTH 2 TILES");
-                    return 2;
-                }
-                else if (enemy_tile_y - 1 == player_tile_y && player_tile_x == enemy_tile_x)
-                {
-                    Debug.Log("NORTH 1 TILES");
-                    return 1;
-                }
-                break;
-            case Movement_Action.Direction.DIR_SOUTH:
-                if (enemy_tile_y + 2 == player_tile_y 
-                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x, (uint)enemy_tile_y+1) == true
-                    && player_tile_x == enemy_tile_x)
-                {
-                    Debug.Log("SOUTH 2 TILES");
-                    return 2;
-                }
-                else if (enemy_tile_y + 1 == player_tile_y && player_tile_x == enemy_tile_x)
-                {
-                    Debug.Log("SOUTH 1 TILES");
-                    return 1;
-                }
-                break;
+            List<PathNode> tiles_between = new List<PathNode>();
+
+            //no need to check enemy tile nor player's
+            if (distance_x != 0)
+            {
+                if (distance_x > 0)
+                    for (int i = 1; i < distance_x; i++)
+                        tiles_between.Add(new PathNode(enemy_x + i, enemy_y));
+                else
+                    for (int i = 1; i < distance_x; i--)
+                        tiles_between.Add(new PathNode(enemy_x + i, enemy_y));
+            }
+
+            if (distance_y != 0)
+            {
+                if (distance_x > 0)
+                    for (int i = 1; i < distance_x; i++)
+                        tiles_between.Add(new PathNode(enemy_x, enemy_y + i));
+                else
+                    for (int i = 1; i < distance_x; i--)
+                        tiles_between.Add(new PathNode(enemy_x, enemy_y + i));
+            }
+
+            foreach (PathNode pn in tiles_between)
+                if (GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile(pn) == false)
+                    return range + 1;
+
+            if (distance_y != 0)
+                return Mathf.Abs(distance_y);
+            else
+                return Mathf.Abs(distance_x);
         }
-        Debug.Log("3 TILES");
-        return range + 1;
     }
 
     public void SetAction(Action.ACTION_TYPE type)

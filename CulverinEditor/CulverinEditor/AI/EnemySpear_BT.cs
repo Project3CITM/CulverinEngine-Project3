@@ -77,6 +77,7 @@ public class EnemySpear_BT : Enemy_BT
 
     protected override void InCombatDecesion()
     {
+        Debug.Log("In Combat Decision");
         int tiles_to_player = GetDistanceInRange();
 
         if (tiles_to_player == 1)
