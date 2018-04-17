@@ -5,6 +5,7 @@
 #include "Timer.h"
 #include "Module.h"
 #include "parson.h"
+#include "Brofiler/Brofiler.h"
 
 #include "GL3W/include/glew.h"
 #include "SDL/include/SDL_opengl.h"

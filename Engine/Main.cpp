@@ -123,7 +123,7 @@ int main(int argc, char ** argv)
 
 		while (state != MAIN_EXIT)
 		{
-			//BROFILER_FRAME("MAIN");
+			BROFILER_FRAME("MAIN");
 			switch (state)
 			{
 			case MAIN_CREATION:

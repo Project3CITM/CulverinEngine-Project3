@@ -43,6 +43,7 @@ static void counted_free(void *ptr);
 
 Application::Application()
 {
+	BROFILER_CATEGORY("Application Creation", Profiler::Color::PaleVioletRed);
 	window = new ModuleWindow();
 	input = new ModuleInput();
 	module_key_binding= new ModuleKeyBinding();
@@ -147,6 +148,7 @@ Application::~Application()
 
 bool Application::Init()
 {
+	BROFILER_CATEGORY("Application Init", Profiler::Color::PaleVioletRed);
 	bool ret = true;
 
 	JSON_Value* config_file;
@@ -190,6 +192,7 @@ bool Application::Init()
 		{
 			if ((*item)->IsEnabled())
 			{
+				BROFILER_CATEGORY((*item)->name.c_str(), Profiler::Color::Yellow);
 				config_node = json_object_get_object(config, (*item)->name.c_str());
 				ret = (*item)->Init(config_node);
 				json_object_clear(config_node);
@@ -200,12 +203,14 @@ bool Application::Init()
 
 		// After all Init calls we call Start() in all modules
 		LOG("Application Start --------------");
+		BROFILER_CATEGORY("Application Start", Profiler::Color::PaleVioletRed);
 		item = list_modules.begin();
 
 		while (item != list_modules.end() && ret == true)
 		{
 			if ((*item)->IsEnabled())
 			{
+				BROFILER_CATEGORY((*item)->name.c_str(), Profiler::Color::Yellow);
 				ret = (*item)->Start();
 			}
 			item++;
@@ -220,6 +225,7 @@ bool Application::Init()
 // ---------------------------------------------
 void Application::PrepareUpdate()
 {
+	BROFILER_CATEGORY("Application PrepareUpdate", Profiler::Color::PaleVioletRed);
 	real_time.frame_count++;
 	real_time.last_sec_frame_count++;
 	real_time.dt = (float)real_time.ms_timer.ReadSec();
@@ -263,7 +269,7 @@ void Application::PrepareUpdate()
 // ---------------------------------------------
 void Application::FinishUpdate()
 {
-
+	BROFILER_CATEGORY("Application FinishUpdate", Profiler::Color::PaleVioletRed);
 	// SAVE & LOAD FUNCTIONS ------------------------
 	if (want_to_save == true)
 	{
@@ -490,6 +496,7 @@ void Application::FinishUpdate()
 // Call PreUpdate, Update and PostUpdate on all modules
 update_status Application::Update()
 {
+	BROFILER_CATEGORY("Application Update", Profiler::Color::PaleVioletRed);
 	update_status ret = UPDATE_CONTINUE;
 	PrepareUpdate();
 
