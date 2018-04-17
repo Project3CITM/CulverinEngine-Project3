@@ -60,7 +60,7 @@ void CSharpScript::PlayAudioEvent(MonoObject* object, MonoString* event_name)
 {
 	if (current_game_object != nullptr)
 	{
-		CompAudio* audio = (CompAudio*)current_game_object->FindComponentByType(Comp_Type::C_AUDIO);
+		CompAudio* audio = (CompAudio*)App->importer->iScript->GetComponentMono(object);
 		if (audio != nullptr)
 		{
 			audio->PlayAudioEvent(mono_string_to_utf8(event_name));

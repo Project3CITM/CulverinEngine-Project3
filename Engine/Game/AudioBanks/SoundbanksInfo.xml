@@ -380,7 +380,7 @@
 				</File>
 				<File Id="583166116" Language="SFX">
 					<ShortName>Door_open_close_end.wav</ShortName>
-					<Path>SFX\Door_open_close_end_1C9C67B2.wem</Path>
+					<Path>SFX\Door_open_close_end_49F42D23.wem</Path>
 				</File>
 				<File Id="688257092" Language="SFX">
 					<ShortName>Switch_Enable.wav</ShortName>
@@ -505,6 +505,25 @@
 				<File Id="1045037916" Language="SFX">
 					<ShortName>Enemy\Enemy_3\E3_Hurt_1.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_3\E3_Hurt_1_1C9C67B2.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
+		<SoundBank Id="2678230380" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\Level3</ObjectPath>
+			<ShortName>Level3</ShortName>
+			<Path>Level3.bnk</Path>
+			<IncludedEvents>
+				<Event Id="3953897988" Name="SwitchOff" ObjectPath="\Events\Scene\Puzzle\SwitchOff"/>
+				<Event Id="1242499422" Name="SwitchOn" ObjectPath="\Events\Scene\Puzzle\SwitchOn"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="304204776" Language="SFX">
+					<ShortName>Switch_Disable.wav</ShortName>
+					<Path>SFX\Switch_Disable_2B7D241B.wem</Path>
+				</File>
+				<File Id="688257092" Language="SFX">
+					<ShortName>Switch_Enable.wav</ShortName>
+					<Path>SFX\Switch_Enable_E685A16D.wem</Path>
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>

@@ -13,9 +13,12 @@ public class TrapManager : CulverinBehaviour
 
     private bool switching_states = false;
 
+    CompAudio audio = null;
+
     void Start()
     {
 
+        audio = GetComponent<CompAudio>();
         childs_to_switch = new List<GameObject>();
 
         bool stop = false;
@@ -38,7 +41,13 @@ public class TrapManager : CulverinBehaviour
 
     void OnTriggerEnter()
     {
+        audio.PlayEvent("SwitchOn");
         SwitchTraps();
+    }
+
+    void OnTriggerLost()
+    {
+        audio.PlayEvent("SwitchOff");
     }
 
     public void SwitchTraps()

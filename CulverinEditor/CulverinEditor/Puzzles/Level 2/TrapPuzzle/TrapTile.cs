@@ -27,9 +27,11 @@ public class TrapTile : CulverinBehaviour
 
     private GameObject map = null;
 
+    CompAudio audio = null;
+
     void Start()
     {
-
+        audio = GetComponent<CompAudio>();
         Vector3 global_pos = transform.GetGlobalPosition();
         tile_x = (int)((global_pos.x + (12.7f)) / 25.4);
         tile_z = (int)((global_pos.z + (12.7f)) / 25.4);
@@ -78,6 +80,7 @@ public class TrapTile : CulverinBehaviour
                     {
                         map_level.UpdateMap(tile_x, tile_z, value);
                     }
+                    audio.PlayEvent("DoorEnd");
                 }
             }
             else
@@ -93,6 +96,8 @@ public class TrapTile : CulverinBehaviour
                     pos.y = max_height;
                     GetComponent<Transform>().SetPosition(pos);
                     curr_state = CHANGE_STATE.TRAP_IDLE;
+                    audio.PlayEvent("DoorEnd");
+
                 }
             }
         }
@@ -100,6 +105,8 @@ public class TrapTile : CulverinBehaviour
 
     public void SwitchTileState()
     {
+        audio.PlayEvent("DoorLoop");
+
         trap_walkable = !trap_walkable;
         if (trap_walkable)
         {
