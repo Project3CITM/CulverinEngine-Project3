@@ -52,6 +52,11 @@ public class Fountain : CulverinBehaviour
                 destination_y = Mathf.Lerp(starting_y_bottom, final_y_bottom, by);
                 destination_x = Mathf.Lerp(starting_x_scale_bottom, final_x_scale_bottom, by);
                 destination_z = Mathf.Lerp(starting_z_scale_bottom, final_z_scale_bottom, by);
+                if(current_usage == 0)
+                {
+                    on_fountain_range = false;
+                    fountain_interact.SetActive(false);
+                }
             }
         }
 
