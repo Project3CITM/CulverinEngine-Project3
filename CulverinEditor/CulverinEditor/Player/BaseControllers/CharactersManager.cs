@@ -627,7 +627,6 @@ public class CharactersManager : CulverinBehaviour
             {
                 if (current_character.GetComponent<JaimeController>().GetDamage(dmg))
                 {
-                    camera.GetComponent<CompAnimation>().PlayAnimation("Player_Hit");
                     if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
                     {
                         StatsScore.CharacterDead();

@@ -238,7 +238,7 @@ public class MovementController : CulverinBehaviour
 
         if (!moving && characters_camera.GetComponent<CompAnimation>().IsAnimationStopped("Idle") && GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetCurrCharacterState() == 0)
         {
-            characters_camera.GetComponent<CompAnimation>().PlayAnimation("Idle");
+            characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Idle");
         }
 
     }
