@@ -1,35 +1,35 @@
 Event	ID	Name			Wwise Object Path	Notes
-	385405090	BossSoldierFalls			\Scene1\Boss\BossSoldierFalls	
-	513450771	CraniumCrush			\Scene1\Boss\CraniumCrush	
-	837426219	BossToKnees			\Scene1\Boss\BossToKnees	
-	843639065	BossSwordSwing			\Scene1\Boss\BossSwordSwing	
-	1240136664	AttackPreparation			\Scene1\Boss\AttackPreparation	
-	1268857950	SwordFalls			\Scene1\Boss\SwordFalls	
-	1437879705	BossHurt			\Scene1\Boss\BossHurt	
-	1481017468	BossDeath			\Scene1\Boss\BossDeath	
-	1746793429	BossGrowl			\Scene1\Boss\BossGrowl	
-	2483303640	BossWalkPhase2			\Scene1\Boss\BossWalkPhase2	
-	2483303643	BossWalkPhase1			\Scene1\Boss\BossWalkPhase1	
+	385405090	BossSoldierFalls			\Scene\Boss\BossSoldierFalls	
+	513450771	CraniumCrush			\Scene\Boss\CraniumCrush	
+	837426219	BossToKnees			\Scene\Boss\BossToKnees	
+	843639065	BossSwordSwing			\Scene\Boss\BossSwordSwing	
+	1240136664	AttackPreparation			\Scene\Boss\AttackPreparation	
+	1268857950	SwordFalls			\Scene\Boss\SwordFalls	
+	1437879705	BossHurt			\Scene\Boss\BossHurt	
+	1481017468	BossDeath			\Scene\Boss\BossDeath	
+	1746793429	BossGrowl			\Scene\Boss\BossGrowl	
+	2483303640	BossWalkPhase2			\Scene\Boss\BossWalkPhase2	
+	2483303643	BossWalkPhase1			\Scene\Boss\BossWalkPhase1	
 	2493198437	PlayBossMusic			\UI\PlayBossMusic	
-	3122217888	BossFalls			\Scene1\Boss\BossFalls	
-	3380664611	PunchAttack			\Scene1\Boss\PunchAttack	
-	3748885507	BossSoldierScream			\Scene1\Boss\BossSoldierScream	
-	3928559768	BossHitGround			\Scene1\Boss\BossHitGround	
+	3122217888	BossFalls			\Scene\Boss\BossFalls	
+	3380664611	PunchAttack			\Scene\Boss\PunchAttack	
+	3748885507	BossSoldierScream			\Scene\Boss\BossSoldierScream	
+	3928559768	BossHitGround			\Scene\Boss\BossHitGround	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	34303078	Boss_craniumcrush	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_craniumcrush_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_craniumcrush		380100
 	46750343	Boss_step2	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_step2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_step2		72536
-	195378477	Boss_theme	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_theme_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\FinalBossMusic\FinalBossMusic\Boss_theme		17621640
+	195378477	FinalBossMusic	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_theme_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\AmbientMusic\FinalBattleBoss\Final_Boss\FinalBossMusic		17621640
 	246088314	Boss_hurt1	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_hurt1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Hurts\Boss_hurt1		81418
 	254082414	Boss_hurt2	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_hurt2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Hurts\Boss_hurt2		74686
 	304824152	Boss_falls_to_ground	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_falls_to_ground_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_falls_to_ground		229012
 	364269213	Boss_hit_ground	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_hit_ground_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_hit_ground		194104
+	444396445	Boss_craniumcrush	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_craniumcrush_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_craniumcrush		231050
 	475114885	Boss_sword_falls	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_sword_falls_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_sword_falls		423424
 	495546356	Boss_attack_preparation	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_attack_preparation_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_attack_preparation		47824
-	508510935	Boss_Growl	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_Growl_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_Growl		475556
 	567468000	Boss_soldier_falls	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_soldier_falls_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_soldier_falls		72700
-	587520127	Boss_death_groan	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_death_groan_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_death_groan		85596
+	609592691	Boss_death_groan	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_death_groan_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_death_groan		876608
 	628133761	Boss_hurt4	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_hurt4_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Hurts\Boss_hurt4		91518
+	640165576	Boss_Growl	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_Growl_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_Growl		228252
 	713280947	Boss_falls_to_knees	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_falls_to_knees_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_falls_to_knees		90096
 	731437871	Boss_step	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_step_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_step		98928
 	881114355	Boss_punch_air	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_punch_air_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_punch_air		101864

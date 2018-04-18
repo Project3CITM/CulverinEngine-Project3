@@ -21,28 +21,24 @@
 			<ShortName>Enemies</ShortName>
 			<Path>Enemies.bnk</Path>
 			<IncludedEvents>
-				<Event Id="1240136664" Name="AttackPreparation" ObjectPath="\Events\Scene1\Boss\AttackPreparation"/>
-				<Event Id="1481017468" Name="BossDeath" ObjectPath="\Events\Scene1\Boss\BossDeath"/>
-				<Event Id="3122217888" Name="BossFalls" ObjectPath="\Events\Scene1\Boss\BossFalls"/>
-				<Event Id="1746793429" Name="BossGrowl" ObjectPath="\Events\Scene1\Boss\BossGrowl"/>
-				<Event Id="3928559768" Name="BossHitGround" ObjectPath="\Events\Scene1\Boss\BossHitGround"/>
-				<Event Id="1437879705" Name="BossHurt" ObjectPath="\Events\Scene1\Boss\BossHurt"/>
-				<Event Id="385405090" Name="BossSoldierFalls" ObjectPath="\Events\Scene1\Boss\BossSoldierFalls"/>
-				<Event Id="3748885507" Name="BossSoldierScream" ObjectPath="\Events\Scene1\Boss\BossSoldierScream"/>
-				<Event Id="843639065" Name="BossSwordSwing" ObjectPath="\Events\Scene1\Boss\BossSwordSwing"/>
-				<Event Id="837426219" Name="BossToKnees" ObjectPath="\Events\Scene1\Boss\BossToKnees"/>
-				<Event Id="2483303643" Name="BossWalkPhase1" ObjectPath="\Events\Scene1\Boss\BossWalkPhase1"/>
-				<Event Id="2483303640" Name="BossWalkPhase2" ObjectPath="\Events\Scene1\Boss\BossWalkPhase2"/>
-				<Event Id="513450771" Name="CraniumCrush" ObjectPath="\Events\Scene1\Boss\CraniumCrush"/>
+				<Event Id="1240136664" Name="AttackPreparation" ObjectPath="\Events\Scene\Boss\AttackPreparation"/>
+				<Event Id="1481017468" Name="BossDeath" ObjectPath="\Events\Scene\Boss\BossDeath"/>
+				<Event Id="3122217888" Name="BossFalls" ObjectPath="\Events\Scene\Boss\BossFalls"/>
+				<Event Id="1746793429" Name="BossGrowl" ObjectPath="\Events\Scene\Boss\BossGrowl"/>
+				<Event Id="3928559768" Name="BossHitGround" ObjectPath="\Events\Scene\Boss\BossHitGround"/>
+				<Event Id="1437879705" Name="BossHurt" ObjectPath="\Events\Scene\Boss\BossHurt"/>
+				<Event Id="385405090" Name="BossSoldierFalls" ObjectPath="\Events\Scene\Boss\BossSoldierFalls"/>
+				<Event Id="3748885507" Name="BossSoldierScream" ObjectPath="\Events\Scene\Boss\BossSoldierScream"/>
+				<Event Id="843639065" Name="BossSwordSwing" ObjectPath="\Events\Scene\Boss\BossSwordSwing"/>
+				<Event Id="837426219" Name="BossToKnees" ObjectPath="\Events\Scene\Boss\BossToKnees"/>
+				<Event Id="2483303643" Name="BossWalkPhase1" ObjectPath="\Events\Scene\Boss\BossWalkPhase1"/>
+				<Event Id="2483303640" Name="BossWalkPhase2" ObjectPath="\Events\Scene\Boss\BossWalkPhase2"/>
+				<Event Id="513450771" Name="CraniumCrush" ObjectPath="\Events\Scene\Boss\CraniumCrush"/>
 				<Event Id="2493198437" Name="PlayBossMusic" ObjectPath="\Events\UI\PlayBossMusic"/>
-				<Event Id="3380664611" Name="PunchAttack" ObjectPath="\Events\Scene1\Boss\PunchAttack"/>
-				<Event Id="1268857950" Name="SwordFalls" ObjectPath="\Events\Scene1\Boss\SwordFalls"/>
+				<Event Id="3380664611" Name="PunchAttack" ObjectPath="\Events\Scene\Boss\PunchAttack"/>
+				<Event Id="1268857950" Name="SwordFalls" ObjectPath="\Events\Scene\Boss\SwordFalls"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
-				<File Id="34303078" Language="SFX">
-					<ShortName>Boss_craniumcrush.wav</ShortName>
-					<Path>SFX\Boss_craniumcrush_1C9C67B2.wem</Path>
-				</File>
 				<File Id="46750343" Language="SFX">
 					<ShortName>Boss_step2.wav</ShortName>
 					<Path>SFX\Boss_step2_1C9C67B2.wem</Path>
@@ -67,6 +63,10 @@
 					<ShortName>Boss_hit_ground.wav</ShortName>
 					<Path>SFX\Boss_hit_ground_1C9C67B2.wem</Path>
 				</File>
+				<File Id="444396445" Language="SFX">
+					<ShortName>Boss_craniumcrush.wav</ShortName>
+					<Path>SFX\Boss_craniumcrush_1C9C67B2.wem</Path>
+				</File>
 				<File Id="475114885" Language="SFX">
 					<ShortName>Boss_sword_falls.wav</ShortName>
 					<Path>SFX\Boss_sword_falls_1C9C67B2.wem</Path>
@@ -75,21 +75,21 @@
 					<ShortName>Boss_attack_preparation.wav</ShortName>
 					<Path>SFX\Boss_attack_preparation_1C9C67B2.wem</Path>
 				</File>
-				<File Id="508510935" Language="SFX">
-					<ShortName>Boss_Growl.wav</ShortName>
-					<Path>SFX\Boss_Growl_1C9C67B2.wem</Path>
-				</File>
 				<File Id="567468000" Language="SFX">
 					<ShortName>Boss_soldier_falls.wav</ShortName>
 					<Path>SFX\Boss_soldier_falls_1C9C67B2.wem</Path>
 				</File>
-				<File Id="587520127" Language="SFX">
+				<File Id="609592691" Language="SFX">
 					<ShortName>Boss_death_groan.wav</ShortName>
 					<Path>SFX\Boss_death_groan_1C9C67B2.wem</Path>
 				</File>
 				<File Id="628133761" Language="SFX">
 					<ShortName>Boss_hurt4.wav</ShortName>
 					<Path>SFX\Boss_hurt4_1C9C67B2.wem</Path>
+				</File>
+				<File Id="640165576" Language="SFX">
+					<ShortName>Boss_Growl.wav</ShortName>
+					<Path>SFX\Boss_Growl_1C9C67B2.wem</Path>
 				</File>
 				<File Id="713280947" Language="SFX">
 					<ShortName>Boss_falls_to_knees.wav</ShortName>
@@ -156,54 +156,63 @@
 			<ShortName>VerticalSlice</ShortName>
 			<Path>VerticalSlice.bnk</Path>
 			<IncludedEvents>
-				<Event Id="2503704488" Name="BarrelSinking" ObjectPath="\Events\Scene1\Puzzle\BarrelSinking"/>
-				<Event Id="1644787663" Name="BehindMe" ObjectPath="\Events\Player_01\Characters\Jaime\BehindMe"/>
-				<Event Id="48383132" Name="Chain" ObjectPath="\Events\Scene1\Puzzle\Chain"/>
+				<Event Id="2503704488" Name="BarrelSinking" ObjectPath="\Events\Scene\Puzzle\BarrelSinking"/>
+				<Event Id="48383132" Name="Chain" ObjectPath="\Events\Scene\Puzzle\Chain"/>
 				<Event Id="2665825462" Name="CrossbowRecharge" ObjectPath="\Events\Player_01\Characters\Theon\CrossbowRecharge"/>
 				<Event Id="3519619633" Name="CrossbowShot" ObjectPath="\Events\Player_01\Characters\Theon\CrossbowShot"/>
+				<Event Id="3732314562" Name="DaenerysBreathing" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysBreathing"/>
 				<Event Id="1296876930" Name="DaenerysDead" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysDead"/>
 				<Event Id="278201357" Name="DaenerysDragonRoar" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysDragonRoar"/>
 				<Event Id="1165032804" Name="DaenerysFire" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysFire"/>
 				<Event Id="461797665" Name="DaenerysFireballImpact" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysFireballImpact"/>
 				<Event Id="1489596707" Name="DaenerysHurt" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysHurt"/>
+				<Event Id="342573290" Name="DaenerysTired" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysTired"/>
 				<Event Id="3969506851" Name="DaenerysWalk" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysWalk"/>
+				<Event Id="2666752652" Name="DoorEnd" ObjectPath="\Events\Scene\Puzzle\DoorEnd"/>
+				<Event Id="2469070767" Name="DoorLoop" ObjectPath="\Events\Scene\Puzzle\DoorLoop"/>
 				<Event Id="3712468846" Name="Dracarys" ObjectPath="\Events\Player_01\Characters\Daenerys\Dracarys"/>
-				<Event Id="916833145" Name="Enemy1_Dead" ObjectPath="\Events\Scene1\Enemies\Enemy1_Dead"/>
-				<Event Id="4028347596" Name="Enemy1_Hurt" ObjectPath="\Events\Scene1\Enemies\Enemy1_Hurt"/>
-				<Event Id="3176015810" Name="Enemy1_Slash" ObjectPath="\Events\Scene1\Enemies\Enemy1_Slash"/>
-				<Event Id="1251584733" Name="Enemy1_SwordClash" ObjectPath="\Events\Scene1\Enemies\Enemy1_SwordClash"/>
-				<Event Id="4117129356" Name="Enemy2_Dead" ObjectPath="\Events\Scene1\Enemies\Enemy2_Dead"/>
-				<Event Id="202441241" Name="Enemy2_Hurt" ObjectPath="\Events\Scene1\Enemies\Enemy2_Hurt"/>
-				<Event Id="540308745" Name="Enemy2_Slash" ObjectPath="\Events\Scene1\Enemies\Enemy2_Slash"/>
-				<Event Id="3461881315" Name="Enemy3_Dead" ObjectPath="\Events\Scene1\Enemies\Enemy3_Dead"/>
-				<Event Id="4111352050" Name="Enemy3_Hurt" ObjectPath="\Events\Scene1\Enemies\Enemy3_Hurt"/>
-				<Event Id="2435509993" Name="Enemy3_ShieldBlock" ObjectPath="\Events\Scene1\Enemies\Enemy3_ShieldBlock"/>
-				<Event Id="846696053" Name="Enemy3_ShieldHit" ObjectPath="\Events\Scene1\Enemies\Enemy3_ShieldHit"/>
-				<Event Id="222867808" Name="Enemy3_Slash" ObjectPath="\Events\Scene1\Enemies\Enemy3_Slash"/>
-				<Event Id="622126552" Name="Enemy_Chase" ObjectPath="\Events\Scene1\Enemies\Enemy_Chase"/>
-				<Event Id="1987237454" Name="Enemy_Flesh_Hit" ObjectPath="\Events\Scene1\Enemies\Enemy_Flesh_Hit"/>
-				<Event Id="1522974588" Name="Enemy_Patrol" ObjectPath="\Events\Scene1\Enemies\Enemy_Patrol"/>
-				<Event Id="3434500843" Name="Enemy_SwordDraw" ObjectPath="\Events\Scene1\Enemies\Enemy_SwordDraw"/>
-				<Event Id="3535166590" Name="Enemy_SwordDrop" ObjectPath="\Events\Scene1\Enemies\Enemy_SwordDrop"/>
-				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene1\Footsteps"/>
+				<Event Id="916833145" Name="Enemy1_Dead" ObjectPath="\Events\Scene\Enemies\Enemy1_Dead"/>
+				<Event Id="4028347596" Name="Enemy1_Hurt" ObjectPath="\Events\Scene\Enemies\Enemy1_Hurt"/>
+				<Event Id="3176015810" Name="Enemy1_Slash" ObjectPath="\Events\Scene\Enemies\Enemy1_Slash"/>
+				<Event Id="1251584733" Name="Enemy1_SwordClash" ObjectPath="\Events\Scene\Enemies\Enemy1_SwordClash"/>
+				<Event Id="4117129356" Name="Enemy2_Dead" ObjectPath="\Events\Scene\Enemies\Enemy2_Dead"/>
+				<Event Id="202441241" Name="Enemy2_Hurt" ObjectPath="\Events\Scene\Enemies\Enemy2_Hurt"/>
+				<Event Id="540308745" Name="Enemy2_Slash" ObjectPath="\Events\Scene\Enemies\Enemy2_Slash"/>
+				<Event Id="3461881315" Name="Enemy3_Dead" ObjectPath="\Events\Scene\Enemies\Enemy3_Dead"/>
+				<Event Id="4111352050" Name="Enemy3_Hurt" ObjectPath="\Events\Scene\Enemies\Enemy3_Hurt"/>
+				<Event Id="2435509993" Name="Enemy3_ShieldBlock" ObjectPath="\Events\Scene\Enemies\Enemy3_ShieldBlock"/>
+				<Event Id="846696053" Name="Enemy3_ShieldHit" ObjectPath="\Events\Scene\Enemies\Enemy3_ShieldHit"/>
+				<Event Id="222867808" Name="Enemy3_Slash" ObjectPath="\Events\Scene\Enemies\Enemy3_Slash"/>
+				<Event Id="622126552" Name="Enemy_Chase" ObjectPath="\Events\Scene\Enemies\Enemy_Chase"/>
+				<Event Id="1987237454" Name="Enemy_Flesh_Hit" ObjectPath="\Events\Scene\Enemies\Enemy_Flesh_Hit"/>
+				<Event Id="1522974588" Name="Enemy_Patrol" ObjectPath="\Events\Scene\Enemies\Enemy_Patrol"/>
+				<Event Id="3434500843" Name="Enemy_SwordDraw" ObjectPath="\Events\Scene\Enemies\Enemy_SwordDraw"/>
+				<Event Id="3535166590" Name="Enemy_SwordDrop" ObjectPath="\Events\Scene\Enemies\Enemy_SwordDrop"/>
+				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene\Footsteps"/>
+				<Event Id="2179486487" Name="HeartBeat" ObjectPath="\Events\Player_01\HeartBeat"/>
 				<Event Id="4134768252" Name="JaimeBlock" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeBlock"/>
+				<Event Id="3907652009" Name="JaimeBreathing" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeBreathing"/>
 				<Event Id="3525158975" Name="JaimeDead" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeDead"/>
 				<Event Id="3224688943" Name="JaimeFailImpact" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeFailImpact"/>
 				<Event Id="2682992486" Name="JaimeHurt" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeHurt"/>
 				<Event Id="3599404043" Name="JaimeImpact" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeImpact"/>
 				<Event Id="299504778" Name="JaimeImpactStone" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeImpactStone"/>
+				<Event Id="23186233" Name="JaimeTired" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeTired"/>
 				<Event Id="1759595795" Name="JaimeWarCry" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeWarCry"/>
-				<Event Id="2782712987" Name="Lever" ObjectPath="\Events\Scene1\Puzzle\Lever"/>
-				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Scene1\MetalClash"/>
+				<Event Id="2782712987" Name="Lever" ObjectPath="\Events\Scene\Puzzle\Lever"/>
+				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Scene\MetalClash"/>
 				<Event Id="4091047182" Name="PauseAll" ObjectPath="\Events\Default Work Unit\PauseAll"/>
-				<Event Id="2493198437" Name="PlayBossMusic" ObjectPath="\Events\UI\PlayBossMusic"/>
-				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene1\PlayMusic"/>
-				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene1\PlayTorch"/>
+				<Event Id="1181117825" Name="PlayAmbient" ObjectPath="\Events\Scene\PlayAmbient"/>
+				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene\PlayMusic"/>
+				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene\PlayTorch"/>
 				<Event Id="3240900869" Name="ResumeAll" ObjectPath="\Events\Default Work Unit\ResumeAll"/>
-				<Event Id="3627978879" Name="RopeCut" ObjectPath="\Events\Scene1\Puzzle\RopeCut"/>
-				<Event Id="1503597272" Name="StartPuzzleCountdown" ObjectPath="\Events\Scene1\Puzzle\StartPuzzleCountdown"/>
-				<Event Id="1566564139" Name="SwordHit" ObjectPath="\Events\Scene1\SwordHit"/>
-				<Event Id="3113731383" Name="SwordSlash" ObjectPath="\Events\Scene1\SwordSlash"/>
+				<Event Id="3627978879" Name="RopeCut" ObjectPath="\Events\Scene\Puzzle\RopeCut"/>
+				<Event Id="1503597272" Name="StartPuzzleCountdown" ObjectPath="\Events\Scene\Puzzle\StartPuzzleCountdown"/>
+				<Event Id="3953897988" Name="SwitchOff" ObjectPath="\Events\Scene\Puzzle\SwitchOff"/>
+				<Event Id="1242499422" Name="SwitchOn" ObjectPath="\Events\Scene\Puzzle\SwitchOn"/>
+				<Event Id="1566564139" Name="SwordHit" ObjectPath="\Events\Scene\SwordHit"/>
+				<Event Id="3113731383" Name="SwordSlash" ObjectPath="\Events\Scene\SwordSlash"/>
+				<Event Id="1288949937" Name="TheonBreathing" ObjectPath="\Events\Player_01\Characters\Theon\TheonBreathing"/>
 				<Event Id="837900871" Name="TheonDead" ObjectPath="\Events\Player_01\Characters\Theon\TheonDead"/>
 				<Event Id="3974846078" Name="TheonHurt" ObjectPath="\Events\Player_01\Characters\Theon\TheonHurt"/>
 				<Event Id="45876787" Name="TheonImpact" ObjectPath="\Events\Player_01\Characters\Theon\TheonImpact"/>
@@ -211,8 +220,9 @@
 				<Event Id="2159928993" Name="TheonMeleHit" ObjectPath="\Events\Player_01\Characters\Theon\TheonMeleHit"/>
 				<Event Id="3836375561" Name="TheonMeleShout" ObjectPath="\Events\Player_01\Characters\Theon\TheonMeleShout"/>
 				<Event Id="3412427529" Name="TheonRope" ObjectPath="\Events\Player_01\Characters\Theon\TheonRope"/>
+				<Event Id="2944574497" Name="TheonTired" ObjectPath="\Events\Player_01\Characters\Theon\TheonTired"/>
 				<Event Id="1916661861" Name="TheonTripleShot" ObjectPath="\Events\Player_01\Characters\Theon\TheonTripleShot"/>
-				<Event Id="777507535" Name="WaterSplash" ObjectPath="\Events\Scene1\Puzzle\WaterSplash"/>
+				<Event Id="777507535" Name="WaterSplash" ObjectPath="\Events\Scene\Puzzle\WaterSplash"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
 				<File Id="46166543" Language="SFX">
@@ -239,6 +249,10 @@
 					<ShortName>Enemy_ShieldBlock.wav</ShortName>
 					<Path>SFX\Enemy_ShieldBlock_1C9C67B2.wem</Path>
 				</File>
+				<File Id="99695251" Language="SFX">
+					<ShortName>Daennerys_Desperately_Breathing.wav</ShortName>
+					<Path>SFX\Daennerys_Desperately_Breathing_1C9C67B2.wem</Path>
+				</File>
 				<File Id="100153174" Language="SFX">
 					<ShortName>Characters\Theon\Theon_Dead_2.wav</ShortName>
 					<Path>SFX\Characters\Theon\Theon_Dead_2_EE628D5C.wem</Path>
@@ -263,6 +277,10 @@
 					<ShortName>Puzzle\Rope.wav</ShortName>
 					<Path>SFX\Puzzle\Rope_1C9C67B2.wem</Path>
 				</File>
+				<File Id="141428708" Language="SFX">
+					<ShortName>Theon_Desperately_Breathing.wav</ShortName>
+					<Path>SFX\Theon_Desperately_Breathing_1C9C67B2.wem</Path>
+				</File>
 				<File Id="153064777" Language="SFX">
 					<ShortName>Jaime_Hurt.wav</ShortName>
 					<Path>SFX\Jaime_Hurt_1C9C67B2.wem</Path>
@@ -274,10 +292,6 @@
 				<File Id="191702901" Language="SFX">
 					<ShortName>Theon_TripleShot.wav</ShortName>
 					<Path>SFX\Theon_TripleShot_1C9C67B2.wem</Path>
-				</File>
-				<File Id="195378477" Language="SFX">
-					<ShortName>Boss_theme.wav</ShortName>
-					<Path>SFX\Boss_theme_F17FB28C.wem</Path>
 				</File>
 				<File Id="195426196" Language="SFX">
 					<ShortName>Arrow_Impact_Wall.wav</ShortName>
@@ -307,6 +321,10 @@
 					<ShortName>Enemy\Enemy_2\E2_Dead_1.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_2\E2_Dead_1_1C9C67B2.wem</Path>
 				</File>
+				<File Id="304204776" Language="SFX">
+					<ShortName>Switch_Disable.wav</ShortName>
+					<Path>SFX\Switch_Disable_5B7EDBFC.wem</Path>
+				</File>
 				<File Id="337181357" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
 					<Path>SFX\Ambient\footstep_stone_1C39B089.wem</Path>
@@ -334,6 +352,10 @@
 				<File Id="433992945" Language="SFX">
 					<ShortName>Enemy_SwordDrop.wav</ShortName>
 					<Path>SFX\Enemy_SwordDrop_1C9C67B2.wem</Path>
+				</File>
+				<File Id="448295503" Language="SFX">
+					<ShortName>Combat_theme.wav</ShortName>
+					<Path>SFX\Combat_theme_F17FB28C.wem</Path>
 				</File>
 				<File Id="460932244" Language="SFX">
 					<ShortName>Enemy_ShortSwordSlash.wav</ShortName>
@@ -371,9 +393,33 @@
 					<ShortName>Misc_Combat\sword_slash.wav</ShortName>
 					<Path>SFX\Misc_Combat\sword_slash_1C9C67B2.wem</Path>
 				</File>
+				<File Id="560031115" Language="SFX">
+					<ShortName>Jaime_Desperately_Breathing.wav</ShortName>
+					<Path>SFX\Jaime_Desperately_Breathing_1C9C67B2.wem</Path>
+				</File>
+				<File Id="568836767" Language="SFX">
+					<ShortName>Daennerys_Tired.wav</ShortName>
+					<Path>SFX\Daennerys_Tired_1C9C67B2.wem</Path>
+				</File>
 				<File Id="582654528" Language="SFX">
 					<ShortName>Characters\Theon\Theon_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Theon\Theon_Dead_1_715F20C0.wem</Path>
+				</File>
+				<File Id="583166116" Language="SFX">
+					<ShortName>Door_open_close_end.wav</ShortName>
+					<Path>SFX\Door_open_close_end_69A33F19.wem</Path>
+				</File>
+				<File Id="585041305" Language="SFX">
+					<ShortName>Theon_Tired.wav</ShortName>
+					<Path>SFX\Theon_Tired_1C9C67B2.wem</Path>
+				</File>
+				<File Id="644454804" Language="SFX">
+					<ShortName>Player_Heartbeat.wav</ShortName>
+					<Path>SFX\Player_Heartbeat_1C9C67B2.wem</Path>
+				</File>
+				<File Id="688257092" Language="SFX">
+					<ShortName>Switch_Enable.wav</ShortName>
+					<Path>SFX\Switch_Enable_CFF5081A.wem</Path>
 				</File>
 				<File Id="706131552" Language="SFX">
 					<ShortName>Daennerys_FlameCrepitarLoop.wav</ShortName>
@@ -394,6 +440,10 @@
 				<File Id="802761961" Language="SFX">
 					<ShortName>Characters\Jaime\Jaime_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Jaime\Jaime_Dead_1_1C9C67B2.wem</Path>
+				</File>
+				<File Id="823093066" Language="SFX">
+					<ShortName>Door_open_close_loop.wav</ShortName>
+					<Path>SFX\Door_open_close_loop_1C9C67B2.wem</Path>
 				</File>
 				<File Id="823990075" Language="SFX">
 					<ShortName>Puzzle\Lever.wav</ShortName>
@@ -451,6 +501,14 @@
 					<ShortName>Enemy\Enemy_1\E1_Hurt_4.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_1\E1_Hurt_4_1C9C67B2.wem</Path>
 				</File>
+				<File Id="988758404" Language="SFX">
+					<ShortName>Jaime_Tired.wav</ShortName>
+					<Path>SFX\Jaime_Tired_1C9C67B2.wem</Path>
+				</File>
+				<File Id="991530287" Language="SFX">
+					<ShortName>Ambient\Ambience.wav</ShortName>
+					<Path>SFX\Ambient\Ambience_F17FB28C.wem</Path>
+				</File>
 				<File Id="999653156" Language="SFX">
 					<ShortName>Enemy_ShieldHit.wav</ShortName>
 					<Path>SFX\Enemy_ShieldHit_1C9C67B2.wem</Path>
@@ -486,6 +544,25 @@
 				<File Id="1045037916" Language="SFX">
 					<ShortName>Enemy\Enemy_3\E3_Hurt_1.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_3\E3_Hurt_1_1C9C67B2.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
+		<SoundBank Id="2678230380" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\Level3</ObjectPath>
+			<ShortName>Level3</ShortName>
+			<Path>Level3.bnk</Path>
+			<IncludedEvents>
+				<Event Id="3953897988" Name="SwitchOff" ObjectPath="\Events\Scene\Puzzle\SwitchOff"/>
+				<Event Id="1242499422" Name="SwitchOn" ObjectPath="\Events\Scene\Puzzle\SwitchOn"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="304204776" Language="SFX">
+					<ShortName>Switch_Disable.wav</ShortName>
+					<Path>SFX\Switch_Disable_5B7EDBFC.wem</Path>
+				</File>
+				<File Id="688257092" Language="SFX">
+					<ShortName>Switch_Enable.wav</ShortName>
+					<Path>SFX\Switch_Enable_CFF5081A.wem</Path>
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>
