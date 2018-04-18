@@ -1165,7 +1165,7 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 		if (timeLoc != -1) glUniform1f(timeLoc, time_dt);
 
 		//CAMERA POSITION
-		float3 cam_pos = App->camera->GetPos();
+		float3 cam_pos = App->renderer3D->active_camera->frustum.pos;
 		GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
 		if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
 
