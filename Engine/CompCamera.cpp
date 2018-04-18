@@ -246,6 +246,10 @@ void CompCamera::ShowInspectorInfo()
 		}
 	}
 
+	/* Enable-Disable Culling */
+	ImGui::Checkbox("DynamicUnCull", &cull_dynamics);
+
+
 	// EDITABLE FRUSTUM VARIABLES ------------------
 	ImGui::PushItemWidth(80);
 	if (ImGui::DragFloat("Near Plane", &near_plane, 0.5f, 0.01f, 699.9f))
@@ -288,6 +292,10 @@ void CompCamera::DoCulling()
 {
 	if (parent == nullptr || !culling)
 	{
+		if (!cull_dynamics)
+		{
+			UnCullDynamics();
+		}
 		return;
 	}
 	
@@ -297,7 +305,11 @@ void CompCamera::DoCulling()
 
 	// Then check dynamic objects
 	BROFILER_CATEGORY("CullDynamic: CompCamera", Profiler::Color::Blue);
-	CullDynamicObjects();
+	if (cull_dynamics)
+	{
+		CullDynamicObjects();
+	}
+	else UnCullDynamics();
 }
 
 void CompCamera::CullStaticObjects()
@@ -343,7 +355,7 @@ void CompCamera::CullDynamicObjects()
 			{
 				box = &candidates_to_cull.front()->box_fixed;
 				
-				if ((box->CenterPoint() - frustum_center).LengthSq() + box->HalfSize().LengthSq() >  far_plane_Sq)
+				if ((box->CenterPoint() - frustum_center).LengthSq() - box->HalfSize().LengthSq() >  far_plane_Sq)
 				{
 					candidates_to_cull.front()->SetVisible(false); // OUTSIDE CAMERA VISION
 				}
@@ -386,6 +398,44 @@ void CompCamera::UnCull()
 		candidates_to_cull.front()->SetVisible(true);
 
 		//Push all childs that are active to the candidates vector
+		for (std::vector<GameObject*>::iterator it = candidates_to_cull.front()->GetChildsPtr()->begin(); it != candidates_to_cull.front()->GetChildsPtr()->end(); it++)
+		{
+			if ((*it)->IsActive())
+			{
+				candidates_to_cull.push_back((*it));
+			}
+		}
+
+		// Delete from vector the object already checked
+		candidates_to_cull.pop_front();
+	}
+}
+
+void CompCamera::UnCullDynamics()
+{
+	// Push all active elements that are main childs of root & active
+	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
+	{
+		if (App->scene->root->GetChildbyIndex(i)->IsActive())
+		{
+			candidates_to_cull.push_back(App->scene->root->GetChildbyIndex(i));
+		}
+	}
+
+	// Check candidates_to_cull vector until it's empty
+	while (candidates_to_cull.empty() == false)
+	{
+		// If it's not static, check if it's inside the vision of the camera to set 
+		if (!candidates_to_cull.front()->IsStatic())
+		{
+			if (candidates_to_cull.front()->box_fixed.IsFinite()) // Check if it has AABB and it's not the camera itself
+			{
+				candidates_to_cull.front()->SetVisible(true); // INSIDE CAMERA VISION
+				candidates_to_cull.front()->Draw();
+			}
+		}
+
+		//Push all the active childs to the candidates vector
 		for (std::vector<GameObject*>::iterator it = candidates_to_cull.front()->GetChildsPtr()->begin(); it != candidates_to_cull.front()->GetChildsPtr()->end(); it++)
 		{
 			if ((*it)->IsActive())
@@ -533,6 +583,11 @@ void CompCamera::SetRatio(float ratio)
 {
 	aspect_ratio = ratio;
 	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2.0f)) * 2.0f;
+}
+
+void CompCamera::SetCullDynamics(bool active)
+{
+	cull_dynamics = active;
 }
 
 float CompCamera::GetNear() const

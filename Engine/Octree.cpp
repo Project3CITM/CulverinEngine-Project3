@@ -217,7 +217,7 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 	for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
 	{
 		AABB Box = item._Ptr->_Myval->box_fixed;
-		if ((Box.CenterPoint() - center_frustum).LengthSq() + Box.HalfSize().LengthSq() < size_frustum)
+		if ((Box.CenterPoint() - center_frustum).LengthSq() - Box.HalfSize().LengthSq() < size_frustum)
 		{
 			int iTotalIn = 0;
 			bool is_in = true;

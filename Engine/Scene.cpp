@@ -1438,6 +1438,7 @@ GameObject* Scene::CreateMainCamera(GameObject* parent)
 	CompCamera* camera = (CompCamera*)obj->AddComponent(C_CAMERA);
 	camera->Enable();
 	camera->SetMain(true);
+	camera->SetCullDynamics(false);
 
 	if (parent == nullptr)
 	{

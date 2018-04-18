@@ -43,6 +43,7 @@ bool ModuleCamera3D::Init(JSON_Object * node)
 	App->renderer3D->SetActiveCamera(cam);
 	cam->frustum.Translate(float3(10, 10, -10));
 	cam->SetFov(50);
+	cam->SetCullDynamics(false);
 	LookAt(float3::zero);
 
 	//Load render config info -------

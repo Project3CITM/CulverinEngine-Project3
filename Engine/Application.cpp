@@ -253,6 +253,7 @@ void Application::PrepareUpdate()
 	}
 	else if (change_to_scene)
 	{
+		renderer3D->scene_camera->SetCullDynamics(false);
 		renderer3D->SetActiveCamera(renderer3D->scene_camera);
 		change_to_scene = false;
 	}
