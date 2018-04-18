@@ -69,6 +69,7 @@ public class CharactersManager : CulverinBehaviour
 
     public GameObject god_mode_sprite;
     public bool god_mode = false;
+    public bool no_damage = false;
 
     void Start()
     {
@@ -1052,8 +1053,16 @@ public class CharactersManager : CulverinBehaviour
 
             //Enable god mode sprite
             god_mode_sprite.GetComponent<CompImage>().SetRender(god_mode);
-            Debug.Log("Helloo", Department.PLAYER, Color.ORANGE);
         }
+
+        //if (Input.GetKeyDown(KeyCode.F1))
+        //{
+        //    god_mode = !god_mode;
+
+        //    //Enable god mode sprite
+        //    god_mode_sprite.GetComponent<CompImage>().SetRender(god_mode);
+        //    Debug.Log("Helloo", Department.PLAYER, Color.ORANGE);
+        //}
     }
 }
 
