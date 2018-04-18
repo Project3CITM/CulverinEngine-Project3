@@ -1298,7 +1298,7 @@ void CSharpScript::SetEnabled(MonoObject* object, mono_bool active)
 	Component* comp = App->importer->iScript->GetComponentMono(object);
 	MonoClass* class_temp = mono_object_get_class(object);
 	std::string name_component = mono_class_get_name(class_temp);
-	if (comp = nullptr)
+	if (comp == nullptr)
 	{
 		comp = current_game_object->GetComponentByName(name_component.c_str());
 	}
