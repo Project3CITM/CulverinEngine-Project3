@@ -72,6 +72,7 @@ public:
 	void SetUniform(uint ID, const GLchar* uniformName, float& v);
 
 	void SetUniformVariables(Material * material);
+	void SetGlobalVariables(float dt,bool all_lights = false);
 
 	//Event system test
 	bool SetEventListenrs();

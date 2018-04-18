@@ -258,20 +258,16 @@ void CompMesh::Draw2(uint ID)
 {
 	if (render && resource_mesh != nullptr)
 	{
-		//BIND MATERIAL
+
 		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
 		if (resource_mesh->vertices.size() > 0 && resource_mesh->indices.size() > 0)
 		{
-			if (App->renderer3D->texture_2d)
-			{
-				
-			}
+		
 			uint TexturesSize = parent->GetComponentMaterial()->material->textures.size();
 			
-			//float4x4 temp = camFrust.ViewMatrix();
-			//GLint view2Loc = glGetUniformLocation(ID, "view");
+		
 			GLint modelLoc = glGetUniformLocation(ID, "model");			
-			//GLint modelviewLoc = glGetUniformLocation(ID, "modelview");
+
 			float4x4 matrixfloat = transform->GetGlobalTransform();
 
 			GLfloat matrix[16] =
@@ -281,21 +277,8 @@ void CompMesh::Draw2(uint ID)
 				matrixfloat[0][2],matrixfloat[1][2],matrixfloat[2][2],matrixfloat[3][2],
 				matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
 			};
-			//float4x4 ModelViewMatrix = temp.Inverted() * matrixfloat;
-			//glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
+			
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
-
-			//glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
-			//glUniformMatrix4fv(modelviewLoc, 1, GL_TRUE, ModelViewMatrix.ptr());
-			//Shadow mapping
-			
-			
-		
-			
-
-			/*TEMPORAL*/
-			
-		/*-----------------*/
 
 			int total_save_buffer = 14;
 			uint bones_size_in_buffer = 0;
@@ -332,9 +315,7 @@ void CompMesh::Draw2(uint ID)
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource_mesh->indices_id);
 				glDrawElements(GL_TRIANGLES, resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);
 			}
-			//Reset TextureColor
-			//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		
+
 			glDisable(GL_TEXTURE_CUBE_MAP_EXT);
 		}
 		else

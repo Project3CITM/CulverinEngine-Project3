@@ -69,73 +69,10 @@ update_status ModuleShaders::PreUpdate(float dt)
 update_status ModuleShaders::Update(float dt)
 {
 	perf_timer.Start();
-	std::vector<Material*>::iterator item = materials.begin();
-	static float time_dt = 0;
-	time_dt += dt * App->game_time.time_scale;
-	while (item != materials.end())
-	{
-		uint ID = (*item)->GetProgramID();
-		if ((*item)->active_num == 0) {
-			item++;
-			continue;
-		}
-
-		(*item)->Bind();
-
-		
-		//TIME		
-		GLint timeLoc = glGetUniformLocation(ID, "_time");
-		if (timeLoc != -1) glUniform1f(timeLoc, time_dt);
-
-		//CAMERA POSITION
-		float3 cam_pos = App->camera->GetPos();
-		GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
-		if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
-
-		//ALPHA
-		float alpha = (*item)->alpha;
-		GLint alphaLoc = glGetUniformLocation(ID, "_alpha");
-		if (alphaLoc != -1) glUniform1f(alphaLoc, alpha);
-
-		//VIEWPROJ MATRIX
-		Frustum camFrust = App->renderer3D->active_camera->frustum;
-		GLint viewLoc = glGetUniformLocation(ID, "viewproj");
-		if (viewLoc != -1)glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
-
-		//LIGHTS
-		std::vector<CompLight*> lights_vec = *App->module_lightning->GetActiveLights();
-		GLint lightsizeLoc = glGetUniformLocation(ID, "_numLights");
-		if (lightsizeLoc != -1) glUniform1i(lightsizeLoc, lights_vec.size());
-
-
-
-
-		if (lightsizeLoc != -1)
-			for (size_t i = 0; i < lights_vec.size(); ++i) {
-
-				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
-					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
-				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
-					SetLightUniform((*item)->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
-
-				SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
-				SetLightUniform(ID, "l_color", i, lights_vec[i]->color);
-				SetLightUniform(ID, "ambientCoefficient", i, lights_vec[i]->ambientCoefficient);
-
-				SetLightUniform(ID, "properties", i, lights_vec[i]->properties);
-
-				// Bias matrix. TODO: Might be better to set other place
-				
-				int depthBiasID = glGetUniformLocation(ID, "depthBias");
-				glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
-
-				// End Bias matrix.
-			}
-
-		item++;
-	}
-	glUseProgram(0);
+	
 	Enable_Text_Editor();
+
+	SetGlobalVariables(dt);
 
 	if (App->gui->shader_program_creation) {
 		SendEventWithAllShaders();
@@ -371,7 +308,7 @@ Shader* ModuleShaders::CompileShader(std::string path, std::string name, ShaderT
 	rewind(pFile);
 
 	// allocate memory to contain the whole file:
-	buffer = new char[lSize + 1];// (char*)malloc(sizeof(char)*lSize);
+	buffer = new char[lSize + 1];
 	memset(buffer, 0, lSize + 1);
 	if (buffer == NULL) { fputs("Memory error", stderr); exit(2); }
 
@@ -500,9 +437,6 @@ void ModuleShaders::ImportShaderObjects()
 			RELEASE_ARRAY(buffer);
 		}
 	}
-
-
-
 }
 
 void ModuleShaders::ImportShaderMaterials()
@@ -1208,6 +1142,79 @@ void ModuleShaders::SetUniformVariables(Material * material)
 	}
 
 	material->RestartIterators();
+}
+
+void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
+{
+	std::vector<Material*>::iterator item = materials.begin();
+	static float time_dt = 0;
+	time_dt += dt * App->game_time.time_scale;
+	while (item != materials.end())
+	{
+		uint ID = (*item)->GetProgramID();
+		if ((*item)->active_num == 0) {
+			item++;
+			continue;
+		}
+
+		(*item)->Bind();
+
+
+		//TIME		
+		GLint timeLoc = glGetUniformLocation(ID, "_time");
+		if (timeLoc != -1) glUniform1f(timeLoc, time_dt);
+
+		//CAMERA POSITION
+		float3 cam_pos = App->camera->GetPos();
+		GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
+		if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
+
+		//ALPHA
+		float alpha = (*item)->alpha;
+		GLint alphaLoc = glGetUniformLocation(ID, "_alpha");
+		if (alphaLoc != -1) glUniform1f(alphaLoc, alpha);
+
+		//VIEWPROJ MATRIX
+		Frustum camFrust = App->renderer3D->active_camera->frustum;
+		GLint viewLoc = glGetUniformLocation(ID, "viewproj");
+		if (viewLoc != -1)glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+
+		//LIGHTS
+		std::vector<CompLight*> lights_vec;
+		if(!all_lights)
+			lights_vec = *App->module_lightning->GetActiveLights();
+		else 
+			lights_vec = App->module_lightning->GetSceneLights();
+
+		GLint lightsizeLoc = glGetUniformLocation(ID, "_numLights");
+		if (lightsizeLoc != -1) glUniform1i(lightsizeLoc, lights_vec.size());
+
+
+		if (lightsizeLoc != -1)
+			for (size_t i = 0; i < lights_vec.size(); ++i) {
+
+				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
+					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
+				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
+					SetLightUniform((*item)->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
+
+				SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
+				SetLightUniform(ID, "l_color", i, lights_vec[i]->color);
+				SetLightUniform(ID, "ambientCoefficient", i, lights_vec[i]->ambientCoefficient);
+
+				SetLightUniform(ID, "properties", i, lights_vec[i]->properties);
+
+				// Bias matrix. TODO: Might be better to set other place
+
+				int depthBiasID = glGetUniformLocation(ID, "depthBias");
+				glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
+
+				// End Bias matrix.
+			}
+
+		item++;
+	}
+	glUseProgram(0);
 }
 
 

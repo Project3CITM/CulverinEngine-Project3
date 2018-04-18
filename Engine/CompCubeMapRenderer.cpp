@@ -30,17 +30,10 @@ CompCubeMapRenderer::~CompCubeMapRenderer()
 
 void CompCubeMapRenderer::Bake(Event& event)
 {
-	//cube_map.Destroy();
-	//cube_map.Create();
-	uint depth_cube_map_index = 0;
+	float3 render_pos = GetGameObjectPos();
 
-	float3 light_pos = GetGameObjectPos();
-
-	CubeMap_Texture* fbo = &cube_map;
-
-	fbo->Bind();
-	
-
+	CubeMap_Texture* cube = &cube_map;
+	cube->Bind();
 
 	GLint viewport_size[4];
 	glGetIntegerv(GL_VIEWPORT, viewport_size);
@@ -48,67 +41,25 @@ void CompCubeMapRenderer::Bake(Event& event)
 	uint size = 1024;
 	glViewport(0, 0, size, size);
 
-	//
 	float near_plane = 1.f;
-	float far_plane = 50.f; //TODO: Change it for light range
+	float far_plane = 50.f; 
 	glm::mat4 shadow_proj = glm::perspective(glm::radians(90.f), (float)size / (float)size, near_plane, far_plane);
 
-	std::vector<glm::mat4> shadow_transforms;
-	glm::vec3 l_pos = glm::vec3(light_pos.x, light_pos.y, light_pos.z);
-	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
-	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
-	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.f, 0.f, 1.f)));
-	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, -1.f)));
-	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
-	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
+	std::vector<glm::mat4> cube_transforms;
+	glm::vec3 r_pos = glm::vec3(render_pos.x, render_pos.y, render_pos.z);
+	cube_transforms.push_back(shadow_proj * glm::lookAt(r_pos, r_pos + glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
+	cube_transforms.push_back(shadow_proj * glm::lookAt(r_pos, r_pos + glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
+	cube_transforms.push_back(shadow_proj * glm::lookAt(r_pos, r_pos + glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.f, 0.f, 1.f)));
+	cube_transforms.push_back(shadow_proj * glm::lookAt(r_pos, r_pos + glm::vec3(0.f, -1.f, 0.f), glm::vec3(0.f, 0.f, -1.f)));
+	cube_transforms.push_back(shadow_proj * glm::lookAt(r_pos, r_pos + glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
+	cube_transforms.push_back(shadow_proj * glm::lookAt(r_pos, r_pos + glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
 
-	std::vector<Material*>::iterator item = App->module_shaders->materials.begin();
-	while (item != App->module_shaders->materials.end())
-	{
-		uint ID = (*item)->GetProgramID();
-		if ((*item)->active_num == 0) {
-			item++;
-			continue;
-		}
-
-		(*item)->Bind();
-		std::vector<CompLight*> lights_vec = App->module_lightning->GetSceneLights();
-		GLint lightsizeLoc = glGetUniformLocation(ID, "_numLights");
-		if (lightsizeLoc != -1) glUniform1i(lightsizeLoc, lights_vec.size());
-
-
-
-
-		if (lightsizeLoc != -1)
-			for (size_t i = 0; i < lights_vec.size(); ++i) {
-
-				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
-					App->module_shaders->SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
-				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
-					App->module_shaders->SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
-
-				App->module_shaders->SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
-				App->module_shaders->SetLightUniform(ID, "l_color", i, lights_vec[i]->color);
-				App->module_shaders->SetLightUniform(ID, "ambientCoefficient", i, lights_vec[i]->ambientCoefficient);
-
-				App->module_shaders->SetLightUniform(ID, "properties", i, lights_vec[i]->properties);
-
-				// Bias matrix. TODO: Might be better to set other place
-
-				int depthBiasID = glGetUniformLocation(ID, "depthBias");
-				glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
-
-				// End Bias matrix.
-			}
-		item++;
-
-	}
-
+	App->module_shaders->SetGlobalVariables(0, true);
 
 	for (uint i = 0; i < 6; ++i)
 	{
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, fbo->GetTextureId(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cube->GetTextureId(), 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 		//GET VECTOR OF GAMEOBJECTS
 	
@@ -121,11 +72,10 @@ void CompCubeMapRenderer::Bake(Event& event)
 				continue;
 			if (m->HasSkeleton())
 				continue;
+
+
 			uint sh_id = m->GetMaterial()->material->GetProgramID();
 			m->GetMaterial()->material->Bind();
-
-
-			float3 object_pos = m->GetGameObjectPos();
 
 			CompTransform* transform = (*item)->GetComponentTransform();
 			float4x4 matrixfloat = transform->GetGlobalTransform();
@@ -144,16 +94,12 @@ void CompCubeMapRenderer::Bake(Event& event)
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
 
 			GLint viewLoc = glGetUniformLocation(sh_id, "viewproj");
-			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &((shadow_transforms[i])[0][0]));
-
-			glUniform1f(glGetUniformLocation(sh_id, "_far_plane"), far_plane);
-			glUniform3fv(glGetUniformLocation(sh_id, "_light_pos"), 1, &l_pos.x);
+			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &((cube_transforms[i])[0][0]));
 
 
 			int total_save_buffer = 14;
 			ResourceMesh* mesh = m->resource_mesh;
 			glBindBuffer(GL_ARRAY_BUFFER, mesh->id_total_buffer);
-
 
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
@@ -178,11 +124,7 @@ void CompCubeMapRenderer::Bake(Event& event)
 
 	//Unbind shader and cube map
 	glUseProgram(0);
-	fbo->UnBind();
-
-	++depth_cube_map_index;
-
-
+	cube->UnBind();
 
 }
 
