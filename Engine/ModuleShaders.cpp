@@ -15,6 +15,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleImporter.h"
 #include "ImportMaterial.h"
+#include "CubeMap_Texture.h"
 
 ModuleShaders::ModuleShaders()
 {
@@ -865,7 +866,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 						material->float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, json_name);
 					}
 					else {
-						for (int n = 0; n < num_floats; n++) {
+						for (int n = 0; n < num_float3; n++) {
 							std::ostringstream temp_ss;
 							temp_ss << name << "Float3:" << n;
 							std::string temp_name = temp_ss.str();
@@ -902,7 +903,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 						material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, json_name);
 					}
 					else {
-						for (int n = 0; n < num_floats; n++) {
+						for (int n = 0; n < num_colors; n++) {
 							std::ostringstream temp_ss;
 							temp_ss << name << "Color:" << n;
 							std::string temp_name = temp_ss.str();
@@ -915,6 +916,45 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 
 							if (strcmp(temp_var_name.c_str(), material->color_variables[i].var_name.c_str()) == 0) {
 								material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, temp_name);
+								break;
+							}
+
+						}
+					}
+				}
+				uint num_cubes = json_object_dotget_number_with_std(object, name + "Num Cubes:");
+				for (int i = 0; i < num_cubes; i++)
+				{
+					std::ostringstream ss;
+					ss << name << "Cube:" << i;
+					std::string json_name = ss.str();
+
+					std::ostringstream ss2;
+					ss2 << name << "Cube Name:" << i;
+					std::string json_var = ss2.str();
+
+					if (i >= material->cube_maps.size()) break;
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->cube_maps[i].var_name.c_str()) == 0) {
+						material->cube_maps[i].cube_name = json_object_dotget_string_with_std(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_cubes; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Cube:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Cube Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->cube_maps[i].var_name.c_str()) == 0) {
+
+								material->cube_maps[i].cube_name = json_object_dotget_string_with_std(object, temp_name);
+
 								break;
 							}
 
@@ -1157,12 +1197,12 @@ void ModuleShaders::SetUniformVariables(Material * material)
 	{
 		for (uint i = 0; i < material->cube_maps.size(); i++)
 		{
-			
+			if (material->cube_maps[i].cube_map == nullptr) continue;
 			uint texLoc = glGetUniformLocation(material->GetProgramID(), material->cube_maps[i].var_name.c_str());
 			glUniform1i(texLoc, i + material->textures.size());
 			glActiveTexture(GL_TEXTURE0 + i + material->textures.size());
-			if (material->cube_maps[i].value <= 0) glBindTexture(GL_TEXTURE_CUBE_MAP, App->renderer3D->id_checkImage);
-			else glBindTexture(GL_TEXTURE_CUBE_MAP, material->cube_maps[i].value);
+			if (material->cube_maps[i].cube_map->GetTextureId() <= 0) glBindTexture(GL_TEXTURE_CUBE_MAP, App->renderer3D->id_checkImage);
+			else glBindTexture(GL_TEXTURE_CUBE_MAP, material->cube_maps[i].cube_map->GetTextureId());
 
 		}
 	}

@@ -12,8 +12,11 @@
 #include "ResourceMaterial.h"
 #include "TextEditor.h"
 
+
 #pragma comment (lib, "GL3W/libx86/glew32.lib") 
 typedef unsigned int uint;
+class CubeMap_Texture;
+
 
 enum ShaderType {
 	nullShader,
@@ -69,7 +72,8 @@ struct boolVar {
 
 struct CubeMapVar {
 	std::string var_name;	
-	uint value = 0;	
+	CubeMap_Texture* cube_map = nullptr;
+	std::string cube_name;
 };
 
 class Shader {

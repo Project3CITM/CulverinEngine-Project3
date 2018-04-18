@@ -334,7 +334,7 @@ void ModuleLightning::OnEvent(Event & event)
 
 		else if (light->type == Light_type::POINT_LIGHT) {
 
-			CalcPointShadowMaps(event, (CompLight*)light);
+			//CalcPointShadowMaps(event, (CompLight*)light);
 		}
 
 	}

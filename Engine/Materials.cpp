@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "ModuleFS.h"
 #include "ModuleRenderer3D.h"
-
+#include "CubeMap_Texture.h"
 Material::Material()
 {
 	active_num = 0;
@@ -150,6 +150,30 @@ void Material::Save() const
 		json_object_dotset_string_with_std(object, json_name_var, color_variables[i].var_name.c_str());
 
 
+	}
+
+	json_object_dotset_number_with_std(object, name + "Num Cubes:", cube_maps.size());
+	for (int i = 0; i < cube_maps.size(); i++)
+	{
+
+		std::ostringstream ss;
+		ss << name << "Cube:" << i;
+		std::string json_name = ss.str();
+
+		std::ostringstream ss2;
+		ss2 << name << "Cube Name:" << i;
+		std::string json_name_var = ss2.str();
+
+		if (cube_maps[i].cube_map != nullptr) {
+
+			json_object_dotset_string_with_std(object, json_name, cube_maps[i].cube_map->GetName().c_str());
+			json_object_dotset_string_with_std(object, json_name_var, cube_maps[i].var_name.c_str());
+
+		}
+		else {
+			json_object_dotset_string_with_std(object, json_name, "");
+			json_object_dotset_string_with_std(object, json_name_var, "");
+		}
 	}
 
 	json_serialize_to_file(config_file, directory_assets.c_str());
@@ -356,7 +380,7 @@ void Material::GetProgramVariables()
 		for (auto item2 = cube_maps.begin(); item2 != cube_maps.end(); item2++)
 		{
 			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
-				(*item2).value = (*item).value;
+				(*item2).cube_map = (*item).cube_map;
 			}
 		}
 	}

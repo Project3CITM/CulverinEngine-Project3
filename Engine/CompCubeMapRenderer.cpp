@@ -15,6 +15,7 @@
 #include "ModuleFS.h"
 CompCubeMapRenderer::CompCubeMapRenderer(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
+	uid = App->random->Int();
 	name_component = "CubeMapRenderer";	
 	cube_map.Create();
 	App->renderer3D->cube_maps.push_back(&cube_map);
@@ -144,10 +145,9 @@ void CompCubeMapRenderer::ShowInspectorInfo()
 {
 	char namedit[150];
 	strcpy_s(namedit, 150, cube_map.GetName().c_str());
-	if (ImGui::InputText("##nameModel", namedit, 150))
-	{
-		cube_map.SetName(App->fs->ConverttoChar(std::string(namedit).c_str()));
-	}
+	ImGui::InputText("##nameModel", namedit, 150);
+	cube_map.SetName(App->fs->ConverttoChar(std::string(namedit).c_str()));
+	
 	if (ImGui::Button("Bake")) {
 		Event draw_event;
 		draw_event.Set_event_data(EventType::EVENT_CUBEMAP_REQUEST);
@@ -155,5 +155,21 @@ void CompCubeMapRenderer::ShowInspectorInfo()
 		PushEvent(draw_event);
 	}
 	ImGui::TreePop();
+}
+
+void CompCubeMapRenderer::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
+{
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
+	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
+	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	json_object_dotset_string_with_std(object, name + "Name:", cube_map.GetName().c_str());
+
+}
+
+void CompCubeMapRenderer::Load(const JSON_Object * object, std::string name)
+{
+
+	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	cube_map.SetName(json_object_dotget_string_with_std(object, name + "Name:"));
 }
 

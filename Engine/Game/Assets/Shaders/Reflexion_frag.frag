@@ -202,7 +202,7 @@ vec3 tmp = normalize(ourPos -  _cameraPosition);
 vec3 temp = reflect(tmp, normalize(ourNormal));
 vec4 reflex_color = texture(cube_map, normalize(temp));
 
-color = mix(vec4(col, 1), reflex_color,  0.7);
+color = reflex_color;
 
  
 }

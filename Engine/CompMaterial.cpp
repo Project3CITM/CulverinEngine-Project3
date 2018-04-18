@@ -84,6 +84,15 @@ void CompMaterial::PreUpdate(float dt)
 			}
 		}
 	}
+	for (int i = 0; i < material->cube_maps.size(); i++)
+	{
+		for (int n = 0; n < App->renderer3D->cube_maps.size(); n++) {
+			if (material->cube_maps[i].cube_name.compare(App->renderer3D->cube_maps[n]->GetName()) == 0) {
+				material->cube_maps[i].cube_map = App->renderer3D->cube_maps[n];
+			}
+		}
+	}
+
 }
 
 void CompMaterial::Clear()
@@ -546,11 +555,11 @@ void CompMaterial::ShowCubeMapVariable(int index, CubeMapVar * var)
 	for (int i = 0; i < App->renderer3D->cube_maps.size(); i++) {
 		cube_names += App->renderer3D->cube_maps[i]->GetName().c_str();
 		cube_names += '\0';
-		if (var->value == App->renderer3D->cube_maps[i]->GetTextureId())
+		if (var->cube_map == App->renderer3D->cube_maps[i])
 			cube_pos = i;
 	}
 	if (ImGui::Combo("CubeMap", &cube_pos, cube_names.c_str())) {
-		var->value = App->renderer3D->cube_maps[cube_pos]->GetTextureId();
+		var->cube_map = App->renderer3D->cube_maps[cube_pos];
 
 	}
 

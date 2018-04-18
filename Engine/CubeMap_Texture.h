@@ -8,7 +8,9 @@ class CubeMap_Texture
 public:
 	CubeMap_Texture();
 	CubeMap_Texture(unsigned int size);
-	~CubeMap_Texture() { Destroy(); }
+	~CubeMap_Texture() {
+		Destroy(); 
+	}
 
 	void Resize(int new_size) 
 	{
