@@ -201,7 +201,7 @@ public class ManagerProjectile : CulverinBehaviour
     {
         //PlayFx("audioooo");
         Debug.Log("Shoot");
-        GameObject projectile = Instantiate("Projectil");
+        GameObject projectile = Instantiate("FireProjectile");
         projectile.transform.SetPosition(projectileOut.GetComponent<Transform>().GetGlobalPosition());
         projectile.transform.SetRotation(projectileOut.GetComponent<Transform>().GetRotation());
 
