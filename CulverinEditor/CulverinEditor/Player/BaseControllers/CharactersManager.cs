@@ -68,7 +68,17 @@ public class CharactersManager : CulverinBehaviour
     private float heal_destination = 0.0f;
 
     public GameObject god_mode_sprite;
+
+    /*GOD MODE: 
+        - No damage taken.
+        - 0 cost of abilities.
+        - 1 sec cooldown for secondary abilities.
+    */
     public bool god_mode = false;
+
+    /*NO DAMAGE MODE: 
+       - No damage taken.
+   */
     public bool no_damage = false;
 
     void Start()
@@ -605,7 +615,7 @@ public class CharactersManager : CulverinBehaviour
         else
         {
             // 0 DAMAGE TAKEN IN GOD MODE
-            if (god_mode)
+            if (god_mode || no_damage)
             {
                 dmg = 0;
             }
@@ -1047,6 +1057,7 @@ public class CharactersManager : CulverinBehaviour
 
     public void CheckGodMode()
     {
+        //GOD MODE
         if (Input.GetKeyDown(KeyCode.F1))
         {
             god_mode = !god_mode;
@@ -1055,14 +1066,11 @@ public class CharactersManager : CulverinBehaviour
             god_mode_sprite.GetComponent<CompImage>().SetRender(god_mode);
         }
 
-        //if (Input.GetKeyDown(KeyCode.F1))
-        //{
-        //    god_mode = !god_mode;
-
-        //    //Enable god mode sprite
-        //    god_mode_sprite.GetComponent<CompImage>().SetRender(god_mode);
-        //    Debug.Log("Helloo", Department.PLAYER, Color.ORANGE);
-        //}
+        //NO DAMAGE MODE
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            no_damage = !no_damage;
+        }
     }
 }
 

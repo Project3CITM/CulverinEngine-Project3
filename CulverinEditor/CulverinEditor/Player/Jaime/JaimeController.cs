@@ -55,6 +55,7 @@ public class JaimeController : CharacterController
     JaimeCD_Right right_ability_cd;
 
     public GameObject jaime_sword_obj;
+    public float blood_amount = 0.2f;
     // ---------------------
 
     //Particle emitter GameObject
@@ -548,6 +549,9 @@ public class JaimeController : CharacterController
                 /* ---------- IN CASE THAT THE ENEMY BLOCKS THE ATTACK, UNCOMMENT AND COMPLETE THIS CODE ---------- */
                 if (enemy_manager.ApplyDamage(coll_object, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.SWORD))
                 {
+                    //Increase the blood of the sword
+                    GetLinkedObject("jaime_sword_obj").GetComponent<SwordParticles>().SetBlood(blood_amount); 
+
                     GetComponent<CompAudio>().PlayEvent("Enemy_Flesh_Hit");
 
                     if (hit_streak == 0)
@@ -561,6 +565,9 @@ public class JaimeController : CharacterController
                 }
                 else
                 {
+                    //Decrease the blood of the sword
+                    GetLinkedObject("jaime_sword_obj").GetComponent<SwordParticles>().SetBlood(-blood_amount);
+
                     // Reset Hit Count
                     combo_obj.GetComponent<ComboController>().ResetHitStreak(); 
 
@@ -580,6 +587,9 @@ public class JaimeController : CharacterController
             }
             else if(coll_object.CompareTag("obstacle"))
             {
+                //Decrease the blood of the sword
+                GetLinkedObject("jaime_sword_obj").GetComponent<SwordParticles>().SetBlood(-blood_amount);
+
                 //Reset Hit Count
                 combo_obj.GetComponent<ComboController>().ResetHitStreak(); 
 
@@ -598,6 +608,9 @@ public class JaimeController : CharacterController
         }
         else
         {
+            //Decrease the blood of the sword
+            GetLinkedObject("jaime_sword_obj").GetComponent<SwordParticles>().SetBlood(-blood_amount);
+
             //Reset Hit Count
             combo_obj.GetComponent<ComboController>().ResetHitStreak();
         }
