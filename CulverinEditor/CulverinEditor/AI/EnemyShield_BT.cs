@@ -148,7 +148,7 @@ public class EnemyShield_BT : Enemy_BT
         switch (life_state)
         {
             case ENEMY_STATE.ENEMY_ALIVE:
-                if (shield_block_timer >= shield_block_cd)
+                if (shield_block_timer >= shield_block_cd && damage_type != ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                 {
                     MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
                     Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
