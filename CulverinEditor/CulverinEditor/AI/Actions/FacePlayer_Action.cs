@@ -23,7 +23,6 @@ public class FacePlayer_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        Debug.Log("Hello");
         if (interupt == true)
             move.Interupt();
 
