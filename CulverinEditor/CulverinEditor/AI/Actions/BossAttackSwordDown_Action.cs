@@ -27,6 +27,9 @@ public class BossAttackSwordDown_Action : Action
     public float preparation_time = 0.8f;
     public float attack_duration = 1.0f;
 
+    public float rumble_power = 0.5f;
+    public int rumble_time = 200;
+
 
     public override bool ActionStart()
     {
@@ -58,6 +61,7 @@ public class BossAttackSwordDown_Action : Action
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
                         GetComponent<CompAudio>().PlayEvent("BossHitGround");
+                        Input.RumblePlay(rumble_power, rumble_time);
                     }
                     break;
                 case Movement_Action.Direction.DIR_EAST:
@@ -65,6 +69,7 @@ public class BossAttackSwordDown_Action : Action
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
                         GetComponent<CompAudio>().PlayEvent("BossHitGround");
+                        Input.RumblePlay(rumble_power, rumble_time);
                     }
                     break;
                 case Movement_Action.Direction.DIR_NORTH:
@@ -72,6 +77,7 @@ public class BossAttackSwordDown_Action : Action
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
                         GetComponent<CompAudio>().PlayEvent("BossHitGround");
+                        Input.RumblePlay(rumble_power, rumble_time);
                     }
                     break;
                 case Movement_Action.Direction.DIR_SOUTH:
@@ -79,6 +85,7 @@ public class BossAttackSwordDown_Action : Action
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
                         GetComponent<CompAudio>().PlayEvent("BossHitGround");
+                        Input.RumblePlay(rumble_power, rumble_time);
                     }
                     break;
             }

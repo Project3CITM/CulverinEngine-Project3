@@ -43,6 +43,9 @@ public class Boss_BT : BT
     public float damaged_limit = 0.6f;
     public float cooldown = 0.0f;
 
+    public float rumble_power = 0.5f;
+    public int rumble_time = 200;
+
     System.Random rand_gen = null;
 
     private bool boss_active;
@@ -266,6 +269,7 @@ public class Boss_BT : BT
     {
         next_action = GetComponent<BossEngage_Action>();
         GetComponent<CompAudio>().PlayEvent("BossGrowl");
+        Input.RumblePlay(rumble_power, rumble_time);
     }
 
     public int GetDistanceXToPlayer()
