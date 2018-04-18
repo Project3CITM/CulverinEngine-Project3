@@ -58,6 +58,8 @@ public class Enemy_BT : BT
     protected float hp_timer = 10.0f;
     protected bool hud_active = false;
 
+    public bool Disable_Movement_Gameplay_Debbuger = false;
+
     public override void Start()
     {
         in_combat = false;

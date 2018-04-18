@@ -96,7 +96,7 @@ public class EnemySword_BT : Enemy_BT
                 return;
             }
         }
-        else if(player_detected == true)
+        else if(player_detected == true && Disable_Movement_Gameplay_Debbuger==false)
         {
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
@@ -105,7 +105,10 @@ public class EnemySword_BT : Enemy_BT
     }
 
     protected override void OutOfCombatDecesion()
-    {        
+    {
+
+        if (Disable_Movement_Gameplay_Debbuger) return;
+
         //Investigate
         if (heard_something)
         {

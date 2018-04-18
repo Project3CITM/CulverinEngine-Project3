@@ -155,7 +155,7 @@ public class EnemySpear_BT : Enemy_BT
             }
         }
 
-        if (player_detected == true)
+        if (player_detected == true && Disable_Movement_Gameplay_Debbuger == false)
         {
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
@@ -166,6 +166,9 @@ public class EnemySpear_BT : Enemy_BT
 
     protected override void OutOfCombatDecesion()
     {
+
+        if (Disable_Movement_Gameplay_Debbuger) return;
+
         //Investigate
         if (heard_something)
         {

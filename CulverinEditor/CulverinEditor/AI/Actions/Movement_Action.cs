@@ -75,6 +75,7 @@ public class Movement_Action : Action
         arrive = GetComponent<Arrive_Steering>();
         seek = GetComponent<Seek_Steering>();
 
+
         BT bt = GetComponent<EnemySword_BT>();
         if (bt == null)
             bt = GetComponent<EnemyShield_BT>();
@@ -134,6 +135,7 @@ public class Movement_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+  
         //Movement
         if (translation_finished == false)
         {
