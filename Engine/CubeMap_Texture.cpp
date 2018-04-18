@@ -19,6 +19,11 @@ CubeMap_Texture::CubeMap_Texture(unsigned int size) : cubemap_size(size)
 void CubeMap_Texture::Create()
 {
 	glGenFramebuffers(1, &cubemap_fbo);
+
+	//Depth 
+	glGenRenderbuffers(1, &cubemap_depth_id);
+
+	//texture
 	glGenTextures(1, &cubemap_texture_id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap_texture_id);
 
@@ -50,11 +55,14 @@ void CubeMap_Texture::Destroy()
 void CubeMap_Texture::Bind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, cubemap_fbo);
-
+	glBindRenderbuffer(GL_RENDERBUFFER, cubemap_depth_id);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, cubemap_size, cubemap_size);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, cubemap_depth_id);
 }
 
 void CubeMap_Texture::UnBind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 

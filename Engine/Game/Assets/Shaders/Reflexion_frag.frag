@@ -196,13 +196,12 @@ void main()
 	vec3 col = max( color_texture * 0.1 ,
 	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb * shadow);
 
-vec4 jaja = texture(albedo, TexCoord);
 
 vec3 tmp = normalize(ourPos -  _cameraPosition);
 vec3 temp = reflect(tmp, normalize(ourNormal));
 vec4 reflex_color = texture(cube_map, normalize(temp));
 
-color = reflex_color;
+color = mix(vec4(col, 1), reflex_color, texture(glossines_map, TexCoord).r * texture(specular_map, TexCoord).r * reflexion_strenght);
 
  
 }

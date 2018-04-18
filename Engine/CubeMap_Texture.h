@@ -22,6 +22,11 @@ public:
 	unsigned int GetTextureId() const {	
 		return cubemap_texture_id;
 	}
+	
+	unsigned int GetDepthId() const {
+		return cubemap_depth_id;
+	}
+
 	unsigned int GetFbo() const { return cubemap_fbo; }
 	unsigned int GetSize() const { return cubemap_size; }
 	std::string GetName() const { return name; }
@@ -36,6 +41,7 @@ private:
 
 	unsigned int cubemap_texture_id = 0;
 	unsigned int cubemap_fbo = 0;
+	unsigned int cubemap_depth_id = 0;
 	unsigned int cubemap_size = 128;
 
 };

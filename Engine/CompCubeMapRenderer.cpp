@@ -60,9 +60,11 @@ void CompCubeMapRenderer::Bake(Event& event)
 	{
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cube->GetTextureId(), 0);
-		glClear(GL_COLOR_BUFFER_BIT);
+		//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cube->GetDepthId(), 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//GET VECTOR OF GAMEOBJECTS
-	
+		glEnable(GL_DEPTH_TEST);
+
 		for (std::vector<GameObject*>::const_iterator item = event.cube_map_draw.all_gameobjects->begin(); item != event.cube_map_draw.all_gameobjects->end(); item++)
 		{
 				
@@ -118,7 +120,6 @@ void CompCubeMapRenderer::Bake(Event& event)
 
 		}
 	}
-	
 	//Reset viewport
 	glViewport(viewport_size[0], viewport_size[1], viewport_size[2], viewport_size[3]);
 
