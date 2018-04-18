@@ -524,6 +524,18 @@ bool ModuleAnimation::LoadAnimation(AnimationJson ** animation, const char * pat
 					case ParameterValue::IMAGE_SPRITE_ANIM:
 						id = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "UUID Sprite on time " + key_data);
 						key_data_item.key_values.sprite = (ResourceMaterial*)App->resource_manager->GetResource(id);
+						if (id > 0)
+						{
+							key_data_item.key_values.sprite = (ResourceMaterial*)App->resource_manager->GetResource(id);
+							if (key_data_item.key_values.sprite != nullptr)
+							{
+								key_data_item.key_values.sprite->num_game_objects_use_me++;
+								if (key_data_item.key_values.sprite->IsLoadedToMemory() == Resource::State::UNLOADED)
+								{
+									App->importer->iMaterial->LoadResource(std::to_string(key_data_item.key_values.sprite->GetUUID()).c_str(), key_data_item.key_values.sprite);
+								}
+							}
+						}
 						break;
 					default:
 						break;
@@ -889,8 +901,18 @@ AnimationValue KeyFrameData::Interpolate(float current_time, int frame)
 			ret.f_value = key_data[destination].key_values.f_value;
 		else
 			ret.f_value = key_data[initial].key_values.f_value + current_interpolation*(key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
-
 		break;
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		if (key_data[destination].key_frame <= frame && current_interpolation >= 1.0f)
+			ret.f_value = key_data[destination].key_values.f_value;
+		else
+			ret.f_value = key_data[initial].key_values.f_value + current_interpolation * (key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+
+		ret.sprite = nullptr;
+		if (key_data[destination].key_frame <= frame && current_interpolation >= 1.0f)
+			ret.sprite = key_data[destination].key_values.sprite;
 	default:
 		break;
 	}

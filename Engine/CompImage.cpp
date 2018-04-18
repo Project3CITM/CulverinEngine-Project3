@@ -523,7 +523,12 @@ void CompImage::SetNewAnimationValue(const AnimationData & value)
 		SetAlpha(value.value.f_value);
 		break;
 	case ParameterValue::IMAGE_SPRITE_ANIM:
-		source_image = value.value.sprite;
+		if (value.value.sprite == nullptr)
+		{
+			return;
+		}
+		overwrite_image = value.value.sprite;
+		UpdateSpriteId();
 		break;
 	default:
 		break;
