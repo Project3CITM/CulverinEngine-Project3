@@ -1180,13 +1180,14 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompGraphic::ActivateRender", (const void*)ActivateRender);
 	mono_add_internal_call("CulverinEditor.CompGraphic::DeactivateRender", (const void*)DeactivateRender);
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetColor", (const void*)SetColor);
-	
+	mono_add_internal_call("CulverinEditor.CompGraphic::SetAlpha", (const void*)SetAlpha);
+
 	mono_add_internal_call("CulverinEditor.CompImage::FillAmount", (const void*)FillAmount);
 	
 	//COMPONENT TEXT
-	mono_add_internal_call("CulverinEditor.CompText::SetAlpha", (const void*)SetAlpha);
 	mono_add_internal_call("CulverinEditor.CompText::SetText", (const void*)SetText);
-
+	//COMPONENT UI_GRAPHIC FUNCTIONS -----------------
+	mono_add_internal_call("CulverinEditor.CompCanvas::SetCanvasAlpha", (const void*)SetCanvasAlpha);
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 	mono_add_internal_call("CulverinEditor.CompCollider::GetContactPoint", (const void*)GetContactPoint);
@@ -1997,6 +1998,12 @@ void ImportScript::SetAlpha(MonoObject * object, float alpha)
 void ImportScript::SetText(MonoObject * object, MonoString * text)
 {
 	current->SetText(object, text);
+}
+
+void ImportScript::SetCanvasAlpha(MonoObject * object, float alpha)
+{
+	current->SetCanvasAlpha(object, alpha);
+
 }
 
 void ImportScript::FillAmount(MonoObject * object, float value)

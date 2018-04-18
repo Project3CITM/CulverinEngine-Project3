@@ -2,7 +2,7 @@
 #define INPUT_ACTION_H_
 #include<string>
 #include"Math\float2.h"
-#include"ModuleKeyBinding.h"
+#include"KeyBinding.h"
 #include"Application.h"
 #include"ModuleInput.h"
 

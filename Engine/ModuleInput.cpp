@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleRenderGui.h"
 #include "ModuleFS.h"
 #include "ModuleGUI.h"
 #include "WindowProject.h"
@@ -11,6 +12,7 @@
 #include "PlayerActions.h"
 #include "InputManager.h"
 #include "JSONSerialization.h"
+
 #define MAX_KEYS 300
 #define MAX_MILLISECONDS 2000
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
@@ -36,6 +38,8 @@ ModuleInput::~ModuleInput()
 bool ModuleInput::Init(JSON_Object* node)
 {
 	perf_timer.Start();
+	key_binding = new KeyBinding();
+	key_binding->InitKeyBinding();
 	LOG("Init SDL input event system");
 	bool ret = true;
 	quit = false;
@@ -84,6 +88,7 @@ bool ModuleInput::Init(JSON_Object* node)
 		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
 	}
 
+	ConnectGameController();
 	ui_manager = player_action->GetInputManager(ui_input_manager.c_str());
 	if (ui_manager != nullptr)
 	{
@@ -98,7 +103,6 @@ bool ModuleInput::Init(JSON_Object* node)
 
 	}
 
-
 	Awake_t = perf_timer.ReadMs();
 	return ret;
 }
@@ -108,6 +112,7 @@ update_status ModuleInput::PreUpdate(float dt)
 {
 	perf_timer.Start();
 	press_any_key = false;
+	update_new_device = false;
 	SDL_PumpEvents();
 	player_action->UpdateInputsManager();
 
@@ -186,16 +191,24 @@ update_status ModuleInput::PreUpdate(float dt)
 		switch (e.type)
 		{
 		case SDL_KEYDOWN:
+			UpdateDeviceType(DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE);
+			break;
 		case SDL_CONTROLLERBUTTONDOWN:
+			UpdateDeviceType(DeviceCombinationType::CONTROLLER_COMB_DEVICE);
 			press_any_key = true;
 
 			break;
 		case SDL_CONTROLLERAXISMOTION:
-			if (e.caxis.axis<-5000 || e.caxis.axis>5000)
+
+			if (e.caxis.value < -5000 || e.caxis.value>5000)
+			{
+				UpdateDeviceType(DeviceCombinationType::CONTROLLER_COMB_DEVICE);
 				press_any_key = true;
+			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 		{
+			UpdateDeviceType(DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE);
 
 
 			press_any_key = true;
@@ -341,7 +354,10 @@ update_status ModuleInput::PreUpdate(float dt)
 		case SDL_WINDOWEVENT:
 		{
 			if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+			{
 				App->renderer3D->OnResize(e.window.data1, e.window.data2);
+				App->render_gui->OnResize(e.window.data1, e.window.data2);
+			}
 			if (e.window.event == SDL_WINDOWEVENT_FOCUS_GAINED)
 			{
 				// Now Update All vectors "project" and "fs"
@@ -483,6 +499,9 @@ bool ModuleInput::CleanUp()
 	std::string name = DIRECTORY_LIBRARY_JSON;
 	name = App->fs->GetFullPath(name);
 	//Crash if not open?
+	//Release Key Binding
+	key_binding->CleanUp();
+	RELEASE(key_binding);
 	gamepad.Clear();
 	player_action->Clear();
 	RELEASE(player_action);
@@ -580,11 +599,31 @@ SDL_Scancode ModuleInput::GetKeyFromName(const char* name)
 	return SDL_GetScancodeFromName(name);
 }
 
-void ModuleInput::RumblePlay(float intensity, int milliseconds)
+bool ModuleInput::GetUpdateNewDevice() const
 {
-	if (gamepad.Empty())
+	return update_new_device;
+}
+
+DeviceCombinationType ModuleInput::GetActualDeviceCombo() const
+{
+	return actual_device_combo;
+}
+
+void ModuleInput::UpdateDeviceType(DeviceCombinationType actual_player_action)
+{
+	if (App->mode_game || App->engine_state != EngineState::STOP) {
+		update_new_device = true;
+		actual_device_combo = actual_player_action;
+	}
+}
+
+void ModuleInput::RumblePlay(float value, int milliseconds)
+{
+	if (gamepad.Empty()||!rumble_active)
 		return;
-	if (intensity > 1 || milliseconds> MAX_MILLISECONDS || milliseconds<0)
+
+	float intensity = CAP(value);
+	if (milliseconds>MAX_MILLISECONDS|| milliseconds<0)
 		return;
 	if (SDL_HapticRumblePlay(gamepad.haptic, intensity, milliseconds) != 0) {
 		LOG("Warning: Unable to play rumble! %s\n", SDL_GetError());
@@ -605,6 +644,13 @@ SDL_Joystick * ModuleInput::GetJoystick()const
 SDL_Haptic * ModuleInput::GetHaptic()const
 {
 	return gamepad.haptic;
+}
+
+KeyRelation * ModuleInput::FindKeyBinding(const char* string)
+{
+	if(key_binding==nullptr)
+		return nullptr;
+	return key_binding->FindKeyBinding(string);
 }
 
 bool ModuleInput::ConnectGameController()

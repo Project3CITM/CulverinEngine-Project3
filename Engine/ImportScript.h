@@ -240,10 +240,12 @@ private:
 	static void SetRender(MonoObject * object, mono_bool flag);
 	static void ActivateRender(MonoObject * object);
 	static void DeactivateRender(MonoObject * object);
-	/*Component Text*/
 	static void SetAlpha(MonoObject* object, float alpha);
-	static void SetText(MonoObject* object, MonoString* alpha);
 
+	/*Component Text*/
+	static void SetText(MonoObject* object, MonoString* alpha);
+	/*Component Canvas*/
+	static void SetCanvasAlpha(MonoObject* object, float alpha);
 	
 	/*Component Graphic Image*/
 	static void FillAmount(MonoObject* object, float value);

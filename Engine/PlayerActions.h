@@ -4,6 +4,8 @@
 #include "Globals.h"
 #include <vector>
 #include <list>
+#include "KeyBinding.h"
+
 typedef union SDL_Event SDL_Event;
 class ModuleInput;
 class InputManager;
@@ -40,16 +42,15 @@ public:
 	bool GetInput_MouseButtonUp(const char* name, const char* input);
 	float GetInput_ControllerAxis(const char* name, const char* input);
 
-
+	void SendNewDeviceCombinationType(DeviceCombinationType type);
 
 public:
 	int number_of_inputs = 0;
 	std::vector<InputManager*> interactive_vector;
-	std::list<InputManager*> update_interactive;
 
 private:
 	std::string selected_input_name;
 	ModuleInput* my_module = nullptr;
-
+	DeviceCombinationType actual_player_action = DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
 };
 #endif //MODULE_PLAYER_ACTION_H

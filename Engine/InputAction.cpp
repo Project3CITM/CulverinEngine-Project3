@@ -2,7 +2,7 @@
 #define DEAD_END 0.1f
 
 
-InputAction::InputAction():positive_button(new KeyRelation(-1,"default", KeyBindingType::NULL_DEVICE)), negative_button(new KeyRelation(-1, "default", KeyBindingType::NULL_DEVICE))
+InputAction::InputAction():positive_button(new KeyRelation(-1,"default","None", KeyBindingType::NULL_DEVICE)), negative_button(new KeyRelation(-1, "default", "None", KeyBindingType::NULL_DEVICE))
 {
 }
 
