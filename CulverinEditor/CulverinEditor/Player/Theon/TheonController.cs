@@ -613,8 +613,9 @@ public class TheonController : CharacterController
                 PlayFx("CrossbowShot");
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
-
-                arrow.transform.SetPosition(GetSecondaryPosition(curr_position));
+                Vector3 player_pos = curr_position;
+                player_pos.y += 4;
+                arrow.transform.SetPosition(GetSecondaryPosition(player_pos));
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
@@ -626,7 +627,10 @@ public class TheonController : CharacterController
                     coll_object.GetTag();
                     if (coll_object.CompareTag("Enemy"))
                     {
-                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), coll_object.transform.GetPosition());
+                        Vector3 enemypos = coll_object.transform.GetPosition();
+                        enemypos.y += 7;
+                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), enemypos);
+                        arrow_script.speed *= 2;
                     }
                 }
 
@@ -641,8 +645,9 @@ public class TheonController : CharacterController
 
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
-
-                arrow.transform.SetPosition(GetSecondaryPosition(curr_position));
+                Vector3 player_pos = curr_position;
+                player_pos.y += 4;
+                arrow.transform.SetPosition(GetSecondaryPosition(player_pos));
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
@@ -654,7 +659,10 @@ public class TheonController : CharacterController
                     coll_object.GetTag();
                     if (coll_object.CompareTag("Enemy"))
                     {
-                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), coll_object.transform.GetPosition());
+                        Vector3 enemypos = coll_object.transform.GetPosition();
+                        enemypos.y += 7;
+                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), enemypos);
+                        arrow_script.speed *= 2.5f;
                     }
                 }
 
@@ -673,8 +681,9 @@ public class TheonController : CharacterController
 
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
-
-                arrow.transform.SetPosition(GetSecondaryPosition(curr_position));
+                Vector3 player_pos = curr_position;
+                player_pos.y += 4;
+                arrow.transform.SetPosition(GetSecondaryPosition(player_pos));
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
@@ -686,7 +695,10 @@ public class TheonController : CharacterController
                     coll_object.GetTag();
                     if (coll_object.CompareTag("Enemy"))
                     {
-                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), coll_object.transform.GetPosition());
+                        Vector3 enemypos = coll_object.transform.GetPosition();
+                        enemypos.y += 7;
+                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), enemypos);
+                        arrow_script.speed *= 1.5f;
                     }
                 }
 
