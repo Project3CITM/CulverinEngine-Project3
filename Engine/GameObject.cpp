@@ -54,6 +54,7 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 	{
 		// Push this game object into the childs list of its parent
 		parent->childs.push_back(this);
+		parent_active = parent->IsParentActive();
 	}
 
 
@@ -94,6 +95,7 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 
 	// Same data as the 'copy' gameobject
 	active = copy.IsActive();
+	parent_active = parent->IsParentActive();
 	visible = copy.IsVisible();
 	static_obj = copy.IsStatic();
 	bb_active = copy.IsAABBActive();
@@ -434,7 +436,7 @@ bool GameObject::IsDeleteFixed() const
 
 void GameObject::Draw()
 {
-	if (visible)
+	if (visible && active && parent_active)
 	{
 		bool comp_active = false;
 		Component* comp = nullptr;
@@ -509,7 +511,7 @@ bool GameObject::Enable()
 {
 	if (!active)
 	{
-		active = true;
+		SetActive(true);
 	}
 
 	return active;
@@ -519,7 +521,7 @@ bool GameObject::Disable()
 {
 	if (active)
 	{
-		active = false;
+		SetActive(false);
 	}
 	return active;
 }
@@ -932,7 +934,10 @@ void GameObject::ShowInspectorInfo()
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 3));
 
 		/* ENABLE-DISABLE CHECKBOX*/
-		ImGui::Checkbox("##1", &active);
+		if(ImGui::Checkbox("##1", &active))
+		{
+			SetActive(active);
+		}
 
 		/* NAME OF THE GAMEOBJECT */
 		ImGui::SameLine();
@@ -1263,6 +1268,25 @@ void GameObject::ShowFreezeChildsWindow(bool freeze, bool& active)
 void GameObject::SetActive(bool active)
 {
 	this->active = active;
+
+	bool set_pactive = (parent_active && active) ? true : false;
+	for (uint i = 0; i < childs.size(); i++)
+	{
+		childs[i]->SetParentActive(set_pactive);
+	}
+}
+
+void GameObject::SetParentActive(bool active)
+{
+	parent_active = active;
+
+	if (this->active)
+	{
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			childs[i]->SetParentActive(active);
+		}
+	}
 }
 
 void GameObject::SetVisible(bool visible)
@@ -1278,6 +1302,11 @@ void GameObject::SetStatic(bool set_static)
 bool GameObject::IsActive() const
 {
 	return active;
+}
+
+bool GameObject::IsParentActive() const
+{
+	return parent_active;
 }
 
 bool GameObject::IsVisible() const
