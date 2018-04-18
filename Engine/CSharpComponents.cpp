@@ -725,8 +725,7 @@ void CSharpScript::DestroyJoint(MonoObject* object)
 
 MonoObject * CSharpScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)
 {
-	Component* comp = App->importer->iScript->GetComponentMono(origin);
-	if (comp != nullptr)
+	if (current_game_object != nullptr)
 	{
 		MonoClass* classP = mono_object_get_class(origin);
 		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
