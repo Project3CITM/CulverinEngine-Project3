@@ -345,7 +345,6 @@ public class JaimeController : CharacterController
             {
                 Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Death");
                 SetAnimationTransition("ToDeath", true);
-                GetLinkedObject("player_obj").GetComponent<DamageFeedback>().CharacterDie();
                 SetState(State.DEAD);
             }
 

@@ -197,18 +197,20 @@ public class CharactersManager : CulverinBehaviour
                     {
                         if (IsDead(left_character) == false)
                         {
+                            GetLinkedObject("player_obj").GetComponent<DamageFeedback>().CharacterDie();
                             state = State.CHANGING_LEFT;
                             CurrentToOut();
                         }
                         else if (IsDead(right_character) == false)
                         {
+                            GetLinkedObject("player_obj").GetComponent<DamageFeedback>().CharacterDie();
                             state = State.CHANGING_RIGHT;
                             CurrentToOut();
                         }
                         else
                         {
-                            SceneManager.LoadScene("LoseMenu");
-                            //DEFEAT
+                            GetLinkedObject("player_obj").GetComponent<DamageFeedback>().TotalDefeat();
+                            CurrentToOut();
                         }
                     }
 

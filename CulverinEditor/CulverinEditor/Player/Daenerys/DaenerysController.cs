@@ -303,8 +303,7 @@ public class DaenerysController : CharacterController
         {
             SetAnimationTransition("ToDeath", true);
             Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Death");
-            GetLinkedObject("player_obj").GetComponent<DamageFeedback>().CharacterDie();
-           SetState(State.DEAD);
+            SetState(State.DEAD);
             PlayFx("DaenerysDead");
         }
 
