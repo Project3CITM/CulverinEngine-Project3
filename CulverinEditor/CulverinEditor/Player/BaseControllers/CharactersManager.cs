@@ -1005,12 +1005,12 @@ public class CharactersManager : CulverinBehaviour
             }
             if (left_character.GetName() == "Daenerys")
             {
-                left_character.GetComponent<DaenerysController>().Heal();
+                left_character.GetComponent<DaenerysController>().Heal(percentage);
                 right_character.GetComponent<TheonController>().Heal(percentage);
             }
             else if (left_character.GetName() == "Theon")
             {
-                right_character.GetComponent<DaenerysController>().Heal();
+                right_character.GetComponent<DaenerysController>().Heal(percentage);
                 left_character.GetComponent<TheonController>().Heal(percentage);
             }
         }
@@ -1046,12 +1046,12 @@ public class CharactersManager : CulverinBehaviour
 
             if (left_character.GetName() == "Daenerys")
             {
-                left_character.GetComponent<DaenerysController>().Heal();
+                left_character.GetComponent<DaenerysController>().Heal(percentage);
                 right_character.GetComponent<JaimeController>().Heal(percentage);
             }
             else if (left_character.GetName() == "Jaime")
             {
-                right_character.GetComponent<DaenerysController>().Heal();
+                right_character.GetComponent<DaenerysController>().Heal(percentage);
                 left_character.GetComponent<JaimeController>().Heal(percentage);
             }
         }
