@@ -130,6 +130,23 @@ public class DaenerysController : CharacterController
                                 anim_controller = daenerys_obj.GetComponent<CompAnimation>();
                                 if (anim_controller.IsAnimOverXTime(0.6f) && play_audio_roar)
                                 {
+                                    GameObject flamethr = Instantiate("CorrectDaenerysFireBreath");
+
+                                    flamethr.transform.SetPosition(GetFlameBreathPosition(curr_position));
+                                    flamethr.transform.SetRotation(flamethr.transform.GetRotation());
+
+                                    Fireball fballscript = flamethr.GetComponent<Fireball>();
+                                    fballscript.vfront = curr_forward;
+
+                                    GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
+                                    if (coll_object != null)
+                                    {
+                                        coll_object.GetTag();
+                                        if (coll_object.CompareTag("Enemy"))
+                                        {
+                                            fballscript.vfront = GetSecondaryForwardToEnemy(flamethr.transform.GetPosition(), coll_object.transform.GetPosition());
+                                        }
+                                    }
                                     PlayFx("DaenerysDragonRoar");                             
                                     play_audio_roar = false;
                                 }
@@ -466,6 +483,7 @@ public class DaenerysController : CharacterController
 
     public void DoLeftAbility() //Might be virtual
     {
+
         // Decrease mana -----------
         DecreaseManaPercentage(mana_cost_percentage_left);
         audio = daenerys_obj.GetComponent<CompAudio>();
@@ -616,7 +634,6 @@ public class DaenerysController : CharacterController
 
         Fireball fballscript = fball.GetComponent<Fireball>();
         fballscript.vfront = curr_forward;
-        fballscript.fireball_particles = daenerys_fireball_particles;
 
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
         if(coll_object != null)

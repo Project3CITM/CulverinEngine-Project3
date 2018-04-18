@@ -182,6 +182,29 @@ public class CharacterController : CulverinBehaviour
     {
     }
 
+    public virtual Vector3 GetFlameBreathPosition(Vector3 player_pos)
+    {
+        Vector3 ret = new Vector3(player_pos.x, player_pos.y + 4, player_pos.z);
+        if (Mathf.Round(curr_forward.z) <= -2.0f)
+        {
+            ret.x -= 7; ret.z -= 2;
+        }
+        if (Mathf.Round(curr_forward.z) >= 2.0f)
+        {
+            ret.x += 7; ret.z += 2;
+        }
+        if (Mathf.Round(curr_forward.x) >= 2.0f)
+        {
+            ret.x -= 2; ret.z -= 7;
+        }
+        if (Mathf.Round(curr_forward.x) <= -2.0f)
+        {
+            ret.x += 2; ret.z += 7;
+        }
+
+        return ret;
+    }
+
     public virtual Vector3 GetSecondaryPosition(Vector3 player_pos)
     {
         Vector3 ret = new Vector3(player_pos.x, player_pos.y - 5.0f, player_pos.z);
