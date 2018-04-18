@@ -1159,7 +1159,7 @@ void ModuleShaders::SetUniformVariables(Material * material)
 		{
 			
 			uint texLoc = glGetUniformLocation(material->GetProgramID(), material->cube_maps[i].var_name.c_str());
-			glUniform1i(texLoc, i);
+			glUniform1i(texLoc, i + material->textures.size());
 			glActiveTexture(GL_TEXTURE0 + i + material->textures.size());
 			if (material->cube_maps[i].value <= 0) glBindTexture(GL_TEXTURE_CUBE_MAP, App->renderer3D->id_checkImage);
 			else glBindTexture(GL_TEXTURE_CUBE_MAP, material->cube_maps[i].value);

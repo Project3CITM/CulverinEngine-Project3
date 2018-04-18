@@ -202,8 +202,8 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 				App->module_shaders->SetUniformVariables(ActualMaterial);
 
 				GLuint ShadowMapLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), "_shadowMap");
-				glUniform1i(ShadowMapLoc, (ActualMaterial->textures.size()));
-				glActiveTexture(GL_TEXTURE0 + (ActualMaterial->textures.size()));
+				glUniform1i(ShadowMapLoc, (ActualMaterial->textures.size() + ActualMaterial->cube_maps.size()));
+				glActiveTexture(GL_TEXTURE0 + (ActualMaterial->textures.size() + ActualMaterial->cube_maps.size()));
 				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
 
 				
