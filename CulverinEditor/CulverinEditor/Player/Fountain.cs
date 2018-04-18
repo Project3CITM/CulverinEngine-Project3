@@ -45,7 +45,7 @@ public class Fountain : CulverinBehaviour
         {
             if (Input.GetInput_KeyDown("Interact", "Player") && current_usage > 0)
             {
-                GetLinkedObject("player").GetComponent<CharactersManager>().HealCharacters(heal_percentage);
+                player.GetComponent<CharactersManager>().HealCharacters(heal_percentage);
                 reducing_water = true;
                 current_usage--;
                 float by = (float)current_usage / (float)number_of_uses;
@@ -58,7 +58,7 @@ public class Fountain : CulverinBehaviour
         if(reducing_water == true)
         {
             int checks = 0;
-            Vector3 bottom_pos = GetLinkedObject("bottom_water").transform.GetPosition();
+            Vector3 bottom_pos = bottom_water.transform.GetPosition();
             if(destination_y < bottom_pos.y)
             {
                 bottom_water.transform.SetPosition(new Vector3(bottom_pos.x, bottom_pos.y - deplenish_speed, bottom_pos.z));
@@ -97,13 +97,8 @@ public class Fountain : CulverinBehaviour
     // OnTrigger Lever ------------------------
     void OnTriggerEnter()
     {
-        CompCollider col = GetComponent<CompCollider>();
-        GameObject obj_col = col.GetCollidedObject();
-        Debug.Log(obj_col.GetTag().ToString());
-
-        if (obj_col != null && obj_col.CompareTag("player") && current_usage > 0)
+        if(current_usage > 0)
         {
-            fountain_interact = GetLinkedObject("fountain_interact");
             fountain_interact.SetActive(true);
             on_fountain_range = true;
         }
@@ -112,7 +107,6 @@ public class Fountain : CulverinBehaviour
     void OnTriggerLost()
     {
         on_fountain_range = false;
-        fountain_interact = GetLinkedObject("fountain_interact");
-        fountain_interact.SetActive(true);
+        fountain_interact.SetActive(false);
     }
 }
