@@ -24,15 +24,15 @@ public class BossWideAttack_Action : Action
     BWA_STATE state = BWA_STATE.WAITING;
     public float damage = 1.0f;
     public float apply_damage_point = 0.5f;
+    public float preparation_time = 0.8f;
     public float attack_duration = 1.0f;
-
 
     public override bool ActionStart()
     {
 
         state = BWA_STATE.PRE_APPLY;
         GetComponent<CompAnimation>().SetTransition("ToWideAttack");
-        GetComponent<CompAnimation>().SetClipDuration("WideAttack", attack_duration);
+        GetComponent<CompAnimation>().SetClipDuration("WideAttack", preparation_time / apply_damage_point);
         GetComponent<CompAudio>().PlayEvent("AttackPreparation");
         return true;
     }
@@ -41,6 +41,8 @@ public class BossWideAttack_Action : Action
     {
         if (state == BWA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
         {
+            GetComponent<CompAnimation>().SetClipDuration("WideAttack", (attack_duration / (1.0f - apply_damage_point)));
+
             state = BWA_STATE.POST_APPLY;
 
             int enemy_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();

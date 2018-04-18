@@ -24,6 +24,7 @@ public class BossAttackSwordDown_Action : Action
     BASD_STATE state = BASD_STATE.WAITING;
     public float damage = 1.0f;
     public float apply_damage_point = 0.5f;
+    public float preparation_time = 0.8f;
     public float attack_duration = 1.0f;
 
 
@@ -32,7 +33,7 @@ public class BossAttackSwordDown_Action : Action
 
         state = BASD_STATE.PRE_APPLY;
         GetComponent<CompAnimation>().SetTransition("ToSwordDownAttack");
-        GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", attack_duration);
+        GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", preparation_time / apply_damage_point);
         GetComponent<CompAudio>().PlayEvent("AttackPreparation");
         return true;
     }
@@ -41,6 +42,8 @@ public class BossAttackSwordDown_Action : Action
     {
         if (state == BASD_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
         {
+            GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", (attack_duration / (1.0f - apply_damage_point)));
+
             state = BASD_STATE.POST_APPLY;
 
             int enemy_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
