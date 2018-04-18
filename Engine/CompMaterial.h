@@ -36,6 +36,7 @@ public:
 	void ShowVec3Variable(int index, float3Var*);
 	void ShowBoolVariable(int index, boolVar*);
 	void ShowColorVariable(int index, ColorVar*);
+	void ShowCubeMapVariable(int index, CubeMapVar*);
 	void ShowShadersEditors();
 	// -------------------------
 

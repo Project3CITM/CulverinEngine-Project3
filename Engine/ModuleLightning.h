@@ -85,7 +85,7 @@ public:
 	FrameBuffer text;
 	DepthFrameBuffer test_fix;
 	ResourceMesh*  light_UI_plane = nullptr;
-	uint texture_bulb = 0;
+
 
 	glm::mat4 depthBiasMVP;
 
@@ -101,7 +101,11 @@ private:
 	std::vector<CompLight*> scene_lights;
 	std::vector<CompLight*> frame_used_lights;
 
-	
+	// Some directional light variables on shadow map render
+	// On directional light shadow map calculations, distance from the scene camera to look at from shadow map camera
+	float distanceFromSceneCameraToLookAt = 20.0f;
+	float projSize = 20.0f, nearPlane = 1.0f, farPlane = 60.0;
+	float distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos = 20.0f;
 };
 
 #endif // __MODULELIGHTNING_H__

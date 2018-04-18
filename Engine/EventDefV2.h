@@ -57,6 +57,8 @@ enum EventType
 	/*----------------------Physics---------------------*/
 	EVENT_TRIGGER_COLLISION,
 	/*------------------Shader Pipeline-----------------*/
+	EVENT_CUBEMAP_REQUEST,
+	EVENT_CUBEMAP_DRAW,
 	EVENT_CREATE_SHADER_PROGRAM,
 	EVENT_SEND_ALL_SHADER_OBJECTS,
 	EVENT_OPEN_SHADER_EDITOR,
@@ -126,6 +128,21 @@ struct ETrigger
 /*--------------------------------------------------*/
 /*------------------Shader Pipeline-----------------*/
 /*--------------------------------------------------*/
+struct ECubeMapRequest
+{
+	uint64_t event_data = 0;
+	Component* comp_cubemap = nullptr;
+
+};
+struct ECubeMapDraw
+{
+	uint64_t event_data = 0;
+	//const std::multimap<uint, Event>* MM3DDrawEvent = nullptr;
+	const std::vector<GameObject*>* all_gameobjects = nullptr;
+};
+
+
+
 struct ECreateShaderProgram
 {
 	uint64_t event_data = 0;
@@ -339,6 +356,8 @@ union Event
 	ETrigger trigger;
 
 	/*------------------Shader Pipeline-----------------*/
+	ECubeMapRequest	cube_map_request;
+	ECubeMapDraw	cube_map_draw;
 	ECreateShaderProgram shader_program;
 	ESendAllShaderObject send_shader_object;
 	EOpenShaderEditor shader_editor;

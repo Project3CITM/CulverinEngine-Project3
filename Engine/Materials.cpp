@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "ModuleFS.h"
 #include "ModuleRenderer3D.h"
-
+#include "CubeMap_Texture.h"
 Material::Material()
 {
 	active_num = 0;
@@ -152,6 +152,30 @@ void Material::Save() const
 
 	}
 
+	json_object_dotset_number_with_std(object, name + "Num Cubes:", cube_maps.size());
+	for (int i = 0; i < cube_maps.size(); i++)
+	{
+
+		std::ostringstream ss;
+		ss << name << "Cube:" << i;
+		std::string json_name = ss.str();
+
+		std::ostringstream ss2;
+		ss2 << name << "Cube Name:" << i;
+		std::string json_name_var = ss2.str();
+
+		if (cube_maps[i].cube_map != nullptr) {
+
+			json_object_dotset_string_with_std(object, json_name, cube_maps[i].cube_map->GetName().c_str());
+			json_object_dotset_string_with_std(object, json_name_var, cube_maps[i].var_name.c_str());
+
+		}
+		else {
+			json_object_dotset_string_with_std(object, json_name, "");
+			json_object_dotset_string_with_std(object, json_name_var, "");
+		}
+	}
+
 	json_serialize_to_file(config_file, directory_assets.c_str());
 	json_value_free(config_file);
 }
@@ -211,6 +235,7 @@ void Material::GetProgramVariables()
 	auto temp_color = color_variables;
 	auto temp_bool = bool_variables;
 	auto  temp_int = int_variables;
+	auto temp_cube_maps = cube_maps;
 
 	textures.clear();
 	float3_variables.clear();
@@ -218,6 +243,7 @@ void Material::GetProgramVariables()
 	int_variables.clear();
 	bool_variables.clear();
 	color_variables.clear();
+	cube_maps.clear();
 
 
 	uint var_size = GetVariablesSize();
@@ -276,6 +302,14 @@ void Material::GetProgramVariables()
 			ColorVar color_var;
 			color_var.var_name = temp.name;
 			color_variables.push_back(color_var);
+		}
+
+		//CubeMaps
+		if (temp.type == GL_SAMPLER_CUBE)
+		{
+			CubeMapVar cube_var;
+			cube_var.var_name = temp.name;
+			cube_maps.push_back(cube_var);
 		}
 
 	}
@@ -340,6 +374,16 @@ void Material::GetProgramVariables()
 			}
 		}
 	}
+
+	for (auto item = temp_cube_maps.begin(); item != temp_cube_maps.end(); item++)
+	{
+		for (auto item2 = cube_maps.begin(); item2 != cube_maps.end(); item2++)
+		{
+			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
+				(*item2).cube_map = (*item).cube_map;
+			}
+		}
+	}
 }
 
 uint Material::GetProgramID()const
@@ -355,4 +399,5 @@ void Material::RestartIterators()
 	it_float3_variables = float3_variables.begin();
 	it_color_variables = color_variables.begin();
 	it_bool_variables = bool_variables.begin();
+	it_cube_maps = cube_maps.begin();
 }

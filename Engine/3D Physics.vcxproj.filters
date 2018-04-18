@@ -1227,6 +1227,12 @@
     <ClInclude Include="CompUIAnimation.h">
       <Filter>Engine\Components\UI</Filter>
     </ClInclude>
+    <ClInclude Include="CompCubeMapRenderer.h">
+      <Filter>Engine\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMap_Texture.h">
+      <Filter>Engine\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1666,6 +1672,12 @@
     </ClCompile>
     <ClCompile Include="CompUIAnimation.cpp">
       <Filter>Engine\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CompCubeMapRenderer.cpp">
+      <Filter>Engine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeMap_Texture.cpp">
+      <Filter>Engine\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,7 @@
 #include "ModuleResourceManager.h"
 #include "ModuleImporter.h"
 #include "ImportMaterial.h"
+#include "CubeMap_Texture.h"
 
 ModuleShaders::ModuleShaders()
 {
@@ -72,87 +73,10 @@ update_status ModuleShaders::Update(float dt)
 {
 	BROFILER_CATEGORY("Update: ModuleShaders", Profiler::Color::Blue);
 	perf_timer.Start();
-	std::vector<Material*>::iterator item = materials.begin();
-	static float time_dt = 0;
-	time_dt += dt * App->game_time.time_scale;
-	while (item != materials.end())
-	{
-		uint ID = (*item)->GetProgramID();
-		if ((*item)->active_num == 0) {
-			item++;
-			continue;
-		}
 
-		(*item)->Bind();
-
-
-		//TIME		
-		GLint timeLoc = glGetUniformLocation(ID, "_time");
-		if (timeLoc != -1) glUniform1f(timeLoc, time_dt);
-
-		//CAMERA POSITION
-		float3 cam_pos = App->camera->GetPos();
-		GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
-		if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
-
-		//ALPHA
-		float alpha = (*item)->alpha;
-		GLint alphaLoc = glGetUniformLocation(ID, "_alpha");
-		if (alphaLoc != -1) glUniform1f(alphaLoc, alpha);
-
-		//VIEWPROJ MATRIX
-		Frustum camFrust = App->renderer3D->active_camera->frustum;
-		GLint viewLoc = glGetUniformLocation(ID, "viewproj");
-		if (viewLoc != -1)glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
-
-		//LIGHTS
-		std::vector<CompLight*> lights_vec = *App->module_lightning->GetActiveLights();
-		GLint lightsizeLoc = glGetUniformLocation(ID, "_numLights");
-		if (lightsizeLoc != -1) glUniform1i(lightsizeLoc, lights_vec.size());
-
-
-
-
-		if (lightsizeLoc != -1)
-			for (size_t i = 0; i < lights_vec.size(); ++i) {
-
-				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
-					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
-				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
-					SetLightUniform((*item)->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
-
-				SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
-				SetLightUniform(ID, "l_color", i, lights_vec[i]->color);
-				SetLightUniform(ID, "ambientCoefficient", i, lights_vec[i]->ambientCoefficient);
-
-				SetLightUniform(ID, "properties", i, lights_vec[i]->properties);
-
-				// Bias matrix. TODO: Might be better to set other place
-
-				glm::mat4 biasMatrix(
-					0.5, 0.0, 0.0, 0,
-					0.0, 0.5, 0.0, 0,
-					0.0, 0.0, 0.5, 0,
-					0.5, 0.5, 0.5, 1.0
-				);
-				float3 dir = lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection();
-				glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-				glm::mat4 depthViewMatrix = glm::lookAt(glm::vec3(dir.x, dir.y, dir.z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-				glm::mat4 depthModelMatrix = glm::mat4(1.0);
-
-				glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-				glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
-
-				int depthBiasID = glGetUniformLocation(ID, "depthBias");
-				glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
-
-				// End Bias matrix.
-			}
-
-		item++;
-	}
-	glUseProgram(0);
 	Enable_Text_Editor();
+
+	SetGlobalVariables(dt);
 
 	if (App->gui->shader_program_creation) {
 		SendEventWithAllShaders();
@@ -388,7 +312,7 @@ Shader* ModuleShaders::CompileShader(std::string path, std::string name, ShaderT
 	rewind(pFile);
 
 	// allocate memory to contain the whole file:
-	buffer = new char[lSize + 1];// (char*)malloc(sizeof(char)*lSize);
+	buffer = new char[lSize + 1];
 	memset(buffer, 0, lSize + 1);
 	if (buffer == NULL) { fputs("Memory error", stderr); exit(2); }
 
@@ -517,9 +441,6 @@ void ModuleShaders::ImportShaderObjects()
 			RELEASE_ARRAY(buffer);
 		}
 	}
-
-
-
 }
 
 void ModuleShaders::ImportShaderMaterials()
@@ -883,7 +804,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 						material->float3_variables[i].value = App->fs->json_array_dotget_float3_string(object, json_name);
 					}
 					else {
-						for (int n = 0; n < num_floats; n++) {
+						for (int n = 0; n < num_float3; n++) {
 							std::ostringstream temp_ss;
 							temp_ss << name << "Float3:" << n;
 							std::string temp_name = temp_ss.str();
@@ -920,7 +841,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 						material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, json_name);
 					}
 					else {
-						for (int n = 0; n < num_floats; n++) {
+						for (int n = 0; n < num_colors; n++) {
 							std::ostringstream temp_ss;
 							temp_ss << name << "Color:" << n;
 							std::string temp_name = temp_ss.str();
@@ -933,6 +854,45 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 
 							if (strcmp(temp_var_name.c_str(), material->color_variables[i].var_name.c_str()) == 0) {
 								material->color_variables[i].value = App->fs->json_array_dotget_float4_string(object, temp_name);
+								break;
+							}
+
+						}
+					}
+				}
+				uint num_cubes = json_object_dotget_number_with_std(object, name + "Num Cubes:");
+				for (int i = 0; i < num_cubes; i++)
+				{
+					std::ostringstream ss;
+					ss << name << "Cube:" << i;
+					std::string json_name = ss.str();
+
+					std::ostringstream ss2;
+					ss2 << name << "Cube Name:" << i;
+					std::string json_var = ss2.str();
+
+					if (i >= material->cube_maps.size()) break;
+					std::string var_name = json_object_dotget_string_with_std(object, json_var);
+
+					if (strcmp(var_name.c_str(), material->cube_maps[i].var_name.c_str()) == 0) {
+						material->cube_maps[i].cube_name = json_object_dotget_string_with_std(object, json_name);
+					}
+					else {
+						for (int n = 0; n < num_cubes; n++) {
+							std::ostringstream temp_ss;
+							temp_ss << name << "Cube:" << n;
+							std::string temp_name = temp_ss.str();
+
+							std::ostringstream temp_ss2;
+							temp_ss2 << name << "Cube Name:" << n;
+							std::string temp_var = temp_ss2.str();
+
+							std::string temp_var_name = json_object_dotget_string_with_std(object, temp_var);
+
+							if (strcmp(temp_var_name.c_str(), material->cube_maps[i].var_name.c_str()) == 0) {
+
+								material->cube_maps[i].cube_name = json_object_dotget_string_with_std(object, temp_name);
+
 								break;
 							}
 
@@ -1159,7 +1119,107 @@ void ModuleShaders::SetUniformVariables(Material * material)
 			material->it_color_variables++;
 		}
 
+	//Textures
+	if (material->textures.size() != 0)
+	{
+		for (uint i = 0; i < material->textures.size(); i++)
+		{
+			uint texLoc = glGetUniformLocation(material->GetProgramID(), material->textures[i].var_name.c_str());
+			glUniform1i(texLoc, i);
+			glActiveTexture(GL_TEXTURE0 + i);
+			if (material->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
+			else glBindTexture(GL_TEXTURE_2D, material->textures[i].value->GetTextureID());
+		}
+
+	}
+	if (material->cube_maps.size() != 0)
+	{
+		for (uint i = 0; i < material->cube_maps.size(); i++)
+		{
+			if (material->cube_maps[i].cube_map == nullptr) continue;
+			uint texLoc = glGetUniformLocation(material->GetProgramID(), material->cube_maps[i].var_name.c_str());
+			glUniform1i(texLoc, i + material->textures.size());
+			glActiveTexture(GL_TEXTURE0 + i + material->textures.size());
+			if (material->cube_maps[i].cube_map->GetTextureId() <= 0) glBindTexture(GL_TEXTURE_CUBE_MAP, App->renderer3D->id_checkImage);
+			else glBindTexture(GL_TEXTURE_CUBE_MAP, material->cube_maps[i].cube_map->GetTextureId());
+
+		}
+	}
+
 	material->RestartIterators();
+}
+
+void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
+{
+	std::vector<Material*>::iterator item = materials.begin();
+	static float time_dt = 0;
+	time_dt += dt * App->game_time.time_scale;
+	while (item != materials.end())
+	{
+		uint ID = (*item)->GetProgramID();
+		if ((*item)->active_num == 0) {
+			item++;
+			continue;
+		}
+
+		(*item)->Bind();
+
+
+		//TIME		
+		GLint timeLoc = glGetUniformLocation(ID, "_time");
+		if (timeLoc != -1) glUniform1f(timeLoc, time_dt);
+
+		//CAMERA POSITION
+		float3 cam_pos = App->renderer3D->active_camera->frustum.pos;
+		GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
+		if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
+
+		//ALPHA
+		float alpha = (*item)->alpha;
+		GLint alphaLoc = glGetUniformLocation(ID, "_alpha");
+		if (alphaLoc != -1) glUniform1f(alphaLoc, alpha);
+
+		//VIEWPROJ MATRIX
+		Frustum camFrust = App->renderer3D->active_camera->frustum;
+		GLint viewLoc = glGetUniformLocation(ID, "viewproj");
+		if (viewLoc != -1)glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+
+		//LIGHTS
+		std::vector<CompLight*> lights_vec;
+		if(!all_lights)
+			lights_vec = *App->module_lightning->GetActiveLights();
+		else 
+			lights_vec = App->module_lightning->GetSceneLights();
+
+		GLint lightsizeLoc = glGetUniformLocation(ID, "_numLights");
+		if (lightsizeLoc != -1) glUniform1i(lightsizeLoc, lights_vec.size());
+
+
+		if (lightsizeLoc != -1)
+			for (size_t i = 0; i < lights_vec.size(); ++i) {
+
+				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
+					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
+				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
+					SetLightUniform((*item)->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
+
+				SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
+				SetLightUniform(ID, "l_color", i, lights_vec[i]->color);
+				SetLightUniform(ID, "ambientCoefficient", i, lights_vec[i]->ambientCoefficient);
+
+				SetLightUniform(ID, "properties", i, lights_vec[i]->properties);
+
+				// Bias matrix. TODO: Might be better to set other place
+
+				int depthBiasID = glGetUniformLocation(ID, "depthBias");
+				glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
+
+				// End Bias matrix.
+			}
+
+		item++;
+	}
+	glUseProgram(0);
 }
 
 

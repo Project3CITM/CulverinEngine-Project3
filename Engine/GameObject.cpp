@@ -38,6 +38,7 @@
 #include "CompJoint.h"
 #include "CompParticleSystem.h"
 #include "ResourceMesh.h"
+#include "CompCubeMapRenderer.h"
 #include <queue>
 
 //Event system test
@@ -469,15 +470,16 @@ void GameObject::Draw()
 				{
 					CompLight* l = (CompLight*)comp;
 					l->use_light_to_render = true;
-
-
 					Event draw_event;
 					draw_event.Set_event_data(EventType::EVENT_REQUEST_3D_3DA_MM);
 					draw_event.request_3d3damm.light = (CompLight*)comp;
 					PushEvent(draw_event);
-					comp->Draw();
+					components[i]->Draw();
+								
 				}
 			}
+
+
 		}
 		/*
 		//Draw child Game Objects -------------------
@@ -800,6 +802,10 @@ void GameObject::ShowGameObjectOptions()
 			{
 				AddComponent(Comp_Type::C_LIGHT);
 			}
+			if (ImGui::MenuItem("CubeMap Renderer"))
+			{
+				AddComponent(Comp_Type::C_CUBEMAP_RENDERER);
+			}
 			if (ImGui::MenuItem("Collider"))
 			{
 				AddComponent(Comp_Type::C_COLLIDER);
@@ -1115,6 +1121,11 @@ void GameObject::ShowInspectorInfo()
 		if (ImGui::MenuItem("Light"))
 		{
 			AddComponent(Comp_Type::C_LIGHT);
+			add_component = false;
+		}
+		if (ImGui::MenuItem("Cube Map Renderer"))
+		{
+			AddComponent(Comp_Type::C_CUBEMAP_RENDERER);
 			add_component = false;
 		}
 		//if (ImGui::BeginMenu("UI"))
@@ -1644,6 +1655,14 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			components.push_back(light);
 			return light;
 		}
+
+		case Comp_Type::C_CUBEMAP_RENDERER:
+		{
+			LOG("Adding CUBEMAP RENDERER.");
+			CompCubeMapRenderer* cubemap = new CompCubeMapRenderer(type, this);
+			components.push_back(cubemap);
+			return cubemap;
+		}
 		case Comp_Type::C_COLLIDER:
 		{
 			CompCollider* collider = new CompCollider(type, this);
@@ -1869,6 +1888,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 			break;
 		case Comp_Type::C_LIGHT:
 			this->AddComponent(Comp_Type::C_LIGHT);
+			break;
+		case Comp_Type::C_CUBEMAP_RENDERER:
+			this->AddComponent(Comp_Type::C_CUBEMAP_RENDERER);
 			break;
 		case Comp_Type::C_COLLIDER:
 			this->AddComponent(Comp_Type::C_COLLIDER);
