@@ -158,7 +158,8 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
-                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        //GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        next_action = GetComponent<ShieldBlock_Action>();
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         return false;
                     }
@@ -181,7 +182,8 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
-                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        next_action = GetComponent<ShieldBlock_Action>();
+                        //GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         return false;
                     }
