@@ -138,7 +138,7 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	961807994	Timer120bpm	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\Timer120bpm_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\PuzzleClock\State2\Puzzle_State2\Timer120bpm		354024
 	975369001	E1_Hurt_4	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Hurt_4_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy1\Enemy1_Hurt\E1_Hurt_4		122252
 	988758404	Jaime_Tired	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Jaime_Tired_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Jaime\Jaime_Tired		1192984
-	991530287	AmbientNoise	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\Ambience_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Stage\AmbientNoise		2735188
+	991530287	AmbientNoise	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\Ambience_F17FB28C.wem		\Actor-Mixer Hierarchy\Default Work Unit\Stage\AmbientNoise		2735188
 	999653156	Enemy_ShieldHit	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_ShieldHit_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Enemies\Enemy3\Enemy_ShieldHit		337980
 	1006288572	Daennerys_Footsteps	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Daennerys_Footsteps_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Daenerys\Daennerys_Footsteps		198184
 	1011102677	Theon_Rope	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Theon_Rope_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player_01\Characters\Theon\Theon_Rope		48070

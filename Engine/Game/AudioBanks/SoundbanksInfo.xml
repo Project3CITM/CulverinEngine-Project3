@@ -507,7 +507,7 @@
 				</File>
 				<File Id="991530287" Language="SFX">
 					<ShortName>Ambient\Ambience.wav</ShortName>
-					<Path>SFX\Ambient\Ambience_1C9C67B2.wem</Path>
+					<Path>SFX\Ambient\Ambience_F17FB28C.wem</Path>
 				</File>
 				<File Id="999653156" Language="SFX">
 					<ShortName>Enemy_ShieldHit.wav</ShortName>
