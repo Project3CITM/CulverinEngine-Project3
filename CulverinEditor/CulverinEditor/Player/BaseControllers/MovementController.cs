@@ -71,9 +71,8 @@ public class MovementController : CulverinBehaviour
 
         Audio.StopAllSounds();
         audio = GetComponent<CompAudio>();
-        audio.PlayEvent("PlayMusic");
         audio.PlayEvent("PlayAmbient");
-        Audio.ChangeState("AmbientMusic", "Level2");
+        Audio.ChangeState("AmbientMusic", "None");
 
 
         curr_dir = (Direction)start_direction;

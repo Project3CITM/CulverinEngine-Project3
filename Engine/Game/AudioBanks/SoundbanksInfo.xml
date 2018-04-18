@@ -160,11 +160,13 @@
 				<Event Id="48383132" Name="Chain" ObjectPath="\Events\Scene\Puzzle\Chain"/>
 				<Event Id="2665825462" Name="CrossbowRecharge" ObjectPath="\Events\Player_01\Characters\Theon\CrossbowRecharge"/>
 				<Event Id="3519619633" Name="CrossbowShot" ObjectPath="\Events\Player_01\Characters\Theon\CrossbowShot"/>
+				<Event Id="3732314562" Name="DaenerysBreathing" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysBreathing"/>
 				<Event Id="1296876930" Name="DaenerysDead" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysDead"/>
 				<Event Id="278201357" Name="DaenerysDragonRoar" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysDragonRoar"/>
 				<Event Id="1165032804" Name="DaenerysFire" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysFire"/>
 				<Event Id="461797665" Name="DaenerysFireballImpact" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysFireballImpact"/>
 				<Event Id="1489596707" Name="DaenerysHurt" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysHurt"/>
+				<Event Id="342573290" Name="DaenerysTired" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysTired"/>
 				<Event Id="3969506851" Name="DaenerysWalk" ObjectPath="\Events\Player_01\Characters\Daenerys\DaenerysWalk"/>
 				<Event Id="2666752652" Name="DoorEnd" ObjectPath="\Events\Scene\Puzzle\DoorEnd"/>
 				<Event Id="2469070767" Name="DoorLoop" ObjectPath="\Events\Scene\Puzzle\DoorLoop"/>
@@ -187,12 +189,15 @@
 				<Event Id="3434500843" Name="Enemy_SwordDraw" ObjectPath="\Events\Scene\Enemies\Enemy_SwordDraw"/>
 				<Event Id="3535166590" Name="Enemy_SwordDrop" ObjectPath="\Events\Scene\Enemies\Enemy_SwordDrop"/>
 				<Event Id="2385628198" Name="Footsteps" ObjectPath="\Events\Scene\Footsteps"/>
+				<Event Id="2179486487" Name="HeartBeat" ObjectPath="\Events\Player_01\HeartBeat"/>
 				<Event Id="4134768252" Name="JaimeBlock" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeBlock"/>
+				<Event Id="3907652009" Name="JaimeBreathing" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeBreathing"/>
 				<Event Id="3525158975" Name="JaimeDead" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeDead"/>
 				<Event Id="3224688943" Name="JaimeFailImpact" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeFailImpact"/>
 				<Event Id="2682992486" Name="JaimeHurt" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeHurt"/>
 				<Event Id="3599404043" Name="JaimeImpact" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeImpact"/>
 				<Event Id="299504778" Name="JaimeImpactStone" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeImpactStone"/>
+				<Event Id="23186233" Name="JaimeTired" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeTired"/>
 				<Event Id="1759595795" Name="JaimeWarCry" ObjectPath="\Events\Player_01\Characters\Jaime\JaimeWarCry"/>
 				<Event Id="2782712987" Name="Lever" ObjectPath="\Events\Scene\Puzzle\Lever"/>
 				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Scene\MetalClash"/>
@@ -207,6 +212,7 @@
 				<Event Id="1242499422" Name="SwitchOn" ObjectPath="\Events\Scene\Puzzle\SwitchOn"/>
 				<Event Id="1566564139" Name="SwordHit" ObjectPath="\Events\Scene\SwordHit"/>
 				<Event Id="3113731383" Name="SwordSlash" ObjectPath="\Events\Scene\SwordSlash"/>
+				<Event Id="1288949937" Name="TheonBreathing" ObjectPath="\Events\Player_01\Characters\Theon\TheonBreathing"/>
 				<Event Id="837900871" Name="TheonDead" ObjectPath="\Events\Player_01\Characters\Theon\TheonDead"/>
 				<Event Id="3974846078" Name="TheonHurt" ObjectPath="\Events\Player_01\Characters\Theon\TheonHurt"/>
 				<Event Id="45876787" Name="TheonImpact" ObjectPath="\Events\Player_01\Characters\Theon\TheonImpact"/>
@@ -214,6 +220,7 @@
 				<Event Id="2159928993" Name="TheonMeleHit" ObjectPath="\Events\Player_01\Characters\Theon\TheonMeleHit"/>
 				<Event Id="3836375561" Name="TheonMeleShout" ObjectPath="\Events\Player_01\Characters\Theon\TheonMeleShout"/>
 				<Event Id="3412427529" Name="TheonRope" ObjectPath="\Events\Player_01\Characters\Theon\TheonRope"/>
+				<Event Id="2944574497" Name="TheonTired" ObjectPath="\Events\Player_01\Characters\Theon\TheonTired"/>
 				<Event Id="1916661861" Name="TheonTripleShot" ObjectPath="\Events\Player_01\Characters\Theon\TheonTripleShot"/>
 				<Event Id="777507535" Name="WaterSplash" ObjectPath="\Events\Scene\Puzzle\WaterSplash"/>
 			</IncludedEvents>
@@ -242,6 +249,10 @@
 					<ShortName>Enemy_ShieldBlock.wav</ShortName>
 					<Path>SFX\Enemy_ShieldBlock_1C9C67B2.wem</Path>
 				</File>
+				<File Id="99695251" Language="SFX">
+					<ShortName>Daennerys_Desperately_Breathing.wav</ShortName>
+					<Path>SFX\Daennerys_Desperately_Breathing_1C9C67B2.wem</Path>
+				</File>
 				<File Id="100153174" Language="SFX">
 					<ShortName>Characters\Theon\Theon_Dead_2.wav</ShortName>
 					<Path>SFX\Characters\Theon\Theon_Dead_2_EE628D5C.wem</Path>
@@ -265,6 +276,10 @@
 				<File Id="141306871" Language="SFX">
 					<ShortName>Puzzle\Rope.wav</ShortName>
 					<Path>SFX\Puzzle\Rope_1C9C67B2.wem</Path>
+				</File>
+				<File Id="141428708" Language="SFX">
+					<ShortName>Theon_Desperately_Breathing.wav</ShortName>
+					<Path>SFX\Theon_Desperately_Breathing_1C9C67B2.wem</Path>
 				</File>
 				<File Id="153064777" Language="SFX">
 					<ShortName>Jaime_Hurt.wav</ShortName>
@@ -308,7 +323,7 @@
 				</File>
 				<File Id="304204776" Language="SFX">
 					<ShortName>Switch_Disable.wav</ShortName>
-					<Path>SFX\Switch_Disable_2B7D241B.wem</Path>
+					<Path>SFX\Switch_Disable_5B7EDBFC.wem</Path>
 				</File>
 				<File Id="337181357" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
@@ -378,17 +393,33 @@
 					<ShortName>Misc_Combat\sword_slash.wav</ShortName>
 					<Path>SFX\Misc_Combat\sword_slash_1C9C67B2.wem</Path>
 				</File>
+				<File Id="560031115" Language="SFX">
+					<ShortName>Jaime_Desperately_Breathing.wav</ShortName>
+					<Path>SFX\Jaime_Desperately_Breathing_1C9C67B2.wem</Path>
+				</File>
+				<File Id="568836767" Language="SFX">
+					<ShortName>Daennerys_Tired.wav</ShortName>
+					<Path>SFX\Daennerys_Tired_1C9C67B2.wem</Path>
+				</File>
 				<File Id="582654528" Language="SFX">
 					<ShortName>Characters\Theon\Theon_Dead_1.wav</ShortName>
 					<Path>SFX\Characters\Theon\Theon_Dead_1_715F20C0.wem</Path>
 				</File>
 				<File Id="583166116" Language="SFX">
 					<ShortName>Door_open_close_end.wav</ShortName>
-					<Path>SFX\Door_open_close_end_49F42D23.wem</Path>
+					<Path>SFX\Door_open_close_end_69A33F19.wem</Path>
+				</File>
+				<File Id="585041305" Language="SFX">
+					<ShortName>Theon_Tired.wav</ShortName>
+					<Path>SFX\Theon_Tired_1C9C67B2.wem</Path>
+				</File>
+				<File Id="644454804" Language="SFX">
+					<ShortName>Player_Heartbeat.wav</ShortName>
+					<Path>SFX\Player_Heartbeat_1C9C67B2.wem</Path>
 				</File>
 				<File Id="688257092" Language="SFX">
 					<ShortName>Switch_Enable.wav</ShortName>
-					<Path>SFX\Switch_Enable_E685A16D.wem</Path>
+					<Path>SFX\Switch_Enable_CFF5081A.wem</Path>
 				</File>
 				<File Id="706131552" Language="SFX">
 					<ShortName>Daennerys_FlameCrepitarLoop.wav</ShortName>
@@ -470,6 +501,10 @@
 					<ShortName>Enemy\Enemy_1\E1_Hurt_4.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_1\E1_Hurt_4_1C9C67B2.wem</Path>
 				</File>
+				<File Id="988758404" Language="SFX">
+					<ShortName>Jaime_Tired.wav</ShortName>
+					<Path>SFX\Jaime_Tired_1C9C67B2.wem</Path>
+				</File>
 				<File Id="991530287" Language="SFX">
 					<ShortName>Ambient\Ambience.wav</ShortName>
 					<Path>SFX\Ambient\Ambience_1C9C67B2.wem</Path>
@@ -523,11 +558,11 @@
 			<IncludedMemoryFiles>
 				<File Id="304204776" Language="SFX">
 					<ShortName>Switch_Disable.wav</ShortName>
-					<Path>SFX\Switch_Disable_2B7D241B.wem</Path>
+					<Path>SFX\Switch_Disable_5B7EDBFC.wem</Path>
 				</File>
 				<File Id="688257092" Language="SFX">
 					<ShortName>Switch_Enable.wav</ShortName>
-					<Path>SFX\Switch_Enable_E685A16D.wem</Path>
+					<Path>SFX\Switch_Enable_CFF5081A.wem</Path>
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>

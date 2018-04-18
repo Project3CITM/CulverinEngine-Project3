@@ -47,6 +47,7 @@ public class ReverbCorridor: CulverinBehaviour
     void OnTriggerLost()
     {
         Debug.Log("LOSE COLLISION", Department.STAGE);
+        col = GetComponent<CompCollider>();
         GameObject col_obj = col.GetCollidedObject();
         CompAudio col_audio = null;
         if (col_obj != null)

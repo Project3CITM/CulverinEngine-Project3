@@ -3,6 +3,6 @@ Event	ID	Name			Wwise Object Path	Notes
 	3953897988	SwitchOff			\Scene\Puzzle\SwitchOff	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	304204776	Switch_Disable	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Switch_Disable_2B7D241B.wem		\Actor-Mixer Hierarchy\Default Work Unit\Stage\Switch_Disable		54116
-	688257092	Switch_Enable	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Switch_Enable_E685A16D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Stage\Switch_Enable		62816
+	304204776	Switch_Disable	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Switch_Disable_5B7EDBFC.wem		\Actor-Mixer Hierarchy\Default Work Unit\Stage\Switch_Disable		54116
+	688257092	Switch_Enable	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Switch_Enable_CFF5081A.wem		\Actor-Mixer Hierarchy\Default Work Unit\Stage\Switch_Enable		62816
 
