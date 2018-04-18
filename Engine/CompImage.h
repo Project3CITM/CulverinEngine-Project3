@@ -47,7 +47,6 @@ public:
 	ResourceMaterial* GetSourceImage()const;
 	ResourceMaterial* GetCurrentTexture()const;
 	AnimationData ShowParameters();
-	//ResourceMaterial * SelectImage();
 	AnimationValue GetParameter(ParameterValue parameter);
 private:
 	void CorrectFillAmount();

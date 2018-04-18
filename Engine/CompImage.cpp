@@ -527,6 +527,7 @@ void CompImage::SetNewAnimationValue(const AnimationData & value)
 		{
 			return;
 		}
+		source_image = value.value.sprite;
 		overwrite_image = value.value.sprite;
 		UpdateSpriteId();
 		break;

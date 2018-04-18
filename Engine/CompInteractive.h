@@ -32,7 +32,7 @@ struct Navigation
 
 };
 
-class CompInteractive:public Component
+class CompInteractive:public Component 
 {
 public:
 	CompInteractive(Comp_Type t, GameObject* parent);

@@ -1066,7 +1066,7 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
 						break;
 					case ParameterValue::IMAGE_ALPHA_VALUE:
-						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Alpha on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.i_value);
+						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Alpha on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
 						break;
 					case ParameterValue::IMAGE_SPRITE_ANIM:
 						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "UUID Sprite on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.sprite->GetUUID());

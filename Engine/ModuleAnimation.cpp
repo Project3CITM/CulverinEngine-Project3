@@ -536,6 +536,7 @@ bool ModuleAnimation::LoadAnimation(AnimationJson ** animation, const char * pat
 								}
 							}
 						}
+						
 						break;
 					default:
 						break;
@@ -909,7 +910,6 @@ AnimationValue KeyFrameData::Interpolate(float current_time, int frame)
 			ret.f_value = key_data[initial].key_values.f_value + current_interpolation * (key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
 		break;
 	case ParameterValue::IMAGE_SPRITE_ANIM:
-
 		ret.sprite = nullptr;
 		if (key_data[destination].key_frame <= frame && current_interpolation >= 1.0f)
 			ret.sprite = key_data[destination].key_values.sprite;
