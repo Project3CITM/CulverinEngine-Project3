@@ -30,7 +30,7 @@ public:
 	void CreateChilds();
 
 	//template<typename TYPE>
-	int CollectIntersections(std::list<GameObject*>& nodes, const Frustum& frustum) const;
+	int CollectIntersections(std::list<GameObject*>& nodes, const Frustum& frustum, math::float3 center_frustum, float size_frustum) const;
 	int CollectAllChilds(std::list<GameObject*>& nodes) const;
 	void CollectAllObjects(std::list<GameObject*>& all_obj) const;
 

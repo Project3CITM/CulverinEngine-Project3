@@ -322,7 +322,7 @@ void CompCamera::CullDynamicObjects()
 {
 	const AABB* box = nullptr;
 	float3 frustum_center = frustum.CenterPoint();
-	float far_plane_Sq = far_plane * far_plane;
+	float far_plane_Sq = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
 
 	// Push all active elements that are main childs of root & active
 	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)

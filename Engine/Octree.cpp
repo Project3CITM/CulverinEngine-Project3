@@ -4,7 +4,6 @@
 #include "GL3W/include/glew.h"
 
 
-
 // Octree NODE -------------------------
 
 OctreeNode::OctreeNode(const AABB& box, OctreeNode* parent) : box(box), parent(parent)
@@ -197,7 +196,7 @@ void OctreeNode::CreateChilds()
 }
 
 //template<typename TYPE>
-int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustum& frustum) const
+int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustum& frustum, math::float3 center_frustum, float size_frustum) const
 {
 	uint ret = 0;
 
@@ -217,36 +216,36 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 	//Should be changed if there is more time
 	for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
 	{
-		
 		AABB Box = item._Ptr->_Myval->box_fixed;
-
-		int iTotalIn = 0;
-		bool is_in = true;
-		for (int p = 0; p < 6; ++p) {
-			int iInCount = 8;
-			int iPtIn = 1;
-			for (int i = 0; i < 8; ++i) {
-				// test this point against the planes
-				if (planes[p].normal.Dot(Box.CornerPoint(i)) >= planes[p].d) {
-					iPtIn = 0;
-					--iInCount;
-				}
-			}
-			// were all the points outside of plane p?
-			if (iInCount == 0)
-			{
-				is_in = false;
-				break;
-			}
-			// check if they were all on the right side of the plane
-			iTotalIn += iPtIn;
-		}
-
-		if (is_in)
+		if ((Box.CenterPoint() - center_frustum).LengthSq() + Box.HalfSize().LengthSq() < size_frustum)
 		{
-			nodes.push_back(*item);
-		}
-	
+			int iTotalIn = 0;
+			bool is_in = true;
+			for (int p = 0; p < 6; ++p) {
+				int iInCount = 8;
+				int iPtIn = 1;
+				for (int i = 0; i < 8; ++i) {
+					// test this point against the planes
+					if (planes[p].normal.Dot(Box.CornerPoint(i)) >= planes[p].d) {
+						iPtIn = 0;
+						--iInCount;
+					}
+				}
+				// were all the points outside of plane p?
+				if (iInCount == 0)
+				{
+					is_in = false;
+					break;
+				}
+				// check if they were all on the right side of the plane
+				iTotalIn += iPtIn;
+			}
+
+			if (is_in)
+			{
+				nodes.push_back(*item);
+			}
+		}	
 	}
 
 	// If there is no children, end
@@ -255,7 +254,7 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 
 	// Otherwise, add the points from the children
 	for (uint i = 0; i < 8; i++)
-		ret += childs[i]->CollectIntersections(nodes, frustum);
+		ret += childs[i]->CollectIntersections(nodes, frustum, center_frustum, size_frustum);
 
 	return ret;
 }
@@ -367,7 +366,9 @@ int Octree::CollectIntersections(std::list<GameObject*>& nodes, const Frustum& f
 	int tests = 1;
 
 	if (root_node != nullptr)
-		tests = root_node->CollectIntersections(nodes, frustum);
+	{
+		tests = root_node->CollectIntersections(nodes, frustum, frustum.CenterPoint(), frustum.MinimalEnclosingAABB().HalfSize().LengthSq());
+	}
 	return tests;
 }
 
