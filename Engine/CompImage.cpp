@@ -290,20 +290,15 @@ void CompImage::ShowMethodInfo()
 
 void CompImage::FillAmount(float value)
 {
-	if (value < 0.0f)
-	{
-		filled = 0.0f;
-	}
-	else if (value > 1.0f)
-	{
-		filled = 1.0f;
-	}
-	filled = value;
 
+	filled = CAP(value);
+	
 	GenerateMesh();
 }
 void CompImage::DeviceCheck()
 {
+
+
 	if (DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE == App->input->GetActualDeviceCombo())
 	{
 		device_swap_active = false;
@@ -316,11 +311,9 @@ void CompImage::DeviceCheck()
 }
 void CompImage::GenerateFilledSprite()
 {
-	if (filled < 0.001f)
+	if (filled < 0.001f|| filled > 1.0f)
 		return;
 
-	if (filled > 1.0f)
-		filled = 1.0f;
 	float4 vertex = parent->GetComponentRectTransform()->GetRect();
 	float4 outer = { 0.0f,0.0f,1.0f,1.0f };	
 	std::vector<float3> quad_pos;
@@ -424,7 +417,7 @@ void CompImage::GenerateFilledSprite()
 					:filled*4.0f - (3-((box_corner) % 4));
 
 
-				if (RadialCut(quad_pos, quad_uv, CorrectValue01(value), ((box_corner + 2) % 4), radial_inverse))
+				if (RadialCut(quad_pos, quad_uv, CAP(value), ((box_corner + 2) % 4), radial_inverse))
 				{
 					ProcesQuad(quad_pos, quad_uv);
 					//my_canvas_render->ProcessQuad(quad_pos, quad_uv);
@@ -663,25 +656,11 @@ ResourceMaterial * CompImage::GetCurrentTexture() const
 
 void CompImage::CorrectFillAmount()
 {
-	if (filled < 0.0f)
-	{
-		filled = 0.0f;
-	}
-	else if (filled > 1.0f)
-	{
-		filled = 1.0f;
-	}
+	filled = CAP(filled);
+	
 }
 
-float CompImage::CorrectValue01(float value)
-{
-	if (value > 1.0f)
-		value = 1.0f;
-	else if (value < 0.0f)
-		value = 0.0f;
 
-	return value;
-}
 
 
 
@@ -706,7 +685,7 @@ bool CompImage::RadialCut(std::vector<float3>& position, std::vector<float3>& te
 	}
 
 	
-	float angle = CorrectValue01(fill_value);
+	float angle = CAP(fill_value);
 	
 	if (invert)
 		angle = 1.0f - angle;

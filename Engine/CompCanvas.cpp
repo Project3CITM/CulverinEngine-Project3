@@ -405,24 +405,26 @@ void CompCanvas::CorrectCanvasAlpha()
 
 void CompCanvas::SetCanvasAlpha(bool alpha_down)
 {
+	if (!IsActive())
+		return;
 	for (int i = 0; i < graphic_vector.size(); i++)
 	{
-		LOG("Canvas Alpha %f", current_canvas_alpha);
+		CompGraphic* graphic = graphic_vector[i];
+		if (!graphic->IsActive() || !graphic->GetToRender() || !graphic->GetParentActive())
+			continue;
 
 		if(alpha_down)
 		{
-			LOG("down %f", graphic_vector[i]->GetAlpha());
 
-			if (graphic_vector[i]->GetAlpha() > current_canvas_alpha)
-				graphic_vector[i]->SetAlpha(current_canvas_alpha);
+			if (graphic->GetAlpha() > current_canvas_alpha)
+				graphic->SetAlpha(current_canvas_alpha);
 
 		}
 		else
 		{
-			LOG("up %f", graphic_vector[i]->GetAlpha());
 
-			if (graphic_vector[i]->GetAlpha()< current_canvas_alpha)
-				graphic_vector[i]->SetAlpha(current_canvas_alpha);
+			if (graphic->GetAlpha()< current_canvas_alpha)
+				graphic->SetAlpha(current_canvas_alpha);
 
 		}
 	}

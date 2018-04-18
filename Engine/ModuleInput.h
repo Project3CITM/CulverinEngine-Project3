@@ -160,6 +160,7 @@ private:
 	std::string horizontal;
 	bool ui_conected = false;
 	bool update_new_device = false;
+	bool rumble_active = true;
 	DeviceCombinationType actual_device_combo = DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
 public:
 	std::list<const char*> dropedfiles;

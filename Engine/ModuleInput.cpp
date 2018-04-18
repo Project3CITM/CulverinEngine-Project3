@@ -617,11 +617,12 @@ void ModuleInput::UpdateDeviceType(DeviceCombinationType actual_player_action)
 	}
 }
 
-void ModuleInput::RumblePlay(float intensity, int milliseconds)
+void ModuleInput::RumblePlay(float value, int milliseconds)
 {
-	if (gamepad.Empty())
+	if (gamepad.Empty()||!rumble_active)
 		return;
-	if (intensity > 1|| milliseconds> MAX_MILLISECONDS|| milliseconds<0)
+	float intensity = CAP(value);
+	if (milliseconds>MAX_MILLISECONDS|| milliseconds<0)
 		return;
 	if (SDL_HapticRumblePlay(gamepad.haptic, intensity, milliseconds) != 0) {
 		LOG("Warning: Unable to play rumble! %s\n", SDL_GetError()); 
