@@ -4,7 +4,7 @@ using CulverinEditor.Debug;
 
 public class Projectile : CulverinBehaviour
 {
-    public float damage = 10;
+    public float damage = 10f;
     public Vector3 speed = Vector3.Zero;
     public bool collision;
     CompRigidBody rb;
@@ -14,7 +14,7 @@ public class Projectile : CulverinBehaviour
         rb = GetComponent<CompRigidBody>();
         Shoot();
         collision = true;
-        damage = 10.0f;
+     
     }
 
     public void Shoot()
@@ -29,14 +29,22 @@ public class Projectile : CulverinBehaviour
 
     void OnContact()
     {
+        Debug.Log("CONTACT", Department.STAGE, Color.RED);
         CompCollider col = GetComponent<CompCollider>();
         GameObject collided_obj = col.GetCollidedObject();
        
-        Debug.Log(collided_obj.GetTag().ToString());
-        if (collided_obj != null && collided_obj.CompareTag("player"))
+       
+        if (collided_obj != null)
         {
-            //collided_obj.GetComponent<CharactersManager>().GetDamage(10);
-        }
+            CharactersManager cm = collided_obj.GetComponent<CharactersManager>();
+
+            if (cm != null)
+            {
+                cm.GetDamage(damage);
+            }
+         }
+        else Debug.Log("Collided obj NULL", Department.STAGE, Color.ORANGE);
+
         Destroy(gameObject);
     }
 }
