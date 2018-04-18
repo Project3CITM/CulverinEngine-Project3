@@ -53,39 +53,34 @@ public class BossAttackSwordDown_Action : Action
             int enemy_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
             GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int player_tile_x, out int player_tile_y);
-         
-            switch(GetComponent<Movement_Action>().GetDirection())
+
+            GetComponent<CompAudio>().PlayEvent("BossHitGround");
+            Input.RumblePlay(rumble_power, rumble_time);
+
+            switch (GetComponent<Movement_Action>().GetDirection())
             {
                 case Movement_Action.Direction.DIR_WEST:
                     if ((enemy_tile_x - 1 == player_tile_x || enemy_tile_x - 2 == player_tile_x) && player_tile_y == enemy_tile_y)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
-                        GetComponent<CompAudio>().PlayEvent("BossHitGround");
-                        Input.RumblePlay(rumble_power, rumble_time);
                     }
                     break;
                 case Movement_Action.Direction.DIR_EAST:
                     if ((enemy_tile_x + 1 == player_tile_x || enemy_tile_x + 2 == player_tile_x) && player_tile_y == enemy_tile_y)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
-                        GetComponent<CompAudio>().PlayEvent("BossHitGround");
-                        Input.RumblePlay(rumble_power, rumble_time);
                     }
                     break;
                 case Movement_Action.Direction.DIR_NORTH:
                     if ((enemy_tile_y - 1 == player_tile_y || enemy_tile_y - 2 == player_tile_y) && player_tile_x == enemy_tile_x)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
-                        GetComponent<CompAudio>().PlayEvent("BossHitGround");
-                        Input.RumblePlay(rumble_power, rumble_time);
                     }
                     break;
                 case Movement_Action.Direction.DIR_SOUTH:
                     if ((enemy_tile_y + 1 == player_tile_y || enemy_tile_y + 2 == player_tile_y) && player_tile_x == enemy_tile_x)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
-                        GetComponent<CompAudio>().PlayEvent("BossHitGround");
-                        Input.RumblePlay(rumble_power, rumble_time);
                     }
                     break;
             }

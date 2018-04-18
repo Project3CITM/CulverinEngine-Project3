@@ -45,6 +45,9 @@ public class Boss_BT : BT
 
     public float rumble_power = 0.5f;
     public int rumble_time = 200;
+    public float rumble_growl_delay = 0.1f;
+    private bool rumble = false;
+    private float rumble_timer = 0.0f;
 
     System.Random rand_gen = null;
 
@@ -65,11 +68,24 @@ public class Boss_BT : BT
         current_hp = total_hp;
         boss_active = false;
 
+        rumble_timer = 0.0f;
+        rumble = false;
+
         base.Start();
     }
 
     public override void Update()
     {
+        if (rumble == true)
+        {
+            rumble_timer += Time.deltaTime;
+            if (rumble_timer >= rumble_growl_delay)
+            {
+                Input.RumblePlay(rumble_power, rumble_time);
+                rumble_timer = 0.0f;
+                rumble = false;
+            }
+        }
         base.Update();
     }
 
@@ -269,7 +285,7 @@ public class Boss_BT : BT
     {
         next_action = GetComponent<BossEngage_Action>();
         GetComponent<CompAudio>().PlayEvent("BossGrowl");
-        Input.RumblePlay(rumble_power, rumble_time);
+        rumble = true;
     }
 
     public int GetDistanceXToPlayer()
