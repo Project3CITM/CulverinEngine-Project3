@@ -328,6 +328,9 @@ bool Scene::CleanUp()
 	skybox->DeleteSkyboxTex();
 	
 	octree.Clear();
+	static_objects.clear();
+	dynamic_objects.clear();
+
 	root->CleanUp();
 	secondary_root->CleanUp();
 	temporary_scene->CleanUp();
@@ -420,6 +423,8 @@ void Scene::EditorQuadtree()
 		if (ImGui::Button("UPDATE QUADTREE"))
 		{
 			octree.Clear(false);
+			static_objects.clear();
+			dynamic_objects.clear();
 			//Clac adaptative size of scene octree
 			/**/
 			//AABB AdaptativeAABB;
@@ -443,8 +448,13 @@ void Scene::EditorQuadtree()
 			//Insert AABBs to octree
 			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 				if ((*item)->IsStatic())
+				{
 					octree.Insert(*item);
-
+				}
+				else
+				{
+					dynamic_objects.push_back(*item);
+				}
 
 		/*	if (App->engine_state == EngineState::STOP)
 			{
@@ -1058,6 +1068,21 @@ const std::vector<GameObject*>* Scene::GetAllSceneObjects()
 	game_objects_scene.clear();
 	root->GetAllSceneGameObjects(game_objects_scene);
 	return &game_objects_scene;
+}
+
+void Scene::RemoveDynamicObject(GameObject * obj)
+{
+	if (obj != nullptr) 
+	{
+		for (int i = dynamic_objects.size() - 1; i >= 0; i--)
+		{
+			if (dynamic_objects[i] == obj) {
+				for (uint j = i; j + 1 < dynamic_objects.size(); j++)
+					dynamic_objects[j] = dynamic_objects[j + 1];
+				dynamic_objects.pop_back();
+			}
+		}
+	}
 }
 
 GameObject * Scene::FindCanvas()

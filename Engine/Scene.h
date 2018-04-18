@@ -76,6 +76,9 @@ public:
 	void RecalculateStaticObjects();
 	const std::vector<GameObject*>* GetAllSceneObjects();
 
+	// DYNAMIC CULLING -------------------
+	void RemoveDynamicObject(GameObject* obj);
+
 	//OBJECTS CREATION / DELETION ---------------------
 	GameObject* FindCanvas();
 	GameObject* CreateGameObject(GameObject* parent = nullptr);
@@ -118,6 +121,7 @@ public:
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
 	std::vector<GameObject*> static_objects;
+	std::vector<GameObject*> dynamic_objects;
 
 	// Scene Saved
 	bool scene_saved = true; // TODO XAVI - need implementation with Event System

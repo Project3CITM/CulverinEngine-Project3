@@ -128,6 +128,11 @@ GameObject::~GameObject()
 	//RELEASE_ARRAY(name); FIX THIS
 	parent = nullptr;
 
+	if (!static_obj)
+	{
+		App->scene->RemoveDynamicObject(this);
+	}
+
 	if (components.size() > 0)
 	{
 		for (uint i = 0; i < components.size(); i++)
@@ -1209,9 +1214,15 @@ void GameObject::FreezeTransforms(bool freeze, bool change_childs)
 		}
 	}
 	if (static_obj)
+	{
 		App->scene->octree.Insert(this);
+		App->scene->RemoveDynamicObject(this);
+	}
 	else
+	{
 		App->scene->octree.Remove(this);
+		App->scene->dynamic_objects.push_back(this);
+	}
 }
 
 void GameObject::ShowFreezeChildsWindow(bool freeze, bool& active)

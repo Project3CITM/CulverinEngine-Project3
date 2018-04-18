@@ -242,6 +242,10 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			{
 				App->scene->octree.Insert(templist[i].go);
 			}
+			else
+			{
+				App->scene->dynamic_objects.push_back(templist[i].go);
+			}
 		}
 		App->scene->RecalculateStaticObjects();
 
@@ -547,6 +551,12 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instant
 					}
 				}
 				int uuid_parent = json_object_dotget_number_with_std(config_node, name + "Parent");
+
+				// Add GameObject to Dynamicvector
+				if (!obj->IsStatic())
+				{
+					App->scene->dynamic_objects.push_back(obj);
+				}
 
 				//Add GameObject
 				if (uuid_parent == -1)

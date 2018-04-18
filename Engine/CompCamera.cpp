@@ -336,48 +336,27 @@ void CompCamera::CullDynamicObjects()
 	float3 frustum_center = frustum.CenterPoint();
 	float far_plane_Sq = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
 
-	// Push all active elements that are main childs of root & active
-	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
+	const int num = App->scene->dynamic_objects.size();
+	GameObject** ptr = (num > 0) ? App->scene->dynamic_objects.data() : nullptr;
+	
+	GameObject* curr_obj = nullptr;
+	for (int i = 0; i < num; i++)
 	{
-		if (App->scene->root->GetChildbyIndex(i)->IsActive())
+		curr_obj = ptr[i];
+		if (curr_obj->box_fixed.IsFinite()) // Check if it has AABB and it's not the camera itself
 		{
-			candidates_to_cull.push_back(App->scene->root->GetChildbyIndex(i));
-		}
-	}
+			box = &curr_obj->box_fixed;
 
-	// Check candidates_to_cull vector until it's empty
-	while (candidates_to_cull.empty() == false)
-	{
-		// If it's not static, check if it's inside the vision of the camera to set 
-		if (!candidates_to_cull.front()->IsStatic())
-		{
-			if (candidates_to_cull.front()->box_fixed.IsFinite()) // Check if it has AABB and it's not the camera itself
+			if ((box->CenterPoint() - frustum_center).LengthSq() - box->HalfSize().LengthSq() >  far_plane_Sq)
 			{
-				box = &candidates_to_cull.front()->box_fixed;
-				
-				if ((box->CenterPoint() - frustum_center).LengthSq() - box->HalfSize().LengthSq() >  far_plane_Sq)
-				{
-					candidates_to_cull.front()->SetVisible(false); // OUTSIDE CAMERA VISION
-				}
-				else
-				{
-					candidates_to_cull.front()->SetVisible(true); // INSIDE CAMERA VISION
-					candidates_to_cull.front()->Draw();
-				}
+				curr_obj->SetVisible(false); // OUTSIDE CAMERA VISION
+			}
+			else
+			{
+				curr_obj->SetVisible(true); // INSIDE CAMERA VISION
+				curr_obj->Draw();
 			}
 		}
-
-		//Push all the active childs to the candidates vector
-		for (std::vector<GameObject*>::iterator it = candidates_to_cull.front()->GetChildsPtr()->begin(); it != candidates_to_cull.front()->GetChildsPtr()->end(); it++)
-		{
-			if ((*it)->IsActive())
-			{
-				candidates_to_cull.push_back((*it));
-			}
-		}
-
-		// Delete from vector the object already checked
-		candidates_to_cull.pop_front();
 	}
 }
 
@@ -413,39 +392,18 @@ void CompCamera::UnCull()
 
 void CompCamera::UnCullDynamics()
 {
-	// Push all active elements that are main childs of root & active
-	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
+	const int num = App->scene->dynamic_objects.size();
+	GameObject** ptr = (num > 0) ? App->scene->dynamic_objects.data() : nullptr;
+
+	GameObject* curr_obj = nullptr;
+	for (int i = 0; i < num; i++)
 	{
-		if (App->scene->root->GetChildbyIndex(i)->IsActive())
+		curr_obj = ptr[i];
+		if (curr_obj->box_fixed.IsFinite()) // Check if it has AABB and it's not the camera itself
 		{
-			candidates_to_cull.push_back(App->scene->root->GetChildbyIndex(i));
+			curr_obj->SetVisible(true); // INSIDE CAMERA VISION
+			curr_obj->Draw();
 		}
-	}
-
-	// Check candidates_to_cull vector until it's empty
-	while (candidates_to_cull.empty() == false)
-	{
-		// If it's not static, check if it's inside the vision of the camera to set 
-		if (!candidates_to_cull.front()->IsStatic())
-		{
-			if (candidates_to_cull.front()->box_fixed.IsFinite()) // Check if it has AABB and it's not the camera itself
-			{
-				candidates_to_cull.front()->SetVisible(true); // INSIDE CAMERA VISION
-				candidates_to_cull.front()->Draw();
-			}
-		}
-
-		//Push all the active childs to the candidates vector
-		for (std::vector<GameObject*>::iterator it = candidates_to_cull.front()->GetChildsPtr()->begin(); it != candidates_to_cull.front()->GetChildsPtr()->end(); it++)
-		{
-			if ((*it)->IsActive())
-			{
-				candidates_to_cull.push_back((*it));
-			}
-		}
-
-		// Delete from vector the object already checked
-		candidates_to_cull.pop_front();
 	}
 }
  

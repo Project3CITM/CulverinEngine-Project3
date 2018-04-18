@@ -282,7 +282,9 @@ void Application::FinishUpdate()
 	if (want_to_load == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		App->scene->octree.Clear(false);
+		scene->octree.Clear(false);
+		scene->static_objects.clear();
+		scene->dynamic_objects.clear();
 
 		App->importer->iScript->ClearMonoMap();
 
@@ -312,7 +314,8 @@ void Application::FinishUpdate()
 	if (dont_destroy_on_load)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		App->scene->octree.Clear(false);
+		scene->octree.Clear(false);
+		scene->static_objects.clear();
 
 		//App->scene->DeleteAllGameObjects(App->scene->root);
 		scene->ChangeRoot(scene->dontdestroyonload, scene->root);
@@ -364,7 +367,8 @@ void Application::FinishUpdate()
 	if (load_multi_scene)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		App->scene->octree.Clear(false);
+		scene->octree.Clear(false);
+		scene->static_objects.clear();
 
 		scene->ChangeRoot(scene->dontdestroyonload, scene->root);
 
