@@ -13,6 +13,7 @@
 #include "CompMaterial.h"
 #include "ModuleLightning.h"
 #include "ModuleFS.h"
+#include "CompLight.h"
 CompCubeMapRenderer::CompCubeMapRenderer(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	uid = App->random->Int();
@@ -61,8 +62,49 @@ void CompCubeMapRenderer::Bake(Event& event)
 	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
 	shadow_transforms.push_back(shadow_proj * glm::lookAt(l_pos, l_pos + glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
 
-	
-	App->renderer3D->cube_map_shader->Bind();
+	std::vector<Material*>::iterator item = App->module_shaders->materials.begin();
+	while (item != App->module_shaders->materials.end())
+	{
+		uint ID = (*item)->GetProgramID();
+		if ((*item)->active_num == 0) {
+			item++;
+			continue;
+		}
+
+		(*item)->Bind();
+		std::vector<CompLight*> lights_vec = App->module_lightning->GetSceneLights();
+		GLint lightsizeLoc = glGetUniformLocation(ID, "_numLights");
+		if (lightsizeLoc != -1) glUniform1i(lightsizeLoc, lights_vec.size());
+
+
+
+
+		if (lightsizeLoc != -1)
+			for (size_t i = 0; i < lights_vec.size(); ++i) {
+
+				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
+					App->module_shaders->SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
+				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
+					App->module_shaders->SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
+
+				App->module_shaders->SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
+				App->module_shaders->SetLightUniform(ID, "l_color", i, lights_vec[i]->color);
+				App->module_shaders->SetLightUniform(ID, "ambientCoefficient", i, lights_vec[i]->ambientCoefficient);
+
+				App->module_shaders->SetLightUniform(ID, "properties", i, lights_vec[i]->properties);
+
+				// Bias matrix. TODO: Might be better to set other place
+
+				int depthBiasID = glGetUniformLocation(ID, "depthBias");
+				glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
+
+				// End Bias matrix.
+			}
+		item++;
+
+	}
+
+
 	for (uint i = 0; i < 6; ++i)
 	{
 
@@ -77,9 +119,12 @@ void CompCubeMapRenderer::Bake(Event& event)
 
 			if (m == nullptr)
 				continue;
-
+			if (m->HasSkeleton())
+				continue;
 			uint sh_id = m->GetMaterial()->material->GetProgramID();
 			m->GetMaterial()->material->Bind();
+
+
 			float3 object_pos = m->GetGameObjectPos();
 
 			CompTransform* transform = (*item)->GetComponentTransform();
