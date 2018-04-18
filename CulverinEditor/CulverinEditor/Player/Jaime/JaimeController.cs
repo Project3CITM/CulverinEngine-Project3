@@ -467,6 +467,7 @@ public class JaimeController : CharacterController
             if (CanWasteStamina(left_ability_cost))
             {
                 left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
+
                 //Check if the ability is not in cooldown
                 if (!left_ability_cd.in_cd)
                 {
