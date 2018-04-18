@@ -693,10 +693,10 @@ public class Movement_Action : Action
             Debug.Log("Going west", Department.IA,Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: GetComponent<CompAnimation>().PlayAnimationNode("WalkBack"); break;
-                case Direction.DIR_NORTH: GetComponent<CompAnimation>().PlayAnimationNode("WalkLeft"); break;
-                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().PlayAnimationNode("WalkRight"); break;
-                case Direction.DIR_WEST: GetComponent<CompAnimation>().PlayAnimationNode("WalkFront"); break;
+                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
+                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
+                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
+                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
             }
         }
 
@@ -706,10 +706,10 @@ public class Movement_Action : Action
             Debug.Log("Going east", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: GetComponent<CompAnimation>().PlayAnimationNode("WalkFront"); break;
-                case Direction.DIR_NORTH: GetComponent<CompAnimation>().PlayAnimationNode("WalkRight"); break;
-                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().PlayAnimationNode("WalkLeft"); break;
-                case Direction.DIR_WEST: GetComponent<CompAnimation>().PlayAnimationNode("WalkBack"); break;
+                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
+                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
+                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
+                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
             }
         }
 
@@ -719,10 +719,10 @@ public class Movement_Action : Action
             Debug.Log("Going north", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: GetComponent<CompAnimation>().PlayAnimationNode("WalkLeft"); break;
-                case Direction.DIR_NORTH: GetComponent<CompAnimation>().PlayAnimationNode("WalkFront"); break;
-                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().PlayAnimationNode("WalkBack"); break;
-                case Direction.DIR_WEST: GetComponent<CompAnimation>().PlayAnimationNode("WalkRight"); break;
+                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
+                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
+                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
+                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
             }
         }
 
@@ -732,10 +732,10 @@ public class Movement_Action : Action
             Debug.Log("Going south", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: GetComponent<CompAnimation>().PlayAnimationNode("WalkRight"); break;
-                case Direction.DIR_NORTH: GetComponent<CompAnimation>().PlayAnimationNode("WalkBack"); break;
-                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().PlayAnimationNode("WalkFront"); break;
-                case Direction.DIR_WEST: GetComponent<CompAnimation>().PlayAnimationNode("WalkLeft"); break;
+                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
+                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
+                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
+                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
             }
         }
     }
