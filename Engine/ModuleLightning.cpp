@@ -322,7 +322,7 @@ void ModuleLightning::OnEvent(Event & event)
 				{
 					if (m->resource_mesh->vertices.size() > 0 && m->resource_mesh->indices.size() > 0)
 					{
-						//CalcDirectionalShadowMap((CompLight*)light, m);
+						CalcDirectionalShadowMap((CompLight*)light, m);
 					}
 
 					else
