@@ -14,6 +14,7 @@ public class Fountain : CulverinBehaviour
     public float final_x_scale_bottom = 0;
     public float final_z_scale_bottom = 0;
     public float deplenish_speed = 0.01f;
+    public float heal_percentage = 0.25f;
     private float starting_y_bottom;
     private float starting_x_scale_bottom;
     private float starting_z_scale_bottom;
@@ -44,15 +45,11 @@ public class Fountain : CulverinBehaviour
         {
             if (Input.GetInput_KeyDown("Interact", "Player") && current_usage > 0)
             {
-                GetLinkedObject("player").GetComponent<CharactersManager>().HealCharacters();
+                GetLinkedObject("player").GetComponent<CharactersManager>().HealCharacters(heal_percentage);
                 reducing_water = true;
                 current_usage--;
                 float by = (float)current_usage / (float)number_of_uses;
                 destination_y = Mathf.Lerp(starting_y_bottom, final_y_bottom, by);
-                Debug.Log(destination_y, Department.STAGE, Color.PINK);
-                Debug.Log(starting_y_bottom, Department.STAGE, Color.ORANGE);
-                Debug.Log(final_y_bottom, Department.STAGE, Color.GREEN);
-                Debug.Log(by, Department.STAGE, Color.BLUE);
                 destination_x = Mathf.Lerp(starting_x_scale_bottom, final_x_scale_bottom, by);
                 destination_z = Mathf.Lerp(starting_z_scale_bottom, final_z_scale_bottom, by);
             }
@@ -64,9 +61,6 @@ public class Fountain : CulverinBehaviour
             Vector3 bottom_pos = GetLinkedObject("bottom_water").transform.GetPosition();
             if(destination_y < bottom_pos.y)
             {
-                Debug.Log(bottom_pos.y, Department.STAGE);
-                Debug.Log("Going toooo", Department.STAGE);
-                Debug.Log(destination_y, Department.STAGE);
                 bottom_water.transform.SetPosition(new Vector3(bottom_pos.x, bottom_pos.y - deplenish_speed, bottom_pos.z));
             }
             else

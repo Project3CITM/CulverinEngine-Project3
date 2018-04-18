@@ -697,8 +697,13 @@ public class JaimeController : CharacterController
         jaime_right_flag.SetActive(active);
     }
 
-    public void Heal()
+    public void Heal(float percentage)
     {
-        curr_hp = max_hp;
+        curr_hp += max_hp * percentage;
+        if (curr_hp > max_hp)
+        {
+            curr_hp = max_hp;
+        }
+        jaime_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
     }
 }

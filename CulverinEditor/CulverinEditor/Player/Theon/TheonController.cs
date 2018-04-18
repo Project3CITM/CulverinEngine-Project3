@@ -701,8 +701,13 @@ public class TheonController : CharacterController
         secondary_ability = true;
     }
 
-    public void Heal()
+    public void Heal(float percentage)
     {
-        curr_hp = max_hp;
+        curr_hp += max_hp * percentage;
+        if(curr_hp > max_hp)
+        {
+            curr_hp = max_hp;
+        }
+        theon_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
     }
 }
