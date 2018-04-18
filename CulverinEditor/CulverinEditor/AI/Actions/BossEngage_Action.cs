@@ -13,7 +13,6 @@ class BossEngage_Action : Action
 
     public override bool ActionStart()
     {
-        Debug.Log("Boss is triggered");
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.GRABBED);
         GetComponent<CompAnimation>().SetTransition("ToDraw");
         GetComponent<CompAnimation>().SetClipDuration("Draw", duration);

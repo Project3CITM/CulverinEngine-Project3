@@ -201,9 +201,8 @@ public class Boss_BT : BT
 
     public bool ApplyDamage(float damage)
     {
-        InterruptAction();
-        next_action = GetComponent<GetHit_Action>();
         GetComponent<CompAudio>().PlayEvent("BossHurt");
+
         current_hp -= damage;
         current_interpolation = current_hp / total_hp;
         
@@ -224,11 +223,11 @@ public class Boss_BT : BT
             GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
         }
         /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
-                {
-                    Debug.Log("[yellow] BOSS PHASE2!!!!!");
-                    phase = BOSS_STATE.BOSS_PHASE2;
-                    //Phase2Textures();
-                }*/
+        {
+            Debug.Log("[yellow] BOSS PHASE2!!!!!");
+            phase = BOSS_STATE.BOSS_PHASE2;
+            //Phase2Textures();
+        }*/
 
         return true;
     }

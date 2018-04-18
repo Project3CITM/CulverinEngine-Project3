@@ -31,8 +31,8 @@ public class BossAttackSwordDown_Action : Action
     {
 
         state = BASD_STATE.PRE_APPLY;
-        GetComponent<CompAnimation>().SetTransition("ToAttack");
-        GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
+        GetComponent<CompAnimation>().SetTransition("ToSwordDownAttack");
+        GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", attack_duration);
         GetComponent<CompAudio>().PlayEvent("AttackPreparation");
         return true;
     }
@@ -80,7 +80,7 @@ public class BossAttackSwordDown_Action : Action
                     break;
             }
         }
-        else if (state == BASD_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
+        else if (state == BASD_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("SwordDownAttack"))
         {
 
             state = BASD_STATE.WAITING;
