@@ -77,7 +77,8 @@ public class Stamina : CulverinBehaviour
     public void DecreaseStamina(float cost)
     {
         //Costs are 0 in GOD MODE
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy)
         {
             cost = 0;
         }
@@ -112,7 +113,8 @@ public class Stamina : CulverinBehaviour
     public bool CanWasteStamina(float value)
     {
         //Costs are 0 in GOD MODE
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy)
         {
             value = 0;
         }

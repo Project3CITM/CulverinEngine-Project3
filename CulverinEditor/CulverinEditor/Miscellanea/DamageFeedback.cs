@@ -124,7 +124,7 @@ public class DamageFeedback : CulverinBehaviour
     public void SetDamage(float curr_hp, float max_hp)
     {
         float result = curr_hp / max_hp;
-        alpha = 1.0f - result;
+        alpha = 1.0f - result * 0.5f;
         damage = true;
     }
 

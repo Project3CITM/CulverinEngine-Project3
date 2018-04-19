@@ -75,7 +75,8 @@ public class Mana : CulverinBehaviour
     public void DecreaseMana(float cost)
     {
         //Costs are 0 in GOD MODE
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy)
         {
             cost = 0;
         }
@@ -94,7 +95,8 @@ public class Mana : CulverinBehaviour
     public void DecreaseManaPercentage(float cost_percentage)
     {
         //Costs are 0 in GOD MODE
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy)
         {
             cost_percentage = 0;
         }
@@ -129,7 +131,8 @@ public class Mana : CulverinBehaviour
     public bool CanWasteMana(float value)
     {
         //Costs are 0 in GOD MODE
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy)
         {
             value = 0;
         }

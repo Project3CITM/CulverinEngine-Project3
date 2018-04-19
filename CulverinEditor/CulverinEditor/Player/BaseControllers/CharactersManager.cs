@@ -67,7 +67,11 @@ public class CharactersManager : CulverinBehaviour
     private bool is_healing = false;
     private float heal_destination = 0.0f;
 
+    //GOD MODE -----------------------------
     public GameObject god_mode_sprite;
+    public GameObject no_cds_text;
+    public GameObject no_energy_text;
+    public GameObject no_damage_text;
 
     /*GOD MODE: 
         - No damage taken.
@@ -80,6 +84,16 @@ public class CharactersManager : CulverinBehaviour
        - No damage taken.
    */
     public bool no_damage = false;
+
+    /*NO CDS MODE: 
+       - 1 sec for secondary abilities.  
+    */
+    public bool no_cds = false;
+
+    /*NO ENERGY MODE: 
+     - 0 cost for all abilities.  
+    */
+    public bool no_energy = false;
 
     void Start()
     {
@@ -107,8 +121,25 @@ public class CharactersManager : CulverinBehaviour
 
         camera = GetLinkedObject("camera");
 
+        //GOD MODE VARIABLES ----------------------------------------
         god_mode_sprite = GetLinkedObject("god_mode_sprite");
+        no_cds_text = GetLinkedObject("no_cds_text");
+        no_energy_text = GetLinkedObject("no_energy_text");
+        no_damage_text = GetLinkedObject("no_damage_text");
+
         god_mode_sprite.GetComponent<CompImage>().SetRender(false);
+
+        no_cds_text.GetComponent<CompText>().SetText("NO COOLDOWNS MODE");
+        no_cds_text.SetActive(false);
+
+        no_energy_text.GetComponent<CompText>().SetText("NO COSTS MODE");
+        no_energy_text.SetActive(false);
+
+        no_damage_text.GetComponent<CompText>().SetText("NO DAMAGE MODE");
+        no_damage_text.SetActive(false);
+        // ----------------------------------------------------------
+
+
 
         SetCurrentPosition();
 
@@ -447,7 +478,6 @@ public class CharactersManager : CulverinBehaviour
             {
                 dcontroller = right_character.GetComponent<DaenerysController>();
                 tcontroller = left_character.GetComponent<TheonController>();
-
             }
             else
             {
@@ -1068,9 +1098,26 @@ public class CharactersManager : CulverinBehaviour
         }
 
         //NO DAMAGE MODE
-        if (Input.GetKeyDown(KeyCode.F2))
+        if (Input.GetKeyDown(KeyCode.F11))
         {
             no_damage = !no_damage;
+            no_damage_text.SetActive(no_damage);
+        }
+
+
+        //NO CDS MODE
+        if (Input.GetKeyDown(KeyCode.F10))
+        {
+            no_cds = !no_cds;
+            no_cds_text.SetActive(no_cds);
+        }
+
+
+        //NO ENERGY MODE
+        if (Input.GetKeyDown(KeyCode.F9))
+        {
+            no_energy = !no_energy;
+            no_energy_text.SetActive(no_energy);
         }
     }
 }

@@ -59,7 +59,8 @@ public class DaenerysCD_Secondary : CoolDown
         in_cd = true;
 
         //SET COOLDOWN TO 1 SECOND
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_cds)
         {
             cd_time = 1.0f;
         }

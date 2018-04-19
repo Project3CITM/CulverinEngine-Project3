@@ -97,7 +97,8 @@ public class DaenerysCD_Left : CoolDown
     public override void ActivateAbility()
     {
         //NO CHARGES COST IN GOD MODE
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode == false)
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode == false ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy == false)
         {
             current_charges--;
             UpdateChargesIcon();
