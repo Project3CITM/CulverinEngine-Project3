@@ -113,6 +113,7 @@
     <Compile Include="Player\Daenerys\FireBreath.cs" />
     <Compile Include="Player\Daenerys\FireSound.cs" />
     <Compile Include="UI_Scripts\Scene\MenuScript.cs" />
+    <Compile Include="UI_Scripts\Scene\PauseMenuButtons.cs" />
     <Compile Include="UI_Scripts\Scene\PlayExit.cs" />
     <Compile Include="UI_Scripts\Scene\PlayQuit.cs" />
     <Compile Include="UI_Scripts\Scene\ReturnToMenu.cs" />
