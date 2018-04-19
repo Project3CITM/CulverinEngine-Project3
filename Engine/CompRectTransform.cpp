@@ -450,6 +450,26 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 			//Update(0.f);
 			//update_rect = false;
 		}
+		else
+		{
+			resize_factor = res_factor;
+			if (unitar_resize)
+			{
+				curr_resize.x = Max(resize_factor.x, resize_factor.y);
+				curr_resize.y = curr_resize.x;
+			}
+			else
+			{
+				curr_resize = resize_factor;
+			}
+			
+			pos.x = ui_position.x*resize_factor.x;
+			pos.y = ui_position.y*resize_factor.y;
+			float3 loc_pos = GetPos();
+			loc_pos.x = pos.x;
+			loc_pos.y = pos.y;
+			SetPos(loc_pos);
+		}
 	}
 	else if (is_canvas)
 	{
