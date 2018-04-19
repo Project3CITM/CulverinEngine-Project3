@@ -1271,6 +1271,7 @@ void ImportScript::LinkFunctions()
 	//RANDOM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.Random::Range(int,int)", (const void*)RangeInt);
 	mono_add_internal_call("CulverinEditor.Random::Range(single,single)", (const void*)RangeFloat);
+	mono_add_internal_call("CulverinEditor.Random::Range(int,int,int)", (const void*)RangeIntNoRepeat);
 }
 
 //Log messages into Engine Console
@@ -2302,3 +2303,23 @@ float ImportScript::RangeFloat(float min, float max)
 {
 	return App->random->Float(min, max);;
 }
+
+int ImportScript::RangeIntNoRepeat(int min, int max, int norepeat)
+{
+	if (norepeat >= min && norepeat <= max)
+	{
+		int num = App->random->Int(min, max);
+		if (num != norepeat)
+		{
+			return num;
+		}
+		else
+		{
+			while (num == norepeat)
+			{
+				num = App->random->Int(min, max);
+			}
+			return num;
+		}
+	}
+	return 0;

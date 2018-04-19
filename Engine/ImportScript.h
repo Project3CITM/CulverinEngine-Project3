@@ -325,6 +325,9 @@ private:
 	static int RangeInt(int min, int max); 
 	// min [inclusive] - max [exclusive]
 	static float RangeFloat(float min, float max);
+	// min [inclusive] - max [inclusive] - norepeat[exclusive]
+	static int RangeIntNoRepeat(int min, int max, int norepeat);
+
 
 public: 
 	std::multimap<std::string, GameObject*> map_link_variables;
