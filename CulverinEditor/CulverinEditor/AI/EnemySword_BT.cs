@@ -6,7 +6,6 @@ public class EnemySword_BT : Enemy_BT
 
     Material enemy_mat_sword;
 
-    public GameObject sword_icon;
     public GameObject sword_name;
 
     public override void Start()
@@ -29,7 +28,6 @@ public class EnemySword_BT : Enemy_BT
 
         enemy_mat_sword = GetMaterialByName("EnemyWithSword");
 
-        sword_icon = GetLinkedObject("sword_icon");
         sword_name = GetLinkedObject("sword_name");
 
         dmg_alpha = 0.0f;

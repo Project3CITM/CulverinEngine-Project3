@@ -5,10 +5,10 @@ using System.Collections.Generic;
 
 public class Movement_Action : Action
 {
-    public GameObject   map;
-    public GameObject   player;
-    public float        tile_size = 0.0f;
-    List<PathNode>      path = null;
+    public GameObject map;
+    public GameObject player;
+    public float tile_size = 0.0f;
+    List<PathNode> path = null;
 
     Align_Steering align;
     Arrive_Steering arrive;
@@ -77,7 +77,7 @@ public class Movement_Action : Action
 
 
         BT bt = GetComponent<EnemySword_BT>();
-        if(bt == null)
+        if (bt == null)
             bt = GetComponent<EnemyShield_BT>();
         if (bt == null)
             bt = GetComponent<EnemySpear_BT>();
@@ -94,7 +94,7 @@ public class Movement_Action : Action
         path = new List<PathNode>();
 
         //Set Occupied tile in Pathfinder
-        tile = new PathNode(0,0);
+        tile = new PathNode(0, 0);
         tile.SetCoords((int)(GetComponent<Transform>().position.x / tile_size + Mathf.Epsilon), (int)(GetComponent<Transform>().position.z / tile_size + Mathf.Epsilon));
         map.GetComponent<Pathfinder>().UpdateOccupiedTiles(gameObject.GetName(), tile);
 
@@ -135,7 +135,7 @@ public class Movement_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-  
+
         //Movement
         if (translation_finished == false)
         {
@@ -207,7 +207,7 @@ public class Movement_Action : Action
 
     public override bool ActionEnd()
     {
-        if (chase == false)       
+        if (chase == false)
             GetComponent<CompAnimation>().SetTransition("ToIdle");
         else
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
@@ -215,7 +215,7 @@ public class Movement_Action : Action
         if (chase != false)
             chase = false;
 
-        if(interupt == true)
+        if (interupt == true)
             interupt = false;
 
         return false;
@@ -406,7 +406,7 @@ public class Movement_Action : Action
         GoToPrevious(x, y, range, true);
     }
 
-    public void Accelerate(Vector3 acceleration)    
+    public void Accelerate(Vector3 acceleration)
     {
         current_acceleration.x = current_acceleration.x + acceleration.x;
         current_acceleration.z = current_acceleration.z + acceleration.z;
@@ -617,7 +617,7 @@ public class Movement_Action : Action
     {
         return current_velocity;
     }
-    
+
     public float GetCurrentRotVelocity()
     {
         return current_rot_velocity;
@@ -627,7 +627,7 @@ public class Movement_Action : Action
     {
         return max_accel;
     }
-    
+
     public float GetDistanceToTarget()
     {
         return ((GetComponent<Transform>().position) - (GetTargetPosition())).Length;
@@ -676,7 +676,7 @@ public class Movement_Action : Action
 
         if ((Mathf.Abs((GetCurrentTileX() - (path[0].GetTileX() * tile_size))) < arrive.min_distance) && (Mathf.Abs((GetCurrentTileY() - (path[0].GetTileY() * tile_size))) < arrive.min_distance))
             return true;
-        
+
         return false;
     }
 
@@ -692,7 +692,7 @@ public class Movement_Action : Action
         //Moving West
         if (distance_x < 0)
         {
-            Debug.Log("Going west", Department.IA,Color.PINK);
+            Debug.Log("Going west", Department.IA, Color.PINK);
             switch (dir)
             {
                 case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;

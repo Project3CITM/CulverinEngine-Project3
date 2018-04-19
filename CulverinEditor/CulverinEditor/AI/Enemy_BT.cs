@@ -56,6 +56,7 @@ public class Enemy_BT : BT
     //UI Components
     public GameObject enemy_hp_bar;
     public float hp_timer_total = 10.0f;
+    public GameObject enemy_hp_border;
     protected float hp_timer = 10.0f;
     protected bool hud_active = false;
 
@@ -94,7 +95,9 @@ public class Enemy_BT : BT
         {
             Debug.Log("COMP IMAGE NULL!!", Department.IA, Color.RED);
         }
+        enemy_hp_border = GetLinkedObject("enemy_hp_border");
         enemy_hp_bar.GetComponent<CompImage>().DeactivateRender();
+        enemy_hp_border.GetComponent<CompImage>().DeactivateRender();
         hp_timer_total = 10.0f;
         hp_timer = 0.0f;
         hud_active = false;
@@ -317,6 +320,7 @@ public class Enemy_BT : BT
     {
         hp_timer = 0.0f;
         enemy_hp_bar.GetComponent<CompImage>().ActivateRender();
+        enemy_hp_border.GetComponent<CompImage>().ActivateRender();
         text.SetActive(true);
         hud_active = true;
     }
@@ -324,6 +328,7 @@ public class Enemy_BT : BT
     public virtual void DeactivateHUD(GameObject text)
     {
         enemy_hp_bar.GetComponent<CompImage>().DeactivateRender();
+        enemy_hp_border.GetComponent<CompImage>().DeactivateRender();
         text.SetActive(false);
         hud_active = false;
     }
