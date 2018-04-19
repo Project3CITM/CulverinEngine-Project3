@@ -35,7 +35,7 @@ public class EnemySword_BT : Enemy_BT
         dmg_alpha = 0.0f;
 
         base.Start();
-        base.DeactivateHUD(sword_icon, sword_name);
+        base.DeactivateHUD(sword_name);
     }
 
     public override void Update()
@@ -49,7 +49,7 @@ public class EnemySword_BT : Enemy_BT
         }
         else if (hud_active == true)
         {
-            base.DeactivateHUD(sword_icon, sword_name);
+            base.DeactivateHUD(sword_name);
         }
 
         bool attack_ready = attack_timer >= attack_cooldown;
@@ -143,7 +143,7 @@ public class EnemySword_BT : Enemy_BT
 
     public override bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
-        base.ActivateHUD(sword_icon, sword_name);
+        base.ActivateHUD(sword_name);
         return base.ApplyDamage(damage, damage_type);
     }
 

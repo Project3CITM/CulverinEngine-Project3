@@ -36,7 +36,7 @@ public class EnemiesManager : CulverinBehaviour
         {
             sword_enemies.Remove(enemy);
             EnemySword_BT temp_bt = enemy.GetComponent<EnemySword_BT>();
-            temp_bt.DeactivateHUD(temp_bt.sword_icon, temp_bt.sword_name);
+            temp_bt.DeactivateHUD(temp_bt.sword_name);
         }
     }
 
@@ -58,7 +58,7 @@ public class EnemiesManager : CulverinBehaviour
         {
             lance_enemies.Remove(enemy);
             EnemySpear_BT temp_bt = enemy.GetComponent<EnemySpear_BT>();
-            temp_bt.DeactivateHUD(temp_bt.spear_icon, temp_bt.spear_name);
+            temp_bt.DeactivateHUD(temp_bt.spear_name);
         }
     }
 
@@ -78,7 +78,7 @@ public class EnemiesManager : CulverinBehaviour
         {
             shield_enemies.Remove(enemy);
             EnemyShield_BT temp_bt = enemy.GetComponent<EnemyShield_BT>();
-            temp_bt.DeactivateHUD(temp_bt.shield_icon, temp_bt.shield_name);
+            temp_bt.DeactivateHUD(temp_bt.shield_name);
         }
     }
 
