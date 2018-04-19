@@ -24,11 +24,13 @@ public class BossAttackSwordDown_Action : Action
     BASD_STATE state = BASD_STATE.WAITING;
     public float damage = 1.0f;
     public float apply_damage_point = 0.5f;
+    public float hit_ground_point = 0.6f;
     public float preparation_time = 0.8f;
     public float attack_duration = 1.0f;
 
     public float rumble_power = 0.5f;
     public int rumble_time = 200;
+    private bool ground_hit = true;
 
 
     public override bool ActionStart()
@@ -38,6 +40,7 @@ public class BossAttackSwordDown_Action : Action
         GetComponent<CompAnimation>().SetTransition("ToSwordDownAttack");
         GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", preparation_time / apply_damage_point);
         GetComponent<CompAudio>().PlayEvent("AttackPreparation");
+        ground_hit = true;
         return true;
     }
 
@@ -54,36 +57,44 @@ public class BossAttackSwordDown_Action : Action
 
             GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int player_tile_x, out int player_tile_y);
 
-            GetComponent<CompAudio>().PlayEvent("BossHitGround");
-            Input.RumblePlay(rumble_power, rumble_time);
-
             switch (GetComponent<Movement_Action>().GetDirection())
             {
                 case Movement_Action.Direction.DIR_WEST:
                     if ((enemy_tile_x - 1 == player_tile_x || enemy_tile_x - 2 == player_tile_x) && player_tile_y == enemy_tile_y)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        ground_hit = false;
                     }
                     break;
                 case Movement_Action.Direction.DIR_EAST:
                     if ((enemy_tile_x + 1 == player_tile_x || enemy_tile_x + 2 == player_tile_x) && player_tile_y == enemy_tile_y)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        ground_hit = false;
                     }
                     break;
                 case Movement_Action.Direction.DIR_NORTH:
                     if ((enemy_tile_y - 1 == player_tile_y || enemy_tile_y - 2 == player_tile_y) && player_tile_x == enemy_tile_x)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        ground_hit = false;
                     }
                     break;
                 case Movement_Action.Direction.DIR_SOUTH:
                     if ((enemy_tile_y + 1 == player_tile_y || enemy_tile_y + 2 == player_tile_y) && player_tile_x == enemy_tile_x)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        ground_hit = false;
                     }
                     break;
             }
+        }
+        else if (ground_hit == false && GetComponent<CompAnimation>().IsAnimOverXTime(hit_ground_point))
+        {
+            GetComponent<CompAudio>().PlayEvent("BossHitGround");
+            Input.RumblePlay(rumble_power, rumble_time);
+            ground_hit = true;
+            Debug.Log("Ground Hit!!");
         }
         else if (state == BASD_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("SwordDownAttack"))
         {
