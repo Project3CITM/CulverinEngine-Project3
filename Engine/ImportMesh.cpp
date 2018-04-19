@@ -262,11 +262,11 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				std::string name = App->fs->GetOnlyName(normalPath);
 
 				bool exists = false;
-				for (auto item = App->module_shaders->materials.begin(); item < App->module_shaders->materials.end(); item++)
+				for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
 				{
-					if (strcmp((*item)->name.c_str(), name.c_str()) == 0)
+					if (strcmp((*item).second->name.c_str(), name.c_str()) == 0)
 					{
-						materialComp->material = (*item);
+						materialComp->material = (*item).second;
 						materialComp->material->active_num++;
 						exists = true;
 						break;
@@ -277,7 +277,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					Material* new_mat = new Material();
 					new_mat->name = name;
 					
-					App->module_shaders->materials.push_back(new_mat);
+					App->module_shaders->materials.insert(std::pair<uint, Material*>(new_mat->GetProgramID(), new_mat));
 					new_mat->material_shader = App->renderer3D->default_shader;
 					new_mat->GetProgramVariables();
 					new_mat->path = normalPath;
@@ -293,11 +293,11 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				LOG("Now Set Material2");
 				std::string name = App->fs->GetOnlyName(normalPath);
 				bool exists = false;
-				for (auto item = App->module_shaders->materials.begin(); item < App->module_shaders->materials.end(); item++)
+				for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
 				{
-					if (strcmp((*item)->name.c_str(), name.c_str()) == 0)
+					if (strcmp((*item).second->name.c_str(), name.c_str()) == 0)
 					{
-						materialComp->material = (*item);
+						materialComp->material = (*item).second;
 						materialComp->material->active_num++;
 						exists = true;
 						break;
@@ -308,7 +308,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					Material* new_mat = new Material();
 					new_mat->name = name;
 
-					App->module_shaders->materials.push_back(new_mat);
+					App->module_shaders->materials.insert(std::pair<uint, Material*>(new_mat->GetProgramID(),new_mat));
 					new_mat->material_shader = App->renderer3D->default_shader;
 					new_mat->GetProgramVariables();
 					new_mat->path = normalPath;

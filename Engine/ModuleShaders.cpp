@@ -26,8 +26,8 @@ ModuleShaders::ModuleShaders()
 
 ModuleShaders::~ModuleShaders()
 {
-	for (auto item = materials.begin(); item != materials.end(); item++) {
-		RELEASE(*item);
+	for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++) {
+		RELEASE((*item).second);
 	}
 	materials.clear();
 	for (auto item = shaders.begin(); item != shaders.end(); item++) {
@@ -104,7 +104,7 @@ bool ModuleShaders::CleanUp()
 {
 
 	for (auto item = materials.begin(); item != materials.end(); item++) {
-		(*item)->Save();
+		(*item).second->Save();
 
 	}
 	return true;
@@ -592,11 +592,11 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 	{
 		std::string material_name = App->fs->GetOnlyName(str_path);
 		Material* material = nullptr;
-		for (int i = 0; i < App->module_shaders->materials.size(); i++)
+		for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
 		{
-			if (strcmp(App->module_shaders->materials[i]->name.c_str(), material_name.c_str()) == 0)
+			if (strcmp((*item).second->name.c_str(), material_name.c_str()) == 0)
 			{
-				material = App->module_shaders->materials[i];
+				material = (*item).second;
 
 				break;
 			}
@@ -900,7 +900,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					}
 				}
 			}
-			App->module_shaders->materials.push_back(material);
+			App->module_shaders->materials.insert(std::pair<uint, Material*>(material->GetProgramID(), material));
 		}
 	}
 	json_object_clear(object);
@@ -911,12 +911,12 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 
 Material * ModuleShaders::GetMaterialByName(const char * name)
 {
-	for (std::vector<Material*>::const_iterator item = materials.cbegin(); item != materials.cend(); item++)
+	for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
 	{
-		std::string str_path = (*item)->name.c_str();
+		std::string str_path = (*item).second->name.c_str();
 
 		if (strcmp(str_path.c_str(), name) == 0) {
-			return (*item);
+			return (*item).second;
 		}
 
 	}
@@ -1152,7 +1152,7 @@ void ModuleShaders::SetUniformVariables(Material * material)
 void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 {
 	BROFILER_CATEGORY("Update: ModuleShaders SetGlobal Variables", Profiler::Color::Blue);
-	std::vector<Material*>::iterator item = materials.begin();
+	std::multimap<uint, Material*>::iterator item = materials.begin();
 	static float time_dt = 0;
 	time_dt += dt * App->game_time.time_scale;
 	uint LastID = 0;
@@ -1160,14 +1160,14 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 	while (item != materials.end())
 	{
 		BROFILER_CATEGORY("Update: ModuleShaders Vars", Profiler::Color::Blue);
-		uint ID = (*item)->GetProgramID();
-		if ((*item)->active_num == 0 || ID == LastID) {
+		uint ID = (*item).second->GetProgramID();
+		if ((*item).second->active_num == 0 || ID == LastID) {
 			item++;
 			continue;
 		}
 
 		LastID = ID;
-		(*item)->Bind();
+		(*item).second->Bind();
 
 		//TIME		
 		GLint timeLoc = glGetUniformLocation(ID, "_time");
@@ -1179,7 +1179,7 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 		if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
 
 		//ALPHA
-		float alpha = (*item)->alpha;
+		float alpha = (*item).second->alpha;
 		GLint alphaLoc = glGetUniformLocation(ID, "_alpha");
 		if (alphaLoc != -1) glUniform1f(alphaLoc, alpha);
 
@@ -1206,7 +1206,7 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
 					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
 				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
-					SetLightUniform((*item)->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
+					SetLightUniform((*item).second->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
 
 				SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
 				SetLightUniform(ID, "l_color", i, lights_vec[i]->color);

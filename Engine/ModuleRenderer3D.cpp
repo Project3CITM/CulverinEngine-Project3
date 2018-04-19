@@ -191,14 +191,14 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	non_glow_material->name = "Non Glow Material";
 	non_glow_material->material_shader = non_glow_shader;
 	non_glow_material->GetProgramVariables();
-	App->module_shaders->materials.push_back(non_glow_material);
+	App->module_shaders->materials.insert(std::pair<uint, Material*>(non_glow_material->GetProgramID(), non_glow_material));
 	non_glow_material->active_num = 1;
 
 	final_tex_material = new Material();
 	final_tex_material->name = "Final Tex Material";
 	final_tex_material->material_shader = final_shader_tex;
 	final_tex_material->GetProgramVariables();
-	App->module_shaders->materials.push_back(final_tex_material);
+	App->module_shaders->materials.insert(std::pair<uint, Material*>(final_tex_material->GetProgramID(), final_tex_material));
 	final_tex_material->active_num = 1;
 	dmg_texture_id = App->textures->LoadTexture("Assets/bloodHurt.png");
 
