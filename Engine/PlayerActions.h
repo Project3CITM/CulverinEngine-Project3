@@ -30,6 +30,9 @@ public:
 	void SetInputManagerActive(const char* name,bool set);
 	void SetInputManagerBlock(const char* name, bool set);
 
+	bool GetInputManagerActive(const char* name)const;
+	bool GetInputManagerBlock(const char* name)const ;
+
 	InputManager* GetInputManager(const char* name) const;
 	InputManager* GetInputManager(const char* name);
 	std::vector<InputManager*> GetInteractiveVector() const;

@@ -106,6 +106,8 @@ private:
 
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);
+	static bool GetInteractiveSelectedActive();
+
 	/* Input */
 	static mono_bool	GetPressAnyKey();
 	static mono_bool	GetKeyDown(int key);
@@ -121,6 +123,8 @@ private:
 	static int			GetMouseMoutionY();
 	static void			SetInputManagerActive(MonoString* str, mono_bool active);
 	static void			SetInputManagerBlock(MonoString* str, mono_bool active);
+	static mono_bool	GetInputManagerActive(MonoString* str, mono_bool active);
+	static mono_bool	GetInputManagerBlock(MonoString* str, mono_bool active);
 	static mono_bool	GetInput_KeyDown(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_KeyUp(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_KeyRepeat(MonoString* name, MonoString* input);

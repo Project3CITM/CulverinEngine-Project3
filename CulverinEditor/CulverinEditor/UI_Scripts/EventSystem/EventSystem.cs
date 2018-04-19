@@ -9,7 +9,7 @@ namespace CulverinEditor.EventSystem
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SendInteractiveSelected(GameObject send);
 
-      //  [MethodImpl(MethodImplOptions.InternalCall)]
-      //  public static extern bool GetInteractiveSelected();
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetInteractiveSelectedActive();
     }
 }

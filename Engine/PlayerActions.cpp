@@ -230,6 +230,27 @@ void PlayerActions::SetInputManagerBlock(const char * name, bool set)
 	}
 }
 
+bool PlayerActions::GetInputManagerActive(const char * name) const
+{
+	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		if (strcmp((*it)->GetName(), name) == 0)
+			return (*it)->GetActiveInput();
+	}
+	return false;
+}
+
+bool PlayerActions::GetInputManagerBlock(const char * name) const
+{
+	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		if (strcmp((*it)->GetName(), name) == 0)
+			return (*it)->GetBlockAction();
+	}
+	return false;
+
+}
+
 InputManager * PlayerActions::GetInputManager(const char * name) const
 {
 	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)

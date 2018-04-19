@@ -53,6 +53,12 @@ namespace CulverinEditor
         public static extern void SetInputManagerBlock(string name, bool set);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetInputManagerActive(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetInputManagerBlock(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool GetInput_KeyDown(string name, string set);
 
         [MethodImpl(MethodImplOptions.InternalCall)]

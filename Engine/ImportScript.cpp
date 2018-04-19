@@ -1117,6 +1117,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadNewWalkableMap", (const void*)LoadNewWalkableMap);
 	//EVENT SYSTEM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
+	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::GetInteractiveSelectedActive", (const void*)GetInteractiveSelectedActive);
 
 	//INPUT FUNCTIONS -------------------
 	
@@ -1134,6 +1135,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::GetMouseMoutionY", (const void*)GetMouseMoutionY);
 	mono_add_internal_call("CulverinEditor.Input::SetInputManagerActive", (const void*)SetInputManagerActive);
 	mono_add_internal_call("CulverinEditor.Input::SetInputManagerBlock", (const void*)SetInputManagerBlock);
+	mono_add_internal_call("CulverinEditor.Input::GetInputManagerActive", (const void*)GetInputManagerActive);
+	mono_add_internal_call("CulverinEditor.Input::GetInputManagerBlock", (const void*)GetInputManagerBlock);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_KeyDown", (const void*)GetInput_KeyDown);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_KeyUp", (const void*)GetInput_KeyUp);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_KeyRepeat", (const void*)GetInput_KeyRepeat);
@@ -1435,6 +1438,11 @@ void ImportScript::SendInteractiveSelected(MonoObject * interactive)
 	}
 }
 
+bool ImportScript::GetInteractiveSelectedActive()
+{
+	return App->render_gui->selected!=nullptr;
+}
+
 mono_bool ImportScript::GetPressAnyKey()
 {
 	return App->input->GetPressAnyKey();
@@ -1539,6 +1547,19 @@ void ImportScript::SetInputManagerActive(MonoString* str, mono_bool active)
 void ImportScript::SetInputManagerBlock(MonoString* str, mono_bool active)
 {
 	App->input->player_action->SetInputManagerBlock(mono_string_to_utf8(str), active);
+}
+
+mono_bool ImportScript::GetInputManagerActive(MonoString * str, mono_bool active)
+{
+
+	return	App->input->player_action->GetInputManagerActive(mono_string_to_utf8(str));
+
+}
+
+mono_bool ImportScript::GetInputManagerBlock(MonoString * str, mono_bool active)
+{
+	return	App->input->player_action->GetInputManagerBlock(mono_string_to_utf8(str));
+
 }
 
 mono_bool ImportScript::GetInput_KeyDown(MonoString* name, MonoString* input) 

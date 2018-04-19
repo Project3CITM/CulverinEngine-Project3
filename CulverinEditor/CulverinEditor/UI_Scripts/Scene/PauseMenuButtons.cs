@@ -21,7 +21,16 @@ public class PauseMenuButtons : CulverinBehaviour
 
         pop_up_menu.SetActive(false);
     }
-
+    void Update()
+    {
+        if (Input.GetInputManagerActive("GUI"))
+        {
+            if (!EventSystem.GetInteractiveSelectedActive())
+            {
+                EventSystem.SendInteractiveSelected(menu_button);
+            }
+        }
+    }
     public void Resume()
     {
         if (SceneManager.CheckMultiSceneReady())
