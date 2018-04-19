@@ -317,7 +317,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	screenshot.TakeFullScreen();
 	screenshot.TakePartScreen();
 	gif.TakeFullScreen(dt);
-	gif.TakePartScreen(dt);
+	//gif.TakePartScreen(dt);
 
 	SDL_GL_SwapWindow(App->window->window);
 
