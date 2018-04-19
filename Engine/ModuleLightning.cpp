@@ -131,6 +131,13 @@ bool ModuleLightning::Init(JSON_Object* node)
 	// TODO: Read ammount of shadow cast point from config. Will use default for now for testing purposes
 	//shadow_cast_points_count = 1;
 
+	// Get some values for directional lights shadows
+	//dstSceneCameraToLookAt = json_object_get_number/(node, /"distance_from_scene_camera_to_lookat_position");
+	//dstShadowmapCameraToLookAt = json_object_get_number/(node, /"distance_from_shadowmap_camera_to_lookat_position");
+	//projSize = json_object_get_number(node, "dir_light_camera_size");
+	//nearPlane = json_object_get_number(node, "dir_light_camera_near");
+	//farPlane = json_object_get_number(node, "dir_light_camera_far");
+
 	Awake_t = perf_timer.ReadMs();
 	return true;
 }
@@ -226,9 +233,9 @@ update_status ModuleLightning::Update(float dt)
 			glm::vec3 lDir = glm::vec3(dir.x, dir.y, dir.z);
 			glm::vec3 camPos = glm::vec3(frustum->pos.x, frustum->pos.y, frustum->pos.z);
 
-			glm::vec3 lookPos = camPos + (glm::vec3(frustum->front.x, frustum->front.y, frustum->front.z) * distanceFromSceneCameraToLookAt);
+			glm::vec3 lookPos = camPos + (glm::vec3(frustum->front.x, frustum->front.y, frustum->front.z) * dstSceneCameraToLookAt);
 
-			glm::vec3 eye = lookPos + (lDir * distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos);
+			glm::vec3 eye = lookPos + (lDir * dstShadowmapCameraToLookAt);
 			
 			glm::mat4 biasMatrix(
 				0.5, 0.0, 0.0, 0,
@@ -279,6 +286,12 @@ update_status ModuleLightning::Update(float dt)
 
 bool ModuleLightning::SaveConfig(JSON_Object* node)
 {
+	json_object_set_number(node, "distance_from_scene_camera_to_lookat_position", dstSceneCameraToLookAt);
+	json_object_set_number(node, "distance_from_shadowmap_camera_to_lookat_position", dstShadowmapCameraToLookAt);
+	json_object_set_number(node, "dir_light_camera_size", projSize);
+	json_object_set_number(node, "dir_light_camera_near", nearPlane);
+	json_object_set_number(node, "dir_light_camera_far", farPlane);
+
 	return true;
 }
 
@@ -680,11 +693,11 @@ update_status ModuleLightning::UpdateConfig(float dt)
 	ImGui::Text("Lights used on frame:"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", frame_used_lights.size());
 
-	ImGui::DragFloat("Distance from camera front to render shadow map", &distanceFromSceneCameraToLookAt, 1.0f, 1.0f, 100.0f);
+	ImGui::DragFloat("Distance from camera front to render shadow map", &dstSceneCameraToLookAt, 1.0f, 1.0f, 100.0f);
 	ImGui::DragFloat("Shadow map camera size", &projSize, 1.0f, 10.0f, 100.0f);
 	ImGui::DragFloat("Shadow map camera near plane dist", &nearPlane, 1.0f, 1.0f, 100.0f);
 	ImGui::DragFloat("Shadow map camera far plane dist", &farPlane, 1.0f, 10.0f, 100.0f);
-	ImGui::DragFloat("Shadow map camera distance from look at position", &distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos, 1.0f, 1.0f, 100.0f);
+	ImGui::DragFloat("Shadow map camera distance from look at position", &dstShadowmapCameraToLookAt, 1.0f, 1.0f, 100.0f);
 	
 	int u_l = shadow_cast_points_count;
 	if(ImGui::DragInt("Set used lights", &u_l, 1, 0, 8))
