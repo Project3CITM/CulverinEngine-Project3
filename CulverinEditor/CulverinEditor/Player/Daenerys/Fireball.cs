@@ -11,6 +11,7 @@ public class Fireball : CulverinBehaviour
     public float vel = 50;
     private float timer = 0.0f;
     public bool rotate = true;
+    public bool fireball = true;
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
@@ -47,10 +48,7 @@ public class Fireball : CulverinBehaviour
         // DAMAGE ---
         if (collided_obj != null)
         {
-            rb = GetComponent<CompRigidBody>();
-            //Lock transform to avoid trespassing more than one collider
-            rb.LockTransform();
-
+            
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
@@ -60,8 +58,14 @@ public class Fireball : CulverinBehaviour
         }
 
         GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
-        GetComponent<CompAudio>().StopEvent("DaenerysFire");      
+        GetComponent<CompAudio>().StopEvent("DaenerysFire");
 
-        Destroy(gameObject);
+        if (fireball)
+        {
+            rb = GetComponent<CompRigidBody>();
+            //Lock transform to avoid trespassing more than one collider
+            rb.LockTransform();
+            Destroy(gameObject);
+        }
     }
 }
