@@ -246,7 +246,7 @@ update_status Scene::Update(float dt)
 	if (dontdestroyonload->GetNumChilds() == 0)
 	{
 		root->Draw();
-		secondary_root->Draw();
+	//	secondary_root->Draw();
 	}
 
 	// Draw Quadtree
@@ -580,6 +580,26 @@ GameObject * Scene::FindGameObjectWithTag(const char * str)
 			if(tagged_objects[k]->empty() == false)return tagged_objects[k]->front();
 			break;
 		}
+	}
+	return nullptr;
+}
+
+GameObject* Scene::FindGameObjectWithTagRecursive(const char* str, GameObject* gameobject)
+{
+	if(gameobject->GetNumChilds() > 0)
+	{
+		for (int i = 0; i< gameobject->GetNumChilds(); i++)
+		{
+			GameObject* found = FindGameObjectWithTagRecursive(str, gameobject->GetChildbyIndex(i));
+			if (found != nullptr)
+			{
+				return found;
+			}
+		}
+	}
+	if (strcmp(str, gameobject->GetTag()) == 0)
+	{
+		return gameobject;
 	}
 	return nullptr;
 }

@@ -37,8 +37,8 @@ public class Scroll : CulverinBehaviour
             loading_text.SetActive(true);
             end_scroll = true;
             start_load = true;
-            SceneManager.LoadNewWalkableMap("Map_Level_2");
-            SceneManager.LoadSceneNoDestroy("Level 2");
+            SceneManager.LoadNewWalkableMap("ProjectileScene");
+            SceneManager.LoadMultiSceneNoDestroy("Level 2", "PauseMenu");
         }
         if (start_load)
         {
@@ -49,7 +49,6 @@ public class Scroll : CulverinBehaviour
                 button.SetActive(true);
             }
         }
-        //SceneManager.LoadScene("MainMenuScene");
     }
 
 
