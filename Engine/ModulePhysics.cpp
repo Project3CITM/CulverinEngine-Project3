@@ -12,6 +12,8 @@
 #include "jpPhysicsWorld.h"
 #include "GL3W/include/glew.h"
 
+#include "ModuleInput.h"
+
 ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
@@ -103,6 +105,48 @@ update_status ModulePhysics::Update(float dt)
 		simulation_done = true;
 	}
 
+	/*
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_STATE::KEY_DOWN)
+	{
+		GameObject* ret = nullptr;
+		physx::PxRaycastBuffer hit;
+		for (uint j = 1; j < 3; j++)
+		{
+			for (uint i = 0; i < 140; i++)
+			{
+				mScene->raycast(physx::PxVec3(0, 5 + 25.4*j, 12.7 + 12.7* i), physx::PxVec3(1, 0, 0), 5000.f, hit);
+				while (hit.hasBlock)
+				{
+					std::map<physx::PxRigidActor*, Component*>::const_iterator pair = colliders.find(hit.block.actor);
+					Component* comp = pair->second;
+					if (comp->GetType() == Comp_Type::C_COLLIDER)
+					{
+						comp->SetDelete(true);
+						DeleteCollider(comp, ((CompCollider*)comp)->body);
+						((CompCollider*)comp)->body = nullptr;
+					}
+
+					mScene->raycast(physx::PxVec3(0, 5 + 25.4*j, 12.7 + 12.7* i), physx::PxVec3(1, 0, 0), 5000.f, hit);
+				}
+
+				mScene->raycast(physx::PxVec3(12.7 + 12.7* i, 5 + 25.4*j, 0), physx::PxVec3(0, 0, 1), 5000.f, hit);
+				while (hit.hasBlock)
+				{
+					std::map<physx::PxRigidActor*, Component*>::const_iterator pair = colliders.find(hit.block.actor);
+					Component* comp = pair->second;
+					if (comp->GetType() == Comp_Type::C_COLLIDER)
+					{
+						comp->SetDelete(true);
+						DeleteCollider(comp, ((CompCollider*)comp)->body);
+						((CompCollider*)comp)->body = nullptr;
+					}
+
+					mScene->raycast(physx::PxVec3(12.7 + 12.7* i, 5 + 25.4*j, 0), physx::PxVec3(0, 0, 1), 5000.f, hit);
+				}
+			}	
+			
+		}
+	}*/
 	Update_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
