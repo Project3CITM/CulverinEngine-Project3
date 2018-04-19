@@ -17,24 +17,24 @@ public class EnemySpear_BT : Enemy_BT
 
         current_map = GetLinkedObject("current_map");
         if (current_map == null)
-            Debug.Log("[error] Map GameObject in Enemy spear is NULL");
+            Debug.Log("Map GameObject in Enemy spear is NULL");
 
         rand = new System.Random();
 
         mov = GetComponent<Movement_Action>();
         if (mov == null)
-            Debug.Log("[error] Script movement action in Enemy spear is NULL");
+            Debug.Log("Script movement action in Enemy spear is NULL");
 
         GameObject Temp_go = GetLinkedObject("enemies_manager");
 
         if (Temp_go == null)
-            Debug.Log("[error] Gameobject enemies_manager not found");
+            Debug.Log("Gameobject enemies_manager not found");
         else
         {
             EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
 
             if (enemy_manager == null)
-                Debug.Log("[error] EnemySpear_BT: enemies_manager is not detected");
+                Debug.Log("EnemySpear_BT: enemies_manager is not detected");
             else
             {
                 enemy_manager.AddLanceEnemy(gameObject);
