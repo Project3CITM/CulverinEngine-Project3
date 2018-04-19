@@ -99,7 +99,26 @@ Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
 ## 8) CHANGELOG
 
-###Vertical Slice 3 V1.0
+### Alpha 1 V0.19.3
+
+	* Game pad actions improve
+	* Bug Fixes
+
+### Alpha 1 V0.19.2
+
+	* Radial Filler in Habilities
+        * Shielded Enemy Animations improved
+        * New Visual Feedback on hp/stamine bars
+        * New Particles
+	* Bug Fixes
+
+### Vertical Slice 3 V0.17.1
+	* Iddle Camera
+	* Dead player animations
+	* Animations improve
+	* Bug Fixes
+
+### Vertical Slice 3 V1.0
 
 	* 2 Enemy added
 	* realistic AI for each of the enemies
@@ -112,12 +131,13 @@ Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 	* New UI Menus & win/lose Windows
 	* BUG fixes
 
-###Vertical Slice 2 v0.9:
+
+### Vertical Slice 2 v0.9:
 	* Enemy added	
 	* Puzzle completed
 	* Lights added
 
-###Vertical Slice 2 v0.8.2:
+### Vertical Slice 2 v0.8.2:
 	* 2 more characters added (Theon and Daenerys)
 	* Simple puzzle
 	* Simple PBR material tests
