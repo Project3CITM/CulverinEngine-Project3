@@ -81,9 +81,9 @@ GifWriter gif_writer;
 
 void Culverin_Gif::TakeFullScreen(float dt)
 {
-	switch (Gif_State)
+	switch (Gif_State_full)
 	{
-	case Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START_OR_WAITING_FOR_POINT1:
+	case Culverin_FullGif_STATE::Culverin_FullGif_STATE_CAN_START:
 		if (App->input->GetKey(FullScreenKey) == KEY_DOWN)
 		{
 			time_t now = time(0);
@@ -95,21 +95,21 @@ void Culverin_Gif::TakeFullScreen(float dt)
 			bool gif_in_progress = GifBegin(&gif_writer, tmp_string, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, (uint32_t)(dt * 100.0f), 8, false);
 			if (gif_in_progress)
 			{
-				pixels = new unsigned char[GuiIO.DisplaySize.x *  GuiIO.DisplaySize.y * sizeof(unsigned char) * 4];
-				Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING;
+				pixels_full = new unsigned char[GuiIO.DisplaySize.x *  GuiIO.DisplaySize.y * sizeof(unsigned char) * 4];
+				Gif_State_full = Culverin_FullGif_STATE::Culverin_FullGif_STATE_RUNNING;
 			}
 		}
 		break;
-	case Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING:
+	case Culverin_FullGif_STATE::Culverin_FullGif_STATE_RUNNING:
 		ImGuiIO GuiIO = ImGui::GetIO();
-		glReadPixels(0, 0, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-		GifWriteFrame(&gif_writer, pixels, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, (uint32_t)(dt * 100.0f), 8, false);
+		glReadPixels(0, 0, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, GL_RGBA, GL_UNSIGNED_BYTE, pixels_full);
+		GifWriteFrame(&gif_writer, pixels_full, GuiIO.DisplaySize.x, GuiIO.DisplaySize.y, (uint32_t)(dt * 100.0f), 8, false);
 		if (App->input->GetKey(FullScreenKey) == KEY_DOWN)
 		{
 			GifEnd(&gif_writer);
-			RELEASE_ARRAY(pixels);
+			RELEASE_ARRAY(pixels_full);
 			ScreenshotsNum++;
-			Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START_OR_WAITING_FOR_POINT1;
+			Gif_State_full = Culverin_FullGif_STATE::Culverin_FullGif_STATE_CAN_START;
 		}
 		break;
 	}
@@ -117,15 +117,15 @@ void Culverin_Gif::TakeFullScreen(float dt)
 
 void Culverin_Gif::TakePartScreen(float dt)
 {
-	if ((App->input->GetKey(PartScreenKey) == KEY_DOWN) || (Gif_State == Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING))
+	if ((App->input->GetKey(PartScreenKey) == KEY_DOWN) || (Gif_State_part == Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING))
 	{
 		ImGuiIO GuiIO = ImGui::GetIO();
-		switch (Gif_State)
+		switch (Gif_State_part)
 		{
-		case Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START_OR_WAITING_FOR_POINT1:
+		case Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT1:
 			Point1.x = GuiIO.MousePos.x;
 			Point1.y = GuiIO.DisplaySize.y - GuiIO.MousePos.y;
-			Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT2;
+			Gif_State_part = Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT2;
 			break;
 		case Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT2:
 		{
@@ -145,20 +145,20 @@ void Culverin_Gif::TakePartScreen(float dt)
 			bool gif_in_progress = GifBegin(&gif_writer, tmp_string, width, height, (uint32_t)(dt * 100.0f), 8, false);
 			if (gif_in_progress)
 			{
-				pixels = new unsigned char[width * height * sizeof(unsigned char) * 4];
-				Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING;
+				pixels_part = new unsigned char[width * height * sizeof(unsigned char) * 4];
+				Gif_State_part = Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING;
 			}
 			break;
 		}
 		case Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING:
-			glReadPixels(MinPoint.x, MinPoint.y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-			GifWriteFrame(&gif_writer, pixels, width, height, (uint32_t)(dt * 100.0f), 8, false);
+			glReadPixels(MinPoint.x, MinPoint.y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels_part);
+			GifWriteFrame(&gif_writer, pixels_part, width, height, (uint32_t)(dt * 100.0f), 8, false);
 			if (App->input->GetKey(PartScreenKey) == KEY_DOWN)
 			{
 				GifEnd(&gif_writer);
-				RELEASE_ARRAY(pixels);
+				RELEASE_ARRAY(pixels_part);
 				ScreenshotsNum++;
-				Gif_State = Culverin_PartGif_STATE::Culverin_PartGif_STATE_CAN_START_OR_WAITING_FOR_POINT1;
+				Gif_State_part = Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT1;
 			}
 			break;
 		}
