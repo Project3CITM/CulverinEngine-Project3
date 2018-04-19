@@ -1089,9 +1089,6 @@
     <ClInclude Include="Materials.h">
       <Filter>Engine\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleKeyBinding.h">
-      <Filter>Engine\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="InputAction.h">
       <Filter>Engine\UI</Filter>
     </ClInclude>
@@ -1226,6 +1223,9 @@
     </ClInclude>
     <ClInclude Include="CompUIAnimation.h">
       <Filter>Engine\Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyBinding.h">
+      <Filter>Engine\UI</Filter>
     </ClInclude>
     <ClInclude Include="CompCubeMapRenderer.h">
       <Filter>Engine\Tools</Filter>
@@ -1544,9 +1544,6 @@
     <ClCompile Include="Materials.cpp">
       <Filter>Engine\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleKeyBinding.cpp">
-      <Filter>Engine\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="InputAction.cpp">
       <Filter>Engine\UI</Filter>
     </ClCompile>
@@ -1672,6 +1669,9 @@
     </ClCompile>
     <ClCompile Include="CompUIAnimation.cpp">
       <Filter>Engine\Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyBinding.cpp">
+      <Filter>Engine\UI</Filter>
     </ClCompile>
     <ClCompile Include="CompCubeMapRenderer.cpp">
       <Filter>Engine\Tools</Filter>

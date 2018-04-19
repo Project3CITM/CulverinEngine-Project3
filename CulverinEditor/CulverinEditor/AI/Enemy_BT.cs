@@ -1,5 +1,7 @@
 ﻿using CulverinEditor;
+using System.Collections.Generic;
 using CulverinEditor.Debug;
+using CulverinEditor.Pathfinding;
 
 public class Enemy_BT : BT
 {
@@ -9,6 +11,15 @@ public class Enemy_BT : BT
         ENEMY_DAMAGED,
         ENEMY_STUNNED,
         ENEMY_DEAD
+    }
+
+    public enum ENEMY_GET_DAMAGE_TYPE
+    {
+        DEFAULT,
+        ARROW,
+        FIREWALL,
+        FIREBALL,
+        SWORD
     }
 
     public GameObject enemies_manager = null;
@@ -47,6 +58,8 @@ public class Enemy_BT : BT
     public float hp_timer_total = 10.0f;
     protected float hp_timer = 10.0f;
     protected bool hud_active = false;
+
+    public bool Disable_Movement_Gameplay_Debbuger = false;
 
     public override void Start()
     {
@@ -101,7 +114,8 @@ public class Enemy_BT : BT
         if (next_action.action_type == Action.ACTION_TYPE.ATTACK_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION 
             || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION
             || next_action.action_type == Action.ACTION_TYPE.FACE_PLAYER_ACTION || next_action.action_type == Action.ACTION_TYPE.DIE_ACTION
-            || next_action.action_type == Action.ACTION_TYPE.SEPARATE_ACTION || next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
+            || next_action.action_type == Action.ACTION_TYPE.SEPARATE_ACTION || next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION 
+            || next_action.action_type == Action.ACTION_TYPE.SHIELD_BLOCK_ACTION)
         {
             if (next_action.action_type == Action.ACTION_TYPE.STUN_ACTION)
             {
@@ -150,18 +164,19 @@ public class Enemy_BT : BT
         Debug.Log("[error] Out Of Combat Not Defined");
     }
 
-    public virtual bool ApplyDamage(float damage)
+    public virtual bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
         InterruptAction();
 
         next_action = GetComponent<GetHit_Action>();
+
+        GetComponent<GetHit_Action>().SetHitType(damage_type);
 
         current_hp -= damage;
         //ChangeTexturesToDamaged();
  
         current_interpolation = current_hp / total_hp;
         dmg_alpha += 0.2f;
-        Debug.Log("[pink]AUMENTAME ALPHA PUTA: " + dmg_alpha);
         if (current_hp <= 0)
         {
             //GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
@@ -214,76 +229,53 @@ public class Enemy_BT : BT
 
     public int GetDistanceInRange()
     {
-        int enemy_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
-        int enemy_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
-
         if (GetLinkedObject("player_obj") == null)
-        {
-            Debug.Log("[error]WILLYYYYYY QUE ESTO ES TO NULL");
-        }
+            Debug.Log("[error] player object is null");
+
         GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int player_tile_x, out int player_tile_y);
 
-        switch (GetComponent<Movement_Action>().GetDirection())
+        int enemy_x = GetComponent<Movement_Action>().GetCurrentTileX();
+        int enemy_y = GetComponent<Movement_Action>().GetCurrentTileY();
+
+        int distance_x = player_tile_x - enemy_x;
+        int distance_y = player_tile_y - enemy_y;
+
+        if (distance_x != 0 && distance_y != 0)
+            return range + 1;
+        else
         {
-            case Movement_Action.Direction.DIR_WEST:
-                if (enemy_tile_x - 2 == player_tile_x 
-                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x - 1, (uint)enemy_tile_y) ==true
-                    && player_tile_y == enemy_tile_y)
-                {
-                    Debug.Log("[pink]WEST 2 TILES");
-                    return 2;
-                }
-                else if (enemy_tile_x - 1 == player_tile_x && player_tile_y == enemy_tile_y)
-                {
-                    Debug.Log("[pink]WEST 1 TILES");
-                    return 1;
-                }
-                break;
-            case Movement_Action.Direction.DIR_EAST:
-                if (enemy_tile_x + 2 == player_tile_x
-                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x + 1, (uint)enemy_tile_y) == true
-                    && player_tile_y == enemy_tile_y)
-                {
-                    Debug.Log("[pink]EAST 2 TILES");
-                    return 2;
-                }
-                else if (enemy_tile_x + 1 == player_tile_x && player_tile_y == enemy_tile_y)
-                {
-                    Debug.Log("[pink]EAST 1 TILES");
-                    return 1;
-                }
-                break;
-            case Movement_Action.Direction.DIR_NORTH:
-                if (enemy_tile_y - 2 == player_tile_y 
-                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x, (uint)enemy_tile_y - 1) == true
-                    && player_tile_x == enemy_tile_x)
-                {
-                    Debug.Log("[pink]NORTH 2 TILES");
-                    return 2;
-                }
-                else if (enemy_tile_y - 1 == player_tile_y && player_tile_x == enemy_tile_x)
-                {
-                    Debug.Log("[pink]NORTH 1 TILES");
-                    return 1;
-                }
-                break;
-            case Movement_Action.Direction.DIR_SOUTH:
-                if (enemy_tile_y + 2 == player_tile_y 
-                    && GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile((uint)enemy_tile_x, (uint)enemy_tile_y+1) == true
-                    && player_tile_x == enemy_tile_x)
-                {
-                    Debug.Log("[pink]SOUTH 2 TILES");
-                    return 2;
-                }
-                else if (enemy_tile_y + 1 == player_tile_y && player_tile_x == enemy_tile_x)
-                {
-                    Debug.Log("[pink]SOUTH 1 TILES");
-                    return 1;
-                }
-                break;
+            List<PathNode> tiles_between = new List<PathNode>();
+
+            //no need to check enemy tile nor player's
+            if (distance_x != 0)
+            {
+                if (distance_x > 0)
+                    for (int i = 1; i < distance_x; i++)
+                        tiles_between.Add(new PathNode(enemy_x + i, enemy_y));
+                else
+                    for (int i = 1; i < distance_x; i--)
+                        tiles_between.Add(new PathNode(enemy_x + i, enemy_y));
+            }
+
+            if (distance_y != 0)
+            {
+                if (distance_x > 0)
+                    for (int i = 1; i < distance_x; i++)
+                        tiles_between.Add(new PathNode(enemy_x, enemy_y + i));
+                else
+                    for (int i = 1; i < distance_x; i--)
+                        tiles_between.Add(new PathNode(enemy_x, enemy_y + i));
+            }
+
+            foreach (PathNode pn in tiles_between)
+                if (GetLinkedObject("map").GetComponent<Pathfinder>().IsWalkableTile(pn) == false)
+                    return range + 1;
+
+            if (distance_y != 0)
+                return Mathf.Abs(distance_y);
+            else
+                return Mathf.Abs(distance_x);
         }
-        Debug.Log("[pink]3 TILES");
-        return range + 1;
     }
 
     public void SetAction(Action.ACTION_TYPE type)
@@ -321,19 +313,17 @@ public class Enemy_BT : BT
         hp_timer = 0.0f;
     }
 
-    public virtual void ActivateHUD(GameObject icon, GameObject text)
+    public virtual void ActivateHUD(GameObject text)
     {
         hp_timer = 0.0f;
         enemy_hp_bar.GetComponent<CompImage>().ActivateRender();
-        icon.GetComponent<CompImage>().ActivateRender();
         text.SetActive(true);
         hud_active = true;
     }
 
-    public virtual void DeactivateHUD(GameObject icon, GameObject text)
+    public virtual void DeactivateHUD(GameObject text)
     {
         enemy_hp_bar.GetComponent<CompImage>().DeactivateRender();
-        icon.GetComponent<CompImage>().DeactivateRender();
         text.SetActive(false);
         hud_active = false;
     }

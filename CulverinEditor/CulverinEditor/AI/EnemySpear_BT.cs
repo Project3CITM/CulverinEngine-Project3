@@ -9,7 +9,6 @@ public class EnemySpear_BT : Enemy_BT
     System.Random rand;
     Material enemy_mat_sword;
 
-    public GameObject spear_icon;
     public GameObject spear_name;
 
     public override void Start()
@@ -44,11 +43,10 @@ public class EnemySpear_BT : Enemy_BT
 
         enemy_mat_sword = GetMaterialByName("EnemyWithSpear");
 
-        spear_icon = GetLinkedObject("spear_icon");
         spear_name = GetLinkedObject("spear_name");
 
         base.Start();
-        base.DeactivateHUD(spear_icon, spear_name);
+        base.DeactivateHUD(spear_name);
     }
 
     public override void Update()
@@ -61,7 +59,7 @@ public class EnemySpear_BT : Enemy_BT
         }
         else if (hud_active == true)
         {
-            base.DeactivateHUD(spear_icon, spear_name);
+            base.DeactivateHUD(spear_name);
         }
 
         bool attack_ready = attack_timer >= attack_cooldown;
@@ -77,6 +75,7 @@ public class EnemySpear_BT : Enemy_BT
 
     protected override void InCombatDecesion()
     {
+        Debug.Log("In Combat Decision");
         int tiles_to_player = GetDistanceInRange();
 
         if (tiles_to_player == 1)
@@ -154,7 +153,7 @@ public class EnemySpear_BT : Enemy_BT
             }
         }
 
-        if (player_detected == true)
+        if (player_detected == true && Disable_Movement_Gameplay_Debbuger == false)
         {
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
@@ -165,6 +164,9 @@ public class EnemySpear_BT : Enemy_BT
 
     protected override void OutOfCombatDecesion()
     {
+
+        if (Disable_Movement_Gameplay_Debbuger) return;
+
         //Investigate
         if (heard_something)
         {
@@ -197,10 +199,10 @@ public class EnemySpear_BT : Enemy_BT
         }
     }
 
-    public override bool ApplyDamage(float damage)
+    public override bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
-        base.ActivateHUD(spear_icon, spear_name);
-        return base.ApplyDamage(damage);
+        base.ActivateHUD(spear_name);
+        return base.ApplyDamage(damage, damage_type);
     }
 
     public override void ChangeTexturesToDamaged()

@@ -38,12 +38,6 @@ public class DaenerysCD_Left : CoolDown
             {
                 //Manage the Radial Fill Cooldown
                 float final_time = cd_time - act_time;
-                //if (final_time <= 0.0f)
-                //{
-                //    final_time = 0.0f;
-                //    reset_timer = true;
-                //    Debug.Log("RESET TIMER TRUE", Department.PLAYER, Color.YELLOW);
-                //}
 
                 calc_time = final_time / cd_time;
                 GetComponent<CompImage>().FillAmount(calc_time);
@@ -102,8 +96,13 @@ public class DaenerysCD_Left : CoolDown
 
     public override void ActivateAbility()
     {
-        current_charges--;
-        UpdateChargesIcon();
+        //NO CHARGES COST IN GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode == false ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy == false)
+        {
+            current_charges--;
+            UpdateChargesIcon();
+        }
 
         act_time = 0.0f;
         

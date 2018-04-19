@@ -29,7 +29,6 @@
 #include "JSONSerialization.h"
 #include "mmgr/mmgr.h"
 #include "ModuleEventSystemV2.h"
-#include "ModuleKeyBinding.h"
 #include "ModuleAnimation.h"
 #include "ImportScript.h"
 #include "ModuleInput.h"
@@ -46,7 +45,6 @@ Application::Application()
 	BROFILER_CATEGORY("Application Creation", Profiler::Color::PaleVioletRed);
 	window = new ModuleWindow();
 	input = new ModuleInput();
-	module_key_binding= new ModuleKeyBinding();
 	audio = new ModuleAudio(true);
 	renderer3D = new ModuleRenderer3D();
 	render_gui = new ModuleRenderGui();
@@ -82,7 +80,6 @@ Application::Application()
 	AddModule(camera);
 	AddModule(resource_manager);
 	AddModule(physics);
-	AddModule(module_key_binding);
 	AddModule(input);
 	AddModule(console);
 	AddModule(particles);

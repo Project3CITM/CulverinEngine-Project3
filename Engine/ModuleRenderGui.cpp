@@ -53,6 +53,7 @@ update_status ModuleRenderGui::PreUpdate(float dt)
 	BROFILER_CATEGORY("PreUpdate: ModuleRenderGui", Profiler::Color::Blue);
 	perf_timer.Start();
 
+	screen_space_canvas.clear();
 
 
 	if (last_size_dock.x != GetSizeDock("Scene").x || last_size_dock.y != GetSizeDock("Scene").y)
@@ -271,6 +272,14 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	//this_event.draw.ToDraw->Draw();
 }
 
+void ModuleRenderGui::OnResize(float width, float height)
+{
+	for (int i = 0; i < screen_space_canvas.size(); i++)
+	{
+		screen_space_canvas[i]->Resize(width,height);
+	}
+}
+
 void ModuleRenderGui::WorldSpaceDraw()
 {
 }
@@ -287,7 +296,6 @@ void ModuleRenderGui::ScreenSpaceDraw(bool debug)
 	{
 		screen_space_canvas[i]->DrawGraphic(debug_draw);
 	}	
-	screen_space_canvas.clear();
 }
 
 void ModuleRenderGui::ClearInteractiveVector()
@@ -302,6 +310,3 @@ bool ModuleRenderGui::CleanUp()
 	return true;
 }
 
-void ModuleRenderGui::OnResize(int width, int height)
-{
-}

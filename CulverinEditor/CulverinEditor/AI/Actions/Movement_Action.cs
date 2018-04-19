@@ -75,6 +75,7 @@ public class Movement_Action : Action
         arrive = GetComponent<Arrive_Steering>();
         seek = GetComponent<Seek_Steering>();
 
+
         BT bt = GetComponent<EnemySword_BT>();
         if(bt == null)
             bt = GetComponent<EnemyShield_BT>();
@@ -134,6 +135,7 @@ public class Movement_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+  
         //Movement
         if (translation_finished == false)
         {
@@ -143,7 +145,7 @@ public class Movement_Action : Action
             {
                 current_velocity = new Vector3(Vector3.Zero);
 
-                if(moving_sideways == true)
+                if (moving_sideways == true)
                 {
                     moving_sideways = false;
                     GetComponent<CompAnimation>().SetTransition("ToChase");
@@ -151,7 +153,7 @@ public class Movement_Action : Action
 
                 if (interupt != true)
                 {
-                    if(wait_timer == 0.0f)
+                    if (wait_timer == 0.0f)
                     {
                         arrive.SetEnabled(false);
                         seek.SetEnabled(false);
@@ -172,7 +174,7 @@ public class Movement_Action : Action
                     translation_finished = true;
                     if (chase == true)
                         LookAtPlayer();
-                }                
+                }
             }
         }
 
@@ -262,7 +264,7 @@ public class Movement_Action : Action
 
         float point_in_speed = current_velocity.Length / current_max_vel;
 
-        if(moving_sideways == true)
+        if (moving_sideways == true)
             GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight(1.0f - point_in_speed);
         else
             GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
@@ -461,20 +463,17 @@ public class Movement_Action : Action
 
     public void LookAtNextTile()
     {
-        Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
         if (path != null && path.Count > 0)
-        {
-            next_tile.x = path[0].GetTileX() * tile_size;
-            next_tile.z = path[0].GetTileY() * tile_size;
-        }
-        LookAt(next_tile);
+            LookAtTile(path[0]);
+        else
+            Debug.Log("There is no next tile to look at", Department.GENERAL, Color.RED);
     }
 
-    public void LookAtTile(PathNode tile)
+    public void LookAtTile(PathNode destiny_tile)
     {
         Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
-        next_tile.x = tile.GetTileX() * tile_size;
-        next_tile.z = tile.GetTileY() * tile_size;
+        next_tile.x = destiny_tile.GetTileX() * tile_size;
+        next_tile.z = destiny_tile.GetTileY() * tile_size;
         LookAt(next_tile);
     }
 
@@ -540,7 +539,7 @@ public class Movement_Action : Action
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
                 //East
                 if (delta < -140.0f || delta > 140.0f)
-                    LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));  
+                    LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
                 break;
         }
     }
@@ -693,20 +692,20 @@ public class Movement_Action : Action
         //Moving West
         if (distance_x < 0)
         {
-            Debug.Log("[pink] Going west");
+            Debug.Log("Going west", Department.IA,Color.PINK);
             switch (dir)
             {
                 case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
                 case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
                 case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
-                case Direction.DIR_WEST:GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
+                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
             }
         }
 
         //Moving East
         if (distance_x > 0)
         {
-            Debug.Log("[pink] Going east");
+            Debug.Log("Going east", Department.IA, Color.PINK);
             switch (dir)
             {
                 case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
@@ -719,7 +718,7 @@ public class Movement_Action : Action
         //Moving North
         if (distance_y < 0)
         {
-            Debug.Log("[pink] Going north");
+            Debug.Log("Going north", Department.IA, Color.PINK);
             switch (dir)
             {
                 case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
@@ -732,7 +731,7 @@ public class Movement_Action : Action
         //Moving South
         if (distance_y > 0)
         {
-            Debug.Log("[pink] Going south");
+            Debug.Log("Going south", Department.IA, Color.PINK);
             switch (dir)
             {
                 case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
