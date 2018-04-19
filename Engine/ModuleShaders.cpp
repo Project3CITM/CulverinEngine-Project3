@@ -1151,19 +1151,23 @@ void ModuleShaders::SetUniformVariables(Material * material)
 
 void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 {
+	BROFILER_CATEGORY("Update: ModuleShaders SetGlobal Variables", Profiler::Color::Blue);
 	std::vector<Material*>::iterator item = materials.begin();
 	static float time_dt = 0;
 	time_dt += dt * App->game_time.time_scale;
+	uint LastID = 0;
+
 	while (item != materials.end())
 	{
+		BROFILER_CATEGORY("Update: ModuleShaders Vars", Profiler::Color::Blue);
 		uint ID = (*item)->GetProgramID();
-		if ((*item)->active_num == 0) {
+		if ((*item)->active_num == 0 || ID == LastID) {
 			item++;
 			continue;
 		}
 
+		LastID = ID;
 		(*item)->Bind();
-
 
 		//TIME		
 		GLint timeLoc = glGetUniformLocation(ID, "_time");
@@ -1186,16 +1190,17 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 
 		//LIGHTS
 		std::vector<CompLight*> lights_vec;
-		if(!all_lights)
+		if (!all_lights)
 			lights_vec = *App->module_lightning->GetActiveLights();
-		else 
+		else
 			lights_vec = App->module_lightning->GetSceneLights();
 
 		GLint lightsizeLoc = glGetUniformLocation(ID, "_numLights");
 		if (lightsizeLoc != -1) glUniform1i(lightsizeLoc, lights_vec.size());
 
 
-		if (lightsizeLoc != -1)
+		if (lightsizeLoc != -1) {
+			BROFILER_CATEGORY("Update: ModuleShaders SetLights", Profiler::Color::Blue);
 			for (size_t i = 0; i < lights_vec.size(); ++i) {
 
 				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
@@ -1212,11 +1217,11 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 				// Bias matrix. TODO: Might be better to set other place
 
 				int depthBiasID = glGetUniformLocation(ID, "depthBias");
-				glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
+				if (viewLoc != -1) glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
 
 				// End Bias matrix.
 			}
-
+		}
 		item++;
 	}
 	glUseProgram(0);
