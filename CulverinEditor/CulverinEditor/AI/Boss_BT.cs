@@ -1,5 +1,6 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using CulverinEditor.SceneManagement;
 using System;
 
 public class Boss_BT : BT
@@ -240,6 +241,8 @@ public class Boss_BT : BT
 
             //todosforme
             GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
+
+            SceneManager.LoadScene("ScoreMenu");
         }
         /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
         {
