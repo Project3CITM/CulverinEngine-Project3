@@ -13,7 +13,6 @@ class BossEngage_Action : Action
 
     public override bool ActionStart()
     {
-        Debug.Log("Boss is triggered");
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.GRABBED);
         GetComponent<CompAnimation>().SetTransition("ToDraw");
         GetComponent<CompAnimation>().SetClipDuration("Draw", duration);
@@ -40,6 +39,9 @@ class BossEngage_Action : Action
         interupt = false;
         play_audio = false;
         GetLinkedObject("hp_bar_boss").SetActive(true);
+        GetLinkedObject("hp_bar_boss").GetComponent<BossHPBar>().ActivateHPBar(true);
+        Audio.ChangeState("AmbientMusic", "FinalBoss");
+
         return true;
     }
 
