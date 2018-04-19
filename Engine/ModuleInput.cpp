@@ -114,7 +114,8 @@ update_status ModuleInput::PreUpdate(float dt)
 	press_any_key = false;
 	update_new_device = false;
 	SDL_PumpEvents();
-	player_action->UpdateInputsManager();
+	if(player_action!=nullptr)
+		player_action->UpdateInputsManager();
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
@@ -187,7 +188,8 @@ update_status ModuleInput::PreUpdate(float dt)
 	{
 		ImGui_ImplSdlGL3_ProcessEvent(&e);
 		//if (App->mode_game) {
-		player_action->ReceiveEvent(&e);
+		if (player_action != nullptr)
+			player_action->ReceiveEvent(&e);
 		//}
 		switch (e.type)
 		{
@@ -461,7 +463,8 @@ update_status ModuleInput::UpdateConfig(float dt)
 	ImGui::Separator();
 	ImGui::Text("Player Actions");
 	ImGui::Separator();
-	player_action->UpdateConfig(dt);
+	if (player_action != nullptr)
+		player_action->UpdateConfig(dt);
 	ImGui::Separator();
 	ImVec4 color;
 	if (ui_conected)
@@ -483,7 +486,8 @@ update_status ModuleInput::UpdateConfig(float dt)
 	ImGui::TextColored(color, "UI Cancel: %s", cancel.c_str());
 	if (ImGui::Button("Save PlayerActions"))
 	{
-		App->json_seria->SavePlayerAction(player_action, name.c_str(), "player_action");
+		if (player_action != nullptr)
+			App->json_seria->SavePlayerAction(player_action, App->fs->GetMainDirectory().c_str(), "player_action");
 
 	}
 
@@ -503,7 +507,8 @@ bool ModuleInput::CleanUp()
 	key_binding->CleanUp();
 	RELEASE(key_binding);
 	gamepad.Clear();
-	player_action->Clear();
+	if (player_action != nullptr)
+		player_action->Clear();
 	RELEASE(player_action);
 	player_action = nullptr;
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);

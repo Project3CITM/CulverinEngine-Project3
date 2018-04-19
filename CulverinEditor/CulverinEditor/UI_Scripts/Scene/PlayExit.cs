@@ -5,10 +5,10 @@ using CulverinEditor.Debug;
 
 public class PlayExit : CulverinBehaviour
 {
-    GameObject pop_up_menu;
-    GameObject pop_up_menu_button;
-    GameObject quit_button;
-    GameObject play_button;
+    public GameObject pop_up_menu;
+    public GameObject pop_up_menu_button;
+    public GameObject quit_button;
+    public GameObject play_button;
 
     void Start()
     {
