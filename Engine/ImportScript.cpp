@@ -2323,3 +2323,4 @@ int ImportScript::RangeIntNoRepeat(int min, int max, int norepeat)
 		}
 	}
 	return 0;
+}

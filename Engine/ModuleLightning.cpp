@@ -132,11 +132,11 @@ bool ModuleLightning::Init(JSON_Object* node)
 	//shadow_cast_points_count = 1;
 
 	// Get some values for directional lights shadows
-	//dstSceneCameraToLookAt = json_object_get_number/(node, /"distance_from_scene_camera_to_lookat_position");
-	//dstShadowmapCameraToLookAt = json_object_get_number/(node, /"distance_from_shadowmap_camera_to_lookat_position");
-	//projSize = json_object_get_number(node, "dir_light_camera_size");
-	//nearPlane = json_object_get_number(node, "dir_light_camera_near");
-	//farPlane = json_object_get_number(node, "dir_light_camera_far");
+	dstSceneCameraToLookAt = json_object_get_number(node, "distance_from_scene_camera_to_lookat_position");
+	dstShadowmapCameraToLookAt = json_object_get_number(node, "distance_from_shadowmap_camera_to_lookat_position");
+	projSize = json_object_get_number(node, "dir_light_camera_size");
+	nearPlane = json_object_get_number(node, "dir_light_camera_near");
+	farPlane = json_object_get_number(node, "dir_light_camera_far");
 
 	Awake_t = perf_timer.ReadMs();
 	return true;
