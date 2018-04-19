@@ -1284,14 +1284,16 @@ mono_bool CSharpScript::GetEnabled(MonoObject* object)
 	{
 		return comp->GetEnabled();
 	}
-
-	MonoClass* class_temp = mono_object_get_class(object);
-	std::string name_component = mono_class_get_name(class_temp);
-
-	Component* component = current_game_object->GetComponentByName(name_component.c_str());
-	if (comp != nullptr)
+	else
 	{
-		return comp->GetEnabled();
+		MonoClass* class_temp = mono_object_get_class(object);
+		std::string name_component = mono_class_get_name(class_temp);
+		CSharpScript* temp = App->importer->iScript->GetScriptMono(object);
+		comp = temp->own_game_object->GetComponentByName(name_component.c_str());
+		if (comp != nullptr)
+		{
+			return comp->GetEnabled();
+		}
 	}
 	LOG("[error] MonoObject invalid");
 	return NULL;
@@ -1304,7 +1306,9 @@ void CSharpScript::SetEnabled(MonoObject* object, mono_bool active)
 	std::string name_component = mono_class_get_name(class_temp);
 	if (comp == nullptr)
 	{
-		comp = current_game_object->GetComponentByName(name_component.c_str());
+		//comp = current_game_object->GetComponentByName(name_component.c_str());
+		CSharpScript* temp = App->importer->iScript->GetScriptMono(object);
+		comp = temp->own_game_object->GetComponentByName(name_component.c_str());
 	}
 
 	if (comp != nullptr && comp->GetEnabled() != active)
