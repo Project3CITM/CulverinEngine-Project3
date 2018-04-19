@@ -87,7 +87,7 @@ public:
 	std::string Material_Directory_fs;
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;
-	std::vector<Material*> materials;
+	std::multimap<uint,Material*> materials;
 
 	std::string last_shader_error = "";
 	TextEditor editor_shaders;

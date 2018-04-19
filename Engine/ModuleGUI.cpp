@@ -626,7 +626,7 @@ update_status ModuleGUI::Update(float dt)
 				Material* new_mat = new Material();
 				new_mat->name = str_mat_temp;
 				new_mat->material_shader = selected_shader_program;
-				App->module_shaders->materials.push_back(new_mat);
+				App->module_shaders->materials.insert(std::pair<uint, Material*>(new_mat->GetProgramID(), new_mat));
 				selected_shader_program = nullptr;
 				new_mat->GetProgramVariables();
 				new_mat->Save();
