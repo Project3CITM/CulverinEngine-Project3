@@ -243,7 +243,9 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 
 			if (is_in)
 			{
-				nodes.push_back(*item);
+				//nodes.push_back(*item);
+				(*item)->SetVisible(true);
+				(*item)->Draw();
 			}
 		}	
 	}
@@ -265,7 +267,9 @@ int OctreeNode::CollectAllChilds(std::list<GameObject*>& nodes) const
 
 	for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
 	{
-		nodes.push_back(*item);
+		//nodes.push_back(*item);
+		(*item)->SetVisible(true);
+		(*item)->Draw();
 	}
 
 	if (isLeaf())

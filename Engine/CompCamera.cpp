@@ -317,17 +317,17 @@ void CompCamera::CullStaticObjects()
 	// First, set all static objects invisible
 
 	// Get all static objects that are inside the frustum (accelerated with quadtree)
-	candidates_to_cull.clear();
+	//candidates_to_cull.clear();
 	BROFILER_CATEGORY("CullStatic: CompCamera", Profiler::Color::Blue);
 	App->scene->octree.CollectIntersections(candidates_to_cull, frustum);
 
-	BROFILER_CATEGORY("Draw CullStatic: CompCamera", Profiler::Color::Blue);
+	//BROFILER_CATEGORY("Draw CullStatic: CompCamera", Profiler::Color::Blue);
 	// Set visible only these static objects
-	while (!candidates_to_cull.empty())
+	/*while (!candidates_to_cull.empty())
 	{
 		candidates_to_cull.front()->Draw(); // INSIDE CAMERA VISION
 		candidates_to_cull.pop_front();
-	}
+	}*/
 }
 
 void CompCamera::CullDynamicObjects()
