@@ -42,6 +42,11 @@ public:
 	bool GetInput_MouseButtonUp(const char* name, const char* input);
 	float GetInput_ControllerAxis(const char* name, const char* input);
 
+	const char* GetInput_ControllerActionName(const char* name, const char* input, const char* device, bool negative_key);
+	const char*	GetInput_ControllerKeyBindingName(const char* name, const char* input, const char* device, bool negative_key);
+	bool GetInput_ControllerWaitForKey(const char* name, const char* input, const char* device, bool negative_key);
+	void SetInput_ControllerWaitForKey(const char* name, const char* input, const char* device, bool negative_key);
+
 	void SendNewDeviceCombinationType(DeviceCombinationType type);
 
 public:

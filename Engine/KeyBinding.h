@@ -26,7 +26,10 @@ enum KeyBindingType {
 
 struct KeyRelation 
 {
-	KeyRelation(int event, std::string name, std::string device, KeyBindingType type) : event_value(event), name(name), key_type(type){}
+	KeyRelation(int event, std::string name, std::string device, KeyBindingType type) : event_value(event), name(name), key_type(type)
+	{
+		SelectDeviceCombination(device.c_str());
+	}
 	std::string name = "default";
 	KeyBindingType key_type = KeyBindingType::NULL_DEVICE;
 	DeviceCombinationType device = DeviceCombinationType::NULL_COMB_DEVICE;

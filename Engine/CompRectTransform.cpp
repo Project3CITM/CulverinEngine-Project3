@@ -287,6 +287,12 @@ void CompRectTransform::ShowTransform(float drag_speed)
 		{
 			SetPivot(pivot);
 		}
+		ImGui::Text("Uniform Scale"); ImGui::SameLine(op + 30);
+
+		if (ImGui::Checkbox("##uniform_scale", &unitar_resize))
+		{
+			Resize(resize_factor);
+		}
 		break;
 	}
 	default:
@@ -424,6 +430,15 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 		if (parent_transform != nullptr && parent_obj->FindComponentByType(C_CANVAS))
 		{
 			resize_factor = res_factor;
+			if (unitar_resize)
+			{
+				curr_resize.x = Max(resize_factor.x, resize_factor.y);
+				curr_resize.y = curr_resize.x;
+			}
+			else
+			{
+				curr_resize = resize_factor;
+			}
 			int p_width = parent_transform->GetWidth();
 			int p_height = parent_transform->GetHeight();
 			pos.x = (p_width*(max_anchor.x-pivot.x) + ui_position.x)*res_factor.x;
@@ -569,22 +584,26 @@ void CompRectTransform::SetWidth(int set_width)
 {
 	update_rect = true;
 	width = set_width;
+	Resize(resize_factor);
 }
 
 void CompRectTransform::SetHeight(int set_height)
 {
 	update_rect = true;
 	height = set_height;
+	Resize(resize_factor);
 }
 
 void CompRectTransform::SetMaxAnchor(float2 set_max_anchor)
 {
 	max_anchor = set_max_anchor;
+	Resize(resize_factor);
 }
 
 void CompRectTransform::SetMinAnchor(float2 set_min_anchor)
 {
 	min_anchor = set_min_anchor;
+	Resize(resize_factor);
 }
 
 void CompRectTransform::SetPivot(float2 set_pivot)
@@ -592,6 +611,7 @@ void CompRectTransform::SetPivot(float2 set_pivot)
 	left_pivot = pivot;
 	right_pivot = float2(1.0f - pivot.x, 1.0f - pivot.y);
 	pivot = set_pivot;
+	Resize(resize_factor);
 }
 
 
@@ -607,6 +627,15 @@ float2 CompRectTransform::GenerateResizeFactor(int width, int height)
 	resize_factor.x = (float)width / (float)this->width;
 	resize_factor.y = (float)height / (float)this->height;
 
+	if (unitar_resize)
+	{
+		curr_resize.x = Max(resize_factor.x, resize_factor.y);
+		curr_resize.y = curr_resize.x;
+	}
+	else
+	{
+		curr_resize = resize_factor;
+	}
 	return resize_factor;
 
 }

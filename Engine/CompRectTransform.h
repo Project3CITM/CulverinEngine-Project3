@@ -61,6 +61,7 @@ private:
 	int width = 0;
 	int height = 0;
 	float2 resize_factor;
+	float2 curr_resize;
 	float2 max_anchor;
 	float2 min_anchor;
 	float2 pivot;
@@ -68,6 +69,7 @@ private:
 	float2 right_pivot;
 	bool update_rect = false;
 	bool ignore_z = false;
+	bool unitar_resize = true;
 };
 
 #endif //COMPONENT_RECT_TRANSFORM_H

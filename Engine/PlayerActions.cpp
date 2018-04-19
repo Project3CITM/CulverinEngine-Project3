@@ -457,6 +457,25 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 	return 0;
 }
 
+const char * PlayerActions::GetInput_ControllerActionName(const char * name, const char * input, const char * device, bool negative_key)
+{
+	return nullptr;
+}
+
+const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name, const char * input, const char * device, bool negative_key)
+{
+	return nullptr;
+}
+
+bool PlayerActions::GetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)
+{
+	return false;
+}
+
+void PlayerActions::SetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)
+{
+}
+
 void PlayerActions::SendNewDeviceCombinationType(DeviceCombinationType type)
 {
 	if (actual_player_action == type)

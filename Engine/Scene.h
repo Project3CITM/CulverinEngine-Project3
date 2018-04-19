@@ -45,6 +45,8 @@ public:
 	GameObject* GetGameObjectfromScene(bool& active);
 	GameObject* GetGameObjectbyuid(uint uid);
 	GameObject* FindGameObjectWithTag(const char* str);
+	//Dont find tag in vector tags (Iterate all root);
+	GameObject* FindGameObjectWithTagRecursive(const char* str, GameObject* gameobject);
 	void		FindGameObjectsWithTag(const char* tag, std::vector<GameObject*>* vec); //You get a pointer to the vec not a new one!
 
 	void						TagWindow();

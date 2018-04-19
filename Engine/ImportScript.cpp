@@ -1140,6 +1140,12 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::GetInput_MouseButtonDown", (const void*)GetInput_MouseButtonDown);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_MouseButtonUp", (const void*)GetInput_MouseButtonUp);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerAxis);
+
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerActionName);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerKeyBindingName);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerWaitForKey);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)SetInput_ControllerWaitForKey);
+
 	mono_add_internal_call("CulverinEditor.Input::RumblePlay", (const void*)RumblePlay);
 
 	//TIME FUNCTIONS -------------------
@@ -1563,6 +1569,26 @@ mono_bool ImportScript::GetInput_MouseButtonUp(MonoString* name, MonoString* inp
 float ImportScript::GetInput_ControllerAxis(MonoString* name, MonoString* input)
 {
 	return App->input->player_action->GetInput_ControllerAxis(mono_string_to_utf8(name), mono_string_to_utf8(input));
+}
+
+MonoString * ImportScript::GetInput_ControllerActionName(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+{
+	return nullptr;
+		//App->input->player_action->GetInput_ControllerActionName(mono_string_to_utf8(name), mono_string_to_utf8(input), mono_string_to_utf8(device), negative_key);
+}
+
+MonoString * ImportScript::GetInput_ControllerKeyBindingName(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+{
+	return nullptr;
+}
+
+mono_bool ImportScript::GetInput_ControllerWaitForKey(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+{
+	return mono_bool();
+}
+
+void ImportScript::SetInput_ControllerWaitForKey(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+{
 }
 
 void ImportScript::RumblePlay(float intensity, int milliseconds)

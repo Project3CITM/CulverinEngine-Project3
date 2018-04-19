@@ -471,10 +471,11 @@ void CompCamera::SetMain(bool isMain)
 		}
 		else
 		{
+			App->renderer3D->SetGameCamera(this);
 			/* Otherwise, enable Pop Up of the camera and turn main  
 			variable to false (not possible to be more than one active cameras at a time) */
-			showPopup = true;
-			is_main = false;
+			//showPopup = true;
+			is_main = true;
 		}
 	}
 	else 

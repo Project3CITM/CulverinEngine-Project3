@@ -127,6 +127,11 @@ private:
 	static mono_bool	GetInput_MouseButtonDown(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_MouseButtonUp(MonoString* name, MonoString* input);
 	static float		GetInput_ControllerAxis(MonoString* name, MonoString* input);
+	static MonoString*	GetInput_ControllerActionName(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
+	static MonoString*	GetInput_ControllerKeyBindingName(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
+	static mono_bool	GetInput_ControllerWaitForKey(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
+	static void			SetInput_ControllerWaitForKey(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
+
 	static void			RumblePlay(float intensity, int milliseconds);
 
 	/* Time */
