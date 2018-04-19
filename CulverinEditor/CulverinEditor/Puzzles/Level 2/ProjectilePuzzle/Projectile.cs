@@ -33,19 +33,31 @@ public class Projectile : CulverinBehaviour
         CompCollider col = GetComponent<CompCollider>();
         GameObject collided_obj = col.GetCollidedObject();
        
+        
        
         if (collided_obj != null)
         {
-            CharactersManager cm = collided_obj.GetComponent<CharactersManager>();
-
-            if (cm != null)
+            if(collided_obj.CompareTag("player"))
             {
-                cm.GetDamage(damage);
+                CharactersManager cm = collided_obj.GetComponent<CharactersManager>();
+
+                if (cm != null)
+                {
+                    cm.GetDamage(damage);
+                }
+
+                Destroy(gameObject);
             }
-         }
+            if(collided_obj.CompareTag("obstacle"))
+            {
+                Destroy(gameObject);
+            }
+
+            Debug.Log(collided_obj.GetTag().ToString(), Department.STAGE) ;
+
+        }
         else Debug.Log("Collided obj NULL", Department.STAGE, Color.ORANGE);
 
-        Destroy(gameObject);
     }
 }
 
