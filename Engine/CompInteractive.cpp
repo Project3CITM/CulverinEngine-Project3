@@ -231,6 +231,7 @@ void CompInteractive::CopyValues(const CompInteractive* component)
 
 	//more...
 }
+
 void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
@@ -1008,7 +1009,7 @@ void CompInteractive::HandleTransition(SelectionStates selection_state)
 		StartTransitionSprite(desired_sprite);
 		break;
 	case  Transition::TRANSITION_ANIMATION:
-
+		StartAnimationSprite();
 		break;
 	default:
 		break;
@@ -1127,8 +1128,6 @@ void CompInteractive::StartTransitionColor(float4 color_to_change, bool no_fade)
 	}
 	
 		start_transition = true;
-
-	
 }
 
 void CompInteractive::UpdateTransitionColor(float dt)
@@ -1136,11 +1135,18 @@ void CompInteractive::UpdateTransitionColor(float dt)
 	
 }
 
+
+
 void CompInteractive::StartTransitionSprite(ResourceMaterial * sprite_to_change)
 {
 	if (image == nullptr)
 		return;
 	image->SetOverwriteImage(sprite_to_change);
 	image->UpdateSpriteId();
+}
+
+void CompInteractive::StartAnimationSprite()
+{
+
 }
 

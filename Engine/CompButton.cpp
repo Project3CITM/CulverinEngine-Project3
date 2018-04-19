@@ -98,7 +98,7 @@ void CompButton::ShowInspectorInfo()
 	int selected_opt = current_transition_mode;
 	ImGui::Text("Transition"); ImGui::SameLine(op + 30);
 
-	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0 Animation transition"))
+	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0 Animation transition\0"))
 	{
 		if (selected_opt == Transition::TRANSITION_COLOR)
 			current_transition_mode = Transition::TRANSITION_COLOR;
@@ -107,6 +107,12 @@ void CompButton::ShowInspectorInfo()
 		if (selected_opt == Transition::TRANSITION_ANIMATION)
 			current_transition_mode = Transition::TRANSITION_ANIMATION;	
 	}
+
+	if (current_transition_mode = Transition::TRANSITION_ANIMATION)
+	{
+		SelectAnimationState();
+	}
+
 	switch (selected_opt)
 	{
 	case 0:
@@ -199,6 +205,22 @@ void CompButton::ShowInspectorInfo()
 	}
 	*/
 	ImGui::TreePop();
+}
+
+void CompButton::SelectAnimationState()
+{
+	ImGui::Text("Select state to animate:");
+	ImGui::SameLine();
+	int selection = 1;
+	if (ImGui::Combo("##State", &selection, "IDLE\0HOVER\0DISABLED"))
+	{
+		if (selection == SelectionStates::STATE_NORMAL)
+			to_anim = SelectionStates::STATE_NORMAL;
+		if (selection == SelectionStates::STATE_HIGHLIGHTED)
+			to_anim = SelectionStates::STATE_HIGHLIGHTED;
+		if (selection == SelectionStates::STATE_DISABLED)
+			to_anim = SelectionStates::STATE_DISABLED;
+	}
 }
 
 void CompButton::CopyValues(const CompButton* component)
