@@ -84,7 +84,7 @@ private:
 	float vertical_fov = 0.0f;
 	// -------------------------------
 
-	std::list<GameObject*> candidates_to_cull;
+	std::vector<GameObject*> candidates_to_cull;
 };
 
 #endif

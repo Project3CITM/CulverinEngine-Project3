@@ -386,7 +386,7 @@ void CompCamera::UnCull()
 		}
 
 		// Delete from vector the object already checked
-		candidates_to_cull.pop_front();
+		//candidates_to_cull.pop_front();
 	}
 }
 
