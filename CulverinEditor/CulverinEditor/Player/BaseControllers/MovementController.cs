@@ -97,7 +97,7 @@ public class MovementController : CulverinBehaviour
         start_direction = (int)curr_dir;
 
         //Update Forward Vector for rotations
-        if(update_rotation)
+        if (update_rotation)
         {
             update_rotation = false;
             char_manager.SetCurrentPosition();
@@ -236,11 +236,11 @@ public class MovementController : CulverinBehaviour
             GetComponent<Transform>().local_rotation = Vector3.Lerp(new Vector3(GetComponent<Transform>().local_rotation.x, GetComponent<Transform>().local_rotation.y, GetComponent<Transform>().local_rotation.z), new Vector3(GetComponent<Transform>().local_rotation.x, GetComponent<Transform>().local_rotation.y, GetComponent<Transform>().local_rotation.z), (endPosition.Length - GetComponent<Transform>().local_position.Length));
         }
 
-        if(!moving && characters_camera.GetComponent<CompAnimation>().IsAnimationStopped("Idle"))
+        if (!moving && characters_camera.GetComponent<CompAnimation>().IsAnimationStopped("Idle") && GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetCurrCharacterState() == 0)
         {
-            characters_camera.GetComponent<CompAnimation>().PlayAnimation("Idle");
+            characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Idle");
         }
-        
+
     }
 
     private bool CheckRotation()
@@ -818,7 +818,7 @@ public class MovementController : CulverinBehaviour
         {
             case (int)MovementController.Direction.NORTH:
                 {
-                    position_front_y = - 1;
+                    position_front_y = -1;
                     break;
                 }
 

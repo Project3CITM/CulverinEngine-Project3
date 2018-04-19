@@ -81,8 +81,8 @@ Application::Application()
 	AddModule(physics);
 	AddModule(input);
 	AddModule(console);
-	AddModule(scene);
 	AddModule(particles);
+	AddModule(scene);
 	AddModule(module_lightning); // Ask this module creators before changing the order, possible dependencies with scene and shaders module.
 	AddModule(module_shaders);
 	
@@ -1252,7 +1252,7 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	folder += "/CulverinEngine.exe";
 	std::string executable = desktop;
 	executable += "/" + game_name + ".exe";
-	App->fs->CopyPasteFile(folder.c_str(), executable.c_str());
+	App->fs->CopyPasteFile(folder.c_str(), executable.c_str(), true);
 	LOG("Copy .exe");
 
 }

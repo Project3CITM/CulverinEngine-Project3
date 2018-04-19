@@ -118,7 +118,6 @@ update_status ModuleInput::PreUpdate(float dt)
 		player_action->UpdateInputsManager();
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
-
 	for (int i = 0; i < MAX_KEYS; ++i)
 	{
 		if (keys[i] == 1)
@@ -202,6 +201,7 @@ update_status ModuleInput::PreUpdate(float dt)
 
 			break;
 		case SDL_CONTROLLERAXISMOTION:
+
 			if (e.caxis.value < -5000 || e.caxis.value>5000)
 			{
 				UpdateDeviceType(DeviceCombinationType::CONTROLLER_COMB_DEVICE);
@@ -233,7 +233,7 @@ update_status ModuleInput::PreUpdate(float dt)
 		}
 		break;
 		case SDL_MOUSEBUTTONUP:
-		{			
+		{
 
 			mouse_x = e.motion.x / SCREEN_SIZE;
 			mouse_y = e.motion.y / SCREEN_SIZE;
@@ -338,7 +338,7 @@ update_status ModuleInput::PreUpdate(float dt)
 					}
 				}
 			}
-			
+
 			break;
 		case SDL_CONTROLLERDEVICEREMOVED:
 			if (!gamepad.Empty())
@@ -517,7 +517,7 @@ bool ModuleInput::CleanUp()
 
 void ModuleInput::UIInputManagerUpdate()
 {
-	if (App->mode_game|| App->engine_state != EngineState::STOP) {
+	if (App->mode_game || App->engine_state != EngineState::STOP) {
 
 		if (!ui_conected || ui_manager == nullptr)
 			return;
@@ -626,11 +626,12 @@ void ModuleInput::RumblePlay(float value, int milliseconds)
 {
 	if (gamepad.Empty()||!rumble_active)
 		return;
+
 	float intensity = CAP(value);
 	if (milliseconds>MAX_MILLISECONDS|| milliseconds<0)
 		return;
 	if (SDL_HapticRumblePlay(gamepad.haptic, intensity, milliseconds) != 0) {
-		LOG("Warning: Unable to play rumble! %s\n", SDL_GetError()); 
+		LOG("Warning: Unable to play rumble! %s\n", SDL_GetError());
 	}
 }
 
@@ -659,40 +660,40 @@ KeyRelation * ModuleInput::FindKeyBinding(const char* string)
 
 bool ModuleInput::ConnectGameController()
 {
-	if (SDL_NumJoysticks() < 1) 
-	{ 
+	if (SDL_NumJoysticks() < 1)
+	{
 		LOG("No GameController connected");
 		return false;
 	}
 	for (int i = 0; i < SDL_NumJoysticks(); ++i)
 	{
 
-			if (SDL_IsGameController(i))
+		if (SDL_IsGameController(i))
+		{
+			gamepad.controller = SDL_GameControllerOpen(i);
+			if (gamepad.controller != nullptr)
 			{
-				gamepad.controller = SDL_GameControllerOpen(i);
-				if (gamepad.controller != nullptr)
+
+				gamepad.joystick = SDL_GameControllerGetJoystick(gamepad.controller);
+				gamepad.haptic = SDL_HapticOpenFromJoystick(gamepad.joystick);
+				gamepad.id = SDL_JoystickInstanceID(gamepad.joystick);
+				if (gamepad.haptic == NULL)
 				{
-
-					gamepad.joystick = SDL_GameControllerGetJoystick(gamepad.controller);
-					gamepad.haptic = SDL_HapticOpenFromJoystick(gamepad.joystick);
-					gamepad.id = SDL_JoystickInstanceID(gamepad.joystick);
-					if (gamepad.haptic == NULL)
-					{
-						LOG("Warning: Controller does not support haptics! SDL Error: %s\n", SDL_GetError());
-					}
-					else
-					{
-						if (SDL_HapticRumbleInit(gamepad.haptic) < 0)
-						{
-							LOG("Warning: Unable to initialize rumble! SDL Error: %s\n", SDL_GetError());
-						}
-					}
-					LOG("Gamepad not opened %s", SDL_GetError());
-					return true;
+					LOG("Warning: Controller does not support haptics! SDL Error: %s\n", SDL_GetError());
 				}
-
+				else
+				{
+					if (SDL_HapticRumbleInit(gamepad.haptic) < 0)
+					{
+						LOG("Warning: Unable to initialize rumble! SDL Error: %s\n", SDL_GetError());
+					}
+				}
+				LOG("Gamepad not opened %s", SDL_GetError());
+				return true;
 			}
-		
+
+		}
+
 
 	}
 	return false;
@@ -700,7 +701,7 @@ bool ModuleInput::ConnectGameController()
 
 bool GamePad::Empty()
 {
-	return controller==nullptr;
+	return controller == nullptr;
 }
 
 void GamePad::Clear()

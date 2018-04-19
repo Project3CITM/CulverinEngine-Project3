@@ -27,6 +27,10 @@ bool ImportMaterial::Import(const char* file, uint uuid, bool isAutoImport)
 	bool ret = false;
 	char* buffer;
 	uint size_file = App->fs->LoadFile(file, &buffer);
+	if (size_file == 0)
+	{
+		return false;
+	}
 	if (ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, size_file))
 	{
 		ILuint size;

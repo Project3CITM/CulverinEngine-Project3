@@ -55,7 +55,7 @@ public:
 	std::string CopyFileToAssets(const char* fileNameFrom, const char* fileNameTo = "");
 	// Same to CopyFileToAssets but this return path of file to save
 	std::string CopyFileToAssetsS(const char* fileNameFrom, const char* fileNameTo = "");
-	void CopyPasteFile(const char* fileFrom, const char* fileTo);
+	void CopyPasteFile(const char* fileFrom, const char* fileTo, bool check_filefromTo = false);
 
 	void CopyFolderToLibrary(const char* folder);
 	void CopyPasteFolder(const char* folderFrom, const char* folderTo);

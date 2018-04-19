@@ -6,7 +6,7 @@ public class ReverbCorridor: CulverinBehaviour
 {
 
     public float in_value = 0.0f;
-  //  public float out_value = 0.0f;
+    public float out_value = 0.0f;
     public string bus_name = "Corridor";
 
     CompCollider col;
@@ -28,26 +28,24 @@ public class ReverbCorridor: CulverinBehaviour
         }
         else
         {
-            Debug.Log("[red] COL_OBJ IS NULL!");
+            Debug.Log("COL_OBJ IS NULL!", Department.STAGE, Color.RED);
         }
 
         if (col_audio != null)
         {
-            Debug.Log("[green] REVERB IN");
             Debug.Log(in_value);
             col_audio.SetAuxiliarySends(bus_name, in_value);
         }
         else
         {
-            Debug.Log("[red] COL_AUDIO IS NULL!");
+            Debug.Log("COL_AUDIO IS NULL!", Department.STAGE, Color.RED);
         }
 
     }
 
 
-    /*void OnTriggerLost()
-    {
-        Debug.Log("[green] REVERB OUT");
+    void OnTriggerLost()
+    {        
         GameObject col_obj = col.GetCollidedObject();
         CompAudio col_audio = null;
         if (col_obj != null)
@@ -58,6 +56,6 @@ public class ReverbCorridor: CulverinBehaviour
         {
             col_audio.SetAuxiliarySends(bus_name, out_value);
         }
-    }*/
+    }
 
 }

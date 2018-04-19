@@ -144,6 +144,8 @@ void CompAnimation::PlayAnimation(AnimationNode * node)
 {
 	node->active = true;
 	active_node = node;
+	if(blending_animation != nullptr)
+	blending_animation->state = AnimationState::A_STOP;
 
 	if (current_animation != nullptr && node->clip->total_blending_time > 0.001f)
 	{
@@ -482,7 +484,9 @@ void CompAnimation::ShowOptions()
 	}
 	if (ImGui::MenuItem("Reset"))
 	{
-		ImGui::CloseCurrentPopup();
+		animation_resource = nullptr;
+		bone_update_vector.clear();
+		bones_placed = false;
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Move to Front", NULL, false, false))

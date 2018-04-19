@@ -30,7 +30,6 @@ public class Stamina : CulverinBehaviour
     {
         if (!wasted_stamina)
         {
-
             if (curr_stamina < max_stamina)
             {
                 curr_stamina += regen;
@@ -77,6 +76,12 @@ public class Stamina : CulverinBehaviour
 
     public void DecreaseStamina(float cost)
     {
+        //Costs are 0 in GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        {
+            cost = 0;
+        }
+
         other_bar_lastamina.GetComponent<Leftamina>().lastamina_value = curr_stamina;
         if (curr_stamina > cost)
         {
@@ -86,7 +91,7 @@ public class Stamina : CulverinBehaviour
         stamina_bar = this_obj_stamina.GetComponent<CompImage>();
         stamina_bar.FillAmount(calc_stamina);
         other_bar_lastamina.GetComponent<Leftamina>().stamina_bar_changed = false;
-     
+
     }
 
     public float GetCurrentStamina()
@@ -106,6 +111,12 @@ public class Stamina : CulverinBehaviour
 
     public bool CanWasteStamina(float value)
     {
+        //Costs are 0 in GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        {
+            value = 0;
+        }
+
         if (curr_stamina >= value)
         {
             wasted_stamina = true;

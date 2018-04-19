@@ -56,15 +56,15 @@ public class Mana : CulverinBehaviour
             {
                 this_obj_mana.GetComponent<CompImage>().DeactivateRender();
             }
-            if (flickering_time >= wait_for_mana_recovery*2)
+            if (flickering_time >= wait_for_mana_recovery * 2)
             {
                 this_obj_mana.GetComponent<CompImage>().ActivateRender();
             }
-            if (flickering_time >= wait_for_mana_recovery*3)
+            if (flickering_time >= wait_for_mana_recovery * 3)
             {
                 this_obj_mana.GetComponent<CompImage>().DeactivateRender();
             }
-            if (flickering_time >= wait_for_mana_recovery*4)
+            if (flickering_time >= wait_for_mana_recovery * 4)
             {
                 this_obj_mana.GetComponent<CompImage>().ActivateRender();
                 not_enough_mana = false;
@@ -74,6 +74,12 @@ public class Mana : CulverinBehaviour
 
     public void DecreaseMana(float cost)
     {
+        //Costs are 0 in GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        {
+            cost = 0;
+        }
+
         other_obj_lastmana.GetComponent<LeftMana>().lastmana_value = curr_mana;
         if (curr_mana > cost)
         {
@@ -87,6 +93,12 @@ public class Mana : CulverinBehaviour
 
     public void DecreaseManaPercentage(float cost_percentage)
     {
+        //Costs are 0 in GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        {
+            cost_percentage = 0;
+        }
+
         float cost = cost_percentage * max_mana / 100.0f;
         other_obj_lastmana.GetComponent<LeftMana>().lastmana_value = curr_mana;
         if (curr_mana > cost)
@@ -116,6 +128,12 @@ public class Mana : CulverinBehaviour
 
     public bool CanWasteMana(float value)
     {
+        //Costs are 0 in GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode)
+        {
+            value = 0;
+        }
+
         if (curr_mana >= value)
         {
             wasted_mana = true;

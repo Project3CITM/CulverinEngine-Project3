@@ -110,6 +110,7 @@ bool ModuleParticles::CleanUp()
 			delete (*item);
 	}
 
+	//Particle systems deletes 
 	particle_systems.clear();
 
 	return true;

@@ -4,10 +4,10 @@ using CulverinEditor.Map;
 
 public class SwordParticles : CulverinBehaviour
 {
-    public GameObject sword_wall_particle;
+    //public GameObject sword_wall_particle;
     public GameObject sword_enemy_particle;
 
-    CompParticleSystem wall_particle;
+    //CompParticleSystem wall_particle;
     CompParticleSystem enemy_particle;
 
     CompCollider col;
@@ -15,17 +15,30 @@ public class SwordParticles : CulverinBehaviour
     bool wall_collision = false;
     bool enemy_collision = false;
 
+    //BLOOD TEXTURE MANAGEMENT
+    Material mat;
+    public float blood = 0.0f;
+
     void Start()
     {
         col = GetComponent<CompCollider>();
         wall_collision = false;
         enemy_collision = false;
 
-        sword_wall_particle = GetLinkedObject("sword_wall_particle");
-        sword_enemy_particle = GetLinkedObject("sword_enemy_particle");
+        //sword_wall_particle = GetLinkedObject("sword_wall_particle");
+        //wall_particle = sword_wall_particle.GetComponent<CompParticleSystem>();
 
-        wall_particle = sword_wall_particle.GetComponent<CompParticleSystem>();
+        sword_enemy_particle = GetLinkedObject("sword_enemy_particle");
         enemy_particle = sword_enemy_particle.GetComponent<CompParticleSystem>();
+
+        //TO MANAGE SWORD BLOOD TEXTURE
+        mat = GetMaterialByName("Jaime Sword");
+        mat.SetFloat("blood", blood);
+    }
+
+    void Update()
+    {
+        mat.SetFloat("blood", blood);
     }
 
     void OnContact()
@@ -71,6 +84,25 @@ public class SwordParticles : CulverinBehaviour
     public void EnableEnemyCollision(bool enable)
     {
         enemy_collision = enable;
+    }
+
+    /* MANAGE BLOOD TEXTURE:
+        - Damage Enemy -> blood++
+        - Attack Miss  -> blood--  
+     */
+    public void SetBlood(float blood_increase)
+    {
+        blood += blood_increase;
+
+        if (blood < 0.0f) 
+        {
+            blood = 0.0f;
+        }
+
+        if (blood > 1.0f)
+        {
+            blood = 1.0f;
+        }
     }
 
 }

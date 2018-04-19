@@ -297,8 +297,6 @@ void CompImage::FillAmount(float value)
 }
 void CompImage::DeviceCheck()
 {
-
-
 	if (DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE == App->input->GetActualDeviceCombo())
 	{
 		device_swap_active = false;
@@ -522,7 +520,6 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 			{
 				App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
 			}
-			UpdateSpriteId();
 		}
 	}
 
@@ -548,7 +545,6 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 				}
 			}
 		}
-		DeviceCheck();
 	}
 	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
 	filled=json_object_dotget_number_with_std(object, name + "Fill Amount");
@@ -563,11 +559,20 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 	Enable();
 }
 
+void CompImage::SyncComponent(GameObject * sync_parent)
+{
+	AddRectTransform();
+	AddCanvasRender();
+	AddCanvas();
+	DeviceCheck();
+}
+
 void CompImage::UpdateSpriteId()
 {
+	if (my_canvas == nullptr)
+		return;
 	if (overwrite_image == nullptr)
 	{
-		
 		if (source_image == nullptr)
 		{
 			// return default texture;

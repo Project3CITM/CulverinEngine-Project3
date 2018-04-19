@@ -19,8 +19,10 @@ public class RespawnWhenHit : CulverinBehaviour
         }
 
         GameObject obj = col.GetCollidedObject();
+        Debug.Log(obj.GetTag().ToString());
 
-        if(obj.CompareTag("player"))
+
+        if (obj.CompareTag("player"))
         {
             Vector3 respawn_pos_float3 = new Vector3(respawn_tile_x * tile_size, respawn_height, respawn_tile_y * tile_size);
             obj.transform.SetPosition(respawn_pos_float3);

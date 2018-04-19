@@ -95,7 +95,7 @@ public class EnemyShield_BT : Enemy_BT
                 return;
             }
         }
-        else if (player_detected == true)
+        else if (player_detected == true && Disable_Movement_Gameplay_Debbuger == false)
         {
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
@@ -105,6 +105,9 @@ public class EnemyShield_BT : Enemy_BT
 
     protected override void OutOfCombatDecesion()
     {
+
+        if (Disable_Movement_Gameplay_Debbuger) return;
+
         //Investigate
         if (heard_something)
         {
@@ -138,14 +141,14 @@ public class EnemyShield_BT : Enemy_BT
         }
     }
 
-    public override bool ApplyDamage(float damage)
+    public override bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
         base.ActivateHUD(shield_icon, shield_name);
 
         switch (life_state)
         {
             case ENEMY_STATE.ENEMY_ALIVE:
-                if (shield_block_timer >= shield_block_cd)
+                if (shield_block_timer >= shield_block_cd && damage_type != ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                 {
                     MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
                     Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
@@ -155,20 +158,21 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
-                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        //GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        next_action = GetComponent<ShieldBlock_Action>();
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         return false;
                     }
                     else
-                        return base.ApplyDamage(damage);
+                        return base.ApplyDamage(damage, damage_type);
                 }
                 else
-                    return base.ApplyDamage(damage);
+                    return base.ApplyDamage(damage, damage_type);
 
                 break;
 
             case ENEMY_STATE.ENEMY_DAMAGED:
-                if (shield_block_timer >= shield_block_cd_damaged)
+                if (shield_block_timer >= shield_block_cd_damaged && damage_type != ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                 {
                     MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
                     Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
@@ -178,20 +182,21 @@ public class EnemyShield_BT : Enemy_BT
                         player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
                     {
                         shield_block_timer = 0.0f;
-                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        next_action = GetComponent<ShieldBlock_Action>();
+                        //GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                         return false;
                     }
                     else
-                        return base.ApplyDamage(damage);
+                        return base.ApplyDamage(damage, damage_type);
                 }
                 else
-                    return base.ApplyDamage(damage);
+                    return base.ApplyDamage(damage, damage_type);
 
                 break;
 
             case ENEMY_STATE.ENEMY_STUNNED:
-                return base.ApplyDamage(damage);
+                return base.ApplyDamage(damage, damage_type);
                 break;
 
             case ENEMY_STATE.ENEMY_DEAD:

@@ -52,11 +52,14 @@ public class Movement_Action : Action
     bool translation_finished = false;
 
     public bool chase = false;
+    bool moving_sideways = false;
 
     float wait_timer = 0.0f;
     public float wait_time = 1.0f;
 
     Vector3 look_at_pos = new Vector3(Vector3.Zero);
+
+    public float sideways_anim_speed = 1.5f;
 
     public Movement_Action()
     {
@@ -71,6 +74,7 @@ public class Movement_Action : Action
         align = GetComponent<Align_Steering>();
         arrive = GetComponent<Arrive_Steering>();
         seek = GetComponent<Seek_Steering>();
+
 
         BT bt = GetComponent<EnemySword_BT>();
         if (bt == null)
@@ -96,6 +100,12 @@ public class Movement_Action : Action
 
         //Set direction
         SetDirection();
+
+        //Sideways animation speeds
+        GetComponent<CompAnimation>().SetClipDuration("WalkRight", sideways_anim_speed);
+        GetComponent<CompAnimation>().SetClipDuration("WalkLeft", sideways_anim_speed);
+        GetComponent<CompAnimation>().SetClipDuration("WalkBack", sideways_anim_speed);
+        GetComponent<CompAnimation>().SetClipDuration("WalkFront", sideways_anim_speed);
     }
 
     public override bool ActionStart()
@@ -109,6 +119,9 @@ public class Movement_Action : Action
         {
             GetComponent<CompAnimation>().SetTransition("ToChase");
             GetComponent<CompAnimation>().SetFirstActiveBlendingClip("IdleAttack");
+
+            if (moving_sideways == true)
+                MoveSideways(path[0]);
         }
 
         if (path.Count != 0)
@@ -122,6 +135,7 @@ public class Movement_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+  
         //Movement
         if (translation_finished == false)
         {
@@ -130,6 +144,12 @@ public class Movement_Action : Action
             if (arrive.ReachedTile() == true)
             {
                 current_velocity = new Vector3(Vector3.Zero);
+
+                if (moving_sideways == true)
+                {
+                    moving_sideways = false;
+                    GetComponent<CompAnimation>().SetTransition("ToChase");
+                }
 
                 if (interupt != true)
                 {
@@ -170,7 +190,6 @@ public class Movement_Action : Action
                 align.SetEnabled(false);
                 look_at_pos.y = GetComponent<Transform>().position.y;
                 Vector3 obj_vec = new Vector3(look_at_pos - GetComponent<Transform>().position);
-                Debug.Log("Looking At: " + look_at_pos);
                 GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
                 SetDirection();
             }
@@ -207,27 +226,23 @@ public class Movement_Action : Action
         if (Mathf.Abs(current_rot_acceleration) > current_max_rot_accel)
         {
             if (current_rot_acceleration > 0)
-            {
                 current_rot_acceleration = current_max_rot_accel;
-            }
             else
-            {
                 current_rot_acceleration = -current_max_rot_accel;
-            }
         }
         current_rot_velocity += current_rot_acceleration;
 
         if (Mathf.Abs(current_rot_velocity) > current_max_rot_vel)
         {
             if (current_rot_velocity > 0)
-            {
                 current_rot_velocity = current_max_rot_vel;
-            }
             else
-            {
                 current_rot_velocity = -current_max_rot_vel;
-            }
         }
+
+        float point_in_speed = current_rot_velocity / current_max_rot_vel;
+
+        //GetComponent<CompAnimation>().SetSecondActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
 
         //Rotate
         align.UpdateRotation(current_rot_velocity * Time.deltaTime);
@@ -239,19 +254,20 @@ public class Movement_Action : Action
     private void UpdateTranslation()
     {
         if (current_acceleration.Length > current_max_accel)
-        {
             current_acceleration = current_acceleration.Normalized * current_max_accel;
-        }
+
         current_velocity.x = current_velocity.x + current_acceleration.x;
         current_velocity.z = current_velocity.z + current_acceleration.z;
 
         if (current_velocity.Length > current_max_vel)
-        {
             current_velocity = current_velocity.Normalized * current_max_vel;
-        }
 
         float point_in_speed = current_velocity.Length / current_max_vel;
-        GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
+
+        if (moving_sideways == true)
+            GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight(1.0f - point_in_speed);
+        else
+            GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
 
         //Translate
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
@@ -265,7 +281,6 @@ public class Movement_Action : Action
 
     private void NextTile()
     {
-        Debug.Log("[yellow] Next Tile");
         Vector3 pos = new Vector3(GetComponent<Transform>().position);
         if (path.Count > 0)
         {
@@ -275,56 +290,36 @@ public class Movement_Action : Action
 
             //Tiles
             if (path.Count == 1)
-            {
-                arrive.SetEnabled(false);
-                seek.SetEnabled(false);
                 translation_finished = true;
-
-                if (chase == true)
-                {
-                    if (LookingAtPlayer() == false)
-                        LookAtPlayer();
-                    else
-                    {
-                        rotation_finished = true;
-                        MoveSideways(path[0]);
-                    }
-                }
-
-                tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
-            }
             else
             {
                 arrive.SetEnabled(true);
                 seek.SetEnabled(true);
                 path.Remove(path[0]);
 
-                if (chase == true)
-                {
-                    Debug.Log("[pink]chase = true");
-                    if (LookingAtPlayer() == true)
-                    {
-                        rotation_finished = true;
-                        MoveSideways(path[0]);
-                        Debug.Log("[green]MoveSideways");
-                    }
-                    else
-                        LookAtPlayer();
-                }
+                if (chase == false)
+                    LookAtNextTile();
                 else
                 {
-                    LookAtNextTile();
-                    Debug.Log("[blue]LookAtNextTile");
+                    if (LookingAtPlayer() == false)
+                        LookAtPlayer();
+                    else
+                    {
+                        rotation_finished = true;
+                        moving_sideways = true;
+                        Debug.Log("Moving sideways to x: " + path[0].GetTileX() + " y: " + path[0].GetTileY());
+                        Debug.Log("Translation finished == " + translation_finished);
+                        MoveSideways(path[0]);
+                    }
                 }
-
-                tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
             }
+
+            tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
         }
     }
 
     public void GoTo(int obj_x, int obj_y)
     {
-        Debug.Log("Go To");
         int current_x = GetCurrentTileX();
         int current_y = GetCurrentTileY();
 
@@ -333,17 +328,6 @@ public class Movement_Action : Action
             translation_finished = true;
             arrive.SetEnabled(false);
             seek.SetEnabled(false);
-            if (chase == true)
-            {
-                Debug.Log("LookingAtPlayer: " + LookingAtPlayer());
-                if (LookingAtPlayer() == false)
-                {
-                    Debug.Log("LookAtPlayer");
-                    LookAtPlayer();
-                }
-                else
-                    rotation_finished = true;
-            }
         }
         else
         {
@@ -356,30 +340,21 @@ public class Movement_Action : Action
 
             path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
 
-            if (path.Count > 1)
+            if (arrive.ReachedTile())
             {
-                if (arrive.ReachedTile())
-                    NextTile();
+                translation_finished = true;
+                arrive.SetEnabled(false);
+                seek.SetEnabled(false);
             }
-            else
-            {
-                if (arrive.ReachedTile())
-                {
-                    translation_finished = true;
-                    arrive.SetEnabled(false);
-                    seek.SetEnabled(false);
-                }
 
-                if (chase == true)
+            if (chase == true)
+            {
+                if (LookingAtPlayer() == false)
+                    LookAtPlayer();
+                else
                 {
-                    Debug.Log("LookingAtPlayer: " + LookingAtPlayer());
-                    if (LookingAtPlayer() == false)
-                    {
-                        Debug.Log("LookAtPlayer");
-                        LookAtPlayer();
-                    }
-                    else
-                        rotation_finished = true;
+                    rotation_finished = true;
+                    moving_sideways = true;
                 }
             }
         }
@@ -474,36 +449,31 @@ public class Movement_Action : Action
 
         if (Mathf.Abs(delta) > align.GetRotMargin())
         {
-            Debug.Log("Rotation finished = false");
-            rotation_finished = false;
             look_at_pos = new Vector3(target_position);
             align.SetEnabled(true);
+            rotation_finished = false;
             align.SetRotation(delta);
+
+            /*if (delta < 0.0f)
+                GetComponent<CompAnimation>().SetSecondActiveBlendingClip("RotateRight");
+            else
+                GetComponent<CompAnimation>().SetSecondActiveBlendingClip("RotateLeft");*/
         }
     }
 
     public void LookAtNextTile()
     {
-        Debug.Log("Look At next tile");
-        Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
         if (path != null && path.Count > 0)
-        {
-            next_tile.x = path[0].GetTileX() * tile_size;
-            next_tile.z = path[0].GetTileY() * tile_size;
-        }
-        LookAt(next_tile);
+            LookAtTile(path[0]);
+        else
+            Debug.Log("There is no next tile to look at", Department.GENERAL, Color.RED);
     }
 
-    public void LookAtTile(PathNode obj_tile)
+    public void LookAtTile(PathNode destiny_tile)
     {
         Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
-        Debug.Log("Looking at tile");
-
-        next_tile.x = obj_tile.GetTileX() * tile_size;
-        next_tile.z = obj_tile.GetTileY() * tile_size;
-
-        Debug.Log("Next tile: x=" + next_tile.x + "y=" + next_tile.z);
-        Debug.Log("Objective tile x:" + obj_tile.GetTileX() + "y:" + obj_tile.GetTileY());
+        next_tile.x = destiny_tile.GetTileX() * tile_size;
+        next_tile.z = destiny_tile.GetTileY() * tile_size;
         LookAt(next_tile);
     }
 
@@ -522,93 +492,54 @@ public class Movement_Action : Action
         if (delta < (-Mathf.PI))
             delta = delta + 2 * Mathf.PI;
 
-        Debug.Log("Angle To Player: " + Mathf.Rad2deg(delta));
-        Debug.Log("Rotation done: " + rotation_finished);
-        Debug.Log("Looking at: " + dir);
+        delta = Mathf.Rad2deg(delta);
 
         switch (dir)
         {
             case Direction.DIR_EAST:
                 //South
-                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                {
+                if (delta > -140.0f && delta < -50.0f)
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
-                    Debug.Log("Looking at East rotationg to South");
-                }
                 //North
-                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
-                {
+                if (delta > 50.0f && delta < 140.0f)
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
-                    Debug.Log("Looking at East rotationg to North");
-                }
                 //West
-                if (delta < (-(3 * Mathf.PI) / 4) || delta > (3 * Mathf.PI) / 4)
-                {
+                if (delta < -140.0f || delta > 140.0f)
                     LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
-                    Debug.Log("Looking at East rotationg to West");
-                }
                 break;
 
             case Direction.DIR_NORTH:
                 //East
-                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                {
+                if (delta > -140.0f && delta < -50.0f)
                     LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
-                    Debug.Log("Looking at North rotationg to East");
-                }
                 //West
-                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
-                {
+                if (delta > 50.0f && delta < 140.0f)
                     LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
-                    Debug.Log("Looking at North rotationg to West");
-                }
                 //South
-                if (delta < (-(3 * Mathf.PI) / 4) || delta > (3 * Mathf.PI) / 4)
-                {
+                if (delta < -140.0f || delta > 140.0f)
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
-                    Debug.Log("Looking at North rotationg to South");
-                }
                 break;
             case Direction.DIR_SOUTH:
                 //West
-                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                {
+                if (delta > -140.0f && delta < -50.0f)
                     LookAtTile(new PathNode(GetCurrentTileX() - 1, GetCurrentTileY()));
-                    Debug.Log("Looking at South rotationg to West");
-                }
                 //East
-                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
-                {
-                    Debug.Log("Current tile x:" + GetCurrentTileX() + "y:" + GetCurrentTileY());
+                if (delta > 50.0f && delta < 140.0f)
                     LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
-                    Debug.Log("Looking at South rotationg to East");
-                }
                 //North
-                if (delta < (-(3 * Mathf.PI) / 4) || delta > (3 * Mathf.PI) / 4)
-                {
+                if (delta < -140.0f || delta > 140.0f)
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
-                    Debug.Log("Looking at South rotationg to North");
-                }
                 break;
             case Direction.DIR_WEST:
                 //North
-                if (delta > (-(3 * Mathf.PI) / 4) && delta < -(Mathf.PI / 4))
-                {
+                if (delta > -140.0f && delta < -50.0f)
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() - 1));
-                    Debug.Log("Looking at West rotationg to North");
-                }
                 //South
-                if (delta > (Mathf.PI / 4) && delta < ((3 * Mathf.PI) / 4))
-                {
+                if (delta > 50.0f && delta < 140.0f)
                     LookAtTile(new PathNode(GetCurrentTileX(), GetCurrentTileY() + 1));
-                    Debug.Log("Looking at West rotationg to South");
-                }
                 //East
-                if (delta < (-(3 * Mathf.PI) / 4) || delta > (3 * Mathf.PI) / 4)
-                {
+                if (delta < -140.0f || delta > 140.0f)
                     LookAtTile(new PathNode(GetCurrentTileX() + 1, GetCurrentTileY()));
-                    Debug.Log("Looking at West rotationg to East");
-                }
                 break;
         }
     }
@@ -628,7 +559,9 @@ public class Movement_Action : Action
         if (delta < (-Mathf.PI))
             delta = delta + 2 * Mathf.PI;
 
-        if (delta >= -(Mathf.PI / 4) && delta <= (Mathf.PI / 4))
+        delta = Mathf.Rad2deg(delta);
+
+        if (delta >= -50.0f && delta <= 50.0f)
             return true;
         return false;
     }
@@ -750,19 +683,62 @@ public class Movement_Action : Action
 
     private void MoveSideways(PathNode destination_node)
     {
-        /*int distance_x = destination_node - GetCurrentTileX();
-        int distance_y = destination_node - GetCurrentTileY();
-        switch (dir)
+        int distance_x = destination_node.GetTileX() - GetCurrentTileX();
+        int distance_y = destination_node.GetTileY() - GetCurrentTileY();
+
+        if (distance_x == 0 && distance_y == 0)
+            Debug.Log("[error] destination == current");
+
+        //Moving West
+        if (distance_x < 0)
         {
-            case Direction.DIR_EAST:
-                
-                break;
-            case Direction.DIR_NORTH:
-                break;
-            case Direction.DIR_SOUTH:
-                break;
-            case Direction.DIR_WEST:
-                break;
-        }*/
+            Debug.Log("Going west", Department.IA,Color.PINK);
+            switch (dir)
+            {
+                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
+                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
+                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
+                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
+            }
+        }
+
+        //Moving East
+        if (distance_x > 0)
+        {
+            Debug.Log("Going east", Department.IA, Color.PINK);
+            switch (dir)
+            {
+                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
+                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
+                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
+                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
+            }
+        }
+
+        //Moving North
+        if (distance_y < 0)
+        {
+            Debug.Log("Going north", Department.IA, Color.PINK);
+            switch (dir)
+            {
+                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
+                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
+                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
+                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
+            }
+        }
+
+        //Moving South
+        if (distance_y > 0)
+        {
+            Debug.Log("Going south", Department.IA, Color.PINK);
+            switch (dir)
+            {
+                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
+                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
+                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
+                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
+            }
+        }
     }
 }
