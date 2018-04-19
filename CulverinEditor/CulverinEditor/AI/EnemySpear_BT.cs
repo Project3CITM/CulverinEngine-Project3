@@ -9,7 +9,6 @@ public class EnemySpear_BT : Enemy_BT
     System.Random rand;
     Material enemy_mat_sword;
 
-    public GameObject spear_icon;
     public GameObject spear_name;
 
     public override void Start()
@@ -44,11 +43,10 @@ public class EnemySpear_BT : Enemy_BT
 
         enemy_mat_sword = GetMaterialByName("EnemyWithSpear");
 
-        spear_icon = GetLinkedObject("spear_icon");
         spear_name = GetLinkedObject("spear_name");
 
         base.Start();
-        base.DeactivateHUD(spear_icon, spear_name);
+        base.DeactivateHUD(spear_name);
     }
 
     public override void Update()
@@ -61,7 +59,7 @@ public class EnemySpear_BT : Enemy_BT
         }
         else if (hud_active == true)
         {
-            base.DeactivateHUD(spear_icon, spear_name);
+            base.DeactivateHUD(spear_name);
         }
 
         bool attack_ready = attack_timer >= attack_cooldown;
@@ -203,7 +201,7 @@ public class EnemySpear_BT : Enemy_BT
 
     public override bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
-        base.ActivateHUD(spear_icon, spear_name);
+        base.ActivateHUD(spear_name);
         return base.ApplyDamage(damage, damage_type);
     }
 

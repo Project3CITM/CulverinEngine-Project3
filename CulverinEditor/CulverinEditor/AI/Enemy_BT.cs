@@ -313,19 +313,17 @@ public class Enemy_BT : BT
         hp_timer = 0.0f;
     }
 
-    public virtual void ActivateHUD(GameObject icon, GameObject text)
+    public virtual void ActivateHUD(GameObject text)
     {
         hp_timer = 0.0f;
         enemy_hp_bar.GetComponent<CompImage>().ActivateRender();
-        icon.GetComponent<CompImage>().ActivateRender();
         text.SetActive(true);
         hud_active = true;
     }
 
-    public virtual void DeactivateHUD(GameObject icon, GameObject text)
+    public virtual void DeactivateHUD(GameObject text)
     {
         enemy_hp_bar.GetComponent<CompImage>().DeactivateRender();
-        icon.GetComponent<CompImage>().DeactivateRender();
         text.SetActive(false);
         hud_active = false;
     }

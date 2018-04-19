@@ -8,7 +8,6 @@ public class EnemyShield_BT : Enemy_BT
     float shield_block_timer = 0.0f;
     Material enemy_mat_sword;
 
-    public GameObject shield_icon;
     public GameObject shield_name;
 
     public override void Start()
@@ -29,11 +28,10 @@ public class EnemyShield_BT : Enemy_BT
 
         enemy_mat_sword = GetMaterialByName("EnemyShield");
 
-        shield_icon = GetLinkedObject("shield_icon");
         shield_name = GetLinkedObject("shield_name");
 
         base.Start();
-        base.DeactivateHUD(shield_icon, shield_name);
+        base.DeactivateHUD(shield_name);
     }
 
     public override void Update()
@@ -49,7 +47,7 @@ public class EnemyShield_BT : Enemy_BT
         }
         else if(hud_active == true)
         {
-            base.DeactivateHUD(shield_icon, shield_name);
+            base.DeactivateHUD(shield_name);
         }
 
         bool attack_ready = attack_timer >= attack_cooldown;
@@ -143,7 +141,7 @@ public class EnemyShield_BT : Enemy_BT
 
     public override bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
-        base.ActivateHUD(shield_icon, shield_name);
+        base.ActivateHUD(shield_name);
 
         switch (life_state)
         {
