@@ -108,22 +108,25 @@ void CompAnimation::PreUpdate(float dt)
 		}
 	}
 	playing = false;
-	if (current_animation != nullptr)
+	if (GetParent()->IsVisible())
 	{
-		for (std::vector<AnimationClip*>::iterator it = animation_clips.begin(); it != animation_clips.end(); it++)
+		if (current_animation != nullptr)
 		{
-			if ((*it)->state != A_STOP)
+			for (std::vector<AnimationClip*>::iterator it = animation_clips.begin(); it != animation_clips.end(); it++)
 			{
-				playing = true;
-			}
-		}
-		if (playing)
-		{
-			for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
-			{
-				if (it->first != nullptr)
+				if ((*it)->state != A_STOP)
 				{
-					it->second->UpdateBone(it->first, current_animation, active_node->GetFirstActiveBlendingClip(), active_node->GetSecondActiveBlendingClip(), blending_animation);
+					playing = true;
+				}
+			}
+			if (playing)
+			{
+				for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
+				{
+					if (it->first != nullptr)
+					{
+						it->second->UpdateBone(it->first, current_animation, active_node->GetFirstActiveBlendingClip(), active_node->GetSecondActiveBlendingClip(), blending_animation);
+					}
 				}
 			}
 		}
