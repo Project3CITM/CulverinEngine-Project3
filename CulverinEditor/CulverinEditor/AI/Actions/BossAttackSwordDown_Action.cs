@@ -89,11 +89,11 @@ public class BossAttackSwordDown_Action : Action
                     break;
             }
         }
-        else if (ground_hit == false && GetComponent<CompAnimation>().IsAnimOverXTime(hit_ground_point))
+        else if (ground_hit == true && GetComponent<CompAnimation>().IsAnimOverXTime(hit_ground_point))
         {
             GetComponent<CompAudio>().PlayEvent("BossHitGround");
             Input.RumblePlay(rumble_power, rumble_time);
-            ground_hit = true;
+            ground_hit = false;
             Debug.Log("Ground Hit!!");
         }
         else if (state == BASD_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("SwordDownAttack"))
