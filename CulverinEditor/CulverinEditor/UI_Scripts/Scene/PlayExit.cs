@@ -1,10 +1,9 @@
 ﻿using CulverinEditor;
 using CulverinEditor.SceneManagement;
 using CulverinEditor.EventSystem;
-
 using CulverinEditor.Debug;
 
-public class ReturnToMenuFromLose : CulverinBehaviour
+public class PlayExit : CulverinBehaviour
 {
     GameObject pop_up_menu;
     GameObject pop_up_menu_button;
@@ -17,21 +16,22 @@ public class ReturnToMenuFromLose : CulverinBehaviour
         pop_up_menu_button = GetLinkedObject("pop_up_menu_button");
         quit_button = GetLinkedObject("quit_button");
         play_button = GetLinkedObject("play_button");
-        Audio.StopAllSounds();
-        Input.SetInputManagerActive("GUI", true);
-        GetComponent<CompAudio>().PlayEvent("PlayLoseMusic");
+
+        pop_up_menu.SetActive(false);
     }
-    public void Return()
+
+    public void PlayButton()
     {
-        Audio.StopAllSounds();
-        GetComponent<CompAudio>().PlayEvent("PlayUIMusic");
-        SceneManager.LoadScene("MainMenuScene");
+        GetComponent<CompAudio>().PlayEvent("Push");
+        SceneManager.LoadScene("HistoryScene");
     }
+
     public void QuitButton()
     {
         GetComponent<CompAudio>().PlayEvent("Push");
         play_button.GetComponent<CompButton>().SetInteractivity(false);
         quit_button.GetComponent<CompButton>().SetInteractivity(false);
+
         pop_up_menu.SetActive(true);
         EventSystem.SendInteractiveSelected(pop_up_menu_button);
     }

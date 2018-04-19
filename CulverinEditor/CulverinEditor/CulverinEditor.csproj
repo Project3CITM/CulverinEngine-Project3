@@ -110,6 +110,7 @@
     <Compile Include="UI_Scripts\Scene\ContinueButton.cs" />
     <Compile Include="Player\Daenerys\FireBreath.cs" />
     <Compile Include="Player\Daenerys\FireSound.cs" />
+    <Compile Include="UI_Scripts\Scene\PlayExit.cs" />
     <Compile Include="UI_Scripts\Scene\PlayQuit.cs" />
     <Compile Include="UI_Scripts\Scene\ReturnToMenu.cs" />
     <Compile Include="ScoreScreen.cs" />
