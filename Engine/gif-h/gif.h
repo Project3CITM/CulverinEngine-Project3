@@ -343,6 +343,8 @@ int GifPickChangedPixels( const uint8_t* lastFrame, uint8_t* frame, int numPixel
     return numChanged;
 }
 
+uint8_t* destroyableImage = nullptr;
+
 // Creates a palette by placing all the image pixels in a k-d tree and then averaging the blocks at the bottom.
 // This is known as the "modified median split" technique
 void GifMakePalette( const uint8_t* lastFrame, const uint8_t* nextFrame, uint32_t width, uint32_t height, int bitDepth, bool buildForDither, GifPalette* pPal )
@@ -352,7 +354,6 @@ void GifMakePalette( const uint8_t* lastFrame, const uint8_t* nextFrame, uint32_
     // SplitPalette is destructive (it sorts the pixels by color) so
     // we must create a copy of the image for it to destroy
     size_t imageSize = (size_t)(width * height * 4 * sizeof(uint8_t));
-    uint8_t* destroyableImage = (uint8_t*)GIF_TEMP_MALLOC(imageSize);
     memcpy(destroyableImage, nextFrame, imageSize);
 
     int numPixels = (int)(width * height);
@@ -365,14 +366,14 @@ void GifMakePalette( const uint8_t* lastFrame, const uint8_t* nextFrame, uint32_
 
     GifSplitPalette(destroyableImage, numPixels, 1, lastElt, splitElt, splitDist, 1, buildForDither, pPal);
 
-    GIF_TEMP_FREE(destroyableImage);
-
     // add the bottom node for the transparency index
     pPal->treeSplit[1 << (bitDepth-1)] = 0;
     pPal->treeSplitElt[1 << (bitDepth-1)] = 0;
 
     pPal->r[0] = pPal->g[0] = pPal->b[0] = 0;
 }
+
+int32_t *quantPixels = nullptr;
 
 // Implements Floyd-Steinberg dithering, writes palette value to alpha
 void GifDitherImage( const uint8_t* lastFrame, const uint8_t* nextFrame, uint8_t* outFrame, uint32_t width, uint32_t height, GifPalette* pPal )
@@ -382,7 +383,6 @@ void GifDitherImage( const uint8_t* lastFrame, const uint8_t* nextFrame, uint8_t
     // quantPixels initially holds color*256 for all pixels
     // The extra 8 bits of precision allow for sub-single-color error values
     // to be propagated
-    int32_t *quantPixels = (int32_t *)GIF_TEMP_MALLOC(sizeof(int32_t) * (size_t)numPixels * 4);
 
     for( int ii=0; ii<numPixels*4; ++ii )
     {
@@ -479,8 +479,6 @@ void GifDitherImage( const uint8_t* lastFrame, const uint8_t* nextFrame, uint8_t
     {
         outFrame[ii] = (uint8_t)quantPixels[ii];
     }
-
-    GIF_TEMP_FREE(quantPixels);
 }
 
 // Picks palette colors for the image using simple thresholding, no dithering
@@ -582,6 +580,8 @@ struct GifLzwNode
     uint16_t m_next[256];
 };
 
+GifLzwNode* codetree = nullptr;
+
 // write a 256-color (8-bit) image palette to the file
 void GifWritePalette( const GifPalette* pPal, FILE* f )
 {
@@ -636,8 +636,6 @@ void GifWriteLzwImage(FILE* f, uint8_t* image, uint32_t left, uint32_t top,  uin
     const uint32_t clearCode = 1 << pPal->bitDepth;
 
     fputc(minCodeSize, f); // min code size 8 bits
-
-    GifLzwNode* codetree = (GifLzwNode*)GIF_TEMP_MALLOC(sizeof(GifLzwNode)*4096);
 
     memset(codetree, 0, sizeof(GifLzwNode)*4096);
     int32_t curCode = -1;
@@ -711,8 +709,6 @@ void GifWriteLzwImage(FILE* f, uint8_t* image, uint32_t left, uint32_t top,  uin
     if( stat.chunkIndex ) GifWriteChunk(f, stat);
 
     fputc(0, f); // image block terminator
-
-    GIF_TEMP_FREE(codetree);
 }
 
 struct GifWriter
@@ -779,6 +775,10 @@ bool GifBegin( GifWriter* writer, const char* filename, uint32_t width, uint32_t
         fputc(0, writer->f); // block terminator
     }
 
+	codetree = (GifLzwNode*)GIF_TEMP_MALLOC(sizeof(GifLzwNode) * 4096);
+	quantPixels = (int32_t *)GIF_TEMP_MALLOC(sizeof(int32_t) * (size_t)((int)(width * height)) * 4);
+	destroyableImage = (uint8_t*)GIF_TEMP_MALLOC((size_t)(width * height * 4 * sizeof(uint8_t)));
+
     return true;
 }
 
@@ -819,6 +819,10 @@ bool GifEnd( GifWriter* writer )
 
     writer->f = NULL;
     writer->oldImage = NULL;
+
+	GIF_TEMP_FREE(codetree);
+	GIF_TEMP_FREE(quantPixels);
+	GIF_TEMP_FREE(destroyableImage);
 
     return true;
 }
