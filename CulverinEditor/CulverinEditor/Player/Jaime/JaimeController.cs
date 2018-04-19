@@ -546,7 +546,7 @@ public class JaimeController : CharacterController
                 }
 
                 /* ---------- IN CASE THAT THE ENEMY BLOCKS THE ATTACK, UNCOMMENT AND COMPLETE THIS CODE ---------- */
-                if (enemy_manager.ApplyDamage(coll_object, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.SWORD))
+                if (enemy_manager.ApplyDamage(coll_object, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT))
                 {
                     //Increase the blood of the sword
                     GetLinkedObject("jaime_sword_obj").GetComponent<SwordParticles>().SetBlood(blood_amount); 

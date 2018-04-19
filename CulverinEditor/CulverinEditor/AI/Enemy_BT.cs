@@ -15,6 +15,7 @@ public class Enemy_BT : BT
 
     public enum ENEMY_GET_DAMAGE_TYPE
     {
+        DEFAULT,
         ARROW,
         FIREWALL,
         FIREBALL,
@@ -169,12 +170,13 @@ public class Enemy_BT : BT
 
         next_action = GetComponent<GetHit_Action>();
 
+        GetComponent<GetHit_Action>().SetHitType(damage_type);
+
         current_hp -= damage;
         //ChangeTexturesToDamaged();
  
         current_interpolation = current_hp / total_hp;
         dmg_alpha += 0.2f;
-        Debug.Log("[pink]AUMENTAME ALPHA PUTA: " + dmg_alpha);
         if (current_hp <= 0)
         {
             //GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
