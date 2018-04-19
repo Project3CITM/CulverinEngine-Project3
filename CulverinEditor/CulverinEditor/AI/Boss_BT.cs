@@ -242,7 +242,8 @@ public class Boss_BT : BT
             //todosforme
             GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
 
-            SceneManager.LoadScene("ScoreMenu");
+            SceneManager.LoadNewWalkableMap("Map_Level_2");
+            SceneManager.LoadScene("Level 2");
         }
         /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
         {
