@@ -711,7 +711,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 						}
 					}
 				}
-				uint num_ints = json_object_dotget_number_with_std(object, name + "Num Int:");
+				uint num_ints = json_object_dotget_number_with_std(object, name + "Num Ints:");
 				for (int i = 0; i < num_ints; i++)
 				{
 					std::ostringstream ss;

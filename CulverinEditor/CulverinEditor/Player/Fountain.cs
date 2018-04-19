@@ -37,6 +37,8 @@ public class Fountain : CulverinBehaviour
         starting_x_scale_bottom = bottom_water.transform.GetScale().x;
         starting_z_scale_bottom = bottom_water.transform.GetScale().z;
         starting_y_bottom = bottom_water.transform.GetPosition().y;
+
+        fountain_interact.GetComponent<CompImage>().DeactivateRender();
     }
 
     void Update()
@@ -52,19 +54,19 @@ public class Fountain : CulverinBehaviour
                 destination_y = Mathf.Lerp(starting_y_bottom, final_y_bottom, by);
                 destination_x = Mathf.Lerp(starting_x_scale_bottom, final_x_scale_bottom, by);
                 destination_z = Mathf.Lerp(starting_z_scale_bottom, final_z_scale_bottom, by);
-                if(current_usage == 0)
+                if (current_usage == 0)
                 {
                     on_fountain_range = false;
-                    fountain_interact.SetActive(false);
+                    fountain_interact.GetComponent<CompImage>().DeactivateRender();
                 }
             }
         }
 
-        if(reducing_water == true)
+        if (reducing_water == true)
         {
             int checks = 0;
             Vector3 bottom_pos = bottom_water.transform.GetPosition();
-            if(destination_y < bottom_pos.y)
+            if (destination_y < bottom_pos.y)
             {
                 bottom_water.transform.SetPosition(new Vector3(bottom_pos.x, bottom_pos.y - deplenish_speed, bottom_pos.z));
             }
@@ -102,9 +104,9 @@ public class Fountain : CulverinBehaviour
     // OnTrigger Lever ------------------------
     void OnTriggerEnter()
     {
-        if(current_usage > 0)
+        if (current_usage > 0)
         {
-            fountain_interact.SetActive(true);
+            fountain_interact.GetComponent<CompImage>().ActivateRender();
             on_fountain_range = true;
         }
     }
@@ -112,6 +114,6 @@ public class Fountain : CulverinBehaviour
     void OnTriggerLost()
     {
         on_fountain_range = false;
-        fountain_interact.SetActive(false);
+        fountain_interact.GetComponent<CompImage>().DeactivateRender();
     }
 }
