@@ -86,10 +86,9 @@ public class MovementController : CulverinBehaviour
 
 
         //SET PLAYER INTO THE CORRECT MAP TILE
-        int player_x, player_y = 0;
-        level_map.GetPositionByeValue(out player_x, out player_y, 2); //2 = player start position
-        level_map.UpdateMap(player_x, player_y, 0);
-        MovePositionInitial(new Vector3((float)player_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)player_y * distanceToMove));
+        level_map.GetPositionByeValue(out curr_x, out curr_y, 2); //2 = player start position
+        level_map.UpdateMap(curr_x, curr_y, 0);
+        MovePositionInitial(new Vector3((float)curr_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)curr_y * distanceToMove));
 
         drowning = false;
     }
@@ -111,7 +110,6 @@ public class MovementController : CulverinBehaviour
         {
             tile_mov_x = 0;
             tile_mov_y = 0;
-
             moving = false;
 
             // CHECK ROTATION --------------------------

@@ -1141,10 +1141,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::GetInput_MouseButtonUp", (const void*)GetInput_MouseButtonUp);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerAxis);
 
-	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerActionName);
-	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerKeyBindingName);
-	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerWaitForKey);
-	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)SetInput_ControllerWaitForKey);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerActionName", (const void*)GetInput_ControllerActionName);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerKeyBindingName", (const void*)GetInput_ControllerKeyBindingName);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerWaitForKey", (const void*)GetInput_ControllerWaitForKey);
+	mono_add_internal_call("CulverinEditor.Input::SetInput_ControllerWaitForKey", (const void*)SetInput_ControllerWaitForKey);
 
 	mono_add_internal_call("CulverinEditor.Input::RumblePlay", (const void*)RumblePlay);
 
