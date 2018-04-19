@@ -14,17 +14,11 @@ enum Culverin_PartScreenshot_STATE
 	Culverin_PartScreenshot_STATE_WAITING_FOR_POINT2
 };
 
-enum Culverin_PartScreenshot_STATE
-{
-	Culverin_PartScreenshot_STATE_WAITING_FOR_POINT1,
-	Culverin_PartScreenshot_STATE_WAITING_FOR_POINT2
-};
-
 struct Culverin_Screenshot
 {
 	SDL_Scancode FullScreenKey = SDL_Scancode::SDL_SCANCODE_0;
 	SDL_Scancode PartScreenKey = SDL_Scancode::SDL_SCANCODE_9;
-	Culverin_PartScreenshot_STATE state = Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT1;
+	Culverin_PartScreenshot_STATE Screen_State_part = Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT1;
 
 	float2 Point1 = float2::zero;
 	float2 Point2 = float2::zero;

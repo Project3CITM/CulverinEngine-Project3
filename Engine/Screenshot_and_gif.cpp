@@ -34,12 +34,12 @@ void Culverin_Screenshot::TakePartScreen()
 	if (App->input->GetKey(PartScreenKey) == KEY_STATE::KEY_DOWN)
 	{
 		ImGuiIO GuiIO = ImGui::GetIO();
-		switch (state)
+		switch (Screen_State_part)
 		{
 		case Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT1:
 			Point1.x = GuiIO.MousePos.x;
 			Point1.y = GuiIO.DisplaySize.y - GuiIO.MousePos.y;
-			state = Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT2;
+			Screen_State_part = Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT2;
 			break;
 		case Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT2:
 		{
@@ -70,7 +70,7 @@ void Culverin_Screenshot::TakePartScreen()
 			RELEASE_ARRAY(s_pixels);
 
 			ScreenshotsNum++;
-			state = Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT1;
+			Screen_State_part = Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT1;
 			break;
 		}
 		}
