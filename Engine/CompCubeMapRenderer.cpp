@@ -42,7 +42,7 @@ void CompCubeMapRenderer::Bake(Event& event)
 	glViewport(0, 0, size, size);
 
 	float near_plane = 1.f;
-	float far_plane = 50.f; 
+	float far_plane = 300.f; 
 	glm::mat4 shadow_proj = glm::perspective(glm::radians(90.f), (float)size / (float)size, near_plane, far_plane);
 
 	std::vector<glm::mat4> cube_transforms;

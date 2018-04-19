@@ -192,7 +192,7 @@ void main()
     final_color =normalize(final_color);
 
 	vec3 col = max( color_texture * vec3(0,0.2,0.2) ,
-	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb * shadow);
+	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
 
     color = vec4(col, _alpha);
 }
