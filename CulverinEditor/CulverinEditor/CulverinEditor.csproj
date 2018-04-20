@@ -124,7 +124,6 @@
     <Compile Include="UI_Scripts\Scene\PlayExit.cs" />
     <Compile Include="UI_Scripts\Scene\PlayQuit.cs" />
     <Compile Include="UI_Scripts\Scene\ReturnToMenu.cs" />
-    <Compile Include="UI_Scripts\ScoreScreen.cs" />
     <Compile Include="UI_Scripts\Scene\FadeAlpha.cs" />
     <Compile Include="UI_Scripts\Scene\ReturnToMenuFromLose.cs" />
     <Compile Include="UI_Scripts\Scene\Scroll.cs" />
