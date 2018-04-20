@@ -14,7 +14,7 @@ public:
 
 	~CompCubeMapRenderer();
 
-
+	void PreUpdate(float dt);
 	void Bake(Event& event);
 	
 	virtual void ShowInspectorInfo();
@@ -29,7 +29,7 @@ public:
 
 public:
 	CubeMap_Texture cube_map;
-
+	bool render = false;
 
 
 

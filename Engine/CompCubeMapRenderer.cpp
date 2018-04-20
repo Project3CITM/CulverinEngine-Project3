@@ -19,13 +19,27 @@ CompCubeMapRenderer::CompCubeMapRenderer(Comp_Type t, GameObject * parent) : Com
 	uid = App->random->Int();
 	name_component = "CubeMapRenderer";	
 	cube_map.Create();
+	cube_map.parent = this;
 	App->renderer3D->cube_maps.push_back(&cube_map);
+	render = true;
 }
 
 CompCubeMapRenderer::~CompCubeMapRenderer()
 {
 	auto item = std::find(App->renderer3D->cube_maps.begin(), App->renderer3D->cube_maps.end(), &cube_map);
 	App->renderer3D->cube_maps.erase(item);
+}
+
+
+void CompCubeMapRenderer::PreUpdate(float dt)
+{
+	if (render) {
+		Event draw_event;
+		draw_event.Set_event_data(EventType::EVENT_CUBEMAP_REQUEST);
+		draw_event.cube_map_request.comp_cubemap = this;
+		App->event_system_v2->PushEvent(draw_event);
+		render = false;
+	}
 }
 
 void CompCubeMapRenderer::Bake(Event& event)
