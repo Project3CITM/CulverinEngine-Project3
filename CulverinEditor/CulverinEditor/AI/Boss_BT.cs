@@ -221,38 +221,43 @@ public class Boss_BT : BT
 
     public bool ApplyDamage(float damage)
     {
-        GetComponent<CompAudio>().PlayEvent("BossHurt");
-
-        current_hp -= damage;
-        current_interpolation = current_hp / total_hp;
-        
-        hp_bar_boss.GetComponent<BossHPBar>().SetHPBar(current_interpolation);
-
-        if (current_hp <= 0)
+        if (boss_active)
         {
-            state = AI_STATE.AI_DEAD;
-            phase = BOSS_STATE.BOSS_DEAD;
-            next_action = GetComponent<Die_Action>();
-            current_action.Interupt();
-            GetComponent<CompAudio>().PlayEvent("BossDeath");
+            GetComponent<CompAudio>().PlayEvent("BossHurt");
 
-            hp_bar_boss.GetComponent<BossHPBar>().ActivateHPBar(false);
-            hp_bar_boss.SetActive(false);
+            current_hp -= damage;
+            current_interpolation = current_hp / total_hp;
 
-            //todosforme
-            GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
+            hp_bar_boss.GetComponent<BossHPBar>().SetHPBar(current_interpolation);
 
-            SceneManager.LoadNewWalkableMap("Map_Level_2");
-            SceneManager.LoadScene("Level 2");
+            if (current_hp <= 0)
+            {
+                state = AI_STATE.AI_DEAD;
+                phase = BOSS_STATE.BOSS_DEAD;
+                next_action = GetComponent<Die_Action>();
+                current_action.Interupt();
+                GetComponent<CompAudio>().PlayEvent("BossDeath");
+
+                hp_bar_boss.GetComponent<BossHPBar>().ActivateHPBar(false);
+                hp_bar_boss.SetActive(false);
+
+                //todosforme
+                GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
+
+                SceneManager.LoadNewWalkableMap("Map_Level_2");
+                SceneManager.LoadScene("Level 2");
+            }
+            /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
+            {
+                Debug.Log("[yellow] BOSS PHASE2!!!!!");
+                phase = BOSS_STATE.BOSS_PHASE2;
+                //Phase2Textures();
+            }*/
+
+            return true;
         }
-        /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
-        {
-            Debug.Log("[yellow] BOSS PHASE2!!!!!");
-            phase = BOSS_STATE.BOSS_PHASE2;
-            //Phase2Textures();
-        }*/
-
-        return true;
+        else
+            return false;
     }
 
     public void Phase2Textures()
