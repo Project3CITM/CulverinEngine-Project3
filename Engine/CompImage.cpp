@@ -85,6 +85,14 @@ void CompImage::Update(float dt)
 			DeviceCheck();
 			
 		}
+		else if (DeviceCombinationType::CONTROLLER_COMB_DEVICE == App->input->GetActualDeviceCombo()&& !device_swap_active )
+		{
+			DeviceCheck();
+		}
+		else if (DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE == App->input->GetActualDeviceCombo() && device_swap_active)
+		{
+			DeviceCheck();
+		}
 	}
 
 	render = CheckRender();
