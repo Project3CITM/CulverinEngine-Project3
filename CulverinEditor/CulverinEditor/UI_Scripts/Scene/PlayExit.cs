@@ -16,6 +16,8 @@ public class PlayExit : CulverinBehaviour
         pop_up_menu_button = GetLinkedObject("pop_up_menu_button");
         quit_button = GetLinkedObject("quit_button");
         play_button = GetLinkedObject("play_button");
+        play_button.GetComponent<CompButton>().SetInteractivity(true);
+        quit_button.GetComponent<CompButton>().SetInteractivity(true);
 
         pop_up_menu.SetActive(false);
     }

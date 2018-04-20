@@ -395,6 +395,9 @@ void CompText::UpdateText()
 	update_text = true;
 	int width = 0;
 	int height = 0;
+	text->font.size = text_size;
+	text->ReLoadToMemory();
+
 	TTF_SizeText(text->font.font, text_str.c_str(), &width, &height);
 	s_font = TTF_RenderText_Blended_Wrapped(text->font.font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) }, width);
 
