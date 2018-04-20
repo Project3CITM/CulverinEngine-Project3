@@ -506,6 +506,8 @@ public class JaimeController : CharacterController
             }
             else
             {
+                PlayFx("JaimeTired"); 
+                Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.BLUE);
                 return false;
             }
         }
@@ -645,7 +647,11 @@ public class JaimeController : CharacterController
                 }
             }
             else
+            {
+                PlayFx("JaimeTired");
+                Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.PINK);
                 return false;
+            }
         }
         return false;
     }
@@ -679,7 +685,11 @@ public class JaimeController : CharacterController
                     return false;
             }
             else
+            {
+                PlayFx("JaimeTired");
+                Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.BLUE);
                 return false;
+            }
         }
         return false;
     }

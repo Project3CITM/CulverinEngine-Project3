@@ -468,6 +468,8 @@ public class DaenerysController : CharacterController
             }
             else
             {
+                PlayFx("DaenerysTired");
+                Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
                 return false;
             }
         }
@@ -558,6 +560,8 @@ public class DaenerysController : CharacterController
                 }
                 else
                 {
+                    PlayFx("DaenerysTired");
+                    Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
                     return false;
                 }
             }
@@ -617,6 +621,8 @@ public class DaenerysController : CharacterController
             }
             else
             {
+                PlayFx("DaenerysTired");
+                Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
                 return false;
             }
         }

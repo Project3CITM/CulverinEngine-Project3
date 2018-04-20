@@ -370,6 +370,7 @@ public class CharactersManager : CulverinBehaviour
             current_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.BEHIND_LEFT);
             current_character.GetComponent<JaimeController>().UpdateHUD(false, true);
             current_character.GetComponent<JaimeController>().ToggleMesh(false);
+            current_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(false);
         }
         else if (current_character.GetName() == "Daenerys")
         {
@@ -391,6 +392,7 @@ public class CharactersManager : CulverinBehaviour
             left_character.GetComponent<JaimeController>().UpdateHUD(true, true);
             left_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
             left_character.GetComponent<JaimeController>().ToggleMesh(true);
+            left_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
         }
         else if (left_character.GetName() == "Daenerys")
         {
@@ -417,6 +419,7 @@ public class CharactersManager : CulverinBehaviour
             current_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.BEHIND_RIGHT);
             current_character.GetComponent<JaimeController>().UpdateHUD(false, false);
             current_character.GetComponent<JaimeController>().ToggleMesh(false);
+            current_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(false);
         }
         else if (current_character.GetName() == "Daenerys")
         {
@@ -438,6 +441,7 @@ public class CharactersManager : CulverinBehaviour
             right_character.GetComponent<JaimeController>().UpdateHUD(true, false);
             right_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
             right_character.GetComponent<JaimeController>().ToggleMesh(true);
+            right_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
         }
         else if (right_character.GetName() == "Daenerys")
         {

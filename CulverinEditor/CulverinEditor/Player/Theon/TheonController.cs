@@ -431,6 +431,8 @@ public class TheonController : CharacterController
             }
             else
             {
+                PlayFx("TheonTired");
+                Debug.Log("NOT ENOUGH STAMINA THEON", Department.PLAYER, Color.YELLOW);
                 return false;
             }
         }
@@ -508,6 +510,8 @@ public class TheonController : CharacterController
             }
             else
             {
+                PlayFx("TheonTired");
+                Debug.Log("NOT ENOUGH STAMINA THEON", Department.PLAYER, Color.YELLOW);
                 return false;
             }
         }
@@ -567,6 +571,8 @@ public class TheonController : CharacterController
             }
             else
             {
+                PlayFx("TheonTired");
+                Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.YELLOW);
                 return false;
             }
         }
