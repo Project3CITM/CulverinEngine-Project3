@@ -30,6 +30,7 @@ public:
 
 	void SetWidth(int set_width);
 	void SetHeight(int set_height);
+	void SetUIPos(float3 position);
 	void SetMaxAnchor(float2 set_max_anchor);
 	void SetMinAnchor(float2 set_min_anchor);
 	void SetPivot(float2 set_pivot);

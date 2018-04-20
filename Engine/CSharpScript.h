@@ -273,6 +273,9 @@ public:
 	void		SetSecondActiveBlendingClipWeight(MonoObject* object, float weight);
 	void		SetBlendInTime(MonoObject* object, MonoString* name, float time);
 	void		PlayAnimationNode(MonoObject* object, MonoString* name);
+	
+	/*UI-RectTransform*/
+	void		SetUIPosition(MonoObject* object, MonoObject* vector3);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);

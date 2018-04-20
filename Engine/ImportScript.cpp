@@ -1184,6 +1184,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::SetAuxiliarySends", (const void*)SetAuxiliarySends);
 
+	//COMPONENT UI_RECT_TRANSFORM FUNCTIONS -----------------
+	mono_add_internal_call("CulverinEditor.CompRectTransform::SetUIPosition", (const void*)SetUIPosition);
+
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
@@ -2318,6 +2321,11 @@ float ImportScript::GetQuadratic(MonoObject * object)
 void ImportScript::SetQuadratic(MonoObject * object, float value)
 {
 	current->SetQuadratic(object, value);
+}
+
+void ImportScript::SetUIPosition(MonoObject * object, MonoObject * vector3)
+{
+	current->SetUIPosition(object, vector3);
 }
 
 MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)

@@ -6,6 +6,9 @@ namespace CulverinEditor
     {
         public CompRectTransform()
         { }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetUIPosition(Vector3 value);
     }
 
 }

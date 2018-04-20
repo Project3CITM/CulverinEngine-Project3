@@ -58,7 +58,7 @@ private:
 	ShaderProgram* default_ui_shader = nullptr;
 	float canvas_alpha = 1.0f;
 	float current_canvas_alpha = 1.0f;
-
+	bool first_update = true;
 
 };
 

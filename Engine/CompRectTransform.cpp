@@ -615,6 +615,16 @@ void CompRectTransform::SetHeight(int set_height)
 	Resize(resize_factor);
 }
 
+void CompRectTransform::SetUIPos(float3 new_pos)
+{
+	if (new_pos.IsFinite())
+	{
+		ui_position.x = new_pos.x;
+		ui_position.y = new_pos.y;
+		Resize(resize_factor);
+	}
+}
+
 void CompRectTransform::SetMaxAnchor(float2 set_max_anchor)
 {
 	max_anchor = set_max_anchor;

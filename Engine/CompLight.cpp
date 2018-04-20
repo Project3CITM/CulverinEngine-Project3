@@ -291,6 +291,8 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
 
 	// bounding box size
+	if(radius == 50)
+		radius = 100;
 	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 }
 

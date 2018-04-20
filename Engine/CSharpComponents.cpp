@@ -23,6 +23,7 @@
 #include "CompImage.h"
 #include "CompLight.h"
 #include "CompParticleSystem.h"
+#include "CompRectTransform.h"
 #include "CompMaterial.h"
 #include "Materials.h"
 #include "ShadersLib.h"
@@ -318,6 +319,27 @@ void CSharpScript::PlayAnimationNode(MonoObject * object, MonoString * name)
 				animation->PlayAnimation(node);
 			}
 		}
+	}
+}
+
+void CSharpScript::SetUIPosition(MonoObject * object, MonoObject * vector3)
+{
+	Component* obj = App->importer->iScript->GetComponentMono(object);
+	if (obj != nullptr)
+	{
+		MonoClass* classT = mono_object_get_class(vector3);
+		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+		float3 new_pos;
+
+		if (x_field) mono_field_get_value(vector3, x_field, &new_pos.x);
+		if (y_field) mono_field_get_value(vector3, y_field, &new_pos.y);
+		if (z_field) mono_field_get_value(vector3, z_field, &new_pos.z);
+
+		CompRectTransform* transform = (CompRectTransform*)obj;
+		transform->SetUIPos(new_pos);
 	}
 }
 

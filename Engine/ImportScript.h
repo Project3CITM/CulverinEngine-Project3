@@ -321,6 +321,9 @@ private:
 	static float GetQuadratic(MonoObject* object);
 	static void SetQuadratic(MonoObject* object, float value);
 
+	/*Component Rect_Transform*/
+	static void SetUIPosition(MonoObject* object, MonoObject* vector3);
+
 	/*Module Physics*/
 	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);
 
