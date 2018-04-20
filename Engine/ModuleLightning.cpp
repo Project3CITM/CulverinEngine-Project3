@@ -203,7 +203,7 @@ update_status ModuleLightning::PreUpdate(float dt)
 	//TODO: Should think on optimitzations on this.
 
 	frame_used_lights.clear();
-	std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
+	//std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
 
 
 	for (uint i = 0; i < scene_lights.size(); ++i)
@@ -581,8 +581,11 @@ void ModuleLightning::OnLightDestroyed(CompLight* l)
 
 			for(std::vector<CompLight*>::iterator it2 = frame_used_lights.begin(); it2 != frame_used_lights.end(); ++it2)
 			{
-				frame_used_lights.erase(it2);
-				return;
+				if ((*it2) == l)
+				{
+					frame_used_lights.erase(it2);
+					return;
+				}
 			}
 
 			return;
