@@ -55,6 +55,10 @@ public class Fireball : CulverinBehaviour
             {
                 enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
             }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
