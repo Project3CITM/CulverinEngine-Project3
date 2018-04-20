@@ -640,11 +640,11 @@ update_status ModuleLightning::UpdateConfig(float dt)
 	ImGui::Text("Lights used on frame:"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", frame_used_lights.size());
 
-	ImGui::DragFloat("Distance from camera front to render shadow map", &dstSceneCameraToLookAt, 1.0f, 1.0f, 100.0f);
-	ImGui::DragFloat("Shadow map camera size", &projSize, 1.0f, 10.0f, 500.0f);
-	ImGui::DragFloat("Shadow map camera near plane dist", &nearPlane, 1.0f, 1.0f, 100.0f);
-	ImGui::DragFloat("Shadow map camera far plane dist", &farPlane, 1.0f, 10.0f, 500.0f);
-	ImGui::DragFloat("Shadow map camera distance from look at position", &dstShadowmapCameraToLookAt, 1.0f, 1.0f, 100.0f);
+	ImGui::DragFloat("Distance from camera front to render shadow map", &dstSceneCameraToLookAt, 1.0f, 1.0f, 10000.0f);
+	ImGui::DragFloat("Shadow map camera size", &projSize, 1.0f, 10.0f, 10000.0f);
+	ImGui::DragFloat("Shadow map camera near plane dist", &nearPlane, 1.0f, 1.0f, 10000.0f);
+	ImGui::DragFloat("Shadow map camera far plane dist", &farPlane, 1.0f, 10.0f, 10000.0f);
+	ImGui::DragFloat("Shadow map camera distance from look at position", &dstShadowmapCameraToLookAt, 1.0f, 1.0f, 10000.0f);
 	
 	int u_l = shadow_cast_points_count;
 	if(ImGui::DragInt("Set used lights", &u_l, 1, 0, 8))
