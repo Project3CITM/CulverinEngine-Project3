@@ -28,7 +28,10 @@ public class Stun_Action : Action
     public override ACTION_RESULT ActionUpdate()
     {
         if (interupt == true)
+        {
+            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_FAIL;
+        }
 
         if (GetComponent<CompAnimation>().IsAnimationStopped("Stun"))
         {
