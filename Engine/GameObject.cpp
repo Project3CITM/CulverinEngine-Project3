@@ -140,7 +140,14 @@ GameObject::~GameObject()
 		for (uint i = 0; i < components.size(); i++)
 		{
 			components[i]->Clear();
-			RELEASE(components[i]);
+			if (components[i]->GetType() == C_LIGHT)
+			{
+				Event delete_light_event;
+				delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
+				delete_light_event.delete_light.light = (CompLight*)components[i];
+				PushEvent(delete_light_event);
+			}
+			else RELEASE(components[i]);
 		}
 		components.clear();
 	}
@@ -2074,7 +2081,15 @@ void GameObject::DeleteAllComponents()
 		}
 
 		comp->Clear();
-		RELEASE(comp);
+
+		if (comp->GetType() == C_LIGHT)
+		{
+			Event delete_light_event;
+			delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
+			delete_light_event.delete_light.light = (CompLight*)comp;
+			PushEvent(delete_light_event);
+		}
+		else RELEASE(comp);
 		components[i] = nullptr;
 	}
 	components.clear();
@@ -2091,7 +2106,14 @@ void GameObject::DeleteComponent(uint index)
 		}
 
 		comp->Clear();
-		RELEASE(comp);
+		if (comp->GetType() == C_LIGHT)
+		{
+			Event delete_light_event;
+			delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
+			delete_light_event.delete_light.light = (CompLight*)comp;
+			PushEvent(delete_light_event);
+		}
+		else RELEASE(comp);
 		comp = nullptr;
 
 		components.erase(components.begin() + index);

@@ -320,13 +320,13 @@ void ModuleLightning::OnEvent(Event & event)
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_3D_3DA_MM:
-
+	{
 		const CompLight* light = event.send_3d3damm.light;
 
 		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
 			test_fix.Bind("peter");
 			glViewport(0, 0, 256, 256);
-			
+
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			shadow_Shader->Bind();
 			uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
@@ -362,6 +362,15 @@ void ModuleLightning::OnEvent(Event & event)
 
 			//CalcPointShadowMaps(event, (CompLight*)light);
 		}
+	}
+		break;
+	case EventType::EVENT_DELETE_LIGHT:
+
+		RELEASE((CompLight*)event.delete_light.light);
+
+
+		break;
+
 
 	}
 
@@ -610,6 +619,7 @@ void ModuleLightning::GetActiveLightsCount(uint ammount, std::vector<CompLight*>
 bool ModuleLightning::SetEventListenrs()
 {
 	AddListener(EventType::EVENT_SEND_3D_3DA_MM, this);
+	AddListener(EventType::EVENT_DELETE_LIGHT, this);
 	return false;
 }
 

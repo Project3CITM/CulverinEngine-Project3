@@ -62,6 +62,7 @@ enum EventType
 	EVENT_CREATE_SHADER_PROGRAM,
 	EVENT_SEND_ALL_SHADER_OBJECTS,
 	EVENT_OPEN_SHADER_EDITOR,
+	EVENT_DELETE_LIGHT,
 	/*----------------Skeletal Animation----------------*/
 
 	/*------------------User Interface------------------*/
@@ -246,6 +247,12 @@ struct ESend3D3DAMM
 	const CompLight* light = nullptr;
 };
 
+struct DeleteLight
+{
+	uint64_t event_data = 0;	
+	CompLight* light = nullptr;
+};
+
 /*--------------------------------------------------*/
 /*----------------------Engine----------------------*/
 /*--------------------------------------------------*/
@@ -363,7 +370,7 @@ union Event
 	EOpenShaderEditor shader_editor;
 	ERequest3D3DAMM request_3d3damm;
 	ESend3D3DAMM send_3d3damm;
-
+	DeleteLight delete_light;
 	/*----------------Skeletal Animation----------------*/
 
 
