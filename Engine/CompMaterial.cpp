@@ -242,7 +242,7 @@ void CompMaterial::ShowInspectorInfo()
 		shaders_names += '\0';
 		if (material->name.compare((*item).second->name) == 0) {
 			shader_pos = i;
-			temp_item = item;
+			temp_item = item;			
 		}
 		i++;
 	}
@@ -265,8 +265,16 @@ void CompMaterial::ShowInspectorInfo()
 				App->importer->iMaterial->LoadResource(temp.c_str(), resource_mat);
 			}
 		}
+		int n = 0;
+		auto temp_mat = App->module_shaders->materials.begin();
+		for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++) {
+			if (n == shader_pos) {
+				temp_mat = item;
+			}
+			n++;
+		}
 		material->active_num--;
-		material = (*temp_item).second;
+		material = (*temp_mat).second;
 		material->active_num++;
 	}
 

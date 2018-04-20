@@ -145,6 +145,7 @@ GameObject::~GameObject()
 				Event delete_light_event;
 				delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
 				delete_light_event.delete_light.light = (CompLight*)components[i];
+				delete_light_event.delete_light.light->to_delete = true;
 				PushEvent(delete_light_event);
 			}
 			else RELEASE(components[i]);
@@ -2087,6 +2088,7 @@ void GameObject::DeleteAllComponents()
 			Event delete_light_event;
 			delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
 			delete_light_event.delete_light.light = (CompLight*)comp;
+			delete_light_event.delete_light.light->to_delete = true;
 			PushEvent(delete_light_event);
 		}
 		else RELEASE(comp);
@@ -2111,6 +2113,7 @@ void GameObject::DeleteComponent(uint index)
 			Event delete_light_event;
 			delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
 			delete_light_event.delete_light.light = (CompLight*)comp;
+			delete_light_event.delete_light.light->to_delete = true;
 			PushEvent(delete_light_event);
 		}
 		else RELEASE(comp);

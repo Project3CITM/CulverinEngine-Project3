@@ -62,7 +62,7 @@ public:
 	//---------
 
 	bool use_light_to_render = false;
-
+	bool to_delete = false;
 
 
 };
