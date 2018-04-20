@@ -544,6 +544,14 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 					App->importer->iMaterial->LoadResource(std::to_string(controller_image->GetUUID()).c_str(), controller_image);
 				}
 			}
+			else
+			{
+				device_swap = false;
+			}
+		}
+		else
+		{
+			device_swap = false;
 		}
 	}
 	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
