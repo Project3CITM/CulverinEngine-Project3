@@ -1,5 +1,6 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using CulverinEditor.SceneManagement;
 using System;
 
 public class Boss_BT : BT
@@ -39,6 +40,12 @@ public class Boss_BT : BT
     public float damaged_limit = 0.6f;
     public float cooldown = 0.0f;
 
+    public float rumble_power = 0.5f;
+    public int rumble_time = 200;
+    public float rumble_growl_delay = 0.1f;
+    private bool rumble = false;
+    private float rumble_timer = 0.0f;
+
     System.Random rand_gen = null;
 
     private bool boss_active;
@@ -46,6 +53,7 @@ public class Boss_BT : BT
     public override void Start()
     {
         hp_bar_boss = GetLinkedObject("hp_bar_boss");
+        hp_bar_boss.GetComponent<BossHPBar>().ActivateHPBar(false);
         hp_bar_boss.SetActive(false);
         GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddBoss(gameObject);
         rand_gen = new System.Random();
@@ -57,11 +65,24 @@ public class Boss_BT : BT
         current_hp = total_hp;
         boss_active = false;
 
+        rumble_timer = 0.0f;
+        rumble = false;
+
         base.Start();
     }
 
     public override void Update()
     {
+        if (rumble == true)
+        {
+            rumble_timer += Time.deltaTime;
+            if (rumble_timer >= rumble_growl_delay)
+            {
+                Input.RumblePlay(rumble_power, rumble_time);
+                rumble_timer = 0.0f;
+                rumble = false;
+            }
+        }
         base.Update();
     }
 
@@ -196,13 +217,14 @@ public class Boss_BT : BT
 
     public bool ApplyDamage(float damage)
     {
-        InterruptAction();
-        next_action = GetComponent<GetHit_Action>();
-        GetComponent<CompAudio>().PlayEvent("BossHurt");
-        current_hp -= damage;
-        current_interpolation = current_hp / total_hp;
-        
-        hp_bar_boss.GetComponent<BossHPBar>().SetHPBar(current_interpolation);
+        if (boss_active)
+        {
+            GetComponent<CompAudio>().PlayEvent("BossHurt");
+
+            current_hp -= damage;
+            current_interpolation = current_hp / total_hp;
+
+            hp_bar_boss.GetComponent<BossHPBar>().SetHPBar(current_interpolation);
 
         if (current_hp <= 0)
         {
@@ -213,17 +235,26 @@ public class Boss_BT : BT
             GetComponent<CompAudio>().PlayEvent("BossDeath");
             StatsScore.BossDead();
 
-            //todosforme
-            GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
-        }
-        /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
-                {
-                    Debug.Log("[yellow] BOSS PHASE2!!!!!");
-                    phase = BOSS_STATE.BOSS_PHASE2;
-                    //Phase2Textures();
-                }*/
+                hp_bar_boss.GetComponent<BossHPBar>().ActivateHPBar(false);
+                hp_bar_boss.SetActive(false);
 
-        return true;
+                //todosforme
+                GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
+
+                SceneManager.LoadNewWalkableMap("Map_Level_2");
+                SceneManager.LoadScene("Level 2");
+            }
+            /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
+            {
+                Debug.Log("[yellow] BOSS PHASE2!!!!!");
+                phase = BOSS_STATE.BOSS_PHASE2;
+                //Phase2Textures();
+            }*/
+
+            return true;
+        }
+        else
+            return false;
     }
 
     public void Phase2Textures()
@@ -260,6 +291,7 @@ public class Boss_BT : BT
     {
         next_action = GetComponent<BossEngage_Action>();
         GetComponent<CompAudio>().PlayEvent("BossGrowl");
+        rumble = true;
     }
 
     public int GetDistanceXToPlayer()

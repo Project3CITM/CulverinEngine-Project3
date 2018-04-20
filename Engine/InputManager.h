@@ -10,7 +10,7 @@ typedef union SDL_Event SDL_Event;
 class InputManager
 {
 public:
-	InputManager();
+	InputManager(PlayerActions* my_player_action);
 	~InputManager();
 	void UpdateInputActions();
 	bool ProcessEvent(SDL_Event* input_event);
@@ -53,7 +53,7 @@ public:
 	bool active_input = true;
 	bool block_action = false;
 private:
-
+	PlayerActions* my_player_action = nullptr;
 	bool window_open = false;
 	std::string name;
 	char selected_action_name[50] = "default";

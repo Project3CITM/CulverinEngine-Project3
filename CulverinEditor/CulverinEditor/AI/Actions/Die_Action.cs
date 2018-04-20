@@ -41,9 +41,9 @@ class Die_Action : Action
         
         if (GetComponent<EnemySword_BT>() != null && cur_time <= time_to_move)
         {
-            cur_time += Time.deltaTime;
+            /*cur_time += Time.deltaTime;
             float val = y_move * (cur_time / time_to_move);
-            GetComponent<Transform>().SetPosition(new Vector3(GetComponent<Transform>().position.x, val, GetComponent<Transform>().position.z));
+            GetComponent<Transform>().SetPosition(new Vector3(GetComponent<Transform>().position.x, val, GetComponent<Transform>().position.z));*/
         }
         return ACTION_RESULT.AR_IN_PROGRESS;
     }

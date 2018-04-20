@@ -9,6 +9,7 @@
 #include "ModuleWindow.h"
 #include "CompLight.h"
 #include "ModuleLightning.h"
+#include "CompCubeMapRenderer.h"
 
 void AddListener(EventType type, Module* listener)
 {
@@ -71,6 +72,9 @@ bool ModuleEventSystemV2::Init(JSON_Object* node)
 
 bool ModuleEventSystemV2::Start()
 {
+	//Set scene for cube map render
+
+
 	perf_timer.Start();
 	Start_t = perf_timer.ReadMs();
 	return true;
@@ -96,6 +100,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	perf_timer.Start();
 	IteratingMaps = true;
 	FrameBuffer* active_frame = nullptr;
+
 	//Draw opaque events
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
@@ -107,17 +112,18 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	active_frame = App->scene->scene_buff;
 	active_frame->Bind("Scene");
 	IterateDrawV(dt);
-	//active_frame->UnBind("Scene");
+	
 	//Draw alpha events
-	//active_frame->Bind("Scene");
 	IterateDrawAlphaV(dt);
 	active_frame->UnBind("Scene");
+
 	//Draw opaque with glow events
 	glViewport(0, 0, 128, 128);
 	active_frame = App->scene->glow_buff;
 	active_frame->Bind("Scene");
 	IterateDrawGlowV(dt);
 	active_frame->UnBind("Scene");
+
 	glUseProgram(NULL);
 	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -190,30 +196,21 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 				LastUsedMaterial = ActualMaterial;
 
 				glBindTexture(GL_TEXTURE_2D, 0);
-				glActiveTexture(GL_TEXTURE0);				
+				glActiveTexture(GL_TEXTURE0);
 				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
 				{
-					LastBindedProgram = NewProgramID;					
+					LastBindedProgram = NewProgramID;
 					ActualMaterial->Bind();
+
 
 				}	
 				App->module_shaders->SetUniformVariables(ActualMaterial);
-				for (uint i = 0; i < ActualMaterial->textures.size(); i++)
-				{
-					uint texLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), ActualMaterial->textures[i].var_name.c_str());
-					glUniform1i(texLoc, i);
-					glActiveTexture(GL_TEXTURE0 + i);
-					if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-					else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
-				}
 
-
-				GLuint ShadowMapLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), "_shadowMap");
-				glUniform1i(ShadowMapLoc, (ActualMaterial->textures.size()));
-				glActiveTexture(GL_TEXTURE0 + (ActualMaterial->textures.size()));
-				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
-
-				App->module_shaders->SetUniformVariables(ActualMaterial);
+			/*	GLuint ShadowMapLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), "_shadowMap");
+				glUniform1i(ShadowMapLoc, (ActualMaterial->textures.size() + ActualMaterial->cube_maps.size()));
+				glActiveTexture(GL_TEXTURE0 + (ActualMaterial->textures.size() + ActualMaterial->cube_maps.size()));
+				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);*/
+				
 
 			}
 			switch (item._Ptr->_Myval.second.draw.Dtype)
@@ -276,8 +273,6 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 				glEnable(GL_CULL_FACE);
 				break;
 
-
-
 			case EventType::EVENT_DRAW:
 
 				NewProgramID = 0;
@@ -304,14 +299,7 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 						ActualMaterial->Bind();
 
 					}
-					for (uint i = 0; i < ActualMaterial->textures.size(); i++)
-					{
-						uint texLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), ActualMaterial->textures[i].var_name.c_str());
-						glUniform1i(texLoc, i);
-						glActiveTexture(GL_TEXTURE0 + i);
-						if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-						else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
-					}
+					App->module_shaders->SetUniformVariables(ActualMaterial);
 
 				}
 
@@ -664,6 +652,17 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		
 		break;
 	}
+
+	case EventType::EVENT_CUBEMAP_REQUEST:
+	{
+		Event event_temp;
+		event_temp.Set_event_data(EventType::EVENT_CUBEMAP_DRAW);
+		event_temp.cube_map_draw.all_gameobjects = App->scene->GetAllSceneObjects();
+		((CompCubeMapRenderer*)event.cube_map_request.comp_cubemap)->Bake(event_temp);	
+
+	}
+
+
 	
 	default:
 		/*

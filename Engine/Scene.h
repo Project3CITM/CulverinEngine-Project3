@@ -45,6 +45,8 @@ public:
 	GameObject* GetGameObjectfromScene(bool& active);
 	GameObject* GetGameObjectbyuid(uint uid);
 	GameObject* FindGameObjectWithTag(const char* str);
+	//Dont find tag in vector tags (Iterate all root);
+	GameObject* FindGameObjectWithTagRecursive(const char* str, GameObject* gameobject);
 	void		FindGameObjectsWithTag(const char* tag, std::vector<GameObject*>* vec); //You get a pointer to the vec not a new one!
 
 	void						TagWindow();
@@ -75,6 +77,9 @@ public:
 	//void FillStaticObjectsVector(bool fill);
 	void RecalculateStaticObjects();
 	const std::vector<GameObject*>* GetAllSceneObjects();
+
+	// DYNAMIC CULLING -------------------
+	void RemoveDynamicObject(GameObject* obj);
 
 	//OBJECTS CREATION / DELETION ---------------------
 	GameObject* FindCanvas();
@@ -118,6 +123,7 @@ public:
 
 	//Container Vector of Static Objects (to speeding searches with quadtree)
 	std::vector<GameObject*> static_objects;
+	std::vector<GameObject*> dynamic_objects;
 
 	// Scene Saved
 	bool scene_saved = true; // TODO XAVI - need implementation with Event System

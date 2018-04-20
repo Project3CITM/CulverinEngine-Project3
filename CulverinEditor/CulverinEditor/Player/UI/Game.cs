@@ -5,7 +5,8 @@ public class Game : CulverinBehaviour
 {
     void Update()
     {
-        if(Input.GetInput_KeyDown("FinalSkill","Player"))
+        
+        if(Input.GetKeyDown(KeyCode.Num8))
         {
             SceneManager.LoadScene("WinScreen");
         }
@@ -14,5 +15,6 @@ public class Game : CulverinBehaviour
         {
             SceneManager.LoadScene("LoseScreen");
         }
+        
     }
 }

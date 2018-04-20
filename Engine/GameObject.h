@@ -53,6 +53,7 @@ public:
 	void Draw();
 
 	void SetActive(bool active);
+	void SetParentActive(bool active);
 	void SetVisible(bool visible);
 	void SetStatic(bool set_static);
 	void FixedDelete(bool check_delete);
@@ -60,6 +61,7 @@ public:
 	void SetTag(const char* tag);
 
 	bool IsActive() const;
+	bool IsParentActive() const;
 	bool IsVisible() const;
 	bool IsStatic() const;
 	bool IsDeleteFixed() const;
@@ -178,6 +180,7 @@ private:
 	std::string name = "CHANGE THIS";
 	std::string tag = "undefined";
 	bool active = false;
+	bool parent_active = true;
 	bool visible = false;
 	bool static_obj = false;
 	bool to_delete = false; 

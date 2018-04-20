@@ -62,13 +62,19 @@ bool OctreeNode::Insert(GameObject* obj, OctreeLimits& limits)
 		{
 			CreateChilds();
 
-			for (std::list<GameObject*>::iterator item = objects.begin(); item != objects.cend();)
+			int num = objects.size();
+			GameObject** ptr = (num > 0) ? objects.data() : nullptr;
+
+			GameObject* curr_obj = nullptr;
+			for (int i = 0; i < num;)
 			{
+				curr_obj = ptr[i];
+				
 				uint node_to_push = 0;
 				uint multiple_collision = 0;
 				for (uint i = 0; i < 8; i++)
 				{
-					if (childs[i]->box.Intersects(item._Ptr->_Myval->box_fixed))
+					if (childs[i]->box.Intersects(curr_obj->box_fixed))
 					{
 						multiple_collision++;
 						node_to_push = i;
@@ -76,7 +82,37 @@ bool OctreeNode::Insert(GameObject* obj, OctreeLimits& limits)
 				}
 				if (multiple_collision == 1)
 				{
-					childs[node_to_push]->Insert(item._Ptr->_Myval, limits);
+					childs[node_to_push]->Insert(curr_obj, limits);					
+					for (uint j = i; j + 1 < num; j++)
+					{
+						objects[j] = objects[j + 1];
+					}
+					objects.pop_back();
+					num = objects.size();
+				}
+				else
+				{
+					i++;
+				}
+
+			}
+
+
+			for (std::vector<GameObject*>::iterator item = objects.begin(); item != objects.cend();)
+			{
+				uint node_to_push = 0;
+				uint multiple_collision = 0;
+				for (uint i = 0; i < 8; i++)
+				{
+					if (childs[i]->box.Intersects((*item)->box_fixed))
+					{
+						multiple_collision++;
+						node_to_push = i;
+					}
+				}
+				if (multiple_collision == 1)
+				{
+					childs[node_to_push]->Insert((*item), limits);
 					item = objects.erase(item);
 				}
 				else
@@ -116,7 +152,7 @@ bool OctreeNode::Insert(GameObject* obj, OctreeLimits& limits)
 
 void OctreeNode::Remove(GameObject* obj)
 {
-	std::list<GameObject*>::iterator it = std::find(objects.begin(), objects.end(), obj);
+	/*std::list<GameObject*>::iterator it = std::find(objects.begin(), objects.end(), obj);
 
 	if (it != objects.end())
 		objects.erase(it);
@@ -124,6 +160,7 @@ void OctreeNode::Remove(GameObject* obj)
 	if (!isLeaf())
 		for (uint i = 0; i < 8; i++)
 			childs[i]->Remove(obj);
+			*/
 }
 
 void OctreeNode::DebugDraw()
@@ -196,7 +233,7 @@ void OctreeNode::CreateChilds()
 }
 
 //template<typename TYPE>
-int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustum& frustum, math::float3 center_frustum, float size_frustum) const
+int OctreeNode::CollectIntersections(std::vector<GameObject*>& nodes, const Frustum& frustum, math::float3 center_frustum, float size_frustum) const
 {
 	uint ret = 0;
 
@@ -214,9 +251,15 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 	AABB Box;
 	//Custom intersec, MathGeoLib was too slow
 	//Should be changed if there is more time
-	for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
+
+	const int num = objects.size();
+	GameObject** ptr = (num > 0) ? (GameObject**)objects.data() : nullptr;
+
+	GameObject* curr_obj = nullptr;
+	for (int i = 0; i < num; i++)
 	{
-		AABB Box = item._Ptr->_Myval->box_fixed;
+		curr_obj = ptr[i];
+		AABB Box = curr_obj->box_fixed;
 		if ((Box.CenterPoint() - center_frustum).LengthSq() - Box.HalfSize().LengthSq() < size_frustum)
 		{
 			int iTotalIn = 0;
@@ -243,9 +286,11 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 
 			if (is_in)
 			{
-				nodes.push_back(*item);
+				//nodes.push_back(*item);
+				curr_obj->SetVisible(true);
+				curr_obj->Draw();
 			}
-		}	
+		}
 	}
 
 	// If there is no children, end
@@ -259,13 +304,22 @@ int OctreeNode::CollectIntersections(std::list<GameObject*>& nodes, const Frustu
 	return ret;
 }
 
-int OctreeNode::CollectAllChilds(std::list<GameObject*>& nodes) const
+int OctreeNode::CollectAllChilds(std::vector<GameObject*>& nodes) const
 {
 	int ret = 0;
 
-	for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
+
+	const int num = objects.size();
+	GameObject** ptr = (num > 0) ? (GameObject**)objects.data() : nullptr;
+
+	GameObject* curr_obj = nullptr;
+	for (int i = 0; i < num; i++)
 	{
-		nodes.push_back(*item);
+		curr_obj = ptr[i];
+
+		//nodes.push_back(*item);
+		curr_obj->SetVisible(true);
+		curr_obj->Draw();
 	}
 
 	if (isLeaf())
@@ -277,9 +331,9 @@ int OctreeNode::CollectAllChilds(std::list<GameObject*>& nodes) const
 	return ret;
 }
 
-void OctreeNode::CollectAllObjects(std::list<GameObject*>& all_obj) const
+void OctreeNode::CollectAllObjects(std::vector<GameObject*>& all_obj) const
 {
-	for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
+	/*for (std::list<GameObject*>::const_iterator item = objects.begin(); item != objects.cend(); ++item)
 	{
 		std::list<GameObject*>::iterator it = std::find(all_obj.begin(), all_obj.end(), item._Ptr->_Myval);
 		if (it != all_obj.end())
@@ -294,7 +348,7 @@ void OctreeNode::CollectAllObjects(std::list<GameObject*>& all_obj) const
 
 	// Otherwise, add the points from the children
 	for (uint i = 0; i < 8; i++)
-		childs[i]->CollectAllObjects(all_obj);
+		childs[i]->CollectAllObjects(all_obj);*/
 }
 
 // Octree ------------------------------
@@ -361,7 +415,7 @@ void Octree::DebugDraw()
 }
 
 //template<typename TYPE>
-int Octree::CollectIntersections(std::list<GameObject*>& nodes, const Frustum& frustum) const
+int Octree::CollectIntersections(std::vector<GameObject*>& nodes, const Frustum& frustum) const
 {
 	int tests = 1;
 
@@ -372,7 +426,7 @@ int Octree::CollectIntersections(std::list<GameObject*>& nodes, const Frustum& f
 	return tests;
 }
 
-void Octree::CollectAllObjects(std::list<GameObject*>& all_obj) const
+void Octree::CollectAllObjects(std::vector<GameObject*>& all_obj) const
 {
 	if (root_node != nullptr)
 		root_node->CollectAllObjects(all_obj);

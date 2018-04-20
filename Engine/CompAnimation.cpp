@@ -108,22 +108,25 @@ void CompAnimation::PreUpdate(float dt)
 		}
 	}
 	playing = false;
-	if (current_animation != nullptr)
+	if (GetParent()->IsVisible())
 	{
-		for (std::vector<AnimationClip*>::iterator it = animation_clips.begin(); it != animation_clips.end(); it++)
+		if (current_animation != nullptr)
 		{
-			if ((*it)->state != A_STOP)
+			for (std::vector<AnimationClip*>::iterator it = animation_clips.begin(); it != animation_clips.end(); it++)
 			{
-				playing = true;
-			}
-		}
-		if (playing)
-		{
-			for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
-			{
-				if (it->first != nullptr)
+				if ((*it)->state != A_STOP)
 				{
-					it->second->UpdateBone(it->first, current_animation, active_node->GetFirstActiveBlendingClip(), active_node->GetSecondActiveBlendingClip(), blending_animation);
+					playing = true;
+				}
+			}
+			if (playing)
+			{
+				for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
+				{
+					if (it->first != nullptr)
+					{
+						it->second->UpdateBone(it->first, current_animation, active_node->GetFirstActiveBlendingClip(), active_node->GetSecondActiveBlendingClip(), blending_animation);
+					}
 				}
 			}
 		}
@@ -144,6 +147,8 @@ void CompAnimation::PlayAnimation(AnimationNode * node)
 {
 	node->active = true;
 	active_node = node;
+	if(blending_animation != nullptr)
+	blending_animation->state = AnimationState::A_STOP;
 
 	if (current_animation != nullptr && node->clip->total_blending_time > 0.001f)
 	{
@@ -482,7 +487,9 @@ void CompAnimation::ShowOptions()
 	}
 	if (ImGui::MenuItem("Reset"))
 	{
-		ImGui::CloseCurrentPopup();
+		animation_resource = nullptr;
+		bone_update_vector.clear();
+		bones_placed = false;
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Move to Front", NULL, false, false))
@@ -1093,8 +1100,8 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 		{
 			BlendingClip* temp_blending_clip = new BlendingClip();
 			temp_blending_clip->name = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".Name");
-			//temp_blending_clip->first_active = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".FirstActive");
-			//temp_blending_clip->second_active = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".SecondActive");
+			temp_blending_clip->first_active = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".FirstActive");
+			temp_blending_clip->second_active = json_object_dotget_boolean_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".SecondActive");
 			temp_blending_clip->weight = json_object_dotget_number_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".Weight");
 
 			std::string clip_name_blending = json_object_dotget_string_with_std(object, name + "Info.AnimationNodes.Node" + std::to_string(i) + ".BlendingClips" + std::to_string(j) + ".ClipName");

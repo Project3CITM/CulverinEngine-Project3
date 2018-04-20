@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleRenderGui.h"
 #include "ModuleFS.h"
 #include "ModuleGUI.h"
 #include "WindowProject.h"
@@ -11,6 +12,7 @@
 #include "PlayerActions.h"
 #include "InputManager.h"
 #include "JSONSerialization.h"
+
 #define MAX_KEYS 300
 #define MAX_MILLISECONDS 2000
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
@@ -36,6 +38,8 @@ ModuleInput::~ModuleInput()
 bool ModuleInput::Init(JSON_Object* node)
 {
 	perf_timer.Start();
+	key_binding = new KeyBinding();
+	key_binding->InitKeyBinding();
 	LOG("Init SDL input event system");
 	bool ret = true;
 	quit = false;
@@ -84,6 +88,7 @@ bool ModuleInput::Init(JSON_Object* node)
 		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
 	}
 
+	ConnectGameController();
 	ui_manager = player_action->GetInputManager(ui_input_manager.c_str());
 	if (ui_manager != nullptr)
 	{
@@ -98,7 +103,6 @@ bool ModuleInput::Init(JSON_Object* node)
 
 	}
 
-
 	Awake_t = perf_timer.ReadMs();
 	return ret;
 }
@@ -109,11 +113,12 @@ update_status ModuleInput::PreUpdate(float dt)
 	BROFILER_CATEGORY("PreUpdate: ModuleInput", Profiler::Color::Blue);
 	perf_timer.Start();
 	press_any_key = false;
+	update_new_device = false;
 	SDL_PumpEvents();
-	player_action->UpdateInputsManager();
+	if(player_action!=nullptr)
+		player_action->UpdateInputsManager();
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
-
 	for (int i = 0; i < MAX_KEYS; ++i)
 	{
 		if (keys[i] == 1)
@@ -183,21 +188,30 @@ update_status ModuleInput::PreUpdate(float dt)
 	{
 		ImGui_ImplSdlGL3_ProcessEvent(&e);
 		//if (App->mode_game) {
-		player_action->ReceiveEvent(&e);
+		if (player_action != nullptr)
+			player_action->ReceiveEvent(&e);
 		//}
 		switch (e.type)
 		{
 		case SDL_KEYDOWN:
+			UpdateDeviceType(DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE);
+			break;
 		case SDL_CONTROLLERBUTTONDOWN:
+			UpdateDeviceType(DeviceCombinationType::CONTROLLER_COMB_DEVICE);
 			press_any_key = true;
 
 			break;
 		case SDL_CONTROLLERAXISMOTION:
-			if(e.caxis.axis<-5000 ||e.caxis.axis>5000)
+
+			if (e.caxis.value < -5000 || e.caxis.value>5000)
+			{
+				UpdateDeviceType(DeviceCombinationType::CONTROLLER_COMB_DEVICE);
 				press_any_key = true;
+			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 		{
+			UpdateDeviceType(DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE);
 
 
 			press_any_key = true;
@@ -220,7 +234,7 @@ update_status ModuleInput::PreUpdate(float dt)
 		}
 		break;
 		case SDL_MOUSEBUTTONUP:
-		{			
+		{
 
 			mouse_x = e.motion.x / SCREEN_SIZE;
 			mouse_y = e.motion.y / SCREEN_SIZE;
@@ -325,7 +339,7 @@ update_status ModuleInput::PreUpdate(float dt)
 					}
 				}
 			}
-			
+
 			break;
 		case SDL_CONTROLLERDEVICEREMOVED:
 			if (!gamepad.Empty())
@@ -343,7 +357,10 @@ update_status ModuleInput::PreUpdate(float dt)
 		case SDL_WINDOWEVENT:
 		{
 			if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+			{
 				App->renderer3D->OnResize(e.window.data1, e.window.data2);
+				App->render_gui->OnResize(e.window.data1, e.window.data2);
+			}
 			if (e.window.event == SDL_WINDOWEVENT_FOCUS_GAINED)
 			{
 				// Now Update All vectors "project" and "fs"
@@ -447,7 +464,8 @@ update_status ModuleInput::UpdateConfig(float dt)
 	ImGui::Separator();
 	ImGui::Text("Player Actions");
 	ImGui::Separator();
-	player_action->UpdateConfig(dt);
+	if (player_action != nullptr)
+		player_action->UpdateConfig(dt);
 	ImGui::Separator();
 	ImVec4 color;
 	if (ui_conected)
@@ -469,7 +487,8 @@ update_status ModuleInput::UpdateConfig(float dt)
 	ImGui::TextColored(color, "UI Cancel: %s", cancel.c_str());
 	if (ImGui::Button("Save PlayerActions"))
 	{
-		App->json_seria->SavePlayerAction(player_action, name.c_str(), "player_action");
+		if (player_action != nullptr)
+			App->json_seria->SavePlayerAction(player_action, App->fs->GetMainDirectory().c_str(), "player_action");
 
 	}
 
@@ -485,8 +504,12 @@ bool ModuleInput::CleanUp()
 	std::string name = DIRECTORY_LIBRARY_JSON;
 	name = App->fs->GetFullPath(name);
 	//Crash if not open?
+	//Release Key Binding
+	key_binding->CleanUp();
+	RELEASE(key_binding);
 	gamepad.Clear();
-	player_action->Clear();
+	if (player_action != nullptr)
+		player_action->Clear();
 	RELEASE(player_action);
 	player_action = nullptr;
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
@@ -495,7 +518,7 @@ bool ModuleInput::CleanUp()
 
 void ModuleInput::UIInputManagerUpdate()
 {
-	if (App->mode_game|| App->engine_state != EngineState::STOP) {
+	if (App->mode_game || App->engine_state != EngineState::STOP) {
 
 		if (!ui_conected || ui_manager == nullptr)
 			return;
@@ -582,14 +605,34 @@ SDL_Scancode ModuleInput::GetKeyFromName(const char* name)
 	return SDL_GetScancodeFromName(name);
 }
 
-void ModuleInput::RumblePlay(float intensity, int milliseconds)
+bool ModuleInput::GetUpdateNewDevice() const
 {
-	if (gamepad.Empty())
+	return update_new_device;
+}
+
+DeviceCombinationType ModuleInput::GetActualDeviceCombo() const
+{
+	return actual_device_combo;
+}
+
+void ModuleInput::UpdateDeviceType(DeviceCombinationType actual_player_action)
+{
+	if (App->mode_game || App->engine_state != EngineState::STOP) {
+		update_new_device = true;
+		actual_device_combo = actual_player_action;
+	}
+}
+
+void ModuleInput::RumblePlay(float value, int milliseconds)
+{
+	if (gamepad.Empty()||!rumble_active)
 		return;
-	if (intensity > 1|| milliseconds> MAX_MILLISECONDS|| milliseconds<0)
+
+	float intensity = CAP(value);
+	if (milliseconds>MAX_MILLISECONDS|| milliseconds<0)
 		return;
 	if (SDL_HapticRumblePlay(gamepad.haptic, intensity, milliseconds) != 0) {
-		LOG("Warning: Unable to play rumble! %s\n", SDL_GetError()); 
+		LOG("Warning: Unable to play rumble! %s\n", SDL_GetError());
 	}
 }
 
@@ -609,42 +652,49 @@ SDL_Haptic * ModuleInput::GetHaptic()const
 	return gamepad.haptic;
 }
 
+KeyRelation * ModuleInput::FindKeyBinding(const char* string)
+{
+	if(key_binding==nullptr)
+		return nullptr;
+	return key_binding->FindKeyBinding(string);
+}
+
 bool ModuleInput::ConnectGameController()
 {
-	if (SDL_NumJoysticks() < 1) 
-	{ 
+	if (SDL_NumJoysticks() < 1)
+	{
 		LOG("No GameController connected");
 		return false;
 	}
 	for (int i = 0; i < SDL_NumJoysticks(); ++i)
 	{
 
-			if (SDL_IsGameController(i))
+		if (SDL_IsGameController(i))
+		{
+			gamepad.controller = SDL_GameControllerOpen(i);
+			if (gamepad.controller != nullptr)
 			{
-				gamepad.controller = SDL_GameControllerOpen(i);
-				if (gamepad.controller != nullptr)
+
+				gamepad.joystick = SDL_GameControllerGetJoystick(gamepad.controller);
+				gamepad.haptic = SDL_HapticOpenFromJoystick(gamepad.joystick);
+				gamepad.id = SDL_JoystickInstanceID(gamepad.joystick);
+				if (gamepad.haptic == NULL)
 				{
-
-					gamepad.joystick = SDL_GameControllerGetJoystick(gamepad.controller);
-					gamepad.haptic = SDL_HapticOpenFromJoystick(gamepad.joystick);
-					gamepad.id = SDL_JoystickInstanceID(gamepad.joystick);
-					if (gamepad.haptic == NULL)
-					{
-						LOG("Warning: Controller does not support haptics! SDL Error: %s\n", SDL_GetError());
-					}
-					else
-					{
-						if (SDL_HapticRumbleInit(gamepad.haptic) < 0)
-						{
-							LOG("Warning: Unable to initialize rumble! SDL Error: %s\n", SDL_GetError());
-						}
-					}
-					LOG("Gamepad not opened %s", SDL_GetError());
-					return true;
+					LOG("Warning: Controller does not support haptics! SDL Error: %s\n", SDL_GetError());
 				}
-
+				else
+				{
+					if (SDL_HapticRumbleInit(gamepad.haptic) < 0)
+					{
+						LOG("Warning: Unable to initialize rumble! SDL Error: %s\n", SDL_GetError());
+					}
+				}
+				LOG("Gamepad not opened %s", SDL_GetError());
+				return true;
 			}
-		
+
+		}
+
 
 	}
 	return false;
@@ -652,7 +702,7 @@ bool ModuleInput::ConnectGameController()
 
 bool GamePad::Empty()
 {
-	return controller==nullptr;
+	return controller == nullptr;
 }
 
 void GamePad::Clear()

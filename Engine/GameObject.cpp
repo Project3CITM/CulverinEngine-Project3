@@ -38,6 +38,7 @@
 #include "CompJoint.h"
 #include "CompParticleSystem.h"
 #include "ResourceMesh.h"
+#include "CompCubeMapRenderer.h"
 #include <queue>
 
 //Event system test
@@ -53,6 +54,7 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 	{
 		// Push this game object into the childs list of its parent
 		parent->childs.push_back(this);
+		parent_active = parent->IsParentActive();
 	}
 
 
@@ -93,6 +95,7 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 
 	// Same data as the 'copy' gameobject
 	active = copy.IsActive();
+	parent_active = parent->IsParentActive();
 	visible = copy.IsVisible();
 	static_obj = copy.IsStatic();
 	bb_active = copy.IsAABBActive();
@@ -127,12 +130,24 @@ GameObject::~GameObject()
 	//RELEASE_ARRAY(name); FIX THIS
 	parent = nullptr;
 
+	if (!static_obj)
+	{
+		App->scene->RemoveDynamicObject(this);
+	}
+
 	if (components.size() > 0)
 	{
 		for (uint i = 0; i < components.size(); i++)
 		{
 			components[i]->Clear();
-			RELEASE(components[i]);
+			if (components[i]->GetType() == C_LIGHT)
+			{
+				Event delete_light_event;
+				delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
+				delete_light_event.delete_light.light = (CompLight*)components[i];
+				PushEvent(delete_light_event);
+			}
+			else RELEASE(components[i]);
 		}
 		components.clear();
 	}
@@ -428,7 +443,7 @@ bool GameObject::IsDeleteFixed() const
 
 void GameObject::Draw()
 {
-	if (visible)
+	if (visible && active && parent_active)
 	{
 		bool comp_active = false;
 		Component* comp = nullptr;
@@ -469,15 +484,16 @@ void GameObject::Draw()
 				{
 					CompLight* l = (CompLight*)comp;
 					l->use_light_to_render = true;
-
-
 					Event draw_event;
 					draw_event.Set_event_data(EventType::EVENT_REQUEST_3D_3DA_MM);
 					draw_event.request_3d3damm.light = (CompLight*)comp;
 					PushEvent(draw_event);
-					comp->Draw();
+					components[i]->Draw();
+								
 				}
 			}
+
+
 		}
 		/*
 		//Draw child Game Objects -------------------
@@ -502,7 +518,7 @@ bool GameObject::Enable()
 {
 	if (!active)
 	{
-		active = true;
+		SetActive(true);
 	}
 
 	return active;
@@ -512,7 +528,7 @@ bool GameObject::Disable()
 {
 	if (active)
 	{
-		active = false;
+		SetActive(false);
 	}
 	return active;
 }
@@ -800,6 +816,10 @@ void GameObject::ShowGameObjectOptions()
 			{
 				AddComponent(Comp_Type::C_LIGHT);
 			}
+			if (ImGui::MenuItem("CubeMap Renderer"))
+			{
+				AddComponent(Comp_Type::C_CUBEMAP_RENDERER);
+			}
 			if (ImGui::MenuItem("Collider"))
 			{
 				AddComponent(Comp_Type::C_COLLIDER);
@@ -921,7 +941,10 @@ void GameObject::ShowInspectorInfo()
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 3));
 
 		/* ENABLE-DISABLE CHECKBOX*/
-		ImGui::Checkbox("##1", &active);
+		if(ImGui::Checkbox("##1", &active))
+		{
+			SetActive(active);
+		}
 
 		/* NAME OF THE GAMEOBJECT */
 		ImGui::SameLine();
@@ -1117,6 +1140,11 @@ void GameObject::ShowInspectorInfo()
 			AddComponent(Comp_Type::C_LIGHT);
 			add_component = false;
 		}
+		if (ImGui::MenuItem("Cube Map Renderer"))
+		{
+			AddComponent(Comp_Type::C_CUBEMAP_RENDERER);
+			add_component = false;
+		}
 		//if (ImGui::BeginMenu("UI"))
 		//{
 
@@ -1198,9 +1226,15 @@ void GameObject::FreezeTransforms(bool freeze, bool change_childs)
 		}
 	}
 	if (static_obj)
+	{
 		App->scene->octree.Insert(this);
+		App->scene->RemoveDynamicObject(this);
+	}
 	else
+	{
 		App->scene->octree.Remove(this);
+		App->scene->dynamic_objects.push_back(this);
+	}
 }
 
 void GameObject::ShowFreezeChildsWindow(bool freeze, bool& active)
@@ -1241,6 +1275,25 @@ void GameObject::ShowFreezeChildsWindow(bool freeze, bool& active)
 void GameObject::SetActive(bool active)
 {
 	this->active = active;
+
+	bool set_pactive = (parent_active && active) ? true : false;
+	for (uint i = 0; i < childs.size(); i++)
+	{
+		childs[i]->SetParentActive(set_pactive);
+	}
+}
+
+void GameObject::SetParentActive(bool active)
+{
+	parent_active = active;
+
+	if (this->active)
+	{
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			childs[i]->SetParentActive(active);
+		}
+	}
 }
 
 void GameObject::SetVisible(bool visible)
@@ -1256,6 +1309,11 @@ void GameObject::SetStatic(bool set_static)
 bool GameObject::IsActive() const
 {
 	return active;
+}
+
+bool GameObject::IsParentActive() const
+{
+	return parent_active;
 }
 
 bool GameObject::IsVisible() const
@@ -1459,7 +1517,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			/* Link Material to the Mesh if exists */
 			const CompMaterial* material_link = (CompMaterial*)FindComponentByType(Comp_Type::C_MATERIAL);
 			if (material_link != nullptr) mesh->LinkMaterial(material_link);
-			else LOG("Havent Material");
 			return mesh;
 		}
 		case Comp_Type::C_TRANSFORM:
@@ -1643,6 +1700,14 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			CompLight* light = new CompLight(type, this);
 			components.push_back(light);
 			return light;
+		}
+
+		case Comp_Type::C_CUBEMAP_RENDERER:
+		{
+			LOG("Adding CUBEMAP RENDERER.");
+			CompCubeMapRenderer* cubemap = new CompCubeMapRenderer(type, this);
+			components.push_back(cubemap);
+			return cubemap;
 		}
 		case Comp_Type::C_COLLIDER:
 		{
@@ -1870,6 +1935,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		case Comp_Type::C_LIGHT:
 			this->AddComponent(Comp_Type::C_LIGHT);
 			break;
+		case Comp_Type::C_CUBEMAP_RENDERER:
+			this->AddComponent(Comp_Type::C_CUBEMAP_RENDERER);
+			break;
 		case Comp_Type::C_COLLIDER:
 			this->AddComponent(Comp_Type::C_COLLIDER);
 			break;
@@ -2013,7 +2081,15 @@ void GameObject::DeleteAllComponents()
 		}
 
 		comp->Clear();
-		RELEASE(comp);
+
+		if (comp->GetType() == C_LIGHT)
+		{
+			Event delete_light_event;
+			delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
+			delete_light_event.delete_light.light = (CompLight*)comp;
+			PushEvent(delete_light_event);
+		}
+		else RELEASE(comp);
 		components[i] = nullptr;
 	}
 	components.clear();
@@ -2030,7 +2106,14 @@ void GameObject::DeleteComponent(uint index)
 		}
 
 		comp->Clear();
-		RELEASE(comp);
+		if (comp->GetType() == C_LIGHT)
+		{
+			Event delete_light_event;
+			delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
+			delete_light_event.delete_light.light = (CompLight*)comp;
+			PushEvent(delete_light_event);
+		}
+		else RELEASE(comp);
 		comp = nullptr;
 
 		components.erase(components.begin() + index);

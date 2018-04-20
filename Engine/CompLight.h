@@ -12,8 +12,7 @@ enum Light_type {
 	DIRECTIONAL_LIGHT	
 };
 
-class CompLight :
-	public Component
+class CompLight :	public Component
 {
 public:
 	CompLight(Comp_Type t, GameObject * parent);
@@ -44,9 +43,7 @@ public:
 	void FrustumDebug();
 
 public:
-	//Billboard to show where are the lights----
-	uint texture_bulb = 0;
-	ResourceMesh* plane;
+
 	//---------------------------------------------
 	float4 color; //a.k.a. the color of the light
 

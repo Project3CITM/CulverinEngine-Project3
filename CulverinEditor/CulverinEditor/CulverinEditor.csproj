@@ -46,6 +46,7 @@
     <Compile Include="AI\Actions\BossEngage_Action.cs" />
     <Compile Include="AI\Actions\BossGrabAttack_Action.cs" />
     <Compile Include="AI\Actions\BossWideAttack_Action.cs" />
+    <Compile Include="AI\Actions\DisableMovementScript.cs" />
     <Compile Include="AI\Actions\FacePlayer_Action.cs" />
     <Compile Include="AI\Actions\InfiniteChasePlayer_Action.cs" />
     <Compile Include="AI\Actions\Separate_Action.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="Player\Fountain.cs" />
     <Compile Include="DebugSceneChanger.cs" />
     <Compile Include="Player\UI\LeftMana.cs" />
     <Compile Include="Player\UI\LeftHp.cs" />
@@ -108,6 +110,7 @@
     <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapTile.cs" />
     <Compile Include="Puzzles\Tests\PuzzleRotation.cs" />
     <Compile Include="Tools\Random.cs" />
+    <Compile Include="UI_Scripts\Component\CompCanvas.cs" />
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
     <Compile Include="UI_Scripts\Scene\FinishedLevel2.cs" />
     <Compile Include="UI_Scripts\Scene\LevelFinished.cs" />
@@ -116,9 +119,11 @@
     <Compile Include="UI_Scripts\Scene\ContinueButton.cs" />
     <Compile Include="Player\Daenerys\FireBreath.cs" />
     <Compile Include="Player\Daenerys\FireSound.cs" />
+    <Compile Include="UI_Scripts\Scene\MenuScript.cs" />
+    <Compile Include="UI_Scripts\Scene\PauseMenuButtons.cs" />
+    <Compile Include="UI_Scripts\Scene\PlayExit.cs" />
     <Compile Include="UI_Scripts\Scene\PlayQuit.cs" />
     <Compile Include="UI_Scripts\Scene\ReturnToMenu.cs" />
-    <Compile Include="UI_Scripts\ScoreScreen.cs" />
     <Compile Include="UI_Scripts\Scene\FadeAlpha.cs" />
     <Compile Include="UI_Scripts\Scene\ReturnToMenuFromLose.cs" />
     <Compile Include="UI_Scripts\Scene\Scroll.cs" />

@@ -4,10 +4,16 @@ using CulverinEditor.Debug;
 
 static public class StatsScore
 {
+    static public bool boss_dead = false;
     static public uint enem_killed = 0; // enemies player has killed
     static public uint puzzle_tries = 0; // tries used to solve the puzzle
     static public uint characters_alive = 0; //counter for tracking how many characters you have used (1,2 or 3)
     static public float time = 0.0f; //counter for tracking how many characters you have used (1,2 or 3)
+
+    static public void BossDead()
+    {
+        boss_dead = true;
+    }
  
     static public void KillEnemy()
     {
@@ -31,6 +37,7 @@ static public class StatsScore
 
     static public void ResetScore()
     {
+        boss_dead = false;
         time = 0.0f;
         enem_killed = 0;
         puzzle_tries = 0;

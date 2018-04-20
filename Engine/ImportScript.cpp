@@ -1117,6 +1117,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadNewWalkableMap", (const void*)LoadNewWalkableMap);
 	//EVENT SYSTEM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
+	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::GetInteractiveSelectedActive", (const void*)GetInteractiveSelectedActive);
 
 	//INPUT FUNCTIONS -------------------
 	
@@ -1134,12 +1135,20 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::GetMouseMoutionY", (const void*)GetMouseMoutionY);
 	mono_add_internal_call("CulverinEditor.Input::SetInputManagerActive", (const void*)SetInputManagerActive);
 	mono_add_internal_call("CulverinEditor.Input::SetInputManagerBlock", (const void*)SetInputManagerBlock);
+	mono_add_internal_call("CulverinEditor.Input::GetInputManagerActive", (const void*)GetInputManagerActive);
+	mono_add_internal_call("CulverinEditor.Input::GetInputManagerBlock", (const void*)GetInputManagerBlock);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_KeyDown", (const void*)GetInput_KeyDown);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_KeyUp", (const void*)GetInput_KeyUp);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_KeyRepeat", (const void*)GetInput_KeyRepeat);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_MouseButtonDown", (const void*)GetInput_MouseButtonDown);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_MouseButtonUp", (const void*)GetInput_MouseButtonUp);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerAxis", (const void*)GetInput_ControllerAxis);
+
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerActionName", (const void*)GetInput_ControllerActionName);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerKeyBindingName", (const void*)GetInput_ControllerKeyBindingName);
+	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerWaitForKey", (const void*)GetInput_ControllerWaitForKey);
+	mono_add_internal_call("CulverinEditor.Input::SetInput_ControllerWaitForKey", (const void*)SetInput_ControllerWaitForKey);
+
 	mono_add_internal_call("CulverinEditor.Input::RumblePlay", (const void*)RumblePlay);
 
 	//TIME FUNCTIONS -------------------
@@ -1175,6 +1184,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAudio::StopEvent", (const void*)StopAudioEvent);
 	mono_add_internal_call("CulverinEditor.CompAudio::SetAuxiliarySends", (const void*)SetAuxiliarySends);
 
+	//COMPONENT UI_RECT_TRANSFORM FUNCTIONS -----------------
+	mono_add_internal_call("CulverinEditor.CompRectTransform::SetUIPosition", (const void*)SetUIPosition);
+	mono_add_internal_call("CulverinEditor.CompRectTransform::GetUIPosition", (const void*)GetUIPosition);
+
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
@@ -1192,13 +1205,14 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompGraphic::ActivateRender", (const void*)ActivateRender);
 	mono_add_internal_call("CulverinEditor.CompGraphic::DeactivateRender", (const void*)DeactivateRender);
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetColor", (const void*)SetColor);
-	
+	mono_add_internal_call("CulverinEditor.CompGraphic::SetAlpha", (const void*)SetAlpha);
+
 	mono_add_internal_call("CulverinEditor.CompImage::FillAmount", (const void*)FillAmount);
 	
 	//COMPONENT TEXT
-	mono_add_internal_call("CulverinEditor.CompText::SetAlpha", (const void*)SetAlpha);
 	mono_add_internal_call("CulverinEditor.CompText::SetText", (const void*)SetText);
-
+	//COMPONENT UI_GRAPHIC FUNCTIONS -----------------
+	mono_add_internal_call("CulverinEditor.CompCanvas::SetCanvasAlpha", (const void*)SetCanvasAlpha);
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 	mono_add_internal_call("CulverinEditor.CompCollider::GetContactPoint", (const void*)GetContactPoint);
@@ -1270,6 +1284,7 @@ void ImportScript::LinkFunctions()
 	//RANDOM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.Random::Range(int,int)", (const void*)RangeInt);
 	mono_add_internal_call("CulverinEditor.Random::Range(single,single)", (const void*)RangeFloat);
+	mono_add_internal_call("CulverinEditor.Random::Range(int,int,int)", (const void*)RangeIntNoRepeat);
 }
 
 //Log messages into Engine Console
@@ -1427,6 +1442,11 @@ void ImportScript::SendInteractiveSelected(MonoObject * interactive)
 	}
 }
 
+bool ImportScript::GetInteractiveSelectedActive()
+{
+	return App->render_gui->selected!=nullptr;
+}
+
 mono_bool ImportScript::GetPressAnyKey()
 {
 	return App->input->GetPressAnyKey();
@@ -1533,6 +1553,19 @@ void ImportScript::SetInputManagerBlock(MonoString* str, mono_bool active)
 	App->input->player_action->SetInputManagerBlock(mono_string_to_utf8(str), active);
 }
 
+mono_bool ImportScript::GetInputManagerActive(MonoString * str, mono_bool active)
+{
+
+	return	App->input->player_action->GetInputManagerActive(mono_string_to_utf8(str));
+
+}
+
+mono_bool ImportScript::GetInputManagerBlock(MonoString * str, mono_bool active)
+{
+	return	App->input->player_action->GetInputManagerBlock(mono_string_to_utf8(str));
+
+}
+
 mono_bool ImportScript::GetInput_KeyDown(MonoString* name, MonoString* input) 
 {
 	return App->input->player_action->GetInput_KeyDown(mono_string_to_utf8(name), mono_string_to_utf8(input));
@@ -1561,6 +1594,26 @@ mono_bool ImportScript::GetInput_MouseButtonUp(MonoString* name, MonoString* inp
 float ImportScript::GetInput_ControllerAxis(MonoString* name, MonoString* input)
 {
 	return App->input->player_action->GetInput_ControllerAxis(mono_string_to_utf8(name), mono_string_to_utf8(input));
+}
+
+MonoString * ImportScript::GetInput_ControllerActionName(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+{
+	return nullptr;
+		//App->input->player_action->GetInput_ControllerActionName(mono_string_to_utf8(name), mono_string_to_utf8(input), mono_string_to_utf8(device), negative_key);
+}
+
+MonoString * ImportScript::GetInput_ControllerKeyBindingName(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+{
+	return nullptr;
+}
+
+mono_bool ImportScript::GetInput_ControllerWaitForKey(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+{
+	return mono_bool();
+}
+
+void ImportScript::SetInput_ControllerWaitForKey(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+{
 }
 
 void ImportScript::RumblePlay(float intensity, int milliseconds)
@@ -2005,6 +2058,12 @@ void ImportScript::SetText(MonoObject * object, MonoString * text)
 	current->SetText(object, text);
 }
 
+void ImportScript::SetCanvasAlpha(MonoObject * object, float alpha)
+{
+	current->SetCanvasAlpha(object, alpha);
+
+}
+
 void ImportScript::FillAmount(MonoObject * object, float value)
 {
 	current->FillAmount(object, value);
@@ -2265,6 +2324,16 @@ void ImportScript::SetQuadratic(MonoObject * object, float value)
 	current->SetQuadratic(object, value);
 }
 
+void ImportScript::SetUIPosition(MonoObject * object, MonoObject * vector3)
+{
+	current->SetUIPosition(object, vector3);
+}
+
+MonoObject * ImportScript::GetUIPosition(MonoObject * object)
+{
+	return current->GetUIPosition(object);
+}
+
 MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)
 {
 	return current->RayCast(origin, direction, distance);
@@ -2294,4 +2363,25 @@ int ImportScript::RangeInt(int min, int max)
 float ImportScript::RangeFloat(float min, float max)
 {
 	return App->random->Float(min, max);;
+}
+
+int ImportScript::RangeIntNoRepeat(int min, int max, int norepeat)
+{
+	if (norepeat >= min && norepeat <= max)
+	{
+		int num = App->random->Int(min, max);
+		if (num != norepeat)
+		{
+			return num;
+		}
+		else
+		{
+			while (num == norepeat)
+			{
+				num = App->random->Int(min, max);
+			}
+			return num;
+		}
+	}
+	return 0;
 }

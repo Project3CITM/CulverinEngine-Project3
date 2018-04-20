@@ -118,6 +118,7 @@
     <ClInclude Include="CompCanvasRender.h" />
     <ClInclude Include="CompCheckBox.h" />
     <ClInclude Include="CompCollider.h" />
+    <ClInclude Include="CompCubeMapRenderer.h" />
     <ClInclude Include="CompEditText.h" />
     <ClInclude Include="CompFSM.h" />
     <ClInclude Include="CompGraphic.h" />
@@ -135,6 +136,7 @@
     <ClInclude Include="CompText.h" />
     <ClInclude Include="CompUIAnimation.h" />
     <ClInclude Include="CSharpScript.h" />
+    <ClInclude Include="CubeMap_Texture.h" />
     <ClInclude Include="DefaultShaders.h" />
     <ClInclude Include="DepthCubeMap.h" />
     <ClInclude Include="EventDef.h" />
@@ -163,7 +165,7 @@
     <ClInclude Include="ModuleEventSystemV2.h" />
     <ClInclude Include="ModuleFS.h" />
     <ClInclude Include="ModuleFramebuffers.h" />
-    <ClInclude Include="ModuleKeyBinding.h" />
+    <ClInclude Include="KeyBinding.h" />
     <ClInclude Include="ModuleLightning.h" />
     <ClInclude Include="ModuleMap.h" />
     <ClInclude Include="ModuleParticles.h" />
@@ -478,6 +480,7 @@
     <ClCompile Include="CompCanvasRender.cpp" />
     <ClCompile Include="CompCheckBox.cpp" />
     <ClCompile Include="CompCollider.cpp" />
+    <ClCompile Include="CompCubeMapRenderer.cpp" />
     <ClCompile Include="CompEditText.cpp" />
     <ClCompile Include="CompFSM.cpp" />
     <ClCompile Include="CompGraphic.cpp" />
@@ -498,6 +501,7 @@
     <ClCompile Include="CSharpComponents.cpp" />
     <ClCompile Include="CSharpTransform.cpp" />
     <ClCompile Include="CSharpUI.cpp" />
+    <ClCompile Include="CubeMap_Texture.cpp" />
     <ClCompile Include="DepthCubeMap.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ImGui\ImGuizmo.cpp" />
@@ -523,7 +527,7 @@
     <ClCompile Include="ModuleFS.cpp" />
     <ClCompile Include="ModuleFramebuffers.cpp" />
     <ClCompile Include="ModuleGUI_Build.cpp" />
-    <ClCompile Include="ModuleKeyBinding.cpp" />
+    <ClCompile Include="KeyBinding.cpp" />
     <ClCompile Include="ModuleLightning.cpp" />
     <ClCompile Include="ModuleMap.cpp" />
     <ClCompile Include="ModuleParticles.cpp" />

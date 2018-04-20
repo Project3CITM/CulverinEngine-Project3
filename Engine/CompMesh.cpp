@@ -19,10 +19,12 @@
 #include "CompBone.h"
 #include "ModuleLightning.h"
 #include "ModuleWindow.h"
+#include "CubeMap_Texture.h"
 
 //Delete this
 #include "glm\glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "ModuleInput.h"
 
 
 CompMesh::CompMesh(Comp_Type t, GameObject* parent) : Component(t, parent)
@@ -257,15 +259,18 @@ void CompMesh::Draw2(uint ID)
 {
 	if (render && resource_mesh != nullptr)
 	{
-		//BIND MATERIAL
+
+
 		CompTransform* transform = (CompTransform*)parent->FindComponentByType(C_TRANSFORM);
 		if (resource_mesh->vertices.size() > 0 && resource_mesh->indices.size() > 0)
 		{
+		
+			uint TexturesSize = parent->GetComponentMaterial()->material->textures.size();
 			
-			uint TexturesSize = parent->GetComponentMaterial()->material->textures.size();			
 		
 			GLint modelLoc = glGetUniformLocation(ID, "model");			
-		
+
+
 			float4x4 matrixfloat = transform->GetGlobalTransform();
 
 			GLfloat matrix[16] =
@@ -275,16 +280,9 @@ void CompMesh::Draw2(uint ID)
 				matrixfloat[0][2],matrixfloat[1][2],matrixfloat[2][2],matrixfloat[3][2],
 				matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
 			};
-		
+
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
 
-			
-
-			/*TEMPORAL*/
-		
-			uint cubeLoc = glGetUniformLocation(ID, "cubeMap");
-			glUniform1i(cubeLoc, 0);
-	
 
 			int total_save_buffer = 14;
 			uint bones_size_in_buffer = 0;
@@ -321,22 +319,11 @@ void CompMesh::Draw2(uint ID)
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource_mesh->indices_id);
 				glDrawElements(GL_TRIANGLES, resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);
 			}
-			//Reset TextureColor
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		
 			
 		}
 		else
 			LOG("Cannot draw the mesh");
 	}
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
-	glDisableVertexAttribArray(3);
-	glDisableVertexAttribArray(4);
-	glDisableVertexAttribArray(5);
-	glDisableVertexAttribArray(6);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 }
 
 void CompMesh::Clear()
@@ -422,7 +409,9 @@ void CompMesh::Save(JSON_Object* object, std::string name, bool saveScene, uint&
 			// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
 			std::string temp = std::to_string(countResources++);
 			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".UUID Resource", resource_mesh->GetUUID());
+			if(resource_mesh->name.c_str()!= nullptr)
 			json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", resource_mesh->name.c_str());
+			else json_object_dotset_string_with_std(object, "Info.Resources.Resource " + temp + ".Name", "");
 			json_object_dotset_number_with_std(object, "Info.Resources.Resource " + temp + ".Type", (int)resource_mesh->GetType());
 		}
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", resource_mesh->GetUUID());

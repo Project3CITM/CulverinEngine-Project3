@@ -10,7 +10,7 @@
 #include "WindowInspector.h"
 #include "ModuleRenderer3D.h"
 #include "Scene.h"
-
+#include "CubeMap_Texture.h"
 
 CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent)
 {
@@ -84,6 +84,15 @@ void CompMaterial::PreUpdate(float dt)
 			}
 		}
 	}
+	for (int i = 0; i < material->cube_maps.size(); i++)
+	{
+		for (int n = 0; n < App->renderer3D->cube_maps.size(); n++) {
+			if (material->cube_maps[i].cube_name.compare(App->renderer3D->cube_maps[n]->GetName()) == 0) {
+				material->cube_maps[i].cube_map = App->renderer3D->cube_maps[n];
+			}
+		}
+	}
+
 }
 
 void CompMaterial::Clear()
@@ -226,11 +235,16 @@ void CompMaterial::ShowInspectorInfo()
 	int program_pos = 0;
 	std::string shaders_names;
 	std::string program_names;
-	for (int i = 0; i < App->module_shaders->materials.size(); i++) {
-		shaders_names += App->module_shaders->materials[i]->name;
+	int i = 0;
+	std::multimap<uint, Material*>::iterator temp_item  = App->module_shaders->materials.begin();
+	for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++) {
+		shaders_names += (*item).second->name.c_str();
 		shaders_names += '\0';
-		if (material->name.compare(App->module_shaders->materials[i]->name) == 0)
+		if (material->name.compare((*item).second->name) == 0) {
 			shader_pos = i;
+			temp_item = item;
+		}
+		i++;
 	}
 	for (int i = 0; i < App->module_shaders->programs.size(); i++) {
 		program_names += App->module_shaders->programs[i]->name;
@@ -238,10 +252,10 @@ void CompMaterial::ShowInspectorInfo()
 		if (material->material_shader->name.compare(App->module_shaders->programs[i]->name) == 0)
 			program_pos = i;
 	}
-	if (ImGui::Combo("Inputs Mode", &shader_pos, shaders_names.c_str())) {
+	if (ImGui::Combo("Material", &shader_pos, shaders_names.c_str())) {
 
 		
-		ResourceMaterial* resource_mat = (ResourceMaterial*)App->resource_manager->GetResource(App->module_shaders->materials[shader_pos]->path.c_str());
+		ResourceMaterial* resource_mat = (ResourceMaterial*)App->resource_manager->GetResource((*temp_item).second->path.c_str());
 		if (resource_mat != nullptr)
 		{
 			resource_mat->num_game_objects_use_me++;
@@ -252,7 +266,7 @@ void CompMaterial::ShowInspectorInfo()
 			}
 		}
 		material->active_num--;
-		material = App->module_shaders->materials[shader_pos];
+		material = (*temp_item).second;
 		material->active_num++;
 	}
 
@@ -357,6 +371,14 @@ void CompMaterial::ShowInspectorInfo()
 			material->it_color_variables++;
 		}
 
+		//CubeMaps
+		if (temp.type == GL_SAMPLER_CUBE && material->cube_maps.size() != 0)
+		{
+			ShowCubeMapVariable(i, &(*material->it_cube_maps));
+			material->it_cube_maps++;
+		}
+
+
 	}
 
 	material->RestartIterators();
@@ -396,12 +418,11 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 
 	std::string material_name = json_object_dotget_string_with_std(object, name + "MaterialName:");
 	
-	for (int i = 0; i < App->module_shaders->materials.size(); i++)
+	for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
 	{
-		if (strcmp(App->module_shaders->materials[i]->name.c_str(), material_name.c_str() )==0)
-		{
-			
-			material = App->module_shaders->materials[i];
+		if (strcmp((*item).second->name.c_str(), material_name.c_str() )==0)
+		{			
+			material = (*item).second;
 			material->active_num++;
 			break;
 		}
@@ -526,6 +547,26 @@ void CompMaterial::ShowColorVariable(int index, ColorVar *var)
 	if(ImGui::ColorPicker4(var->var_name.c_str(), &var->value[0]))
 		material->Save();
 	ImGui::PopID();
+
+}
+
+void CompMaterial::ShowCubeMapVariable(int index, CubeMapVar * var)
+{
+	//CHANGE for combo if we have more than one cubemap
+	//var->value = App->renderer3D->temp_cubemap->GetTextureId();
+	int cube_pos = 0;
+	std::string cube_names;
+	for (int i = 0; i < App->renderer3D->cube_maps.size(); i++) {
+		cube_names += App->renderer3D->cube_maps[i]->GetName().c_str();
+		cube_names += '\0';
+		if (var->cube_map == App->renderer3D->cube_maps[i])
+			cube_pos = i;
+	}
+	if (ImGui::Combo("CubeMap", &cube_pos, cube_names.c_str())) {
+		var->cube_map = App->renderer3D->cube_maps[cube_pos];
+
+	}
+
 
 }
 

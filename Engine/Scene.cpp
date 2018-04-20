@@ -247,7 +247,6 @@ update_status Scene::Update(float dt)
 		DrawPlane();
 	}
 
-	
 	// Draw Quadtree
 	if (octree_draw) octree.DebugDraw();
 
@@ -328,6 +327,9 @@ bool Scene::CleanUp()
 	skybox->DeleteSkyboxTex();
 	
 	octree.Clear();
+	static_objects.clear();
+	dynamic_objects.clear();
+
 	root->CleanUp();
 	secondary_root->CleanUp();
 	temporary_scene->CleanUp();
@@ -420,6 +422,8 @@ void Scene::EditorQuadtree()
 		if (ImGui::Button("UPDATE QUADTREE"))
 		{
 			octree.Clear(false);
+			static_objects.clear();
+			dynamic_objects.clear();
 			//Clac adaptative size of scene octree
 			/**/
 			//AABB AdaptativeAABB;
@@ -443,8 +447,13 @@ void Scene::EditorQuadtree()
 			//Insert AABBs to octree
 			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 				if ((*item)->IsStatic())
+				{
 					octree.Insert(*item);
-
+				}
+				else
+				{
+					dynamic_objects.push_back(*item);
+				}
 
 		/*	if (App->engine_state == EngineState::STOP)
 			{
@@ -581,6 +590,26 @@ GameObject * Scene::FindGameObjectWithTag(const char * str)
 			if(tagged_objects[k]->empty() == false)return tagged_objects[k]->front();
 			break;
 		}
+	}
+	return nullptr;
+}
+
+GameObject* Scene::FindGameObjectWithTagRecursive(const char* str, GameObject* gameobject)
+{
+	if(gameobject->GetNumChilds() > 0)
+	{
+		for (int i = 0; i< gameobject->GetNumChilds(); i++)
+		{
+			GameObject* found = FindGameObjectWithTagRecursive(str, gameobject->GetChildbyIndex(i));
+			if (found != nullptr)
+			{
+				return found;
+			}
+		}
+	}
+	if (strcmp(str, gameobject->GetTag()) == 0)
+	{
+		return gameobject;
 	}
 	return nullptr;
 }
@@ -1060,6 +1089,21 @@ const std::vector<GameObject*>* Scene::GetAllSceneObjects()
 	return &game_objects_scene;
 }
 
+void Scene::RemoveDynamicObject(GameObject * obj)
+{
+	if (obj != nullptr) 
+	{
+		for (int i = dynamic_objects.size() - 1; i >= 0; i--)
+		{
+			if (dynamic_objects[i] == obj) {
+				for (uint j = i; j + 1 < dynamic_objects.size(); j++)
+					dynamic_objects[j] = dynamic_objects[j + 1];
+				dynamic_objects.pop_back();
+			}
+		}
+	}
+}
+
 GameObject * Scene::FindCanvas()
 {
 	std::queue<GameObject*> queue;
@@ -1359,6 +1403,7 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("CUBE Created.");
@@ -1413,6 +1458,7 @@ GameObject * Scene::CreatePlane(GameObject * parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("Plane Created.");

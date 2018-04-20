@@ -273,6 +273,10 @@ public:
 	void		SetSecondActiveBlendingClipWeight(MonoObject* object, float weight);
 	void		SetBlendInTime(MonoObject* object, MonoString* name, float time);
 	void		PlayAnimationNode(MonoObject* object, MonoString* name);
+	
+	/*UI-RectTransform*/
+	void		SetUIPosition(MonoObject* object, MonoObject* vector3);
+	MonoObject* GetUIPosition(MonoObject* object);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
@@ -290,6 +294,8 @@ public:
 	void		SetAlpha(MonoObject * object, float alpha);
 	void		SetText(MonoObject * object, MonoString* string);
 	void		SetColor(MonoObject * object, MonoObject * color, float alpha);
+	/*UI- Canvas*/
+	void		SetCanvasAlpha(MonoObject * object, float alpha);
 
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);

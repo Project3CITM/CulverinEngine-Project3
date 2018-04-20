@@ -20,25 +20,25 @@ public class Scroll : CulverinBehaviour
         scroll_text = GetLinkedObject("scroll_text");
         button = GetLinkedObject("button");
         loading_text = GetLinkedObject("loading_text");        
-        position = scroll_text.GetComponent<CompRectTransform>().GetPosition();
+        position = scroll_text.GetComponent<CompRectTransform>().GetUIPosition();
         button.SetActive(false);
         loading_text.SetActive(false);
 
     }
     void Update()
     {
-        if (scroll_text.GetComponent<CompRectTransform>().GetPosition().y < limit_y)
+        if (scroll_text.GetComponent<CompRectTransform>().GetUIPosition().y < limit_y)
         {
-            Vector3 new_pos = new Vector3(position.x, position.y + speed * Time.deltaTime, position.z);
-            scroll_text.GetComponent<CompRectTransform>().SetPosition(new_pos);
+            position.y += speed * Time.deltaTime;
+            scroll_text.GetComponent<CompRectTransform>().SetUIPosition(position);
         }
-        if (!end_scroll && scroll_text.GetComponent<CompRectTransform>().GetPosition().y >= limit_y)
+        if (!end_scroll && scroll_text.GetComponent<CompRectTransform>().GetUIPosition().y >= limit_y)
         {
             loading_text.SetActive(true);
             end_scroll = true;
             start_load = true;
             SceneManager.LoadNewWalkableMap("Map_Level_2");
-            SceneManager.LoadSceneNoDestroy("Level 2");
+            SceneManager.LoadMultiSceneNoDestroy("Level 2", "PauseMenu");
         }
         if (start_load)
         {
@@ -49,7 +49,6 @@ public class Scroll : CulverinBehaviour
                 button.SetActive(true);
             }
         }
-        //SceneManager.LoadScene("MainMenuScene");
     }
 
 

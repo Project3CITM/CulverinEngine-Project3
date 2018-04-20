@@ -35,7 +35,7 @@ void PlayerActions::UpdateConfig(float dt)
 		{
 			for (int i = interactive_vector.size(); i < number_of_inputs; i++)
 			{
-				InputManager* input_manager = new InputManager();
+				InputManager* input_manager = new InputManager(this);
 				interactive_vector.push_back(input_manager);
 				std::string temp_name = "Input " + std::to_string(number_of_inputs);
 				input_manager->SetName(temp_name.c_str());
@@ -228,6 +228,27 @@ void PlayerActions::SetInputManagerBlock(const char * name, bool set)
 		if (strcmp((*it)->GetName(), name) == 0)
 			(*it)->SetBlockAction(set);
 	}
+}
+
+bool PlayerActions::GetInputManagerActive(const char * name) const
+{
+	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		if (strcmp((*it)->GetName(), name) == 0)
+			return (*it)->GetActiveInput();
+	}
+	return false;
+}
+
+bool PlayerActions::GetInputManagerBlock(const char * name) const
+{
+	for (std::vector<InputManager*>::const_iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		if (strcmp((*it)->GetName(), name) == 0)
+			return (*it)->GetBlockAction();
+	}
+	return false;
+
 }
 
 InputManager * PlayerActions::GetInputManager(const char * name) const
@@ -455,4 +476,31 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 
 	}
 	return 0;
+}
+
+const char * PlayerActions::GetInput_ControllerActionName(const char * name, const char * input, const char * device, bool negative_key)
+{
+	return nullptr;
+}
+
+const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name, const char * input, const char * device, bool negative_key)
+{
+	return nullptr;
+}
+
+bool PlayerActions::GetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)
+{
+	return false;
+}
+
+void PlayerActions::SetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)
+{
+}
+
+void PlayerActions::SendNewDeviceCombinationType(DeviceCombinationType type)
+{
+	if (actual_player_action == type)
+		return;
+	actual_player_action = type;
+	my_module->UpdateDeviceType(actual_player_action);
 }

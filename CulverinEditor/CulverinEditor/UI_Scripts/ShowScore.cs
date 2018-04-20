@@ -5,6 +5,10 @@ using CulverinEditor.Debug;
 
 public class ShowScore : CulverinBehaviour
 {
+    //Boss dead
+    public GameObject coin1_boss;
+    public GameObject coin2_boss;
+    public GameObject coin3_boss;
     //Level tries
     public GameObject coin1_try;
     public GameObject coin2_try;
@@ -54,7 +58,9 @@ public class ShowScore : CulverinBehaviour
     //space for sergio saez methods 
     void Start()
     {
-       
+        coin1_boss = GetLinkedObject("coin1_boss");
+        coin2_boss = GetLinkedObject("coin2_boss");
+        coin3_boss = GetLinkedObject("coin3_boss");
         coin1_try = GetLinkedObject("coin1_try");
         coin2_try = GetLinkedObject("coin2_try");
         coin3_try = GetLinkedObject("coin3_try");
@@ -73,7 +79,9 @@ public class ShowScore : CulverinBehaviour
         bronze_coin.SetActive(false);
         silver_coin.SetActive(false);
         golden_coin.SetActive(false);
-
+        coin1_boss.SetActive(false);
+        coin2_boss.SetActive(false);
+        coin3_boss.SetActive(false);
         coin1_kill.SetActive(false);
         coin2_kill.SetActive(false);
         coin3_kill.SetActive(false);
@@ -87,11 +95,27 @@ public class ShowScore : CulverinBehaviour
         coin2_time.SetActive(false);
         coin3_time.SetActive(false);
         StatsScore.time = Time.timePlay;
+
         EnemyKillsScore();
         AliveScore();
         TimeScore();
         TryScore();
         TotalScore();
+    }
+
+    void BossScore()
+    {
+        if(StatsScore.boss_dead)
+        {
+            coin_score += bronze_value;
+            coin_score += silver_value;
+            coin_score += gold_value;
+
+            coin1_boss.SetActive(true);
+            coin2_boss.SetActive(true);
+            coin3_boss.SetActive(true);
+
+        }
     }
     void EnemyKillsScore()
     {
