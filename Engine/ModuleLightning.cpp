@@ -215,7 +215,7 @@ update_status ModuleLightning::PreUpdate(float dt)
 		if(scene_lights[i]->use_light_to_render == true && scene_lights[i]->to_delete != true)
 			frame_used_lights.push_back(scene_lights[i]);
 	}
-	scene_objects = App->scene->GetAllSceneObjects();
+
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -335,6 +335,7 @@ void ModuleLightning::OnEvent(Event & event)
 			shadow_Shader->Bind();
 			uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
 			glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &light->depthMVPMat[0][0]);
+			scene_objects = App->scene->GetAllSceneObjects();
 			for (std::vector<GameObject*>::const_iterator item = scene_objects->begin(); item != scene_objects->end(); item++)
 			{
 				CompMesh* m = (*item)->GetComponentMesh();
