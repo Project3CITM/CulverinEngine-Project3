@@ -474,6 +474,18 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 				templist[i].go->SyncComponents(mainParent);
 			}
 
+			for (uint i = 0; i < templist.size(); i++)
+			{
+				if (templist[i].go->IsStatic())
+				{
+					App->scene->octree.Insert(templist[i].go);
+				}
+				else
+				{
+					App->scene->dynamic_objects.push_back(templist[i].go);
+				}
+			}
+
 			// Now Iterate All GameObjects and Components and create a new UUID!
 			if (mainParent != nullptr)
 			{

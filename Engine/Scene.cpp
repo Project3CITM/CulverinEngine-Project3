@@ -1403,6 +1403,7 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("CUBE Created.");
@@ -1457,6 +1458,7 @@ GameObject * Scene::CreatePlane(GameObject * parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("Plane Created.");
