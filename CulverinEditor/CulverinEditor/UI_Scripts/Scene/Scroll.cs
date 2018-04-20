@@ -42,7 +42,7 @@ public class Scroll : CulverinBehaviour
         }
         if (start_load)
         {
-            if (SceneManager.CheckSceneReady())
+            if (SceneManager.CheckMultiSceneReady())
             {
                 start_load = false;
                 loading_text.SetActive(false);

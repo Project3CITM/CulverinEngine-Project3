@@ -62,6 +62,8 @@ Scene::~Scene()
 	DeleteAllGameObjects(root);
 	DeleteAllGameObjects(secondary_root);
 	DeleteAllGameObjects(temporary_scene);
+	DeleteAllGameObjects(dontdestroyonload);
+
 	search_name->GetChildsPtr()->clear();
 	//DeleteAllGameObjects(dontdestroyonload);
 	defined_tags.clear();
@@ -333,7 +335,8 @@ bool Scene::CleanUp()
 	root->CleanUp();
 	secondary_root->CleanUp();
 	temporary_scene->CleanUp();
-	
+	dontdestroyonload->CleanUp();
+
 	RELEASE(scene_buff);
 	RELEASE(glow_buff);
 	RELEASE(horizontal_blur_buff);
