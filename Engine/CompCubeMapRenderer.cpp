@@ -115,6 +115,10 @@ void CompCubeMapRenderer::Bake(Event& event)
 
 			int total_save_buffer = 14;
 			ResourceMesh* mesh = m->resource_mesh;
+
+			if (mesh == nullptr)
+				continue;
+
 			glBindBuffer(GL_ARRAY_BUFFER, mesh->id_total_buffer);
 
 			glEnableVertexAttribArray(0);

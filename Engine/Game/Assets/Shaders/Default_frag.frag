@@ -175,10 +175,7 @@ void main()
     usedBias = clamp(usedBias, 0, 0.01);
 
 
-    // Shadow
-    vec4 shadowPos = shadowCoord / shadowCoord.w;
-    float shadow = CalcShadow(shadowPos, usedBias);
-
+    
  for (int i = 0; i <_numLights; ++i) {
 
        inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N);
