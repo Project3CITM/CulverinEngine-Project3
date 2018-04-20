@@ -105,6 +105,7 @@ void CompRectTransform::Update(float dt)
 	}
 	if (toUpdate)
 	{
+		Resize(resize_factor);
 		UpdateMatrix(transform_mode);
 		toUpdate = false;
 		updated = true;

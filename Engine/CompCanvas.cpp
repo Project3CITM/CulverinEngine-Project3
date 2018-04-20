@@ -22,7 +22,7 @@ CompCanvas::CompCanvas(Comp_Type t, GameObject * parent) :Component(t, parent)
 	uid = App->random->Int();
 	name_component = "CompCanvas";
 	my_transform = (CompRectTransform*)parent->FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
-	UpdateCanvasScale();
+	//UpdateCanvasScale();
 
 	/*
 	draw_mode.type = EventType::EVENT_DRAW;
