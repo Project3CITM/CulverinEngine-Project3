@@ -533,7 +533,7 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 		uint resource_controllerID = json_object_dotget_number_with_std(object, name + "Resource Controller UUID");
 		if (resource_controllerID > 0)
 		{
-			controller_image = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+			controller_image = (ResourceMaterial*)App->resource_manager->GetResource(resource_controllerID);
 			if (controller_image != nullptr)
 			{
 				controller_image->num_game_objects_use_me++;
