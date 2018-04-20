@@ -8,8 +8,6 @@ static public class StatsScore
     static public uint puzzle_tries = 0; // tries used to solve the puzzle
     static public uint characters_alive = 0; //counter for tracking how many characters you have used (1,2 or 3)
     static public float time = 0.0f; //counter for tracking how many characters you have used (1,2 or 3)
-
-
  
     static public void KillEnemy()
     {

@@ -26,19 +26,15 @@ public class Boss_BT : BT
 
     //distance Attack
     public float distance_attack_cooldown = 1.0f;
-    public float distance_attack_damage = 1.0f;
 
     //AOE Attack
     public float aoe_attack_cooldown = 1.0f;
-    public float aoe_attack_damage = 1.0f;
 
     //Strong Attack
     public float strong_attack_cooldown = 1.0f;
-    public float strong_attack_damage = 1.0f;
 
     //Triple Attack
     public float triple_attack_cooldown = 1.0f;
-    public float triple_attack_damage = 1.0f;
 
     public float damaged_limit = 0.6f;
     public float cooldown = 0.0f;
@@ -215,6 +211,7 @@ public class Boss_BT : BT
             next_action = GetComponent<Die_Action>();
             current_action.Interupt();
             GetComponent<CompAudio>().PlayEvent("BossDeath");
+            StatsScore.BossDead();
 
             //todosforme
             GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
