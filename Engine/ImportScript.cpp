@@ -1186,6 +1186,7 @@ void ImportScript::LinkFunctions()
 
 	//COMPONENT UI_RECT_TRANSFORM FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompRectTransform::SetUIPosition", (const void*)SetUIPosition);
+	mono_add_internal_call("CulverinEditor.CompRectTransform::GetUIPosition", (const void*)GetUIPosition);
 
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
@@ -2326,6 +2327,11 @@ void ImportScript::SetQuadratic(MonoObject * object, float value)
 void ImportScript::SetUIPosition(MonoObject * object, MonoObject * vector3)
 {
 	current->SetUIPosition(object, vector3);
+}
+
+MonoObject * ImportScript::GetUIPosition(MonoObject * object)
+{
+	return current->GetUIPosition(object);
 }
 
 MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)

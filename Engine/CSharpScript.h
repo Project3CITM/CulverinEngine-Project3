@@ -276,6 +276,7 @@ public:
 	
 	/*UI-RectTransform*/
 	void		SetUIPosition(MonoObject* object, MonoObject* vector3);
+	MonoObject* GetUIPosition(MonoObject* object);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);

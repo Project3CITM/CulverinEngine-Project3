@@ -343,6 +343,37 @@ void CSharpScript::SetUIPosition(MonoObject * object, MonoObject * vector3)
 	}
 }
 
+MonoObject * CSharpScript::GetUIPosition(MonoObject * object)
+{
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
+		if (classT)
+		{
+			Component* obj = App->importer->iScript->GetComponentMono(object);
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+				CompRectTransform* rect = (CompRectTransform*)comp->GetParent()->FindComponentByType(C_RECT_TRANSFORM);
+				float3 new_vec = float3(rect->GetUIPosition(),0.f);
+
+				if (x_field) mono_field_set_value(new_object, x_field, &new_vec.x);
+				if (y_field) mono_field_set_value(new_object, y_field, &new_vec.y);
+				if (z_field) mono_field_set_value(new_object, z_field, &new_vec.z);
+
+				return new_object;
+			}
+		}
+	}
+	return nullptr;
+	return nullptr;
+}
+
 // CompCollider -----------------------------------------------------------
 MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
 {

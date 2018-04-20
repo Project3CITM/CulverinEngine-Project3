@@ -323,6 +323,7 @@ private:
 
 	/*Component Rect_Transform*/
 	static void SetUIPosition(MonoObject* object, MonoObject* vector3);
+	static MonoObject* GetUIPosition(MonoObject* object);
 
 	/*Module Physics*/
 	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);

@@ -336,6 +336,7 @@ void CompRectTransform::Save(JSON_Object* object, std::string name, bool saveSce
 	float3 save_pos = GetPos();
 	save_pos.x = ui_position.x;
 	save_pos.y = ui_position.y;
+	save_pos.z = 0;
 
 	App->fs->json_array_dotset_float3(object, name + "Position", save_pos);
 	// Rotation
@@ -758,11 +759,11 @@ float4 CompRectTransform::GetRect()const
 }
 float4 CompRectTransform::GetGlobalRect()const
 {
-	return float4(global_transform.TranslatePart().x - (abs(width)*left_pivot.x), global_transform.TranslatePart().y + (abs(height)*left_pivot.y), (float)abs(width), (float)abs(height));
+	return float4(position_global.x - (abs(width*resize_factor.x)*left_pivot.x), position_global.y + (abs(height*resize_factor.y)*left_pivot.y), (float)abs(width*resize_factor.x), (float)abs(height*resize_factor.y));
 }
 float3 CompRectTransform::GetGlobalPosition()const
 {
-	return float3(global_transform.TranslatePart().x - (abs(width)*left_pivot.x), global_transform.TranslatePart().y + (abs(height)*left_pivot.y), global_transform.TranslatePart().z);
+	return float3(position_global.x - (abs(width)*left_pivot.x), position_global.y + (abs(height)*left_pivot.y), position_global.z);
 }
 float3 CompRectTransform::GetNorthEastPosition()const
 {
