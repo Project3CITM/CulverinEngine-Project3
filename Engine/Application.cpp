@@ -435,8 +435,11 @@ void Application::FinishUpdate()
 			render_gui->ClearInteractiveVector();
 
 			//First swap main camera
-			GameObject* camera = scene->root->FindGameObjectWithTag("camera");
-			((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
+			//GameObject* camera = scene->root->FindGameObjectWithTag("camera");
+			//((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
+			GameObject* camera2 = scene->FindGameObjectWithTagRecursive("camera", scene->root);
+			CompCamera* cam = (CompCamera*)camera2->FindComponentByType(Comp_Type::C_CAMERA);
+			cam->SetMain(false);
 
 			//Swap Scenes
 			GameObject* temp = new GameObject();
@@ -446,8 +449,11 @@ void Application::FinishUpdate()
 			RELEASE(temp);
 
 			//Set new main camera
-			camera = scene->root->FindGameObjectWithTag("camera");
-			((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
+			//camera = scene->root->FindGameObjectWithTag("camera");
+			//((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
+			GameObject* camera3 = scene->FindGameObjectWithTagRecursive("camera", scene->root);
+			CompCamera* cam3 = (CompCamera*)camera3->FindComponentByType(Comp_Type::C_CAMERA);
+			cam3->SetMain(true);
 
 			if (engine_state != EngineState::STOP)
 			{
