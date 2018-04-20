@@ -45,7 +45,7 @@ nJoy Game uses and requires Microsoft DirectX 11.0.
 
 Download our latest build at https://github.com/Project3CITM/CulverinEngine-Project3/releases
 
-Just download the release, unpack it, open the NjoyGames_VerticalSlice3 folders and open the NjoyGames_VerticalSlice1.exe file.
+Just download the release, unpack it, open the NjoyGames_VerticalSlice3 folders and open the NjoyGames_VerticalSlice1.exe file. 
 
 ### Save Games:
 

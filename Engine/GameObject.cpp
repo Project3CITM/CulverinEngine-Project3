@@ -1510,7 +1510,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			/* Link Material to the Mesh if exists */
 			const CompMaterial* material_link = (CompMaterial*)FindComponentByType(Comp_Type::C_MATERIAL);
 			if (material_link != nullptr) mesh->LinkMaterial(material_link);
-			else LOG("Havent Material");
 			return mesh;
 		}
 		case Comp_Type::C_TRANSFORM:
