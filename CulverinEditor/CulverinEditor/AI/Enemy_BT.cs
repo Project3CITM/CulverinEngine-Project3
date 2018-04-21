@@ -262,17 +262,17 @@ public class Enemy_BT : BT
                     for (int i = 1; i < distance_x; i++)
                         tiles_between.Add(new PathNode(enemy_x + i, enemy_y));
                 else
-                    for (int i = 1; i < distance_x; i--)
+                    for (int i = -1; i > distance_x; i--)
                         tiles_between.Add(new PathNode(enemy_x + i, enemy_y));
             }
 
             if (distance_y != 0)
             {
-                if (distance_x > 0)
-                    for (int i = 1; i < distance_x; i++)
+                if (distance_y > 0)
+                    for (int i = 1; i < distance_y; i++)
                         tiles_between.Add(new PathNode(enemy_x, enemy_y + i));
                 else
-                    for (int i = 1; i < distance_x; i--)
+                    for (int i = -1; i > distance_y; i--)
                         tiles_between.Add(new PathNode(enemy_x, enemy_y + i));
             }
 
