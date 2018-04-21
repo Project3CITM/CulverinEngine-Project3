@@ -34,7 +34,6 @@
 				<Event Id="2483303643" Name="BossWalkPhase1" ObjectPath="\Events\Scene\Boss\BossWalkPhase1"/>
 				<Event Id="2483303640" Name="BossWalkPhase2" ObjectPath="\Events\Scene\Boss\BossWalkPhase2"/>
 				<Event Id="513450771" Name="CraniumCrush" ObjectPath="\Events\Scene\Boss\CraniumCrush"/>
-				<Event Id="2493198437" Name="PlayBossMusic" ObjectPath="\Events\UI\PlayBossMusic"/>
 				<Event Id="3380664611" Name="PunchAttack" ObjectPath="\Events\Scene\Boss\PunchAttack"/>
 				<Event Id="1268857950" Name="SwordFalls" ObjectPath="\Events\Scene\Boss\SwordFalls"/>
 			</IncludedEvents>
@@ -42,10 +41,6 @@
 				<File Id="46750343" Language="SFX">
 					<ShortName>Boss_step2.wav</ShortName>
 					<Path>SFX\Boss_step2_1C9C67B2.wem</Path>
-				</File>
-				<File Id="195378477" Language="SFX">
-					<ShortName>Boss_theme.wav</ShortName>
-					<Path>SFX\Boss_theme_F17FB28C.wem</Path>
 				</File>
 				<File Id="246088314" Language="SFX">
 					<ShortName>Boss_hurt1.wav</ShortName>
@@ -123,16 +118,11 @@
 			<Path>Menu.bnk</Path>
 			<IncludedEvents>
 				<Event Id="3753593413" Name="Hover" ObjectPath="\Events\UI\Hover"/>
-				<Event Id="2493198437" Name="PlayBossMusic" ObjectPath="\Events\UI\PlayBossMusic"/>
 				<Event Id="1306286961" Name="PlayLoseMusic" ObjectPath="\Events\UI\PlayLoseMusic"/>
 				<Event Id="1616796442" Name="PlayUIMusic" ObjectPath="\Events\UI\PlayUIMusic"/>
 				<Event Id="1758001241" Name="Push" ObjectPath="\Events\UI\Push"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
-				<File Id="195378477" Language="SFX">
-					<ShortName>Boss_theme.wav</ShortName>
-					<Path>SFX\Boss_theme_F17FB28C.wem</Path>
-				</File>
 				<File Id="299845700" Language="SFX">
 					<ShortName>UI\Button_Hover.wav</ShortName>
 					<Path>SFX\UI\Button_Hover_1C9C67B2.wem</Path>
@@ -292,6 +282,10 @@
 				<File Id="191702901" Language="SFX">
 					<ShortName>Theon_TripleShot.wav</ShortName>
 					<Path>SFX\Theon_TripleShot_1C9C67B2.wem</Path>
+				</File>
+				<File Id="195378477" Language="SFX">
+					<ShortName>Boss_theme.wav</ShortName>
+					<Path>SFX\Boss_theme_F17FB28C.wem</Path>
 				</File>
 				<File Id="195426196" Language="SFX">
 					<ShortName>Arrow_Impact_Wall.wav</ShortName>

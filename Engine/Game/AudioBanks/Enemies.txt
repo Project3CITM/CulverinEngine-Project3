@@ -10,7 +10,6 @@ Event	ID	Name			Wwise Object Path	Notes
 	1746793429	BossGrowl			\Scene\Boss\BossGrowl	
 	2483303640	BossWalkPhase2			\Scene\Boss\BossWalkPhase2	
 	2483303643	BossWalkPhase1			\Scene\Boss\BossWalkPhase1	
-	2493198437	PlayBossMusic			\UI\PlayBossMusic	
 	3122217888	BossFalls			\Scene\Boss\BossFalls	
 	3380664611	PunchAttack			\Scene\Boss\PunchAttack	
 	3748885507	BossSoldierScream			\Scene\Boss\BossSoldierScream	
@@ -18,7 +17,6 @@ Event	ID	Name			Wwise Object Path	Notes
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	46750343	Boss_step2	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_step2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_step2		72536
-	195378477	FinalBossMusic	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_theme_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\AmbientMusic\FinalBattleBoss\Final_Boss\FinalBossMusic		17621640
 	246088314	Boss_hurt1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_hurt1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Hurts\Boss_hurt1		81418
 	254082414	Boss_hurt2	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_hurt2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Hurts\Boss_hurt2		74686
 	304824152	Boss_falls_to_ground	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Boss_falls_to_ground_1C9C67B2.wem		\Actor-Mixer Hierarchy\Default Work Unit\Boss\Boss_falls_to_ground		229012
