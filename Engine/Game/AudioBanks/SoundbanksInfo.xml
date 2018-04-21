@@ -193,6 +193,7 @@
 				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Scene\MetalClash"/>
 				<Event Id="4091047182" Name="PauseAll" ObjectPath="\Events\Default Work Unit\PauseAll"/>
 				<Event Id="1181117825" Name="PlayAmbient" ObjectPath="\Events\Scene\PlayAmbient"/>
+				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Scene\PlayMusic"/>
 				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Scene\PlayTorch"/>
 				<Event Id="3240900869" Name="ResumeAll" ObjectPath="\Events\Default Work Unit\ResumeAll"/>
 				<Event Id="3627978879" Name="RopeCut" ObjectPath="\Events\Scene\Puzzle\RopeCut"/>
@@ -282,6 +283,10 @@
 					<ShortName>Theon_TripleShot.wav</ShortName>
 					<Path>SFX\Theon_TripleShot_1C9C67B2.wem</Path>
 				</File>
+				<File Id="195378477" Language="SFX">
+					<ShortName>Boss_theme.wav</ShortName>
+					<Path>SFX\Boss_theme_F17FB28C.wem</Path>
+				</File>
 				<File Id="195426196" Language="SFX">
 					<ShortName>Arrow_Impact_Wall.wav</ShortName>
 					<Path>SFX\Arrow_Impact_Wall_1C9C67B2.wem</Path>
@@ -342,6 +347,10 @@
 					<ShortName>Enemy_SwordDrop.wav</ShortName>
 					<Path>SFX\Enemy_SwordDrop_1C9C67B2.wem</Path>
 				</File>
+				<File Id="448295503" Language="SFX">
+					<ShortName>Combat_theme.wav</ShortName>
+					<Path>SFX\Combat_theme_F17FB28C.wem</Path>
+				</File>
 				<File Id="460932244" Language="SFX">
 					<ShortName>Enemy_ShortSwordSlash.wav</ShortName>
 					<Path>SFX\Enemy_ShortSwordSlash_1C9C67B2.wem</Path>
@@ -353,6 +362,10 @@
 				<File Id="471313250" Language="SFX">
 					<ShortName>Puzzle\Timer60bpm.wav</ShortName>
 					<Path>SFX\Puzzle\Timer60bpm_F17FB28C.wem</Path>
+				</File>
+				<File Id="473597307" Language="SFX">
+					<ShortName>Rains_of_Castemere_Little.wav</ShortName>
+					<Path>SFX\Rains_of_Castemere_Little_F17FB28C.wem</Path>
 				</File>
 				<File Id="500858504" Language="SFX">
 					<ShortName>Enemy\Enemy_1\E1_Dead_1.wav</ShortName>
@@ -393,10 +406,6 @@
 				<File Id="585041305" Language="SFX">
 					<ShortName>Theon_Tired.wav</ShortName>
 					<Path>SFX\Theon_Tired_1C9C67B2.wem</Path>
-				</File>
-				<File Id="610476806" Language="SFX">
-					<ShortName>NewCombat.wav</ShortName>
-					<Path>SFX\NewCombat_F17FB28C.wem</Path>
 				</File>
 				<File Id="644454804" Language="SFX">
 					<ShortName>Player_Heartbeat.wav</ShortName>
