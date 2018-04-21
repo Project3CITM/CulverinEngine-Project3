@@ -590,7 +590,7 @@ public class JaimeController : CharacterController
                 }
                 /* ----------------------------------------------------------------------------------- */
             }
-            else if(coll_object.CompareTag("obstacle"))
+            else if(coll_object.CompareTag("obstacle") || coll_object.CompareTag("trap_floor"))
             {
                 //Decrease the blood of the sword
                 GetLinkedObject("jaime_sword_obj").GetComponent<SwordParticles>().SetBlood(-blood_amount);
