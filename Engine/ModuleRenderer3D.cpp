@@ -200,7 +200,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	final_tex_material->GetProgramVariables();
 	App->module_shaders->materials.insert(std::pair<uint, Material*>(final_tex_material->GetProgramID(), final_tex_material));
 	final_tex_material->active_num = 1;
-	dmg_texture_id = App->textures->LoadTexture("Assets/bloodHurt.png");
+	dmg_texture_id = App->textures->LoadTexture("Assets/bloodHurt2.png");
 
 	default_material = new Material();
 	default_material->name = "Default Material";
