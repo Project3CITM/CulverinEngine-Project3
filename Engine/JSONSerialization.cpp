@@ -147,6 +147,8 @@ void JSONSerialization::LoadScene(const char* sceneName)
 	JSON_Object* config;
 	JSON_Object* config_node;
 
+	Timer timetp;
+	timetp.Start();
 	config_file = json_parse_file(sceneName);
 	if (config_file != nullptr)
 	{
@@ -166,6 +168,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		std::vector<GameObject*> mesh_gos;
 		if (NUmberGameObjects > 0)
 		{
+			templist.reserve(NUmberGameObjects);
 			for (int i = 0; i < NUmberGameObjects; i++)
 			{
 				std::string name = "GameObject" + std::to_string(i);
@@ -207,44 +210,47 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			}
 		}
 
+		const int num_objects = templist.size();
+		LoadSceneSt* scene_ptr = (num_objects > 0) ? templist.data() : nullptr;
+
 		// Now with uid parent add childs.
-		for (int i = 0; i < templist.size(); i++)
+		for (int i = 0; i < num_objects; i++)
 		{
-			if (templist[i].uid_parent != -1)
+			if (scene_ptr[i].uid_parent != -1)
 			{
-				for (int j = 0; j < templist.size(); j++)
+				for (int j = 0; j < num_objects; j++)
 				{
-					if (templist[i].uid_parent == templist[j].go->GetUUID())
+					if (scene_ptr[i].uid_parent == scene_ptr[j].go->GetUUID())
 					{
-						templist[j].go->AddChildGameObject(templist[i].go);
+						scene_ptr[j].go->AddChildGameObject(scene_ptr[i].go);
 					}
 				}
 			}
 		}
 		// Now pass vector to root in scene
-		for (int i = 0; i < templist.size(); i++)
+		for (int i = 0; i < num_objects; i++)
 		{
-			if (templist[i].uid_parent == -1)
+			if (scene_ptr[i].uid_parent == -1)
 			{
-				App->scene->root->AddChildGameObject(templist[i].go);
+				App->scene->root->AddChildGameObject(scene_ptr[i].go);
 			}
 		}
 		//Sync components
-		for (int i = 0; i < templist.size(); i++)
+		for (int i = 0; i < num_objects; i++)
 		{
-			templist[i].go->SyncComponents(nullptr);
+			scene_ptr[i].go->SyncComponents(nullptr);
 		}
 
 		//Add static objects to scene
-		for (int i = 0; i < templist.size(); i++)
+		for (int i = 0; i < num_objects; i++)
 		{
-			if (templist[i].go->IsStatic())
+			if (scene_ptr[i].go->IsStatic())
 			{
-				App->scene->octree.Insert(templist[i].go);
+				App->scene->octree.Insert(scene_ptr[i].go);
 			}
 			else
 			{
-				App->scene->dynamic_objects.push_back(templist[i].go);
+				App->scene->dynamic_objects.push_back(scene_ptr[i].go);
 			}
 		}
 		App->scene->RecalculateStaticObjects();
@@ -264,6 +270,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		App->audio->LoadAudioBanksFromScene(number_of_audio_banks, config);
 	}
 	json_value_free(config_file);
+	LOG("Load Time %d, [red]", timetp.Read());
 }
 
 
