@@ -25,6 +25,8 @@ public class ReturnToMenuFromLose : CulverinBehaviour
     {
         Audio.StopAllSounds();
         GetComponent<CompAudio>().PlayEvent("PlayUIMusic");
+        GetComponent<CompAudio>().PlayEvent("Push");
+
         SceneManager.LoadScene("MainMenuScene");
     }
     public void QuitButton()
