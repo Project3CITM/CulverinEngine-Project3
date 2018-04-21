@@ -95,6 +95,15 @@ public class CharactersManager : CulverinBehaviour
     */
     public bool no_energy = false;
 
+    //AUDIO SOUNDS CONTROLLER -------
+    public bool jaime_tired = false;
+    public float jaime_tired_time = 0.0f;
+    public bool daenerys_tired = false;
+    public float daenerys_tired_time = 0.0f;
+    public bool theon_tired = false;
+    public float theon_tired_time = 0.0f;
+    // ------------------------------
+
     void Start()
     {
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
@@ -139,8 +148,6 @@ public class CharactersManager : CulverinBehaviour
         no_damage_text.SetActive(false);
         // ----------------------------------------------------------
 
-
-
         SetCurrentPosition();
 
         audio = GetComponent<CompAudio>();
@@ -148,10 +155,48 @@ public class CharactersManager : CulverinBehaviour
         changing = false;
         is_healing = false;
         god_mode = false;
+
+        jaime_tired = false;
+        jaime_tired_time = 0.0f;
+        daenerys_tired = false;
+        daenerys_tired_time = 0.0f;
+        theon_tired = false;
+        theon_tired_time = 0.0f;
+
     }
 
     void Update()
     {
+        //MANAGE AUDIO CONTROLLER VARIABLES --
+        if (jaime_tired) 
+        {
+            jaime_tired_time += Time.deltaTime;
+            if (jaime_tired_time >= 3.0f) 
+            {
+                jaime_tired = false;
+                jaime_tired_time = 0.0f;
+            }
+        }
+        if (daenerys_tired)
+        {
+            daenerys_tired_time += Time.deltaTime;
+            if (daenerys_tired_time >= 3.0f)
+            {
+                daenerys_tired = false;
+                daenerys_tired_time = 0.0f;
+            }
+        }
+        if (theon_tired)
+        {
+            theon_tired_time += Time.deltaTime;
+            if (theon_tired_time >= 3.0f)
+            {
+                theon_tired = false;
+                theon_tired_time = 0.0f;
+            }
+        }
+        //------------------------------------
+
         //MANAGE GOD MODE
         CheckGodMode();
 

@@ -506,8 +506,12 @@ public class JaimeController : CharacterController
             }
             else
             {
-                PlayFx("JaimeTired"); 
-                Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.BLUE);
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired == false)
+                {
+                    PlayFx("JaimeTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.BLUE);
+                }
                 return false;
             }
         }
@@ -648,8 +652,12 @@ public class JaimeController : CharacterController
             }
             else
             {
-                PlayFx("JaimeTired");
-                Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.PINK);
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired == false)
+                {
+                    PlayFx("JaimeTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.BLUE);
+                }
                 return false;
             }
         }
@@ -686,8 +694,12 @@ public class JaimeController : CharacterController
             }
             else
             {
-                PlayFx("JaimeTired");
-                Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.BLUE);
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired == false)
+                {
+                    PlayFx("JaimeTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.BLUE);
+                }
                 return false;
             }
         }

@@ -468,8 +468,12 @@ public class DaenerysController : CharacterController
             }
             else
             {
-                PlayFx("DaenerysTired");
-                Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired == false)
+                {
+                    PlayFx("DaenerysTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
+                }
                 return false;
             }
         }
@@ -560,8 +564,12 @@ public class DaenerysController : CharacterController
                 }
                 else
                 {
-                    PlayFx("DaenerysTired");
-                    Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
+                    if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired == false)
+                    {
+                        PlayFx("DaenerysTired");
+                        GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired = true;
+                        Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
+                    }
                     return false;
                 }
             }
@@ -621,8 +629,12 @@ public class DaenerysController : CharacterController
             }
             else
             {
-                PlayFx("DaenerysTired");
-                Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired == false)
+                {
+                    PlayFx("DaenerysTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
+                }
                 return false;
             }
         }

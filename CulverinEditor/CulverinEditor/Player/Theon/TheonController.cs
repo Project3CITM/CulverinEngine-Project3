@@ -431,8 +431,12 @@ public class TheonController : CharacterController
             }
             else
             {
-                PlayFx("TheonTired");
-                Debug.Log("NOT ENOUGH STAMINA THEON", Department.PLAYER, Color.YELLOW);
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired == false)
+                {
+                    PlayFx("TheonTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA THEON", Department.PLAYER, Color.GREEN);
+                }
                 return false;
             }
         }
@@ -510,8 +514,12 @@ public class TheonController : CharacterController
             }
             else
             {
-                PlayFx("TheonTired");
-                Debug.Log("NOT ENOUGH STAMINA THEON", Department.PLAYER, Color.YELLOW);
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired == false)
+                {
+                    PlayFx("TheonTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA THEON", Department.PLAYER, Color.GREEN);
+                }
                 return false;
             }
         }
@@ -571,8 +579,12 @@ public class TheonController : CharacterController
             }
             else
             {
-                PlayFx("TheonTired");
-                Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.YELLOW);
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired == false)
+                {
+                    PlayFx("TheonTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA THEON", Department.PLAYER, Color.GREEN);
+                }
                 return false;
             }
         }
