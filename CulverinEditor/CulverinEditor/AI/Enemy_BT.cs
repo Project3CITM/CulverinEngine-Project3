@@ -185,6 +185,12 @@ public class Enemy_BT : BT
             //GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
             state = AI_STATE.AI_DEAD;
             life_state = ENEMY_STATE.ENEMY_DEAD;
+
+            if (gameObject.GetComponent<CompCollider>()!=null)
+            {
+                gameObject.GetComponent<CompCollider>().CollisionActive(false);
+            }
+
             next_action = GetComponent<Die_Action>();
             current_action.Interupt();
             if (GetComponent<EnemySword_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteSwordEnemy(GetComponent<EnemySword_BT>().gameObject);
