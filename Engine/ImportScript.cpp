@@ -1434,11 +1434,15 @@ void ImportScript::SendInteractiveSelected(MonoObject * interactive)
 {
 	if (interactive != nullptr)
 	{
-		Event pass_selected;
-		pass_selected.Set_event_data(EventType::EVENT_PASS_SELECTED);
+		
 		GameObject*  go= App->importer->iScript->GetGameObject(interactive);
-		pass_selected.pass_selected.component = (CompInteractive*)go->FindComponentByType(Comp_Type::C_BUTTON);
-		PushEvent(pass_selected);
+		if (go != nullptr)
+		{
+			Event pass_selected;
+			pass_selected.Set_event_data(EventType::EVENT_PASS_SELECTED);
+			pass_selected.pass_selected.component = (CompInteractive*)go->FindComponentByType(Comp_Type::C_BUTTON);
+			PushEvent(pass_selected);
+		}
 	}
 }
 

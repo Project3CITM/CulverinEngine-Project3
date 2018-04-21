@@ -70,6 +70,7 @@ public class DoorLevel2 : CulverinBehaviour
                 door_closed = true;
                 //  audio.StopEvent("DoorLoop");
                 GetComponent<CompAudio>().PlayEvent("DoorEnd");
+                Input.RumblePlay(1.0f, 500);
             }
         }
         else if (go_open)
@@ -88,6 +89,7 @@ public class DoorLevel2 : CulverinBehaviour
                 door_closed = false;
                 // audio.StopEvent("DoorLoop");
                 GetComponent<CompAudio>().PlayEvent("DoorEnd");
+                Input.RumblePlay(1.0f, 500);
             }
         }
     }
@@ -100,6 +102,7 @@ public class DoorLevel2 : CulverinBehaviour
             current_open_calls = 0;
             go_open = true;
             audio.PlayEvent("DoorLoop");
+            Input.RumblePlay(0.5f, 5000);
         }
     }
 
@@ -108,6 +111,7 @@ public class DoorLevel2 : CulverinBehaviour
         go_close = true;
         GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(door_pos_x, door_pos_y, 1);
         audio.PlayEvent("DoorLoop");
+        Input.RumblePlay(0.5f, 5000);
     }
 
     public void ChangeStateDoor()
@@ -116,12 +120,13 @@ public class DoorLevel2 : CulverinBehaviour
         {
             go_open = true;
             audio.PlayEvent("DoorLoop");
-
+            Input.RumblePlay(0.5f, 5000);
         }
         else
         {
             go_close = true;
             audio.PlayEvent("DoorLoop");
+            Input.RumblePlay(0.5f, 5000);
             GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(door_pos_x, door_pos_y, 1);
         }
     }

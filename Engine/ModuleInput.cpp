@@ -14,7 +14,7 @@
 #include "JSONSerialization.h"
 
 #define MAX_KEYS 300
-#define MAX_MILLISECONDS 2000
+#define MAX_MILLISECONDS 6000
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
