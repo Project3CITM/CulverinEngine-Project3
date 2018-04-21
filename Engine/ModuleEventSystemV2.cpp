@@ -246,7 +246,7 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 	bool UseGlow = false;
 	Material* LastUsedMaterial = nullptr;
 	Material* ActualMaterial = nullptr;
-	for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend();)
+	for (std::multimap<DrawVMultimapKey, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
@@ -275,7 +275,7 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 				NewProgramID = 0;
 
 				UseGlow = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->glow;
-				if (item._Ptr->_Myval.first != 0)
+				if (item._Ptr->_Myval.first.uuid != 0)
 				{
 					if (UseGlow) NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
 					else NewProgramID = App->renderer3D->non_glow_material->GetProgramID();
@@ -578,8 +578,8 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		*/
 		DrawAlphaV.insert(std::pair<float, Event>(-((Particle*)event.particle_draw.ToDraw)->CameraDistance, event));
 
-		if((Particle*)event.particle_draw.ToDraw->glow)
-			DrawGlowV.insert(std::pair<float, Event>(-((Particle*)event.particle_draw.ToDraw)->CameraDistance, event));
+		if ((Particle*)event.particle_draw.ToDraw->glow)
+			DrawGlowV.insert(std::pair<DrawVMultimapKey, Event>(DrawVMultimapKey(0, -((Particle*)event.particle_draw.ToDraw)->CameraDistance), event));
 
 		break;
 	case EventType::EVENT_DRAW:
@@ -600,7 +600,7 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 			}
 			*/
 			DrawV.insert(std::pair<DrawVMultimapKey, Event>(DrawVMultimapKey(ID, DistanceCamToObject), event));
-			DrawGlowV.insert(std::pair<uint, Event>(ID, event));
+			DrawGlowV.insert(std::pair<DrawVMultimapKey, Event>(DrawVMultimapKey(ID, DistanceCamToObject), event));
 			break;
 		case event.draw.DRAW_3D_ALPHA:
 			/*

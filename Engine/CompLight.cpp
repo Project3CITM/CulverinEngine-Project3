@@ -282,7 +282,7 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	ui_light_type =json_object_dotget_number_with_std(object, name + "Light Type");
 	type = (Light_type)ui_light_type;
 	ambientCoefficient = json_object_dotget_number_with_std(object, name + "Ambient Coefficient");
-	radius =  json_object_dotget_number_with_std(object, name + "Radius");
+	radius = 50;// json_object_dotget_number_with_std(object, name + "Radius");
 	properties[0] = json_object_dotget_number_with_std(object, name + "Intensity");
 	properties[1] = json_object_dotget_number_with_std(object, name + "Constant");
 	properties[2] = json_object_dotget_number_with_std(object, name + "Linear");
@@ -291,8 +291,8 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
 
 	// bounding box size
-	if(radius == 50)
-		radius = 100;
+	if(radius == 100)
+		radius = 50;
 	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 }
 
