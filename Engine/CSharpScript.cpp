@@ -1131,15 +1131,15 @@ void CSharpScript::Destroy(MonoObject* object, float time)
 
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)
 {
-	if (!CheckMonoObject(object))
-	{
-		return nullptr;
-	}
+	//if (!CheckMonoObject(object))
+	//{
+	//	return nullptr;
+	//}
 
-	if (current_game_object == nullptr)
-	{
-		return nullptr;
-	}
+	//if (current_game_object == nullptr)
+	//{
+	//	return nullptr;
+	//}
 
 	MonoType* t = mono_reflection_type_get_type(type);
 	MonoClass* class_temp_comp = mono_type_get_class(t);

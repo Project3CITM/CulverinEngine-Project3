@@ -116,7 +116,7 @@
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
     <Compile Include="UI_Scripts\Scene\FinishedLevel2.cs" />
     <Compile Include="UI_Scripts\Scene\LevelFinished.cs" />
-    <Compile Include="UI_Scripts\Scene\CompText.cs" />
+    <Compile Include="UI_Scripts\Component\CompText.cs" />
     <Compile Include="Components\CompLight.cs" />
     <Compile Include="UI_Scripts\Scene\ContinueButton.cs" />
     <Compile Include="Player\Daenerys\FireBreath.cs" />

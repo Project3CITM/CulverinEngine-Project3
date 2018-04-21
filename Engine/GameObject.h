@@ -72,6 +72,8 @@ public:
 	// EDITOR METHODS ------------------
 	void ShowHierarchy(bool use_search = false);
 	void ShowGameObjectOptions();
+	void SetAllChildsTag(GameObject * child, const char * tag, bool parent = false);
+	void GetChildsRecursive(GameObject * child, uint & count);
 	void ShowInspectorInfo();
 	void FreezeTransforms(bool freeze, bool change_childs);
 	void ShowFreezeChildsWindow(bool freeze, bool& active);

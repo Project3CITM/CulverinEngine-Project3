@@ -128,6 +128,7 @@ bool Scene::Start()
 	defined_tags.push_back("undefined");
 	defined_tags.push_back("camera");
 	defined_tags.push_back("player");
+	defined_tags.push_back("NoC#");
 
 	RELEASE(scene_buff);
 	scene_buff = new FrameBuffer();
@@ -787,9 +788,10 @@ void Scene::RemoveTaggedObject(const GameObject * target)
 			{
 				if (tagged_objects[k]->at(d) == target)
 				{
+					GameObject** ptr = tagged_objects[k]->data();
 					for (uint h = d; h < v_size - 1; h++)
 					{
-						tagged_objects[k][d] = tagged_objects[k][d + 1];
+						ptr[h] = ptr[h + 1];
 					}
 					tagged_objects[k]->pop_back();
 					return;
