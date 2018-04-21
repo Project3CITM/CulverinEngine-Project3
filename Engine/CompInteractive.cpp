@@ -444,13 +444,12 @@ void CompInteractive::NavigationRemove(CompInteractive * to_remove)
 }
 
 
-void CompInteractive::ForceClear(Event event_input)
+void CompInteractive::ForceClear()
 {
 	point_down = false;
 	point_inside = false;
 	interactive_selected = false;
-
-	UpdateSelectionState(event_input);
+	current_selection_state = SelectionStates::STATE_NORMAL;
 	PrepareHandleTransition();
 
 }

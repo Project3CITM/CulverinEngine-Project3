@@ -126,7 +126,9 @@ void ModuleRenderGui::PassSelected(CompInteractive * to_pass)
 void ModuleRenderGui::ChangeSelected(Event & this_event)
 {
 	if (selected != nullptr)
-		selected->ForceClear(this_event);
+	{
+		selected->ForceClear();
+	}
 	selected = this_event.pass_selected.component;
 	if (selected != nullptr)
 		selected->OnInteractiveSelected(this_event);
@@ -200,7 +202,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 					{
 						if (!(*it)->IsActivate()) //if it's active 
 						{
-							(*it)->ForceClear(this_event);
+							(*it)->ForceClear();
 						}
 						continue;
 					}
@@ -209,7 +211,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 					{
 						if (positive_colision)
 						{
-							(*it)->ForceClear(this_event);
+							(*it)->ForceClear();
 							continue;
 						}
 						switch (this_event.Get_event_data_type())
@@ -259,7 +261,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 					focus = nullptr;
 					if (this_event.Get_event_data_type() == EventType::EVENT_BUTTON_DOWN)
 					{
-						selected->ForceClear(this_event);
+						selected->ForceClear();
 						selected = nullptr;
 					}
 				}
