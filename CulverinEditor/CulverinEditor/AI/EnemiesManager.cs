@@ -113,7 +113,7 @@ public class EnemiesManager : CulverinBehaviour
                     int tile_y = temp_move.GetCurrentTileY();
                     if (x == tile_x && y == tile_y)
                     {
-                        if (enemy_t.GetComponent<Enemy_BT>() != null && enemy_t.GetComponent<Enemy_BT>().GetCurrentHP() > 0)
+                        if (enemy_t.GetComponent<EnemySword_BT>() != null && enemy_t.GetComponent<EnemySword_BT>().GetCurrentHP() > 0)
                         {
                             return enemy_t.GetComponent<EnemySword_BT>();
                         }
@@ -144,7 +144,7 @@ public class EnemiesManager : CulverinBehaviour
                     int tile_y = temp_move.GetCurrentTileY();
                     if (x == tile_x && y == tile_y)
                     {
-                        if (enemy_t.GetComponent<Enemy_BT>() != null && enemy_t.GetComponent<Enemy_BT>().GetCurrentHP() > 0)
+                        if (enemy_t.GetComponent<EnemySpear_BT>() != null && enemy_t.GetComponent<EnemySpear_BT>().GetCurrentHP() > 0)
                         {
                             return enemy_t.GetComponent<EnemySpear_BT>();
                         }
@@ -175,7 +175,7 @@ public class EnemiesManager : CulverinBehaviour
                     int tile_y = temp_move.GetCurrentTileY();
                     if (x == tile_x && y == tile_y)
                     {
-                        if (enemy_t.GetComponent<Enemy_BT>() != null && enemy_t.GetComponent<Enemy_BT>().GetCurrentHP() > 0)
+                        if (enemy_t.GetComponent<EnemyShield_BT>() != null && enemy_t.GetComponent<EnemyShield_BT>().GetCurrentHP() > 0)
                         {
                             return enemy_t.GetComponent<EnemyShield_BT>();
                         }
