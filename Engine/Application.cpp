@@ -1105,7 +1105,7 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	static bool run_in_background = false;
 	static bool resizable_window = true;
 	static bool borderless = false;
-	static bool full_desktop = false;
+	static bool full_desktop = true;
 	static bool game_mode = true;
 	static bool use_release = true;
 
