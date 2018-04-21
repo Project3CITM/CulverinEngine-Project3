@@ -49,6 +49,10 @@ public class DaenerysController : CharacterController
 
     public GameObject Global_Camera;
 
+    public GameObject daenerys_fireball_particles2;
+    public GameObject daenerys_fireball_particles3;
+    public GameObject daenerys_fireball_particles4;
+
     protected override void Start()
     {
         SetPosition(Position.BEHIND_RIGHT);
@@ -72,6 +76,9 @@ public class DaenerysController : CharacterController
         mana_regen = GetLinkedObject("mana_obj").GetComponent<Mana>().regen;
 
         daenerys_fireball_particles = GetLinkedObject("daenerys_fireball_particles");
+        daenerys_fireball_particles2 = GetLinkedObject("daenerys_fireball_particles2");
+        daenerys_fireball_particles3 = GetLinkedObject("daenerys_fireball_particles3");
+        daenerys_fireball_particles4 = GetLinkedObject("daenerys_fireball_particles4");
 
         Global_Camera = GetLinkedObject("Global_Camera");
 
@@ -651,6 +658,10 @@ public class DaenerysController : CharacterController
 
         Fireball fballscript = fball.GetComponent<Fireball>();
         fballscript.vfront = curr_forward;
+        fballscript.fireball_particles = daenerys_fireball_particles;
+        fballscript.fireball_particles2 = daenerys_fireball_particles2;
+        fballscript.fireball_particles3 = daenerys_fireball_particles3;
+        fballscript.fireball_particles4 = daenerys_fireball_particles4;
 
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
         if(coll_object != null)

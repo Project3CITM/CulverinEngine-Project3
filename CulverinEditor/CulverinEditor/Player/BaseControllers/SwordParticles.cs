@@ -6,6 +6,9 @@ public class SwordParticles : CulverinBehaviour
 {
     //public GameObject sword_wall_particle;
     public GameObject sword_enemy_particle;
+    public GameObject sword_enemy_particle2;
+    public GameObject sword_enemy_particle3;
+    public GameObject sword_enemy_particle4;
 
     //CompParticleSystem wall_particle;
     CompParticleSystem enemy_particle;
@@ -48,7 +51,7 @@ public class SwordParticles : CulverinBehaviour
 
         if (obj != null)
         {      
-            if (enemy_collision && obj.CompareTag("Enemy"))
+            if (enemy_collision && obj.CompareTag("Enemy") && sword_enemy_particle != null)
             {
                 col = GetComponent<CompCollider>();
                 Vector3 point = col.GetContactPoint();
@@ -63,12 +66,27 @@ public class SwordParticles : CulverinBehaviour
                 enemy_particle = sword_enemy_particle.GetComponent<CompParticleSystem>();
                 enemy_particle.ActivateEmission(true);
 
-                //Iterate all childs, they have a ParticleSystem too
-                int childs = sword_enemy_particle.ChildCount();
-                for (int i = 0; i < childs; i++)
+                if (sword_enemy_particle2 != null)
                 {
-                    sword_enemy_particle.GetChildByIndex(i).GetComponent<CompParticleSystem>().ActivateEmission(true);
+                    enemy_particle = sword_enemy_particle2.GetComponent<CompParticleSystem>();
+                    enemy_particle.ActivateEmission(true);
                 }
+                if (sword_enemy_particle3 != null)
+                {
+                    enemy_particle = sword_enemy_particle3.GetComponent<CompParticleSystem>();
+                    enemy_particle.ActivateEmission(true);
+                }
+                if (sword_enemy_particle4 != null)
+                {
+                    enemy_particle = sword_enemy_particle4.GetComponent<CompParticleSystem>();
+                    enemy_particle.ActivateEmission(true);
+                }
+                //Iterate all childs, they have a ParticleSystem too
+                //int childs = sword_enemy_particle.ChildCount();
+                //for (int i = 0; i < childs; i++)
+                //{
+                //    sword_enemy_particle.GetChildByIndex(i).GetComponent<CompParticleSystem>().ActivateEmission(true);
+                //}
 
                 //Disable Enemy Collisions
                 EnableEnemyCollision(false);
