@@ -145,10 +145,14 @@ public class MovementController : CulverinBehaviour
                     curr_y += tile_mov_y;
                     char_manager.SetCurrentPosition();
                     moving = true;
-                    GetComponent<CompRigidBody>().UnLockMotion();
-                    GetComponent<CompRigidBody>().ApplyImpulse(new Vector3(0.0f, -50.0f, 0.0f));
-                    //char_manager.Drown();
-                    drowning = true;
+
+                    if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode == false)
+                    {
+                        GetComponent<CompRigidBody>().UnLockMotion();
+                        GetComponent<CompRigidBody>().ApplyImpulse(new Vector3(0.0f, -50.0f, 0.0f));
+                        //char_manager.Drown();
+                        drowning = true;
+                    }
                 }
             }
         }
