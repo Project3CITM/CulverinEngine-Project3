@@ -113,7 +113,14 @@ public class EnemiesManager : CulverinBehaviour
                     int tile_y = temp_move.GetCurrentTileY();
                     if (x == tile_x && y == tile_y)
                     {
-                        return enemy_t.GetComponent<EnemySword_BT>();
+                        if (enemy_t.GetComponent<Enemy_BT>() != null && enemy_t.GetComponent<Enemy_BT>().GetCurrentHP() > 0)
+                        {
+                            return enemy_t.GetComponent<EnemySword_BT>();
+                        }
+                        else
+                        {
+                            return null;
+                        }
                     }
                 }
                 else
@@ -137,7 +144,14 @@ public class EnemiesManager : CulverinBehaviour
                     int tile_y = temp_move.GetCurrentTileY();
                     if (x == tile_x && y == tile_y)
                     {
-                        return enemy_t.GetComponent<EnemySpear_BT>();
+                        if (enemy_t.GetComponent<Enemy_BT>() != null && enemy_t.GetComponent<Enemy_BT>().GetCurrentHP() > 0)
+                        {
+                            return enemy_t.GetComponent<EnemySpear_BT>();
+                        }
+                        else
+                        {
+                            return null;
+                        }
                     }
                 }
                 else
@@ -161,7 +175,14 @@ public class EnemiesManager : CulverinBehaviour
                     int tile_y = temp_move.GetCurrentTileY();
                     if (x == tile_x && y == tile_y)
                     {
-                        return enemy_t.GetComponent<EnemyShield_BT>();
+                        if (enemy_t.GetComponent<Enemy_BT>() != null && enemy_t.GetComponent<Enemy_BT>().GetCurrentHP() > 0)
+                        {
+                            return enemy_t.GetComponent<EnemyShield_BT>();
+                        }
+                        else
+                        {
+                            return null;
+                        }
                     }
                 }
                 else

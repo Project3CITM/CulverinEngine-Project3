@@ -338,4 +338,9 @@ public class Enemy_BT : BT
         text.SetActive(false);
         hud_active = false;
     }
+
+    public float GetCurrentHP()
+    {
+        return current_hp;
+    }
 }
