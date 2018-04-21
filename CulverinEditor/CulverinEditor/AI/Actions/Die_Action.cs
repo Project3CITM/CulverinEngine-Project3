@@ -19,6 +19,11 @@ class Die_Action : Action
         //TODO_AI: Die audio
         GetComponent<CompAudio>().PlayEvent("Enemy_SwordDrop");
 
+        //PLAY COMBAT MUSIC
+        Audio.ChangeState("MusicState", "None");
+        GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen = false;
+        Debug.Log("COMBAT OFF", Department.PLAYER, Color.BLUE);
+
         StatsScore.KillEnemy();
 
         //Play Dead Audio
