@@ -362,32 +362,32 @@ void CompCamera::CullDynamicObjects()
 
 void CompCamera::UnCull()
 {
-	// Push all active elements that are root & active
-	for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
-	{
-		if (App->scene->root->GetChildbyIndex(i)->IsActive())
-		{
-			candidates_to_cull.push_back(App->scene->root->GetChildbyIndex(i));
-		}
-	}
+	//// Push all active elements that are root & active
+	//for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
+	//{
+	//	if (App->scene->root->GetChildbyIndex(i)->IsActive())
+	//	{
+	//		candidates_to_cull.push_back(App->scene->root->GetChildbyIndex(i));
+	//	}
+	//}
 
-	// Check candidates_to_cull vector until it's empty
-	while (candidates_to_cull.empty() == false)
-	{
-		candidates_to_cull.front()->SetVisible(true);
+	//// Check candidates_to_cull vector until it's empty
+	//while (candidates_to_cull.empty() == false)
+	//{
+	//	candidates_to_cull.front()->SetVisible(true);
 
-		//Push all childs that are active to the candidates vector
-		for (std::vector<GameObject*>::iterator it = candidates_to_cull.front()->GetChildsPtr()->begin(); it != candidates_to_cull.front()->GetChildsPtr()->end(); it++)
-		{
-			if ((*it)->IsActive())
-			{
-				candidates_to_cull.push_back((*it));
-			}
-		}
+	//	//Push all childs that are active to the candidates vector
+	//	for (std::vector<GameObject*>::iterator it = candidates_to_cull.front()->GetChildsPtr()->begin(); it != candidates_to_cull.front()->GetChildsPtr()->end(); it++)
+	//	{
+	//		if ((*it)->IsActive())
+	//		{
+	//			candidates_to_cull.push_back((*it));
+	//		}
+	//	}
 
-		// Delete from vector the object already checked
-		candidates_to_cull.pop_front();
-	}
+	//	// Delete from vector the object already checked
+	//	//candidates_to_cull.pop_front();
+	//}
 }
 
 void CompCamera::UnCullDynamics()
@@ -471,10 +471,11 @@ void CompCamera::SetMain(bool isMain)
 		}
 		else
 		{
+			App->renderer3D->SetGameCamera(this);
 			/* Otherwise, enable Pop Up of the camera and turn main  
 			variable to false (not possible to be more than one active cameras at a time) */
-			showPopup = true;
-			is_main = false;
+			//showPopup = true;
+			is_main = true;
 		}
 	}
 	else 
@@ -609,6 +610,7 @@ void CompCamera::Save(JSON_Object * object, std::string name, bool saveScene, ui
 	// Config options variables ---------
 	json_object_dotset_boolean_with_std(object, name + "Main Camera", is_main);
 	json_object_dotset_boolean_with_std(object, name + "Culling", culling);
+	json_object_dotset_boolean_with_std(object, name + "Dynamic Culling", cull_dynamics);
 }
 
 void CompCamera::Load(const JSON_Object * object, std::string name)
@@ -631,6 +633,7 @@ void CompCamera::Load(const JSON_Object * object, std::string name)
 	SetMain(is_main);
 
 	culling = json_object_dotget_boolean_with_std(object, name + "Culling");
+	cull_dynamics = json_object_dotget_boolean_with_std(object, name + "Dynamic Culling");
 
 	Enable();
 }

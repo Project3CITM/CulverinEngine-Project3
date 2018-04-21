@@ -165,7 +165,7 @@
     <ClInclude Include="ModuleEventSystemV2.h" />
     <ClInclude Include="ModuleFS.h" />
     <ClInclude Include="ModuleFramebuffers.h" />
-    <ClInclude Include="ModuleKeyBinding.h" />
+    <ClInclude Include="KeyBinding.h" />
     <ClInclude Include="ModuleLightning.h" />
     <ClInclude Include="ModuleMap.h" />
     <ClInclude Include="ModuleParticles.h" />
@@ -527,7 +527,7 @@
     <ClCompile Include="ModuleFS.cpp" />
     <ClCompile Include="ModuleFramebuffers.cpp" />
     <ClCompile Include="ModuleGUI_Build.cpp" />
-    <ClCompile Include="ModuleKeyBinding.cpp" />
+    <ClCompile Include="KeyBinding.cpp" />
     <ClCompile Include="ModuleLightning.cpp" />
     <ClCompile Include="ModuleMap.cpp" />
     <ClCompile Include="ModuleParticles.cpp" />

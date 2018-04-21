@@ -417,6 +417,16 @@ void ModuleMap::ShowWalkableMap()
 				{
 					ImGui::PopStyleColor();
 				}
+				std::string position_tile = "x:" + std::to_string(x);
+				position_tile += " - y:" + std::to_string(y);
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::PushTextWrapPos(450.0f);
+					ImGui::TextUnformatted(position_tile.c_str());
+					ImGui::PopTextWrapPos();
+					ImGui::EndTooltip();
+				}
 				if (ImGui::BeginPopupContextItem("Options##maptile"))
 				{
 					OptionsTile(x, y);

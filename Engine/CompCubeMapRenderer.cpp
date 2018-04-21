@@ -19,13 +19,27 @@ CompCubeMapRenderer::CompCubeMapRenderer(Comp_Type t, GameObject * parent) : Com
 	uid = App->random->Int();
 	name_component = "CubeMapRenderer";	
 	cube_map.Create();
+	cube_map.parent = this;
 	App->renderer3D->cube_maps.push_back(&cube_map);
+	render = true;
 }
 
 CompCubeMapRenderer::~CompCubeMapRenderer()
 {
 	auto item = std::find(App->renderer3D->cube_maps.begin(), App->renderer3D->cube_maps.end(), &cube_map);
 	App->renderer3D->cube_maps.erase(item);
+}
+
+
+void CompCubeMapRenderer::PreUpdate(float dt)
+{
+	if (render) {
+		Event draw_event;
+		draw_event.Set_event_data(EventType::EVENT_CUBEMAP_REQUEST);
+		draw_event.cube_map_request.comp_cubemap = this;
+		App->event_system_v2->PushEvent(draw_event);
+		render = false;
+	}
 }
 
 void CompCubeMapRenderer::Bake(Event& event)
@@ -42,7 +56,7 @@ void CompCubeMapRenderer::Bake(Event& event)
 	glViewport(0, 0, size, size);
 
 	float near_plane = 1.f;
-	float far_plane = 50.f; 
+	float far_plane = 300.f; 
 	glm::mat4 shadow_proj = glm::perspective(glm::radians(90.f), (float)size / (float)size, near_plane, far_plane);
 
 	std::vector<glm::mat4> cube_transforms;
@@ -101,6 +115,10 @@ void CompCubeMapRenderer::Bake(Event& event)
 
 			int total_save_buffer = 14;
 			ResourceMesh* mesh = m->resource_mesh;
+
+			if (mesh == nullptr)
+				continue;
+
 			glBindBuffer(GL_ARRAY_BUFFER, mesh->id_total_buffer);
 
 			glEnableVertexAttribArray(0);

@@ -63,7 +63,15 @@ public class ChasePlayer_Action : Action
                 if (bt == null)
                     bt = GetComponent<EnemySpear_BT>();
 
-                move.GoToPlayer((uint)bt.range);
+                if(bt == GetComponent<EnemySpear_BT>())
+                {
+                    move.GoToPlayer(1);
+                }
+                else
+                {
+                    move.GoToPlayer((uint)bt.range);
+                }
+
             }
 
             if (GetComponent<PerceptionSightEnemy>().player_seen == false)

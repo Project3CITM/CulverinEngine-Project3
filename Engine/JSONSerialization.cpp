@@ -474,6 +474,18 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 				templist[i].go->SyncComponents(mainParent);
 			}
 
+			for (uint i = 0; i < templist.size(); i++)
+			{
+				if (templist[i].go->IsStatic())
+				{
+					App->scene->octree.Insert(templist[i].go);
+				}
+				else
+				{
+					App->scene->dynamic_objects.push_back(templist[i].go);
+				}
+			}
+
 			// Now Iterate All GameObjects and Components and create a new UUID!
 			if (mainParent != nullptr)
 			{
@@ -957,7 +969,7 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 		{
 			std::string name = "Input.InputManager" + std::to_string(i);
 			name += ".";
-			InputManager* input_manager = new InputManager();
+			InputManager* input_manager = new InputManager((*player_action));
 			(*player_action)->interactive_vector.push_back(input_manager);
 			input_manager->SetName(json_object_dotget_string_with_std(config, name + "InputManagerName"));
 			input_manager->SetActiveInput(json_object_dotget_boolean_with_std(config, name + "InputManagerActive"));

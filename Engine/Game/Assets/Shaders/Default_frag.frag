@@ -40,9 +40,9 @@ uniform float a_Kd;
 uniform float a_Ks;
 uniform float a_shininess;
 
-uniform int iterations;
+//uniform int iterations;
 uniform int shadow_blur;
-uniform float bias;
+//uniform float bias;
 
 uniform mat4 model;
 
@@ -127,13 +127,15 @@ float CalcShadow(vec4 shadowPos, float usedBias)
 
     if(shadowPos.z > 1.0)
         return 0.0;
+   
+    int iterations = 10;
 
     for(int i = 0; i < iterations; ++i)
     {
         int index = int(16.0 * random(floor(mat3(model) * ourPos * 1000.0), i)) % 16;
 
         float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowPos.xy + poissonDisk[index] / 200.0, (shadowPos.z - usedBias) / shadowPos.w)));
-        float tmp = 0.05 * shadowVal;
+        float tmp = 0.1 * shadowVal;// old value: 0.05 - iterations: 20
 
         shadow -= tmp;
     }
@@ -168,14 +170,12 @@ void main()
 
     vec3 l = normalize(lightDir);
     float cosTheta = clamp(dot(ourNormal,l),0,1);
+    float bias = 0.005;
     float usedBias = bias * tan(acos(cosTheta));
     usedBias = clamp(usedBias, 0, 0.01);
 
 
-    // Shadow
-    vec4 shadowPos = shadowCoord / shadowCoord.w;
-    float shadow = CalcShadow(shadowPos, usedBias);
-
+    
  for (int i = 0; i <_numLights; ++i) {
 
        inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N);
@@ -192,7 +192,7 @@ void main()
     final_color =normalize(final_color);
 
 	vec3 col = max( color_texture * vec3(0,0.2,0.2) ,
-	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb * shadow);
+	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
 
     color = vec4(col, _alpha);
 }

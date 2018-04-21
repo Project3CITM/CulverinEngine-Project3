@@ -335,15 +335,16 @@ static const GLchar* FinalFrag[] =
 	"uniform vec4 _my_color;\n"
 	"uniform bool damage;\n"
 	"uniform float alpha; \n"
+	"uniform float mult_dead;\n"
 	"void main()\n"
 	"{\n"
 	"vec4 dst = texture2D(_albedo, TexCoord);\n" // rendered scene
 	"vec4 src = texture2D(_glow_tex, TexCoord); \n" // glowmap
 	"vec4 dmg = texture(_dmg_tex,TexCoord);\n"
 	"if(damage)\n"
-	"color = mix(min(src + dst, 1.0) , dmg, dmg.a * alpha );\n"
+	"color = mix(min(vec4(src.rgb * mult_dead,1) + vec4(dst.rgb * mult_dead,1), 1.0) , dmg, dmg.a * alpha );\n"
 	"else\n"
-	"color= min(src + dst, 1.0);\n"
+	"color= min(vec4(src.rgb * mult_dead,1) + vec4(dst.rgb * mult_dead,1) , 1.0);\n"
 
 	"}\n"
 };

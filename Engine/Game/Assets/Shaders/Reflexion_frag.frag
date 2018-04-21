@@ -148,8 +148,8 @@ void main()
 {
     vec3 color_texture = texture(albedo, TexCoord).xyz;
     vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1) ;
-    vec3 spec_texture = texture(specular_map, TexCoord).xyz ;
-    vec3 gloss_texture =abs(texture(glossines_map,TexCoord).xyz - vec3(1));
+    vec3 spec_texture = exp2(texture(specular_map, TexCoord).xyz) + 0.5f;
+    vec3 gloss_texture = exp2(10 * abs(texture(glossines_map,TexCoord).xyz - vec3(1)) + 1) * 128;
 
     vec3 inten = vec3(0); vec3 inten_final = vec3(0);
 

@@ -35,6 +35,8 @@ public:
 	void UnBind();
 	void Create();
 	void Destroy();
+public:
+	Component * parent;
 private:
 
 	std::string name;
@@ -43,6 +45,7 @@ private:
 	unsigned int cubemap_fbo = 0;
 	unsigned int cubemap_depth_id = 0;
 	unsigned int cubemap_size = 128;
+	
 
 };
 

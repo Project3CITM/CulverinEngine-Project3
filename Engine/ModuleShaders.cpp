@@ -26,8 +26,8 @@ ModuleShaders::ModuleShaders()
 
 ModuleShaders::~ModuleShaders()
 {
-	for (auto item = materials.begin(); item != materials.end(); item++) {
-		RELEASE(*item);
+	for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++) {
+		RELEASE((*item).second);
 	}
 	materials.clear();
 	for (auto item = shaders.begin(); item != shaders.end(); item++) {
@@ -104,7 +104,7 @@ bool ModuleShaders::CleanUp()
 {
 
 	for (auto item = materials.begin(); item != materials.end(); item++) {
-		(*item)->Save();
+		(*item).second->Save();
 
 	}
 	return true;
@@ -592,11 +592,11 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 	{
 		std::string material_name = App->fs->GetOnlyName(str_path);
 		Material* material = nullptr;
-		for (int i = 0; i < App->module_shaders->materials.size(); i++)
+		for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
 		{
-			if (strcmp(App->module_shaders->materials[i]->name.c_str(), material_name.c_str()) == 0)
+			if (strcmp((*item).second->name.c_str(), material_name.c_str()) == 0)
 			{
-				material = App->module_shaders->materials[i];
+				material = (*item).second;
 
 				break;
 			}
@@ -711,7 +711,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 						}
 					}
 				}
-				uint num_ints = json_object_dotget_number_with_std(object, name + "Num Int:");
+				uint num_ints = json_object_dotget_number_with_std(object, name + "Num Ints:");
 				for (int i = 0; i < num_ints; i++)
 				{
 					std::ostringstream ss;
@@ -900,7 +900,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					}
 				}
 			}
-			App->module_shaders->materials.push_back(material);
+			App->module_shaders->materials.insert(std::pair<uint, Material*>(material->GetProgramID(), material));
 		}
 	}
 	json_object_clear(object);
@@ -911,12 +911,12 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 
 Material * ModuleShaders::GetMaterialByName(const char * name)
 {
-	for (std::vector<Material*>::const_iterator item = materials.cbegin(); item != materials.cend(); item++)
+	for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
 	{
-		std::string str_path = (*item)->name.c_str();
+		std::string str_path = (*item).second->name.c_str();
 
 		if (strcmp(str_path.c_str(), name) == 0) {
-			return (*item);
+			return (*item).second;
 		}
 
 	}
@@ -1151,19 +1151,23 @@ void ModuleShaders::SetUniformVariables(Material * material)
 
 void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 {
-	std::vector<Material*>::iterator item = materials.begin();
+	BROFILER_CATEGORY("Update: ModuleShaders SetGlobal Variables", Profiler::Color::Blue);
+	std::multimap<uint, Material*>::iterator item = materials.begin();
 	static float time_dt = 0;
 	time_dt += dt * App->game_time.time_scale;
+	uint LastID = 0;
+
 	while (item != materials.end())
 	{
-		uint ID = (*item)->GetProgramID();
-		if ((*item)->active_num == 0) {
+		BROFILER_CATEGORY("Update: ModuleShaders Vars", Profiler::Color::Blue);
+		uint ID = (*item).second->GetProgramID();
+		if ((*item).second->active_num == 0 || ID == LastID) {
 			item++;
 			continue;
 		}
 
-		(*item)->Bind();
-
+		LastID = ID;
+		(*item).second->Bind();
 
 		//TIME		
 		GLint timeLoc = glGetUniformLocation(ID, "_time");
@@ -1175,7 +1179,7 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 		if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
 
 		//ALPHA
-		float alpha = (*item)->alpha;
+		float alpha = (*item).second->alpha;
 		GLint alphaLoc = glGetUniformLocation(ID, "_alpha");
 		if (alphaLoc != -1) glUniform1f(alphaLoc, alpha);
 
@@ -1186,22 +1190,23 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 
 		//LIGHTS
 		std::vector<CompLight*> lights_vec;
-		if(!all_lights)
+		if (!all_lights)
 			lights_vec = *App->module_lightning->GetActiveLights();
-		else 
+		else
 			lights_vec = App->module_lightning->GetSceneLights();
 
 		GLint lightsizeLoc = glGetUniformLocation(ID, "_numLights");
 		if (lightsizeLoc != -1) glUniform1i(lightsizeLoc, lights_vec.size());
 
 
-		if (lightsizeLoc != -1)
+		if (lightsizeLoc != -1) {
+			BROFILER_CATEGORY("Update: ModuleShaders SetLights", Profiler::Color::Blue);
 			for (size_t i = 0; i < lights_vec.size(); ++i) {
 
 				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
 					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
 				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
-					SetLightUniform((*item)->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
+					SetLightUniform((*item).second->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
 
 				SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
 				SetLightUniform(ID, "l_color", i, lights_vec[i]->color);
@@ -1212,11 +1217,11 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 				// Bias matrix. TODO: Might be better to set other place
 
 				int depthBiasID = glGetUniformLocation(ID, "depthBias");
-				glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
+				if (viewLoc != -1) glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
 
 				// End Bias matrix.
 			}
-
+		}
 		item++;
 	}
 	glUseProgram(0);

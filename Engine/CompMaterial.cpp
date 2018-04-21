@@ -235,11 +235,16 @@ void CompMaterial::ShowInspectorInfo()
 	int program_pos = 0;
 	std::string shaders_names;
 	std::string program_names;
-	for (int i = 0; i < App->module_shaders->materials.size(); i++) {
-		shaders_names += App->module_shaders->materials[i]->name;
+	int i = 0;
+	std::multimap<uint, Material*>::iterator temp_item  = App->module_shaders->materials.begin();
+	for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++) {
+		shaders_names += (*item).second->name.c_str();
 		shaders_names += '\0';
-		if (material->name.compare(App->module_shaders->materials[i]->name) == 0)
+		if (material->name.compare((*item).second->name) == 0) {
 			shader_pos = i;
+			temp_item = item;			
+		}
+		i++;
 	}
 	for (int i = 0; i < App->module_shaders->programs.size(); i++) {
 		program_names += App->module_shaders->programs[i]->name;
@@ -250,7 +255,7 @@ void CompMaterial::ShowInspectorInfo()
 	if (ImGui::Combo("Material", &shader_pos, shaders_names.c_str())) {
 
 		
-		ResourceMaterial* resource_mat = (ResourceMaterial*)App->resource_manager->GetResource(App->module_shaders->materials[shader_pos]->path.c_str());
+		ResourceMaterial* resource_mat = (ResourceMaterial*)App->resource_manager->GetResource((*temp_item).second->path.c_str());
 		if (resource_mat != nullptr)
 		{
 			resource_mat->num_game_objects_use_me++;
@@ -260,8 +265,16 @@ void CompMaterial::ShowInspectorInfo()
 				App->importer->iMaterial->LoadResource(temp.c_str(), resource_mat);
 			}
 		}
+		int n = 0;
+		auto temp_mat = App->module_shaders->materials.begin();
+		for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++) {
+			if (n == shader_pos) {
+				temp_mat = item;
+			}
+			n++;
+		}
 		material->active_num--;
-		material = App->module_shaders->materials[shader_pos];
+		material = (*temp_mat).second;
 		material->active_num++;
 	}
 
@@ -413,12 +426,11 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 
 	std::string material_name = json_object_dotget_string_with_std(object, name + "MaterialName:");
 	
-	for (int i = 0; i < App->module_shaders->materials.size(); i++)
+	for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
 	{
-		if (strcmp(App->module_shaders->materials[i]->name.c_str(), material_name.c_str() )==0)
-		{
-			
-			material = App->module_shaders->materials[i];
+		if (strcmp((*item).second->name.c_str(), material_name.c_str() )==0)
+		{			
+			material = (*item).second;
 			material->active_num++;
 			break;
 		}

@@ -9,15 +9,19 @@ public class ShieldGuard_Listener : PerceptionListener
 
     void Start()
     {
-        event_manager = GetLinkedObject("event_manager");
-        if (event_manager == null)
+        GetLinkedObject("event_manager");
+        if (GetLinkedObject("event_manager") == null)
             Debug.Log("[error] Event manager is null");
 
-        PerceptionManager perception_manager = event_manager.GetComponent<PerceptionManager>();
-        if (perception_manager != null)
-            perception_manager.AddListener(this);
+
+        if (GetLinkedObject("event_manager").GetComponent<PerceptionManager>() != null)
+            GetLinkedObject("event_manager").GetComponent<PerceptionManager>().AddListener(this);
         else
+        {
             Debug.Log("[error] Perception manager is null");
+            Debug.Log("[error]WILLYREEEEEEEEEEEEEEEEEEEEEEEEEEEEEX");
+        }
+
         events_in_memory = new List<PerceptionEvent>();
     }
 
@@ -64,7 +68,12 @@ public class ShieldGuard_Listener : PerceptionListener
 
                 if (gameObject.IsEquals(seen_event_tmp.enemy_who_saw))
                 {
-                    
+                    //if (GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen == false)
+                    //{
+                    //    //PLAY COMBAT MUSIC
+                    //    Audio.ChangeState("AmbientMusic", "Combat");
+                    //    GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen = true;
+                    //}
 
                     GetComponent<EnemyShield_BT>().InterruptAction();
                     GetComponent<EnemyShield_BT>().player_detected = true;

@@ -131,6 +131,13 @@ bool ModuleLightning::Init(JSON_Object* node)
 	// TODO: Read ammount of shadow cast point from config. Will use default for now for testing purposes
 	//shadow_cast_points_count = 1;
 
+	// Get some values for directional lights shadows
+	dstSceneCameraToLookAt = json_object_get_number(node, "distance_from_scene_camera_to_lookat_position");
+	dstShadowmapCameraToLookAt = json_object_get_number(node, "distance_from_shadowmap_camera_to_lookat_position");
+	projSize = json_object_get_number(node, "dir_light_camera_size");
+	nearPlane = json_object_get_number(node, "dir_light_camera_near");
+	farPlane = json_object_get_number(node, "dir_light_camera_far");
+
 	Awake_t = perf_timer.ReadMs();
 	return true;
 }
@@ -183,6 +190,7 @@ bool ModuleLightning::Start()
 	light_UI_plane->LoadToMemory();
 	delete[] total_buffer_mesh;
 
+
 	Start_t = perf_timer.ReadMs();
 	return true;
 }
@@ -195,15 +203,19 @@ update_status ModuleLightning::PreUpdate(float dt)
 	//TODO: Should think on optimitzations on this.
 
 	frame_used_lights.clear();
-	std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
-
+	//std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
+	for (auto item = scene_lights.begin(); item < scene_lights.end(); item++)
+	{
+		if ((*item)->to_delete == true)
+			scene_lights.erase(item);
+	}
 
 	for (uint i = 0; i < scene_lights.size(); ++i)
 	{
-		if(scene_lights[i]->use_light_to_render == true)
+		if(scene_lights[i]->use_light_to_render == true && scene_lights[i]->to_delete != true)
 			frame_used_lights.push_back(scene_lights[i]);
 	}
-	
+
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -226,9 +238,9 @@ update_status ModuleLightning::Update(float dt)
 			glm::vec3 lDir = glm::vec3(dir.x, dir.y, dir.z);
 			glm::vec3 camPos = glm::vec3(frustum->pos.x, frustum->pos.y, frustum->pos.z);
 
-			glm::vec3 lookPos = camPos + (glm::vec3(frustum->front.x, frustum->front.y, frustum->front.z) * distanceFromSceneCameraToLookAt);
+			glm::vec3 lookPos = camPos + (glm::vec3(frustum->front.x, frustum->front.y, frustum->front.z) * dstSceneCameraToLookAt);
 
-			glm::vec3 eye = lookPos + (lDir * distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos);
+			glm::vec3 eye = lookPos + (lDir * dstShadowmapCameraToLookAt);
 			
 			glm::mat4 biasMatrix(
 				0.5, 0.0, 0.0, 0,
@@ -279,6 +291,12 @@ update_status ModuleLightning::Update(float dt)
 
 bool ModuleLightning::SaveConfig(JSON_Object* node)
 {
+	json_object_set_number(node, "distance_from_scene_camera_to_lookat_position", dstSceneCameraToLookAt);
+	json_object_set_number(node, "distance_from_shadowmap_camera_to_lookat_position", dstShadowmapCameraToLookAt);
+	json_object_set_number(node, "dir_light_camera_size", projSize);
+	json_object_set_number(node, "dir_light_camera_near", nearPlane);
+	json_object_set_number(node, "dir_light_camera_far", farPlane);
+
 	return true;
 }
 
@@ -306,18 +324,28 @@ void ModuleLightning::OnEvent(Event & event)
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_3D_3DA_MM:
-
+	{
 		const CompLight* light = event.send_3d3damm.light;
 
 		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
 			test_fix.Bind("peter");
-			glViewport(0, 0, 1024, 1024);
-			
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			for (std::multimap<uint, Event>::const_iterator item = event.send_3d3damm.MM3DDrawEvent->begin(); item != event.send_3d3damm.MM3DDrawEvent->end(); item++)
-			{
-				CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
+			glViewport(0, 0, 256, 256);
 
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			shadow_Shader->Bind();
+			uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
+			glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &light->depthMVPMat[0][0]);
+			scene_objects = App->scene->GetAllSceneObjects();
+			for (std::vector<GameObject*>::const_iterator item = scene_objects->begin(); item != scene_objects->end(); item++)
+			{
+				CompMesh* m = (*item)->GetComponentMesh();
+
+				if (m == nullptr)
+					continue;
+				if (m->HasSkeleton())
+					continue;
+				if ((m->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos).Length() > projSize)
+					continue;
 				if (m->resource_mesh != nullptr)
 				{
 					if (m->resource_mesh->vertices.size() > 0 && m->resource_mesh->indices.size() > 0)
@@ -332,13 +360,22 @@ void ModuleLightning::OnEvent(Event & event)
 				}
 
 			}
-			
+			shadow_Shader->Unbind();
 		}
 
 		else if (light->type == Light_type::POINT_LIGHT) {
 
 			//CalcPointShadowMaps(event, (CompLight*)light);
 		}
+	}
+		break;
+	case EventType::EVENT_DELETE_LIGHT:
+
+		RELEASE((CompLight*)event.delete_light.light);
+
+
+		break;
+
 
 	}
 
@@ -452,46 +489,18 @@ void ModuleLightning::CalcPointShadowMaps(Event& events, CompLight* light)
 
 void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 {
+	BROFILER_CATEGORY("OnEvent: ModuleLightning", Profiler::Color::Blue);
+	if (m->HasSkeleton()) return;
 	int x = 0;
-	shadow_Shader->Bind();
+
 
 	Material* material = App->renderer3D->default_material;
-	//if (material->material_shader != nullptr)
+
 	if (m->GetMaterial() != nullptr) material = m->GetMaterial()->material;
-	//shader->Bind();
-
-	CompTransform* transform = (CompTransform*)m->GetParent()->FindComponentByType(C_TRANSFORM);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	//Set Wireframe
-	if (App->renderer3D->wireframe)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-
-	//Temporary, future delete incoming
-	//Set Color
-	if (m->GetMaterial() != nullptr)
-	{
-		glColor4f(m->GetMaterial()->GetColor().r, m->GetMaterial()->GetColor().g, m->GetMaterial()->GetColor().b, m->GetMaterial()->GetColor().a);
-	}
-	else
-	{
-		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
-	}
-	//
 
 
-	//Future Delete
 	
-	//
-
-	Frustum camFrust = App->renderer3D->active_camera->frustum;
-
+	CompTransform* transform = (CompTransform*)m->GetParent()->FindComponentByType(C_TRANSFORM);
 	float4x4 matrixfloat = transform->GetGlobalTransform();
 	GLfloat matrix[16] =
 	{
@@ -501,18 +510,9 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 		matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
 	};
 
-	float4x4 MVP = camFrust.ProjectionMatrix()* camFrust.ViewMatrix() * matrixfloat;
-
-	//This is needed for the shadow projection in CompMesh cpp
-	
-	//----------------------------
-
 	GLint modelLoc = glGetUniformLocation(shadow_Shader->programID, "model");
-	uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
-
-
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
-	glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &light->depthMVPMat[0][0]);
+
 
 
 	int total_save_buffer = 14;
@@ -530,37 +530,11 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 
 	}
 
-	if (material->name == "Shadow_World_Render") {
-
-		material->Bind();
-
-		int depthMatrixID = glGetUniformLocation(material->GetProgramID(), "depthMVP");
-		int depthBiasID = glGetUniformLocation(material->GetProgramID(), "depthBias");		
-		//-----------------------
-		glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &light->depthBiasMat[0][0]);
-
-		material->Unbind();
-	}
-	shadow_Shader->Bind();
-
-	//-----------------
-
-	//Reset TextureColor
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glActiveTexture(GL_TEXTURE0);
-
-	//Disable Wireframe -> only this object will be wireframed
-	if (App->renderer3D->wireframe)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
+	/*
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
 }
 
 void ModuleLightning::SetShadowCastPoints(uint points)
@@ -612,8 +586,11 @@ void ModuleLightning::OnLightDestroyed(CompLight* l)
 
 			for(std::vector<CompLight*>::iterator it2 = frame_used_lights.begin(); it2 != frame_used_lights.end(); ++it2)
 			{
-				frame_used_lights.erase(it2);
-				return;
+				if ((*it2) == l)
+				{
+					frame_used_lights.erase(it2);
+					return;
+				}
 			}
 
 			return;
@@ -650,6 +627,7 @@ void ModuleLightning::GetActiveLightsCount(uint ammount, std::vector<CompLight*>
 bool ModuleLightning::SetEventListenrs()
 {
 	AddListener(EventType::EVENT_SEND_3D_3DA_MM, this);
+	AddListener(EventType::EVENT_DELETE_LIGHT, this);
 	return false;
 }
 
@@ -680,11 +658,11 @@ update_status ModuleLightning::UpdateConfig(float dt)
 	ImGui::Text("Lights used on frame:"); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", frame_used_lights.size());
 
-	ImGui::DragFloat("Distance from camera front to render shadow map", &distanceFromSceneCameraToLookAt, 1.0f, 1.0f, 100.0f);
-	ImGui::DragFloat("Shadow map camera size", &projSize, 1.0f, 10.0f, 100.0f);
-	ImGui::DragFloat("Shadow map camera near plane dist", &nearPlane, 1.0f, 1.0f, 100.0f);
-	ImGui::DragFloat("Shadow map camera far plane dist", &farPlane, 1.0f, 10.0f, 100.0f);
-	ImGui::DragFloat("Shadow map camera distance from look at position", &distanceFromTheShadowMapRenderLookAtPosToShadowMapRenderCamPos, 1.0f, 1.0f, 100.0f);
+	ImGui::DragFloat("Distance from camera front to render shadow map", &dstSceneCameraToLookAt, 1.0f, 1.0f, 10000.0f);
+	ImGui::DragFloat("Shadow map camera size", &projSize, 1.0f, 10.0f, 10000.0f);
+	ImGui::DragFloat("Shadow map camera near plane dist", &nearPlane, 1.0f, 1.0f, 10000.0f);
+	ImGui::DragFloat("Shadow map camera far plane dist", &farPlane, 1.0f, 10.0f, 10000.0f);
+	ImGui::DragFloat("Shadow map camera distance from look at position", &dstShadowmapCameraToLookAt, 1.0f, 1.0f, 10000.0f);
 	
 	int u_l = shadow_cast_points_count;
 	if(ImGui::DragInt("Set used lights", &u_l, 1, 0, 8))

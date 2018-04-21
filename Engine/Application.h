@@ -38,7 +38,6 @@ class ModuleRenderGui;
 class ModulePhysics;
 class ModuleMap;
 class ModuleLightning;
-class ModuleKeyBinding;
 class ModuleAnimation;
 class ModuleParticles;
 
@@ -146,7 +145,6 @@ public:
 	ModulePhysics* physics = nullptr;
 	ModuleMap* map = nullptr;
 	ModuleLightning* module_lightning = nullptr;
-	ModuleKeyBinding* module_key_binding = nullptr;
 	ModuleParticles* particles = nullptr;
 
 private:

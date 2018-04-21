@@ -62,6 +62,8 @@ Scene::~Scene()
 	DeleteAllGameObjects(root);
 	DeleteAllGameObjects(secondary_root);
 	DeleteAllGameObjects(temporary_scene);
+	DeleteAllGameObjects(dontdestroyonload);
+
 	search_name->GetChildsPtr()->clear();
 	//DeleteAllGameObjects(dontdestroyonload);
 	defined_tags.clear();
@@ -247,7 +249,6 @@ update_status Scene::Update(float dt)
 		DrawPlane();
 	}
 
-	
 	// Draw Quadtree
 	if (octree_draw) octree.DebugDraw();
 
@@ -334,7 +335,8 @@ bool Scene::CleanUp()
 	root->CleanUp();
 	secondary_root->CleanUp();
 	temporary_scene->CleanUp();
-	
+	dontdestroyonload->CleanUp();
+
 	RELEASE(scene_buff);
 	RELEASE(glow_buff);
 	RELEASE(horizontal_blur_buff);
@@ -591,6 +593,26 @@ GameObject * Scene::FindGameObjectWithTag(const char * str)
 			if(tagged_objects[k]->empty() == false)return tagged_objects[k]->front();
 			break;
 		}
+	}
+	return nullptr;
+}
+
+GameObject* Scene::FindGameObjectWithTagRecursive(const char* str, GameObject* gameobject)
+{
+	if(gameobject->GetNumChilds() > 0)
+	{
+		for (int i = 0; i< gameobject->GetNumChilds(); i++)
+		{
+			GameObject* found = FindGameObjectWithTagRecursive(str, gameobject->GetChildbyIndex(i));
+			if (found != nullptr)
+			{
+				return found;
+			}
+		}
+	}
+	if (strcmp(str, gameobject->GetTag()) == 0)
+	{
+		return gameobject;
 	}
 	return nullptr;
 }
@@ -1384,6 +1406,7 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("CUBE Created.");
@@ -1438,6 +1461,7 @@ GameObject * Scene::CreatePlane(GameObject * parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("Plane Created.");

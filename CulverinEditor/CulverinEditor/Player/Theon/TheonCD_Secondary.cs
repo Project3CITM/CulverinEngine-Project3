@@ -59,5 +59,12 @@ public class TheonCD_Secondary : CoolDown
         act_time = 0.0f;
         prev_seconds = 1000;
         in_cd = true;
+
+        //SET COOLDOWN TO 1 SECOND
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_cds)
+        {
+            cd_time = 1.0f;
+        }
     }
 }

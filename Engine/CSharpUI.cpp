@@ -21,7 +21,7 @@
 #include "CompGraphic.h"
 #include "CompImage.h"
 #include "CompText.h"
-
+#include "CompCanvas.h"
 
 void CSharpScript::Activate(MonoObject* object, int uid)
 {
@@ -154,10 +154,10 @@ void CSharpScript::SetAlpha(MonoObject * object, float alpha)
 {
 	if (current_game_object != nullptr)
 	{
-		CompText* text = (CompText*)current_game_object->FindComponentByType(Comp_Type::C_TEXT);
-		if (text != nullptr)
+		CompGraphic* item = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
 		{
-			text->SetAlpha(alpha);
+			item->SetAlpha(alpha);
 		}
 	}
 }
@@ -193,6 +193,18 @@ void CSharpScript::SetColor(MonoObject * object, MonoObject * color, float alpha
 			if (z_field) mono_field_get_value(color, z_field, &new_vec.z);
 
 			image->SetColor(new_vec.x, new_vec.y, new_vec.z, alpha);
+		}
+	}
+}
+
+void CSharpScript::SetCanvasAlpha(MonoObject * object, float alpha)
+{
+	if (current_game_object != nullptr)
+	{
+		CompCanvas* item = (CompCanvas*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			item->SetNewCanvasAlphaValue(alpha); 
 		}
 	}
 }

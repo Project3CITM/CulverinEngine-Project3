@@ -191,16 +191,16 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	non_glow_material->name = "Non Glow Material";
 	non_glow_material->material_shader = non_glow_shader;
 	non_glow_material->GetProgramVariables();
-	App->module_shaders->materials.push_back(non_glow_material);
+	App->module_shaders->materials.insert(std::pair<uint, Material*>(non_glow_material->GetProgramID(), non_glow_material));
 	non_glow_material->active_num = 1;
 
 	final_tex_material = new Material();
 	final_tex_material->name = "Final Tex Material";
 	final_tex_material->material_shader = final_shader_tex;
 	final_tex_material->GetProgramVariables();
-	App->module_shaders->materials.push_back(final_tex_material);
+	App->module_shaders->materials.insert(std::pair<uint, Material*>(final_tex_material->GetProgramID(), final_tex_material));
 	final_tex_material->active_num = 1;
-	dmg_texture_id = App->textures->LoadTexture("Assets/Damage2.png");
+	dmg_texture_id = App->textures->LoadTexture("Assets/bloodHurt.png");
 
 	default_material = new Material();
 	default_material->name = "Default Material";
@@ -564,7 +564,7 @@ void ModuleRenderer3D::BlurShaderVars(int i)
 void ModuleRenderer3D::GlowShaderVars()
 {
 	final_shader_tex->Bind();
-
+	App->module_shaders->SetUniformVariables(final_tex_material);
 	glActiveTexture(GL_TEXTURE0);
 	GLint texLoc = glGetUniformLocation(final_shader_tex->programID, "_albedo");
 	glBindTexture(GL_TEXTURE_2D, App->scene->scene_buff->GetTexture());
