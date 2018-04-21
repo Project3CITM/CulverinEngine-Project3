@@ -18,7 +18,7 @@ using CulverinEditor.Debug;
         void OnTriggerEnter()
         {
           SceneManager.LoadNewWalkableMap("Map_Level_3_FinalVersion");
-          SceneManager.LoadScene("Level_3_v2");            
+          SceneManager.LoadScene("Level_3_v3");            
         }               
     }
 
