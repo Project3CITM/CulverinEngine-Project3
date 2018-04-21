@@ -467,7 +467,7 @@ GameObject * ModulePhysics::RayCast(float3 origin, float3 direction, float dista
 		direction.Normalize();
 		physx::PxRaycastBuffer hit;
 		mScene->raycast(physx::PxVec3(origin.x, origin.y, origin.z), physx::PxVec3(direction.x, direction.y, direction.z), distance, hit);
-		if (hit.hasBlock)
+		if (hit.hasBlock && (hit.block.shape->getFlags() & physx::PxShapeFlag::eSIMULATION_SHAPE))
 		{
 			std::map<physx::PxRigidActor*, Component*>::const_iterator pair = colliders.find(hit.block.actor);
 			ret = pair._Ptr->_Myval.second->GetParent();
