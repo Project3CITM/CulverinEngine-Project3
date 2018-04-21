@@ -1968,6 +1968,7 @@ void ImportScript::ChangeRTPC(MonoString* var_name, float value)
 void ImportScript::ChangeState(MonoString * group_name, MonoString * state_name)
 {
 	App->audio->ChangeState(mono_string_to_utf8(group_name), mono_string_to_utf8(state_name));
+	//LOG("State: %s  Value %s", mono_string_to_utf8(group_name), mono_string_to_utf8(state_name))
 }
 
 void ImportScript::ChangeVolume(float volume)

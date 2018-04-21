@@ -71,7 +71,7 @@ public class ShieldGuard_Listener : PerceptionListener
                     if (GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen == false)
                     {
                         //PLAY COMBAT MUSIC
-                        Audio.ChangeState("AmbientMusic", "Combat");
+                        Audio.ChangeState("MusicState", "Combat");
                         GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen = true;
                         Debug.Log("COMBAT ON", Department.PLAYER, Color.ORANGE);
                     }

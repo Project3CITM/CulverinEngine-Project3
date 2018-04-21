@@ -19,7 +19,7 @@ class Disengage_Action : Action
 
 
         //PLAY COMBAT MUSIC
-        Audio.ChangeState("AmbientMusic", "None");
+        Audio.ChangeState("MusicState", "None");
         GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen = false;
         Debug.Log("COMBAT OFF", Department.PLAYER, Color.BLUE);
 
