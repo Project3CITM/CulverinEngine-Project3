@@ -65,12 +65,13 @@ public class SpearGuard_Listener : PerceptionListener
 
                 if (gameObject.IsEquals(seen_event_tmp.enemy_who_saw))
                 {
-                    //if (GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen == false)
-                    //{
-                    //    //PLAY COMBAT MUSIC
-                    //    Audio.ChangeState("AmbientMusic", "Combat");
-                    //    GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen = true;
-                    //}
+                    if (GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen == false)
+                    {
+                        //PLAY COMBAT MUSIC
+                        Audio.ChangeState("AmbientMusic", "Combat");
+                        GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen = true;
+                        Debug.Log("COMBAT ON", Department.PLAYER, Color.ORANGE);
+                    }
 
                     GetComponent<EnemySpear_BT>().InterruptAction();
                     GetComponent<EnemySpear_BT>().player_detected = true;
