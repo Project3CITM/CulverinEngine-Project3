@@ -22,7 +22,6 @@ public class Fireball : CulverinBehaviour
     {
         rb = GetComponent<CompRigidBody>();
         Shoot();
-        damage = 10.0f;
         timer = 0.0f;
         
         GetComponent<CompAudio>().PlayEvent("DaenerysFire"); //Change This!!
