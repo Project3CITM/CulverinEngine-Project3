@@ -10,7 +10,7 @@ public class EnemySpear_BT : Enemy_BT
     Material enemy_mat_sword;
 
     public GameObject spear_name;
-
+    public int texture_type = 0;
     public override void Start()
     {
         this.range = 2;
@@ -41,7 +41,14 @@ public class EnemySpear_BT : Enemy_BT
             }
         }
 
-        enemy_mat_sword = GetMaterialByName("EnemyWithSpear");
+        if (texture_type == 0)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_SpearEnemy_Material_21_04");
+        }
+        else if (texture_type == 1)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_SpearEnemy2_Material_21_04");
+        }
 
         spear_name = GetLinkedObject("spear_name");
 

@@ -7,7 +7,7 @@ public class EnemySword_BT : Enemy_BT
     Material enemy_mat_sword;
 
     public GameObject sword_name;
-
+    public int texture_type = 0;
     public override void Start()
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
@@ -26,7 +26,14 @@ public class EnemySword_BT : Enemy_BT
             }
         }
 
-        enemy_mat_sword = GetMaterialByName("EnemyWithSword");
+        if (texture_type == 0)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_SwordEnemy_Material_21_04");
+        }
+        else if (texture_type == 1)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_SwordEnemy2_Material_21_04");
+        }
 
         sword_name = GetLinkedObject("sword_name");
 

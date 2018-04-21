@@ -9,6 +9,7 @@ public class EnemyShield_BT : Enemy_BT
     Material enemy_mat_sword;
 
     public GameObject shield_name;
+    public int texture_type = 0;
 
     public override void Start()
     {
@@ -26,7 +27,15 @@ public class EnemyShield_BT : Enemy_BT
                 enemy_manager.AddShieldEnemy(gameObject);
         }
 
-        enemy_mat_sword = GetMaterialByName("EnemyShield");
+        if (texture_type == 0)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_ShieldEnemy_Material_21_04");
+        }
+        else if(texture_type == 1)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_ShieldEnemy2_Material_21_04");
+        }
+
 
         shield_name = GetLinkedObject("shield_name");
 
