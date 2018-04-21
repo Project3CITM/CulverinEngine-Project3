@@ -32,6 +32,10 @@ public class SwordParticles : CulverinBehaviour
         //wall_particle = sword_wall_particle.GetComponent<CompParticleSystem>();
 
         sword_enemy_particle = GetLinkedObject("sword_enemy_particle");
+        sword_enemy_particle2 = GetLinkedObject("sword_enemy_particle2");
+        sword_enemy_particle3 = GetLinkedObject("sword_enemy_particle3");
+        sword_enemy_particle4 = GetLinkedObject("sword_enemy_particle4");
+
         enemy_particle = sword_enemy_particle.GetComponent<CompParticleSystem>();
 
         //TO MANAGE SWORD BLOOD TEXTURE
