@@ -52,6 +52,7 @@
     <Compile Include="AI\Actions\Separate_Action.cs" />
     <Compile Include="AI\Actions\SpearAttack_Action.cs" />
     <Compile Include="AI\Actions\Stun_Action.cs" />
+    <Compile Include="AI\Actions\UpdateTilesToWalkableLVL2.cs" />
     <Compile Include="AI\AIManager.cs" />
     <Compile Include="AI\Actions\Align_Steering.cs" />
     <Compile Include="AI\Actions\Arrive_Steering.cs" />
