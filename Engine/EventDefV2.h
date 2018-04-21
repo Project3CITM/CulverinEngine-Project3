@@ -38,6 +38,8 @@ class CompScript;
 class GameObject;
 class Shader;
 class Particle;
+struct Comparator;
+struct DrawVMultimapKey;
 enum ShaderType;
 enum JP_COLLISION_TYPE;
 union Event;
@@ -242,7 +244,7 @@ struct ERequest3D3DAMM
 struct ESend3D3DAMM
 {
 	uint64_t event_data = 0;
-	const std::multimap<uint, Event>* MM3DDrawEvent = nullptr;
+	const std::multimap<DrawVMultimapKey, Event, Comparator>* MM3DDrawEvent = nullptr;
 	const std::multimap<float, Event>* MM3DADrawEvent = nullptr;
 	const CompLight* light = nullptr;
 };

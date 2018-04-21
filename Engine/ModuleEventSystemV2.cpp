@@ -72,9 +72,6 @@ bool ModuleEventSystemV2::Init(JSON_Object* node)
 
 bool ModuleEventSystemV2::Start()
 {
-	//Set scene for cube map render
-
-
 	perf_timer.Start();
 	Start_t = perf_timer.ReadMs();
 	return true;
@@ -178,14 +175,14 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 	uint NewProgramID = 0;
 	Material* LastUsedMaterial = nullptr;
 	Material* ActualMaterial =  nullptr;
-	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
+	for (std::multimap<DrawVMultimapKey, Event, Comparator>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
 		case EventValidation::EVENT_VALIDATION_VALID: //Here we can execute the event, any delay is left and this is a valid event
 			NewProgramID = 0;
-			if (item._Ptr->_Myval.first != 0)
+			if (item._Ptr->_Myval.first.uuid != 0)
 				NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
 
 				ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
@@ -435,7 +432,7 @@ void ModuleEventSystemV2::IterateNoDrawV(float dt)
 {
 	BROFILER_CATEGORY("ModuleEventSystemV2: IterateNoDrawV", Profiler::Color::Blue);
 
-	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
+	std::multimap<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
 	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
 	{
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
@@ -499,8 +496,6 @@ void ModuleEventSystemV2::IterateLightsV(float dt)
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
-
-
 }
 
 EventValidation ModuleEventSystemV2::ValidEvent(Event& event, float dt)
@@ -558,7 +553,7 @@ void ModuleEventSystemV2::AddListener(EventType type, Module* listener)
 {
 	if (listener != nullptr)
 	{
-		std::map<EventType, std::vector<Module*>>::iterator EListener = MEventListeners.find(type);
+		std::multimap<EventType, std::vector<Module*>>::iterator EListener = MEventListeners.find(type);
 		if (EListener != MEventListeners.end()) EListener._Ptr->_Myval.second.push_back(listener);
 	}
 }
@@ -604,7 +599,7 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 				EventPushedWhileIteratingMaps_DrawV = true;
 			}
 			*/
-			DrawV.insert(std::pair<uint, Event>(ID, event));
+			DrawV.insert(std::pair<DrawVMultimapKey, Event>(DrawVMultimapKey(ID, DistanceCamToObject), event));
 			DrawGlowV.insert(std::pair<uint, Event>(ID, event));
 			break;
 		case event.draw.DRAW_3D_ALPHA:
@@ -679,7 +674,7 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 
 void ModuleEventSystemV2::PushImmediateEvent(Event& event)
 {
-	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.find(event.Get_event_data_type());
+	std::multimap<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.find(event.Get_event_data_type());
 	if (EListener != MEventListeners.end())
 	{
 		switch (event.Get_event_data_type())

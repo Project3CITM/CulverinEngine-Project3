@@ -433,7 +433,7 @@ void ModuleLightning::CalcPointShadowMaps(Event& events, CompLight* light)
 
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, fbo->GetTexture(), 0);
 				glClear(GL_DEPTH_BUFFER_BIT);
-				for (std::multimap<uint, Event>::const_iterator item = events.send_3d3damm.MM3DDrawEvent->begin(); item != events.send_3d3damm.MM3DDrawEvent->end(); item++)
+				for (std::multimap<DrawVMultimapKey, Event>::const_iterator item = events.send_3d3damm.MM3DDrawEvent->begin(); item != events.send_3d3damm.MM3DDrawEvent->end(); item++)
 				{
 					CompMesh* m = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw);
 
