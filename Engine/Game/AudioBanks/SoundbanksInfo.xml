@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="128">
 	<RootPaths>
-		<ProjectRoot>E:\Repos\AudioWwiseProject\Proyecto3\</ProjectRoot>
-		<SourceFilesRoot>E:\Repos\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
-		<SoundBanksRoot>E:\Repos\AudioWwiseProject\SoundBank\</SoundBanksRoot>
+		<ProjectRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\</ProjectRoot>
+		<SourceFilesRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>C:\Users\Kay\Documents\GitHub\TempMotor3D_P3\Engine\Game\AudioBanks\</SoundBanksRoot>
 		<ExternalSourcesInputFile></ExternalSourcesInputFile>
-		<ExternalSourcesOutputRoot>E:\Repos\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
+		<ExternalSourcesOutputRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
 	</RootPaths>
 	<DialogueEvents/>
 	<StreamedFiles/>
@@ -39,10 +39,6 @@
 				<Event Id="1268857950" Name="SwordFalls" ObjectPath="\Events\Scene\Boss\SwordFalls"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
-				<File Id="34303078" Language="SFX">
-					<ShortName>Boss_craniumcrush.wav</ShortName>
-					<Path>SFX\Boss_craniumcrush_1C9C67B2.wem</Path>
-				</File>
 				<File Id="46750343" Language="SFX">
 					<ShortName>Boss_step2.wav</ShortName>
 					<Path>SFX\Boss_step2_1C9C67B2.wem</Path>
@@ -67,6 +63,10 @@
 					<ShortName>Boss_hit_ground.wav</ShortName>
 					<Path>SFX\Boss_hit_ground_1C9C67B2.wem</Path>
 				</File>
+				<File Id="444396445" Language="SFX">
+					<ShortName>Boss_craniumcrush.wav</ShortName>
+					<Path>SFX\Boss_craniumcrush_1C9C67B2.wem</Path>
+				</File>
 				<File Id="475114885" Language="SFX">
 					<ShortName>Boss_sword_falls.wav</ShortName>
 					<Path>SFX\Boss_sword_falls_1C9C67B2.wem</Path>
@@ -75,21 +75,21 @@
 					<ShortName>Boss_attack_preparation.wav</ShortName>
 					<Path>SFX\Boss_attack_preparation_1C9C67B2.wem</Path>
 				</File>
-				<File Id="508510935" Language="SFX">
-					<ShortName>Boss_Growl.wav</ShortName>
-					<Path>SFX\Boss_Growl_1C9C67B2.wem</Path>
-				</File>
 				<File Id="567468000" Language="SFX">
 					<ShortName>Boss_soldier_falls.wav</ShortName>
 					<Path>SFX\Boss_soldier_falls_1C9C67B2.wem</Path>
 				</File>
-				<File Id="587520127" Language="SFX">
+				<File Id="609592691" Language="SFX">
 					<ShortName>Boss_death_groan.wav</ShortName>
 					<Path>SFX\Boss_death_groan_1C9C67B2.wem</Path>
 				</File>
 				<File Id="628133761" Language="SFX">
 					<ShortName>Boss_hurt4.wav</ShortName>
 					<Path>SFX\Boss_hurt4_1C9C67B2.wem</Path>
+				</File>
+				<File Id="640165576" Language="SFX">
+					<ShortName>Boss_Growl.wav</ShortName>
+					<Path>SFX\Boss_Growl_1C9C67B2.wem</Path>
 				</File>
 				<File Id="713280947" Language="SFX">
 					<ShortName>Boss_falls_to_knees.wav</ShortName>
@@ -507,7 +507,7 @@
 				</File>
 				<File Id="991530287" Language="SFX">
 					<ShortName>Ambient\Ambience.wav</ShortName>
-					<Path>SFX\Ambient\Ambience_1C9C67B2.wem</Path>
+					<Path>SFX\Ambient\Ambience_F17FB28C.wem</Path>
 				</File>
 				<File Id="999653156" Language="SFX">
 					<ShortName>Enemy_ShieldHit.wav</ShortName>
