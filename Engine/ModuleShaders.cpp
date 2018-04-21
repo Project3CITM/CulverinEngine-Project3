@@ -1202,7 +1202,7 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 		if (lightsizeLoc != -1) {
 			BROFILER_CATEGORY("Update: ModuleShaders SetLights", Profiler::Color::Blue);
 			for (size_t i = 0; i < lights_vec.size(); ++i) {
-
+				if (lights_vec[i]->to_delete) continue;
 				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
 					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
 				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
