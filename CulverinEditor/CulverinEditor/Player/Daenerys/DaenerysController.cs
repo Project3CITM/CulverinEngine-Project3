@@ -131,11 +131,9 @@ public class DaenerysController : CharacterController
                     case State.ATTACKING:
                         {
                             //Check for end of the Attack animation
-                            anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("Idle"))
+                            if (GetComponent<CompAnimation>().IsAnimationStopped("Idle"))
                             { 
-                                anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                                if (anim_controller.IsAnimOverXTime(0.6f) && play_audio_roar)
+                                if (GetComponent<CompAnimation>().IsAnimOverXTime(0.6f) && play_audio_roar)
                                 {
                                     GameObject flamethr = Instantiate("CorrectDaenerysFireBreath");
 
@@ -158,7 +156,7 @@ public class DaenerysController : CharacterController
                                     play_audio_roar = false;
                                 }
 
-                                if (anim_controller.IsAnimOverXTime(1.0f))
+                                if (GetComponent<CompAnimation>().IsAnimationStopped("AttackLeft"))
                                 {
                                     state = State.IDLE;
                                 }
