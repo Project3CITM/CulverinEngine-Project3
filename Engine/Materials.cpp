@@ -164,9 +164,9 @@ void Material::Save() const
 		ss2 << name << "Cube Name:" << i;
 		std::string json_name_var = ss2.str();
 
-		if (cube_maps[i].cube_map != nullptr) {
+		if (cube_maps[i].var_name != "" && cube_maps[i].cube_name != "") {
 
-			json_object_dotset_string_with_std(object, json_name, cube_maps[i].cube_map->GetName().c_str());
+			json_object_dotset_string_with_std(object, json_name, cube_maps[i].cube_name.c_str());
 			json_object_dotset_string_with_std(object, json_name_var, cube_maps[i].var_name.c_str());
 
 		}
