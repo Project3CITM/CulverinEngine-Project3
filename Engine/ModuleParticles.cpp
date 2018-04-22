@@ -34,6 +34,10 @@ update_status ModuleParticles::PreUpdate(float dt)
 {
 	BROFILER_CATEGORY("PreUpdate: ModuleParticles", Profiler::Color::Blue);
 	const CompCamera* camera = App->renderer3D->GetActiveCamera();
+
+	if (camera == nullptr)
+		return UPDATE_CONTINUE;
+
 	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); )
 	{
 		if ((*item)->to_delete == true && (*item)->SystemIsEmpty())

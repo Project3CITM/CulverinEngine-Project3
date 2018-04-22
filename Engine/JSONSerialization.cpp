@@ -264,6 +264,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		{
 			(*it)->GetComponentMesh()->LinkSkeleton();
 		}
+				
 
 		//Load Audio Banks
 		int number_of_audio_banks = json_object_dotget_number(config_node, "Info.Number of Audio Banks");
