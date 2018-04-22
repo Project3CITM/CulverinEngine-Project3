@@ -97,7 +97,7 @@ public class Fireball : CulverinBehaviour
             }
             else
             {
-                Destroy(gameObject);
+                //Destroy(gameObject);
             }
         }
 
