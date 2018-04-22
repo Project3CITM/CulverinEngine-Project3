@@ -75,7 +75,7 @@ public class EnemyShield_BT : Enemy_BT
         //Attack action
         if (InRange())
         {
-            if (!GetComponent<Movement_Action>().LookingAtPlayer())
+            if (!GetComponent<FacePlayer_Action>().IsFaced())
             {
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
