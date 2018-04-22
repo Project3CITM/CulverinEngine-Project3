@@ -95,7 +95,7 @@ public class ShowScore : CulverinBehaviour
         coin2_time.SetActive(false);
         coin3_time.SetActive(false);
         StatsScore.time = Time.timePlay;
-
+        BossScore();
         EnemyKillsScore();
         AliveScore();
         TimeScore();
