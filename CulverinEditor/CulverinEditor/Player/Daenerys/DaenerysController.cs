@@ -35,7 +35,7 @@ public class DaenerysController : CharacterController
     public float damage_percentage_left = 10f;
     public int distance_left_attack = 3;
     private DaenerysCD_Left cd_left;
-
+    float AttackLeftTimer = 0.0f;
     //Right Ability Stats
     public float mana_cost_percentage_right = 20f;
     public float damage_percentage_right = 10f;
@@ -97,7 +97,7 @@ public class DaenerysController : CharacterController
         daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(1.0f, 1.0f, 1.0f), 1.0f);
         GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
         GetLinkedObject("daenerys_s_button_obj_idle").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
-
+        AttackLeftTimer = 0.0f;
         //Disable Daenerys Abilities buttons
         EnableAbilities(false);
     }
@@ -109,7 +109,7 @@ public class DaenerysController : CharacterController
 
     public override void ControlCharacter()
     {
-         
+        Debug.Log(state, Department.PLAYER);
         //// First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)
@@ -130,6 +130,7 @@ public class DaenerysController : CharacterController
                         }
                     case State.ATTACKING:
                         {
+                            AttackLeftTimer += Time.deltaTime;
                             //Check for end of the Attack animation
                             if (GetComponent<CompAnimation>().IsAnimationStopped("Idle"))
                             { 
@@ -158,13 +159,15 @@ public class DaenerysController : CharacterController
 
                                 if (GetComponent<CompAnimation>().IsAnimationStopped("AttackLeft"))
                                 {
-                                    play_audio_roar = true;
                                     state = State.IDLE;
                                 }
                             }
                             else if(play_audio_roar == false)
                             {
-                                play_audio_roar = true;
+                                state = State.IDLE;
+                            }
+                            if(AttackLeftTimer >= 1.35f)
+                            {
                                 state = State.IDLE;
                             }
                             break;
@@ -500,7 +503,7 @@ public class DaenerysController : CharacterController
         DecreaseManaPercentage(mana_cost_percentage_left);
         audio = daenerys_obj.GetComponent<CompAudio>();
         PlayFx("Dracarys");
-
+        AttackLeftTimer = 0.0f;
         play_audio_roar = true;
     }
 
