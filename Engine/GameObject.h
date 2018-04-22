@@ -191,8 +191,6 @@ private:
 	bool fixed_delete = false;
 	bool bb_active = false;
 
-
-
 	GameObject* parent = nullptr;
 	std::vector<Component*> components;
 	std::vector<GameObject*> childs;
