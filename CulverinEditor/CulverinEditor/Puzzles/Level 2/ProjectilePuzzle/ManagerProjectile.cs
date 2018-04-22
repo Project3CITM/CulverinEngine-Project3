@@ -235,6 +235,7 @@ public class ManagerProjectile : CulverinBehaviour
         Mathf.Round(vfront.y);
         Mathf.Round(vfront.z);
         projectile_script.speed = vfront * -1;
+        projectile_script.speed_projectil = speed_projectil;
     }
 
     void OnTriggerEnter()

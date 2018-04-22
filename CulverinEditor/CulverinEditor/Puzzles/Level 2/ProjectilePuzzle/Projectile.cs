@@ -6,6 +6,7 @@ public class Projectile : CulverinBehaviour
 {
     public float damage = 10f;
     public Vector3 speed = Vector3.Zero;
+    public float speed_projectil = 1.0f;
     public bool collision;
     CompRigidBody rb;
 
@@ -19,7 +20,7 @@ public class Projectile : CulverinBehaviour
 
     public void Shoot()
     {
-        rb.ApplyImpulse(speed * 100);
+        rb.ApplyImpulse(speed * speed_projectil);
     }
 
     void Update()

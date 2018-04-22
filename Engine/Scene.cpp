@@ -128,6 +128,13 @@ bool Scene::Start()
 	defined_tags.push_back("undefined");
 	defined_tags.push_back("camera");
 	defined_tags.push_back("player");
+	defined_tags.push_back("barrel");
+	defined_tags.push_back("Enemy");
+	defined_tags.push_back("death_zone");
+	defined_tags.push_back("weapon");
+	defined_tags.push_back("obstacle");
+	defined_tags.push_back("trap_floor");
+	defined_tags.push_back("boss_trigger");
 	defined_tags.push_back("NoC#");
 
 	RELEASE(scene_buff);
