@@ -149,6 +149,7 @@ private:
 	float	size_quadtree = 0.0f;
 	uint	icon_resetAll = 0;
 	bool	load_scene = true;
+	bool	did_delete_obj_event = false;
 	std::vector<Component*> temp_vector;
 	Comp_Type				actualType = Comp_Type::C_UNKNOWN;
 	bool					on_tag_creation = false;

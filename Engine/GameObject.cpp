@@ -2284,6 +2284,7 @@ void GameObject::RemoveChildbyIndex(uint index)
 			if (i == index)
 			{
 				GameObject* it = childs[i];
+				childs[i]->SetParent(nullptr);
 				childs.erase(item);
 				RELEASE(it);
 				it = nullptr;

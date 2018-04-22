@@ -220,7 +220,10 @@ update_status Scene::PreUpdate(float dt)
 	//	}
 	//}
 
-	deleted_objects.clear();
+	if (!did_delete_obj_event)
+	{
+		deleted_objects.clear();
+	}
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -293,6 +296,8 @@ update_status Scene::Update(float dt)
 		BROFILER_CATEGORY("DoCulling: ModuleScene", Profiler::Color::Blue);
 		active_camera->DoCulling();
 	}
+
+	did_delete_obj_event = false;
 
 	Update_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -400,6 +405,7 @@ void Scene::OnEvent(Event & event)
 		if (CheckDeletedObjcet(event.delete_go.uuid))
 		{
 			DeleteGameObject(event.delete_go.Todelte);
+			did_delete_obj_event = true;
 		}
 		break;
 	}
@@ -1277,6 +1283,7 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 			{
 				gameobject->GetParent()->RemoveChildbyIndex(index);
 			}
+			gameobject->SetParent(nullptr);
 			gameobject = nullptr;
 		}
 

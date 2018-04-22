@@ -49,14 +49,18 @@ public class Projectile : CulverinBehaviour
                     cm.GetDamage(damage);
                 }
             }
-            destroyed = true;
-            Destroy(gameObject);
 
             Debug.Log(collided_obj.GetTag().ToString(), Department.STAGE) ;
 
         }
         else Debug.Log("Collided obj NULL", Department.STAGE, Color.ORANGE);
 
+        if (!destroyed)
+        {
+            destroyed = true;
+            col.CollisionActive(false);
+            Destroy(gameObject);
+        }
     }
 }
 

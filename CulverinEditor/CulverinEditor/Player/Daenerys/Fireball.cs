@@ -80,16 +80,19 @@ public class Fireball : CulverinBehaviour
 
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
-            if (enemy_manager.IsEnemy(collided_obj) && destroyed == false)
+            if (!destroyed)
             {
-                enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
-            }
-            else
-            {
-                destroyed = true;
-                Debug.Log("Destroy 1", Department.GENERAL);
-                Destroy(gameObject);
-                return;
+                if (enemy_manager.IsEnemy(collided_obj))
+                {
+                    enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
+                }
+                else
+                {
+                    destroyed = true;
+                    Debug.Log("Destroy 1", Department.GENERAL);
+                    Destroy(gameObject);
+                    return;
+                }
             }
         }
 
@@ -98,8 +101,7 @@ public class Fireball : CulverinBehaviour
 
         if (fireball && destroyed == false)
         {
-            rb = GetComponent<CompRigidBody>();
-            rb.LockTransform();
+            col.CollisionActive(false);
             Debug.Log("Destroy 2", Department.GENERAL);
             Destroy(gameObject);
             destroyed = true;
