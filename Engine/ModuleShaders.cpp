@@ -1174,9 +1174,11 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 		if (timeLoc != -1) glUniform1f(timeLoc, time_dt);
 
 		//CAMERA POSITION
-		float3 cam_pos = App->renderer3D->active_camera->frustum.pos;
-		GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
-		if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
+		if (App->renderer3D->active_camera != nullptr) {
+			float3 cam_pos = App->renderer3D->active_camera->frustum.pos;
+			GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
+			if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
+		}
 
 		//ALPHA
 		float alpha = (*item).second->alpha;
@@ -1184,9 +1186,12 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 		if (alphaLoc != -1) glUniform1f(alphaLoc, alpha);
 
 		//VIEWPROJ MATRIX
-		Frustum camFrust = App->renderer3D->active_camera->frustum;
-		GLint viewLoc = glGetUniformLocation(ID, "viewproj");
-		if (viewLoc != -1)glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+		if (App->renderer3D->active_camera != nullptr) {
+
+			Frustum camFrust = App->renderer3D->active_camera->frustum;
+			GLint viewLoc = glGetUniformLocation(ID, "viewproj");
+			if (viewLoc != -1)glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
+		}
 
 		//LIGHTS
 		std::vector<CompLight*> lights_vec;
@@ -1217,7 +1222,7 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 				// Bias matrix. TODO: Might be better to set other place
 
 				int depthBiasID = glGetUniformLocation(ID, "depthBias");
-				if (viewLoc != -1) glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
+				if (depthBiasID != -1) glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
 
 				// End Bias matrix.
 			}

@@ -228,12 +228,12 @@ update_status ModuleLightning::Update(float dt)
 	{
 		CompLight* light = frame_used_lights[i];
 
-		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
+		if (light->type == Light_type::DIRECTIONAL_LIGHT && App->renderer3D->GetActiveCamera() != nullptr) {
 			float3 dir = light->GetParent()->GetComponentTransform()->GetEulerToDirection();
 			dir = dir.Normalized();
 
 			
-			Frustum* frustum = /*&App->renderer3D->game_camera->frustum;//*/&App->renderer3D->GetActiveCamera()->frustum;
+			Frustum* frustum = &App->renderer3D->GetActiveCamera()->frustum;
 
 			glm::vec3 lDir = glm::vec3(dir.x, dir.y, dir.z);
 			glm::vec3 camPos = glm::vec3(frustum->pos.x, frustum->pos.y, frustum->pos.z);
@@ -316,8 +316,7 @@ bool ModuleLightning::CleanUp()
 
 void ModuleLightning::OnEvent(Event & event)
 {
-	if (App->renderer3D->active_camera == nullptr)
-		return;
+
 
 	BROFILER_CATEGORY("OnEvent: ModuleLightning", Profiler::Color::Blue);
 
@@ -349,7 +348,7 @@ void ModuleLightning::OnEvent(Event & event)
 					continue;
 				if (m->HasSkeleton())
 					continue;
-				if ((m->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos).Length() > projSize)
+				if (App->renderer3D->active_camera == nullptr || (m->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos).Length() > projSize)
 					continue;
 				if (m->resource_mesh != nullptr)
 				{
@@ -676,7 +675,7 @@ update_status ModuleLightning::UpdateConfig(float dt)
 	}
 
 	ImGui::Checkbox("Display extense debug info", &light_extense_debug_info);
-	if (light_extense_debug_info)
+	if (light_extense_debug_info && App->renderer3D->active_camera != nullptr)
 	{
 		Frustum* cam = &App->renderer3D->active_camera->frustum;
 		ImGui::TextColored(ImVec4(0.f, 0.5f, 1.f, 1.f), "Camera pos: x:%.3f y:%.3f z:%.3f", cam->pos.x, cam->pos.y, cam->pos.z);
