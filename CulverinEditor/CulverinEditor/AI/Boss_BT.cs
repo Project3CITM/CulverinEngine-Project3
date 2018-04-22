@@ -50,6 +50,10 @@ public class Boss_BT : BT
 
     private bool boss_active;
 
+    private bool boss_dead = false;
+    public float boss_dead_delay_time = 5.0f;
+    private float boss_dead_delay_timer = 0.0f;
+
     public override void Start()
     {
         hp_bar_boss = GetLinkedObject("hp_bar_boss");
@@ -68,6 +72,9 @@ public class Boss_BT : BT
         rumble_timer = 0.0f;
         rumble = false;
 
+        boss_dead = false;
+        boss_dead_delay_timer = 0.0f;
+
         base.Start();
     }
 
@@ -81,6 +88,17 @@ public class Boss_BT : BT
                 Input.RumblePlay(rumble_power, rumble_time);
                 rumble_timer = 0.0f;
                 rumble = false;
+            }
+        }
+
+        if (boss_dead)
+        {
+            boss_dead_delay_timer += Time.deltaTime;
+            if (boss_dead_delay_timer >= boss_dead_delay_time)
+            {
+                if (SceneManager.CheckMultiSceneReady())
+                    SceneManager.RemoveSecondaryScene();
+                SceneManager.LoadScene("ScoreMenu");
             }
         }
         base.Update();
@@ -241,9 +259,7 @@ public class Boss_BT : BT
                 //todosforme
                 GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
 
-                if (SceneManager.CheckMultiSceneReady())
-                    SceneManager.RemoveSecondaryScene();
-                SceneManager.LoadScene("ScoreMenu");
+                boss_dead = true;
             }
             /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
             {
