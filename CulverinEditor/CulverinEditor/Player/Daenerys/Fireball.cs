@@ -18,6 +18,8 @@ public class Fireball : CulverinBehaviour
     public bool rotate = true;
     public bool fireball = true;
 
+    private bool destroyed = false;
+
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
@@ -78,12 +80,14 @@ public class Fireball : CulverinBehaviour
 
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
-            if (enemy_manager.IsEnemy(collided_obj))
+            if (enemy_manager.IsEnemy(collided_obj) && destroyed == false)
             {
                 enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
             }
             else
             {
+                destroyed = true;
+                Debug.Log("Destroy 1", Department.GENERAL);
                 Destroy(gameObject);
                 return;
             }
@@ -92,11 +96,13 @@ public class Fireball : CulverinBehaviour
         GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
         GetComponent<CompAudio>().StopEvent("DaenerysFire");
 
-        if (fireball)
+        if (fireball && destroyed == false)
         {
             rb = GetComponent<CompRigidBody>();
             rb.LockTransform();
+            Debug.Log("Destroy 2", Department.GENERAL);
             Destroy(gameObject);
+            destroyed = true;
             return;
         }
     }

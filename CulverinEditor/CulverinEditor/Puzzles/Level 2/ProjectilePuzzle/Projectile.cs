@@ -10,6 +10,8 @@ public class Projectile : CulverinBehaviour
     public bool collision;
     CompRigidBody rb;
 
+    private bool destroyed = false;
+
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
@@ -36,7 +38,7 @@ public class Projectile : CulverinBehaviour
        
         
        
-        if (collided_obj != null)
+        if (collided_obj != null && destroyed == false)
         {
             if(collided_obj.CompareTag("player"))
             {
@@ -46,13 +48,9 @@ public class Projectile : CulverinBehaviour
                 {
                     cm.GetDamage(damage);
                 }
-
-                Destroy(gameObject);
             }
-            if(collided_obj.CompareTag("obstacle"))
-            {
-                Destroy(gameObject);
-            }
+            destroyed = true;
+            Destroy(gameObject);
 
             Debug.Log(collided_obj.GetTag().ToString(), Department.STAGE) ;
 
