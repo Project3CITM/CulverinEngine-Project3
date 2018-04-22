@@ -88,28 +88,21 @@ public class Fireball : CulverinBehaviour
         // DAMAGE ---
         if (collided_obj != null)
         {
-            
+
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
             {
                 enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
             }
-            else
-            {
-                //Destroy(gameObject);
-            }
         }
 
         GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
         GetComponent<CompAudio>().StopEvent("DaenerysFire");
 
-        if (fireball)
-        {
-            rb = GetComponent<CompRigidBody>();
-            //Lock transform to avoid trespassing more than one collider
-            rb.LockTransform();
-            Destroy(gameObject);
-        }
+        rb = GetComponent<CompRigidBody>();
+        //Lock transform to avoid trespassing more than one collider
+        rb.LockTransform();
+        Destroy(gameObject);
     }
 }
