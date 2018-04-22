@@ -4,7 +4,7 @@ using CulverinEditor.Debug;
 
 public class Fireball : CulverinBehaviour
 {
-    public float damage = 50;
+    public float damage = 25;
     public float life = 5.0f;
     public Vector3 vfront = Vector3.Zero;
     public GameObject fireball_particles;
@@ -13,7 +13,7 @@ public class Fireball : CulverinBehaviour
     public GameObject fireball_particles4;
 
     private CompRigidBody rb;
-    public float vel = 50;
+    public float vel = 120;
     private float timer = 0.0f;
     public bool rotate = true;
     public bool fireball = true;
