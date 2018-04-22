@@ -23,7 +23,7 @@ public class Fireball : CulverinBehaviour
         rb = GetComponent<CompRigidBody>();
         Shoot();
         timer = 0.0f;
-        
+
         GetComponent<CompAudio>().PlayEvent("DaenerysFire"); //Change This!!
     }
 
@@ -36,12 +36,6 @@ public class Fireball : CulverinBehaviour
 
     void Update()
     {
-        timer += Time.deltaTime;
-
-        if(timer >= life)
-        {
-            Destroy(gameObject);
-        }
     }
 
     void OnContact()
@@ -75,13 +69,6 @@ public class Fireball : CulverinBehaviour
                 fireball_particles_script = fireball_particles4.GetComponent<CompParticleSystem>();
                 fireball_particles_script.ActivateEmission(true);
             }
-
-            //Iterate all childs, they have a ParticleSystem too
-            //int childs = fireball_particles.ChildCount();
-            //for (int i = 0; i < childs; i++)
-            //{
-            //    fireball_particles.GetChildByIndex(i).GetComponent<CompParticleSystem>().ActivateEmission(true);
-            //}
         }
 
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
@@ -95,14 +82,22 @@ public class Fireball : CulverinBehaviour
             {
                 enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
             }
+            else
+            {
+                Destroy(gameObject);
+                return;
+            }
         }
 
         GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
         GetComponent<CompAudio>().StopEvent("DaenerysFire");
 
-        rb = GetComponent<CompRigidBody>();
-        //Lock transform to avoid trespassing more than one collider
-        rb.LockTransform();
-        Destroy(gameObject);
+        if (fireball)
+        {
+            rb = GetComponent<CompRigidBody>();
+            rb.LockTransform();
+            Destroy(gameObject);
+            return;
+        }
     }
 }

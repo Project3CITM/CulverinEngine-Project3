@@ -7,7 +7,7 @@ public class Hp : CulverinBehaviour
     public GameObject other_obj_hp;
     CompImage hp_bar;
     public float max_hp = 100.0f;
-    float current_hp = 100.0f;
+    float current_hp = 80.0f;
     float calc_hp = 1.0f;
 
     void Start()
@@ -23,10 +23,12 @@ public class Hp : CulverinBehaviour
 
     public void GetDamage(float dmg)
     {
-        other_obj_hp.GetComponent<CompImage>().FillAmount(other_obj_hp.GetComponent<LeftHp>().lasthp_value / 100);
-        other_obj_hp.GetComponent<LeftHp>().lasthp_value = current_hp;
+        other_obj_hp.GetComponent<CompImage>().FillAmount(current_hp / max_hp);
+    
+        other_obj_hp.GetComponent<LeftHp>().current_lasthp = current_hp;
         other_obj_hp.GetComponent<LeftHp>().hp_ready_to_below = false;
         other_obj_hp.GetComponent<LeftHp>().current_temp_hp_time = 0.0f;
+        other_obj_hp.GetComponent<LeftHp>().hp_bar_changed = true;
         current_hp -= dmg;
         if(current_hp < 0)
         {
@@ -35,7 +37,8 @@ public class Hp : CulverinBehaviour
         calc_hp = current_hp / max_hp;
         hp_bar = this_obj_hp.GetComponent<CompImage>();
         hp_bar.FillAmount(calc_hp);
-        other_obj_hp.GetComponent<LeftHp>().hp_bar_changed = false;
+        other_obj_hp.GetComponent<LeftHp>().lasthp_value = current_hp;
+
     }
 
     public float GetCurrentHealth()
