@@ -102,7 +102,7 @@ public class DamageFeedback : CulverinBehaviour
             {
                 float decrease_val = Time.deltaTime / dying_time;
                 mult_dead += decrease_val;
-                fade_image.GetComponent<CompImage>().SetAlpha(mult_dead);
+                total_fade_image.GetComponent<CompImage>().SetAlpha(mult_dead);
             }
 
             if (mult_dead >= 1.0f)
