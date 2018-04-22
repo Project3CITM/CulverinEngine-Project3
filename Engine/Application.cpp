@@ -283,7 +283,7 @@ void Application::FinishUpdate()
 		scene->static_objects.clear();
 		scene->dynamic_objects.clear();
 
-		App->importer->iScript->ClearMonoMap();
+		//App->importer->iScript->ClearMonoMap();
 
 		App->scene->DeleteAllGameObjects(App->scene->root);
 		scene->ClearAllTags();
