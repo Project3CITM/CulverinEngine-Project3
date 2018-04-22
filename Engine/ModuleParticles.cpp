@@ -3,6 +3,7 @@
 #include "ModuleParticles.h"
 #include "CompCamera.h"
 #include "ModuleRenderer3D.h"
+#include "CompParticleSystem.h"
 
 
 ModuleParticles::ModuleParticles(bool start_enabled) : Module(start_enabled)
@@ -113,8 +114,11 @@ bool ModuleParticles::CleanUp()
 {
 	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); item++)
 	{
-		if((*item)!=nullptr)
+		if ((*item) != nullptr)
+		{
+			(*item)->parent->SetSystemAsNull();
 			delete (*item);
+		}
 	}
 
 	//Particle systems deletes 

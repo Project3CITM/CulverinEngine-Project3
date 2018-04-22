@@ -82,8 +82,8 @@ Application::Application()
 	AddModule(physics);
 	AddModule(input);
 	AddModule(console);
-	AddModule(particles);
 	AddModule(scene);
+	AddModule(particles);
 	AddModule(module_lightning); // Ask this module creators before changing the order, possible dependencies with scene and shaders module.
 	AddModule(module_shaders);
 	

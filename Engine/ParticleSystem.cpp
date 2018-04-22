@@ -7,6 +7,7 @@
 #include "Application.h"
 #include "CompCamera.h"
 #include "ModuleRenderer3D.h"
+#include "CompParticleSystem.h"
 
 float ParticleSystem_Lerp(float v0, float v1, float time, float Maxtime)
 {

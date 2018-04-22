@@ -62,6 +62,8 @@
 
 #define MAX_PARTICLES_PER_EMITTER 1000
 
+class CompParticleSystem;
+
 struct ConeTrunk			//Definition of a cone trunk for the cone emitter type
 {
 	Circle Upper_Circle;
@@ -376,7 +378,7 @@ public:
 	bool ShowEmitterBoundBox = false;							//Draw emitter AABB
 	bool ShowEmitter = true;									//Draw emitter shape
 
-
+	CompParticleSystem* parent = nullptr;
 	bool active = true;
 	bool preview = true;
 	bool to_delete = false;

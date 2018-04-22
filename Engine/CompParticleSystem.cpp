@@ -28,6 +28,7 @@ CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Compon
 	particle_resource_name += "_particle";
 
 	part_system = App->particles->CreateParticleSystem();
+	part_system->parent = this;
 	uid = App->random->Int();
 }
 
@@ -45,7 +46,7 @@ CompParticleSystem::CompParticleSystem(const CompParticleSystem& copy, GameObjec
 	part_system->discard_distance = copy.GetDiscardDistance();
 	part_system->preview = copy.IsPreview();
 	part_system->active = copy.IsActive();
-	
+	part_system->parent = this;
 	file_to_load = particle_resource_name;
 	ImGuiLoadParticlePopUp();
 
@@ -84,8 +85,10 @@ void CompParticleSystem::Clear()
 
 	if (part_system != nullptr)
 	{
+		part_system->parent = nullptr;
 		part_system->to_delete = true;
 		part_system = nullptr;
+
 	}
 }
 
@@ -148,6 +151,11 @@ bool CompParticleSystem::IsActive() const
 bool CompParticleSystem::IsPreview() const
 {
 	return part_system->preview;
+}
+
+void CompParticleSystem::SetSystemAsNull()
+{
+	part_system = nullptr;
 }
 
 
