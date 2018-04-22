@@ -103,14 +103,13 @@ void CompMesh::PreUpdate(float dt)
 
 void CompMesh::Update(float dt)
 {
-
 	if (parent->GetComponentTransform()->GetUpdated())
 	{
-		if (resource_mesh != nullptr)
+		if (resource_mesh != nullptr && resource_mesh->aabb_box.IsFinite())
 		{
 			parent->box_fixed = resource_mesh->aabb_box;
+			parent->box_fixed.TransformAsAABB(parent->GetComponentTransform()->GetGlobalTransform());
 		}
-		parent->box_fixed.TransformAsAABB(parent->GetComponentTransform()->GetGlobalTransform());
 	}
 }
 
