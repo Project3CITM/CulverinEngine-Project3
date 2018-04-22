@@ -695,6 +695,7 @@ void ImportScript::RemoveGObjectFromMonoMap(GameObject* object)
 		{
 			if (it->second == object)
 			{
+				mono_gchandle_free(it->first);
 				it = mono_map.erase(it);
 			}
 			else
@@ -716,6 +717,7 @@ void ImportScript::RemoveComponentFromMonoList(Component* comp)
 		{
 			if (it_comp._Ptr->_Myval.second == comp)
 			{
+				mono_gchandle_free(it_comp->first);
 				it_comp = mono_comp.erase(it_comp);
 			}
 			else it_comp++;
@@ -733,6 +735,7 @@ void ImportScript::RemoveTransformPosPointerFromMap(float3 * pospointer)
 		{
 			if (it_pos._Ptr->_Myval.second == pospointer)
 			{
+				mono_gchandle_free(it_pos->first);
 				it_pos = mono_pos.erase(it_pos);
 			}
 			else it_pos++;
@@ -749,6 +752,7 @@ void ImportScript::RemoveCSharpScriptFromMonoScript(CSharpScript * script)
 		{
 			if (it_pos._Ptr->_Myval.second == script)
 			{
+				mono_gchandle_free(it_pos->first);
 				it_pos = mono_script.erase(it_pos);
 				return;
 			}
