@@ -584,7 +584,12 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		break;
 	case EventType::EVENT_DRAW:
 	{
-		float3 diff_vect = event.draw.ToDraw->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;
+
+		float3 diff_vect = float3::zero;
+
+		if (App->renderer3D->active_camera)
+			diff_vect = event.draw.ToDraw->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;
+
 		uint ID = 0;
 		if ((event.draw.ToDraw != nullptr) && (((CompMesh*)event.draw.ToDraw)->GetMaterial() != nullptr) && (((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram() != nullptr))
 			ID = ((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
@@ -634,14 +639,19 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 			EventPushedWhileIteratingMaps_DrawAlphaV = true;
 			EventPushedWhileIteratingMaps_NoDrawV = true;
 		}
-		*/
+		*/		
+
 		Event event_temp;
 		event_temp.Set_event_data(EventType::EVENT_SEND_3D_3DA_MM);
 		event_temp.send_3d3damm.MM3DDrawEvent = &DrawV;
 		event_temp.send_3d3damm.MM3DADrawEvent = &DrawAlphaV;
 		event_temp.send_3d3damm.light = event.request_3d3damm.light;	
 
-		float3 diff_vect = event_temp.send_3d3damm.light->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;
+		float3 diff_vect = float3::zero;
+
+		if(App->renderer3D->active_camera)
+			diff_vect = event_temp.send_3d3damm.light->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;
+
 		float DistanceCamToObject = diff_vect.Length();
 		DrawLightV.insert(std::pair<float, Event>(DistanceCamToObject, event_temp));
 		
@@ -654,7 +664,6 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		event_temp.Set_event_data(EventType::EVENT_CUBEMAP_DRAW);
 		event_temp.cube_map_draw.all_gameobjects = App->scene->GetAllSceneObjects();
 		((CompCubeMapRenderer*)event.cube_map_request.comp_cubemap)->Bake(event_temp);	
-
 	}
 
 

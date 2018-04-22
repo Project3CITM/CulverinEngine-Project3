@@ -82,15 +82,18 @@ void FrameBuffer::Init(const char * window)
 
 	Bind(window);
 
+	if (App->renderer3D->active_camera)
+	{
+		// Refresh Projection of the camera
+		App->renderer3D->UpdateProjection(App->renderer3D->active_camera);
 
-	// Refresh Projection of the camera
-	App->renderer3D->UpdateProjection(App->renderer3D->active_camera);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glLoadIdentity();
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->renderer3D->active_camera->GetViewMatrix());
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(App->renderer3D->active_camera->GetViewMatrix());
+	}
+	
 
 }
 

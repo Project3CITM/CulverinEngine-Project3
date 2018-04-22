@@ -316,10 +316,15 @@ bool ModuleLightning::CleanUp()
 
 void ModuleLightning::OnEvent(Event & event)
 {
+	if (App->renderer3D->active_camera == nullptr)
+		return;
+
 	BROFILER_CATEGORY("OnEvent: ModuleLightning", Profiler::Color::Blue);
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
+
+
 
 	switch (event.Get_event_data_type())
 	{

@@ -528,7 +528,7 @@ void CompCamera::SetFov(float vertical)
 		frustum.verticalFov = vertical * DEGTORAD;
 		frustum.horizontalFov = (2.0f * math::Atan(math::Tan(frustum.verticalFov / 2.0f) *div));
 	}
-	else
+	else if(App->renderer3D->active_camera)
 	{
 		int w=App->window->GetWidth();
 		int h = App->window->GetHeight();

@@ -248,7 +248,9 @@ update_status Scene::Update(float dt)
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	App->scene->scene_buff->Bind("Scene");
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+
+	if(App->renderer3D->active_camera)
+		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
 
 
 	// Draw Plane
