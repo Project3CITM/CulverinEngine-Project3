@@ -88,7 +88,6 @@ void CompParticleSystem::Clear()
 		part_system->parent = nullptr;
 		part_system->to_delete = true;
 		part_system = nullptr;
-
 	}
 }
 

@@ -116,7 +116,8 @@ bool ModuleParticles::CleanUp()
 	{
 		if ((*item) != nullptr)
 		{
-			(*item)->parent->SetSystemAsNull();
+			if((*item)->parent != nullptr)
+				(*item)->parent->SetSystemAsNull();
 			delete (*item);
 		}
 	}
