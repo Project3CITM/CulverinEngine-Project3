@@ -19,7 +19,6 @@ public class Arrow : CulverinBehaviour
         destroyed = false;
         Shoot();
         collision = true;
-        damage = 10.0f;
     }
 
     public void Shoot()
