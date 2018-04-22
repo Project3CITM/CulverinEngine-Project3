@@ -287,6 +287,7 @@ void Application::FinishUpdate()
 
 		App->scene->DeleteAllGameObjects(App->scene->root);
 		scene->ClearAllTags();
+		App->particles->CleanUp();
 
 		render_gui->focus = nullptr;
 		render_gui->selected = nullptr;

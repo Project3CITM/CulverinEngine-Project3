@@ -158,11 +158,13 @@ public class DaenerysController : CharacterController
 
                                 if (GetComponent<CompAnimation>().IsAnimationStopped("AttackLeft"))
                                 {
+                                    play_audio_roar = true;
                                     state = State.IDLE;
                                 }
                             }
                             else if(play_audio_roar == false)
                             {
+                                play_audio_roar = true;
                                 state = State.IDLE;
                             }
                             break;
