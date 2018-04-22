@@ -87,7 +87,7 @@ public class EnemySpear_BT : Enemy_BT
 
         if (tiles_to_player == 1)
         {
-            if (!GetComponent<FacePlayer_Action>().IsFaced())
+            if (!GetComponent<Movement_Action>().LookingAtPlayer())
             {
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
@@ -132,7 +132,7 @@ public class EnemySpear_BT : Enemy_BT
         }
         else if (tiles_to_player == 2)
         {
-            if (!GetComponent<FacePlayer_Action>().IsFaced())
+            if (!GetComponent<Movement_Action>().LookingAtPlayer())
             {
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
