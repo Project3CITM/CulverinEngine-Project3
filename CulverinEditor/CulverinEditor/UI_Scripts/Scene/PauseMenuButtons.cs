@@ -45,6 +45,7 @@ public class PauseMenuButtons : CulverinBehaviour
     {
         menu_button.GetComponent<CompButton>().SetInteractivity(false);
         return_button.GetComponent<CompButton>().SetInteractivity(false);
+
         GetComponent<CompAudio>().PlayEvent("Push");
 
         pop_up_menu.SetActive(true);
@@ -52,6 +53,8 @@ public class PauseMenuButtons : CulverinBehaviour
     }
     public void YesButton()
     {
+        Audio.StopAllSounds();
+        GetComponent<CompAudio>().PlayEvent("PlayUIMusic");
         GetComponent<CompAudio>().PlayEvent("Push");
         if (SceneManager.CheckMultiSceneReady())
         {

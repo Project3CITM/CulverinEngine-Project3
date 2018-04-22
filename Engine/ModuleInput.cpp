@@ -195,6 +195,8 @@ update_status ModuleInput::PreUpdate(float dt)
 		{
 		case SDL_KEYDOWN:
 			UpdateDeviceType(DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE);
+			press_any_key = true;
+
 			break;
 		case SDL_CONTROLLERBUTTONDOWN:
 			UpdateDeviceType(DeviceCombinationType::CONTROLLER_COMB_DEVICE);
