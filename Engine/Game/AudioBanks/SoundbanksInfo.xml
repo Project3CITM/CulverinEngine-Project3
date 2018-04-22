@@ -275,6 +275,10 @@
 					<ShortName>Jaime_Hurt.wav</ShortName>
 					<Path>SFX\Jaime_Hurt_1C9C67B2.wem</Path>
 				</File>
+				<File Id="158615143" Language="SFX">
+					<ShortName>Boss_theme.wav</ShortName>
+					<Path>SFX\Boss_theme_F17FB28C.wem</Path>
+				</File>
 				<File Id="178260986" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
 					<Path>SFX\Ambient\footstep_stone_C599367A.wem</Path>
@@ -282,10 +286,6 @@
 				<File Id="191702901" Language="SFX">
 					<ShortName>Theon_TripleShot.wav</ShortName>
 					<Path>SFX\Theon_TripleShot_1C9C67B2.wem</Path>
-				</File>
-				<File Id="195378477" Language="SFX">
-					<ShortName>Boss_theme.wav</ShortName>
-					<Path>SFX\Boss_theme_F17FB28C.wem</Path>
 				</File>
 				<File Id="195426196" Language="SFX">
 					<ShortName>Arrow_Impact_Wall.wav</ShortName>
