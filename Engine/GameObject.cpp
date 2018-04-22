@@ -44,7 +44,7 @@
 //Event system test
 #include "ModuleEventSystemV2.h"
 
-GameObject::GameObject(GameObject* parent) :parent(parent)
+GameObject::GameObject(GameObject* parent) : parent(parent)
 {
 	Enable();
 	SetVisible(true);
@@ -61,18 +61,17 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 	box_fixed.SetNegativeInfinity();
 }
 
-GameObject::GameObject(std::string nameGameObject)
+GameObject::GameObject(std::string nameGameObject) : parent(nullptr)
 {
 	Enable();
 	SetVisible(true);
 	uid = App->random->Int();
 	name = nameGameObject;
 
-
 	box_fixed.SetNegativeInfinity();
 }
 
-GameObject::GameObject(std::string nameGameObject, uint uuid)
+GameObject::GameObject(std::string nameGameObject, uint uuid) : parent(nullptr)
 {
 	Enable();
 	SetVisible(true);
@@ -102,7 +101,6 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 
 	if (copy.box_fixed.IsFinite())
 	{
-
 		box_fixed = copy.box_fixed;
 	}
 	else

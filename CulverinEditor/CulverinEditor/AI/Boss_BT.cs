@@ -226,14 +226,14 @@ public class Boss_BT : BT
 
             hp_bar_boss.GetComponent<BossHPBar>().SetHPBar(current_interpolation);
 
-        if (current_hp <= 0)
-        {
-            state = AI_STATE.AI_DEAD;
-            phase = BOSS_STATE.BOSS_DEAD;
-            next_action = GetComponent<Die_Action>();
-            current_action.Interupt();
-            GetComponent<CompAudio>().PlayEvent("BossDeath");
-            StatsScore.BossDead();
+            if (current_hp <= 0)
+            {
+                state = AI_STATE.AI_DEAD;
+                phase = BOSS_STATE.BOSS_DEAD;
+                next_action = GetComponent<Die_Action>();
+                current_action.Interupt();
+                GetComponent<CompAudio>().PlayEvent("BossDeath");
+                StatsScore.BossDead();
 
                 hp_bar_boss.GetComponent<BossHPBar>().ActivateHPBar(false);
                 hp_bar_boss.SetActive(false);
@@ -241,7 +241,8 @@ public class Boss_BT : BT
                 //todosforme
                 GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
 
-                SceneManager.LoadNewWalkableMap("Map_Level_2");
+                if (SceneManager.CheckMultiSceneReady())
+                    SceneManager.RemoveSecondaryScene();
                 SceneManager.LoadScene("ScoreMenu");
             }
             /*else if (phase != BOSS_STATE.BOSS_PHASE2 && current_hp < total_hp * damaged_limit)
