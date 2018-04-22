@@ -415,7 +415,7 @@ void Application::FinishUpdate()
 		render_gui->selected = nullptr;
 		render_gui->ClearInteractiveVector();
 
-		scene->DeleteAllGameObjects(scene->secondary_root);
+		scene->DeleteAllGameObjects(scene->secondary_root,false);
 
 		if (engine_state != EngineState::STOP)
 		{

@@ -18,6 +18,10 @@ public class ReturnToMenu : CulverinBehaviour
 
     public void Return()
     {
+        if (SceneManager.CheckMultiSceneReady())
+        {
+            SceneManager.RemoveSecondaryScene();
+        }
         SceneManager.LoadScene("MainMenuScene");
     }
 

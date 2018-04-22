@@ -53,7 +53,10 @@ public class PauseMenuButtons : CulverinBehaviour
     public void YesButton()
     {
         GetComponent<CompAudio>().PlayEvent("Push");
-
+        if (SceneManager.CheckMultiSceneReady())
+        {
+            SceneManager.RemoveSecondaryScene();
+        }
         SceneManager.LoadScene("MainMenuScene");
     }
     public void NoButton()

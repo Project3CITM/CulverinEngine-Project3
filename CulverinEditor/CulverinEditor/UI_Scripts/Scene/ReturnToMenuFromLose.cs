@@ -39,6 +39,10 @@ public class ReturnToMenuFromLose : CulverinBehaviour
     }
     public void YesButton()
     {
+        if (SceneManager.CheckMultiSceneReady())
+        {
+            SceneManager.RemoveSecondaryScene();
+        }
         GetComponent<CompAudio>().PlayEvent("Push");
         SceneManager.QuitScene();
     }
