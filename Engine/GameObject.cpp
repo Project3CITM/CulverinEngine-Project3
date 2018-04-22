@@ -208,6 +208,10 @@ void GameObject::StartScripts()
 {
 	if (active)
 	{
+		if (static_obj)
+		{
+			static_obj_gm = true;
+		}
 		//Start Active scripts --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
@@ -386,7 +390,7 @@ void GameObject::Update(float dt)
 	if (active)
 	{
 		//Update Components --------------------------
-		for (uint i = static_obj; i < components.size(); i++)
+		for (uint i = static_obj_gm; i < components.size(); i++)
 		{
 			if (components[i]->IsActive())
 			{

@@ -185,6 +185,8 @@ private:
 	bool parent_active = true;
 	bool visible = false;
 	bool static_obj = false;
+	//gm = Game Mode
+	bool static_obj_gm = false;
 	bool to_delete = false; 
 	bool fixed_delete = false;
 	bool bb_active = false;
