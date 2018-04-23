@@ -15,7 +15,6 @@ public class FireSound : CulverinBehaviour
 
         //Play Fire Audio
         GetComponent<CompAudio>().PlayEvent("DaenerysFire"); //Change This!!
-        Debug.Log("[blue] PLAY TORCH ---------------");
     }
 
     void Update()
@@ -26,7 +25,6 @@ public class FireSound : CulverinBehaviour
         {
             GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
             GetComponent<CompAudio>().StopEvent("DaenerysFire"); //Change This!!
-            Debug.Log("[blue] STOP TORCH ---------------");
             stop = false;
         }
     }

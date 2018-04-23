@@ -61,11 +61,14 @@ public:
 	void ShowProject();
 	void Folders_update(std::vector<FoldersNew>& folders);
 	void Files_Update(const std::vector<FilesNew>& files);
+	void Files_UpdateDebug(const std::vector<FilesNew>& files);
 
 	const char* GetDirectory() const;
 	void SetDirectory(const char* newDirectory);
 	void UpdateNow();
 	void SetAllFolderBool(std::vector<FoldersNew>& folders, bool setBoolean);
+
+	uint GetIconScene() const;
 	//void AddFile(std::vector<Files>* folderViwe, std::string newFile);
 
 private:

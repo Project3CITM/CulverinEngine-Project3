@@ -53,8 +53,8 @@ void CompGraphic::AddCanvasRender()
 	{
 		
 		my_canvas_render->SetGraphic(this);
-		my_canvas_render->ProcessQuad(transform->GenerateQuadVertices());
 
+		GenerateMesh();
 	}
 
 }
@@ -91,12 +91,12 @@ void CompGraphic::DrawRectTranforms()
 
 void CompGraphic::ActivateRender()
 {
-	render = true;
+	can_draw = true;
 }
 
 void CompGraphic::DeactivateRender()
 {
-	render = false;
+	can_draw = false;
 }
 
 void CompGraphic::SetNullCanvas()
@@ -128,19 +128,17 @@ void CompGraphic::SetToRender(bool render)
 {
 	this->render = render;
 }
+void CompGraphic::SetCanDraw(bool render)
+{
+	this->can_draw = render;
+}
 
 void CompGraphic::SetRaycastTarget(bool flag)
 {
 	raycast_target = flag;
 }
 
-void CompGraphic::SetInteractive(CompInteractive * set_interactive)
-{
-	if (this != nullptr)
-	{
-		interactive = set_interactive;
-	}
-}
+
 
 bool CompGraphic::GetToRender() const
 {
@@ -179,4 +177,73 @@ float4 CompGraphic::GetColor() const
 bool CompGraphic::GetParentActive()
 {
 	return parent->IsActive();
+}
+
+float CompGraphic::GetAlpha() const
+{
+	return color.w;
+}
+void CompGraphic::ResizeGenerateMesh()
+{
+	GenerateMesh();
+}
+
+void CompGraphic::ProcesQuad(std::vector<float3>& position, std::vector<float3>& texture_cord)
+{
+	uint indice_position = vertex_data.current_vertex_count;
+
+	float2 res_fact = transform->GetResizeFactor();
+	float3 curr_pos = float3::zero;
+	for (uint i = 0; i < 4; i++)
+	{
+		curr_pos = position[i];
+		curr_pos.x *= res_fact.x;
+		curr_pos.y *= res_fact.y;
+		vertex_data.AddVertex(curr_pos, float2(texture_cord[i].x, texture_cord[i].y));
+	}
+	
+	vertex_data.AddTriangleIndex(indice_position, indice_position + 1, indice_position + 2);
+	vertex_data.AddTriangleIndex(indice_position + 2, indice_position + 3, indice_position);
+
+}
+void CompGraphic::ProcesQuad(std::vector<float3>& position)
+{
+	std::vector<float3> tex_cord;
+	tex_cord.push_back(float3(0.0f, 0.0f, 0.0f));
+	tex_cord.push_back(float3(1.0f, 0.0f, 0.0f));
+	tex_cord.push_back(float3(1.0f, 1.0f, 0.0f));
+	tex_cord.push_back(float3(0.0f, 1.0f, 0.0f));
+	ProcesQuad(position, tex_cord);
+	
+
+}
+void CompGraphic::ExpandMesh()
+{
+}
+
+void CompGraphic::GenerateMesh()
+{
+	if (my_canvas_render == nullptr)
+		return;
+	vertex_data.CleanUp();
+	ExpandMesh();
+
+	(vertex_data.current_vertex_count == 0) ? invalid = true : invalid = false;
+
+	if (vertex_data.current_vertex_count == 0)
+	{
+		return;
+	}
+	my_canvas_render->SetVertex(vertex_data);
+}
+
+bool CompGraphic::CheckRender()
+{
+	if(invalid|| !IsActive())
+		return false;
+	return can_draw;
+}
+
+void CompGraphic::DeviceCheck()
+{
 }

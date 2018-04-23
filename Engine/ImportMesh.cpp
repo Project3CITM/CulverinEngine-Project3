@@ -38,7 +38,7 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	uint num_indices = 0;
 	uint num_normals = 0;
 	uint num_textures = 0;
-
+	
 	float3* vertices = nullptr;
 	uint* indices = nullptr;
 	float3* vert_normals = nullptr;
@@ -74,17 +74,18 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 	}
 
 	CompMesh* meshComp = (CompMesh*)obj->AddComponent(C_MESH);
+	if (meshComp == nullptr)
+	{
+		return false;
+	}
 	//ResourceMesh* resourceMesh = App->resource_manager->CreateNewResource(Resource::Type::MESH);
 
 	if (mesh != nullptr)
 	{
-		LOG("Importing Mesh %s", name);
-		
 		// SET VERTEX DATA -------------------------------
 		num_vertices = mesh->mNumVertices;
 		vertices = new float3[num_vertices];
 		memcpy(vertices, mesh->mVertices, sizeof(float3) * num_vertices);
-		LOG("- Imported all vertex from data, total vertex: %i", num_vertices);
 
 		//SET TANGENTS / BITANGENTS
 
@@ -111,7 +112,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					memcpy(&indices[i * 3], mesh->mFaces[i].mIndices, sizeof(uint) * 3);
 				}
 			}
-			LOG("- Imported all index from data, total indices: %i", num_indices);
 		}
 		else
 		{
@@ -124,7 +124,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			num_normals = num_vertices;
 			vert_normals = new float3[num_normals];
 			memcpy(vert_normals, mesh->mNormals, sizeof(float3) * num_normals);
-			LOG("- Imported all Normals from data");
 		}
 		else
 		{
@@ -143,7 +142,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				tex_coords[i].y = mesh->mTextureCoords[0][i].y;
 			}
 			//memcpy(tex_coords, mesh->mTextureCoords[0], sizeof(float2) * num_tex_coords);
-			LOG("- Imported all Tex Coords from data");
 		}
 		else
 		{
@@ -154,7 +152,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 
 			LOG("- Mesh %s does not have Tex Coords", mesh->mName.C_Str());
 		}
-
 		// Skeleton
 		if (mesh->HasBones())
 		{
@@ -227,30 +224,26 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			}
 			else
 			{
-				LOG("Imported joints correctly");
+				//LOG("Imported joints correctly");
 			}
 		}
 		else
 		{
-			LOG("- Mesh %s does not have Bones", mesh->mName.C_Str());
+			//LOG("- Mesh %s does not have Bones", mesh->mName.C_Str());
 		}
-
-		LOG("Imported all data");
 	}
 	else
 	{
 		LOG("Can't Import Mesh");
 		ret = false;
 	}
-	
+
 	// SET MATERIAL DATA -----------------------------------------
-	if (mesh->mMaterialIndex >= 0)
+	if (mesh->mMaterialIndex >= 0 && App->build_mode == false)
 	{
 		CompMaterial* materialComp = (CompMaterial*)obj->AddComponent(C_MATERIAL);
-		//
 		//std::vector<Texture> text_t;
 		aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
-
 		for (uint i = 0; i < mat->GetTextureCount(aiTextureType_DIFFUSE); i++)
 		{
 			aiString str;
@@ -268,23 +261,23 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				std::string name = App->fs->GetOnlyName(normalPath);
 
 				bool exists = false;
-				for (auto item = App->module_shaders->materials.begin(); item < App->module_shaders->materials.end(); item++)
+				for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
 				{
-					if (strcmp((*item)->name.c_str(), name.c_str()) == 0)
+					if (strcmp((*item).second->name.c_str(), name.c_str()) == 0)
 					{
-						materialComp->material = (*item);
+						materialComp->material = (*item).second;
 						materialComp->material->active_num++;
 						exists = true;
 						break;
 					}
 				}
-				if (!exists)
+				if (!exists && !App->build_mode)
 				{
 					Material* new_mat = new Material();
 					new_mat->name = name;
 					
-					App->module_shaders->materials.push_back(new_mat);
 					new_mat->material_shader = App->renderer3D->default_shader;
+					App->module_shaders->materials.insert(std::pair<uint, Material*>(new_mat->GetProgramID(), new_mat));
 					new_mat->GetProgramVariables();
 					new_mat->path = normalPath;
 					if (new_mat->textures.size() > 0)
@@ -298,23 +291,23 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			else {
 				std::string name = App->fs->GetOnlyName(normalPath);
 				bool exists = false;
-				for (auto item = App->module_shaders->materials.begin(); item < App->module_shaders->materials.end(); item++)
+				for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
 				{
-					if (strcmp((*item)->name.c_str(), name.c_str()) == 0)
+					if (strcmp((*item).second->name.c_str(), name.c_str()) == 0)
 					{
-						materialComp->material = (*item);
+						materialComp->material = (*item).second;
 						materialComp->material->active_num++;
 						exists = true;
 						break;
 					}
 				}
-				if (!exists)
+				if (!exists && !App->build_mode)
 				{
 					Material* new_mat = new Material();
 					new_mat->name = name;
 
-					App->module_shaders->materials.push_back(new_mat);
 					new_mat->material_shader = App->renderer3D->default_shader;
+					App->module_shaders->materials.insert(std::pair<uint, Material*>(new_mat->GetProgramID(), new_mat));
 					new_mat->GetProgramVariables();
 					new_mat->path = normalPath;
 					
@@ -325,7 +318,6 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 			}
 		}
 	}
-	
 	meshComp->Enable();
 	// Create Resource ----------------------
 	uint uuid_mesh = 0;

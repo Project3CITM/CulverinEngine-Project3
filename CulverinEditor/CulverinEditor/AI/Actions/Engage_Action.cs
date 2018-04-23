@@ -13,20 +13,15 @@ class Engage_Action : Action
 
     public override bool ActionStart()
     {
-        Debug.Log("Engage Start");
         GetComponent<CompAnimation>().SetTransition("ToDraw");
         GetComponent<CompAnimation>().SetClipDuration("Draw", duration);
-
-        
-
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if(GetComponent<CompAnimation>().IsAnimOverXTime(0.2f) && !play_audio && GetComponent<EnemySpear_BT>() == null)
+        if (GetComponent<CompAnimation>().IsAnimOverXTime(0.2f) && play_audio == false && GetComponent<EnemySpear_BT>() == null)
         {
-            //TODO_AI: Engage action
             GetComponent<CompAudio>().PlayEvent("Enemy_SwordDraw");
             play_audio = true;
         }

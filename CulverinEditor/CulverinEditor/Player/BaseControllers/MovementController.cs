@@ -71,8 +71,10 @@ public class MovementController : CulverinBehaviour
 
         Audio.StopAllSounds();
         audio = GetComponent<CompAudio>();
+        audio.PlayEvent("PlayAmbient");
         audio.PlayEvent("PlayMusic");
-        Debug.Log("Play Music");
+        Audio.ChangeState("MusicState", "None");
+
 
         curr_dir = (Direction)start_direction;
         update_rotation = false;
@@ -80,20 +82,14 @@ public class MovementController : CulverinBehaviour
         map_width = Map.GetWidthMap();
         map_height = Map.GetHeightMap();
 
-        Debug.Log("Get Map");
-        Debug.Log(map_width);
-        Debug.Log(map_height);
-
         endPosition = GetComponent<Transform>().local_position;
         endRotation = GetComponent<Transform>().local_rotation;
 
 
         //SET PLAYER INTO THE CORRECT MAP TILE
-        int player_x, player_y = 0;
-        level_map.GetPositionByeValue(out player_x, out player_y, 2); //2 = player start position
-        level_map.UpdateMap(player_x, player_y, 0);
-        MovePositionInitial(new Vector3((float)player_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)player_y * distanceToMove));
-        Debug.Log("Move initial position");
+        level_map.GetPositionByeValue(out curr_x, out curr_y, 2); //2 = player start position
+        level_map.UpdateMap(curr_x, curr_y, 0);
+        MovePositionInitial(new Vector3((float)curr_x * distanceToMove, GetComponent<Transform>().local_position.y, (float)curr_y * distanceToMove));
 
         drowning = false;
     }
@@ -103,7 +99,7 @@ public class MovementController : CulverinBehaviour
         start_direction = (int)curr_dir;
 
         //Update Forward Vector for rotations
-        if(update_rotation)
+        if (update_rotation)
         {
             update_rotation = false;
             char_manager.SetCurrentPosition();
@@ -115,7 +111,6 @@ public class MovementController : CulverinBehaviour
         {
             tile_mov_x = 0;
             tile_mov_y = 0;
-
             moving = false;
 
             // CHECK ROTATION --------------------------
@@ -150,10 +145,14 @@ public class MovementController : CulverinBehaviour
                     curr_y += tile_mov_y;
                     char_manager.SetCurrentPosition();
                     moving = true;
-                    GetComponent<CompRigidBody>().UnLockMotion();
-                    GetComponent<CompRigidBody>().ApplyImpulse(new Vector3(0.0f, -50.0f, 0.0f));
-                    //char_manager.Drown();
-                    drowning = true;
+
+                    if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode == false)
+                    {
+                        GetComponent<CompRigidBody>().UnLockMotion();
+                        GetComponent<CompRigidBody>().ApplyImpulse(new Vector3(0.0f, -50.0f, 0.0f));
+                        //char_manager.Drown();
+                        drowning = true;
+                    }
                 }
             }
         }
@@ -242,11 +241,11 @@ public class MovementController : CulverinBehaviour
             GetComponent<Transform>().local_rotation = Vector3.Lerp(new Vector3(GetComponent<Transform>().local_rotation.x, GetComponent<Transform>().local_rotation.y, GetComponent<Transform>().local_rotation.z), new Vector3(GetComponent<Transform>().local_rotation.x, GetComponent<Transform>().local_rotation.y, GetComponent<Transform>().local_rotation.z), (endPosition.Length - GetComponent<Transform>().local_position.Length));
         }
 
-        if(!moving && characters_camera.GetComponent<CompAnimation>().IsAnimationStopped("Idle"))
+        if (!moving && characters_camera.GetComponent<CompAnimation>().IsAnimationStopped("Idle") && GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetCurrCharacterState() == 0)
         {
-            characters_camera.GetComponent<CompAnimation>().PlayAnimation("Idle");
+            characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Idle");
         }
-        
+
     }
 
     private bool CheckRotation()
@@ -824,7 +823,7 @@ public class MovementController : CulverinBehaviour
         {
             case (int)MovementController.Direction.NORTH:
                 {
-                    position_front_y = - 1;
+                    position_front_y = -1;
                     break;
                 }
 
@@ -853,7 +852,6 @@ public class MovementController : CulverinBehaviour
 
         }
         Vector3 forward_dir = new Vector3(position_front_x, 0, position_front_y);
-        Debug.Log("Dir: " + forward_dir);
         return forward_dir;
     }
 
@@ -896,7 +894,6 @@ public class MovementController : CulverinBehaviour
 
         }
         Vector3 forward_dir = new Vector3(position_front_x, 0, position_front_y);
-        Debug.Log("Dir: " + forward_dir);
         return forward_dir;
     }
 

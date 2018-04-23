@@ -24,8 +24,14 @@ public class ChasePlayer_Action : Action
     public override bool ActionStart()
     {
         event_to_react.start_counting = false;
-        move.GoToPlayer();
-        //Debug.Log("[green] woooow party path");
+
+        Enemy_BT bt = GetComponent<EnemySword_BT>();
+        if (bt == null)
+            bt = GetComponent<EnemyShield_BT>();
+        if (bt == null)
+            bt = GetComponent<EnemySpear_BT>();
+
+        move.GoToPlayer((uint)bt.range);
         interupt = false;
         bool ret = move.ActionStart();
         return ret;
@@ -33,7 +39,6 @@ public class ChasePlayer_Action : Action
 
     public override bool ActionEnd()
     {
-        Debug.Log("[blue] chase player action end");
         interupt = false;
         move.SetInterupt(false);
         return true;
@@ -42,10 +47,7 @@ public class ChasePlayer_Action : Action
     public override ACTION_RESULT ActionUpdate()
     {
         if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true )
-        {
-            //Debug.Log("[yellow] Move interruptus " + forgot_event + " " + GetComponent<Movement_Action>().NextToPlayer() + " " + interupt);
             move.Interupt();
-        }
 
         if (forgot_event == false)
         {
@@ -54,7 +56,22 @@ public class ChasePlayer_Action : Action
             if (timer >= check_player_timer && move.CenteredInTile())
             {
                 timer = 0.0f;
-                move.GoToPlayer();
+
+                Enemy_BT bt = GetComponent<EnemySword_BT>();
+                if (bt == null)
+                    bt = GetComponent<EnemyShield_BT>();
+                if (bt == null)
+                    bt = GetComponent<EnemySpear_BT>();
+
+                if(bt == GetComponent<EnemySpear_BT>())
+                {
+                    move.GoToPlayer(1);
+                }
+                else
+                {
+                    move.GoToPlayer((uint)bt.range);
+                }
+
             }
 
             if (GetComponent<PerceptionSightEnemy>().player_seen == false)

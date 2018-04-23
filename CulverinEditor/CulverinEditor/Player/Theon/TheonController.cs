@@ -19,12 +19,14 @@ public class TheonController : CharacterController
     public GameObject theon_left_flag;
     public GameObject theon_right_flag;
 
+    CompImage theon_icon_stamina_bar;
 
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
     public float curr_hp = 100.0f;
     public float max_stamina = 100.0f;
     public float curr_stamina = 100.0f;
+    private float stamina_regen = 0.0f;
 
     //LEFT ABILITY STATS-------------------
     public float left_ability_dmg = 10;
@@ -49,11 +51,16 @@ public class TheonController : CharacterController
 
     public GameObject theon_blood_particles;
     public GameObject theon_sparks_particles;
+
+    public GameObject theon_button_left_idle;
+    public GameObject theon_button_right_idle;
+
+    public GameObject Global_Camera;
     //----------------------------------------
 
     protected override void Start()
     {
-        SetPosition(Position.BEHIND);
+        SetPosition(Position.BEHIND_LEFT);
 
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         theon_obj = GetLinkedObject("theon_obj");
@@ -65,14 +72,19 @@ public class TheonController : CharacterController
         theon_icon_obj = GetLinkedObject("theon_icon_obj");
         theon_button_right = GetLinkedObject("theon_button_right");
         theon_button_left = GetLinkedObject("theon_button_left");
+        theon_button_right_idle = GetLinkedObject("theon_button_right_idle");
+        theon_button_left_idle = GetLinkedObject("theon_button_left_idle");
         theon_left_flag = GetLinkedObject("theon_left_flag");
         theon_right_flag = GetLinkedObject("theon_right_flag");
 
         theon_icon_obj_hp = GetLinkedObject("theon_icon_obj_hp");
         theon_icon_obj_stamina = GetLinkedObject("theon_icon_obj_stamina");
+        stamina_regen = GetLinkedObject("stamina_obj").GetComponent<Stamina>().regen;
 
         theon_blood_particles = GetLinkedObject("theon_blood_particles");
         theon_sparks_particles = GetLinkedObject("theon_sparks_particles");
+
+        Global_Camera = GetLinkedObject("Global_Camera");
 
         //Start Idle animation
         anim_controller = theon_obj.GetComponent<CompAnimation>();
@@ -81,9 +93,10 @@ public class TheonController : CharacterController
 
         //Move icon to the left
         theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
-        theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
+        theon_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-115.0f, 100.0f, 0.0f));
         theon_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(1.0f, 1.0f, 1.0f), 1.0f);
-        GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
+        GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(124.0f, -33.0f, 0.0f));
+        GetLinkedObject("theon_s_button_obj_idle").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(124.0f, -33.0f, 0.0f));
 
         //Disable Theon Abilities buttons
         EnableAbilities(false);
@@ -110,12 +123,14 @@ public class TheonController : CharacterController
             // Check if player is moving to block attacks/abilities
             movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
             if (!movement.IsMoving())
-            { 
+            {
                 /* Player is alive */
+
                 switch (state)
                 {
                     case State.IDLE:
                         {
+                           
                             //Check For Input + It has to check if he's moving to block attack (¿?)
                             CheckAttack();
                         
@@ -123,11 +138,7 @@ public class TheonController : CharacterController
                             {
                                 anim_controller = theon_obj.GetComponent<CompAnimation>();
                                 if (anim_controller.IsAnimationRunning("Idle"))
-                                {                          
                                     reloading = false;
-                                    Debug.Log("[error] Finished reloading");
-                                }
-
                             }
                             break;
                         }
@@ -168,16 +179,18 @@ public class TheonController : CharacterController
                     case State.STUN:
                         {
                             //Check for end of the Attack animation
-                            anim_controller = theon_obj.GetComponent<CompAnimation>();
+                            //anim_controller = theon_obj.GetComponent<CompAnimation>();
                             
                             //Apply damage over x time of the attack animation
-                            if (do_push_attack && anim_controller.IsAnimOverXTime(0.6f))
+                            if (do_push_attack && theon_obj.GetComponent<CompAnimation>().IsAnimOverXTime(0.6f))
                             {
+                                Debug.Log("CAN I DO RIGHT ATTACK", Department.IA);
                                 DoRightAbility();
                                 do_push_attack = false;
                             }
+             
 
-                            if (anim_controller.IsAnimationStopped("Attack2"))
+                            if (theon_obj.GetComponent<CompAnimation>().IsAnimationStopped("Attack2"))
                             { 
                                 state = State.IDLE;
                             }
@@ -224,6 +237,25 @@ public class TheonController : CharacterController
         }
     }
 
+    public override void ManageEnergy()
+    {
+        if (state != State.DEAD)
+        {
+            //Regen Stamina Bar
+            if (curr_stamina < max_stamina)
+            {
+                curr_stamina += stamina_regen;
+                if (curr_stamina > max_stamina)
+                {
+                    curr_stamina = max_stamina;
+                }
+                float calc_stamina = curr_stamina / max_stamina;
+                theon_icon_stamina_bar = theon_icon_obj_stamina.GetComponent<CompImage>();
+                theon_icon_stamina_bar.FillAmount(calc_stamina);
+            }
+        }
+    }
+
     public override void CheckAttack()
     {
         if (Input.GetInput_KeyDown("LAttack", "Player"))
@@ -242,6 +274,7 @@ public class TheonController : CharacterController
         secondary_ability = true;
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);
+        DecreaseMana(sec_ability_cost);
     }
 
 
@@ -255,20 +288,24 @@ public class TheonController : CharacterController
         {
             if (GetState() == 0)
             {
+                Debug.Log("GET STATE DAMAGE", Department.IA);
+                Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
                 SetAnimationTransition("ToHit", true);
                 SetState(State.HIT);
             }
             PlayFx("TheonHurt");
+
+            //Damage Feedback
+            GetLinkedObject("player_obj").GetComponent<DamageFeedback>().SetDamage(health.GetCurrentHealth(), max_hp);
         }
 
         else
         {
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Death");
             SetAnimationTransition("ToDeath", true);
             SetState(State.DEAD);
             PlayFx("TheonDead");
         }
-
-        SetState(State.HIT);
 
         return true;
     }
@@ -286,7 +323,7 @@ public class TheonController : CharacterController
         {
             //Set Icon in the center
             theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
-            theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
+            theon_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(0.0f, 22.0f, 0.0f));
             theon_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, theon_icon_obj_hp);
             theon_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, theon_icon_obj_stamina);
             
@@ -302,7 +339,9 @@ public class TheonController : CharacterController
             EnableAbilities(true);
 
             //Disable Secondary button
-            GetLinkedObject("theon_s_button_obj").SetActive(false);
+            GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>().SetInteractivity(false);
+            GetLinkedObject("theon_s_button_obj").GetComponent<CompImage>().SetRender(false);
+            GetLinkedObject("theon_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);
         }
 
         //Get values from var and store them
@@ -318,19 +357,24 @@ public class TheonController : CharacterController
             if (left)
             {
                 theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
-                theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
-                GetLinkedObject("theon_s_button_obj").SetActive(true);
-                GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
+                theon_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-115.0f, 100.0f, 0.0f));
+                GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(124.0f, -33.0f, 0.0f));
+                GetLinkedObject("theon_s_button_obj_idle").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(124.0f, -33.0f, 0.0f));
             }
 
             //Set the icon at the right
             else
             {
                 theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
-                theon_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
-                GetLinkedObject("theon_s_button_obj").SetActive(true);
-                GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, -31.5f, 0.0f));
+                theon_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(115.0f, 100.0f, 0.0f));
+                GetLinkedObject("theon_s_button_obj").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
+                GetLinkedObject("theon_s_button_obj_idle").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
             }
+
+            //Enable Secondary Button
+            GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>().SetInteractivity(true);
+            GetLinkedObject("theon_s_button_obj").GetComponent<CompImage>().SetRender(true);
+            GetLinkedObject("theon_s_button_obj_idle").GetComponent<CompImage>().SetRender(true);
 
             //Enable Secondary Bars & Update them
             theon_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
@@ -351,7 +395,6 @@ public class TheonController : CharacterController
 
     public override bool IsAnimationRunning(string name)
     {
-        Debug.Log("[orange] THEON ANIMATION RUNNING");
         anim_controller = theon_obj.GetComponent<CompAnimation>();
         return anim_controller.IsAnimationRunning(name);
     }
@@ -370,7 +413,7 @@ public class TheonController : CharacterController
         if (state == State.IDLE) /*0 = IDLE*/
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > left_ability_cost)
+            if (CanWasteStamina(left_ability_cost))
             {
                 cd_left = theon_button_left.GetComponent<TheonCD_Left>();
                 //Check if the ability is not in cooldown
@@ -388,6 +431,12 @@ public class TheonController : CharacterController
             }
             else
             {
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired == false)
+                {
+                    PlayFx("TheonTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA THEON", Department.PLAYER, Color.GREEN);
+                }
                 return false;
             }
         }
@@ -417,14 +466,13 @@ public class TheonController : CharacterController
         arrow_script.arrow_sparks_particles = theon_sparks_particles;
 
         Arrow.GetComponent<CompMesh>().SetEnabled(false, Arrow);
-        Debug.Log("[green] SetEnabled");
 
         //Set Attack Animation
+        Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Attack");
         SetAnimationTransition("ToAttack1", true);
         CrossBow.GetComponent<CompAnimation>().PlayAnimation("Attack");
 
         PlayFx("CrossbowShot");
-        Debug.Log("[green] Shoot Audio");
 
         SetState(CharacterController.State.ATTACKING);
     }
@@ -440,7 +488,7 @@ public class TheonController : CharacterController
         if (state == State.IDLE)
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > right_ability_cost)
+            if (CanWasteStamina(right_ability_cost))
             {
                 cd_right = theon_button_right.GetComponent<TheonCD_Right>();
                 //Check if the ability is not in cooldown
@@ -450,8 +498,7 @@ public class TheonController : CharacterController
                     DecreaseStamina(right_ability_cost);
 
                     PlayFx("TheonMeleShout");
-
-                    //Debug.Log("[error]STAMINA!");
+                    Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Push");
                     SetAnimationTransition("ToAttack2", true);
 
                     do_push_attack = true;
@@ -467,6 +514,12 @@ public class TheonController : CharacterController
             }
             else
             {
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired == false)
+                {
+                    PlayFx("TheonTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA THEON", Department.PLAYER, Color.GREEN);
+                }
                 return false;
             }
         }
@@ -481,18 +534,20 @@ public class TheonController : CharacterController
 
     public void DoRightAbility() //Might be virtual
     {
-        //Debug.Log("[error]TRANSITION!");
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 40.0f);
-        //Debug.Log("[error]RAYCAST!");
+
+        Debug.Log("RIGHT ABILITY", Department.IA);
+
         if (coll_object != null)
         {
+
+            Debug.Log("OBJ COLLECTED:" + coll_object.GetTag(), Department.IA);
+
             PlayFx("TheonMeleHit");
 
-            Debug.Log(coll_object.GetTag());
-            //Debug.Log("[error]COOL OBJ NOT NULL!");
-            if (coll_object.CompareTag("Enemy"))
+            if (coll_object.GetTag() == "Enemy")
             {
-                //Debug.Log("[error]HERE!");
+                Debug.Log("IS AN ENEMY", Department.IA);
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
                 EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
                 movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
@@ -507,7 +562,7 @@ public class TheonController : CharacterController
         if (GetState() == 0)
         {
             // Check if player has enough stamina to perform its attack
-            if (GetCurrentStamina() > sec_ability_cost)
+            if (CanWasteStamina(sec_ability_cost))
             {
                 sec_ability_cd = GetLinkedObject("theon_s_button_obj").GetComponent<TheonCD_Secondary>();
                 //Check if the ability is not in cooldown
@@ -524,6 +579,12 @@ public class TheonController : CharacterController
             }
             else
             {
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired == false)
+                {
+                    PlayFx("TheonTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().theon_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA THEON", Department.PLAYER, Color.GREEN);
+                }
                 return false;
             }
         }
@@ -532,8 +593,28 @@ public class TheonController : CharacterController
 
     public override void EnableAbilities(bool active)
     {
-        theon_button_left.SetActive(active);
-        theon_button_right.SetActive(active);
+        //theon_button_left.SetActive(active);
+        //theon_button_right.SetActive(active);
+
+        //Disable Button Interaction
+        theon_button_left.GetComponent<CompButton>().SetInteractivity(active);
+        theon_button_right.GetComponent<CompButton>().SetInteractivity(active);  
+
+        //Disable Image
+        theon_button_left.GetComponent<CompImage>().SetRender(active);
+        theon_button_right.GetComponent<CompImage>().SetRender(active);
+        theon_button_left_idle.GetComponent<CompImage>().SetRender(active);
+        theon_button_right_idle.GetComponent<CompImage>().SetRender(active);
+
+        //Right Cooldown Text Render
+        GetLinkedObject("theon_right_cd_text").GetComponent<CompText>().SetRender(active);
+        //Left Cooldown Text Render
+        GetLinkedObject("theon_left_cd_text").GetComponent<CompText>().SetRender(active);
+        //Sec Cooldown Text Render
+        GetLinkedObject("theon_secondary_cd_text").GetComponent<CompText>().SetRender(!active);
+
+
+        //Disable Flags
         theon_left_flag.SetActive(active);
         theon_right_flag.SetActive(active);
     }
@@ -549,12 +630,27 @@ public class TheonController : CharacterController
                 PlayFx("CrossbowShot");
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
-
-                arrow.transform.SetPosition(curr_position);
+                Vector3 player_pos = curr_position;
+                player_pos.y += 4;
+                arrow.transform.SetPosition(GetSecondaryPosition(player_pos));
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
-                arrow_script.speed = curr_forward;
+                arrow_script.speed = GetSecondaryForward(curr_forward);
+
+                GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
+                if (coll_object != null)
+                {
+                    coll_object.GetTag();
+                    if (coll_object.CompareTag("Enemy"))
+                    {
+                        Vector3 enemypos = coll_object.transform.GetPosition();
+                        enemypos.y += 7;
+                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), enemypos);
+                        arrow_script.speed *= 2;
+                    }
+                }
+
                 arrow_script.arrow_blood_particles = theon_blood_particles;
                 arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
@@ -566,12 +662,27 @@ public class TheonController : CharacterController
 
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
-
-                arrow.transform.SetPosition(curr_position);
+                Vector3 player_pos = curr_position;
+                player_pos.y += 4;
+                arrow.transform.SetPosition(GetSecondaryPosition(player_pos));
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
-                arrow_script.speed = curr_forward;
+                arrow_script.speed = GetSecondaryForward(curr_forward);
+
+                GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
+                if (coll_object != null)
+                {
+                    coll_object.GetTag();
+                    if (coll_object.CompareTag("Enemy"))
+                    {
+                        Vector3 enemypos = coll_object.transform.GetPosition();
+                        enemypos.y += 7;
+                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), enemypos);
+                        arrow_script.speed *= 2.5f;
+                    }
+                }
+
                 arrow_script.arrow_blood_particles = theon_blood_particles;
                 arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
@@ -587,11 +698,27 @@ public class TheonController : CharacterController
 
                 GameObject arrow = Instantiate("ArrowTheon");
                 GameObject player = GetLinkedObject("player_obj");
-                arrow.transform.SetPosition(curr_position);
+                Vector3 player_pos = curr_position;
+                player_pos.y += 4;
+                arrow.transform.SetPosition(GetSecondaryPosition(player_pos));
                 arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
-                arrow_script.speed = curr_forward;
+                arrow_script.speed = GetSecondaryForward(curr_forward);
+
+                GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
+                if (coll_object != null)
+                {
+                    coll_object.GetTag();
+                    if (coll_object.CompareTag("Enemy"))
+                    {
+                        Vector3 enemypos = coll_object.transform.GetPosition();
+                        enemypos.y += 7;
+                        arrow_script.speed = GetSecondaryForwardToEnemy(arrow.transform.GetPosition(), enemypos);
+                        arrow_script.speed *= 1.5f;
+                    }
+                }
+
                 arrow_script.arrow_blood_particles = theon_blood_particles;
                 arrow_script.arrow_sparks_particles = theon_sparks_particles;
             }
@@ -601,5 +728,18 @@ public class TheonController : CharacterController
     public void ActivateSecondaryAbility()
     {
         secondary_ability = true;
+    }
+
+    public void Heal(float percentage)
+    {
+        if (state != State.DEAD)
+        {
+            curr_hp += max_hp * percentage;
+            if (curr_hp > max_hp)
+            {
+                curr_hp = max_hp;
+            }
+            theon_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
+        }
     }
 }

@@ -155,7 +155,7 @@ bool AABB::IsDegenerate() const
 
 float3 AABB::CenterPoint() const
 {
-	return (minPoint + maxPoint) / 2.f;
+	return (minPoint + maxPoint) * 0.5f;
 }
 
 float3 AABB::PointInside(float x, float y, float z) const

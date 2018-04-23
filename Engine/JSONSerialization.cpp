@@ -13,6 +13,7 @@
 #include "InputManager.h"
 #include "InputAction.h"
 #include "PlayerActions.h"
+#include "ModuleAnimation.h"
 #include "ResourceMesh.h"
 
 static int malloc_count;
@@ -21,6 +22,7 @@ static void counted_free(void *ptr);
 
 JSONSerialization::JSONSerialization()
 {
+	json_set_allocation_functions(counted_malloc, counted_free);
 }
 
 
@@ -145,6 +147,8 @@ void JSONSerialization::LoadScene(const char* sceneName)
 	JSON_Object* config;
 	JSON_Object* config_node;
 
+	Timer timetp;
+	timetp.Start();
 	config_file = json_parse_file(sceneName);
 	if (config_file != nullptr)
 	{
@@ -164,6 +168,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		std::vector<GameObject*> mesh_gos;
 		if (NUmberGameObjects > 0)
 		{
+			templist.reserve(NUmberGameObjects);
 			for (int i = 0; i < NUmberGameObjects; i++)
 			{
 				std::string name = "GameObject" + std::to_string(i);
@@ -205,40 +210,47 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			}
 		}
 
+		const int num_objects = templist.size();
+		LoadSceneSt* scene_ptr = (num_objects > 0) ? templist.data() : nullptr;
+
 		// Now with uid parent add childs.
-		for (int i = 0; i < templist.size(); i++)
+		for (int i = 0; i < num_objects; i++)
 		{
-			if (templist[i].uid_parent != -1)
+			if (scene_ptr[i].uid_parent != -1)
 			{
-				for (int j = 0; j < templist.size(); j++)
+				for (int j = 0; j < num_objects; j++)
 				{
-					if (templist[i].uid_parent == templist[j].go->GetUUID())
+					if (scene_ptr[i].uid_parent == scene_ptr[j].go->GetUUID())
 					{
-						templist[j].go->AddChildGameObject(templist[i].go);
+						scene_ptr[j].go->AddChildGameObject(scene_ptr[i].go);
 					}
 				}
 			}
 		}
 		// Now pass vector to root in scene
-		for (int i = 0; i < templist.size(); i++)
+		for (int i = 0; i < num_objects; i++)
 		{
-			if (templist[i].uid_parent == -1)
+			if (scene_ptr[i].uid_parent == -1)
 			{
-				App->scene->root->AddChildGameObject(templist[i].go);
+				App->scene->root->AddChildGameObject(scene_ptr[i].go);
 			}
 		}
 		//Sync components
-		for (int i = 0; i < templist.size(); i++)
+		for (int i = 0; i < num_objects; i++)
 		{
-			templist[i].go->SyncComponents(nullptr);
+			scene_ptr[i].go->SyncComponents(nullptr);
 		}
 
 		//Add static objects to scene
-		for (int i = 0; i < templist.size(); i++)
+		for (int i = 0; i < num_objects; i++)
 		{
-			if (templist[i].go->IsStatic())
+			if (scene_ptr[i].go->IsStatic())
 			{
-				App->scene->octree.Insert(templist[i].go);
+				App->scene->octree.Insert(scene_ptr[i].go);
+			}
+			else
+			{
+				App->scene->dynamic_objects.push_back(scene_ptr[i].go);
 			}
 		}
 		App->scene->RecalculateStaticObjects();
@@ -252,12 +264,14 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		{
 			(*it)->GetComponentMesh()->LinkSkeleton();
 		}
+				
 
 		//Load Audio Banks
 		int number_of_audio_banks = json_object_dotget_number(config_node, "Info.Number of Audio Banks");
 		App->audio->LoadAudioBanksFromScene(number_of_audio_banks, config);
 	}
 	json_value_free(config_file);
+	LOG("Load Time %d, [red]", timetp.Read());
 }
 
 
@@ -265,8 +279,6 @@ void JSONSerialization::LoadScene(const char* sceneName)
 
 void JSONSerialization::SavePrefab(const GameObject& gameObject, const char* directory, const char* fileName, bool is_FBX)
 {
-	LOG("SAVING PREFAB %s -----", gameObject.GetName());
-
 	JSON_Value* config_file;
 	JSON_Object* config;
 	JSON_Object* config_node;
@@ -470,6 +482,18 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 				templist[i].go->SyncComponents(mainParent);
 			}
 
+			for (uint i = 0; i < templist.size(); i++)
+			{
+				if (templist[i].go->IsStatic())
+				{
+					App->scene->octree.Insert(templist[i].go);
+				}
+				else
+				{
+					App->scene->dynamic_objects.push_back(templist[i].go);
+				}
+			}
+
 			// Now Iterate All GameObjects and Components and create a new UUID!
 			if (mainParent != nullptr)
 			{
@@ -527,7 +551,7 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instant
 				obj->animation_translations = json_object_dotget_boolean_with_std(config_node, name + "AnimTranslations");
 
 				// Now Check that the name is not repet
-				//CheckChangeName(*obj);
+				CheckChangeName(*obj);
 				//Load Components
 				int NumberofComponents = json_object_dotget_number_with_std(config_node, name + "Number of Components");
 				if (NumberofComponents > 0)
@@ -547,6 +571,12 @@ GameObject* JSONSerialization::GetLoadPrefab(const char* prefab, bool is_instant
 					}
 				}
 				int uuid_parent = json_object_dotget_number_with_std(config_node, name + "Parent");
+
+				// Add GameObject to Dynamicvector
+				if (!obj->IsStatic())
+				{
+					App->scene->dynamic_objects.push_back(obj);
+				}
 
 				//Add GameObject
 				if (uuid_parent == -1)
@@ -947,7 +977,7 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 		{
 			std::string name = "Input.InputManager" + std::to_string(i);
 			name += ".";
-			InputManager* input_manager = new InputManager();
+			InputManager* input_manager = new InputManager((*player_action));
 			(*player_action)->interactive_vector.push_back(input_manager);
 			input_manager->SetName(json_object_dotget_string_with_std(config, name + "InputManagerName"));
 			input_manager->SetActiveInput(json_object_dotget_boolean_with_std(config, name + "InputManagerActive"));
@@ -968,7 +998,9 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 
 			}
 		}
+		json_object_clear(config);
 	}
+	json_value_free(config_file);
 }
 
 void JSONSerialization::SaveFont(const ResourceFont * font, const char * directory, const char * fileName)
@@ -997,6 +1029,112 @@ void JSONSerialization::SaveFont(const ResourceFont * font, const char * directo
 		json_object_dotset_number_with_std(config, "Font.Last Write", cftime);
 		json_serialize_to_file(config_file, nameJson.c_str());
 	}
+	json_value_free(config_file);
+}
+
+void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const char * directory, const char * fileName)
+{
+	LOG("SAVING Font %s -----", animation->name.c_str());
+
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	std::string nameJson = directory;
+	nameJson += "/";
+	nameJson += animation->name;
+	nameJson += ".anim.json";
+	config_file = json_value_init_object();
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		json_object_clear(config);
+		json_object_dotset_number_with_std(config, "UIAnimation.Size ", animation->animations.size());
+		json_object_dotset_number_with_std(config, "UIAnimation.Max_Key ", animation->max_keys);
+		json_object_dotset_number_with_std(config, "UIAnimation.Samples ", animation->sample_rate);
+		json_object_dotset_string_with_std(config, "UIAnimation.Name ", animation->name.c_str());
+
+		for (int i = 0; i < animation->animations.size(); i++)
+		{
+			std::string animations = std::to_string(i);
+			Component* component = dynamic_cast<Component*>(animation->animations[i]->data);
+			
+			json_object_dotset_string_with_std(config, "UIAnimation.Name ", App->fs->GetToAsstes(fileName).c_str());
+			json_object_dotset_number_with_std(config, "UIAnimation.Type " + animations, component->GetType());
+			json_object_dotset_number_with_std(config, "UIAnimation.Keyframe Size " + animations , animation->animations[i]->key_frame_data.size());
+
+			for (int j = 0; j < animation->animations[i]->key_frame_data.size(); j++)
+			{
+				std::string key_frame = std::to_string(j);
+
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations+".Animations.Max_Key " + key_frame, animation->animations[i]->key_frame_data[j].max_keys);
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Samples " + key_frame, animation->animations[i]->key_frame_data[j].sample_rate);
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Initial " + key_frame, animation->animations[i]->key_frame_data[j].initial);
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Destination " + key_frame, animation->animations[i]->key_frame_data[j].destination);
+				json_object_dotset_boolean_with_std(config, "UIAnimation " + animations + ".Animations.Invalid Key " + key_frame, animation->animations[i]->key_frame_data[j].invalid_key);
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.Parameter " + key_frame, animation->animations[i]->key_frame_data[j].parameter);
+
+
+				json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData Size " + key_frame, animation->animations[i]->key_frame_data[j].key_data.size());
+
+				for (int k = 0; k < animation->animations[i]->key_frame_data[j].key_data.size(); k++)
+				{
+					std::string key_data = std::to_string(k);
+					json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_on_time);
+					json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Keyframe " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_frame);
+					switch (animation->animations[i]->key_frame_data[j].parameter)
+					{
+					case ParameterValue::RECT_TRANSFORM_POSITION:
+			
+						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f3_value);
+						break;
+					case ParameterValue::RECT_TRANSFORM_ROTATION:
+						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f3_value);
+						break;
+					case ParameterValue::RECT_TRANSFORM_SCALE:
+						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f3_value);
+						break;
+					case ParameterValue::RECT_TRANSFORM_WIDTH:
+						
+						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
+						break;
+					case ParameterValue::RECT_TRANSFORM_HEIGHT:
+						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
+						break;
+					default:
+						break;
+					}
+
+				}
+			}
+		}
+		json_serialize_to_file(config_file, nameJson.c_str());
+	}
+	json_value_free(config_file);
+}
+
+
+void JSONSerialization::SaveConfig(std::string config_path, std::string game_name, std::string inital_scene, bool game_mode, bool full_screen, bool resizable_window, bool borderless, bool full_desktop)
+{
+	JSON_Value* config_file;
+	JSON_Object* config;
+
+	config_file = json_parse_file(config_path.c_str());
+	if (config_file != nullptr)
+	{
+		config = json_value_get_object(config_file);
+		// Application
+		json_object_dotset_boolean_with_std(config, "Application.Mode Game", game_mode);
+		std::string actual_scene = "Assets/";
+		actual_scene += inital_scene;
+		json_object_dotset_string_with_std(config, "Application.ActualScene", actual_scene.c_str());
+		// Application
+		json_object_dotset_string_with_std(config, "Window.Window Name", game_name.c_str());
+		json_object_dotset_boolean_with_std(config, "Window.Fullscreen", full_screen);
+		json_object_dotset_boolean_with_std(config, "Window.Resizable", resizable_window);
+		json_object_dotset_boolean_with_std(config, "Window.Borderless", borderless);
+		json_object_dotset_boolean_with_std(config, "Window.Full Desktop", full_desktop);
+	}
+	json_serialize_to_file(config_file, config_path.c_str());
 	json_value_free(config_file);
 }
 
@@ -1350,8 +1488,6 @@ void JSONSerialization::ResourcesInLibrary(std::string& path, uint type)
 
 void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile)
 {
-	json_set_allocation_functions(counted_malloc, counted_free);
-
 	*root_value_scene = json_value_init_object();
 	*root_object_scene = json_value_get_object(*root_value_scene);
 

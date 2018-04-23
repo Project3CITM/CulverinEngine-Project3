@@ -9,6 +9,8 @@ public class PerceptionManager : CulverinBehaviour
     List<PerceptionListener>    listeners_list;
     List<PerceptionEvent>       perception_events_queue;
 
+    public bool player_seen = false;
+
     PerceptionManager()
     { }
 
@@ -19,6 +21,8 @@ public class PerceptionManager : CulverinBehaviour
             listeners_list = new List<PerceptionListener>();
 
         perception_events_queue = new List<PerceptionEvent>();
+
+        player_seen = false;
     }
 
     void Update()
@@ -28,7 +32,7 @@ public class PerceptionManager : CulverinBehaviour
 
         if(perception_events_queue == null)
         {
-            Debug.Log("VERY BAD THING:Perception events queue is null");
+            Debug.Log("[error] Perception events queue is null");
             return;
         }
 
@@ -38,9 +42,7 @@ public class PerceptionManager : CulverinBehaviour
                 SendEventtoListeners(perception_event);
             }
             else
-            {
-                Debug.Log("[error]Perception manager: An event null");
-            }
+                Debug.Log("[error] Perception manager: An event null");
         }
 
         //Clean frame events

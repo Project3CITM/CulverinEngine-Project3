@@ -20,6 +20,13 @@ Console::Console(bool start_enabled): Module(start_enabled)
 	Commands.push_back("CLASSIFY");  // "classify" is here to provide an example of "C"+[tab] completing to "CL" and displaying matches.
 	AddLog("Welcome to ImGui!");
 
+	//Init filters map ------------
+	filters_map.insert(std::pair<const char*, bool>("[Player]", false)); 
+	filters_map.insert(std::pair<const char*, bool>("[IA]", false));
+	filters_map.insert(std::pair<const char*, bool>("[Stage]", false));
+	filters_map.insert(std::pair<const char*, bool>("[Physics]", false));
+	// -----------------------------
+
 	name = "Console";
 }
 
@@ -56,6 +63,7 @@ Console::~Console()
 
 update_status Console::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: Console", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_UP)
@@ -78,6 +86,56 @@ update_status Console::Update(float dt)
 bool Console::CleanUp()
 {
 	return true;
+}
+
+void Console::ManageFilters()
+{
+	ImGui::Text("DEPARTMENT FILTERS     |     ");
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox("Player", &player_filter))
+	{
+		update_filters = true;
+		filters_map["[Player]"] = player_filter;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox("Stage", &ia_filter))
+	{
+		update_filters = true;
+		filters_map["[Stage]"] = ia_filter;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox("IA", &stage_filter))
+	{
+		update_filters = true;
+		filters_map["[IA]"] = stage_filter;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox("Physics", &physics_filter))
+	{
+		update_filters = true;
+		filters_map["[Physics]"] = physics_filter;
+	}
+
+	//Update filters Vector to pass to the console
+	if (update_filters)
+	{
+		filters.resize(0);
+		for (std::map<const char*, bool>::iterator it = filters_map.begin(); it != filters_map.end(); ++it)
+		{
+			if (it->second)
+			{
+				filters.push_back(it->first);
+			}
+		}
+	}
+
 }
 
 void Console::OpenClose()
@@ -112,6 +170,15 @@ void Console::AddLog(const char* fmt, ...) IM_FMTARGS(2)
 	ScrollToBottom = true;
 }
 
+void Console::Remove(const char* name)
+{
+	size = temp_string.find(name);
+	if (size != std::string::npos)
+	{
+		temp_string.erase(size, temp_string.length());
+	}
+}
+
 void Console::Draw(const char* title)
 {
 	if (!BeginDock(title, NULL, ImGuiWindowFlags_NoCollapse))
@@ -134,9 +201,17 @@ void Console::Draw(const char* title)
 	ImGui::Separator();
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-	static ImGuiTextFilter filter;
-	filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
+
+	ManageFilters();
+
+	console_filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180, filters, update_filters);
+	if (update_filters)
+	{
+		update_filters = false;
+	}
+
 	ImGui::PopStyleVar();
+
 	ImGui::Separator();
 
 	ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
@@ -163,38 +238,49 @@ void Console::Draw(const char* title)
 	for (int i = 0; i < Items.Size; i++)
 	{
 		const char* item = Items[i];
-		if (!filter.PassFilter(item))
+		if (!console_filter.PassFilter(item))
 			continue;
 		ImVec4 col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // A better implementation may store a type per-item. For the sample let's just parse the text.
-		if (strstr(item, "[error]"))
+		
+		//Get the string LOG
+		temp_string = item;
+		
+		//COLOR LOGS --------
+		if (strstr(item, "[red]") || strstr(item, "[error]"))
 		{
 			col = ImColor(1.0f, 0.4f, 0.4f, 1.0f);
+			Remove("[red]");
 		}
-		//COLOR LOGS --------
 		else if (strstr(item, "[blue]"))
 		{
 			col = ImColor(0.0f, 0.5f, 1.0f, 1.0f);
+			Remove("[blue]");
 		}
 		else if (strstr(item, "[green]"))
 		{
 			col = ImColor(0.062f, 0.678f, 0.09f, 1.0f);
+			Remove("[green]");
 		}
 		else if (strstr(item, "[yellow]"))
 		{
 			col = ImColor(1.0f, 1.0f, 0.02f, 1.0f);
+			Remove("[yellow]");
 		}
 		else if (strstr(item, "[orange]"))
 		{
 			col = ImColor(1.0f, 0.423f, 0.02f, 1.0f);
+			Remove("[orange]");
 		}
 		else if (strstr(item, "[pink]"))
 		{
 			col = ImColor(1.0f, 0.02f, 0.941f, 1.0f);
+			Remove("[pink]");
 		}
 		// -------------------
+
 		else if (strncmp(item, "# ", 2) == 0) col = ImColor(1.0f, 0.78f, 0.58f, 1.0f);
 		ImGui::PushStyleColor(ImGuiCol_Text, col);
-		ImGui::TextUnformatted(item);
+		ImGui::TextUnformatted(temp_string.c_str());
 		ImGui::PopStyleColor();
 	}
 	if (copy_to_clipboard)

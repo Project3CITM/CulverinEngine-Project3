@@ -12,5 +12,8 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void Deactivate();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetInteractivity(bool enable);
     }
 }

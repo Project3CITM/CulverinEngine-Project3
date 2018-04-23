@@ -72,13 +72,10 @@ public class ComboController : CulverinBehaviour
         this_combo_3_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_3_text_obj);
         this_combo_bar_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_bar_obj);
         this_combo_1_text_obj.GetComponent<CompImage>().SetEnabled(false, this_combo_1_text_obj);
-
-        Debug.Log("[green] RESET HIT STREAK");
     }
 
     public int GetHitStreak()
     {
-        Debug.Log("[green] --------------------- " + hit_streak + " ---------------------");
         if(hit_streak >= 2)
         {
             return 2;
@@ -90,8 +87,6 @@ public class ComboController : CulverinBehaviour
     {
         if (hit_streak < 3)
         {
-            Debug.Log("[orange] ----------- INCREASE HIT STREAK ------------");
-
             //Increase hit count
             hit_streak++;
 
@@ -118,9 +113,6 @@ public class ComboController : CulverinBehaviour
 
             //Refill time bar
             FillComboBar(curr_time);
-
-            Debug.Log("[orange] ----------- " + hit_streak + " -----------");
-
         }
         else
         {

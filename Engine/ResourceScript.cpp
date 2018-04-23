@@ -11,7 +11,6 @@ ResourceScript::ResourceScript(uint uid) : Resource(uid, Resource::Type::SCRIPT,
 {
 	num_game_objects_use_me = 0;
 	editor = new Script_editor(this);
-	LOG("Resource Script Created!");
 }
 
 ResourceScript::~ResourceScript()

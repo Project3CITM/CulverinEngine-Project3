@@ -74,7 +74,7 @@ public:
 	
 private:
 	void AddShadowMapCastViews(uint ammount);
-	void CalcPointShadowMaps(CompLight* light, CompMesh* mesh_to_render);
+	void CalcPointShadowMaps(Event& events, CompLight* light);
 	void CalcDirectionalShadowMap(CompLight* light, CompMesh* mesh);
 
 public:
@@ -85,7 +85,7 @@ public:
 	FrameBuffer text;
 	DepthFrameBuffer test_fix;
 	ResourceMesh*  light_UI_plane = nullptr;
-	uint texture_bulb = 0;
+
 
 	glm::mat4 depthBiasMVP;
 
@@ -94,14 +94,18 @@ public:
 private:
 	uint shadow_cast_points_count = DEFAULT_SHADOW_CAST_POINTS_COUNT; // This value should be able to change from config and modiffied on load
 	std::vector<DepthCubeMap*> shadow_point_lights_maps;
-	uint shadow_maps_res_w = 1024;
-	uint shadow_maps_res_h = 1024;
+	uint shadow_maps_res_w = 256;
+	uint shadow_maps_res_h = 256;
 
 
 	std::vector<CompLight*> scene_lights;
 	std::vector<CompLight*> frame_used_lights;
-
-	
+	const std::vector<GameObject*>* scene_objects;
+	// Some directional light variables on shadow map render
+	// On directional light shadow map calculations, distance from the scene camera to look at from shadow map camera
+	float dstSceneCameraToLookAt = 20.0f;
+	float projSize = 20.0f, nearPlane = 1.0f, farPlane = 60.0f;
+	float dstShadowmapCameraToLookAt = 20.0f;
 };
 
 #endif // __MODULELIGHTNING_H__

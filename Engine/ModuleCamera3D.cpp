@@ -43,6 +43,7 @@ bool ModuleCamera3D::Init(JSON_Object * node)
 	App->renderer3D->SetActiveCamera(cam);
 	cam->frustum.Translate(float3(10, 10, -10));
 	cam->SetFov(50);
+	cam->SetCullDynamics(false);
 	LookAt(float3::zero);
 
 	//Load render config info -------
@@ -90,6 +91,7 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: ModuleCamera3D", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (App->engine_state == EngineState::STOP) //Block camera movement while game is executing

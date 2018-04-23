@@ -24,7 +24,8 @@
 
 MonoObject* CSharpScript::GetForwardVector(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -54,7 +55,8 @@ MonoObject* CSharpScript::GetForwardVector(MonoObject * object)
 
 MonoObject* CSharpScript::GetBackwardVector(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -66,7 +68,7 @@ MonoObject* CSharpScript::GetBackwardVector(MonoObject * object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 				float3 new_vec;
 				new_vec = transform->GetBackwardVector();
 
@@ -83,7 +85,8 @@ MonoObject* CSharpScript::GetBackwardVector(MonoObject * object)
 
 MonoObject* CSharpScript::GetUpVector(MonoObject* object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -95,7 +98,7 @@ MonoObject* CSharpScript::GetUpVector(MonoObject* object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 				float3 new_vec;
 				new_vec = transform->GetUpVector();
 
@@ -112,7 +115,8 @@ MonoObject* CSharpScript::GetUpVector(MonoObject* object)
 
 MonoObject * CSharpScript::GetDownVector(MonoObject* object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -124,7 +128,7 @@ MonoObject * CSharpScript::GetDownVector(MonoObject* object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 				float3 new_vec;
 				new_vec = transform->GetDownVector();
 
@@ -141,7 +145,8 @@ MonoObject * CSharpScript::GetDownVector(MonoObject* object)
 
 MonoObject* CSharpScript::GetRightVector(MonoObject* object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -153,7 +158,7 @@ MonoObject* CSharpScript::GetRightVector(MonoObject* object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 				float3 new_vec;
 				new_vec = transform->GetRightVector();
 
@@ -170,7 +175,8 @@ MonoObject* CSharpScript::GetRightVector(MonoObject* object)
 
 MonoObject* CSharpScript::GetLeftVector(MonoObject* object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -182,7 +188,7 @@ MonoObject* CSharpScript::GetLeftVector(MonoObject* object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 				float3 new_vec;
 				new_vec = transform->GetLeftVector();
 
@@ -199,7 +205,8 @@ MonoObject* CSharpScript::GetLeftVector(MonoObject* object)
 
 void CSharpScript::SetForwardVector(MonoObject* object, MonoObject* vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -212,14 +219,15 @@ void CSharpScript::SetForwardVector(MonoObject* object, MonoObject* vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &new_vec.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_vec.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->SetForwardVector(new_vec);
 	}
 }
 
 void CSharpScript::SetBackwardVector(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -232,14 +240,15 @@ void CSharpScript::SetBackwardVector(MonoObject * object, MonoObject * vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &new_vec.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_vec.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->SetBackwardVector(new_vec);
 	}
 }
 
 void CSharpScript::SetUpVector(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -252,14 +261,15 @@ void CSharpScript::SetUpVector(MonoObject * object, MonoObject * vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &new_vec.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_vec.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->SetUpVector(new_vec);
 	}
 }
 
 void CSharpScript::SetDownVector(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -272,14 +282,15 @@ void CSharpScript::SetDownVector(MonoObject * object, MonoObject * vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &new_vec.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_vec.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->SetDownVector(new_vec);
 	}
 }
 
 void CSharpScript::SetRightVector(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -292,14 +303,15 @@ void CSharpScript::SetRightVector(MonoObject * object, MonoObject * vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &new_vec.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_vec.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->SetRightVector(new_vec);
 	}
 }
 
 void CSharpScript::SetLeftVector(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -312,7 +324,7 @@ void CSharpScript::SetLeftVector(MonoObject * object, MonoObject * vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &new_vec.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_vec.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->SetLeftVector(new_vec);
 	}
 }
@@ -320,14 +332,14 @@ void CSharpScript::SetLeftVector(MonoObject * object, MonoObject * vector3)
 MonoObject* CSharpScript::GetPosition(MonoObject* object)
 {
 	Component* obj = App->importer->iScript->GetComponentMono(object);
-	if (current_game_object != nullptr && obj != nullptr)
+	if (obj != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
 		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)obj->GetParent()->GetComponentTransform();
 		float3* new_pos = ((CompTransform*)obj)->GetPosPointer();
 		MonoObject* new_obj = App->importer->iScript->GetMonoObject(((CompTransform*)obj)->GetPosPointer());
 		if (new_obj != nullptr)
@@ -360,7 +372,7 @@ MonoObject* CSharpScript::GetPosition(MonoObject* object)
 MonoObject* CSharpScript::GetGlobalPosition(MonoObject * object)
 {
 	Component* obj = App->importer->iScript->GetComponentMono(object);
-	if (current_game_object != nullptr && obj != nullptr)
+	if (obj != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -372,7 +384,7 @@ MonoObject* CSharpScript::GetGlobalPosition(MonoObject * object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				CompTransform* transform = (CompTransform*)obj->GetParent()->GetComponentTransform();
 				float3 new_pos;
 				new_pos = transform->GetPosGlobal();
 
@@ -391,7 +403,7 @@ MonoObject* CSharpScript::GetGlobalPosition(MonoObject * object)
 void CSharpScript::SetPosition(MonoObject* object, MonoObject* vector3)
 {
 	Component* obj = App->importer->iScript->GetComponentMono(object);
-	if (current_game_object != nullptr || obj != nullptr)
+	if (obj != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -411,7 +423,8 @@ void CSharpScript::SetPosition(MonoObject* object, MonoObject* vector3)
 
 void CSharpScript::SetGlobalPosition(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -424,14 +437,15 @@ void CSharpScript::SetGlobalPosition(MonoObject * object, MonoObject * vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &new_pos.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_pos.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->SetPosGlobal(new_pos);
 	}
 }
 
 void CSharpScript::Translate(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -444,14 +458,15 @@ void CSharpScript::Translate(MonoObject * object, MonoObject * vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &added_pos.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &added_pos.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->Translate(added_pos);
 	}
 }
 
 MonoObject* CSharpScript::GetRotation(MonoObject* object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -481,7 +496,8 @@ MonoObject* CSharpScript::GetRotation(MonoObject* object)
 
 MonoObject * CSharpScript::GetGlobalRotation(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -493,7 +509,7 @@ MonoObject * CSharpScript::GetGlobalRotation(MonoObject * object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 				float3 new_pos;
 				new_pos = transform->GetGlobalRotEuler();
 
@@ -511,7 +527,7 @@ MonoObject * CSharpScript::GetGlobalRotation(MonoObject * object)
 void CSharpScript::SetRotation(MonoObject* object, MonoObject* vector3)
 {
 	Component* obj = App->importer->iScript->GetComponentMono(object);
-	if (current_game_object != nullptr && obj)
+	if (obj)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -531,7 +547,8 @@ void CSharpScript::SetRotation(MonoObject* object, MonoObject* vector3)
 
 void CSharpScript::SetGlobalRotation(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -544,14 +561,15 @@ void CSharpScript::SetGlobalRotation(MonoObject * object, MonoObject * vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &new_rot.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_rot.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->SetRotGlobal(new_rot);
 	}
 }
 
 void CSharpScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -564,14 +582,15 @@ void CSharpScript::IncrementRotation(MonoObject* object, MonoObject* vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &new_rot.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_rot.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->IncrementRot(new_rot);
 	}
 }
 
 void CSharpScript::RotateAroundAxis(MonoObject * object, MonoObject * vector3, float value)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -584,14 +603,15 @@ void CSharpScript::RotateAroundAxis(MonoObject * object, MonoObject * vector3, f
 		if (y_field) mono_field_get_value(vector3, y_field, &new_rot.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_rot.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->RotateAroundAxis(new_rot, value);
 	}
 }
 
 void CSharpScript::SetScale(MonoObject* object, MonoObject* vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -604,14 +624,15 @@ void CSharpScript::SetScale(MonoObject* object, MonoObject* vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &new_scale.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &new_scale.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->SetScale(new_scale);
 	}
 }
 
 MonoObject * CSharpScript::GetScale(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -623,7 +644,7 @@ MonoObject * CSharpScript::GetScale(MonoObject * object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 				float3 get_scale;
 				get_scale = transform->GetScale();
 
@@ -640,7 +661,8 @@ MonoObject * CSharpScript::GetScale(MonoObject * object)
 
 void CSharpScript::LookAt(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(vector3);
 		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
@@ -653,14 +675,15 @@ void CSharpScript::LookAt(MonoObject * object, MonoObject * vector3)
 		if (y_field) mono_field_get_value(vector3, y_field, &target_pos.y);
 		if (z_field) mono_field_get_value(vector3, z_field, &target_pos.z);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->LookAt(target_pos);
 	}
 }
 
 void CSharpScript::LookAtTrans(MonoObject * object, MonoObject * transform)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_object_get_class(transform);
 		MonoClassField* field = mono_class_get_field_from_name(classT, "position");
@@ -669,14 +692,15 @@ void CSharpScript::LookAtTrans(MonoObject * object, MonoObject * transform)
 
 		if (field) mono_field_get_value(transform, field, &target_pos);
 
-		CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+		CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 		transform->LookAt(target_pos);
 	}
 }
 
 MonoObject* CSharpScript::GetLocalTransform(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "float4x4");
 		if (classT)
@@ -704,7 +728,7 @@ MonoObject* CSharpScript::GetLocalTransform(MonoObject * object)
 				MonoClassField* d2_field = mono_class_get_field_from_name(classT, "d2");
 				MonoClassField* d3_field = mono_class_get_field_from_name(classT, "d3");
 
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 				float4x4 local_transform = transform->GetLocalTransform();
 
 				if (a0_field) mono_field_set_value(new_object, a0_field, &local_transform.At(0, 0));
@@ -736,7 +760,8 @@ MonoObject* CSharpScript::GetLocalTransform(MonoObject * object)
 
 MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "float4x4");
 		if (classT)
@@ -764,7 +789,7 @@ MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
 				MonoClassField* d2_field = mono_class_get_field_from_name(classT, "d2");
 				MonoClassField* d3_field = mono_class_get_field_from_name(classT, "d3");
 
-				CompTransform* transform = (CompTransform*)current_game_object->GetComponentTransform();
+				CompTransform* transform = (CompTransform*)comp->GetParent()->GetComponentTransform();
 				float4x4 global_transform = transform->GetGlobalTransform();
 
 				if (a0_field) mono_field_set_value(new_object, a0_field, &global_transform.At(0, 0));
@@ -791,8 +816,5 @@ MonoObject* CSharpScript::GetGlobalTransform(MonoObject * object)
 			}
 		}
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }

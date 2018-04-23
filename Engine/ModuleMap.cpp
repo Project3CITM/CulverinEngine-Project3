@@ -62,6 +62,7 @@ bool ModuleMap::Start()
 
 update_status ModuleMap::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleMap", Profiler::Color::Blue);
 	perf_timer.Start();
 	if (imported_map.size() > 0)
 	{
@@ -416,6 +417,16 @@ void ModuleMap::ShowWalkableMap()
 				{
 					ImGui::PopStyleColor();
 				}
+				std::string position_tile = "x:" + std::to_string(x);
+				position_tile += " - y:" + std::to_string(y);
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::PushTextWrapPos(450.0f);
+					ImGui::TextUnformatted(position_tile.c_str());
+					ImGui::PopTextWrapPos();
+					ImGui::EndTooltip();
+				}
 				if (ImGui::BeginPopupContextItem("Options##maptile"))
 				{
 					OptionsTile(x, y);
@@ -565,12 +576,17 @@ void ModuleMap::ShowCreationMap()
 			ImGui::Text("%i: ", i + 1); ImGui::SameLine();
 			if (ImGui::BeginCombo("##Pref", prefabs[i].c_str()))
 			{
+				static ImGuiTextFilter filter;
+				filter.Draw();
 				for (int n = 0; n < all_prefabs.size(); n++)
 				{
-					if (ImGui::Selectable(all_prefabs[n].c_str()))
+					if (filter.PassFilter(all_prefabs[n].c_str()))
 					{
-						prefabs[i] = all_prefabs[n];
-						ImGui::SetItemDefaultFocus();//
+						if (ImGui::Selectable(all_prefabs[n].c_str()))
+						{
+							prefabs[i] = all_prefabs[n];
+							ImGui::SetItemDefaultFocus();//
+						}
 					}
 				}
 				ImGui::EndCombo();
@@ -674,6 +690,16 @@ void ModuleMap::ShowCreationMap()
 				if (map[x][y] > -1 && force_pop)
 				{
 					ImGui::PopStyleColor();
+				}
+				std::string position_tile = "x:" + std::to_string(x);
+				position_tile += " - y:" + std::to_string(y);
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::PushTextWrapPos(450.0f);
+					ImGui::TextUnformatted(position_tile.c_str());
+					ImGui::PopTextWrapPos();
+					ImGui::EndTooltip();
 				}
 				if (ImGui::BeginPopupContextItem("Options##maptile3d"))
 				{
@@ -1147,10 +1173,30 @@ void ModuleMap::ShowEditableStyle()
 	ImGui::InputInt("##item_spacing_y", &item_spacing_y);
 }
 
-void ModuleMap::ImportMap()
+void ModuleMap::ImportMap(bool used_in_mono)
 {
+	if (used_in_mono)
+	{
+
+		std::string import_map_tmp;
+		import_map_tmp = App->fs->GetMainDirectory();
+		import_map_tmp += "/Maps/";
+		import_map_tmp += imported_map;
+		imported_map = import_map_tmp;
+		imported_map += ".mapwalk.json";
+
+
+	}
+
 	TypeMap type = App->map->CheckTypeMap(imported_map.c_str());
 	vector_map.clear();
+	for (int y = 0; y < 99; y++)
+	{
+		for (int x = 0; x < 99; x++)
+		{
+			map[x][y] = -1;
+		}
+	}
 	switch (type)
 	{
 	case TypeMap::MAP_WALKABLE:
@@ -1283,7 +1329,10 @@ float ModuleMap::GetSeparation()
 bool ModuleMap::SaveConfig(JSON_Object* node)
 {
 	//Save --------------------------------
-	json_object_set_string(node, "Walkable Map", name_map.c_str());
+	if (App->mode_game == false)
+	{
+		json_object_set_string(node, "Walkable Map", name_map.c_str());
+	}
 
 	// Navigation maps
 	//json_object_set_string(node, "Walkable Map", map_string.c_str());

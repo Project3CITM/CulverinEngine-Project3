@@ -16,6 +16,13 @@ class Disengage_Action : Action
         //TODO_AI: Audio disengage?
         //GetComponent<CompAudio>().PlayEvent("Dracarys");
         GetComponent<CompAnimation>().SetClipDuration("Sheathe Sword", duration);
+
+
+        //PLAY COMBAT MUSIC
+        Audio.ChangeState("MusicState", "None");
+        GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen = false;
+        Debug.Log("COMBAT OFF", Department.PLAYER, Color.BLUE);
+
         return true;
     }
 

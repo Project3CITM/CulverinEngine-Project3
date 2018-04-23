@@ -51,6 +51,7 @@ public:
 	std::vector<float3Var>	float3_variables;
 	std::vector<ColorVar>	color_variables;
 	std::vector<boolVar>	bool_variables;
+	std::vector<CubeMapVar>	cube_maps;
 
 	std::vector<TextureVar>::iterator	it_textures;
 	std::vector<intVar>::iterator		it_int_variables;
@@ -58,6 +59,7 @@ public:
 	std::vector<float3Var>::iterator	it_float3_variables;
 	std::vector<ColorVar>::iterator		it_color_variables;
 	std::vector<boolVar>::iterator		it_bool_variables;
+	std::vector<CubeMapVar>::iterator	it_cube_maps;
 
 	uint active_num = 0;
 };

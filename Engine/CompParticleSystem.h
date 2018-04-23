@@ -19,7 +19,7 @@ public:
 	CompParticleSystem(const CompParticleSystem& copy, GameObject* parent);
 	~CompParticleSystem();
 
-	void PreUpdate(float dt);
+
 	void Update(float dt);
 	void Clear();
 	void Draw();
@@ -31,6 +31,7 @@ public:
 	// EDITOR METHODS -----------------
 	void ShowOptions();
 	void ShowInspectorInfo();
+
 
 	void CopyComponent();
 
@@ -45,16 +46,19 @@ public:
 
 
 	void ActivateEmitter(bool);
+	float GetDiscardDistance() const;
+	bool IsActive() const;
+	bool IsPreview() const;
+
+	void SetSystemAsNull();
 
 private:
 
-	void SetChild(const char* Particle, const char* Emitter);
 
 	void SetTextureResource(uint uuid, int columns = 1, int rows = 1, int numberOfFrames = 1, uint AnimationOrder = 0);
 	void SetTextureResource(const char* Path, int columns = 1, int rows = 1, int numberOfFrames = 1, uint AnimationOrder = 0);
 
-	const std::string* GetChildParticle() const;
-	const std::string* GetChildEmitter() const;
+
 
 	void DrawDirectory(const char* directory);
 
@@ -99,11 +103,9 @@ private:
 private:
 
 
-	bool active = true;
-	bool preview = true;
 
 	ParticleSystem* part_system = nullptr;
-	ResourceMaterial* texture_resource = nullptr;
+	
 	bool pop_up_load_open = false;
 	bool pop_up_save_open = false;
 	std::string file_to_load;
@@ -116,23 +118,14 @@ private:
 	std::string particle_resource_name;
 	std::string emitter_resource_name;
 
-	std::string child_particle;
-	std::string child_particle_name;
-	std::string child_emitter;
-	std::string child_emitter_name;
-	bool child_loaded = false;
+	
 
-
-	float discard_distance = 100.0;
-	float distance_to_camera = 0.0;
 
 	enum
 	{
 		Texture_Resource,
 		Particle_Resource,
 		Emitter_Resource,
-		Child_Particle_Resource,
-		Child_Emitter_Resource,
 		MeshResource
 	} file_type = Texture_Resource;
 

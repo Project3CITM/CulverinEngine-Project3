@@ -20,7 +20,6 @@ public:
 	void Update(float dt);
 	void ShowOptions();
 	void ShowInspectorInfo();
-	void UpdateText();
 	void FreeFont();
 	void CopyValues(const CompText * component);
 	void Clear();
@@ -30,11 +29,13 @@ public:
 	void SetRect(float x, float y, float width, float height);
 	void SetString(std::string input);
 
+private:	
+	void UpdateText();
 	bool GenerateText();
-private:
 	bool TextCanFit(float4 rect_transform, float4 rect_text);
 	void ReSizeInput();
-
+protected:
+	void ExpandMesh();
 public:
 	SDL_Surface * s_font = nullptr;
 	ResourceFont* text = nullptr;
@@ -53,7 +54,6 @@ private:
 		BOTTOM_POSITION
 	};
 	bool update_text = false;
-	bool can_draw = false;
 	float4 text_rect;
 	bool show_resource_font_windows = false;
 	//std::string input_text;

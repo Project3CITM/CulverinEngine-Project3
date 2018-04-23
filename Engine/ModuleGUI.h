@@ -12,6 +12,12 @@
 
 class GameObject;
 
+#ifdef _DEBUG
+#define DEBUGMODE true
+#else
+#define DEBUGMODE false
+#endif
+
 #define IM_NEWLINE "\r\n"
 
 enum WindowName
@@ -47,6 +53,7 @@ public:
 	void ShowCameraMissing();
 	void ShowEngineState();
 	void ShowCreateNewScriptWindow();
+	void ShowWindowBuild(bool* active);
 
 	void ShowStyleEditor(ImGuiStyle* ref = NULL);
 	//void ShowConfig();
@@ -69,6 +76,7 @@ public:
 	bool show_test = false;
 	bool is_saved = false;
 	bool develop_mode = false;
+
 	std::vector<WindowManager*> win_manager;
 
 	//RANDOM NUMBERS TEST ----------
@@ -117,6 +125,12 @@ private:
 	bool window_audio = false;
 	bool window_create_map = false;
 	bool window_create_animation = false;
+
+	// Build variables
+	bool window_build = false;
+	bool load_scenes = true;
+	std::vector<std::string> scenes_build;
+	std::vector<std::string> scenes_only_name;
 
 	//bool window_NewScene = false;
 

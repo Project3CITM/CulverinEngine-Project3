@@ -11,17 +11,14 @@ public class SwordGuard_Listener : PerceptionListener
     {
 
         event_manager = GetLinkedObject("event_manager");
-        if(event_manager==null) Debug.Log("[error]EVENT MANAGER NULL");
+        if(event_manager==null)
+            Debug.Log("[error] Event manager is null");
         
         PerceptionManager perception_manager = event_manager.GetComponent<PerceptionManager>();
         if (perception_manager != null)
-        {
             perception_manager.AddListener(this);
-        }
         else
-        {
-            Debug.Log("THERE IS NO PERCEPTION MANAGER");
-        }
+            Debug.Log("[error] Perception manager is null");
         events_in_memory = new List<PerceptionEvent>();
 
     }
@@ -69,7 +66,13 @@ public class SwordGuard_Listener : PerceptionListener
 
                 if (gameObject.IsEquals(seen_event_tmp.enemy_who_saw))
                 {
-                   
+                    if (GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen == false)
+                    {
+                        //PLAY COMBAT MUSIC
+                        Audio.ChangeState("MusicState", "Combat");
+                        GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen = true;
+                        Debug.Log("COMBAT ON", Department.PLAYER, Color.ORANGE);
+                    }
 
                     GetComponent<EnemySword_BT>().InterruptAction();
                     GetComponent<EnemySword_BT>().player_detected = true;

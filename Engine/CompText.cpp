@@ -81,7 +81,7 @@ void CompText::Update(float dt)
 		}
 	}
 
-		render = can_draw;
+		render = CheckRender();
 
 }
 void CompText::ShowOptions()
@@ -201,8 +201,8 @@ void CompText::ShowInspectorInfo()
 		{
 			text->SetSize(text_size);
 			text->ReLoadToMemory();
-			UpdateText();
-			GenerateText();
+			GenerateMesh();
+
 
 		}
 	}
@@ -262,21 +262,24 @@ void CompText::SetString(std::string input)
 	if (input.size() > max_input)
 		return;
 	text_str = input;
-	UpdateText();
-	GenerateText();
+	GenerateMesh();
+
 }
 
 bool CompText::GenerateText()
 {
 	if (text_str.empty())
 		return false;
+
 	float4 rect_transform = parent->GetComponentRectTransform()->GetRect();
 	float width = parent->GetComponentRectTransform()->GetWidth();
 	float height = parent->GetComponentRectTransform()->GetHeight();
-	can_draw = false;
+	
+	invalid = true;
+
 	if (TextCanFit(rect_transform, text_rect))
 	{
-		can_draw = true;
+		invalid = false;
 		std::vector<float3> quad_pos;
 		float3 right_top=float3::zero;
 		float3 left_top = float3::zero;
@@ -336,7 +339,9 @@ bool CompText::GenerateText()
 		quad_pos.push_back(right_bottom);
 		quad_pos.push_back(right_top);
 		quad_pos.push_back(left_top);
-		my_canvas_render->ProcessQuad(quad_pos);
+
+		ProcesQuad(quad_pos);
+
 		return true;
 
 	}
@@ -366,6 +371,12 @@ void CompText::ReSizeInput()
 	strcpy_s(input_text, max_input,  tmp.c_str());
 }
 
+void CompText::ExpandMesh()
+{
+	UpdateText();
+	GenerateText();
+}
+
 void CompText::UpdateText()
 {
 	if (text == nullptr)
@@ -384,6 +395,9 @@ void CompText::UpdateText()
 	update_text = true;
 	int width = 0;
 	int height = 0;
+	text->font.size = text_size;
+	text->ReLoadToMemory();
+
 	TTF_SizeText(text->font.font, text_str.c_str(), &width, &height);
 	s_font = TTF_RenderText_Blended_Wrapped(text->font.font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) }, width);
 
@@ -503,7 +517,7 @@ void CompText::SyncComponent(GameObject* sync_parent)
 			text->SetSize(text_size);
 			text->ReLoadToMemory();
 		}
-		UpdateText();
-		GenerateText();
+		GenerateMesh();
+
 	}
 }

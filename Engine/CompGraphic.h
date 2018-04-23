@@ -2,7 +2,7 @@
 #define COMPONENT_GRAPHIC_H
 #include "Component.h"
 #include "Math\float4.h"
-
+#include "VertexUIData.h"
 class CompRectTransform;
 class CompCanvasRender;
 class CompCanvas;
@@ -30,25 +30,40 @@ public:
 	void SetColor(float set_r, float set_g, float set_b, float set_a);
 	void SetAlpha(float alpha);
 	void SetToRender(bool render);
+	void SetCanDraw(bool render);
 	void SetRaycastTarget(bool flag);
-	void SetInteractive(CompInteractive* set_interactive);
 	bool GetToRender()const;
 	uint GetTextureID()const;
 	CompRectTransform* GetRectTrasnform()const;
 	CompCanvasRender* GetCanvasRender()const;
 	float4 GetColor()const;
 	bool GetParentActive();
+	float GetAlpha()const;
+
+	void ResizeGenerateMesh();
 
 private:
-public:
 protected:
+	void ProcesQuad(std::vector<float3>& position, std::vector<float3>& texture_cord);
+
+	void ProcesQuad(std::vector<float3>& position);
+
+	virtual void ExpandMesh();
+	void GenerateMesh();
+	bool CheckRender();
+	virtual void DeviceCheck();
+protected:	
+	bool can_draw = true;
+	bool invalid = false;
+	bool device_swap = false;
+	bool device_swap_active = false;
+
+	VertexUIData vertex_data;
 	bool render = true;
-protected:
 	bool raycast_target = true;
 	CompCanvas* my_canvas = nullptr;
 	CompCanvasRender* my_canvas_render = nullptr;
 	CompRectTransform* transform = nullptr;
-	CompInteractive* interactive = nullptr;
 	uint texture_id = 0;
 	float4 color = float4::one;
 

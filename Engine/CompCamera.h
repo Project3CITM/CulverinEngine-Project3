@@ -38,6 +38,7 @@ public:
 	void CullStaticObjects();
 	void CullDynamicObjects();
 	void UnCull();
+	void UnCullDynamics();
 
 	void LookAt(const float3& position);
 
@@ -49,6 +50,8 @@ public:
 	void SetFar(float far_p);
 	void SetFov(float vertical);
 	void SetRatio(float ratio);
+	void SetCullDynamics(bool active);
+
 
 	float GetNear() const;
 	float GetFar() const;
@@ -71,6 +74,7 @@ private:
 
 	// Editor Variables -------------
 	bool culling = false;
+	bool cull_dynamics = true;
 	bool is_main = false;
 	float width = 0.0f;
 	float height = 0.0f;
@@ -80,7 +84,7 @@ private:
 	float vertical_fov = 0.0f;
 	// -------------------------------
 
-	std::list<GameObject*> candidates_to_cull;
+	std::vector<GameObject*> candidates_to_cull;
 };
 
 #endif

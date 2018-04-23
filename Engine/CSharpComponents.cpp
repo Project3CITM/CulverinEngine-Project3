@@ -23,6 +23,7 @@
 #include "CompImage.h"
 #include "CompLight.h"
 #include "CompParticleSystem.h"
+#include "CompRectTransform.h"
 #include "CompMaterial.h"
 #include "Materials.h"
 #include "ShadersLib.h"
@@ -31,9 +32,10 @@
 
 void CSharpScript::ActivateEmission(MonoObject* obj, bool a)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(obj);
+	if (comp != nullptr)
 	{
-		CompParticleSystem* part = (CompParticleSystem*)current_game_object->FindComponentByType(Comp_Type::C_PARTICLE_SYSTEM);
+		CompParticleSystem* part = (CompParticleSystem*)comp->GetParent()->FindComponentByType(Comp_Type::C_PARTICLE_SYSTEM);
 		if (part)
 		{
 			part->ActivateEmitter(a);
@@ -43,36 +45,34 @@ void CSharpScript::ActivateEmission(MonoObject* obj, bool a)
 
 bool CSharpScript::IsEmitterActive(MonoObject* obj)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(obj);
+	if (comp != nullptr)
 	{
-		CompParticleSystem* part = (CompParticleSystem*)current_game_object->FindComponentByType(Comp_Type::C_PARTICLE_SYSTEM);
+		CompParticleSystem* part = (CompParticleSystem*)comp->GetParent()->FindComponentByType(Comp_Type::C_PARTICLE_SYSTEM);
 		if (part)
 		{
 			return part->IsActive();
 		}
 	}
-
 	return false;
 }
 
 
 void CSharpScript::PlayAudioEvent(MonoObject* object, MonoString* event_name)
 {
-	if (current_game_object != nullptr)
+	CompAudio* audio = (CompAudio*)App->importer->iScript->GetComponentMono(object);
+	if (audio != nullptr)
 	{
-		CompAudio* audio = (CompAudio*)current_game_object->FindComponentByType(Comp_Type::C_AUDIO);
-		if (audio != nullptr)
-		{
-			audio->PlayAudioEvent(mono_string_to_utf8(event_name));
-		}
+		audio->PlayAudioEvent(mono_string_to_utf8(event_name));
 	}
 }
 
 void CSharpScript::StopAudioEvent(MonoObject* object, MonoString* event_name)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAudio* audio = (CompAudio*)current_game_object->FindComponentByType(Comp_Type::C_AUDIO);
+		CompAudio* audio = (CompAudio*)comp->GetParent()->FindComponentByType(Comp_Type::C_AUDIO);
 		if (audio != nullptr)
 		{
 			audio->StopAudioEvent(mono_string_to_utf8(event_name));
@@ -82,9 +82,10 @@ void CSharpScript::StopAudioEvent(MonoObject* object, MonoString* event_name)
 
 void CSharpScript::SetAuxiliarySends(MonoObject* object, MonoString* bus, float value)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAudio* audio = (CompAudio*)current_game_object->FindComponentByType(Comp_Type::C_AUDIO);
+		CompAudio* audio = (CompAudio*)comp->GetParent()->FindComponentByType(Comp_Type::C_AUDIO);
 		if (audio != nullptr)
 		{
 			audio->SetAuxiliarySend(mono_string_to_utf8(bus), value);
@@ -94,9 +95,10 @@ void CSharpScript::SetAuxiliarySends(MonoObject* object, MonoString* bus, float 
 
 void CSharpScript::PlayAnimation(MonoObject* object, MonoString* name, mono_bool blending)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			animation->PlayClip(mono_string_to_utf8(name), blending);
@@ -106,9 +108,10 @@ void CSharpScript::PlayAnimation(MonoObject* object, MonoString* name, mono_bool
 
 void CSharpScript::SetTransition(MonoObject* object, MonoString* name, mono_bool condition)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			animation->SetTransition(mono_string_to_utf8(name), condition);
@@ -118,9 +121,10 @@ void CSharpScript::SetTransition(MonoObject* object, MonoString* name, mono_bool
 
 mono_bool CSharpScript::IsAnimationStopped(MonoObject * object, MonoString * name)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			return animation->IsAnimationStopped(mono_string_to_utf8(name));
@@ -131,9 +135,10 @@ mono_bool CSharpScript::IsAnimationStopped(MonoObject * object, MonoString * nam
 
 mono_bool CSharpScript::IsAnimationRunning(MonoObject * object, MonoString * name)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			return animation->IsAnimationRunning(mono_string_to_utf8(name));
@@ -144,9 +149,10 @@ mono_bool CSharpScript::IsAnimationRunning(MonoObject * object, MonoString * nam
 
 mono_bool CSharpScript::IsAnimOverXTime(MonoObject * object, float number_between_0_1)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			if (animation->GetBlendingClip() == nullptr)
@@ -164,9 +170,10 @@ mono_bool CSharpScript::IsAnimOverXTime(MonoObject * object, float number_betwee
 
 void CSharpScript::SetClipsSpeed(MonoObject * object, float speed_value)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			animation->SetClipsSpeed(speed_value);
@@ -176,9 +183,10 @@ void CSharpScript::SetClipsSpeed(MonoObject * object, float speed_value)
 
 float CSharpScript::GetClipDuration(MonoObject * object, MonoString * name)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			AnimationClip* clip = animation->GetClipFromName(mono_string_to_utf8(name));
@@ -197,9 +205,10 @@ float CSharpScript::GetClipDuration(MonoObject * object, MonoString * name)
 
 void CSharpScript::SetClipDuration(MonoObject * object, MonoString * name, float duration)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			AnimationClip* clip = animation->GetClipFromName(mono_string_to_utf8(name));
@@ -211,33 +220,69 @@ void CSharpScript::SetClipDuration(MonoObject * object, MonoString * name, float
 	}
 }
 
-void CSharpScript::SetActiveBlendingClip(MonoObject * object, MonoString * name)
+void CSharpScript::SetFirstActiveBlendingClip(MonoObject * object, MonoString * name)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			AnimationNode* active_node = animation->GetActiveNode();
 			if (active_node != nullptr)
 			{
-				active_node->SetActiveBlendingClip(mono_string_to_utf8(name));
+				active_node->SetFirstActiveBlendingClip(mono_string_to_utf8(name));
 			}
 		}
 	}
 }
 
-void CSharpScript::SetActiveBlendingClipWeight(MonoObject * object, float weight)
+void CSharpScript::SetFirstActiveBlendingClipWeight(MonoObject * object, float weight)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			AnimationNode* active_node = animation->GetActiveNode();
 			if (active_node != nullptr)
 			{
-				active_node->SetActiveBlendingClipWeight(weight);
+				active_node->SetFirstActiveBlendingClipWeight(weight);
+			}
+		}
+	}
+}
+
+void CSharpScript::SetSecondActiveBlendingClip(MonoObject * object, MonoString * name)
+{
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			AnimationNode* active_node = animation->GetActiveNode();
+			if (active_node != nullptr)
+			{
+				active_node->SetSecondActiveBlendingClip(mono_string_to_utf8(name));
+			}
+		}
+	}
+}
+
+void CSharpScript::SetSecondActiveBlendingClipWeight(MonoObject * object, float weight)
+{
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
+		if (animation != nullptr)
+		{
+			AnimationNode* active_node = animation->GetActiveNode();
+			if (active_node != nullptr)
+			{
+				active_node->SetSecondActiveBlendingClipWeight(weight);
 			}
 		}
 	}
@@ -245,9 +290,10 @@ void CSharpScript::SetActiveBlendingClipWeight(MonoObject * object, float weight
 
 void CSharpScript::SetBlendInTime(MonoObject * object, MonoString * name, float time)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			AnimationClip* clip = animation->GetClipFromName(mono_string_to_utf8(name));
@@ -261,9 +307,10 @@ void CSharpScript::SetBlendInTime(MonoObject * object, MonoString * name, float 
 
 void CSharpScript::PlayAnimationNode(MonoObject * object, MonoString * name)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompAnimation* animation = (CompAnimation*)current_game_object->FindComponentByType(Comp_Type::C_ANIMATION);
+		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
 			AnimationNode* node = animation->GetNodeFromName(mono_string_to_utf8(name));
@@ -275,22 +322,31 @@ void CSharpScript::PlayAnimationNode(MonoObject * object, MonoString * name)
 	}
 }
 
-// CompCollider -----------------------------------------------------------
-MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
+void CSharpScript::SetUIPosition(MonoObject * object, MonoObject * vector3)
 {
-	if (current_game_object != nullptr)
+	Component* obj = App->importer->iScript->GetComponentMono(object);
+	if (obj != nullptr)
 	{
-		GameObject* target = ((CompCollider*)current_game_object->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
-		if (target == nullptr)return nullptr;
+		MonoClass* classT = mono_object_get_class(vector3);
+		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-		return App->importer->iScript->GetMonoObject(target);
+		float3 new_pos;
+
+		if (x_field) mono_field_get_value(vector3, x_field, &new_pos.x);
+		if (y_field) mono_field_get_value(vector3, y_field, &new_pos.y);
+		if (z_field) mono_field_get_value(vector3, z_field, &new_pos.z);
+
+		CompRectTransform* transform = (CompRectTransform*)obj;
+		transform->SetUIPos(new_pos);
 	}
-	return nullptr;
 }
 
-MonoObject * CSharpScript::GetContactPoint(MonoObject * object)
+MonoObject * CSharpScript::GetUIPosition(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -303,7 +359,52 @@ MonoObject * CSharpScript::GetContactPoint(MonoObject * object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				CompCollider* coll = (CompCollider*)current_game_object->FindComponentByType(C_COLLIDER);
+				CompRectTransform* rect = (CompRectTransform*)comp->GetParent()->FindComponentByType(C_RECT_TRANSFORM);
+				float3 new_vec = float3(rect->GetUIPosition(),0.f);
+
+				if (x_field) mono_field_set_value(new_object, x_field, &new_vec.x);
+				if (y_field) mono_field_set_value(new_object, y_field, &new_vec.y);
+				if (z_field) mono_field_set_value(new_object, z_field, &new_vec.z);
+
+				return new_object;
+			}
+		}
+	}
+	return nullptr;
+	return nullptr;
+}
+
+// CompCollider -----------------------------------------------------------
+MonoObject* CSharpScript::GetCollidedObject(MonoObject * object)
+{
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		GameObject* target = ((CompCollider*)comp->GetParent()->FindComponentByType(Comp_Type::C_COLLIDER))->GetCollidedObject();
+		if (target == nullptr)return nullptr;
+
+		return App->importer->iScript->GetMonoObject(target);
+	}
+	return nullptr;
+}
+
+MonoObject * CSharpScript::GetContactPoint(MonoObject * object)
+{
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
+		if (classT)
+		{
+			Component* obj = App->importer->iScript->GetComponentMono(object);
+			MonoObject* new_object = mono_object_new(App->importer->iScript->GetDomain(), classT);
+			if (new_object)
+			{
+				MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+				CompCollider* coll = (CompCollider*)comp->GetParent()->FindComponentByType(C_COLLIDER);
 				float3 new_vec = coll->GetContactPoint();
 
 				if (x_field) mono_field_set_value(new_object, x_field, &new_vec.x);
@@ -319,7 +420,8 @@ MonoObject * CSharpScript::GetContactPoint(MonoObject * object)
 
 MonoObject * CSharpScript::GetContactNormal(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -332,7 +434,7 @@ MonoObject * CSharpScript::GetContactNormal(MonoObject * object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				CompCollider* coll = (CompCollider*)current_game_object->FindComponentByType(C_COLLIDER);
+				CompCollider* coll = (CompCollider*)comp->GetParent()->FindComponentByType(C_COLLIDER);
 				float3 new_vec = coll->GetContactNormal();
 
 				if (x_field) mono_field_set_value(new_object, x_field, &new_vec.x);
@@ -348,7 +450,8 @@ MonoObject * CSharpScript::GetContactNormal(MonoObject * object)
 
 void CSharpScript::MoveStaticColliderTo(MonoObject * object, MonoObject * position)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classP = mono_object_get_class(position);
 		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
@@ -361,39 +464,43 @@ void CSharpScript::MoveStaticColliderTo(MonoObject * object, MonoObject * positi
 		if (y_field) mono_field_get_value(position, y_field, &new_pos.y);
 		if (z_field) mono_field_get_value(position, z_field, &new_pos.z);
 
-		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->MoveStaticTo(new_pos);
+		((CompCollider*)comp->GetParent()->FindComponentByType(C_COLLIDER))->MoveStaticTo(new_pos);
 	}
 }
 
 void CSharpScript::CallOnContact(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		CollisionData data;
-		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnContact(data);
+		((CompCollider*)comp->GetParent()->FindComponentByType(C_COLLIDER))->OnContact(data);
 	}
 }
 
 void CSharpScript::CallOnTriggerEnter(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->OnTriggerEnter(nullptr);
+		((CompCollider*)comp->GetParent()->FindComponentByType(C_COLLIDER))->OnTriggerEnter(nullptr);
 	}
 }
 
 void CSharpScript::CollisionActive(MonoObject * object, bool active)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->CollisionActive(active);
+		((CompCollider*)comp->GetParent()->FindComponentByType(C_COLLIDER))->CollisionActive(active);
 	}
 }
 
 // CompRigidBody ----------------------------------------------------------
 MonoObject * CSharpScript::GetColliderPosition(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Vector3");
 		if (classT)
@@ -405,7 +512,7 @@ MonoObject * CSharpScript::GetColliderPosition(MonoObject * object)
 				MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
 				MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
 
-				float3 pos = ((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->GetGlobalPosition();
+				float3 pos = ((CompCollider*)comp->GetParent()->FindComponentByType(C_COLLIDER))->GetGlobalPosition();
 
 				if (x_field) mono_field_set_value(new_object, x_field, &pos.x);
 				if (y_field) mono_field_set_value(new_object, y_field, &pos.y);
@@ -421,7 +528,8 @@ MonoObject * CSharpScript::GetColliderPosition(MonoObject * object)
 
 MonoObject * CSharpScript::GetColliderQuaternion(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classT = mono_class_from_name(App->importer->iScript->GetCulverinImage(), "CulverinEditor", "Quaternion");
 		if (classT)
@@ -435,7 +543,7 @@ MonoObject * CSharpScript::GetColliderQuaternion(MonoObject * object)
 				MonoClassField* w_field = mono_class_get_field_from_name(classT, "w");
 
 
-				Quat rot = ((CompCollider*)current_game_object->FindComponentByType(C_COLLIDER))->GetGlobalQuat();
+				Quat rot = ((CompCollider*)comp->GetParent()->FindComponentByType(C_COLLIDER))->GetGlobalQuat();
 
 				if (x_field) mono_field_set_value(new_object, x_field, &rot.x);
 				if (y_field) mono_field_set_value(new_object, y_field, &rot.y);
@@ -452,9 +560,10 @@ MonoObject * CSharpScript::GetColliderQuaternion(MonoObject * object)
 
 void CSharpScript::RemoveJoint(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompRigidBody* body = (CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY);
+		CompRigidBody* body = (CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY);
 		if (body != nullptr)
 		{
 			body->RemoveJoint();
@@ -466,7 +575,8 @@ void CSharpScript::RemoveJoint(MonoObject * object)
 
 void CSharpScript::MoveKinematic(MonoObject * object, MonoObject * position, MonoObject * rotation)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classP = mono_object_get_class(position);
 		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
@@ -492,13 +602,14 @@ void CSharpScript::MoveKinematic(MonoObject * object, MonoObject * position, Mon
 		if (z_field) mono_field_get_value(rotation, z_field, &new_rot.z);
 		if (w_field) mono_field_get_value(rotation, w_field, &new_rot.w);
 
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->MoveKinematic(new_pos, new_rot);
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->MoveKinematic(new_pos, new_rot);
 	}
 }
 
 void CSharpScript::ApplyForce(MonoObject * object, MonoObject * force)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classP = mono_object_get_class(force);
 		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
@@ -511,13 +622,14 @@ void CSharpScript::ApplyForce(MonoObject * object, MonoObject * force)
 		if (y_field) mono_field_get_value(force, y_field, &new_force.y);
 		if (z_field) mono_field_get_value(force, z_field, &new_force.z);
 
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->ApplyForce(new_force);
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->ApplyForce(new_force);
 	}
 }
 
 void CSharpScript::ApplyImpulse(MonoObject * object, MonoObject * impulse)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classP = mono_object_get_class(impulse);
 		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
@@ -530,13 +642,14 @@ void CSharpScript::ApplyImpulse(MonoObject * object, MonoObject * impulse)
 		if (y_field) mono_field_get_value(impulse, y_field, &new_impuse.y);
 		if (z_field) mono_field_get_value(impulse, z_field, &new_impuse.z);
 
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->ApplyImpulse(new_impuse);
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->ApplyImpulse(new_impuse);
 	}
 }
 
 void CSharpScript::ApplyTorqueForce(MonoObject * object, MonoObject * force)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classP = mono_object_get_class(force);
 		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
@@ -549,13 +662,14 @@ void CSharpScript::ApplyTorqueForce(MonoObject * object, MonoObject * force)
 		if (y_field) mono_field_get_value(force, y_field, &new_force.y);
 		if (z_field) mono_field_get_value(force, z_field, &new_force.z);
 
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->ApplyTorqueForce(new_force);
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->ApplyTorqueForce(new_force);
 	}
 }
 
 void CSharpScript::ApplyTorqueImpulse(MonoObject * object, MonoObject * impulse)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
 		MonoClass* classP = mono_object_get_class(impulse);
 		MonoClassField* x_field = mono_class_get_field_from_name(classP, "x");
@@ -568,87 +682,97 @@ void CSharpScript::ApplyTorqueImpulse(MonoObject * object, MonoObject * impulse)
 		if (y_field) mono_field_get_value(impulse, y_field, &new_impuse.y);
 		if (z_field) mono_field_get_value(impulse, z_field, &new_impuse.z);
 
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->ApplyTorqueImpulse(new_impuse);
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->ApplyTorqueImpulse(new_impuse);
 	}
 }
 
 void CSharpScript::LockMotion(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockMotion();
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->LockMotion();
 	}
 }
 
 void CSharpScript::LockRotation(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockRotation();
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->LockRotation();
 	}
 }
 
 void CSharpScript::LockTransform(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->LockTransform();
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->LockTransform();
 	}
 }
 
 void CSharpScript::UnLockMotion(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->UnLockMotion();
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->UnLockMotion();
 	}
 }
 
 void CSharpScript::UnLockRotation(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->UnLockRotation();
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->UnLockRotation();
 	}
 }
 
 void CSharpScript::UnLockTransform(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->UnLockTransform();
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->UnLockTransform();
 	}
 }
 
 void CSharpScript::ResetForce(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->SetMomentumToZero();
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->SetMomentumToZero();
 	}
 }
 
 void CSharpScript::WakeUp(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->WakeUp();
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->WakeUp();
 	}
 }
 
 void CSharpScript::SetAtMaxJointPose(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompRigidBody*)current_game_object->FindComponentByType(C_RIGIDBODY))->SetMaxJointPose();
+		((CompRigidBody*)comp->GetParent()->FindComponentByType(C_RIGIDBODY))->SetMaxJointPose();
 	}
 }
 
 void CSharpScript::DestroyJoint(MonoObject* object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		((CompJoint*)current_game_object->FindComponentByType(C_JOINT))->RemoveActors();
+		((CompJoint*)comp->GetParent()->FindComponentByType(C_JOINT))->RemoveActors();
 	}
 }
 
@@ -691,155 +815,202 @@ MonoObject * CSharpScript::RayCast(MonoObject * origin, MonoObject * direction, 
 void CSharpScript::SetAlbedo(MonoObject * object, MonoString * string)
 {
 	const char* c_string = mono_string_to_utf8(string);
-	
-	CompMaterial* c_material = current_game_object->GetComponentMaterial();
-	if (c_material == nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		LOG("ERROR %s", c_string);
-		return;
-	}
+		CompMaterial* c_material = comp->GetParent()->GetComponentMaterial();
+		if (c_material == nullptr)
+		{
+			LOG("ERROR %s", c_string);
+			return;
+		}
 
-	ResourceMaterial* texture_resource = (ResourceMaterial*)App->resource_manager->GetResource((char*)c_string);
-	if (texture_resource == nullptr)
-	{
-		LOG("ERROR %s", c_string);
-		return;
-	}
+		ResourceMaterial* texture_resource = (ResourceMaterial*)App->resource_manager->GetResource((char*)c_string);
+		if (texture_resource == nullptr)
+		{
+			LOG("ERROR %s", c_string);
+			return;
+		}
 
-	texture_resource->num_game_objects_use_me++;
-	if (texture_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
-	{
-		std::string temp = std::to_string(texture_resource->GetUUID());
-		App->importer->iMaterial->LoadResource(temp.c_str(), texture_resource);
+		texture_resource->num_game_objects_use_me++;
+		if (texture_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
+		{
+			std::string temp = std::to_string(texture_resource->GetUUID());
+			App->importer->iMaterial->LoadResource(temp.c_str(), texture_resource);
+		}
+
+		c_material->material->textures[0].value = (ResourceMaterial*)texture_resource;
 	}
-		
-	c_material->material->textures[0].value = (ResourceMaterial*)texture_resource;
 }
 
 void CSharpScript::SetNormals(MonoObject * object, MonoString * string)
 {
 	const char* c_string = mono_string_to_utf8(string);
-
-	CompMaterial* c_material = current_game_object->GetComponentMaterial();
-	if (c_material == nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		LOG("ERROR %s", c_string);
-		return;
-	}
+		CompMaterial* c_material = comp->GetParent()->GetComponentMaterial();
+		if (c_material == nullptr)
+		{
+			LOG("ERROR %s", c_string);
+			return;
+		}
 
-	ResourceMaterial* texture_resource = (ResourceMaterial*)App->resource_manager->GetResource((char*)c_string);
-	if (texture_resource == nullptr)
-	{
-		LOG("ERROR %s", c_string);
-		return;
-	}
+		ResourceMaterial* texture_resource = (ResourceMaterial*)App->resource_manager->GetResource((char*)c_string);
+		if (texture_resource == nullptr)
+		{
+			LOG("ERROR %s", c_string);
+			return;
+		}
 
-	texture_resource->num_game_objects_use_me++;
-	if (texture_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
-	{
-		std::string temp = std::to_string(texture_resource->GetUUID());
-		App->importer->iMaterial->LoadResource(temp.c_str(), texture_resource);
-	}
+		texture_resource->num_game_objects_use_me++;
+		if (texture_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
+		{
+			std::string temp = std::to_string(texture_resource->GetUUID());
+			App->importer->iMaterial->LoadResource(temp.c_str(), texture_resource);
+		}
 
-	c_material->material->textures[1].value = (ResourceMaterial*)texture_resource;
+		c_material->material->textures[1].value = (ResourceMaterial*)texture_resource;
+	}
 }
 
 void CSharpScript::SetAmbientOcclusion(MonoObject * object, MonoString * string)
 {
 	const char* c_string = mono_string_to_utf8(string);
-
-	CompMaterial* c_material = current_game_object->GetComponentMaterial();
-	if (c_material == nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		LOG("ERROR %s", c_string);
-		return;
-	}
+		CompMaterial* c_material = comp->GetParent()->GetComponentMaterial();
+		if (c_material == nullptr)
+		{
+			LOG("ERROR %s", c_string);
+			return;
+		}
 
-	ResourceMaterial* texture_resource = (ResourceMaterial*)App->resource_manager->GetResource((char*)c_string);
-	if (texture_resource == nullptr)
-	{
-		LOG("ERROR %s", c_string);
-		return;
-	}
+		ResourceMaterial* texture_resource = (ResourceMaterial*)App->resource_manager->GetResource((char*)c_string);
+		if (texture_resource == nullptr)
+		{
+			LOG("ERROR %s", c_string);
+			return;
+		}
 
-	texture_resource->num_game_objects_use_me++;
-	if (texture_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
-	{
-		std::string temp = std::to_string(texture_resource->GetUUID());
-		App->importer->iMaterial->LoadResource(temp.c_str(), texture_resource);
-	}
+		texture_resource->num_game_objects_use_me++;
+		if (texture_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
+		{
+			std::string temp = std::to_string(texture_resource->GetUUID());
+			App->importer->iMaterial->LoadResource(temp.c_str(), texture_resource);
+		}
 
-	c_material->material->textures[2].value = (ResourceMaterial*)texture_resource;
+		c_material->material->textures[2].value = (ResourceMaterial*)texture_resource;
+	}
 }
 
 float CSharpScript::GetIntensity(MonoObject * object)
 {
-	CompLight* c_light = current_game_object->GetComponentLight();
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		CompLight* c_light = comp->GetParent()->GetComponentLight();
 
-	if (c_light == nullptr)
-		return 0;
-	return c_light->properties[0];
+		if (c_light == nullptr)
+			return 0;
+		return c_light->properties[0];
+	}
+	return 0.0f;
 }
 
 void CSharpScript::SetIntensity(MonoObject * object, float value)
 {
-	CompLight* c_light = current_game_object->GetComponentLight();
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		CompLight* c_light = comp->GetParent()->GetComponentLight();
 
-	if (c_light == nullptr)
-		return ;
-	c_light->properties[0] = value;
+		if (c_light == nullptr)
+			return;
+
+		c_light->properties[0] = value;
+	}
 }
 
 float CSharpScript::GetConstant(MonoObject * object)
 {
-	CompLight* c_light = current_game_object->GetComponentLight();
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		CompLight* c_light = comp->GetParent()->GetComponentLight();
 
-	if (c_light == nullptr)
-		return 0;
-	return c_light->properties[1];
+		if (c_light == nullptr)
+			return 0;
+		return c_light->properties[1];
+	}
+	return 0.0f;
 }
 
 void CSharpScript::SetConstant(MonoObject * object, float value)
 {
-	CompLight* c_light = current_game_object->GetComponentLight();
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		CompLight* c_light = comp->GetParent()->GetComponentLight();
 
-	if (c_light == nullptr)
-		return;
-	c_light->properties[1] = value;
+		if (c_light == nullptr)
+			return;
+		c_light->properties[1] = value;
+	}
 }
 
 float CSharpScript::GetLinear(MonoObject * object)
 {
-	CompLight* c_light = current_game_object->GetComponentLight();
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		CompLight* c_light = comp->GetParent()->GetComponentLight();
 
-	if (c_light == nullptr)
-		return 0;
-	return c_light->properties[2];
+		if (c_light == nullptr)
+			return 0;
+		return c_light->properties[2];
+	}
+	return 0.0f;
 }
 
 void CSharpScript::SetLinear(MonoObject * object, float value)
 {
-	CompLight* c_light = current_game_object->GetComponentLight();
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		CompLight* c_light = comp->GetParent()->GetComponentLight();
 
-	if (c_light == nullptr)
-		return;
-	c_light->properties[2] = value;
+		if (c_light == nullptr)
+			return;
+		c_light->properties[2] = value;
+	}
 }
 
 float CSharpScript::GetQuadratic(MonoObject * object)
 {
-	CompLight* c_light = current_game_object->GetComponentLight();
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		CompLight* c_light = comp->GetParent()->GetComponentLight();
 
-	if (c_light == nullptr)
-		return 0;
-	return c_light->properties[3];
+		if (c_light == nullptr)
+			return 0;
+
+		return c_light->properties[3];
+	}
+	return 0.0f;
 }
 
 void CSharpScript::SetQuadratic(MonoObject * object, float value)
 {
-	CompLight* c_light = current_game_object->GetComponentLight();
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
+	{
+		CompLight* c_light = comp->GetParent()->GetComponentLight();
 
-	if (c_light == nullptr)
-		return;
-	c_light->properties[3] = value;
+		if (c_light == nullptr)
+			return;
+		c_light->properties[3] = value;
+	}
 }

@@ -11,6 +11,8 @@ public class DaenerysCD_Left : CoolDown
     public GameObject charge_count_2;
     public GameObject charge_count_3;
 
+    public GameObject daenerys_left_cd_text;
+
     void Start()
     {
         charge_count_0 = GetLinkedObject("charge_count_0");
@@ -22,13 +24,30 @@ public class DaenerysCD_Left : CoolDown
         charge_count_1.GetComponent<CompImage>().SetEnabled(false, charge_count_1);
         charge_count_2.GetComponent<CompImage>().SetEnabled(false, charge_count_2);
         charge_count_3.GetComponent<CompImage>().SetEnabled(true, charge_count_3);
+
+        daenerys_left_cd_text = GetLinkedObject("daenerys_left_cd_text");
+        ResetTextTimer(daenerys_left_cd_text);
     }
 
     public override void Update()
     {
         if (current_charges < max_charges)
         {
+            //Perform Radial Fill when charges are 0
+            if (current_charges == 0) 
+            {
+                //Manage the Radial Fill Cooldown
+                float final_time = cd_time - act_time;
+
+                calc_time = final_time / cd_time;
+                GetComponent<CompImage>().FillAmount(calc_time);
+
+                //Manage Seconds Counter     
+                ManageTextTimer(daenerys_left_cd_text);          
+            }
+           
             act_time += Time.deltaTime;
+            
             if (act_time >= cd_time)
             {
                 if (in_cd == true)
@@ -36,12 +55,21 @@ public class DaenerysCD_Left : CoolDown
                     in_cd = false;
                     button_cd = GetLinkedObject("daenerys_button_left_obj").GetComponent<CompButton>();
                     button_cd.Activate();
+
+                    if (current_charges == 0)
+                    {
+                        GetComponent<CompImage>().FillAmount(1.0f);
+
+                        ResetTextTimer(daenerys_left_cd_text);
+                        Debug.Log("RESET TIMER FALSE", Department.PLAYER, Color.YELLOW);
+
+                        reset_timer = false;
+                    }              
                 }
 
                 current_charges++;
-                UpdateChargesIcon();
 
-                Debug.Log("[error] increase charges");
+                UpdateChargesIcon();
 
                 if (current_charges < max_charges)
                 {
@@ -68,8 +96,13 @@ public class DaenerysCD_Left : CoolDown
 
     public override void ActivateAbility()
     {
-        current_charges--;
-        UpdateChargesIcon();
+        //NO CHARGES COST IN GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode == false ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy == false)
+        {
+            current_charges--;
+            UpdateChargesIcon();
+        }
 
         act_time = 0.0f;
         
@@ -78,6 +111,7 @@ public class DaenerysCD_Left : CoolDown
             button_cd = GetLinkedObject("daenerys_button_left_obj").GetComponent<CompButton>();
             button_cd.Deactivate();
             in_cd = true;
+            prev_seconds = 1000;
         }
     }
 

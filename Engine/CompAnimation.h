@@ -42,7 +42,8 @@ class BlendingClip
 public:
 	std::string name = "Blending Clip";
 	AnimationClip* clip = nullptr;
-	bool active = false;
+	bool first_active = false;
+	bool second_active = false;
 	float weight = 0.0f;
 };
 class AnimationNode
@@ -54,15 +55,25 @@ public:
 
 	void CreateBlendingClip();
 
-	void SetActiveBlendingClip(BlendingClip * blnd_clip);
-	void SetActiveBlendingClip(std::string name);
-	BlendingClip* GetActiveBlendingClip();
-	void SetActiveBlendingClipWeight(float weight);
+	void SetFirstActiveBlendingClip(BlendingClip * blnd_clip);
+	void SetSecondActiveBlendingClip(BlendingClip * blnd_clip);
+	void SetFirstActiveBlendingClip(std::string name);
+	void SetSecondActiveBlendingClip(std::string name);
+	BlendingClip * GetFirstActiveBlendingClip();
+	BlendingClip * GetSecondActiveBlendingClip();
+
+	void SetFirstActiveBlendingClipWeight(float weight);
+
+	void SetSecondActiveBlendingClipWeight(float weight);
+
 
 	AnimationClip* clip = nullptr;
+
 	bool active = false;
 	std::string name = "Animation Node ";
+
 	std::vector<BlendingClip*> blending_clips;
+
 	std::string anim_audio = "Null_Audio";
 	float audio_time = 0.0f;
 	std::vector<AnimationTransition*> transitions;

@@ -1,4 +1,5 @@
 ﻿using CulverinEditor;
+using CulverinEditor.Debug;
 
 class GetHit_Action: Action
 {
@@ -8,6 +9,8 @@ class GetHit_Action: Action
 
     bool played_audio = false;
 
+    private Enemy_BT.ENEMY_GET_DAMAGE_TYPE next_dmg_type = Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT;
+
     public GetHit_Action()
     {
         action_type = ACTION_TYPE.GET_HIT_ACTION;
@@ -16,113 +19,135 @@ class GetHit_Action: Action
     public override bool ActionStart()
     {
         interupt = false;
+
         /*CompAudio audio = GetComponent<CompAudio>();
         audio.PlayEvent("Enemy2_Hurt");
         audio.PlayEvent("SwordHit");*/
-        GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
-        int tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
-        int tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
 
-        int dif_x = player_x - tile_x;
-        int dif_y = player_y - tile_y;
 
-        Movement_Action.Direction dir = GetComponent<Movement_Action>().GetDirection();
-
-        switch(dir)
+        if (next_dmg_type == Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT)
         {
-            case Movement_Action.Direction.DIR_EAST:
-                if (dif_x < 0)
-                {
-                    animation_clip = "HitBack";
-                    GetComponent<CompAnimation>().SetTransition("ToHitBack");
-                }
-                else if (dif_x > 0)
-                {
-                    animation_clip = "HitFront";
-                    GetComponent<CompAnimation>().SetTransition("ToHitFront");
-                }
-                else if (dif_y < 0)
-                {
-                    animation_clip = "HitLeft";
-                    GetComponent<CompAnimation>().SetTransition("ToHitLeft");
-                }
-                else if (dif_y > 0)
-                {
-                    animation_clip = "HitRight";
-                    GetComponent<CompAnimation>().SetTransition("ToHitRight");                 
-                }
-                break;
 
-            case Movement_Action.Direction.DIR_NORTH:
-                if (dif_x < 0)
-                {
-                    animation_clip = "HitLeft";
-                    GetComponent<CompAnimation>().SetTransition("ToHitLeft");
-                }
-                else if (dif_x > 0)
-                {
-                    animation_clip = "HitRight";
-                    GetComponent<CompAnimation>().SetTransition("ToHitRight");
-                }
-                else if (dif_y < 0)
-                {
-                    animation_clip = "HitFront";
-                    GetComponent<CompAnimation>().SetTransition("ToHitFront");
-                }
-                else if (dif_y > 0)
-                {
-                    animation_clip = "HitBack";
-                    GetComponent<CompAnimation>().SetTransition("ToHitBack");
-                }
-                break;
+            int tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
+            int tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+            int player_x = tile_x;
+            int player_y = tile_y;
+            MovementController temp = GetLinkedObject("player_obj").GetComponent<MovementController>();
+            if (temp != null)
+            {
+                temp.GetPlayerPos(out int x, out int y);
+                player_x = x;
+                player_y = y;
+            }
 
-            case Movement_Action.Direction.DIR_SOUTH:
-                if (dif_x < 0)
-                {
-                    animation_clip = "HitRight";
-                    GetComponent<CompAnimation>().SetTransition("ToHitRight");
-                }
-                else if (dif_x > 0)
-                {
-                    animation_clip = "HitLeft";
-                    GetComponent<CompAnimation>().SetTransition("ToHitLeft");
-                }
-                else if (dif_y < 0)
-                {
-                    animation_clip = "HitBack";
-                    GetComponent<CompAnimation>().SetTransition("ToHitBack");
-                    
-                }
-                else if (dif_y > 0)
-                {
-                    animation_clip = "HitFront";
-                    GetComponent<CompAnimation>().SetTransition("ToHitFront");                   
-                }
-                break;
+            int dif_x = player_x - tile_x;
+            int dif_y = player_y - tile_y;
 
-            case Movement_Action.Direction.DIR_WEST:
-                if (dif_x < 0)
-                {
-                    animation_clip = "HitFront";
-                    GetComponent<CompAnimation>().SetTransition("ToHitFront");
-                }
-                else if (dif_x > 0)
-                {
-                    animation_clip = "HitBack";
-                    GetComponent<CompAnimation>().SetTransition("ToHitBack");
-                }
-                else if (dif_y < 0)
-                {
-                    animation_clip = "HitRight";
-                    GetComponent<CompAnimation>().SetTransition("ToHitRight");
-                }
-                else if (dif_y > 0)
-                {
-                    animation_clip = "HitLeft";
-                    GetComponent<CompAnimation>().SetTransition("ToHitLeft");
-                }
-                break;
+            Movement_Action.Direction dir = GetComponent<Movement_Action>().GetDirection();
+
+            switch (dir)
+            {
+                case Movement_Action.Direction.DIR_EAST:
+                    if (dif_x < 0)
+                    {
+                        animation_clip = "HitBack";
+                        GetComponent<CompAnimation>().SetTransition("ToHitBack");
+                    }
+                    else if (dif_x > 0)
+                    {
+                        animation_clip = "HitFront";
+                        GetComponent<CompAnimation>().SetTransition("ToHitFront");
+                    }
+                    else if (dif_y < 0)
+                    {
+                        animation_clip = "HitLeft";
+                        GetComponent<CompAnimation>().SetTransition("ToHitLeft");
+                    }
+                    else if (dif_y > 0)
+                    {
+                        animation_clip = "HitRight";
+                        GetComponent<CompAnimation>().SetTransition("ToHitRight");
+                    }
+                    break;
+
+                case Movement_Action.Direction.DIR_NORTH:
+                    if (dif_x < 0)
+                    {
+                        animation_clip = "HitLeft";
+                        GetComponent<CompAnimation>().SetTransition("ToHitLeft");
+                    }
+                    else if (dif_x > 0)
+                    {
+                        animation_clip = "HitRight";
+                        GetComponent<CompAnimation>().SetTransition("ToHitRight");
+                    }
+                    else if (dif_y < 0)
+                    {
+                        animation_clip = "HitFront";
+                        GetComponent<CompAnimation>().SetTransition("ToHitFront");
+                    }
+                    else if (dif_y > 0)
+                    {
+                        animation_clip = "HitBack";
+                        GetComponent<CompAnimation>().SetTransition("ToHitBack");
+                    }
+                    break;
+
+                case Movement_Action.Direction.DIR_SOUTH:
+                    if (dif_x < 0)
+                    {
+                        animation_clip = "HitRight";
+                        GetComponent<CompAnimation>().SetTransition("ToHitRight");
+                    }
+                    else if (dif_x > 0)
+                    {
+                        animation_clip = "HitLeft";
+                        GetComponent<CompAnimation>().SetTransition("ToHitLeft");
+                    }
+                    else if (dif_y < 0)
+                    {
+                        animation_clip = "HitBack";
+                        GetComponent<CompAnimation>().SetTransition("ToHitBack");
+
+                    }
+                    else if (dif_y > 0)
+                    {
+                        animation_clip = "HitFront";
+                        GetComponent<CompAnimation>().SetTransition("ToHitFront");
+                    }
+                    break;
+
+                case Movement_Action.Direction.DIR_WEST:
+                    if (dif_x < 0)
+                    {
+                        animation_clip = "HitFront";
+                        GetComponent<CompAnimation>().SetTransition("ToHitFront");
+                    }
+                    else if (dif_x > 0)
+                    {
+                        animation_clip = "HitBack";
+                        GetComponent<CompAnimation>().SetTransition("ToHitBack");
+                    }
+                    else if (dif_y < 0)
+                    {
+                        animation_clip = "HitRight";
+                        GetComponent<CompAnimation>().SetTransition("ToHitRight");
+                    }
+                    else if (dif_y > 0)
+                    {
+                        animation_clip = "HitLeft";
+                        GetComponent<CompAnimation>().SetTransition("ToHitLeft");
+                    }
+                    break;
+            }
         }
+
+        else if(next_dmg_type == Enemy_BT.ENEMY_GET_DAMAGE_TYPE.FIREWALL)
+        {
+            animation_clip = "HitFire";
+            GetComponent<CompAnimation>().PlayAnimationNode("HitFire");
+        }
+
         GetComponent<CompAnimation>().SetClipDuration(animation_clip, duration);
         //TODO_AI: Hurt audio
         //GetComponent<CompAudio>().PlayEvent("JaimeHurt");
@@ -131,6 +156,11 @@ class GetHit_Action: Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if (interupt == true)
+        {
+            return ACTION_RESULT.AR_FAIL;
+        }
+
         if(GetComponent<CompAnimation>().IsAnimOverXTime(0.3f) && !played_audio)
         {
             if(GetComponent<EnemyShield_BT>() != null)
@@ -155,5 +185,10 @@ class GetHit_Action: Action
         interupt = false;
         played_audio = false;
         return true;
+    }
+
+    public void SetHitType(Enemy_BT.ENEMY_GET_DAMAGE_TYPE dmg_type)
+    {
+        next_dmg_type = dmg_type;
     }
 }

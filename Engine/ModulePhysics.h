@@ -68,6 +68,7 @@ private:
 	physx::PxScene* mScene = nullptr;
 
 	bool did_simulation = false;
+	bool simulation_done = false;
 
 	// Config data ------------------
 	// Use only as a debug tool -----

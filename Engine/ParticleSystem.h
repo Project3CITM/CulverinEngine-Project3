@@ -4,7 +4,7 @@
 #include <vector>
 #include <list>
 #include "MathGeoLib.h"
-#include "CompMesh.h"
+#include "CompMaterial.h"
 
 
 #ifdef NULL
@@ -62,11 +62,28 @@
 
 #define MAX_PARTICLES_PER_EMITTER 1000
 
+class CompParticleSystem;
+
 struct ConeTrunk			//Definition of a cone trunk for the cone emitter type
 {
 	Circle Upper_Circle;
 	Circle Bottom_Circle;
 	float heigth = 1.0f;
+};
+
+enum ParticleBlendingType
+{
+	GlZero = 0,
+	GlOne,
+	GlSrcColor,
+	GlOneMinusSrcColor,
+	GlDstColor,
+	GlOneMinusDstColor,
+	GlSrcAlpha,
+	GlOneMinusSrcAlpha,
+	GlDstAlpha,
+	GlOneMinusDstAlpha,
+	GlSrcAlphaSaturate
 };
 
 class ParticleEmitter
@@ -108,6 +125,18 @@ public:
 	float Speed = 5.0f;								//Speed of emitted particles
 	float SpeedVariation = 0.0f;					//Speed variation of emitted particles
 	AABB BoundingBox;								//User can set AABB for camera culling purpose (we can add physics...)
+
+	bool glow = false;
+
+	//Particle Blendings
+	ParticleBlendingType source_type = ParticleBlendingType::GlSrcAlpha;
+	int p_source_type = 0x0302; //GL_SRC_ALPHA
+	ParticleBlendingType destiny_type = ParticleBlendingType::GlOne;
+	int p_destiny_type = 1; //GL_ONE
+
+	void SetSourceBlendingType();
+	void SetDestinyBlendingType();
+	
 	
 	/*
 	//Not working properly, transformations errors, so to avoid malfunctionality and a
@@ -190,6 +219,8 @@ struct ParticleProperties
 	float LifetimeActual = 0;					//Actual Particle Lifetime
 	unsigned int TextureID = 0;					//Texture ID used by this particle
 	float4 RGBATint = float4::zero;				//Particle Texture tint
+	int source_blend_type = 0x0302;				//0x0302 is for GL_SRC_ALPHA
+	int destiny_blend_type = 1;					//1 is for GL_ONE
 };
 
 class ParticleSystem;
@@ -197,7 +228,7 @@ class ParticleSystem;
 class Particle
 {
 public:
-	Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax);
+	Particle(ParticleSystem* parent, const ParticleState& Initial, const ParticleState& Final, float3 Speed, float3 offset, float LifetimeMax, bool _glow, int source_blend, int destiny_blend);
 	~Particle();
 	bool PreUpdate(float dt);
 	bool PostUpdate(float dt);
@@ -222,6 +253,8 @@ public:
 	ParticleAssignedState FinalState;							//Particle Final State Properties with no variations, all are final values (calculated from ParticleState +- Var)
 	bool MeshChanged = false;									//If we cahnge the mesh, we need to stop drowing it, update buffers and then start again
 	long double CameraDistance = 0.0;							//Store camera distance of this particle, used to sort them and draw with correct order
+	
+	bool glow = false;
 
 private:
 	bool ToDelete = false;	//If this particle is dead, we set this bool to true and wait to the right time to delete it
@@ -313,6 +346,8 @@ public:
 	void DeactivateEmitter();
 	bool IsEmitterActive() const;
 
+	bool SystemIsEmpty() const;
+
 	void DebugDrawEmitter();									//Draw emitter shape
 	void DebugDrawEmitterAABB();								//Draw emitter AABB
 	void DrawImGuiEditorWindow();								//Draw Particle Editor Window
@@ -343,6 +378,16 @@ public:
 	bool ShowEmitterBoundBox = false;							//Draw emitter AABB
 	bool ShowEmitter = true;									//Draw emitter shape
 
+	CompParticleSystem* parent = nullptr;
+	bool active = true;
+	bool preview = true;
+	bool to_delete = false;
+
+	ResourceMaterial* texture_resource = nullptr;
+
+	float discard_distance = 100.0;
+	float distance_to_camera = 0.0;
+
 private:
 	ParticleMeshData ParticleMesh;								//Particle mesh to use
 	std::vector<Particle> Particles;								//Particles created
@@ -355,7 +400,7 @@ private:
 	std::vector<unsigned int> TexturesUV_ID;					//Particle animation UVs IDs
 	float NextParticleTime = 0.0f;								//Store next time when the next particle will be spawned
 
-	uint last_particle_alive = 0;
+
 
 	enum
 	{

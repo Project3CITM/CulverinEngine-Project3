@@ -35,8 +35,8 @@ public class SpearAttack_Action : Action
     public override bool ActionStart()
     {
         state = SWA_STATE.PRE_APPLY;
-        GetComponent<CompAnimation>().SetTransition("ToAttack");
         GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
+        GetComponent<CompAnimation>().PlayAnimationNode("Attack");
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
         //Interrupt player action
         return true;
@@ -44,7 +44,6 @@ public class SpearAttack_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-       // Debug.Log("[error]Is melee attack:" + melee_attack);
         if (melee_attack)
         {
             if (interupt == true)

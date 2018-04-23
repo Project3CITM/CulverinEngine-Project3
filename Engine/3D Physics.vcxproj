@@ -14,7 +14,7 @@
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
     <ProjectName>CulverinEngine</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -118,6 +118,7 @@
     <ClInclude Include="CompCanvasRender.h" />
     <ClInclude Include="CompCheckBox.h" />
     <ClInclude Include="CompCollider.h" />
+    <ClInclude Include="CompCubeMapRenderer.h" />
     <ClInclude Include="CompEditText.h" />
     <ClInclude Include="CompFSM.h" />
     <ClInclude Include="CompGraphic.h" />
@@ -135,6 +136,7 @@
     <ClInclude Include="CompText.h" />
     <ClInclude Include="CompUIAnimation.h" />
     <ClInclude Include="CSharpScript.h" />
+    <ClInclude Include="CubeMap_Texture.h" />
     <ClInclude Include="DefaultShaders.h" />
     <ClInclude Include="DepthCubeMap.h" />
     <ClInclude Include="EventDef.h" />
@@ -163,9 +165,10 @@
     <ClInclude Include="ModuleEventSystemV2.h" />
     <ClInclude Include="ModuleFS.h" />
     <ClInclude Include="ModuleFramebuffers.h" />
-    <ClInclude Include="ModuleKeyBinding.h" />
+    <ClInclude Include="KeyBinding.h" />
     <ClInclude Include="ModuleLightning.h" />
     <ClInclude Include="ModuleMap.h" />
+    <ClInclude Include="ModuleParticles.h" />
     <ClInclude Include="ModulePhysics.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="ClickAction.h" />
@@ -367,6 +370,7 @@
     <ClInclude Include="ShadersLib.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="TextEditor.h" />
+    <ClInclude Include="VertexUIData.h" />
     <ClInclude Include="WindowHierarchy.h" />
     <ClInclude Include="ModuleImporter.h" />
     <ClInclude Include="WindowProject.h" />
@@ -476,6 +480,7 @@
     <ClCompile Include="CompCanvasRender.cpp" />
     <ClCompile Include="CompCheckBox.cpp" />
     <ClCompile Include="CompCollider.cpp" />
+    <ClCompile Include="CompCubeMapRenderer.cpp" />
     <ClCompile Include="CompEditText.cpp" />
     <ClCompile Include="CompFSM.cpp" />
     <ClCompile Include="CompGraphic.cpp" />
@@ -496,6 +501,7 @@
     <ClCompile Include="CSharpComponents.cpp" />
     <ClCompile Include="CSharpTransform.cpp" />
     <ClCompile Include="CSharpUI.cpp" />
+    <ClCompile Include="CubeMap_Texture.cpp" />
     <ClCompile Include="DepthCubeMap.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ImGui\ImGuizmo.cpp" />
@@ -520,9 +526,11 @@
     <ClCompile Include="ModuleEventSystemV2.cpp" />
     <ClCompile Include="ModuleFS.cpp" />
     <ClCompile Include="ModuleFramebuffers.cpp" />
-    <ClCompile Include="ModuleKeyBinding.cpp" />
+    <ClCompile Include="ModuleGUI_Build.cpp" />
+    <ClCompile Include="KeyBinding.cpp" />
     <ClCompile Include="ModuleLightning.cpp" />
     <ClCompile Include="ModuleMap.cpp" />
+    <ClCompile Include="ModuleParticles.cpp" />
     <ClCompile Include="ModulePhysics.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="ClickAction.cpp" />
@@ -543,6 +551,7 @@
     <ClCompile Include="ShadersLib.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="TextEditor.cpp" />
+    <ClCompile Include="VertexUIData.cpp" />
     <ClCompile Include="WindowHierarchy.cpp" />
     <ClCompile Include="ModuleImporter.cpp" />
     <ClCompile Include="WindowProject.cpp" />

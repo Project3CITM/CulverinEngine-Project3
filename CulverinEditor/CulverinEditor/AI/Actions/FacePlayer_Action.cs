@@ -17,15 +17,19 @@ public class FacePlayer_Action : Action
     {
         move = GetComponent<Movement_Action>();
         move.LookAtPlayer();
+        move.ActionStart();
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-       /* if (interupt == true)
-        {
+        if (interupt == true)
             move.Interupt();
-        }*/
+
+        ACTION_RESULT move_update = move.ActionUpdate();
+
+        if (move_update != ACTION_RESULT.AR_IN_PROGRESS)
+            move.ActionEnd();
 
         return move.ActionUpdate();
     }
@@ -36,20 +40,4 @@ public class FacePlayer_Action : Action
         return true;
     }
 
-    public bool IsFaced()
-    {
-        forward = new Vector3(GetComponent<Transform>().GetForwardVector());
-        Vector3 pos = new Vector3(GetComponent<Transform>().position);
-        Vector3 target_pos = new Vector3(GetLinkedObject("player_obj").GetComponent<Transform>().position);
-        obj_vec = new Vector3(target_pos - pos);
-
-        if (pos == target_pos)
-        {
-            return true;
-        }
-
-        delta = Vector3.AngleBetweenXZ(forward, obj_vec);
-
-        return Mathf.Abs(delta) < 0.1f;
-    }
 }

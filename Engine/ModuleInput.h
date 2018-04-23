@@ -4,11 +4,21 @@
 #include "Module.h"
 #include "Globals.h"
 #include "parson.h"
+#include "KeyBinding.h"
 
 #define MAX_MOUSE_BUTTONS 5
 #define MAX_CONTROLLER_BUTTONS 15
 class InputManager;
 class PlayerActions;
+struct GamePad
+{
+	bool Empty();
+	void Clear();
+	_SDL_GameController* controller = nullptr;
+	SDL_Joystick* joystick = NULL;
+	SDL_Haptic* haptic = NULL;
+	int id = -1;
+};
 enum KEY_STATE
 {
 	KEY_IDLE = 0,
@@ -16,7 +26,6 @@ enum KEY_STATE
 	KEY_REPEAT,
 	KEY_UP
 };
-
 /*struct Controller
 {
 	KEY_STATE				controller_buttons[MAX_CONTROLLER_BUTTONS];
@@ -24,7 +33,8 @@ enum KEY_STATE
 	uint					left_joystick_dir[4];
 	_SDL_GameController*	pad = nullptr;
 };*/
-
+struct KeyRelation;
+class KeyBinding;
 class ModuleInput : public Module
 {
 public:
@@ -112,10 +122,22 @@ public:
 		mouse_x_global = x;
 		mouse_y_global = y;
 	}
+	bool GetUpdateNewDevice()const;
+	DeviceCombinationType GetActualDeviceCombo()const;
+	void UpdateDeviceType(DeviceCombinationType actual_player_action);
+	void RumblePlay(float intensity, int milliseconds);
+	_SDL_GameController* GetGameController()const;
+	SDL_Joystick* GetJoystick() const;
+	SDL_Haptic* GetHaptic() const;
+	KeyRelation* FindKeyBinding(const char* string);
+
+private:
+	bool ConnectGameController();
 public:
 	bool quit = false;
 
 private:
+	KeyBinding* key_binding = nullptr;
 	KEY_STATE* keyboard;
 	KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
 	int mouse_x = 0;
@@ -137,10 +159,12 @@ private:
 	std::string vertical;
 	std::string horizontal;
 	bool ui_conected = false;
-
+	bool update_new_device = false;
+	bool rumble_active = true;
+	DeviceCombinationType actual_device_combo = DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
 public:
 	std::list<const char*> dropedfiles;
-	_SDL_GameController* controller = nullptr;
+	GamePad gamepad;
 	PlayerActions* player_action = nullptr;
 	InputManager* ui_manager = nullptr;
 };

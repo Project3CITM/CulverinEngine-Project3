@@ -30,12 +30,13 @@ public:
 	void CreateChilds();
 
 	//template<typename TYPE>
-	int CollectIntersections(std::list<GameObject*>& nodes, const Frustum& frustum) const;
-	void CollectAllObjects(std::list<GameObject*>& all_obj) const;
+	int CollectIntersections(std::vector<GameObject*>& nodes, const Frustum& frustum, math::float3 center_frustum, float size_frustum) const;
+	int CollectAllChilds(std::vector<GameObject*>& nodes) const;
+	void CollectAllObjects(std::vector<GameObject*>& all_obj) const;
 
 public:
 	AABB box;
-	std::list<GameObject*> objects;
+	std::vector<GameObject*> objects;
 	OctreeNode* parent = nullptr;
 	OctreeNode* childs[8];
 
@@ -55,8 +56,8 @@ public:
 	void DebugDraw();
 
 	//template<typename TYPE>
-	int CollectIntersections(std::list<GameObject*>& nodes, const Frustum& frustum) const;
-	void CollectAllObjects(std::list<GameObject*>& all_obj) const;
+	int CollectIntersections(std::vector<GameObject*>& nodes, const Frustum& frustum) const;
+	void CollectAllObjects(std::vector<GameObject*>& all_obj) const;
 
 public:
 	

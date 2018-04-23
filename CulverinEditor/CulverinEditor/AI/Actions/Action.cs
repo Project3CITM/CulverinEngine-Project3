@@ -22,6 +22,7 @@ public class Action : CulverinBehaviour
         IDLE_ATTACK_ACTION,
         INVESTIGATE_ACTION,
         CHASE_ACTION,
+        INFINITE_CHASE_ACTION,
         SEPARATE_ACTION,
         FACE_PLAYER_ACTION,
         PUSHBACK_ACTION,
@@ -30,29 +31,36 @@ public class Action : CulverinBehaviour
         SHIELD_BLOCK_ACTION,
         ENGAGE_ACTION,
         DISENGAGE_ACTION,
-        DIE_ACTION
+        DIE_ACTION,
+        BOSS_ATTACK_SWORD_DOWN_ACTION,
+        BOSS_ATTACK_WIDE_ACTION,
+        BOSS_ATTACK_STRONG_ACTION,
+        BOSS_ATTACK_GRAB_ACTION,
+        BOSS_ENGAGE_ACTION
     }
 
     public ACTION_TYPE action_type = ACTION_TYPE.NO_ACTION;
 
     public Action()
-    {}
+    {
+        action_type = ACTION_TYPE.NO_ACTION;
+    }
 
     public virtual bool ActionStart()
     {
-        Debug.Log("Action start not defined!");
+        Debug.Log("[error] Action start not defined!");
         return false;
     }
 
     public virtual ACTION_RESULT ActionUpdate()
     {
-        Debug.Log("Action update not defined!");
+        Debug.Log("[error] Action update not defined!");
         return ACTION_RESULT.AR_FAIL;
     }
 
     public virtual bool ActionEnd()
     {
-        Debug.Log("Action end not defined!");
+        Debug.Log("[error] Action end not defined!");
         interupt = false;
         return false;
     }

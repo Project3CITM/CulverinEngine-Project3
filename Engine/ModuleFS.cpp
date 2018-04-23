@@ -25,10 +25,11 @@ ModuleFS::~ModuleFS()
 	allfilesAsstes.clear(); 
 }
 
-bool ModuleFS::Init(JSON_Object * node)
+bool ModuleFS::Init(JSON_Object* node)
 {
 	// Will contain exe path
 	GetCurrentDirectory(MAX_PATH, ownPth);
+
 	directory_game = ownPth;
 	directory_assets = directory_game + "\\Assets";
 	LOG("%s", directory_game);
@@ -47,6 +48,7 @@ bool ModuleFS::Init(JSON_Object * node)
 	CreateFolder("Assets/Maps");
 	CreateFolder("Assets/Shaders");
 	CreateFolder("Assets/Shaders/Materials");
+
 	return true;
 }
 
@@ -64,6 +66,7 @@ bool ModuleFS::Start()
 
 update_status ModuleFS::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleFS", Profiler::Color::Blue);
 	perf_timer.Start();
 	static bool ImportAutoFiles = true;
 	if (ImportAutoFiles)
@@ -163,6 +166,33 @@ std::string ModuleFS::CopyFileToAssetsS(const char* fileNameFrom, const char* fi
 	return exits;
 }
 
+void ModuleFS::CopyPasteFile(const char * fileFrom, const char* fileTo, bool check_filefromTo)
+{
+	namespace fs = std::experimental::filesystem;
+	if (fileFrom != nullptr && fileTo != nullptr)
+	{
+		if (fs::exists(fileTo))
+		{
+			fs::remove(fileTo);
+		}
+		if (check_filefromTo)
+		{
+			std::string temp = fileTo;
+			temp = GetOnlyPath(temp);
+			temp += "/" + GetOnlyName(fileFrom);
+			temp += ".exe";
+			NormalitzatePath(temp);
+			LOG("%s", temp.c_str());
+			App->SaveLogs();
+			if (fs::exists(temp.c_str()))
+			{
+				fs::remove(temp.c_str());
+			}
+		}
+		fs::copy(fileFrom, fileTo);
+	}
+}
+
 void ModuleFS::CopyFolderToLibrary(const char * folder)
 {
 	namespace fs = std::experimental::filesystem;
@@ -178,6 +208,15 @@ void ModuleFS::CopyFolderToLibrary(const char * folder)
 	CreateFolder("Library");
 	CreateFolder("Library/ParticleSystem");
 	fs::copy(from, to, fs::copy_options::recursive);
+}
+
+void ModuleFS::CopyPasteFolder(const char* folderFrom, const char* folderTo)
+{
+	namespace fs = std::experimental::filesystem;
+	if (folderFrom != nullptr && folderTo != nullptr)
+	{
+		fs::copy(folderFrom, folderTo, fs::copy_options::recursive);
+	}
 }
 
 bool ModuleFS::CheckAssetsIsModify()
@@ -288,7 +327,7 @@ void ModuleFS::GetAllFiles(std::experimental::filesystem::path path, std::vector
 	}
 }
 
-void ModuleFS::GetAllFilesByExtension(std::experimental::filesystem::path path, std::vector<std::string>& files, const char* ext)
+void ModuleFS::GetAllFilesByExtension(std::experimental::filesystem::path path, std::vector<std::string>& files, const char* ext, bool recursive)
 {
 	namespace stdfs = std::experimental::filesystem;
 
@@ -305,9 +344,24 @@ void ModuleFS::GetAllFilesByExtension(std::experimental::filesystem::path path, 
 		{
 			files.push_back(iter->path().string());
 		}
-		if (stdfs::is_directory(*iter))
+		if (stdfs::is_directory(*iter) && recursive)
 		{
 			GetAllFilesByExtension(iter->path().string(), files, ext);
+		}
+	}
+}
+
+void ModuleFS::GetOnlyFilesFromFolder(std::experimental::filesystem::path path, std::vector<std::string>& files)
+{
+	namespace stdfs = std::experimental::filesystem;
+
+	const stdfs::directory_iterator end{};
+
+	for (stdfs::directory_iterator iter{ path }; iter != end; ++iter)
+	{
+		if (!stdfs::is_directory(*iter))
+		{
+			files.push_back(iter->path().string());
 		}
 	}
 }
@@ -971,35 +1025,39 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 		break;
 	}
 	}
-	std::ifstream is(temp, std::ifstream::binary);
-	int length = 0;
-	if (is)
+	if (std::experimental::filesystem::exists(temp))
 	{
-		// get length of file:
-		is.seekg(0, is.end);
-		length = is.tellg();
-		is.seekg(0, is.beg);
-
-		*buffer = new char[length];
-
-		is.read(*buffer, length);
-
+		std::ifstream is(temp, std::ifstream::binary);
+		int length = 0;
 		if (is)
 		{
-			LOG("File Loaded.")
+			// get length of file:
+			is.seekg(0, is.end);
+			length = is.tellg();
+			is.seekg(0, is.beg);
+
+			*buffer = new char[length];
+
+			is.read(*buffer, length);
+
+			if (is)
+			{
+				LOG("File Loaded.")
+			}
+			else
+			{
+				LOG("Error %s", is.gcount());
+			}
+
+			is.close();
 		}
 		else
 		{
-			LOG("Error %s", is.gcount());
+			LOG("Error to Load File -> %s", file);
 		}
-
-		is.close();
+		return length;
 	}
-	else
-	{
-		LOG("Error to Load File -> %s", file);
-	}
-	return length;
+	return 0;
 }
 
 bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY_IMPORT directory)
@@ -1054,7 +1112,6 @@ bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY
 	{
 		// write to outfile
 		outfile.write(data, size);
-		LOG("Save File %s", name.c_str());
 	}
 	else
 	{
@@ -1265,6 +1322,12 @@ std::string ModuleFS::GetExtension(std::string file, bool is_meta)
 			file = file.substr(EndName + 1);
 			return file;
 		}
+		EndName = file.find(".anim.json");
+		if (EndName != std::string::npos)
+		{
+			file = file.substr(EndName + 1);
+			return file;
+		}
 		EndName = file.find_last_of(".");
 		if(EndName != std::string::npos)
 		{
@@ -1338,7 +1401,7 @@ const char* ModuleFS::ConverttoConstChar(std::string name)
 	return temp;
 }
 
-std::string ModuleFS::GetAssetsDirectory()
+std::string ModuleFS::GetGameDirectory()
 {
 	return directory_game;
 }

@@ -35,11 +35,11 @@ enum Comp_Type
 	C_AUDIO = 17,
 	C_BONE,
 	C_FSM,
-	C_LIGHT,
+	C_LIGHT,	
 	C_PARTICLE_SYSTEM,
 	C_JOINT,
 	C_ANIMATION_UI,
-
+	C_CUBEMAP_RENDERER,
 	//Graphic
 	C_CANVAS = 50,
 	C_CANVAS_RENDER,
@@ -50,6 +50,7 @@ enum Comp_Type
 	C_CHECK_BOX,
 	C_BUTTON,
 	C_SLIDER
+	
 };
 
 class Component
@@ -80,6 +81,7 @@ public:
 	void SetActive(bool active);
 	void SetUUIDRandom();
 	void SetInScripting();
+	void SetDelete(bool set_delete);
 
 	uint GetUUID() const;
 	Comp_Type GetType() const;

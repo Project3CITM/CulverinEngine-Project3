@@ -19,7 +19,6 @@ public class Arrow : CulverinBehaviour
         destroyed = false;
         Shoot();
         collision = true;
-        damage = 10.0f;
     }
 
     public void Shoot()
@@ -46,7 +45,6 @@ public class Arrow : CulverinBehaviour
 
     void OnContact()
     {
-        Debug.Log("[yellow]Contact Start");
         CompCollider col = GetComponent<CompCollider>();
         GameObject collided_obj = col.GetCollidedObject();
        
@@ -54,23 +52,18 @@ public class Arrow : CulverinBehaviour
         Vector3 normal = col.GetContactNormal();
 
         // DAMAGE ---
-        Debug.Log("[error] Collided");
         if (collided_obj != null && destroyed == false)
         {
             /* PLAY AUDIO */
             GetComponent<CompAudio>().PlayEvent("TheonImpact");
-            Debug.Log("[yellow] AJAAAA -------------------------------------");
             //Lock transform to avoid trespassing more than one collider
             rb.LockTransform();
-
-            Debug.Log("[error] OnContact");
-            Debug.Log("[error]" + collided_obj.GetName());
 
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
             {
-                enemy_manager.ApplyDamage(collided_obj, damage);
+                enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
                 if (arrow_blood_particles != null)
                 {
 
@@ -79,9 +72,6 @@ public class Arrow : CulverinBehaviour
 
                     CompParticleSystem arrow_particles_script = arrow_blood_particles.GetComponent<CompParticleSystem>();
                     arrow_particles_script.ActivateEmission(true);
-
-                    Debug.Log("[pink] ---------------- BLOOOOOD -------------------");
-
                 }
             }
             else
@@ -99,7 +89,6 @@ public class Arrow : CulverinBehaviour
 
                     CompParticleSystem wall_particles_script = arrow_sparks_particles.GetComponent<CompParticleSystem>();
                     wall_particles_script.ActivateEmission(true);
-                    Debug.Log("[pink] ---------------- BLOOOOOD -------------------");
                 }
             }
         }

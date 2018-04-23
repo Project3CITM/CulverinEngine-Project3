@@ -43,8 +43,11 @@ ModuleResourceManager::~ModuleResourceManager()
 
 bool ModuleResourceManager::Init(JSON_Object* node)
 {
-	CreateResourceCube();
-	CreateResourcePlane();
+	if (App->build_mode == false)
+	{
+		CreateResourceCube();
+		CreateResourcePlane();
+	}
 
 	// Load resources with meta
 	NewLoad();
@@ -55,7 +58,7 @@ bool ModuleResourceManager::Init(JSON_Object* node)
 bool ModuleResourceManager::Start()
 {
 	perf_timer.Start();
-
+	LOG("Start ResourceManager -------------");
 	if (App->mode_game == false)
 	{
 		for (std::map<uint, Resource*>::iterator it = resources.begin(); it != resources.end(); it++)
@@ -79,7 +82,7 @@ bool ModuleResourceManager::Start()
 				{
 					path_resources_library += ".ttf";
 				}
-				if (App->fs->CheckIsFileExist(path_resources_library) || to_reimport->GetType() == Resource::Type::ANIMATION)
+				if (App->fs->CheckIsFileExist(path_resources_library) || to_reimport->GetType() == Resource::Type::ANIMATION || to_reimport->GetType() == Resource::Type::SCRIPT)
 				{
 					continue;
 				}
@@ -123,13 +126,15 @@ bool ModuleResourceManager::Start()
 				delete it->second;
 				resources.erase(it);
 			}
-
 			// Now ReImport
 			LOG("ReImporting...");
 			ImportFile(files_reimport, resources_to_reimport, true);
 			LOG("Finished ReImport.");
 			// After reimport, update time of vector of files in filesystem.
-			App->fs->UpdateFilesAssets();
+			if (App->mode_game == false)
+			{
+				App->fs->UpdateFilesAssets();
+			}
 			files_reimport.clear();
 			for (int i = 0; i < resources_to_reimport.size(); i++)
 			{
@@ -141,7 +146,6 @@ bool ModuleResourceManager::Start()
 			reimport_now = false;
 		}
 	}
-
 	Start_t = perf_timer.ReadMs();
 	return true;
 }
@@ -149,6 +153,7 @@ bool ModuleResourceManager::Start()
 
 update_status ModuleResourceManager::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleResourceManager", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (App->input->dropedfiles.size() > 0)
@@ -224,6 +229,7 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 
 update_status ModuleResourceManager::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModuleResourceManager", Profiler::Color::Blue);
 	if (resources_to_reimport.size() > 0 && reimport_now)
 	{
 		// if a Resource state == Resource::State::REIMPORT delete it.
@@ -410,8 +416,11 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(it._Ptr->_Myval).c_str(), App->fs->GetExtension(it._Ptr->_Myval));
 		}
 	}
-	((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
-	App->fs->UpdateFilesAssets();
+	if (App->mode_game == false)
+	{
+		((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
+		App->fs->UpdateFilesAssets();
+	}
 }
 
 void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vector<ReImport>& resourcesToReimport, bool auto_reimport)
@@ -435,14 +444,17 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(file[i]).c_str(), App->fs->GetExtension(file[i]).c_str());
 		}
 	}
-	if (App->mode_game == false)
+	if (App->mode_game == false && App->build_mode == false)
 	{
 		if (auto_reimport == false)
 		{
 			((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
 		}
 	}
-	App->fs->UpdateFilesAssets();
+	if (App->mode_game == false)
+	{
+		App->fs->UpdateFilesAssets();
+	}
 }
 
 Resource* ModuleResourceManager::CreateNewResource(Resource::Type type, uint uuid)
@@ -823,7 +835,7 @@ void ModuleResourceManager::NewLoad()
 	std::vector<std::string> files_meta;
 	App->fs->GetAllMetas(App->fs->GetMainDirectory(), files_meta);
 	App->json_seria->CreateResourcesLoad(files_meta);
-
+	files_meta.clear();
 	//Duplicate Particle folder to library
 	App->fs->CopyFolderToLibrary("ParticleSystem");
 

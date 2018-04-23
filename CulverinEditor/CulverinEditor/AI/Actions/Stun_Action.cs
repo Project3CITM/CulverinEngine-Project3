@@ -19,19 +19,22 @@ public class Stun_Action : Action
         GetComponent<Align_Steering>().SetEnabled(false);
         GetComponent<Arrive_Steering>().SetEnabled(false);
         GetComponent<Seek_Steering>().SetEnabled(false);
-        GetComponent<CompAnimation>().SetTransition("ToStun");
+        //GetComponent<CompAnimation>().SetTransition("ToStun");
         GetComponent<CompAnimation>().SetClipDuration("Stun", stun_duration);
+        GetComponent<CompAnimation>().PlayAnimationNode("Stun");
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
         if (interupt == true)
+        {
+            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_FAIL;
+        }
 
         if (GetComponent<CompAnimation>().IsAnimationStopped("Stun"))
         {
-            Debug.Log("Stun finished");
             GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_SUCCESS;
         }

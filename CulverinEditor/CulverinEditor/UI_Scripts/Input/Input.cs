@@ -53,6 +53,12 @@ namespace CulverinEditor
         public static extern void SetInputManagerBlock(string name, bool set);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetInputManagerActive(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetInputManagerBlock(string name);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool GetInput_KeyDown(string name, string set);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -69,6 +75,21 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern float GetInput_ControllerAxis(string name, string input);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern string GetInput_ControllerActionName(string name, string input, string device, bool negative_key);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern string GetInput_ControllerKeyBindingName(string name, string input, string device, bool negative_key);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetInput_ControllerWaitForKey(string name, string input, string device, bool negative_key);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetInput_ControllerWaitForKey(string name, string input, string device, bool negative_key);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void RumblePlay(float intensity, int milliseconds);
 
 
 

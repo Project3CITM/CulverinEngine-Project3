@@ -51,6 +51,8 @@ ModuleGUI::~ModuleGUI()
 		delete win_manager[i];
 	}
 	win_manager.clear();
+	scenes_build.clear();
+	scenes_only_name.clear();
 }
 
 
@@ -112,6 +114,7 @@ bool ModuleGUI::Start()
 
 update_status ModuleGUI::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: ModuleGUI", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	//ShowTest -----------------------
@@ -157,8 +160,9 @@ update_status ModuleGUI::Update(float dt)
 				App->WantToLoad();
 			}
 			ImGui::Separator();
-			if (ImGui::MenuItem("Build Settings...", NULL, false, false))
+			if (ImGui::MenuItem("Build Settings...", "Ctrl + Shift + B"))
 			{
+				window_build = !window_build;
 			}
 			if (ImGui::MenuItem("Build & Run", NULL, false, false))
 			{
@@ -502,6 +506,12 @@ update_status ModuleGUI::Update(float dt)
 		App->animation_ui->ShowAnimationWindow(window_create_animation);
 	}
 	//----------------------------------------------
+	// Build Window
+	if (window_build && App->mode_game == false)
+	{
+		ShowWindowBuild(&window_build);
+	}
+	//----------------------------------------------
 	// Window Creating Shader Object --------------------------------
 
 	if (shader_obj_creation) {
@@ -616,7 +626,7 @@ update_status ModuleGUI::Update(float dt)
 				Material* new_mat = new Material();
 				new_mat->name = str_mat_temp;
 				new_mat->material_shader = selected_shader_program;
-				App->module_shaders->materials.push_back(new_mat);
+				App->module_shaders->materials.insert(std::pair<uint, Material*>(new_mat->GetProgramID(), new_mat));
 				selected_shader_program = nullptr;
 				new_mat->GetProgramVariables();
 				new_mat->Save();
@@ -1311,6 +1321,7 @@ bool ModuleGUI::SetEventListenrs()
 
 void ModuleGUI::OnEvent(Event& event)
 {
+	BROFILER_CATEGORY("OnEvent: ModuleGUI", Profiler::Color::Blue);
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:
