@@ -99,7 +99,7 @@ public:
 
 	void SetState(EngineState state);
 
-	void WantToSave();
+	void WantToSave(bool binary = false);
 	void WantToLoad(bool in_game = false);
 	void DontDestroyOnLoad();
 	void LoadMultiScene();
@@ -203,6 +203,7 @@ private:
 	std::string secondary_scene;
 
 	bool want_to_save = false;
+	bool want_to_save_binary = false;
 	bool want_to_load = false;
 	bool load_in_game = false;
 

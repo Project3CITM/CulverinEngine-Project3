@@ -1679,6 +1679,9 @@
     <ClCompile Include="CubeMap_Texture.cpp">
       <Filter>Engine\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="SerializationBinary.cpp">
+      <Filter>Engine\Importer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Geometry\KDTree.inl">

@@ -152,6 +152,10 @@ update_status ModuleGUI::Update(float dt)
 			{
 				App->WantToSave();
 			}
+			if (ImGui::MenuItem("Save Scene Binary", NULL, false, false))
+			{
+				App->WantToSave();
+			}
 			if (ImGui::MenuItem("Save Scene as...", NULL, false, false))
 			{
 			}

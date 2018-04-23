@@ -519,6 +519,7 @@
     <ClCompile Include="jpPhysicsJoint.cpp" />
     <ClCompile Include="jpPhysicsRigidBody.cpp" />
     <ClCompile Include="jpPhysicsWorld.cpp" />
+    <ClCompile Include="SerializationBinary.cpp" />
     <ClCompile Include="Materials.cpp" />
     <ClCompile Include="mmgr\mmgr.cpp" />
     <ClCompile Include="ModuleAnimation.cpp" />

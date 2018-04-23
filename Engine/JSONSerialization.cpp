@@ -253,7 +253,6 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				App->scene->dynamic_objects.push_back(scene_ptr[i].go);
 			}
 		}
-		App->scene->RecalculateStaticObjects();
 
 		templist.clear();
 		

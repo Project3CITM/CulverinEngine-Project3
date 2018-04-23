@@ -275,6 +275,14 @@ void Application::FinishUpdate()
 		}
 		want_to_save = false;
 	}
+	if (want_to_save_binary == true)
+	{
+		if (App->mode_game == false)
+		{
+			//actual_scene = json_seria->SaveScene();
+		}
+		want_to_save_binary = false;
+	}
 
 	if (want_to_load == true)
 	{
@@ -1010,9 +1018,16 @@ void Application::SetState(EngineState state)
 	LOG("Engine State is Now: %i", engine_state);
 }
 
-void Application::WantToSave()
+void Application::WantToSave(bool binary)
 {
-	want_to_save = true;
+	if (binary == false)
+	{
+		want_to_save = true;
+	}
+	else
+	{
+		want_to_save_binary = true;
+	}
 }
 
 void Application::WantToLoad(bool in_game)
