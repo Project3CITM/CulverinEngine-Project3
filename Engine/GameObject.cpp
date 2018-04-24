@@ -1899,6 +1899,41 @@ void GameObject::AddComponentCopy(const Component& copy)
 	}
 }
 
+void GameObject::GetOwnBufferSize(uint & buffer_size)
+{
+	buffer_size += sizeof(int);			//identifier
+	buffer_size += sizeof(GetUUID());
+	int uuidParent = -1;
+	if (this->GetParent() != nullptr)
+	{
+		uuidParent = this->GetParent()->GetUUID();
+	}
+	buffer_size += sizeof(uuidParent);
+	//Save name size
+	buffer_size += sizeof(int);			
+	buffer_size += name.size();
+	//Save Tag size
+	buffer_size += sizeof(int);
+	buffer_size += tag.size();
+	buffer_size += sizeof(bb_active);
+	buffer_size += sizeof(static_obj);
+	buffer_size += sizeof(animation_translations);
+	buffer_size += sizeof(animation_rotations);
+	buffer_size += sizeof(animation_scales);
+
+	// Save Components size
+	//buffer_size += sizeof(components.size());
+	//for (uint i = 0; i < components.size(); i++)
+	//{
+	//	components[i]->GetOwnBufferSize(buffer_size);
+	//}
+
+	//for (uint i = 0; i < childs.size(); i++)
+	//{
+	//	childs[i]->GetOwnBufferSize(buffer_size);
+	//}
+}
+
 void GameObject::SaveComponents(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
 	for (uint i = 0; i < components.size(); i++)
