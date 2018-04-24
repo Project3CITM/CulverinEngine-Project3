@@ -5,6 +5,22 @@
 #include <vector>
 #include "ShadersLib.h"
 
+
+enum MaterialBlendModes
+{
+	MGlZero = 0,
+	MGlOne,
+	MGlSrcColor,
+	MGlOneMinusSrcColor,
+	MGlDstColor,
+	MGlOneMinusDstColor,
+	MGlSrcAlpha,
+	MGlOneMinusSrcAlpha,
+	MGlDstAlpha,
+	MGlOneMinusDstAlpha,
+	MGlSrcAlphaSaturate
+};
+
 class Material {
 public:
 	Material();
@@ -27,10 +43,13 @@ public:
 
 	void GetProgramVariables();
 	uint GetProgramID() const;
-
 	
 	void RestartIterators();
 
+	// BLEND MODES ------------------------
+	void SetSourceBlendMode();
+	void SetDestinyBlendMode();
+	//----------------
 
 public:
 
@@ -43,6 +62,12 @@ public:
 
 	//GLOW
 	bool glow = false;
+
+	//BLEND MODES
+	MaterialBlendModes source_type = MaterialBlendModes::MGlOne;
+	int m_source_type = GL_ONE; 
+	MaterialBlendModes destiny_type = MaterialBlendModes::MGlOneMinusSrcAlpha;
+	int m_destiny_type = GL_ONE_MINUS_SRC_ALPHA;
 
 	//Variables Vector
 	std::vector<TextureVar>	textures;

@@ -282,7 +282,7 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	ui_light_type =json_object_dotget_number_with_std(object, name + "Light Type");
 	type = (Light_type)ui_light_type;
 	ambientCoefficient = json_object_dotget_number_with_std(object, name + "Ambient Coefficient");
-	radius = 50;// json_object_dotget_number_with_std(object, name + "Radius");
+	radius =  json_object_dotget_number_with_std(object, name + "Radius");
 	properties[0] = json_object_dotget_number_with_std(object, name + "Intensity");
 	properties[1] = json_object_dotget_number_with_std(object, name + "Constant");
 	properties[2] = json_object_dotget_number_with_std(object, name + "Linear");

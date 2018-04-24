@@ -170,11 +170,12 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 void ModuleEventSystemV2::IterateDrawV(float dt)
 {
 	BROFILER_CATEGORY("ModuleEventSystemV2: IterateDrawV", Profiler::Color::Blue);
-
+	glEnable(GL_BLEND);
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	Material* LastUsedMaterial = nullptr;
 	Material* ActualMaterial =  nullptr;
+
 	for (std::multimap<DrawVMultimapKey, Event, Comparator>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -184,11 +185,13 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 			NewProgramID = 0;
 			if (item._Ptr->_Myval.first.uuid != 0)
 				NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
-
+			
 				ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
 
 			if (LastUsedMaterial != ActualMaterial)
 			{
+			
+				glBlendFunc(ActualMaterial->m_source_type, ActualMaterial->m_destiny_type);
 				
 				LastUsedMaterial = ActualMaterial;
 
@@ -234,6 +237,8 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 			continue;
 		}
 	}
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_BLEND);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
 }

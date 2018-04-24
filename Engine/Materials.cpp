@@ -401,3 +401,106 @@ void Material::RestartIterators()
 	it_bool_variables = bool_variables.begin();
 	it_cube_maps = cube_maps.begin();
 }
+
+
+void Material::SetSourceBlendMode()
+{
+	switch (source_type)
+	{
+	case MGlZero:
+		m_source_type = GL_ZERO;
+		break;
+
+	case MGlOne:
+		m_source_type = GL_ONE;
+		break;
+
+	case MGlSrcColor:
+		m_source_type = GL_SRC_COLOR;
+		break;
+
+	case MGlOneMinusSrcColor:
+		m_source_type = GL_ONE_MINUS_SRC_COLOR;
+		break;
+
+	case MGlDstColor:
+		m_source_type = GL_DST_COLOR;
+		break;
+
+	case MGlOneMinusDstColor:
+		m_source_type = GL_ONE_MINUS_DST_COLOR;
+		break;
+
+	case MGlSrcAlpha:
+		m_source_type = GL_SRC_ALPHA;
+		break;
+
+	case MGlOneMinusSrcAlpha:
+		m_source_type = GL_ONE_MINUS_SRC_ALPHA;
+		break;
+
+	case MGlDstAlpha:
+		m_source_type = GL_DST_ALPHA;
+		break;
+
+	case MGlOneMinusDstAlpha:
+		m_source_type = GL_ONE_MINUS_DST_ALPHA;
+		break;
+
+	case MGlSrcAlphaSaturate:
+		m_source_type = GL_SRC_ALPHA_SATURATE;
+		break;
+	}
+}
+
+void Material::SetDestinyBlendMode()
+{
+	switch (destiny_type)
+	{
+	case MGlZero:
+		m_destiny_type = GL_ZERO;
+		break;
+
+	case MGlOne:
+		m_destiny_type = GL_ONE;
+		break;
+
+	case MGlSrcColor:
+		m_destiny_type = GL_SRC_COLOR;
+		break;
+
+	case MGlOneMinusSrcColor:
+		m_destiny_type = GL_ONE_MINUS_SRC_COLOR;
+		break;
+
+	case MGlDstColor:
+		m_destiny_type = GL_DST_COLOR;
+		break;
+
+	case MGlOneMinusDstColor:
+		m_destiny_type = GL_ONE_MINUS_DST_COLOR;
+		break;
+
+	case MGlSrcAlpha:
+		m_destiny_type = GL_SRC_ALPHA;
+		break;
+
+	case MGlOneMinusSrcAlpha:
+		m_destiny_type = GL_ONE_MINUS_SRC_ALPHA;
+		break;
+
+	case MGlDstAlpha:
+		m_destiny_type = GL_DST_ALPHA;
+		break;
+
+	case MGlOneMinusDstAlpha:
+		m_destiny_type = GL_ONE_MINUS_DST_ALPHA;
+		break;
+
+	case MGlSrcAlphaSaturate:
+		m_destiny_type = GL_SRC_ALPHA_SATURATE;
+		break;
+	}
+
+}
+
