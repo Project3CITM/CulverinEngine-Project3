@@ -35,6 +35,25 @@ bool MouseButtonAction::ProcessEventAction(SDL_Event * input_event)
 	return false;
 }
 
+bool MouseButtonAction::PositiveReaction(SDL_Event * input_event)
+{
+
+	if (positive_button->key_type == KeyBindingType::MOUSE_BUTTON_DEVICE)
+	{
+		if (input_event->type == SDL_MOUSEBUTTONDOWN)
+		{
+			if (positive_button->event_value == input_event->button.button) {
+				return true;
+			}
+		}
+
+	}
+
+	//Negative button mouse?
+
+	return false;
+}
+
 
 bool MouseButtonAction::UpdateEventAction(int mouse_x, int mouse_y, Uint32 buttons)
 {
@@ -109,6 +128,28 @@ bool ControllerAxisAction::ProcessEventAction(SDL_Event * input_event)
 	return false;
 }
 
+bool ControllerAxisAction::PositiveReaction(SDL_Event * input_event)
+{
+	if (positive_button->key_type == KeyBindingType::CONTROLLER_AXIS_DEVICE)
+	{
+
+		if (input_event->type == SDL_CONTROLLERAXISMOTION)
+		{
+			if (input_event->caxis.axis == positive_button->event_value) {
+	
+				if (DEAD_END < abs(direction_axis))
+					return true;
+			}
+			else if (input_event->cbutton.button == positive_button->event_value) {
+				if (DEAD_END< abs(direction_axis))
+					return true;
+			}
+
+		}
+	}
+	return false;
+}
+
 bool ControllerAxisAction::UpdateEventAction()
 {
 
@@ -127,6 +168,38 @@ bool KeyAction::ProcessEventAction(SDL_Event * input_event)
 	ret = DetectAction(*input_event);
 
 	return ret;
+}
+
+bool KeyAction::PositiveReaction(SDL_Event * input_event)
+{
+	switch (positive_button->key_type)
+	{
+	case KeyBindingType::KEYBOARD_DEVICE:
+		if (input_event->type == SDL_KEYDOWN)
+		{
+			if (positive_button->event_value == input_event->key.keysym.scancode)
+			{
+				return true;
+			}
+			else if (negative_button->event_value == input_event->key.keysym.scancode)
+			{
+				return true;
+			}
+		}
+		return false;
+		break;
+	case KeyBindingType::CONTROLLER_BUTTON_DEVICE:
+		if (input_event->type == SDL_CONTROLLERBUTTONDOWN)
+		{
+			if (positive_button->event_value == input_event->cbutton.button)
+			{
+				return true;
+			}
+		}
+		return false;
+		break;
+	}
+	return false;
 }
 
 bool KeyAction::DetectAction(const SDL_Event &input_event) {

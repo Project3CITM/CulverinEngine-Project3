@@ -149,13 +149,13 @@ void PlayerActions::UpdateInputsManager()
 	}
 }
 
-bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
+bool PlayerActions::ReceiveEvent(SDL_Event * input_event,float dt)
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		if (!(*it)->GetActiveInput())
 			continue;
-		bool result = (*it)->ProcessEvent(input_event);
+		bool result = (*it)->ProcessEvent(input_event, dt);
 		if (result || (*it)->GetBlockAction())
 			return true;
 
@@ -480,12 +480,68 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 
 const char * PlayerActions::GetInput_ControllerActionName(const char * name, const char * input, const char * device, bool negative_key)
 {
-	return nullptr;
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		InputManager* item = (*it);
+		if (strcmp(item->GetName(), input) == 0)
+		{
+			for (std::vector<InputAction*>::iterator action_it = item->action_vector.begin(); action_it != item->action_vector.end(); action_it++)
+			{
+				InputAction* action_item = (*action_it);
+				if (strcmp(action_item->name.c_str(), name) == 0)
+				{
+					KeyRelation* key = nullptr;
+					if (negative_key&&action_item->negative_button != nullptr)
+					{
+						key = action_item->negative_button;
+					}
+					key = action_item->positive_button;
+
+					DeviceCombinationType this_device = key->SelectDeviceCombination(device);
+					if (key->device == this_device)
+					{
+						return action_item->name.c_str();
+					}
+				}			
+			}
+			
+		}
+
+	}
+	return "";
 }
 
 const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name, const char * input, const char * device, bool negative_key)
 {
-	return nullptr;
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		InputManager* item = (*it);
+		if (strcmp(item->GetName(), input) == 0)
+		{
+			for (std::vector<InputAction*>::iterator action_it = item->action_vector.begin(); action_it != item->action_vector.end(); action_it++)
+			{
+				InputAction* action_item = (*action_it);
+				if (strcmp(action_item->name.c_str(), name) == 0)
+				{
+					KeyRelation* key = nullptr;
+					if (negative_key&&action_item->negative_button != nullptr)
+					{
+						key = action_item->negative_button;
+					}
+					key = action_item->positive_button;
+
+					DeviceCombinationType this_device = key->SelectDeviceCombination(device);
+					if (key->device == this_device)
+					{
+						return key->name.c_str();
+					}
+				}
+			}
+
+		}
+
+	}
+	return "";
 }
 
 bool PlayerActions::GetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)

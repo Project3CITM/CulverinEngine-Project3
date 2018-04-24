@@ -19,7 +19,7 @@ public:
 
 
 	void UpdateInputsManager();
-	bool ReceiveEvent(SDL_Event* input_event);
+	bool ReceiveEvent(SDL_Event* input_event,float dt);
 	void InputManagerActive(const char* name);
 	void InputManagerDeactive(const char* name);
 

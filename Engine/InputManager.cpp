@@ -3,6 +3,8 @@
 #include "InputAction.h"
 #include"Application.h"
 #include "PlayerActions.h"
+#define ACTION_SECOND_LIMIT 1000
+
 #define ACTION_LIMIT 50
 #define MAX_INPUT 25
 
@@ -76,14 +78,32 @@ void InputManager::UpdateInputActions()
 	*/
 }
 
-bool InputManager::ProcessEvent(SDL_Event * input_event)
+bool InputManager::ProcessEvent(SDL_Event * input_event, float dt)
 {
+	if (!no_wait)
+		current_time_wait_for_same_key += dt;
+	
 	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
 	{
+		if (!no_wait)
+		{
+			if (current_time_wait_for_same_key > wait_for_same_key)
+			{
+				current_time_wait_for_same_key = 0.0f;
+				last_action = nullptr;
+			}
+			if (last_action != nullptr)
+			{
+				if (last_action->PositiveReaction(input_event))
+					continue;
+			}
+		}
+
 		if ((*it)->ProcessEventAction(input_event))
 		{
+			last_action = (*it);
 			//my_player_action->SendNewDeviceCombinationType((*it)->positive_button->device);
-			active_action.push_back(*(it));
+			active_action.push_back(last_action);
 			return true;
 		}
 	}
@@ -169,7 +189,21 @@ void InputManager::ShowInspectorInfo()
 	window_flags |= ImGuiWindowFlags_NoCollapse;
 	std::string window_name = "Input Manager " + name;
 	ImGui::Begin(window_name.c_str(), &window_open, window_flags);
+	ImGui::Text("Number of Action per second");
+	if (ImGui::DragInt("##drag_float", &wait_for_same_key))
+	{
+	
+		if (wait_for_same_key < 0)
+			wait_for_same_key = 0;
+		else if (wait_for_same_key > ACTION_SECOND_LIMIT)
+			wait_for_same_key = ACTION_SECOND_LIMIT;
 
+
+		(wait_for_same_key == 0) ? no_wait = true : no_wait = false;
+
+		
+
+	}
 	ImGui::Text("Number of Action");
 	if (ImGui::InputInt("##number_of_action", &number_of_action))
 	{

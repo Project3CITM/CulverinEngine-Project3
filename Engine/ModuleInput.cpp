@@ -189,7 +189,7 @@ update_status ModuleInput::PreUpdate(float dt)
 		ImGui_ImplSdlGL3_ProcessEvent(&e);
 		//if (App->mode_game) {
 		if (player_action != nullptr)
-			player_action->ReceiveEvent(&e);
+			player_action->ReceiveEvent(&e,dt);
 		//}
 		switch (e.type)
 		{

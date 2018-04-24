@@ -13,7 +13,7 @@ public:
 	InputManager(PlayerActions* my_player_action);
 	~InputManager();
 	void UpdateInputActions();
-	bool ProcessEvent(SDL_Event* input_event);
+	bool ProcessEvent(SDL_Event* input_event,float dt);
 	void Clear();
 	ControllerAxisAction* GetAxis(const char* name);
 	std::vector<ControllerAxisAction*> GetAxisVector(const char* name);
@@ -47,12 +47,15 @@ public:
 
 private:
 public:
+	int wait_for_same_key = 0.0f;
+	bool no_wait = true;
 	int number_of_action = 0;
 	std::vector<InputAction*> action_vector;
 	std::list<InputAction*> active_action;
 	bool active_input = true;
 	bool block_action = false;
 private:
+	InputAction* last_action = nullptr;
 	PlayerActions* my_player_action = nullptr;
 	bool window_open = false;
 	std::string name;
@@ -61,5 +64,6 @@ private:
 	char selected_action_key_negative[50] = "default";
 
 	int action_type = 0;
+	float current_time_wait_for_same_key = 0.0f;
 };
 #endif //INPUT_MANAGER_H
