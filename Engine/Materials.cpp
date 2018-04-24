@@ -49,6 +49,8 @@ void Material::Save() const
 	json_object_dotset_number_with_std(object, name + "Num Textures:", textures.size());
 	json_object_dotset_number_with_std(object, name + "Alpha:", alpha);
 	json_object_dotset_boolean_with_std(object, name + "Glow:", glow);
+	json_object_dotset_number_with_std(object, name + "Source Blend:", m_source_type);
+	json_object_dotset_number_with_std(object, name + "Destiny Blend:", m_destiny_type);
 
 	for (int i = 0; i < textures.size(); i++)
 	{
