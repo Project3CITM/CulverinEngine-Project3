@@ -90,11 +90,15 @@ void CompSlider::ShowInspectorInfo()
 		ImGui::OpenPopup("Options Slider");
 	}
 	ImGui::PopStyleVar();
+	if (ImGui::Button("Sync Components", ImVec2(120, 0)))
+	{
+		SyncComponents();
+	}
 	if (ImGui::Button("Sync Min/Max", ImVec2(120, 0)))
 	{
 		if (slide_bg != nullptr)
 		{
-			int bar_x = slide_bg->GetRectTrasnform()->GetPosGlobal().x;
+			int bar_x = slide_bg->GetRectTrasnform()->GetPos().x;
 			min_pos = bar_x - slide_bg->GetRectTrasnform()->GetWidth() / 2;
 			max_pos = bar_x + slide_bg->GetRectTrasnform()->GetWidth() / 2;
 		}
@@ -102,6 +106,14 @@ void CompSlider::ShowInspectorInfo()
 	ImGui::Text("Min pos: %f", min_pos);
 	ImGui::Text("Max pos: %f", max_pos);
 	ImGui::TreePop();
+}
+
+void CompSlider::SyncComponents()
+{
+	std::vector<GameObject*> childs = parent->GetChildsVec();
+	slide_bg = (CompImage*)childs[0];
+	slide_bar = (CompImage*)childs[1];
+	slide_ball = (CompImage*)childs[2];
 }
 
 void CompSlider::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const

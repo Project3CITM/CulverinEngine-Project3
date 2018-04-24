@@ -15,6 +15,7 @@ public:
 
 	void ShowOptions();
 	void ShowInspectorInfo();
+	void SyncComponents();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
 
@@ -25,7 +26,7 @@ private:
 public:
 	CompImage * slide_bg = nullptr;
 	CompImage * slide_bar = nullptr;
-	CompImage * slide_ball = nullptr;
+	//target graphic (interactive)
 private:
 	int number_script = 0;
 	int* uid_linked_scripts = nullptr;

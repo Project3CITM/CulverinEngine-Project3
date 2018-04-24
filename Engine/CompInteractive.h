@@ -81,7 +81,7 @@ public:
 	virtual void OnCancel(Event event_data);
 
 	bool PointerInside(float2 position);
-	void SetTargetGraphic(CompGraphic* target_graphic);
+	void SetTargetGraphic(CompGraphic* target_graphic);//slider
 	//Setters Color tint parameters
 	void SetNormalColor(const float4& set_rgba);
 	void SetNormalColor(float set_r, float set_g, float set_b, float set_a);
