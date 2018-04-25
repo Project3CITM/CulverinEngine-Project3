@@ -852,7 +852,6 @@ void GameObject::ShowGameObjectOptions()
 				CompSlider* linker = (CompSlider*)slider;
 				linker->slide_bg = (CompImage*)slide_bg;
 				linker->slide_bar = (CompImage*)slide_bar;
-				linker->slide_ball = (CompImage*)slide_bar;
 				App->gui->SetLinkInspector(slider);
 				linker->slide_bar->SetToFilled(true);
 

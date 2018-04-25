@@ -113,7 +113,6 @@ void CompSlider::SyncComponents()
 	std::vector<GameObject*> childs = parent->GetChildsVec();
 	slide_bg = (CompImage*)childs[0];
 	slide_bar = (CompImage*)childs[1];
-	slide_ball = (CompImage*)childs[2];
 }
 
 void CompSlider::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
@@ -151,10 +150,6 @@ void CompSlider::Save(JSON_Object * object, std::string name, bool saveScene, ui
 	if (slide_bar != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Slider filler", slide_bar->GetUUID()); 
-	}
-	if (slide_ball != nullptr)
-	{
-		json_object_dotset_number_with_std(object, name + "Slider ball", slide_ball->GetUUID());
 	}
 }
 

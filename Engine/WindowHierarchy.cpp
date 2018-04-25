@@ -246,7 +246,7 @@ void Hierarchy::ShowOptions()
 			CompImage* ball_ptr = (CompImage*)ball->FindComponentByType(Comp_Type::C_IMAGE);
 			slider_ptr->slide_bg = bg_ptr;
 			slider_ptr->slide_bar = fill_ptr;
-			slider_ptr->slide_ball = ball_ptr;
+
 
 			App->gui->SetLinkInspector(slider);
 		}
