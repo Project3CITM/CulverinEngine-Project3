@@ -268,25 +268,6 @@ private:
 
 };
 
-struct ParticleMeshData							//Very similar to MeshDataResource, but we copy it here to separate as much as we can the particle code from engine code (easier to export/make a library)
-{
-	ParticleMeshData();
-	~ParticleMeshData();
-	void Copy(ParticleMeshData& Other);			//Copy data from other ParticleMeshData
-	void Clean();								//Clear all stored values
-
-	unsigned int num_faces = 0;					//Mesh faces number
-	unsigned int id_vertices = 0;				//Vertices ID in VRAM
-	unsigned int num_vertices = 0;				//Mesh vertices number
-	float* vertices = nullptr;					//Mesh vertices
-	unsigned int id_indices = 0;				//Indices ID in VRAM
-	unsigned int num_indices = 0;				//Mesh indices number
-	unsigned int* indices = nullptr;			//Mesh indices
-	unsigned int id_normals = 0;				//Normals ID in VRAM
-	float* normals = nullptr;					//Mesh normals
-	//unsigned int id_texture_coords = 0;		//Texture coords ID in VRAM
-	//float* texture_coords = nullptr;			//Mesh texture coords
-};
 
 struct ParticleTextureData
 {
@@ -334,6 +315,9 @@ public:
 	void UpdateInEditor(float dt);
 
 	bool PostUpdate(float dt);
+
+	void InstantiateParticles(int geometry_buffer);
+
 	bool CleanUp();
 
 	//void SetMeshResource(ParticleMeshData& MeshData);			//Set Mesh resource to use
@@ -373,7 +357,6 @@ public:
 	bool IsEmitterDead() const;									//Usseful if you need to do something else when this emitter dies
 
 private:
-	void GenerateMeshResourceBuffers();							//Function to generate new buffers for mesh
 	void GenerateUVBuffers();									//When texture rows or columns are updated we update animation UVs
 	void GenerateTexturesUVs();									//Generate animation UVs buffers
 	void DrawTexturePreview();									//Imgui draw Texture preview + animation edit
@@ -400,7 +383,7 @@ public:
 	float distance_to_camera = 0.0;
 
 private:
-	ParticleMeshData ParticleMesh;								//Particle mesh to use
+
 	std::vector<Particle> Particles;								//Particles created
 	ParticleState InitialState;									//Particle initial state with variable values
 	ParticleState FinalState;									//Particle final state with variable values

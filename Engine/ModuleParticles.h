@@ -15,7 +15,7 @@ public:
 	ModuleParticles(bool start_enabled = true);
 	~ModuleParticles();
 
-	bool Init(JSON_Object* node);
+	bool Start();
 
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
@@ -23,10 +23,11 @@ public:
 	bool SaveConfig(JSON_Object* node);
 	bool CleanUp();
 
-	ParticleSystem* CreateParticleSystem();
+	ParticleSystem* CreateParticleSystem();	
 
 private:
-	
+
+	GLuint geometry_buffer = 0;
 	std::vector<ParticleSystem*> particle_systems;
 };
 

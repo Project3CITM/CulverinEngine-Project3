@@ -10,6 +10,7 @@
 #include "CompLight.h"
 #include "ModuleLightning.h"
 #include "CompCubeMapRenderer.h"
+#include "ModuleParticles.h"
 
 void AddListener(EventType type, Module* listener)
 {
@@ -259,13 +260,16 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 			case EventType::EVENT_PARTICLE_DRAW:
 				glEnable(GL_BLEND);
 				glDisable(GL_CULL_FACE);
-				NewProgramID = App->renderer3D->particles_shader->programID;
+			/*	NewProgramID = App->renderer3D->particles_shader->programID;
 				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
 				{
 					LastBindedProgram = NewProgramID;
 					App->renderer3D->particles_shader->Bind();
 				}
 				((Particle*)item._Ptr->_Myval.second.particle_draw.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
+				*/
+				
+				App->particles->InstantiateParticles();
 				glDisable(GL_BLEND);
 				glEnable(GL_CULL_FACE);
 				break;

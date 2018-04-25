@@ -9,6 +9,8 @@
 #include "ModuleRenderer3D.h"
 #include "CompParticleSystem.h"
 
+
+
 float ParticleSystem_Lerp(float v0, float v1, float time, float Maxtime)
 {
 	float Time = time / Maxtime;
@@ -431,10 +433,7 @@ bool Particle::PostUpdate(float dt)
 	if (!MeshChanged)
 	{
 		OrientateParticle();
-		Event draw_event;
-		draw_event.Set_event_data(EventType::EVENT_PARTICLE_DRAW);
-		draw_event.particle_draw.ToDraw = this;
-		PushEvent(draw_event);
+		
 	}
 	if (Properties.LifetimeActual >= Properties.LifetimeMax) ToDelete = true;
 
@@ -446,7 +445,7 @@ bool Particle::isDead()
 	return ToDelete;
 }
 
-void Particle::DrawParticle(uint program_id)
+/*void Particle::DrawParticle(uint program_id)
 {
 	glDepthMask(GL_FALSE);
 	const ParticleMeshData& Mesh = ParentParticleSystem->GetParticleMeshData();
@@ -501,7 +500,7 @@ void Particle::DrawParticle(uint program_id)
 	glDisable(GL_NORMALIZE);
 	glDepthMask(GL_TRUE);
 
-}
+}*/
 
 void Particle::SetAssignedStateFromVariables(ParticleAssignedState& AState, const ParticleState& State)
 {
@@ -603,73 +602,6 @@ inline void Particle::CalculateSpin(float LifetimeFloat, float MaxLifetimeFloat)
 	Properties.Spin = ParticleSystem_Lerp(InitialState.Spin, FinalState.Spin, LifetimeFloat, MaxLifetimeFloat);
 }
 
-ParticleMeshData::ParticleMeshData()
-{
-
-}
-
-ParticleMeshData::~ParticleMeshData()
-{
-	Clean();
-}
-
-void ParticleMeshData::Copy(ParticleMeshData& Other)
-{
-	Clean();
-	num_faces = Other.num_faces;
-	id_vertices = Other.id_vertices;
-	num_vertices = Other.num_vertices;
-	vertices = new float[num_vertices * 3];
-	memcpy(vertices, Other.vertices, sizeof(float) * num_vertices * 3);
-	id_indices = Other.id_indices;
-	num_indices = Other.num_indices;
-	indices = new unsigned int[num_indices];
-	memcpy(indices, Other.indices, sizeof(float) * num_indices);
-	id_normals = Other.id_normals;
-	normals = new float[num_vertices * 3];
-	memcpy(normals, Other.normals, sizeof(float) * num_vertices * 3);
-	/*
-	id_texture_coords = Other.id_texture_coords;
-	texture_coords = new float[num_vertices * 3];
-	memcpy(texture_coords, Other.texture_coords, sizeof(float) * num_vertices * 3);
-	*/
-}
-
-void ParticleMeshData::Clean()
-{
-	num_faces = 0;
-	if (vertices != nullptr)
-	{
-		if (id_vertices > 0)
-			glDeleteBuffers(1, &id_vertices);
-		id_vertices = 0;
-		RELEASE_ARRAY(vertices);
-	}
-	num_indices = 0;
-	if (indices != nullptr)
-	{
-		if (id_indices > 0)
-			glDeleteBuffers(1, &id_indices);
-		id_indices = 0;
-		RELEASE_ARRAY(indices);
-	}
-	if (normals != nullptr)
-	{
-		if (id_normals > 0)
-			glDeleteBuffers(1, &id_normals);
-		id_normals = 0;
-		RELEASE_ARRAY(normals);
-	}
-	/*
-	if (texture_coords != nullptr)
-	{
-		if (id_texture_coords > 0)
-			glDeleteBuffers(1, &id_texture_coords);
-		id_texture_coords = 0;
-		RELEASE_ARRAY(texture_coords);
-	}
-	*/
-}
 
 void ParticleTextureData::Set(unsigned int ID, unsigned int width, unsigned int heigth, int columns, int rows, int numberOfFrames, unsigned int AnimationOrder)
 {
@@ -705,7 +637,6 @@ bool ParticleSystem::PreUpdate(float dt)
 {
 	if (GenerateBuffers)
 	{
-		GenerateMeshResourceBuffers();
 		GenerateTexturesUVs();
 	}
 	
@@ -859,67 +790,23 @@ bool ParticleSystem::PostUpdate(float dt)
 	return ret;
 }
 
+void ParticleSystem::InstantiateParticles(int geometry_buffer)
+{
+
+	//Sort and draw all particles
+
+
+}
+
 bool ParticleSystem::CleanUp()
 {
 	Particles.clear();
 	return true;
 }
 
-/*
-void ParticleSystem::SetMeshResource(ParticleMeshData& MeshData)
-{
-	ParticleMesh.Copy(MeshData);
-	//ToDeleteBool_FirstTimeTest = true;
-	//for (std::vector<Particle*>::iterator item = Particles.begin(); item != Particles.cend(); ++item) (*item)->MeshChanged = true;
-}
-*/
 
 void ParticleSystem::SetMeshResourcePlane()
 {
-	ParticleMesh.Clean();
-	ParticleMesh.num_faces = 2;
-	// Vertices
-	ParticleMesh.num_vertices = 4;
-	ParticleMesh.vertices = new float[ParticleMesh.num_vertices * 3];
-	float vertices[] =
-	{
-		-0.5f,  0.5f, 0.0f,
-		 0.5f,  0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f
-	};
-	memcpy(ParticleMesh.vertices, vertices, sizeof(float) * ParticleMesh.num_vertices * 3);
-	//Indices
-	ParticleMesh.num_indices = 6;
-	ParticleMesh.indices = new unsigned int[ParticleMesh.num_indices];
-	unsigned int indices[] =
-	{
-		2, 1, 0,
-		2, 3, 1
-	};
-	memcpy(ParticleMesh.indices, indices, sizeof(float) * ParticleMesh.num_indices);
-	//Normals
-	ParticleMesh.normals = new float[ParticleMesh.num_vertices * 3];
-	float normals[] =
-	{
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f
-	};
-	memcpy(ParticleMesh.normals, normals, sizeof(float) * ParticleMesh.num_vertices * 3);
-	// Texture coords
-	/*
-	ParticleMesh.texture_coords = new float[ParticleMesh.num_vertices * 3];
-	float texture_coords[] =
-	{
-		0.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f
-	};
-	memcpy(ParticleMesh.texture_coords, texture_coords, sizeof(float) * ParticleMesh.num_vertices * 3);
-	*/
 	GenerateBuffers = true;
 	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend(); ++item)
 		(*item).MeshChanged = true;
@@ -1084,10 +971,6 @@ AABB& ParticleSystem::GetEmitterAABB()
 	return Emitter.BoundingBox;
 }
 
-const ParticleMeshData & ParticleSystem::GetParticleMeshData() const
-{
-	return ParticleMesh;
-}
 
 void ParticleSystem::SetCameraPosToFollow(float3 position)
 {
@@ -1109,39 +992,13 @@ bool ParticleSystem::IsEmitterDead() const
 	return ret;
 }
 
-void ParticleSystem::GenerateMeshResourceBuffers()
-{
-	// Vertices Buffer
-	glGenBuffers(1, (GLuint*)&ParticleMesh.id_vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, ParticleMesh.id_vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ParticleMesh.num_vertices * 3, ParticleMesh.vertices, GL_STATIC_DRAW);
-	// Indices Buffer
-	glGenBuffers(1, (GLuint*)&ParticleMesh.id_indices);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ParticleMesh.id_indices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * ParticleMesh.num_indices, ParticleMesh.indices, GL_STATIC_DRAW);
-	// Indices Buffer
-	glGenBuffers(1, (GLuint*)&ParticleMesh.id_normals);
-	glBindBuffer(GL_ARRAY_BUFFER, ParticleMesh.id_normals);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ParticleMesh.num_vertices * 3, ParticleMesh.normals, GL_STATIC_DRAW);
-	// Texture coords Buffer
-	/*
-	glGenBuffers(1, (GLuint*)&ParticleMesh.id_texture_coords);
-	glBindBuffer(GL_ARRAY_BUFFER, ParticleMesh.id_texture_coords);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ParticleMesh.num_indices * 3, ParticleMesh.texture_coords, GL_STATIC_DRAW);
-	*/
-	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend(); ++item) 
-		(*item).MeshChanged = false;
-	GenerateBuffers = false;
-}
 
 void ParticleSystem::GenerateUVBuffers()
 {
 	for (std::vector<unsigned int>::iterator item = TexturesUV_ID.begin(); item != TexturesUV_ID.cend(); ++item)
 		if (*item > 0) glDeleteBuffers(1, &(*item));
 	TexturesUV_ID.clear();
-	//for (std::vector<float*>::iterator item = TexturesUV_Data_ptr.begin(); item != TexturesUV_Data_ptr.cend(); ++item)
-	//	RELEASE_ARRAY(*item);
-	//TexturesUV_Data_ptr.clear();
+
 
 	for (unsigned int i = 0; i < TextureData.columns * TextureData.rows; i++)
 	{
@@ -1160,7 +1017,7 @@ void ParticleSystem::GenerateUVBuffers()
 
 		glGenBuffers(1, (GLuint*)&NewID);
 		glBindBuffer(GL_ARRAY_BUFFER, NewID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ParticleMesh.num_indices * 3, texture_coords, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, texture_coords, GL_STATIC_DRAW);
 
 		TexturesUV_ID.push_back(NewID);
 	}

@@ -112,7 +112,7 @@ struct EScriptDisabled
 struct EParticleDraw
 {
 	uint64_t event_data = 0;
-	Particle* ToDraw = nullptr;
+	ParticleSystem* part_system = nullptr;
 };
 
 /*--------------------------------------------------*/

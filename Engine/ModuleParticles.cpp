@@ -4,6 +4,7 @@
 #include "CompCamera.h"
 #include "ModuleRenderer3D.h"
 #include "CompParticleSystem.h"
+#include "ModuleEventSystemV2.h"
 
 
 ModuleParticles::ModuleParticles(bool start_enabled) : Module(start_enabled)
@@ -20,14 +21,27 @@ ModuleParticles::~ModuleParticles()
 }
 
 // Called before render is available
-bool ModuleParticles::Init(JSON_Object* node)
-{
-	perf_timer.Start();
+bool ModuleParticles::Start()
+{	
 	bool ret = true;
 	
+	/*Generate one buffer to particle geometry*/
+
+	
+	// The VBO containing the 4 vertices of the particles.
+	// Thanks to instancing, they will be shared by all particles.
+	 static const GLfloat  vertex_data[] = {
+		 -0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		 -0.5f, 0.5f, 0.0f,
+		 0.5f, 0.5f, 0.0f,
+	 };
+	 
+	 glGenBuffers(1, &geometry_buffer);
+	 glBindBuffer(GL_ARRAY_BUFFER, geometry_buffer);
+	 glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
 
 
-	Awake_t = perf_timer.ReadMs();
 	return ret;
 }
 
@@ -96,6 +110,16 @@ update_status ModuleParticles::PostUpdate(float dt)
 {
 	BROFILER_CATEGORY("PostUpdate: ModuleParticles", Profiler::Color::Blue);
 	perf_timer.Start();
+
+	//Send one event per system to draw particles
+	for (int i = 0; i < particle_systems.size(); i++)
+	{
+		Event draw_event;
+		draw_event.Set_event_data(EventType::EVENT_PARTICLE_DRAW);
+		draw_event.particle_draw.part_system = particle_systems[i];
+		PushEvent(draw_event);
+	}
+	
 	postUpdate_t = perf_timer.ReadMs();
 
 	return UPDATE_CONTINUE;
@@ -133,6 +157,8 @@ ParticleSystem * ModuleParticles::CreateParticleSystem()
 	particle_systems.push_back(new ParticleSystem());
 	return particle_systems.back();
 }
+
+
 
 
 
