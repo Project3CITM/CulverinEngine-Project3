@@ -39,14 +39,14 @@ public:
 
 	// SAVE & LOAD SCENE BINARY --------------------------
 	std::string SaveSceneBinary();
-	void SaveIntBinary(char* cursor, int value);
-	void SaveFloatBinary(char* cursor, float value);
-	void SaveBoolBinary(char* cursor, bool value);
-	void SaveStringBinary(char* cursor, std::string value);
-	void SaveConstCharBinary(char* cursor, const char* value);
-	void SaveFloat2Binary(char* cursor, math::float2 value);
-	void SaveFloat3Binary(char* cursor, math::float3 value);
-	void SaveFloat4Binary(char* cursor, math::float4 value);
+	void SaveIntBinary(char** cursor, int value);
+	void SaveFloatBinary(char** cursor, float value);
+	void SaveBoolBinary(char** cursor, bool value);
+	void SaveStringBinary(char** cursor, std::string value);
+	void SaveConstCharBinary(char** cursor, const char* value);
+	void SaveFloat2Binary(char** cursor, math::float2 value);
+	void SaveFloat3Binary(char** cursor, math::float3 value);
+	void SaveFloat4Binary(char** cursor, math::float4 value);
 	//void SaveChildGameObjectBinary(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);
 	//void LoadSceneBinary(const char* sceneName);
 	// --------------------------------------
