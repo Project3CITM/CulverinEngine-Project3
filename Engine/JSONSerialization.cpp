@@ -983,7 +983,10 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 			input_manager->SetName(json_object_dotget_string_with_std(config, name + "InputManagerName"));
 			input_manager->SetActiveInput(json_object_dotget_boolean_with_std(config, name + "InputManagerActive"));
 			input_manager->SetBlockAction(json_object_dotget_boolean_with_std(config, name + "InputManagerBlock"));
+			input_manager->SetInputPerSecond(json_object_dotget_number_with_std(config, name + "InputPerSecond"));
+
 			int input_action_size = json_object_dotget_number_with_std(config, name + "InputManagerActionSize");
+
 			input_manager->number_of_action = input_action_size;
 			for (uint j = 0; j < input_action_size; j++)
 			{

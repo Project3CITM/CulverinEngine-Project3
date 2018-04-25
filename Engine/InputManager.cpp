@@ -95,13 +95,18 @@ bool InputManager::ProcessEvent(SDL_Event * input_event, float dt)
 			if (last_action != nullptr)
 			{
 				if (last_action->PositiveReaction(input_event))
+				{
+					//LOG("INPUT BLOCK");
 					continue;
+
+				}
 			
 			}
 		}
 
 		if ((*it)->ProcessEventAction(input_event))
 		{
+			//LOG("INPUT ENTER");
 			last_action = (*it);
 			current_time_input_per_second = 0.0f;
 			//my_player_action->SendNewDeviceCombinationType((*it)->positive_button->device);
