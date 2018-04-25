@@ -227,7 +227,7 @@ void ParticleEmitter::DrawBox(const AABB& shape)
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnable(GL_COLOR);
-	glColor3f(1.0f, 0.0f, 1.0f);
+	glColor3f(0.0f, 0.0f, 1.0f);
 	glLineWidth(DEBUG_THICKNESS);
 	glBegin(GL_LINES);
 
@@ -270,7 +270,7 @@ void ParticleEmitter::DrawBox(const AABB& shape)
 	glEnd();
 
 	glLineWidth(1.0f);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(0.0f, 0.0f, 1.0f);
 	glDisable(GL_TEXTURE_2D);
 
 
@@ -516,6 +516,8 @@ void Particle::SetAssignedStateFromVariables(ParticleAssignedState& AState, cons
 	AState.RGBATint.y = State.RGBATint.y + RandGen.Float(-State.RGBATintVariation.y, State.RGBATintVariation.y);
 	AState.RGBATint.z = State.RGBATint.z + RandGen.Float(-State.RGBATintVariation.z, State.RGBATintVariation.z);
 	AState.RGBATint.w = State.RGBATint.w + RandGen.Float(-State.RGBATintVariation.w, State.RGBATintVariation.w);
+
+	AState.Spin = State.particleSpin + RandGen.Float(-State.spinVariation, State.spinVariation);
 }
 
 void Particle::OrientateParticle()
@@ -531,6 +533,10 @@ void Particle::OrientateParticle()
 	{
 		float3 direction = App->renderer3D->active_camera->frustum.front;
 		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		
+		
+		Quat to_rot = Quat::RotateZ(DEGTORAD * Properties.Spin);
+		Properties.Rotation = Properties.Rotation*to_rot;
 		break;
 	}
 	case 2: //VerticalBillboard
@@ -556,6 +562,7 @@ inline void Particle::CalculateStatesInterpolation()
 	CalculateGravity(Properties.LifetimeActual, Properties.LifetimeMax);
 	CalculateSize(Properties.LifetimeActual, Properties.LifetimeMax);
 	CalculateColor(Properties.LifetimeActual, Properties.LifetimeMax);
+	CalculateSpin(Properties.LifetimeActual, Properties.LifetimeMax);
 }
 
 inline void Particle::CalculatePosition(float LifetimeFloat)
@@ -589,6 +596,11 @@ inline void Particle::CalculateSize(float LifetimeFloat, float MaxLifetimeFloat)
 inline void Particle::CalculateColor(float LifetimeFloat, float MaxLifetimeFloat)
 {
 	Properties.RGBATint = ParticleSystem_Lerp(InitialState.RGBATint, FinalState.RGBATint, LifetimeFloat, MaxLifetimeFloat);
+}
+
+inline void Particle::CalculateSpin(float LifetimeFloat, float MaxLifetimeFloat)
+{
+	Properties.Spin = ParticleSystem_Lerp(InitialState.Spin, FinalState.Spin, LifetimeFloat, MaxLifetimeFloat);
 }
 
 ParticleMeshData::ParticleMeshData()

@@ -204,6 +204,7 @@ struct ParticleAssignedState
 	float3 force = float3::zero;		//Gravity that affects that particle
 	float Size = 1.0f;					//Size that affects that particle
 	float4 RGBATint = float4::one;		//Particle texture tint that affects that particle
+	float Spin = 0.0f;					//Particle rotation
 };
 
 struct ParticleMeshData;
@@ -248,6 +249,7 @@ private:
 	inline void CalculateGravity(float LifetimeFloat, float MaxLifetimeFloat);							//Calculate particle gravity/force inperpolation
 	inline void CalculateSize(float LifetimeFloat, float MaxLifetimeFloat);								//Calculate particle size inperpolation
 	inline void CalculateColor(float LifetimeFloat, float MaxLifetimeFloat);							//Calculate particle color inperpolation
+	inline void CalculateSpin(float LifetimeFloat, float MaxLifetimeFloat);								//Calculate particle spin inTerpolation
 
 public:
 	ParticleSystem* ParentParticleSystem = nullptr;				//Store a pointer to parent particle system
