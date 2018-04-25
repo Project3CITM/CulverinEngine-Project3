@@ -1261,8 +1261,17 @@ void ParticleSystem::DrawColorSelector()
 	ImGui::PopItemWidth();
 	ImGui::DragFloat4("Color Var##ColorVariation", (float*)&state->RGBATintVariation, 0.01f, 0.0f, 1.0f);
 	ImGui::PushItemWidth(175);
+
+	//Particle gravity
 	ImGui::DragFloat3("Gravity##Gravity", &state->force[0], 0.01, -10.0f, 10.0f, "%.2f");
 	ImGui::DragFloat3("Gravity Var##GravityVariation", &state->forceVariation[0], 0.01, -10.0f, 10.0f, "%.2f");
+	ImGui::PopItemWidth();
+
+	//Particle Spin
+	ImGui::PushItemWidth(80);
+	ImGui::DragFloat("Spin", &state->particleSpin, 1.0f , 0.0f , 359.99f);
+	ImGui::SameLine();
+	ImGui::DragFloat("Spin Var", &state->spinVariation, 1.0f, 0.0f, 360.0f);
 	ImGui::PopItemWidth();
 }
 

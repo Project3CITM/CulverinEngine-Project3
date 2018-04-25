@@ -185,6 +185,8 @@ struct ParticleState
 	float SizeVariation = 0.0f;							//Size of the particle variation
 	float4 RGBATint = float4::one;						//Particle Texture tint
 	float4 RGBATintVariation = float4::zero;			//Particle Texture tint variation
+	float particleSpin = 0.0f;							//Particle rotation
+	float spinVariation = 0.0f;							//Particle rotation variation
 
 	//Variables to store values of imgui elements
 	bool alpha_preview = true;
@@ -212,6 +214,7 @@ struct ParticleProperties
 	Quat Rotation = Quat::identity;				//Particle Actual Rotation
 	float3 Scale = float3::one;					//Particle Actual Scale
 	float Size = 1.0f;							//Scale Multiplicator to modify
+	float Spin = 0.0f;							//Current rotation of the particle
 	float3 Speed = float3::zero;				//Particle Speed
 	float3 EmissionDirection = float3::zero;	//Particle Emission Direction
 	float3 force = float3::zero;				//Force that effects that particle
