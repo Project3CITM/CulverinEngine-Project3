@@ -1,3 +1,5 @@
+#include <experimental\filesystem>
+
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
@@ -200,6 +202,16 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	if (default_material->textures.size()>0)
 		default_material->textures[0].value = default_texture;
 
+	if (std::experimental::filesystem::create_directory("..//Game//Screenshots")) { LOG("Screenshots folder created"); }
+	else { LOG("Screenshots folder already exists"); }
+	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//ScreenFull")) { LOG("ScreenFull folder created"); }
+	else { LOG("ScreenFull folder already exists"); }
+	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//ScreenPortion")) { LOG("ScreenPortion folder created"); }
+	else { LOG("ScreenPortion folder already exists"); }
+	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//GifFull")) { LOG("GifFull folder created"); }
+	else { LOG("GifFull folder already exists"); }
+	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//GifPortion")) { LOG("GifPortion folder created"); }
+	else { LOG("GifPortion folder already exists"); }
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;
@@ -450,9 +462,10 @@ void ModuleRenderer3D::UpdateProjection(CompCamera* cam)
 	}
 }
 
-
 void ModuleRenderer3D::OnResize(int width, int height)
 {
+	screenshot.Stop();
+	gif.Stop();
 
 	float ratio = (float)width / (float)height;
 	App->window->SetWindowSize(width, height);

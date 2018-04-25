@@ -25,6 +25,7 @@ struct Culverin_Screenshot
 
 	void TakeFullScreen();
 	void TakePartScreen();
+	void Stop();
 };
 
 enum Culverin_FullGif_STATE
@@ -59,6 +60,9 @@ struct Culverin_Gif
 
 	void TakeFullScreen(float dt);
 	void TakePartScreen(float dt);
+	void Stop();
+	void StopFull();
+	void StopPart();
 };
 
 #endif

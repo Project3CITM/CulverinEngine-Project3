@@ -77,6 +77,12 @@ void Culverin_Screenshot::TakePartScreen()
 	}
 }
 
+void Culverin_Screenshot::Stop()
+{
+	if (Screen_State_part == Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT2)
+		Screen_State_part = Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT1;
+}
+
 GifWriter gif_writer;
 
 void Culverin_Gif::TakeFullScreen(float dt)
@@ -86,6 +92,11 @@ void Culverin_Gif::TakeFullScreen(float dt)
 	case Culverin_FullGif_STATE::Culverin_FullGif_STATE_CAN_START:
 		if (App->input->GetKey(FullScreenKey) == KEY_DOWN)
 		{
+			if (Gif_State_part != Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT1)
+			{
+				StopPart();
+				return;
+			}
 			time_t now = time(0);
 			tm ltm;
 			localtime_s(&ltm, &now);
@@ -123,6 +134,11 @@ void Culverin_Gif::TakePartScreen(float dt)
 		switch (Gif_State_part)
 		{
 		case Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT1:
+			if (Gif_State_full != Culverin_FullGif_STATE::Culverin_FullGif_STATE_CAN_START)
+			{
+				StopFull();
+				return;
+			}
 			Point1.x = GuiIO.MousePos.x;
 			Point1.y = GuiIO.DisplaySize.y - GuiIO.MousePos.y;
 			Gif_State_part = Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT2;
@@ -162,5 +178,35 @@ void Culverin_Gif::TakePartScreen(float dt)
 			}
 			break;
 		}
+	}
+}
+
+void Culverin_Gif::Stop()
+{
+	StopFull();
+	StopPart();
+}
+
+void Culverin_Gif::StopFull()
+{
+	if (Gif_State_full == Culverin_FullGif_STATE::Culverin_FullGif_STATE_RUNNING)
+	{
+		GifEnd(&gif_writer);
+		RELEASE_ARRAY(pixels_full);
+		ScreenshotsNum++;
+		Gif_State_full = Culverin_FullGif_STATE::Culverin_FullGif_STATE_CAN_START;
+	}
+}
+
+void Culverin_Gif::StopPart()
+{
+	if (Gif_State_part == Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT2)
+		Gif_State_part = Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT1;
+	if (Gif_State_part == Culverin_PartGif_STATE::Culverin_PartGif_STATE_RUNNING)
+	{
+		GifEnd(&gif_writer);
+		RELEASE_ARRAY(pixels_part);
+		ScreenshotsNum++;
+		Gif_State_part = Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT1;
 	}
 }
