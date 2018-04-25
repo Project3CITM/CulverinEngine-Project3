@@ -232,7 +232,7 @@ void CompBone::Load(const JSON_Object * object, std::string name)
 				App->importer->iMesh->LoadResource(std::to_string(resource_mesh->GetUUID()).c_str(), resource_mesh);
 			}
 			// Add bounding box ------
-			parent->AddBoundingBox(resource_mesh);
+			//parent->AddBoundingBox(resource_mesh);
 
 			offset.SetCol(0, App->fs->json_array_dotget_float4_string(object, name + "Offset.Col0"));
 			offset.SetCol(1, App->fs->json_array_dotget_float4_string(object, name + "Offset.Col1"));

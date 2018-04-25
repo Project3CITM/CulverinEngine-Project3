@@ -146,20 +146,14 @@ void CompLight::Init()
 {
 }
 
-void CompLight::PreUpdate(float dt)
-{
-	float3 box_pos = parent->box_fixed.CenterPoint();
-	float3 parent_pos = GetGameObjectPos();
-	float epsilon = 0.4f;
-	if(abs(box_pos.x - parent_pos.x) > epsilon || abs(box_pos.y - parent_pos.y) > epsilon || abs(box_pos.z - parent_pos.z) > epsilon)
-		parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
-	
-}
-
 void CompLight::Update(float dt)
 {
 	use_light_to_render = false;
-
+	
+	if (parent->GetComponentTransform()->GetUpdated())
+	{
+		parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
+	}
 }
 
 void CompLight::Draw()
@@ -257,6 +251,14 @@ void CompLight::ShowInspectorInfo()
 
 }
 
+void CompLight::SyncComponent(GameObject * sync_parent)
+{
+	if (parent)
+	{
+		parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
+	}
+}
+
 void CompLight::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
 
@@ -290,10 +292,6 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	color=App->fs->json_array_dotget_float4_string(object, name + "Color");
 	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
 
-	// bounding box size
-	if(radius == 100)
-		radius = 50;
-	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 }
 
 void CompLight::UpdateFrustum()

@@ -23,7 +23,6 @@ public:
 	bool Enable();
 	bool Disable();
 	void Init();
-	void PreUpdate(float dt);
 	void Update(float dt);
 	void Draw();
 	void Clear();
@@ -31,6 +30,7 @@ public:
 	// EDITOR METHODS -----------------
 	virtual void ShowOptions();
 	virtual void ShowInspectorInfo();
+	void SyncComponent(GameObject* sync_parent);
 	// --------------------------------
 
 	// SAVE - LOAD METHODS ----------------

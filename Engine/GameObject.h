@@ -165,6 +165,7 @@ public:
 	//-------------------------------
 
 public:
+	float tp = 0.f;
 	AABB  box_fixed;
 	bool beingUsedByScript = false;
 

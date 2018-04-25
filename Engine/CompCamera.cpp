@@ -637,3 +637,8 @@ void CompCamera::Load(const JSON_Object * object, std::string name)
 
 	Enable();
 }
+
+void CompCamera::SyncComponent(GameObject * sync_parent)
+{
+	UpdateFrustum();
+}
