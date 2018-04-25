@@ -5,6 +5,9 @@
 #include "Globals.h"
 #include <vector>
 #include <filesystem>
+#include "Math/float2.h"
+#include "Math/float3.h"
+#include "Math/float4.h"
 
 class GameObject;
 class ResourceMaterial;
