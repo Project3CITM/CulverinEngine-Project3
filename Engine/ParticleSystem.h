@@ -113,13 +113,15 @@ private:
 	void DrawCircle(const Circle& shape);			//Draw circle emitter
 
 public:
-	float EmitterLifeMax = -1.0f;					//EmitterLife, after that, we can execute another child particle system, if -1, infinite life
+	float EmitterLifeMax = 0.0f;					//EmitterLife, after that, we can execute another child particle system
 	float EmitterLife = 0.0f;						//Emitter Real Life
 	float4x4 Transform = float4x4::identity;		//Transformation of this emitter
 	unsigned int SpawnRate = 2;						//How many particles are emitted every second
 	float Lifetime = 1.0f;							//Lifetime of emitted particles
 	float LifetimeVariation = 0.0f;					//Lifetime variation of emitted particles
 	float EmissionDuration = 0.0f;					//If loop is false, emission is played EmissionDuration
+	float PreviewDuration = 0.0f;					
+
 	bool Loop = true;								//Ignore EmissionDuration and keep emitting
 	int ParticleNumber = 0;							//Alive particles emitted
 	float Speed = 5.0f;								//Speed of emitted particles
@@ -328,6 +330,9 @@ public:
 	~ParticleSystem();
 	bool PreUpdate(float dt);
 	bool Update(float dt, bool emit = true);
+	void UpdateInGame(float dt);
+	void UpdateInEditor(float dt);
+
 	bool PostUpdate(float dt);
 	bool CleanUp();
 
@@ -349,6 +354,7 @@ public:
 	void SetEmitterTransform(const float4x4& transform);		//Set emitter transformation
 	void ActivateEmitter();
 	void DeactivateEmitter();
+	void ResetPreview();
 	bool IsEmitterActive() const;
 
 	bool SystemIsEmpty() const;

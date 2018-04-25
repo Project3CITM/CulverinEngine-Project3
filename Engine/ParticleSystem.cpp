@@ -735,69 +735,14 @@ bool ParticleSystem::Update(float dt, bool emit)
 {	
 
 	if(emit && to_delete == false)
-	{ 
-		if (App->engine_state != EngineState::STOP && !Emitter.IsEmitterActive())
-			return true;
-
-		/* Emission */
-		Emitter.EmissionDuration += dt;
-		float SpawnRate = 1.0f / (float)Emitter.SpawnRate;
-
+	{ 	
 		if (App->engine_state == EngineState::STOP)
 		{
-			if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
-			{
-				if (SpawnRate < dt)
-				{
-					unsigned int ParticlesToSpawn = dt / SpawnRate;
-					for (unsigned int i = 0; i < ParticlesToSpawn; i++)
-						CreateParticle();
-				}
-				else
-					CreateParticle();
-				NextParticleTime = Emitter.EmissionDuration + SpawnRate;
-			}
+			UpdateInEditor(dt);
 	     }
 		else
 		{
-			if ((Emitter.EmitterLifeMax <= 0.0f || Emitter.Loop) || (!Emitter.IsEmitterActive()))
-			{
-				if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
-				{
-					if (SpawnRate < dt)
-					{
-						unsigned int ParticlesToSpawn = dt / SpawnRate;
-						for (unsigned int i = 0; i < ParticlesToSpawn; i++)
-							CreateParticle();
-					}
-					else
-						CreateParticle();
-					NextParticleTime = Emitter.EmissionDuration + SpawnRate;
-				}
-			}
-			else
-			{
-				if (Emitter.EmitterLifeMax > Emitter.EmitterLife)
-				{
-					if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
-					{
-						if (SpawnRate < dt)
-						{
-							unsigned int ParticlesToSpawn = dt / SpawnRate;
-							for (unsigned int i = 0; i < ParticlesToSpawn; i++)
-								CreateParticle();
-						}
-						else
-							CreateParticle();
-						NextParticleTime = Emitter.EmissionDuration + SpawnRate;
-
-						//CreateParticle();
-						//NextParticleTime = Emitter.EmissionDuration + (1.0f / (float)Emitter.SpawnRate);
-					}
-					Emitter.EmitterLife += dt;
-				}
-				else DeactivateEmitter();
-			}
+			UpdateInGame(dt);
 		}
 	}
 	
@@ -811,6 +756,97 @@ bool ParticleSystem::Update(float dt, bool emit)
 	
 	return true;
 }
+
+void ParticleSystem::UpdateInEditor(float dt)
+{
+	/* Emission */
+	Emitter.EmissionDuration += dt;
+	float SpawnRate = 1.0f / (float)Emitter.SpawnRate;
+
+	if(Emitter.Loop)
+	{	
+		if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
+		{
+			if (SpawnRate < dt)
+			{
+				unsigned int ParticlesToSpawn = dt / SpawnRate;
+				for (unsigned int i = 0; i < ParticlesToSpawn; i++)
+					CreateParticle();
+			}
+			else
+				CreateParticle();
+			NextParticleTime = Emitter.EmissionDuration + SpawnRate;
+		}
+	}
+	else
+	{
+		if (Emitter.EmitterLifeMax > Emitter.PreviewDuration)
+		{
+			if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
+			{
+				if (SpawnRate < dt)
+				{
+					unsigned int ParticlesToSpawn = dt / SpawnRate;
+					for (unsigned int i = 0; i < ParticlesToSpawn; i++)
+						CreateParticle();
+				}
+				else
+					CreateParticle();
+
+				NextParticleTime = Emitter.EmissionDuration + SpawnRate;			
+			}
+			Emitter.PreviewDuration += dt;
+		}
+		else preview =false;
+	}
+}
+
+void ParticleSystem::UpdateInGame(float dt)
+{
+	/* Emission */
+	Emitter.EmissionDuration += dt;
+	float SpawnRate = 1.0f / (float)Emitter.SpawnRate;
+
+	if (Emitter.Loop)
+	{
+		if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
+		{
+			if (SpawnRate < dt)
+			{
+				unsigned int ParticlesToSpawn = dt / SpawnRate;
+				for (unsigned int i = 0; i < ParticlesToSpawn; i++)
+					CreateParticle();
+			}
+			else
+				CreateParticle();
+			NextParticleTime = Emitter.EmissionDuration + SpawnRate;
+		}
+	}
+	else
+	{
+		if (Emitter.EmitterLifeMax > Emitter.EmitterLife)
+		{
+			if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
+			{
+				if (SpawnRate < dt)
+				{
+					unsigned int ParticlesToSpawn = dt / SpawnRate;
+					for (unsigned int i = 0; i < ParticlesToSpawn; i++)
+						CreateParticle();
+				}
+				else
+					CreateParticle();
+				NextParticleTime = Emitter.EmissionDuration + SpawnRate;
+
+				//CreateParticle();
+				//NextParticleTime = Emitter.EmissionDuration + (1.0f / (float)Emitter.SpawnRate);
+			}
+			Emitter.EmitterLife += dt;
+		}
+		else DeactivateEmitter();
+	}
+}
+
 
 bool ParticleSystem::PostUpdate(float dt)
 {
@@ -974,6 +1010,11 @@ void ParticleSystem::ActivateEmitter()
 void ParticleSystem::DeactivateEmitter()
 {
 	Emitter.Deactivate();
+}
+
+void ParticleSystem::ResetPreview()
+{
+	Emitter.PreviewDuration = 0;
 }
 
 bool ParticleSystem::IsEmitterActive() const
@@ -1363,7 +1404,9 @@ void ParticleSystem::DrawEmitterOptions()
 
 	ImGui::NextColumn();
 	ImGui::PushItemWidth(80);
-	ImGui::DragFloat("Emitter Life", &Emitter.EmitterLifeMax, 0.1f, -1.0f, 120.0f);
+	ImGui::Checkbox("Loop", &Emitter.Loop);
+	if(!Emitter.Loop)
+		ImGui::DragFloat("Emitter Life", &Emitter.EmitterLifeMax, 0.1f, 0.1f, 120.0f);
 	ImGui::DragInt("Particles emitted per second", (int*)&Emitter.SpawnRate, 1, 0, 1000);
 	ImGui::DragFloat("+-##Lifetime", &Emitter.Lifetime, 0.01f, 0.0f, 100.0f);
 	ImGui::SameLine();
@@ -1371,7 +1414,6 @@ void ParticleSystem::DrawEmitterOptions()
 	char title[100] = "";
 	sprintf_s(title, 100, "Emission Duration: %.3f", Emitter.EmissionDuration);
 	ImGui::Text(title);
-	ImGui::Checkbox("Loop", &Emitter.Loop);
 	ImGui::Checkbox("Glow effect", &Emitter.glow);
 	sprintf_s(title, 100, "Particle Num: %i", Particles.size());
 	ImGui::Text(title);
