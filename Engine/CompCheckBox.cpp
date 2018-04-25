@@ -13,7 +13,7 @@
 #include "CompImage.h"
 
 
-CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
+CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent), ClickAction()
 {
 	uid = App->random->Int();
 	name_component = "Check Box";
@@ -112,6 +112,7 @@ void CompCheckBox::Save(JSON_Object * object, std::string name, bool saveScene, 
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	json_object_dotset_number_with_std(object, name + "Active", active);
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -134,12 +135,13 @@ void CompCheckBox::Save(JSON_Object * object, std::string name, bool saveScene, 
 			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
 		}
 	}
-
+	SaveClickAction(object, name);
 }
 
 void CompCheckBox::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	active = json_object_dotget_number_with_std(object, name + "Active");
 	//...
 	for (int i = 0; i < 3; i++)
 	{
@@ -162,6 +164,7 @@ void CompCheckBox::Load(const JSON_Object * object, std::string name)
 			}
 		}
 	}
+	LoadClickAction(object, name);
 	Enable();
 }
 
@@ -181,7 +184,24 @@ void CompCheckBox::OnPointDown(Event event_input)
 
 void CompCheckBox::OnClick()
 {
-	Tick->SetToRender(!Tick->GetToRender());
+	if (IsActivate() || !IsActive())
+		return;
+	if (actions.empty())
+	{
+		return;
+	}
+
+	uint size = actions.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (actions[k].script == nullptr)
+			continue;
+
+		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
+	}
+
+	active = !active;
+	Tick->SetToRender(active);
 }
 
 void CompCheckBox::ClearLinkedScripts()
@@ -189,3 +209,22 @@ void CompCheckBox::ClearLinkedScripts()
 	linked_scripts.clear();
 }
 
+////?¿
+//void CompCheckBox::OnSubmit(Event event_input)
+//{
+//	if (IsActivate() || !IsActive())
+//		return;
+//	if (actions.empty())
+//	{
+//		return;
+//	}
+//
+//	uint size = actions.size();
+//	for (uint k = 0; k < size; k++)
+//	{
+//		if (actions[k].script == nullptr)
+//			continue;
+//
+//		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
+//	}
+//}

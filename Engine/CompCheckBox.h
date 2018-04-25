@@ -1,12 +1,12 @@
 #ifndef COMPONENT_CHECK_BOX_H
 #define COMPONENT_CHECK_BOX_H
 #include "CompInteractive.h"
-
+#include "ClickAction.h"
 #include <vector>
 
 class CompScript;
 
-class CompCheckBox:public CompInteractive
+class CompCheckBox:public CompInteractive, public ClickAction
 {
 public:
 	CompCheckBox(Comp_Type t, GameObject* parent);
@@ -20,6 +20,8 @@ public:
 	void OnPointDown(Event event_input);
 	void OnClick();
 	void ClearLinkedScripts();
+
+	//void OnSubmit(Event event_input);
 
 public:
 	CompImage* Tick = nullptr;
