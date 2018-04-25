@@ -45,7 +45,6 @@ public class EnemyShield_BT : Enemy_BT
 
     public override void Update()
     {
-
         shield_block_timer += Time.deltaTime;
 
         enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
@@ -72,9 +71,12 @@ public class EnemyShield_BT : Enemy_BT
 
     protected override void InCombatDecesion()
     {
+        Debug.Log("Shield timer" + shield_block_timer, Department.IA, Color.PINK);
         //Attack action
         if (InRange())
         {
+            bool attack_ready = attack_timer >= attack_cooldown;
+
             if (!GetComponent<Movement_Action>().LookingAtPlayer())
             {
                 current_action.Interupt();
@@ -82,9 +84,22 @@ public class EnemyShield_BT : Enemy_BT
                 return;
             }
 
-            bool attack_ready = attack_timer >= attack_cooldown;
+            else if (shield_block_timer >= shield_block_cd)
+            {
+                Debug.Log("Tralaalaaaa", Department.IA, Color.PINK);
+                MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
+                Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
+                if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
+                    player_dir == MovementController.Direction.SOUTH && enemy_dir == Movement_Action.Direction.DIR_NORTH ||
+                    player_dir == MovementController.Direction.EAST && enemy_dir == Movement_Action.Direction.DIR_WEST ||
+                    player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
+                {
+                    next_action = GetComponent<ShieldBlock_Action>();
+                }
+                return;
+            }
 
-            if (attack_ready)
+            else if (attack_ready)
             {
                 attack_timer = 0.0f;
                 state = AI_STATE.AI_ATTACKING;
@@ -155,51 +170,41 @@ public class EnemyShield_BT : Enemy_BT
         switch (life_state)
         {
             case ENEMY_STATE.ENEMY_ALIVE:
-                if (shield_block_timer >= shield_block_cd && damage_type != ENEMY_GET_DAMAGE_TYPE.FIREWALL)
+                if (GetComponent<ShieldBlock_Action>().IsBlocking() == true)
                 {
-                    MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
-                    Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
-                    if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
-                        player_dir == MovementController.Direction.SOUTH && enemy_dir == Movement_Action.Direction.DIR_NORTH ||
-                        player_dir == MovementController.Direction.EAST && enemy_dir == Movement_Action.Direction.DIR_WEST ||
-                        player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
+                    if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                     {
-                        shield_block_timer = 0.0f;
-                        //GetComponent<CompAnimation>().PlayAnimationNode("Block");
-                        next_action = GetComponent<ShieldBlock_Action>();
-                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
-                        return false;
+                        return base.ApplyDamage(damage, damage_type);
                     }
                     else
-                        return base.ApplyDamage(damage, damage_type);
+                    {
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
+                    }
                 }
                 else
+                {
                     return base.ApplyDamage(damage, damage_type);
-
+                }
                 break;
 
             case ENEMY_STATE.ENEMY_DAMAGED:
-                if (shield_block_timer >= shield_block_cd_damaged && damage_type != ENEMY_GET_DAMAGE_TYPE.FIREWALL)
+                if (GetComponent<ShieldBlock_Action>().IsBlocking() == true)
                 {
-                    MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
-                    Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
-                    if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
-                        player_dir == MovementController.Direction.SOUTH && enemy_dir == Movement_Action.Direction.DIR_NORTH ||
-                        player_dir == MovementController.Direction.EAST && enemy_dir == Movement_Action.Direction.DIR_WEST ||
-                        player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
+                    if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                     {
-                        shield_block_timer = 0.0f;
-                        next_action = GetComponent<ShieldBlock_Action>();
-                        //GetComponent<CompAnimation>().PlayAnimationNode("Block");
-                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
-                        return false;
+                        return base.ApplyDamage(damage, damage_type);
                     }
                     else
-                        return base.ApplyDamage(damage, damage_type);
+                    {
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
+                    }
                 }
                 else
+                {
                     return base.ApplyDamage(damage, damage_type);
-
+                }
                 break;
 
             case ENEMY_STATE.ENEMY_STUNNED:
@@ -225,5 +230,10 @@ public class EnemyShield_BT : Enemy_BT
         GetComponent<CompMaterial>().SetAlbedo("enemy1_Color.png");
         GetComponent<CompMaterial>().SetNormals("enemy1_Normal.png");
         GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO.png");
+    }
+
+    public void ResetShieldBlockTimer()
+    {
+        shield_block_timer = 0.0f;
     }
 }

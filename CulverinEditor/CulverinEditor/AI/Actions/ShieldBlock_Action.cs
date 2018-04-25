@@ -6,6 +6,7 @@ class ShieldBlock_Action : Action
     public float block_duration = 1.0f;
     float current_time = 0.0f;
     CompAnimation animator = null;
+    private bool blocking = false;
 
     public ShieldBlock_Action()
     {
@@ -19,8 +20,8 @@ class ShieldBlock_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().PlayAnimationNode("Block");
-
+        GetComponent<CompAnimation>().PlayAnimationNode("BlockIdle");
+        blocking = true;
         return true;
     }
 
@@ -30,6 +31,7 @@ class ShieldBlock_Action : Action
 
         if(current_time >= block_duration)
         {
+            blocking = false;
             current_time = 0.0f;
             return ACTION_RESULT.AR_SUCCESS;
         }
@@ -39,8 +41,14 @@ class ShieldBlock_Action : Action
 
     public override bool ActionEnd()
     {
+        GetComponent<EnemyShield_BT>().ResetShieldBlockTimer();
         interupt = false;
         return false;
+    }
+
+    public bool IsBlocking()
+    {
+        return blocking;
     }
 }
 
