@@ -86,10 +86,11 @@ public class DaenerysController : CharacterController
         anim_controller = daenerys_obj.GetComponent<CompAnimation>();
         anim_controller.PlayAnimationNode("Out");
         ToggleMesh(false);
+        Debug.Log("5", Department.PLAYER, Color.YELLOW);
 
         //Disable Mana bar
         icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
-        icon.SetEnabled(false, GetLinkedObject("mana_obj"));
+        icon.SetEnabled(false);
 
         //Move icon to the right
         daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
@@ -98,6 +99,7 @@ public class DaenerysController : CharacterController
         GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
         GetLinkedObject("daenerys_s_button_obj_idle").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
         AttackLeftTimer = 0.0f;
+
         //Disable Daenerys Abilities buttons
         EnableAbilities(false);
     }
@@ -334,8 +336,8 @@ public class DaenerysController : CharacterController
             //Set Icon in the center
             daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
             daenerys_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(0.0f, 22.0f, 0.0f));
-            daenerys_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, daenerys_icon_obj_hp);
-            daenerys_icon_obj_mana.GetComponent<CompImage>().SetEnabled(false, daenerys_icon_obj_mana);
+            daenerys_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false);
+            daenerys_icon_obj_mana.GetComponent<CompImage>().SetEnabled(false);
 
             //Update HP
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
@@ -343,17 +345,17 @@ public class DaenerysController : CharacterController
 
             //Disable Stamina Bar
             icon = GetLinkedObject("stamina_obj").GetComponent<CompImage>();
-            icon.SetEnabled(false, GetLinkedObject("stamina_obj"));
+            icon.SetEnabled(false);
 
             icon = GetLinkedObject("leftamina_bar").GetComponent<CompImage>();
-            icon.SetEnabled(false, GetLinkedObject("leftamina_bar"));
+            icon.SetEnabled(false);
 
             //Enable Mana Bar
             icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
-            icon.SetEnabled(true, GetLinkedObject("mana_obj"));
+            icon.SetEnabled(true);
 
             icon = GetLinkedObject("leftmana_bar").GetComponent<CompImage>();
-            icon.SetEnabled(true, GetLinkedObject("leftmana_bar"));
+            icon.SetEnabled(true);
 
             //Update Mana 
             mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
@@ -404,22 +406,22 @@ public class DaenerysController : CharacterController
             //Enable Secondary Bars & Update them
             daenerys_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
             daenerys_icon_obj_mana.GetComponent<CompImage>().FillAmount(curr_mana / max_mana);
-            daenerys_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true, daenerys_icon_obj_hp);
-            daenerys_icon_obj_mana.GetComponent<CompImage>().SetEnabled(true, daenerys_icon_obj_mana);
+            daenerys_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true);
+            daenerys_icon_obj_mana.GetComponent<CompImage>().SetEnabled(true);
 
             //Disable Mana Bar
             icon = GetLinkedObject("mana_obj").GetComponent<CompImage>();
-            icon.SetEnabled(false, GetLinkedObject("mana_obj"));
+            icon.SetEnabled(false);
 
             icon = GetLinkedObject("leftmana_bar").GetComponent<CompImage>();
-            icon.SetEnabled(false, GetLinkedObject("leftmana_bar"));
+            icon.SetEnabled(false);
 
             //Enable Stamina Bar
             icon = GetLinkedObject("stamina_obj").GetComponent<CompImage>();
-            icon.SetEnabled(true, GetLinkedObject("stamina_obj"));
+            icon.SetEnabled(true);
 
             icon = GetLinkedObject("leftamina_bar").GetComponent<CompImage>();
-            icon.SetEnabled(true, GetLinkedObject("leftamina_bar"));
+            icon.SetEnabled(true);
 
             //Disable Daenerys Abilities buttons
             EnableAbilities(false);
@@ -440,8 +442,8 @@ public class DaenerysController : CharacterController
 
     public override void ToggleMesh(bool active)
     {
-        rarm_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active, rarm_daenerys_obj);
-        larm_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active, larm_daenerys_obj);
+        rarm_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active);
+        larm_daenerys_obj.GetComponent<CompMesh>().SetEnabled(active);
     }
 
     //LEFT ARM ------------------------------

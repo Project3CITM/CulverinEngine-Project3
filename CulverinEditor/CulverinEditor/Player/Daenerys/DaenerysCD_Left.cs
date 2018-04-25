@@ -20,10 +20,10 @@ public class DaenerysCD_Left : CoolDown
         charge_count_2 = GetLinkedObject("charge_count_2");
         charge_count_3 = GetLinkedObject("charge_count_3");
 
-        charge_count_0.GetComponent<CompImage>().SetEnabled(false, charge_count_0);
-        charge_count_1.GetComponent<CompImage>().SetEnabled(false, charge_count_1);
-        charge_count_2.GetComponent<CompImage>().SetEnabled(false, charge_count_2);
-        charge_count_3.GetComponent<CompImage>().SetEnabled(true, charge_count_3);
+        charge_count_0.GetComponent<CompImage>().SetEnabled(false);
+        charge_count_1.GetComponent<CompImage>().SetEnabled(false);
+        charge_count_2.GetComponent<CompImage>().SetEnabled(false);
+        charge_count_3.GetComponent<CompImage>().SetEnabled(true);
 
         daenerys_left_cd_text = GetLinkedObject("daenerys_left_cd_text");
         ResetTextTimer(daenerys_left_cd_text);
@@ -126,28 +126,28 @@ public class DaenerysCD_Left : CoolDown
         {
             case 0:
                 {
-                    charge_count_0.GetComponent<CompImage>().SetEnabled(true, charge_count_0);
-                    charge_count_1.GetComponent<CompImage>().SetEnabled(false, charge_count_1);
+                    charge_count_0.GetComponent<CompImage>().SetEnabled(true);
+                    charge_count_1.GetComponent<CompImage>().SetEnabled(false);
                     break;
                 }
             case 1:
                 {
-                    charge_count_0.GetComponent<CompImage>().SetEnabled(false, charge_count_0);
-                    charge_count_1.GetComponent<CompImage>().SetEnabled(true, charge_count_1);
-                    charge_count_2.GetComponent<CompImage>().SetEnabled(false, charge_count_2);
+                    charge_count_0.GetComponent<CompImage>().SetEnabled(false);
+                    charge_count_1.GetComponent<CompImage>().SetEnabled(true);
+                    charge_count_2.GetComponent<CompImage>().SetEnabled(false);
                     break;
                 }
             case 2:
                 {
-                    charge_count_1.GetComponent<CompImage>().SetEnabled(false, charge_count_1);
-                    charge_count_2.GetComponent<CompImage>().SetEnabled(true, charge_count_2);
-                    charge_count_3.GetComponent<CompImage>().SetEnabled(false, charge_count_3);
+                    charge_count_1.GetComponent<CompImage>().SetEnabled(false);
+                    charge_count_2.GetComponent<CompImage>().SetEnabled(true);
+                    charge_count_3.GetComponent<CompImage>().SetEnabled(false);
                     break;
                 }
             case 3:
                 {
-                    charge_count_2.GetComponent<CompImage>().SetEnabled(false, charge_count_2);
-                    charge_count_3.GetComponent<CompImage>().SetEnabled(true, charge_count_3);
+                    charge_count_2.GetComponent<CompImage>().SetEnabled(false);
+                    charge_count_3.GetComponent<CompImage>().SetEnabled(true);
                     break;
                 }
             default:

@@ -67,4 +67,11 @@ public class TheonCD_Secondary : CoolDown
             cd_time = 1.0f;
         }
     }
+
+    public void Die()
+    {
+        theon_dead = true;
+        ResetTextTimer(theon_secondary_cd_text);
+        GetComponent<CompImage>().FillAmount(1.0f);
+    }
 }

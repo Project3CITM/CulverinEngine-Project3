@@ -65,4 +65,11 @@ public class DaenerysCD_Secondary : CoolDown
             cd_time = 1.0f;
         }
     }
+
+    public void Die()
+    {
+        daenerys_dead = true;
+        ResetTextTimer(daenerys_secondary_cd_text);
+        GetComponent<CompImage>().FillAmount(1.0f);
+    }
 }

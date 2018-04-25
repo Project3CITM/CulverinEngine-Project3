@@ -67,4 +67,11 @@ public class JaimeCD_Secondary : CoolDown
             cd_time = 1.0f;
         }
     }
+
+    public void Die()
+    {
+        jaime_dead = true;
+        ResetTextTimer(jaime_secondary_cd_text);
+        GetComponent<CompImage>().FillAmount(1.0f);
+    }
 }

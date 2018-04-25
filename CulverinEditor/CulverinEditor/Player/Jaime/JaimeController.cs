@@ -104,13 +104,13 @@ public class JaimeController : CharacterController
         GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);
 
         //Set Icon in the center
-        jaime_icon_obj.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj);
+        jaime_icon_obj.GetComponent<CompImage>().SetEnabled(true);
         jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(1.0f, 1.0f, 1.0f), 1.0f);
 
         jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
         jaime_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(0.0f, 22.0f, 0.0f));
-        jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_hp);
-        jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_stamina);
+        jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false);
+        jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false);
 
         cover_timer = 0.0f;
     }
@@ -369,8 +369,8 @@ public class JaimeController : CharacterController
             //Set Icon in the center
             jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
             jaime_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(0.0f, 22.0f, 0.0f));
-            jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_hp);
-            jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, jaime_icon_obj_stamina);
+            jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false);
+            jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false);
 
             //Update HP
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
@@ -425,8 +425,8 @@ public class JaimeController : CharacterController
             jaime_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
             jaime_icon_obj_stamina.GetComponent<CompImage>().FillAmount(curr_stamina / max_stamina);
             Debug.Log(curr_stamina / max_stamina);
-            jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj_hp);
-            jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(true, jaime_icon_obj_stamina);
+            jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true);
+            jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(true);
 
             //Disable Jaime Abilities buttons
             EnableAbilities(false);
@@ -435,9 +435,9 @@ public class JaimeController : CharacterController
 
     public override void ToggleMesh(bool active)
     {
-        larm_jaime_obj.GetComponent<CompMesh>().SetEnabled(active, larm_jaime_obj);
-        rarm_jaime_obj.GetComponent<CompMesh>().SetEnabled(active, rarm_jaime_obj);
-        jaime_sword_obj.GetComponent<CompMesh>().SetEnabled(active, jaime_sword_obj);
+        larm_jaime_obj.GetComponent<CompMesh>().SetEnabled(active);
+        rarm_jaime_obj.GetComponent<CompMesh>().SetEnabled(active);
+        jaime_sword_obj.GetComponent<CompMesh>().SetEnabled(active);
     }
 
     public override bool IsAnimationStopped(string name)

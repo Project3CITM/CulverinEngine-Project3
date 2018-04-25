@@ -36,6 +36,7 @@ public class CoolDown : CulverinBehaviour
                 in_cd = false;
                 button_cd = GetComponent<CompButton>();
                 button_cd.Activate();
+                Debug.Log("ACTIVATE ", Department.PLAYER);
                 GetComponent<CompImage>().FillAmount(1.0f);
                 reset_timer = true;
             }

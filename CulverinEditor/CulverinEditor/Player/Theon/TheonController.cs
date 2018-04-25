@@ -166,7 +166,7 @@ public class TheonController : CharacterController
                             if (anim_controller.IsAnimOverXTime(0.5f)) 
                             {
                                 //Activate arrow Placement
-                                Arrow.GetComponent<CompMesh>().SetEnabled(true, Arrow);                       
+                                Arrow.GetComponent<CompMesh>().SetEnabled(true);                       
                                 PlayFx("CrossbowRecharge");
                                 state = State.IDLE;
                             }
@@ -324,8 +324,8 @@ public class TheonController : CharacterController
             //Set Icon in the center
             theon_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
             theon_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(0.0f, 22.0f, 0.0f));
-            theon_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, theon_icon_obj_hp);
-            theon_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false, theon_icon_obj_stamina);
+            theon_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false);
+            theon_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false);
             
             //Update HP
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
@@ -379,8 +379,8 @@ public class TheonController : CharacterController
             //Enable Secondary Bars & Update them
             theon_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
             theon_icon_obj_stamina.GetComponent<CompImage>().FillAmount(curr_stamina / max_stamina);
-            theon_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true, theon_icon_obj_hp);
-            theon_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(true, theon_icon_obj_stamina);
+            theon_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true);
+            theon_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(true);
 
             //Disable Theon Abilities buttons
             EnableAbilities(false);
@@ -401,10 +401,10 @@ public class TheonController : CharacterController
 
     public override void ToggleMesh(bool active)
     {
-        L_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, L_Arm_Theon);
-        R_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active, R_Arm_Theon);
-        CrossBow.GetComponent<CompMesh>().SetEnabled(active, CrossBow);
-        Arrow.GetComponent<CompMesh>().SetEnabled(active, Arrow);
+        L_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active);
+        R_Arm_Theon.GetComponent<CompMesh>().SetEnabled(active);
+        CrossBow.GetComponent<CompMesh>().SetEnabled(active);
+        Arrow.GetComponent<CompMesh>().SetEnabled(active);
     }
 
     public bool OnLeftClick()
@@ -465,7 +465,7 @@ public class TheonController : CharacterController
         arrow_script.arrow_blood_particles = theon_blood_particles;
         arrow_script.arrow_sparks_particles = theon_sparks_particles;
 
-        Arrow.GetComponent<CompMesh>().SetEnabled(false, Arrow);
+        Arrow.GetComponent<CompMesh>().SetEnabled(false);
 
         //Set Attack Animation
         Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Attack");
