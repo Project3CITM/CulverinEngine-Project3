@@ -149,13 +149,13 @@ void PlayerActions::UpdateInputsManager()
 	}
 }
 
-bool PlayerActions::ReceiveEvent(SDL_Event * input_event,float dt)
+bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 {
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		if (!(*it)->GetActiveInput())
 			continue;
-		bool result = (*it)->ProcessEvent(input_event, dt);
+		bool result = (*it)->ProcessEvent(input_event);
 		if (result || (*it)->GetBlockAction())
 			return true;
 

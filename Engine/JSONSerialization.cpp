@@ -935,7 +935,6 @@ void JSONSerialization::SaveInputManager(JSON_Object * config_node, const InputM
 	json_object_dotset_string_with_std(config_node, name + "InputManagerName", input_manager->GetName());
 	json_object_dotset_boolean_with_std(config_node, name + "InputManagerActive", input_manager->GetActiveInput());
 	json_object_dotset_boolean_with_std(config_node, name + "InputManagerBlock", input_manager->GetBlockAction());
-	json_object_dotset_number_with_std(config_node, name + "InputPerSecond", input_manager->GetInputPerSecond());
 
 	if (!input_manager->GetActionVector().empty())
 	{
@@ -983,7 +982,6 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 			input_manager->SetName(json_object_dotget_string_with_std(config, name + "InputManagerName"));
 			input_manager->SetActiveInput(json_object_dotget_boolean_with_std(config, name + "InputManagerActive"));
 			input_manager->SetBlockAction(json_object_dotget_boolean_with_std(config, name + "InputManagerBlock"));
-			input_manager->SetInputPerSecond(json_object_dotget_number_with_std(config, name + "InputPerSecond"));
 
 			int input_action_size = json_object_dotget_number_with_std(config, name + "InputManagerActionSize");
 

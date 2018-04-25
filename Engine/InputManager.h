@@ -13,7 +13,7 @@ public:
 	InputManager(PlayerActions* my_player_action);
 	~InputManager();
 	void UpdateInputActions();
-	bool ProcessEvent(SDL_Event* input_event,float dt);
+	bool ProcessEvent(SDL_Event* input_event);
 	void Clear();
 	ControllerAxisAction* GetAxis(const char* name);
 	std::vector<ControllerAxisAction*> GetAxisVector(const char* name);
@@ -31,17 +31,18 @@ public:
 	void ActiveWindowOpen();
 	void DeactiveWIndowOpen();
 	bool ActionExist(const char* name);
+
 	void SetActiveInput(bool set);
 	void SetBlockAction(bool set);
 	void SetName(const char* name);
-	void SetInputPerSecond(int value);
+
 	const char* GetName()const;
 	const bool GetBlockAction()const;
 	bool GetBlockAction();
 	const bool GetActiveInput()const;
 	bool GetActiveInput();
 	bool GetWindowOpen()const;
-	int GetInputPerSecond()const;
+
 	InputAction* CreateNewAction(const char* new_name, const char* new_key_positive, const char* new_key_negative, ActionInputType new_type = ActionInputType::UNKNOWN_ACTION);
 	std::vector<InputAction*> GetActionVector() const;
 	std::vector<InputAction*> GetActionVector();
@@ -55,7 +56,6 @@ public:
 	bool block_action = false;
 private:
 
-	InputAction* last_action = nullptr;
 	PlayerActions* my_player_action = nullptr;
 	bool window_open = false;
 	std::string name;
@@ -65,8 +65,6 @@ private:
 
 	int action_type = 0;
 
-	int input_per_second = 0.0f;
-	bool no_wait = true;
-	float current_time_input_per_second = 0.0f;
+	
 };
 #endif //INPUT_MANAGER_H
