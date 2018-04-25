@@ -81,27 +81,29 @@ void InputManager::UpdateInputActions()
 bool InputManager::ProcessEvent(SDL_Event * input_event, float dt)
 {
 	if (!no_wait)
-		current_time_wait_for_same_key += dt;
+		current_time_input_per_second += dt;
 	
 	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
 	{
 		if (!no_wait)
 		{
-			if (current_time_wait_for_same_key > wait_for_same_key)
+			if (current_time_input_per_second > input_per_second)
 			{
-				current_time_wait_for_same_key = 0.0f;
+				current_time_input_per_second = 0.0f;
 				last_action = nullptr;
 			}
 			if (last_action != nullptr)
 			{
 				if (last_action->PositiveReaction(input_event))
 					continue;
+			
 			}
 		}
 
 		if ((*it)->ProcessEventAction(input_event))
 		{
 			last_action = (*it);
+			current_time_input_per_second = 0.0f;
 			//my_player_action->SendNewDeviceCombinationType((*it)->positive_button->device);
 			active_action.push_back(last_action);
 			return true;
@@ -190,17 +192,10 @@ void InputManager::ShowInspectorInfo()
 	std::string window_name = "Input Manager " + name;
 	ImGui::Begin(window_name.c_str(), &window_open, window_flags);
 	ImGui::Text("Number of Action per second");
-	if (ImGui::DragInt("##drag_float", &wait_for_same_key))
+	if (ImGui::DragInt("##drag_float", &input_per_second))
 	{
 	
-		if (wait_for_same_key < 0)
-			wait_for_same_key = 0;
-		else if (wait_for_same_key > ACTION_SECOND_LIMIT)
-			wait_for_same_key = ACTION_SECOND_LIMIT;
-
-
-		(wait_for_same_key == 0) ? no_wait = true : no_wait = false;
-
+		SetInputPerSecond(input_per_second);
 		
 
 	}
@@ -401,6 +396,19 @@ void InputManager::SetName(const char * set_name)
 	name = set_name;
 }
 
+void InputManager::SetInputPerSecond(int value)
+{
+	if (value < 0)
+		input_per_second = 0;
+	else if (value > ACTION_SECOND_LIMIT)
+		input_per_second = ACTION_SECOND_LIMIT;
+
+	input_per_second = value;
+
+	(input_per_second == 0) ? no_wait = true : no_wait = false;
+
+}
+
 const char * InputManager::GetName()const
 {
 	return name.c_str();
@@ -427,6 +435,11 @@ bool InputManager::GetActiveInput()
 bool InputManager::GetWindowOpen() const
 {
 	return window_open;
+}
+
+int InputManager::GetInputPerSecond() const
+{
+	return input_per_second;
 }
 
 InputAction* InputManager::CreateNewAction(const char * new_name, const char * new_key_positive, const char* new_key_negative, ActionInputType new_type)
