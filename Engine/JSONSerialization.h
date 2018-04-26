@@ -57,7 +57,7 @@ public:
 
 	void SaveIntBinary(char** cursor, int value);
 	void SaveFloatBinary(char** cursor, float value);
-	void SaveBoolBinary(char** cursor, bool value);
+	void SaveBooleanBinary(char** cursor, bool value);
 	void SaveStringBinary(char** cursor, std::string value);
 	void SaveConstCharBinary(char** cursor, const char* value);
 	void SaveFloat2Binary(char** cursor, math::float2 value);
@@ -66,7 +66,7 @@ public:
 
 	int LoadIntBinary(char** cursor);
 	float LoadFloatBinary(char** cursor);
-	bool LoadBoolBinary(char** cursor);
+	bool LoadBooleanBinary(char** cursor);
 	std::string LoadStringBinary(char** cursor);
 	void LoadConstCharBinary(char** cursor, const char** value);
 	math::float2 LoadFloat2Binary(char** cursor);

@@ -5,6 +5,7 @@
 #include "WindowInspector.h"
 #include "Scene.h"
 #include "ModulePhysics.h"
+#include "JSONSerialization.h"
 
 #include "jpPhysicsRigidBody.h"
 #include "CompCollider.h"
@@ -283,6 +284,34 @@ void CompRigidBody::SyncComponent(GameObject* sync_parent)
 		body->SetSleepTime(sleep_time);
 		SetDinamicLockFlags();
 	}
+}
+
+void CompRigidBody::GetOwnBufferSize(uint& buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);			//UID
+	buffer_size += sizeof(bool);		//kinematic
+	buffer_size += sizeof(int);			//lock_move
+	buffer_size += sizeof(float);			//sleep_time
+}
+
+void CompRigidBody::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+	App->json_seria->SaveBooleanBinary(cursor, kinematic);
+	App->json_seria->SaveIntBinary(cursor, lock_move);
+	App->json_seria->SaveFloatBinary(cursor, sleep_time);
+}
+
+void CompRigidBody::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	kinematic = App->json_seria->LoadBooleanBinary(cursor);
+	lock_move = App->json_seria->LoadIntBinary(cursor);
+	sleep_time = App->json_seria->LoadFloatBinary(cursor);
+
+	Enable();
 }
 
 bool CompRigidBody::IsKinematic()

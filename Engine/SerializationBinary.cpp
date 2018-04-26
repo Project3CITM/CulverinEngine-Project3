@@ -77,13 +77,13 @@ void JSONSerialization::SaveChildGameObjectBinary(const GameObject& gameObject, 
 	// Tag ----------
 	SaveStringBinary(cursor, gameObject.GetTag());
 	// Bounding Box ---------
-	SaveBoolBinary(cursor, gameObject.IsAABBActive());
+	SaveBooleanBinary(cursor, gameObject.IsAABBActive());
 	// Static ---------
-	SaveBoolBinary(cursor, gameObject.IsStatic());
+	SaveBooleanBinary(cursor, gameObject.IsStatic());
 
-	SaveBoolBinary(cursor, gameObject.AreTranslationsActivateds());
-	SaveBoolBinary(cursor, gameObject.AreRotationsActivateds());
-	SaveBoolBinary(cursor, gameObject.AreScalesActivateds());
+	SaveBooleanBinary(cursor, gameObject.AreTranslationsActivateds());
+	SaveBooleanBinary(cursor, gameObject.AreRotationsActivateds());
+	SaveBooleanBinary(cursor, gameObject.AreScalesActivateds());
 
 	// Components  ------------
 	if (gameObject.GetNumComponents() > 0)
@@ -274,18 +274,18 @@ LoadSceneSt JSONSerialization::LoadGameObejctBinary(char** cursor)
 	if (App->scene->FindTag(tagGameObject.c_str()))obj->SetTag(tagGameObject.c_str());
 	// Bounding Box ---------
 	
-	bool aabb_active = LoadBoolBinary(cursor);
+	bool aabb_active = LoadBooleanBinary(cursor);
 	obj->SetAABBActive(aabb_active);
-	bool static_obj = LoadBoolBinary(cursor);
+	bool static_obj = LoadBooleanBinary(cursor);
 	obj->SetStatic(static_obj);
 
-	bool anim_translations = LoadBoolBinary(cursor);
+	bool anim_translations = LoadBooleanBinary(cursor);
 	obj->ToggleAnimationTranslations(anim_translations);
 
-	bool anim_rotations = LoadBoolBinary(cursor);
+	bool anim_rotations = LoadBooleanBinary(cursor);
 	obj->ToggleAnimationRotation(anim_rotations);
 
-	bool anim_scales = LoadBoolBinary(cursor);
+	bool anim_scales = LoadBooleanBinary(cursor);
 	obj->ToggleAnimationScale(anim_scales);
 
 	LoadSceneSt temp;
@@ -350,7 +350,7 @@ void JSONSerialization::SaveFloatBinary(char** cursor, float value)
 	(*cursor) += bytes_to_copy;
 }
 
-void JSONSerialization::SaveBoolBinary(char** cursor, bool value)
+void JSONSerialization::SaveBooleanBinary(char** cursor, bool value)
 {
 	uint bytes_to_copy = sizeof(value);
 	memcpy((*cursor), &value, bytes_to_copy);
@@ -427,7 +427,7 @@ float JSONSerialization::LoadFloatBinary(char ** cursor)
 	return ret;
 }
 
-bool JSONSerialization::LoadBoolBinary(char ** cursor)
+bool JSONSerialization::LoadBooleanBinary(char ** cursor)
 {
 	uint bytes_to_copy = sizeof(bool);
 	bool ret;
