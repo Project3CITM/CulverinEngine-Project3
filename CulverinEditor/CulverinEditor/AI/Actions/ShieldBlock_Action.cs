@@ -19,7 +19,7 @@ class ShieldBlock_Action : Action
 
     public override bool ActionStart()
     {
-        animator.SetTransition("ToBlock");
+        GetComponent<CompAnimation>().PlayAnimationNode("Block");
 
         return true;
     }

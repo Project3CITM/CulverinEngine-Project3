@@ -4,10 +4,13 @@ using CulverinEditor.Map;
 
 public class SwordParticles : CulverinBehaviour
 {
-    public GameObject sword_wall_particle;
+    //public GameObject sword_wall_particle;
     public GameObject sword_enemy_particle;
+    public GameObject sword_enemy_particle2;
+    public GameObject sword_enemy_particle3;
+    public GameObject sword_enemy_particle4;
 
-    CompParticleSystem wall_particle;
+    //CompParticleSystem wall_particle;
     CompParticleSystem enemy_particle;
 
     CompCollider col;
@@ -15,17 +18,34 @@ public class SwordParticles : CulverinBehaviour
     bool wall_collision = false;
     bool enemy_collision = false;
 
+    //BLOOD TEXTURE MANAGEMENT
+    Material mat;
+    public float blood = 0.0f;
+
     void Start()
     {
         col = GetComponent<CompCollider>();
         wall_collision = false;
         enemy_collision = false;
 
-        sword_wall_particle = GetLinkedObject("sword_wall_particle");
-        sword_enemy_particle = GetLinkedObject("sword_enemy_particle");
+        //sword_wall_particle = GetLinkedObject("sword_wall_particle");
+        //wall_particle = sword_wall_particle.GetComponent<CompParticleSystem>();
 
-        wall_particle = sword_wall_particle.GetComponent<CompParticleSystem>();
+        sword_enemy_particle = GetLinkedObject("sword_enemy_particle");
+        sword_enemy_particle2 = GetLinkedObject("sword_enemy_particle2");
+        sword_enemy_particle3 = GetLinkedObject("sword_enemy_particle3");
+        sword_enemy_particle4 = GetLinkedObject("sword_enemy_particle4");
+
         enemy_particle = sword_enemy_particle.GetComponent<CompParticleSystem>();
+
+        //TO MANAGE SWORD BLOOD TEXTURE
+        mat = GetMaterialByName("Jaime Sword");
+        mat.SetFloat("blood", blood);
+    }
+
+    void Update()
+    {
+        mat.SetFloat("blood", blood);
     }
 
     void OnContact()
@@ -35,7 +55,7 @@ public class SwordParticles : CulverinBehaviour
 
         if (obj != null)
         {      
-            if (enemy_collision && obj.CompareTag("Enemy"))
+            if (enemy_collision && obj.CompareTag("Enemy") && sword_enemy_particle != null)
             {
                 col = GetComponent<CompCollider>();
                 Vector3 point = col.GetContactPoint();
@@ -50,12 +70,27 @@ public class SwordParticles : CulverinBehaviour
                 enemy_particle = sword_enemy_particle.GetComponent<CompParticleSystem>();
                 enemy_particle.ActivateEmission(true);
 
-                //Iterate all childs, they have a ParticleSystem too
-                int childs = sword_enemy_particle.ChildCount();
-                for (int i = 0; i < childs; i++)
+                if (sword_enemy_particle2 != null)
                 {
-                    sword_enemy_particle.GetChildByIndex(i).GetComponent<CompParticleSystem>().ActivateEmission(true);
+                    enemy_particle = sword_enemy_particle2.GetComponent<CompParticleSystem>();
+                    enemy_particle.ActivateEmission(true);
                 }
+                if (sword_enemy_particle3 != null)
+                {
+                    enemy_particle = sword_enemy_particle3.GetComponent<CompParticleSystem>();
+                    enemy_particle.ActivateEmission(true);
+                }
+                if (sword_enemy_particle4 != null)
+                {
+                    enemy_particle = sword_enemy_particle4.GetComponent<CompParticleSystem>();
+                    enemy_particle.ActivateEmission(true);
+                }
+                //Iterate all childs, they have a ParticleSystem too
+                //int childs = sword_enemy_particle.ChildCount();
+                //for (int i = 0; i < childs; i++)
+                //{
+                //    sword_enemy_particle.GetChildByIndex(i).GetComponent<CompParticleSystem>().ActivateEmission(true);
+                //}
 
                 //Disable Enemy Collisions
                 EnableEnemyCollision(false);
@@ -71,6 +106,25 @@ public class SwordParticles : CulverinBehaviour
     public void EnableEnemyCollision(bool enable)
     {
         enemy_collision = enable;
+    }
+
+    /* MANAGE BLOOD TEXTURE:
+        - Damage Enemy -> blood++
+        - Attack Miss  -> blood--  
+     */
+    public void SetBlood(float blood_increase)
+    {
+        blood += blood_increase;
+
+        if (blood < 0.0f) 
+        {
+            blood = 0.0f;
+        }
+
+        if (blood > 1.0f)
+        {
+            blood = 1.0f;
+        }
     }
 
 }

@@ -4,6 +4,8 @@
 #include "Globals.h"
 #include <vector>
 #include <list>
+#include "KeyBinding.h"
+
 typedef union SDL_Event SDL_Event;
 class ModuleInput;
 class InputManager;
@@ -28,6 +30,9 @@ public:
 	void SetInputManagerActive(const char* name,bool set);
 	void SetInputManagerBlock(const char* name, bool set);
 
+	bool GetInputManagerActive(const char* name)const;
+	bool GetInputManagerBlock(const char* name)const ;
+
 	InputManager* GetInputManager(const char* name) const;
 	InputManager* GetInputManager(const char* name);
 	std::vector<InputManager*> GetInteractiveVector() const;
@@ -40,16 +45,20 @@ public:
 	bool GetInput_MouseButtonUp(const char* name, const char* input);
 	float GetInput_ControllerAxis(const char* name, const char* input);
 
+	const char* GetInput_ControllerActionName(const char* name, const char* input, const char* device, bool negative_key);
+	const char*	GetInput_ControllerKeyBindingName(const char* name, const char* input, const char* device, bool negative_key);
+	bool GetInput_ControllerWaitForKey(const char* name, const char* input, const char* device, bool negative_key);
+	void SetInput_ControllerWaitForKey(const char* name, const char* input, const char* device, bool negative_key);
 
+	void SendNewDeviceCombinationType(DeviceCombinationType type);
 
 public:
 	int number_of_inputs = 0;
 	std::vector<InputManager*> interactive_vector;
-	std::list<InputManager*> update_interactive;
 
 private:
 	std::string selected_input_name;
 	ModuleInput* my_module = nullptr;
-
+	DeviceCombinationType actual_player_action = DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
 };
 #endif //MODULE_PLAYER_ACTION_H

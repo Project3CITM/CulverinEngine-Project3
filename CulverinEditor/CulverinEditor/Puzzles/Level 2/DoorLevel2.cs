@@ -21,8 +21,12 @@ public class DoorLevel2 : CulverinBehaviour
     private bool go_close = false;
     private bool go_open = false;
 
+    CompAudio audio;
+
     void Start()
     {
+        audio = GetComponent<CompAudio>();
+
         Vector3 global_pos = transform.GetGlobalPosition();
         door_pos_x = (int)((global_pos.x + (12.7f)) / 25.4);
         door_pos_y = (int)((global_pos.z + (12.7f)) / 25.4);
@@ -61,8 +65,12 @@ public class DoorLevel2 : CulverinBehaviour
             }
             else
             {
+                Debug.Log("DOOR CLOSED");
                 go_close = false;
                 door_closed = true;
+                //  audio.StopEvent("DoorLoop");
+                GetComponent<CompAudio>().PlayEvent("DoorEnd");
+                Input.RumblePlay(1.0f, 500);
             }
         }
         else if (go_open)
@@ -75,9 +83,13 @@ public class DoorLevel2 : CulverinBehaviour
             }
             else
             {
+                Debug.Log("DOOR OPENED", Department.STAGE);
                 GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(door_pos_x, door_pos_y, 0);
                 go_open = false;
                 door_closed = false;
+                // audio.StopEvent("DoorLoop");
+                GetComponent<CompAudio>().PlayEvent("DoorEnd");
+                Input.RumblePlay(1.0f, 500);
             }
         }
     }
@@ -89,6 +101,8 @@ public class DoorLevel2 : CulverinBehaviour
         {
             current_open_calls = 0;
             go_open = true;
+            audio.PlayEvent("DoorLoop");
+            Input.RumblePlay(0.3f, 5000);
         }
     }
 
@@ -96,6 +110,8 @@ public class DoorLevel2 : CulverinBehaviour
     {
         go_close = true;
         GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(door_pos_x, door_pos_y, 1);
+        audio.PlayEvent("DoorLoop");
+        Input.RumblePlay(0.3f, 5000);
     }
 
     public void ChangeStateDoor()
@@ -103,10 +119,14 @@ public class DoorLevel2 : CulverinBehaviour
         if (door_closed)
         {
             go_open = true;
+            audio.PlayEvent("DoorLoop");
+            Input.RumblePlay(0.3f, 5000);
         }
         else
         {
             go_close = true;
+            audio.PlayEvent("DoorLoop");
+            Input.RumblePlay(0.3f, 5000);
             GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(door_pos_x, door_pos_y, 1);
         }
     }

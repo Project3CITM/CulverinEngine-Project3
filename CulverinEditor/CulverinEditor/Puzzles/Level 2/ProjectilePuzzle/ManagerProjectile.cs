@@ -33,11 +33,14 @@ public class ManagerProjectile : CulverinBehaviour
     public float phase2_projects_per_time = 1.25f;
     public float phase3_projects_per_time = 0.40f;
 
+    public int probability_two_shoots = 30;
+
     private float actualtime_puzzle = 0.0f;
     public float actualtime_projectils = 0.0f;
 
     public bool active_puzzle = false;
     private int phase_active = 0;
+    private int last_shoot = 0;
     // --------------------------------------
 
     void Start()
@@ -58,10 +61,6 @@ public class ManagerProjectile : CulverinBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.F))
-        {
-            Shoot(projectileOut_1);
-        }
         if (active_puzzle)
         {
             if (door_puzzle_level2 != null)
@@ -101,13 +100,27 @@ public class ManagerProjectile : CulverinBehaviour
                 phase_active = -1;
             }
 
+
             switch (phase_active)
             {
                 case 1:
                     if (actualtime_projectils >= phase1_projects_per_time)
                     {
-                        ApplyProjectil(Random.Range(1, number_projectils));
-                        actualtime_projectils = 0.0f;
+                        if(last_shoot > 0)
+                        {
+                            ApplyProjectil(Random.Range(1, number_projectils, last_shoot));
+                            int shoot_two = Random.Range(1, 100);
+                            if(shoot_two <= probability_two_shoots)
+                            {
+                                ApplyProjectil(Random.Range(1, number_projectils, last_shoot));
+                            }
+                            actualtime_projectils = 0.0f;
+                        }
+                        else
+                        {
+                            ApplyProjectil(Random.Range(1, number_projectils));
+                            actualtime_projectils = 0.0f;
+                        }
                     }
                     else
                     {
@@ -117,7 +130,12 @@ public class ManagerProjectile : CulverinBehaviour
                 case 2:
                     if (actualtime_projectils >= phase2_projects_per_time)
                     {
-                        ApplyProjectil(Random.Range(1, number_projectils));
+                        ApplyProjectil(Random.Range(1, number_projectils, last_shoot));
+                        int shoot_two = Random.Range(1, 100);
+                        if (shoot_two <= probability_two_shoots)
+                        {
+                            ApplyProjectil(Random.Range(1, number_projectils, last_shoot));
+                        }
                         actualtime_projectils = 0.0f;
                     }
                     else
@@ -128,7 +146,12 @@ public class ManagerProjectile : CulverinBehaviour
                 case 3:
                     if (actualtime_projectils >= phase3_projects_per_time)
                     {
-                        ApplyProjectil(Random.Range(1, number_projectils));
+                        ApplyProjectil(Random.Range(1, number_projectils, last_shoot));
+                        int shoot_two = Random.Range(1, 100);
+                        if (shoot_two <= probability_two_shoots)
+                        {
+                            ApplyProjectil(Random.Range(1, number_projectils, last_shoot));
+                        }
                         actualtime_projectils = 0.0f;
                     }
                     else
@@ -144,6 +167,7 @@ public class ManagerProjectile : CulverinBehaviour
     {
         Debug.Log("[yellow]");
         Debug.Log(projectil);
+        last_shoot = projectil;
         switch (projectil)
         {
             case 1:
@@ -201,16 +225,17 @@ public class ManagerProjectile : CulverinBehaviour
     {
         //PlayFx("audioooo");
         Debug.Log("Shoot");
-        GameObject projectile = Instantiate("Projectil");
+        GameObject projectile = Instantiate("FireProjectile");
         projectile.transform.SetPosition(projectileOut.GetComponent<Transform>().GetGlobalPosition());
         projectile.transform.SetRotation(projectileOut.GetComponent<Transform>().GetRotation());
 
         Projectile projectile_script = projectile.GetComponent<Projectile>();
-        Vector3 vfront = projectileOut.GetComponent<Transform>().right;
+        Vector3 vfront = projectileOut.GetComponent<Transform>().forward;
         Mathf.Round(vfront.x);
         Mathf.Round(vfront.y);
         Mathf.Round(vfront.z);
         projectile_script.speed = vfront * -1;
+        projectile_script.speed_projectil = speed_projectil;
     }
 
     void OnTriggerEnter()

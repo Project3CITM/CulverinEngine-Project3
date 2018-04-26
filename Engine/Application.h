@@ -38,7 +38,6 @@ class ModuleRenderGui;
 class ModulePhysics;
 class ModuleMap;
 class ModuleLightning;
-class ModuleKeyBinding;
 class ModuleAnimation;
 class ModuleParticles;
 
@@ -100,7 +99,7 @@ public:
 
 	void SetState(EngineState state);
 
-	void WantToSave();
+	void WantToSave(bool binary = false);
 	void WantToLoad(bool in_game = false);
 	void DontDestroyOnLoad();
 	void LoadMultiScene();
@@ -146,7 +145,6 @@ public:
 	ModulePhysics* physics = nullptr;
 	ModuleMap* map = nullptr;
 	ModuleLightning* module_lightning = nullptr;
-	ModuleKeyBinding* module_key_binding = nullptr;
 	ModuleParticles* particles = nullptr;
 
 private:
@@ -205,6 +203,7 @@ private:
 	std::string secondary_scene;
 
 	bool want_to_save = false;
+	bool want_to_save_binary = false;
 	bool want_to_load = false;
 	bool load_in_game = false;
 

@@ -9,6 +9,7 @@
 #include "ModuleWindow.h"
 #include "CompLight.h"
 #include "ModuleLightning.h"
+#include "CompCubeMapRenderer.h"
 
 void AddListener(EventType type, Module* listener)
 {
@@ -92,9 +93,11 @@ update_status ModuleEventSystemV2::Update(float dt)
 
 update_status ModuleEventSystemV2::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModuleEventSystemV2", Profiler::Color::Blue);
 	perf_timer.Start();
 	IteratingMaps = true;
 	FrameBuffer* active_frame = nullptr;
+
 	//Draw opaque events
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
@@ -106,17 +109,18 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	active_frame = App->scene->scene_buff;
 	active_frame->Bind("Scene");
 	IterateDrawV(dt);
-	//active_frame->UnBind("Scene");
+	
 	//Draw alpha events
-	//active_frame->Bind("Scene");
 	IterateDrawAlphaV(dt);
 	active_frame->UnBind("Scene");
+
 	//Draw opaque with glow events
 	glViewport(0, 0, 128, 128);
 	active_frame = App->scene->glow_buff;
 	active_frame->Bind("Scene");
 	IterateDrawGlowV(dt);
 	active_frame->UnBind("Scene");
+
 	glUseProgram(NULL);
 	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -165,18 +169,20 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 
 void ModuleEventSystemV2::IterateDrawV(float dt)
 {
+	BROFILER_CATEGORY("ModuleEventSystemV2: IterateDrawV", Profiler::Color::Blue);
+
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	Material* LastUsedMaterial = nullptr;
 	Material* ActualMaterial =  nullptr;
-	for (std::multimap<uint, Event>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
+	for (std::multimap<DrawVMultimapKey, Event, Comparator>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
 		{
 		case EventValidation::EVENT_VALIDATION_VALID: //Here we can execute the event, any delay is left and this is a valid event
 			NewProgramID = 0;
-			if (item._Ptr->_Myval.first != 0)
+			if (item._Ptr->_Myval.first.uuid != 0)
 				NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
 
 				ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
@@ -187,30 +193,21 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 				LastUsedMaterial = ActualMaterial;
 
 				glBindTexture(GL_TEXTURE_2D, 0);
-				glActiveTexture(GL_TEXTURE0);				
+				glActiveTexture(GL_TEXTURE0);
 				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
 				{
-					LastBindedProgram = NewProgramID;					
+					LastBindedProgram = NewProgramID;
 					ActualMaterial->Bind();
+
 
 				}	
 				App->module_shaders->SetUniformVariables(ActualMaterial);
-				for (uint i = 0; i < ActualMaterial->textures.size(); i++)
-				{
-					uint texLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), ActualMaterial->textures[i].var_name.c_str());
-					glUniform1i(texLoc, i);
-					glActiveTexture(GL_TEXTURE0 + i);
-					if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-					else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
-				}
-
 
 				GLuint ShadowMapLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), "_shadowMap");
-				glUniform1i(ShadowMapLoc, (ActualMaterial->textures.size()));
-				glActiveTexture(GL_TEXTURE0 + (ActualMaterial->textures.size()));
+				glUniform1i(ShadowMapLoc, (ActualMaterial->textures.size() + ActualMaterial->cube_maps.size()));
+				glActiveTexture(GL_TEXTURE0 + (ActualMaterial->textures.size() + ActualMaterial->cube_maps.size()));
 				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
-
-				App->module_shaders->SetUniformVariables(ActualMaterial);
+				
 
 			}
 			switch (item._Ptr->_Myval.second.draw.Dtype)
@@ -243,12 +240,13 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 
 void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 {
+	BROFILER_CATEGORY("ModuleEventSystemV2: IterateDrawGlowV", Profiler::Color::Blue);
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	bool UseGlow = false;
 	Material* LastUsedMaterial = nullptr;
 	Material* ActualMaterial = nullptr;
-	for (std::multimap<uint, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend();)
+	for (std::multimap<DrawVMultimapKey, Event>::const_iterator item = DrawGlowV.cbegin(); item != DrawGlowV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
@@ -272,14 +270,12 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 				glEnable(GL_CULL_FACE);
 				break;
 
-
-
 			case EventType::EVENT_DRAW:
 
 				NewProgramID = 0;
 
 				UseGlow = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material->glow;
-				if (item._Ptr->_Myval.first != 0)
+				if (item._Ptr->_Myval.first.uuid != 0)
 				{
 					if (UseGlow) NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
 					else NewProgramID = App->renderer3D->non_glow_material->GetProgramID();
@@ -300,14 +296,7 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 						ActualMaterial->Bind();
 
 					}
-					for (uint i = 0; i < ActualMaterial->textures.size(); i++)
-					{
-						uint texLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), ActualMaterial->textures[i].var_name.c_str());
-						glUniform1i(texLoc, i);
-						glActiveTexture(GL_TEXTURE0 + i);
-						if (ActualMaterial->textures[i].value == nullptr) glBindTexture(GL_TEXTURE_2D, App->renderer3D->id_checkImage);
-						else glBindTexture(GL_TEXTURE_2D, ActualMaterial->textures[i].value->GetTextureID());
-					}
+					App->module_shaders->SetUniformVariables(ActualMaterial);
 
 				}
 
@@ -349,6 +338,8 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 
 void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 {
+	BROFILER_CATEGORY("ModuleEventSystemV2: IterateDrawAlphaV", Profiler::Color::Blue);
+
 	bool alpha_draw = false;
 	if (DrawAlphaV.size() > 0) alpha_draw = true;
 	if (alpha_draw)
@@ -439,7 +430,9 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 
 void ModuleEventSystemV2::IterateNoDrawV(float dt)
 {
-	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
+	BROFILER_CATEGORY("ModuleEventSystemV2: IterateNoDrawV", Profiler::Color::Blue);
+
+	std::multimap<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.cbegin();
 	for (std::multimap<EventType, Event>::const_iterator item = NoDrawV.cbegin(); item != NoDrawV.cend();)
 	{
 		switch (ValidEvent(item._Ptr->_Myval.second, dt))
@@ -474,6 +467,7 @@ void ModuleEventSystemV2::IterateNoDrawV(float dt)
 
 void ModuleEventSystemV2::IterateLightsV(float dt)
 {
+	BROFILER_CATEGORY("ModuleEventSystemV2: IterateLightsV", Profiler::Color::Blue);
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	Material* LastUsedMaterial = nullptr;
@@ -502,8 +496,6 @@ void ModuleEventSystemV2::IterateLightsV(float dt)
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
-
-
 }
 
 EventValidation ModuleEventSystemV2::ValidEvent(Event& event, float dt)
@@ -561,7 +553,7 @@ void ModuleEventSystemV2::AddListener(EventType type, Module* listener)
 {
 	if (listener != nullptr)
 	{
-		std::map<EventType, std::vector<Module*>>::iterator EListener = MEventListeners.find(type);
+		std::multimap<EventType, std::vector<Module*>>::iterator EListener = MEventListeners.find(type);
 		if (EListener != MEventListeners.end()) EListener._Ptr->_Myval.second.push_back(listener);
 	}
 }
@@ -586,13 +578,18 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		*/
 		DrawAlphaV.insert(std::pair<float, Event>(-((Particle*)event.particle_draw.ToDraw)->CameraDistance, event));
 
-		if((Particle*)event.particle_draw.ToDraw->glow)
-			DrawGlowV.insert(std::pair<float, Event>(-((Particle*)event.particle_draw.ToDraw)->CameraDistance, event));
+		if ((Particle*)event.particle_draw.ToDraw->glow)
+			DrawGlowV.insert(std::pair<DrawVMultimapKey, Event>(DrawVMultimapKey(0, -((Particle*)event.particle_draw.ToDraw)->CameraDistance), event));
 
 		break;
 	case EventType::EVENT_DRAW:
 	{
-		float3 diff_vect = event.draw.ToDraw->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;
+
+		float3 diff_vect = float3::zero;
+
+		if (App->renderer3D->active_camera)
+			diff_vect = event.draw.ToDraw->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;
+
 		uint ID = 0;
 		if ((event.draw.ToDraw != nullptr) && (((CompMesh*)event.draw.ToDraw)->GetMaterial() != nullptr) && (((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram() != nullptr))
 			ID = ((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
@@ -607,8 +604,8 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 				EventPushedWhileIteratingMaps_DrawV = true;
 			}
 			*/
-			DrawV.insert(std::pair<uint, Event>(ID, event));
-			DrawGlowV.insert(std::pair<uint, Event>(ID, event));
+			DrawV.insert(std::pair<DrawVMultimapKey, Event>(DrawVMultimapKey(ID, DistanceCamToObject), event));
+			DrawGlowV.insert(std::pair<DrawVMultimapKey, Event>(DrawVMultimapKey(ID, DistanceCamToObject), event));
 			break;
 		case event.draw.DRAW_3D_ALPHA:
 			/*
@@ -642,19 +639,34 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 			EventPushedWhileIteratingMaps_DrawAlphaV = true;
 			EventPushedWhileIteratingMaps_NoDrawV = true;
 		}
-		*/
+		*/		
+
 		Event event_temp;
 		event_temp.Set_event_data(EventType::EVENT_SEND_3D_3DA_MM);
 		event_temp.send_3d3damm.MM3DDrawEvent = &DrawV;
 		event_temp.send_3d3damm.MM3DADrawEvent = &DrawAlphaV;
 		event_temp.send_3d3damm.light = event.request_3d3damm.light;	
 
-		float3 diff_vect = event_temp.send_3d3damm.light->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;
+		float3 diff_vect = float3::zero;
+
+		if(App->renderer3D->active_camera)
+			diff_vect = event_temp.send_3d3damm.light->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos;
+
 		float DistanceCamToObject = diff_vect.Length();
 		DrawLightV.insert(std::pair<float, Event>(DistanceCamToObject, event_temp));
 		
 		break;
 	}
+
+	case EventType::EVENT_CUBEMAP_REQUEST:
+	{
+		Event event_temp;
+		event_temp.Set_event_data(EventType::EVENT_CUBEMAP_DRAW);
+		event_temp.cube_map_draw.all_gameobjects = App->scene->GetAllSceneObjects();
+		((CompCubeMapRenderer*)event.cube_map_request.comp_cubemap)->Bake(event_temp);	
+	}
+
+
 	
 	default:
 		/*
@@ -671,7 +683,7 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 
 void ModuleEventSystemV2::PushImmediateEvent(Event& event)
 {
-	std::map<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.find(event.Get_event_data_type());
+	std::multimap<EventType, std::vector<Module*>>::const_iterator EListener = MEventListeners.find(event.Get_event_data_type());
 	if (EListener != MEventListeners.end())
 	{
 		switch (event.Get_event_data_type())

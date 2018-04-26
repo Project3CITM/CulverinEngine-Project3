@@ -35,7 +35,7 @@ public class DaenerysController : CharacterController
     public float damage_percentage_left = 10f;
     public int distance_left_attack = 3;
     private DaenerysCD_Left cd_left;
-
+    float AttackLeftTimer = 0.0f;
     //Right Ability Stats
     public float mana_cost_percentage_right = 20f;
     public float damage_percentage_right = 10f;
@@ -46,6 +46,12 @@ public class DaenerysController : CharacterController
 
     public GameObject daenerys_button_left_obj_idle;
     public GameObject daenerys_button_right_obj_idle;
+
+    public GameObject Global_Camera;
+
+    public GameObject daenerys_fireball_particles2;
+    public GameObject daenerys_fireball_particles3;
+    public GameObject daenerys_fireball_particles4;
 
     protected override void Start()
     {
@@ -70,6 +76,11 @@ public class DaenerysController : CharacterController
         mana_regen = GetLinkedObject("mana_obj").GetComponent<Mana>().regen;
 
         daenerys_fireball_particles = GetLinkedObject("daenerys_fireball_particles");
+        daenerys_fireball_particles2 = GetLinkedObject("daenerys_fireball_particles2");
+        daenerys_fireball_particles3 = GetLinkedObject("daenerys_fireball_particles3");
+        daenerys_fireball_particles4 = GetLinkedObject("daenerys_fireball_particles4");
+
+        Global_Camera = GetLinkedObject("Global_Camera");
 
         // Start Idle animation
         anim_controller = daenerys_obj.GetComponent<CompAnimation>();
@@ -82,11 +93,11 @@ public class DaenerysController : CharacterController
 
         //Move icon to the right
         daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
-        daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
+        daenerys_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(115.0f, 100.0f, 0.0f));
         daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(1.0f, 1.0f, 1.0f), 1.0f);
-        GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, -31.5f, 0.0f));
-        GetLinkedObject("daenerys_s_button_obj_idle").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, -31.5f, 0.0f));
-
+        GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
+        GetLinkedObject("daenerys_s_button_obj_idle").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
+        AttackLeftTimer = 0.0f;
         //Disable Daenerys Abilities buttons
         EnableAbilities(false);
     }
@@ -98,7 +109,7 @@ public class DaenerysController : CharacterController
 
     public override void ControlCharacter()
     {
-         
+        Debug.Log(state, Department.PLAYER);
         //// First check if you are alive
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)
@@ -106,8 +117,9 @@ public class DaenerysController : CharacterController
             // Check if player is moving to block attacks/abilities
             movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
             if (!movement.IsMoving())
-            { 
+            {
                 /* Player is alive */
+
                 switch (state)
                 {
                     case State.IDLE:
@@ -118,23 +130,43 @@ public class DaenerysController : CharacterController
                         }
                     case State.ATTACKING:
                         {
+                            AttackLeftTimer += Time.deltaTime;
                             //Check for end of the Attack animation
-                            anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                            if (anim_controller.IsAnimationStopped("Idle"))
+                            if (GetComponent<CompAnimation>().IsAnimationStopped("Idle"))
                             { 
-                                anim_controller = daenerys_obj.GetComponent<CompAnimation>();
-                                if (anim_controller.IsAnimOverXTime(0.6f) && play_audio_roar)
+                                if (GetComponent<CompAnimation>().IsAnimOverXTime(0.6f) && play_audio_roar)
                                 {
+                                    GameObject flamethr = Instantiate("CorrectDaenerysFireBreath");
+
+                                    flamethr.transform.SetPosition(GetFlameBreathPosition(curr_position));
+                                    flamethr.transform.SetRotation(flamethr.transform.GetRotation());
+
+                                    Fireball fballscript = flamethr.GetComponent<Fireball>();
+                                    fballscript.vfront = curr_forward;
+
+                                    GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
+                                    if (coll_object != null)
+                                    {
+                                        coll_object.GetTag();
+                                        if (coll_object.CompareTag("Enemy"))
+                                        {
+                                            fballscript.vfront = GetSecondaryForwardToEnemy(flamethr.transform.GetPosition(), coll_object.transform.GetPosition());
+                                        }
+                                    }
                                     PlayFx("DaenerysDragonRoar");                             
                                     play_audio_roar = false;
                                 }
 
-                                if (anim_controller.IsAnimOverXTime(1.0f))
+                                if (GetComponent<CompAnimation>().IsAnimationStopped("AttackLeft"))
                                 {
                                     state = State.IDLE;
                                 }
                             }
                             else if(play_audio_roar == false)
+                            {
+                                state = State.IDLE;
+                            }
+                            if(AttackLeftTimer >= 1.35f)
                             {
                                 state = State.IDLE;
                             }
@@ -267,15 +299,20 @@ public class DaenerysController : CharacterController
         {
             if (GetState() == 0)
             {
+                Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
                 SetAnimationTransition("ToHit", true);
                 SetState(State.HIT);
             }
             PlayFx("DaenerysHurt");
+
+            //Damage Feedback
+            GetLinkedObject("player_obj").GetComponent<DamageFeedback>().SetDamage(health.GetCurrentHealth(), max_hp);
         }
 
         else
         {
             SetAnimationTransition("ToDeath", true);
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Death");
             SetState(State.DEAD);
             PlayFx("DaenerysDead");
         }
@@ -296,7 +333,7 @@ public class DaenerysController : CharacterController
         {
             //Set Icon in the center
             daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
-            daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(0.0f, 365.0f, 0.0f));
+            daenerys_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(0.0f, 22.0f, 0.0f));
             daenerys_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false, daenerys_icon_obj_hp);
             daenerys_icon_obj_mana.GetComponent<CompImage>().SetEnabled(false, daenerys_icon_obj_mana);
 
@@ -345,18 +382,18 @@ public class DaenerysController : CharacterController
             if (left)
             {
                 daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
-                daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(-115.0f, 430.0f, 0.0f));
-                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
-                GetLinkedObject("daenerys_s_button_obj_idle").GetComponent<CompRectTransform>().SetPosition(new Vector3(124.0f, -33.0f, 0.0f));
+                daenerys_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-115.0f, 100.0f, 0.0f));
+                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(124.0f, -33.0f, 0.0f));
+                GetLinkedObject("daenerys_s_button_obj_idle").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(124.0f, -33.0f, 0.0f));
 
             }
             //Set the icon at the right
             else
             {
                 daenerys_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
-                daenerys_icon_obj.GetComponent<CompRectTransform>().SetPosition(new Vector3(115.0f, 430.0f, 0.0f));
-                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, -31.5f, 0.0f));
-                GetLinkedObject("daenerys_s_button_obj_idle").GetComponent<CompRectTransform>().SetPosition(new Vector3(-123.0f, -31.5f, 0.0f));
+                daenerys_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(115.0f, 100.0f, 0.0f));
+                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
+                GetLinkedObject("daenerys_s_button_obj_idle").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
             }
 
             //Enable Secondary Button
@@ -430,6 +467,8 @@ public class DaenerysController : CharacterController
                     // Set Attacking Animation
                     SetAnimationTransition("ToAttackLeft", true);
 
+                    Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Firebreath");
+
                     return true;
                 }
                 else
@@ -439,6 +478,12 @@ public class DaenerysController : CharacterController
             }
             else
             {
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired == false)
+                {
+                    PlayFx("DaenerysTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
+                }
                 return false;
             }
         }
@@ -453,11 +498,12 @@ public class DaenerysController : CharacterController
 
     public void DoLeftAbility() //Might be virtual
     {
+
         // Decrease mana -----------
         DecreaseManaPercentage(mana_cost_percentage_left);
         audio = daenerys_obj.GetComponent<CompAudio>();
         PlayFx("Dracarys");
-
+        AttackLeftTimer = 0.0f;
         play_audio_roar = true;
     }
 
@@ -516,6 +562,7 @@ public class DaenerysController : CharacterController
                         DoRightAbility();
 
                         // Set Animation
+                        Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Firewall");
                         SetAnimationTransition("ToAttackRight", true);
 
                         return true;
@@ -527,6 +574,12 @@ public class DaenerysController : CharacterController
                 }
                 else
                 {
+                    if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired == false)
+                    {
+                        PlayFx("DaenerysTired");
+                        GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired = true;
+                        Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
+                    }
                     return false;
                 }
             }
@@ -586,6 +639,12 @@ public class DaenerysController : CharacterController
             }
             else
             {
+                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired == false)
+                {
+                    PlayFx("DaenerysTired");
+                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().daenerys_tired = true;
+                    Debug.Log("NOT ENOUGH STAMINA DAENERYS", Department.PLAYER, Color.PINK);
+                }
                 return false;
             }
         }
@@ -601,9 +660,21 @@ public class DaenerysController : CharacterController
         fball.transform.SetRotation(pla_obj.transform.GetRotation());
 
         Fireball fballscript = fball.GetComponent<Fireball>();
-        fballscript.vfront = GetSecondaryForward(curr_forward);
+        fballscript.vfront = curr_forward;
         fballscript.fireball_particles = daenerys_fireball_particles;
+        fballscript.fireball_particles2 = daenerys_fireball_particles2;
+        fballscript.fireball_particles3 = daenerys_fireball_particles3;
+        fballscript.fireball_particles4 = daenerys_fireball_particles4;
 
+        GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
+        if(coll_object != null)
+        {
+            coll_object.GetTag();
+            if(coll_object.CompareTag("Enemy"))
+            {
+                fballscript.vfront = GetSecondaryForwardToEnemy(fball.transform.GetPosition(), coll_object.transform.GetPosition());
+            }
+        }
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);
     }
@@ -635,5 +706,16 @@ public class DaenerysController : CharacterController
         daenerys_right_flag.SetActive(active);
     }
 
-    //---------------------------   
+    public void Heal(float percentage)
+    {
+        if (state != State.DEAD)
+        {
+            curr_hp += max_hp * percentage;
+            if (curr_hp > max_hp)
+            {
+                curr_hp = max_hp;
+            }
+            daenerys_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
+        }
+    }
 }

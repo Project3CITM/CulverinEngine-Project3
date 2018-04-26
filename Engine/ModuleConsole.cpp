@@ -63,6 +63,7 @@ Console::~Console()
 
 update_status Console::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: Console", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_UP)
@@ -245,7 +246,7 @@ void Console::Draw(const char* title)
 		temp_string = item;
 		
 		//COLOR LOGS --------
-		if (strstr(item, "[red]"))
+		if (strstr(item, "[red]") || strstr(item, "[error]"))
 		{
 			col = ImColor(1.0f, 0.4f, 0.4f, 1.0f);
 			Remove("[red]");

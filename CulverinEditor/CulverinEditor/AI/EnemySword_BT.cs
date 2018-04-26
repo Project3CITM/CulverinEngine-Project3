@@ -6,9 +6,8 @@ public class EnemySword_BT : Enemy_BT
 
     Material enemy_mat_sword;
 
-    public GameObject sword_icon;
     public GameObject sword_name;
-
+    public int texture_type = 0;
     public override void Start()
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
@@ -27,15 +26,21 @@ public class EnemySword_BT : Enemy_BT
             }
         }
 
-        enemy_mat_sword = GetMaterialByName("EnemyWithSword");
+        if (texture_type == 0)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_SwordEnemy_Material_21_04");
+        }
+        else if (texture_type == 1)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_SwordEnemy2_Material_21_04");
+        }
 
-        sword_icon = GetLinkedObject("sword_icon");
         sword_name = GetLinkedObject("sword_name");
 
         dmg_alpha = 0.0f;
 
         base.Start();
-        base.DeactivateHUD(sword_icon, sword_name);
+        base.DeactivateHUD(sword_name);
     }
 
     public override void Update()
@@ -49,7 +54,7 @@ public class EnemySword_BT : Enemy_BT
         }
         else if (hud_active == true)
         {
-            base.DeactivateHUD(sword_icon, sword_name);
+            base.DeactivateHUD(sword_name);
         }
 
         bool attack_ready = attack_timer >= attack_cooldown;
@@ -69,7 +74,7 @@ public class EnemySword_BT : Enemy_BT
         if (InRange())
         {
 
-            if (!GetComponent<FacePlayer_Action>().IsFaced())
+            if (!GetComponent<Movement_Action>().LookingAtPlayer())
             {
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
@@ -96,7 +101,7 @@ public class EnemySword_BT : Enemy_BT
                 return;
             }
         }
-        else if(player_detected == true)
+        else if(player_detected == true && Disable_Movement_Gameplay_Debbuger==false)
         {
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
@@ -105,7 +110,10 @@ public class EnemySword_BT : Enemy_BT
     }
 
     protected override void OutOfCombatDecesion()
-    {        
+    {
+
+        if (Disable_Movement_Gameplay_Debbuger) return;
+
         //Investigate
         if (heard_something)
         {
@@ -138,10 +146,10 @@ public class EnemySword_BT : Enemy_BT
         }
     }
 
-    public override bool ApplyDamage(float damage)
+    public override bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
-        base.ActivateHUD(sword_icon, sword_name);
-        return base.ApplyDamage(damage);
+        base.ActivateHUD(sword_name);
+        return base.ApplyDamage(damage, damage_type);
     }
 
     public override void ChangeTexturesToDamaged()

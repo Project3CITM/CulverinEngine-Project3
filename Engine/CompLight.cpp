@@ -42,10 +42,9 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 	color_temp[1] = 1;
 	color_temp[2] = 1;
 	color_temp[3] = 1;
+	
 
-	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png",&texture_bulb);
 
-	plane = App->module_lightning->light_UI_plane;
 
 
 
@@ -91,10 +90,10 @@ CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Co
 	this->types_lights = copy.types_lights;
 	this->ui_light_type = copy.ui_light_type;
 
-	App->renderer3D->LoadImage_devil("Assets/Bulb_Texture.png", &texture_bulb);
+
 
 	this->properties = copy.properties;
-	plane = App->module_lightning->light_UI_plane;
+
 
 
 
@@ -147,89 +146,20 @@ void CompLight::Init()
 {
 }
 
-void CompLight::PreUpdate(float dt)
-{
-	float3 box_pos = parent->box_fixed.CenterPoint();
-	float3 parent_pos = GetGameObjectPos();
-	float epsilon = 0.4f;
-	if(abs(box_pos.x - parent_pos.x) > epsilon || abs(box_pos.y - parent_pos.y) > epsilon || abs(box_pos.z - parent_pos.z) > epsilon)
-		parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
-	
-}
-
 void CompLight::Update(float dt)
 {
 	use_light_to_render = false;
-
+	
+	if (parent->GetComponentTransform()->GetUpdated())
+	{
+		parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
+	}
 }
 
 void CompLight::Draw()
 {
 
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.8);
-
-	//Frustum Operations-------------------------------
-
-	if (App->mode_game == false) {
-		UpdateFrustum();
-		FrustumDebug();
-	}
-
-	//---------------------------------------------------
-
-	App->renderer3D->lights_billboard_shader->Bind();
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glBindTexture(GL_TEXTURE_2D, texture_bulb);
-
-	Frustum camFrust = App->renderer3D->active_camera->frustum;// App->camera->GetFrustum();
-	float4x4 temp = camFrust.ViewMatrix();
-
-	GLint view2Loc = glGetUniformLocation(App->renderer3D->default_shader->programID, "view");
-	GLint modelLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "model");
-	GLint viewLoc = glGetUniformLocation(App->renderer3D->default_shader->programID, "viewproj");
-
-	CompTransform* trans = parent->GetComponentTransform();
-	float3 Direction = App->renderer3D->active_camera->frustum.pos - trans->GetPos();
-	Direction = Direction.Normalized();
-	Quat Rotation = Quat::LookAt(float3(0.0f, 1.0f, 0.0f), Direction, float3(0.0f, 0.0f, -1.0f), float3(0.0f, 1.0f, 0.0f));
 	
-	auto mat = float4x4::FromTRS(trans->GetPos(), Rotation, float3(1, 1, 1)).Transposed();
-
-
-	glUniformMatrix4fv(view2Loc, 1, GL_TRUE, temp.Inverted().ptr());
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, mat.ptr());
-	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, camFrust.ViewProjMatrix().ptr());
-
-
-	int total_save_buffer = 5;
-
-	if (plane->vertices.size() > 0) {
-		glBindBuffer(GL_ARRAY_BUFFER, plane->id_total_buffer);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (3 * sizeof(float)));
-
-		glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, plane->indices_id);
-		glDrawElements(GL_TRIANGLES, plane->num_indices, GL_UNSIGNED_INT, NULL);
-
-	}
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	App->renderer3D->lights_billboard_shader->Unbind();
-	glDisable(GL_ALPHA_TEST);
 }
 
 void CompLight::Clear()
@@ -321,6 +251,14 @@ void CompLight::ShowInspectorInfo()
 
 }
 
+void CompLight::SyncComponent(GameObject * sync_parent)
+{
+	if (parent)
+	{
+		parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
+	}
+}
+
 void CompLight::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
 
@@ -346,7 +284,7 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	ui_light_type =json_object_dotget_number_with_std(object, name + "Light Type");
 	type = (Light_type)ui_light_type;
 	ambientCoefficient = json_object_dotget_number_with_std(object, name + "Ambient Coefficient");
-	radius =  json_object_dotget_number_with_std(object, name + "Radius");
+	radius = 50;// json_object_dotget_number_with_std(object, name + "Radius");
 	properties[0] = json_object_dotget_number_with_std(object, name + "Intensity");
 	properties[1] = json_object_dotget_number_with_std(object, name + "Constant");
 	properties[2] = json_object_dotget_number_with_std(object, name + "Linear");
@@ -354,8 +292,6 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	color=App->fs->json_array_dotget_float4_string(object, name + "Color");
 	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
 
-	// bounding box size
-	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 }
 
 void CompLight::UpdateFrustum()

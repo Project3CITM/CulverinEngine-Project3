@@ -121,7 +121,6 @@ void CompInteractive::Update(float dt)
 
 void CompInteractive::Clear()
 {
-	target_graphic->SetInteractive(nullptr);
 	target_graphic = nullptr;
 	image = nullptr;
 	if (!iteractive_list.empty())
@@ -445,13 +444,12 @@ void CompInteractive::NavigationRemove(CompInteractive * to_remove)
 }
 
 
-void CompInteractive::ForceClear(Event event_input)
+void CompInteractive::ForceClear()
 {
 	point_down = false;
 	point_inside = false;
 	interactive_selected = false;
-
-	UpdateSelectionState(event_input);
+	current_selection_state = SelectionStates::STATE_NORMAL;
 	PrepareHandleTransition();
 
 }
@@ -550,7 +548,6 @@ void CompInteractive::SetTargetGraphic(CompGraphic * set_target_graphic)
 	if (set_target_graphic == nullptr)
 		return;
 	target_graphic = set_target_graphic;
-	target_graphic->SetInteractive(this);
 	target_graphic_uid = target_graphic->GetUUID();
 	TryConversion();
 }

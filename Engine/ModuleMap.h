@@ -85,8 +85,8 @@ private:
 	int frame_padding_x = 4;
 	int frame_padding_y = 3;
 
-	int item_spacing_x = 8;
-	int item_spacing_y = 4;
+	int item_spacing_x = 0;
+	int item_spacing_y = 0;
 
 
 };

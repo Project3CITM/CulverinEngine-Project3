@@ -6,6 +6,7 @@ public class Stamina : CulverinBehaviour
     public GameObject this_obj_stamina;
     CompImage stamina_bar;
     public GameObject other_bar_lastamina;
+    public GameObject no_stamina;
     public float regen = 1.0f;
     public float max_stamina = 100.0f;
     float curr_stamina = 100.0f;
@@ -20,6 +21,8 @@ public class Stamina : CulverinBehaviour
     {
         this_obj_stamina = GetLinkedObject("this_obj_stamina");
         other_bar_lastamina = GetLinkedObject("other_bar_lastamina");
+        no_stamina = GetLinkedObject("no_stamina");
+        no_stamina.GetComponent<CompImage>().DeactivateRender();
         not_enough_stamina = false;
         wasted_stamina = false;
         flickering_time = 0.0f;
@@ -28,9 +31,9 @@ public class Stamina : CulverinBehaviour
 
     void Update()
     {
+        no_stamina.GetComponent<CompImage>().FillAmount(calc_stamina);
         if (!wasted_stamina)
         {
-
             if (curr_stamina < max_stamina)
             {
                 curr_stamina += regen;
@@ -57,19 +60,19 @@ public class Stamina : CulverinBehaviour
             flickering_time += Time.deltaTime;
             if (flickering_time >= stamina_flickering_time)
             {
-                this_obj_stamina.GetComponent<CompImage>().DeactivateRender();
+                no_stamina.GetComponent<CompImage>().ActivateRender();
             }
             if (flickering_time >= stamina_flickering_time * 2)
             {
-                this_obj_stamina.GetComponent<CompImage>().ActivateRender();
+                no_stamina.GetComponent<CompImage>().DeactivateRender();
             }
             if (flickering_time >= stamina_flickering_time * 3)
             {
-                this_obj_stamina.GetComponent<CompImage>().DeactivateRender();
+                no_stamina.GetComponent<CompImage>().ActivateRender();
             }
             if (flickering_time >= stamina_flickering_time * 4)
             {
-                this_obj_stamina.GetComponent<CompImage>().ActivateRender();
+                no_stamina.GetComponent<CompImage>().DeactivateRender();
                 not_enough_stamina = false;
             }
         }
@@ -77,6 +80,13 @@ public class Stamina : CulverinBehaviour
 
     public void DecreaseStamina(float cost)
     {
+        //Costs are 0 in GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy)
+        {
+            cost = 0;
+        }
+
         other_bar_lastamina.GetComponent<Leftamina>().lastamina_value = curr_stamina;
         if (curr_stamina > cost)
         {
@@ -86,7 +96,7 @@ public class Stamina : CulverinBehaviour
         stamina_bar = this_obj_stamina.GetComponent<CompImage>();
         stamina_bar.FillAmount(calc_stamina);
         other_bar_lastamina.GetComponent<Leftamina>().stamina_bar_changed = false;
-     
+
     }
 
     public float GetCurrentStamina()
@@ -106,6 +116,13 @@ public class Stamina : CulverinBehaviour
 
     public bool CanWasteStamina(float value)
     {
+        //Costs are 0 in GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy)
+        {
+            value = 0;
+        }
+
         if (curr_stamina >= value)
         {
             wasted_stamina = true;

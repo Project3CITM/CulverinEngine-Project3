@@ -1,4 +1,4 @@
-﻿# nJoy Game
+﻿# nJoy Game's Unthroned
 ## CONTENTS
 
 	0) WHAT IS OUR GAME?
@@ -45,7 +45,7 @@ nJoy Game uses and requires Microsoft DirectX 11.0.
 
 Download our latest build at https://github.com/Project3CITM/CulverinEngine-Project3/releases
 
-Just download the release, unpack it, open the NjoyGames_VerticalSlice3 folders and open the NjoyGames_VerticalSlice1.exe file.
+Just download the release, unpack it, open the NjoyGames_VerticalSlice3 folders and open the NjoyGames_VerticalSlice1.exe file. 
 
 ### Save Games:
 
@@ -89,6 +89,14 @@ As a player you can execute the following controls:
 * Press 3 to use the left suport ability
 * Press SPACE to activate the lever
 
+//Debug
+
+* Press F1 To Put Total GodMode 
+* Press F9 To Put GodMode, Habilities without cost
+* Press F10 To Put the secundary hability cooldown in 1 seg
+* Press F11 to quit damage
+* Press P to pass to lvl 3
+
 ## 6) KNOWN ISSUES
 
 https://github.com/Project3CITM/CulverinEngine-Project3/issues
@@ -99,7 +107,43 @@ Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
 ## 8) CHANGELOG
 
-###Vertical Slice 3 V1.0
+### Alpha V 0.3
+
+	* Radial Filler in Habilities
+        * Shielded Enemy Animations improved
+        * New Visual Feedback on hp/stamine bars
+        * New Particles
+	* Bug Fixes
+
+
+### Pre-Alpha 1 V0.19.3
+
+* Game pad actions improve
+	* Bug Fixes
+
+### Pre-Alpha 1 V0.19.2
+
+	* Radial Filler in Habilities
+        * Shielded Enemy Animations improved
+        * New Visual Feedback on hp/stamine bars
+        * New Particles
+	* Bug Fixes
+
+### Pre-Alpha 1 V0.19
+
+	* New Map Lvl2 distribution 
+	* New 2 Puzzle on lvl 2, (one binari, open the gates )
+	* New Enemy life feedback 
+	* New Puzzle on lvl 3
+	* Bug Fixes 
+
+### Vertical Slice 3 V0.17.1
+	* Iddle Camera
+	* Dead player animations
+	* Animations improve
+	* Bug Fixes
+
+### Vertical Slice 3 V0.10
 
 	* 2 Enemy added
 	* realistic AI for each of the enemies
@@ -112,18 +156,18 @@ Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 	* New UI Menus & win/lose Windows
 	* BUG fixes
 
-###Vertical Slice 2 v0.9:
+### Vertical Slice 2 v0.09:
 	* Enemy added	
 	* Puzzle completed
 	* Lights added
 
-###Vertical Slice 2 v0.8.2:
+### Vertical Slice 2 v0.08.2:
 	* 2 more characters added (Theon and Daenerys)
 	* Simple puzzle
 	* Simple PBR material tests
 	* New UI art
 
-### Vertical Slice 1 v0.8: 
+### Vertical Slice 1 v0.08: 
 	* Character can Move between tiles and rotate.
 	* Character can Attack and block.
 	* Simple combat with the AI.
@@ -137,6 +181,7 @@ Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 	* Interactive UI Buttons
 	* Healt and Stamina UI representation
 	* Level Music and FX such as footsteps, torch fire…
+
 
 ## 9) TEAM
 

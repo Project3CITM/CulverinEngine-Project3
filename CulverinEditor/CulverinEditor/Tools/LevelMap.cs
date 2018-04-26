@@ -47,11 +47,6 @@ public class LevelMap : CulverinBehaviour
         }
     }
 
-
-    //void Update()
-    //{
-
-    //}
     /// <summary>
     /// Value == 0 -> Walkable
     /// Value == 1 -> No Walkable
@@ -59,6 +54,8 @@ public class LevelMap : CulverinBehaviour
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="value"></param>
+    /// 
+
     public void UpdateMap(int x, int y, int value)
     {
         level_map[x, y] = value;
@@ -75,7 +72,7 @@ public class LevelMap : CulverinBehaviour
         {
             for (int i = 0; i < map_width; i++)
             {
-                if(level_map[i, j] == value)
+                if (level_map[i, j] == value)
                 {
                     x = i;
                     y = j;
@@ -89,4 +86,8 @@ public class LevelMap : CulverinBehaviour
         y = 0;
     }
 
+    public bool GodModeWalkability(int x, int y)
+    {
+        return (x >= 0 && y >= 0 && x < map_width && y < map_height);
+    }
 }

@@ -4,22 +4,25 @@ using CulverinEditor.Debug;
 
 public class Projectile : CulverinBehaviour
 {
-    public float damage = 10;
+    public float damage = 10f;
     public Vector3 speed = Vector3.Zero;
+    public float speed_projectil = 1.0f;
     public bool collision;
     CompRigidBody rb;
+
+    private bool destroyed = false;
 
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
         Shoot();
         collision = true;
-        damage = 10.0f;
+     
     }
 
     public void Shoot()
     {
-        rb.ApplyImpulse(speed * 100);
+        rb.ApplyImpulse(speed * speed_projectil);
     }
 
     void Update()
@@ -29,15 +32,35 @@ public class Projectile : CulverinBehaviour
 
     void OnContact()
     {
+        Debug.Log("CONTACT", Department.STAGE, Color.RED);
         CompCollider col = GetComponent<CompCollider>();
         GameObject collided_obj = col.GetCollidedObject();
        
-        Debug.Log(collided_obj.GetTag().ToString());
-        if (collided_obj != null && collided_obj.CompareTag("player"))
+        
+       
+        if (collided_obj != null && destroyed == false)
         {
-            //collided_obj.GetComponent<CharactersManager>().GetDamage(10);
+            if(collided_obj.CompareTag("player"))
+            {
+                CharactersManager cm = collided_obj.GetComponent<CharactersManager>();
+
+                if (cm != null)
+                {
+                    cm.GetDamage(damage);
+                }
+            }
+
+            Debug.Log(collided_obj.GetTag().ToString(), Department.STAGE) ;
+
         }
-        Destroy(gameObject);
+        else Debug.Log("Collided obj NULL", Department.STAGE, Color.ORANGE);
+
+        if (!destroyed)
+        {
+            destroyed = true;
+            col.CollisionActive(false);
+            Destroy(gameObject);
+        }
     }
 }
 

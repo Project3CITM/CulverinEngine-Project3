@@ -50,6 +50,8 @@ public:
 	bool IsActive() const;
 	bool IsPreview() const;
 
+	void SetSystemAsNull();
+
 private:
 
 

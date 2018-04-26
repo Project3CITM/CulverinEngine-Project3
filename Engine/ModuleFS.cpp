@@ -66,6 +66,7 @@ bool ModuleFS::Start()
 
 update_status ModuleFS::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleFS", Profiler::Color::Blue);
 	perf_timer.Start();
 	static bool ImportAutoFiles = true;
 	if (ImportAutoFiles)

@@ -51,6 +51,24 @@ Event GetResponseFromRequestEvent(Event& event);
 void ClearEvents(EventType type);
 void ClearEvents(EventType type, void* component);
 
+struct DrawVMultimapKey
+{
+	DrawVMultimapKey(uint uuid, float distance) : uuid(uuid), distance(distance){}
+	uint uuid = 0;
+	float distance = 0.0f;
+};
+
+struct Comparator
+{
+	bool operator()(const DrawVMultimapKey left, const DrawVMultimapKey right) const
+	{
+		if (left.uuid < right.uuid) return true;
+		else if (left.uuid > right.uuid) return false;
+		else return left.distance < right.distance;
+		//return left.uuid > right.uuid;
+	}
+};
+
 class ModuleEventSystemV2 : public Module
 {
 public:
@@ -81,12 +99,12 @@ private:
 	EventValidation ValidEvent(Event& event, float dt);
 
 private:
-	std::multimap<uint, Event> DrawV;							//Draw events are stored here ordered by resource number (faster draw, less bind/unbind)
-	std::multimap<uint, Event> DrawGlowV;						//Draw glow events are stored here ordered by resource number (faster draw, less bind/unbind)
-	std::multimap<float, Event> DrawAlphaV;						//Draw events are stored here ordered by distance to active camera
-	std::multimap<EventType, Event> NoDrawV;					//No-Draw events are stored here ordered by EventType enum, less eventvector change when iterating
+	std::multimap<DrawVMultimapKey, Event, Comparator> DrawV;		//Draw events are stored here ordered by resource number (faster draw, less bind/unbind)
+	std::multimap<DrawVMultimapKey, Event, Comparator> DrawGlowV;	//Draw glow events are stored here ordered by resource number (faster draw, less bind/unbind)
+	std::multimap<float, Event> DrawAlphaV;							//Draw events are stored here ordered by distance to active camera
+	std::multimap<EventType, Event> NoDrawV;						//No-Draw events are stored here ordered by EventType enum, less eventvector change when iterating
 	std::multimap<float, Event> DrawLightV;							//Lights events are stored here ordered by distance to active
-	std::list<Event> PushedWhileIteratingEvents;				//Store events while iterating, used by event system internally
+	std::list<Event> PushedWhileIteratingEvents;					//Store events while iterating, used by event system internally
 	std::map<EventType, std::vector<Module*>> MEventListeners;
 	bool IteratingMaps = false;
 	/*

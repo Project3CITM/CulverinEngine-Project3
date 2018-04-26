@@ -50,8 +50,10 @@ bool ModuleRenderGui::Start()
 
 update_status ModuleRenderGui::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleRenderGui", Profiler::Color::Blue);
 	perf_timer.Start();
 
+	screen_space_canvas.clear();
 
 
 	if (last_size_dock.x != GetSizeDock("Scene").x || last_size_dock.y != GetSizeDock("Scene").y)
@@ -124,7 +126,9 @@ void ModuleRenderGui::PassSelected(CompInteractive * to_pass)
 void ModuleRenderGui::ChangeSelected(Event & this_event)
 {
 	if (selected != nullptr)
-		selected->ForceClear(this_event);
+	{
+		selected->ForceClear();
+	}
 	selected = this_event.pass_selected.component;
 	if (selected != nullptr)
 		selected->OnInteractiveSelected(this_event);
@@ -133,7 +137,7 @@ void ModuleRenderGui::ChangeSelected(Event & this_event)
 
 void ModuleRenderGui::OnEvent(Event & this_event)
 {
-
+	BROFILER_CATEGORY("OnEvent: ModuleRenderGui", Profiler::Color::Blue);
 	if (focus != nullptr)
 		this_event.pointer.focus = focus->GetParent();
 
@@ -198,7 +202,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 					{
 						if (!(*it)->IsActivate()) //if it's active 
 						{
-							(*it)->ForceClear(this_event);
+							(*it)->ForceClear();
 						}
 						continue;
 					}
@@ -207,7 +211,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 					{
 						if (positive_colision)
 						{
-							(*it)->ForceClear(this_event);
+							(*it)->ForceClear();
 							continue;
 						}
 						switch (this_event.Get_event_data_type())
@@ -257,7 +261,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 					focus = nullptr;
 					if (this_event.Get_event_data_type() == EventType::EVENT_BUTTON_DOWN)
 					{
-						selected->ForceClear(this_event);
+						selected->ForceClear();
 						selected = nullptr;
 					}
 				}
@@ -268,6 +272,14 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 		break;
 	}
 	//this_event.draw.ToDraw->Draw();
+}
+
+void ModuleRenderGui::OnResize(float width, float height)
+{
+	for (int i = 0; i < screen_space_canvas.size(); i++)
+	{
+		screen_space_canvas[i]->Resize(width,height);
+	}
 }
 
 void ModuleRenderGui::WorldSpaceDraw()
@@ -286,7 +298,6 @@ void ModuleRenderGui::ScreenSpaceDraw(bool debug)
 	{
 		screen_space_canvas[i]->DrawGraphic(debug_draw);
 	}	
-	screen_space_canvas.clear();
 }
 
 void ModuleRenderGui::ClearInteractiveVector()
@@ -301,6 +312,3 @@ bool ModuleRenderGui::CleanUp()
 	return true;
 }
 
-void ModuleRenderGui::OnResize(int width, int height)
-{
-}

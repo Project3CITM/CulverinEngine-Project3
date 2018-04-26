@@ -62,7 +62,7 @@ public:
 
 	void Deactive();
 	void NavigationRemove(CompInteractive* to_remove);
-	virtual void ForceClear(Event event_input);
+	virtual void ForceClear();
 	void TryConversion();
 	void ShowNavigationInfo();
 	Component* ShowInteractiveWindow();

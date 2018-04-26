@@ -12,8 +12,7 @@ enum Light_type {
 	DIRECTIONAL_LIGHT	
 };
 
-class CompLight :
-	public Component
+class CompLight :	public Component
 {
 public:
 	CompLight(Comp_Type t, GameObject * parent);
@@ -24,7 +23,6 @@ public:
 	bool Enable();
 	bool Disable();
 	void Init();
-	void PreUpdate(float dt);
 	void Update(float dt);
 	void Draw();
 	void Clear();
@@ -32,6 +30,7 @@ public:
 	// EDITOR METHODS -----------------
 	virtual void ShowOptions();
 	virtual void ShowInspectorInfo();
+	void SyncComponent(GameObject* sync_parent);
 	// --------------------------------
 
 	// SAVE - LOAD METHODS ----------------
@@ -44,9 +43,7 @@ public:
 	void FrustumDebug();
 
 public:
-	//Billboard to show where are the lights----
-	uint texture_bulb = 0;
-	ResourceMesh* plane;
+
 	//---------------------------------------------
 	float4 color; //a.k.a. the color of the light
 
@@ -65,7 +62,7 @@ public:
 	//---------
 
 	bool use_light_to_render = false;
-
+	bool to_delete = false;
 
 
 };

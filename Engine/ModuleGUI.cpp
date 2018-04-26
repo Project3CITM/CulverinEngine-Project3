@@ -114,6 +114,7 @@ bool ModuleGUI::Start()
 
 update_status ModuleGUI::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: ModuleGUI", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	//ShowTest -----------------------
@@ -148,6 +149,10 @@ update_status ModuleGUI::Update(float dt)
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Save Scene", "Ctrl + S"))
+			{
+				App->WantToSave();
+			}
+			if (ImGui::MenuItem("Save Scene Binary", NULL, false, false))
 			{
 				App->WantToSave();
 			}
@@ -625,7 +630,7 @@ update_status ModuleGUI::Update(float dt)
 				Material* new_mat = new Material();
 				new_mat->name = str_mat_temp;
 				new_mat->material_shader = selected_shader_program;
-				App->module_shaders->materials.push_back(new_mat);
+				App->module_shaders->materials.insert(std::pair<uint, Material*>(new_mat->GetProgramID(), new_mat));
 				selected_shader_program = nullptr;
 				new_mat->GetProgramVariables();
 				new_mat->Save();
@@ -1320,6 +1325,7 @@ bool ModuleGUI::SetEventListenrs()
 
 void ModuleGUI::OnEvent(Event& event)
 {
+	BROFILER_CATEGORY("OnEvent: ModuleGUI", Profiler::Color::Blue);
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_ALL_SHADER_OBJECTS:

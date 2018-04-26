@@ -9,6 +9,8 @@
 #include "CompMesh.h"
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
+#include "ModuleInput.h"
+#include "ModuleGUI.h"
 
 
 ModuleMap::ModuleMap()
@@ -62,6 +64,7 @@ bool ModuleMap::Start()
 
 update_status ModuleMap::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleMap", Profiler::Color::Blue);
 	perf_timer.Start();
 	if (imported_map.size() > 0)
 	{
@@ -416,6 +419,28 @@ void ModuleMap::ShowWalkableMap()
 				{
 					ImGui::PopStyleColor();
 				}
+				if (ImGui::IsItemHovered() && App->gui->develop_mode)
+				{
+					if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
+					{
+						map[x][y] = paint;
+					}
+					if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT)
+					{
+						map[x][y] = -1;
+					}
+				}
+
+				std::string position_tile = "x:" + std::to_string(x);
+				position_tile += " - y:" + std::to_string(y);
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::PushTextWrapPos(450.0f);
+					ImGui::TextUnformatted(position_tile.c_str());
+					ImGui::PopTextWrapPos();
+					ImGui::EndTooltip();
+				}
 				if (ImGui::BeginPopupContextItem("Options##maptile"))
 				{
 					OptionsTile(x, y);
@@ -565,12 +590,17 @@ void ModuleMap::ShowCreationMap()
 			ImGui::Text("%i: ", i + 1); ImGui::SameLine();
 			if (ImGui::BeginCombo("##Pref", prefabs[i].c_str()))
 			{
+				static ImGuiTextFilter filter;
+				filter.Draw();
 				for (int n = 0; n < all_prefabs.size(); n++)
 				{
-					if (ImGui::Selectable(all_prefabs[n].c_str()))
+					if (filter.PassFilter(all_prefabs[n].c_str()))
 					{
-						prefabs[i] = all_prefabs[n];
-						ImGui::SetItemDefaultFocus();//
+						if (ImGui::Selectable(all_prefabs[n].c_str()))
+						{
+							prefabs[i] = all_prefabs[n];
+							ImGui::SetItemDefaultFocus();//
+						}
 					}
 				}
 				ImGui::EndCombo();
@@ -674,6 +704,16 @@ void ModuleMap::ShowCreationMap()
 				if (map[x][y] > -1 && force_pop)
 				{
 					ImGui::PopStyleColor();
+				}
+				std::string position_tile = "x:" + std::to_string(x);
+				position_tile += " - y:" + std::to_string(y);
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::PushTextWrapPos(450.0f);
+					ImGui::TextUnformatted(position_tile.c_str());
+					ImGui::PopTextWrapPos();
+					ImGui::EndTooltip();
 				}
 				if (ImGui::BeginPopupContextItem("Options##maptile3d"))
 				{
@@ -987,7 +1027,6 @@ void ModuleMap::ShowNavigationMap()
 
 void ModuleMap::OptionsTile(int x, int y)
 {
-	ImGui::Text("%i,%i", x, y);
 	if (ImGui::MenuItem("Delete"))
 	{
 		map[x][y] = -1;

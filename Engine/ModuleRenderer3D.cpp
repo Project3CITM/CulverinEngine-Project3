@@ -185,21 +185,22 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr, true);
 	blur_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr, true);
 	final_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", FinalFrag, TextureVert, nullptr, true);
+	cube_map_shader = App->module_shaders->CreateDefaultShader("CubeMapShader", CubeMapFrag, CubeMapVert, nullptr, true);
 
 	non_glow_material = new Material();
 	non_glow_material->name = "Non Glow Material";
 	non_glow_material->material_shader = non_glow_shader;
 	non_glow_material->GetProgramVariables();
-	App->module_shaders->materials.push_back(non_glow_material);
+	App->module_shaders->materials.insert(std::pair<uint, Material*>(non_glow_material->GetProgramID(), non_glow_material));
 	non_glow_material->active_num = 1;
 
 	final_tex_material = new Material();
 	final_tex_material->name = "Final Tex Material";
 	final_tex_material->material_shader = final_shader_tex;
 	final_tex_material->GetProgramVariables();
-	App->module_shaders->materials.push_back(final_tex_material);
+	App->module_shaders->materials.insert(std::pair<uint, Material*>(final_tex_material->GetProgramID(), final_tex_material));
 	final_tex_material->active_num = 1;
-	dmg_texture_id = App->textures->LoadTexture("Assets/Damage2.png");
+	dmg_texture_id = App->textures->LoadTexture("Assets/bloodHurt2.png");
 
 	default_material = new Material();
 	default_material->name = "Default Material";
@@ -277,6 +278,7 @@ bool ModuleRenderer3D::Start()
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleRenderer3D", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	App->scene->scene_buff->Init("Scene");
@@ -293,10 +295,8 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModuleRenderer3D", Profiler::Color::Blue);
 	perf_timer.Start();
-
-
-
 
 	App->scene->horizontal_blur_buff->Bind("Scene");
 	BlurShaderVars(0);
@@ -483,74 +483,6 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	glLoadIdentity();
 }
 
-float2 ModuleRenderer3D::LoadImage_devil(const char * theFileName, GLuint *buff)
-{
-	float2 texture_w_h;
-	//Texture loading success
-	bool textureLoaded = false;
-
-	//Generate and set current image ID
-	uint imgID = 0;
-	ilGenImages(1, &imgID);
-	ilBindImage(imgID);
-
-	//Load image
-	ILboolean success = ilLoadImage(theFileName);
-
-	//Image loaded successfully
-	if (success == IL_TRUE)
-	{
-		ILinfo ImageInfo;
-		iluGetImageInfo(&ImageInfo);
-		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
-		{
-			iluFlipImage();
-		}
-
-		//Convert image to RGBA
-		success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-
-		if (success == IL_TRUE)
-		{
-			textureLoaded = loadTextureFromPixels32((GLuint*)ilGetData(), (GLuint)ilGetInteger(IL_IMAGE_WIDTH), (GLuint)ilGetInteger(IL_IMAGE_HEIGHT), buff);
-			texture_w_h.x = (uint)ilGetInteger(IL_IMAGE_WIDTH); texture_w_h.y = (uint)ilGetInteger(IL_IMAGE_HEIGHT);
-			//Create texture from file pixels
-			textureLoaded = true;
-		}
-
-		//Delete file from memory
-		ilDeleteImages(1, &imgID);
-	}
-
-	return texture_w_h;
-
-}
-
-bool ModuleRenderer3D::loadTextureFromPixels32(GLuint * id_pixels, GLuint width_img, GLuint height_img, GLuint *buff)
-{
-
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glGenTextures(1, buff);
-	glBindTexture(GL_TEXTURE_2D, *buff);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_img, height_img,
-		0, GL_RGBA, GL_UNSIGNED_BYTE, id_pixels);
-	glBindTexture(GL_TEXTURE_2D, NULL);
-	//Check for error
-	GLenum error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		printf("Error loading texture from %p pixels! %s\n", id_pixels, gluErrorString(error));
-		return false;
-	}
-
-	return true;
-}
-
 void ModuleRenderer3D::RenderSceneWiewport()
 {
 
@@ -632,7 +564,7 @@ void ModuleRenderer3D::BlurShaderVars(int i)
 void ModuleRenderer3D::GlowShaderVars()
 {
 	final_shader_tex->Bind();
-
+	App->module_shaders->SetUniformVariables(final_tex_material);
 	glActiveTexture(GL_TEXTURE0);
 	GLint texLoc = glGetUniformLocation(final_shader_tex->programID, "_albedo");
 	glBindTexture(GL_TEXTURE_2D, App->scene->scene_buff->GetTexture());

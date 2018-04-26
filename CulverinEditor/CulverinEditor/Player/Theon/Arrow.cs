@@ -19,7 +19,6 @@ public class Arrow : CulverinBehaviour
         destroyed = false;
         Shoot();
         collision = true;
-        damage = 10.0f;
     }
 
     public void Shoot()
@@ -64,7 +63,7 @@ public class Arrow : CulverinBehaviour
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
             {
-                enemy_manager.ApplyDamage(collided_obj, damage);
+                enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
                 if (arrow_blood_particles != null)
                 {
 

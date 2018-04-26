@@ -51,7 +51,7 @@ Scene::Scene(bool start_enabled) : Module(start_enabled)
 	Start_enabled = true;
 	preUpdate_enabled = true;
 	Update_enabled = true;
-
+	
 	name = "Scene";
 	have_config = true;
 	load_scene = true;
@@ -62,6 +62,8 @@ Scene::~Scene()
 	DeleteAllGameObjects(root);
 	DeleteAllGameObjects(secondary_root);
 	DeleteAllGameObjects(temporary_scene);
+	DeleteAllGameObjects(dontdestroyonload);
+
 	search_name->GetChildsPtr()->clear();
 	//DeleteAllGameObjects(dontdestroyonload);
 	defined_tags.clear();
@@ -126,6 +128,14 @@ bool Scene::Start()
 	defined_tags.push_back("undefined");
 	defined_tags.push_back("camera");
 	defined_tags.push_back("player");
+	defined_tags.push_back("barrel");
+	defined_tags.push_back("Enemy");
+	defined_tags.push_back("death_zone");
+	defined_tags.push_back("weapon");
+	defined_tags.push_back("obstacle");
+	defined_tags.push_back("trap_floor");
+	defined_tags.push_back("boss_trigger");
+	defined_tags.push_back("NoC#");
 
 	RELEASE(scene_buff);
 	scene_buff = new FrameBuffer();
@@ -160,6 +170,7 @@ bool Scene::Start()
 
 update_status Scene::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: Scene", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (root == nullptr)
@@ -181,6 +192,7 @@ update_status Scene::PreUpdate(float dt)
 		}
 		else
 		{
+			BROFILER_CATEGORY("Scene: PreUpdate", Profiler::Color::Red);
 			root->PreUpdate(dt);
 		}
 	}
@@ -208,7 +220,10 @@ update_status Scene::PreUpdate(float dt)
 	//	}
 	//}
 
-	deleted_objects.clear();
+	if (!did_delete_obj_event)
+	{
+		deleted_objects.clear();
+	}
 
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -216,6 +231,7 @@ update_status Scene::PreUpdate(float dt)
 
 update_status Scene::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: Scene", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	// Update GameObjects -----------
@@ -225,6 +241,7 @@ update_status Scene::Update(float dt)
 	}
 	else
 	{
+		BROFILER_CATEGORY("Scene: Update", Profiler::Color::Red);
 		root->Update(dt);
 	}
 
@@ -232,21 +249,17 @@ update_status Scene::Update(float dt)
 	//if (App->scene->draw_skybox) 
 
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
-	App->scene->scene_buff->Init("Scene");
-	App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+	App->scene->scene_buff->Bind("Scene");
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+	if(App->renderer3D->active_camera)
+		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
 
 
 	// Draw Plane
 	if (App->engine_state != EngineState::PLAY)
 	{
 		DrawPlane();
-	}
-
-	// Draw GameObjects
-	if (dontdestroyonload->GetNumChilds() == 0)
-	{
-		root->Draw();
-		secondary_root->Draw();
 	}
 
 	// Draw Quadtree
@@ -280,8 +293,11 @@ update_status Scene::Update(float dt)
 	CompCamera* active_camera = App->renderer3D->GetActiveCamera();
 	if (active_camera != nullptr)
 	{
+		BROFILER_CATEGORY("DoCulling: ModuleScene", Profiler::Color::Blue);
 		active_camera->DoCulling();
 	}
+
+	did_delete_obj_event = false;
 
 	Update_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -328,10 +344,14 @@ bool Scene::CleanUp()
 	skybox->DeleteSkyboxTex();
 	
 	octree.Clear();
+	static_objects.clear();
+	dynamic_objects.clear();
+
 	root->CleanUp();
 	secondary_root->CleanUp();
 	temporary_scene->CleanUp();
-	
+	dontdestroyonload->CleanUp();
+
 	RELEASE(scene_buff);
 	RELEASE(glow_buff);
 	RELEASE(horizontal_blur_buff);
@@ -376,6 +396,7 @@ bool Scene::SetEventListenrs()
 
 void Scene::OnEvent(Event & event)
 {
+	BROFILER_CATEGORY("OnEvent: Scene", Profiler::Color::Blue);
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_DELETE_GO:
@@ -384,6 +405,7 @@ void Scene::OnEvent(Event & event)
 		if (CheckDeletedObjcet(event.delete_go.uuid))
 		{
 			DeleteGameObject(event.delete_go.Todelte);
+			did_delete_obj_event = true;
 		}
 		break;
 	}
@@ -419,6 +441,8 @@ void Scene::EditorQuadtree()
 		if (ImGui::Button("UPDATE QUADTREE"))
 		{
 			octree.Clear(false);
+			static_objects.clear();
+			dynamic_objects.clear();
 			//Clac adaptative size of scene octree
 			/**/
 			//AABB AdaptativeAABB;
@@ -442,8 +466,13 @@ void Scene::EditorQuadtree()
 			//Insert AABBs to octree
 			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 				if ((*item)->IsStatic())
+				{
 					octree.Insert(*item);
-
+				}
+				else
+				{
+					dynamic_objects.push_back(*item);
+				}
 
 		/*	if (App->engine_state == EngineState::STOP)
 			{
@@ -580,6 +609,26 @@ GameObject * Scene::FindGameObjectWithTag(const char * str)
 			if(tagged_objects[k]->empty() == false)return tagged_objects[k]->front();
 			break;
 		}
+	}
+	return nullptr;
+}
+
+GameObject* Scene::FindGameObjectWithTagRecursive(const char* str, GameObject* gameobject)
+{
+	if(gameobject->GetNumChilds() > 0)
+	{
+		for (int i = 0; i< gameobject->GetNumChilds(); i++)
+		{
+			GameObject* found = FindGameObjectWithTagRecursive(str, gameobject->GetChildbyIndex(i));
+			if (found != nullptr)
+			{
+				return found;
+			}
+		}
+	}
+	if (strcmp(str, gameobject->GetTag()) == 0)
+	{
+		return gameobject;
 	}
 	return nullptr;
 }
@@ -754,9 +803,10 @@ void Scene::RemoveTaggedObject(const GameObject * target)
 			{
 				if (tagged_objects[k]->at(d) == target)
 				{
+					GameObject** ptr = tagged_objects[k]->data();
 					for (uint h = d; h < v_size - 1; h++)
 					{
-						tagged_objects[k][d] = tagged_objects[k][d + 1];
+						ptr[h] = ptr[h + 1];
 					}
 					tagged_objects[k]->pop_back();
 					return;
@@ -1059,6 +1109,21 @@ const std::vector<GameObject*>* Scene::GetAllSceneObjects()
 	return &game_objects_scene;
 }
 
+void Scene::RemoveDynamicObject(GameObject * obj)
+{
+	if (obj != nullptr) 
+	{
+		for (int i = dynamic_objects.size() - 1; i >= 0; i--)
+		{
+			if (dynamic_objects[i] == obj) {
+				for (uint j = i; j + 1 < dynamic_objects.size(); j++)
+					dynamic_objects[j] = dynamic_objects[j + 1];
+				dynamic_objects.pop_back();
+			}
+		}
+	}
+}
+
 GameObject * Scene::FindCanvas()
 {
 	std::queue<GameObject*> queue;
@@ -1218,6 +1283,7 @@ void Scene::DeleteGameObject(GameObject* gameobject, bool isImport, bool is_reim
 			{
 				gameobject->GetParent()->RemoveChildbyIndex(index);
 			}
+			gameobject->SetParent(nullptr);
 			gameobject = nullptr;
 		}
 
@@ -1267,10 +1333,23 @@ Component* Scene::BlitSceneComponentsAsButtons(Comp_Type type, std::string& curr
 	//ImGui::PushItemWidth(150);
 	ImGui::Text("Select: "); ImGui::SameLine();
 
+	
+
 	if (ImGui::BeginCombo("##SelectComponent", current_item.c_str()))
 	{
+		static char comp_name[100];
+		ImGui::InputText("Name: ", comp_name, 99); 
+
 		for (int i = 0; i < temp_vector.size(); i++)
 		{
+			std::string tmp = temp_vector[i]->GetParent()->GetName();
+			std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+
+			if (tmp.find(comp_name) == std::string::npos)
+			{
+			 continue;
+			}
+
 			char buffer[100];
 			if (temp_vector[i]->GetType() == Comp_Type::C_SCRIPT)
 			{
@@ -1345,6 +1424,7 @@ GameObject* Scene::CreateCube(GameObject* parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("CUBE Created.");
@@ -1399,6 +1479,7 @@ GameObject * Scene::CreatePlane(GameObject * parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("Plane Created.");
@@ -1424,6 +1505,7 @@ GameObject* Scene::CreateMainCamera(GameObject* parent)
 	CompCamera* camera = (CompCamera*)obj->AddComponent(C_CAMERA);
 	camera->Enable();
 	camera->SetMain(true);
+	camera->SetCullDynamics(false);
 
 	if (parent == nullptr)
 	{

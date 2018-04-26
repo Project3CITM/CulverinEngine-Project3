@@ -21,20 +21,21 @@
 #include "CompGraphic.h"
 #include "CompImage.h"
 #include "CompText.h"
-
+#include "CompCanvas.h"
 
 void CSharpScript::Activate(MonoObject* object, int uid)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-
-		CompInteractive* interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_BUTTON);
+		GameObject* current = comp->GetParent();
+		CompInteractive* interactive = (CompInteractive*)current->FindComponentByType(Comp_Type::C_BUTTON);
 		if (interactive != nullptr)
 		{
 			interactive->Activate();
 			return;
 		}
-		interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_CHECK_BOX);
+		interactive = (CompInteractive*)current->FindComponentByType(Comp_Type::C_CHECK_BOX);
 		if (interactive != nullptr)
 		{
 			interactive->Activate();
@@ -46,15 +47,17 @@ void CSharpScript::Activate(MonoObject* object, int uid)
 
 void CSharpScript::Deactivate(MonoObject * object, int uid)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompInteractive* interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_BUTTON);
+		GameObject* current = comp->GetParent();
+		CompInteractive* interactive = (CompInteractive*)current->FindComponentByType(Comp_Type::C_BUTTON);
 		if (interactive != nullptr)
 		{
 			interactive->Deactive();
 			return;
 		}
-		interactive = (CompInteractive*)current_game_object->FindComponentByType(Comp_Type::C_CHECK_BOX);
+		interactive = (CompInteractive*)current->FindComponentByType(Comp_Type::C_CHECK_BOX);
 		if (interactive != nullptr)
 		{
 			interactive->Deactive();
@@ -66,9 +69,10 @@ void CSharpScript::Deactivate(MonoObject * object, int uid)
 
 void CSharpScript::Clicked(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompButton* interactive = (CompButton*)current_game_object->FindComponentByType(Comp_Type::C_BUTTON);
+		CompButton* interactive = (CompButton*)comp;
 		if (interactive != nullptr)
 		{
 			interactive->OnClick();
@@ -78,7 +82,7 @@ void CSharpScript::Clicked(MonoObject * object)
 
 void CSharpScript::SetInteractivity(MonoObject * object, mono_bool enable)
 {
-	if (current_game_object != nullptr)
+	if (object != nullptr)
 	{
 		CompInteractive* item = (CompInteractive*)App->importer->iScript->GetComponentMono(object);
 		if (item != nullptr)
@@ -90,9 +94,10 @@ void CSharpScript::SetInteractivity(MonoObject * object, mono_bool enable)
 
 void CSharpScript::SetRaycastTarget(MonoObject * object, mono_bool flag)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompImage* graphic = (CompImage*)current_game_object->FindComponentByType(Comp_Type::C_IMAGE);
+		CompImage* graphic = (CompImage*)comp->GetParent()->FindComponentByType(Comp_Type::C_IMAGE);
 		if (graphic != nullptr)
 		{
 			graphic->SetRaycastTarget(flag);
@@ -102,9 +107,9 @@ void CSharpScript::SetRaycastTarget(MonoObject * object, mono_bool flag)
 
 void CSharpScript::FillAmount(MonoObject * object, float value)
 {
-	if (current_game_object != nullptr)
+	if (object != nullptr)
 	{
-		CompImage* image = (CompImage*)current_game_object->FindComponentByType(Comp_Type::C_IMAGE);
+		CompImage* image = (CompImage*)App->importer->iScript->GetComponentMono(object);;
 		if (image != nullptr)
 		{
 			image->FillAmount(value);
@@ -114,7 +119,7 @@ void CSharpScript::FillAmount(MonoObject * object, float value)
 
 void CSharpScript::SetRender(MonoObject * object, mono_bool flag)
 {
-	if (current_game_object != nullptr)
+	if (object != nullptr)
 	{
 		CompGraphic* item = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
 		if (item != nullptr)
@@ -126,7 +131,7 @@ void CSharpScript::SetRender(MonoObject * object, mono_bool flag)
 
 void CSharpScript::ActivateRender(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	if (object != nullptr)
 	{
 		CompGraphic* item = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
 		if (item != nullptr)
@@ -139,7 +144,7 @@ void CSharpScript::ActivateRender(MonoObject * object)
 
 void CSharpScript::DeactivateRender(MonoObject * object)
 {
-	if (current_game_object != nullptr)
+	if (object != nullptr)
 	{
 		CompGraphic* item = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
 		if (item != nullptr)
@@ -152,21 +157,21 @@ void CSharpScript::DeactivateRender(MonoObject * object)
 
 void CSharpScript::SetAlpha(MonoObject * object, float alpha)
 {
-	if (current_game_object != nullptr)
+	if (object != nullptr)
 	{
-		CompText* text = (CompText*)current_game_object->FindComponentByType(Comp_Type::C_TEXT);
-		if (text != nullptr)
+		CompGraphic* item = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
 		{
-			text->SetAlpha(alpha);
+			item->SetAlpha(alpha);
 		}
 	}
 }
 
 void CSharpScript::SetText(MonoObject * object, MonoString * string)
 {
-	if (current_game_object != nullptr)
+	if (object != nullptr)
 	{
-		CompText* text = (CompText*)current_game_object->FindComponentByType(Comp_Type::C_TEXT);
+		CompText* text = (CompText*)App->importer->iScript->GetComponentMono(object);
 		if (text != nullptr)
 		{
 			text->SetString(mono_string_to_utf8(string));
@@ -176,9 +181,10 @@ void CSharpScript::SetText(MonoObject * object, MonoString * string)
 
 void CSharpScript::SetColor(MonoObject * object, MonoObject * color, float alpha)
 {
-	if (current_game_object != nullptr)
+	Component* comp = App->importer->iScript->GetComponentMono(object);
+	if (comp != nullptr)
 	{
-		CompImage* image = (CompImage*)current_game_object->FindComponentByType(Comp_Type::C_IMAGE);
+		CompImage* image = (CompImage*)comp->GetParent()->FindComponentByType(Comp_Type::C_IMAGE);
 		if (image != nullptr)
 		{
 			MonoClass* classT = mono_object_get_class(color);
@@ -193,6 +199,18 @@ void CSharpScript::SetColor(MonoObject * object, MonoObject * color, float alpha
 			if (z_field) mono_field_get_value(color, z_field, &new_vec.z);
 
 			image->SetColor(new_vec.x, new_vec.y, new_vec.z, alpha);
+		}
+	}
+}
+
+void CSharpScript::SetCanvasAlpha(MonoObject * object, float alpha)
+{
+	if (object != nullptr)
+	{
+		CompCanvas* item = (CompCanvas*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			item->SetNewCanvasAlphaValue(alpha); 
 		}
 	}
 }

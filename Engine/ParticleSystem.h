@@ -62,6 +62,8 @@
 
 #define MAX_PARTICLES_PER_EMITTER 1000
 
+class CompParticleSystem;
+
 struct ConeTrunk			//Definition of a cone trunk for the cone emitter type
 {
 	Circle Upper_Circle;
@@ -111,13 +113,15 @@ private:
 	void DrawCircle(const Circle& shape);			//Draw circle emitter
 
 public:
-	float EmitterLifeMax = -1.0f;					//EmitterLife, after that, we can execute another child particle system, if -1, infinite life
+	float EmitterLifeMax = 0.0f;					//EmitterLife, after that, we can execute another child particle system
 	float EmitterLife = 0.0f;						//Emitter Real Life
 	float4x4 Transform = float4x4::identity;		//Transformation of this emitter
 	unsigned int SpawnRate = 2;						//How many particles are emitted every second
 	float Lifetime = 1.0f;							//Lifetime of emitted particles
 	float LifetimeVariation = 0.0f;					//Lifetime variation of emitted particles
 	float EmissionDuration = 0.0f;					//If loop is false, emission is played EmissionDuration
+	float PreviewDuration = 0.0f;					
+
 	bool Loop = true;								//Ignore EmissionDuration and keep emitting
 	int ParticleNumber = 0;							//Alive particles emitted
 	float Speed = 5.0f;								//Speed of emitted particles
@@ -183,6 +187,8 @@ struct ParticleState
 	float SizeVariation = 0.0f;							//Size of the particle variation
 	float4 RGBATint = float4::one;						//Particle Texture tint
 	float4 RGBATintVariation = float4::zero;			//Particle Texture tint variation
+	float particleSpin = 0.0f;							//Particle rotation
+	float spinVariation = 0.0f;							//Particle rotation variation
 
 	//Variables to store values of imgui elements
 	bool alpha_preview = true;
@@ -200,6 +206,7 @@ struct ParticleAssignedState
 	float3 force = float3::zero;		//Gravity that affects that particle
 	float Size = 1.0f;					//Size that affects that particle
 	float4 RGBATint = float4::one;		//Particle texture tint that affects that particle
+	float Spin = 0.0f;					//Particle rotation
 };
 
 struct ParticleMeshData;
@@ -210,6 +217,7 @@ struct ParticleProperties
 	Quat Rotation = Quat::identity;				//Particle Actual Rotation
 	float3 Scale = float3::one;					//Particle Actual Scale
 	float Size = 1.0f;							//Scale Multiplicator to modify
+	float Spin = 0.0f;							//Current rotation of the particle
 	float3 Speed = float3::zero;				//Particle Speed
 	float3 EmissionDirection = float3::zero;	//Particle Emission Direction
 	float3 force = float3::zero;				//Force that effects that particle
@@ -243,6 +251,7 @@ private:
 	inline void CalculateGravity(float LifetimeFloat, float MaxLifetimeFloat);							//Calculate particle gravity/force inperpolation
 	inline void CalculateSize(float LifetimeFloat, float MaxLifetimeFloat);								//Calculate particle size inperpolation
 	inline void CalculateColor(float LifetimeFloat, float MaxLifetimeFloat);							//Calculate particle color inperpolation
+	inline void CalculateSpin(float LifetimeFloat, float MaxLifetimeFloat);								//Calculate particle spin inTerpolation
 
 public:
 	ParticleSystem* ParentParticleSystem = nullptr;				//Store a pointer to parent particle system
@@ -321,6 +330,9 @@ public:
 	~ParticleSystem();
 	bool PreUpdate(float dt);
 	bool Update(float dt, bool emit = true);
+	void UpdateInGame(float dt);
+	void UpdateInEditor(float dt);
+
 	bool PostUpdate(float dt);
 	bool CleanUp();
 
@@ -342,6 +354,7 @@ public:
 	void SetEmitterTransform(const float4x4& transform);		//Set emitter transformation
 	void ActivateEmitter();
 	void DeactivateEmitter();
+	void ResetPreview();
 	bool IsEmitterActive() const;
 
 	bool SystemIsEmpty() const;
@@ -376,7 +389,7 @@ public:
 	bool ShowEmitterBoundBox = false;							//Draw emitter AABB
 	bool ShowEmitter = true;									//Draw emitter shape
 
-
+	CompParticleSystem* parent = nullptr;
 	bool active = true;
 	bool preview = true;
 	bool to_delete = false;

@@ -32,16 +32,9 @@ public class FireBreath : CulverinBehaviour
                 if (enemy_manager.IsEnemy(collided_obj))
                 {
                     collided = true;
-                    enemy_manager.ApplyDamage(collided_obj, damage);
+                    enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
                 }
-                else
-                {
-                    CompCollider obj_col = collided_obj.GetComponent<CompCollider>();
-                    if (obj_col != null)
-                    {
-                        obj_col.CallOnContact();
-                    }
-                }
+              
             }
         }
     }

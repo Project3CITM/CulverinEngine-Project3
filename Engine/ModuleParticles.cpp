@@ -3,6 +3,7 @@
 #include "ModuleParticles.h"
 #include "CompCamera.h"
 #include "ModuleRenderer3D.h"
+#include "CompParticleSystem.h"
 
 
 ModuleParticles::ModuleParticles(bool start_enabled) : Module(start_enabled)
@@ -32,7 +33,12 @@ bool ModuleParticles::Init(JSON_Object* node)
 
 update_status ModuleParticles::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleParticles", Profiler::Color::Blue);
 	const CompCamera* camera = App->renderer3D->GetActiveCamera();
+
+	if (camera == nullptr)
+		return UPDATE_CONTINUE;
+
 	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); )
 	{
 		if ((*item)->to_delete == true && (*item)->SystemIsEmpty())
@@ -64,6 +70,7 @@ update_status ModuleParticles::PreUpdate(float dt)
 
 update_status ModuleParticles::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: ModuleParticles", Profiler::Color::Blue);
 	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); item++)
 	{
 		if ((*item)->distance_to_camera < (*item)->discard_distance)
@@ -87,6 +94,7 @@ update_status ModuleParticles::Update(float dt)
 
 update_status ModuleParticles::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModuleParticles", Profiler::Color::Blue);
 	perf_timer.Start();
 	postUpdate_t = perf_timer.ReadMs();
 
@@ -106,8 +114,12 @@ bool ModuleParticles::CleanUp()
 {
 	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); item++)
 	{
-		if((*item)!=nullptr)
+		if ((*item) != nullptr)
+		{
+			if((*item)->parent != nullptr)
+				(*item)->parent->SetSystemAsNull();
 			delete (*item);
+		}
 	}
 
 	//Particle systems deletes 

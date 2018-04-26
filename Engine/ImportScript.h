@@ -106,6 +106,8 @@ private:
 
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);
+	static bool GetInteractiveSelectedActive();
+
 	/* Input */
 	static mono_bool	GetPressAnyKey();
 	static mono_bool	GetKeyDown(int key);
@@ -121,12 +123,19 @@ private:
 	static int			GetMouseMoutionY();
 	static void			SetInputManagerActive(MonoString* str, mono_bool active);
 	static void			SetInputManagerBlock(MonoString* str, mono_bool active);
+	static mono_bool	GetInputManagerActive(MonoString* str, mono_bool active);
+	static mono_bool	GetInputManagerBlock(MonoString* str, mono_bool active);
 	static mono_bool	GetInput_KeyDown(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_KeyUp(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_KeyRepeat(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_MouseButtonDown(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_MouseButtonUp(MonoString* name, MonoString* input);
 	static float		GetInput_ControllerAxis(MonoString* name, MonoString* input);
+	static MonoString*	GetInput_ControllerActionName(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
+	static MonoString*	GetInput_ControllerKeyBindingName(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
+	static mono_bool	GetInput_ControllerWaitForKey(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
+	static void			SetInput_ControllerWaitForKey(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
+
 	static void			RumblePlay(float intensity, int milliseconds);
 
 	/* Time */
@@ -139,8 +148,8 @@ private:
 
 	/* CulverinBehaciour */
 	static MonoObject*	GetLinkedObject(MonoObject* object, MonoString* name);
-	static bool			GetEnabled(MonoObject* object, MonoObject* gameobject);
-	static void			SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject);
+	static bool			GetEnabled(MonoObject* object);
+	static void			SetEnabled(MonoObject* object, mono_bool active);
 
 	/* GameObject */
 	static mono_bool	IsStatic(MonoObject* object);
@@ -159,7 +168,6 @@ private:
 	static mono_bool	CompareTag(MonoObject* object, MonoString* tag);
 	static MonoObject*	FindGameObjectWithTag(MonoObject* object, MonoString* tag);
 	static void			CreateGameObject(MonoObject* object);
-	static void			DeleteGameObject(MonoObject* object);
 	static MonoObject*	GetComponent(MonoObject* object, MonoReflectionType* type);
 
 	/* Object */
@@ -240,10 +248,12 @@ private:
 	static void SetRender(MonoObject * object, mono_bool flag);
 	static void ActivateRender(MonoObject * object);
 	static void DeactivateRender(MonoObject * object);
-	/*Component Text*/
 	static void SetAlpha(MonoObject* object, float alpha);
-	static void SetText(MonoObject* object, MonoString* alpha);
 
+	/*Component Text*/
+	static void SetText(MonoObject* object, MonoString* alpha);
+	/*Component Canvas*/
+	static void SetCanvasAlpha(MonoObject* object, float alpha);
 	
 	/*Component Graphic Image*/
 	static void FillAmount(MonoObject* object, float value);
@@ -311,6 +321,10 @@ private:
 	static float GetQuadratic(MonoObject* object);
 	static void SetQuadratic(MonoObject* object, float value);
 
+	/*Component Rect_Transform*/
+	static void SetUIPosition(MonoObject* object, MonoObject* vector3);
+	static MonoObject* GetUIPosition(MonoObject* object);
+
 	/*Module Physics*/
 	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);
 
@@ -324,6 +338,9 @@ private:
 	static int RangeInt(int min, int max); 
 	// min [inclusive] - max [exclusive]
 	static float RangeFloat(float min, float max);
+	// min [inclusive] - max [inclusive] - norepeat[exclusive]
+	static int RangeIntNoRepeat(int min, int max, int norepeat);
+
 
 public: 
 	std::multimap<std::string, GameObject*> map_link_variables;

@@ -6,6 +6,7 @@ public class Mana : CulverinBehaviour
     public GameObject this_obj_mana;
     public GameObject other_obj_lastmana;
     CompImage mana_bar;
+    public GameObject no_mana;
     public float regen = 1.0f;
     public float max_mana = 100.0f;
     float curr_mana = 100.0f;
@@ -20,12 +21,15 @@ public class Mana : CulverinBehaviour
     {
         this_obj_mana = GetLinkedObject("this_obj_mana");
         other_obj_lastmana = GetLinkedObject("other_obj_lastmana");
+        no_mana = GetLinkedObject("no_mana");
+        no_mana.GetComponent<CompImage>().DeactivateRender();
         not_enough_mana = false;
         flickering_time = 0.0f;
     }
 
     void Update()
     {
+        no_mana.GetComponent<CompImage>().FillAmount(calc_mana);
         if (!wasted_mana)
         {
             if (curr_mana < max_mana)
@@ -54,19 +58,19 @@ public class Mana : CulverinBehaviour
             flickering_time += Time.deltaTime;
             if (flickering_time >= wait_for_mana_recovery)
             {
-                this_obj_mana.GetComponent<CompImage>().DeactivateRender();
+                no_mana.GetComponent<CompImage>().ActivateRender();
             }
-            if (flickering_time >= wait_for_mana_recovery*2)
+            if (flickering_time >= wait_for_mana_recovery * 2)
             {
-                this_obj_mana.GetComponent<CompImage>().ActivateRender();
+                no_mana.GetComponent<CompImage>().DeactivateRender();
             }
-            if (flickering_time >= wait_for_mana_recovery*3)
+            if (flickering_time >= wait_for_mana_recovery * 3)
             {
-                this_obj_mana.GetComponent<CompImage>().DeactivateRender();
+                no_mana.GetComponent<CompImage>().ActivateRender();
             }
-            if (flickering_time >= wait_for_mana_recovery*4)
+            if (flickering_time >= wait_for_mana_recovery * 4)
             {
-                this_obj_mana.GetComponent<CompImage>().ActivateRender();
+                no_mana.GetComponent<CompImage>().DeactivateRender();
                 not_enough_mana = false;
             }
         }
@@ -74,6 +78,13 @@ public class Mana : CulverinBehaviour
 
     public void DecreaseMana(float cost)
     {
+        //Costs are 0 in GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy)
+        {
+            cost = 0;
+        }
+
         other_obj_lastmana.GetComponent<LeftMana>().lastmana_value = curr_mana;
         if (curr_mana > cost)
         {
@@ -87,6 +98,13 @@ public class Mana : CulverinBehaviour
 
     public void DecreaseManaPercentage(float cost_percentage)
     {
+        //Costs are 0 in GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy)
+        {
+            cost_percentage = 0;
+        }
+
         float cost = cost_percentage * max_mana / 100.0f;
         other_obj_lastmana.GetComponent<LeftMana>().lastmana_value = curr_mana;
         if (curr_mana > cost)
@@ -116,6 +134,13 @@ public class Mana : CulverinBehaviour
 
     public bool CanWasteMana(float value)
     {
+        //Costs are 0 in GOD MODE
+        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
+            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy)
+        {
+            value = 0;
+        }
+
         if (curr_mana >= value)
         {
             wasted_mana = true;

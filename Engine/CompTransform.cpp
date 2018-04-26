@@ -325,7 +325,6 @@ void CompTransform::SyncComponent(GameObject * sync_parent)
 	UpdateMatrix(transform_mode);
 	parentUpdate = false;
 	toUpdate = false;
-	updated = true;
 }
 
 void CompTransform::SetPosGlobal(float3 pos)

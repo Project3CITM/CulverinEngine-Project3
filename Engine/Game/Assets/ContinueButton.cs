@@ -5,10 +5,11 @@ using CulverinEditor.Debug;
 public class ContinueButton : CulverinBehaviour
 {
     public void Play()
-    {
-        Debug.Log("GOING TO GAME");
+    {       
+        StatsScore.ResetScore();
+        Debug.Log("Remove asdasdasdadadadsasdasdadasdads",Department.PHYSICS,Color.RED);
         Input.SetInputManagerActive("GUI", false);
-        SceneManager.LoadScene("FinalMap1");
+        SceneManager.RemoveNoDestroy();        
     }
 
 }

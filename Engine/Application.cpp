@@ -29,7 +29,6 @@
 #include "JSONSerialization.h"
 #include "mmgr/mmgr.h"
 #include "ModuleEventSystemV2.h"
-#include "ModuleKeyBinding.h"
 #include "ModuleAnimation.h"
 #include "ImportScript.h"
 #include "ModuleInput.h"
@@ -46,7 +45,6 @@ Application::Application()
 	BROFILER_CATEGORY("Application Creation", Profiler::Color::PaleVioletRed);
 	window = new ModuleWindow();
 	input = new ModuleInput();
-	module_key_binding= new ModuleKeyBinding();
 	audio = new ModuleAudio(true);
 	renderer3D = new ModuleRenderer3D();
 	render_gui = new ModuleRenderGui();
@@ -82,11 +80,10 @@ Application::Application()
 	AddModule(camera);
 	AddModule(resource_manager);
 	AddModule(physics);
-	AddModule(module_key_binding);
 	AddModule(input);
 	AddModule(console);
-	AddModule(particles);
 	AddModule(scene);
+	AddModule(particles);
 	AddModule(module_lightning); // Ask this module creators before changing the order, possible dependencies with scene and shaders module.
 	AddModule(module_shaders);
 	
@@ -192,7 +189,6 @@ bool Application::Init()
 		{
 			if ((*item)->IsEnabled())
 			{
-				BROFILER_CATEGORY((*item)->name.c_str(), Profiler::Color::Yellow);
 				config_node = json_object_get_object(config, (*item)->name.c_str());
 				ret = (*item)->Init(config_node);
 				json_object_clear(config_node);
@@ -210,7 +206,6 @@ bool Application::Init()
 		{
 			if ((*item)->IsEnabled())
 			{
-				BROFILER_CATEGORY((*item)->name.c_str(), Profiler::Color::Yellow);
 				ret = (*item)->Start();
 			}
 			item++;
@@ -255,6 +250,7 @@ void Application::PrepareUpdate()
 	}
 	else if (change_to_scene)
 	{
+		renderer3D->scene_camera->SetCullDynamics(false);
 		renderer3D->SetActiveCamera(renderer3D->scene_camera);
 		change_to_scene = false;
 	}
@@ -279,16 +275,27 @@ void Application::FinishUpdate()
 		}
 		want_to_save = false;
 	}
+	if (want_to_save_binary == true)
+	{
+		if (App->mode_game == false)
+		{
+			//actual_scene = json_seria->SaveScene();
+		}
+		want_to_save_binary = false;
+	}
 
 	if (want_to_load == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		App->scene->octree.Clear(false);
+		scene->octree.Clear(false);
+		scene->static_objects.clear();
+		scene->dynamic_objects.clear();
 
-		App->importer->iScript->ClearMonoMap();
+		//App->importer->iScript->ClearMonoMap();
 
 		App->scene->DeleteAllGameObjects(App->scene->root);
 		scene->ClearAllTags();
+		App->particles->CleanUp();
 
 		render_gui->focus = nullptr;
 		render_gui->selected = nullptr;
@@ -313,7 +320,8 @@ void Application::FinishUpdate()
 	if (dont_destroy_on_load)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		App->scene->octree.Clear(false);
+		scene->octree.Clear(false);
+		scene->static_objects.clear();
 
 		//App->scene->DeleteAllGameObjects(App->scene->root);
 		scene->ChangeRoot(scene->dontdestroyonload, scene->root);
@@ -346,8 +354,10 @@ void Application::FinishUpdate()
 
 		scene->DeleteAllGameObjects(App->scene->dontdestroyonload);
 
-		GameObject* camera2 = scene->root->FindGameObjectWithTag("camera");
-		((CompCamera*)camera2->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
+		GameObject* camera2 = scene->FindGameObjectWithTagRecursive("camera", scene->root);
+		//GameObject* camera2 = scene->root->FindGameObjectWithTagRecursive("camera");
+		CompCamera* cam = (CompCamera*)camera2->FindComponentByType(Comp_Type::C_CAMERA);
+		cam->SetMain(true);
 
 		if (engine_state != EngineState::STOP)
 		{
@@ -364,8 +374,10 @@ void Application::FinishUpdate()
 
 	if (load_multi_scene)
 	{
+		/**/
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		App->scene->octree.Clear(false);
+		scene->octree.Clear(false);
+		scene->static_objects.clear();
 
 		scene->ChangeRoot(scene->dontdestroyonload, scene->root);
 
@@ -380,8 +392,18 @@ void Application::FinishUpdate()
 		json_seria->LoadScene(secondary_scene.c_str());
 		scene->ChangeRoot(scene->secondary_root, scene->root);
 
+		camera = scene->secondary_root->FindGameObjectWithTag("camera");
+		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
+
 		// Load Root 
 		json_seria->LoadScene(actual_scene.c_str());
+
+		camera = scene->root->FindGameObjectWithTag("camera");
+		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
+		if (engine_state != EngineState::STOP)
+		{
+			change_to_game = true;
+		}
 
 		// Set Scripting MonoMaps
 		importer->iScript->SetMonoMap(App->scene->root, true);
@@ -402,7 +424,7 @@ void Application::FinishUpdate()
 		render_gui->selected = nullptr;
 		render_gui->ClearInteractiveVector();
 
-		scene->DeleteAllGameObjects(scene->secondary_root);
+		scene->DeleteAllGameObjects(scene->secondary_root,false);
 
 		if (engine_state != EngineState::STOP)
 		{
@@ -422,8 +444,11 @@ void Application::FinishUpdate()
 			render_gui->ClearInteractiveVector();
 
 			//First swap main camera
-			GameObject* camera = scene->root->FindGameObjectWithTag("camera");
-			((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
+			//GameObject* camera = scene->root->FindGameObjectWithTag("camera");
+			//((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
+			GameObject* camera2 = scene->FindGameObjectWithTagRecursive("camera", scene->root);
+			CompCamera* cam = (CompCamera*)camera2->FindComponentByType(Comp_Type::C_CAMERA);
+			cam->SetMain(false);
 
 			//Swap Scenes
 			GameObject* temp = new GameObject();
@@ -433,9 +458,16 @@ void Application::FinishUpdate()
 			RELEASE(temp);
 
 			//Set new main camera
-			GameObject* camera2 = scene->root->FindGameObjectWithTag("camera");
-			((CompCamera*)camera2->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
+			//camera = scene->root->FindGameObjectWithTag("camera");
+			//((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
+			GameObject* camera3 = scene->FindGameObjectWithTagRecursive("camera", scene->root);
+			CompCamera* cam3 = (CompCamera*)camera3->FindComponentByType(Comp_Type::C_CAMERA);
+			cam3->SetMain(true);
 
+			if (engine_state != EngineState::STOP)
+			{
+				change_to_game = true;
+			}
 			//Block or not in Game InputEvents 
 			input->player_action->SetInputManagerActive("GUI", activate_gui_input);
 		}
@@ -496,7 +528,7 @@ void Application::FinishUpdate()
 // Call PreUpdate, Update and PostUpdate on all modules
 update_status Application::Update()
 {
-	BROFILER_CATEGORY("Application Update", Profiler::Color::PaleVioletRed);
+	BROFILER_CATEGORY("Application PreUpdate", Profiler::Color::PaleVioletRed);
 	update_status ret = UPDATE_CONTINUE;
 	PrepareUpdate();
 
@@ -558,7 +590,7 @@ update_status Application::Update()
 	}
 
 	item = list_modules.begin();
-
+	BROFILER_CATEGORY("Application Update", Profiler::Color::PaleVioletRed);
 	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
 		if ((*item)->IsEnabled())
@@ -610,7 +642,7 @@ update_status Application::Update()
 		stop_perf = false;
 	}
 	//-----------------------------------------------
-
+	BROFILER_CATEGORY("Application PostUpdate", Profiler::Color::PaleVioletRed);
 	item = list_modules.begin();
 	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
@@ -962,7 +994,7 @@ void Application::SetState(EngineState state)
 						scene->scene_buff->WantRefreshRatio();
 
 						//To Save all elements in the scene to load them correctly when exiting Game Mode
-						actual_scene = json_seria->SaveScene();
+						//actual_scene = json_seria->SaveScene();
 					}
 				}
 
@@ -986,9 +1018,16 @@ void Application::SetState(EngineState state)
 	LOG("Engine State is Now: %i", engine_state);
 }
 
-void Application::WantToSave()
+void Application::WantToSave(bool binary)
 {
-	want_to_save = true;
+	if (binary == false)
+	{
+		want_to_save = true;
+	}
+	else
+	{
+		want_to_save_binary = true;
+	}
 }
 
 void Application::WantToLoad(bool in_game)
@@ -1082,7 +1121,7 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	static bool run_in_background = false;
 	static bool resizable_window = true;
 	static bool borderless = false;
-	static bool full_desktop = false;
+	static bool full_desktop = true;
 	static bool game_mode = true;
 	static bool use_release = true;
 
