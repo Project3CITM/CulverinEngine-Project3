@@ -252,7 +252,7 @@ update_status ModuleLightning::Update(float dt)
 			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-projSize, projSize, -projSize, projSize, nearPlane, farPlane);
 			glm::mat4 depthViewMatrix = glm::lookAt(eye, lookPos, glm::vec3(0, 1, 0));
 
-
+			
 			light->depthMVPMat = depthProjectionMatrix * depthViewMatrix;
 			light->depthBiasMat = biasMatrix * light->depthMVPMat;
 		}
@@ -320,10 +320,7 @@ void ModuleLightning::OnEvent(Event & event)
 
 	BROFILER_CATEGORY("OnEvent: ModuleLightning", Profiler::Color::Blue);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
-
-
+	glDisable(GL_CULL_FACE);
 
 	switch (event.Get_event_data_type())
 	{
@@ -354,7 +351,7 @@ void ModuleLightning::OnEvent(Event & event)
 				{
 					if (m->resource_mesh->vertices.size() > 0 && m->resource_mesh->indices.size() > 0)
 					{
-						//CalcDirectionalShadowMap((CompLight*)light, m);
+						CalcDirectionalShadowMap((CompLight*)light, m);
 					}
 
 					else
@@ -384,7 +381,7 @@ void ModuleLightning::OnEvent(Event & event)
 	}
 
 	glCullFace(GL_BACK);
-
+	glEnable(GL_CULL_FACE);
 	App->scene->scene_buff->Bind("Scene"); glCullFace(GL_BACK);
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	

@@ -31,7 +31,7 @@ void main()
 {
 	TexCoord = texCoord;
 	ourPos = position;
-   ourNormal = normal;
+   ourNormal = mat3(model) * normal;
 	shadowCoord = depthBias * model * vec4(position, 1.0);
 
     vec3 T = normalize(vec3( model * vec4(tangent, 0)));

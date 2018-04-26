@@ -1219,8 +1219,12 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 			BROFILER_CATEGORY("Update: ModuleShaders SetLights", Profiler::Color::Blue);
 			for (size_t i = 0; i < lights_vec.size(); ++i) {
 				if (lights_vec[i]->to_delete) continue;
-				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
+				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT) {
+					int depthBiasID = glGetUniformLocation(ID, "depthBias");
+					if (depthBiasID != -1) glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
 					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
+				}
+					
 				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
 					SetLightUniform((*item).second->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
 
@@ -1232,9 +1236,7 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 
 				// Bias matrix. TODO: Might be better to set other place
 
-				int depthBiasID = glGetUniformLocation(ID, "depthBias");
-				if (depthBiasID != -1) glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
-
+				
 				// End Bias matrix.
 			}
 		}
