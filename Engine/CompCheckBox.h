@@ -24,6 +24,8 @@ public:
 	void OnClick();
 	void ClearLinkedScripts();
 
+	void OnSubmit(Event event_input);
+
 public:
 	CompImage* Tick = nullptr;
 private:
