@@ -36,14 +36,13 @@ uniform sampler2DShadow _shadowMap;
 uniform vec3 _cameraPosition;
 uniform float _alpha;
 
-uniform float a_Ka;
-uniform float a_Kd;
-uniform float a_Ks;
-uniform float a_shininess;
 
-//uniform int iterations;
+uniform float a_Kd;
+uniform float a_shininess;
+uniform float _farPlane;
+
 uniform int shadow_blur;
-//uniform float bias;
+
 
 uniform mat4 model;
 
@@ -194,6 +193,9 @@ void main()
 
 	vec3 col = max( color_texture * vec3(0,0.2,0.2) ,
 	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
-
-    color = vec4(col, _alpha);
+   float fade_dist = 1;
+float norm_min = (_farPlane - _farPlane/ 3);
+float dist = (length(_cameraPosition - vec3(model * vec4(ourPos,1)))-  norm_min) / (_farPlane - norm_min); 
+dist = abs(clamp(dist, 0.0, 1.0)-1);
+    color = vec4(col * dist, _alpha);
 }

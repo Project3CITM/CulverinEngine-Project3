@@ -1183,6 +1183,10 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 			float3 cam_pos = App->renderer3D->active_camera->frustum.pos;
 			GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
 			if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
+
+			float far_plane = App->renderer3D->active_camera->frustum.farPlaneDistance;
+			GLint farLoc = glGetUniformLocation(ID, "_farPlane");
+			if (farLoc != -1) glUniform1f(farLoc, far_plane);
 		}
 
 		//ALPHA
