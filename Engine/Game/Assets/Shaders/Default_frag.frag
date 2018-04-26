@@ -1,6 +1,6 @@
 #version 330 core
 
-#define MAX_LIGHTS 120
+#define MAX_LIGHTS 100
 
 uniform int _numLights;
 uniform struct Light {
@@ -65,11 +65,7 @@ vec2 poissonDisk[16] = vec2[](
    vec2( 0.14383161, -0.14100790 )
 );
 
-float random(vec3 seed, int i){
-	vec4 seed4 = vec4(seed,i);
-	float dot_product = dot(seed4, vec4(12.9898,78.233,45.164,94.673));
-	return fract(sin(dot_product) * 43758.5453);
-};
+
 
 vec4 light_colors[MAX_LIGHTS];
 
@@ -131,8 +127,7 @@ float CalcShadow(vec4 shadowPos, float usedBias)
 
     for(int i = 0; i < iterations; ++i)
     {
-        int index = int(16.0 * random(floor(mat3(model) * ourPos * 1000.0), i)) % 16;
-
+      
         float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowPos.xy + poissonDisk[i] / 200.0, (shadowPos.z - usedBias) / shadowPos.w)));
         float tmp = 0.1* shadowVal;// old value: 0.05 - iterations: 20
 
