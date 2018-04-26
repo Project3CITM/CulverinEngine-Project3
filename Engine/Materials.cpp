@@ -4,6 +4,20 @@
 #include "ModuleFS.h"
 #include "ModuleRenderer3D.h"
 #include "CubeMap_Texture.h"
+#include <algorithm>
+
+bool sortTexVars(const TextureVar& i, const TextureVar& j);
+bool sortFloatVars(const floatVar& i, const floatVar& j);
+bool sortBoolVars(const boolVar& i, const boolVar& j);
+bool sortIntVars(const intVar& i, const intVar& j);
+bool sortFloat3Vars(const float3Var& i, const float3Var& j);
+bool sortColorVars(const ColorVar& i, const ColorVar& j);
+bool sortCubeVars(const CubeMapVar& i, const CubeMapVar& j);
+
+
+
+
+
 Material::Material()
 {
 	active_num = 0;
@@ -26,8 +40,18 @@ void Material::Unbind()
 	glUseProgram(NULL);
 }
 
-void Material::Save() const
+
+void Material::Save() 
 {
+
+	std::sort(textures.begin(), textures.end(), sortTexVars);
+	std::sort(bool_variables.begin(), bool_variables.end(), sortBoolVars);
+	std::sort(int_variables.begin(), int_variables.end(), sortIntVars);
+	std::sort(float_variables.begin(), float_variables.end(), sortFloatVars);
+	std::sort(float3_variables.begin(), float3_variables.end(), sortFloat3Vars);
+	std::sort(color_variables.begin(), color_variables.end(), sortColorVars);
+	std::sort(cube_maps.begin(), cube_maps.end(), sortCubeVars);
+
 	JSON_Value* config_file;
 	JSON_Object* object;
 
@@ -504,5 +528,86 @@ void Material::SetDestinyBlendMode()
 		break;
 	}
 
+}
+
+
+bool sortTexVars(const TextureVar& i, const TextureVar& j)
+{
+
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+
+bool sortIntVars(const intVar& i, const intVar& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+bool sortFloatVars(const floatVar& i, const floatVar& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+bool sortFloat3Vars(const float3Var& i, const float3Var& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+bool sortColorVars(const ColorVar& i, const ColorVar& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+bool sortBoolVars(const boolVar& i, const boolVar& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+bool sortCubeVars(const CubeMapVar& i, const CubeMapVar& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
 }
 

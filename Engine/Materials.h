@@ -32,7 +32,7 @@ public:
 
 	void  Unbind();
 
-	void Save()const;
+	void Save();
 	void Load();
 
 	UniformVar  GetVariableInfo(uint index);
@@ -78,6 +78,7 @@ public:
 	std::vector<boolVar>	bool_variables;
 	std::vector<CubeMapVar>	cube_maps;
 
+
 	std::vector<TextureVar>::iterator	it_textures;
 	std::vector<intVar>::iterator		it_int_variables;
 	std::vector<floatVar>::iterator		it_float_variables;
@@ -88,6 +89,7 @@ public:
 
 	uint active_num = 0;
 };
+
 
 #endif
 
