@@ -19,16 +19,20 @@ public:
 	void OnDrag(Event event_input);
 	//bool PointerInside(float2 position);
 	//void OnClick();
+	void SetSliderBg(CompImage*bg);
+	void SetSliderBar(CompImage*bar);
 
 
 private:
+	
 public:
-	CompImage * slide_bar = nullptr;
+
 private:
 	std::vector<CompScript*> linked_scripts;
 	float min_pos = 0;
 	float max_pos = 0;
-
+	CompImage * slide_bg = nullptr;
+	CompImage * slide_bar = nullptr;
 };
 
 #endif

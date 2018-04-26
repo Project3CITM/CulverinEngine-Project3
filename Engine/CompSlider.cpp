@@ -88,15 +88,6 @@ void CompSlider::ShowInspectorInfo()
 		ImGui::OpenPopup("Options Slider");
 	}
 	ImGui::PopStyleVar();
-	if (ImGui::Button("Sync Min/Max", ImVec2(120, 0)))
-	{
-		int bar_x = slide_bar->GetRectTrasnform()->GetPosGlobal().x;
-		min_pos = bar_x - slide_bar->GetRectTrasnform()->GetWidth()/2;
-		max_pos = bar_x + slide_bar->GetRectTrasnform()->GetWidth()/2;
-		slide_bar->SetToFilled(true);
-	}
-	ImGui::Text("Min pos: %f", min_pos);
-	ImGui::Text("Max pos: %f", max_pos);
 
 	ImGui::TreePop();
 }
@@ -189,3 +180,14 @@ void CompSlider::OnDrag(Event event_input)
 		image->GetRectTrasnform()->SetPos(float3(new_x,mous_pos.y, 0));
 	}
 }
+
+void CompSlider::SetSliderBg(CompImage * bg)
+{
+	slide_bg = bg;
+}
+
+void CompSlider::SetSliderBar(CompImage * bar)
+{
+	slide_bar = bar;
+}
+
