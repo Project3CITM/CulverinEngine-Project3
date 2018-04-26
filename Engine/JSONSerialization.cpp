@@ -1036,7 +1036,7 @@ void JSONSerialization::SaveFont(const ResourceFont * font, const char * directo
 
 void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const char * directory, const char * fileName)
 {
-	LOG("SAVING Font %s -----", animation->name.c_str());
+	LOG("SAVING UIAnimation %s -----", animation->name.c_str());
 
 	JSON_Value* config_file;
 	JSON_Object* config;
@@ -1044,7 +1044,6 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 	std::string nameJson = directory;
 	nameJson += "/";
 	nameJson += animation->name;
-	nameJson += ".anim.json";
 	config_file = json_value_init_object();
 	if (config_file != nullptr)
 	{
@@ -1096,11 +1095,16 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f3_value);
 						break;
 					case ParameterValue::RECT_TRANSFORM_WIDTH:
-						
 						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
 						break;
 					case ParameterValue::RECT_TRANSFORM_HEIGHT:
 						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
+						break;
+					case ParameterValue::IMAGE_ALPHA_VALUE:
+						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Alpha on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
+						break;
+					case ParameterValue::IMAGE_SPRITE_ANIM:
+						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "UUID Sprite on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.sprite->GetUUID());
 						break;
 					default:
 						break;

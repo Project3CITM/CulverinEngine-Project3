@@ -6,6 +6,9 @@
 #include "GameObject.h"
 #include "Scene.h"
 #include "ModuleFS.h"
+#include "ModuleResourceManager.h"
+#include "ModuleImporter.h"
+#include "ImportMaterial.h"
 
 CompUIAnimation::CompUIAnimation(Comp_Type t, GameObject * parent):Component(t,parent)
 {
@@ -323,7 +326,7 @@ void CompUIAnimation::LoadAnimation(AnimationJson ** animation, const char * pat
 						std::string key_data = std::to_string(k);
 						KeyData key_data_item;
 						key_data_item.key_on_time = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data);
-
+						uint id;
 						key_data_item.key_frame = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Keyframe " + key_data);
 
 
@@ -345,6 +348,26 @@ void CompUIAnimation::LoadAnimation(AnimationJson ** animation, const char * pat
 							break;
 						case ParameterValue::RECT_TRANSFORM_HEIGHT:
 							key_data_item.key_values.f_value = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data);
+							break;
+						case ParameterValue::IMAGE_ALPHA_VALUE:
+							key_data_item.key_values.i_value = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Alpha on time " + key_data);
+							break;
+						case ParameterValue::IMAGE_SPRITE_ANIM:
+							id = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "UUID Sprite on time " + key_data);
+							key_data_item.key_values.sprite = (ResourceMaterial*)App->resource_manager->GetResource(id);
+							if (id > 0)
+							{
+								key_data_item.key_values.sprite = (ResourceMaterial*)App->resource_manager->GetResource(id);
+								if (key_data_item.key_values.sprite != nullptr)
+								{
+									key_data_item.key_values.sprite->num_game_objects_use_me++;
+									if (key_data_item.key_values.sprite->IsLoadedToMemory() == Resource::State::UNLOADED)
+									{
+										App->importer->iMaterial->LoadResource(std::to_string(key_data_item.key_values.sprite->GetUUID()).c_str(), key_data_item.key_values.sprite);
+									}
+								}
+							}
+
 							break;
 						default:
 							break;

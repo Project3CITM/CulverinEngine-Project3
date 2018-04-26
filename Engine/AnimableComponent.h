@@ -1,6 +1,7 @@
 #ifndef _ANIMABLE_COMPONENT_H_
 #define _ANIMABLE_COMPONENT_H_
 #include "MathGeoLib.h"
+#include "ResourceMaterial.h"
 enum ParameterValue
 {
 	PARAMETER_NONE = -1,
@@ -9,7 +10,8 @@ enum ParameterValue
 	RECT_TRANSFORM_SCALE,
 	RECT_TRANSFORM_WIDTH,
 	RECT_TRANSFORM_HEIGHT,
-
+	IMAGE_ALPHA_VALUE,
+	IMAGE_SPRITE_ANIM,
 };
 
 union AnimationValue
@@ -21,7 +23,7 @@ union AnimationValue
 	double d_value;
 	float3 f3_value;
 	Quat q_value;
-
+	ResourceMaterial* sprite = nullptr;
 };
 struct AnimationData
 {

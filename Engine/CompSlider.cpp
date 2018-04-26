@@ -88,16 +88,45 @@ void CompSlider::ShowInspectorInfo()
 		ImGui::OpenPopup("Options Slider");
 	}
 	ImGui::PopStyleVar();
+
 	if (ImGui::Button("Sync Min/Max", ImVec2(120, 0)))
 	{
-		int bar_x = slide_bar->GetRectTrasnform()->GetPosGlobal().x;
-		min_pos = bar_x - slide_bar->GetRectTrasnform()->GetWidth()/2;
-		max_pos = bar_x + slide_bar->GetRectTrasnform()->GetWidth()/2;
+		float3 pos = slide_bg->GetRectTrasnform()->GetPosGlobal();
+		min_pos = pos.x - slide_bar->GetRectTrasnform()->GetWidth()/2;
+		max_pos = pos.x + slide_bar->GetRectTrasnform()->GetWidth()/2;
 		slide_bar->SetToFilled(true);
 	}
 	ImGui::Text("Min pos: %f", min_pos);
 	ImGui::Text("Max pos: %f", max_pos);
 
+	if (ImGui::DragFloat("##fillQuantity", &fill, 0.01f, 0.0f, 1.0f))
+	{
+		slide_bar->SetToFilled(true);
+		slide_bar->FillAmount(fill);
+	}
+
+	int selected_opt = current_transition_mode;
+	ImGui::Text("Transition"); ImGui::SameLine((ImGui::GetWindowWidth() / 4) + 30);
+
+	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0"))
+	{
+		if (selected_opt == Transition::TRANSITION_COLOR)
+			current_transition_mode = Transition::TRANSITION_COLOR;
+		if (selected_opt == Transition::TRANSITION_SPRITE)
+			current_transition_mode = Transition::TRANSITION_SPRITE;
+	}
+
+	switch (selected_opt)
+	{
+	case 0:
+		ShowInspectorColorTransition();
+		break;
+	case 1:
+		ShowInspectorSpriteTransition();
+		break;
+	default:
+		break;
+	}
 	ImGui::TreePop();
 }
 
@@ -106,6 +135,9 @@ void CompSlider::Save(JSON_Object * object, std::string name, bool saveScene, ui
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	json_object_dotset_number_with_std(object, name + "SlideBG uid", slide_bg->GetTextureID());
+	json_object_dotset_number_with_std(object, name + "SlideBAR uid", slide_bar->GetTextureID());
+	json_object_dotset_number_with_std(object, name + "Fill amount", fill);
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -134,6 +166,9 @@ void CompSlider::Save(JSON_Object * object, std::string name, bool saveScene, ui
 void CompSlider::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	uint bg_id = json_object_dotget_number_with_std(object, name + "SlideBG uid");
+	uint bar_id = json_object_dotget_number_with_std(object, name + "SlideBAR uid");
+	fill = json_object_dotget_number_with_std(object, name + "Fill amount");
 	//...
 	for (int i = 0; i < 3; i++)
 	{
@@ -146,27 +181,19 @@ void CompSlider::Load(const JSON_Object * object, std::string name)
 			if (sprite[i] != nullptr)
 			{
 				sprite[i]->num_game_objects_use_me++;
-
-				// LOAD All Materials ----------------------------
 				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
 				}
-
 			}
 		}
 	}
+	LoadSliderMaterial(slide_bg, bg_id);
+	LoadSliderMaterial(slide_bar, bar_id);
 	Enable();
 }
 
-/*
-bool CompSlider::PointerInside(float2 position)
-{
 
-
-
-
-}*/
 
 void CompSlider::OnDrag(Event event_input)
 {
@@ -189,3 +216,14 @@ void CompSlider::OnDrag(Event event_input)
 		image->GetRectTrasnform()->SetPos(float3(new_x,mous_pos.y, 0));
 	}
 }
+
+void CompSlider::SetSliderBg(CompImage * bg)
+{
+	slide_bg = bg;
+}
+
+void CompSlider::SetSliderBar(CompImage * bar)
+{
+	slide_bar = bar;
+}
+

@@ -1707,7 +1707,7 @@ GameObject * Scene::CreateCheckBox(GameObject * parent)
 GameObject * Scene::CreateSlider(GameObject * parent)
 {
 	GameObject* obj = new GameObject(parent);
-
+	
 
 	// SET NAME -----------------------------------
 	static uint slider_count = 0;
@@ -1717,17 +1717,15 @@ GameObject * Scene::CreateSlider(GameObject * parent)
 	char* name_str = new char[name.size() + 1];
 	strcpy(name_str, name.c_str());
 	obj->SetName(name_str);
+	
+
 
 	// TRANSFORM COMPONENT --------------
 	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
 	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
 	transform->Enable();
 
-	// IMAGE COMPONENT -----------------
-	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
-	image->Enable();
-	image->SyncComponent(nullptr);
-	image->UpdateSpriteId();
+
 	// SLIDER -----------------
 	CompSlider* slide = (CompSlider*)obj->AddComponent(Comp_Type::C_SLIDER);
 	slide->Enable();

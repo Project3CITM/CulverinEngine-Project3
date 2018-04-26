@@ -32,7 +32,7 @@ struct Navigation
 
 };
 
-class CompInteractive:public Component
+class CompInteractive:public Component 
 {
 public:
 	CompInteractive(Comp_Type t, GameObject* parent);
@@ -143,6 +143,8 @@ private:
 	void StartTransitionColor(float4 color_to_change, bool no_fade);
 	void UpdateTransitionColor(float dt);
 	void StartTransitionSprite(ResourceMaterial* sprite_to_change);
+	void StartAnimationSprite();
+
 public:
 
 	
@@ -176,6 +178,9 @@ protected:
 	int sprite_value = -1;
 	bool select_sprite = false;
 
+	//Animation parameters
+	SelectionStates to_anim = STATE_NORMAL;
+	CompImage* image_state[3];
 	//State values
 
 	bool disabled = false;

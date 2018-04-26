@@ -651,6 +651,42 @@ void CompImage::SetToFilled(bool filled)
 
 }
 
+void CompImage::SetNewAnimationValue(const AnimationData & value)
+{
+	switch (value.type)
+	{
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		SetAlpha(value.value.f_value);
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		if (value.value.sprite == nullptr)
+		{
+			return;
+		}
+		source_image = value.value.sprite;
+		overwrite_image = value.value.sprite;
+		UpdateSpriteId();
+		break;
+	default:
+		break;
+	}
+}
+
+const char * CompImage::ReturnParameterName(ParameterValue parameter)
+{
+	switch (parameter)
+	{
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		return "Alpha";
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		return "Sprite";
+		break;
+	default:		
+		break;
+	}
+}
+
 float4 CompImage::GetColor() const
 {
 	return color;
@@ -675,14 +711,66 @@ ResourceMaterial * CompImage::GetCurrentTexture() const
 	return overwrite_image;
 }
 
+AnimationData CompImage::ShowParameters()
+{
+	ImGui::OpenPopup("Sprite Options");
+	AnimationData ret;
+	ret.type = ParameterValue::PARAMETER_NONE;
+	SetNextWindowSize(ImVec2(200, 200));
+	if (ImGui::BeginPopup("Sprite Options"))
+	{
+		ImGui::Columns(2, "Type");
+		ImGui::Text("Anim type");
+		ImGui::NextColumn();
+		ImGui::Text("Select");
+		ImGui::NextColumn();
+		ImGui::Separator();
+
+		ImGui::Text("Alpha");
+		ImGui::NextColumn();
+		if(ImGui::Button("Set Alpha"))
+		{
+			ret.type = ParameterValue::IMAGE_ALPHA_VALUE;
+			ret.value.i_value = GetColor().w;
+		}
+		ImGui::NextColumn();
+
+		ImGui::Text("Sprite");
+		ImGui::NextColumn();
+		if(ImGui::Button("Set Sprite"))
+		{
+			ret.type = ParameterValue::IMAGE_SPRITE_ANIM;
+			ret.value.sprite = nullptr;
+		}
+		ImGui::NextColumn();
+		ImGui::Columns(1);
+
+		ImGui::EndPopup();
+	}
+	return ret;
+}
+
+AnimationValue CompImage::GetParameter(ParameterValue parameter)
+{
+	AnimationValue ret;
+	switch (parameter)
+	{
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		ret.f_value = GetColor().w;
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		ret.sprite = source_image;
+	default:
+		break;
+	}
+	return ret;
+}
+
 void CompImage::CorrectFillAmount()
 {
 	filled = CAP(filled);
 	
 }
-
-
-
 
 
 
