@@ -73,16 +73,15 @@ float random(vec3 seed, int i){
 
 vec4 light_colors[MAX_LIGHTS];
 
-vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
+vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N, float shadow)
 {
     vec3 v = normalize(TBN * _cameraPosition - FragPos);
 
     float lightInt = light.properties[0];
 
     if (light.type != 0) {
-        // Directional
-
-       // Light direction
+     
+       
         vec3 s =  normalize(TBN * light.position );
 
         vec3 r = reflect(-s,N);
@@ -93,8 +92,8 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
 
         float diffuse = Kd * lightInt * cosTheta;
         float spec =  Ks* lightInt* pow(cosAlpha,shininess);
-
-        return vec3(diffuse,spec,0);
+      
+        return vec3(diffuse,spec,1) * shadow;
 
     }
 
@@ -128,14 +127,14 @@ float CalcShadow(vec4 shadowPos, float usedBias)
     if(shadowPos.z > 1.0)
         return 0.0;
    
-    int iterations = 1;
+    int iterations = 10;
 
     for(int i = 0; i < iterations; ++i)
     {
         int index = int(16.0 * random(floor(mat3(model) * ourPos * 1000.0), i)) % 16;
 
         float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowPos.xy + poissonDisk[i] / 200.0, (shadowPos.z - usedBias) / shadowPos.w)));
-        float tmp = 1* shadowVal;// old value: 0.05 - iterations: 20
+        float tmp = 0.1* shadowVal;// old value: 0.05 - iterations: 20
 
         shadow -= tmp;
     }
@@ -179,7 +178,7 @@ void main()
     
  for (int i = 0; i <_numLights; ++i) {
 
-       inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N);
+       inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N, shadow);
        inten_final += inten;
        light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);
 
@@ -192,11 +191,11 @@ void main()
     final_ambient = final_ambient/_numLights;
     final_color =normalize(final_color);
 
-	vec3 col = max( color_texture * vec3(0,0,0) ,
-	color_texture * (inten_final.x + shadow + inten_final.y * spec_texture.r)*final_color.rgb );
+	vec3 col = max( color_texture * vec3(0,0.2,0.2) ,
+	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb );
    float fade_dist = 1;
 float norm_min = (_farPlane - _farPlane/ 3);
 float dist = (length(_cameraPosition - vec3(model * vec4(ourPos,1)))-  norm_min) / (_farPlane - norm_min); 
 dist = abs(clamp(dist, 0.0, 1.0)-1);
-    color = vec4(col * dist, _alpha);
+    color = vec4(col* dist, _alpha);
 }

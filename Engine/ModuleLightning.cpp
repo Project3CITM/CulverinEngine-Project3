@@ -320,8 +320,8 @@ void ModuleLightning::OnEvent(Event & event)
 
 	BROFILER_CATEGORY("OnEvent: ModuleLightning", Profiler::Color::Blue);
 
-	glDisable(GL_CULL_FACE);
-
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_3D_3DA_MM:
@@ -381,7 +381,7 @@ void ModuleLightning::OnEvent(Event & event)
 	}
 
 	glCullFace(GL_BACK);
-	glEnable(GL_CULL_FACE);
+	
 	App->scene->scene_buff->Bind("Scene"); glCullFace(GL_BACK);
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	
