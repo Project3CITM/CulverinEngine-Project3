@@ -153,9 +153,8 @@ void Component::SaveBinary(char ** cursor, int position) const
 	App->json_seria->SaveIntBinary(cursor, position);
 }
 
-LoadSceneCp Component::LoadBinary(char ** cursor)
+void Component::LoadBinary(char ** cursor)
 {
-	return LoadSceneCp();
 }
 
 void Component::SyncComponent(GameObject* sync_parent)

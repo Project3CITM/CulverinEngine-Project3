@@ -76,7 +76,7 @@ public:
 	//Binary
 	virtual void GetOwnBufferSize(uint& buffer_size);
 	virtual void SaveBinary(char** cursor, int position) const;
-	virtual LoadSceneCp LoadBinary(char** cursor);
+	virtual void LoadBinary(char** cursor);
 	virtual void SyncComponent(GameObject* sync_parent);
 
 	// EDITOR METHODS -----------------
