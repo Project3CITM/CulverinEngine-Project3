@@ -121,7 +121,6 @@ void CompInteractive::Update(float dt)
 
 void CompInteractive::Clear()
 {
-	target_graphic->SetInteractive(nullptr);
 	target_graphic = nullptr;
 	image = nullptr;
 	if (!iteractive_list.empty())
@@ -416,6 +415,17 @@ void CompInteractive::Activate()
 	current_selection_state = SelectionStates::STATE_NORMAL;
 	PrepareHandleTransition();
 }
+
+bool CompInteractive::IsInteractiveEnabled() const
+{
+	return interactive_enabled;
+}
+
+void CompInteractive::SetInteractivity(bool enable)
+{
+	interactive_enabled = enable;
+}
+
 void CompInteractive::Deactive()
 {
 	disabled = true;
@@ -435,13 +445,12 @@ void CompInteractive::NavigationRemove(CompInteractive * to_remove)
 }
 
 
-void CompInteractive::ForceClear(Event event_input)
+void CompInteractive::ForceClear()
 {
 	point_down = false;
 	point_inside = false;
 	interactive_selected = false;
-
-	UpdateSelectionState(event_input);
+	current_selection_state = SelectionStates::STATE_NORMAL;
 	PrepareHandleTransition();
 
 }
@@ -540,7 +549,6 @@ void CompInteractive::SetTargetGraphic(CompGraphic * set_target_graphic)
 	if (set_target_graphic == nullptr)
 		return;
 	target_graphic = set_target_graphic;
-	target_graphic->SetInteractive(this);
 	target_graphic_uid = target_graphic->GetUUID();
 	TryConversion();
 }
@@ -991,7 +999,6 @@ void CompInteractive::HandleTransition(SelectionStates selection_state)
 	case  SelectionStates::STATE_PRESSED:
 		desired_color = pressed_color;
 		desired_sprite = sprite[PRESSED_SPRITE];
-
 		break;
 	case  SelectionStates::STATE_DISABLED:
 		desired_color = disabled_color;

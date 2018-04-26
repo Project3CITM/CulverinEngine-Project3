@@ -7,51 +7,87 @@ public class EnemySpear_BT : Enemy_BT
     public GameObject current_map;
     Movement_Action mov;
     System.Random rand;
+    Material enemy_mat_sword;
 
+    public GameObject spear_name;
+    public int texture_type = 0;
     public override void Start()
     {
         this.range = 2;
 
         current_map = GetLinkedObject("current_map");
         if (current_map == null)
-            Debug.Log("[error] Map GameObject in Enemy spear is NULL");
+            Debug.Log("Map GameObject in Enemy spear is NULL");
 
         rand = new System.Random();
 
         mov = GetComponent<Movement_Action>();
         if (mov == null)
-            Debug.Log("[error] Script movement action in Enemy spear is NULL");
+            Debug.Log("Script movement action in Enemy spear is NULL");
 
         GameObject Temp_go = GetLinkedObject("enemies_manager");
 
         if (Temp_go == null)
-            Debug.Log("[error] Gameobject enemies_manager not found");
+            Debug.Log("Gameobject enemies_manager not found");
         else
         {
             EnemiesManager enemy_manager = Temp_go.GetComponent<EnemiesManager>();
 
             if (enemy_manager == null)
-                Debug.Log("[error] EnemySpear_BT: enemies_manager is not detected");
+                Debug.Log("EnemySpear_BT: enemies_manager is not detected");
             else
             {
                 enemy_manager.AddLanceEnemy(gameObject);
             }
         }
+
+        if (texture_type == 0)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_SpearEnemy_Material_21_04");
+        }
+        else if (texture_type == 1)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_SpearEnemy2_Material_21_04");
+        }
+
+        spear_name = GetLinkedObject("spear_name");
+
         base.Start();
+        base.DeactivateHUD(spear_name);
     }
 
     public override void Update()
     {
+        enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
+
+        if (hp_timer < hp_timer_total && hud_active == true)
+        {
+            hp_timer += Time.deltaTime;
+        }
+        else if (hud_active == true)
+        {
+            base.DeactivateHUD(spear_name);
+        }
+
+        bool attack_ready = attack_timer >= attack_cooldown;
+
+        if (attack_ready && current_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
+        {
+            Debug.Log("GetHitInterrupted BITCH", Department.IA);
+            current_action.Interupt();
+        }
+
         base.Update();
     }
 
     protected override void InCombatDecesion()
     {
+        Debug.Log("In Combat Decision");
         int tiles_to_player = GetDistanceInRange();
 
         if (tiles_to_player == 1)
         {
-            if (!GetComponent<FacePlayer_Action>().IsFaced())
+            if (!GetComponent<Movement_Action>().LookingAtPlayer())
             {
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
@@ -96,7 +132,7 @@ public class EnemySpear_BT : Enemy_BT
         }
         else if (tiles_to_player == 2)
         {
-            if (!GetComponent<FacePlayer_Action>().IsFaced())
+            if (!GetComponent<Movement_Action>().LookingAtPlayer())
             {
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
@@ -124,7 +160,7 @@ public class EnemySpear_BT : Enemy_BT
             }
         }
 
-        if (player_detected == true)
+        if (player_detected == true && Disable_Movement_Gameplay_Debbuger == false)
         {
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
@@ -135,6 +171,9 @@ public class EnemySpear_BT : Enemy_BT
 
     protected override void OutOfCombatDecesion()
     {
+
+        if (Disable_Movement_Gameplay_Debbuger) return;
+
         //Investigate
         if (heard_something)
         {
@@ -167,9 +206,10 @@ public class EnemySpear_BT : Enemy_BT
         }
     }
 
-    public override bool ApplyDamage(float damage)
+    public override bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
-        return base.ApplyDamage(damage);
+        base.ActivateHUD(spear_name);
+        return base.ApplyDamage(damage, damage_type);
     }
 
     public override void ChangeTexturesToDamaged()

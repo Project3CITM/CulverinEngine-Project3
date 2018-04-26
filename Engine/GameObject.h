@@ -53,6 +53,7 @@ public:
 	void Draw();
 
 	void SetActive(bool active);
+	void SetParentActive(bool active);
 	void SetVisible(bool visible);
 	void SetStatic(bool set_static);
 	void FixedDelete(bool check_delete);
@@ -60,6 +61,7 @@ public:
 	void SetTag(const char* tag);
 
 	bool IsActive() const;
+	bool IsParentActive() const;
 	bool IsVisible() const;
 	bool IsStatic() const;
 	bool IsDeleteFixed() const;
@@ -70,6 +72,8 @@ public:
 	// EDITOR METHODS ------------------
 	void ShowHierarchy(bool use_search = false);
 	void ShowGameObjectOptions();
+	void SetAllChildsTag(GameObject * child, const char * tag, bool parent = false);
+	void GetChildsRecursive(GameObject * child, uint & count);
 	void ShowInspectorInfo();
 	void FreezeTransforms(bool freeze, bool change_childs);
 	void ShowFreezeChildsWindow(bool freeze, bool& active);
@@ -120,7 +124,8 @@ public:
 	GameObject* GetChildByTagIndex(const char* tag, int index) const;
 	GameObject* GetChildByRealName(std::string name) const;
 	void GetChildDeepSearch(const char * name, std::vector<GameObject*>& GOVector) const;
-	uint GetIndexChildbyName(const char* name) const;
+	int GetIndexChildbyName(const char* name) const;
+	int GetIndexChildbyGO(const GameObject* child) const;
 	void RemoveChildbyIndex(uint index);
 	std::vector<GameObject*> GetChildsVec() const;
 	std::vector<GameObject*>* GetChildsPtr();
@@ -163,6 +168,8 @@ public:
 	AABB  box_fixed;
 	bool beingUsedByScript = false;
 
+	bool set_next_tree_node_open = false;
+
 
 	//ANIMATION PURPOSES------
 	bool animation_translations = false;
@@ -175,13 +182,14 @@ private:
 	std::string name = "CHANGE THIS";
 	std::string tag = "undefined";
 	bool active = false;
+	bool parent_active = true;
 	bool visible = false;
 	bool static_obj = false;
+	//gm = Game Mode
+	bool static_obj_gm = false;
 	bool to_delete = false; 
 	bool fixed_delete = false;
 	bool bb_active = false;
-
-
 
 	GameObject* parent = nullptr;
 	std::vector<Component*> components;

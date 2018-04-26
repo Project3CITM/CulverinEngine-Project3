@@ -88,6 +88,12 @@ private:
 
 };
 
+struct XaviStruct
+{
+	MonoClassField* mono_field = nullptr;
+	MonoType* mono_type = nullptr;
+};
+
 class ScriptVariable
 {
 public:
@@ -175,13 +181,17 @@ public:
 	void SetVarValue(ScriptVariable* variable, void* new_val);
 	// ------------------------------------------------------------------
 
+	// ------------------------------------------------------------------
+	// C# CulverinEditor -------------------------------------------------
+	// ------------------------------------------------------------------
+
 	/*Input*/
 	MonoObject* GetMousePosition();
 
 	/* CulverinBehaviour */
 	MonoObject* GetMonoObjectLink(std::string name);
-	mono_bool	GetEnabled(MonoObject* object, MonoObject* gameobect);
-	void		SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject);
+	mono_bool	GetEnabled(MonoObject* object);
+	void		SetEnabled(MonoObject* object, mono_bool active);
 
 	/*Game Object*/
 	bool		IsStatic(MonoObject* object);
@@ -203,7 +213,6 @@ public:
 	void		SetCurrentGameObject(GameObject* current);
 	void		SetOwnGameObject(GameObject* gameobject);
 	void		CreateGameObject(MonoObject* object);
-	bool		DestroyGameObject(MonoObject* object);
 	MonoObject*	Instantiate(MonoObject* object, MonoString* prefab);
 	MonoObject*	Instantiate_respawn(MonoObject* object, MonoString* prefab, float time);
 	void		Destroy(MonoObject* object, float time);
@@ -264,11 +273,16 @@ public:
 	void		SetSecondActiveBlendingClipWeight(MonoObject* object, float weight);
 	void		SetBlendInTime(MonoObject* object, MonoString* name, float time);
 	void		PlayAnimationNode(MonoObject* object, MonoString* name);
+	
+	/*UI-RectTransform*/
+	void		SetUIPosition(MonoObject* object, MonoObject* vector3);
+	MonoObject* GetUIPosition(MonoObject* object);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
 	void		Deactivate(MonoObject * object, int uid);
 	void		Clicked(MonoObject* object);
+	void		SetInteractivity(MonoObject* object, mono_bool enable);
 
 	/*UI-Graphics*/
 	void		SetRaycastTarget(MonoObject * object, mono_bool flag);
@@ -280,6 +294,8 @@ public:
 	void		SetAlpha(MonoObject * object, float alpha);
 	void		SetText(MonoObject * object, MonoString* string);
 	void		SetColor(MonoObject * object, MonoObject * color, float alpha);
+	/*UI- Canvas*/
+	void		SetCanvasAlpha(MonoObject * object, float alpha);
 
 	/*Collider*/
 	MonoObject* GetCollidedObject(MonoObject* object);
@@ -360,7 +376,8 @@ public:
 private:
 
 	//Auxiliar map to fill variables vector with info
-	std::map<MonoClassField*, MonoType*> field_type;
+	std::multimap<uint, XaviStruct> field_type;
+	uint count_variables = 0;
 	std::string nameCSharp;
 	std::string name_space;
 

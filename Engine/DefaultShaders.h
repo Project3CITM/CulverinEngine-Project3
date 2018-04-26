@@ -335,15 +335,16 @@ static const GLchar* FinalFrag[] =
 	"uniform vec4 _my_color;\n"
 	"uniform bool damage;\n"
 	"uniform float alpha; \n"
+	"uniform float mult_dead;\n"
 	"void main()\n"
 	"{\n"
 	"vec4 dst = texture2D(_albedo, TexCoord);\n" // rendered scene
 	"vec4 src = texture2D(_glow_tex, TexCoord); \n" // glowmap
 	"vec4 dmg = texture(_dmg_tex,TexCoord);\n"
 	"if(damage)\n"
-	"color = mix(min(src + dst, 1.0) , dmg, dmg.a * alpha );\n"
+	"color = mix(min(vec4(src.rgb * mult_dead,1) + vec4(dst.rgb * mult_dead,1), 1.0) , dmg, dmg.a * alpha );\n"
 	"else\n"
-	"color= min(src + dst, 1.0);\n"
+	"color= min(vec4(src.rgb * mult_dead,1) + vec4(dst.rgb * mult_dead,1) , 1.0);\n"
 
 	"}\n"
 };
@@ -415,6 +416,34 @@ static const GLchar* ShadowMapFrag[] =
 	"fragmentdepth = vec4(gl_FragCoord.z);\n"
 	"}\n"
 };
+static const GLchar* CubeMapVert[] =
+{
+	"#version 330 core\n"
+	"layout(location = 0) in vec3 position;\n"
+	"layout(location = 1) in vec2 texCoord;\n"
+	"layout(location = 2) in vec3 normal;\n"
+	"layout(location = 3) in vec4 color;\n"
+
+	"uniform mat4 viewproj;\n"
+	"uniform mat4 model;\n"
+
+	"void main()\n"
+	"{\n"
+	" gl_Position =  viewproj *model * vec4(position,1);\n"
+	"}\n"
+};
+
+
+static const GLchar* CubeMapFrag[] =
+{
+	"#version 330 core\n"
+	"out vec4 color;\n"
+
+	"void main()\n"
+	"{\n"
+	"color = vec4(1);\n"
+	"}\n"
+};
 
 
 static const  GLchar* UIShaderVert[] =
@@ -455,9 +484,12 @@ static const GLchar* PointShadowMapVert[] =
 	"#version 330 core\n"
 	"layout (location = 0) in vec3 position;\n"
 	"uniform mat4 model;\n"
+	"uniform mat4 viewproj;\n"
+	"out vec4 FragPos;\n"
 	"void main()\n"
 	"{\n"
-	"	gl_Position = model * vec4(position, 1.0);\n"
+	"	FragPos = model * vec4(position, 1.0);\n"
+	"	gl_Position = viewproj * model * vec4(position, 1.0);\n"
 	"}\n"
 };
 
@@ -488,12 +520,13 @@ static const GLchar* PointShadowMapFrag[] =
 {
 	"#version 330 core\n"
 	"in vec4 FragPos;\n"
-	"uniform vec3 light_pos;\n"
-	"uniform float far_plane;\n"
+	
+	"uniform vec3 _light_pos;\n"
+	"uniform float _far_plane;\n"
 	"void main()\n"
 	"{\n"
-	"	float light_dist = length(FragPos.xyz - light_pos);\n"
-	"	light_dist = light_dist / far_plane; // Normalize it\n"
+	"	float light_dist = length(FragPos.xyz - _light_pos);\n"
+	"	light_dist = (light_dist-1) / (_far_plane-1); // Normalize it\n"
 	"	gl_FragDepth = light_dist;\n"
 	"}\n"
 };

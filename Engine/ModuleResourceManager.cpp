@@ -131,7 +131,10 @@ bool ModuleResourceManager::Start()
 			ImportFile(files_reimport, resources_to_reimport, true);
 			LOG("Finished ReImport.");
 			// After reimport, update time of vector of files in filesystem.
-			App->fs->UpdateFilesAssets();
+			if (App->mode_game == false)
+			{
+				App->fs->UpdateFilesAssets();
+			}
 			files_reimport.clear();
 			for (int i = 0; i < resources_to_reimport.size(); i++)
 			{
@@ -150,6 +153,7 @@ bool ModuleResourceManager::Start()
 
 update_status ModuleResourceManager::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModuleResourceManager", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (App->input->dropedfiles.size() > 0)
@@ -225,6 +229,7 @@ update_status ModuleResourceManager::PreUpdate(float dt)
 
 update_status ModuleResourceManager::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModuleResourceManager", Profiler::Color::Blue);
 	if (resources_to_reimport.size() > 0 && reimport_now)
 	{
 		// if a Resource state == Resource::State::REIMPORT delete it.
@@ -411,8 +416,11 @@ void ModuleResourceManager::ImportFile(std::list<const char*>& file)
 			LOG("[error] This file: %s with this format %s is incorrect!", App->fs->FixName_directory(it._Ptr->_Myval).c_str(), App->fs->GetExtension(it._Ptr->_Myval));
 		}
 	}
-	((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
-	App->fs->UpdateFilesAssets();
+	if (App->mode_game == false)
+	{
+		((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
+		App->fs->UpdateFilesAssets();
+	}
 }
 
 void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vector<ReImport>& resourcesToReimport, bool auto_reimport)
@@ -443,7 +451,10 @@ void ModuleResourceManager::ImportFile(std::vector<const char*>& file, std::vect
 			((Project*)App->gui->win_manager[WindowName::PROJECT])->UpdateNow();
 		}
 	}
-	App->fs->UpdateFilesAssets();
+	if (App->mode_game == false)
+	{
+		App->fs->UpdateFilesAssets();
+	}
 }
 
 Resource* ModuleResourceManager::CreateNewResource(Resource::Type type, uint uuid)

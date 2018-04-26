@@ -1,6 +1,6 @@
 #version 330 core
  
-#define MAX_LIGHTS 40
+#define MAX_LIGHTS 120
 uniform int _numLights;
 uniform struct Light {
     vec3 position;
@@ -22,17 +22,14 @@ in vec3 FragPos;
  
 uniform vec4 diff_color;           
 out vec4 color;                    
-uniform sampler2D albedo;          
+uniform sampler2D albedo;        
+uniform sampler2D dmg_albedo;   
 uniform sampler2D normal_map;      
 
 uniform sampler2D specular_map;
 uniform sampler2D glossines_map;                   
                                
-uniform float a;
-uniform float b;
-uniform float c;
-uniform float e;
-    
+uniform float dmg_alpha;
 uniform bool invert_norms;
 
 uniform mat4 viewproj;             
@@ -108,7 +105,8 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
                                                                                                                  
 void main()                                                                                                
 {                                                 
-    vec3 color_texture = texture(albedo, TexCoord).xyz;                                                          
+    vec3 color_texture = texture(albedo, TexCoord).xyz;   
+    vec3 dmg_color_texture = texture(dmg_albedo, TexCoord).xyz;                                                          
     vec3 N = normalize(texture(normal_map,TexCoord).xyz*2-1) ;                                                       
     vec3 spec_texture = texture(specular_map, TexCoord).xyz ;
     vec3 gloss_texture =abs(texture(glossines_map,TexCoord).xyz - vec3(1));
@@ -138,8 +136,8 @@ void main()
     final_ambient = final_ambient/_numLights;
     final_color =normalize(final_color);  
         
-	vec3 col = max( color_texture * vec3(0.0,0.3,0.3) ,
-	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
+	vec3 col = max( mix(color_texture,dmg_color_texture,dmg_alpha) * vec3(0.0,0.3,0.3) ,
+	mix(color_texture,dmg_color_texture,dmg_alpha) * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
 	
     color = vec4(col,_alpha);
  

@@ -22,6 +22,7 @@ public class InfiniteChasePlayer_Action : Action
 
     public override bool ActionStart()
     {
+        Debug.Log("Chase start");
         move.GoToPlayer(chase_range);
         interupt = false;
         bool ret = move.ActionStart();

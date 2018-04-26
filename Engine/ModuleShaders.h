@@ -72,6 +72,7 @@ public:
 	void SetUniform(uint ID, const GLchar* uniformName, float& v);
 
 	void SetUniformVariables(Material * material);
+	void SetGlobalVariables(float dt,bool all_lights = false);
 
 	//Event system test
 	bool SetEventListenrs();
@@ -86,7 +87,7 @@ public:
 	std::string Material_Directory_fs;
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;
-	std::vector<Material*> materials;
+	std::multimap<uint,Material*> materials;
 
 	std::string last_shader_error = "";
 	TextEditor editor_shaders;

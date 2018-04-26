@@ -9,6 +9,8 @@ public class PerceptionManager : CulverinBehaviour
     List<PerceptionListener>    listeners_list;
     List<PerceptionEvent>       perception_events_queue;
 
+    public bool player_seen = false;
+
     PerceptionManager()
     { }
 
@@ -19,6 +21,8 @@ public class PerceptionManager : CulverinBehaviour
             listeners_list = new List<PerceptionListener>();
 
         perception_events_queue = new List<PerceptionEvent>();
+
+        player_seen = false;
     }
 
     void Update()

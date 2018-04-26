@@ -4,22 +4,20 @@ using CulverinEditor.Debug;
 
 public class PlayQuit : CulverinBehaviour
 {
-    CompAudio push;
 
     void Start()
     {
-        push = GetComponent<CompAudio>();
     }
 
     public void Play()
     {
-        push.PlayEvent("Push");
+        GetComponent<CompAudio>().PlayEvent("Push");
         SceneManager.LoadScene("HistoryScene");
     }
 
     public void Quit()
     {
-        push.PlayEvent("Push");
+        GetComponent<CompAudio>().PlayEvent("Push");
         SceneManager.QuitScene();
     }
 }

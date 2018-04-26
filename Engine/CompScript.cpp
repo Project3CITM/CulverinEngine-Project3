@@ -48,6 +48,7 @@ void CompScript::PreUpdate(float dt)
 		{
 			if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
 			{
+				App->importer->iScript->SetCurrentScript(csharp);
 				csharp->DoMainFunction(FunctionBase::CS_OnEnable);
 			}
 		}
@@ -59,6 +60,7 @@ void CompScript::PreUpdate(float dt)
 		{
 			if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
 			{
+				App->importer->iScript->SetCurrentScript(csharp);
 				csharp->DoMainFunction(FunctionBase::CS_Start);
 			}
 		}
@@ -146,6 +148,7 @@ void CompScript::postUpdate()
 	{
 		if (resource_script != nullptr && (App->engine_state == EngineState::PLAY || App->engine_state == EngineState::PLAYFRAME))
 		{
+			App->importer->iScript->SetCurrentScript(csharp);
 			csharp->DoMainFunction(FunctionBase::CS_OnDisable);
 		}
 	}

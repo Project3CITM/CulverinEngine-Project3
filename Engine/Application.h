@@ -5,6 +5,7 @@
 #include "Timer.h"
 #include "Module.h"
 #include "parson.h"
+#include "Brofiler/Brofiler.h"
 
 #include "GL3W/include/glew.h"
 #include "SDL/include/SDL_opengl.h"
@@ -37,8 +38,9 @@ class ModuleRenderGui;
 class ModulePhysics;
 class ModuleMap;
 class ModuleLightning;
-class ModuleKeyBinding;
 class ModuleAnimation;
+class ModuleParticles;
+
 enum EngineState
 {
 	PLAY = 0,
@@ -97,14 +99,17 @@ public:
 
 	void SetState(EngineState state);
 
-	void WantToSave();
+	void WantToSave(bool binary = false);
 	void WantToLoad(bool in_game = false);
 	void DontDestroyOnLoad();
+	void LoadMultiScene();
+	void ChangeToSecondary();
 
 	void ChangeCamera(const char* window);
 
 	std::string GetActualScene();
 	void SetActualScene(std::string);
+	void SetSecondaryScene(std::string);
 
 	const std::vector<Module*>* GetModuleList() const;
 
@@ -140,7 +145,8 @@ public:
 	ModulePhysics* physics = nullptr;
 	ModuleMap* map = nullptr;
 	ModuleLightning* module_lightning = nullptr;
-	ModuleKeyBinding* module_key_binding = nullptr;
+	ModuleParticles* particles = nullptr;
+
 private:
 	std::vector<Module*> list_modules;
 	// ----------------------------------
@@ -176,6 +182,11 @@ public:
 	bool show_camera_popup = false;
 	bool dont_destroy_on_load = false;
 	bool remove_dont_destroy_on_load = false;
+	bool load_multi_scene = false;
+	bool change_to_secondary_scene = false;
+	bool remove_secondary_scene = false;
+	bool activate_gui_input = false;
+
 	// -------------------------------------------
 
 	float4 scene_dock = { 0, 0, 0, 0 };
@@ -189,8 +200,10 @@ private:
 	std::string org_name;
 
 	std::string actual_scene;
+	std::string secondary_scene;
 
 	bool want_to_save = false;
+	bool want_to_save_binary = false;
 	bool want_to_load = false;
 	bool load_in_game = false;
 

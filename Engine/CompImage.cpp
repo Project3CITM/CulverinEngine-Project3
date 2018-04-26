@@ -10,6 +10,7 @@
 #include "CompRectTransform.h"
 #include "CompCanvas.h"
 #include "ModuleFS.h"
+#include "ModuleInput.h"
 
 CompImage::CompImage(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
 {
@@ -77,7 +78,24 @@ void CompImage::Update(float dt)
 			transform->SetUpdateRect(false);
 		}
 	}
-	render = can_draw;
+	if (device_swap)
+	{
+		if (App->input->GetUpdateNewDevice())
+		{
+			DeviceCheck();
+			
+		}
+		else if (DeviceCombinationType::CONTROLLER_COMB_DEVICE == App->input->GetActualDeviceCombo()&& !device_swap_active )
+		{
+			DeviceCheck();
+		}
+		else if (DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE == App->input->GetActualDeviceCombo() && device_swap_active)
+		{
+			DeviceCheck();
+		}
+	}
+
+	render = CheckRender();
 
 }
 void CompImage::ShowOptions()
@@ -150,10 +168,27 @@ void CompImage::ShowInspectorInfo()
 		ImGui::Image((ImTextureID*)source_image->GetTextureID(), ImVec2(170, 170), ImVec2(-1, 1), ImVec2(0, 0));
 
 	}		
-	
 	if (ImGui::Button("Select Sprite..."))
 	{
-		select_source_image = true;
+		if (!select_controller_source_image)
+			select_source_image = true;
+	}
+	ImGui::Checkbox("Sprite Swap(Controller)", &device_swap);
+	ImGui::Checkbox("Sprite Swap Active(Controller)", &device_swap_active);
+
+	if (device_swap)
+	{
+		if (controller_image != nullptr)
+		{
+		ImGui::Image((ImTextureID*)controller_image->GetTextureID(), ImVec2(170, 170), ImVec2(-1, 1), ImVec2(0, 0));
+
+		}
+	
+		if (ImGui::Button("Select Controller Sprite..."))
+		{
+			if(!select_source_image)
+				select_controller_source_image = true;
+		}
 	}
 	ImGui::ColorEdit4("Color##image_rgba", color.ptr());
 	ImGui::Checkbox("RayCast Target", &raycast_target);
@@ -176,13 +211,41 @@ void CompImage::ShowInspectorInfo()
 				if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{
 					App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
-					
+
 
 				}
 				SetTextureID(source_image->GetTextureID());
 				Enable();
 			}
 		}
+	}
+	if (controller_image == nullptr || select_controller_source_image)
+	{
+		if (select_controller_source_image)
+		{
+			ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(select_controller_source_image, Resource::Type::MATERIAL);
+			if (temp != nullptr)
+			{
+				if (controller_image != nullptr)
+				{
+					if (controller_image->num_game_objects_use_me > 0)
+					{
+						controller_image->num_game_objects_use_me--;
+					}
+				}
+				controller_image = temp;
+				controller_image->num_game_objects_use_me++;
+				if (controller_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(controller_image->GetUUID()).c_str(), controller_image);
+
+
+				}
+				DeviceCheck();
+				Enable();
+			}
+		}
+		
 	}
 	int selection = type;
 	ImGui::Text("Image Type:"); ImGui::SameLine();
@@ -213,38 +276,50 @@ void CompImage::ShowInspectorInfo()
 				method = FillMethod::RADIAL360;
 			
 		}
+		ShowMethodInfo();
 		if (ImGui::DragFloat("##fillQuantity", &filled, 0.01f, 0.0f, 1.0f))
 		{
 			CorrectFillAmount();
 			GenerateMesh();
-
 		}
 	}
 	ImGui::TreePop();
+}
+
+void CompImage::ShowMethodInfo()
+{
+	if (method == FillMethod::RADIAL360)
+	{
+		ImGui::Checkbox("Invert Radial##radial invert", &radial_inverse);
+	}
 }
 
 
 
 void CompImage::FillAmount(float value)
 {
-	if (value < 0.0f)
-	{
-		filled = 0.0f;
-	}
-	else if (value > 1.0f)
-	{
-		filled = 1.0f;
-	}
-	filled = value;
+
+	filled = CAP(value);
+	
 	GenerateMesh();
+}
+void CompImage::DeviceCheck()
+{
+	if (DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE == App->input->GetActualDeviceCombo())
+	{
+		device_swap_active = false;
+	}
+	else if (DeviceCombinationType::CONTROLLER_COMB_DEVICE == App->input->GetActualDeviceCombo())
+	{
+		device_swap_active = true;
+	}
+	UpdateSpriteId();
 }
 void CompImage::GenerateFilledSprite()
 {
-	if (filled < 0.001f)
+	if (filled < 0.001f|| filled > 1.0f)
 		return;
 
-	if (filled > 1.0f)
-		filled = 1.0f;
 	float4 vertex = parent->GetComponentRectTransform()->GetRect();
 	float4 outer = { 0.0f,0.0f,1.0f,1.0f };	
 	std::vector<float3> quad_pos;
@@ -343,37 +418,16 @@ void CompImage::GenerateFilledSprite()
 				quad_uv[2].y = quad_uv[1].y;		
 				quad_uv[3].y = quad_uv[0].y;
 
-				float value = filled*4.0f - (box_corner % 4);
-				
-		
-				if (RadialCut(quad_pos, quad_uv, CorrectValue01(value), ((box_corner + 2) % 4)))
+				float value = (radial_inverse)
+					?filled*4.0f - (box_corner % 4)
+					:filled*4.0f - (3-((box_corner) % 4));
+
+
+				if (RadialCut(quad_pos, quad_uv, CAP(value), ((box_corner + 2) % 4), radial_inverse))
 				{
 					ProcesQuad(quad_pos, quad_uv);
-
 					//my_canvas_render->ProcessQuad(quad_pos, quad_uv);
-					LOG("RADIAL CUT %i", box_corner);
-					LOG(" quad_pos[0].x %f", quad_pos[0].x);
-					LOG(" quad_pos[0].y %f", quad_pos[0].y);
-					LOG(" quad_pos[1].x %f", quad_pos[1].x);
-					LOG(" quad_pos[1].y %f", quad_pos[1].y);
-					LOG(" quad_pos[2].x %f", quad_pos[2].x);		
-					LOG(" quad_pos[2].y %f", quad_pos[2].y);
-					LOG(" quad_pos[3].x %f", quad_pos[3].x);
-					LOG(" quad_pos[3].y %f", quad_pos[3].y);
-					
-
-					LOG(" quad_uv[0].x %f", quad_uv[0].x);
-					LOG(" quad_uv[1].x %f", quad_uv[1].x);
-					LOG(" quad_uv[2].x %f", quad_uv[2].x);
-					LOG(" quad_uv[3].x %f", quad_uv[3].x);
-					LOG(" quad_uv[0].y %f", quad_uv[0].y);
-					LOG(" quad_uv[1].y %f", quad_uv[1].y);
-					LOG(" quad_uv[2].y %f", quad_uv[2].y);
-					LOG(" quad_uv[3].y %f", quad_uv[3].y);
-					
-
 				}
-			
 			}
 		}
 	}
@@ -422,11 +476,37 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", 0);
 	}
+	json_object_dotset_boolean_with_std(object, name + "Device Swap", device_swap);
+	json_object_dotset_boolean_with_std(object, name + "Device Swap Active", device_swap_active);
+	json_object_dotset_boolean_with_std(object, name + "Invalid", invalid);
+	json_object_dotset_boolean_with_std(object, name + "Can draw", can_draw);
 
+	if (device_swap)
+	{
+		if (controller_image != nullptr)
+		{
+			if (saveScene == false)
+			{
+				// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
+				std::string temp = std::to_string(countResources++);
+				json_object_dotset_number_with_std(object, "Info.Resources.ControllerResource " + temp + ".UUID Resource", controller_image->GetUUID());
+				json_object_dotset_string_with_std(object, "Info.Resources.ControllerResource " + temp + ".Name", controller_image->name.c_str());
+			}
+			json_object_dotset_number_with_std(object, name + "Resource Controller UUID", controller_image->GetUUID());
+		}
+		else
+		{
+			json_object_dotset_number_with_std(object, name + "Resource Controller UUID", 0);
+		}
+	}
 	json_object_dotset_boolean_with_std(object, name + "RayCast Target", raycast_target);
 	json_object_dotset_number_with_std(object, name + "Fill Amount", filled);
 	json_object_dotset_number_with_std(object, name + "Image Type", type);
 	json_object_dotset_number_with_std(object, name + "Fill Method", method);
+	if (method == FillMethod::RADIAL360)
+	{
+		json_object_dotset_boolean_with_std(object, name + "Fill Radian Inverse", radial_inverse);
+	}
 	App->fs->json_array_dotset_float4(object, name + "Image Color", color);
 
 }
@@ -448,20 +528,65 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 			{
 				App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
 			}
-			UpdateSpriteId();
+		}
+	}
+
+	device_swap = json_object_dotget_boolean_with_std(object, name + "Device Swap");
+	device_swap_active= json_object_dotget_boolean_with_std(object, name + "Device Swap Active");
+
+	invalid = json_object_dotget_boolean_with_std(object, name + "Invalid");
+	can_draw = json_object_dotget_boolean_with_std(object, name + "Can draw");
+	if (device_swap)
+	{
+		uint resource_controllerID = json_object_dotget_number_with_std(object, name + "Resource Controller UUID");
+		if (resource_controllerID > 0)
+		{
+			controller_image = (ResourceMaterial*)App->resource_manager->GetResource(resource_controllerID);
+			if (controller_image != nullptr)
+			{
+				controller_image->num_game_objects_use_me++;
+
+				// LOAD Image ----------------------------
+				if (controller_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(controller_image->GetUUID()).c_str(), controller_image);
+				}
+			}
+			else
+			{
+				device_swap = false;
+			}
+		}
+		else
+		{
+			device_swap = false;
 		}
 	}
 	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
 	filled=json_object_dotget_number_with_std(object, name + "Fill Amount");
 	type = static_cast<CompImage::Type>((int)json_object_dotget_number_with_std(object, name + "Image Type"));
 	method = static_cast<FillMethod>((int)json_object_dotget_number_with_std(object, name + "Fill Method"));
+	if (method == FillMethod::RADIAL360)
+	{
+		radial_inverse = json_object_dotget_boolean_with_std(object, name + "Fill Radian Inverse");
+	}
 	color = App->fs->json_array_dotget_float4_string(object, name + "Image Color");
 
 	Enable();
 }
 
+void CompImage::SyncComponent(GameObject * sync_parent)
+{
+	AddRectTransform();
+	AddCanvasRender();
+	AddCanvas();
+	DeviceCheck();
+}
+
 void CompImage::UpdateSpriteId()
 {
+	if (my_canvas == nullptr)
+		return;
 	if (overwrite_image == nullptr)
 	{
 		if (source_image == nullptr)
@@ -469,6 +594,15 @@ void CompImage::UpdateSpriteId()
 			// return default texture;
 			SetTextureID(my_canvas->GetDefaultTexture());
 			return;
+		}
+		if (device_swap_active)
+		{
+			if (controller_image != nullptr)
+			{
+			// return default texture;
+				SetTextureID(controller_image->GetTextureID());
+				return;
+			}
 		}
 		SetTextureID(source_image->GetTextureID());
 		return;
@@ -494,6 +628,8 @@ void CompImage::SetColor(float set_r, float set_g, float set_b, float set_a)
 
 void CompImage::SetTextureID(uint uid)
 {
+	if (texture_id == uid)
+		return;
 	texture_id = uid;
 }
 
@@ -632,39 +768,33 @@ AnimationValue CompImage::GetParameter(ParameterValue parameter)
 
 void CompImage::CorrectFillAmount()
 {
-	if (filled < 0.0f)
-	{
-		filled = 0.0f;
-	}
-	else if (filled > 1.0f)
-	{
-		filled = 1.0f;
-	}
+	filled = CAP(filled);
+	
 }
 
-float CompImage::CorrectValue01(float value)
-{
-	if (value > 1)
-		value = 1.0f;
-	else if (value < 0)
-		value = 0.0f;
 
-	return value;
-}
 
 bool CompImage::RadialCut(std::vector<float3>& position, std::vector<float3>& texture_cord, float fill_value, int box_corner,bool invert)
 {
-	if (fill_value < 0.001f) 
+	if (fill_value < 0.001f)
+	{
+
 		return false;
+
+	}
 
 	if ((box_corner & 1) == 1) 
 		invert = !invert;
 
 	if (!invert && fill_value > 0.999f)
+	{
+
 		return true;
 
+	}
+
 	
-	float angle = CorrectValue01(fill_value);
+	float angle = CAP(fill_value);
 	
 	if (invert)
 		angle = 1.0f - angle;
@@ -675,7 +805,7 @@ bool CompImage::RadialCut(std::vector<float3>& position, std::vector<float3>& te
 
 	RadialCut(position, cos, sin, box_corner, invert);
 	RadialCut(texture_cord, cos, sin, box_corner, invert);
-
+	return true;
 }
 
 void CompImage::RadialCut(std::vector<float3>& modify, float cos, float sin, int box_corner, bool invert)
@@ -684,10 +814,7 @@ void CompImage::RadialCut(std::vector<float3>& modify, float cos, float sin, int
 	int pos1 = ((box_corner + 1) % 4);
 	int pos2 = ((box_corner + 2) % 4);
 	int pos3 = ((box_corner + 3) % 4);
-	LOG(" pos0 %i", pos0);
-	LOG(" pos1 %i", pos1);
-	LOG(" pos2 %i", pos2);
-	LOG(" pos3 %i", pos3);
+
 	if ((box_corner & 1) == 1)
 	{
 		if (sin > cos)
@@ -728,7 +855,6 @@ void CompImage::RadialCut(std::vector<float3>& modify, float cos, float sin, int
 		if (cos > sin)
 		{
 			sin /= cos;
-			sin /= 1.0f;
 			cos = 1.0f;
 
 			if (!invert)
@@ -759,6 +885,7 @@ void CompImage::RadialCut(std::vector<float3>& modify, float cos, float sin, int
 		else 
 			modify[pos1].x = Lerp(modify[pos0].x, modify[pos2].x, cos);
 	}
+	
 }
 
 void CompImage::ExpandMesh()

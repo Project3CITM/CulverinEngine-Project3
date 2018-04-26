@@ -138,13 +138,7 @@ void CompGraphic::SetRaycastTarget(bool flag)
 	raycast_target = flag;
 }
 
-void CompGraphic::SetInteractive(CompInteractive * set_interactive)
-{
-	if (this != nullptr)
-	{
-		interactive = set_interactive;
-	}
-}
+
 
 bool CompGraphic::GetToRender() const
 {
@@ -185,21 +179,29 @@ bool CompGraphic::GetParentActive()
 	return parent->IsActive();
 }
 
+float CompGraphic::GetAlpha() const
+{
+	return color.w;
+}
+void CompGraphic::ResizeGenerateMesh()
+{
+	GenerateMesh();
+}
+
 void CompGraphic::ProcesQuad(std::vector<float3>& position, std::vector<float3>& texture_cord)
 {
 	uint indice_position = vertex_data.current_vertex_count;
 
+	float2 res_fact = transform->GetResizeFactor();
+	float3 curr_pos = float3::zero;
 	for (uint i = 0; i < 4; i++)
 	{
-		vertex_data.AddVertex(position[i], float2(texture_cord[i].x, texture_cord[i].y));
+		curr_pos = position[i];
+		curr_pos.x *= res_fact.x;
+		curr_pos.y *= res_fact.y;
+		vertex_data.AddVertex(curr_pos, float2(texture_cord[i].x, texture_cord[i].y));
 	}
-	LOG(" quad_pos[0].x %i", indice_position);
-	LOG(" quad_pos[0].x %i", indice_position + 1);
-	LOG(" quad_pos[0].x %i", indice_position + 2);
-	LOG(" quad_pos[0].x %i", indice_position + 2);
-	LOG(" quad_pos[0].x %i", indice_position + 3);
-	LOG(" quad_pos[0].x %i", indice_position);
-
+	
 	vertex_data.AddTriangleIndex(indice_position, indice_position + 1, indice_position + 2);
 	vertex_data.AddTriangleIndex(indice_position + 2, indice_position + 3, indice_position);
 
@@ -226,11 +228,22 @@ void CompGraphic::GenerateMesh()
 	vertex_data.CleanUp();
 	ExpandMesh();
 
-	(vertex_data.current_vertex_count == 0) ? can_draw = false : can_draw = true;
+	(vertex_data.current_vertex_count == 0) ? invalid = true : invalid = false;
 
 	if (vertex_data.current_vertex_count == 0)
 	{
 		return;
 	}
 	my_canvas_render->SetVertex(vertex_data);
+}
+
+bool CompGraphic::CheckRender()
+{
+	if(invalid|| !IsActive())
+		return false;
+	return can_draw;
+}
+
+void CompGraphic::DeviceCheck()
+{
 }

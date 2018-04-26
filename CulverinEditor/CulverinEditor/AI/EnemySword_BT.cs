@@ -3,6 +3,11 @@ using CulverinEditor.Debug;
 
 public class EnemySword_BT : Enemy_BT
 {
+
+    Material enemy_mat_sword;
+
+    public GameObject sword_name;
+    public int texture_type = 0;
     public override void Start()
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
@@ -20,11 +25,46 @@ public class EnemySword_BT : Enemy_BT
                 enemy_manager.AddSwordEnemy(gameObject);
             }
         }
+
+        if (texture_type == 0)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_SwordEnemy_Material_21_04");
+        }
+        else if (texture_type == 1)
+        {
+            enemy_mat_sword = GetMaterialByName("Alpha1_SwordEnemy2_Material_21_04");
+        }
+
+        sword_name = GetLinkedObject("sword_name");
+
+        dmg_alpha = 0.0f;
+
         base.Start();
+        base.DeactivateHUD(sword_name);
     }
 
     public override void Update()
     {
+
+        enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
+
+        if (hp_timer < hp_timer_total && hud_active == true)
+        {
+            hp_timer += Time.deltaTime;
+        }
+        else if (hud_active == true)
+        {
+            base.DeactivateHUD(sword_name);
+        }
+
+        bool attack_ready = attack_timer >= attack_cooldown;
+
+        if (attack_ready && current_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
+        {
+            Debug.Log("GetHitInterrupted BITCH", Department.IA);
+            current_action.Interupt();
+        }
+
         base.Update();
     }
 
@@ -34,7 +74,7 @@ public class EnemySword_BT : Enemy_BT
         if (InRange())
         {
 
-            if (!GetComponent<FacePlayer_Action>().IsFaced())
+            if (!GetComponent<Movement_Action>().LookingAtPlayer())
             {
                 current_action.Interupt();
                 next_action = GetComponent<FacePlayer_Action>();
@@ -61,7 +101,7 @@ public class EnemySword_BT : Enemy_BT
                 return;
             }
         }
-        else if(player_detected == true)
+        else if(player_detected == true && Disable_Movement_Gameplay_Debbuger==false)
         {
             GetComponent<ChasePlayer_Action>().ActionStart();
             current_action = GetComponent<ChasePlayer_Action>();
@@ -70,7 +110,10 @@ public class EnemySword_BT : Enemy_BT
     }
 
     protected override void OutOfCombatDecesion()
-    {        
+    {
+
+        if (Disable_Movement_Gameplay_Debbuger) return;
+
         //Investigate
         if (heard_something)
         {
@@ -103,13 +146,16 @@ public class EnemySword_BT : Enemy_BT
         }
     }
 
-    public override bool ApplyDamage(float damage)
+    public override bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
-        return base.ApplyDamage(damage);
+        base.ActivateHUD(sword_name);
+        return base.ApplyDamage(damage, damage_type);
     }
 
     public override void ChangeTexturesToDamaged()
     {
+
+
         mesh.GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
         mesh.GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
         mesh.GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");

@@ -208,22 +208,23 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 			bytes = sizeof(uint);
 			memcpy(&num_pos_keys, cursor, bytes);
 			cursor += bytes;
+
+			temp_bone->position_keys.resize(num_pos_keys);
 			for (int j = 0; j < num_pos_keys; j++)
 			{
-				PositionKey* temp_pos_key = new PositionKey;
-
 				//Time
 				double temp_double;
 				bytes = sizeof(double);
 				memcpy(&temp_double, cursor, bytes);
-				temp_pos_key->time = (float)temp_double;
+				temp_bone->position_keys[j].time = (float)temp_double;
 				cursor += bytes;
 
 				//PosValue
 				bytes = sizeof(float3);
-				memcpy(&temp_pos_key->position, cursor, bytes);
+				float3 pos;
+				memcpy(&pos, cursor, bytes);
+				temp_bone->position_keys[j].position = pos;
 				cursor += bytes;
-				temp_bone->position_keys.push_back(temp_pos_key);
 			}
 
 			//NumRotKeys
@@ -232,15 +233,14 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 			bytes = sizeof(uint);
 			memcpy(&num_rot_keys, cursor, bytes);
 			cursor += bytes;
+			temp_bone->rotation_keys.resize(num_rot_keys);
 			for (int p = 0; p < num_rot_keys; p++)
 			{
-				RotationKey* temp_rot_key = new RotationKey;
-
 				//Time
 				double temp_double;
 				bytes = sizeof(double);
 				memcpy(&temp_double, cursor, bytes);
-				temp_rot_key->time = (float)temp_double;
+				temp_bone->rotation_keys[p].time = (float)temp_double;
 				cursor += bytes;
 
 				//RotValue
@@ -248,9 +248,7 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 				bytes = sizeof(float4);
 				memcpy(&temp_float4, cursor, bytes);
 				cursor += bytes;
-				temp_rot_key->rotation = { temp_float4.x, temp_float4.y, temp_float4.z, temp_float4.w };
-
-				temp_bone->rotation_keys.push_back(temp_rot_key);
+				temp_bone->rotation_keys[p].rotation = { temp_float4.x, temp_float4.y, temp_float4.z, temp_float4.w };
 			}
 
 			//NumScaKeys
@@ -259,22 +257,24 @@ bool ImportAnimation::LoadResource(const char * file, ResourceAnimation * resour
 			bytes = sizeof(uint);
 			memcpy(&num_sca_keys, cursor, bytes);
 			cursor += bytes;
+			
+			temp_bone->scale_keys.resize(num_sca_keys);
 			for (int p = 0; p < num_sca_keys; p++)
 			{
-				ScaleKey* temp_sca_key = new ScaleKey;
 
 				//Time
 				double temp_double;
 				bytes = sizeof(double);
 				memcpy(&temp_double, cursor, bytes);
-				temp_sca_key->time = (float)temp_double;
+				temp_bone->scale_keys[p].time = (float)temp_double;
 				cursor += bytes;
 
 				//ScaValue
 				bytes = sizeof(float3);
-				memcpy(&temp_sca_key->scale, cursor, bytes);
+				float3 scale;
+				memcpy(&scale, cursor, bytes);
 				cursor += bytes;
-				temp_bone->scale_keys.push_back(temp_sca_key);
+				temp_bone->scale_keys[p].scale = scale;
 			}
 			resource_animation->bones.push_back(temp_bone);
 			RELEASE_ARRAY(tmp_name);

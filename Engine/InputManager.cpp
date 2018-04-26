@@ -2,10 +2,13 @@
 #include "ImGui/imgui.h"
 #include "InputAction.h"
 #include"Application.h"
+#include "PlayerActions.h"
+#define ACTION_SECOND_LIMIT 1000
+
 #define ACTION_LIMIT 50
 #define MAX_INPUT 25
 
-InputManager::InputManager()
+InputManager::InputManager(PlayerActions* my_player_action):my_player_action(my_player_action)
 {
 }
 
@@ -77,11 +80,16 @@ void InputManager::UpdateInputActions()
 
 bool InputManager::ProcessEvent(SDL_Event * input_event)
 {
+
+	
 	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
 	{
+		
+
 		if ((*it)->ProcessEventAction(input_event))
 		{
-			active_action.push_back(*(it));
+			//my_player_action->SendNewDeviceCombinationType((*it)->positive_button->device);
+			active_action.push_back((*it));
 			return true;
 		}
 	}
@@ -167,6 +175,7 @@ void InputManager::ShowInspectorInfo()
 	window_flags |= ImGuiWindowFlags_NoCollapse;
 	std::string window_name = "Input Manager " + name;
 	ImGui::Begin(window_name.c_str(), &window_open, window_flags);
+	ImGui::Text("Number of Action per second");
 
 	ImGui::Text("Number of Action");
 	if (ImGui::InputInt("##number_of_action", &number_of_action))
@@ -365,6 +374,7 @@ void InputManager::SetName(const char * set_name)
 	name = set_name;
 }
 
+
 const char * InputManager::GetName()const
 {
 	return name.c_str();
@@ -393,14 +403,15 @@ bool InputManager::GetWindowOpen() const
 	return window_open;
 }
 
+
 InputAction* InputManager::CreateNewAction(const char * new_name, const char * new_key_positive, const char* new_key_negative, ActionInputType new_type)
 {
 
 	/*KeyRelation new_key_relation = KeyRelation(new_name);
 	new_key_relation.key_type= new_type*/
 	
-	KeyRelation* new_key_relation_positive = App->module_key_binding->Find_key_binding(new_key_positive);
-	KeyRelation* new_key_relation_negative = App->module_key_binding->Find_key_binding(new_key_negative);
+	KeyRelation* new_key_relation_positive = App->input->FindKeyBinding(new_key_positive);
+	KeyRelation* new_key_relation_negative = App->input->FindKeyBinding(new_key_negative);
 	InputAction* temp = nullptr;
 	bool can_create_action = true;
 	switch (new_type) {

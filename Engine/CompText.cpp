@@ -81,7 +81,7 @@ void CompText::Update(float dt)
 		}
 	}
 
-		render = can_draw;
+		render = CheckRender();
 
 }
 void CompText::ShowOptions()
@@ -270,13 +270,16 @@ bool CompText::GenerateText()
 {
 	if (text_str.empty())
 		return false;
+
 	float4 rect_transform = parent->GetComponentRectTransform()->GetRect();
 	float width = parent->GetComponentRectTransform()->GetWidth();
 	float height = parent->GetComponentRectTransform()->GetHeight();
-	can_draw = false;
+	
+	invalid = true;
+
 	if (TextCanFit(rect_transform, text_rect))
 	{
-		can_draw = true;
+		invalid = false;
 		std::vector<float3> quad_pos;
 		float3 right_top=float3::zero;
 		float3 left_top = float3::zero;
@@ -392,6 +395,9 @@ void CompText::UpdateText()
 	update_text = true;
 	int width = 0;
 	int height = 0;
+	text->font.size = text_size;
+	text->ReLoadToMemory();
+
 	TTF_SizeText(text->font.font, text_str.c_str(), &width, &height);
 	s_font = TTF_RenderText_Blended_Wrapped(text->font.font, text_str.c_str(), SDL_Color{ (Uint8)(color.x * 255), (Uint8)(color.y * 255),(Uint8)(color.z * 255), (Uint8)(color.w * 255) }, width);
 

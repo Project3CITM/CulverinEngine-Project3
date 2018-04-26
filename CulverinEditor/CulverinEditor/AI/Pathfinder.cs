@@ -242,6 +242,17 @@ public class Pathfinder : CulverinBehaviour
         return false;
     }
 
+    public bool IsWalkableTile(PathNode pn)
+    {
+        //Check if the tiles are inside the map
+        if (pn.GetTileX() < map_width && pn.GetTileY() < map_height)
+        {
+            if (tile_map[pn.GetTileX(), pn.GetTileY()] == 0 || tile_map[pn.GetTileX(), pn.GetTileY()] == 2)
+                return true;
+        }
+        return false;
+    }
+
     private void SetOccupiedTilesValue(int walkability)
     {
         foreach (KeyValuePair<string, PathNode> node in occupied_tiles)

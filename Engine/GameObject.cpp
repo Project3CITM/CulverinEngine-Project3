@@ -38,12 +38,13 @@
 #include "CompJoint.h"
 #include "CompParticleSystem.h"
 #include "ResourceMesh.h"
+#include "CompCubeMapRenderer.h"
 #include <queue>
 
 //Event system test
 #include "ModuleEventSystemV2.h"
 
-GameObject::GameObject(GameObject* parent) :parent(parent)
+GameObject::GameObject(GameObject* parent) : parent(parent)
 {
 	Enable();
 	SetVisible(true);
@@ -53,24 +54,24 @@ GameObject::GameObject(GameObject* parent) :parent(parent)
 	{
 		// Push this game object into the childs list of its parent
 		parent->childs.push_back(this);
+		parent_active = parent->IsParentActive();
 	}
 
 
 	box_fixed.SetNegativeInfinity();
 }
 
-GameObject::GameObject(std::string nameGameObject)
+GameObject::GameObject(std::string nameGameObject) : parent(nullptr)
 {
 	Enable();
 	SetVisible(true);
 	uid = App->random->Int();
 	name = nameGameObject;
 
-
 	box_fixed.SetNegativeInfinity();
 }
 
-GameObject::GameObject(std::string nameGameObject, uint uuid)
+GameObject::GameObject(std::string nameGameObject, uint uuid) : parent(nullptr)
 {
 	Enable();
 	SetVisible(true);
@@ -93,13 +94,13 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 
 	// Same data as the 'copy' gameobject
 	active = copy.IsActive();
+	parent_active = parent->IsParentActive();
 	visible = copy.IsVisible();
 	static_obj = copy.IsStatic();
 	bb_active = copy.IsAABBActive();
 
 	if (copy.box_fixed.IsFinite())
 	{
-
 		box_fixed = copy.box_fixed;
 	}
 	else
@@ -127,13 +128,36 @@ GameObject::~GameObject()
 	//RELEASE_ARRAY(name); FIX THIS
 	parent = nullptr;
 
+	if (!static_obj)
+	{
+		App->scene->RemoveDynamicObject(this);
+	}
+
 	if (components.size() > 0)
 	{
+		for (uint i = 0; i < components.size(); i++)
+		{
+			components[i]->Clear();
+			if (components[i]->GetType() == C_LIGHT)
+			{
+				Event delete_light_event;
+				delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
+				delete_light_event.delete_light.light = (CompLight*)components[i];
+				delete_light_event.delete_light.light->to_delete = true;
+				PushEvent(delete_light_event);
+			}
+			else RELEASE(components[i]);
+		}
 		components.clear();
 	}
 
 	if (childs.size() > 0)
 	{
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			childs[i]->CleanUp();
+			RELEASE(childs[i]);
+		}
 		childs.clear();
 	}
 }
@@ -182,6 +206,10 @@ void GameObject::StartScripts()
 {
 	if (active)
 	{
+		if (static_obj)
+		{
+			static_obj_gm = true;
+		}
 		//Start Active scripts --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
@@ -360,7 +388,7 @@ void GameObject::Update(float dt)
 	if (active)
 	{
 		//Update Components --------------------------
-		for (uint i = 0; i < components.size(); i++)
+		for (uint i = static_obj_gm; i < components.size(); i++)
 		{
 			if (components[i]->IsActive())
 			{
@@ -376,9 +404,6 @@ void GameObject::Update(float dt)
 				childs[i]->Update(dt);
 			}
 		}
-
-
-
 	}
 }
 
@@ -418,52 +443,59 @@ bool GameObject::IsDeleteFixed() const
 
 void GameObject::Draw()
 {
-	if (visible)
+	if (visible && active && parent_active)
 	{
+		bool comp_active = false;
+		Component* comp = nullptr;
+		Comp_Type type = Comp_Type::C_TRANSFORM;
 		//Draw Components --------------------------
 		for (uint i = 0; i < components.size(); i++)
 		{
-			if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_MESH)
+			comp = components[i];
+			type = comp->GetType();
+			if (comp->IsActive())
 			{
-				//components[i]->Draw();
-				/**/
-				CompMesh* comp = (CompMesh*)components[i];
-				Event draw_event;
-				draw_event.Set_event_data(EventType::EVENT_DRAW);
-				if (comp->GetMaterial()->material->alpha < 1.0f) draw_event.draw.Dtype = draw_event.draw.DRAW_3D_ALPHA;
-				else draw_event.draw.Dtype = draw_event.draw.DRAW_3D;
-				draw_event.draw.ToDraw = components[i];
-				PushEvent(draw_event);
-				/**/
+				if (type == Comp_Type::C_MESH)
+				{
+					//components[i]->Draw();
+					/**/
+					CompMesh* comp_mesh = (CompMesh*)comp;
+					Event draw_event;
+					draw_event.Set_event_data(EventType::EVENT_DRAW);
+					if (comp_mesh->GetMaterial()->material->alpha < 1.0f) draw_event.draw.Dtype = draw_event.draw.DRAW_3D_ALPHA;
+					else draw_event.draw.Dtype = draw_event.draw.DRAW_3D;
+					draw_event.draw.ToDraw = comp;
+					PushEvent(draw_event);
+					/**/
+				}
+				else if (type == Comp_Type::C_CAMERA)
+				{
+					comp->Draw();
+				}
+				else if (type == Comp_Type::C_PARTICLE_SYSTEM)
+				{
+					comp->Draw();
+				}
+				else if (type == Comp_Type::C_ANIMATION)
+				{
+					comp->Draw();
+				}
+				else if (type == Comp_Type::C_LIGHT)
+				{
+					CompLight* l = (CompLight*)comp;
+					l->use_light_to_render = true;
+					Event draw_event;
+					draw_event.Set_event_data(EventType::EVENT_REQUEST_3D_3DA_MM);
+					draw_event.request_3d3damm.light = (CompLight*)comp;
+					PushEvent(draw_event);
+					components[i]->Draw();
+								
+				}
 			}
-			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_CAMERA)
-			{
-				components[i]->Draw();
-			}
-			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_PARTICLE_SYSTEM)
-			{
-				components[i]->Draw();
-			}
-			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_ANIMATION)
-			{
-				components[i]->Draw();
-			}
-			else if (components[i]->IsActive() && components[i]->GetType() == Comp_Type::C_LIGHT)
-			{
-				CompLight* l = (CompLight*)components[i];
-				l->use_light_to_render = true;
-				//if (!l->use_light_to_render)
-				//	continue;
 
-				/*Event draw_event;
-				draw_event.Set_event_data(EventType::EVENT_REQUEST_3D_3DA_MM);
-				draw_event.request_3d3damm.light = (CompLight*)components[i];
-				PushEvent(draw_event);
-				components[i]->Draw();*/
-			}
 
 		}
-
+		/*
 		//Draw child Game Objects -------------------
 		for (uint i = 0; i < childs.size(); i++)
 		{
@@ -472,8 +504,8 @@ void GameObject::Draw()
 			{
 				childs[i]->Draw();
 			}
-		}
-
+		}*/
+		
 		if (bb_active)
 		{
 			// Draw Bounding Box
@@ -486,7 +518,7 @@ bool GameObject::Enable()
 {
 	if (!active)
 	{
-		active = true;
+		SetActive(true);
 	}
 
 	return active;
@@ -496,7 +528,7 @@ bool GameObject::Disable()
 {
 	if (active)
 	{
-		active = false;
+		SetActive(false);
 	}
 	return active;
 }
@@ -608,6 +640,11 @@ void GameObject::ShowHierarchy(bool use_search)
 		node_flags |= ImGuiTreeNodeFlags_DefaultOpen;
 	}
 	//ImGui::SetNextTreeNodeOpen(true);
+	if (set_next_tree_node_open && App->gui->develop_mode)
+	{
+		ImGui::SetNextTreeNodeOpen(true);
+		set_next_tree_node_open = false;
+	}
 	if (ImGui::TreeNodeEx(name.c_str(), node_flags))
 	{
 		treeNod = true;
@@ -667,11 +704,11 @@ void GameObject::ShowHierarchy(bool use_search)
 void GameObject::ShowGameObjectOptions()
 {
 	//Create child Game Objects / Components
-	if (ImGui::MenuItem("Copy"))
+	if (ImGui::MenuItem("Copy", NULL, false, false))
 	{
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjectCopy(this);
 	}
-	if (ImGui::MenuItem("Paste"))
+	if (ImGui::MenuItem("Paste", NULL, false, false))
 	{
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->CopyGameObject(this);
 	}
@@ -709,12 +746,27 @@ void GameObject::ShowGameObjectOptions()
 			Event e;
 			e.Set_event_data(EventType::EVENT_DELETE_GO);
 			e.delete_go.Todelte = this;
+			e.delete_go.uuid = uid;
 			PushEvent(e);
 		}
 		else
 		{
 			LOG("Deleting a GameObject while PlayMode may cause crashes... you can't delete now.");
 		}
+	}
+	//if (ImGui::MenuItem("Set All Childs with tag 'No C#'"))
+	//{
+	//	SetAllChildsTag(this, "NoC#");
+	//}
+	//if (ImGui::MenuItem("Set All Childs with tag 'No C#' NO PARENT"))
+	//{
+	//	SetAllChildsTag(this, "NoC#", true);
+	//}
+	if (ImGui::MenuItem("Show Number of Childs (recursive)", NULL, false, App->gui->develop_mode))
+	{
+		uint count = 0;
+		GetChildsRecursive(this, count);
+		LOG("[error] Total: %i", count);
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Create Empty"))
@@ -777,6 +829,10 @@ void GameObject::ShowGameObjectOptions()
 			if (ImGui::MenuItem("Light"))
 			{
 				AddComponent(Comp_Type::C_LIGHT);
+			}
+			if (ImGui::MenuItem("CubeMap Renderer"))
+			{
+				AddComponent(Comp_Type::C_CUBEMAP_RENDERER);
 			}
 			if (ImGui::MenuItem("Collider"))
 			{
@@ -880,9 +936,36 @@ void GameObject::ShowGameObjectOptions()
 			}
 			ImGui::EndMenu();
 		}
-
 	}
 	// -------------------------------------------------------------
+}
+
+//void GameObject::SetAllChildsTag(GameObject* child, const char* tag, bool parent)
+//{
+//	if (child->GetNumChilds() > 0)
+//	{
+//		for (int i = 0; i < child->GetNumChilds(); i++)
+//		{
+//			child->SetAllChildsTag(child->GetChildbyIndex(i), tag);
+//		}
+//	}
+//	if (child->GetNumComponents() > 1 && child->FindComponentByType(Comp_Type::C_COLLIDER) == nullptr &&
+//		child->FindComponentByType(Comp_Type::C_SCRIPT) == nullptr && parent == false)
+//	{
+//		child->SetTag(tag);
+//	}
+//}
+
+void GameObject::GetChildsRecursive(GameObject* child, uint& count)
+{
+	if (child->GetNumChilds() > 0)
+	{
+		for (int i = 0; i < child->GetNumChilds(); i++)
+		{
+			child->GetChildsRecursive(child->GetChildbyIndex(i), count);
+		}
+	}
+	count++;
 }
 
 void GameObject::ShowInspectorInfo()
@@ -899,7 +982,10 @@ void GameObject::ShowInspectorInfo()
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 3));
 
 		/* ENABLE-DISABLE CHECKBOX*/
-		ImGui::Checkbox("##1", &active);
+		if(ImGui::Checkbox("##1", &active))
+		{
+			SetActive(active);
+		}
 
 		/* NAME OF THE GAMEOBJECT */
 		ImGui::SameLine();
@@ -1095,6 +1181,11 @@ void GameObject::ShowInspectorInfo()
 			AddComponent(Comp_Type::C_LIGHT);
 			add_component = false;
 		}
+		if (ImGui::MenuItem("Cube Map Renderer"))
+		{
+			AddComponent(Comp_Type::C_CUBEMAP_RENDERER);
+			add_component = false;
+		}
 		//if (ImGui::BeginMenu("UI"))
 		//{
 
@@ -1176,9 +1267,15 @@ void GameObject::FreezeTransforms(bool freeze, bool change_childs)
 		}
 	}
 	if (static_obj)
+	{
 		App->scene->octree.Insert(this);
+		App->scene->RemoveDynamicObject(this);
+	}
 	else
+	{
 		App->scene->octree.Remove(this);
+		App->scene->dynamic_objects.push_back(this);
+	}
 }
 
 void GameObject::ShowFreezeChildsWindow(bool freeze, bool& active)
@@ -1219,6 +1316,25 @@ void GameObject::ShowFreezeChildsWindow(bool freeze, bool& active)
 void GameObject::SetActive(bool active)
 {
 	this->active = active;
+
+	bool set_pactive = (parent_active && active) ? true : false;
+	for (uint i = 0; i < childs.size(); i++)
+	{
+		childs[i]->SetParentActive(set_pactive);
+	}
+}
+
+void GameObject::SetParentActive(bool active)
+{
+	parent_active = active;
+
+	if (this->active)
+	{
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			childs[i]->SetParentActive(active);
+		}
+	}
 }
 
 void GameObject::SetVisible(bool visible)
@@ -1234,6 +1350,11 @@ void GameObject::SetStatic(bool set_static)
 bool GameObject::IsActive() const
 {
 	return active;
+}
+
+bool GameObject::IsParentActive() const
+{
+	return parent_active;
 }
 
 bool GameObject::IsVisible() const
@@ -1293,7 +1414,12 @@ Component* GameObject::GetComponentsByUID(int uid, bool iterate_hierarchy)
 			{
 				if (queue.front()->components[i]->GetUUID() == uid)
 				{
-					return queue.front()->components[i];
+					Component* ret = queue.front()->components[i];
+
+					while (!queue.empty())
+						queue.pop();
+
+					return ret;
 				}
 			}
 			for (uint k = 0; k < queue.front()->childs.size(); k++)
@@ -1432,7 +1558,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			/* Link Material to the Mesh if exists */
 			const CompMaterial* material_link = (CompMaterial*)FindComponentByType(Comp_Type::C_MATERIAL);
 			if (material_link != nullptr) mesh->LinkMaterial(material_link);
-			else LOG("Havent Material");
 			return mesh;
 		}
 		case Comp_Type::C_TRANSFORM:
@@ -1445,10 +1570,10 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 		{
 			if (FindComponentByType(Comp_Type::C_RECT_TRANSFORM) != nullptr) return nullptr;
 			CompRectTransform* transform = new CompRectTransform(type, this);
-			if (!components.empty())
+			if (components.size() > 0 && components[0]->GetType() == Comp_Type::C_TRANSFORM)
 			{
 				RELEASE(components[0]);
-				components.at(0) = transform;
+				components[0] = transform;
 			}
 			else components.push_back(transform);
 			return transform;
@@ -1616,6 +1741,14 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			CompLight* light = new CompLight(type, this);
 			components.push_back(light);
 			return light;
+		}
+
+		case Comp_Type::C_CUBEMAP_RENDERER:
+		{
+			LOG("Adding CUBEMAP RENDERER.");
+			CompCubeMapRenderer* cubemap = new CompCubeMapRenderer(type, this);
+			components.push_back(cubemap);
+			return cubemap;
 		}
 		case Comp_Type::C_COLLIDER:
 		{
@@ -1843,6 +1976,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		case Comp_Type::C_LIGHT:
 			this->AddComponent(Comp_Type::C_LIGHT);
 			break;
+		case Comp_Type::C_CUBEMAP_RENDERER:
+			this->AddComponent(Comp_Type::C_CUBEMAP_RENDERER);
+			break;
 		case Comp_Type::C_COLLIDER:
 			this->AddComponent(Comp_Type::C_COLLIDER);
 			break;
@@ -1986,7 +2122,16 @@ void GameObject::DeleteAllComponents()
 		}
 
 		comp->Clear();
-		RELEASE(comp);
+
+		if (comp->GetType() == C_LIGHT)
+		{
+			Event delete_light_event;
+			delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
+			delete_light_event.delete_light.light = (CompLight*)comp;
+			delete_light_event.delete_light.light->to_delete = true;
+			PushEvent(delete_light_event);
+		}
+		else RELEASE(comp);
 		components[i] = nullptr;
 	}
 	components.clear();
@@ -2003,7 +2148,15 @@ void GameObject::DeleteComponent(uint index)
 		}
 
 		comp->Clear();
-		RELEASE(comp);
+		if (comp->GetType() == C_LIGHT)
+		{
+			Event delete_light_event;
+			delete_light_event.Set_event_data(EventType::EVENT_DELETE_LIGHT);
+			delete_light_event.delete_light.light = (CompLight*)comp;
+			delete_light_event.delete_light.light->to_delete = true;
+			PushEvent(delete_light_event);
+		}
+		else RELEASE(comp);
 		comp = nullptr;
 
 		components.erase(components.begin() + index);
@@ -2091,7 +2244,7 @@ void GameObject::GetChildDeepSearch(const char * name, std::vector<GameObject*>&
 }
 
 
-uint GameObject::GetIndexChildbyName(const char * name) const
+int GameObject::GetIndexChildbyName(const char * name) const
 {
 	if (childs.size() > 0)
 	{
@@ -2103,7 +2256,22 @@ uint GameObject::GetIndexChildbyName(const char * name) const
 			}
 		}
 	}
-	return 0;
+	return -1;
+}
+
+int GameObject::GetIndexChildbyGO(const GameObject * child) const
+{
+	if (childs.size() > 0)
+	{
+		for (uint i = 0; i < childs.size(); i++)
+		{
+			if (childs[i] == child)
+			{
+				return i;
+			}
+		}
+	}
+	return -1;
 }
 
 void GameObject::RemoveChildbyIndex(uint index)
@@ -2116,6 +2284,7 @@ void GameObject::RemoveChildbyIndex(uint index)
 			if (i == index)
 			{
 				GameObject* it = childs[i];
+				childs[i]->SetParent(nullptr);
 				childs.erase(item);
 				RELEASE(it);
 				it = nullptr;

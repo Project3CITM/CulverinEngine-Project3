@@ -34,6 +34,12 @@ public:
 	void LoadScene(const char* sceneName);
 	// --------------------------------------
 
+	// SAVE & LOAD SCENE BINARY --------------------------
+	//std::string SaveSceneBinary();
+	//void SaveChildGameObjectBinary(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);
+	//void LoadSceneBinary(const char* sceneName);
+	// --------------------------------------
+
 	// SAVE & LOAD PREFAB --------------------------
 	void SavePrefab(const GameObject& gameObject, const char* directory, const char* fileName, bool is_FBX = true);
 	void SaveChildPrefab(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);

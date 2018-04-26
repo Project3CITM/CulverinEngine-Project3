@@ -27,6 +27,10 @@ bool ImportMaterial::Import(const char* file, uint uuid, bool isAutoImport)
 	bool ret = false;
 	char* buffer;
 	uint size_file = App->fs->LoadFile(file, &buffer);
+	if (size_file == 0)
+	{
+		return false;
+	}
 	if (ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, size_file))
 	{
 		ILuint size;
@@ -115,7 +119,7 @@ Texture ImportMaterial::Load(const char* file)
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		glTexImage2D(GL_TEXTURE_2D,

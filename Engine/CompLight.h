@@ -2,7 +2,8 @@
 #define COMPONENT_LIGHT
 #include "Component.h"
 #include "MathGeoLib.h"
-
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 class ResourceMesh;
 
 enum Light_type {
@@ -11,8 +12,7 @@ enum Light_type {
 	DIRECTIONAL_LIGHT	
 };
 
-class CompLight :
-	public Component
+class CompLight :	public Component
 {
 public:
 	CompLight(Comp_Type t, GameObject * parent);
@@ -43,9 +43,7 @@ public:
 	void FrustumDebug();
 
 public:
-	//Billboard to show where are the lights----
-	uint texture_bulb = 0;
-	ResourceMesh* plane;
+
 	//---------------------------------------------
 	float4 color; //a.k.a. the color of the light
 
@@ -55,6 +53,8 @@ public:
 	float4 properties;
 	Light_type type;
 	Frustum frustum;
+	glm::mat4 depthMVPMat;
+	glm::mat4 depthBiasMat;
 	//UI variables------------
 	float color_temp[4];
 	std::string types_lights;
@@ -62,7 +62,7 @@ public:
 	//---------
 
 	bool use_light_to_render = false;
-
+	bool to_delete = false;
 
 
 };

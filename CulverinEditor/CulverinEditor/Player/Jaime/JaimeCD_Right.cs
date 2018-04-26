@@ -3,9 +3,30 @@ using CulverinEditor.Debug;
 
 public class JaimeCD_Right : CoolDown
 {
+    public GameObject jaime_right_cd_text;
+
+    void Start()
+    {
+        jaime_right_cd_text = GetLinkedObject("jaime_right_cd_text");
+        ResetTextTimer(jaime_right_cd_text);
+    }
+
     public override void Update()
     {
         base.Update();
+
+        //Manage Seconds Counter
+        if (in_cd)
+        {
+            ManageTextTimer(jaime_right_cd_text);
+        }
+
+        //Reset Seconds Counter
+        if (reset_timer)
+        {
+            ResetTextTimer(jaime_right_cd_text);
+            reset_timer = false;
+        }
     }
 
     public override void OnClick()
@@ -29,6 +50,7 @@ public class JaimeCD_Right : CoolDown
         button_cd = GetLinkedObject("jaime_button_right").GetComponent<CompButton>();
         button_cd.Deactivate();
         act_time = 0.0f;
+        prev_seconds = 1000;
         in_cd = true;
     }
 }

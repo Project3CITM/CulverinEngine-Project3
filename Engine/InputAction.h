@@ -2,7 +2,7 @@
 #define INPUT_ACTION_H_
 #include<string>
 #include"Math\float2.h"
-#include"ModuleKeyBinding.h"
+#include"KeyBinding.h"
 #include"Application.h"
 #include"ModuleInput.h"
 
@@ -42,6 +42,8 @@ public:
 	~InputAction();
 
 	virtual bool ProcessEventAction(SDL_Event * input_event) { return false; }
+	virtual bool PositiveReaction(SDL_Event * input_event) { return false; }
+
 	//virtual bool UpdateEventAction(const Uint8* array_kys) { return false; }
 public:
 
@@ -62,6 +64,7 @@ public:
 	bool OnRelease() { return state == Keystateaction::KEY_UP_ACTION; };
 	bool OnRepeat() { return state == Keystateaction::KEY_REPEAT_ACTION; };
 	bool ProcessEventAction(SDL_Event * input_event);
+	bool PositiveReaction(SDL_Event * input_event);
 	bool UpdateEventAction(int mouse_x, int mouse_y, Uint32 buttons);
 
 public:
@@ -85,6 +88,8 @@ class ControllerAxisAction : public InputAction
 public:
 	ControllerAxisAction() { action_type = ActionInputType::CONTROLLER_AXIS_ACTION; }
 	bool ProcessEventAction(SDL_Event * input_event);
+	bool PositiveReaction(SDL_Event * input_event);
+
 	bool UpdateEventAction();
 
 public:
@@ -111,6 +116,8 @@ public:
 	bool OnRelease() { return state == Keystateaction::KEY_UP_ACTION; };
 	bool OnRepeat() { return state == Keystateaction::KEY_REPEAT_ACTION; };
 	bool ProcessEventAction(SDL_Event * input_event);
+	bool PositiveReaction(SDL_Event * input_event);
+
 	bool DetectAction(const SDL_Event &input_event);
 	bool UpdateEventAction(const Uint8* array_kys);
 	int UpdateKeyRelation(KeyRelation* to_update, const Uint8 * array_kys);

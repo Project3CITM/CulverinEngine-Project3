@@ -47,7 +47,7 @@ void ScriptVariable::SetMonoValue(void* newVal)
 			/*MonoObject* object = mono_field_get_value_object(App->importer->iScript->GetDomain(), mono_field, script->GetMonoObject());
 
 			//script->game_objects[object] = game_object;*/
-			//App->importer->iScript->UpdateMonoMap(game_object);
+			App->importer->iScript->UpdateMonoMap(game_object);
 			std::string temp = mono_field_get_name(mono_field);
 			App->importer->iScript->map_link_variables.insert(std::pair<std::string, GameObject*>(temp, game_object));
 		}
@@ -598,9 +598,11 @@ void CSharpScript::GetScriptVariables()
 			if (field != NULL)
 			{
 				type = mono_field_get_type(field);
-
+				XaviStruct temp;
+				temp.mono_field = field;
+				temp.mono_type = type;
 				//Insert this info pair into the map
-				field_type.insert(std::pair<MonoClassField*, MonoType*>(field, type));
+				field_type.insert(std::pair<uint, XaviStruct>(count_variables++, temp));
 			}
 		}
 		parent = mono_class_get_parent(parent);
@@ -616,20 +618,22 @@ void CSharpScript::GetScriptVariables()
 		if (field != NULL)
 		{
 			type = mono_field_get_type(field);
-
+			XaviStruct temp;
+			temp.mono_field = field;
+			temp.mono_type = type;
 			//Insert this info pair into the map
-			field_type.insert(std::pair<MonoClassField*, MonoType*>(field, type));
+			field_type.insert(std::pair<uint, XaviStruct>(count_variables++, temp));
 		}
 	}
 
 	// From the previous map, fill VariablesScript vector that will contain info (name, type, value) of each variable
-	for (std::map<MonoClassField*, MonoType*>::iterator it = field_type.begin(); it != field_type.end(); ++it)
+	for (std::multimap<uint, XaviStruct>::iterator it = field_type.begin(); it != field_type.end(); ++it)
 	{
-		VarType type = GetTypeFromMono(it->second);
+		VarType type = GetTypeFromMono(it->second.mono_type);
 		VarAccess access = VarAccess::Var_PRIVATE;
 
 		//Set info about accessibility of the variable -> DOESN'T WORK!!!
-		flags = mono_field_get_flags(it->first);
+		flags = mono_field_get_flags(it->second.mono_field);
 		if (flags == MONO_FIELD_ATTR_FAMILY)
 		{
 			access = VarAccess::Var_PRIVATE;
@@ -644,13 +648,13 @@ void CSharpScript::GetScriptVariables()
 		}
 
 		//Create variable
-		ScriptVariable* new_var = new ScriptVariable(mono_field_get_name(it->first), type, access, this);
+		ScriptVariable* new_var = new ScriptVariable(mono_field_get_name(it->second.mono_field), type, access, this);
 
 		//Set its value
-		GetValueFromMono(new_var, it->first, it->second);
+		GetValueFromMono(new_var, it->second.mono_field, it->second.mono_type);
 
 		//Link to Mono properties
-		LinkVarToMono(new_var, it->first, it->second);
+		LinkVarToMono(new_var, it->second.mono_field, it->second.mono_type);
 
 		//Put it in variables vector
 		variables.push_back(new_var);
@@ -661,10 +665,10 @@ void CSharpScript::UpdateScriptVariables()
 {
 	uint count = 0;
 	// From the map, update the value of each script
-	for (std::map<MonoClassField*, MonoType*>::iterator it = field_type.begin(); it != field_type.end(); ++it)
+	for (std::multimap<uint, XaviStruct>::iterator it = field_type.begin(); it != field_type.end(); ++it)
 	{
 		//Set its value
-		UpdateValueFromMono(variables[count++], it->first, it->second);
+		UpdateValueFromMono(variables[count++], it->second.mono_field, it->second.mono_type);
 	}
 }
 
@@ -862,16 +866,16 @@ MonoObject* CSharpScript::GetMousePosition()
 	return nullptr;
 }
 
-bool CSharpScript::IsStatic(MonoObject * object)
+bool CSharpScript::IsStatic(MonoObject* object)
 {
-	if (!CheckMonoObject(object))
+	if (object == nullptr)
 	{
 		return false;
 	}
-
-	if (current_game_object != nullptr)
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current != nullptr)
 	{
-		return current_game_object->IsStatic();
+		return current->IsStatic();
 	}
 	else
 	{
@@ -882,14 +886,15 @@ bool CSharpScript::IsStatic(MonoObject * object)
 
 mono_bool CSharpScript::IsActive(MonoObject* object)
 {
-	if (!CheckMonoObject(object))
+	if (object == nullptr)
 	{
 		return false;
 	}
 
-	if (current_game_object != nullptr)
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current != nullptr)
 	{
-		return current_game_object->IsActive();
+		return current->IsActive();
 	}
 	else
 	{
@@ -900,16 +905,16 @@ mono_bool CSharpScript::IsActive(MonoObject* object)
 
 void CSharpScript::SetActive(MonoObject* object, mono_bool active)
 {
-	if (!CheckMonoObject(object))
+	if (object == nullptr)
 	{
 		LOG("[error] MonoObject invalid");
 	}
-
 	else
 	{
-		if (current_game_object != nullptr)
+		GameObject* current = App->importer->iScript->GetGameObject(object);
+		if (current != nullptr)
 		{
-			current_game_object->SetActive(active);
+			current->SetActive(active);
 		}
 		else
 		{
@@ -940,88 +945,73 @@ void CSharpScript::CreateGameObject(MonoObject* object)
 	//game_objects[object] = gameobject;
 }
 
-bool CSharpScript::DestroyGameObject(MonoObject* object)
-{
-	if (!CheckMonoObject(object))
-	{
-		return false;
-	}
-
-	if (current_game_object == nullptr)
-	{
-		return false;
-	}
-	else
-	{
-		App->scene->DeleteGameObject(current_game_object);
-		return true;
-	}
-	return false;
-}
-
 void CSharpScript::SetName(MonoObject * object, MonoString * name)
 {
-	if (!CheckMonoObject(object))
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current == nullptr)
 	{
 		LOG("[error] MonoObject invalid");
 	}
 	else
 	{
-		if (current_game_object != nullptr)
+		if (current != nullptr)
 		{
-			current_game_object->SetName(mono_string_to_utf8(name));
+			current->SetName(mono_string_to_utf8(name));
 			std::string temp_name = mono_string_to_utf8(name);
 
-			current_game_object->NameNotRepeat(temp_name, false, current_game_object->GetParent());
+			current->NameNotRepeat(temp_name, false, current->GetParent());
 		}
 	}
 }
 
 MonoString* CSharpScript::GetName(MonoObject* object)
 {
-	if (!CheckMonoObject(object))
-	{
-		return nullptr;
-	}
-	if (current_game_object == nullptr)
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current == nullptr)
 	{
 		return nullptr;
 	}
 
-	return mono_string_new(CSdomain, current_game_object->GetName());
+	return mono_string_new(CSdomain, current->GetName());
 }
 
 void CSharpScript::SetTag(MonoObject * object, MonoString * tag)
 {
-	if (!CheckMonoObject(object))
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current == nullptr)
 	{
 		LOG("[error] MonoObject invalid");
 	}
 	else
 	{
-		if (current_game_object != nullptr)
+		if (current != nullptr)
 		{
-			current_game_object->SetTag(mono_string_to_utf8(tag));
+			current->SetTag(mono_string_to_utf8(tag));
 		}
 	}
 }
 
 MonoString* CSharpScript::GetTag(MonoObject* object)
 {
-	if (!CheckMonoObject(object))
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current == nullptr)
 	{
 		return nullptr;
 	}
-	if (current_game_object == nullptr)
-	{
-		return nullptr;
-	}
-	return mono_string_new(CSdomain, current_game_object->GetTag());
+	return mono_string_new(CSdomain, current->GetTag());
 }
 
 bool CSharpScript::CompareTag(MonoObject * object, MonoString * tag)
 {
-	return current_game_object->CompareTag(mono_string_to_utf8(tag));
+	if (object)
+	{
+		GameObject* actual = App->importer->iScript->GetGameObject(object);
+		if (actual)
+		{
+			return actual->CompareTag(mono_string_to_utf8(tag));
+		}
+	}
+	return false;
 }
 
 MonoObject* CSharpScript::FindGameObjectWithTag(MonoObject* object, MonoString * tag)
@@ -1032,28 +1022,51 @@ MonoObject* CSharpScript::FindGameObjectWithTag(MonoObject* object, MonoString *
 
 int CSharpScript::ChildCount(MonoObject * object)
 {
-	return current_game_object->GetNumChilds();
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current == nullptr) 
+	{
+		return current->GetNumChilds();
+	}
+	return 0;
 }
 
 MonoObject * CSharpScript::GetChildByIndex(MonoObject* object, int index)
 {
-	GameObject* target = current_game_object->GetChildbyIndex(index);
-	return App->importer->iScript->GetMonoObject(target);
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current == nullptr)
+	{
+		return nullptr;
+	}
+	if (current != nullptr)
+	{
+		GameObject* target = current->GetChildbyIndex(index);
+		if (target != nullptr)
+		{
+			return App->importer->iScript->GetMonoObject(target);
+		}
+		return nullptr;
+	}
 }
 
 MonoObject * CSharpScript::GetChildByName(MonoObject * object, MonoString * name)
 {
-	GameObject* target = current_game_object->GetChildbyName(mono_string_to_utf8(name));
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current == nullptr)
+	{
+		return nullptr;
+	}
+	GameObject* target = current->GetChildbyName(mono_string_to_utf8(name));
 	return App->importer->iScript->GetMonoObject(target);
 }
 
 MonoObject* CSharpScript::GetChildByTagIndex(MonoObject* object, MonoString* tag, int index)
 {
-	if (!CheckMonoObject(object))
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current == nullptr)
 	{
 		return nullptr;
 	}
-	GameObject* target = current_game_object->GetChildByTagIndex(mono_string_to_utf8(tag), index);
+	GameObject* target = current->GetChildByTagIndex(mono_string_to_utf8(tag), index);
 	return App->importer->iScript->GetMonoObject(target);
 }
 
@@ -1104,7 +1117,7 @@ void CSharpScript::Destroy(MonoObject* object, float time)
 	{
 		Event e;
 		LOG("Destroy ITEM gameobject %s", gameobject->GetName());
-		
+		LOG("Destroyed UUID %d", gameobject->GetUUID());
 		e.Set_event_data(EventType::EVENT_DELETE_GO, 0, time);
 		e.delete_go.Todelte = gameobject;
 		e.delete_go.uuid = gameobject->GetUUID();
@@ -1118,15 +1131,15 @@ void CSharpScript::Destroy(MonoObject* object, float time)
 
 MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* type)
 {
-	if (!CheckMonoObject(object))
-	{
-		return nullptr;
-	}
+	//if (!CheckMonoObject(object))
+	//{
+	//	return nullptr;
+	//}
 
-	if (current_game_object == nullptr)
-	{
-		return nullptr;
-	}
+	//if (current_game_object == nullptr)
+	//{
+	//	return nullptr;
+	//}
 
 	MonoType* t = mono_reflection_type_get_type(type);
 	MonoClass* class_temp_comp = mono_type_get_class(t);
@@ -1191,6 +1204,10 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	else if (name_class == "CompText")
 	{
 		comp_name = "CompText";
+	}
+	else if (name_class == "CompCanvas")
+	{
+		comp_name = "CompCanvas";
 	}
 	/* Scripts */
 	if (comp_name == "")
@@ -1260,51 +1277,40 @@ MonoObject* CSharpScript::GetParentGameObject(MonoObject* object)
 	return nullptr;
 }
 
-mono_bool CSharpScript::GetEnabled(MonoObject* object, MonoObject* gameobject)
+mono_bool CSharpScript::GetEnabled(MonoObject* object)
 {
-	if (gameobject != nullptr)
-	{
-		if (!CheckMonoObject(gameobject))
-		{
-			LOG("[error] MonoObject invalid");
-			return NULL;
-		}
-	}
-	else
-	{
-		current_game_object = own_game_object;
-	}
-	MonoClass* class_temp = mono_object_get_class(object);
-	std::string name_component = mono_class_get_name(class_temp);
-
-	Component* comp = current_game_object->GetComponentByName(name_component.c_str());
+	Component* comp = App->importer->iScript->GetComponentMono(object);
 	if (comp != nullptr)
 	{
 		return comp->GetEnabled();
+	}
+	else
+	{
+		MonoClass* class_temp = mono_object_get_class(object);
+		std::string name_component = mono_class_get_name(class_temp);
+		CSharpScript* temp = App->importer->iScript->GetScriptMono(object);
+		comp = temp->own_game_object->GetComponentByName(name_component.c_str());
+		if (comp != nullptr)
+		{
+			return comp->GetEnabled();
+		}
 	}
 	LOG("[error] MonoObject invalid");
 	return NULL;
 }
 
-void CSharpScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* gameobject)
+void CSharpScript::SetEnabled(MonoObject* object, mono_bool active)
 {
-	std::string name = mono_class_get_name(mono_object_get_class(object));
-	if (gameobject != nullptr)
-	{
-		if (!CheckMonoObject(gameobject))
-		{
-			LOG("[error] MonoObject invalid");
-			return;
-		}
-	}
-	else
-	{
-		current_game_object = own_game_object;
-	}
+	Component* comp = App->importer->iScript->GetComponentMono(object);
 	MonoClass* class_temp = mono_object_get_class(object);
 	std::string name_component = mono_class_get_name(class_temp);
+	if (comp == nullptr)
+	{
+		//comp = current_game_object->GetComponentByName(name_component.c_str());
+		CSharpScript* temp = App->importer->iScript->GetScriptMono(object);
+		comp = temp->own_game_object->GetComponentByName(name_component.c_str());
+	}
 
-	Component* comp = current_game_object->GetComponentByName(name_component.c_str());
 	if (comp != nullptr && comp->GetEnabled() != active)
 	{
 		if (comp->GetType() != Comp_Type::C_SCRIPT)
@@ -1357,8 +1363,13 @@ void CSharpScript::SetEnabled(MonoObject* object, mono_bool active, MonoObject* 
 
 MonoObject* CSharpScript::Find(MonoObject * object, MonoString * name)
 {
+	GameObject* current = App->importer->iScript->GetGameObject(object);
+	if (current == nullptr)
+	{
+		return nullptr;
+	}
 	GameObject* found = nullptr;
-	found = current_game_object->GetChildbyName(mono_string_to_utf8(name));
+	found = current->GetChildbyName(mono_string_to_utf8(name));
 	return App->importer->iScript->GetMonoObject(found);
 }
 

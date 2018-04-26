@@ -12,6 +12,8 @@
 #include "jpPhysicsWorld.h"
 #include "GL3W/include/glew.h"
 
+#include "ModuleInput.h"
+
 ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
@@ -76,14 +78,17 @@ bool ModulePhysics::Start()
 // -----------------------------------------------------------------
 update_status ModulePhysics::PreUpdate(float dt)
 {
+	BROFILER_CATEGORY("PreUpdate: ModulePhysics", Profiler::Color::Blue);
 	perf_timer.Start();
 	// Update Physics World
 	if (dt > 0) {
 		did_simulation = physics_world->Simulate(dt);
+		simulation_done = false;
 	}
 	else
 	{
 		did_simulation = false;
+		simulation_done = true;
 	}
 	preUpdate_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
@@ -91,19 +96,64 @@ update_status ModulePhysics::PreUpdate(float dt)
 
 update_status ModulePhysics::Update(float dt)
 {
+	BROFILER_CATEGORY("Update: ModulePhysics", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (dt > 0)
 	{
 		physics_world->StopSimulation();
+		simulation_done = true;
 	}
 
+	/*
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_STATE::KEY_DOWN)
+	{
+		GameObject* ret = nullptr;
+		physx::PxRaycastBuffer hit;
+		for (uint j = 1; j < 3; j++)
+		{
+			for (uint i = 0; i < 140; i++)
+			{
+				mScene->raycast(physx::PxVec3(0, 5 + 25.4*j, 12.7 + 12.7* i), physx::PxVec3(1, 0, 0), 5000.f, hit);
+				while (hit.hasBlock)
+				{
+					std::map<physx::PxRigidActor*, Component*>::const_iterator pair = colliders.find(hit.block.actor);
+					Component* comp = pair->second;
+					if (comp->GetType() == Comp_Type::C_COLLIDER)
+					{
+						comp->SetDelete(true);
+						DeleteCollider(comp, ((CompCollider*)comp)->body);
+						((CompCollider*)comp)->body = nullptr;
+					}
+
+					mScene->raycast(physx::PxVec3(0, 5 + 25.4*j, 12.7 + 12.7* i), physx::PxVec3(1, 0, 0), 5000.f, hit);
+				}
+
+				mScene->raycast(physx::PxVec3(12.7 + 12.7* i, 5 + 25.4*j, 0), physx::PxVec3(0, 0, 1), 5000.f, hit);
+				while (hit.hasBlock)
+				{
+					std::map<physx::PxRigidActor*, Component*>::const_iterator pair = colliders.find(hit.block.actor);
+					Component* comp = pair->second;
+					if (comp->GetType() == Comp_Type::C_COLLIDER)
+					{
+						comp->SetDelete(true);
+						DeleteCollider(comp, ((CompCollider*)comp)->body);
+						((CompCollider*)comp)->body = nullptr;
+					}
+
+					mScene->raycast(physx::PxVec3(12.7 + 12.7* i, 5 + 25.4*j, 0), physx::PxVec3(0, 0, 1), 5000.f, hit);
+				}
+			}	
+			
+		}
+	}*/
 	Update_t = perf_timer.ReadMs();
 	return UPDATE_CONTINUE;
 }
 
 update_status ModulePhysics::PostUpdate(float dt)
 {
+	BROFILER_CATEGORY("PostUpdate: ModulePhysics", Profiler::Color::Blue);
 	perf_timer.Start();
 
 	if (!App->mode_game)
@@ -144,7 +194,7 @@ bool ModulePhysics::CleanUp()
 {
 	LOG("Cleaning Physics");
 
-	if (physics_world)
+	if (physics_world && !simulation_done)
 	{
 		physics_world->StopSimulation();
 	}
@@ -164,6 +214,8 @@ bool ModulePhysics::SetEventListenrs()
 
 void ModulePhysics::OnEvent(Event & event)
 {
+	BROFILER_CATEGORY("OnEvent: ModulePhysics", Profiler::Color::Blue);
+
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_TRIGGER_COLLISION:
@@ -415,7 +467,7 @@ GameObject * ModulePhysics::RayCast(float3 origin, float3 direction, float dista
 		direction.Normalize();
 		physx::PxRaycastBuffer hit;
 		mScene->raycast(physx::PxVec3(origin.x, origin.y, origin.z), physx::PxVec3(direction.x, direction.y, direction.z), distance, hit);
-		if (hit.hasBlock)
+		if (hit.hasBlock && (hit.block.shape->getFlags() & physx::PxShapeFlag::eSIMULATION_SHAPE))
 		{
 			std::map<physx::PxRigidActor*, Component*>::const_iterator pair = colliders.find(hit.block.actor);
 			ret = pair._Ptr->_Myval.second->GetParent();

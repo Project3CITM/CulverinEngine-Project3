@@ -6,6 +6,7 @@
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
 #include "ModuleEventSystemV2.h"
+#include "ModuleGUI.h"
 
 Project::Project()
 {
@@ -212,7 +213,14 @@ void Project::ShowProject()
 		App->fs->GetAllFiles(directory_see, files);
 	}
 
-	Files_Update(files);
+	if (DEBUGMODE)
+	{
+		Files_UpdateDebug(files);
+	}
+	else
+	{
+		Files_Update(files);
+	}
 
 	EndDock();
 }
@@ -495,6 +503,185 @@ void Project::Files_Update(const std::vector<FilesNew>& files)
 		{
 			if (i + 1 < files.size())
 				ImGui::SameLine();
+		}
+		if (ImGui::BeginPopupContextItem("rename context menu"))
+		{
+			ImGui::Text("Edit name:");
+			ImGui::InputText("##edit2", files[i].file_name, 50, ImGuiInputTextFlags_ReadOnly);
+			//ImGui::InputText("##edit2", folders[i].file_name, 256);
+			ImGui::Spacing();
+			if (ImGui::Button("Create New Folder"))
+			{
+				std::string newFolder = GetDirectory();
+				newFolder += "/";
+				newFolder += "New Folder";
+				App->fs->CreateFolder(newFolder.c_str(), true);
+				ImGui::CloseCurrentPopup();
+				UpdateNow();
+			}
+			ImGui::Spacing();
+
+			if (ImGui::Button("Remove"))
+			{
+				if (i < folders.size()) // TODO ELLIOT 
+				{
+					if (folders[i].have_something)
+					{
+						//App->fs->GetUUIDFromFile(files[i].directory_name, App->resource_manager->files_to_delete);
+					}
+				}
+				App->fs->GetUUIDFromFile(files[i].directory_name, App->resource_manager->files_to_delete);
+				std::experimental::filesystem::remove_all(files[i].directory_name);
+				std::string meta = files[i].directory_name;
+				meta += ".meta.json";
+				std::experimental::filesystem::remove_all(meta);
+				UpdateNow();
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+	}
+	ImGui::SetWindowFontScale(1);
+}
+
+void Project::Files_UpdateDebug(const std::vector<FilesNew>& files)
+{
+	ImGui::SetWindowFontScale(0.9);
+	uint width = DISTANCEBUTTONS;
+	float size_test = 0.0f;
+	for (int i = 0; i < files.size(); i++)
+	{
+		ImGui::PushID(i);
+		if (filter.PassFilter(files[i].file_name) == false)
+		{
+			ImGui::PopID();
+			continue;
+		}
+
+		switch (files[i].file_type)
+		{
+		case TYPE_FILE::NON:
+		{
+			ImGui::Selectable(files[i].file_name);
+
+			break;
+		}
+		case TYPE_FILE::FOLDER:
+		{
+			ImGui::Selectable(files[i].file_name);
+			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+			{
+				//LOG("%.2f - %.2f  / /  %.2f - %.2f", ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y, ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y);
+				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+				{
+					//ChangefileViwer(files[i].parentFolder->folder_child, files[i].file_name);
+					directory_see = files[i].directory_name;
+					update_files_now = true;
+					update_folders_now = true;
+				}
+			}
+			break;
+		}
+		case TYPE_FILE::FBX:
+		{
+			ImGui::Selectable(files[i].file_name);
+			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+			{
+				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+				{
+					std::string directory_prebaf = GetDirectory();
+					directory_prebaf += "/";
+					directory_prebaf += files[i].file_name;
+					directory_prebaf += ".meta.json";
+					App->json_seria->LoadPrefab(directory_prebaf.c_str());
+					directory_prebaf.clear();
+				}
+			}
+			break;
+		}
+		case TYPE_FILE::PREFAB:
+		{
+			ImGui::Selectable(files[i].file_name);
+			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+			{
+				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+				{
+					std::string directory_prebaf = App->fs->GetMainDirectory();
+					directory_prebaf += "/";
+					directory_prebaf += files[i].file_name;
+					App->json_seria->LoadPrefab(directory_prebaf.c_str());
+					directory_prebaf.clear();
+				}
+			}
+			break;
+		}
+		case TYPE_FILE::OBJ:
+		{
+			ImGui::Selectable(files[i].file_name);
+			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+			{
+				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+				{
+					std::string directory_prebaf = GetDirectory();
+					directory_prebaf += "/";
+					directory_prebaf += files[i].file_name;
+					directory_prebaf += ".meta.json";
+					App->json_seria->LoadPrefab(directory_prebaf.c_str());
+					directory_prebaf.clear();
+				}
+			}
+			break;
+		}
+		case TYPE_FILE::SCRIPT:
+		{
+			ImGui::Selectable(files[i].file_name);
+			break;
+		}
+		case TYPE_FILE::PNG:
+		{
+			ImGui::Selectable(files[i].file_name);
+			break;
+		}
+		case TYPE_FILE::JPG:
+		{
+			ImGui::Selectable(files[i].file_name);
+			break;
+		}
+		case TYPE_FILE::SHADER:
+		{
+			ImGui::Selectable(files[i].file_name);
+			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+			{
+				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+				{
+
+				}
+
+			}
+			break;
+		}
+
+		case TYPE_FILE::SCENE:
+		{
+			ImGui::Selectable(files[i].file_name);
+			if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()))
+			{
+				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsMouseHoveringWindow())
+				{
+					// Set new Scene and before change scene, check if he want save scene.
+					App->scene->DeleteAllGameObjects(App->scene->root); //TODO->Elliot
+					ClearEvents(EventType::EVENT_DRAW);
+					std::string directory_scene = GetDirectory();
+					directory_scene += "/";
+					directory_scene += files[i].file_name;
+					App->WantToLoad();
+					App->SetActualScene(directory_scene.c_str());
+					//App->resource_manager->ReImportAllScripts();
+				}
+			}
+			break;
+		}
 		}
 		if (ImGui::BeginPopupContextItem("rename context menu"))
 		{

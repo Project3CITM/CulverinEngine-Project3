@@ -34,7 +34,6 @@ int main(int argc, char ** argv)
 
 	if (argc > 1)
 	{
-		return EXIT_SUCCESS;
 		std::string make_build;
 		std::string destination;
 		std::string build_name;
@@ -124,7 +123,7 @@ int main(int argc, char ** argv)
 
 		while (state != MAIN_EXIT)
 		{
-			//BROFILER_FRAME("MAIN");
+			BROFILER_FRAME("MAIN");
 			switch (state)
 			{
 			case MAIN_CREATION:
