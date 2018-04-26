@@ -3,6 +3,16 @@ using CulverinEditor.Debug;
 
 public class JaimeCD_Left : CoolDown
 {
+    JaimeController jaime_controller;
+
+    public override void Start()
+    {
+        //Link to the external jaime_obj 
+        jaime_controller = GetLinkedObject("jaime_obj").GetComponent<JaimeController>();
+
+        base.Start();
+    }
+
     public override void Update()
     {
         base.Update();
@@ -10,12 +20,12 @@ public class JaimeCD_Left : CoolDown
 
     public override void OnClick()
     {
-        if (GetLinkedObject("jaime_obj").GetComponent<JaimeController>().GetState() == 0
-            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
+        if (jaime_controller.GetState() == 0
+            && characters_manager.changing == false)
         {
             if (in_cd == false)
             {
-                if (GetLinkedObject("jaime_obj").GetComponent<JaimeController>().OnLeftClick()) 
+                if (jaime_controller.OnLeftClick()) 
                 {
                     ActivateAbility();
                 }            
@@ -25,8 +35,6 @@ public class JaimeCD_Left : CoolDown
 
     public override void ActivateAbility()
     {
-        //this_obj.GetComponent
-        button_cd = GetLinkedObject("jaime_button_left").GetComponent<CompButton>();
         button_cd.Deactivate();
         act_time = 0.0f;
         in_cd = true;

@@ -6,12 +6,21 @@ public class DaenerysCD_Secondary : CoolDown
     public bool daenerys_dead = false;
     public GameObject daenerys_secondary_cd_text;
 
-    void Start()
+    DaenerysController daenerys_controller;
+
+    public override void Start()
     {
         daenerys_dead = false;
 
         daenerys_secondary_cd_text = GetLinkedObject("daenerys_secondary_cd_text");
-        ResetTextTimer(daenerys_secondary_cd_text);
+
+        LinkTextTimer(daenerys_secondary_cd_text);
+        ResetTextTimer();
+
+        //Link to the external daenerys_obj 
+        daenerys_controller = GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>();
+
+        base.Start();
     }
 
     public override void Update()
@@ -23,13 +32,13 @@ public class DaenerysCD_Secondary : CoolDown
             //Manage Seconds Counter
             if (in_cd)
             {
-                ManageTextTimer(daenerys_secondary_cd_text);
+                ManageTextTimer();
             }
 
             //Reset Seconds Counter
             if (reset_timer)
             {
-                ResetTextTimer(daenerys_secondary_cd_text);
+                ResetTextTimer();
                 reset_timer = false;
             }
         }
@@ -37,12 +46,12 @@ public class DaenerysCD_Secondary : CoolDown
 
     public override void OnClick()
     {
-        if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().GetState() == 0
-            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
+        if (daenerys_controller.GetState() == 0
+            && characters_manager.changing == false)
         {
             if (in_cd == false)
             {
-                if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().OnSecondaryClick())
+                if (daenerys_controller.OnSecondaryClick())
                 {
                     ActivateAbility();
                 }
@@ -52,15 +61,14 @@ public class DaenerysCD_Secondary : CoolDown
 
     public override void ActivateAbility()
     {
-        button_cd = GetLinkedObject("daenerys_s_button_obj").GetComponent<CompButton>();
         button_cd.Deactivate();
         act_time = 0.0f;
         prev_seconds = 1000;
         in_cd = true;
 
         //SET COOLDOWN TO 1 SECOND
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
-            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_cds)
+        if (characters_manager.god_mode ||
+            characters_manager.no_cds)
         {
             cd_time = 1.0f;
         }
@@ -69,7 +77,7 @@ public class DaenerysCD_Secondary : CoolDown
     public void Die()
     {
         daenerys_dead = true;
-        ResetTextTimer(daenerys_secondary_cd_text);
-        GetComponent<CompImage>().FillAmount(1.0f);
+        ResetTextTimer();
+        fill_image.FillAmount(1.0f);
     }
 }
