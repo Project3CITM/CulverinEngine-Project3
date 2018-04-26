@@ -18,6 +18,7 @@ CompSlider::CompSlider(Comp_Type t, GameObject * parent) : CompInteractive (t, p
 {
 	uid = App->random->Int();
 	name_component = "CompSlider";
+	dragable = true;
 }
 
 CompSlider::CompSlider(const CompImage & copy, GameObject * parent) : CompInteractive(Comp_Type::C_SLIDER, parent)
@@ -315,7 +316,35 @@ void CompSlider::SyncSliderComponents()
 
 void CompSlider::OnDrag(Event event_input)
 {
-	float2 mous_pos = event_input.pointer.position;
+	if (slide_bar == nullptr)
+		return;
+	if (IsPressed())
+	{
+
+		float4 rect = slide_bar->GetRectTrasnform()->GetGlobalRect();
+
+		float mouse_x = event_input.pointer.position.x;
+		LOG("mouse %f", mouse_x);
+		LOG("min %f", rect.x);
+		LOG("max %f", rect.x + rect.z);
+
+		if (mouse_x < rect.x)
+			fill = 0.0f;
+		else if (mouse_x > rect.x + rect.z)
+			fill = 1.0f;
+		else
+		{
+			float a = mouse_x - rect.x;
+			float b = (rect.x + rect.z) - rect.x;
+			fill = (a / b);
+		}
+		LOG("fill %f", fill);
+
+		SetNewPositions();
+
+	}
+
+	/*float2 mous_pos = event_input.pointer.position;
 	int new_x = 0;
 	if (mous_pos.x > min_pos && mous_pos.x < max_pos)
 	{
@@ -332,7 +361,7 @@ void CompSlider::OnDrag(Event event_input)
 			new_x = min_pos;
 		}
 		image->GetRectTrasnform()->SetPos(float3(new_x,mous_pos.y, 0));
-	}
+	}*/
 }
 
 void CompSlider::SetSliderBg(CompImage * bg)

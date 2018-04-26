@@ -726,7 +726,10 @@ CompInteractive * CompInteractive::FindNavigationOnUp()
 
 void CompInteractive::OnDrag(Event event_input)
 {
-	image->GetRectTrasnform()->SetPos(float3(event_input.pointer.position.x, event_input.pointer.position.y, 0));
+	if (IsPressed())
+	{
+		image->GetRectTrasnform()->SetPos(float3(event_input.pointer.position.x, event_input.pointer.position.y, 0));
+	}
 }
 
 CompInteractive * CompInteractive::FindNavigationOnDown()

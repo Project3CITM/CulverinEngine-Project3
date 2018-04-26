@@ -251,6 +251,10 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 							mouse_down = false;
 							break;
 						case EventType::EVENT_MOUSE_MOTION:
+							if ((*it)->IsDragrable())
+							{
+								(*it)->OnDrag(this_event);
+							}
 							(*it)->OnPointExit(this_event);
 							break;
 						}
