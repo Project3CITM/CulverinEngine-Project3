@@ -88,6 +88,7 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="Miscellanea\SwapScene.cs" />
     <Compile Include="Player\Fountain.cs" />
     <Compile Include="DebugSceneChanger.cs" />
     <Compile Include="Player\UI\LeftMana.cs" />
