@@ -1785,10 +1785,12 @@ void GameObject::AddComponent(Component* new_component, uint position)
 	if (position > this->GetNumComponents())
 	{
 		components.push_back(new_component);
+		new_component->SetParent(this);
 	}
 	else
 	{
 		components.push_back(new_component);
+		new_component->SetParent(this);
 		for (int i = 1, fir = components.size() - 2, sec = components.size() - 1; i < components.size(); i++, fir--, sec--)
 		{
 			std::iter_swap(components.begin() + fir, components.begin() + sec);

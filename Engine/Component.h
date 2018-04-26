@@ -99,6 +99,7 @@ public:
 	float3 GetGameObjectPos() const;
 
 	GameObject* GetParent()const;
+	void SetParent(GameObject* new_parent);
 
 private:
 	Comp_Type type = C_UNKNOWN;

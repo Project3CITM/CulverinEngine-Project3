@@ -100,6 +100,14 @@ GameObject* Component::GetParent() const
 	return parent;
 }
 
+void Component::SetParent(GameObject * new_parent)
+{
+	if (new_parent != nullptr)
+	{
+		parent = new_parent;
+	}
+}
+
 void Component::SetActive(bool active)
 {
 	this->active = active;
