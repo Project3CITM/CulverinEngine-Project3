@@ -91,7 +91,7 @@ void Material::Save()
 
 		RELEASE_ARRAY(num);
 
-		if (textures[i].value != nullptr && textures[i].value->GetTextureID() != App->renderer3D->id_checkImage)
+		if (textures[i].value != nullptr )
 		{
 			json_object_dotset_number_with_std(object, name + mat_name, textures[i].value->GetUUID());
 		}

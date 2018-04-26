@@ -107,6 +107,8 @@ bool ModuleShaders::CleanUp()
 		(*item).second->Save();
 
 	}
+	RELEASE(App->renderer3D->default_texture);
+	RELEASE(App->renderer3D->default_material);
 	return true;
 }
 
