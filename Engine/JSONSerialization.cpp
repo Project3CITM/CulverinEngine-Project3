@@ -238,7 +238,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		//Sync components
 		for (int i = 0; i < num_objects; i++)
 		{
-			scene_ptr[i].go->SyncComponents(nullptr);
+			scene_ptr[i].go->SyncComponents(App->scene->root);
 		}
 
 		//Add static objects to scene

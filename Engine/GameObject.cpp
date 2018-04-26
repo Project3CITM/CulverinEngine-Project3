@@ -1963,6 +1963,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		case Comp_Type::C_IMAGE:
 			this->AddComponent(Comp_Type::C_IMAGE);
 			break;
+		case Comp_Type::C_SLIDER:
+			this->AddComponent(Comp_Type::C_SLIDER);
+			break;
 		case Comp_Type::C_SCRIPT:
 			this->AddComponent(Comp_Type::C_SCRIPT, true);
 			break;

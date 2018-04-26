@@ -238,6 +238,7 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
 	for (int i = 0; i < 3; i++)
 	{
 		std::string resource_count = std::to_string(i);
@@ -259,6 +260,7 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
 		}
 	}
+
 	App->fs->json_array_dotset_float4(object, name + "Normal Color", normal_color);
 	App->fs->json_array_dotset_float4(object, name + "Highlighted Color", highlighted_color);
 	App->fs->json_array_dotset_float4(object, name + "Pressed Color", pressed_color);
@@ -279,6 +281,47 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 	}
 
 
+	json_object_dotset_number_with_std(object, name + "Selection Mode", current_selection_state);
+	json_object_dotset_number_with_std(object, name + "Transition Mode", current_transition_mode);
+	json_object_dotset_number_with_std(object, name + "Navigation Mode", navigation.current_navigation_mode);
+
+	if (navigation.interactive_up != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive up", navigation.interactive_up->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive up", 0);
+
+	}
+	if (navigation.interactive_down != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive down", navigation.interactive_down->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive down", 0);
+
+	}
+	if (navigation.interactive_right != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive right", navigation.interactive_right->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive right", 0);
+
+	}
+	if (navigation.interactive_left != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive left", navigation.interactive_left->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive left", 0);
+	}
+
+
 }
 
 void CompInteractive::Load(const JSON_Object * object, std::string name)
@@ -289,7 +332,7 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 	{
 		std::string resource_count = std::to_string(i);
 
-		uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID "+ resource_count);
+		uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID " + resource_count);
 		if (resourceID > 0)
 		{
 			sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
@@ -306,29 +349,39 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 			}
 		}
 	}
-	normal_color=App->fs->json_array_dotget_float4_string(object, name + "Normal Color");
-	highlighted_color=App->fs->json_array_dotget_float4_string(object, name + "Highlighted Color");
-	pressed_color=App->fs->json_array_dotget_float4_string(object, name + "Pressed Color");
-	disabled_color=App->fs->json_array_dotget_float4_string(object, name + "Disabled Color");
-	desired_color=App->fs->json_array_dotget_float4_string(object, name + "Desired Color");
-	color_multiply= json_object_dotget_number_with_std(object, name + "Color Multiply");
-	fade_duration=json_object_dotget_number_with_std(object, name + "Fade Duration");
-	no_fade=json_object_dotget_boolean_with_std(object, name + "Fade Active");
-	start_transition=json_object_dotget_boolean_with_std(object, name + "Transition Start");
-	target_graphic_uid=json_object_dotget_number_with_std(object, name + "Graphic UUID");
+	normal_color = App->fs->json_array_dotget_float4_string(object, name + "Normal Color");
+	highlighted_color = App->fs->json_array_dotget_float4_string(object, name + "Highlighted Color");
+	pressed_color = App->fs->json_array_dotget_float4_string(object, name + "Pressed Color");
+	disabled_color = App->fs->json_array_dotget_float4_string(object, name + "Disabled Color");
+	desired_color = App->fs->json_array_dotget_float4_string(object, name + "Desired Color");
+	color_multiply = json_object_dotget_number_with_std(object, name + "Color Multiply");
+	fade_duration = json_object_dotget_number_with_std(object, name + "Fade Duration");
+	no_fade = json_object_dotget_boolean_with_std(object, name + "Fade Active");
+	start_transition = json_object_dotget_boolean_with_std(object, name + "Transition Start");
+	target_graphic_uid = json_object_dotget_number_with_std(object, name + "Graphic UUID");
+
+	current_selection_state = static_cast<SelectionStates>((int)json_object_dotget_number_with_std(object, name + "Selection Mode"));
+	current_transition_mode = static_cast<Transition>((int)json_object_dotget_number_with_std(object, name + "Transition Mode"));
+	navigation.current_navigation_mode = static_cast<Navigation::NavigationMode>((int)json_object_dotget_number_with_std(object, name + "Navigation Mode"));
+
+	navigation.inteactive_up_uid = json_object_dotget_number_with_std(object, name + "Interactive up");
+	navigation.inteactive_down_uid = json_object_dotget_number_with_std(object, name + "Interactive down");
+	navigation.inteactive_right_uid = json_object_dotget_number_with_std(object, name + "Interactive right");
+	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive left");
 
 	Enable();
 }
 void CompInteractive::SyncComponent(GameObject* sync_parent)
 {
-	if (target_graphic_uid != 0)
-	{
-		SetTargetGraphic((CompGraphic*)parent->FindComponentByUUID(target_graphic_uid));
-	}
-	std::vector<Component*> script_vec;
-
 	if (sync_parent != nullptr)
 	{
+		if (target_graphic_uid != 0)
+		{
+			SetTargetGraphic((CompGraphic*)sync_parent->GetComponentsByUID(target_graphic_uid,true));
+		}
+		std::vector<Component*> script_vec;
+
+	
 		if (navigation.inteactive_up_uid != 0)
 		{
 			navigation.interactive_up = (CompInteractive*)sync_parent->GetComponentsByUID(navigation.inteactive_up_uid, true);
@@ -393,19 +446,6 @@ void CompInteractive::SyncComponent(GameObject* sync_parent)
 			navigation.interactive_left->navigation.assigned_to_me.push_back(this);
 
 		}
-	}
-	
-	if (GetType() == Comp_Type::C_BUTTON)
-	{
-		static_cast<CompButton*>(this)->SyncScript();
-	}
-	if (GetType() == Comp_Type::C_SLIDER)
-	{
-		static_cast<CompCheckBox*>(this)->SyncScript();
-	}
-	if (GetType() == Comp_Type::C_SLIDER)
-	{
-		static_cast<CompSlider*>(this)->SyncSliderComponents();
 	}
 }
 bool CompInteractive::IsActivate()const

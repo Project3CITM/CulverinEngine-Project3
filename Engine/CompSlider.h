@@ -20,8 +20,10 @@ public:
 
 	void Load(const JSON_Object * object, std::string name);
 
-	void SyncSliderComponents();
+	void SyncComponent(GameObject * sync_parent);
 
+	void SyncSliderComponents(GameObject* sync_parent);
+	void SyncBar();
 	void OnDrag(Event event_input);
 	void SetSliderBg(CompImage*bg);
 	void SetSliderBar(CompImage*bar);
@@ -41,7 +43,7 @@ private:
 	CompImage * slide_bar = nullptr;
 	uint uuid_reimported_slide_bar = 0;
 
-	float fill = 1.0f;
+	float fill = 0.5f;
 };
 
 #endif
