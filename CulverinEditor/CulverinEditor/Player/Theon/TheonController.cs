@@ -60,6 +60,8 @@ public class TheonController : CharacterController
 
     protected override void Start()
     {
+        base.Start();
+
         SetPosition(Position.BEHIND_LEFT);
 
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
@@ -445,8 +447,8 @@ public class TheonController : CharacterController
 
     public void PrepareLeftAbility()
     {
-        button = theon_button_left.GetComponent<CompButton>();
-        button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
+        //button = theon_button_left.GetComponent<CompButton>();
+        //button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
     public void DoLeftAbility() //Might be virtual
@@ -528,8 +530,8 @@ public class TheonController : CharacterController
 
     public void PrepareRightAbility()
     {
-        button = theon_button_right.GetComponent<CompButton>();
-        button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
+        //button = theon_button_right.GetComponent<CompButton>();
+        //button.Clicked(); // This will execute Cooldown & Weapon OnClick Methods
     }
 
     public void DoRightAbility() //Might be virtual

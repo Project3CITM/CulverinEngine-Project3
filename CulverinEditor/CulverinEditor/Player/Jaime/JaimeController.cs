@@ -69,6 +69,8 @@ public class JaimeController : CharacterController
 
     protected override void Start()
     {
+        base.Start();
+
         // LINK VARIABLES TO GAMEOBJECTS OF THE SCENE
         jaime_obj = GetLinkedObject("jaime_obj");
         larm_jaime_obj = GetLinkedObject("larm_jaime_obj");
@@ -454,8 +456,8 @@ public class JaimeController : CharacterController
 
     public void PrepareLeftAbility()
     {
-        button = jaime_button_left.GetComponent<CompButton>();
-        button.Clicked(); // This will execute LeftCooldown  
+        //button = jaime_button_left.GetComponent<CompButton>();
+        //button.Clicked(); // This will execute LeftCooldown  
     }
 
     public bool OnLeftClick()
@@ -626,8 +628,8 @@ public class JaimeController : CharacterController
 
     public void PrepareRightAbility()
     {
-        button = jaime_button_right.GetComponent<CompButton>();
-        button.Clicked(); // This will execute RightCooldown    
+        //button = jaime_button_right.GetComponent<CompButton>();
+        //button.Clicked(); // This will execute RightCooldown    
     }
 
     public bool OnRightClick()
