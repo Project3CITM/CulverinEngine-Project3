@@ -3,13 +3,14 @@
 #include "CompTransform.h"
 #include "MathGeoLib.h"
 #include "Application.h"
+#include "JSONSerialization.h"
 #include "Scene.h"
 #include "ModuleFS.h"
 #include "ModuleRenderer3D.h"
 #include "GameObject.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
-#include"ModuleWindow.h"
+#include "ModuleWindow.h"
 #include "SDL\include\SDL_opengl.h"
 #include <math.h>
 
@@ -623,17 +624,85 @@ void CompCamera::Load(const JSON_Object * object, std::string name)
 	frustum.farPlaneDistance = json_object_dotget_number_with_std(object, name + "Far Plane");
 	frustum.verticalFov = json_object_dotget_number_with_std(object, name + "Vertical Pov");
 
+	is_main = json_object_dotget_boolean_with_std(object, name + "Main Camera");
+
+	culling = json_object_dotget_boolean_with_std(object, name + "Culling");
+	cull_dynamics = json_object_dotget_boolean_with_std(object, name + "Dynamic Culling");
+
+	Enable();
+}
+
+void CompCamera::SyncComponent(GameObject * sync_parent)
+{
 	// Set output variables ----
 	near_plane = frustum.nearPlaneDistance;
 	far_plane = frustum.farPlaneDistance;
 	vertical_fov = frustum.verticalFov * RADTODEG; /* output variable in Degrees */
 	SetFov(vertical_fov);
 
-	is_main = json_object_dotget_boolean_with_std(object, name + "Main Camera");
 	SetMain(is_main);
+}
 
-	culling = json_object_dotget_boolean_with_std(object, name + "Culling");
-	cull_dynamics = json_object_dotget_boolean_with_std(object, name + "Dynamic Culling");
+void CompCamera::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);				//UID
+	
+	buffer_size += sizeof(bool);			//Culling
+	buffer_size += sizeof(bool);			//Cull_dynamics
+	buffer_size += sizeof(bool);			//Is_Main
+
+	buffer_size += sizeof(float);			//near_plane
+	buffer_size += sizeof(float);			//far_plane
+	buffer_size += sizeof(float);			//vertical_fov
+
+	buffer_size += sizeof(float);			//Frustum Position
+	buffer_size += sizeof(float);			//Frustum Position
+	buffer_size += sizeof(float);			//Frustum Position
+
+	buffer_size += sizeof(float);			//Frustum Front
+	buffer_size += sizeof(float);			//Frustum Front
+	buffer_size += sizeof(float);			//Frustum Front
+
+	buffer_size += sizeof(float);			//Frustum Up
+	buffer_size += sizeof(float);			//Frustum Up
+	buffer_size += sizeof(float);			//Frustum Up
+}
+
+void CompCamera::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+
+	// Config options variables ---------
+	App->json_seria->SaveBooleanBinary(cursor, culling);
+	App->json_seria->SaveBooleanBinary(cursor, cull_dynamics);
+	App->json_seria->SaveBooleanBinary(cursor, is_main);
+
+	// Frustum variables --------
+	App->json_seria->SaveFloatBinary(cursor, frustum.nearPlaneDistance);
+	App->json_seria->SaveFloatBinary(cursor, frustum.farPlaneDistance);
+	App->json_seria->SaveFloatBinary(cursor, frustum.verticalFov);
+
+	// Transform variables ------
+	App->json_seria->SaveFloat3Binary(cursor, frustum.pos);
+	App->json_seria->SaveFloat3Binary(cursor, frustum.front);
+	App->json_seria->SaveFloat3Binary(cursor, frustum.up);
+}
+
+void CompCamera::LoadBinary(char ** cursor)
+{
+	culling = App->json_seria->LoadBooleanBinary(cursor);
+	cull_dynamics = App->json_seria->LoadBooleanBinary(cursor);
+	is_main = App->json_seria->LoadBooleanBinary(cursor);
+
+	frustum.nearPlaneDistance = App->json_seria->LoadFloatBinary(cursor);
+	frustum.farPlaneDistance = App->json_seria->LoadFloatBinary(cursor);
+	frustum.verticalFov = App->json_seria->LoadFloatBinary(cursor);
+
+	frustum.pos = App->json_seria->LoadFloat3Binary(cursor);
+	frustum.front = App->json_seria->LoadFloat3Binary(cursor);
+	frustum.up = App->json_seria->LoadFloat3Binary(cursor);
 
 	Enable();
 }

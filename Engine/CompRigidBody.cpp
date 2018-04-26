@@ -277,6 +277,37 @@ void CompRigidBody::Load(const JSON_Object * object, std::string name)
 
 void CompRigidBody::SyncComponent(GameObject* sync_parent)
 {
+	// Load Components Without Parent --------------------
+	if (!transform)
+	{
+		transform = parent->GetComponentTransform();
+	}
+
+	if (!body) 
+	{
+		collider_comp = (CompCollider*)parent->FindComponentByType(Comp_Type::C_COLLIDER);
+		if (collider_comp != nullptr)
+		{
+			body = collider_comp->GivePhysicsBody(this);
+			if (!body)
+			{
+				body = App->physics->GetNewRigidBody(this, true);
+				SetColliderPosition();
+			}
+			else
+			{
+				App->physics->ChangeRigidActorToDynamic(body, this);
+			}
+			collider_comp->SetFilterFlags();
+		}
+		else
+		{
+			body = App->physics->GetNewRigidBody(this, true);
+			SetColliderPosition();
+		}
+	}
+
+	// Sync Component ------------------------------------
 	body->SetAsKinematic(kinematic);
 
 	if (!kinematic)
