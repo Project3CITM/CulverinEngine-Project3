@@ -317,8 +317,10 @@ void CompMaterial::ShowInspectorInfo()
 	}
 
 	ImGui::Separator();
+	
 	ImGui::SliderFloat("Alpha", &material->alpha, 0.0f, 1.0f);
-	ImGui:Checkbox("Glow", &material->glow);
+	ImGui::Checkbox("Glow", &material->glow);
+	ImGui::Checkbox("CastShadows", &material->cast_shadows);
 	
 	if (ImGui::Combo("Blend Source type", (int*)&material->source_type,
 		"GL_ZERO\0GL_ONE\0GL_SRC_COLOR\0GL_ONE_MINUS_SRC_COLOR\0GL_DST_COLOR\0GL_ONE_MINUS_DST_COLOR\0GL_SRC_ALPHA\0GL_ONE_MINUS_SRC_ALPHA\0GL_DST_ALPHA\0GL_ONE_MINUS_DST_ALPHA\0GL_SRC_ALPHA_SATURATE\0GL_CONSTANT_COLOR\0GL_ONE_MINUS_CONSTANT_COLOR\0GL_CONSTANT_ALPHA\0GL_ONE_MINUS_CONSTANT_ALPHA"))

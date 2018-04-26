@@ -63,6 +63,9 @@ public:
 	//GLOW
 	bool glow = false;
 
+	//CAST SHADOW
+	bool cast_shadows = true;
+
 	//BLEND MODES
 	MaterialBlendModes source_type = MaterialBlendModes::MGlOne;
 	int m_source_type = GL_ONE; 

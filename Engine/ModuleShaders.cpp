@@ -612,6 +612,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 			material->GetProgramVariables();
 			uint num_textures = json_object_dotget_number_with_std(object, name + "Num Textures:");
 			material->glow = json_object_dotget_boolean_with_std(object, name + "Glow:");
+			material->cast_shadows = json_object_dotget_boolean_with_std(object, name + "CastShadow:");
 			material->alpha = json_object_dotget_number_with_std(object, name + "Alpha:");
 			material->m_source_type = json_object_dotget_number_with_std(object, name + "Source Blend:");
 			material->m_destiny_type = json_object_dotget_number_with_std(object, name + "Destiny Blend:");

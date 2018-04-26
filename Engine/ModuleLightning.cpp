@@ -343,7 +343,7 @@ void ModuleLightning::OnEvent(Event & event)
 
 				if (m == nullptr)
 					continue;
-				if (m->HasSkeleton())
+				if (m->HasSkeleton() || !m->GetMaterial()->material->cast_shadows)
 					continue;
 				if (App->renderer3D->active_camera == nullptr || (m->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos).Length() > projSize)
 					continue;
