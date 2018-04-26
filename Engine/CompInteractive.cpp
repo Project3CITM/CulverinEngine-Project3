@@ -397,7 +397,10 @@ void CompInteractive::SyncComponent(GameObject* sync_parent)
 	{
 		static_cast<CompButton*>(this)->SyncScript();
 	}
-
+	if (GetType() == Comp_Type::C_SLIDER)
+	{
+		static_cast<CompButton*>(this)->SyncScript();
+	}
 }
 bool CompInteractive::IsActivate()const
 {

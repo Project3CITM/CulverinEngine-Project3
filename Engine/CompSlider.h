@@ -15,10 +15,9 @@ public:
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
 
-	//void OnPointDown(Event event_input);
+	void LoadSliderMaterial(CompImage * sl_comp, uint id);
+
 	void OnDrag(Event event_input);
-	//bool PointerInside(float2 position);
-	//void OnClick();
 	void SetSliderBg(CompImage*bg);
 	void SetSliderBar(CompImage*bar);
 
@@ -33,6 +32,7 @@ private:
 	float max_pos = 0;
 	CompImage * slide_bg = nullptr;
 	CompImage * slide_bar = nullptr;
+	float fill = 1.0f;
 };
 
 #endif
