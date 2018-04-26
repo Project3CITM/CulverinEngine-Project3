@@ -71,7 +71,6 @@ public class EnemyShield_BT : Enemy_BT
 
     protected override void InCombatDecesion()
     {
-        Debug.Log("Shield timer" + shield_block_timer, Department.IA, Color.PINK);
         //Attack action
         if (InRange())
         {
@@ -84,9 +83,8 @@ public class EnemyShield_BT : Enemy_BT
                 return;
             }
 
-            else if (shield_block_timer >= shield_block_cd)
+            else if (shield_block_timer >= shield_block_cd && player.GetComponent<CharactersManager>().GetCurrentCharacterName() == "Jaime")
             {
-                Debug.Log("Tralaalaaaa", Department.IA, Color.PINK);
                 MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
                 Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
                 if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
@@ -119,8 +117,19 @@ public class EnemyShield_BT : Enemy_BT
         }
         else if (player_detected == true && Disable_Movement_Gameplay_Debbuger == false)
         {
-            GetComponent<ChasePlayer_Action>().ActionStart();
-            current_action = GetComponent<ChasePlayer_Action>();
+            if (player.GetComponent<CharactersManager>().GetCurrentCharacterName() == "Jaime")
+            {
+                GetComponent<ChasePlayer_Action>().SetBlocking(false);
+                GetComponent<ChasePlayer_Action>().ActionStart();
+                current_action = GetComponent<ChasePlayer_Action>();
+            }
+            else
+            {
+                GetComponent<ChasePlayer_Action>().SetBlocking(true);
+                GetComponent<ChasePlayer_Action>().ActionStart();
+                current_action = GetComponent<ChasePlayer_Action>();
+            }
+
             return;
         }
     }
@@ -170,7 +179,7 @@ public class EnemyShield_BT : Enemy_BT
         switch (life_state)
         {
             case ENEMY_STATE.ENEMY_ALIVE:
-                if (GetComponent<ShieldBlock_Action>().IsBlocking() == true)
+                if (GetComponent<ShieldBlock_Action>().IsBlocking() == true || GetComponent<ChasePlayer_Action>().IsBlocking() == true)
                 {
                     if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                     {
@@ -178,6 +187,7 @@ public class EnemyShield_BT : Enemy_BT
                     }
                     else
                     {
+                        GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
                         GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                     }
@@ -189,7 +199,7 @@ public class EnemyShield_BT : Enemy_BT
                 break;
 
             case ENEMY_STATE.ENEMY_DAMAGED:
-                if (GetComponent<ShieldBlock_Action>().IsBlocking() == true)
+                if (GetComponent<ShieldBlock_Action>().IsBlocking() == true || GetComponent<ChasePlayer_Action>().IsBlocking() == true)
                 {
                     if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                     {
@@ -197,6 +207,7 @@ public class EnemyShield_BT : Enemy_BT
                     }
                     else
                     {
+                        GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
                         GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
                     }

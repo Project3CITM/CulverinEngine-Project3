@@ -9,11 +9,15 @@ public class ChasePlayer_Action : Action
     ACTION_RESULT move_return;
     public bool forgot_event = false;
     public float check_player_timer = 1.0f;
+    public GameObject player;
     float timer = 0.0f;
+    private bool blocking = false;
 
     void Start()
     {
+        blocking = false;
         move = GetComponent<Movement_Action>();
+        player = GetLinkedObject("player");
     }
 
     public ChasePlayer_Action()
@@ -55,6 +59,19 @@ public class ChasePlayer_Action : Action
 
             if (timer >= check_player_timer && move.CenteredInTile())
             {
+                if (player.GetComponent<CharactersManager>().GetCurrentCharacterName() == "Jaime")
+                {
+                    GetComponent<CompAnimation>().PlayAnimationNode("Chase");
+                    SetBlocking(false);
+                    GetComponent<Movement_Action>().SetBlocking(false);
+                }
+                else
+                {
+                    GetComponent<CompAnimation>().PlayAnimationNode("BlockIdle");
+                    SetBlocking(true);
+                    GetComponent<Movement_Action>().SetBlocking(true);
+                }
+
                 timer = 0.0f;
 
                 Enemy_BT bt = GetComponent<EnemySword_BT>();
@@ -96,6 +113,16 @@ public class ChasePlayer_Action : Action
     public void SetInterupt(bool i)
     {
         interupt = i;
+    }
+
+    public void SetBlocking(bool value)
+    {
+        blocking = value;
+    }
+
+    public bool IsBlocking()
+    {
+        return blocking;
     }
 
 }

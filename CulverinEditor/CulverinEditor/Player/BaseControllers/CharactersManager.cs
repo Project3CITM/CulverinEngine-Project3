@@ -1190,5 +1190,10 @@ public class CharactersManager : CulverinBehaviour
         }
         
     }
+
+    public string GetCurrentCharacterName()
+    {
+        return current_character.GetName();
+    }
 }
 

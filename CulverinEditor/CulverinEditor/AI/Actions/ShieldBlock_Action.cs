@@ -7,6 +7,8 @@ class ShieldBlock_Action : Action
     float current_time = 0.0f;
     CompAnimation animator = null;
     private bool blocking = false;
+    public float decrease_block_timer_by_hit = 0.5f;
+    public GameObject player;
 
     public ShieldBlock_Action()
     {
@@ -16,12 +18,14 @@ class ShieldBlock_Action : Action
     public void Start()
     {
         animator = GetComponent<CompAnimation>();
+        player = GetLinkedObject("player");
     }
 
     public override bool ActionStart()
     {
         GetComponent<CompAnimation>().PlayAnimationNode("BlockIdle");
         blocking = true;
+        current_time = 0.0f;
         return true;
     }
 
@@ -30,6 +34,13 @@ class ShieldBlock_Action : Action
         current_time += Time.deltaTime;
 
         if(current_time >= block_duration)
+        {
+            blocking = false;
+            current_time = 0.0f;
+            return ACTION_RESULT.AR_SUCCESS;
+        }
+
+        if(player.GetComponent<CharactersManager>().GetCurrentCharacterName() != "Jaime")
         {
             blocking = false;
             current_time = 0.0f;
@@ -49,6 +60,11 @@ class ShieldBlock_Action : Action
     public bool IsBlocking()
     {
         return blocking;
+    }
+
+    public void DecreaseBlockTime()
+    {
+        current_time -= decrease_block_timer_by_hit;
     }
 }
 

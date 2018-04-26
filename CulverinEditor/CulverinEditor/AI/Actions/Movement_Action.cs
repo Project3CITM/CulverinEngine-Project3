@@ -61,6 +61,8 @@ public class Movement_Action : Action
 
     public float sideways_anim_speed = 1.5f;
 
+    private bool blocking = false;
+
     public Movement_Action()
     {
         action_type = ACTION_TYPE.MOVE_ACTION;
@@ -106,6 +108,8 @@ public class Movement_Action : Action
         GetComponent<CompAnimation>().SetClipDuration("WalkLeft", sideways_anim_speed);
         GetComponent<CompAnimation>().SetClipDuration("WalkBack", sideways_anim_speed);
         GetComponent<CompAnimation>().SetClipDuration("WalkFront", sideways_anim_speed);
+
+        blocking = false;
     }
 
     public override bool ActionStart()
@@ -114,6 +118,10 @@ public class Movement_Action : Action
         {
             GetComponent<CompAnimation>().SetTransition("ToPatrol");
             GetComponent<CompAnimation>().SetFirstActiveBlendingClip("Idle");
+        }
+        else if(blocking == true)
+        {
+            GetComponent<CompAnimation>().PlayAnimationNode("BlockIdle");
         }
         else
         {
@@ -740,5 +748,15 @@ public class Movement_Action : Action
                 case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
             }
         }
+    }
+
+    public void SetBlocking(bool value)
+    {
+        blocking = value;
+    }
+
+    public bool IsBlocking()
+    {
+        return blocking;
     }
 }
