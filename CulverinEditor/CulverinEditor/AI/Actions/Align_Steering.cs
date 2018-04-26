@@ -5,7 +5,7 @@ using CulverinEditor.Debug;
 public class Align_Steering : CulverinBehaviour
 {
     Movement_Action move;
-    public float rot_margin = 0.05f;
+    float rot_margin = 0.05f;
     public float slow_angle = 0.6f;
     float delta = 0.0f;
 
@@ -58,5 +58,12 @@ public class Align_Steering : CulverinBehaviour
     {
         return rot_margin;
     }
+
+    public void SetRotationVel(float rot)
+    {
+        rot_margin = rot;
+    }
+
+
 }
 
