@@ -387,8 +387,9 @@ void CompButton::SyncScript()
 		}
 
 	}
-	*/
+	
 	RELEASE_ARRAY(uid_linked_scripts);
+	*/
 }
 
 void CompButton::OnClick()

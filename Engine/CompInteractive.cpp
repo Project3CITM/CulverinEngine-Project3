@@ -512,7 +512,9 @@ void CompInteractive::OnInteractiveUnSelected(Event event_input)
 
 bool CompInteractive::PointerInside(float2 position)
 {
-	float4 rect = parent->GetComponentRectTransform()->GetGlobalRect();
+	if (target_graphic == nullptr)
+		return false;
+	float4 rect = target_graphic->GetParent()->GetComponentRectTransform()->GetGlobalRect();
 	ImGuiIO& io = ImGui::GetIO();
 	float mouse_x = position.x;
 	float mouse_y = position.y;
@@ -704,7 +706,6 @@ CompInteractive * CompInteractive::FindNavigationOnUp()
 	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
 	{
 		return navigation.interactive_up;
-
 	}
 	else
 	{
