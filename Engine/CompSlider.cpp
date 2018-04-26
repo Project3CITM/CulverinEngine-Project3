@@ -320,14 +320,22 @@ void CompSlider::OnDrag(Event event_input)
 		return;
 	if (IsPressed())
 	{
+		ImGuiIO& io = ImGui::GetIO();
 
 		float4 rect = slide_bar->GetRectTrasnform()->GetGlobalRect();
+		float mouse_x = 0.0f;
+		if (!App->mode_game)
+		{
+			mouse_x = event_input.pointer.position.x - GetPositionDock("Scene").x;
 
-		float mouse_x = event_input.pointer.position.x;
-		LOG("mouse %f", mouse_x);
-		LOG("min %f", rect.x);
-		LOG("max %f", rect.x + rect.z);
+			mouse_x = (mouse_x*io.DisplaySize.x) / GetSizeDock("Scene").x;
 
+		}
+		else
+		{
+			mouse_x = event_input.pointer.position.x;
+			
+		}
 		if (mouse_x < rect.x)
 			fill = 0.0f;
 		else if (mouse_x > rect.x + rect.z)
@@ -338,7 +346,6 @@ void CompSlider::OnDrag(Event event_input)
 			float b = (rect.x + rect.z) - rect.x;
 			fill = (a / b);
 		}
-		LOG("fill %f", fill);
 
 		SetNewPositions();
 
