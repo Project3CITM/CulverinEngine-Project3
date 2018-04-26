@@ -85,6 +85,7 @@ public:
 	// Components -----------------------------
 
 	Component* AddComponent(Comp_Type type, bool isFromLoader = false);
+	void AddComponent(Component* new_component, uint position);
 	void AddComponentCopy(const Component& copy);
 	int GetNumComponents() const;
 	Component* FindComponentByType(Comp_Type type) const;

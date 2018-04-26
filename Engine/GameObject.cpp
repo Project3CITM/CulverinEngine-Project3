@@ -1780,6 +1780,27 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 	return nullptr;
 }
 
+void GameObject::AddComponent(Component* new_component, uint position)
+{
+	if (position > this->GetNumComponents())
+	{
+		components.push_back(new_component);
+	}
+	else
+	{
+		components.push_back(new_component);
+		for (int i = 1, fir = components.size() - 2, sec = components.size() - 1; i < components.size(); i++, fir--, sec--)
+		{
+			std::iter_swap(components.begin() + fir, components.begin() + sec);
+			if (fir == position)
+			{
+				return;
+			}
+		}
+	}
+
+}
+
 void GameObject::AddComponentCopy(const Component& copy)
 {
 	switch (copy.GetType())
@@ -1902,36 +1923,30 @@ void GameObject::AddComponentCopy(const Component& copy)
 void GameObject::GetOwnBufferSize(uint & buffer_size)
 {
 	buffer_size += sizeof(int);			//identifier
-	buffer_size += sizeof(GetUUID());
-	int uuidParent = -1;
-	if (this->GetParent() != nullptr)
-	{
-		uuidParent = this->GetParent()->GetUUID();
-	}
-	buffer_size += sizeof(uuidParent);
+	buffer_size += sizeof(int);			//UID
+	buffer_size += sizeof(int);			//UID Parent
 	//Save name size
-	buffer_size += sizeof(int);			
+	buffer_size += sizeof(int);
 	buffer_size += name.size();
 	//Save Tag size
 	buffer_size += sizeof(int);
 	buffer_size += tag.size();
-	buffer_size += sizeof(bb_active);
-	buffer_size += sizeof(static_obj);
-	buffer_size += sizeof(animation_translations);
-	buffer_size += sizeof(animation_rotations);
-	buffer_size += sizeof(animation_scales);
+	buffer_size += sizeof(bool);		//IsAABBActive
+	buffer_size += sizeof(bool);		//IsStatic
+	buffer_size += sizeof(bool);		//AreTranslationsActivateds
+	buffer_size += sizeof(bool);		//AreRotationsActivateds
+	buffer_size += sizeof(bool);		//AreScalesActivateds
 
 	// Save Components size
-	//buffer_size += sizeof(components.size());
-	//for (uint i = 0; i < components.size(); i++)
-	//{
-	//	components[i]->GetOwnBufferSize(buffer_size);
-	//}
+	for (uint i = 0; i < components.size(); i++)
+	{
+		components[i]->GetOwnBufferSize(buffer_size);
+	}
 
-	//for (uint i = 0; i < childs.size(); i++)
-	//{
-	//	childs[i]->GetOwnBufferSize(buffer_size);
-	//}
+	for (uint i = 0; i < childs.size(); i++)
+	{
+		childs[i]->GetOwnBufferSize(buffer_size);
+	}
 }
 
 void GameObject::SaveComponents(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Application.h"
 #include "CompTransform.h"
+#include "JSONSerialization.h"
 
 Component::Component(Comp_Type t, GameObject* parent) :type(t), parent(parent), active(true)
 {
@@ -132,6 +133,42 @@ void Component::Load(const JSON_Object* object, std::string name)
 {
 }
 
+void Component::GetOwnBufferSize(uint & buffer_size)
+{
+	buffer_size += sizeof(int);			//identifier
+	buffer_size += sizeof(int);			//Type
+	buffer_size += sizeof(int);			//UID Parent
+	buffer_size += sizeof(int);			//position
+}
+
+void Component::SaveBinary(char ** cursor, int position) const
+{
+	// Identificator Component
+	App->json_seria->SaveIntBinary(cursor, IDENTIFICATOR_COMPONENT);
+	// Type Component--------
+	App->json_seria->SaveIntBinary(cursor, (int)type);
+	// UUID Parent --------
+	App->json_seria->SaveIntBinary(cursor, parent->GetUUID());
+	// Position in Parent --------
+	App->json_seria->SaveIntBinary(cursor, position);
+}
+
+LoadSceneCp Component::LoadBinary(char ** cursor)
+{
+	return LoadSceneCp();
+}
+
 void Component::SyncComponent(GameObject* sync_parent)
 {
 }
+
+
+/* 
+Base:
+- Identificator Component: IDENTIFICATOR_COMPONENT
+- Int: type
+- Int: UID parent
+- Int: position in parent
+In All Components SaveBinary Function:
+first put this line-> Component::SaveBinary(cursor, position);
+*/

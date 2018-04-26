@@ -10,6 +10,7 @@
 #include "Math/float4.h"
 
 class GameObject;
+class Component;
 class ResourceMaterial;
 class ResourceScript;
 class ResourceAnimation;
@@ -19,10 +20,18 @@ class InputAction;
 class PlayerActions;
 struct ReImport;
 struct AnimationJson;
+
 struct LoadSceneSt
 {
 	GameObject* go = nullptr;
-	int uid_parent;
+	uint uid_parent;
+};
+
+struct LoadSceneCp
+{
+	Component* comp = nullptr;
+	uint position_parent = 0;
+	uint uid_parent = 0;
 };
 
 class JSONSerialization
@@ -39,6 +48,13 @@ public:
 
 	// SAVE & LOAD SCENE BINARY --------------------------
 	std::string SaveSceneBinary();
+	void SaveChildGameObjectBinary(const GameObject& gameObject, char** cursor);
+
+	void LoadSceneBinary(std::string scene);
+	LoadSceneSt LoadGameObejctBinary(char** cursor);
+	LoadSceneCp LoadComponentsBinary(char** cursor);
+	void GetBufferSizeRoot(uint &buffer_size);
+
 	void SaveIntBinary(char** cursor, int value);
 	void SaveFloatBinary(char** cursor, float value);
 	void SaveBoolBinary(char** cursor, bool value);
@@ -47,6 +63,15 @@ public:
 	void SaveFloat2Binary(char** cursor, math::float2 value);
 	void SaveFloat3Binary(char** cursor, math::float3 value);
 	void SaveFloat4Binary(char** cursor, math::float4 value);
+
+	int LoadIntBinary(char** cursor);
+	float LoadFloatBinary(char** cursor);
+	bool LoadBoolBinary(char** cursor);
+	std::string LoadStringBinary(char** cursor);
+	void LoadConstCharBinary(char** cursor, const char** value);
+	math::float2 LoadFloat2Binary(char** cursor);
+	math::float3 LoadFloat3Binary(char** cursor);
+	math::float4 LoadFloat4Binary(char** cursor);
 	//void SaveChildGameObjectBinary(JSON_Object* config_node, const GameObject& gameObject, uint& count, uint& countResources);
 	//void LoadSceneBinary(const char* sceneName);
 	// --------------------------------------

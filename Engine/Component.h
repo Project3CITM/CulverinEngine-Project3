@@ -7,6 +7,7 @@
 #include "Math\Quat.h"
 #include <string>
 
+struct LoadSceneCp;
 struct json_object_t;
 typedef struct json_object_t JSON_Object;
 
@@ -71,6 +72,11 @@ public:
 	// LOAD - SAVE METHODS ------------------
 	virtual void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	virtual void Load(const JSON_Object* object, std::string name);
+
+	//Binary
+	virtual void GetOwnBufferSize(uint& buffer_size);
+	virtual void SaveBinary(char** cursor, int position) const;
+	virtual LoadSceneCp LoadBinary(char** cursor);
 	virtual void SyncComponent(GameObject* sync_parent);
 
 	// EDITOR METHODS -----------------
