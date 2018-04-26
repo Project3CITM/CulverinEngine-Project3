@@ -283,6 +283,8 @@ void Hierarchy::ShowOptions()
 			GameObject* slider = App->scene->CreateSlider(canvas);
 			GameObject* bg = App->scene->CreateImage(slider);
 			GameObject* bar = App->scene->CreateImage(slider);
+			GameObject* to_slide = App->scene->CreateImage(slider);
+
 			CompSlider* temp = (CompSlider*)slider->FindComponentByType(Comp_Type::C_SLIDER);
 
 			bg->GetComponentRectTransform()->SetWidth(400);
@@ -292,8 +294,8 @@ void Hierarchy::ShowOptions()
 
 			temp->SetSliderBg((CompImage*)bg->FindComponentByType(Comp_Type::C_IMAGE));
 			temp->SetSliderBar((CompImage*)bar->FindComponentByType(Comp_Type::C_IMAGE));
-			GameObject* to_slide = App->scene->CreateImage(slider);
-			temp->SetTargetGraphic((CompGraphic*)to_slide);
+			temp->SetTargetGraphic((CompGraphic*)to_slide->FindComponentByType(Comp_Type::C_IMAGE));
+
 			App->gui->SetLinkInspector(slider);
 		}
 		if (ImGui::MenuItem("Text"))

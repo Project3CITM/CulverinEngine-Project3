@@ -196,7 +196,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 			
 				bool positive_colision = false;
 				std::vector<CompInteractive*>::reverse_iterator it = iteractive_vector.rbegin();
-				for (; it != iteractive_vector.rend(); it++)
+				for (; it != iteractive_vector.rend(); ++it)
 				{
 					if (!(*it)->IsInteractiveEnabled())
 					{
@@ -232,7 +232,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 							mouse_down = false;
 							break;
 						case EventType::EVENT_MOUSE_MOTION:
-							if ((*it)->IsSelective())
+							if ((*it)->IsDragrable())
 							{
 								(*it)->OnDrag(this_event);
 							}

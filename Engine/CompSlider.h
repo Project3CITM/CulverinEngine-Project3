@@ -12,10 +12,15 @@ public:
 
 	void ShowOptions();
 	void ShowInspectorInfo();
+	void SetNewPositions();
+	void SetSlideBarPos();
+	void SetSlideBarBall();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
+	uint SaveSliderCompUID(CompImage *img) const;
+
 	void Load(const JSON_Object * object, std::string name);
 
-	void LoadSliderMaterial(CompImage * sl_comp, uint id);
+	void SyncSliderComponents();
 
 	void OnDrag(Event event_input);
 	void SetSliderBg(CompImage*bg);
@@ -31,7 +36,11 @@ private:
 	float min_pos = 0;
 	float max_pos = 0;
 	CompImage * slide_bg = nullptr;
+	uint uuid_reimported_slide_bg = 0;
+
 	CompImage * slide_bar = nullptr;
+	uint uuid_reimported_slide_bar = 0;
+
 	float fill = 1.0f;
 };
 

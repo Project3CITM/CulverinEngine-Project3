@@ -10,6 +10,8 @@
 #include "GameObject.h"
 #include "CompRectTransform.h"
 #include "CompButton.h"
+#include "CompCheckBox.h"
+#include "CompSlider.h"
 #include "ModuleFS.h"
 #include "Scene.h"
 #include "ModuleEventSystemV2.h"
@@ -399,7 +401,11 @@ void CompInteractive::SyncComponent(GameObject* sync_parent)
 	}
 	if (GetType() == Comp_Type::C_SLIDER)
 	{
-		static_cast<CompButton*>(this)->SyncScript();
+		static_cast<CompCheckBox*>(this)->SyncScript();
+	}
+	if (GetType() == Comp_Type::C_SLIDER)
+	{
+		static_cast<CompSlider*>(this)->SyncSliderComponents();
 	}
 }
 bool CompInteractive::IsActivate()const
@@ -407,9 +413,9 @@ bool CompInteractive::IsActivate()const
 	return disabled;
 }
 
-bool CompInteractive::IsSelective() const
+bool CompInteractive::IsDragrable() const
 {
-	return selective;
+	return dragable;
 }
 
 void CompInteractive::Activate()
@@ -518,7 +524,7 @@ bool CompInteractive::PointerInside(float2 position)
 {
 	if (target_graphic == nullptr)
 		return false;
-	float4 rect = target_graphic->GetParent()->GetComponentRectTransform()->GetGlobalRect();
+	float4 rect = target_graphic->GetRectTrasnform()->GetGlobalRect();
 	ImGuiIO& io = ImGui::GetIO();
 	float mouse_x = position.x;
 	float mouse_y = position.y;

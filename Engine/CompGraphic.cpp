@@ -157,11 +157,12 @@ uint CompGraphic::GetTextureID() const
 
 CompRectTransform * CompGraphic::GetRectTrasnform() const
 {
-	if (this != nullptr)
+	if (transform != nullptr)
 	{
 		return transform;
 	}
-	else return nullptr;
+	else
+	return nullptr;
 }
 
 CompCanvasRender * CompGraphic::GetCanvasRender() const

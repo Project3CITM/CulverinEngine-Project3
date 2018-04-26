@@ -21,7 +21,6 @@
 #include "CSharpScript.h"
 #include "CompScript.h"
 #include "ResourceMesh.h"
-#include "CompCheckBox.h"
 #include "CompSlider.h"
 #include "ImportMesh.h"
 #include "ImportScript.h"
@@ -978,6 +977,7 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 		}
 		case Comp_Type::C_SLIDER:
 		{
+
 			//CompSlider* slider = (CompSlider*)comp;
 			break;
 		}

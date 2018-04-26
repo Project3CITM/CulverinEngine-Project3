@@ -17,6 +17,7 @@ public:
 	void CopyValues(const CompCheckBox * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+	void SyncScript();
 	void OnPointDown(Event event_input);
 	void OnClick();
 	void ClearLinkedScripts();

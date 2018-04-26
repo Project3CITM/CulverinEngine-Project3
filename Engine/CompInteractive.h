@@ -54,7 +54,7 @@ public:
 	void Load(const JSON_Object * object, std::string name);
 	void SyncComponent(GameObject* sync_parent);
 	bool IsActivate()const;
-	bool IsSelective() const;
+	bool IsDragrable() const;
 	void Activate();
 
 	bool IsInteractiveEnabled() const;
@@ -187,7 +187,7 @@ protected:
 	bool point_down = false;
 	bool point_inside = false;
 	bool interactive_selected = false;
-	bool selective = false;
+	bool dragable = false;
 
 	bool interactive_enabled = true;
 

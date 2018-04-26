@@ -165,6 +165,10 @@ void CompCheckBox::Load(const JSON_Object * object, std::string name)
 	Enable();
 }
 
+void CompCheckBox::SyncScript()
+{
+}
+
 void CompCheckBox::OnPointDown(Event event_input)
 {
 	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
