@@ -459,7 +459,7 @@ public class TheonController : CharacterController
 
         arrow.transform.SetRotation(player.transform.GetRotation());
 
-        arrow.transform.SetPosition(Arrow.transform.GetGlobalPosition());
+        arrow.transform.SetPosition(new Vector3 (Arrow.transform.GetGlobalPosition().x, Arrow.transform.GetGlobalPosition().y -1, Arrow.transform.GetGlobalPosition().z));
         Arrow arrow_script = arrow.GetComponent<Arrow>();
         arrow_script.speed = curr_forward;
 

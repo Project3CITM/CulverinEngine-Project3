@@ -73,6 +73,8 @@ public class CharactersManager : CulverinBehaviour
     public GameObject no_energy_text;
     public GameObject no_damage_text;
 
+
+    public GameObject no_hp_bar;
     /*GOD MODE: 
         - No damage taken.
         - 0 cost of abilities.
@@ -163,6 +165,8 @@ public class CharactersManager : CulverinBehaviour
         theon_tired = false;
         theon_tired_time = 0.0f;
 
+
+        no_hp_bar = GetLinkedObject("no_hp_bar");
     }
 
     void Update()
@@ -438,6 +442,7 @@ public class CharactersManager : CulverinBehaviour
             left_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
             left_character.GetComponent<JaimeController>().ToggleMesh(true);
             left_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
+            no_hp_bar.GetComponent<CompImage>().FillAmount(left_character.GetComponent<JaimeController>().curr_hp / 100.0f);
         }
         else if (left_character.GetName() == "Daenerys")
         {
@@ -445,6 +450,7 @@ public class CharactersManager : CulverinBehaviour
             left_character.GetComponent<DaenerysController>().UpdateHUD(true, true);
             left_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
             left_character.GetComponent<DaenerysController>().ToggleMesh(true);
+            no_hp_bar.GetComponent<CompImage>().FillAmount(left_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
         }
         else if (left_character.GetName() == "Theon")
         {
@@ -452,7 +458,7 @@ public class CharactersManager : CulverinBehaviour
             left_character.GetComponent<TheonController>().UpdateHUD(true, true);
             left_character.GetComponent<TheonController>().ToggleMesh(true);
             left_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
-
+            no_hp_bar.GetComponent<CompImage>().FillAmount(left_character.GetComponent<TheonController>().curr_hp / 100.0f);
         }
     }
 
@@ -487,6 +493,7 @@ public class CharactersManager : CulverinBehaviour
             right_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
             right_character.GetComponent<JaimeController>().ToggleMesh(true);
             right_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
+            no_hp_bar.GetComponent<CompImage>().FillAmount(right_character.GetComponent<JaimeController>().curr_hp/100.0f);
         }
         else if (right_character.GetName() == "Daenerys")
         {
@@ -494,6 +501,7 @@ public class CharactersManager : CulverinBehaviour
             right_character.GetComponent<DaenerysController>().UpdateHUD(true, false);
             right_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
             right_character.GetComponent<DaenerysController>().ToggleMesh(true);
+            no_hp_bar.GetComponent<CompImage>().FillAmount(right_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
         }
         else if (right_character.GetName() == "Theon")
         {
@@ -501,6 +509,7 @@ public class CharactersManager : CulverinBehaviour
             right_character.GetComponent<TheonController>().UpdateHUD(true, false);
             right_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
             right_character.GetComponent<TheonController>().ToggleMesh(true);
+            no_hp_bar.GetComponent<CompImage>().FillAmount(right_character.GetComponent<TheonController>().curr_hp / 100.0f);
         }
     }
 
