@@ -58,5 +58,12 @@ public class Align_Steering : CulverinBehaviour
     {
         return rot_margin;
     }
+
+
+    public void SetRotationVel(float rot)
+    {
+        rot_margin = rot;
+    }
+
 }
 
