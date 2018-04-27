@@ -75,6 +75,7 @@ public class CharacterController : CulverinBehaviour
     protected CompAnimation anim_controller;            // Animation component to handle animations
     protected CompAudio audio;
     protected DamageFeedback damage_feedback;
+    protected EnemiesManager enemy_manager;
 
     protected Position position = Position.CURRENT; 
     protected State state = State.IDLE;
@@ -150,7 +151,7 @@ public class CharacterController : CulverinBehaviour
         anim_controller = GetComponent<CompAnimation>();
         damage_feedback = player_obj.GetComponent<DamageFeedback>();
         characters_manager = player_obj.GetComponent<CharactersManager>();
-
+        enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
     }
 
     public virtual void Update()
@@ -281,6 +282,20 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void EnableAbilities(bool active)
     {
+        //Button Interaction
+        left_button.SetInteractivity(active);
+        right_button.SetInteractivity(active);
+
+        //Button Images
+        left_button_img.SetRender(active);
+        left_button_idle_img.SetRender(active);
+        right_button_img.SetRender(active);
+        right_button_idle_img.SetRender(active);
+
+        //Cooldown Text Renders
+        left_counter.SetRender(active);
+        right_counter.SetRender(active);
+        sec_counter.SetRender(!active);
     }
 
     public virtual Vector3 GetFlameBreathPosition(Vector3 player_pos)

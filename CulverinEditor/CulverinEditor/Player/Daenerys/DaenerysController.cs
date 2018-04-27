@@ -43,7 +43,7 @@ public class DaenerysController : CharacterController
 
     //Sec Ability Stats
     public float sec_ability_cost = 30.0f;
-    DaenerysCD_Secondary sec_ability_cd;
+    private DaenerysCD_Secondary sec_ability_cd;
 
     //Left Ability Stats
     public float mana_cost_percentage_left = 20.0f;
@@ -134,8 +134,8 @@ public class DaenerysController : CharacterController
 
     public override void ControlCharacter()
     {
-        Debug.Log(state, Department.PLAYER);
-        //// First check if you are alive
+        //Debug.Log(state, Department.PLAYER);
+        // First check if you are alive
         if (health.GetCurrentHealth() > 0)
         {
             // Check if player is moving to block attacks/abilities
@@ -593,15 +593,15 @@ public class DaenerysController : CharacterController
 
         set_fire_wall = false;
 
-        GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 30 * distance_left_attack);
-        if (coll_object != null)
-        {
-            CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
-            if (obj_collider != null)
-            {
-                obj_collider.CallOnContact();
-            }
-        }
+        //GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 30 * distance_left_attack);
+        //if (coll_object != null)
+        //{
+        //    CompCollider obj_collider = coll_object.GetComponent<CompCollider>();
+        //    if (obj_collider != null)
+        //    {
+        //        obj_collider.CallOnContact();
+        //    }
+        //}
     }
 
     public bool OnSecondaryClick()
@@ -666,24 +666,9 @@ public class DaenerysController : CharacterController
 
     public override void EnableAbilities(bool active)
     {
-        //Disable Button Interaction
-        left_button.SetInteractivity(active);
-        right_button.SetInteractivity(active);
+        base.EnableAbilities(active);
 
-        //Disable Image
-        left_button_img.SetRender(active);
-        right_button_img.SetRender(active);
-        left_button_idle_img.SetRender(active);
-        right_button_idle_img.SetRender(active);
-
-        //Right Cooldown Text Render
-        right_counter.SetRender(active);
-        //Left Cooldown Text Render
-        left_counter.SetRender(active);
-        //Sec Cooldown Text Render
-        sec_counter.SetRender(!active);
-
-        //Disable Flags
+        //Flags
         daenerys_left_flag.SetActive(active);
         daenerys_right_flag.SetActive(active);
     }
