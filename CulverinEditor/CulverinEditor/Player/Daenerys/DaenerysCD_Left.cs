@@ -26,6 +26,7 @@ public class DaenerysCD_Left : CoolDown
         charge_count_2 = GetLinkedObject("charge_count_2");
         charge_count_3 = GetLinkedObject("charge_count_3");
         daenerys_left_cd_text = GetLinkedObject("daenerys_left_cd_text");
+        Debug.Log(daenerys_left_cd_text.GetName(), Department.PLAYER, Color.BLUE);
 
         charge_img_0 = charge_count_0.GetComponent<CompImage>();
         charge_img_1 = charge_count_1.GetComponent<CompImage>();

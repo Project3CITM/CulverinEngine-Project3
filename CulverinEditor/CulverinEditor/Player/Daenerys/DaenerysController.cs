@@ -15,12 +15,15 @@ public class DaenerysController : CharacterController
 
     public GameObject daenerys_button_left_obj;
     public GameObject daenerys_button_left_obj_idle;
+    public GameObject daenerys_left_text_counter;
 
     public GameObject daenerys_button_right_obj;
     public GameObject daenerys_button_right_obj_idle;
+    public GameObject daenerys_right_text_counter;
 
     GameObject daenerys_s_button;
     GameObject daenerys_s_button_idle;
+    public GameObject daenerys_sec_text_counter;
 
     public GameObject daenerys_left_flag;
     public GameObject daenerys_right_flag;
@@ -75,14 +78,17 @@ public class DaenerysController : CharacterController
 
         daenerys_button_left_obj = GetLinkedObject("daenerys_button_left_obj");
         daenerys_button_left_obj_idle = GetLinkedObject("daenerys_button_left_obj_idle");
+        daenerys_left_text_counter = GetLinkedObject("daenerys_left_text_counter");
         cd_left = daenerys_button_left_obj.GetComponent<DaenerysCD_Left>();
 
         daenerys_button_right_obj = GetLinkedObject("daenerys_button_right_obj");
         daenerys_button_right_obj_idle = GetLinkedObject("daenerys_button_right_obj_idle");
+        daenerys_right_text_counter = GetLinkedObject("daenerys_right_text_counter");
         cd_right = daenerys_button_right_obj.GetComponent<DaenerysCD_Right>();
 
         daenerys_s_button = GetLinkedObject("daenerys_s_button_obj");
         daenerys_s_button_idle = GetLinkedObject("daenerys_s_button_obj_idle");
+        daenerys_sec_text_counter = GetLinkedObject("daenerys_sec_text_counter");
         sec_ability_cd = daenerys_s_button.GetComponent<DaenerysCD_Secondary>();
 
         daenerys_left_flag = GetLinkedObject("daenerys_left_flag");
@@ -102,7 +108,7 @@ public class DaenerysController : CharacterController
         //Link components with correct gameobjects
         LinkComponents(daenerys_icon_obj, daenerys_icon_obj_hp, null, daenerys_icon_obj_mana, 
                        daenerys_button_left_obj, daenerys_button_right_obj, daenerys_s_button, daenerys_s_button_idle, 
-                       GetLinkedObject("daenerys_left_cd_text"), GetLinkedObject("daenerys_right_cd_text"), GetLinkedObject("daenerys_secondary_cd_text"),
+                       daenerys_left_text_counter, daenerys_right_text_counter, daenerys_sec_text_counter,
                        larm_daenerys_obj, rarm_daenerys_obj, daenerys_button_left_obj_idle, daenerys_button_right_obj_idle);
 
         // Start Idle animation
@@ -204,7 +210,7 @@ public class DaenerysController : CharacterController
                                 {
                                     int tile_x, tile_y;
                                     movement.GetPlayerPos(out tile_x, out tile_y);
-                                    Vector3 player_pos = player_obj.GetComponent<Transform>().GetPosition();
+                                    Vector3 player_pos = player.GetComponent<Transform>().GetPosition();
                                     player_pos.y -= 9.1f;
                                     MovementController.Direction direction = movement.curr_dir;
                                     switch (direction)
@@ -641,7 +647,7 @@ public class DaenerysController : CharacterController
         GameObject fball = Instantiate("DaenerysFireball");
 
         fball.transform.SetPosition(GetSecondaryPosition(curr_position));
-        fball.transform.SetRotation(player_obj.transform.GetRotation());
+        fball.transform.SetRotation(player.transform.GetRotation());
 
         Fireball fballscript = fball.GetComponent<Fireball>();
         fballscript.vfront = curr_forward;

@@ -27,7 +27,7 @@ public class CharacterController : CulverinBehaviour
     }
 
     //PLAYER
-    protected GameObject player_obj;
+    protected GameObject player;
     protected CharactersManager characters_manager;
     protected MovementController movement;              // To manage when the player is moving to block attacks/abilities
     protected CompMesh left_arm;
@@ -98,7 +98,7 @@ public class CharacterController : CulverinBehaviour
         //LEFT BUTTON
         left_button = left_button_obj.GetComponent<CompButton>();
         left_button_img = left_button_obj.GetComponent<CompImage>();
-        if (left_counter != null)
+        if (left_counter_obj != null)
         {
             left_counter = left_counter_obj.GetComponent<CompText>();
         }
@@ -107,7 +107,7 @@ public class CharacterController : CulverinBehaviour
         //RIGHT BUTTON
         right_button = right_button_obj.GetComponent<CompButton>();
         right_button_img = right_button_obj.GetComponent<CompImage>();
-        if (right_counter != null)
+        if (right_counter_obj != null)
         {
             right_counter = right_counter_obj.GetComponent<CompText>();
         }
@@ -116,7 +116,7 @@ public class CharacterController : CulverinBehaviour
         //SECONDARY BUTTON
         sec_button = sec_button_obj.GetComponent<CompButton>();
         sec_button_img = sec_button_obj.GetComponent<CompImage>();
-        if (sec_counter != null)
+        if (sec_counter_obj != null)
         {
             sec_counter = sec_counter_obj.GetComponent<CompText>();
         }
@@ -141,8 +141,8 @@ public class CharacterController : CulverinBehaviour
 
     protected virtual void Start()
     {
-        player_obj = GetLinkedObject("player_obj");
-
+        player = GetLinkedObject("player_obj");
+        Debug.Log(player.GetName(), Department.PLAYER, Color.RED);
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
 
         stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
@@ -151,13 +151,21 @@ public class CharacterController : CulverinBehaviour
 
         mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
         mana_img = mana.GetComponent<CompImage>();
-        left_mana_img = GetLinkedObject("letfmana_bar").GetComponent<CompImage>();
+        left_mana_img = GetLinkedObject("leftmana_bar").GetComponent<CompImage>();
 
-        audio = player_obj.GetComponent<CompAudio>();
-        movement = player_obj.GetComponent<MovementController>();
+        audio = player.GetComponent<CompAudio>();
+        movement = player.GetComponent<MovementController>();
+        if(movement == null)
+        {
+            Debug.Log("MOVEMENT NULL", Department.PLAYER, Color.YELLOW);
+        }
         anim_controller = GetComponent<CompAnimation>();
-        damage_feedback = player_obj.GetComponent<DamageFeedback>();
-        characters_manager = player_obj.GetComponent<CharactersManager>();
+        damage_feedback = player.GetComponent<DamageFeedback>();
+        if (damage_feedback == null)
+        {
+            Debug.Log("damage feedback NULL", Department.PLAYER, Color.YELLOW);
+        }
+        characters_manager = player.GetComponent<CharactersManager>();
         enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
     }
 
@@ -303,14 +311,38 @@ public class CharacterController : CulverinBehaviour
         if (left_counter != null)
         {
             left_counter.SetRender(active);
+            if (active)
+            {
+                Debug.Log("left counter", Department.PLAYER, Color.PINK);
+            }
+        }
+        else
+        {
+            Debug.Log("left counter null", Department.PLAYER, Color.PINK);
         }
         if (right_counter != null)
         {
             right_counter.SetRender(active);
+            if (active)
+            {
+                Debug.Log("right counter", Department.PLAYER, Color.PINK);
+            }
+        }
+        else
+        {
+            Debug.Log("right counter null", Department.PLAYER, Color.PINK);
         }
         if (sec_counter != null) 
         {
             sec_counter.SetRender(!active);
+            if (active)
+            {
+                Debug.Log("sec counter", Department.PLAYER, Color.PINK);
+            }
+        }
+        else
+        {
+            Debug.Log("sec counter null", Department.PLAYER, Color.PINK);
         }
     }
 

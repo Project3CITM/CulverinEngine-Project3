@@ -20,11 +20,14 @@ public class JaimeController : CharacterController
 
     public GameObject jaime_button_right;
     public GameObject jaime_button_right_idle;
+    public GameObject jaime_right_text_counter;
+
     public GameObject combo_obj; /* Combo controller */
     ComboController combo_controller;
 
     GameObject jaime_s_button;
     GameObject jaime_s_button_idle;
+    public GameObject jaime_sec_text_counter;
 
     public GameObject jaime_left_flag;
     public GameObject jaime_right_flag;
@@ -90,10 +93,12 @@ public class JaimeController : CharacterController
 
         jaime_button_right = GetLinkedObject("jaime_button_right");
         jaime_button_right_idle = GetLinkedObject("jaime_button_right_idle");
-        cd_right = jaime_button_left.GetComponent<JaimeCD_Right>();
+        jaime_right_text_counter = GetLinkedObject("jaime_right_text_counter");
+        cd_right = jaime_button_right.GetComponent<JaimeCD_Right>();
 
         jaime_s_button = GetLinkedObject("jaime_s_button_obj");
         jaime_s_button_idle = GetLinkedObject("jaime_s_button_obj_idle");
+        jaime_sec_text_counter = GetLinkedObject("jaime_sec_text_counter");
         sec_ability_cd = jaime_s_button.GetComponent<JaimeCD_Secondary>();
 
         jaime_left_flag = GetLinkedObject("jaime_left_flag");
@@ -108,7 +113,7 @@ public class JaimeController : CharacterController
         //Link components with correct gameobjects
         LinkComponents(jaime_icon_obj, jaime_icon_obj_hp, jaime_icon_obj_stamina, null,
                        jaime_button_left, jaime_button_right, jaime_s_button, jaime_s_button_idle,
-                       null, GetLinkedObject("jaime_right_cd_text"), GetLinkedObject("jaime_secondary_cd_text"),
+                       null, jaime_right_text_counter, jaime_sec_text_counter,
                        larm_jaime_obj, rarm_jaime_obj, jaime_button_left_idle, jaime_button_right_idle);
 
 
@@ -310,7 +315,7 @@ public class JaimeController : CharacterController
         PlayFx("JaimeWarCry");
 
         // Activate the shield that protects from damage once
-        player_obj.GetComponent<Shield>().ActivateShield();
+        player.GetComponent<Shield>().ActivateShield();
     }
 
     public override bool GetDamage(float dmg)
@@ -620,9 +625,11 @@ public class JaimeController : CharacterController
         // Check if player is in Idle State
         if (GetState() == 0)
         {
+            Debug.Log("Get State = 0", Department.PLAYER, Color.YELLOW);
             // Check if player has enough stamina to perform its attack
             if (CanWasteStamina(right_ability_cost))
             {
+                Debug.Log("Can Waste Stamina", Department.PLAYER, Color.YELLOW);
                 //Check if the ability is not in cooldown
                 if (!cd_right.in_cd)
                 {

@@ -24,7 +24,7 @@ namespace CulverinEditor
         ///     Get Enabled or Disbaled Behaviours.
         /// </summary>
         [MethodImpl(MethodImplOptions.InternalCall)]
-        [Obsolete("Now doesn't use parent. Use: GetEnabled();", true)]
+        [Obsolete("Now doesn't use parent. Use: GetEnabled();", false)]
         public extern bool GetEnabled(GameObject parent = null);
 
         /// <summary>  
@@ -37,7 +37,7 @@ namespace CulverinEditor
         ///     Set Enabled or Disbaled Behaviours.
         /// </summary>
         [MethodImpl(MethodImplOptions.InternalCall)]
-        [Obsolete("Now doesn't use parent. Use: SetEnabled(bool active);", true)]
+        [Obsolete("Now doesn't use parent. Use: SetEnabled(bool active);", false)]
         public extern void SetEnabled(bool active, GameObject parent = null);
 
         /// <summary>  

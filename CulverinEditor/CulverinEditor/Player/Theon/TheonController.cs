@@ -17,12 +17,17 @@ public class TheonController : CharacterController
 
     public GameObject theon_button_left;
     public GameObject theon_button_left_idle;
+    public GameObject theon_left_text_counter;
 
     public GameObject theon_button_right;
     public GameObject theon_button_right_idle;
+    public GameObject theon_right_text_counter;
+
 
     GameObject theon_s_button;
     GameObject theon_s_button_idle;
+    public GameObject theon_sec_text_counter;
+
 
     public GameObject theon_left_flag;
     public GameObject theon_right_flag;
@@ -80,14 +85,17 @@ public class TheonController : CharacterController
 
         theon_button_left = GetLinkedObject("theon_button_left");
         theon_button_left_idle = GetLinkedObject("theon_button_left_idle");
+        theon_left_text_counter = GetLinkedObject("theon_left_text_counter");
         cd_left = theon_button_left.GetComponent<TheonCD_Left>();
 
         theon_button_right = GetLinkedObject("theon_button_right");
         theon_button_right_idle = GetLinkedObject("theon_button_right_idle");
+        theon_right_text_counter = GetLinkedObject("theon_right_text_counter");
         cd_right = theon_button_right.GetComponent<TheonCD_Right>();
 
         theon_s_button = GetLinkedObject("theon_s_button_obj");
         theon_s_button_idle = GetLinkedObject("theon_s_button_obj_idle");
+        theon_sec_text_counter = GetLinkedObject("theon_sec_text_counter");
         sec_ability_cd = theon_s_button.GetComponent<TheonCD_Secondary>();
 
         theon_left_flag = GetLinkedObject("theon_left_flag");
@@ -105,7 +113,7 @@ public class TheonController : CharacterController
         //Link components with correct gameobjects
         LinkComponents(theon_icon_obj, theon_icon_obj_hp, theon_icon_obj_stamina, null,
                        theon_button_left, theon_button_right, theon_s_button, theon_s_button_idle,
-                       GetLinkedObject("theon_left_cd_text"), GetLinkedObject("theon_right_cd_text"), GetLinkedObject("theon_secondary_cd_text"),
+                       theon_left_text_counter, theon_right_text_counter, theon_sec_text_counter,
                        L_Arm_Theon, R_Arm_Theon, theon_button_left_idle, theon_button_right_idle);
 
         //Start Idle animation
@@ -404,9 +412,13 @@ public class TheonController : CharacterController
     public override void ToggleMesh(bool active)
     {
         left_arm.SetEnabled(active);
+        Debug.Log("Left Arm");
         right_arm.SetEnabled(active);
+        Debug.Log("Right Arm");
         CrossBow.GetComponent<CompMesh>().SetEnabled(active);
+        Debug.Log("Crossbow");
         Arrow.GetComponent<CompMesh>().SetEnabled(active);
+        Debug.Log("Arrow");
     }
 
     public bool OnLeftClick()
@@ -454,7 +466,7 @@ public class TheonController : CharacterController
 
         GameObject arrow = Instantiate("ArrowTheon");
 
-        arrow.transform.SetRotation(player_obj.transform.GetRotation());
+        arrow.transform.SetRotation(player.transform.GetRotation());
         arrow.transform.SetPosition(new Vector3(curr_position.x, curr_position.y - 1.5f, curr_position.z));
         Arrow arrow_script = arrow.GetComponent<Arrow>();
         arrow_script.speed = curr_forward;
@@ -594,7 +606,7 @@ public class TheonController : CharacterController
                 Vector3 player_pos = curr_position;
                 player_pos.y += 4;
                 arrow.transform.SetPosition(GetSecondaryPosition(player_pos));
-                arrow.transform.SetRotation(player_obj.transform.GetRotation());
+                arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
                 arrow_script.speed = GetSecondaryForward(curr_forward);
@@ -625,7 +637,7 @@ public class TheonController : CharacterController
                 Vector3 player_pos = curr_position;
                 player_pos.y += 4;
                 arrow.transform.SetPosition(GetSecondaryPosition(player_pos));
-                arrow.transform.SetRotation(player_obj.transform.GetRotation());
+                arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
                 arrow_script.speed = GetSecondaryForward(curr_forward);
@@ -660,7 +672,7 @@ public class TheonController : CharacterController
                 Vector3 player_pos = curr_position;
                 player_pos.y += 4;
                 arrow.transform.SetPosition(GetSecondaryPosition(player_pos));
-                arrow.transform.SetRotation(player_obj.transform.GetRotation());
+                arrow.transform.SetRotation(player.transform.GetRotation());
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
                 arrow_script.speed = GetSecondaryForward(curr_forward);
