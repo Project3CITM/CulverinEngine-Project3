@@ -1,6 +1,8 @@
 #include "PlayerActions.h"
 #include "InputManager.h"
+#include "InputAction.h"
 #include "ModuleInput.h"
+
 #define INPUT_MANAGER_LIMIT 5
 #define MAX_INPUT 20
 
@@ -151,6 +153,11 @@ void PlayerActions::UpdateInputsManager()
 
 bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 {
+	if (key_change.change_active)
+	{
+		key_change.ReceiveEvent(input_event);
+
+	}
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		if (!(*it)->GetActiveInput())
@@ -228,6 +235,34 @@ void PlayerActions::SetInputManagerBlock(const char * name, bool set)
 		if (strcmp((*it)->GetName(), name) == 0)
 			(*it)->SetBlockAction(set);
 	}
+}
+
+InputAction * PlayerActions::SetInputActionToChange(const char * input_action, const char * input_manager, const char * device, bool change_negative)
+{
+	DeviceCombinationType this_device = SelectDeviceCombination(device);
+	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
+		return nullptr;
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		InputManager* item = (*it);
+		if (strcmp(item->GetName(), input_manager) == 0)
+		{
+			for (std::vector<InputAction*>::iterator action_it = item->action_vector.begin(); action_it != item->action_vector.end(); action_it++)
+			{
+				InputAction* action_item = (*action_it);
+				if (strcmp(action_item->name.c_str(), input_action) == 0)
+				{
+					if (action_item->key_device == this_device)
+					{
+						return action_item;
+					}					
+				}
+			}
+
+		}
+
+	}
+	return nullptr;
 }
 
 bool PlayerActions::GetInputManagerActive(const char * name) const
@@ -480,6 +515,10 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 
 const char * PlayerActions::GetInput_ControllerActionName(const char * name, const char * input, const char * device, bool negative_key)
 {
+	DeviceCombinationType this_device = SelectDeviceCombination(device);
+	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
+		return "";
+
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		InputManager* item = (*it);
@@ -489,16 +528,8 @@ const char * PlayerActions::GetInput_ControllerActionName(const char * name, con
 			{
 				InputAction* action_item = (*action_it);
 				if (strcmp(action_item->name.c_str(), name) == 0)
-				{
-					KeyRelation* key = nullptr;
-					if (negative_key&&action_item->negative_button != nullptr)
-					{
-						key = action_item->negative_button;
-					}
-					key = action_item->positive_button;
-
-					DeviceCombinationType this_device = key->SelectDeviceCombination(device);
-					if (key->device == this_device)
+				{					
+					if (action_item->key_device == this_device)
 					{
 						return action_item->name.c_str();
 					}
@@ -513,6 +544,9 @@ const char * PlayerActions::GetInput_ControllerActionName(const char * name, con
 
 const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name, const char * input, const char * device, bool negative_key)
 {
+	DeviceCombinationType this_device = SelectDeviceCombination(device);
+	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
+		return "";
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		InputManager* item = (*it);
@@ -523,18 +557,18 @@ const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name,
 				InputAction* action_item = (*action_it);
 				if (strcmp(action_item->name.c_str(), name) == 0)
 				{
-					KeyRelation* key = nullptr;
-					if (negative_key&&action_item->negative_button != nullptr)
+					if (action_item->key_device == this_device)
 					{
-						key = action_item->negative_button;
-					}
-					key = action_item->positive_button;
-
-					DeviceCombinationType this_device = key->SelectDeviceCombination(device);
-					if (key->device == this_device)
-					{
+						KeyRelation* key = nullptr;
+						if (negative_key&&action_item->negative_button != nullptr)
+						{
+							key = action_item->negative_button;
+						}
+						key = action_item->positive_button;
 						return key->name.c_str();
 					}
+
+					
 				}
 			}
 
@@ -559,4 +593,98 @@ void PlayerActions::SendNewDeviceCombinationType(DeviceCombinationType type)
 		return;
 	actual_player_action = type;
 	my_module->UpdateDeviceType(actual_player_action);
+}
+
+DeviceCombinationType PlayerActions::SelectDeviceCombination(const char * value)
+{
+
+		if (strcmp(value, "mouse") == 0 || strcmp(value, "keyboard") == 0)
+		{
+			DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
+		}
+		else if (strcmp(value, "controller") == 0)
+		{
+			DeviceCombinationType::CONTROLLER_COMB_DEVICE;
+		}
+		return DeviceCombinationType::NULL_COMB_DEVICE;
+}
+
+bool PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
+{
+	if (key_to_change == nullptr)
+		return false;
+	switch (input_event->type)
+	{
+	case SDL_KEYDOWN:
+		if (key_to_change->key_device == DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE)
+		{
+			KeyRelation* key = nullptr;
+
+			if (change_negative)
+				key = key_to_change->negative_button;			
+			key = key_to_change->positive_button;
+
+			if (key == nullptr || key->event_value == input_event->key.keysym.scancode)
+				return false;
+			
+			if (key_to_change->my_manager == nullptr)
+				return false;
+
+			key_to_change->my_manager->ClearSameEvent(input_event);
+
+			
+		}
+		break;
+	case SDL_CONTROLLERBUTTONDOWN:
+		if (key_to_change->key_device == DeviceCombinationType::CONTROLLER_COMB_DEVICE)
+		{
+
+			KeyRelation* key = nullptr;
+
+			if (change_negative)
+				key = key_to_change->negative_button;
+			key = key_to_change->positive_button;
+
+			if (key == nullptr || key->event_value == input_event->cbutton.button)
+				return false;
+
+			if (key_to_change->my_manager == nullptr)
+				return false;
+
+			key_to_change->my_manager->ClearSameEvent(input_event);
+		}
+
+		break;
+	case SDL_CONTROLLERAXISMOTION:
+		if (input_event->caxis.value < -5000 || input_event->caxis.value>5000)
+		{
+			return true;
+		}
+		break;
+	case SDL_MOUSEBUTTONDOWN:
+		if (key_to_change->key_device == DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE)
+		{
+			KeyRelation* key = nullptr;
+
+			if (change_negative)
+				key = key_to_change->negative_button;
+			key = key_to_change->positive_button;
+
+			if (key == nullptr || key->event_value == input_event->button.button)
+				return false;
+
+			if (key_to_change->my_manager == nullptr)
+				return false;
+
+			key_to_change->my_manager->ClearSameEvent(input_event);
+		}
+		break;
+	}
+	return false;
+}
+
+void PlayerActions::KeyChange::Clear()
+{
+	key_to_change = nullptr;
+	change_negative = false;
 }

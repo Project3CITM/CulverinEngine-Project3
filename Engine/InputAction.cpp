@@ -2,17 +2,19 @@
 #define DEAD_END 0.1f
 
 
-InputAction::InputAction():positive_button(new KeyRelation(-1,"default","None", KeyBindingType::NULL_DEVICE)), negative_button(new KeyRelation(-1, "default", "None", KeyBindingType::NULL_DEVICE))
+InputAction::InputAction():positive_button(new KeyRelation(-1,"default","None", KeyBindingType::NULL_DEVICE)), negative_button(new KeyRelation(-1, "default", "None", KeyBindingType::NULL_DEVICE)), my_manager(nullptr)
 {
 }
 
-InputAction::InputAction(const char * name, KeyRelation *key_relation, ActionInputType action_type): name(name), action_type(action_type), positive_button(key_relation)
+InputAction::InputAction(const char * name, KeyRelation *key_relation, ActionInputType action_type, InputManager* my_manager) : name(name), action_type(action_type), positive_button(key_relation), my_manager(my_manager)
 {
 }
 
 InputAction::~InputAction()
 {
 }
+
+
 
 bool MouseButtonAction::ProcessEventAction(SDL_Event * input_event)
 {
