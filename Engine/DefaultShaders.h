@@ -263,6 +263,28 @@ static const GLchar* TextureVert[] =
 	"}\n"
 };
 
+static const GLchar* ParticleVert[] =
+{
+	"#version 330 core\n"
+	"layout(location = 0) in vec3 position;\n"
+	"layout(location = 1) in vec2 texCoord;\n"
+	"layout(location = 2) in mat4 transform;\n"
+	"layout(location = 3) in vec4 _color;\n"
+		
+	"out vec4 ourColor;\n"
+	"out vec2 TexCoord;\n"
+
+	"uniform mat4 viewproj;\n"
+	
+
+	"void main()\n"
+	"{\n"
+	"gl_Position = viewproj * transform *vec4(position.x,position.y,position.z, 1.0f) ;\n"
+	"ourColor = _color;\n"
+	"TexCoord = texCoord;\n"
+	"}\n"
+};
+
 static const GLchar* BlurFrag[] =
 {
 	"#version 330 core\n"
@@ -365,6 +387,25 @@ static const GLchar* DefaultFrag[] =
 
 	//Z-Buffer Line Shader
 	"color= _my_color * texture(albedo, TexCoord);\n"
+	"}\n"
+};
+
+static const GLchar* ParticleFrag[] =
+{
+	"#version 330 core\n"
+	"in vec4 ourColor;\n"	
+	"in vec2 TexCoord;\n"
+	
+	"out vec4 color;\n"
+
+	"uniform sampler2D albedo;\n"
+
+
+	"void main()\n"
+	"{\n"
+
+	//Z-Buffer Line Shader
+	"color= ourColor * texture(albedo, TexCoord);\n"
 	"}\n"
 };
 

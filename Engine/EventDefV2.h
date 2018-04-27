@@ -37,7 +37,7 @@ class CompLight;
 class CompScript;
 class GameObject;
 class Shader;
-class Particle;
+class ParticleSystem;
 struct Comparator;
 struct DrawVMultimapKey;
 enum ShaderType;

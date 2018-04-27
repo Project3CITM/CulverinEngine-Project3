@@ -309,6 +309,7 @@ class ParticleSystem
 public:
 	ParticleSystem();
 	~ParticleSystem();
+	
 	bool PreUpdate(float dt);
 	bool Update(float dt, bool emit = true);
 	void UpdateInGame(float dt);
@@ -316,7 +317,7 @@ public:
 
 	bool PostUpdate(float dt);
 
-	void InstantiateParticles(int geometry_buffer);
+	void InstantiateParticles(GLuint geometry_buffer, int program_id);
 
 	bool CleanUp();
 
@@ -348,7 +349,6 @@ public:
 	void DrawImGuiEditorWindow();								//Draw Particle Editor Window
 
 	AABB& GetEmitterAABB();										//You can get the Emitter AABB and edit min and max point with gizmos
-	const ParticleMeshData& GetParticleMeshData() const;		//You can get the particle mesh data used by particles of this emitter
 
 	void SetCameraPosToFollow(float3 position);					//Set Camera position which the billboards will face
 
@@ -357,6 +357,7 @@ public:
 	bool IsEmitterDead() const;									//Usseful if you need to do something else when this emitter dies
 
 private:
+	void GenerateTransfBuffers();
 	void GenerateUVBuffers();									//When texture rows or columns are updated we update animation UVs
 	void GenerateTexturesUVs();									//Generate animation UVs buffers
 	void DrawTexturePreview();									//Imgui draw Texture preview + animation edit
@@ -394,6 +395,8 @@ private:
 	std::vector<unsigned int> TexturesUV_ID;					//Particle animation UVs IDs
 	float NextParticleTime = 0.0f;								//Store next time when the next particle will be spawned
 
+	GLuint transform_buffer = 0;
+	GLuint color_buffer = 0;
 
 
 	enum

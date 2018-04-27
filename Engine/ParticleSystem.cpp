@@ -39,7 +39,7 @@ ParticleEmitter::ParticleEmitter()
 
 ParticleEmitter::~ParticleEmitter()
 {
-
+	
 }
 
 void ParticleEmitter::DebugDrawEmitter()
@@ -631,15 +631,27 @@ ParticleSystem::~ParticleSystem()
 		texture_resource->num_game_objects_use_me--;
 		texture_resource = nullptr;
 	}
+
+	glDeleteBuffers(1, &transform_buffer);
+	glDeleteBuffers(1, &color_buffer);
 }
 
 bool ParticleSystem::PreUpdate(float dt)
 {
 	if (GenerateBuffers)
 	{
+		GenerateTransfBuffers();
 		GenerateTexturesUVs();
+		GenerateBuffers = false;
 	}
 	
+	float particles_transforms_planed[MAX_PARTICLES_PER_EMITTER * 16] = {};
+	uint ptr = 0;
+
+	float particles_color_planed[MAX_PARTICLES_PER_EMITTER * 4] = {};
+	uint color_ptr = 0;
+
+
 	bool ret = true;
 	uint i = 0;
 	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend() && ret == true;)
@@ -653,11 +665,41 @@ bool ParticleSystem::PreUpdate(float dt)
 			item = Particles.erase(item);
 			continue;
 		}
-		
+
+		//Tranfs planed		
+		float4x4 part_transf = float4x4::FromTRS((*item).Properties.Position, (*item).Properties.Rotation, (*item).Properties.Scale);
+		//float4x4 part_transf = float4x4::identity;
+
+		memcpy((particles_transforms_planed) + ptr, part_transf.ptr(), 16*sizeof(float));
+		ptr += 16;
+
+		//Color planed
+		float4 part_color = (*item).Properties.RGBATint;
+		memcpy((particles_color_planed)+color_ptr, part_color.ptr(), 4 * sizeof(float));
+		color_ptr += 4;
+
+		//Update particle state
 		(*item).CameraDistance = (long double)((CameraPosition - (*item).Properties.Position).Length());
 		ret = (*item).PreUpdate(dt);
 		++item;		
 	}
+
+
+	//Update gl buffers
+
+	
+	GLenum error = glGetError();
+
+	/*Transform*/
+	glBindBuffer(GL_ARRAY_BUFFER, transform_buffer);
+	glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES_PER_EMITTER * 16 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, Particles.size() * sizeof(GLfloat) * 16, particles_transforms_planed);
+	
+	 /*Color*/
+	 glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
+	 glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES_PER_EMITTER * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	 glBufferSubData(GL_ARRAY_BUFFER, 0, Particles.size() * sizeof(GLfloat) * 4, particles_color_planed);
+
 
 	return ret;
 }
@@ -779,6 +821,7 @@ void ParticleSystem::UpdateInGame(float dt)
 }
 
 
+
 bool ParticleSystem::PostUpdate(float dt)
 {
 	bool ret = true;
@@ -790,12 +833,78 @@ bool ParticleSystem::PostUpdate(float dt)
 	return ret;
 }
 
-void ParticleSystem::InstantiateParticles(int geometry_buffer)
+void ParticleSystem::InstantiateParticles(GLuint geometry_buffer, int program_id)
 {
-
+	if (Particles.empty())
+		return;
+	
 	//Sort and draw all particles
+	GLenum error = glGetError();
+
+	/*Vertex buffer*/
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, geometry_buffer);
+	glVertexAttribPointer(
+		0, // attribute. 
+		12, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		0, // stride
+		(void*)0 // array buffer offset
+	);
+	glVertexAttribDivisor(0, 0); // particles vertices : always reuse the same 4 vertices -> 0
+
+	/*Position buffer*/
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, transform_buffer);
+	glVertexAttribPointer(
+		2, // attribute. 
+		4, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(GLfloat) * 4 * 4, // stride
+		(void*)0 // array buffer offset
+	);
+	glVertexAttribDivisor(2, 1); // transform : one per quad (16 floats per quad) -> 1
 
 
+	/*Color buffer*/
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
+	glVertexAttribPointer(
+		3, // attribute. 
+		4, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		0, // stride
+		(void*)0 // array buffer offset
+	);
+	glVertexAttribDivisor(3, 1); // color : one per quad -> 1
+
+	
+	/*if (TextureData.TextureID != 0)
+	{
+		//glEnable(GL_BLEND);
+		//glBlendFunc(Properties.source_blend_type, Properties.destiny_blend_type);
+		uint texLoc = glGetUniformLocation(program_id, "albedo");
+		glUniform1i(texLoc, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, TextureData.TextureID);
+	}
+	*/
+	
+	//Pass the viewproj matrix to the shader
+	uint viewLoc = glGetUniformLocation(program_id, "viewproj");
+	float4x4 f = float4x4::identity;
+	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, f.ptr());
+	//App->renderer3D->active_camera->frustum.ViewProjMatrix().ptr()
+		
+	//Draw all particles!		
+	GLsizei particle_count = Particles.size();
+	glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, particle_count);
+	error = glGetError();
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 bool ParticleSystem::CleanUp()
@@ -992,6 +1101,29 @@ bool ParticleSystem::IsEmitterDead() const
 	return ret;
 }
 
+
+void ParticleSystem::GenerateTransfBuffers()
+{
+	GLenum error = glGetError();
+
+	/* Transform buffer	*/
+	glGenBuffers(1, &transform_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, transform_buffer);
+
+	// Initialize with empty (NULL) buffer : it will be updated later, each frame.
+	// 16 items, since we give a planed 4x4 matrix
+	glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES_PER_EMITTER * 16 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+
+	error = glGetError();
+	
+	/* Color buffer	*/
+	color_buffer;
+	glGenBuffers(1, &color_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
+	// Initialize with empty (NULL) buffer : it will be updated later, each frame.
+	glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES_PER_EMITTER * 4 * sizeof(GLubyte), NULL, GL_STREAM_DRAW);
+	error = glGetError();
+}
 
 void ParticleSystem::GenerateUVBuffers()
 {

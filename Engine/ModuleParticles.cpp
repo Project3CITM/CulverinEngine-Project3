@@ -17,7 +17,7 @@ ModuleParticles::ModuleParticles(bool start_enabled) : Module(start_enabled)
 // Destructor
 ModuleParticles::~ModuleParticles()
 {
-	
+	glDeleteBuffers(1, &geometry_buffer);
 }
 
 // Called before render is available
@@ -156,6 +156,11 @@ ParticleSystem * ModuleParticles::CreateParticleSystem()
 {
 	particle_systems.push_back(new ParticleSystem());
 	return particle_systems.back();
+}
+
+GLuint ModuleParticles::GetGeometryBuffer() const
+{
+	return geometry_buffer;
 }
 
 

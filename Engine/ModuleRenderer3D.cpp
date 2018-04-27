@@ -181,7 +181,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	default_shader = App->module_shaders->CreateDefaultShader("Default Shader", fragmentShaderSource, vertexShaderSource, nullptr, true);
 	lights_billboard_shader = App->module_shaders->CreateDefaultShader("Billboard Lights Shader", DefaultFrag, DefaultVert, nullptr,true);
 
-	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", DefaultFrag, DefaultVert, nullptr, true);
+	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", ParticleFrag, ParticleVert, nullptr, true);
 	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr, true);
 	blur_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr, true);
 	final_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", FinalFrag, TextureVert, nullptr, true);

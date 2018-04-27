@@ -61,7 +61,7 @@ CompParticleSystem::CompParticleSystem(const CompParticleSystem& copy, GameObjec
 
 CompParticleSystem::~CompParticleSystem()
 {
-	
+	//LOG("");
 }
 
 
@@ -81,7 +81,7 @@ void CompParticleSystem::Update(float dt)
 
 void CompParticleSystem::Clear()
 {
-	ClearEvents(EventType::EVENT_PARTICLE_DRAW);
+	//ClearEvents(EventType::EVENT_PARTICLE_DRAW);
 
 	if (part_system != nullptr)
 	{

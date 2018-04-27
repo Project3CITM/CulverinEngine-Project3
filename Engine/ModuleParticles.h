@@ -25,6 +25,8 @@ public:
 
 	ParticleSystem* CreateParticleSystem();	
 
+	GLuint GetGeometryBuffer() const;
+
 private:
 
 	GLuint geometry_buffer = 0;

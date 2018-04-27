@@ -259,7 +259,7 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 
 			case EventType::EVENT_PARTICLE_DRAW:
 				glEnable(GL_BLEND);
-				glDisable(GL_CULL_FACE);
+	
 			/*	NewProgramID = App->renderer3D->particles_shader->programID;
 				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
 				{
@@ -268,10 +268,10 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 				}
 				((Particle*)item._Ptr->_Myval.second.particle_draw.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
 				*/
+				App->renderer3D->particles_shader->Bind();
+				((ParticleSystem*)(*item).second.particle_draw.part_system)->InstantiateParticles(App->particles->GetGeometryBuffer(), App->renderer3D->particles_shader->programID);
 				
-				App->particles->InstantiateParticles();
 				glDisable(GL_BLEND);
-				glEnable(GL_CULL_FACE);
 				break;
 
 			case EventType::EVENT_DRAW:
@@ -402,13 +402,21 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 				}
 				break;
 			case EventType::EVENT_PARTICLE_DRAW:
-				NewProgramID = App->renderer3D->particles_shader->programID;
+			/*	NewProgramID = App->renderer3D->particles_shader->programID;
 				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
 				{
 					LastBindedProgram = NewProgramID;
 					App->renderer3D->particles_shader->Bind();
 				}
 				((Particle*)item._Ptr->_Myval.second.particle_draw.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
+				*/
+				GLenum error = glGetError();
+
+				glEnable(GL_BLEND);
+				App->renderer3D->particles_shader->Bind();
+				((ParticleSystem*)(*item).second.particle_draw.part_system)->InstantiateParticles(App->particles->GetGeometryBuffer(), App->renderer3D->particles_shader->programID);
+				glDisable(GL_BLEND);
+
 				break;
 			}
 			item = DrawAlphaV.erase(item);
@@ -580,10 +588,10 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 			EventPushedWhileIteratingMaps_DrawAlphaV = true;
 		}
 		*/
-		DrawAlphaV.insert(std::pair<float, Event>(-((Particle*)event.particle_draw.ToDraw)->CameraDistance, event));
+		DrawAlphaV.insert(std::pair<float, Event>(-((ParticleSystem*)event.particle_draw.part_system)->distance_to_camera, event));
 
-		if ((Particle*)event.particle_draw.ToDraw->glow)
-			DrawGlowV.insert(std::pair<DrawVMultimapKey, Event>(DrawVMultimapKey(0, -((Particle*)event.particle_draw.ToDraw)->CameraDistance), event));
+		////if ((Particle*)event.particle_draw.ToDraw->glow)
+		//	DrawGlowV.insert(std::pair<DrawVMultimapKey, Event>(DrawVMultimapKey(0, -((Particle*)event.particle_draw.ToDraw)->CameraDistance), event));
 
 		break;
 	case EventType::EVENT_DRAW:
