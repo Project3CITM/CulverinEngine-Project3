@@ -46,6 +46,7 @@
     <Compile Include="AI\Actions\BossEngage_Action.cs" />
     <Compile Include="AI\Actions\BossGrabAttack_Action.cs" />
     <Compile Include="AI\Actions\BossWideAttack_Action.cs" />
+    <Compile Include="AI\Actions\ChargeAttack_Action.cs" />
     <Compile Include="AI\Actions\DisableMovementScript.cs" />
     <Compile Include="AI\Actions\FacePlayer_Action.cs" />
     <Compile Include="AI\Actions\InfiniteChasePlayer_Action.cs" />
