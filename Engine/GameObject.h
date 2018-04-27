@@ -85,6 +85,7 @@ public:
 	// Components -----------------------------
 
 	Component* AddComponent(Comp_Type type, bool isFromLoader = false);
+	void AddComponent(Component* new_component, uint position);
 	void AddComponentCopy(const Component& copy);
 	int GetNumComponents() const;
 	Component* FindComponentByType(Comp_Type type) const;
@@ -111,6 +112,8 @@ public:
 	Component* GetComponentbyIndex(uint i) const;
 	void DeleteAllComponents();
 	void DeleteComponent(uint index);
+
+	void GetOwnBufferSize(uint& buffer_size);
 	void SaveComponents(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void LoadComponents(const JSON_Object * object, std::string name, uint numComponents);
 
