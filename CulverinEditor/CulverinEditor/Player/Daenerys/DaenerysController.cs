@@ -176,6 +176,7 @@ public class DaenerysController : CharacterController
 
                                     Fireball fballscript = flamethr.GetComponent<Fireball>();
                                     fballscript.vfront = curr_forward;
+                                    fballscript.SetDamage(left_ability_dmg);
 
                                     GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
                                     if (coll_object != null)
@@ -251,7 +252,9 @@ public class DaenerysController : CharacterController
                                     //GET TILE POS!
                                     GameObject fire_wall = Instantiate("FireWall");
                                     fire_wall.transform.SetPosition(player_pos);
-                                    fire_wall.GetComponent<FireWall>().SetTiles(tile_x, tile_y);
+                                    FireWall fire_wall_controller = fire_wall.GetComponent<FireWall>();
+                                    fire_wall_controller.SetTiles(tile_x, tile_y);
+                                    fire_wall_controller.SetDamage(right_ability_dmg);
                                     set_fire_wall = true;
                                 }
 
@@ -659,6 +662,7 @@ public class DaenerysController : CharacterController
         fballscript.fireball_particles2 = daenerys_fireball_particles2;
         fballscript.fireball_particles3 = daenerys_fireball_particles3;
         fballscript.fireball_particles4 = daenerys_fireball_particles4;
+        fballscript.SetDamage(sec_ability_dmg);
 
         GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
         if(coll_object != null)

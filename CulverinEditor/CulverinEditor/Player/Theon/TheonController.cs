@@ -475,6 +475,7 @@ public class TheonController : CharacterController
         arrow.transform.SetPosition(new Vector3(curr_position.x, curr_position.y - 1.5f, curr_position.z));
         Arrow arrow_script = arrow.GetComponent<Arrow>();
         arrow_script.speed = curr_forward;
+        arrow_script.SetDamage(left_ability_dmg);
 
         arrow_script.arrow_blood_particles = theon_blood_particles;
         arrow_script.arrow_sparks_particles = theon_sparks_particles;
@@ -615,6 +616,7 @@ public class TheonController : CharacterController
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
                 arrow_script.speed = GetSecondaryForward(curr_forward);
+                arrow_script.SetDamage(sec_ability_dmg);
 
                 GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
                 if (coll_object != null)
@@ -646,6 +648,7 @@ public class TheonController : CharacterController
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
                 arrow_script.speed = GetSecondaryForward(curr_forward);
+                arrow_script.SetDamage(sec_ability_dmg);
 
                 GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
                 if (coll_object != null)
@@ -681,6 +684,7 @@ public class TheonController : CharacterController
 
                 Arrow arrow_script = arrow.GetComponent<Arrow>();
                 arrow_script.speed = GetSecondaryForward(curr_forward);
+                arrow_script.SetDamage(sec_ability_dmg);
 
                 GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
                 if (coll_object != null)
