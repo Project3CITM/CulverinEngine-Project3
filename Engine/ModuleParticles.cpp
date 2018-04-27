@@ -65,6 +65,7 @@ update_status ModuleParticles::PreUpdate(float dt)
 
 		if (camera != nullptr)
 			(*item)->SetCameraPosToFollow(camera->frustum.pos);
+		else (*item)->SetCameraPosToFollow(float3::zero);
 
 		float3 emitter_pos;
 		((ParticleEmitter*)(*item)->GetEmitter())->GetPosition(emitter_pos);

@@ -60,7 +60,7 @@
 #define DEBUG_COLOR_B 255.0f
 #define CIRCLES_SEGMENTS 10.0f
 
-#define MAX_PARTICLES_PER_EMITTER 1000
+#define MAX_PARTICLES_PER_EMITTER 2000
 
 class CompParticleSystem;
 
@@ -123,7 +123,6 @@ public:
 	float PreviewDuration = 0.0f;					
 
 	bool Loop = true;								//Ignore EmissionDuration and keep emitting
-	int ParticleNumber = 0;							//Alive particles emitted
 	float Speed = 5.0f;								//Speed of emitted particles
 	float SpeedVariation = 0.0f;					//Speed variation of emitted particles
 	AABB BoundingBox;								//User can set AABB for camera culling purpose (we can add physics...)

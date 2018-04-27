@@ -654,14 +654,11 @@ bool ParticleSystem::PreUpdate(float dt)
 
 	bool ret = true;
 	uint i = 0;
-	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.cend() && ret == true;)
-	{
-		bool to_delete = false;
-	
+	for (std::vector<Particle>::iterator item = Particles.begin(); item != Particles.end();)
+	{	
 		//Check if particle is alive
 	    if ((*item).isDead())
 		{
-			Emitter.ParticleNumber--;
 			item = Particles.erase(item);
 			continue;
 		}
@@ -683,7 +680,7 @@ bool ParticleSystem::PreUpdate(float dt)
 		//Update particle state
 		(*item).CameraDistance = (long double)((CameraPosition - (*item).Properties.Position).Length());
 		ret = (*item).PreUpdate(dt);
-		++item;		
+		item++;		
 	}
 
 
@@ -1447,7 +1444,11 @@ void ParticleSystem::DrawEmitterOptions()
 	ImGui::Checkbox("Loop", &Emitter.Loop);
 	if(!Emitter.Loop)
 		ImGui::DragFloat("Emitter Life", &Emitter.EmitterLifeMax, 0.1f, 0.1f, 120.0f);
-	ImGui::DragInt("Particles emitted per second", (int*)&Emitter.SpawnRate, 1, 0, 1000);
+	if (ImGui::DragInt("Particles emitted per second", (int*)&Emitter.SpawnRate, 1, 0, MAX_PARTICLES_PER_EMITTER))
+	{
+		if (Emitter.SpawnRate > MAX_PARTICLES_PER_EMITTER)
+			Emitter.SpawnRate = MAX_PARTICLES_PER_EMITTER;
+	}
 	ImGui::DragFloat("+-##Lifetime", &Emitter.Lifetime, 0.01f, 0.0f, 100.0f);
 	ImGui::SameLine();
 	ImGui::DragFloat("Lifetime +- Var##LifetimeVariation", &Emitter.LifetimeVariation, 0.01f, 0.0f, 100.0f);
@@ -1477,6 +1478,10 @@ void ParticleSystem::DrawEmitterOptions()
 
 bool ParticleSystem::CreateParticle()
 {
+
+	if (Particles.size() >= MAX_PARTICLES_PER_EMITTER)
+		return false;
+
 	LCG RandGen;
 	float3 Direction = float3::zero;
 	float3 offset = float3::zero;
