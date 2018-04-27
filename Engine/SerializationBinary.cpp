@@ -4,7 +4,29 @@
 #include "ResourceScript.h"
 #include "ResourceFont.h"
 #include "ResourceAnimation.h"
+#include "CompMesh.h"
+#include "CompTransform.h"
+#include "CompRectTransform.h"
+#include "CompMaterial.h"
+#include "CompCamera.h"
 #include "CompScript.h"
+#include "CompAnimation.h"
+#include "CompUIAnimation.h"
+#include "CompButton.h"
+#include "CompCheckBox.h"
+#include "CompImage.h"
+#include "CompSlider.h"
+#include "CompText.h"
+#include "CompEditText.h"
+#include "CompCanvas.h"
+#include "CompCanvasRender.h"
+#include "CompAudio.h"
+#include "CompLight.h"
+#include "CompCollider.h"
+#include "CompRigidBody.h"
+#include "CompJoint.h"
+#include "CompParticleSystem.h"
+#include "CompBone.h"
 #include "ModuleFS.h"
 #include "ModuleResourceManager.h"
 #include "Scene.h"
@@ -267,8 +289,6 @@ LoadSceneSt JSONSerialization::LoadGameObejctBinary(char** cursor)
 		return temp;
 	}
 
-	obj->AddComponent(Comp_Type::C_TRANSFORM);
-
 	// Tag ----------
 	std::string tagGameObject = LoadStringBinary(cursor);
 	if (App->scene->FindTag(tagGameObject.c_str()))obj->SetTag(tagGameObject.c_str());
@@ -303,8 +323,203 @@ LoadSceneCp JSONSerialization::LoadComponentsBinary(char** cursor)
 	uint uid_parent = LoadIntBinary(cursor);
 	// Position in Parent
 	uint position_parent = LoadIntBinary(cursor);
+	Component* comp;
+	switch (type)
+	{
+	case Comp_Type::C_MESH:
+	{
+		comp = new CompMesh(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_TRANSFORM:
+	{
+		comp = new CompTransform(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_RECT_TRANSFORM:
+	{
+		//if (FindComponentByType(Comp_Type::C_RECT_TRANSFORM) != nullptr) return nullptr;
+		//CompRectTransform* transform = new CompRectTransform(type, this);
+		//if (components.size() > 0 && components[0]->GetType() == Comp_Type::C_TRANSFORM)
+		//{
+		//	RELEASE(components[0]);
+		//	components[0] = transform;
+		//}
+		//else components.push_back(transform);
+		//return transform;
+	}
+	case Comp_Type::C_MATERIAL:
+	{
+		comp = new CompMaterial(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_CANVAS:
+	{
+		//AddComponent(Comp_Type::C_RECT_TRANSFORM);
+		//CompCanvas* canvas = new CompCanvas(type, this);
+		//components.push_back(canvas);
+		////If is not RectTransform
+		////TODO change transform
+		//return canvas;
+	}
+	case Comp_Type::C_CANVAS_RENDER:
+	{
+		//CompCanvasRender* canvas_renderer = new CompCanvasRender(type, this);
+		//components.push_back(canvas_renderer);
+		//return canvas_renderer;
+	}
+	case Comp_Type::C_IMAGE:
+	{
+		////If is not RectTransform
+		////TODO change transform
+		//CompCanvasRender* canvas_renderer = (CompCanvasRender*)FindComponentByType(Comp_Type::C_CANVAS_RENDER);
+		//if (canvas_renderer == nullptr)
+		//{
+		//	canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
+		//	components.push_back(canvas_renderer);
+		//}
+		//CompImage* image = new CompImage(type, this);
 
-	Component* comp = new Component(type, nullptr);
+		//components.push_back(image);
+		//return image;
+	}
+	case Comp_Type::C_TEXT:
+	{
+		//If is not RectTransform
+		//TODO change transform
+		//CompCanvasRender* canvas_renderer = (CompCanvasRender*)FindComponentByType(Comp_Type::C_CANVAS_RENDER);
+		//if (canvas_renderer == nullptr)
+		//{
+		//	canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
+		//	components.push_back(canvas_renderer);
+		//}
+		//CompText* text = new CompText(type, this);
+
+		//components.push_back(text);
+		//return text;
+	}
+	case Comp_Type::C_EDIT_TEXT:
+	{
+		//If is not RectTransform
+		//TODO change transform
+		//CompEditText* edit_text = new CompEditText(type, this);
+		//components.push_back(edit_text);
+		///* Link image to the button if exists */
+		//CompText* text_to_link = (CompText*)FindComponentByType(Comp_Type::C_TEXT);
+		//if (text_to_link != nullptr)
+		//{
+
+		//}
+		//else LOG("TEXT not linked to any Edit Text");
+		//return edit_text;
+	}
+	case Comp_Type::C_BUTTON:
+	{
+		//If is not RectTransform
+		//TODO change transform
+		//CompButton* button = new CompButton(type, this);
+		//components.push_back(button);
+		///* Link image to the button if exists */
+		//CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
+		//if (image_to_link != nullptr)
+		//{
+
+		//}
+		//else LOG("IMAGE not linked to any Button");
+		//return button;
+	}
+	case Comp_Type::C_CHECK_BOX:
+	{
+		//If is not RectTransform
+		//TODO change transform
+		//CompCheckBox* check_box = new CompCheckBox(type, this);
+		//components.push_back(check_box);
+		///* Link image to the button if exists */
+		//CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
+		//if (image_to_link != nullptr)
+		//{
+
+		//}
+		//else LOG("IMAGE not linked to any CheckBox");
+		//return check_box;
+	}
+	case Comp_Type::C_SLIDER:
+	{
+		//If is not RectTransform
+		//TODO change transform
+		//CompSlider* slider = new CompSlider(type, this);
+		//components.push_back(slider);
+		//CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
+		//if (image_to_link != nullptr)
+		//{
+
+		//}
+		//else LOG("IMAGE not linked to any slider");
+		//return slider;
+	}
+	case Comp_Type::C_CAMERA:
+	{
+		comp = new CompCamera(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_SCRIPT:
+	{
+		comp = new CompScript(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_ANIMATION:
+	{
+		comp = new CompAnimation(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_ANIMATION_UI:
+	{
+		comp = new CompUIAnimation(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_AUDIO:
+	{
+		comp = new CompAudio(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_BONE:
+	{
+		comp = new CompBone(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_LIGHT:
+	{
+		comp = new CompLight(type, nullptr);
+		break;
+	}
+
+	case Comp_Type::C_CUBEMAP_RENDERER:
+	{
+		//LOG("Adding CUBEMAP RENDERER.");
+		//CompCubeMapRenderer* cubemap = new CompCubeMapRenderer(type, this);
+		break;
+	}
+	case Comp_Type::C_COLLIDER:
+	{
+		comp = new CompCollider(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_RIGIDBODY:
+	{
+		comp = new CompRigidBody(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_PARTICLE_SYSTEM:
+	{
+		comp = new CompParticleSystem(type, nullptr);
+		break;
+	}
+	case Comp_Type::C_JOINT:
+	{
+		comp = new CompJoint(type, nullptr);
+		break;
+	}
+	}
 	if (comp == nullptr)
 	{
 		LoadSceneCp temp;

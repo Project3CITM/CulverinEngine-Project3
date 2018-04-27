@@ -816,6 +816,9 @@ void Skeleton::Link(const SkeletonSource* source)
 
 void Skeleton::GetOwnBufferSize(uint & buffer_size)
 {
+	// Put this on SyncComponents ............
+	//const CompMaterial* material_link = (CompMaterial*)FindComponentByType(Comp_Type::C_MATERIAL);
+	//if (material_link != nullptr) mesh->LinkMaterial(material_link);
 }
 
 void Skeleton::SaveBinary(char ** cursor) const
