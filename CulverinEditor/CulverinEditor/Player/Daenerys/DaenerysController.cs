@@ -102,7 +102,7 @@ public class DaenerysController : CharacterController
         //Link components with correct gameobjects
         LinkComponents(daenerys_icon_obj, daenerys_icon_obj_hp, null, daenerys_icon_obj_mana, 
                        daenerys_button_left_obj, daenerys_button_right_obj, daenerys_s_button, daenerys_s_button_idle, 
-                       GetLinkedObject("daenerys_left_cd_text"), GetLinkedObject("daenerys_right_cd_text"), GetLinkedObject("daenerys_sec_cd_text"),
+                       GetLinkedObject("daenerys_left_cd_text"), GetLinkedObject("daenerys_right_cd_text"), GetLinkedObject("daenerys_secondary_cd_text"),
                        larm_daenerys_obj, rarm_daenerys_obj, daenerys_button_left_obj_idle, daenerys_button_right_obj_idle);
 
         // Start Idle animation

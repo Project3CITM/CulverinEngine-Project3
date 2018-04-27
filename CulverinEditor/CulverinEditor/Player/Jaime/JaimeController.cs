@@ -5,21 +5,34 @@ public class JaimeController : CharacterController
 {
     //MESH ELEMENTS
     public GameObject jaime_obj;
-    public GameObject larm_jaime_obj; //To enable/disable mesh
-    public GameObject rarm_jaime_obj; //To enable/disable mesh
-    public GameObject Global_Camera;
-    
+    public GameObject larm_jaime_obj; 
+    public GameObject rarm_jaime_obj;
+    public GameObject jaime_sword_obj; //PARTICLES
+    SwordParticles sword_particles;
+
     //UI ELEMENTS
     public GameObject jaime_icon_obj;
     public GameObject jaime_icon_obj_hp;
     public GameObject jaime_icon_obj_stamina;
+
     public GameObject jaime_button_left;
+    public GameObject jaime_button_left_idle;
+
     public GameObject jaime_button_right;
+    public GameObject jaime_button_right_idle;
+    public GameObject combo_obj; /* Combo controller */
+    ComboController combo_controller;
+
+    GameObject jaime_s_button;
+    GameObject jaime_s_button_idle;
+
     public GameObject jaime_left_flag;
     public GameObject jaime_right_flag;
 
-    CompAnimation jaime_anim_controller;
-    CompImage jaime_icon_stamina_bar;
+    
+
+    //CAMERA
+    public GameObject Global_Camera;
 
     /* Stats to modify Hp/Stamina bar depending on current character */
     public float max_hp = 100.0f;
@@ -28,41 +41,30 @@ public class JaimeController : CharacterController
     public float curr_stamina = 100.0f;
     private float stamina_regen = 0.0f;
 
-    //Secondary Ability Stats ---
+    //Sec Ability Stats
     public float duration = 4.0f;
     public float sec_ability_damage = 10.0f;
     public float sec_ability_cost = 30;
-    JaimeCD_Secondary sec_ability_cd;
-    // ---------------------
+    private JaimeCD_Secondary sec_ability_cd;
 
-    //Left Ability Stats ---
+    //Left Ability Stats 
     public float left_ability_dmg = 10.0f;
     public float left_ability_dmg2 = 1.0f;
     public float left_ability_dmg3 = 15.0f;
     public float left_ability_cost = 10.0f;
-    JaimeCD_Left left_ability_cd;
-    bool do_left_attack = false;
-    public GameObject combo_obj; // Combo controller
+    private JaimeCD_Left cd_left;
+    private bool do_left_attack = false;
+
+    public float blood_amount = 0.2f;
 
     /* To perform different animations depending on the hit streak */
     string[] anim_name = { "Attack1", "Attack2", "Attack3" };
     string current_anim = "Attack1";
-    // ---------------------
 
-    //Right Ability Stats ---
+    //Right Ability Stats 
     public float right_ability_dmg = 0.0f;
     public float right_ability_cost = 50.0f;
-    JaimeCD_Right right_ability_cd;
-
-    public GameObject jaime_sword_obj;
-    public float blood_amount = 0.2f;
-    // ---------------------
-
-    //Particle emitter GameObject
-    public GameObject particles_jaime;
-
-    public GameObject jaime_button_left_idle;
-    public GameObject jaime_button_right_idle;
+    private JaimeCD_Right cd_right;
 
     public float cover_duration = 3.0f;
     private float cover_timer = 0.0f;
@@ -76,43 +78,57 @@ public class JaimeController : CharacterController
         larm_jaime_obj = GetLinkedObject("larm_jaime_obj");
         rarm_jaime_obj = GetLinkedObject("rarm_jaime_obj");
         jaime_sword_obj = GetLinkedObject("jaime_sword_obj");
-
-        Global_Camera = GetLinkedObject("Global_Camera");
+        sword_particles = jaime_sword_obj.GetComponent<SwordParticles>();
 
         jaime_icon_obj = GetLinkedObject("jaime_icon_obj");
+
         jaime_button_left = GetLinkedObject("jaime_button_left");
-        jaime_button_right = GetLinkedObject("jaime_button_right");
         jaime_button_left_idle = GetLinkedObject("jaime_button_left_idle");
+        combo_obj = GetLinkedObject("combo_obj");
+        combo_controller = combo_obj.GetComponent<ComboController>();
+        cd_left = jaime_button_left.GetComponent<JaimeCD_Left>();
+
+        jaime_button_right = GetLinkedObject("jaime_button_right");
         jaime_button_right_idle = GetLinkedObject("jaime_button_right_idle");
+        cd_right = jaime_button_left.GetComponent<JaimeCD_Right>();
+
+        jaime_s_button = GetLinkedObject("jaime_s_button_obj");
+        jaime_s_button_idle = GetLinkedObject("jaime_s_button_obj_idle");
+        sec_ability_cd = jaime_s_button.GetComponent<JaimeCD_Secondary>();
 
         jaime_left_flag = GetLinkedObject("jaime_left_flag");
         jaime_right_flag = GetLinkedObject("jaime_right_flag");
 
         jaime_icon_obj_hp = GetLinkedObject("jaime_icon_obj_hp");
         jaime_icon_obj_stamina = GetLinkedObject("jaime_icon_obj_stamina");
-        stamina_regen = GetLinkedObject("stamina_obj").GetComponent<Stamina>().regen;
+        stamina_regen = stamina.regen;
 
-        particles_jaime = GetLinkedObject("particles_jaime");
+        Global_Camera = GetLinkedObject("Global_Camera");
 
-        combo_obj = GetLinkedObject("combo_obj");
+        //Link components with correct gameobjects
+        LinkComponents(jaime_icon_obj, jaime_icon_obj_hp, jaime_icon_obj_stamina, null,
+                       jaime_button_left, jaime_button_right, jaime_s_button, jaime_s_button_idle,
+                       null, GetLinkedObject("jaime_right_cd_text"), GetLinkedObject("jaime_secondary_cd_text"),
+                       larm_jaime_obj, rarm_jaime_obj, jaime_button_left_idle, jaime_button_right_idle);
+
 
         //Start Idle animation
-        anim_controller = jaime_obj.GetComponent<CompAnimation>();
         anim_controller.PlayAnimation("Idle");
 
         //Disable Jaime secondary ability button
-        GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().SetInteractivity(false);
-        GetLinkedObject("jaime_s_button_obj").GetComponent<CompImage>().SetRender(false);
-        GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);
+        sec_button.SetInteractivity(false);
+        sec_button_img.SetRender(false);
+        sec_button_idle_img.SetRender(false);
 
         //Set Icon in the center
-        jaime_icon_obj.GetComponent<CompImage>().SetEnabled(true);
-        jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(1.0f, 1.0f, 1.0f), 1.0f);
+        icon_img.SetEnabled(true);
+        icon_img.SetColor(new Vector3(1.0f, 1.0f, 1.0f), 1.0f);
 
-        jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
-        jaime_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(0.0f, 22.0f, 0.0f));
-        jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false);
-        jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false);
+        icon_trans.SetScale(new Vector3(1.0f, 1.0f, 1.0f));
+        icon_trans.SetUIPosition(new Vector3(0.0f, 22.0f, 0.0f));
+
+        icon_hp_img.SetEnabled(false);
+        icon_stamina_img.SetEnabled(false);
 
         cover_timer = 0.0f;
     }
@@ -124,13 +140,11 @@ public class JaimeController : CharacterController
 
     public override void ControlCharacter()
     {
-
+        //Debug.Log(state, Department.PLAYER);
         // First check if you are alive
-        health = GetLinkedObject("health_obj").GetComponent<Hp>();
         if (health.GetCurrentHealth() > 0)
         {
             // Check if player is moving to block attacks/abilities
-            movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
             if (!movement.IsMoving())
             {
                 /* Player is alive */
@@ -144,9 +158,7 @@ public class JaimeController : CharacterController
                         }
                     case State.ATTACKING:
                         {
-                            //Check for end of the Attack animation
-                            anim_controller = jaime_obj.GetComponent<CompAnimation>();
-
+                            //Check for end of the Attack animation                       
                             //Apply damage over x time of the attack animation
                             if (do_left_attack && anim_controller.IsAnimOverXTime(0.7f))
                             {
@@ -167,8 +179,6 @@ public class JaimeController : CharacterController
                     case State.FAIL_ATTACK:
                         {
                             //Check for end of the Attack animation
-                            anim_controller = jaime_obj.GetComponent<CompAnimation>();
-
                             if (anim_controller.IsAnimationStopped("Attack Fail"))
                             {
                                 state = State.IDLE;
@@ -178,19 +188,19 @@ public class JaimeController : CharacterController
                     case State.COVER:
                         {
                             //Check for end of the Attack animation
-                            if (jaime_obj.GetComponent<CompAnimation>().IsAnimationStopped("CoverIn") && cover_timer <= 0.0f)
+                            if (anim_controller.IsAnimationStopped("CoverIn") && cover_timer <= 0.0f)
                             {
-                                jaime_obj.GetComponent<CompAnimation>().SetTransition("ToCoverIdle");
+                                anim_controller.SetTransition("ToCoverIdle");
                             }
-                            if(jaime_obj.GetComponent<CompAnimation>().IsAnimationRunning("CoverIdle") == true)
+                            if (anim_controller.IsAnimationRunning("CoverIdle") == true)
                             {
                                 cover_timer += Time.deltaTime;
                             }
-                            if(jaime_obj.GetComponent<CompAnimation>().IsAnimationRunning("CoverIdle") && cover_timer >= cover_duration)
+                            if(anim_controller.IsAnimationRunning("CoverIdle") && cover_timer >= cover_duration)
                             {
-                                jaime_obj.GetComponent<CompAnimation>().SetTransition("ToCoverOut");
+                                anim_controller.SetTransition("ToCoverOut");
                             }
-                            if (jaime_obj.GetComponent<CompAnimation>().IsAnimationStopped("CoverOut") && cover_timer >= cover_duration)
+                            if (anim_controller.IsAnimationStopped("CoverOut") && cover_timer >= cover_duration)
                             {
                                 state = State.IDLE;
                             }
@@ -199,7 +209,6 @@ public class JaimeController : CharacterController
                     case State.BLOCKING:
                         {
                             //Check for end of the Attack animation
-                            anim_controller = jaime_obj.GetComponent<CompAnimation>();
                             if (anim_controller.IsAnimationStopped("Block"))
                             {
                                 state = State.IDLE;
@@ -213,7 +222,6 @@ public class JaimeController : CharacterController
                     case State.HIT:
                         {
                             //Check for end of the Attack animation
-                            anim_controller = jaime_obj.GetComponent<CompAnimation>();
                             if (anim_controller.IsAnimationStopped("Hit"))
                             {
                                 state = State.IDLE;
@@ -250,8 +258,7 @@ public class JaimeController : CharacterController
                     curr_stamina = max_stamina;
                 }
                 float calc_stamina = curr_stamina / max_stamina;
-                jaime_icon_stamina_bar = jaime_icon_obj_stamina.GetComponent<CompImage>();
-                jaime_icon_stamina_bar.FillAmount(calc_stamina);
+                icon_stamina_img.FillAmount(calc_stamina);
             }
         }
     }
@@ -277,7 +284,6 @@ public class JaimeController : CharacterController
         //int enemy_y = 0;
 
         //Do Damage Around
-        movement = GetLinkedObject("player_obj").GetComponent<MovementController>();
         movement.GetPlayerPos(out curr_x, out curr_y);
 
         //Check enemy in the tiles around the player
@@ -304,7 +310,7 @@ public class JaimeController : CharacterController
         PlayFx("JaimeWarCry");
 
         // Activate the shield that protects from damage once
-        GetLinkedObject("player_obj").GetComponent<Shield>().ActivateShield();
+        player_obj.GetComponent<Shield>().ActivateShield();
     }
 
     public override bool GetDamage(float dmg)
@@ -313,8 +319,8 @@ public class JaimeController : CharacterController
         {
             SetAnimationTransition("ToBlock", true);
             Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Block");
-            GetLinkedObject("player_obj").GetComponent<CompAudio>().PlayEvent("MetalHit");
-            
+
+            PlayFx("MetalHit");       
             //PlayFx("MetalClash");
             PlayFx("JaimeBlock");
 
@@ -326,7 +332,6 @@ public class JaimeController : CharacterController
         }
         else
         {
-            health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.GetDamage(dmg);
 
             if (health.GetCurrentHealth() > 0)
@@ -337,10 +342,11 @@ public class JaimeController : CharacterController
                     SetAnimationTransition("ToHit", true);
                     SetState(State.HIT);
                 }
+
                 PlayFx("JaimeHurt");
 
                 //Damage Feedback
-                GetLinkedObject("player_obj").GetComponent<DamageFeedback>().SetDamage(health.GetCurrentHealth(), max_hp);
+                damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
             }
 
             else
@@ -348,10 +354,12 @@ public class JaimeController : CharacterController
                 Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Death");
                 SetAnimationTransition("ToDeath", true);
                 SetState(State.DEAD);
+
+                PlayFx("JaimeDead");
             }
 
             //Reset hit count
-            combo_obj.GetComponent<ComboController>().ResetHitStreak();
+            combo_controller.ResetHitStreak();
 
             return true;
         }
@@ -359,7 +367,6 @@ public class JaimeController : CharacterController
 
     public override void SetAnimationTransition(string name, bool value)
     {
-        anim_controller = jaime_obj.GetComponent<CompAnimation>();
         anim_controller.SetTransition(name, value);
     }
 
@@ -369,95 +376,85 @@ public class JaimeController : CharacterController
         if (active)
         {
             //Set Icon in the center
-            jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(1.0f, 1.0f, 1.0f));
-            jaime_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(0.0f, 22.0f, 0.0f));
-            jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(false);
-            jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(false);
+            icon_trans.SetScale(new Vector3(1.0f, 1.0f, 1.0f));
+            icon_trans.SetUIPosition(new Vector3(0.0f, 22.0f, 0.0f));
+            icon_hp_img.SetEnabled(false);
+            icon_stamina_img.SetEnabled(false);
 
             //Update HP
-            health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.SetHP(curr_hp, max_hp);
 
             //Update Stamina
-            stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             stamina.SetStamina(curr_stamina, max_stamina);
 
             //Enable Jaime Abilities buttons
             EnableAbilities(true);
 
             //Disable Secondary button     
-            GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().SetInteractivity(false);
-            GetLinkedObject("jaime_s_button_obj").GetComponent<CompImage>().SetRender(false);
-            GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);
-            GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(false);        
+            sec_button.SetInteractivity(false);
+            sec_button_img.SetRender(false);
+            sec_button_idle_img.SetRender(false);
         }
 
         //Get values from var and store them
         else
         {
-            health = GetLinkedObject("health_obj").GetComponent<Hp>();
             curr_hp = health.GetCurrentHealth();
-
-            stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
             curr_stamina = stamina.GetCurrentStamina();
 
             //Set icon at the left
             if (left) 
             {
-                jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
-                jaime_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-115.0f, 100.0f, 0.0f));
-                GetLinkedObject("jaime_s_button_obj").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(124.0f, -33.0f, 0.0f));           
-                GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(124.0f, -33.0f, 0.0f));
+                icon_trans.SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+                icon_trans.SetUIPosition(new Vector3(-115.0f, 100.0f, 0.0f));
+                sec_button_trans.SetUIPosition(new Vector3(124.0f, -33.0f, 0.0f));           
+                sec_button_idle_trans.SetUIPosition(new Vector3(124.0f, -33.0f, 0.0f));
             }
             //Set the icon at the right
             else
             {
-                jaime_icon_obj.GetComponent<CompRectTransform>().SetScale(new Vector3(0.7f, 0.7f, 0.7f));
-                jaime_icon_obj.GetComponent<CompRectTransform>().SetUIPosition(new Vector3(115.0f, 100.0f, 0.0f));
-                GetLinkedObject("jaime_s_button_obj").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
-                GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompRectTransform>().SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
+                icon_trans.SetScale(new Vector3(0.7f, 0.7f, 0.7f));
+                icon_trans.SetUIPosition(new Vector3(115.0f, 100.0f, 0.0f));
+                sec_button_trans.SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
+                sec_button_idle_trans.SetUIPosition(new Vector3(-123.0f, -31.5f, 0.0f));
             }
 
             //Enable Secondary Button
-            GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().SetInteractivity(true);
-            GetLinkedObject("jaime_s_button_obj").GetComponent<CompImage>().SetRender(true);
-            GetLinkedObject("jaime_s_button_obj_idle").GetComponent<CompImage>().SetRender(true);
+            sec_button.SetInteractivity(true);
+            sec_button_img.SetRender(true);
+            sec_button_idle_img.SetRender(true);
 
             //Enable Secondary Bars And Update them
-            jaime_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
-            jaime_icon_obj_stamina.GetComponent<CompImage>().FillAmount(curr_stamina / max_stamina);
-            Debug.Log(curr_stamina / max_stamina);
-            jaime_icon_obj_hp.GetComponent<CompImage>().SetEnabled(true);
-            jaime_icon_obj_stamina.GetComponent<CompImage>().SetEnabled(true);
+            icon_hp_img.FillAmount(curr_hp / max_hp);
+            icon_stamina_img.FillAmount(curr_stamina / max_stamina);
+            icon_hp_img.SetEnabled(true);
+            icon_stamina_img.SetEnabled(true);
 
             //Disable Jaime Abilities buttons
             EnableAbilities(false);
         }
     }
 
-    public override void ToggleMesh(bool active)
-    {
-        larm_jaime_obj.GetComponent<CompMesh>().SetEnabled(active);
-        rarm_jaime_obj.GetComponent<CompMesh>().SetEnabled(active);
-        jaime_sword_obj.GetComponent<CompMesh>().SetEnabled(active);
-    }
-
     public override bool IsAnimationStopped(string name)
     {
-        anim_controller = jaime_obj.GetComponent<CompAnimation>();
         return anim_controller.IsAnimationStopped(name);
     }
 
     public override bool IsAnimationRunning(string name)
     {
-        anim_controller = jaime_obj.GetComponent<CompAnimation>();
         return anim_controller.IsAnimationRunning(name);
+    }
+
+    public override void ToggleMesh(bool active)
+    {
+        left_arm.SetEnabled(active);
+        right_arm.SetEnabled(active);
+        jaime_sword_obj.GetComponent<CompMesh>().SetEnabled(active);
     }
 
     public void PrepareLeftAbility()
     {
-        //button = jaime_button_left.GetComponent<CompButton>();
-        //button.Clicked(); // This will execute LeftCooldown  
+        left_button.Clicked(); // This will execute LeftCooldown  
     }
 
     public bool OnLeftClick()
@@ -468,10 +465,8 @@ public class JaimeController : CharacterController
             // Check if player has enough stamina to perform its attack
             if (CanWasteStamina(left_ability_cost))
             {
-                left_ability_cd = jaime_button_left.GetComponent<JaimeCD_Left>();
-
                 //Check if the ability is not in cooldown
-                if (!left_ability_cd.in_cd)
+                if (!cd_left.in_cd)
                 {
                     // Play the Sound FX
                     PlayFx("JaimeFailImpact"); //GOOD ONE
@@ -480,20 +475,19 @@ public class JaimeController : CharacterController
                     DecreaseStamina(left_ability_cost);
 
                     // Set Attacking Animation depending on the hit_streak
-                    current_anim = anim_name[combo_obj.GetComponent<ComboController>().GetHitStreak()];
+                    current_anim = anim_name[combo_controller.GetHitStreak()];
                     SetAnimationTransition("To" + current_anim, true);
-                    jaime_anim_controller = Global_Camera.GetComponent<CompAnimation>();
                     if(current_anim == "Attack1")
                     {
-                        jaime_anim_controller.PlayAnimationNode("J_Attack1");
+                        anim_controller.PlayAnimationNode("J_Attack1");
                     }
                     if(current_anim == "Attack2")
                     {
-                        jaime_anim_controller.PlayAnimationNode("J_Attack2");
+                        anim_controller.PlayAnimationNode("J_Attack2");
                     }
                     if(current_anim == "Attack3")
                     {
-                        jaime_anim_controller.PlayAnimationNode("J_Attack3");
+                        anim_controller.PlayAnimationNode("J_Attack3");
                     }
                     do_left_attack = true;
 
@@ -508,11 +502,10 @@ public class JaimeController : CharacterController
             }
             else
             {
-                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired == false)
+                if (characters_manager.jaime_tired == false)
                 {
                     PlayFx("JaimeTired");
-                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired = true;
-                    Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.BLUE);
+                    characters_manager.jaime_tired = true;
                 }
                 return false;
             }
@@ -530,14 +523,12 @@ public class JaimeController : CharacterController
             if (coll_object.CompareTag("Enemy"))
             {
                 //Get current hit streak
-                int hit_streak = combo_obj.GetComponent<ComboController>().GetHitStreak();
+                int hit_streak = combo_controller.GetHitStreak();
 
                 //Enable particles emission of enemy blood
-                particles_jaime.GetComponent<SwordParticles>().EnableEnemyCollision(true);
+                sword_particles.EnableEnemyCollision(true);
 
                 // Check the specific enemy in front of you and apply dmg or call object OnContact
-                EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
-
                 float damage = 1.0f;
 
                 if (hit_streak == 0) 
@@ -557,35 +548,33 @@ public class JaimeController : CharacterController
                 if (enemy_manager.ApplyDamage(coll_object, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT))
                 {
                     //Increase the blood of the sword
-                    GetLinkedObject("jaime_sword_obj").GetComponent<SwordParticles>().SetBlood(blood_amount); 
+                    sword_particles.SetBlood(blood_amount); 
 
-                    GetComponent<CompAudio>().PlayEvent("Enemy_Flesh_Hit");
+                    PlayFx("Enemy_Flesh_Hit");
 
                     if (hit_streak == 0)
                     {
                         //Start combo time controller to manage hit streaks
-                        combo_obj.GetComponent<ComboController>().StartComboTime();
+                        combo_controller.StartComboTime();
                     }
 
                     // If damage done effectively, increase Hit Streak
-                    combo_obj.GetComponent<ComboController>().IncreaseHitStreak();
+                    combo_controller.IncreaseHitStreak();
                 }
                 else
                 {
                     //Decrease the blood of the sword
-                    GetLinkedObject("jaime_sword_obj").GetComponent<SwordParticles>().SetBlood(-blood_amount);
+                    sword_particles.SetBlood(-blood_amount);
 
                     // Reset Hit Count
-                    combo_obj.GetComponent<ComboController>().ResetHitStreak(); 
+                    combo_controller.ResetHitStreak();
 
                     //Enable particles emission of enemy blood
-                    particles_jaime.GetComponent<SwordParticles>().EnableWallCollision(true);
+                    sword_particles.EnableWallCollision(true);
 
                     //Set FailAttack Transition & Audio
                     SetAnimationTransition("ToFail", true);
 
-                    //PlayFx -> Obstacle Impact
-                    //PlayFx("JaimeImpactStone");
                     PlayFx("JaimeImpact");
 
                     SetState(State.FAIL_ATTACK);
@@ -595,19 +584,17 @@ public class JaimeController : CharacterController
             else if(coll_object.CompareTag("obstacle") || coll_object.CompareTag("trap_floor"))
             {
                 //Decrease the blood of the sword
-                GetLinkedObject("jaime_sword_obj").GetComponent<SwordParticles>().SetBlood(-blood_amount);
+                sword_particles.SetBlood(-blood_amount);
 
                 //Reset Hit Count
-                combo_obj.GetComponent<ComboController>().ResetHitStreak(); 
+                combo_controller.ResetHitStreak();
 
                 //Enable particles emission of sparks
-                particles_jaime.GetComponent<SwordParticles>().EnableWallCollision(true);
+                sword_particles.EnableWallCollision(true);
 
                 //Set FailAttack Transition & Audio
                 SetAnimationTransition("ToFail", true);
 
-                //PlayFx -> Obstacle Impact
-                //PlayFx("JaimeImpactStone");
                 PlayFx("JaimeImpact");
 
                 SetState(State.FAIL_ATTACK);
@@ -616,20 +603,16 @@ public class JaimeController : CharacterController
         else
         {
             //Decrease the blood of the sword
-            GetLinkedObject("jaime_sword_obj").GetComponent<SwordParticles>().SetBlood(-blood_amount);
+            sword_particles.SetBlood(-blood_amount);
 
             //Reset Hit Count
-            combo_obj.GetComponent<ComboController>().ResetHitStreak();
+            combo_controller.ResetHitStreak();
         }
-
-        // Play the Sound FX
-        //PlayFx("JaimeFailImpact");
     }
 
     public void PrepareRightAbility()
     {
-        //button = jaime_button_right.GetComponent<CompButton>();
-        //button.Clicked(); // This will execute RightCooldown    
+        right_button.Clicked(); // This will execute RightCooldown    
     }
 
     public bool OnRightClick()
@@ -640,9 +623,8 @@ public class JaimeController : CharacterController
             // Check if player has enough stamina to perform its attack
             if (CanWasteStamina(right_ability_cost))
             {
-                right_ability_cd = jaime_button_right.GetComponent<JaimeCD_Right>();
                 //Check if the ability is not in cooldown
-                if (!right_ability_cd.in_cd)
+                if (!cd_right.in_cd)
                 {
                     DoRightAbility();
                     return true;
@@ -654,11 +636,10 @@ public class JaimeController : CharacterController
             }
             else
             {
-                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired == false)
+                if (characters_manager.jaime_tired == false)
                 {
                     PlayFx("JaimeTired");
-                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired = true;
-                    Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.BLUE);
+                    characters_manager.jaime_tired = true;
                 }
                 return false;
             }
@@ -684,7 +665,6 @@ public class JaimeController : CharacterController
             // Check if player has enough stamina to perform its attack
             if (CanWasteStamina(sec_ability_cost))
             {
-                sec_ability_cd = GetLinkedObject("jaime_s_button_obj").GetComponent<JaimeCD_Secondary>();
                 //Check if the ability is not in cooldown
                 if (!sec_ability_cd.in_cd)
                 {
@@ -696,11 +676,10 @@ public class JaimeController : CharacterController
             }
             else
             {
-                if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired == false)
+                if (characters_manager.jaime_tired == false)
                 {
                     PlayFx("JaimeTired");
-                    GetLinkedObject("player_obj").GetComponent<CharactersManager>().jaime_tired = true;
-                    Debug.Log("NOT ENOUGH STAMINA JAIME", Department.PLAYER, Color.BLUE);
+                    characters_manager.jaime_tired = true;
                 }
                 return false;
             }
@@ -710,26 +689,9 @@ public class JaimeController : CharacterController
 
     public override void EnableAbilities(bool active)
     {
-        //jaime_button_left.SetActive(active);
-        //jaime_button_right.SetActive(active);
+        base.EnableAbilities(active);
 
-        //Button Interaction
-        jaime_button_left.GetComponent<CompButton>().SetInteractivity(active);
-        jaime_button_right.GetComponent<CompButton>().SetInteractivity(active);
-
-        //Image
-        jaime_button_left.GetComponent<CompImage>().SetRender(active);
-        jaime_button_right.GetComponent<CompImage>().SetRender(active);
-        jaime_button_left_idle.GetComponent<CompImage>().SetRender(active);
-        jaime_button_right_idle.GetComponent<CompImage>().SetRender(active);
-        
-        //Right Cooldown Text Render
-        GetLinkedObject("jaime_right_cd_text").GetComponent<CompText>().SetRender(active);
-
-        //Sec Cooldown Text Render
-        GetLinkedObject("jaime_secondary_cd_text").GetComponent<CompText>().SetRender(!active);
-
-        //Disable Flags
+        //Flags
         jaime_left_flag.SetActive(active);
         jaime_right_flag.SetActive(active);
     }
@@ -743,7 +705,7 @@ public class JaimeController : CharacterController
             {
                 curr_hp = max_hp;
             }
-            jaime_icon_obj_hp.GetComponent<CompImage>().FillAmount(curr_hp / max_hp);
+            icon_hp_img.FillAmount(curr_hp / max_hp);
         }
     }
 }

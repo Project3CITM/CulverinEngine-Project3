@@ -105,7 +105,7 @@ public class TheonController : CharacterController
         //Link components with correct gameobjects
         LinkComponents(theon_icon_obj, theon_icon_obj_hp, theon_icon_obj_stamina, null,
                        theon_button_left, theon_button_right, theon_s_button, theon_s_button_idle,
-                       GetLinkedObject("theon_left_cd_text"), GetLinkedObject("theon_right_cd_text"), GetLinkedObject("theon_sec_cd_text"),
+                       GetLinkedObject("theon_left_cd_text"), GetLinkedObject("theon_right_cd_text"), GetLinkedObject("theon_secondary_cd_text"),
                        L_Arm_Theon, R_Arm_Theon, theon_button_left_idle, theon_button_right_idle);
 
         //Start Idle animation
@@ -420,7 +420,6 @@ public class TheonController : CharacterController
                 //Check if the ability is not in cooldown
                 if (!cd_left.in_cd)
                 { 
-                    // First, OnClick of LeftWeapon, then, onClick of Cooldown
                     DoLeftAbility();
 
                     return true;

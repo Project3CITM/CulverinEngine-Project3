@@ -98,21 +98,28 @@ public class CharacterController : CulverinBehaviour
         //LEFT BUTTON
         left_button = left_button_obj.GetComponent<CompButton>();
         left_button_img = left_button_obj.GetComponent<CompImage>();
-        left_counter = left_counter_obj.GetComponent<CompText>();
-
+        if (left_counter != null)
+        {
+            left_counter = left_counter_obj.GetComponent<CompText>();
+        }
         left_button_idle_img = left_button_idle_obj.GetComponent<CompImage>();
 
         //RIGHT BUTTON
         right_button = right_button_obj.GetComponent<CompButton>();
         right_button_img = right_button_obj.GetComponent<CompImage>();
-        right_counter = right_counter_obj.GetComponent<CompText>();
-
+        if (right_counter != null)
+        {
+            right_counter = right_counter_obj.GetComponent<CompText>();
+        }
         right_button_idle_img = right_button_idle_obj.GetComponent<CompImage>();
 
         //SECONDARY BUTTON
         sec_button = sec_button_obj.GetComponent<CompButton>();
         sec_button_img = sec_button_obj.GetComponent<CompImage>();
-        sec_counter = sec_counter_obj.GetComponent<CompText>();
+        if (sec_counter != null)
+        {
+            sec_counter = sec_counter_obj.GetComponent<CompText>();
+        }
         sec_button_trans = sec_button_obj.GetComponent<CompRectTransform>();
 
         sec_button_idle_img = sec_button_idle_obj.GetComponent<CompImage>();
@@ -293,9 +300,18 @@ public class CharacterController : CulverinBehaviour
         right_button_idle_img.SetRender(active);
 
         //Cooldown Text Renders
-        left_counter.SetRender(active);
-        right_counter.SetRender(active);
-        sec_counter.SetRender(!active);
+        if (left_counter != null)
+        {
+            left_counter.SetRender(active);
+        }
+        if (right_counter != null)
+        {
+            right_counter.SetRender(active);
+        }
+        if (sec_counter != null) 
+        {
+            sec_counter.SetRender(!active);
+        }
     }
 
     public virtual Vector3 GetFlameBreathPosition(Vector3 player_pos)
