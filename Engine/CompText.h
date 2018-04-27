@@ -26,13 +26,13 @@ public:
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
 	void SyncComponent(GameObject * sync_parent);
-	void SetRect(float x, float y, float width, float height);
 	void SetString(std::string input);
-
+	int GetWidth()const;
+	int GetHeight()const;
 private:	
 	void UpdateText();
 	bool GenerateText();
-	bool TextCanFit(float4 rect_transform, float4 rect_text);
+	bool TextCanFit(float4 rect_transform);
 	void ReSizeInput();
 protected:
 	void ExpandMesh();
@@ -54,7 +54,8 @@ private:
 		BOTTOM_POSITION
 	};
 	bool update_text = false;
-	float4 text_rect;
+	int text_width = 0;
+	int text_height = 0;
 	bool show_resource_font_windows = false;
 	//std::string input_text;
 	char* input_text = nullptr;

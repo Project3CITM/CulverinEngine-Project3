@@ -184,6 +184,18 @@ float CompGraphic::GetAlpha() const
 {
 	return color.w;
 }
+int CompGraphic::GetWidth()const
+{
+	if(transform==nullptr)
+		return 0;
+	return transform->GetWidth();
+}
+int CompGraphic::GetHeight()const
+{
+	if (transform == nullptr)
+		return 0;
+	return transform->GetHeight();
+}
 void CompGraphic::ResizeGenerateMesh()
 {
 	GenerateMesh();

@@ -250,6 +250,10 @@ private:
 	static void DeactivateRender(MonoObject * object);
 	static void SetAlpha(MonoObject* object, float alpha);
 
+	static int GetHeight(MonoObject * object);
+
+	static int GetWidth(MonoObject * object);
+
 	/*Component Text*/
 	static void SetText(MonoObject* object, MonoString* alpha);
 	/*Component Canvas*/
@@ -324,6 +328,8 @@ private:
 	/*Component Rect_Transform*/
 	static void SetUIPosition(MonoObject* object, MonoObject* vector3);
 	static MonoObject* GetUIPosition(MonoObject* object);
+	static void SetWidth(MonoObject * object, int value);
+	static void SetHeight(MonoObject * object, int value);
 
 	/*Module Physics*/
 	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);

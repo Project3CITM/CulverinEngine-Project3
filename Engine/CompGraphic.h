@@ -39,6 +39,8 @@ public:
 	float4 GetColor()const;
 	bool GetParentActive();
 	float GetAlpha()const;
+	virtual int GetWidth()const;
+	virtual int GetHeight()const;
 
 	void ResizeGenerateMesh();
 
