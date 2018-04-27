@@ -685,9 +685,9 @@ void JSONSerialization::LoadConstCharBinary(char ** cursor, const char** value)
 
 math::float2 JSONSerialization::LoadFloat2Binary(char ** cursor)
 {
-	uint bytes_to_copy = sizeof(int);
+	uint bytes_to_copy = sizeof(float);
 	math::float2 ret;
-	int temp = 0;
+	float temp = 0;
 	memcpy(&temp, (*cursor), bytes_to_copy);
 	ret.x = temp;
 	(*cursor) += bytes_to_copy;
@@ -700,9 +700,9 @@ math::float2 JSONSerialization::LoadFloat2Binary(char ** cursor)
 
 math::float3 JSONSerialization::LoadFloat3Binary(char ** cursor)
 {
-	uint bytes_to_copy = sizeof(int);
+	uint bytes_to_copy = sizeof(float);
 	math::float3 ret;
-	int temp = 0;
+	float temp = 0;
 	memcpy(&temp, (*cursor), bytes_to_copy);
 	ret.x = temp;
 	(*cursor) += bytes_to_copy;
@@ -719,9 +719,9 @@ math::float3 JSONSerialization::LoadFloat3Binary(char ** cursor)
 
 math::float4 JSONSerialization::LoadFloat4Binary(char ** cursor)
 {
-	uint bytes_to_copy = sizeof(int);
+	uint bytes_to_copy = sizeof(float);
 	math::float4 ret;
-	int temp = 0;
+	float temp = 0;
 	memcpy(&temp, (*cursor), bytes_to_copy);
 	ret.x = temp;
 	(*cursor) += bytes_to_copy;
