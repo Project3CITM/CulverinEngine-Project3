@@ -92,19 +92,22 @@ CompCollider::~CompCollider()
 // -----------------------------------------------------------------
 void CompCollider::Update(float dt)
 {
-	if (transform->GetUpdated() && rigid_body_comp == nullptr)
+	if (dt == 0.f && !rigid_body_comp)
 	{
-		if (trigger && !on_move)
+		if (transform->GetUpdated())
 		{
-			body->SetAsTrigger(false);
-			on_move = true;
+			if (trigger && !on_move)
+			{
+				body->SetAsTrigger(false);
+				on_move = true;
+			}
+			SetColliderPosition();
 		}
-		SetColliderPosition();
-	}
-	else if (!rigid_body_comp && trigger && on_move)
-	{
-		body->SetAsTrigger(trigger);
-		on_move = false;
+		else if (trigger && on_move)
+		{
+			body->SetAsTrigger(trigger);
+			on_move = false;
+		}
 	}
 }
 

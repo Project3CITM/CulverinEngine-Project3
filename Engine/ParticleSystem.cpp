@@ -227,7 +227,7 @@ void ParticleEmitter::DrawBox(const AABB& shape)
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnable(GL_COLOR);
-	glColor3f(1.0f, 0.0f, 1.0f);
+	glColor3f(0.0f, 0.0f, 1.0f);
 	glLineWidth(DEBUG_THICKNESS);
 	glBegin(GL_LINES);
 
@@ -270,7 +270,7 @@ void ParticleEmitter::DrawBox(const AABB& shape)
 	glEnd();
 
 	glLineWidth(1.0f);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(0.0f, 0.0f, 1.0f);
 	glDisable(GL_TEXTURE_2D);
 
 
@@ -516,6 +516,8 @@ void Particle::SetAssignedStateFromVariables(ParticleAssignedState& AState, cons
 	AState.RGBATint.y = State.RGBATint.y + RandGen.Float(-State.RGBATintVariation.y, State.RGBATintVariation.y);
 	AState.RGBATint.z = State.RGBATint.z + RandGen.Float(-State.RGBATintVariation.z, State.RGBATintVariation.z);
 	AState.RGBATint.w = State.RGBATint.w + RandGen.Float(-State.RGBATintVariation.w, State.RGBATintVariation.w);
+
+	AState.Spin = State.particleSpin + RandGen.Float(-State.spinVariation, State.spinVariation);
 }
 
 void Particle::OrientateParticle()
@@ -531,6 +533,10 @@ void Particle::OrientateParticle()
 	{
 		float3 direction = App->renderer3D->active_camera->frustum.front;
 		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		
+		
+		Quat to_rot = Quat::RotateZ(DEGTORAD * Properties.Spin);
+		Properties.Rotation = Properties.Rotation*to_rot;
 		break;
 	}
 	case 2: //VerticalBillboard
@@ -556,6 +562,7 @@ inline void Particle::CalculateStatesInterpolation()
 	CalculateGravity(Properties.LifetimeActual, Properties.LifetimeMax);
 	CalculateSize(Properties.LifetimeActual, Properties.LifetimeMax);
 	CalculateColor(Properties.LifetimeActual, Properties.LifetimeMax);
+	CalculateSpin(Properties.LifetimeActual, Properties.LifetimeMax);
 }
 
 inline void Particle::CalculatePosition(float LifetimeFloat)
@@ -589,6 +596,11 @@ inline void Particle::CalculateSize(float LifetimeFloat, float MaxLifetimeFloat)
 inline void Particle::CalculateColor(float LifetimeFloat, float MaxLifetimeFloat)
 {
 	Properties.RGBATint = ParticleSystem_Lerp(InitialState.RGBATint, FinalState.RGBATint, LifetimeFloat, MaxLifetimeFloat);
+}
+
+inline void Particle::CalculateSpin(float LifetimeFloat, float MaxLifetimeFloat)
+{
+	Properties.Spin = ParticleSystem_Lerp(InitialState.Spin, FinalState.Spin, LifetimeFloat, MaxLifetimeFloat);
 }
 
 ParticleMeshData::ParticleMeshData()
@@ -723,69 +735,14 @@ bool ParticleSystem::Update(float dt, bool emit)
 {	
 
 	if(emit && to_delete == false)
-	{ 
-		if (App->engine_state != EngineState::STOP && !Emitter.IsEmitterActive())
-			return true;
-
-		/* Emission */
-		Emitter.EmissionDuration += dt;
-		float SpawnRate = 1.0f / (float)Emitter.SpawnRate;
-
+	{ 	
 		if (App->engine_state == EngineState::STOP)
 		{
-			if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
-			{
-				if (SpawnRate < dt)
-				{
-					unsigned int ParticlesToSpawn = dt / SpawnRate;
-					for (unsigned int i = 0; i < ParticlesToSpawn; i++)
-						CreateParticle();
-				}
-				else
-					CreateParticle();
-				NextParticleTime = Emitter.EmissionDuration + SpawnRate;
-			}
+			UpdateInEditor(dt);
 	     }
 		else
 		{
-			if ((Emitter.EmitterLifeMax <= 0.0f || Emitter.Loop) || (!Emitter.IsEmitterActive()))
-			{
-				if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
-				{
-					if (SpawnRate < dt)
-					{
-						unsigned int ParticlesToSpawn = dt / SpawnRate;
-						for (unsigned int i = 0; i < ParticlesToSpawn; i++)
-							CreateParticle();
-					}
-					else
-						CreateParticle();
-					NextParticleTime = Emitter.EmissionDuration + SpawnRate;
-				}
-			}
-			else
-			{
-				if (Emitter.EmitterLifeMax > Emitter.EmitterLife)
-				{
-					if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
-					{
-						if (SpawnRate < dt)
-						{
-							unsigned int ParticlesToSpawn = dt / SpawnRate;
-							for (unsigned int i = 0; i < ParticlesToSpawn; i++)
-								CreateParticle();
-						}
-						else
-							CreateParticle();
-						NextParticleTime = Emitter.EmissionDuration + SpawnRate;
-
-						//CreateParticle();
-						//NextParticleTime = Emitter.EmissionDuration + (1.0f / (float)Emitter.SpawnRate);
-					}
-					Emitter.EmitterLife += dt;
-				}
-				else DeactivateEmitter();
-			}
+			UpdateInGame(dt);
 		}
 	}
 	
@@ -799,6 +756,97 @@ bool ParticleSystem::Update(float dt, bool emit)
 	
 	return true;
 }
+
+void ParticleSystem::UpdateInEditor(float dt)
+{
+	/* Emission */
+	Emitter.EmissionDuration += dt;
+	float SpawnRate = 1.0f / (float)Emitter.SpawnRate;
+
+	if(Emitter.Loop)
+	{	
+		if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
+		{
+			if (SpawnRate < dt)
+			{
+				unsigned int ParticlesToSpawn = dt / SpawnRate;
+				for (unsigned int i = 0; i < ParticlesToSpawn; i++)
+					CreateParticle();
+			}
+			else
+				CreateParticle();
+			NextParticleTime = Emitter.EmissionDuration + SpawnRate;
+		}
+	}
+	else
+	{
+		if (Emitter.EmitterLifeMax > Emitter.PreviewDuration)
+		{
+			if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
+			{
+				if (SpawnRate < dt)
+				{
+					unsigned int ParticlesToSpawn = dt / SpawnRate;
+					for (unsigned int i = 0; i < ParticlesToSpawn; i++)
+						CreateParticle();
+				}
+				else
+					CreateParticle();
+
+				NextParticleTime = Emitter.EmissionDuration + SpawnRate;			
+			}
+			Emitter.PreviewDuration += dt;
+		}
+		else preview =false;
+	}
+}
+
+void ParticleSystem::UpdateInGame(float dt)
+{
+	/* Emission */
+	Emitter.EmissionDuration += dt;
+	float SpawnRate = 1.0f / (float)Emitter.SpawnRate;
+
+	if (Emitter.Loop)
+	{
+		if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
+		{
+			if (SpawnRate < dt)
+			{
+				unsigned int ParticlesToSpawn = dt / SpawnRate;
+				for (unsigned int i = 0; i < ParticlesToSpawn; i++)
+					CreateParticle();
+			}
+			else
+				CreateParticle();
+			NextParticleTime = Emitter.EmissionDuration + SpawnRate;
+		}
+	}
+	else
+	{
+		if (Emitter.EmitterLifeMax > Emitter.EmitterLife)
+		{
+			if ((Emitter.SpawnRate > 0) && (NextParticleTime < Emitter.EmissionDuration))
+			{
+				if (SpawnRate < dt)
+				{
+					unsigned int ParticlesToSpawn = dt / SpawnRate;
+					for (unsigned int i = 0; i < ParticlesToSpawn; i++)
+						CreateParticle();
+				}
+				else
+					CreateParticle();
+				NextParticleTime = Emitter.EmissionDuration + SpawnRate;
+
+				//CreateParticle();
+				//NextParticleTime = Emitter.EmissionDuration + (1.0f / (float)Emitter.SpawnRate);
+			}
+			Emitter.EmitterLife += dt;
+		}
+		else DeactivateEmitter();
+	}
+}
+
 
 bool ParticleSystem::PostUpdate(float dt)
 {
@@ -962,6 +1010,11 @@ void ParticleSystem::ActivateEmitter()
 void ParticleSystem::DeactivateEmitter()
 {
 	Emitter.Deactivate();
+}
+
+void ParticleSystem::ResetPreview()
+{
+	Emitter.PreviewDuration = 0;
 }
 
 bool ParticleSystem::IsEmitterActive() const
@@ -1261,8 +1314,17 @@ void ParticleSystem::DrawColorSelector()
 	ImGui::PopItemWidth();
 	ImGui::DragFloat4("Color Var##ColorVariation", (float*)&state->RGBATintVariation, 0.01f, 0.0f, 1.0f);
 	ImGui::PushItemWidth(175);
+
+	//Particle gravity
 	ImGui::DragFloat3("Gravity##Gravity", &state->force[0], 0.01, -10.0f, 10.0f, "%.2f");
 	ImGui::DragFloat3("Gravity Var##GravityVariation", &state->forceVariation[0], 0.01, -10.0f, 10.0f, "%.2f");
+	ImGui::PopItemWidth();
+
+	//Particle Spin
+	ImGui::PushItemWidth(80);
+	ImGui::DragFloat("Spin", &state->particleSpin, 1.0f , 0.0f , 359.99f);
+	ImGui::SameLine();
+	ImGui::DragFloat("Spin Var", &state->spinVariation, 1.0f, 0.0f, 360.0f);
 	ImGui::PopItemWidth();
 }
 
@@ -1342,7 +1404,9 @@ void ParticleSystem::DrawEmitterOptions()
 
 	ImGui::NextColumn();
 	ImGui::PushItemWidth(80);
-	ImGui::DragFloat("Emitter Life", &Emitter.EmitterLifeMax, 0.1f, -1.0f, 120.0f);
+	ImGui::Checkbox("Loop", &Emitter.Loop);
+	if(!Emitter.Loop)
+		ImGui::DragFloat("Emitter Life", &Emitter.EmitterLifeMax, 0.1f, 0.1f, 120.0f);
 	ImGui::DragInt("Particles emitted per second", (int*)&Emitter.SpawnRate, 1, 0, 1000);
 	ImGui::DragFloat("+-##Lifetime", &Emitter.Lifetime, 0.01f, 0.0f, 100.0f);
 	ImGui::SameLine();
@@ -1350,7 +1414,6 @@ void ParticleSystem::DrawEmitterOptions()
 	char title[100] = "";
 	sprintf_s(title, 100, "Emission Duration: %.3f", Emitter.EmissionDuration);
 	ImGui::Text(title);
-	ImGui::Checkbox("Loop", &Emitter.Loop);
 	ImGui::Checkbox("Glow effect", &Emitter.glow);
 	sprintf_s(title, 100, "Particle Num: %i", Particles.size());
 	ImGui::Text(title);

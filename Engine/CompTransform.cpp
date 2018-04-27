@@ -55,11 +55,6 @@ void CompTransform::Init(float3 p, float3 r, float3 s)
 	SetScale(s);
 }
 
-void CompTransform::PreUpdate(float dt)
-{
-	updated = false;
-}
-
 void CompTransform::Update(float dt)
 {
 	// This code is made by disabling gizmos when editing transforms with editor
@@ -330,7 +325,6 @@ void CompTransform::SyncComponent(GameObject * sync_parent)
 	UpdateMatrix(transform_mode);
 	parentUpdate = false;
 	toUpdate = false;
-	updated = true;
 }
 
 void CompTransform::SetPosGlobal(float3 pos)

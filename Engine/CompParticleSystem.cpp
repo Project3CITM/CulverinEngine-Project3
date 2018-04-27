@@ -584,7 +584,11 @@ void CompParticleSystem::ShowInspectorInfo()
 		else 
 			part_system->DeactivateEmitter();
 	}
-	ImGui::Checkbox("Preview", &part_system->preview);
+	if (ImGui::Checkbox("Preview", &part_system->preview))
+	{
+		if (part_system->preview)
+			part_system->ResetPreview();
+	}
 
 	ImGui::DragFloat("Discard distance", &part_system->discard_distance, 1.0f, 0, 1000, "%.2f");
 	
