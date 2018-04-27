@@ -31,9 +31,7 @@ public class JaimeController : CharacterController
 
     public GameObject jaime_left_flag;
     public GameObject jaime_right_flag;
-
     
-
     //CAMERA
     public GameObject Global_Camera;
 
@@ -46,8 +44,8 @@ public class JaimeController : CharacterController
 
     //Sec Ability Stats
     public float duration = 4.0f;
-    public float sec_ability_damage = 10.0f;
-    public float sec_ability_cost = 30;
+    public float sec_ability_cost = 30.0f;
+    public float sec_ability_cd_time = 20.0f;
     private JaimeCD_Secondary sec_ability_cd;
 
     //Left Ability Stats 
@@ -55,6 +53,7 @@ public class JaimeController : CharacterController
     public float left_ability_dmg2 = 1.0f;
     public float left_ability_dmg3 = 15.0f;
     public float left_ability_cost = 10.0f;
+    public float left_ability_cd_time = 0.7f;
     private JaimeCD_Left cd_left;
     private bool do_left_attack = false;
 
@@ -65,8 +64,8 @@ public class JaimeController : CharacterController
     string current_anim = "Attack1";
 
     //Right Ability Stats 
-    public float right_ability_dmg = 0.0f;
     public float right_ability_cost = 50.0f;
+    public float right_ability_cd_time = 10.0f;
     private JaimeCD_Right cd_right;
 
     public float cover_duration = 3.0f;
@@ -290,23 +289,6 @@ public class JaimeController : CharacterController
 
         //Do Damage Around
         movement.GetPlayerPos(out curr_x, out curr_y);
-
-        //Check enemy in the tiles around the player
-        //for (int i = -1; i < 1; i++)
-        //{
-        //    for (int j = -1; j < 1; j++)
-        //    {
-        //        if (i == 0 && j == 0)
-        //        {
-        //            continue;
-        //        }
-        //        enemy_x = curr_x + j;
-        //        enemy_y = curr_x + i;
-
-        //        //Apply damage on the enemy in the specified tile (SURE ?¿)
-        //        //GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>().DamageEnemyInTile(enemy_x, enemy_y, sec_ability_damage);
-        //    }
-        //}
 
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);

@@ -57,6 +57,7 @@ public class JaimeCD_Right : CoolDown
     {
         button_cd.Deactivate();
         act_time = 0.0f;
+        cd_time = jaime_controller.right_ability_cd_time;
         prev_seconds = 1000;
         in_cd = true;
     }

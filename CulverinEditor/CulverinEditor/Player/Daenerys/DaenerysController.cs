@@ -45,19 +45,23 @@ public class DaenerysController : CharacterController
     private float mana_regen = 0.0f;
 
     //Sec Ability Stats
+    public float sec_ability_dmg = 20.0f;
     public float sec_ability_cost = 30.0f;
+    public float sec_ability_cd_time = 15.0f;
     private DaenerysCD_Secondary sec_ability_cd;
 
     //Left Ability Stats
-    public float mana_cost_percentage_left = 20.0f;
-    public float damage_percentage_left = 10.0f;
-    public int distance_left_attack = 3;
+    public float left_ability_dmg = 10.0f;
+    public float left_ability_cost = 20.0f;
+    //public int distance_left_attack = 3;
+    public float left_ability_cd_time = 1.0f;
     private DaenerysCD_Left cd_left;
     float AttackLeftTimer = 0.0f;
     
     //Right Ability Stats
-    public float mana_cost_percentage_right = 20.0f;
-    public float damage_percentage_right = 10.0f;
+    public float right_ability_dmg = 10.0f;
+    public float right_ability_cost = 20.0f;
+    public float right_ability_cd_time = 10.0f;
     private DaenerysCD_Right cd_right;
     private bool set_fire_wall = false;
 
@@ -455,7 +459,7 @@ public class DaenerysController : CharacterController
         if (GetState() == 0) /*0 = IDLE*/
         {
             // Check if player has enough stamina to perform its attack
-            float mana_cost = mana_cost_percentage_left * max_mana / 100.0f;
+            float mana_cost = left_ability_cost * max_mana / 100.0f;
             if (CanWasteMana(mana_cost))
             {
                 //Check if the ability has enough charges
@@ -500,7 +504,7 @@ public class DaenerysController : CharacterController
     public void DoLeftAbility() //Might be virtual
     {
         // Decrease mana -----------
-        DecreaseManaPercentage(mana_cost_percentage_left);
+        DecreaseManaPercentage(left_ability_cost);
         PlayFx("Dracarys");
         AttackLeftTimer = 0.0f;
         play_audio_roar = true;
@@ -547,7 +551,7 @@ public class DaenerysController : CharacterController
             }
             if (movement.CheckIsWalkable(tile_x, tile_y))
             {
-                float mana_cost = mana_cost_percentage_right * max_mana / 100.0f;
+                float mana_cost = right_ability_cost * max_mana / 100.0f;
                 if (CanWasteMana(mana_cost))
                 {
                     //Check if the ability is not in cooldown
@@ -595,7 +599,7 @@ public class DaenerysController : CharacterController
     public void DoRightAbility()
     {
         // Decrease mana -----------
-        DecreaseManaPercentage(mana_cost_percentage_right);
+        DecreaseManaPercentage(right_ability_cost);
 
         set_fire_wall = false;
 

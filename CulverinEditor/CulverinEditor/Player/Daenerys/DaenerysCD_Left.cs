@@ -123,6 +123,7 @@ public class DaenerysCD_Left : CoolDown
         if (current_charges == 0)
         {
             button_cd.Deactivate();
+            cd_time = daenerys_controller.left_ability_cd_time;
             in_cd = true;
             prev_seconds = 1000;
         }

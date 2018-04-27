@@ -56,6 +56,7 @@ public class TheonCD_Left : CoolDown
     public override void ActivateAbility()
     {
         button_cd.Deactivate();
+        cd_time = theon_controller.left_ability_cd_time;
         act_time = 0.0f;
         prev_seconds = 1000;
         in_cd = true;

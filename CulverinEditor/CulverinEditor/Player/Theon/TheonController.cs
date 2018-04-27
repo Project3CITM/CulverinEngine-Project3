@@ -47,19 +47,21 @@ public class TheonController : CharacterController
     private float stamina_regen = 0.0f;
 
     //Sec Ability Stats
-    public bool secondary_ability = false;
-    public float sec_ability_cost = 30;
+    public float sec_ability_dmg = 30.0f;
+    public float sec_ability_cost = 50.0f;
+    public float sec_ability_cd_time = 20.0f;
     private TheonCD_Secondary sec_ability_cd;
 
     //Left Ability Stats
     public float left_ability_dmg = 10;
     public float left_ability_cost = 10.0f;
+    public float left_ability_cd_time = 2.0f;
     private TheonCD_Left cd_left;
 
     //Right Ability Stats
-    public bool reloading = false;
     public float right_ability_dmg = 10;
     public float right_ability_cost = 10.0f;
+    public float right_ability_cd_time = 2.0f;
     private TheonCD_Right cd_right;
     bool do_push_attack = false;
 
@@ -67,6 +69,9 @@ public class TheonController : CharacterController
     bool arrow2 = false;
     bool arrow3 = false;
     float arrowtimers = 0.0f;
+
+    public bool reloading = false;
+    public bool secondary_ability = false;
 
     protected override void Start()
     {

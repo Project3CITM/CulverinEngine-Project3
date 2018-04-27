@@ -37,6 +37,7 @@ public class JaimeCD_Left : CoolDown
     {
         button_cd.Deactivate();
         act_time = 0.0f;
+        cd_time = jaime_controller.left_ability_cd_time;
         in_cd = true;
     }
 }

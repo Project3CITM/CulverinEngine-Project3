@@ -81,4 +81,9 @@ public class CoolDown : CulverinBehaviour
         //Set time text
         timer_text.SetText("");
     }
+
+    public void SetCDTime(float time)
+    {
+        cd_time = time;
+    }
 }
