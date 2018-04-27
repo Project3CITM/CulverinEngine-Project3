@@ -14,6 +14,7 @@ public:
 	~InputManager();
 	void UpdateInputActions();
 	bool ProcessEvent(SDL_Event* input_event);
+	void ClearSameEvent(SDL_Event* input_event);
 	void Clear();
 	ControllerAxisAction* GetAxis(const char* name);
 	std::vector<ControllerAxisAction*> GetAxisVector(const char* name);

@@ -97,6 +97,10 @@ bool InputManager::ProcessEvent(SDL_Event * input_event)
 
 }
 
+void InputManager::ClearSameEvent(SDL_Event * input_event)
+{
+}
+
 void InputManager::Clear()
 {
 	if (action_vector.empty())
@@ -436,9 +440,12 @@ InputAction* InputManager::CreateNewAction(const char * new_name, const char * n
 
 	if (temp != nullptr)
 	{
+
 		temp->name = new_name;
+		temp->key_device = new_key_relation_positive->device;
 		temp->positive_button = new_key_relation_positive;
 		temp->negative_button = new_key_relation_negative;
+		temp->my_manager = this;
 	}
 
 	return temp;

@@ -9,6 +9,7 @@
 typedef union SDL_Event SDL_Event;
 class ModuleInput;
 class InputManager;
+class InputAction;
 class PlayerActions
 {
 public:
@@ -29,6 +30,8 @@ public:
 
 	void SetInputManagerActive(const char* name,bool set);
 	void SetInputManagerBlock(const char* name, bool set);
+
+	InputAction* SetInputActionToChange(const char* input_action, const char* input_manager, const char* device, bool change_negative = false);
 
 	bool GetInputManagerActive(const char* name)const;
 	bool GetInputManagerBlock(const char* name)const ;
@@ -51,12 +54,25 @@ public:
 	void SetInput_ControllerWaitForKey(const char* name, const char* input, const char* device, bool negative_key);
 
 	void SendNewDeviceCombinationType(DeviceCombinationType type);
+private:
+	DeviceCombinationType SelectDeviceCombination(const char* value);
 
 public:
 	int number_of_inputs = 0;
 	std::vector<InputManager*> interactive_vector;
 
 private:
+	struct KeyChange
+	{
+		bool ReceiveEvent(SDL_Event* input_event);
+		void Clear();
+
+		InputAction* key_to_change = nullptr;
+		bool change_negative = false;
+		bool change_active = true;
+
+	};
+	KeyChange key_change;
 	std::string selected_input_name;
 	ModuleInput* my_module = nullptr;
 	DeviceCombinationType actual_player_action = DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;

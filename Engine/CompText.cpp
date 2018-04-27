@@ -436,9 +436,7 @@ void CompText::Clear()
 }
 void CompText::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", name_component);
-	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	CompGraphic::Save(object, name, saveScene, countResources);
 
 	if (text != nullptr)
 	{
@@ -456,7 +454,6 @@ void CompText::Save(JSON_Object * object, std::string name, bool saveScene, uint
 		json_object_dotset_number_with_std(object, name + "Resource Font UUID", 0);
 	}
 
-	json_object_dotset_boolean_with_std(object, name + "RayCast Target", raycast_target);
 	json_object_dotset_string_with_std(object, name + "Text", text_str.c_str());
 	json_object_dotset_number_with_std(object, name + "Max Input", max_input);
 	json_object_dotset_number_with_std(object, name + "Text Size", text_size);
@@ -465,14 +462,11 @@ void CompText::Save(JSON_Object * object, std::string name, bool saveScene, uint
 	json_object_dotset_number_with_std(object, name + "VPosition", v_position);
 	json_object_dotset_boolean_with_std(object, name + "Can Draw", can_draw);
 
-	App->fs->json_array_dotset_float4(object, name + "Text Color", color);
 }
 
 void CompText::Load(const JSON_Object * object, std::string name)
 {
-	uid = json_object_dotget_number_with_std(object, name + "UUID");
-
-	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
+	CompGraphic::Load(object, name);
 	text_str=json_object_dotget_string_with_std(object, name + "Text");
 
 	max_input=json_object_dotget_number_with_std(object, name + "Max Input");
@@ -482,7 +476,6 @@ void CompText::Load(const JSON_Object * object, std::string name)
 
 	h_position= static_cast<CompText::HorizontalPosition>((int)json_object_dotget_number_with_std(object, name + "HPosition" ));
 	v_position= static_cast<CompText::VerticalPosition>((int)json_object_dotget_number_with_std(object, name + "VPosition" ));
-	can_draw=json_object_dotget_boolean_with_std(object, name + "Can Draw");
 
 	color=App->fs->json_array_dotget_float4_string(object, name + "Text Color");
 

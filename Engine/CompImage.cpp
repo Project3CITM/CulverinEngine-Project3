@@ -457,9 +457,8 @@ void CompImage::Clear()
 
 void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", name_component);
-	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	
+	CompGraphic::Save(object, name, saveScene, countResources);
 
 	if (source_image != nullptr)
 	{
@@ -476,11 +475,6 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", 0);
 	}
-	json_object_dotset_boolean_with_std(object, name + "Device Swap", device_swap);
-	json_object_dotset_boolean_with_std(object, name + "Device Swap Active", device_swap_active);
-	json_object_dotset_boolean_with_std(object, name + "Invalid", invalid);
-	json_object_dotset_boolean_with_std(object, name + "Can draw", can_draw);
-
 	if (device_swap)
 	{
 		if (controller_image != nullptr)
@@ -499,7 +493,8 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 			json_object_dotset_number_with_std(object, name + "Resource Controller UUID", 0);
 		}
 	}
-	json_object_dotset_boolean_with_std(object, name + "RayCast Target", raycast_target);
+	json_object_dotset_boolean_with_std(object, name + "Device Swap", device_swap);
+	json_object_dotset_boolean_with_std(object, name + "Device Swap Active", device_swap_active);
 	json_object_dotset_number_with_std(object, name + "Fill Amount", filled);
 	json_object_dotset_number_with_std(object, name + "Image Type", type);
 	json_object_dotset_number_with_std(object, name + "Fill Method", method);
@@ -513,7 +508,8 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 
 void CompImage::Load(const JSON_Object * object, std::string name)
 {
-	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	CompGraphic::Load(object, name);
+
 	//...
 	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID");
 	if (resourceID > 0)
@@ -533,9 +529,6 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 
 	device_swap = json_object_dotget_boolean_with_std(object, name + "Device Swap");
 	device_swap_active= json_object_dotget_boolean_with_std(object, name + "Device Swap Active");
-
-	invalid = json_object_dotget_boolean_with_std(object, name + "Invalid");
-	can_draw = json_object_dotget_boolean_with_std(object, name + "Can draw");
 	if (device_swap)
 	{
 		uint resource_controllerID = json_object_dotget_number_with_std(object, name + "Resource Controller UUID");
@@ -562,7 +555,6 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 			device_swap = false;
 		}
 	}
-	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
 	filled=json_object_dotget_number_with_std(object, name + "Fill Amount");
 	type = static_cast<CompImage::Type>((int)json_object_dotget_number_with_std(object, name + "Image Type"));
 	method = static_cast<FillMethod>((int)json_object_dotget_number_with_std(object, name + "Fill Method"));
