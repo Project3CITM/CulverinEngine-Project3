@@ -629,8 +629,9 @@ bool PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
 			
 			if (key_to_change->my_manager == nullptr)
 				return false;
-
 			key_to_change->my_manager->ClearSameEvent(input_event);
+
+			key = App->input->FindKeyBinding(key->device, input_event->key.keysym.scancode);
 
 			
 		}
@@ -652,6 +653,9 @@ bool PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
 				return false;
 
 			key_to_change->my_manager->ClearSameEvent(input_event);
+
+			key = App->input->FindKeyBinding(key->device, input_event->cbutton.button);
+
 		}
 
 		break;
@@ -677,6 +681,8 @@ bool PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
 				return false;
 
 			key_to_change->my_manager->ClearSameEvent(input_event);
+			key = App->input->FindKeyBinding(key->device, input_event->button.button);
+
 		}
 		break;
 	}

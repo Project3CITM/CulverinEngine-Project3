@@ -87,6 +87,7 @@ public:
 	bool CleanUp();
 
 	KeyRelation* FindKeyBinding(const char* name);
+	KeyRelation* FindKeyBinding(DeviceCombinationType device,int event_value);
 
 private:
 
