@@ -25,10 +25,6 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	void SyncComponent(GameObject* sync_parent);
 
-	void GetOwnBufferSize(uint& buffer_size);
-	void SaveBinary(char** cursor, int position) const;
-	void LoadBinary(char** cursor);
-
 	// Joint Methods ---------------
 	void CreateJoint();
 

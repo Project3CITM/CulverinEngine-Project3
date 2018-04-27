@@ -20,7 +20,6 @@
 #include "ModuleLightning.h"
 #include "ModuleWindow.h"
 #include "CubeMap_Texture.h"
-#include "JSONSerialization.h"
 
 //Delete this
 #include "glm\glm.hpp"
@@ -485,82 +484,6 @@ void CompMesh::LinkSkeleton()
 		skeleton->Link(resource_mesh->skeleton);
 }
 
-void CompMesh::GetOwnBufferSize(uint& buffer_size)
-{
-	Component::GetOwnBufferSize(buffer_size);
-	buffer_size += sizeof(int);				//UID
-	if (resource_mesh != nullptr)
-	{
-		buffer_size += sizeof(int);			//resource_mesh->GetUUID()
-		buffer_size += sizeof(bool);		//has_skeleton
-		buffer_size += sizeof(bool);		//generated_skeleton
-
-		if (skeleton != nullptr)
-			skeleton->GetOwnBufferSize(buffer_size);
-
-	}
-	else
-	{
-		buffer_size += sizeof(int);			//0   ->   resource_mesh->GetUUID() == 0
-	}
-}
-
-void CompMesh::SaveBinary(char** cursor, int position) const
-{
-	Component::SaveBinary(cursor, position);
-	App->json_seria->SaveIntBinary(cursor, GetUUID());
-	if (resource_mesh != nullptr)
-	{
-		App->json_seria->SaveIntBinary(cursor, resource_mesh->GetUUID());
-		App->json_seria->SaveBooleanBinary(cursor, has_skeleton);
-		App->json_seria->SaveBooleanBinary(cursor, generated_skeleton);
-		
-		if (skeleton != nullptr)
-			skeleton->SaveBinary(cursor);
-	}
-	App->json_seria->SaveIntBinary(cursor, 0);
-}
-
-void CompMesh::LoadBinary(char** cursor)
-{
-	uid = App->json_seria->LoadIntBinary(cursor);
-	uint resourceID = App->json_seria->LoadIntBinary(cursor);
-
-	if (resourceID > 0)
-	{
-		resource_mesh = (ResourceMesh*)App->resource_manager->GetResource(resourceID);
-		if (resource_mesh != nullptr)
-		{
-			resource_mesh->num_game_objects_use_me++;
-
-			// LOAD MESH ----------------------------
-			if (resource_mesh->IsLoadedToMemory() == Resource::State::UNLOADED)
-			{
-				App->importer->iMesh->LoadResource(std::to_string(resource_mesh->GetUUID()).c_str(), resource_mesh);
-			}
-			// Add bounding box ------
-			parent->AddBoundingBox(resource_mesh);
-
-			
-			has_skeleton = App->json_seria->LoadBooleanBinary(cursor);
-			generated_skeleton = App->json_seria->LoadBooleanBinary(cursor);
-
-			if (has_skeleton == true)
-			{
-				if (generated_skeleton == true)
-				{
-					skeleton = new Skeleton;
-					skeleton->LoadBinary(cursor);
-				}
-				else
-					GenSkeleton();
-			}
-
-		}
-	}
-	Enable();
-}
-
 bool CompMesh::HasSkeleton() const
 {
 	if (resource_mesh != nullptr) return resource_mesh->HasSkeleton();
@@ -812,19 +735,4 @@ void Skeleton::Link(const SkeletonSource* source)
 
 	root_bone = App->scene->GetGameObjectbyuid(root_bone_uid);
 	root_bone->GetComponentBone()->Link();
-}
-
-void Skeleton::GetOwnBufferSize(uint & buffer_size)
-{
-	// Put this on SyncComponents ............
-	//const CompMaterial* material_link = (CompMaterial*)FindComponentByType(Comp_Type::C_MATERIAL);
-	//if (material_link != nullptr) mesh->LinkMaterial(material_link);
-}
-
-void Skeleton::SaveBinary(char ** cursor) const
-{
-}
-
-void Skeleton::LoadBinary(char ** cursor)
-{
 }

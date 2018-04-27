@@ -10,7 +10,6 @@
 #include "ModuleFS.h"
 #include "CompTransform.h"
 #include "CompBone.h"
-#include "JSONSerialization.h"
 
 CompBone::CompBone(Comp_Type t, GameObject * parent): Component(t, parent)
 {
@@ -211,6 +210,8 @@ void CompBone::Save(JSON_Object * object, std::string name, bool saveScene, uint
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", 0);
 	}
+
+	
 }
 
 void CompBone::Load(const JSON_Object * object, std::string name)
@@ -230,6 +231,8 @@ void CompBone::Load(const JSON_Object * object, std::string name)
 			{
 				App->importer->iMesh->LoadResource(std::to_string(resource_mesh->GetUUID()).c_str(), resource_mesh);
 			}
+			// Add bounding box ------
+			parent->AddBoundingBox(resource_mesh);
 
 			offset.SetCol(0, App->fs->json_array_dotget_float4_string(object, name + "Offset.Col0"));
 			offset.SetCol(1, App->fs->json_array_dotget_float4_string(object, name + "Offset.Col1"));
@@ -258,6 +261,8 @@ void CompBone::Load(const JSON_Object * object, std::string name)
 				sprintf(str, "Child %i", i);
 				child_uids[i] = json_object_dotget_number_with_std(object, name + std::string(str) + ".UUID");
 			}
+
+
 		}
 	}
 
@@ -269,140 +274,6 @@ void CompBone::Link()
 {
 	for (int i = 0; i < child_bones.size(); i++)
 		child_bones[i] = App->scene->GetGameObjectbyuid(child_uids[i])->GetComponentBone();
-}
-
-void CompBone::SyncComponent(GameObject * sync_parent)
-{
-	// Add bounding box ------
-	parent->AddBoundingBox(resource_mesh);
-}
-
-void CompBone::GetOwnBufferSize(uint & buffer_size)
-{
-	Component::GetOwnBufferSize(buffer_size);
-	buffer_size += sizeof(int);					//UID
-
-	if (resource_mesh != nullptr)
-	{
-		buffer_size += sizeof(int);					//resource_mesh->GetUUID()
-		buffer_size += sizeof(float);				//offset.Col(0)
-		buffer_size += sizeof(float);				//
-		buffer_size += sizeof(float);				//
-		buffer_size += sizeof(float);				//
-
-		buffer_size += sizeof(float);				//offset.Col(1)
-		buffer_size += sizeof(float);				//
-		buffer_size += sizeof(float);				//
-		buffer_size += sizeof(float);				//
-
-		buffer_size += sizeof(float);				//offset.Col(2)
-		buffer_size += sizeof(float);				//
-		buffer_size += sizeof(float);				//
-		buffer_size += sizeof(float);				//
-
-		buffer_size += sizeof(float);				//offset.Col(3)
-		buffer_size += sizeof(float);				//
-		buffer_size += sizeof(float);				//
-		buffer_size += sizeof(float);				//
-
-		buffer_size += sizeof(int);					//weights.size()
-		for (int i = 0; i < weights.size(); i++)
-		{
-			buffer_size += sizeof(int);				//weights[i].vertex_id
-			buffer_size += sizeof(float);			//weights[i].weight
-		}
-
-		buffer_size += sizeof(int);					//child_bones.size()
-		for (int i = 0; i < child_bones.size(); i++)
-		{
-			buffer_size += sizeof(int);					//child_bones[i]->GetParent()->GetUUID()
-		}
-	}
-	else
-	{
-		buffer_size += sizeof(int);				//0
-	}
-
-}
-
-void CompBone::SaveBinary(char ** cursor, int position) const
-{
-	Component::SaveBinary(cursor, position);
-	App->json_seria->SaveIntBinary(cursor, GetUUID());
-
-	if (resource_mesh != nullptr)
-	{
-		App->json_seria->SaveIntBinary(cursor, resource_mesh->GetUUID());
-
-		math::float4 tempOffset = offset.Col(0);
-		App->json_seria->SaveFloat4Binary(cursor, tempOffset);
-		tempOffset = offset.Col(1);
-		App->json_seria->SaveFloat4Binary(cursor, tempOffset);
-		tempOffset = offset.Col(2);
-		App->json_seria->SaveFloat4Binary(cursor, tempOffset);
-		tempOffset = offset.Col(3);
-		App->json_seria->SaveFloat4Binary(cursor, tempOffset);
-
-		App->json_seria->SaveIntBinary(cursor, weights.size());
-		for (int i = 0; i < weights.size(); i++)
-		{
-			App->json_seria->SaveIntBinary(cursor, weights[i].vertex_id);
-			App->json_seria->SaveFloatBinary(cursor, weights[i].weight);
-		}
-
-		App->json_seria->SaveIntBinary(cursor, child_bones.size());
-		for (int i = 0; i < child_bones.size(); i++)
-		{
-			App->json_seria->SaveIntBinary(cursor, child_bones[i]->GetParent()->GetUUID());
-		}
-	}
-	else
-	{
-		App->json_seria->SaveIntBinary(cursor, 0);
-	}
-}
-
-void CompBone::LoadBinary(char ** cursor)
-{
-	uid = App->json_seria->LoadIntBinary(cursor);
-	uint resourceID = App->json_seria->LoadIntBinary(cursor);
-	if (resourceID > 0)
-	{
-		resource_mesh = (ResourceMesh*)App->resource_manager->GetResource(resourceID);
-		if (resource_mesh != nullptr)
-		{
-			resource_mesh->num_game_objects_use_me++;
-
-			// LOAD MESH ----------------------------
-			if (resource_mesh->IsLoadedToMemory() == Resource::State::UNLOADED)
-			{
-				App->importer->iMesh->LoadResource(std::to_string(resource_mesh->GetUUID()).c_str(), resource_mesh);
-			}
-
-			offset.SetCol(0, App->json_seria->LoadFloat4Binary(cursor));
-			offset.SetCol(1, App->json_seria->LoadFloat4Binary(cursor));
-			offset.SetCol(2, App->json_seria->LoadFloat4Binary(cursor));
-			offset.SetCol(3, App->json_seria->LoadFloat4Binary(cursor));
-
-			uint weights_size = App->json_seria->LoadIntBinary(cursor);
-			weights.resize(weights_size);
-
-			for (int i = 0; i < weights.size(); i++)
-			{
-				weights[i].vertex_id = App->json_seria->LoadIntBinary(cursor);
-				weights[i].weight = App->json_seria->LoadFloatBinary(cursor);
-			}
-
-			uint childs_size = App->json_seria->LoadIntBinary(cursor);
-			child_bones.resize(childs_size);
-			child_uids.resize(childs_size);
-
-			for (int i = 0; i < child_bones.size(); i++)
-			{
-				child_uids[i] = App->json_seria->LoadIntBinary(cursor);
-			}
-		}
-	}
 }
 
 void CompBone::GenSkinningMatrix(const float4x4& parent_transform)

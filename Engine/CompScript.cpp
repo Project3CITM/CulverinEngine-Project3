@@ -10,7 +10,6 @@
 #include "ModuleGUI.h"
 #include "ModuleInput.h"
 #include "WindowInspector.h"
-#include "JSONSerialization.h"
 
 CompScript::CompScript(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
@@ -728,20 +727,3 @@ void CompScript::LoadScript(const JSON_Object* object, std::string name)
 	}
 }
 
-void CompScript::GetOwnBufferSize(uint& buffer_size)
-{
-	Component::GetOwnBufferSize(buffer_size);
-
-}
-
-void CompScript::SaveBinary(char ** cursor, int position) const
-{
-	Component::SaveBinary(cursor, position);
-
-}
-
-void CompScript::LoadBinary(char ** cursor)
-{
-
-	Enable();
-}

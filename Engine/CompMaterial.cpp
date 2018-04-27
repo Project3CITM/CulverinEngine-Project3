@@ -11,7 +11,6 @@
 #include "ModuleRenderer3D.h"
 #include "Scene.h"
 #include "CubeMap_Texture.h"
-#include "JSONSerialization.h"
 
 CompMaterial::CompMaterial(Comp_Type t, GameObject* parent): Component(t, parent)
 {
@@ -410,7 +409,10 @@ void CompMaterial::Save(JSON_Object* object, std::string name, bool saveScene, u
 	App->fs->json_array_dotset_float4(object, name + "Color", tempColor);
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
 
-	json_object_dotset_string_with_std(object, name + "MaterialName:", material->name.c_str());	
+	json_object_dotset_string_with_std(object, name + "MaterialName:", material->name.c_str());
+
+
+	
 }
 
 void CompMaterial::Load(const JSON_Object* object, std::string name)
@@ -432,85 +434,21 @@ void CompMaterial::Load(const JSON_Object* object, std::string name)
 			material->active_num++;
 			break;
 		}
+
 	}
 	if (material == nullptr)
 	{
 		material = App->renderer3D->default_material;
 		material->active_num++;
+
 	}
-	else 
-	{
+	else {
 		for (int i = 0; i < material->textures.size(); i++)
 		{
 			if (material->textures[i].value != nullptr)
 			{
 				material->textures[i].value->num_game_objects_use_me++;
-				// LOAD MATERIAL -------------------------
-				if (material->textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
-				{
-					App->importer->iMaterial->LoadResource(std::to_string(material->textures[i].value->GetUUID()).c_str(), material->textures[i].value);
-				}
-			}
-		}
-	}
 
-	Enable();
-}
-
-void CompMaterial::GetOwnBufferSize(uint & buffer_size)
-{
-	Component::GetOwnBufferSize(buffer_size);
-	buffer_size += sizeof(int);					//UID
-
-	buffer_size += sizeof(float);					//Color
-	buffer_size += sizeof(float);					//
-	buffer_size += sizeof(float);					//
-	buffer_size += sizeof(float);					//
-		
-	buffer_size += sizeof(int);					//material->name
-	buffer_size += sizeof(material->name.size());//
-
-}
-
-void CompMaterial::SaveBinary(char** cursor, int position) const
-{
-	Component::SaveBinary(cursor, position);
-	App->json_seria->SaveIntBinary(cursor, GetUUID());
-	math::float4 tempColor = { color.r, color.g, color.b, color.a };
-	App->json_seria->SaveFloat4Binary(cursor, tempColor);
-
-	App->json_seria->SaveStringBinary(cursor, material->name);
-
-}
-
-void CompMaterial::LoadBinary(char** cursor)
-{
-	uid = App->json_seria->LoadIntBinary(cursor);
-	float4 tempColor = App->json_seria->LoadFloat4Binary(cursor);
-	color.Set(tempColor.x, tempColor.y, tempColor.z, tempColor.w);
-
-	std::string material_name = App->json_seria->LoadStringBinary(cursor);
-	for (auto item = App->module_shaders->materials.begin(); item != App->module_shaders->materials.end(); item++)
-	{
-		if (strcmp((*item).second->name.c_str(), material_name.c_str()) == 0)
-		{
-			material = (*item).second;
-			material->active_num++;
-			break;
-		}
-	}
-	if (material == nullptr)
-	{
-		material = App->renderer3D->default_material;
-		material->active_num++;
-	}
-	else
-	{
-		for (int i = 0; i < material->textures.size(); i++)
-		{
-			if (material->textures[i].value != nullptr)
-			{
-				material->textures[i].value->num_game_objects_use_me++;
 				// LOAD MATERIAL -------------------------
 				if (material->textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
 				{

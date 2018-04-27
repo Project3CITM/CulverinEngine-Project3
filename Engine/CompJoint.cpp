@@ -6,7 +6,6 @@
 #include "WindowInspector.h"
 #include "Scene.h"
 #include "ModulePhysics.h"
-#include "JSONSerialization.h"
 
 #include "CompRigidBody.h"
 #include "jpPhysicsJoint.h"
@@ -195,55 +194,6 @@ void CompJoint::SyncComponent(GameObject* sync_parent)
 			}
 		}
 	}
-}
-
-void CompJoint::GetOwnBufferSize(uint& buffer_size)
-{
-	Component::GetOwnBufferSize(buffer_size);
-	buffer_size += sizeof(int);				//UID
-	if (second != nullptr)
-	{
-		buffer_size += sizeof(int);				//second->GetUUID()
-
-		buffer_size += sizeof(int);				//second_name
-		buffer_size += second_name.size();		//
-	}
-	else
-	{
-		buffer_size += sizeof(int);				//0
-		buffer_size += sizeof(int);				//""
-	}
-	buffer_size += sizeof(float);				//min_dist
-	buffer_size += sizeof(float);				//max_dist
-}
-
-void CompJoint::SaveBinary(char** cursor, int position) const
-{
-	Component::SaveBinary(cursor, position);
-	App->json_seria->SaveIntBinary(cursor, GetUUID());
-	if (second != nullptr)
-	{
-		App->json_seria->SaveIntBinary(cursor, second->GetUUID());
-		App->json_seria->SaveStringBinary(cursor, second_name);
-	}
-	else
-	{
-		App->json_seria->SaveIntBinary(cursor, 0);
-		App->json_seria->SaveStringBinary(cursor, "");
-	}
-	App->json_seria->SaveFloatBinary(cursor, min_dist);
-	App->json_seria->SaveFloatBinary(cursor, max_dist);
-}
-
-void CompJoint::LoadBinary(char** cursor)
-{
-	uid = App->json_seria->LoadIntBinary(cursor);
-
-	second_uid = App->json_seria->LoadIntBinary(cursor);
-	second_name = App->json_seria->LoadStringBinary(cursor);
-
-	min_dist = App->json_seria->LoadFloatBinary(cursor);
-	max_dist = App->json_seria->LoadFloatBinary(cursor);
 }
 
 void CompJoint::CreateJoint()

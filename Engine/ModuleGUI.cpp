@@ -32,7 +32,6 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleImporter.h"
 #include "ImportMaterial.h"
-#include "JSONSerialization.h"
 
 
 
@@ -153,17 +152,12 @@ update_status ModuleGUI::Update(float dt)
 			{
 				App->WantToSave();
 			}
-			if (ImGui::MenuItem("Save Scene Binary", NULL, false))
+			if (ImGui::MenuItem("Save Scene Binary", NULL, false, false))
 			{
-				App->json_seria->SaveSceneBinary();
-			}
-			if (ImGui::MenuItem("Load Scene Binary", NULL, false))
-			{
-				App->json_seria->LoadSceneBinary("JoanTest");
+				App->WantToSave();
 			}
 			if (ImGui::MenuItem("Save Scene as...", NULL, false, false))
 			{
-				
 			}
 			if (ImGui::MenuItem("Load Scene"))
 			{
