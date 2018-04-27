@@ -669,6 +669,8 @@ bool ParticleSystem::PreUpdate(float dt)
 		//Tranfs planed		
 		float4x4 part_transf = float4x4::FromTRS((*item).Properties.Position, (*item).Properties.Rotation, (*item).Properties.Scale);
 		//float4x4 part_transf = float4x4::identity;
+		//part_transf = part_transf * float4x4::RotateY(45*DEGTORAD);
+		//part_transf = part_transf * float4x4::Translate(float3(10, 0, 0));
 
 		memcpy((particles_transforms_planed) + ptr, part_transf.ptr(), 16*sizeof(float));
 		ptr += 16;
@@ -846,7 +848,7 @@ void ParticleSystem::InstantiateParticles(GLuint geometry_buffer, int program_id
 	glBindBuffer(GL_ARRAY_BUFFER, geometry_buffer);
 	glVertexAttribPointer(
 		0, // attribute. 
-		12, // size
+		3, // size
 		GL_FLOAT, // type
 		GL_FALSE, // normalized?
 		0, // stride
@@ -854,34 +856,80 @@ void ParticleSystem::InstantiateParticles(GLuint geometry_buffer, int program_id
 	);
 	glVertexAttribDivisor(0, 0); // particles vertices : always reuse the same 4 vertices -> 0
 
-	/*Position buffer*/
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, transform_buffer);
-	glVertexAttribPointer(
-		2, // attribute. 
-		4, // size
-		GL_FLOAT, // type
-		GL_FALSE, // normalized?
-		sizeof(GLfloat) * 4 * 4, // stride
-		(void*)0 // array buffer offset
-	);
-	glVertexAttribDivisor(2, 1); // transform : one per quad (16 floats per quad) -> 1
-
+	
 
 	/*Color buffer*/
-	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
 	glVertexAttribPointer(
-		3, // attribute. 
+		2, // attribute. 
 		4, // size
 		GL_FLOAT, // type
 		GL_FALSE, // normalized?
 		0, // stride
 		(void*)0 // array buffer offset
 	);
-	glVertexAttribDivisor(3, 1); // color : one per quad -> 1
+	glVertexAttribDivisor(2, 1); // color : one per quad -> 1
 
 	
+
+	 /*Position buffer*/
+	glBindBuffer(GL_ARRAY_BUFFER, transform_buffer);
+
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(
+		3, // attribute. 
+		4, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(GLfloat) * 4 * 4, // stride
+		(void*)0 // array buffer offset
+	);
+
+	glEnableVertexAttribArray(4);
+	glBindBuffer(GL_ARRAY_BUFFER, transform_buffer);
+	glVertexAttribPointer(
+		4, // attribute. 
+		4, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(GLfloat) * 4 * 4, // stride
+		(void*)(sizeof(GLfloat) * 4) // array buffer offset
+	);
+
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(
+		5, // attribute. 
+		4, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(GLfloat) * 4 * 4, // stride
+		(void*)(sizeof(GLfloat) * 4*2) // array buffer offset
+	);
+	glEnableVertexAttribArray(6);
+	glBindBuffer(GL_ARRAY_BUFFER, transform_buffer);
+	glVertexAttribPointer(
+		6, // attribute. 
+		4, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(GLfloat) * 4 * 4, // stride
+		(void*)(sizeof(GLfloat) *4* 3) // array buffer offset
+	);
+
+	
+	glVertexAttribDivisor(3, 1); // transform : one per quad (16 floats per quad) -> 1
+	glVertexAttribDivisor(4, 1); // transform : one per quad (16 floats per quad) -> 1
+	glVertexAttribDivisor(5, 1); // transform : one per quad (16 floats per quad) -> 1
+	glVertexAttribDivisor(6, 1); // transform : one per quad (16 floats per quad) -> 1
+
+	
+
+
+
+
+
+
 	/*if (TextureData.TextureID != 0)
 	{
 		//glEnable(GL_BLEND);
@@ -895,9 +943,12 @@ void ParticleSystem::InstantiateParticles(GLuint geometry_buffer, int program_id
 	
 	//Pass the viewproj matrix to the shader
 	uint viewLoc = glGetUniformLocation(program_id, "viewproj");
-	float4x4 f = float4x4::identity;
-	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, f.ptr());
-	//App->renderer3D->active_camera->frustum.ViewProjMatrix().ptr()
+
+	float4x4 viewProj = float4x4::identity;
+
+	if (App->renderer3D->active_camera)
+		viewProj = App->renderer3D->active_camera->frustum.ViewProjMatrix();
+	glUniformMatrix4fv(viewLoc, 1, GL_TRUE, viewProj.ptr());
 		
 	//Draw all particles!		
 	GLsizei particle_count = Particles.size();

@@ -267,9 +267,9 @@ static const GLchar* ParticleVert[] =
 {
 	"#version 330 core\n"
 	"layout(location = 0) in vec3 position;\n"
-	"layout(location = 1) in vec2 texCoord;\n"
-	"layout(location = 2) in mat4 transform;\n"
-	"layout(location = 3) in vec4 _color;\n"
+	"layout(location = 1) in vec2 texCoord;\n"	
+	"layout(location = 2) in vec4 _color;\n"
+	"layout(location = 3) in mat4 transform;\n"
 		
 	"out vec4 ourColor;\n"
 	"out vec2 TexCoord;\n"
@@ -279,7 +279,7 @@ static const GLchar* ParticleVert[] =
 
 	"void main()\n"
 	"{\n"
-	"gl_Position = viewproj * transform *vec4(position.x,position.y,position.z, 1.0f) ;\n"
+	"gl_Position = viewproj * transpose(transform) *vec4(position.x,position.y,position.z, 1.0f) ;\n"
 	"ourColor = _color;\n"
 	"TexCoord = texCoord;\n"
 	"}\n"
