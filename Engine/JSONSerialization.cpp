@@ -235,7 +235,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			{
 				App->scene->root->AddChildGameObject(scene_ptr[i].go);
 				sync_parent = scene_ptr[i].go;
-				break;
+				//break;
 			}
 		}
 		//Sync components
