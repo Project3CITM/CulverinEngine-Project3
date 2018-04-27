@@ -109,60 +109,27 @@ void CompCheckBox::CopyValues(const CompCheckBox * component)
 
 void CompCheckBox::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", name_component);
-	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	CompInteractive::Save(object, name, saveScene, countResources);
 
-	for (int i = 0; i < 3; i++)
-	{
-		std::string resource_count = std::to_string(i);
-
-		if (sprite[i] != nullptr)
-		{
-			if (saveScene == false)
-			{
-				// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
-				std::string temp = std::to_string(countResources++);
-
-				json_object_dotset_number_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".UUID Resource", sprite[i]->GetUUID());
-				json_object_dotset_string_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".Name", sprite[i]->name.c_str());
-			}
-			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, sprite[i]->GetUUID());
-		}
-		else
-		{
-			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
-		}
-	}
+	SaveClickAction(object, name);
 
 }
 
 void CompCheckBox::Load(const JSON_Object * object, std::string name)
 {
-	uid = json_object_dotget_number_with_std(object, name + "UUID");
-	//...
-	for (int i = 0; i < 3; i++)
-	{
-		std::string resource_count = std::to_string(i);
+	CompInteractive::Load(object, name);
+	LoadClickAction(object, name);
 
-		uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID " + resource_count);
-		if (resourceID > 0)
-		{
-			sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
-			if (sprite[i] != nullptr)
-			{
-				sprite[i]->num_game_objects_use_me++;
-
-				// LOAD All Materials ----------------------------
-				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
-				{
-					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
-				}
-
-			}
-		}
-	}
 	Enable();
+}
+void CompCheckBox::SyncComponent(GameObject* sync_parent)
+{
+	CompInteractive::SyncComponent(sync_parent);
+
+	SyncScript();
+}
+void CompCheckBox::SyncScript()
+{
 }
 
 void CompCheckBox::OnPointDown(Event event_input)

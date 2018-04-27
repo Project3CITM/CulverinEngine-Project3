@@ -15,6 +15,7 @@
 
 #define MAX_KEYS 300
 #define MAX_MILLISECONDS 6000
+#define UPDATE_GUI_INPUT 0.3f
 ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
 {
 	Awake_enabled = true;
@@ -93,6 +94,7 @@ bool ModuleInput::Init(JSON_Object* node)
 	if (ui_manager != nullptr)
 	{
 		//ui_conected = t;
+		ui_input_update = UPDATE_GUI_INPUT;
 		ui_conected = ui_manager->ActionExist(submit.c_str());
 		if (ui_conected == true)
 			ui_conected = ui_manager->ActionExist(cancel.c_str());
@@ -376,7 +378,7 @@ update_status ModuleInput::PreUpdate(float dt)
 		}
 		}
 	}
-	UIInputManagerUpdate();
+	UIInputManagerUpdate(dt);
 	//LOG(std::to_string(mouse_x_motion).c_str());
 
 	if (quit == true/* || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP*/)
@@ -518,20 +520,31 @@ bool ModuleInput::CleanUp()
 	return true;
 }
 
-void ModuleInput::UIInputManagerUpdate()
+void ModuleInput::UIInputManagerUpdate(float dt)
 {
-	if (App->mode_game || App->engine_state != EngineState::STOP) {
+	
+	if (App->mode_game || App->engine_state != EngineState::STOP)
+	{
+
+		if (last_input.can_block)
+			current_time_ui_input_update += dt;
+
+		if (current_time_ui_input_update > ui_input_update)		
+			last_input.can_block = false;
 
 		if (!ui_conected || ui_manager == nullptr)
 			return;
+
 		if (!ui_manager->GetActiveInput())
 			return;
 
 		std::vector<KeyAction*> vect_temp = ui_manager->GetKey(submit.c_str());
 		for (int i = 0; i < vect_temp.size(); i++)
 		{
-			if (vect_temp[i]->OnClick())
+			KeyAction* item = vect_temp[i];
+			if (item->OnClick()&& !last_input.CheckLastInputEqual(EventType::EVENT_SUBMIT))
 			{
+				SetLastInputEvent(EventType::EVENT_SUBMIT);
 				Event mouse_event;
 				mouse_event.Set_event_data(EventType::EVENT_SUBMIT);
 				mouse_event.gui_submit.active = true;
@@ -543,8 +556,11 @@ void ModuleInput::UIInputManagerUpdate()
 		vect_temp = ui_manager->GetKey(cancel.c_str());
 		for (int i = 0; i < vect_temp.size(); i++)
 		{
-			if (vect_temp[i]->OnClick())
+			KeyAction* item = vect_temp[i];
+
+			if (item->OnClick() && !last_input.CheckLastInputEqual(EventType::EVENT_CANCEL))
 			{
+				SetLastInputEvent(EventType::EVENT_CANCEL);
 
 				Event mouse_event;
 				mouse_event.Set_event_data(EventType::EVENT_CANCEL);
@@ -556,8 +572,12 @@ void ModuleInput::UIInputManagerUpdate()
 		std::vector<ControllerAxisAction*> axis_temp = ui_manager->GetAxisVector(vertical.c_str());
 		for (int i = 0; i < axis_temp.size(); i++)
 		{
-			if (axis_temp[i]->direction_axis > 0.8f)
+			if (axis_temp[i]->direction_axis > 0.8f && !last_input.CheckLastInputEqual(EventType::EVENT_AXIS))
 			{
+				LOG("1 SEND Axis %f", current_time_ui_input_update);
+				SetLastInputEvent(EventType::EVENT_AXIS);
+				LOG("2 SEND Axis %f", current_time_ui_input_update);
+
 				Event mouse_event;
 				mouse_event.Set_event_data(EventType::EVENT_AXIS);
 				mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
@@ -565,8 +585,10 @@ void ModuleInput::UIInputManagerUpdate()
 				PushEvent(mouse_event);
 
 			}
-			else if (axis_temp[i]->direction_axis < -0.8f)
+			else if (axis_temp[i]->direction_axis < -0.8f && !last_input.CheckLastInputEqual(EventType::EVENT_AXIS, true))
 			{
+				SetLastInputEvent(EventType::EVENT_AXIS,true);
+
 				Event mouse_event;
 				mouse_event.Set_event_data(EventType::EVENT_AXIS);
 				mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
@@ -579,8 +601,10 @@ void ModuleInput::UIInputManagerUpdate()
 		axis_temp = ui_manager->GetAxisVector(horizontal.c_str());
 		for (int i = 0; i < axis_temp.size(); i++)
 		{
-			if (axis_temp[i]->direction_axis > 0.8f)
+			if (axis_temp[i]->direction_axis > 0.8f && !last_input.CheckLastInputEqual(EventType::EVENT_AXIS))
 			{
+				SetLastInputEvent(EventType::EVENT_AXIS);
+
 				Event mouse_event;
 				mouse_event.Set_event_data(EventType::EVENT_AXIS);
 				mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
@@ -588,8 +612,10 @@ void ModuleInput::UIInputManagerUpdate()
 				PushEvent(mouse_event);
 
 			}
-			else if (axis_temp[i]->direction_axis < -0.8f)
+			else if (axis_temp[i]->direction_axis < -0.8f && !last_input.CheckLastInputEqual(EventType::EVENT_AXIS,true))
 			{
+				SetLastInputEvent(EventType::EVENT_AXIS, true);
+
 				Event mouse_event;
 				mouse_event.Set_event_data(EventType::EVENT_AXIS);
 				mouse_event.gui_axis.value = axis_temp[i]->direction_axis;
@@ -702,6 +728,7 @@ bool ModuleInput::ConnectGameController()
 	return false;
 }
 
+
 bool GamePad::Empty()
 {
 	return controller == nullptr;
@@ -716,4 +743,24 @@ void GamePad::Clear()
 	SDL_HapticClose(haptic);
 	haptic = NULL;
 	joystick = NULL;
+}
+void ModuleInput::SetLastInputEvent(int value, bool nega)
+{
+	last_input.SetLastInputEvent(value, nega);
+	current_time_ui_input_update = 0.0f;
+}
+void ModuleInput::LastInput::SetLastInputEvent(int value, bool nega)
+{
+	last_input_event = value;
+	negative = nega;
+	can_block = true;
+}
+
+bool ModuleInput::LastInput::CheckLastInputEqual(int value, bool negative_key)
+{
+	if (can_block)
+	{
+		return last_input_event == value&&negative == negative_key;
+	}
+	return false;
 }

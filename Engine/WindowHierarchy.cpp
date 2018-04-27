@@ -8,7 +8,7 @@
 #include "CompCheckBox.h"
 #include "CompImage.h"
 #include "CompSlider.h"
-
+#include "CompRectTransform.h"
 Hierarchy::Hierarchy() : WindowManager()
 {
 	active.push_back(Active());
@@ -280,11 +280,21 @@ void Hierarchy::ShowOptions()
 			{
 				canvas = App->scene->CreateCanvas(nullptr);
 			}
-			GameObject* to_slide = App->scene->CreateImage(canvas);
-			GameObject* slider = App->scene->CreateSlider(to_slide);
-			CompSlider* to_move = (CompSlider*)slider->FindComponentByType(Comp_Type::C_SLIDER);
-			CompImage* bar = (CompImage*)to_slide->FindComponentByType(Comp_Type::C_IMAGE);
-			to_move->slide_bar = bar;
+			GameObject* slider = App->scene->CreateSlider(canvas);
+			GameObject* bg = App->scene->CreateImage(slider);
+			GameObject* bar = App->scene->CreateImage(slider);
+			GameObject* to_slide = App->scene->CreateImage(slider);
+
+			CompSlider* temp = (CompSlider*)slider->FindComponentByType(Comp_Type::C_SLIDER);
+
+			bg->GetComponentRectTransform()->SetWidth(400);
+			bg->GetComponentRectTransform()->SetHeight(30);
+			bar->GetComponentRectTransform()->SetWidth(400);
+			bar->GetComponentRectTransform()->SetHeight(30);
+
+			temp->SetSliderBg((CompImage*)bg->FindComponentByType(Comp_Type::C_IMAGE));
+			temp->SetSliderBar((CompImage*)bar->FindComponentByType(Comp_Type::C_IMAGE));
+			temp->SetTargetGraphic((CompGraphic*)to_slide->FindComponentByType(Comp_Type::C_IMAGE));
 
 			App->gui->SetLinkInspector(slider);
 		}

@@ -98,7 +98,7 @@ void CompButton::ShowInspectorInfo()
 	int selected_opt = current_transition_mode;
 	ImGui::Text("Transition"); ImGui::SameLine(op + 30);
 
-	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0 Animation transition"))
+	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0 Animation transition\0"))
 	{
 		if (selected_opt == Transition::TRANSITION_COLOR)
 			current_transition_mode = Transition::TRANSITION_COLOR;
@@ -107,6 +107,12 @@ void CompButton::ShowInspectorInfo()
 		if (selected_opt == Transition::TRANSITION_ANIMATION)
 			current_transition_mode = Transition::TRANSITION_ANIMATION;	
 	}
+
+	if (current_transition_mode = Transition::TRANSITION_ANIMATION)
+	{
+		SelectAnimationState();
+	}
+
 	switch (selected_opt)
 	{
 	case 0:
@@ -201,6 +207,22 @@ void CompButton::ShowInspectorInfo()
 	ImGui::TreePop();
 }
 
+void CompButton::SelectAnimationState()
+{
+	ImGui::Text("Select state to animate:");
+	ImGui::SameLine();
+	int selection = 1;
+	if (ImGui::Combo("##State", &selection, "IDLE\0HOVER\0DISABLED"))
+	{
+		if (selection == SelectionStates::STATE_NORMAL)
+			to_anim = SelectionStates::STATE_NORMAL;
+		if (selection == SelectionStates::STATE_HIGHLIGHTED)
+			to_anim = SelectionStates::STATE_HIGHLIGHTED;
+		if (selection == SelectionStates::STATE_DISABLED)
+			to_anim = SelectionStates::STATE_DISABLED;
+	}
+}
+
 void CompButton::CopyValues(const CompButton* component)
 {
 	//more...
@@ -208,139 +230,15 @@ void CompButton::CopyValues(const CompButton* component)
 
 void CompButton::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", name_component);
-	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	json_object_dotset_number_with_std(object, name + "UUID", uid);
-	
-	for (int i = 0; i < 3; i++)
-	{
-		std::string resource_count = std::to_string(i);
+	CompInteractive::Save(object, name, saveScene, countResources);
 
-		if (sprite[i] != nullptr)
-		{
-			if (saveScene == false)
-			{
-				// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
-				std::string temp = std::to_string(countResources++);
-
-				json_object_dotset_number_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".UUID Resource", sprite[i]->GetUUID());
-				json_object_dotset_string_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".Name", sprite[i]->name.c_str());
-			}
-			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, sprite[i]->GetUUID());
-		}
-		else
-		{
-			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
-		}
-	}
-	
-	App->fs->json_array_dotset_float4(object, name + "Normal Color", normal_color);
-	App->fs->json_array_dotset_float4(object, name + "Highlighted Color", highlighted_color);
-	App->fs->json_array_dotset_float4(object, name + "Pressed Color", pressed_color);
-	App->fs->json_array_dotset_float4(object, name + "Disabled Color", disabled_color);
-	App->fs->json_array_dotset_float4(object, name + "Desired Color", desired_color);
-	json_object_dotset_number_with_std(object, name + "Color Multiply", color_multiply);
-	json_object_dotset_number_with_std(object, name + "Fade Duration", fade_duration);
-	json_object_dotset_boolean_with_std(object, name + "Fade Active", no_fade);
-	json_object_dotset_boolean_with_std(object, name + "Transition Start", start_transition);
-
-	if (target_graphic != nullptr)
-	{
-		json_object_dotset_number_with_std(object, name + "Graphic UUID", target_graphic_uid);
-	}
-	else
-	{
-		json_object_dotset_number_with_std(object, name + "Graphic UUID", 0);
-	}
-
-	json_object_dotset_number_with_std(object, name + "Selection Mode", current_selection_state);
-	json_object_dotset_number_with_std(object, name + "Transition Mode", current_transition_mode);
-	json_object_dotset_number_with_std(object, name + "Navigation Mode", navigation.current_navigation_mode);
-
-	if (navigation.interactive_up != nullptr)
-	{
-		json_object_dotset_number_with_std(object, name + "Interactive up", navigation.interactive_up->GetUUID());
-	}
-	else
-	{
-		json_object_dotset_number_with_std(object, name + "Interactive up", 0);
-
-	}
-	if (navigation.interactive_down != nullptr)
-	{
-		json_object_dotset_number_with_std(object, name + "Interactive down", navigation.interactive_down->GetUUID());
-	}
-	else
-	{
-		json_object_dotset_number_with_std(object, name + "Interactive down", 0);
-
-	}
-	if (navigation.interactive_right != nullptr)
-	{
-		json_object_dotset_number_with_std(object, name + "Interactive right", navigation.interactive_right->GetUUID());
-	}
-	else
-	{
-		json_object_dotset_number_with_std(object, name + "Interactive right", 0);
-
-	}
-	if (navigation.interactive_left != nullptr)
-	{
-		json_object_dotset_number_with_std(object, name + "Interactive left", navigation.interactive_left->GetUUID());
-	}
-	else
-	{
-		json_object_dotset_number_with_std(object, name + "Interactive left", 0);
-
-	}
 	SaveClickAction(object,name);
 }
 
 void CompButton::Load(const JSON_Object * object, std::string name)
 {
-	uid = json_object_dotget_number_with_std(object, name + "UUID");
-	//...
-	for (int i = 0; i < 3; i++)
-	{
-		std::string resource_count = std::to_string(i);
+	CompInteractive::Load(object, name);
 
-		uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID " + resource_count);
-		if (resourceID > 0)
-		{
-			sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
-			if (sprite[i] != nullptr)
-			{
-				sprite[i]->num_game_objects_use_me++;
-
-				// LOAD All Materials ----------------------------
-				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
-				{
-					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
-				}
-
-			}
-		}
-	}
-	normal_color = App->fs->json_array_dotget_float4_string(object, name + "Normal Color");
-	highlighted_color = App->fs->json_array_dotget_float4_string(object, name + "Highlighted Color");
-	pressed_color = App->fs->json_array_dotget_float4_string(object, name + "Pressed Color");
-	disabled_color = App->fs->json_array_dotget_float4_string(object, name + "Disabled Color");
-	desired_color = App->fs->json_array_dotget_float4_string(object, name + "Desired Color");
-	color_multiply = json_object_dotget_number_with_std(object, name + "Color Multiply");
-	fade_duration = json_object_dotget_number_with_std(object, name + "Fade Duration");
-	no_fade = json_object_dotget_boolean_with_std(object, name + "Fade Active");
-	start_transition = json_object_dotget_boolean_with_std(object, name + "Transition Start");
-	target_graphic_uid = json_object_dotget_number_with_std(object, name + "Graphic UUID");
-	number_script = json_object_dotget_number_with_std(object, name + "Linked Spites Size");
-
-	current_selection_state = static_cast<SelectionStates>((int)json_object_dotget_number_with_std(object, name + "Selection Mode"));
-	current_transition_mode = static_cast<Transition>((int)json_object_dotget_number_with_std(object, name + "Transition Mode"));
-	navigation.current_navigation_mode = static_cast<Navigation::NavigationMode>((int)json_object_dotget_number_with_std(object, name + "Navigation Mode"));
-
-	navigation.inteactive_up_uid = json_object_dotget_number_with_std(object, name + "Interactive up");
-	navigation.inteactive_down_uid = json_object_dotget_number_with_std(object, name + "Interactive down");
-	navigation.inteactive_right_uid = json_object_dotget_number_with_std(object, name + "Interactive right");
-	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive left");
 	LoadClickAction(object, name);
 	/*
 	if (number_script != 0)
@@ -361,7 +259,11 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 
 	Enable();
 }
-
+void CompButton::SyncComponent(GameObject* sync_parent)
+{
+	CompInteractive::SyncComponent(sync_parent);
+	SyncScript();
+}
 void CompButton::SyncScript()
 {
 	SyncClickAction();
@@ -387,8 +289,9 @@ void CompButton::SyncScript()
 		}
 
 	}
-	*/
+	
 	RELEASE_ARRAY(uid_linked_scripts);
+	*/
 }
 
 void CompButton::OnClick()

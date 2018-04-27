@@ -14,6 +14,7 @@ public:
 	~InputManager();
 	void UpdateInputActions();
 	bool ProcessEvent(SDL_Event* input_event);
+	void ClearSameEvent(SDL_Event* input_event);
 	void Clear();
 	ControllerAxisAction* GetAxis(const char* name);
 	std::vector<ControllerAxisAction*> GetAxisVector(const char* name);
@@ -31,6 +32,7 @@ public:
 	void ActiveWindowOpen();
 	void DeactiveWIndowOpen();
 	bool ActionExist(const char* name);
+
 	void SetActiveInput(bool set);
 	void SetBlockAction(bool set);
 	void SetName(const char* name);
@@ -41,6 +43,7 @@ public:
 	const bool GetActiveInput()const;
 	bool GetActiveInput();
 	bool GetWindowOpen()const;
+
 	InputAction* CreateNewAction(const char* new_name, const char* new_key_positive, const char* new_key_negative, ActionInputType new_type = ActionInputType::UNKNOWN_ACTION);
 	std::vector<InputAction*> GetActionVector() const;
 	std::vector<InputAction*> GetActionVector();
@@ -53,6 +56,7 @@ public:
 	bool active_input = true;
 	bool block_action = false;
 private:
+
 	PlayerActions* my_player_action = nullptr;
 	bool window_open = false;
 	std::string name;
@@ -61,5 +65,7 @@ private:
 	char selected_action_key_negative[50] = "default";
 
 	int action_type = 0;
+
+	
 };
 #endif //INPUT_MANAGER_H

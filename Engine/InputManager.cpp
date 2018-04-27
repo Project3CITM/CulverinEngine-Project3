@@ -3,6 +3,8 @@
 #include "InputAction.h"
 #include"Application.h"
 #include "PlayerActions.h"
+#define ACTION_SECOND_LIMIT 1000
+
 #define ACTION_LIMIT 50
 #define MAX_INPUT 25
 
@@ -78,17 +80,25 @@ void InputManager::UpdateInputActions()
 
 bool InputManager::ProcessEvent(SDL_Event * input_event)
 {
+
+	
 	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
 	{
+		
+
 		if ((*it)->ProcessEventAction(input_event))
 		{
 			//my_player_action->SendNewDeviceCombinationType((*it)->positive_button->device);
-			active_action.push_back(*(it));
+			active_action.push_back((*it));
 			return true;
 		}
 	}
 	return false;
 
+}
+
+void InputManager::ClearSameEvent(SDL_Event * input_event)
+{
 }
 
 void InputManager::Clear()
@@ -169,6 +179,7 @@ void InputManager::ShowInspectorInfo()
 	window_flags |= ImGuiWindowFlags_NoCollapse;
 	std::string window_name = "Input Manager " + name;
 	ImGui::Begin(window_name.c_str(), &window_open, window_flags);
+	ImGui::Text("Number of Action per second");
 
 	ImGui::Text("Number of Action");
 	if (ImGui::InputInt("##number_of_action", &number_of_action))
@@ -367,6 +378,7 @@ void InputManager::SetName(const char * set_name)
 	name = set_name;
 }
 
+
 const char * InputManager::GetName()const
 {
 	return name.c_str();
@@ -394,6 +406,7 @@ bool InputManager::GetWindowOpen() const
 {
 	return window_open;
 }
+
 
 InputAction* InputManager::CreateNewAction(const char * new_name, const char * new_key_positive, const char* new_key_negative, ActionInputType new_type)
 {
@@ -427,9 +440,12 @@ InputAction* InputManager::CreateNewAction(const char * new_name, const char * n
 
 	if (temp != nullptr)
 	{
+
 		temp->name = new_name;
+		temp->key_device = new_key_relation_positive->device;
 		temp->positive_button = new_key_relation_positive;
 		temp->negative_button = new_key_relation_negative;
+		temp->my_manager = this;
 	}
 
 	return temp;

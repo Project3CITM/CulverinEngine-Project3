@@ -1,1 +1,200 @@
-{"Input":{"Directory":"player_action","InputManager":{"Size":2},"InputManager0":{"InputManagerActionSize":8,"InputManagerName":"GUI","InputManagerActive":false,"InputManagerBlock":false,"InputAction0":{"InputActionName":"Vertical","KeyRelationNamePositive":"S","KeyRelationNameNegative":"W","ActionType":2},"InputAction1":{"InputActionName":"Horizontal","KeyRelationNamePositive":"D","KeyRelationNameNegative":"A","ActionType":2},"InputAction2":{"InputActionName":"Submit","KeyRelationNamePositive":"Return","KeyRelationNameNegative":"None","ActionType":2},"InputAction3":{"InputActionName":"Cancel","KeyRelationNamePositive":"Backspace","KeyRelationNameNegative":"None","ActionType":2},"InputAction4":{"InputActionName":"Vertical","KeyRelationNamePositive":"CLeftY","KeyRelationNameNegative":"None","ActionType":1},"InputAction5":{"InputActionName":"Horizontal","KeyRelationNamePositive":"CLeftX","KeyRelationNameNegative":"None","ActionType":1},"InputAction6":{"InputActionName":"Submit","KeyRelationNamePositive":"CButtonA","KeyRelationNameNegative":"None","ActionType":4},"InputAction7":{"InputActionName":"Cancel","KeyRelationNamePositive":"CButtonB","KeyRelationNameNegative":"None","ActionType":4}},"InputManager1":{"InputManagerActionSize":22,"InputManagerName":"Player","InputManagerActive":true,"InputManagerBlock":false,"InputAction0":{"InputActionName":"Vertical","KeyRelationNamePositive":"S","KeyRelationNameNegative":"W","ActionType":2},"InputAction1":{"InputActionName":"Horizontal","KeyRelationNamePositive":"D","KeyRelationNameNegative":"A","ActionType":2},"InputAction2":{"InputActionName":"Rotate","KeyRelationNamePositive":"E","KeyRelationNameNegative":"Q","ActionType":2},"InputAction3":{"InputActionName":"TriangleR","KeyRelationNamePositive":"R","KeyRelationNameNegative":"None","ActionType":2},"InputAction4":{"InputActionName":"TriangleL","KeyRelationNamePositive":"Tab","KeyRelationNameNegative":"None","ActionType":2},"InputAction5":{"InputActionName":"RAllyAttack","KeyRelationNamePositive":"4","KeyRelationNameNegative":"None","ActionType":2},"InputAction6":{"InputActionName":"LAllyAttack","KeyRelationNamePositive":"3","KeyRelationNameNegative":"None","ActionType":2},"InputAction7":{"InputActionName":"RAttack","KeyRelationNamePositive":"2","KeyRelationNameNegative":"None","ActionType":2},"InputAction8":{"InputActionName":"LAttack","KeyRelationNamePositive":"1","KeyRelationNameNegative":"None","ActionType":2},"InputAction9":{"InputActionName":"Vertical","KeyRelationNamePositive":"CLeftY","KeyRelationNameNegative":"None","ActionType":1},"InputAction10":{"InputActionName":"Horizontal","KeyRelationNamePositive":"CLeftX","KeyRelationNameNegative":"None","ActionType":1},"InputAction11":{"InputActionName":"Rotate","KeyRelationNamePositive":"CRightX","KeyRelationNameNegative":"None","ActionType":1},"InputAction12":{"InputActionName":"TriangleR","KeyRelationNamePositive":"CButtonB","KeyRelationNameNegative":"None","ActionType":4},"InputAction13":{"InputActionName":"TriangleL","KeyRelationNamePositive":"CButtonX","KeyRelationNameNegative":"None","ActionType":4},"InputAction14":{"InputActionName":"RAllyAttack","KeyRelationNamePositive":"CButtonRightStick","KeyRelationNameNegative":"None","ActionType":1},"InputAction15":{"InputActionName":"LAllyAttack","KeyRelationNamePositive":"CButtonLeftStick","KeyRelationNameNegative":"None","ActionType":1},"InputAction16":{"InputActionName":"RAttack","KeyRelationNamePositive":"CButtonRightShoulder","KeyRelationNameNegative":"None","ActionType":4},"InputAction17":{"InputActionName":"LAttack","KeyRelationNamePositive":"CButtonLeftShoulder","KeyRelationNameNegative":"None","ActionType":4},"InputAction18":{"InputActionName":"Interact","KeyRelationNamePositive":"Space","KeyRelationNameNegative":"None","ActionType":2},"InputAction19":{"InputActionName":"Interact","KeyRelationNamePositive":"CButtonA","KeyRelationNameNegative":"None","ActionType":4},"InputAction20":{"InputActionName":"Menu","KeyRelationNamePositive":"Escape","KeyRelationNameNegative":"None","ActionType":2},"InputAction21":{"InputActionName":"Menu","KeyRelationNamePositive":"CStart","KeyRelationNameNegative":"None","ActionType":4}}}}
+{
+  "Input": {
+    "Directory": "player_action",
+    "InputManager": { "Size": 2 },
+    "InputManager0": {
+      "InputManagerActionSize": 8,
+      "InputManagerName": "GUI",
+      "InputManagerActive": false,
+      "InputManagerBlock": false,
+      "InputPerSecond": 10,
+      "InputAction0": {
+        "InputActionName": "Vertical",
+        "KeyRelationNamePositive": "S",
+        "KeyRelationNameNegative": "W",
+        "ActionType": 2
+      },
+      "InputAction1": {
+        "InputActionName": "Horizontal",
+        "KeyRelationNamePositive": "D",
+        "KeyRelationNameNegative": "A",
+        "ActionType": 2
+      },
+      "InputAction2": {
+        "InputActionName": "Submit",
+        "KeyRelationNamePositive": "Return",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 2
+      },
+      "InputAction3": {
+        "InputActionName": "Cancel",
+        "KeyRelationNamePositive": "Backspace",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 2
+      },
+      "InputAction4": {
+        "InputActionName": "Vertical",
+        "KeyRelationNamePositive": "CLeftY",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 1
+      },
+      "InputAction5": {
+        "InputActionName": "Horizontal",
+        "KeyRelationNamePositive": "CLeftX",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 1
+      },
+      "InputAction6": {
+        "InputActionName": "Submit",
+        "KeyRelationNamePositive": "CButtonA",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 4
+      },
+      "InputAction7": {
+        "InputActionName": "Cancel",
+        "KeyRelationNamePositive": "CButtonB",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 4
+      }
+    },
+    "InputManager1": {
+      "InputManagerActionSize": 22,
+      "InputManagerName": "Player",
+      "InputManagerActive": true,
+      "InputManagerBlock": false,
+      "InputPerSecond": 0,
+      "InputAction0": {
+        "InputActionName": "Vertical",
+        "KeyRelationNamePositive": "S",
+        "KeyRelationNameNegative": "W",
+        "ActionType": 2
+      },
+      "InputAction1": {
+        "InputActionName": "Horizontal",
+        "KeyRelationNamePositive": "D",
+        "KeyRelationNameNegative": "A",
+        "ActionType": 2
+      },
+      "InputAction2": {
+        "InputActionName": "Rotate",
+        "KeyRelationNamePositive": "E",
+        "KeyRelationNameNegative": "Q",
+        "ActionType": 2
+      },
+      "InputAction3": {
+        "InputActionName": "TriangleR",
+        "KeyRelationNamePositive": "R",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 2
+      },
+      "InputAction4": {
+        "InputActionName": "TriangleL",
+        "KeyRelationNamePositive": "Tab",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 2
+      },
+      "InputAction5": {
+        "InputActionName": "RAllyAttack",
+        "KeyRelationNamePositive": "4",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 2
+      },
+      "InputAction6": {
+        "InputActionName": "LAllyAttack",
+        "KeyRelationNamePositive": "3",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 2
+      },
+      "InputAction7": {
+        "InputActionName": "RAttack",
+        "KeyRelationNamePositive": "2",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 2
+      },
+      "InputAction8": {
+        "InputActionName": "LAttack",
+        "KeyRelationNamePositive": "1",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 2
+      },
+      "InputAction9": {
+        "InputActionName": "Vertical",
+        "KeyRelationNamePositive": "CLeftY",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 1
+      },
+      "InputAction10": {
+        "InputActionName": "Horizontal",
+        "KeyRelationNamePositive": "CLeftX",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 1
+      },
+      "InputAction11": {
+        "InputActionName": "Rotate",
+        "KeyRelationNamePositive": "CRightX",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 1
+      },
+      "InputAction12": {
+        "InputActionName": "TriangleR",
+        "KeyRelationNamePositive": "CButtonB",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 4
+      },
+      "InputAction13": {
+        "InputActionName": "TriangleL",
+        "KeyRelationNamePositive": "CButtonX",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 4
+      },
+      "InputAction14": {
+        "InputActionName": "RAllyAttack",
+        "KeyRelationNamePositive": "CButtonRightStick",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 1
+      },
+      "InputAction15": {
+        "InputActionName": "LAllyAttack",
+        "KeyRelationNamePositive": "CButtonLeftStick",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 1
+      },
+      "InputAction16": {
+        "InputActionName": "RAttack",
+        "KeyRelationNamePositive": "CButtonRightShoulder",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 4
+      },
+      "InputAction17": {
+        "InputActionName": "LAttack",
+        "KeyRelationNamePositive": "CButtonLeftShoulder",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 4
+      },
+      "InputAction18": {
+        "InputActionName": "Interact",
+        "KeyRelationNamePositive": "Space",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 2
+      },
+      "InputAction19": {
+        "InputActionName": "Interact",
+        "KeyRelationNamePositive": "CButtonA",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 4
+      },
+      "InputAction20": {
+        "InputActionName": "Menu",
+        "KeyRelationNamePositive": "Escape",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 2
+      },
+      "InputAction21": {
+        "InputActionName": "Menu",
+        "KeyRelationNamePositive": "CStart",
+        "KeyRelationNameNegative": "None",
+        "ActionType": 4
+      }
+    }
+  }
+}
