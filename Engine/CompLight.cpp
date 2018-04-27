@@ -83,6 +83,8 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Comp_Type::C_LIGHT, parent)
 {
 	//App->module_lightning->OnLightDestroyed(this); //TODO/CHECK: Why delete the light?? Should add it to the list. Why create another method, already one to erase a light from the list on module lighting.
+	name_component = "CompLight";
+	
 	this->ambientCoefficient = copy.ambientCoefficient;
 	this->radius = copy.radius;
 	this->color = copy.color;

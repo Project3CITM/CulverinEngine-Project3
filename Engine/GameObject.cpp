@@ -94,7 +94,10 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 
 	// Same data as the 'copy' gameobject
 	active = copy.IsActive();
-	parent_active = parent->IsParentActive();
+	if (parent != nullptr)
+		parent_active = parent->IsParentActive();
+	else
+		parent_active = true;
 	visible = copy.IsVisible();
 	static_obj = copy.IsStatic();
 	bb_active = copy.IsAABBActive();
@@ -704,11 +707,11 @@ void GameObject::ShowHierarchy(bool use_search)
 void GameObject::ShowGameObjectOptions()
 {
 	//Create child Game Objects / Components
-	if (ImGui::MenuItem("Copy", NULL, false, false))
+	if (ImGui::MenuItem("Copy", NULL, false))
 	{
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjectCopy(this);
 	}
-	if (ImGui::MenuItem("Paste", NULL, false, false))
+	if (ImGui::MenuItem("Paste", NULL, false))
 	{
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->CopyGameObject(this);
 	}
