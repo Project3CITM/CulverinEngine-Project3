@@ -19,7 +19,8 @@ public class Enemy_BT : BT
         ARROW,
         FIREWALL,
         FIREBALL,
-        SWORD
+        SWORD,
+        FIREBREATH
     }
 
     public GameObject enemies_manager = null;

@@ -67,7 +67,6 @@ public class ChasePlayer_Action : Action
                 }
                 else
                 {
-                    GetComponent<CompAnimation>().PlayAnimationNode("BlockIdle");
                     SetBlocking(true);
                     GetComponent<Movement_Action>().SetBlocking(true);
                 }

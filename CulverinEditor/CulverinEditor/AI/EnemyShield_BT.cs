@@ -11,6 +11,11 @@ public class EnemyShield_BT : Enemy_BT
     public GameObject shield_name;
     public int texture_type = 0;
 
+    public float arrow_pen = 0.0f;
+    public float tripleArrow_pen = 0.0f;
+    public float fireball_pen = 0.0f;
+    public float firebreath_pen = 0.0f;
+
     public override void Start()
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
@@ -185,6 +190,18 @@ public class EnemyShield_BT : Enemy_BT
                     {
                         return base.ApplyDamage(damage, damage_type);
                     }
+                    else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
+                    {
+                        return base.ApplyDamage(damage * fireball_pen, damage_type);
+                    }
+                    else if(damage_type == ENEMY_GET_DAMAGE_TYPE.ARROW)
+                    {
+                        return base.ApplyDamage(damage * arrow_pen, damage_type);
+                    }
+                    else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBREATH)
+                    {
+                        return base.ApplyDamage(damage * firebreath_pen, damage_type);
+                    }
                     else
                     {
                         GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
@@ -204,6 +221,18 @@ public class EnemyShield_BT : Enemy_BT
                     if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                     {
                         return base.ApplyDamage(damage, damage_type);
+                    }
+                    else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
+                    {
+                        return base.ApplyDamage(damage * fireball_pen, damage_type);
+                    }
+                    else if (damage_type == ENEMY_GET_DAMAGE_TYPE.ARROW)
+                    {
+                        return base.ApplyDamage(damage * arrow_pen, damage_type);
+                    }
+                    else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBREATH)
+                    {
+                        return base.ApplyDamage(damage * firebreath_pen, damage_type);
                     }
                     else
                     {

@@ -119,10 +119,6 @@ public class Movement_Action : Action
             GetComponent<CompAnimation>().SetTransition("ToPatrol");
             GetComponent<CompAnimation>().SetFirstActiveBlendingClip("Idle");
         }
-        else if(blocking == true)
-        {
-            GetComponent<CompAnimation>().PlayAnimationNode("BlockIdle");
-        }
         else
         {
             GetComponent<CompAnimation>().SetTransition("ToChase");
