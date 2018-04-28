@@ -64,9 +64,12 @@ void CompGraphic::AddCanvas()
 			current->RemoveGraphic(this);
 		}
 		my_canvas->AddGraphic(this);
-	//	if(graphic)
+		
+		transform->Resize(((CompRectTransform*)my_canvas->GetParent()->FindComponentByType(Comp_Type::C_RECT_TRANSFORM))->GetResizeFactor());
+		GenerateMesh();
 	}
 }
+
 
 
 void CompGraphic::AddCanvasRender()
