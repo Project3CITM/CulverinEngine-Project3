@@ -75,7 +75,7 @@ private:
 
 		InputAction* key_to_change = nullptr;
 		bool change_negative = false;
-		bool change_active = true;
+		bool change_active = false;
 		KeyState state = KeyState::NO_STATE;
 	};
 	KeyChange key_change;

@@ -9,7 +9,8 @@ public class EditKeyBinding : CulverinBehaviour
     public bool keyboard = false;
 
 
-    
+    string last_text;
+    string text;
     string action_name = null;
     string input_name = null;
     int device = 0;
@@ -49,8 +50,12 @@ public class EditKeyBinding : CulverinBehaviour
         input_name = "Player";
 
     }
+    void Update()
+    {
+  
+    }
 
-    public void ChangeInputAction()
+    void ChangeInputAction()
     {
         Input.SetInputActionToChange(action_name, input_name, device, negative_key);
 

@@ -2,14 +2,15 @@
 using CulverinEditor.SceneManagement;
 using CulverinEditor.Debug;
 
-public class EditKeyBinding : CulverinBehaviour
+public class ShowInputName : CulverinBehaviour
 {
     public int string_pos = 0;
     public bool negative_key = false;
     public bool keyboard = false;
 
 
-    
+    string last_text;
+    string text;
     string action_name = null;
     string input_name = null;
     int device = 0;
@@ -47,13 +48,19 @@ public class EditKeyBinding : CulverinBehaviour
             action_name = "Menu";
 
         input_name = "Player";
+        text = Input.GetInput_ControllerKeyBindingName(action_name, input_name, device, negative_key);
+        last_text = text;
+        GetComponent<CompText>().SetText(text);
 
     }
-
-    public void ChangeInputAction()
+    void Update()
     {
-        Input.SetInputActionToChange(action_name, input_name, device, negative_key);
-
+        text = Input.GetInput_ControllerKeyBindingName(action_name, input_name, device, negative_key);
+        if(last_text!=text)
+        {
+            GetComponent<CompText>().SetText(text);
+            last_text = text;
+        }
     }
+
 }
-  

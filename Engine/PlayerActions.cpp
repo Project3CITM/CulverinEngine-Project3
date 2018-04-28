@@ -647,7 +647,9 @@ PlayerActions::KeyChange::KeyState PlayerActions::KeyChange::ReceiveEvent(SDL_Ev
 				return KeyState::INVALID_KEY_STATE;
 			key_to_change->my_manager->ClearSameEvent(input_event);
 			key = App->input->FindKeyBinding(key->device, input_event->key.keysym.scancode);
-
+			if (change_negative)
+				key_to_change->negative_button = key;
+			key_to_change->positive_button = key;
 			return KeyState::VALID_KEY_STATE;
 
 		}
@@ -671,6 +673,9 @@ PlayerActions::KeyChange::KeyState PlayerActions::KeyChange::ReceiveEvent(SDL_Ev
 			key_to_change->my_manager->ClearSameEvent(input_event);
 
 			key = App->input->FindKeyBinding(key->device, input_event->cbutton.button);
+			if (change_negative)
+				key_to_change->negative_button = key;
+			key_to_change->positive_button = key;
 			return KeyState::VALID_KEY_STATE;
 
 		}
@@ -699,6 +704,9 @@ PlayerActions::KeyChange::KeyState PlayerActions::KeyChange::ReceiveEvent(SDL_Ev
 
 			key_to_change->my_manager->ClearSameEvent(input_event);
 			key = App->input->FindKeyBinding(key->device, input_event->button.button);
+			if (change_negative)
+				key_to_change->negative_button = key;
+			key_to_change->positive_button = key;
 			return KeyState::VALID_KEY_STATE;
 
 		}
