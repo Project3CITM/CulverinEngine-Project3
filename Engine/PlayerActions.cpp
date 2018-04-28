@@ -155,7 +155,31 @@ bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 {
 	if (key_change.change_active)
 	{
-		key_change.ReceiveEvent(input_event);
+		key_change.state = key_change.ReceiveEvent(input_event);
+		
+		if (key_change.state != KeyChange::KeyState::WAIT_FOR_KEY_STATE)
+		{
+			bool ret = false;
+			if (key_change.state == KeyChange::KeyState::NO_STATE)
+			{
+
+			}
+			else if (key_change.state == KeyChange::KeyState::VALID_KEY_STATE)
+			{
+				ret = true;
+
+			}
+			else if (key_change.state == KeyChange::KeyState::INVALID_KEY_STATE)
+			{
+				ret = true;
+
+			}
+			key_change.Clear();
+			if (ret)
+				return ret;
+		}
+		
+		
 
 	}
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
@@ -237,7 +261,7 @@ void PlayerActions::SetInputManagerBlock(const char * name, bool set)
 	}
 }
 
-InputAction * PlayerActions::SetInputActionToChange(const char * input_action, const char * input_manager, const char * device, bool change_negative)
+bool PlayerActions::SetInputActionToChange(const char * input_action, const char * input_manager, const char * device, bool change_negative)
 {
 	DeviceCombinationType this_device = SelectDeviceCombination(device);
 	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
@@ -254,7 +278,8 @@ InputAction * PlayerActions::SetInputActionToChange(const char * input_action, c
 				{
 					if (action_item->key_device == this_device)
 					{
-						return action_item;
+						key_change.SetInputAction(action_item);
+						return true;
 					}					
 				}
 			}
@@ -262,7 +287,7 @@ InputAction * PlayerActions::SetInputActionToChange(const char * input_action, c
 		}
 
 	}
-	return nullptr;
+	return false;
 }
 
 bool PlayerActions::GetInputManagerActive(const char * name) const
@@ -578,15 +603,6 @@ const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name,
 	return "";
 }
 
-bool PlayerActions::GetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)
-{
-	return false;
-}
-
-void PlayerActions::SetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)
-{
-}
-
 void PlayerActions::SendNewDeviceCombinationType(DeviceCombinationType type)
 {
 	if (actual_player_action == type)
@@ -609,10 +625,10 @@ DeviceCombinationType PlayerActions::SelectDeviceCombination(const char * value)
 		return DeviceCombinationType::NULL_COMB_DEVICE;
 }
 
-bool PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
+PlayerActions::KeyChange::KeyState PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
 {
 	if (key_to_change == nullptr)
-		return false;
+		return KeyState::NO_STATE;
 	switch (input_event->type)
 	{
 	case SDL_KEYDOWN:
@@ -625,15 +641,15 @@ bool PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
 			key = key_to_change->positive_button;
 
 			if (key == nullptr || key->event_value == input_event->key.keysym.scancode)
-				return false;
+				return KeyState::INVALID_KEY_STATE;
 			
 			if (key_to_change->my_manager == nullptr)
-				return false;
+				return KeyState::INVALID_KEY_STATE;
 			key_to_change->my_manager->ClearSameEvent(input_event);
-
 			key = App->input->FindKeyBinding(key->device, input_event->key.keysym.scancode);
 
-			
+			return KeyState::VALID_KEY_STATE;
+
 		}
 		break;
 	case SDL_CONTROLLERBUTTONDOWN:
@@ -647,14 +663,15 @@ bool PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
 			key = key_to_change->positive_button;
 
 			if (key == nullptr || key->event_value == input_event->cbutton.button)
-				return false;
+				return KeyState::INVALID_KEY_STATE;
 
 			if (key_to_change->my_manager == nullptr)
-				return false;
+				return KeyState::INVALID_KEY_STATE;
 
 			key_to_change->my_manager->ClearSameEvent(input_event);
 
 			key = App->input->FindKeyBinding(key->device, input_event->cbutton.button);
+			return KeyState::VALID_KEY_STATE;
 
 		}
 
@@ -662,7 +679,7 @@ bool PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
 	case SDL_CONTROLLERAXISMOTION:
 		if (input_event->caxis.value < -5000 || input_event->caxis.value>5000)
 		{
-			return true;
+			return KeyState::INVALID_KEY_STATE;
 		}
 		break;
 	case SDL_MOUSEBUTTONDOWN:
@@ -675,22 +692,37 @@ bool PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
 			key = key_to_change->positive_button;
 
 			if (key == nullptr || key->event_value == input_event->button.button)
-				return false;
+				return KeyState::INVALID_KEY_STATE;
 
 			if (key_to_change->my_manager == nullptr)
-				return false;
+				return KeyState::INVALID_KEY_STATE;
 
 			key_to_change->my_manager->ClearSameEvent(input_event);
 			key = App->input->FindKeyBinding(key->device, input_event->button.button);
+			return KeyState::VALID_KEY_STATE;
 
 		}
 		break;
+	default:
+		return 	KeyState::WAIT_FOR_KEY_STATE;
+		break;
 	}
-	return false;
+	return 	KeyState::WAIT_FOR_KEY_STATE;
 }
+
+void PlayerActions::KeyChange::SetInputAction(InputAction * action_item)
+{
+	key_to_change = action_item;
+	change_active = true;
+	state = KeyState::WAIT_FOR_KEY_STATE;
+}
+
+
 
 void PlayerActions::KeyChange::Clear()
 {
 	key_to_change = nullptr;
 	change_negative = false;
+	change_active = false;
+	state = KeyState::NO_STATE;
 }

@@ -721,7 +721,7 @@ Component* CompInteractive::ShowInteractiveWindow()
 	std::vector<Component*> temp_list;
 	App->scene->root->GetComponentsByRangeOfType(Comp_Type::C_EDIT_TEXT, Comp_Type::C_SLIDER, &temp_list, true);
 	ImGui::Begin("Interactive", &select_interactive, window_flags);
-
+	
 	ImVec2 WindowSize = ImGui::GetWindowSize();
 	float ChildsWidth = WindowSize.x ;
 	float ChildsHeight = (WindowSize.y - 50.0f);
@@ -759,7 +759,7 @@ CompInteractive * CompInteractive::FindNavigationOnUp()
 	}
 	else
 	{
-		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(0, 1, 0));
+		return FindInteractive(float3(0, 1, 0));
 	}
 	return nullptr;
 }
@@ -782,7 +782,7 @@ CompInteractive * CompInteractive::FindNavigationOnDown()
 	}
 	else
 	{
-		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(0, -1, 0));
+		return FindInteractive(float3(0, -1, 0));
 
 	}
 	return nullptr;
@@ -797,7 +797,7 @@ CompInteractive * CompInteractive::FindNavigationOnRight()
 	}
 	else
 	{
-		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(1, 0, 0));
+		return FindInteractive(float3(1, 0, 0));
 
 	}
 	return nullptr;
@@ -811,7 +811,7 @@ CompInteractive * CompInteractive::FindNavigationOnLeft()
 	}
 	else
 	{
-		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(-1, 0, 0));
+		return FindInteractive(float3(-1, 0, 0));
 	}
 	return nullptr;
 }
@@ -822,7 +822,8 @@ CompInteractive * CompInteractive::FindInteractive(float3 direction)
 	//float3 local_direction = parent->GetComponentRectTransform()->GetRot().Inverted() * norm_direction;
 	float3 position = parent->GetComponentRectTransform()->GetGlobalPosition();
 	CompInteractive* ret = nullptr;
-	float best_score = -1 * INFINITY;
+	float closest_point = INFINITY;
+	float closest_point_second_axis = INFINITY;
 	for (std::list<CompInteractive*>::iterator it = iteractive_list.begin(); it != iteractive_list.end(); it++)
 	{
 		if (!(*it)->IsActive())
@@ -832,21 +833,22 @@ CompInteractive * CompInteractive::FindInteractive(float3 direction)
 		if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_NONE)
 			continue;
 		float3 position_it = (*it)->parent->GetComponentRectTransform()->GetGlobalPosition();
-		float3 vector = position_it - position;
+		float3 diff_vec = position_it - position;
+		float diff_x = diff_vec.x * direction.x;
+		float diff_y = diff_vec.y * direction.y;
 
-		float dot_value = norm_direction.Dot(vector);
-		
-		if (dot_value <= 0)
-			continue;
-
-		float score = dot_value / vector.Length();
-
-		if (score > best_score)
+		if (diff_x > 0.000001 && diff_x < closest_point)
 		{
-			best_score = score;
-			ret = (*it);
-		}		
+				closest_point = diff_x;
+				ret = it._Ptr->_Myval;
+		}
+		if (diff_y > 0.000001 && diff_y < closest_point)
+		{
+				closest_point = diff_y;
+				ret = it._Ptr->_Myval;	
+		}
 	}
+	
 	return ret;
 }
 
@@ -1165,6 +1167,12 @@ void CompInteractive::ShowInspectorSpriteTransition()
 			}
 		}
 	}
+}
+
+void CompInteractive::ShowInspectorAnimationTransition()
+{
+	int op = ImGui::GetWindowWidth() / 4;
+
 }
 
 

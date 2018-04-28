@@ -135,6 +135,8 @@ protected:
 	virtual void UpdateSelectionState(Event event_data);
 	void ShowInspectorColorTransition();
 	void ShowInspectorSpriteTransition();
+	void ShowInspectorAnimationTransition();
+
 	void PrepareHandleTransition();
 	void HandleTransition(SelectionStates selection_state);
 

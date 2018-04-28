@@ -108,7 +108,7 @@ void CompButton::ShowInspectorInfo()
 			current_transition_mode = Transition::TRANSITION_ANIMATION;	
 	}
 
-	if (current_transition_mode = Transition::TRANSITION_ANIMATION)
+	if (current_transition_mode == Transition::TRANSITION_ANIMATION)
 	{
 		SelectAnimationState();
 	}
@@ -129,12 +129,14 @@ void CompButton::ShowInspectorInfo()
 	}
 	int navigation_opt = navigation.current_navigation_mode;
 	ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
-	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Navigation Extrict\0"))
+	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Navigation Extrict\0Navigation Automatic\0"))
 	{
 		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_NONE)
 			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_NONE;
 		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
 			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_EXTRICTE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_AUTOMATIC)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_AUTOMATIC;
 
 	}
 	if (navigation.current_navigation_mode != Navigation::NavigationMode::NAVIGATION_NONE)
@@ -142,68 +144,7 @@ void CompButton::ShowInspectorInfo()
 		ShowNavigationInfo();
 	}
 	ShowOnClickInfo();
-	/*
-	ImGui::Text("On Click");
 
-	ImGui::Text("Number of Script"); 
-	ImGui::SameLine(op + 60);
-	ImGui::PushItemWidth(100);
-	if (ImGui::InputInt("##number_script", &number_script))
-	{	
-		if (number_script < 0)
-		{
-			number_script = 0;
-		}
-		else if (number_script >= BUTTON_LIMIT)
-		{
-			number_script = BUTTON_LIMIT;
-		}
-		if(linked_scripts.size()<number_script)
-		{
-			for (int i = linked_scripts.size(); i < number_script; i++)
-			{
-				CompScript* sc = nullptr;
-				linked_scripts.push_back(sc);
-			}
-		}
-		else
-		{
-			int size = linked_scripts.size() - number_script;
-			for (int i = 0; i < size; i++)
-			{
-				linked_scripts.pop_back();
-			}
-		}
-	}
-	ImGui::PopItemWidth();
-
-
-	uint size = linked_scripts.size();
-	for (uint k = 0; k < size; k++)
-	{
-		CompScript* item_sc = linked_scripts[k];
-		if (item_sc != nullptr)
-		{
-			std::string name = strcmp(item_sc->GetScriptName(), "") == 0?"Empty Script": item_sc->GetScriptName();
-			ImGui::Text(name.c_str());
-			ImGui::SameLine();
-		}
-		std::string temp = std::to_string(k);
-		std::string name = "Add Script" + temp;
-
-		if (ImGui::Button(name.c_str()))
-		{
-			ImGui::OpenPopup(name.c_str());
-		}
-		if (ImGui::BeginPopup(name.c_str()))
-		{
-			CompScript* sc = (CompScript*)App->scene->BlitSceneComponentsAsButtons(Comp_Type::C_SCRIPT, script_name);
-			if (sc != nullptr)
-				linked_scripts[k] =sc;
-			ImGui::EndPopup();
-		}
-	}
-	*/
 	ImGui::TreePop();
 }
 
@@ -348,8 +289,3 @@ void CompButton::OnPointDown(Event event_input)
 	PrepareHandleTransition();
 }
 
-void CompButton::ShowInspectorAnimationTransition()
-{
-	int op = ImGui::GetWindowWidth() / 4;
-
-}

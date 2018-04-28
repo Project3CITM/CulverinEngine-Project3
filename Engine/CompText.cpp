@@ -453,6 +453,7 @@ void CompText::Save(JSON_Object * object, std::string name, bool saveScene, uint
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Font UUID", 0);
 	}
+	App->fs->json_array_dotset_float4(object, name + "Text Color", color);
 
 	json_object_dotset_string_with_std(object, name + "Text", text_str.c_str());
 	json_object_dotset_number_with_std(object, name + "Max Input", max_input);
@@ -476,7 +477,8 @@ void CompText::Load(const JSON_Object * object, std::string name)
 
 	h_position= static_cast<CompText::HorizontalPosition>((int)json_object_dotget_number_with_std(object, name + "HPosition" ));
 	v_position= static_cast<CompText::VerticalPosition>((int)json_object_dotget_number_with_std(object, name + "VPosition" ));
-
+	horizontal_position= json_object_dotget_number_with_std(object, name + "HPosition");
+	vertical_position = json_object_dotget_number_with_std(object, name + "VPosition");
 	color=App->fs->json_array_dotget_float4_string(object, name + "Text Color");
 
 	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Font UUID");
