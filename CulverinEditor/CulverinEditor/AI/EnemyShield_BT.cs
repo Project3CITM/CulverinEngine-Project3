@@ -207,6 +207,7 @@ public class EnemyShield_BT : Enemy_BT
                         GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
                         GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
+                        base.UpdateHUD();
                     }
                 }
                 else
@@ -239,6 +240,7 @@ public class EnemyShield_BT : Enemy_BT
                         GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
                         GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
+                        base.UpdateHUD();
                     }
                 }
                 else
