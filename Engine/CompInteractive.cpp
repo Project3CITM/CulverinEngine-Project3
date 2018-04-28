@@ -1169,6 +1169,12 @@ void CompInteractive::ShowInspectorSpriteTransition()
 	}
 }
 
+void CompInteractive::ShowInspectorAnimationTransition()
+{
+	int op = ImGui::GetWindowWidth() / 4;
+
+}
+
 
 void CompInteractive::Navigate(Event event_data, CompInteractive * interactive)
 {

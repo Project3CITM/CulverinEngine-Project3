@@ -272,7 +272,7 @@ void Hierarchy::ShowOptions()
 			CompCheckBox* check = (CompCheckBox*)check_box->FindComponentByType(Comp_Type::C_CHECK_BOX);
 			CompImage* tick_img = (CompImage*)tick_obj->FindComponentByType(Comp_Type::C_IMAGE);
 
-			check->Tick = tick_img;
+			check->SetTick(tick_img);
 			App->gui->SetLinkInspector(check_box);
 		}
 		if (ImGui::MenuItem("Slider"))
