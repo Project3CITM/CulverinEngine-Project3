@@ -98,7 +98,7 @@ void CompGraphic::DrawGraphic()
 	if (my_canvas_render == nullptr)
 		return;
 
-	if (render)
+	if (can_draw)
 	{
 		my_canvas_render->DrawGraphic();
 	}
@@ -153,7 +153,10 @@ void CompGraphic::SetToRender(bool render)
 }
 void CompGraphic::SetCanDraw(bool render)
 {
-	this->can_draw = render;
+	if (this != nullptr)
+	{
+		this->can_draw = render;
+	}
 }
 
 void CompGraphic::SetRaycastTarget(bool flag)

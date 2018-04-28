@@ -13,7 +13,7 @@
 #include "CompImage.h"
 
 
-CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
+CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent), ClickAction()
 {
 	uid = App->random->Int();
 	name_component = "Check Box";
@@ -148,7 +148,24 @@ void CompCheckBox::OnPointDown(Event event_input)
 
 void CompCheckBox::OnClick()
 {
-	Tick->SetToRender(!Tick->GetToRender());
+	if (IsActivate() || !IsActive())
+		return;
+	//if (actions.empty())
+	//{
+	//	return;
+	//}
+
+	uint size = actions.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (actions[k].script == nullptr)
+			continue;
+
+		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
+	}
+
+	active = !active;
+	Tick->SetCanDraw(active);
 }
 
 void CompCheckBox::ClearLinkedScripts()
@@ -156,3 +173,21 @@ void CompCheckBox::ClearLinkedScripts()
 	linked_scripts.clear();
 }
 
+void CompCheckBox::OnSubmit(Event event_input)
+{
+	if (IsActivate() || !IsActive())
+		return;
+	if (actions.empty())
+	{
+		return;
+	}
+
+	uint size = actions.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (actions[k].script == nullptr)
+			continue;
+
+		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
+	}
+}
