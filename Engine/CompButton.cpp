@@ -108,7 +108,7 @@ void CompButton::ShowInspectorInfo()
 			current_transition_mode = Transition::TRANSITION_ANIMATION;	
 	}
 
-	if (current_transition_mode = Transition::TRANSITION_ANIMATION)
+	if (current_transition_mode == Transition::TRANSITION_ANIMATION)
 	{
 		SelectAnimationState();
 	}
@@ -129,12 +129,14 @@ void CompButton::ShowInspectorInfo()
 	}
 	int navigation_opt = navigation.current_navigation_mode;
 	ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
-	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Navigation Extrict\0"))
+	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Navigation Extrict\0Navigation Automatic\0"))
 	{
 		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_NONE)
 			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_NONE;
 		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
 			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_EXTRICTE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_AUTOMATIC)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_AUTOMATIC;
 
 	}
 	if (navigation.current_navigation_mode != Navigation::NavigationMode::NAVIGATION_NONE)
