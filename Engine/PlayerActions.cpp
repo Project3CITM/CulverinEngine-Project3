@@ -261,9 +261,9 @@ void PlayerActions::SetInputManagerBlock(const char * name, bool set)
 	}
 }
 
-bool PlayerActions::SetInputActionToChange(const char * input_action, const char * input_manager, const char * device, bool change_negative)
+bool PlayerActions::SetInputActionToChange(const char * input_action, const char * input_manager, int device, bool change_negative)
 {
-	DeviceCombinationType this_device = SelectDeviceCombination(device);
+	DeviceCombinationType this_device = static_cast<DeviceCombinationType>((int)device);
 	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
 		return nullptr;
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
@@ -538,9 +538,9 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 	return 0;
 }
 
-const char * PlayerActions::GetInput_ControllerActionName(const char * name, const char * input, const char * device, bool negative_key)
+const char * PlayerActions::GetInput_ControllerActionName(const char * name, const char * input, int device, bool negative_key)
 {
-	DeviceCombinationType this_device = SelectDeviceCombination(device);
+	DeviceCombinationType this_device = static_cast<DeviceCombinationType>((int)device);
 	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
 		return "";
 
@@ -567,9 +567,9 @@ const char * PlayerActions::GetInput_ControllerActionName(const char * name, con
 	return "";
 }
 
-const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name, const char * input, const char * device, bool negative_key)
+const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name, const char * input, int device, bool negative_key)
 {
-	DeviceCombinationType this_device = SelectDeviceCombination(device);
+	DeviceCombinationType this_device = static_cast<DeviceCombinationType>((int)device);
 	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
 		return "";
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
