@@ -13,7 +13,7 @@
 #include "CompImage.h"
 
 
-CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
+CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent), ClickAction()
 {
 	uid = App->random->Int();
 	name_component = "Check Box";
@@ -165,14 +165,7 @@ void CompCheckBox::OnClick()
 	}
 
 	active = !active;
-	if (active)
-	{
-		target_graphic->ActivateRender();
-	}
-	else
-	{
-		target_graphic->DeactivateRender();
-	}
+	target_graphic->SetCanDraw(active);
 }
 
 void CompCheckBox::ClearLinkedScripts()

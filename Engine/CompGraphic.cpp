@@ -98,7 +98,7 @@ void CompGraphic::DrawGraphic()
 	if (my_canvas_render == nullptr)
 		return;
 
-	if (render)
+	if (can_draw)
 	{
 		my_canvas_render->DrawGraphic();
 	}
