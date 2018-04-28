@@ -186,7 +186,7 @@ void CompCanvas::Resize(int width, int height)
 
 	for (uint i = 0; i < graphic_vector.size(); i++)
 	{
-		graphic_vector[i]->ResizeGenerateMesh(resize_factor);
+		graphic_vector[i]->ResizeGenerateMesh();
 	}
 }
 
