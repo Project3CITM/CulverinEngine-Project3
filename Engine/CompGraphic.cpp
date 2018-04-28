@@ -153,7 +153,10 @@ void CompGraphic::SetToRender(bool render)
 }
 void CompGraphic::SetCanDraw(bool render)
 {
-	this->can_draw = render;
+	if (this != nullptr)
+	{
+		this->can_draw = render;
+	}
 }
 
 void CompGraphic::SetRaycastTarget(bool flag)

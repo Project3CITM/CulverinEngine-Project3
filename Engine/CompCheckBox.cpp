@@ -165,7 +165,7 @@ void CompCheckBox::OnClick()
 	}
 
 	active = !active;
-	target_graphic->SetCanDraw(active);
+	Tick->SetCanDraw(active);
 }
 
 void CompCheckBox::ClearLinkedScripts()
