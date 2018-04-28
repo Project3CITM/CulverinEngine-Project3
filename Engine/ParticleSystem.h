@@ -60,7 +60,7 @@
 #define DEBUG_COLOR_B 255.0f
 #define CIRCLES_SEGMENTS 10.0f
 
-#define MAX_PARTICLES_PER_EMITTER 2000
+#define MAX_PARTICLES_PER_EMITTER 10000
 
 class CompParticleSystem;
 
@@ -240,8 +240,7 @@ public:
 
 	bool isDead();												//Check if this particle is dead, we can use this to trigger a child emitter of the particle
 
-	void DrawParticle(uint program_id);										//Function to draw this particle
-
+	
 private:
 	void SetAssignedStateFromVariables(ParticleAssignedState& AState, const ParticleState& State);		//Set particle Assigned state from Variable state
 	void OrientateParticle();																			//Rotate all particles with selected billboard type
@@ -351,7 +350,7 @@ public:
 
 	void SetCameraPosToFollow(float3 position);					//Set Camera position which the billboards will face
 
-	unsigned int GetTextureID(float MaxParticleLife, float time); //This is used by particles update to find which texture of the animation they use
+	unsigned int GetCurrentFrame(float MaxParticleLife, float time); //This is used by particles update to find which texture of the animation they use
 
 	bool IsEmitterDead() const;									//Usseful if you need to do something else when this emitter dies
 
@@ -359,6 +358,8 @@ private:
 	void GenerateTransfBuffers();
 	void GenerateUVBuffers();									//When texture rows or columns are updated we update animation UVs
 	void GenerateTexturesUVs();									//Generate animation UVs buffers
+	void UpdateTexturesUVs();									//Update each frame the content of the UV buffers
+
 	void DrawTexturePreview();									//Imgui draw Texture preview + animation edit
 	void DrawColorSelector();									//Imgui draw initial/final state editors
 	void DrawEmitterOptions();									//Imgui draw emitter options
@@ -396,7 +397,7 @@ private:
 
 	GLuint transform_buffer = 0;
 	GLuint color_buffer = 0;
-
+	GLuint uv_buffer = 0;
 
 	enum
 	{

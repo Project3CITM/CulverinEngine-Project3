@@ -270,7 +270,8 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 				*/
 				App->renderer3D->particles_shader->Bind();
 				((ParticleSystem*)(*item).second.particle_draw.part_system)->InstantiateParticles(App->particles->GetGeometryBuffer(), App->renderer3D->particles_shader->programID);
-				
+				//App->renderer3D->particles_shader->Unbind();
+
 				glDisable(GL_BLEND);
 				break;
 
@@ -415,6 +416,8 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 				glEnable(GL_BLEND);
 				App->renderer3D->particles_shader->Bind();
 				((ParticleSystem*)(*item).second.particle_draw.part_system)->InstantiateParticles(App->particles->GetGeometryBuffer(), App->renderer3D->particles_shader->programID);
+				//App->renderer3D->particles_shader->Unbind();
+
 				glDisable(GL_BLEND);
 
 				break;

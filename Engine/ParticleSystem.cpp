@@ -642,6 +642,7 @@ bool ParticleSystem::PreUpdate(float dt)
 	{
 		GenerateTransfBuffers();
 		GenerateTexturesUVs();
+
 		GenerateBuffers = false;
 	}
 	
@@ -698,6 +699,9 @@ bool ParticleSystem::PreUpdate(float dt)
 	 glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
 	 glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES_PER_EMITTER * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
 	 glBufferSubData(GL_ARRAY_BUFFER, 0, Particles.size() * sizeof(GLfloat) * 4, particles_color_planed);
+
+	 /*UV*/
+	 UpdateTexturesUVs();
 
 
 	return ret;
@@ -836,9 +840,22 @@ void ParticleSystem::InstantiateParticles(GLuint geometry_buffer, int program_id
 {
 	if (Particles.empty())
 		return;
+
+	glDepthMask(GL_FALSE);
+	glEnable(GL_TEXTURE_2D);
 	
 	//Sort and draw all particles
 	GLenum error = glGetError();
+
+	if (TextureData.TextureID != 0)
+	{
+		glEnable(GL_BLEND);
+		//glBlendFunc(Properties.source_blend_type, Properties.destiny_blend_type);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, TextureData.TextureID);
+		uint texLoc = glGetUniformLocation(program_id, "albedo");
+		glUniform1i(texLoc, 0);
+	}
 
 	/*Vertex buffer*/
 	glEnableVertexAttribArray(0);
@@ -853,7 +870,26 @@ void ParticleSystem::InstantiateParticles(GLuint geometry_buffer, int program_id
 	);
 	glVertexAttribDivisor(0, 0); // particles vertices : always reuse the same 4 vertices -> 0
 
-	
+	//glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+	//glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (char *)NULL + (0 * sizeof(float)));
+
+
+	/*Texture coord*/
+	glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(
+		1, // attribute. 
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		3 * sizeof(float), // stride
+		(void*)0 // array buffer offset
+	);
+	//glTexCoordPointer(2, GL_FLOAT, 12, NULL);
+	//glVertexAttribDivisor(1, 1); 
+
+
 
 	/*Color buffer*/
 	glEnableVertexAttribArray(2);
@@ -919,24 +955,7 @@ void ParticleSystem::InstantiateParticles(GLuint geometry_buffer, int program_id
 	glVertexAttribDivisor(4, 1); // transform : one per quad (16 floats per quad) -> 1
 	glVertexAttribDivisor(5, 1); // transform : one per quad (16 floats per quad) -> 1
 	glVertexAttribDivisor(6, 1); // transform : one per quad (16 floats per quad) -> 1
-
-	
-
-
-
-
-
-
-	/*if (TextureData.TextureID != 0)
-	{
-		//glEnable(GL_BLEND);
-		//glBlendFunc(Properties.source_blend_type, Properties.destiny_blend_type);
-		uint texLoc = glGetUniformLocation(program_id, "albedo");
-		glUniform1i(texLoc, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, TextureData.TextureID);
-	}
-	*/
+		
 	
 	//Pass the viewproj matrix to the shader
 	uint viewLoc = glGetUniformLocation(program_id, "viewproj");
@@ -952,7 +971,13 @@ void ParticleSystem::InstantiateParticles(GLuint geometry_buffer, int program_id
 	glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, particle_count);
 	error = glGetError();
 
+
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_NORMALIZE);
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+
 }
 
 bool ParticleSystem::CleanUp()
@@ -1134,10 +1159,12 @@ void ParticleSystem::SetCameraPosToFollow(float3 position)
 	CameraPosition = position;
 }
 
-unsigned int ParticleSystem::GetTextureID(float MaxParticleLife, float time)
+unsigned int ParticleSystem::GetCurrentFrame(float MaxParticleLife, float time)
 {
-	unsigned int ID = (unsigned int)(time / (MaxParticleLife / (float)TextureData.numberOfFrames));
-	return TexturesUV_ID[CLAMP(ID, 0, TexturesUV_ID.size() - 1)];
+	uint current_frame = (unsigned int)(time / (MaxParticleLife / (float)TextureData.numberOfFrames));
+	if (current_frame >= TextureData.numberOfFrames)
+		current_frame--;
+	return current_frame;
 }
 
 bool ParticleSystem::IsEmitterDead() const
@@ -1174,37 +1201,17 @@ void ParticleSystem::GenerateTransfBuffers()
 }
 
 void ParticleSystem::GenerateUVBuffers()
-{
-	for (std::vector<unsigned int>::iterator item = TexturesUV_ID.begin(); item != TexturesUV_ID.cend(); ++item)
-		if (*item > 0) glDeleteBuffers(1, &(*item));
-	TexturesUV_ID.clear();
-
-
-	for (unsigned int i = 0; i < TextureData.columns * TextureData.rows; i++)
-	{
-		unsigned int NewID = 0;
-
-		//float* texture_coords_ptr = new float[ParticleMesh.num_vertices * 3];
-		float texture_coords[] =
-		{
-			TexturesUV_Data[i].x, TexturesUV_Data[i].w, 0.0f,
-			TexturesUV_Data[i].z, TexturesUV_Data[i].w, 0.0f,
-			TexturesUV_Data[i].x, TexturesUV_Data[i].y, 0.0f,
-			TexturesUV_Data[i].z, TexturesUV_Data[i].y, 0.0f
-		};
-		//memcpy(texture_coords_ptr, texture_coords, sizeof(float) * ParticleMesh.num_vertices * 3);
-		//TexturesUV_Data_ptr.push_back(texture_coords_ptr);
-
-		glGenBuffers(1, (GLuint*)&NewID);
-		glBindBuffer(GL_ARRAY_BUFFER, NewID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, texture_coords, GL_STATIC_DRAW);
-
-		TexturesUV_ID.push_back(NewID);
-	}
+{		
+	glDeleteBuffers(1, &uv_buffer);
+	glGenBuffers(1, &uv_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12 * MAX_PARTICLES_PER_EMITTER, NULL, GL_STREAM_DRAW);
 }
 
 void ParticleSystem::GenerateTexturesUVs()
 {
+	GenerateUVBuffers();
+
 	TexturesUV_Data.clear();
 	for (unsigned int i = 0; i < TextureData.columns * TextureData.rows; i++)
 	{
@@ -1233,7 +1240,41 @@ void ParticleSystem::GenerateTexturesUVs()
 		*/
 		TexturesUV_Data.push_back(NewUV);
 	}
-	GenerateUVBuffers();
+}
+
+void ParticleSystem::UpdateTexturesUVs()
+{
+	static float all_uvs[MAX_PARTICLES_PER_EMITTER  * 12];
+	uint ptr = 0;
+	
+	for (int i = 0;i<Particles.size();i++)
+	{
+		//Get the current UV coords for each particle based on his life time
+
+		uint current_frame = GetCurrentFrame(Particles[i].Properties.LifetimeMax, Particles[i].Properties.LifetimeActual);
+				
+		all_uvs[ptr++] = TexturesUV_Data[current_frame].x;
+		all_uvs[ptr++] = TexturesUV_Data[current_frame].w;
+		all_uvs[ptr++] = 0.0f;
+
+		all_uvs[ptr++] = TexturesUV_Data[current_frame].z;
+		all_uvs[ptr++] = TexturesUV_Data[current_frame].w;
+		all_uvs[ptr++] = 0.0f;
+
+		all_uvs[ptr++] = TexturesUV_Data[current_frame].x;
+		all_uvs[ptr++] = TexturesUV_Data[current_frame].y;
+		all_uvs[ptr++] = 0.0f;
+
+		all_uvs[ptr++] = TexturesUV_Data[current_frame].z;
+		all_uvs[ptr++] = TexturesUV_Data[current_frame].y;
+		all_uvs[ptr++] = 0.0f;
+
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+	glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES_PER_EMITTER * 12 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, MAX_PARTICLES_PER_EMITTER  * 12* sizeof(GLfloat), &all_uvs);
+
 }
 
 void ParticleSystem::DrawTexturePreview()
