@@ -1154,8 +1154,7 @@ void ImportScript::LinkFunctions()
 
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerActionName", (const void*)GetInput_ControllerActionName);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerKeyBindingName", (const void*)GetInput_ControllerKeyBindingName);
-	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerWaitForKey", (const void*)GetInput_ControllerWaitForKey);
-	mono_add_internal_call("CulverinEditor.Input::SetInput_ControllerWaitForKey", (const void*)SetInput_ControllerWaitForKey);
+	mono_add_internal_call("CulverinEditor.Input::SetInputActionToChange", (const void*)SetInputActionToChange);
 
 	mono_add_internal_call("CulverinEditor.Input::RumblePlay", (const void*)RumblePlay);
 
@@ -1619,22 +1618,17 @@ float ImportScript::GetInput_ControllerAxis(MonoString* name, MonoString* input)
 
 MonoString * ImportScript::GetInput_ControllerActionName(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
 {
-	return nullptr;
-		//App->input->player_action->GetInput_ControllerActionName(mono_string_to_utf8(name), mono_string_to_utf8(input), mono_string_to_utf8(device), negative_key);
+	return mono_string_new_wrapper(App->input->player_action->GetInput_ControllerActionName(mono_string_to_utf8(name), mono_string_to_utf8(input), mono_string_to_utf8(device), negative_key));
 }
 
 MonoString * ImportScript::GetInput_ControllerKeyBindingName(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
 {
-	return nullptr;
+	return mono_string_new_wrapper(App->input->player_action->GetInput_ControllerKeyBindingName(mono_string_to_utf8(name), mono_string_to_utf8(input), mono_string_to_utf8(device), negative_key));
 }
 
-mono_bool ImportScript::GetInput_ControllerWaitForKey(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+void ImportScript::SetInputActionToChange(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
 {
-	return mono_bool();
-}
-
-void ImportScript::SetInput_ControllerWaitForKey(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
-{
+	App->input->player_action->SetInputActionToChange(mono_string_to_utf8(name), mono_string_to_utf8(input), mono_string_to_utf8(device), negative_key);
 }
 
 void ImportScript::RumblePlay(float intensity, int milliseconds)

@@ -159,17 +159,24 @@ bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 		
 		if (key_change.state != KeyChange::KeyState::WAIT_FOR_KEY_STATE)
 		{
-
+			bool ret = false;
 			if (key_change.state == KeyChange::KeyState::NO_STATE)
 			{
+
 			}
 			else if (key_change.state == KeyChange::KeyState::VALID_KEY_STATE)
 			{
+				ret = true;
+
 			}
 			else if (key_change.state == KeyChange::KeyState::INVALID_KEY_STATE)
 			{
+				ret = true;
+
 			}
 			key_change.Clear();
+			if (ret)
+				return ret;
 		}
 		
 		
@@ -254,7 +261,7 @@ void PlayerActions::SetInputManagerBlock(const char * name, bool set)
 	}
 }
 
-InputAction * PlayerActions::SetInputActionToChange(const char * input_action, const char * input_manager, const char * device, bool change_negative)
+bool PlayerActions::SetInputActionToChange(const char * input_action, const char * input_manager, const char * device, bool change_negative)
 {
 	DeviceCombinationType this_device = SelectDeviceCombination(device);
 	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
@@ -271,7 +278,8 @@ InputAction * PlayerActions::SetInputActionToChange(const char * input_action, c
 				{
 					if (action_item->key_device == this_device)
 					{
-						return action_item;
+						key_change.SetInputAction(action_item);
+						return true;
 					}					
 				}
 			}
@@ -279,7 +287,7 @@ InputAction * PlayerActions::SetInputActionToChange(const char * input_action, c
 		}
 
 	}
-	return nullptr;
+	return false;
 }
 
 bool PlayerActions::GetInputManagerActive(const char * name) const
@@ -595,15 +603,6 @@ const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name,
 	return "";
 }
 
-bool PlayerActions::GetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)
-{
-	return false;
-}
-
-void PlayerActions::SetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)
-{
-}
-
 void PlayerActions::SendNewDeviceCombinationType(DeviceCombinationType type)
 {
 	if (actual_player_action == type)
@@ -709,6 +708,13 @@ PlayerActions::KeyChange::KeyState PlayerActions::KeyChange::ReceiveEvent(SDL_Ev
 		break;
 	}
 	return 	KeyState::WAIT_FOR_KEY_STATE;
+}
+
+void PlayerActions::KeyChange::SetInputAction(InputAction * action_item)
+{
+	key_to_change = action_item;
+	change_active = true;
+	state = KeyState::WAIT_FOR_KEY_STATE;
 }
 
 

@@ -31,7 +31,7 @@ public:
 	void SetInputManagerActive(const char* name,bool set);
 	void SetInputManagerBlock(const char* name, bool set);
 
-	InputAction* SetInputActionToChange(const char* input_action, const char* input_manager, const char* device, bool change_negative = false);
+	bool SetInputActionToChange(const char* input_action, const char* input_manager, const char* device, bool change_negative = false);
 
 	bool GetInputManagerActive(const char* name)const;
 	bool GetInputManagerBlock(const char* name)const ;
@@ -50,8 +50,6 @@ public:
 
 	const char* GetInput_ControllerActionName(const char* name, const char* input, const char* device, bool negative_key);
 	const char*	GetInput_ControllerKeyBindingName(const char* name, const char* input, const char* device, bool negative_key);
-	bool GetInput_ControllerWaitForKey(const char* name, const char* input, const char* device, bool negative_key);
-	void SetInput_ControllerWaitForKey(const char* name, const char* input, const char* device, bool negative_key);
 
 	void SendNewDeviceCombinationType(DeviceCombinationType type);
 private:
@@ -72,6 +70,7 @@ private:
 			INVALID_KEY_STATE
 		};
 		KeyState ReceiveEvent(SDL_Event* input_event);
+		void SetInputAction(InputAction* key_to_change);
 		void Clear();
 
 		InputAction* key_to_change = nullptr;
