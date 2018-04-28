@@ -13,6 +13,11 @@ public class Arrow : CulverinBehaviour
     public GameObject arrow_blood_particles;
     public GameObject arrow_sparks_particles;
 
+    public void SetDamage(float set_damage)
+    {
+        damage = set_damage;
+    }
+
     void Start()
     {
         rb = GetComponent<CompRigidBody>();

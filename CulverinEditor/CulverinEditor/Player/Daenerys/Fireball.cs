@@ -20,6 +20,11 @@ public class Fireball : CulverinBehaviour
 
     private bool destroyed = false;
 
+    public void SetDamage(float set_damage)
+    {
+        damage = set_damage;
+    }
+
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
@@ -77,7 +82,6 @@ public class Fireball : CulverinBehaviour
         // DAMAGE ---
         if (collided_obj != null)
         {
-
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (!destroyed)
