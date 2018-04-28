@@ -165,12 +165,23 @@ void CompCheckBox::OnClick()
 	}
 
 	active = !active;
-	Tick->SetCanDraw(active);
-}
+
+	if (tick!=nullptr)
+	{
+		tick->SetCanDraw(active);
+	}
+
+	}
+	
 
 void CompCheckBox::ClearLinkedScripts()
 {
 	linked_scripts.clear();
+}
+
+void CompCheckBox::SetTick(CompImage * tick)
+{
+	this->tick = tick;
 }
 
 void CompCheckBox::OnSubmit(Event event_input)

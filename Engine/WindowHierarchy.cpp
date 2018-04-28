@@ -270,9 +270,8 @@ void Hierarchy::ShowOptions()
 			GameObject* tick_obj = App->scene->CreateImage(check_box);
 
 			CompCheckBox* check = (CompCheckBox*)check_box->FindComponentByType(Comp_Type::C_CHECK_BOX);
-			CompImage* tick_img = (CompImage*)tick_obj->FindComponentByType(Comp_Type::C_IMAGE);
 
-			check->Tick = tick_img;
+			check->SetTick((CompImage*)tick_obj->FindComponentByType(Comp_Type::C_IMAGE));
 			App->gui->SetLinkInspector(check_box);
 		}
 		if (ImGui::MenuItem("Slider"))
