@@ -214,7 +214,7 @@ void CompSlider::OnDrag(Event event_input)
 {
 	if (slide_bar == nullptr)
 		return;
-	if (IsPressed())
+	if (point_down)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 

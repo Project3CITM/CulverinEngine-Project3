@@ -4,6 +4,7 @@
 #include "CompCanvasRender.h"
 #include "CompCanvas.h"
 #include "CompRectTransform.h"
+#include "ModuleFS.h"
 CompGraphic::CompGraphic(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
@@ -28,6 +29,28 @@ void CompGraphic::Clear()
 	transform = nullptr;
 
 	
+}
+
+void CompGraphic::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
+{
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
+	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
+	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
+	
+	json_object_dotset_boolean_with_std(object, name + "Invalid", invalid);
+	json_object_dotset_boolean_with_std(object, name + "Can draw", can_draw);
+	json_object_dotset_boolean_with_std(object, name + "RayCast Target", raycast_target);
+
+}
+
+void CompGraphic::Load(const JSON_Object * object, std::string name)
+{
+	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	raycast_target = json_object_dotget_boolean_with_std(object, name + "RayCast Target");
+
+	can_draw = json_object_dotget_boolean_with_std(object, name + "Can Draw");
+
 }
 
 void CompGraphic::AddCanvas()
@@ -183,6 +206,18 @@ bool CompGraphic::GetParentActive()
 float CompGraphic::GetAlpha() const
 {
 	return color.w;
+}
+int CompGraphic::GetWidth()const
+{
+	if(transform==nullptr)
+		return 0;
+	return transform->GetWidth();
+}
+int CompGraphic::GetHeight()const
+{
+	if (transform == nullptr)
+		return 0;
+	return transform->GetHeight();
 }
 void CompGraphic::ResizeGenerateMesh()
 {

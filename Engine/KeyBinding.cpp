@@ -147,6 +147,22 @@ KeyRelation * KeyBinding::FindKeyBinding(const char * name)
 	return &key_binding_relations[KEY_NONE_NUM];
 }
 
+KeyRelation * KeyBinding::FindKeyBinding(DeviceCombinationType device, int event_value)
+{
+	for (int i = 0; i < key_binding_relations.size(); i++)
+	{
+
+		if (key_binding_relations[i].device == device&&key_binding_relations[i].event_value == event_value)
+		{
+			return &key_binding_relations[i];
+		}
+
+	}
+
+
+	return &key_binding_relations[KEY_NONE_NUM];
+}
+
 DeviceCombinationType KeyRelation::SelectDeviceCombination(const char* value)
 {
 	if (strcmp(value, "mouse")==0|| strcmp(value, "keyboard") == 0)

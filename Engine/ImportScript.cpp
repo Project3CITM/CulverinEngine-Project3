@@ -1195,6 +1195,8 @@ void ImportScript::LinkFunctions()
 	//COMPONENT UI_RECT_TRANSFORM FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompRectTransform::SetUIPosition", (const void*)SetUIPosition);
 	mono_add_internal_call("CulverinEditor.CompRectTransform::GetUIPosition", (const void*)GetUIPosition);
+	mono_add_internal_call("CulverinEditor.CompRectTransform::SetWidth", (const void*)SetWidth);
+	mono_add_internal_call("CulverinEditor.CompRectTransform::SetHeight", (const void*)SetHeight);
 
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
@@ -1214,6 +1216,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompGraphic::DeactivateRender", (const void*)DeactivateRender);
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetColor", (const void*)SetColor);
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetAlpha", (const void*)SetAlpha);
+	mono_add_internal_call("CulverinEditor.CompGraphic::GetWidth", (const void*)GetWidth);
+	mono_add_internal_call("CulverinEditor.CompGraphic::GetHeight", (const void*)GetHeight);
 
 	mono_add_internal_call("CulverinEditor.CompImage::FillAmount", (const void*)FillAmount);
 	
@@ -2071,6 +2075,16 @@ void ImportScript::SetAlpha(MonoObject * object, float alpha)
 	current->SetAlpha(object, alpha);
 }
 
+int ImportScript::GetHeight(MonoObject * object)
+{
+	return current->GetWidth(object);
+}
+
+int ImportScript::GetWidth(MonoObject * object)
+{
+	return current->GetHeight(object);
+}
+
 void ImportScript::SetText(MonoObject * object, MonoString * text)
 {
 	current->SetText(object, text);
@@ -2352,6 +2366,15 @@ MonoObject * ImportScript::GetUIPosition(MonoObject * object)
 	return current->GetUIPosition(object);
 }
 
+void ImportScript::SetWidth(MonoObject * object, int value)
+{
+	current->SetWidth(object, value);
+}
+
+void ImportScript::SetHeight(MonoObject * object, int value)
+{
+	current->SetHeight(object, value);
+}
 MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)
 {
 	return current->RayCast(origin, direction, distance);

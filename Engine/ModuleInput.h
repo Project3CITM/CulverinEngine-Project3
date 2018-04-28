@@ -131,6 +131,8 @@ public:
 	SDL_Haptic* GetHaptic() const;
 	KeyRelation* FindKeyBinding(const char* string);
 
+	KeyRelation * FindKeyBinding(DeviceCombinationType device, int event_value);
+
 private:
 	bool ConnectGameController();
 	void SetLastInputEvent(int value, bool nega=false);

@@ -278,6 +278,9 @@ public:
 	void		SetUIPosition(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetUIPosition(MonoObject* object);
 
+	void SetWidth(MonoObject * object, int value);
+	void SetHeight(MonoObject * object, int value);
+
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
 	void		Deactivate(MonoObject * object, int uid);
@@ -292,6 +295,8 @@ public:
 	void		ActivateRender(MonoObject * object);
 	void		DeactivateRender(MonoObject * object);
 	void		SetAlpha(MonoObject * object, float alpha);
+	int			GetWidth(MonoObject * object);
+	int			GetHeight(MonoObject * object);
 	void		SetText(MonoObject * object, MonoString* string);
 	void		SetColor(MonoObject * object, MonoObject * color, float alpha);
 	/*UI- Canvas*/

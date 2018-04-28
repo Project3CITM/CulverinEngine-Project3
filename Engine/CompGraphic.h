@@ -14,6 +14,8 @@ public:
 	CompGraphic(const CompGraphic& copy, GameObject* parent);
 	~CompGraphic();
 	void Clear();
+	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
+	void Load(const JSON_Object * object, std::string name);
 	void AddCanvas();
 	void AddCanvasRender();
 	void AddRectTransform();
@@ -39,6 +41,8 @@ public:
 	float4 GetColor()const;
 	bool GetParentActive();
 	float GetAlpha()const;
+	virtual int GetWidth()const;
+	virtual int GetHeight()const;
 
 	void ResizeGenerateMesh();
 

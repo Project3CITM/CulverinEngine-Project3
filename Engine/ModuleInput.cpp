@@ -686,7 +686,12 @@ KeyRelation * ModuleInput::FindKeyBinding(const char* string)
 		return nullptr;
 	return key_binding->FindKeyBinding(string);
 }
-
+KeyRelation * ModuleInput::FindKeyBinding(DeviceCombinationType device, int event_value)
+{
+	if (key_binding == nullptr)
+		return nullptr;
+	return key_binding->FindKeyBinding(device, event_value);
+}
 bool ModuleInput::ConnectGameController()
 {
 	if (SDL_NumJoysticks() < 1)

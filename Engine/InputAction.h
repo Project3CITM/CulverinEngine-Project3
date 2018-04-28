@@ -38,19 +38,24 @@ class InputAction
 public:
 
 	InputAction();
-	InputAction(const char* name, KeyRelation* key_relation, ActionInputType action_type = ActionInputType::UNKNOWN_ACTION);
+	InputAction(const char* name, KeyRelation* key_relation, ActionInputType action_type = ActionInputType::UNKNOWN_ACTION, InputManager* my_manager=nullptr);
 	~InputAction();
 
 	virtual bool ProcessEventAction(SDL_Event * input_event) { return false; }
 	virtual bool PositiveReaction(SDL_Event * input_event) { return false; }
 
 	//virtual bool UpdateEventAction(const Uint8* array_kys) { return false; }
+
+private:
+	
 public:
 
 	std::string name = "default";
 	ActionInputType action_type = ActionInputType::UNKNOWN_ACTION;
+	DeviceCombinationType key_device = DeviceCombinationType::NULL_COMB_DEVICE;
 	KeyRelation* positive_button = nullptr;
 	KeyRelation* negative_button = nullptr;
+	InputManager* my_manager = nullptr;
 	//KeyRelation* alt_positive_button;
 	//KeyRelation* alt_negative_button;
 
