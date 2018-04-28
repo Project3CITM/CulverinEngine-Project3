@@ -902,4 +902,20 @@ public class MovementController : CulverinBehaviour
         return curr_dir;
     }
 
+    public void CheckDrawning()
+    {
+        if (level_map.map[curr_x, curr_y] == 3) //Valryian Fire!
+        {
+            StatsScore.PuzzleTry();
+
+            if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode == false)
+            {
+                CompRigidBody rb = GetComponent<CompRigidBody>();
+                rb.UnLockMotion();
+                rb.ApplyImpulse(new Vector3(0.0f, -50.0f, 0.0f));
+                //char_manager.Drown();
+                drowning = true;
+            }
+        }
+    }
 }

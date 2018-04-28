@@ -586,11 +586,13 @@ public class Lever : CulverinBehaviour
         time = 0.0f;
 
         SetPathWalkable(3,3);
+        GetLinkedObject("player_obj").GetComponent<MovementController>().CheckDrawning();
 
-        if(on_lever_range)
+        if (on_lever_range)
         {
             lever_interact.SetActive(true);
         }
+
 
     }
 
