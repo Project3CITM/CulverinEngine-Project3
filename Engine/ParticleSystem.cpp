@@ -665,7 +665,7 @@ bool ParticleSystem::PreUpdate(float dt)
 		}
 
 		//Tranfs planed		
-		float4x4 part_transf = float4x4::FromTRS((*item).Properties.Position, (*item).Properties.Rotation, (*item).Properties.Scale);
+		float4x4 part_transf = float4x4::FromTRS((*item).Properties.Position, (*item).Properties.Rotation, float3((*item).Properties.Size));
 		//float4x4 part_transf = float4x4::identity;
 		//part_transf = part_transf * float4x4::RotateY(45*DEGTORAD);
 		//part_transf = part_transf * float4x4::Translate(float3(10, 0, 0));
@@ -839,6 +839,8 @@ bool ParticleSystem::PostUpdate(float dt)
 void ParticleSystem::InstantiateParticles(GLuint geometry_buffer, int program_id)
 {
 	if (Particles.empty())
+		return;
+	if(transform_buffer == 0)
 		return;
 
 	glDepthMask(GL_FALSE);
@@ -1163,7 +1165,7 @@ unsigned int ParticleSystem::GetCurrentFrame(float MaxParticleLife, float time)
 {
 	uint current_frame = (unsigned int)(time / (MaxParticleLife / (float)TextureData.numberOfFrames));
 	if (current_frame >= TextureData.numberOfFrames)
-		current_frame--;
+		current_frame = TextureData.numberOfFrames -1;
 	return current_frame;
 }
 
@@ -1492,7 +1494,13 @@ void ParticleSystem::DrawEmitterOptions()
 	}
 	ImGui::DragFloat("+-##Lifetime", &Emitter.Lifetime, 0.01f, 0.0f, 100.0f);
 	ImGui::SameLine();
-	ImGui::DragFloat("Lifetime +- Var##LifetimeVariation", &Emitter.LifetimeVariation, 0.01f, 0.0f, 100.0f);
+	if (ImGui::DragFloat("Lifetime +- Var##LifetimeVariation", &Emitter.LifetimeVariation, 0.01f, 0.0f, 100.0f))
+	{
+		if (Emitter.LifetimeVariation > Emitter.Lifetime)
+		{
+			Emitter.LifetimeVariation = Emitter.Lifetime;
+		}
+	}
 	char title[100] = "";
 	sprintf_s(title, 100, "Emission Duration: %.3f", Emitter.EmissionDuration);
 	ImGui::Text(title);
