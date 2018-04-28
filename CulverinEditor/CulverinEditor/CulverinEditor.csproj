@@ -113,6 +113,7 @@
     <Compile Include="Puzzles\Tests\PuzzleRotation.cs" />
     <Compile Include="Tools\Random.cs" />
     <Compile Include="UI_Scripts\Component\CompCanvas.cs" />
+    <Compile Include="UI_Scripts\EditKeyBinding.cs" />
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
     <Compile Include="UI_Scripts\Scene\FinishedLevel2.cs" />
     <Compile Include="UI_Scripts\Scene\LevelFinished.cs" />
@@ -129,6 +130,8 @@
     <Compile Include="UI_Scripts\Scene\FadeAlpha.cs" />
     <Compile Include="UI_Scripts\Scene\ReturnToMenuFromLose.cs" />
     <Compile Include="UI_Scripts\Scene\Scroll.cs" />
+    <Compile Include="UI_Scripts\ShowActionName.cs" />
+    <Compile Include="UI_Scripts\ShowInputName.cs" />
     <Compile Include="UI_Scripts\ShowScore.cs" />
     <Compile Include="UI_Scripts\StatsScore.cs" />
     <Compile Include="UI_Scripts\Scene\PKeyScene.cs" />

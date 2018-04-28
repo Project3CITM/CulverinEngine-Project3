@@ -64,13 +64,20 @@ public:
 private:
 	struct KeyChange
 	{
-		bool ReceiveEvent(SDL_Event* input_event);
+		enum KeyState
+		{
+			NO_STATE = -1,
+			WAIT_FOR_KEY_STATE,
+			VALID_KEY_STATE,
+			INVALID_KEY_STATE
+		};
+		KeyState ReceiveEvent(SDL_Event* input_event);
 		void Clear();
 
 		InputAction* key_to_change = nullptr;
 		bool change_negative = false;
 		bool change_active = true;
-
+		KeyState state = KeyState::NO_STATE;
 	};
 	KeyChange key_change;
 	std::string selected_input_name;
