@@ -836,16 +836,26 @@ CompInteractive * CompInteractive::FindInteractive(float3 direction)
 		float3 diff_vec = position_it - position;
 		float diff_x = diff_vec.x * direction.x;
 		float diff_y = diff_vec.y * direction.y;
+		float diff_second_x = diff_vec.x * direction.y;
+		float diff_second_y = diff_vec.y * direction.x;
 
-		if (diff_x > 0.000001 && diff_x < closest_point)
+		if (diff_x > 0.000001)
 		{
+			if (diff_x < closest_point && diff_second_y < closest_point_second_axis)
+			{
+				closest_point_second_axis = diff_second_y;
 				closest_point = diff_x;
 				ret = it._Ptr->_Myval;
+			}
 		}
-		if (diff_y > 0.000001 && diff_y < closest_point)
+		if (diff_y > 0.000001)
 		{
+			if (diff_y < closest_point && diff_second_x < closest_point_second_axis)
+			{
+				closest_point_second_axis = diff_second_x;
 				closest_point = diff_y;
-				ret = it._Ptr->_Myval;	
+				ret = it._Ptr->_Myval;
+			}
 		}
 	}
 	
