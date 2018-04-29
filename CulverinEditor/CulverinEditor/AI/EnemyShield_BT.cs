@@ -191,14 +191,20 @@ public class EnemyShield_BT : Enemy_BT
                     }
                     else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
                     {
+                        Debug.Log("FIREBALL BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         return base.ApplyDamage(damage * fireball_pen, damage_type);
                     }
                     else if(damage_type == ENEMY_GET_DAMAGE_TYPE.ARROW)
                     {
+                        Debug.Log("ARROW BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         return base.ApplyDamage(damage * arrow_pen, damage_type);
                     }
                     else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBREATH)
                     {
+                        Debug.Log("FIREBREATH BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         return base.ApplyDamage(damage * firebreath_pen, damage_type);
                     }
                     else
@@ -224,14 +230,20 @@ public class EnemyShield_BT : Enemy_BT
                     }
                     else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
                     {
+                        Debug.Log("FIREBALL BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         return base.ApplyDamage(damage * fireball_pen, damage_type);
                     }
                     else if (damage_type == ENEMY_GET_DAMAGE_TYPE.ARROW)
                     {
+                        Debug.Log("ARROW BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         return base.ApplyDamage(damage * arrow_pen, damage_type);
                     }
                     else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBREATH)
                     {
+                        Debug.Log("FIREBREATH BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
                         return base.ApplyDamage(damage * firebreath_pen, damage_type);
                     }
                     else

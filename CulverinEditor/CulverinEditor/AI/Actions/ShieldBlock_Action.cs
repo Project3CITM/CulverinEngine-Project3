@@ -31,6 +31,12 @@ class ShieldBlock_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if(GetComponent<EnemyShield_BT>().InRange() == false)
+        {
+            blocking = false;
+            current_time = 0.0f;
+            return ACTION_RESULT.AR_SUCCESS;
+        }
         current_time += Time.deltaTime;
 
         if(current_time >= block_duration)

@@ -222,6 +222,8 @@ public class Movement_Action : Action
         if (interupt == true)
             interupt = false;
 
+        blocking = false;
+
         return false;
     }
 

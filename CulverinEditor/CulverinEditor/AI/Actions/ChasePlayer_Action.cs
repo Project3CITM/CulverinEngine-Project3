@@ -45,6 +45,7 @@ public class ChasePlayer_Action : Action
     {
         interupt = false;
         move.SetInterupt(false);
+        blocking = false;
         return true;
     }
 
