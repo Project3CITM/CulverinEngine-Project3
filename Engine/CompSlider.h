@@ -42,7 +42,7 @@ private:
 
 	CompImage * slide_bar = nullptr;
 	uint uuid_reimported_slide_bar = 0;
-
+	float speed = 1.0f;
 	float fill = 0.5f;
 };
 
