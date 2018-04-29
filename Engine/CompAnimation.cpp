@@ -121,11 +121,14 @@ void CompAnimation::PreUpdate(float dt)
 			}
 			if (playing)
 			{
+				AnimationNode* blending_node = nullptr;
+				if(blending_animation != nullptr)
+					blending_node = GetNodeFromName(blending_animation->name);
 				for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
 				{
 					if (it->first != nullptr)
 					{
-						it->second->UpdateBone(it->first, current_animation, active_node->GetFirstActiveBlendingClip(), active_node->GetSecondActiveBlendingClip(), blending_animation);
+						it->second->UpdateBone(it->first, current_animation, active_node->GetFirstActiveBlendingClip(), active_node->GetSecondActiveBlendingClip(), blending_node);
 					}
 				}
 			}
