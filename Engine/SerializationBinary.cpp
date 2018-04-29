@@ -28,6 +28,8 @@ std::string JSONSerialization::SaveSceneBinary()
 			App->scene->root->GetChildbyIndex(i)->GetOwnBufferSize(buffer_size);
 		}
 	}
+	buffer_size += sizeof(int);			//identifier IDENTIFICATOR_AUDIOBANKS
+	App->audio->GetOwnBufferSize(buffer_size);
 	buffer_size += sizeof(int);			//identifier IDENTIFICATOR_END
 	char* buffer = new char[buffer_size];
 	char* cursor = buffer;
@@ -51,6 +53,9 @@ std::string JSONSerialization::SaveSceneBinary()
 		}
 	}
 
+	//AudioBanks
+	SaveIntBinary(&cursor, IDENTIFICATOR_AUDIOBANKS);
+	App->audio->SaveAudioBanks(&cursor);
 
 	SaveIntBinary(&cursor, IDENTIFICATOR_END);
 	App->fs->SaveFile(buffer, "JoanTest", buffer_size, DIRECTORY_IMPORT::IMPORT_DIRECTORY_ASSETS);
@@ -104,6 +109,8 @@ void JSONSerialization::SaveChildGameObjectBinary(const GameObject& gameObject, 
 
 void JSONSerialization::LoadSceneBinary(std::string scene)
 {
+	Timer timetp;
+	timetp.Start();
 	char* buffer;
 	uint size_file = App->fs->LoadFile(scene.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DIRECTORY_ASSETS);
 	char* cursor = buffer;
@@ -174,6 +181,12 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 				next_identificator = IDENTIFICATOR_END;
 				break;
 			}
+			case IDENTIFICATOR_AUDIOBANKS:
+			{
+				//Load Audio Banks
+				int number_of_audio_banks = LoadIntBinary(&cursor);
+				App->audio->LoadAudioBanksFromScene(number_of_audio_banks, &cursor);
+			}
 			case IDENTIFICATOR_END:
 				LOG("[green]%s scene succesfully loaded", scene.c_str());
 				identificator = IDENTIFICATOR_END;
@@ -199,24 +212,24 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 		const int num_objects = gameobjects.size();
 		LoadSceneSt* scene_ptr = (num_objects > 0) ? gameobjects.data() : nullptr;
 
-		// Add Components
-		for (int i = 0; i < num_components; i++)
-		{
-			if (scene_comp[i].uid_parent != -1)
-			{
-				for (int j = 0; j < num_objects; j++)
-				{
-					if (scene_comp[i].uid_parent == scene_ptr[j].go->GetUUID())
-					{
-						scene_ptr[j].go->AddComponent(scene_comp[i].comp, scene_comp[i].position_parent);
-					}
-				}
-			}
-			else
-			{
-				LOG("[error] with load a Component!");
-			}
-		}
+		//// Add Components
+		//for (int i = 0; i < num_components; i++)
+		//{
+		//	if (scene_comp[i].uid_parent != -1)
+		//	{
+		//		for (int j = 0; j < num_objects; j++)
+		//		{
+		//			if (scene_comp[i].uid_parent == scene_ptr[j].go->GetUUID())
+		//			{
+		//				scene_ptr[j].go->AddComponent(scene_comp[i].comp, scene_comp[i].position_parent);
+		//			}
+		//		}
+		//	}
+		//	else
+		//	{
+		//		LOG("[error] with load a Component!");
+		//	}
+		//}
 
 		// Now with uid parent add childs.
 		for (int i = 0; i < num_objects; i++)
@@ -263,10 +276,12 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 			(*it)->GetComponentMesh()->LinkSkeleton();
 		}
 	}
+
 	gameobjects.clear();
 	components.clear();
 	mesh_gos.clear();
 	RELEASE_ARRAY(buffer);
+	LOG("Load Time %d, [red]", timetp.Read());
 }
 
 LoadSceneSt JSONSerialization::LoadGameObejctBinary(char** cursor)

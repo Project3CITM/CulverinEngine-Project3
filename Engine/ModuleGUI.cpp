@@ -155,11 +155,12 @@ update_status ModuleGUI::Update(float dt)
 			}
 			if (ImGui::MenuItem("Save Scene Binary", NULL, false))
 			{
-				App->json_seria->SaveSceneBinary();
+				App->WantToSave(true);
 			}
 			if (ImGui::MenuItem("Load Scene Binary", NULL, false))
 			{
-				App->json_seria->LoadSceneBinary("JoanTest");
+				//App->json_seria->LoadSceneBinary("JoanTest");
+				App->WantToLoad(false, true);
 			}
 			if (ImGui::MenuItem("Save Scene as...", NULL, false, false))
 			{

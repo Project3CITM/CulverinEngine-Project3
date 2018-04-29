@@ -22,6 +22,7 @@ void log(const char file[], int line, const char* format, ...);
 #define IDENTIFICATOR_ROOT 20
 #define IDENTIFICATOR_GAMEOBJECT 21
 #define IDENTIFICATOR_COMPONENT 22
+#define IDENTIFICATOR_AUDIOBANKS 23
 #define IDENTIFICATOR_END 25
 #define IDENTIFICATOR_ERROR 26
 

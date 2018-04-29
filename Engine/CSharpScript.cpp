@@ -341,7 +341,7 @@ void ScriptVariable::Save(char ** cursor) const
 
 	case Var_STRING:
 		type_name = "string";
-		App->json_seria->SaveStringBinary(cursor, type_name);
+		//App->json_seria->SaveStringBinary(cursor, type_name);
 		//App->json_seria->SaveStringBinary(cursor, str_value);
 		break;
 

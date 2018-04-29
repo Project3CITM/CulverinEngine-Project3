@@ -289,11 +289,7 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	properties[3] = json_object_dotget_number_with_std(object, name + "Quadratic");
 	color = App->fs->json_array_dotget_float4_string(object, name + "Color");
 	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
-}
 
-void CompLight::SyncComponent(GameObject * sync_parent)
-{
-	// bounding box size
 	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 }
 
@@ -345,6 +341,8 @@ void CompLight::LoadBinary(char** cursor)
 	properties[1] = App->json_seria->LoadFloatBinary(cursor);
 	properties[2] = App->json_seria->LoadFloatBinary(cursor);
 	properties[3] = App->json_seria->LoadFloatBinary(cursor);
+
+	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 }
 
 void CompLight::UpdateFrustum()
