@@ -43,6 +43,14 @@ uniform float _farPlane;
 
 uniform int shadow_blur;
 
+//Fresnel
+uniform bool activate_fresnel;
+uniform float fresnel_scale;
+uniform float fresnel_bias;
+uniform float fresnel_power;
+uniform float fresnel_lerp;
+in vec3 world_pos;
+in vec3 world_normal;
 
 uniform mat4 model;
 
@@ -186,11 +194,29 @@ void main()
     final_ambient = final_ambient/_numLights;
     final_color =normalize(final_color);
 
-	vec3 col = max( color_texture * vec3(0,0.2,0.2) ,
-	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb );
-   float fade_dist = 1;
+    vec3 col = max( color_texture * vec3(0,0.2,0.2), color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb );
+
+float fade_dist = 1;
 float norm_min = (_farPlane - _farPlane/ 3);
 float dist = (length(_cameraPosition - vec3(model * vec4(ourPos,1)))-  norm_min) / (_farPlane - norm_min); 
 dist = abs(clamp(dist, 0.0, 1.0)-1);
     color = vec4(col* dist, _alpha);
+
+color = vec4(col* dist, _alpha);
+    
+
+ if(activate_fresnel == true)
+ {
+
+   vec3 camera_to_vertex = normalize(_cameraPosition - world_pos);
+   float fresnel_coeficient = max(0.0, min(1.0, fresnel_bias + fresnel_scale * pow(1.0 + dot(camera_to_vertex, world_normal), fresnel_power)));
+
+
+     color = mix(color ,vec4(vec3(col.xyz * dist) * fresnel_coeficient, 1.0), fresnel_lerp);
+
+  
+ }
+
+
+
 }

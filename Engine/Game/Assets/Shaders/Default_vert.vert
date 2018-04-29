@@ -8,6 +8,8 @@ layout(location = 6) in vec3 bitangent;
 out float ourTime;
 out vec2 TexCoord;
 out vec3 ourPos;
+out vec3 world_pos;
+out vec3 world_normal;
 out mat3 TBN;
 out vec3 FragPos;
 out vec3 ourNormal;
@@ -31,7 +33,9 @@ void main()
 {
 	TexCoord = texCoord;
 	ourPos = position;
-   ourNormal = mat3(model) * normal;
+    world_pos = (model  * vec4(position, 1.0)).xyz;
+    world_normal = normalize(mat3(model) * normal);
+   ourNormal = normalize(normal);
 	shadowCoord = depthBias * model * vec4(position, 1.0);
 
     vec3 T = normalize(vec3( model * vec4(tangent, 0)));
