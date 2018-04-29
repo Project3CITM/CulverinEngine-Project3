@@ -81,10 +81,17 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern string GetInput_ControllerKeyBindingName(string name, string input, int device, bool negative_key);
-
-      
+    
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SetInputActionToChange(string name, string input, int device, bool negative_key);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetChangeInputActive();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern int GetChangeInputState();
+
+
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void RumblePlay(float intensity, int milliseconds);

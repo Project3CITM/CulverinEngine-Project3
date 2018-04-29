@@ -1155,6 +1155,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerActionName", (const void*)GetInput_ControllerActionName);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerKeyBindingName", (const void*)GetInput_ControllerKeyBindingName);
 	mono_add_internal_call("CulverinEditor.Input::SetInputActionToChange", (const void*)SetInputActionToChange);
+	mono_add_internal_call("CulverinEditor.Input::GetChangeInputActive", (const void*)GetChangeInputActive);
+	mono_add_internal_call("CulverinEditor.Input::GetChangeInputState", (const void*)GetChangeInputState);
 
 	mono_add_internal_call("CulverinEditor.Input::RumblePlay", (const void*)RumblePlay);
 
@@ -1629,6 +1631,14 @@ MonoString * ImportScript::GetInput_ControllerKeyBindingName(MonoString * name, 
 void ImportScript::SetInputActionToChange(MonoString * name, MonoString * input, int device, bool negative_key)
 {
 	App->input->player_action->SetInputActionToChange(mono_string_to_utf8(name), mono_string_to_utf8(input), device, negative_key);
+}
+bool ImportScript::GetChangeInputActive()
+{
+	return true;
+}
+int ImportScript::GetChangeInputState()
+{
+	return 0;
 }
 
 void ImportScript::RumblePlay(float intensity, int milliseconds)
