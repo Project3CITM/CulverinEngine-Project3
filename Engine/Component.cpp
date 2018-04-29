@@ -62,6 +62,10 @@ void Component::ShowInspectorInfo()
 {
 }
 
+void Component::OnGOActive(bool active)
+{
+}
+
 Comp_Type Component::GetType() const
 {
 	return type;

@@ -56,7 +56,7 @@ public:
 	bool IsActivate()const;
 	bool IsDragrable() const;
 	void Activate();
-
+	void OnGOActive(bool active);
 	bool IsInteractiveEnabled() const;
 	
 

@@ -52,7 +52,12 @@ bool CompInteractive::Enable()
 	{
 		active = true;
 	}
-	iteractive_list.push_back(this);
+	std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+	if (item == iteractive_list.end())
+	{
+		iteractive_list.push_back(this);
+
+	}
 
 	return active;
 }
@@ -61,8 +66,12 @@ bool CompInteractive::Disable()
 	if (active)
 	{
 		active = false;
+		std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+		if (item == iteractive_list.end())
+		{
+			return active;
+		}
 		iteractive_list.remove(this);
-
 	}
 	return active;
 }
@@ -463,6 +472,29 @@ void CompInteractive::Activate()
 	disabled = false;
 	current_selection_state = SelectionStates::STATE_NORMAL;
 	PrepareHandleTransition();
+}
+
+void CompInteractive::OnGOActive(bool active)
+{
+	if (active)
+	{
+		std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+		if (item == iteractive_list.end())
+		{
+			iteractive_list.push_back(this);
+
+		}
+	}
+	else
+	{
+		std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+		if (item == iteractive_list.end())
+		{
+			return;
+		}
+		iteractive_list.remove(this);
+
+	}
 }
 
 bool CompInteractive::IsInteractiveEnabled() const

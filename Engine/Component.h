@@ -77,6 +77,7 @@ public:
 	virtual void ShowOptions();
 	virtual void ShowInspectorInfo();
 	// --------------------------------
+	virtual void OnGOActive(bool active);
 
 	void SetActive(bool active);
 	void SetUUIDRandom();
