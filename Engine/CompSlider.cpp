@@ -181,6 +181,7 @@ void CompSlider::SyncComponent(GameObject* sync_parent)
 }
 void CompSlider::SyncSliderComponents(GameObject* sync_parent)
 {
+	//checkbox para el compimage tick (+ save)
 	if (sync_parent == nullptr)
 		return;
 
