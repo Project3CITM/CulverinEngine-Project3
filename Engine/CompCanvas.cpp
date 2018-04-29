@@ -208,19 +208,9 @@ void CompCanvas::LoadBinary(char ** cursor)
 
 void CompCanvas::Resize(int width, int height)
 {
-	//UpdateCanvasScale();
 	float2 resize_factor = my_transform->GenerateResizeFactor(width, height);
-	my_transform->Resize(resize_factor, true);
 
-	CompRectTransform* childs_transf = nullptr;
-	for (int i = 0; i < parent->GetNumChilds(); i++)
-	{
-		childs_transf = (CompRectTransform*)parent->GetChildbyIndex(i)->FindComponentByType(C_RECT_TRANSFORM);
-		if (childs_transf != nullptr)
-		{
-			childs_transf->Resize(resize_factor);
-		}
-	}
+	my_transform->ResizeRecursive(resize_factor, true);
 
 	for (uint i = 0; i < graphic_vector.size(); i++)
 	{

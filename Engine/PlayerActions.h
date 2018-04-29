@@ -31,7 +31,7 @@ public:
 	void SetInputManagerActive(const char* name,bool set);
 	void SetInputManagerBlock(const char* name, bool set);
 
-	InputAction* SetInputActionToChange(const char* input_action, const char* input_manager, const char* device, bool change_negative = false);
+	bool SetInputActionToChange(const char* input_action, const char* input_manager, int device, bool change_negative = false);
 
 	bool GetInputManagerActive(const char* name)const;
 	bool GetInputManagerBlock(const char* name)const ;
@@ -48,10 +48,8 @@ public:
 	bool GetInput_MouseButtonUp(const char* name, const char* input);
 	float GetInput_ControllerAxis(const char* name, const char* input);
 
-	const char* GetInput_ControllerActionName(const char* name, const char* input, const char* device, bool negative_key);
-	const char*	GetInput_ControllerKeyBindingName(const char* name, const char* input, const char* device, bool negative_key);
-	bool GetInput_ControllerWaitForKey(const char* name, const char* input, const char* device, bool negative_key);
-	void SetInput_ControllerWaitForKey(const char* name, const char* input, const char* device, bool negative_key);
+	const char* GetInput_ControllerActionName(const char* name, const char* input, int device, bool negative_key);
+	const char*	GetInput_ControllerKeyBindingName(const char* name, const char* input, int device, bool negative_key);
 
 	void SendNewDeviceCombinationType(DeviceCombinationType type);
 private:
@@ -64,13 +62,21 @@ public:
 private:
 	struct KeyChange
 	{
-		bool ReceiveEvent(SDL_Event* input_event);
+		enum KeyState
+		{
+			NO_STATE = -1,
+			WAIT_FOR_KEY_STATE,
+			VALID_KEY_STATE,
+			INVALID_KEY_STATE
+		};
+		KeyState ReceiveEvent(SDL_Event* input_event);
+		void SetInputAction(InputAction* key_to_change);
 		void Clear();
 
 		InputAction* key_to_change = nullptr;
 		bool change_negative = false;
-		bool change_active = true;
-
+		bool change_active = false;
+		KeyState state = KeyState::NO_STATE;
 	};
 	KeyChange key_change;
 	std::string selected_input_name;

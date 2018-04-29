@@ -36,7 +36,6 @@ private:
 	void OnSubmit(Event event_input);
 
 	void OnPointDown(Event event_input);
-	void ShowInspectorAnimationTransition();
 
 public:
 

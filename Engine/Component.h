@@ -96,6 +96,8 @@ public:
 	bool WantDelete() const;
 	bool InScripting() const;
 
+	virtual void OnGOActive(bool active);
+
 	float3 GetGameObjectPos() const;
 
 	GameObject* GetParent()const;

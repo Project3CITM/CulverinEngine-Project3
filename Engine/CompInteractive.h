@@ -64,7 +64,7 @@ public:
 	bool IsActivate()const;
 	bool IsDragrable() const;
 	void Activate();
-
+	void OnGOActive(bool active);
 	bool IsInteractiveEnabled() const;
 	
 
@@ -143,6 +143,8 @@ protected:
 	virtual void UpdateSelectionState(Event event_data);
 	void ShowInspectorColorTransition();
 	void ShowInspectorSpriteTransition();
+	void ShowInspectorAnimationTransition();
+
 	void PrepareHandleTransition();
 	void HandleTransition(SelectionStates selection_state);
 

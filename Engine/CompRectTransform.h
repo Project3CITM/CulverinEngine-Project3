@@ -27,6 +27,7 @@ public:
 	void DrawRectTransform();
 
 	void Resize(float2 resize_factor, bool is_canvas = false);
+	void ResizeRecursive(float2 resize_factor, bool is_canvas = false);
 
 	AnimationData ShowParameters();
 	float2 GenerateResizeFactor(int width, int height);

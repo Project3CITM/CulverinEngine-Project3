@@ -228,20 +228,17 @@ void JSONSerialization::LoadScene(const char* sceneName)
 			}
 		}
 		// Now pass vector to root in scene
-		GameObject* sync_parent = nullptr;
 		for (int i = 0; i < num_objects; i++)
 		{
 			if (scene_ptr[i].uid_parent == -1)
 			{
 				App->scene->root->AddChildGameObject(scene_ptr[i].go);
-				sync_parent = scene_ptr[i].go;
-				//break;
 			}
 		}
 		//Sync components
 		for (int i = 0; i < num_objects; i++)
 		{
-			scene_ptr[i].go->SyncComponents(sync_parent);
+			scene_ptr[i].go->SyncComponents(App->scene->root);
 		}
 
 		//Add static objects to scene

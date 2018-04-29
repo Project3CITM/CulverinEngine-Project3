@@ -13,7 +13,7 @@
 #include "CompImage.h"
 
 
-CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
+CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent), ClickAction()
 {
 	uid = App->random->Int();
 	name_component = "Check Box";
@@ -79,26 +79,67 @@ void CompCheckBox::ShowOptions()
 
 void CompCheckBox::ShowInspectorInfo()
 {
+	int op = ImGui::GetWindowWidth() / 4;
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 0));
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ImGui::OpenPopup("OptionsCheckBox");
+		ImGui::OpenPopup("OptionCheckBox");
 	}
 	ImGui::PopStyleVar();
+
+	// Button Options --------------------------------------
 
 	if (ImGui::Button("Sync Image..."))
 	{
 		SetTargetGraphic((CompGraphic*)parent->FindComponentByType(Comp_Type::C_IMAGE));
+		//select_source_image = true;
 	}
-	current_transition_mode = TRANSITION_SPRITE;
-	ShowInspectorSpriteTransition();
-	// CheckBox Options --------------------------------------
-	if (ImGui::BeginPopup("OptionsCheckBox"))
+
+
+
+	int selected_opt = current_transition_mode;
+	ImGui::Text("Transition"); ImGui::SameLine(op + 30);
+
+	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0"))
 	{
-		ShowOptions();
-		ImGui::EndPopup();
+		if (selected_opt == Transition::TRANSITION_COLOR)
+			current_transition_mode = Transition::TRANSITION_COLOR;
+		if (selected_opt == Transition::TRANSITION_SPRITE)
+			current_transition_mode = Transition::TRANSITION_SPRITE;
 	}
+
+	switch (selected_opt)
+	{
+	case 0:
+		ShowInspectorColorTransition();
+		break;
+	case 1:
+		ShowInspectorSpriteTransition();
+		break;
+	case 2:
+		ShowInspectorAnimationTransition();
+		break;
+	default:
+		break;
+	}
+	int navigation_opt = navigation.current_navigation_mode;
+	ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
+	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Navigation Extrict\0Navigation Automatic\0"))
+	{
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_NONE)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_NONE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_EXTRICTE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_AUTOMATIC)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_AUTOMATIC;
+
+	}
+	if (navigation.current_navigation_mode != Navigation::NavigationMode::NAVIGATION_NONE)
+	{
+		ShowNavigationInfo();
+	}
+	ShowOnClickInfo();
 
 	ImGui::TreePop();
 }
@@ -148,11 +189,70 @@ void CompCheckBox::OnPointDown(Event event_input)
 
 void CompCheckBox::OnClick()
 {
-	Tick->SetToRender(!Tick->GetToRender());
+	if (IsActivate() || !IsActive())
+		return;
+	//if (actions.empty())
+	//{
+	//	return;
+	//}
+
+	uint size = actions.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (actions[k].script == nullptr)
+			continue;
+
+		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
+	}
+
+	active = !active;
+
+	if (tick != nullptr)
+	{
+		tick->SetCanDraw(active);
+	}
+
 }
+
+	
 
 void CompCheckBox::ClearLinkedScripts()
 {
 	linked_scripts.clear();
 }
 
+
+void CompCheckBox::SetTick(CompImage * set_tick)
+{
+	if (set_tick == nullptr)
+		return;
+	tick = set_tick;
+
+}
+
+void CompCheckBox::OnSubmit(Event event_input)
+{
+	if (IsActivate() || !IsActive())
+		return;
+	if (actions.empty())
+	{
+		return;
+	}
+
+	uint size = actions.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (actions[k].script == nullptr)
+			continue;
+
+		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
+	}
+
+	active = !active;
+
+
+	if (tick != nullptr)
+	{
+		tick->SetCanDraw(active);
+	}
+}

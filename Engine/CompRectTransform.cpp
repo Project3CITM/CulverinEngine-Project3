@@ -528,7 +528,7 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 	if (parent_obj != nullptr)
 	{
 		CompRectTransform* parent_transform = (CompRectTransform*)parent_obj->FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
-		if (parent_transform != nullptr && parent_obj->FindComponentByType(C_CANVAS))
+		if (parent_transform != nullptr)
 		{
 			resize_factor = res_factor;
 			if (unitar_resize)
@@ -548,28 +548,6 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 			loc_pos.x = pos.x;
 			loc_pos.y = pos.y;
 			SetPos(loc_pos);
-			//Update(0.f);
-			//update_rect = false;
-		}
-		else
-		{
-			resize_factor = res_factor;
-			if (unitar_resize)
-			{
-				curr_resize.x = Max(resize_factor.x, resize_factor.y);
-				curr_resize.y = curr_resize.x;
-			}
-			else
-			{
-				curr_resize = resize_factor;
-			}
-			
-			pos.x = ui_position.x*resize_factor.x;
-			pos.y = ui_position.y*resize_factor.y;
-			float3 loc_pos = GetPos();
-			loc_pos.x = pos.x;
-			loc_pos.y = pos.y;
-			SetPos(loc_pos);
 		}
 	}
 	else if (is_canvas)
@@ -580,8 +558,21 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 		loc_pos.x = pos.x;
 		loc_pos.y = pos.y;
 		SetPos(loc_pos);
-		//Update(0.f);
-		//update_rect = false;
+	}
+}
+
+void CompRectTransform::ResizeRecursive(float2 resize_factor, bool is_canvas)
+{
+	Resize(resize_factor, is_canvas);
+
+	std::vector<GameObject*>* childs_vec = parent->GetChildsPtr();
+	for (uint i = 0; i < childs_vec->size(); i++)
+	{
+		CompRectTransform* child_rect = (CompRectTransform*)(*childs_vec)[i]->FindComponentByType(C_RECT_TRANSFORM);
+		if (child_rect != nullptr)
+		{
+			child_rect->ResizeRecursive(resize_factor);
+		}
 	}
 }
 
