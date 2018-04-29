@@ -518,7 +518,10 @@ void CompMesh::SaveBinary(char** cursor, int position) const
 		if (skeleton != nullptr)
 			skeleton->SaveBinary(cursor);
 	}
-	App->json_seria->SaveIntBinary(cursor, 0);
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
 }
 
 void CompMesh::LoadBinary(char** cursor)
@@ -816,15 +819,39 @@ void Skeleton::Link(const SkeletonSource* source)
 
 void Skeleton::GetOwnBufferSize(uint & buffer_size)
 {
-	// Put this on SyncComponents ............
-	//const CompMaterial* material_link = (CompMaterial*)FindComponentByType(Comp_Type::C_MATERIAL);
-	//if (material_link != nullptr) mesh->LinkMaterial(material_link);
+	buffer_size += sizeof(int);				// bones.size()
+	for (int i = 0; i < bones.size(); i++)
+	{
+		buffer_size += sizeof(int);				// bones[i]->GetUUID()
+	}
+	buffer_size += sizeof(int);				// root_bone->GetUUID()
 }
 
 void Skeleton::SaveBinary(char ** cursor) const
 {
+	App->json_seria->SaveIntBinary(cursor, bones.size());
+
+	for (int i = 0; i < bones.size(); i++)
+	{
+		App->json_seria->SaveIntBinary(cursor, bones[i]->GetUUID());
+	}
+	App->json_seria->SaveIntBinary(cursor, root_bone->GetUUID());
 }
 
 void Skeleton::LoadBinary(char ** cursor)
 {
+	uint num_bones = App->json_seria->LoadIntBinary(cursor);
+	bones.resize(num_bones);
+	bone_uids.resize(num_bones);
+
+	for (int i = 0; i < num_bones; i++)
+	{
+		char tmp[255];
+		sprintf(tmp, "Bone %i.UUID", i);
+		bone_uids[i] = App->json_seria->LoadIntBinary(cursor);
+	}
+
+	skinning_mats = new GLfloat[num_bones * 4 * 4];
+
+	root_bone_uid = App->json_seria->LoadIntBinary(cursor);
 }

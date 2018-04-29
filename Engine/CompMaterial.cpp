@@ -468,7 +468,7 @@ void CompMaterial::GetOwnBufferSize(uint & buffer_size)
 	buffer_size += sizeof(float);					//
 		
 	buffer_size += sizeof(int);					//material->name
-	buffer_size += sizeof(material->name.size());//
+	buffer_size += material->name.size();//
 
 }
 
@@ -480,7 +480,6 @@ void CompMaterial::SaveBinary(char** cursor, int position) const
 	App->json_seria->SaveFloat4Binary(cursor, tempColor);
 
 	App->json_seria->SaveStringBinary(cursor, material->name);
-
 }
 
 void CompMaterial::LoadBinary(char** cursor)
