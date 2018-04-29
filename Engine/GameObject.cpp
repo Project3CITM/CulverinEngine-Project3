@@ -2080,7 +2080,7 @@ bool GameObject::LoadComponents(char** cursor, uint numComponents)
 		int next_identificator = App->json_seria->LoadIntBinary(cursor);
 		if (next_identificator != IDENTIFICATOR_COMPONENT)
 		{
-			LOG("[error] Error with Loading Components, info: %s", GetName());
+			LOG("[error] Error with Loading Components, info: %s, %i", GetName(), i);
 			return false;
 		}
 		// type--------

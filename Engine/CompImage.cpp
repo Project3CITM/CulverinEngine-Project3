@@ -10,6 +10,7 @@
 #include "CompRectTransform.h"
 #include "CompCanvas.h"
 #include "ModuleFS.h"
+#include "JSONSerialization.h"
 #include "ModuleInput.h"
 
 CompImage::CompImage(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
@@ -563,6 +564,142 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 		radial_inverse = json_object_dotget_boolean_with_std(object, name + "Fill Radian Inverse");
 	}
 	color = App->fs->json_array_dotget_float4_string(object, name + "Image Color");
+
+	Enable();
+}
+
+void CompImage::GetOwnBufferSize(uint& buffer_size)
+{
+	CompGraphic::GetOwnBufferSize(buffer_size);
+
+	if (source_image != nullptr)
+	{
+		buffer_size += sizeof(int);						//source_image->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//source_image->GetUUID() == 0
+	}
+	buffer_size += sizeof(bool);						//device_swap
+	if (device_swap)
+	{
+		if (controller_image != nullptr)
+		{
+			buffer_size += sizeof(int);					//controller_image->GetUUID()
+		}
+		else
+		{
+			buffer_size += sizeof(int);					//controller_image->GetUUID() == 0
+		}
+	}
+
+	buffer_size += sizeof(bool);						//device_swap_active
+	buffer_size += sizeof(float);						//filled
+	buffer_size += sizeof(int);							//(enum) type
+	buffer_size += sizeof(int);							//(enum) method
+
+	if (method == FillMethod::RADIAL360)
+	{
+		buffer_size += sizeof(bool);					//radial_inverse
+	}
+	buffer_size += sizeof(float);						//color
+	buffer_size += sizeof(float);						//.
+	buffer_size += sizeof(float);						//.
+	buffer_size += sizeof(float);						//.
+}
+
+void CompImage::SaveBinary(char ** cursor, int position) const
+{
+	CompGraphic::SaveBinary(cursor, position);
+	if (source_image != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, source_image->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+	App->json_seria->SaveBooleanBinary(cursor, device_swap);
+	if (device_swap)
+	{
+		if (controller_image != nullptr)
+		{
+			App->json_seria->SaveIntBinary(cursor, controller_image->GetUUID());
+		}
+		else
+		{
+			App->json_seria->SaveIntBinary(cursor, 0);
+		}
+	}
+	App->json_seria->SaveBooleanBinary(cursor, device_swap_active);
+	App->json_seria->SaveFloatBinary(cursor, filled);
+	App->json_seria->SaveIntBinary(cursor, type);
+	App->json_seria->SaveIntBinary(cursor, method);
+
+	if (method == FillMethod::RADIAL360)
+	{
+		App->json_seria->SaveBooleanBinary(cursor, radial_inverse);
+	}
+	App->json_seria->SaveFloat4Binary(cursor, color);
+}
+
+void CompImage::LoadBinary(char ** cursor)
+{
+	CompGraphic::LoadBinary(cursor);
+
+	//...
+	uint resourceID = App->json_seria->LoadIntBinary(cursor);
+	if (resourceID > 0)
+	{
+		source_image = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+		if (source_image != nullptr)
+		{
+			source_image->num_game_objects_use_me++;
+
+			// LOAD Image ----------------------------
+			if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
+			}
+		}
+	}
+
+	device_swap = App->json_seria->LoadBooleanBinary(cursor);
+	if (device_swap)
+	{
+		uint resource_controllerID = App->json_seria->LoadIntBinary(cursor);
+		if (resource_controllerID > 0)
+		{
+			controller_image = (ResourceMaterial*)App->resource_manager->GetResource(resource_controllerID);
+			if (controller_image != nullptr)
+			{
+				controller_image->num_game_objects_use_me++;
+
+				// LOAD Image ----------------------------
+				if (controller_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(controller_image->GetUUID()).c_str(), controller_image);
+				}
+			}
+			else
+			{
+				device_swap = false;
+			}
+		}
+		else
+		{
+			device_swap = false;
+		}
+	}
+	device_swap_active = App->json_seria->LoadBooleanBinary(cursor);
+	filled = App->json_seria->LoadFloatBinary(cursor);
+	type = static_cast<CompImage::Type>(App->json_seria->LoadIntBinary(cursor));
+	method = static_cast<FillMethod>(App->json_seria->LoadIntBinary(cursor));
+	if (method == FillMethod::RADIAL360)
+	{
+		radial_inverse = App->json_seria->LoadBooleanBinary(cursor);
+	}
+	color = App->json_seria->LoadFloat4Binary(cursor);
 
 	Enable();
 }

@@ -9,6 +9,7 @@
 #include "WindowSceneWorld.h"
 #include "ModuleCamera3D.h"
 #include "ModuleFS.h"
+#include "JSONSerialization.h"
 
 #include "ImGui/ImGuizmo.h"
 
@@ -387,6 +388,104 @@ void CompRectTransform::Load(const JSON_Object* object, std::string name)
 	height = json_object_dotget_number_with_std(object, name + "Height");
 
 	ignore_z = json_object_dotget_boolean_with_std(object, name + "Ignore Z");
+
+	Init(position, rotation, scale);
+
+	ui_position = float2(position.x, position.y);
+
+	Enable();
+}
+
+void CompRectTransform::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+
+	buffer_size += sizeof(int);						//UID
+
+	float3 save_pos = GetPos();
+	save_pos.x = ui_position.x;
+	save_pos.y = ui_position.y;
+	save_pos.z = 0;
+
+	buffer_size += sizeof(float);					//save_pos
+	buffer_size += sizeof(float);					//save_pos
+	buffer_size += sizeof(float);					//save_pos
+
+	buffer_size += sizeof(float);					//float4(GetRot().x, GetRot().y, GetRot().z, GetRot().w)
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//GetScale()
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//max_anchor
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//min_anchor
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//right_pivot
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//left_pivot
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//pivot
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(int);						//width
+	buffer_size += sizeof(int);						//height
+
+	buffer_size += sizeof(bool);					//ignore_z
+}
+
+void CompRectTransform::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+
+	// TRANSFORM -----------
+	float3 save_pos = GetPos();
+	save_pos.x = ui_position.x;
+	save_pos.y = ui_position.y;
+	save_pos.z = 0;
+
+	App->json_seria->SaveFloat3Binary(cursor, save_pos);
+	App->json_seria->SaveFloat4Binary(cursor, float4(GetRot().x, GetRot().y, GetRot().z, GetRot().w));
+	App->json_seria->SaveFloat3Binary(cursor, GetScale());
+
+
+	App->json_seria->SaveFloat2Binary(cursor, max_anchor);
+	App->json_seria->SaveFloat2Binary(cursor, min_anchor);
+	App->json_seria->SaveFloat2Binary(cursor, right_pivot);
+	App->json_seria->SaveFloat2Binary(cursor, left_pivot);
+	App->json_seria->SaveFloat2Binary(cursor, pivot);
+
+	App->json_seria->SaveIntBinary(cursor, width);
+	App->json_seria->SaveIntBinary(cursor, height);
+	App->json_seria->SaveBooleanBinary(cursor, ignore_z);
+}
+
+void CompRectTransform::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+
+	//...
+	float3 position = App->json_seria->LoadFloat3Binary(cursor);
+	float4 rotation = App->json_seria->LoadFloat4Binary(cursor);
+	float3 scale = App->json_seria->LoadFloat3Binary(cursor);
+
+	max_anchor = App->json_seria->LoadFloat2Binary(cursor);
+	min_anchor = App->json_seria->LoadFloat2Binary(cursor);
+	right_pivot = App->json_seria->LoadFloat2Binary(cursor);
+	left_pivot = App->json_seria->LoadFloat2Binary(cursor);
+	pivot = App->json_seria->LoadFloat2Binary(cursor);
+
+	width = App->json_seria->LoadIntBinary(cursor);
+	height = App->json_seria->LoadIntBinary(cursor);
+	ignore_z = App->json_seria->LoadBooleanBinary(cursor);
 
 	Init(position, rotation, scale);
 

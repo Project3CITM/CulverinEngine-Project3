@@ -277,7 +277,7 @@ void Application::FinishUpdate()
 			}
 			else if (want_to_save_binary)
 			{
-				actual_scene = json_seria->SaveSceneBinary();
+				/*actual_scene = */json_seria->SaveSceneBinary();
 			}
 		}
 		want_to_save = false;
