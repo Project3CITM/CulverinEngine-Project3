@@ -965,7 +965,6 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 		case Comp_Type::C_CHECK_BOX:
 		{
 			CompCheckBox* check_box = (CompCheckBox*)comp;
-			check_box->Tick = nullptr;
 			check_box->ClearLinkedScripts();
 			break;
 		}
