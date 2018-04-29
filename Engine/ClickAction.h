@@ -40,8 +40,14 @@ public:
 	void ShowVarType(ScriptVariable * var);
 	void ShowVarValue(ScriptVariable * var, int pushi);
 	void InitValueParamater(int index);
+
 	void SaveClickAction(JSON_Object* object, std::string name)const;
 	void LoadClickAction(const JSON_Object* object, std::string name);
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor) const;
+	void LoadBinary(char** cursor);
+
 	void SyncClickAction();
 	void ClearLinkedScripts();
 

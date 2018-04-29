@@ -14,7 +14,9 @@
 #include "CompSlider.h"
 #include "ModuleFS.h"
 #include "Scene.h"
+#include "JSONSerialization.h"
 #include "ModuleEventSystemV2.h"
+
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
 #define PRESSED_SPRITE 1
@@ -292,8 +294,8 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 	else
 	{
 		json_object_dotset_number_with_std(object, name + "Interactive up", 0);
-
 	}
+	
 	if (navigation.interactive_down != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Interactive down", navigation.interactive_down->GetUUID());
@@ -301,8 +303,8 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 	else
 	{
 		json_object_dotset_number_with_std(object, name + "Interactive down", 0);
-
 	}
+
 	if (navigation.interactive_right != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Interactive right", navigation.interactive_right->GetUUID());
@@ -310,8 +312,8 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 	else
 	{
 		json_object_dotset_number_with_std(object, name + "Interactive right", 0);
-
 	}
+
 	if (navigation.interactive_left != nullptr)
 	{
 		json_object_dotset_number_with_std(object, name + "Interactive left", navigation.interactive_left->GetUUID());
@@ -371,6 +373,236 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 
 	Enable();
 }
+
+void CompInteractive::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	
+	buffer_size += sizeof(int);				//uid
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (sprite[i] != nullptr)
+		{
+			buffer_size += sizeof(int);			//sprite[i]->GetUUID()
+		}
+		else
+		{
+			buffer_size += sizeof(int);			//sprite[i]->GetUUID() == 0
+		}
+	}
+
+	buffer_size += sizeof(float);					//normal_color
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//highlighted_color
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//pressed_color
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//disabled_color
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//desired_color
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//color_multiply
+	buffer_size += sizeof(float);					//fade_duration
+	buffer_size += sizeof(bool);					//no_fade
+	buffer_size += sizeof(bool);					//start_transition
+
+
+	if (target_graphic != nullptr)
+	{
+		buffer_size += sizeof(int);					//target_graphic_uid
+	}
+	else
+	{
+		buffer_size += sizeof(int);					//target_graphic_uid = 0
+	}
+
+	buffer_size += sizeof(int);						//current_selection_state
+	buffer_size += sizeof(int);						//current_transition_mode
+	buffer_size += sizeof(int);						//navigation.current_navigation_mode
+
+	if (navigation.interactive_up != nullptr)
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_up->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_up->GetUUID() = 0
+
+	}
+	if (navigation.interactive_down != nullptr)
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_down->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_down->GetUUID() = 0
+
+	}
+	if (navigation.interactive_right != nullptr)
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_right->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_right->GetUUID() = 0
+
+	}
+	if (navigation.interactive_left != nullptr)
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_left->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_left->GetUUID() = 0
+	}
+}
+
+void CompInteractive::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+
+	App->json_seria->SaveIntBinary(cursor, uid);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (sprite[i] != nullptr)
+		{
+			App->json_seria->SaveIntBinary(cursor, sprite[i]->GetUUID());
+		}
+		else
+		{
+			App->json_seria->SaveIntBinary(cursor, 0);
+		}
+	}
+
+	App->json_seria->SaveFloat4Binary(cursor, normal_color);
+	App->json_seria->SaveFloat4Binary(cursor, highlighted_color);
+	App->json_seria->SaveFloat4Binary(cursor, pressed_color);
+	App->json_seria->SaveFloat4Binary(cursor, disabled_color);
+	App->json_seria->SaveFloat4Binary(cursor, desired_color);
+
+	App->json_seria->SaveFloatBinary(cursor, color_multiply);
+	App->json_seria->SaveFloatBinary(cursor, fade_duration);
+	App->json_seria->SaveBooleanBinary(cursor, no_fade);
+	App->json_seria->SaveBooleanBinary(cursor, start_transition);
+
+	if (target_graphic != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, target_graphic_uid);
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+
+	App->json_seria->SaveIntBinary(cursor, (int)current_selection_state);
+	App->json_seria->SaveIntBinary(cursor, (int)current_transition_mode);
+	App->json_seria->SaveIntBinary(cursor, (int)navigation.current_navigation_mode);
+
+	if (navigation.interactive_up != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, navigation.interactive_up->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+
+	if (navigation.interactive_down != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, navigation.interactive_down->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+
+	if (navigation.interactive_right != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, navigation.interactive_right->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+
+	if (navigation.interactive_left != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, navigation.interactive_left->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+}
+
+void CompInteractive::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	//...
+	for (int i = 0; i < 3; i++)
+	{
+		uint resourceID = App->json_seria->LoadIntBinary(cursor);
+		if (resourceID > 0)
+		{
+			sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+			if (sprite[i] != nullptr)
+			{
+				sprite[i]->num_game_objects_use_me++;
+
+				// LOAD All Materials ----------------------------
+				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
+				}
+
+			}
+		}
+	}
+
+	App->json_seria->LoadFloat4Binary(cursor);
+
+	normal_color = App->json_seria->LoadFloat4Binary(cursor);
+	highlighted_color = App->json_seria->LoadFloat4Binary(cursor);
+	pressed_color = App->json_seria->LoadFloat4Binary(cursor);
+	disabled_color = App->json_seria->LoadFloat4Binary(cursor);
+	desired_color = App->json_seria->LoadFloat4Binary(cursor);
+
+	color_multiply = App->json_seria->LoadFloatBinary(cursor);
+	fade_duration = App->json_seria->LoadFloatBinary(cursor);
+	no_fade = App->json_seria->LoadBooleanBinary(cursor);
+	start_transition = App->json_seria->LoadBooleanBinary(cursor);
+
+	target_graphic_uid = App->json_seria->LoadIntBinary(cursor);
+
+	current_selection_state = static_cast<SelectionStates>(App->json_seria->LoadIntBinary(cursor));
+	current_transition_mode = static_cast<Transition>(App->json_seria->LoadIntBinary(cursor));
+	navigation.current_navigation_mode = static_cast<Navigation::NavigationMode>(App->json_seria->LoadIntBinary(cursor));
+
+	navigation.inteactive_up_uid = App->json_seria->LoadIntBinary(cursor);
+	navigation.inteactive_down_uid = App->json_seria->LoadIntBinary(cursor);
+	navigation.inteactive_right_uid = App->json_seria->LoadIntBinary(cursor);
+	navigation.inteactive_left_uid = App->json_seria->LoadIntBinary(cursor);
+
+	Enable();
+}
+
 void CompInteractive::SyncComponent(GameObject* sync_parent)
 {
 	if (sync_parent != nullptr)
