@@ -107,6 +107,7 @@ void JSONSerialization::SaveChildGameObjectBinary(const GameObject& gameObject, 
 	SaveBooleanBinary(cursor, gameObject.AreRotationsActivateds());
 	SaveBooleanBinary(cursor, gameObject.AreScalesActivateds());
 
+	SaveIntBinary(cursor, gameObject.GetNumComponents());
 	// Components  ------------
 	if (gameObject.GetNumComponents() > 0)
 	{
@@ -129,12 +130,14 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 	char* buffer;
 	uint size_file = App->fs->LoadFile(scene.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DIRECTORY_ASSETS);
 	char* cursor = buffer;
+	LOG("---- Loading Scene: %s", scene.c_str());
 
 	App->scene->DeleteAllGameObjects(App->scene->root);
 	App->scene->ClearAllTags();
 	int identificator = LoadIntBinary(&cursor);
 	std::vector<LoadSceneSt> gameobjects;
 	std::vector<LoadSceneCp> components;
+	std::vector<GameObject*> mesh_gos;
 	if (identificator == IDENTIFICATOR_ROOT)
 	{
 		int number_of_tags = LoadIntBinary(&cursor);
@@ -162,6 +165,10 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 				if (obj.go != nullptr)
 				{
 					gameobjects.push_back(obj);
+					if (obj.go->GetComponentMesh() != nullptr)
+					{
+						mesh_gos.push_back(obj.go);
+					}
 				}
 				else
 				{
@@ -173,17 +180,21 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 			}
 			case IDENTIFICATOR_COMPONENT:
 			{
-				LoadSceneCp comp = LoadComponentsBinary(&cursor);
-				if (comp.comp != nullptr)
-				{
-					components.push_back(comp);
-				}
-				else
-				{
-					LOG("[error] File seems corrupted");
-					identificator = IDENTIFICATOR_ERROR;
-					next_identificator = IDENTIFICATOR_END;
-				}
+				//LoadSceneCp comp = LoadComponentsBinary(&cursor);
+				//if (comp.comp != nullptr)
+				//{
+				//	components.push_back(comp);
+				//}
+				//else
+				//{
+				//	LOG("[error] File seems corrupted");
+				//	identificator = IDENTIFICATOR_ERROR;
+				//	next_identificator = IDENTIFICATOR_END;
+				//}
+				LOG("[error]Load component outside gameobject");
+				LOG("[error] File seems corrupted");
+				identificator = IDENTIFICATOR_ERROR;
+				next_identificator = IDENTIFICATOR_END;
 				break;
 			}
 			case IDENTIFICATOR_END:
@@ -264,9 +275,20 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 				App->scene->dynamic_objects.push_back(scene_ptr[i].go);
 			}
 		}
+
+		//templist.clear();
+
+		//App->scene->root->SetName(App->fs->GetOnlyName(sceneName).c_str());
+
+		//Link Skeletons
+		for (std::vector<GameObject*>::iterator it = mesh_gos.begin(); it != mesh_gos.end(); it++)
+		{
+			(*it)->GetComponentMesh()->LinkSkeleton();
+		}
 	}
 	gameobjects.clear();
 	components.clear();
+	mesh_gos.clear();
 	RELEASE_ARRAY(buffer);
 }
 
@@ -308,6 +330,13 @@ LoadSceneSt JSONSerialization::LoadGameObejctBinary(char** cursor)
 	bool anim_scales = LoadBooleanBinary(cursor);
 	obj->ToggleAnimationScale(anim_scales);
 
+	int NumberofComponents = LoadIntBinary(cursor);
+
+	if (NumberofComponents > 0)
+	{
+		obj->LoadComponents(cursor, NumberofComponents);
+	}
+
 	LoadSceneSt temp;
 	temp.go = obj;
 	temp.uid_parent = uid_parent;
@@ -318,220 +347,24 @@ LoadSceneSt JSONSerialization::LoadGameObejctBinary(char** cursor)
 LoadSceneCp JSONSerialization::LoadComponentsBinary(char** cursor)
 {
 	// type--------
-	Comp_Type type = (Comp_Type)LoadIntBinary(cursor);
-	// UID Parent
-	uint uid_parent = LoadIntBinary(cursor);
-	// Position in Parent
-	uint position_parent = LoadIntBinary(cursor);
-	Component* comp;
-	switch (type)
-	{
-	case Comp_Type::C_MESH:
-	{
-		comp = new CompMesh(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_TRANSFORM:
-	{
-		comp = new CompTransform(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_RECT_TRANSFORM:
-	{
-		//if (FindComponentByType(Comp_Type::C_RECT_TRANSFORM) != nullptr) return nullptr;
-		//CompRectTransform* transform = new CompRectTransform(type, this);
-		//if (components.size() > 0 && components[0]->GetType() == Comp_Type::C_TRANSFORM)
-		//{
-		//	RELEASE(components[0]);
-		//	components[0] = transform;
-		//}
-		//else components.push_back(transform);
-		//return transform;
-	}
-	case Comp_Type::C_MATERIAL:
-	{
-		comp = new CompMaterial(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_CANVAS:
-	{
-		//AddComponent(Comp_Type::C_RECT_TRANSFORM);
-		//CompCanvas* canvas = new CompCanvas(type, this);
-		//components.push_back(canvas);
-		////If is not RectTransform
-		////TODO change transform
-		//return canvas;
-	}
-	case Comp_Type::C_CANVAS_RENDER:
-	{
-		//CompCanvasRender* canvas_renderer = new CompCanvasRender(type, this);
-		//components.push_back(canvas_renderer);
-		//return canvas_renderer;
-	}
-	case Comp_Type::C_IMAGE:
-	{
-		////If is not RectTransform
-		////TODO change transform
-		//CompCanvasRender* canvas_renderer = (CompCanvasRender*)FindComponentByType(Comp_Type::C_CANVAS_RENDER);
-		//if (canvas_renderer == nullptr)
-		//{
-		//	canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
-		//	components.push_back(canvas_renderer);
-		//}
-		//CompImage* image = new CompImage(type, this);
-
-		//components.push_back(image);
-		//return image;
-	}
-	case Comp_Type::C_TEXT:
-	{
-		//If is not RectTransform
-		//TODO change transform
-		//CompCanvasRender* canvas_renderer = (CompCanvasRender*)FindComponentByType(Comp_Type::C_CANVAS_RENDER);
-		//if (canvas_renderer == nullptr)
-		//{
-		//	canvas_renderer = new CompCanvasRender(Comp_Type::C_CANVAS_RENDER, this);
-		//	components.push_back(canvas_renderer);
-		//}
-		//CompText* text = new CompText(type, this);
-
-		//components.push_back(text);
-		//return text;
-	}
-	case Comp_Type::C_EDIT_TEXT:
-	{
-		//If is not RectTransform
-		//TODO change transform
-		//CompEditText* edit_text = new CompEditText(type, this);
-		//components.push_back(edit_text);
-		///* Link image to the button if exists */
-		//CompText* text_to_link = (CompText*)FindComponentByType(Comp_Type::C_TEXT);
-		//if (text_to_link != nullptr)
-		//{
-
-		//}
-		//else LOG("TEXT not linked to any Edit Text");
-		//return edit_text;
-	}
-	case Comp_Type::C_BUTTON:
-	{
-		//If is not RectTransform
-		//TODO change transform
-		//CompButton* button = new CompButton(type, this);
-		//components.push_back(button);
-		///* Link image to the button if exists */
-		//CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
-		//if (image_to_link != nullptr)
-		//{
-
-		//}
-		//else LOG("IMAGE not linked to any Button");
-		//return button;
-	}
-	case Comp_Type::C_CHECK_BOX:
-	{
-		//If is not RectTransform
-		//TODO change transform
-		//CompCheckBox* check_box = new CompCheckBox(type, this);
-		//components.push_back(check_box);
-		///* Link image to the button if exists */
-		//CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
-		//if (image_to_link != nullptr)
-		//{
-
-		//}
-		//else LOG("IMAGE not linked to any CheckBox");
-		//return check_box;
-	}
-	case Comp_Type::C_SLIDER:
-	{
-		//If is not RectTransform
-		//TODO change transform
-		//CompSlider* slider = new CompSlider(type, this);
-		//components.push_back(slider);
-		//CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
-		//if (image_to_link != nullptr)
-		//{
-
-		//}
-		//else LOG("IMAGE not linked to any slider");
-		//return slider;
-	}
-	case Comp_Type::C_CAMERA:
-	{
-		comp = new CompCamera(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_SCRIPT:
-	{
-		comp = new CompScript(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_ANIMATION:
-	{
-		comp = new CompAnimation(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_ANIMATION_UI:
-	{
-		comp = new CompUIAnimation(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_AUDIO:
-	{
-		comp = new CompAudio(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_BONE:
-	{
-		comp = new CompBone(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_LIGHT:
-	{
-		comp = new CompLight(type, nullptr);
-		break;
-	}
-
-	case Comp_Type::C_CUBEMAP_RENDERER:
-	{
-		//LOG("Adding CUBEMAP RENDERER.");
-		//CompCubeMapRenderer* cubemap = new CompCubeMapRenderer(type, this);
-		break;
-	}
-	case Comp_Type::C_COLLIDER:
-	{
-		comp = new CompCollider(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_RIGIDBODY:
-	{
-		comp = new CompRigidBody(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_PARTICLE_SYSTEM:
-	{
-		comp = new CompParticleSystem(type, nullptr);
-		break;
-	}
-	case Comp_Type::C_JOINT:
-	{
-		comp = new CompJoint(type, nullptr);
-		break;
-	}
-	}
-	if (comp == nullptr)
-	{
-		LoadSceneCp temp;
-		temp.comp = nullptr;
-		return temp;
-	}
-	comp->LoadBinary(cursor);
+	//Comp_Type type = (Comp_Type)LoadIntBinary(cursor);
+	//// UID Parent
+	//uint uid_parent = LoadIntBinary(cursor);
+	//// Position in Parent
+	////uint position_parent = LoadIntBinary(cursor);
+	//Component* comp;
+	//if (comp == nullptr)
+	//{
+	//	LoadSceneCp temp;
+	//	temp.comp = nullptr;
+	//	return temp;
+	//}
+	//comp->LoadBinary(cursor);
 
 	LoadSceneCp temp;
-	temp.comp = comp;
-	temp.position_parent = position_parent;
-	temp.uid_parent = uid_parent;
+	//temp.comp = comp;
+	//temp.position_parent = position_parent;
+	//temp.uid_parent = uid_parent;
 	return temp;
 }
 

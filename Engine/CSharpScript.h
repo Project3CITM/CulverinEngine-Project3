@@ -109,6 +109,10 @@ public:
 	void Save(JSON_Object* object, const std::string& name);
 	void Load(const JSON_Object* object, const std::string& name, std::vector<uint>& re_load_values);
 
+	void GetOwnBufferSize(uint & buffer_size);
+	void Save(char ** cursor) const;
+	void Load(char ** cursor, std::vector<uint>& re_load_values);
+
 public:
 	const char* name = nullptr;
 	VarType type = Var_UNKNOWN;
@@ -369,6 +373,9 @@ public:
 	// LOAD - SAVE METHODS ------------------
 	void Save(JSON_Object* object, std::string name) const;
 	void Load(const JSON_Object* object, std::string name);
+	void GetOwnBufferSize(uint & buffer_size);
+	void Save(char ** cursor) const;
+	void Load(char ** cursor);
 	void LoadValuesGO(GameObject* sync_parent);
 
 	GameObject* GetGameObject() const;

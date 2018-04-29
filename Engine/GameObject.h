@@ -115,7 +115,8 @@ public:
 
 	void GetOwnBufferSize(uint& buffer_size);
 	void SaveComponents(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
-	void LoadComponents(const JSON_Object * object, std::string name, uint numComponents);
+	void LoadComponents(const JSON_Object * object, std::string name, uint numComponents); //JSON
+	bool LoadComponents(char ** cursor, uint numComponents);//BINARY
 
 	void SyncComponents(GameObject* sync_parent);
 	void SyncComponentsRecursive(GameObject* sync_parent);

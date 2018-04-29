@@ -692,6 +692,7 @@ void CompCamera::SaveBinary(char ** cursor, int position) const
 
 void CompCamera::LoadBinary(char ** cursor)
 {
+	uid = App->json_seria->LoadIntBinary(cursor);
 	culling = App->json_seria->LoadBooleanBinary(cursor);
 	cull_dynamics = App->json_seria->LoadBooleanBinary(cursor);
 	is_main = App->json_seria->LoadBooleanBinary(cursor);

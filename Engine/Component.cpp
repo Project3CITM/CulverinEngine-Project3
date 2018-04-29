@@ -146,7 +146,7 @@ void Component::GetOwnBufferSize(uint & buffer_size)
 	buffer_size += sizeof(int);			//identifier
 	buffer_size += sizeof(int);			//Type
 	buffer_size += sizeof(int);			//UID Parent
-	buffer_size += sizeof(int);			//position
+	//buffer_size += sizeof(int);			//position
 }
 
 void Component::SaveBinary(char ** cursor, int position) const
@@ -158,7 +158,7 @@ void Component::SaveBinary(char ** cursor, int position) const
 	// UUID Parent --------
 	App->json_seria->SaveIntBinary(cursor, parent->GetUUID());
 	// Position in Parent --------
-	App->json_seria->SaveIntBinary(cursor, position);
+	//App->json_seria->SaveIntBinary(cursor, position);
 }
 
 void Component::LoadBinary(char ** cursor)
