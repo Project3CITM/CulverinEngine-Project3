@@ -125,11 +125,11 @@ public class Enemy_BT : BT
             {
                 life_state = ENEMY_STATE.ENEMY_STUNNED;
             }
-            if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION && current_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION)
-            {
-                Debug.Log("Willyrex push hit", Department.PHYSICS, Color.PINK);
-                return;
-            }
+            //if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION && current_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION)
+            //{
+            //    Debug.Log("Willyrex push hit", Department.PHYSICS, Color.PINK);
+            //    return;
+            //}
             current_action = next_action;
             next_action = null_action;
             current_action.ActionStart();
@@ -175,11 +175,18 @@ public class Enemy_BT : BT
 
     public virtual bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
-        InterruptAction();
-
-        next_action = GetComponent<GetHit_Action>();
-
-        GetComponent<GetHit_Action>().SetHitType(damage_type);
+        
+        if (current_action.action_type != Action.ACTION_TYPE.PUSHBACK_ACTION)
+        {
+            Debug.Log("Yes push hit", Department.PHYSICS, Color.BLUE);
+            next_action = GetComponent<GetHit_Action>();
+            GetComponent<GetHit_Action>().SetHitType(damage_type);
+            InterruptAction();
+        }
+        else
+        {
+            Debug.Log("Not push hit", Department.PHYSICS, Color.PINK);
+        }
 
         current_hp -= damage;
         //ChangeTexturesToDamaged();

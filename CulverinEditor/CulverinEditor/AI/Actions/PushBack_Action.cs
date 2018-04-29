@@ -10,6 +10,7 @@ public class PushBack_Action : Action
 
     public float push_time = 1.0f;
     string animation_clip_push="a";
+    public float push_velocity = 2.5f;
 
     float push_timer = 0.0f;
 
@@ -37,6 +38,7 @@ public class PushBack_Action : Action
 
     public override bool ActionStart()
     {
+        Debug.Log("PUSH ANIMATION", Department.PHYSICS, Color.ORANGE);
         GetComponent<Align_Steering>().SetEnabled(false);
         Movement_Action.Direction dir = GetComponent<Movement_Action>().GetDirection();
 
@@ -145,7 +147,7 @@ public class PushBack_Action : Action
         //        }
         //        break;
         //}
-        GetComponent<CompAnimation>().SetClipDuration(animation_clip_push, push_time);
+        //GetComponent<CompAnimation>().SetClipDuration(animation_clip_push, push_time);
 
         target_x = GetComponent<Movement_Action>().GetCurrentTileX();
         target_y = GetComponent<Movement_Action>().GetCurrentTileY();
@@ -159,8 +161,10 @@ public class PushBack_Action : Action
     public override ACTION_RESULT ActionUpdate()
     {
         if (interupt == true)
+        {
+            Debug.Log("INTERRUMPIOOO!", Department.PHYSICS, Color.YELLOW);
             return ACTION_RESULT.AR_FAIL;
-
+        }
 
         Vector3 my_pos = transform.position;
 
@@ -175,10 +179,10 @@ public class PushBack_Action : Action
             movement.x = (target_x * GetComponent<Movement_Action>().tile_size) - my_pos.x;
             movement.z = (target_y * GetComponent<Movement_Action>().tile_size) - my_pos.z;
 
-            movement = movement.Normalized * GetComponent<Movement_Action>().tile_size * (1 - GetComponent<Arrive_Steering>().min_distance);
+            movement = (movement.Normalized * GetComponent<Movement_Action>().tile_size * (1 - GetComponent<Arrive_Steering>().min_distance)) * push_velocity;
             transform.SetPosition(my_pos + ((movement * Time.deltaTime) / push_time));
 
-            if (push_timer >= 0.5f)
+            if (push_timer >= 0.01f)
             {
                 push_timer = 0.0f;
                 return ACTION_RESULT.AR_SUCCESS;
@@ -194,7 +198,7 @@ public class PushBack_Action : Action
         movement.x = (target_x * GetComponent<Movement_Action>().tile_size) - my_pos.x;
         movement.z = (target_y * GetComponent<Movement_Action>().tile_size) - my_pos.z;
 
-        movement = movement.Normalized * GetComponent<Movement_Action>().tile_size * (1 - GetComponent<Arrive_Steering>().min_distance);
+        movement = (movement.Normalized * GetComponent<Movement_Action>().tile_size * (1 - GetComponent<Arrive_Steering>().min_distance)) * push_velocity;
         transform.SetPosition(my_pos + ((movement * Time.deltaTime) / push_time));
 
         return ACTION_RESULT.AR_IN_PROGRESS;

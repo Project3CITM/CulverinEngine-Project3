@@ -67,7 +67,6 @@ public class EnemyShield_BT : Enemy_BT
 
         if (attack_ready && current_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
         {
-            Debug.Log("GetHitInterrupted BITCH", Department.IA);
             current_action.Interupt();
         }
 
