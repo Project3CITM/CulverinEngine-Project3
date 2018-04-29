@@ -206,7 +206,7 @@ void CompText::ShowInspectorInfo()
 
 		}
 	}
-	if (ImGui::DragInt("Input limit", &max_input, 1.0f, 1, 50))
+	if (ImGui::InputInt("Input limit", &max_input,1,1, ImGuiInputTextFlags_EnterReturnsTrue))
 	{
 		if (max_input < 0)
 		{
