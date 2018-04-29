@@ -23,7 +23,7 @@ public:
 	void OnPointDown(Event event_input);
 	void OnClick();
 	void ClearLinkedScripts();
-	void SetTick(CompImage* set_tick);
+	void SetTick(CompImage* tick);
 	void OnSubmit(Event event_input);
 
 private:

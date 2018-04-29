@@ -84,69 +84,64 @@ void CompCheckBox::ShowInspectorInfo()
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ImGui::OpenPopup("OptionsCheckBox");
+		ImGui::OpenPopup("OptionCheckBox");
 	}
 	ImGui::PopStyleVar();
 
-	// CheckBox Options --------------------------------------
-	if (ImGui::BeginPopup("OptionsCheckBox"))
-	{
-		ShowOptions();
-		ImGui::EndPopup();
-	}	
+	// Button Options --------------------------------------
+
 	if (ImGui::Button("Sync Image..."))
 	{
 		SetTargetGraphic((CompGraphic*)parent->FindComponentByType(Comp_Type::C_IMAGE));
+		//select_source_image = true;
 	}
-		int selected_opt = current_transition_mode;
-		ImGui::Text("Transition"); ImGui::SameLine(op + 30);
 
-		if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0 Animation transition\0"))
-		{
-			if (selected_opt == Transition::TRANSITION_COLOR)
-				current_transition_mode = Transition::TRANSITION_COLOR;
-			if (selected_opt == Transition::TRANSITION_SPRITE)
-				current_transition_mode = Transition::TRANSITION_SPRITE;
-			if (selected_opt == Transition::TRANSITION_ANIMATION)
-				current_transition_mode = Transition::TRANSITION_ANIMATION;
-		}
 
-		switch (selected_opt)
-		{
-		case 0:
-			ShowInspectorColorTransition();
-			break;
-		case 1:
-			ShowInspectorSpriteTransition();
-			break;
-		case 2:
-			ShowInspectorAnimationTransition();
-			break;
-		default:
-			break;
-		}
-		int navigation_opt = navigation.current_navigation_mode;
-		ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
-		if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Navigation Extrict\0Navigation Automatic\0"))
-		{
-			if (navigation_opt == Navigation::NavigationMode::NAVIGATION_NONE)
-				navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_NONE;
-			if (navigation_opt == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
-				navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_EXTRICTE;
-			if (navigation_opt == Navigation::NavigationMode::NAVIGATION_AUTOMATIC)
-				navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_AUTOMATIC;
 
-		}
-		if (navigation.current_navigation_mode != Navigation::NavigationMode::NAVIGATION_NONE)
-		{
-			ShowNavigationInfo();
-		}
-		ShowOnClickInfo();
-		
-		
-		ImGui::TreePop();
-	
+	int selected_opt = current_transition_mode;
+	ImGui::Text("Transition"); ImGui::SameLine(op + 30);
 
+	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0"))
+	{
+		if (selected_opt == Transition::TRANSITION_COLOR)
+			current_transition_mode = Transition::TRANSITION_COLOR;
+		if (selected_opt == Transition::TRANSITION_SPRITE)
+			current_transition_mode = Transition::TRANSITION_SPRITE;
+	}
+
+	switch (selected_opt)
+	{
+	case 0:
+		ShowInspectorColorTransition();
+		break;
+	case 1:
+		ShowInspectorSpriteTransition();
+		break;
+	case 2:
+		ShowInspectorAnimationTransition();
+		break;
+	default:
+		break;
+	}
+	int navigation_opt = navigation.current_navigation_mode;
+	ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
+	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Navigation Extrict\0Navigation Automatic\0"))
+	{
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_NONE)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_NONE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_EXTRICTE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_AUTOMATIC)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_AUTOMATIC;
+
+	}
+	if (navigation.current_navigation_mode != Navigation::NavigationMode::NAVIGATION_NONE)
+	{
+		ShowNavigationInfo();
+	}
+	ShowOnClickInfo();
+
+	ImGui::TreePop();
 }
 
 void CompCheckBox::CopyValues(const CompCheckBox * component)
@@ -218,6 +213,7 @@ void CompCheckBox::OnClick()
 	}
 
 }
+
 	
 
 void CompCheckBox::ClearLinkedScripts()
@@ -225,11 +221,13 @@ void CompCheckBox::ClearLinkedScripts()
 	linked_scripts.clear();
 }
 
+
 void CompCheckBox::SetTick(CompImage * set_tick)
 {
 	if (set_tick == nullptr)
 		return;
 	tick = set_tick;
+
 }
 
 void CompCheckBox::OnSubmit(Event event_input)

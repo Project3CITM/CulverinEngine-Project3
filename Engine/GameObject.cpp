@@ -1334,7 +1334,7 @@ void GameObject::SetActive(bool active)
 	bool set_pactive = (parent_active && active) ? true : false;
 	if (!components.empty())
 	{
-		if (components[0]->GetType == Comp_Type::C_RECT_TRANSFORM)
+		if (components[0]->GetType() == Comp_Type::C_RECT_TRANSFORM)
 		{
 			for (uint i = 0; i < components.size(); i++)
 			{
@@ -1354,7 +1354,7 @@ void GameObject::SetParentActive(bool active)
 	parent_active = active;
 	if (!components.empty())
 	{
-		if (components[0]->GetType == Comp_Type::C_RECT_TRANSFORM)
+		if (components[0]->GetType() == Comp_Type::C_RECT_TRANSFORM)
 		{
 			for (uint i = 0; i < components.size(); i++)
 			{
