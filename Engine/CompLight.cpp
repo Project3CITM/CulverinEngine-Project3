@@ -67,7 +67,7 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 
 					   /* Set frustum vars */
 	frustum.type = PerspectiveFrustum;
-	frustum.pos = parent->GetComponentTransform()->GetPosGlobal(); //now in syncomponents¿?
+	frustum.pos = parent->GetComponentTransform()->GetPosGlobal();
 	frustum.front.Set(0, -1, 0);
 	frustum.up.Set(0, 0, 1);
 	frustum.nearPlaneDistance = near_plane;
