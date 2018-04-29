@@ -1616,19 +1616,19 @@ float ImportScript::GetInput_ControllerAxis(MonoString* name, MonoString* input)
 	return App->input->player_action->GetInput_ControllerAxis(mono_string_to_utf8(name), mono_string_to_utf8(input));
 }
 
-MonoString * ImportScript::GetInput_ControllerActionName(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+MonoString * ImportScript::GetInput_ControllerActionName(MonoString * name, MonoString * input, int device, bool negative_key)
 {
-	return mono_string_new_wrapper(App->input->player_action->GetInput_ControllerActionName(mono_string_to_utf8(name), mono_string_to_utf8(input), mono_string_to_utf8(device), negative_key));
+	return mono_string_new_wrapper(App->input->player_action->GetInput_ControllerActionName(mono_string_to_utf8(name), mono_string_to_utf8(input), device, negative_key));
 }
 
-MonoString * ImportScript::GetInput_ControllerKeyBindingName(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+MonoString * ImportScript::GetInput_ControllerKeyBindingName(MonoString * name, MonoString * input, int device, bool negative_key)
 {
-	return mono_string_new_wrapper(App->input->player_action->GetInput_ControllerKeyBindingName(mono_string_to_utf8(name), mono_string_to_utf8(input), mono_string_to_utf8(device), negative_key));
+	return mono_string_new_wrapper(App->input->player_action->GetInput_ControllerKeyBindingName(mono_string_to_utf8(name), mono_string_to_utf8(input), device, negative_key));
 }
 
-void ImportScript::SetInputActionToChange(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+void ImportScript::SetInputActionToChange(MonoString * name, MonoString * input, int device, bool negative_key)
 {
-	App->input->player_action->SetInputActionToChange(mono_string_to_utf8(name), mono_string_to_utf8(input), mono_string_to_utf8(device), negative_key);
+	App->input->player_action->SetInputActionToChange(mono_string_to_utf8(name), mono_string_to_utf8(input), device, negative_key);
 }
 
 void ImportScript::RumblePlay(float intensity, int milliseconds)

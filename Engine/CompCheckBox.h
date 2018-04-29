@@ -26,9 +26,6 @@ public:
 	void SetTick(CompImage* tick);
 	void OnSubmit(Event event_input);
 
-public:
-
-private:
 private:
 	CompImage * tick = nullptr;
 	std::vector<CompScript*> linked_scripts;

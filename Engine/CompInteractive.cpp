@@ -52,7 +52,12 @@ bool CompInteractive::Enable()
 	{
 		active = true;
 	}
-	iteractive_list.push_back(this);
+	std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+	if (item == iteractive_list.end())
+	{
+		iteractive_list.push_back(this);
+
+	}
 
 	return active;
 }
@@ -61,8 +66,12 @@ bool CompInteractive::Disable()
 	if (active)
 	{
 		active = false;
+		std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+		if (item == iteractive_list.end())
+		{
+			return active;
+		}
 		iteractive_list.remove(this);
-
 	}
 	return active;
 }
@@ -465,6 +474,29 @@ void CompInteractive::Activate()
 	PrepareHandleTransition();
 }
 
+void CompInteractive::OnGOActive(bool active)
+{
+	if (active)
+	{
+		std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+		if (item == iteractive_list.end())
+		{
+			iteractive_list.push_back(this);
+
+		}
+	}
+	else
+	{
+		std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+		if (item == iteractive_list.end())
+		{
+			return;
+		}
+		iteractive_list.remove(this);
+
+	}
+}
+
 bool CompInteractive::IsInteractiveEnabled() const
 {
 	return interactive_enabled;
@@ -836,16 +868,26 @@ CompInteractive * CompInteractive::FindInteractive(float3 direction)
 		float3 diff_vec = position_it - position;
 		float diff_x = diff_vec.x * direction.x;
 		float diff_y = diff_vec.y * direction.y;
+		float diff_second_x = diff_vec.x * direction.y;
+		float diff_second_y = diff_vec.y * direction.x;
 
-		if (diff_x > 0.000001 && diff_x < closest_point)
+		if (diff_x > 0.000001)
 		{
+			if (diff_x < closest_point && diff_second_y < closest_point_second_axis)
+			{
+				closest_point_second_axis = diff_second_y;
 				closest_point = diff_x;
 				ret = it._Ptr->_Myval;
+			}
 		}
-		if (diff_y > 0.000001 && diff_y < closest_point)
+		if (diff_y > 0.000001)
 		{
+			if (diff_y < closest_point && diff_second_x < closest_point_second_axis)
+			{
+				closest_point_second_axis = diff_second_x;
 				closest_point = diff_y;
-				ret = it._Ptr->_Myval;	
+				ret = it._Ptr->_Myval;
+			}
 		}
 	}
 	

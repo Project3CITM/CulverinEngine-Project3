@@ -167,11 +167,11 @@ DeviceCombinationType KeyRelation::SelectDeviceCombination(const char* value)
 {
 	if (strcmp(value, "mouse")==0|| strcmp(value, "keyboard") == 0)
 	{
-		DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
+		return DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
 	}
 	else if(strcmp(value, "controller") == 0)
 	{
-		DeviceCombinationType::CONTROLLER_COMB_DEVICE;
+		return DeviceCombinationType::CONTROLLER_COMB_DEVICE;
 	}
 	return DeviceCombinationType::NULL_COMB_DEVICE;
 }
