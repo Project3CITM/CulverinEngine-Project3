@@ -582,6 +582,8 @@ void CompText::LoadBinary(char ** cursor)
 	h_position = static_cast<CompText::HorizontalPosition>(App->json_seria->LoadIntBinary(cursor));
 	v_position = static_cast<CompText::VerticalPosition>(App->json_seria->LoadIntBinary(cursor));
 
+	can_draw = App->json_seria->LoadBooleanBinary(cursor);
+
 	color = App->json_seria->LoadFloat4Binary(cursor);
 
 	Enable();
