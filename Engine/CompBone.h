@@ -26,6 +26,11 @@ public:
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
 	void Link();
+	void SyncComponent(GameObject* sync_parent);
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
 	// -------------------------------------
 
 	void GenSkinningMatrix(const float4x4& parent_transform);

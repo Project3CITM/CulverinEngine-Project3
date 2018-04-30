@@ -8,6 +8,7 @@
 #include "ModuleFS.h"
 #include "ModuleResourceManager.h"
 #include "ModuleImporter.h"
+#include "JSONSerialization.h"
 #include "ImportMaterial.h"
 
 CompUIAnimation::CompUIAnimation(Comp_Type t, GameObject * parent):Component(t,parent)
@@ -197,6 +198,67 @@ void CompUIAnimation::Load(const JSON_Object * object, std::string name)
 	//...
 	Enable();
 }
+
+void CompUIAnimation::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);			//UID
+
+	buffer_size += sizeof(bool);		//OnExecution
+	buffer_size += sizeof(bool);		//Loop
+
+	buffer_size += sizeof(int);			//Animation name
+	if(animation_json != nullptr)
+	{
+		buffer_size += animation_json->name.length();
+	}
+	else
+	{
+		buffer_size += strlen("");
+	}
+}
+
+void CompUIAnimation::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+
+	App->json_seria->SaveBooleanBinary(cursor, on_execution);
+	App->json_seria->SaveBooleanBinary(cursor, loop);
+
+	if (animation_json != nullptr)
+	{
+		App->json_seria->SaveStringBinary(cursor, animation_json->name);
+	}
+	else
+	{
+		App->json_seria->SaveStringBinary(cursor, std::string(""));
+	}
+}
+
+void CompUIAnimation::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	
+	on_execution = App->json_seria->LoadBooleanBinary(cursor);
+	loop = App->json_seria->LoadBooleanBinary(cursor);
+
+	std::string animation_file = App->json_seria->LoadStringBinary(cursor);
+	
+	play = on_execution;
+
+	if (!animation_file.empty())
+	{
+		if (animation_json == nullptr)
+		{
+			animation_json = new AnimationJson();
+
+			LoadAnimation(&animation_json, App->fs->GetMainDirectory().c_str(), animation_file.c_str());
+		}
+	}
+	Enable();
+}
+
 bool CompUIAnimation::PlayAnimation(float dt)
 {
 	if (animation_json != nullptr)

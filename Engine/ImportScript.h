@@ -135,6 +135,10 @@ private:
 	static MonoString*	GetInput_ControllerKeyBindingName(MonoString* name, MonoString* input, int device, bool negative_key);
 	static void			SetInputActionToChange(MonoString* name, MonoString* input, int device, bool negative_key);
 
+	static bool GetChangeInputActive();
+
+	static int GetChangeInputState();
+
 	static void			RumblePlay(float intensity, int milliseconds);
 
 	/* Time */
@@ -238,6 +242,11 @@ private:
 	static void Activate(MonoObject* object, int uid);
 	static void Deactivate(MonoObject* object, int uid);
 	static void SetInteractivity(MonoObject* object, mono_bool enable);
+
+	static bool IsNormal(MonoObject * object);
+	static bool IsHighlighted(MonoObject * object);
+	static bool IsPressed(MonoObject * object);
+	static bool IsDisabled(MonoObject * object);
 
 	/*Component Interactive Button*/
 	static void Clicked(MonoObject * object);

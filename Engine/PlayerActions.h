@@ -52,6 +52,10 @@ public:
 	const char*	GetInput_ControllerKeyBindingName(const char* name, const char* input, int device, bool negative_key);
 
 	void SendNewDeviceCombinationType(DeviceCombinationType type);
+
+	bool GetChangeInputActive()const;
+	int GetChangeInputState()const;
+
 private:
 	DeviceCombinationType SelectDeviceCombination(const char* value);
 

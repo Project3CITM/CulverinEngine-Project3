@@ -1166,6 +1166,7 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 	if (parent == nullptr)
 	{
 		root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	return obj;
@@ -1546,6 +1547,7 @@ GameObject * Scene::CreateMainLight(GameObject * parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("MAIN CAMERA Created.");

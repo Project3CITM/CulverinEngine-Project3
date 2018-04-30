@@ -10,6 +10,7 @@
 #include "CompRectTransform.h"
 #include "CompCanvasRender.h"
 #include "ModuleFS.h"
+#include "JSONSerialization.h"
 #include "ResourceFont.h"
 #include "CompCanvas.h"
 
@@ -500,6 +501,86 @@ void CompText::Load(const JSON_Object * object, std::string name)
 	}
 	Enable();
 }
+
+void CompText::GetOwnBufferSize(uint & buffer_size)
+{
+	CompGraphic::GetOwnBufferSize(buffer_size);
+
+	buffer_size += sizeof(int);							//text_str
+	buffer_size += text_str.size();						//
+	buffer_size += sizeof(int);							//max_input
+	buffer_size += sizeof(int);							//text_size
+
+	if (text != nullptr)
+	{
+		buffer_size += sizeof(int);						//text->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//text->GetUUID() == 0
+	}
+
+	buffer_size += sizeof(int);							//(enum) h_position
+	buffer_size += sizeof(int);							//(enum) v_position
+	buffer_size += sizeof(bool);						//can_draw
+}
+
+void CompText::SaveBinary(char** cursor, int position) const
+{
+	CompGraphic::SaveBinary(cursor, position);
+
+	App->json_seria->SaveStringBinary(cursor, text_str);
+	App->json_seria->SaveIntBinary(cursor, max_input);
+	App->json_seria->SaveIntBinary(cursor, text_size);
+
+	if (text != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, text->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+
+	App->json_seria->SaveIntBinary(cursor, (int)h_position);
+	App->json_seria->SaveIntBinary(cursor, (int)v_position);
+	App->json_seria->SaveBooleanBinary(cursor, can_draw);
+}
+
+void CompText::LoadBinary(char ** cursor)
+{
+	CompGraphic::LoadBinary(cursor);
+
+	text_str = App->json_seria->LoadStringBinary(cursor);
+	max_input = App->json_seria->LoadIntBinary(cursor);
+	text_size = App->json_seria->LoadIntBinary(cursor);
+	ReSizeInput();
+	strcpy_s(input_text, max_input, text_str.c_str());
+
+	uint resourceID = App->json_seria->LoadIntBinary(cursor);
+	if (resourceID > 0)
+	{
+		text = (ResourceFont*)App->resource_manager->GetResource(resourceID);
+		if (text != nullptr)
+		{
+			text->num_game_objects_use_me++;
+
+			// LOAD Image ----------------------------
+			if (text->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iFont->LoadResource(std::to_string(text->GetUUID()).c_str(), text_size, text);
+			}
+		}
+	}
+
+	h_position = static_cast<CompText::HorizontalPosition>(App->json_seria->LoadIntBinary(cursor));
+	v_position = static_cast<CompText::VerticalPosition>(App->json_seria->LoadIntBinary(cursor));
+
+	color = App->json_seria->LoadFloat4Binary(cursor);
+
+	Enable();
+}
+
 void CompText::SyncComponent(GameObject* sync_parent)
 {
 

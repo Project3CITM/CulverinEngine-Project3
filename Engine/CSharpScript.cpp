@@ -229,6 +229,197 @@ void ScriptVariable::Load(const JSON_Object * object, const std::string& title, 
 	}
 }
 
+void ScriptVariable::GetOwnBufferSize(uint & buffer_size)
+{
+	const char* type_name = nullptr;
+
+	//SET VAR NAME --------------------
+	//json_object_dotset_string_with_std(object, title + "Name: ", name);
+	buffer_size += sizeof(int);
+	buffer_size += strlen(name);
+
+	//SAVE VAR TYPE -------------------
+	switch (type)
+	{
+	case Var_UNKNOWN:
+		type_name = "unknown";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		break;
+
+	case Var_INT:
+		type_name = "int";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		buffer_size += sizeof(int);				//*(int*)value
+		break;
+
+	case Var_FLOAT:
+		type_name = "float";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		buffer_size += sizeof(float);
+		break;
+
+	case Var_BOOL:
+		type_name = "bool";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		buffer_size += sizeof(bool);
+		break;
+
+	case Var_STRING:
+		type_name = "string";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+
+		//buffer_size += sizeof(int);
+		//buffer_size += str_value.size();
+		break;
+
+	case Var_CLASS:
+		type_name = "class";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		break;
+
+	case Var_GAMEOBJECT:
+		type_name = "GameObject";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		if (game_object != nullptr)
+		{
+			buffer_size += sizeof(int);
+			//json_object_dotset_number_with_std(object, title + "GameObject UUID: ", game_object->GetUUID());
+		}
+		else
+		{
+			//-1 Any GameObject is assigned
+			buffer_size += sizeof(int);
+			//json_object_dotset_number_with_std(object, title + "GameObject UUID: ", -1);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void ScriptVariable::Save(char ** cursor) const
+{
+	const char* type_name = nullptr;
+
+	//SET VAR NAME --------------------
+	//json_object_dotset_string_with_std(object, title + "Name: ", name);
+	App->json_seria->SaveStringBinary(cursor, name);
+
+	//SAVE VAR TYPE -------------------
+	switch (type)
+	{
+	case Var_UNKNOWN:
+		type_name = "unknown";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		break;
+
+	case Var_INT:
+		type_name = "int";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		App->json_seria->SaveIntBinary(cursor, *(int*)value);
+		break;
+
+	case Var_FLOAT:
+		type_name = "float";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		App->json_seria->SaveFloatBinary(cursor, *(float*)value);
+		break;
+
+	case Var_BOOL:
+		type_name = "bool";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		App->json_seria->SaveBooleanBinary(cursor, *(bool*)value);
+		break;
+
+	case Var_STRING:
+		type_name = "string";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		//App->json_seria->SaveStringBinary(cursor, str_value);
+		break;
+
+	case Var_CLASS:
+		type_name = "class";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		break;
+
+	case Var_GAMEOBJECT:
+		type_name = "GameObject";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		if (game_object != nullptr)
+		{
+			App->json_seria->SaveIntBinary(cursor, game_object->GetUUID());
+		}
+		else
+		{
+			//-1 Any GameObject is assigned
+			App->json_seria->SaveIntBinary(cursor, -1);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void ScriptVariable::Load(char ** cursor, std::vector<uint>& re_load_values)
+{
+	// Load values from inspector previously saved
+	switch (type)
+	{
+	case Var_UNKNOWN:
+	{
+		break;
+	}
+	case Var_INT:
+	{
+		int ival = App->json_seria->LoadIntBinary(cursor);
+		*(int*)value = ival;
+		SetMonoValue((int*)value);
+		break;
+	}
+	case Var_FLOAT:
+	{
+		float fval = App->json_seria->LoadFloatBinary(cursor);
+		*(float*)value = fval;
+		SetMonoValue((float*)value);
+		break;
+	}
+	case Var_BOOL:
+	{
+		bool bval = App->json_seria->LoadBooleanBinary(cursor);
+		*(bool*)value = bval;
+		SetMonoValue((bool*)value);
+		break;
+	}
+	case Var_STRING:
+	{
+		break;
+	}
+	case Var_CLASS:
+	{
+		break;
+	}
+	case Var_GAMEOBJECT:
+	{
+		uint obj_uid = App->json_seria->LoadIntBinary(cursor);
+		re_load_values.push_back(obj_uid);
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
+}
+
 //CSHARP SCRIPT FUNCTIONS ---------------
 CSharpScript::CSharpScript()
 {
@@ -1417,6 +1608,45 @@ void CSharpScript::Load(const JSON_Object* object, std::string name)
 			if (strcmp(variables[j]->name, name_variable_temp.c_str()) == 0)
 			{
 				variables[j]->Load(object, temp_var, re_load_values);
+			}
+		}
+	}
+}
+
+void CSharpScript::GetOwnBufferSize(uint &buffer_size)
+{
+	buffer_size += sizeof(int);			//variables.size()
+
+	for (int i = 0; i < variables.size(); i++)
+	{
+		variables[i]->GetOwnBufferSize(buffer_size);
+	}
+}
+
+void CSharpScript::Save(char** cursor) const
+{
+	App->json_seria->SaveIntBinary(cursor, variables.size());
+
+	for (int i = 0; i < variables.size(); i++)
+	{
+		variables[i]->Save(cursor);
+	}
+}
+
+void CSharpScript::Load(char** cursor)
+{
+	if (re_load_values.size() > 0)
+		re_load_values.clear();
+	//Once set the default values for the variables, update them to the inspector values saved previously
+	int num_variables = App->json_seria->LoadIntBinary(cursor);
+	for (int i = 0; i < num_variables; i++)
+	{
+		std::string name_variable_temp = App->json_seria->LoadStringBinary(cursor);
+		for (int j = 0; j < variables.size(); j++)
+		{
+			if (strcmp(variables[j]->name, name_variable_temp.c_str()) == 0)
+			{
+				variables[j]->Load(cursor, re_load_values);
 			}
 		}
 	}

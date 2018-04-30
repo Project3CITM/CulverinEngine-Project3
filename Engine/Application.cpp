@@ -267,24 +267,24 @@ void Application::FinishUpdate()
 {
 	BROFILER_CATEGORY("Application FinishUpdate", Profiler::Color::PaleVioletRed);
 	// SAVE & LOAD FUNCTIONS ------------------------
-	if (want_to_save == true)
+	if (want_to_save == true || want_to_save_binary == true)
 	{
 		if (App->mode_game == false)
 		{
-			actual_scene = json_seria->SaveScene();
+			if (want_to_save)
+			{
+				actual_scene = json_seria->SaveScene();
+			}
+			else if (want_to_save_binary)
+			{
+				/*actual_scene = */json_seria->SaveSceneBinary();
+			}
 		}
 		want_to_save = false;
-	}
-	if (want_to_save_binary == true)
-	{
-		if (App->mode_game == false)
-		{
-			//actual_scene = json_seria->SaveScene();
-		}
 		want_to_save_binary = false;
 	}
 
-	if (want_to_load == true)
+	if (want_to_load == true || want_to_load_binary == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		scene->octree.Clear(false);
@@ -301,7 +301,14 @@ void Application::FinishUpdate()
 		render_gui->selected = nullptr;
 		render_gui->ClearInteractiveVector();
 
-		json_seria->LoadScene(actual_scene.c_str());
+		if (want_to_load)
+		{
+			json_seria->LoadScene(actual_scene.c_str());
+		}
+		else if (want_to_load_binary)
+		{
+			json_seria->LoadSceneBinary("JoanTest");
+		}
 
 		if (load_in_game)
 		{
@@ -314,6 +321,7 @@ void Application::FinishUpdate()
 			change_to_game = true;
 		}
 		want_to_load = false;
+		want_to_load_binary = false;
 		load_in_game = false;
 	}
 
@@ -1030,9 +1038,16 @@ void Application::WantToSave(bool binary)
 	}
 }
 
-void Application::WantToLoad(bool in_game)
+void Application::WantToLoad(bool in_game, bool binary)
 {
-	want_to_load = true;
+	if (binary == false)
+	{
+		want_to_load = true;
+	}
+	else
+	{
+		want_to_load_binary = true;
+	}
 	load_in_game = in_game;
 }
 

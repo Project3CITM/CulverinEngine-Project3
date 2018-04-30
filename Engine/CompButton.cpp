@@ -200,11 +200,33 @@ void CompButton::Load(const JSON_Object * object, std::string name)
 
 	Enable();
 }
+
+void CompButton::GetOwnBufferSize(uint & buffer_size)
+{
+	CompInteractive::GetOwnBufferSize(buffer_size);
+	ClickAction::GetOwnBufferSize(buffer_size);
+}
+
+void CompButton::SaveBinary(char ** cursor, int position) const
+{
+	CompInteractive::SaveBinary(cursor, position);
+	ClickAction::SaveBinary(cursor);
+
+}
+
+void CompButton::LoadBinary(char ** cursor)
+{
+	CompInteractive::LoadBinary(cursor);
+	ClickAction::LoadBinary(cursor);
+	Enable();
+}
+
 void CompButton::SyncComponent(GameObject* sync_parent)
 {
 	CompInteractive::SyncComponent(sync_parent);
 	SyncScript();
 }
+
 void CompButton::SyncScript()
 {
 	SyncClickAction();

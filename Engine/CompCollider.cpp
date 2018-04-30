@@ -8,6 +8,7 @@
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
 #include "Scene.h"
+#include "JSONSerialization.h"
 #include "MathGeoLib.h"
 
 #include "jpPhysicsRigidBody.h"
@@ -382,6 +383,31 @@ void CompCollider::Load(const JSON_Object * object, std::string name)
 
 void CompCollider::SyncComponent(GameObject* sync_parent)
 {
+	// Load Components Without Parent --------------------
+	if (!transform)
+	{
+		transform = parent->GetComponentTransform();
+	}
+
+	if (!body)
+	{
+		rigid_body_comp = (CompRigidBody*)parent->FindComponentByType(Comp_Type::C_RIGIDBODY);
+		if (rigid_body_comp != nullptr)
+		{
+			rigid_body_comp->SetColliderComp(this);
+			body = rigid_body_comp->GetPhysicsBody();
+			if (!body)
+			{
+				body = App->physics->GetNewRigidBody(this);
+			}
+		}
+		else
+		{
+			body = App->physics->GetNewRigidBody(this);
+		}
+	}
+
+	// Sync Component ------------------------------------
 	local_quat = Quat::FromEulerXYZ(angle.x*DEGTORAD, angle.y*DEGTORAD, angle.z*DEGTORAD);
 
 	body->SetGeometry(size, rad, curr_type);
@@ -390,6 +416,7 @@ void CompCollider::SyncComponent(GameObject* sync_parent)
 	{
 		body->SetAsTrigger(trigger);
 	}
+
 	if (uid_script_asigned != 0)
 	{
 		std::vector<Component*> script_vec;
@@ -414,6 +441,82 @@ void CompCollider::SyncComponent(GameObject* sync_parent)
 	// Setup Filter Shader Masks
 	SetFilterFlags();
 
+}
+
+void CompCollider::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);				//UID
+
+	buffer_size += sizeof(int);				//Collider Type
+	buffer_size += sizeof(int);				//Current Type
+
+	buffer_size += sizeof(float);			//Local Position
+	buffer_size += sizeof(float);			//Local Position
+	buffer_size += sizeof(float);			//Local Position
+
+	buffer_size += sizeof(float);			//Local Angle
+	buffer_size += sizeof(float);			//Local Angle
+	buffer_size += sizeof(float);			//Local Angle
+
+	buffer_size += sizeof(float);			//Material
+	buffer_size += sizeof(float);			//Material
+	buffer_size += sizeof(float);			//Material
+
+	buffer_size += sizeof(float);			//Size
+	buffer_size += sizeof(float);			//Size
+	buffer_size += sizeof(float);			//Size
+
+	buffer_size += sizeof(float);			//Rad
+
+	buffer_size += sizeof(bool);			//Trigger
+
+	buffer_size += sizeof(int);				//Collision Flags
+	buffer_size += sizeof(int);				//UID Script Listener
+
+	buffer_size += sizeof(int);				//Script name
+	buffer_size += script_name.length();
+}
+
+void CompCollider::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+	App->json_seria->SaveIntBinary(cursor, collider_type);
+	App->json_seria->SaveIntBinary(cursor, curr_type);
+
+	App->json_seria->SaveFloat3Binary(cursor, this->position);
+	App->json_seria->SaveFloat3Binary(cursor, angle);
+	App->json_seria->SaveFloat3Binary(cursor, material);
+	App->json_seria->SaveFloat3Binary(cursor, size);
+
+	App->json_seria->SaveFloatBinary(cursor, rad);
+
+	App->json_seria->SaveBooleanBinary(cursor, trigger);
+
+	App->json_seria->SaveIntBinary(cursor, collision_flags);
+	App->json_seria->SaveIntBinary(cursor, uid_script_asigned);
+
+	App->json_seria->SaveStringBinary(cursor, script_name);
+}
+
+void CompCollider::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	collider_type = (JP_COLLIDER_TYPE)App->json_seria->LoadIntBinary(cursor);
+	curr_type = (JP_COLLIDER_TYPE)App->json_seria->LoadIntBinary(cursor);
+		
+	position = App->json_seria->LoadFloat3Binary(cursor);
+	angle = App->json_seria->LoadFloat3Binary(cursor);
+	material = App->json_seria->LoadFloat3Binary(cursor);
+	size = App->json_seria->LoadFloat3Binary(cursor);
+	rad	= App->json_seria->LoadFloatBinary(cursor);
+	trigger	= App->json_seria->LoadBooleanBinary(cursor);
+	collision_flags = App->json_seria->LoadIntBinary(cursor);
+	uid_script_asigned = App->json_seria->LoadIntBinary(cursor);
+	script_name	= App->json_seria->LoadStringBinary(cursor);
+
+	Enable();
 }
 
 // -----------------------------------------------------------------

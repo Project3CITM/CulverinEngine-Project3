@@ -80,6 +80,7 @@ void CSharpScript::Clicked(MonoObject * object)
 	}
 }
 
+
 void CSharpScript::SetInteractivity(MonoObject * object, mono_bool enable)
 {
 	if (object != nullptr)
@@ -88,6 +89,52 @@ void CSharpScript::SetInteractivity(MonoObject * object, mono_bool enable)
 		if (item != nullptr)
 		{
 			item->SetInteractivity(enable);
+		}
+	}
+}
+bool CSharpScript::IsNormal(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompInteractive* item = (CompInteractive*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			return item->IsStateNormal();
+		}
+	}
+}
+bool CSharpScript::IsHighlighted(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompInteractive* item = (CompInteractive*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			return item->IsStateHighlighted();
+		}
+	}
+}
+
+bool CSharpScript::IsPressed(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompInteractive* item = (CompInteractive*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			return item->IsStatePressed();
+		}
+	}
+}
+
+bool CSharpScript::IsDisabled(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompInteractive* item = (CompInteractive*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			return item->IsStateDisabled();
 		}
 	}
 }

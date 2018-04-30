@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
+#include "JSONSerialization.h"
 
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
@@ -171,6 +172,33 @@ void CompCanvas::Load(const JSON_Object* object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	default_ui_shader=App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert,nullptr,true);
 	current_canvas_alpha = json_object_dotget_number_with_std(object, name + "Canvas Alpha");
+	canvas_alpha = current_canvas_alpha;
+	default_ui_shader = App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert, nullptr, true);
+
+	//...
+	Enable();
+}
+
+void CompCanvas::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);				//UID
+	buffer_size += sizeof(float);			//current_canvas_alpha
+}
+
+void CompCanvas::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+	App->json_seria->SaveFloatBinary(cursor, current_canvas_alpha);
+
+}
+
+void CompCanvas::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	default_ui_shader = App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert, nullptr, true);
+	current_canvas_alpha = App->json_seria->LoadFloatBinary(cursor);
 	canvas_alpha = current_canvas_alpha;
 	default_ui_shader = App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert, nullptr, true);
 

@@ -15,6 +15,7 @@
 #include"ModuleFS.h"
 #include "ModuleLightning.h"
 #include "ResourceMesh.h"
+#include "JSONSerialization.h"
 
 CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
@@ -259,7 +260,7 @@ void CompLight::ShowInspectorInfo()
 
 void CompLight::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
-
+	json_object_dotset_number_with_std(object, name + "UUID", GetUUID());
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	App->fs->json_array_dotset_float4(object, name + "Color", color);
@@ -277,7 +278,6 @@ void CompLight::Save(JSON_Object * object, std::string name, bool saveScene, uin
 
 void CompLight::Load(const JSON_Object * object, std::string name)
 {
-
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	ui_light_type =json_object_dotget_number_with_std(object, name + "Light Type");
 	type = (Light_type)ui_light_type;
@@ -287,12 +287,61 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	properties[1] = json_object_dotget_number_with_std(object, name + "Constant");
 	properties[2] = json_object_dotget_number_with_std(object, name + "Linear");
 	properties[3] = json_object_dotget_number_with_std(object, name + "Quadratic");
-	color=App->fs->json_array_dotget_float4_string(object, name + "Color");
+	color = App->fs->json_array_dotget_float4_string(object, name + "Color");
 	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
 
-	// bounding box size
-	if(radius == 100)
-		radius = 50;
+	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
+}
+
+void CompLight::GetOwnBufferSize(uint& buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);				//UID
+	buffer_size += sizeof(float);			//color.x
+	buffer_size += sizeof(float);			//color.y
+	buffer_size += sizeof(float);			//color.z
+	buffer_size += sizeof(float);			//color.w
+
+
+	buffer_size += sizeof(int);				//(int)type
+	buffer_size += sizeof(float);			//properties[0]
+	buffer_size += sizeof(float);			//ambientCoefficient
+	buffer_size += sizeof(float);			//radius
+	buffer_size += sizeof(float);			//properties[1]
+	buffer_size += sizeof(float);			//properties[2]
+	buffer_size += sizeof(float);			//properties[3]
+}
+
+void CompLight::SaveBinary(char** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, GetUUID());
+	App->json_seria->SaveFloat4Binary(cursor, color);
+
+	App->json_seria->SaveIntBinary(cursor, (int)type);
+
+	App->json_seria->SaveFloatBinary(cursor, properties[0]);
+	App->json_seria->SaveFloatBinary(cursor, ambientCoefficient);
+	App->json_seria->SaveFloatBinary(cursor, radius);
+	App->json_seria->SaveFloatBinary(cursor, properties[1]);
+	App->json_seria->SaveFloatBinary(cursor, properties[2]);
+	App->json_seria->SaveFloatBinary(cursor, properties[3]);
+}
+
+void CompLight::LoadBinary(char** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	color = App->json_seria->LoadFloat4Binary(cursor);
+	ui_light_type = App->json_seria->LoadIntBinary(cursor);
+	type = (Light_type)ui_light_type;
+
+	properties[0] = App->json_seria->LoadFloatBinary(cursor);
+	ambientCoefficient = App->json_seria->LoadFloatBinary(cursor);
+	radius = App->json_seria->LoadFloatBinary(cursor);
+	properties[1] = App->json_seria->LoadFloatBinary(cursor);
+	properties[2] = App->json_seria->LoadFloatBinary(cursor);
+	properties[3] = App->json_seria->LoadFloatBinary(cursor);
+
 	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 }
 

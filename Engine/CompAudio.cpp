@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "Scene.h"
 #include "ModuleInput.h"
+#include "JSONSerialization.h"
 
 #include "CompTransform.h"
 #include "ModuleAudio.h"
@@ -240,6 +241,28 @@ void CompAudio::Load(const JSON_Object * object, std::string name)
 
 	//...
 	Enable();
+}
+
+void CompAudio::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);					//UID
+	buffer_size += sizeof(int);					//audio_type
+}
+
+void CompAudio::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, GetUUID());
+	App->json_seria->SaveIntBinary(cursor, (int)audio_type);
+}
+
+void CompAudio::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	audio_type = (AUDIO_TYPE)App->json_seria->LoadIntBinary(cursor);
+	if (audio_type == LISTENER)
+		App->audio->SetListener(this);
 }
 
 uint CompAudio::GetEmitterID() const

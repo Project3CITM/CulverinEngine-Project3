@@ -4,7 +4,9 @@
 #include "CompCanvasRender.h"
 #include "CompCanvas.h"
 #include "CompRectTransform.h"
+#include "JSONSerialization.h"
 #include "ModuleFS.h"
+
 CompGraphic::CompGraphic(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
@@ -27,8 +29,6 @@ void CompGraphic::Clear()
 	my_canvas = nullptr;
 	my_canvas_render = nullptr;
 	transform = nullptr;
-
-	
 }
 
 void CompGraphic::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
@@ -41,16 +41,45 @@ void CompGraphic::Save(JSON_Object * object, std::string name, bool saveScene, u
 	json_object_dotset_boolean_with_std(object, name + "Invalid", invalid);
 	json_object_dotset_boolean_with_std(object, name + "Can draw", can_draw);
 	json_object_dotset_boolean_with_std(object, name + "RayCast Target", raycast_target);
-
 }
 
 void CompGraphic::Load(const JSON_Object * object, std::string name)
 {
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	raycast_target = json_object_dotget_boolean_with_std(object, name + "RayCast Target");
-
+	invalid = json_object_dotget_boolean_with_std(object, name + "Invalid");
 	can_draw = json_object_dotget_boolean_with_std(object, name + "Can Draw");
+}
 
+void CompGraphic::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);					// UID
+
+	buffer_size += sizeof(bool);					// invalid
+	buffer_size += sizeof(bool);					// can_draw
+	buffer_size += sizeof(bool);					// raycast_target
+}
+
+void CompGraphic::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+
+	App->json_seria->SaveIntBinary(cursor, uid);
+
+	App->json_seria->SaveBooleanBinary(cursor, invalid);
+	App->json_seria->SaveBooleanBinary(cursor, can_draw);
+	App->json_seria->SaveBooleanBinary(cursor, raycast_target);
+
+}
+
+void CompGraphic::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+
+	invalid = App->json_seria->LoadBooleanBinary(cursor);
+	can_draw = App->json_seria->LoadBooleanBinary(cursor);
+	raycast_target = App->json_seria->LoadBooleanBinary(cursor);
 }
 
 void CompGraphic::AddCanvas()
