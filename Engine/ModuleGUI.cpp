@@ -356,6 +356,10 @@ update_status ModuleGUI::Update(float dt)
 			{
 				window_create_animation = !window_create_animation;
 			}
+			if (ImGui::MenuItem("Test_renderer"))
+			{
+				window_Test_renderer = !window_Test_renderer;
+			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Resources"))
 			{

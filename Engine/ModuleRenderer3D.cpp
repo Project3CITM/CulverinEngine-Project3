@@ -18,6 +18,7 @@
 #include "Materials.h"
 #include "ModuleTextures.h"
 #include "ModuleLightning.h"
+#include "ModuleGUI.h"
 
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
@@ -318,13 +319,20 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	App->scene->final_buff->UnBind("Scene");
 
 
-	
-	ImGui::Begin("Test");
-	ImGui::Image((ImTextureID*)App->module_lightning->test_fix.depthTex, ImVec2(256, 256));
-	ImGui::SliderFloat("Strength", &blur_strength, 0.0f, 50.0f);
-	ImGui::SliderInt("Amount", &blur_amount, 0.0f, 30.0f);
-	ImGui::SliderFloat("Scale", &blur_scale, 0.0f, 50.0f);
-	ImGui::End();
+	if (App->mode_game == false)
+	{
+		if (App->gui->window_Test_renderer)
+		{
+			if (ImGui::Begin("Test", &App->gui->window_Test_renderer))
+			{
+				ImGui::Image((ImTextureID*)App->module_lightning->test_fix.depthTex, ImVec2(256, 256));
+				ImGui::SliderFloat("Strength", &blur_strength, 0.0f, 50.0f);
+				ImGui::SliderInt("Amount", &blur_amount, 0.0f, 30.0f);
+				ImGui::SliderFloat("Scale", &blur_scale, 0.0f, 50.0f);
+			}
+			ImGui::End();
+		}
+	}
 
 
 
