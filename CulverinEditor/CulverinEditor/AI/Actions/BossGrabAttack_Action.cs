@@ -33,19 +33,36 @@ public class BossGrabAttack_Action : Action
     public float second_hit_point = 0.7f;
     public float third_hit_point = 0.9f;
     public float attack_duration = 5.0f;
-
+    CharactersManager player = null;
 
     public override bool ActionStart()
     {
         state = BGA_STATE.PRE_APPLY;
-        GetComponent<CompAnimation>().SetTransition("ToAttack");
-        GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
-        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
+        player = GetLinkedObject("target").GetComponent<CharactersManager>();
+
+        if (player == null)
+        {
+            Debug.Log("[error] Attack Action Start: Player is null!");
+        }
+
+        if (player.dying == false)
+        {
+            GetComponent<CompAnimation>().SetTransition("ToAttack");
+            GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
+            GetComponent<CompAudio>().PlayEvent("AttackPreparation");
+        }
+
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if (player.dying)
+        {
+            Debug.Log("DON'T ATTACK PLAYER", Department.PLAYER, Color.ORANGE);
+            return ACTION_RESULT.AR_FAIL; //Player is dead, don't attack
+        }
+
         if (state == BGA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(grab_point))
         {
             state = BGA_STATE.GRAB_FAILING;

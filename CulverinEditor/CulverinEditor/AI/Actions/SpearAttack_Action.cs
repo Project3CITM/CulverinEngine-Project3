@@ -35,16 +35,26 @@ public class SpearAttack_Action : Action
     public override bool ActionStart()
     {
         state = SWA_STATE.PRE_APPLY;
-        anim_comp = GetComponent<CompAnimation>();
-        anim_comp.SetClipDuration("Attack", attack_duration);
-        anim_comp.PlayAnimationNode("Attack");
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
+        if (player.dying == false)
+        {
+            anim_comp = GetComponent<CompAnimation>();
+            anim_comp.SetClipDuration("Attack", attack_duration);
+            anim_comp.PlayAnimationNode("Attack");
+            GetComponent<CompAudio>().PlayEvent("Enemy2_Slash");
+        }
         //Interrupt player action
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if (player.dying)
+        {
+            Debug.Log("DON'T ATTACK PLAYER", Department.PLAYER, Color.YELLOW);
+            return ACTION_RESULT.AR_FAIL; //Player is dead, don't attack
+        }
+
         if (melee_attack)
         {
             if (interupt == true)
@@ -56,9 +66,10 @@ public class SpearAttack_Action : Action
             if (state == SWA_STATE.PRE_APPLY && anim_comp.IsAnimOverXTime(apply_damage_point))
             {
                 state = SWA_STATE.POST_APPLY;
-                player.GetDamage(damage);
-                //Apply damage to the target
-                //Play audio fx
+                if (player.GetDamage(damage) == true) 
+                {
+                    GetComponent<CompAudio>().PlayEvent("SwordHit");
+                }
             }
             else if (state == SWA_STATE.POST_APPLY && anim_comp.IsAnimationStopped("Attack"))
             {
@@ -78,9 +89,10 @@ public class SpearAttack_Action : Action
             if (state == SWA_STATE.PRE_APPLY && anim_comp.IsAnimOverXTime(apply_damage_point))
             {
                 state = SWA_STATE.POST_APPLY;
-                player.GetDamage(damage);
-                //Apply damage to the target
-                //Play audio fx
+                if (player.GetDamage(damage) == true)
+                {
+                    GetComponent<CompAudio>().PlayEvent("SwordHit");
+                }
             }
             else if (state == SWA_STATE.POST_APPLY && anim_comp.IsAnimationStopped("Attack"))
             {
