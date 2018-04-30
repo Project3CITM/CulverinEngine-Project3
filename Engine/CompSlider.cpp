@@ -100,6 +100,10 @@ void CompSlider::ShowInspectorInfo()
 	{
 		SetNewPositions();
 	}
+	if (ImGui::DragFloat("##Drag Speed", &speed, 0.01f, 0.0f, 1.0f))
+	{
+		//Space for normalize if using number higher that 0 to 1
+	}
 
 	int selected_opt = current_transition_mode;
 	ImGui::Text("Transition"); ImGui::SameLine((ImGui::GetWindowWidth() / 4) + 30);
@@ -156,6 +160,7 @@ void CompSlider::Save(JSON_Object * object, std::string name, bool saveScene, ui
 	json_object_dotset_number_with_std(object, name + "Slide BG UUID", SaveSliderCompUID(slide_bg));
 	json_object_dotset_number_with_std(object, name + "Slide Bar UUID", SaveSliderCompUID(slide_bar));
 	json_object_dotset_number_with_std(object, name + "Slide Fill", fill);
+	json_object_dotset_number_with_std(object, name + "Slide Speed", speed);
 
 }
 
@@ -170,8 +175,8 @@ void CompSlider::Load(const JSON_Object * object, std::string name)
 
 	uuid_reimported_slide_bg = json_object_dotget_number_with_std(object, name + "Slide BG UUID");
 	uuid_reimported_slide_bar = json_object_dotget_number_with_std(object, name + "Slide Bar UUID");
-	fill=json_object_dotget_number_with_std(object, name + "Slide Fill");
-
+	fill = json_object_dotget_number_with_std(object, name + "Slide Fill");
+	speed = json_object_dotget_number_with_std(object, name + "Slide Speed");
 	Enable();
 }
 void CompSlider::SyncComponent(GameObject* sync_parent)
@@ -181,6 +186,8 @@ void CompSlider::SyncComponent(GameObject* sync_parent)
 }
 void CompSlider::SyncSliderComponents(GameObject* sync_parent)
 {
+	//checkbox para el compimage tick (+ save)
+
 	if (sync_parent == nullptr)
 		return;
 
@@ -193,10 +200,12 @@ void CompSlider::SyncSliderComponents(GameObject* sync_parent)
 
 			SetSliderBar((CompImage*)sync_parent->GetComponentsByUID(uuid_reimported_slide_bar,true));
 		}
-		if (target_graphic != nullptr)
-			target_graphic->SyncComponent(nullptr);
+		if (slide_bg != nullptr)
+			slide_bg->SyncComponent(nullptr);
 		if (slide_bar != nullptr)
 			slide_bar->SyncComponent(nullptr);
+		if (target_graphic != nullptr)
+			target_graphic->SyncComponent(nullptr);
 
 	SyncBar();
 	SetNewPositions();

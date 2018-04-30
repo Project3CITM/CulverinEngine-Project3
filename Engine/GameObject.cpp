@@ -895,6 +895,12 @@ void GameObject::ShowGameObjectOptions()
 					parent = App->scene->CreateCanvas(this);
 				}
 				GameObject* check_box = App->scene->CreateCheckBox(parent);
+				GameObject* tick_obj = App->scene->CreateImage(check_box);
+
+				CompCheckBox* check = (CompCheckBox*)check_box->FindComponentByType(Comp_Type::C_CHECK_BOX);
+
+				check->SetTick((CompImage*)tick_obj->FindComponentByType(Comp_Type::C_IMAGE));
+
 				App->gui->SetLinkInspector(check_box);
 
 			}
