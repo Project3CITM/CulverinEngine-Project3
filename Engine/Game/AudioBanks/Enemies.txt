@@ -25,7 +25,7 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	347745547	E3_Dead_2	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Dead_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy3_Dead\E3_Dead_2		67124
 	402319163	Enemy_Flesh_Cut	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Misc_Combat\sword_hit_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy_Flesh_Cut		35344
 	416970658	E1_Dead_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy1_Dead\E1_Dead_1		118430
-	433992945	Enemy_SwordDrop	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SwordDrop_450D5DAB.wem		\Actor-Mixer Hierarchy\Enemies\Enemy_SwordDrop		201532
+	433992945	Enemy_SwordDrop	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SwordDrop_F4B794D3.wem		\Actor-Mixer Hierarchy\Enemies\Enemy_SwordDrop		201532
 	456359166	E1_Hurt_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Hurt_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy1_Hurt\E1_Hurt_1		110384
 	460932244	Enemy_ShortSwordSlash	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_ShortSwordSlash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy_ShortSwordSlash		74124
 	525252151	E3_Dead_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy3_Dead\E3_Dead_1		95472

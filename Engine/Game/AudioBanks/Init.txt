@@ -1,6 +1,7 @@
 State Group	ID	Name			Wwise Object Path	Notes
 	1021618141	MusicState			\Default Work Unit\MusicState	
 	1981396969	PuzzleCountDownState			\Default Work Unit\PuzzleCountDownState	
+	3285234865	PlayerState			\Default Work Unit\PlayerState	
 
 State	ID	Name	State Group			Notes
 	0	None	MusicState			
@@ -11,6 +12,9 @@ State	ID	Name	State Group			Notes
 	1208172673	State1	PuzzleCountDownState			
 	1208172674	State2	PuzzleCountDownState			
 	1208172675	State3	PuzzleCountDownState			
+	0	None	PlayerState			
+	513390134	Bad	PlayerState			
+	1572484541	Well	PlayerState			
 
 Game Parameter	ID	Name			Wwise Object Path	Notes
 	504532776	Brick			\Factory Reflect Acoustic Textures\Textures\Brick	

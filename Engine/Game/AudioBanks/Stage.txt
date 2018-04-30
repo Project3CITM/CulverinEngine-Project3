@@ -6,14 +6,12 @@ Event	ID	Name			Wwise Object Path	Notes
 	1242499422	SwitchOn			\Stage\Puzzle\SwitchOn	
 	1287847765	MetalClash			\Stage\MetalClash	
 	1503597272	StartPuzzleCountdown			\Stage\Puzzle\StartPuzzleCountdown	
-	1566564139	SwordHit			\Stage\SwordHit	
 	2385628198	Footsteps			\Stage\Footsteps	
 	2469070767	DoorLoop			\Stage\Puzzle\DoorLoop	
 	2503704488	BarrelSinking			\Stage\Puzzle\BarrelSinking	
 	2666752652	DoorEnd			\Stage\Puzzle\DoorEnd	
 	2782712987	Lever			\Stage\Puzzle\Lever	
 	3035439363	PlayTorch			\Stage\PlayTorch	
-	3113731383	SwordSlash			\Stage\SwordSlash	
 	3627978879	RopeCut			\Stage\Puzzle\RopeCut	
 	3953897988	SwitchOff			\Stage\Puzzle\SwitchOff	
 
@@ -25,12 +23,10 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	252929518	footstep_stone_01	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\footstep_stone_DADC38C1.wem		\Actor-Mixer Hierarchy\Stage\FootSepts_Stone\footstep_stone_01		32328
 	304204776	Switch_Disable	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Switch_Disable_5B7EDBFC.wem		\Actor-Mixer Hierarchy\Stage\Switch_Disable		54116
 	337181357	footstep_stone_03	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\footstep_stone_1C39B089.wem		\Actor-Mixer Hierarchy\Stage\FootSepts_Stone\footstep_stone_03		32756
-	402319163	Flesh_Cut	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Misc_Combat\sword_hit_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player\Flesh_Cut		35344
 	448295503	Combat_theme	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Combat_theme_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\AmbientMusic\Combat\Combat_theme\Combat_theme		6401064
 	471313250	Timer60bpm	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\Timer60bpm_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\PuzzleClock\State1\Puzzle_State1\Timer60bpm		707984
 	473597307	Rains_of_Castemere_Little	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Rains_of_Castemere_Little_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\AmbientMusic\Level2\Rains_of_Castemere_Little\Rains_of_Castemere_Little		12058432
 	502356219	Metal_Clash	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Misc_Combat\metal_clash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player\Metal_Clash		128684
-	530850552	sword_slash	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Misc_Combat\sword_slash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Player\SwordSlash\sword_slash		73360
 	583166116	Door_open_close_end	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Door_open_close_end_69A33F19.wem		\Actor-Mixer Hierarchy\Stage\Door_open_close_end		117612
 	688257092	Switch_Enable	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Switch_Enable_CFF5081A.wem		\Actor-Mixer Hierarchy\Stage\Switch_Enable		62816
 	823093066	Door_open_close_loop	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Door_open_close_loop_1C9C67B2.wem		\Actor-Mixer Hierarchy\Stage\DoorLoop\Door_open_close_loop		787792
@@ -39,7 +35,7 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	848720781	Timer240bpm	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\Timer240bpm_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\PuzzleClock\State3\Puzzle_State3\Timer240bpm		177044
 	948585701	Chain1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\Chain1_249601E6.wem		\Actor-Mixer Hierarchy\Default Work Unit\BarrelPuzzle\Chain\Chain1		82076
 	961807994	Timer120bpm	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\Timer120bpm_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\PuzzleClock\State2\Puzzle_State2\Timer120bpm		354024
-	991530287	AmbientNoise	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\Ambience_F17FB28C.wem		\Actor-Mixer Hierarchy\Stage\AmbientNoise		2735188
+	991530287	AmbientNoise	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\Ambience_F17FB28C.wem		\Actor-Mixer Hierarchy\Stage\AmbientNoise		1256512
 	1017291416	BubbleLong	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\BubbleLong_CE6DE23F.wem		\Actor-Mixer Hierarchy\Default Work Unit\BarrelPuzzle\BarrelsSinking\BubbleLong		353500
 	1022376451	footstep_stone_02	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\footstep_stone_706EA8A9.wem		\Actor-Mixer Hierarchy\Stage\FootSepts_Stone\footstep_stone_02		33580
 
