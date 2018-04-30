@@ -5,6 +5,8 @@ public class Stun_Action : Action
 {
     public float stun_duration = 1.0f;
 
+    CompAnimation anim_comp;
+
     void Start()
     {
     }
@@ -20,8 +22,9 @@ public class Stun_Action : Action
         GetComponent<Arrive_Steering>().SetEnabled(false);
         GetComponent<Seek_Steering>().SetEnabled(false);
         //GetComponent<CompAnimation>().SetTransition("ToStun");
-        GetComponent<CompAnimation>().SetClipDuration("Stun", stun_duration);
-        GetComponent<CompAnimation>().PlayAnimationNode("Stun");
+        anim_comp = GetComponent<CompAnimation>();
+        anim_comp.SetClipDuration("Stun", stun_duration);
+        anim_comp.PlayAnimationNode("Stun");
         return true;
     }
 
@@ -29,13 +32,13 @@ public class Stun_Action : Action
     {
         if (interupt == true)
         {
-            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            anim_comp.SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_FAIL;
         }
 
-        if (GetComponent<CompAnimation>().IsAnimationStopped("Stun"))
+        if (anim_comp.IsAnimationStopped("Stun"))
         {
-            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            anim_comp.SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_SUCCESS;
         }
 

@@ -12,6 +12,9 @@ public class ChasePlayer_Action : Action
     public GameObject player;
     float timer = 0.0f;
     private bool blocking = false;
+    Enemy_BT bt;
+    PerceptionSightEnemy percep_sight;
+    CompAnimation comp_anim;
 
     void Start()
     {
@@ -29,11 +32,15 @@ public class ChasePlayer_Action : Action
     {
         event_to_react.start_counting = false;
 
-        Enemy_BT bt = GetComponent<EnemySword_BT>();
+        bt = GetComponent<EnemySword_BT>();
         if (bt == null)
             bt = GetComponent<EnemyShield_BT>();
         if (bt == null)
             bt = GetComponent<EnemySpear_BT>();
+
+        percep_sight = GetComponent<PerceptionSightEnemy>();
+
+        comp_anim = GetComponent<CompAnimation>();
 
         move.GoToPlayer((uint)bt.range);
         interupt = false;
@@ -51,7 +58,7 @@ public class ChasePlayer_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true )
+        if (forgot_event == true || move.NextToPlayer() == true || interupt == true )
             move.Interupt();
 
         if (forgot_event == false)
@@ -62,23 +69,17 @@ public class ChasePlayer_Action : Action
             {
                 if (player.GetComponent<CharactersManager>().GetCurrentCharacterName() == "Jaime")
                 {
-                    GetComponent<CompAnimation>().PlayAnimationNode("Chase");
+                    comp_anim.PlayAnimationNode("Chase");
                     SetBlocking(false);
-                    GetComponent<Movement_Action>().SetBlocking(false);
+                    move.SetBlocking(false);
                 }
                 else
                 {
                     SetBlocking(true);
-                    GetComponent<Movement_Action>().SetBlocking(true);
+                    move.SetBlocking(true);
                 }
 
                 timer = 0.0f;
-
-                Enemy_BT bt = GetComponent<EnemySword_BT>();
-                if (bt == null)
-                    bt = GetComponent<EnemyShield_BT>();
-                if (bt == null)
-                    bt = GetComponent<EnemySpear_BT>();
 
                 if(bt == GetComponent<EnemySpear_BT>())
                 {
@@ -91,7 +92,7 @@ public class ChasePlayer_Action : Action
 
             }
 
-            if (GetComponent<PerceptionSightEnemy>().player_seen == false)
+            if (percep_sight.player_seen == false)
                 event_to_react.start_counting = true;
             else
                 event_to_react.start_counting = false;

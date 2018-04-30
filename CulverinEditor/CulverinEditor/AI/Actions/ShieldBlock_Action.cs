@@ -23,7 +23,7 @@ class ShieldBlock_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().PlayAnimationNode("BlockIdle");
+        animator.PlayAnimationNode("BlockIdle");
         blocking = true;
         current_time = 0.0f;
         return true;

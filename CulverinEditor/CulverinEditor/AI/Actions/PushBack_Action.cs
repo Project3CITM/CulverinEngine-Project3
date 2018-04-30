@@ -14,6 +14,9 @@ public class PushBack_Action : Action
 
     float push_timer = 0.0f;
 
+    Movement_Action move;
+    Arrive_Steering arrive_comp;
+    CompAnimation anim_comp;
     void Start()
     {
         target_x = 0;
@@ -39,118 +42,25 @@ public class PushBack_Action : Action
     public override bool ActionStart()
     {
         Debug.Log("PUSH ANIMATION", Department.PHYSICS, Color.ORANGE);
+        arrive_comp = GetComponent<Arrive_Steering>();
         GetComponent<Align_Steering>().SetEnabled(false);
         Movement_Action.Direction dir = GetComponent<Movement_Action>().GetDirection();
 
+        move = GetComponent<Movement_Action>();
+        anim_comp = GetComponent<CompAnimation>();
+
         GetComponent<PerceptionSightEnemy>().GetPlayerTilePos(out int player_x, out int player_y);
-        int tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
-        int tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+        int tile_x = move.GetCurrentTileX();
+        int tile_y = move.GetCurrentTileY();
 
         int dif_x = player_x - tile_x;
         int dif_y = player_y - tile_y;
 
         animation_clip_push = "Push";
-        GetComponent<CompAnimation>().PlayAnimationNode("Push");
+        anim_comp.PlayAnimationNode("Push");
 
-        //switch (dir)
-        //{
-        //    case Movement_Action.Direction.DIR_EAST:
-        //        if (dif_x < 0)
-        //        {
-        //            animation_clip_push = "HitBack";
-        //            GetComponent<CompAnimation>().PlayAnimationNode("Push");
-        //        }
-        //        else if (dif_x > 0)
-        //        {
-        //            animation_clip_push = "HitFront";
-        //            GetComponent<CompAnimation>().SetTransition("Push");
-        //        }
-        //        else if (dif_y < 0)
-        //        {
-        //            animation_clip_push = "HitLeft";
-        //            GetComponent<CompAnimation>().SetTransition("Push");
-        //        }
-        //        else if (dif_y > 0)
-        //        {
-        //            animation_clip_push = "HitRight";
-        //            GetComponent<CompAnimation>().SetTransition("Push");
-        //        }
-        //        break;
-
-        //    case Movement_Action.Direction.DIR_NORTH:
-        //        if (dif_x < 0)
-        //        {
-        //            animation_clip_push = "HitLeft";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitLeft");
-        //        }
-        //        else if (dif_x > 0)
-        //        {
-        //            animation_clip_push = "HitRight";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitRight");
-        //        }
-        //        else if (dif_y < 0)
-        //        {
-        //            animation_clip_push = "HitFront";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitFront");
-        //        }
-        //        else if (dif_y > 0)
-        //        {
-        //            animation_clip_push = "HitBack";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitBack");
-        //        }
-        //        break;
-
-        //    case Movement_Action.Direction.DIR_SOUTH:
-        //        if (dif_x < 0)
-        //        {
-        //            animation_clip_push = "HitRight";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitRight");
-        //        }
-        //        else if (dif_x > 0)
-        //        {
-        //            animation_clip_push = "HitLeft";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitLeft");
-        //        }
-        //        else if (dif_y < 0)
-        //        {
-        //            animation_clip_push = "HitBack";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitBack");
-
-        //        }
-        //        else if (dif_y > 0)
-        //        {
-        //            animation_clip_push = "HitFront";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitFront");
-        //        }
-        //        break;
-
-        //    case Movement_Action.Direction.DIR_WEST:
-        //        if (dif_x < 0)
-        //        {
-        //            animation_clip_push = "HitFront";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitFront");
-        //        }
-        //        else if (dif_x > 0)
-        //        {
-        //            animation_clip_push = "HitBack";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitBack");
-        //        }
-        //        else if (dif_y < 0)
-        //        {
-        //            animation_clip_push = "HitRight";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitRight");
-        //        }
-        //        else if (dif_y > 0)
-        //        {
-        //            animation_clip_push = "HitLeft";
-        //            GetComponent<CompAnimation>().SetTransition("ToHitLeft");
-        //        }
-        //        break;
-        //}
-        //GetComponent<CompAnimation>().SetClipDuration(animation_clip_push, push_time);
-
-        target_x = GetComponent<Movement_Action>().GetCurrentTileX();
-        target_y = GetComponent<Movement_Action>().GetCurrentTileY();
+        target_x = move.GetCurrentTileX();
+        target_y = move.GetCurrentTileY();
 
         target_x += (int)push_direction.x;
         target_y += (int)push_direction.z;
@@ -162,7 +72,6 @@ public class PushBack_Action : Action
     {
         if (interupt == true)
         {
-            Debug.Log("INTERRUMPIOOO!", Department.PHYSICS, Color.YELLOW);
             return ACTION_RESULT.AR_FAIL;
         }
 
@@ -170,16 +79,16 @@ public class PushBack_Action : Action
 
         Vector3 movement = new Vector3(Vector3.Zero);
 
-        if (GetComponent<CompAnimation>().IsAnimationStopped(animation_clip_push))
+        if (anim_comp.IsAnimationStopped(animation_clip_push))
         {
-            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            anim_comp.SetTransition("ToIdleAttack");
             Debug.Log("Tile Destiny x: " + target_x + "y:" + target_y, Department.IA, Color.YELLOW);
-            GetComponent<Movement_Action>().SetEnemyTile(target_x, target_y);
+            move.SetEnemyTile(target_x, target_y);
 
-            movement.x = (target_x * GetComponent<Movement_Action>().tile_size) - my_pos.x;
-            movement.z = (target_y * GetComponent<Movement_Action>().tile_size) - my_pos.z;
+            movement.x = (target_x * move.tile_size) - my_pos.x;
+            movement.z = (target_y * move.tile_size) - my_pos.z;
 
-            movement = (movement.Normalized * GetComponent<Movement_Action>().tile_size * (1 - GetComponent<Arrive_Steering>().min_distance)) * push_velocity;
+            movement = (movement.Normalized * move.tile_size * (1 - arrive_comp.min_distance)) * push_velocity;
             transform.SetPosition(my_pos + ((movement * Time.deltaTime) / push_time));
 
             if (push_timer >= 0.01f)
@@ -195,10 +104,10 @@ public class PushBack_Action : Action
 
         }
 
-        movement.x = (target_x * GetComponent<Movement_Action>().tile_size) - my_pos.x;
-        movement.z = (target_y * GetComponent<Movement_Action>().tile_size) - my_pos.z;
+        movement.x = (target_x * move.tile_size) - my_pos.x;
+        movement.z = (target_y * move.tile_size) - my_pos.z;
 
-        movement = (movement.Normalized * GetComponent<Movement_Action>().tile_size * (1 - GetComponent<Arrive_Steering>().min_distance)) * push_velocity;
+        movement = (movement.Normalized * move.tile_size * (1 - arrive_comp.min_distance)) * push_velocity;
         transform.SetPosition(my_pos + ((movement * Time.deltaTime) / push_time));
 
         return ACTION_RESULT.AR_IN_PROGRESS;

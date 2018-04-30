@@ -7,6 +7,8 @@ class Die_Action : Action
     float y_move = -8.0f;
     public float time_to_move = 0.75f;
     float cur_time = 0.0f;
+    CompAnimation anim_comp;
+    CompAudio audio_comp;
 
     public Die_Action()
     {
@@ -15,9 +17,13 @@ class Die_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().PlayAnimationNode("Die");
+
+        anim_comp = GetComponent<CompAnimation>();
+        audio_comp = GetComponent<CompAudio>();
+
+        anim_comp.PlayAnimationNode("Die");
         //TODO_AI: Die audio
-        GetComponent<CompAudio>().PlayEvent("Enemy_SwordDrop");
+        audio_comp.PlayEvent("Enemy_SwordDrop");
 
         //PLAY COMBAT MUSIC
         Audio.ChangeState("MusicState", "None");
@@ -28,15 +34,15 @@ class Die_Action : Action
 
         //Play Dead Audio
         if (GetComponent<EnemyShield_BT>() != null)
-            GetComponent<CompAudio>().PlayEvent("Enemy3_Dead");
+            audio_comp.PlayEvent("Enemy3_Dead");
 
         if (GetComponent<EnemySpear_BT>() != null)
-            GetComponent<CompAudio>().PlayEvent("Enemy2_Dead");
+            audio_comp.PlayEvent("Enemy2_Dead");
 
         if (GetComponent<EnemySword_BT>() != null)
-            GetComponent<CompAudio>().PlayEvent("Enemy1_Dead");
+            audio_comp.PlayEvent("Enemy1_Dead");
 
-        GetComponent<CompAnimation>().SetClipDuration("Die", duration);
+        anim_comp.SetClipDuration("Die", duration);
         GetComponent<CompCollider>().CollisionActive(false);
         return true;
     }

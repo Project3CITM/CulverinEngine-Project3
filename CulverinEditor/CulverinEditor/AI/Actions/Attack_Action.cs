@@ -12,6 +12,8 @@ public class Attack_Action : Action
     CharactersManager player = null;
     bool shield_attack = false;
     bool damage_done = false;
+    CompAnimation anim_comp;
+    CompAudio audio_comp;
 
     public Attack_Action()
     {
@@ -29,11 +31,12 @@ public class Attack_Action : Action
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
         if (player == null)
             Debug.Log("[error] Attack Action Start: Player is null!");
+        anim_comp = GetComponent<CompAnimation>();
+        audio_comp = GetComponent<CompAudio>();
 
-
-        GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
-        GetComponent<CompAnimation>().PlayAnimationNode("Attack");
-        GetComponent<CompAudio>().PlayEvent("Enemy1_Slash");
+        anim_comp.SetClipDuration("Attack", attack_duration);
+        anim_comp.PlayAnimationNode("Attack");
+        audio_comp.PlayEvent("Enemy1_Slash");
       
 
         damage_done = false;
@@ -54,16 +57,16 @@ public class Attack_Action : Action
             else
             {
                 if (player.GetDamage(damage) == true)
-                { 
-                    GetComponent<CompAudio>().PlayEvent("SwordHit");
-                    GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight(0.0f);
+                {
+                    audio_comp.PlayEvent("SwordHit");
+                    anim_comp.SetFirstActiveBlendingClipWeight(0.0f);
                 }
                 else
-                    GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight(1.0f);
+                    anim_comp.SetFirstActiveBlendingClipWeight(1.0f);
             }
         }
 
-        if (GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
+        if (anim_comp.IsAnimationStopped("Attack"))
             return ACTION_RESULT.AR_SUCCESS;
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
