@@ -4,6 +4,20 @@
 #include "ModuleFS.h"
 #include "ModuleRenderer3D.h"
 #include "CubeMap_Texture.h"
+#include <algorithm>
+
+bool sortTexVars(const TextureVar& i, const TextureVar& j);
+bool sortFloatVars(const floatVar& i, const floatVar& j);
+bool sortBoolVars(const boolVar& i, const boolVar& j);
+bool sortIntVars(const intVar& i, const intVar& j);
+bool sortFloat3Vars(const float3Var& i, const float3Var& j);
+bool sortColorVars(const ColorVar& i, const ColorVar& j);
+bool sortCubeVars(const CubeMapVar& i, const CubeMapVar& j);
+
+
+
+
+
 Material::Material()
 {
 	active_num = 0;
@@ -26,8 +40,18 @@ void Material::Unbind()
 	glUseProgram(NULL);
 }
 
-void Material::Save() const
+
+void Material::Save() 
 {
+
+	std::sort(textures.begin(), textures.end(), sortTexVars);
+	std::sort(bool_variables.begin(), bool_variables.end(), sortBoolVars);
+	std::sort(int_variables.begin(), int_variables.end(), sortIntVars);
+	std::sort(float_variables.begin(), float_variables.end(), sortFloatVars);
+	std::sort(float3_variables.begin(), float3_variables.end(), sortFloat3Vars);
+	std::sort(color_variables.begin(), color_variables.end(), sortColorVars);
+	std::sort(cube_maps.begin(), cube_maps.end(), sortCubeVars);
+
 	JSON_Value* config_file;
 	JSON_Object* object;
 
@@ -49,6 +73,9 @@ void Material::Save() const
 	json_object_dotset_number_with_std(object, name + "Num Textures:", textures.size());
 	json_object_dotset_number_with_std(object, name + "Alpha:", alpha);
 	json_object_dotset_boolean_with_std(object, name + "Glow:", glow);
+	json_object_dotset_boolean_with_std(object, name + "CastShadow:", cast_shadows);
+	json_object_dotset_number_with_std(object, name + "Source Blend:", m_source_type);
+	json_object_dotset_number_with_std(object, name + "Destiny Blend:", m_destiny_type);
 
 	for (int i = 0; i < textures.size(); i++)
 	{
@@ -65,7 +92,7 @@ void Material::Save() const
 
 		RELEASE_ARRAY(num);
 
-		if (textures[i].value != nullptr && textures[i].value->GetTextureID() != App->renderer3D->id_checkImage)
+		if (textures[i].value != nullptr )
 		{
 			json_object_dotset_number_with_std(object, name + mat_name, textures[i].value->GetUUID());
 		}
@@ -401,3 +428,187 @@ void Material::RestartIterators()
 	it_bool_variables = bool_variables.begin();
 	it_cube_maps = cube_maps.begin();
 }
+
+
+void Material::SetSourceBlendMode()
+{
+	switch (source_type)
+	{
+	case MGlZero:
+		m_source_type = GL_ZERO;
+		break;
+
+	case MGlOne:
+		m_source_type = GL_ONE;
+		break;
+
+	case MGlSrcColor:
+		m_source_type = GL_SRC_COLOR;
+		break;
+
+	case MGlOneMinusSrcColor:
+		m_source_type = GL_ONE_MINUS_SRC_COLOR;
+		break;
+
+	case MGlDstColor:
+		m_source_type = GL_DST_COLOR;
+		break;
+
+	case MGlOneMinusDstColor:
+		m_source_type = GL_ONE_MINUS_DST_COLOR;
+		break;
+
+	case MGlSrcAlpha:
+		m_source_type = GL_SRC_ALPHA;
+		break;
+
+	case MGlOneMinusSrcAlpha:
+		m_source_type = GL_ONE_MINUS_SRC_ALPHA;
+		break;
+
+	case MGlDstAlpha:
+		m_source_type = GL_DST_ALPHA;
+		break;
+
+	case MGlOneMinusDstAlpha:
+		m_source_type = GL_ONE_MINUS_DST_ALPHA;
+		break;
+
+	case MGlSrcAlphaSaturate:
+		m_source_type = GL_SRC_ALPHA_SATURATE;
+		break;
+	}
+}
+
+void Material::SetDestinyBlendMode()
+{
+	switch (destiny_type)
+	{
+	case MGlZero:
+		m_destiny_type = GL_ZERO;
+		break;
+
+	case MGlOne:
+		m_destiny_type = GL_ONE;
+		break;
+
+	case MGlSrcColor:
+		m_destiny_type = GL_SRC_COLOR;
+		break;
+
+	case MGlOneMinusSrcColor:
+		m_destiny_type = GL_ONE_MINUS_SRC_COLOR;
+		break;
+
+	case MGlDstColor:
+		m_destiny_type = GL_DST_COLOR;
+		break;
+
+	case MGlOneMinusDstColor:
+		m_destiny_type = GL_ONE_MINUS_DST_COLOR;
+		break;
+
+	case MGlSrcAlpha:
+		m_destiny_type = GL_SRC_ALPHA;
+		break;
+
+	case MGlOneMinusSrcAlpha:
+		m_destiny_type = GL_ONE_MINUS_SRC_ALPHA;
+		break;
+
+	case MGlDstAlpha:
+		m_destiny_type = GL_DST_ALPHA;
+		break;
+
+	case MGlOneMinusDstAlpha:
+		m_destiny_type = GL_ONE_MINUS_DST_ALPHA;
+		break;
+
+	case MGlSrcAlphaSaturate:
+		m_destiny_type = GL_SRC_ALPHA_SATURATE;
+		break;
+	}
+
+}
+
+
+bool sortTexVars(const TextureVar& i, const TextureVar& j)
+{
+
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+
+bool sortIntVars(const intVar& i, const intVar& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+bool sortFloatVars(const floatVar& i, const floatVar& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+bool sortFloat3Vars(const float3Var& i, const float3Var& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+bool sortColorVars(const ColorVar& i, const ColorVar& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+bool sortBoolVars(const boolVar& i, const boolVar& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+
+bool sortCubeVars(const CubeMapVar& i, const CubeMapVar& j) {
+	uint n = 0;
+	while ((n < i.var_name.length()) && (n < j.var_name.length()))
+	{
+		if (tolower(i.var_name[n]) < tolower(j.var_name[n])) return true;
+		else if (tolower(i.var_name[n]) > tolower(j.var_name[n])) return false;
+		n++;
+	}
+	return false;
+}
+

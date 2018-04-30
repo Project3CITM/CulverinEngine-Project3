@@ -42,7 +42,7 @@ struct TextureVar {
 	std::string var_name;
 	bool selected = false;
 	ResourceMaterial* value = nullptr;
-	uint uuid_to_reimport = 0;
+	uint uuid_to_reimport = 0;	
 };
 
 struct float3Var {
@@ -75,6 +75,9 @@ struct CubeMapVar {
 	CubeMap_Texture* cube_map = nullptr;
 	std::string cube_name;
 };
+
+
+
 
 class Shader {
 public:

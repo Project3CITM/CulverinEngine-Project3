@@ -1,8 +1,8 @@
 #ifndef _MODULERENDERER3D_
 #define _MODULERENDERER3D_
 
-#include "Module.h"
 #include "Globals.h"
+#include "Module.h"
 #include "Light.h"
 #include "parson.h"
 
@@ -17,6 +17,7 @@
 class CompCamera;
 class CubeMap_Texture;
 class DepthCubeMap;
+
 
 enum RenderMode {
 	DEFAULT,

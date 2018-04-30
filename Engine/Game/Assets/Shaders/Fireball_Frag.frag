@@ -12,10 +12,7 @@ in vec3 FragPos;
 
 uniform vec4 diff_color;			
 out vec4 color;						
-uniform sampler2D albedo;			
-uniform sampler2D normal_map;		
-uniform sampler2D occlusion_map;
-uniform sampler2D specular_map;						
+				
 									
 uniform mat4 viewproj;				
 uniform mat4 model;					
@@ -69,10 +66,7 @@ void main()
   vec2 xy = TexCoord.xy;
 vec2 phase = fract(xy*Tile);																					 
 													 
-	vec3 color_texture = texture(albedo, phase).xyz;															 
-	vec3 N = normalize(texture(normal_map,phase).xyz*2-1);														 
-	vec3 occlusion_texture = texture(occlusion_map,phase).xyz;												 
-    vec3 spec_texture = texture(specular_map, phase).xyz;
+
 																		 
 																												 
 	vec3 inten = vec3(0); vec3 inten_final = vec3(0);																					 
@@ -83,7 +77,7 @@ vec2 phase = fract(xy*Tile);
 	vec3 final_color = vec3(0);	
 																		 
 																		 
-	inten = blinnPhongDir( a_Kd, a_Ks, a_shininess, N);				
+	inten = blinnPhongDir( a_Kd, a_Ks, a_shininess, ourNormal);				
 																		
 										
 	
@@ -93,9 +87,9 @@ float height = wave_height - ourPos.y;
 float top_mult = clamp((wave_height + waveHeight),0,1);// / (waveHeight*1);
 float down_mult = abs(top_mult-1);
 																
-	vec3 col = max(0.3* color_texture*ambient_col.rgb, 
-    color_texture * (inten.x + inten.y * spec_texture.r)
-    *occlusion_texture) * (top_col.rgb *top_mult + down_col.rgb * down_mult); 
+	vec3 col = max(0.3*ambient_col.rgb, 
+     (inten.x + inten.y )) 
+* (top_col.rgb *top_mult + down_col.rgb * down_mult); 
 																						
 	color = vec4(col,_alpha) ;
 
