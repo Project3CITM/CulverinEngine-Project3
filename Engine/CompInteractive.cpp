@@ -585,7 +585,6 @@ void CompInteractive::LoadBinary(char ** cursor)
 		}
 	}
 
-	App->json_seria->LoadFloat4Binary(cursor);
 
 	normal_color = App->json_seria->LoadFloat4Binary(cursor);
 	highlighted_color = App->json_seria->LoadFloat4Binary(cursor);

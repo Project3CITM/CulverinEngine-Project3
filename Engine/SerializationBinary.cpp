@@ -253,6 +253,13 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 				App->scene->root->AddChildGameObject(scene_ptr[i].go);
 			}
 		}
+
+		//Sync components
+		for (int i = 0; i < num_objects; i++)
+		{
+			scene_ptr[i].go->SyncComponents(App->scene->root);
+		}
+
 		//Add static objects to scene
 		for (int i = 0; i < num_objects; i++)
 		{
