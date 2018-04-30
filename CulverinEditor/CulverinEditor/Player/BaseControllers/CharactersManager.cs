@@ -9,7 +9,8 @@ public class CharactersManager : CulverinBehaviour
         IDLE = 0,
         CHANGING_LEFT,
         CHANGING_RIGHT,
-        DROWNING
+        DROWNING,
+        DYING
     }
 
     public enum Side
@@ -64,6 +65,7 @@ public class CharactersManager : CulverinBehaviour
     //To manage player state
     State state = State.IDLE;
     public bool changing = false;
+    public bool dying = false;
 
     //To manage Jaime Secondary Ability
     public bool shield_activated = false;
@@ -169,6 +171,7 @@ public class CharactersManager : CulverinBehaviour
 
 
         changing = false;
+        dying = false;
         is_healing = false;
         god_mode = false;
 
@@ -182,6 +185,14 @@ public class CharactersManager : CulverinBehaviour
 
     void Update()
     {
+        //if (dying == false) 
+        //{
+        //    Debug.Log("ALIVE", Department.PLAYER, Color.BLUE);
+        //}
+        //else
+        //{
+        //    Debug.Log("DEAD", Department.PLAYER, Color.RED);
+        //}
         //MANAGE AUDIO CONTROLLER VARIABLES --
         if (jaime_tired) 
         {

@@ -12,18 +12,24 @@ public class DamageFeedback : CulverinBehaviour
     bool dead = false;
     bool reviving = false;
     float mult_dead = 0.0f;
+
     //Duration of the blood texture at the screen
     public float blood_time = 2.0f;
     public float dying_time = 2.0f;
     float curr_dead_time = 0.0f;
     public float fade_maintained_time = 5.0f;
+
     public GameObject fade_image;
     public GameObject total_fade_image;
     public GameObject you_died_image;
+
     bool total_dead = false;
     public float last_dying_timer = 5.0f;
     float last_dying_current_timer = 0.0f;
     float you_died_value = 0.0f;
+
+    CharactersManager characters_manager;
+
     void Start()
     {
         mat = GetMaterialByName("Final Tex Material");
@@ -38,6 +44,8 @@ public class DamageFeedback : CulverinBehaviour
         fade_image = GetLinkedObject("fade_image");
         total_fade_image = GetLinkedObject("total_fade_image");
         you_died_image = GetLinkedObject("you_died_image");
+
+        characters_manager = GetComponent<CharactersManager>();
     }
 
     void Update()
@@ -88,6 +96,7 @@ public class DamageFeedback : CulverinBehaviour
                 fade_image.GetComponent<CompImage>().SetAlpha(0.0f);
                 curr_dead_time = 0.0f;
                 reviving = false;
+                characters_manager.dying = false;
             }
         }
         //--------------------------------------------------
@@ -114,6 +123,7 @@ public class DamageFeedback : CulverinBehaviour
                 if (last_dying_current_timer >= last_dying_timer)
                 {
                     SceneManager.LoadScene("LoseMenu");
+                    characters_manager.dying = false;
                 }
             }
         }
@@ -134,11 +144,12 @@ public class DamageFeedback : CulverinBehaviour
         dead = true;
         curr_dead_time = 0.0f;
         reviving = false;
-        
+        characters_manager.dying = true;
     }
 
     public void TotalDefeat()
     {
         total_dead = true;
+        characters_manager.dying = true;
     }
 }

@@ -35,15 +35,27 @@ public class SpearAttack_Action : Action
     public override bool ActionStart()
     {
         state = SWA_STATE.PRE_APPLY;
-        GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
-        GetComponent<CompAnimation>().PlayAnimationNode("Attack");
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
+
+        if (player.dying == false)
+        {
+            GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
+            GetComponent<CompAnimation>().PlayAnimationNode("Attack");
+            GetComponent<CompAudio>().PlayEvent("Enemy2_Slash");
+        }
+
         //Interrupt player action
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if (player.dying)
+        {
+            Debug.Log("DON'T ATTACK PLAYER", Department.PLAYER, Color.YELLOW);
+            return ACTION_RESULT.AR_FAIL; //Player is dead, don't attack
+        }
+
         if (melee_attack)
         {
             if (interupt == true)
@@ -56,8 +68,7 @@ public class SpearAttack_Action : Action
             {
                 state = SWA_STATE.POST_APPLY;
                 player.GetDamage(damage);
-                //Apply damage to the target
-                //Play audio fx
+                GetComponent<CompAudio>().PlayEvent("SwordHit");
             }
             else if (state == SWA_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
             {
@@ -78,8 +89,7 @@ public class SpearAttack_Action : Action
             {
                 state = SWA_STATE.POST_APPLY;
                 player.GetDamage(damage);
-                //Apply damage to the target
-                //Play audio fx
+                GetComponent<CompAudio>().PlayEvent("SwordHit");
             }
             else if (state == SWA_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
             {
