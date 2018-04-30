@@ -152,6 +152,9 @@ void CompCheckBox::Save(JSON_Object * object, std::string name, bool saveScene, 
 {
 	CompInteractive::Save(object, name, saveScene, countResources);
 
+	
+	json_object_dotset_number_with_std(object, name + "Tick UUID", (tick == nullptr) ? 0 : tick->GetUUID());
+	json_object_dotset_boolean_with_std(object, name + "Check active", active);
 	SaveClickAction(object, name);
 
 }
@@ -159,6 +162,9 @@ void CompCheckBox::Save(JSON_Object * object, std::string name, bool saveScene, 
 void CompCheckBox::Load(const JSON_Object * object, std::string name)
 {
 	CompInteractive::Load(object, name);
+
+	tick_uid = json_object_dotget_number_with_std(object, name + "Tick UUID");
+	active = json_object_dotget_boolean_with_std(object, name + "Check active");
 	LoadClickAction(object, name);
 
 	Enable();
@@ -166,11 +172,23 @@ void CompCheckBox::Load(const JSON_Object * object, std::string name)
 void CompCheckBox::SyncComponent(GameObject* sync_parent)
 {
 	CompInteractive::SyncComponent(sync_parent);
-
 	SyncScript();
+
+	if (sync_parent == nullptr)
+		return;
+
+	if (tick_uid != 0)
+	{
+		SetTick((CompImage*)sync_parent->GetComponentsByUID(tick_uid, true));
+	}
+	if (tick != nullptr)
+		tick->SyncComponent(nullptr);
+
+
 }
 void CompCheckBox::SyncScript()
 {
+	SyncClickAction();
 }
 
 void CompCheckBox::OnPointDown(Event event_input)

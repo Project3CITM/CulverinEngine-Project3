@@ -30,6 +30,7 @@ private:
 	CompImage * tick = nullptr;
 	std::vector<CompScript*> linked_scripts;
 	bool active = false;
+	uint tick_uid;
 };
 
 #endif//COMPONENT_CHECK_BOX_H

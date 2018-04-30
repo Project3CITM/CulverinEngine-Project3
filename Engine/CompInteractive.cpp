@@ -698,6 +698,26 @@ bool CompInteractive::IsDragrable() const
 	return dragable;
 }
 
+bool CompInteractive::IsStateNormal() const
+{
+	return 	current_selection_state == SelectionStates::STATE_NORMAL;	
+}
+
+bool CompInteractive::IsStateHighlighted() const
+{
+	return current_selection_state == SelectionStates::STATE_HIGHLIGHTED;
+}
+
+bool CompInteractive::IsStatePressed() const
+{
+	return current_selection_state == SelectionStates::STATE_PRESSED;
+}
+
+bool CompInteractive::IsStateDisabled() const
+{
+	return current_selection_state == SelectionStates::STATE_DISABLED;
+}
+
 void CompInteractive::Activate()
 {
 	disabled = false;

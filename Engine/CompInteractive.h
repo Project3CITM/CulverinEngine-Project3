@@ -63,6 +63,11 @@ public:
 	void SyncComponent(GameObject* sync_parent);
 	bool IsActivate()const;
 	bool IsDragrable() const;
+	bool IsStateNormal()const;
+	bool IsStateHighlighted()const;
+	bool IsStatePressed()const;
+	bool IsStateDisabled()const;
+
 	void Activate();
 	void OnGOActive(bool active);
 	bool IsInteractiveEnabled() const;

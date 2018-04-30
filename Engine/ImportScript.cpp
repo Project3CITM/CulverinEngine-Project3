@@ -1203,6 +1203,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::SetInteractivity", (const void*)SetInteractivity);
+	mono_add_internal_call("CulverinEditor.CompInteractive::IsNormal", (const void*)IsNormal);
+	mono_add_internal_call("CulverinEditor.CompInteractive::IsHighlighted", (const void*)IsHighlighted);
+	mono_add_internal_call("CulverinEditor.CompInteractive::IsPressed", (const void*)IsPressed);
+	mono_add_internal_call("CulverinEditor.CompInteractive::IsDisabled", (const void*)IsDisabled);
 
 	
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
@@ -1634,11 +1638,11 @@ void ImportScript::SetInputActionToChange(MonoString * name, MonoString * input,
 }
 bool ImportScript::GetChangeInputActive()
 {
-	return true;
+	return App->input->player_action->GetChangeInputActive();
 }
 int ImportScript::GetChangeInputState()
 {
-	return 0;
+	return App->input->player_action->GetChangeInputState();;
 }
 
 void ImportScript::RumblePlay(float intensity, int milliseconds)
@@ -2049,7 +2053,24 @@ void ImportScript::SetInteractivity(MonoObject * object, mono_bool enable)
 {
 	current->SetInteractivity(object, enable);
 }
+bool ImportScript::IsNormal(MonoObject * object)
+{
+	return current->IsNormal(object);
+}
+bool ImportScript::IsHighlighted(MonoObject * object)
+{
+	return current->IsHighlighted(object);
+}
 
+bool ImportScript::IsPressed(MonoObject * object)
+{
+	return current->IsPressed(object);
+}
+
+bool ImportScript::IsDisabled(MonoObject * object)
+{
+	return current->IsDisabled(object);
+}
 void ImportScript::Clicked(MonoObject * object)
 {
 	current->Clicked(object);

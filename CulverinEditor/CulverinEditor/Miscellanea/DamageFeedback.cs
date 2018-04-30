@@ -113,6 +113,10 @@ public class DamageFeedback : CulverinBehaviour
                 you_died_image.GetComponent<CompImage>().SetAlpha(you_died_value);
                 if (last_dying_current_timer >= last_dying_timer)
                 {
+                    if (SceneManager.CheckMultiSceneReady())
+                    {
+                        SceneManager.RemoveSecondaryScene();
+                    }
                     SceneManager.LoadScene("LoseMenu");
                 }
             }
