@@ -265,6 +265,7 @@ void CompMesh::Draw2(uint ID)
 		{
 		
 			uint TexturesSize = parent->GetComponentMaterial()->material->textures.size();
+			uint CubeMapsSize = parent->GetComponentMaterial()->material->cube_maps.size();
 			
 		
 			GLint modelLoc = glGetUniformLocation(ID, "model");			
@@ -287,12 +288,16 @@ void CompMesh::Draw2(uint ID)
 			uint bones_size_in_buffer = 0;
 			if (skeleton != nullptr)
 			{
+				int sum = 0;
+				GLuint ShadowMapLoc = glGetUniformLocation(ID, "_shadowMap");
+				if (ShadowMapLoc != -1) sum = 1;
+
 				bones_size_in_buffer = 4 * sizeof(GLint) + 4 * sizeof(GLfloat);
 				GLuint skinning_texture_id = glGetUniformLocation(ID, "_skinning_text");
 				skeleton->GenSkinningTexture(parent);
-				glActiveTexture(GL_TEXTURE0 + TexturesSize);
+				glActiveTexture(GL_TEXTURE0 + TexturesSize + CubeMapsSize + sum);
 				glBindTexture(GL_TEXTURE_BUFFER, skeleton->skinning_mats_id);
-				glUniform1i(skinning_texture_id, TexturesSize);
+				glUniform1i(skinning_texture_id, TexturesSize + CubeMapsSize + sum);
 			}
 			if (resource_mesh->vertices.size() > 0)
 			{

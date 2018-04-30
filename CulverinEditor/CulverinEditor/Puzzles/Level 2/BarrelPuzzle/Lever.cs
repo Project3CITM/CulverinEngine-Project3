@@ -237,7 +237,6 @@ public class Lever : CulverinBehaviour
                 SetInfo(line5, 4);
                 SetInfo(line6, 5);
                 phase1 = true;
-                SetPathWalkable(1,1);
             }
             if (!phase2) // Move barrels mode.PUZZLE
             {
@@ -291,10 +290,6 @@ public class Lever : CulverinBehaviour
                     ResetPuzzle();
                 }
             }
-
-           
-
-
             
         }
     }
@@ -302,46 +297,25 @@ public class Lever : CulverinBehaviour
     // OnTrigger Lever ------------------------
     void OnTriggerEnter()
     {
-
+        on_lever_range = true;
         if (active_lever || on_lever_animation)
         {
             return;
         }
 
-        CompCollider col = GetComponent<CompCollider>();
-        GameObject obj_col = col.GetCollidedObject();
-        Debug.Log(obj_col.GetTag().ToString());
-
-        if (obj_col != null && obj_col.CompareTag("player"))
-        {
-
-            lever_interact.SetActive(true);
-            on_lever_range = true;
-
-        }
-
+        lever_interact.SetActive(true);
     }
 
     void OnTriggerLost()
     {
-
+        on_lever_range = false;
         if (active_lever)
         {
             on_lever_range = false;
             return;
         }
 
-        CompCollider col = GetComponent<CompCollider>();
-        GameObject obj_col = col.GetCollidedObject();
-
-        if (obj_col != null && obj_col.CompareTag("player"))
-        {
-
-            lever_interact.SetActive(false);
-            on_lever_range = false;
-
-        }
-
+        lever_interact.SetActive(false);
     }
 
     // -------------------------------------------------------------------------------------
@@ -468,6 +442,9 @@ public class Lever : CulverinBehaviour
         anim_controller = lever_go.GetComponent<CompAnimation>();
         if (anim_controller != null)
             anim_controller.PlayAnimation(lever_animation_name);
+        
+        // Block Walkability
+        SetPathWalkable(1, 1);
     }
 
     void OnLeverAnimFinish()
@@ -609,6 +586,13 @@ public class Lever : CulverinBehaviour
         time = 0.0f;
 
         SetPathWalkable(3,3);
+        GetLinkedObject("player_obj").GetComponent<MovementController>().CheckDrawning();
+
+        if (on_lever_range)
+        {
+            lever_interact.SetActive(true);
+        }
+
 
     }
 

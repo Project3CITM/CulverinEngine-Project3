@@ -14,11 +14,13 @@ out vec2 TexCoord;
 out vec3 ourPos;
 out mat3 TBN;
 out vec3 FragPos;
+out vec4 shadowCoord;
 uniform float _time;
 uniform vec4 _color;
 uniform mat4 model;
 uniform mat4 viewproj;
 uniform mat4 view;
+uniform mat4 depthBias;
 
 uniform samplerBuffer _skinning_text;
 uniform int _num_pixels;
@@ -27,7 +29,8 @@ void main()
 {
     vec3 skinned_pos = vec3(0.0f, 0.0f, 0.0f);
     vec3 skinned_normal = vec3(0.0f, 0.0f, 0.0f);
-    
+    vec3 skinned_tangent = vec3(0.0f, 0.0f, 0.0f);
+    vec3 skinned_bitangent = vec3(0.0f, 0.0f, 0.0f);
     float total_weight = 0.0f;
 
 bool test = false;
@@ -71,6 +74,8 @@ bool test = false;
         vec4 moved_normals = skinning_mat * vec4(normal, 0.0f);
         skinned_normal = moved_normals.xyz * influences[i] + skinned_normal;
 
+
+
         total_weight += influences[i];
         
         if(total_weight >= 1.0f)
@@ -82,8 +87,8 @@ bool test = false;
 	vec3 B = normalize(vec3( model * vec4(bitangent, 0)));
 	vec3 N = normalize(vec3( model * vec4(normal, 0)));
     TBN = transpose(mat3(T,B,N));
-	FragPos = TBN * vec3(model) * position; 
-	
+	FragPos = TBN * vec3(model * vec4(skinned_pos,1)); 
+	shadowCoord = depthBias * model * vec4(skinned_pos, 1.0);
     
 	gl_Position = viewproj *  model * vec4(skinned_pos, 1.0f);
 	ourColor = _color;

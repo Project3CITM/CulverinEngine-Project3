@@ -8,7 +8,10 @@
 #include "ModuleShaders.h"
 #include "Materials.h"
 
+
 class ResourceMaterial;
+
+
 
 class CompMaterial : public Component
 {
@@ -47,11 +50,13 @@ public:
 
 
 
+
 public:
 
 	//ResourceMaterial* resource_material = nullptr;
 	//ShaderProgram material_shader;
 	Material* material;
+	
 private:
 
 	Color color = White;

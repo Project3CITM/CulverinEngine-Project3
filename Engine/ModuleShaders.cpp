@@ -107,6 +107,8 @@ bool ModuleShaders::CleanUp()
 		(*item).second->Save();
 
 	}
+	RELEASE(App->renderer3D->default_texture);
+	RELEASE(App->renderer3D->default_material);
 	return true;
 }
 
@@ -610,7 +612,13 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 			material->GetProgramVariables();
 			uint num_textures = json_object_dotget_number_with_std(object, name + "Num Textures:");
 			material->glow = json_object_dotget_boolean_with_std(object, name + "Glow:");
+			material->cast_shadows = json_object_dotget_boolean_with_std(object, name + "CastShadow:");
 			material->alpha = json_object_dotget_number_with_std(object, name + "Alpha:");
+			material->m_source_type = json_object_dotget_number_with_std(object, name + "Source Blend:");
+			material->m_destiny_type = json_object_dotget_number_with_std(object, name + "Destiny Blend:");
+
+			material->SetDestinyBlendMode();
+			material->SetSourceBlendMode();
 
 			if (load_vars) {
 				for (int i = 0; i < num_textures; i++)
@@ -1178,6 +1186,10 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 			float3 cam_pos = App->renderer3D->active_camera->frustum.pos;
 			GLint cameraLoc = glGetUniformLocation(ID, "_cameraPosition");
 			if (cameraLoc != -1) glUniform3fv(cameraLoc, 1, &cam_pos[0]);
+
+			float far_plane = App->renderer3D->active_camera->frustum.farPlaneDistance;
+			GLint farLoc = glGetUniformLocation(ID, "_farPlane");
+			if (farLoc != -1) glUniform1f(farLoc, far_plane);
 		}
 
 		//ALPHA
@@ -1208,8 +1220,12 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 			BROFILER_CATEGORY("Update: ModuleShaders SetLights", Profiler::Color::Blue);
 			for (size_t i = 0; i < lights_vec.size(); ++i) {
 				if (lights_vec[i]->to_delete) continue;
-				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT)
+				if (lights_vec[i]->type == Light_type::DIRECTIONAL_LIGHT) {
+					int depthBiasID = glGetUniformLocation(ID, "depthBias");
+					if (depthBiasID != -1) glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
 					SetLightUniform(ID, "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetEulerToDirection());
+				}
+					
 				if (lights_vec[i]->type == Light_type::POINT_LIGHT)
 					SetLightUniform((*item).second->GetProgramID(), "position", i, lights_vec[i]->GetParent()->GetComponentTransform()->GetPosGlobal());
 
@@ -1221,9 +1237,7 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 
 				// Bias matrix. TODO: Might be better to set other place
 
-				int depthBiasID = glGetUniformLocation(ID, "depthBias");
-				if (depthBiasID != -1) glUniformMatrix4fv(depthBiasID, 1, GL_FALSE, &lights_vec[i]->depthBiasMat[0][0]);
-
+				
 				// End Bias matrix.
 			}
 		}

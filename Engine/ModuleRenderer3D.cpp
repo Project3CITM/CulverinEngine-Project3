@@ -174,7 +174,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	default_text.name = "default_texture";
 	default_text.id = id_checkImage;
 
-	default_texture = new ResourceMaterial(App->random->Int());
+	default_texture = new ResourceMaterial(5);
 	default_texture->Init(default_text);
 
 
@@ -318,13 +318,13 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	App->scene->final_buff->UnBind("Scene");
 
 
-	/*
+	
 	ImGui::Begin("Test");
 	ImGui::Image((ImTextureID*)App->module_lightning->test_fix.depthTex, ImVec2(256, 256));
 	ImGui::SliderFloat("Strength", &blur_strength, 0.0f, 50.0f);
 	ImGui::SliderInt("Amount", &blur_amount, 0.0f, 30.0f);
 	ImGui::SliderFloat("Scale", &blur_scale, 0.0f, 50.0f);
-	ImGui::End();*/
+	ImGui::End();
 
 
 
@@ -421,9 +421,7 @@ bool ModuleRenderer3D::SaveConfig(JSON_Object * node)
 bool ModuleRenderer3D::CleanUp()
 {
 	LOG("Destroying 3D Renderer");
-
-	RELEASE(default_texture);
-	RELEASE(default_material);
+	
 
 	SDL_GL_DeleteContext(context);
 
