@@ -150,18 +150,39 @@ update_status ModuleGUI::Update(float dt)
 			ImGui::Separator();
 			if (ImGui::MenuItem("Save Scene", "Ctrl + S"))
 			{
-				App->WantToSave();
+				if (App->engine_state == EngineState::STOP)
+				{
+					App->WantToSave();
+				}
+				else
+				{
+					LOG("YOU CAN'T SAVE IN PLAY MODE! [red]");
+				}
 			}
 			if (ImGui::MenuItem("Save Scene Binary", NULL, false, false))
 			{
-				App->WantToSave();
+				if (App->engine_state == EngineState::STOP)
+				{
+					App->WantToSave();
+				}
+				else
+				{
+					LOG("YOU CAN'T SAVE IN PLAY MODE! [red]");
+				}
 			}
 			if (ImGui::MenuItem("Save Scene as...", NULL, false, false))
 			{
 			}
 			if (ImGui::MenuItem("Load Scene"))
 			{
-				App->WantToLoad();
+				if (App->engine_state == EngineState::STOP)
+				{
+					App->WantToLoad();
+				}
+				else
+				{
+					LOG("YOU CAN'T LOAD IN PLAY MODE! [red]");
+				}
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Build Settings...", "Ctrl + Shift + B"))
