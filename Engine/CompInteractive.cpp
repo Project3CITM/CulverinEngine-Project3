@@ -792,7 +792,7 @@ void CompInteractive::OnPointDown(Event event_input)
 {
 	if (event_input.pointer.button != event_input.pointer.INPUT_MOUSE_LEFT)
 	{
-		return;
+		return;	
 	}
 
 

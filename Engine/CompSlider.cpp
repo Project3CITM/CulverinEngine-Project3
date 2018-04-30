@@ -81,6 +81,7 @@ void CompSlider::ShowOptions()
 
 void CompSlider::ShowInspectorInfo()
 {
+	int op = ImGui::GetWindowWidth() / 4;
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 0));
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
@@ -98,6 +99,7 @@ void CompSlider::ShowInspectorInfo()
 
 	if (ImGui::DragFloat("##fillQuantity", &fill, 0.01f, 0.0f, 1.0f))
 	{
+		fill = CAP(fill);
 		SetNewPositions();
 	}
 	if (ImGui::DragFloat("##Drag Speed", &speed, 0.01f, 0.0f, 1.0f))
@@ -126,6 +128,22 @@ void CompSlider::ShowInspectorInfo()
 		break;
 	default:
 		break;
+	}
+	int navigation_opt = navigation.current_navigation_mode;
+	ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
+	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Navigation Extrict\0Navigation Automatic\0"))
+	{
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_NONE)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_NONE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_EXTRICTE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_AUTOMATIC)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_AUTOMATIC;
+
+	}
+	if (navigation.current_navigation_mode != Navigation::NavigationMode::NAVIGATION_NONE)
+	{
+		ShowNavigationInfo();
 	}
 	ImGui::TreePop();
 }
@@ -184,6 +202,53 @@ void CompSlider::SyncComponent(GameObject* sync_parent)
 	CompInteractive::SyncComponent(sync_parent);
 	SyncSliderComponents(sync_parent);
 }
+
+void CompSlider::OnSubmit(Event event_data)
+{
+	on_drag = true;
+	UpdateSelectionState(event_data);
+	PrepareHandleTransition();
+}
+
+void CompSlider::OnCancel(Event event_data)
+{
+	on_drag = false;
+	UpdateSelectionState(event_data);
+	PrepareHandleTransition();
+}
+
+void CompSlider::OnMove(Event event_data)
+{
+	if (on_drag)
+	{
+		switch (event_data.gui_axis.direction)
+		{
+		case EGUIAxis::Direction::DIRECTION_RIGHT:
+			fill += speed;
+			fill = CAP(fill);
+			SetNewPositions();
+			break;
+		case EGUIAxis::Direction::DIRECTION_LEFT:
+			fill -= speed;
+			fill = CAP(fill);
+			SetNewPositions();
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		CompInteractive::OnMove(event_data);
+	}
+}
+
+void CompSlider::SetFillBar(float amount)
+{
+	fill = CAP(amount);
+	SetNewPositions();
+}
+
 void CompSlider::SyncSliderComponents(GameObject* sync_parent)
 {
 	//checkbox para el compimage tick (+ save)
@@ -255,25 +320,6 @@ void CompSlider::OnDrag(Event event_input)
 		SetNewPositions();
 
 	}
-
-	/*float2 mous_pos = event_input.pointer.position;
-	int new_x = 0;
-	if (mous_pos.x > min_pos && mous_pos.x < max_pos)
-	{
-		image->GetRectTrasnform()->SetPos(float3(mous_pos, 0));
-	}
-	else
-	{
-		if (mous_pos.x > max_pos)
-		{
-			new_x = max_pos;
-		}
-		if (mous_pos.x < min_pos)
-		{
-			new_x = min_pos;
-		}
-		image->GetRectTrasnform()->SetPos(float3(new_x,mous_pos.y, 0));
-	}*/
 }
 
 void CompSlider::SetSliderBg(CompImage * bg)
@@ -293,3 +339,14 @@ void CompSlider::SetSliderBar(CompImage * bar)
 
 }
 
+bool CompSlider::IsPressed()
+{
+	if (IsActivate())
+		return false;
+	if (point_down && point_inside)
+		return true;
+	else if (on_drag)
+		return true;
+	else
+		return false;
+}

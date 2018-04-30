@@ -17,16 +17,23 @@ public:
 	void SetSlideBarBall();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	uint SaveSliderCompUID(CompImage *img) const;
-
+	
 	void Load(const JSON_Object * object, std::string name);
 
 	void SyncComponent(GameObject * sync_parent);
+	void OnSubmit(Event event_data);
+	void OnCancel(Event event_data);
+	void OnMove(Event event_data);
+
+	void SetFillBar(float amount);
 
 	void SyncSliderComponents(GameObject* sync_parent);
 	void SyncBar();
 	void OnDrag(Event event_input);
 	void SetSliderBg(CompImage*bg);
 	void SetSliderBar(CompImage*bar);
+
+	bool IsPressed();
 
 
 private:
@@ -44,6 +51,7 @@ private:
 	uint uuid_reimported_slide_bar = 0;
 	float speed = 1.0f;
 	float fill = 0.5f;
+	bool on_drag = false;
 };
 
 #endif
