@@ -35,14 +35,18 @@ public class SpearAttack_Action : Action
     public override bool ActionStart()
     {
         state = SWA_STATE.PRE_APPLY;
+        anim_comp = GetComponent<CompAnimation>();
+        
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
+  
+
         if (player.dying == false)
         {
-            anim_comp = GetComponent<CompAnimation>();
             anim_comp.SetClipDuration("Attack", attack_duration);
             anim_comp.PlayAnimationNode("Attack");
             GetComponent<CompAudio>().PlayEvent("Enemy2_Slash");
         }
+
         //Interrupt player action
         return true;
     }
