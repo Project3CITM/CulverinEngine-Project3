@@ -523,6 +523,11 @@ void CompText::GetOwnBufferSize(uint & buffer_size)
 	buffer_size += sizeof(int);							//(enum) h_position
 	buffer_size += sizeof(int);							//(enum) v_position
 	buffer_size += sizeof(bool);						//can_draw
+
+	buffer_size += sizeof(float);						//color
+	buffer_size += sizeof(float);						//.
+	buffer_size += sizeof(float);						//.
+	buffer_size += sizeof(float);						//.
 }
 
 void CompText::SaveBinary(char** cursor, int position) const
@@ -545,6 +550,7 @@ void CompText::SaveBinary(char** cursor, int position) const
 	App->json_seria->SaveIntBinary(cursor, (int)h_position);
 	App->json_seria->SaveIntBinary(cursor, (int)v_position);
 	App->json_seria->SaveBooleanBinary(cursor, can_draw);
+	App->json_seria->SaveFloat4Binary(cursor, color);
 }
 
 void CompText::LoadBinary(char ** cursor)

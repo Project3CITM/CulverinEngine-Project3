@@ -193,6 +193,11 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 				break;
 			default:
 				LOG("[error]File seems corrupted");
+				for (int i = 0; i < gameobjects.size(); i++)
+				{
+					if(gameobjects[i].go != nullptr)
+						LOG("[error]Info: %s", gameobjects[i].go->GetName());
+				}
 				identificator = IDENTIFICATOR_ERROR;
 				next_identificator = IDENTIFICATOR_END;
 				break;
