@@ -116,11 +116,9 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 	char* cursor = buffer;
 	LOG("---- Loading Scene: %s", scene.c_str());
 
-	App->scene->DeleteAllGameObjects(App->scene->root);
-	App->scene->ClearAllTags();
 	int identificator = LoadIntBinary(&cursor);
 	std::vector<LoadSceneSt> gameobjects;
-	std::vector<LoadSceneCp> components;
+	//std::vector<LoadSceneCp> components;
 	std::vector<GameObject*> mesh_gos;
 	if (identificator == IDENTIFICATOR_ROOT)
 	{
@@ -211,8 +209,6 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 
 	if (identificator == IDENTIFICATOR_END)
 	{
-		const int num_components = components.size();
-		LoadSceneCp* scene_comp = (num_components > 0) ? components.data() : nullptr;
 
 		const int num_objects = gameobjects.size();
 		LoadSceneSt* scene_ptr = (num_objects > 0) ? gameobjects.data() : nullptr;
@@ -290,7 +286,6 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 	}
 
 	gameobjects.clear();
-	components.clear();
 	mesh_gos.clear();
 	RELEASE_ARRAY(buffer);
 	LOG("Load Time %d, [red]", timetp.Read());
