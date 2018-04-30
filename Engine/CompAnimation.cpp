@@ -22,6 +22,7 @@
 CompAnimation::CompAnimation(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	name_component = "CompAnimation";
+	uid = App->random->Int();
 }
 
 CompAnimation::CompAnimation(const CompAnimation & copy, GameObject * parent) : Component(Comp_Type::C_ANIMATION, parent)
@@ -1121,7 +1122,7 @@ void CompAnimation::GetOwnBufferSize(uint & buffer_size)
 	Component::GetOwnBufferSize(buffer_size);
 	
 	buffer_size += sizeof(int); //Component UUID
-	buffer_size += sizeof(uint); //Resource UUID
+	buffer_size += sizeof(int); //Resource UUID
 	buffer_size += sizeof(int); //Number of clips
 
 	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
@@ -1136,7 +1137,7 @@ void CompAnimation::GetOwnBufferSize(uint & buffer_size)
 		buffer_size += sizeof(float);	//Speed_factor
 		buffer_size += sizeof(float);	//total_blending time
 		buffer_size += sizeof(float);	//current_blending_time
-		buffer_size += sizeof(AnimationState);	//animation state
+		buffer_size += sizeof(int);	//animation state
 	}
 	
 	buffer_size += sizeof(int);			//Number of nodes
@@ -1153,8 +1154,12 @@ void CompAnimation::GetOwnBufferSize(uint & buffer_size)
 		buffer_size += sizeof(int);		//Animation particle
 		buffer_size += (*it)->anim_prefab_particle.length();
 		buffer_size += sizeof(float);	//Prefab particle time
-		buffer_size += sizeof(float) * 3;//Particle pos
-
+		buffer_size += sizeof(float);	//Particle pos
+		buffer_size += sizeof(float);	//
+		buffer_size += sizeof(float);	//
+	}
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	{
 		buffer_size += sizeof(int);		//Number of transitions
 		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
 		{
@@ -1206,7 +1211,7 @@ void CompAnimation::SaveBinary(char ** cursor, int position) const
 		App->json_seria->SaveFloatBinary(cursor, (*it)->total_blending_time);
 		App->json_seria->SaveFloatBinary(cursor, (*it)->current_blending_time);
 		App->json_seria->SaveFloatBinary(cursor, (*it)->speed_factor);
-		App->json_seria->SaveFloatBinary(cursor, (*it)->state);
+		App->json_seria->SaveFloatBinary(cursor, (int)(*it)->state);
 	}
 
 	App->json_seria->SaveIntBinary(cursor, animation_nodes.size());
@@ -1222,7 +1227,9 @@ void CompAnimation::SaveBinary(char ** cursor, int position) const
 		App->json_seria->SaveStringBinary(cursor, (*it)->anim_prefab_particle);
 		App->json_seria->SaveFloatBinary(cursor, (*it)->prefab_particle_time);
 		App->json_seria->SaveFloat3Binary(cursor, (*it)->prefab_pos);
-
+	}
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	{
 		App->json_seria->SaveIntBinary(cursor, (*it)->transitions.size());
 		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
 		{
@@ -1289,8 +1296,6 @@ void CompAnimation::LoadBinary(char ** cursor)
 			blending_animation = temp;
 		}
 	}
-	std::vector<AnimationTransition*> temp_trans;
-	std::vector<BlendingClip*> temp_blends;
 	int num_nodes = App->json_seria->LoadIntBinary(cursor);
 	for (int i = 0; i < num_nodes; i++)
 	{
@@ -1317,10 +1322,14 @@ void CompAnimation::LoadBinary(char ** cursor)
 				break;
 			}
 		}
+		animation_nodes.push_back(temp);
+	}
 
+	for (int i = 0; i < num_nodes; i++)
+	{
 		//Load transitions
 		int num_transitions = App->json_seria->LoadIntBinary(cursor);
-		for (int i = 0; i < num_transitions; i++)
+		for (int j = 0; j < num_transitions; j++)
 		{
 			AnimationTransition* temp_transition = new AnimationTransition();
 
@@ -1329,11 +1338,20 @@ void CompAnimation::LoadBinary(char ** cursor)
 			temp_transition->condition = App->json_seria->LoadBooleanBinary(cursor);
 			temp_transition->has_exit_time = App->json_seria->LoadBooleanBinary(cursor);
 			temp_transition->exit_time = App->json_seria->LoadFloatBinary(cursor);
-			temp_trans.push_back(temp_transition);
+
+			for (std::vector<AnimationNode*>::iterator temp_it = animation_nodes.begin(); temp_it != animation_nodes.end(); temp_it++)
+			{
+				if ((*temp_it)->name == temp_transition->destination_name)
+				{
+					temp_transition->destination = (*temp_it);
+					break;
+				}
+			}
+			animation_nodes.at(i)->transitions.push_back(temp_transition);
 		}
 
 		int num_blending_clips = App->json_seria->LoadIntBinary(cursor);
-		for (int i = 0; i < num_blending_clips; i++)
+		for (int j = 0; j < num_blending_clips; j++)
 		{
 			BlendingClip* temp_blending_clip = new BlendingClip();
 			temp_blending_clip->name = App->json_seria->LoadStringBinary(cursor);
@@ -1341,36 +1359,13 @@ void CompAnimation::LoadBinary(char ** cursor)
 			temp_blending_clip->first_active = App->json_seria->LoadBooleanBinary(cursor);
 			temp_blending_clip->second_active = App->json_seria->LoadBooleanBinary(cursor);
 			temp_blending_clip->weight= App->json_seria->LoadFloatBinary(cursor);
-			temp_blends.push_back(temp_blending_clip);
-		}
-
-		animation_nodes.push_back(temp);
-	}
-
-	for (int i = 0; i < num_nodes; i++)
-	{
-		for (int j = 0; j < temp_trans.size(); j++)
-		{
-			for (std::vector<AnimationNode*>::iterator temp_it = animation_nodes.begin(); temp_it != animation_nodes.end(); temp_it++)
-			{
-				if ((*temp_it)->name == temp_trans[j]->destination_name)
-				{
-					temp_trans[j]->destination = (*temp_it);
-					break;
-				}
-			}
-			animation_nodes.at(i)->transitions.push_back(temp_trans[j]);
-		}
-
-		for (int j = 0; j < temp_blends.size(); j++)
-		{
-			AnimationClip* temp_clip = GetClipFromName(temp_blends[j]->name_clip);
+			AnimationClip* temp_clip = GetClipFromName(temp_blending_clip->name_clip);
 			if (temp_clip != nullptr)
 			{
-				temp_blends[j]->clip = temp_clip;
+				temp_blending_clip->clip = temp_clip;
 			}
 
-			animation_nodes.at(i)->blending_clips.push_back(temp_blends[j]);
+			animation_nodes.at(i)->blending_clips.push_back(temp_blending_clip);
 		}
 	}
 }
@@ -1552,7 +1547,6 @@ void AnimationClip::RestartAnimationClip()
 
 AnimationNode::~AnimationNode()
 {
-
 	for (std::vector<BlendingClip*>::iterator temp = blending_clips.begin(); temp != blending_clips.end(); temp++)
 	{
 		RELEASE((*temp));
