@@ -846,8 +846,6 @@ void Skeleton::LoadBinary(char ** cursor)
 
 	for (int i = 0; i < num_bones; i++)
 	{
-		char tmp[255];
-		sprintf(tmp, "Bone %i.UUID", i);
 		bone_uids[i] = App->json_seria->LoadIntBinary(cursor);
 	}
 
