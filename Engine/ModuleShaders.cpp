@@ -119,7 +119,10 @@ ShaderProgram* ModuleShaders::CreateShader(const char* name)
 
 	newProgram->name = name;
 
-	programs.push_back(newProgram);
+	if (strcmp(name,"DefaultShader") != 0)
+	{
+		programs.push_back(newProgram);
+	}
 	return newProgram;
 }
 
@@ -515,6 +518,7 @@ void ModuleShaders::ImportShaderMaterials()
 				//IF default material found, change it
 				if (App->fs->GetOnlyName(str_path).compare("DefaultShader") == 0)
 				{
+					App->module_shaders->programs[0] = mat_shader;
 					App->renderer3D->default_shader = mat_shader;
 					App->renderer3D->default_material->material_shader = mat_shader;
 				}
