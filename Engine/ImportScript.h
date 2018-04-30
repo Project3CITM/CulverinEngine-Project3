@@ -243,6 +243,11 @@ private:
 	static void Deactivate(MonoObject* object, int uid);
 	static void SetInteractivity(MonoObject* object, mono_bool enable);
 
+	static bool IsNormal(MonoObject * object);
+	static bool IsHighlighted(MonoObject * object);
+	static bool IsPressed(MonoObject * object);
+	static bool IsDisabled(MonoObject * object);
+
 	/*Component Interactive Button*/
 	static void Clicked(MonoObject * object);
 

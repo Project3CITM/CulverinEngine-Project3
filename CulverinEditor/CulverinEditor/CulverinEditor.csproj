@@ -115,6 +115,7 @@
     <Compile Include="UI_Scripts\Component\CompCanvas.cs" />
     <Compile Include="UI_Scripts\Input\EditKeyBinding.cs" />
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
+    <Compile Include="UI_Scripts\Input\KeyBindingChangeStatus.cs" />
     <Compile Include="UI_Scripts\Scene\FinishedLevel2.cs" />
     <Compile Include="UI_Scripts\Scene\LevelFinished.cs" />
     <Compile Include="UI_Scripts\Component\CompText.cs" />

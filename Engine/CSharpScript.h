@@ -282,14 +282,22 @@ public:
 	void		SetUIPosition(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetUIPosition(MonoObject* object);
 
-	void SetWidth(MonoObject * object, int value);
-	void SetHeight(MonoObject * object, int value);
+	void		SetWidth(MonoObject * object, int value);
+	void		SetHeight(MonoObject * object, int value);
 
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
 	void		Deactivate(MonoObject * object, int uid);
 	void		Clicked(MonoObject* object);
 	void		SetInteractivity(MonoObject* object, mono_bool enable);
+
+	bool		IsNormal(MonoObject * object);
+
+	bool		IsHighlighted(MonoObject * object);
+
+	bool		IsPressed(MonoObject * object);
+
+	bool		IsDisabled(MonoObject * object);
 
 	/*UI-Graphics*/
 	void		SetRaycastTarget(MonoObject * object, mono_bool flag);

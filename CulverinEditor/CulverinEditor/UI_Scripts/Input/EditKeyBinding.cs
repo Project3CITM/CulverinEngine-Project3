@@ -52,7 +52,8 @@ public class EditKeyBinding : CulverinBehaviour
 
     public void ChangeInputAction()
     {
-        Input.SetInputActionToChange(action_name, input_name, device, negative_key);
+        if(!Input.GetChangeInputActive())
+            Input.SetInputActionToChange(action_name, input_name, device, negative_key);
 
     }
 }

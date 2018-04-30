@@ -145,6 +145,13 @@ void PlayerActions::Clear()
 
 void PlayerActions::UpdateInputsManager()
 {
+	if (key_change.change_active)
+	{
+		if (key_change.state != KeyChange::KeyState::WAIT_FOR_KEY_STATE)
+		{
+			key_change.Clear();
+		}
+	}
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		(*it)->UpdateInputActions();
@@ -159,29 +166,14 @@ bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 		
 		if (key_change.state != KeyChange::KeyState::WAIT_FOR_KEY_STATE)
 		{
-			bool ret = false;
-			if (key_change.state == KeyChange::KeyState::NO_STATE)
+			if (key_change.state == KeyChange::KeyState::VALID_KEY_STATE
+				|| key_change.state == KeyChange::KeyState::INVALID_KEY_STATE)
 			{
-
-			}
-			else if (key_change.state == KeyChange::KeyState::VALID_KEY_STATE)
-			{
-				ret = true;
-
-			}
-			else if (key_change.state == KeyChange::KeyState::INVALID_KEY_STATE)
-			{
-				ret = true;
-
-			}
-			key_change.Clear();
-			if (ret)
-				return ret;
+				return true;
+			}		
 		}
-		
-		
-
 	}
+	
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		if (!(*it)->GetActiveInput())
@@ -609,6 +601,16 @@ void PlayerActions::SendNewDeviceCombinationType(DeviceCombinationType type)
 		return;
 	actual_player_action = type;
 	my_module->UpdateDeviceType(actual_player_action);
+}
+
+bool PlayerActions::GetChangeInputActive() const
+{
+	return key_change.change_active;
+}
+
+int PlayerActions::GetChangeInputState() const
+{
+	return (int)key_change.state;
 }
 
 DeviceCombinationType PlayerActions::SelectDeviceCombination(const char * value)
