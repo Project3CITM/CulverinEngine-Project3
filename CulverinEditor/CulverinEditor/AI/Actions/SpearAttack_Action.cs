@@ -67,8 +67,10 @@ public class SpearAttack_Action : Action
             if (state == SWA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
             {
                 state = SWA_STATE.POST_APPLY;
-                player.GetDamage(damage);
-                GetComponent<CompAudio>().PlayEvent("SwordHit");
+                if (player.GetDamage(damage) == true) 
+                {
+                    GetComponent<CompAudio>().PlayEvent("SwordHit");
+                }
             }
             else if (state == SWA_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
             {
@@ -88,8 +90,10 @@ public class SpearAttack_Action : Action
             if (state == SWA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
             {
                 state = SWA_STATE.POST_APPLY;
-                player.GetDamage(damage);
-                GetComponent<CompAudio>().PlayEvent("SwordHit");
+                if (player.GetDamage(damage) == true)
+                {
+                    GetComponent<CompAudio>().PlayEvent("SwordHit");
+                }
             }
             else if (state == SWA_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
             {

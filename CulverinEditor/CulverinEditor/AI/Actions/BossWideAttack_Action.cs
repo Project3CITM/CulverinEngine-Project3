@@ -26,19 +26,36 @@ public class BossWideAttack_Action : Action
     public float apply_damage_point = 0.5f;
     public float preparation_time = 0.8f;
     public float attack_duration = 1.0f;
+    CharactersManager player = null;
 
     public override bool ActionStart()
     {
-
         state = BWA_STATE.PRE_APPLY;
-        GetComponent<CompAnimation>().SetTransition("ToWideAttack");
-        GetComponent<CompAnimation>().SetClipDuration("WideAttack", preparation_time / apply_damage_point);
-        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
+        player = GetLinkedObject("target").GetComponent<CharactersManager>();
+
+        if (player == null)
+        {
+            Debug.Log("[error] Attack Action Start: Player is null!");
+        }
+
+        if (player.dying == false)
+        {
+            GetComponent<CompAnimation>().SetTransition("ToWideAttack");
+            GetComponent<CompAnimation>().SetClipDuration("WideAttack", preparation_time / apply_damage_point);
+            GetComponent<CompAudio>().PlayEvent("AttackPreparation");
+        }
+
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if (player.dying)
+        {
+            Debug.Log("DON'T ATTACK PLAYER", Department.PLAYER, Color.ORANGE);
+            return ACTION_RESULT.AR_FAIL; //Player is dead, don't attack
+        }
+
         if (state == BWA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
         {
             GetComponent<CompAnimation>().SetClipDuration("WideAttack", (attack_duration / (1.0f - apply_damage_point)));
