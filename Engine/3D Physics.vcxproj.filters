@@ -136,6 +136,9 @@
     <Filter Include="Engine\Components\UI">
       <UniqueIdentifier>{a2b7159f-3153-4583-bcdf-895437cd8b06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Tools\Gif">
+      <UniqueIdentifier>{7a3fc125-cb2f-4931-8155-5866fbb3dfa7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
