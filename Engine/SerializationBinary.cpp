@@ -18,7 +18,6 @@
 std::string JSONSerialization::SaveSceneBinary()
 {
 	LOG("SAVING SCENE BINARY -----");
-	std::string ret;
 	uint buffer_size = 0;
 	GetBufferSizeRoot(buffer_size);
 	if (App->scene->root->GetNumChilds() > 0)
@@ -58,9 +57,17 @@ std::string JSONSerialization::SaveSceneBinary()
 	App->audio->SaveAudioBanks(&cursor);
 
 	SaveIntBinary(&cursor, IDENTIFICATOR_END);
-	App->fs->SaveFile(buffer, "JoanTest", buffer_size, DIRECTORY_IMPORT::IMPORT_DIRECTORY_ASSETS);
+	std::string nameJson = App->fs->GetMainDirectory();
+	nameJson += "/SceneBinary/";
+	nameJson += App->scene->root->GetName();
+	nameJson += ".culverinscene";
+	App->fs->SaveFile(buffer, nameJson.c_str(), buffer_size);
 	RELEASE_ARRAY(buffer);
-	return ret;
+	nameJson = App->fs->GetMainDirectory();
+	nameJson += "/";
+	nameJson += App->scene->root->GetName();
+	nameJson += ".scene.json";
+	return nameJson;
 }
 
 void JSONSerialization::SaveChildGameObjectBinary(const GameObject& gameObject, char** cursor)
@@ -112,7 +119,7 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 	Timer timetp;
 	timetp.Start();
 	char* buffer;
-	uint size_file = App->fs->LoadFile(scene.c_str(), &buffer, DIRECTORY_IMPORT::IMPORT_DIRECTORY_ASSETS);
+	uint size_file = App->fs->LoadFile(scene.c_str(), &buffer);
 	char* cursor = buffer;
 	LOG("---- Loading Scene: %s", scene.c_str());
 

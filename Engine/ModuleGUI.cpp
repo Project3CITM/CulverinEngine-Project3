@@ -168,7 +168,7 @@ update_status ModuleGUI::Update(float dt)
 			}
 			if (ImGui::MenuItem("Load Scene"))
 			{
-				App->WantToLoad();
+				App->WantToLoad(false, false, true);
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Build Settings...", "Ctrl + Shift + B"))
