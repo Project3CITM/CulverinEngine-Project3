@@ -167,7 +167,7 @@ class GetHit_Action: Action
             return ACTION_RESULT.AR_FAIL;
         }
 
-        if(anim_comp.IsAnimOverXTime(0.3f) && !played_audio)
+        /*if(anim_comp.IsAnimOverXTime(0.3f) && !played_audio)
         {
             if(GetComponent<EnemyShield_BT>() != null)
                 audio_comp.PlayEvent("Enemy3_Hurt");
@@ -179,7 +179,7 @@ class GetHit_Action: Action
                 audio_comp.PlayEvent("Enemy1_Hurt");
 
             played_audio = true;
-        }
+        }*/
 
         if (anim_comp.IsAnimationStopped(animation_clip))
             return ACTION_RESULT.AR_SUCCESS;

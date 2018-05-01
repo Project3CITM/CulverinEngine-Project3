@@ -63,6 +63,8 @@ public class Enemy_BT : BT
 
     public bool Disable_Movement_Gameplay_Debbuger = false;
 
+    CompAudio audio_comp;
+
     public override void Start()
     {
         in_combat = false;
@@ -102,7 +104,7 @@ public class Enemy_BT : BT
         hp_timer_total = 10.0f;
         hp_timer = 0.0f;
         hud_active = false;
-
+        audio_comp = GetComponent<CompAudio>();
         base.Start();
     }
 
@@ -179,6 +181,15 @@ public class Enemy_BT : BT
         if (current_action.action_type != Action.ACTION_TYPE.PUSHBACK_ACTION)
         {
             Debug.Log("Yes push hit", Department.PHYSICS, Color.BLUE);
+            if (GetComponent<EnemyShield_BT>() != null)
+                audio_comp.PlayEvent("Enemy3_Hurt");
+
+            if (GetComponent<EnemySpear_BT>() != null)
+                audio_comp.PlayEvent("Enemy2_Hurt");
+
+            if (GetComponent<EnemySword_BT>() != null)
+                audio_comp.PlayEvent("Enemy1_Hurt");
+
             next_action = GetComponent<GetHit_Action>();
             GetComponent<GetHit_Action>().SetHitType(damage_type);
             InterruptAction();
