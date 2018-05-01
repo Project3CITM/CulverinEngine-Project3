@@ -1157,6 +1157,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::SetInputActionToChange", (const void*)SetInputActionToChange);
 	mono_add_internal_call("CulverinEditor.Input::GetChangeInputActive", (const void*)GetChangeInputActive);
 	mono_add_internal_call("CulverinEditor.Input::GetChangeInputState", (const void*)GetChangeInputState);
+	mono_add_internal_call("CulverinEditor.Input::SavePlayerAction", (const void*)SavePlayerAction);
+	mono_add_internal_call("CulverinEditor.Input::LoadDefaultPlayerAction", (const void*)LoadDefaultPlayerAction);
 
 	mono_add_internal_call("CulverinEditor.Input::RumblePlay", (const void*)RumblePlay);
 
@@ -1644,7 +1646,14 @@ int ImportScript::GetChangeInputState()
 {
 	return App->input->player_action->GetChangeInputState();;
 }
-
+void ImportScript::SavePlayerAction()
+{
+	App->input->SavePlayerAction();
+}
+void ImportScript::LoadDefaultPlayerAction()
+{
+	App->input->LoadDefaultPlayerAction();
+}
 void ImportScript::RumblePlay(float intensity, int milliseconds)
 {
 	App->input->RumblePlay(intensity, milliseconds);

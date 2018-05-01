@@ -134,11 +134,10 @@ private:
 	static MonoString*	GetInput_ControllerActionName(MonoString* name, MonoString* input, int device, bool negative_key);
 	static MonoString*	GetInput_ControllerKeyBindingName(MonoString* name, MonoString* input, int device, bool negative_key);
 	static void			SetInputActionToChange(MonoString* name, MonoString* input, int device, bool negative_key);
-
-	static bool GetChangeInputActive();
-
-	static int GetChangeInputState();
-
+	static bool			GetChangeInputActive();
+	static int			GetChangeInputState();
+	static void			SavePlayerAction();
+	static void			LoadDefaultPlayerAction();
 	static void			RumblePlay(float intensity, int milliseconds);
 
 	/* Time */

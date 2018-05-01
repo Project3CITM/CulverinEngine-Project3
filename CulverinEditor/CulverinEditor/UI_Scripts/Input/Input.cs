@@ -91,7 +91,11 @@ namespace CulverinEditor
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern int GetChangeInputState();
 
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SavePlayerAction();
 
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void LoadDefaultPlayerAction();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void RumblePlay(float intensity, int milliseconds);

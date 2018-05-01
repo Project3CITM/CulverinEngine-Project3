@@ -123,6 +123,8 @@ public:
 		mouse_y_global = y;
 	}
 	bool GetUpdateNewDevice()const;
+	void SavePlayerAction()const;
+	void LoadDefaultPlayerAction();
 	DeviceCombinationType GetActualDeviceCombo()const;
 	void UpdateDeviceType(DeviceCombinationType actual_player_action);
 	void RumblePlay(float intensity, int milliseconds);

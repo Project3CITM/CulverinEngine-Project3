@@ -491,8 +491,7 @@ update_status ModuleInput::UpdateConfig(float dt)
 	ImGui::TextColored(color, "UI Cancel: %s", cancel.c_str());
 	if (ImGui::Button("Save PlayerActions"))
 	{
-		if (player_action != nullptr)
-			App->json_seria->SavePlayerAction(player_action, App->fs->GetMainDirectory().c_str(), "player_action");
+			SavePlayerAction();
 
 	}
 
@@ -636,6 +635,28 @@ SDL_Scancode ModuleInput::GetKeyFromName(const char* name)
 bool ModuleInput::GetUpdateNewDevice() const
 {
 	return update_new_device;
+}
+
+void ModuleInput::SavePlayerAction() const
+{
+	if (player_action != nullptr)
+		App->json_seria->SavePlayerAction(player_action, App->fs->GetMainDirectory().c_str(), "player_action");
+
+}
+
+void ModuleInput::LoadDefaultPlayerAction()
+{
+	if (player_action != nullptr)
+	{
+		player_action->Clear();
+		RELEASE(player_action);
+	}
+	
+
+	std::string name = DIRECTORY_LIBRARY_JSON;
+	name = App->fs->GetFullPath(name);
+	name += "player_action_default.json";
+	App->json_seria->LoadPlayerAction(&player_action, name.c_str());
 }
 
 DeviceCombinationType ModuleInput::GetActualDeviceCombo() const

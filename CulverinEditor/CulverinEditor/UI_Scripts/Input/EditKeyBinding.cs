@@ -52,9 +52,11 @@ public class EditKeyBinding : CulverinBehaviour
 
     public void ChangeInputAction()
     {
-        if(!Input.GetChangeInputActive())
+        if (!Input.GetChangeInputActive())
+        {
+            GetComponent<CompAudio>().PlayEvent("Push");
             Input.SetInputActionToChange(action_name, input_name, device, negative_key);
-
+        }
     }
 }
   
