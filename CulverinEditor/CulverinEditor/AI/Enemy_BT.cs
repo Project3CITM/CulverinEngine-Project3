@@ -192,7 +192,8 @@ public class Enemy_BT : BT
 
             next_action = GetComponent<GetHit_Action>();
             GetComponent<GetHit_Action>().SetHitType(damage_type);
-            InterruptAction();
+            if (GetComponent<EnemySpear_BT>() == null)
+                InterruptAction();
         }
         else
         {
