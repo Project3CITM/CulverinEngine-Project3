@@ -641,6 +641,7 @@ void CompCamera::SyncComponent(GameObject * sync_parent)
 	SetFov(vertical_fov);
 
 	SetMain(is_main);
+	UpdateFrustum();
 }
 
 void CompCamera::GetOwnBufferSize(uint & buffer_size)
@@ -706,9 +707,4 @@ void CompCamera::LoadBinary(char ** cursor)
 	frustum.up = App->json_seria->LoadFloat3Binary(cursor);
 
 	Enable();
-}
-
-void CompCamera::SyncComponent(GameObject * sync_parent)
-{
-	UpdateFrustum();
 }
