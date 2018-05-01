@@ -1425,3 +1425,40 @@ void CompAnimation::SetActiveAnimationNode(AnimationNode* active)
 		}
 	}
 }
+
+void CompAnimation::SpawnPrefabFromPos(std::string prefab_name,float3 realposition, float3 realrotation, float3 prefabpos, float3 prefabrot)
+{
+	std::string directory_prebaf = App->fs->GetMainDirectory();
+	directory_prebaf += "/";
+	directory_prebaf += prefab_name.c_str();
+	directory_prebaf += ".prefab.json";
+	GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str(), true);
+	if (gameobject != nullptr)
+	{
+		App->scene->root->AddChildGameObject(gameobject);
+		App->importer->iScript->UpdateMonoMap(gameobject);
+
+		CompTransform* trans = gameobject->GetComponentTransform();
+		CompTransform* my_trans = parent->GetComponentTransform();
+
+		if (trans != nullptr)
+		{
+			float3 final_pos = realposition;
+			float3 globalrot = realrotation;
+				
+			float3x3 mat;
+			mat = mat.identity;
+			mat = mat.FromEulerXYZ(realrotation.x, realrotation.y, realrotation.z);
+
+			float3 rotatedpos = mat * prefabpos;
+			final_pos = final_pos + rotatedpos;
+			trans->SetPos(final_pos);
+
+			float3 prefabrot = ((trans->GetRotGlobal()).ToEulerXYZ()) *RADTODEG;
+
+			globalrot = globalrot + prefabrot;
+			trans->SetRot(globalrot);
+			gameobject->UpdateChildsMatrices();
+		}
+	}
+}

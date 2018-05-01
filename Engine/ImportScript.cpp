@@ -1073,7 +1073,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Object::Instantiate(string)", (const void*)Instantiate);
 	mono_add_internal_call("CulverinEditor.Object::Instantiate(string,single)", (const void*)Instantiate_respawn);
 	mono_add_internal_call("CulverinEditor.Object::Destroy", (const void*)Destroy);
-	
+		mono_add_internal_call("CulverinEditor.Object::SpawnPrefabFromPos", (const MonoObject*)SpawnPrefabFromPos);
 	// Transform ---------------------------
 	mono_add_internal_call("CulverinEditor.Transform::GetForwardVector", (const void*)GetForwardVector);
 	mono_add_internal_call("CulverinEditor.Transform::GetBackwardVector", (const void*)GetBackwardVector);
@@ -1275,7 +1275,6 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetFirstActiveBlendingClipWeight", (const void*)SetFirstActiveBlendingClipWeight);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetBlendInTime", (const void*)SetBlendInTime);
 	mono_add_internal_call("CulverinEditor.CompAnimation::PlayAnimationNode", (const void*)PlayAnimationNode);
-
 	//MODULE PHYSICS FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.PhysX::RayCast", (const void*)RayCast);
 
@@ -2285,6 +2284,11 @@ void ImportScript::SetBlendInTime(MonoObject * object, MonoString * string, floa
 void ImportScript::PlayAnimationNode(MonoObject * object, MonoString * string)
 {
 	current->PlayAnimationNode(object, string);
+}
+
+MonoObject * ImportScript::SpawnPrefabFromPos(MonoObject * object, MonoString * prefab_name, MonoObject* realposition, MonoObject* realrotation, MonoObject* prefabpos)
+{
+	return current->SpawnPrefabFromPos(object, prefab_name, realposition, realrotation, prefabpos);
 }
 
 void ImportScript::SetAlbedo(MonoObject * object, MonoString * string)

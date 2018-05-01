@@ -289,7 +289,6 @@ public class JaimeController : CharacterController
 
         //Do Damage Around
         movement.GetPlayerPos(out curr_x, out curr_y);
-
         // Decrease stamina -----------
         DecreaseStamina(sec_ability_cost);
         DecreaseMana(sec_ability_cost);

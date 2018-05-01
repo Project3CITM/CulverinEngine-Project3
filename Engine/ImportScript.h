@@ -172,6 +172,7 @@ private:
 
 	/* Object */
 	static MonoObject*	Instantiate(MonoObject* object, MonoString* prefab);
+	static MonoObject*  SpawnPrefabFromPos(MonoObject* object, MonoString* prefab_name, MonoObject* realposition, MonoObject* realrotation, MonoObject* prefabpos);
 	static MonoObject*	Instantiate_respawn(MonoObject* object, MonoString* prefab, float time);
 	static void			Destroy(MonoObject* object, MonoObject* gameobject, float time);
 	
@@ -305,7 +306,7 @@ private:
 	static void SetSecondctiveBlendingClipWeight(MonoObject* object, float weight);
 	static void SetBlendInTime(MonoObject* object, MonoString* string, float weight);
 	static void PlayAnimationNode(MonoObject* object, MonoString* string);
-
+	
 	/*Component Material*/
 	static void SetAlbedo(MonoObject* object, MonoString* string);
 	static void SetNormals(MonoObject* object, MonoString* string);
