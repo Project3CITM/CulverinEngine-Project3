@@ -59,6 +59,7 @@ public class Fountain : CulverinBehaviour
                     on_fountain_range = false;
                     fountain_interact.GetComponent<CompImage>().DeactivateRender();
                 }
+                StatsScore.Heal();
             }
         }
 

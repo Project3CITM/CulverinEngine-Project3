@@ -10,7 +10,9 @@ static public class StatsScore
     static public uint characters_alive = 3; //counter for tracking how many characters you have used (1,2 or 3)
     static public float time = 0.0f; //counter for tracking how many characters you have used (1,2 or 3)
 
+    static public uint fountain_times = 0;
     static public uint combat_points = 0;
+    static public uint puzzle_hits = 0;
 
     static public void BossDead()
     {
@@ -49,5 +51,12 @@ static public class StatsScore
         Time.StartTimePlay();
 
         combat_points = 0;
+        fountain_times = 0;
+        puzzle_hits = 0;
+    }
+
+    static public void Heal()
+    {
+        fountain_times++;
     }
 }
