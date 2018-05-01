@@ -57,6 +57,7 @@ public class DaenerysController : CharacterController
     public float left_ability_cd_time = 1.0f;
     private DaenerysCD_Left cd_left;
     float AttackLeftTimer = 0.0f;
+    public int left_ability_distance = 3;
     
     //Right Ability Stats
     public float right_ability_dmg = 10.0f;
@@ -182,6 +183,7 @@ public class DaenerysController : CharacterController
                                     Fireball fballscript = flamethr.GetComponent<Fireball>();
                                     fballscript.vfront = curr_forward;
                                     fballscript.SetDamage(left_ability_dmg);
+                                    fballscript.SetDistance(left_ability_distance);
 
                                     GameObject coll_object = PhysX.RayCast(curr_position, curr_forward, 254.0f);
                                     if (coll_object != null)
