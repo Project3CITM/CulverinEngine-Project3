@@ -145,9 +145,14 @@ public class JaimeController : CharacterController
     public override void ControlCharacter()
     {
         //Debug.Log(state, Department.PLAYER);
+        curr_hp = health.GetCurrentHealth();
+        
         // First check if you are alive
-        if (health.GetCurrentHealth() > 0)
+        if (curr_hp > 0)
         {
+            //Check play breath audio
+            base.CheckHealth(curr_hp, max_hp, "JaimeBreathing");
+
             // Check if player is moving to block attacks/abilities
             if (!movement.IsMoving())
             {
@@ -330,6 +335,7 @@ public class JaimeController : CharacterController
                 }
 
                 PlayFx("JaimeHurt");
+                play_breathing_audio = true;
 
                 //Damage Feedback
                 damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);

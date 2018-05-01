@@ -463,6 +463,7 @@ public class CharactersManager : CulverinBehaviour
             left_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
             left_character.GetComponent<JaimeController>().ToggleMesh(true);
             left_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
+            left_character.GetComponent<JaimeController>().force_audio = true;
             GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<JaimeController>().curr_hp / 100.0f);
         }
         else if (left_character.GetName() == "Daenerys")
@@ -471,6 +472,7 @@ public class CharactersManager : CulverinBehaviour
             left_character.GetComponent<DaenerysController>().UpdateHUD(true, true);
             left_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
             left_character.GetComponent<DaenerysController>().ToggleMesh(true);
+            left_character.GetComponent<DaenerysController>().force_audio = true;
             GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
         }
         else if (left_character.GetName() == "Theon")
@@ -479,6 +481,7 @@ public class CharactersManager : CulverinBehaviour
             left_character.GetComponent<TheonController>().UpdateHUD(true, true);
             left_character.GetComponent<TheonController>().ToggleMesh(true);
             left_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
+            left_character.GetComponent<TheonController>().force_audio = true;
             GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<TheonController>().curr_hp / 100.0f);
         }
     }
@@ -506,7 +509,7 @@ public class CharactersManager : CulverinBehaviour
             current_character.GetComponent<TheonController>().ToggleMesh(false);
         }
 
-        // LEFT CHARACTER -------------------------------
+        // RIGHT CHARACTER -------------------------------
         if (right_character.GetName() == "Jaime")
         {
             right_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.CURRENT);
@@ -514,6 +517,7 @@ public class CharactersManager : CulverinBehaviour
             right_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
             right_character.GetComponent<JaimeController>().ToggleMesh(true);
             right_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
+            right_character.GetComponent<JaimeController>().force_audio = true;
             GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<JaimeController>().curr_hp/100.0f);
         }
         else if (right_character.GetName() == "Daenerys")
@@ -522,6 +526,7 @@ public class CharactersManager : CulverinBehaviour
             right_character.GetComponent<DaenerysController>().UpdateHUD(true, false);
             right_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
             right_character.GetComponent<DaenerysController>().ToggleMesh(true);
+            right_character.GetComponent<DaenerysController>().force_audio = true;
             GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
         }
         else if (right_character.GetName() == "Theon")
@@ -530,6 +535,7 @@ public class CharactersManager : CulverinBehaviour
             right_character.GetComponent<TheonController>().UpdateHUD(true, false);
             right_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
             right_character.GetComponent<TheonController>().ToggleMesh(true);
+            right_character.GetComponent<TheonController>().force_audio = true;
             GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<TheonController>().curr_hp / 100.0f);
         }
     }
