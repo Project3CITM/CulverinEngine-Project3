@@ -23,6 +23,7 @@ CompRectTransform::CompRectTransform(Comp_Type t, GameObject * parent) :CompTran
 	name_component = "CompRectTransform";
 	ui_position = float2::zero;
 	resize_factor = float2::one;
+	curr_resize = float2::one;
 	max_anchor = float2(0.5f, 0.5f);
 	min_anchor = float2(0.5f, 0.5f);
 	pivot = float2(0.5f, 0.5f);
@@ -291,9 +292,10 @@ void CompRectTransform::ShowTransform(float drag_speed)
 		}
 		ImGui::Text("Uniform Scale"); ImGui::SameLine(op + 30);
 
-		if (ImGui::Checkbox("##uniform_scale", &unitar_resize))
+		if (ImGui::Checkbox("##uniform_scale", &use_unitary_rescale))
 		{
 			Resize(resize_factor);
+			update_rect = true;
 		}
 		break;
 	}
@@ -531,7 +533,7 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 		if (parent_transform != nullptr)
 		{
 			resize_factor = res_factor;
-			if (unitar_resize)
+			if (use_unitary_rescale)
 			{
 				curr_resize.x = Max(resize_factor.x, resize_factor.y);
 				curr_resize.y = curr_resize.x;
@@ -542,8 +544,8 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 			}
 			int p_width = parent_transform->GetWidth();
 			int p_height = parent_transform->GetHeight();
-			pos.x = (p_width*(max_anchor.x-pivot.x) + ui_position.x)*res_factor.x;
-			pos.y = (p_height*(max_anchor.y-pivot.y) + ui_position.y)*res_factor.y;
+			pos.x = (p_width*(max_anchor.x-pivot.x) + ui_position.x)*curr_resize.x;
+			pos.y = (p_height*(max_anchor.y-pivot.y) + ui_position.y)*curr_resize.y;
 			float3 loc_pos = GetPos();
 			loc_pos.x = pos.x;
 			loc_pos.y = pos.y;
@@ -552,8 +554,10 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 	}
 	else if (is_canvas)
 	{
-		pos.x = width * 0.5* res_factor.x;
-		pos.y = height * 0.5* res_factor.y;
+		resize_factor = res_factor;
+		curr_resize = res_factor;
+		pos.x = width * 0.5* curr_resize.x;
+		pos.y = height * 0.5* curr_resize.y;
 		float3 loc_pos = GetPos();
 		loc_pos.x = pos.x;
 		loc_pos.y = pos.y;
@@ -749,15 +753,7 @@ float2 CompRectTransform::GenerateResizeFactor(int width, int height)
 	resize_factor.x = (float)width / (float)this->width;
 	resize_factor.y = (float)height / (float)this->height;
 
-	if (unitar_resize)
-	{
-		curr_resize.x = Max(resize_factor.x, resize_factor.y);
-		curr_resize.y = curr_resize.x;
-	}
-	else
-	{
-		curr_resize = resize_factor;
-	}
+	curr_resize = resize_factor;
 	return resize_factor;
 
 }
@@ -812,7 +808,7 @@ int CompRectTransform::GetHeight()const
 
 float2 CompRectTransform::GetResizeFactor() const
 {
-	return resize_factor;
+	return curr_resize;
 }
 
 float2 CompRectTransform::GetMaxAnchor()const
@@ -846,7 +842,7 @@ float4 CompRectTransform::GetRect()const
 }
 float4 CompRectTransform::GetGlobalRect()const
 {
-	return float4(position_global.x - (abs(width*resize_factor.x)*left_pivot.x), position_global.y + (abs(height*resize_factor.y)*left_pivot.y), (float)abs(width*resize_factor.x), (float)abs(height*resize_factor.y));
+	return float4(position_global.x - (abs(width*curr_resize.x)*left_pivot.x), position_global.y + (abs(height*curr_resize.y)*left_pivot.y), (float)abs(width*curr_resize.x), (float)abs(height*curr_resize.y));
 }
 float3 CompRectTransform::GetGlobalPosition()const
 {
