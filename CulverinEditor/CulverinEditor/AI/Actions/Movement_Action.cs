@@ -18,6 +18,7 @@ public class Movement_Action : Action
 
     CompAnimation anim_comp;
     Transform transform_comp;
+    CompAudio audio_comp;
 
     public enum Direction
     {
@@ -83,6 +84,7 @@ public class Movement_Action : Action
         seek = GetComponent<Seek_Steering>();
         anim_comp = GetComponent<CompAnimation>();
         transform_comp = GetComponent<Transform>();
+        audio_comp = GetComponent<CompAudio>();
 
         player_t = GetLinkedObject("player_obj");
 
@@ -295,6 +297,10 @@ public class Movement_Action : Action
 
     private void NextTile()
     {
+        //Audio Footsteps
+        //audio_comp.PlayEvent("Footsteps");
+
+
         Vector3 pos = new Vector3(transform_comp.position);
         if (path.Count > 0)
         {
@@ -328,6 +334,8 @@ public class Movement_Action : Action
                 }
             }
 
+            Debug.Log("footstep audio enemy", Department.PHYSICS, Color.BLUE);
+            audio_comp.PlayEvent("Footsteps");
             tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
         }
     }
