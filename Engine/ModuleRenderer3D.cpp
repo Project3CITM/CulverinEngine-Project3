@@ -183,6 +183,7 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 	particles_shader = App->module_shaders->CreateDefaultShader("Particles Shader", DefaultFrag, DefaultVert, nullptr, true);
 	non_glow_shader = App->module_shaders->CreateDefaultShader("Non Glow Shader", NonGlowFrag, DefaultVert, nullptr, true);
+	non_glow_skinning_shader = App->module_shaders->CreateDefaultShader("Non Glow Skinning Shader", NonGlowFrag, SkinningVert, nullptr, true);
 	blur_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", BlurFrag, TextureVert, nullptr, true);
 	final_shader_tex = App->module_shaders->CreateDefaultShader("Texture Shader", FinalFrag, TextureVert, nullptr, true);
 	cube_map_shader = App->module_shaders->CreateDefaultShader("CubeMapShader", CubeMapFrag, CubeMapVert, nullptr, true);
@@ -193,6 +194,13 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	non_glow_material->GetProgramVariables();
 	App->module_shaders->materials.insert(std::pair<uint, Material*>(non_glow_material->GetProgramID(), non_glow_material));
 	non_glow_material->active_num = 1;
+
+	non_glow_skinning_material = new Material();
+	non_glow_skinning_material->name = "Non Glow Skinning Material";
+	non_glow_skinning_material->material_shader = non_glow_skinning_shader;
+	non_glow_skinning_material->GetProgramVariables();
+	App->module_shaders->materials.insert(std::pair<uint, Material*>(non_glow_skinning_material->GetProgramID(), non_glow_skinning_material));
+	non_glow_skinning_material->active_num = 1;
 
 	final_tex_material = new Material();
 	final_tex_material->name = "Final Tex Material";

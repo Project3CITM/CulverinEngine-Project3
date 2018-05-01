@@ -285,10 +285,24 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 				if (item._Ptr->_Myval.first.uuid != 0)
 				{
 					if (UseGlow) NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
-					else NewProgramID = App->renderer3D->non_glow_material->GetProgramID();
+					else 
+					{ 
+						if (((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->name == "Skinning with texture Final version")
+						{
+							NewProgramID = App->renderer3D->non_glow_skinning_material->GetProgramID();
+						}
+						else NewProgramID = App->renderer3D->non_glow_material->GetProgramID(); 
+					}
 				}
 
-				if (!UseGlow) ActualMaterial = App->renderer3D->non_glow_material;
+				if (!UseGlow)
+				{
+					if (((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->name == "Skinning with texture Final version")
+					{
+						ActualMaterial = App->renderer3D->non_glow_skinning_material;
+					}
+					else ActualMaterial = App->renderer3D->non_glow_material;
+				}
 				else ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
 
 				if (LastUsedMaterial != ActualMaterial)
@@ -600,6 +614,9 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		uint ID = 0;
 		if ((event.draw.ToDraw != nullptr) && (((CompMesh*)event.draw.ToDraw)->GetMaterial() != nullptr) && (((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram() != nullptr))
 			ID = ((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
+
+		//LOG(((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram()->name.c_str());
+
 		float DistanceCamToObject = diff_vect.Length();
 		switch (event.draw.Dtype)
 		{
