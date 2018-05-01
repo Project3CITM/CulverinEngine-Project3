@@ -10,9 +10,13 @@
 #include "GameObject.h"
 #include "CompRectTransform.h"
 #include "CompButton.h"
+#include "CompCheckBox.h"
+#include "CompSlider.h"
 #include "ModuleFS.h"
 #include "Scene.h"
+#include "JSONSerialization.h"
 #include "ModuleEventSystemV2.h"
+
 //Don't touch
 #define HIGHLIGHTED_SPRITE 0
 #define PRESSED_SPRITE 1
@@ -50,7 +54,12 @@ bool CompInteractive::Enable()
 	{
 		active = true;
 	}
-	iteractive_list.push_back(this);
+	std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+	if (item == iteractive_list.end())
+	{
+		iteractive_list.push_back(this);
+
+	}
 
 	return active;
 }
@@ -59,8 +68,12 @@ bool CompInteractive::Disable()
 	if (active)
 	{
 		active = false;
+		std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+		if (item == iteractive_list.end())
+		{
+			return active;
+		}
 		iteractive_list.remove(this);
-
 	}
 	return active;
 }
@@ -230,11 +243,13 @@ void CompInteractive::CopyValues(const CompInteractive* component)
 
 	//more...
 }
+
 void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
 	json_object_dotset_number_with_std(object, name + "UUID", uid);
+
 	for (int i = 0; i < 3; i++)
 	{
 		std::string resource_count = std::to_string(i);
@@ -256,6 +271,7 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
 		}
 	}
+
 	App->fs->json_array_dotset_float4(object, name + "Normal Color", normal_color);
 	App->fs->json_array_dotset_float4(object, name + "Highlighted Color", highlighted_color);
 	App->fs->json_array_dotset_float4(object, name + "Pressed Color", pressed_color);
@@ -276,6 +292,47 @@ void CompInteractive::Save(JSON_Object * object, std::string name, bool saveScen
 	}
 
 
+	json_object_dotset_number_with_std(object, name + "Selection Mode", current_selection_state);
+	json_object_dotset_number_with_std(object, name + "Transition Mode", current_transition_mode);
+	json_object_dotset_number_with_std(object, name + "Navigation Mode", navigation.current_navigation_mode);
+
+	if (navigation.interactive_up != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive up", navigation.interactive_up->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive up", 0);
+	}
+	
+	if (navigation.interactive_down != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive down", navigation.interactive_down->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive down", 0);
+	}
+
+	if (navigation.interactive_right != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive right", navigation.interactive_right->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive right", 0);
+	}
+
+	if (navigation.interactive_left != nullptr)
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive left", navigation.interactive_left->GetUUID());
+	}
+	else
+	{
+		json_object_dotset_number_with_std(object, name + "Interactive left", 0);
+	}
+
+
 }
 
 void CompInteractive::Load(const JSON_Object * object, std::string name)
@@ -286,7 +343,7 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 	{
 		std::string resource_count = std::to_string(i);
 
-		uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID "+ resource_count);
+		uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID " + resource_count);
 		if (resourceID > 0)
 		{
 			sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
@@ -303,29 +360,268 @@ void CompInteractive::Load(const JSON_Object * object, std::string name)
 			}
 		}
 	}
-	normal_color=App->fs->json_array_dotget_float4_string(object, name + "Normal Color");
-	highlighted_color=App->fs->json_array_dotget_float4_string(object, name + "Highlighted Color");
-	pressed_color=App->fs->json_array_dotget_float4_string(object, name + "Pressed Color");
-	disabled_color=App->fs->json_array_dotget_float4_string(object, name + "Disabled Color");
-	desired_color=App->fs->json_array_dotget_float4_string(object, name + "Desired Color");
-	color_multiply= json_object_dotget_number_with_std(object, name + "Color Multiply");
-	fade_duration=json_object_dotget_number_with_std(object, name + "Fade Duration");
-	no_fade=json_object_dotget_boolean_with_std(object, name + "Fade Active");
-	start_transition=json_object_dotget_boolean_with_std(object, name + "Transition Start");
-	target_graphic_uid=json_object_dotget_number_with_std(object, name + "Graphic UUID");
+	normal_color = App->fs->json_array_dotget_float4_string(object, name + "Normal Color");
+	highlighted_color = App->fs->json_array_dotget_float4_string(object, name + "Highlighted Color");
+	pressed_color = App->fs->json_array_dotget_float4_string(object, name + "Pressed Color");
+	disabled_color = App->fs->json_array_dotget_float4_string(object, name + "Disabled Color");
+	desired_color = App->fs->json_array_dotget_float4_string(object, name + "Desired Color");
+	color_multiply = json_object_dotget_number_with_std(object, name + "Color Multiply");
+	fade_duration = json_object_dotget_number_with_std(object, name + "Fade Duration");
+	no_fade = json_object_dotget_boolean_with_std(object, name + "Fade Active");
+	start_transition = json_object_dotget_boolean_with_std(object, name + "Transition Start");
+	target_graphic_uid = json_object_dotget_number_with_std(object, name + "Graphic UUID");
+
+	current_selection_state = static_cast<SelectionStates>((int)json_object_dotget_number_with_std(object, name + "Selection Mode"));
+	current_transition_mode = static_cast<Transition>((int)json_object_dotget_number_with_std(object, name + "Transition Mode"));
+	navigation.current_navigation_mode = static_cast<Navigation::NavigationMode>((int)json_object_dotget_number_with_std(object, name + "Navigation Mode"));
+
+	navigation.inteactive_up_uid = json_object_dotget_number_with_std(object, name + "Interactive up");
+	navigation.inteactive_down_uid = json_object_dotget_number_with_std(object, name + "Interactive down");
+	navigation.inteactive_right_uid = json_object_dotget_number_with_std(object, name + "Interactive right");
+	navigation.inteactive_left_uid = json_object_dotget_number_with_std(object, name + "Interactive left");
 
 	Enable();
 }
+
+void CompInteractive::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	
+	buffer_size += sizeof(int);				//uid
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (sprite[i] != nullptr)
+		{
+			buffer_size += sizeof(int);			//sprite[i]->GetUUID()
+		}
+		else
+		{
+			buffer_size += sizeof(int);			//sprite[i]->GetUUID() == 0
+		}
+	}
+
+	buffer_size += sizeof(float);					//normal_color
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//highlighted_color
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//pressed_color
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//disabled_color
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//desired_color
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//color_multiply
+	buffer_size += sizeof(float);					//fade_duration
+	buffer_size += sizeof(bool);					//no_fade
+	buffer_size += sizeof(bool);					//start_transition
+
+
+	if (target_graphic != nullptr)
+	{
+		buffer_size += sizeof(int);					//target_graphic_uid
+	}
+	else
+	{
+		buffer_size += sizeof(int);					//target_graphic_uid = 0
+	}
+
+	buffer_size += sizeof(int);						//current_selection_state
+	buffer_size += sizeof(int);						//current_transition_mode
+	buffer_size += sizeof(int);						//navigation.current_navigation_mode
+
+	if (navigation.interactive_up != nullptr)
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_up->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_up->GetUUID() = 0
+
+	}
+	if (navigation.interactive_down != nullptr)
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_down->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_down->GetUUID() = 0
+
+	}
+	if (navigation.interactive_right != nullptr)
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_right->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_right->GetUUID() = 0
+
+	}
+	if (navigation.interactive_left != nullptr)
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_left->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//navigation.interactive_left->GetUUID() = 0
+	}
+}
+
+void CompInteractive::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+
+	App->json_seria->SaveIntBinary(cursor, uid);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (sprite[i] != nullptr)
+		{
+			App->json_seria->SaveIntBinary(cursor, sprite[i]->GetUUID());
+		}
+		else
+		{
+			App->json_seria->SaveIntBinary(cursor, 0);
+		}
+	}
+
+	App->json_seria->SaveFloat4Binary(cursor, normal_color);
+	App->json_seria->SaveFloat4Binary(cursor, highlighted_color);
+	App->json_seria->SaveFloat4Binary(cursor, pressed_color);
+	App->json_seria->SaveFloat4Binary(cursor, disabled_color);
+	App->json_seria->SaveFloat4Binary(cursor, desired_color);
+
+	App->json_seria->SaveFloatBinary(cursor, color_multiply);
+	App->json_seria->SaveFloatBinary(cursor, fade_duration);
+	App->json_seria->SaveBooleanBinary(cursor, no_fade);
+	App->json_seria->SaveBooleanBinary(cursor, start_transition);
+
+	if (target_graphic != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, target_graphic_uid);
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+
+	App->json_seria->SaveIntBinary(cursor, (int)current_selection_state);
+	App->json_seria->SaveIntBinary(cursor, (int)current_transition_mode);
+	App->json_seria->SaveIntBinary(cursor, (int)navigation.current_navigation_mode);
+
+	if (navigation.interactive_up != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, navigation.interactive_up->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+
+	if (navigation.interactive_down != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, navigation.interactive_down->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+
+	if (navigation.interactive_right != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, navigation.interactive_right->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+
+	if (navigation.interactive_left != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, navigation.interactive_left->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+}
+
+void CompInteractive::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	//...
+	for (int i = 0; i < 3; i++)
+	{
+		uint resourceID = App->json_seria->LoadIntBinary(cursor);
+		if (resourceID > 0)
+		{
+			sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+			if (sprite[i] != nullptr)
+			{
+				sprite[i]->num_game_objects_use_me++;
+
+				// LOAD All Materials ----------------------------
+				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
+				}
+
+			}
+		}
+	}
+
+
+	normal_color = App->json_seria->LoadFloat4Binary(cursor);
+	highlighted_color = App->json_seria->LoadFloat4Binary(cursor);
+	pressed_color = App->json_seria->LoadFloat4Binary(cursor);
+	disabled_color = App->json_seria->LoadFloat4Binary(cursor);
+	desired_color = App->json_seria->LoadFloat4Binary(cursor);
+
+	color_multiply = App->json_seria->LoadFloatBinary(cursor);
+	fade_duration = App->json_seria->LoadFloatBinary(cursor);
+	no_fade = App->json_seria->LoadBooleanBinary(cursor);
+	start_transition = App->json_seria->LoadBooleanBinary(cursor);
+
+	target_graphic_uid = App->json_seria->LoadIntBinary(cursor);
+
+	current_selection_state = static_cast<SelectionStates>(App->json_seria->LoadIntBinary(cursor));
+	current_transition_mode = static_cast<Transition>(App->json_seria->LoadIntBinary(cursor));
+	navigation.current_navigation_mode = static_cast<Navigation::NavigationMode>(App->json_seria->LoadIntBinary(cursor));
+
+	navigation.inteactive_up_uid = App->json_seria->LoadIntBinary(cursor);
+	navigation.inteactive_down_uid = App->json_seria->LoadIntBinary(cursor);
+	navigation.inteactive_right_uid = App->json_seria->LoadIntBinary(cursor);
+	navigation.inteactive_left_uid = App->json_seria->LoadIntBinary(cursor);
+
+	Enable();
+}
+
 void CompInteractive::SyncComponent(GameObject* sync_parent)
 {
-	if (target_graphic_uid != 0)
-	{
-		SetTargetGraphic((CompGraphic*)parent->FindComponentByUUID(target_graphic_uid));
-	}
-	std::vector<Component*> script_vec;
-
 	if (sync_parent != nullptr)
 	{
+		if (target_graphic_uid != 0)
+		{
+			SetTargetGraphic((CompGraphic*)sync_parent->GetComponentsByUID(target_graphic_uid,true));
+		}
+		std::vector<Component*> script_vec;
+
+	
 		if (navigation.inteactive_up_uid != 0)
 		{
 			navigation.interactive_up = (CompInteractive*)sync_parent->GetComponentsByUID(navigation.inteactive_up_uid, true);
@@ -391,21 +687,35 @@ void CompInteractive::SyncComponent(GameObject* sync_parent)
 
 		}
 	}
-	
-	if (GetType() == Comp_Type::C_BUTTON)
-	{
-		static_cast<CompButton*>(this)->SyncScript();
-	}
-
 }
 bool CompInteractive::IsActivate()const
 {
 	return disabled;
 }
 
-bool CompInteractive::IsSelective() const
+bool CompInteractive::IsDragrable() const
 {
-	return selective;
+	return dragable;
+}
+
+bool CompInteractive::IsStateNormal() const
+{
+	return 	current_selection_state == SelectionStates::STATE_NORMAL;	
+}
+
+bool CompInteractive::IsStateHighlighted() const
+{
+	return current_selection_state == SelectionStates::STATE_HIGHLIGHTED;
+}
+
+bool CompInteractive::IsStatePressed() const
+{
+	return current_selection_state == SelectionStates::STATE_PRESSED;
+}
+
+bool CompInteractive::IsStateDisabled() const
+{
+	return current_selection_state == SelectionStates::STATE_DISABLED;
 }
 
 void CompInteractive::Activate()
@@ -413,6 +723,29 @@ void CompInteractive::Activate()
 	disabled = false;
 	current_selection_state = SelectionStates::STATE_NORMAL;
 	PrepareHandleTransition();
+}
+
+void CompInteractive::OnGOActive(bool active)
+{
+	if (active)
+	{
+		std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+		if (item == iteractive_list.end())
+		{
+			iteractive_list.push_back(this);
+
+		}
+	}
+	else
+	{
+		std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+		if (item == iteractive_list.end())
+		{
+			return;
+		}
+		iteractive_list.remove(this);
+
+	}
 }
 
 bool CompInteractive::IsInteractiveEnabled() const
@@ -512,7 +845,9 @@ void CompInteractive::OnInteractiveUnSelected(Event event_input)
 
 bool CompInteractive::PointerInside(float2 position)
 {
-	float4 rect = parent->GetComponentRectTransform()->GetGlobalRect();
+	if (target_graphic == nullptr)
+		return false;
+	float4 rect = target_graphic->GetRectTrasnform()->GetGlobalRect();
 	ImGuiIO& io = ImGui::GetIO();
 	float mouse_x = position.x;
 	float mouse_y = position.y;
@@ -669,7 +1004,7 @@ Component* CompInteractive::ShowInteractiveWindow()
 	std::vector<Component*> temp_list;
 	App->scene->root->GetComponentsByRangeOfType(Comp_Type::C_EDIT_TEXT, Comp_Type::C_SLIDER, &temp_list, true);
 	ImGui::Begin("Interactive", &select_interactive, window_flags);
-
+	
 	ImVec2 WindowSize = ImGui::GetWindowSize();
 	float ChildsWidth = WindowSize.x ;
 	float ChildsHeight = (WindowSize.y - 50.0f);
@@ -704,18 +1039,20 @@ CompInteractive * CompInteractive::FindNavigationOnUp()
 	if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
 	{
 		return navigation.interactive_up;
-
 	}
 	else
 	{
-		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(0, 1, 0));
+		return FindInteractive(float3(0, 1, 0));
 	}
 	return nullptr;
 }
 
 void CompInteractive::OnDrag(Event event_input)
 {
-	image->GetRectTrasnform()->SetPos(float3(event_input.pointer.position.x, event_input.pointer.position.y, 0));
+	if (IsPressed())
+	{
+		image->GetRectTrasnform()->SetPos(float3(event_input.pointer.position.x, event_input.pointer.position.y, 0));
+	}
 }
 
 CompInteractive * CompInteractive::FindNavigationOnDown()
@@ -728,7 +1065,7 @@ CompInteractive * CompInteractive::FindNavigationOnDown()
 	}
 	else
 	{
-		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(0, -1, 0));
+		return FindInteractive(float3(0, -1, 0));
 
 	}
 	return nullptr;
@@ -743,7 +1080,7 @@ CompInteractive * CompInteractive::FindNavigationOnRight()
 	}
 	else
 	{
-		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(1, 0, 0));
+		return FindInteractive(float3(1, 0, 0));
 
 	}
 	return nullptr;
@@ -757,7 +1094,7 @@ CompInteractive * CompInteractive::FindNavigationOnLeft()
 	}
 	else
 	{
-		return FindInteractive(parent->GetComponentRectTransform()->GetRot()*float3(-1, 0, 0));
+		return FindInteractive(float3(-1, 0, 0));
 	}
 	return nullptr;
 }
@@ -768,7 +1105,8 @@ CompInteractive * CompInteractive::FindInteractive(float3 direction)
 	//float3 local_direction = parent->GetComponentRectTransform()->GetRot().Inverted() * norm_direction;
 	float3 position = parent->GetComponentRectTransform()->GetGlobalPosition();
 	CompInteractive* ret = nullptr;
-	float best_score = -1 * INFINITY;
+	float closest_point = INFINITY;
+	float closest_point_second_axis = INFINITY;
 	for (std::list<CompInteractive*>::iterator it = iteractive_list.begin(); it != iteractive_list.end(); it++)
 	{
 		if (!(*it)->IsActive())
@@ -778,21 +1116,32 @@ CompInteractive * CompInteractive::FindInteractive(float3 direction)
 		if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_NONE)
 			continue;
 		float3 position_it = (*it)->parent->GetComponentRectTransform()->GetGlobalPosition();
-		float3 vector = position_it - position;
+		float3 diff_vec = position_it - position;
+		float diff_x = diff_vec.x * direction.x;
+		float diff_y = diff_vec.y * direction.y;
+		float diff_second_x = diff_vec.x * direction.y;
+		float diff_second_y = diff_vec.y * direction.x;
 
-		float dot_value = norm_direction.Dot(vector);
-		
-		if (dot_value <= 0)
-			continue;
-
-		float score = dot_value / vector.Length();
-
-		if (score > best_score)
+		if (diff_x > 0.000001)
 		{
-			best_score = score;
-			ret = (*it);
-		}		
+			if (diff_x < closest_point && diff_second_y < closest_point_second_axis)
+			{
+				closest_point_second_axis = diff_second_y;
+				closest_point = diff_x;
+				ret = it._Ptr->_Myval;
+			}
+		}
+		if (diff_y > 0.000001)
+		{
+			if (diff_y < closest_point && diff_second_x < closest_point_second_axis)
+			{
+				closest_point_second_axis = diff_second_x;
+				closest_point = diff_y;
+				ret = it._Ptr->_Myval;
+			}
+		}
 	}
+	
 	return ret;
 }
 
@@ -1015,7 +1364,7 @@ void CompInteractive::HandleTransition(SelectionStates selection_state)
 		StartTransitionSprite(desired_sprite);
 		break;
 	case  Transition::TRANSITION_ANIMATION:
-
+		StartAnimationSprite();
 		break;
 	default:
 		break;
@@ -1113,6 +1462,12 @@ void CompInteractive::ShowInspectorSpriteTransition()
 	}
 }
 
+void CompInteractive::ShowInspectorAnimationTransition()
+{
+	int op = ImGui::GetWindowWidth() / 4;
+
+}
+
 
 void CompInteractive::Navigate(Event event_data, CompInteractive * interactive)
 {
@@ -1134,8 +1489,6 @@ void CompInteractive::StartTransitionColor(float4 color_to_change, bool no_fade)
 	}
 	
 		start_transition = true;
-
-	
 }
 
 void CompInteractive::UpdateTransitionColor(float dt)
@@ -1143,11 +1496,18 @@ void CompInteractive::UpdateTransitionColor(float dt)
 	
 }
 
+
+
 void CompInteractive::StartTransitionSprite(ResourceMaterial * sprite_to_change)
 {
 	if (image == nullptr)
 		return;
 	image->SetOverwriteImage(sprite_to_change);
 	image->UpdateSpriteId();
+}
+
+void CompInteractive::StartAnimationSprite()
+{
+
 }
 

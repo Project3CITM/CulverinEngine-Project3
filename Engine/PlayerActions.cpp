@@ -1,6 +1,8 @@
 #include "PlayerActions.h"
 #include "InputManager.h"
+#include "InputAction.h"
 #include "ModuleInput.h"
+
 #define INPUT_MANAGER_LIMIT 5
 #define MAX_INPUT 20
 
@@ -143,6 +145,13 @@ void PlayerActions::Clear()
 
 void PlayerActions::UpdateInputsManager()
 {
+	if (key_change.change_active)
+	{
+		if (key_change.state != KeyChange::KeyState::WAIT_FOR_KEY_STATE)
+		{
+			key_change.Clear();
+		}
+	}
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		(*it)->UpdateInputActions();
@@ -151,6 +160,20 @@ void PlayerActions::UpdateInputsManager()
 
 bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 {
+	if (key_change.change_active)
+	{
+		key_change.state = key_change.ReceiveEvent(input_event);
+		
+		if (key_change.state != KeyChange::KeyState::WAIT_FOR_KEY_STATE)
+		{
+			if (key_change.state == KeyChange::KeyState::VALID_KEY_STATE
+				|| key_change.state == KeyChange::KeyState::INVALID_KEY_STATE)
+			{
+				return true;
+			}		
+		}
+	}
+	
 	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
 	{
 		if (!(*it)->GetActiveInput())
@@ -228,6 +251,35 @@ void PlayerActions::SetInputManagerBlock(const char * name, bool set)
 		if (strcmp((*it)->GetName(), name) == 0)
 			(*it)->SetBlockAction(set);
 	}
+}
+
+bool PlayerActions::SetInputActionToChange(const char * input_action, const char * input_manager, int device, bool change_negative)
+{
+	DeviceCombinationType this_device = static_cast<DeviceCombinationType>((int)device);
+	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
+		return nullptr;
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		InputManager* item = (*it);
+		if (strcmp(item->GetName(), input_manager) == 0)
+		{
+			for (std::vector<InputAction*>::iterator action_it = item->action_vector.begin(); action_it != item->action_vector.end(); action_it++)
+			{
+				InputAction* action_item = (*action_it);
+				if (strcmp(action_item->name.c_str(), input_action) == 0)
+				{
+					if (action_item->key_device == this_device)
+					{
+						key_change.SetInputAction(action_item);
+						return true;
+					}					
+				}
+			}
+
+		}
+
+	}
+	return false;
 }
 
 bool PlayerActions::GetInputManagerActive(const char * name) const
@@ -478,23 +530,69 @@ float PlayerActions::GetInput_ControllerAxis(const char * name, const char * inp
 	return 0;
 }
 
-const char * PlayerActions::GetInput_ControllerActionName(const char * name, const char * input, const char * device, bool negative_key)
+const char * PlayerActions::GetInput_ControllerActionName(const char * name, const char * input, int device, bool negative_key)
 {
-	return nullptr;
+	DeviceCombinationType this_device = static_cast<DeviceCombinationType>((int)device);
+	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
+		return "";
+
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		InputManager* item = (*it);
+		if (strcmp(item->GetName(), input) == 0)
+		{
+			for (std::vector<InputAction*>::iterator action_it = item->action_vector.begin(); action_it != item->action_vector.end(); action_it++)
+			{
+				InputAction* action_item = (*action_it);
+				if (strcmp(action_item->name.c_str(), name) == 0)
+				{					
+					if (action_item->key_device == this_device)
+					{
+						return action_item->name.c_str();
+					}
+				}			
+			}
+			
+		}
+
+	}
+	return "";
 }
 
-const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name, const char * input, const char * device, bool negative_key)
+const char * PlayerActions::GetInput_ControllerKeyBindingName(const char * name, const char * input, int device, bool negative_key)
 {
-	return nullptr;
-}
+	DeviceCombinationType this_device = static_cast<DeviceCombinationType>((int)device);
+	if (this_device == DeviceCombinationType::NULL_COMB_DEVICE)
+		return "";
+	for (std::vector<InputManager*>::iterator it = interactive_vector.begin(); it != interactive_vector.end(); it++)
+	{
+		InputManager* item = (*it);
+		if (strcmp(item->GetName(), input) == 0)
+		{
+			for (std::vector<InputAction*>::iterator action_it = item->action_vector.begin(); action_it != item->action_vector.end(); action_it++)
+			{
+				InputAction* action_item = (*action_it);
+				if (strcmp(action_item->name.c_str(), name) == 0)
+				{
+					if (action_item->key_device == this_device)
+					{
+						KeyRelation* key = nullptr;
+						if (negative_key&&action_item->negative_button != nullptr)
+						{
+							key = action_item->negative_button;
+						}
+						key = action_item->positive_button;
+						return key->name.c_str();
+					}
 
-bool PlayerActions::GetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)
-{
-	return false;
-}
+					
+				}
+			}
 
-void PlayerActions::SetInput_ControllerWaitForKey(const char * name, const char * input, const char * device, bool negative_key)
-{
+		}
+
+	}
+	return "";
 }
 
 void PlayerActions::SendNewDeviceCombinationType(DeviceCombinationType type)
@@ -503,4 +601,138 @@ void PlayerActions::SendNewDeviceCombinationType(DeviceCombinationType type)
 		return;
 	actual_player_action = type;
 	my_module->UpdateDeviceType(actual_player_action);
+}
+
+bool PlayerActions::GetChangeInputActive() const
+{
+	return key_change.change_active;
+}
+
+int PlayerActions::GetChangeInputState() const
+{
+	return (int)key_change.state;
+}
+
+DeviceCombinationType PlayerActions::SelectDeviceCombination(const char * value)
+{
+
+		if (strcmp(value, "mouse") == 0 || strcmp(value, "keyboard") == 0)
+		{
+			DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
+		}
+		else if (strcmp(value, "controller") == 0)
+		{
+			DeviceCombinationType::CONTROLLER_COMB_DEVICE;
+		}
+		return DeviceCombinationType::NULL_COMB_DEVICE;
+}
+
+PlayerActions::KeyChange::KeyState PlayerActions::KeyChange::ReceiveEvent(SDL_Event * input_event)
+{
+	if (key_to_change == nullptr)
+		return KeyState::NO_STATE;
+	switch (input_event->type)
+	{
+	case SDL_KEYDOWN:
+		if (key_to_change->key_device == DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE)
+		{
+			KeyRelation* key = nullptr;
+
+			if (change_negative)
+				key = key_to_change->negative_button;			
+			key = key_to_change->positive_button;
+
+			if (key == nullptr || key->event_value == input_event->key.keysym.scancode)
+				return KeyState::INVALID_KEY_STATE;
+			
+			if (key_to_change->my_manager == nullptr)
+				return KeyState::INVALID_KEY_STATE;
+			key_to_change->my_manager->ClearSameEvent(input_event);
+			key = App->input->FindKeyBinding(key->device, input_event->key.keysym.scancode);
+			if (change_negative)
+				key_to_change->negative_button = key;
+			key_to_change->positive_button = key;
+			return KeyState::VALID_KEY_STATE;
+
+		}
+		break;
+	case SDL_CONTROLLERBUTTONDOWN:
+		if (key_to_change->key_device == DeviceCombinationType::CONTROLLER_COMB_DEVICE)
+		{
+
+			KeyRelation* key = nullptr;
+
+			if (change_negative)
+				key = key_to_change->negative_button;
+			key = key_to_change->positive_button;
+
+			if (key == nullptr || key->event_value == input_event->cbutton.button)
+				return KeyState::INVALID_KEY_STATE;
+
+			if (key_to_change->my_manager == nullptr)
+				return KeyState::INVALID_KEY_STATE;
+
+			key_to_change->my_manager->ClearSameEvent(input_event);
+
+			key = App->input->FindKeyBinding(key->device, input_event->cbutton.button);
+			if (change_negative)
+				key_to_change->negative_button = key;
+			key_to_change->positive_button = key;
+			return KeyState::VALID_KEY_STATE;
+
+		}
+
+		break;
+	case SDL_CONTROLLERAXISMOTION:
+		if (input_event->caxis.value < -5000 || input_event->caxis.value>5000)
+		{
+			return KeyState::INVALID_KEY_STATE;
+		}
+		break;
+	case SDL_MOUSEBUTTONDOWN:
+		if (key_to_change->key_device == DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE)
+		{
+			KeyRelation* key = nullptr;
+
+			if (change_negative)
+				key = key_to_change->negative_button;
+			key = key_to_change->positive_button;
+
+			if (key == nullptr || key->event_value == input_event->button.button)
+				return KeyState::INVALID_KEY_STATE;
+
+			if (key_to_change->my_manager == nullptr)
+				return KeyState::INVALID_KEY_STATE;
+
+			key_to_change->my_manager->ClearSameEvent(input_event);
+			key = App->input->FindKeyBinding(key->device, input_event->button.button);
+			if (change_negative)
+				key_to_change->negative_button = key;
+			key_to_change->positive_button = key;
+			return KeyState::VALID_KEY_STATE;
+
+		}
+		break;
+	default:
+		return 	KeyState::WAIT_FOR_KEY_STATE;
+		break;
+	}
+	return 	KeyState::WAIT_FOR_KEY_STATE;
+}
+
+void PlayerActions::KeyChange::SetInputAction(InputAction * action_item)
+{
+	key_to_change = action_item;
+	change_active = true;
+	state = KeyState::WAIT_FOR_KEY_STATE;
+}
+
+
+
+void PlayerActions::KeyChange::Clear()
+{
+	key_to_change = nullptr;
+	change_negative = false;
+	change_active = false;
+	state = KeyState::NO_STATE;
 }

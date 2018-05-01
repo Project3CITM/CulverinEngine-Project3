@@ -5,6 +5,7 @@
 #include "ModuleFS.h"
 #include "CompAudio.h"
 #include "ModuleEventSystemV2.h"
+#include "JSONSerialization.h"
 
 #include <locale>
 #include <codecvt>
@@ -270,6 +271,55 @@ void ModuleAudio::SaveAudioBanks(JSON_Object * config_node)
 	{		
 		json_object_dotset_string_with_std(config_node, audio_banks + "Bank " + std::to_string(i).c_str(), (*it).c_str());
 	}
+}
+
+void ModuleAudio::GetOwnBufferSize(uint& buffer_size)
+{
+	buffer_size += sizeof(int);				//loaded_banks.size()
+
+	for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end(); it++)
+	{
+		buffer_size += sizeof(int);
+		buffer_size += (*it).size();
+	}
+}
+
+void ModuleAudio::SaveAudioBanks(char** cursor)
+{
+	App->json_seria->SaveIntBinary(cursor, loaded_banks.size());
+	for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end(); it++)
+	{
+		App->json_seria->SaveStringBinary(cursor, *it);
+	}
+}
+
+void ModuleAudio::LoadAudioBanksFromScene(int number_of_banks, char** cursor)
+{
+	std::vector<std::string> banks_in_scene;
+
+	//Get all used banks to unload unused ones. Do this to avoid unload and load same banks
+	for (int i = 0; i < number_of_banks; i++)
+	{
+		std::string bank_name = App->json_seria->LoadStringBinary(cursor);
+		banks_in_scene.push_back(bank_name);
+	}
+
+	//Unload all unused banks
+	for (std::vector<std::string>::iterator it = loaded_banks.begin(); it != loaded_banks.end();)
+	{
+		if (std::find(banks_in_scene.begin(), banks_in_scene.end(), (*it)) == banks_in_scene.end()) {
+			Wwished::Utility::UnLoadBank((*it).c_str());
+			it = loaded_banks.erase(it);
+		}
+		else it++;
+	}
+
+	//Load used banks
+	for (std::vector<std::string>::iterator it = banks_in_scene.begin(); it != banks_in_scene.end(); it++)
+	{
+		LoadBank((*it).c_str());
+	}
+
 }
 
 void ModuleAudio::LoadAudioBanksFromScene(int number_of_banks, JSON_Object * config_node)

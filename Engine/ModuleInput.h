@@ -49,7 +49,7 @@ public:
 	update_status UpdateConfig(float dt);
 	bool CleanUp();
 
-	void UIInputManagerUpdate();
+	void UIInputManagerUpdate(float dt);
 
 	int GetMouseXMotionNormalized();
 	int GetMouseYMotionNormalized();
@@ -123,6 +123,8 @@ public:
 		mouse_y_global = y;
 	}
 	bool GetUpdateNewDevice()const;
+	void SavePlayerAction()const;
+	void LoadDefaultPlayerAction();
 	DeviceCombinationType GetActualDeviceCombo()const;
 	void UpdateDeviceType(DeviceCombinationType actual_player_action);
 	void RumblePlay(float intensity, int milliseconds);
@@ -131,12 +133,24 @@ public:
 	SDL_Haptic* GetHaptic() const;
 	KeyRelation* FindKeyBinding(const char* string);
 
+	KeyRelation * FindKeyBinding(DeviceCombinationType device, int event_value);
+
 private:
 	bool ConnectGameController();
+	void SetLastInputEvent(int value, bool nega=false);
 public:
 	bool quit = false;
 
 private:
+	struct LastInput
+	{
+		void SetLastInputEvent(int value, bool negative = false);
+		bool CheckLastInputEqual(int value, bool negative_key = false);
+	public:
+		int last_input_event = 0;
+		bool negative = false;
+		bool can_block = false;
+	};
 	KeyBinding* key_binding = nullptr;
 	KEY_STATE* keyboard;
 	KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
@@ -158,10 +172,14 @@ private:
 	std::string cancel;
 	std::string vertical;
 	std::string horizontal;
+	float ui_input_update = 0.0f;
+	float current_time_ui_input_update = 0.0f;
 	bool ui_conected = false;
 	bool update_new_device = false;
 	bool rumble_active = true;
 	DeviceCombinationType actual_device_combo = DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
+	LastInput last_input;
+
 public:
 	std::list<const char*> dropedfiles;
 	GamePad gamepad;

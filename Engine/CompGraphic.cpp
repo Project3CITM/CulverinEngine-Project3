@@ -4,6 +4,9 @@
 #include "CompCanvasRender.h"
 #include "CompCanvas.h"
 #include "CompRectTransform.h"
+#include "JSONSerialization.h"
+#include "ModuleFS.h"
+
 CompGraphic::CompGraphic(Comp_Type t, GameObject * parent) :Component(t, parent)
 {
 	uid = App->random->Int();
@@ -26,8 +29,57 @@ void CompGraphic::Clear()
 	my_canvas = nullptr;
 	my_canvas_render = nullptr;
 	transform = nullptr;
+}
+
+void CompGraphic::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
+{
+	json_object_dotset_string_with_std(object, name + "Component:", name_component);
+	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
+	json_object_dotset_number_with_std(object, name + "UUID", uid);
 
 	
+	json_object_dotset_boolean_with_std(object, name + "Invalid", invalid);
+	json_object_dotset_boolean_with_std(object, name + "Can draw", can_draw);
+	json_object_dotset_boolean_with_std(object, name + "RayCast Target", raycast_target);
+}
+
+void CompGraphic::Load(const JSON_Object * object, std::string name)
+{
+	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	raycast_target = json_object_dotget_boolean_with_std(object, name + "RayCast Target");
+	invalid = json_object_dotget_boolean_with_std(object, name + "Invalid");
+	can_draw = json_object_dotget_boolean_with_std(object, name + "Can Draw");
+}
+
+void CompGraphic::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);					// UID
+
+	buffer_size += sizeof(bool);					// invalid
+	buffer_size += sizeof(bool);					// can_draw
+	buffer_size += sizeof(bool);					// raycast_target
+}
+
+void CompGraphic::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+
+	App->json_seria->SaveIntBinary(cursor, uid);
+
+	App->json_seria->SaveBooleanBinary(cursor, invalid);
+	App->json_seria->SaveBooleanBinary(cursor, can_draw);
+	App->json_seria->SaveBooleanBinary(cursor, raycast_target);
+
+}
+
+void CompGraphic::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+
+	invalid = App->json_seria->LoadBooleanBinary(cursor);
+	can_draw = App->json_seria->LoadBooleanBinary(cursor);
+	raycast_target = App->json_seria->LoadBooleanBinary(cursor);
 }
 
 void CompGraphic::AddCanvas()
@@ -41,9 +93,12 @@ void CompGraphic::AddCanvas()
 			current->RemoveGraphic(this);
 		}
 		my_canvas->AddGraphic(this);
-	//	if(graphic)
+		
+		transform->Resize(((CompRectTransform*)my_canvas->GetParent()->FindComponentByType(Comp_Type::C_RECT_TRANSFORM))->GetResizeFactor());
+		GenerateMesh();
 	}
 }
+
 
 
 void CompGraphic::AddCanvasRender()
@@ -75,7 +130,7 @@ void CompGraphic::DrawGraphic()
 	if (my_canvas_render == nullptr)
 		return;
 
-	if (render)
+	if (can_draw)
 	{
 		my_canvas_render->DrawGraphic();
 	}
@@ -130,7 +185,10 @@ void CompGraphic::SetToRender(bool render)
 }
 void CompGraphic::SetCanDraw(bool render)
 {
-	this->can_draw = render;
+	if (this != nullptr)
+	{
+		this->can_draw = render;
+	}
 }
 
 void CompGraphic::SetRaycastTarget(bool flag)
@@ -157,11 +215,12 @@ uint CompGraphic::GetTextureID() const
 
 CompRectTransform * CompGraphic::GetRectTrasnform() const
 {
-	if (this != nullptr)
+	if (transform != nullptr)
 	{
 		return transform;
 	}
-	else return nullptr;
+	else
+	return nullptr;
 }
 
 CompCanvasRender * CompGraphic::GetCanvasRender() const
@@ -182,6 +241,18 @@ bool CompGraphic::GetParentActive()
 float CompGraphic::GetAlpha() const
 {
 	return color.w;
+}
+int CompGraphic::GetWidth()const
+{
+	if(transform==nullptr)
+		return 0;
+	return transform->GetWidth();
+}
+int CompGraphic::GetHeight()const
+{
+	if (transform == nullptr)
+		return 0;
+	return transform->GetHeight();
 }
 void CompGraphic::ResizeGenerateMesh()
 {

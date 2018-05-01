@@ -33,6 +33,9 @@ public:
 	
 
 	void SaveAudioBanks(JSON_Object* config_node);
+	void GetOwnBufferSize(uint & buffer_size);
+	void SaveAudioBanks(char ** cursor);
+	void LoadAudioBanksFromScene(int number_of_banks, char ** cursor);
 	void LoadAudioBanksFromScene(int number_of_banks, JSON_Object* config_node);
 	
 	void SetListener(CompAudio* c);

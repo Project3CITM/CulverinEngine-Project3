@@ -267,24 +267,24 @@ void Application::FinishUpdate()
 {
 	BROFILER_CATEGORY("Application FinishUpdate", Profiler::Color::PaleVioletRed);
 	// SAVE & LOAD FUNCTIONS ------------------------
-	if (want_to_save == true)
+	if (want_to_save == true || want_to_save_binary == true)
 	{
 		if (App->mode_game == false)
 		{
-			actual_scene = json_seria->SaveScene();
+			if (want_to_save)
+			{
+				actual_scene = json_seria->SaveScene();
+			}
+			else if (want_to_save_binary)
+			{
+				actual_scene = json_seria->SaveSceneBinary();
+			}
 		}
 		want_to_save = false;
-	}
-	if (want_to_save_binary == true)
-	{
-		if (App->mode_game == false)
-		{
-			//actual_scene = json_seria->SaveScene();
-		}
 		want_to_save_binary = false;
 	}
 
-	if (want_to_load == true)
+	if (want_to_load == true || want_to_load_binary == true || want_to_load_json == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		scene->octree.Clear(false);
@@ -292,6 +292,9 @@ void Application::FinishUpdate()
 		scene->dynamic_objects.clear();
 
 		//App->importer->iScript->ClearMonoMap();
+		std::string scene_binary = DIRECTORY_ASSETS;
+		scene_binary += "SceneBinary/";
+		scene_binary += fs->GetOnlyName(actual_scene) + ".culverinscene";
 
 		App->scene->DeleteAllGameObjects(App->scene->root);
 		scene->ClearAllTags();
@@ -301,7 +304,34 @@ void Application::FinishUpdate()
 		render_gui->selected = nullptr;
 		render_gui->ClearInteractiveVector();
 
-		json_seria->LoadScene(actual_scene.c_str());
+		if (want_to_load)
+		{
+			if (App->fs->CheckIsFileExist(scene_binary))
+			{
+				json_seria->LoadSceneBinary(scene_binary.c_str());
+			}
+			else
+			{
+				json_seria->LoadScene(actual_scene.c_str());
+			}
+		}
+		else if (want_to_load_json)
+		{
+			json_seria->LoadScene(actual_scene.c_str());
+		}
+		else if (want_to_load_binary)
+		{
+			if (App->fs->CheckIsFileExist(scene_binary))
+			{
+				json_seria->LoadSceneBinary(scene_binary.c_str());
+			}
+			else
+			{
+				LOG("[error] Doesn't exist this scene in binary");
+				LOG("[blue] Load scene with json!!");
+				json_seria->LoadScene(actual_scene.c_str());
+			}
+		}
 
 		if (load_in_game)
 		{
@@ -314,6 +344,8 @@ void Application::FinishUpdate()
 			change_to_game = true;
 		}
 		want_to_load = false;
+		want_to_load_binary = false;
+		want_to_load_json = false;
 		load_in_game = false;
 	}
 
@@ -334,7 +366,17 @@ void Application::FinishUpdate()
 		importer->iScript->ClearLinkVariables();
 
 
-		json_seria->LoadScene(actual_scene.c_str());
+		std::string scene_binary = DIRECTORY_ASSETS;
+		scene_binary += "SceneBinary/";
+		scene_binary += fs->GetOnlyName(actual_scene) + ".culverinscene";
+		if (App->fs->CheckIsFileExist(scene_binary))
+		{
+			json_seria->LoadSceneBinary(scene_binary.c_str());
+		}
+		else
+		{
+			json_seria->LoadScene(actual_scene.c_str());
+		}
 
 
 		importer->iScript->SetMonoMap(App->scene->root, true);
@@ -389,14 +431,34 @@ void Application::FinishUpdate()
 		importer->iScript->ClearLinkVariables();
 
 		// Load SecondaryScene and swap
-		json_seria->LoadScene(secondary_scene.c_str());
+		std::string scene_binary = DIRECTORY_ASSETS;
+		scene_binary += "SceneBinary/";
+		scene_binary += fs->GetOnlyName(secondary_scene) + ".culverinscene";
+		if (App->fs->CheckIsFileExist(scene_binary))
+		{
+			json_seria->LoadSceneBinary(scene_binary.c_str());
+		}
+		else
+		{
+			json_seria->LoadScene(secondary_scene.c_str());
+		}
 		scene->ChangeRoot(scene->secondary_root, scene->root);
 
 		camera = scene->secondary_root->FindGameObjectWithTag("camera");
 		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
 
 		// Load Root 
-		json_seria->LoadScene(actual_scene.c_str());
+		scene_binary = DIRECTORY_ASSETS;
+		scene_binary += "SceneBinary/";
+		scene_binary += fs->GetOnlyName(actual_scene) + ".culverinscene";
+		if (App->fs->CheckIsFileExist(scene_binary))
+		{
+			json_seria->LoadSceneBinary(scene_binary.c_str());
+		}
+		else
+		{
+			json_seria->LoadScene(actual_scene.c_str());
+		}
 
 		camera = scene->root->FindGameObjectWithTag("camera");
 		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
@@ -1030,9 +1092,23 @@ void Application::WantToSave(bool binary)
 	}
 }
 
-void Application::WantToLoad(bool in_game)
+void Application::WantToLoad(bool in_game, bool binary, bool force_json)
 {
-	want_to_load = true;
+	if (binary == false)
+	{
+		if (force_json)
+		{
+			want_to_load_json = true;
+		}
+		else
+		{
+			want_to_load = true;
+		}
+	}
+	else
+	{
+		want_to_load_binary = true;
+	}
 	load_in_game = in_game;
 }
 

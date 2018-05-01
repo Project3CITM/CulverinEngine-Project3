@@ -109,6 +109,10 @@ public:
 	void Save(JSON_Object* object, const std::string& name);
 	void Load(const JSON_Object* object, const std::string& name, std::vector<uint>& re_load_values);
 
+	void GetOwnBufferSize(uint & buffer_size);
+	void Save(char ** cursor) const;
+	void Load(char ** cursor, std::vector<uint>& re_load_values);
+
 public:
 	const char* name = nullptr;
 	VarType type = Var_UNKNOWN;
@@ -278,11 +282,22 @@ public:
 	void		SetUIPosition(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetUIPosition(MonoObject* object);
 
+	void		SetWidth(MonoObject * object, int value);
+	void		SetHeight(MonoObject * object, int value);
+
 	/*UI-Interactive*/
 	void		Activate(MonoObject * object, int uid);
 	void		Deactivate(MonoObject * object, int uid);
 	void		Clicked(MonoObject* object);
 	void		SetInteractivity(MonoObject* object, mono_bool enable);
+
+	bool		IsNormal(MonoObject * object);
+
+	bool		IsHighlighted(MonoObject * object);
+
+	bool		IsPressed(MonoObject * object);
+
+	bool		IsDisabled(MonoObject * object);
 
 	/*UI-Graphics*/
 	void		SetRaycastTarget(MonoObject * object, mono_bool flag);
@@ -292,6 +307,8 @@ public:
 	void		ActivateRender(MonoObject * object);
 	void		DeactivateRender(MonoObject * object);
 	void		SetAlpha(MonoObject * object, float alpha);
+	int			GetWidth(MonoObject * object);
+	int			GetHeight(MonoObject * object);
 	void		SetText(MonoObject * object, MonoString* string);
 	void		SetColor(MonoObject * object, MonoObject * color, float alpha);
 	/*UI- Canvas*/
@@ -364,6 +381,9 @@ public:
 	// LOAD - SAVE METHODS ------------------
 	void Save(JSON_Object* object, std::string name) const;
 	void Load(const JSON_Object* object, std::string name);
+	void GetOwnBufferSize(uint & buffer_size);
+	void Save(char ** cursor) const;
+	void Load(char ** cursor);
 	void LoadValuesGO(GameObject* sync_parent);
 
 	GameObject* GetGameObject() const;

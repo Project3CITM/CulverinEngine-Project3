@@ -38,17 +38,24 @@ class InputAction
 public:
 
 	InputAction();
-	InputAction(const char* name, KeyRelation* key_relation, ActionInputType action_type = ActionInputType::UNKNOWN_ACTION);
+	InputAction(const char* name, KeyRelation* key_relation, ActionInputType action_type = ActionInputType::UNKNOWN_ACTION, InputManager* my_manager=nullptr);
 	~InputAction();
 
 	virtual bool ProcessEventAction(SDL_Event * input_event) { return false; }
+	virtual bool PositiveReaction(SDL_Event * input_event) { return false; }
+
 	//virtual bool UpdateEventAction(const Uint8* array_kys) { return false; }
+
+private:
+	
 public:
 
 	std::string name = "default";
 	ActionInputType action_type = ActionInputType::UNKNOWN_ACTION;
+	DeviceCombinationType key_device = DeviceCombinationType::NULL_COMB_DEVICE;
 	KeyRelation* positive_button = nullptr;
 	KeyRelation* negative_button = nullptr;
+	InputManager* my_manager = nullptr;
 	//KeyRelation* alt_positive_button;
 	//KeyRelation* alt_negative_button;
 
@@ -62,6 +69,7 @@ public:
 	bool OnRelease() { return state == Keystateaction::KEY_UP_ACTION; };
 	bool OnRepeat() { return state == Keystateaction::KEY_REPEAT_ACTION; };
 	bool ProcessEventAction(SDL_Event * input_event);
+	bool PositiveReaction(SDL_Event * input_event);
 	bool UpdateEventAction(int mouse_x, int mouse_y, Uint32 buttons);
 
 public:
@@ -85,6 +93,8 @@ class ControllerAxisAction : public InputAction
 public:
 	ControllerAxisAction() { action_type = ActionInputType::CONTROLLER_AXIS_ACTION; }
 	bool ProcessEventAction(SDL_Event * input_event);
+	bool PositiveReaction(SDL_Event * input_event);
+
 	bool UpdateEventAction();
 
 public:
@@ -111,6 +121,8 @@ public:
 	bool OnRelease() { return state == Keystateaction::KEY_UP_ACTION; };
 	bool OnRepeat() { return state == Keystateaction::KEY_REPEAT_ACTION; };
 	bool ProcessEventAction(SDL_Event * input_event);
+	bool PositiveReaction(SDL_Event * input_event);
+
 	bool DetectAction(const SDL_Event &input_event);
 	bool UpdateEventAction(const Uint8* array_kys);
 	int UpdateKeyRelation(KeyRelation* to_update, const Uint8 * array_kys);

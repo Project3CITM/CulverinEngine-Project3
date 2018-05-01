@@ -10,6 +10,7 @@
 #include "ModuleGUI.h"
 #include "ModuleInput.h"
 #include "WindowInspector.h"
+#include "JSONSerialization.h"
 
 CompScript::CompScript(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
@@ -727,3 +728,90 @@ void CompScript::LoadScript(const JSON_Object* object, std::string name)
 	}
 }
 
+void CompScript::GetOwnBufferSize(uint& buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);				//UID
+
+	buffer_size += sizeof(int);				//name_script
+	if (strcmp(name_script.c_str(), "") == 0)
+	{
+		buffer_size += strlen("Empty Script");
+	}
+	else
+	{
+		buffer_size += name_script.size();
+	}
+
+	if (resource_script != nullptr)
+	{
+		buffer_size += sizeof(int);			//resource_script->GetUUID()
+		if (csharp != nullptr)
+		{
+			csharp->GetOwnBufferSize(buffer_size);
+		}
+	}
+	else
+	{
+		buffer_size += sizeof(int);			//resource_script->GetUUID() == 0
+	}
+}
+
+void CompScript::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+
+	if (strcmp(name_script.c_str(), "") == 0)
+	{
+		App->json_seria->SaveStringBinary(cursor, "Empty Script");
+	}
+	else
+	{
+		App->json_seria->SaveStringBinary(cursor, name_script);
+	}
+	if (resource_script != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, resource_script->GetUUID());
+		if (csharp != nullptr)
+		{
+			csharp->Save(cursor);
+		}
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+}
+
+void CompScript::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	name_script = App->json_seria->LoadStringBinary(cursor);
+	uint resourceID = App->json_seria->LoadIntBinary(cursor);
+
+	if (resourceID > 0)
+	{
+		resource_script = (ResourceScript*)App->resource_manager->GetResource(resourceID);
+		if (resource_script != nullptr)
+		{
+			resource_script->num_game_objects_use_me++;
+
+			// LOAD SCRIPT -------------------------
+			if (resource_script->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				resource_script->SetState(Resource::State::LOADED);
+				//App->importer->iScript->LoadResource(resource_script->GetPathAssets().c_str(), resource_script);
+			}
+
+			if (resource_script->GetState() != Resource::State::FAILED)
+			{
+				RELEASE(csharp);
+				csharp = App->importer->iScript->LoadScript_CSharp(resource_script->GetPathdll(), resource_script->name);
+				csharp->Load(cursor);
+				SetOwnGameObject(parent);
+			}
+		}
+	}
+	Enable();
+}

@@ -21,7 +21,6 @@
 #include "CSharpScript.h"
 #include "CompScript.h"
 #include "ResourceMesh.h"
-#include "CompCheckBox.h"
 #include "CompSlider.h"
 #include "ImportMesh.h"
 #include "ImportScript.h"
@@ -966,7 +965,6 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 		case Comp_Type::C_CHECK_BOX:
 		{
 			CompCheckBox* check_box = (CompCheckBox*)comp;
-			check_box->Tick = nullptr;
 			check_box->ClearLinkedScripts();
 			break;
 		}
@@ -978,6 +976,7 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 		}
 		case Comp_Type::C_SLIDER:
 		{
+
 			//CompSlider* slider = (CompSlider*)comp;
 			break;
 		}
@@ -1167,6 +1166,7 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 	if (parent == nullptr)
 	{
 		root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	return obj;
@@ -1547,6 +1547,7 @@ GameObject * Scene::CreateMainLight(GameObject * parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("MAIN CAMERA Created.");
@@ -1707,7 +1708,7 @@ GameObject * Scene::CreateCheckBox(GameObject * parent)
 GameObject * Scene::CreateSlider(GameObject * parent)
 {
 	GameObject* obj = new GameObject(parent);
-
+	
 
 	// SET NAME -----------------------------------
 	static uint slider_count = 0;
@@ -1717,17 +1718,15 @@ GameObject * Scene::CreateSlider(GameObject * parent)
 	char* name_str = new char[name.size() + 1];
 	strcpy(name_str, name.c_str());
 	obj->SetName(name_str);
+	
+
 
 	// TRANSFORM COMPONENT --------------
 	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
 	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
 	transform->Enable();
 
-	// IMAGE COMPONENT -----------------
-	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
-	image->Enable();
-	image->SyncComponent(nullptr);
-	image->UpdateSpriteId();
+
 	// SLIDER -----------------
 	CompSlider* slide = (CompSlider*)obj->AddComponent(Comp_Type::C_SLIDER);
 	slide->Enable();

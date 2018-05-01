@@ -13,7 +13,7 @@
 #include "CompImage.h"
 
 
-CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent)
+CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent), ClickAction()
 {
 	uid = App->random->Int();
 	name_component = "Check Box";
@@ -79,26 +79,67 @@ void CompCheckBox::ShowOptions()
 
 void CompCheckBox::ShowInspectorInfo()
 {
+	int op = ImGui::GetWindowWidth() / 4;
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3, 0));
 	ImGui::SameLine(ImGui::GetWindowWidth() - 26);
 	if (ImGui::ImageButton((ImTextureID*)App->scene->icon_options_transform, ImVec2(13, 13), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ImGui::OpenPopup("OptionsCheckBox");
+		ImGui::OpenPopup("OptionCheckBox");
 	}
 	ImGui::PopStyleVar();
+
+	// Button Options --------------------------------------
 
 	if (ImGui::Button("Sync Image..."))
 	{
 		SetTargetGraphic((CompGraphic*)parent->FindComponentByType(Comp_Type::C_IMAGE));
+		//select_source_image = true;
 	}
-	current_transition_mode = TRANSITION_SPRITE;
-	ShowInspectorSpriteTransition();
-	// CheckBox Options --------------------------------------
-	if (ImGui::BeginPopup("OptionsCheckBox"))
+
+
+
+	int selected_opt = current_transition_mode;
+	ImGui::Text("Transition"); ImGui::SameLine(op + 30);
+
+	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0"))
 	{
-		ShowOptions();
-		ImGui::EndPopup();
+		if (selected_opt == Transition::TRANSITION_COLOR)
+			current_transition_mode = Transition::TRANSITION_COLOR;
+		if (selected_opt == Transition::TRANSITION_SPRITE)
+			current_transition_mode = Transition::TRANSITION_SPRITE;
 	}
+
+	switch (selected_opt)
+	{
+	case 0:
+		ShowInspectorColorTransition();
+		break;
+	case 1:
+		ShowInspectorSpriteTransition();
+		break;
+	case 2:
+		ShowInspectorAnimationTransition();
+		break;
+	default:
+		break;
+	}
+	int navigation_opt = navigation.current_navigation_mode;
+	ImGui::Text("Navigation"); ImGui::SameLine(op + 30);
+	if (ImGui::Combo("##navegacion", &navigation_opt, "Desactive Navigation\0Navigation Extrict\0Navigation Automatic\0"))
+	{
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_NONE)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_NONE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_EXTRICTE)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_EXTRICTE;
+		if (navigation_opt == Navigation::NavigationMode::NAVIGATION_AUTOMATIC)
+			navigation.current_navigation_mode = Navigation::NavigationMode::NAVIGATION_AUTOMATIC;
+
+	}
+	if (navigation.current_navigation_mode != Navigation::NavigationMode::NAVIGATION_NONE)
+	{
+		ShowNavigationInfo();
+	}
+	ShowOnClickInfo();
 
 	ImGui::TreePop();
 }
@@ -109,60 +150,45 @@ void CompCheckBox::CopyValues(const CompCheckBox * component)
 
 void CompCheckBox::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", name_component);
-	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	CompInteractive::Save(object, name, saveScene, countResources);
 
-	for (int i = 0; i < 3; i++)
-	{
-		std::string resource_count = std::to_string(i);
-
-		if (sprite[i] != nullptr)
-		{
-			if (saveScene == false)
-			{
-				// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
-				std::string temp = std::to_string(countResources++);
-
-				json_object_dotset_number_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".UUID Resource", sprite[i]->GetUUID());
-				json_object_dotset_string_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".Name", sprite[i]->name.c_str());
-			}
-			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, sprite[i]->GetUUID());
-		}
-		else
-		{
-			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
-		}
-	}
+	
+	json_object_dotset_number_with_std(object, name + "Tick UUID", (tick == nullptr) ? 0 : tick->GetUUID());
+	json_object_dotset_boolean_with_std(object, name + "Check active", active);
+	SaveClickAction(object, name);
 
 }
 
 void CompCheckBox::Load(const JSON_Object * object, std::string name)
 {
-	uid = json_object_dotget_number_with_std(object, name + "UUID");
-	//...
-	for (int i = 0; i < 3; i++)
-	{
-		std::string resource_count = std::to_string(i);
+	CompInteractive::Load(object, name);
 
-		uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID " + resource_count);
-		if (resourceID > 0)
-		{
-			sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
-			if (sprite[i] != nullptr)
-			{
-				sprite[i]->num_game_objects_use_me++;
+	tick_uid = json_object_dotget_number_with_std(object, name + "Tick UUID");
+	active = json_object_dotget_boolean_with_std(object, name + "Check active");
+	LoadClickAction(object, name);
 
-				// LOAD All Materials ----------------------------
-				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
-				{
-					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
-				}
-
-			}
-		}
-	}
 	Enable();
+}
+void CompCheckBox::SyncComponent(GameObject* sync_parent)
+{
+	CompInteractive::SyncComponent(sync_parent);
+	SyncScript();
+
+	if (sync_parent == nullptr)
+		return;
+
+	if (tick_uid != 0)
+	{
+		SetTick((CompImage*)sync_parent->GetComponentsByUID(tick_uid, true));
+	}
+	if (tick != nullptr)
+		tick->SyncComponent(nullptr);
+
+
+}
+void CompCheckBox::SyncScript()
+{
+	SyncClickAction();
 }
 
 void CompCheckBox::OnPointDown(Event event_input)
@@ -181,11 +207,70 @@ void CompCheckBox::OnPointDown(Event event_input)
 
 void CompCheckBox::OnClick()
 {
-	Tick->SetToRender(!Tick->GetToRender());
+	if (IsActivate() || !IsActive())
+		return;
+	//if (actions.empty())
+	//{
+	//	return;
+	//}
+
+	uint size = actions.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (actions[k].script == nullptr)
+			continue;
+
+		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
+	}
+
+	active = !active;
+
+	if (tick != nullptr)
+	{
+		tick->SetCanDraw(active);
+	}
+
 }
+
+	
 
 void CompCheckBox::ClearLinkedScripts()
 {
 	linked_scripts.clear();
 }
 
+
+void CompCheckBox::SetTick(CompImage * set_tick)
+{
+	if (set_tick == nullptr)
+		return;
+	tick = set_tick;
+
+}
+
+void CompCheckBox::OnSubmit(Event event_input)
+{
+	if (IsActivate() || !IsActive())
+		return;
+	if (actions.empty())
+	{
+		return;
+	}
+
+	uint size = actions.size();
+	for (uint k = 0; k < size; k++)
+	{
+		if (actions[k].script == nullptr)
+			continue;
+
+		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
+	}
+
+	active = !active;
+
+
+	if (tick != nullptr)
+	{
+		tick->SetCanDraw(active);
+	}
+}

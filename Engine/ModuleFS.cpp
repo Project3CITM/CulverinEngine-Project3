@@ -48,6 +48,7 @@ bool ModuleFS::Init(JSON_Object* node)
 	CreateFolder("Assets/Maps");
 	CreateFolder("Assets/Shaders");
 	CreateFolder("Assets/Shaders/Materials");
+	CreateFolder("Assets/SceneBinary");
 
 	return true;
 }

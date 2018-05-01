@@ -131,11 +131,13 @@ private:
 	static mono_bool	GetInput_MouseButtonDown(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_MouseButtonUp(MonoString* name, MonoString* input);
 	static float		GetInput_ControllerAxis(MonoString* name, MonoString* input);
-	static MonoString*	GetInput_ControllerActionName(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
-	static MonoString*	GetInput_ControllerKeyBindingName(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
-	static mono_bool	GetInput_ControllerWaitForKey(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
-	static void			SetInput_ControllerWaitForKey(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
-
+	static MonoString*	GetInput_ControllerActionName(MonoString* name, MonoString* input, int device, bool negative_key);
+	static MonoString*	GetInput_ControllerKeyBindingName(MonoString* name, MonoString* input, int device, bool negative_key);
+	static void			SetInputActionToChange(MonoString* name, MonoString* input, int device, bool negative_key);
+	static bool			GetChangeInputActive();
+	static int			GetChangeInputState();
+	static void			SavePlayerAction();
+	static void			LoadDefaultPlayerAction();
 	static void			RumblePlay(float intensity, int milliseconds);
 
 	/* Time */
@@ -240,6 +242,11 @@ private:
 	static void Deactivate(MonoObject* object, int uid);
 	static void SetInteractivity(MonoObject* object, mono_bool enable);
 
+	static bool IsNormal(MonoObject * object);
+	static bool IsHighlighted(MonoObject * object);
+	static bool IsPressed(MonoObject * object);
+	static bool IsDisabled(MonoObject * object);
+
 	/*Component Interactive Button*/
 	static void Clicked(MonoObject * object);
 
@@ -249,6 +256,10 @@ private:
 	static void ActivateRender(MonoObject * object);
 	static void DeactivateRender(MonoObject * object);
 	static void SetAlpha(MonoObject* object, float alpha);
+
+	static int GetHeight(MonoObject * object);
+
+	static int GetWidth(MonoObject * object);
 
 	/*Component Text*/
 	static void SetText(MonoObject* object, MonoString* alpha);
@@ -324,6 +335,8 @@ private:
 	/*Component Rect_Transform*/
 	static void SetUIPosition(MonoObject* object, MonoObject* vector3);
 	static MonoObject* GetUIPosition(MonoObject* object);
+	static void SetWidth(MonoObject * object, int value);
+	static void SetHeight(MonoObject * object, int value);
 
 	/*Module Physics*/
 	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);

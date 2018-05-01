@@ -18,7 +18,7 @@ CompSlider::CompSlider(Comp_Type t, GameObject * parent) : CompInteractive (t, p
 {
 	uid = App->random->Int();
 	name_component = "CompSlider";
-	selective = true;
+	dragable = true;
 }
 
 CompSlider::CompSlider(const CompImage & copy, GameObject * parent) : CompInteractive(Comp_Type::C_SLIDER, parent)
@@ -88,89 +88,175 @@ void CompSlider::ShowInspectorInfo()
 		ImGui::OpenPopup("Options Slider");
 	}
 	ImGui::PopStyleVar();
+
 	if (ImGui::Button("Sync Min/Max", ImVec2(120, 0)))
 	{
-		int bar_x = slide_bar->GetRectTrasnform()->GetPosGlobal().x;
-		min_pos = bar_x - slide_bar->GetRectTrasnform()->GetWidth()/2;
-		max_pos = bar_x + slide_bar->GetRectTrasnform()->GetWidth()/2;
-		slide_bar->SetToFilled(true);
+		SyncBar();
 	}
 	ImGui::Text("Min pos: %f", min_pos);
 	ImGui::Text("Max pos: %f", max_pos);
 
+	if (ImGui::DragFloat("##fillQuantity", &fill, 0.01f, 0.0f, 1.0f))
+	{
+		SetNewPositions();
+	}
+	if (ImGui::DragFloat("##Drag Speed", &speed, 0.01f, 0.0f, 1.0f))
+	{
+		//Space for normalize if using number higher that 0 to 1
+	}
+
+	int selected_opt = current_transition_mode;
+	ImGui::Text("Transition"); ImGui::SameLine((ImGui::GetWindowWidth() / 4) + 30);
+
+	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0"))
+	{
+		if (selected_opt == Transition::TRANSITION_COLOR)
+			current_transition_mode = Transition::TRANSITION_COLOR;
+		if (selected_opt == Transition::TRANSITION_SPRITE)
+			current_transition_mode = Transition::TRANSITION_SPRITE;
+	}
+
+	switch (selected_opt)
+	{
+	case 0:
+		ShowInspectorColorTransition();
+		break;
+	case 1:
+		ShowInspectorSpriteTransition();
+		break;
+	default:
+		break;
+	}
 	ImGui::TreePop();
+}
+
+void CompSlider::SetNewPositions()
+{
+	SetSlideBarPos();
+	SetSlideBarBall();
+}
+
+void CompSlider::SetSlideBarPos()
+{
+	if (slide_bar == nullptr)
+		return;
+	slide_bar->FillAmount(fill);
+
+}
+
+void CompSlider::SetSlideBarBall()
+{
+	if (target_graphic == nullptr)
+		return;
+
+	float new_pos = Lerp(min_pos, max_pos, fill);
+	target_graphic->GetRectTrasnform()->SetUIPos(float3(new_pos, 0.0f, 0.0f));
 }
 
 void CompSlider::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", name_component);
-	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	CompInteractive::Save(object, name, saveScene, countResources);
 
-	for (int i = 0; i < 3; i++)
-	{
-		std::string resource_count = std::to_string(i);
+	json_object_dotset_number_with_std(object, name + "Slide BG UUID", SaveSliderCompUID(slide_bg));
+	json_object_dotset_number_with_std(object, name + "Slide Bar UUID", SaveSliderCompUID(slide_bar));
+	json_object_dotset_number_with_std(object, name + "Slide Fill", fill);
+	json_object_dotset_number_with_std(object, name + "Slide Speed", speed);
 
-		if (sprite[i] != nullptr)
-		{
-			if (saveScene == false)
-			{
-				// Save Info of Resource in Prefab (next we use this info for Reimport this prefab)
-				std::string temp = std::to_string(countResources++);
+}
 
-				json_object_dotset_number_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".UUID Resource", sprite[i]->GetUUID());
-				json_object_dotset_string_with_std(object, "Info.Resources.Resource " + resource_count + temp + ".Name", sprite[i]->name.c_str());
-			}
-			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, sprite[i]->GetUUID());
-		}
-		else
-		{
-			json_object_dotset_number_with_std(object, name + "Resource Mesh UUID " + resource_count, 0);
-		}
-	}
-
+uint CompSlider::SaveSliderCompUID(CompImage * img) const
+{
+	return (img==nullptr)?0:img->GetUUID();
 }
 
 void CompSlider::Load(const JSON_Object * object, std::string name)
 {
-	uid = json_object_dotget_number_with_std(object, name + "UUID");
-	//...
-	for (int i = 0; i < 3; i++)
-	{
-		std::string resource_count = std::to_string(i);
+	CompInteractive::Load(object, name);
 
-		uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID " + resource_count);
-		if (resourceID > 0)
-		{
-			sprite[i] = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
-			if (sprite[i] != nullptr)
-			{
-				sprite[i]->num_game_objects_use_me++;
-
-				// LOAD All Materials ----------------------------
-				if (sprite[i]->IsLoadedToMemory() == Resource::State::UNLOADED)
-				{
-					App->importer->iMaterial->LoadResource(std::to_string(sprite[i]->GetUUID()).c_str(), sprite[i]);
-				}
-
-			}
-		}
-	}
+	uuid_reimported_slide_bg = json_object_dotget_number_with_std(object, name + "Slide BG UUID");
+	uuid_reimported_slide_bar = json_object_dotget_number_with_std(object, name + "Slide Bar UUID");
+	fill = json_object_dotget_number_with_std(object, name + "Slide Fill");
+	speed = json_object_dotget_number_with_std(object, name + "Slide Speed");
 	Enable();
 }
-
-/*
-bool CompSlider::PointerInside(float2 position)
+void CompSlider::SyncComponent(GameObject* sync_parent)
 {
+	CompInteractive::SyncComponent(sync_parent);
+	SyncSliderComponents(sync_parent);
+}
+void CompSlider::SyncSliderComponents(GameObject* sync_parent)
+{
+	//checkbox para el compimage tick (+ save)
 
+	if (sync_parent == nullptr)
+		return;
 
+		if (uuid_reimported_slide_bg != 0)
+		{
+			SetSliderBg((CompImage*)sync_parent->GetComponentsByUID(uuid_reimported_slide_bg, true));
+		}
+		if (uuid_reimported_slide_bar != 0)
+		{
 
+			SetSliderBar((CompImage*)sync_parent->GetComponentsByUID(uuid_reimported_slide_bar,true));
+		}
+		if (slide_bg != nullptr)
+			slide_bg->SyncComponent(nullptr);
+		if (slide_bar != nullptr)
+			slide_bar->SyncComponent(nullptr);
+		if (target_graphic != nullptr)
+			target_graphic->SyncComponent(nullptr);
 
-}*/
+	SyncBar();
+	SetNewPositions();
+
+}
+
+void CompSlider::SyncBar()
+{
+	min_pos = - slide_bar->GetRectTrasnform()->GetWidth() *0.5f;
+	max_pos = + slide_bar->GetRectTrasnform()->GetWidth()*0.5f;
+	slide_bar->SetToFilled(true);
+}
 
 void CompSlider::OnDrag(Event event_input)
 {
-	float2 mous_pos = event_input.pointer.position;
+	if (slide_bar == nullptr)
+		return;
+	if (point_down)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		float4 rect = slide_bar->GetRectTrasnform()->GetGlobalRect();
+		float mouse_x = 0.0f;
+		if (!App->mode_game)
+		{
+			mouse_x = event_input.pointer.position.x - GetPositionDock("Scene").x;
+
+			mouse_x = (mouse_x*io.DisplaySize.x) / GetSizeDock("Scene").x;
+
+		}
+		else
+		{
+			mouse_x = event_input.pointer.position.x;
+			
+		}
+		if (mouse_x < rect.x)
+			fill = 0.0f;
+		else if (mouse_x > rect.x + rect.z)
+			fill = 1.0f;
+		else
+		{
+			float a = mouse_x - rect.x;
+			float b = (rect.x + rect.z) - rect.x;
+			fill = (a / b);
+		}
+
+		SetNewPositions();
+
+	}
+
+	/*float2 mous_pos = event_input.pointer.position;
 	int new_x = 0;
 	if (mous_pos.x > min_pos && mous_pos.x < max_pos)
 	{
@@ -187,5 +273,23 @@ void CompSlider::OnDrag(Event event_input)
 			new_x = min_pos;
 		}
 		image->GetRectTrasnform()->SetPos(float3(new_x,mous_pos.y, 0));
-	}
+	}*/
 }
+
+void CompSlider::SetSliderBg(CompImage * bg)
+{
+	if (bg == nullptr)
+		return;
+	slide_bg = bg;
+	uuid_reimported_slide_bg = slide_bg->GetUUID();
+
+}
+
+void CompSlider::SetSliderBar(CompImage * bar)
+{
+	if (bar == nullptr)
+		return;
+	slide_bar = bar;
+
+}
+

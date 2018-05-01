@@ -1,10 +1,13 @@
 #ifndef COMPONENT_IMAGE_H
 #define COMPONENT_IMAGE_H
 #include "CompGraphic.h"
+#include "AnimableComponent.h"
 #include <vector>
 
 class ResourceMaterial;
 class CompRectTransform;
+
+struct AnimationData;
 
 enum FillMethod
 {
@@ -14,7 +17,7 @@ enum FillMethod
 	NONE
 };
 
-class CompImage:public CompGraphic
+class CompImage:public CompGraphic, public AnimableComponent
 {
 public:
 	CompImage(Comp_Type t, GameObject* parent);
@@ -30,8 +33,14 @@ public:
 	void DeviceCheck();
 	void CopyValues(const CompImage * component);
 	void Clear();
+
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
+
 	void SyncComponent(GameObject* sync_parent);
 	void UpdateSpriteId();
 	void SetSourceImage(ResourceMaterial* set_source_image);
@@ -40,9 +49,14 @@ public:
 	void SetTextureID(uint uid);
 	void SetOverwriteImage(ResourceMaterial* overwrite_image);
 	void SetToFilled(bool filled);
+	void SetNewAnimationValue(const AnimationData& value);
+	const char* ReturnParameterName(ParameterValue parameter);
+
 	float4 GetColor()const;
 	ResourceMaterial* GetSourceImage()const;
 	ResourceMaterial* GetCurrentTexture()const;
+	AnimationData ShowParameters();
+	AnimationValue GetParameter(ParameterValue parameter);
 private:
 	void CorrectFillAmount();
 
@@ -69,7 +83,6 @@ public:
 	};
 
 private:
-	//CompImage * slide = nullptr;
 	ResourceMaterial* source_image = nullptr;
 	ResourceMaterial* controller_image = nullptr;
 	ResourceMaterial* overwrite_image = nullptr;

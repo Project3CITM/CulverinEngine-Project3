@@ -204,10 +204,23 @@ update_status ModuleLightning::PreUpdate(float dt)
 
 	frame_used_lights.clear();
 	//std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
-	for (auto item = scene_lights.begin(); item < scene_lights.end(); item++)
+	if (scene_lights.size() > 0)
 	{
-		if ((*item)->to_delete == true)
-			scene_lights.erase(item);
+		for (auto item = scene_lights.begin(); item != scene_lights.end(); item++)
+		{
+			if ((*item)->to_delete == true)
+			{
+				scene_lights.erase(item);
+				if (scene_lights.size() > 0)
+				{
+					item = scene_lights.begin();
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
 	}
 
 	for (uint i = 0; i < scene_lights.size(); ++i)
