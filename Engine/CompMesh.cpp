@@ -532,6 +532,11 @@ void CompMesh::GenSkeleton()
 	generated_skeleton = true;
 }
 
+Skeleton * CompMesh::GetSkeleton() const
+{
+	return skeleton;
+}
+
 GameObject* CompMesh::GenBone( char** name_iterator, const SkeletonSource* source, uint& generated_bones, Skeleton* skeleton)
 {
 	GameObject* new_bone = new GameObject(*name_iterator);

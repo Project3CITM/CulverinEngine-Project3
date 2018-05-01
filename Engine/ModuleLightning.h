@@ -8,6 +8,7 @@
 #include "glm\glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <vector>
+#include "Materials.h"
 
 #define DEFAULT_SHADOW_CAST_POINTS_COUNT 9
 
@@ -80,7 +81,10 @@ private:
 public:
 	//test
 	ShaderProgram * shadow_Shader = nullptr;
+	ShaderProgram * shadow_Shader_skinning = nullptr;
 	ShaderProgram* point_light_shadow_depth_shader = nullptr;
+
+	Material* shadow_skinning_mat = nullptr;
 
 	FrameBuffer text;
 	DepthFrameBuffer test_fix;
