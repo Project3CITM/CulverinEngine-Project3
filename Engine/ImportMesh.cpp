@@ -18,6 +18,7 @@
 #include <fstream>
 #include <queue>
 #include <algorithm>
+#include "ShadersLib.h"
 
 ImportMesh::ImportMesh()
 {}
@@ -275,8 +276,19 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 				{
 					Material* new_mat = new Material();
 					new_mat->name = name;
-					
-					new_mat->material_shader = App->renderer3D->default_shader;
+
+					ShaderProgram* def_shader = nullptr;
+					for (auto item = App->module_shaders->programs.begin(); item != App->module_shaders->programs.end(); item++) {
+						
+						if (strcmp((*item)->name.c_str(), "DefaultShader")== 0) {
+							def_shader = (*item);
+						}						
+					}
+					if (def_shader != nullptr)
+						new_mat->material_shader = def_shader;
+					else
+						new_mat->material_shader = App->renderer3D->default_shader;
+
 					App->module_shaders->materials.insert(std::pair<uint, Material*>(new_mat->GetProgramID(), new_mat));
 					new_mat->GetProgramVariables();
 					new_mat->path = normalPath;
@@ -306,7 +318,18 @@ bool ImportMesh::Import(const aiScene* scene, const aiMesh* mesh, GameObject* ob
 					Material* new_mat = new Material();
 					new_mat->name = name;
 
-					new_mat->material_shader = App->renderer3D->default_shader;
+					ShaderProgram* def_shader = nullptr;
+					for (auto item = App->module_shaders->programs.begin(); item != App->module_shaders->programs.end(); item++) {
+
+						if (strcmp((*item)->name.c_str(), "DefaultShader") == 0) {
+							def_shader = (*item);
+						}
+					}
+					if (def_shader != nullptr)
+						new_mat->material_shader = def_shader;
+					else
+						new_mat->material_shader = App->renderer3D->default_shader;
+
 					App->module_shaders->materials.insert(std::pair<uint, Material*>(new_mat->GetProgramID(), new_mat));
 					new_mat->GetProgramVariables();
 					new_mat->path = normalPath;
