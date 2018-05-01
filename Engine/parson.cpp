@@ -1101,7 +1101,11 @@ JSON_Value * json_object_get_value(const JSON_Object *object, const char *name) 
 }
 
 const char * json_object_get_string(const JSON_Object *object, const char *name) {
-	return json_value_get_string(json_object_get_value(object, name));
+	JSON_Value* val = json_object_get_value(object, name);
+	if (val) {
+		return json_value_get_string(val);
+	}
+	else return "";
 }
 
 double json_object_get_number(const JSON_Object *object, const char *name) {
@@ -1151,7 +1155,11 @@ int json_object_dotget_boolean(const JSON_Object *object, const char *name) {
 
 //New Functions
 const char * json_object_dotget_string_with_std(const JSON_Object *object, std::string name) {
-	return json_value_get_string(json_object_dotget_value(object, name.c_str()));
+	JSON_Value* val = json_object_dotget_value(object, name.c_str());
+	if (val) {
+		return  json_value_get_string(val);
+	}
+	else return "";
 }
 
 double json_object_dotget_number_with_std(const JSON_Object *object, std::string name) {
@@ -1289,6 +1297,7 @@ void json_value_free(JSON_Value *value) {
 JSON_Value * json_value_init_object(void) {
 	JSON_Value *new_value = (JSON_Value*)parson_malloc(sizeof(JSON_Value));
 	if (!new_value) {
+		parson_free(new_value);
 		return NULL;
 	}
 	new_value->parent = NULL;

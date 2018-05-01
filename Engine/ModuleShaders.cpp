@@ -657,6 +657,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 
 							strcat(temp_var, "Resource Material Var Name ");
 							strcat(temp_var, temp_num);
+							RELEASE_ARRAY(temp_num);
 
 							uint temp_uuid = json_object_dotget_number_with_std(object, name + temp_name);
 							std::string var_name_temp = json_object_dotget_string_with_std(object, name + temp_var);
@@ -665,7 +666,6 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 								material->textures[i].value = (ResourceMaterial*)App->resource_manager->GetResource(temp_uuid);
 								break;
 							}
-							RELEASE_ARRAY(temp_num);
 						}
 					}
 					if (material->textures[i].value != nullptr)
@@ -911,7 +911,6 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 			App->module_shaders->materials.insert(std::pair<uint, Material*>(material->GetProgramID(), material));
 		}
 	}
-	json_object_clear(object);
 	json_value_free(file_proj);
 
 	return nullptr;
