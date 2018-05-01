@@ -587,6 +587,8 @@ public class JaimeController : CharacterController
                 //Set FailAttack Transition & Audio
                 SetAnimationTransition("ToFail", true);
 
+                Debug.Log(transform.GetGlobalPosition(), Department.PLAYER);
+                SpawnPrefabFromPos("Particle_RockCollision", transform.GetGlobalPosition(), player.transform.GetRotation(),new Vector3(0,7,5));
                 PlayFx("JaimeImpact");
 
                 SetState(State.FAIL_ATTACK);
