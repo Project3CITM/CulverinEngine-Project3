@@ -28,7 +28,6 @@ public class TheonController : CharacterController
     GameObject theon_s_button_idle;
     public GameObject theon_sec_text_counter;
 
-
     public GameObject theon_left_flag;
     public GameObject theon_right_flag;
 
@@ -153,9 +152,14 @@ public class TheonController : CharacterController
     public override void ControlCharacter()
     {
         //Debug.Log(state, Department.PLAYER);
+        curr_hp = health.GetCurrentHealth();
+        
         // First check if you are alive
-        if (health.GetCurrentHealth() > 0)
+        if (curr_hp > 0)
         {
+            //Check play breath audio
+            base.CheckHealth(curr_hp, max_hp, "TheonBreathing");
+
             // Check if player is moving to block attacks/abilities
             if (!movement.IsMoving())
             {
@@ -316,6 +320,7 @@ public class TheonController : CharacterController
             }
 
             PlayFx("TheonHurt");
+            play_breathing_audio = true;
 
             //Damage Feedback
             damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);

@@ -57,7 +57,6 @@ public class CharacterController : CulverinBehaviour
     protected CompImage left_button_img;
     protected CompImage left_button_idle_img;
 
-
     protected CompButton right_button;
     protected CompText right_counter;
     protected CompImage right_button_img;
@@ -82,6 +81,11 @@ public class CharacterController : CulverinBehaviour
 
     public Vector3 curr_position = Vector3.Zero;
     public Vector3 curr_forward = Vector3.Zero;
+
+    //PLAY AUDIO OF BREATHING WHEN LOW HEALTH (<= 30% HP)
+    public bool play_breathing_audio = false;
+    public bool currently_playing_b_audio = false;
+    public bool force_audio = false;
 
     protected void LinkComponents(GameObject icon_obj, GameObject icon_hp_obj, GameObject icon_stamina_obj, GameObject icon_mana_obj,
                                   GameObject left_button_obj, GameObject right_button_obj, GameObject sec_button_obj, GameObject sec_button_idle_obj,
@@ -142,32 +146,28 @@ public class CharacterController : CulverinBehaviour
     protected virtual void Start()
     {
         player = GetLinkedObject("player_obj");
-        Debug.Log(player.GetName(), Department.PLAYER, Color.RED);
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
 
         stamina = GetLinkedObject("stamina_obj").GetComponent<Stamina>();
-        Debug.Log("Stamina", Department.PLAYER, Color.RED);
         stamina_img = stamina.GetComponent<CompImage>();
         leftamina_img = GetLinkedObject("leftamina_bar").GetComponent<CompImage>();
 
         mana = GetLinkedObject("mana_obj").GetComponent<Mana>();
-        Debug.Log("Mana", Department.PLAYER, Color.RED);
         mana_img = mana.GetComponent<CompImage>();
-        Debug.Log("Mana img", Department.PLAYER, Color.RED);
         left_mana_img = GetLinkedObject("leftmana_bar").GetComponent<CompImage>();
-        Debug.Log("Left Mana img", Department.PLAYER, Color.RED);
 
         audio = player.GetComponent<CompAudio>();
-        Debug.Log("Audio", Department.PLAYER, Color.RED);
         movement = player.GetComponent<MovementController>();
-        Debug.Log("Movement", Department.PLAYER, Color.RED);
 
         anim_controller = GetComponent<CompAnimation>();
         damage_feedback = player.GetComponent<DamageFeedback>();
              
         characters_manager = player.GetComponent<CharactersManager>();
         enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
-        Debug.Log("Enemy Manager", Department.PLAYER, Color.RED);
+
+        play_breathing_audio = false;
+        currently_playing_b_audio = false;
+        force_audio = false;
     }
 
     public virtual void Update()
@@ -186,6 +186,55 @@ public class CharacterController : CulverinBehaviour
 
             //If the character is behind, manage the stamina/mana bar to regen it
             ManageEnergy();
+        }
+    }
+
+    public virtual void CheckHealth(float curr_hp, float max_hp, string breath_name)
+    {
+        //If HP is lower than 30% of max hp, play breathing ad heartbeat audio
+        if (play_breathing_audio)
+        {
+            if ((curr_hp / max_hp * 100) <= 30.0f && currently_playing_b_audio == false)
+            {
+                PlayFx(breath_name);
+                PlayFx("PlayHeartbeat");
+                currently_playing_b_audio = true;
+
+                Debug.Log("PLAY AUDIO: " + breath_name, Department.PLAYER, Color.BLUE);
+            }
+            else if ((curr_hp / max_hp * 100) >= 30.0f && currently_playing_b_audio == true)
+            {
+                audio.StopEvent("DaenerysBreathing");
+                audio.StopEvent("TheonBreathing");
+                audio.StopEvent("JaimeBreathing");
+                audio.StopEvent("PlayHeartbeat");
+                currently_playing_b_audio = false;
+
+                Debug.Log("STOP AUDIO: " + breath_name, Department.PLAYER, Color.BLUE);
+            }
+
+            play_breathing_audio = false;
+        }
+
+        if (force_audio)
+        {
+            //STOP ALL PREVIOUS SOUNDS 
+            audio.StopEvent("DaenerysBreathing");
+            audio.StopEvent("TheonBreathing");
+            audio.StopEvent("JaimeBreathing");
+            audio.StopEvent("PlayHeartbeat");
+            currently_playing_b_audio = false;
+
+            if ((curr_hp / max_hp * 100) <= 30.0f)
+            {
+                PlayFx(breath_name);
+                PlayFx("PlayHeartbeat");
+                currently_playing_b_audio = true;
+
+                Debug.Log("PLAY AUDIO: " + breath_name, Department.PLAYER, Color.BLUE);
+            }
+
+            force_audio = false;
         }
     }
 
