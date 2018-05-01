@@ -4,7 +4,7 @@ using CulverinEditor;
 public class Stun_Action : Action
 {
     public float stun_duration = 1.0f;
-
+    float stun_counter = 0;
     CompAnimation anim_comp;
 
     void Start()
@@ -30,17 +30,26 @@ public class Stun_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
+        stun_counter += Time.deltaTime;
         if (interupt == true)
         {
             anim_comp.SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_FAIL;
         }
 
-        if (anim_comp.IsAnimationStopped("Stun"))
+        if (stun_counter>stun_duration)
         {
+            stun_counter = 0;
             anim_comp.SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_SUCCESS;
         }
+
+
+        /*if (anim_comp.IsAnimationStopped("Stun"))
+        {
+            anim_comp.SetTransition("ToIdleAttack");
+            return ACTION_RESULT.AR_SUCCESS;
+        }*/
 
         // Does nothing
         return ACTION_RESULT.AR_IN_PROGRESS;
