@@ -241,6 +241,7 @@ public class CharactersManager : CulverinBehaviour
                 }
                 else
                 {
+                    current_character.GetComponent<TheonController>().play_breathing_audio = true;
                     health.SetHP(heal_destination, max_hp);
                     is_healing = false;
                 }
@@ -256,6 +257,7 @@ public class CharactersManager : CulverinBehaviour
                 }
                 else
                 {
+                    current_character.GetComponent<JaimeController>().play_breathing_audio = true;
                     health.SetHP(heal_destination, max_hp);
                     is_healing = false;
                 }
@@ -271,6 +273,7 @@ public class CharactersManager : CulverinBehaviour
                 }
                 else
                 {
+                    current_character.GetComponent<DaenerysController>().play_breathing_audio = true;
                     health.SetHP(heal_destination, max_hp);
                     is_healing = false;
                 }
@@ -1117,6 +1120,7 @@ public class CharactersManager : CulverinBehaviour
         {
             float max_hp = current_character.GetComponent<JaimeController>().max_hp;
             heal_destination = max_hp * percentage + health.GetCurrentHealth();
+
             if (heal_destination > max_hp)
             {
                 heal_destination = max_hp;
@@ -1137,7 +1141,7 @@ public class CharactersManager : CulverinBehaviour
         {
             float max_hp = current_character.GetComponent<DaenerysController>().max_hp;
             heal_destination = max_hp * percentage + health.GetCurrentHealth();
-            if(heal_destination > max_hp)
+            if (heal_destination > max_hp)
             {
                 heal_destination = max_hp;
             }
