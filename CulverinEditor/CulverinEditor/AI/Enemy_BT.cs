@@ -127,11 +127,7 @@ public class Enemy_BT : BT
             {
                 life_state = ENEMY_STATE.ENEMY_STUNNED;
             }
-            //if (next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION && current_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION)
-            //{
-            //    Debug.Log("Willyrex push hit", Department.PHYSICS, Color.PINK);
-            //    return;
-            //}
+
             current_action = next_action;
             next_action = null_action;
             current_action.ActionStart();
@@ -181,8 +177,6 @@ public class Enemy_BT : BT
         if (current_action.action_type != Action.ACTION_TYPE.PUSHBACK_ACTION)
         {
             Debug.Log("Yes push hit", Department.PHYSICS, Color.BLUE);
-            if (GetComponent<EnemyShield_BT>() != null)
-                audio_comp.PlayEvent("Enemy3_Hurt");
 
             if (GetComponent<EnemySpear_BT>() != null)
                 audio_comp.PlayEvent("Enemy2_Hurt");

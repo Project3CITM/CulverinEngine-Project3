@@ -15,6 +15,7 @@ public class EnemyShield_BT : Enemy_BT
     public float tripleArrow_pen = 0.0f;
     public float fireball_pen = 0.0f;
     public float firebreath_pen = 0.0f;
+    CompAudio audio_comp;
 
     public override void Start()
     {
@@ -41,7 +42,7 @@ public class EnemyShield_BT : Enemy_BT
             enemy_mat_sword = GetMaterialByName("Alpha1_ShieldEnemy2_Material_21_04");
         }
 
-
+        audio_comp = GetComponent<CompAudio>();
         shield_name = GetLinkedObject("shield_name");
 
         base.Start();
@@ -187,6 +188,7 @@ public class EnemyShield_BT : Enemy_BT
                 {
                     if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                     {
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage, damage_type);
                     }
                     else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
@@ -226,6 +228,7 @@ public class EnemyShield_BT : Enemy_BT
                 {
                     if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                     {
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage, damage_type);
                     }
                     else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
@@ -256,11 +259,13 @@ public class EnemyShield_BT : Enemy_BT
                 }
                 else
                 {
+                    audio_comp.PlayEvent("Enemy3_Hurt");
                     return base.ApplyDamage(damage, damage_type);
                 }
                 break;
 
             case ENEMY_STATE.ENEMY_STUNNED:
+                audio_comp.PlayEvent("Enemy3_Hurt");
                 return base.ApplyDamage(damage, damage_type);
                 break;
 
