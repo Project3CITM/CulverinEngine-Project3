@@ -533,8 +533,7 @@ void Particle::OrientateParticle()
 	{
 		float3 direction = App->renderer3D->active_camera->frustum.front;
 		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
-		
-		
+			
 		Quat to_rot = Quat::RotateZ(DEGTORAD * Properties.Spin);
 		Properties.Rotation = Properties.Rotation*to_rot;
 		break;
@@ -544,13 +543,19 @@ void Particle::OrientateParticle()
 		float3 direction = App->renderer3D->active_camera->frustum.front;
 		direction.y = Properties.Position.y;
 		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		
+		Quat to_rot = Quat::RotateZ(DEGTORAD * Properties.Spin);
+		Properties.Rotation = Properties.Rotation*to_rot;
 		break;
 	}
 	case 3: //HorizontalBillboard
 	{
 		float3 direction = App->renderer3D->active_camera->frustum.front;
-		direction.x = Properties.Position.x;
-		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), -direction, float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		
+		Properties.Rotation = Quat::LookAt(float3(0.0f, 0.0f, 1.0f), float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+		
+		Quat to_rot = Quat::RotateZ(DEGTORAD * Properties.Spin);
+		Properties.Rotation = Properties.Rotation*to_rot;
 		break;
 	}
 	}
