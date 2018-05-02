@@ -10,7 +10,8 @@
 #include "CompLight.h"
 #include "ModuleLightning.h"
 #include "CompCubeMapRenderer.h"
-
+#include "Scene.h"
+#include "SkyBox.h"
 void AddListener(EventType type, Module* listener)
 {
 	App->event_system_v2->AddListener(type, listener);
@@ -98,11 +99,15 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	IteratingMaps = true;
 	FrameBuffer* active_frame = nullptr;
 
+	if (App->renderer3D->active_camera)
+		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+
 	//Draw opaque events
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	
 	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	IterateLightsV(dt);
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
@@ -122,6 +127,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	active_frame->UnBind("Scene");
 
 	glUseProgram(NULL);
+	
 	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -141,6 +147,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 			PushEvent(item._Ptr->_Myval);
 		PushedWhileIteratingEvents.clear();
 	}
+	
 	/*
 	//Draw opaque events
 	if (EventPushedWhileIteratingMaps_DrawV)
