@@ -7,18 +7,18 @@ using CulverinEditor.Debug;
 public class KeyBindingMenu : CulverinBehaviour
 {
 
-    public GameObject option_menu;
-    public GameObject input_button;
+    GameObject option_menu;
+    GameObject input_button;
 
-    public GameObject keybinding_menu;
-    public GameObject keyboard_button;
-    public GameObject controller_button;
+    GameObject keybinding_menu;
+    GameObject keyboard_button;
+    GameObject controller_button;
 
-    public GameObject keyboard_menu;
-    public GameObject keyboard_return_button;
+    GameObject keyboard_menu;
+    GameObject keyboard_return_button;
 
-    public GameObject controller_menu;
-    public GameObject controller_return_button;
+    GameObject controller_menu;
+    GameObject controller_return_button;
 
     void Start()
     {
@@ -33,7 +33,7 @@ public class KeyBindingMenu : CulverinBehaviour
         keyboard_return_button = GetLinkedObject("keyboard_return_button");
 
         controller_menu = GetLinkedObject("controller_menu");
-        controller_return_button = GetLinkedObject("controller_return_button");
+        controller_menu = GetLinkedObject("controller_return_button");
 
         keybinding_menu.SetActive(false);
         keyboard_menu.SetActive(false);
