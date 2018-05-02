@@ -192,8 +192,6 @@ public class CharacterController : CulverinBehaviour
     public virtual void CheckHealth(float curr_hp, float max_hp, string breath_name)
     {
         //If HP is lower than 30% of max hp, play breathing ad heartbeat audio
-        Debug.Log(gameObject.GetName() + " current_audio: " + currently_playing_b_audio + " play_audio: " + play_breathing_audio, Department.PLAYER);
-
         if (play_breathing_audio)
         {
             if ((curr_hp / max_hp * 100) <= 30.0f && currently_playing_b_audio == false)

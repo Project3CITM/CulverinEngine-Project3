@@ -9,6 +9,7 @@ class Die_Action : Action
     float cur_time = 0.0f;
     CompAnimation anim_comp;
     CompAudio audio_comp;
+    bool blood_particle = false;
 
     public Die_Action()
     {
@@ -49,13 +50,14 @@ class Die_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        
-        if (GetComponent<EnemySword_BT>() != null && cur_time <= time_to_move)
+        if (anim_comp.IsAnimationStopped("Die") && blood_particle == false)
         {
-            /*cur_time += Time.deltaTime;
-            float val = y_move * (cur_time / time_to_move);
-            GetComponent<Transform>().SetPosition(new Vector3(GetComponent<Transform>().position.x, val, GetComponent<Transform>().position.z));*/
+            GameObject floor_blood = SpawnPrefabFromPos("Particle_FloorBlood", transform.GetGlobalPosition(), new Vector3(0, 0, 0), new Vector3(0, 0, -10));
+            blood_particle = true;
+            Destroy(floor_blood);
+            Debug.Log("I'M DEAD", Department.PLAYER, Color.PINK);
         }
+
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
