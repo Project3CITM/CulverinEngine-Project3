@@ -1279,8 +1279,8 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	App->SaveLogs();
 
 	// Copy Folder Maps -------------------------------------------
-	std::string path_copy = App->fs->GetMainDirectory() + "/SceneBinary";
-	std::string path_paste = desktop_assets + "/SceneBinary";
+	path_copy = App->fs->GetMainDirectory() + "/SceneBinary";
+	path_paste = desktop_assets + "/SceneBinary";
 	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
 
 	LOG("Copy SceneBinary folder");
