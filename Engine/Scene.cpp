@@ -248,14 +248,7 @@ update_status Scene::Update(float dt)
 	// Draw Skybox (direct mode for now)
 	//if (App->scene->draw_skybox) 
 
-	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	App->scene->scene_buff->Bind("Scene");
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-	if(App->renderer3D->active_camera)
-		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
-
-
 	// Draw Plane
 	if (App->engine_state != EngineState::PLAY)
 	{

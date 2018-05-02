@@ -88,6 +88,7 @@ public:
 	ShaderProgram* particles_shader = nullptr;
 	ShaderProgram* lights_billboard_shader = nullptr;
 	ShaderProgram* non_glow_shader = nullptr;
+	ShaderProgram* non_glow_skinning_shader = nullptr;
 	ShaderProgram* blur_shader_tex = nullptr;
 	ShaderProgram* final_shader_tex = nullptr;
 	ShaderProgram* cube_map_shader = nullptr;
@@ -95,6 +96,7 @@ public:
 
 	Material* default_material = nullptr;
 	Material* non_glow_material = nullptr;
+	Material* non_glow_skinning_material = nullptr;
 	Material* final_tex_material = nullptr;
 
 	RenderMode render_mode = RenderMode::DEFAULT;

@@ -104,6 +104,7 @@ public:
 	bool HasSkeleton() const;
 	void SetSkeleton(bool has_skeleton);
 	void GenSkeleton();
+	Skeleton* GetSkeleton()const;
 	GameObject* GenBone(char** name_iterator, const SkeletonSource* source, uint& generated_bones, Skeleton* skeleton);
 
 	CompMaterial* GetMaterial() const;
