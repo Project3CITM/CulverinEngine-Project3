@@ -61,6 +61,8 @@ public class Movement_Action : Action
 
     public float sideways_anim_speed = 1.5f;
 
+    bool fx_played = false;
+
     public Movement_Action()
     {
         action_type = ACTION_TYPE.MOVE_ACTION;
@@ -130,6 +132,8 @@ public class Movement_Action : Action
             tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
         }
 
+        fx_played = false;
+
         return true;
     }
 
@@ -139,6 +143,16 @@ public class Movement_Action : Action
         //Movement
         if (translation_finished == false)
         {
+            if (GetComponent<CompAnimation>().IsAnimOverXTime(0.6f) && fx_played == false)
+            {
+                GetComponent<CompAudio>().PlayEvent("BossFootstep");
+                fx_played = true;
+            }
+            if(GetComponent<CompAnimation>().IsAnimOverXTime(0.95f))
+            {
+                fx_played = false;
+            }
+
             UpdateTranslation();
 
             if (arrive.ReachedTile() == true)
