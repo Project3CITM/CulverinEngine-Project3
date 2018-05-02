@@ -12,6 +12,8 @@ public class Attack_Action : Action
     CharactersManager player = null;
     bool shield_attack = false;
     bool damage_done = false;
+    CompAnimation anim_comp;
+    CompAudio audio_comp;
 
     public Attack_Action()
     {
@@ -27,44 +29,62 @@ public class Attack_Action : Action
     public override bool ActionStart()
     {
         player = GetLinkedObject("target").GetComponent<CharactersManager>();
+
         if (player == null)
+        {
             Debug.Log("[error] Attack Action Start: Player is null!");
+        }
+        anim_comp = GetComponent<CompAnimation>();
+        audio_comp = GetComponent<CompAudio>();
 
-
-        GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
-        GetComponent<CompAnimation>().PlayAnimationNode("Attack");
-        GetComponent<CompAudio>().PlayEvent("Enemy1_Slash");
+            if (player.dying == false)
+            {
+                anim_comp.SetClipDuration("Attack", attack_duration);
+                anim_comp.PlayAnimationNode("Attack");
+                audio_comp.PlayEvent("Enemy1_Slash");
+            }
       
 
         damage_done = false;
         shield_attack = false;
+
         //Interrupt player action
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-      
+        if (player.dying) 
+        {
+            Debug.Log("DON'T ATTACK PLAYER", Department.PLAYER, Color.YELLOW);
+            return ACTION_RESULT.AR_FAIL; //Player is dead, don't attack
+        }
+
         if (GetComponent<CompAnimation>().IsAnimOverXTime(damage_point) && damage_done == false)
         {
             damage_done = true;
 
             if (shield_attack)
+            {
                 player.ApplyFatigue(fatigue);
+            }
             else
             {
                 if (player.GetDamage(damage) == true)
-                { 
-                    GetComponent<CompAudio>().PlayEvent("SwordHit");
-                    GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight(0.0f);
+                {
+                    audio_comp.PlayEvent("SwordHit");
+                    anim_comp.SetFirstActiveBlendingClipWeight(0.0f);
                 }
-                else
-                    GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight(1.0f);
+                else { 
+                    anim_comp.SetFirstActiveBlendingClipWeight(1.0f);
+                }
             }
         }
 
-        if (GetComponent<CompAnimation>().IsAnimationStopped("Attack"))
+        if (anim_comp.IsAnimationStopped("Attack"))
             return ACTION_RESULT.AR_SUCCESS;
+        
+
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 

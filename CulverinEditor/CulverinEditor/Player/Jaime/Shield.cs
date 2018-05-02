@@ -25,9 +25,9 @@ public class Shield : CulverinBehaviour
 
         // Disable UI images
         icon = shield_obj.GetComponent<CompImage>();
-        icon.SetEnabled(false, shield_obj);
+        icon.SetEnabled(false);
         icon = broken_shield_obj.GetComponent<CompImage>();
-        icon.SetEnabled(false, broken_shield_obj);
+        icon.SetEnabled(false);
     }
 
     // Update is called once per frame
@@ -81,28 +81,28 @@ public class Shield : CulverinBehaviour
     void EnableShield()
     {
         icon = broken_shield_obj.GetComponent<CompImage>();
-        icon.SetEnabled(true, shield_obj);
+        icon.SetEnabled(true);
     }
 
     //Enable UI Image
     void EnableBrokenShield()
     {
         icon = broken_shield_obj.GetComponent<CompImage>();
-        icon.SetEnabled(true, broken_shield_obj);
+        icon.SetEnabled(true);
     }
 
     //Disable UI Image
     void DisableShield()
     {
         icon = broken_shield_obj.GetComponent<CompImage>();
-        icon.SetEnabled(false, shield_obj);
+        icon.SetEnabled(false);
     }
 
     //Disable UI Image
     void DisableBrokenShield()
     {
         icon = broken_shield_obj.GetComponent<CompImage>();
-        icon.SetEnabled(false, broken_shield_obj);
+        icon.SetEnabled(false);
     }
 
     public bool IsActive()

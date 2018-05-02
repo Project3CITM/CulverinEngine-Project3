@@ -4,6 +4,8 @@ using CulverinEditor;
 public class Stun_Action : Action
 {
     public float stun_duration = 1.0f;
+    float stun_counter = 0;
+    CompAnimation anim_comp;
 
     void Start()
     {
@@ -20,24 +22,34 @@ public class Stun_Action : Action
         GetComponent<Arrive_Steering>().SetEnabled(false);
         GetComponent<Seek_Steering>().SetEnabled(false);
         //GetComponent<CompAnimation>().SetTransition("ToStun");
-        GetComponent<CompAnimation>().SetClipDuration("Stun", stun_duration);
-        GetComponent<CompAnimation>().PlayAnimationNode("Stun");
+        anim_comp = GetComponent<CompAnimation>();
+        anim_comp.SetClipDuration("Stun", stun_duration);
+        anim_comp.PlayAnimationNode("Stun");
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
+        stun_counter += Time.deltaTime;
         if (interupt == true)
         {
-            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            anim_comp.SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_FAIL;
         }
 
-        if (GetComponent<CompAnimation>().IsAnimationStopped("Stun"))
+        if (stun_counter>stun_duration)
         {
-            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            stun_counter = 0;
+            anim_comp.SetTransition("ToIdleAttack");
             return ACTION_RESULT.AR_SUCCESS;
         }
+
+
+        /*if (anim_comp.IsAnimationStopped("Stun"))
+        {
+            anim_comp.SetTransition("ToIdleAttack");
+            return ACTION_RESULT.AR_SUCCESS;
+        }*/
 
         // Does nothing
         return ACTION_RESULT.AR_IN_PROGRESS;

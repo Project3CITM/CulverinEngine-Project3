@@ -31,21 +31,38 @@ public class BossAttackSwordDown_Action : Action
     public float rumble_power = 0.5f;
     public int rumble_time = 200;
     private bool ground_hit = true;
+    CharactersManager player = null;
 
 
     public override bool ActionStart()
     {
-
         state = BASD_STATE.PRE_APPLY;
-        GetComponent<CompAnimation>().SetTransition("ToSwordDownAttack");
-        GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", preparation_time / apply_damage_point);
-        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
+        player = GetLinkedObject("player_obj").GetComponent<CharactersManager>();
+
+        if (player == null)
+        {
+            Debug.Log("[error] Attack Action Start: Player is null!");
+        }
+
+        if (player.dying == false)
+        {
+            GetComponent<CompAnimation>().SetTransition("ToSwordDownAttack");
+            GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", preparation_time / apply_damage_point);
+            GetComponent<CompAudio>().PlayEvent("AttackPreparation");
+        }
+
         ground_hit = true;
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if (player.dying)
+        {
+            Debug.Log("DON'T ATTACK PLAYER", Department.PLAYER, Color.ORANGE);
+            return ACTION_RESULT.AR_FAIL; //Player is dead, don't attack
+        }
+
         if (state == BASD_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
         {
             GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", (attack_duration / (1.0f - apply_damage_point)));

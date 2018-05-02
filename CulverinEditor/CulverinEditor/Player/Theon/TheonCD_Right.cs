@@ -5,10 +5,19 @@ public class TheonCD_Right : CoolDown
 {
     public GameObject theon_right_cd_text;
 
-    void Start()
+    TheonController theon_controller;
+
+    public override void Start()
     {
         theon_right_cd_text = GetLinkedObject("theon_right_cd_text");
-        ResetTextTimer(theon_right_cd_text);
+
+        LinkTextTimer(theon_right_cd_text);
+        ResetTextTimer();
+
+        //Link to the external daenerys_obj 
+        theon_controller = GetLinkedObject("theon_obj").GetComponent<TheonController>();
+
+        base.Start();
     }
 
     public override void Update()
@@ -18,26 +27,26 @@ public class TheonCD_Right : CoolDown
         //Manage Seconds Counter
         if (in_cd)
         {
-            ManageTextTimer(theon_right_cd_text);
+            ManageTextTimer();
         }
 
         //Reset Seconds Counter
         if (reset_timer)
         {
-            ResetTextTimer(theon_right_cd_text);
+            ResetTextTimer();
             reset_timer = false;
         }
     }
 
     public override void OnClick()
     {
-        if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0 
-            && GetLinkedObject("theon_obj").GetComponent<TheonController>().reloading == false
-            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
+        if (theon_controller.GetState() == 0 
+            && theon_controller.reloading == false
+            && characters_manager.changing == false)
         {
             if (in_cd == false)
             {
-                if (GetLinkedObject("theon_obj").GetComponent<TheonController>().OnRightClick() == true)
+                if (theon_controller.OnRightClick() == true)
                 {
                     ActivateAbility();
                 }
@@ -47,10 +56,9 @@ public class TheonCD_Right : CoolDown
 
     public override void ActivateAbility()
     {
-        //this_obj.GetComponent
-        button_cd = GetLinkedObject("theon_button_right").GetComponent<CompButton>();
         button_cd.Deactivate();
         act_time = 0.0f;
+        cd_time = theon_controller.right_ability_cd_time;
         prev_seconds = 1000;
         in_cd = true;
     }

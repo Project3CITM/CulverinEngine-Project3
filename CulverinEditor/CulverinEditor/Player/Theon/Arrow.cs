@@ -13,6 +13,11 @@ public class Arrow : CulverinBehaviour
     public GameObject arrow_blood_particles;
     public GameObject arrow_sparks_particles;
 
+    public void SetDamage(float set_damage)
+    {
+        damage = set_damage;
+    }
+
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
@@ -63,7 +68,7 @@ public class Arrow : CulverinBehaviour
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (enemy_manager.IsEnemy(collided_obj))
             {
-                enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
+                enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.ARROW);
                 if (arrow_blood_particles != null)
                 {
 

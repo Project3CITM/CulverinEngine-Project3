@@ -1273,9 +1273,88 @@ MonoObject*	CSharpScript::Instantiate(MonoObject* object, MonoString* prefab_)
 	{
 		App->scene->root->AddChildGameObject(gameobject);
 		App->importer->iScript->UpdateMonoMap(gameobject);
+
+
 		return App->importer->iScript->GetMonoObject(gameobject);
 	}
 	LOG("[error] with load prefab");
+	return nullptr;
+}
+
+MonoObject * CSharpScript::SpawnPrefabFromPos(MonoObject * object, MonoString * prefab_name, MonoObject * realposition, MonoObject * realrotation, MonoObject * prefabpos)
+{
+	const char* prefab = mono_string_to_utf8(prefab_name);
+
+	std::string directory_prebaf = App->fs->GetMainDirectory();
+	directory_prebaf += "/";
+	directory_prebaf += prefab;
+	directory_prebaf += ".prefab.json";
+	GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str(), true);
+
+	if (gameobject != nullptr)
+	{
+		App->scene->root->AddChildGameObject(gameobject);
+		App->importer->iScript->UpdateMonoMap(gameobject);
+
+		MonoClass* classT = mono_object_get_class(realposition);
+		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+		float3 real_position_object;
+
+		if (x_field) mono_field_get_value(realposition, x_field, &real_position_object.x);
+		if (y_field) mono_field_get_value(realposition, y_field, &real_position_object.y);
+		if (z_field) mono_field_get_value(realposition, z_field, &real_position_object.z);
+
+		MonoClass* classT2 = mono_object_get_class(realrotation);
+		MonoClassField* x_field2 = mono_class_get_field_from_name(classT2, "x");
+		MonoClassField* y_field2 = mono_class_get_field_from_name(classT2, "y");
+		MonoClassField* z_field2 = mono_class_get_field_from_name(classT2, "z");
+
+		float3 real_rotation_object;
+
+		if (x_field2) mono_field_get_value(realrotation, x_field2, &real_rotation_object.x);
+		if (y_field2) mono_field_get_value(realrotation, y_field2, &real_rotation_object.y);
+		if (z_field2) mono_field_get_value(realrotation, z_field2, &real_rotation_object.z);
+
+		MonoClass* classT3 = mono_object_get_class(prefabpos);
+		MonoClassField* x_field3 = mono_class_get_field_from_name(classT3, "x");
+		MonoClassField* y_field3 = mono_class_get_field_from_name(classT3, "y");
+		MonoClassField* z_field3 = mono_class_get_field_from_name(classT3, "z");
+
+		float3 prefab_position_object;
+
+		if (x_field3) mono_field_get_value(prefabpos, x_field3, &prefab_position_object.x);
+		if (y_field3) mono_field_get_value(prefabpos, y_field3, &prefab_position_object.y);
+		if (z_field3) mono_field_get_value(prefabpos, z_field3, &prefab_position_object.z);
+
+		CompTransform* trans = gameobject->GetComponentTransform();
+
+		if (trans != nullptr)
+		{
+			float3 final_pos = real_position_object;
+			if (real_rotation_object.x < 1 && real_rotation_object.x > -1) real_rotation_object.x = 0;
+			if (real_rotation_object.z < 1 && real_rotation_object.z > -1) real_rotation_object.z = 0;
+			float3 globalrot = real_rotation_object;
+			Quat global_rot_quat = Quat::FromEulerXYZ(globalrot.x * DEGTORAD, globalrot.y * DEGTORAD, globalrot.z * DEGTORAD);
+			float3x3 mat;
+			mat = mat.identity;
+			mat = mat.FromQuat(global_rot_quat);
+
+			float3 rotatedpos = mat * prefab_position_object;
+			final_pos = final_pos + rotatedpos;
+			trans->SetPos(final_pos);
+
+			float3 prefabrot = ((trans->GetRotGlobal()).ToEulerXYZ()) * RADTODEG;
+
+			globalrot = globalrot + prefabrot;
+			trans->SetRot(globalrot);
+			gameobject->UpdateChildsMatrices();
+
+			return App->importer->iScript->GetMonoObject(gameobject);
+		}
+	}
 	return nullptr;
 }
 

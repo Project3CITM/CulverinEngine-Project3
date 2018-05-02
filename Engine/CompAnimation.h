@@ -157,6 +157,9 @@ public:
 	void SetClipsSpeed(float speed_value);
 
 	void SetActiveAnimationNode(AnimationNode * active);
+
+	void SpawnPrefabFromPos(std::string prefab_name,float3 realposition, float3 rotation, float3 prefabpos, float3 prefabrot);
+
 public:
 
 	ResourceAnimation* animation_resource = nullptr;

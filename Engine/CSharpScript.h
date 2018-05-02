@@ -218,6 +218,7 @@ public:
 	void		SetOwnGameObject(GameObject* gameobject);
 	void		CreateGameObject(MonoObject* object);
 	MonoObject*	Instantiate(MonoObject* object, MonoString* prefab);
+	MonoObject*	SpawnPrefabFromPos(MonoObject* object, MonoString* prefab_name, MonoObject* realposition, MonoObject* realrotation, MonoObject* prefabpos);
 	MonoObject*	Instantiate_respawn(MonoObject* object, MonoString* prefab, float time);
 	void		Destroy(MonoObject* object, float time);
 
@@ -277,7 +278,7 @@ public:
 	void		SetSecondActiveBlendingClipWeight(MonoObject* object, float weight);
 	void		SetBlendInTime(MonoObject* object, MonoString* name, float time);
 	void		PlayAnimationNode(MonoObject* object, MonoString* name);
-	
+
 	/*UI-RectTransform*/
 	void		SetUIPosition(MonoObject* object, MonoObject* vector3);
 	MonoObject* GetUIPosition(MonoObject* object);

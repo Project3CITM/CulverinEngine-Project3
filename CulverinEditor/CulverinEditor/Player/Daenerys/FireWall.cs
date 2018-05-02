@@ -12,6 +12,11 @@ public class FireWall : CulverinBehaviour
     private int tile_x = 0;
     private int tile_y = 0;
 
+    public void SetDamage(float damage)
+    {
+        damage_per_second_percentage = damage;
+    }
+
     // Use this for initialization
     void Start()
     {

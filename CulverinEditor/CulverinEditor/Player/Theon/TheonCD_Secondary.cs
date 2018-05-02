@@ -6,13 +6,21 @@ public class TheonCD_Secondary : CoolDown
     public bool theon_dead = false;
     public GameObject theon_secondary_cd_text;
 
+    TheonController theon_controller;
 
-    void Start()
+    public override void Start()
     {
         theon_dead = false;
 
         theon_secondary_cd_text = GetLinkedObject("theon_secondary_cd_text");
-        ResetTextTimer(theon_secondary_cd_text);
+
+        LinkTextTimer(theon_secondary_cd_text);
+        ResetTextTimer();
+
+        //Link to the external daenerys_obj 
+        theon_controller = GetLinkedObject("theon_obj").GetComponent<TheonController>();
+
+        base.Start();
     }
 
     public override void Update()
@@ -24,13 +32,13 @@ public class TheonCD_Secondary : CoolDown
             //Manage Seconds Counter
             if (in_cd)
             {
-                ManageTextTimer(theon_secondary_cd_text);
+                ManageTextTimer();
             }
 
             //Reset Seconds Counter
             if (reset_timer)
             {
-                ResetTextTimer(theon_secondary_cd_text);
+                ResetTextTimer();
                 reset_timer = false;
             }
         }
@@ -38,12 +46,12 @@ public class TheonCD_Secondary : CoolDown
 
     public override void OnClick()
     {
-        if (GetLinkedObject("theon_obj").GetComponent<TheonController>().GetState() == 0
-            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
+        if (theon_controller.GetState() == 0
+            && characters_manager.changing == false)
         {
             if (in_cd == false)
             {
-                if (GetLinkedObject("theon_obj").GetComponent<TheonController>().OnSecondaryClick())
+                if (theon_controller.OnSecondaryClick())
                 {
                     ActivateAbility();
                 }
@@ -53,18 +61,24 @@ public class TheonCD_Secondary : CoolDown
 
     public override void ActivateAbility()
     {
-        //this_obj.GetComponent
-        button_cd = GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>();
         button_cd.Deactivate();
+        cd_time = theon_controller.sec_ability_cd_time;
         act_time = 0.0f;
         prev_seconds = 1000;
         in_cd = true;
 
         //SET COOLDOWN TO 1 SECOND
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode ||
-            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_cds)
+        if (characters_manager.god_mode ||
+            characters_manager.no_cds)
         {
             cd_time = 1.0f;
         }
+    }
+
+    public void Die()
+    {
+        theon_dead = true;
+        ResetTextTimer();
+        fill_image.FillAmount(1.0f);
     }
 }

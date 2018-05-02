@@ -9,11 +9,18 @@ public class ChasePlayer_Action : Action
     ACTION_RESULT move_return;
     public bool forgot_event = false;
     public float check_player_timer = 1.0f;
+    public GameObject player;
     float timer = 0.0f;
+    private bool blocking = false;
+    Enemy_BT bt;
+    PerceptionSightEnemy percep_sight;
+    CompAnimation comp_anim;
 
     void Start()
     {
+        blocking = false;
         move = GetComponent<Movement_Action>();
+        player = GetLinkedObject("player");
     }
 
     public ChasePlayer_Action()
@@ -25,11 +32,15 @@ public class ChasePlayer_Action : Action
     {
         event_to_react.start_counting = false;
 
-        Enemy_BT bt = GetComponent<EnemySword_BT>();
+        bt = GetComponent<EnemySword_BT>();
         if (bt == null)
             bt = GetComponent<EnemyShield_BT>();
         if (bt == null)
             bt = GetComponent<EnemySpear_BT>();
+
+        percep_sight = GetComponent<PerceptionSightEnemy>();
+
+        comp_anim = GetComponent<CompAnimation>();
 
         move.GoToPlayer((uint)bt.range);
         interupt = false;
@@ -41,12 +52,13 @@ public class ChasePlayer_Action : Action
     {
         interupt = false;
         move.SetInterupt(false);
+        blocking = false;
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (forgot_event == true || GetComponent<Movement_Action>().NextToPlayer() == true || interupt == true )
+        if (forgot_event == true || move.NextToPlayer() == true || interupt == true )
             move.Interupt();
 
         if (forgot_event == false)
@@ -55,13 +67,19 @@ public class ChasePlayer_Action : Action
 
             if (timer >= check_player_timer && move.CenteredInTile())
             {
-                timer = 0.0f;
+                if (player.GetComponent<CharactersManager>().GetCurrentCharacterName() == "Jaime")
+                {
+                    comp_anim.PlayAnimationNode("Chase");
+                    SetBlocking(false);
+                    move.SetBlocking(false);
+                }
+                else
+                {
+                    SetBlocking(true);
+                    move.SetBlocking(true);
+                }
 
-                Enemy_BT bt = GetComponent<EnemySword_BT>();
-                if (bt == null)
-                    bt = GetComponent<EnemyShield_BT>();
-                if (bt == null)
-                    bt = GetComponent<EnemySpear_BT>();
+                timer = 0.0f;
 
                 if(bt == GetComponent<EnemySpear_BT>())
                 {
@@ -74,7 +92,7 @@ public class ChasePlayer_Action : Action
 
             }
 
-            if (GetComponent<PerceptionSightEnemy>().player_seen == false)
+            if (percep_sight.player_seen == false)
                 event_to_react.start_counting = true;
             else
                 event_to_react.start_counting = false;
@@ -96,6 +114,16 @@ public class ChasePlayer_Action : Action
     public void SetInterupt(bool i)
     {
         interupt = i;
+    }
+
+    public void SetBlocking(bool value)
+    {
+        blocking = value;
+    }
+
+    public bool IsBlocking()
+    {
+        return blocking;
     }
 
 }

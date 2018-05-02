@@ -9,6 +9,7 @@ public class Arrive_Steering : CulverinBehaviour
     public float stopping_time = 1.5f;
     bool in_range = false;
     Movement_Action move;
+    Transform transform;
 
     // Use this for initialization
     void Start()
@@ -16,12 +17,13 @@ public class Arrive_Steering : CulverinBehaviour
         in_range = false;
         SetEnabled(false);
         move = GetComponent<Movement_Action>();
+        transform = GetComponent<Transform>();
     }
 
     void Update()
     {
-        Vector3 my_pos = GetComponent<Transform>().position;
-        Vector3 tile_pos = GetComponent<Movement_Action>().GetTargetPosition();
+        Vector3 my_pos = transform.position;
+        Vector3 tile_pos = move.GetTargetPosition();
         Vector3 distance_to_target = new Vector3(Vector3.Zero);
         distance_to_target.x = tile_pos.x - my_pos.x;
         distance_to_target.z = tile_pos.z - my_pos.z;
@@ -44,15 +46,15 @@ public class Arrive_Steering : CulverinBehaviour
 
             deceleration = deceleration + distance_to_target.Normalized * move.GetMaxAcceleration() * (-1);
 
-            GetComponent<Movement_Action>().Accelerate(deceleration);
+            move.Accelerate(deceleration);
         }
     }
 
     public bool ReachedTile()
     {
         Vector3 ideal_velocity = new Vector3(Vector3.Zero);
-        Vector3 my_pos = GetComponent<Transform>().position;
-        Vector3 tile_pos = GetComponent<Movement_Action>().GetTargetPosition();
+        Vector3 my_pos = transform.position;
+        Vector3 tile_pos = move.GetTargetPosition();
         Vector3 distance_to_target = new Vector3(Vector3.Zero);
         distance_to_target.x = tile_pos.x - my_pos.x;
         distance_to_target.z = tile_pos.z - my_pos.z;
