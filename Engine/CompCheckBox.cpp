@@ -272,3 +272,9 @@ void CompCheckBox::OnSubmit(Event event_input)
 	}
 
 }
+
+void CompCheckBox::HideTick()
+{
+	tick->SetCanDraw(false);
+	active = false;
+}
