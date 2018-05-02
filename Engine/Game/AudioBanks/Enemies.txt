@@ -15,25 +15,25 @@ Event	ID	Name			Wwise Object Path	Notes
 	4117129356	Enemy2_Dead			\Enemies\Enemies\Enemy2_Dead	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	7718038	E2_Hurt_2	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Hurt_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy2_Hurt\E2_Hurt_2		55614
-	34348135	E2_Hurt_1	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Hurt_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy2_Hurt\E2_Hurt_1		51796
-	46166543	Enemy_SpearSwing	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SpearSwing_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy_SpearSwing		44164
-	95151264	Enemy_ShieldBlock	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_ShieldBlock_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy_ShieldBlock		186320
-	186105963	E3_Hurt_1	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Hurt_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy3_Hurt\E3_Hurt_1		94200
-	232669740	Enemy_SwordClash	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SwordClash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy_SwordClash		241128
-	250696451	Enemy_Slash	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_Slash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy_Slash		153528
-	347745547	E3_Dead_2	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Dead_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy3_Dead\E3_Dead_2		67124
-	402319163	Enemy_Flesh_Cut	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Misc_Combat\sword_hit_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy_Flesh_Cut		35344
-	416970658	E1_Dead_1	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy1_Dead\E1_Dead_1		118430
-	433992945	Enemy_SwordDrop	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SwordDrop_F4B794D3.wem		\Actor-Mixer Hierarchy\Enemies\Enemy_SwordDrop		201532
-	456359166	E1_Hurt_1	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Hurt_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy1_Hurt\E1_Hurt_1		110384
-	460932244	Enemy_ShortSwordSlash	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_ShortSwordSlash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy_ShortSwordSlash		74124
-	525252151	E3_Dead_1	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy3_Dead\E3_Dead_1		95472
-	549090009	E2_Dead_2	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Dead_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy2_Dead\E2_Dead_2		55614
-	550330053	E1_Dead_2	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Dead_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy1_Dead\E1_Dead_2		157806
-	692406587	E2_Dead_1	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy2_Dead\E2_Dead_1		47590
-	885694415	Enemy_SwordDraw	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SwordDraw_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy_SwordDraw		190188
-	906120742	E2_Hurt_3	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Hurt_3_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy2_Hurt\E2_Hurt_3		51372
-	910455306	E3_Hurt_2	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Hurt_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy3_Hurt\E3_Hurt_2		94624
-	912478601	E1_Hurt_2	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Hurt_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy1_Hurt\E1_Hurt_2		61126
+	7718038	E2_Hurt_2	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Hurt_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy2_Hurt\E2_Hurt_2		55614
+	34348135	E2_Hurt_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Hurt_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy2_Hurt\E2_Hurt_1		51796
+	46166543	Enemy_SpearSwing	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SpearSwing_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy_SpearSwing		44164
+	95151264	Enemy_ShieldBlock	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_ShieldBlock_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy_ShieldBlock		186320
+	186105963	E3_Hurt_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Hurt_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy3_Hurt\E3_Hurt_1		94200
+	232669740	Enemy_SwordClash	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SwordClash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy_SwordClash		241128
+	250696451	Enemy_Slash	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_Slash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy_Slash		153528
+	347745547	E3_Dead_2	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Dead_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy3_Dead\E3_Dead_2		67124
+	402319163	Enemy_Flesh_Cut	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Misc_Combat\sword_hit_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy_Flesh_Cut		35344
+	416970658	E1_Dead_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy1_Dead\E1_Dead_1		118430
+	433992945	Enemy_SwordDrop	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SwordDrop_F4B794D3.wem		\Actor-Mixer Hierarchy\Enemies\Enemy_SwordDrop		201532
+	456359166	E1_Hurt_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Hurt_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy1_Hurt\E1_Hurt_1		110384
+	460932244	Enemy_ShortSwordSlash	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_ShortSwordSlash_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy_ShortSwordSlash		74124
+	525252151	E3_Dead_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy3_Dead\E3_Dead_1		95472
+	549090009	E2_Dead_2	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Dead_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy2_Dead\E2_Dead_2		55614
+	550330053	E1_Dead_2	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Dead_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy1_Dead\E1_Dead_2		157806
+	692406587	E2_Dead_1	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Dead_1_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy2_Dead\E2_Dead_1		47590
+	885694415	Enemy_SwordDraw	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy_SwordDraw_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy_SwordDraw		190188
+	906120742	E2_Hurt_3	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_2\E2_Hurt_3_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy2\Enemy2_Hurt\E2_Hurt_3		51372
+	910455306	E3_Hurt_2	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_3\E3_Hurt_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy3\Enemy3_Hurt\E3_Hurt_2		94624
+	912478601	E1_Hurt_2	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Enemy\Enemy_1\E1_Hurt_2_1C9C67B2.wem		\Actor-Mixer Hierarchy\Enemies\Enemy1\Enemy1_Hurt\E1_Hurt_2		61126
 
