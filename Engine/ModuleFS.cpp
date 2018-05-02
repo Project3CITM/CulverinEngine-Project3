@@ -48,6 +48,7 @@ bool ModuleFS::Init(JSON_Object* node)
 	CreateFolder("Assets/Maps");
 	CreateFolder("Assets/Shaders");
 	CreateFolder("Assets/Shaders/Materials");
+	CreateFolder("Assets/SceneBinary");
 
 	return true;
 }
@@ -983,7 +984,6 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 {
 	// First apply direcotry
 	std::string temp = file;
-	std::string test = "Joan/";
 	switch (directory)
 	{
 	case IMPORT_DEFAULT:
@@ -992,7 +992,7 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 	}
 	case IMPORT_DIRECTORY_ASSETS:
 	{
-		temp = DIRECTORY_ASSETS + test + temp;
+		temp = DIRECTORY_ASSETS + temp;
 		break;
 	}
 	case IMPORT_DIRECTORY_LIBRARY:
@@ -1063,7 +1063,6 @@ uint ModuleFS::LoadFile(const char* file, char** buffer, DIRECTORY_IMPORT direct
 
 bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY_IMPORT directory)
 {
-	std::string test = "Joan/";
 	// First apply direcotry
 	switch (directory)
 	{
@@ -1073,7 +1072,7 @@ bool ModuleFS::SaveFile(const char* data, std::string name, uint size, DIRECTORY
 	}
 	case IMPORT_DIRECTORY_ASSETS:
 	{
-		name = DIRECTORY_ASSETS + test + name;
+		name = DIRECTORY_ASSETS + name;
 		break;
 	}
 	case IMPORT_DIRECTORY_LIBRARY:

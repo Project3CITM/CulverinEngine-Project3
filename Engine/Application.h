@@ -100,7 +100,7 @@ public:
 	void SetState(EngineState state);
 
 	void WantToSave(bool binary = false);
-	void WantToLoad(bool in_game = false, bool binary = false);
+	void WantToLoad(bool in_game = false, bool binary = false, bool force_json = false);
 	void DontDestroyOnLoad();
 	void LoadMultiScene();
 	void ChangeToSecondary();
@@ -204,6 +204,7 @@ private:
 
 	bool want_to_save = false;
 	bool want_to_save_binary = false;
+	bool want_to_load_json = false;
 	bool want_to_load = false;
 	bool want_to_load_binary = false;
 	bool load_in_game = false;

@@ -77,7 +77,7 @@ private:
 	float2 right_pivot;
 	bool update_rect = false;
 	bool ignore_z = false;
-	bool unitar_resize = true;
+	bool use_unitary_rescale = true;
 };
 
 #endif //COMPONENT_RECT_TRANSFORM_H
