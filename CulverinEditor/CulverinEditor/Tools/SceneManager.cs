@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System;
 
 namespace CulverinEditor.SceneManagement
 {
@@ -69,6 +70,25 @@ namespace CulverinEditor.SceneManagement
         /// </summary>
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void LoadNewWalkableMap(string map);
+
+        /// <summary>  
+        ///     SaveInfo Player.
+        /// </summary>
+        [Obsolete("Doesn't work at the moment!", true)]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void PushSaveInfo(Vector3 info);
+
+        /// <summary>  
+        ///     SaveInfo Player..
+        /// </summary>
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void PushSaveInfo(float hp);
+
+        /// <summary>  
+        ///     LoadInfo Player..
+        /// </summary>
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern float PopLoadInfo();
 
     }
 }

@@ -1188,7 +1188,95 @@ public class CharactersManager : CulverinBehaviour
         {
             current_character.GetComponent<TheonController>().SetState(currstate);
         }
-        
+    }
+
+    public void SaveInfoPlayer()
+    {
+        if (current_character.GetName() == "Jaime")
+        {
+            SceneManager.PushSaveInfo(current_character.GetComponent<JaimeController>().curr_hp);
+        }
+        if (right_character.GetName() == "Jaime")
+        {
+            SceneManager.PushSaveInfo(right_character.GetComponent<JaimeController>().curr_hp);
+        }
+        if (left_character.GetName() == "Jaime")
+        {
+            SceneManager.PushSaveInfo(left_character.GetComponent<JaimeController>().curr_hp);
+        }
+
+        if (current_character.GetName() == "Daenerys")
+        {
+            SceneManager.PushSaveInfo(current_character.GetComponent<DaenerysController>().curr_hp);
+        }
+        if (left_character.GetName() == "Daenerys")
+        {
+            SceneManager.PushSaveInfo(left_character.GetComponent<DaenerysController>().curr_hp);
+        }
+        if (right_character.GetName() == "Daenerys")
+        {
+            SceneManager.PushSaveInfo(right_character.GetComponent<DaenerysController>().curr_hp);
+        }
+
+        if (current_character.GetName() == "Theon")
+        {
+            SceneManager.PushSaveInfo(current_character.GetComponent<TheonController>().curr_hp);
+        }
+        if (left_character.GetName() == "Theon")
+        {
+            SceneManager.PushSaveInfo(left_character.GetComponent<TheonController>().curr_hp);
+        }
+        if (right_character.GetName() == "Theon")
+        {
+            SceneManager.PushSaveInfo(right_character.GetComponent<TheonController>().curr_hp);
+        }
+    }
+
+    public void LoadInfoPlayer()
+    {
+        float theoninfo = SceneManager.PopLoadInfo();
+        float daenerysinfo = SceneManager.PopLoadInfo();
+        float jaimeinfo = SceneManager.PopLoadInfo();
+
+        current_character.GetComponent<JaimeController>().curr_hp = jaimeinfo;
+        left_character.GetComponent<TheonController>().curr_hp = theoninfo;
+        right_character.GetComponent<DaenerysController>().curr_hp = daenerysinfo;
+
+        GetLinkedObject("health_obj").GetComponent<Hp>().SetHP(current_character.GetComponent<JaimeController>().curr_hp, current_character.GetComponent<JaimeController>().max_hp);
+
+
+        //GameObject temp;
+        //GameObject temp1;
+        //GameObject temp2;
+
+        //if (jaimeinfo.y == 0)
+        //{
+        //    temp = left_character;
+        //}
+        //else if (jaimeinfo.y == 2)
+        //{
+        //    temp = right_character;
+        //}
+
+        //if (daenerysinfo.y == 0)
+        //{
+        //    temp1 = left_character;
+        //}
+        //else if (daenerysinfo.y == 1)
+        //{
+        //    temp1 = current_character;
+        //}
+
+        //else if (theoninfo.y == 1)
+        //{
+
+        //}
+        //else if (theoninfo.y == 2)
+        //{
+
+        //}
+
+
     }
 }
 

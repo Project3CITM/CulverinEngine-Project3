@@ -98,6 +98,7 @@
     <Compile Include="Miscellanea\DoorLever.cs" />
     <Compile Include="Miscellanea\ReverbCorridor.cs" />
     <Compile Include="Player\Jaime\ComboController.cs" />
+    <Compile Include="Puzzles\FadeToBlack.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\BarrelFall.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\BarrelPuzzleManager.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\Lever.cs" />
