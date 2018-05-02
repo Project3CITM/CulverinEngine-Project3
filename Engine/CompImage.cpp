@@ -1023,7 +1023,8 @@ void CompImage::ExpandMesh()
 	{
 	case Type::SIMPLE:
 	{
-		ProcesQuad(transform->GenerateQuadVertices());
+		if(transform != nullptr)
+			ProcesQuad(transform->GenerateQuadVertices());
 	}
 		break;
 	case Type::FILLED:

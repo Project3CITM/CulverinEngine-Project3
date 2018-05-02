@@ -103,6 +103,9 @@ private:
 	static void BlockGUIinput();
 	static void QuitScene();
 	static void LoadNewWalkableMap(MonoString* walkable_map);
+	static void PushSaveInfoV2(MonoObject* info);
+	static void PushSaveInfo(float hp);
+	static float PopLoadInfo();
 
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);

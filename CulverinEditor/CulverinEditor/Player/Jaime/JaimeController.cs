@@ -326,7 +326,7 @@ public class JaimeController : CharacterController
         {
             health = GetLinkedObject("health_obj").GetComponent<Hp>();
             health.GetDamage(dmg);
-
+            curr_hp -= dmg;
             if (health.GetCurrentHealth() > 0)
             {
                 if (GetState() == 0)

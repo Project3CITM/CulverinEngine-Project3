@@ -293,7 +293,7 @@ public class DaenerysController : CharacterController
     {
         health = GetLinkedObject("health_obj").GetComponent<Hp>();
         health.GetDamage(dmg);
-
+        curr_hp -= dmg;
         // SET HIT ANIMATION
         if (health.GetCurrentHealth() > 0)
         {

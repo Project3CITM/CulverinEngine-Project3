@@ -1,3 +1,5 @@
+#include <experimental\filesystem>
+
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
@@ -13,7 +15,7 @@
 #include "GL3W/include/glew.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
-#include"Devil\include\ilut.h"
+#include "Devil\include\ilut.h"
 #include "DefaultShaders.h"
 #include "Materials.h"
 #include "ModuleTextures.h"
@@ -95,12 +97,9 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glClearDepth(1.0f);
 
-
-
 		//Initialize clear color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
@@ -119,8 +118,6 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 		GLfloat LightModelAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 
-
-
 		GLfloat MaterialAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
 
@@ -133,8 +130,6 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 			LOG("[error]Error initializing GL3W! %s\n", gluErrorString(error));
 			ret = false;
 		}
-
-
 
 		//Load render config info -------
 		depth_test = json_object_get_boolean(node, "Depth Test");
@@ -211,6 +206,16 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	if (default_material->textures.size()>0)
 		default_material->textures[0].value = default_texture;
 
+	if (std::experimental::filesystem::create_directory("..//Game//Screenshots")) { LOG("Screenshots folder created"); }
+	else { LOG("Screenshots folder already exists"); }
+	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//ScreenFull")) { LOG("ScreenFull folder created"); }
+	else { LOG("ScreenFull folder already exists"); }
+	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//ScreenPortion")) { LOG("ScreenPortion folder created"); }
+	else { LOG("ScreenPortion folder already exists"); }
+	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//GifFull")) { LOG("GifFull folder created"); }
+	else { LOG("GifFull folder already exists"); }
+	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//GifPortion")) { LOG("GifPortion folder created"); }
+	else { LOG("GifPortion folder already exists"); }
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;
@@ -245,7 +250,6 @@ bool ModuleRenderer3D::Start()
 		0.0f, 1.0f,
 	};
 
-
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), cube_vertices, GL_STATIC_DRAW);
@@ -257,7 +261,6 @@ bool ModuleRenderer3D::Start()
 	glGenBuffers(1, &ibo_cube_elements);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(uint), cube_elements, GL_STATIC_DRAW);
-
 
 	(depth_test) ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	(cull_face) ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
@@ -334,12 +337,12 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 		}
 	}
 
-
-
-
 	ImGui::Render();
 
-
+	screenshot.TakeFullScreen();
+	screenshot.TakePartScreen();
+	gif.TakeFullScreen(dt);
+	gif.TakePartScreen(dt);
 
 	SDL_GL_SwapWindow(App->window->window);
 
@@ -470,9 +473,10 @@ void ModuleRenderer3D::UpdateProjection(CompCamera* cam)
 	}
 }
 
-
 void ModuleRenderer3D::OnResize(int width, int height)
 {
+	screenshot.Stop();
+	gif.Stop();
 
 	float ratio = (float)width / (float)height;
 	App->window->SetWindowSize(width, height);
@@ -487,6 +491,72 @@ void ModuleRenderer3D::OnResize(int width, int height)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+}
+
+float2 ModuleRenderer3D::LoadImage_devil(const char * theFileName, GLuint *buff)
+{
+	float2 texture_w_h;
+	//Texture loading success
+	bool textureLoaded = false;
+
+	//Generate and set current image ID
+	uint imgID = 0;
+	ilGenImages(1, &imgID);
+	ilBindImage(imgID);
+
+	//Load image
+	ILboolean success = ilLoadImage(theFileName);
+
+	//Image loaded successfully
+	if (success == IL_TRUE)
+	{
+		ILinfo ImageInfo;
+		iluGetImageInfo(&ImageInfo);
+		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		{
+			iluFlipImage();
+		}
+
+		//Convert image to RGBA
+		success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+
+		if (success == IL_TRUE)
+		{
+			textureLoaded = loadTextureFromPixels32((GLuint*)ilGetData(), (GLuint)ilGetInteger(IL_IMAGE_WIDTH), (GLuint)ilGetInteger(IL_IMAGE_HEIGHT), buff);
+			texture_w_h.x = (uint)ilGetInteger(IL_IMAGE_WIDTH); texture_w_h.y = (uint)ilGetInteger(IL_IMAGE_HEIGHT);
+			//Create texture from file pixels
+			textureLoaded = true;
+		}
+
+		//Delete file from memory
+		ilDeleteImages(1, &imgID);
+	}
+
+	return texture_w_h;
+
+}
+
+bool ModuleRenderer3D::loadTextureFromPixels32(GLuint * id_pixels, GLuint width_img, GLuint height_img, GLuint *buff)
+{
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, buff);
+	glBindTexture(GL_TEXTURE_2D, *buff);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_img, height_img, 0, GL_RGBA, GL_UNSIGNED_BYTE, id_pixels);
+	glBindTexture(GL_TEXTURE_2D, NULL);
+
+	//Check for error
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		printf("Error loading texture from %p pixels! %s\n", id_pixels, gluErrorString(error));
+		return false;
+	}
+
+	return true;
 }
 
 void ModuleRenderer3D::RenderSceneWiewport()

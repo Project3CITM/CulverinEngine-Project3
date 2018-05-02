@@ -249,9 +249,9 @@ update_status ModuleLightning::Update(float dt)
 			Frustum* frustum = &App->renderer3D->GetActiveCamera()->frustum;
 
 			glm::vec3 lDir = glm::vec3(dir.x, dir.y, dir.z);
-			glm::vec3 camPos = glm::vec3(frustum->pos.x, frustum->pos.y, frustum->pos.z);
+			glm::vec3 camPos = glm::vec3(frustum->pos.x, 0, frustum->pos.z);
 
-			glm::vec3 lookPos = camPos + (glm::vec3(frustum->front.x, frustum->front.y, frustum->front.z) * dstSceneCameraToLookAt);
+			glm::vec3 lookPos = camPos + (glm::vec3(frustum->front.x, 0, frustum->front.z) * dstSceneCameraToLookAt);
 
 			glm::vec3 eye = lookPos + (lDir * dstShadowmapCameraToLookAt);
 			
@@ -343,22 +343,23 @@ void ModuleLightning::OnEvent(Event & event)
 
 		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
 			test_fix.Bind("peter");
-			glViewport(0, 0, 256, 256);
+			glViewport(0, 0, 1024, 1024);
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			shadow_Shader->Bind();
 			uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
 			glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &light->depthMVPMat[0][0]);
 			scene_objects = App->scene->GetAllSceneObjects();
+			float3 view_pos = float3(App->renderer3D->active_camera->frustum.front.x, 0, App->renderer3D->active_camera->frustum.front.z) * dstSceneCameraToLookAt;
 			for (std::vector<GameObject*>::const_iterator item = scene_objects->begin(); item != scene_objects->end(); item++)
 			{
 				CompMesh* m = (*item)->GetComponentMesh();
-
+				
 				if (m == nullptr)
 					continue;
 				if (m->HasSkeleton() || !m->GetMaterial()->material->cast_shadows)
 					continue;
-				if (App->renderer3D->active_camera == nullptr || (m->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos).Length() > projSize)
+				if (App->renderer3D->active_camera == nullptr || (m->GetGameObjectPos() - (App->renderer3D->active_camera->frustum.pos + view_pos)).Length() > (projSize + 50))
 					continue;
 				if (m->resource_mesh != nullptr)
 				{

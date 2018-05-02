@@ -142,6 +142,7 @@
     <ClInclude Include="EventDef.h" />
     <ClInclude Include="EventDefV2.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="gif-h\gif.h" />
     <ClInclude Include="ImGui\ImGuizmo.h" />
     <ClInclude Include="ImGui\imgui_dock_v2.h" />
     <ClInclude Include="ImGui\imgui_graph_nodes.h" />
@@ -366,6 +367,7 @@
     <ClInclude Include="ResourceMesh.h" />
     <ClInclude Include="ResourceScript.h" />
     <ClInclude Include="Resource_.h" />
+    <ClInclude Include="Screenshot_and_gif.h" />
     <ClInclude Include="Script_editor.h" />
     <ClInclude Include="ShadersLib.h" />
     <ClInclude Include="SkyBox.h" />
@@ -548,6 +550,7 @@
     <ClCompile Include="ResourceMesh.cpp" />
     <ClCompile Include="ResourceScript.cpp" />
     <ClCompile Include="Resource_.cpp" />
+    <ClCompile Include="Screenshot_and_gif.cpp" />
     <ClCompile Include="Script_editor.cpp" />
     <ClCompile Include="ShadersLib.cpp" />
     <ClCompile Include="SkyBox.cpp" />

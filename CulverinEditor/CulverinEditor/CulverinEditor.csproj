@@ -98,6 +98,7 @@
     <Compile Include="Miscellanea\DoorLever.cs" />
     <Compile Include="Miscellanea\ReverbCorridor.cs" />
     <Compile Include="Player\Jaime\ComboController.cs" />
+    <Compile Include="Puzzles\FadeToBlack.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\BarrelFall.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\BarrelPuzzleManager.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\Lever.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapManager.cs" />
     <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapTile.cs" />
     <Compile Include="Puzzles\Tests\PuzzleRotation.cs" />
+    <Compile Include="Tests\TestParticlesV2.cs" />
     <Compile Include="Tools\Random.cs" />
     <Compile Include="UI_Scripts\Component\CompCanvas.cs" />
     <Compile Include="UI_Scripts\Input\EditKeyBinding.cs" />

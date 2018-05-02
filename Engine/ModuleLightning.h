@@ -94,8 +94,8 @@ public:
 private:
 	uint shadow_cast_points_count = DEFAULT_SHADOW_CAST_POINTS_COUNT; // This value should be able to change from config and modiffied on load
 	std::vector<DepthCubeMap*> shadow_point_lights_maps;
-	uint shadow_maps_res_w = 256;
-	uint shadow_maps_res_h = 256;
+	uint shadow_maps_res_w = 1024;
+	uint shadow_maps_res_h = 1024;
 
 
 	std::vector<CompLight*> scene_lights;

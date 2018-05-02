@@ -1123,6 +1123,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::BlockGUIinput", (const void*)BlockGUIinput);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadNewWalkableMap", (const void*)LoadNewWalkableMap);
+	//mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(object)", (const void*)PushSaveInfoV2);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(single)", (const void*)PushSaveInfo);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PopLoadInfo", (const void*)PopLoadInfo);
 	//EVENT SYSTEM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::GetInteractiveSelectedActive", (const void*)GetInteractiveSelectedActive);
@@ -1447,6 +1450,41 @@ void ImportScript::LoadNewWalkableMap(MonoString* walkable_map)
 		App->map->imported_map = map;
 		App->map->ImportMap(true);
 	}
+}
+
+void ImportScript::PushSaveInfoV2(MonoObject* info)
+{
+	if (info != nullptr)
+	{
+		//MonoClass* classT = mono_object_get_class(info);
+		//MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		//MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		//MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+		//float3 info_p;
+
+		//if (x_field) mono_field_get_value(info, x_field, &info_p.x);
+		//if (y_field) mono_field_get_value(info, y_field, &info_p.y);
+		//if (z_field) mono_field_get_value(info, z_field, &info_p.z);
+
+		//App->scene->infoPlayer.push_back(info_p);
+	}
+}
+
+void ImportScript::PushSaveInfo(float hp)
+{
+	App->scene->infoPlayer.push_back(hp);
+}
+
+float ImportScript::PopLoadInfo()
+{
+	if (App->scene->infoPlayer.size() > 0)
+	{
+		float ret = App->scene->infoPlayer[App->scene->infoPlayer.size() - 1];
+		App->scene->infoPlayer.pop_back();
+		return ret;
+	}
+	return 0.0f;
 }
 
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)
