@@ -64,7 +64,7 @@ public class Enemy_BT : BT
     public bool Disable_Movement_Gameplay_Debbuger = false;
 
     CompAudio audio_comp;
-
+    public bool dying = false;
     public override void Start()
     {
         in_combat = false;
@@ -112,6 +112,23 @@ public class Enemy_BT : BT
     {
         //Update attack cooldown
         attack_timer += Time.deltaTime;
+        Debug.Log(state, Department.PHYSICS);
+
+        if (GetCurrentHP() <= 0 && state != AI_STATE.AI_DEAD)
+        {
+            Debug.Log("DEAD", Department.IA);
+            //GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+            state = AI_STATE.AI_DEAD;
+            life_state = ENEMY_STATE.ENEMY_DEAD;
+
+
+            next_action = GetComponent<Die_Action>();
+            current_action.Interupt();
+            if (GetComponent<EnemySword_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteSwordEnemy(GetComponent<EnemySword_BT>().gameObject);
+            else if (GetComponent<EnemyShield_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteShieldEnemy(GetComponent<EnemyShield_BT>().gameObject);
+            else if (GetComponent<EnemySpear_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteLanceEnemy(GetComponent<EnemySpear_BT>().gameObject);
+        }
+
         base.Update();
     }
 
@@ -209,10 +226,9 @@ public class Enemy_BT : BT
             {
                 gameObject.GetComponent<CompCollider>().CollisionActive(false);
             }
-
             next_action = GetComponent<Die_Action>();
             current_action.Interupt();
-            if (GetComponent<EnemySword_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteSwordEnemy(GetComponent<EnemySword_BT>().gameObject);
+            if (GetComponent<EnemySword_BT>() != null)enemies_manager.GetComponent<EnemiesManager>().DeleteSwordEnemy(GetComponent<EnemySword_BT>().gameObject);
             else if (GetComponent<EnemyShield_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteShieldEnemy(GetComponent<EnemyShield_BT>().gameObject);
             else if (GetComponent<EnemySpear_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteLanceEnemy(GetComponent<EnemySpear_BT>().gameObject);
         }
