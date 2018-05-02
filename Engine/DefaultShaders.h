@@ -597,4 +597,106 @@ static const GLchar* PointShadowMapFrag[] =
 	"}\n"
 };
 
+static const GLchar* SkinningVert[] =
+{
+	"#version 330 core\n"
+	"layout(location = 0) in vec3 position;\n"
+	"layout(location = 1) in vec2 texCoord;\n"
+	"layout(location = 2) in vec3 normal;\n"
+	"layout(location = 3) in vec4 influences;\n"
+	"layout(location = 4) in vec4 bones;\n"
+	"layout(location = 5) in vec3 tangent;\n"
+	"layout(location = 6) in vec3 bitangent;\n"
+
+	"out float ourTime;		\n"
+	"out vec4 ourColor;		\n"
+	"out vec3 ourNormal;	\n"
+	"out vec2 TexCoord;		\n"
+	"out vec3 ourPos;		\n"
+	"out mat3 TBN;			\n"
+	"out vec3 FragPos;		\n"
+	"out vec4 shadowCoord;	\n"
+	"uniform float _time;	\n"
+	"uniform vec4 _color;	\n"
+	"uniform mat4 model;	\n"
+	"uniform mat4 viewproj;	\n"
+	"uniform mat4 view;		\n"
+	"uniform mat4 depthBias;\n"
+
+	"uniform samplerBuffer _skinning_text;\n"
+	"uniform int _num_pixels;			  \n"
+
+	"void main()										\n"
+	"{													\n"
+	"	vec3 skinned_pos = vec3(0.0f, 0.0f, 0.0f);		\n"
+	"	vec3 skinned_normal = vec3(0.0f, 0.0f, 0.0f);	\n"
+	"	vec3 skinned_tangent = vec3(0.0f, 0.0f, 0.0f);	\n"
+	"	vec3 skinned_bitangent = vec3(0.0f, 0.0f, 0.0f);\n"
+	"	float total_weight = 0.0f;						\n"
+
+	"	bool test = false;	\n"
+
+	"	for (int i = 0; i < 4; i++)									\n"
+	"	{															\n"
+	"		int bone_id = int(bones[i]);							\n"
+
+	"		if (bone_id == -1)										\n"
+	"			break;												\n"
+
+	"		int start_buffer_pos = bone_id * 4 * 4;					\n"
+
+	"		mat4 skinning_mat = mat4(								\n"
+	"			//Column 0											\n"
+	"			texelFetch(_skinning_text, start_buffer_pos).r,		\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 1).r,	\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 2).r,	\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 3).r,	\n"
+	"			//Column 1											\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 4).r,	\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 5).r,	\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 6).r,	\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 7).r,	\n"
+	"			//Column 2											\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 8).r,	\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 9).r,	\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 10).r,\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 11).r,\n"
+	"			//Column 3											\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 12).r,\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 13).r,\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 14).r,\n"
+	"			texelFetch(_skinning_text, start_buffer_pos + 15).r	\n"
+	"		);														\n"
+
+	"		vec4 moved_pos = skinning_mat * vec4(position, 1.0f);		\n"
+	"		vec3 normalized_pos = moved_pos.xyz / moved_pos.w;			\n"
+	"		skinned_pos = normalized_pos * influences[i] + skinned_pos;	\n"
+
+	"		vec4 moved_normals = skinning_mat * vec4(normal, 0.0f);				\n"
+	"		skinned_normal = moved_normals.xyz * influences[i] + skinned_normal;\n"
+
+	"		total_weight += influences[i];	\n"
+
+	"		if (total_weight >= 1.0f)		\n"
+	"			break;						\n"
+	"	}									\n"
+
+
+	"	vec3 T = normalize(vec3(model * vec4(tangent, 0)));			\n"
+	"	vec3 B = normalize(vec3(model * vec4(bitangent, 0)));		\n"
+	"	vec3 N = normalize(vec3(model * vec4(normal, 0)));			\n"
+	"	TBN = transpose(mat3(T,B,N));								\n"
+	"	FragPos = TBN * vec3(model * vec4(skinned_pos,1));			\n"
+	"	shadowCoord = depthBias * model * vec4(skinned_pos, 1.0);	\n"
+
+	"	gl_Position = viewproj * model * vec4(skinned_pos, 1.0f);	\n"
+	"	ourColor = _color;											\n"
+	"	TexCoord = texCoord;										\n"
+	"	ourTime = _time;											\n"
+	"	ourNormal = mat3(model) * normalize(skinned_normal);		\n"
+	"	ourPos = position;											\n"
+	"}																\n"
+};
+
+
 #endif 
