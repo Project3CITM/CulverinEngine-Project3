@@ -125,9 +125,15 @@ public class Boss_BT : BT
 
             if (in_cd == true)
             {
-                if (distance_x <= 2 && distance_y == 0 || distance_x == 0 && distance_y <= 2)
+                if (GetComponent<Movement_Action>().LookingAtPlayer() == true)
                 {
-                    if (GetComponent<Movement_Action>().LookingAtPlayer() == true)
+                    Debug.Log("Charge Attack");
+                    current_action = GetComponent<ChargeAttack_Action>();
+                    current_action.ActionStart();
+                    cooldown = charge_attack_cooldown;
+                    return;
+
+                    if (distance_x <= 2 && distance_y == 0 || distance_x == 0 && distance_y <= 2)
                     {
                         if (distance_x == 2 && distance_y == 0 || distance_x == 0 && distance_y == 2)
                         {
@@ -172,38 +178,38 @@ public class Boss_BT : BT
                                 cooldown = distance_attack_cooldown;
                                 return;
                             }
-                        } 
+                        }
                     }
                     else
                     {
-                        current_action = GetComponent<FacePlayer_Action>();
-                        current_action.ActionStart();
-                        return;
+                        if (phase == BOSS_STATE.BOSS_PHASE2)
+                        {
+                            Debug.Log("Charge Attack");
+                            current_action = GetComponent<ChargeAttack_Action>();
+                            current_action.ActionStart();
+                            cooldown = charge_attack_cooldown;
+                            return;
+
+                            /*GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
+                            current_action = GetComponent<InfiniteChasePlayer_Action>();
+                            current_action.ActionStart();
+                            return;*/
+                        }
+                        else
+                        {
+                            GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
+                            current_action = GetComponent<InfiniteChasePlayer_Action>();
+                            current_action.ActionStart();
+                            return;
+                        }
                     }
                 }
                 else
                 {
-                    if (phase == BOSS_STATE.BOSS_PHASE2)
-                    {
-                        /*Debug.Log("Charge Attack");
-                        current_action = GetComponent<ChargeAttack_Action>();
-                        current_action.ActionStart();
-                        cooldown = charge_attack_cooldown;
-                        return;*/
-
-                        GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
-                        current_action = GetComponent<InfiniteChasePlayer_Action>();
-                        current_action.ActionStart();
-                        return;
-                    }
-                    else
-                    {
-                        GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
-                        current_action = GetComponent<InfiniteChasePlayer_Action>();
-                        current_action.ActionStart();
-                        return;
-                    }
-                }
+                    current_action = GetComponent<FacePlayer_Action>();
+                    current_action.ActionStart();
+                    return;
+                }                
             }
             current_action = GetComponent<IdleAttack_Action>();
             GetComponent<IdleAttack_Action>().ActionStart();

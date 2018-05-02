@@ -30,11 +30,9 @@ public class Attack_Action : Action
         if (player == null)
             Debug.Log("[error] Attack Action Start: Player is null!");
 
-
         GetComponent<CompAnimation>().SetClipDuration("Attack", attack_duration);
         GetComponent<CompAnimation>().PlayAnimationNode("Attack");
         GetComponent<CompAudio>().PlayEvent("Enemy1_Slash");
-      
 
         damage_done = false;
         shield_attack = false;

@@ -1,6 +1,7 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 using CulverinEditor.Map;
+using CulverinEditor.Pathfinding;
 
 //Attach this script to the tank parent object if you want to see it rotate
 public class MovementController : CulverinBehaviour
@@ -61,6 +62,9 @@ public class MovementController : CulverinBehaviour
 
     public bool drowning = false;
 
+    bool push = false;
+    PathNode push_tile;
+
     void Start()
     {
         level_map = GetLinkedObject("map_obj").GetComponent<LevelMap>();
@@ -84,7 +88,6 @@ public class MovementController : CulverinBehaviour
 
         endPosition = GetComponent<Transform>().local_position;
         endRotation = GetComponent<Transform>().local_rotation;
-
 
         //SET PLAYER INTO THE CORRECT MAP TILE
         level_map.GetPositionByeValue(out curr_x, out curr_y, 2); //2 = player start position
@@ -125,8 +128,10 @@ public class MovementController : CulverinBehaviour
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0))
             {
+                Debug.Log("HERE");
                 if (level_map.map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
                 {
+                    Debug.Log("Walkability passed");
                     audio = GetComponent<CompAudio>();
                     audio.PlayEvent("Footsteps");
                     endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
@@ -282,9 +287,18 @@ public class MovementController : CulverinBehaviour
     {
         if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
+            if(push == true)
+            {
+                push = false;
+                MovePush(out tile_mov_x, out tile_mov_y);
+                GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
+                return true;
+            }
+
             float variation = Input.GetInput_ControllerAxis("Horizontal", "Player");
             if (variation > 0.8)
             {
+                Debug.Log("Hello");
                 if (!EnemyInRight())
                 {
                     MoveRight(out tile_mov_x, out tile_mov_y);
@@ -448,6 +462,23 @@ public class MovementController : CulverinBehaviour
         {
             tile_mov_x = -1;
         }
+    }
+
+    private void MovePush(out int tile_mov_x, out int tile_mov_y)
+    {
+        Debug.Log("Current Player: " + curr_x + "," + curr_y);
+        Debug.Log("Moving Player to: " + push_tile.GetTileX() + "," + push_tile.GetTileY());
+        characters_camera.GetComponent<CompAnimation>().PlayAnimation("Walk");
+        endPosition = new Vector3(push_tile.GetTileX() * distanceToMove, GetComponent<Transform>().local_position.y, push_tile.GetTileY() * distanceToMove);
+        tile_mov_x = push_tile.GetTileX() - curr_x;
+        tile_mov_y = push_tile.GetTileY() - curr_y;
+        Debug.Log("Tile mov: " + tile_mov_x + "," + tile_mov_y);
+    }
+
+    public void Push(PathNode tile)
+    {
+        push_tile = new PathNode(tile.GetTileX(), tile.GetTileY());
+        push = true;
     }
 
     public void MoveRight(out int tile_mov_x, out int tile_mov_y)
