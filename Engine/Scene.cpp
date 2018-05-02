@@ -21,6 +21,7 @@
 #include "CSharpScript.h"
 #include "CompScript.h"
 #include "ResourceMesh.h"
+#include "ModuleFS.h"
 #include "CompSlider.h"
 #include "ImportMesh.h"
 #include "ImportScript.h"
@@ -368,7 +369,17 @@ void Scene::LoadScene()
 	if (strcmp(App->GetActualScene().c_str(), "") != 0)
 	{
 		new_scene = false;
-		App->json_seria->LoadScene(App->GetActualScene().c_str());
+		std::string scene_binary = "Assets/";
+		scene_binary += "SceneBinary/";
+		scene_binary += App->fs->GetOnlyName(App->GetActualScene()) + ".culverinscene";
+		if (App->fs->CheckIsFileExist(scene_binary))
+		{
+			App->json_seria->LoadSceneBinary(scene_binary.c_str());
+		}
+		else
+		{
+			App->json_seria->LoadScene(App->GetActualScene().c_str());
+		}
 
 	}
 	if (new_scene)
