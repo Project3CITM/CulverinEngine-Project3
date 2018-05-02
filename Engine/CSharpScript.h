@@ -310,6 +310,7 @@ public:
 	void		SetAlpha(MonoObject * object, float alpha);
 	int			GetWidth(MonoObject * object);
 	int			GetHeight(MonoObject * object);
+	void		HideTick(MonoObject * object);
 	void		SetText(MonoObject * object, MonoString* string);
 	void		SetColor(MonoObject * object, MonoObject * color, float alpha);
 	/*UI- Canvas*/

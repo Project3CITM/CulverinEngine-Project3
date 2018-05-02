@@ -209,10 +209,17 @@ void CompCheckBox::OnClick()
 {
 	if (IsActivate() || !IsActive())
 		return;
-	//if (actions.empty())
-	//{
-	//	return;
-	//}
+
+	active = !active;
+	if (tick != nullptr)
+	{
+		tick->SetCanDraw(active);
+	}
+
+	if (actions.empty())
+	{
+		return;
+	}
 
 	uint size = actions.size();
 	for (uint k = 0; k < size; k++)
@@ -223,16 +230,7 @@ void CompCheckBox::OnClick()
 		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
 	}
 
-	active = !active;
-
-	if (tick != nullptr)
-	{
-		tick->SetCanDraw(active);
-	}
-
 }
-
-	
 
 void CompCheckBox::ClearLinkedScripts()
 {
@@ -252,6 +250,13 @@ void CompCheckBox::OnSubmit(Event event_input)
 {
 	if (IsActivate() || !IsActive())
 		return;
+
+	active = !active;
+	if (tick != nullptr)
+	{
+		tick->SetCanDraw(active);
+	}
+
 	if (actions.empty())
 	{
 		return;
@@ -266,11 +271,10 @@ void CompCheckBox::OnSubmit(Event event_input)
 		actions[k].script->csharp->DoPublicMethod(actions[k].method, &actions[k].value);
 	}
 
-	active = !active;
+}
 
-
-	if (tick != nullptr)
-	{
-		tick->SetCanDraw(active);
-	}
+void CompCheckBox::HideTick()
+{
+	tick->SetCanDraw(false);
+	active = false;
 }

@@ -265,6 +265,8 @@ private:
 
 	static int GetWidth(MonoObject * object);
 
+	/*Component CheckBox*/
+	static void HideTick(MonoObject * object);
 	/*Component Text*/
 	static void SetText(MonoObject* object, MonoString* alpha);
 	/*Component Canvas*/
@@ -273,7 +275,12 @@ private:
 	/*Component Graphic Image*/
 	static void FillAmount(MonoObject* object, float value);
 	static void SetColor(MonoObject* object, MonoObject* color, float alpha);
-
+	/*Screen*/
+	static void SetFullScreen(MonoObject * object);
+	static void SetWindowed(MonoObject * object);
+	static void SetBordeless(MonoObject * object);
+	static void SetVSync(MonoObject * object);
+	static void ShowFPS(MonoObject * object);
 	/*Component Collier*/
 	static MonoObject*	GetCollidedObject(MonoObject * object);
 	static MonoObject*	GetContactPoint(MonoObject* object);

@@ -23,6 +23,7 @@
 #include "CompText.h"
 #include "CompCanvas.h"
 #include "CompRectTransform.h"
+#include "CompCheckBox.h"
 void CSharpScript::Activate(MonoObject* object, int uid)
 {
 	Component* comp = App->importer->iScript->GetComponentMono(object);
@@ -257,6 +258,19 @@ int CSharpScript::GetHeight(MonoObject * object)
 		}
 	}
 }
+
+void CSharpScript::HideTick(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompCheckBox* checkbox = (CompCheckBox*)App->importer->iScript->GetComponentMono(object);
+		if (checkbox != nullptr)
+		{
+			checkbox->HideTick();
+		}
+	}
+}
+
 void CSharpScript::SetText(MonoObject * object, MonoString * string)
 {
 	if (object != nullptr)

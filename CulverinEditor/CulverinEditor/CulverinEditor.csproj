@@ -89,6 +89,7 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="UI_Scripts\Component\CompCheckBox.cs" />
     <Compile Include="Player\Fountain.cs" />
     <Compile Include="DebugSceneChanger.cs" />
     <Compile Include="Player\UI\LeftMana.cs" />
@@ -114,6 +115,12 @@
     <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapTile.cs" />
     <Compile Include="Puzzles\Tests\PuzzleRotation.cs" />
     <Compile Include="Tests\TestParticlesV2.cs" />
+
+    <Compile Include="UI_Scripts\Scene\Screen.cs" />
+    <Compile Include="UI_Scripts\Scene\ScreenOptions.cs" />
+    <Compile Include="UI_Scripts\Scene\DisplayMenu.cs" />
+    <Compile Include="UI_Scripts\ShowScore2.cs" />
+
     <Compile Include="Tools\Random.cs" />
     <Compile Include="UI_Scripts\Component\CompCanvas.cs" />
     <Compile Include="UI_Scripts\Input\EditKeyBinding.cs" />
