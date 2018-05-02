@@ -27,59 +27,71 @@ public class BossWideAttack_Action : Action
     public float preparation_time = 0.8f;
     public float attack_duration = 1.0f;
 
+    private CompAudio audio;
+    private CompAnimation anim;
+    private Movement_Action move;
+    private MovementController movement_ctrl;
+    private CharactersManager characters_manager;
+
     public override bool ActionStart()
     {
+        anim = GetComponent<CompAnimation>();
+        audio = GetComponent<CompAudio>();
+        move = GetComponent<Movement_Action>();
+        movement_ctrl = GetLinkedObject("player_obj").GetComponent<MovementController>();
+        characters_manager = GetLinkedObject("player_obj").GetComponent<CharactersManager>();
 
         state = BWA_STATE.PRE_APPLY;
-        GetComponent<CompAnimation>().SetTransition("ToWideAttack");
-        GetComponent<CompAnimation>().SetClipDuration("WideAttack", preparation_time / apply_damage_point);
-        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
+        anim.SetTransition("ToWideAttack");
+        anim.SetClipDuration("WideAttack", preparation_time / apply_damage_point);
+        audio.PlayEvent("AttackPreparation");
+
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (state == BWA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
+        if (state == BWA_STATE.PRE_APPLY && anim.IsAnimOverXTime(apply_damage_point))
         {
-            GetComponent<CompAnimation>().SetClipDuration("WideAttack", (attack_duration / (1.0f - apply_damage_point)));
+            anim.SetClipDuration("WideAttack", (attack_duration / (1.0f - apply_damage_point)));
 
             state = BWA_STATE.POST_APPLY;
 
-            int enemy_tile_x = GetComponent<Movement_Action>().GetCurrentTileX();
-            int enemy_tile_y = GetComponent<Movement_Action>().GetCurrentTileY();
+            int enemy_tile_x = move.GetCurrentTileX();
+            int enemy_tile_y = move.GetCurrentTileY();
 
-            GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int player_tile_x, out int player_tile_y);
-            GetComponent<CompAudio>().PlayEvent("BossSwordSwing");
+            movement_ctrl.GetPlayerPos(out int player_tile_x, out int player_tile_y);
+            audio.PlayEvent("BossSwordSwing");
 
-            switch (GetComponent<Movement_Action>().GetDirection())
+            switch (move.GetDirection())
             {
                 case Movement_Action.Direction.DIR_WEST:
                     if ((enemy_tile_x - 1 == player_tile_x || enemy_tile_x == player_tile_x) && (player_tile_y == enemy_tile_y || player_tile_y == enemy_tile_y -1 || player_tile_y == enemy_tile_y + 1))
                     {
-                        GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        characters_manager.GetDamage(damage);
                     }
                     break;
                 case Movement_Action.Direction.DIR_EAST:
                     if ((enemy_tile_x + 1 == player_tile_x || enemy_tile_x == player_tile_x) && (player_tile_y == enemy_tile_y || player_tile_y == enemy_tile_y - 1 || player_tile_y == enemy_tile_y + 1))
                     {
-                        GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        characters_manager.GetDamage(damage);
                     }
                     break;
                 case Movement_Action.Direction.DIR_NORTH:
                     if ((enemy_tile_y - 1 == player_tile_y || enemy_tile_y == player_tile_y) && (player_tile_x == enemy_tile_x || player_tile_x == enemy_tile_x - 1 || player_tile_x == enemy_tile_x + 1))
                     {
-                        GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        characters_manager.GetDamage(damage);
                     }
                     break;
                 case Movement_Action.Direction.DIR_SOUTH:
                     if ((enemy_tile_y + 1 == player_tile_y || enemy_tile_y == player_tile_y) && (player_tile_x == enemy_tile_x || player_tile_x == enemy_tile_x - 1 || player_tile_x == enemy_tile_x + 1))
                     {
-                        GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
+                        characters_manager.GetDamage(damage);
                     }
                     break;
             }
         }
-        else if (state == BWA_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("WideAttack"))
+        else if (state == BWA_STATE.POST_APPLY && anim.IsAnimationStopped("WideAttack"))
         {
 
             state = BWA_STATE.WAITING;

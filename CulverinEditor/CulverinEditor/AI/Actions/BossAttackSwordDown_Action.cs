@@ -32,6 +32,7 @@ public class BossAttackSwordDown_Action : Action
     public int rumble_time = 200;
     private bool ground_hit = false;
 
+    private CompAudio audio;
 
     public override bool ActionStart()
     {
@@ -39,7 +40,8 @@ public class BossAttackSwordDown_Action : Action
         state = BASD_STATE.PRE_APPLY;
         GetComponent<CompAnimation>().SetTransition("ToSwordDownAttack");
         GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", preparation_time / apply_damage_point);
-        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
+        audio = GetComponent<CompAudio>();
+        audio.PlayEvent("AttackPreparation");
         ground_hit = false;
         return true;
     }
@@ -87,14 +89,13 @@ public class BossAttackSwordDown_Action : Action
         }
         else if (ground_hit == false && GetComponent<CompAnimation>().IsAnimOverXTime(hit_ground_point))
         {
-            GetComponent<CompAudio>().PlayEvent("BossHitGround");
+            audio.PlayEvent("BossHitGround");
             Input.RumblePlay(rumble_power, rumble_time);
             ground_hit = true;
             Debug.Log("Ground Hit!!");
         }
         else if (state == BASD_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("SwordDownAttack"))
         {
-
             state = BASD_STATE.WAITING;
             return ACTION_RESULT.AR_SUCCESS;
         }
