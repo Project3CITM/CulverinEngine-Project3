@@ -22,7 +22,6 @@
 #include "ModuleLightning.h"
 #include "ModuleGUI.h"
 
-
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
 #pragma comment (lib, "Devil/libx86/ILUT.lib")
@@ -213,17 +212,6 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 
 	if (default_material->textures.size()>0)
 		default_material->textures[0].value = default_texture;
-
-	if (std::experimental::filesystem::create_directory("..//Game//Screenshots")) { LOG("Screenshots folder created"); }
-	else { LOG("Screenshots folder already exists"); }
-	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//ScreenFull")) { LOG("ScreenFull folder created"); }
-	else { LOG("ScreenFull folder already exists"); }
-	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//ScreenPortion")) { LOG("ScreenPortion folder created"); }
-	else { LOG("ScreenPortion folder already exists"); }
-	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//GifFull")) { LOG("GifFull folder created"); }
-	else { LOG("GifFull folder already exists"); }
-	if (std::experimental::filesystem::create_directory("..//Game//Screenshots//GifPortion")) { LOG("GifPortion folder created"); }
-	else { LOG("GifPortion folder already exists"); }
 
 	Awake_t = perf_timer.ReadMs();
 	return ret;

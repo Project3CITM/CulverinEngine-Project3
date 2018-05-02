@@ -50,6 +50,12 @@ bool ModuleFS::Init(JSON_Object* node)
 	CreateFolder("Assets/Shaders/Materials");
 	CreateFolder("Assets/SceneBinary");
 
+	CreateFolder("Screenshots");
+	CreateFolder("Screenshots/ScreenFull");
+	CreateFolder("Screenshots/ScreenPortion");
+	CreateFolder("Screenshots/GifFull");
+	CreateFolder("Screenshots/GifPortion");
+
 	return true;
 }
 
