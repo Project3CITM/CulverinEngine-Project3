@@ -127,12 +127,6 @@ public class Boss_BT : BT
             {
                 if (GetComponent<Movement_Action>().LookingAtPlayer() == true)
                 {
-                    Debug.Log("Charge Attack");
-                    current_action = GetComponent<ChargeAttack_Action>();
-                    current_action.ActionStart();
-                    cooldown = charge_attack_cooldown;
-                    return;
-
                     if (distance_x <= 2 && distance_y == 0 || distance_x == 0 && distance_y <= 2)
                     {
                         if (distance_x == 2 && distance_y == 0 || distance_x == 0 && distance_y == 2)
@@ -180,7 +174,7 @@ public class Boss_BT : BT
                             }
                         }
                     }
-                    else
+                    else if (distance_x + distance_y >= 3)
                     {
                         if (phase == BOSS_STATE.BOSS_PHASE2)
                         {
@@ -189,11 +183,6 @@ public class Boss_BT : BT
                             current_action.ActionStart();
                             cooldown = charge_attack_cooldown;
                             return;
-
-                            /*GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
-                            current_action = GetComponent<InfiniteChasePlayer_Action>();
-                            current_action.ActionStart();
-                            return;*/
                         }
                         else
                         {
@@ -202,6 +191,13 @@ public class Boss_BT : BT
                             current_action.ActionStart();
                             return;
                         }
+                    }
+                    else
+                    {
+                        GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
+                        current_action = GetComponent<InfiniteChasePlayer_Action>();
+                        current_action.ActionStart();
+                        return;
                     }
                 }
                 else
@@ -297,6 +293,7 @@ public class Boss_BT : BT
         next_action = GetComponent<BossEngage_Action>();
         GetComponent<CompAudio>().PlayEvent("BossGrowl");
         GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(21, 12, 1);
+        GetLinkedObject("map").GetComponent<Pathfinder>().SetWalkableTile(21, 12, 1);
         rumble = true;
     }
 

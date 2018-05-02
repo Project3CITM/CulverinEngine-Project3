@@ -81,9 +81,6 @@ public class ChargeAttack_Action : Action
         uint current_x = (uint)(pos.x / tile_size) + 1;
         uint current_y = (uint)(pos.z / tile_size) + 1;
 
-        Debug.Log("current: " + current_x + "," + current_y);
-        Debug.Log("player: " + player_x + "," + player_y);
-
         if (current_x == player_x && current_y == player_y)
         {
             Debug.Log("Push");
@@ -99,11 +96,12 @@ public class ChargeAttack_Action : Action
             final_pos.x = objective.GetTileX() * tile_size;
             final_pos.z = objective.GetTileY() * tile_size;
             trans.position = final_pos;
-
+         
             GetComponent<Movement_Action>().tile.SetCoords(objective.GetTileX(), objective.GetTileY());
+            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
         }
 
-        if(GetComponent<CompAnimation>().IsAnimationStopped("ChargeAttack"))
+        if (GetComponent<CompAnimation>().IsAnimationStopped("ChargeAttack"))
             return ACTION_RESULT.AR_SUCCESS;
 
         return ACTION_RESULT.AR_IN_PROGRESS;
@@ -138,8 +136,6 @@ public class ChargeAttack_Action : Action
         Pathfinder pf = GetLinkedObject("map").GetComponent<Pathfinder>();
         PathNode ret = new PathNode(-1, -1);
 
-        Debug.Log("Delta: " + delta);
-
         //Charging from North
         if (delta > -50.0f && delta < 50.0f)
         {
@@ -164,12 +160,10 @@ public class ChargeAttack_Action : Action
         //Charging from West
         else if (delta > 50.0f && delta < 140.0f)
         {
-            Debug.Log("Comming from West");
             ret = new PathNode(player_x - 1, player_y);
 
             if (pf.IsWalkableTile(ret) == false)
             {
-                Debug.Log("No Walkable");
                 if (delta < 90.0)
                 {
                     ret = new PathNode(player_x, player_y - 1);
