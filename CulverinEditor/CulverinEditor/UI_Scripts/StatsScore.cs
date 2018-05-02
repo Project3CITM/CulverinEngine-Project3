@@ -13,6 +13,7 @@ static public class StatsScore
     static public uint fountain_times = 0;
     static public uint combat_points = 0;
     static public uint puzzle_hits = 0;
+    static public float boss_time = 0.0f;
 
     static public void BossDead()
     {
@@ -59,4 +60,10 @@ static public class StatsScore
     {
         fountain_times++;
     }
+
+    static public void PuzzleDamage()
+    {
+        puzzle_hits++;
+    }
+
 }

@@ -54,6 +54,8 @@ public class Boss_BT : BT
     public float boss_dead_delay_time = 5.0f;
     private float boss_dead_delay_timer = 0.0f;
 
+    public float boss_timer = 0.0f;
+
     public override void Start()
     {
         hp_bar_boss = GetLinkedObject("hp_bar_boss");
@@ -80,6 +82,8 @@ public class Boss_BT : BT
 
     public override void Update()
     {
+        boss_timer += Time.deltaTime;
+
         if (rumble == true)
         {
             rumble_timer += Time.deltaTime;
@@ -96,9 +100,10 @@ public class Boss_BT : BT
             boss_dead_delay_timer += Time.deltaTime;
             if (boss_dead_delay_timer >= boss_dead_delay_time)
             {
+                StatsScore.boss_time = boss_timer;
                 if (SceneManager.CheckMultiSceneReady())
                     SceneManager.RemoveSecondaryScene();
-                SceneManager.LoadScene("ScoreMenu");
+                SceneManager.LoadScene("ScoreScenev2");
             }
         }
         base.Update();

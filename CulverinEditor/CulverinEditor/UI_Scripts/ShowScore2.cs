@@ -32,6 +32,12 @@ public class ShowScore2 : CulverinBehaviour
         skill_bronze_coin.SetActive(false);
         skill_silver_coin.SetActive(false);
         skill_gold_coin.SetActive(false);
+
+        grade_mark_S = GetLinkedObject("grade_mark_S");
+        grade_mark_A = GetLinkedObject("grade_mark_A");
+        grade_mark_B = GetLinkedObject("grade_mark_B");
+        grade_mark_C = GetLinkedObject("grade_mark_C");
+        grade_mark_D = GetLinkedObject("grade_mark_D");
         grade_mark_S.SetActive(false);
         grade_mark_A.SetActive(false);
         grade_mark_B.SetActive(false);
@@ -96,22 +102,27 @@ public class ShowScore2 : CulverinBehaviour
     {
         if(grade_points >= 400)
         {
+            Debug.Log("Grade S", Department.GENERAL, Color.PINK);
             grade_mark_S.SetActive(true);
         }
         else if (grade_points < 400 && grade_points >= 350)
         {
+            Debug.Log("Grade A", Department.GENERAL, Color.PINK);
             grade_mark_A.SetActive(true);
         }
         else if (grade_points < 350 && grade_points >= 250)
         {
+            Debug.Log("Grade B", Department.GENERAL, Color.PINK);
             grade_mark_B.SetActive(true);
         }
         else if (grade_points < 250 && grade_points >= 200)
         {
+            Debug.Log("Grade C", Department.GENERAL, Color.PINK);
             grade_mark_C.SetActive(true);
         }
         else if (grade_points < 200)
         {
+            Debug.Log("Grade D", Department.GENERAL, Color.PINK);
             grade_mark_D.SetActive(true);
         }
     }
@@ -123,6 +134,10 @@ public class ShowScore2 : CulverinBehaviour
             skill_coins++;
         }
         if(StatsScore.puzzle_hits <= 5)
+        {
+            skill_coins++;
+        }
+        if(StatsScore.boss_time <= 85)
         {
             skill_coins++;
         }
