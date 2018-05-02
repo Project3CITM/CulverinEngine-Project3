@@ -54,12 +54,43 @@ public class Boss_BT : BT
     public float boss_dead_delay_time = 5.0f;
     private float boss_dead_delay_timer = 0.0f;
 
+    private Movement_Action move;
+    private CompAudio audio;
+    private BossAttackSwordDown_Action sword_down_attack_action;
+    private BossWideAttack_Action wide_attack_action;
+    private InfiniteChasePlayer_Action infinite_chase_action;
+    private FacePlayer_Action face_player_action;
+    private IdleAttack_Action idle_attack_action;
+    private GetHit_Action get_hit_action;
+    private Engage_Action engage_action;
+
+    private BossHPBar boss_hp_bar_comp;
+    private CompMaterial material;
+    private EnemiesManager enemies_manager_obj;
+    private MovementController movement_controller;
+
     public override void Start()
     {
+        move = GetComponent<Movement_Action>();
+        audio = GetComponent<CompAudio>();
+        sword_down_attack_action = GetComponent<BossAttackSwordDown_Action>();
+        wide_attack_action = GetComponent<BossWideAttack_Action>();
+        infinite_chase_action = GetComponent<InfiniteChasePlayer_Action>();
+        face_player_action = GetComponent<FacePlayer_Action>();
+        idle_attack_action = GetComponent<IdleAttack_Action>();
+        get_hit_action = GetComponent<GetHit_Action>();
+        engage_action = GetComponent<Engage_Action>();
+
         hp_bar_boss = GetLinkedObject("hp_bar_boss");
-        hp_bar_boss.GetComponent<BossHPBar>().ActivateHPBar(false);
+        boss_hp_bar_comp = hp_bar_boss.GetComponent<BossHPBar>();
+        material = mesh.GetComponent<CompMaterial>();
+        enemies_manager_obj = GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>();
+        movement_controller = GetLinkedObject("player_obj").GetComponent<MovementController>();
+
+
+        boss_hp_bar_comp.ActivateHPBar(false);
         hp_bar_boss.SetActive(false);
-        GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().AddBoss(gameObject);
+        enemies_manager_obj.AddBoss(gameObject);
         rand_gen = new System.Random();
 
         //Phase1Textures();
@@ -127,7 +158,7 @@ public class Boss_BT : BT
             {
                 if (distance_x <= 2 && distance_y == 0 || distance_x == 0 && distance_y <= 2)
                 {
-                    if (GetComponent<Movement_Action>().LookingAtPlayer() == true)
+                    if (move.LookingAtPlayer() == true)
                     {
                         if (distance_x == 2 && distance_y == 0 || distance_x == 0 && distance_y == 2)
                         {
@@ -137,15 +168,15 @@ public class Boss_BT : BT
                             {
                                 //distance attack
                                 Debug.Log("Distance Attack");
-                                current_action = GetComponent<BossAttackSwordDown_Action>();
+                                current_action = sword_down_attack_action;
                                 current_action.ActionStart();
                                 cooldown = distance_attack_cooldown;
                                 return;
                             }
                             else
                             {
-                                GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(1);
-                                current_action = GetComponent<InfiniteChasePlayer_Action>();
+                                infinite_chase_action.SetChaseRange(1);
+                                current_action = infinite_chase_action;
                                 current_action.ActionStart();
                                 return;
                             }
@@ -158,7 +189,7 @@ public class Boss_BT : BT
                             {
                                 //AOE attack
                                 Debug.Log("AOE Attack");
-                                current_action = GetComponent<BossWideAttack_Action>();
+                                current_action = wide_attack_action;
                                 current_action.ActionStart();
                                 cooldown = aoe_attack_cooldown;
                                 return;
@@ -167,7 +198,7 @@ public class Boss_BT : BT
                             {
                                 //distance attack
                                 Debug.Log("Distance Attack");
-                                current_action = GetComponent<BossAttackSwordDown_Action>();
+                                current_action = sword_down_attack_action;
                                 current_action.ActionStart();
                                 cooldown = distance_attack_cooldown;
                                 return;
@@ -176,7 +207,7 @@ public class Boss_BT : BT
                     }
                     else
                     {
-                        current_action = GetComponent<FacePlayer_Action>();
+                        current_action = face_player_action;
                         current_action.ActionStart();
                         return;
                     }
@@ -191,22 +222,22 @@ public class Boss_BT : BT
                         cooldown = charge_attack_cooldown;
                         return;*/
 
-                        GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
-                        current_action = GetComponent<InfiniteChasePlayer_Action>();
+                        infinite_chase_action.SetChaseRange(2);
+                        current_action = infinite_chase_action;
                         current_action.ActionStart();
                         return;
                     }
                     else
                     {
-                        GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
-                        current_action = GetComponent<InfiniteChasePlayer_Action>();
+                        infinite_chase_action.SetChaseRange(2);
+                        current_action = infinite_chase_action;
                         current_action.ActionStart();
                         return;
                     }
                 }
             }
-            current_action = GetComponent<IdleAttack_Action>();
-            GetComponent<IdleAttack_Action>().ActionStart();
+            current_action = idle_attack_action;
+            idle_attack_action.ActionStart();
         }
     }
 
@@ -214,12 +245,12 @@ public class Boss_BT : BT
     {
         if (boss_active)
         {
-            GetComponent<CompAudio>().PlayEvent("BossHurt");
+            audio.PlayEvent("BossHurt");
 
             current_hp -= damage;
             current_interpolation = current_hp / total_hp;
 
-            hp_bar_boss.GetComponent<BossHPBar>().SetHPBar(current_interpolation);
+            boss_hp_bar_comp.SetHPBar(current_interpolation);
 
             if (current_hp <= 0)
             {
@@ -227,14 +258,14 @@ public class Boss_BT : BT
                 phase = BOSS_STATE.BOSS_DEAD;
                 next_action = GetComponent<Die_Action>();
                 current_action.Interupt();
-                GetComponent<CompAudio>().PlayEvent("BossDeath");
+                audio.PlayEvent("BossDeath");
                 StatsScore.BossDead();
 
-                hp_bar_boss.GetComponent<BossHPBar>().ActivateHPBar(false);
+                boss_hp_bar_comp.ActivateHPBar(false);
                 hp_bar_boss.SetActive(false);
 
                 //todosforme
-                GetLinkedObject("enemies_manager").GetComponent<EnemiesManager>().DeleteBoss();
+                enemies_manager_obj.DeleteBoss();
 
                 boss_dead = true;
             }
@@ -244,7 +275,7 @@ public class Boss_BT : BT
                 phase = BOSS_STATE.BOSS_PHASE2;
 
                 //Change the boss values
-                //GetComponent<Movement_Action>().max_vel = 80;
+                //move.max_vel = 80;
                 //Phase2Textures();
             }
 
@@ -258,16 +289,16 @@ public class Boss_BT : BT
 
     public void Phase2Textures()
     {
-        mesh.GetComponent<CompMaterial>().SetAlbedo("enemy1_Color_Hit.png");
-        mesh.GetComponent<CompMaterial>().SetNormals("enemy1_Normal_Hit.png");
-        mesh.GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO_Hit.png");
+        material.SetAlbedo("enemy1_Color_Hit.png");
+        material.SetNormals("enemy1_Normal_Hit.png");
+        material.SetAmbientOcclusion("enemy1_AO_Hit.png");
     }
 
     public void Phase1Textures()
     {
-        mesh.GetComponent<CompMaterial>().SetAlbedo("enemy1_Color.png");
-        mesh.GetComponent<CompMaterial>().SetNormals("enemy1_Normal.png");
-        mesh.GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO.png");
+        material.SetAlbedo("enemy1_Color.png");
+        material.SetNormals("enemy1_Normal.png");
+        material.SetAmbientOcclusion("enemy1_AO.png");
     }
 
     public bool InCombat()
@@ -279,8 +310,8 @@ public class Boss_BT : BT
     {
         switch (type)
         {
-            case Action.ACTION_TYPE.GET_HIT_ACTION: next_action = GetComponent<GetHit_Action>(); break;
-            case Action.ACTION_TYPE.ENGAGE_ACTION: next_action = GetComponent<Engage_Action>(); break;
+            case Action.ACTION_TYPE.GET_HIT_ACTION: next_action = get_hit_action; break;
+            case Action.ACTION_TYPE.ENGAGE_ACTION: next_action = engage_action; break;
 
             default: Debug.Log("[error] Unknown action"); break;
         }
@@ -289,22 +320,22 @@ public class Boss_BT : BT
     public void Activate()
     {
         next_action = GetComponent<BossEngage_Action>();
-        GetComponent<CompAudio>().PlayEvent("BossGrowl");
+        audio.PlayEvent("BossGrowl");
         GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(21, 12, 1);
         rumble = true;
     }
 
     public int GetDistanceXToPlayer()
     {
-        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-        int distance_x = Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
+        movement_controller.GetPlayerPos(out int x, out int y);
+        int distance_x = Mathf.Abs(x - move.GetCurrentTileX());
         return distance_x;
     }
 
     public int GetDistanceYToPlayer()
     {
-        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
-        int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
+        movement_controller.GetPlayerPos(out int x, out int y);
+        int distance_y = Mathf.Abs(y - move.GetCurrentTileY());
         return distance_y;
     }
 
