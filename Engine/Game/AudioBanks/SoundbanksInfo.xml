@@ -180,7 +180,7 @@
 				</File>
 				<File Id="114820679" Language="SFX">
 					<ShortName>Daennerys_Hurt.wav</ShortName>
-					<Path>SFX\Daennerys_Hurt_DFA57B54.wem</Path>
+					<Path>SFX\Daennerys_Hurt_B8D67082.wem</Path>
 				</File>
 				<File Id="137727506" Language="SFX">
 					<ShortName>Jaime_Handblock.wav</ShortName>
@@ -196,7 +196,7 @@
 				</File>
 				<File Id="217820731" Language="SFX">
 					<ShortName>Daennerys_Hurt.wav</ShortName>
-					<Path>SFX\Daennerys_Hurt_6374CDB6.wem</Path>
+					<Path>SFX\Daennerys_Hurt_A2510AB2.wem</Path>
 				</File>
 				<File Id="279320789" Language="SFX">
 					<ShortName>Characters\Jaime\Jaime_Hurt_3.wav</ShortName>
@@ -208,7 +208,7 @@
 				</File>
 				<File Id="384029104" Language="SFX">
 					<ShortName>Fireball_Impact.wav</ShortName>
-					<Path>SFX\Fireball_Impact_1C9C67B2.wem</Path>
+					<Path>SFX\Fireball_Impact_AF1750FB.wem</Path>
 				</File>
 				<File Id="402319163" Language="SFX">
 					<ShortName>Misc_Combat\sword_hit.wav</ShortName>
@@ -280,7 +280,7 @@
 				</File>
 				<File Id="964099995" Language="SFX">
 					<ShortName>Daennerys_Hurt.wav</ShortName>
-					<Path>SFX\Daennerys_Hurt_5C7B1678.wem</Path>
+					<Path>SFX\Daennerys_Hurt_4A1DB6AD.wem</Path>
 				</File>
 				<File Id="988758404" Language="SFX">
 					<ShortName>Jaime_Tired.wav</ShortName>
@@ -317,6 +317,7 @@
 				<Event Id="1240136664" Name="AttackPreparation" ObjectPath="\Events\Boss\AttackPreparation"/>
 				<Event Id="1481017468" Name="BossDeath" ObjectPath="\Events\Boss\BossDeath"/>
 				<Event Id="3122217888" Name="BossFalls" ObjectPath="\Events\Boss\BossFalls"/>
+				<Event Id="1891413372" Name="BossFootstep" ObjectPath="\Events\Boss\BossFootstep"/>
 				<Event Id="1746793429" Name="BossGrowl" ObjectPath="\Events\Boss\BossGrowl"/>
 				<Event Id="3928559768" Name="BossHitGround" ObjectPath="\Events\Boss\BossHitGround"/>
 				<Event Id="1437879705" Name="BossHurt" ObjectPath="\Events\Boss\BossHurt"/>
@@ -333,7 +334,11 @@
 			<IncludedMemoryFiles>
 				<File Id="46750343" Language="SFX">
 					<ShortName>Boss_step2.wav</ShortName>
-					<Path>SFX\Boss_step2_1C9C67B2.wem</Path>
+					<Path>SFX\Boss_step2_DB877A44.wem</Path>
+				</File>
+				<File Id="234045436" Language="SFX">
+					<ShortName>Boss_step2.wav</ShortName>
+					<Path>SFX\Boss_step2_5136C9D9.wem</Path>
 				</File>
 				<File Id="246088314" Language="SFX">
 					<ShortName>Boss_hurt1.wav</ShortName>
@@ -385,7 +390,11 @@
 				</File>
 				<File Id="731437871" Language="SFX">
 					<ShortName>Boss_step.wav</ShortName>
-					<Path>SFX\Boss_step_1C9C67B2.wem</Path>
+					<Path>SFX\Boss_step_86DF3907.wem</Path>
+				</File>
+				<File Id="738726869" Language="SFX">
+					<ShortName>Boss_step2.wav</ShortName>
+					<Path>SFX\Boss_step2_EFCB6A72.wem</Path>
 				</File>
 				<File Id="881114355" Language="SFX">
 					<ShortName>Boss_punch_air.wav</ShortName>
