@@ -281,6 +281,8 @@ public class Boss_BT : BT
             {
                 Debug.Log("BOSS PHASE2!!!!!");
                 phase = BOSS_STATE.BOSS_PHASE2;
+                current_action.Interupt();
+                next_action = GetComponent<PhaseChange_Action>();
 
                 //Change the boss values
                 //GetComponent<Movement_Action>().max_vel = 80;
