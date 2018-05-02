@@ -356,6 +356,7 @@ public class Boss_BT : BT
         next_action = GetComponent<BossEngage_Action>();
         audio.PlayEvent("BossGrowl");
         GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(21, 12, 1);
+        GetLinkedObject("map").GetComponent<Pathfinder>().SetWalkableTile(21, 12, 1);
         rumble = true;
     }
 

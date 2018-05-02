@@ -14,8 +14,8 @@ class BossEngage_Action : Action
     public override bool ActionStart()
     {
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.GRABBED);
-        GetComponent<CompAnimation>().SetTransition("ToDraw");
-        GetComponent<CompAnimation>().SetClipDuration("Draw", duration);
+        GetComponent<CompAnimation>().SetTransition("ToPresentation");
+        GetComponent<CompAnimation>().SetClipDuration("Presentation", duration);
         return true;
     }
 
@@ -27,7 +27,7 @@ class BossEngage_Action : Action
             play_audio = true;
         }
 
-        if (GetComponent<CompAnimation>().IsAnimationStopped("Draw"))
+        if (GetComponent<CompAnimation>().IsAnimationStopped("Presentation"))
             return ACTION_RESULT.AR_SUCCESS;
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
