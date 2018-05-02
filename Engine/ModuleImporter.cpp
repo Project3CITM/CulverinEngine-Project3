@@ -182,7 +182,7 @@ GameObject* ModuleImporter::ProcessNode(const aiNode* node, const aiScene* scene
 		}
 		if (isReimported == false)
 		{
-			iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), path.c_str());
+			iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), path.c_str()); //TODO ELLIOT
 		}
 	}
 
