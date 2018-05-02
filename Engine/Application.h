@@ -117,6 +117,13 @@ public:
 	void SaveLogs(const char* path = nullptr);
 	bool InitBuild();
 
+	//
+	void SetFullScreen();
+	void SetWindowed();
+	void SetBordeless();
+	void SetVSync();
+	void ShowFPS();
+
 private:
 
 	void AddModule(Module* mod);
@@ -186,7 +193,10 @@ public:
 	bool change_to_secondary_scene = false;
 	bool remove_secondary_scene = false;
 	bool activate_gui_input = false;
-
+	bool active_fps = false;
+	bool full_screen = false;
+	bool resizable_window = true;
+	bool borderless = false;
 	// -------------------------------------------
 
 	float4 scene_dock = { 0, 0, 0, 0 };

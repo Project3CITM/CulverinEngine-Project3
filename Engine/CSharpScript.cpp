@@ -1400,6 +1400,14 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	{
 		comp_name = "CompCanvas";
 	}
+	else if (name_class == "CompCheckBox")
+	{
+		comp_name = "CompCheckBox";
+	}
+	else if (name_class == "CompSlider")
+	{
+		comp_name = "CompSlider";
+	}
 	/* Scripts */
 	if (comp_name == "")
 	{

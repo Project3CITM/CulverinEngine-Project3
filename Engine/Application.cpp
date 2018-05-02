@@ -635,11 +635,10 @@ update_status Application::Update()
 
 	if (mode_game)
 	{
-		static bool active_fps = false;
-		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
-		{
-			active_fps = !active_fps;
-		}
+		//if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
+		//{
+		//	active_fps = !active_fps;
+		//}
 		if (active_fps)
 		{
 			ImGui::SetNextWindowPos(ImVec2(20, 20));
@@ -1192,11 +1191,8 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	static std::string game_name;
 	game_name = build_name;
 
-	static bool full_screen = false;
 	static bool native_resolution = false;
 	static bool run_in_background = false;
-	static bool resizable_window = true;
-	static bool borderless = false;
 	static bool full_desktop = true;
 	static bool game_mode = true;
 	static bool use_release = true;
@@ -1438,6 +1434,31 @@ bool Application::InitBuild()
 		item++;
 	}
 	return true;
+}
+
+void Application::SetFullScreen()
+{
+	full_screen = !full_screen;
+}
+
+void Application::SetWindowed()
+{
+	resizable_window = !resizable_window;
+}
+
+void Application::SetBordeless()
+{
+	borderless = !borderless;
+}
+
+void Application::SetVSync()
+{
+	vsync = !vsync;
+}
+
+void Application::ShowFPS()
+{
+	active_fps = !active_fps;
 }
 
 static void *counted_malloc(size_t size) {

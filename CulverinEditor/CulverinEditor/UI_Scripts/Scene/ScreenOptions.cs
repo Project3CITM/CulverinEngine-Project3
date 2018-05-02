@@ -2,7 +2,7 @@
 using CulverinEditor.EventSystem;
 using CulverinEditor.SceneManagement;
 using CulverinEditor.Debug;
-
+using CulverinEditor.Screen;
 
 public class ScreenOptions : CulverinBehaviour
 {
@@ -35,16 +35,19 @@ public class ScreenOptions : CulverinBehaviour
     {
         fullscreen_cb.GetComponent<CompCheckBox>().HideTick();
         bordeless_cb.GetComponent<CompCheckBox>().HideTick();
+        Screen.SetWindowed();
     }
     public void SetFullscreen()
     {
         windowed_cb.GetComponent<CompCheckBox>().HideTick();
         bordeless_cb.GetComponent<CompCheckBox>().HideTick();
+        Screen.SetFullScreen();
     }
     public void SetBorderless()
     {
         windowed_cb.GetComponent<CompCheckBox>().HideTick();
         fullscreen_cb.GetComponent<CompCheckBox>().HideTick();
+        Screen.SetBordeless();
     }
 
 }

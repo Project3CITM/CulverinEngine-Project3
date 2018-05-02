@@ -1232,6 +1232,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompText::SetText", (const void*)SetText);
 	//COMPONENT UI_GRAPHIC FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompCanvas::SetCanvasAlpha", (const void*)SetCanvasAlpha);
+	//CHECKBOX METHODS
+	mono_add_internal_call("CulverinEditor.CompCheckBox::HideTick", (const void*)HideTick);
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 	mono_add_internal_call("CulverinEditor.CompCollider::GetContactPoint", (const void*)GetContactPoint);
@@ -1304,6 +1306,12 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Random::Range(int,int)", (const void*)RangeInt);
 	mono_add_internal_call("CulverinEditor.Random::Range(single,single)", (const void*)RangeFloat);
 	mono_add_internal_call("CulverinEditor.Random::Range(int,int,int)", (const void*)RangeIntNoRepeat);
+	//SCREEN FUNCTRIONS ---------------------------
+	mono_add_internal_call("CulverinEditor.Screen.Screen::SetFullScreen", (const void*)SetFullScreen);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::SetWindowed", (const void*)SetWindowed);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::SetBordeless", (const void*)SetBordeless);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::SetVSync", (const void*)SetVSync);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::ShowFPS", (const void*)ShowFPS);
 }
 
 //Log messages into Engine Console
@@ -2119,6 +2127,11 @@ int ImportScript::GetWidth(MonoObject * object)
 	return current->GetHeight(object);
 }
 
+void ImportScript::HideTick(MonoObject * object)
+{
+
+}
+
 void ImportScript::SetText(MonoObject * object, MonoString * text)
 {
 	current->SetText(object, text);
@@ -2459,4 +2472,29 @@ int ImportScript::RangeIntNoRepeat(int min, int max, int norepeat)
 		}
 	}
 	return 0;
+}
+
+void ImportScript::SetFullScreen(MonoObject * object)
+{
+	App->full_screen = !(App->full_screen);
+}
+
+void ImportScript::SetWindowed(MonoObject * object)
+{
+	App->resizable_window = !(App->resizable_window);
+}
+
+void ImportScript::SetBordeless(MonoObject * object)
+{
+	App->borderless = !(App->borderless);
+}
+
+void ImportScript::SetVSync(MonoObject * object)
+{
+	App->vsync = !(App->vsync);
+}
+
+void ImportScript::ShowFPS(MonoObject * object)
+{
+	App->active_fps = !(App->active_fps);
 }
