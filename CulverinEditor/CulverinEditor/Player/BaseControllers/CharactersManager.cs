@@ -938,6 +938,57 @@ public class CharactersManager : CulverinBehaviour
 
 
     // THIS IS HARDCODED FOR SCORE SCREEN --------------------------------
+    public float GetTotalHP()
+    {
+        float result_hp = 0.0f;
+
+        //CURRENT CHARACTER HP
+        if (current_character.GetName() == "Jaime")
+        {
+            result_hp += current_character.GetComponent<JaimeController>().curr_hp;
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+            result_hp += current_character.GetComponent<DaenerysController>().curr_hp;
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            result_hp += current_character.GetComponent<TheonController>().curr_hp;
+        }
+
+        //LEFT CHARACTER HP
+        if (left_character.GetName() == "Jaime")
+        {
+            result_hp += left_character.GetComponent<JaimeController>().curr_hp;
+        }
+        else if (left_character.GetName() == "Daenerys")
+        {
+            result_hp += left_character.GetComponent<DaenerysController>().curr_hp;
+        }
+        else if (left_character.GetName() == "Theon")
+        {
+            result_hp += left_character.GetComponent<TheonController>().curr_hp;
+        }
+
+        //RIGHT CHARACTER HP
+        if (right_character.GetName() == "Jaime")
+        {
+            result_hp += right_character.GetComponent<JaimeController>().curr_hp;
+        }
+        else if (right_character.GetName() == "Daenerys")
+        {
+            result_hp += right_character.GetComponent<DaenerysController>().curr_hp;
+        }
+        else if (right_character.GetName() == "Theon")
+        {
+            result_hp += right_character.GetComponent<TheonController>().curr_hp;
+        }
+
+        Debug.Log("TOTAL HP: " + result_hp, Department.PLAYER, Color.RED);
+
+        return result_hp;
+    }
+
     void EnemyKilled(uint number = 1)
     {
         enem_killed += number;
