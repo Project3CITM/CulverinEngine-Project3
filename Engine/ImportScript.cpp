@@ -1237,6 +1237,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompCanvas::SetCanvasAlpha", (const void*)SetCanvasAlpha);
 	//CHECKBOX METHODS
 	mono_add_internal_call("CulverinEditor.CompCheckBox::HideTick", (const void*)HideTick);
+	//SLIDERFUNCIOTNRGAS
+	mono_add_internal_call("CulverinEditor.CompSlider::GetFill", (const void*)GetFill);
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 	mono_add_internal_call("CulverinEditor.CompCollider::GetContactPoint", (const void*)GetContactPoint);
@@ -2166,7 +2168,12 @@ int ImportScript::GetWidth(MonoObject * object)
 
 void ImportScript::HideTick(MonoObject * object)
 {
+	current->HideTick(object);
+}
 
+float ImportScript::GetFill(MonoObject * object)
+{
+	return GetFill(object);
 }
 
 void ImportScript::SetText(MonoObject * object, MonoString * text)

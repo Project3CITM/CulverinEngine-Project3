@@ -267,6 +267,8 @@ private:
 
 	/*Component CheckBox*/
 	static void HideTick(MonoObject * object);
+	/*Component Slider*/
+	static float GetFill(MonoObject * object);
 	/*Component Text*/
 	static void SetText(MonoObject* object, MonoString* alpha);
 	/*Component Canvas*/
