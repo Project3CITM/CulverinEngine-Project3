@@ -74,9 +74,9 @@ namespace CulverinEditor.SceneManagement
         /// <summary>  
         ///     SaveInfo Player.
         /// </summary>
-        [Obsolete("Doesn't work at the moment!", true)]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern void PushSaveInfo(Vector3 info);
+        //[Obsolete("Doesn't work at the moment!", true)]
+        //[MethodImpl(MethodImplOptions.InternalCall)]
+        //public static extern void PushSaveInfo(Vector3 info);
 
         /// <summary>  
         ///     SaveInfo Player..
