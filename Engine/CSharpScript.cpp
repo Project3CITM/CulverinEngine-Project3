@@ -238,6 +238,8 @@ void ScriptVariable::GetOwnBufferSize(uint & buffer_size)
 	buffer_size += sizeof(int);
 	buffer_size += strlen(name);
 
+	buffer_size += sizeof(int);		//type
+
 	//SAVE VAR TYPE -------------------
 	switch (type)
 	{
@@ -312,6 +314,7 @@ void ScriptVariable::Save(char ** cursor) const
 	//SET VAR NAME --------------------
 	//json_object_dotset_string_with_std(object, title + "Name: ", name);
 	App->json_seria->SaveStringBinary(cursor, name);
+	App->json_seria->SaveIntBinary(cursor, type);
 
 	//SAVE VAR TYPE -------------------
 	switch (type)
@@ -1729,11 +1732,46 @@ void CSharpScript::Load(char** cursor)
 	for (int i = 0; i < num_variables; i++)
 	{
 		std::string name_variable_temp = App->json_seria->LoadStringBinary(cursor);
-		for (int j = 0; j < variables.size(); j++)
+		bool loaded = false; bool stop = false;
+		for (int j = 0; j < variables.size() && stop == false; j++)
 		{
 			if (strcmp(variables[j]->name, name_variable_temp.c_str()) == 0)
 			{
+				loaded = true;
+				stop = true;
+				VarType type_usless = (VarType)App->json_seria->LoadIntBinary(cursor);
 				variables[j]->Load(cursor, re_load_values);
+			}
+		}
+		if (!loaded)
+		{
+			VarType type_ = (VarType)App->json_seria->LoadIntBinary(cursor);
+			switch (type_)
+			{
+			case Var_INT:
+			{
+				int ival = App->json_seria->LoadIntBinary(cursor);
+				break;
+			}
+			case Var_FLOAT:
+			{
+				float fval = App->json_seria->LoadFloatBinary(cursor);
+				break;
+			}
+			case Var_BOOL:
+			{
+				bool bval = App->json_seria->LoadBooleanBinary(cursor);
+				break;
+			}
+			case Var_GAMEOBJECT:
+			{
+				uint obj_uid = App->json_seria->LoadIntBinary(cursor);
+				break;
+			}
+			default:
+			{
+				break;
+			}
 			}
 		}
 	}
