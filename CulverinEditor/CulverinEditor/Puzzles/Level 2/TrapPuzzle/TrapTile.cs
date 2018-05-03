@@ -32,7 +32,9 @@ public class TrapTile : CulverinBehaviour
     void Start()
     {
         audio = GetComponent<CompAudio>();
+      
         Vector3 global_pos = transform.GetGlobalPosition();
+        Debug.Log(global_pos);
         tile_x = (int)((global_pos.x + (12.7f)) / 25.4);
         tile_z = (int)((global_pos.z + (12.7f)) / 25.4);
 
@@ -46,8 +48,8 @@ public class TrapTile : CulverinBehaviour
             global_pos.y = max_height;
             value = 1;
         }
-        GetComponent<Transform>().SetPosition(global_pos);
-
+        GetComponent<Transform>().SetGlobalPosition(global_pos);
+        Debug.Log(global_pos);
         map = GetLinkedObject("map_obj");
         LevelMap map_level = map.GetComponent<LevelMap>();
         if (map_level != null)
