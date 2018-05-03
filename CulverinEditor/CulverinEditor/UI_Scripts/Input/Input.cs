@@ -92,6 +92,9 @@ namespace CulverinEditor
         public static extern int GetChangeInputState();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern int GetActualDeviceCombo();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void SavePlayerAction();
 
         [MethodImpl(MethodImplOptions.InternalCall)]

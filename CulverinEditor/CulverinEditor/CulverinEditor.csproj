@@ -117,6 +117,7 @@
     <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapTile.cs" />
     <Compile Include="Puzzles\Tests\PuzzleRotation.cs" />
     <Compile Include="Tests\TestParticlesV2.cs" />
+    <Compile Include="UI_Scripts\Input\InputShow.cs" />
     <Compile Include="UI_Scripts\Scene\AudioMenu.cs" />
     <Compile Include="UI_Scripts\Scene\Screen.cs" />
     <Compile Include="UI_Scripts\Scene\ScreenOptions.cs" />

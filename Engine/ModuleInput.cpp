@@ -646,17 +646,20 @@ void ModuleInput::SavePlayerAction() const
 
 void ModuleInput::LoadDefaultPlayerAction()
 {
-	if (player_action != nullptr)
-	{
-		player_action->Clear();
-		RELEASE(player_action);
-	}
-	
-
 	std::string name = DIRECTORY_LIBRARY_JSON;
 	name = App->fs->GetFullPath(name);
 	name += "player_action_default.json";
-	App->json_seria->LoadPlayerAction(&player_action, name.c_str());
+	JSON_Value* config_file = json_parse_file(name.c_str());
+
+	if (config_file != nullptr)
+	{
+		if (player_action != nullptr)
+		{
+			player_action->Clear();
+			RELEASE(player_action);
+		}
+		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
+	}
 }
 
 DeviceCombinationType ModuleInput::GetActualDeviceCombo() const

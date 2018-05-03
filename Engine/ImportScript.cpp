@@ -1160,6 +1160,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Input::SetInputActionToChange", (const void*)SetInputActionToChange);
 	mono_add_internal_call("CulverinEditor.Input::GetChangeInputActive", (const void*)GetChangeInputActive);
 	mono_add_internal_call("CulverinEditor.Input::GetChangeInputState", (const void*)GetChangeInputState);
+	mono_add_internal_call("CulverinEditor.Input::GetActualDeviceCombo", (const void*)GetActualDeviceCombo);
+
+	
 	mono_add_internal_call("CulverinEditor.Input::SavePlayerAction", (const void*)SavePlayerAction);
 	mono_add_internal_call("CulverinEditor.Input::LoadDefaultPlayerAction", (const void*)LoadDefaultPlayerAction);
 
@@ -1693,6 +1696,10 @@ bool ImportScript::GetChangeInputActive()
 int ImportScript::GetChangeInputState()
 {
 	return App->input->player_action->GetChangeInputState();;
+}
+int ImportScript::GetActualDeviceCombo()
+{
+	return App->input->GetActualDeviceCombo();;
 }
 void ImportScript::SavePlayerAction()
 {

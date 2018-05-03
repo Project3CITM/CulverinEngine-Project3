@@ -139,6 +139,7 @@ private:
 	static void			SetInputActionToChange(MonoString* name, MonoString* input, int device, bool negative_key);
 	static bool			GetChangeInputActive();
 	static int			GetChangeInputState();
+	static int			GetActualDeviceCombo();
 	static void			SavePlayerAction();
 	static void			LoadDefaultPlayerAction();
 	static void			RumblePlay(float intensity, int milliseconds);
