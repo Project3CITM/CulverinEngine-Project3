@@ -253,6 +253,15 @@ public class Pathfinder : CulverinBehaviour
         return false;
     }
 
+    public void SetWalkableTile(uint tile_to_check_x, uint tile_to_check_y, int value)
+    {
+        //Change the desired tile value
+        if (tile_to_check_x < map_width && tile_to_check_y < map_height)
+        {
+            tile_map[tile_to_check_x, tile_to_check_y] = value;
+        }
+    }
+
     private void SetOccupiedTilesValue(int walkability)
     {
         foreach (KeyValuePair<string, PathNode> node in occupied_tiles)
