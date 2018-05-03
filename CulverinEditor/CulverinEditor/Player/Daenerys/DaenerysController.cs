@@ -658,7 +658,7 @@ public class DaenerysController : CharacterController
     }
 
     public override void SecondaryAbility()
-    {
+    {       
         GameObject fball = Instantiate("DaenerysFireball");
 
         fball.transform.SetPosition(GetSecondaryPosition(curr_position));

@@ -13,6 +13,7 @@ Event	ID	Name			Wwise Object Path	Notes
 	2782712987	Lever			\Stage\Puzzle\Lever	
 	3035439363	PlayTorch			\Stage\PlayTorch	
 	3627978879	RopeCut			\Stage\Puzzle\RopeCut	
+	3664125068	PlayChants			\Stage\PlayChants	
 	3953897988	SwitchOff			\Stage\Puzzle\SwitchOff	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
@@ -22,6 +23,7 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	178260986	footstep_stone	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\footstep_stone_C599367A.wem		\Actor-Mixer Hierarchy\Stage\FootSepts_Stone\footstep_stone		33908
 	252929518	footstep_stone_01	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\footstep_stone_DADC38C1.wem		\Actor-Mixer Hierarchy\Stage\FootSepts_Stone\footstep_stone_01		32328
 	304204776	Switch_Disable	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Switch_Disable_5B7EDBFC.wem		\Actor-Mixer Hierarchy\Stage\Switch_Disable		54116
+	316512089	Gregorian_Ambience	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\Gregorian_Ambience_F17FB28C.wem		\Actor-Mixer Hierarchy\Stage\Gregorian_Ambience		30105664
 	337181357	footstep_stone_03	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Ambient\footstep_stone_1C39B089.wem		\Actor-Mixer Hierarchy\Stage\FootSepts_Stone\footstep_stone_03		32756
 	448295503	Combat_theme	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Combat_theme_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\AmbientMusic\Combat\Combat_theme\Combat_theme		6401064
 	471313250	Timer60bpm	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Puzzle\Timer60bpm_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\PuzzleClock\State1\Puzzle_State1\Timer60bpm		707984

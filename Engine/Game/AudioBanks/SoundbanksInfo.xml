@@ -24,6 +24,7 @@
 				<Event Id="2782712987" Name="Lever" ObjectPath="\Events\Stage\Puzzle\Lever"/>
 				<Event Id="1287847765" Name="MetalClash" ObjectPath="\Events\Stage\MetalClash"/>
 				<Event Id="1181117825" Name="PlayAmbient" ObjectPath="\Events\Stage\PlayAmbient"/>
+				<Event Id="3664125068" Name="PlayChants" ObjectPath="\Events\Stage\PlayChants"/>
 				<Event Id="417627684" Name="PlayMusic" ObjectPath="\Events\Stage\PlayMusic"/>
 				<Event Id="3035439363" Name="PlayTorch" ObjectPath="\Events\Stage\PlayTorch"/>
 				<Event Id="3627978879" Name="RopeCut" ObjectPath="\Events\Stage\Puzzle\RopeCut"/>
@@ -56,6 +57,10 @@
 				<File Id="304204776" Language="SFX">
 					<ShortName>Switch_Disable.wav</ShortName>
 					<Path>SFX\Switch_Disable_5B7EDBFC.wem</Path>
+				</File>
+				<File Id="316512089" Language="SFX">
+					<ShortName>Ambient\Gregorian_Ambience.wav</ShortName>
+					<Path>SFX\Ambient\Gregorian_Ambience_F17FB28C.wem</Path>
 				</File>
 				<File Id="337181357" Language="SFX">
 					<ShortName>Ambient\footstep_stone.wav</ShortName>
@@ -208,7 +213,7 @@
 				</File>
 				<File Id="384029104" Language="SFX">
 					<ShortName>Fireball_Impact.wav</ShortName>
-					<Path>SFX\Fireball_Impact_4323ED4C.wem</Path>
+					<Path>SFX\Fireball_Impact_AF1750FB.wem</Path>
 				</File>
 				<File Id="402319163" Language="SFX">
 					<ShortName>Misc_Combat\sword_hit.wav</ShortName>
@@ -252,7 +257,7 @@
 				</File>
 				<File Id="706131552" Language="SFX">
 					<ShortName>Daennerys_FlameCrepitarLoop.wav</ShortName>
-					<Path>SFX\Daennerys_FlameCrepitarLoop_1C9C67B2.wem</Path>
+					<Path>SFX\Daennerys_FlameCrepitarLoop_6DE6523E.wem</Path>
 				</File>
 				<File Id="764335624" Language="SFX">
 					<ShortName>Characters\Daenerys\Daenerys_Dead_1.wav</ShortName>
@@ -334,11 +339,11 @@
 			<IncludedMemoryFiles>
 				<File Id="46750343" Language="SFX">
 					<ShortName>Boss_step2.wav</ShortName>
-					<Path>SFX\Boss_step2_8F731440.wem</Path>
+					<Path>SFX\Boss_step2_DB877A44.wem</Path>
 				</File>
 				<File Id="234045436" Language="SFX">
 					<ShortName>Boss_step2.wav</ShortName>
-					<Path>SFX\Boss_step2_8FDC76A6.wem</Path>
+					<Path>SFX\Boss_step2_5136C9D9.wem</Path>
 				</File>
 				<File Id="246088314" Language="SFX">
 					<ShortName>Boss_hurt1.wav</ShortName>
@@ -390,11 +395,11 @@
 				</File>
 				<File Id="731437871" Language="SFX">
 					<ShortName>Boss_step.wav</ShortName>
-					<Path>SFX\Boss_step_6256B143.wem</Path>
+					<Path>SFX\Boss_step_86DF3907.wem</Path>
 				</File>
 				<File Id="738726869" Language="SFX">
 					<ShortName>Boss_step2.wav</ShortName>
-					<Path>SFX\Boss_step2_C850A971.wem</Path>
+					<Path>SFX\Boss_step2_EFCB6A72.wem</Path>
 				</File>
 				<File Id="881114355" Language="SFX">
 					<ShortName>Boss_punch_air.wav</ShortName>
@@ -502,6 +507,10 @@
 				<File Id="692406587" Language="SFX">
 					<ShortName>Enemy\Enemy_2\E2_Dead_1.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_2\E2_Dead_1_1C9C67B2.wem</Path>
+				</File>
+				<File Id="788695252" Language="SFX">
+					<ShortName>Enemy\Enemy_1\Enemy1_Dead4.wav</ShortName>
+					<Path>SFX\Enemy\Enemy_1\Enemy1_Dead4_F4E2F85E.wem</Path>
 				</File>
 				<File Id="885694415" Language="SFX">
 					<ShortName>Enemy_SwordDraw.wav</ShortName>

@@ -20,7 +20,7 @@ public class FireWall : CulverinBehaviour
     // Use this for initialization
     void Start()
     {
-        GetComponent<CompAudio>().PlayEvent("DaenerysFire"); // Change This!!
+        GetComponent<CompAudio>().PlayEvent("DaenerysFire"); 
         GetComponent<CompParticleSystem>().ActivateEmission(true);
     }
 
@@ -32,7 +32,6 @@ public class FireWall : CulverinBehaviour
         if (timer >= duration)
         {
             GetComponent<CompParticleSystem>().ActivateEmission(false);
-            GetComponent<CompAudio>().StopEvent("DaenerysFire");
             Destroy(gameObject);
         }
 

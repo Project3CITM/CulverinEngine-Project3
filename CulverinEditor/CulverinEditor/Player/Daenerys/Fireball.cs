@@ -35,6 +35,8 @@ public class Fireball : CulverinBehaviour
         Shoot();
         timer = 0.0f;
 
+        GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
+
         if (fireball == false)
         {
             if (vfront.x >= 2)
@@ -55,7 +57,6 @@ public class Fireball : CulverinBehaviour
             }
         }
 
-        GetComponent<CompAudio>().PlayEvent("DaenerysFire"); //Change This!!
     }
 
     public void Shoot()
@@ -122,6 +123,7 @@ public class Fireball : CulverinBehaviour
         }
 
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
+        GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");       
         // DAMAGE ---
         if (collided_obj != null)
         {
@@ -143,8 +145,6 @@ public class Fireball : CulverinBehaviour
             }
         }
 
-        GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
-        GetComponent<CompAudio>().StopEvent("DaenerysFire");
 
         if (fireball && destroyed == false)
         {
