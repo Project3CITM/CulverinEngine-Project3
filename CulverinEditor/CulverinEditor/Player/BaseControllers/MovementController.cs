@@ -79,7 +79,6 @@ public class MovementController : CulverinBehaviour
         audio.PlayEvent("PlayMusic");
         Audio.ChangeState("MusicState", "None");
 
-
         curr_dir = (Direction)start_direction;
         update_rotation = false;
 

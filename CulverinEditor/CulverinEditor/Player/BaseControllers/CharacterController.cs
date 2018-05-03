@@ -1,5 +1,6 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using CulverinEditor.Pathfinding;
 
 public class CharacterController : CulverinBehaviour
 {
@@ -16,6 +17,8 @@ public class CharacterController : CulverinBehaviour
         IDLE = 0,
         ATTACKING,
         BLOCKING,
+        PUSHING,
+        PUSH_BLOCKING,
         COVER,
         HIT,
         FIRE_WALL,
@@ -69,7 +72,6 @@ public class CharacterController : CulverinBehaviour
     protected CompImage sec_button_idle_img;
     protected CompRectTransform sec_button_idle_trans;
 
-
     //OTHERS
     protected CompAnimation anim_controller;            // Animation component to handle animations
     protected CompAudio audio;
@@ -86,6 +88,12 @@ public class CharacterController : CulverinBehaviour
     public bool play_breathing_audio = false;
     public bool currently_playing_b_audio = false;
     public bool force_audio = false;
+
+    protected bool push = false;
+    protected float push_x = 0.0f;
+    protected float push_y = 0.0f;
+    protected uint push_cycles = 0;
+    protected PathNode push_obj;
 
     protected void LinkComponents(GameObject icon_obj, GameObject icon_hp_obj, GameObject icon_stamina_obj, GameObject icon_mana_obj,
                                   GameObject left_button_obj, GameObject right_button_obj, GameObject sec_button_obj, GameObject sec_button_idle_obj,
@@ -187,6 +195,36 @@ public class CharacterController : CulverinBehaviour
             //If the character is behind, manage the stamina/mana bar to regen it
             ManageEnergy();
         }
+    }
+
+    protected void UpdatePush()
+    {
+        Transform trans = GetComponent<Transform>();
+        Vector3 pos = new Vector3(trans.position);
+        pos.x = pos.x + push_x;
+        pos.z = pos.z + push_y;
+        trans.position = pos;
+        push_cycles--;
+
+        if (push_cycles == 0)
+        {
+            push = false;
+            Vector3 final_pos = new Vector3(trans.position);
+            final_pos.x = push_obj.GetTileX() * movement.distanceToMove;
+            final_pos.z = push_obj.GetTileY() * movement.distanceToMove;
+            trans.position = final_pos;
+            movement.curr_x = push_obj.GetTileX();
+            movement.curr_y = push_obj.GetTileY();
+        }
+    }
+
+    protected void PushTo(PathNode obj, float duration)
+    {
+        push_x = (obj.GetTileX() - movement.curr_x) / duration;
+        push_y = (obj.GetTileY() - movement.curr_y) / duration;
+        push_cycles = (uint)(duration / Time.deltaTime);
+        push_obj = new PathNode(obj.GetTileX(), obj.GetTileY());
+        push = true;
     }
 
     public virtual void CheckHealth(float curr_hp, float max_hp, string breath_name)
@@ -305,6 +343,11 @@ public class CharacterController : CulverinBehaviour
     }
 
     public virtual bool GetDamage(float dmg)
+    {
+        return true;
+    }
+
+    public virtual bool Push(float dmg, PathNode tile)
     {
         return true;
     }

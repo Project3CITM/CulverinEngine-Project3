@@ -1,5 +1,6 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using CulverinEditor.Pathfinding;
 
 public class JaimeController : CharacterController
 {
@@ -115,7 +116,6 @@ public class JaimeController : CharacterController
                        null, jaime_right_text_counter, jaime_sec_text_counter,
                        larm_jaime_obj, rarm_jaime_obj, jaime_button_left_idle, jaime_button_right_idle);
 
-
         //Start Idle animation
         anim_controller.PlayAnimation("Idle");
 
@@ -152,6 +152,9 @@ public class JaimeController : CharacterController
         {
             //Check play breath audio
             base.CheckHealth(curr_hp, max_hp, "JaimeBreathing");
+
+            if(push)
+                base.UpdatePush();
 
             // Check if player is moving to block attacks/abilities
             if (!movement.IsMoving())
@@ -340,7 +343,61 @@ public class JaimeController : CharacterController
                 //Damage Feedback
                 damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
             }
+            else
+            {
+                Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Death");
+                SetAnimationTransition("ToDeath", true);
+                SetState(State.DEAD);
 
+                PlayFx("JaimeDead");
+            }
+
+            //Reset hit count
+            combo_controller.ResetHitStreak();
+
+            return true;
+        }
+    }
+
+    public override bool Push(float dmg, PathNode tile)
+    {
+        if (state == State.COVER)
+        {
+            SetAnimationTransition("ToBlock", true);
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Block");
+            base.PushTo(tile, anim_controller.GetClipDuration("Block"));
+
+            PlayFx("MetalHit");
+            //PlayFx("MetalClash");
+            PlayFx("JaimeBlock");
+
+            DecreaseStamina(right_ability_cost);
+
+            SetState(State.BLOCKING);
+
+            return false;
+        }
+        else
+        {
+            health.GetDamage(dmg);
+            curr_hp -= dmg;
+            base.PushTo(tile, anim_controller.GetClipDuration("Hit"));
+
+            if (health.GetCurrentHealth() > 0)
+            {
+                if (GetState() == 0)
+                {
+                    Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
+                    SetAnimationTransition("ToHit", true);
+                    SetState(State.HIT);
+                }
+
+                PlayFx("JaimeHurt");
+                play_breathing_audio = true;
+
+                //Damage Feedback
+                damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
+            }
             else
             {
                 Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Death");

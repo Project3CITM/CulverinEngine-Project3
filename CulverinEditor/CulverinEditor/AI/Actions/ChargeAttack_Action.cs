@@ -84,9 +84,7 @@ public class ChargeAttack_Action : Action
         if (current_x == player_x && current_y == player_y)
         {
             Debug.Log("Push");
-            //push player
-            player.GetComponent<MovementController>().Push(GetPushTile());
-            if (player.GetComponent<CharactersManager>().GetDamage(damage) == true)
+            if (player.GetComponent<CharactersManager>().Push(damage, GetPushTile()) == true)
                 GetComponent<CompAudio>().PlayEvent("SwordHit");
         }
 
