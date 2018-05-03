@@ -42,13 +42,14 @@
   <ItemGroup>
     <Compile Include="AI\Actions\Action.cs" />
     <Compile Include="AI\Actions\BossAttackSwordDown_Action.cs" />
-    <Compile Include="AI\Actions\BossBasicStrongAttack_Action.cs" />
     <Compile Include="AI\Actions\BossEngage_Action.cs" />
     <Compile Include="AI\Actions\BossGrabAttack_Action.cs" />
     <Compile Include="AI\Actions\BossWideAttack_Action.cs" />
+    <Compile Include="AI\Actions\ChargeAttack_Action.cs" />
     <Compile Include="AI\Actions\DisableMovementScript.cs" />
     <Compile Include="AI\Actions\FacePlayer_Action.cs" />
     <Compile Include="AI\Actions\InfiniteChasePlayer_Action.cs" />
+    <Compile Include="AI\Actions\PhaseChange_Action.cs" />
     <Compile Include="AI\Actions\Separate_Action.cs" />
     <Compile Include="AI\Actions\SpearAttack_Action.cs" />
     <Compile Include="AI\Actions\Stun_Action.cs" />
