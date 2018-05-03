@@ -46,6 +46,15 @@ uniform float reflexion_strenght;
 uniform int shadow_blur;
 uniform float bias;
 
+
+//Fresnel
+uniform bool activate_fresnel;
+uniform float fresnel_scale;
+uniform float fresnel_bias;
+uniform float fresnel_power;
+uniform float fresnel_lerp;
+
+
 uniform mat4 model;
 
 vec2 poissonDisk[16] = vec2[](
@@ -201,7 +210,17 @@ vec3 tmp = normalize(ourPos -  _cameraPosition);
 vec3 temp = reflect(tmp, normalize(ourNormal));
 vec4 reflex_color = texture(cube_map, normalize(temp));
 
-color = mix(vec4(col, 1), reflex_color, texture(glossines_map, TexCoord).r * texture(specular_map, TexCoord).r * reflexion_strenght);
+
+ vec3 camera_to_vertex = normalize(_cameraPosition - ourPos);
+   float fresnel_coeficient = max(0.0, min(1.0, fresnel_bias + fresnel_scale * pow(1.0 + dot(camera_to_vertex, ourNormal), fresnel_power)));
+
+vec4 reflex_col = mix(vec4(col, 1), reflex_color, texture(glossines_map, TexCoord).r * texture(specular_map, TexCoord).r * reflexion_strenght * fresnel_coeficient);
 
  
+  
+     color = mix(reflex_col ,vec4(vec3(reflex_col.xyz), 1.0), fresnel_lerp);
+
+
+
+
 }
