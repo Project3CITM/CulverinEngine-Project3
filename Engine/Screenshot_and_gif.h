@@ -16,8 +16,8 @@ enum Culverin_PartScreenshot_STATE
 
 struct Culverin_Screenshot
 {
-	SDL_Scancode FullScreenKey = SDL_Scancode::SDL_SCANCODE_F10;
-	SDL_Scancode PartScreenKey = SDL_Scancode::SDL_SCANCODE_F9;
+	SDL_Scancode FullScreenKey = SDL_Scancode::SDL_SCANCODE_F8;
+	SDL_Scancode PartScreenKey = SDL_Scancode::SDL_SCANCODE_F7;
 	Culverin_PartScreenshot_STATE Screen_State_part = Culverin_PartScreenshot_STATE::Culverin_PartScreenshot_STATE_WAITING_FOR_POINT1;
 
 	float2 Point1 = float2::zero;
@@ -43,8 +43,8 @@ enum Culverin_PartGif_STATE
 
 struct Culverin_Gif
 {
-	int FullScreenKey = SDL_Scancode::SDL_SCANCODE_F8;
-	int PartScreenKey = SDL_Scancode::SDL_SCANCODE_F7;
+	int FullScreenKey = SDL_Scancode::SDL_SCANCODE_F6;
+	int PartScreenKey = SDL_Scancode::SDL_SCANCODE_F5;
 	Culverin_FullGif_STATE Gif_State_full = Culverin_FullGif_STATE::Culverin_FullGif_STATE_CAN_START;
 	Culverin_PartGif_STATE Gif_State_part = Culverin_PartGif_STATE::Culverin_PartGif_STATE_WAITING_FOR_POINT1;
 	unsigned char* pixels_full = nullptr;

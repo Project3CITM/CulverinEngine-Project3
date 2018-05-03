@@ -21,6 +21,22 @@ public class Lever : CulverinBehaviour
     private List<GameObject> line5;
     private List<GameObject> line6;
 
+    // Chain Lines-----------------------------
+    public GameObject chain_line_1;
+    public GameObject chain_line_2;
+    public GameObject chain_line_3;
+    public GameObject chain_line_4;
+    public GameObject chain_line_5;
+    public GameObject chain_line_6;
+
+    //Chain Lists ---------------------------------------
+    private List<GameObject> chains_1;
+    private List<GameObject> chains_2;
+    private List<GameObject> chains_3;
+    private List<GameObject> chains_4;
+    private List<GameObject> chains_5;
+    private List<GameObject> chains_6;
+
     // 
     public float speed_barrel = 5.0f;
     public float wheight_barrel = 20.0f;
@@ -126,8 +142,25 @@ public class Lever : CulverinBehaviour
         line5 = new List<GameObject>();
         line6 = new List<GameObject>();
 
+        chain_line_1 = GetLinkedObject("chain_line_1");
+        chain_line_2 = GetLinkedObject("chain_line_2");
+        chain_line_3 = GetLinkedObject("chain_line_3");
+        chain_line_4 = GetLinkedObject("chain_line_4");
+        chain_line_5 = GetLinkedObject("chain_line_5");
+        chain_line_6 = GetLinkedObject("chain_line_6");
+
+        chains_1 = new List<GameObject>();
+        chains_2 = new List<GameObject>();
+        chains_3 = new List<GameObject>();
+        chains_4 = new List<GameObject>();
+        chains_5 = new List<GameObject>();
+        chains_6 = new List<GameObject>();
+
         // Get All barrels from Puzzle.
         SetBarrels();
+
+        // Get All Chains from Puzzle.
+        SetChains();
 
         // Desactivate all barrels, while the player dont stay in puzzle. 
         DesactivateBarrels(line1);
@@ -246,6 +279,7 @@ public class Lever : CulverinBehaviour
                 MoveBarrels(line4);
                 MoveBarrels(line5);
                 MoveBarrels(line6);
+                MoveChains(true);
                 phase3 = true;
                 phase2 = true;
                 phase_wait = true;
@@ -283,7 +317,7 @@ public class Lever : CulverinBehaviour
                     SetPathWalkable(0, 3);
                     editmap = false;
                     countdown.StartCountdown();
-                    
+                    MoveChains(false);
                 }
                 else if (countdown.IsCountdownOver())
                 {
@@ -354,6 +388,12 @@ public class Lever : CulverinBehaviour
 
         int curr_x = 0;
         int curr_y = 0;
+
+        int start_tile_x = 0;
+        int start_tile_z = 0;
+        int target_tile_x = 0;
+        int target_tile_z = 0;
+
         for (int x = barrel_per_line - 1; x >= 0; x--)
         {
             curr_x = puzzle_start_tile_x + y * (int)(orientation_x.x + orientation_z.x);
@@ -361,12 +401,23 @@ public class Lever : CulverinBehaviour
 
             if (current_path.walkability[x, y] == 0)
             {
-               
                 list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.PUZZLE, time_sinking, floor_height);
             }
             else if (current_path.walkability[x, y] == 1)
             {
                 list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.FILLING, time_sinking, floor_height);
+            }
+
+            if (x == barrel_per_line - 1)
+            {
+                target_tile_x = curr_x;
+                target_tile_z = curr_y;
+            }
+            else if(x == 0)
+            {
+                start_tile_x = curr_x;
+                start_tile_z = curr_y;
+                SetChainsData(number_of_lines, start_tile_x, start_tile_z, target_tile_x, target_tile_z);
             }
         }
     }
@@ -432,6 +483,158 @@ public class Lever : CulverinBehaviour
                 stop = true;
             else
                 line6.Add(temp);
+        }
+    }
+
+    void SetChains()
+    {
+        bool stop = false;
+        int count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_1.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_1.Add(temp);
+        }
+        stop = false;
+        count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_2.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_2.Add(temp);
+        }
+        stop = false;
+        count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_3.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_3.Add(temp);
+        }
+        stop = false;
+        count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_4.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_4.Add(temp);
+        }
+        stop = false;
+        count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_5.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_5.Add(temp);
+        }
+        stop = false;
+        count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_6.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_6.Add(temp);
+        }
+    }
+
+    void SetChainsData(int line, int start_x, int start_z, int target_x, int target_z)
+    {
+        switch(line)
+        {
+            case 0:
+                {
+                    for (int i = 0; i < chains_1.Count; i++)
+                    {
+                        chains_1[i].GetComponent<ChainMove>().SetData(speed_barrel,start_x,start_z,target_x,target_z);
+                    }
+                    break;
+                }
+            case 1:
+                {
+                    for (int i = 0; i < chains_2.Count; i++)
+                    {
+                        chains_2[i].GetComponent<ChainMove>().SetData(speed_barrel, start_x, start_z, target_x, target_z);
+                    }
+                    break;
+                }
+            case 2:
+                {
+                    for (int i = 0; i < chains_3.Count; i++)
+                    {
+                        chains_3[i].GetComponent<ChainMove>().SetData(speed_barrel, start_x, start_z, target_x, target_z);
+                    }
+                    break;
+                }
+            case 3:
+                {
+                    for (int i = 0; i < chains_4.Count; i++)
+                    {
+                        chains_4[i].GetComponent<ChainMove>().SetData(speed_barrel, start_x, start_z, target_x, target_z);
+                    }
+                    break;
+                }
+            case 4:
+                {
+                    for (int i = 0; i < chains_5.Count; i++)
+                    {
+                        chains_5[i].GetComponent<ChainMove>().SetData(speed_barrel, start_x, start_z, target_x, target_z);
+                    }
+                    break;
+                }
+            case 5:
+                {
+                    for (int i = 0; i < chains_6.Count; i++)
+                    {
+                        chains_6[i].GetComponent<ChainMove>().SetData(speed_barrel, start_x, start_z, target_x, target_z);
+                    }
+                    break;
+                }
+        }
+    }
+
+    void MoveChains(bool active)
+    {
+        for (int i = 0; i < chains_1.Count; i++)
+        {
+            chains_1[i].GetComponent<ChainMove>().SetMove(active);
+        }                                        
+                                                 
+        for (int i = 0; i < chains_2.Count; i++) 
+        {                                        
+            chains_2[i].GetComponent<ChainMove>().SetMove(active);
+        }                                        
+                                                 
+        for (int i = 0; i < chains_3.Count; i++) 
+        {                                        
+            chains_3[i].GetComponent<ChainMove>().SetMove(active);
+        }                                       
+                                                
+        for (int i = 0; i < chains_4.Count; i++)
+        {                                       
+            chains_4[i].GetComponent<ChainMove>().SetMove(active);
+        }                                        
+                                                 
+        for (int i = 0; i < chains_5.Count; i++) 
+        {                                        
+            chains_5[i].GetComponent<ChainMove>().SetMove(active);
+        }
+
+        for (int i = 0; i < chains_6.Count; i++)
+        {
+            chains_6[i].GetComponent<ChainMove>().SetMove(active);
         }
     }
 
