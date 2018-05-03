@@ -67,7 +67,12 @@ public class Movement_Action : Action
 
     private bool blocking = false;
 
+    bool fx_played=false;
+
     GameObject player_t;
+
+    public float steps_start_audio_anim = 0.66f;
+    public float steps_finish_audio_anim = 0.98f;
 
     public Movement_Action()
     {
@@ -153,6 +158,16 @@ public class Movement_Action : Action
         //Movement
         if (translation_finished == false)
         {
+            /*if (anim_comp.IsAnimOverXTime(steps_start_audio_anim) && fx_played == false)
+            {
+                Debug.Log("PASITO A PASITO", Department.IA, Color.BLUE);
+                audio_comp.PlayEvent("Footsteps");
+                fx_played = true;
+            }
+            if (anim_comp.IsAnimOverXTime(steps_finish_audio_anim))
+            {
+                fx_played = false;
+            }*/
             UpdateTranslation();
 
             if (arrive.ReachedTile() == true)
@@ -334,8 +349,9 @@ public class Movement_Action : Action
                 }
             }
 
-            Debug.Log("footstep audio enemy", Department.PHYSICS, Color.BLUE);
-            audio_comp.PlayEvent("Footsteps");
+            //Debug.Log("footstep audio enemy", Department.PHYSICS, Color.BLUE);
+            //audio_comp.PlayEvent("Footsteps");
+
             tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
         }
     }
