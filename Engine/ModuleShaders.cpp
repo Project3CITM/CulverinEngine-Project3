@@ -578,6 +578,7 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 
 	JSON_Object* object;
 	JSON_Value* file_proj;
+	bool insert = false;
 	//Point JSON_Object and JSON_Value to the path we want
 	App->json_seria->Create_Json_Doc(&file_proj, &object, str_path.c_str());
 	std::string name = App->fs->GetOnlyName(str_path);
@@ -610,9 +611,11 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 		}
 
 		if (material == nullptr) {
-			material = new Material();
-			material->material_shader = program;
+			material = new Material();			
 			material->name = material_name;
+			insert = true;
+		}
+			material->material_shader = program;
 			material->GetProgramVariables();
 			uint num_textures = json_object_dotget_number_with_std(object, name + "Num Textures:");
 			material->glow = json_object_dotget_boolean_with_std(object, name + "Glow:");
@@ -912,8 +915,9 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					}
 				}
 			}
-			App->module_shaders->materials.insert(std::pair<uint, Material*>(material->GetProgramID(), material));
-		}
+			if(insert) 
+				App->module_shaders->materials.insert(std::pair<uint, Material*>(material->GetProgramID(), material));
+		
 	}
 	json_value_free(file_proj);
 
