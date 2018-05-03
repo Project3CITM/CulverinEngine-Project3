@@ -12,9 +12,10 @@ public class ShowActionName : CulverinBehaviour
     string action_name = null;
     string input_name = null;
     int device = 0;
-
+    bool update = false;
     void Start()
     {
+        update = true;
         if (keyboard)
             device = 0;
         else
@@ -43,6 +44,8 @@ public class ShowActionName : CulverinBehaviour
             action_name = "Interact";        
         else if (string_pos == 10)        
             action_name = "Menu";
+        else
+            action_name = "";
 
         input_name = "Player";
 
@@ -50,5 +53,9 @@ public class ShowActionName : CulverinBehaviour
         text = Input.GetInput_ControllerActionName(action_name, input_name, device, negative_key);
         GetComponent<CompText>().SetText(text);
     }
-  
+    void Update()
+    {
+        if (!update)
+            Start();
+    }
 }

@@ -145,7 +145,7 @@ void PlayerActions::Clear()
 
 void PlayerActions::UpdateInputsManager()
 {
-	if (key_change.change_active)
+	if (!key_change.change_active)
 	{
 		if (key_change.state != KeyChange::KeyState::WAIT_FOR_KEY_STATE)
 		{
@@ -169,6 +169,7 @@ bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 			if (key_change.state == KeyChange::KeyState::VALID_KEY_STATE
 				|| key_change.state == KeyChange::KeyState::INVALID_KEY_STATE)
 			{
+				key_change.change_active = false;
 				return true;
 			}		
 		}

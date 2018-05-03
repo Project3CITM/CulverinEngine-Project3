@@ -13,10 +13,11 @@ public class EditKeyBinding : CulverinBehaviour
     string action_name = null;
     string input_name = null;
     int device = 0;
-
+    bool update = false;
 
     void Start()
     {
+        update = true;
         if (keyboard)
             device = 0;
         else
@@ -52,6 +53,8 @@ public class EditKeyBinding : CulverinBehaviour
 
     public void ChangeInputAction()
     {
+        if (!update)
+            Start();
         if (!Input.GetChangeInputActive())
         {
             GetComponent<CompAudio>().PlayEvent("Push");

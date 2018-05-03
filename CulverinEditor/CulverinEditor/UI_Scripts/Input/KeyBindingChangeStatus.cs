@@ -19,8 +19,7 @@ public class KeyBindingChangeStatus : CulverinBehaviour
     {
         UpdateText();
 
-        if (!Input.GetChangeInputActive())
-            return;
+
 
         if (Input.GetChangeInputState() == 0)
         {
