@@ -2533,17 +2533,17 @@ int ImportScript::RangeIntNoRepeat(int min, int max, int norepeat)
 
 void ImportScript::SetFullScreen(MonoObject * object)
 {
-	App->full_screen = !(App->full_screen);
+	App->SetFullScreen();
 }
 
 void ImportScript::SetWindowed(MonoObject * object)
 {
-	App->resizable_window = !(App->resizable_window);
+	App->SetWindowed();
 }
 
 void ImportScript::SetBordeless(MonoObject * object)
 {
-	App->borderless = !(App->borderless);
+	App->SetBordeless();
 }
 
 void ImportScript::SetVSync(MonoObject * object)
@@ -2558,5 +2558,5 @@ void ImportScript::ShowFPS(MonoObject * object)
 
 void ImportScript::SwapControllerVibration(MonoObject * object)
 {
-	App->SwapControllerVibration();
+	App->input->SwapVibration();
 }

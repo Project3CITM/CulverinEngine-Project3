@@ -123,6 +123,7 @@
     <Compile Include="UI_Scripts\Scene\Screen.cs" />
     <Compile Include="UI_Scripts\Scene\ScreenOptions.cs" />
     <Compile Include="UI_Scripts\Scene\DisplayMenu.cs" />
+    <Compile Include="UI_Scripts\Scene\Volume.cs" />
     <Compile Include="UI_Scripts\ShowScore2.cs" />
     <Compile Include="Tools\Random.cs" />
     <Compile Include="UI_Scripts\Component\CompCanvas.cs" />
