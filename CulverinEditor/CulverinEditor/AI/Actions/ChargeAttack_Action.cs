@@ -19,6 +19,7 @@ public class ChargeAttack_Action : Action
     int player_x = -1;
     int player_y = -1;
     GameObject player;
+    bool pushed = false;
 
     public ChargeAttack_Action()
     {
@@ -62,6 +63,8 @@ public class ChargeAttack_Action : Action
         GetComponent<CompAnimation>().SetTransition("ToChargeAttack");
         GetComponent<CompAnimation>().SetClipDuration("ChargeAttack", duration);
 
+        pushed = false;
+
         return true;
     }
 
@@ -78,13 +81,19 @@ public class ChargeAttack_Action : Action
 
         player.GetComponent<MovementController>().GetPlayerPos(out player_x, out player_y);
         float tile_size = GetComponent<Movement_Action>().tile_size;
-        uint current_x = (uint)(pos.x / tile_size) + 1;
-        uint current_y = (uint)(pos.z / tile_size) + 1;
+        uint current_x = (uint)(pos.x / tile_size);
+        uint current_y = (uint)(pos.z / tile_size);
 
-        if (current_x == player_x && current_y == player_y)
+        Debug.Log("Boss " + current_x + "," + current_y);
+        Debug.Log("Player " + player_x + "," + player_y);
+
+        if (current_x == player_x && current_y == player_y && pushed == false)
         {
-            Debug.Log("Push");
-            if (player.GetComponent<CharactersManager>().Push(damage, GetPushTile()) == true)
+            PathNode push_tile = GetPushTile();
+            Debug.Log("Push From " + current_x + "," + current_y);
+            Debug.Log("Push to " + push_tile.GetTileX() + "," + push_tile.GetTileY());
+            pushed = true;
+            if (player.GetComponent<CharactersManager>().Push(damage, push_tile) == true)
                 GetComponent<CompAudio>().PlayEvent("SwordHit");
         }
 
@@ -109,6 +118,7 @@ public class ChargeAttack_Action : Action
     {
         interupt = false;
         GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+        pushed = false;
         return true;
     }
 
@@ -130,6 +140,8 @@ public class ChargeAttack_Action : Action
             delta = delta + 2 * Mathf.PI;
 
         delta = Mathf.Rad2deg(delta);
+
+        Debug.Log("Delta: " + delta);
 
         Pathfinder pf = GetLinkedObject("map").GetComponent<Pathfinder>();
         PathNode ret = new PathNode(-1, -1);
@@ -155,10 +167,10 @@ public class ChargeAttack_Action : Action
                 }
             }
         }
-        //Charging from West
+        //Charging from East
         else if (delta > 50.0f && delta < 140.0f)
         {
-            ret = new PathNode(player_x - 1, player_y);
+            ret = new PathNode(player_x + 1, player_y);
 
             if (pf.IsWalkableTile(ret) == false)
             {
@@ -176,10 +188,10 @@ public class ChargeAttack_Action : Action
                 }
             }
         }
-        //Charging from East
+        //Charging from West
         else if (delta > -140.0f && delta < -50.0f)
         {
-            ret = new PathNode(player_x + 1, player_y);
+            ret = new PathNode(player_x - 1, player_y);
 
             if (pf.IsWalkableTile(ret) == false)
             {
@@ -187,13 +199,13 @@ public class ChargeAttack_Action : Action
                 {
                     ret = new PathNode(player_x, player_y + 1);
                     if (pf.IsWalkableTile(ret) == false)
-                        ret = new PathNode(player_x - 1, player_y - 1);
+                        ret = new PathNode(player_x, player_y - 1);
                 }
                 else
                 {
-                    ret = new PathNode(player_x - 1, player_y - 1);
+                    ret = new PathNode(player_x, player_y - 1);
                     if (pf.IsWalkableTile(ret) == false)
-                        ret = new PathNode(player_x + 1, player_y + 1);
+                        ret = new PathNode(player_x, player_y + 1);
                 }
             }
         }
