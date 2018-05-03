@@ -25,6 +25,9 @@ public class AudioMenu : CulverinBehaviour
 
         audio_sl = GetLinkedObject("audio_sl");
         mute_cb = GetLinkedObject("mute_cb");
+
+        audio_menu.SetActive(false);
+
     }
     public void OpenAudioMenu()
     {

@@ -211,7 +211,6 @@ void CompButton::SaveBinary(char ** cursor, int position) const
 {
 	CompInteractive::SaveBinary(cursor, position);
 	ClickAction::SaveBinary(cursor);
-
 }
 
 void CompButton::LoadBinary(char ** cursor)

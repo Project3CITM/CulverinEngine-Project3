@@ -67,11 +67,9 @@ public class Movement_Action : Action
 
     private bool blocking = false;
 
-    bool fx_played=false;
+    bool fx_played = false;
 
     GameObject player_t;
-
-    bool fx_played = false;
 
     public float steps_start_audio_anim = 0.66f;
     public float steps_finish_audio_anim = 0.98f;
