@@ -283,6 +283,7 @@ private:
 	static void SetBordeless(MonoObject * object);
 	static void SetVSync(MonoObject * object);
 	static void ShowFPS(MonoObject * object);
+	static void SwapControllerVibration(MonoObject * object);
 	/*Component Collier*/
 	static MonoObject*	GetCollidedObject(MonoObject * object);
 	static MonoObject*	GetContactPoint(MonoObject* object);

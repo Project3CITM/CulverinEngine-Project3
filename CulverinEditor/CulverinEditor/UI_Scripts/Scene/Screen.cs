@@ -24,5 +24,8 @@ namespace CulverinEditor.Screen
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool ShowFPS();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool SwapControllerVibration();
     }
 }

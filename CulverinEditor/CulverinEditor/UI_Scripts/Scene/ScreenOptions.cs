@@ -6,6 +6,8 @@ using CulverinEditor.Screen;
 
 public class ScreenOptions : CulverinBehaviour
 {
+    public GameObject options_menu;
+
     public GameObject windowed_cb;
     public GameObject fullscreen_cb;
     public GameObject bordeless_cb;
@@ -19,6 +21,8 @@ public class ScreenOptions : CulverinBehaviour
 
     void Start()
     {
+        options_menu = GetLinkedObject("options_menu");
+
         windowed_cb = GetLinkedObject("windowed_cb");
         fullscreen_cb = GetLinkedObject("fullscreen_cb");
         bordeless_cb = GetLinkedObject("bordeless_cb");
@@ -48,6 +52,18 @@ public class ScreenOptions : CulverinBehaviour
         windowed_cb.GetComponent<CompCheckBox>().HideTick();
         fullscreen_cb.GetComponent<CompCheckBox>().HideTick();
         Screen.SetBordeless();
+    }
+    public void SetVSync()
+    {
+        Screen.SetBordeless();
+    }
+    public void ShowFPS()
+    {
+        Screen.ShowFPS();
+    }
+    public void SwapControllerVibration()
+    {
+        Screen.SwapControllerVibration();
     }
 
 }

@@ -1316,6 +1316,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Screen.Screen::SetBordeless", (const void*)SetBordeless);
 	mono_add_internal_call("CulverinEditor.Screen.Screen::SetVSync", (const void*)SetVSync);
 	mono_add_internal_call("CulverinEditor.Screen.Screen::ShowFPS", (const void*)ShowFPS);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::SwapControllerVibration", (const void*)SwapControllerVibration);
 }
 
 //Log messages into Engine Console
@@ -2546,4 +2547,9 @@ void ImportScript::SetVSync(MonoObject * object)
 void ImportScript::ShowFPS(MonoObject * object)
 {
 	App->active_fps = !(App->active_fps);
+}
+
+void ImportScript::SwapControllerVibration(MonoObject * object)
+{
+	App->SwapControllerVibration();
 }

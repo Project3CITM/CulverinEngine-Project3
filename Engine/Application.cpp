@@ -1469,6 +1469,11 @@ void Application::ShowFPS()
 	active_fps = !active_fps;
 }
 
+void Application::SwapControllerVibration()
+{
+	App->input->SwapVibration();
+}
+
 static void *counted_malloc(size_t size) {
 	void *res = malloc(size);
 	if (res != NULL) {

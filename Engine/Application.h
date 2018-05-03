@@ -123,6 +123,7 @@ public:
 	void SetBordeless();
 	void SetVSync();
 	void ShowFPS();
+	void SwapControllerVibration();
 
 private:
 

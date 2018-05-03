@@ -713,6 +713,10 @@ KeyRelation * ModuleInput::FindKeyBinding(DeviceCombinationType device, int even
 		return nullptr;
 	return key_binding->FindKeyBinding(device, event_value);
 }
+void ModuleInput::SwapVibration()
+{
+	rumble_active = !rumble_active;
+}
 bool ModuleInput::ConnectGameController()
 {
 	if (SDL_NumJoysticks() < 1)
