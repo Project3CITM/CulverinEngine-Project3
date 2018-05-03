@@ -57,6 +57,7 @@ public class Boss_BT : BT
     private bool boss_dead = false;
     public float boss_dead_delay_time = 5.0f;
     private float boss_dead_delay_timer = 0.0f;
+    public float boss_fight_timer = 0.0f;
 
     private CompText boss_title_text;
 
@@ -94,6 +95,7 @@ public class Boss_BT : BT
 
     public override void Update()
     {
+        boss_dead_delay_timer += Time.deltaTime;
         if (rumble == true)
         {
             rumble_timer += Time.deltaTime;
@@ -133,6 +135,8 @@ public class Boss_BT : BT
             boss_dead_delay_timer += Time.deltaTime;
             if (boss_dead_delay_timer >= boss_dead_delay_time)
             {
+                StatsScore.boss_time = boss_fight_timer;
+                StatsScore.combat_points += GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetTotalHP();
                 if (SceneManager.CheckMultiSceneReady())
                     SceneManager.RemoveSecondaryScene();
                 SceneManager.LoadScene("ScoreMenu");
