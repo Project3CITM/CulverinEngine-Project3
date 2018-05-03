@@ -111,6 +111,8 @@ public class MovementController : CulverinBehaviour
 
         if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false && char_manager.GetManagerState() != CharactersManager.State.DROWNING)
         {
+            Debug.Log("ENTEEEEER!");
+
             tile_mov_x = 0;
             tile_mov_y = 0;
             moving = false;
@@ -284,6 +286,8 @@ public class MovementController : CulverinBehaviour
     {
         if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
+            
+
             if(push == true)
             {
                 push = false;
@@ -390,7 +394,7 @@ public class MovementController : CulverinBehaviour
         blocked_camera = false;
     }
 
-    void MovePositionInitial(Vector3 newpos)
+    public void MovePositionInitial(Vector3 newpos)
     {
         GetComponent<Transform>().SetPosition(newpos);
     }

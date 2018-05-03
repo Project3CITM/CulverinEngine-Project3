@@ -93,6 +93,7 @@ public class CharacterController : CulverinBehaviour
     protected float push_x = 0.0f;
     protected float push_y = 0.0f;
     protected uint push_cycles = 0;
+    protected PathNode push_obj;
 
     protected void LinkComponents(GameObject icon_obj, GameObject icon_hp_obj, GameObject icon_stamina_obj, GameObject icon_mana_obj,
                                   GameObject left_button_obj, GameObject right_button_obj, GameObject sec_button_obj, GameObject sec_button_idle_obj,
@@ -200,22 +201,28 @@ public class CharacterController : CulverinBehaviour
     {
         Debug.Log("Position Before: " + GetComponent<Transform>().position);
         Transform trans = player.GetComponent<Transform>();
-        Vector3 pos = new Vector3(trans.position);
+        Vector3 pos = new Vector3(trans.local_position);
         pos.x = pos.x + push_x * Time.deltaTime;
         pos.z = pos.z + push_y * Time.deltaTime;
-        trans.position = pos;
+        trans.local_position = pos;
         push_cycles--;
 
-        Debug.Log("Position After: " + GetComponent<Transform>().position);
+        Debug.Log("Position After:" + GetComponent<Transform>().position);
 
         if (push_cycles == 0)
         {
+            characters_manager.SetCurrentPlayerState(CharacterController.State.IDLE);
+
             push = false;
 
-            Vector3 final_pos = new Vector3(trans.position);
+            movement.curr_x = push_obj.GetTileX();
+            movement.curr_y = push_obj.GetTileY();
+
+            Vector3 final_pos = new Vector3(trans.local_position);
             final_pos.x = movement.curr_x * movement.distanceToMove;
             final_pos.z = movement.curr_y * movement.distanceToMove;
-            trans.position = final_pos;
+            trans.local_position = final_pos;
+            //movement.MovePositionInitial(final_pos);
 
             Debug.Log("Final position: " + movement.curr_x + "," + movement.curr_y);
         }
@@ -228,12 +235,13 @@ public class CharacterController : CulverinBehaviour
         push_y = (obj.GetTileY() - movement.curr_y) / duration;
         push_cycles = (uint)(duration / Time.deltaTime);
 
-        movement.curr_x += obj.GetTileX();
-        movement.curr_y += obj.GetTileY();
+        push_obj = new PathNode(obj.GetTileX(), obj.GetTileY());
 
-        Vector3 final_pos = new Vector3(transform.position);
-        final_pos.x = movement.curr_x * movement.distanceToMove;
-        final_pos.z = movement.curr_y * movement.distanceToMove;
+
+
+        Vector3 final_pos = new Vector3(transform.local_position);
+        final_pos.x = push_obj.GetTileX() * movement.distanceToMove;
+        final_pos.z = push_obj.GetTileY() * movement.distanceToMove;
         movement.endPosition = final_pos;        
 
         push = true;
