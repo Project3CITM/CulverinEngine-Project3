@@ -6,10 +6,16 @@ using CulverinEditor.Debug;
 
 public class AudioMenu : CulverinBehaviour
 {
+    public GameObject audio_menu;
     public GameObject audio_sl;
     public GameObject mute_cb;
+
+    public GameObject options_menu;
+    public GameObject input_button;
+
     public bool mute = false;
     public float audio_multiplier = 100;
+
 
     void Start()
     {
@@ -17,14 +23,17 @@ public class AudioMenu : CulverinBehaviour
         mute_cb = GetLinkedObject("mute_cb");
     }
 
-    public void SetVolume()
+    public void CloseScreenOptions()
     {
-        float multiplier = audio_sl.GetComponent<CompSlider>().GetFill();
-        Audio.ChangeVolume(multiplier * audio_multiplier);
+        GetComponent<CompAudio>().PlayEvent("Push");
+        audio_menu.SetActive(false);
+        options_menu.SetActive(true);
+        EventSystem.SendInteractiveSelected(input_button);
     }
 
     public void Mute()
     {
+        GetComponent<CompAudio>().PlayEvent("Push");
         mute = !mute;
         Audio.Mute(mute);
     }

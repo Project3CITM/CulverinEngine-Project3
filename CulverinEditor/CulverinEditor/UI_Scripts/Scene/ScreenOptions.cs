@@ -7,6 +7,8 @@ using CulverinEditor.Screen;
 public class ScreenOptions : CulverinBehaviour
 {
     public GameObject options_menu;
+    public GameObject screenoptions_menu;
+    public GameObject input_button;
 
     public GameObject windowed_cb;
     public GameObject fullscreen_cb;
@@ -22,6 +24,7 @@ public class ScreenOptions : CulverinBehaviour
     void Start()
     {
         options_menu = GetLinkedObject("options_menu");
+        screenoptions_menu = GetLinkedObject("screenoptions_menu");
 
         windowed_cb = GetLinkedObject("windowed_cb");
         fullscreen_cb = GetLinkedObject("fullscreen_cb");
@@ -35,34 +38,48 @@ public class ScreenOptions : CulverinBehaviour
         vibration_cb = GetLinkedObject("vibration_cb");
     }
 
+    public void CloseScreenOptions()
+    {
+        GetComponent<CompAudio>().PlayEvent("Push");
+        screenoptions_menu.SetActive(false);
+        options_menu.SetActive(true);
+        EventSystem.SendInteractiveSelected(input_button);
+    }
+
     public void SetWindowed()
     {
+        GetComponent<CompAudio>().PlayEvent("Push");
         fullscreen_cb.GetComponent<CompCheckBox>().HideTick();
         bordeless_cb.GetComponent<CompCheckBox>().HideTick();
         Screen.SetWindowed();
     }
     public void SetFullscreen()
     {
+        GetComponent<CompAudio>().PlayEvent("Push");
         windowed_cb.GetComponent<CompCheckBox>().HideTick();
         bordeless_cb.GetComponent<CompCheckBox>().HideTick();
         Screen.SetFullScreen();
     }
     public void SetBorderless()
     {
+        GetComponent<CompAudio>().PlayEvent("Push");
         windowed_cb.GetComponent<CompCheckBox>().HideTick();
         fullscreen_cb.GetComponent<CompCheckBox>().HideTick();
         Screen.SetBordeless();
     }
     public void SetVSync()
     {
+        GetComponent<CompAudio>().PlayEvent("Push");
         Screen.SetBordeless();
     }
     public void ShowFPS()
     {
+        GetComponent<CompAudio>().PlayEvent("Push");
         Screen.ShowFPS();
     }
     public void SwapControllerVibration()
     {
+        GetComponent<CompAudio>().PlayEvent("Push");
         Screen.SwapControllerVibration();
     }
 
