@@ -1128,10 +1128,10 @@ void CompAnimation::GetOwnBufferSize(uint & buffer_size)
 	buffer_size += sizeof(int); //Resource UUID
 	buffer_size += sizeof(int); //Number of clips
 
-	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
+	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.cbegin(); it != animation_clips.cend(); it++)
 	{
 		buffer_size += sizeof(int);		//Animation clip name
-		buffer_size += sizeof((*it)->name.length());
+		buffer_size += (*it)->name.size();
 		buffer_size += sizeof(bool);	//Loop
 		buffer_size += sizeof(bool);	//Finished
 		buffer_size += sizeof(float);	//Time
@@ -1140,22 +1140,22 @@ void CompAnimation::GetOwnBufferSize(uint & buffer_size)
 		buffer_size += sizeof(float);	//Speed_factor
 		buffer_size += sizeof(float);	//total_blending time
 		buffer_size += sizeof(float);	//current_blending_time
-		buffer_size += sizeof(int);	//animation state
+		buffer_size += sizeof(int);		//animation state
 	}
 	
 	buffer_size += sizeof(int);			//Number of nodes
 	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
 	{
 		buffer_size += sizeof(int);		//Node name
-		buffer_size += (*it)->name.length();
+		buffer_size += (*it)->name.size();
 		buffer_size += sizeof(int);		//Animation clip name
-		buffer_size += (*it)->clip->name.length();
+		buffer_size += (*it)->clip->name.size();
 		buffer_size += sizeof(bool);	//Active
 		buffer_size += sizeof(int);		//Animation audio
-		buffer_size += (*it)->anim_audio.length();
+		buffer_size += (*it)->anim_audio.size();
 		buffer_size += sizeof(float);	//Audio time
 		buffer_size += sizeof(int);		//Animation particle
-		buffer_size += (*it)->anim_prefab_particle.length();
+		buffer_size += (*it)->anim_prefab_particle.size();
 		buffer_size += sizeof(float);	//Prefab particle time
 		buffer_size += sizeof(float);	//Particle pos
 		buffer_size += sizeof(float);	//
@@ -1167,9 +1167,9 @@ void CompAnimation::GetOwnBufferSize(uint & buffer_size)
 		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
 		{
 			buffer_size += sizeof(int);		//Transition name
-			buffer_size += (*trans_it)->name.length();
+			buffer_size += (*trans_it)->name.size();
 			buffer_size += sizeof(int);		//Destination name
-			buffer_size += (*trans_it)->name.length();
+			buffer_size += (*trans_it)->name.size();
 			buffer_size += sizeof(bool);	//Condition
 			buffer_size += sizeof(bool);	//Has exit time
 			buffer_size += sizeof(float);	//Exit time
@@ -1179,9 +1179,9 @@ void CompAnimation::GetOwnBufferSize(uint & buffer_size)
 		for (std::vector<BlendingClip*>::const_iterator blend_it = (*it)->blending_clips.begin(); blend_it != (*it)->blending_clips.end(); ++blend_it)
 		{
 			buffer_size += sizeof(int);		//Blending clip name
-			buffer_size += (*blend_it)->name.length();
+			buffer_size += (*blend_it)->name.size();
 			buffer_size += sizeof(int);		//Clip name
-			buffer_size += (*blend_it)->clip->name.length();
+			buffer_size += (*blend_it)->clip->name.size();
 			buffer_size += sizeof(bool);	//First active
 			buffer_size += sizeof(bool);	//Second active
 			buffer_size += sizeof(float);	//Weight
@@ -1203,7 +1203,7 @@ void CompAnimation::SaveBinary(char ** cursor, int position) const
 	}
 	App->json_seria->SaveIntBinary(cursor, animation_clips.size());
 
-	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
+	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.cbegin(); it != animation_clips.cend(); it++)
 	{
 		App->json_seria->SaveStringBinary(cursor, (*it)->name);
 		App->json_seria->SaveBooleanBinary(cursor, (*it)->loop);
@@ -1214,7 +1214,7 @@ void CompAnimation::SaveBinary(char ** cursor, int position) const
 		App->json_seria->SaveFloatBinary(cursor, (*it)->total_blending_time);
 		App->json_seria->SaveFloatBinary(cursor, (*it)->current_blending_time);
 		App->json_seria->SaveFloatBinary(cursor, (*it)->speed_factor);
-		App->json_seria->SaveFloatBinary(cursor, (int)(*it)->state);
+		App->json_seria->SaveIntBinary(cursor, (int)(*it)->state);
 	}
 
 	App->json_seria->SaveIntBinary(cursor, animation_nodes.size());

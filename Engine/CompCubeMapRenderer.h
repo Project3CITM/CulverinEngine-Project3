@@ -24,6 +24,9 @@ public:
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
 
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
 	// -------------------------------------
 
 

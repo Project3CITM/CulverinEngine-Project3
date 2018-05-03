@@ -9,11 +9,13 @@
 #include "ModuleEventSystemV2.h"
 #include "EventDefV2.h"
 #include "CubeMap_Texture.h"
+#include "JSONSerialization.h"
 #include "ResourceMesh.h"
 #include "CompMaterial.h"
 #include "ModuleLightning.h"
 #include "ModuleFS.h"
 #include "CompLight.h"
+
 CompCubeMapRenderer::CompCubeMapRenderer(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	uid = App->random->Int();
@@ -177,5 +179,27 @@ void CompCubeMapRenderer::Load(const JSON_Object * object, std::string name)
 
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 	cube_map.SetName(json_object_dotget_string_with_std(object, name + "Name:"));
+}
+
+void CompCubeMapRenderer::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);
+
+	buffer_size += sizeof(int);
+	buffer_size += cube_map.GetName().size();
+}
+
+void CompCubeMapRenderer::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+	App->json_seria->SaveStringBinary(cursor, cube_map.GetName());
+}
+
+void CompCubeMapRenderer::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	cube_map.SetName(App->json_seria->LoadStringBinary(cursor));
 }
 
