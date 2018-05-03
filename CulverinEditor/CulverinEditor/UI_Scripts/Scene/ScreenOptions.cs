@@ -40,6 +40,14 @@ public class ScreenOptions : CulverinBehaviour
         screenoptions_menu.SetActive(false);
     }
 
+    public void OpenScreenOptions()
+    {
+        GetComponent<CompAudio>().PlayEvent("Push");
+        screenoptions_menu.SetActive(true);
+        options_menu.SetActive(false);
+        EventSystem.SendInteractiveSelected(display_button);
+    }
+
     public void CloseScreenOptions()
     {
         GetComponent<CompAudio>().PlayEvent("Push");
