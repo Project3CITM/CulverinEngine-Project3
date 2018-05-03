@@ -83,7 +83,6 @@ CompLight::CompLight(Comp_Type t, GameObject * parent) : Component(t, parent)
 
 CompLight::CompLight(const CompLight & copy, GameObject * parent) : Component(Comp_Type::C_LIGHT, parent)
 {
-	//App->module_lightning->OnLightDestroyed(this); //TODO/CHECK: Why delete the light?? Should add it to the list. Why create another method, already one to erase a light from the list on module lighting.
 	name_component = "CompLight";
 	
 	this->ambientCoefficient = copy.ambientCoefficient;
@@ -336,6 +335,7 @@ void CompLight::LoadBinary(char** cursor)
 {
 	uid = App->json_seria->LoadIntBinary(cursor);
 	color = App->json_seria->LoadFloat4Binary(cursor);
+	color_temp[0] = color.x;	color_temp[1] = color.y;	color_temp[2] = color.z;	color_temp[3] = color.w;
 	ui_light_type = App->json_seria->LoadIntBinary(cursor);
 	type = (Light_type)ui_light_type;
 
