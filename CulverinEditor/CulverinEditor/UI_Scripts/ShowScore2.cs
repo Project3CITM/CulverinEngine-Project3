@@ -18,6 +18,14 @@ public class ShowScore2 : CulverinBehaviour
     public GameObject grade_mark_D;
 
 
+    public int fountain_uses = 3;
+    public int max_puzzle_hits = 5;
+    public int boss_time_sec = 85;
+    public float gold_time = 440;
+    public float silver_time = 510;
+    public int gold_combat_points = 480;
+    public int silver_combat_points = 200;
+
     int grade_points = 0;
     int skill_coins = 0;
 
@@ -129,15 +137,15 @@ public class ShowScore2 : CulverinBehaviour
 
     void CalulateScore()
     {
-        if(StatsScore.fountain_times <= 3)
+        if(StatsScore.fountain_times <= fountain_uses)
         {
             skill_coins++;
         }
-        if(StatsScore.puzzle_hits <= 5)
+        if(StatsScore.puzzle_hits <= max_puzzle_hits)
         {
             skill_coins++;
         }
-        if(StatsScore.boss_time <= 85)
+        if(StatsScore.boss_time <= boss_time_sec)
         {
             skill_coins++;
         }
@@ -145,15 +153,15 @@ public class ShowScore2 : CulverinBehaviour
 
         //Grade--------------
         //Time
-        if(StatsScore.time <= 440)
+        if(StatsScore.time <= gold_time)
         {
             grade_points += 100;
         }
-        else if (StatsScore.time > 440 && StatsScore.time < 510)
+        else if (StatsScore.time > gold_time && StatsScore.time < silver_time)
         {
             grade_points += 50;
         }
-        else if (StatsScore.time > 510)
+        else if (StatsScore.time > silver_time)
         {
             grade_points += 25;
         }
