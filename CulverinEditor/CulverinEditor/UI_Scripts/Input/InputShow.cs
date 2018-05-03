@@ -32,7 +32,7 @@ public class InputShow : CulverinBehaviour
             Start();
         device = Input.GetActualDeviceCombo();
         text = "Pulse ";
-        text += Input.GetInput_ControllerKeyBindingName(action_name, input_name, device, negative_key);
+        text += Input.GetInput_ControllerKeyBindingName(action_name, input_name, device, false);
         text += " to Interact";
 
         if (last_text!=text)

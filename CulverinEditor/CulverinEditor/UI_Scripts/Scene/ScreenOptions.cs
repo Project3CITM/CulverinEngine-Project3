@@ -8,7 +8,7 @@ public class ScreenOptions : CulverinBehaviour
 {
     public GameObject options_menu;
     public GameObject screenoptions_menu;
-    public GameObject input_button;
+    public GameObject display_button;
 
     public GameObject windowed_cb;
     public GameObject fullscreen_cb;
@@ -25,6 +25,7 @@ public class ScreenOptions : CulverinBehaviour
     {
         options_menu = GetLinkedObject("options_menu");
         screenoptions_menu = GetLinkedObject("screenoptions_menu");
+        display_button = GetLinkedObject("display_button");
 
         windowed_cb = GetLinkedObject("windowed_cb");
         fullscreen_cb = GetLinkedObject("fullscreen_cb");
@@ -43,7 +44,7 @@ public class ScreenOptions : CulverinBehaviour
         GetComponent<CompAudio>().PlayEvent("Push");
         screenoptions_menu.SetActive(false);
         options_menu.SetActive(true);
-        EventSystem.SendInteractiveSelected(input_button);
+        EventSystem.SendInteractiveSelected(display_button);
     }
 
     public void SetWindowed()
