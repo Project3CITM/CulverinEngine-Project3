@@ -37,6 +37,7 @@ public class ScreenOptions : CulverinBehaviour
         vsync_cb = GetLinkedObject("vsync_cb");
         showfps_cb = GetLinkedObject("showfps_cb");
         vibration_cb = GetLinkedObject("vibration_cb");
+        screenoptions_menu.SetActive(false);
     }
 
     public void CloseScreenOptions()
