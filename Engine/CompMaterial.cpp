@@ -98,8 +98,18 @@ void CompMaterial::PreUpdate(float dt)
 
 void CompMaterial::Clear()
 {	
-
-	
+	if (material != nullptr)
+	{
+		for (int i = 0; i < material->textures.size(); i++)
+		{
+			if (material->textures[i].value != nullptr)
+			{
+				if (material->textures[i].value->num_game_objects_use_me > 0)
+					material->textures[i].value->num_game_objects_use_me--;
+			}
+		}
+		material = nullptr;
+	}
 }
 
 void CompMaterial::SetColor(float r, float g, float b, float a)
